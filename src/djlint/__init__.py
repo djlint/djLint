@@ -134,7 +134,7 @@ def main(src: str, extension: str):
                             message["message"],
                             Fore.BLUE + message["match"],
                         ),
-                        err=error,
+                        err=False,
                     )
 
     success_message = "Checked %s, found %d errors." % (
