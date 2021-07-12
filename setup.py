@@ -18,13 +18,15 @@ def long_description():
 
 setup(
     name="djlint",
-    version="0.0.1",
+    version="0.0.5",
     author="Christopher Pickering",
     author_email="cpickering@rhc.net",
     description="Django Template Linter",
     long_description=long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/Riverside-Healthcare/djlint",
+    include_package_data=True,
+    package_data={"djlint": ["rules.yaml"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
@@ -40,7 +42,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "djlint=djlint:patched_main",
+            "djlint=djlint:main",
         ]
     },
 )
