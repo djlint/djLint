@@ -33,7 +33,7 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     python_requires=">=3.6",
-    install_requires=["click>=7.1.2", "appdirs", "toml", "pyyaml"],
+    install_requires=["click>=7.1.2", "pyyaml>=5.4.1"],
     test_suite="tests.test_djlint",
     extras_require={
         "colorama": ["colorama>=0.4.3"],

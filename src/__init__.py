@@ -117,7 +117,7 @@ def main(src: str, extension: str):
             if errors:
                 echo(
                     "{}\n{}\n{}===============================".format(
-                        Fore.GREEN, this_file, Style.DIM
+                        Fore.GREEN + Style.BRIGHT, this_file, Style.DIM
                     )
                     + Style.RESET_ALL
                 )
