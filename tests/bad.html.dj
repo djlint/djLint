@@ -2,3 +2,7 @@
 {{ is}}
 
 <a src="/junk"></a>
+
+<footer class="ft">
+    &copy; {% now "Y" %} - {{settings.ORG_NAME }}
+</footer>
