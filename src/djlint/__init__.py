@@ -99,6 +99,10 @@ def main(src: str, extension: str):
     if len(file_list) == 0:
         return
 
+    file_quantity = "%d file%s" % (len(file_list), ("s" if len(file_list) > 1 else ""))
+
+    echo("\nChecking %s!" % file_quantity)
+
     worker_count = os.cpu_count()
 
     if sys.platform == "win32":
@@ -108,9 +112,8 @@ def main(src: str, extension: str):
     with ProcessPoolExecutor(max_workers=worker_count) as exe:
         file_errors = exe.map(lint_file, file_list)
 
-    success_message = "No errors!"
-
     # format errors
+    error_count = 0
     for error in file_errors:
         for this_file, errors in error.items():
             if errors:
@@ -120,7 +123,7 @@ def main(src: str, extension: str):
                     )
                     + Style.RESET_ALL
                 )
-
+                error_count += len(errors)
                 for message in sorted(errors, key=lambda x: x["line"]):
                     error = bool(message["code"][:1] == "E")
                     echo(
@@ -134,9 +137,12 @@ def main(src: str, extension: str):
                         err=error,
                     )
 
-                success_message = ""
+    success_message = "Checked %s, found %d errors." % (
+        file_quantity,
+        error_count,
+    )
 
-    echo("\n%s" % (success_message))
+    echo("\n%s\n" % (success_message))
 
 
 if __name__ == "__main__":

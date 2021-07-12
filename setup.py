@@ -18,7 +18,7 @@ def long_description():
 
 setup(
     name="djlint",
-    version="0.0.5",
+    version="0.0.6",
     author="Christopher Pickering",
     author_email="cpickering@rhc.net",
     description="Django Template Linter",
