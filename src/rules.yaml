@@ -1,0 +1,24 @@
+- rule:
+    name: E001
+    message: Variables should be wrapped in a single whitespace.
+    patterns:
+    - '{[{|%|#][^\s]+'
+    - '[^\s]+[}|%|#]}'
+    - \s{2,}[}|%|#]}
+    - '{[{|%|#]\s{2,}'
+- rule:
+    name: E002
+    message: Double quotes should be used in tags.
+    patterns:
+    - '{%.?extends\s+?[^\"]\w+'
+- rule:
+    name: W003
+    message: 'Endblock should have name. Ex: {% endblock body %}.'
+    patterns:
+    - '{%\s*?endblock\s*?%}'
+- rule:
+    name: W004
+    message: Status urls should follow {% static path/to/file %} pattern.
+    # this should be using the static path from django settings
+    patterns:
+    - <(?:link|img|script)\s[^\>]*?(?:href|src)=[\"\']/?static/?

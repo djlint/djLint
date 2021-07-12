@@ -1,0 +1,40 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.0.1
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-yaml
+- repo: https://github.com/myint/autoflake
+  rev: v1.4
+  hooks:
+  - id: autoflake
+    exclude: &fixtures tests/functional/|tests/input|tests/extensions/data|tests/regrtest_data/|tests/data/
+    args:
+    - --in-place
+    - --remove-all-unused-imports
+    - --expand-star-imports
+    - --remove-duplicate-keys
+    - --remove-unused-variables
+- repo: https://github.com/asottile/pyupgrade
+  rev: v2.21.0
+  hooks:
+  - id: pyupgrade
+    args: [--py36-plus]
+- repo: https://github.com/PyCQA/isort
+  rev: 5.9.2
+  hooks:
+  - id: isort
+    exclude: docs*
+    additional_dependencies: [toml]
+- repo: https://github.com/psf/black
+  rev: 21.6b0
+  hooks:
+  - id: black
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v2.1.0
+  hooks:
+  - id: pretty-format-ini
+    args: [--autofix]
+  - id: pretty-format-yaml
+    args: [--autofix, --indent, '2']
