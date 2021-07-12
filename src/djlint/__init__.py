@@ -50,7 +50,7 @@ def lint_file(this_file: Path):
                     {
                         "code": rule["name"],
                         "line": get_line(match.start()),
-                        "match": match.group(),
+                        "match": match.group()[:20].strip(),
                         "message": rule["message"],
                     }
                 )

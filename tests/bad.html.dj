@@ -1,8 +1,23 @@
 {%this%}
 {{ is}}
 
-<a src="/junk"></a>
+<a href="/junk"></a>
 
 <footer class="ft">
     &copy; {% now "Y" %} - {{settings.ORG_NAME }}
 </footer>
+
+<BODY>
+<P>This is a paragraph.</P>
+
+
+<a HREF="https://www.w3schools.com/html/">Visit our HTML tutorial</a>
+
+<table class=striped></table>
+
+</BODY>
+
+<img src="html5.gif">
+<link rel = "stylesheet" href = "styles.css">
+
+<div class="this is a really line long of random stuff... how long can we make it? hopefully over 99 chars long!"><p>close that div out!</p></div>

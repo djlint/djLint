@@ -22,3 +22,64 @@
     # this should be using the static path from django settings
     patterns:
     - <(?:link|img|script)\s[^\>]*?(?:href|src)=[\"\']/?static/?
+- rule:
+    name: W005
+    message: Html tag should have lang attribute.
+    patterns:
+    - <html\s(?:(?!lang).)*>
+- rule:
+    name: W006
+    message: Img tag should have alt, height and width attributes.
+    patterns:
+    - <img\s(?:(?!(?:alt|width|height)).)*>
+- rule:
+    name: W007
+    message: <!DOCTYPE ... > should be present before the html tag.
+    patterns:
+    - ^<html
+- rule:
+    name: W008
+    message: Attributes should be double quoted.
+    patterns:
+    - (?:class|id|src|width|height|alt|style|lang|title)=\'[^\']*'
+- rule:
+    name: W009
+    message: Tag names should be lowercase.
+    patterns:
+    - (?<=<)(?:HTML|BODY|DIV|P|SPAN|TABLE|TR|TD|TH|THEAD|TBODY|CODE|UL|OL|LI|H1|H2|H3|H4|H5|H6)
+- rule:
+    name: W010
+    message: Attribute names should be lowercase.
+    patterns:
+    - (?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE)=
+- rule:
+    name: W011
+    message: Attirbute values should be quoted.
+    patterns:
+    - (?:class|id|src|width|height|alt|style|lang|title)=[a-zA-Z]+
+- rule:
+    name: W012
+    message: There should be no spaces around attribute =.
+    patterns:
+    - <(?:(?!\{[%|{|#])[^\n])*\s+=
+    - <(?:(?!\{[%|{|#])[^\n])*=\s
+- rule:
+    name: W013
+    message: Line is longer than 99 chars.
+    patterns:
+    - "[^\n]{99,}"
+- rule:
+    name: W014
+    message: More than 2 blank lines.
+    patterns:
+    - "[^\n]{,10}\n{3,}"
+- rule:
+    name: W015
+    message: Follow h tags with a blank line.
+    patterns:
+    - </h\d?>(?:(?!(.+\r?\n){1,}).)*<[a-zA-Z]+\d?
+- rule:
+    name: W016
+    message: Missging title tag in html.
+    patterns:
+    - <html[^>]*?>(?:(?!<title>).)*</html>
