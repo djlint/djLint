@@ -82,7 +82,6 @@ def get_src(src: Path, extension=None):
         exists=True, file_okay=True, dir_okay=True, readable=True, allow_dash=True
     ),
     nargs=1,
-    is_eager=True,
     metavar="SRC ...",
 )
 @click.option(
