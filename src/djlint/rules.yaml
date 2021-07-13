@@ -26,7 +26,7 @@
     name: W005
     message: Html tag should have lang attribute.
     patterns:
-    - <html\s(?:(?!lang).)*>
+    - <html\s*(?:(?!lang).)*>
 - rule:
     name: W006
     message: Img tag should have alt, height and width attributes.

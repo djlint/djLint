@@ -30,12 +30,12 @@ def lint_file(this_file: Path):
     html = this_file.read_text(encoding="utf8")
 
     # build list of line ends for file
-    line_ends = [m.end() for m in re.finditer(r".*\n", html)]
+    line_ends = [m.end() for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)]
 
     def get_line(start):
         """Get the line number and index of match."""
         for index, value in enumerate(line_ends):
-            if value >= start:
+            if value > start:
                 line_start_index = (line_ends[index - 1] if index > 0 else 0) - 1
                 return "%d:%d" % (index + 1, start - line_start_index)
 
@@ -69,7 +69,7 @@ def get_src(src: Path, extension=None):
     paths = list(src.glob(r"**/*.%s" % extension))
 
     if len(paths) == 0:
-        echo("No files to lint! 😢")
+        echo(Fore.BLUE + "No files to lint! 😢")
         return []
 
     return paths
@@ -124,7 +124,9 @@ def main(src: str, extension: str):
                     + Style.RESET_ALL
                 )
                 error_count += len(errors)
-                for message in sorted(errors, key=lambda x: x["line"]):
+                for message in sorted(
+                    errors, key=lambda x: int(x["line"].split(":")[0])
+                ):
                     error = bool(message["code"][:1] == "E")
                     echo(
                         "{} {} {} {} {}".format(

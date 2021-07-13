@@ -16,6 +16,12 @@ def long_description():
     )
 
 
+test_deps = ["coverage", "pytest", "pytest-xdist", "pytest-cov"]
+
+extras = {
+    "test": test_deps,
+}
+
 setup(
     name="djlint",
     version="0.0.8",
@@ -35,14 +41,13 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     python_requires=">=3.6",
-    install_requires=["click>=7.1.2", "pyyaml>=5.4.1"],
+    install_requires=["click>=7.1.2", "pyyaml>=5.4.1", "colorama>=0.4.3"],
     test_suite="tests.test_djlint",
-    extras_require={
-        "colorama": ["colorama>=0.4.3"],
-    },
     entry_points={
         "console_scripts": [
             "djlint=djlint:main",
         ]
     },
+    tests_require=test_deps,
+    extras_require=extras,
 )
