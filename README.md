@@ -12,7 +12,6 @@ Simple Django template linter.
 ```sh
 pip install djlint
 ```
-
 ## Usage
 
 ```sh
@@ -52,12 +51,11 @@ djlint <file or path>
 | W015 | Follow h tags with a blank line. |
 | W016 | Missging title tag in html. |
 
-
 ## Adding Rules
 
 A good rule consists of
 
-- Name
-- Code - Codes beginning with "E" signify error, and "W" warning.
-- Message - Message to display when error is found.
-- Patterns - regex expressions that will find the error.
+  - Name
+  - Code - Codes beginning with "E" signify error, and "W" warning.
+  - Message - Message to display when error is found.
+  - Patterns - regex expressions that will find the error.

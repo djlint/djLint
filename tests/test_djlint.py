@@ -15,6 +15,11 @@ from pathlib import Path
 from src.djlint import main as djlint
 
 
+def write_to_file(the_file, the_text):
+    with open(the_file, mode="w+b") as open_file:
+        open_file.write(the_text)
+
+
 def test_help(runner):
     result = runner.invoke(djlint, ["-h"])
     assert result.exit_code == 0
@@ -67,13 +72,13 @@ def test_good_path_with_bad_ext(runner):
 
 
 def test_empty_file(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"")
+    write_to_file(tmp_file.name, b"")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
 
 
 def test_E001(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"{{test }}\n{% test%}")
+    write_to_file(tmp_file.name, b"{{test }}\n{% test%}")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "E001 1:" in result.output
@@ -81,77 +86,77 @@ def test_E001(runner, tmp_file):
 
 
 def test_E002(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"{% extends 'this' %}")
+    write_to_file(tmp_file.name, b"{% extends 'this' %}")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "E002 1:" in result.output
 
 
 def test_W003(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"{% endblock %}")
+    write_to_file(tmp_file.name, b"{% endblock %}")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W003 1:" in result.output
 
 
 def test_W004(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b'<link src="/static/there">')
+    write_to_file(tmp_file.name, b'<link src="/static/there">')
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W004 1:" in result.output
 
 
 def test_W005(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"<!DOCTYPE html>\n<html>")
+    write_to_file(tmp_file.name, b"<!DOCTYPE html>\n<html>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W005 2:" in result.output
 
 
 def test_W006(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"<img />")
+    write_to_file(tmp_file.name, b"<img />")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W006 1:" in result.output
 
 
 def test_W007(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b'<html lang="en">')
+    write_to_file(tmp_file.name, b'<html lang="en">')
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W007 1:" in result.output
 
 
 def test_W008(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"<div class='test'>")
+    write_to_file(tmp_file.name, b"<div class='test'>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W008 1:" in result.output
 
 
 def test_W009(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"<H1>")
+    write_to_file(tmp_file.name, b"<H1>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W009 1:" in result.output
 
 
 def test_W010(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b'<img HEIGHT="12">')
+    write_to_file(tmp_file.name, b'<img HEIGHT="12">')
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W010 1:" in result.output
 
 
 def test_W011(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"<div class=test></div>")
+    write_to_file(tmp_file.name, b"<div class=test></div>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W011 1:" in result.output
 
 
 def test_W012(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b'<div class = "stuff">')
+    write_to_file(tmp_file.name, b'<div class = "stuff">')
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W012 1:" in result.output
@@ -168,21 +173,21 @@ def test_W013(runner, tmp_file):
 
 
 def test_W014(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"</div>\n\n\n<p>")
+    write_to_file(tmp_file.name, b"</div>\n\n\n<p>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W014 1:" in result.output
 
 
 def test_W015(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"</h1><p>")
+    write_to_file(tmp_file.name, b"</h1><p>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W015 1:" in result.output
 
 
 def test_W016(runner, tmp_file):
-    open(tmp_file.name, mode="wb").write(b"<html>\nstuff\n</html>")
+    write_to_file(tmp_file.name, b"<html>\nstuff\n</html>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W016 1:" in result.output
