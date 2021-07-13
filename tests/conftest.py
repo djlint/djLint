@@ -1,3 +1,4 @@
+import os
 import tempfile
 
 import pytest
@@ -11,5 +12,6 @@ def runner():
 
 @pytest.fixture
 def tmp_file():
-    with tempfile.NamedTemporaryFile() as tmp:
-        yield tmp
+    tmp = tempfile.NamedTemporaryFile(delete=False)
+    yield tmp
+    os.unlink(tmp.name)
