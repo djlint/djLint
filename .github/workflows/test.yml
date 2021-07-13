@@ -3,11 +3,15 @@ on: [push]
 
 jobs:
   test:
+    name: python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: [3.6, 3.7, 3.8, 3.9]
-    runs-on: ${{ matrix.os }}
+      fail-fast: true
+
     steps:
     - name: checkout
       uses: actions/checkout@v2
@@ -18,7 +22,7 @@ jobs:
     - name: install deps
       run: python -m pip install tox
     - name: test
-      run: tox -p
+      run: python -m tox -p
     - name: upload cov
       uses: codecov/codecov-action@v1
       with:

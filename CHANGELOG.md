@@ -1,7 +1,9 @@
-# 0.0.8
+# Changelog
+
+## 0.0.8
 
 Added rules.
 
-# 0.0.1
+## 0.0.1
 
 Initial release.

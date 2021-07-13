@@ -1,11 +1,13 @@
 #!/usr/bin/python
-"""Check Django template syntax.
+"""
+Check Django template syntax.
 
 usage::
 
     djlint INPUT -e <extension>
 
 """
+
 import os
 import re
 import sys
@@ -23,6 +25,13 @@ rules = yaml.load(
 )
 
 
+def get_line(start, line_ends):
+    """Get the line number and index of match."""
+    line = list(filter(lambda pair: pair["end"] > start, line_ends))[0]
+
+    return "%d:%d" % (line_ends.index(line) + 1, line["start"])
+
+
 def lint_file(this_file: Path):
     """Check file for formatting errors."""
     file_name = str(this_file)
@@ -30,16 +39,10 @@ def lint_file(this_file: Path):
     html = this_file.read_text(encoding="utf8")
 
     # build list of line ends for file
-    line_ends = [m.end() for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)]
-
-    def get_line(start):
-        """Get the line number and index of match."""
-        for index, value in enumerate(line_ends):
-            if value > start:
-                line_start_index = (line_ends[index - 1] if index > 0 else 0) - 1
-                return "%d:%d" % (index + 1, start - line_start_index)
-
-        return "error"
+    line_ends = [
+        {"start": m.start(), "end": m.end()}
+        for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)
+    ]
 
     for rule in rules:
         rule = rule["rule"]
@@ -49,7 +52,7 @@ def lint_file(this_file: Path):
                 errors[file_name].append(
                     {
                         "code": rule["name"],
-                        "line": get_line(match.start()),
+                        "line": get_line(match.start(), line_ends),
                         "match": match.group()[:20].strip(),
                         "message": rule["message"],
                     }
@@ -73,6 +76,35 @@ def get_src(src: Path, extension=None):
         return []
 
     return paths
+
+
+def build_output(error):
+    """Build output for file errors."""
+    errors = sorted(list(error.values())[0], key=lambda x: int(x["line"].split(":")[0]))
+
+    if len(errors) == 0:
+        return 0
+
+    echo(
+        "{}\n{}\n{}===============================".format(
+            Fore.GREEN + Style.BRIGHT, list(error.keys())[0], Style.DIM
+        )
+        + Style.RESET_ALL
+    )
+
+    for message in errors:
+        error = bool(message["code"][:1] == "E")
+        echo(
+            "{} {} {} {} {}".format(
+                (Fore.RED if error else Fore.YELLOW),
+                message["code"] + Style.RESET_ALL,
+                Fore.BLUE + message["line"] + Style.RESET_ALL,
+                message["message"],
+                Fore.BLUE + message["match"],
+            ),
+            err=False,
+        )
+    return len(errors)
 
 
 @click.command(context_settings={"help_option_names": ["-h", "--help"]})
@@ -115,29 +147,7 @@ def main(src: str, extension: str):
     # format errors
     error_count = 0
     for error in file_errors:
-        for this_file, errors in error.items():
-            if errors:
-                echo(
-                    "{}\n{}\n{}===============================".format(
-                        Fore.GREEN + Style.BRIGHT, this_file, Style.DIM
-                    )
-                    + Style.RESET_ALL
-                )
-                error_count += len(errors)
-                for message in sorted(
-                    errors, key=lambda x: int(x["line"].split(":")[0])
-                ):
-                    error = bool(message["code"][:1] == "E")
-                    echo(
-                        "{} {} {} {} {}".format(
-                            (Fore.RED if error else Fore.YELLOW),
-                            message["code"] + Style.RESET_ALL,
-                            Fore.BLUE + message["line"] + Style.RESET_ALL,
-                            message["message"],
-                            Fore.BLUE + message["match"],
-                        ),
-                        err=False,
-                    )
+        error_count += build_output(error)
 
     success_message = "Checked %s, found %d errors." % (
         file_quantity,

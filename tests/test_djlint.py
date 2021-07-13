@@ -1,4 +1,5 @@
-"""Djlint Tests.
+"""
+Djlint Tests.
 
 run::
 
@@ -77,7 +78,7 @@ def test_E001(runner, tmp_file):
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "E001 1:" in result.output
-    assert "E001 2:4" in result.output
+    assert "E001 2:" in result.output
 
 
 def test_E002(runner, tmp_file):
