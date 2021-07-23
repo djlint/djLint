@@ -27,9 +27,10 @@ rules = yaml.load(
 
 def get_line(start, line_ends):
     """Get the line number and index of match."""
+    #    print(start, line_ends)
     line = list(filter(lambda pair: pair["end"] > start, line_ends))[0]
 
-    return "%d:%d" % (line_ends.index(line) + 1, line["start"])
+    return "%d:%d" % (line_ends.index(line) + 1, start - line["start"])
 
 
 def lint_file(this_file: Path):
