@@ -56,7 +56,7 @@
     name: W011
     message: Attirbute values should be quoted.
     patterns:
-    - (?:class|id|src|width|height|alt|style|lang|title)=[a-zA-Z]+
+    - "[^(?:\"|')](?:class|id|src|width|height|alt|style|lang|title)=[a-zA-Z]+"
 - rule:
     name: W012
     message: There should be no spaces around attribute =.
