@@ -5,10 +5,6 @@ build-backend = "setuptools.build_meta"
 
 [tool]
 
-[tool.flake8]
-max-line-length = 99
-extend-ignore = "D103, F401"
-
 
 [tool.black]
 max_line_length = 99
@@ -23,3 +19,7 @@ use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 99
 quiet = true
+
+
+[tool.pylint.messages_control]
+disable = "E1120, R0914, E0401, R0912"

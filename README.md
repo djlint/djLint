@@ -1,6 +1,6 @@
 # djlint
 
-Simple Django template linter.
+Simple Django template linter and reformatter.
 
 [![codecov](https://codecov.io/gh/Riverside-Healthcare/djlint/branch/master/graph/badge.svg?token=eNTG721BAA)](https://codecov.io/gh/Riverside-Healthcare/djlint)
 [![test](https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml/badge.svg)](https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml)
@@ -12,18 +12,31 @@ Simple Django template linter.
 ```sh
 pip install djlint
 ```
-## Usage
+## Linter Usage
 
 ```sh
-djlint <file or path>
+djlint src # file or path
 ```
+
+## Reformatter Usage
+
+Reforamtting is beta. Check the output before applying changes. Please PR any changes needed 👍🏽
+
+```sh
+djlint src --reformat --check
+
+djlint src --reformat
+```
+
 ## Optional args
 
 | Arg | Definition | Default |
 |:----|:-----------|:--------|
 -e, --extension | File extension to lint. | default=html
+--check | Checks file formatting |
+--reformat | Reformats html |
 
-## Rules
+## Linter Rules
 
 ### Error Codes
 
