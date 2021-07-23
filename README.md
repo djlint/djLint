@@ -16,6 +16,9 @@ pip install djlint
 
 ```sh
 djlint src # file or path
+
+# with custom extensions
+djlint src -e html.dj
 ```
 
 ## Reformatter Usage
