@@ -68,7 +68,7 @@ def test_good_path_with_ext(runner):
 def test_good_path_with_bad_ext(runner):
     result = runner.invoke(djlint, ["tests/", "-e", "html.alphabet"])
     assert result.exit_code == 0
-    assert "No files to lint!" in result.output
+    assert "No files to check!" in result.output
 
 
 def test_empty_file(runner, tmp_file):
