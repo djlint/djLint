@@ -14,6 +14,7 @@ usage::
 """
 
 import os
+import re
 import sys
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
@@ -25,6 +26,7 @@ from colorama import Fore, Style, deinit, init
 
 from djlint.lint import lint_file
 from djlint.reformat import reformat_file
+from djlint.settings import ignored_paths
 
 
 def get_src(src: Path, extension=None):
@@ -35,7 +37,12 @@ def get_src(src: Path, extension=None):
     # remove leading . from extension
     extension = extension[1:] if extension.startswith(".") else extension
 
-    paths = list(src.glob(r"**/*.%s" % extension))
+    paths = list(
+        filter(
+            lambda x: not re.search(ignored_paths, str(x)),
+            list(src.glob(r"**/*.%s" % extension)),
+        )
+    )
 
     if len(paths) == 0:
         echo(Fore.BLUE + "No files to check! 😢")
@@ -163,7 +170,12 @@ def main(src: str, extension: str, reformat: bool, check: bool, quiet: bool):
 
     file_quantity = build_quantity(len(file_list))
 
-    message = "Reformatt" if reformat is True else "Lint"
+    message = "Lint"
+
+    if check is True:
+        message = "Check"
+    elif reformat is True:
+        message = "Reformatt"
 
     echo(
         "%sing %s!\n"

@@ -7,32 +7,24 @@ import difflib
 import re
 from pathlib import Path
 
-from djlint.settings import settings
-
-indent = settings.get("indent")
-tag_indent = settings.get("tag_indent")
-tag_unindent = settings.get("tag_unindent")
-
-tag_unindent_line = settings.get("tag_unindent_line")
-
-tag_pos_inline = settings.get("tag_pos_inline")
-
-reduce_extralines_gt = settings.get("reduce_extralines_gt")
-
-max_line_length = settings.get("max_line_length")
-format_long_attributes = settings.get("format_long_attributes")
-
-ignored_tag_opening = settings.get("ignored_tag_opening")
-ignored_tag_closing = settings.get("ignored_tag_closing")
-
-tag_newline_before = settings.get("tag_newline_before")
-tag_newline_after = settings.get("tag_newline_after")
-
-tag_raw_flat_opening = settings.get("tag_raw_flat_opening")
-tag_raw_flat_closing = settings.get("tag_raw_flat_closing")
-
-attribute_pattern = settings.get("attribute_pattern")
-tag_pattern = settings.get("tag_pattern")
+from djlint.settings import (
+    attribute_pattern,
+    format_long_attributes,
+    ignored_tag_closing,
+    ignored_tag_opening,
+    indent,
+    max_line_length,
+    reduce_extralines_gt,
+    tag_indent,
+    tag_newline_after,
+    tag_newline_before,
+    tag_pattern,
+    tag_pos_inline,
+    tag_raw_flat_closing,
+    tag_raw_flat_opening,
+    tag_unindent,
+    tag_unindent_line,
+)
 
 
 def clean_line(line):
