@@ -1,6 +1,6 @@
 # djlint
 
-Simple Django template linter and reformatter.
+Simple Django template linter and reformatter. Ps, reformatting might work with Jinja and Handlebar templates as well! Test it out with the `--check` flag.
 
 [![codecov](https://codecov.io/gh/Riverside-Healthcare/djlint/branch/master/graph/badge.svg?token=eNTG721BAA)](https://codecov.io/gh/Riverside-Healthcare/djlint)
 [![test](https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml/badge.svg)](https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml)
@@ -75,3 +75,7 @@ A good rule consists of
   - Code - Codes beginning with "E" signify error, and "W" warning.
   - Message - Message to display when error is found.
   - Patterns - regex expressions that will find the error.
+
+## Contributing - Please Help!
+
+Checkout the issue list and help where you can!

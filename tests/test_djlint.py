@@ -191,3 +191,10 @@ def test_W016(runner, tmp_file):
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W016 1:" in result.output
+
+
+def test_W017(runner, tmp_file):
+    write_to_file(tmp_file.name, b"<img this >")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "W017 1:" in result.output

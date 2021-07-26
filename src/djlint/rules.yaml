@@ -83,3 +83,8 @@
     message: Missging title tag in html.
     patterns:
     - <html[^>]*?>(?:(?!<title>).)*</html>
+- rule:
+    name: W017
+    message: Tag should be self closing.
+    patterns:
+    - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|command|keygen|menuitem)[^/]*?>
