@@ -24,7 +24,7 @@ extras = {
 
 setup(
     name="djlint",
-    version="0.0.9",
+    version="0.1.0",
     author="Christopher Pickering",
     author_email="cpickering@rhc.net",
     description="Django Template Linter",
