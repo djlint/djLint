@@ -71,20 +71,13 @@ def format_attributes(match):
 
 def add_newlines(match):
     """Only add newlines of the match is not in our acceptable one line pattern."""
-
     g_one = match.group(1)
     g_two = match.group(2)
 
-    # print("one")
-    # print(g_one)
-    # print("two")
-    # print(g_two)
-
     if not re.search(tag_pos_inline, g_one + g_two, flags=re.IGNORECASE | re.MULTILINE):
-        # print("not matched")
         return g_one + "\n" + g_two
-    else:
-        return g_one + g_two
+
+    return g_one + g_two
 
 
 def remove_indentation(rawcode):
@@ -97,11 +90,9 @@ def remove_indentation(rawcode):
 
         # ignore raw code
         if re.search(tag_raw_flat_closing, item, re.IGNORECASE):
-            # tmp = item #clean_line(item)
             is_block_raw = False
 
         elif re.search(tag_raw_flat_opening, item, re.IGNORECASE):
-            # tmp = item #clean_line(item)
             is_block_raw = True
 
         # find ignored blocks and retain indentation, otherwise strip white space
@@ -124,22 +115,18 @@ def remove_indentation(rawcode):
         else:
             tmp = clean_line(item)  # item.strip()
 
-            # if not an acceptable inline tag then add breaks
-
             # add missing line breaks before tag
-            #   print("before")
             tmp = re.sub(
                 tag_newline_before,
                 add_newlines,
                 tmp,
                 flags=re.IGNORECASE | re.MULTILINE,
             )
-            #  print("after")
+
             # add missing line breaks after tag
             tmp = re.sub(
                 tag_newline_after, add_newlines, tmp, flags=re.IGNORECASE | re.MULTILINE
             )
-            # print(tmp)
 
         rawcode_flat = rawcode_flat + tmp + "\n"
 
@@ -172,57 +159,48 @@ def add_indentation(rawcode):
     blank_counter = 0
 
     for item in rawcode_flat_list:
-        # print(is_block_raw)
-        # print(item)
 
         # if a raw tag then start ignoring
         if (
             tag_raw_flat_closing
             and re.search(tag_raw_flat_closing, item, re.IGNORECASE)
         ) or re.search(ignored_tag_closing, item, re.IGNORECASE):
-            # print("tag raw flat closing")
             is_block_raw = False
 
         # if a one-line, inline tag, just process it
-        if re.search(tag_pos_inline, item, re.IGNORECASE) and is_block_raw == False:
-            # print("tag pos inline")
+        if re.search(tag_pos_inline, item, re.IGNORECASE) and is_block_raw is False:
             tmp = (indent * indent_level) + item
             blank_counter = 0
 
         # if unindent, move left
-        elif re.search(tag_unindent, item, re.IGNORECASE) and is_block_raw == False:
-            # print("tag unindent")
+        elif re.search(tag_unindent, item, re.IGNORECASE) and is_block_raw is False:
             indent_level = indent_level - 1
             tmp = (indent * indent_level) + item
             blank_counter = 0
 
         elif (
-            re.search(tag_unindent_line, item, re.IGNORECASE) and is_block_raw == False
+            re.search(tag_unindent_line, item, re.IGNORECASE) and is_block_raw is False
         ):
-            # print("tag unindent line")
             tmp = (indent * (indent_level - 1)) + item
             blank_counter = 0
 
         # if indent, move right
-        elif re.search(tag_indent, item, re.IGNORECASE) and is_block_raw == False:
-            # print("tag indent")
+        elif re.search(tag_indent, item, re.IGNORECASE) and is_block_raw is False:
             tmp = (indent * indent_level) + item
             indent_level = indent_level + 1
             blank_counter = 0
 
         elif is_block_raw is True:
-            # print("is raw")
             tmp = item
 
         # if just a blank line
-        elif item.strip() == "":
-            # print("is blank")
-            if blank_counter < int(reduce_extralines_gt) or blank_counter + 1:
-                tmp = item.strip()
+        elif item.strip() == "" and (
+            blank_counter < int(reduce_extralines_gt) or blank_counter + 1
+        ):
+            tmp = item.strip()
 
         # otherwise, just leave same level
         else:
-            # print("else")
             tmp = (indent * indent_level) + item
 
         # if not raw, we can try to fix django tags
@@ -238,13 +216,12 @@ def add_indentation(rawcode):
             tag_raw_flat_closing
             and re.search(tag_raw_flat_opening, item, re.IGNORECASE)
         ) or re.search(ignored_tag_opening, item, re.IGNORECASE):
-            # print("tag raw flat opening")
             is_block_raw = True
 
         # if a normal tag, we can try to expand attributes
         elif (
             format_long_attributes
-            and is_block_raw == False
+            and is_block_raw is False
             and len(tmp) > max_line_length
         ):
             # get leading space, and attributes
@@ -257,8 +234,6 @@ def add_indentation(rawcode):
         ) or re.search(ignored_tag_closing, item, re.IGNORECASE):
             is_block_raw = False
 
-        # print(tmp)
-
         beautified_code = beautified_code + tmp + "\n"
 
     return beautified_code.strip() + "\n"
@@ -267,9 +242,9 @@ def add_indentation(rawcode):
 def reformat_file(check: bool, this_file: Path):
     """Reformat html file."""
     rawcode = this_file.read_text(encoding="utf8")
-    # print(remove_indentation(rawcode))
+
     beautified_code = add_indentation(remove_indentation(rawcode))
-    # print(beautified_code)
+
     if check is not True:
         # update the file
         this_file.write_text(beautified_code)
