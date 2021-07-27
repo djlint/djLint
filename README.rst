@@ -39,15 +39,15 @@ PR any changes needed 👍🏽
 Optional args
 -------------
 
-+-------------------+---------------------------+----------------+
-| Arg               | Definition                | Default        |
-+===================+===========================+================+
-| -e, --extension   | File extension to lint.   | default=html   |
-+-------------------+---------------------------+----------------+
-| --check           | Checks file formatting    |
-+-------------------+---------------------------+----------------+
-| --reformat        | Reformats html            |
-+-------------------+---------------------------+----------------+
++--------------------+---------------------------+----------------+
+| Arg                | Definition                | Default        |
++====================+===========================+================+
+| -e, --extension    | File extension to lint.   | default=html   |
++--------------------+---------------------------+----------------+
+| --reformat --check | Checks html formatting    |                |
++--------------------+---------------------------+----------------+
+| --reformat         | Reformats html            |                |
++--------------------+---------------------------+----------------+
 
 Linter Rules
 ------------
@@ -97,6 +97,8 @@ Warning Codes
 +--------+----------------------------------------------------------------+
 | W016   | Missging title tag in html.                                    |
 +--------+----------------------------------------------------------------+
+| W017   | Tag should be self closing.                                    |
++--------+----------------------------------------------------------------+
 
 Adding Rules
 ------------
@@ -111,7 +113,7 @@ A good rule consists of
 Contributing - Please Help!
 ---------------------------
 
-Checkout the issue list and help where you can!
+Checkout the `issue <https://github.com/Riverside-Healthcare/djlint/issues>`_ list and help where you can!
 
 .. |codecov| image:: https://codecov.io/gh/Riverside-Healthcare/djlint/branch/master/graph/badge.svg?token=eNTG721BAA
    :target: https://codecov.io/gh/Riverside-Healthcare/djlint

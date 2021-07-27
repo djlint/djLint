@@ -6,6 +6,8 @@ from setuptools import find_packages, setup
 
 project_path = Path(__file__).parent
 
+__version__ = "0.1.1"
+
 
 def long_description():
     """Build long description from readme and changelog."""
@@ -24,7 +26,7 @@ extras = {
 
 setup(
     name="djlint",
-    version="0.1.1",
+    version=__version__,
     author="Christopher Pickering",
     author_email="cpickering@rhc.net",
     description="Django Template Linter",
