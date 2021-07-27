@@ -12,7 +12,7 @@ ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre|<svg"
 ignored_tag_closing = r"</script|</style|-->|\*}|\?>|</pre|</svg"
 
 # the contents of these tag blocks will be start on a new line
-tag_newline_before = r"([^\n]+?)((?:(?:\{\{[\/|\#])|\{% +?(?:if|end|for|block|endblock|else|spaceless|compress|load|include)|(?:<script)|(?:{% endverbatim %})|(?:{% verbatim %})|(?:</?(html|head|body|div|cache|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|button|img|source)[^>]*?>.*?)))"
+tag_newline_before = r"([^\n]+?)((?:(?:\{\{[\/|\#])|\{% +?(?:if|end|for|block|endblock|else|spaceless|compress|load|include|assets)|(?:<script)|(?:{% endverbatim %})|(?:{% verbatim %})|(?:</?(html|head|body|div|cache|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|button|img|source)[^>]*?>.*?)))"
 
 # these tags should be followed by a newline
 tag_newline_after = r"((?:(?:\{\{[\/\#].*?\}\})|\{% +?(?:if|end|for|block|else|spaceless|compress|load|include)(?:.*?%}))|(?:{% endverbatim %})|(?:{% verbatim %})|(?:<html|<head|</head|<body|</body|</script|<div|</div|<cache|</cache|<nav|</nav|<ul|</ul|<ol|</ol|<dl|</dl|<li|</li|<table|</table|<thead|</thead|<tbody|</tbody|<tr|</tr|<th|</th|<td|</td|<blockquote|</blockquote|<select|</select|<form|</form|<option|</option|<optgroup|</optgroup|<fieldset|</fieldset|<legend|</legend|<label|</label|<header|</header|<main|</main|<section|</section|<aside|</aside|<footer|</footer|<figure|</figure|<video|</video|<source|</source|</span|<p|</p|<g|</g|<svg|</svg|</h\d|<img).*?\>)([^\n]+)"
