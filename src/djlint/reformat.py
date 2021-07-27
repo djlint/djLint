@@ -225,7 +225,7 @@ def add_indentation(rawcode):
             and len(tmp) > max_line_length
         ):
             # get leading space, and attributes
-            tmp = re.sub(r"(\s*?)(<\w+)(.+?)(/?>)", format_attributes, tmp)
+            tmp = re.sub(r"(\s*?)(<\w+)(\s[^>]+?)(/?>)", format_attributes, tmp)
 
         # turn off raw block if we hit end - for one line raw blocks
         if (
