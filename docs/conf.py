@@ -6,13 +6,6 @@
 
 # -- Path setup --------------------------------------------------------------
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-from pathlib import Path
-
-CURRENT_DIR = Path(__file__).parent
 
 # -- Project information -----------------------------------------------------
 
