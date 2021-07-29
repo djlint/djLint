@@ -27,7 +27,7 @@ Simple html template linter and reformatter to find common formatting issues wit
 
 Ps, ``--check`` it out on Jinja and Handlebar templates as well!
 
-|codecov| |test| |Codacy Badge| |Maintainability|
+|codecov| |test| |Codacy Badge| |Maintainability| |Downloads|
 
 .. note:: djLint is not an html parser or syntax validator.
 
@@ -68,3 +68,5 @@ Checkout the `issue <https://github.com/Riverside-Healthcare/djlint/issues>`_ li
    :target: https://www.codacy.com/gh/Riverside-Healthcare/djlint/dashboard?utm_source=github.com&utm_medium=referral&utm_content=Riverside-Healthcare/djlint&utm_campaign=Badge_Grade
 .. |Maintainability| image:: https://api.codeclimate.com/v1/badges/5febe4111a36c7e0d2ed/maintainability
    :target: https://codeclimate.com/github/Riverside-Healthcare/djlint/maintainability
+.. |Downloads| image:: https://img.shields.io/pypi/dm/djlint.svg
+   :target: https://pypi.org/project/djlint/
