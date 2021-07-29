@@ -1,6 +1,6 @@
 ![djLint Logo](https://raw.githubusercontent.com/Riverside-Healthcare/djlint/master/docs/_static/icon.png)
 
-Simple html template linter and reformatter to find common formatting issues with and *reformat* django html templates
+Simple html template linter and reformatter to find common formatting issues. djLint is intended as a django template linter and django template formatter.
 
 Ps, ```--check``` it out on Jinja and Handlebar templates as well!
 
