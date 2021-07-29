@@ -12,7 +12,7 @@ __version__ = "0.1.2"
 def long_description():
     """Build long description from readme and changelog."""
     return (
-        (project_path / "README.rst").read_text(encoding="utf8")
+        (project_path / "README.md").read_text(encoding="utf8")
         + "\n\n"
         + (project_path / "CHANGELOG.md").read_text(encoding="utf8")
     )
@@ -31,7 +31,7 @@ setup(
     author_email="cpickering@rhc.net",
     description="Django Template Linter",
     long_description=long_description(),
-    long_description_content_type="text/x-rst",
+    long_description_content_type="text/markdown",
     url="https://github.com/Riverside-Healthcare/djlint",
     include_package_data=True,
     package_data={"djlint": ["rules.yaml"]},
