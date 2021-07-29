@@ -11,7 +11,10 @@ Html Template Linter and Formatter
    :titlesonly:
 
    Welcome<self>
-   djlint/*
+   djlint/usage
+   djlint/rules
+   djlint/formatter
+   djlint/configuration
 
 .. toctree::
    :hidden:
