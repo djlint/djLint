@@ -32,7 +32,11 @@ setup(
     description="Django Template Linter",
     long_description=long_description(),
     long_description_content_type="text/markdown",
-    url="https://github.com/Riverside-Healthcare/djlint",
+    project_urls={
+        "Documentation": "https://djlint.readthedocs.io",
+        "Source": "https://github.com/Riverside-Healthcare/djlint",
+    },
+    url="",
     include_package_data=True,
     package_data={"djlint": ["rules.yaml"]},
     classifiers=[
