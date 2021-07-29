@@ -1,4 +1,4 @@
-# djLint
+![djLint Logo](https://raw.githubusercontent.com/Riverside-Healthcare/djlint/master/docs/_static/icon.png)
 
 Simple html template linter and reformatter to find common formatting issues with and *reformat* django html templates
 
