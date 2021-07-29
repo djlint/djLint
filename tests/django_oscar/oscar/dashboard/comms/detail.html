@@ -1,0 +1,183 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load i18n %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+{% block title %}{{ commtype.name }} | {{ block.super }}{% endblock %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard:index' %}">
+                    {% trans "Dashboard" %}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard:comms-list' %}">
+                    {% trans "Emails" %}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ commtype.name }}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+    <div class="page-header">
+        <h1>{{ commtype.name }}</h1>
+    </div>
+{% endblock header %}
+{% block dashboard_content %}
+    <form method="post" class="form-stacked">
+        <div class="tabbable dashboard">
+            {% if preview %}
+                <ul class="nav nav-tabs mb-0">
+                    <li>
+                        <a href="#email_form" data-toggle="tab">
+                            {% trans "Edit" %}
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="#email_preview" data-toggle="tab">
+                            {% trans "Preview" %}
+                        </a>
+                    </li>
+                </ul>
+            {% else %}
+                <div class="table-header">
+                    <h2>
+                        <i class="fas fa-envelope"></i>
+                        {% trans "Edit email" %}
+                    </h2>
+                </div>
+            {% endif %}
+            <div class="{% if preview %}tab-content{% else %}card card-body{% endif %}">
+            <div class="tab-pane {% if not preview %}active{% endif %}" id="email_form">
+            {% csrf_token %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.name %}
+            <div class="table-header">
+                <h3>{% trans "Email content" %}</h3>
+            </div>
+            <div class="card card-body">
+                <p>
+                    {% trans "These fields are rendered using Django's template system." %}
+                </p>
+                <p>
+                    {% trans "You can use the following variables:" %}
+                </p>
+                <dl>
+                    <dt>
+                    <code>
+                    {% templatetag openvariable %} user.get_full_name {% templatetag closevariable %}
+                    </code>
+                    </dt>
+                    <dd>
+                    {% trans "The full name of the user (if they have one)" %}
+                    </dd>
+                    <dt>
+                    <code>
+                    {% templatetag openvariable %} user.email {% templatetag closevariable %}
+                    </code>
+                    </dt>
+                    <dd>
+                    {% trans "The user's email address" %}
+                    </dd>
+                    <dt>
+                    <code>
+                    {% templatetag openvariable %} site.name {% templatetag closevariable %}
+                    </code>
+                    </dt>
+                    <dd>
+                    {% trans "The name of the site (eg example.com)" %}
+                    </dd>
+                    {% if commtype.is_order_related %}
+                        <dt>
+                        <code>
+                        {% templatetag openvariable %} order.number {% templatetag closevariable %}
+                        </code>
+                        </dt>
+                        <dd>
+                        {% trans "Order number" %}
+                        </dd>
+                    {% endif %}
+                </dl>
+            </div>
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.email_subject_template %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.email_body_template %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.email_body_html_template %}
+            <div class="table-header">
+                <h3>{% trans "Preview" %}</h3>
+            </div>
+            <div class="card card-body">
+                {% if commtype.is_order_related %}
+                    <p>
+                        {% trans "View a preview of this email using order:" %}
+                    </p>
+                    {% include 'oscar/dashboard/partials/form_field.html' with field=form.preview_order_number %}{% endif %}
+                    <button type="submit"
+                            class="btn btn-primary"
+                            name="show_preview"
+                            data-loading-text="{% trans 'Submitting...' %}">
+                        {% trans "View preview" %}
+                    </button>
+                    <p>
+                        {% trans "or send a preview to:" %}
+                    </p>
+                    {% include 'oscar/dashboard/partials/form_field.html' with field=form.preview_email %}
+                    <button type="submit"
+                            class="btn btn-secondary"
+                            name="send_preview"
+                            data-loading-text="{% trans 'Sending...' %}">
+                        {% trans "Send preview email" %}
+                    </button>
+                </div>
+            </div>
+            <div class="tab-pane {% if preview %}active{% endif %}" id="email_preview">
+            <table class="table table-striped table-bordered table-hover">
+                <tr>
+                    <th>{% trans "Subject" %}</th>
+                    <td>{{ preview.subject }}</td>
+                </tr>
+                <tr>
+                    <th>{% trans "Body text" %}</th>
+                    <td>
+                        <pre>
+{{ preview.body }}
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <th>{% trans "Body HTML" %}</th>
+                    <td>
+                        <iframe id="preview_box" width="100%" height="400">
+                        {{ preview.html }}
+                        </iframe>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Saving...' %}">
+                {% trans "Save" %}
+            </button>
+            {% trans "or" %}
+            <a href="{% url 'dashboard:comms-list' %}">
+                {% trans "cancel" %}
+            </a>
+            .
+        </div>
+    </div>
+</div>
+</form>
+{% endblock dashboard_content %}
+{% block onbodyload %}
+{{ block.super }}
+$(function() {
+// Sets the HTML email preview so it's css doesn't touch the page.
+var el_preview_html = document.getElementById('preview_box');
+var html = $(el_preview_html).text();
+var doc = el_preview_html.contentWindow.document;
+doc.open();
+doc.write(html);
+doc.close();
+});
+{% endblock %}

@@ -1,114 +1,41 @@
-djlint
+djLint
 ======
 
-Simple Django template linter and reformatter. Ps, reformatting might
-work with Jinja and Handlebar templates as well! Test it out with the
-``--check`` flag.
+Simple html template linter and reformatter to find common formatting issues with and *reformat* django html templates
+
+Ps, ``--check`` it out on Jinja and Handlebar templates as well!
 
 |codecov| |test| |Codacy Badge| |Maintainability|
 
-Install from `Pypi <https://pypi.org/project/djlint/>`__
---------------------------------------------------------
 
-.. code:: sh
-
-    pip install djlint
-
-Linter Usage
-------------
-
-.. code:: sh
-
-    djlint src # file or path
-
-    # with custom extensions
-    djlint src -e html.dj
-
-Reformatter Usage
------------------
-
-Reforamtting is beta. Check the output before applying changes. Please
-PR any changes needed 👍🏽
-
-.. code:: sh
-
-    djlint src --reformat --check
-
-    djlint src --reformat
-
-Optional args
+Documentation
 -------------
 
-+--------------------+---------------------------+----------------+
-| Arg                | Definition                | Default        |
-+====================+===========================+================+
-| -e, --extension    | File extension to lint.   | default=html   |
-+--------------------+---------------------------+----------------+
-| --reformat --check | Checks html formatting    |                |
-+--------------------+---------------------------+----------------+
-| --reformat         | Reformats html            |                |
-+--------------------+---------------------------+----------------+
+Read the `documentation <https://djlint.readthedocs.io>`_
 
-Linter Rules
-------------
+Show your format
+----------------
 
-Error Codes
-~~~~~~~~~~~
+Add a badge to your projects `readme.md`:
 
-+--------+----------------------------------------------------------------------+
-| Code   | Meaning                                                              |
-+========+======================================================================+
-| E001   | Variables should be wrapped in a single whitespace. Ex: {{ this }}   |
-+--------+----------------------------------------------------------------------+
-| E002   | Double quotes should be used in tags. Ex {% extends "this.html" %}   |
-+--------+----------------------------------------------------------------------+
+.. code-block:: md
 
-Warning Codes
-~~~~~~~~~~~~~
+   [![Code style: black](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
 
-+--------+----------------------------------------------------------------+
-| Code   | Meaning                                                        |
-+========+================================================================+
-| W003   | Endblock should have name. Ex: {% endblock body %}.            |
-+--------+----------------------------------------------------------------+
-| W004   | Status urls should follow {% static path/to/file %} pattern.   |
-+--------+----------------------------------------------------------------+
-| W005   | Html tag should have lang attribute.                           |
-+--------+----------------------------------------------------------------+
-| W006   | Img tag should have alt, height and width attributes.          |
-+--------+----------------------------------------------------------------+
-| W007   | <!DOCTYPE ... > should be present before the html tag.         |
-+--------+----------------------------------------------------------------+
-| W008   | Attributes should be double quoted.                            |
-+--------+----------------------------------------------------------------+
-| W009   | Tag names should be lowercase.                                 |
-+--------+----------------------------------------------------------------+
-| W010   | Attribute names should be lowercase.                           |
-+--------+----------------------------------------------------------------+
-| W011   | Attirbute values should be quoted.                             |
-+--------+----------------------------------------------------------------+
-| W012   | There should be no spaces around attribute =.                  |
-+--------+----------------------------------------------------------------+
-| W013   | Line is longer than 99 chars.                                  |
-+--------+----------------------------------------------------------------+
-| W014   | More than 2 blank lines.                                       |
-+--------+----------------------------------------------------------------+
-| W015   | Follow h tags with a blank line.                               |
-+--------+----------------------------------------------------------------+
-| W016   | Missging title tag in html.                                    |
-+--------+----------------------------------------------------------------+
-| W017   | Tag should be self closing.                                    |
-+--------+----------------------------------------------------------------+
 
-Adding Rules
-------------
+Add a badge to your `readme.rst`:
 
-A good rule consists of
+.. code-block:: rst
 
--  Name
--  Code - Codes beginning with "E" signify error, and "W" warning.
--  Message - Message to display when error is found.
--  Patterns - regex expressions that will find the error.
+   .. image:: https://img.shields.io/badge/html%20style-djlint-blue.svg
+      :target: https://github.com/Riverside-Healthcare/djlint
+
+
+Looks like this:
+
+.. image:: https://img.shields.io/badge/html%20style-djlint-blue.svg
+   :target: https://github.com/Riverside-Healthcare/djlint
+
 
 Contributing - Please Help!
 ---------------------------

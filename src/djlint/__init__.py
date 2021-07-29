@@ -4,10 +4,11 @@ Check Django template syntax.
 
 usage::
 
-    djlint INPUT -e <extension>
+    djlint src
 
     options:
 
+    -e or --extension | <extension>
     --check | will check html formatting for needed changes
     --reformat | will reformat html
 
@@ -24,9 +25,9 @@ import click
 from click import echo
 from colorama import Fore, Style, deinit, init
 
-from djlint.lint import lint_file
-from djlint.reformat import reformat_file
-from djlint.settings import ignored_paths
+from .lint import lint_file
+from .reformat import reformat_file
+from .settings import ignored_paths
 
 
 def get_src(src: Path, extension=None):
@@ -149,17 +150,17 @@ def build_quantity_tense(size: int):
 @click.option(
     "--reformat",
     is_flag=True,
-    help="Reformat the file.",
+    help="Reformat the file(s).",
 )
 @click.option(
     "--check",
     is_flag=True,
-    help="Reformat the file.",
+    help="Check formatting on the file(s).",
 )
 @click.option(
     "--quiet",
     is_flag=True,
-    help="Reformat the file.",
+    help="Do not print diff when reformatting.",
 )
 def main(src: str, extension: str, reformat: bool, check: bool, quiet: bool):
     """Djlint django template files."""
@@ -192,7 +193,7 @@ def main(src: str, extension: str, reformat: bool, check: bool, quiet: bool):
         worker_count = min(worker_count, 60)
 
     with ProcessPoolExecutor(max_workers=worker_count) as exe:
-        if reformat is True:
+        if reformat is True or check is True:
             func = partial(reformat_file, check)
             file_errors = exe.map(func, file_list)
         else:
@@ -202,16 +203,8 @@ def main(src: str, extension: str, reformat: bool, check: bool, quiet: bool):
     success_message = ""
     error_count = 0
 
-    if reformat is not True:
-        for error in file_errors:
-            error_count += build_output(error)
-
-        success_message = "%sed %s, found %d errors." % (
-            message,
-            file_quantity,
-            error_count,
-        )
-    else:
+    if reformat is True or check is True:
+        # reformat message
         for error in file_errors:
             error_count += build_check_output(error, quiet)
             tense_message = (
@@ -220,6 +213,17 @@ def main(src: str, extension: str, reformat: bool, check: bool, quiet: bool):
                 else build_quantity_tense(error_count)
             )
         success_message = "%s updated." % tense_message
+
+    else:
+        # lint message
+        for error in file_errors:
+            error_count += build_output(error)
+
+        success_message = "%sed %s, found %d errors." % (
+            message,
+            file_quantity,
+            error_count,
+        )
 
     echo("\n%s\n" % (success_message))
 

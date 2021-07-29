@@ -1,0 +1,212 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+{% block title %}
+    {{ voucher }} | {% trans "Vouchers" %} | {{ block.super }}
+{% endblock %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard:index' %}">
+                    {% trans "Dashboard" %}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard:voucher-list' %}">
+                    {% trans "Vouchers" %}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ voucher }}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block headertext %}{{ voucher }}{% endblock %}
+{% block dashboard_content %}
+    <div class="table-header">
+        <h2>{% trans "Voucher details" %}</h2>
+    </div>
+    {% include "oscar/dashboard/vouchers/partials/voucher_details_table.html" %}
+    <div class="table-header">
+        <h2>{% trans "Attached offers" %}</h2>
+    </div>
+    <table class="table table-striped table-bordered table-hover">
+        {% if voucher.offers.exists %}
+            <thead>
+                <tr>
+                    <th>{% trans "Offer name" %}</th>
+                    <th>{% trans "Start date" %}</th>
+                    <th>{% trans "End date" %}</th>
+                    <th>{% trans "Is available?" %}</th>
+                    <th>{% trans "Priority" %}</th>
+                    <th>{% trans "Incentive" %}</th>
+                    <th>{% trans "Condition" %}</th>
+                    <th>{% trans "Restrictions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offer in voucher.offers.all %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'dashboard:offer-detail' pk=offer.pk %}">
+                                {{ offer.name }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ offer.start_datetime|default:"-" }}
+                        </td>
+                        <td>
+                            {{ offer.end_datetime|default:"-" }}
+                        </td>
+                        <td>
+                            {% if offer.is_available %}
+                                <span class="badge badge-success">{% trans "Yes" %}</span>
+                            {% else %}
+                                <span class="badge badge-danger">{% trans "No" %}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ offer.priority }}
+                        </td>
+                        <td>
+                            {{ offer.benefit.description|safe }}
+                        </td>
+                        <td>
+                            {{ offer.condition.description|safe }}
+                        </td>
+                        <td>
+                            {% for restriction in offer.availability_restrictions %}
+                                {% if not restriction.is_satisfied %}
+                                    <label class="badge badge-danger">
+                                        {{ restriction.description }}
+                                    </label>
+                                {% else %}
+                                    {{ restriction.description }}
+                                    <br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        {% else %}
+            <tr>
+                <td>
+                    {% trans "No offers are attached to this voucher." %}
+                </td>
+            </tr>
+        {% endif %}
+    </table>
+    <div class="table-header">
+        <h2>
+            {% trans "Voucher performance" %}
+        </h2>
+    </div>
+    <table class="table table-striped table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>
+                    {% trans "Number of basket additions" %}
+                </th>
+                <td>
+                    {{ voucher.num_basket_additions }}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    {% trans "Number of orders" %}
+                </th>
+                <td>
+                    {{ voucher.num_orders }}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    {% trans "Total discount" %}
+                </th>
+                <td>
+                    {{ voucher.total_discount|currency }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="table-header">
+        <h2>
+            {% trans "Recent orders" %}
+        </h2>
+    </div>
+    <table class="table table-striped table-bordered table-hover">
+        {% if not discounts %}
+            <tr>
+                <td>
+                    {% trans "No orders have been placed that use this voucher." %}
+                </td>
+            </tr>
+        {% else %}
+            <thead>
+                <tr>
+                    <th>
+                        {% trans "Order number" %}
+                    </th>
+                    <th>
+                        {% trans "Order total" %}
+                    </th>
+                    <th>
+                        {% trans "Discount" %}
+                    </th>
+                    <th>
+                        {% trans "Date placed" %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for discount in discounts %}
+                    {% with order=discount.order %}
+                    <tr>
+                        <td>
+                            <a href="{% url "dashboard:order-detail" number=order.number %}">
+                                {{ order.number }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ order.total_incl_tax|currency:order.currency }}
+                        </td>
+                        <td>
+                            {{ discount.amount|currency:order.currency }}
+                        </td>
+                        <td>
+                            {{ order.date_placed }}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    {% endif %}
+</table>
+<div class="form-actions">
+    {% if not voucher.voucher_set %}
+        <a class="btn btn-primary" href="{% url 'dashboard:voucher-update' pk=voucher.id %}">
+            {% trans "Edit" %}
+        </a>
+        {% trans "or" %}
+    {% else %}
+        <a class="btn btn-primary" href="{% url 'dashboard:voucher-set-update' pk=voucher.voucher_set.pk %}">
+            {% trans "Edit set" %}
+        </a>
+        {% trans "or" %}
+    {% endif %}
+    <a class="btn btn-danger" href="{% url 'dashboard:voucher-delete' pk=voucher.id %}">
+        {% if not voucher.voucher_set %}
+            {% trans "Delete" %}
+        {% else %}
+            {% trans "Delete from set" %}
+        {% endif %}
+    </a>
+    {% trans "or" %}
+    <a href="{% if not voucher.voucher_set %}{% url 'dashboard:voucher-list' %}{% else %}{% url 'dashboard:voucher-set-detail' pk=voucher.voucher_set.pk %}{% endif %}">
+    {% trans "cancel" %}
+</a>
+</div>
+{% endblock dashboard_content %}

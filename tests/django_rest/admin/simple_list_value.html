@@ -1,0 +1,5 @@
+{% load rest_framework %}
+{% for item in value %}
+    {% if not forloop.first %},{% endif %}
+    {{ item|format_value }}
+{% endfor %}

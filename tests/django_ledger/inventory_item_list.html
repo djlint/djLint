@@ -1,0 +1,27 @@
+{% extends 'django_ledger/layouts/content_layout_1.html' %}
+{% load i18n %}
+{% load static %}
+{% load django_ledger %}
+{% block view_content %}
+    <div class="card">
+        <div class="card-content">
+            <div class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <h1 class="is-size-1 has-text-weight-thin">
+                            {% trans 'My Inventory Items' %}
+                        </h1>
+                    </div>
+                    <div class="level-item">
+                        <a href="{% url 'django_ledger:inventory-item-create' entity_slug=view.kwargs.entity_slug %}">
+                            <span class="icon is-large has-text-success">
+                                {% icon 'carbon:add-alt' 60 %}
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% inventory_item_table inventory_item_list %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% load django_ledger %}
+{% load i18n %}
+<div class="table-container">
+    <table class="table is-fullwidth is-narrow is-striped is-bordered django-ledger-table-bottom-margin-75">
+        <thead>
+            <tr>
+                <th class="has-text-centered">Customer</th>
+                <th class="has-text-centered">Address</th>
+                <th class="has-text-centered">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                <tr class="has-text-centered">
+                    <td>{{ customer.customer_name }}</td>
+                    <td>{{ customer.address_1 }}</td>
+                    <td>
+                        <div class="dropdown is-right is-hoverable" id="customer-action-{{ customer.uuid }}">
+                            <div class="dropdown-trigger">
+                                <button class="button is-small is-rounded is-outlined is-dark"
+                                        aria-haspopup="true"
+                                        aria-controls="dropdown-menu">
+                                    <span>Actions</span>
+                                    <span class="icon is-small">{% icon 'bi:arrow-down' 24 %}</span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu-{{ customer.uuid }}" role="menu">
+                                <div class="dropdown-content">
+                                    <a href="{% url 'django_ledger:customer-update' entity_slug=view.kwargs.entity_slug customer_pk=customer.uuid %}"
+                                       class="dropdown-item has-text-weight-bold has-text-info">
+                                        {% trans 'Update' %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

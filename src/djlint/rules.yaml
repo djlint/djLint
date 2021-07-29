@@ -65,9 +65,9 @@
     - <(?:(?!\{[%|{|#])[^\n])*=\s
 - rule:
     name: W013
-    message: Line is longer than 99 chars.
+    message: Line is longer than 120 chars.
     patterns:
-    - "[^\n]{99,}"
+    - "[^\n]{120,}"
 - rule:
     name: W014
     message: More than 2 blank lines.

@@ -1,0 +1,226 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% block title %}
+    {% trans "Offers" %} | {{ block.super }}
+{% endblock %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard:index' %}">
+                    {% trans "Dashboard" %}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% trans "Offers" %}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+    <div class="page-header">
+        <a href="{% url 'dashboard:offer-metadata' %}" class="btn btn-primary float-right">
+            <i class="fas fa-plus-circle"></i>
+            {% trans "Create new offer" %}
+        </a>
+        <h1>{% trans "Offers" %}</h1>
+    </div>
+{% endblock header %}
+{% block dashboard_content %}
+    <div class="table-header">
+        <h3>
+            <i class="fas fa-search"></i>
+            {% trans "Search" %}
+        </h3>
+    </div>
+    <div class="card card-body bg-light">
+        <form method="get" class="form-inline">
+            {% for field in form %}
+                {% if field.name in form.basic_fields %}
+                    {% if field.is_hidden %}
+                        {{ field }}
+                    {% else %}
+                        <div class="form-group mr-2{% if field.errors %}error{% endif %}">
+                        {{ field.label_tag }}
+                        {% render_field field class+='form-control' %}
+                        {% for error in field.errors %}
+                            <ul class="error-block">
+                                <li>
+                                    {{ error }}
+                                </li>
+                            </ul>
+                        {% endfor %}
+                        {# No help text as it wraps #}
+                    </div>
+                {% endif %}
+            {% else %}
+                <input type="hidden" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}">
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary mr-2" data-loading-text="{% trans 'Searching...' %}">
+            {% trans "Search" %}
+        </button>
+        <a data-toggle="modal" data-target="#SearchModal" href="#" class="mr-2">
+            {% trans "Advanced Search" %}
+        </a>
+        <a href="{% url 'dashboard:offer-list' %}" class="btn btn-secondary">
+            {% trans "Reset" %}
+        </a>
+    </form>
+    {# Search modal, if there are form errors the form is automatically openend #}
+    {% include "oscar/dashboard/partials/advanced_search_modal.html" with form=advanced_form style='horizontal' %}
+    {% if search_filters %}
+        <div class="search-filter-list">
+            <label>
+                Filters:
+            </label>
+            {% for filter in search_filters %}
+                <span class="badge badge-success">{{ filter }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+<form method="post" class="order_table">
+    {% csrf_token %}
+    <table class="table table-striped table-bordered table-hover">
+        <caption>
+        <i class="fas fa-gift"></i>
+        {% if search_filters %}
+            {% trans "Offer Search Results" %}
+        {% else %}
+            {% trans "All Offers" %}
+        {% endif %}
+        </caption>
+        {% if offers %}
+            <tr>
+                <th>{% anchor 'name' _('Offer name') %}</th>
+                <th>{% anchor 'offer_type' _('Offer type') %}</th>
+                {% if form.is_bound %}
+                    {% if form.is_voucher_offer_type or not form.cleaned_data.offer_type %}
+                        <th>{% trans "Num of vouchers" %}</th>
+                    {% endif %}
+                {% endif %}
+                <th>{% anchor 'start_datetime' _('Start date') %}</th>
+                <th>{% anchor 'end_datetime' _('End date') %}</th>
+                <th>{% trans "Priority" %}</th>
+                <th>{% trans "Incentive" %}</th>
+                <th>{% trans "Condition" %}</th>
+                <th>{% trans "Is available?" %}</th>
+                <th>
+                    {% trans "Restrictions" %}
+                </th>
+                <th>
+                    {% anchor 'num_applications' _('Uses') %}
+                </th>
+                <th>
+                    {% anchor 'total_discount' _('Cost') %}
+                </th>
+                <th></th>
+            </tr>
+            {% for offer in offers %}
+                <tr>
+                    <td>
+                        <a href="{% url 'dashboard:offer-detail' pk=offer.pk %}">
+                            {{ offer.name }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ offer.offer_type }}
+                    </td>
+                    {% if form.is_bound %}
+                        {% if form.is_voucher_offer_type or not form.cleaned_data.offer_type %}
+                            <td>
+                                {{ offer.vouchers.count }}
+                            </td>
+                        {% endif %}
+                    {% endif %}
+                    <td>
+                        {{ offer.start_datetime|default:"-" }}
+                    </td>
+                    <td>
+                        {{ offer.end_datetime|default:"-" }}
+                    </td>
+                    <td>
+                        {{ offer.priority }}
+                    </td>
+                    <td>
+                        {{ offer.benefit.description|safe }}
+                    </td>
+                    <td>
+                        {{ offer.condition.description|safe }}
+                    </td>
+                    <td>
+                        {% if offer.is_available %}
+                            <span class="badge badge-success">{% trans "Yes" %}</span>
+                        {% else %}
+                            <span class="badge badge-danger">{% trans "No" %}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for restriction in offer.availability_restrictions %}
+                            {% if not restriction.is_satisfied %}
+                                <label class="badge badge-danger">
+                                    {{ restriction.description }}
+                                </label>
+                            {% else %}
+                                {{ restriction.description }}
+                                <br/>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ offer.num_applications }}
+                    </td>
+                    <td>
+                        {{ offer.total_discount|currency }}
+                    </td>
+                    <td>
+                        <div class="btn-toolbar">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle"
+                                        type="button"
+                                        id="dropdownMenuButton"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                    {% trans "Actions" %}
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{% url 'offer:detail' slug=offer.slug %}">
+                                        {% trans "Browse" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'dashboard:offer-detail' pk=offer.pk %}">
+                                        {% trans "Stats" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'dashboard:offer-metadata' pk=offer.pk %}">
+                                        {% trans "Edit" %}
+                                    </a>
+                                    {% if not offer.vouchers.exists %}
+                                        <a class="dropdown-item" href="{% url 'dashboard:offer-delete' pk=offer.pk %}">
+                                            {% trans "Delete" %}
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td>
+                    {% trans "No offers found." %}
+                </td>
+            </tr>
+        {% endif %}
+    </table>
+    {% include "oscar/dashboard/partials/pagination.html" %}
+</form>
+{% endblock dashboard_content %}
+{% block onbodyload %}
+{{ block.super }}
+{% if advanced_form.errors %}$('#SearchModal').modal('show');{% endif %}
+{% endblock onbodyload %}

@@ -1,0 +1,49 @@
+{% load i18n %}
+<div class="tab-nav sticky-top">
+    <div class="table-header">
+        <h3>{% trans "Steps" %}</h3>
+    </div>
+    <ul class="nav flex-column bs-docs-sidenav">
+        <li class="nav-item step1">
+            {% if step == 2 or step == 3 or step == 4 %}
+                <a href="{% if session_offer.pk %}{% url 'dashboard:offer-metadata' pk=session_offer.pk %}{% else %}{% url 'dashboard:offer-metadata' %}{% endif %}"
+                   class="nav-link visited">
+                {% trans "1. Name, description and type" %}
+            </a>
+        {% else %}
+            <a class="nav-link {% if step == 1 %}active{% else %}disabled text-reset{% endif %}">
+            {% trans "1. Name, description and type" %}
+        </a>
+    {% endif %}
+</li>
+<li class="nav-item step2">
+    {% if step == 3 or step == 4 %}
+        <a href="{% if session_offer.pk %}{% url 'dashboard:offer-benefit' pk=session_offer.pk %}{% else %}{% url 'dashboard:offer-benefit' %}{% endif %}"
+           class="nav-link visited">
+        {% trans "2. Incentive" %}
+    </a>
+{% else %}
+    <a class="nav-link {% if step == 2 %}active{% else %}disabled text-reset{% endif %}">
+    {% trans "2. Incentive" %}
+</a>
+{% endif %}
+</li>
+<li class="nav-item step3">
+{% if step == 4 %}
+<a href="{% if session_offer.pk %}{% url 'dashboard:offer-condition' pk=session_offer.pk %}{% else %}{% url 'dashboard:offer-condition' %}{% endif %}"
+   class="nav-link visited">
+{% trans "3. Condition" %}
+</a>
+{% else %}
+<a class="nav-link {% if step == 3 %}active{% else %}disabled text-reset{% endif %}">
+{% trans "3. Condition" %}
+</a>
+{% endif %}
+</li>
+<li class="nav-item step4">
+<a class="nav-link {% if step == 4 %}active{% else %}disabled text-reset{% endif %}">
+{% trans "4. Restrictions" %}
+</a>
+</li>
+</ul>
+</div>

@@ -1,0 +1,40 @@
+{% extends "oscar/layout.html" %}
+{% load basket_tags %}
+{% load category_tags %}
+{% load i18n %}
+{% load product_tags %}
+{% block title %}{{ range.name }} | {{ block.super }}{% endblock %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ homepage_url }}">{% trans "Home" %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ range.name }}
+            </li>
+        </ol>
+    </nav>
+{% endblock breadcrumbs %}
+{% block headertext %}{{ range.name }}{% endblock %}
+{% block content %}
+    {% if range.description %}{{ range.description|safe }}{% endif %}
+    {% if products %}
+        <section>
+            <div>
+                <ol class="row list-unstyled ml-0 pl-0">
+                    {% for product in products %}
+                        <li class="col-sm-4 col-md-3 col-lg-3">
+                            {% render_product product %}
+                        </li>
+                    {% endfor %}
+                </ol>
+                {% include "oscar/partials/pagination.html" %}
+            </div>
+        </section>
+    {% else %}
+        <p class="nonefound">
+            {% trans "No products found." %}
+        </p>
+    {% endif %}
+{% endblock content %}

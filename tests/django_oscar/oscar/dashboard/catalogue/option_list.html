@@ -1,0 +1,43 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% block title %}
+    {% trans "Options" %} | {{ block.super }}
+{% endblock %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard:index' %}">
+                    {% trans "Dashboard" %}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% trans "Options" %}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+    <div class="page-header">
+        <a href="{% url 'dashboard:catalogue-option-create' %}" class="btn btn-primary float-right">
+            <i class="fas fa-plus-circle"></i>
+            {% trans "Create new Option" %}
+        </a>
+        <h1>{% trans "Option" %}</h1>
+    </div>
+{% endblock header %}
+{% block dashboard_content %}
+    {% if options %}
+        {% block product_list %}
+            <form action="." method="post">
+                {% csrf_token %}
+                {% render_table options %}
+            </form>
+        {% endblock product_list %}
+    {% else %}
+        <p>
+            {% trans "No Option found." %}
+        </p>
+    {% endif %}
+{% endblock dashboard_content %}

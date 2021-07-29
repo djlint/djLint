@@ -1,0 +1,24 @@
+{% extends 'django_ledger/base.html' %}
+{% load navigation_menu from django_ledger %}
+{% block content %}
+    <section class="section">
+        <div class="container is-fluid px-1">
+            <div class="columns">
+                {# SIDE MENU #}
+                {% if not hide_menu %}
+                    <div class="column is-3 is-hidden-mobile is-hidden-tablet-only">
+                        <div class="columns is-multiline">
+                            {% block aux_menu %}{% endblock %}
+                            <div class="column is-12">
+                                {% navigation_menu 'desktop' %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="column">
+                    {% block view_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

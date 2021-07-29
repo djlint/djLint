@@ -1,0 +1,33 @@
+{% extends "oscar/layout.html" %}
+{% load i18n %}
+{% block title %}
+    {% trans "Basket" %} | {{ block.super }}
+{% endblock %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ homepage_url }}">{% trans "Home" %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% trans "Basket" %}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+{# Hide mini-basket so we don't have two baskets to keep in sync #}
+{% block mini_basket %}{% endblock %}
+{% block headertext %}
+    {% trans "Basket" %}
+{% endblock %}
+{% block content %}
+    {# Use a partial template so that AJAX can be used to re-render basket #}
+    {% include 'oscar/basket/partials/basket_content.html' %}{% endblock content %}
+    {% block onbodyload %}
+        {{ block.super }}
+        {# We pass in the URL to send AJAX requests to #}
+        var options = {
+        'basketURL': '{% url 'basket:summary' %}'
+        };
+        oscar.basket.init(options);
+    {% endblock %}

@@ -1,0 +1,40 @@
+{% load static %}
+{% load django_ledger %}
+{% load cache %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% session_entity_name %} | {{ page_title }}</title>
+        <script src="{% static 'django_ledger/bundle/styles.bundle.js' %}"></script>
+        <link rel="shortcut icon" type="image/jpg" href="{% static 'django_ledger/logo/favicon.png' %}">
+    </head>
+    <body>
+        {% block nav %}
+            {% include 'django_ledger/includes/nav.html' %}{% endblock %}
+            {% block header %}
+                {% include 'django_ledger/includes/page_header.html' with header_title=header_title %}{% endblock %}
+                {% block breadcrumbs %}{% endblock %}
+                {% block messages %}
+                    {% include 'django_ledger/includes/messages.html' with messages=messages %}{% endblock %}
+                    {% block content %}{% endblock %}
+                    {% block footer %}
+                        {% include 'django_ledger/includes/footer.html' %}{% endblock %}
+                        {% block script_bottom %}
+                            <script src="{% static 'django_ledger/bundle/djetler.bundle.js' %}"></script>
+                            <script>
+        {% if entity_slug %}let entitySlug = "{{ view.kwargs.entity_slug }}"{% endif %}
+        {% if from_date and to_date %}
+            let fromDate = "{{ from_date | date:'Y-m-d' }}";
+            let toDate = "{{ to_date | date:'Y-m-d' }}";
+        {% endif %}
+        {% if date_navigation_url %}
+            let dateNavigationUrl = "{{ date_navigation_url }}"
+            let datePickers = document.querySelectorAll("[id^='djl-datepicker']")
+            datePickers.forEach(dp => djLedger.getCalendar(dp.attributes.id.value, dateNavigationUrl))
+        {% endif %}
+                            </script>
+                        {% endblock %}
+                    </body>
+                </html>

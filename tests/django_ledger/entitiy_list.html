@@ -1,0 +1,40 @@
+{% extends 'django_ledger/base.html' %}
+{% load i18n %}
+{% load static %}
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-header-title">
+                                {% trans 'My Entities' %}
+                            </div>
+                        </div>
+                        <div class="card-content content">
+                            <ul>
+                                {% for entity in entities %}
+                                    <li>
+                                        {{ entity.name }}
+                                        <a href="{{ entity.get_absolute_url }}"
+                                           class="button is-small is-primary is-outlined">
+                                            {% trans 'View' %}
+                                        </a>
+                                        <a href="{{ entity.get_manage_url }}" class="button is-small is-dark">
+                                            {% trans 'Settings' %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{% url 'django_ledger:entity-create' %}"
+                               class="button is-fullwidth is-primary is-outlined djetler_my_1">
+                                {% trans 'New Entity' %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

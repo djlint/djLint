@@ -1,0 +1,23 @@
+{% extends 'django_ledger/layouts/content_layout_1.html' %}
+{% load i18n %}
+{% load static %}
+{% load django_ledger %}
+{% block view_content %}
+    <div class="columns is-centered">
+        <div class="column is-8-tablet is-6-desktop">
+            <div class="box">
+                <form action="{{ account.get_update_url }}" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="button is-fullwidth is-primary my-3">
+                        {% trans 'Submit' %}
+                    </button>
+                    <a class="button is-fullwidth is-dark is-small my-3"
+                       href="{% url 'django_ledger:account-list' entity_slug=view.kwargs.entity_slug %}">
+                        {% trans 'Back' %}
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

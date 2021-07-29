@@ -38,14 +38,14 @@ html_sidebars = {
 
 html_theme_options = {
     "show_related": False,
-    "description": "django template formatter",
+    "description": "Html Template Lint",
     "github_button": True,
     "github_user": "Riverside-Healthcare",
     "github_repo": "djlint",
     "github_type": "star",
     "show_powered_by": False,
     "fixed_sidebar": True,
-    # "logo": "logo2.png",
+    "logo": "icon.png",
 }
 
 html_static_path = ["_static"]

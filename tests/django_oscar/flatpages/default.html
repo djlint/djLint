@@ -1,0 +1,33 @@
+{% extends "oscar/layout.html" %}
+{% load i18n %}
+{% block title %}{{ flatpage.title }} | {{ block.super }}{% endblock %}
+{% block header %}
+    <div class="page-header">
+        {% if user.is_staff %}
+            <a class="float-right d-none d-md-block" href="{% url 'dashboard:page-update' pk=flatpage.id %}">
+                <small>
+                <i class="fas fa-pencil-alt"></i>
+                {% trans "Edit this page" %}
+                </small>
+            </a>
+        {% endif %}
+        <h1>{{ flatpage.title }}</h1>
+    </div>
+{% endblock %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ homepage_url }}">{% trans "Home" %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ flatpage.title }}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <article>
+        {{ flatpage.content }}
+    </article>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-gb" }}" class="{% block html_class %}no-js{% endblock %}">
+<head>
+    <title>
+    {% block title %}{{ shop_name }} - {{ shop_tagline }}{% endblock %}
+    </title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="created" content="{% now "jS M Y h:i" %}" />
+    <meta name="description" content="{% block description %}{% endblock %}" />
+    <meta name="viewport" content="{% block viewport %}width=device-width{% endblock %}" />
+    {% block favicon %}
+        <link rel="shortcut icon" href="{% static "oscar/favicon.ico" %}" />
+    {% endblock %}
+    {# Block where global CSS will go. #}
+    {% block styles %}{% endblock %}
+    {# Additional CSS - specific to certain pages #}
+    {% block extrastyles %}{% endblock %}
+    {% block extrahead %}{% endblock %}
+    {% block tracking %}
+        {# Default to using Google analytics #}
+        {% include "oscar/partials/google_analytics.html" %}{% endblock %}
+    </head>
+    <body id="{% block body_id %}default{% endblock %}" class="{% block body_class %}default{% endblock %}">
+    {# Main content goes in this 'layout' block #}
+    {% block layout %}{% endblock %}
+    {# Scripts loaded from a CDN. #}
+    {% block cdn_scripts %}
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="{% static "oscar/js/jquery/jquery.min.js" %}"><\/script>')
+        </script>
+    {% endblock %}
+    {# Local scripts #}
+    {% block scripts %}{% endblock %}
+    {# Additional JS scripts #}
+    {% block extrascripts %}{% endblock %}
+    {# Block for body onload functions #}
+    <script>
+            $(function() {
+                {% block onbodyload %}{% endblock %}
+            });
+    </script>
+    {# Page meta-data - this is populated by the 'metadata' template context processor #}
+</body>
+</html>

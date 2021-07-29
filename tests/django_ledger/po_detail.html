@@ -1,0 +1,111 @@
+{% extends 'django_ledger/layouts/content_layout_1.html' %}
+{% load trans from i18n %}
+{% load static %}
+{% load django_ledger %}
+{% block view_content %}
+    <div class="columns">
+        <div class="column is-4">
+            <div class="columns is-multiline">
+                <div class="column is-12">
+                    {% include 'django_ledger/includes/card_po.html' with po_model=po_model entity_slug=view.kwargs.entity_slug style='po-detail' %}
+                </div>
+                <div class="column is-12">
+                    <a class="button is-info is-fullwidth is-outlined"
+                       href="{% url 'django_ledger:po-list' entity_slug=view.kwargs.entity_slug %}">
+                        {% trans 'PO List' %}
+                    </a>
+                    <a class="button is-primary is-fullwidth is-outlined mt-2"
+                       href="{% url 'django_ledger:entity-dashboard' entity_slug=view.kwargs.entity_slug %}">
+                        {% trans 'Go To Dashboard' %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="column is-8">
+            <nav class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">
+                            {% trans 'PO Amount' %}:
+                            <p class="title">
+                                {% currency_symbol %}{{ po_model.po_amount | absolute | currency_format }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">
+                                {% trans 'Amount Received' %}:
+                            </p>
+                            <p class="title has-text-success">
+                                {% currency_symbol %}{{ po_model.po_amount_received | currency_format }}
+                            </p>
+                        </div>
+                    </div>
+                </nav>
+                <div class="columns is-multiline">
+                    <div class="column is-12">
+                        <h3 class="is-size-3 has-text-weight-light">
+                            {{ po_model.po_title }}
+                        </h3>
+                    </div>
+                    <div class="column is-12">
+                        <div class="table-container">
+                            <table class="table is-fullwidth is-tripped is-narrow">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Item' %}</th>
+                                        <th>{% trans 'Quantity' %}</th>
+                                        <th>{% trans 'Unit Cost' %}</th>
+                                        <th>{% trans 'Total Cost' %}</th>
+                                        <th>{% trans 'Status' %}</th>
+                                        <th>{% trans 'Billed' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in po_items %}
+                                        <tr>
+                                            <td>{{ item.item_model }}</td>
+                                            <td>{{ item.quantity }}</td>
+                                            <td>{{ item.unit_cost }}</td>
+                                            <td class="{% if item.is_cancelled %}djl-is-strikethrough{% endif %}">
+                                            {% currency_symbol %}{{ item.total_amount | currency_format }}
+                                        </td>
+                                        <td class="has-text-weight-bold {% if item.is_cancelled %}has-text-danger{% endif %}">
+                                        {% if item.po_item_status %}{{ item.get_po_item_status_display }}{% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.bill_model_id %}
+                                            <a class="is-small is-light button"
+                                               href="{% url 'django_ledger:bill-detail' entity_slug=view.kwargs.entity_slug bill_pk=item.bill_model_id %}">
+                                                View Bill
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                Total PO Amount
+                            </td>
+                            <td class="has-text-weight-bold">
+                                {% currency_symbol %}{{ total_amount_due | currency_format }}
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class=" column is-12">
+                {% include 'django_ledger/includes/card_markdown.html' with style='card_1' title='PO Notes' notes_html=po_model.notes_html %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

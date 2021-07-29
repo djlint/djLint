@@ -1,0 +1,67 @@
+{% now "Y" as current_year %}
+{% load icon from django_ledger %}
+<div class="table-container">
+    <table class="table is-fullwidth is-narrow is-striped django-ledger-table-bottom-margin-75">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Detail</th>
+                <th>Balance Sheet</th>
+                <th>Income Statement</th>
+                <th>Posted</th>
+                <th>Locked</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ledger in ledgers %}
+                <tr>
+                    <td>{{ ledger.name }}</td>
+                    <td>
+                        <a class="button is-info is-small is-outlined"
+                           href="{% url 'django_ledger:je-list' entity_slug=entity_slug ledger_pk=ledger.uuid %}">
+                            Journal
+                            Entries
+                        </a>
+                    </td>
+                    <td>
+                        <a class="button is-info is-small is-outlined"
+                           href="{% url 'django_ledger:ledger-bs-year' entity_slug=entity_slug ledger_pk=ledger.uuid year=current_year %}">
+                            Balance
+                            Sheet
+                        </a>
+                    </td>
+                    <td>
+                        <a class="button is-info is-small is-outlined"
+                           href="{% url 'django_ledger:ledger-ic-year' entity_slug=entity_slug ledger_pk=ledger.uuid year=current_year %}">
+                            Income
+                            Statement
+                        </a>
+                    </td>
+                    <td>
+                        {% if ledger.posted %}
+                            <span class="icon has-text-success">{% icon 'ant-design:check-circle-filled' 24 %}</span>
+                        {% else %}
+                            <span class="icon is-small has-text-danger">
+                                {% icon 'maki:roadblock-11' 24 %}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ledger.locked %}
+                            <span class="icon has-text-success">{% icon 'bi:lock-fill' 24 %}</span>
+                        {% else %}
+                            <span class="icon has-text-danger">{% icon 'bx:bx-lock-open-alt' 24 %}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="button is-info is-small"
+                           href="{% url 'django_ledger:ledger-update' entity_slug=entity_slug ledger_pk=ledger.uuid %}">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

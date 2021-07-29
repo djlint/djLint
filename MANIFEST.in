@@ -1,2 +1,2 @@
 include pyproject.toml
-include rules.yaml
+include src/djlint/rules.yaml

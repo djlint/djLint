@@ -198,3 +198,29 @@ def test_W017(runner, tmp_file):
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W017 1:" in result.output
+
+
+def test_check(runner, tmp_file):
+    write_to_file(tmp_file.name, b"<div></div>")
+    result = runner.invoke(djlint, [tmp_file.name], "--check")
+    assert result.exit_code == 0
+    assert "Linting 1 file!" in result.output
+    assert "Linted 1 file, found 0 errors" in result.output
+
+
+def test_check_non_existing_file(runner, tmp_file):
+    result = runner.invoke(djlint, "tests/nothing.html", "--check")
+    assert result.exit_code == 2
+
+
+def test_check_non_existing_folder(runner, tmp_file):
+    result = runner.invoke(djlint, "tests/nothing", "--check")
+    assert result.exit_code == 2
+
+
+def test_check_django_ledger(runner, tmp_file):
+    # source from https://github.com/arrobalytics/django-ledger
+    result = runner.invoke(djlint, "tests/django_ledger", "--check")
+    assert result.exit_code == 0
+    # assert "Linting 120 files!" in result.output
+    # assert "0 files were updated." in result.output

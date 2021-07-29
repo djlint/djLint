@@ -1,0 +1,22 @@
+{% extends "cms/wizards/base.html" %}
+{% load i18n %}
+{% block wizard %}
+    <h1>{% trans "Create" %}</h1>
+    <form action="{% url 'cms_wizard_create' %}" method="post" class="modal-body">
+        {% csrf_token %}
+        {{ wizard.management_form }}
+        {{ form.page }}
+        {{ form.language }}
+        {% if form.errors %}
+            <p class="errornote">
+                {% trans "Please choose an option from below to proceed to the next step." %}
+            </p>
+        {% endif %}
+        <div class="choice-wrapper">
+            {{ form.entry }}
+        </div>
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Next' %}" class="default cms-btn cms-btn-action" name="_continue">
+        </div>
+    </form>
+{% endblock %}

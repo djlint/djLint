@@ -1,0 +1,34 @@
+{% extends 'django_ledger/layouts/content_layout_2.html' %}
+{% load i18n %}
+{% load static %}
+{% load django_ledger %}
+{% block view_content %}
+    <form action="{% url 'django_ledger:entity-create' %}" method="post">
+        <div class="columns is-multiline is-centered">
+            {% csrf_token %}
+            <div class="column is-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-header-title">
+                            <span class="icon">
+                                <i class="iconify djl-icon-36"
+                                   data-icon="ic:baseline-business"
+                                   data-inline="false"></i>
+                            </span>
+                            {% trans 'New Entity Information' %}
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        {{ form.as_p }}
+                        <button type="submit" class="button is-primary is-outlined is-fullwidth djetler_my_1">
+                            Create
+                        </button>
+                        <a href="{% url 'django_ledger:home' %}" class="button is-small is-dark is-fullwidth">
+                            Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

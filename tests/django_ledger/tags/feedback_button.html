@@ -1,0 +1,87 @@
+{% load i18n %}
+{% load icon from django_ledger %}
+<div class="navbar-item has-dropdown is-hoverable">
+    <a class="navbar-link">{% trans 'Feedback' %}</a>
+    <div class="navbar-dropdown">
+        <a href="javascript:djLedger.toggleDropdown('{{ bug_modal_html_id }}')" class="navbar-item">
+            {% trans 'Report a Bug' %}
+        </a>
+        <a href="javascript:djLedger.toggleDropdown('{{ feature_modal_html_id }}')" class="navbar-item">
+            {% trans 'Request a Feature' %}
+        </a>
+    </div>
+</div>
+{# BUG MODAL #}
+<div class="modal" id="{{ bug_modal_html_id }}">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <form action="{% url 'django_ledger:bug-report' %}?next={{ next_url }}" method="post">
+            {% csrf_token %}
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                    {% trans 'Report a Bug' %}
+                </p>
+                <button class="delete"
+                        aria-label="close"
+                        onclick="djLedger.toggleModal('{{ bug_modal_html_id }}')"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="container">
+                    <div class="columns is-multiline">
+                        <div class="column is-12">
+                            <h2>Thank you for helping make Django Ledger better...</h2>
+                        </div>
+                        <div class="column is-12">
+                            {{ bug_form }}
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button type="submit" class="button is-success">
+                    Submit
+                </button>
+                <button class="button" onclick="djLedger.toggleModal('{{ bug_modal_html_id }}')">
+                    Cancel
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+{# FEATURE MODAL #}
+<div class="modal" id="{{ feature_modal_html_id }}">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <form action="{% url 'django_ledger:new-feature' %}?next={{ next_url }}" method="post">
+            {% csrf_token %}
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                    {% trans 'Request a New Feature' %}
+                </p>
+                <button class="delete"
+                        aria-label="close"
+                        onclick="djLedger.toggleModal('{{ feature_modal_html_id }}')"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="container">
+                    <div class="columns is-multiline">
+                        <div class="column is-12">
+                            <h2>Thank you for helping make Django Ledger better...</h2>
+                        </div>
+                        <div class="column is-12">
+                            {{ feature_form }}
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button type="submit" class="button is-success">
+                    Send
+                </button>
+                <button class="button" onclick="djLedger.toggleModal('{{ feature_modal_html_id }}')">
+                    Cancel
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>

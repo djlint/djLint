@@ -1,0 +1,50 @@
+{% extends "oscar/catalogue/detail.html" %}
+{% load i18n %}
+{% block product_review %}
+    <div id="addreview" class="review_add card card-body bg-light">
+        <form id="add_review_form" method="post" action="#addreview">
+            <fieldset>
+                <legend>
+                    {% trans "Leave a product review" %}
+                </legend>
+                {% csrf_token %}
+                {% include 'oscar/partials/form_field.html' with field=form.title %}
+                <div class="reviewrating form-group {% if form.score.errors %}error{% endif %}">
+                <label for="{{ form.score.auto_id }}" class="col-form-label required">
+                    {{ form.score.label|safe }}
+                </label>
+                <div class="controls">
+                    {{ form.score }}
+                    <div class="star-rating {% if form.score.value == '1' %}One{% elif form.score.value == '2' %}Two{% elif form.score.value == '3' %}Three{% elif form.score.value == '4' %}Four{% elif form.score.value == '5' %}Five{% endif %}">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                {% for error in form.score.errors %}
+                    <span class="error-block">
+                        <i class="fas fa-exclamation"></i>
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+            {% comment %}
+            {% include 'oscar/partials/form_field.html' with field=form.score %}{% endcomment %}
+        </div>
+        {% include 'oscar/partials/form_field.html' with field=form.body %}
+        {% if form.name %}
+            {% include 'oscar/partials/form_field.html' with field=form.name %}{% endif %}
+            {% if form.email %}
+                {% include 'oscar/partials/form_field.html' with field=form.email %}{% endif %}
+                <button type="submit" class="btn btn-primary btn-lg" data-loading-text="{% trans 'Saving...' %}">
+                    {% trans "Save review" %}
+                </button>
+                {% trans "or" %}
+                <a href="{{ product.get_absolute_url }}">
+                    {% trans "cancel" %}
+                </a>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}

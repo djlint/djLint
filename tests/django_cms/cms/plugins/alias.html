@@ -1,0 +1,4 @@
+{% load cms_alias_tags %}
+{% if request and not instance.is_recursive %}
+    {% render_alias_plugin instance %}
+{% endif %}

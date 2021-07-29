@@ -1,0 +1,24 @@
+{% extends 'django_ledger/layouts/content_layout_1.html' %}
+{% load i18n %}
+{% load static %}
+{% load django_ledger %}
+{% block view_content %}
+    <div class="columns is-centered">
+        <div class="column is-4">
+            <div class="box">
+                <form action="{% url 'django_ledger:ledger-update' entity_slug=view.kwargs.entity_slug ledger_pk=ledger.uuid %}"
+                      method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="button is-primary is-fullwidth is-outlined djetler_my_1">
+                        Update
+                    </button>
+                    <a class="button is-dark is-small is-fullwidth"
+                       href="{% url 'django_ledger:ledger-list' entity_slug=view.kwargs.entity_slug %}">
+                        Back
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

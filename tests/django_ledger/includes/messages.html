@@ -1,0 +1,11 @@
+{% if messages %}
+    {# Messages Container #}
+    <div class="container">
+        {% for msg in messages %}
+            <div class="notification {{ msg.tags }} mt-3 mb-2">
+                <button class="delete"></button>
+                {{ msg | safe }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
