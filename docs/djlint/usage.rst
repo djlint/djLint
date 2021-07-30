@@ -29,7 +29,7 @@ To check what may change in formatting run:
 
 .. code:: sh
 
-    djlint src --check
+    djlint src --check --ignore="W013,W014"
 
 To reformat run:
 
@@ -48,6 +48,7 @@ CLI Args
 
     Options:
       -e, --extension TEXT  File extension to lint  [default: html]
+      -i, --ignore "Codes"  Rules to be ignored. ex: "W013,W014"
       --reformat            Reformat the file(s).
       --check               Check formatting on the file(s).
       --quiet               Do not print diff when reformatting.

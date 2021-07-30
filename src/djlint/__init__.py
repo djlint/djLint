@@ -17,13 +17,14 @@ usage::
 import os
 import re
 import sys
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 from pathlib import Path
 
 import click
 from click import echo
 from colorama import Fore, Style, deinit, init
+from tqdm import tqdm
 
 from .lint import lint_file
 from .reformat import reformat_file
@@ -88,7 +89,7 @@ def build_check_output(errors, quiet):
 
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
 
-    if quiet is True or len(list(errors.values())[0]) == 0:
+    if quiet is True and len(list(errors.values())[0]) > 0:
         echo(
             Fore.GREEN
             + Style.BRIGHT
@@ -97,7 +98,7 @@ def build_check_output(errors, quiet):
             + Style.RESET_ALL
         )
 
-    else:
+    elif quiet is False and len(list(errors.values())[0]) > 0:
         echo(
             "{}\n{}\n{}===============================".format(
                 Fore.GREEN + Style.BRIGHT, list(errors.keys())[0], Style.DIM
@@ -148,6 +149,14 @@ def build_quantity_tense(size: int):
     show_default=True,
 )
 @click.option(
+    "-i",
+    "--ignore",
+    type=str,
+    default="",
+    help='Codes to ignore. ex: "W013,W014"',
+    show_default=False,
+)
+@click.option(
     "--reformat",
     is_flag=True,
     help="Reformat the file(s).",
@@ -162,7 +171,9 @@ def build_quantity_tense(size: int):
     is_flag=True,
     help="Do not print diff when reformatting.",
 )
-def main(src: str, extension: str, reformat: bool, check: bool, quiet: bool):
+def main(
+    src: str, extension: str, ignore: str, reformat: bool, check: bool, quiet: bool
+):
     """Djlint django template files."""
     file_list = get_src(Path(src), extension)
 
@@ -178,13 +189,21 @@ def main(src: str, extension: str, reformat: bool, check: bool, quiet: bool):
     elif reformat is True:
         message = "Reformatt"
 
-    echo(
-        "%sing %s!\n"
-        % (
-            message,
-            file_quantity,
+    bar_message = (
+        "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{{elapsed}}{}".format(
+            Fore.BLUE + Style.BRIGHT,
+            message + "ing",
+            Style.RESET_ALL,
+            Fore.RED + Style.BRIGHT,
+            Style.RESET_ALL,
+            Fore.BLUE + Style.BRIGHT,
+            Style.RESET_ALL,
+            Fore.GREEN + Style.BRIGHT,
+            Style.RESET_ALL,
         )
     )
+
+    echo()
 
     worker_count = os.cpu_count()
 
@@ -193,15 +212,37 @@ def main(src: str, extension: str, reformat: bool, check: bool, quiet: bool):
         worker_count = min(worker_count, 60)
 
     with ProcessPoolExecutor(max_workers=worker_count) as exe:
+        file_errors = []
         if reformat is True or check is True:
             func = partial(reformat_file, check)
-            file_errors = exe.map(func, file_list)
+            futures = {
+                exe.submit(func, this_file): this_file for this_file in file_list
+            }
+
         else:
-            file_errors = exe.map(lint_file, file_list)
+            func = partial(lint_file, ignore)
+            futures = {
+                exe.submit(func, this_file): this_file for this_file in file_list
+            }
+
+        with tqdm(
+            total=len(file_list),
+            desc=bar_message,
+            bar_format=bar_message,
+            colour="BLUE",
+            ascii=" ━",
+        ) as pbar:
+            for future in as_completed(futures):
+
+                futures[future]
+                file_errors.append(future.result())
+                # pbar.set_description("Processing %s" % arg)
+                pbar.update()
 
     # format errors
     success_message = ""
     error_count = 0
+    echo()
 
     if reformat is True or check is True:
         # reformat message

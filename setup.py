@@ -52,6 +52,7 @@ setup(
         "pyyaml>=5.4.1",
         "colorama>=0.4.3",
         "regex>=2020.11.13",
+        "tqdm",
     ],
     test_suite="tests.test_djlint",
     entry_points={

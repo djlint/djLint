@@ -17,7 +17,7 @@ def get_line(start, line_ends):
     return "%d:%d" % (line_ends.index(line) + 1, start - line["start"])
 
 
-def lint_file(this_file: Path):
+def lint_file(ignore: str, this_file: Path):
     """Check file for formatting errors."""
     file_name = str(this_file)
     errors: dict = {file_name: []}
@@ -29,7 +29,9 @@ def lint_file(this_file: Path):
         for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)
     ]
 
-    for rule in rules:
+    for rule in list(
+        filter(lambda x: x["rule"]["name"] not in ignore.split(","), rules)
+    ):
         rule = rule["rule"]
 
         for pattern in rule["patterns"]:
