@@ -10,6 +10,26 @@ Ps, ```--check``` it out on Jinja and Handlebar templates as well!
 
 Read the [documentation](https://djlint.readthedocs.io)
 
+
+## Installation and Usage
+
+djLint can be installed with `pip install djlint`, and is easy to run:
+
+```sh
+# to lint a directory
+djlint /path
+
+# to lint a directory with custom extension
+djlint /path -e html.dj
+
+# to check formatting on a file
+djlint /path/file.html.j2 --check
+
+# to reformt a directory without printing the file diff
+djlint /path --reformat --quiet
+
+```
+
 ## Show your format
 
 Add a badge to your projects ```readme.md```:
