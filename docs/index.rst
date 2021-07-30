@@ -27,6 +27,8 @@ Simple html template linter and reformatter to find common formatting issues wit
 
 Ps, ``--check`` it out on Jinja and Handlebar templates as well!
 
+.. image:: /_static/demo.gif
+
 |codecov| |test| |Codacy Badge| |Maintainability| |Downloads|
 
 .. note:: djLint is not an html parser or syntax validator.

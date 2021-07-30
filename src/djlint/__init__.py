@@ -267,7 +267,7 @@ def main(
             initial=len(file_list),
             bar_format=finshed_bar_message,
             colour="GREEN",
-            ascii=" ━",
+            ascii="┈━",
             leave=True,
         )
         asdf.close()
