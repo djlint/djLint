@@ -1,4 +1,5 @@
 """djLint expand out html code."""
+import re as old_re
 from functools import partial
 
 import regex as re
@@ -58,11 +59,11 @@ def expand_html(html):
         return out_format % match.group(1)
 
     # put attributes on one line
-    html = re.sub(
+    html = old_re.sub(
         tag_pattern,
         _flatten_attributes,
         html,
-        flags=re.IGNORECASE | re.DOTALL | re.MULTILINE,
+        flags=re.IGNORECASE | re.MULTILINE,
     )
 
     html_tags = "|".join(break_html_tags)
