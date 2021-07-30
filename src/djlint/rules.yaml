@@ -3,7 +3,7 @@
     message: Variables should be wrapped in a single whitespace.
     patterns:
     # open
-    - '{{[^#][^\s]+'
+    - '{{[^\s#]+'
     - '{%[^\s]+'
     # handlebars
     - '[^{]{#[^\s]+'
