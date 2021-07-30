@@ -12,7 +12,7 @@
 project = "djlint"
 copyright = "2021, Riverside Healthcare"
 author = "Christopher Pickering"
-release = "0.1.4"
+release = "0.1.5"
 version = release
 
 # -- General configuration ---------------------------------------------------

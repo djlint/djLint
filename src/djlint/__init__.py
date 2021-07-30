@@ -236,7 +236,6 @@ def main(
 
                 futures[future]
                 file_errors.append(future.result())
-                # pbar.set_description("Processing %s" % arg)
                 pbar.update()
 
     # format errors

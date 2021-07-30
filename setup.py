@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 project_path = Path(__file__).parent
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 
 def long_description():
@@ -52,7 +52,7 @@ setup(
         "pyyaml>=5.4.1",
         "colorama>=0.4.3",
         "regex>=2020.11.13",
-        "tqdm",
+        "tqdm>=4.61.2",
     ],
     test_suite="tests.test_djlint",
     entry_points={
