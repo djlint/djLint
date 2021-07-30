@@ -48,7 +48,9 @@ ignored_attributes = [
 ignored_paths = r"(?:\.tox|\.venv|node_modules|_build)"
 
 
-start_template_tags = r"{% ?(?:if|for|block|spaceless|compress|load|include|assets|addto|language)[^}]+?%}"
+start_template_tags = (
+    r"{% ?(?:if|for|block|spaceless|compress|load|assets|addto|language)[^}]+?%}"
+)
 
 break_template_tags = [
     r"{% ?(?:if|end|for|block|endblock|else|spaceless|compress|load|include|assets|addto|language)[^}]+?%}",
