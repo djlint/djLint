@@ -2,7 +2,14 @@
     name: E001
     message: Variables should be wrapped in a single whitespace.
     patterns:
-    - '{[{|%|#][^\s]+'
+    # open
+    - '{{[^#][^\s]+'
+    - '{%[^\s]+'
+    # handlebars
+    - '[^{]{#[^\s]+'
+    - '[^{]{\/[^\s]+'
+    - '[^{]{\@[^\s]+'
+    # close
     - '[^\s]+[}|%|#]}'
     - \s{2,}[}|%|#]}
     - '{[{|%|#]\s{2,}'

@@ -26,10 +26,10 @@ tag_unindent_line = r"(?:\{% el)|(?:\{\{ *?(?:else|\^) *?\}\})"
 # these tags use raw code and should flatten to column 1
 # tabs will be removed inside these tags! use spaces for spacing if needed!
 # flatten starting with this tag...
-tag_raw_flat_opening = r"{#"
+tag_raw_flat_opening = r"[^\{]{#"
 
 # ...stop flattening when you encounter this tag
-tag_raw_flat_closing = r"#}"
+tag_raw_flat_closing = r"#}[^\}]"
 
 # reduce empty lines greater than  x to 1 line
 reduce_extralines_gt = 2
