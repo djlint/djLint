@@ -56,13 +56,17 @@ def get_src(src: Path, extension=None):
 def build_output(error):
     """Build output for file errors."""
     errors = sorted(list(error.values())[0], key=lambda x: int(x["line"].split(":")[0]))
+    width = click.get_terminal_size().columns
 
     if len(errors) == 0:
         return 0
 
     echo(
-        "{}\n{}\n{}===============================".format(
-            Fore.GREEN + Style.BRIGHT, list(error.keys())[0], Style.DIM
+        "{}\n{}\n{}{}".format(
+            Fore.GREEN + Style.BRIGHT,
+            list(error.keys())[0],
+            Style.DIM,
+            "".join(["─" for x in range(1, width)]),
         )
         + Style.RESET_ALL
     )
@@ -88,6 +92,7 @@ def build_check_output(errors, quiet):
         return 0
 
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
+    width = click.get_terminal_size().columns
 
     if quiet is True and len(list(errors.values())[0]) > 0:
         echo(
@@ -100,13 +105,16 @@ def build_check_output(errors, quiet):
 
     elif quiet is False and len(list(errors.values())[0]) > 0:
         echo(
-            "{}\n{}\n{}===============================".format(
-                Fore.GREEN + Style.BRIGHT, list(errors.keys())[0], Style.DIM
+            "{}\n{}\n{}{}".format(
+                Fore.GREEN + Style.BRIGHT,
+                list(errors.keys())[0],
+                Style.DIM,
+                "".join(["─" for x in range(1, width)]),
             )
             + Style.RESET_ALL
         )
 
-        for diff in list(errors.values())[0]:
+        for diff in list(errors.values())[0][2:]:
             echo(
                 "{}{}{}".format(
                     color.get(diff[:1], Style.RESET_ALL), diff, Style.RESET_ALL
@@ -189,18 +197,16 @@ def main(
     elif reformat is True:
         message = "Reformatt"
 
-    bar_message = (
-        "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{{elapsed}}{}".format(
-            Fore.BLUE + Style.BRIGHT,
-            message + "ing",
-            Style.RESET_ALL,
-            Fore.RED + Style.BRIGHT,
-            Style.RESET_ALL,
-            Fore.BLUE + Style.BRIGHT,
-            Style.RESET_ALL,
-            Fore.GREEN + Style.BRIGHT,
-            Style.RESET_ALL,
-        )
+    bar_message = "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{{elapsed}}{}    ".format(
+        Fore.BLUE + Style.BRIGHT,
+        message + "ing",
+        Style.RESET_ALL,
+        Fore.RED + Style.BRIGHT,
+        Style.RESET_ALL,
+        Fore.BLUE + Style.BRIGHT,
+        Style.RESET_ALL,
+        Fore.GREEN + Style.BRIGHT,
+        Style.RESET_ALL,
     )
 
     echo()
@@ -225,18 +231,46 @@ def main(
                 exe.submit(func, this_file): this_file for this_file in file_list
             }
 
+        elapsed = "00:00"
         with tqdm(
             total=len(file_list),
-            desc=bar_message,
             bar_format=bar_message,
             colour="BLUE",
-            ascii=" ━",
+            ascii="┈━",
+            leave=False,
         ) as pbar:
+
             for future in as_completed(futures):
 
                 futures[future]
                 file_errors.append(future.result())
                 pbar.update()
+                elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
+
+        finshed_bar_message = (
+            "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{}{}    ".format(
+                Fore.BLUE + Style.BRIGHT,
+                message + "ing",
+                Style.RESET_ALL,
+                Fore.GREEN + Style.BRIGHT,
+                Style.RESET_ALL,
+                Fore.BLUE + Style.BRIGHT,
+                Style.RESET_ALL,
+                Fore.GREEN + Style.BRIGHT,
+                elapsed,
+                Style.RESET_ALL,
+            )
+        )
+
+        asdf = tqdm(
+            total=len(file_list),
+            initial=len(file_list),
+            bar_format=finshed_bar_message,
+            colour="GREEN",
+            ascii=" ━",
+            leave=True,
+        )
+        asdf.close()
 
     # format errors
     success_message = ""
@@ -265,7 +299,9 @@ def main(
             error_count,
         )
 
-    echo("\n%s\n" % (success_message))
+    success_color = Fore.RED + Style.BRIGHT if error_count > 0 else Fore.BLUE
+
+    echo(f"\n{success_color}{success_message}{Style.RESET_ALL}\n")
 
 
 if __name__ == "__main__":

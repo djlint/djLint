@@ -40,7 +40,7 @@ format_long_attributes = True
 
 # pattern used to find attributes in a tag
 attribute_pattern = r"(.+?=(?:\".*?\"|\'.*?\')|required|checked)\s*"
-tag_pattern = r"(<\w+?[^>]*?)((?:\n\s*?[^>]+?)+?)(/?\>)"
+tag_pattern = r"(<\w+?[^>]*?)((?:\n[^>]+?)+?)(/?\>)"
 ignored_attributes = [
     "data-json",
 ]
