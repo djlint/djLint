@@ -19,14 +19,14 @@
             </a>
             <a class="dropdown-item {% if not record.has_children %}disabled{% endif %}"
                href="{% if not record.has_children %}#{% else %}{% url 'dashboard:catalogue-category-detail-list' pk=record.pk %}{% endif %}">
-            {% trans "Edit children" %}
-        </a>
-        <a class="dropdown-item" href="{{ record.get_absolute_url }}">
-            {% trans "View on site" %}
-        </a>
-        <a class="dropdown-item" href="{% url 'dashboard:catalogue-category-delete' pk=record.id %}">
-            {% trans "Delete" %}
-        </a>
+                {% trans "Edit children" %}
+            </a>
+            <a class="dropdown-item" href="{{ record.get_absolute_url }}">
+                {% trans "View on site" %}
+            </a>
+            <a class="dropdown-item" href="{% url 'dashboard:catalogue-category-delete' pk=record.id %}">
+                {% trans "Delete" %}
+            </a>
+        </div>
     </div>
-</div>
 </div>

@@ -22,12 +22,13 @@
 {% endblock %}
 {% block content %}
     {# Use a partial template so that AJAX can be used to re-render basket #}
-    {% include 'oscar/basket/partials/basket_content.html' %}{% endblock content %}
-    {% block onbodyload %}
-        {{ block.super }}
-        {# We pass in the URL to send AJAX requests to #}
-        var options = {
-        'basketURL': '{% url 'basket:summary' %}'
-        };
-        oscar.basket.init(options);
-    {% endblock %}
+    {% include 'oscar/basket/partials/basket_content.html' %}
+{% endblock content %}
+{% block onbodyload %}
+    {{ block.super }}
+    {# We pass in the URL to send AJAX requests to #}
+    var options = {
+    'basketURL': '{% url 'basket:summary' %}'
+    };
+    oscar.basket.init(options);
+{% endblock %}

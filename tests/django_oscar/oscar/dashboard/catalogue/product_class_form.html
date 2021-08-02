@@ -79,82 +79,83 @@
                                     {% endfor %}
                                 {% endif %}
                                 {% for field in form %}
-                                    {% include 'oscar/dashboard/partials/form_field.html' with field=field %}{% endfor %}
-                                </div>
+                                    {% include 'oscar/dashboard/partials/form_field.html' with field=field %}
+                                {% endfor %}
                             </div>
-                        {% endblock %}
-                        {% block product_attributes %}
-                            <div class="tab-pane" id="product_attributes">
-                                <div class="table-header">
-                                    <h3>{% trans "Product attributes" %}</h3>
-                                </div>
-                                <div class="product-attributes">
-                                    <table class="table table-striped table-bordered">
-                                        {{ attributes_formset.management_form }}
-                                        {{ attributes_formset.non_form_errors }}
-                                        <col width="20%">
-                                        <col width="20%">
-                                        <col width="20%">
-                                        <thead>
+                        </div>
+                    {% endblock %}
+                    {% block product_attributes %}
+                        <div class="tab-pane" id="product_attributes">
+                            <div class="table-header">
+                                <h3>{% trans "Product attributes" %}</h3>
+                            </div>
+                            <div class="product-attributes">
+                                <table class="table table-striped table-bordered">
+                                    {{ attributes_formset.management_form }}
+                                    {{ attributes_formset.non_form_errors }}
+                                    <col width="20%">
+                                    <col width="20%">
+                                    <col width="20%">
+                                    <thead>
+                                        <tr>
+                                            <th>{% trans "Name" %}</th>
+                                            <th>{% trans "Code" %}</th>
+                                            <th>{% trans "Type" %}</th>
+                                            <th>{% trans "Required" %}</th>
+                                            <th>{% trans "Delete?" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for attribute_form in attributes_formset %}
                                             <tr>
-                                                <th>{% trans "Name" %}</th>
-                                                <th>{% trans "Code" %}</th>
-                                                <th>{% trans "Type" %}</th>
-                                                <th>{% trans "Required" %}</th>
-                                                <th>{% trans "Delete?" %}</th>
+                                                {% for hidden_field in attribute_form.hidden_fields %}
+                                                    {{ hidden_field }}
+                                                {% endfor %}
+                                                <td>
+                                                    {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.name nolabel=True %}
+                                                </td>
+                                                <td>
+                                                    {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.code nolabel=True %}
+                                                </td>
+                                                <td>
+                                                    {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.type nolabel=True %}
+                                                    {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.option_group nolabel=True %}
+                                                </td>
+                                                <td>
+                                                    {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.required nolabel=True %}
+                                                </td>
+                                                <td>
+                                                    {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.DELETE nolabel=True %}
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for attribute_form in attributes_formset %}
-                                                <tr>
-                                                    {% for hidden_field in attribute_form.hidden_fields %}
-                                                        {{ hidden_field }}
-                                                    {% endfor %}
-                                                    <td>
-                                                        {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.name nolabel=True %}
-                                                    </td>
-                                                    <td>
-                                                        {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.code nolabel=True %}
-                                                    </td>
-                                                    <td>
-                                                        {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.type nolabel=True %}
-                                                        {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.option_group nolabel=True %}
-                                                    </td>
-                                                    <td>
-                                                        {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.required nolabel=True %}
-                                                    </td>
-                                                    <td>
-                                                        {% include 'oscar/dashboard/partials/form_field.html' with field=attribute_form.DELETE nolabel=True %}
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                        {% endblock %}
-                    {% endblock tab_content %}
+                        </div>
+                    {% endblock %}
+                {% endblock tab_content %}
+            </div>
+        </div>
+    </div>
+    {% block fixed_actions_group %}
+        <div class="fixed-actions-group">
+            <div class="form-actions">
+                <div class="float-right">
+                    <a href="#" onclick="window.history.go(-1);return false" >
+                        {% trans "Cancel" %}
+                    </a>
+                    {% trans "or" %}
+                    <button class="btn btn-primary" type="submit">
+                        {% trans "Save" %}
+                    </button>
                 </div>
             </div>
         </div>
-        {% block fixed_actions_group %}
-            <div class="fixed-actions-group">
-                <div class="form-actions">
-                    <div class="float-right">
-                        <a href="#" onclick="window.history.go(-1);return false" >
-                            {% trans "Cancel" %}
-                        </a>
-                        {% trans "or" %}
-                        <button class="btn btn-primary" type="submit">
-                            {% trans "Save" %}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        {% endblock fixed_actions_group %}
-    </form>
+    {% endblock fixed_actions_group %}
+</form>
 {% endblock dashboard_content %}
 {% block onbodyload %}
-    {{ block.super }}
-    oscar.dashboard.product_attributes.init();
+{{ block.super }}
+oscar.dashboard.product_attributes.init();
 {% endblock %}

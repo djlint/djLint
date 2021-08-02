@@ -53,81 +53,82 @@
     <div class="side_categories card card-body bg-light">
         {% for field, data in facet_data.items %}
             {% if data.results %}
-                {% include 'oscar/search/partials/facet.html' with name=data.name items=data.results %}{% endif %}
-            {% endfor %}
-        </div>
-    {% endif %}
+                {% include 'oscar/search/partials/facet.html' with name=data.name items=data.results %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
 {% endblock %}
 {% block content %}
-    <form method="get">
-        {# Render other search params as hidden inputs #}
-        {% for value in selected_facets %}
-            <input type="hidden" name="selected_facets" value="{{ value }}" />
-        {% endfor %}
-        <input type="hidden" name="q" value="{{ search_form.q.value|default_if_none:"" }}" />
-        {% if paginator.count %}
-            {% if paginator.num_pages > 1 %}
-                {% blocktrans with start=page_obj.start_index end=page_obj.end_index count num_results=paginator.count %}
-                    <strong>{{ num_results }}</strong>
-                    result - showing
-                    <strong>{{ start }}</strong>
-                    to
-                    <strong>{{ end }}</strong>
-                    .
-                    {% plural %}
-                    <strong>{{ num_results }}</strong>
-                    results - showing
-                    <strong>{{ start }}</strong>
-                    to
-                    <strong>{{ end }}</strong>
-                    .
-                {% endblocktrans %}
-            {% else %}
-                {% blocktrans count num_results=paginator.count %}
-                    <strong>{{ num_results }}</strong>
-                    result.
-                    {% plural %}
-                    <strong>
-                    {{ num_results }}
-                    </strong>
-                    results.
-                {% endblocktrans %}
-            {% endif %}
-            {% if form %}
-                <div class="float-right">
-                    {% include "oscar/partials/form_field.html" with field=form.sort_by style='horizontal' %}
-                </div>
-            {% endif %}
+<form method="get">
+    {# Render other search params as hidden inputs #}
+    {% for value in selected_facets %}
+        <input type="hidden" name="selected_facets" value="{{ value }}" />
+    {% endfor %}
+    <input type="hidden" name="q" value="{{ search_form.q.value|default_if_none:"" }}" />
+    {% if paginator.count %}
+        {% if paginator.num_pages > 1 %}
+            {% blocktrans with start=page_obj.start_index end=page_obj.end_index count num_results=paginator.count %}
+                <strong>{{ num_results }}</strong>
+                result - showing
+                <strong>{{ start }}</strong>
+                to
+                <strong>{{ end }}</strong>
+                .
+                {% plural %}
+                <strong>{{ num_results }}</strong>
+                results - showing
+                <strong>{{ start }}</strong>
+                to
+                <strong>{{ end }}</strong>
+                .
+            {% endblocktrans %}
         {% else %}
-            <p>
-                {% trans "
+            {% blocktrans count num_results=paginator.count %}
+                <strong>{{ num_results }}</strong>
+                result.
+                {% plural %}
                 <strong>
-                0
+                {{ num_results }}
                 </strong>
-                results." %}
-            </p>
+                results.
+            {% endblocktrans %}
         {% endif %}
-    </form>
-    {% if products %}
-        <section>
-            <div>
-                <ol class="row list-unstyled ml-0 pl-0">
-                    {% for product in products %}
-                        <li class="col-sm-6 col-md-4 col-lg-3">
-                            {% render_product product %}
-                        </li>
-                    {% endfor %}
-                </ol>
-                {% include "oscar/partials/pagination.html" %}
+        {% if form %}
+            <div class="float-right">
+                {% include "oscar/partials/form_field.html" with field=form.sort_by style='horizontal' %}
             </div>
-        </section>
+        {% endif %}
     {% else %}
-        <p class="nonefound">
-            {% trans "No products found." %}
+        <p>
+            {% trans "
+            <strong>
+            0
+            </strong>
+            results." %}
         </p>
     {% endif %}
+</form>
+{% if products %}
+    <section>
+        <div>
+            <ol class="row list-unstyled ml-0 pl-0">
+                {% for product in products %}
+                    <li class="col-sm-6 col-md-4 col-lg-3">
+                        {% render_product product %}
+                    </li>
+                {% endfor %}
+            </ol>
+            {% include "oscar/partials/pagination.html" %}
+        </div>
+    </section>
+{% else %}
+    <p class="nonefound">
+        {% trans "No products found." %}
+    </p>
+{% endif %}
 {% endblock content %}
 {% block onbodyload %}
-    {{ block.super }}
-    oscar.search.init();
+{{ block.super }}
+oscar.search.init();
 {% endblock %}

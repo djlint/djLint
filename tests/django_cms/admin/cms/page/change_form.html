@@ -60,71 +60,74 @@
               {% endif %}action="?language={{ language }}{% if request.GET.parent_node %}&amp;parent_node={{ request.GET.parent_node }}{% endif %}{% if request.GET.source %}&amp;source={{ request.GET.source }}{% endif %}"
               method="post"
               id="page_form">
-        {% csrf_token %}
-        {% block form_top %}{% endblock %}
-        <div style="display: none;"><input type="hidden"
+            {% csrf_token %}
+            {% block form_top %}{% endblock %}
+            <div style="display: none;"><input type="hidden"
        name="language"
        value="{{ language }}"
        id="id_language"/></div>
-        {% if show_language_tabs and not show_permissions %}
-            <div id="page_form_lang_tabs">
-                {% for lang_code, lang_name in language_tabs %}
-                    <input type="button"
-                           onclick="CMS.API.changeLanguage('./?language={{ lang_code }}');"
-                           class="language_button {% if lang_code == language %}selected{% else %}{% if not lang_code in filled_languages %} notfilled{% endif %}{% endif %}"
-                           id="{{ lang_code }}button"
-                           name="{{ lang_code }}"
-                           value="{{ lang_name }}"/>
-                {% endfor %}
-                <div class="lang_tabs_line"></div>
-            </div>
-        {% endif %}
-        <div id="lang_tab_content">
-            {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
-            {% if save_on_top %}{% submit_row %}{% endif %}
-            {% if errors %}
-                <p class="errornote">
-                    {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
-                    </p>
-                    <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
-                {% endif %}
-                {% for fieldset in adminform %}
-                    {% include "admin/cms/page/includes/fieldset.html" %}{% endfor %}
-                    {% for inline_admin_formset in inline_admin_formsets %}
-                        {% include inline_admin_formset.opts.template %}{% endfor %}
-                        {% if show_permissions %}
-                            {% if CMS_PERMISSION and can_change_permissions %}
-                                <div class="inline-group">
-                                    <div class="tabular inline-related">
-                                        <fieldset id="inherited_permissions" class="module aligned collapse">
-                                            <h2>{% trans 'All permissions' %}</h2>
-                                            <div class="loading" rel="../permissions/">{% trans 'Loading...' %}</div>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                        {% block after_related_objects %}{% endblock %}
-                        {% if add %}
-                            <div class="submit-row" {% if is_popup %} style="overflow: auto;">
-                                <input type="submit" name="_save" class="default" value="{% trans 'Save' %}"/>
-                                <input type="submit" name="_continue" value="{% trans 'Save and continue editing' %}"/>
-                            </div>
-                        {% else %}
-                            {% page_submit_row %}
-                        {% endif %}
-                    </div>
-                </form>
-            </div>
-            {% block admin_change_form_document_ready %}
-                {{ block.super }}
-            {% endblock %}
-            {% for url in unihandecode_urls %}<script src="{{ url }}" type="text/javascript"></script>{% endfor %}
-            {% if unihandecode_urls %}
-                <script>
-    var UNIHANDECODER = unihandecode.Unihan('{{ unihandecode_lang }}');
-                </script>
+            {% if show_language_tabs and not show_permissions %}
+                <div id="page_form_lang_tabs">
+                    {% for lang_code, lang_name in language_tabs %}
+                        <input type="button"
+                               onclick="CMS.API.changeLanguage('./?language={{ lang_code }}');"
+                               class="language_button {% if lang_code == language %}selected{% else %}{% if not lang_code in filled_languages %} notfilled{% endif %}{% endif %}"
+                               id="{{ lang_code }}button"
+                               name="{{ lang_code }}"
+                               value="{{ lang_name }}"/>
+                    {% endfor %}
+                    <div class="lang_tabs_line"></div>
+                </div>
             {% endif %}
-            {# JavaScript for prepopulated fields #}
-            {% prepopulated_fields_js %}
-        {% endblock %}
+            <div id="lang_tab_content">
+                {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+                {% if save_on_top %}{% submit_row %}{% endif %}
+                {% if errors %}
+                    <p class="errornote">
+                        {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+                        </p>
+                        <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                    {% endif %}
+                    {% for fieldset in adminform %}
+                        {% include "admin/cms/page/includes/fieldset.html" %}{% endfor %}
+                        {% for inline_admin_formset in inline_admin_formsets %}
+                            {% include inline_admin_formset.opts.template %}{% endfor %}
+                            {% if show_permissions %}
+                                {% if CMS_PERMISSION and can_change_permissions %}
+                                    <div class="inline-group">
+                                        <div class="tabular inline-related">
+                                            <fieldset id="inherited_permissions" class="module aligned collapse">
+                                                <h2>{% trans 'All permissions' %}</h2>
+                                                <div class="loading"
+                                                     rel="../permissions/">{% trans 'Loading...' %}</div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            {% block after_related_objects %}{% endblock %}
+                            {% if add %}
+                                <div class="submit-row" {% if is_popup %} style="overflow: auto;">
+                                    <input type="submit" name="_save" class="default" value="{% trans 'Save' %}"/>
+                                    <input type="submit"
+                                           name="_continue"
+                                           value="{% trans 'Save and continue editing' %}"/>
+                                </div>
+                            {% else %}
+                                {% page_submit_row %}
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+                {% block admin_change_form_document_ready %}
+                    {{ block.super }}
+                {% endblock %}
+                {% for url in unihandecode_urls %}<script src="{{ url }}" type="text/javascript"></script>{% endfor %}
+                {% if unihandecode_urls %}
+                    <script>
+    var UNIHANDECODER = unihandecode.Unihan('{{ unihandecode_lang }}');
+                    </script>
+                {% endif %}
+                {# JavaScript for prepopulated fields #}
+                {% prepopulated_fields_js %}
+            {% endblock %}

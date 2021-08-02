@@ -64,9 +64,9 @@
                 </button>
                 {% trans "or" %}
                 <a href="{% if not voucher.voucher_set %}{% url 'dashboard:voucher-list' %}{% else %}{% url 'dashboard:voucher-set-detail' pk=voucher.voucher_set.pk %}{% endif %}">
-                {% trans "cancel" %}
-            </a>
-        </div>
-    </form>
-</div>
+                    {% trans "cancel" %}
+                </a>
+            </div>
+        </form>
+    </div>
 {% endblock dashboard_content %}

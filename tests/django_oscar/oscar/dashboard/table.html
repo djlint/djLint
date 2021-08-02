@@ -29,5 +29,6 @@
 {% endblock table.thead %}
 {% block pagination %}
     {% with page_obj=table.page paginator=table.paginator %}
-    {% include "oscar/dashboard/partials/pagination.html" %}{% endwith %}
+        {% include "oscar/dashboard/partials/pagination.html" %}
+    {% endwith %}
 {% endblock pagination %}

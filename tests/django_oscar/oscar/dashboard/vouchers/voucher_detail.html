@@ -79,9 +79,7 @@
                         <td>
                             {% for restriction in offer.availability_restrictions %}
                                 {% if not restriction.is_satisfied %}
-                                    <label class="badge badge-danger">
-                                        {{ restriction.description }}
-                                    </label>
+                                    <label class="badge badge-danger">{{ restriction.description }}</label>
                                 {% else %}
                                     {{ restriction.description }}
                                     <br/>
@@ -164,49 +162,49 @@
             <tbody>
                 {% for discount in discounts %}
                     {% with order=discount.order %}
-                    <tr>
-                        <td>
-                            <a href="{% url "dashboard:order-detail" number=order.number %}">
-                                {{ order.number }}
-                            </a>
-                        </td>
-                        <td>
-                            {{ order.total_incl_tax|currency:order.currency }}
-                        </td>
-                        <td>
-                            {{ discount.amount|currency:order.currency }}
-                        </td>
-                        <td>
-                            {{ order.date_placed }}
-                        </td>
-                    </tr>
-                {% endwith %}
-            {% endfor %}
-        </tbody>
-    {% endif %}
-</table>
-<div class="form-actions">
-    {% if not voucher.voucher_set %}
-        <a class="btn btn-primary" href="{% url 'dashboard:voucher-update' pk=voucher.id %}">
-            {% trans "Edit" %}
-        </a>
-        {% trans "or" %}
-    {% else %}
-        <a class="btn btn-primary" href="{% url 'dashboard:voucher-set-update' pk=voucher.voucher_set.pk %}">
-            {% trans "Edit set" %}
-        </a>
-        {% trans "or" %}
-    {% endif %}
-    <a class="btn btn-danger" href="{% url 'dashboard:voucher-delete' pk=voucher.id %}">
-        {% if not voucher.voucher_set %}
-            {% trans "Delete" %}
-        {% else %}
-            {% trans "Delete from set" %}
+                        <tr>
+                            <td>
+                                <a href="{% url "dashboard:order-detail" number=order.number %}">
+                                    {{ order.number }}
+                                </a>
+                            </td>
+                            <td>
+                                {{ order.total_incl_tax|currency:order.currency }}
+                            </td>
+                            <td>
+                                {{ discount.amount|currency:order.currency }}
+                            </td>
+                            <td>
+                                {{ order.date_placed }}
+                            </td>
+                        </tr>
+                    {% endwith %}
+                {% endfor %}
+            </tbody>
         {% endif %}
-    </a>
-    {% trans "or" %}
-    <a href="{% if not voucher.voucher_set %}{% url 'dashboard:voucher-list' %}{% else %}{% url 'dashboard:voucher-set-detail' pk=voucher.voucher_set.pk %}{% endif %}">
-    {% trans "cancel" %}
-</a>
-</div>
+    </table>
+    <div class="form-actions">
+        {% if not voucher.voucher_set %}
+            <a class="btn btn-primary" href="{% url 'dashboard:voucher-update' pk=voucher.id %}">
+                {% trans "Edit" %}
+            </a>
+            {% trans "or" %}
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'dashboard:voucher-set-update' pk=voucher.voucher_set.pk %}">
+                {% trans "Edit set" %}
+            </a>
+            {% trans "or" %}
+        {% endif %}
+        <a class="btn btn-danger" href="{% url 'dashboard:voucher-delete' pk=voucher.id %}">
+            {% if not voucher.voucher_set %}
+                {% trans "Delete" %}
+            {% else %}
+                {% trans "Delete from set" %}
+            {% endif %}
+        </a>
+        {% trans "or" %}
+        <a href="{% if not voucher.voucher_set %}{% url 'dashboard:voucher-list' %}{% else %}{% url 'dashboard:voucher-set-detail' pk=voucher.voucher_set.pk %}{% endif %}">
+            {% trans "cancel" %}
+        </a>
+    </div>
 {% endblock dashboard_content %}

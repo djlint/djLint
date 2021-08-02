@@ -85,18 +85,18 @@
                     </div>
                     <div class="modal-body text-center">
                         <img class="img-fluid mx-auto">
-                        </div>
                     </div>
                 </div>
             </div>
-        {% endblock product_list %}
-    {% else %}
-        <p>
-            {% trans "No products found." %}
-        </p>
-    {% endif %}
+        </div>
+    {% endblock product_list %}
+{% else %}
+    <p>
+        {% trans "No products found." %}
+    </p>
+{% endif %}
 {% endblock dashboard_content %}
 {% block onbodyload %}
-    {{ block.super }}
-    oscar.dashboard.product_lists.init();
+{{ block.super }}
+oscar.dashboard.product_lists.init();
 {% endblock onbodyload %}

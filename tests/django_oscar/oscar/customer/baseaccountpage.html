@@ -26,9 +26,10 @@
 {% block column_left %}
     <ul class="nav nav-pills flex-column">
         {% block standard_tabs %}
-            {% include 'oscar/customer/partials/standard_tabs.html' %}{% endblock %}
-        </ul>
-    {% endblock %}
-    {% block content %}
-        {% block tabcontent %}{% endblock tabcontent %}
-        {% endblock content %}
+            {% include 'oscar/customer/partials/standard_tabs.html' %}
+        {% endblock %}
+    </ul>
+{% endblock %}
+{% block content %}
+    {% block tabcontent %}{% endblock tabcontent %}
+{% endblock content %}

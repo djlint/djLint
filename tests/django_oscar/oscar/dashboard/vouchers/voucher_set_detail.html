@@ -53,9 +53,7 @@
         </form>
         {% if search_filters %}
             <div class="search-filter-list">
-                <label>
-                    Filters:
-                </label>
+                <label>Filters:</label>
                 {% for filter in search_filters %}
                     <span class="badge badge-success">{{ filter }}</span>
                 {% endfor %}
@@ -113,7 +111,9 @@
             {% endfor %}
         {% else %}
             <tr>
-                <td>{% trans "No vouchers found." %}</td>
+                <td>
+                    {% trans "No vouchers found." %}
+                </td>
             </tr>
         {% endif %}
     </table>
@@ -186,9 +186,7 @@
                         <td>
                             {% for restriction in offer.availability_restrictions %}
                                 {% if not restriction.is_satisfied %}
-                                    <label class="badge badge-danger">
-                                        {{ restriction.description }}
-                                    </label>
+                                    <label class="badge badge-danger">{{ restriction.description }}</label>
                                 {% else %}
                                     {{ restriction.description }}
                                     <br/>

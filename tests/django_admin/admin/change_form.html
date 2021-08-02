@@ -56,42 +56,42 @@
                   {% endif %} {% if form_url %}action="{{ form_url }}"
                   {% endif %} method="post"
                   id="{{ opts.model_name }}_form">
-            {% csrf_token %}{% block form_top %}{% endblock %}
-            <div>
-                {% if is_popup %}
-                    <input type="hidden" name="{{ is_popup_var }}" value="1">
-                {% endif %}
-                {% if to_field %}
-                    <input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">
-                {% endif %}
-                {% if save_on_top %}
-                    {% block submit_buttons_top %}
-                        {% submit_row %}{% endblock %}{% endif %}
-                        {% if errors %}
-                            <p class="errornote">
-                                {% if errors|length == 1 %}{% translate "Please correct the error below." %}{% else %}
-                                    {% translate "Please correct the errors below." %}{% endif %}
-                                </p>
-                                {{ adminform.form.non_field_errors }}
-                            {% endif %}
-                            {% block field_sets %}
-                                {% for fieldset in adminform %}
-                                    {% include "admin/includes/fieldset.html" %}{% endfor %}
-                                {% endblock %}
-                                {% block after_field_sets %}{% endblock %}
-                                {% block inline_field_sets %}
-                                    {% for inline_admin_formset in inline_admin_formsets %}
-                                        {% include inline_admin_formset.opts.template %}{% endfor %}
+                {% csrf_token %}{% block form_top %}{% endblock %}
+                <div>
+                    {% if is_popup %}
+                        <input type="hidden" name="{{ is_popup_var }}" value="1">
+                    {% endif %}
+                    {% if to_field %}
+                        <input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">
+                    {% endif %}
+                    {% if save_on_top %}
+                        {% block submit_buttons_top %}
+                            {% submit_row %}{% endblock %}{% endif %}
+                            {% if errors %}
+                                <p class="errornote">
+                                    {% if errors|length == 1 %}{% translate "Please correct the error below." %}{% else %}
+                                        {% translate "Please correct the errors below." %}{% endif %}
+                                    </p>
+                                    {{ adminform.form.non_field_errors }}
+                                {% endif %}
+                                {% block field_sets %}
+                                    {% for fieldset in adminform %}
+                                        {% include "admin/includes/fieldset.html" %}{% endfor %}
                                     {% endblock %}
-                                    {% block after_related_objects %}{% endblock %}
-                                    {% block submit_buttons_bottom %}
-                                        {% submit_row %}{% endblock %}
-                                        {% block admin_change_form_document_ready %}
-                                            <script id="django-admin-form-add-constants" src="{% static 'admin/js/change_form.js' %}" {% if adminform and add %}data-model-name="{{ opts.model_name }}" {% endif %} async></script>
+                                    {% block after_field_sets %}{% endblock %}
+                                    {% block inline_field_sets %}
+                                        {% for inline_admin_formset in inline_admin_formsets %}
+                                            {% include inline_admin_formset.opts.template %}{% endfor %}
                                         {% endblock %}
-                                        {# JavaScript for prepopulated fields #}
-                                        {% prepopulated_fields_js %}
-                                    </div>
-                                </form>
-                            </div>
-                        {% endblock %}
+                                        {% block after_related_objects %}{% endblock %}
+                                        {% block submit_buttons_bottom %}
+                                            {% submit_row %}{% endblock %}
+                                            {% block admin_change_form_document_ready %}
+                                                <script id="django-admin-form-add-constants" src="{% static 'admin/js/change_form.js' %}" {% if adminform and add %}data-model-name="{{ opts.model_name }}" {% endif %} async></script>
+                                            {% endblock %}
+                                            {# JavaScript for prepopulated fields #}
+                                            {% prepopulated_fields_js %}
+                                        </div>
+                                    </form>
+                                </div>
+                            {% endblock %}

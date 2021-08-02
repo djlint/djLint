@@ -69,43 +69,43 @@
                                             <td>{{ item.quantity }}</td>
                                             <td>{{ item.unit_cost }}</td>
                                             <td class="{% if item.is_cancelled %}djl-is-strikethrough{% endif %}">
-                                            {% currency_symbol %}{{ item.total_amount | currency_format }}
-                                        </td>
-                                        <td class="has-text-weight-bold {% if item.is_cancelled %}has-text-danger{% endif %}">
-                                        {% if item.po_item_status %}{{ item.get_po_item_status_display }}{% endif %}
-                                    </td>
+                                                {% currency_symbol %}{{ item.total_amount | currency_format }}
+                                            </td>
+                                            <td class="has-text-weight-bold {% if item.is_cancelled %}has-text-danger{% endif %}">
+                                                {% if item.po_item_status %}{{ item.get_po_item_status_display }}{% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.bill_model_id %}
+                                                    <a class="is-small is-light button"
+                                                       href="{% url 'django_ledger:bill-detail' entity_slug=view.kwargs.entity_slug bill_pk=item.bill_model_id %}">
+                                                        View Bill
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
                                     <td>
-                                        {% if item.bill_model_id %}
-                                            <a class="is-small is-light button"
-                                               href="{% url 'django_ledger:bill-detail' entity_slug=view.kwargs.entity_slug bill_pk=item.bill_model_id %}">
-                                                View Bill
-                                            </a>
-                                        {% endif %}
+                                        Total PO Amount
                                     </td>
+                                    <td class="has-text-weight-bold">
+                                        {% currency_symbol %}{{ total_amount_due | currency_format }}
+                                    </td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                Total PO Amount
-                            </td>
-                            <td class="has-text-weight-bold">
-                                {% currency_symbol %}{{ total_amount_due | currency_format }}
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        </tfoot>
-                    </table>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class=" column is-12">
+                        {% include 'django_ledger/includes/card_markdown.html' with style='card_1' title='PO Notes' notes_html=po_model.notes_html %}
+                    </div>
                 </div>
             </div>
-            <div class=" column is-12">
-                {% include 'django_ledger/includes/card_markdown.html' with style='card_1' title='PO Notes' notes_html=po_model.notes_html %}
-            </div>
         </div>
-    </div>
-</div>
-{% endblock %}
+    {% endblock %}

@@ -29,94 +29,94 @@
     </head>
     <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
           data-admin-utc-offset="{% now ">
-    <!-- Container -->
-    <div id="container">
-        {% if not is_popup %}
-            <!-- Header -->
-            {% block header %}
-                <div id="header">
-                    <div id="branding">
-                        {% block branding %}{% endblock %}
-                    </div>
-                    {% block usertools %}
-                        {% if has_permission %}
-                            <div id="user-tools">
-                                {% block welcome-msg %}
-                                    {% translate 'Welcome,' %}
-                                    <strong>{% firstof user.get_short_name user.get_username %}</strong>
-                                    .
-                                {% endblock %}
-                                {% block userlinks %}
-                                    {% if site_url %}
-                                        <a href="{{ site_url }}">{% translate 'View site' %}</a>
-                                        /
-                                    {% endif %}
-                                    {% if user.is_active and user.is_staff %}
-                                        {% url 'django-admindocs-docroot' as docsroot %}
-                                        {% if docsroot %}
-                                            <a href="{{ docsroot }}">{% translate 'Documentation' %}</a>
+        <!-- Container -->
+        <div id="container">
+            {% if not is_popup %}
+                <!-- Header -->
+                {% block header %}
+                    <div id="header">
+                        <div id="branding">
+                            {% block branding %}{% endblock %}
+                        </div>
+                        {% block usertools %}
+                            {% if has_permission %}
+                                <div id="user-tools">
+                                    {% block welcome-msg %}
+                                        {% translate 'Welcome,' %}
+                                        <strong>{% firstof user.get_short_name user.get_username %}</strong>
+                                        .
+                                    {% endblock %}
+                                    {% block userlinks %}
+                                        {% if site_url %}
+                                            <a href="{{ site_url }}">{% translate 'View site' %}</a>
                                             /
                                         {% endif %}
-                                    {% endif %}
-                                    {% if user.has_usable_password %}
-                                        <a href="{% url 'admin:password_change' %}">
-                                            {% translate 'Change password' %}
+                                        {% if user.is_active and user.is_staff %}
+                                            {% url 'django-admindocs-docroot' as docsroot %}
+                                            {% if docsroot %}
+                                                <a href="{{ docsroot }}">{% translate 'Documentation' %}</a>
+                                                /
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if user.has_usable_password %}
+                                            <a href="{% url 'admin:password_change' %}">
+                                                {% translate 'Change password' %}
+                                            </a>
+                                            /
+                                        {% endif %}
+                                        <a href="{% url 'admin:logout' %}">
+                                            {% translate 'Log out' %}
                                         </a>
-                                        /
-                                    {% endif %}
-                                    <a href="{% url 'admin:logout' %}">
-                                        {% translate 'Log out' %}
-                                    </a>
-                                {% endblock %}
+                                    {% endblock %}
+                                </div>
+                            {% endif %}
+                        {% endblock %}
+                        {% block nav-global %}{% endblock %}</div>{% endblock %}
+                        <!-- END Header -->
+                        {% block breadcrumbs %}
+                            <div class="breadcrumbs">
+                                <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+                                {% if title %}&rsaquo; {{ title }}{% endif %}
                             </div>
-                        {% endif %}
-                    {% endblock %}
-                    {% block nav-global %}{% endblock %}</div>{% endblock %}
-                    <!-- END Header -->
-                    {% block breadcrumbs %}
-                        <div class="breadcrumbs">
-                            <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
-                            {% if title %}&rsaquo; {{ title }}{% endif %}
-                        </div>
-                    {% endblock %}{% endif %}
-                    <div class="main" id="main">
-                        {% if not is_popup and is_nav_sidebar_enabled %}
-                            {% block nav-sidebar %}
-                                {% include "admin/nav_sidebar.html" %}{% endblock %}{% endif %}
-                                <div class="content">
-                                    {% block messages %}
-                                        {% if messages %}
-                                            <ul class="messagelist">
-                                                {% for message in messages %}
-                                                    <li{% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                {% endblock messages %}
-                                <!-- Content -->
-                                <div id="content" class="{% block coltype %}colM{% endblock %}">
-                                {% block pretitle %}{% endblock %}
-                                {% block content_title %}{% if title %}
-                                    <h1>{{ title }}</h1>
-                                {% endif %}{% endblock %}
-                                {% block content_subtitle %}{% if subtitle %}
-                                    <h2>{{ subtitle }}</h2>
-                                {% endif %}{% endblock %}
-                                {% block content %}
-                                    {% block object-tools %}{% endblock %}
-                                    {{ content }}
-                                {% endblock %}
-                                {% block sidebar %}{% endblock %}
-                                <br class="clear">
+                        {% endblock %}{% endif %}
+                        <div class="main" id="main">
+                            {% if not is_popup and is_nav_sidebar_enabled %}
+                                {% block nav-sidebar %}
+                                    {% include "admin/nav_sidebar.html" %}{% endblock %}{% endif %}
+                                    <div class="content">
+                                        {% block messages %}
+                                            {% if messages %}
+                                                <ul class="messagelist">
+                                                    {% for message in messages %}
+                                                        <li{% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% endblock messages %}
+                                        <!-- Content -->
+                                        <div id="content" class="{% block coltype %}colM{% endblock %}">
+                                            {% block pretitle %}{% endblock %}
+                                            {% block content_title %}{% if title %}
+                                                <h1>{{ title }}</h1>
+                                            {% endif %}{% endblock %}
+                                            {% block content_subtitle %}{% if subtitle %}
+                                                <h2>{{ subtitle }}</h2>
+                                            {% endif %}{% endblock %}
+                                            {% block content %}
+                                                {% block object-tools %}{% endblock %}
+                                                {{ content }}
+                                            {% endblock %}
+                                            {% block sidebar %}{% endblock %}
+                                            <br class="clear">
+                                        </div>
+                                        <!-- END Content -->
+                                        {% block footer %}
+                                            <div id="footer"></div>
+                                        {% endblock %}
+                                    </div>
+                                </div>
                             </div>
-                            <!-- END Content -->
-                            {% block footer %}
-                                <div id="footer"></div>
-                            {% endblock %}
-                        </div>
-                    </div>
-                </div>
-                <!-- END Container -->
-            </body>
-        </html>
+                            <!-- END Container -->
+                        </body>
+                    </html>

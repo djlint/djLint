@@ -3,7 +3,7 @@
      class="cms cms-reset {% if not user.is_authenticated %}cms-toolbar-auth{% endif %} {% if debug %}cms-toolbar-debug{% endif %}"
      dir="ltr"
      data-touch-action="none">
-{% block toolbar_top %}{% endblock toolbar_top %}
+    {% block toolbar_top %}{% endblock toolbar_top %}
     {# start: toolbar #}
     <div class="cms-toolbar">
         <div class="cms-debug-bar"></div>
@@ -36,4 +36,4 @@
     </div>
     {# end: toolbar #}
     {% block toolbar_bottom %}{% endblock toolbar_bottom %}
-    </div>
+</div>

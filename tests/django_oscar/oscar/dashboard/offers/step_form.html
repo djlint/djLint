@@ -51,9 +51,10 @@
     <div class="row">
         <div class="col-md-3">
             {% block progress %}
-                {% include 'oscar/dashboard/offers/progress.html' %}{% endblock %}
-            </div>
-            <div class="{% if session_offer %}col-md-6{% else %}col-md-9{% endif %}">
+                {% include 'oscar/dashboard/offers/progress.html' %}
+            {% endblock %}
+        </div>
+        <div class="{% if session_offer %}col-md-6{% else %}col-md-9{% endif %}">
             <form method="post" class="form-stacked wysiwyg fixed-actions">
                 <div class="table-header">
                     <h3>{{ title }}</h3>
@@ -61,45 +62,47 @@
                 <div class="card card-body">
                     {% csrf_token %}
                     {% block form_fields %}
-                        {% include "oscar/dashboard/partials/form_fields.html" with form=form %}{% endblock %}
-                        {% block form_extradata %}{% endblock %}
-                    </div>
-                    {% block form_actions %}
-                        <div class="fixed-actions-group">
-                            <div class="form-actions">
-                                <div class="float-right">
-                                    {% block form_actions_buttons %}
-                                        <button class="btn btn-primary"
+                        {% include "oscar/dashboard/partials/form_fields.html" with form=form %}
+                    {% endblock %}
+                    {% block form_extradata %}{% endblock %}
+                </div>
+                {% block form_actions %}
+                    <div class="fixed-actions-group">
+                        <div class="form-actions">
+                            <div class="float-right">
+                                {% block form_actions_buttons %}
+                                    <button class="btn btn-primary"
+                                            type="submit"
+                                            data-loading-text="{% trans 'Submitting...' %}">
+                                        {% block submittext %}
+                                            {% trans "Continue" %}
+                                        {% endblock %}
+                                    </button>
+                                    {% if offer %}
+                                        {# When editing offer, show saving button #}
+                                        <button class="btn btn-secondary"
+                                                name="save"
                                                 type="submit"
-                                                data-loading-text="{% trans 'Submitting...' %}">
-                                            {% block submittext %}
-                                                {% trans "Continue" %}
-                                            {% endblock %}
+                                                data-loading-text="{% trans 'Saving...' %}">
+                                            {% trans "Save changes" %}
                                         </button>
-                                        {% if offer %}
-                                            {# When editing offer, show saving button #}
-                                            <button class="btn btn-secondary"
-                                                    name="save"
-                                                    type="submit"
-                                                    data-loading-text="{% trans 'Saving...' %}">
-                                                {% trans "Save changes" %}
-                                            </button>
-                                        {% endif %}
-                                    {% endblock %}
-                                </div>
-                                <a class="btn btn-secondary" href="{% url 'dashboard:offer-list' %}">
-                                    {% trans "cancel" %}
-                                </a>
+                                    {% endif %}
+                                {% endblock %}
                             </div>
+                            <a class="btn btn-secondary" href="{% url 'dashboard:offer-list' %}">
+                                {% trans "cancel" %}
+                            </a>
                         </div>
-                    {% endblock form_actions %}
-                </form>
-            </div>
-            {% if session_offer %}
-                <div class="col-md-3">
-                    {% block summary %}
-                        {% include 'oscar/dashboard/offers/summary.html' %}{% endblock %}
                     </div>
-                {% endif %}
+                {% endblock form_actions %}
+            </form>
+        </div>
+        {% if session_offer %}
+            <div class="col-md-3">
+                {% block summary %}
+                    {% include 'oscar/dashboard/offers/summary.html' %}
+                {% endblock %}
             </div>
-        {% endblock dashboard_content %}
+        {% endif %}
+    </div>
+{% endblock dashboard_content %}

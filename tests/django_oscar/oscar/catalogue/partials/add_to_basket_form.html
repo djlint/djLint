@@ -19,29 +19,29 @@
         </button>
     </form>
     {% iffeature "wishlists" %}
-        {% include "oscar/catalogue/partials/add_to_wishlist.html" %}{% endiffeature %}
+        {% include "oscar/catalogue/partials/add_to_wishlist.html" %}
+    {% endiffeature %}
+{% else %}
+    {% if has_active_alert %}
+        <p>
+            {% trans "You have an active stock alert for this product." %}
+        </p>
     {% else %}
-        {% if has_active_alert %}
+        <form id="alert_form"
+              method="post"
+              action="{% url 'customer:alert-create' pk=product.id %}"
+              class="add-to-basket mb-0">
+            {% csrf_token %}
             <p>
-                {% trans "You have an active stock alert for this product." %}
+                {% trans "You can get an email alert when this product is back in stock." %}
             </p>
-        {% else %}
-            <form id="alert_form"
-                  method="post"
-                  action="{% url 'customer:alert-create' pk=product.id %}"
-                  class="add-to-basket mb-0">
-                {% csrf_token %}
-                <p>
-                    {% trans "You can get an email alert when this product is back in stock." %}
-                </p>
-                {% include "oscar/partials/form_fields.html" with form=alert_form %}
-                <button type="submit"
-                        class="btn btn-lg btn-info w-100"
-                        data-loading-text="{% trans 'Submitting...' %}">
-                    {% trans "Notify me" %}
-                </button>
-            </form>
-        {% endif %}
-        {% iffeature "wishlists" %}
-            {% include "oscar/catalogue/partials/add_to_wishlist.html" %}{% endiffeature %}
-        {% endif %}
+            {% include "oscar/partials/form_fields.html" with form=alert_form %}
+            <button type="submit" class="btn btn-lg btn-info w-100" data-loading-text="{% trans 'Submitting...' %}">
+                {% trans "Notify me" %}
+            </button>
+        </form>
+    {% endif %}
+    {% iffeature "wishlists" %}
+        {% include "oscar/catalogue/partials/add_to_wishlist.html" %}
+    {% endiffeature %}
+{% endif %}

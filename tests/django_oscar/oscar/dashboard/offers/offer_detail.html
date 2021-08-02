@@ -246,25 +246,26 @@
             <tbody>
                 {% for discount in order_discounts %}
                     {% with order=discount.order %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'dashboard:order-detail' number=order.number %}">
-                                {{ order.number }}
-                            </a>
-                        </td>
-                        <td>
-                            {{ order.date_placed }}
-                        </td>
-                        <td>
-                            {{ order.total_incl_tax|currency }}
-                        </td>
-                        <td>
-                            {{ discount.amount|currency }}
-                        </td>
-                    </tr>
-                {% endwith %}
-            {% endfor %}
-        </tbody>
-    </table>
-    {% include 'oscar/dashboard/partials/pagination.html' %}{% endif %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'dashboard:order-detail' number=order.number %}">
+                                    {{ order.number }}
+                                </a>
+                            </td>
+                            <td>
+                                {{ order.date_placed }}
+                            </td>
+                            <td>
+                                {{ order.total_incl_tax|currency }}
+                            </td>
+                            <td>
+                                {{ discount.amount|currency }}
+                            </td>
+                        </tr>
+                    {% endwith %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include 'oscar/dashboard/partials/pagination.html' %}
+    {% endif %}
 {% endblock dashboard_content %}

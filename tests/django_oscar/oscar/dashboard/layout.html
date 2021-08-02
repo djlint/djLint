@@ -75,92 +75,92 @@
                 <ul class="navbar-nav">
                     {% for item in nav_items %}
                         <li class="nav-item {% if item.has_children %}dropdown{% endif %}">
-                        <a class="nav-link {% if item.has_children %}dropdown-toggle{% endif %}" href="{% if item.is_heading %}#{% else %}{{ item.url }}{% endif %}"
-                        {% if item.has_children %}
-                            id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                        {% endif %}
-                        >
-                        {% if item.icon %}<i class="{{ item.icon }}"></i>{% endif %}
-                        {{ item.label }}
-                    </a>
-                    {% if item.has_children %}
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            {% for subitem in item.children %}
-                                <a class="dropdown-item" href="{{ subitem.url }}">
-                                    {% if subitem.icon %}<i class="{{ subitem.icon }}"></i>{% endif %}
-                                    {{ subitem.label }}
-                                </a>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-<div class="container-fluid">
-{% block breadcrumbs %}
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
-            </li>
-        </ol>
-    </nav>
-{% endblock %}
-<div class="content">
-    {% include 'oscar/dashboard/partials/alert_messages.html' %}
-    {% block header %}
-        <div class="page-header">
-            <h1>{% block headertext %}{% endblock %}</h1>
-        </div>
+                            <a class="nav-link {% if item.has_children %}dropdown-toggle{% endif %}" href="{% if item.is_heading %}#{% else %}{{ item.url }}{% endif %}"
+                                {% if item.has_children %}
+                                    id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                {% endif %}
+                                >
+                                {% if item.icon %}<i class="{{ item.icon }}"></i>{% endif %}
+                                {{ item.label }}
+                            </a>
+                            {% if item.has_children %}
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    {% for subitem in item.children %}
+                                        <a class="dropdown-item" href="{{ subitem.url }}">
+                                            {% if subitem.icon %}<i class="{{ subitem.icon }}"></i>{% endif %}
+                                            {{ subitem.label }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </nav>
     {% endblock %}
-    <div class="page-content">
-        {% block content %}
-            {% block dashboard_content %}{% endblock dashboard_content %}
-            {% endblock content %}
+    <div class="container-fluid">
+        {% block breadcrumbs %}
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="{% url 'dashboard:index' %}">
+                            {% trans "Dashboard" %}
+                        </a>
+                    </li>
+                </ol>
+            </nav>
+        {% endblock %}
+        <div class="content">
+            {% include 'oscar/dashboard/partials/alert_messages.html' %}
+            {% block header %}
+                <div class="page-header">
+                    <h1>{% block headertext %}{% endblock %}</h1>
+                </div>
+            {% endblock %}
+            <div class="page-content">
+                {% block content %}
+                    {% block dashboard_content %}{% endblock dashboard_content %}
+                {% endblock content %}
+            </div>
         </div>
     </div>
-</div>
-<!-- /container -->
+    <!-- /container -->
 {% endblock %}
 {# Local scripts #}
 {% block scripts %}
-<!-- Twitter Bootstrap -->
-<script src="{% static "oscar/js/bootstrap4/bootstrap.bundle.min.js" %}"></script>
-<!-- Oscar -->
-<script src="{% static "oscar/js/oscar/ui.js" %}"></script>
+    <!-- Twitter Bootstrap -->
+    <script src="{% static "oscar/js/bootstrap4/bootstrap.bundle.min.js" %}"></script>
+    <!-- Oscar -->
+    <script src="{% static "oscar/js/oscar/ui.js" %}"></script>
 {% endblock %}
 {% block extrascripts %}
-{{ block.super }}
-{# jQuery plugins #}
-<script src="{% static "oscar/js/mousewheel/jquery.mousewheel.js" %}"></script>
-<script src="{% static "oscar/js/bootstrap4-datetimepicker/moment-with-locales.min.js" %}"></script>
-<script src="{% static "oscar/js/bootstrap4-datetimepicker/tempusdominus-bootstrap-4.min.js" %}"></script>
-<script src="{% static "oscar/js/inputmask/jquery.inputmask.min.js" %}"></script>
-<script src="{% static "oscar/js/select2/select2.min.js" %}"></script>
-<script src="{% static "oscar/js/jquery-sortable/jquery-sortable-min.js" %}"></script>
-<script src="{% static "oscar/js/oscar/dashboard.js" %}"></script>
-<script src="{% static "oscar/js/oscar/RelatedObjectLookups.js" %}"></script>
-<script src="{% static "oscar/js/tinymce/tinymce.min.js" %}"></script>
-<script src="{% static "oscar/js/tinymce/jquery.tinymce.min.js" %}"></script>
+    {{ block.super }}
+    {# jQuery plugins #}
+    <script src="{% static "oscar/js/mousewheel/jquery.mousewheel.js" %}"></script>
+    <script src="{% static "oscar/js/bootstrap4-datetimepicker/moment-with-locales.min.js" %}"></script>
+    <script src="{% static "oscar/js/bootstrap4-datetimepicker/tempusdominus-bootstrap-4.min.js" %}"></script>
+    <script src="{% static "oscar/js/inputmask/jquery.inputmask.min.js" %}"></script>
+    <script src="{% static "oscar/js/select2/select2.min.js" %}"></script>
+    <script src="{% static "oscar/js/jquery-sortable/jquery-sortable-min.js" %}"></script>
+    <script src="{% static "oscar/js/oscar/dashboard.js" %}"></script>
+    <script src="{% static "oscar/js/oscar/RelatedObjectLookups.js" %}"></script>
+    <script src="{% static "oscar/js/tinymce/tinymce.min.js" %}"></script>
+    <script src="{% static "oscar/js/tinymce/jquery.tinymce.min.js" %}"></script>
 {% endblock %}
 {% block onbodyload %}
-{{ block.super }}
-// Javascript to enable link to tab
-var url = document.location.toString();
-if (url.match('#')) {
-$('.nav-list a[href="#' + url.split('#')[1] + '"]').tab('show');
-}
-// Change hash for page-reload
-$('.nav-list a').on('shown.bs.tab', function (e) {
-window.location.hash = e.target.hash;
-});
-options = {
-'languageCode': '{{ LANGUAGE_CODE }}'
-};
-oscar.dashboard.init(options);
+    {{ block.super }}
+    // Javascript to enable link to tab
+    var url = document.location.toString();
+    if (url.match('#')) {
+    $('.nav-list a[href="#' + url.split('#')[1] + '"]').tab('show');
+    }
+    // Change hash for page-reload
+    $('.nav-list a').on('shown.bs.tab', function (e) {
+    window.location.hash = e.target.hash;
+    });
+    options = {
+    'languageCode': '{{ LANGUAGE_CODE }}'
+    };
+    oscar.dashboard.init(options);
 {% endblock %}

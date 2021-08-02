@@ -188,7 +188,8 @@
     </div>
     <div class="col-md-6 code-samples">
         {% for html in lang_htmls %}
-            {% include html %}{% endfor %}
-        </div>
+            {% include html %}
+        {% endfor %}
     </div>
-    {% include "rest_framework/docs/interact.html" with link=link %}
+</div>
+{% include "rest_framework/docs/interact.html" with link=link %}

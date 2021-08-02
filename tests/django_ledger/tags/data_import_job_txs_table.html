@@ -28,26 +28,26 @@
                     <td>{{ txf.date_posted.value }}</td>
                     <td>{{ txf.name.value }}</td>
                     <td class="{% if txf.amount.value < 0 %}has-text-danger{% endif %}">
-                    ${{ txf.amount.value }}
-                </td>
-                <td>{{ txf.earnings_account }}</td>
-                <td>{{ txf.tx_import }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                        ${{ txf.amount.value }}
+                    </td>
+                    <td>{{ txf.earnings_account }}</td>
+                    <td>{{ txf.tx_import }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 <div class="columns is-centered">
-<div class="column is-4 has-text-centered">
-    <button class="button is-primary is-small is-fullwidth">
-        {% trans 'Save/Import' %}
-    </button>
-</div>
-<div class="column is-4 has-text-centered">
-    <a class="button is-info is-small is-fullwidth"
-       href="{% url 'django_ledger:bank-account-update' entity_slug=view.kwargs.entity_slug bank_account_pk=bank_account_model.uuid %}">
-        {% trans 'Bank Account' %}
-    </a>
-</div>
+    <div class="column is-4 has-text-centered">
+        <button class="button is-primary is-small is-fullwidth">
+            {% trans 'Save/Import' %}
+        </button>
+    </div>
+    <div class="column is-4 has-text-centered">
+        <a class="button is-info is-small is-fullwidth"
+           href="{% url 'django_ledger:bank-account-update' entity_slug=view.kwargs.entity_slug bank_account_pk=bank_account_model.uuid %}">
+            {% trans 'Bank Account' %}
+        </a>
+    </div>
 </div>
 </form>

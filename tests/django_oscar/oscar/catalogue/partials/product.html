@@ -7,9 +7,11 @@
         {% block product_image %}
             <div class="image_container w-100">
                 {% with image=product.primary_image %}
-                {% oscar_thumbnail image.original "x155" upscale=False as thumb %}
-                <a href="{{ product.get_absolute_url }}">
-                    <img src="{{ thumb.url }}" alt="{{ product.get_title }}" class="img-thumbnail w-auto mx-auto my-0">
+                    {% oscar_thumbnail image.original "x155" upscale=False as thumb %}
+                    <a href="{{ product.get_absolute_url }}">
+                        <img src="{{ thumb.url }}"
+                             alt="{{ product.get_title }}"
+                             class="img-thumbnail w-auto mx-auto my-0">
                     </a>
                 {% endwith %}
             </div>
@@ -36,8 +38,9 @@
             <div class="product_price w-100">
                 {% include "oscar/catalogue/partials/stock_record.html" %}
                 {% if not product.is_parent and not product.has_options %}
-                    {% include "oscar/catalogue/partials/add_to_basket_form_compact.html" %}{% endif %}
-                </div>
-            {% endblock %}
-        </article>
-    {% endblock %}
+                    {% include "oscar/catalogue/partials/add_to_basket_form_compact.html" %}
+                {% endif %}
+            </div>
+        {% endblock %}
+    </article>
+{% endblock %}

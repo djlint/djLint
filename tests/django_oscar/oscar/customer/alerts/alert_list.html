@@ -19,29 +19,29 @@
                     <tr>
                         <td>
                             {% with product=alert.product %}
-                            {% if product.is_public %}
-                                <a href="{{ product.get_absolute_url }}">
+                                {% if product.is_public %}
+                                    <a href="{{ product.get_absolute_url }}">
+                                        {{ product.get_title }}
+                                    </a>
+                                {% else %}
                                     {{ product.get_title }}
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>{{ alert.status }}</td>
+                        <td>{{ alert.date_created }}</td>
+                        <td>
+                            {% if alert.can_be_cancelled %}
+                                <a href="{% url 'customer:alerts-cancel-by-pk' pk=alert.pk %}?next={% url 'customer:alerts-list' %}"
+                                   class="btn btn-danger">
+                                    {% trans "Cancel" %}
                                 </a>
-                            {% else %}
-                                {{ product.get_title }}
                             {% endif %}
-                        {% endwith %}
-                    </td>
-                    <td>{{ alert.status }}</td>
-                    <td>{{ alert.date_created }}</td>
-                    <td>
-                        {% if alert.can_be_cancelled %}
-                            <a href="{% url 'customer:alerts-cancel-by-pk' pk=alert.pk %}?next={% url 'customer:alerts-list' %}"
-                               class="btn btn-danger">
-                                {% trans "Cancel" %}
-                            </a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        {% include "oscar/partials/pagination.html" %}
-    </form>
-{% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% include "oscar/partials/pagination.html" %}
+        </form>
+    {% endif %}
 {% endblock tabcontent %}

@@ -5,16 +5,16 @@
         {{ field }}
     {% else %}
         <div class="form-group mr-2 {% if field.errors %}error{% endif %}">
-        {{ field.label_tag }}
-        {% render_field field class+='form-control' %}
-        {% for error in field.errors %}
-            <ul class="error-block">
-                <li>
-                    {{ error }}
-                </li>
-            </ul>
-        {% endfor %}
-        {# No help text as it wraps #}
-    </div>
-{% endif %}
+            {{ field.label_tag }}
+            {% render_field field class+='form-control' %}
+            {% for error in field.errors %}
+                <ul class="error-block">
+                    <li>
+                        {{ error }}
+                    </li>
+                </ul>
+            {% endfor %}
+            {# No help text as it wraps #}
+        </div>
+    {% endif %}
 {% endfor %}

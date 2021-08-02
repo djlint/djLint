@@ -11,41 +11,42 @@
                 <a href="{{ homepage_url }}">{% trans "Home" %}</a>
             </li>
             {% with category=product.categories.all.0 %}
-            {% for c in category.get_ancestors_and_self %}
+                {% for c in category.get_ancestors_and_self %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ c.get_absolute_url }}">
+                            {{ c.name }}
+                        </a>
+                    </li>
+                {% endfor %}
                 <li class="breadcrumb-item">
-                    <a href="{{ c.get_absolute_url }}">
-                        {{ c.name }}
+                    <a href="{{ product.get_absolute_url }}">
+                        {{ product.title }}
                     </a>
                 </li>
-            {% endfor %}
-            <li class="breadcrumb-item">
-                <a href="{{ product.get_absolute_url }}">
-                    {{ product.title }}
-                </a>
+            {% endwith %}
+            <li class="breadcrumb-item active" aria-current="page">
+                {% trans "All reviews" %}
             </li>
-        {% endwith %}
-        <li class="breadcrumb-item active" aria-current="page">
-            {% trans "All reviews" %}
-        </li>
-    </ol>
-</nav>
+        </ol>
+    </nav>
 {% endblock %}
 {% block headertext %}
-{% trans "Customer reviews" %}
+    {% trans "Customer reviews" %}
 {% endblock %}
 {% block content %}
-<section>
-    {% include 'oscar/catalogue/reviews/review_product.html' %}
-    {% if reviews %}
-        <form method="get" class="form-inline">
-            {% include "oscar/partials/form_fields_inline.html" with form=form %}
-            <button type="submit" class="btn btn-secondary">
-                {% trans "Go" %}
-            </button>
-        </form>
-        <hr>
-        {% for review in reviews %}
-            {% include 'oscar/catalogue/partials/review.html' %}{% endfor %}
+    <section>
+        {% include 'oscar/catalogue/reviews/review_product.html' %}
+        {% if reviews %}
+            <form method="get" class="form-inline">
+                {% include "oscar/partials/form_fields_inline.html" with form=form %}
+                <button type="submit" class="btn btn-secondary">
+                    {% trans "Go" %}
+                </button>
+            </form>
+            <hr>
+            {% for review in reviews %}
+                {% include 'oscar/catalogue/partials/review.html' %}
+            {% endfor %}
             {% include 'oscar/partials/pagination.html' %}
         {% else %}
             <p>
