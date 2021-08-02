@@ -61,7 +61,6 @@ def indent_html(rawcode):
     slt_template = "|".join(single_line_template_tags)
 
     for item in rawcode_flat_list:
-
         # if a raw tag then start ignoring
         if (
             tag_raw_flat_opening
@@ -80,7 +79,7 @@ def indent_html(rawcode):
             re.findall(r"(<(%s)>)(.*?)(</(\2)>)" % slt_html, item, re.IGNORECASE)
             or re.findall(r"(<(%s) .+?>)(.*?)(</(\2)>)" % slt_html, item, re.IGNORECASE)
             or re.findall(
-                r"^({% +?(" + slt_template + r") +?.+?%})(.*?)({% +?end(\2) +?%})",
+                r"^({% +?(" + slt_template + r") +?.+?%})(.*?)({% +?end(\2) +?.*?%})",
                 item,
                 re.IGNORECASE | re.MULTILINE,
             )
