@@ -1,6 +1,7 @@
 - rule:
     name: E001
     message: Variables should be wrapped in a single whitespace.
+    flags: re.DOTALL
     patterns:
     # open
     - '{{[^\s#]+'
@@ -16,82 +17,104 @@
 - rule:
     name: E002
     message: Double quotes should be used in tags.
+    flags: re.DOTALL
     patterns:
     - '{%.?extends\s+?[^\"]\w+'
 - rule:
     name: W003
     message: 'Endblock should have name. Ex: {% endblock body %}.'
+    flags: re.DOTALL
     patterns:
     - '{%\s*?endblock\s*?%}'
 - rule:
     name: W004
     message: Status urls should follow {% static path/to/file %} pattern.
+    flags: re.DOTALL
     # this should be using the static path from django settings
     patterns:
     - <(?:link|img|script)\s[^\>]*?(?:href|src)=[\"\']/?static/?
 - rule:
     name: W005
     message: Html tag should have lang attribute.
+    flags: re.DOTALL|re.I
     patterns:
     - <html\s*(?:(?!lang).)*>
 - rule:
     name: W006
     message: Img tag should have alt, height and width attributes.
+    flags: re.DOTALL|re.I
     patterns:
     - <img\s(?:(?!(?:alt|width|height)).)*>
 - rule:
     name: W007
     message: <!DOCTYPE ... > should be present before the html tag.
+    flags: re.DOTALL|re.I
     patterns:
     - ^<html
 - rule:
     name: W008
     message: Attributes should be double quoted.
+    flags: re.DOTALL|re.I
     patterns:
     - (?:class|id|src|width|height|alt|style|lang|title)=\'[^\']*'
 - rule:
     name: W009
     message: Tag names should be lowercase.
+    flags: re.DOTALL
     patterns:
     - (?<=<)(?:HTML|BODY|DIV|P|SPAN|TABLE|TR|TD|TH|THEAD|TBODY|CODE|UL|OL|LI|H1|H2|H3|H4|H5|H6)
 - rule:
     name: W010
     message: Attribute names should be lowercase.
+    flags: re.DOTALL
     patterns:
     - (?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE)=
 - rule:
     name: W011
     message: Attirbute values should be quoted.
+    flags: re.DOTALL|re.I
     patterns:
     - "[^(?:\"|')](?:class|id|src|width|height|alt|style|lang|title)=[a-zA-Z]+"
 - rule:
     name: W012
     message: There should be no spaces around attribute =.
+    flags: re.DOTALL
     patterns:
     - <(?:(?!\{[%|{|#])[^\n])*\s+=
     - <(?:(?!\{[%|{|#])[^\n])*=\s
 - rule:
     name: W013
     message: Line is longer than 120 chars.
+    flags: re.DOTALL
     patterns:
     - "[^\n]{120,}"
 - rule:
     name: W014
     message: More than 2 blank lines.
+    flags: re.DOTALL
     patterns:
     - "[^\n]{,10}\n{3,}"
 - rule:
     name: W015
     message: Follow h tags with a blank line.
+    flags: re.DOTALL
     patterns:
     - </h\d?>(?:(?!(.+\r?\n){1,}).)*<[a-zA-Z]+\d?
 - rule:
     name: W016
     message: Missing title tag in html.
+    flags: re.DOTALL|re.I
     patterns:
     - <html[^>]*?>(?:(?!<title>).)*</html>
 - rule:
     name: W017
     message: Tag should be self closing.
+    flags: re.DOTALL|re.I
     patterns:
     - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|command|keygen|menuitem|path)[^>]*?[^/]>
+- rule:
+    name: W018
+    message: Internal links should use the {% url ... %} pattern.
+    flags: re.DOTALL|re.I
+    patterns:
+    - <a\s+?[^>]*?\Khref=[\"|'](?!https?:)/?[^/][^/][^>]*

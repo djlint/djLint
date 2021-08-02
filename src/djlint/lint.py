@@ -1,13 +1,37 @@
 """Djlint html linter."""
-import re
 from pathlib import Path
 
+import regex as re
 import yaml
 
 rules = yaml.load(
     (Path(__file__).parent / "rules.yaml").read_text(encoding="utf8"),
     Loader=yaml.SafeLoader,
 )
+flags = {
+    "re.A": re.A,
+    "re.ASCII": re.ASCII,
+    "re.I": re.I,
+    "re.IGNORECASE": re.IGNORECASE,
+    "re.M": re.M,
+    "re.MULTILINE": re.MULTILINE,
+    "re.S": re.S,
+    "re.DOTALL": re.DOTALL,
+    "re.X": re.X,
+    "re.VERBOSE": re.VERBOSE,
+    "re.L": re.L,
+    "re.LOCALE": re.LOCALE,
+}
+
+
+def build_flags(flag_list):
+    """Build list of regex flags."""
+    split_flags = flag_list.split("|")
+
+    combined_flags = 0
+    for flag in split_flags:
+        combined_flags |= flags[flag.strip()]
+    return combined_flags
 
 
 def get_line(start, line_ends):
@@ -35,7 +59,10 @@ def lint_file(ignore: str, this_file: Path):
         rule = rule["rule"]
 
         for pattern in rule["patterns"]:
-            for match in re.finditer(pattern, html, re.DOTALL):
+
+            for match in re.finditer(
+                pattern, html, flags=build_flags(rule.get("flags", "re.DOTALL"))
+            ):
                 errors[file_name].append(
                     {
                         "code": rule["name"],

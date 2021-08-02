@@ -57,4 +57,5 @@ A good rule consists of
 -  Name
 -  Code - Codes beginning with "E" signify error, and "W" warning.
 -  Message - Message to display when error is found.
+-  Flags - Regex flags. Defaults to re.DOTALL. ex: re.I|re.M
 -  Patterns - regex expressions that will find the error.

@@ -200,6 +200,16 @@ def test_W017(runner, tmp_file):
     assert "W017 1:" in result.output
 
 
+def test_W018(runner, tmp_file):
+    write_to_file(
+        tmp_file.name,
+        b'<a class="drop-link" href="/Collections?handler=RemoveAgreement&id=@a.Id">',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "W018 1:" in result.output
+
+
 def test_check(runner, tmp_file):
     write_to_file(tmp_file.name, b"<div></div>")
     result = runner.invoke(djlint, [tmp_file.name], "--check")
