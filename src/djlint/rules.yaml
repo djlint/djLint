@@ -117,4 +117,4 @@
     message: Internal links should use the {% url ... %} pattern.
     flags: re.DOTALL|re.I
     patterns:
-    - <a\s+?[^>]*?(?:href|data-url)=[\"|'][\w|/]\w*
+    - <a\s+?[^>]*?(?:href|data-url)=[\"|'](?!https?://)[\w|/]+
