@@ -92,6 +92,7 @@ single_line_html_tags = [
     "link",
     "path",
     "label",
+    "textarea",
 ]
 
 always_single_line_html_tags = ["link"]
