@@ -9,16 +9,16 @@ break_html_tags = ["a", "abbr"]
 
 
 # indicates tags whose contents should not be formatted
-ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre|<svg|{#"
+ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre|{#"
 
 # indicates when to stop ignoring
-ignored_tag_closing = r"</script|</style|-->|\*}|\?>|</pre|</svg|#}"
+ignored_tag_closing = r"</script|</style|-->|\*}|\?>|</pre|#}"
 
 # the contents of these tag blocks will be indented
-tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|script|style|source))"
+tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
 
 # this signals when tags should be unindented (see tags above)
-tag_unindent = r"(?:\{\{\/)|\{% end|(?:{% endverbatim %})|(?:</(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|header|cache|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|script|style|source))"
+tag_unindent = r"(?:\{\{\/)|\{% end|(?:{% endverbatim %})|(?:</(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|header|cache|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
 
 # these tags should be unindented and next line will be indented
 tag_unindent_line = r"(?:\{% el)|(?:\{\{ *?(?:else|\^) *?\}\})"
@@ -59,7 +59,7 @@ break_template_tags = [
 unformated_html_tags = ["script"]
 
 ignored_blocks = [
-    r"<(script|style|pre|svg).*?(?:%s).*?</(\1)>",
+    r"<(script|style|pre).*?(?:%s).*?</(\1)>",
     r"<!--.*?(?:%s).*?-->",
     r"{\*.*?(?:%s).*?\*}",
     r"{#.*?(?:%s).*?#}",
@@ -90,6 +90,7 @@ single_line_html_tags = [
     "span",
     "title",
     "link",
+    "path",
 ]
 
 always_single_line_html_tags = ["link"]
@@ -156,6 +157,7 @@ break_html_tags = [
     "html",
     "i",
     "iframe",
+    "icon",
     "img",
     "input",
     "ins",
@@ -178,6 +180,7 @@ break_html_tags = [
     "option",
     "output",
     "p",
+    "path",
     "param",
     "picture",
     "pre",
