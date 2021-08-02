@@ -6,9 +6,9 @@
     - '{{[^\s#]+'
     - '{%[^\s]+'
     # handlebars
-    - '[^{]{#[^\s]+'
-    - '[^{]{\/[^\s]+'
-    - '[^{]{\@[^\s]+'
+    - '[^{]{#[^\s]+|^{#[^\s]+'
+    - '[^{]{\/[^\s]+|^{\/[^\s]+'
+    - '[^{]{\@[^\s]+|^{\@[^\s]+'
     # close
     - '[^\s]+[}|%|#]}'
     - \s{2,}[}|%|#]}
@@ -87,11 +87,11 @@
     - </h\d?>(?:(?!(.+\r?\n){1,}).)*<[a-zA-Z]+\d?
 - rule:
     name: W016
-    message: Missging title tag in html.
+    message: Missing title tag in html.
     patterns:
     - <html[^>]*?>(?:(?!<title>).)*</html>
 - rule:
     name: W017
     message: Tag should be self closing.
     patterns:
-    - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|command|keygen|menuitem)[^>]*?[^/]>
+    - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|command|keygen|menuitem|path)[^>]*?[^/]>
