@@ -97,7 +97,7 @@ def indent_html(rawcode):
             and is_block_raw is False
             or re.search(ignored_tag_closing, item, re.IGNORECASE)
         ):
-            indent_level = indent_level - 1
+            indent_level = max(indent_level - 1, 0)
             tmp = (indent * indent_level) + item + "\n"
             blank_counter = 0
 
