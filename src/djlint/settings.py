@@ -45,8 +45,26 @@ ignored_attributes = [
     "data-json",
 ]
 
-ignored_paths = r"(?:\.tox|\.venv|node_modules|_build)"
-
+ignored_paths = [
+    ".venv",
+    "venv",
+    ".tox",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".svn",
+    ".bzr",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    ".pants.d",
+    ".direnv",
+    "node_modules",
+    "__pypackages__",
+]
 
 start_template_tags = (
     r"{% ?(?:if|for|block|spaceless|compress|load|assets|addto|language|with)[^}]+?%}"

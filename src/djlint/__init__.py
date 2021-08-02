@@ -41,7 +41,9 @@ def get_src(src: Path, extension=None):
 
     paths = list(
         filter(
-            lambda x: not re.search(ignored_paths, str(x)),
+            lambda x: not re.search(
+                "|".join([re.escape(x) for x in ignored_paths]), str(x)
+            ),
             list(src.glob(r"**/*.%s" % extension)),
         )
     )
