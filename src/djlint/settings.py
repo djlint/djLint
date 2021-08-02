@@ -15,7 +15,7 @@ ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre|{#"
 ignored_tag_closing = r"</script|</style|-->|\*}|\?>|</pre|#}"
 
 # the contents of these tag blocks will be indented
-tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|textarea|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
+tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language|with)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|textarea|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
 
 # this signals when tags should be unindented (see tags above)
 tag_unindent = r"(?:\{\{\/)|\{% end|(?:{% endverbatim %})|(?:</(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|textarea|header|cache|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
@@ -49,11 +49,11 @@ ignored_paths = r"(?:\.tox|\.venv|node_modules|_build)"
 
 
 start_template_tags = (
-    r"{% ?(?:if|for|block|spaceless|compress|load|assets|addto|language)[^}]+?%}"
+    r"{% ?(?:if|for|block|spaceless|compress|load|assets|addto|language|with)[^}]+?%}"
 )
 
 break_template_tags = [
-    r"{% ?(?:if|end|for|block|endblock|else|spaceless|compress|load|include|assets|addto|language)[^}]+?%}",
+    r"{% ?(?:if|end|for|block|endblock|else|spaceless|compress|load|include|assets|addto|language|with)[^}]+?%}",
 ]
 
 unformated_html_tags = ["script"]
@@ -97,7 +97,7 @@ single_line_html_tags = [
 
 always_single_line_html_tags = ["link"]
 
-single_line_template_tags = ["if", "for", "block"]
+single_line_template_tags = ["if", "for", "block", "with"]
 
 break_html_tags = [
     "a",
