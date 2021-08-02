@@ -95,7 +95,7 @@ single_line_html_tags = [
     "textarea",
 ]
 
-always_single_line_html_tags = ["link"]
+always_single_line_html_tags = ["link", "img", "meta"]
 
 single_line_template_tags = ["if", "for", "block", "with"]
 
