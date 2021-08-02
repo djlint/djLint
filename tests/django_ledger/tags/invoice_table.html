@@ -19,35 +19,21 @@
                 <tr>
                     <td>{{ invoice.invoice_number }}</td>
                     <td>{{ invoice.date }}</td>
-                    <td>
-                        {{ invoice.customer.customer_name }}
-                    </td>
-                    <td>
-                        ${{ invoice.amount_due | currency_format }}
-                    </td>
-                    <td>
-                        ${{ invoice.amount_paid | currency_format }}
-                    </td>
+                    <td>{{ invoice.customer.customer_name }}</td>
+                    <td>${{ invoice.amount_due | currency_format }}</td>
+                    <td>${{ invoice.amount_paid | currency_format }}</td>
                     <td>
                         {% if invoice.paid %}
-                            <span class="icon is-small has-text-success">
-                                {% icon 'bi:check-circle-fill' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-success">{% icon 'bi:check-circle-fill' 24 %}</span>
                         {% else %}
-                            <span class="icon is-small has-text-danger">
-                                {% icon 'clarity:no-access-solid' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-danger">{% icon 'clarity:no-access-solid' 24 %}</span>
                         {% endif %}
                     </td>
                     <td>
                         {% if invoice.is_past_due %}
-                            <span class="icon is-small has-text-success">
-                                {% icon 'bi:check-circle-fill' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-success">{% icon 'bi:check-circle-fill' 24 %}</span>
                         {% else %}
-                            <span class="icon is-small has-text-danger">
-                                {% icon 'clarity:no-access-solid' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-danger">{% icon 'clarity:no-access-solid' 24 %}</span>
                         {% endif %}
                     </td>
                     <td>
@@ -56,9 +42,7 @@
                                 <button class="button is-small is-rounded is-outlined is-dark"
                                         aria-haspopup="true"
                                         aria-controls="dropdown-menu">
-                                    <span>
-                                        {% trans 'Actions' %}
-                                    </span>
+                                    <span>{% trans 'Actions' %}</span>
                                     <span class="icon is-small">{% icon 'bi:arrow-down' 24 %}</span>
                                 </button>
                             </div>

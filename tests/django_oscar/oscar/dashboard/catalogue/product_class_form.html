@@ -8,9 +8,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'dashboard:catalogue-class-list' %}">
@@ -146,9 +144,7 @@
                         {% trans "Cancel" %}
                     </a>
                     {% trans "or" %}
-                    <button class="btn btn-primary" type="submit">
-                        {% trans "Save" %}
-                    </button>
+                    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
                 </div>
             </div>
         </div>
@@ -156,6 +152,6 @@
 </form>
 {% endblock dashboard_content %}
 {% block onbodyload %}
-{{ block.super }}
-oscar.dashboard.product_attributes.init();
+    {{ block.super }}
+    oscar.dashboard.product_attributes.init();
 {% endblock %}

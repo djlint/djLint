@@ -119,20 +119,12 @@
                     <td class="col-md-2" >{{ total_orders }}</td>
                 </tr>
                 <tr>
-                    <th class="col-md-10">
-                        {% trans "Total lines" %}
-                    </th>
-                    <td class="col-md-2" >
-                        {{ total_lines }}
-                    </td>
+                    <th class="col-md-10">{% trans "Total lines" %}</th>
+                    <td class="col-md-2" >{{ total_lines }}</td>
                 </tr>
                 <tr>
-                    <th class="col-md-10">
-                        {% trans "Total revenue" %}
-                    </th>
-                    <td class="col-md-2" >
-                        {{ total_revenue|currency }}
-                    </td>
+                    <th class="col-md-10">{% trans "Total revenue" %}</th>
+                    <td class="col-md-2" >{{ total_revenue|currency }}</td>
                 </tr>
                 <tr>
                     <th class="col-md-10">
@@ -140,9 +132,7 @@
                         <em>open</em>
                         baskets" %}
                     </th>
-                    <td class="col-md-2" >
-                        {{ total_open_baskets }}
-                    </td>
+                    <td class="col-md-2" >{{ total_open_baskets }}</td>
                 </tr>
             </table>
         </div>
@@ -153,20 +143,12 @@
                 {% trans "Customers" %}
                 </caption>
                 <tr>
-                    <th class="col-md-10">
-                        {% trans "Total customers" %}
-                    </th>
-                    <td class="col-md-2" >
-                        {{ total_customers }}
-                    </td>
+                    <th class="col-md-10">{% trans "Total customers" %}</th>
+                    <td class="col-md-2" >{{ total_customers }}</td>
                 </tr>
                 <tr>
-                    <th class="col-md-10">
-                        {% trans "New customers" %}
-                    </th>
-                    <td class="col-md-2" >
-                        {{ total_customers_last_day }}
-                    </td>
+                    <th class="col-md-10">{% trans "New customers" %}</th>
+                    <td class="col-md-2" >{{ total_customers_last_day }}</td>
                 </tr>
                 <tr>
                     <th class="col-md-10">
@@ -174,9 +156,7 @@
                         <em>open</em>
                         baskets" %}
                     </th>
-                    <td class="col-md-2" >
-                        {{ total_open_baskets_last_day }}
-                    </td>
+                    <td class="col-md-2" >{{ total_open_baskets_last_day }}</td>
                 </tr>
             </table>
         </div>
@@ -203,12 +183,8 @@
                 {% trans "Catalogue and stock" %}
                 </caption>
                 <tr>
-                    <th class="col-md-10">
-                        {% trans "Total products" %}
-                    </th>
-                    <td class="col-md-2" >
-                        {{ total_products }}
-                    </td>
+                    <th class="col-md-10">{% trans "Total products" %}</th>
+                    <td class="col-md-2" >{{ total_products }}</td>
                 </tr>
                 <tr>
                     <th class="col-md-10">
@@ -216,9 +192,7 @@
                         <em>Open</em>
                         stock alerts" %}
                     </th>
-                    <td class="col-md-2" >
-                        {{ total_open_stock_alerts }}
-                    </td>
+                    <td class="col-md-2" >{{ total_open_stock_alerts }}</td>
                 </tr>
                 <tr>
                     <th class="col-md-10">
@@ -226,9 +200,7 @@
                         <em>Closed</em>
                         stock alerts" %}
                     </th>
-                    <td class="col-md-2" >
-                        {{ total_closed_stock_alerts }}
-                    </td>
+                    <td class="col-md-2" >{{ total_closed_stock_alerts }}</td>
                 </tr>
             </table>
         </div>
@@ -248,9 +220,7 @@
                                     Offers
                                 {% endblocktrans %}
                             </th>
-                            <td class="col-md-2" >
-                                {{ offer_map.count }}
-                            </td>
+                            <td class="col-md-2" >{{ offer_map.count }}</td>
                         </tr>
                     {% endfor %}
                     <tr>
@@ -259,9 +229,7 @@
                             <em>Vouchers</em>
                             " %}
                         </th>
-                        <td class="col-md-2" >
-                            {{ total_vouchers }}
-                        </td>
+                        <td class="col-md-2" >{{ total_vouchers }}</td>
                     </tr>
                 </table>
             {% endif %}

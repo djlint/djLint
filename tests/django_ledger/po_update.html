@@ -5,9 +5,7 @@
 {% block view_content %}
     <div class="columns">
         <div class="column has-text-centered is-12">
-            <h1 class="is-size-1 has-text-weight-light">
-                {% trans 'Update Purchase Order' %}
-            </h1>
+            <h1 class="is-size-1 has-text-weight-light">{% trans 'Update Purchase Order' %}</h1>
             <h2 class="title">{{ po_model.po_number }}</h2>
         </div>
     </div>
@@ -62,9 +60,7 @@
                 <div class="field">
                     <label for="{{ form.markdown_notes.id_for_label }}" class="label">
                         {{ form.markdown_notes.label }}
-                        <span class="icon is-medium has-text-grey">
-                            {% icon 'logos:markdown' 16 %}
-                        </span>
+                        <span class="icon is-medium has-text-grey">{% icon 'logos:markdown' 16 %}</span>
                     </label>
                     {{ form.markdown_notes }}
                 </div>

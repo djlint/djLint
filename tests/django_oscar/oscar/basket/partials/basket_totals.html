@@ -146,9 +146,7 @@
                         <td class="text-right">-{{ shipping_discount|currency:basket.currency }}</td>
                     </tr>
                     <tr>
-                        <th class="total">
-                            {% trans "Shipping total (after discounts)" %}
-                        </th>
+                        <th class="total">{% trans "Shipping total (after discounts)" %}</th>
                         <th class="total text-right">
                             {% if not show_tax_separately and shipping_charge.is_tax_known %}
                                 {{ shipping_charge.incl_tax|currency:basket.currency }}
@@ -172,9 +170,7 @@
                     </tr>
                     {% for surcharge in surcharges %}
                         <tr>
-                            <th class="total">
-                                {{ surcharge.surcharge.name }}
-                            </th>
+                            <th class="total">{{ surcharge.surcharge.name }}</th>
                             <th class="total align-right">
                                 {% if not show_tax_separately and surcharge.price.is_tax_known %}
                                     {{ surcharge.price.incl_tax|currency:basket.currency }}
@@ -189,49 +185,33 @@
             {% block tax_totals %}
                 {% if show_tax_separately %}
                     <tr>
-                        <th>
-                            &nbsp;
-                        </th>
+                        <th>&nbsp;</th>
                         <td></td>
                     </tr>
                     <tr>
                         <th colspan="2">
-                            <h3>
-                                {% trans "Tax" %}
-                            </h3>
+                            <h3>{% trans "Tax" %}</h3>
                         </th>
                     </tr>
                     <tr>
-                        <th class="total">
-                            {% trans "Basket" %}
-                        </th>
-                        <th class="total text-right">
-                            {{ basket.total_tax|currency:basket.currency }}
-                        </th>
+                        <th class="total">{% trans "Basket" %}</th>
+                        <th class="total text-right">{{ basket.total_tax|currency:basket.currency }}</th>
                     </tr>
                     <tr>
-                        <th class="total">
-                            {% trans "Shipping" %}
-                        </th>
-                        <th class="total text-right">
-                            {{ shipping_charge.tax|currency:basket.currency }}
-                        </th>
+                        <th class="total">{% trans "Shipping" %}</th>
+                        <th class="total text-right">{{ shipping_charge.tax|currency:basket.currency }}</th>
                     </tr>
                 {% endif %}
             {% endblock %}
             {% block post_order_action_totals %}
                 {% if basket.post_order_actions %}
                     <tr>
-                        <th>
-                            &nbsp;
-                        </th>
+                        <th>&nbsp;</th>
                         <td></td>
                     </tr>
                     <tr>
                         <th>
-                            <h3>
-                                {% trans "Post order actions" %}
-                            </h3>
+                            <h3>{% trans "Post order actions" %}</h3>
                             <small>
                             {% trans "These will be applied once your order is placed." %}
                             </small>
@@ -241,9 +221,7 @@
                     {% for discount in basket.post_order_actions %}
                         <tr>
                             <td class="total" colspan="2">
-                                <span class="badge badge-success">
-                                    {{ discount.name }}
-                                </span>
+                                <span class="badge badge-success">{{ discount.name }}</span>
                                 <br/>
                                 <p>
                                     {{ discount.description }}
@@ -255,16 +233,12 @@
             {% endblock %}
             {% block order_total %}
                 <tr>
-                    <th>
-                        &nbsp;
-                    </th>
+                    <th>&nbsp;</th>
                     <td></td>
                 </tr>
                 <tr>
                     <th class="total">
-                        <h3>
-                            {% trans "Order total" %}
-                        </h3>
+                        <h3>{% trans "Order total" %}</h3>
                     </th>
                     <td class="total text-right">
                         <h3 class="price_color">

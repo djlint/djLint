@@ -24,22 +24,16 @@
                 <div class="columns">
                     <div class="column">
                         {% if entity %}
-                            <h1 class="is-size-2 has-text-weight-light">
-                                {% session_entity_name %}
-                            </h1>
+                            <h1 class="is-size-2 has-text-weight-light">{% session_entity_name %}</h1>
                         {% elif ledger %}
-                            <h1 class="is-size-2 has-text-weight-light">
-                                {{ ledger.name }}
-                            </h1>
+                            <h1 class="is-size-2 has-text-weight-light">{{ ledger.name }}</h1>
                         {% endif %}
                         {% if unit_model %}
                             <h3 class="is-size-4 has-text-weight-medium is-italic">
                                 {{ unit_model.name }} {% trans 'Unit' %}
                             </h3>
                         {% endif %}
-                        <h1 class="is-size-2 has-text-weight-bold">
-                            {% trans 'Income Statement' %}
-                        </h1>
+                        <h1 class="is-size-2 has-text-weight-bold">{% trans 'Income Statement' %}</h1>
                         <h2 class="is-size-2 has-text-weight-light">
                             {% if quarter %}
                                 {{ year }} | Q{{ quarter }}

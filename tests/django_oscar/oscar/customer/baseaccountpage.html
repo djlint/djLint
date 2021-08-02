@@ -11,9 +11,7 @@
                 <a href="{{ homepage_url }}">{% trans 'Home' %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'customer:summary' %}">
-                    {% trans 'Account' %}
-                </a>
+                <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
             </li>
             {% block extra_breadcrumbs %}{% endblock %}
             <li class="breadcrumb-item active" aria-current="page">

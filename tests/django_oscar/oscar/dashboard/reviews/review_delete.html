@@ -12,9 +12,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'dashboard:reviews-list' %}">
@@ -60,25 +58,15 @@
                 </tr>
                 <tr>
                     <th>{% trans "Votes" %}</th>
-                    <td>
-                        {{ review.total_votes }}
-                    </td>
+                    <td>{{ review.total_votes }}</td>
                 </tr>
                 <tr>
-                    <th>
-                        {% trans "Status" %}
-                    </th>
-                    <td>
-                        {{ review.status }}
-                    </td>
+                    <th>{% trans "Status" %}</th>
+                    <td>{{ review.status }}</td>
                 </tr>
                 <tr>
-                    <th>
-                        {% trans "Date created" %}
-                    </th>
-                    <td>
-                        {{ review.date_created }}
-                    </td>
+                    <th>{% trans "Date created" %}</th>
+                    <td>{{ review.date_created }}</td>
                 </tr>
             </tbody>
         </table>

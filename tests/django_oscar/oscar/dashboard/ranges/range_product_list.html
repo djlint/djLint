@@ -11,14 +11,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:range-list' %}">
-                    {% trans "Ranges" %}
-                </a>
+                <a href="{% url 'dashboard:range-list' %}">{% trans "Ranges" %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'dashboard:range-update' pk=range.id %}">
@@ -73,12 +69,8 @@
                                     <td>{{ upload.filepath }}</td>
                                     <td>{{ upload.num_new_skus }}</td>
                                     <td>{{ upload.num_duplicate_skus }}</td>
-                                    <td>
-                                        {{ upload.num_unknown_skus }}
-                                    </td>
-                                    <td>
-                                        {{ upload.date_uploaded }}
-                                    </td>
+                                    <td>{{ upload.num_unknown_skus }}</td>
+                                    <td>{{ upload.date_uploaded }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -103,15 +95,9 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>
-                                    {% trans "UPC" %}
-                                </th>
-                                <th>
-                                    {% trans "Title" context "Product title" %}
-                                </th>
-                                <th>
-                                    {% trans "Is product discountable?" %}
-                                </th>
+                                <th>{% trans "UPC" %}</th>
+                                <th>{% trans "Title" context "Product title" %}</th>
+                                <th>{% trans "Is product discountable?" %}</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -121,9 +107,7 @@
                                     <td>
                                         <input type="checkbox" name="selected_product" value="{{ product.id }}" />
                                     </td>
-                                    <td>
-                                        {{ product.upc|default:"-" }}
-                                    </td>
+                                    <td>{{ product.upc|default:"-" }}</td>
                                     <td>
                                         <a href="{% url 'dashboard:catalogue-product' pk=product.id %}">
                                             {{ product.get_title }}
@@ -159,9 +143,7 @@
                     {% trans "Products in Range" %}
                     </caption>
                     <tr>
-                        <td>
-                            {% trans "No products found." %}
-                        </td>
+                        <td>{% trans "No products found." %}</td>
                     </tr>
                 </table>
             {% endif %}

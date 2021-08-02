@@ -7,9 +7,7 @@
     {% endif %}
     <p class="deletelink-box">
         {% if show_delete_link %}
-            <a href="delete/" class="deletelink">
-                {% trans "Delete" %}
-            </a>
+            <a href="delete/" class="deletelink">{% trans "Delete" %}</a>
         {% endif %}
         {% if show_buttons %}
             <a href="{% url opts|admin_urlname:'change' object_id %}?language={{ language }}"

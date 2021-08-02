@@ -22,22 +22,14 @@
         </tr>
         <tr>
             <th>{% trans "Number of vouchers" %}</th>
-            <td>
-                {{ voucher_set.count }}
-            </td>
+            <td>{{ voucher_set.count }}</td>
         </tr>
         <tr>
-            <th>
-                {% trans "Number of offers" %}
-            </th>
-            <td>
-                {{ voucher_set.vouchers.first.offers.count|default:0 }}
-            </td>
+            <th>{% trans "Number of offers" %}</th>
+            <td>{{ voucher_set.vouchers.first.offers.count|default:0 }}</td>
         </tr>
         <tr>
-            <th>
-                {% trans "Status" %}
-            </th>
+            <th>{% trans "Status" %}</th>
             <td>
                 {% if voucher_set.is_active %}
                     <span class="badge badge-success">{% trans "Active" %}</span>
@@ -47,20 +39,12 @@
             </td>
         </tr>
         <tr>
-            <th>
-                {% trans "Created" %}
-            </th>
-            <td>
-                {{ voucher_set.date_created }}
-            </td>
+            <th>{% trans "Created" %}</th>
+            <td>{{ voucher_set.date_created }}</td>
         </tr>
         <tr>
-            <th>
-                {% trans "Usage" %}
-            </th>
-            <td>
-                {{ voucher_set.vouchers.first.get_usage_display }}
-            </td>
+            <th>{% trans "Usage" %}</th>
+            <td>{{ voucher_set.vouchers.first.get_usage_display }}</td>
         </tr>
     </tbody>
 </table>

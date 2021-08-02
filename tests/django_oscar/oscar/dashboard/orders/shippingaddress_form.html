@@ -7,14 +7,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:order-list' %}">
-                    {% trans "Orders" %}
-                </a>
+                <a href="{% url 'dashboard:order-list' %}">{% trans "Orders" %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'dashboard:order-detail' number=order.number %}">

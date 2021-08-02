@@ -29,17 +29,11 @@
         </tr>
         <tr>
             <th>{% trans "Usage" %}</th>
-            <td>
-                {{ voucher.get_usage_display }}
-            </td>
+            <td>{{ voucher.get_usage_display }}</td>
         </tr>
         <tr>
-            <th>
-                {% trans "Number of offers" %}
-            </th>
-            <td>
-                {{ voucher.offers.count }}
-            </td>
+            <th>{% trans "Number of offers" %}</th>
+            <td>{{ voucher.offers.count }}</td>
         </tr>
     </tbody>
 </table>

@@ -45,9 +45,7 @@
                 </nav>
                 <div class="columns is-multiline">
                     <div class="column is-12">
-                        <h3 class="is-size-3 has-text-weight-light">
-                            {{ po_model.po_title }}
-                        </h3>
+                        <h3 class="is-size-3 has-text-weight-light">{{ po_model.po_title }}</h3>
                     </div>
                     <div class="column is-12">
                         <div class="table-container">
@@ -89,9 +87,7 @@
                                 <tr>
                                     <td></td>
                                     <td></td>
-                                    <td>
-                                        Total PO Amount
-                                    </td>
+                                    <td>Total PO Amount</td>
                                     <td class="has-text-weight-bold">
                                         {% currency_symbol %}{{ total_amount_due | currency_format }}
                                     </td>

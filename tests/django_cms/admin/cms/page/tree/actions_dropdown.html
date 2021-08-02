@@ -127,33 +127,25 @@
                                 {% endif %}
                                 {% if page.changed_date %}
                                     <p title="{% filter escapejs %}{% trans ">
-                                        <strong>
-                                        {% filter escapejs %}{% trans "last change on" %}{% endfilter %}:
-                                        </strong>
+                                        <strong>{% filter escapejs %}{% trans "last change on" %}{% endfilter %}:</strong>
                                         {{ page.changed_date|date:"Y-m-d H:i:s" }}
                                     </p>
                                 {% endif %}
                                 {% if page.get_template_display %}
                                     <p title="{% filter escapejs %}{% trans ">
-                                        <strong>
-                                        {% filter escapejs %}{% trans "template" %}{% endfilter %}:
-                                        </strong>
+                                        <strong>{% filter escapejs %}{% trans "template" %}{% endfilter %}:</strong>
                                         {{ page.get_template_display }}
                                     </p>
                                 {% endif %}
                                 {% if metadata %}
                                     <p title="{% filter escapejs %}{% trans ">
-                                        <strong>
-                                        {% filter escapejs %}{% trans "meta" %}{% endfilter %}:
-                                        </strong>
+                                        <strong>{% filter escapejs %}{% trans "meta" %}{% endfilter %}:</strong>
                                         {{ metadata }}
                                     </p>
                                 {% endif %}
                                 {% if page.site %}
                                     <p title="{% filter escapejs %}{% trans ">
-                                        <strong>
-                                        {% filter escapejs %}{% trans "site" %}{% endfilter %}:
-                                        </strong>
+                                        <strong>{% filter escapejs %}{% trans "site" %}{% endfilter %}:</strong>
                                         {{ page.site }}
                                     </p>
                                 {% endif %}

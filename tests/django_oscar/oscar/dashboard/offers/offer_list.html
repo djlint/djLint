@@ -10,9 +10,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {% trans "Offers" %}
@@ -106,18 +104,10 @@
                     <th>{% trans "Priority" %}</th>
                     <th>{% trans "Incentive" %}</th>
                     <th>{% trans "Condition" %}</th>
-                    <th>
-                        {% trans "Is available?" %}
-                    </th>
-                    <th>
-                        {% trans "Restrictions" %}
-                    </th>
-                    <th>
-                        {% anchor 'num_applications' _('Uses') %}
-                    </th>
-                    <th>
-                        {% anchor 'total_discount' _('Cost') %}
-                    </th>
+                    <th>{% trans "Is available?" %}</th>
+                    <th>{% trans "Restrictions" %}</th>
+                    <th>{% anchor 'num_applications' _('Uses') %}</th>
+                    <th>{% anchor 'total_discount' _('Cost') %}</th>
                     <th></th>
                 </tr>
                 {% for offer in offers %}
@@ -127,31 +117,17 @@
                                 {{ offer.name }}
                             </a>
                         </td>
-                        <td>
-                            {{ offer.offer_type }}
-                        </td>
+                        <td>{{ offer.offer_type }}</td>
                         {% if form.is_bound %}
                             {% if form.is_voucher_offer_type or not form.cleaned_data.offer_type %}
-                                <td>
-                                    {{ offer.vouchers.count }}
-                                </td>
+                                <td>{{ offer.vouchers.count }}</td>
                             {% endif %}
                         {% endif %}
-                        <td>
-                            {{ offer.start_datetime|default:"-" }}
-                        </td>
-                        <td>
-                            {{ offer.end_datetime|default:"-" }}
-                        </td>
-                        <td>
-                            {{ offer.priority }}
-                        </td>
-                        <td>
-                            {{ offer.benefit.description|safe }}
-                        </td>
-                        <td>
-                            {{ offer.condition.description|safe }}
-                        </td>
+                        <td>{{ offer.start_datetime|default:"-" }}</td>
+                        <td>{{ offer.end_datetime|default:"-" }}</td>
+                        <td>{{ offer.priority }}</td>
+                        <td>{{ offer.benefit.description|safe }}</td>
+                        <td>{{ offer.condition.description|safe }}</td>
                         <td>
                             {% if offer.is_available %}
                                 <span class="badge badge-success">{% trans "Yes" %}</span>
@@ -169,12 +145,8 @@
                                 {% endif %}
                             {% endfor %}
                         </td>
-                        <td>
-                            {{ offer.num_applications }}
-                        </td>
-                        <td>
-                            {{ offer.total_discount|currency }}
-                        </td>
+                        <td>{{ offer.num_applications }}</td>
+                        <td>{{ offer.total_discount|currency }}</td>
                         <td>
                             <div class="btn-toolbar">
                                 <div class="dropdown">
@@ -212,9 +184,7 @@
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td>
-                        {% trans "No offers found." %}
-                    </td>
+                    <td>{% trans "No offers found." %}</td>
                 </tr>
             {% endif %}
         </table>

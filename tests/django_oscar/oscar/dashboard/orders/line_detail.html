@@ -10,14 +10,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:order-list' %}">
-                    {% trans "Orders" %}
-                </a>
+                <a href="{% url 'dashboard:order-list' %}">{% trans "Orders" %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'dashboard:order-detail' number=line.order.number %}">
@@ -83,59 +79,35 @@
         </div>
         <div class="col-md-4">
             <div class="table-header">
-                <h3>
-                    {% trans "Partner details" %}
-                </h3>
+                <h3>{% trans "Partner details" %}</h3>
             </div>
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th>
-                        {% trans "Status" %}
-                    </th>
-                    <td>
-                        {{ line.status|default:"-" }}
-                    </td>
+                    <th>{% trans "Status" %}</th>
+                    <td>{{ line.status|default:"-" }}</td>
                 </tr>
                 <tr>
-                    <th>
-                        {% trans "Partner" %}
-                    </th>
-                    <td>
-                        {{ line.partner_name }}
-                    </td>
+                    <th>{% trans "Partner" %}</th>
+                    <td>{{ line.partner_name }}</td>
                 </tr>
                 <tr>
-                    <th>
-                        {% trans "Partner SKU" %}
-                    </th>
-                    <td>
-                        {{ line.partner_sku }}
-                    </td>
+                    <th>{% trans "Partner SKU" %}</th>
+                    <td>{{ line.partner_sku }}</td>
                 </tr>
             </table>
         </div>
         <div class="col-md-4">
             <div class="table-header">
-                <h3>
-                    {% trans "Shipping details" %}
-                </h3>
+                <h3>{% trans "Shipping details" %}</h3>
             </div>
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th>
-                        {% trans "Partner reference number" %}
-                    </th>
-                    <td>
-                        {{ line.partner_line_reference|default:"-" }}
-                    </td>
+                    <th>{% trans "Partner reference number" %}</th>
+                    <td>{{ line.partner_line_reference|default:"-" }}</td>
                 </tr>
                 <tr>
-                    <th>
-                        {% trans "Partner notes" %}
-                    </th>
-                    <td>
-                        {{ line.partner_line_notes|default:"-" }}
-                    </td>
+                    <th>{% trans "Partner notes" %}</th>
+                    <td>{{ line.partner_line_notes|default:"-" }}</td>
                 </tr>
             </table>
         </div>
@@ -143,27 +115,19 @@
     <div class="row">
         <div class="col-md-4">
             <div class="table-header">
-                <h3>
-                    {% trans "Shipping status" %}
-                </h3>
+                <h3>{% trans "Shipping status" %}</h3>
             </div>
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>
-                            {% trans "State" %}
-                        </th>
-                        <th>
-                            {% trans "Quantity" %}
-                        </th>
+                        <th>{% trans "State" %}</th>
+                        <th>{% trans "Quantity" %}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for state in line.shipping_event_breakdown.values %}
                         <tr>
-                            <td>
-                                {{ state.event_type.name }}
-                            </td>
+                            <td>{{ state.event_type.name }}</td>
                             <td>
                                 {{ state.quantity }}
                             </td>

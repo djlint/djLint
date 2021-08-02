@@ -11,14 +11,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:range-list' %}">
-                    {% trans "Ranges" %}
-                </a>
+                <a href="{% url 'dashboard:range-list' %}">{% trans "Ranges" %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'dashboard:range-update' pk=range.pk %}">
@@ -43,9 +39,7 @@
                 {% trans "Delete" %}
             </button>
             {% trans "or" %}
-            <a href="{% url 'dashboard:range-list' %}">
-                {% trans "cancel" %}
-            </a>
+            <a href="{% url 'dashboard:range-list' %}">{% trans "cancel" %}</a>
         </div>
     </form>
 {% endblock dashboard_content %}

@@ -11,14 +11,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:offer-list' %}">
-                    {% trans "Offers" %}
-                </a>
+                <a href="{% url 'dashboard:offer-list' %}">{% trans "Offers" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {{ offer.name }}
@@ -105,17 +101,11 @@
             </tr>
             <tr>
                 <th>{% trans "Type" %}</th>
-                <td>
-                    {{ offer.get_offer_type_display }}
-                </td>
+                <td>{{ offer.get_offer_type_display }}</td>
             </tr>
             <tr>
-                <th>
-                    {% trans "Incentive" %}
-                </th>
-                <td>
-                    {{ offer.benefit.description|safe }}
-                </td>
+                <th>{% trans "Incentive" %}</th>
+                <td>{{ offer.benefit.description|safe }}</td>
                 <td>
                     <a href="{% url 'dashboard:offer-benefit' pk=offer.pk %}" class="btn btn-secondary">
                         {% trans "Edit" %}
@@ -123,12 +113,8 @@
                 </td>
             </tr>
             <tr>
-                <th>
-                    {% trans "Condition" %}
-                </th>
-                <td>
-                    {{ offer.condition.description|safe }}
-                </td>
+                <th>{% trans "Condition" %}</th>
+                <td>{{ offer.condition.description|safe }}</td>
                 <td>
                     <a href="{% url 'dashboard:offer-condition' pk=offer.pk %}" class="btn btn-secondary">
                         {% trans "Edit" %}
@@ -136,9 +122,7 @@
                 </td>
             </tr>
             <tr>
-                <th>
-                    {% trans "Restrictions" %}
-                </th>
+                <th>{% trans "Restrictions" %}</th>
                 <td>
                     {% for restriction in offer.availability_restrictions %}
                         {% if not restriction.is_satisfied %}
@@ -158,35 +142,23 @@
             </tr>
             {% if offer.is_voucher_offer_type %}
                 <tr>
-                    <th>
-                        {% trans "Num of vouchers" %}
-                    </th>
-                    <td>
-                        {{ offer.vouchers.count }}
-                    </td>
+                    <th>{% trans "Num of vouchers" %}</th>
+                    <td>{{ offer.vouchers.count }}</td>
                 </tr>
             {% endif %}
         </tbody>
     </table>
     {% if offer.is_voucher_offer_type %}
         <div class="table-header">
-            <h2>
-                {% trans "Attached vouchers" %}
-            </h2>
+            <h2>{% trans "Attached vouchers" %}</h2>
         </div>
         <table class="table table-striped table-bordered table-hover">
             {% if offer.vouchers.exists %}
                 <thead>
                     <tr>
-                        <th>
-                            {% trans "Name" %}
-                        </th>
-                        <th>
-                            {% trans "Code" %}
-                        </th>
-                        <th>
-                            {% trans "Status" %}
-                        </th>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Code" %}</th>
+                        <th>{% trans "Status" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -212,9 +184,7 @@
                 </tbody>
             {% else %}
                 <tr>
-                    <td>
-                        {% trans "No vouchers are attached to this offer." %}
-                    </td>
+                    <td>{% trans "No vouchers are attached to this offer." %}</td>
                 </tr>
             {% endif %}
         </table>
@@ -224,18 +194,12 @@
             <a class="float-right btn" href=".?format=csv">
                 {% trans "Export to CSV" %}
             </a>
-            <h2>
-                {% trans "Orders that used this offer" %}
-            </h2>
+            <h2>{% trans "Orders that used this offer" %}</h2>
         </div>
         <table class="table table-bordered table-striped">
             <thead>
-                <th>
-                    {% trans "Order number" %}
-                </th>
-                <th>
-                    {% trans "Order date" %}
-                </th>
+                <th>{% trans "Order number" %}</th>
+                <th>{% trans "Order date" %}</th>
                 <th>
                     {% trans "Order total" %}
                 </th>

@@ -27,30 +27,14 @@
                         {{ user.user.get_full_name|default:"-" }}
                     </a>
                 </td>
-                <td>
-                    {{ user.user.date_joined }}
-                </td>
-                <td>
-                    {{ user.num_product_views }}
-                </td>
-                <td>
-                    {{ user.num_basket_additions }}
-                </td>
-                <td>
-                    {{ user.num_orders }}
-                </td>
-                <td>
-                    {{ user.num_order_lines }}
-                </td>
-                <td>
-                    {{ user.num_order_items }}
-                </td>
-                <td>
-                    {{ user.total_spent|currency }}
-                </td>
-                <td>
-                    {{ user.date_last_order|default:"-" }}
-                </td>
+                <td>{{ user.user.date_joined }}</td>
+                <td>{{ user.num_product_views }}</td>
+                <td>{{ user.num_basket_additions }}</td>
+                <td>{{ user.num_orders }}</td>
+                <td>{{ user.num_order_lines }}</td>
+                <td>{{ user.num_order_items }}</td>
+                <td>{{ user.total_spent|currency }}</td>
+                <td>{{ user.date_last_order|default:"-" }}</td>
             </tr>
         {% endfor %}
     </table>

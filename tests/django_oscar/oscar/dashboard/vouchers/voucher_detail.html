@@ -8,9 +8,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'dashboard:voucher-list' %}">
@@ -54,12 +52,8 @@
                                 {{ offer.name }}
                             </a>
                         </td>
-                        <td>
-                            {{ offer.start_datetime|default:"-" }}
-                        </td>
-                        <td>
-                            {{ offer.end_datetime|default:"-" }}
-                        </td>
+                        <td>{{ offer.start_datetime|default:"-" }}</td>
+                        <td>{{ offer.end_datetime|default:"-" }}</td>
                         <td>
                             {% if offer.is_available %}
                                 <span class="badge badge-success">{% trans "Yes" %}</span>
@@ -67,15 +61,9 @@
                                 <span class="badge badge-danger">{% trans "No" %}</span>
                             {% endif %}
                         </td>
-                        <td>
-                            {{ offer.priority }}
-                        </td>
-                        <td>
-                            {{ offer.benefit.description|safe }}
-                        </td>
-                        <td>
-                            {{ offer.condition.description|safe }}
-                        </td>
+                        <td>{{ offer.priority }}</td>
+                        <td>{{ offer.benefit.description|safe }}</td>
+                        <td>{{ offer.condition.description|safe }}</td>
                         <td>
                             {% for restriction in offer.availability_restrictions %}
                                 {% if not restriction.is_satisfied %}
@@ -91,63 +79,41 @@
             </tbody>
         {% else %}
             <tr>
-                <td>
-                    {% trans "No offers are attached to this voucher." %}
-                </td>
+                <td>{% trans "No offers are attached to this voucher." %}</td>
             </tr>
         {% endif %}
     </table>
     <div class="table-header">
-        <h2>
-            {% trans "Voucher performance" %}
-        </h2>
+        <h2>{% trans "Voucher performance" %}</h2>
     </div>
     <table class="table table-striped table-bordered table-hover">
         <tbody>
             <tr>
-                <th>
-                    {% trans "Number of basket additions" %}
-                </th>
-                <td>
-                    {{ voucher.num_basket_additions }}
-                </td>
+                <th>{% trans "Number of basket additions" %}</th>
+                <td>{{ voucher.num_basket_additions }}</td>
             </tr>
             <tr>
-                <th>
-                    {% trans "Number of orders" %}
-                </th>
-                <td>
-                    {{ voucher.num_orders }}
-                </td>
+                <th>{% trans "Number of orders" %}</th>
+                <td>{{ voucher.num_orders }}</td>
             </tr>
             <tr>
-                <th>
-                    {% trans "Total discount" %}
-                </th>
-                <td>
-                    {{ voucher.total_discount|currency }}
-                </td>
+                <th>{% trans "Total discount" %}</th>
+                <td>{{ voucher.total_discount|currency }}</td>
             </tr>
         </tbody>
     </table>
     <div class="table-header">
-        <h2>
-            {% trans "Recent orders" %}
-        </h2>
+        <h2>{% trans "Recent orders" %}</h2>
     </div>
     <table class="table table-striped table-bordered table-hover">
         {% if not discounts %}
             <tr>
-                <td>
-                    {% trans "No orders have been placed that use this voucher." %}
-                </td>
+                <td>{% trans "No orders have been placed that use this voucher." %}</td>
             </tr>
         {% else %}
             <thead>
                 <tr>
-                    <th>
-                        {% trans "Order number" %}
-                    </th>
+                    <th>{% trans "Order number" %}</th>
                     <th>
                         {% trans "Order total" %}
                     </th>

@@ -21,9 +21,7 @@
         {% for acc in tx_digest.group_account.GROUP_INCOME %}
             <tr>
                 <td>{{ acc.code }}</td>
-                <td>
-                    {{ acc.name }}
-                </td>
+                <td>{{ acc.name }}</td>
                 {% if by_unit %}
                     <td>
                         {% if acc.unit_name %}{{ acc.unit_name }}{% endif %}
@@ -36,15 +34,11 @@
                         <span class="icon">{% icon 'bi:arrow-bar-up' 24 %}</span>
                     {% endif %}
                 </td>
-                <td>
-                    {% currency_symbol %}{{ acc.balance | currency_format }}
-                </td>
+                <td>{% currency_symbol %}{{ acc.balance | currency_format }}</td>
             </tr>
         {% endfor %}
         <tr class="has-text-weight-bold">
-            <td>
-                Total Income
-            </td>
+            <td>Total Income</td>
             <td></td>
             {% if by_unit %}<td></td>{% endif %}
             <td></td>
@@ -63,12 +57,8 @@
         </tr>
         {% for acc in tx_digest.group_account.GROUP_EXPENSES %}
             <tr>
-                <td>
-                    {{ acc.code }}
-                </td>
-                <td>
-                    {{ acc.name }}
-                </td>
+                <td>{{ acc.code }}</td>
+                <td>{{ acc.name }}</td>
                 {% if by_unit %}
                     <td>
                         {% if acc.unit_name %}{{ acc.unit_name }}{% endif %}
@@ -81,15 +71,11 @@
                         <span class="icon">{% icon 'bi:arrow-bar-up' 24 %}</span>
                     {% endif %}
                 </td>
-                <td>
-                    {% currency_symbol %}{{ acc.balance | reverse_sing | currency_format }}
-                </td>
+                <td>{% currency_symbol %}{{ acc.balance | reverse_sing | currency_format }}</td>
             </tr>
         {% endfor %}
         <tr class="has-text-weight-bold">
-            <td>
-                Total Expenses
-            </td>
+            <td>Total Expenses</td>
             <td></td>
             {% if by_unit %}<td></td>{% endif %}
             <td></td>

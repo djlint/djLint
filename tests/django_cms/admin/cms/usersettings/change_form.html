@@ -26,9 +26,7 @@
 {% endblock %}
 {% block breadcrumbs %}
     <div class="breadcrumbs">
-        <a href="{% cms_admin_url 'index' %}">
-            {% trans 'Home' %}
-        </a>
+        <a href="{% cms_admin_url 'index' %}">{% trans 'Home' %}</a>
         &rsaquo;
         <a href="{% cms_admin_url 'app_list' app_label=opts.app_label %}">
             {{ app_label|capfirst|escape }}

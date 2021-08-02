@@ -10,9 +10,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             {% if form.is_bound %}
                 <li class="breadcrumb-item">
@@ -134,18 +132,10 @@
                                     <span class="badge badge-secondary">{% trans "Inactive" %}</span>
                                 {% endif %}
                             </td>
-                            <td>
-                                {{ voucher.offers.count }}
-                            </td>
-                            <td>
-                                {{ voucher.num_basket_additions }}
-                            </td>
-                            <td>
-                                {{ voucher.num_orders }}
-                            </td>
-                            <td>
-                                {{ voucher.date_created }}
-                            </td>
+                            <td>{{ voucher.offers.count }}</td>
+                            <td>{{ voucher.num_basket_additions }}</td>
+                            <td>{{ voucher.num_orders }}</td>
+                            <td>{{ voucher.date_created }}</td>
                             {% if form.is_bound and form.cleaned_data.in_set is not False %}
                                 <td>
                                     {% if voucher.voucher_set.pk %}
@@ -204,9 +194,7 @@
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td>
-                        {% trans "No vouchers found." %}
-                    </td>
+                    <td>{% trans "No vouchers found." %}</td>
                 </tr>
             {% endif %}
         </table>

@@ -31,9 +31,7 @@
                             {% if entry.is_deletion or not entry.get_admin_url %}
                                 {{ entry.object_repr }}
                             {% else %}
-                                <a href="{{ entry.get_admin_url }}">
-                                    {{ entry.object_repr }}
-                                </a>
+                                <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
                             {% endif %}
                             <br>
                             {% if entry.content_type %}

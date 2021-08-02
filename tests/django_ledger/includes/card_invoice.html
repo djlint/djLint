@@ -31,9 +31,7 @@
                     {% else %}
                         <p>
                             Is Progressible:
-                            <span class="icon is-small has-text-danger">
-                                {% icon 'maki:roadblock-11' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-danger">{% icon 'maki:roadblock-11' 24 %}</span>
                         {% endif %}
                         <p class="is-size-5 has-text-success">
                             Owed to You: {% currency_symbol %}{{ invoice.get_amount_open | currency_format }}
@@ -118,9 +116,7 @@
                             {% else %}
                                 <p>
                                     Is Progressible:
-                                    <span class="icon is-small has-text-danger">
-                                        {% icon 'maki:roadblock-11' 24 %}
-                                    </span>
+                                    <span class="icon is-small has-text-danger">{% icon 'maki:roadblock-11' 24 %}</span>
                                 </p>
                             {% endif %}
                             <p>
@@ -158,12 +154,8 @@
         {% else %}
             <div class="box has-text-centered">
                 <a href="{% url 'django_ledger:invoice-create' entity_slug=entity_slug %}">
-                    <span class="icon is-large has-text-grey">
-                        {% icon "ic:baseline-add-circle-outline" 48 %}
-                    </span>
+                    <span class="icon is-large has-text-grey">{% icon "ic:baseline-add-circle-outline" 48 %}</span>
                 </a>
-                <h2 class="is-size-3 has-text-grey">
-                    {% trans 'New Invoice' %}
-                </h2>
+                <h2 class="is-size-3 has-text-grey">{% trans 'New Invoice' %}</h2>
             </div>
         {% endif %}

@@ -9,9 +9,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'dashboard:catalogue-product-list' %}">
@@ -225,12 +223,8 @@
                                                 <th>{% trans "Low stock threshold" %}</th>
                                             {% endif %}
                                             <th>{% trans "Currency" %}</th>
-                                            <th>
-                                                {% trans "Price" %}
-                                            </th>
-                                            <th>
-                                                {% trans "Delete?" %}
-                                            </th>
+                                            <th>{% trans "Price" %}</th>
+                                            <th>{% trans "Delete?" %}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -258,9 +252,7 @@
                                                     <td>
                                                         {% include "oscar/dashboard/partials/form_field.html" with field=stockrecord_form.num_in_stock nolabel=True %}
                                                     </td>
-                                                    <td>
-                                                        {{ stockrecord_form.instance.num_allocated|default:"-" }}
-                                                    </td>
+                                                    <td>{{ stockrecord_form.instance.num_allocated|default:"-" }}</td>
                                                     <td>
                                                         {% include "oscar/dashboard/partials/form_field.html" with field=stockrecord_form.low_stock_threshold nolabel=True %}
                                                     </td>
@@ -298,33 +290,17 @@
                                         </caption>
                                         {% if children %}
                                             <tr>
-                                                <th>
-                                                    {% trans "Title" %}
-                                                </th>
-                                                <th>
-                                                    {% trans "Attributes" %}
-                                                </th>
-                                                <th>
-                                                    {% trans "Stock records" %}
-                                                </th>
-                                                <th>
-                                                    {% trans "Is public?" %}
-                                                </th>
-                                                <th>
-                                                    &nbsp;
-                                                </th>
+                                                <th>{% trans "Title" %}</th>
+                                                <th>{% trans "Attributes" %}</th>
+                                                <th>{% trans "Stock records" %}</th>
+                                                <th>{% trans "Is public?" %}</th>
+                                                <th>&nbsp;</th>
                                             </tr>
                                             {% for child in children %}
                                                 <tr>
-                                                    <td>
-                                                        {{ child.get_title }}
-                                                    </td>
-                                                    <td>
-                                                        {{ child.attribute_summary }}
-                                                    </td>
-                                                    <td>
-                                                        {{ child.stockrecords.count }}
-                                                    </td>
+                                                    <td>{{ child.get_title }}</td>
+                                                    <td>{{ child.attribute_summary }}</td>
+                                                    <td>{{ child.stockrecords.count }}</td>
                                                     <td>
                                                         {% if child.is_public %}
                                                             <span class="true">✔</span>
@@ -388,9 +364,7 @@
                     {% block seo %}
                         <div class="tab-pane" id="seo">
                             <div class="table-header">
-                                <h3>
-                                    {% trans "Search engine optimisation" %}
-                                </h3>
+                                <h3>{% trans "Search engine optimisation" %}</h3>
                             </div>
                             <div class="card card-body">
                                 {% block seo_content %}

@@ -4,12 +4,11 @@
         href="{{ url }}">
         <span>
             {{ title }}
-            <span class="cms-icon cms-icon-arrow"></span>
-        </span>
-    </a>
-    {% if items %}
-        <ul>
-            {% for item in items %}{{ item.render }}{% endfor %}
-        </ul>
-    {% endif %}
-</li>
+            <span class="cms-icon cms-icon-arrow"></span></span>
+        </a>
+        {% if items %}
+            <ul>
+                {% for item in items %}{{ item.render }}{% endfor %}
+            </ul>
+        {% endif %}
+    </li>

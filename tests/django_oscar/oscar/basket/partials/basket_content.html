@@ -58,9 +58,7 @@
                             </div>
                             <div class="col-md-4">
                                 <h3>
-                                    <a href="{{ product.get_absolute_url }}">
-                                        {{ line.description }}
-                                    </a>
+                                    <a href="{{ product.get_absolute_url }}">{{ line.description }}</a>
                                 </h3>
                                 <p class="availability {{ session.availability.code }}">
                                     {{ session.availability.message }}
@@ -162,9 +160,7 @@
                                 {% trans "Add voucher" %}
                             </button>
                             {% trans "or" %}
-                            <a href="#" id="voucher_form_cancel">
-                                {% trans "cancel" %}
-                            </a>
+                            <a href="#" id="voucher_form_cancel">{% trans "cancel" %}</a>
                         </form>
                     </div>
                 </div>

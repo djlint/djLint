@@ -9,9 +9,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {% trans "Products" %}
@@ -97,6 +95,6 @@
 {% endif %}
 {% endblock dashboard_content %}
 {% block onbodyload %}
-{{ block.super }}
-oscar.dashboard.product_lists.init();
+    {{ block.super }}
+    oscar.dashboard.product_lists.init();
 {% endblock onbodyload %}

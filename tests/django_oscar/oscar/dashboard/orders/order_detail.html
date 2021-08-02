@@ -12,14 +12,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:order-list' %}">
-                    {% trans "Orders" %}
-                </a>
+                <a href="{% url 'dashboard:order-list' %}">{% trans "Orders" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 #{{ order.number }}
@@ -72,37 +68,21 @@
             </caption>
             <tr>
                 <th>{% trans "Order Total" %}</th>
-                <th>
-                    {% trans "Date of purchase" %}
-                </th>
-                <th>
-                    {% trans "Time of purchase" %}
-                </th>
-                <th>
-                    {% trans "Status" %}
-                </th>
+                <th>{% trans "Date of purchase" %}</th>
+                <th>{% trans "Time of purchase" %}</th>
+                <th>{% trans "Status" %}</th>
             </tr>
             <tr>
-                <td>
-                    {{ order.total_incl_tax|currency:order.currency }}
-                </td>
-                <td>
-                    {{ order.date_placed|date }}
-                </td>
-                <td>
-                    {{ order.date_placed|time }}
-                </td>
-                <td>
-                    {{ order.status|default:"N/A" }}
-                </td>
+                <td>{{ order.total_incl_tax|currency:order.currency }}</td>
+                <td>{{ order.date_placed|date }}</td>
+                <td>{{ order.date_placed|time }}</td>
+                <td>{{ order.status|default:"N/A" }}</td>
             </tr>
         </table>
     {% endblock order_information %}
     {% block additional_order_information %}{% endblock additional_order_information %}
     <div class="sub-header">
-        <h2>
-            {% trans "Order Details" %}
-        </h2>
+        <h2>{% trans "Order Details" %}</h2>
     </div>
     <div class="tabbable dashboard">
         <ul class="nav nav-tabs mb-0" role="tablist">
@@ -147,9 +127,7 @@
         <div class="tab-content">
             <div class="tab-pane fade {% if active_tab == 'lines' %}show active{% endif %}" id="lines" role="tabpanel">
                 <div class="table-header">
-                    <h3>
-                        {% trans "Items ordered" %}
-                    </h3>
+                    <h3>{% trans "Items ordered" %}</h3>
                 </div>
                 <form id="order_lines_form" method="post" class="form-inline">
                     {% csrf_token %}
@@ -159,21 +137,11 @@
                                 <tr>
                                     <th></th>
                                     <th></th>
-                                    <th>
-                                        {% trans "Line ID" %}
-                                    </th>
-                                    <th>
-                                        {% trans "Quantity" %}
-                                    </th>
-                                    <th>
-                                        {% trans "Product" %}
-                                    </th>
-                                    <th>
-                                        {% trans "UPC" %}
-                                    </th>
-                                    <th>
-                                        {% trans "Status" %}
-                                    </th>
+                                    <th>{% trans "Line ID" %}</th>
+                                    <th>{% trans "Quantity" %}</th>
+                                    <th>{% trans "Product" %}</th>
+                                    <th>{% trans "UPC" %}</th>
+                                    <th>{% trans "Status" %}</th>
                                     <th>
                                         {% trans "Supplier" %}
                                     </th>
@@ -340,15 +308,11 @@
                                         <tr>
                                             <td colspan="8"></td>
                                             <td>
-                                                <span class="badge badge-success">
-                                                    {% trans "Discount" %}
-                                                </span>
+                                                <span class="badge badge-success">{% trans "Discount" %}</span>
                                                 {{ discount.offer_name }}
                                             </td>
                                             <td></td>
-                                            <td class="text-right">
-                                                - {{ discount.amount|currency:order.currency }}
-                                            </td>
+                                            <td class="text-right">- {{ discount.amount|currency:order.currency }}</td>
                                             <td></td>
                                         </tr>
                                     {% endfor %}
@@ -388,12 +352,8 @@
                                                 <th>
                                                     {% blocktrans with name=charge.name %}Surcharge {{ name }}{% endblocktrans %}
                                                     </th>
-                                                    <th class="text-right">
-                                                        {{ charge.excl_tax|currency:order.currency }}
-                                                    </th>
-                                                    <th class="text-right">
-                                                        {{ charge.incl_tax|currency:order.currency }}
-                                                    </th>
+                                                    <th class="text-right">{{ charge.excl_tax|currency:order.currency }}</th>
+                                                    <th class="text-right">{{ charge.incl_tax|currency:order.currency }}</th>
                                                     <td></td>
                                                 </tr>
                                             {% endfor %}
@@ -404,12 +364,8 @@
                                         <th>
                                             {% trans "Order total" %}
                                         </th>
-                                        <th class="text-right">
-                                            {{ order.total_excl_tax|currency:order.currency }}
-                                        </th>
-                                        <th class="text-right">
-                                            {{ order.total_incl_tax|currency:order.currency }}
-                                        </th>
+                                        <th class="text-right">{{ order.total_excl_tax|currency:order.currency }}</th>
+                                        <th class="text-right">{{ order.total_incl_tax|currency:order.currency }}</th>
                                         <td></td>
                                     </tr>
                                 </tbody>
@@ -439,9 +395,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="sr-only" for="new_status_select">
-                                        {% trans "choose new status" %}
-                                    </label>
+                                    <label class="sr-only"
+                                           for="new_status_select">{% trans "choose new status" %}</label>
                                     <select id="new_status_select" name="new_status">
                                         <option value="">
                                             -- {% trans "choose new status" %} --
@@ -483,9 +438,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="reference_input">
-                                        {% trans "with reference" %}
-                                    </label>
+                                    <label for="reference_input">{% trans "with reference" %}</label>
                                     <input id="reference_input" type="text" name="reference" value="" />
                                 </div>
                             </div>
@@ -518,16 +471,12 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="amount_input">
-                                        {% trans "with amount" %}
-                                    </label>
+                                    <label for="amount_input">{% trans "with amount" %}</label>
                                     <input id="amount_input" type="text" name="amount" value="" />
                                 </div>
                             </div>
                             <div class="flex-nowrap">
-                                <button type="submit" class="btn btn-primary">
-                                    {% trans "Go!" %}
-                                </button>
+                                <button type="submit" class="btn btn-primary">{% trans "Go!" %}</button>
                             </div>
                         </div>
                     {% endblock line_actions %}

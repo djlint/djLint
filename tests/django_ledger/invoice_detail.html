@@ -124,12 +124,8 @@
                                         <tr>
                                             <th></th>
                                             <th></th>
-                                            <th>
-                                                {% trans 'Total' %}
-                                            </th>
-                                            <th>
-                                                {% currency_symbol %}{{ total_amount_due | currency_format }}
-                                            </th>
+                                            <th>{% trans 'Total' %}</th>
+                                            <th>{% currency_symbol %}{{ total_amount_due | currency_format }}</th>
                                         </tr>
                                         </tfoot>
                                     </table>

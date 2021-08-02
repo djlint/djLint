@@ -4,9 +4,7 @@
     {% block navlinks %}
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" href="{{ return_url }}">
-                    {{ _gettext('List') }}
-                </a>
+                <a class="nav-link" href="{{ return_url }}">{{ _gettext('List') }}</a>
             </li>
             {%- if admin_view.can_create - %}
             <li class="nav-item">

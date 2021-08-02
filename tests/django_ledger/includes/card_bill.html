@@ -30,9 +30,7 @@
                     {% else %}
                         <p>
                             Is Progressible:
-                            <span class="icon is-small has-text-danger">
-                                {% icon 'maki:roadblock-11' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-danger">{% icon 'maki:roadblock-11' 24 %}</span>
                         {% endif %}
                         <p class="is-size-5 has-text-danger">
                             You Still Owe:
@@ -123,9 +121,7 @@
                                 {% else %}
                                     <p>
                                         Is Accrued:
-                                        <span class="icon is-small has-text-danger">
-                                            {% icon 'maki:roadblock-11' 24 %}
-                                        </span>
+                                        <span class="icon is-small has-text-danger">{% icon 'maki:roadblock-11' 24 %}</span>
                                     </p>
                                 {% endif %}
                                 <p>
@@ -178,12 +174,8 @@
         {% else %}
             <div class="box has-text-centered">
                 <a href="{% url 'django_ledger:bill-create' entity_slug=entity_slug %}">
-                    <span class="icon is-large has-text-grey">
-                        {% icon "ic:baseline-add-circle-outline" 48 %}
-                    </span>
+                    <span class="icon is-large has-text-grey">{% icon "ic:baseline-add-circle-outline" 48 %}</span>
                 </a>
-                <h2 class="is-size-3 has-text-grey">
-                    {% trans 'New Bill' %}
-                </h2>
+                <h2 class="is-size-3 has-text-grey">{% trans 'New Bill' %}</h2>
             </div>
         {% endif %}

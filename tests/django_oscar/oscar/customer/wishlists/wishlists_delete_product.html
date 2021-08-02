@@ -7,9 +7,7 @@
                 <a href="{{ homepage_url }}">{% trans 'Home' %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'customer:summary' %}">
-                    {% trans 'Account' %}
-                </a>
+                <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{% url 'customer:wishlists-list' %}">
@@ -40,9 +38,7 @@
                 {% trans 'Remove' %}
             </button>
             {% trans 'or' %}
-            <a href="{{ wishlist.get_absolute_url }}">
-                {% trans 'cancel' %}
-            </a>
+            <a href="{{ wishlist.get_absolute_url }}">{% trans 'cancel' %}</a>
         </div>
     </form>
 {% endblock tabcontent %}

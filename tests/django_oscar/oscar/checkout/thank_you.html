@@ -173,9 +173,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="sub-header">
-                        <h2>
-                            {% trans 'Totals' %}
-                        </h2>
+                        <h2>{% trans 'Totals' %}</h2>
                     </div>
                     {% include 'oscar/order/partials/basket_totals.html' %}
                 </div>
@@ -185,9 +183,7 @@
     {% block order_tracking %}
         {% if not order.user %}
             <div class="sub-header">
-                <h2>
-                    {% trans "Tracking your order" %}
-                </h2>
+                <h2>{% trans "Tracking your order" %}</h2>
             </div>
             <p>
                 {% trans "You can track the status of your order" %}

@@ -11,9 +11,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {% trans "Orders" %}
@@ -106,12 +104,8 @@
                             <th>{% trans "Status" %}</th>
                             <th>{% trans "Customer" %}</th>
                             <th>{% trans "Shipping address" %}</th>
-                            <th>
-                                {% trans "Billing address" %}
-                            </th>
-                            <th>
-                                {% trans "Date of purchase" %}
-                            </th>
+                            <th>{% trans "Billing address" %}</th>
+                            <th>{% trans "Date of purchase" %}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -129,15 +123,9 @@
                                         {{ order.number }}
                                     </a>
                                 </td>
-                                <td>
-                                    {{ order.total_incl_tax|currency:order.currency }}
-                                </td>
-                                <td>
-                                    {{ order.num_items }}
-                                </td>
-                                <td>
-                                    {{ order.status|default:"-" }}
-                                </td>
+                                <td>{{ order.total_incl_tax|currency:order.currency }}</td>
+                                <td>{{ order.num_items }}</td>
+                                <td>{{ order.status|default:"-" }}</td>
                                 <td>
                                     {% if order.guest_email %}
                                         {{ order.guest_email }}
@@ -149,15 +137,9 @@
                                         &lt;{% trans "Deleted" %}&gt;
                                     {% endif %}
                                 </td>
-                                <td>
-                                    {{ order.shipping_address|default:"-" }}
-                                </td>
-                                <td>
-                                    {{ order.billing_address|default:"-" }}
-                                </td>
-                                <td>
-                                    {{ order.date_placed }}
-                                </td>
+                                <td>{{ order.shipping_address|default:"-" }}</td>
+                                <td>{{ order.billing_address|default:"-" }}</td>
+                                <td>{{ order.date_placed }}</td>
                                 <td>
                                     <a class="btn btn-secondary"
                                        href="{% url 'dashboard:order-detail' number=order.number %}">
@@ -217,9 +199,7 @@
             {% endif %}
             </caption>
             <tr>
-                <td>
-                    {% trans "No orders found." %}
-                </td>
+                <td>{% trans "No orders found." %}</td>
             </tr>
         </table>
     {% endif %}

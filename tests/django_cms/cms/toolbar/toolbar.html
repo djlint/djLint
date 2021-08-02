@@ -20,20 +20,19 @@
                         <a href="#">
                             <span>
                                 {% trans "More" %}...
-                                <span class="cms-icon cms-icon-arrow"></span>
-                            </span>
-                        </a>
-                        <ul data-touch-action="pan-y"></ul>
-                    </li>
-                </ul>
-            {% endif %}
+                                <span class="cms-icon cms-icon-arrow"></span></span>
+                            </a>
+                            <ul data-touch-action="pan-y"></ul>
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="cms-toolbar-right">
+                {% for item in cms_toolbar.get_right_items %}
+                    {{ item.render }}
+                {% endfor %}
+            </div>
         </div>
-        <div class="cms-toolbar-right">
-            {% for item in cms_toolbar.get_right_items %}
-                {{ item.render }}
-            {% endfor %}
-        </div>
+        {# end: toolbar #}
+        {% block toolbar_bottom %}{% endblock toolbar_bottom %}
     </div>
-    {# end: toolbar #}
-    {% block toolbar_bottom %}{% endblock toolbar_bottom %}
-</div>

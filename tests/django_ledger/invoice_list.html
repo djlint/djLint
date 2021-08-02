@@ -9,25 +9,19 @@
                 <div class="level-left">
                     <div class="level-item">
                         {% if month %}
-                            <h1 class="is-size-1 has-text-weight-thin">
-                                {{ month | date:'F Y' }}
-                            </h1>
+                            <h1 class="is-size-1 has-text-weight-thin">{{ month | date:'F Y' }}</h1>
                         {% elif year %}
                             <h1 class="is-size-1 has-text-weight-thin">
                                 Year {{ year | date:'Y' }}
                                 {% trans 'Invoices' %}
                             </h1>
                         {% else %}
-                            <h1 class="is-size-1 has-text-weight-thin">
-                                {% trans 'Latest Invoices' %}
-                            </h1>
+                            <h1 class="is-size-1 has-text-weight-thin">{% trans 'Latest Invoices' %}</h1>
                         {% endif %}
                     </div>
                     <div class="level-item">
                         <a href="{% url 'django_ledger:invoice-create' entity_slug=view.kwargs.entity_slug %}">
-                            <span class="icon is-large has-text-success">
-                                {% icon 'carbon:add-alt' 60 %}
-                            </span>
+                            <span class="icon is-large has-text-success">{% icon 'carbon:add-alt' 60 %}</span>
                         </a>
                     </div>
                 </div>

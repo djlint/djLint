@@ -40,12 +40,8 @@
             </tr>
         {% else %}
             <tr>
-                <th>
-                    {% trans "Date alert sent" %}
-                </th>
-                <td>
-                    {{ alert.date_closed|default:"-" }}
-                </td>
+                <th>{% trans "Date alert sent" %}</th>
+                <td>{{ alert.date_closed|default:"-" }}</td>
             </tr>
         {% endif %}
     </tbody>

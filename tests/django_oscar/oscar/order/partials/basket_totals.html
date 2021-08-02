@@ -127,32 +127,22 @@
         {% endblock %}
         {% if show_tax_separately %}
             <tr>
-                <th colspan="2">
-                    &nbsp;
-                </th>
+                <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
-                <th class="total">
-                    {% trans "Order tax" %}
-                </th>
-                <th class="total text-right">
-                    {{ order.total_tax|currency:order.currency }}
-                </th>
+                <th class="total">{% trans "Order tax" %}</th>
+                <th class="total text-right">{{ order.total_tax|currency:order.currency }}</th>
             </tr>
         {% endif %}
         {% block post_order_action_totals %}
             {% with actions=order.post_order_actions %}
                 {% if actions %}
                     <tr>
-                        <th colspan="2">
-                            &nbsp;
-                        </th>
+                        <th colspan="2">&nbsp;</th>
                     </tr>
                     <tr>
                         <th colspan="2">
-                            <h3>
-                                {% trans "Post order actions" %}
-                            </h3>
+                            <h3>{% trans "Post order actions" %}</h3>
                         </th>
                     </tr>
                     {% for action in order.post_order_actions %}
@@ -169,20 +159,14 @@
         {% endblock post_order_action_totals %}
         {% block order_total %}
             <tr>
-                <th colspan="2">
-                    &nbsp;
-                </th>
+                <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
                 <td class="total">
-                    <h3>
-                        {% trans "Order total" %}
-                    </h3>
+                    <h3>{% trans "Order total" %}</h3>
                 </td>
                 <td class="total text-right">
-                    <h3 class="price_color">
-                        {{ order.total_incl_tax|currency:order.currency }}
-                    </h3>
+                    <h3 class="price_color">{{ order.total_incl_tax|currency:order.currency }}</h3>
                 </td>
             </tr>
         {% endblock order_total %}

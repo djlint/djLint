@@ -8,9 +8,7 @@
             <div class="column">
                 <a class="button is-primary is-outlined is-small"
                    href="{% url 'django_ledger:customer-create' entity_slug=view.kwargs.entity_slug %}">
-                    <span class="icon is-large has-text-success">
-                        {% icon 'carbon:add-alt' 24 %}
-                    </span>
+                    <span class="icon is-large has-text-success">{% icon 'carbon:add-alt' 24 %}</span>
                     <span>{% trans 'New Customer' %}</span>
                 </a>
             </div>

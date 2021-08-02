@@ -7,14 +7,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:users-index' %}">
-                    {% trans "Customers" %}
-                </a>
+                <a href="{% url 'dashboard:users-index' %}">{% trans "Customers" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {{ customer.email }}
@@ -49,75 +45,43 @@
                     </tr>
                     <tr>
                         <th>{% trans "Staff" %}?</th>
-                        <td>
-                            {{ customer.is_staff|yesno:_("True,False") }}
-                        </td>
+                        <td>{{ customer.is_staff|yesno:_("True,False") }}</td>
                     </tr>
                     <tr>
-                        <th>
-                            {% trans "Last login" %}
-                        </th>
-                        <td>
-                            {{ customer.last_login }}
-                        </td>
+                        <th>{% trans "Last login" %}</th>
+                        <td>{{ customer.last_login }}</td>
                     </tr>
                     <tr>
-                        <th>
-                            {% trans "Date joined" %}
-                        </th>
-                        <td>
-                            {{ customer.date_joined }}
-                        </td>
+                        <th>{% trans "Date joined" %}</th>
+                        <td>{{ customer.date_joined }}</td>
                     </tr>
                     {% if customer.userrecord %}
                         {% with record=customer.userrecord %}
                             <tr>
-                                <th>
-                                    {% trans "Products viewed" %}
-                                </th>
-                                <td>
-                                    {{ record.num_product_views|default:0 }}
-                                </td>
+                                <th>{% trans "Products viewed" %}</th>
+                                <td>{{ record.num_product_views|default:0 }}</td>
                             </tr>
                             <tr>
-                                <th>
-                                    {% trans "Number of orders" %}
-                                </th>
-                                <td>
-                                    {{ record.num_orders|default:0 }}
-                                </td>
+                                <th>{% trans "Number of orders" %}</th>
+                                <td>{{ record.num_orders|default:0 }}</td>
                             </tr>
                             <tr>
-                                <th>
-                                    {% trans "Number of ordered items" %}
-                                </th>
-                                <td>
-                                    {{ record.num_order_items|default:0 }}
-                                </td>
+                                <th>{% trans "Number of ordered items" %}</th>
+                                <td>{{ record.num_order_items|default:0 }}</td>
                             </tr>
                             <tr>
-                                <th>
-                                    {% trans "Total spent" %}
-                                </th>
-                                <td>
-                                    {{ record.total_spent|default:0|currency }}
-                                </td>
+                                <th>{% trans "Total spent" %}</th>
+                                <td>{{ record.total_spent|default:0|currency }}</td>
                             </tr>
                         {% endwith %}
                     {% endif %}
                     <tr>
-                        <th>
-                            {% trans "Reviews written" %}
-                        </th>
-                        <td>
-                            {{ customer.reviews.count }}
-                        </td>
+                        <th>{% trans "Reviews written" %}</th>
+                        <td>{{ customer.reviews.count }}</td>
                     </tr>
                     {% if customer.email %}
                         <tr>
-                            <th>
-                                {% trans "Actions" %}
-                            </th>
+                            <th>{% trans "Actions" %}</th>
                             <td>
                                 <form id="password_reset_form"
                                       action="{% url 'dashboard:user-password-reset' pk=customer.id %}"

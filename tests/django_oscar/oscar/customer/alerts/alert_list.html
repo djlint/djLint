@@ -20,9 +20,7 @@
                         <td>
                             {% with product=alert.product %}
                                 {% if product.is_public %}
-                                    <a href="{{ product.get_absolute_url }}">
-                                        {{ product.get_title }}
-                                    </a>
+                                    <a href="{{ product.get_absolute_url }}">{{ product.get_title }}</a>
                                 {% else %}
                                     {{ product.get_title }}
                                 {% endif %}

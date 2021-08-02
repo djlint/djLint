@@ -10,9 +10,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {% trans "Reviews" %}
@@ -105,12 +103,8 @@
                                 {{ review.name }}
                             {% endif %}
                         </td>
-                        <td>
-                            {{ review.score|floatformat:1 }} / {{ 5.0|floatformat:1 }}
-                        </td>
-                        <td>
-                            {{ review.total_votes }}
-                        </td>
+                        <td>{{ review.score|floatformat:1 }} / {{ 5.0|floatformat:1 }}</td>
+                        <td>{{ review.total_votes }}</td>
                         <td>
                             {% if review.status == 1 %}
                                 <span class="badge badge-success">
@@ -122,9 +116,7 @@
                                         {{ review.get_status_display }}
                                     </span>
                                 </td>
-                                <td>
-                                    {{ review.date_created }}
-                                </td>
+                                <td>{{ review.date_created }}</td>
                                 <td>
                                     <div class="btn-toolbar">
                                         <div class="dropdown">
@@ -167,9 +159,7 @@
                     {{ description }}
                     </caption>
                     <tr>
-                        <td>
-                            {% trans "No reviews found." %}
-                        </td>
+                        <td>{% trans "No reviews found." %}</td>
                     </tr>
                 </table>
             {% endif %}

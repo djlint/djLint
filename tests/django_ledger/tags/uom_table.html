@@ -17,13 +17,9 @@
                     <td>{{ uom.unit_abbr }}</td>
                     <td class="has-text-centered">
                         {% if uom.is_active %}
-                            <span class="icon is-small has-text-success">
-                                {% icon 'bi:check-circle-fill' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-success">{% icon 'bi:check-circle-fill' 24 %}</span>
                         {% else %}
-                            <span class="icon is-small has-text-danger">
-                                {% icon 'clarity:no-access-solid' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-danger">{% icon 'clarity:no-access-solid' 24 %}</span>
                         {% endif %}
                     </td>
                     <td>

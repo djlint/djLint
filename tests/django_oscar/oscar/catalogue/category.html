@@ -26,9 +26,7 @@
             </li>
             {% for category in category.get_ancestors %}
                 <li class="breadcrumb-item">
-                    <a href="{{ category.get_absolute_url }}">
-                        {{ category.name }}
-                    </a>
+                    <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
                 </li>
             {% endfor %}
             <li class="breadcrumb-item active" aria-current="page">

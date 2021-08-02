@@ -12,15 +12,11 @@
             {% with category=product.categories.all.0 %}
                 {% for c in category.get_ancestors_and_self %}
                     <li class="breadcrumb-item">
-                        <a href="{{ c.get_absolute_url }}">
-                            {{ c.name }}
-                        </a>
+                        <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
                     </li>
                 {% endfor %}
                 <li class="breadcrumb-item">
-                    <a href="{{ product.get_absolute_url }}">
-                        {{ product.title }}
-                    </a>
+                    <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
                 </li>
                 <li class="breadcrumb-item">
                     <a href="{% url 'catalogue:reviews-list' product_slug=product.slug product_pk=product.pk %}">

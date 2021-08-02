@@ -13,9 +13,7 @@
     {% for p in module.list %}
         {% if p.value != 'AliasPlugin' and p.value != 'PlaceholderPlugin' %}
             <div class="cms-submenu-item">
-                <a data-rel="add" href="{{ p.value }}">
-                    {{ p.name }}
-                </a>
+                <a data-rel="add" href="{{ p.value }}">{{ p.name }}</a>
             </div>
         {% endif %}
     {% endfor %}

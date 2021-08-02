@@ -44,9 +44,7 @@
                     <a class="navbar-link">{{ link.title }}</a>
                     <div class="navbar-dropdown">
                         {% for l in link.links %}
-                            <a class="navbar-item" href="{{ l.url }}">
-                                {{ l.title }}
-                            </a>
+                            <a class="navbar-item" href="{{ l.url }}">{{ l.title }}</a>
                         {% endfor %}
                     </div>
                 </div>

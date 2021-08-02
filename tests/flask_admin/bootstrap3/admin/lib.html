@@ -48,9 +48,7 @@
         {% endfor %}
         {% if page + 1 < pages %}
             <li>
-                <a href="{{ generator(page + 1) }}">
-                    &gt;
-                </a>
+                <a href="{{ generator(page + 1) }}">&gt;</a>
             </li>
         {% else %}
             <li class="disabled">
@@ -59,9 +57,7 @@
         {% endif %}
         {% if max < pages %}
             <li>
-                <a href="{{ generator(pages - 1) }}">
-                    &raquo;
-                </a>
+                <a href="{{ generator(pages - 1) }}">&raquo;</a>
             </li>
         {% else %}
             <li class="disabled">
@@ -75,9 +71,7 @@
 <ul class="pagination">
     {% if page > 0 %}
         <li>
-            <a href="{{ generator(page - 1) }}">
-                &lt;
-            </a>
+            <a href="{{ generator(page - 1) }}">&lt;</a>
         </li>
     {% else %}
         <li class="disabled">
@@ -86,9 +80,7 @@
     {% endif %}
     {% if have_next %}
         <li>
-            <a href="{{ generator(page + 1) }}">
-                &gt;
-            </a>
+            <a href="{{ generator(page + 1) }}">&gt;</a>
         </li>
     {% else %}
         <li class="disabled">
@@ -112,69 +104,67 @@
    title="{{ title }}"
    href="{{ url }}"
    data-toggle="modal">
-{{ content|safe }}
+    {{ content|safe }}
 </a>
 {% endmacro %}
 {# ---------------------- Forms -------------------------- #}
 {% macro render_field(form, field, kwargs={}, caller=None) %}
 {% set direct_error = h.is_field_error(field.errors) %}
 <div class="form-group{{ ' has-error' if direct_error else '' }}">
-<label for="{{ field.id }}" class="col-md-2 control-label">
-{{ field.label.text }}
-{% if h.is_required_form_field(field) %}
-    <strong style="color: red">
-    &#42;
-    </strong>
-    {%- else - %}
-    &nbsp;
-    {%- endif %}
-</label>
-<div class="{{ kwargs.get('column_class', 'col-md-10') }}">
-    {% set _dummy = kwargs.setdefault('class', 'form-control') %}
-    {{ field(**kwargs)|safe }}
-    {% if field.description %}
-        <p class="help-block">
-            {{ field.description|safe }}
-        </p>
-    {% endif %}
-    {% if direct_error %}
-        <ul class="help-block input-errors">
-            {% for e in field.errors if e is string %}
-                <li>
-                    {{ e }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</div>
-{% if caller %}{{ caller(form, field, direct_error, kwargs) }}{% endif %}
-</div>
+    <label for="{{ field.id }}" class="col-md-2 control-label">
+        {{ field.label.text }}
+        {% if h.is_required_form_field(field) %}
+            <strong style="color: red">&#42;</strong>
+            {%- else - %}
+            &nbsp;
+            {%- endif %}
+        </label>
+        <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
+            {% set _dummy = kwargs.setdefault('class', 'form-control') %}
+            {{ field(**kwargs)|safe }}
+            {% if field.description %}
+                <p class="help-block">
+                    {{ field.description|safe }}
+                </p>
+            {% endif %}
+            {% if direct_error %}
+                <ul class="help-block input-errors">
+                    {% for e in field.errors if e is string %}
+                        <li>
+                            {{ e }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        {% if caller %}{{ caller(form, field, direct_error, kwargs) }}{% endif %}
+    </div>
 {% endmacro %}
 {% macro render_header(form, text) %}
 <h3>{{ text }}</h3>
 {% endmacro %}
 {% macro render_form_fields(form, form_opts=None) %}
 {% if form.hidden_tag is defined %}
-{{ form.hidden_tag() }}
+    {{ form.hidden_tag() }}
 {% else %}
-{% if csrf_token %}
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-{% endif %}
-{% for f in form if f.widget.input_type == 'hidden' %}
-{{ f }}
-{% endfor %}
+    {% if csrf_token %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {% endif %}
+    {% for f in form if f.widget.input_type == 'hidden' %}
+        {{ f }}
+    {% endfor %}
 {% endif %}
 {% if form_opts and form_opts.form_rules %}
-{% for r in form_opts.form_rules %}{{ r(form, form_opts=form_opts) }}{% endfor %}
+    {% for r in form_opts.form_rules %}{{ r(form, form_opts=form_opts) }}{% endfor %}
 {% else %}
-{% for f in form if f.widget.input_type != 'hidden' %}
-{% if form_opts %}
-{% set kwargs = form_opts.widget_args.get(f.short_name, {}) %}
-{% else %}
-{% set kwargs = {} %}
-{% endif %}
-{{ render_field(form, f, kwargs) }}
-{% endfor %}
+    {% for f in form if f.widget.input_type != 'hidden' %}
+        {% if form_opts %}
+            {% set kwargs = form_opts.widget_args.get(f.short_name, {}) %}
+        {% else %}
+            {% set kwargs = {} %}
+        {% endif %}
+        {{ render_field(form, f, kwargs) }}
+    {% endfor %}
 {% endif %}
 {% endmacro %}
 {% macro form_tag(form=None, action=None) %}
@@ -183,23 +173,23 @@
       role="form"
       class="admin-form form-horizontal"
       enctype="multipart/form-data">
-{{ caller() }}
+    {{ caller() }}
 </form>
 {% endmacro %}
 {% macro render_form_buttons(cancel_url, extra=None, is_modal=False) %}
 <hr>
 <div class="form-group">
-<div class="col-md-offset-2 col-md-10 submit-row">
-<input type="submit" class="btn btn-primary" value="{{ _gettext('Save') }}" />
-{% if extra %}{{ extra }}{% endif %}
-{% if cancel_url %}
-<a href="{{ cancel_url }}" class="btn btn-danger" role="button"
-{% if is_modal %}data-dismiss="modal"{% endif %}
->
-{{ _gettext('Cancel') }}
-</a>
-{% endif %}
-</div>
+    <div class="col-md-offset-2 col-md-10 submit-row">
+        <input type="submit" class="btn btn-primary" value="{{ _gettext('Save') }}" />
+        {% if extra %}{{ extra }}{% endif %}
+        {% if cancel_url %}
+            <a href="{{ cancel_url }}" class="btn btn-danger" role="button"
+                {% if is_modal %}data-dismiss="modal"{% endif %}
+                >
+                {{ _gettext('Cancel') }}
+            </a>
+        {% endif %}
+    </div>
 </div>
 {% endmacro %}
 {% macro render_form(form, cancel_url, extra=None, form_opts=None, action=None, is_modal=False) - %}
@@ -214,17 +204,17 @@
 <link href="{{ admin_static.url(filename='vendor/bootstrap-daterangepicker/daterangepicker-bs3.css', v='1.3.22') }}"
       rel="stylesheet">
 {% if config.MAPBOX_MAP_ID %}
-<link href="{{ admin_static.url(filename='vendor/leaflet/leaflet.css', v='1.0.2') }}" rel="stylesheet">
-<link href="{{ admin_static.url(filename='vendor/leaflet/leaflet.draw.css', v='0.4.6') }}" rel="stylesheet">
+    <link href="{{ admin_static.url(filename='vendor/leaflet/leaflet.css', v='1.0.2') }}" rel="stylesheet">
+    <link href="{{ admin_static.url(filename='vendor/leaflet/leaflet.draw.css', v='0.4.6') }}" rel="stylesheet">
 {% endif %}
 {% if editable_columns %}
-<link href="{{ admin_static.url(filename='vendor/x-editable/css/bootstrap3-editable.css', v='1.5.1.1') }}"
-      rel="stylesheet">
+    <link href="{{ admin_static.url(filename='vendor/x-editable/css/bootstrap3-editable.css', v='1.5.1.1') }}"
+          rel="stylesheet">
 {% endif %}
 {% endmacro %}
 {% macro form_js() %}
 {% if config.MAPBOX_MAP_ID %}
-<script>
+    <script>
   window.MAPBOX_MAP_ID = "{{ config.MAPBOX_MAP_ID }}";
   {% if config.MAPBOX_ACCESS_TOKEN %}
   window.MAPBOX_ACCESS_TOKEN = "{{ config.MAPBOX_ACCESS_TOKEN }}";
@@ -233,30 +223,30 @@
   window.DEFAULT_CENTER_LAT = "{{ config.DEFAULT_CENTER_LAT }}";
   window.DEFAULT_CENTER_LONG = "{{ config.DEFAULT_CENTER_LONG }}";
   {% endif %}
-</script>
-<script src="{{ admin_static.url(filename='vendor/leaflet/leaflet.js', v='1.0.2') }}"></script>
-<script src="{{ admin_static.url(filename='vendor/leaflet/leaflet.draw.js', v='0.4.6') }}"></script>
-{% if config.MAPBOX_SEARCH %}
-<script>
+    </script>
+    <script src="{{ admin_static.url(filename='vendor/leaflet/leaflet.js', v='1.0.2') }}"></script>
+    <script src="{{ admin_static.url(filename='vendor/leaflet/leaflet.draw.js', v='0.4.6') }}"></script>
+    {% if config.MAPBOX_SEARCH %}
+        <script>
   window.MAPBOX_SEARCH = "{{ config.MAPBOX_SEARCH }}";
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?v=3&libraries=places&key={{ config.get('GOOGLE_MAPS_API_KEY') }}"></script>
-{% endif %}
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3&libraries=places&key={{ config.get('GOOGLE_MAPS_API_KEY') }}"></script>
+    {% endif %}
 {% endif %}
 <script src="{{ admin_static.url(filename='vendor/bootstrap-daterangepicker/daterangepicker.js', v='1.3.22') }}"></script>
 {% if editable_columns %}
-<script src="{{ admin_static.url(filename='vendor/x-editable/js/bootstrap3-editable.min.js', v='1.5.1.1') }}"></script>
+    <script src="{{ admin_static.url(filename='vendor/x-editable/js/bootstrap3-editable.min.js', v='1.5.1.1') }}"></script>
 {% endif %}
 <script src="{{ admin_static.url(filename='admin/js/form.js', v='1.0.1') }}"></script>
 {% endmacro %}
 {% macro extra() %}
 {% if admin_view.can_create %}
-<input name="_add_another" type="submit" class="btn btn-default" value="{{ _gettext('Save and Add Another') }}" />
+    <input name="_add_another" type="submit" class="btn btn-default" value="{{ _gettext('Save and Add Another') }}" />
 {% endif %}
 {% if admin_view.can_edit %}
-<input name="_continue_editing"
-       type="submit"
-       class="btn btn-default"
-       value="{{ _gettext('Save and Continue Editing') }}"/>
+    <input name="_continue_editing"
+           type="submit"
+           class="btn btn-default"
+           value="{{ _gettext('Save and Continue Editing') }}"/>
 {% endif %}
 {% endmacro %}

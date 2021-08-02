@@ -27,9 +27,7 @@
             {% for acc in tx_digest.group_account.GROUP_ASSETS %}
                 <tr>
                     <td>{{ acc.code }}</td>
-                    <td>
-                        {{ acc.name }}
-                    </td>
+                    <td>{{ acc.name }}</td>
                     {% if by_unit %}
                         <td>
                             {% if acc.unit_name %}{{ acc.unit_name }}{% endif %}
@@ -42,15 +40,11 @@
                             <span class="icon">{% icon 'bi:arrow-bar-up' 24 %}</span>
                         {% endif %}
                     </td>
-                    <td>
-                        {% currency_symbol %}{{ acc.balance | currency_format }}
-                    </td>
+                    <td>{% currency_symbol %}{{ acc.balance | currency_format }}</td>
                 </tr>
             {% endfor %}
             <tr class="has-text-weight-bold">
-                <td>
-                    {% trans 'Total Assets' %}
-                </td>
+                <td>{% trans 'Total Assets' %}</td>
                 <td></td>
                 {% if by_unit %}<td></td>{% endif %}
                 <td></td>
@@ -70,12 +64,8 @@
             {# LIABILITIES #}
             {% for acc in tx_digest.group_account.GROUP_LIABILITIES %}
                 <tr>
-                    <td>
-                        {{ acc.code }}
-                    </td>
-                    <td>
-                        {{ acc.name }}
-                    </td>
+                    <td>{{ acc.code }}</td>
+                    <td>{{ acc.name }}</td>
                     {% if by_unit %}
                         <td>
                             {% if acc.unit_name %}{{ acc.unit_name }}{% endif %}
@@ -88,15 +78,11 @@
                             <span class="icon">{% icon 'bi:arrow-bar-up' 24 %}</span>
                         {% endif %}
                     </td>
-                    <td>
-                        {% currency_symbol %}{{ acc.balance | currency_format }}
-                    </td>
+                    <td>{% currency_symbol %}{{ acc.balance | currency_format }}</td>
                 </tr>
             {% endfor %}
             <tr class="has-text-weight-bold">
-                <td>
-                    {% trans 'Total Liabilities' %}
-                </td>
+                <td>{% trans 'Total Liabilities' %}</td>
                 <td></td>
                 {% if by_unit %}<td></td>{% endif %}
                 <td></td>

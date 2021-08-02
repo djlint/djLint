@@ -141,18 +141,14 @@
                                         {{ lib.add_modal_button(url=get_file_url(path, modal=True)|safe,
                                         btn_class='', content=name) }}
                                     {% else %}
-                                        <a href="{{ get_file_url(path)|safe }}">
-                                            {{ name }}
-                                        </a>
+                                        <a href="{{ get_file_url(path)|safe }}">{{ name }}</a>
                                         {%- endif - %}
                                     {% else %}
                                         {{ name }}
                                     {% endif %}
                                 </td>
                                 {% if admin_view.is_column_visible('size') %}
-                                    <td data-title="{{ _gettext('Size') }}">
-                                        {{ size|filesizeformat }}
-                                    </td>
+                                    <td data-title="{{ _gettext('Size') }}">{{ size|filesizeformat }}</td>
                                 {% endif %}
                                 {% if admin_view.is_column_visible('date') %}
                                     <td>{{ timestamp_format(date) }}</td>

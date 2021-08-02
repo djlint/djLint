@@ -22,34 +22,24 @@
                         {% if je.posted %}
                             <span class="icon has-text-success">{% icon 'ant-design:check-circle-filled' 24 %}</span>
                         {% else %}
-                            <span class="icon is-small has-text-danger">
-                                {% icon 'maki:roadblock-11' 24 %}
-                            </span>
+                            <span class="icon is-small has-text-danger">{% icon 'maki:roadblock-11' 24 %}</span>
                         {% endif %}
                     </td>
                     <td>
                         {% if je.locked %}
-                            <span class="icon has-text-success-dark">
-                                {% icon 'bi:lock-fill' 24 %}
-                            </span>
+                            <span class="icon has-text-success-dark">{% icon 'bi:lock-fill' 24 %}</span>
                         {% else %}
-                            <span class="icon has-text-danger-dark">
-                                {% icon 'bx:bx-lock-open-alt' 24 %}
-                            </span>
+                            <span class="icon has-text-danger-dark">{% icon 'bx:bx-lock-open-alt' 24 %}</span>
                         {% endif %}
                     </td>
-                    <td>
-                        {{ je.created | timesince }}
-                    </td>
+                    <td>{{ je.created | timesince }}</td>
                     <td>
                         <div class="dropdown is-right is-hoverable" id="je-action-{{ je.uuid }}">
                             <div class="dropdown-trigger">
                                 <button class="button is-small is-rounded is-outlined is-dark"
                                         aria-haspopup="true"
                                         aria-controls="dropdown-menu">
-                                    <span>
-                                        Actions
-                                    </span>
+                                    <span>Actions</span>
                                     <span class="icon is-small">{% icon 'bi:arrow-down' 24 %}</span>
                                 </button>
                             </div>

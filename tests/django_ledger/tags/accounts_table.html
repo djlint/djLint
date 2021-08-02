@@ -6,9 +6,7 @@
             {% if title %}
                 <tr>
                     <td>
-                        <h2 class="is-size-3 has-text-weight-light">
-                            {{ title }}
-                        </h2>
+                        <h2 class="is-size-3 has-text-weight-light">{{ title }}</h2>
                     </td>
                     <td></td>
                     <td></td>
@@ -23,65 +21,37 @@
                 <th>{% trans 'Role' %}</th>
                 <th>{% trans 'Parent' %}</th>
                 <th>{% trans 'Code' %}</th>
-                <th>
-                    {% trans 'Account Name' %}
-                </th>
-                <th>
-                    {% trans 'Balance Type' %}
-                </th>
-                <th>
-                    {% trans 'Active' %}
-                </th>
-                <th>
-                    {% trans 'Locked' %}
-                </th>
-                <th>
-                    {% trans 'Actions' %}
-                </th>
+                <th>{% trans 'Account Name' %}</th>
+                <th>{% trans 'Balance Type' %}</th>
+                <th>{% trans 'Active' %}</th>
+                <th>{% trans 'Locked' %}</th>
+                <th>{% trans 'Actions' %}</th>
             </tr>
         </thead>
         <tbody>
             {% for account in accounts %}
                 <tr>
-                    <td>
-                        {{ account.get_role_display }}
-                    </td>
-                    <td>
-                        {{ account.parent.code }}
-                    </td>
-                    <td>
-                        {{ account.code }}
-                    </td>
-                    <td>
-                        {{ account.name }}
-                    </td>
+                    <td>{{ account.get_role_display }}</td>
+                    <td>{{ account.parent.code }}</td>
+                    <td>{{ account.code }}</td>
+                    <td>{{ account.name }}</td>
                     <td class="has-text-centered">
                         {% if account.is_debit %}
-                            <span class="icon has-text-info-dark">
-                                {% icon 'bi:arrow-bar-down' 24 %}
-                            </span>
+                            <span class="icon has-text-info-dark">{% icon 'bi:arrow-bar-down' 24 %}</span>
                         {% elif account.is_credit %}
-                            <span class="icon has-text-warning-dark">
-                                {% icon 'bi:arrow-bar-up' 24 %}
-                            </span>
+                            <span class="icon has-text-warning-dark">{% icon 'bi:arrow-bar-up' 24 %}</span>
                         {% endif %}
                     </td>
                     <td class="has-text-centered">
                         {% if account.active %}
-                            <span class="icon has-text-success-dark">
-                                {% icon 'ant-design:check-circle-filled' 24 %}
-                            </span>
+                            <span class="icon has-text-success-dark">{% icon 'ant-design:check-circle-filled' 24 %}</span>
                         {% endif %}
                     </td>
                     <td class="has-text-centered">
                         {% if account.locked %}
-                            <span class="icon has-text-success-dark">
-                                {% icon 'bi:lock-fill' 24 %}
-                            </span>
+                            <span class="icon has-text-success-dark">{% icon 'bi:lock-fill' 24 %}</span>
                         {% elif not account.locked %}
-                            <span class="icon has-text-danger-dark">
-                                {% icon 'bx:bx-lock-open-alt' 24 %}
-                            </span>
+                            <span class="icon has-text-danger-dark">{% icon 'bx:bx-lock-open-alt' 24 %}</span>
                         {% endif %}
                     </td>
                     <td>
@@ -90,9 +60,7 @@
                                 <button class="button is-small is-rounded is-outlined"
                                         aria-haspopup="true"
                                         aria-controls="dropdown-menu">
-                                    <span>
-                                        Actions
-                                    </span>
+                                    <span>Actions</span>
                                     <span class="icon is-small">{% icon 'bi:arrow-down' 24 %}</span>
                                 </button>
                             </div>

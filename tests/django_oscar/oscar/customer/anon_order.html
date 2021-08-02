@@ -58,18 +58,10 @@
     <table class="table table-striped table-bordered">
         <tr>
             <th>{% trans 'Product' %}</th>
-            <th>
-                {% trans 'Status' %}
-            </th>
-            <th>
-                {% trans 'Quantity' %}
-            </th>
-            <th>
-                {% trans 'Line price excl. tax' %}
-            </th>
-            <th>
-                {% trans 'Line price incl. tax' %}
-            </th>
+            <th>{% trans 'Status' %}</th>
+            <th>{% trans 'Quantity' %}</th>
+            <th>{% trans 'Line price excl. tax' %}</th>
+            <th>{% trans 'Line price incl. tax' %}</th>
             {% iffeature "reviews" %}
                 <th></th>
             {% endiffeature %}
@@ -85,18 +77,10 @@
                         {{ line.description }}
                     {% endif %}
                 </td>
-                <td>
-                    {{ line.shipping_status|default:"-" }}
-                </td>
-                <td>
-                    {{ line.quantity }}
-                </td>
-                <td>
-                    {{ line.line_price_before_discounts_excl_tax|currency:order.currency }}
-                </td>
-                <td>
-                    {{ line.line_price_before_discounts_incl_tax|currency:order.currency }}
-                </td>
+                <td>{{ line.shipping_status|default:"-" }}</td>
+                <td>{{ line.quantity }}</td>
+                <td>{{ line.line_price_before_discounts_excl_tax|currency:order.currency }}</td>
+                <td>{{ line.line_price_before_discounts_incl_tax|currency:order.currency }}</td>
                 {% iffeature "reviews" %}
                     <td>
                         {% if line.product|is_review_permitted:user %}
@@ -112,9 +96,7 @@
         {% for discount in order.discounts.all %}
             <tr>
                 <td colspan="5">{{ discount.description }}</td>
-                <td>
-                    -{{ discount.amount|currency:order.currency }}
-                </td>
+                <td>-{{ discount.amount|currency:order.currency }}</td>
                 <td colspan="1"></td>
             </tr>
         {% endfor %}
@@ -124,28 +106,16 @@
         {% trans 'Totals' %}
         </caption>
         <tr>
-            <th>
-                {% trans 'Basket total (inc. tax)' %}
-            </th>
-            <td>
-                {{ order.basket_total_incl_tax|currency:order.currency }}
-            </td>
+            <th>{% trans 'Basket total (inc. tax)' %}</th>
+            <td>{{ order.basket_total_incl_tax|currency:order.currency }}</td>
         </tr>
         <tr>
-            <th>
-                {% trans 'Shipping charge (inc. tax)' %}
-            </th>
-            <td>
-                {{ order.shipping_incl_tax|currency:order.currency }}
-            </td>
+            <th>{% trans 'Shipping charge (inc. tax)' %}</th>
+            <td>{{ order.shipping_incl_tax|currency:order.currency }}</td>
         </tr>
         <tr>
-            <th>
-                {% trans 'Order total' %}
-            </th>
-            <td>
-                {{ order.total_incl_tax|currency:order.currency }}
-            </td>
+            <th>{% trans 'Order total' %}</th>
+            <td>{{ order.total_incl_tax|currency:order.currency }}</td>
         </tr>
     </table>
 {% endblock content %}

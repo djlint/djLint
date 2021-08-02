@@ -6,14 +6,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:comms-list' %}">
-                    {% trans "Emails" %}
-                </a>
+                <a href="{% url 'dashboard:comms-list' %}">{% trans "Emails" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {{ commtype.name }}
@@ -32,14 +28,10 @@
             {% if preview %}
                 <ul class="nav nav-tabs mb-0">
                     <li>
-                        <a href="#email_form" data-toggle="tab">
-                            {% trans "Edit" %}
-                        </a>
+                        <a href="#email_form" data-toggle="tab">{% trans "Edit" %}</a>
                     </li>
                     <li class="active">
-                        <a href="#email_preview" data-toggle="tab">
-                            {% trans "Preview" %}
-                        </a>
+                        <a href="#email_preview" data-toggle="tab">{% trans "Preview" %}</a>
                     </li>
                 </ul>
             {% else %}
@@ -161,9 +153,7 @@
                         {% trans "Save" %}
                     </button>
                     {% trans "or" %}
-                    <a href="{% url 'dashboard:comms-list' %}">
-                        {% trans "cancel" %}
-                    </a>
+                    <a href="{% url 'dashboard:comms-list' %}">{% trans "cancel" %}</a>
                     .
                 </div>
             </div>

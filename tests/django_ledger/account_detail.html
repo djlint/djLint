@@ -8,12 +8,8 @@
 {% block view_content %}
     <div class="card">
         <div class="card-content has-text-centered">
-            <h1 class="is-size-1 has-text-weight-bold">
-                {{ account.code }}: {{ account.name }}
-            </h1>
-            <h2 class="is-size-2 has-text-weight-light">
-                {% trans 'Account Transaction List Report' %}
-            </h2>
+            <h1 class="is-size-1 has-text-weight-bold">{{ account.code }}: {{ account.name }}</h1>
+            <h2 class="is-size-2 has-text-weight-light">{% trans 'Account Transaction List Report' %}</h2>
             <h3 class="is-size-4 is-italic has-font-weight-light">
                 {% if view_date %}
                     {{ from_date | date:'m/d/Y' }}

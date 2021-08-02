@@ -8,9 +8,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboard:index' %}">
-                    {% trans "Dashboard" %}
-                </a>
+                <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {% trans "Stock alerts" %}
@@ -73,15 +71,9 @@
                     </td>
                     <td>{{ alert.stockrecord.partner.display_name }}</td>
                     <td>{{ alert.stockrecord.low_stock_threshold }}</td>
-                    <td>
-                        {{ alert.stockrecord.net_stock_level }}
-                    </td>
-                    <td>
-                        {{ alert.date_created }}
-                    </td>
-                    <td>
-                        {{ alert.status }}
-                    </td>
+                    <td>{{ alert.stockrecord.net_stock_level }}</td>
+                    <td>{{ alert.date_created }}</td>
+                    <td>{{ alert.status }}</td>
                     <td>
                         <a class="btn btn-info"
                            href="{% url 'dashboard:catalogue-product' pk=alert.stockrecord.product.id %}">
@@ -92,9 +84,7 @@
             {% endfor %}
         {% else %}
             <tr>
-                <td>
-                    {% trans "No stock alerts found." %}
-                </td>
+                <td>{% trans "No stock alerts found." %}</td>
             </tr>
         {% endif %}
     </table>

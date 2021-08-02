@@ -139,9 +139,7 @@
                                         {{ lib.add_modal_button(url=get_file_url(path, modal=True)|safe,
                                         btn_class='', content=name) }}
                                     {% else %}
-                                        <a href="{{ get_file_url(path)|safe }}">
-                                            {{ name }}
-                                        </a>
+                                        <a href="{{ get_file_url(path)|safe }}">{{ name }}</a>
                                         {%- endif - %}
                                     {% else %}
                                         {{ name }}
