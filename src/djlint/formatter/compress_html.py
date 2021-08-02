@@ -73,6 +73,8 @@ def _strip_html_whitespace(html):
 def compress_html(html):
     """Compress back tags that do not need to be expanded."""
     # put empty tags on one line
+    html = _strip_html_whitespace(html)
+
     html = re.sub(
         r"(<([\w]+)[^>]*>)\s+?(<\/\2>)",
         r"\1\3",
@@ -120,7 +122,5 @@ def compress_html(html):
         html,
         re.IGNORECASE | re.MULTILINE,
     )
-
-    html = _strip_html_whitespace(html)
 
     return html
