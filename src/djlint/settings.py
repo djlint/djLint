@@ -15,10 +15,10 @@ ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre|{#"
 ignored_tag_closing = r"</script|</style|-->|\*}|\?>|</pre|#}"
 
 # the contents of these tag blocks will be indented
-tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
+tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|textarea|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
 
 # this signals when tags should be unindented (see tags above)
-tag_unindent = r"(?:\{\{\/)|\{% end|(?:{% endverbatim %})|(?:</(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|header|cache|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
+tag_unindent = r"(?:\{\{\/)|\{% end|(?:{% endverbatim %})|(?:</(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|textarea|header|cache|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
 
 # these tags should be unindented and next line will be indented
 tag_unindent_line = r"(?:\{% el)|(?:\{\{ *?(?:else|\^) *?\}\})"
