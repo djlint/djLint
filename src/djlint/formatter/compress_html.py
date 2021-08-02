@@ -1,4 +1,6 @@
 """djLint Attempt to logically shrink html."""
+import re as old_re
+
 import regex as re
 
 from ..settings import (
@@ -88,17 +90,25 @@ def compress_html(html):
 
     # put short single line tags on one line
     slt_html = "|".join(single_line_html_tags)
-    html = re.sub(
+    html = old_re.sub(
         r"(<(%s)>)\s*([^<\n]{,80})\s*?(</(\2)>)" % slt_html,
         r"\1\3\4",
         html,
-        re.IGNORECASE | re.MULTILINE,
+        re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
-    html = re.sub(
-        r"(<(%s) [^\n]{,30}>)\s*([^<\n]{,50})\s*?(</(\2)>)" % slt_html,
+
+    html = old_re.sub(
+        r"(<(%s)>)\s*?([^<\n]{,80})\s*?(</(\2)>)" % slt_html,
         r"\1\3\4",
         html,
-        re.IGNORECASE | re.MULTILINE,
+        re.IGNORECASE | re.MULTILINE | re.DOTALL,
+    )
+
+    html = re.sub(
+        r"(<(%s) [^\n]{,40}>)\s*([^<\n]{,50})\s*?(</(\2)>)" % slt_html,
+        r"\1\3\4",
+        html,
+        re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
 
     slt_template = "|".join(single_line_template_tags)
