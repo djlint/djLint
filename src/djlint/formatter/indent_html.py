@@ -53,38 +53,42 @@ def indent_html(rawcode):
     slt_html = "|".join(
         break_html_tags
     )  # here using all tags cause we allow empty tags on one line
+
     always_slt_html = "|".join(
         always_single_line_html_tags
     )  # here using all tags cause we allow empty tags on one line
+
     slt_template = "|".join(single_line_template_tags)
 
     for item in rawcode_flat_list:
+
         # if a raw tag then start ignoring
         if (
             tag_raw_flat_opening
             and re.search(tag_raw_flat_opening, item, re.IGNORECASE)
         ) or re.search(tag_raw_flat_opening, item, re.IGNORECASE):
             is_block_raw = True
+
         if re.findall(
             r"(?:%s)" % "|".join(ignored_inline_blocks), item, flags=re.IGNORECASE
         ):
             tmp = (indent * indent_level) + item + "\n"
 
         # if a one-line, inline tag, just process it, only if line starts w/ it
+
         elif (
             re.findall(r"(<(%s)>)(.*?)(</(\2)>)" % slt_html, item, re.IGNORECASE)
             or re.findall(r"(<(%s) .+?>)(.*?)(</(\2)>)" % slt_html, item, re.IGNORECASE)
             or re.findall(
-                r"({% +?(" + slt_template + r") +?.+?%})(.*?)({% +?end(\2) +?%})",
+                r"^({% +?(" + slt_template + r") +?.+?%})(.*?)({% +?end(\2) +?%})",
                 item,
-                re.IGNORECASE,
+                re.IGNORECASE | re.MULTILINE,
             )
             or re.findall(r"(<(%s) .*?/>)" % slt_html, item, flags=re.IGNORECASE)
             or re.findall(
                 r"(<(%s) .*?/?>)" % always_slt_html, item, flags=re.IGNORECASE
             )
         ) and is_block_raw is False:
-
             tmp = (indent * indent_level) + item + "\n"
             blank_counter = 0
 
