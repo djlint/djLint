@@ -118,3 +118,4 @@
     flags: re.DOTALL|re.I
     patterns:
     - <a\s+?[^>]*?(?:href|data-url)=[\"|'](?!https?://)[\w|/]+
+    - <form\s+?[^>]*?(?:action)=[\"|'](?!https?://)[\w|/]+
