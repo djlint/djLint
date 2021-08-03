@@ -199,16 +199,18 @@ def main(
     elif reformat is True:
         message = "Reformatt"
 
-    bar_message = "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{{elapsed}}{}    ".format(
-        Fore.BLUE + Style.BRIGHT,
-        message + "ing",
-        Style.RESET_ALL,
-        Fore.RED + Style.BRIGHT,
-        Style.RESET_ALL,
-        Fore.BLUE + Style.BRIGHT,
-        Style.RESET_ALL,
-        Fore.GREEN + Style.BRIGHT,
-        Style.RESET_ALL,
+    bar_message = (
+        "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{{elapsed}}{}".format(
+            Fore.BLUE + Style.BRIGHT,
+            message + "ing",
+            Style.RESET_ALL,
+            Fore.RED + Style.BRIGHT,
+            Style.RESET_ALL,
+            Fore.BLUE + Style.BRIGHT,
+            Style.RESET_ALL,
+            Fore.GREEN + Style.BRIGHT,
+            Style.RESET_ALL + "    ",
+        )
     )
 
     echo()
