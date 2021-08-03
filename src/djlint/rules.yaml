@@ -44,7 +44,9 @@
     message: Img tag should have alt, height and width attributes.
     flags: re.DOTALL|re.I
     patterns:
-    - <img\s(?:(?!(?:alt|width|height)).)*>
+    - <img\s(?:(?!(?:height)=).)*/?>
+    - <img\s(?:(?!(?:width)=).)*/?>
+    - <img\s(?:(?!(?:alt)=).)*/?>
 - rule:
     name: W007
     message: <!DOCTYPE ... > should be present before the html tag.
@@ -71,10 +73,10 @@
     - (?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE)=
 - rule:
     name: W011
-    message: Attirbute values should be quoted.
+    message: Attribute values should be quoted.
     flags: re.DOTALL|re.I
     patterns:
-    - "[^(?:\"|')](?:class|id|src|width|height|alt|style|lang|title)=[a-zA-Z]+"
+    - "[^(?:\"|')]\\s+?(?:class|id|src|width|height|alt|style|lang|title|href|action|method)=[a-zA-Z]+"
 - rule:
     name: W012
     message: There should be no spaces around attribute =.
@@ -117,5 +119,5 @@
     message: Internal links should use the {% url ... %} pattern.
     flags: re.DOTALL|re.I
     patterns:
-    - <a\s+?[^>]*?(?:href|data-url)=[\"|'](?!https?://)[\w|/]+
+    - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url|data-ajax)=[\"|'](?!https?://)[\w|/]+
     - <form\s+?[^>]*?(?:action)=[\"|'](?!https?://)[\w|/]+
