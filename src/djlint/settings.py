@@ -9,10 +9,10 @@ break_html_tags = ["a", "abbr"]
 
 
 # indicates tags whose contents should not be formatted
-ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre|{#"
+ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre"
 
 # indicates when to stop ignoring
-ignored_tag_closing = r"</script|</style|-->|\*}|\?>|</pre|#}"
+ignored_tag_closing = r"</script|</style|-->|\*}|\?>|</pre"
 
 # the contents of these tag blocks will be indented
 tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language|with)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|textarea|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"

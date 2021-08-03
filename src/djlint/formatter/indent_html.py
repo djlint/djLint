@@ -94,12 +94,9 @@ def indent_html(rawcode):
         elif (
             re.search(r"^(?:" + tag_unindent + r")", item, re.IGNORECASE | re.MULTILINE)
             and is_block_raw is False
+            or re.search(ignored_tag_closing, item, re.IGNORECASE)
         ):
             indent_level = max(indent_level - 1, 0)
-            tmp = (indent * indent_level) + item + "\n"
-            blank_counter = 0
-
-        elif re.search(ignored_tag_closing, item, re.IGNORECASE):
             tmp = (indent * indent_level) + item + "\n"
             blank_counter = 0
 
