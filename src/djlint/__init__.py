@@ -58,7 +58,7 @@ def get_src(src: Path, extension=None):
 def build_output(error):
     """Build output for file errors."""
     errors = sorted(list(error.values())[0], key=lambda x: int(x["line"].split(":")[0]))
-    width = click.get_terminal_size().columns
+    width, _ = click.get_terminal_size()
 
     if len(errors) == 0:
         return 0
