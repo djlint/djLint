@@ -94,7 +94,7 @@ def build_check_output(errors, quiet):
         return 0
 
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
-    width = click.get_terminal_size().columns
+    width, _ = click.get_terminal_size()
 
     if quiet is True and len(list(errors.values())[0]) > 0:
         echo(
