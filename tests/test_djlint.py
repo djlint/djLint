@@ -3,11 +3,12 @@ Djlint Tests.
 
 run::
 
-    coverage erase; coverage run -m pytest; coverage report -m
+    pytest --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 or::
 
     tox
+
 """
 
 from pathlib import Path
@@ -210,27 +211,60 @@ def test_W018(runner, tmp_file):
     assert "W018 1:" in result.output
 
 
+# assert "asdf" in result.output
+
+
 def test_check(runner, tmp_file):
     write_to_file(tmp_file.name, b"<div></div>")
-    result = runner.invoke(djlint, [tmp_file.name], "--check")
+    result = runner.invoke(djlint, [tmp_file.name, "--check"])
     assert result.exit_code == 0
     # assert "Linting 1 file!" in result.output
     # assert "Linted 1 file, found 0 errors" in result.output
 
 
 def test_check_non_existing_file(runner, tmp_file):
-    result = runner.invoke(djlint, "tests/nothing.html", "--check")
+    result = runner.invoke(djlint, ["tests/nothing.html", "--check"])
     assert result.exit_code == 2
 
 
 def test_check_non_existing_folder(runner, tmp_file):
-    result = runner.invoke(djlint, "tests/nothing", "--check")
+    result = runner.invoke(djlint, ["tests/nothing", "--check"])
     assert result.exit_code == 2
 
 
 def test_check_django_ledger(runner, tmp_file):
     # source from https://github.com/arrobalytics/django-ledger
-    result = runner.invoke(djlint, "tests/django_ledger", "--check")
+    result = runner.invoke(djlint, ["tests/django_ledger", "--check"])
     assert result.exit_code == 0
     # assert "Linting 120 files!" in result.output
     # assert "0 files were updated." in result.output
+
+
+def test_check_reformatter_simple_error(runner, tmp_file):
+    write_to_file(tmp_file.name, b"<div><p>nice stuff here</p></div>")
+    result = runner.invoke(djlint, [tmp_file.name, "--check"])
+    assert result.exit_code == 0
+    assert "1 file would be updated." in result.output
+
+
+def test_reformatter_simple_error(runner, tmp_file):
+    write_to_file(tmp_file.name, b"<div><p>nice stuff here</p></div>")
+    result = runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert result.exit_code == 0
+    assert "1 file was updated." in result.output
+
+
+def test_check_reformatter_simple_error_quiet(runner, tmp_file):
+    write_to_file(tmp_file.name, b"<div><p>nice stuff here</p></div>")
+    result = runner.invoke(djlint, [tmp_file.name, "--check", "--quiet"])
+    assert result.exit_code == 0
+    assert "1 file would be updated." in result.output
+
+
+def test_check_reformatter_no_error(runner, tmp_file):
+    write_to_file(
+        tmp_file.name, b"<div>\n    <p>\n        nice stuff here\n    </p>\n</div>"
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--check"])
+    assert result.exit_code == 0
+    assert "0 files would be updated." in result.output

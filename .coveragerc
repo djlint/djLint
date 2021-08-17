@@ -2,7 +2,6 @@
 source = src/djlint
 branch = True
 
-
 [report]
 show_missing = True
 skip_covered = True

@@ -16,6 +16,7 @@ usage::
 
 import os
 import re
+import shutil
 import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
@@ -58,7 +59,7 @@ def get_src(src: Path, extension=None):
 def build_output(error):
     """Build output for file errors."""
     errors = sorted(list(error.values())[0], key=lambda x: int(x["line"].split(":")[0]))
-    width, _ = click.get_terminal_size()
+    width, _ = shutil.get_terminal_size()
 
     if len(errors) == 0:
         return 0
@@ -94,7 +95,7 @@ def build_check_output(errors, quiet):
         return 0
 
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
-    width, _ = click.get_terminal_size()
+    width, _ = shutil.get_terminal_size()
 
     if quiet is True and len(list(errors.values())[0]) > 0:
         echo(
@@ -129,7 +130,7 @@ def build_check_output(errors, quiet):
 
 def build_quantity(size: int):
     """Count files in a list."""
-    return "%d file%s" % (size, ("s" if size > 1 else ""))
+    return "%d file%s" % (size, ("s" if size > 1 or size == 0 else ""))
 
 
 def build_quantity_tense(size: int):
