@@ -298,10 +298,12 @@ def main(
         for error in file_errors:
             error_count += build_output(error)
 
-        success_message = "%sed %s, found %d errors." % (
+        error_case = "error" if error_count == 1 else "errors"
+        success_message = "%sed %s, found %d %s." % (
             message,
             file_quantity,
             error_count,
+            error_case,
         )
 
     success_color = Fore.RED + Style.BRIGHT if error_count > 0 else Fore.BLUE

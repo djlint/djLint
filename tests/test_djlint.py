@@ -119,6 +119,7 @@ def test_W006(runner, tmp_file):
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W006 1:" in result.output
+    assert "a" == "b"
 
 
 def test_W007(runner, tmp_file):
@@ -209,6 +210,13 @@ def test_W018(runner, tmp_file):
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W018 1:" in result.output
+
+
+def test_handlebars_else(runner, tmp_file):
+    write_to_file(tmp_file.name, b"{{^}}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "Linted 1 file, found 0 errors." in result.output
 
 
 # assert "asdf" in result.output
