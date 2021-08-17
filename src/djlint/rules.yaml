@@ -119,5 +119,5 @@
     message: Internal links should use the {% url ... %} pattern.
     flags: re.DOTALL|re.I
     patterns:
-    - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url|data-ajax)=[\"|'](?!https?://)[\w|/]+
+    - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url)=[\"|'](?!https?://)[\w|/]+
     - <form\s+?[^>]*?(?:action)=[\"|'](?!https?://)[\w|/]+
