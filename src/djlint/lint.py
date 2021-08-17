@@ -72,4 +72,11 @@ def lint_file(ignore: str, this_file: Path):
                     }
                 )
 
+    # remove duplicate matches
+    for file_name, error_dict in errors.items():
+        unique_errors = []
+        for dict_ in error_dict:
+            if dict_ not in unique_errors:
+                unique_errors.append(dict_)
+        errors[file_name] = unique_errors
     return errors

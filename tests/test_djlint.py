@@ -119,7 +119,7 @@ def test_W006(runner, tmp_file):
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "W006 1:" in result.output
-    assert "a" == "b"
+    assert "found 1 error" in result.output
 
 
 def test_W007(runner, tmp_file):
