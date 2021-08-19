@@ -310,6 +310,9 @@ def main(
 
     echo(f"\n{success_color}{success_message}{Style.RESET_ALL}\n")
 
+    if bool(error_count):
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     init(autoreset=True)
