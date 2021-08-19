@@ -5,6 +5,11 @@ run::
 
     pytest --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
+for a single test::
+
+    pytest tests/test_djlint.py::test_W010 --cov=src/djlint \
+     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
+
 or::
 
     tox
@@ -148,6 +153,10 @@ def test_W010(runner, tmp_file):
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "W010 1:" in result.output
+
+    write_to_file(tmp_file.name, b"<li>ID=username</li>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
 
 
 def test_W011(runner, tmp_file):

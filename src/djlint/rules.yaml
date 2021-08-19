@@ -70,7 +70,7 @@
     message: Attribute names should be lowercase.
     flags: re.DOTALL
     patterns:
-    - (?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE)=
+    - <\w+[^\>]+?(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE)=
 - rule:
     name: W011
     message: Attribute values should be quoted.
