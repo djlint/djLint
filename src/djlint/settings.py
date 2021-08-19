@@ -5,9 +5,6 @@
 # default indentation
 indent = "    "
 
-break_html_tags = ["a", "abbr"]
-
-
 # indicates tags whose contents should not be formatted
 ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre"
 
@@ -39,7 +36,7 @@ max_line_length = 120
 format_long_attributes = True
 
 # pattern used to find attributes in a tag
-attribute_pattern = r"(.+?=(?:\".*?\"|\'.*?\')|required|checked)\s*"
+attribute_pattern = r"(?:{%[^}]*?%}(?:.*?{%[^}]*?%})+?)|(?:[^\s]+?=(?:\"{{.*?}}\"|\'{{.*?}}\'))|(?:[^\s]+?=(?:\".*?\"|\'.*?\'))|required|checked|[\w|-]+|[\w|-]+=[\w|-]+|{{.*?}}"
 tag_pattern = r"(<\w+?[^>]*?)((?:\n[^>]+?)+?)(/?\>)"
 ignored_attributes = [
     "data-json",

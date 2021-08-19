@@ -267,7 +267,7 @@ def main(
             )
         )
 
-        asdf = tqdm(
+        finished_bar = tqdm(
             total=len(file_list),
             initial=len(file_list),
             bar_format=finshed_bar_message,
@@ -275,7 +275,7 @@ def main(
             ascii="┈━",
             leave=True,
         )
-        asdf.close()
+        finished_bar.close()
 
     # format errors
     success_message = ""

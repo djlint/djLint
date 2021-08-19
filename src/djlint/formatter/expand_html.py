@@ -90,10 +90,12 @@ def expand_html(html):
         html,
         flags=re.IGNORECASE,
     )
+    # <tag>
     html = re.sub(
         r"(<(?:%s)>)(?=[^\n])" % html_tags, add_right, html, flags=re.IGNORECASE
     )
 
+    # \n<tag /> and \n<tag/>
     html = re.sub(
         r"%s\K(<(?:%s) ?/>)"
         % (
@@ -104,10 +106,13 @@ def expand_html(html):
         html,
         flags=re.IGNORECASE,
     )
+
+    # <tag /> and <tag/>
     html = re.sub(
         r"(<(?:%s) ?/>)(?=[^\n])" % html_tags, add_right, html, flags=re.IGNORECASE
     )
 
+    # \n<tag stuff/>,  \n<tag stuff>, \n<tag stuff />
     html = re.sub(
         r"%s\K(<(?:%s) [^>]*?[^/]>)"
         % (
@@ -118,6 +123,7 @@ def expand_html(html):
         html,
         flags=re.IGNORECASE,
     )
+    # <tag stuff/>,  <tag stuff>, <tag stuff />
     html = re.sub(
         r"(<(?:%s) [^>]*?[^/]>)(?=[^\n])" % html_tags,
         add_right,
@@ -135,6 +141,7 @@ def expand_html(html):
         html,
         flags=re.IGNORECASE,
     )
+
     html = re.sub(
         r"(<(?:%s) [^>]+?/>)(?=[^\n])" % html_tags, add_right, html, flags=re.IGNORECASE
     )
@@ -165,11 +172,7 @@ def expand_html(html):
             return match.group(1)
 
         if not re.findall(
-            r"\<(?:"
-            + html_tags
-            + r") .*? ?\w+=[\"][^\"]*?"
-            + re.escape(match.group(1))
-            + "$",
+            r"\<(?:" + html_tags + r") [^>]*?" + re.escape(match.group(1)) + "$",
             html[: match.end()],
             re.MULTILINE,
         ):
