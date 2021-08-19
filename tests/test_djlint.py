@@ -276,3 +276,21 @@ def test_check_reformatter_no_error(runner, tmp_file):
     result = runner.invoke(djlint, [tmp_file.name, "--check"])
     assert result.exit_code == 0
     assert "0 files would be updated." in result.output
+
+
+def test_reformat_asset_tag(runner, tmp_file):
+    write_to_file(
+        tmp_file.name,
+        b"""{% block css %}{% assets "css_error" %}<link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />{% endassets %}{% endblock css %}""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        open(tmp_file.name).read()
+        == """{% block css %}
+    {% assets "css_error" %}
+        <link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />
+    {% endassets %}
+{% endblock css %}
+"""
+    )
+    assert result.exit_code == 1
