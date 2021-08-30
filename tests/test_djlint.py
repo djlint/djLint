@@ -311,9 +311,47 @@ def test_textarea_tag(runner, tmp_file):
     assert (
         open(tmp_file.name).read()
         == """<div>
-    <textarea>
+<textarea>
 asdf
   asdf</textarea>
+</div>
+"""
+    )
+
+
+def test_script_tag(runner, tmp_file):
+    write_to_file(
+        tmp_file.name,
+        b"""<div>\n    <script>console.log();\n    console.log();\n\n    </script>\n</div>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        open(tmp_file.name).read()
+        == """<div>
+    <script>
+console.log();
+    console.log();
+
+    </script>
+</div>
+"""
+    )
+
+
+def test_html_comments_tag(runner, tmp_file):
+    write_to_file(
+        tmp_file.name,
+        b"""<div>\n    <!-- asdf-->\n\n   <!-- \n multi\nline\ncomment--></div>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        open(tmp_file.name).read()
+        == """<div>
+    <!-- asdf-->
+   <!--
+ multi
+line
+comment-->
 </div>
 """
     )

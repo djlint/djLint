@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 project_path = Path(__file__).parent
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 
 def long_description():

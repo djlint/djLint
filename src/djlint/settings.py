@@ -5,28 +5,25 @@
 # default indentation
 indent = "    "
 
-# indicates tags whose contents should not be formatted
-ignored_tag_opening = r"<script|<style|<!--|{\*|<\?php|<pre|<textarea"
+# contents of tags will not be formatted, but tags will be formatted
+ignored_block_opening = [r"<style" r"{\*", r"<\?php", r"<script"]
 
-# indicates when to stop ignoring
-ignored_tag_closing = r"</script|</style|-->|\*}|\?>|</pre|</textarea"
+ignored_block_closing = [r"</style" r"\*}", r"\?>", r"</script"]
 
-# the contents of these tag blocks will be indented
+
+# contents of tags will not be formated and tags will not be formatted
+ignored_group_opening = [r"<!--", r"[^\{]{#", r"<pre", r"<textarea"]
+
+ignored_group_closing = [r"-->", r"#}[^\}]", r"</pre", r"</textarea"]
+
+
+# the contents of these tag blocks will be indented, then unindented
 tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language|with|assets)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
-
-# this signals when tags should be unindented (see tags above)
 tag_unindent = r"(?:\{\{\/)|\{% end|(?:{% endverbatim %})|(?:</(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|header|cache|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
 
 # these tags should be unindented and next line will be indented
 tag_unindent_line = r"(?:\{% el)|(?:\{\{ *?(?:else|\^) *?\}\})"
 
-# these tags use raw code and should flatten to column 1
-# tabs will be removed inside these tags! use spaces for spacing if needed!
-# flatten starting with this tag...
-tag_raw_flat_opening = r"[^\{]{#"
-
-# ...stop flattening when you encounter this tag
-tag_raw_flat_closing = r"#}[^\}]"
 
 # reduce empty lines greater than  x to 1 line
 reduce_extralines_gt = 2
