@@ -355,3 +355,15 @@ comment-->
 </div>
 """
     )
+
+
+def test_dj_comments_tag(runner, tmp_file):
+    write_to_file(
+        tmp_file.name,
+        b"""{# comment #}\n{% if this %}<div></div>{% endif %}""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        open(tmp_file.name).read()
+        == """{# comment #}\n{% if this %}<div></div>{% endif %}\n"""
+    )

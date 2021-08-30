@@ -14,7 +14,7 @@ ignored_block_closing = [r"</style" r"\*}", r"\?>", r"</script"]
 # contents of tags will not be formated and tags will not be formatted
 ignored_group_opening = [r"<!--", r"[^\{]{#", r"<pre", r"<textarea"]
 
-ignored_group_closing = [r"-->", r"#}[^\}]", r"</pre", r"</textarea"]
+ignored_group_closing = [r"-->", r"#}", r"</pre", r"</textarea"]
 
 
 # the contents of these tag blocks will be indented, then unindented
