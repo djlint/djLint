@@ -22,4 +22,4 @@ quiet = true
 
 
 [tool.pylint.messages_control]
-disable = "E1120, R0914, E0401, R0912, R0916, R0913, W0104"
+disable = "E1120, R0914, E0401, R0912, R0916, R0913, W0104, R0801, W1404"
