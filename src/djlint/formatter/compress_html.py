@@ -46,14 +46,16 @@ def _strip_html_whitespace(html):
             re.search(ignored_tag_closing, item, re.IGNORECASE)
             and is_block_raw is False
         ):
-            tmp = _clean_line(item)
+            # do not format ignored lines
+            tmp = item
             is_block_ignored = False
 
         elif (
             re.search(ignored_tag_opening, item, re.IGNORECASE)
             and is_block_raw is False
         ):
-            tmp = _clean_line(item)
+            # do not format ignored lines
+            tmp = item
             is_block_ignored = True
 
         elif is_block_raw or is_block_ignored:

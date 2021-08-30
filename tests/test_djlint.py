@@ -303,3 +303,17 @@ def test_reformat_asset_tag(runner, tmp_file):
 """
     )
     assert result.exit_code == 1
+
+
+def test_textarea_tag(runner, tmp_file):
+    write_to_file(tmp_file.name, b"""<div><textarea>\nasdf\n  asdf</textarea></div>""")
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        open(tmp_file.name).read()
+        == """<div>
+    <textarea>
+asdf
+  asdf</textarea>
+</div>
+"""
+    )
