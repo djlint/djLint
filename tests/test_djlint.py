@@ -341,7 +341,7 @@ console.log();
 def test_html_comments_tag(runner, tmp_file):
     write_to_file(
         tmp_file.name,
-        b"""<div>\n    <!-- asdf-->\n\n   <!-- \n multi\nline\ncomment--></div>""",
+        b"""<div>\n    <!-- asdf-->\n\n   <!--\n multi\nline\ncomment--></div>""",
     )
     runner.invoke(djlint, [tmp_file.name, "--reformat"])
     assert (
