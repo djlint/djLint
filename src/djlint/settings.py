@@ -102,6 +102,7 @@ single_line_html_tags = [
     "link",
     "path",
     "label",
+    "div",
 ]
 
 always_single_line_html_tags = ["link", "img", "meta"]

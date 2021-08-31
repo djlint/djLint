@@ -112,7 +112,7 @@ def compress_html(html):
     )
 
     html = re.sub(
-        r"(<(%s) [^\n]{,40}>)\s*([^<\n]{,50})\s*?(</(\2)>)" % slt_html,
+        r"(<(%s) [^\n]{,80}>)\s*([^<\n]{,80})\s*?(</(\2)>)" % slt_html,
         r"\1\3\4",
         html,
         re.IGNORECASE | re.MULTILINE | re.DOTALL,
@@ -127,5 +127,5 @@ def compress_html(html):
         html,
         re.IGNORECASE | re.MULTILINE,
     )
-
+    print(html)
     return html
