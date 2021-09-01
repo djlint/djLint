@@ -127,5 +127,5 @@ def compress_html(html):
         html,
         re.IGNORECASE | re.MULTILINE,
     )
-    print(html)
+
     return html

@@ -121,9 +121,10 @@ def indent_html(rawcode):
         else:
             tmp = (indent * indent_level) + item + "\n"
 
-        # we can try to fix django tags
-        tmp = re.sub(r"({[{|%])(\w[^}].+?)([}|%]})", r"\1 \2\3", tmp)
-        tmp = re.sub(r"({[{|%])([^}].+?[^ ])([}|%]})", r"\1\2 \3", tmp)
+        # we can try to fix template tags
+        tmp = re.sub(r"({[{|%]\-?)(\w[^}].+?)([}|%]})", r"\1 \2\3", tmp)
+        tmp = re.sub(r"({[{|%])([^}].+?[^(?: |\-)])([}|%]})", r"\1\2 \3", tmp)
+        tmp = re.sub(r"({[{|%])([^}].+?[^ ])(\-[}|%]})", r"\1\2 \3", tmp)
 
         # handlebars templates
         tmp = re.sub(r"({{#(?:each|if).+?[^ ])(}})", r"\1 \2", tmp)

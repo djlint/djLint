@@ -90,6 +90,20 @@ def test_E001(runner, tmp_file):
     assert "E001 1:" in result.output
     assert "E001 2:" in result.output
 
+    write_to_file(tmp_file.name, b"{%- test-%}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "E001 1:" in result.output
+
+    write_to_file(tmp_file.name, b"{%-test -%}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "E001 1:" in result.output
+
+    write_to_file(tmp_file.name, b"{%- test -%}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+
 
 def test_E002(runner, tmp_file):
     write_to_file(tmp_file.name, b"{% extends 'this' %}")
@@ -366,4 +380,25 @@ def test_dj_comments_tag(runner, tmp_file):
     assert (
         open(tmp_file.name).read()
         == """{# comment #}\n{% if this %}<div></div>{% endif %}\n"""
+    )
+
+
+def test_template_tags(runner, tmp_file):
+    # njk tag
+    write_to_file(
+        tmp_file.name,
+        b"""{%- set posts = collections.docs -%}""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert open(tmp_file.name).read() == """{%- set posts = collections.docs -%}\n"""
+
+    # ensure spaces are added
+    write_to_file(
+        tmp_file.name,
+        b"""{%-set posts = collections.docs-%}\n{%asdf%}""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        open(tmp_file.name).read()
+        == """{%- set posts = collections.docs -%}\n{% asdf %}\n"""
     )
