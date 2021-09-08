@@ -28,6 +28,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install poetry
     - name: Build and publish package
-      users: JRubics/poetry-publish@v1.8
+      uses: JRubics/poetry-publish@v1.8
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
