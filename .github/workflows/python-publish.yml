@@ -30,4 +30,4 @@ jobs:
     - name: Build and publish package
       uses: JRubics/poetry-publish@v1.8
       with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        pypi_token: ${{ secrets.PYPI_API_TOKEN }}
