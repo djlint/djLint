@@ -14,7 +14,7 @@ from click.testing import CliRunner
 
 from src.djlint import main as djlint
 
-from .conftest import write_to_file
+from .conftest import reformat, write_to_file
 
 
 def test_template_tags(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -36,4 +36,21 @@ def test_template_tags(runner: CliRunner, tmp_file: TextIO) -> None:
     assert (
         Path(tmp_file.name).read_text()
         == """{%- set posts = collections.docs -%}\n{% asdf %}\n"""
+    )
+
+
+def test_spaceless(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{%- if entry.children.length -%}<strong>{%- endif -%}""",
+    )
+    assert output["exit_code"] == 1
+    print(output["text"])
+    assert (
+        output["text"]
+        == r"""{%- if entry.children.length -%}
+    <strong>
+{%- endif -%}
+"""
     )

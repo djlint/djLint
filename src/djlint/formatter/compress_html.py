@@ -83,9 +83,9 @@ def compress_html(html: str, config: Config) -> str:
 
     # put empty template tags on one line
     html = re.sub(
-        r"({%[ ]*?("
+        r"({%-?[ ]*?("
         + re.sub(r"\s", "", config.start_template_tags)
-        + r")[^}]+?%})\s+?(\{\% end[^}]*?\%\})",
+        + r")[^}]+?-?%})\s+?(\{\%-?[ ]end[^}]*?\%\})",
         r"\1\3",
         html,
         re.MULTILINE,
@@ -118,9 +118,9 @@ def compress_html(html: str, config: Config) -> str:
 
     # cannot use verbose when replacing with var. 🤕
     html = re.sub(
-        r"({%[ ]*?("
+        r"({%-?[ ]*?("
         + re.sub(r"\s", "", config.single_line_template_tags)
-        + r")[ ]+?[^\n]{,30}%})\s*([^%\n]{,50})\s*?({%[ ]+?end(\2)[ ]*?%})",
+        + r")[ ]+?[^\n]{,30}%})\s*([^%\n]{,50})\s*?({%-?[ ]+?end(\2)[ ]*?%})",
         r"\1\3\4",
         html,
         re.IGNORECASE | re.MULTILINE,

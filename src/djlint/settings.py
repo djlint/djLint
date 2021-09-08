@@ -30,13 +30,13 @@ def find_pyproject(src: Path) -> Optional[Path]:
 def load_pyproject_settings(src: Path) -> Dict:
     """Load djlint config from pyproject.toml."""
 
-    djlint_content = {}
+    djlint_content: Dict = {}
     pyproject_file = find_pyproject(src)
 
     if pyproject_file:
         content = tomlkit.parse(pyproject_file.read_text())
         try:
-            djlint_content = content["tool"]["djlint"]
+            djlint_content = content["tool"]["djlint"]  # type: ignore
         except KeyError:
             logger.info("No pyproject.toml found.")
 
@@ -128,7 +128,7 @@ class Config:
         # the contents of these tag blocks will be indented, then unindented
         self.tag_indent: str = (
             r"""
-              (?:\{\{\#|\{%)[ ]*?
+              (?:\{\{\#|\{%-?)[ ]*?
                 (
                       if
                     | for
@@ -202,7 +202,7 @@ class Config:
         self.tag_unindent: str = r"""^
               (?:
                   (?:\{\{\/)
-                | (?:\{%[ ]*?end)
+                | (?:\{%-?[ ]*?end)
               )
             | (?:</
                 (?:
@@ -255,7 +255,7 @@ class Config:
 
         # these tags should be unindented and next line will be indented
         self.tag_unindent_line: str = r"""
-              (?:\{%[ ]*?(?:elif|else|empty))
+              (?:\{%-?[ ]*?(?:elif|else|empty))
             | (?:
                 \{\{[ ]*?
                 (
@@ -274,7 +274,7 @@ class Config:
 
         # pattern used to find attributes in a tag
         self.attribute_pattern: str = r"""
-              (?:{%[^}]*?%}(?:.*?{%[^}]*?%})+?)
+              (?:{%-?[^}]*?%}(?:.*?{%[^}]*?-?%})+?)
             | (?:[^\s]+?=(?:\"{{.*?}}\"|\'{{.*?}}\'))
             | (?:[^\s]+?=(?:\".*?\"|\'.*?\'))
             | required
