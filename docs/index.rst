@@ -27,39 +27,7 @@ HTML Template Linter and Formatter
 
 Find common formatting issues and *reformat* HTML templates.
 
-.. raw:: html
-   <style>
-      .types {
-        text-align: center;
-        font-size: 110%;
-        font-style: italic;
-        width: 100%;
-        position: relative;
-      }
-
-      .types::after {
-        position: absolute;
-        top: 11px;
-        left:0;
-        right:0;
-        border: 1px solid rgba(0,0,0,.2);
-        content: "";
-        z-index: -1;
-      }
-
-      .types span {
-        padding: 15px;
-        margin: 5px;
-        background: #fff;
-        z-index:1;
-      }
-   </style>
-   <p class="types">
-      <span>Django</span>
-      <span>Jinja</span>
-      <span>Nunjucks</span>
-      <span>Handlebars</span>
-   </p>
+*Django · Jinja · Nunjucks · Handlebars*
 
 Ps, ``--check`` it out on other templates as well!
 
@@ -108,5 +76,5 @@ Checkout the `issue <https://github.com/Riverside-Healthcare/djlint/issues>`_ li
    :target: https://codeclimate.com/github/Riverside-Healthcare/djlint/maintainability
 .. |Downloads| image:: https://img.shields.io/pypi/dm/djlint.svg
    :target: https://pypi.org/project/djlint/
-.. |chat| image:: https://discord.gg/taghAqebzU
-   :target: https://img.shields.io/badge/chat-discord-green
+.. |chat| image:: https://img.shields.io/badge/chat-discord-green
+   :target: https://discord.gg/taghAqebzU
