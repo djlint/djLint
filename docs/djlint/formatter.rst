@@ -3,11 +3,9 @@ Formatter
 
 djLint's formatter will take sloppy html templates and make it look pretty nice!
 
-For an example of what the output will be, check out the `/tests/ <https://github.com/Riverside-Healthcare/djlint/tree/master/tests>`_ folder to see over 300 **formatted** templates from the top django and flask projects.
-
 Before
 ------
-.. code :: html
+.. code ::
 
    {% load admin_list %}   {% load i18n %}
    <p class="paginator">

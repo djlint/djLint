@@ -18,10 +18,10 @@ Linter Usage
     # with custom extensions
     djlint src -e html.dj
 
-Reformatter Usage
+Formatter Usage
 -----------------
 
-Reforamtting is a beta product. Check the output before applying changes.
+Foramtting is a beta tool. ``--check`` the output before applying changes.
 
 Reformatting does not work with long json/html embedded into attribute data.
 
@@ -29,16 +29,16 @@ To check what may change in formatting run:
 
 .. code:: sh
 
-    djlint src --check --ignore="W013,W014"
+    djlint . --check --ignore="W013,W014"
 
-To reformat run:
+To format code run:
 
 .. code:: sh
 
-    djlint src --reformat
+    djlint . --reformat
 
 CLI Args
--------------
+--------
 
 .. code:: sh
 

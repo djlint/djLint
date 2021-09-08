@@ -1,15 +1,50 @@
 [build-system]
-requires = ["setuptools>=41.0", "setuptools-scm", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 
 [tool]
 
-
+[tool.poetry]
+name="djlint"
+version="0.3.5"
+description="HTML Template Linter and Formatter"
+license="GPL-3.0-or-later"
+authors=["Christopher Pickering <cpickering@rhc.net>"]
+maintainers=["Christopher Pickering <cpickering@rhc.net>"]
+readme="README.md"
+repository="https://github.com/Riverside-Healthcare/djlint"
+documentation="https://djlint.readthedocs.io"
+classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+        "Operating System :: OS Independent",
+    ]
+packages = [
+    { include = "djlint", from = "src" },
+]
+include = ["rules.yaml"]
 [tool.black]
 max_line_length = 99
 quiet = true
 
+[tool.poetry.dependencies]
+python = "^3.6"
+click = "^8.0.1"
+PyYAML = "^5.4.1"
+colorama = "^0.4.4"
+regex = "^2021.8.28"
+tqdm = "^4.62.2"
+tomlkit = "^0.7.2"
+coverage = { version = "^5.5", optional = true }
+pytest = { version = "^6.2.5", optional = true }
+pytest-cov = { version = "^2.12.1", optional = true }
+
+[tool.poetry.extras]
+test = ["coverage", "pytest", "pytest-cov"]
+
+[tool.poetry.scripts]
+djlint = "djlint:main"
 
 [tool.isort]
 multi_line_output = 3
@@ -22,4 +57,4 @@ quiet = true
 
 
 [tool.pylint.messages_control]
-disable = "E1120, R0914, E0401, R0912, R0916, R0913, W0104, R0801, W1404"
+disable = "E1120, R0914, E0401, R0912, R0916, R0913, W0104, R0801, W1404, R0902, R0903"

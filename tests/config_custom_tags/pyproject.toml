@@ -1,0 +1,3 @@
+[tool]
+[tool.djlint]
+custom_blocks = "toc,example"

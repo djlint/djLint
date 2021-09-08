@@ -1,7 +1,7 @@
 .. djlint documentation master file, created by
    sphinx-quickstart on Tue Jul 27 15:28:35 2021.
 
-Html Template Linter and Formatter
+HTML Template Linter and Formatter
 ==================================
 
 .. toctree::
@@ -15,21 +15,57 @@ Html Template Linter and Formatter
    djlint/rules
    djlint/formatter
    djlint/configuration
+   djlint/changelog
 
 .. toctree::
    :hidden:
 
    GitHub ↪ <https://github.com/Riverside-Healthcare/djlint>
    PyPI ↪ <https://pypi.org/project/djlint/>
+   Discord ↪ <https://discord.gg/taghAqebzU>
 
 
-Simple html template linter and reformatter to find common formatting issues with and *reformat* django html templates
+Find common formatting issues and *reformat* HTML templates.
 
-Ps, ``--check`` it out on Jinja and Handlebar templates as well!
+.. raw:: html
+   <style>
+      .types {
+        text-align: center;
+        font-size: 110%;
+        font-style: italic;
+        width: 100%;
+        position: relative;
+      }
+
+      .types::after {
+        position: absolute;
+        top: 11px;
+        left:0;
+        right:0;
+        border: 1px solid rgba(0,0,0,.2);
+        content: "";
+        z-index: -1;
+      }
+
+      .types span {
+        padding: 15px;
+        margin: 5px;
+        background: #fff;
+        z-index:1;
+      }
+   </style>
+   <p class="types">
+      <span>Django</span>
+      <span>Jinja</span>
+      <span>Nunjucks</span>
+      <span>Handlebars</span>
+   </p>
+
+Ps, ``--check`` it out on other templates as well!
 
 .. image:: /_static/demo.gif
 
-|codecov| |test| |Codacy Badge| |Maintainability| |Downloads|
+|codecov| |test| |Codacy Badge| |Maintainability| |Downloads| |chat|
 
 .. note:: djLint is not an html parser or syntax validator.
 
@@ -40,7 +76,7 @@ Add a badge to your projects `readme.md`:
 
 .. code-block:: md
 
-   [![Code style: black](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
+   [![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
 
 
 Add a badge to your `readme.rst`:
@@ -72,3 +108,5 @@ Checkout the `issue <https://github.com/Riverside-Healthcare/djlint/issues>`_ li
    :target: https://codeclimate.com/github/Riverside-Healthcare/djlint/maintainability
 .. |Downloads| image:: https://img.shields.io/pypi/dm/djlint.svg
    :target: https://pypi.org/project/djlint/
+.. |chat| image:: https://discord.gg/taghAqebzU
+   :target: https://img.shields.io/badge/chat-discord-green

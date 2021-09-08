@@ -1,0 +1,3 @@
+[tool]
+[tool.djlint]
+ignore = "E001"

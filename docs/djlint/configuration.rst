@@ -1,7 +1,10 @@
 Configuration
 =============
 
-Linter rules can easily be ignored with the `-i` or `--ignore` flag.
+Ignoring Linter Rules
+---------------------
+
+Linter rules can be ignored with the `-i` or `--ignore` flag.
 
 For example:
 
@@ -10,7 +13,15 @@ For example:
    djlint src -i "W013,W014"
 
 
-Help needed!
-------------
+Pyproject.toml Configuration
+----------------------------
 
-Ideally we'd also like to be able to ignore rules through pyproject.toml/tox.ini/setup.cfg.
+Configuration options can also be added to your projects `pyproject.toml` file. Command line args will always override any settings in `pyproject.toml`.
+
+.. code:: toml
+
+   [tool.djlint]
+   ignore = "W013"
+   extension = "html.dj"
+   custom_blocks = "toc,example" # custom code blocks {% toc %}...{% endtoc %}
+   indent = "    " # change indentation level
