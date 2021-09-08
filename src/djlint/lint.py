@@ -1,8 +1,11 @@
 """Djlint html linter."""
 from pathlib import Path
+from typing import Dict, List
 
 import regex as re
 import yaml
+
+from .settings import Config
 
 rules = yaml.load(
     (Path(__file__).parent / "rules.yaml").read_text(encoding="utf8"),
@@ -24,7 +27,7 @@ flags = {
 }
 
 
-def build_flags(flag_list):
+def build_flags(flag_list: str) -> int:
     """Build list of regex flags."""
     split_flags = flag_list.split("|")
 
@@ -34,14 +37,14 @@ def build_flags(flag_list):
     return combined_flags
 
 
-def get_line(start, line_ends):
+def get_line(start: int, line_ends: List) -> str:
     """Get the line number and index of match."""
     line = list(filter(lambda pair: pair["end"] > start, line_ends))[0]
 
     return "%d:%d" % (line_ends.index(line) + 1, start - line["start"])
 
 
-def lint_file(ignore: str, this_file: Path):
+def lint_file(config: Config, this_file: Path) -> Dict:
     """Check file for formatting errors."""
     file_name = str(this_file)
     errors: dict = {file_name: []}
@@ -54,7 +57,7 @@ def lint_file(ignore: str, this_file: Path):
     ]
 
     for rule in list(
-        filter(lambda x: x["rule"]["name"] not in ignore.split(","), rules)
+        filter(lambda x: x["rule"]["name"] not in config.ignore.split(","), rules)
     ):
         rule = rule["rule"]
 

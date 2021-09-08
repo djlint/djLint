@@ -21,6 +21,7 @@ import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 from pathlib import Path
+from typing import List
 
 import click
 from click import echo
@@ -29,22 +30,21 @@ from tqdm import tqdm
 
 from .lint import lint_file
 from .reformat import reformat_file
-from .settings import ignored_paths
+from .settings import Config
 
 
-def get_src(src: Path, extension=None):
+def get_src(src: Path, config: Config) -> List[Path]:
     """Get source files."""
     if Path.is_file(src):
         return [src]
 
     # remove leading . from extension
+    extension = str(config.extension)
     extension = extension[1:] if extension.startswith(".") else extension
 
     paths = list(
         filter(
-            lambda x: not re.search(
-                "|".join([re.escape(x) for x in ignored_paths]), str(x)
-            ),
+            lambda x: not re.search(config.ignored_paths, str(x), re.VERBOSE),
             list(src.glob(r"**/*.%s" % extension)),
         )
     )
@@ -56,7 +56,7 @@ def get_src(src: Path, extension=None):
     return paths
 
 
-def build_output(error):
+def build_output(error: dict) -> int:
     """Build output for file errors."""
     errors = sorted(list(error.values())[0], key=lambda x: int(x["line"].split(":")[0]))
     width, _ = shutil.get_terminal_size()
@@ -75,10 +75,9 @@ def build_output(error):
     )
 
     for message in errors:
-        error = bool(message["code"][:1] == "E")
         echo(
             "{} {} {} {} {}".format(
-                (Fore.RED if error else Fore.YELLOW),
+                (Fore.RED if bool(message["code"][:1] == "E") else Fore.YELLOW),
                 message["code"] + Style.RESET_ALL,
                 Fore.BLUE + message["line"] + Style.RESET_ALL,
                 message["message"],
@@ -89,7 +88,7 @@ def build_output(error):
     return len(errors)
 
 
-def build_check_output(errors, quiet):
+def build_check_output(errors: dict, quiet: bool) -> int:
     """Build output for reformat check."""
     if len(errors) == 0:
         return 0
@@ -128,12 +127,12 @@ def build_check_output(errors, quiet):
     return len(list(filter(lambda x: len(x) > 0, errors.values())))
 
 
-def build_quantity(size: int):
+def build_quantity(size: int) -> str:
     """Count files in a list."""
     return "%d file%s" % (size, ("s" if size > 1 or size == 0 else ""))
 
 
-def build_quantity_tense(size: int):
+def build_quantity_tense(size: int) -> str:
     """Count files in a list."""
     return "%d file%s %s" % (
         size,
@@ -155,7 +154,7 @@ def build_quantity_tense(size: int):
     "-e",
     "--extension",
     type=str,
-    default="html",
+    default="",
     help="File extension to lint",
     show_default=True,
 )
@@ -184,9 +183,11 @@ def build_quantity_tense(size: int):
 )
 def main(
     src: str, extension: str, ignore: str, reformat: bool, check: bool, quiet: bool
-):
+) -> None:
     """Djlint django template files."""
-    file_list = get_src(Path(src), extension)
+    config = Config(src, extension=extension, ignore=ignore, quiet=quiet)
+
+    file_list = get_src(Path(src), config)
 
     if len(file_list) == 0:
         return
@@ -225,13 +226,13 @@ def main(
     with ProcessPoolExecutor(max_workers=worker_count) as exe:
         file_errors = []
         if reformat is True or check is True:
-            func = partial(reformat_file, check)
+            func = partial(reformat_file, config, check)
             futures = {
                 exe.submit(func, this_file): this_file for this_file in file_list
             }
 
         else:
-            func = partial(lint_file, ignore)
+            func = partial(lint_file, config)
             futures = {
                 exe.submit(func, this_file): this_file for this_file in file_list
             }

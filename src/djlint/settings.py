@@ -2,234 +2,521 @@
 # pylint: disable=C0301,C0103
 # flake8: noqa
 
-# default indentation
-indent = "    "
 
-# contents of tags will not be formatted, but tags will be formatted
-ignored_block_opening = [r"<style" r"{\*", r"<\?php", r"<script"]
+import logging
 
-ignored_block_closing = [r"</style" r"\*}", r"\?>", r"</script"]
+## get pyproject.toml settings
+from pathlib import Path
+from typing import Dict, Optional, Union
 
+import tomlkit
 
-# contents of tags will not be formated and tags will not be formatted
-ignored_group_opening = [r"<!--", r"[^\{]{#", r"<pre", r"<textarea"]
-
-ignored_group_closing = [r"-->", r"#}", r"</pre", r"</textarea"]
+logger = logging.getLogger(__name__)
 
 
-# the contents of these tag blocks will be indented, then unindented
-tag_indent = r"(?:\{\{\#)|\{% +?(if|for|block|else|spaceless|compress|addto|language|with|assets)|(?:{% verbatim %})|(?:<(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|cache|optgroup|fieldset|legend|label|header|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
-tag_unindent = r"(?:\{\{\/)|\{% end|(?:{% endverbatim %})|(?:</(?:html|head|body|div|a|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|header|cache|main|section|aside|footer|figure|video|span|p|g|svg|h\d|button|img|path|script|style|source))"
+def find_pyproject(src: Path) -> Optional[Path]:
+    """Search upstream for a pyprojec.toml file."""
 
-# these tags should be unindented and next line will be indented
-tag_unindent_line = r"(?:\{% el)|(?:\{\{ *?(?:else|\^) *?\}\})"
+    for directory in [src, *src.resolve().parents]:
+
+        candidate = directory / "pyproject.toml"
+
+        if candidate.is_file():
+            return candidate
+
+    return None
 
 
-# reduce empty lines greater than  x to 1 line
-reduce_extralines_gt = 2
+def load_pyproject_settings(src: Path) -> Dict:
+    """Load djlint config from pyproject.toml."""
 
-# if lines are longer than x
-max_line_length = 120
-format_long_attributes = True
+    djlint_content = {}
+    pyproject_file = find_pyproject(src)
 
-# pattern used to find attributes in a tag
-attribute_pattern = r"(?:{%[^}]*?%}(?:.*?{%[^}]*?%})+?)|(?:[^\s]+?=(?:\"{{.*?}}\"|\'{{.*?}}\'))|(?:[^\s]+?=(?:\".*?\"|\'.*?\'))|required|checked|[\w|-]+|[\w|-]+=[\w|-]+|{{.*?}}"
-tag_pattern = r"(<\w+?[^>]*?)((?:\n[^>]+?)+?)(/?\>)"
-ignored_attributes = [
-    "data-json",
-]
+    if pyproject_file:
+        content = tomlkit.parse(pyproject_file.read_text())
+        try:
+            djlint_content = content["tool"]["djlint"]
+        except KeyError:
+            logger.info("No pyproject.toml found.")
 
-ignored_paths = [
-    ".venv",
-    "venv",
-    ".tox",
-    ".eggs",
-    ".git",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".svn",
-    ".bzr",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    ".pants.d",
-    ".direnv",
-    "node_modules",
-    "__pypackages__",
-]
+    return djlint_content
 
-start_template_tags = r"{% ?(?:if|for|block|spaceless|compress|load|assets|addto|language|with|assets)[^}]+?%}"
 
-break_template_tags = [
-    r"{% ?(?:if|end|for|block|endblock|else|spaceless|compress|load|include|assets|addto|language|with|assets)[^}]+?%}",
-]
+def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
+    """Build regex string for custom template blocks."""
+    if custom_blocks:
+        return "|" + "|".join(x.strip() for x in custom_blocks.split(","))
+    return None
 
-unformated_html_tags = ["script"]
 
-ignored_blocks = [
-    r"<(script|style|pre|textarea).*?(?:%s).*?</(\1)>",
-    r"<!--.*?(?:%s).*?-->",
-    r"{\*.*?(?:%s).*?\*}",
-    r"{#.*?(?:%s).*?#}",
-    r"<\?php.*?(?:%s).*?\?>",
-]
+class Config:
+    """Djling Config."""
 
-ignored_inline_blocks = [
-    r"<!--.*?-->",
-    r"{\*.*?\*}",
-    r"{#.*?#}",
-    r"<\?php.*?\?>",
-]
+    def __init__(
+        self,
+        src: str,
+        ignore: Optional[str] = None,
+        extension: Optional[str] = None,
+        quiet: Optional[bool] = False,
+    ):
 
-single_line_html_tags = [
-    "button",
-    "a",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "td",
-    "th",
-    "strong",
-    "em",
-    "icon",
-    "span",
-    "title",
-    "link",
-    "path",
-    "label",
-    "div",
-]
+        self.ignored_paths: str = r"""
+            \.venv
+            | venv
+            | \.tox
+            | \.eggs
+            | \.git
+            | \.hg
+            | \.mypy_cache
+            | \.nox
+            | \.svn
+            | \.bzr
+            | _build
+            | buck-out
+            | build
+            | dist
+            | \.pants\.d
+            | \.direnv
+            | node_modules
+            | __pypackages__
+        """
 
-always_single_line_html_tags = ["link", "img", "meta"]
+        djlint_settings = load_pyproject_settings(Path(src))
 
-single_line_template_tags = ["if", "for", "block", "with"]
+        # custom configuration options
+        self.extension: str = str(extension or djlint_settings.get("extension", "html"))
+        self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
+        self.quiet: str = str(quiet or djlint_settings.get("quiet", ""))
+        self.custom_blocks: str = str(
+            build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
+        )
 
-break_html_tags = [
-    "a",
-    "abbr",
-    "acronym",
-    "address",
-    "applet",
-    "area",
-    "article",
-    "aside",
-    "audio",
-    "b",
-    "base",
-    "basefont",
-    "bdi",
-    "bdo",
-    "big",
-    "blockquote",
-    "body",
-    "br",
-    "button",
-    "canvas",
-    "caption",
-    "center",
-    "cite",
-    "code",
-    "col",
-    "colgroup",
-    "data",
-    "datalist",
-    "dd",
-    "del",
-    "details",
-    "dfn",
-    "dialog",
-    "dir",
-    "div",
-    "dl",
-    "dt",
-    "em",
-    "embed",
-    "fieldset",
-    "figcaption",
-    "figure",
-    "font",
-    "footer",
-    "form",
-    "frame",
-    "frameset",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "head",
-    "header",
-    "hr",
-    "html",
-    "i",
-    "iframe",
-    "icon",
-    "img",
-    "input",
-    "ins",
-    "kbd",
-    "label",
-    "legend",
-    "li",
-    "link",
-    "main",
-    "map",
-    "mark",
-    "meta",
-    "meter",
-    "nav",
-    "noframes",
-    "noscript",
-    "object",
-    "ol",
-    "optgroup",
-    "option",
-    "output",
-    "p",
-    "path",
-    "param",
-    "picture",
-    "progress",
-    "q",
-    "rp",
-    "rt",
-    "ruby",
-    "s",
-    "samp",
-    "script",
-    "section",
-    "select",
-    "small",
-    "source",
-    "span",
-    "strike",
-    "strong",
-    "style",
-    "sub",
-    "summary",
-    "sup",
-    "svg",
-    "table",
-    "tbody",
-    "td",
-    "template",
-    "tfoot",
-    "th",
-    "thead",
-    "time",
-    "title",
-    "tr",
-    "track",
-    "tt",
-    "u",
-    "ul",
-    "var",
-    "video",
-    "wbr",
-]
+        # base options
+        self.indent: str = djlint_settings.get("indent", "    ")
+
+        # contents of tags will not be formatted, but tags will be formatted
+        self.ignored_block_opening: str = r"""
+              <style
+            | {\*
+            | <\?php
+            | <script
+        """
+
+        self.ignored_block_closing: str = r"""
+              </style
+            | \*}
+            | \?>
+            | </script
+        """
+
+        # contents of tags will not be formated and tags will not be formatted
+        self.ignored_group_opening: str = r"""
+              <!--
+            | [^\{]{\#
+            | <pre
+            | <textarea
+        """
+
+        self.ignored_group_closing: str = r"""
+              -->
+            | \#}
+            | </pre
+            | </textarea
+        """
+
+        # the contents of these tag blocks will be indented, then unindented
+        self.tag_indent: str = (
+            r"""
+              (?:\{\{\#|\{%)[ ]*?
+                (
+                      if
+                    | for
+                    | block
+                    | else
+                    | spaceless
+                    | compress
+                    | addto
+                    | language
+                    | with
+                    | assets
+                    | verbatim
+                    | autoescape
+                    | comment
+                    | filter
+                    | each
+                    """
+            + self.custom_blocks
+            + r"""
+                )
+            | (?:<
+                (?:
+                      html
+                    | head
+                    | body
+                    | div
+                    | a
+                    | nav
+                    | ul
+                    | ol
+                    | dl
+                    | li
+                    | table
+                    | thead
+                    | tbody
+                    | tr
+                    | th
+                    | td
+                    | blockquote
+                    | select
+                    | form
+                    | option
+                    | cache
+                    | optgroup
+                    | fieldset
+                    | legend
+                    | label
+                    | header
+                    | main
+                    | section
+                    | aside
+                    | footer
+                    | figure
+                    | video
+                    | span
+                    | p
+                    | g
+                    | svg
+                    | h\d
+                    | button
+                    | img
+                    | path
+                    | script
+                    | style
+                    | source
+                )
+              )
+        """
+        )
+
+        self.tag_unindent: str = r"""^
+              (?:
+                  (?:\{\{\/)
+                | (?:\{%[ ]*?end)
+              )
+            | (?:</
+                (?:
+                      html
+                    | head
+                    | body
+                    | div
+                    | a
+                    | nav
+                    | ul
+                    | ol
+                    | dl
+                    | li
+                    | table
+                    | thead
+                    | tbody
+                    | tr
+                    | th
+                    | td
+                    | blockquote
+                    | select
+                    | form
+                    | option
+                    | optgroup
+                    | fieldset
+                    | legend
+                    | label
+                    | header
+                    | cache
+                    | main
+                    | section
+                    | aside
+                    | footer
+                    | figure
+                    | video
+                    | span
+                    | p
+                    | g
+                    | svg
+                    | h\d
+                    | button
+                    | img
+                    | path
+                    | script
+                    | style
+                    | source
+                )
+              )
+        """
+
+        # these tags should be unindented and next line will be indented
+        self.tag_unindent_line: str = r"""
+              (?:\{%[ ]*?(?:elif|else|empty))
+            | (?:
+                \{\{[ ]*?
+                (
+                    (?:else|\^)
+                    [ ]*?\}\}
+                )
+              )
+        """
+
+        # reduce empty lines greater than  x to 1 line
+        self.reduce_extralines_gt = 2
+
+        # if lines are longer than x
+        self.max_line_length = 120
+        self.format_long_attributes = True
+
+        # pattern used to find attributes in a tag
+        self.attribute_pattern: str = r"""
+              (?:{%[^}]*?%}(?:.*?{%[^}]*?%})+?)
+            | (?:[^\s]+?=(?:\"{{.*?}}\"|\'{{.*?}}\'))
+            | (?:[^\s]+?=(?:\".*?\"|\'.*?\'))
+            | required
+            | checked
+            | [\w|-]+
+            | [\w|-]+=[\w|-]+
+            | {{.*?}}
+        """
+
+        self.tag_pattern: str = r"""
+            (<\w+?[^>]*?)((?:\n[^>]+?)+?)(/?\>)
+        """
+
+        self.ignored_attributes: list = [r"""data-json"""]
+
+        self.start_template_tags: str = (
+            r"""
+              if
+            | for
+            | block
+            | spaceless
+            | compress
+            | load
+            | assets
+            | addto
+            | language
+            | with
+            | assets
+            | autoescape
+            | comment
+            | filter
+            | verbatim
+            | each
+            """
+            + self.custom_blocks
+            + r"""
+        """
+        )
+
+        self.break_template_tags: str = (
+            r"""
+              if
+            | end
+            | for
+            | block
+            | endblock
+            | else
+            | spaceless
+            | compress
+            | load
+            | include
+            | assets
+            | addto
+            | language
+            | with
+            | assets
+            | autoescape
+            | comment
+            | filter
+            | elif
+            | resetcycle
+            | verbatim
+            | each
+            """
+            + self.custom_blocks
+            + r"""
+        """
+        )
+
+        self.ignored_blocks: list = [
+            r"<(script|style|pre|textarea).*?(?:%s).*?</(\1)>",
+            r"<!--.*?(?:%s).*?-->",
+            r"{\*.*?(?:%s).*?\*}",
+            r"{\#.*?(?:%s).*?#}",
+            r"<\?php.*?(?:%s).*?\?>",
+        ]
+
+        self.ignored_inline_blocks: str = r"""
+              <!--.*?-->
+            | {\*.*?\*}
+            | {\#.*?\#}
+            | <\?php.*?\?>
+        """
+
+        self.single_line_html_tags: str = r"""
+              button
+            | a
+            | h1
+            | h2
+            | h3
+            | h4
+            | h5
+            | h6
+            | td
+            | th
+            | strong
+            | em
+            | icon
+            | span
+            | title
+            | link
+            | path
+            | label
+            | div
+            | li
+        """
+
+        self.always_single_line_html_tags: str = r"""
+              link
+            | img
+            | meta
+        """
+
+        self.single_line_template_tags: str = r"""
+              if
+            | for
+            | block
+            | with
+            | comment
+        """
+
+        self.break_html_tags: str = r"""
+              a
+            | abbr
+            | acronym
+            | address
+            | applet
+            | area
+            | article
+            | aside
+            | audio
+            | b
+            | base
+            | basefont
+            | bdi
+            | bdo
+            | big
+            | blockquote
+            | body
+            | br
+            | button
+            | canvas
+            | caption
+            | center
+            | cite
+            | code
+            | col
+            | colgroup
+            | data
+            | datalist
+            | dd
+            | del
+            | details
+            | dfn
+            | dialog
+            | dir
+            | div
+            | dl
+            | dt
+            | em
+            | embed
+            | fieldset
+            | figcaption
+            | figure
+            | font
+            | footer
+            | form
+            | frame
+            | frameset
+            | h1
+            | h2
+            | h3
+            | h4
+            | h5
+            | h6
+            | head
+            | header
+            | hr
+            | html
+            | i
+            | iframe
+            | icon
+            | img
+            | input
+            | ins
+            | kbd
+            | label
+            | legend
+            | li
+            | link
+            | main
+            | map
+            | mark
+            | meta
+            | meter
+            | nav
+            | noframes
+            | noscript
+            | object
+            | ol
+            | optgroup
+            | option
+            | output
+            | p
+            | path
+            | param
+            | picture
+            | progress
+            | q
+            | rp
+            | rt
+            | ruby
+            | s
+            | samp
+            | script
+            | section
+            | select
+            | small
+            | source
+            | span
+            | strike
+            | strong
+            | style
+            | sub
+            | summary
+            | sup
+            | svg
+            | table
+            | tbody
+            | td
+            | template
+            | tfoot
+            | th
+            | thead
+            | time
+            | title
+            | tr
+            | track
+            | tt
+            | u
+            | ul
+            | var
+            | video
+            | wbr
+        """
