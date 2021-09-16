@@ -90,3 +90,16 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
        required="true"/>
 """
     )
+
+
+def test_small_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<small>text</small>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        Path(tmp_file.name).read_text()
+        == """<small>text</small>
+"""
+    )

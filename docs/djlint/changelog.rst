@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.3.6
+-----
+- Added formatter support for Nunjucks ``{%-`` opening blocks
+
 0.3.5
 -----
 - Added support for more Django blocks

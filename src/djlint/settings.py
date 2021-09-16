@@ -371,6 +371,7 @@ class Config:
             | td
             | th
             | strong
+            | small
             | em
             | icon
             | span
