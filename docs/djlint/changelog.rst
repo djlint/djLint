@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.3.8
+-----
+- Added support for stdin
+
 0.3.7
 -----
 - Fixed formatting on ``small``, ``dt``, and ``dd`` tags

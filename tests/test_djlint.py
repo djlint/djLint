@@ -85,6 +85,11 @@ def test_empty_file(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 0
 
 
+def test_stdin(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ["-"], input="<div></div>")
+    assert result.exit_code == 0
+
+
 def test_check(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<div></div>")
     result = runner.invoke(djlint, [tmp_file.name, "--check"])

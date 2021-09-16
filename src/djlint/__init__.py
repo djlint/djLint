@@ -18,6 +18,7 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 from pathlib import Path
@@ -187,7 +188,20 @@ def main(
     """Djlint django template files."""
     config = Config(src, extension=extension, ignore=ignore, quiet=quiet)
 
-    file_list = get_src(Path(src), config)
+    temp_file = None
+
+    if src == "-":
+        stdin_stream = click.get_text_stream("stdin")
+        stdin_text = stdin_stream.read()
+
+        temp_file = tempfile.NamedTemporaryFile()
+        temp_file.write(str.encode(stdin_text))
+        temp_file.seek(0)
+
+        file_list = get_src(Path(temp_file.name), config)
+
+    else:
+        file_list = get_src(Path(src), config)
 
     if len(file_list) == 0:
         return
@@ -310,6 +324,9 @@ def main(
     success_color = Fore.RED + Style.BRIGHT if error_count > 0 else Fore.BLUE
 
     echo(f"\n{success_color}{success_message}{Style.RESET_ALL}\n")
+
+    if temp_file:
+        temp_file.close()
 
     if bool(error_count):
         sys.exit(1)

@@ -37,6 +37,15 @@ To format code run:
 
     djlint . --reformat
 
+Stdin vs Path
+-------------
+
+djLint also works with stdin.
+
+.. code:: sh
+
+    echo "<div></div>" | djlint -
+
 CLI Args
 --------
 

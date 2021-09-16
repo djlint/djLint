@@ -29,6 +29,9 @@ djlint /path/file.html.j2 --check
 # to reformt a directory without printing the file diff
 djlint /path --reformat --quiet
 
+# using stdin
+echo "<div></div>" | djlint -
+
 ```
 
 ## Show your format
