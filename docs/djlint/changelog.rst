@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.3.7
+-----
+- Fixed formatting on ``small``, ``dt``, and ``dd`` tags
+
 0.3.6
 -----
 - Added formatter support for Nunjucks ``{%-`` opening blocks
