@@ -160,6 +160,8 @@ class Config:
                     | ul
                     | ol
                     | dl
+                    | dd
+                    | dt
                     | li
                     | table
                     | thead
@@ -215,6 +217,8 @@ class Config:
                     | ul
                     | ol
                     | dl
+                    | dd
+                    | dt
                     | li
                     | table
                     | thead

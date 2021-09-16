@@ -103,3 +103,33 @@ def test_small_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         == """<small>text</small>
 """
     )
+
+
+def test_dd_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<dd>text</dd>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        Path(tmp_file.name).read_text()
+        == """<dd>
+    text
+</dd>
+"""
+    )
+
+
+def test_dt_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<dt>text</dt>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        Path(tmp_file.name).read_text()
+        == """<dt>
+    text
+</dt>
+"""
+    )
