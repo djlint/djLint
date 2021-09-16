@@ -194,7 +194,7 @@ def main(
         stdin_stream = click.get_text_stream("stdin")
         stdin_text = stdin_stream.read()
 
-        temp_file = tempfile.NamedTemporaryFile()
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
         temp_file.write(str.encode(stdin_text))
         temp_file.seek(0)
 
@@ -327,6 +327,7 @@ def main(
 
     if temp_file:
         temp_file.close()
+        os.unlink(temp_file.name)
 
     if bool(error_count):
         sys.exit(1)
