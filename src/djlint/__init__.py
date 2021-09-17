@@ -25,7 +25,6 @@ from pathlib import Path
 from typing import List
 
 import click
-import pkg_resources
 from click import echo
 from colorama import Fore, Style, deinit, init
 from tqdm import tqdm
@@ -152,7 +151,7 @@ def build_quantity_tense(size: int) -> str:
     nargs=1,
     metavar="SRC ...",
 )
-@click.version_option(pkg_resources.get_distribution("djlint").version)
+@click.version_option(package_name="djlint")
 @click.option(
     "-e",
     "--extension",
