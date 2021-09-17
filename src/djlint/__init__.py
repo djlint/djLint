@@ -151,6 +151,7 @@ def build_quantity_tense(size: int) -> str:
     nargs=1,
     metavar="SRC ...",
 )
+@click.version_option(package_name="djlint")
 @click.option(
     "-e",
     "--extension",
