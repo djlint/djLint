@@ -7,7 +7,7 @@ run::
 
 for a single test::
 
-    pytest tests/test_djlint.py::test_W010 --cov=src/djlint \
+    pytest tests/test_djlint.py::test_version --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 or::
@@ -19,6 +19,7 @@ or::
 from pathlib import Path
 from typing import TextIO
 
+import pkg_resources
 from click.testing import CliRunner
 
 from src.djlint import main as djlint
@@ -136,3 +137,8 @@ def test_check_reformatter_no_error(runner: CliRunner, tmp_file: TextIO) -> None
     result = runner.invoke(djlint, [tmp_file.name, "--check"])
     assert result.exit_code == 0
     assert "0 files would be updated." in result.output
+
+
+def test_version(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ["--version"])
+    assert pkg_resources.get_distribution("djlint").version in result.output

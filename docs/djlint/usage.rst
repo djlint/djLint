@@ -62,3 +62,4 @@ CLI Args
       --check               Check formatting on the file(s).
       --quiet               Do not print diff when reformatting.
       -h, --help            Show this message and exit.
+      --version             Get djLint version
