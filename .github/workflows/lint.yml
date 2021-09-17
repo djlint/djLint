@@ -8,7 +8,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: build docs
+    - name: run lint
       run: |
         pip install tox
         tox -e lint

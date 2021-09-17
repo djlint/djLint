@@ -18,6 +18,7 @@ def _flatten_attributes(config: Config, match: re.Match) -> str:
         if attribute in match.group():
             return match.group()
 
+    # pylint: disable=C0209
     return "{} {}{}".format(
         match.group(1),
         " ".join(x.strip() for x in match.group(2).strip().splitlines()),
@@ -78,18 +79,14 @@ def expand_html(html: str, config: Config) -> str:
     break_char = r"(?<!\n[ ]*?)"
 
     html = re.sub(
-        r"%s\K(<(?:%s)>)"
-        % (
-            break_char,
-            html_tags,
-        ),
+        fr"{break_char}\K(<(?:{html_tags})>)",
         add_left,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
     )
     # <tag>
     html = re.sub(
-        r"(<(?:%s)>)(?=[^\n])" % html_tags,
+        fr"(<(?:{html_tags})>)(?=[^\n])",
         add_right,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
@@ -97,11 +94,7 @@ def expand_html(html: str, config: Config) -> str:
 
     # \n<tag /> and \n<tag/>
     html = re.sub(
-        r"%s\K(<(?:%s)[ ]?/>)"
-        % (
-            break_char,
-            html_tags,
-        ),
+        fr"{break_char}\K(<(?:{html_tags})[ ]?/>)",
         add_left,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
@@ -109,7 +102,7 @@ def expand_html(html: str, config: Config) -> str:
 
     # <tag /> and <tag/>
     html = re.sub(
-        r"(<(?:%s)[ ]?/>)(?=[^\n])" % html_tags,
+        fr"(<(?:{html_tags})[ ]?/>)(?=[^\n])",
         add_right,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
@@ -117,36 +110,28 @@ def expand_html(html: str, config: Config) -> str:
 
     # \n<tag stuff/>,  \n<tag stuff>, \n<tag stuff />
     html = re.sub(
-        r"%s\K(<(?:%s)[ ][^>]*?[^/]>)"
-        % (
-            break_char,
-            html_tags,
-        ),
+        fr"{break_char}\K(<(?:{html_tags})[ ][^>]*?[^/]>)",
         add_left,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
     )
     # <tag stuff/>,  <tag stuff>, <tag stuff />
     html = re.sub(
-        r"(<(?:%s)[ ][^>]*?[^/]>)(?=[^\n])" % html_tags,
+        fr"(<(?:{html_tags})[ ][^>]*?[^/]>)(?=[^\n])",
         add_right,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
     )
 
     html = re.sub(
-        r"%s\K(<(?:%s)[ ][^>]+?/>)"
-        % (
-            break_char,
-            html_tags,
-        ),
+        fr"{break_char}\K(<(?:{html_tags})[ ][^>]+?/>)",
         add_left,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
     )
 
     html = re.sub(
-        r"(<(?:%s)[ ][^>]+?/>)(?=[^\n])" % html_tags,
+        fr"(<(?:{html_tags})[ ][^>]+?/>)(?=[^\n])",
         add_right,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
@@ -155,17 +140,13 @@ def expand_html(html: str, config: Config) -> str:
     # process closing (break_char, html_tags,)s ######
 
     html = re.sub(
-        r"%s\K(</(?:%s)>)"
-        % (
-            break_char,
-            html_tags,
-        ),
+        fr"{break_char}\K(</(?:{html_tags})>)",
         add_left,
         html,
         flags=re.IGNORECASE | re.VERBOSE,
     )
     html = re.sub(
-        r"(</(?:%s)>)(?=[^\n])" % html_tags,
+        fr"(</(?:{html_tags})>)(?=[^\n])",
         add_right,
         html,
         flags=re.IGNORECASE | re.VERBOSE,

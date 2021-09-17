@@ -41,6 +41,7 @@ def get_line(start: int, line_ends: List) -> str:
     """Get the line number and index of match."""
     line = list(filter(lambda pair: pair["end"] > start, line_ends))[0]
 
+    # pylint: disable=C0209
     return "%d:%d" % (line_ends.index(line) + 1, start - line["start"])
 
 

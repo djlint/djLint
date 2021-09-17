@@ -30,7 +30,7 @@ def _strip_html_whitespace(html: str, config: Config) -> str:
 
         # find ignored blocks and retain indentation, otherwise strip white space
         if re.findall(
-            r"(?:%s)" % config.ignored_inline_blocks,
+            fr"(?:{config.ignored_inline_blocks})",
             item,
             flags=re.IGNORECASE | re.VERBOSE,
         ):
@@ -96,21 +96,21 @@ def compress_html(html: str, config: Config) -> str:
     slt_html = re.sub(r"\s", "", config.single_line_html_tags)
 
     html = re.sub(
-        r"(<(%s)>)\s*([^<\n]{,80})\s*?(</(\2)>)" % slt_html,
+        fr"(<({slt_html})>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
         r"\1\3\4",
         html,
         re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
 
     html = re.sub(
-        r"(<(%s)>)\s*?([^<\n]{,80})\s*?(</(\2)>)" % slt_html,
+        fr"(<({slt_html})>)\s*?([^<\n]{{,80}})\s*?(</(\2)>)",
         r"\1\3\4",
         html,
         re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
 
     html = re.sub(
-        r"(<(%s)[ ][^\n]{,80}>)\s*([^<\n]{,80})\s*?(</(\2)>)" % slt_html,
+        fr"(<({slt_html})[ ][^\n]{{,80}}>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
         r"\1\3\4",
         html,
         re.IGNORECASE | re.MULTILINE | re.DOTALL,

@@ -21,12 +21,7 @@ def _format_attributes(config: Config, match: re.match) -> str:
 
     close = match.group(4)
 
-    return "{}{}{}{}".format(
-        leading_space,
-        tag,
-        attributes,
-        close,
-    )
+    return f"{leading_space}{tag}{attributes}{close}"
 
 
 def indent_html(rawcode: str, config: Config) -> str:
@@ -60,10 +55,10 @@ def indent_html(rawcode: str, config: Config) -> str:
         # if a one-line, inline tag, just process it, only if line starts w/ it
         elif (
             re.findall(
-                r"(<(%s)>)(.*?)(</(\2)>)" % slt_html, item, re.IGNORECASE | re.VERBOSE
+                fr"(<({slt_html})>)(.*?)(</(\2)>)", item, re.IGNORECASE | re.VERBOSE
             )
             or re.findall(
-                r"(<(%s)[ ].+?>)(.*?)(</(\2)>)" % slt_html,
+                fr"(<({slt_html})[ ].+?>)(.*?)(</(\2)>)",
                 item,
                 re.IGNORECASE | re.VERBOSE,
             )
@@ -75,10 +70,10 @@ def indent_html(rawcode: str, config: Config) -> str:
                 re.IGNORECASE | re.MULTILINE | re.VERBOSE,
             )
             or re.findall(
-                r"(<(%s)[ ].*?/>)" % slt_html, item, flags=re.IGNORECASE | re.VERBOSE
+                fr"(<({slt_html})[ ].*?/>)", item, flags=re.IGNORECASE | re.VERBOSE
             )
             or re.findall(
-                r"(<(%s)[ ].*?/?>)" % always_slt_html,
+                fr"(<({always_slt_html})[ ].*?/?>)",
                 item,
                 flags=re.IGNORECASE | re.VERBOSE,
             )

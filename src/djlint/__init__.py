@@ -46,7 +46,7 @@ def get_src(src: Path, config: Config) -> List[Path]:
     paths = list(
         filter(
             lambda x: not re.search(config.ignored_paths, str(x), re.VERBOSE),
-            list(src.glob(r"**/*.%s" % extension)),
+            list(src.glob(f"**/*.{extension}")),
         )
     )
 
@@ -66,24 +66,25 @@ def build_output(error: dict) -> int:
         return 0
 
     echo(
-        "{}\n{}\n{}{}".format(
-            Fore.GREEN + Style.BRIGHT,
-            list(error.keys())[0],
-            Style.DIM,
-            "".join(["─" for x in range(1, width)]),
-        )
+        f"{Fore.GREEN}{Style.BRIGHT}\n{list(error.keys())[0]}\n{Style.DIM}"
+        + "".join(["─" for x in range(1, width)])
         + Style.RESET_ALL
     )
 
     for message in errors:
         echo(
-            "{} {} {} {} {}".format(
-                (Fore.RED if bool(message["code"][:1] == "E") else Fore.YELLOW),
-                message["code"] + Style.RESET_ALL,
-                Fore.BLUE + message["line"] + Style.RESET_ALL,
-                message["message"],
-                Fore.BLUE + message["match"],
-            ),
+            (Fore.RED if bool(message["code"][:1] == "E") else Fore.YELLOW)
+            + message["code"]
+            + Style.RESET_ALL
+            + Fore.BLUE
+            + " "
+            + message["line"]
+            + Style.RESET_ALL
+            + " "
+            + message["message"]
+            + Fore.BLUE
+            + " "
+            + message["match"],
             err=False,
         )
     return len(errors)
@@ -108,20 +109,19 @@ def build_check_output(errors: dict, quiet: bool) -> int:
 
     elif quiet is False and len(list(errors.values())[0]) > 0:
         echo(
-            "{}\n{}\n{}{}".format(
-                Fore.GREEN + Style.BRIGHT,
-                list(errors.keys())[0],
-                Style.DIM,
-                "".join(["─" for x in range(1, width)]),
-            )
+            Fore.GREEN
+            + Style.BRIGHT
+            + "\n"
+            + str(list(errors.keys())[0])
+            + "\n"
+            + Style.DIM
+            + "".join(["─" for x in range(1, width)])
             + Style.RESET_ALL
         )
 
         for diff in list(errors.values())[0][2:]:
             echo(
-                "{}{}{}".format(
-                    color.get(diff[:1], Style.RESET_ALL), diff, Style.RESET_ALL
-                ),
+                f"{ color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}",
                 err=False,
             )
 
@@ -130,15 +130,17 @@ def build_check_output(errors: dict, quiet: bool) -> int:
 
 def build_quantity(size: int) -> str:
     """Count files in a list."""
-    return "%d file%s" % (size, ("s" if size > 1 or size == 0 else ""))
+    return str(size) + " file" + ("s" if size > 1 or size == 0 else "")
 
 
 def build_quantity_tense(size: int) -> str:
     """Count files in a list."""
-    return "%d file%s %s" % (
-        size,
-        ("s" if size > 1 or size == 0 else ""),
-        ("were" if size > 1 or size == 0 else "was"),
+    return (
+        str(size)
+        + " file"
+        + ("s" if size > 1 or size == 0 else "")
+        + " "
+        + ("were" if size > 1 or size == 0 else "was")
     )
 
 
@@ -216,6 +218,7 @@ def main(
     elif reformat is True:
         message = "Reformatt"
 
+    # pylint: disable=C0209
     bar_message = (
         "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{{elapsed}}{}".format(
             Fore.BLUE + Style.BRIGHT,
@@ -307,7 +310,7 @@ def main(
                 if check is True
                 else build_quantity_tense(error_count)
             )
-        success_message = "%s updated." % tense_message
+        success_message = f"{tense_message} updated."
 
     else:
         # lint message
@@ -315,11 +318,8 @@ def main(
             error_count += build_output(error)
 
         error_case = "error" if error_count == 1 else "errors"
-        success_message = "%sed %s, found %d %s." % (
-            message,
-            file_quantity,
-            error_count,
-            error_case,
+        success_message = (
+            f"{message}ed {file_quantity}, found {error_count} {error_case}."
         )
 
     success_color = Fore.RED + Style.BRIGHT if error_count > 0 else Fore.BLUE
