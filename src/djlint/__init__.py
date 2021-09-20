@@ -188,7 +188,7 @@ def build_quantity_tense(size: int) -> str:
 def main(
     src: str, extension: str, ignore: str, reformat: bool, check: bool, quiet: bool
 ) -> None:
-    """Djlint django template files."""
+    """djLint · lint and reformat HTML templates."""
     config = Config(src, extension=extension, ignore=ignore, quiet=quiet)
 
     temp_file = None
