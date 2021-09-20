@@ -7,7 +7,7 @@ run::
 
 for a single test::
 
-    pytest tests/test_djlint.py::test_version --cov=src/djlint \
+    pytest tests/test_djlint.py::test_python_call --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 or::
@@ -15,6 +15,8 @@ or::
     tox
 
 """
+import subprocess
+
 # pylint: disable=C0116
 from pathlib import Path
 from typing import TextIO
@@ -142,3 +144,15 @@ def test_check_reformatter_no_error(runner: CliRunner, tmp_file: TextIO) -> None
 def test_version(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["--version"])
     assert pkg_resources.get_distribution("djlint").version in result.output
+
+
+def test_python_call() -> None:
+    x = subprocess.run(["python", "-m", "djlint", "-h"], capture_output=True)
+    assert b"python -m djlint [OPTIONS] SRC ..." in x.stdout
+    assert x.returncode == 0
+
+    x = subprocess.run(
+        ["python", "-m", "djlint", "__init__", "-h"], capture_output=True
+    )
+    assert b"python -m djlint [OPTIONS] SRC ..." in x.stdout
+    assert x.returncode == 0

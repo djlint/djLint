@@ -7,14 +7,14 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name="djlint"
-version="0.3.8a"
+version="0.3.9"
 description="HTML Template Linter and Formatter"
 license="GPL-3.0-or-later"
 authors=["Christopher Pickering <cpickering@rhc.net>"]
 maintainers=["Christopher Pickering <cpickering@rhc.net>"]
 readme="README.md"
 repository="https://github.com/Riverside-Healthcare/djlint"
-documentation="https://djlint.readthedocs.io"
+documentation="https://djlint.com"
 classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
@@ -61,4 +61,4 @@ quiet = true
 
 
 [tool.pylint.messages_control]
-disable = "E1120, R0914, E0401, R0912, R0916, R0913, W0104, R0801, W1404, R0902, R0903, R1732, R0915"
+disable = "E1120, R0914, E0401, R0912, R0916, R0913, W0104, R0801, W1404, R0902, R0903, R1732, R0915, C0301"

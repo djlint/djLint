@@ -5,23 +5,7 @@ from functools import partial
 import regex as re
 
 from ..settings import Config
-
-
-def _format_attributes(config: Config, match: re.match) -> str:
-    """Spread long attributes over multiple lines."""
-    leading_space = match.group(1)
-
-    tag = match.group(2)
-
-    spacing = "\n" + leading_space + len(tag) * " "
-
-    attributes = (spacing).join(
-        re.findall(str(config.attribute_pattern), match.group(3).strip(), re.VERBOSE)
-    )
-
-    close = match.group(4)
-
-    return f"{leading_space}{tag}{attributes}{close}"
+from .attributes import format_attributes
 
 
 def indent_html(rawcode: str, config: Config) -> str:
@@ -63,9 +47,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 re.IGNORECASE | re.VERBOSE,
             )
             or re.findall(
-                r"^({%[ ]*?("
-                + str(slt_template)
-                + r")[ ]+?.+?%})(.*?)({%[ ]+?end(\2)[ ]+?.*?%})",
+                fr"^({{%[ ]*?({slt_template})[ ]+?.+?%}})(.*?)({{%[ ]+?end(\2)[ ]+?.*?%}})",
                 item,
                 re.IGNORECASE | re.MULTILINE | re.VERBOSE,
             )
@@ -148,16 +130,28 @@ def indent_html(rawcode: str, config: Config) -> str:
             and len(tmp) > int(config.max_line_length)
         ):
             # get leading space, and attributes
-            func = partial(_format_attributes, config)
-            tmp = re.sub(r"(\s*?)(<\w+\s)([^>]+?)(/?>)", func, tmp)
+            func = partial(format_attributes, config)
+            tmp = re.sub(
+                re.compile(
+                    fr"(\s*?)(<\w+\s)((?:{config.attribute_pattern}|\s*?)+?)(/?>)",
+                    re.VERBOSE | re.IGNORECASE,
+                ),
+                func,
+                tmp,
+                re.VERBOSE,
+            )
 
         # turn off raw block if we hit end - for one line raw blocks
         if (
             re.search(
-                re.sub(r"\s", "", config.ignored_group_closing), item, re.IGNORECASE
+                re.compile(
+                    config.ignored_group_closing, flags=re.VERBOSE | re.IGNORECASE
+                ),
+                item,
             )
         ) or re.search(
-            re.sub(r"\s", "", config.ignored_block_closing), item, re.IGNORECASE
+            re.compile(config.ignored_block_closing, flags=re.IGNORECASE | re.VERBOSE),
+            item,
         ):
 
             is_block_raw = False

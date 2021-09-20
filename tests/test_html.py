@@ -5,6 +5,10 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
+   pytest tests/test_html.py::test_ignored_attributes --cov=src/djlint --cov-branch \
+          --cov-report xml:coverage.xml --cov-report term-missing
+
+
 """
 # pylint: disable=C0116
 from pathlib import Path
@@ -131,5 +135,31 @@ def test_dt_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         == """<dt>
     text
 </dt>
+"""
+    )
+
+
+def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div
+    class="a long list of meaningless classes"
+    id="somthing_meaning_less_is_here"
+    required
+    checked="checked"
+    json-data='{"menu":{"header":"SVG Viewer","items":[{"id":"Open"}]}}'>
+    </div>""",
+    )
+
+    assert output["exit_code"] == 1
+
+    assert (
+        output["text"]
+        == """<div class="a long list of meaningless classes"
+     id="somthing_meaning_less_is_here"
+     required
+     checked="checked"
+     json-data='{"menu":{"header":"SVG Viewer","items":[{"id":"Open"}]}}'></div>
 """
     )

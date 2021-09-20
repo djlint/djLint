@@ -2,7 +2,7 @@
 
 Find common formatting issues and *reformat* HTML templates.
 
-***Django · Jinja · Nunjucks · Handlebars***
+***[Django](https://django.readthedocs.io/en/stable/ref/templates/language.html) · [Jinja](https://jinja2docs.readthedocs.io/en/stable/) · [Nunjucks](https://mozilla.github.io/nunjucks/) · [Handlebars](https://handlebarsjs.com)***
 
 Ps, ``--check`` it out on other templates as well!
 

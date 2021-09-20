@@ -16,32 +16,11 @@ def reformat_file(config: Config, check: bool, this_file: Path) -> dict:
     """Reformat html file."""
     rawcode = this_file.read_text(encoding="utf8")
 
-    itteration = 0
+    expanded = expand_html(rawcode, config)
+    compressed = compress_html(expanded, config)
+    indented = indent_html(compressed, config)
 
-    beautified_code = rawcode
-
-    while itteration < 10:
-
-        expanded = expand_html(rawcode, config)
-        compressed = compress_html(expanded, config)
-        indented = indent_html(compressed, config)
-
-        if (
-            len(
-                list(
-                    difflib.unified_diff(
-                        beautified_code.splitlines(), indented.splitlines()
-                    )
-                )
-            )
-            == 0
-        ):
-            beautified_code = indented
-            break
-
-        beautified_code = indented
-
-        itteration += 1
+    beautified_code = indented
 
     if check is not True:
         # update the file

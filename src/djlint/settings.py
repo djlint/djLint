@@ -277,9 +277,27 @@ class Config:
         self.format_long_attributes = True
 
         # pattern used to find attributes in a tag
-        self.attribute_pattern: str = r"""
-              (?:{%-?[^}]*?%}(?:.*?{%[^}]*?-?%})+?)
-            | (?:[^\s]+?=(?:\"{{.*?}}\"|\'{{.*?}}\'))
+        # order is important.
+        # 1. attributes="{% if %}with if or for statement{% endif %}"
+        # 2. attributes="{{ stuff in here }}"
+        # 3. {% if %}with if or for statement{% endif %}
+        # 4. attributes="normal html"
+        # 5. require | checked | otherword | other-word
+        # 6. {{ stuff }}
+        template_if_for_pattern = (
+            r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
+        )
+        self.attribute_pattern: str = (
+            r"""
+            (?:[^\s]+?=(?:\"[^\"]*?"""
+            + template_if_for_pattern
+            + r"""[^\"]*?\"|\'[^\']*?"""
+            + template_if_for_pattern
+            + r"""[^\']*?\'))
+            | (?:[^\s]+?=(?:\"[^\"]*?{{.*?}}[^\"]*?\"|\'[^\']*?{{.*?}}[^\']*?\'))
+            | """
+            + template_if_for_pattern
+            + r"""
             | (?:[^\s]+?=(?:\".*?\"|\'.*?\'))
             | required
             | checked
@@ -287,12 +305,11 @@ class Config:
             | [\w|-]+=[\w|-]+
             | {{.*?}}
         """
+        )
 
         self.tag_pattern: str = r"""
             (<\w+?[^>]*?)((?:\n[^>]+?)+?)(/?\>)
         """
-
-        self.ignored_attributes: list = [r"""data-json"""]
 
         self.start_template_tags: str = (
             r"""

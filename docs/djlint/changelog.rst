@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.3.9
+-----
+- Updated attribute handling
+
 0.3.8
 -----
 - Added support for stdin

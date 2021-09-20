@@ -1,5 +1,4 @@
 """djLint expand out html code."""
-import re as old_re
 from functools import partial
 
 import regex as re
@@ -7,17 +6,13 @@ import regex as re
 from ..settings import Config
 
 
-def _flatten_attributes(config: Config, match: re.Match) -> str:
+def _flatten_attributes(match: re.Match) -> str:
     """Flatten multiline attributes back to one line.
 
     Skip when attribute is ignored.
     Attribute name can be in group one or group 2.
     for now, skipping if they are anywhere
     """
-    for attribute in config.ignored_attributes:
-        if attribute in match.group():
-            return match.group()
-
     # pylint: disable=C0209
     return "{} {}{}".format(
         match.group(1),
@@ -56,12 +51,10 @@ def expand_html(html: str, config: Config) -> str:
         return out_format % match.group(1)
 
     # put attributes on one line
-    func = partial(_flatten_attributes, config)
-    html = old_re.sub(
-        config.tag_pattern,
-        func,
+    html = re.sub(
+        re.compile(config.tag_pattern, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE),
+        _flatten_attributes,
         html,
-        flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
     )
 
     html_tags = config.break_html_tags
@@ -79,77 +72,91 @@ def expand_html(html: str, config: Config) -> str:
     break_char = r"(?<!\n[ ]*?)"
 
     html = re.sub(
-        fr"{break_char}\K(<(?:{html_tags})>)",
+        re.compile(
+            fr"{break_char}\K(<(?:{html_tags})>)", flags=re.IGNORECASE | re.VERBOSE
+        ),
         add_left,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
     # <tag>
     html = re.sub(
-        fr"(<(?:{html_tags})>)(?=[^\n])",
+        re.compile(fr"(<(?:{html_tags})>)(?=[^\n])", flags=re.IGNORECASE | re.VERBOSE),
         add_right,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
 
     # \n<tag /> and \n<tag/>
     html = re.sub(
-        fr"{break_char}\K(<(?:{html_tags})[ ]?/>)",
+        re.compile(
+            fr"{break_char}\K(<(?:{html_tags})[ ]?/>)", flags=re.IGNORECASE | re.VERBOSE
+        ),
         add_left,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
 
     # <tag /> and <tag/>
     html = re.sub(
-        fr"(<(?:{html_tags})[ ]?/>)(?=[^\n])",
+        re.compile(
+            fr"(<(?:{html_tags})[ ]?/>)(?=[^\n])", flags=re.IGNORECASE | re.VERBOSE
+        ),
         add_right,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
 
-    # \n<tag stuff/>,  \n<tag stuff>, \n<tag stuff />
+    # \n<tag attributes/>,  \n<tag attributes>, \n<tag attributes />
     html = re.sub(
-        fr"{break_char}\K(<(?:{html_tags})[ ][^>]*?[^/]>)",
+        re.compile(
+            fr"{break_char}\K(<(?:{html_tags})[ ]+?("
+            + config.attribute_pattern
+            + r")\s*?>)",
+            flags=re.IGNORECASE | re.VERBOSE,
+        ),
         add_left,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
-    # <tag stuff/>,  <tag stuff>, <tag stuff />
+
+    # <tag attributes/>,  <tag attributes>, <tag attributes />
     html = re.sub(
-        fr"(<(?:{html_tags})[ ][^>]*?[^/]>)(?=[^\n])",
+        re.compile(
+            fr"(<(?:{html_tags})[ ]+?("
+            + config.attribute_pattern
+            + r")\s*?>)(?=[^\n])",
+            flags=re.IGNORECASE | re.VERBOSE,
+        ),
         add_right,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
 
     html = re.sub(
-        fr"{break_char}\K(<(?:{html_tags})[ ][^>]+?/>)",
+        re.compile(
+            fr"{break_char}\K(<(?:{html_tags})[ ][^>]+?/>)",
+            flags=re.IGNORECASE | re.VERBOSE,
+        ),
         add_left,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
 
     html = re.sub(
-        fr"(<(?:{html_tags})[ ][^>]+?/>)(?=[^\n])",
+        re.compile(
+            fr"(<(?:{html_tags})[ ][^>]+?/>)(?=[^\n])", flags=re.IGNORECASE | re.VERBOSE
+        ),
         add_right,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
 
     # process closing (break_char, html_tags,)s ######
 
     html = re.sub(
-        fr"{break_char}\K(</(?:{html_tags})>)",
+        re.compile(
+            fr"{break_char}\K(</(?:{html_tags})>)", flags=re.IGNORECASE | re.VERBOSE
+        ),
         add_left,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
     html = re.sub(
-        fr"(</(?:{html_tags})>)(?=[^\n])",
+        re.compile(fr"(</(?:{html_tags})>)(?=[^\n])", flags=re.IGNORECASE | re.VERBOSE),
         add_right,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
     )
 
     # template tag breaks
@@ -177,23 +184,27 @@ def expand_html(html: str, config: Config) -> str:
     # template tags
     # break before
     html = re.sub(
-        break_char
-        + r"\K((?:{%|{{\#)[ ]*?(?:"
-        + re.sub(r"\s", "", config.break_template_tags)
-        + ")[^}]+?[%|}]})",
+        re.compile(
+            break_char
+            + r"\K((?:{%|{{\#)[ ]*?(?:"
+            + config.break_template_tags
+            + ")[^}]+?[%|}]})",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        ),
         partial(should_i_move_template_tag, "\n%s"),
         html,
-        re.IGNORECASE | re.MULTILINE,
     )
 
     # break after
     html = re.sub(
-        r"((?:{%|{{\#)[ ]*?(?:"
-        + re.sub(r"\s", "", config.break_template_tags)
-        + ")[^}]+?[%|}]})(?=[^\n])",
+        re.compile(
+            r"((?:{%|{{\#)[ ]*?(?:"
+            + config.break_template_tags
+            + ")[^}]+?[%|}]})(?=[^\n])",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        ),
         partial(should_i_move_template_tag, "%s\n"),
         html,
-        re.IGNORECASE | re.MULTILINE,
     )
 
     return html

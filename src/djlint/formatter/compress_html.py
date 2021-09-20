@@ -83,47 +83,52 @@ def compress_html(html: str, config: Config) -> str:
 
     # put empty template tags on one line
     html = re.sub(
-        r"({%-?[ ]*?("
-        + re.sub(r"\s", "", config.start_template_tags)
-        + r")[^}]+?-?%})\s+?(\{\%-?[ ]end[^}]*?\%\})",
+        re.compile(
+            rf"({{%-?[ ]*?({config.start_template_tags})[^}}]+?-?%}})\s+?(\{{\%-?[ ]end[^}}]*?\%\}})",
+            flags=re.MULTILINE | re.IGNORECASE | re.VERBOSE,
+        ),
         r"\1\3",
         html,
-        re.MULTILINE,
     )
 
     # put short single line tags on one line
     # verbose doesn't seem to work with replace groups.
-    slt_html = re.sub(r"\s", "", config.single_line_html_tags)
-
     html = re.sub(
-        fr"(<({slt_html})>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
+        re.compile(
+            fr"(<({config.single_line_html_tags})>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
+            re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
+        ),
         r"\1\3\4",
         html,
         re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
 
     html = re.sub(
-        fr"(<({slt_html})>)\s*?([^<\n]{{,80}})\s*?(</(\2)>)",
+        re.compile(
+            fr"(<({config.single_line_html_tags})>)\s*?([^<\n]{{,80}})\s*?(</(\2)>)",
+            re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
+        ),
         r"\1\3\4",
         html,
-        re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
 
     html = re.sub(
-        fr"(<({slt_html})[ ][^\n]{{,80}}>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
+        re.compile(
+            fr"(<({config.single_line_html_tags})[ ][^\n]{{,80}}>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
+            re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
+        ),
         r"\1\3\4",
         html,
-        re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
 
     # cannot use verbose when replacing with var. 🤕
     html = re.sub(
-        r"({%-?[ ]*?("
-        + re.sub(r"\s", "", config.single_line_template_tags)
-        + r")[ ]+?[^\n]{,30}%})\s*([^%\n]{,50})\s*?({%-?[ ]+?end(\2)[ ]*?%})",
+        re.compile(
+            rf"({{%-?[ ]*?({config.single_line_template_tags})[ ]+?[^\n]{{,30}}%}})\s*([^%\n]{{,50}})\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        ),
         r"\1\3\4",
         html,
-        re.IGNORECASE | re.MULTILINE,
     )
 
     return html

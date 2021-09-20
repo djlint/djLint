@@ -37,6 +37,7 @@ Ps, ``--check`` it out on other templates as well!
 
 .. note:: djLint is not an html parser or syntax validator.
 
+
 Show your format
 ----------------
 
