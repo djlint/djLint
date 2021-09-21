@@ -29,6 +29,17 @@ def test_dj_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     assert output["exit_code"] == 0
 
 
+def test_dj_comments_tag_with_html(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file, runner, b"{# <div></div> #}\n{% if this %}<div></div>{% endif %}"
+    )
+    assert (
+        output["text"] == """{# <div></div> #}\n{% if this %}<div></div>{% endif %}\n"""
+    )
+    # no change was required
+    assert output["exit_code"] == 0
+
+
 def test_reformat_asset_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     # pylint: disable=C0301
     output = reformat(
