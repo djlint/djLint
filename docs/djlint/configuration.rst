@@ -25,3 +25,5 @@ Configuration options can also be added to your projects `pyproject.toml` file. 
    extension = "html.dj"
    custom_blocks = "toc,example" # custom code blocks {% toc %}...{% endtoc %}
    indent = "    " # change indentation level
+   exclude = ".venv,venv,.tox,.eggs,..." # override the default set of excluded paths
+   extend_exclude = ".custom" # add paths to exclude

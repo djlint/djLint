@@ -45,7 +45,7 @@ def get_src(src: Path, config: Config) -> List[Path]:
 
     paths = list(
         filter(
-            lambda x: not re.search(config.ignored_paths, str(x), re.VERBOSE),
+            lambda x: not re.search(config.exclude, str(x), re.VERBOSE),
             list(src.glob(f"**/*.{extension}")),
         )
     )
