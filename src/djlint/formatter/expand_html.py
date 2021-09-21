@@ -23,8 +23,8 @@ def _flatten_attributes(match: re.Match) -> str:
 
 def _should_ignore(config: Config, html: str, match: re.Match) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
-    for block in config.ignored_blocks:
-        return any(
+    return any(
+        any(
             ignored_match.start() < match.start(1)
             and ignored_match.end() > match.end(1)
             for ignored_match in re.finditer(
@@ -33,8 +33,8 @@ def _should_ignore(config: Config, html: str, match: re.Match) -> bool:
                 re.DOTALL | re.IGNORECASE | re.VERBOSE,
             )
         )
-
-    return False
+        for block in config.ignored_blocks
+    )
 
 
 def expand_html(html: str, config: Config) -> str:
