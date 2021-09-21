@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.4.0
+-----
+- Fixed formatting of django ``{# ... #}`` tags
+- Added indent support for figcaption, details and summary tags
+
 0.3.9
 -----
 - Updated attribute handling
