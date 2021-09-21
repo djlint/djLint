@@ -1,6 +1,8 @@
 Changelog
 =========
 
+- Added support for processing several files or folders at once.
+
 0.4.0
 -----
 - Fixed formatting of django ``{# ... #}`` tags

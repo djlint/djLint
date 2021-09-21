@@ -34,21 +34,24 @@ from .reformat import reformat_file
 from .settings import Config
 
 
-def get_src(src: Path, config: Config) -> List[Path]:
+def get_src(src: List[Path], config: Config) -> List[Path]:
     """Get source files."""
-    if Path.is_file(src):
-        return [src]
+    paths = []
+    for item in src:
+        if Path.is_file(item):
+            paths.append(item)
 
-    # remove leading . from extension
-    extension = str(config.extension)
-    extension = extension[1:] if extension.startswith(".") else extension
+        else:
+            # remove leading . from extension
+            extension = str(config.extension)
+            extension = extension[1:] if extension.startswith(".") else extension
 
-    paths = list(
-        filter(
-            lambda x: not re.search(config.exclude, str(x), re.VERBOSE),
-            list(src.glob(f"**/*.{extension}")),
-        )
-    )
+            paths.extend(
+                filter(
+                    lambda x: not re.search(config.exclude, str(x), re.VERBOSE),
+                    list(item.glob(f"**/*.{extension}")),
+                )
+            )
 
     if len(paths) == 0:
         echo(Fore.BLUE + "No files to check! 😢")
@@ -150,7 +153,8 @@ def build_quantity_tense(size: int) -> str:
     type=click.Path(
         exists=True, file_okay=True, dir_okay=True, readable=True, allow_dash=True
     ),
-    nargs=1,
+    nargs=-1,
+    required=True,
     metavar="SRC ...",
 )
 @click.version_option(package_name="djlint")
@@ -186,14 +190,19 @@ def build_quantity_tense(size: int) -> str:
     help="Do not print diff when reformatting.",
 )
 def main(
-    src: str, extension: str, ignore: str, reformat: bool, check: bool, quiet: bool
+    src: List[str],
+    extension: str,
+    ignore: str,
+    reformat: bool,
+    check: bool,
+    quiet: bool,
 ) -> None:
     """djLint · lint and reformat HTML templates."""
-    config = Config(src, extension=extension, ignore=ignore, quiet=quiet)
+    config = Config(src[0], extension=extension, ignore=ignore, quiet=quiet)
 
     temp_file = None
 
-    if src == "-":
+    if src == ["-"]:
         stdin_stream = click.get_text_stream("stdin")
         stdin_text = stdin_stream.read()
 
@@ -201,10 +210,10 @@ def main(
         temp_file.write(str.encode(stdin_text))
         temp_file.seek(0)
 
-        file_list = get_src(Path(temp_file.name), config)
+        file_list = get_src([Path(temp_file.name)], config)
 
     else:
-        file_list = get_src(Path(src), config)
+        file_list = get_src([Path(x) for x in src], config)
 
     if len(file_list) == 0:
         return

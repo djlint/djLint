@@ -58,6 +58,12 @@ def test_existing_file(runner: CliRunner) -> None:
     assert str(Path("tests/bad.html")) in result.output
 
 
+def test_multiple_files(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ["tests/multiple_files/a", "tests/multiple_files/b", "--check"])
+    assert result.exit_code == 1
+    assert "3 files would be updated." in result.output
+
+
 def test_bad_path(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/nowhere"])
     assert result.exit_code == 2
