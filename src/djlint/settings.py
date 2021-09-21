@@ -96,7 +96,7 @@ class Config:
             | __pypackages__
         """
         self.exclude: str = djlint_settings.get("exclude", default_exclude)
-        extend_exclude: str = djlint_settings.get("extend_exclude")
+        extend_exclude: str = djlint_settings.get("extend_exclude", "")
         if extend_exclude:
             self.exclude += r" | " + r" | ".join(
                 re.escape(x.strip()) for x in extend_exclude.split(",")
