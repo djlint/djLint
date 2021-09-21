@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_complex_attributes --cov=src/djlint \
+   pytest tests/test_django.py::test_inline_comment --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -73,6 +73,16 @@ def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:
         == r"""{% comment "Optional note" %}{{ body }}{% endcomment %}
 """
     )
+
+
+def test_inline_comment(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file, runner, b"{# <div></div> #}\n{% if this %}<div></div>{% endif %}"
+    )
+    assert (
+        output["text"] == """{# <div></div> #}\n{% if this %}<div></div>{% endif %}\n"""
+    )
+    assert output["exit_code"] == 0
 
 
 def test_for_loop(runner: CliRunner, tmp_file: TextIO) -> None:
