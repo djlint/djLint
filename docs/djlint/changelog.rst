@@ -1,6 +1,9 @@
 Changelog
 =========
 
+- Added support for overriding or extending the list of excluded paths in
+  ``pyproject.toml``
+
 0.3.9
 -----
 - Updated attribute handling

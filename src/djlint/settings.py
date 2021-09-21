@@ -4,6 +4,7 @@
 
 
 import logging
+import re
 
 ## get pyproject.toml settings
 from pathlib import Path
@@ -61,7 +62,20 @@ class Config:
         quiet: Optional[bool] = False,
     ):
 
-        self.ignored_paths: str = r"""
+        djlint_settings = load_pyproject_settings(Path(src))
+
+        # custom configuration options
+        self.extension: str = str(extension or djlint_settings.get("extension", "html"))
+        self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
+        self.quiet: str = str(quiet or djlint_settings.get("quiet", ""))
+        self.custom_blocks: str = str(
+            build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
+        )
+
+        # base options
+        self.indent: str = djlint_settings.get("indent", "    ")
+
+        default_exclude: str = r"""
             \.venv
             | venv
             | \.tox
@@ -81,19 +95,11 @@ class Config:
             | node_modules
             | __pypackages__
         """
-
-        djlint_settings = load_pyproject_settings(Path(src))
-
-        # custom configuration options
-        self.extension: str = str(extension or djlint_settings.get("extension", "html"))
-        self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
-        self.quiet: str = str(quiet or djlint_settings.get("quiet", ""))
-        self.custom_blocks: str = str(
-            build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
-        )
-
-        # base options
-        self.indent: str = djlint_settings.get("indent", "    ")
+        self.exclude: str = djlint_settings.get("exclude", default_exclude)
+        if extend_exclude := djlint_settings.get("extend_exclude"):
+            self.exclude += r" | " + r" | ".join(
+                re.escape(x.strip()) for x in extend_exclude.split(",")
+            )
 
         # contents of tags will not be formatted, but tags will be formatted
         self.ignored_block_opening: str = r"""
