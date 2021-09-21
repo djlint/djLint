@@ -5,6 +5,7 @@ Changelog
 -----
 - Fixed formatting of django ``{# ... #}`` tags
 - Added indent support for figcaption, details and summary tags
+- Added support for overriding or extending the list of excluded paths in  ``pyproject.toml``
 
 0.3.9
 -----
