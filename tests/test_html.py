@@ -139,6 +139,42 @@ def test_dt_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     )
 
 
+def test_details_summary_tags(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<details><summary>summary</summary>body</details>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        Path(tmp_file.name).read_text()
+        == """<details>
+    <summary>
+        summary
+    </summary>
+    body
+</details>
+"""
+    )
+
+
+def test_figure_figcaption_tags(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<figure><img src="" alt=""><figcaption>caption</figcaption></figure>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        Path(tmp_file.name).read_text()
+        == """<figure>
+    <img src="" alt="">
+    <figcaption>
+        caption
+    </figcaption>
+</figure>
+"""
+    )
+
+
 def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
