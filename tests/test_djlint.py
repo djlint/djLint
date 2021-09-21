@@ -150,12 +150,18 @@ def test_version(runner: CliRunner) -> None:
 def test_python_call() -> None:
     # give up fighting windows lol
     if sys.platform != "win32":
-        x = subprocess.run(["python", "-m", "djlint", "-h"], capture_output=True)
+        x = subprocess.run(
+            ["python", "-m", "djlint", "-h"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
         assert b"python -m djlint [OPTIONS] SRC ..." in x.stdout
         assert x.returncode == 0
 
         x = subprocess.run(
-            ["python", "-m", "djlint", "__init__", "-h"], capture_output=True
+            ["python", "-m", "djlint", "__init__", "-h"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
         assert b"python -m djlint [OPTIONS] SRC ..." in x.stdout
         assert x.returncode == 0
