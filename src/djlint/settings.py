@@ -184,6 +184,7 @@ class Config:
                     | aside
                     | footer
                     | figure
+                    | figcaption
                     | video
                     | span
                     | p
@@ -196,6 +197,8 @@ class Config:
                     | script
                     | style
                     | source
+                    | details
+                    | summary
                 )
               )
         """
@@ -241,6 +244,7 @@ class Config:
                     | aside
                     | footer
                     | figure
+                    | figcaption
                     | video
                     | span
                     | p
@@ -253,6 +257,8 @@ class Config:
                     | script
                     | style
                     | source
+                    | details
+                    | summary
                 )
               )
         """
