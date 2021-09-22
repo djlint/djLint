@@ -1,7 +1,9 @@
 Changelog
 =========
 
-- Added support for processing several files or folders at once.
+0.4.1
+-----
+- Added support for processing several files or folders at once
 
 0.4.0
 -----
