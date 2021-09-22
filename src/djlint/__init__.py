@@ -202,7 +202,7 @@ def main(
 
     temp_file = None
 
-    if src == ["-"]:
+    if "-" in src:
         stdin_stream = click.get_text_stream("stdin")
         stdin_text = stdin_stream.read()
 
