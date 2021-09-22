@@ -7,7 +7,7 @@ run::
 
 for a single test::
 
-    pytest tests/test_djlint.py::test_python_call --cov=src/djlint \
+    pytest tests/test_djlint.py::test_stdin --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 or::
@@ -58,6 +58,14 @@ def test_existing_file(runner: CliRunner) -> None:
     assert str(Path("tests/bad.html")) in result.output
 
 
+def test_multiple_files(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint, ["tests/multiple_files/a", "tests/multiple_files/b", "--check"]
+    )
+    assert result.exit_code == 1
+    assert "3 files would be updated." in result.output
+
+
 def test_bad_path(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/nowhere"])
     assert result.exit_code == 2
@@ -92,6 +100,12 @@ def test_empty_file(runner: CliRunner, tmp_file: TextIO) -> None:
 def test_stdin(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["-"], input="<div></div>")
     assert result.exit_code == 0
+    assert "Linted 1 file" in result.output
+
+    # check with multiple inputs
+    result = runner.invoke(djlint, ["-", "-"], input="<div></div>")
+    assert result.exit_code == 0
+    assert "Linted 1 file" in result.output
 
 
 def test_check(runner: CliRunner, tmp_file: TextIO) -> None:
