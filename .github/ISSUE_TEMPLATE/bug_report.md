@@ -1,34 +1,32 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: "\U0001F9A0 Bug Report"
+about: You've found a bug?
 title: "[BUG]"
 labels: bug
 assignees: christopherpickering
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+<!--
+    Thanks for finding and submitting an issue.
 
-**To Reproduce**
-Steps to reproduce the behavior:
+    Have you...
+-->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+- [ ] I'm on the [latest version](https://pypi.org/project/djlint/) of djLint
+- [ ] I've searched the [issues](https://github.com/Riverside-Healthcare/djLint/issues)
+- [ ] I've read the [docs](https://djlint.com)
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## System Info
+ - OS: e.g. ubuntu 20.04
+ - Python Version (``python --version``)
+ - djLint Version (``djlint --version``)
 
-**Desktop (please complete the following information):**
- - OS: [e.g. ubuntu 20.04]
--  Python Version (``python --version``)
- - djLint Version [e.g. 22] (``djlint --version``)
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+## Issue
+<!-- A clear and concise description of what the bug is. -->
 
-**Additional context**
-Add any other context about the problem here.
+## How To Reproduce
+<!-- Steps to reproduce the behavior -->
+
+<!-- Thanks! 🤠 -->

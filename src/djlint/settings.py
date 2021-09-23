@@ -102,6 +102,11 @@ class Config:
                 re.escape(x.strip()) for x in extend_exclude.split(",")
             )
 
+        # add blank line after load tags
+        self.blank_line_after_tag: Optional[str] = djlint_settings.get(
+            "blank_line_after_tag", None
+        )
+
         # contents of tags will not be formatted, but tags will be formatted
         self.ignored_block_opening: str = r"""
               <style

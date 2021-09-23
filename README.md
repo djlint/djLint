@@ -50,9 +50,9 @@ Add a badge to your ```readme.rst```:
 ```
 Looks like this:
 
-[![djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
+[![djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
 
 
 ## Contributing
 
-Checkout the [issue](https://github.com/Riverside-Healthcare/djlint/issues) list and help where you can.
+Send a pr with a new feature, or checkout the [issue](https://github.com/Riverside-Healthcare/djlint/issues) list and help where you can.

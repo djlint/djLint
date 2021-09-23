@@ -158,4 +158,14 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         beautified_code = beautified_code + tmp
 
+    # should we add blank lines after load tags?
+    if config.blank_line_after_tag:
+        for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
+            beautified_code = re.sub(
+                fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+                r"\1\n",
+                beautified_code,
+                re.IGNORECASE,
+            )
+
     return beautified_code.strip() + "\n"

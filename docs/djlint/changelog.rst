@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.4.2
+-----
+- Added support for additional whitespace after tags with ``blank_line_after_tag`` option
+
 0.4.1
 -----
 - Added support for processing several files or folders at once

@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_custom_tags --cov=src/djlint \
+   pytest tests/test_config.py::test_blank_lines_after_load --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -69,4 +69,35 @@ def test_exclude(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_excludes"])
     assert """html.html""" in result.output
     assert """excluded.html""" not in result.output
+    assert result.exit_code == 1
+
+
+def test_blank_lines_after_tag(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint, ["tests/config_blank_lines_after_tag/html.html", "--check"]
+    )
+    assert (
+        """+{% extends "nothing.html" %}
++
++{% load stuff %}
++{% load stuff 2 %}
++
++{% include "html_two.html" %}
++
++<div></div>"""
+        in result.output
+    )
+    assert """1 file would be updated.""" in result.output
+    assert result.exit_code == 1
+
+    result = runner.invoke(
+        djlint, ["tests/config_blank_lines_after_tag/html_two.html", "--check"]
+    )
+    assert (
+        """ {% load stuff %}
++
+ <div></div>"""
+        in result.output
+    )
+    assert """1 file would be updated.""" in result.output
     assert result.exit_code == 1

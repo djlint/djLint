@@ -45,27 +45,27 @@ Add a badge to your projects `readme.md`:
 
 .. code-block:: md
 
-   [![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
+   [![Code style: djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
 
 
 Add a badge to your `readme.rst`:
 
 .. code-block:: rst
 
-   .. image:: https://img.shields.io/badge/html%20style-djlint-blue.svg
+   .. image:: https://img.shields.io/badge/html%20style-djLint-blue.svg
       :target: https://github.com/Riverside-Healthcare/djlint
 
 
 Looks like this:
 
-.. image:: https://img.shields.io/badge/html%20style-djlint-blue.svg
+.. image:: https://img.shields.io/badge/html%20style-djLint-blue.svg
    :target: https://github.com/Riverside-Healthcare/djlint
 
 
 Contributing - Please Help!
 ---------------------------
 
-Checkout the `issue <https://github.com/Riverside-Healthcare/djlint/issues>`_ list and help where you can!
+Send a pr with a new feature, or checkout the `issue <https://github.com/Riverside-Healthcare/djlint/issues>`_ list and help where you can.
 
 .. |codecov| image:: https://codecov.io/gh/Riverside-Healthcare/djlint/branch/master/graph/badge.svg?token=eNTG721BAA
    :target: https://codecov.io/gh/Riverside-Healthcare/djlint

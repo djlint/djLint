@@ -1,20 +1,21 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
+name: "\U0001F682 Feature Request"
+about: Do you have an idea for a new feature or improvement?
+title: '[FEATURE]'
 labels: enhancement
 assignees: christopherpickering
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+<!--
+    Thanks for wanting to make djLint better.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+    Have you...
+-->
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+- [ ] I've searched the [issues](https://github.com/Riverside-Healthcare/djLint/issues)
+- [ ] I've read the [docs](https://djlint.com)
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## Feature Request
+
+<!-- Thanks! 🤠 -->

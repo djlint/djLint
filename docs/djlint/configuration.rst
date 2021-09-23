@@ -1,29 +1,87 @@
 Configuration
 =============
 
-Ignoring Linter Rules
----------------------
-
-Linter rules can be ignored with the `-i` or `--ignore` flag.
-
-For example:
-
-.. code:: bash
-
-   djlint src -i "W013,W014"
-
-
-Pyproject.toml Configuration
-----------------------------
-
-Configuration options can also be added to your projects `pyproject.toml` file. Command line args will always override any settings in `pyproject.toml`.
+Configuration is done through your projects `pyproject.toml` file. Command line args will always override any settings in `pyproject.toml`.
 
 .. code:: toml
 
    [tool.djlint]
+   <config options>
+
+ignore
+------
+
+Ignore linter codes.
+
+Usage:
+
+.. code:: toml
+
    ignore = "W013"
+
+extension
+---------
+
+Use to only find files with a specific extension.
+
+Usage:
+
+.. code:: toml
+
    extension = "html.dj"
-   custom_blocks = "toc,example" # custom code blocks {% toc %}...{% endtoc %}
+
+custom_blocks
+-------------
+
+Use to indent custom code blocks. For example ``{% toc %}...{% endtoc %}``
+
+Usage:
+
+.. code:: toml
+
+   custom_blocks = "toc,example"
+
+indent
+------
+
+Use to change the code indentation. Default is four spaces.
+
+Usage:
+
+.. code:: toml
+
    indent = "    " # change indentation level
-   exclude = ".venv,venv,.tox,.eggs,..." # override the default set of excluded paths
-   extend_exclude = ".custom" # add paths to exclude
+
+exclude
+-------
+
+Override the default exclude paths.
+
+Usage:
+
+.. code:: toml
+
+   exclude = ".venv,venv,.tox,.eggs,..."
+
+
+extend_exclude
+--------------
+
+Add additional paths to the default exclude.
+
+Usage:
+
+.. code:: toml
+
+   extend_exclude = ".custom"
+
+blank_line_after_tag
+--------------------
+
+Add an additional blank line after ``{% <tag> ... %}`` tag groups.
+
+Usage:
+
+.. code:: toml
+
+   blank_line_after_tag = "load,extends,include"
