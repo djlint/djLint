@@ -10,7 +10,7 @@ Ps, ``--check`` it out on other templates as well!
 
 ## Documentation
 
-Read the [documentation](https://djlint.readthedocs.io)
+Read the [documentation](https://djlint.com)
 
 ## Installation and Usage
 
