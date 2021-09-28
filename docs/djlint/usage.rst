@@ -35,7 +35,7 @@ To format code run:
 
 .. code:: sh
 
-    djlint . --reformat
+    djlint . --reformat --indent="   "
 
 Stdin vs Path
 -------------
@@ -58,6 +58,7 @@ CLI Args
     Options:
       -e, --extension TEXT  File extension to lint  [default: html]
       -i, --ignore "Codes"  Rules to be ignored. ex: "W013,W014"
+      --indent              Indent spacing.
       --reformat            Reformat the file(s).
       --check               Check formatting on the file(s).
       --quiet               Do not print diff when reformatting.

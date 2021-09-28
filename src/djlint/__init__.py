@@ -22,7 +22,7 @@ import tempfile
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import click
 from click import echo
@@ -185,6 +185,11 @@ def build_quantity_tense(size: int) -> str:
     help="Check formatting on the file(s).",
 )
 @click.option(
+    "--indent",
+    type=str,
+    help="Indent spacing.",
+)
+@click.option(
     "--quiet",
     is_flag=True,
     help="Do not print diff when reformatting.",
@@ -194,11 +199,14 @@ def main(
     extension: str,
     ignore: str,
     reformat: bool,
+    indent: Optional[str],
     check: bool,
     quiet: bool,
 ) -> None:
     """djLint · lint and reformat HTML templates."""
-    config = Config(src[0], extension=extension, ignore=ignore, quiet=quiet)
+    config = Config(
+        src[0], extension=extension, ignore=ignore, indent=indent, quiet=quiet
+    )
 
     temp_file = None
 

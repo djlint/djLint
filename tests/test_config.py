@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_blank_lines_after_load --cov=src/djlint \
+   pytest tests/test_config.py::test_indent --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -59,6 +59,23 @@ def test_indent(runner: CliRunner) -> None:
 +      <span></span>
 +    </div>
 +  </p>
++</section>"""
+        in result.output
+    )
+    assert result.exit_code == 1
+
+    result = runner.invoke(
+        djlint, ["tests/config_indent", "--check", "--indent", "   "]
+    )
+
+    assert (
+        """-<section><p><div><span></span></div></p></section>
++<section>
++   <p>
++      <div>
++         <span></span>
++      </div>
++   </p>
 +</section>"""
         in result.output
     )

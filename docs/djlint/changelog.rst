@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.4.3
+-----
+- Added cli option for indent spacing. ``--indent="  "``
+
 0.4.2
 -----
 - Added support for additional whitespace after tags with ``blank_line_after_tag`` option
