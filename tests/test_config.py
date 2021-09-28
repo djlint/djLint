@@ -64,9 +64,7 @@ def test_indent(runner: CliRunner) -> None:
     )
     assert result.exit_code == 1
 
-    result = runner.invoke(
-        djlint, ["tests/config_indent", "--check", "--indent", "   "]
-    )
+    result = runner.invoke(djlint, ["tests/config_indent", "--check", "--indent", 3])
 
     assert (
         """-<section><p><div><span></span></div></p></section>

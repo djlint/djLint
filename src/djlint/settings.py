@@ -59,7 +59,7 @@ class Config:
         src: str,
         ignore: Optional[str] = None,
         extension: Optional[str] = None,
-        indent: Optional[str] = None,
+        indent: Optional[int] = None,
         quiet: Optional[bool] = False,
     ):
 
@@ -74,7 +74,7 @@ class Config:
         )
 
         # base options
-        self.indent: str = str(indent or djlint_settings.get("indent", "    "))
+        self.indent: str = (indent or int(djlint_settings.get("indent", 4))) * " "
         print(len(self.indent))
 
         default_exclude: str = r"""

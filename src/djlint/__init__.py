@@ -186,8 +186,8 @@ def build_quantity_tense(size: int) -> str:
 )
 @click.option(
     "--indent",
-    type=str,
-    help="Indent spacing.",
+    type=int,
+    help="Indent spacing. ex: 3",
 )
 @click.option(
     "--quiet",
@@ -199,7 +199,7 @@ def main(
     extension: str,
     ignore: str,
     reformat: bool,
-    indent: Optional[str],
+    indent: Optional[int],
     check: bool,
     quiet: bool,
 ) -> None:

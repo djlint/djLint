@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.4.4
+-----
+- Change indent config from string to int. ``--indent 3``
+
 0.4.3
 -----
 - Added cli option for indent spacing. ``--indent="  "``

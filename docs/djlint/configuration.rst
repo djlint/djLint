@@ -44,13 +44,13 @@ Usage:
 indent
 ------
 
-Use to change the code indentation. Default is four spaces.
+Use to change the code indentation. Default is 4 (four spaces).
 
 Usage:
 
 .. code:: toml
 
-   indent = "    " # change indentation level
+   indent = 3 # change indentation level
 
 exclude
 -------
