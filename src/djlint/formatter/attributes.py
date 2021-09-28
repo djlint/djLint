@@ -12,6 +12,7 @@ def format_attributes(config: Config, match: re.match) -> str:
     tag = match.group(2)
 
     spacing = "\n" + leading_space + len(tag) * " "
+
     attributes = (spacing).join(
         re.findall(config.attribute_pattern, match.group(3).strip(), re.VERBOSE)
     )

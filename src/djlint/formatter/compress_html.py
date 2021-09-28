@@ -121,10 +121,9 @@ def compress_html(html: str, config: Config) -> str:
         html,
     )
 
-    # cannot use verbose when replacing with var. 🤕
     html = re.sub(
         re.compile(
-            rf"({{%-?[ ]*?({config.single_line_template_tags})[ ]+?[^\n]{{,30}}%}})\s*([^%\n]{{,50}})\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
+            rf"({{%-?[ ]*?({config.single_line_template_tags})[^\n]{{,30}}%}})\s*([^%\n]{{,50}})\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         r"\1\3\4",
