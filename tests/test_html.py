@@ -27,7 +27,7 @@ def test_textarea_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     assert (
         Path(tmp_file.name).read_text()
         == """<div>
-<textarea>
+    <textarea>
 asdf
   asdf</textarea>
 </div>
@@ -64,7 +64,7 @@ def test_html_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         Path(tmp_file.name).read_text()
         == """<div>
     <!-- asdf-->
-   <!--
+    <!--
  multi
 line
 comment-->

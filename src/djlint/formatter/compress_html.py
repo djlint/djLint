@@ -20,8 +20,13 @@ def _strip_html_whitespace(html: str, config: Config) -> str:
     rawcode_flat = ""
     is_block_ignored = False
     is_group_ignored = False
+    lstrip = False
 
     for item in html.strip().splitlines():
+        # we can left strip ignored blocks on the opening tag.
+        lstrip = not is_group_ignored and bool(
+            re.search(config.ignored_group_opening, item, re.IGNORECASE | re.VERBOSE)
+        )
 
         # start of ignored block. If we are already in an ingored block, keep true.
         is_group_ignored = is_group_ignored or bool(
@@ -52,6 +57,9 @@ def _strip_html_whitespace(html: str, config: Config) -> str:
             tmp = _clean_line(item)
             is_block_ignored = True
 
+        elif lstrip:
+            tmp = item.lstrip()
+
         elif is_group_ignored or is_block_ignored:
             tmp = item
 
@@ -63,6 +71,7 @@ def _strip_html_whitespace(html: str, config: Config) -> str:
             re.search(config.ignored_group_closing, item, re.IGNORECASE | re.VERBOSE)
         ):
             is_group_ignored = False
+            lstrip = False
 
         rawcode_flat = rawcode_flat + tmp + "\n"
 

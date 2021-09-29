@@ -16,6 +16,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
     beautified_code = ""
     indent_level = 0
+    is_raw_first_line = False
     is_block_raw = False
 
     slt_html = config.break_html_tags
@@ -27,6 +28,12 @@ def indent_html(rawcode: str, config: Config) -> str:
     slt_template = config.single_line_template_tags
 
     for item in rawcode_flat_list:
+        # if a raw tag first line
+        if not is_block_raw and re.search(
+            config.ignored_group_opening, item, re.IGNORECASE | re.VERBOSE
+        ):
+            is_raw_first_line = True
+
         # if a raw tag then start ignoring
         if re.search(config.ignored_group_opening, item, re.IGNORECASE | re.VERBOSE):
             is_block_raw = True
@@ -97,6 +104,9 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
             indent_level = indent_level + 1
 
+        elif is_raw_first_line is True:
+            tmp = (indent * indent_level) + item + "\n"
+
         elif is_block_raw is True:
             tmp = item + "\n"
 
@@ -122,6 +132,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             re.search(config.ignored_group_opening, item, re.IGNORECASE | re.VERBOSE)
         ) or re.search(config.ignored_block_opening, item, re.IGNORECASE | re.VERBOSE):
             is_block_raw = True
+            is_raw_first_line = False
 
         # if a normal tag, we can try to expand attributes
         elif (
