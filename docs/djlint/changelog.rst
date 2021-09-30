@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.4.6
+-----
+- fix bug `#31 <https://github.com/Riverside-Healthcare/djLint/issues/31>`_
+
 0.4.5
 -----
 - Added best practices to docs
