@@ -443,6 +443,7 @@ class Config:
               link
             | img
             | meta
+            | source
         """
 
         self.single_line_template_tags: str = r"""
