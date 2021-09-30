@@ -227,7 +227,6 @@ class Config:
                     | path
                     | script
                     | style
-                    | source
                     | details
                     | summary
                 )
@@ -287,7 +286,6 @@ class Config:
                     | path
                     | script
                     | style
-                    | source
                     | details
                     | summary
                 )
