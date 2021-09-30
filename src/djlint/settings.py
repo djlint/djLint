@@ -8,7 +8,7 @@ import re
 
 ## get pyproject.toml settings
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import tomlkit
 
@@ -61,21 +61,38 @@ class Config:
         extension: Optional[str] = None,
         indent: Optional[int] = None,
         quiet: Optional[bool] = False,
+        profile: Optional[str] = None,
     ):
 
         djlint_settings = load_pyproject_settings(Path(src))
 
         # custom configuration options
         self.extension: str = str(extension or djlint_settings.get("extension", "html"))
-        self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
         self.quiet: str = str(quiet or djlint_settings.get("quiet", ""))
         self.custom_blocks: str = str(
             build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
         )
 
+        # ignore is based on input and also profile
+        self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
+
+        # codes to exclude
+        profile_dict: Dict[str, List[str]] = {
+            "django": ["J", "N", "M"],
+            "jinja": ["D", "N", "M"],
+            "nunjucks": ["D", "J", "M"],
+            "handlebars": ["D", "J", "N"],
+        }
+
+        self.profile_code: List[str] = profile_dict.get(
+            str(profile or djlint_settings.get("profile", "all")).lower(), []
+        )
+        self.profile: str = str(
+            profile or djlint_settings.get("profile", "all")
+        ).lower()
+
         # base options
         self.indent: str = (indent or int(djlint_settings.get("indent", 4))) * " "
-        print(len(self.indent))
 
         default_exclude: str = r"""
             \.venv

@@ -12,7 +12,7 @@
 project = "djlint"
 copyright = "2021, Riverside Healthcare"
 author = "Christopher Pickering"
-release = "0.4.4"
+release = "0.4.5"
 version = release
 
 # -- General configuration ---------------------------------------------------
@@ -38,7 +38,7 @@ html_sidebars = {
 
 html_theme_options = {
     "show_related": False,
-    "description": "Html Template Lint",
+    "description": "Html Template Linter and Formatter",
     "github_button": True,
     "github_user": "Riverside-Healthcare",
     "github_repo": "djlint",

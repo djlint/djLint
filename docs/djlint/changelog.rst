@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.4.5
+-----
+- Added best practices to docs
+- Add ``--profile`` option to set default linter/formatter rules
+- Added linter rules for jinja url patterns
+
 0.4.4
 -----
 - Change indent config from string to int. ``--indent 3``

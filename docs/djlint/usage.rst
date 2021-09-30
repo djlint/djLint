@@ -35,7 +35,7 @@ To format code run:
 
 .. code:: sh
 
-    djlint . --reformat --indent="   "
+    djlint . --reformat --indent=3
 
 Stdin vs Path
 -------------
@@ -62,5 +62,7 @@ CLI Args
       --reformat            Reformat the file(s).
       --check               Check formatting on the file(s).
       --quiet               Do not print diff when reformatting.
+      --profile             Enable defaults by template language.
+                            ops: django, jinja, nunjucks, handlebars
       -h, --help            Show this message and exit.
       --version             Get djLint version

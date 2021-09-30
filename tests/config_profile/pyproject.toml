@@ -1,3 +1,3 @@
 [tool]
 [tool.djlint]
-ignore = "T001"
+profile = "django"

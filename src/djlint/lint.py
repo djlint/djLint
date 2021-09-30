@@ -58,7 +58,12 @@ def lint_file(config: Config, this_file: Path) -> Dict:
     ]
 
     for rule in list(
-        filter(lambda x: x["rule"]["name"] not in config.ignore.split(","), rules)
+        filter(
+            lambda x: x["rule"]["name"] not in config.ignore.split(",")
+            and x["rule"]["name"][0] not in config.profile_code
+            and config.profile not in x["rule"].get("exclude", []),
+            rules,
+        )
     ):
         rule = rule["rule"]
 

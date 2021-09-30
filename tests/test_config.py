@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_indent --cov=src/djlint \
+   pytest tests/test_config.py::test_profile --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -116,3 +116,41 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     )
     assert """1 file would be updated.""" in result.output
     assert result.exit_code == 1
+
+
+def test_profile(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ["tests/config_profile/html.html"])
+
+    assert "T001" in result.output
+    assert "J018" not in result.output
+    assert "D018" in result.output
+
+    result = runner.invoke(
+        djlint, ["tests/config_profile/html.html", "--profile", "jinja"]
+    )
+    assert "T001" in result.output
+    assert "J018" in result.output
+    assert "D018" not in result.output
+
+    result = runner.invoke(
+        djlint, ["tests/config_profile/html.html", "--profile", "handlebars"]
+    )
+    assert "T001" not in result.output
+    assert "J018" not in result.output
+    assert "D018" not in result.output
+
+    result = runner.invoke(
+        djlint, ["tests/config_profile/html.html", "--check", "--profile", "handlebars"]
+    )
+
+    assert result.exit_code == 0
+
+    result = runner.invoke(
+        djlint, ["tests/config_profile/html.html", "--check", "--profile", "jinja"]
+    )
+    assert result.exit_code == 1
+    assert (
+        """-{{test}}
++{{ test }}"""
+        in result.output
+    )

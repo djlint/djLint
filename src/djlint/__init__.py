@@ -194,6 +194,11 @@ def build_quantity_tense(size: int) -> str:
     is_flag=True,
     help="Do not print diff when reformatting.",
 )
+@click.option(
+    "--profile",
+    type=str,
+    help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars",
+)
 def main(
     src: List[str],
     extension: str,
@@ -202,10 +207,16 @@ def main(
     indent: Optional[int],
     check: bool,
     quiet: bool,
+    profile: str,
 ) -> None:
     """djLint · lint and reformat HTML templates."""
     config = Config(
-        src[0], extension=extension, ignore=ignore, indent=indent, quiet=quiet
+        src[0],
+        extension=extension,
+        ignore=ignore,
+        indent=indent,
+        quiet=quiet,
+        profile=profile,
     )
 
     temp_file = None

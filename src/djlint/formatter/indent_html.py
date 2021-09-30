@@ -118,13 +118,14 @@ def indent_html(rawcode: str, config: Config) -> str:
         else:
             tmp = (indent * indent_level) + item + "\n"
 
-        # we can try to fix template tags
-        tmp = re.sub(r"({[{|%]\-?)(\w[^}].+?)([}|%]})", r"\1 \2\3", tmp)
-        tmp = re.sub(r"({[{|%])([^}].+?[^(?:\ |\-)])([}|%]})", r"\1\2 \3", tmp)
-        tmp = re.sub(r"({[{|%])([^}].+?[^ ])(\-[}|%]})", r"\1\2 \3", tmp)
-
-        # handlebars templates
-        tmp = re.sub(r"({{#(?:each|if).+?[^ ])(}})", r"\1 \2", tmp)
+        # we can try to fix template tags. ignore handlebars
+        if config.profile != "handlebars":
+            tmp = re.sub(r"({[{|%]\-?)(\w[^}].+?)([}|%]})", r"\1 \2\3", tmp)
+            tmp = re.sub(r"({[{|%])([^}].+?[^(?:\ |\-)])([}|%]})", r"\1\2 \3", tmp)
+            tmp = re.sub(r"({[{|%])([^}].+?[^ ])(\-[}|%]})", r"\1\2 \3", tmp)
+        else:
+            # handlebars templates
+            tmp = re.sub(r"({{#(?:each|if).+?[^ ])(}})", r"\1 \2", tmp)
 
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
