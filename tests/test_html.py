@@ -199,3 +199,21 @@ def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
      json-data='{"menu":{"header":"SVG Viewer","items":[{"id":"Open"}]}}'></div>
 """
     )
+
+
+def test_picture_source_img_tags(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""\
+<picture><source media="(max-width:640px)"
+srcset="image.jpg"><img src="image.jpg" alt="image"></picture>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        Path(tmp_file.name).read_text()
+        == """<picture>
+    <source media="(max-width:640px)" srcset="image.jpg">
+    <img src="image.jpg" alt="image">
+</picture>
+"""
+    )

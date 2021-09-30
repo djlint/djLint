@@ -227,7 +227,6 @@ class Config:
                     | path
                     | script
                     | style
-                    | source
                     | details
                     | summary
                 )
@@ -287,7 +286,6 @@ class Config:
                     | path
                     | script
                     | style
-                    | source
                     | details
                     | summary
                 )
@@ -445,6 +443,7 @@ class Config:
               link
             | img
             | meta
+            | source
         """
 
         self.single_line_template_tags: str = r"""
