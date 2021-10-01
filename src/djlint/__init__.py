@@ -171,7 +171,7 @@ def build_quantity_tense(size: int) -> str:
     "--ignore",
     type=str,
     default="",
-    help='Codes to ignore. ex: "W013,W014"',
+    help='Codes to ignore. ex: "H014,H017"',
     show_default=False,
 )
 @click.option(
