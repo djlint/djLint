@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_ignored_attributes --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_ignored_block --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -215,5 +215,30 @@ srcset="image.jpg"><img src="image.jpg" alt="image"></picture>""",
     <source media="(max-width:640px)" srcset="image.jpg">
     <img src="image.jpg" alt="image">
 </picture>
+"""
+    )
+
+
+def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<!-- <span> -->
+    <div><p><span></span></p></div>
+    <!-- <div> -->
+    """,
+    )
+
+    assert output["exit_code"] == 1
+
+    assert (
+        output["text"]
+        == """<!-- <span> -->
+<div>
+    <p>
+        <span></span>
+    </p>
+</div>
+<!-- <div> -->
 """
     )

@@ -1,13 +1,17 @@
 Changelog
 =========
 
+0.4.8
+-----
+- Fixed bug `#34 <https://github.com/Riverside-Healthcare/djLint/issues/34>`_
+
 0.4.7
 -----
 - Moved ``source`` tag to single line tags
 
 0.4.6
 -----
-- fix bug `#31 <https://github.com/Riverside-Healthcare/djLint/issues/31>`_
+- Fixed bug `#31 <https://github.com/Riverside-Healthcare/djLint/issues/31>`_
 
 0.4.5
 -----

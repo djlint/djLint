@@ -400,13 +400,13 @@ class Config:
         """
         )
 
-        self.ignored_blocks: list = [
-            r"<(script|style|pre|textarea).*?(?:%s).*?</(\1)>",
-            r"<!--.*?(?:%s).*?-->",
-            r"{\*.*?(?:%s).*?\*}",
-            r"{\#.*?(?:%s).*?\#}",
-            r"<\?php.*?(?:%s).*?\?>",
-        ]
+        self.ignored_blocks: str = r"""
+              <(script|style|pre|textarea).*?</(\1)>
+            | <!--.*?-->
+            | {\*.*?\*}
+            | {\#.*?\#}
+            | <\?php.*?\?>
+        """
 
         self.ignored_inline_blocks: str = r"""
               <!--.*?-->
