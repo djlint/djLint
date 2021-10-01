@@ -174,10 +174,12 @@ def indent_html(rawcode: str, config: Config) -> str:
     if config.blank_line_after_tag:
         for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
             beautified_code = re.sub(
-                fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+                re.compile(
+                    fr"((?:^{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+                    re.IGNORECASE | re.MULTILINE | re.DOTALL,
+                ),
                 r"\1\n",
                 beautified_code,
-                re.IGNORECASE,
             )
 
     return beautified_code.strip() + "\n"

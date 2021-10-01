@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.4.9
+-----
+- Fixed bug `#35 <https://github.com/Riverside-Healthcare/djLint/issues/35>`_
+
 0.4.8
 -----
 - Fixed bug `#34 <https://github.com/Riverside-Healthcare/djLint/issues/34>`_

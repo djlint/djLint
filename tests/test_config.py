@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_profile --cov=src/djlint \
+   pytest tests/test_config.py::test_blank_lines_after_tag --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -91,6 +91,7 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ["tests/config_blank_lines_after_tag/html.html", "--check"]
     )
+
     assert (
         """+{% extends "nothing.html" %}
 +
@@ -116,6 +117,14 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     )
     assert """1 file would be updated.""" in result.output
     assert result.exit_code == 1
+
+    # check blocks that do not start on a newline - they should be left as is.
+    result = runner.invoke(
+        djlint, ["tests/config_blank_lines_after_tag/html_three.html", "--check"]
+    )
+
+    assert """0 files would be updated.""" in result.output
+    assert result.exit_code == 0
 
 
 def test_profile(runner: CliRunner) -> None:
