@@ -17,7 +17,7 @@ Usage:
 
 .. code:: ini
 
-   ignore = "W013"
+   ignore = "H014"
 
 extension
 ---------
