@@ -137,6 +137,7 @@ class Config:
             "jinja": ["D", "N", "M"],
             "nunjucks": ["D", "J", "M"],
             "handlebars": ["D", "J", "N"],
+            "golang": ["D", "J", "N", "M"],
         }
 
         self.profile_code: List[str] = profile_dict.get(

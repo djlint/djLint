@@ -5,6 +5,7 @@ Next Release
 ------------
 - Split ``alt`` requirement from H006 to H013
 - Added optional custom rules file
+- Added ``golang`` as profile option
 
 0.5.1
 -----

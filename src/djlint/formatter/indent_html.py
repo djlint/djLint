@@ -119,11 +119,12 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
 
         # we can try to fix template tags. ignore handlebars
-        if config.profile != "handlebars":
+        if config.profile not in ["handlebars", "golang"]:
             tmp = re.sub(r"({[{|%]\-?)(\w[^}].+?)([}|%]})", r"\1 \2\3", tmp)
             tmp = re.sub(r"({[{|%])([^}].+?[^(?:\ |\-)])([}|%]})", r"\1\2 \3", tmp)
             tmp = re.sub(r"({[{|%])([^}].+?[^ ])(\-[}|%]})", r"\1\2 \3", tmp)
-        else:
+
+        elif config.profile == "handlebars":
             # handlebars templates
             tmp = re.sub(r"({{#(?:each|if).+?[^ ])(}})", r"\1 \2", tmp)
 

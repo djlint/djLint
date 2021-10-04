@@ -4,6 +4,7 @@
     flags: re.DOTALL
     exclude:
     - handlebars
+    - golang
     patterns:
     # open
     - '{{[^\s#/@^]+'

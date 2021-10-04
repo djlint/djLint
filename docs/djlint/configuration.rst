@@ -96,7 +96,8 @@ Options:
 - django
 - jinja
 - nunjucks
-- handlebars
+- handlebars (for handlebars and mustache)
+- golang
 
 Usage:
 
