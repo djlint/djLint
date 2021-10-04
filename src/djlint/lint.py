@@ -70,7 +70,8 @@ def lint_file(config: Config, this_file: Path) -> Dict:
         for pattern in rule["patterns"]:
 
             for match in re.finditer(
-                pattern, html, flags=build_flags(rule.get("flags", "re.DOTALL"))
+                re.compile(pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))),
+                html,
             ):
                 errors[file_name].append(
                     {

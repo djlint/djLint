@@ -114,6 +114,12 @@ def test_H011(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "H011 1:" in result.output
 
+    # check for no matches inside template tags
+    write_to_file(tmp_file.name, b" {{ func( id=html_id,) }}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "H011 1:" not in result.output
+
 
 def test_H012(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<div class = "stuff">')
