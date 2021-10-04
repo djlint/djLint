@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.5.0
+-----
+- Fixed several regex matching bugs in linter rules
+- Stopped linter from returning errors in ignored blocks
+- Added option to ignore code block from linter/formatter with ``{% djlint:off %}...{% djlint:on %}`` tags
+
 0.4.9
 -----
 - Fixed bug `#35 <https://github.com/Riverside-Healthcare/djLint/issues/35>`_
