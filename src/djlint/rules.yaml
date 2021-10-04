@@ -215,8 +215,8 @@
     message: There should be no spaces around attribute =.
     flags: re.DOTALL
     patterns:
-    - <(?:(?!\{[%|{|#])[^\n|>])*\s+=
-    - <(?:(?!\{[%|{|#])[^\n|>])*=\s
+    - <\w+?(?:(?!\{[%|{|#])[^\n|>])*\s+=
+    - <\w+?(?:(?!\{[%|{|#])[^\n|>])*=\s
 - rule:
     name: H014
     message: More than 2 blank lines.
