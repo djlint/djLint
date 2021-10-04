@@ -4,6 +4,7 @@ Changelog
 Next Release
 ------------
 - Split ``alt`` requirement from H006 to H013
+- Added optional custom rules file
 
 0.5.1
 -----

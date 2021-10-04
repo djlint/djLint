@@ -73,3 +73,19 @@ The first letter of a code follows the pattern:
 - J: applies specifically to Jinja
 - N: applies specifically to Nunjucks
 - M: applies specifically to Handlebars
+
+Custom Rules
+~~~~~~~~~~~~
+
+Create a file ``.djlint_rules.yaml`` alongside your ``pyproject.toml``. Rules can be added to this files and djLint will pick them up.
+
+A good rule follows this pattern:
+
+.. code:: yaml
+
+    - rule:
+        name: T001
+        message: Find Trichotillomania
+        flags: re.DOTALL|re.I
+        patterns:
+        - Trichotillomania

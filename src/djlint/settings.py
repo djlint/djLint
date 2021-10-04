@@ -11,6 +11,9 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import tomlkit
+import yaml
+from click import echo
+from colorama import Fore
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +24,19 @@ def find_pyproject(src: Path) -> Optional[Path]:
     for directory in [src, *src.resolve().parents]:
 
         candidate = directory / "pyproject.toml"
+
+        if candidate.is_file():
+            return candidate
+
+    return None
+
+
+def find_djlint_rules(src: Path) -> Optional[Path]:
+    """Search upstream for a pyprojec.toml file."""
+
+    for directory in [src, *src.resolve().parents]:
+
+        candidate = directory / ".djlint_rules.yaml"
 
         if candidate.is_file():
             return candidate
@@ -40,6 +56,44 @@ def load_pyproject_settings(src: Path) -> Dict:
             djlint_content = content["tool"]["djlint"]  # type: ignore
         except KeyError:
             logger.info("No pyproject.toml found.")
+
+    return djlint_content
+
+
+def validate_rules(rules: List) -> List:
+    clean_rules = []
+
+    for rule in rules:
+        # check for name
+        warning = 0
+        name = rule["rule"].get("name", "undefined")
+        if "name" not in rule["rule"]:
+            warning += 1
+            echo(Fore.RED + f"Warning: A rule is missing a name! 😢")
+        if "patterns" not in rule["rule"]:
+            warning += 1
+            echo(Fore.RED + f"Warning: Rule {name} is missing a pattern! 😢")
+        if "message" not in rule["rule"]:
+            warning += 1
+            echo(Fore.RED + f"Warning: Rule {name} is missing a message! 😢")
+
+        if warning == 0:
+            clean_rules.append(rule)
+
+    return clean_rules
+
+
+def load_custom_rules(src: Path) -> List:
+    """Load djlint config from pyproject.toml."""
+
+    djlint_content: List = []
+    djlint_rules_file = find_djlint_rules(src)
+
+    if djlint_rules_file:
+        djlint_content = yaml.load(
+            Path(djlint_rules_file).read_text(encoding="utf8"),
+            Loader=yaml.SafeLoader,
+        )
 
     return djlint_content
 
@@ -90,6 +144,24 @@ class Config:
         self.profile: str = str(
             profile or djlint_settings.get("profile", "all")
         ).lower()
+
+        # load linter rules
+        rule_set = validate_rules(
+            yaml.load(
+                (Path(__file__).parent / "rules.yaml").read_text(encoding="utf8"),
+                Loader=yaml.SafeLoader,
+            )
+            + load_custom_rules(Path(src))
+        )
+
+        self.linter_rules = list(
+            filter(
+                lambda x: x["rule"]["name"] not in self.ignore.split(",")
+                and x["rule"]["name"][0] not in self.profile_code
+                and self.profile not in x["rule"].get("exclude", []),
+                rule_set,
+            )
+        )
 
         # base options
         self.indent: str = (indent or int(djlint_settings.get("indent", 4))) * " "

@@ -3,14 +3,9 @@ from pathlib import Path
 from typing import Dict, List
 
 import regex as re
-import yaml
 
 from .settings import Config
 
-rules = yaml.load(
-    (Path(__file__).parent / "rules.yaml").read_text(encoding="utf8"),
-    Loader=yaml.SafeLoader,
-)
 flags = {
     "re.A": re.A,
     "re.ASCII": re.ASCII,
@@ -69,14 +64,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
         for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)
     ]
 
-    for rule in list(
-        filter(
-            lambda x: x["rule"]["name"] not in config.ignore.split(",")
-            and x["rule"]["name"][0] not in config.profile_code
-            and config.profile not in x["rule"].get("exclude", []),
-            rules,
-        )
-    ):
+    for rule in config.linter_rules:
         rule = rule["rule"]
 
         for pattern in rule["patterns"]:

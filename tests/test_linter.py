@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_DJ018 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_custom_rules_bad_config --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -254,3 +254,19 @@ def test_rules_not_matched_in_ignored_block(
     print(result.output)
     assert result.exit_code == 0
     assert "H011 1:" not in result.output
+
+
+def test_custom_rules(runner: CliRunner, tmp_file: TextIO) -> None:
+    result = runner.invoke(djlint, ["tests/custom_rules"])
+    assert """Linting""" in result.output
+    assert """1/1""" in result.output
+    assert """T001 1:""" in result.output
+    assert result.exit_code == 1
+
+
+def test_custom_rules_bad_config(runner: CliRunner, tmp_file: TextIO) -> None:
+    result = runner.invoke(djlint, ["tests/custom_rules_bad"])
+    assert """Linting""" in result.output
+    assert """1/1""" in result.output
+    assert """T001 1:""" in result.output
+    assert result.exit_code == 1

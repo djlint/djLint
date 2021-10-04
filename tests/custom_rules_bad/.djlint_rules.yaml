@@ -1,0 +1,24 @@
+- rule:
+    name: T001
+    message: Find Trichotillomania
+    flags: re.DOTALL|re.I
+    patterns:
+    - Trichotillomania
+
+- rule:
+    name: T002
+    flags: re.DOTALL|re.I
+    patterns:
+    - Trichotillomania
+
+- rule:
+    name: T003
+    patterns:
+    - Trichotillomania
+
+- rule:
+    name: T004
+
+- rule:
+    patterns:
+    - Trichotillomania
