@@ -127,6 +127,12 @@ def test_H012(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "H012 1:" in result.output
 
+    # test for not matching random "="" in text
+    write_to_file(tmp_file.name, b"<h3>#= title #</h3>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "H012 1:" not in result.output
+
 
 def test_H014(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"</div>\n\n\n<p>")
