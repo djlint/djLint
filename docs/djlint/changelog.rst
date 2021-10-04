@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.1
+-----
+- Added rule H019
+- Fixed bugs in DJ018 and H012
+
 0.5.0
 -----
 - Fixed several regex matching bugs in linter rules
