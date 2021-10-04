@@ -159,6 +159,12 @@ def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "H017 1:" in result.output
 
+    # test colgroup tag
+    write_to_file(tmp_file.name, b"<colgroup><colgroup asdf>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "H017 1:" not in result.output
+
 
 def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
