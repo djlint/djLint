@@ -85,9 +85,9 @@
 - rule:
     name: H011
     message: Attribute values should be quoted.
-    flags: re.DOTALL|re.I
+    flags: re.DOTALL|re.I|re.M
     patterns:
-    - "[^(?:\"|')]\\s+?(?:class|id|src|width|height|alt|style|lang|title|href|action|method)=[a-zA-Z]+"
+    - ^^[^(?:"|')]*?\s+?(?:class|id|src|width|height|alt|style|lang|title|href|action|method)=[a-zA-Z_-]+
 - rule:
     name: H012
     message: There should be no spaces around attribute =.

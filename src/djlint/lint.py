@@ -76,7 +76,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     {
                         "code": rule["name"],
                         "line": get_line(match.start(), line_ends),
-                        "match": match.group()[:20].strip(),
+                        "match": match.group().strip()[:20],
                         "message": rule["message"],
                     }
                 )
