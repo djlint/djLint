@@ -61,6 +61,7 @@ def load_pyproject_settings(src: Path) -> Dict:
 
 
 def validate_rules(rules: List) -> List:
+    """Validate a list of linter rules. Returns valid rules."""
     clean_rules = []
 
     for rule in rules:
@@ -69,7 +70,7 @@ def validate_rules(rules: List) -> List:
         name = rule["rule"].get("name", "undefined")
         if "name" not in rule["rule"]:
             warning += 1
-            echo(Fore.RED + f"Warning: A rule is missing a name! 😢")
+            echo(Fore.RED + "Warning: A rule is missing a name! 😢")
         if "patterns" not in rule["rule"]:
             warning += 1
             echo(Fore.RED + f"Warning: Rule {name} is missing a pattern! 😢")
