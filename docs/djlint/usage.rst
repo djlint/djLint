@@ -19,7 +19,7 @@ Linter Usage
     djlint src -e html.dj
 
 Formatter Usage
------------------
+---------------
 
 Foramtting is a beta tool. ``--check`` the output before applying changes.
 
@@ -36,6 +36,17 @@ To format code run:
 .. code:: sh
 
     djlint . --reformat --indent=3
+
+Ignoring Code
+-------------
+
+Code can be skipped by the linter and formatter by wrapping in djlint tags:
+
+.. code:: html
+
+   {% djlint:off %}
+   <bad html to ignore>
+   {% djlint:on %}
 
 Stdin vs Path
 -------------

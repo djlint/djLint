@@ -5,6 +5,11 @@ run::
    pytest tests/test_linter.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
+   # for a single test
+
+   pytest tests/test_linter.py::test_rules_not_matched_in_ignored_block --cov=src/djlint --cov-branch \
+         --cov-report xml:coverage.xml --cov-report term-missing
+
 """
 # pylint: disable=C0116,C0103
 
@@ -187,3 +192,13 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "D018 1:" in result.output
     assert "J018 1:" in result.output
+
+
+def test_rules_not_matched_in_ignored_block(
+    runner: CliRunner, tmp_file: TextIO
+) -> None:
+    write_to_file(tmp_file.name, b"<script><div class=test></script>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    print(result.output)
+    assert result.exit_code == 0
+    assert "H011 1:" not in result.output

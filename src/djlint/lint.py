@@ -45,6 +45,18 @@ def get_line(start: int, line_ends: List) -> str:
     return "%d:%d" % (line_ends.index(line) + 1, start - line["start"])
 
 
+# filter out matches that are inside ignored blocks
+def _should_ignore(config: Config, html: str, match: re.Match) -> bool:
+    """Do not add whitespace if the tag is in a non indent block."""
+    return any(
+        ignored_match.start() < match.start() and ignored_match.end() > match.end()
+        for ignored_match in re.finditer(
+            re.compile(config.ignored_blocks, re.DOTALL | re.IGNORECASE | re.VERBOSE),
+            html,
+        )
+    )
+
+
 def lint_file(config: Config, this_file: Path) -> Dict:
     """Check file for formatting errors."""
     file_name = str(this_file)
@@ -73,14 +85,16 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                 re.compile(pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))),
                 html,
             ):
-                errors[file_name].append(
-                    {
-                        "code": rule["name"],
-                        "line": get_line(match.start(), line_ends),
-                        "match": match.group().strip()[:20],
-                        "message": rule["message"],
-                    }
-                )
+
+                if _should_ignore(config, html, match) is False:
+                    errors[file_name].append(
+                        {
+                            "code": rule["name"],
+                            "line": get_line(match.start(), line_ends),
+                            "match": match.group().strip()[:20],
+                            "message": rule["message"],
+                        }
+                    )
 
     # remove duplicate matches
     for file_name, error_dict in errors.items():

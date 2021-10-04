@@ -147,6 +147,7 @@ class Config:
             | [^\{]{\#
             | <pre
             | <textarea
+            | {%[ ]djlint:off[ ]%}
         """
 
         self.ignored_group_closing: str = r"""
@@ -154,6 +155,7 @@ class Config:
             | \#}
             | </pre
             | </textarea
+            | {%[ ]djlint:on[ ]%}
         """
 
         # the contents of these tag blocks will be indented, then unindented
@@ -402,6 +404,7 @@ class Config:
 
         self.ignored_blocks: str = r"""
               <(script|style|pre|textarea).*?</(\1)>
+            | {%[ ]djlint:off[ ]%}.*?{%[ ]djlint:on[ ]%}
             | <!--.*?-->
             | {\*.*?\*}
             | {\#.*?\#}

@@ -242,3 +242,43 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
 <!-- <div> -->
 """
     )
+
+    # check custom ignore tag {# djlint:off #} {# djlint:on #}
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{% djlint:off %}
+    <div><p><span></span></p></div>
+    {% djlint:on %}
+""",
+    )
+
+    assert output["exit_code"] == 0
+
+    assert (
+        output["text"]
+        == """{% djlint:off %}
+    <div><p><span></span></p></div>
+    {% djlint:on %}
+"""
+    )
+
+    # check script tag
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<script>
+    <div><p><span></span></p></div>
+</script>
+""",
+    )
+
+    assert output["exit_code"] == 0
+
+    assert (
+        output["text"]
+        == """<script>
+    <div><p><span></span></p></div>
+</script>
+"""
+    )
