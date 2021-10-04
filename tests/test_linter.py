@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_rules_not_matched_in_ignored_block --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H011 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -123,6 +123,14 @@ def test_H011(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b" {{ func( id=html_id,) }}")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
+    assert "H011 1:" not in result.output
+
+    # check meta tag
+    write_to_file(
+        tmp_file.name,
+        b'<meta name="viewport" content="width=device-width, initial-scale=1">',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
     assert "H011 1:" not in result.output
 
 
