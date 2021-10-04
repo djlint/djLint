@@ -247,12 +247,19 @@
     message: (Django) Internal links should use the {% url ... %} pattern.
     flags: re.DOTALL|re.I
     patterns:
-    - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url)=[\"|'](?!https?://)[\w|/]+
-    - <form\s+?[^>]*?(?:action)=[\"|'](?!https?://)[\w|/]+
+    - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url)=[\"|'](?!(?:https?://)|javascript:|on\w+:)[\w|/]+
+    - <form\s+?[^>]*?(?:action)=[\"|'](?!(?:https?://)|javascript:|on\w+:)[\w|/]+
 - rule:
     name: J018
     message: (Jinja) Internal links should use the {{ url_for() ... }} pattern.
     flags: re.DOTALL|re.I
     patterns:
-    - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url)=[\"|'](?!https?://)[\w|/]+
-    - <form\s+?[^>]*?(?:action)=[\"|'](?!https?://)[\w|/]+
+    - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url)=[\"|'](?!(?:https?://)|javascript:|on\w+:)[\w|/]+
+    - <form\s+?[^>]*?(?:action)=[\"|'](?!(?:https?://)|javascript:|on\w+:)[\w|/]+
+- rule:
+    name: H019
+    message: Replace 'javascript:abc()' with on_ event and real url.
+    flags: re.DOTALL|re.I
+    patterns:
+    - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url)=[\"|']javascript:[\w|/]+
+    - <form\s+?[^>]*?(?:action)=[\"|']javascript:[\w|/]+

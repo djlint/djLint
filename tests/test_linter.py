@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_H011 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_DJ018 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -203,12 +203,38 @@ def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
 def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
         tmp_file.name,
-        b'<a class="drop-link" href="/Collections?handler=RemoveAgreement&id=@a.Id">',
+        b'<a href="/Collections?handler=RemoveAgreement&id=@a.Id">\n<form action="/Collections">',
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "D018 1:" in result.output
     assert "J018 1:" in result.output
+    assert "D018 2:" in result.output
+    assert "J018 2:" in result.output
+
+    # test javascript functions
+    write_to_file(
+        tmp_file.name,
+        b'<a href="javascript:abc()">\n<form action="javascript:abc()">',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    # don't check status code. will fail on other rules here.
+    assert "D018 1:" not in result.output
+    assert "J018 1:" not in result.output
+    assert "D018 2:" not in result.output
+    assert "J018 2:" not in result.output
+
+    # test on_ events
+    write_to_file(
+        tmp_file.name,
+        b'<a href="onclick:abc()">\n<form action="onclick:abc()">',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "D018 1:" not in result.output
+    assert "J018 1:" not in result.output
+    assert "D018 2:" not in result.output
+    assert "J018 2:" not in result.output
 
 
 def test_rules_not_matched_in_ignored_block(
