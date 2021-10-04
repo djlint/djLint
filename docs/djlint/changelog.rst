@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Next Release
+------------
+- Split ``alt`` requirement from H006 to H013
+
 0.5.1
 -----
 - Added rule H019

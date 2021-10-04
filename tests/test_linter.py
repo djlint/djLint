@@ -74,7 +74,7 @@ def test_H005(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_H006(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b"<img />")
+    write_to_file(tmp_file.name, b'<img alt="test"/>')
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "H006 1:" in result.output
@@ -154,6 +154,15 @@ def test_H012(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "H012 1:" not in result.output
+
+
+def test_H013(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b'<img height="12" width="12"/>')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H013 1:" in result.output
+    print(result.output)
+    assert "found 1 error" in result.output
 
 
 def test_H014(runner: CliRunner, tmp_file: TextIO) -> None:
