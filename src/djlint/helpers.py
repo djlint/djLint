@@ -1,3 +1,4 @@
+"""Collection of shared djLint functions."""
 import regex as re
 
 from .settings import Config

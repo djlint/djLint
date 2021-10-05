@@ -9,6 +9,7 @@ Next Release
 - Fixed formatting of ignored blocks containing inline comments
 - Added default text to ``--indent`` and ``-e`` options
 - Update url rules to accept #
+- Fixed file encoding on Windows OS
 
 0.5.1
 -----
