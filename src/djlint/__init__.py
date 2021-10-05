@@ -261,8 +261,8 @@ def main(
             Style.RESET_ALL + "    ",
         )
     )
-
-    echo()
+    if temp_file is None or (reformat is False and check is False):
+        echo()
 
     worker_count = os.cpu_count()
 
@@ -284,24 +284,24 @@ def main(
                 exe.submit(func, this_file): this_file for this_file in file_list
             }
 
-        elapsed = "00:00"
-        with tqdm(
-            total=len(file_list),
-            bar_format=bar_message,
-            colour="BLUE",
-            ascii="┈━",
-            leave=False,
-        ) as pbar:
+        if temp_file is None or (reformat is False and check is False):
+            elapsed = "00:00"
+            with tqdm(
+                total=len(file_list),
+                bar_format=bar_message,
+                colour="BLUE",
+                ascii="┈━",
+                leave=False,
+            ) as pbar:
 
-            for future in as_completed(futures):
+                for future in as_completed(futures):
 
-                futures[future]
-                file_errors.append(future.result())
-                pbar.update()
-                elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
+                    futures[future]
+                    file_errors.append(future.result())
+                    pbar.update()
+                    elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
 
-        finshed_bar_message = (
-            "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{}{}    ".format(
+            finshed_bar_message = "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{}{}    ".format(
                 Fore.BLUE + Style.BRIGHT,
                 message + "ing",
                 Style.RESET_ALL,
@@ -313,33 +313,38 @@ def main(
                 elapsed,
                 Style.RESET_ALL,
             )
-        )
 
-        finished_bar = tqdm(
-            total=len(file_list),
-            initial=len(file_list),
-            bar_format=finshed_bar_message,
-            colour="GREEN",
-            ascii="┈━",
-            leave=True,
-        )
-        finished_bar.close()
+            finished_bar = tqdm(
+                total=len(file_list),
+                initial=len(file_list),
+                bar_format=finshed_bar_message,
+                colour="GREEN",
+                ascii="┈━",
+                leave=True,
+            )
+            finished_bar.close()
 
-    # format errors
-    success_message = ""
-    error_count = 0
-    echo()
+        # format errors
+        success_message = ""
+        error_count = 0
+
+        if temp_file is None or (reformat is False and check is False):
+            echo()
 
     if reformat is True or check is True:
-        # reformat message
-        for error in file_errors:
-            error_count += build_check_output(error, quiet)
-            tense_message = (
-                build_quantity(error_count) + " would be"
-                if check is True
-                else build_quantity_tense(error_count)
-            )
-        success_message = f"{tense_message} updated."
+        # if using stdin, only give back formatted code.
+        if temp_file:
+            echo(Path(temp_file.name).read_text(encoding="utf8").rstrip())
+        else:
+            # reformat message
+            for error in file_errors:
+                error_count += build_check_output(error, quiet)
+                tense_message = (
+                    build_quantity(error_count) + " would be"
+                    if check is True
+                    else build_quantity_tense(error_count)
+                )
+            success_message = f"{tense_message} updated."
 
     else:
         # lint message
@@ -353,7 +358,8 @@ def main(
 
     success_color = Fore.RED + Style.BRIGHT if error_count > 0 else Fore.BLUE
 
-    echo(f"\n{success_color}{success_message}{Style.RESET_ALL}\n")
+    if temp_file is None or (reformat is False and check is False):
+        echo(f"\n{success_color}{success_message}{Style.RESET_ALL}\n")
 
     if temp_file:
         temp_file.close()

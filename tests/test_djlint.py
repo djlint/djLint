@@ -107,6 +107,10 @@ def test_stdin(runner: CliRunner) -> None:
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
 
+    # check with reformat
+    result = runner.invoke(djlint, ["-", "--reformat"], input="<div></div>")
+    assert "<div></div>\n" == result.output
+
 
 def test_check(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<div></div>")

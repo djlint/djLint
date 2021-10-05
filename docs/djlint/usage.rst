@@ -57,6 +57,19 @@ djLint also works with stdin.
 
     echo "<div></div>" | djlint -
 
+Stdin can also be used to reformat code. The output will be only the formatted code without messages.
+
+.. code:: sh
+
+    echo "<div></div>" | djlint - --reformat
+
+Output -
+
+.. code:: html
+
+    <div></div>
+
+
 CLI Args
 --------
 

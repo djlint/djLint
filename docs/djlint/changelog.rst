@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.5.3
+-----
+- Change stdout for ``--reformat/check`` options to only print new html when using stdin as the input
+
 0.5.2
 -----
 - Split ``alt`` requirement from H006 to H013
