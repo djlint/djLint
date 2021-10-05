@@ -245,6 +245,14 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "D018 2:" not in result.output
     assert "J018 2:" not in result.output
 
+    # test hash urls
+    write_to_file(
+        tmp_file.name,
+        b'<a href="#">\n<form action="#"><a href="#tab">\n<form action="#go">',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+
 
 def test_rules_not_matched_in_ignored_block(
     runner: CliRunner, tmp_file: TextIO

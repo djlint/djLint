@@ -163,8 +163,8 @@ def build_quantity_tense(size: int) -> str:
     "--extension",
     type=str,
     default="",
-    help="File extension to lint",
-    show_default=True,
+    help="File extension to check [default: html]",
+    show_default=False,
 )
 @click.option(
     "-i",
@@ -187,7 +187,8 @@ def build_quantity_tense(size: int) -> str:
 @click.option(
     "--indent",
     type=int,
-    help="Indent spacing. ex: 3",
+    help="Indent spacing. [default: 4]",
+    show_default=False,
 )
 @click.option(
     "--quiet",
@@ -197,7 +198,7 @@ def build_quantity_tense(size: int) -> str:
 @click.option(
     "--profile",
     type=str,
-    help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars",
+    help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars, golang",
 )
 def main(
     src: List[str],

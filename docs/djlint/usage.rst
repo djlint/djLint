@@ -62,18 +62,18 @@ CLI Args
 
 .. code:: sh
 
-    Usage: djlint [OPTIONS] SRC ...
+    Usage: python -m djlint [OPTIONS] SRC ...
 
-    Djlint django template files.
+    djLint · lint and reformat HTML templates.
 
     Options:
-      -e, --extension TEXT  File extension to lint  [default: html]
-      -i, --ignore "Codes"  Rules to be ignored. ex: "H014,H017"
-      --indent              Indent spacing. ex: 3
+      --version             Show the version and exit.
+      -e, --extension TEXT  File extension to check  [default: html]
+      -i, --ignore TEXT     Codes to ignore. ex: "H014,H017"
       --reformat            Reformat the file(s).
       --check               Check formatting on the file(s).
+      --indent INTEGER      Indent spacing.  [default: 4]
       --quiet               Do not print diff when reformatting.
-      --profile             Enable defaults by template language.
-                            ops: django, jinja, nunjucks, handlebars
+      --profile TEXT        Enable defaults by template language. ops: django,
+                            jinja, nunjucks, handlebars, golang
       -h, --help            Show this message and exit.
-      --version             Get djLint version
