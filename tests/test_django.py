@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_inline_comment --cov=src/djlint \
+   pytest tests/test_django.py::test_load_tag --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -312,5 +312,21 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         output["text"]
         == r"""<div class="media-content"
      {% ifchanged comment.stream_id %} comments-msg {% else %} comments-newMsgReply {% endifchanged %}>
+"""
+    )
+
+
+def test_load_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{% block content %}{% load i18n %}{% endblock %}""",
+    )
+    assert output["exit_code"] == 1
+    assert (
+        output["text"]
+        == r"""{% block content %}
+    {% load i18n %}
+{% endblock %}
 """
     )

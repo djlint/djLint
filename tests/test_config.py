@@ -126,6 +126,21 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     assert """0 files would be updated.""" in result.output
     assert result.exit_code == 0
 
+    result = runner.invoke(
+        djlint, ["tests/config_blank_lines_after_tag/html_four.html", "--check"]
+    )
+
+    assert result.exit_code == 1
+    assert (
+        """ {% block this %}
+-{% load i18n %}
++    {% load i18n %}
++
+ {% endblock this %}
+"""
+        in result.output
+    )
+
 
 def test_profile(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_profile/html.html"])

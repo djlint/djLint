@@ -79,6 +79,7 @@ def _strip_html_whitespace(html: str, config: Config) -> str:
 def compress_html(html: str, config: Config) -> str:
     """Compress back tags that do not need to be expanded."""
     # put empty tags on one line
+
     html = _strip_html_whitespace(html, config)
 
     html = re.sub(
@@ -91,7 +92,7 @@ def compress_html(html: str, config: Config) -> str:
     # put empty template tags on one line
     html = re.sub(
         re.compile(
-            rf"({{%-?[ ]*?({config.start_template_tags})[^}}]+?-?%}})\s+?(\{{\%-?[ ]end[^}}]*?\%\}})",
+            rf"({{%-?[ ]*?({config.start_template_tags})[^}}]+?-?%}})\s+?(\{{\%-?[ ]end\2[^}}]*?\%\}})",
             flags=re.MULTILINE | re.IGNORECASE | re.VERBOSE,
         ),
         r"\1\3",
