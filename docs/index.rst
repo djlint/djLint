@@ -34,7 +34,7 @@ Ps, ``--check`` it out on other templates as well!
 
 .. image:: /_static/demo.gif
 
-|codecov| |test| |Codacy Badge| |Maintainability| |Downloads| |chat|
+|codecov| |test| |Codacy Badge| |Maintainability| |Downloads| |chat| |version|
 
 .. note:: djLint is not an html parser or syntax validator.
 
@@ -80,3 +80,6 @@ Send a pr with a new feature, or checkout the `issue <https://github.com/Riversi
    :target: https://pypi.org/project/djlint/
 .. |chat| image:: https://img.shields.io/badge/chat-discord-green
    :target: https://discord.gg/taghAqebzU
+.. |version| image:: https://img.shields.io/pypi/v/djlint
+   :target: https://pypi.org/project/djlint/
+   :alt: PyPI
