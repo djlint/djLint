@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Next Release
-------------
+0.5.2
+-----
 - Split ``alt`` requirement from H006 to H013
 - Added optional custom rules file
 - Added ``golang`` as profile option
@@ -10,6 +10,8 @@ Next Release
 - Added default text to ``--indent`` and ``-e`` options
 - Update url rules to accept #
 - Fixed file encoding on Windows OS
+- Fix single line template tag regex
+- Fix ``blank_line_after_tag`` for tags with leading space
 
 0.5.1
 -----
