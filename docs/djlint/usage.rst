@@ -25,13 +25,13 @@ Foramtting is a beta tool. ``--check`` the output before applying changes.
 
 Reformatting does not work with long json/html embedded into attribute data.
 
-To check what may change in formatting run:
+To review what may change in formatting run:
 
 .. code:: sh
 
     djlint . --check --ignore="H014,H017"
 
-To format code run:
+To format the code and update files run:
 
 .. code:: sh
 
