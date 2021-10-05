@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_ignored_block --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_html_comments_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -57,14 +57,14 @@ console.log();
 def test_html_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
         tmp_file.name,
-        b"""<div>\n    <!-- asdf-->\n\n   <!--\n multi\nline\ncomment--></div>""",
+        b"""<div>\n    <!-- asdf--><!--\n multi\nline\ncomment--></div>""",
     )
     runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    print(Path(tmp_file.name).read_text())
     assert (
         Path(tmp_file.name).read_text()
         == """<div>
-    <!-- asdf-->
-    <!--
+    <!-- asdf--><!--
  multi
 line
 comment-->
@@ -282,3 +282,32 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
 </script>
 """
     )
+
+
+def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<style>
+    {# override to fix text all over the place in media upload box #}
+    .k-dropzone .k-upload-status {
+        color: #a1a1a1;
+    }
+</style>
+""",
+    )
+
+    assert output["exit_code"] == 0
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<style>
+ .k-dropzone .k-upload-status {
+       color: #a1a1a1;
+           }
+</style>
+""",
+    )
+
+    assert output["exit_code"] == 0

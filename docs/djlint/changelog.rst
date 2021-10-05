@@ -6,6 +6,9 @@ Next Release
 - Split ``alt`` requirement from H006 to H013
 - Added optional custom rules file
 - Added ``golang`` as profile option
+- Fixed formatting of ignored blocks containing inline comments
+- Added default text to ``--indent`` and ``-e`` options
+- Update url rules to accept #
 
 0.5.1
 -----

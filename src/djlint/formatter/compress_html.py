@@ -2,6 +2,12 @@
 
 import regex as re
 
+from ..helpers import (
+    is_ignored_block_closing,
+    is_ignored_block_opening,
+    is_ignored_group_closing,
+    is_ignored_group_opening,
+)
 from ..settings import Config
 
 
@@ -30,7 +36,7 @@ def _strip_html_whitespace(html: str, config: Config) -> str:
 
         # start of ignored block. If we are already in an ingored block, keep true.
         is_group_ignored = is_group_ignored or bool(
-            re.search(config.ignored_group_opening, item, re.IGNORECASE | re.VERBOSE)
+            is_ignored_group_opening(config, item)
         )
 
         # find ignored blocks and retain indentation, otherwise strip white space
@@ -41,18 +47,12 @@ def _strip_html_whitespace(html: str, config: Config) -> str:
         ):
             tmp = _clean_line(item)
 
-        elif (
-            re.search(config.ignored_block_closing, item, re.IGNORECASE | re.VERBOSE)
-            and is_group_ignored is False
-        ):
+        elif is_ignored_block_closing(config, item) and is_group_ignored is False:
             # do not format ignored lines
             tmp = _clean_line(item)
             is_block_ignored = False
 
-        elif (
-            re.search(config.ignored_block_opening, item, re.IGNORECASE | re.VERBOSE)
-            and is_group_ignored is False
-        ):
+        elif is_ignored_block_opening(config, item) and is_group_ignored is False:
             # do not format ignored lines
             tmp = _clean_line(item)
             is_block_ignored = True
@@ -67,9 +67,7 @@ def _strip_html_whitespace(html: str, config: Config) -> str:
             tmp = _clean_line(item)
 
         # end of ignore raw code
-        if bool(
-            re.search(config.ignored_group_closing, item, re.IGNORECASE | re.VERBOSE)
-        ):
+        if is_ignored_group_closing(config, item):
             is_group_ignored = False
             lstrip = False
 

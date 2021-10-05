@@ -4,6 +4,11 @@ from functools import partial
 
 import regex as re
 
+from ..helpers import (
+    is_ignored_group_block_closing,
+    is_ignored_group_block_opening,
+    is_ignored_group_opening,
+)
 from ..settings import Config
 from .attributes import format_attributes
 
@@ -29,13 +34,11 @@ def indent_html(rawcode: str, config: Config) -> str:
 
     for item in rawcode_flat_list:
         # if a raw tag first line
-        if not is_block_raw and re.search(
-            config.ignored_group_opening, item, re.IGNORECASE | re.VERBOSE
-        ):
+        if not is_block_raw and is_ignored_group_opening(config, item):
             is_raw_first_line = True
 
         # if a raw tag then start ignoring
-        if re.search(config.ignored_group_opening, item, re.IGNORECASE | re.VERBOSE):
+        if is_ignored_group_opening(config, item):
             is_block_raw = True
 
         if re.findall(
@@ -130,9 +133,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
-        if (
-            re.search(config.ignored_group_opening, item, re.IGNORECASE | re.VERBOSE)
-        ) or re.search(config.ignored_block_opening, item, re.IGNORECASE | re.VERBOSE):
+        if is_ignored_group_block_opening(config, item):
             is_block_raw = True
             is_raw_first_line = False
 
@@ -154,19 +155,8 @@ def indent_html(rawcode: str, config: Config) -> str:
                 re.VERBOSE,
             )
 
-        # turn off raw block if we hit end - for one line raw blocks
-        if (
-            re.search(
-                re.compile(
-                    config.ignored_group_closing, flags=re.VERBOSE | re.IGNORECASE
-                ),
-                item,
-            )
-        ) or re.search(
-            re.compile(config.ignored_block_closing, flags=re.IGNORECASE | re.VERBOSE),
-            item,
-        ):
-
+        # turn off raw block if we hit end - for one line raw blocks, but not an inline raw
+        if is_ignored_group_block_closing(config, item):
             is_block_raw = False
 
         beautified_code = beautified_code + tmp
