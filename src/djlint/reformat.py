@@ -24,7 +24,7 @@ def reformat_file(config: Config, check: bool, this_file: Path) -> dict:
 
     if check is not True:
         # update the file
-        this_file.write_text(beautified_code)
+        this_file.write_text(beautified_code, encoding="utf8")
 
     out = {
         this_file: list(
