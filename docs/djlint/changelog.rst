@@ -8,13 +8,14 @@ Next Release
 - Added rule H022 to find http links
 - Added rule H023 to find entity references
 - Added rule H024 to find type on scripts and styles
+- Added rule H025 to check for orphan tags. Thanks to https://stackoverflow.com/a/1736801/10265880
 - Improved attribute formatting
 - Updated ``blank_line_after_tag`` option to add newline regardless of location
 - Fixed django ``trans`` tag formatting
 - Added formatting for inline styles
 - Added formatting for template conditions inside attributes
 - Added srcset as possible url location in linter rules
-
+- Special thanks to `jayvdb <https://github.com/jayvdb>`_
 0.5.3
 -----
 - Change stdout for ``--reformat/check`` options to only print new html when using stdin as the input

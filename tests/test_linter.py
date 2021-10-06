@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_H021 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H012 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -152,6 +152,7 @@ def test_H012(runner: CliRunner, tmp_file: TextIO) -> None:
         b"<p>{% if activity.reporting_groups|length <= 0 %}<h3>{% trans 'General' %}</h3>{% endif %}</p>",
     )
     result = runner.invoke(djlint, [tmp_file.name])
+    print(result.output)
     assert result.exit_code == 0
     assert "H012 1:" not in result.output
 
@@ -203,7 +204,7 @@ def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H017 1:" in result.output
 
     # test colgroup tag
-    write_to_file(tmp_file.name, b"<colgroup><colgroup asdf>")
+    write_to_file(tmp_file.name, b"<colgroup><colgroup asdf></colgroup></colgroup>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "H017 1:" not in result.output
@@ -212,7 +213,7 @@ def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
 def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
         tmp_file.name,
-        b'<a href="/Collections?handler=RemoveAgreement&id=@a.Id">\n<form action="/Collections">',
+        b'<a href="/Collections?handler=RemoveAgreement&id=@a.Id">\n<form action="/Collections"></form></a>',
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
@@ -304,6 +305,13 @@ def test_H024(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "H024 1:" in result.output
+
+
+def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<div>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H025 1:" in result.output
 
 
 def test_rules_not_matched_in_ignored_block(

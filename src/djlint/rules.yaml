@@ -299,3 +299,8 @@
     flags: re.I
     patterns:
     - <(?:script|style)[^>]*?type=["|'][^>]*?>
+- rule:
+    name: H025
+    message: Tag seems to be an orphan.
+    patterns:
+    - <((?:\"[^\"<>]*\"['\"]*|'[^'<>]*'['\"]*|[^'\"<>])+)(?<!/\s*)>

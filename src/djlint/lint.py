@@ -1,4 +1,5 @@
 """Djlint html linter."""
+import copy
 from pathlib import Path
 from typing import Dict, List
 
@@ -69,20 +70,59 @@ def lint_file(config: Config, this_file: Path) -> Dict:
 
         for pattern in rule["patterns"]:
 
-            for match in re.finditer(
-                re.compile(pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))),
-                html,
-            ):
+            # rule H025 is a special case where the output must be an even num.
+            if rule["name"] == "H025":
+                open_tags = []
 
-                if _should_ignore(config, html, match) is False:
-                    errors[file_name].append(
-                        {
-                            "code": rule["name"],
-                            "line": get_line(match.start(), line_ends),
-                            "match": match.group().strip()[:20],
-                            "message": rule["message"],
-                        }
-                    )
+                for match in re.finditer(
+                    re.compile(
+                        pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))
+                    ),
+                    html,
+                ):
+                    # close tags should equal open tags
+                    if match.group(1).split(" ")[0][0] != "/":
+                        open_tags.append(match)
+                    else:
+                        for i, tag in enumerate(copy.deepcopy(open_tags)):
+                            if (
+                                tag.group(1).split(" ")[0]
+                                == match.group(1).split(" ")[0][1:]
+                            ):
+                                open_tags.pop(i)
+                                break
+                        else:
+                            # there was no open tag matching the close tag
+                            open_tags.append(match)
+
+                for match in open_tags:
+                    if _should_ignore(config, html, match) is False:
+                        errors[file_name].append(
+                            {
+                                "code": rule["name"],
+                                "line": get_line(match.start(), line_ends),
+                                "match": match.group().strip()[:20],
+                                "message": rule["message"],
+                            }
+                        )
+            else:
+
+                for match in re.finditer(
+                    re.compile(
+                        pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))
+                    ),
+                    html,
+                ):
+
+                    if _should_ignore(config, html, match) is False:
+                        errors[file_name].append(
+                            {
+                                "code": rule["name"],
+                                "line": get_line(match.start(), line_ends),
+                                "match": match.group().strip()[:20],
+                                "message": rule["message"],
+                            }
+                        )
 
     # remove duplicate matches
     for file_name, error_dict in errors.items():
