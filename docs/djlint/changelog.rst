@@ -7,6 +7,8 @@ Next Release
 - Improved attribute formatting
 - Updated ``blank_line_after_tag`` option to add newline regardless of location
 - Fixed django ``trans`` tag formatting
+- Added linter rule H021 to check for inline styles
+- Added formatting for inline styles
 
 0.5.3
 -----

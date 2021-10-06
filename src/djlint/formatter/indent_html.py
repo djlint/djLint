@@ -152,7 +152,6 @@ def indent_html(rawcode: str, config: Config) -> str:
                 ),
                 func,
                 tmp,
-                re.VERBOSE,
             )
 
         # turn off raw block if we hit end - for one line raw blocks, but not an inline raw

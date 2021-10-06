@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_html_comments_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_long_attributes --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -60,7 +60,7 @@ def test_html_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<div>\n    <!-- asdf--><!--\n multi\nline\ncomment--></div>""",
     )
     runner.invoke(djlint, [tmp_file.name, "--reformat"])
-    print(Path(tmp_file.name).read_text())
+
     assert (
         Path(tmp_file.name).read_text()
         == """<div>
@@ -94,6 +94,38 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
        required="true"/>
 """
     )
+
+    # check styles
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div class="my long classes"
+     required="true"
+     checked="checked"
+     data-attr="some long junk"
+     style="margin-left: 90px;
+            display: contents;
+            font-weight: bold;
+            font-size: 1.5rem;">
+""",
+    )
+
+    assert output["exit_code"] == 0
+
+    # check styles when tag is first
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div style="margin-left: 90px;
+            display: contents;
+            font-weight: bold;
+            font-size: 1.5rem;"
+     data-attr="stuff"
+     class="my long class goes here">
+""",
+    )
+    print(output["text"])
+    assert output["exit_code"] == 0
 
 
 def test_small_tag(runner: CliRunner, tmp_file: TextIO) -> None:

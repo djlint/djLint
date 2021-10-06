@@ -420,6 +420,8 @@ class Config:
         """
         )
 
+        self.attribute_style_pattern: str = r"(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
+
         self.tag_pattern: str = r"""
             (<\w+?[^>]*?)((?:\n[^>]+?)+?)(/?\>)
         """
