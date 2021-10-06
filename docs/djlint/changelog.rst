@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Next Release
-------------
+0.5.4
+-----
 - Added rule H020 to find empty tag pairs
 - Added rule H021 to find inline styles
 - Added rule H022 to find http links
