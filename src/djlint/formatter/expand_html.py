@@ -66,91 +66,22 @@ def expand_html(html: str, config: Config) -> str:
 
     break_char = config.break_before
 
+    # html tags - break before
     html = re.sub(
         re.compile(
-            fr"{break_char}\K(<(?:{html_tags})>)", flags=re.IGNORECASE | re.VERBOSE
-        ),
-        add_left,
-        html,
-    )
-
-    # <tag>
-    html = re.sub(
-        re.compile(fr"(<(?:{html_tags})>)(?=[^\n])", flags=re.IGNORECASE | re.VERBOSE),
-        add_right,
-        html,
-    )
-
-    # \n<tag /> and \n<tag/>
-    html = re.sub(
-        re.compile(
-            fr"{break_char}\K(<(?:{html_tags})[ ]?/>)", flags=re.IGNORECASE | re.VERBOSE
-        ),
-        add_left,
-        html,
-    )
-
-    # <tag /> and <tag/>
-    html = re.sub(
-        re.compile(
-            fr"(<(?:{html_tags})[ ]?/>)(?=[^\n])", flags=re.IGNORECASE | re.VERBOSE
-        ),
-        add_right,
-        html,
-    )
-
-    # \n<tag attributes/>,  \n<tag attributes>, \n<tag attributes />
-    html = re.sub(
-        re.compile(
-            fr"{break_char}\K(<(?:{html_tags})[ ]+?("
-            + config.attribute_pattern
-            + r")\s*?>)",
+            fr"{break_char}\K(</?(?:{html_tags})(?:[^<>])*>)",
             flags=re.IGNORECASE | re.VERBOSE,
         ),
         add_left,
         html,
     )
 
-    # <tag attributes/>,  <tag attributes>, <tag attributes />
+    # html tags - break after
     html = re.sub(
         re.compile(
-            fr"(<(?:{html_tags})[ ]+?("
-            + config.attribute_pattern
-            + r")\s*?>)(?=[^\n])",
+            fr"(</?(?:{html_tags})(?:[^<>])*>)(?=[^\n])",
             flags=re.IGNORECASE | re.VERBOSE,
         ),
-        add_right,
-        html,
-    )
-
-    html = re.sub(
-        re.compile(
-            fr"{break_char}\K(<(?:{html_tags})[ ][^>]+?/>)",
-            flags=re.IGNORECASE | re.VERBOSE,
-        ),
-        add_left,
-        html,
-    )
-
-    html = re.sub(
-        re.compile(
-            fr"(<(?:{html_tags})[ ][^>]+?/>)(?=[^\n])", flags=re.IGNORECASE | re.VERBOSE
-        ),
-        add_right,
-        html,
-    )
-
-    # process closing (break_char, html_tags,)s ######
-
-    html = re.sub(
-        re.compile(
-            fr"{break_char}\K(</(?:{html_tags})>)", flags=re.IGNORECASE | re.VERBOSE
-        ),
-        add_left,
-        html,
-    )
-    html = re.sub(
-        re.compile(fr"(</(?:{html_tags})>)(?=[^\n])", flags=re.IGNORECASE | re.VERBOSE),
         add_right,
         html,
     )

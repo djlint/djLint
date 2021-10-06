@@ -358,28 +358,32 @@ class Config:
             | wbr
         """
 
+        self.indent_template_tags: str = (
+            r"""  if
+                | for
+                | block
+                | else
+                | spaceless
+                | compress
+                | addto
+                | language
+                | with
+                | assets
+                | verbatim
+                | autoescape
+                | comment
+                | filter
+                | each
+            """
+            + self.custom_blocks
+        )
+
         # the contents of these tag blocks will be indented, then unindented
         self.tag_indent: str = (
             r"""
               (?:\{\{\#|\{%-?)[ ]*?
-                (
-                      if
-                    | for
-                    | block
-                    | else
-                    | spaceless
-                    | compress
-                    | addto
-                    | language
-                    | with
-                    | assets
-                    | verbatim
-                    | autoescape
-                    | comment
-                    | filter
-                    | each
-                    """
-            + self.custom_blocks
+                ("""
+            + self.indent_template_tags
             + r"""
                 )
             | (?:<
