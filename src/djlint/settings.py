@@ -278,6 +278,7 @@ class Config:
                     | td
                     | blockquote
                     | select
+                    | i
                     | form
                     | option
                     | cache
@@ -338,6 +339,7 @@ class Config:
                     | blockquote
                     | select
                     | form
+                    | i
                     | option
                     | optgroup
                     | fieldset
@@ -539,7 +541,7 @@ class Config:
 
         self.break_html_tags: str = r"""
               a
-            | abbr
+        #    | abbr
             | acronym
             | address
             | applet
@@ -575,7 +577,7 @@ class Config:
             | div
             | dl
             | dt
-            | em
+        #    | em
             | embed
             | fieldset
             | figcaption
@@ -595,9 +597,9 @@ class Config:
             | header
             | hr
             | html
-            | i
+        #    | i
             | iframe
-            | icon
+        #    | icon
             | img
             | input
             | ins
@@ -633,11 +635,11 @@ class Config:
             | script
             | section
             | select
-            | small
+        #    | small
             | source
-            | span
+        #    | span
             | strike
-            | strong
+        #    | strong
             | style
             | sub
             | summary
