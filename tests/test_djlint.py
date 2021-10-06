@@ -98,12 +98,12 @@ def test_empty_file(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_stdin(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ["-"], input="<div></div>")
+    result = runner.invoke(djlint, ["-"], input='<div><p id="a"></p></div>')
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
 
     # check with multiple inputs
-    result = runner.invoke(djlint, ["-", "-"], input="<div></div>")
+    result = runner.invoke(djlint, ["-", "-"], input='<div><p id="a"></p></div>')
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
 

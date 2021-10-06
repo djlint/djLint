@@ -4,6 +4,9 @@ Changelog
 Next Release
 ------------
 - Added rule H020 to find empty tag pairs
+- Improved attribute formatting
+- Updated ``blank_line_after_tag`` option to add newline regardless of location
+- Fixed django ``trans`` tag formatting
 
 0.5.3
 -----
