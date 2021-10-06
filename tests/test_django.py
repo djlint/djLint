@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_trans --cov=src/djlint \
+   pytest tests/test_django.py::test_complex_attributes --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -328,6 +328,18 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
      {% ifchanged comment.stream_id %} comments-msg {% else %} comments-newMsgReply {% endifchanged %}>
 """
     )
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<a class="piwik_download" href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}">""",
+    )
+    assert (
+        output["text"]
+        == """<a class="piwik_download"
+   href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}">
+"""
+    )
+    assert output["exit_code"] == 1
 
 
 def test_load_tag(runner: CliRunner, tmp_file: TextIO) -> None:
