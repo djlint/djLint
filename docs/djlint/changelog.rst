@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Next Release
+------------
+- Added rule H020 to find empty tag pairs
+
 0.5.3
 -----
 - Change stdout for ``--reformat/check`` options to only print new html when using stdin as the input

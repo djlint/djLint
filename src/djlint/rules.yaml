@@ -269,3 +269,9 @@
     patterns:
     - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url)=[\"|']javascript:[\w|/]+
     - <form\s+?[^>]*?(?:action)=[\"|']javascript:[\w|/]+
+- rule:
+    name: H020
+    message: Empty tag pair found. Consider removing.
+    flags: re.DOTALL|re.I
+    patterns:
+    - <(\w+)\s*?>\s*?<\/\1>
