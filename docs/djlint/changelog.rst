@@ -15,7 +15,9 @@ Next Release
 - Added formatting for inline styles
 - Added formatting for template conditions inside attributes
 - Added srcset as possible url location in linter rules
+- Speed up formatting
 - Special thanks to `jayvdb <https://github.com/jayvdb>`_
+
 0.5.3
 -----
 - Change stdout for ``--reformat/check`` options to only print new html when using stdin as the input
