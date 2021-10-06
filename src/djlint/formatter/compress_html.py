@@ -82,28 +82,10 @@ def compress_html(html: str, config: Config) -> str:
 
     html = _strip_html_whitespace(html, config)
 
-    html = re.sub(
-        r"(<([\w]+)[^>]*>)\s+?(<\/\2>)",
-        r"\1\3",
-        html,
-        flags=re.IGNORECASE | re.MULTILINE,
-    )
-
-    # put empty template tags on one line
-    html = re.sub(
-        re.compile(
-            rf"({{%-?[ ]*?({config.start_template_tags})[^}}]+?-?%}})\s+?(\{{\%-?[ ]end\2[^}}]*?\%\}})",
-            flags=re.MULTILINE | re.IGNORECASE | re.VERBOSE,
-        ),
-        r"\1\3",
-        html,
-    )
-
     # put short single line tags on one line
-    # verbose doesn't seem to work with replace groups.
     html = re.sub(
         re.compile(
-            fr"(<({config.single_line_html_tags})>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
+            fr"(<({config.single_line_html_tags})(?:[^<>])*>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
             re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
         ),
         r"\1\3\4",
@@ -111,24 +93,7 @@ def compress_html(html: str, config: Config) -> str:
         re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
 
-    html = re.sub(
-        re.compile(
-            fr"(<({config.single_line_html_tags})>)\s*?([^<\n]{{,80}})\s*?(</(\2)>)",
-            re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
-        ),
-        r"\1\3\4",
-        html,
-    )
-
-    html = re.sub(
-        re.compile(
-            fr"(<({config.single_line_html_tags})[ ][^>\n]{{,80}}>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
-            re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
-        ),
-        r"\1\3\4",
-        html,
-    )
-
+    # put short template tags back on one line
     html = re.sub(
         re.compile(
             rf"({{%-?[ ]*?({config.single_line_template_tags})[^\n(?:%}})]{{,30}}%}})\s*([^%\n]{{,50}})\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
