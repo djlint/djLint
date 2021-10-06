@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_load_tag --cov=src/djlint \
+   pytest tests/test_django.py::test_trans --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -234,6 +234,20 @@ def test_blocktranslate(runner: CliRunner, tmp_file: TextIO) -> None:
     The width is: {{ width }}
 {% endblocktranslate %}
 """
+    )
+
+
+def test_trans(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file, runner, b"""<p>{% trans 'Please do <b>Blah</b>.' %}</p>"""
+    )
+    assert output["exit_code"] == 1
+    assert (
+        """<p>
+    {% trans 'Please do <b>Blah</b>.' %}
+</p>
+"""
+        in output["text"]
     )
 
 

@@ -483,6 +483,7 @@ class Config:
             | {\*.*?\*}
             | {\#.*?\#}
             | <\?php.*?\?>
+            | {\%[ ]trans[ ][^}]*?\%}
         """
 
         self.ignored_inline_blocks: str = r"""
