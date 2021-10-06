@@ -85,7 +85,7 @@ def compress_html(html: str, config: Config) -> str:
     # put short single line tags on one line
     html = re.sub(
         re.compile(
-            fr"(<({config.single_line_html_tags})(?:[^<>])*>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
+            fr"(<({config.single_line_html_tags})(?:\s(?:(?:{{%[^(?:%}}]*?%}})|(?:{{{{[^(?:}}}})]*?}}}})|[^<>])*)?>)\s*([^<\n]{{,80}})\s*?(</(\2)>)",
             re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
         ),
         r"\1\3\4",

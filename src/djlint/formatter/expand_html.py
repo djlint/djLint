@@ -69,7 +69,7 @@ def expand_html(html: str, config: Config) -> str:
     # html tags - break before
     html = re.sub(
         re.compile(
-            fr"{break_char}\K(</?(?:{html_tags})(?:[^<>])*>)",
+            fr"{break_char}\K(</?(?:{html_tags})(?:\s((?:{{%[^(?:%}}]*?%}})|(?:{{{{[^(?:}}}})]*?}}}})|[^<>])*)?>)",
             flags=re.IGNORECASE | re.VERBOSE,
         ),
         add_left,
@@ -79,7 +79,7 @@ def expand_html(html: str, config: Config) -> str:
     # html tags - break after
     html = re.sub(
         re.compile(
-            fr"(</?(?:{html_tags})(?:[^<>])*>)(?=[^\n])",
+            fr"(</?(?:{html_tags})(?:\s((?:{{%[^(?:%}}]*?%}})|(?:{{{{[^(?:}}}})]*?}}}})|[^<>])*)?>)(?=[^\n])",
             flags=re.IGNORECASE | re.VERBOSE,
         ),
         add_right,
