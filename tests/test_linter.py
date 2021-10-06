@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_custom_rules_bad_config --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H019 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -252,6 +252,30 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
+
+
+def test_H019(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<a href='javascript:abc()'>asdf</a>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H019 1:" in result.output
+
+    write_to_file(tmp_file.name, b"<form action='javascript:abc()'></form>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H019 1:" in result.output
+
+
+def test_H020(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<div></div>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H020 1:" in result.output
+
+    write_to_file(tmp_file.name, b"<span>\n   </span>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H020 1:" in result.output
 
 
 def test_rules_not_matched_in_ignored_block(
