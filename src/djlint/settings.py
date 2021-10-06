@@ -380,6 +380,7 @@ class Config:
               )
         """
 
+        self.break_before = r"(?<!\n[ ]*?)"
         # reduce empty lines greater than  x to 1 line
         self.reduce_extralines_gt = 2
 
@@ -395,22 +396,22 @@ class Config:
         # 4. attributes="normal html"
         # 5. require | checked | otherword | other-word
         # 6. {{ stuff }}
-        template_if_for_pattern = (
+        self.template_if_for_pattern = (
             r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
         )
         self.attribute_pattern: str = (
             r"""
             (?:[^\s]+?=(?:\"[^\"]*?"""
-            + template_if_for_pattern
+            + self.template_if_for_pattern
             + r"""[^\"]*?\"|\'[^\']*?"""
-            + template_if_for_pattern
+            + self.template_if_for_pattern
             + r"""[^\']*?\'))
             | (?:[^\s]+?=(?:\"[^\"]*?{{.*?}}[^\"]*?\"|\'[^\']*?{{.*?}}[^\']*?\'))
             | """
-            + template_if_for_pattern
+            + self.template_if_for_pattern
             + r"""
             | (?:[^\s]+?=(?:\"(?:[^\"]*?{%[^}]*?%}[^\"]*?)+?\"))
-            | (?:[^\s]+?=(?:\"(?:[^\']*?{%[^}]*?%}[^\"]*?)+?\'))
+            | (?:[^\s]+?=(?:\'(?:[^\']*?{%[^}]*?%}[^\']*?)+?\'))
             | (?:[^\s]+?=(?:\".*?\"|\'.*?\'))
             | required
             | checked

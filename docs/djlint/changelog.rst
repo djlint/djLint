@@ -9,6 +9,7 @@ Next Release
 - Fixed django ``trans`` tag formatting
 - Added linter rule H021 to check for inline styles
 - Added formatting for inline styles
+- Added formatting for template conditions inside attributes
 
 0.5.3
 -----

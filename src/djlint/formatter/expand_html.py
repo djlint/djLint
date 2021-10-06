@@ -64,7 +64,7 @@ def expand_html(html: str, config: Config) -> str:
     add_left = partial(add_html_line, "\n%s")
     add_right = partial(add_html_line, "%s\n")
 
-    break_char = r"(?<!\n[ ]*?)"
+    break_char = config.break_before
 
     html = re.sub(
         re.compile(
