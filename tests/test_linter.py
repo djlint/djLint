@@ -225,7 +225,7 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     # test javascript functions
     write_to_file(
         tmp_file.name,
-        b'<a href="javascript:abc()">\n<form action="javascript:abc()">',
+        b'<a href="javascript:abc()">\n<form action="javascript:abc()"></form></a>',
     )
     result = runner.invoke(djlint, [tmp_file.name])
     # don't check status code. will fail on other rules here.
@@ -237,7 +237,7 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     # test on_ events
     write_to_file(
         tmp_file.name,
-        b'<a href="onclick:abc()">\n<form action="onclick:abc()">',
+        b'<a href="onclick:abc()">\n<form action="onclick:abc()"></form></a>',
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
@@ -249,7 +249,7 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     # test hash urls
     write_to_file(
         tmp_file.name,
-        b'<a href="#">\n<form action="#"><a href="#tab">\n<form action="#go">',
+        b'<a href="#">\n<form action="#"><a href="#tab">\n<form action="#go"></form></a></form></a>',
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
