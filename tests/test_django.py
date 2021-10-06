@@ -306,21 +306,17 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""<a class=" {% if favorite == "yes" %}favorite{% endif %} has-tooltip-arrow has-tooltip-right" data-tooltip=" {% if favorite == "yes" %}Remove from Favorites {% else %}Add to Favorites{% endif %}" fav-type="report" object-id="{{ report.report_id }}"><span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span></a>""",
+        b"""<a class="{% if favorite == "yes" %}favorite{% endif %} has-tooltip-arrow has-tooltip-right" data-tooltip="{% if favorite == "yes" %}Remove from Favorites {% else %}Add to Favorites{% endif %}" fav-type="report" object-id="{{ report.report_id }}"><span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span></a>""",
     )
     assert output["exit_code"] == 1
 
     assert (
         output["text"]
-        == r"""<a class=" """
-        + """
-          {% if favorite == "yes" %}
+        == r"""<a class="{% if favorite == "yes" %}
               favorite
           {% endif %}
           has-tooltip-arrow has-tooltip-right"
-   data-tooltip=" """
-        + """
-                 {% if favorite == "yes" %}
+   data-tooltip="{% if favorite == "yes" %}
                      Remove from Favorites
                  {% else %}
                      Add to Favorites
@@ -366,8 +362,9 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""<span {%if a%}required{%endif%}title="{% if eev.status == eev.STATUS_CURRENT %} {% trans 'A' %} {% elif eev.status == eev.STATUS_APPROVED %} {% trans 'B' %} {% elif eev.status == eev.STATUS_EXPIRED %} {% trans 'C' %}{% endif %}" class="asdf {%if a%}b{%endif%} asdf" {%if a%}checked{%endif%}>""",
+        b"""<span {%if a%}required{%endif%}title="{% if eev.status == eev.STATUS_CURRENT %} {% trans 'A' %} {% elif eev.status == eev.STATUS_APPROVED %} {% trans 'B' %} {% elif eev.status == eev.STATUS_EXPIRED %} {% trans 'C' %}{% endif %}" class="asdf{%if a%}b{%endif%} asdf" {%if a%}checked{%endif%}>""",
     )
+
     assert (
         output["text"]
         == """<span {% if a %}
