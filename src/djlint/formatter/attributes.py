@@ -39,6 +39,12 @@ def format_template_tags(config: Config, attributes: str) -> str:
                 )
             )[-1]
         else:
+            # if we don't know where we are, then return what we started with.
+            if not re.findall(
+                re.compile(r"^<\w+[^=\"']\s*", re.M), attributes[: match.start()]
+            ):
+                return match.group()
+
             attr_name = list(
                 re.finditer(
                     re.compile(r"^<\w+[^=\"']\s*", re.M), attributes[: match.start()]

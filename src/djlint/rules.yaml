@@ -37,14 +37,14 @@
     flags: re.DOTALL
     # this should be using the static path from django settings
     patterns:
-    - <(?:link|img|script)\s[^\>]*?(?:href|src)=[\"\']/?static/?
+    - <(?:link|img|script|source)\s[^\>]*?(?:href|src|srcset)=[\"\']/?static/?
 - rule:
     name: J004
     message: (Jinja) Static urls should follow {{ url_for('static'..) }} pattern.
     flags: re.DOTALL
     # this should be using the static path from django settings
     patterns:
-    - <(?:link|img|script)\s[^\>]*?(?:href|src)=[\"\']/?static/?
+    - <(?:link|img|script|source)\s[^\>]*?(?:href|src|srcset)=[\"\']/?static/?
 - rule:
     name: H005
     message: Html tag should have lang attribute.
@@ -69,7 +69,7 @@
     message: Attributes should be double quoted.
     flags: re.DOTALL|re.I
     patterns:
-    - (?:class|id|src|width|height|alt|style|lang|title)=\'[^\']*'
+    - (?:class|id|src|width|height|alt|style|lang|title|srcset|media)=\'[^\']*'
 - rule:
     name: H009
     message: Tag names should be lowercase.
@@ -81,7 +81,7 @@
     message: Attribute names should be lowercase.
     flags: re.DOTALL
     patterns:
-    - <\w+[^\>]+?(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE)=
+    - <\w+[^\>]+?(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE|MEDIA|SRCSET)=
 - rule:
     name: H011
     message: Attribute values should be quoted.
@@ -208,7 +208,7 @@
          | ul
          | var
          | video
-         | wbr)\s+?[^>]*?(?:class|id|src|width|height|alt|style|lang|title|href|action|method|checked|required)=[a-zA-Z_-]+
+         | wbr)\s+?[^>]*?(?:class|id|src|width|height|alt|style|lang|title|href|action|method|checked|required|srcset)=[a-zA-Z_-]+
     - <(?:meta)\s+?[^>]*?(?:class|id|src|alt|style|lang|title|href|action|method|name)=[a-zA-Z_-]+
 - rule:
     name: H012
@@ -281,3 +281,21 @@
     flags: re.I
     patterns:
     - <\w+\s[^>]*style(?=[^>]*>)
+- rule:
+    name: H022
+    message: Use HTTPS for external links.
+    flags: re.I
+    patterns:
+    - <\w+\s[^>]*?(?:href|data-url|action|src|url|srcset)=[\"|']http://[^>]*?>
+- rule:
+    name: H023
+    message: Do not use entity references.
+    flags: re.I
+    patterns:
+    - '&.{5};'
+- rule:
+    name: H024
+    message: Omit type on scripts and styles.
+    flags: re.I
+    patterns:
+    - <(?:script|style)[^>]*?type=["|'][^>]*?>

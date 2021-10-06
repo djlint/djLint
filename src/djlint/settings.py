@@ -232,6 +232,132 @@ class Config:
             | {%[ ]djlint:on[ ]%}
         """
 
+        # all html tags possible
+        self.indent_html_tags: str = r"""
+              a
+            | abbr
+            | acronym
+            | address
+            | applet
+            | area
+            | article
+            | aside
+            | audio
+            | b
+            | base
+            | basefont
+            | bdi
+            | bdo
+            | big
+            | blockquote
+            | body
+            | br
+            | button
+            | canvas
+            | caption
+            | center
+            | cite
+            | code
+            | col
+            | colgroup
+            | data
+            | datalist
+            | dd
+            | del
+            | details
+            | dfn
+            | dialog
+            | dir
+            | div
+            | dl
+            | dt
+            | em
+            | embed
+            | fieldset
+            | figcaption
+            | figure
+            | font
+            | footer
+            | form
+            | frame
+            | frameset
+            | h1
+            | h2
+            | h3
+            | h4
+            | h5
+            | h6
+            | head
+            | header
+            | hr
+            | html
+            | i
+            | iframe
+            | icon
+            | img
+            | input
+            | ins
+            | kbd
+            | label
+            | legend
+            | li
+            | link
+            | main
+            | map
+            | mark
+            | meta
+            | meter
+            | nav
+            | noframes
+            | noscript
+            | object
+            | ol
+            | optgroup
+            | option
+            | output
+            | p
+            | path
+            | param
+            | picture
+            | progress
+            | q
+            | rp
+            | rt
+            | ruby
+            | s
+            | samp
+            | script
+            | section
+            | select
+            | small
+            | source
+            | span
+            | strike
+            | strong
+            | style
+            | sub
+            | summary
+            | sup
+            | svg
+            | table
+            | tbody
+            | td
+            | template
+            | tfoot
+            | th
+            | thead
+            | time
+            | title
+            | tr
+            | track
+            | tt
+            | u
+            | ul
+            | var
+            | video
+            | wbr
+        """
+
         # the contents of these tag blocks will be indented, then unindented
         self.tag_indent: str = (
             r"""
@@ -258,117 +384,29 @@ class Config:
                 )
             | (?:<
                 (?:
-                      html
-                    | head
-                    | body
-                    | div
-                    | a
-                    | nav
-                    | ul
-                    | ol
-                    | dl
-                    | dd
-                    | dt
-                    | li
-                    | table
-                    | thead
-                    | tbody
-                    | tr
-                    | th
-                    | td
-                    | blockquote
-                    | select
-                    | i
-                    | form
-                    | option
-                    | cache
-                    | optgroup
-                    | fieldset
-                    | legend
-                    | label
-                    | header
-                    | main
-                    | section
-                    | aside
-                    | footer
-                    | figure
-                    | figcaption
-                    | video
-                    | span
-                    | p
-                    | g
-                    | svg
-                    | h\d
-                    | button
-                    | img
-                    | path
-                    | script
-                    | style
-                    | details
-                    | summary
+                    """
+            + self.indent_html_tags
+            + """
                 )
               )
         """
         )
 
-        self.tag_unindent: str = r"""^
+        self.tag_unindent: str = (
+            r"""^
               (?:
                   (?:\{\{\/)
                 | (?:\{%-?[ ]*?end)
               )
             | (?:</
                 (?:
-                      html
-                    | head
-                    | body
-                    | div
-                    | a
-                    | nav
-                    | ul
-                    | ol
-                    | dl
-                    | dd
-                    | dt
-                    | li
-                    | table
-                    | thead
-                    | tbody
-                    | tr
-                    | th
-                    | td
-                    | blockquote
-                    | select
-                    | form
-                    | i
-                    | option
-                    | optgroup
-                    | fieldset
-                    | legend
-                    | label
-                    | header
-                    | cache
-                    | main
-                    | section
-                    | aside
-                    | footer
-                    | figure
-                    | figcaption
-                    | video
-                    | span
-                    | p
-                    | g
-                    | svg
-                    | h\d
-                    | button
-                    | img
-                    | path
-                    | script
-                    | style
-                    | details
-                    | summary
+                    """
+            + self.indent_html_tags
+            + """
                 )
               )
         """
+        )
 
         # these tags should be unindented and next line will be indented
         self.tag_unindent_line: str = r"""
@@ -540,126 +578,52 @@ class Config:
         """
 
         self.break_html_tags: str = r"""
-              a
-        #    | abbr
-            | acronym
-            | address
-            | applet
-            | area
-            | article
-            | aside
-            | audio
-            | b
-            | base
-            | basefont
-            | bdi
-            | bdo
-            | big
-            | blockquote
-            | body
-            | br
-            | button
-            | canvas
-            | caption
-            | center
-            | cite
-            | code
-            | col
-            | colgroup
-            | data
-            | datalist
-            | dd
-            | del
-            | details
-            | dfn
-            | dialog
-            | dir
-            | div
-            | dl
-            | dt
-        #    | em
-            | embed
-            | fieldset
-            | figcaption
-            | figure
-            | font
-            | footer
-            | form
-            | frame
-            | frameset
-            | h1
-            | h2
-            | h3
-            | h4
-            | h5
-            | h6
+              html
             | head
-            | header
-            | hr
-            | html
-        #    | i
-            | iframe
-        #    | icon
-            | img
-            | input
-            | ins
-            | kbd
-            | label
-            | legend
-            | li
-            | link
-            | main
-            | map
-            | mark
-            | meta
-            | meter
+            | body
+            | div
+            | a
             | nav
-            | noframes
-            | noscript
-            | object
-            | ol
-            | optgroup
-            | option
-            | output
-            | p
-            | path
-            | param
-            | picture
-            | progress
-            | q
-            | rp
-            | rt
-            | ruby
-            | s
-            | samp
-            | script
-            | section
-            | select
-        #    | small
-            | source
-        #    | span
-            | strike
-        #    | strong
-            | style
-            | sub
-            | summary
-            | sup
-            | svg
-            | table
-            | tbody
-            | td
-            | template
-            | tfoot
-            | th
-            | thead
-            | time
-            | title
-            | tr
-            | track
-            | tt
-            | u
             | ul
-            | var
+            | ol
+            | dl
+            | dd
+            | dt
+            | li
+            | table
+            | thead
+            | tbody
+            | tr
+            | th
+            | td
+            | blockquote
+            | select
+            | form
+            | option
+            | optgroup
+            | fieldset
+            | legend
+            | label
+            | header
+            | cache
+            | main
+            | section
+            | aside
+            | footer
+            | figure
+            | figcaption
             | video
-            | wbr
+            | span
+            | p
+            | g
+            | svg
+            | h\d
+            | button
+            | img
+            | path
+            | picture
+            | script
+            | style
+            | details
+            | summary
         """

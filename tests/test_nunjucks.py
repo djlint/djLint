@@ -5,6 +5,9 @@ run::
    pytest tests/test_nunjucks.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
+   pytest tests/test_nunjucks.py::test_spaceless --cov=src/djlint --cov-branch \
+          --cov-report xml:coverage.xml --cov-report term-missing
+
 """
 # pylint: disable=C0116
 from pathlib import Path
@@ -45,12 +48,10 @@ def test_spaceless(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""{%- if entry.children.length -%}<strong>{%- endif -%}""",
     )
-    assert output["exit_code"] == 1
-    print(output["text"])
+
+    assert output["exit_code"] == 0
     assert (
         output["text"]
-        == r"""{%- if entry.children.length -%}
-    <strong>
-{%- endif -%}
+        == r"""{%- if entry.children.length -%}<strong>{%- endif -%}
 """
     )

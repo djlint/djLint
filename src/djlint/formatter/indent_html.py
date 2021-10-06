@@ -24,7 +24,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     is_raw_first_line = False
     is_block_raw = False
 
-    slt_html = config.break_html_tags
+    slt_html = config.indent_html_tags
 
     # here using all tags cause we allow empty tags on one line
     always_slt_html = config.always_single_line_html_tags

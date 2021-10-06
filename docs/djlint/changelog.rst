@@ -4,12 +4,16 @@ Changelog
 Next Release
 ------------
 - Added rule H020 to find empty tag pairs
+- Added rule H021 to find inline styles
+- Added rule H022 to find http links
+- Added rule H023 to find entity references
+- Added rule H024 to find type on scripts and styles
 - Improved attribute formatting
 - Updated ``blank_line_after_tag`` option to add newline regardless of location
 - Fixed django ``trans`` tag formatting
-- Added linter rule H021 to check for inline styles
 - Added formatting for inline styles
 - Added formatting for template conditions inside attributes
+- Added srcset as possible url location in linter rules
 
 0.5.3
 -----

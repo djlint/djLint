@@ -285,6 +285,27 @@ def test_H021(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H021 1:" in result.output
 
 
+def test_H022(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b'<a href="http://">')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H022 1:" in result.output
+
+
+def test_H023(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"&mdash;")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H023 1:" in result.output
+
+
+def test_H024(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b'<script type="hare">')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H024 1:" in result.output
+
+
 def test_rules_not_matched_in_ignored_block(
     runner: CliRunner, tmp_file: TextIO
 ) -> None:
