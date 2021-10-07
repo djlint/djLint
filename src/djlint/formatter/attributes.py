@@ -157,4 +157,7 @@ def format_attributes(config: Config, match: re.match) -> str:
     # format template tags
     attributes = format_template_tags(config, attributes)
 
+    # clean trailing spaces added by breaks
+    attributes = "\n".join([x.rstrip() for x in attributes.splitlines()])
+
     return f"{attributes}"
