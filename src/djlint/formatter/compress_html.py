@@ -102,5 +102,5 @@ def compress_html(html: str, config: Config) -> str:
         r"\1\3\4",
         html,
     )
-
+    print(html)
     return html

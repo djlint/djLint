@@ -564,6 +564,8 @@ class Config:
             | label
             | div
             | li
+            | script
+            | style
         """
 
         self.always_single_line_html_tags: str = r"""

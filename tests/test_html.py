@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_long_attributes --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_style_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -52,6 +52,15 @@ console.log();
 </div>
 """
     )
+
+    # check script includes
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<script src="{% static 'common/js/foo.min.js' %}"></script>""",
+    )
+
+    assert output["exit_code"] == 0
 
 
 def test_html_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -340,6 +349,15 @@ def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
            }
 </style>
 """,
+    )
+
+    assert output["exit_code"] == 0
+
+    # check style includes
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<link href="{% static 'common/js/foo.min.js' %}" />""",
     )
 
     assert output["exit_code"] == 0
