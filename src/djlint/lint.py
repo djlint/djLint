@@ -69,21 +69,20 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     ),
                     html,
                 ):
-                    print(match.group(1).split(" ")[0])
                     if match.group(1) and not re.match(
                         re.compile(
                             fr"^/?{config.always_self_closing_html_tags}", re.I | re.X
                         ),
-                        match.group(1).split(" ")[0],
+                        re.split(r"\s+", match.group(1))[0],
                     ):
                         # close tags should equal open tags
-                        if match.group(1).split(" ")[0][0] != "/":
+                        if re.split(r"\s+", match.group(1))[0][0] != "/":
                             open_tags.append(match)
                         else:
                             for i, tag in enumerate(copy.deepcopy(open_tags)):
                                 if (
-                                    tag.group(1).split(" ")[0]
-                                    == match.group(1).split(" ")[0][1:]
+                                    re.split(r"\s+", tag.group(1))[0]
+                                    == re.split(r"\s+", match.group(1))[0][1:]
                                 ):
                                     open_tags.pop(i)
                                     break

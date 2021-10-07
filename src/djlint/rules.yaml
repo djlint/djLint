@@ -302,5 +302,6 @@
 - rule:
     name: H025
     message: Tag seems to be an orphan.
+    flags: re.I|re.DOTALL
     patterns:
     - <(/?(?:\w+)(?:\s(?:(?:{%[^(?:%}]*?%})|(?:{{[^(?:}})]*?}})|[^<>])*[^/])?)>
