@@ -371,6 +371,23 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H025" not in result.output
 
 
+def test_H026(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b'<asdf id="" >')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H026" in result.output
+
+    write_to_file(tmp_file.name, b"<asdf id >")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H026" in result.output
+
+    write_to_file(tmp_file.name, b'<asdf class="" >')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H026" in result.output
+
+
 def test_rules_not_matched_in_ignored_block(
     runner: CliRunner, tmp_file: TextIO
 ) -> None:

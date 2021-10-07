@@ -185,3 +185,9 @@
     flags: re.I|re.DOTALL
     patterns:
     - <(/?(?:\w+)(?:\s(?:(?:{%[^(?:%}]*?%})|(?:{{[^(?:}})]*?}})|[^<>])*[^/])?)>
+- rule:
+    name: H026
+    message: Emtpy id and class tags can be removed.
+    flags: re.I
+    patterns:
+    - <(?:\w+)(?:\s(?:(?:{%[^(?:%}]*?%})|(?:{{[^(?:}})]*?}})|[^<>])*)[(?:id)|(?:class)](?:(?:=(?:\"{2})|(?:'{2}))|\s)
