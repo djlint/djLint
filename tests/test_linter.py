@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_H025 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H021 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -284,6 +284,14 @@ def test_H021(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "H021 1:" in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b'<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" />',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "H021" not in result.output
 
 
 def test_H022(runner: CliRunner, tmp_file: TextIO) -> None:
