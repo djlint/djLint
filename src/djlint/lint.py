@@ -80,20 +80,21 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     ),
                     html,
                 ):
-                    # close tags should equal open tags
-                    if match.group(1).split(" ")[0][0] != "/":
-                        open_tags.append(match)
-                    else:
-                        for i, tag in enumerate(copy.deepcopy(open_tags)):
-                            if (
-                                tag.group(1).split(" ")[0]
-                                == match.group(1).split(" ")[0][1:]
-                            ):
-                                open_tags.pop(i)
-                                break
-                        else:
-                            # there was no open tag matching the close tag
+                    if match.group(1):
+                        # close tags should equal open tags
+                        if match.group(1).split(" ")[0][0] != "/":
                             open_tags.append(match)
+                        else:
+                            for i, tag in enumerate(copy.deepcopy(open_tags)):
+                                if (
+                                    tag.group(1).split(" ")[0]
+                                    == match.group(1).split(" ")[0][1:]
+                                ):
+                                    open_tags.pop(i)
+                                    break
+                            else:
+                                # there was no open tag matching the close tag
+                                open_tags.append(match)
 
                 for match in open_tags:
                     if _should_ignore(config, html, match) is False:
