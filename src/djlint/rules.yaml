@@ -298,7 +298,7 @@
     message: Omit type on scripts and styles.
     flags: re.I
     patterns:
-    - <(?:script|style)[^>]*?type=["|'][^>]*?>
+    - <(?:script|style)[^>]*?type=[\"|'](?:(?:text/css)|(?:text/javascript))[^>]*?>
 - rule:
     name: H025
     message: Tag seems to be an orphan.
