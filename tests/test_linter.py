@@ -355,6 +355,10 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output
 
+    write_to_file(tmp_file.name, b"<alpha />")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H025" not in result.output
+
     write_to_file(
         tmp_file.name,
         b'<script src="{% static \'notifications/notify.js\' %}" type="text/javascript"></script>',
