@@ -222,6 +222,7 @@ class Config:
             | <pre
             | <textarea
             | {%[ ]djlint:off[ ]%}
+            | {%[ ]+?comment[ ]+?[^(?:%})]*?%}
         """
 
         self.ignored_group_closing: str = r"""
@@ -230,6 +231,7 @@ class Config:
             | </pre
             | </textarea
             | {%[ ]djlint:on[ ]%}
+            | {%[ ]+?endcomment[ ]+?%}
         """
 
         # all html tags possible
@@ -371,7 +373,6 @@ class Config:
                 | assets
                 | verbatim
                 | autoescape
-                | comment
                 | filter
                 | each
             """
@@ -485,7 +486,6 @@ class Config:
             | with
             | assets
             | autoescape
-            | comment
             | filter
             | verbatim
             | each
@@ -513,7 +513,6 @@ class Config:
             | with
             | assets
             | autoescape
-            | comment
             | filter
             | elif
             | resetcycle
@@ -533,6 +532,7 @@ class Config:
             | {\#.*?\#}
             | <\?php.*?\?>
             | {\%[ ]trans[ ][^}]*?\%}
+            | {%[ ]+?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]+?endcomment[ ]+?%}
         """
 
         self.ignored_inline_blocks: str = r"""
@@ -540,6 +540,7 @@ class Config:
             | {\*.*?\*}
             | {\#.*?\#}
             | <\?php.*?\?>
+            | {%[ ]+?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]+?endcomment[ ]+?%}
         """
 
         self.single_line_html_tags: str = r"""
@@ -581,7 +582,6 @@ class Config:
             | for
             | block
             | with
-            | comment
         """
 
         self.break_html_tags: str = r"""
