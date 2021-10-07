@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.5
+-----
+- Consolidated settings and slimmed code
+- Bug fixes
+
 0.5.4
 -----
 - Added rule H020 to find empty tag pairs

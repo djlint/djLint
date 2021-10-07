@@ -274,7 +274,7 @@
     message: Empty tag pair found. Consider removing.
     flags: re.DOTALL|re.I
     patterns:
-    - <(\w+)\s*?>\s*?<\/\1>
+    - <((?!td|li|th|dt|dd)\w+)\s*?>\s*?<\/\1>
 - rule:
     name: H021
     message: Inline styles should be avoided.

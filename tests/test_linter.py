@@ -278,6 +278,11 @@ def test_H020(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "H020 1:" in result.output
 
+    write_to_file(tmp_file.name, b"<td></td>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "H020" not in result.output
+
 
 def test_H021(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<div style="asdf"></div>')

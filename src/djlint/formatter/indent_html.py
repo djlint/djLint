@@ -4,11 +4,7 @@ from functools import partial
 
 import regex as re
 
-from ..helpers import (
-    is_ignored_group_block_closing,
-    is_ignored_group_block_opening,
-    is_ignored_group_opening,
-)
+from ..helpers import is_ignored_block_closing, is_ignored_block_opening
 from ..settings import Config
 from .attributes import format_attributes
 
@@ -30,15 +26,15 @@ def indent_html(rawcode: str, config: Config) -> str:
     always_self_closing_html = config.always_self_closing_html_tags
 
     # here using all tags cause we allow empty tags on one line
-    slt_template = config.single_line_template_tags
+    slt_template = config.optional_single_line_template_tags
 
     for item in rawcode_flat_list:
         # if a raw tag first line
-        if not is_block_raw and is_ignored_group_opening(config, item):
+        if not is_block_raw and is_ignored_block_opening(config, item):
             is_raw_first_line = True
 
         # if a raw tag then start ignoring
-        if is_ignored_group_opening(config, item):
+        if is_ignored_block_opening(config, item):
             is_block_raw = True
 
         if re.findall(
@@ -133,7 +129,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
-        if is_ignored_group_block_opening(config, item):
+        if is_ignored_block_opening(config, item):
             is_block_raw = True
             is_raw_first_line = False
 
@@ -155,7 +151,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             )
 
         # turn off raw block if we hit end - for one line raw blocks, but not an inline raw
-        if is_ignored_group_block_closing(config, item):
+        if is_ignored_block_closing(config, item):
             is_block_raw = False
 
         beautified_code = beautified_code + tmp

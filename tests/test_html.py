@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_style_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_ignored_block --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -44,8 +44,7 @@ def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     assert (
         Path(tmp_file.name).read_text()
         == """<div>
-    <script>
-console.log();
+    <script>console.log();
     console.log();
 
     </script>
@@ -133,7 +132,7 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
      class="my long class goes here">
 """,
     )
-    print(output["text"])
+
     assert output["exit_code"] == 0
 
 
@@ -290,7 +289,7 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""{% djlint:off %}
     <div><p><span></span></p></div>
-    {% djlint:on %}
+{% djlint:on %}
 """,
     )
 
@@ -300,7 +299,7 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
         output["text"]
         == """{% djlint:off %}
     <div><p><span></span></p></div>
-    {% djlint:on %}
+{% djlint:on %}
 """
     )
 
@@ -357,7 +356,7 @@ def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""<link href="{% static 'common/js/foo.min.js' %}" />""",
+        b"""<link href="{% static 'common/js/foo.min.js' %}"/>""",
     )
 
     assert output["exit_code"] == 0

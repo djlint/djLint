@@ -188,8 +188,11 @@ class Config:
             | node_modules
             | __pypackages__
         """
+
         self.exclude: str = djlint_settings.get("exclude", default_exclude)
+
         extend_exclude: str = djlint_settings.get("extend_exclude", "")
+
         if extend_exclude:
             self.exclude += r" | " + r" | ".join(
                 re.escape(x.strip()) for x in extend_exclude.split(",")
@@ -200,24 +203,13 @@ class Config:
             "blank_line_after_tag", None
         )
 
-        # contents of tags will not be formatted, but tags will be formatted
+        # contents of tags will not be formatted
         self.ignored_block_opening: str = r"""
               <style
             | {\*
             | <\?php
             | <script
-        """
-
-        self.ignored_block_closing: str = r"""
-              </style
-            | \*}
-            | \?>
-            | </script
-        """
-
-        # contents of tags will not be formated and tags will not be formatted
-        self.ignored_group_opening: str = r"""
-              <!--
+            | <!--
             | [^\{]{\#
             | <pre
             | <textarea
@@ -225,8 +217,12 @@ class Config:
             | {%[ ]+?comment[ ]+?[^(?:%})]*?%}
         """
 
-        self.ignored_group_closing: str = r"""
-              -->
+        self.ignored_block_closing: str = r"""
+              </style
+            | \*}
+            | \?>
+            | </script
+            |  -->
             | \#}
             | </pre
             | </textarea
@@ -426,11 +422,10 @@ class Config:
         """
 
         self.break_before = r"(?<!\n[ ]*?)"
-        # reduce empty lines greater than  x to 1 line
-        self.reduce_extralines_gt = 2
 
         # if lines are longer than x
         self.max_line_length = 120
+
         self.format_long_attributes = True
 
         # pattern used to find attributes in a tag
@@ -441,6 +436,7 @@ class Config:
         # 4. attributes="normal html"
         # 5. require | checked | otherword | other-word
         # 6. {{ stuff }}
+
         self.template_if_for_pattern = (
             r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
         )
@@ -467,10 +463,6 @@ class Config:
         )
 
         self.attribute_style_pattern: str = r"(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
-
-        self.tag_pattern: str = r"""
-            (<\w+?[^>]*?)((?:\n[^>]+?)+?)(/?\>)
-        """
 
         self.start_template_tags: str = (
             r"""
@@ -543,7 +535,7 @@ class Config:
             | {%[ ]+?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]+?endcomment[ ]+?%}
         """
 
-        self.single_line_html_tags: str = r"""
+        self.optional_single_line_html_tags: str = r"""
               button
             | a
             | h1
@@ -575,9 +567,10 @@ class Config:
             | meta
             | source
             | br
+            | input
         """
 
-        self.single_line_template_tags: str = r"""
+        self.optional_single_line_template_tags: str = r"""
               if
             | for
             | block

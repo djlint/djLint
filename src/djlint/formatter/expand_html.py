@@ -3,6 +3,7 @@ from functools import partial
 
 import regex as re
 
+from ..helpers import inside_ignored_block
 from ..settings import Config
 
 
@@ -21,17 +22,6 @@ def _flatten_attributes(match: re.Match) -> str:
     )
 
 
-def _should_ignore(config: Config, html: str, match: re.Match) -> bool:
-    """Do not add whitespace if the tag is in a non indent block."""
-    return any(
-        ignored_match.start() <= match.start(1) and match.end(1) <= ignored_match.end()
-        for ignored_match in re.finditer(
-            re.compile(config.ignored_blocks, re.DOTALL | re.IGNORECASE | re.VERBOSE),
-            html,
-        )
-    )
-
-
 def expand_html(html: str, config: Config) -> str:
     """Split single line html into many lines based on tags."""
 
@@ -40,26 +30,22 @@ def expand_html(html: str, config: Config) -> str:
 
         Do not add whitespace if the tag is in a non indent block.
         """
-        if _should_ignore(config, html, match):
+        if inside_ignored_block(config, html, match):
             return match.group(1)
 
         return out_format % match.group(1)
 
+    html_tags = config.break_html_tags
+
     # put attributes on one line
     html = re.sub(
-        re.compile(config.tag_pattern, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE),
+        re.compile(
+            fr"(<(?:{config.indent_html_tags}))((?:\s(?:(?:{{%[^(?:%}}]*?%}})|(?:{{{{[^(?:}}}})]*?}}}})|[^<>/])*)+?)(/?>)",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        ),
         _flatten_attributes,
         html,
     )
-
-    html_tags = config.break_html_tags
-
-    # process opening tags ############
-
-    # the tag either opens <div>
-    # self closes <img />
-    # has attributes <div text>
-    # or has attributes and self closes <img text/>
 
     add_left = partial(add_html_line, "\n%s")
     add_right = partial(add_html_line, "%s\n")
@@ -91,7 +77,7 @@ def expand_html(html: str, config: Config) -> str:
     def should_i_move_template_tag(out_format: str, match: re.Match) -> str:
         # ensure template tag is not inside an html tag
 
-        if _should_ignore(config, html, match):
+        if inside_ignored_block(config, html, match):
             return match.group(1)
 
         if not re.findall(

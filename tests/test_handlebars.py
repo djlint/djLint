@@ -4,6 +4,10 @@ run::
 
    pytest tests/test_handlebars.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
+
+   pytest tests/test_handlebars.py::test_each --cov=src/djlint --cov-branch \
+          --cov-report xml:coverage.xml --cov-report term-missing
+
 """
 # pylint: disable=C0116
 
@@ -25,6 +29,7 @@ def test_each(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""{{#each people}}{{print_person}} <p>and more long stuff</p>{{/each}}""",
     )
+    print(output["text"])
     assert output["exit_code"] == 1
     assert (
         output["text"]

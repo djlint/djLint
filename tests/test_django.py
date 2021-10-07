@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_complex_attributes --cov=src/djlint \
+   pytest tests/test_django.py::test_comment --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
