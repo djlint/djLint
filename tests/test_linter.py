@@ -336,6 +336,10 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 0
     assert "H025" not in result.output
 
+    write_to_file(tmp_file.name, b"<br>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H025" not in result.output
+
 
 def test_rules_not_matched_in_ignored_block(
     runner: CliRunner, tmp_file: TextIO

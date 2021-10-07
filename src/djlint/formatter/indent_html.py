@@ -27,7 +27,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     slt_html = config.indent_html_tags
 
     # here using all tags cause we allow empty tags on one line
-    always_slt_html = config.always_single_line_html_tags
+    always_self_closing_html = config.always_self_closing_html_tags
 
     # here using all tags cause we allow empty tags on one line
     slt_template = config.single_line_template_tags
@@ -65,7 +65,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 fr"(<({slt_html})[ ].*?/>)", item, flags=re.IGNORECASE | re.VERBOSE
             )
             or re.findall(
-                fr"(<({always_slt_html})[ ].*?/?>)",
+                fr"(<({always_self_closing_html})[ ].*?/?>)",
                 item,
                 flags=re.IGNORECASE | re.VERBOSE,
             )

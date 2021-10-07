@@ -568,11 +568,12 @@ class Config:
             | style
         """
 
-        self.always_single_line_html_tags: str = r"""
+        self.always_self_closing_html_tags: str = r"""
               link
             | img
             | meta
             | source
+            | br
         """
 
         self.single_line_template_tags: str = r"""
