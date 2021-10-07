@@ -51,7 +51,7 @@ def load_pyproject_settings(src: Path) -> Dict:
     pyproject_file = find_pyproject(src)
 
     if pyproject_file:
-        content = tomlkit.parse(pyproject_file.read_text())
+        content = tomlkit.parse(pyproject_file.read_text(encoding="utf8"))
         try:
             djlint_content = content["tool"]["djlint"]  # type: ignore
         except KeyError:
