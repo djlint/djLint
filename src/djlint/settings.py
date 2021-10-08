@@ -435,6 +435,15 @@ class Config:
 
         # if lines are longer than x
         self.max_line_length = 120
+        try:
+            self.max_line_length = int(
+                djlint_settings.get("max_line_length", self.max_line_length)
+            )
+        except ValueError:
+            echo(
+                Fore.RED
+                + f"Error: Invalid pyproject.toml max_line_length value {djlint_settings['max_line_length']}"
+            )
 
         self.format_long_attributes = True
 
