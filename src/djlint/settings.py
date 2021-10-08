@@ -166,7 +166,17 @@ class Config:
         )
 
         # base options
-        self.indent: str = (indent or int(djlint_settings.get("indent", 4))) * " "
+        default_indent = 4
+        if not indent:
+            try:
+                indent = int(djlint_settings.get("indent", default_indent))
+            except ValueError:
+                echo(
+                    Fore.RED
+                    + f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}"
+                )
+                indent = default_indent
+        self.indent: str = indent * " "
 
         default_exclude: str = r"""
             \.venv
