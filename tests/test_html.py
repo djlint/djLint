@@ -164,6 +164,21 @@ def test_dd_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     )
 
 
+def test_span_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert (
+        Path(tmp_file.name).read_text()
+        == """<span class="icon has-text-grey is-large ">
+    <i class="fas fa-lg fa-star"></i>
+</span>
+"""
+    )
+
+
 def test_dt_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
         tmp_file.name,

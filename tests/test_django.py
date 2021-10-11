@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_comment --cov=src/djlint \
+   pytest tests/test_django.py::test_complex_attributes --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -395,6 +395,13 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 """
     )
     assert output["exit_code"] == 1
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div class="bg-level{% if value >= 70 %}1{% elif value >= 60 %}2{% elif value >= 50 %}3{% else %}4{% endif %}></div>""",
+    )
+    assert output["exit_code"] == 0
 
 
 def test_load_tag(runner: CliRunner, tmp_file: TextIO) -> None:

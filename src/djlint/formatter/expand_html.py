@@ -40,7 +40,7 @@ def expand_html(html: str, config: Config) -> str:
     # put attributes on one line
     html = re.sub(
         re.compile(
-            fr"(<(?:{config.indent_html_tags}))((?:\s(?:(?:{{%[^(?:%}}]*?%}})|(?:{{{{[^(?:}}}})]*?}}}})|[^<>/])*)+?)(/?>)",
+            fr"(<(?:{config.indent_html_tags})\b)((?:\s(?:(?:{{%[^(?:%}}]*?%}})|(?:{{{{[^(?:}}}})]*?}}}})|[^<>/])*)+?)(/?>)",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         _flatten_attributes,
@@ -55,7 +55,7 @@ def expand_html(html: str, config: Config) -> str:
     # html tags - break before
     html = re.sub(
         re.compile(
-            fr"{break_char}\K(</?(?:{html_tags})(?:\s((?:{{%[^(?:%}}]*?%}})|(?:{{{{[^(?:}}}})]*?}}}})|[^<>])*)?>)",
+            fr"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|[^'\">])*>)",
             flags=re.IGNORECASE | re.VERBOSE,
         ),
         add_left,
@@ -65,7 +65,7 @@ def expand_html(html: str, config: Config) -> str:
     # html tags - break after
     html = re.sub(
         re.compile(
-            fr"(</?(?:{html_tags})(?:\s((?:{{%[^(?:%}}]*?%}})|(?:{{{{[^(?:}}}})]*?}}}})|[^<>])*)?>)(?=[^\n])",
+            fr"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|[^'\">])*>)(?=[^\n])",
             flags=re.IGNORECASE | re.VERBOSE,
         ),
         add_right,
@@ -82,20 +82,20 @@ def expand_html(html: str, config: Config) -> str:
 
         if not re.findall(
             r"\<(?:"
-            + str(config.break_html_tags)
-            + r")[ ][^>]*?"
+            + str(config.indent_html_tags)
+            + r")\b(?:[^>]|{%[^(?:%}]*?%}|{{[^(?:}}]*?}})*?"
             + re.escape(match.group(1))
             + "$",
             html[: match.end()],
             re.MULTILINE | re.VERBOSE,
         ):
-
             return out_format % match.group(1)
 
         return match.group(1)
 
     # template tags
     # break before
+
     html = re.sub(
         re.compile(
             break_char
