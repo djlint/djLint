@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_ignored_block --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_self_closing_tags --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -362,28 +362,44 @@ def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     assert output["exit_code"] == 0
 
 
-def test_self_closing_br_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b"""<p><span>Hello</span> <br /> <span>World</span></p>""")
+def test_self_closing_tags(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<p><span>Hello</span> <br /><input /><link /><img /><source /><meta /> <span>World</span></p>""",
+    )
     runner.invoke(djlint, [tmp_file.name, "--reformat"])
     assert (
         Path(tmp_file.name).read_text()
         == """<p>
     <span>Hello</span>
     <br />
+    <input />
+    <link />
+    <img />
+    <source />
+    <meta />
     <span>World</span>
 </p>
 """
     )
 
 
-def test_void_br_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b"""<p><span>Hello</span> <br> <span>World</span></p>""")
+def test_void_self_closing_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<p><span>Hello</span> <br><input><link><img><source><meta> <span>World</span></p>""",
+    )
     runner.invoke(djlint, [tmp_file.name, "--reformat"])
     assert (
         Path(tmp_file.name).read_text()
         == """<p>
     <span>Hello</span>
     <br>
+    <input>
+    <link>
+    <img>
+    <source>
+    <meta>
     <span>World</span>
 </p>
 """

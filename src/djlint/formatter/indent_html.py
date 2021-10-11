@@ -48,7 +48,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 fr"(<({slt_html})>)(.*?)(</(\2)>)", item, re.IGNORECASE | re.VERBOSE
             )
             or re.findall(
-                fr"(<({slt_html})[ ].+?>)(.*?)(</(\2)>)",
+                fr"(<({slt_html})\b.+?>)(.*?)(</(\2)>)",
                 item,
                 re.IGNORECASE | re.VERBOSE,
             )
@@ -58,12 +58,14 @@ def indent_html(rawcode: str, config: Config) -> str:
                 re.IGNORECASE | re.MULTILINE | re.VERBOSE,
             )
             or re.findall(
-                fr"(<({slt_html})[ ].*?/>)", item, flags=re.IGNORECASE | re.VERBOSE
+                fr"(<({slt_html})\b.*?/>)", item, flags=re.IGNORECASE | re.VERBOSE
             )
             or re.findall(
-                fr"(<({always_self_closing_html})[ ].*?/?>)",
+                re.compile(
+                    fr"(<({always_self_closing_html})\b.*?/?>)",
+                    re.IGNORECASE | re.VERBOSE,
+                ),
                 item,
-                flags=re.IGNORECASE | re.VERBOSE,
             )
         ) and is_block_raw is False:
             tmp = (indent * indent_level) + item + "\n"
@@ -94,9 +96,11 @@ def indent_html(rawcode: str, config: Config) -> str:
         # if indent, move right
         elif (
             re.search(
-                r"^(?:" + str(config.tag_indent) + r")",
+                re.compile(
+                    r"^(?:" + str(config.tag_indent) + r")",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
                 item,
-                re.IGNORECASE | re.MULTILINE | re.VERBOSE,
             )
             and is_block_raw is False
         ):
