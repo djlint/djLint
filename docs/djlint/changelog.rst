@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.5.7
+-----
+- Bug fixes
+
 0.5.6
 -----
 - Added rule H026 to find empty id and class tags
