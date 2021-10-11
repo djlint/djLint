@@ -110,12 +110,8 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif is_raw_first_line is True:
             tmp = (indent * indent_level) + item + "\n"
 
-        elif is_block_raw is True:
+        elif is_block_raw is True or item.strip() == "":
             tmp = item + "\n"
-
-        # if just a blank line
-        elif item.strip() == "":
-            tmp = item.strip()
 
         # otherwise, just leave same level
         else:
@@ -159,17 +155,5 @@ def indent_html(rawcode: str, config: Config) -> str:
             is_block_raw = False
 
         beautified_code = beautified_code + tmp
-
-    # should we add blank lines after load tags?
-    if config.blank_line_after_tag:
-        for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
-            beautified_code = re.sub(
-                re.compile(
-                    fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
-                    re.IGNORECASE | re.MULTILINE | re.DOTALL,
-                ),
-                r"\1\n",
-                beautified_code,
-            )
 
     return beautified_code.strip() + "\n"

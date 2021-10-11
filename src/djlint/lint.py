@@ -61,7 +61,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
 
             # rule H025 is a special case where the output must be an even num.
             if rule["name"] == "H025":
-                open_tags = []
+                open_tags: List[re.Match] = []
 
                 for match in re.finditer(
                     re.compile(

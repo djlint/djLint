@@ -43,4 +43,16 @@ def compress_html(html: str, config: Config) -> str:
         html,
     )
 
+    # should we add blank lines after load tags?
+    if config.blank_line_after_tag:
+        for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
+            html = re.sub(
+                re.compile(
+                    fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+                    re.IGNORECASE | re.MULTILINE | re.DOTALL,
+                ),
+                r"\1\n",
+                html,
+            )
+
     return html

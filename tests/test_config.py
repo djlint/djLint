@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_indent --cov=src/djlint \
+   pytest tests/test_config.py::test_blank_lines_after_tag --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -91,7 +91,6 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ["tests/config_blank_lines_after_tag/html.html", "--check"]
     )
-
     assert (
         """+{% extends "nothing.html" %}
 +
@@ -140,6 +139,12 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
 """
         in result.output
     )
+
+    # something perfect should stay perfect :)
+    result = runner.invoke(
+        djlint, ["tests/config_blank_lines_after_tag/html_five.html", "--check"]
+    )
+    assert result.exit_code == 0
 
 
 def test_profile(runner: CliRunner) -> None:
