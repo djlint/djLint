@@ -69,6 +69,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     ),
                     html,
                 ):
+
                     if match.group(1) and not re.match(
                         re.compile(
                             fr"^/?{config.always_self_closing_html_tags}", re.I | re.X
