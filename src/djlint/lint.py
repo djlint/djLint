@@ -78,7 +78,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     ):
                         # close tags should equal open tags
                         if re.split(r"\s+", match.group(1))[0][0] != "/":
-                            open_tags.append(match)
+                            open_tags.insert(0, match)
                         else:
                             for i, tag in enumerate(copy.deepcopy(open_tags)):
                                 if (
@@ -89,7 +89,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                                     break
                             else:
                                 # there was no open tag matching the close tag
-                                open_tags.append(match)
+                                open_tags.insert(0, match)
 
                 for match in open_tags:
                     if inside_ignored_block(config, html, match) is False:

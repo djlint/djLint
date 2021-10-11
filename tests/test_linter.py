@@ -374,6 +374,11 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output
 
+    write_to_file(tmp_file.name, b"<p>Foo\n<p>Foo</p>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H025 1:" in result.output
+    assert "H025 2:" not in result.output
+
 
 def test_H026(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<asdf id="" >')
