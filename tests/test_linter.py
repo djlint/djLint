@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_H025 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H026 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -395,6 +395,11 @@ def test_H026(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "H026" in result.output
+
+    write_to_file(tmp_file.name, b'<asdf {% class="" %}></asdf>')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "H026" not in result.output
 
 
 def test_rules_not_matched_in_ignored_block(

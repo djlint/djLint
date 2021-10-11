@@ -190,4 +190,5 @@
     message: Emtpy id and class tags can be removed.
     flags: re.I
     patterns:
-    - <(?:\w+)(?:\s(?:(?:{%[^(?:%})]*?%})|(?:{{[^(?:}})]*?}})|[^<>])*)(id|class)(?:(?:=(?:\"{2})|(?:'{2}))|\s)
+    - <\w+\b[^(?:{(?:%|{|#))>]*?\b(class|id)\b=(\"\"|'')
+    - <\w+\b[^(?:{(?:%|{|#))>]*?\b(class|id)\b[^=]
