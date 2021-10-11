@@ -12,9 +12,7 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = list(
-        re.finditer(
-            config.ignored_inline_blocks, item, flags=re.IGNORECASE | re.VERBOSE
-        )
+        re.finditer(config.ignored_blocks, item, flags=re.IGNORECASE | re.VERBOSE)
     )
 
     if inline:

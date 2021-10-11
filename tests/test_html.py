@@ -323,6 +323,22 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
 """
     )
 
+    # check inline script includes
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<html>
+    <head>
+        <link href="{% static  'foo/bar.css' %}" rel="stylesheet"/>
+        <!--JS-->
+        <script src="{% static  'foo/bar.js' %}"></script>
+    </head>
+</html>
+""",
+    )
+
+    assert output["exit_code"] == 0
+
 
 def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(

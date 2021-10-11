@@ -12,15 +12,16 @@ def compress_html(html: str, config: Config) -> str:
     """Compress back tags that do not need to be expanded."""
     # put empty tags on one line
 
-    def trip_space(config: Config, html: str, match: re.Match) -> str:
+    def strip_space(config: Config, html: str, match: re.Match) -> str:
         """Trim leading whitepsace."""
         if inside_ignored_block(config, html, match):
             return match.group()
+
         return match.group(1)
 
-    func = partial(trip_space, config, html)
+    func = partial(strip_space, config, html)
 
-    html = re.sub(re.compile(r"^\s*(.*?)\s*$", re.M), func, html)
+    html = re.sub(re.compile(r"^[ \t]*(.*?)[\n \t]*$", re.M), func, html)
 
     # put short single line tags on one line
     html = re.sub(

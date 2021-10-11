@@ -48,9 +48,10 @@ def indent_html(rawcode: str, config: Config) -> str:
                 fr"(<({slt_html})>)(.*?)(</(\2)>)", item, re.IGNORECASE | re.VERBOSE
             )
             or re.findall(
-                fr"(<({slt_html})\b.+?>)(.*?)(</(\2)>)",
+                re.compile(
+                    fr"(<({slt_html})\b.+?>)(.*?)(</(\2)>)", re.IGNORECASE | re.VERBOSE
+                ),
                 item,
-                re.IGNORECASE | re.VERBOSE,
             )
             or re.findall(
                 fr"^({{%[ ]*?({slt_template})[ ]+?.+?%}})(.*?)({{%[ ]+?end(\2)[ ]+?.*?%}})",
