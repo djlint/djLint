@@ -264,7 +264,7 @@ def main(
     if temp_file is None or (reformat is False and check is False):
         echo()
 
-    worker_count = os.cpu_count()
+    worker_count = os.cpu_count() or 1
 
     if sys.platform == "win32":
         # Work around https://bugs.python.org/issue26903
