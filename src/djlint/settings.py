@@ -388,7 +388,7 @@ class Config:
                     """
             + self.indent_html_tags
             + """
-                )
+                )\\b
               )
         """
         )
@@ -404,7 +404,7 @@ class Config:
                     """
             + self.indent_html_tags
             + """
-                )
+                )\\b
               )
         """
         )
@@ -577,7 +577,8 @@ class Config:
             | with
         """
 
-        self.break_html_tags: str = r"""
+        self.break_html_tags: str = (
+            r"""
               html
             | head
             | body
@@ -619,11 +620,14 @@ class Config:
             | svg
             | h\d
             | button
-            | img
             | path
             | picture
             | script
             | style
             | details
             | summary
+            | """
+            + self.always_self_closing_html_tags
+            + """
         """
+        )
