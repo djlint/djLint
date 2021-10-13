@@ -200,6 +200,11 @@ def build_quantity_tense(size: int) -> str:
     type=str,
     help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars, golang",
 )
+@click.option(
+    "--require-pragma",
+    is_flag=True,
+    help="Only formats files that starts with a comment with only the word 'format'",
+)
 def main(
     src: List[str],
     extension: str,
@@ -209,6 +214,7 @@ def main(
     check: bool,
     quiet: bool,
     profile: str,
+    require_pragma: str,
 ) -> None:
     """djLint · lint and reformat HTML templates."""
     config = Config(
@@ -218,6 +224,7 @@ def main(
         indent=indent,
         quiet=quiet,
         profile=profile,
+        require_pragma=require_pragma,
     )
 
     temp_file = None
