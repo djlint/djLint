@@ -104,3 +104,26 @@ Usage:
 .. code:: ini
 
    profile="django"
+
+require_pragma
+--------------
+
+Only format files that starts with a comment with only the word 'format'. The comment can be a HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.
+
+Usage:
+
+.. code:: ini
+
+   require_pragma = true
+
+.. code:: html
+
+   <!-- format -->
+   or
+   {# format #}
+   or
+   {% comment %} format {% endcomment %}
+   or
+   {{ /* format */ }}
+   or
+   {{!-- format --}}
