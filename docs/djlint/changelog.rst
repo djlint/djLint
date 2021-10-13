@@ -1,6 +1,10 @@
 Changelog
 =========
 
+next release
+-----------
+- Added require_pragma option
+
 0.5.7
 -----
 - Bug fixes
