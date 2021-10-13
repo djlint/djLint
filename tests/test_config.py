@@ -183,3 +183,105 @@ def test_profile(runner: CliRunner) -> None:
 +{{ test }}"""
         in result.output
     )
+
+
+def test_require_pragma(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint, ["tests/config_pragmas/html_one.html", "--check", "--profile", "django"]
+    )
+
+    assert """0 files would be updated.""" in result.output
+    assert result.exit_code == 0
+
+    result = runner.invoke(
+        djlint, ["tests/config_pragmas/html_two.html", "--check", "--profile", "django"]
+    )
+    assert (
+        """ {# format #}
+-{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
++{% extends "nothing.html" %}
++{% load stuff %}
++{% load stuff 2 %}
++{% include "html_two.html" %}
++<div></div>"""
+        in result.output
+    )
+    assert """1 file would be updated.""" in result.output
+    assert result.exit_code == 1
+
+    result = runner.invoke(
+        djlint,
+        ["tests/config_pragmas/html_three.html", "--check", "--profile", "handlebars"],
+    )
+
+    assert (
+        """ {{!-- format --}}
+ <p>
+-    
+-{{firstname}} </p><p>{{lastname}}</p>
++    {{firstname}}
++</p>
++<p>
++    {{lastname}}
++</p>"""
+        in result.output
+    )
+    assert """1 file would be updated.""" in result.output
+    assert result.exit_code == 1
+
+    result = runner.invoke(
+        djlint,
+        ["tests/config_pragmas/html_four.html", "--check", "--profile", "golang"],
+    )
+
+    assert (
+        """ {{ /* format */ }}
+-<h1>Test</h1><p>{{ .Variable }}</p>
+-{{ range .Items }} <p>{{ . }}
+-
+-</p>{{ end }}
++<h1>Test</h1>
++<p>
++    {{ .Variable }}
++</p>
++{{ range .Items }}
++<p>
++    {{ . }}
++</p>
++{{ end }}
+
+1 file would be updated."""
+        in result.output
+    )
+    assert """1 file would be updated.""" in result.output
+    assert result.exit_code == 1
+
+    result = runner.invoke(djlint, ["tests/config_pragmas/html_five.html", "--check"])
+    assert (
+        """ <!-- format -->
+-{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
++{% extends "nothing.html" %}
++{% load stuff %}
++{% load stuff 2 %}
++{% include "html_two.html" %}
++<div></div>"""
+        in result.output
+    )
+    assert """1 file would be updated.""" in result.output
+    assert result.exit_code == 1
+
+    result = runner.invoke(
+        djlint, ["tests/config_pragmas/html_six.html", "--check", "--profile", "django"]
+    )
+    assert (
+        """ {% comment %} format {% endcomment %}
+-{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
++{% extends "nothing.html" %}
++{% load stuff %}
++{% load stuff 2 %}
++{% include "html_two.html" %}
++<div></div>"""
+        in result.output
+    )
+    assert """1 file would be updated.""" in result.output
+    assert result.exit_code == 1

@@ -117,6 +117,7 @@ class Config:
         indent: Optional[int] = None,
         quiet: Optional[bool] = False,
         profile: Optional[str] = None,
+        require_pragma: Optional[bool] = False,
     ):
 
         djlint_settings = load_pyproject_settings(Path(src))
@@ -124,6 +125,10 @@ class Config:
         # custom configuration options
         self.extension: str = str(extension or djlint_settings.get("extension", "html"))
         self.quiet: str = str(quiet or djlint_settings.get("quiet", ""))
+        self.require_pragma: bool = (
+            require_pragma
+            or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
+        )
         self.custom_blocks: str = str(
             build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
         )

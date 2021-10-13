@@ -1,0 +1,3 @@
+[tool]
+[tool.djlint]
+require_pragma=true
