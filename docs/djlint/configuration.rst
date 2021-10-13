@@ -106,9 +106,9 @@ Usage:
    profile="django"
 
 require_pragma
-------
+--------------
 
-Only formats files that starts with a comment with only the word 'format'. The comment can be a HTML comment or a comment in the templating language defined by the profile setting. If no profile is specified, a comment in any of the templating languages is accepted.
+Only format files that starts with a comment with only the word 'format'. The comment can be a HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.
 
 Usage:
 
