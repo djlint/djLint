@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_textarea_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_hr_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -175,6 +175,33 @@ def test_dd_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 </dd>
 """
     )
+
+
+def test_hr_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div>
+    <div>
+        <hr>
+    </div>
+</div>
+""",
+    )
+    assert output["exit_code"] == 0
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div>
+    <div>
+        <hr />
+    </div>
+</div>
+""",
+    )
+
+    assert output["exit_code"] == 0
 
 
 def test_span_tag(runner: CliRunner, tmp_file: TextIO) -> None:

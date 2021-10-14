@@ -621,6 +621,7 @@ class Config:
             | source
             | br
             | input
+            | hr
         """
 
         self.optional_single_line_template_tags: str = r"""
