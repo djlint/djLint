@@ -272,6 +272,14 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "D018 1:" in result.output
     assert "J018 1:" in result.output
 
+    # test mailto:
+    write_to_file(
+        tmp_file.name,
+        b'<a href="mailto:joe"></a>',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+
 
 def test_H019(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<a href='javascript:abc()'>asdf</a>")
