@@ -254,6 +254,16 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
 
+    # test data-src
+    write_to_file(
+        tmp_file.name,
+        b'<div class="em-ajaxLogs" data-src="/table/task/{{ t.id }}/log"></div>',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "D018 1:" in result.output
+    assert "J018 1:" in result.output
+
 
 def test_H019(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<a href='javascript:abc()'>asdf</a>")

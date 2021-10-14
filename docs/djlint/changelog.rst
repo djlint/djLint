@@ -4,6 +4,7 @@ Changelog
 next release
 -----------
 - Added require_pragma option
+- Updated DJ018 to catch ``data-src`` and ``action`` on inputs
 
 0.5.7
 -----
