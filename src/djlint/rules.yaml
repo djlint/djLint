@@ -88,7 +88,7 @@
     flags: re.DOTALL|re.I|re.M|re.X
     patterns:
     - |
-      <(?:(?!meta)\w+)\s+?[^>]*?(?:class|id|src|width|height|alt|style|lang|title|href|action|method|checked|required|srcset)=[a-zA-Z_-]+
+      <(?:(?!meta)\w+)\b(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*(?:class|id|src|width|height|alt|style|lang|title|href|action|method|checked|required|srcset)=[a-zA-Z_-]+
     - <(?:meta)\s+?[^>]*?(?:class|id|src|alt|style|lang|title|href|action|method|name)=[a-zA-Z_-]+
 - rule:
     name: H012

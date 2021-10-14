@@ -133,13 +133,13 @@ def test_H011(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H011 1:" not in result.output
 
-    # # check keywords inside template syntax
-    # write_to_file(
-    #     tmp_file.name,
-    #     b'<a href="{{ url_for(\'connection_bp.one_connection\', connection_id=connection.id) }}">{{ connection }}</a>',
-    # )
-    # result = runner.invoke(djlint, [tmp_file.name])
-    # assert "H011 1:" not in result.output
+    # check keywords inside template syntax
+    write_to_file(
+        tmp_file.name,
+        b"<a href=\"{{ url_for('connection_bp.one_connection', connection_id=connection.id) }}\">{{ connection }}</a>",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H011 1:" not in result.output
 
 
 def test_H012(runner: CliRunner, tmp_file: TextIO) -> None:
