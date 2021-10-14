@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_ignored_attributes --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_textarea_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -33,6 +33,19 @@ asdf
 </div>
 """
     )
+    # check double nesting
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div>
+    <div class="field">
+        <textarea>asdf</textarea>
+    </div>
+</div>
+""",
+    )
+
+    assert output["exit_code"] == 0
 
 
 def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
