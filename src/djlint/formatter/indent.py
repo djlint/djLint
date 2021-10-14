@@ -29,6 +29,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     slt_template = config.optional_single_line_template_tags
 
     for item in rawcode_flat_list:
+
         # if a raw tag first line
         if not is_block_raw and is_ignored_block_opening(config, item):
             is_raw_first_line = True
@@ -122,7 +123,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         if config.profile not in ["handlebars", "golang"]:
             tmp = re.sub(r"({[{|%]\-?)(\w[^}].+?)([}|%]})", r"\1 \2\3", tmp)
             tmp = re.sub(r"({[{|%])([^}].+?[^(?:\ |\-)])([}|%]})", r"\1\2 \3", tmp)
-            tmp = re.sub(r"({[{|%])([^}].+?[^ ])(\-[}|%]})", r"\1\2 \3", tmp)
+            tmp = re.sub(r"({[{|%])([^}].+?[^ -])(\-+?[}|%]})", r"\1\2 \3", tmp)
 
         elif config.profile == "handlebars":
             # handlebars templates
@@ -130,21 +131,18 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
+
         if is_ignored_block_opening(config, item):
             is_block_raw = True
             is_raw_first_line = False
 
         # if a normal tag, we can try to expand attributes
-        elif (
-            config.format_long_attributes
-            and is_block_raw is False
-            and len(tmp) > int(config.max_line_length)
-        ):
+        elif is_block_raw is False:
             # get leading space, and attributes
             func = partial(format_attributes, config)
             tmp = re.sub(
                 re.compile(
-                    fr"(\s*?)(<\w+\s)((?:{config.attribute_pattern}|\s*?)+?)(/?>)",
+                    fr"(\s*?)(<(?:{config.indent_html_tags})\b)((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])+?)(/?>)",
                     re.VERBOSE | re.IGNORECASE,
                 ),
                 func,

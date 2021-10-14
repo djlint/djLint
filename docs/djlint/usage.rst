@@ -44,9 +44,34 @@ Code can be skipped by the linter and formatter by wrapping in djlint tags:
 
 .. code:: html
 
-   {% djlint:off %}
-   <bad html to ignore>
-   {% djlint:on %}
+   <!-- djlint:off -->
+       <bad html to ignore>
+   <!-- djlint:on -->
+
+   or
+
+   {# djlint:off #}
+       <bad html to ignore>
+   {# djlint:on #}
+
+   or
+
+   {% comment %} djlint:off {% endcomment %}
+       <bad html to ignore>
+   {% comment %} djlint:on {% endcomment %}
+
+   or
+
+   {{ /* djlint:off */ }}
+       <bad html to ignore>
+   {{ /* djlint:on */ }}
+
+   or
+
+   {{!-- djlint:off --}}
+       <bad html to ignore>
+   {{!-- djlint:on --}}
+
 
 Stdin vs Path
 -------------
@@ -77,16 +102,19 @@ CLI Args
 
     Usage: python -m djlint [OPTIONS] SRC ...
 
-    djLint · lint and reformat HTML templates.
+      djLint · lint and reformat HTML templates.
 
     Options:
       --version             Show the version and exit.
-      -e, --extension TEXT  File extension to check  [default: html]
+      -e, --extension TEXT  File extension to check [default: html]
       -i, --ignore TEXT     Codes to ignore. ex: "H014,H017"
       --reformat            Reformat the file(s).
       --check               Check formatting on the file(s).
-      --indent INTEGER      Indent spacing.  [default: 4]
+      --indent INTEGER      Indent spacing. [default: 4]
       --quiet               Do not print diff when reformatting.
       --profile TEXT        Enable defaults by template language. ops: django,
                             jinja, nunjucks, handlebars, golang
+      --require-pragma      Only format or lint files that starts with a comment
+                            with the text 'djlint:on'
+      --lint                Lint for common issues. [default option]
       -h, --help            Show this message and exit.

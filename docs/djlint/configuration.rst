@@ -108,7 +108,7 @@ Usage:
 require_pragma
 --------------
 
-Only format files that starts with a comment with only the word 'format'. The comment can be a HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.
+Only format or lint files that starts with a comment with only the text 'djlint:on'. The comment can be a HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.
 
 Usage:
 
@@ -118,12 +118,34 @@ Usage:
 
 .. code:: html
 
-   <!-- format -->
+   <!-- djlint:on -->
    or
-   {# format #}
+   {# djlint:on #}
    or
-   {% comment %} format {% endcomment %}
+   {% comment %} djlint:on {% endcomment %}
    or
-   {{ /* format */ }}
+   {{ /* djlint:on */ }}
    or
-   {{!-- format --}}
+   {{!-- djlint:on --}}
+
+max_line_length
+---------------
+
+Formatter will attempt to put some html and template tags on a single line instead of wrapping them if the line length will not exceed this value.
+
+Usage:
+
+.. code:: ini
+
+   max_line_length=120
+
+max_attribute_length
+--------------------
+
+Formatter will attempt to wrap tag attributes if the attribute length exceeds this value.
+
+Usage:
+
+.. code:: ini
+
+   max_attribute_length=10

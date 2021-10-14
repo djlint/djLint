@@ -13,11 +13,11 @@ jobs:
       uses: srggrs/assign-one-project-github-action@1.2.1
       if: contains(github.event.issue.labels.*.name, 'bug')
       with:
-        project: 'https://github.com/Riverside-Healthcare/djLint/projects/1'
-        column_name: 'Needs triage'
-    - name: Assign issues and with `enhancement` label to bugs project
+        project: https://github.com/Riverside-Healthcare/djLint/projects/1
+        column_name: Needs triage
+    - name: Assign issues and with `enhancement` label to enhancement project
       uses: srggrs/assign-one-project-github-action@1.2.1
       if: contains(github.event.issue.labels.*.name, 'enhancement')
       with:
-        project: 'https://github.com/Riverside-Healthcare/djLint/projects/2'
-        column_name: 'Needs triage'
+        project: https://github.com/Riverside-Healthcare/djLint/projects/2
+        column_name: Needs triage

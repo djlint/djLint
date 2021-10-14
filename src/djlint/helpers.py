@@ -57,8 +57,18 @@ def inside_ignored_block(config: Config, html: str, match: re.Match) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     return any(
         ignored_match.start() <= match.start() and match.end() <= ignored_match.end()
-        for ignored_match in re.finditer(
-            re.compile(config.ignored_blocks, re.DOTALL | re.IGNORECASE | re.VERBOSE),
-            html,
+        for ignored_match in list(
+            re.finditer(
+                re.compile(
+                    config.ignored_blocks, re.DOTALL | re.IGNORECASE | re.VERBOSE
+                ),
+                html,
+            )
+        )
+        + list(
+            re.finditer(
+                re.compile(config.ignored_inline_blocks, re.IGNORECASE | re.VERBOSE),
+                html,
+            )
         )
     )

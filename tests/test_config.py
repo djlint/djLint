@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_blank_lines_after_tag --cov=src/djlint \
+   pytest tests/test_config.py::test_require_pragma --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -187,17 +187,24 @@ def test_profile(runner: CliRunner) -> None:
 
 def test_require_pragma(runner: CliRunner) -> None:
     result = runner.invoke(
-        djlint, ["tests/config_pragmas/html_one.html", "--check", "--profile", "django"]
+        djlint,
+        [
+            "tests/config_pragmas/html_one.html",
+            "--lint",
+            "--check",
+            "--profile",
+            "django",
+        ],
     )
 
-    assert """0 files would be updated.""" in result.output
+    assert """No files to check!""" in result.output
     assert result.exit_code == 0
 
     result = runner.invoke(
         djlint, ["tests/config_pragmas/html_two.html", "--check", "--profile", "django"]
     )
     assert (
-        """ {# format #}
+        """ {# djlint:on #}
 -{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
 +{% extends "nothing.html" %}
 +{% load stuff %}
@@ -215,9 +222,9 @@ def test_require_pragma(runner: CliRunner) -> None:
     )
 
     assert (
-        """ {{!-- format --}}
+        """ {{!-- djlint:on --}}
  <p>
--    
+-
 -{{firstname}} </p><p>{{lastname}}</p>
 +    {{firstname}}
 +</p>
@@ -235,7 +242,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     )
 
     assert (
-        """ {{ /* format */ }}
+        """ {{ /* djlint:on */ }}
 -<h1>Test</h1><p>{{ .Variable }}</p>
 -{{ range .Items }} <p>{{ . }}
 -
@@ -258,7 +265,7 @@ def test_require_pragma(runner: CliRunner) -> None:
 
     result = runner.invoke(djlint, ["tests/config_pragmas/html_five.html", "--check"])
     assert (
-        """ <!-- format -->
+        """ <!-- djlint:on -->
 -{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
 +{% extends "nothing.html" %}
 +{% load stuff %}
@@ -274,7 +281,7 @@ def test_require_pragma(runner: CliRunner) -> None:
         djlint, ["tests/config_pragmas/html_six.html", "--check", "--profile", "django"]
     )
     assert (
-        """ {% comment %} format {% endcomment %}
+        """ {% comment %} djlint:on {% endcomment %}
 -{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
 +{% extends "nothing.html" %}
 +{% load stuff %}

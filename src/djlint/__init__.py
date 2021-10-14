@@ -1,28 +1,13 @@
 #!/usr/bin/python
-"""
-Check Django template syntax.
-
-usage::
-
-    djlint src
-
-    options:
-
-    -e or --extension | <extension>
-    --check | will check html formatting for needed changes
-    --reformat | will reformat html
-
-"""
+"""djLint · lint and reformat HTML templates."""
 
 import os
-import re
-import shutil
 import sys
 import tempfile
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import click
 from click import echo
@@ -30,121 +15,10 @@ from colorama import Fore, Style, deinit, init
 from tqdm import tqdm
 
 from .lint import lint_file
+from .output import print_output
 from .reformat import reformat_file
 from .settings import Config
-
-
-def get_src(src: List[Path], config: Config) -> List[Path]:
-    """Get source files."""
-    paths = []
-    for item in src:
-        if Path.is_file(item):
-            paths.append(item)
-
-        else:
-            # remove leading . from extension
-            extension = str(config.extension)
-            extension = extension[1:] if extension.startswith(".") else extension
-
-            paths.extend(
-                filter(
-                    lambda x: not re.search(config.exclude, str(x), re.VERBOSE),
-                    list(item.glob(f"**/*.{extension}")),
-                )
-            )
-
-    if len(paths) == 0:
-        echo(Fore.BLUE + "No files to check! 😢")
-        return []
-
-    return paths
-
-
-def build_output(error: dict) -> int:
-    """Build output for file errors."""
-    errors = sorted(list(error.values())[0], key=lambda x: int(x["line"].split(":")[0]))
-    width, _ = shutil.get_terminal_size()
-
-    if len(errors) == 0:
-        return 0
-
-    echo(
-        f"{Fore.GREEN}{Style.BRIGHT}\n{list(error.keys())[0]}\n{Style.DIM}"
-        + "".join(["─" for x in range(1, width)])
-        + Style.RESET_ALL
-    )
-
-    for message in errors:
-        echo(
-            (Fore.RED if bool(message["code"][:1] == "E") else Fore.YELLOW)
-            + message["code"]
-            + Style.RESET_ALL
-            + Fore.BLUE
-            + " "
-            + message["line"]
-            + Style.RESET_ALL
-            + " "
-            + message["message"]
-            + Fore.BLUE
-            + " "
-            + message["match"],
-            err=False,
-        )
-    return len(errors)
-
-
-def build_check_output(errors: dict, quiet: bool) -> int:
-    """Build output for reformat check."""
-    if len(errors) == 0:
-        return 0
-
-    color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
-    width, _ = shutil.get_terminal_size()
-
-    if quiet is True and len(list(errors.values())[0]) > 0:
-        echo(
-            Fore.GREEN
-            + Style.BRIGHT
-            + str(list(errors.keys())[0])
-            + Style.DIM
-            + Style.RESET_ALL
-        )
-
-    elif quiet is False and len(list(errors.values())[0]) > 0:
-        echo(
-            Fore.GREEN
-            + Style.BRIGHT
-            + "\n"
-            + str(list(errors.keys())[0])
-            + "\n"
-            + Style.DIM
-            + "".join(["─" for x in range(1, width)])
-            + Style.RESET_ALL
-        )
-
-        for diff in list(errors.values())[0][2:]:
-            echo(
-                f"{ color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}",
-                err=False,
-            )
-
-    return len(list(filter(lambda x: len(x) > 0, errors.values())))
-
-
-def build_quantity(size: int) -> str:
-    """Count files in a list."""
-    return str(size) + " file" + ("s" if size > 1 or size == 0 else "")
-
-
-def build_quantity_tense(size: int) -> str:
-    """Count files in a list."""
-    return (
-        str(size)
-        + " file"
-        + ("s" if size > 1 or size == 0 else "")
-        + " "
-        + ("were" if size > 1 or size == 0 else "was")
-    )
+from .src import get_src
 
 
 @click.command(context_settings={"help_option_names": ["-h", "--help"]})
@@ -203,7 +77,12 @@ def build_quantity_tense(size: int) -> str:
 @click.option(
     "--require-pragma",
     is_flag=True,
-    help="Only formats files that starts with a comment with only the word 'format'",
+    help="Only format or lint files that starts with a comment with the text 'djlint:on'",
+)
+@click.option(
+    "--lint",
+    is_flag=True,
+    help="Lint for common issues. [default option]",
 )
 def main(
     src: List[str],
@@ -214,7 +93,8 @@ def main(
     check: bool,
     quiet: bool,
     profile: str,
-    require_pragma: str,
+    require_pragma: bool,
+    lint: bool,
 ) -> None:
     """djLint · lint and reformat HTML templates."""
     config = Config(
@@ -225,6 +105,9 @@ def main(
         quiet=quiet,
         profile=profile,
         require_pragma=require_pragma,
+        lint=lint or not (reformat or check),
+        reformat=reformat,
+        check=check,
     )
 
     temp_file = None
@@ -245,20 +128,21 @@ def main(
     if len(file_list) == 0:
         return
 
-    file_quantity = build_quantity(len(file_list))
+    message = ""
 
-    message = "Lint"
+    if config.check is True:
+        message = "Checking"
+    elif config.reformat is True:
+        message = "Reformatting"
 
-    if check is True:
-        message = "Check"
-    elif reformat is True:
-        message = "Reformatt"
+    if config.lint:
+        message += " and Linting"
 
     # pylint: disable=C0209
     bar_message = (
         "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{{elapsed}}{}".format(
             Fore.BLUE + Style.BRIGHT,
-            message + "ing",
+            message,
             Style.RESET_ALL,
             Fore.RED + Style.BRIGHT,
             Style.RESET_ALL,
@@ -268,7 +152,7 @@ def main(
             Style.RESET_ALL + "    ",
         )
     )
-    if temp_file is None or (reformat is False and check is False):
+    if config.stdin is False or config.lint:
         echo()
 
     worker_count = os.cpu_count() or 1
@@ -279,19 +163,11 @@ def main(
 
     with ProcessPoolExecutor(max_workers=worker_count) as exe:
         file_errors = []
-        if reformat is True or check is True:
-            func = partial(reformat_file, config, check)
-            futures = {
-                exe.submit(func, this_file): this_file for this_file in file_list
-            }
 
-        else:
-            func = partial(lint_file, config)
-            futures = {
-                exe.submit(func, this_file): this_file for this_file in file_list
-            }
+        func = partial(process, config)
+        futures = {exe.submit(func, this_file): this_file for this_file in file_list}
 
-        if temp_file is None or (reformat is False and check is False):
+        if temp_file is None or config.lint:
             elapsed = "00:00"
             with tqdm(
                 total=len(file_list),
@@ -303,14 +179,13 @@ def main(
 
                 for future in as_completed(futures):
 
-                    futures[future]
                     file_errors.append(future.result())
                     pbar.update()
                     elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
 
             finshed_bar_message = "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{}{}    ".format(
                 Fore.BLUE + Style.BRIGHT,
-                message + "ing",
+                message,
                 Style.RESET_ALL,
                 Fore.GREEN + Style.BRIGHT,
                 Style.RESET_ALL,
@@ -331,49 +206,28 @@ def main(
             )
             finished_bar.close()
 
-        # format errors
-        success_message = ""
-        error_count = 0
-
-        if temp_file is None or (reformat is False and check is False):
-            echo()
-
-    if reformat is True or check is True:
+    if temp_file and (config.reformat or config.check):
         # if using stdin, only give back formatted code.
-        if temp_file:
-            echo(Path(temp_file.name).read_text(encoding="utf8").rstrip())
-        else:
-            # reformat message
-            for error in file_errors:
-                error_count += build_check_output(error, quiet)
-                tense_message = (
-                    build_quantity(error_count) + " would be"
-                    if check is True
-                    else build_quantity_tense(error_count)
-                )
-            success_message = f"{tense_message} updated."
-
-    else:
-        # lint message
-        for error in file_errors:
-            error_count += build_output(error)
-
-        error_case = "error" if error_count == 1 else "errors"
-        success_message = (
-            f"{message}ed {file_quantity}, found {error_count} {error_case}."
-        )
-
-    success_color = Fore.RED + Style.BRIGHT if error_count > 0 else Fore.BLUE
-
-    if temp_file is None or (reformat is False and check is False):
-        echo(f"\n{success_color}{success_message}{Style.RESET_ALL}\n")
+        echo(Path(temp_file.name).read_text(encoding="utf8").rstrip())
 
     if temp_file:
         temp_file.close()
         os.unlink(temp_file.name)
 
-    if bool(error_count):
+    if bool(print_output(config, file_errors, len(file_list))):
         sys.exit(1)
+
+
+def process(config: Config, this_file: Path) -> Dict:
+    """Run linter or formatter."""
+    output = {}
+    if config.reformat or config.check:
+        output["format_message"] = reformat_file(config, this_file)
+
+    if config.lint:
+        output["lint_message"] = lint_file(config, this_file)
+
+    return output
 
 
 if __name__ == "__main__":

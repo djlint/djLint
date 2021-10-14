@@ -2,7 +2,7 @@
 
 Find common formatting issues and *reformat* HTML templates.
 
-***[Django](https://django.readthedocs.io/en/stable/ref/templates/language.html) · [Jinja](https://jinja2docs.readthedocs.io/en/stable/) · [Nunjucks](https://mozilla.github.io/nunjucks/) · [Handlebars](https://handlebarsjs.com) · [Mustache](http://mustache.github.io/mustache.5.html) · [GoLang](https://golang.org/doc/)***
+***[Django](https://django.readthedocs.io/en/stable/ref/templates/language.html) · [Jinja](https://jinja2docs.readthedocs.io/en/stable/) · [Nunjucks](https://mozilla.github.io/nunjucks/) · [Handlebars](https://handlebarsjs.com) · [Mustache](http://mustache.github.io/mustache.5.html) · [GoLang](https://pkg.go.dev/text/template)***
 
 Ps, ``--check`` it out on other templates as well!
 

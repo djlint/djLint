@@ -261,13 +261,15 @@ def test_with(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""{% with total=business.employees.count %}{{ total }} employee{{ total|pluralize }}{% endwith %}""",
+        b"""{% with total=business.employees.count %}{{ total }}<div>employee</div>{{ total|pluralize }}{% endwith %}""",
     )
     assert output["exit_code"] == 1
     assert (
         output["text"]
         == r"""{% with total=business.employees.count %}
-    {{ total }} employee{{ total|pluralize }}
+    {{ total }}
+    <div>employee</div>
+    {{ total|pluralize }}
 {% endwith %}
 """
     )
@@ -399,7 +401,7 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""<div class="bg-level{% if value >= 70 %}1{% elif value >= 60 %}2{% elif value >= 50 %}3{% else %}4{% endif %}></div>""",
+        b"""<div class="bg-level{% if value >= 70 %}1{% elif value >= 60 %}2{% elif value >= 50 %}3{% else %}4{% endif %}>\n</div>""",
     )
     assert output["exit_code"] == 0
 

@@ -115,16 +115,24 @@ class Config:
         ignore: Optional[str] = None,
         extension: Optional[str] = None,
         indent: Optional[int] = None,
-        quiet: Optional[bool] = False,
+        quiet: bool = False,
         profile: Optional[str] = None,
-        require_pragma: Optional[bool] = False,
+        require_pragma: bool = False,
+        reformat: bool = False,
+        check: bool = False,
+        lint: bool = False,
     ):
+
+        self.reformat = reformat
+        self.check = check
+        self.lint = lint
+        self.stdin = "-" in src
 
         djlint_settings = load_pyproject_settings(Path(src))
 
         # custom configuration options
         self.extension: str = str(extension or djlint_settings.get("extension", "html"))
-        self.quiet: str = str(quiet or djlint_settings.get("quiet", ""))
+        self.quiet: bool = quiet or djlint_settings.get("quiet", False)
         self.require_pragma: bool = (
             require_pragma
             or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
@@ -440,6 +448,7 @@ class Config:
 
         # if lines are longer than x
         self.max_line_length = 120
+
         try:
             self.max_line_length = int(
                 djlint_settings.get("max_line_length", self.max_line_length)
@@ -450,7 +459,17 @@ class Config:
                 + f"Error: Invalid pyproject.toml max_line_length value {djlint_settings['max_line_length']}"
             )
 
-        self.format_long_attributes = True
+        self.max_attribute_length = 70
+
+        try:
+            self.max_attribute_length = int(
+                djlint_settings.get("max_attribute_length", self.max_attribute_length)
+            )
+        except ValueError:
+            echo(
+                Fore.RED
+                + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}"
+            )
 
         # pattern used to find attributes in a tag
         # order is important.
@@ -542,10 +561,20 @@ class Config:
 
         self.ignored_blocks: str = r"""
               <(script|style|pre|textarea).*?</(\1)>
-            | {%[ ]djlint:off[ ]%}.*?{%[ ]djlint:on[ ]%}
+            # html comment
+            | <!--\s*djlint\:off\s*-->.*?<!--\s*djlint\:on\s*-->
+            # django/jinja
+            | {\#\s*djlint\:off\s*\#}.*?{\#\s*djlint\:on\s*\#}
+            | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}
+            # nunjucks
+            | {\#\s*djlint\:off\s*\#}.*?{\#\s*djlint\:on\s*\#}
+            # handlebars
+            | {{!--\s*djlint\:off\s*--}}.*?{{!--\s*djlint\:on\s*--}}
+            # golang
+            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
             | <!--.*?-->
-            | {\*.*?\*}
-            | {\#.*?\#}
+           # | {\*.*?\*}
+           # | {\#.*?\#}
             | <\?php.*?\?>
             | {\%[ ]trans[ ][^}]*?\%}
             | {%[ ]+?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]+?endcomment[ ]+?%}

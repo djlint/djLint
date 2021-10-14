@@ -128,9 +128,12 @@ def format_style(match: re.match) -> str:
 
 def format_attributes(config: Config, match: re.match) -> str:
     """Spread long attributes over multiple lines."""
+    if len(match.group(3).strip()) < config.max_attribute_length:
+        return match.group()
+
     leading_space = match.group(1)
 
-    tag = match.group(2)
+    tag = match.group(2) + " "
 
     spacing = "\n" + leading_space + len(tag) * " "
 
