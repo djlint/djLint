@@ -2,6 +2,7 @@
 import shutil
 from typing import Any, Dict, List
 
+import regex as re
 from click import echo
 from colorama import Fore, Style
 
@@ -90,7 +91,7 @@ def build_output(error: dict) -> int:
             + message["line"]
             + Style.RESET_ALL
             + " "
-            + message["message"]
+            + re.sub(r"\s{2,}", " ", message["message"])
             + Fore.BLUE
             + " "
             + message["match"],

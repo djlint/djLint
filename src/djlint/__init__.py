@@ -136,7 +136,9 @@ def main(
         message = "Reformatting"
 
     if config.lint:
-        message += " and Linting"
+        if message != "":
+            message += " and "
+        message += "Linting"
 
     # pylint: disable=C0209
     bar_message = (

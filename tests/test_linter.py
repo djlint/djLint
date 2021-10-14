@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_DJ018 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H011 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -132,6 +132,14 @@ def test_H011(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H011 1:" not in result.output
+
+    # # check keywords inside template syntax
+    # write_to_file(
+    #     tmp_file.name,
+    #     b'<a href="{{ url_for(\'connection_bp.one_connection\', connection_id=connection.id) }}">{{ connection }}</a>',
+    # )
+    # result = runner.invoke(djlint, [tmp_file.name])
+    # assert "H011 1:" not in result.output
 
 
 def test_H012(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -436,3 +444,10 @@ def test_custom_rules_bad_config(runner: CliRunner, tmp_file: TextIO) -> None:
     assert """1/1""" in result.output
     assert """T001 1:""" in result.output
     assert result.exit_code == 1
+
+
+def test_output_for_no_linebreaks(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<a\n    class='asdf'></a>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "<a\n" not in result.output
