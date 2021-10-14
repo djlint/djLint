@@ -23,7 +23,7 @@ def print_output(
     if config.stdin is False or config.lint:
         echo()
 
-    for error in file_errors:
+    for error in sorted(file_errors, key=lambda x: next(iter(list(x.values())[0]))):
         if error.get("format_message") and config.stdin is False:
             # reformat message
             format_error_count += build_check_output(
