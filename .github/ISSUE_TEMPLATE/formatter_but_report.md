@@ -1,8 +1,8 @@
 ---
-name: "\U0001F9A0 Bug Report"
+name: "\U0001F9A0 Formatter Bug Report"
 about: You've found a bug?
-title: "[BUG]"
-labels: bug
+title: "[BUG] [Formatter]"
+labels: bug, formatter
 assignees: christopherpickering
 
 ---
