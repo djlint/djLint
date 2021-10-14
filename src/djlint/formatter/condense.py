@@ -70,5 +70,5 @@ def condense_html(html: str, config: Config) -> str:
                 r"\1\n",
                 html,
             )
-
+    print(html)
     return html

@@ -253,6 +253,13 @@ class Config:
             | {%[ ]+?endcomment[ ]+?%}
         """
 
+        # ignored block closing tags that
+        # we can savely indent.
+        self.safe_closing_tag: str = r"""
+              </script
+            | </style
+        """
+
         # all html tags possible
         self.indent_html_tags: str = r"""
               a
@@ -560,7 +567,8 @@ class Config:
         )
 
         self.ignored_blocks: str = r"""
-              <(script|style|pre|textarea).*?</(\1)>
+              <(pre|textarea).*?</(\1)>
+            | <(script|style).*?(?=(\</(?:\3)>))
             # html comment
             | <!--\s*djlint\:off\s*-->.*?<!--\s*djlint\:on\s*-->
             # django/jinja

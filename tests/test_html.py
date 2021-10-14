@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_hr_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_script_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -54,6 +54,7 @@ def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<div>\n    <script>console.log();\n    console.log();\n\n    </script>\n</div>""",
     )
     runner.invoke(djlint, [tmp_file.name, "--reformat"])
+
     assert (
         Path(tmp_file.name).read_text()
         == """<div>

@@ -4,7 +4,11 @@ from functools import partial
 
 import regex as re
 
-from ..helpers import is_ignored_block_closing, is_ignored_block_opening
+from ..helpers import (
+    is_ignored_block_closing,
+    is_ignored_block_opening,
+    is_safe_closing_tag,
+)
 from ..settings import Config
 from .attributes import format_attributes
 
@@ -107,10 +111,11 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
             indent_level = indent_level + 1
 
-        elif is_raw_first_line is True:
+        elif is_raw_first_line is True or is_safe_closing_tag(config, item):
             tmp = (indent * indent_level) + item + "\n"
 
         elif is_block_raw is True or item.strip() == "":
+
             tmp = item + "\n"
 
         # otherwise, just leave same level
