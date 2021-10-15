@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_require_pragma --cov=src/djlint \
+   pytest tests/test_config.py::test_blank_lines_after_tag --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """

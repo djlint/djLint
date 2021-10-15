@@ -27,16 +27,44 @@ def condense_html(html: str, config: Config) -> str:
 
     html = re.sub(re.compile(r"^[ \t]*(.*?)[\n \t]*$", re.M), func, html)
 
+    def if_blank_line_after_match(config: Config, html: str) -> bool:
+        """Check if there should be a blank line after."""
+        if config.blank_line_after_tag:
+            return not any(
+                re.findall(
+                    re.compile(
+                        fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+                        re.IGNORECASE | re.MULTILINE | re.DOTALL,
+                    ),
+                    html,
+                )
+                for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]
+            )
+        return True
+
     def condense_line(config: Config, match: re.Match) -> str:
         """Put contents on a single line if below max line length."""
         if (
             len(match.group(1) + match.group(3) + match.group(4))
             < config.max_line_length
-        ):
+        ) and if_blank_line_after_match(config, match.group(3)):
             return match.group(1) + match.group(3) + match.group(4)
+
         return match.group()
 
     func = partial(condense_line, config)
+
+    # should we add blank lines after load tags?
+    if config.blank_line_after_tag:
+        for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
+            html = re.sub(
+                re.compile(
+                    fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+                    re.IGNORECASE | re.MULTILINE | re.DOTALL,
+                ),
+                r"\1\n",
+                html,
+            )
 
     # put short single line tags on one line
     html = re.sub(
@@ -59,16 +87,4 @@ def condense_html(html: str, config: Config) -> str:
         html,
     )
 
-    # should we add blank lines after load tags?
-    if config.blank_line_after_tag:
-        for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
-            html = re.sub(
-                re.compile(
-                    fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
-                    re.IGNORECASE | re.MULTILINE | re.DOTALL,
-                ),
-                r"\1\n",
-                html,
-            )
-    print(html)
     return html
