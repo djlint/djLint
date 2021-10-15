@@ -18,13 +18,13 @@ HTML Template Linter and Formatter
    djlint/best_practices
    djlint/changelog
 
+
 .. toctree::
    :hidden:
 
    GitHub ↪ <https://github.com/Riverside-Healthcare/djlint>
    PyPI ↪ <https://pypi.org/project/djlint/>
    Discord ↪ <https://discord.gg/taghAqebzU>
-
 
 Find common formatting issues and *reformat* HTML templates.
 

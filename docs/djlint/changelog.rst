@@ -1,12 +1,13 @@
 Changelog
 =========
 
-next release
------------
+0.5.8
+-----
 - Added require_pragma option
 - Updated DJ018 to catch ``data-src`` and ``action`` on inputs
 - Fixed inline ignore syntax
 - Added ``--lint`` option as placeholder for default usage
+- Bug fixes
 
 0.5.7
 -----
