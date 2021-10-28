@@ -13,8 +13,12 @@ def get_src(src: List[Path], config: Config) -> List[Path]:
     """Get source files."""
     paths = []
     for item in src:
-        if Path.is_file(item) and no_pragma(config, item):
-            paths.append(item)
+
+        # normalize path
+        normalized_item = Path(item).resolve()
+
+        if Path.is_file(normalized_item) and no_pragma(config, normalized_item):
+            paths.append(normalized_item)
             continue
 
         # remove leading . from extension
@@ -23,9 +27,9 @@ def get_src(src: List[Path], config: Config) -> List[Path]:
 
         paths.extend(
             filter(
-                lambda x: not re.search(config.exclude, str(x), re.VERBOSE)
+                lambda x: not re.search(config.exclude, x.as_posix(), re.VERBOSE)
                 and no_pragma(config, x),
-                list(item.glob(f"**/*.{extension}")),
+                list(normalized_item.glob(f"**/*.{extension}")),
             )
         )
 

@@ -84,6 +84,7 @@ def test_exclude(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_excludes"])
     assert """html.html""" in result.output
     assert """excluded.html""" not in result.output
+    assert """foo/excluded.html""" not in result.output
     assert result.exit_code == 1
 
 

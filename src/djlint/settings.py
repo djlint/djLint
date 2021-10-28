@@ -4,7 +4,6 @@
 
 
 import logging
-import re
 
 ## get pyproject.toml settings
 from pathlib import Path
@@ -218,7 +217,7 @@ class Config:
 
         if extend_exclude:
             self.exclude += r" | " + r" | ".join(
-                re.escape(x.strip()) for x in extend_exclude.split(",")
+                x.strip() for x in extend_exclude.split(",")
             )
 
         # add blank line after load tags
