@@ -401,6 +401,7 @@ class Config:
                 | autoescape
                 | filter
                 | each
+                | macro
             """
             + self.custom_blocks
         )
@@ -531,6 +532,7 @@ class Config:
             | filter
             | verbatim
             | each
+            | macro
             """
             + self.custom_blocks
             + r"""
@@ -560,6 +562,7 @@ class Config:
             | resetcycle
             | verbatim
             | each
+            | macro
             """
             + self.custom_blocks
             + r"""
