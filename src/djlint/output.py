@@ -69,7 +69,9 @@ def print_output(
 
 def build_output(error: dict) -> int:
     """Build output for file errors."""
-    errors = sorted(list(error.values())[0], key=lambda x: int(x["line"].split(":")[0]))
+    errors = sorted(
+        list(error.values())[0], key=lambda x: tuple(map(int, x["line"].split(":")))
+    )
     width, _ = shutil.get_terminal_size()
 
     if len(errors) == 0:
@@ -91,10 +93,10 @@ def build_output(error: dict) -> int:
             + message["line"]
             + Style.RESET_ALL
             + " "
-            + re.sub(r"\s{2,}", " ", message["message"])
+            + message["message"]
             + Fore.BLUE
             + " "
-            + message["match"],
+            + re.sub(r"\s{2,}", " ", message["match"]),
             err=False,
         )
     return len(errors)

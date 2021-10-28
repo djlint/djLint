@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_H011 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_output_order --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -464,3 +464,22 @@ def test_output_for_no_linebreaks(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "<a\n" not in result.output
+
+    write_to_file(tmp_file.name, b"<h1>asdf</h1>\n    <h2>asdf</h2>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "</h1>\n" not in result.output
+
+
+def test_output_order(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<h1>asdf</h2>\n    <h3>asdf</h4>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert (
+        """H025 1:0 Tag seems to be an orphan. <h1>
+H015 1:8 Follow h tags with a line break. </h2> <h3
+H025 1:8 Tag seems to be an orphan. </h2>
+H025 2:4 Tag seems to be an orphan. <h3>
+H025 2:12 Tag seems to be an orphan. </h4>"""
+        in result.output
+    )
