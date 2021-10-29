@@ -13,6 +13,96 @@ def format_template_tags(config: Config, attributes: str) -> str:
     # find unindent lines and move back
     # put short stuff back on one line
 
+    def add_indentation(config: Config, attributes: str) -> str:
+        """Indent template tags."""
+        attr_name = (
+            list(
+                re.finditer(
+                    re.compile(r"^<\w+\b\s*", re.M), attributes.splitlines()[0].strip()
+                )
+            )
+        )[-1]
+
+        start_test = (
+            list(
+                re.finditer(
+                    re.compile(
+                        r"^.*?(?=" + config.template_indent + r")", re.I | re.X | re.M
+                    ),
+                    attributes.splitlines()[0].strip(),
+                )
+            )
+            + list(
+                re.finditer(
+                    re.compile(r"^<\w+\b\s*[^\"']+?[\"']", re.M),
+                    attributes.splitlines()[0].strip(),
+                )
+            )
+        )[-1]
+
+        base_indent = len(attr_name.group())
+        indent = 0
+        indented = ""
+        indent_adder = len(start_test.group()) - base_indent if start_test else 0
+
+        for line_number, line in enumerate(attributes.splitlines()):
+
+            if re.search(re.compile(config.template_indent, re.I | re.X), line.strip()):
+                tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
+                indent = indent + 1
+
+            elif re.match(
+                re.compile(config.template_unindent, re.I | re.X), line.strip()
+            ):
+                indent = indent - 1
+                tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
+
+                # if we are leaving an indented group, then remove the indent_adder
+
+            elif re.match(
+                re.compile(config.tag_unindent_line, re.I | re.X), line.strip()
+            ):
+                tmp = (
+                    max(indent - 1, 0) * config.indent
+                    + indent_adder * " "
+                    + line.strip()
+                )
+            else:
+                tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
+
+            if line_number == 0:
+                # don't touch first line
+                indented += f"{line.strip()}"
+            else:
+                # if changing indent level and not the first item on the line, then
+                # check if base indent is changed.
+                # match must start at first of string
+                start_test = list(
+                    re.finditer(re.compile(r"^(\w+?=[\"'])", re.M), line.strip())
+                ) + list(
+                    re.finditer(
+                        re.compile(
+                            r"^(.+?)" + config.template_indent, re.I | re.X | re.M
+                        ),
+                        line.strip(),
+                    )
+                )
+
+                if start_test:
+                    indent_adder = len(start_test[-1].group(1)) - (
+                        base_indent if line_number == 0 else 0
+                    )
+
+                base_indent_space = base_indent * " "
+                indented += f"\n{base_indent_space}{tmp}"
+
+            end_text = re.findall(re.compile(r"[\"']$", re.M), line.strip())
+
+            if end_text:
+                indent_adder = 0
+
+        return indented
+
     def add_break(
         config: Config, attributes: str, pattern: str, match: re.Match
     ) -> str:
@@ -51,27 +141,18 @@ def format_template_tags(config: Config, attributes: str) -> str:
                 )
             )[-1]
 
-        leading_space = len(attr_name.group()) * " "
-
-        indent = ""
-
-        if re.match(
-            re.compile(config.tag_indent, re.I | re.X), match.group()
-        ) or re.match(re.compile(config.tag_unindent_line, re.I | re.X), match.group()):
-            # if an indent tag, then add leading space
-            indent = config.indent
         if pattern == "before":
             # but don't add break if we are the first thing in an attribute.
             if attr_name.end() == match.start():
                 return match.group()
-            return f"\n{leading_space}{match.group()}"
 
-        # else "after"
+            return f"\n{match.group()}"
+
         # but don't add a break if the next char closes the attr.
         if re.match(r"\s*?[\"|'|>]", match.group(2)):
             return match.group(1) + match.group(2)
 
-        return f"{match.group(1)}\n{leading_space}{indent}{match.group(2).strip()}"
+        return f"{match.group(1)}\n{match.group(2).strip()}"
 
     break_char = config.break_before
 
@@ -100,6 +181,8 @@ def format_template_tags(config: Config, attributes: str) -> str:
         func,
         attributes,
     )
+
+    attributes = add_indentation(config, attributes)
 
     return attributes
 
@@ -146,19 +229,19 @@ def format_attributes(config: Config, match: re.match) -> str:
 
     attributes = f"{leading_space}{tag}{attributes}{close}"
 
+    # format template tags
+    attributes = format_template_tags(config, attributes)
+
     # format styles
     func = partial(format_style)
     attributes = re.sub(
         re.compile(
             config.attribute_style_pattern,
-            re.VERBOSE | re.IGNORECASE,
+            re.VERBOSE | re.IGNORECASE | re.M,
         ),
         func,
         attributes,
     )
-
-    # format template tags
-    attributes = format_template_tags(config, attributes)
 
     # clean trailing spaces added by breaks
     attributes = "\n".join([x.rstrip() for x in attributes.splitlines()])

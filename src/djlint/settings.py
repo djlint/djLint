@@ -389,7 +389,7 @@ class Config:
             r"""  if
                 | for
                 | block
-                | else
+                #| else <-- this is in the unindent line block
                 | spaceless
                 | compress
                 | addto
@@ -405,14 +405,26 @@ class Config:
             + self.custom_blocks
         )
 
-        # the contents of these tag blocks will be indented, then unindented
-        self.tag_indent: str = (
+        self.template_indent: str = (
             r"""
-              (?:\{\{\#|\{%-?)[ ]*?
+            (?:\{\{\#|\{%-?)[ ]*?
                 ("""
             + self.indent_template_tags
             + r"""
-                )
+            )"""
+        )
+
+        self.template_unindent: str = r"""
+                (?:
+                  (?:\{\{\/)
+                | (?:\{%-?[ ]*?end)
+              )
+            """
+
+        # the contents of these tag blocks will be indented, then unindented
+        self.tag_indent: str = (
+            self.template_indent
+            + """
             | (?:<
                 (?:
                     """
@@ -424,11 +436,11 @@ class Config:
         )
 
         self.tag_unindent: str = (
-            r"""^
-              (?:
-                  (?:\{\{\/)
-                | (?:\{%-?[ ]*?end)
-              )
+            r"""
+                ^
+                """
+            + self.template_unindent
+            + """
             | (?:</
                 (?:
                     """
@@ -512,7 +524,7 @@ class Config:
         """
         )
 
-        self.attribute_style_pattern: str = r"(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
+        self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
 
         self.start_template_tags: str = (
             r"""

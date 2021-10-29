@@ -1,2 +1,3 @@
 [tool.djlint]
+exclude = "foo/excluded.html"
 extend_exclude = "excluded.html"

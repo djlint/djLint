@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_complex_attributes --cov=src/djlint \
+   pytest tests/test_django.py::test_attribute_for_loop --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -317,7 +317,7 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<a class="asdf {% if favorite == "yes" %}favorite{% endif %} has-tooltip-arrow has-tooltip-right" data-tooltip="{% if favorite == "yes" %}Remove from Favorites {% else %}Add to Favorites{% endif %}" fav-type="report" object-id="{{ report.report_id }}"><span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span></a>""",
     )
     assert output["exit_code"] == 1
-
+    print(output["text"])
     assert (
         output["text"]
         == r"""<a class="asdf
@@ -344,7 +344,7 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<div class="media-content" {% ifchanged comment.stream_id %} comments-msg {% else %} comments-newMsgReply {% endifchanged %}>""",
     )
     assert output["exit_code"] == 1
-
+    print(output["text"])
     assert (
         output["text"]
         == r"""<div class="media-content"
@@ -374,6 +374,7 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<span {%if a%}required{%endif%}title="{% if eev.status == eev.STATUS_CURRENT %} {% trans 'A' %} {% elif eev.status == eev.STATUS_APPROVED %} {% trans 'B' %} {% elif eev.status == eev.STATUS_EXPIRED %} {% trans 'C' %}{% endif %}" class="asdf{%if a%}b{%endif%} asdf" {%if a%}checked{%endif%}>""",
     )
 
+    print(output["text"])
     assert (
         output["text"]
         == """<span {% if a %}
@@ -418,6 +419,29 @@ def test_load_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         == r"""{% block content %}
     {% load i18n %}
 {% endblock %}
+"""
+    )
+
+
+def test_attribute_for_loop(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<ul class="menu-list{% for child in entry.children %}{% if child.url== page.url %}is-active{%else%}not-active{% endif %}{% endfor %} is-collapsible">""",
+    )
+    assert output["exit_code"] == 1
+
+    assert (
+        output["text"]
+        == r"""<ul class="menu-list
+           {% for child in entry.children %}
+               {% if child.url== page.url %}
+                   is-active
+               {% else %}
+                   not-active
+               {% endif %}
+           {% endfor %}
+           is-collapsible">
 """
     )
 

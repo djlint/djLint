@@ -134,7 +134,6 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
-
         if is_ignored_block_opening(config, item):
             is_block_raw = True
             is_raw_first_line = False
