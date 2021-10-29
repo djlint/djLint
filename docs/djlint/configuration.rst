@@ -149,3 +149,14 @@ Usage:
 .. code:: ini
 
    max_attribute_length=10
+
+use_gitignore
+-------------
+
+Add .gitignore excludes to the default exclude.
+
+Usage:
+
+.. code:: ini
+
+   use_gitignore = True

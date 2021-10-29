@@ -13,6 +13,7 @@ for a single test, run::
 """
 # pylint: disable=C0116
 import os
+from pathlib import Path
 
 from click.testing import CliRunner
 
@@ -23,6 +24,8 @@ def test_cli(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_gitignore/html_two.html", "--check"])
     assert result.exit_code == 1
 
+    # create .git folder to make root
+    Path("tests/config_gitignore/.git").mkdir(parents=True, exist_ok=True)
     # add a gitignore file
     with open("tests/config_gitignore/.gitignore", "w") as git:
         git.write("html_two.html")
@@ -43,6 +46,8 @@ def test_pyproject(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_gitignore/html_two.html", "--check"])
     assert result.exit_code == 1
 
+    # make a root
+    Path("tests/config_gitignore/.git").mkdir(parents=True, exist_ok=True)
     # add a gitignore file
     with open("tests/config_gitignore/.gitignore", "w") as git:
         git.write("html_two.html")

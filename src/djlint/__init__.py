@@ -87,7 +87,7 @@ from .src import get_src
 @click.option(
     "--use-gitignore",
     is_flag=True,
-    help="Use .gitignore file as exclude. [default option]",
+    help="Use .gitignore file to extend excludes.",
 )
 def main(
     src: List[str],

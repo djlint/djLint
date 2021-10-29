@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.5.9
+-----
+- Added option ``--use-gitignore`` to extend the excludes
+- Changed default exclude matching
+- Fixed windows exclude paths
+- Fixed formatting of ``{%...%}`` tags in attributes
+- Fixed formatting for for loops and nested conditions in attributes
+
 0.5.8
 -----
 - Added require_pragma option

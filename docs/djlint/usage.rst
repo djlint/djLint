@@ -117,4 +117,5 @@ CLI Args
       --require-pragma      Only format or lint files that starts with a comment
                             with the text 'djlint:on'
       --lint                Lint for common issues. [default option]
+      --use-gitignore       Use .gitignore file to extend excludes.
       -h, --help            Show this message and exit.
