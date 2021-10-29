@@ -37,7 +37,7 @@ def find_project_root(src: Path) -> Path:
 
 
 def load_gitignore(root: Path) -> PathSpec:
-    """Search upstream for a pyprojec.toml file."""
+    """Search upstream for a .gitignore file."""
 
     gitignore = root / ".gitignore"
     git_lines: List[str] = []
@@ -54,7 +54,7 @@ def load_gitignore(root: Path) -> PathSpec:
 
 
 def find_pyproject(root: Path) -> Optional[Path]:
-    """Search upstream for a pyprojec.toml file."""
+    """Search upstream for a pyproject.toml file."""
 
     pyproject = root / "pyproject.toml"
 
@@ -138,7 +138,7 @@ def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
 
 
 class Config:
-    """Djling Config."""
+    """Djlint Config."""
 
     def __init__(
         self,
