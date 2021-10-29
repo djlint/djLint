@@ -13,11 +13,21 @@ def get_src(src: List[Path], config: Config) -> List[Path]:
     """Get source files."""
     paths = []
     for item in src:
-
         # normalize path
+
         normalized_item = Path(item).resolve()
 
-        if Path.is_file(normalized_item) and no_pragma(config, normalized_item):
+        if (
+            Path.is_file(normalized_item)
+            and no_pragma(config, normalized_item)
+            and (
+                (
+                    config.use_gitignore
+                    and not config.gitignore.match_file(normalized_item)
+                )
+                or not config.use_gitignore
+            )
+        ):
             paths.append(normalized_item)
             continue
 
@@ -28,7 +38,11 @@ def get_src(src: List[Path], config: Config) -> List[Path]:
         paths.extend(
             filter(
                 lambda x: not re.search(config.exclude, x.as_posix(), re.VERBOSE)
-                and no_pragma(config, x),
+                and no_pragma(config, x)
+                and (
+                    (config.use_gitignore and not config.gitignore.match_file(x))
+                    or not config.use_gitignore
+                ),
                 list(normalized_item.glob(f"**/*.{extension}")),
             )
         )

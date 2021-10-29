@@ -13,32 +13,64 @@ import tomlkit
 import yaml
 from click import echo
 from colorama import Fore
+from pathspec import PathSpec
+from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
 
 logger = logging.getLogger(__name__)
 
 
-def find_pyproject(src: Path) -> Optional[Path]:
-    """Search upstream for a pyprojec.toml file."""
-
+def find_project_root(src: Path) -> Path:
+    """Attempt to get the project root."""
     for directory in [src, *src.resolve().parents]:
 
-        candidate = directory / "pyproject.toml"
+        if (directory / ".git").exists():
+            return directory
 
-        if candidate.is_file():
-            return candidate
+        if (directory / ".hg").is_dir():
+            return directory
+
+        if (directory / "pyproject.toml").is_file():
+            return directory
+
+    # pylint: disable=W0631
+    return directory
+
+
+def load_gitignore(root: Path) -> PathSpec:
+    """Search upstream for a pyprojec.toml file."""
+
+    gitignore = root / ".gitignore"
+    git_lines: List[str] = []
+    if gitignore.is_file():
+        with gitignore.open(encoding="utf-8") as this_file:
+            git_lines = this_file.readlines()
+
+    try:
+        return PathSpec.from_lines("gitwildmatch", git_lines)
+
+    except GitWildMatchPatternError as e:
+        echo(f"Could not parse {gitignore}: {e}", err=True)
+        raise
+
+
+def find_pyproject(root: Path) -> Optional[Path]:
+    """Search upstream for a pyprojec.toml file."""
+
+    pyproject = root / "pyproject.toml"
+
+    if pyproject.is_file():
+        return pyproject
 
     return None
 
 
-def find_djlint_rules(src: Path) -> Optional[Path]:
+def find_djlint_rules(root: Path) -> Optional[Path]:
     """Search upstream for a pyprojec.toml file."""
 
-    for directory in [src, *src.resolve().parents]:
+    rules = root / ".djlint_rules.yaml"
 
-        candidate = directory / ".djlint_rules.yaml"
-
-        if candidate.is_file():
-            return candidate
+    if rules.is_file():
+        return rules
 
     return None
 
@@ -120,6 +152,7 @@ class Config:
         reformat: bool = False,
         check: bool = False,
         lint: bool = False,
+        use_gitignore: bool = False,
     ):
 
         self.reformat = reformat
@@ -127,9 +160,16 @@ class Config:
         self.lint = lint
         self.stdin = "-" in src
 
-        djlint_settings = load_pyproject_settings(Path(src))
+        project_root = find_project_root(Path(src))
 
+        djlint_settings = load_pyproject_settings(project_root)
+
+        self.gitignore = load_gitignore(project_root)
         # custom configuration options
+
+        self.use_gitignore: bool = use_gitignore or djlint_settings.get(
+            "use_gitignore", False
+        )
         self.extension: str = str(extension or djlint_settings.get("extension", "html"))
         self.quiet: bool = quiet or djlint_settings.get("quiet", False)
         self.require_pragma: bool = (
@@ -165,7 +205,7 @@ class Config:
                 (Path(__file__).parent / "rules.yaml").read_text(encoding="utf8"),
                 Loader=yaml.SafeLoader,
             )
-            + load_custom_rules(Path(src))
+            + load_custom_rules(project_root)
         )
 
         self.linter_rules = list(
@@ -192,7 +232,7 @@ class Config:
 
         default_exclude: str = r"""
             \.venv
-            | venv
+            | venv/
             | \.tox
             | \.eggs
             | \.git
@@ -201,13 +241,13 @@ class Config:
             | \.nox
             | \.svn
             | \.bzr
-            | _build
-            | buck-out
-            | build
-            | dist
+            | _build/
+            | buck-out/
+            | build/
+            | dist/
             | \.pants\.d
             | \.direnv
-            | node_modules
+            | node_modules/
             | __pypackages__
         """
 

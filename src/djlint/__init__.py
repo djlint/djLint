@@ -84,6 +84,11 @@ from .src import get_src
     is_flag=True,
     help="Lint for common issues. [default option]",
 )
+@click.option(
+    "--use-gitignore",
+    is_flag=True,
+    help="Use .gitignore file as exclude. [default option]",
+)
 def main(
     src: List[str],
     extension: str,
@@ -95,6 +100,7 @@ def main(
     profile: str,
     require_pragma: bool,
     lint: bool,
+    use_gitignore: bool,
 ) -> None:
     """djLint · lint and reformat HTML templates."""
     config = Config(
@@ -108,6 +114,7 @@ def main(
         lint=lint or not (reformat or check),
         reformat=reformat,
         check=check,
+        use_gitignore=use_gitignore,
     )
 
     temp_file = None
