@@ -389,7 +389,6 @@ class Config:
             r"""  if
                 | for
                 | block
-                #| else <-- this is in the unindent line block
                 | spaceless
                 | compress
                 | addto
@@ -521,6 +520,7 @@ class Config:
             | [\w|-]+
             | [\w|-]+=[\w|-]+
             | {{.*?}}
+            | {%.*?%}
         """
         )
 
@@ -595,8 +595,6 @@ class Config:
             # golang
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
             | <!--.*?-->
-           # | {\*.*?\*}
-           # | {\#.*?\#}
             | <\?php.*?\?>
             | {\%[ ]trans[ ][^}]*?\%}
             | {%[ ]+?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]+?endcomment[ ]+?%}

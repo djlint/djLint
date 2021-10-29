@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_attribute_for_loop --cov=src/djlint \
+   pytest tests/test_django.py::test_attribute_include --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -442,6 +442,24 @@ def test_attribute_for_loop(runner: CliRunner, tmp_file: TextIO) -> None:
                {% endif %}
            {% endfor %}
            is-collapsible">
+"""
+    )
+
+
+def test_attribute_include(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div {% if true %}class="test"{% endif %} {% include "django/forms/widgets/attrs.html" %}></div>""",
+    )
+    assert output["exit_code"] == 1
+
+    assert (
+        output["text"]
+        == r"""<div {% if true %}
+         class="test"
+     {% endif %}
+     {% include "django/forms/widgets/attrs.html" %}></div>
 """
     )
 
