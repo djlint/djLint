@@ -1,6 +1,10 @@
 Changelog
 =========
 
+next release
+-----
+- Added test support for python 3.10
+
 0.5.9
 -----
 - Added option ``--use-gitignore`` to extend the excludes
