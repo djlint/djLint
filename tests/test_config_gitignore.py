@@ -27,9 +27,6 @@ def test_cli(runner: CliRunner) -> None:
     with open("tests/config_gitignore/.gitignore", "w") as git:
         git.write("html_two.html")
 
-    with open("tests/config_gitignore/pyproject.toml", "w") as f:
-        f.write("")
-
     result = runner.invoke(
         djlint, ["tests/config_gitignore/html_two.html", "--check", "--use-gitignore"]
     )
