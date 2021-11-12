@@ -31,7 +31,7 @@ quiet = true
 [tool.poetry.dependencies]
 python = "^3.6.2,<4.0"
 click = "^8.0.1"
-PyYAML = "^5.4.1"
+PyYAML = "^6.0"
 colorama = "^0.4.4"
 regex = "^2021.8.28"
 tqdm = "^4.62.2"
