@@ -148,7 +148,7 @@ This will look for files matching ``*.hbs`` and set ``--profile=handlebars``.
 
 This will look for files matching ``*.tmpl`` and set ``--profile=golang``.
 
-Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options.
+Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the `pre-commit docs <https://pre-commit.com/#pre-commit-configyaml---hooks>`_ for additional configuration
 
 Default Django example
 ^^^^^^^^^^^^^^^^^^^^^^
