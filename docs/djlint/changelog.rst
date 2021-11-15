@@ -1,6 +1,10 @@
 Changelog
 =========
 
+next_release
+------------
+- Added rule T027 to check for unclosed in template syntax
+
 0.5.9a
 ------
 - Added test support for python 3.10
