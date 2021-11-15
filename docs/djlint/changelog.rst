@@ -1,9 +1,10 @@
 Changelog
 =========
 
-next release
------
+0.5.9a
+------
 - Added test support for python 3.10
+- Added pre-commit hook
 
 0.5.9
 -----
