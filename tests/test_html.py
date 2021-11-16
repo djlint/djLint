@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_ignored_attributes --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_script_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -71,6 +71,21 @@ def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         tmp_file,
         runner,
         b"""<script src="{% static 'common/js/foo.min.js' %}"></script>""",
+    )
+
+    assert output["exit_code"] == 0
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<script>
+    $("#x").do({
+        dataBound: function () {
+            this.tbody.append($("<td colspan=2'>X</td>"));
+        },
+    });
+</script>
+""",
     )
 
     assert output["exit_code"] == 0

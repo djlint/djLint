@@ -1,6 +1,10 @@
 Changelog
 =========
 
+next release
+------------
+- Bug fixes
+
 0.6.0
 -----
 - Added rule T027 to check for unclosed in template syntax
