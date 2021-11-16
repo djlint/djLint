@@ -147,6 +147,12 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     )
     assert result.exit_code == 0
 
+    # something perfect should stay perfect :)
+    result = runner.invoke(
+        djlint, ["tests/config_blank_lines_after_tag/html_six.html", "--check"]
+    )
+    assert result.exit_code == 0
+
 
 def test_profile(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_profile/html.html"])

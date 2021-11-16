@@ -52,7 +52,14 @@ def condense_html(html: str, config: Config) -> str:
 
         return match.group()
 
-    func = partial(condense_line, config)
+    def add_blank_line(config: Config, html: str, match: re.Match) -> str:
+        """Add break after if not in ignored block."""
+        if inside_ignored_block(config, html, match):
+            return match.group()
+
+        return match.group() + "\n"
+
+    func = partial(add_blank_line, config, html)
 
     # should we add blank lines after load tags?
     if config.blank_line_after_tag:
@@ -62,9 +69,11 @@ def condense_html(html: str, config: Config) -> str:
                     fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
                     re.IGNORECASE | re.MULTILINE | re.DOTALL,
                 ),
-                r"\1\n",
+                func,
                 html,
             )
+
+    func = partial(condense_line, config)
 
     # put short single line tags on one line
     html = re.sub(
