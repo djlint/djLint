@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_long_attributes --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_ignored_attributes --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -138,15 +138,17 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""<div style="margin-left: 90px;
-            display: contents;
-            font-weight: bold;
-            font-size: 1.5rem;"
-     data-attr="stuff"
-     class="my long class goes here">
+        b"""<div>
+    <div style="margin-left: 90px;
+                display: contents;
+                font-weight: bold;
+                font-size: 1.5rem;"
+         data-attr="stuff"
+         class="my long class goes here">
+    </div>
+</div>
 """,
     )
-    print(output["text"])
     assert output["exit_code"] == 0
 
 
@@ -285,7 +287,7 @@ def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     )
 
     assert output["exit_code"] == 1
-
+    print(output["text"])
     assert (
         output["text"]
         == """<div class="a long list of meaningless classes"

@@ -12,6 +12,12 @@ def format_template_tags(config: Config, attributes: str) -> str:
     # find break tags, add breaks + indent
     # find unindent lines and move back
     # put short stuff back on one line
+    leading_space = ""
+
+    if re.search(r"^[ ]+", attributes.splitlines()[0], re.MULTILINE):
+        leading_space = re.search(
+            r"^[ ]+", attributes.splitlines()[0], re.MULTILINE
+        ).group()
 
     def add_indentation(config: Config, attributes: str) -> str:
         """Indent template tags."""
@@ -72,7 +78,7 @@ def format_template_tags(config: Config, attributes: str) -> str:
 
             if line_number == 0:
                 # don't touch first line
-                indented += f"{line.strip()}"
+                indented += f"{leading_space}{line.strip()}"
             else:
                 # if changing indent level and not the first item on the line, then
                 # check if base indent is changed.
@@ -94,7 +100,7 @@ def format_template_tags(config: Config, attributes: str) -> str:
                     )
 
                 base_indent_space = base_indent * " "
-                indented += f"\n{base_indent_space}{tmp}"
+                indented += f"\n{leading_space}{base_indent_space}{tmp}"
 
             end_text = re.findall(re.compile(r"[\"']$", re.M), line.strip())
 
