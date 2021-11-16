@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_T027 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_T028 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -447,6 +447,40 @@ def test_T027(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "T027" in result.output
+
+
+def test_T028(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<a href=\"{% blah 'asdf' -%}\">")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "T028" in result.output
+
+    write_to_file(tmp_file.name, b"<a href=\"{%- blah 'asdf' %}\">")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "T028" in result.output
+
+    write_to_file(tmp_file.name, b"<a href=\"{{- blah 'asdf' }}\">")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "T028" in result.output
+
+    write_to_file(tmp_file.name, b"<a href=\"{{ blah 'asdf' -}}\">")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "T028" in result.output
+
+    write_to_file(tmp_file.name, b"<a {{ blah 'asdf' }}>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T028" not in result.output
+
+    write_to_file(tmp_file.name, b"<a {% blah 'asdf' %}>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T028" not in result.output
+
+    write_to_file(tmp_file.name, b"{% blah 'asdf' %}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T028" not in result.output
 
 
 def test_rules_not_matched_in_ignored_block(
