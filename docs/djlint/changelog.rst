@@ -6,6 +6,7 @@ next_release
 - Added rule T027 to check for unclosed in template syntax
 - Added rule T028 to check for missing spaceless tags in attributes
 - Added rule H029 to check for lowercase form method
+- Ignored djagno blocktranslate tags that do not have "trimmed" from formatter
 
 0.5.9a
 ------

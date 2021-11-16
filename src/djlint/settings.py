@@ -636,8 +636,8 @@ class Config:
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
             | <!--.*?-->
             | <\?php.*?\?>
-            # | {\%[ ]trans[ ][^}]*?\%}
-            | {%[ ]+?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]+?endcomment[ ]+?%}
+            | {%[ ]*?blocktranslate[ ]+?((?!%}|trimmed).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]*?endcomment[ ]*?%}
         """
 
         self.ignored_inline_blocks: str = r"""
@@ -645,7 +645,8 @@ class Config:
             | {\*.*?\*}
             | {\#.*?\#}
             | <\?php.*?\?>
-            | {%[ ]+?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]+?endcomment[ ]+?%}
+            | {%[ ]*?comment[ ]+?[^(?:%})]*?%}.*?{%[ ]*?endcomment[ ]*?%}
+            | {%[ ]*?blocktranslate[ ]+?((?!%}|trimmed).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
         """
 
         self.optional_single_line_html_tags: str = r"""
