@@ -4,6 +4,8 @@ Changelog
 next_release
 ------------
 - Added rule T027 to check for unclosed in template syntax
+- Added rule T028 to check for missing spaceless tags in attributes
+- Added rule H029 to check for lowercase form method
 
 0.5.9a
 ------

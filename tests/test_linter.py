@@ -483,6 +483,21 @@ def test_T028(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "T028" not in result.output
 
 
+def test_H029(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b'<forM method="Post">')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H029" in result.output
+
+    write_to_file(tmp_file.name, b'<forM method="post">')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H029" not in result.output
+
+    write_to_file(tmp_file.name, b'<a method="post">')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H029" not in result.output
+
+
 def test_rules_not_matched_in_ignored_block(
     runner: CliRunner, tmp_file: TextIO
 ) -> None:
