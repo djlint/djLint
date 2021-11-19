@@ -65,7 +65,7 @@ Codes
 +--------+-------------------------------------------------------------------------+
 | T027   | Unclosed string found in template syntax.                               |
 +--------+-------------------------------------------------------------------------+
-| T028   | Consider using spaceless tags inside attribute values.                  |
+| T028   | Consider using spaceless tags inside attribute values. {%- if/for -%}   |
 +--------+-------------------------------------------------------------------------+
 | H029   | Consider using lowercase form method values.                            |
 +--------+-------------------------------------------------------------------------+

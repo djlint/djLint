@@ -453,22 +453,20 @@ def test_T028(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<a href=\"{% blah 'asdf' -%}\">")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
-    assert "T028" in result.output
+    assert "T028" not in result.output
 
-    write_to_file(tmp_file.name, b"<a href=\"{%- blah 'asdf' %}\">")
+    write_to_file(tmp_file.name, b"<a href=\"{%- if 'asdf' %}\">")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "T028" in result.output
 
     write_to_file(tmp_file.name, b"<a href=\"{{- blah 'asdf' }}\">")
     result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "T028" in result.output
+    assert "T028" not in result.output
 
     write_to_file(tmp_file.name, b"<a href=\"{{ blah 'asdf' -}}\">")
     result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "T028" in result.output
+    assert "T028" not in result.output
 
     write_to_file(tmp_file.name, b"<a {{ blah 'asdf' }}>")
     result = runner.invoke(djlint, [tmp_file.name])
@@ -479,6 +477,10 @@ def test_T028(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "T028" not in result.output
 
     write_to_file(tmp_file.name, b"{% blah 'asdf' %}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T028" not in result.output
+
+    write_to_file(tmp_file.name, b"{% for 'asdf' %}")
     result = runner.invoke(djlint, [tmp_file.name])
     assert "T028" not in result.output
 
