@@ -1,8 +1,8 @@
 Changelog
 =========
 
-next release
-------------
+0.6.1
+-----
 - Bug fixes
 - Made rule T028 stricter with clearer message
 
