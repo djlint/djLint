@@ -683,6 +683,11 @@ class Config:
             | br
             | input
             | hr
+            | area
+            | col
+            | embed
+            | track
+            | wbr
         """
 
         self.optional_single_line_template_tags: str = r"""
