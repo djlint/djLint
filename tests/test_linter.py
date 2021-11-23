@@ -457,6 +457,13 @@ def test_T027(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "T027" in result.output
 
+    write_to_file(
+        tmp_file.name,
+        b'{% trans "Check box if you\'re interested in this location." %}',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T027" not in result.output
+
 
 def test_T028(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<a href=\"{% blah 'asdf' -%}\">")

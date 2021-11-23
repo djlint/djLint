@@ -108,7 +108,6 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     ),
                     html,
                 ):
-
                     if inside_ignored_block(config, html, match) is False:
                         errors[file_name].append(
                             {
