@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_H017 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_T028 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -475,6 +475,12 @@ def test_T028(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "T028" in result.output
+
+    # django should not trigger
+    write_to_file(tmp_file.name, b"<a href=\"{%- if 'asdf' %}\">")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T028" not in result.output
 
     write_to_file(tmp_file.name, b"<a href=\"{{- blah 'asdf' }}\">")
     result = runner.invoke(djlint, [tmp_file.name])
