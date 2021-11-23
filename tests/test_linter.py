@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_T028 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H025 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -393,6 +393,20 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
         tmp_file.name,
         b'<script src="{% static \'notifications/notify.js\' %}" type="text/javascript"></script>',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H025" not in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b'<script src="{% static "folder/foo.js" %}?version={% some_version %}"></script>',
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H025" not in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b"<script />",
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output
