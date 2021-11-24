@@ -254,6 +254,32 @@ def test_blocktranslate(runner: CliRunner, tmp_file: TextIO) -> None:
 """
     )
 
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{% blocktrans %}The width is: {{ width }}{% endblocktrans %}""",
+    )
+    assert output["exit_code"] == 0
+    assert (
+        output["text"]
+        == r"""{% blocktrans %}The width is: {{ width }}{% endblocktrans %}
+"""
+    )
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{% blocktrans trimmed %}The width is: {{ width }}{% endblocktrans %}""",
+    )
+    assert output["exit_code"] == 1
+    assert (
+        output["text"]
+        == r"""{% blocktrans trimmed %}
+    The width is: {{ width }}
+{% endblocktrans %}
+"""
+    )
+
 
 def test_trans(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
