@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_blank_lines_after_tag --cov=src/djlint \
+   pytest tests/test_config.py::test_exclude --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -82,6 +82,7 @@ def test_indent(runner: CliRunner) -> None:
 
 def test_exclude(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_excludes"])
+    print(result.output)
     assert """html.html""" in result.output
     assert """excluded.html""" not in result.output
     assert """foo/excluded.html""" not in result.output

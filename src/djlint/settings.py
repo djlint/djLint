@@ -160,11 +160,11 @@ class Config:
         self.lint = lint
         self.stdin = "-" in src
 
-        project_root = find_project_root(Path(src))
+        self.project_root = find_project_root(Path(src))
 
-        djlint_settings = load_pyproject_settings(project_root)
+        djlint_settings = load_pyproject_settings(self.project_root)
 
-        self.gitignore = load_gitignore(project_root)
+        self.gitignore = load_gitignore(self.project_root)
         # custom configuration options
 
         self.use_gitignore: bool = use_gitignore or djlint_settings.get(
@@ -205,7 +205,7 @@ class Config:
                 (Path(__file__).parent / "rules.yaml").read_text(encoding="utf8"),
                 Loader=yaml.SafeLoader,
             )
-            + load_custom_rules(project_root)
+            + load_custom_rules(self.project_root)
         )
 
         self.linter_rules = list(

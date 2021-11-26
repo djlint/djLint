@@ -1,5 +1,6 @@
 """Build djLint console output."""
 import shutil
+from pathlib import Path
 from typing import Any, Dict, List
 
 import regex as re
@@ -26,13 +27,11 @@ def print_output(
     for error in sorted(file_errors, key=lambda x: next(iter(list(x.values())[0]))):
         if error.get("format_message") and config.stdin is False:
             # reformat message
-            format_error_count += build_check_output(
-                error["format_message"], config.quiet
-            )
+            format_error_count += build_check_output(error["format_message"], config)
 
         if error.get("lint_message"):
             # lint message
-            lint_error_count += build_output(error["lint_message"])
+            lint_error_count += build_output(error["lint_message"], config)
 
     tense_message = (
         build_quantity(format_error_count) + " would be"
@@ -67,7 +66,15 @@ def print_output(
     return lint_error_count + format_error_count
 
 
-def build_output(error: dict) -> int:
+def build_relative_path(url: str, project_root: Path) -> str:
+    """Get path relative to project."""
+    if project_root != url:
+        return str(Path(url).relative_to(project_root.resolve()))
+
+    return url
+
+
+def build_output(error: dict, config: Config) -> int:
     """Build output for file errors."""
     errors = sorted(
         list(error.values())[0], key=lambda x: tuple(map(int, x["line"].split(":")))
@@ -78,7 +85,7 @@ def build_output(error: dict) -> int:
         return 0
 
     echo(
-        f"{Fore.GREEN}{Style.BRIGHT}\n{list(error.keys())[0]}\n{Style.DIM}"
+        f"{Fore.GREEN}{Style.BRIGHT}\n{build_relative_path(list(error.keys())[0],config.project_root)}\n{Style.DIM}"
         + "".join(["─" for x in range(1, width)])
         + Style.RESET_ALL
     )
@@ -102,7 +109,7 @@ def build_output(error: dict) -> int:
     return len(errors)
 
 
-def build_check_output(errors: dict, quiet: bool) -> int:
+def build_check_output(errors: dict, config: Config) -> int:
     """Build output for reformat check."""
     if len(errors) == 0:
         return 0
@@ -110,21 +117,22 @@ def build_check_output(errors: dict, quiet: bool) -> int:
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
     width, _ = shutil.get_terminal_size()
 
-    if quiet is True and len(list(errors.values())[0]) > 0:
+    if config.quiet is True and len(list(errors.values())[0]) > 0:
         echo(
             Fore.GREEN
             + Style.BRIGHT
+            + build_relative_path(list(errors.keys())[0], config.project_root)
             + str(list(errors.keys())[0])
             + Style.DIM
             + Style.RESET_ALL
         )
 
-    elif quiet is False and len(list(errors.values())[0]) > 0:
+    elif config.quiet is False and len(list(errors.values())[0]) > 0:
         echo(
             Fore.GREEN
             + Style.BRIGHT
             + "\n"
-            + str(list(errors.keys())[0])
+            + build_relative_path(list(errors.keys())[0], config.project_root)
             + "\n"
             + Style.DIM
             + "".join(["─" for x in range(1, width)])

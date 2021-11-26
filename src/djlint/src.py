@@ -15,7 +15,7 @@ def get_src(src: List[Path], config: Config) -> List[Path]:
     for item in src:
         # normalize path
 
-        normalized_item = Path(item).resolve()
+        normalized_item = item.resolve()
 
         if (
             Path.is_file(normalized_item)
