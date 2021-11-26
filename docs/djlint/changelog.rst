@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.6.4
+-----
+- Bug fixes
+
 0.6.3
 -----
 - Added support for django `blocktrans` tag
