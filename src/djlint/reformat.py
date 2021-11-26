@@ -17,8 +17,8 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     """Reformat html file."""
     rawcode = this_file.read_text(encoding="utf8")
 
-    comporessed = compress_html(rawcode, config)
-    expanded = expand_html(comporessed, config)
+    compressed = compress_html(rawcode, config)
+    expanded = expand_html(compressed, config)
     condensed = condense_html(expanded, config)
     indented = indent_html(condensed, config)
 

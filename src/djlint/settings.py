@@ -410,6 +410,7 @@ class Config:
             | tbody
             | td
             | template
+            | textarea
             | tfoot
             | th
             | thead

@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_blocktranslate --cov=src/djlint \
+   pytest tests/test_django.py::test_attribute_include --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -355,7 +355,7 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<a class="asdf {% if favorite == "yes" %}favorite{% endif %} has-tooltip-arrow has-tooltip-right" data-tooltip="{% if favorite == "yes" %}Remove from Favorites {% else %}Add to Favorites{% endif %}" fav-type="report" object-id="{{ report.report_id }}"><span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span></a>""",
     )
     assert output["exit_code"] == 1
-    print(output["text"])
+
     assert (
         output["text"]
         == r"""<a class="asdf
@@ -441,6 +441,20 @@ def test_complex_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         tmp_file,
         runner,
         b"""<div class="bg-level{% if value >= 70 %}1{% elif value >= 60 %}2{% elif value >= 50 %}3{% else %}4{% endif %}>\n</div>""",
+    )
+    assert output["exit_code"] == 0
+
+    # check attributes that have short if inside a attribute tag
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{% block body %}
+    <form action="{% if gpg -%}asdf something pretty long. can't beat this length{%- endif %}"
+          method="POST">
+    </form>
+{% endblock body %}
+""",
     )
     assert output["exit_code"] == 0
 

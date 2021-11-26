@@ -20,7 +20,18 @@ def format_template_tags(config: Config, attributes: str) -> str:
         ).group()
 
     def add_indentation(config: Config, attributes: str) -> str:
-        """Indent template tags."""
+        """Indent template tags.
+
+        |    <form class="this"
+        |    ----- attribute name
+        |
+        |    <form class="this"
+        |---^ leading space
+        |
+        |    <form class="this"
+        |    ^----^ base indent
+        |
+        """
         attr_name = (
             list(
                 re.finditer(
@@ -47,24 +58,27 @@ def format_template_tags(config: Config, attributes: str) -> str:
         )[-1]
 
         base_indent = len(attr_name.group())
+
         indent = 0
         indented = ""
-        indent_adder = len(start_test.group()) - base_indent if start_test else 0
+        indent_adder = 0
+
+        # if the "start test" open is actually closed, then ignore the indent.
+        if not re.findall(
+            re.compile(r"[\"']$", re.M), attributes.splitlines()[0].strip()
+        ):
+            indent_adder = len(start_test.group()) - base_indent if start_test else 0
 
         for line_number, line in enumerate(attributes.splitlines()):
-
-            if re.search(re.compile(config.template_indent, re.I | re.X), line.strip()):
-                tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
-                indent = indent + 1
-
-            elif re.match(
+            # when checking for template tag, use "match" to force start of line check.
+            if re.match(
                 re.compile(config.template_unindent, re.I | re.X), line.strip()
             ):
+
                 indent = indent - 1
                 tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
 
                 # if we are leaving an indented group, then remove the indent_adder
-
             elif re.match(
                 re.compile(config.tag_unindent_line, re.I | re.X), line.strip()
             ):
@@ -73,6 +87,16 @@ def format_template_tags(config: Config, attributes: str) -> str:
                     + indent_adder * " "
                     + line.strip()
                 )
+
+            # for open tags, search, but then check that they are not closed.
+            elif re.search(
+                re.compile(config.template_indent, re.I | re.X), line.strip()
+            ) and not re.search(
+                re.compile(config.template_unindent, re.I | re.X), line.strip()
+            ):
+                tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
+                indent = indent + 1
+
             else:
                 tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
 
