@@ -1,4 +1,4 @@
-![djLint Logo](https://raw.githubusercontent.com/Riverside-Healthcare/djlint/master/docs/_static/icon.png)
+# ![djLint Logo](https://raw.githubusercontent.com/Riverside-Healthcare/djlint/master/docs/_static/icon.png)
 
 Find common formatting issues and *reformat* HTML templates.
 
