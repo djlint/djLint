@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_exclude --cov=src/djlint \
+   pytest tests/test_config.py::test_blank_lines_after_tag --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -150,6 +150,12 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     # something perfect should stay perfect :)
     result = runner.invoke(
         djlint, ["tests/config_blank_lines_after_tag/html_six.html", "--check"]
+    )
+    assert result.exit_code == 0
+
+    # make sure endblock doesn't pick up endblocktrans :)
+    result = runner.invoke(
+        djlint, ["tests/config_blank_lines_after_tag/html_seven.html", "--check"]
     )
     assert result.exit_code == 0
 

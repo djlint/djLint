@@ -66,7 +66,7 @@ def condense_html(html: str, config: Config) -> str:
         for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
             html = re.sub(
                 re.compile(
-                    fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+                    fr"((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)",
                     re.IGNORECASE | re.MULTILINE | re.DOTALL,
                 ),
                 func,
