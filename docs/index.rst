@@ -28,7 +28,7 @@ HTML Template Linter and Formatter
 
 Find common formatting issues and *reformat* HTML templates.
 
-*Django · Jinja · Nunjucks · Handlebars · Mustache · GoLang*
+*Django · Jinja · Nunjucks · Twig · Handlebars · Mustache · GoLang*
 
 Ps, ``--check`` it out on other templates as well!
 
