@@ -20,7 +20,7 @@ from .conftest import reformat
 
 def test_handlebars_else(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(tmp_file, runner, b"{{^}}")
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
 
 def test_each(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -29,10 +29,10 @@ def test_each(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""{{#each people}}{{print_person}} <p>and more long stuff</p>{{/each}}""",
     )
-    print(output["text"])
-    assert output["exit_code"] == 1
+    print(output.text)
+    assert output.exit_code == 1
     assert (
-        output["text"]
+        output.text
         == r"""{{#each people }}
     {{ print_person }}
     <p>
@@ -49,9 +49,9 @@ def test_with(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""{{#with person}}<p>{{firstname}} {{lastname}}</p>{{/with}}""",
     )
-    assert output["exit_code"] == 1
+    assert output.exit_code == 1
     assert (
-        output["text"]
+        output.text
         == r"""{{#with person }}
     <p>
         {{ firstname }} {{ lastname }}

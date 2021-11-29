@@ -1,6 +1,10 @@
 Changelog
 =========
 
+next release
+------------
+- Added config option ``format_attribute_template_tags`` as opt-in for template tag formatting inside of attributes
+
 0.6.6
 -----
 - Big fixes

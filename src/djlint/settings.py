@@ -180,6 +180,10 @@ class Config:
             build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
         )
 
+        self.format_attribute_template_tags = djlint_settings.get(
+            "format_attribute_template_tags", False
+        )
+
         # ignore is based on input and also profile
         self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
 

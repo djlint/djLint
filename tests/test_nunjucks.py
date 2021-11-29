@@ -49,9 +49,9 @@ def test_spaceless(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""{%- if entry.children.length -%}<strong>{%- endif -%}""",
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
     assert (
-        output["text"]
+        output.text
         == r"""{%- if entry.children.length -%}<strong>{%- endif -%}
 """
     )
@@ -61,9 +61,9 @@ def test_macro(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file, runner, b"{% macro 'cool' %}<div>some html</div>{% endmacro %}"
     )
-    assert output["exit_code"] == 1
+    assert output.exit_code == 1
     assert (
-        output["text"]
+        output.text
         == r"""{% macro 'cool' %}
     <div>some html</div>
 {% endmacro %}

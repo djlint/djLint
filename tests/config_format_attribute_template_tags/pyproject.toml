@@ -1,0 +1,3 @@
+[tool]
+[tool.djlint]
+format_attribute_template_tags=true

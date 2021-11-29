@@ -2,6 +2,7 @@
 import os
 import tempfile
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Generator, TextIO
 
 import pytest
@@ -32,7 +33,9 @@ def write_to_file(the_file: str, the_text: bytes) -> None:
         open_file.write(the_text)
 
 
-def reformat(the_file: TextIO, runner: CliRunner, the_text: bytes) -> dict:
+def reformat(the_file: TextIO, runner: CliRunner, the_text: bytes) -> SimpleNamespace:
     write_to_file(the_file.name, the_text)
     result = runner.invoke(djlint, [the_file.name, "--reformat"])
-    return {"text": Path(the_file.name).read_text(), "exit_code": result.exit_code}
+    return SimpleNamespace(
+        **{"text": Path(the_file.name).read_text(), "exit_code": result.exit_code}
+    )

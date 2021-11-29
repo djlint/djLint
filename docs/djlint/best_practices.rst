@@ -20,10 +20,10 @@ This pattern is not recommended:
     <div class="class1{% if condition -%} class2{%- endif %}">content</div>
                                         ^ space here
 
-Spaceless Conditional Attributes
---------------------------------
+``format_attribute_template_tags`` and Spaceless Conditional Attributes
+-----------------------------------------------------------------------
 
-Conditional attributes should use spaceless tags, for example ``{% if a -%}`` in nunjuck and jinja, to remove spaces inside the.
+If ``format_attribute_template_tags`` option is enabled, conditional attributes should use spaceless tags, for example ``{% if a -%}`` in nunjuck and jinja, or ``{% spaceless %}{% if a %}{% endspaceless %}`` in django, to remove spaces inside the.
 
 djLint will format long attributes onto multiple lines, and the whitespace saved inside of attributes could break your code.
 

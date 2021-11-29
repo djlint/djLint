@@ -160,3 +160,24 @@ Usage:
 .. code:: ini
 
    use_gitignore = True
+
+format_attribute_template_tags
+------------------------------
+
+Formatter will attempt to format template syntax inside of tag attributes. Disabled by default.
+
+Usage:
+
+.. code:: ini
+
+   format_attribute_template_tags=true
+
+For example, with this option enabled, the following html will be acceptable:
+
+.. code:: html
+
+   <input class="{% if this %}
+                     then something neat
+                 {% else %}
+                     that is long stuff asdf and more even
+                 {% endif %}"/>

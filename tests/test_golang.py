@@ -22,9 +22,9 @@ from .conftest import reformat
 
 def test_if(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(tmp_file, runner, b"{{ if .condition }} {{ else }} {{ end }}")
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
 
 def test_range(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(tmp_file, runner, b"{{ range .Items }} {{ end }}")
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0

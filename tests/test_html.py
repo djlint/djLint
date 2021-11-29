@@ -45,7 +45,7 @@ asdf
 """,
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
     # check attributes
     output = reformat(
@@ -61,7 +61,7 @@ asdf
     )
 
     assert (
-        output["text"]
+        output.text
         == """<div>
     <div class="field">
         <textarea class="this" name="that">asdf</textarea>
@@ -96,7 +96,7 @@ def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<script src="{% static 'common/js/foo.min.js' %}"></script>""",
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
     output = reformat(
         tmp_file,
@@ -111,7 +111,7 @@ def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 """,
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
 
 def test_html_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -142,10 +142,10 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
        required="true" />""",
     )
 
-    assert output["exit_code"] == 1
+    assert output.exit_code == 1
 
     assert (
-        output["text"]
+        output.text
         == """<input type="text"
        class="class one class two"
        disabled="true"
@@ -170,7 +170,7 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 """,
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
     # check styles when tag is first
     output = reformat(
@@ -187,7 +187,7 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 </div>
 """,
     )
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
 
 def test_small_tag(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -229,7 +229,7 @@ def test_hr_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 </div>
 """,
     )
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
     output = reformat(
         tmp_file,
@@ -242,7 +242,7 @@ def test_hr_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 """,
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
 
 def test_span_tag(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -324,10 +324,10 @@ def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     </div>""",
     )
 
-    assert output["exit_code"] == 1
-    print(output["text"])
+    assert output.exit_code == 1
+    print(output.text)
     assert (
-        output["text"]
+        output.text
         == """<div class="a long list of meaningless classes"
      id="somthing_meaning_less_is_here"
      required
@@ -365,10 +365,10 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
     """,
     )
 
-    assert output["exit_code"] == 1
+    assert output.exit_code == 1
 
     assert (
-        output["text"]
+        output.text
         == """<!-- <span> -->
 <div>
     <p>
@@ -401,10 +401,10 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
 """,
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
     assert (
-        output["text"]
+        output.text
         == """<!-- djlint:off -->
 <div><p><span></span></p></div>
 <!-- djlint:on -->
@@ -433,14 +433,14 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
 """,
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
     assert (
         """<script>
     <div><p><span></span></p></div>
 </script>
 """
-        in output["text"]
+        in output.text
     )
 
     # check inline script includes
@@ -456,8 +456,8 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
 </html>
 """,
     )
-    print(output["text"])
-    assert output["exit_code"] == 0
+    print(output.text)
+    assert output.exit_code == 0
 
 
 def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -473,7 +473,7 @@ def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 """,
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
     output = reformat(
         tmp_file,
@@ -486,7 +486,7 @@ def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 """,
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
     # check style includes
     output = reformat(
@@ -495,7 +495,7 @@ def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<link href="{% static 'common/js/foo.min.js' %}"/>""",
     )
 
-    assert output["exit_code"] == 0
+    assert output.exit_code == 0
 
 
 def test_self_closing_tags(runner: CliRunner, tmp_file: TextIO) -> None:

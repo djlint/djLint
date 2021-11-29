@@ -124,7 +124,9 @@ def format_template_tags(config: Config, attributes: str) -> str:
                     )
 
                 base_indent_space = base_indent * " "
-                indented += f"\n{leading_space}{base_indent_space}{tmp}"
+
+                if tmp.strip() != "":
+                    indented += f"\n{leading_space}{base_indent_space}{tmp}"
 
             end_text = re.findall(re.compile(r"[\"']$", re.M), line.strip())
 
@@ -260,7 +262,8 @@ def format_attributes(config: Config, match: re.match) -> str:
     attributes = f"{leading_space}{tag}{attributes}{close}"
 
     # format template tags
-    attributes = format_template_tags(config, attributes)
+    if config.format_attribute_template_tags:
+        attributes = format_template_tags(config, attributes)
 
     # format styles
     func = partial(format_style)
