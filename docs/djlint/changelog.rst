@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.6.6
+-----
+- Big fixes
+
 0.6.5
 -----
 - Updated output paths to be relative to the project root
