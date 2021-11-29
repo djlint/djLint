@@ -68,8 +68,9 @@ def print_output(
 
 def build_relative_path(url: str, project_root: Path) -> str:
     """Get path relative to project."""
-    if project_root != url:
-        return str(Path(url).relative_to(project_root.resolve()))
+    url_path = Path(url)
+    if project_root != url_path and project_root in url_path.parents:
+        return str(url_path.relative_to(project_root.resolve()))
 
     return url
 
@@ -85,7 +86,7 @@ def build_output(error: dict, config: Config) -> int:
         return 0
 
     echo(
-        f"{Fore.GREEN}{Style.BRIGHT}\n{build_relative_path(list(error.keys())[0],config.project_root)}\n{Style.DIM}"
+        f"{Fore.GREEN}{Style.BRIGHT}\n{build_relative_path(list(error.keys())[0],config.project_root.resolve())}\n{Style.DIM}"
         + "".join(["─" for x in range(1, width)])
         + Style.RESET_ALL
     )
@@ -121,7 +122,7 @@ def build_check_output(errors: dict, config: Config) -> int:
         echo(
             Fore.GREEN
             + Style.BRIGHT
-            + build_relative_path(list(errors.keys())[0], config.project_root)
+            + build_relative_path(list(errors.keys())[0], config.project_root.resolve())
             + str(list(errors.keys())[0])
             + Style.DIM
             + Style.RESET_ALL
@@ -132,7 +133,7 @@ def build_check_output(errors: dict, config: Config) -> int:
             Fore.GREEN
             + Style.BRIGHT
             + "\n"
-            + build_relative_path(list(errors.keys())[0], config.project_root)
+            + build_relative_path(list(errors.keys())[0], config.project_root.resolve())
             + "\n"
             + Style.DIM
             + "".join(["─" for x in range(1, width)])

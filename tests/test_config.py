@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_config.py::test_exclude --cov=src/djlint \
+   pytest tests/test_config.py::test_indent --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -50,7 +50,7 @@ def test_ignores(runner: CliRunner) -> None:
 
 def test_indent(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_indent", "--check"])
-
+    print(result.output)
     assert (
         """-<section><p><div><span></span></div></p></section>
 +<section>
