@@ -181,3 +181,22 @@ For example, with this option enabled, the following html will be acceptable:
                  {% else %}
                      that is long stuff asdf and more even
                  {% endif %}"/>
+
+
+linter_output_format
+--------------------
+
+Customize order of output message. Default="{code} {line} {message} {match}". If ``{filename}`` is not include in message, then the output will be grouped by file and a header will automatically be added to each group.
+
+Usage:
+
+.. code:: ini
+
+   # optional variables:
+   #   {filename}
+   #   {line}
+   #   {code}
+   #   {message}
+   #   {match}
+
+   linter_output_format="{filename}:{line}: {code} {message} {match}"

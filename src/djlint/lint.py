@@ -44,8 +44,8 @@ def get_line(start: int, line_ends: List) -> str:
 
 def lint_file(config: Config, this_file: Path) -> Dict:
     """Check file for formatting errors."""
-    file_name = str(this_file)
-    errors: dict = {file_name: []}
+    filename = str(this_file)
+    errors: dict = {filename: []}
     html = this_file.read_text(encoding="utf8")
 
     # build list of line ends for file
@@ -92,7 +92,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
 
                 for match in open_tags:
                     if inside_ignored_block(config, html, match) is False:
-                        errors[file_name].append(
+                        errors[filename].append(
                             {
                                 "code": rule["name"],
                                 "line": get_line(match.start(), line_ends),
@@ -109,7 +109,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     html,
                 ):
                     if inside_ignored_block(config, html, match) is False:
-                        errors[file_name].append(
+                        errors[filename].append(
                             {
                                 "code": rule["name"],
                                 "line": get_line(match.start(), line_ends),
@@ -119,10 +119,10 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                         )
 
     # remove duplicate matches
-    for file_name, error_dict in errors.items():
+    for filename, error_dict in errors.items():
         unique_errors = []
         for dict_ in error_dict:
             if dict_ not in unique_errors:
                 unique_errors.append(dict_)
-        errors[file_name] = unique_errors
+        errors[filename] = unique_errors
     return errors

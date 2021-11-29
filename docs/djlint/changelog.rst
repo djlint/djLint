@@ -4,6 +4,7 @@ Changelog
 next release
 ------------
 - Added config option ``format_attribute_template_tags`` as opt-in for template tag formatting inside of attributes
+- Added config option ``linter_output_format`` to customize linter message variable order
 
 0.6.6
 -----

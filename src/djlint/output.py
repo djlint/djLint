@@ -85,28 +85,37 @@ def build_output(error: dict, config: Config) -> int:
     if len(errors) == 0:
         return 0
 
-    echo(
-        f"{Fore.GREEN}{Style.BRIGHT}\n{build_relative_path(list(error.keys())[0],config.project_root.resolve())}\n{Style.DIM}"
-        + "".join(["─" for x in range(1, width)])
-        + Style.RESET_ALL
-    )
+    filename = build_relative_path(list(error.keys())[0], config.project_root.resolve())
 
-    for message in errors:
+    if "{filename}" not in config.linter_output_format:
         echo(
-            (Fore.RED if bool(message["code"][:1] == "E") else Fore.YELLOW)
-            + message["code"]
+            f"{Fore.GREEN}{Style.BRIGHT}\n{filename}\n{Style.DIM}"
+            + "".join(["─" for x in range(1, width)])
             + Style.RESET_ALL
-            + Fore.BLUE
-            + " "
-            + message["line"]
+        )
+
+    for message_dict in errors:
+
+        line = Fore.BLUE + message_dict["line"] + Style.RESET_ALL
+        code = (
+            (Fore.RED if bool(message_dict["code"][:1] == "E") else Fore.YELLOW)
+            + message_dict["code"]
             + Style.RESET_ALL
-            + " "
-            + message["message"]
-            + Fore.BLUE
-            + " "
-            + re.sub(r"\s{2,}", " ", message["match"]),
+        )
+        message = message_dict["message"]
+        match = (
+            Fore.BLUE
+            + re.sub(r"\s{2,}|\n", " ", message_dict["match"])
+            + Style.RESET_ALL
+        )
+
+        echo(
+            config.linter_output_format.format(
+                filename=filename, line=line, code=code, message=message, match=match
+            ),
             err=False,
         )
+
     return len(errors)
 
 

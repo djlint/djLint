@@ -180,7 +180,7 @@ class Config:
             build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
         )
 
-        self.format_attribute_template_tags = djlint_settings.get(
+        self.format_attribute_template_tags: bool = djlint_settings.get(
             "format_attribute_template_tags", False
         )
 
@@ -202,6 +202,10 @@ class Config:
         self.profile: str = str(
             profile or djlint_settings.get("profile", "all")
         ).lower()
+
+        self.linter_output_format: str = djlint_settings.get(
+            "linter_output_format", "{code} {line} {message} {match}"
+        )
 
         # load linter rules
         rule_set = validate_rules(
