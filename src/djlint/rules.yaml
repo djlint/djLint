@@ -216,3 +216,15 @@
     message: Consider using lowercase form method values.
     patterns:
     - <[fF][oO][rR][mM]\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}/])*([mM][eE][tT][hH][oO][dD])=(([\"'])[a-zA-Z]*?[A-Z][a-zA-Z]*?\3)
+- rule:
+    name: H030
+    message: Consider adding a meta description.
+    flags: re.DOTALL|re.I
+    patterns:
+    - <html[^>]*?>(?:(?!<meta[^>]*?name=([\"|'])description\b).)*</html>
+- rule:
+    name: H031
+    message: Consider adding meta keywords.
+    flags: re.DOTALL|re.I
+    patterns:
+    - <html[^>]*?>(?:(?!<meta[^>]*?name=([\"|'])keywords\b).)*</html>

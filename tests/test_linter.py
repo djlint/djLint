@@ -194,6 +194,10 @@ def test_H016(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "H016 1:" in result.output
 
+    write_to_file(tmp_file.name, b"<html>\n<title>stuff</title>\n</html>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H016" not in result.output
+
 
 def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<img this >")
@@ -539,6 +543,32 @@ def test_H029(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<a method="post">')
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H029" not in result.output
+
+
+def test_H030(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<html>\nstuff\n</html>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H030 1:" in result.output
+
+    write_to_file(
+        tmp_file.name, b'<html>\n<meta name="description" content="nice"/>\n</html>'
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H030" not in result.output
+
+
+def test_H031(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<html>\nstuff\n</html>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H031 1:" in result.output
+
+    write_to_file(
+        tmp_file.name, b'<html>\n<meta name="keywords" content="nice"/>\n</html>'
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H031" not in result.output
 
 
 def test_rules_not_matched_in_ignored_block(

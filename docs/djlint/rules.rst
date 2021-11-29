@@ -69,7 +69,10 @@ Codes
 +--------+-------------------------------------------------------------------------+
 | H029   | Consider using lowercase form method values.                            |
 +--------+-------------------------------------------------------------------------+
-
+| H030   | Consider adding a meta description.                                     |
++--------+-------------------------------------------------------------------------+
+| H031   | Consider adding meta keywords.                                          |
++--------+-------------------------------------------------------------------------+
 
 Adding Rules
 ------------
@@ -88,7 +91,7 @@ Code Patterns
 
 The first letter of a code follows the pattern:
 
-- T: applies to template language
+- T: applies generally to templates
 - H: applies to html
 - D: applies specifically to Django
 - J: applies specifically to Jinja
