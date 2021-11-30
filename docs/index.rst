@@ -15,6 +15,7 @@ HTML Template Linter and Formatter
    djlint/rules
    djlint/formatter
    djlint/configuration
+   djlint/integrations
    djlint/best_practices
    djlint/changelog
 
