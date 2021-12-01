@@ -102,7 +102,7 @@ def main(
     lint: bool,
     use_gitignore: bool,
 ) -> None:
-    """djLint · lint and reformat HTML templates."""
+    """djLint · HTML template linter and formatter."""
     config = Config(
         src[0],
         extension=extension,

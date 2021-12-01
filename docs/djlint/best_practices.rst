@@ -1,3 +1,9 @@
+.. meta::
+    :title lang=en: djLint » Best Practices
+    :description lang=en:
+        Best practices for using djLint to format HTML templates.
+    :keywords lang=en: template linter, template formatter, djLint, HTML, templates, formatter, linter, best practices
+
 Best Practices
 ==============
 

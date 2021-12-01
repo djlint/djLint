@@ -1,3 +1,10 @@
+.. meta::
+    :title lang=en: djLint » Integrations
+    :description lang=en:
+        Integrate djLint with your favorite editor. Auto format
+        your templates with Pre-Commit. Lint with SublimeText.
+    :keywords lang=en: template linter, template formatter, djLint, HTML, templates, formatter, linter, integrations
+
 Integrations
 ============
 
@@ -45,7 +52,7 @@ Default Django example
 
 
 Handlebars with .html extension instead of .hbs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: yaml
 

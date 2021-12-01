@@ -1,5 +1,12 @@
-Formatter
-=========
+.. meta::
+    :title lang=en: djLint » Formatter Usage
+    :description lang=en:
+        Format your HTML Templates with djLint. Fast, accurate, output
+        will make your templates shine.
+    :keywords lang=en: template linter, template formatter, djLint, HTML, templates, formatter, linter, formatter usage
+
+Formatter Usage
+===============
 
 djLint's formatter will take sloppy html templates and make it look pretty nice!
 

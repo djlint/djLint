@@ -1,5 +1,10 @@
-.. djlint documentation master file, created by
-   sphinx-quickstart on Tue Jul 27 15:28:35 2021.
+.. meta::
+    :title lang=en: djLint » HTML Template Linter and Formatter
+    :description lang=en:
+        djLint HTML template linter and formatter. Find common syntax errors,
+        reformat to make your HTML templates shine! Supports django, jinja,
+        nunjucks, twig, handlebars, mustache, golang, and more!
+    :keywords lang=en: template linter, template formatter, djLint, HTML, templates, formatter, linter
 
 HTML Template Linter and Formatter
 ==================================
@@ -11,21 +16,20 @@ HTML Template Linter and Formatter
    :titlesonly:
 
    Welcome<self>
-   djlint/usage
-   djlint/rules
+   djlint/getting_started
+   djlint/linter_rules
    djlint/formatter
    djlint/configuration
-   djlint/integrations
    djlint/best_practices
    djlint/changelog
-
+   djlint/integrations
 
 .. toctree::
    :hidden:
 
    GitHub ↪ <https://github.com/Riverside-Healthcare/djlint>
    PyPI ↪ <https://pypi.org/project/djlint/>
-   Discord ↪ <https://discord.gg/taghAqebzU>
+   Chat ↪ <https://discord.gg/taghAqebzU>
 
 Find common formatting issues and *reformat* HTML templates.
 

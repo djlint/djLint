@@ -1,3 +1,9 @@
+.. meta::
+    :title lang=en: djLint » Changelog
+    :description lang=en:
+        djLint Changelog.
+    :keywords lang=en: template linter, template formatter, djLint, HTML, templates, formatter, linter, changelog
+
 Changelog
 =========
 
