@@ -7,7 +7,7 @@ run::
 
 for a single test::
 
-    pytest tests/test_djlint.py::test_stdin --cov=src/djlint \
+    pytest tests/test_djlint.py::test_help --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 or::
@@ -33,7 +33,7 @@ from .conftest import write_to_file
 def test_help(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["-h"])
     assert result.exit_code == 0
-    assert "djLint · lint and reformat HTML templates." in result.output
+    assert "djLint · HTML template linter and formatter." in result.output
 
 
 def test_bad_args(runner: CliRunner) -> None:
