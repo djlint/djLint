@@ -16,13 +16,13 @@ HTML Template Linter and Formatter
    :titlesonly:
 
    Welcome<self>
-   djlint/getting_started
-   djlint/linter_rules
-   djlint/formatter
-   djlint/configuration
-   djlint/best_practices
-   djlint/changelog
-   djlint/integrations
+   docs/getting_started
+   docs/linter_rules
+   docs/formatter
+   docs/configuration
+   docs/best_practices
+   docs/changelog
+   docs/integrations
 
 .. toctree::
    :hidden:

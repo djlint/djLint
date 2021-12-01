@@ -1,0 +1,3 @@
+User-agent: *
+
+Sitemap: https://djlint.com/sitemap.xml

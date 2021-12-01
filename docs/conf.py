@@ -17,7 +17,7 @@ version = release
 
 # -- General configuration ---------------------------------------------------
 
-extensions = ["myst_parser", "sphinx_copybutton"]
+extensions = ["myst_parser", "sphinx_copybutton", "sphinx_sitemap"]
 
 templates_path = ["_templates"]
 
@@ -53,3 +53,8 @@ html_static_path = ["_static"]
 source_suffix = [".rst", ".md"]
 
 pygments_style = "sphinx"
+
+# -- Sitemap -------------------------------------------------------------------
+html_baseurl = "https://djlint.com/"
+html_extra_path = ["robots.txt"]
+sitemap_url_scheme = "{link}"
