@@ -132,7 +132,6 @@ def build_check_output(errors: dict, config: Config) -> int:
             Fore.GREEN
             + Style.BRIGHT
             + build_relative_path(list(errors.keys())[0], config.project_root.resolve())
-            + str(list(errors.keys())[0])
             + Style.DIM
             + Style.RESET_ALL
         )

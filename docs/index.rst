@@ -32,7 +32,7 @@ HTML Template Linter and Formatter
    PyPI ↪ <https://pypi.org/project/djlint/>
    Chat ↪ <https://discord.gg/taghAqebzU>
 
-Find common formatting issues and *reformat* HTML templates.
+Lint for common HTML/template issues and *format* HTML templates.
 
 *Django · Jinja · Nunjucks · Twig · Handlebars · Mustache · GoLang*
 
