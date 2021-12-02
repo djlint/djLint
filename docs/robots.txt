@@ -1,3 +1,8 @@
 User-agent: *
 
 Sitemap: https://djlint.com/sitemap.xml
+
+Disallow: /_sources/
+Disallow: /objects.inv
+Disallow: /.buildinfo
+Disallow: /.doctrees/

@@ -26,6 +26,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = "alabaster"
+html_title = "djLint » "
+html_favicon = "_static/favicon.ico"
 
 html_sidebars = {
     "**": [
@@ -46,6 +48,7 @@ html_theme_options = {
     "show_powered_by": False,
     "fixed_sidebar": True,
     "logo": "icon.png",
+    "canonical_url": "https://djlint.com",
 }
 
 html_static_path = ["_static"]
@@ -55,6 +58,7 @@ source_suffix = [".rst", ".md"]
 pygments_style = "sphinx"
 
 # -- Sitemap -------------------------------------------------------------------
+
 html_baseurl = "https://djlint.com/"
 html_extra_path = ["robots.txt"]
 sitemap_url_scheme = "{link}"
