@@ -4,5 +4,5 @@
 {%- endblock %}
 
 {%- if pageurl %}
- {% set pageurl = pageurl| replace("/index.html","") %}
+ {% set pageurl = pageurl| replace("index.html","")| replace(".html","/") %}
 {%- endif %}

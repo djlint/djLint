@@ -19,7 +19,7 @@ Installation from `Pypi <https://pypi.org/project/djlint/>`__
 CLI Usage
 ---------
 
-djLint is a command line application. See `configuration </djlint/configuration.html>`_ for advanced configuration.
+djLint is a command line application. See `configuration </docs/configuration>`_ for advanced configuration.
 
 .. code:: sh
 
