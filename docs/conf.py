@@ -28,6 +28,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "alabaster"
 html_title = "djLint » "
 html_favicon = "_static/favicon.ico"
+language = "en"
 
 html_sidebars = {
     "**": [
@@ -48,7 +49,6 @@ html_theme_options = {
     "show_powered_by": False,
     "fixed_sidebar": True,
     "logo": "icon.png",
-    "canonical_url": "https://djlint.com",
 }
 
 html_static_path = ["_static"]

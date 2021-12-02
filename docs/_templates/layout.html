@@ -2,3 +2,7 @@
 {%- block htmltitle %}
     <title>{{ docstitle|e }}{{ title|striptags|e }}</title>
 {%- endblock %}
+
+{%- if pageurl %}
+ {% set pageurl = pageurl| replace("index.html","") %}
+{%- endif %}
