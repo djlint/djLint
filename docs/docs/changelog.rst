@@ -1,7 +1,9 @@
+:description: djLint Changelog. Find updates from recent releases and what feature you can expect on your next upgrade.
+
 .. meta::
     :title lang=en: djLint » Changelog
     :description lang=en:
-        djLint Changelog.
+        djLint Changelog. Find updates from recent releases and what feature you can expect on your next upgrade.
     :keywords lang=en: template linter, template formatter, djLint, HTML, templates, formatter, linter, changelog
 
 Changelog

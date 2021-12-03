@@ -1,3 +1,5 @@
+:description: djLint HTML Template linter includes over 30 rules! Find the definitions here. Easily expand with include custom rules!
+
 .. meta::
     :title lang=en: djLint » Linter Rules
     :description lang=en:

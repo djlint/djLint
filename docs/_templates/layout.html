@@ -3,6 +3,53 @@
     <title>{{ docstitle|e }}{{ title|striptags|e }}</title>
 {%- endblock %}
 
+
 {%- if pageurl %}
  {% set pageurl = pageurl| replace("index.html","")| replace(".html","/") %}
 {%- endif %}
+
+
+{%- block extrahead %}
+    {{ super() }}
+    {%- if meta is mapping and meta.get("description") %}
+        {% set description = meta.get("description") %}
+    {% else %}
+        {% set description = "djLint HTML template linter and formatter. Find common syntax errors, reformat to make your HTML templates shine! Supports django, jinja, nunjucks, twig, handlebars, mustache, golang, and more!" %}
+    {%- endif %}
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://djlint.com#website",
+      "url": "https://djlint.com",
+      "name": "djLint HTML template linter and formatter",
+      "description": "djLint HTML template linter and formatter. Find common syntax errors, reformat to make your HTML templates shine! Supports django, jinja, nunjucks, twig, handlebars, mustache, golang, and more!",
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "WebPage",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://djlint.com/"
+      },
+      "url": "{{ pageurl }}",
+      "isPartOf": {
+        "@id": "https://djlint.com#website"
+      },
+      "headline": "{{ docstitle|e }}{{ title|striptags|e }}",
+      "description": "{{ description }}",
+      "inLanguage": "en-US",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Riverside Healthcare",
+        "url": "https://github.com/Riverside-Healthcare",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://djlint.com/_static/icon.png"
+        }
+      }
+    }
+  ]
+}</script>
+{% endblock %}

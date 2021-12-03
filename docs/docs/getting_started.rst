@@ -1,3 +1,5 @@
+:description: Getting started with djLint for HTML Template Linting and Formatting. Take advantage of the easy cli interface and many formatter options.
+
 .. meta::
     :title lang=en: djLint » Getting Started
     :description lang=en:

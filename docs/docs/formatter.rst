@@ -1,3 +1,5 @@
+:description: Format your HTML Templates with djLint. Fast, accurate, output will make your templates shine.
+
 .. meta::
     :title lang=en: djLint » Formatter Usage
     :description lang=en:

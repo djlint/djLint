@@ -1,3 +1,5 @@
+:description: Best practices for using djLint to format HTML templates.
+
 .. meta::
     :title lang=en: djLint » Best Practices
     :description lang=en:
