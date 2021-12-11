@@ -101,6 +101,7 @@ Set a default profile for the template language. The profile will disable linter
 
 Options:
 
+- html
 - django
 - jinja
 - nunjucks

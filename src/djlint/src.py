@@ -72,6 +72,7 @@ def no_pragma(config: Config, this_file: Path) -> bool:
         first_line = open_file.readline()
 
         pragma_patterns = {
+            "html": html_patterns,
             "django": django_jinja_patterns + html_patterns,
             "jinja": django_jinja_patterns + html_patterns,
             "nunjucks": nunjucks_patterns + html_patterns,
