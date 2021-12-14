@@ -195,6 +195,7 @@ class Config:
             "nunjucks": ["D", "J", "M"],
             "handlebars": ["D", "J", "N"],
             "golang": ["D", "J", "N", "M"],
+            "angular": ["D", "J", "H012", "H026", "H028"],
         }
 
         self.profile_code: List[str] = profile_dict.get(
@@ -220,7 +221,9 @@ class Config:
         self.linter_rules = list(
             filter(
                 lambda x: x["rule"]["name"] not in self.ignore.split(",")
-                and x["rule"]["name"][0] not in self.profile_code
+                and not any(
+                    x["rule"]["name"].startswith(code) for code in self.profile_code
+                )
                 and self.profile not in x["rule"].get("exclude", []),
                 rule_set,
             )

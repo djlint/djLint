@@ -107,6 +107,7 @@ Options:
 - nunjucks
 - handlebars (for handlebars and mustache)
 - golang
+- angular
 
 Usage:
 

@@ -78,6 +78,7 @@ def no_pragma(config: Config, this_file: Path) -> bool:
             "nunjucks": nunjucks_patterns + html_patterns,
             "handlebars": handlebars_patterns + html_patterns,
             "golang": golang_patterns + html_patterns,
+            "angular": html_patterns,
             "all": django_jinja_patterns
             + nunjucks_patterns
             + handlebars_patterns
