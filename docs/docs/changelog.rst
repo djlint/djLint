@@ -9,6 +9,12 @@
 Changelog
 =========
 
+0.6.9
+-----
+- Added HTML and Angular profiles
+- Allowed some entities in rule #H023
+- Bug fixes
+
 0.6.8
 -----
 - Bug fixes
