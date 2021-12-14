@@ -21,7 +21,17 @@ extensions = ["myst_parser", "sphinx_copybutton", "sphinx_sitemap"]
 
 templates_path = ["_templates"]
 
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "_assets",
+    "node_modules",
+    "gulpfile.js",
+    "package.json",
+    "package-lock.json",
+    "requirements.txt",
+]
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -56,6 +66,10 @@ html_static_path = ["_static"]
 source_suffix = [".rst", ".md"]
 
 pygments_style = "sphinx"
+
+html_css_files = [
+    "css/style.css",
+]
 
 # -- Sitemap -------------------------------------------------------------------
 
