@@ -172,7 +172,7 @@
     message: Do not use entity references.
     flags: re.I
     patterns:
-    - '&.{5};'
+    - '&(?!(lt|gt|amp|quot|nbsp|ensp|emsp|thinsp))[#0-9a-z]{,30};'
 - rule:
     name: H024
     message: Omit type on scripts and styles.
