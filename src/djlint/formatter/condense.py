@@ -89,7 +89,7 @@ def condense_html(html: str, config: Config) -> str:
     # put short template tags back on one line
     html = re.sub(
         re.compile(
-            rf"({{%-?[ ]*?({config.optional_single_line_template_tags})[^\n(?:%}})]*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
+            rf"({{%-?[ ]*?({config.optional_single_line_template_tags})[^\n(?:%}})]*?%}})\s*?([ ]*?[^%\n]*?[ ]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         func,

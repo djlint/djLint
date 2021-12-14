@@ -142,6 +142,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif is_block_raw is False:
             # get leading space, and attributes
             func = partial(format_attributes, config)
+
             tmp = re.sub(
                 re.compile(
                     fr"(\s*?)(<(?:{config.indent_html_tags})\b)((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])+?)(/?>)",

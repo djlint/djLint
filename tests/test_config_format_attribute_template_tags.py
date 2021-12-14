@@ -44,6 +44,14 @@ def test_without_config(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
+        b'<a href="#"\n   class="list-group-item{% if not is_allowed %} disabled{% endif %}">foo</a>\n',
+    )
+
+    assert output.exit_code == 0
+
+    output = reformat(
+        tmp_file,
+        runner,
         b"""<img data-src="{% if report.imgs.exists %}{{ report.imgs.first.get_absolute_url|size:"96x96"}}{% else %}{% static '/img/report_thumb_placeholder_400x300.png' %}{% endif %}" src="{% static '/img/loader.gif' %}" alt="report image"/>""",
     )
     assert output.exit_code == 1
