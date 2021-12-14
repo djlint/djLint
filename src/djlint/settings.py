@@ -189,6 +189,7 @@ class Config:
 
         # codes to exclude
         profile_dict: Dict[str, List[str]] = {
+            "html": ["D", "J", "T", "N", "M"],
             "django": ["J", "N", "M"],
             "jinja": ["D", "N", "M"],
             "nunjucks": ["D", "J", "M"],

@@ -1,3 +1,8 @@
+exclude: >
+  (?x)(
+      docs/|
+      node_modules/
+  )
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.0.1

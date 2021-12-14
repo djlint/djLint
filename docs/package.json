@@ -1,0 +1,39 @@
+{
+  "name": "djlint",
+  "version": "0.6.8",
+  "description": "djlint HTML Template Linter and Formatter",
+  "main": " ",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Riverside-Healthcare/djLint.git"
+  },
+  "keywords": [
+    "djlint",
+    "html",
+    "formatter",
+    "linter"
+  ],
+  "author": "Christopher Pickering",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Riverside-Healthcare/djLint/issues"
+  },
+  "homepage": "https://github.com/Riverside-Healthcare/djLint#readme",
+  "dependencies": {
+    "autoprefixer": "^10.4.0",
+    "bulma": "^0.9.3",
+    "cssnano": "^5.0.12",
+    "gulp": "^4.0.2",
+    "gulp-postcss": "^9.0.1",
+    "gulp-purgecss": "^4.1.3",
+    "gulp-sass": "^5.0.0",
+    "postcss-sort-media-queries": "^4.2.1",
+    "sass": "^1.44.0"
+  }
+}

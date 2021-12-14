@@ -1,5 +1,7 @@
 {% extends "!layout.html" %}
+
 {%- block htmltitle %}
+    <meta {{pageurl}} >
     <title>{{ docstitle|e }}{{ title|striptags|e }}</title>
 {%- endblock %}
 
@@ -10,6 +12,7 @@
 
 
 {%- block extrahead %}
+<meta {{pageurl}} >
     {{ super() }}
     {%- if meta is mapping and meta.get("description") %}
         {% set description = meta.get("description") %}
