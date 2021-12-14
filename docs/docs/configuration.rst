@@ -1,7 +1,7 @@
 :description: djLint configuration for HTML Template Linting and Formatting. Take advantage of the many formatter options.
 
 .. meta::
-    :title lang=en: djLint » Configuration
+    :title lang=en: Configuration | djLint
     :description lang=en: djLint configuration for HTML Template Linting and Formatting. Take advantage of the many formatter options.
     :keywords lang=en: template linter, template formatter, djLint, HTML, templates, formatter, linter, configuration
 

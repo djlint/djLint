@@ -1,7 +1,7 @@
 :description: Integrate djLint with your favorite editor. Auto format your templates with Pre-Commit. Lint with SublimeText.
 
 .. meta::
-    :title lang=en: djLint » Integrations
+    :title lang=en: Integrations | djLint
     :description lang=en:
         Integrate djLint with your favorite editor. Auto format
         your templates with Pre-Commit. Lint with SublimeText.

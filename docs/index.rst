@@ -1,9 +1,8 @@
 .. meta::
-    :title lang=en: djLint » HTML Template Linter and Formatter
+    :title lang=en: djLint | HTML Template Linter and Formatter
     :description lang=en:
-        djLint HTML template linter and formatter. Find common syntax errors,
-        reformat to make your HTML templates shine! Supports django, jinja,
-        nunjucks, twig, handlebars, mustache, golang, and more!
+        Find common syntax errors, reformat to make your HTML templates shine!
+        Supports django, jinja, nunjucks, twig, handlebars, mustache, golang, and more!
     :keywords lang=en: template linter, template formatter, djLint, HTML, templates, formatter, linter
 
 
