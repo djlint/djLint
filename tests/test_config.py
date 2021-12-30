@@ -33,6 +33,21 @@ def test_custom_tags(runner: CliRunner) -> None:
     )
     assert result.exit_code == 1
 
+def test_custom_html(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ["tests/config_custom_html/html.html", "--check"])
+
+    assert (
+        """-<mjml><mj-body>this is a email text</mj-body></mjml>
++<mjml>
++    <mj-body>
++        this is a email text
++    </mj-body>
++</mjml>
+"""
+        in result.output
+    )
+    assert result.exit_code == 1
+
 
 def test_extension(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/config_extension", "--check"])
