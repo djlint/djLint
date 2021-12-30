@@ -136,6 +136,11 @@ def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
         return "|" + "|".join(x.strip() for x in custom_blocks.split(","))
     return None
 
+def build_custom_html(custom_html: Union[str, None]) -> Optional[str]:
+    """Build regex string for custom HTML blocks."""
+    if custom_html:
+        return "|" + "|".join(x.strip() for x in custom_html.split(","))
+    return None
 
 class Config:
     """Djlint Config."""
@@ -176,8 +181,13 @@ class Config:
             require_pragma
             or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
         )
+
         self.custom_blocks: str = str(
             build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
+        )
+        
+        self.custom_html: str = str(
+            build_custom_html(djlint_settings.get("custom_html")) or ""
         )
 
         self.format_attribute_template_tags: bool = djlint_settings.get(
@@ -312,131 +322,133 @@ class Config:
         """
 
         # all html tags possible
-        self.indent_html_tags: str = r"""
-              a
-            | abbr
-            | acronym
-            | address
-            | applet
-            | area
-            | article
-            | aside
-            | audio
-            | b
-            | base
-            | basefont
-            | bdi
-            | bdo
-            | big
-            | blockquote
-            | body
-            | br
-            | button
-            | canvas
-            | caption
-            | center
-            | cite
-            | code
-            | col
-            | colgroup
-            | data
-            | datalist
-            | dd
-            | del
-            | details
-            | dfn
-            | dialog
-            | dir
-            | div
-            | dl
-            | dt
-            | em
-            | embed
-            | fieldset
-            | figcaption
-            | figure
-            | font
-            | footer
-            | form
-            | frame
-            | frameset
-            | h1
-            | h2
-            | h3
-            | h4
-            | h5
-            | h6
-            | head
-            | header
-            | hr
-            | html
-            | i
-            | iframe
-            | icon
-            | img
-            | input
-            | ins
-            | kbd
-            | label
-            | legend
-            | li
-            | link
-            | main
-            | map
-            | mark
-            | meta
-            | meter
-            | nav
-            | noframes
-            | noscript
-            | object
-            | ol
-            | optgroup
-            | option
-            | output
-            | p
-            | path
-            | param
-            | picture
-            | progress
-            | q
-            | rp
-            | rt
-            | ruby
-            | s
-            | samp
-            | script
-            | section
-            | select
-            | small
-            | source
-            | span
-            | strike
-            | strong
-            | style
-            | sub
-            | summary
-            | sup
-            | svg
-            | table
-            | tbody
-            | td
-            | template
-            | textarea
-            | tfoot
-            | th
-            | thead
-            | time
-            | title
-            | tr
-            | track
-            | tt
-            | u
-            | ul
-            | var
-            | video
-            | wbr
-        """
+        self.indent_html_tags: str = (
+            r""" a
+                | abbr
+                | acronym
+                | address
+                | applet
+                | area
+                | article
+                | aside
+                | audio
+                | b
+                | base
+                | basefont
+                | bdi
+                | bdo
+                | big
+                | blockquote
+                | body
+                | br
+                | button
+                | canvas
+                | caption
+                | center
+                | cite
+                | code
+                | col
+                | colgroup
+                | data
+                | datalist
+                | dd
+                | del
+                | details
+                | dfn
+                | dialog
+                | dir
+                | div
+                | dl
+                | dt
+                | em
+                | embed
+                | fieldset
+                | figcaption
+                | figure
+                | font
+                | footer
+                | form
+                | frame
+                | frameset
+                | h1
+                | h2
+                | h3
+                | h4
+                | h5
+                | h6
+                | head
+                | header
+                | hr
+                | html
+                | i
+                | iframe
+                | icon
+                | img
+                | input
+                | ins
+                | kbd
+                | label
+                | legend
+                | li
+                | link
+                | main
+                | map
+                | mark
+                | meta
+                | meter
+                | nav
+                | noframes
+                | noscript
+                | object
+                | ol
+                | optgroup
+                | option
+                | output
+                | p
+                | path
+                | param
+                | picture
+                | progress
+                | q
+                | rp
+                | rt
+                | ruby
+                | s
+                | samp
+                | script
+                | section
+                | select
+                | small
+                | source
+                | span
+                | strike
+                | strong
+                | style
+                | sub
+                | summary
+                | sup
+                | svg
+                | table
+                | tbody
+                | td
+                | template
+                | textarea
+                | tfoot
+                | th
+                | thead
+                | time
+                | title
+                | tr
+                | track
+                | tt
+                | u
+                | ul
+                | var
+                | video
+                | wbr
+            """ 
+            + self.custom_html
+        )
 
         self.indent_template_tags: str = (
             r"""  if
