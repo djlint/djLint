@@ -185,7 +185,7 @@ class Config:
         self.custom_blocks: str = str(
             build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
         )
-        
+
         self.custom_html: str = str(
             build_custom_html(djlint_settings.get("custom_html")) or ""
         )
