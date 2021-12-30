@@ -446,7 +446,7 @@ class Config:
                 | var
                 | video
                 | wbr
-            """ 
+            """
             + self.custom_html
         )
 
