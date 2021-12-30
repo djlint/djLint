@@ -136,11 +136,13 @@ def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
         return "|" + "|".join(x.strip() for x in custom_blocks.split(","))
     return None
 
+
 def build_custom_html(custom_html: Union[str, None]) -> Optional[str]:
     """Build regex string for custom HTML blocks."""
     if custom_html:
         return "|" + "|".join(x.strip() for x in custom_html.split(","))
     return None
+
 
 class Config:
     """Djlint Config."""
@@ -185,7 +187,7 @@ class Config:
         self.custom_blocks: str = str(
             build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
         )
-        
+
         self.custom_html: str = str(
             build_custom_html(djlint_settings.get("custom_html")) or ""
         )
@@ -446,7 +448,7 @@ class Config:
                 | var
                 | video
                 | wbr
-            """ 
+            """
             + self.custom_html
         )
 
