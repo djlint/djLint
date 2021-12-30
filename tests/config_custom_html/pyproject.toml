@@ -1,0 +1,3 @@
+[tool]
+[tool.djlint]
+custom_html = "mjml,mj-body"
