@@ -474,6 +474,16 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output
 
+    # fix issue #164
+    write_to_file(
+        tmp_file.name,
+        b"""<th {{ attrs }}>
+    <a href="{% url %}">{{ content }}</a>
+</th>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H025" not in result.output
+
 
 def test_H026(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<asdf id="" >')
