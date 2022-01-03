@@ -777,6 +777,7 @@ class Config:
             | summary
             | """
             + self.always_self_closing_html_tags
+            + self.custom_html
             + """
         """
         )
