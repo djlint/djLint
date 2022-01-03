@@ -6,11 +6,6 @@
   "scripts": {
     "start": "eleventy --serve --watch",
     "install": "ELEVENTY_PRODUCTION=true eleventy",
-    "prepare": "husky install",
-    "test": "npm run test:eslint && npm run test:prettier",
-    "test:eslint": "eslint \"./**/*.js\" --color",
-    "test:prettier": "prettier --check ./**/*.js",
-    "format": "prettier --config .prettierrc \"src/**/*.{ts,css,less,scss,js}\" --write",
     "updateSearch": "node ./src/search/update-algolia-index.js"
   },
   "keywords": [],
