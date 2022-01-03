@@ -1,0 +1,165 @@
+---
+layout: layout.njk
+date: Last Modified
+
+---
+{% block body %}
+<div class="section">
+     <div class="container has-text-centered">
+                 <h1 class="title huge mt-5">dj<span class="has-text-weight-light">&#8201;Lint</span></h1>
+
+                 <h2 class="title is-2">
+                     Lint & Format HTML Templates</h2>
+
+<h2 class="title is-2 has-text-centered"></h2>
+<p class="subtitle has-text-centered mb-5">find your favorite template language!
+<div class="columns is-multiline">
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="/docs/languages/django/">
+         <div class="card-content" >
+            <div class="content">
+            <figure class="image brand">
+                        {% image "./src/static/img/logos/django.png", "django logo", "(min-width:300px) 50vw, 100vw" %}
+                    </figure>
+                     <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">Django</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="/docs/languages/jinja/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+                        {% image "./src/static/img/logos/jinja.png", "jinja logo", "(min-width:300px) 50vw, 100vw" %}
+                    </figure>
+                    <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">jinja</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="/docs/languages/nunjucks/">
+         <div class="card-content">
+            <div class="content">
+            <figure class="image brand">
+            {% image "./src/static/img/logos/nunjucks.png", "nunjucks logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">nunjucks</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="/docs/languages/twig/">
+         <div class="card-content">
+            <div class="content">
+            <figure class="image brand">
+            {% image "./src/static/img/logos/twig.png", "twig logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">twig</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="/docs/languages/handlebars/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+            {% image "./src/static/img/logos/handlebars.png", "handlebars logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">handlebars</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="/docs/languages/mustache/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+            {% image "./src/static/img/logos/mustache.png", "mustache logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">mustache</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="/docs/languages/golang/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+            {% image "./src/static/img/logos/golang.png", "golang logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">golang</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="/docs/languages/angular/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+            {% image "./src/static/img/logos/angular.png", "angular logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">angular</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+</div>
+                  </div>
+ </div>
+
+<div class="container has-text-centered">
+<h2 class="title is-2">Watch it run!</h2>
+
+    <figure class="image animated is-radius fadeInUp mx-auto" style="max-width:800px">
+                     <img src="/static/img/demo.gif" alt="djlint html template formater demo">
+                 </figure>
+
+<h2 class="title is-2 mt-5">Show your format!</h2>
+</div>
+<div class="container">
+
+
+Add a badge to your projects <code>readme.md</code>:
+
+{% highlight "md" %}
+[![Code style: djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
+{% endhighlight %}
+
+Add a badge to your <code>readme.rst</code>:
+
+{% highlight "md" %}
+
+   .. image:: https://img.shields.io/badge/html%20style-djLint-blue.svg
+      :target: https://github.com/Riverside-Healthcare/djlint
+{% endhighlight %}
+
+Looks like this:
+
+<figure class="image" style="max-width:100px;"><img src="https://img.shields.io/badge/html%20style-djLint-blue.svg" alt="https://github.com/Riverside-Healthcare/djlint" /></figure>
+
+</div>
+<div class="container has-text-centered mb-5">
+<h2 class="title is-2 mt-5">Contributing</h2>
+<p class="has-text-left">
+Contributions are welcome. Send a pr with a new feature, or checkout the <a href="https://github.com/Riverside-Healthcare/djlint/issues">issue</a> list and help where you can.</p>
+</div>
+</div>
+
+
+
+{% endblock body %}

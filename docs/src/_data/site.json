@@ -1,0 +1,8 @@
+{
+  "description": "Find common syntax errors, reformat to make your HTML templates shine! Supports django, jinja, nunjucks, twig, handlebars, mustache, golang, and more!",
+  "image": "/static/img/icon.png",
+  "keywords": "djLint, template linting, template formatting, html template linting, django template, nunjucks template, jinja template",
+  "title": "HTML Template Linter and Formatter",
+  "name": "djLint",
+  "url": "https://www.djlint.com"
+}

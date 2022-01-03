@@ -2,6 +2,8 @@ badtest.html
 node_modules
 source_django
 report.xml
+_site
+
 # Created by https://www.toptal.com/developers/gitignore/api/macos,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,python
 
@@ -175,3 +177,5 @@ dmypy.json
 cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,python
+!docs/lib
+!docs_new/lib

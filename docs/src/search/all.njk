@@ -1,0 +1,19 @@
+---
+permalink: search/all.json
+eleventyExcludeFromCollections: true
+---
+{%- set posts = collections.algolia -%}
+[
+{%- for post in posts -%}
+    {
+    "title": "{{ post.data.title | default(" ") }}",
+    "date": "{{ page.date }}",
+    "url": "{{ post.url }}",
+    "content": {{ post.templateContent | algExcerpt | jsonify | safe }},
+    "_tags": [{%- for tag in post.data.tags -%}"{{ tag }}"{%- if not loop.last -%},{% endif %}
+{% endfor %}
+]
+}
+{% if not loop.last %},{% endif %}
+{% endfor %}
+]

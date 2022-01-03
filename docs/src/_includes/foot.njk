@@ -1,0 +1,20 @@
+<footer class="footer">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-one-third">
+                <figure class="image" style="max-width: 100px;">
+                    {% image "./src/static/img/icon.png", "djlint icon", "(min-width:100px) 50vw, 100vw" %}
+                </figure>
+                <p class="my-4">
+                    {{ site.description }}
+                </p>
+            </div>
+            <div class="column"></div>
+            <div class="column">
+                <p class="copyright has-text-grey">
+                    djLint © 2021 Riverside Healthcare <br><br> Updated {{ page.date | niceDate }}
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" class="has-navbar-fixed-top">
+    <head>
+        {% block meta %}
+            {% metagen
+            title=(title or site.description) + " | " + site.name,
+            desc=desc or description or site.description,
+            url=site.url + page.url,
+            img=image or site.url + site.image,
+            img_alt=alt or "djlint logo",
+            twitter_card_type=type,
+            twitter_handle=twitter,
+            name="Riverside Healthcare / Christopher Pickering"
+            %}
+        {% endblock meta %}
+        <meta name="keywords"
+              content="{{ page.keywords or keywords or site.keywords }}"/>
+        <meta name="revised" content="{{ page.date.toISOString() }}" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="article:author" content="Riverside Healthcare / Christopher Pickering" />
+        <meta name="robots" content="index,follow" />
+        <meta name="googlebot" content="index,follow" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
+        <link rel="apple-touch-icon"
+              sizes="192x192"
+              href="/static/img/logo-192x192.png"/>
+        <link rel="apple-touch-icon"
+              sizes="512x512"
+              href="/static/img/logo-512x512.png"/>
+        <meta content="yes" name="apple-mobile-web-app-capable">
+        <meta name="apple-mobile-web-app-status-bar-style"
+              content="black-translucent">
+        <!-- critical css is inlined, so we can async the rest -->
+        <link rel="preload"
+              href="{{ css.stylesCss }}"
+              as="style"
+              onload="this.rel='stylesheet'"/>
+        <link rel="preload"
+              href="/static/font/inter/files/inter-latin-400-normal.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        <link rel="preload"
+              href="/static/font/inter/files/inter-latin-600-normal.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        <link rel="preload"
+              href="/static/font/inter/files/inter-latin-700-normal.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        <link rel="preload"
+              href="/static/font/rasa/files/rasa-latin-500-normal.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        <link rel="preload"
+              href="/static/font/rasa/files/rasa-latin-600-normal.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        <link rel="preload"
+              href="/static/font/rasa/files/rasa-latin-700-normal.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        <link rel="preload"
+              href="/static/font/fontawesome/webfonts/fa-brands-400.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        <link rel="preload"
+              href="/static/font/fontawesome/webfonts/fa-regular-400.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        <link rel="preload"
+              href="/static/font/fontawesome/webfonts/fa-solid-900.woff2"
+              as="font"
+              type="font/woff2"
+              crossorigin/>
+        {% jsonLdScript meta, type, tags %}
+    </head>
+    <body>
+        {% include "src/_includes/nav.njk" %}
+        <section class="is-flex-grow-1 main">
+            {% block body %}
+                {{ content | safe }}
+            {% endblock body %}
+        </section>
+        {% include "src/_includes/foot.njk" %}
+        <!--<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"></script>-->
+        <script src="{{ js.scriptsJs }}" async></script>
+    </body>
+</html>
