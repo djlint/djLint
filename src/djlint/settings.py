@@ -299,8 +299,10 @@ class Config:
             | [^\{]{\#
             | <pre
             | <textarea
-            | {%[ ]djlint:off[ ]%}
+            | {\#\s*djlint\:\s*off\s*\#}
             | {%[ ]+?comment[ ]+?[^(?:%})]*?%}
+            | {{!--\s*djlint\:off\s*--}}
+            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
         """
 
         self.ignored_block_closing: str = r"""
@@ -312,8 +314,10 @@ class Config:
             | \#}
             | </pre
             | </textarea
-            | {%[ ]djlint:on[ ]%}
+            | {\#\s*djlint\:\s*on\s*\#}
             | {%[ ]+?endcomment[ ]+?%}
+            | {{!--\s*djlint\:on\s*--}}
+            | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
         """
 
         # ignored block closing tags that
@@ -652,11 +656,9 @@ class Config:
             | <(script|style).*?(?=(\</(?:\3)>))
             # html comment
             | <!--\s*djlint\:off\s*-->.*?<!--\s*djlint\:on\s*-->
-            # django/jinja
-            | {\#\s*djlint\:off\s*\#}.*?{\#\s*djlint\:on\s*\#}
+            # django/jinja/nunjucks
+            | {\#\s*djlint\:\s*off\s*\#}.*?{\#\s*djlint\:\s*on\s*\#}
             | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}
-            # nunjucks
-            | {\#\s*djlint\:off\s*\#}.*?{\#\s*djlint\:on\s*\#}
             # handlebars
             | {{!--\s*djlint\:off\s*--}}.*?{{!--\s*djlint\:on\s*--}}
             # golang

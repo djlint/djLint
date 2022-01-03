@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_textarea_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_ignored_block --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -403,25 +403,14 @@ def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
 
     assert output.exit_code == 0
 
-    assert (
-        output.text
-        == """<!-- djlint:off -->
-<div><p><span></span></p></div>
-<!-- djlint:on -->
-{# djlint:off #}
-<div><p><span></span></p></div>
-{# djlint:on #}
-{% comment %} djlint:off {% endcomment %}
-<div><p><span></span></p></div>
-{% comment %} djlint:on {% endcomment %}
-{{ /* djlint:off */ }}
-<div><p><span></span></p></div>
-{{ /* djlint:on */ }}
-{{!-- djlint:off --}}
-<div><p><span></span></p></div>
-{{!-- djlint:on --}}
-"""
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{# djlint: off #}<meta name="description" content="{% block meta_content %}Alle vogelkijkhutten van Nederland{% endblock %}">{# djlint:on #}
+""",
     )
+
+    assert output.exit_code == 0
 
     # check script tag
     output = reformat(

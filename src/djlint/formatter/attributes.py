@@ -4,6 +4,7 @@ from functools import partial
 
 import regex as re
 
+from ..helpers import inside_ignored_block
 from ..settings import Config
 
 
@@ -241,9 +242,13 @@ def format_style(match: re.match) -> str:
     return f"{leading_stuff}{tag}{quote}{styles}{quote}"
 
 
-def format_attributes(config: Config, match: re.match) -> str:
+def format_attributes(config: Config, html: str, match: re.match) -> str:
     """Spread long attributes over multiple lines."""
-    if len(match.group(3).strip()) < config.max_attribute_length:
+    # check that we are not inside an ingnored block
+    if (
+        inside_ignored_block(config, html, match)
+        or len(match.group(3).strip()) < config.max_attribute_length
+    ):
         return match.group()
 
     leading_space = match.group(1)
