@@ -49,6 +49,17 @@ Usage:
 
    custom_blocks = "toc,example"
 
+custom_html
+-----------
+
+Use to indent custom HTML tags. For example ``<mjml>`` or ``<simple-greeting>`` or ``<mj-\w+>``
+
+Usage:
+
+.. code:: ini
+
+   custom_html = "mjml,simple-greeting,mj-\\w+"
+
 indent
 ------
 
