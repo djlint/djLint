@@ -177,5 +177,4 @@ dmypy.json
 cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,python
-!docs/lib
-!docs_new/lib
+!docs/src/lib

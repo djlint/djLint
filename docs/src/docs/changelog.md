@@ -8,7 +8,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # Changelog
 
-## Next Release
+## 0.7.0
 
 ::: content
 - Added config for custom HTML tags
