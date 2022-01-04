@@ -153,7 +153,7 @@ body.has-navbar-fixed-top, html.has-navbar-fixed-top {
   max-width: 200px;
   max-height:200px;
   margin-top: 50%;
- translate: 0 -50%;
+ transform: translate(0 -50%);
 }
 
 a.navbar-item:hover,
@@ -178,6 +178,9 @@ h2 {
   font-size: 25px;
 }
 
+.is-nav-icon .fa-2x {
+  font-size:1.6em;
+}
 
 /* fix for prism in bulma */
 pre .number {
