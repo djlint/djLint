@@ -3,7 +3,7 @@
     <head>
         {% block meta %}
             {% metagen
-            title=(title or site.description) + " | " + site.name,
+            title=(title or site.title) + " | " + site.name,
             desc=desc or description or site.description,
             url=site.url + page.url,
             img=image or site.url + site.image,
