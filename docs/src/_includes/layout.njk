@@ -32,10 +32,9 @@
         <meta name="apple-mobile-web-app-status-bar-style"
               content="black-translucent">
         <!-- critical css is inlined, so we can async the rest -->
-        <link rel="preload"
+        <link rel="stylesheet preload"
               href="{{ css.stylesCss }}"
-              as="style"
-              onload="this.rel='stylesheet'"/>
+              as="style" />
         <link rel="preload"
               href="/static/font/inter/files/inter-latin-400-normal.woff2"
               as="font"

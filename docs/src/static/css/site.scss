@@ -148,12 +148,13 @@ body.has-navbar-fixed-top, html.has-navbar-fixed-top {
 
 .image.brand {
   height:200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .image.brand img {
   max-width: 200px;
   max-height:200px;
-  margin-top: 50%;
- transform: translate(0 -50%);
 }
 
 a.navbar-item:hover,
