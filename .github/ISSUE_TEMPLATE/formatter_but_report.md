@@ -21,7 +21,7 @@ assignees: christopherpickering
  - OS: e.g. ubuntu 20.04
  - Python Version (``python --version``)
  - djLint Version (``djlint --version``)
-
+ - template language: e.g. mustache
 
 ## Issue
 <!-- A clear and concise description of what the bug is. -->

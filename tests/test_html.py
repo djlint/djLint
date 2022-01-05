@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_ignored_block --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_script_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -109,6 +109,15 @@ def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     });
 </script>
 """,
+    )
+
+    assert output.exit_code == 0
+
+    # check bad template tags inside scripts
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<script>{{missing_space}}</script>\n""",
     )
 
     assert output.exit_code == 0

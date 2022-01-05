@@ -5,6 +5,7 @@ from functools import partial
 import regex as re
 
 from ..helpers import (
+    inside_ignored_block,
     is_ignored_block_closing,
     is_ignored_block_opening,
     is_safe_closing_tag,
@@ -122,16 +123,6 @@ def indent_html(rawcode: str, config: Config) -> str:
         else:
             tmp = (indent * indent_level) + item + "\n"
 
-        # we can try to fix template tags. ignore handlebars
-        if config.profile not in ["handlebars", "golang"]:
-            tmp = re.sub(r"({[{|%]\-?)(\w[^}].+?)([}|%]})", r"\1 \2\3", tmp)
-            tmp = re.sub(r"({[{|%])([^}].+?[^(?:\ |\-)])([}|%]})", r"\1\2 \3", tmp)
-            tmp = re.sub(r"({[{|%])([^}].+?[^ -])(\-+?[}|%]})", r"\1\2 \3", tmp)
-
-        elif config.profile == "handlebars":
-            # handlebars templates
-            tmp = re.sub(r"({{#(?:each|if).+?[^ ])(}})", r"\1 \2", tmp)
-
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
 
@@ -158,5 +149,52 @@ def indent_html(rawcode: str, config: Config) -> str:
             is_block_raw = False
 
         beautified_code = beautified_code + tmp
+
+    # we can try to fix template tags. ignore handlebars
+    if config.profile not in ["handlebars", "golang"]:
+
+        def fix_non_handlebars_template_tags(
+            html: str, out_format: str, match: str
+        ) -> str:
+
+            if inside_ignored_block(config, html, match):
+                return match.group()
+
+            return out_format % (
+                match.group(1),
+                match.group(2),
+                match.group(3),
+            )
+
+        func = partial(fix_non_handlebars_template_tags, beautified_code, "%s %s%s")
+        beautified_code = re.sub(
+            r"({[{|%]\-?)(\w[^}].+?)([}|%]})", func, beautified_code
+        )
+
+        func = partial(fix_non_handlebars_template_tags, beautified_code, "%s%s %s")
+        beautified_code = re.sub(
+            r"({[{|%])([^}].+?[^(?:\ |\-)])([}|%]})", func, beautified_code
+        )
+
+        func = partial(fix_non_handlebars_template_tags, beautified_code, "%s%s %s")
+        beautified_code = re.sub(
+            r"({[{|%])([^}].+?[^ -])(\-+?[}|%]})", func, beautified_code
+        )
+
+    elif config.profile == "handlebars":
+
+        def fix_handlebars_template_tags(html: str, out_format: str, match: str) -> str:
+
+            if inside_ignored_block(config, html, match):
+                return match.group()
+
+            return out_format % (
+                match.group(1),
+                match.group(2),
+            )
+
+        func = partial(fix_handlebars_template_tags, beautified_code, "%s %s")
+        # handlebars templates
+        beautified_code = re.sub(r"({{#(?:each|if).+?[^ ])(}})", func, beautified_code)
 
     return beautified_code.strip() + "\n"

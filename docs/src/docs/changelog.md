@@ -8,6 +8,11 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # Changelog
 
+## Next Release
+::: content
+- Bug fixes
+:::
+
 ## 0.7.0
 
 ::: content
