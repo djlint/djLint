@@ -154,7 +154,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     if config.profile not in ["handlebars", "golang"]:
 
         def fix_non_handlebars_template_tags(
-            html: str, out_format: str, match: str
+            html: str, out_format: str, match: re.Match
         ) -> str:
 
             if inside_ignored_block(config, html, match):
@@ -183,7 +183,9 @@ def indent_html(rawcode: str, config: Config) -> str:
 
     elif config.profile == "handlebars":
 
-        def fix_handlebars_template_tags(html: str, out_format: str, match: str) -> str:
+        def fix_handlebars_template_tags(
+            html: str, out_format: str, match: re.Match
+        ) -> str:
 
             if inside_ignored_block(config, html, match):
                 return match.group()
