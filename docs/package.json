@@ -14,6 +14,7 @@
   "browserslist": "> 2%, not dead",
   "dependencies": {
     "@creativebulma/bulma-divider": "^1.1.0",
+    "@fontsource/crimson-pro": "^4.5.1",
     "@fontsource/rasa": "^4.5.3",
     "@quasibit/eleventy-plugin-schema": "^1.0.0",
     "@sindresorhus/slugify": "^2.1.0",

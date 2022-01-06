@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_attribute_include --cov=src/djlint \
+   pytest tests/test_django.py::test_blocktranslate --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -277,6 +277,16 @@ def test_blocktranslate(runner: CliRunner, tmp_file: TextIO) -> None:
 {% endblocktrans %}
 """
     )
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<p>
+    {% blocktrans %}If you have not created an account yet, then please
+    <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}
+</p>\n""",
+    )
+    assert output.exit_code == 0
 
 
 def test_trans(runner: CliRunner, tmp_file: TextIO) -> None:

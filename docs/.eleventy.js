@@ -104,6 +104,9 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
     "./node_modules/@fontsource/rasa/files": "static/font/rasa/files"
   });
+  eleventyConfig.addPassthroughCopy({
+    "./node_modules/@fontsource/crimson-pro/files": "static/font/crimson-pro/files"
+  });
 
   // copy images
   eleventyConfig.addPassthroughCopy({

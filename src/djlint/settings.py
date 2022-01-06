@@ -459,7 +459,8 @@ class Config:
         self.indent_template_tags: str = (
             r"""  if
                 | for
-                | block
+                | block(?!trans|translate)
+            #    | blocktrans(?:late)?[ ]+?trimmed
                 | spaceless
                 | compress
                 | addto
@@ -471,6 +472,7 @@ class Config:
                 | filter
                 | each
                 | macro
+                | raw
             """
             + self.custom_blocks
         )
@@ -601,7 +603,7 @@ class Config:
             r"""
               if
             | for
-            | block
+            | block(?!trans)
             | spaceless
             | compress
             | load
@@ -615,6 +617,7 @@ class Config:
             | verbatim
             | each
             | macro
+            | raw
             """
             + self.custom_blocks
             + r"""
@@ -624,27 +627,37 @@ class Config:
         self.break_template_tags: str = (
             r"""
               if
-            | end
+            | endif
             | for
-            | block
-            | endblock
+            | endfor
+            | block(?!trans)
+            | endblock(?!trans)
             | else
             | spaceless
+            | endspaceless
             | compress
+            | endcompress
             | load
             | include
             | assets
+            | endassets
             | addto
             | language
             | with
-            | assets
+            | endwith
             | autoescape
+            | endautoescape
             | filter
+            | endfilter
             | elif
             | resetcycle
             | verbatim
+            | endverbatim
             | each
             | macro
+            | endmacro
+            | raw
+            | endraw
             """
             + self.custom_blocks
             + r"""

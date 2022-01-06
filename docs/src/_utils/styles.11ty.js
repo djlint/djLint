@@ -24,7 +24,7 @@ module.exports = class {
     purgecss({
       content: ['./src/**/*.njk', './src/**/*.md'],
       safelist: {
-              deep: [/zoomIn/, /fadeInUp/, /pre/,/code/,/block/, /box/, /title/, /is-\d/, /table/, /message/, /message-header/, /message-body/, /panel-block/, /p-3/, /is-block/, /is-justify-content-space-between/, /is-light/, /is-active/, /is-info/],
+              deep: [/headShake/, /zoomIn/, /fadeInUp/, /pre/,/code/,/block/, /box/, /title/, /is-\d/, /table/, /message/, /message-header/, /message-body/, /panel-block/, /p-3/, /is-block/, /is-justify-content-space-between/, /is-light/, /is-active/, /is-info/],
             }
     }),
     require('autoprefixer'),
