@@ -7,12 +7,7 @@ import difflib
 from pathlib import Path
 
 from .formatter.condense import condense_html
-<<<<<<< HEAD
-from .formatter.expand import expand_html
-from .formatter.new_indent import indent_html
-=======
 from .formatter.indent import indent_html
->>>>>>> 86e2c8b (formatted tests)
 from .settings import Config
 
 
