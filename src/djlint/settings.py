@@ -299,6 +299,7 @@ class Config:
             | [^\{]{\#
             | <pre
             | <textarea
+            | {%[ ]*?blocktrans(?:late)?[^(?:%})]*?%}
             | {\#\s*djlint\:\s*off\s*\#}
             | {%[ ]+?comment[ ]+?[^(?:%})]*?%}
             | {{!--\s*djlint\:off\s*--}}
@@ -311,13 +312,14 @@ class Config:
             | \?>
             | </script
             |  -->
-            | \#}
+            # | \#}
             | </pre
             | </textarea
             | {\#\s*djlint\:\s*on\s*\#}
             | {%[ ]+?endcomment[ ]+?%}
             | {{!--\s*djlint\:on\s*--}}
             | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
+            | {%[ ]*?endblocktrans(?:late)?[^(?:%})]*?%}
         """
 
         # ignored block closing tags that
@@ -325,6 +327,10 @@ class Config:
         self.safe_closing_tag: str = r"""
               </script
             | </style
+            | {\#\s*djlint\:\s*on\s*\#}
+            | {%[ ]+?endcomment[ ]+?%}
+            | {{!--\s*djlint\:on\s*--}}
+            | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
         """
 
         # all html tags possible
@@ -668,29 +674,29 @@ class Config:
               <(pre|textarea).*?</(\1)>
             | <(script|style).*?(?=(\</(?:\3)>))
             # html comment
-            | <!--\s*djlint\:off\s*-->.*?<!--\s*djlint\:on\s*-->
+            | <!--\s*djlint\:off\s*-->.*?(?=<!--\s*djlint\:on\s*-->)
             # django/jinja/nunjucks
-            | {\#\s*djlint\:\s*off\s*\#}.*?{\#\s*djlint\:\s*on\s*\#}
-            | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}
+            | {\#\s*djlint\:\s*off\s*\#}.*?(?={\#\s*djlint\:\s*on\s*\#})
+            | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})
             # handlebars
-            | {{!--\s*djlint\:off\s*--}}.*?{{!--\s*djlint\:on\s*--}}
+            | {{!--\s*djlint\:off\s*--}}.*?(?={{!--\s*djlint\:on\s*--}})
             # golang
-            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
+            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
             | <!--.*?-->
             | <\?php.*?\?>
-            | {%[ ]*?blocktranslate\b((?!%}|trimmed).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b((?!%}|trimmed).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-            | {%[ ]*?comment\b[^(?:%})]*?%}.*?{%[ ]*?endcomment[ ]*?%}
+            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+            | {%[ ]*?comment\b[^(?:%})]*?%}.*?(?={%[ ]*?endcomment[ ]*?%})
         """
 
         self.ignored_inline_blocks: str = r"""
               <!--.*?-->
             | {\*.*?\*}
-            | {\#.*?\#}
+            | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
             | <\?php.*?\?>
             | {%[ ]*?comment\b[^(?:%})]*?%}.*?{%[ ]*?endcomment[ ]*?%}
-            | {%[ ]*?blocktranslate\b((?!%}|trimmed).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b((?!%}|trimmed).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
         """
 
         self.optional_single_line_html_tags: str = r"""

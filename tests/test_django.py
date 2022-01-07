@@ -80,6 +80,52 @@ def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:
 """
     )
 
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div class="hi">
+    <div class="poor">
+        <p class="format">
+            Lorem ipsum dolor
+            <span class="bold">sit</span>
+            amet
+        </p>
+        <img src="./pic.jpg">
+    </div>
+    <script src="file1.js"></script>
+    {% comment %} <script src="file2.js"></script>
+    <script src="file3.js"></script> {% endcomment %}
+    <script src="file4.js"></script>
+</div>""",
+    )
+
+    assert output.exit_code == 0
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div class="hi">
+    <div class="poor">
+        {# djlint:off #}
+        <p class="format">
+            Lorem ipsum dolor <span class="bold">sit</span> amet
+        </p>
+        {# djlint:on #}
+        <img src="./pic.jpg">
+    </div>
+    <ul>
+        {% for i in items %}
+            <li>item {{i}}</li>
+            {% if i > 10 %}{% endif %}
+            <li>item {{i}}</li>
+        {% endfor %}
+    </ul>
+</div>
+""",
+    )
+
+    assert output.exit_code == 0
+
 
 def test_inline_comment(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
@@ -243,14 +289,7 @@ def test_blocktranslate(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""{% blocktranslate trimmed %}The width is: {{ width }}{% endblocktranslate %}""",
     )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% blocktranslate trimmed %}
-    The width is: {{ width }}
-{% endblocktranslate %}
-"""
-    )
+    assert output.exit_code == 0
 
     output = reformat(
         tmp_file,
@@ -269,14 +308,7 @@ def test_blocktranslate(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""{% blocktrans trimmed %}The width is: {{ width }}{% endblocktrans %}""",
     )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% blocktrans trimmed %}
-    The width is: {{ width }}
-{% endblocktrans %}
-"""
-    )
+    assert output.exit_code == 0
 
     output = reformat(
         tmp_file,
