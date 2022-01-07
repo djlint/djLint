@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_script_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_long_attributes --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
