@@ -86,6 +86,14 @@
               type="font/woff2"
               crossorigin/>
         {% jsonLdScript meta, type, tags %}
+        <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+        <script>
+          TrackJS.install({
+            token: "43e6548fbc654c889ce75878d88c9071",
+            application: "djlint"
+            // for more configuration options, see https://docs.trackjs.com
+          });
+        </script>
     </head>
     <body>
         {% include "src/_includes/nav.njk" %}
