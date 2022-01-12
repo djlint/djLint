@@ -39,7 +39,7 @@
     "esbuild": "^0.14.6",
     "fontawesome-subset": "^3.0.0",
     "html-minifier": "^4.0.0",
-    "markdown-it": "^12.3.0",
+    "markdown-it": "^12.3.2",
     "markdown-it-anchor": "^8.3.0",
     "markdown-it-div": "^1.1.0",
     "markdown-it-imsize": "^2.0.1",
