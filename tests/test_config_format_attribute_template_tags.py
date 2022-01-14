@@ -77,9 +77,7 @@ def test_without_config(runner: CliRunner, tmp_file: TextIO) -> None:
    data-tooltip="{% if favorite == "yes" %}Remove from Favorites {% else %}Add to Favorites{% endif %}"
    fav-type="report"
    object-id="{{ report.report_id }}">
-    <span class="icon has-text-grey is-large ">
-        <i class="fas fa-lg fa-star"></i>
-    </span>
+    <span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>
 </a>
 """
     )
