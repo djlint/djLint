@@ -784,7 +784,7 @@ class Config:
             | figure
             | figcaption
             | video
-            | span
+         #   | span # span gets no breaks #171
             | p
             | g
             | svg
