@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_output_for_no_linebreaks --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H025 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -480,6 +480,16 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""<th {{ attrs }}>
     <a href="{% url %}">{{ content }}</a>
 </th>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H025" not in result.output
+
+    # fix issue #169
+    write_to_file(
+        tmp_file.name,
+        b"""<li{% if is_active %} class="active" {% endif %}>
+    some content
+</li>""",
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output

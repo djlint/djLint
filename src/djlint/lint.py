@@ -80,10 +80,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                             open_tags.insert(0, match)
                         else:
                             for i, tag in enumerate(copy.deepcopy(open_tags)):
-                                if (
-                                    re.split(r"\s+", tag.group(1))[0]
-                                    == match.group(2)[1:]
-                                ):
+                                if tag.group(3) == match.group(2)[1:]:
                                     open_tags.pop(i)
                                     break
                             else:

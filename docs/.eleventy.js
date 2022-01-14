@@ -15,7 +15,7 @@ const slugifyCustom = (s) =>
 async function imageShortcode(src, alt, sizes, type='asdf', loading="lazy", decoding="async") {
   let metadata = await Image(src, {
     widths: [24, 300, 400, 500, 600, 800, 1200],
-    formats: ["webp"],
+    formats: ["webp", "png"],
     sharpWebpOptions: {
       options: {
         quality:70
