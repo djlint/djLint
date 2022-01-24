@@ -19,7 +19,7 @@ jobs:
     - name: Update python deps
       run: |
         python -m pip install tox poetry tox-poetry poetry-up
-        poetry-up --install
+        poetry-up --install --no-commit
 
     - name: python format
       run: |
