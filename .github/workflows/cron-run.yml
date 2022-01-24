@@ -1,4 +1,4 @@
-name: Build and Release [Weekly]
+name: Build and Format [Weekly]
 
 on:
   schedule:
