@@ -1,12 +1,8 @@
-
 // var client = algoliasearch('QFXNLHI6NP', '6b5ccc86ead48e79e587963eeb2d83e8');
 // var searchIndex = client.initIndex("dev_atlas");
 
-
 // var searchBox = document.getElementById("search");
 // var searchForm = document.getElementById("search-form");
-
-
 
 // var runSearch = function(event) {
 //   var searchResultsContainer = document.getElementById("search-results");
@@ -30,7 +26,6 @@
 //     results = e["hits"]
 
 //     console.log(results);
-
 
 //   var formattedResults = results.map(function(result){
 //     var toolName = extractToolName(result._tags);
@@ -98,4 +93,3 @@
 //   searchBox.addEventListener("input", runSearch.debounce(250));
 //   searchForm.addEventListener("submit", (e) => e.preventDefault());
 // }
-

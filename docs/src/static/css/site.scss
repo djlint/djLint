@@ -1,20 +1,18 @@
+$link-hover: hsl(207, 61%, 53%);
+$link: hsl(207, 61%, 53%);
 
-$link-hover:hsl(207, 61%,  53%);
-$link: hsl(207, 61%,  53%);
+@import '../../../node_modules/bulma/bulma';
+@import '../../../node_modules/bulma-pricingtable/src/sass/index';
+@import '../../../node_modules/@creativebulma/bulma-divider/src/sass/index';
 
+$fontDir: '/static/font/inter/';
+@import '../../../node_modules/@fontsource/inter/scss/mixins';
 
-@import "../../../node_modules/bulma/bulma";
-@import "../../../node_modules/bulma-pricingtable/src/sass/index";
-@import "../../../node_modules/@creativebulma/bulma-divider/src/sass/index";
+$use-all: true;
+$use-slideInDown: true;
+@import '../../../node_modules/animate-sass/animate';
 
-$fontDir: "/static/font/inter/";
-@import "../../../node_modules/@fontsource/inter/scss/mixins";
-
-$use-all:true;
-$use-slideInDown:true;
-@import "../../../node_modules/animate-sass/animate";
-
-@import "../font/fontawesome/stylesheet";
+@import '../font/fontawesome/stylesheet';
 
 /* purgecss start ignore */
 
@@ -32,14 +30,14 @@ pre .tag {
   padding-right: unset;
   white-space: unset;
 }
-@import "../../../node_modules/prismjs/themes/prism";
+@import '../../../node_modules/prismjs/themes/prism';
 
 @include fontFace(
   $fontName: Inter,
   $weight: 400,
   $display: swap,
   $unicodeMap: latin,
-  $fontDir: "/static/font/inter/files/"
+  $fontDir: '/static/font/inter/files/'
 );
 
 @include fontFace(
@@ -47,7 +45,7 @@ pre .tag {
   $weight: 600,
   $display: swap,
   $unicodeMap: latin,
-  $fontDir: "/static/font/inter/files/"
+  $fontDir: '/static/font/inter/files/'
 );
 
 @include fontFace(
@@ -55,18 +53,18 @@ pre .tag {
   $weight: 700,
   $display: swap,
   $unicodeMap: latin,
-  $fontDir: "/static/font/inter/files/"
+  $fontDir: '/static/font/inter/files/'
 );
 
-$fontDir: "/static/font/rasa/";
-@import "../../../node_modules/@fontsource/rasa/scss/mixins";
+$fontDir: '/static/font/rasa/';
+@import '../../../node_modules/@fontsource/rasa/scss/mixins';
 
 @include fontFace(
   $fontName: Rasa,
   $weight: 300,
   $display: swap,
   $unicodeMap: latin,
-  $fontDir: "/static/font/rasa/files/"
+  $fontDir: '/static/font/rasa/files/'
 );
 
 @include fontFace(
@@ -74,7 +72,7 @@ $fontDir: "/static/font/rasa/";
   $weight: 500,
   $display: swap,
   $unicodeMap: latin,
-  $fontDir: "/static/font/rasa/files/"
+  $fontDir: '/static/font/rasa/files/'
 );
 
 @include fontFace(
@@ -82,7 +80,7 @@ $fontDir: "/static/font/rasa/";
   $weight: 600,
   $display: swap,
   $unicodeMap: latin,
-  $fontDir: "/static/font/rasa/files/"
+  $fontDir: '/static/font/rasa/files/'
 );
 
 @include fontFace(
@@ -90,66 +88,66 @@ $fontDir: "/static/font/rasa/";
   $weight: 700,
   $display: swap,
   $unicodeMap: latin,
-  $fontDir: "/static/font/rasa/files/"
+  $fontDir: '/static/font/rasa/files/'
 );
 
-$fontDir: "/static/font/crimson-pro/";
-@import "../../../node_modules/@fontsource/crimson-pro/scss/mixins";
+$fontDir: '/static/font/crimson-pro/';
+@import '../../../node_modules/@fontsource/crimson-pro/scss/mixins';
 
 @include fontFace(
   $fontName: 'Crimson Pro',
   $weight: 400,
   $display: swap,
   $unicodeMap: latin,
-  $fontDir: "/static/font/crimson-pro/files/"
+  $fontDir: '/static/font/crimson-pro/files/'
 );
-
 
 html {
   height: 100%;
 }
 
 body {
-  font-family: "Inter", Arial, Verdana, Tahoma, sans-serif;
+  font-family: 'Inter', Arial, Verdana, Tahoma, sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100%;
 }
 
 .title {
-  font-family: "Rasa", Georgia, "Times New Roman", Times, serif;
+  font-family: 'Rasa', Georgia, 'Times New Roman', Times, serif;
 }
 .huge {
-  font-size:100px;
+  font-size: 100px;
 }
 
 .djlint-nav {
   padding-left: 15px;
 }
 .djlint-nav .navbar-brand a {
-  margin-top:auto;
-  margin-bottom:auto;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
-body.has-navbar-fixed-top, html.has-navbar-fixed-top {
-  padding-top:118px;
+body.has-navbar-fixed-top,
+html.has-navbar-fixed-top {
+  padding-top: 118px;
 }
 .djlint-nav .navbar-brand img {
-  width:auto;
+  width: auto;
   height: 40px !important;
   margin-top: 6px;
   margin-bottom: -2px;
 }
 
 .is-flex-widescreen {
-  display:none !important;
+  display: none !important;
 }
 @media screen and (min-width: $widescreen) {
   .djlint-nav {
     padding: 15px 0;
   }
 
-  .djlint-nav .navbar-brand img  {
+  .djlint-nav .navbar-brand img {
     height: 56px !important;
   }
 
@@ -159,14 +157,14 @@ body.has-navbar-fixed-top, html.has-navbar-fixed-top {
 }
 
 .image.brand {
-  height:200px;
+  height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .image.brand img {
   max-width: 200px;
-  max-height:200px;
+  max-height: 200px;
 }
 
 a.navbar-item:hover,
@@ -192,7 +190,7 @@ h2 {
 }
 
 .is-nav-icon .fa-2x {
-  font-size:1.6em;
+  font-size: 1.6em;
 }
 
 /* fix for prism in bulma */
@@ -214,15 +212,15 @@ pre .number {
 }
 
 .mail-icon > img {
-  margin-top:3px;
+  margin-top: 3px;
 }
 /* comparison */
 .plan-item .icon {
-  height:auto;
+  height: auto;
 }
 .plan-item .icon svg {
-  height:15px;
-  width:15px
+  height: 15px;
+  width: 15px;
 }
 
 .pricing-table .pricing-plan .plan-group {
@@ -231,14 +229,13 @@ pre .number {
   color: #4a4a4a;
   font-size: $size-6;
   font-weight: 600;
-  padding: .75em;
+  padding: 0.75em;
   text-align: center;
 }
 
 .pricing-table .pricing-plan .plan-header {
   font-size: $size-6;
 }
-
 
 .icon.is-huge {
   height: 2.5em;
@@ -247,24 +244,23 @@ pre .number {
 
 /* search */
 #search-form .icon svg {
-  height:1.2rem;
+  height: 1.2rem;
 }
 
 #search-results {
-  position:absolute;
-  top:70px;
-  left:0;
-  right:0;
-  display:none;
-  border-radius: $radius
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  display: none;
+  border-radius: $radius;
 }
 
 #search-results:empty {
   display: none !important;
 }
 
-
-#search:focus  {
+#search:focus {
   border-color: $info;
   box-shadow: $input-focus-box-shadow-size bulmaRgba($info, 0.25);
 }
@@ -273,15 +269,14 @@ pre .number {
   box-shadow: $input-focus-box-shadow-size bulmaRgba($info, 0.25);
 }
 
-#search-wrap:focus-within #search-results
-{
-  display:block;
+#search-wrap:focus-within #search-results {
+  display: block;
   box-shadow: $input-focus-box-shadow-size bulmaRgba($info, 0.25);
   border: 1px solid $info;
 }
 
 #search-results:active {
-  display:block;
+  display: block;
   box-shadow: $input-focus-box-shadow-size bulmaRgba($info, 0.25);
   border: 1px solid $info;
 }
@@ -297,7 +292,7 @@ pre .number {
 }
 
 .story {
-  font-family: Crimson Pro,Georgia,serif;
+  font-family: Crimson Pro, Georgia, serif;
   font-size: 24px;
   font-weight: 400;
   line-height: 1.6666666667;
@@ -309,62 +304,62 @@ pre .number {
 // tabs
 
 .tab-container {
-  @extend %block
+  @extend %block;
 }
 .tab-container .tab {
-  display:none
+  display: none;
 }
 
 .tab-container .tab.is-active {
-  display:initial;
+  display: initial;
 }
 
 // admonitions
 .message-header .icon svg {
-  height:$size-6;
-  padding-right:10px;
+  height: $size-6;
+  padding-right: 10px;
 }
 
 .message.note {
-  border-width:$message-body-border-width;
-  border-style:solid;
+  border-width: $message-body-border-width;
+  border-style: solid;
   border-color: $info;
-  background-color:$white;
-  padding:0;
+  background-color: $white;
+  padding: 0;
 }
 .message.hint {
-  border-width:$message-body-border-width;
-  border-style:solid;
+  border-width: $message-body-border-width;
+  border-style: solid;
   border-color: $success;
-  background-color:$white;
-  padding:0;
+  background-color: $white;
+  padding: 0;
 }
 .message.alert {
-  border-width:$message-body-border-width;
-  border-style:solid;
+  border-width: $message-body-border-width;
+  border-style: solid;
   border-color: $danger;
-  background-color:$white;
-  padding:0;
+  background-color: $white;
+  padding: 0;
 }
 .message.note .message-header {
-  color:$text;
-  background-color:$info-light;
+  color: $text;
+  background-color: $info-light;
 }
 
 .message.hint .message-header {
-  color:$text;
-  background-color:$success-light;
+  color: $text;
+  background-color: $success-light;
 }
 
 .message.alert .message-header {
-  color:$text;
-  background-color:$danger-light;
+  color: $text;
+  background-color: $danger-light;
 }
 
 .message.note .message-body,
 .message.hint .message-body,
 .message.alert .message-body {
-  color:$text;
+  color: $text;
 }
 
 .image.is-35x35 {
@@ -373,60 +368,60 @@ pre .number {
 }
 /* menu collapse */
 
-.is-collapsible, .is-collapsible.is-active {
+.is-collapsible,
+.is-collapsible.is-active {
   transition: max-height 0.2s ease-out;
 }
 
 .is-collapsible {
-  max-height:0;
-  overflow:hidden;
-  margin-top:0;
-  margin-bottom:0;
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .is-collapsible-menu {
-  height:0;
+  height: 0;
   overflow: hidden;
-  margin-top:0;
-  margin-bottom:0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .is-collapsible-menu.is-active {
-  height:auto;
+  height: auto;
 }
 
-
 .is-collapsible-menu:not(.is-active) {
-  margin-top:0 !important;
-  margin-bottom:0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .is-collapsible-menu .is-collapsible-menu {
-  margin-bottom:0 !important;
+  margin-bottom: 0 !important;
 }
 .menu .menu-label {
-  font-weight:600;
+  font-weight: 600;
   font-size: unset;
-  color: $grey-dark
+  color: $grey-dark;
 }
 
-.menu li a{
+.menu li a {
   position: relative;
-  padding-left:20px;
+  padding-left: 20px;
 }
 
-.menu li a.is-active{
-  background:unset;
+.menu li a.is-active {
+  background: unset;
   color: unset;
   font-weight: 700;
 }
 
 .menu li.head > a {
-  font-weight: 600
+  font-weight: 600;
 }
 
 .menu-list li.head ul {
-  margin-left:3px;
-  padding-left:20px;
+  margin-left: 3px;
+  padding-left: 20px;
 }
 
 .menu-list a:hover,
@@ -437,46 +432,44 @@ pre .number {
 .menu li a:before {
   position: absolute;
   display: block;
-  margin-right:18px;
-  margin-left:-18px;
-  content: "";
+  margin-right: 18px;
+  margin-left: -18px;
+  content: '';
 }
 
-.menu li a:not([data-action="collapse-menu"]):before {
-  height:4px;
-  width:4px;
-  border-radius:4px;
+.menu li a:not([data-action='collapse-menu']):before {
+  height: 4px;
+  width: 4px;
+  border-radius: 4px;
   background: $grey;
   top: calc(50% - 2px);
 }
 
-
-.menu li a[data-action="collapse-menu"]:before {
+.menu li a[data-action='collapse-menu']:before {
   border: 2px solid $grey-light;
   border-radius: 2px;
   border-right: 0;
   border-top: 0;
   height: 7px;
-  margin-top: -.4375em;
+  margin-top: -0.4375em;
   transform-origin: 3px 4px;
   width: 7px;
-  transition: transform .2s;
+  transition: transform 0.2s;
   transform: rotate(-135deg);
   top: calc(50% + 3px);
   margin-left: -19px;
 }
-.menu li a.is-active[data-action="collapse-menu"]:before {
+.menu li a.is-active[data-action='collapse-menu']:before {
   transform: rotate(-45deg);
-  transition: transform .2s;
+  transition: transform 0.2s;
 }
-
 
 pre {
   margin-bottom: 1.5rem !important;
 }
 
 .column:not(.is-narrow) {
-  min-width:0px;
+  min-width: 0px;
 }
 
 .is-inlineblock {
@@ -484,7 +477,7 @@ pre {
 }
 
 .is-radius > img {
-  border-radius: $radius
+  border-radius: $radius;
 }
 
 .is-framed {
@@ -492,30 +485,30 @@ pre {
   border: 8px solid $grey-lightest;
   border-radius: 4px;
   border-top: 24px solid $grey-lightest;
-  box-shadow: 0 .5em 1em -.125em #0a0a0a1a,0 0 0 1px #0a0a0a05;
+  box-shadow: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
   position: relative;
 }
 
 .is-framed::before {
-border-radius: 10px;
-content: "";
-height: 15px;
-left: 0px;
-position: absolute;
-top: -19px;
-width: 15px;
-background: $grey-light;
+  border-radius: 10px;
+  content: '';
+  height: 15px;
+  left: 0px;
+  position: absolute;
+  top: -19px;
+  width: 15px;
+  background: $grey-light;
 }
 
 .is-framed::after {
-border-radius: 10px;
-content: "";
-height: 15px;
-left: 20px;
-position: absolute;
-top: -19px;
-width: 15px;
-background: $grey-light;
+  border-radius: 10px;
+  content: '';
+  height: 15px;
+  left: 20px;
+  position: absolute;
+  top: -19px;
+  width: 15px;
+  background: $grey-light;
 }
 
 .hero.is-white .hero-body {
@@ -523,11 +516,11 @@ background: $grey-light;
 }
 
 .hero {
-  position:relative
+  position: relative;
 }
 
 a.card:hover {
-  box-shadow: 0 .5em 2em -.125em #0a0a0a1a,0 0 0 1px #0a0a0a05;
+  box-shadow: 0 0.5em 2em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
 }
 
 .title {
@@ -535,24 +528,24 @@ a.card:hover {
 }
 @media screen and (min-width: $tablet) {
   .is-sticky {
-  position: sticky;
-  top:118px;
-  bottom:0;
-  max-height: calc(100vh - 118px);
-  overflow-y: scroll;
+    position: sticky;
+    top: 118px;
+    bottom: 0;
+    max-height: calc(100vh - 118px);
+    overflow-y: scroll;
+  }
 }
-}
-@media screen and (min-width: $desktop){
-.navbar.is-transparent a.is-info.navbar-item:hover {
-  background-color: $info-dark !important;
-}
+@media screen and (min-width: $desktop) {
+  .navbar.is-transparent a.is-info.navbar-item:hover {
+    background-color: $info-dark !important;
+  }
 }
 .navbar-item.button.is-white:hover {
   background: transparent !important;
 }
 .is-256x256 {
-  max-height:256px;
-  max-width:256px;
+  max-height: 256px;
+  max-width: 256px;
 }
 @media screen and (max-width: $tablet) {
   .main {
@@ -560,16 +553,16 @@ a.card:hover {
   }
 }
 .animated[data-animate] {
-  visibility:hidden
+  visibility: hidden;
 }
 
 .navbar-item .media img {
-  max-height:unset !important;
+  max-height: unset !important;
 }
 
 .icon.is-5x {
-  height:6rem;
-  width:6rem;
+  height: 6rem;
+  width: 6rem;
 }
 
 /* purgecss end ignore */
@@ -579,6 +572,6 @@ a.card:hover {
 
   .is-mega-menu-title {
     margin-bottom: 0;
-    padding: .375rem 1rem;
+    padding: 0.375rem 1rem;
   }
 }

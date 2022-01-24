@@ -6,7 +6,8 @@
   "scripts": {
     "start": "eleventy --serve --watch",
     "install": "ELEVENTY_PRODUCTION=true eleventy",
-    "updateSearch": "node ./src/search/update-algolia-index.js"
+    "updateSearch": "node ./src/search/update-algolia-index.js",
+    "format": "prettier --config .prettierrc \"src/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write"
   },
   "keywords": [],
   "author": "Christopher Pickering",
@@ -37,6 +38,9 @@
     "cssnano": "^5.0.15",
     "eleventy-plugin-metagen": "^1.4.0",
     "esbuild": "^0.14.11",
+    "eslint": "^8.7.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
     "fontawesome-subset": "^3.0.0",
     "html-minifier": "^4.0.0",
     "markdown-it": "^12.3.2",
@@ -46,6 +50,7 @@
     "outdent": "^0.8.0",
     "postcss-cli": "^9.1.0",
     "postcss-nested": "^5.0.6",
+    "prettier": "^2.5.1",
     "prismjs": "^1.26.0",
     "sass": "^1.48.0",
     "slugify": "^1.6.4"

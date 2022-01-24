@@ -5,7 +5,6 @@ description: djLint is a GoLang template linter and a GoLang template formatter!
 tool: golang
 ---
 
-
 # {{ title }}
 
 {{ description }}
@@ -18,7 +17,7 @@ djlint /path/to/templates --profile={{ tool }}
 
 #### Or, Use a Config File
 
-Configure djLint in your projects ``pyproject.toml``.
+Configure djLint in your projects `pyproject.toml`.
 
 ```toml
 [tool.djlint]

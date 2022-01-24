@@ -46,7 +46,6 @@ Options:
    "If the command `djlint` is not found, ensure sure that Python is [in your path](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)."
 %}
 
-
 ## Using Path vs Stdin
 
 djLint works with a path or stdin.
@@ -68,6 +67,7 @@ Or with stdin -
 ```bash
 echo "<div></div>" | djlint -
 ```
+
 Stdin can also be used to reformat code. The output will be only the formatted code without messages.
 
 ```bash

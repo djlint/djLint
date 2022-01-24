@@ -1,5 +1,8 @@
 // Get all "navbar-burger" elements
-var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0); // Check if there are any navbar burgers
+var $navbarBurgers = Array.prototype.slice.call(
+  document.querySelectorAll('.navbar-burger'),
+  0,
+); // Check if there are any navbar burgers
 
 if ($navbarBurgers.length > 0) {
   // Add a click event on each of them

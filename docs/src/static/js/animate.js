@@ -19,13 +19,16 @@
 
   var d = document,
     load = function () {
-      [].forEach.call(d.querySelectorAll(".animated[data-animate]"), function (el) {
-        if (isInViewport(el)) {
-          // set image to nothing to clear, then load new
-          el.classList.add(el.getAttribute("data-animate"));
-          el.removeAttribute("data-animate");
-        }
-      });
+      [].forEach.call(
+        d.querySelectorAll('.animated[data-animate]'),
+        function (el) {
+          if (isInViewport(el)) {
+            // set image to nothing to clear, then load new
+            el.classList.add(el.getAttribute('data-animate'));
+            el.removeAttribute('data-animate');
+          }
+        },
+      );
     };
 
   var isInViewport = function isInViewport(elem) {
@@ -43,24 +46,24 @@
   };
 
   load();
-  d.addEventListener("lazy", function () {
+  d.addEventListener('lazy', function () {
     setTimeout(function () {
       load();
     }, 0);
   });
 
-  var resetHash = function(){
-    if(window.location.hash != ""){
-        history.pushState("", document.title, window.location.pathname + window.location.search);
-      }
-  }
-  d.addEventListener(
-    "scroll",
-    function () {
-      debounce(load(), 200);
-
-      debounce(resetHash(), 500);
-
+  var resetHash = function () {
+    if (window.location.hash != '') {
+      history.pushState(
+        '',
+        document.title,
+        window.location.pathname + window.location.search,
+      );
     }
-  );
+  };
+  d.addEventListener('scroll', function () {
+    debounce(load(), 200);
+
+    debounce(resetHash(), 500);
+  });
 })();

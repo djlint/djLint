@@ -45,7 +45,7 @@ custom_blocks="toc,example"
 
 ## custom_html
 
-Use to indent custom HTML tags. For example ``<mjml>`` or ``<simple-greeting>`` or ``<mj-\w+>``
+Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\w+>`
 
 Usage:
 
@@ -95,11 +95,12 @@ blank_line_after_tag="load,extends,include"
 
 ## profile
 
-Set a default profile for the template language. The profile will disable linter rules that do not apply to your template language, and may also change reformatting. For example, in ``handlebars`` there are no spaces inside {% raw %}``{{#if}}``{% endraw %} tags.
+Set a default profile for the template language. The profile will disable linter rules that do not apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside {% raw %}`{{#if}}`{% endraw %} tags.
 
 Options:
 
 :::content
+
 - html
 - django
 - jinja
@@ -107,7 +108,7 @@ Options:
 - handlebars (for handlebars and mustache)
 - golang
 - angular
-:::
+  :::
 
 Usage:
 
@@ -124,18 +125,15 @@ Usage:
 ```ini
 require_pragma=true
 ```
+
 {% raw %}
+
 ```html
 <!-- djlint:on -->
-or
-{# djlint:on #}
-or
-{% comment %} djlint:on {% endcomment %}
-or
-{{ /* djlint:on */ }}
-or
-{{!-- djlint:on --}}
+or {# djlint:on #} or {% comment %} djlint:on {% endcomment %} or {{ /*
+djlint:on */ }} or {{!-- djlint:on --}}
 ```
+
 {% endraw %}
 
 ## max_line_length
@@ -181,16 +179,18 @@ format_attribute_template_tags=true
 For example, with this option enabled, the following html will be acceptable:
 
 ```html
-<input class="{% if this %}
+<input
+  class="{% if this %}
                   then something neat
               {% else %}
                   that is long stuff asdf and more even
-              {% endif %}"/>
+              {% endif %}"
+/>
 ```
 
 ## linter_output_format
 
-Customize order of output message. Default="{code} {line} {message} {match}". If ``{filename}`` is not include in message, then the output will be grouped by file and a header will automatically be added to each group.
+Customize order of output message. Default="{code} {line} {message} {match}". If `{filename}` is not include in message, then the output will be grouped by file and a header will automatically be added to each group.
 
 Usage:
 
@@ -204,4 +204,3 @@ Usage:
 
 linter_output_format="{filename}:{line}: {code} {message} {match}"
 ```
-

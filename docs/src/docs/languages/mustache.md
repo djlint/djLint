@@ -5,7 +5,6 @@ description: djLint is a mustache template linter and a mustache template format
 tool: handlebars
 ---
 
-
 # {{ title }}
 
 {{ description }}
@@ -18,7 +17,7 @@ djlint /path/to/templates --profile={{ tool }}
 
 #### Or, Use a Config File
 
-Configure djLint in your projects ``pyproject.toml``.
+Configure djLint in your projects `pyproject.toml`.
 
 ```toml
 [tool.djlint]

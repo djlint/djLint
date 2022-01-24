@@ -8,7 +8,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 djLint's formatter will take sloppy html templates and make the formatting consistent and easy to follow!
 
-Formatting is a beta tool. ``--check`` the output before applying changes.
+Formatting is a beta tool. `--check` the output before applying changes.
 
 To review what may change in formatting run:
 
@@ -38,7 +38,6 @@ djlint . --reformat
    "djLint is not an html parser or syntax validator."
 %}
 
-
 ## Ignoring Code
 
 Code can be ignored by wrapping it in `djlint` tags:
@@ -46,56 +45,50 @@ Code can be ignored by wrapping it in `djlint` tags:
 {% raw %}
 
 For plain old html -
+
 ```html
 <!-- djlint:off -->
-   <bad html to ignore>
-<!-- djlint:on -->
+<bad html to ignore> <!-- djlint:on --></bad>
 ```
 
 or as a comment -
 
 ```html
-{# djlint:off #}
-   <bad html to ignore>
-{# djlint:on #}
+{# djlint:off #} <bad html to ignore> {# djlint:on #}</bad>
 ```
 
 or as a long comment
 
 ```html
 {% comment %} djlint:off {% endcomment %}
-   <bad html to ignore>
-{% comment %} djlint:on {% endcomment %}
+<bad html to ignore> {% comment %} djlint:on {% endcomment %}</bad>
 ```
 
 or as a javascript style comment -
 
 ```html
-{{ /* djlint:off */ }}
-   <bad html to ignore>
-{{ /* djlint:on */ }}
+{{ /* djlint:off */ }} <bad html to ignore> {{ /* djlint:on */ }}</bad>
 ```
 
 or as a golan style comment -
 
 ```html
-{{!-- djlint:off --}}
-   <bad html to ignore>
-{{!-- djlint:on --}}
+{{!-- djlint:off --}} <bad html to ignore> {{!-- djlint:on --}}</bad>
 ```
+
 {% endraw %}
 
-
 ## Here's an example!
-
 
 ### Before
 
 Here's a blob of HTML that's in desperate need of attention -
 {% raw %}
+
 ```
 {% load admin_list %}{% load i18n %}<p class="paginator">{% if pagination_required %}{% for i in page_range %}{% paginator_number cl i %}{% endfor %}{% endif %}{{ cl.result_count }}{% if cl.result_count == 1 %}{{ cl.opts.verbose_name }}   {% else %}{{ cl.opts.verbose_name_plural }}       {% endif %}{% if show_all_url %} <a href="{{ show_all_url }}" class="showall">{% translate 'Show all' %}          </a>  {% endif %}{% if cl.formset and cl.result_count %}<input type="submit" name="_save" class="default" value="{% translate 'Save' %}">{% endif %}      </p>
 ```
+
 {% endraw %}
 
 ### After
@@ -103,29 +96,24 @@ Here's a blob of HTML that's in desperate need of attention -
 It looks a bit better now... we can read it :)
 
 {% raw %}
+
 ```html
-{% load admin_list %}
-{% load i18n %}
+{% load admin_list %} {% load i18n %}
 <p class="paginator">
-   {% if pagination_required %}
-       {% for i in page_range %}
-           {% paginator_number cl i %}
-       {% endfor %}
-   {% endif %}
-   {{ cl.result_count }}
-   {% if cl.result_count == 1 %}
-       {{ cl.opts.verbose_name }}
-   {% else %}
-       {{ cl.opts.verbose_name_plural }}
-   {% endif %}
-   {% if show_all_url %}
-       <a href="{{ show_all_url }}" class="showall">
-           {% translate 'Show all' %}
-       </a>
-   {% endif %}
-   {% if cl.formset and cl.result_count %}
-       <input type="submit" name="_save" class="default" value="{% translate 'Save' %}">
-   {% endif %}
+  {% if pagination_required %} {% for i in page_range %} {% paginator_number cl
+  i %} {% endfor %} {% endif %} {{ cl.result_count }} {% if cl.result_count == 1
+  %} {{ cl.opts.verbose_name }} {% else %} {{ cl.opts.verbose_name_plural }} {%
+  endif %} {% if show_all_url %}
+  <a href="{{ show_all_url }}" class="showall"> {% translate 'Show all' %} </a>
+  {% endif %} {% if cl.formset and cl.result_count %}
+  <input
+    type="submit"
+    name="_save"
+    class="default"
+    value="{% translate 'Save' %}"
+  />
+  {% endif %}
 </p>
 ```
+
 {% endraw %}
