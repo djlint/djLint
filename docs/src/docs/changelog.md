@@ -13,6 +13,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 ::: content
 
 - Bug fixes [#173](https://github.com/Riverside-Healthcare/djLint/issues/173), #174(https://github.com/Riverside-Healthcare/djLint/issues/174)
+- Dropped Py3.6 from `pyproject.toml`.
   :::
 
 ## 0.7.2
