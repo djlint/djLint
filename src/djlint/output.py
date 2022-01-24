@@ -98,7 +98,7 @@ def build_output(error: dict, config: Config) -> int:
 
         line = Fore.BLUE + message_dict["line"] + Style.RESET_ALL
         code = (
-            (Fore.RED if bool(message_dict["code"][:1] == "E") else Fore.YELLOW)
+            (Fore.RED if message_dict["code"][:1] == "E" else Fore.YELLOW)
             + message_dict["code"]
             + Style.RESET_ALL
         )

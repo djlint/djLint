@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_blocktranslate --cov=src/djlint \
+   pytest tests/test_django.py::test_comment --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -121,6 +121,50 @@ def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:
         {% endfor %}
     </ul>
 </div>
+""",
+    )
+
+    assert output.exit_code == 0
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<html>
+    <head>
+        <script src="file1.js"></script>
+        {% comment %}
+        <script src="file2.js"></script>
+        <script src="file3.js"></script>
+        <script src="file4.js"></script>
+        {% endcomment %}
+        <script src="file5.js"></script>
+    </head>
+    <body>
+    </body>
+</html>
+""",
+    )
+
+    assert output.exit_code == 0
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<html>
+    <head>
+        <script src="file1.js"></script>
+        {# djlint:off #}
+        {% comment %}
+        <script src="file2.js"></script>
+        <script src="file3.js"></script>
+        <script src="file4.js"></script>
+        {% endcomment %}
+        {# djlint:on #}
+        <script src="file5.js"></script>
+    </head>
+    <body>
+    </body>
+</html>
 """,
     )
 

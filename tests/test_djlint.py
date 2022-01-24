@@ -7,7 +7,7 @@ run::
 
 for a single test::
 
-    pytest tests/test_djlint.py::test_help --cov=src/djlint \
+    pytest tests/test_djlint.py::test_version --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 or::
@@ -17,6 +17,7 @@ or::
 """
 import subprocess
 import sys
+from importlib.metadata import version
 
 # pylint: disable=C0116
 from pathlib import Path
@@ -162,7 +163,10 @@ def test_check_reformatter_no_error(runner: CliRunner, tmp_file: TextIO) -> None
 
 def test_version(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["--version"])
-    assert pkg_resources.get_distribution("djlint").version in result.output
+    print(result.output)
+    print(pkg_resources.get_distribution("djlint").version)
+    print(version("djlint"))
+    assert version("djlint") in result.output
 
 
 def test_python_call() -> None:

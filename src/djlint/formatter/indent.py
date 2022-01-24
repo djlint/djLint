@@ -33,6 +33,9 @@ def indent_html(rawcode: str, config: Config) -> str:
     # here using all tags cause we allow empty tags on one line
     slt_template = config.optional_single_line_template_tags
 
+    # nested ignored blocks..
+    ignored_level = 0
+
     for item in rawcode_flat_list:
         # if a raw tag first line
         if not is_block_raw and is_ignored_block_opening(config, item):
@@ -41,9 +44,18 @@ def indent_html(rawcode: str, config: Config) -> str:
         # if a raw tag then start ignoring
         if is_ignored_block_opening(config, item):
             is_block_raw = True
+            ignored_level += 1
 
-        if re.findall(
-            config.ignored_inline_blocks, item, flags=re.IGNORECASE | re.VERBOSE
+        if is_safe_closing_tag(config, item):
+            ignored_level -= 1
+            if is_block_raw is True and ignored_level == 0:
+                is_block_raw = False
+
+        if (
+            re.findall(
+                config.ignored_inline_blocks, item, flags=re.IGNORECASE | re.VERBOSE
+            )
+            and is_block_raw is False
         ):
             tmp = (indent * indent_level) + item + "\n"
 
@@ -84,6 +96,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 re.IGNORECASE | re.MULTILINE | re.VERBOSE,
             )
             and is_block_raw is False
+            and not is_safe_closing_tag(config, item)
         ):
             indent_level = max(indent_level - 1, 0)
             tmp = (indent * indent_level) + item + "\n"
@@ -112,11 +125,12 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
             indent_level = indent_level + 1
 
-        elif is_raw_first_line is True or is_safe_closing_tag(config, item):
+        elif is_raw_first_line is True or (
+            is_safe_closing_tag(config, item) and is_block_raw is False
+        ):
             tmp = (indent * indent_level) + item + "\n"
 
         elif is_block_raw is True or item.strip() == "":
-
             tmp = item + "\n"
 
         # otherwise, just leave same level
@@ -125,7 +139,6 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
-
         if is_ignored_block_opening(config, item):
             is_block_raw = True
             is_raw_first_line = False
@@ -146,7 +159,10 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # turn off raw block if we hit end - for one line raw blocks, but not an inline raw
         if is_ignored_block_closing(config, item):
-            is_block_raw = False
+            if not is_safe_closing_tag(config, item):
+                ignored_level -= 1
+            if ignored_level == 0:
+                is_block_raw = False
 
         beautified_code = beautified_code + tmp
 

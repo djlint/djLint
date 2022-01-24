@@ -495,7 +495,7 @@ class Config:
         self.template_unindent: str = r"""
                 (?:
                   (?:\{\{\/)
-                | (?:\{%-?[ ]*?end)
+                | (?:\{%-?[ ]*?end(?!comment))
               )
             """
 
@@ -691,6 +691,7 @@ class Config:
 
         self.ignored_inline_blocks: str = r"""
               <!--.*?-->
+            | <(script|style).*?\</(?:\1)>
             | {\*.*?\*}
             | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
             | <\?php.*?\?>

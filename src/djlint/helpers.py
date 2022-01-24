@@ -62,7 +62,10 @@ def is_safe_closing_tag(config: Config, item: str) -> bool:
     last_index = 0
     inline = list(
         re.finditer(
-            re.compile(config.ignored_inline_blocks, flags=re.IGNORECASE | re.VERBOSE),
+            re.compile(
+                config.ignored_inline_blocks + r" | " + config.ignored_blocks,
+                flags=re.IGNORECASE | re.VERBOSE,
+            ),
             item,
         )
     )
