@@ -5,7 +5,7 @@ exclude: >
   )
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.0.1
+  rev: v4.1.0
   hooks:
   - id: trailing-whitespace
   - id: end-of-file-fixer
@@ -22,22 +22,22 @@ repos:
     - --remove-duplicate-keys
     - --remove-unused-variables
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.21.0
+  rev: v2.31.0
   hooks:
   - id: pyupgrade
     args: [--py36-plus]
 - repo: https://github.com/PyCQA/isort
-  rev: 5.9.2
+  rev: 5.10.1
   hooks:
   - id: isort
     exclude: docs*
     additional_dependencies: [toml]
 - repo: https://github.com/psf/black
-  rev: 21.6b0
+  rev: 21.12b0
   hooks:
   - id: black
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.1.0
+  rev: v2.2.0
   hooks:
   - id: pretty-format-ini
     args: [--autofix]
