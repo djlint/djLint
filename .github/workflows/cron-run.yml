@@ -27,7 +27,10 @@ jobs:
         tox -e isort,black
 
     - name: Pre-commit update
-      run: pre-commit autoupdate
+      run: |
+        pip install pre-commit
+        pre-commit install
+        pre-commit autoupdate
 
     - name: Update npm packages
       run: |
