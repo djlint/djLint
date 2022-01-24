@@ -18,8 +18,13 @@ jobs:
 
     - name: Update python deps
       run: |
-        pip install poetry-up
+        python -m pip install tox poetry tox-poetry poetry-up
         poetry-up --install
+
+    - name: python format
+      run: |
+        python -m pip install tox poetry tox-poetry
+        tox -e isort,black
 
     - name: Update npm packages
       run: |
@@ -32,10 +37,7 @@ jobs:
         cd docs
         npm run format
 
-    - name: python format
-      run: |
-        python -m pip install tox poetry tox-poetry
-        tox -e isort,black
+
 
       # - name: Stage, commit and push files
       #   uses: stefanzweifel/git-auto-commit-action@v4
