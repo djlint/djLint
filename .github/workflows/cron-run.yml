@@ -30,20 +30,19 @@ jobs:
       run: |
         cd docs
         npm install
-        npm update --save/--save-dev
+        npm install -g npm-check-updates
+        ncu -u
 
     - name: npm format
       run: |
         cd docs
         npm run format
 
-
-
-      # - name: Stage, commit and push files
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_user_name: "djlint-bot"
-      #     commit_user_email: "djlint-bot@users.noreply.github.com"
-      #     commit_author: "djlint-bot <djlint-bot@users.noreply.github.com>"
-      #     commit_message: "chore(build): update packages [Weekly]"
-      #   continue-on-error: true
+    - name: Stage, commit and push files
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_user_name: djlint-bot
+        commit_user_email: djlint-bot@users.noreply.github.com
+        commit_author: djlint-bot <djlint-bot@users.noreply.github.com>
+        commit_message: 'chore(build): update packages [Weekly]'
+      continue-on-error: true
