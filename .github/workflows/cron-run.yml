@@ -26,12 +26,18 @@ jobs:
         python -m pip install tox poetry tox-poetry
         tox -e isort,black
 
+    - name: Pre-commit update
+      run: pre-commit autoupdate
+
     - name: Update npm packages
       run: |
         cd docs
         npm install
         npm install -g npm-check-updates
+        # update deps
         ncu -u
+        # update package lock
+        npm install
 
     - name: npm format
       run: |
