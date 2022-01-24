@@ -17,13 +17,18 @@ or::
 """
 import subprocess
 import sys
-from importlib.metadata import version
+
+try:
+    from importlib import metadata
+except ImportError:
+    # Running on pre-3.8 Python; use importlib-metadata package
+    import importlib_metadata as metadata  # type: ignore
+
 
 # pylint: disable=C0116
 from pathlib import Path
 from typing import TextIO
 
-import pkg_resources
 from click.testing import CliRunner
 
 from src.djlint import main as djlint
@@ -163,10 +168,7 @@ def test_check_reformatter_no_error(runner: CliRunner, tmp_file: TextIO) -> None
 
 def test_version(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["--version"])
-    print(result.output)
-    print(pkg_resources.get_distribution("djlint").version)
-    print(version("djlint"))
-    assert version("djlint") in result.output
+    assert metadata.version("djlint") in result.output
 
 
 def test_python_call() -> None:

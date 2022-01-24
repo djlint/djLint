@@ -8,7 +8,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 ## Installation from [Pypi](https://pypi.org/project/djlint/)
 
-djLint is build with [Python 3](https://python.org), it can be installed by simply running:
+djLint is build with [Python 3.7+](https://python.org), it can be installed by simply running:
 
 ```bash
 pip install djlint
