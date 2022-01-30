@@ -33,7 +33,7 @@ def condense_html(html: str, config: Config) -> str:
             return not any(
                 re.findall(
                     re.compile(
-                        fr"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+                        rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
                         re.IGNORECASE | re.MULTILINE | re.DOTALL,
                     ),
                     html,
@@ -66,7 +66,7 @@ def condense_html(html: str, config: Config) -> str:
         for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
             html = re.sub(
                 re.compile(
-                    fr"((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)",
+                    rf"((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)",
                     re.IGNORECASE | re.MULTILINE | re.DOTALL,
                 ),
                 func,
@@ -78,7 +78,7 @@ def condense_html(html: str, config: Config) -> str:
     # put short single line tags on one line
     html = re.sub(
         re.compile(
-            fr"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)\s*([^<\n]*?)\s*?(</(\2)>)",
+            rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)\s*([^<\n]*?)\s*?(</(\2)>)",
             re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
         ),
         func,
