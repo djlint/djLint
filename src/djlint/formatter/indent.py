@@ -62,25 +62,25 @@ def indent_html(rawcode: str, config: Config) -> str:
         # if a one-line, inline tag, just process it, only if line starts w/ it
         elif (
             re.findall(
-                fr"(<({slt_html})>)(.*?)(</(\2)>)", item, re.IGNORECASE | re.VERBOSE
+                rf"(<({slt_html})>)(.*?)(</(\2)>)", item, re.IGNORECASE | re.VERBOSE
             )
             or re.findall(
                 re.compile(
-                    fr"(<({slt_html})\b.+?>)(.*?)(</(\2)>)", re.IGNORECASE | re.VERBOSE
+                    rf"(<({slt_html})\b.+?>)(.*?)(</(\2)>)", re.IGNORECASE | re.VERBOSE
                 ),
                 item,
             )
             or re.findall(
-                fr"^({{%[ ]*?({slt_template})[ ]+?.+?%}})(.*?)({{%[ ]+?end(\2)[ ]+?.*?%}})",
+                rf"^({{%[ ]*?({slt_template})[ ]+?.+?%}})(.*?)({{%[ ]+?end(\2)[ ]+?.*?%}})",
                 item,
                 re.IGNORECASE | re.MULTILINE | re.VERBOSE,
             )
             or re.findall(
-                fr"(<({slt_html})\b.*?/>)", item, flags=re.IGNORECASE | re.VERBOSE
+                rf"(<({slt_html})\b.*?/>)", item, flags=re.IGNORECASE | re.VERBOSE
             )
             or re.findall(
                 re.compile(
-                    fr"(<({always_self_closing_html})\b.*?/?>)",
+                    rf"(<({always_self_closing_html})\b.*?/?>)",
                     re.IGNORECASE | re.VERBOSE,
                 ),
                 item,
@@ -150,7 +150,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
             tmp = re.sub(
                 re.compile(
-                    fr"(\s*?)(<(?:{config.indent_html_tags})\b)((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])+?)(/?>)",
+                    rf"(\s*?)(<(?:{config.indent_html_tags})\b)((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])+?)(/?>)",
                     re.VERBOSE | re.IGNORECASE,
                 ),
                 func,

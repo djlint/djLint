@@ -36,14 +36,14 @@ colorama = "^0.4.4"
 regex = "^2022.1.18"
 tqdm = "^4.62.2"
 tomlkit = "^0.8.0"
-coverage = { version = "^6.2", optional = true }
+coverage = { version = "^6.3", optional = true }
 pytest = { version = "^6.2.5", optional = true }
 pytest-cov = { version = "^3.0.0", optional = true }
 pathspec = "^0.9.0"
 importlib-metadata = "^4.10.1"
 
 [tool.poetry.dev-dependencies]
-black = "^21.12b0"
+black = "^22.1.0"
 isort = "^5.9.3"
 
 [tool.poetry.extras]

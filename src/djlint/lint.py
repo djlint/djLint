@@ -71,7 +71,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                 ):
                     if match.group(2) and not re.search(
                         re.compile(
-                            fr"^/?{config.always_self_closing_html_tags}\b", re.I | re.X
+                            rf"^/?{config.always_self_closing_html_tags}\b", re.I | re.X
                         ),
                         match.group(2),
                     ):
