@@ -754,7 +754,7 @@ class Config:
             | head
             | body
             | div
-            | a
+         #   | a # a gets no breaks #177
             | nav
             | ul
             | ol

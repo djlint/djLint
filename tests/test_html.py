@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_script_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_a_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -69,6 +69,18 @@ asdf
 </div>
 """
     )
+
+
+def test_a_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<p>
+    some nice text <a href="this">asdf</a>, ok
+</p>""",
+    )
+
+    assert output.exit_code == 0
 
 
 def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:

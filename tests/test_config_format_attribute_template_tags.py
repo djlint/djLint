@@ -76,9 +76,7 @@ def test_without_config(runner: CliRunner, tmp_file: TextIO) -> None:
         == r"""<a class="asdf {% if favorite == "yes" %}favorite{% endif %} has-tooltip-arrow has-tooltip-right"
    data-tooltip="{% if favorite == "yes" %}Remove from Favorites {% else %}Add to Favorites{% endif %}"
    fav-type="report"
-   object-id="{{ report.report_id }}">
-    <span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>
-</a>
+   object-id="{{ report.report_id }}"><span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span></a>
 """
     )
     output = reformat(
