@@ -66,6 +66,12 @@ djLint can be used as a SublimeText Linter plugin. It can be installed via [pack
 
 Ensure djLint is installed in your global python, or on yout `PATH`.
 
+## Visual Studio Code
+
+[Marketplace page](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
+
+[GitHub repository](https://github.com/monosans/djlint-vscode)
+
 ## coc.nvim
 
 https://www.npmjs.com/package/coc-htmldjango
