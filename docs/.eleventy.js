@@ -35,7 +35,21 @@ async function imageShortcode(src, alt, sizes, type='asdf', loading="lazy", deco
   if(type=="boxed"){
       return `<div class="block"><div class="box is-inlineblock">` + Image.generateHTML(metadata, imageAttributes) + `</div></div>`;
   }
-  return Image.generateHTML(metadata, imageAttributes);
+  // using custom code so that we can return the highest src in img as old browsers don't auto upscale.
+  let lowsrc = metadata.png[0];
+  let highsrc = metadata.png[metadata.png.length - 1];
+  return `<picture>
+    ${Object.values(metadata).map(imageFormat => {
+      return `  <source type="${imageFormat[0].sourceType}" srcset="${imageFormat.map(entry => entry.srcset).join(", ")}" sizes="${sizes}">`;
+    }).join("\n")}
+      <img
+        src="${highsrc.url}"
+        width="${highsrc.width}"
+        height="${highsrc.height}"
+        alt="${alt}"
+        loading="lazy"
+        decoding="async">
+    </picture>`;
 }
 
 // from https://github.com/pusher/docs/blob/main/.eleventy.js
