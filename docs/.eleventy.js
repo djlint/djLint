@@ -3,7 +3,8 @@ const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 const criticalCss = require("eleventy-critical-css");
 const slugify = require("slugify");
 const metagen = require("eleventy-plugin-metagen");
-
+const i18n = require('eleventy-plugin-i18n');
+const translations = require('./src/_data/i18n');
 const fs = require('fs');
 const outdent = require('outdent');
 const schema = require("@quasibit/eleventy-plugin-schema");
@@ -141,6 +142,10 @@ module.exports = function(eleventyConfig) {
     return JSON.stringify(text).replace(/(?:\\n\s*){2,}/g, "\\n");
   });
 
+  eleventyConfig.addFilter("baseUrl", (text) => {
+    return text.replace(/(?:ru)\//g, "");
+  });
+
   eleventyConfig.addFilter("niceDate", (value) => {
     try{
       const options = {year: 'numeric', month: 'short', day: 'numeric' };
@@ -188,8 +193,15 @@ module.exports = function(eleventyConfig) {
   fontawesomeSubset({
     brands:['discord', 'github'],
     regular:['envelope', 'life-ring'],
-    solid: ['arrow-circle-right', 'pencil-alt', 'envelope', 'share', 'infinity', 'search', 'book', 'project-diagram', 'heart', 'address-card', 'server', 'database', 'ship', 'code', 'chart-bar', 'sitemap', 'tasks', 'lock', 'sliders-h', 'user', 'users', 'compass', 'download', 'sync-alt']
+    solid: ['globe', 'arrow-circle-right', 'pencil-alt', 'envelope', 'share', 'infinity', 'search', 'book', 'project-diagram', 'heart', 'address-card', 'server', 'database', 'ship', 'code', 'chart-bar', 'sitemap', 'tasks', 'lock', 'sliders-h', 'user', 'users', 'compass', 'download', 'sync-alt']
         }, '_site/static/font/fontawesome/webfonts');
+
+  eleventyConfig.addPlugin(i18n, {
+    translations,
+    fallbackLocales: {
+      '*': 'en-US'
+    }
+  });
 
   return {
     dir: {

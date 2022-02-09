@@ -1,0 +1,169 @@
+---
+layout: layout.njk
+date: Last Modified
+
+---
+{% block body %}
+<div class="section">
+     <div class="container has-text-centered">
+                 <h1 class="title huge mt-5">dj<span class="has-text-weight-light">&#8201;Lint</span></h1>
+
+                 <h2 class="title is-2">
+                     {{ "index_title" |i18n }}</h2>
+
+<p class="story my-5 has-text-left">{{ "index_description" | i18n | safe }}
+
+<h2 class="title is-2 has-text-centered mb-5">{{ "index_fav_lang" | i18n }}</h2>
+<div class="columns is-multiline">
+   <div class="column is-one-quarter">
+      <a class="is-block card animated fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/django/">
+         <div class="card-content" >
+            <div class="content">
+            <figure class="image brand">
+                        {% image "./src/static/img/logos/django.png", "django logo", "(min-width:300px) 50vw, 100vw" %}
+                    </figure>
+                     <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">Django</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/jinja/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+                        {% image "./src/static/img/logos/jinja.png", "jinja logo", "(min-width:300px) 50vw, 100vw" %}
+                    </figure>
+                    <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">jinja</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/nunjucks/">
+         <div class="card-content">
+            <div class="content">
+            <figure class="image brand">
+            {% image "./src/static/img/logos/nunjucks.png", "nunjucks logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">nunjucks</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/twig/">
+         <div class="card-content">
+            <div class="content">
+            <figure class="image brand">
+            {% image "./src/static/img/logos/twig.png", "twig logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">twig</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/handlebars/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+            {% image "./src/static/img/logos/handlebars.png", "handlebars logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">handlebars</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/mustache/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+            {% image "./src/static/img/logos/mustache.png", "mustache logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">mustache</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/golang/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+            {% image "./src/static/img/logos/golang.png", "golang logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">golang</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+   <div class="column is-one-quarter">
+      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/angular/">
+         <div class="card-content">
+            <div class="content">
+             <figure class="image brand">
+            {% image "./src/static/img/logos/angular.png", "angular logo", "(min-width:300px) 50vw, 100vw" %}
+            </figure>
+               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">angular</h3>
+            </div>
+         </div>
+      </a>
+   </div>
+
+</div>
+                  </div>
+ </div>
+
+<div class="container has-text-centered">
+<h2 class="title is-2">{{ "index_watch" | i18n }}</h2>
+
+    <figure class="image animated mx-auto is-framed" style="max-width:800px" data-animate="headShake">
+             <video autoplay loop muted playsinline>
+             <source src="/static/img/demo.webm" type="video/webm">
+                     <img src="/static/img/demo.gif" alt="djlint html template formater demo" loading="lazy" decoding="async">
+</video>
+                 </figure>
+
+<h2 class="title is-2 mt-5">{{ "index_show_format" | i18n }}</h2>
+</div>
+<div class="container">
+
+
+{{ "index_add_badge" | i18n }} <code>readme.md</code>:
+
+{% highlight "md" %}
+[![Code style: djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://github.com/Riverside-Healthcare/djlint)
+{% endhighlight %}
+
+{{ "index_add_badge" | i18n }} <code>readme.rst</code>:
+
+{% highlight "md" %}
+
+   .. image:: https://img.shields.io/badge/html%20style-djLint-blue.svg
+      :target: https://github.com/Riverside-Healthcare/djlint
+{% endhighlight %}
+
+<p>{{ "index_looks_like" | i18n }}</p>
+
+<figure class="image" style="max-width:120px;"><img src="https://img.shields.io/badge/html%20style-djLint-blue.svg" alt="https://github.com/Riverside-Healthcare/djlint" /></figure>
+
+</div>
+<div class="container has-text-centered mb-5">
+<h2 class="title is-2 mt-5">{{ "contributing" | i18n }}</h2>
+<p class="has-text-left">
+{{ "contributing_message" | i18n | safe }}</p>
+</div>
+</div>
+
+
+
+{% endblock body %}

@@ -28,7 +28,7 @@ The repo provides multiple pre-configured hooks for specific djLint profiles (it
   This will look for files matching `*.tmpl` and set `--profile=golang`.
   :::
 
-Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the `pre-commit docs <https://pre-commit.com/#pre-commit-configyaml---hooks>`\_ for additional configuration
+Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) for additional configuration
 
 ### Default Django example
 
@@ -64,7 +64,7 @@ djLint can be used as a SublimeText Linter plugin. It can be installed via [pack
 3. Install SublimeLinter-contrib-djlint
    :::
 
-Ensure djLint is installed in your global python, or on yout `PATH`.
+Ensure djLint is installed in your global python, or on your `PATH`.
 
 ## Visual Studio Code
 

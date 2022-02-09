@@ -19,7 +19,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 ::: content
 
-- Bug fixes [#173](https://github.com/Riverside-Healthcare/djLint/issues/173), #174(https://github.com/Riverside-Healthcare/djLint/issues/174)
+- Bug fixes [#173](https://github.com/Riverside-Healthcare/djLint/issues/173), [#174](https://github.com/Riverside-Healthcare/djLint/issues/174)
 - Dropped Py3.6 from `pyproject.toml`.
   :::
 
@@ -197,7 +197,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 - Added formatting for template conditions inside attributes
 - Added srcset as possible url location in linter rules
 - Speed up formatting
-- Special thanks to `jayvdb <https://github.com/jayvdb>`\_
+- Special thanks to [jayvdb](https://github.com/jayvdb)
   :::
 
 ## 0.5.3
@@ -243,14 +243,14 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 ::: content
 
-- Fixed bug `#35 <https://github.com/Riverside-Healthcare/djLint/issues/35>`\_
+- Fixed bug [#35](https://github.com/Riverside-Healthcare/djLint/issues/35)
   :::
 
 ## 0.4.8
 
 ::: content
 
-- Fixed bug `#34 <https://github.com/Riverside-Healthcare/djLint/issues/34>`\_
+- Fixed bug [#34](https://github.com/Riverside-Healthcare/djLint/issues/34)
   :::
 
 ## 0.4.7
@@ -264,7 +264,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 ::: content
 
-- Fixed bug `#31 <https://github.com/Riverside-Healthcare/djLint/issues/31>`\_
+- Fixed bug [#31](https://github.com/Riverside-Healthcare/djLint/issues/31)
   :::
 
 ## 0.4.5

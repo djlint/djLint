@@ -155,6 +155,7 @@ $icons: (
   life-ring: $fa-var-life-ring,
   pencil-alt: $fa-var-pencil-alt,
   arrow-circle-right: $fa-var-arrow-circle-right,
+  globe: $fa-var-globe,
 );
 
 @each $key, $value in $icons {

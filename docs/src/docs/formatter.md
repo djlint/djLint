@@ -70,7 +70,7 @@ or as a javascript style comment -
 {{ /* djlint:off */ }} <bad html to ignore> {{ /* djlint:on */ }}</bad>
 ```
 
-or as a golan style comment -
+or as a golang style comment -
 
 ```html
 {{!-- djlint:off --}} <bad html to ignore> {{!-- djlint:on --}}</bad>
