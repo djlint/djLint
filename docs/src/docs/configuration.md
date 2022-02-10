@@ -146,6 +146,8 @@ Usage:
 max_line_length=120
 ```
 
+Use a small value (e.g., `max_line_length=1`) to keep tags being condensed in a single line.
+
 ## max_attribute_length
 
 Formatter will attempt to wrap tag attributes if the attribute length exceeds this value.
