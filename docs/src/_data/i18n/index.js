@@ -7,14 +7,14 @@ module.exports = {
     'en-US': "HTML Template Linter and Formatter",
     ru: "Программа проверки и форматирования шаблонов HTML"
   },
-  lang_name: {
-    'en-US': "English",
-    ru: "Русский"
-  },
-  lang_code: {
-    'en-US': "en",
-    ru: "ru"
-  },
+  // lang_name: {
+  //   'en-US': "English",
+  //   ru: "Русский"
+  // },
+  // lang_code: {
+  //   'en-US': "en",
+  //   ru: "ru"
+  // },
   lang_code_url: {
     'en-US': "",
     ru: "/ru"

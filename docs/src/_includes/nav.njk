@@ -2,7 +2,7 @@
      aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <a href="/">{% image "./src/static/img/icon.png", "djlint icon", "(min-width:600px) 50vw, 100vw" %}</a>
+            <a href="{{ "lang_code_url" | i18n }}/">{% image "./src/static/img/icon.png", "djlint icon", "(min-width:600px) 50vw, 100vw" %}</a>
             <a role="button"
                class="navbar-burger"
                aria-label="menu"
@@ -65,19 +65,12 @@
                         <span class="icon is-large">
                             <i class="fas fa-lg  fa-globe"></i>
                         </span>
-                        <span>{{ "lang_code" | i18n }}
+                        <span>{{ locale | i18n_locale(locales) }}
                     </a>
                     <div class="navbar-dropdown">
-                    {% if "lang_code" | i18n != "en" %}
-                        <a class="navbar-item" href="{{ page.url | baseUrl }}">
-                            {{ 'lang_name' | i18n({}, 'en-US') }}
-                        </a>
-                    {% endif %}
-                    {% if "lang_code" | i18n != "ru" %}
-                        <a class="navbar-item" href="/ru{{ page.url | baseUrl }}">
-                            {{ 'lang_name' | i18n({}, 'ru') }}
-                        </a>
-                    {%  endif %}
+                        {%  for page in page.url | i18n_urls(collections.all) %}
+                            <a class="navbar-item" href="{{ page.url }}">{{ page.meta.label }}
+                        {%  endfor %}
                     </div>
                 </div>
             </div>

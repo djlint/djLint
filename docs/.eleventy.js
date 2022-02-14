@@ -5,6 +5,7 @@ const slugify = require("slugify");
 const metagen = require("eleventy-plugin-metagen");
 const i18n = require('eleventy-plugin-i18n');
 const translations = require('./src/_data/i18n');
+const locales = require('./src/_data/locales');
 const fs = require('fs');
 const outdent = require('outdent');
 const schema = require("@quasibit/eleventy-plugin-schema");
@@ -142,9 +143,7 @@ module.exports = function(eleventyConfig) {
     return JSON.stringify(text).replace(/(?:\\n\s*){2,}/g, "\\n");
   });
 
-  eleventyConfig.addFilter("baseUrl", (text) => {
-    return text.replace(/(?:ru)\//g, "");
-  });
+
 
   eleventyConfig.addFilter("niceDate", (value) => {
     try{
@@ -155,6 +154,8 @@ module.exports = function(eleventyConfig) {
         }
 
   });
+
+  
 
   eleventyConfig.addFilter("algExcerpt", (text) => {
     return text
@@ -201,6 +202,52 @@ module.exports = function(eleventyConfig) {
     fallbackLocales: {
       '*': 'en-US'
     }
+  });
+
+  eleventyConfig.addFilter("baseUrl", (text) => {
+    return text.replace(/(?:ru)\//g, "");
+  });
+
+  eleventyConfig.addFilter("i18n_locale", (current_locale, locale_list) => {
+
+    return locale_list.filter(x => {return x.code === (current_locale ?? "en-US")})[0].label;
+  })
+
+  eleventyConfig.addFilter("i18n_urls", (page, all) => {
+    console.log(page)
+    var locale_urls = locales.map((x => { if (x.url != "") return x.url  })).filter(x => {return x !== undefined});
+
+    var split_url = page.split('/').length > 1 ? page.split('/')[1] : "";
+
+    // find the current locale
+    var active_local = "";
+
+    locale_urls.every(locale => {
+      if(locale === split_url){
+        active_local = locale
+        return true;
+      }
+    })
+
+    // get remaining locales
+    var remaining_locals = locales.map((x => { return x.url  })).filter(x => {return x !== active_local});
+
+    var i18n_pages = []
+
+    var valid_urls = all.map(x => {return x.url})
+
+    remaining_locals.forEach(x => {
+      var new_url = ("/" + page.replace(active_local,x)).replace(/\/{2,}/,"/");
+      console.log(new_url)
+      if (valid_urls.indexOf(new_url)){
+        i18n_pages.push({
+          "url": new_url,
+          "meta": locales.filter(y => {return y.url === x})[0]
+        })
+      }
+    })
+
+    return i18n_pages
   });
 
   return {
