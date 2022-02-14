@@ -2,11 +2,11 @@ module.exports = [
   {
     label: 'English',
     code: 'en-US',
-    url: ''
+    url: '',
   },
   {
     label: 'Русский',
     code: 'ru',
-    url: 'ru'
-  }
+    url: 'ru',
+  },
 ];

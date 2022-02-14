@@ -130,7 +130,8 @@ require_pragma=true
 
 ```html
 <!-- djlint:on -->
-или {# djlint:on #} или {% comment %} djlint:on {% endcomment %} или {{ /* djlint:on */ }} или {{!-- djlint:on --}}
+или {# djlint:on #} или {% comment %} djlint:on {% endcomment %} или {{ /*
+djlint:on */ }} или {{!-- djlint:on --}}
 ```
 
 {% endraw %}

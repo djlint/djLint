@@ -565,7 +565,8 @@ a.card:hover {
   width: 6rem;
 }
 
-.is-transparent, .is-transparent:hover {
+.is-transparent,
+.is-transparent:hover {
   background-color: transparent !important;
 }
 /* purgecss end ignore */

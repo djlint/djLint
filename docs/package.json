@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "eleventy --serve --watch",
-    "install": "ELEVENTY_PRODUCTION=true eleventy",
-    "updateSearch": "node ./src/search/update-algolia-index.js",
+    "build": "ELEVENTY_PRODUCTION=true eleventy",
     "format": "prettier --config .prettierrc \"src/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write"
   },
   "keywords": [],
