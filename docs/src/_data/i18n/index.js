@@ -32,7 +32,7 @@ module.exports = {
     ru: 'Линтер',
   },
   configuration: {
-    'en-US': 'configuration',
+    'en-US': 'Configuration',
     ru: 'Конфигурация',
   },
   integrations: {

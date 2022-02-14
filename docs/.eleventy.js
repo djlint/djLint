@@ -155,8 +155,6 @@ module.exports = function(eleventyConfig) {
 
   });
 
-  
-
   eleventyConfig.addFilter("algExcerpt", (text) => {
     return text
       .replace(/<code class="language-.*?">.*?<\/code>/gs, "")
@@ -214,7 +212,6 @@ module.exports = function(eleventyConfig) {
   })
 
   eleventyConfig.addFilter("i18n_urls", (page, all) => {
-    console.log(page)
     var locale_urls = locales.map((x => { if (x.url != "") return x.url  })).filter(x => {return x !== undefined});
 
     var split_url = page.split('/').length > 1 ? page.split('/')[1] : "";
@@ -238,7 +235,6 @@ module.exports = function(eleventyConfig) {
 
     remaining_locals.forEach(x => {
       var new_url = ("/" + page.replace(active_local,x)).replace(/\/{2,}/,"/");
-      console.log(new_url)
       if (valid_urls.indexOf(new_url)){
         i18n_pages.push({
           "url": new_url,
