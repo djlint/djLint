@@ -68,10 +68,24 @@ djLint можно использовать в качестве плагина Su
 
 ## Visual Studio Code
 
-[Страница рынка](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
+::: content
 
-[GitHub репозиторий](https://github.com/monosans/djlint-vscode)
+- [Страница рынка](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
+- [GitHub репозиторий](https://github.com/monosans/djlint-vscode)
+   :::
+## neovim
+
+djLint можно использовать в качестве форматера в neovim с помощью плагина ``null-ls``.
+
+::: content
+
+- [GitHub репозиторий](https://github.com/jose-elias-alvarez/null-ls.nvim/)
+- [Пример конфигурации](https://github.com/shaeinst/roshnivim/blob/5d991fcfa1b8f865f9653a98c6d97a829d4a2add/lua/plugins/null-ls_nvim.lua#L84-L91)
+   :::
 
 ## coc.nvim
 
-https://www.npmjs.com/package/coc-htmldjango
+::: content
+
+- [npm package](https://www.npmjs.com/package/coc-htmldjango)
+   :::
