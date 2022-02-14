@@ -2,7 +2,7 @@
      aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <a href="/">{% image "./src/static/img/icon.png", "djlint icon", "(min-width:600px) 50vw, 100vw" %}</a>
+            <a href="{{ "lang_code_url" | i18n }}/">{% image "./src/static/img/icon.png", "djlint icon", "(min-width:600px) 50vw, 100vw" %}</a>
             <a role="button"
                class="navbar-burger"
                aria-label="menu"
@@ -14,59 +14,66 @@
             </a>
         </div>
         <div id="djlint-nav-menu" class="navbar-menu">
-        <div class="navbar-start my-5 mx-0 is-justify-content-center is-flex-grow-1">
+            <div class="navbar-start my-5 mx-0 is-justify-content-center is-flex-grow-1">
+                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/getting-started/">
+                    {{ "getting_started" | i18n }}
+                </a>
 
-        <a class="navbar-item has-text-grey" href="/docs/getting-started/">
-            Getting Started
-        </a>
-
-        <a class="navbar-item has-text-grey" href="/docs/formatter/">
-            Formatter
-        </a>
-         <a class="navbar-item has-text-grey" href="/docs/linter/">
-            Linter
-        </a>
-        <a class="navbar-item has-text-grey" href="/docs/configuration">
-            Configuration
-        </a>
-        <a class="navbar-item has-text-grey" href="/docs/integrations">
-            Integrations
-        </a>
-        <a class="navbar-item has-text-grey" href="/docs/best-practices">
-            Best Practices
-        </a>
+                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/formatter/">
+                    {{ "formatter" | i18n }}
+                </a>
+                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/linter/">
+                    {{ "linter" | i18n }}
+                </a>
+                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/configuration">
+                    {{ "configuration" | i18n }}
+                </a>
+                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/integrations">
+                    {{ "integrations" | i18n }}
+                </a>
+                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/best-practices">
+                    {{ "best_practices" | i18n }}
+                </a>
+            </div>
+            <div class="navbar-end mx-0">
+                <a class="navbar-item button is-white animated fadeIn"
+                   href="https://github.com/Riverside-Healthcare/djlint"
+                   target="_blank"
+                   rel="noopener">
+                    <span class="icon is-large has-text-grey is-nav-icon">
+                        <i class="fab fa-2x fa-github"></i>
+                    </span>
+                </a>
+                <a class="navbar-item button is-white animated fadeIn"
+                   href="https://discord.gg/taghAqebzU"
+                   target="_blank"
+                   rel="noopener">
+                    <span class="icon is-large has-text-grey  is-nav-icon">
+                        <i class="fab fa-2x fa-discord"></i>
+                    </span>
+                </a>
+                <a class="navbar-item button is-white animated fadeIn"
+                   href="https://pypi.org/project/djlint/"
+                   target="_blank"
+                   rel="noopener">
+                    <span class="icon is-large has-text-grey  is-nav-icon">
+                        <i class="fab fa-2x fa-download"></i>
+                    </span>
+                </a>
+                 <div class="navbar-item has-dropdown has-text-grey is-hoverable">
+                    <a class="navbar-link has-text-grey is-transparent">
+                        <span class="icon is-large">
+                            <i class="fas fa-lg  fa-globe"></i>
+                        </span>
+                        <span>{{ locale | i18n_locale(locales) }}
+                    </a>
+                    <div class="navbar-dropdown">
+                        {%  for page in page.url | i18n_urls(collections.all) %}
+                            <a class="navbar-item" href="{{ page.url }}">{{ page.meta.label }}
+                        {%  endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="navbar-end mx-0">
-        <a class="navbar-item button is-white animated fadeIn"
-               href="https://github.com/Riverside-Healthcare/djlint"
-               target="_blank"
-               rel="noopener">
-                <span class="icon is-large has-text-grey is-nav-icon">
-                    <i class="fab fa-2x fa-github"></i>
-                </span>
-            </a>
-             <a class="navbar-item button is-white animated fadeIn"
-                       href="https://discord.gg/taghAqebzU"
-                       target="_blank"
-                       rel="noopener">
-                        <span class="icon is-large has-text-grey  is-nav-icon">
-                            <i class="fab fa-2x fa-discord"></i>
-                        </span>
-                    </a>
-
-                     <a class="navbar-item button is-white animated fadeIn"
-                       href="https://pypi.org/project/djlint/"
-                       target="_blank"
-                       rel="noopener">
-                        <span class="icon is-large has-text-grey  is-nav-icon">
-                            <i class="fab fa-2x fa-download"></i>
-                        </span>
-                    </a>
-
-</div>
-          </div>          
-
-        
     </div>
-</div>
 </nav>

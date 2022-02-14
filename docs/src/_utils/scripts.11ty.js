@@ -13,9 +13,8 @@ module.exports = class {
 
   async render() {
     await esbuild.build({
-      entryPoints: ['src/static/js/search.js'],
+      entryPoints: ['src/static/js/hamburger.js'],
       inject: [
-        './src/static/js/hamburger.js',
         './src/static/js/animate.js',
         './src/static/js/modal.js',
       ],

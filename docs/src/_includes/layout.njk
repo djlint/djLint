@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="has-navbar-fixed-top">
+<html lang="{{ locale }}" dir="{{ dir }}" class="has-navbar-fixed-top">
     <head>
         {% block meta %}
             {% metagen
-            title=(title or site.title) + " | " + site.name,
-            desc=desc or description or site.description,
+            title=(title or "title" | i18n or site.title) + " | " + site.name,
+            desc=desc or description or "description" | i18n or site.description,
             url=site.url + page.url,
             img=image or site.url + site.image,
             img_alt=alt or "djlint logo",
@@ -31,6 +31,11 @@
         <meta content="yes" name="apple-mobile-web-app-capable">
         <meta name="apple-mobile-web-app-status-bar-style"
               content="black-translucent">
+
+        <!-- languages -->
+        <link rel="alternate" hreflang="en-US" href="{{site.url}}{{ page.url | baseUrl }}" />
+        <link rel="alternate" hreflang="ru" href="{{site.url}}/ru{{ page.url | baseUrl }}" />
+
         <!-- critical css is inlined, so we can async the rest -->
         <link rel="stylesheet preload"
               href="{{ css.stylesCss }}"
