@@ -2,7 +2,7 @@
 name: "\U0001F9A0 Linter Bug Report"
 about: You've found a bug?
 title: "[BUG] [Linter]"
-labels: ":microbe: bug", ":mag: linter"
+labels: [":microbe: bug", ":mag: linter"]
 ---
 
 <!--

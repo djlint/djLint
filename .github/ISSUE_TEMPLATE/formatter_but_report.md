@@ -2,7 +2,7 @@
 name: "\U0001F9A0 Formatter Bug Report"
 about: You've found a bug?
 title: "[BUG] [Formatter]"
-labels: ":microbe: bug", ":sponge: formatter"
+labels: [":microbe: bug", ":sponge: formatter"]
 ---
 
 <!--
