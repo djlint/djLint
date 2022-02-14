@@ -72,6 +72,11 @@ Ensure djLint is installed in your global python, or on your `PATH`.
 
 [GitHub repository](https://github.com/monosans/djlint-vscode)
 
+## neovim
+djLint can use used as formatter in neovim using null-ls plugin.
+https://github.com/jose-elias-alvarez/null-ls.nvim/
+[config](https://github.com/shaeinst/roshnivim/blob/5d991fcfa1b8f865f9653a98c6d97a829d4a2add/lua/plugins/null-ls_nvim.lua#L84-L91) example
+
 ## coc.nvim
 
 https://www.npmjs.com/package/coc-htmldjango
