@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_H025 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_T032 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -628,12 +628,38 @@ def test_H031(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H031" not in result.output
 
 
+def test_T032(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"{% static ''  \"  \"  'foo/bar.min.css' %}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T032" in result.output
+
+    write_to_file(tmp_file.name, b"{% static  ''  %}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T032" in result.output
+
+    write_to_file(tmp_file.name, b"{% static '' \"     \" 'foo/bar.min.css' %}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T032" not in result.output
+
+    write_to_file(tmp_file.name, b"{{ static ''  \"  \"  'foo/bar.min.css' }}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T032" in result.output
+
+    write_to_file(tmp_file.name, b"{{ static  ''  }}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T032" in result.output
+
+    write_to_file(tmp_file.name, b"{{ static '' \"     \" 'foo/bar.min.css' }}")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "T032" not in result.output
+
+
 def test_rules_not_matched_in_ignored_block(
     runner: CliRunner, tmp_file: TextIO
 ) -> None:
     write_to_file(tmp_file.name, b"<script><div class=test></script>")
     result = runner.invoke(djlint, [tmp_file.name])
-    print(result.output)
+
     assert result.exit_code == 0
     assert "H011 1:" not in result.output
 

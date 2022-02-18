@@ -14,6 +14,7 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 - Исправления ошибок [#187](https://github.com/Riverside-Healthcare/djLint/issues/187)
 - Добавлена улучшенная поддержка ``yaml`` front matter в файлах шаблонов
+- Добавлено правило T032 для [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
   :::
 
 ## 0.7.4

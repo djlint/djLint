@@ -228,3 +228,9 @@
     flags: re.DOTALL|re.I
     patterns:
     - <html[^>]*?>(?:(?!<meta[^>]*?name=([\"|'])keywords\b).)*</html>
+- rule:
+    name: T032
+    message: Extra whitepsace found in template tags.
+    patterns:
+    - "{%(([\"|'](?:(?!'|\"|%}).)*?[\"|'])|[^(?:%}|'|\")])*?\\s{2,}"
+    - "{{(([\"|'](?:(?!'|\"|}}).)*?[\"|'])|[^(?:}}|'|\")])*?\\s{2,}"
