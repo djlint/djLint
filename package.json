@@ -30,13 +30,14 @@
     "angular template formatter"
   ],
   "files": [
-    "src"
+    "src",
+    "bin"
   ],
   "bin": {
     "djlint": "./bin/index.js"
   },
   "scripts": {
-    "install": "node ./bin/install.js"
+    "postinstall": "node ./bin/install.js"
   },
   "author": {
     "name": "Christopher Pickering",
