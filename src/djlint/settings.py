@@ -687,6 +687,7 @@ class Config:
             | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
             | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
             | {%[ ]*?comment\b[^(?:%})]*?%}.*?(?={%[ ]*?endcomment[ ]*?%})
+            | ^---[\s\S]+?---
         """
 
         self.ignored_inline_blocks: str = r"""

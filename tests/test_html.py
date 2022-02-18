@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_pre_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_front_matter --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -19,6 +19,18 @@ from click.testing import CliRunner
 from src.djlint import main as djlint
 
 from .conftest import reformat, write_to_file
+
+
+def test_front_matter(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""---
+layout: <div><div></div></div>
+---
+<div></div>""",
+    )
+    assert output.exit_code == 0
 
 
 def test_pre_tag(runner: CliRunner, tmp_file: TextIO) -> None:
