@@ -1,6 +1,6 @@
 const {spawn} = require('child_process');
 var dataToSend;
-const python = spawn('python3', ['-m', 'pip', 'install', '--upgrade','--quiet', '-r', '../requirement.txt'], {"cwd": "./src"});
+const python = spawn('python3', ['-m', 'pip', 'install', '--upgrade','--quiet', '-r', '../requirements.txt'], {"cwd": "./src"});
 
 
 python.stdout.on('data', function (data) {
