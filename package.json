@@ -36,7 +36,7 @@
     "djlint": "./bin/index.js"
   },
   "scripts": {
-    "install": "node ./bin/install.js"
+    "install": "./bin/install.js"
   },
   "author": {
     "name": "Christopher Pickering",
