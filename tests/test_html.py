@@ -5,7 +5,7 @@ run::
    pytest tests/test_html.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_a_tag --cov=src/djlint --cov-branch \
+   pytest tests/test_html.py::test_pre_tag --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 
@@ -19,6 +19,24 @@ from click.testing import CliRunner
 from src.djlint import main as djlint
 
 from .conftest import reformat, write_to_file
+
+
+def test_pre_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    # added for https://github.com/Riverside-Healthcare/djLint/issues/187
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{% if a %}
+    <div>
+        <pre><code>asdf</code></pre>
+        <pre><code>asdf
+            </code></pre>
+        <!-- other html -->
+        <h2>title</h2>
+    </div>
+{% endif %}""",
+    )
+    assert output.exit_code == 0
 
 
 def test_textarea_tag(runner: CliRunner, tmp_file: TextIO) -> None:

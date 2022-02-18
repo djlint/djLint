@@ -235,7 +235,7 @@ module.exports = function(eleventyConfig) {
 
     remaining_locals.forEach(x => {
       var new_url = ("/" + page.replace(active_local,x)).replace(/\/{2,}/,"/");
-      if (valid_urls.indexOf(new_url)){
+      if (valid_urls.indexOf(new_url) !== -1){
         i18n_pages.push({
           "url": new_url,
           "meta": locales.filter(y => {return y.url === x})[0]

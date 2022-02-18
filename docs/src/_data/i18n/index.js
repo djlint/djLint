@@ -19,6 +19,10 @@ module.exports = {
     'en-US': '',
     ru: '/ru',
   },
+  next_release: {
+    'en-US': "Next Release",
+    ru: "Следующая публикация",
+  },
   getting_started: {
     'en-US': 'Getting Started',
     ru: 'Начало Работы',

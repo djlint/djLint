@@ -48,6 +48,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         if is_safe_closing_tag(config, item):
             ignored_level -= 1
+            ignored_level = max(ignored_level, 0)
             if is_block_raw is True and ignored_level == 0:
                 is_block_raw = False
 
@@ -161,6 +162,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         if is_ignored_block_closing(config, item):
             if not is_safe_closing_tag(config, item):
                 ignored_level -= 1
+                ignored_level = max(ignored_level, 0)
             if ignored_level == 0:
                 is_block_raw = False
 
