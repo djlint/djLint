@@ -211,7 +211,7 @@ class Config:
         }
 
         self.profile_code: List[str] = profile_dict.get(
-            str(profile or djlint_settings.get("profile", "all")).lower(), []
+            str(profile or djlint_settings.get("profile", "html")).lower(), []
         )
         self.profile: str = str(
             profile or djlint_settings.get("profile", "all")

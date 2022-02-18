@@ -97,7 +97,7 @@ def test_indent(runner: CliRunner) -> None:
 
 
 def test_exclude(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ["tests/config_excludes"])
+    result = runner.invoke(djlint, ["tests/config_excludes", "--profile", "django"])
     print(result.output)
     assert """html.html""" in result.output
     assert """excluded.html""" not in result.output

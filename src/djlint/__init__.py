@@ -72,7 +72,7 @@ from .src import get_src
 @click.option(
     "--profile",
     type=str,
-    help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars, golang",
+    help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars, golang, angular, html [default: html]",
 )
 @click.option(
     "--require-pragma",

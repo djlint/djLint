@@ -95,13 +95,13 @@ blank_line_after_tag="load,extends,include"
 
 ## profile
 
-Set a default profile for the template language. The profile will disable linter rules that do not apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside {% raw %}`{{#if}}`{% endraw %} tags.
+Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside {% raw %}`{{#if}}`{% endraw %} tags.
 
 Options:
 
 :::content
 
-- html
+- html (default)
 - django
 - jinja
 - nunjucks (for nunjucks and twig)
