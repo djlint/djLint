@@ -1,0 +1,54 @@
+{
+  "name": "djlint",
+  "version": "0.7.4",
+  "description": "HTML Template Linter and Formatter",
+  "main": "./bin/index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Riverside-Healthcare/djLint.git"
+  },
+  "keywords": [
+    "html template linter",
+    "html template formatter",
+    "jinja template linter",
+    "jinja template formatter",
+    "nunjucks template linter",
+    "nunjucks template formatter",
+    "twig template linter",
+    "twig template formatter",
+    "handlebars template linter",
+    "handlebars template formatter",
+    "mustache template linter",
+    "mustache template formatter",
+    "golang template linter",
+    "golang template formatter",
+    "angular template linter",
+    "angular template formatter"
+  ],
+  "files": [
+    "src"
+  ],
+  "bin": {
+    "djlint": "./bin/index.js"
+  },
+  "scripts": {
+    "install": "node ./bin/install.js"
+  },
+  "author": {
+    "name": "Christopher Pickering",
+    "url": "https://going.bg"
+  },
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Riverside-Healthcare/djLint/issues"
+  },
+  "homepage": "https://djlint.com",
+  "dependencies": {
+    "get-stdin": "^9.0.0",
+    "yargs": "^17.3.1"
+  }
+}

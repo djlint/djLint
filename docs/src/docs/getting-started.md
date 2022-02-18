@@ -19,7 +19,7 @@ pip install djlint
 djLint is a command line application. See `configuration` for advanced configuration.
 
 ```bash
-Usage: python -m djlint [OPTIONS] SRC ...
+Usage: djlint [OPTIONS] SRC ...
 
   djLint · lint and reformat HTML templates.
 
