@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_T032 --cov=src/djlint --cov-branch \
+   pytest tests/test_linter.py::test_H033 --cov=src/djlint --cov-branch \
          --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -652,6 +652,45 @@ def test_T032(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{{ static '' \"     \" 'foo/bar.min.css' }}")
     result = runner.invoke(djlint, [tmp_file.name])
     assert "T032" not in result.output
+
+
+def test_H033(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name, b"<form action=\" {% url 'foo:bar' %} \" ...>...</form>"
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H033" in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b"<form action=\" {% url 'foo:bar' %} {{ asdf}} \" ...>...</form>",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H033" in result.output
+
+    write_to_file(
+        tmp_file.name, b"<form action=\" {% url 'foo:bar' %} \" ...>...</form>"
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H033" in result.output
+
+    write_to_file(tmp_file.name, b'<form action=" {{ asdf}} " ...>...</form>')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H033" in result.output
+
+    write_to_file(
+        tmp_file.name, b"<form action=\"{% url 'foo:bar' %} \" ...>...</form>"
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H033" in result.output
+
+    write_to_file(tmp_file.name, b'<form action="asdf " ...>...</form>')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H033" in result.output
+
+    write_to_file(tmp_file.name, b'<form action=" asdf " ...>...</form>')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H033" in result.output
 
 
 def test_rules_not_matched_in_ignored_block(

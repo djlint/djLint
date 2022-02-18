@@ -15,6 +15,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 - Bug fixes [#187](https://github.com/Riverside-Healthcare/djLint/issues/187)
 - Added better support for ``yaml`` front matter in template files
 - Added rule T032 for [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
+- Added rule H033 for [#124](https://github.com/Riverside-Healthcare/djLint/issues/124)
   :::
 
 ## 0.7.4
