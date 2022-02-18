@@ -31,7 +31,8 @@
   ],
   "files": [
     "src",
-    "bin"
+    "bin",
+    "requirements.txt"
   ],
   "bin": {
     "djlint": "./bin/index.js"
