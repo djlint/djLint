@@ -6,11 +6,18 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 # {{ "configuration" | i18n }}
 
-Конфигурация выполняется через файл `pyproject.toml` вашего проекта. Арги командной строки всегда будут переопределять любые настройки в `pyproject.toml`.
+Конфигурация выполняется либо через файл `pyproject.toml` вашего проекта, либо через файл `.djlintrc`. Арги командной строки всегда будут переопределять любые настройки в `pyproject.toml`.
 
 ```ini
 [tool.djlint]
 <config options>
+```
+Формат для ``.djlintrc`` - ``json``.
+
+```json
+{
+  "вариант": "значение"
+}
 ```
 
 ## ignore
@@ -19,8 +26,18 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 ignore="H014,H015"
+```
+
+**.djlintrc**
+
+```json
+{
+  "ignore": "H014,H015"
+}
 ```
 
 ## extension
@@ -29,8 +46,18 @@ ignore="H014,H015"
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 extension="html.dj"
+```
+
+**.djlintrc**
+
+```json
+{
+  "extension": "html.dj"
+}
 ```
 
 ## custom_blocks
@@ -39,8 +66,18 @@ extension="html.dj"
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 custom_blocks="toc,example"
+```
+
+**.djlintrc**
+
+```json
+{
+  "custom_blocks": "toc,example"
+}
 ```
 
 ## custom_html
@@ -49,8 +86,18 @@ custom_blocks="toc,example"
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 custom_html="mjml,simple-greeting,mj-\\w+"
+```
+
+**.djlintrc**
+
+```json
+{
+  "custom_html": "mjml,simple-greeting,mj-\\w+"
+}
 ```
 
 ## indent
@@ -59,8 +106,18 @@ custom_html="mjml,simple-greeting,mj-\\w+"
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 indent=3
+```
+
+**.djlintrc**
+
+```json
+{
+  "indent": "3"
+}
 ```
 
 ## exclude
@@ -69,8 +126,18 @@ indent=3
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 exclude=".venv,venv,.tox,.eggs,..."
+```
+
+**.djlintrc**
+
+```json
+{
+  "exclude": ".venv,venv,.tox,.eggs,..."
+}
 ```
 
 ## extend_exclude
@@ -79,8 +146,18 @@ exclude=".venv,venv,.tox,.eggs,..."
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 extend_exclude=".custom"
+```
+
+**.djlintrc**
+
+```json
+{
+  "extend_exclude": ".custom"
+}
 ```
 
 ## blank_line_after_tag
@@ -89,10 +166,19 @@ extend_exclude=".custom"
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 blank_line_after_tag="load,extends,include"
 ```
 
+**.djlintrc**
+
+```json
+{
+  "blank_line_after_tag": "load,extends,include"
+}
+```
 ## profile
 
 Установите профиль для языка шаблона. Профиль будет включать правила линтера, применимые к языку шаблонов, а также может изменять переформатирование. Например, в `handlebars` нет пробелов внутри тегов {% raw %}`{{#if}}`{% endraw %}.
@@ -111,8 +197,18 @@ blank_line_after_tag="load,extends,include"
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 profile="django"
+```
+
+**.djlintrc**
+
+```json
+{
+  "profile": "django"
+}
 ```
 
 ## require_pragma
@@ -121,8 +217,18 @@ profile="django"
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 require_pragma=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "require_pragma": "true"
+}
 ```
 
 {% raw %}
@@ -141,8 +247,18 @@ djlint:on */ }} или {{!-- djlint:on --}}
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 max_line_length=120
+```
+
+**.djlintrc**
+
+```json
+{
+  "max_line_length": "120"
+}
 ```
 
 ## max_attribute_length
@@ -151,8 +267,18 @@ max_line_length=120
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 max_attribute_length=10
+```
+
+**.djlintrc**
+
+```json
+{
+  "max_attribute_length": "10"
+}
 ```
 
 ## use_gitignore
@@ -161,8 +287,18 @@ max_attribute_length=10
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 use_gitignore=True
+```
+
+**.djlintrc**
+
+```json
+{
+  "use_gitignore": "True"
+}
 ```
 
 ## format_attribute_template_tags
@@ -171,35 +307,58 @@ use_gitignore=True
 
 Использование:
 
+**pyproject.toml**
+
 ```ini
 format_attribute_template_tags=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "format_attribute_template_tags": "true"
+}
 ```
 
 Например, если эта опция включена, то допустимым будет следующий html:
 
 ```html
-<input
-  class="{% if this %}
+{% raw %}
+<input class="{% if this %}
                   then something neat
               {% else %}
                   that is long stuff asdf and more even
               {% endif %}"
 />
+{% endraw %}
 ```
 
 ## linter_output_format
 
 Настройка порядка вывода сообщения. По умолчанию="{code} {line} {message} {match}". Если `{filename}` не включено в сообщение, то вывод будет сгруппирован по файлам и к каждой группе будет автоматически добавлен заголовок.
 
+Необязательные переменные:
+::: content
+- `{filename}`
+- `{line}`
+- `{code}`
+- `{message}`
+- `{match}`
+:::
+
 Использование:
 
-```ini
-# необязательные переменные:
-#   {filename}
-#   {line}
-#   {code}
-#   {message}
-#   {match}
+**pyproject.toml**
 
+```ini
 linter_output_format="{filename}:{line}: {code} {message} {match}"
+```
+
+**.djlintrc**
+
+```json
+{
+  "linter_output_format": "{filename}:{line}: {code} {message} {match}"
+}
 ```

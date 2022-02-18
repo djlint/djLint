@@ -6,11 +6,20 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # Configuration
 
-Configuration is done through your projects `pyproject.toml` file. Command line args will always override any settings in `pyproject.toml`.
+Configuration is done either through your projects `pyproject.toml` file, or a `.djlintrc` file. Command line args will always override any settings in `pyproject.toml`.
+
+The format for ``pyproject.toml`` is ``toml``.
 
 ```ini
 [tool.djlint]
 <config options>
+```
+The format for ``.djlintrc`` is ``json``.
+
+```json
+{
+  "option": "value"
+}
 ```
 
 ## ignore
@@ -19,8 +28,18 @@ Ignore linter codes.
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 ignore="H014,H015"
+```
+
+**.djlintrc**
+
+```json
+{
+  "ignore": "H014,H015"
+}
 ```
 
 ## extension
@@ -29,8 +48,18 @@ Use to only find files with a specific extension.
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 extension="html.dj"
+```
+
+**.djlintrc**
+
+```json
+{
+  "extension": "html.dj"
+}
 ```
 
 ## custom_blocks
@@ -39,8 +68,18 @@ Use to indent custom code blocks. For example {% raw %}`{% toc %}...{% endtoc %}
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 custom_blocks="toc,example"
+```
+
+**.djlintrc**
+
+```json
+{
+  "custom_blocks": "toc,example"
+}
 ```
 
 ## custom_html
@@ -49,8 +88,18 @@ Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 custom_html="mjml,simple-greeting,mj-\\w+"
+```
+
+**.djlintrc**
+
+```json
+{
+  "custom_html": "mjml,simple-greeting,mj-\\w+"
+}
 ```
 
 ## indent
@@ -59,8 +108,18 @@ Use to change the code indentation. Default is 4 (four spaces).
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 indent=3
+```
+
+**.djlintrc**
+
+```json
+{
+  "indent": "3"
+}
 ```
 
 ## exclude
@@ -69,8 +128,18 @@ Override the default exclude paths.
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 exclude=".venv,venv,.tox,.eggs,..."
+```
+
+**.djlintrc**
+
+```json
+{
+  "exclude": ".venv,venv,.tox,.eggs,..."
+}
 ```
 
 ## extend_exclude
@@ -79,8 +148,18 @@ Add additional paths to the default exclude.
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 extend_exclude=".custom"
+```
+
+**.djlintrc**
+
+```json
+{
+  "extend_exclude": ".custom"
+}
 ```
 
 ## blank_line_after_tag
@@ -89,8 +168,18 @@ Add an additional blank line after {% raw %}`{% <tag> ... %}`{% endraw %} tag gr
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 blank_line_after_tag="load,extends,include"
+```
+
+**.djlintrc**
+
+```json
+{
+  "blank_line_after_tag": "load,extends,include"
+}
 ```
 
 ## profile
@@ -112,8 +201,18 @@ Options:
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 profile="django"
+```
+
+**.djlintrc**
+
+```json
+{
+  "profile": "django"
+}
 ```
 
 ## require_pragma
@@ -122,8 +221,18 @@ Only format or lint files that starts with a comment with only the text 'djlint:
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 require_pragma=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "require_pragma": "true"
+}
 ```
 
 {% raw %}
@@ -142,8 +251,18 @@ Formatter will attempt to put some html and template tags on a single line inste
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 max_line_length=120
+```
+
+**.djlintrc**
+
+```json
+{
+  "max_line_length": "120"
+}
 ```
 
 ## max_attribute_length
@@ -152,8 +271,18 @@ Formatter will attempt to wrap tag attributes if the attribute length exceeds th
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 max_attribute_length=10
+```
+
+**.djlintrc**
+
+```json
+{
+  "max_attribute_length": "10"
+}
 ```
 
 ## use_gitignore
@@ -162,8 +291,18 @@ Add .gitignore excludes to the default exclude.
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 use_gitignore=True
+```
+
+**.djlintrc**
+
+```json
+{
+  "use_gitignore": "True"
+}
 ```
 
 ## format_attribute_template_tags
@@ -172,35 +311,58 @@ Formatter will attempt to format template syntax inside of tag attributes. Disab
 
 Usage:
 
+**pyproject.toml**
+
 ```ini
 format_attribute_template_tags=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "format_attribute_template_tags": "true"
+}
 ```
 
 For example, with this option enabled, the following html will be acceptable:
 
 ```html
-<input
-  class="{% if this %}
+{% raw %}
+<input class="{% if this %}
                   then something neat
               {% else %}
                   that is long stuff asdf and more even
               {% endif %}"
 />
+{% endraw %}
 ```
 
 ## linter_output_format
 
 Customize order of output message. Default="{code} {line} {message} {match}". If `{filename}` is not include in message, then the output will be grouped by file and a header will automatically be added to each group.
 
+Optional variables:
+::: content
+- `{filename}`
+- `{line}`
+- `{code}`
+- `{message}`
+- `{match}`
+:::
+
 Usage:
 
-```ini
-# optional variables:
-#   {filename}
-#   {line}
-#   {code}
-#   {message}
-#   {match}
+**pyproject.toml**
 
+```ini
 linter_output_format="{filename}:{line}: {code} {message} {match}"
+```
+
+**.djlintrc**
+
+```json
+{
+  "linter_output_format": "{filename}:{line}: {code} {message} {match}"
+}
 ```

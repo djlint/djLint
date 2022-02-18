@@ -17,6 +17,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 - Added rule T032 for [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
 - Added rule H033 for [#124](https://github.com/Riverside-Healthcare/djLint/issues/124)
 - Changed linter profiles to be inclusive vs exclusive for [#178](https://github.com/Riverside-Healthcare/djLint/issues/178)
+- Added alternate config file option ``.djlintrc`` for [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
   :::
 
 ## 0.7.4

@@ -3,6 +3,7 @@
 # flake8: noqa
 
 
+import json
 import logging
 
 ## get pyproject.toml settings
@@ -30,6 +31,9 @@ def find_project_root(src: Path) -> Path:
             return directory
 
         if (directory / "pyproject.toml").is_file():
+            return directory
+
+        if (directory / ".djlintrc").is_file():
             return directory
 
     # pylint: disable=W0631
@@ -64,6 +68,17 @@ def find_pyproject(root: Path) -> Optional[Path]:
     return None
 
 
+def find_djlintrc(root: Path) -> Optional[Path]:
+    """Search upstream for a pyproject.toml file."""
+
+    djlintrc = root / ".djlintrc"
+
+    if djlintrc.is_file():
+        return djlintrc
+
+    return None
+
+
 def find_djlint_rules(root: Path) -> Optional[Path]:
     """Search upstream for a pyprojec.toml file."""
 
@@ -75,7 +90,7 @@ def find_djlint_rules(root: Path) -> Optional[Path]:
     return None
 
 
-def load_pyproject_settings(src: Path) -> Dict:
+def load_project_settings(src: Path) -> Dict:
     """Load djlint config from pyproject.toml."""
 
     djlint_content: Dict = {}
@@ -84,9 +99,18 @@ def load_pyproject_settings(src: Path) -> Dict:
     if pyproject_file:
         content = tomlkit.parse(pyproject_file.read_text(encoding="utf8"))
         try:
-            djlint_content = content["tool"]["djlint"]  # type: ignore
+            return content["tool"]["djlint"]  # type: ignore
         except KeyError:
             logger.info("No pyproject.toml found.")
+
+    djlintrc_file = find_djlintrc(src)
+
+    if djlintrc_file:
+        try:
+            return json.loads(djlintrc_file.read_text(encoding="utf8"))
+        # pylint: disable=broad-except
+        except BaseException:
+            logger.info("Failed to load .djlintrc file.")
 
     return djlint_content
 
@@ -169,7 +193,7 @@ class Config:
 
         self.project_root = find_project_root(Path(src))
 
-        djlint_settings = load_pyproject_settings(self.project_root)
+        djlint_settings = load_project_settings(self.project_root)
 
         self.gitignore = load_gitignore(self.project_root)
         # custom configuration options

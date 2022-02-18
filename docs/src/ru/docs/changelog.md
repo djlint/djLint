@@ -17,6 +17,7 @@ keywords: облицовка шаблонов, форматер шаблонов
 - Добавлено правило T032 для [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
 - Добавлено правило H033 для [#124](https://github.com/Riverside-Healthcare/djLint/issues/124)
 - Изменены профили линтеров, чтобы они были инклюзивными, а не эксклюзивными для [#178](https://github.com/Riverside-Healthcare/djLint/issues/178)
+- Добавлена альтернативная опция файла конфигурации ``.djlintrc`` для [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
   :::
 
 ## 0.7.4
