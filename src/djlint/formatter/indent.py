@@ -37,6 +37,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     ignored_level = 0
 
     for item in rawcode_flat_list:
+        print(item)
         # if a raw tag first line
         if not is_block_raw and is_ignored_block_opening(config, item):
             is_raw_first_line = True
@@ -63,11 +64,14 @@ def indent_html(rawcode: str, config: Config) -> str:
         # if a one-line, inline tag, just process it, only if line starts w/ it
         elif (
             re.findall(
-                rf"(<({slt_html})>)(.*?)(</(\2)>)", item, re.IGNORECASE | re.VERBOSE
+                rf"(<({slt_html})>)(.*?)(</(\2)>$)",
+                item,
+                re.IGNORECASE | re.VERBOSE | re.MULTILINE,
             )
             or re.findall(
                 re.compile(
-                    rf"(<({slt_html})\b.+?>)(.*?)(</(\2)>)", re.IGNORECASE | re.VERBOSE
+                    rf"(<({slt_html})\b.+?>)(.*?)(</(\2)>$)",
+                    re.IGNORECASE | re.VERBOSE | re.MULTILINE,
                 ),
                 item,
             )
@@ -99,8 +103,31 @@ def indent_html(rawcode: str, config: Config) -> str:
             and is_block_raw is False
             and not is_safe_closing_tag(config, item)
         ):
-            indent_level = max(indent_level - 1, 0)
-            tmp = (indent * indent_level) + item + "\n"
+            # block to catch inline block followed by a non-break tag
+            if (
+                len(
+                    re.findall(
+                        rf"(^<({slt_html})>)(.*?)(</(\2)>)",
+                        item,
+                        re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                    )
+                    or re.findall(
+                        re.compile(
+                            rf"(^<({slt_html})\b.+?>)(.*?)(</(\2)>)",
+                            re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                        ),
+                        item,
+                    )
+                )
+                > 0
+            ):
+                # unindent after instead of before
+                tmp = (indent * indent_level) + item + "\n"
+                indent_level = max(indent_level - 1, 0)
+            else:
+                indent_level = max(indent_level - 1, 0)
+                tmp = (indent * indent_level) + item + "\n"
+            print("unindent")
 
         elif (
             re.search(

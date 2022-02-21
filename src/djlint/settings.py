@@ -441,6 +441,7 @@ class Config:
                 | option
                 | output
                 | p
+                | pre
                 | path
                 | param
                 | picture

@@ -112,6 +112,18 @@ def test_a_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 
     assert output.exit_code == 0
 
+    # test added for https://github.com/Riverside-Healthcare/djLint/issues/189
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<a>
+    <span>hi</span>hi</a>
+<div>
+    <h4>{{ _("Options") }}</h4>
+</div>
+""")
+
+    assert output.exit_code == 0
 
 def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
