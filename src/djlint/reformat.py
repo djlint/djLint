@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .formatter.condense import condense_html
 from .formatter.indent import indent_html
+
 from .settings import Config
 
 
