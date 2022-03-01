@@ -451,7 +451,7 @@ class HTMLParser(_markupbase.ParserBase):
             # XHTML-style empty tag: <span attr="value" />
             self.handle_startendtag(tag, attrs)
         else:
-            self.handle_starttag(tag, attrs, "HTML")
+            self.handle_starttag(tag, attrs)
             if tag in self.CDATA_CONTENT_ELEMENTS:
                 self.set_cdata_mode(tag)
         return endpos
@@ -497,9 +497,9 @@ class HTMLParser(_markupbase.ParserBase):
         # statement tags are not else ending.
         # if end.endswith('%}'):
         #     # XHTML-style empty tag: <span attr="value" />
-        #     self.handle_startendtag(tag, attrs)
+        #     self.handle_tempstatestartendtag(tag, attrs)
         #else:
-        self.handle_starttag(tag.strip(), attrs, "CURLY_STATEMENT")
+        self.handle_tempstatestarttag(tag.strip(), attrs)
         if tag in self.CDATA_CONTENT_ELEMENTS:
             self.set_cdata_mode(tag)
         return endpos
@@ -611,7 +611,7 @@ class HTMLParser(_markupbase.ParserBase):
             # </tag attr=">">, but looking for > after the name should cover
             # most of the cases and is much simpler
             gtpos = rawdata.find('>', namematch.end())
-            self.handle_endtag(tagname, "HTML")
+            self.handle_endtag(tagname)
             return gtpos+1
 
         elem = match.group(1).lower() # script or style
@@ -621,7 +621,8 @@ class HTMLParser(_markupbase.ParserBase):
                 self.handle_data(rawdata[i:gtpos])
                 return gtpos
 
-        self.handle_endtag(elem, "HTML")
+
+        self.handle_endtag(elem)
 
         self.clear_cdata_mode()
         return gtpos
@@ -655,7 +656,7 @@ class HTMLParser(_markupbase.ParserBase):
             # </tag attr=">">, but looking for > after the name should cover
             # most of the cases and is much simpler
             gtpos = rawdata.find('%}', namematch.end())
-            self.handle_endtag(tagname)
+            self.handle_tempstateendtag(tagname)
             return gtpos+1
 
         elem = match.group(1).lower() # script or style
@@ -665,7 +666,7 @@ class HTMLParser(_markupbase.ParserBase):
                 self.handle_data(rawdata[i:gtpos])
                 return gtpos
 
-        self.handle_endtag(elem, "CURLY_STATEMENT")
+        self.handle_tempstateendtag(elem)
         self.clear_cdata_mode()
         return gtpos
 
@@ -800,7 +801,7 @@ class HTMLParser(_markupbase.ParserBase):
         if report:
             j = match.start(0)
 
-            self.handle_comment(rawdata[i+4: j], "HTML")
+            self.handle_comment(rawdata[i+4: j])
 
         return match.end(0)
 
@@ -1055,16 +1056,31 @@ class HTMLParser(_markupbase.ParserBase):
 
     # Overridable -- finish processing of start+end tag: <tag.../>
 
-    def handle_startendtag(self, tag, attrs, tag_type="HTML"):
-        self.handle_starttag(tag, attrs, tag_type)
-        self.handle_endtag(tag, tag_type)
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
+
+    # Overridable -- finish processing of start+end tag: <tag.../>
+    def handle_tempstatestartendtag(self, tag, attrs):
+        self.handle_tempstatestarttag(tag, attrs)
+        self.handle_tempstateendtag(tag)
+
 
     # Overridable -- handle start tag
-    def handle_starttag(self, tag, attrs, tag_type):
+    def handle_starttag(self, tag, attrs):
+        pass
+
+    # Overridable -- handle template statement start tag
+    def handle_tempstatestarttag(self, tag, attrs):
         pass
 
     # Overridable -- handle end tag
-    def handle_endtag(self, tag, tag_type="HTML"):
+
+    def handle_endtag(self, tag):
+        pass
+
+    # Overridable -- handle template statement end tag
+    def handle_tempstateendtag(self, tag):
 
         pass
 
@@ -1082,7 +1098,9 @@ class HTMLParser(_markupbase.ParserBase):
 
     # Overridable -- handle comment
 
-    def handle_comment(self, data, tag_type="HTML"):
+    def handle_comment(self, data):
+        # need to add comment types for
+        # other template languages
 
         pass
 
