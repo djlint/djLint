@@ -40,7 +40,7 @@ def indent_html(rawcode, config):
             self.indent_block = False
             self.current_block = "tag"
 
-            self.indent = "    "
+            self.indent = " " *4
             self.level = 0
             self.ignored_level = 0
             self.inline_level = 0
@@ -49,12 +49,14 @@ def indent_html(rawcode, config):
         def handle_starttag(self, tag, attrs):
             attribs = (" " + (" ").join([x[0] + "=\"" + x[1] + "\"" for x in attrs]) + "" if attrs else "")
 
+            html_tag = f"<{tag}{attribs}>"
+
             if tag in self.indent_html_tags:
                 self.output = self.output.rstrip()
-                if self.output != "":
+                if self.output and self.output[-1] != "\n":
                     self.output = self.output + "\n"
 
-                self.output += (self.indent * self.level) + "<" + tag + attribs + ">\n"
+                self.output += (self.indent * self.level) + html_tag + "\n"
                 self.level += 1
                 self.current_block = "tag"
 
@@ -63,7 +65,7 @@ def indent_html(rawcode, config):
                     self.output += (self.indent * self.level)
                 elif self.ignored_level == 0 and not breakbefore(self.output):
                     self.output += "\n" + (self.indent * self.level)
-                self.output += "<" + tag + attribs+ ">"
+                self.output += html_tag
                 self.ignored_level += 1
                 self.current_block = "tag"
 
@@ -71,16 +73,15 @@ def indent_html(rawcode, config):
                 if self.inline_level == 0 and breakbefore(self.output):
                     self.output += (self.indent * self.level)
 
-                print(self.inline_level)
-                print(self.output)
-                print(breakbefore(self.output))
-                print(self.current_block)
                 if self.inline_level == 0 and not breakbefore(self.output) and self.current_block=="tag":
                     self.output += "\n" + (self.indent * self.level)
 
                 self.inline_level += 1
-                self.output += "<" + tag +attribs + ">"
+                self.output += html_tag
                 self.current_block = "tag"
+
+            else:
+                self.output += html_tag
 
         def handle_tempstatestarttag(self, tag, attrs):
             attribs = (" " + (" ").join(attrs) + "" if attrs else "")
