@@ -87,22 +87,22 @@ module.exports = {
     'en-US':
       'Once upon a time all the other programming languages had a formatter and linter. Css, javascript, python, the c suite, typescript, ruby, php, go, swift, and you know the others. <i>The cool kids on the block.</i><br>HTML templates were left out there on their own, in the cold, unformatted and unlinted :( The dirty corner in your repository. <i>Something had to change.</i><br>Welcome djLint, the free cleaning service for html templates!<br>And the html templates lived happily ever after.',
     ru: 'Когда-то давно все другие языки программирования имели форматтер и линтер. Css, javascript, python, c suite, typescript, ruby, php, go, swift, и вы знаете другие. <i>Крутые ребята в квартале.</i><br>HTML-шаблоны остались там сами по себе, на холоде, неформатированные и нелинкованные :( Грязный угол в вашем репозитории. <i>Что-то должно было измениться.</i><br>Добро пожаловать djLint, бесплатный сервис очистки html-шаблонов!<br>И html-шаблоны жили долго и счастливо.',
-    fr: 'Il fut un temps où tous les autres langages de programmation avaient un formateur et un linter. Css, javascript, python, la suite c, typescript, ruby, php, go, swift, et vous connaissez les autres. <i>Les gamins cool du quartier.</i><br>Les modèles HTML ont été laissés là, seuls, dans le froid, non formatés et non peints :( Le coin sale de votre dépôt. <i>Quelque chose devait changer.</i><br>Bienvenue à djLint, le service gratuit de nettoyage des modèles html !<br>Et les modèles html vécurent heureux jusqu\'à la fin des temps.',
+    fr: 'Il était une fois, un royaume où tous les autres langages de programmation avaient un formateur et un linter. Css, javascript, python, la suite c, typescript, ruby, php, go, swift, et vous connaissez les autres. <i>Les gamins cool du quartier.</i><br>Les modèles HTML restaient là, seuls, dans le froid, non formatés et non non-lintés :( Le coin cracra de votre entrepôt. <i>Quelque chose devait changer.</i><br>Bienvenue à djLint, le service gratuit de nettoyage des modèles html !<br>Et les modèles html vécurent heureux jusqu\'à la fin des temps.',
   },
   index_fav_lang: {
     'en-US': 'find your favorite template language!',
     ru: 'найдите свой любимый язык шаблонов!',
-    fr: 'trouvez votre langue de modèle préférée !',
+    fr: 'retrouvez votre language informatique préféré!',
   },
   index_show_format: {
     'en-US': 'Show your format!',
     ru: 'Покажите свой формат!',
-    fr: 'Montre ton format !',
+    fr: 'Montre ton format!',
   },
   index_watch: {
     'en-US': 'Watch it run!',
     ru: 'Смотрите, как он идет!',
-    fr: 'Regardez-le courir !',
+    fr: 'Regardez-le marcher!',
   },
   index_add_badge: {
     'en-US': 'Add a badge to your projects',
@@ -112,7 +112,7 @@ module.exports = {
   index_looks_like: {
     'en-US': 'Looks like this:',
     ru: 'Выглядит вот так:',
-    fr: 'Ça ressemble à ça :',
+    fr: 'Ça ressemble à ça:',
   },
   contributing: {
     'en-US': 'Contributing',

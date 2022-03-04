@@ -8,7 +8,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 Le formateur de djLint prendra des modèles html bâclés et rendra le formatage cohérent et facile à suivre !
 
-Le formatage est un outil bêta. Vérifiez la sortie avant d'appliquer les changements.
+Le formatage est un outil non définitif. Vérifiez la sortie avant d'appliquer les changements.
 
 Pour revoir ce qui peut changer dans le formatage, lancez :
 
@@ -82,7 +82,7 @@ ou comme un commentaire de style golang -
 
 ### Avant
 
-Voici une tache de HTML qui a désespérément besoin d'attention...
+Voilà un pâté de HTML qui a désespérément besoin d’attention...
 
 {% raw %}
 
