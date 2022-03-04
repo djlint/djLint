@@ -219,11 +219,12 @@ module.exports = function(eleventyConfig) {
     // find the current locale
     var active_local = "";
 
-    locale_urls.every(locale => {
+    locale_urls.forEach(locale => {
       if(locale === split_url){
         active_local = locale
         return true;
       }
+      return false
     })
 
     // get remaining locales

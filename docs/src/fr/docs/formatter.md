@@ -1,88 +1,89 @@
 ---
-description: Format your HTML Templates with djLint. Fast, accurate, output will make your templates shine.
-title: Formatter Usage
+description: Formatez vos modèles HTML avec djLint. Rapide et précis, le résultat fera briller vos modèles.
+title: Utilisation du formateur
 keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, formatter usage
 ---
 
-# Formatter Usage
+# Utilisation du formateur
 
-djLint's formatter will take sloppy html templates and make the formatting consistent and easy to follow!
+Le formateur de djLint prendra des modèles html bâclés et rendra le formatage cohérent et facile à suivre !
 
-Formatting is a beta tool. `--check` the output before applying changes.
+Le formatage est un outil bêta. Vérifiez la sortie avant d'appliquer les changements.
 
-To review what may change in formatting run:
+Pour revoir ce qui peut changer dans le formatage, lancez :
 
 ```bash
 djlint . --check
 ```
 
-To format the code and update files run:
+Pour formater le code et exécuter les fichiers de mise à jour :
 
 ```bash
 djlint . --reformat
 ```
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-arrow-circle-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/docs/configuration/">Check out the configuration guide for all the options!</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-arrow-circle-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/fr/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
 </div>
 
 {% admonition
    "note",
    "Note",
-   "Reformatting does not work with long json/html embedded into attribute data."
+   "Le reformatage ne fonctionne pas avec les longs fichiers json/html intégrés dans les données d'attribut."
 %}
 
 {% admonition
    "note",
    "Note",
-   "djLint is not an html parser or syntax validator."
+   "djLint n'est pas un analyseur html ou un validateur de syntaxe."
 %}
 
-## Ignoring Code
+## Ignorer le code
 
-Code can be ignored by wrapping it in `djlint` tags:
+Le code peut être ignoré en l'entourant de balises `djlint` :
 
 {% raw %}
 
-For plain old html -
+Pour le simple html -
 
 ```html
 <!-- djlint:off -->
-<bad html to ignore> <!-- djlint:on --></bad>
+<mauvais html à ignorer> <!-- djlint:on --></bad>
 ```
 
-or as a comment -
+ou comme un long commentaire -
 
 ```html
-{# djlint:off #} <bad html to ignore> {# djlint:on #}</bad>
+{# djlint:off #} <mauvais html à ignorer> {# djlint:on #}</bad>
 ```
 
-or as a long comment -
+ou comme un long commentaire -
 
 ```html
 {% comment %} djlint:off {% endcomment %}
-<bad html to ignore> {% comment %} djlint:on {% endcomment %}</bad>
+<mauvais html à ignorer> {% comment %} djlint:on {% endcomment %}</bad>
 ```
 
-or as a javascript style comment -
+ou comme un commentaire de style javascript -
 
 ```html
-{{ /* djlint:off */ }} <bad html to ignore> {{ /* djlint:on */ }}</bad>
+{{ /* djlint:off */ }} <mauvais html à ignorer> {{ /* djlint:on */ }}</bad>
 ```
 
-or as a golang style comment -
+ou comme un commentaire de style golang -
 
 ```html
-{{!-- djlint:off --}} <bad html to ignore> {{!-- djlint:on --}}</bad>
+{{!-- djlint:off --}} <mauvais html à ignorer> {{!-- djlint:on --}}</bad>
 ```
 
 {% endraw %}
 
-## Here's an example!
+## Voici un exemple !
 
-### Before
+### Avant
 
-Here's a blob of HTML that's in desperate need of attention -
+Voici une tache de HTML qui a désespérément besoin d'attention...
+
 {% raw %}
 
 ```
@@ -91,9 +92,9 @@ Here's a blob of HTML that's in desperate need of attention -
 
 {% endraw %}
 
-### After
+### Après
 
-It looks a bit better now... we can read it :)
+C'est un peu mieux maintenant... on peut le lire :)
 
 {% raw %}
 

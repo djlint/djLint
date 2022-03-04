@@ -9,4 +9,9 @@ module.exports = [
     code: 'ru',
     url: 'ru',
   },
+  {
+    label: 'Français',
+    code: 'fr',
+    url: 'fr',
+  }
 ];
