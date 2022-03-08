@@ -8,6 +8,11 @@ run::
    pytest tests/test_html.py::test_long_attributes --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
+missing tests:
+
+self closing should have a /> > meta, link, img, source, param
+smart quotes
+missing quotes are added to single word attributes <p title=Title>String</p> >> <p title="Title">String</p>
 
 """
 # pylint: disable=C0116
@@ -18,7 +23,7 @@ from click.testing import CliRunner
 
 from src.djlint import main as djlint
 
-from .conftest import reformat, write_to_file
+from ..conftest import reformat, write_to_file
 
 
 def test_front_matter(runner: CliRunner, tmp_file: TextIO) -> None:
