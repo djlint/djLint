@@ -10,10 +10,16 @@ run::
 
 missing tests:
 
+<<<<<<< HEAD:tests/test_html/test_html.py
 - self closing should have a /> > meta, link, img, source, param
 - smart quotes
 - missing quotes are added to single word attributes <p title=Title>String</p> >> <p title="Title">String</p>
 - tags and attributes should be made lowercase
+=======
+self closing should have a /> > meta, link, img, source, param
+smart quotes
+missing quotes are added to single word attributes <p title=Title>String</p> >> <p title="Title">String</p>
+>>>>>>> 79dc3a9 (started adding more html tests):tests/test_html.py
 
 """
 # pylint: disable=C0116
@@ -57,79 +63,6 @@ def test_pre_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     assert output.exit_code == 0
 
 
-<<<<<<< HEAD
-# def test_textarea_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-#     write_to_file(tmp_file.name, b"""<div><textarea>\nasdf\n  asdf</textarea></div>""")
-#     runner.invoke(djlint, [tmp_file.name, "--reformat"])
-#     assert (
-#         Path(tmp_file.name).read_text()
-#         == """<div>
-#     <textarea>
-# asdf
-#   asdf</textarea>
-# </div>
-# """
-#     )
-#     # check double nesting
-#     output = reformat(
-#         tmp_file,
-#         runner,
-#         b"""<div>
-#     <div class="field">
-#         <textarea>asdf</textarea>
-#     </div>
-# </div>
-# """,
-#     )
-
-#     assert output.exit_code == 0
-
-#     # check attributes
-#     output = reformat(
-#         tmp_file,
-#         runner,
-#         b"""<div>
-#     <div class="field">
-#         <textarea class="this"
-#                   name="that">asdf</textarea>
-#     </div>
-# </div>
-# """,
-#     )
-
-#     assert (
-#         output.text
-#         == """<div>
-#     <div class="field">
-#         <textarea class="this" name="that">asdf</textarea>
-#     </div>
-# </div>
-# """
-#     )
-
-
-# def test_a_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-#     output = reformat(
-#         tmp_file,
-#         runner,
-#         b"""<p>
-#     some nice text <a href="this">asdf</a>, ok
-# </p>""",
-#     )
-
-#     assert output.exit_code == 0
-
-#     # test added for https://github.com/Riverside-Healthcare/djLint/issues/189
-#     output = reformat(
-#         tmp_file,
-#         runner,
-#         b"""<a>
-#     <span>hi</span>hi</a>
-# <div>
-#     <h4>{{ _("Options") }}</h4>
-# </div>
-# """)
-=======
 def test_textarea_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"""<div><textarea>\nasdf\n  asdf</textarea></div>""")
     runner.invoke(djlint, [tmp_file.name, "--reformat"])
@@ -202,7 +135,6 @@ def test_a_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 </div>
 """,
     )
->>>>>>> 86e2c8b (formatted tests)
 
     assert output.exit_code == 0
 
