@@ -127,9 +127,11 @@ def test_a_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 <div>
     <h4>{{ _("Options") }}</h4>
 </div>
-""")
+""",
+    )
 
     assert output.exit_code == 0
+
 
 def test_script_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(

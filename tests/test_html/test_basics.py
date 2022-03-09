@@ -25,9 +25,12 @@ from typing import TextIO
 from click.testing import CliRunner
 
 from ..conftest import reformat
+
+
 def test_brocken_html(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!--
 #7241,
 reproduction:
@@ -38,9 +41,11 @@ extra space(s)
 -->
 <div><span>
 <
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!--
 #7241,
 reproduction:
@@ -50,74 +55,83 @@ linebreak
 extra space(s)
 -->
 <div><span> < </span></div>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
 
 def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!--hello world-->
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!--hello world-->
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_emtpy_doc(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!doctype html>
 <html>
 <head></head>
 <body></body>
 </html>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!DOCTYPE html>
 <html>
   <head></head>
   <body></body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_empty(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_form(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <form>
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
@@ -186,9 +200,11 @@ def test_form(runner: CliRunner, tmp_file: TextIO) -> None:
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <form>
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
@@ -299,17 +315,18 @@ def test_form(runner: CliRunner, tmp_file: TextIO) -> None:
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_hello_world(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -323,9 +340,11 @@ def test_hello_world(runner: CliRunner, tmp_file: TextIO) -> None:
     <h1>Hello World</h1>
 </body>
 </html>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -339,17 +358,18 @@ def test_hello_world(runner: CliRunner, tmp_file: TextIO) -> None:
     <h1>Hello World</h1>
   </body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_html_comments(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!-- htmlhint attr-lowercase: false -->
 <html>
   <body>
@@ -357,9 +377,11 @@ def test_html_comments(runner: CliRunner, tmp_file: TextIO) -> None:
     <div hidden class="foo" id=bar></div>
   </body>
 </html>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!-- htmlhint attr-lowercase: false -->
 <html>
   <body>
@@ -367,17 +389,18 @@ def test_html_comments(runner: CliRunner, tmp_file: TextIO) -> None:
     <div hidden class="foo" id="bar"></div>
   </body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_html5_boilerplate(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!doctype html>
 <html class="no-js" lang="">
   <head>
@@ -411,9 +434,11 @@ def test_html5_boilerplate(runner: CliRunner, tmp_file: TextIO) -> None:
     <script src="https://www.google-analytics.com/analytics.js" async defer></script>
   </body>
 </html>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!DOCTYPE html>
 <html class="no-js" lang="">
   <head>
@@ -472,65 +497,75 @@ def test_html5_boilerplate(runner: CliRunner, tmp_file: TextIO) -> None:
     ></script>
   </body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_issue_9368_2(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <strong>a</strong>-<strong>b</strong>-
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <strong>a</strong>-<strong>b</strong>-
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_issue_9368_3(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 a track<strong>pad</strong>, or a <strong>gyro</strong>scope.
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 a track<strong>pad</strong>, or a <strong>gyro</strong>scope.
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_issue_9368(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <strong>a</strong>-&gt;<strong>b</strong>-&gt;
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <strong>a</strong>-&gt;<strong>b</strong>-&gt;
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_more_html(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <html>
 <head></head>
 <body>
@@ -538,9 +573,11 @@ def test_more_html(runner: CliRunner, tmp_file: TextIO) -> None:
     <div hidden class="foo" id=bar></div>
 </body>
 </html>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <html>
   <head></head>
   <body>
@@ -548,17 +585,18 @@ def test_more_html(runner: CliRunner, tmp_file: TextIO) -> None:
     <div hidden class="foo" id="bar"></div>
   </body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_void_elements(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <html>
 <head>
   <meta charset="UTF-8">
@@ -566,9 +604,11 @@ def test_void_elements(runner: CliRunner, tmp_file: TextIO) -> None:
 </head>
 <body></body>
 </html>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -576,17 +616,18 @@ def test_void_elements(runner: CliRunner, tmp_file: TextIO) -> None:
   </head>
   <body></body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_void_elements_2(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <video controls width="250">
     <source src="/media/examples/flower.webm"
             type="video/webm">
@@ -600,9 +641,11 @@ def test_void_elements_2(runner: CliRunner, tmp_file: TextIO) -> None:
 <span><img  src="1.png"
 ><img src="1.png"
 ></span>1
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <video controls width="250">
   <source src="/media/examples/flower.webm" type="video/webm" />
   <source src="/media/examples/flower.mp4" type="video/mp4" /></video
@@ -613,17 +656,18 @@ def test_void_elements_2(runner: CliRunner, tmp_file: TextIO) -> None:
   <param name="autoplay" value="true" /></object
 >1
 <span><img src="1.png" /><img src="1.png" /></span>1
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_with_colon(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!-- unknown tag with colon -->
 <div>
 <foo:bar>
@@ -745,9 +789,11 @@ e-wrap </html:textarea>
 </with:colon>
 <html:script>const func = function() { console.log('Hello, there');}</html:script>
 <html:style>.a{color:#f00}</html:style>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!-- unknown tag with colon -->
 <div>
   <foo:bar>
@@ -1000,11 +1046,9 @@ e-wrap </textarea
 <html:style
   >.a{color:#f00}</html:style
 >
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out

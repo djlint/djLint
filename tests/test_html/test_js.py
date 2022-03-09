@@ -29,21 +29,25 @@ from ..conftest import reformat
 
 def test_empty(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <script></script>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <script></script>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
+
+
 def test_js(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <script type="text/javascript">
   var message = "Alert!";
   alert(message);
@@ -64,9 +68,11 @@ def test_js(runner: CliRunner, tmp_file: TextIO) -> None:
 
         function myFunction() { return 'foo'; }
   </script>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <script type="text/javascript">
   var message = "Alert!";
   alert(message);
@@ -88,15 +94,16 @@ def test_js(runner: CliRunner, tmp_file: TextIO) -> None:
     return "foo";
   }
 </script>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
+
+
 def test_simple(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!DOCTYPE html>
 <html>
   <head>
@@ -112,9 +119,11 @@ def test_simple(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>This page is just a demo.</p>
   </body>
 </html>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!DOCTYPE html>
 <html>
   <head>
@@ -132,57 +141,64 @@ def test_simple(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>This page is just a demo.</p>
   </body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
+
+
 def test_single_script(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <script>alert('test');</script>
 <script>
   document.getElementById("demo").innerHTML = "Hello JavaScript!";
 </script>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <script>
   alert("test");
 </script>
 <script>
   document.getElementById("demo").innerHTML = "Hello JavaScript!";
 </script>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
+
+
 def test_something_else(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <script type="text/template">
  <div>
     </div>
 </script>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <script type="text/template">
   <div>
      </div>
 </script>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
+
+
 def test_template_literal(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -199,9 +215,11 @@ def test_template_literal(runner: CliRunner, tmp_file: TextIO) -> None:
         </script>
     </body>
 </html>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!DOCTYPE html>
 <html lang="en">
   <head> </head>
@@ -217,15 +235,16 @@ def test_template_literal(runner: CliRunner, tmp_file: TextIO) -> None:
     </script>
   </body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
+
+
 def test_typescript(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <script type="application/x-typescript">
   class Student {
     fullName: string;
@@ -296,9 +315,11 @@ def test_typescript(runner: CliRunner, tmp_file: TextIO) -> None:
     }
   }
 </script>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <script type="application/x-typescript">
   class Student {
     fullName: string;
@@ -380,9 +401,7 @@ def test_typescript(runner: CliRunner, tmp_file: TextIO) -> None:
     }
   }
 </script>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)

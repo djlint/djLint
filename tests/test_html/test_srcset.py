@@ -29,7 +29,8 @@ from ..conftest import reformat
 
 def test_invalid(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <img src="a"
 srcset="
  should-not-format  400w 100h,
@@ -41,9 +42,11 @@ srcset="
  should-not-format ,, should-not-format 0q,,,
 "
  alt=""/>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <img
   src="a"
   srcset="
@@ -60,9 +63,7 @@ srcset="
   alt=""
 />
 
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)

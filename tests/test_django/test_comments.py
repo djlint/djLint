@@ -17,6 +17,8 @@ from typing import TextIO
 from click.testing import CliRunner
 
 from ..conftest import reformat
+
+
 def test_dj_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file, runner, b"{# comment #}\n{% if this %}<div></div>{% endif %}"
@@ -24,7 +26,6 @@ def test_dj_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     assert output.text == """{# comment #}\n{% if this %}<div></div>{% endif %}\n"""
     # no change was required
     assert output.exit_code == 0
-
 
 
 def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:

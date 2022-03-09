@@ -22,4 +22,3 @@ def test_ignores(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/test_config/test_ignores"])
     assert """Linted 1 file, found 0 errors.""" in result.output
     assert result.exit_code == 0
-

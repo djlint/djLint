@@ -19,7 +19,9 @@ from src.djlint import main as djlint
 
 
 def test_custom_tags(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ["tests/test_config/test_custom_tags/html.html", "--check"])
+    result = runner.invoke(
+        djlint, ["tests/test_config/test_custom_tags/html.html", "--check"]
+    )
 
     assert (
         """-{% example stuff %}<p>this is a long paragraph</p>{% endexample %}

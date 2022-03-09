@@ -25,9 +25,12 @@ from typing import TextIO
 from click.testing import CliRunner
 
 from ..conftest import reformat
+
+
 def test_case(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!DOCTYPE html>
 <HTML CLASS="no-js mY-ClAsS">
   <HEAD>
@@ -44,9 +47,11 @@ def test_case(runner: CliRunner, tmp_file: TextIO) -> None:
     <SCRIPT src="https://www.google-analytics.com/analytics.js" ASYNC DEFER></SCRIPT>
   </body>
 </HTML>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!DOCTYPE html>
 <html class="no-js mY-ClAsS">
   <head>
@@ -75,11 +80,9 @@ def test_case(runner: CliRunner, tmp_file: TextIO) -> None:
     ></script>
   </body>
 </html>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
