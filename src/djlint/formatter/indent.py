@@ -1,7 +1,9 @@
 from .parser import HTMLParser
 import re
+from ..settings import Config
 
-def indent_html(rawcode, config):
+
+def indent_html(rawcode: str, config: Config):
 
     ## pop front mater
     rawcode = rawcode.strip()
@@ -39,7 +41,7 @@ def indent_html(rawcode, config):
             self.indent_block = False
             self.current_block = "tag"
 
-            self.indent = " " *4
+            self.indent = config.indent
             self.level = 0
             self.ignored_level = 0
             self.inline_level = 0
@@ -47,8 +49,8 @@ def indent_html(rawcode, config):
 
         def handle_starttag(self, tag, attrs):
             tag = tag.lower()
-            print("opening: ", tag)
-            print(attrs)
+            # print("opening: ", tag)
+            # print(attrs)
             attribs = ""
             if attrs:
                 attribs = " " + (" ").join([x[0].lower() + ("=\"" + x[1] + "\"" if x[1] else "") for x in attrs])
@@ -58,7 +60,7 @@ def indent_html(rawcode, config):
             html_tag = f"<{tag}{attribs}{html_closing}"
 
             if tag in self.ignored_html_tags:
-                print("ignored html tags")
+                # print("ignored html tags")
                 if self.ignored_level == 0 and breakbefore(self.output):
                     self.output += (self.indent * self.level)
                 elif self.ignored_level == 0 and not breakbefore(self.output):
@@ -69,7 +71,7 @@ def indent_html(rawcode, config):
                     self.current_block = "tag"
 
             elif tag in self.inline_blocks:
-                print("inline blocks")
+                # print("inline blocks")
                 if self.inline_level == 0 and breakbefore(self.output):
                     self.output += (self.indent * self.level)
 
@@ -84,7 +86,7 @@ def indent_html(rawcode, config):
                     self.current_block = "tag"
 
             else:
-                print("else")
+                # print("else")
                 #if tag in self.indent_html_tags:
                 self.output = self.output.rstrip()
                 if self.output and self.output[-1] != "\n":
@@ -118,12 +120,12 @@ def indent_html(rawcode, config):
                 self.inline_level -= 1
                 self.output += "</" + tag + ">"
                 self.current_block = "tag"
-            if tag not in self.self_closing_tags:
+            elif tag not in self.self_closing_tags:
                 self.output = self.output.rstrip()
                 if self.output != "":
                     self.output = self.output + "\n"
 
-                print("end")
+                # print("end")
                 self.level -= 1
                 self.output += (self.indent * self.level) + "</" + tag + ">\n"
                 self.current_block = "tag"

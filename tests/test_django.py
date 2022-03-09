@@ -365,18 +365,18 @@ def test_blocktranslate(runner: CliRunner, tmp_file: TextIO) -> None:
     assert output.exit_code == 0
 
 
-# def test_trans(runner: CliRunner, tmp_file: TextIO) -> None:
-#     output = reformat(
-#         tmp_file, runner, b"""<p>{% trans 'Please do <b>Blah</b>.' %}</p>"""
-#     )
-#     assert output.exit_code == 1
-#     assert (
-#         """<p>
-#     {% trans 'Please do <b>Blah</b>.' %}
-# </p>
-# """
-#         in output.text
-#     )
+def test_trans(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file, runner, b"""<p>{% trans 'Please do <b>Blah</b>.' %}</p>"""
+    )
+    assert output.exit_code == 1
+    assert (
+        """<p>
+    {% trans 'Please do <b>Blah</b>.' %}
+</p>
+"""
+        in output.text
+    )
 
 
 def test_with(runner: CliRunner, tmp_file: TextIO) -> None:
