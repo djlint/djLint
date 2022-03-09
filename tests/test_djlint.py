@@ -3,7 +3,7 @@ Djlint base tests.
 
 run::
 
-    pytest --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
+    pytest tests/test_djlint.py --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 for a single test::
 
