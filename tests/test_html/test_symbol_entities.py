@@ -29,21 +29,22 @@ from ..conftest import reformat
 
 def test_symbol_entities(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <p>I will display &euro;</p>
 <p>I will display &excl;</p>
 <p>I will display &#8364;</p>
 <p>I will display &#x20AC;</p>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <p>I will display &euro;</p>
 <p>I will display &excl;</p>
 <p>I will display &#8364;</p>
 <p>I will display &#x20AC;</p>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)

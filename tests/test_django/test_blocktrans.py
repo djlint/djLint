@@ -18,6 +18,7 @@ from click.testing import CliRunner
 
 from ..conftest import reformat
 
+
 def test_blocktranslate(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
@@ -80,4 +81,3 @@ def test_trans(runner: CliRunner, tmp_file: TextIO) -> None:
 """
         in output.text
     )
-

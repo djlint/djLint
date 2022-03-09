@@ -29,7 +29,8 @@ from ..conftest import reformat
 
 def test_block(runner: CliRunner, tmp_file: TextIO) -> None:
     # set bracket-same-line: false
-    html_in = (b"""
+    html_in = (
+        b"""
 <div long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
 text
 </div>
@@ -38,9 +39,11 @@ text
 text
 </div>
 <div class="a">text</div>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <div
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
@@ -51,15 +54,14 @@ text
 ></div>
 <div class="a">text</div>
 <div class="a">text</div>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     # set bracket-same-line: true
-    html_in = (b"""
+    html_in = (
+        b"""
 <div long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
 text
 </div>
@@ -68,9 +70,11 @@ text
 text
 </div>
 <div class="a">text</div>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <div
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
   text
@@ -79,18 +83,18 @@ text
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></div>
 <div class="a">text</div>
 <div class="a">text</div>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
 
 def test_embed(runner: CliRunner, tmp_file: TextIO) -> None:
     # set bracket-same-line: false
-    html_in = (b"""
+    html_in = (
+        b"""
 <script long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
 alert(1)</script>
 <style long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
@@ -99,9 +103,11 @@ alert(1)</script>
 alert(1)</script>
 <style>
 .a{color: #f00}</style>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <script
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
@@ -122,14 +128,13 @@ alert(1)</script>
     color: #f00;
   }
 </style>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
     # set bracket-same-line: true
-    html_in = (b"""
+    html_in = (
+        b"""
 <script long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
 alert(1)</script>
 <style long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
@@ -138,9 +143,11 @@ alert(1)</script>
 alert(1)</script>
 <style>
 .a{color: #f00}</style>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <script
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
   alert(1);
@@ -159,17 +166,18 @@ alert(1)</script>
     color: #f00;
   }
 </style>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_inline(runner: CliRunner, tmp_file: TextIO) -> None:
     # set bracket-same-line: false
-    html_in = (b"""
+    html_in = (
+        b"""
 <span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
 text
 </span>
@@ -182,9 +190,11 @@ text
 text
 </span>
 <span  class="a">text</span><span  class="a">text</span><span  class="a">text</span><span  class="a">text</span><span  class="a">text</span>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <span
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
@@ -207,15 +217,14 @@ text
 </span>
 <span class="a">text</span><span class="a">text</span><span class="a">text</span
 ><span class="a">text</span><span class="a">text</span>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     # set bracket-same-line: true
-    html_in = (b"""
+    html_in = (
+        b"""
 <span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
 text
 </span>
@@ -228,9 +237,11 @@ text
 text
 </span>
 <span  class="a">text</span><span  class="a">text</span><span  class="a">text</span><span  class="a">text</span><span  class="a">text</span>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <span
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
   text
@@ -249,23 +260,25 @@ text
 </span>
 <span class="a">text</span><span class="a">text</span><span class="a">text</span
 ><span class="a">text</span><span class="a">text</span>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
-
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_void_elements(runner: CliRunner, tmp_file: TextIO) -> None:
     # set bracket-same-line: false
-    html_in = (b"""
+    html_in = (
+        b"""
 <img long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value" src="./1.jpg"/>
 <img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <img
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
   src="./1.jpg"
@@ -273,28 +286,27 @@ def test_void_elements(runner: CliRunner, tmp_file: TextIO) -> None:
 <img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img
   src="./1.jpg"
 /><img src="./1.jpg" />
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     # set bracket-same-line: true
-    html_in = (b"""
+    html_in = (
+        b"""
 <img long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value" src="./1.jpg"/>
 <img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <img
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
   src="./1.jpg" />
 <img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img
   src="./1.jpg" /><img src="./1.jpg" />
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)

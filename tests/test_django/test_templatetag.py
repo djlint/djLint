@@ -17,6 +17,8 @@ from typing import TextIO
 from click.testing import CliRunner
 
 from ..conftest import reformat
+
+
 def test_templatetag(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
@@ -29,6 +31,7 @@ def test_templatetag(runner: CliRunner, tmp_file: TextIO) -> None:
         == r"""{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}
 """
     )
+
 
 def test_empty_tags_on_one_line(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(tmp_file, runner, b"{% if stuff %}\n{% endif %}")
