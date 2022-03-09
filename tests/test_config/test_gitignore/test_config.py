@@ -21,9 +21,9 @@ from src.djlint import main as djlint
 
 
 def test_cli(runner: CliRunner) -> None:
-
-    result = runner.invoke(djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"])
-
+    result = runner.invoke(
+        djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"]
+    )
     assert result.exit_code == 1
 
     # create .git folder to make root
@@ -33,25 +33,28 @@ def test_cli(runner: CliRunner) -> None:
         git.write("html_two.html")
 
     result = runner.invoke(
-
-        djlint, ["tests/test_config/test_gitignore/html_two.html", "--check", "--use-gitignore"]
-
+        djlint,
+        [
+            "tests/test_config/test_gitignore/html_two.html",
+            "--check",
+            "--use-gitignore",
+        ],
     )
 
     assert result.exit_code == 0
 
-
-    result = runner.invoke(djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"])
-
+    result = runner.invoke(
+        djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"]
+    )
     assert result.exit_code == 1
 
     os.remove("tests/test_config/test_gitignore/.gitignore")
 
 
 def test_pyproject(runner: CliRunner) -> None:
-
-    result = runner.invoke(djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"])
-
+    result = runner.invoke(
+        djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"]
+    )
     assert result.exit_code == 1
 
     # make a root
@@ -63,8 +66,9 @@ def test_pyproject(runner: CliRunner) -> None:
     with open("tests/test_config/test_gitignore/pyproject.toml", "w") as git:
         git.write("[tool]\n[tool.djlint]\nuse_gitignore=true")
 
-
-    result = runner.invoke(djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"])
+    result = runner.invoke(
+        djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"]
+    )
 
 
     assert result.exit_code == 0
@@ -72,16 +76,19 @@ def test_pyproject(runner: CliRunner) -> None:
     with open("tests/test_config/test_gitignore/pyproject.toml", "w") as git:
         git.write("[tool]\n[tool.djlint]\nuse_gitignore=false")
 
-
-    result = runner.invoke(djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"])
-
+    result = runner.invoke(
+        djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"]
+    )
     assert result.exit_code == 1
 
     # verify cli overrides pyproject
     result = runner.invoke(
-
-        djlint, ["tests/test_config/test_gitignore/html_two.html", "--check", "--use-gitignore"]
-
+        djlint,
+        [
+            "tests/test_config/test_gitignore/html_two.html",
+            "--check",
+            "--use-gitignore",
+        ],
     )
     assert result.exit_code == 0
 

@@ -40,4 +40,3 @@ def test_ifchanged(runner: CliRunner, tmp_file: TextIO) -> None:
 {% endfor %}
 """
     )
-

@@ -18,6 +18,7 @@ from click.testing import CliRunner
 
 from ..conftest import reformat
 
+
 def test_spaceless(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,

@@ -19,9 +19,9 @@ from src.djlint import main as djlint
 
 
 def test_custom_html(runner: CliRunner) -> None:
-
-    result = runner.invoke(djlint, ["tests/test_config/test_custom_html/html.html", "--check"])
-
+    result = runner.invoke(
+        djlint, ["tests/test_config/test_custom_html/html.html", "--check"]
+    )
     print(result.output)
     assert (
         """-<mjml><mj-body>this is a email text</mj-body></mjml>
@@ -34,6 +34,3 @@ def test_custom_html(runner: CliRunner) -> None:
         in result.output
     )
     assert result.exit_code == 1
-
-
-

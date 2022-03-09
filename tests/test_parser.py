@@ -14,10 +14,10 @@ run::
 
 from src.djlint.formatter.parser import HTMLParser
 
+
 def test_test():
-   p = HTMLParser()
-   a = p.feed('<div></div>')
-   p.close()
+    p = HTMLParser()
+    a = p.feed("<div></div>")
+    p.close()
 
-   assert a == 1
-
+    assert a == 1

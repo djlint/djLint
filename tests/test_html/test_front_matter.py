@@ -29,9 +29,8 @@ from ..conftest import reformat
 
 def test_custom_parser(runner: CliRunner, tmp_file: TextIO) -> None:
 
-
-    html_in = (b"""
-
+    html_in = (
+        b"""
 ---mycustomparser
 
 title: Hello
@@ -39,115 +38,111 @@ slug: home
 ---
 <h1>
   Hello world!</h1>
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
-
+    html_out = (
+        """
 ---mycustomparser
 
 title: Hello
 slug: home
 ---
 <h1>Hello world!</h1>
+        """
+    ).strip()
 
-        """).strip()
+    output = reformat(tmp_file, runner, html_in)
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+
 def test_empty(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
-
+    html_in = (
+        b"""
 ---
 ---
 <h1>
   Hello world!</h1>
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
+    html_out = (
+        """
 ---
 ---
 <h1>Hello world!</h1>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
+
+
 def test_empty_2(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
-
+    html_in = (
+        b"""
 ---
 ---
 <div>
 ---
 </div>
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
+    html_out = (
+        """
 ---
 ---
 <div>---</div>
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
+
+
 def test_issue_9042_no_empty_line(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
-
+    html_in = (
+        b"""
 ---
 layout: foo
 ---
 Test <a
 href="https://prettier.io">abc</a>.
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
-
+    html_out = (
+        """
 ---
 layout: foo
 ---
 Test <a href="https://prettier.io">abc</a>.
+        """
+    ).strip()
 
-        """).strip()
+    output = reformat(tmp_file, runner, html_in)
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+
 def test_issue_9042(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
-
+    html_in = (
+        b"""
 ---
 layout: foo
 ---
 Test <a
 href="https://prettier.io">abc</a>.
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
-
+    html_out = (
+        """
 ---
 layout: foo
 ---
 Test <a href="https://prettier.io">abc</a>.
+        """
+    ).strip()
 
-        """).strip()
-
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
-
+    output = reformat(tmp_file, runner, html_in)

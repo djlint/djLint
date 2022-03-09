@@ -26,28 +26,29 @@ from click.testing import CliRunner
 
 from ..conftest import reformat
 
+
 def test_example(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <span><![CDATA[<sender>John Smith</sender>]]></span>
 <span><![CDATA[1]]> a <![CDATA[2]]></span>
 <span><![CDATA[1]]> <br> <![CDATA[2]]></span>
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <span><![CDATA[<sender>John Smith</sender>]]></span>
 <span><![CDATA[1]]> a <![CDATA[2]]></span>
 <span
   ><![CDATA[1]]> <br />
   <![CDATA[2]]></span
 >
+        """
+    ).strip()
 
-        """).strip()
-
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
 
     assert output.text == html_out

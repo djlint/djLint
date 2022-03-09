@@ -8,8 +8,7 @@ from pathlib import Path
 
 from .formatter.condense import condense_html
 
-from .formatter.expand import expand_html
-from .formatter.new_indent import indent_html
+from .formatter.indent import indent_html
 
 from .settings import Config
 
@@ -19,8 +18,6 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     rawcode = this_file.read_text(encoding="utf8")
 
     indented = indent_html(rawcode, config)
-
-    #indented = condense_html(indented, config)
 
     beautified_code = indented
 

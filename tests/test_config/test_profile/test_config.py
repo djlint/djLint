@@ -40,15 +40,20 @@ def test_profile(runner: CliRunner) -> None:
     assert "D018" not in result.output
 
     result = runner.invoke(
-
-        djlint, ["tests/test_config/test_profile/html.html", "--check", "--profile", "handlebars"]
+        djlint,
+        [
+            "tests/test_config/test_profile/html.html",
+            "--check",
+            "--profile",
+            "handlebars",
+        ],
     )
 
     assert result.exit_code == 0
 
     result = runner.invoke(
-
-        djlint, ["tests/test_config/test_profile/html.html", "--check", "--profile", "jinja"]
+        djlint,
+        ["tests/test_config/test_profile/html.html", "--check", "--profile", "jinja"],
     )
     assert result.exit_code == 1
     assert (

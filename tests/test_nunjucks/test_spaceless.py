@@ -14,7 +14,6 @@ from typing import TextIO
 
 from click.testing import CliRunner
 
-
 from ..conftest import reformat
 
 

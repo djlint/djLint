@@ -26,48 +26,55 @@ from click.testing import CliRunner
 
 from ..conftest import reformat
 
+
 def test_before_text(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <!-- hello -->
 
 123
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <!-- hello -->
 
 123
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_bogus(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
+    html_in = (
+        b"""
 <? hello ?>
 <!- world ->
-    """).strip()
+    """
+    ).strip()
 
-    html_out = ("""
+    html_out = (
+        """
 <? hello ?>
 <!- world ->
-        """).strip()
+        """
+    ).strip()
 
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_conditional(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
-
+    html_in = (
+        b"""
 <!DOCTYPE html>
 <html>
   <body>
@@ -138,11 +145,11 @@ def test_conditional(runner: CliRunner, tmp_file: TextIO) -> None:
   <head></head>
   <body></body>
 </html>
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
-
+    html_out = (
+        """
 <!DOCTYPE html>
 <html>
   <body>
@@ -213,19 +220,18 @@ def test_conditional(runner: CliRunner, tmp_file: TextIO) -> None:
   <head></head>
   <body></body>
 </html>
+        """
+    ).strip()
 
-        """).strip()
-
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
+
+
 def test_for_debugging(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
-
+    html_in = (
+        b"""
 <!DOCTYPE html>
 <html>
   <body>
@@ -244,11 +250,11 @@ def test_for_debugging(runner: CliRunner, tmp_file: TextIO) -> None:
 
   </body>
 </html>
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
-
+    html_out = (
+        """
 <!DOCTYPE html>
 <html>
   <body>
@@ -265,20 +271,18 @@ def test_for_debugging(runner: CliRunner, tmp_file: TextIO) -> None:
     -->
   </body>
 </html>
+        """
+    ).strip()
 
-        """).strip()
-
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
 
+
 def test_hidden(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
-
+    html_in = (
+        b"""
 <!DOCTYPE html>
 <html>
     <body>
@@ -292,11 +296,11 @@ def test_hidden(runner: CliRunner, tmp_file: TextIO) -> None:
 
     </body>
 </html>
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
-
+    html_out = (
+        """
 <!DOCTYPE html>
 <html>
   <body>
@@ -308,20 +312,18 @@ def test_hidden(runner: CliRunner, tmp_file: TextIO) -> None:
     <!-- Comments are not displayed in the browser -->
   </body>
 </html>
+        """
+    ).strip()
 
-        """).strip()
-
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
     assert output.text == html_out
 
+
 def test_surrounding_empty_line(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (b"""
-
+    html_in = (
+        b"""
 <ul><!-- 123
 --><li>First</li><!-- 123
 456
@@ -378,11 +380,11 @@ See console log:
     See console log:
     TypeError: Cannot read property 'name' of null in [null]
 -->
+    """
+    ).strip()
 
-    """).strip()
-
-    html_out = ("""
-
+    html_out = (
+        """
 <ul>
   <!-- 123
 -->
@@ -454,13 +456,10 @@ See console log:
     See console log:
     TypeError: Cannot read property 'name' of null in [null]
 -->
+        """
+    ).strip()
 
-        """).strip()
-
-    output = reformat(
-        tmp_file,
-        runner,
-        html_in)
+    output = reformat(tmp_file, runner, html_in)
 
 
     assert output.text == html_out
