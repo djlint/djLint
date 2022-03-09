@@ -13,17 +13,14 @@ for a single test, run::
 """
 # pylint: disable=C0116
 
-from typing import TextIO
 
 from click.testing import CliRunner
 
 from src.djlint import main as djlint
-
+from typing import TextIO
 
 def test_custom_rules(runner: CliRunner, tmp_file: TextIO) -> None:
-    result = runner.invoke(
-        djlint, ["tests/test_linter/test_custom_rules/", "--profile", "django"]
-    )
+    result = runner.invoke(djlint, ["tests/test_linter/test_custom_rules/", "--profile", "django"])
     assert """Linting""" in result.output
     assert """1/1""" in result.output
     assert """T001 1:""" in result.output

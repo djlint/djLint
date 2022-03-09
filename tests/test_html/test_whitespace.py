@@ -29,31 +29,31 @@ from ..conftest import reformat
 
 def test_break_tags(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
 <a>Lorem</a>, ispum dolor sit <strong>amet</strong>.
 <div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div>
 <div><div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div></div>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
+
 <a>Lorem</a>, ispum dolor sit <strong>amet</strong>.
 <div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div>
 <div>
   <div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div>
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_display_inline_block(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <button>Click here! Click here! Click here! Click here! Click here! Click here!</button>
 <button>
 Click here! Click here! Click here! Click here! Click here! Click here!
@@ -66,11 +66,11 @@ Click here! Click here! Click here! Click here! Click here! Click here!
 <button>Click here! Click here! Click here! Click here! Click here! Click here!</button>
 </div>
 <video src="brave.webm"><track kind=subtitles src=brave.en.vtt srclang=en label="English"><track kind=subtitles src=brave.en.vtt srclang=en label="English"></video>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <button>
   Click here! Click here! Click here! Click here! Click here! Click here!
 </button>
@@ -96,22 +96,21 @@ Click here! Click here! Click here! Click here! Click here! Click here!
   <track kind="subtitles" src="brave.en.vtt" srclang="en" label="English" />
   <track kind="subtitles" src="brave.en.vtt" srclang="en" label="English" />
 </video>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_display_none(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <!DOCTYPE html><HTML CLASS="no-js mY-ClAsS"><HEAD><META CHARSET="utf-8"><TITLE>My tITlE</TITLE><META NAME="description" content="My CoNtEnT"></HEAD></HTML>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
+
 <!DOCTYPE html>
 <html class="no-js mY-ClAsS">
   <head>
@@ -120,16 +119,17 @@ def test_display_none(runner: CliRunner, tmp_file: TextIO) -> None:
     <meta name="description" content="My CoNtEnT" />
   </head>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_fill(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <p>
   <img
     src="/images/pansies.jpg"
@@ -141,11 +141,11 @@ def test_fill(runner: CliRunner, tmp_file: TextIO) -> None:
   members 40%. Consumer and worker members share proportionately in the cooperative&#8217;s
   profits through our annual patronage dividends.
 </p>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <p>
   <img
     src="/images/pansies.jpg"
@@ -158,37 +158,35 @@ def test_fill(runner: CliRunner, tmp_file: TextIO) -> None:
   proportionately in the cooperative&#8217;s profits through our annual
   patronage dividends.
 </p>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_inline_leading_trailing_spaces(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <span> 321 </span>
 
 <span> <a>321</a> </span>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <span> 321 </span>
 
 <span> <a>321</a> </span>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_inline_nodes(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce cursus massa vel augue
 vestibulum facilisis in porta turpis. Ut faucibus lectus sit amet urna consectetur dignissim.
 Sam vitae neque quis ex dapibus faucibus at sed ligula. Nulla sit amet aliquet nibh.
@@ -203,11 +201,11 @@ Vestibulum at congue mi. Suspendisse vitae odio vitae massa hendrerit mattis sed
 Sed eu scelerisque neque. Donec <a href="#"><b>maximus</b></a> rhoncus pellentesque. Aenean purus turpis, vehicula
 euismod ante vel, ultricies eleifend dui. Class aptent taciti sociosqu ad litora torquent per
 conubia nostra, per inceptos himenaeos. Donec in ornare velit.</p>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <p>
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce cursus massa
   vel augue vestibulum facilisis in porta turpis. Ut faucibus lectus sit amet
@@ -230,17 +228,17 @@ conubia nostra, per inceptos himenaeos. Donec in ornare velit.</p>
   sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec
   in ornare velit.
 </p>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_nested_inline_without_whitespace(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        (
-            """
+    html_in = ("""
+
 <a href="/wiki/Help:IPA/English" title="Help:IPA/English">/<span style="border-bottom:1px dotted"><span title="/ˌ/: secondary stress follows">ˌ</span
 ><span title="/ɪ/: &#39;i&#39; in &#39;kit&#39;">ɪ</span
 ><span title="&#39;l&#39; in &#39;lie&#39;">l</span
@@ -250,14 +248,11 @@ def test_nested_inline_without_whitespace(runner: CliRunner, tmp_file: TextIO) -
 ><span title="/ɔɪ/: &#39;oi&#39; in &#39;choice&#39;">ɔɪ</span></span>/</a>
 <span class="word"><span class="syllable"><span class="letter vowel">i</span><span class="letter consonant">p</span></span
 ><span class="syllable"><span class="letter consonant onset">s</span><span class="letter vowel">u</span><span class="letter consonant">m</span></span></span>
-    """
-        )
-        .strip()
-        .str.encode()
-    )
 
-    html_out = (
-        """
+    """).strip().str.encode()
+
+    html_out = ("""
+
 <a href="/wiki/Help:IPA/English" title="Help:IPA/English"
   >/<span style="border-bottom: 1px dotted"
     ><span title="/ˌ/: secondary stress follows">ˌ</span
@@ -279,27 +274,28 @@ def test_nested_inline_without_whitespace(runner: CliRunner, tmp_file: TextIO) -
     ><span class="letter consonant">m</span></span
   ></span
 >
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_non_breaking_whitespace(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
+
 <!-- normal whitespaces -->
 <span>Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores voluptas quaerat ut qui sunt vitae error.</span>
 <!-- non-breaking whitespaces -->
 <span>Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores voluptas quaerat ut qui sunt vitae error.</span>
 <!-- non-breaking narrow whitespaces -->
 <span>Prix : 32 €</span>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <!-- normal whitespaces -->
 <span
   >Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores
@@ -311,266 +307,231 @@ def test_non_breaking_whitespace(runner: CliRunner, tmp_file: TextIO) -> None:
 >
 <!-- non-breaking narrow whitespaces -->
 <span>Prix : 32 €</span>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+
 
 
 def test_snippet_18(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+
+    html_in = str.encode("""
 <div> </div>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <div> </div>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
 def test_snippet_19(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <div>          </div>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <div> </div>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_20(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <div>           </div>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <div>  </div>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_21(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <div>                   </div>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <div>   </div>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_22(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <span> </span>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <span> </span>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_23(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <span>          </span>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <span>   </span>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_24(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <span>           </span>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <span>    </span>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_25(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <span>                   </span>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <span>     </span>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
 def test_snippet_26(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <img/> <img/>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <img /> <img />
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_27(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <img/>          <img/>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <img />   <img />
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_28(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <img/>           <img/>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <img />    <img />
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_29(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <img/>                   <img/>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <img />     <img />
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_30(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <i />   |   <i />
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <i />   |   <i />
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_31(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
 <p><span>X</span>   or   <span>Y</span></p><p>X   or   Y</p>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <p><span>X</span>   or   <span>Y</span></p>
 <p>X   or   Y</p>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_2005(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
+
 <!-- U+2005 -->
 <div>before<span> </span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>
 <!-- U+005F -->
 <div>before<span>_</span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>
 <!-- U+0020 -->
 <div>before<span> </span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <!-- U+2005 -->
 <div>
   before<span> </span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter
@@ -585,16 +546,17 @@ def test_snippet_2005(runner: CliRunner, tmp_file: TextIO) -> None:
   > </span
   >afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_snippet_2005_2(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = str.encode(
-        """
+    html_in = str.encode("""
+
 <!-- U+2005 -->
 <script type="text/unknown" lang="unknown">
         // comment
@@ -616,11 +578,11 @@ def test_snippet_2005_2(runner: CliRunner, tmp_file: TextIO) -> None:
           // comment
           // comment
 </script>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <!-- U+2005 -->
 <script type="text/unknown" lang="unknown">
        // comment
@@ -642,16 +604,21 @@ def test_snippet_2005_2(runner: CliRunner, tmp_file: TextIO) -> None:
     // comment
     // comment
 </script>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+
 
 
 def test_surrounding_linebreak(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <span>123</span>
 <span>
 123</span>
@@ -668,11 +635,11 @@ def test_surrounding_linebreak(runner: CliRunner, tmp_file: TextIO) -> None:
 <div>
 123
 </div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <span>123</span>
 <span> 123</span>
 <span>123 </span>
@@ -681,16 +648,17 @@ def test_surrounding_linebreak(runner: CliRunner, tmp_file: TextIO) -> None:
 <div>123</div>
 <div>123</div>
 <div>123</div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_table(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <table>
   <thead>
     <tr>
@@ -711,11 +679,11 @@ def test_table(runner: CliRunner, tmp_file: TextIO) -> None:
     </tr>
   </thead>
 </table>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <table>
   <thead>
     <tr>
@@ -751,27 +719,28 @@ def test_table(runner: CliRunner, tmp_file: TextIO) -> None:
     <tr></tr>
   </thead>
 </table>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_template(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <template>
   <template>foo</template>
 </template>
 <template>
   <template>foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo</template>
 </template>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <template>
   <template>foo</template>
 </template>
@@ -780,7 +749,11 @@ def test_template(runner: CliRunner, tmp_file: TextIO) -> None:
     >foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo</template
   >
 </template>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

@@ -37,8 +37,9 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     assert result.exit_code == 1
 
     result = runner.invoke(
-        djlint,
-        ["tests/test_config/test_blank_lines_after_tag/html_two.html", "--check"],
+
+        djlint, ["tests/test_config/test_blank_lines_after_tag/html_two.html", "--check"]
+
     )
     assert (
         """ {% load stuff %}
@@ -51,16 +52,18 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
 
     # check blocks that do not start on a newline - they should be left as is.
     result = runner.invoke(
-        djlint,
-        ["tests/test_config/test_blank_lines_after_tag/html_three.html", "--check"],
+
+        djlint, ["tests/test_config/test_blank_lines_after_tag/html_three.html", "--check"]
+
     )
 
     assert """0 files would be updated.""" in result.output
     assert result.exit_code == 0
 
     result = runner.invoke(
-        djlint,
-        ["tests/test_config/test_blank_lines_after_tag/html_four.html", "--check"],
+
+        djlint, ["tests/test_config/test_blank_lines_after_tag/html_four.html", "--check"]
+
     )
 
     assert result.exit_code == 1
@@ -76,21 +79,25 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
 
     # something perfect should stay perfect :)
     result = runner.invoke(
-        djlint,
-        ["tests/test_config/test_blank_lines_after_tag/html_five.html", "--check"],
+
+        djlint, ["tests/test_config/test_blank_lines_after_tag/html_five.html", "--check"]
+
     )
     assert result.exit_code == 0
 
     # something perfect should stay perfect :)
     result = runner.invoke(
-        djlint,
-        ["tests/test_config/test_blank_lines_after_tag/html_six.html", "--check"],
+
+        djlint, ["tests/test_config/test_blank_lines_after_tag/html_six.html", "--check"]
+
     )
     assert result.exit_code == 0
 
     # make sure endblock doesn't pick up endblocktrans :)
     result = runner.invoke(
-        djlint,
-        ["tests/test_config/test_blank_lines_after_tag/html_seven.html", "--check"],
+
+        djlint, ["tests/test_config/test_blank_lines_after_tag/html_seven.html", "--check"]
     )
     assert result.exit_code == 0
+
+

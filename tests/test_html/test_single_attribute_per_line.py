@@ -29,8 +29,9 @@ from ..conftest import reformat
 
 def test_single_attribute_per_line(runner: CliRunner, tmp_file: TextIO) -> None:
     # single-attribute-per-line: true
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <div data-a="1">
   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 </div>
@@ -46,11 +47,11 @@ def test_single_attribute_per_line(runner: CliRunner, tmp_file: TextIO) -> None:
 <img src="/images/foo.png" />
 <img src="/images/foo.png" alt="bar" />
 <img src="/images/foo.png" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div data-a="1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
 <div
   data-a="1"
@@ -82,13 +83,16 @@ def test_single_attribute_per_line(runner: CliRunner, tmp_file: TextIO) -> None:
   src="/images/foo.png"
   alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 />
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
     # single-attribute-per-line: false
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div data-a="1">
   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 </div>
@@ -104,11 +108,11 @@ def test_single_attribute_per_line(runner: CliRunner, tmp_file: TextIO) -> None:
 <img src="/images/foo.png" />
 <img src="/images/foo.png" alt="bar" />
 <img src="/images/foo.png" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div data-a="1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
 <div data-a="1" data-b="2" data-c="3">
   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -133,7 +137,11 @@ def test_single_attribute_per_line(runner: CliRunner, tmp_file: TextIO) -> None:
   src="/images/foo.png"
   alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 />
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

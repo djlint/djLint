@@ -26,30 +26,26 @@ from click.testing import CliRunner
 
 from ..conftest import reformat
 
-
 def test_empty(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <style></style>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <style></style>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_less(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <style type="text/less">
   @nice-blue: #5B83AD;
   @light-blue: @nice-blue + #111;
@@ -64,11 +60,11 @@ def test_less(runner: CliRunner, tmp_file: TextIO) -> None:
     color: @light-blue;
   }
 </style>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <style type="text/less">
   @nice-blue: #5B83AD;
   @light-blue: @nice-blue + #111;
@@ -83,29 +79,30 @@ def test_less(runner: CliRunner, tmp_file: TextIO) -> None:
     color: @light-blue;
   }
 </style>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_postcss(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <style type="text/css">
   body { background: navy; color: yellow; }
 </style>
 <style lang="postcss">
   body { background: navy; color: yellow; }
 </style>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <style type="text/css">
   body {
     background: navy;
@@ -118,18 +115,19 @@ def test_postcss(runner: CliRunner, tmp_file: TextIO) -> None:
     color: yellow;
   }
 </style>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_scss(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <style type="text/x-scss">
   $font-stack:    Helvetica, sans-serif;
   $primary-color: #333;
@@ -158,11 +156,11 @@ def test_scss(runner: CliRunner, tmp_file: TextIO) -> None:
     }
 }
 </style>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <style type="text/x-scss">
   $font-stack: Helvetica, sans-serif;
   $primary-color: #333;
@@ -190,18 +188,19 @@ def test_scss(runner: CliRunner, tmp_file: TextIO) -> None:
     }
   }
 </style>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_simple(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -216,11 +215,11 @@ def test_simple(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>This page is just a demo.</p>
   </body>
 </html>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -242,18 +241,19 @@ def test_simple(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>This page is just a demo.</p>
   </body>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_single_style(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <style>a { color: red; }</style>
 <style>
   h1 {
@@ -262,11 +262,11 @@ def test_single_style(runner: CliRunner, tmp_file: TextIO) -> None:
     color: #333366;
   }
 </style>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <style>
   a {
     color: red;
@@ -279,9 +279,13 @@ def test_single_style(runner: CliRunner, tmp_file: TextIO) -> None:
     color: #333366;
   }
 </style>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+
 
     assert output.text == html_out

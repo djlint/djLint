@@ -29,8 +29,9 @@ from ..conftest import reformat
 
 def test_svg(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -72,11 +73,11 @@ def test_svg(runner: CliRunner, tmp_file: TextIO) -> None:
   </foreignObject>
 </svg>
 
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -125,7 +126,11 @@ def test_svg(runner: CliRunner, tmp_file: TextIO) -> None:
     </div>
   </foreignObject>
 </svg>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

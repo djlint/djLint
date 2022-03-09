@@ -29,9 +29,9 @@ from ..conftest import reformat
 
 def test_html4_01_frameset(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        (
-            """
+
+    html_in = ("""
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
   "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
@@ -43,14 +43,11 @@ def test_html4_01_frameset(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>… Your HTML content here …</p>
   </body>
 </html>
-    """
-        )
-        .strip()
-        .encode()
-    )
 
-    html_out = (
-        """
+    """).strip().encode()
+
+    html_out = ("""
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
   <head>
@@ -61,17 +58,17 @@ def test_html4_01_frameset(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>… Your HTML content here …</p>
   </body>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_html4_01_strict(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        (
-            """
+    html_in = ("""
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
   "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -83,14 +80,11 @@ def test_html4_01_strict(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>… Your HTML content here …</p>
   </body>
 </html>
-    """
-        )
-        .strip()
-        .encode()
-    )
 
-    html_out = (
-        """
+    """).strip().encode()
+
+    html_out = ("""
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
@@ -101,17 +95,17 @@ def test_html4_01_strict(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>… Your HTML content here …</p>
   </body>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_html4_01_transitional(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        (
-            """
+    html_in = ("""
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
   "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -123,14 +117,11 @@ def test_html4_01_transitional(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>… Your HTML content here …</p>
   </body>
 </html>
-    """
-        )
-        .strip()
-        .encode()
-    )
 
-    html_out = (
-        """
+    """).strip().encode()
+
+    html_out = ("""
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
@@ -141,17 +132,17 @@ def test_html4_01_transitional(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>… Your HTML content here …</p>
   </body>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_html5(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        (
-            """
+    html_in = ("""
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -162,14 +153,11 @@ def test_html5(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>… Your HTML content here …</p>
   </body>
 </html>
-    """
-        )
-        .strip()
-        .encode()
-    )
 
-    html_out = (
-        """
+    """).strip().encode()
+
+    html_out = ("""
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -180,16 +168,18 @@ def test_html5(runner: CliRunner, tmp_file: TextIO) -> None:
     <p>… Your HTML content here …</p>
   </body>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
 def test_xhtml1_1(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -212,11 +202,11 @@ def test_xhtml1_1(runner: CliRunner, tmp_file: TextIO) -> None:
     <hr />
   </body>
 </html>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -247,7 +237,11 @@ def test_xhtml1_1(runner: CliRunner, tmp_file: TextIO) -> None:
     <hr />
   </body>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

@@ -10,16 +10,19 @@ run::
 
 missing tests:
 
-<<<<<<< HEAD:tests/test_html/test_html.py
+
+
 - self closing should have a /> > meta, link, img, source, param
 - smart quotes
 - missing quotes are added to single word attributes <p title=Title>String</p> >> <p title="Title">String</p>
 - tags and attributes should be made lowercase
-=======
+
 self closing should have a /> > meta, link, img, source, param
 smart quotes
 missing quotes are added to single word attributes <p title=Title>String</p> >> <p title="Title">String</p>
->>>>>>> 79dc3a9 (started adding more html tests):tests/test_html.py
+
+=======
+
 
 """
 # pylint: disable=C0116

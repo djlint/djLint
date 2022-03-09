@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> dd970c2 (restructured tests)
 """Djlint tests specific to django.
 
 run::
@@ -17,7 +21,6 @@ from typing import TextIO
 from click.testing import CliRunner
 
 from ..conftest import reformat
-
 
 def test_if(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(

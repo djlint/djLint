@@ -29,8 +29,9 @@ from ..conftest import reformat
 
 def test_example(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <!--interpolations in html should be treated as normal text--><div>Fuga magnam facilis. Voluptatem quaerat porro.{{
 x => {
     const hello = 'world'
@@ -46,11 +47,11 @@ x => {
 
                     interpolation
 }} reprehenderit voluptates minus {{console.log(  short_interpolation )}} nemo.</div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <!--interpolations in html should be treated as normal text-->
 <div>
   Fuga magnam facilis. Voluptatem quaerat porro.{{ x => { const hello = 'world'
@@ -59,7 +60,11 @@ x => {
   vero est error {{ preserve invalid interpolation }} reprehenderit voluptates
   minus {{console.log( short_interpolation )}} nemo.
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

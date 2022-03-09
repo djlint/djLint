@@ -29,8 +29,9 @@ from ..conftest import reformat
 
 def test_babel(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <script type="text/babel" data-presets="react" data-type="module">
 import { h,
          render } from 'https://unpkg.com/preact?module';
@@ -44,11 +45,11 @@ render(
 alert(1)
 -->
 </script>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <script type="text/babel" data-presets="react" data-type="module">
   import { h, render } from "https://unpkg.com/preact?module";
   render(<h1>Hello World!</h1>, document.body);
@@ -58,16 +59,17 @@ alert(1)
   alert(1);
   -->
 </script>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_legacy(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <script>
 <!--
 alert(1)
@@ -78,11 +80,11 @@ alert(1)
 alert(2)
 //-->
 </script>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <script>
   <!--
   alert(1);
@@ -93,16 +95,17 @@ alert(2)
   alert(2);
   //-->
 </script>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_module(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <script type="module">
 import prettier from "prettier/standalone";
 import parserGraphql from "prettier/parser-graphql";
@@ -118,11 +121,11 @@ async function foo() {
   await(import('mod'))
 }
 </script>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <script type="module">
   import prettier from "prettier/standalone";
   import parserGraphql from "prettier/parser-graphql";
@@ -138,33 +141,31 @@ async function foo() {
     await import("mod");
   }
 </script>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_module_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <script src="foo.wasm" type="module" withtype="webassembly"></script>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <script src="foo.wasm" type="module" withtype="webassembly"></script>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_script(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <script type="application/ld+json">
   {   "json": true }
 </script>
@@ -196,11 +197,11 @@ End Function
 </script>
 <script lang="unknown">
 </script>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <script type="application/ld+json">
   { "json": true }
 </script>
@@ -233,7 +234,11 @@ End Function
   End Function
 </script>
 <script lang="unknown"></script>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

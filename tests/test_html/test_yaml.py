@@ -29,8 +29,9 @@ from ..conftest import reformat
 
 def test_invalid(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 ---
     invalid:
 invalid:
@@ -40,11 +41,11 @@ invalid:
 
 
 <html><head></head><body></body></html>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 ---
     invalid:
 invalid:
@@ -54,16 +55,21 @@ invalid:
   <head></head>
   <body></body>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+
 
 
 def test_yaml(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 ---
 hello:     world
 ---
@@ -77,11 +83,11 @@ hello:     world
 
 
 <html><head></head><body></body></html>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 ---
 hello: world
 ---
@@ -89,7 +95,11 @@ hello: world
   <head></head>
   <body></body>
 </html>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

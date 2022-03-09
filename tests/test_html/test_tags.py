@@ -29,25 +29,23 @@ from ..conftest import reformat
 
 def test_case_sensitive(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
 <CaseSensitive CaseSensitive="true">hello world</CaseSensitive>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <CaseSensitive CaseSensitive="true">hello world</CaseSensitive>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_close_at_start(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div>
     aaaaaaaaaa
     <a
@@ -63,11 +61,11 @@ def test_close_at_start(runner: CliRunner, tmp_file: TextIO) -> None:
       >bbbbbbbbbb</a
     >cccccccccc
 </div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div>
   aaaaaaaaaa
   <a
@@ -83,35 +81,33 @@ def test_close_at_start(runner: CliRunner, tmp_file: TextIO) -> None:
     >bbbbbbbbbb</a
   >cccccccccc
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_custom_element(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <app-foo></app-foo>
 <app-bar></app-bar>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <app-foo></app-foo>
 <app-bar></app-bar>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
-
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_opening_at_end(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <p
   >Want to write us a letter? Use our<a
     ><b
@@ -141,11 +137,11 @@ def test_opening_at_end(runner: CliRunner, tmp_file: TextIO) -> None:
     ></a
   >.</p
 >
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <p>
   Want to write us a letter? Use our<a
     ><b><a>mailing address</a></b></a
@@ -168,24 +164,23 @@ def test_opening_at_end(runner: CliRunner, tmp_file: TextIO) -> None:
     ><b><a>mailing address</a></b></a
   >.
 </p>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_option(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <select><option>Blue</option><option>Green</option><optgroup label="Darker"><option>Dark Blue</option><option>Dark Green</option></optgroup></select>
 <input list=colors>
 <datalist id=colors><option>Blue</option><option>Green</option></datalist>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
+
 <select>
   <option>Blue</option>
   <option>Green</option>
@@ -199,16 +194,17 @@ def test_option(runner: CliRunner, tmp_file: TextIO) -> None:
   <option>Blue</option>
   <option>Green</option>
 </datalist>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_pre(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <pre>
 --------------------------------------------------------------------------------
 
@@ -311,11 +307,11 @@ ___________________________
 <pre><br/>long long long text long long long text long long long text long long long text <br></pre>
 <pre><br>long long long text long long long text long long long text long long long text <BR/></pre>
 
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <pre>
 --------------------------------------------------------------------------------
 
@@ -427,16 +423,17 @@ ___________________________
 <pre><DIV></DIV></pre>
 <pre><br/>long long long text long long long text long long long text long long long text <br></pre>
 <pre><br>long long long text long long long text long long long text long long long text <BR/></pre>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_tags(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <br/>
 <br />
 <br  />
@@ -562,11 +559,11 @@ def test_tags(runner: CliRunner, tmp_file: TextIO) -> None:
 <span><input type="checkbox"/> </span>
 <span><span><input type="checkbox"/></span></span>
 <span><input type="checkbox"/></span>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <br />
 <br />
 <br />
@@ -764,16 +761,17 @@ def test_tags(runner: CliRunner, tmp_file: TextIO) -> None:
   ><span><input type="checkbox" /></span
 ></span>
 <span><input type="checkbox" /></span>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_tags2(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div>before<noscript>noscript long long long long long long long long</noscript>after</div>
 
 <div>before<details><summary>summary long long long long </summary>details</details>after</div>
@@ -785,11 +783,11 @@ def test_tags2(runner: CliRunner, tmp_file: TextIO) -> None:
 <div>before<meter min="0" max="1" low=".4" high=".7" optimum=".5" value=".2"></meter>after</div>
 
 <div>before<progress value=".5" max="1"></progress>after</div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div>
   before<noscript>noscript long long long long long long long long</noscript
   >after
@@ -830,16 +828,17 @@ def test_tags2(runner: CliRunner, tmp_file: TextIO) -> None:
 </div>
 
 <div>before<progress value=".5" max="1"></progress>after</div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_textarea(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div>
   <div>
     <div>
@@ -870,11 +869,11 @@ def test_textarea(runner: CliRunner, tmp_file: TextIO) -> None:
 <textarea></textarea>
 
 <div><textarea>lorem ipsum</textarea></div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div>
   <div>
     <div>
@@ -905,24 +904,25 @@ def test_textarea(runner: CliRunner, tmp_file: TextIO) -> None:
 <textarea></textarea>
 
 <div><textarea>lorem ipsum</textarea></div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
 
-
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 def test_unsupported(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <center></center>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <center></center>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

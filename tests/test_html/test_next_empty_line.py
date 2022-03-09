@@ -29,8 +29,9 @@ from ..conftest import reformat
 
 def test_standalone_end_marker(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <div></div
 >
 <span></span>
@@ -48,11 +49,11 @@ def test_standalone_end_marker(runner: CliRunner, tmp_file: TextIO) -> None:
   >
   123123
 </div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div></div>
 <span></span>
 <div></div>
@@ -66,7 +67,11 @@ def test_standalone_end_marker(runner: CliRunner, tmp_file: TextIO) -> None:
   >
   123123
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

@@ -29,8 +29,9 @@ from ..conftest import reformat
 
 def test_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <input name=address maxlength=200>
 <input name='address' maxlength='200'>
 <input name="address" maxlength="200">
@@ -103,11 +104,11 @@ and HTML5 Apps. It also documents Mozilla products, like Firefox OS.">
   "
 >
 </p>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <input name="address" maxlength="200" />
 <input name="address" maxlength="200" />
 <input name="address" maxlength="200" />
@@ -175,18 +176,23 @@ and HTML5 Apps. It also documents Mozilla products, like Firefox OS." />
 <X a="1" b="2"> </X>
 <X a="1" b="2" c="3"> </X>
 <p class="foo bar baz"></p>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+
 
     assert output.text == html_out
 
 
 def test_boolean(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <button type="submit">This is valid.</button>
 <button type="submit" disabled>This is valid.</button>
 <button type="submit" disabled="">This is valid.</button>
@@ -204,11 +210,11 @@ def test_boolean(runner: CliRunner, tmp_file: TextIO) -> None:
 <input type="checkbox" checked="checked" disabled="disabled" name="cheese">
 <input type='checkbox' checked="" disabled="" name=cheese >
 <div lang=""></div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <button type="submit">This is valid.</button>
 <button type="submit" disabled>This is valid.</button>
 <button type="submit" disabled="">This is valid.</button>
@@ -244,37 +250,37 @@ def test_boolean(runner: CliRunner, tmp_file: TextIO) -> None:
 <input type="checkbox" checked="checked" disabled="disabled" name="cheese" />
 <input type="checkbox" checked="" disabled="" name="cheese" />
 <div lang=""></div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
 
 def test_case_sensitive(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <div CaseSensitive></div>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <div CaseSensitive></div>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
 
-
 def test_class_bem1(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div class="ProviderMeasuresContainer__heading-row
   d-flex
   flex-column flex-lg-row
@@ -284,11 +290,11 @@ def test_class_bem1(runner: CliRunner, tmp_file: TextIO) -> None:
 <div  class="a-bem-block__element a-bem-block__element--with-modifer also-another-block" >
 <div  class="a-bem-block__element a-bem-block__element--with-modifer also-another-block__element">
 </div></div> </div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div
   class="ProviderMeasuresContainer__heading-row d-flex flex-column flex-lg-row justify-content-start justify-content-lg-between align-items-start align-items-lg-center"
 >
@@ -302,18 +308,19 @@ def test_class_bem1(runner: CliRunner, tmp_file: TextIO) -> None:
     ></div>
   </div>
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_class_bem2(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div class="news__header widget__content">
   <div class="news__tabs">
     <h1 class="news__tab-wrapper news__head-item">
@@ -335,11 +342,11 @@ def test_class_bem2(runner: CliRunner, tmp_file: TextIO) -> None:
     </h1>
   </div>
 </div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div class="news__header widget__content">
     <div class="news__tabs">
         <h1 class="news__tab-wrapper news__head-item">
@@ -359,73 +366,70 @@ def test_class_bem2(runner: CliRunner, tmp_file: TextIO) -> None:
         </h1>
     </div>
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_class_colon(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <my-tag class="md:foo-bg md:foo-color md:foo--sub-bg md:foo--sub-color xl:foo xl:prefix2 --prefix2--something-else unrelated_class_to_fill_80_chars"></my-tag>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <my-tag
   class="md:foo-bg md:foo-color md:foo--sub-bg md:foo--sub-color xl:foo xl:prefix2 --prefix2--something-else unrelated_class_to_fill_80_chars"
 ></my-tag>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_class_leading_dashes(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <my-tag class="__prefix1__foo __prefix1__bar __prefix2__foo prefix2 prefix2--something --prefix2--something-else"></my-tag>
 <my-tag class="--prefix1--foo --prefix1--bar --prefix2--foo prefix2 prefix2__something __prefix2__something_else"></my-tag>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
+
 <my-tag
   class="__prefix1__foo __prefix1__bar __prefix2__foo prefix2 prefix2--something --prefix2--something-else"
 ></my-tag>
 <my-tag
   class="--prefix1--foo --prefix1--bar --prefix2--foo prefix2 prefix2__something __prefix2__something_else"
 ></my-tag>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_class_many_short_names(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div aria-hidden="true" class="border rounded-1 flex-shrink-0 bg-gray px-1 text-gray-light ml-1 f6 d-none d-on-nav-focus js-jump-to-badge-jump">
   Jump to
   <span class="d-inline-block ml-1 v-align-middle">x</span>
 </div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div
   aria-hidden="true"
   class="border rounded-1 flex-shrink-0 bg-gray px-1 text-gray-light ml-1 f6 d-none d-on-nav-focus js-jump-to-badge-jump"
@@ -433,18 +437,20 @@ def test_class_many_short_names(runner: CliRunner, tmp_file: TextIO) -> None:
   Jump to
   <span class="d-inline-block ml-1 v-align-middle">x</span>
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
 
-
 def test_class_names(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <img class="
                      foo
 bar
@@ -492,11 +498,11 @@ href="https://www.yahoo.com/" class="D(b) Pos(r)" data-ylk="elm:img;elmt:logo;se
 <img class="H(27px)!--sm1024 Mt(9px)!--sm1024 W(90px)!--sm1024"
 src="https://s.yimg.com/rz/p/yahoo_frontpage_en-US_s_f_p_205x58_frontpage_2x.png" height="58px"
 width="205px" alt="Yahoo"/></a></h1></div></div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <img class="foo bar" />
 <img class="  " />
 <img class />
@@ -533,125 +539,117 @@ width="205px" alt="Yahoo"/></a></h1></div></div>
     </h1>
   </div>
 </div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_class_print_width_edge(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <div aria-hidden="true" class="border rounded-1 flex-shrink-0 bg-gray px-1 loooooooooooooooooooooooong">
 </div>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
+
 <div
   aria-hidden="true"
   class="border rounded-1 flex-shrink-0 bg-gray px-1 loooooooooooooooooooooooong"
 ></div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_dobule_quotes(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <img src="test.png" alt="John 'ShotGun' Nelson">
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <img src="test.png" alt="John 'ShotGun' Nelson" />
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_duplicate(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <a href="1" href="2">123</a>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <a href="1" href="2">123</a>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_single_quotes(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <img src="test.png" alt='John "ShotGun" Nelson'>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <img src="test.png" alt='John "ShotGun" Nelson' />
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_smart_quotes(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div
     smart-quotes='123 " 456'
     smart-quotes="123 ' 456"
     smart-quotes='123 &apos;&quot; 456'
 ></div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div
   smart-quotes='123 " 456'
   smart-quotes="123 ' 456"
   smart-quotes="123 '&quot; 456"
 ></div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_srcset(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <img src="/assets/visual.png"
 srcset="/assets/visual@0.5.png  400w, /assets/visual.png      805w"
 sizes="(max-width: 66rem) 100vw, 66rem" alt=""/>
@@ -686,11 +684,11 @@ _20200401_145009_szrhju_c_scale,w_1398.jpg 1398w,
 _20200401_145009_szrhju_c_scale,w_1400.jpg 1400w"
 src="_20200401_145009_szrhju_c_scale,w_1400.jpg"
 alt="">
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <img
   src="/assets/visual.png"
   srcset="/assets/visual@0.5.png 400w, /assets/visual.png 805w"
@@ -743,18 +741,19 @@ alt="">
   src="_20200401_145009_szrhju_c_scale,w_1400.jpg"
   alt=""
 />
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_style(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
+
 <div style="
 color:
 #fFf
@@ -788,11 +787,11 @@ style="css-prop-1: css-value;css-prop-2: css-value;css-prop-3: css-value;css-pro
 ></div>
 <div style="color: red; {{ otherStyles }}"
 ></div>
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <div style="color: #fff"></div>
 <div style=""></div>
 <div style></div>
@@ -858,28 +857,29 @@ style="css-prop-1: css-value;css-prop-2: css-value;css-prop-3: css-value;css-pro
 ></div>
 <div style="{{ ...styles }}"></div>
 <div style="color: red; {{ otherStyles }}"></div>
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
 
     assert output.text == html_out
-
-
 def test_without_quotes(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+    html_in = (b"""
 <p title=Title>String</p>
-    """
-    ).strip()
+    """).strip()
 
-    html_out = (
-        """
+    html_out = ("""
 <p title="Title">String</p>
-        """
-    ).strip()
+        """).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+
 
     assert output.text == html_out

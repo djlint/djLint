@@ -29,23 +29,28 @@ from ..conftest import reformat
 
 def test_tag_should_in_fill(runner: CliRunner, tmp_file: TextIO) -> None:
 
-    html_in = (
-        b"""
+
+    html_in = (b"""
+
 <a-long-long-long-element>foo bar foo bar
   foo bar foo bar foo bar foo bar foo bar
   foo bar foo bar</a-long-long-long-element>
 <!-- The end tag should stay in 80 print width -->
-    """
-    ).strip()
 
-    html_out = (
-        """
+    """).strip()
+
+    html_out = ("""
+
 <a-long-long-long-element
   >foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo
   bar</a-long-long-long-element
 >
 <!-- The end tag should stay in 80 print width -->
-        """
-    ).strip()
 
-    output = reformat(tmp_file, runner, html_in)
+        """).strip()
+
+    output = reformat(
+        tmp_file,
+        runner,
+        html_in)
+

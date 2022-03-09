@@ -18,7 +18,6 @@ from click.testing import CliRunner
 
 from ..conftest import reformat
 
-
 def test_reformat_asset_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     # pylint: disable=C0301
     output = reformat(
@@ -36,3 +35,4 @@ def test_reformat_asset_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 """
     )
     assert output.exit_code == 1
+
