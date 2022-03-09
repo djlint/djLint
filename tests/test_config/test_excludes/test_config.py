@@ -19,7 +19,9 @@ from src.djlint import main as djlint
 
 
 def test_exclude(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ["tests/test_config/test_excludes", "--profile", "django"])
+    result = runner.invoke(
+        djlint, ["tests/test_config/test_excludes", "--profile", "django"]
+    )
     print(result.output)
     assert """html.html""" in result.output
     assert """excluded.html""" not in result.output

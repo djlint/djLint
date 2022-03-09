@@ -14,25 +14,14 @@ from typing import TextIO
 
 from click.testing import CliRunner
 
-
 from ..conftest import reformat
 
 
 def test_template_tags(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file, runner, b"{%- set posts = collections.docs -%}"
-    )
+    output = reformat(tmp_file, runner, b"{%- set posts = collections.docs -%}")
 
-    assert (
-        output.text
-        == r"""{%- set posts = collections.docs -%}\n"""
-    )
+    assert output.text == r"""{%- set posts = collections.docs -%}\n"""
 
-    output = reformat(
-        tmp_file, runner, b"{%-set posts = collections.docs-%}\n{%asdf%}"
-    )
+    output = reformat(tmp_file, runner, b"{%-set posts = collections.docs-%}\n{%asdf%}")
 
-    assert (
-        output.text
-        == r"""{%- set posts = collections.docs -%}\n{% asdf %}\n"""
-    )
+    assert output.text == r"""{%- set posts = collections.docs -%}\n{% asdf %}\n"""

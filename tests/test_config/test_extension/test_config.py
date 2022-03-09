@@ -24,4 +24,3 @@ def test_extension(runner: CliRunner) -> None:
     assert """1/1""" in result.output
     assert """0 files would be updated.""" in result.output
     assert result.exit_code == 0
-

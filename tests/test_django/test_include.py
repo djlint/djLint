@@ -17,6 +17,8 @@ from typing import TextIO
 from click.testing import CliRunner
 
 from ..conftest import reformat
+
+
 def test_include(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(tmp_file, runner, b"""{% include "this" %}{% include "that"%}""")
     assert output.exit_code == 1

@@ -14,8 +14,8 @@ from typing import TextIO
 
 from click.testing import CliRunner
 
-
 from ..conftest import reformat
+
 
 def test_spaceless(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
@@ -30,4 +30,3 @@ def test_spaceless(runner: CliRunner, tmp_file: TextIO) -> None:
         == r"""{%- if entry.children.length -%}<strong>{%- endif -%}
 """
     )
-
