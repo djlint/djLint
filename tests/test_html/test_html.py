@@ -10,9 +10,10 @@ run::
 
 missing tests:
 
-self closing should have a /> > meta, link, img, source, param
-smart quotes
-missing quotes are added to single word attributes <p title=Title>String</p> >> <p title="Title">String</p>
+- self closing should have a /> > meta, link, img, source, param
+- smart quotes
+- missing quotes are added to single word attributes <p title=Title>String</p> >> <p title="Title">String</p>
+- tags and attributes should be made lowercase
 
 """
 # pylint: disable=C0116
