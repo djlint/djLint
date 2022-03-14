@@ -184,11 +184,13 @@ class Config:
         check: bool = False,
         lint: bool = False,
         use_gitignore: bool = False,
+        warn: bool = False,
     ):
 
         self.reformat = reformat
         self.check = check
         self.lint = lint
+        self.warn = warn
         self.stdin = "-" in src
 
         self.project_root = find_project_root(Path(src))

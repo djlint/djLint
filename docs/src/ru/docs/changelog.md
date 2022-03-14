@@ -8,10 +8,13 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 # Изменения
 
-## {{ "next_release" i18n }}
+<!--## {{ "next_release" i18n }}-->
+
+## 0.7.6
 
 ::: content
-- Исправления ошибок [#189](https://github.com/Riverside-Healthcare/djLint/issues/189)
+- Исправления ошибок [#189](https://github.com/Riverside-Healthcare/djLint/issues/189), [#197](https://github.com/Riverside-Healthcare/djLint/issues/189)
+- Добавлен флаг `--warn` для возврата ошибок в виде предупреждений.
   :::
 
 ## 0.7.5

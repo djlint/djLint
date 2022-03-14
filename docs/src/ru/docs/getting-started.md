@@ -38,6 +38,7 @@ Options:
                         with the text 'djlint:on'
   --lint                Lint for common issues. [default option]
   --use-gitignore       Use .gitignore file to extend excludes.
+  --warn                Return errors as warnings.
   -h, --help            Show this message and exit.
 ```
 

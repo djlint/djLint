@@ -8,10 +8,13 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # Changelog
 
-## {{ "next_release" i18n }}
+<!--## {{ "next_release" i18n }}-->
+
+## 0.7.6
 
 ::: content
-- Bug fixes [#189](https://github.com/Riverside-Healthcare/djLint/issues/189)
+- Bug fixes [#189](https://github.com/Riverside-Healthcare/djLint/issues/189), [#197](https://github.com/Riverside-Healthcare/djLint/issues/189)
+- Added `--warn` flag to return return errors as warnings.
   :::
 
 ## 0.7.5

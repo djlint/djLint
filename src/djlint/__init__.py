@@ -89,6 +89,11 @@ from .src import get_src
     is_flag=True,
     help="Use .gitignore file to extend excludes.",
 )
+@click.option(
+    "--warn",
+    is_flag=True,
+    help="Return errors as warnings.",
+)
 def main(
     src: List[str],
     extension: str,
@@ -101,6 +106,7 @@ def main(
     require_pragma: bool,
     lint: bool,
     use_gitignore: bool,
+    warn: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -115,6 +121,7 @@ def main(
         reformat=reformat,
         check=check,
         use_gitignore=use_gitignore,
+        warn=warn,
     )
 
     temp_file = None
@@ -223,7 +230,7 @@ def main(
         temp_file.close()
         os.unlink(temp_file.name)
 
-    if bool(print_output(config, file_errors, len(file_list))):
+    if bool(print_output(config, file_errors, len(file_list))) and config.warn is False:
         sys.exit(1)
 
 
