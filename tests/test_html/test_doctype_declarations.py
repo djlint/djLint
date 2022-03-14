@@ -15,7 +15,7 @@ run::
    pytest tests/test_html/test_doctype_declarations.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html/test_doctype_declarations.py::test_long_ --cov=src/djlint --cov-branch \
+   poetry run pytest tests/test_html/test_doctype_declarations.py::test_case --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -26,6 +26,13 @@ from click.testing import CliRunner
 
 from ..conftest import reformat
 
+
+def test_case(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(tmp_file, runner, b"<!DocType htMl>")
+    assert "<!DOCTYPE html>" == output.text
+
+    output = reformat(tmp_file, runner, b"<!DocType htMl  >")
+    assert "<!DOCTYPE html>" == output.text
 
 def test_html4_01_frameset(runner: CliRunner, tmp_file: TextIO) -> None:
 
@@ -65,6 +72,7 @@ def test_html4_01_frameset(runner: CliRunner, tmp_file: TextIO) -> None:
     ).strip()
 
     output = reformat(tmp_file, runner, html_in)
+    assert html_out == output.text
 
 
 def test_html4_01_strict(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -105,6 +113,7 @@ def test_html4_01_strict(runner: CliRunner, tmp_file: TextIO) -> None:
     ).strip()
 
     output = reformat(tmp_file, runner, html_in)
+    assert html_out == output.text
 
 
 def test_html4_01_transitional(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -145,6 +154,7 @@ def test_html4_01_transitional(runner: CliRunner, tmp_file: TextIO) -> None:
     ).strip()
 
     output = reformat(tmp_file, runner, html_in)
+    assert html_out == output.text
 
 
 def test_html5(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -184,6 +194,7 @@ def test_html5(runner: CliRunner, tmp_file: TextIO) -> None:
     ).strip()
 
     output = reformat(tmp_file, runner, html_in)
+    assert html_out == output.text
 
 
 def test_xhtml1_1(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -251,3 +262,4 @@ def test_xhtml1_1(runner: CliRunner, tmp_file: TextIO) -> None:
     ).strip()
 
     output = reformat(tmp_file, runner, html_in)
+    assert html_out == output.text
