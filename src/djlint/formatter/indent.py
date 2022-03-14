@@ -29,12 +29,8 @@ def indent_html(rawcode: str, config: Config):
         return bool(re.search(r"\n[ \t]*$", html, re.M))
 
     def spacebefore(html):
-<<<<<<< HEAD
-        return bool(re.search(r"[ ]*$",html, re.M))
 
-=======
         return bool(re.search(r"[ ]*$", html, re.M))
->>>>>>> 86e2c8b (formatted tests)
 
     elements = []
 
