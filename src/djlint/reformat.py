@@ -21,7 +21,7 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     rawcode = this_file.read_text(encoding="utf8")
 
     indented = indent_html(rawcode, config)
-    indented = condense_html(indented, config)
+    #indented = condense_html(indented, config)
 
     beautified_code = indented
 

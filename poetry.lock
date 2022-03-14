@@ -78,6 +78,30 @@ tomli = {version = "*", optional = true, markers = "extra == \"toml\""}
 toml = ["tomli"]
 
 [[package]]
+name = "html-styles"
+version = "0.1.2"
+description = "List of HTML tag default styles."
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[[package]]
+name = "html-tag-names"
+version = "0.1.1"
+description = "List of known HTML tag names"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[[package]]
+name = "html-void-elements"
+version = "0.1.0"
+description = "List of HTML void tag names."
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[[package]]
 name = "importlib-metadata"
 version = "4.11.0"
 description = "Read metadata from Python packages"
@@ -308,7 +332,7 @@ test = ["coverage", "pytest", "pytest-cov"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7,<4.0"
-content-hash = "5882c401d3802c01018bfafaf2a8be1129c29288f51af71ece4388b8bb8a76be"
+content-hash = "de3e00586abfee34dd3d6e36e64a093f91a15127c2e1b60b4e3ff50e7c59976b"
 
 [metadata.files]
 atomicwrites = [
@@ -394,6 +418,18 @@ coverage = [
     {file = "coverage-6.3.1-cp39-cp39-win_amd64.whl", hash = "sha256:9976fb0a5709988778ac9bc44f3d50fccd989987876dfd7716dee28beed0a9fa"},
     {file = "coverage-6.3.1-pp36.pp37.pp38-none-any.whl", hash = "sha256:463e52616ea687fd323888e86bf25e864a3cc6335a043fad6bbb037dbf49bbe2"},
     {file = "coverage-6.3.1.tar.gz", hash = "sha256:6c3f6158b02ac403868eea390930ae64e9a9a2a5bbfafefbb920d29258d9f2f8"},
+]
+html-styles = [
+    {file = "html-styles-0.1.2.tar.gz", hash = "sha256:c5a4a1b40210bbb1df44d701e526cad40f009a4c84f0c4884ce19616d56e9d80"},
+    {file = "html_styles-0.1.2-py3-none-any.whl", hash = "sha256:f67efb5155629a909ee4440ded03592abcfc582ac1ed221cc944989fbd0b5a68"},
+]
+html-tag-names = [
+    {file = "html-tag-names-0.1.1.tar.gz", hash = "sha256:b0699eb21533583c8b5227375d05b8c7912096c6665bb891d32760c3ccccf032"},
+    {file = "html_tag_names-0.1.1-py3-none-any.whl", hash = "sha256:2408a9ac430f6374f6f1524267bd2adf17336b407b6106e5f7992b6d1cde2966"},
+]
+html-void-elements = [
+    {file = "html-void-elements-0.1.0.tar.gz", hash = "sha256:931b88f84cd606fee0b582c28fcd00e41d7149421fb673e1e1abd2f0c4f231f0"},
+    {file = "html_void_elements-0.1.0-py3-none-any.whl", hash = "sha256:784cf39db03cdeb017320d9301009f8f3480f9d7b254d0974272e80e0cb5e0d2"},
 ]
 importlib-metadata = [
     {file = "importlib_metadata-4.11.0-py3-none-any.whl", hash = "sha256:6affcdb3aec542dd98df8211e730bba6c5f2bec8288d47bacacde898f548c9ad"},

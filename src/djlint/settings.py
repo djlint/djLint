@@ -694,7 +694,7 @@ class Config:
         self.break_before = r"(?<!\n[ ]*?)"
 
         # if lines are longer than x
-        self.max_line_length = 120
+        self.max_line_length = 10
 
         try:
             self.max_line_length = int(
