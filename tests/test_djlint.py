@@ -167,7 +167,9 @@ def test_check_reformatter_no_error(runner: CliRunner, tmp_file: TextIO) -> None
 
 
 def test_warn(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b"<div style='color:pink;'><p>nice stuff here</p></div>")
+    write_to_file(
+        tmp_file.name, b"<div style='color:pink;'><p>nice stuff here</p></div>"
+    )
     result = runner.invoke(djlint, [tmp_file.name, "--lint", "--warn"])
     assert result.exit_code == 0
 
