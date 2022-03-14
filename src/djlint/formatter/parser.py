@@ -415,7 +415,7 @@ class HTMLParser(_markupbase.ParserBase):
 
         assert match, "unexpected call to parse_starttag()"
         k = match.end()
-        self.lasttag = tag = match.group(1).lower()
+        self.lasttag = tag = match.group(1)
         while k < endpos:
             m = attrfind_tolerant.match(rawdata, k)
 
@@ -431,7 +431,7 @@ class HTMLParser(_markupbase.ParserBase):
                 attrvalue = attrvalue[1:-1]
             if attrvalue:
                 attrvalue = unescape(attrvalue)
-            attrs.append((attrname.lower(), attrvalue))
+            attrs.append((attrname, attrvalue))
             k = m.end()
         end = rawdata[k:endpos].strip()
         if end not in (">", "/>"):
@@ -598,7 +598,7 @@ class HTMLParser(_markupbase.ParserBase):
                     return i + 3
                 else:
                     return self.parse_bogus_comment(i)
-            tagname = namematch.group(1).lower()
+            tagname = namematch.group(1)
             # consume and ignore other stuff between the name and the >
             # Note: this is not 100% correct, since we might have things like
             # </tag attr=">">, but looking for > after the name should cover
@@ -607,7 +607,7 @@ class HTMLParser(_markupbase.ParserBase):
             self.handle_endtag(tagname)
             return gtpos + 1
 
-        elem = match.group(1).lower()  # script or style
+        elem = match.group(1)  # script or style
         if self.cdata_elem is not None:
             if elem != self.cdata_elem:
                 self.handle_data(rawdata[i:gtpos])

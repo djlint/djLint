@@ -34,6 +34,7 @@ def test_case(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(tmp_file, runner, b"<!DocType htMl  >")
     assert "<!DOCTYPE html>" == output.text
 
+
 def test_html4_01_frameset(runner: CliRunner, tmp_file: TextIO) -> None:
 
     html_in = (

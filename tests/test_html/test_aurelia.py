@@ -12,10 +12,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 run::
 
-   pytest tests/test_html/test_attributes.py --cov=src/djlint --cov-branch \
+   poetry run pytest tests/test_html/test_aurelia.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html/test_attributes.py::test_long_attributes --cov=src/djlint --cov-branch \
+   poetry run pytest tests/test_html/test_aurelia.py::test_aurelia --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -27,7 +27,7 @@ from click.testing import CliRunner
 from ..conftest import reformat
 
 
-def test_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
+def test_aurelia(runner: CliRunner, tmp_file: TextIO) -> None:
 
     html_in = (
         b"""
@@ -40,7 +40,7 @@ def test_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     html_out = (
         """
 <template>
-  <i class.bind="icon"></i>
+    <i class.bind="icon"></i>
 </template>
         """
     ).strip()
