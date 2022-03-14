@@ -2,8 +2,14 @@ import re
 
 from ..settings import Config
 from .parser import HTMLParser
-
-
+from HtmlTagNames import html_tag_names
+from HtmlVoidElements import html_void_elements
+from HtmlStyles import html_styles
+from itertools import chain
+"""
+options needed > no
+empty-attributes-are-booleans >> required will either be "require =''" or just require
+"""
 def indent_html(rawcode: str, config: Config):
 
     ## pop front mater
@@ -32,11 +38,28 @@ def indent_html(rawcode: str, config: Config):
 
     elements = []
 
+
+
     class MyHTMLParser(HTMLParser):
-        def __init__(self):
+        def __init__(self, config):
+            def get_tag_style(style):
+                return dict(
+                    chain(
+                        *map(
+                            dict.items,
+                            [
+                                {y: x["style"].get(style) for y in x["selectorText"].split(",")}
+                                for x in list(
+                                    filter(lambda x: x["style"].get(style) is not None, html_styles)
+                                )
+                            ],
+                        )
+                    )
+                )
             super(MyHTMLParser, self).__init__()
             self.output = ""
-            # self.indent_html_tags = ["div", "p", "dd"]
+            self.config = config
+            self.indent_html_tags = ["div", "p", "dd"]
             self.ignored_html_tags = ["pre", "code", "textarea", "script"]
             self.inline_blocks = [
                 "h1",
@@ -47,58 +70,73 @@ def indent_html(rawcode: str, config: Config):
                 "h6",
                 "a",
                 "span",
-                "small",
+                "small"
             ]
-            self.self_closing_tags = [
-                "area",
-                "base",
-                "br",
-                "col",
-                "embed",
-                "hr",
-                "img",
-                "input",
-                "link",
-                "meta",
-                "para",
-                "source",
-                "track" "wbr",
-                "command",
-                "keygen",
-                "menuitem",
-            ]
+
+            self.css_display = dict(**get_tag_style('display'),**{
+                  "button": "inline-block",
+                  "template": "inline",
+                  "source": "block",
+                  "track": "block",
+                  "script": "block",
+                  "param": "block",
+                  "details": "block",
+                  "summary": "block",
+                  "dialog": "block",
+                  "meter": "inline-block",
+                  "progress": "inline-block",
+                  "object": "inline-block",
+                  "video": "inline-block",
+                  "audio": "inline-block",
+                  "select": "inline-block",
+                  "option": "block",
+                  "optgroup": "block"
+                })
+            self.css_default_display = "inline"
+            self.css_whitespace = get_tag_style('whitespace')
+            self.css.default_whitespace = 'normal'
+
             self.indent_temp_tags = ["if"]
             self.indent_block = False
             self.current_block = "tag"
 
-            self.indent = config.indent
+            self.indent = self.config.indent
             self.level = 0
             self.ignored_level = 0
             self.inline_level = 0
             self.is_inline = False
 
+            self.line_length= 0
+
         def handle_starttag(self, tag, attrs):
-            tag = tag.lower()
-            # print("opening: ", tag)
-            # print(attrs)
-            attribs = ""
+
+            if tag in html_tag_names:
+                tag = tag.lower()
+            #print("opening: ", tag)
+
+
+            attributes = []
+
+            #for attribute in attrs:
+
             if attrs:
                 attribs = " " + (" ").join(
                     [x[0].lower() + ('="' + x[1] + '"' if x[1] else "") for x in attrs]
                 )
 
-            html_closing = " />" if tag in self.self_closing_tags else ">"
-
+            html_closing = " />" if tag in html_void_elements else ">"
             html_tag = f"<{tag}{attribs}{html_closing}"
+
+            indent = self.indent * self.level
 
             if tag in self.ignored_html_tags:
                 # print("ignored html tags")
                 if self.ignored_level == 0 and breakbefore(self.output):
-                    self.output += self.indent * self.level
+                    self.output += indent
                 elif self.ignored_level == 0 and not breakbefore(self.output):
-                    self.output += "\n" + (self.indent * self.level)
+                    self.output += "\n" + indent
                 self.output += html_tag
-                if tag not in self.self_closing_tags:
+                if tag not in html_void_elements:
                     self.ignored_level += 1
                     self.current_block = "tag"
 
@@ -112,15 +150,14 @@ def indent_html(rawcode: str, config: Config):
                     and not breakbefore(self.output)
                     and self.current_block == "tag"
                 ):
-                    self.output += "\n" + (self.indent * self.level)
+                    self.output += "\n" + indent
 
-                if tag not in self.self_closing_tags:
+                if tag not in html_void_elements:
                     self.inline_level += 1
                 self.output += html_tag
 
-                if tag not in self.self_closing_tags:
+                if tag not in html_void_elements:
                     self.current_block = "tag"
-
             else:
                 # print("else")
                 # if tag in self.indent_html_tags:
@@ -128,10 +165,10 @@ def indent_html(rawcode: str, config: Config):
                 if self.output and self.output[-1] != "\n":
                     self.output = self.output + "\n"
 
-                self.output += self.indent * self.level
+                self.output += indent
 
                 self.output += html_tag + "\n"
-                if tag not in self.self_closing_tags:
+                if tag not in html_void_elements:
                     self.level += 1
                     self.current_block = "tag"
 
@@ -147,7 +184,9 @@ def indent_html(rawcode: str, config: Config):
                 self.level += 1
 
         def handle_endtag(self, tag):
-            tag = tag.lower()
+            if tag in html_tag_names:
+                tag = tag.lower()
+
             if tag in self.ignored_html_tags:
                 self.output += "</" + tag + ">"
                 self.ignored_level -= 1
@@ -157,7 +196,7 @@ def indent_html(rawcode: str, config: Config):
                 self.inline_level -= 1
                 self.output += "</" + tag + ">"
                 self.current_block = "tag"
-            elif tag not in self.self_closing_tags:
+            elif tag not in html_void_elements:
                 self.output = self.output.rstrip()
                 if self.output != "":
                     self.output = self.output + "\n"
@@ -199,7 +238,7 @@ def indent_html(rawcode: str, config: Config):
             super(MyHTMLParser, self).close()
             return self.output
 
-    p = MyHTMLParser()
+    p = MyHTMLParser(config)
     p.feed(rawcode)
     output = p.close()
 
