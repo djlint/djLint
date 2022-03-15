@@ -48,16 +48,34 @@ class Tag:
             ),
         )
         self.data: Optional[str] = None
+        self.type: Optional[str] = None
         self.parent = parent
         self.rawname = tag
         self.namespace, self.name = self.__get_tag_name()
-        self.is_space_sensitive = self.__tag_is_space_sensitive(self.name)
-        self.is_indentation_sensitive = self.__tag_is_indentation_sensitive(self.name)
         self.is_pre = self.__tag_is_pre(self.name)
-        self.is_script = self.__tag_is_script()
-        self.attributes = self.__get_tag_attributes(self.name, attributes)
+        self.raw_attributes = attributes
         self.is_void = self.name in html_void_elements
 
+    def __str__(self) -> str:
+        return self.name
+
+    @property
+    def data(self) -> Optional[str]:
+        return self._data
+
+    @data.setter
+    def data(self, val: str) -> None:
+        self._data = val
+
+    @property
+    def type(self) -> Optional[str]:
+        return self._type
+
+    @type.setter
+    def type(self, val: str) -> None:
+        self._type = val
+
+    @property
     def open_tag(self) -> str:
         if self.parent and (
             self.parent.is_indentation_sensitive or self.parent.is_space_sensitive
@@ -66,17 +84,18 @@ class Tag:
         else:
             return f"<{self.name}{self.attributes}{self.__get_tag_closing()}"
 
-    def close_tag(self, line_length: int = 0) -> str:
+    @property
+    def close_tag(self) -> str:
         if self.is_void:
             return ""
 
         if self.parent and (
             self.parent.is_indentation_sensitive or self.parent.is_space_sensitive
         ):
-            return f"</{self.name}{self.__get_tag_closing(line_length)}"
-        return f"</{self.name}{self.__get_tag_closing(line_length)}"
+            return f"</{self.name}{self.__get_tag_closing()}"
+        return f"</{self.name}{self.__get_tag_closing()}"
 
-    def __get_tag_closing(self, line_length: int = 0) -> str:
+    def __get_tag_closing(self) -> str:
         if self.is_void:
             return " />"
 
@@ -103,26 +122,28 @@ class Tag:
             )
         )
 
-    def __tag_is_space_sensitive(self, tag: str) -> bool:
+    @property
+    def is_space_sensitive(self) -> bool:
         """Check if tag is space sensitive."""
         display = self.__css_display.get(self.name, self.__css_default_display)
-        print(tag, display)
-        return not display.startswith("table") and display not in [
+        #print(display)
+        return self.is_script or not display.startswith("table") and display not in [
             "block",
             "list-item",
-            "inline-block",
-            "none",
+            "inline-block"
         ]
 
-    def __tag_is_indentation_sensitive(self, tag: str) -> bool:
-        return self.__tag_is_pre(tag)
+    @property
+    def is_indentation_sensitive(self) -> bool:
+        return self.__tag_is_pre(self.name)
 
     def __tag_is_pre(self, tag: str) -> bool:
         return self.__css_whitespace.get(tag, self.__css_default_whitespace).startswith(
             "pre"
         )
 
-    def __tag_is_script(self) -> bool:
+    @property
+    def is_script(self) -> bool:
         return self.name in ("script", "style", "svg:style")
 
     def __get_tag_name(self) -> Tuple[Optional[str], str]:
@@ -143,14 +164,15 @@ class Tag:
             else attribute
         )
 
-    def __get_tag_attributes(self, tag: str, attributes: Optional[List]) -> str:
+    @property
+    def attributes(self) -> str:
 
         attribs = []
-        if not attributes:
+        if not self.raw_attributes:
             return ""
 
-        for x in attributes:
-            key = self.__get_attribute_name(tag, x[0])
+        for x in self.raw_attributes:
+            key = self.__get_attribute_name(self.name, x[0])
             value = ""
 
             if x[1]:
