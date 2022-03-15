@@ -45,12 +45,12 @@ text
     html_out = (
         """
 <div
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
-  text
+    text
 </div>
 <div
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 ></div>
 <div class="a">text</div>
 <div class="a">text</div>
@@ -76,11 +76,11 @@ text
     html_out = (
         """
 <div
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
-  text
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
+    text
 </div>
 <div
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></div>
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></div>
 <div class="a">text</div>
 <div class="a">text</div>
         """
@@ -109,24 +109,24 @@ alert(1)</script>
     html_out = (
         """
 <script
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
-  alert(1);
+    alert(1);
 </script>
 <style
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
-  .a {
-    color: #f00;
-  }
+    .a {
+      color: #f00;
+    }
 </style>
 <script>
-  alert(1);
+    alert(1);
 </script>
 <style>
-  .a {
-    color: #f00;
-  }
+    .a {
+      color: #f00;
+    }
 </style>
         """
     ).strip()
@@ -149,8 +149,8 @@ alert(1)</script>
     html_out = (
         """
 <script
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
-  alert(1);
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
+    alert(1);
 </script>
 <style
   long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
@@ -159,7 +159,7 @@ alert(1)</script>
   }
 </style>
 <script>
-  alert(1);
+    alert(1);
 </script>
 <style>
   .a {
@@ -196,24 +196,24 @@ text
     html_out = (
         """
 <span
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
-  text
+    text
 </span>
 <span
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 ></span>
 <span class="a">text</span>
 <span
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
-  text
+    text
 </span>
 <span class="a">text</span
 ><span
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
 >
-  text
+    text
 </span>
 <span class="a">text</span><span class="a">text</span><span class="a">text</span
 ><span class="a">text</span><span class="a">text</span>
@@ -243,20 +243,20 @@ text
     html_out = (
         """
 <span
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
-  text
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
+    text
 </span>
 <span
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>
 <span class="a">text</span>
 <span
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
-  text
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
+    text
 </span>
 <span class="a">text</span
 ><span
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
-  text
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">
+    text
 </span>
 <span class="a">text</span><span class="a">text</span><span class="a">text</span
 ><span class="a">text</span><span class="a">text</span>
@@ -280,11 +280,11 @@ def test_void_elements(runner: CliRunner, tmp_file: TextIO) -> None:
     html_out = (
         """
 <img
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
-  src="./1.jpg"
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    src="./1.jpg"
 />
 <img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img
-  src="./1.jpg"
+    src="./1.jpg"
 /><img src="./1.jpg" />
         """
     ).strip()
@@ -302,10 +302,10 @@ def test_void_elements(runner: CliRunner, tmp_file: TextIO) -> None:
     html_out = (
         """
 <img
-  long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
-  src="./1.jpg" />
+    long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"
+    src="./1.jpg" />
 <img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img
-  src="./1.jpg" /><img src="./1.jpg" />
+    src="./1.jpg" /><img src="./1.jpg" />
         """
     ).strip()
 

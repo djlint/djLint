@@ -12,10 +12,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 run::
 
-   pytest tests/test_html/test_text.py --cov=src/djlint --cov-branch \
+   poetry run pytest tests/test_html/test_text.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html/test_text.py::test_long_attributes --cov=src/djlint --cov-branch \
+   poetry run pytest tests/test_html/test_text.py::test_long_attributes --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -41,8 +41,8 @@ def test_tag_should_in_fill(runner: CliRunner, tmp_file: TextIO) -> None:
     html_out = (
         """
 <a-long-long-long-element
-  >foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo
-  bar</a-long-long-long-element
+    >foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo
+    bar</a-long-long-long-element
 >
 <!-- The end tag should stay in 80 print width -->
         """

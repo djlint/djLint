@@ -152,73 +152,73 @@ def test_conditional(runner: CliRunner, tmp_file: TextIO) -> None:
         """
 <!DOCTYPE html>
 <html>
-  <body>
-    <!--[if IE 5]>This is IE 5<br /><![endif]-->
-    <!--[if IE 6]>This is IE 6<br /><![endif]-->
-    <!--[if IE 7]>This is IE 7<br /><![endif]-->
-    <!--[if IE 8]>This is IE 8<br /><![endif]-->
-    <!--[if IE 9]>This is IE 9<br /><![endif]-->
-  </body>
+    <body>
+        <!--[if IE 5]>This is IE 5<br /><![endif]-->
+        <!--[if IE 6]>This is IE 6<br /><![endif]-->
+        <!--[if IE 7]>This is IE 7<br /><![endif]-->
+        <!--[if IE 8]>This is IE 8<br /><![endif]-->
+        <!--[if IE 9]>This is IE 9<br /><![endif]-->
+    </body>
 </html>
 
 <!DOCTYPE html>
 <!--[if lt IE 9]><html lang="zh-CN"><![endif]-->
 <html lang="zh-CN">
-  <head></head>
-  <body></body>
+    <head></head>
+    <body></body>
 </html>
 
 <!DOCTYPE html>
 <!--[if lt IE 9]><html lang="zh-CN"><div><![endif]-->
 <html lang="zh-CN">
-  <head></head>
-  <body></body>
+    <head></head>
+    <body></body>
 </html>
 
 <!DOCTYPE html>
 <!--[if lt IE 9]><html lang="zh-CN"><div></div><![endif]-->
 <html lang="zh-CN">
-  <head></head>
-  <body></body>
+    <head></head>
+    <body></body>
 </html>
 
 <body width="100%" align="center">
-  <center>
-    <!--[if (gte mso 9)|(IE)]><table cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td><![endif]-->
-    <div></div>
-    <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
-  </center>
+    <center>
+        <!--[if (gte mso 9)|(IE)]><table cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td><![endif]-->
+        <div></div>
+        <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
+    </center>
 </body>
 
 <!DOCTYPE html>
 <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
 <!--[if gte IE 9]><!--><html><!--<![endif]-->
-  <head></head>
-  <body></body>
+    <head></head>
+    <body></body>
 </html>
 
 <!DOCTYPE html>
 <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
 <!--[if gte IE 9]><!--><html hello><!--<![endif]-->
-  <head></head>
-  <body></body>
+    <head></head>
+    <body></body>
 </html>
 
 <!DOCTYPE html>
 <!--[if lt IE 9]><html class="legacy-ie"><head><![endif]-->
 <!--[if gte IE 9]><!-->
 <html>
-  <head>
-    <!--<![endif]-->
-  </head>
-  <body></body>
+    <head>
+        <!--<![endif]-->
+    </head>
+    <body></body>
 </html>
 
 <!DOCTYPE html>
 <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
 <!--[if gte IE 9]><!--><html><!--<![endif]-->
-  <head></head>
-  <body></body>
+    <head></head>
+    <body></body>
 </html>
         """
     ).strip()
@@ -257,18 +257,18 @@ def test_for_debugging(runner: CliRunner, tmp_file: TextIO) -> None:
         """
 <!DOCTYPE html>
 <html>
-  <body>
-    <!-- Do not display this at the moment
-<img border="0" src="pic_trulli.jpg" alt="Trulli">
--->
+    <body>
+        <!-- Do not display this at the moment
+        <img border="0" src="pic_trulli.jpg" alt="Trulli">
+        -->
 
-    <!-- Do not display this at the moment
-  <img border="0" src="pic_trulli.jpg" alt="Trulli">
-  -->
+        <!-- Do not display this at the moment
+        <img border="0" src="pic_trulli.jpg" alt="Trulli">
+        -->
 
-    <!-- Do not display this at the moment
-    <img border="0" src="pic_trulli.jpg" alt="Trulli">
-    -->
+        <!-- Do not display this at the moment
+        <img border="0" src="pic_trulli.jpg" alt="Trulli">
+        -->
   </body>
 </html>
         """
@@ -303,14 +303,14 @@ def test_hidden(runner: CliRunner, tmp_file: TextIO) -> None:
         """
 <!DOCTYPE html>
 <html>
-  <body>
-    <!--This is a comment-->
-    <!-- This is a comment -->
-    <!--  This is a comment  -->
-    <!--   This   is   a   comment   -->
-    <p>This is a paragraph.</p>
-    <!-- Comments are not displayed in the browser -->
-  </body>
+    <body>
+        <!--This is a comment-->
+        <!-- This is a comment -->
+        <!--  This is a comment  -->
+        <!--   This   is   a   comment   -->
+        <p>This is a paragraph.</p>
+        <!-- Comments are not displayed in the browser -->
+    </body>
 </html>
         """
     ).strip()
@@ -386,15 +386,15 @@ See console log:
     html_out = (
         """
 <ul>
-  <!-- 123
+    <!-- 123
 -->
-  <li>First</li>
-  <!-- 123
+    <li>First</li>
+    <!-- 123
 456
    789
 -->
-  <li>Second</li>
-  <!--
+    <li>Second</li>
+    <!--
 
 
     123
@@ -403,8 +403,8 @@ See console log:
 
 
 -->
-  <li>Second</li>
-  <!--
+    <li>Second</li>
+    <!--
 
 
            123
@@ -414,27 +414,27 @@ See console log:
 
 --></ul>
 <span
-  ><!--
+    ><!--
 --><span>a</span
-  ><!--
+    ><!--
 --><span>b</span
-  ><!--
+    ><!--
 --></span>
 
 <span
-  ><!-- 1
+    ><!-- 1
 --><span>a</span
-  ><!-- 2
+    ><!-- 2
 --><span>b</span
-  ><!-- 3
+    ><!-- 3
 --></span>
 
 <span
-  ><!--
+    ><!--
 1 --><span>a</span
-  ><!--
+    ><!--
 2 --><span>b</span
-  ><!--
+    ><!--
 3 --></span
 >
 
@@ -447,7 +447,7 @@ See console log:
 The null hero's name is {{nullHero.name}}
 
 See console log:
-  TypeError: Cannot read property 'name' of null in [null]
+    TypeError: Cannot read property 'name' of null in [null]
 -->
 
 <!--

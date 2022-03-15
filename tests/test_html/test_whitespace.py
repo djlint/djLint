@@ -42,7 +42,7 @@ def test_break_tags(runner: CliRunner, tmp_file: TextIO) -> None:
 <a>Lorem</a>, ispum dolor sit <strong>amet</strong>.
 <div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div>
 <div>
-  <div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div>
+    <div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div>
 </div>
         """
     ).strip()
@@ -72,29 +72,29 @@ Click here! Click here! Click here! Click here! Click here! Click here!
     html_out = (
         """
 <button>
-  Click here! Click here! Click here! Click here! Click here! Click here!
+    Click here! Click here! Click here! Click here! Click here! Click here!
 </button>
 <button>
-  Click here! Click here! Click here! Click here! Click here! Click here!
+    Click here! Click here! Click here! Click here! Click here! Click here!
 </button>
 <div>
-  <button>
-    Click here! Click here! Click here! Click here! Click here! Click here!</button
-  ><button>
-    Click here! Click here! Click here! Click here! Click here! Click here!
-  </button>
+    <button>
+        Click here! Click here! Click here! Click here! Click here! Click here!</button
+    ><button>
+        Click here! Click here! Click here! Click here! Click here! Click here!
+    </button>
 </div>
 <div>
-  <button>
-    Click here! Click here! Click here! Click here! Click here! Click here!
-  </button>
-  <button>
-    Click here! Click here! Click here! Click here! Click here! Click here!
-  </button>
+    <button>
+        Click here! Click here! Click here! Click here! Click here! Click here!
+    </button>
+    <button>
+        Click here! Click here! Click here! Click here! Click here! Click here!
+    </button>
 </div>
 <video src="brave.webm">
-  <track kind="subtitles" src="brave.en.vtt" srclang="en" label="English" />
-  <track kind="subtitles" src="brave.en.vtt" srclang="en" label="English" />
+    <track kind="subtitles" src="brave.en.vtt" srclang="en" label="English" />
+    <track kind="subtitles" src="brave.en.vtt" srclang="en" label="English" />
 </video>
         """
     ).strip()
@@ -114,11 +114,11 @@ def test_display_none(runner: CliRunner, tmp_file: TextIO) -> None:
         """
 <!DOCTYPE html>
 <html class="no-js mY-ClAsS">
-  <head>
-    <meta charset="utf-8" />
-    <title>My tITlE</title>
-    <meta name="description" content="My CoNtEnT" />
-  </head>
+    <head>
+        <meta charset="utf-8" />
+        <title>My tITlE</title>
+        <meta name="description" content="My CoNtEnT" />
+    </head>
 </html>
         """
     ).strip()
@@ -147,16 +147,15 @@ def test_fill(runner: CliRunner, tmp_file: TextIO) -> None:
     html_out = (
         """
 <p>
-  <img
-    src="/images/pansies.jpg"
-    alt="about fedco bottom image"
-    style="float: left"
-  /><strong>We are a cooperative</strong>, one of the few seed companies so
-  organized in the United States. Because we do not have an individual owner or
-  beneficiary, profit is not our primary goal. Consumers own 60% of the
-  cooperative and worker members 40%. Consumer and worker members share
-  proportionately in the cooperative&#8217;s profits through our annual
-  patronage dividends.
+    <img src="/images/pansies.jpg"
+         alt="about fedco bottom image"
+         style="float: left"
+    /><strong>We are a cooperative</strong>, one of the few seed companies so
+    organized in the United States. Because we do not have an individual owner or
+    beneficiary, profit is not our primary goal. Consumers own 60% of the
+    cooperative and worker members 40%. Consumer and worker members share
+    proportionately in the cooperative&#8217;s profits through our annual
+    patronage dividends.
 </p>
         """
     ).strip()
@@ -209,26 +208,26 @@ conubia nostra, per inceptos himenaeos. Donec in ornare velit.</p>
     html_out = (
         """
 <p>
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce cursus massa
-  vel augue vestibulum facilisis in porta turpis. Ut faucibus lectus sit amet
-  urna consectetur dignissim. Sam vitae neque quis ex dapibus faucibus at sed
-  ligula. Nulla sit amet aliquet nibh. Vestibulum at congue mi. Suspendisse
-  vitae odio vitae massa hendrerit mattis sed eget dui. Sed eu scelerisque
-  neque. Donec <b>maximus</b> rhoncus pellentesque. Aenean purus turpis,
-  vehicula euismod ante vel, ultricies eleifend dui. Class aptent taciti
-  sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec
-  in ornare velit.
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce cursus massa
+    vel augue vestibulum facilisis in porta turpis. Ut faucibus lectus sit amet
+    urna consectetur dignissim. Sam vitae neque quis ex dapibus faucibus at sed
+    ligula. Nulla sit amet aliquet nibh. Vestibulum at congue mi. Suspendisse
+    vitae odio vitae massa hendrerit mattis sed eget dui. Sed eu scelerisque
+    neque. Donec <b>maximus</b> rhoncus pellentesque. Aenean purus turpis,
+    vehicula euismod ante vel, ultricies eleifend dui. Class aptent taciti
+    sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec
+    in ornare velit.
 </p>
 <p>
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce cursus massa
-  vel augue vestibulum facilisis in porta turpis. Ut faucibus lectus sit amet
-  urna consectetur dignissim. Sam vitae neque quis ex dapibus faucibus at sed
-  ligula. Nulla sit amet aliquet nibh. Vestibulum at congue mi. Suspendisse
-  vitae odio vitae massa hendrerit mattis sed eget dui. Sed eu scelerisque
-  neque. Donec <a href="#"><b>maximus</b></a> rhoncus pellentesque. Aenean purus
-  turpis, vehicula euismod ante vel, ultricies eleifend dui. Class aptent taciti
-  sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec
-  in ornare velit.
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce cursus massa
+    vel augue vestibulum facilisis in porta turpis. Ut faucibus lectus sit amet
+    urna consectetur dignissim. Sam vitae neque quis ex dapibus faucibus at sed
+    ligula. Nulla sit amet aliquet nibh. Vestibulum at congue mi. Suspendisse
+    vitae odio vitae massa hendrerit mattis sed eget dui. Sed eu scelerisque
+    neque. Donec <a href="#"><b>maximus</b></a> rhoncus pellentesque. Aenean purus
+    turpis, vehicula euismod ante vel, ultricies eleifend dui. Class aptent taciti
+    sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec
+    in ornare velit.
 </p>
         """
     ).strip()
@@ -259,25 +258,25 @@ def test_nested_inline_without_whitespace(runner: CliRunner, tmp_file: TextIO) -
     html_out = (
         """
 <a href="/wiki/Help:IPA/English" title="Help:IPA/English"
-  >/<span style="border-bottom: 1px dotted"
-    ><span title="/ˌ/: secondary stress follows">ˌ</span
-    ><span title="/ɪ/: &#39;i&#39; in &#39;kit&#39;">ɪ</span
-    ><span title="&#39;l&#39; in &#39;lie&#39;">l</span
-    ><span title="/ə/: &#39;a&#39; in &#39;about&#39;">ə</span
-    ><span title="/ˈ/: primary stress follows">ˈ</span
-    ><span title="&#39;n&#39; in &#39;nigh&#39;">n</span
-    ><span title="/ɔɪ/: &#39;oi&#39; in &#39;choice&#39;">ɔɪ</span></span
-  >/</a
+    >/<span style="border-bottom: 1px dotted"
+      ><span title="/ˌ/: secondary stress follows">ˌ</span
+      ><span title="/ɪ/: &#39;i&#39; in &#39;kit&#39;">ɪ</span
+      ><span title="&#39;l&#39; in &#39;lie&#39;">l</span
+      ><span title="/ə/: &#39;a&#39; in &#39;about&#39;">ə</span
+      ><span title="/ˈ/: primary stress follows">ˈ</span
+      ><span title="&#39;n&#39; in &#39;nigh&#39;">n</span
+      ><span title="/ɔɪ/: &#39;oi&#39; in &#39;choice&#39;">ɔɪ</span></span
+    >/</a
 >
 <span class="word"
-  ><span class="syllable"
-    ><span class="letter vowel">i</span
-    ><span class="letter consonant">p</span></span
-  ><span class="syllable"
-    ><span class="letter consonant onset">s</span
-    ><span class="letter vowel">u</span
-    ><span class="letter consonant">m</span></span
-  ></span
+    ><span class="syllable"
+      ><span class="letter vowel">i</span
+      ><span class="letter consonant">p</span></span
+    ><span class="syllable"
+      ><span class="letter consonant onset">s</span
+      ><span class="letter vowel">u</span
+      ><span class="letter consonant">m</span></span
+    ></span
 >
         """
     ).strip()
@@ -302,12 +301,12 @@ def test_non_breaking_whitespace(runner: CliRunner, tmp_file: TextIO) -> None:
         """
 <!-- normal whitespaces -->
 <span
-  >Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores
-  voluptas quaerat ut qui sunt vitae error.</span
+    >Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores
+    voluptas quaerat ut qui sunt vitae error.</span
 >
 <!-- non-breaking whitespaces -->
 <span
-  >Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores voluptas quaerat ut qui sunt vitae error.</span
+    >Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores voluptas quaerat ut qui sunt vitae error.</span
 >
 <!-- non-breaking narrow whitespaces -->
 <span>Prix : 32 €</span>
@@ -574,17 +573,17 @@ def test_snippet_2005(runner: CliRunner, tmp_file: TextIO) -> None:
         """
 <!-- U+2005 -->
 <div>
-  before<span> </span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter
+    before<span> </span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter
 </div>
 <!-- U+005F -->
 <div>
-  before<span>_</span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter
+    before<span>_</span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter
 </div>
 <!-- U+0020 -->
 <div>
-  before<span
-  > </span
-  >afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter
+    before<span
+    > </span
+    >afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter
 </div>
         """
     ).strip()
@@ -719,39 +718,39 @@ def test_table(runner: CliRunner, tmp_file: TextIO) -> None:
     html_out = (
         """
 <table>
-  <thead>
-    <tr>
-      <th>A</th>
-      <th>B</th>
-      <th>C</th>
-    </tr>
-  </thead>
+    <thead>
+        <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>C</th>
+        </tr>
+    </thead>
 </table>
 
 <table>
-  <thead>
-    <tr>
-      <th>A</th>
-      <th>B</th>
-      <th>C</th>
-    </tr>
-  </thead>
+    <thead>
+        <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>C</th>
+        </tr>
+    </thead>
 </table>
 
 <table>
-  <thead>
-    <tr>
-      <th>A</th>
-      <th>B</th>
-      <th>C</th>
-    </tr>
-  </thead>
+    <thead>
+        <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>C</th>
+        </tr>
+    </thead>
 </table>
 
 <table>
-  <thead>
-    <tr></tr>
-  </thead>
+    <thead>
+        <tr></tr>
+    </thead>
 </table>
         """
     ).strip()
@@ -775,12 +774,12 @@ def test_template(runner: CliRunner, tmp_file: TextIO) -> None:
     html_out = (
         """
 <template>
-  <template>foo</template>
+    <template>foo</template>
 </template>
 <template>
-  <template
-    >foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo</template
-  >
+    <template
+        >foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo</template
+    >
 </template>
         """
     ).strip()
