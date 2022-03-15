@@ -58,7 +58,8 @@ def indent_html(rawcode: str, config: Config):
             self.ignored_level = 0
             self.inline_level = 0
             self.is_inline = False
-            self.last_tag: Optional[Tag] = None
+            self.last_sibling: Optional[Tag] = None
+            self.last_parent: Optional[Tag] = None
             self.line_length = 0
             self.namespace = ""
             self.tag = Tag("None", self.config)
@@ -70,15 +71,35 @@ def indent_html(rawcode: str, config: Config):
             return None
 
         def current_indent(self):
+
             indent = ""
             if (
                 not self.tag.is_indentation_sensitive
-                and self.output != ""
+                and self.tag.data is None
+                and self.output
                 and self.output[-1] != "\n"
             ):
                 indent += "\n"
+            # elif (self.last_sibling
+            #      and self.last_sibling.is_void):
+            #     indent += "\n"
+            elif (
+                not self.tag.is_indentation_sensitive
+                and self.tag.data is not None
+                ):
+                indent = ""
+            elif (self.output and self.output[-1] != "\n" and
+                 (self.tag.data and len(self.tag.data) > 0)):
+                return ""
             return indent + self.indent * self.level
 
+        def get_open_parent(self,tag: Tag) -> Tag:
+            while tag and tag.parent:
+                if tag.parent.type == "open":
+                    return tag.parent
+                tag = tag.parent
+
+            return None
         def handle_decl(self, decl):
             if re.match(r"doctype", decl, re.I):
                 self.output += self.current_indent()
@@ -86,83 +107,56 @@ def indent_html(rawcode: str, config: Config):
                 decl = re.sub(r"^html\b", "html", decl, flags=re.I | re.M)
                 decl = re.sub(r"\s+", " ", decl)
                 self.output += "<!DOCTYPE " + decl + ">" + "\n"
-                self.last_tag = "doctype"
+                #self.last_sibling = "doctype"
 
         def handle_starttag(self, tag, attrs):
-            self.tag = Tag(tag, self.config, parent=self.get_parent(), attributes=attrs)
+            """Handle start tag.
 
-            # indent = self.current_indent()
-            # print("start tag:", tag)
+            Create a tag object.
+
+            If the tag is not void, update last parent.
+            """
+            #print(self.last_parent)
+            if self.tag.type == "open":
+                self.last_sibling = self.tag
+
+            self.tag = Tag(tag, self.config, parent=self.last_parent, attributes=attrs)
+
+
+            print("open:",self.tag,self.tag.parent, self.last_sibling)
 
             if self.tag.is_space_sensitive:
-                # print("space sensitive")
-                self.output += self.current_indent() + self.tag.open_tag()
-            #     #print("space sensitive tags")
-            #     #if self.ignored_level == 0 and breakbefore(self.output):
-            #         #self.output += indent
-
-            #         self.line_length += len(indent)
-            #     elif self.ignored_level == 0 and not breakbefore(self.output):
-            #         #self.output += "\n" + indent
-            #         self.output += indent
-            #         self.line_length =len(indent)
-            #     self.output += html_tag
-            #     if tag not in html_void_elements:
-            #         self.ignored_level += 1
-            #         self.current_block = "tag"
+                self.output += self.current_indent() + self.tag.open_tag
 
             elif self.tag.is_indentation_sensitive:
-                # print("indent sensitive")
-                self.output += self.current_indent() + self.tag.open_tag()
+                self.output += self.current_indent() + self.tag.open_tag
 
             elif self.tag.is_script:
-                self.output += self.current_indent() + self.tag.open_tag()
+                self.output += self.current_indent() + self.tag.open_tag
                 self.ignored_level += 1
 
-            # elif self.tag_is_pre(tag):
-            #     print("pre blocks")
-            #     if self.inline_level == 0 and breakbefore(self.output):
-            #         self.output += indent
-            #         self.line_length +=len(indent)
-
-            #     if (
-            #         self.inline_level == 0
-            #         and not breakbefore(self.output)
-            #         and self.current_block == "tag"
-            #     ):
-            #         self.output += "\n" + indent
-            #         self.line_length =len(indent)
-
-            #     if tag not in html_void_elements:
-            #         self.inline_level += 1
-            #     self.output += html_tag
-            #     self.line_length +=len(html_tag)
-
-            #     if tag not in html_void_elements:
-            #         self.current_block = "tag"
-            # else:
-
-            # self.output = self.output.rstrip()
-            # if self.output and self.output[-1] != "\n":
-            #     self.output = self.output #+ "\n"
-            #     self.line_length = 0
-
-            # self.output += indent
-            # self.line_length += len(indent)
             else:
-                self.output += self.current_indent() + self.tag.open_tag()
-            # self.line_length = 0
-            # if tag not in html_void_elements:
-            #     self.level += 1
-            #     self.current_block = "tag"
-
-            # else:
-            #     self.output += html_tag
+                self.output += self.current_indent() + self.tag.open_tag
 
             if not self.tag.is_void:
-                self.last_tag = self.tag
-                self.parents.append(self.tag)
+                self.tag.type = "open"
+                #self.parents.append(self.tag)
                 self.level += 1
+            self.last_sibling = self.tag
+            # else:
+            #     self.last_sibling = self.tag
+
+            if self.last_parent is None:
+                #print("setting last parent:", self.tag)
+                self.last_parent = self.tag
+            elif not self.tag.is_void and not self.tag.is_script:
+                #print("setting parent to last sibling:", self.tag)
+                self.last_parent = self.tag
+            elif self.tag.is_script:
+                self.last_parent = self.last_parent
+            else:
+                #print("void, going up one:", self.tag.parent)
+                self.last_parent = self.tag.parent
 
         # def handle_tempstatestarttag(self, tag, attrs):
         #     attribs = " " + (" ").join(attrs) + "" if attrs else ""
@@ -173,34 +167,41 @@ def indent_html(rawcode: str, config: Config):
         #         self.level += 1
 
         def handle_endtag(self, tag):
-            print("end tag:", tag)
+            """Handle end tag.
+
+            Create a tag object.
+
+            If the tag is not void, update the last sibling.
+            """
+            #print("end tag:", tag)
             # do not update the class tag with the endtag.
-            tag = Tag(tag, self.config, parent=self.tag.parent)
+            tag = Tag(tag, self.config, parent=self.last_parent)
+            tag.type = "close"
+            print("close:",tag, self.tag.parent, self.last_sibling)
 
-            # if tag in self.ignored_html_tags:
-            #     self.output += "</" + tag + ">"
-            #     self.ignored_level -= 1
-            #     self.current_block = "tag"
-
-            # elif tag in self.inline_blocks:
-            #     self.inline_level -= 1
-            #     self.output += "</" + tag + ">"
-            #     self.current_block = "tag"
             if not tag.is_void:
                 self.level -= 1
+                #self.last_parent = self.tag
+                self.tag = tag
+
+            self.last_sibling = tag
+            #print("setting last parent on close:", self.tag.parent)
+            # get next previous open tag
+            if tag.is_script:
+                self.last_parent = self.get_open_parent(tag)
+            else:
+                self.last_parent = self.get_open_parent(self.tag.parent)
 
             if tag.is_script:
                 self.ignored_level -= 1
 
-            print(tag.name, tag.is_space_sensitive, tag.is_indentation_sensitive)
+            #print(tag.name, tag.is_space_sensitive, tag.is_indentation_sensitive)
 
-            if not tag.is_space_sensitive:
-                self.output += self.current_indent()
-            self.output += tag.close_tag()
+            self.output += self.current_indent()
+            self.output += tag.close_tag
 
-            self.last_tag = tag
-            if self.parents[-1].name == tag.name:
-                self.parents.pop()
+            # if self.parents[-1].name == tag.name:
+            #     self.parents.pop()
 
         # def handle_tempstateendtag(self, tag, attrs):
         #     attribs = " " + (" ").join(attrs) + "" if attrs else ""
@@ -209,13 +210,14 @@ def indent_html(rawcode: str, config: Config):
         #         self.output += (self.indent * self.level) + "{% end" + tag + " %}\n"
 
         def handle_data(self, data):
-            # print("data")
-            # print(self.tag)
+
+            #print("data", self.tag)
+
             if self.ignored_level > 0:
                 self.output += data
 
             elif self.tag.parent and self.tag.parent.is_space_sensitive:
-                # print("space sensitive ", self.tag)
+                #print("space sensitive ", self.tag)
 
                 # long text can be wrapped to meet line length
                 data = re.sub(r"\s+", " ", data)
@@ -239,33 +241,27 @@ def indent_html(rawcode: str, config: Config):
                 self.output += cleaned_data
 
             elif self.tag.parent and self.tag.parent.is_indentation_sensitive:
-                # print("indent sensitive ", self.tag)
+                #print("indent sensitive ", self.tag)
                 data = re.sub(r"\s+", " ", data)
                 self.tag.data = data
                 self.output += data
 
             elif data.strip() != "":
                 # for example, "." following "</a>"
-                if self.tag.is_space_sensitive:
+                if self.tag.is_void:
+                    data = re.sub(r"\s+", " ", data)
+                    self.output += self.current_indent() + data.rstrip() + "\n"
+                elif self.tag.is_space_sensitive:
                     data = re.sub(r"\s+", " ", data)
                     self.output += data.rstrip() + "\n"
                 else:
-                    length = (
-                        len(self.output.split("\n")[-1])
-                        + len(self.current_indent())
-                        + len(data.strip())
+                    self.tag.data = (
+                        "\n" + self.current_indent() + data.strip() #+ "\n"
                     )
 
-                    if length > self.config.max_line_length:
-                        self.tag.data = (
-                            "\n" + self.current_indent() + data.strip() + "\n"
-                        )
-                        self.output += (
-                            "\n" + self.current_indent() + data.strip() + "\n"
-                        )
-                    else:
-                        self.tag.data = data.strip()
-                        self.output += data.strip()
+                    self.output += (
+                        "\n" + self.current_indent() + data.strip() #+ "\n"
+                    )
             # else:
             # print("skipped data")
             # if self.ignored_level > 0 or self.inline_level > 0 and data.strip() != "":
