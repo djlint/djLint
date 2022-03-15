@@ -134,6 +134,9 @@ class Tag:
         ]
 
     @property
+    def is_hidden(self) -> bool:
+        return self.__css_display.get(self.name, self.__css_default_display) == "none"
+    @property
     def is_indentation_sensitive(self) -> bool:
         return self.__tag_is_pre(self.name)
 
