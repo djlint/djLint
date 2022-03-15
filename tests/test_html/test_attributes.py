@@ -290,15 +290,15 @@ def test_class_bem1(runner: CliRunner, tmp_file: TextIO) -> None:
     html_out = (
         """
 <div
-  class="ProviderMeasuresContainer__heading-row d-flex flex-column flex-lg-row justify-content-start justify-content-lg-between align-items-start align-items-lg-center"
+    class="ProviderMeasuresContainer__heading-row d-flex flex-column flex-lg-row justify-content-start justify-content-lg-between align-items-start align-items-lg-center"
 >
   Foo
 </div>
 <div class="a-bem-block a-bem-block--with-modifer">
-  <div
-    class="a-bem-block__element a-bem-block__element--with-modifer also-another-block">
     <div
-      class="a-bem-block__element a-bem-block__element--with-modifer also-another-block__element"
+        class="a-bem-block__element a-bem-block__element--with-modifer also-another-block">
+    <div
+        class="a-bem-block__element a-bem-block__element--with-modifer also-another-block__element"
     ></div>
   </div>
 </div>

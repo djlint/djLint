@@ -48,19 +48,19 @@ srcset="
     html_out = (
         """
 <img
-  src="a"
-  srcset="
+    src="a"
+    srcset="
  should-not-format  400w 100h,
        should-not-format  500w 200h
 "
-  alt=""
+    alt=""
 />
 <img
-  src="a"
-  srcset="
+    src="a"
+    srcset="
  should-not-format ,, should-not-format 0q,,,
 "
-  alt=""
+    alt=""
 />
 
         """

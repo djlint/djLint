@@ -42,8 +42,8 @@ def test_example(runner: CliRunner, tmp_file: TextIO) -> None:
 <span><![CDATA[<sender>John Smith</sender>]]></span>
 <span><![CDATA[1]]> a <![CDATA[2]]></span>
 <span
-  ><![CDATA[1]]> <br />
-  <![CDATA[2]]></span
+    ><![CDATA[1]]> <br />
+    <![CDATA[2]]></span
 >
         """
     ).strip()
