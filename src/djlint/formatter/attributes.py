@@ -244,7 +244,7 @@ def format_style(match: re.match) -> str:
 
 def format_attributes(config: Config, html: str, match: re.match) -> str:
     """Spread long attributes over multiple lines."""
-    # check that we are not inside an ingnored block
+    # check that we are not inside an ignored block
     if (
         inside_ignored_block(config, html, match)
         or len(match.group(3).strip()) < config.max_attribute_length

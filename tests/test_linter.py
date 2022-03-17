@@ -481,7 +481,7 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H025 1:" in result.output
     assert "H025 2:" not in result.output
 
-    # test tags inside attibutes
+    # test tags inside attributes
     write_to_file(tmp_file.name, b'<span title="<p>Bar</p>">Foo</span>')
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output

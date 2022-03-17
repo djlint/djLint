@@ -349,7 +349,7 @@ class Config:
         """
 
         # ignored block closing tags that
-        # we can savely indent.
+        # we can safely indent.
         self.safe_closing_tag: str = r"""
               </script
             | </style
