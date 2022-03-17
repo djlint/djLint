@@ -68,13 +68,13 @@ A good rule follows this pattern:
 | H023 | Do not use entity references.                                                                |
 | H024 | Omit type on scripts and styles.                                                             |
 | H025 | Tag seems to be an orphan.                                                                   |
-| H026 | Emtpy id and class tags can be removed.                                                      |
+| H026 | Empty id and class tags can be removed.                                                      |
 | T027 | Unclosed string found in template syntax.                                                    |
 | T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} |
 | H029 | Consider using lowercase form method values.                                                 |
 | H030 | Consider adding a meta description.                                                          |
 | H031 | Consider adding meta keywords.                                                               |
-| T032 | Extra whitepsace found in template tags.                                                     |
+| T032 | Extra whitespace found in template tags.                                                     |
 | H033 | Extra whitespace found in form action.                                                       |
 
 ### Adding Rules
