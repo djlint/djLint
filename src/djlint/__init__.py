@@ -11,7 +11,7 @@ from typing import Dict, List, Optional
 
 import click
 from click import echo
-from colorama import Fore, Style, deinit, init
+from colorama import Fore, Style, colorama_text
 from tqdm import tqdm
 
 from .lint import lint_file
@@ -94,6 +94,7 @@ from .src import get_src
     is_flag=True,
     help="Return errors as warnings.",
 )
+@colorama_text(autoreset=True)
 def main(
     src: List[str],
     extension: str,
@@ -244,9 +245,3 @@ def process(config: Config, this_file: Path) -> Dict:
         output["lint_message"] = lint_file(config, this_file)
 
     return output
-
-
-if __name__ == "__main__":
-    init(autoreset=True)
-    main()
-    deinit()
