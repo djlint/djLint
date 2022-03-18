@@ -187,7 +187,7 @@
     - <((/?(\w+))\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|[^'\">{}])*)(?<!/)>
 - rule:
     name: H026
-    message: Emtpy id and class tags can be removed.
+    message: Empty id and class tags can be removed.
     flags: re.I
     patterns:
     - <\w+\b[^(?:{(?:%|{|#))>]*?\b(class|id)\b=(\"\"|'')

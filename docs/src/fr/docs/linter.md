@@ -70,7 +70,7 @@ Une bonne règle suit ce modèle :
 | H023 | N'utilisez pas de références d'entités.                                                                                   |
 | H024 | Omettre le type sur les scripts et les styles.                                                                            |
 | H025 | La balise semble être orpheline.                                                                                          |
-| H026 | Les balises Emtpy id et class peuvent être supprimées.                                                                    |
+| H026 | Les balises id et class vides peuvent être supprimées.                                                                    |
 | T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      |
 | T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} |
 | H029 | Pensez à utiliser des valeurs de méthode de formulaire en minuscules.                                                     |
