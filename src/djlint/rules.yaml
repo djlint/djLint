@@ -230,13 +230,13 @@
     - <html[^>]*?>(?:(?!<meta[^>]*?name=([\"|'])keywords\b).)*</html>
 - rule:
     name: T032
-    message: Extra whitepsace found in template tags.
+    message: Extra whitespace found in template tags.
     patterns:
     - "{%(([\"|'](?:(?!'|\"|%}).)*?[\"|'])|[^(?:%}|'|\")])*?\\s{2,}"
     - "{{(([\"|'](?:(?!'|\"|}}).)*?[\"|'])|[^(?:}}|'|\")])*?\\s{2,}"
 - rule:
     name: H033
-    message: Extra whitepsace found in form action.
+    message: Extra whitespace found in form action.
     patterns:
     - <form[^>]+?action=['|"]\s
     - <form[^>]+?action=(['|"])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^"'{]))*\s+?\1
