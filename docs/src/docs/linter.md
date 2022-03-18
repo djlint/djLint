@@ -74,7 +74,7 @@ A good rule follows this pattern:
 | H029 | Consider using lowercase form method values.                                                 |
 | H030 | Consider adding a meta description.                                                          |
 | H031 | Consider adding meta keywords.                                                               |
-| T032 | Extra whitepsace found in template tags.                                                     |
+| T032 | Extra whitespace found in template tags.                                                     |
 | H033 | Extra whitespace found in form action.                                                       |
 
 ### Adding Rules
