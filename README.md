@@ -9,25 +9,25 @@
 
 <p align="center">
    <a href="https://codecov.io/gh/Riverside-Healthcare/djlint">
-    <img src="https://codecov.io/gh/Riverside-Healthcare/djlint/branch/master/graph/badge.svg?token=eNTG721BAA" alt="Codecov Status">
+     <img src="https://codecov.io/gh/Riverside-Healthcare/djlint/branch/master/graph/badge.svg?token=eNTG721BAA" alt="Codecov Status">
    </a>
    <a href="https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml">
-    <img src="https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml/badge.svg" alt="Test Status">
+     <img src="https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml/badge.svg" alt="Test Status">
    </a>
    <a href="https://www.codacy.com/gh/Riverside-Healthcare/djlint/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Riverside-Healthcare/djlint&amp;utm_campaign=Badge_Grade">
-    <img src="https://app.codacy.com/project/badge/Grade/dba6338b0e7a4de896b45b382574f369" alt="Codacy Status">
+     <img src="https://app.codacy.com/project/badge/Grade/dba6338b0e7a4de896b45b382574f369" alt="Codacy Status">
    </a>
    <a href="https://codeclimate.com/github/Riverside-Healthcare/djlint/maintainability">
-    <img src="https://api.codeclimate.com/v1/badges/5febe4111a36c7e0d2ed/maintainability" alt="Maintainability">
+     <img src="https://api.codeclimate.com/v1/badges/5febe4111a36c7e0d2ed/maintainability" alt="Maintainability">
    </a>
    <a href="https://pepy.tech/project/djlint">
-    <img src="https://pepy.tech/badge/djlint" alt="Downloads">
+     <img src="https://pepy.tech/badge/djlint" alt="Downloads">
    </a>
    <a href="https://discord.gg/taghAqebzU">
-    <img src="https://img.shields.io/badge/chat-discord-green" alt="Discord Chat">
+     <img src="https://img.shields.io/badge/chat-discord-green" alt="Discord Chat">
    </a>
    <a href="https://pypi.org/project/djlint/">
-    <img src="https://img.shields.io/pypi/v/djlint" alt="Pypi Download">
+     <img src="https://img.shields.io/pypi/v/djlint" alt="Pypi Download">
    </a>
 </p>
 
@@ -36,7 +36,11 @@
 
 <p align="center">
    <a href="https://djlint.com/docs/languages/django/">Django</a> • <a href="https://djlint.com/docs/languages/jinja/">Jinja</a> • <a href="https://djlint.com/docs/languages/nunjucks/">Nunjucks</a> • <a href="https://djlint.com/docs/languages/twig/">Twig</a> • <a href="https://djlint.com/docs/languages/handlebars/">Handlebars</a> • <a href="https://djlint.com/docs/languages/mustach/">Mustache</a> • <a href="https://djlint.com/docs/languages/golang/">GoLang</a> • <a href="https://djlint.com/docs/languages/angular/">Angular</a>
-   </p>
+</p>
+
+<p align="center">
+  <img src="https://github.com/Riverside-Healthcare/djLint/blob/aa9097660d4a2e840450de5456f656c42bc7dd34/docs/src/static/img/demo-min.gif" alt="demo" width="600">
+</p>
 
 ## 🤔 For What?
 
