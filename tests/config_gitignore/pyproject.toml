@@ -1,0 +1,3 @@
+[tool]
+[tool.djlint]
+use_gitignore=true

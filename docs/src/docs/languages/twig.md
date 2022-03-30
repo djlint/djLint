@@ -9,6 +9,8 @@ tool: nunjucks
 
 {{ description }}
 
+**[What is Twig?](https://twig.symfony.com/)**
+
 #### Using the Command Line
 
 ```bash

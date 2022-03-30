@@ -9,6 +9,8 @@ tool: angular
 
 {{ description }}
 
+**[Что такое Angular?](https://angular.io/guide/template-syntax)**
+
 #### Использование командной строки
 
 ```bash

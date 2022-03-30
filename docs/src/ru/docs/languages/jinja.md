@@ -9,6 +9,8 @@ tool: jinja
 
 {{ description }}
 
+**[Что такое Jinja?](https://jinja2docs.readthedocs.io/en/stable/)**
+
 #### Использование командной строки
 
 ```bash

@@ -9,6 +9,8 @@ tool: handlebars
 
 {{ description }}
 
+**[Что такое Mustache?](http://mustache.github.io/mustache.5.html)**
+
 #### Использование командной строки
 
 ```bash

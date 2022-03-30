@@ -9,6 +9,8 @@ tool: handlebars
 
 {{ description }}
 
+**[What is Handlebars?](https://handlebarsjs.com/)**
+
 #### Using the Command Line
 
 ```bash

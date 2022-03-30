@@ -9,6 +9,8 @@ tool: golang
 
 {{ description }}
 
+**[What is GoLang?](https://pkg.go.dev/text/template)**
+
 #### Using the Command Line
 
 ```bash

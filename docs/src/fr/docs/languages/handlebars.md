@@ -9,6 +9,8 @@ tool: handlebars
 
 {{ description }}
 
+**[C'est quoi Handlebars?](https://handlebarsjs.com/)**
+
 #### Utilisation de la ligne de commande
 
 ```bash

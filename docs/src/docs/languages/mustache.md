@@ -9,6 +9,8 @@ tool: handlebars
 
 {{ description }}
 
+**[What is Mustache?](http://mustache.github.io/mustache.5.html)**
+
 #### Using the Command Line
 
 ```bash

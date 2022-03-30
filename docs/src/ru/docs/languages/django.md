@@ -9,6 +9,8 @@ tool: django
 
 {{ description }}
 
+**[Что такое Django?](https://django.readthedocs.io/en/stable/ref/templates/language.html)**
+
 #### Использование командной строки
 
 ```bash

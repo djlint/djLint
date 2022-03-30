@@ -9,6 +9,8 @@ tool: handlebars
 
 {{ description }}
 
+**[Что такое Handlebars?](https://handlebarsjs.com/)**
+
 #### Использование командной строки
 
 ```bash

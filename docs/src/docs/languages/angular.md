@@ -9,6 +9,8 @@ tool: angular
 
 {{ description }}
 
+**[What is Angular?](https://angular.io/guide/template-syntax)**
+
 #### Using the Command Line
 
 ```bash

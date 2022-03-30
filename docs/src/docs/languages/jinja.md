@@ -9,6 +9,8 @@ tool: jinja
 
 {{ description }}
 
+**[What is Jinja?](https://jinja2docs.readthedocs.io/en/stable/)**
+
 #### Using the Command Line
 
 ```bash

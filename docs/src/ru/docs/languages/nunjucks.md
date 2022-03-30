@@ -9,6 +9,8 @@ tool: nunjucks
 
 {{ description }}
 
+**[Что такое Nunjucks?](https://mozilla.github.io/nunjucks/)**
+
 #### Использование командной строки
 
 ```bash

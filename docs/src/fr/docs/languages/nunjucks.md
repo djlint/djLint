@@ -9,6 +9,8 @@ tool: nunjucks
 
 {{ description }}
 
+**[C'est quoi Nunjucks?](https://mozilla.github.io/nunjucks/)**
+
 #### Utilisation de la ligne de commande
 
 ```bash
