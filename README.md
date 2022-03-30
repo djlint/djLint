@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="https://htmlhint.com"><img src="https://raw.githubusercontent.com/Riverside-Healthcare/djLint/master/docs/src/static/img/icon.png" alt="djLint Logo" width="270"></a>
+  <a href="https://www.djlint.com"><img src="https://raw.githubusercontent.com/Riverside-Healthcare/djLint/master/docs/src/static/img/icon.png" alt="djLint Logo" width="270"></a>
   <br>
 </h1>
  
