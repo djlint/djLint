@@ -10,18 +10,13 @@
     "npm:unpublishSafe"
   ],
   "ignoreDeps": ["@fortawesome/fontawesome-free"],
-  "packageRules": [
-    {
-      "assignees": [
-        "christopherpickering"
-      ],
-      "assigneesSampleSize": 2,
-      "bumpVersion": "patch",
-      "commitMessagePrefix": "chore(deps)",
-      "labels": [
-        "maintenance", 
-        "renovate"
-      ]
-    }
+  "assignees": [
+    "christopherpickering"
+  ],
+  "bumpVersion": "patch",
+  "commitMessagePrefix": "chore(deps)",
+  "labels": [
+    "maintenance", 
+    "renovate"
   ]
 }
