@@ -180,7 +180,6 @@ and HTML5 Apps. It also documents Mozilla products, like Firefox OS." />
 
     output = reformat(tmp_file, runner, html_in)
 
-
     assert output.text == html_out
 
 
@@ -882,6 +881,5 @@ def test_without_quotes(runner: CliRunner, tmp_file: TextIO) -> None:
     ).strip()
 
     output = reformat(tmp_file, runner, html_in)
-
 
     assert output.text == html_out

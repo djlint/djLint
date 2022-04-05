@@ -316,7 +316,6 @@ def test_non_breaking_whitespace(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(tmp_file, runner, html_in)
 
 
-
 def test_snippet_18(runner: CliRunner, tmp_file: TextIO) -> None:
 
     html_in = str.encode(
@@ -646,7 +645,6 @@ def test_snippet_2005_2(runner: CliRunner, tmp_file: TextIO) -> None:
     ).strip()
 
     output = reformat(tmp_file, runner, html_in)
-
 
 
 def test_surrounding_linebreak(runner: CliRunner, tmp_file: TextIO) -> None:

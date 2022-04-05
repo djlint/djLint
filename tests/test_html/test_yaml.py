@@ -60,7 +60,6 @@ invalid:
     output = reformat(tmp_file, runner, html_in)
 
 
-
 def test_yaml(runner: CliRunner, tmp_file: TextIO) -> None:
 
     html_in = (

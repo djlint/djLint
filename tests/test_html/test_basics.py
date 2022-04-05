@@ -1051,5 +1051,4 @@ e-wrap </textarea
 
     output = reformat(tmp_file, runner, html_in)
 
-
     assert output.text == html_out

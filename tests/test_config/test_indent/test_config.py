@@ -38,7 +38,6 @@ def test_indent(runner: CliRunner) -> None:
         djlint, ["tests/test_config/test_indent", "--check", "--indent", 3]
     )
 
-
     assert (
         """-<section><p><div><span></span></div></p></section>
 +<section>

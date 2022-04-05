@@ -1,4 +1,3 @@
-
 import re
 from typing import Dict, List, Optional, Tuple
 
@@ -17,27 +16,21 @@ def indent_html(rawcode: str, config: Config):
     ## pop front mater
     rawcode = rawcode.strip()
 
-
     front_matter = re.search(r"^---[\s\S]+?---\S*", rawcode)
 
     if front_matter:
         front_matter = front_matter.group()
         rawcode = rawcode.replace(front_matter, "")
-
         front_matter = front_matter.strip() + "\n"
     else:
         front_matter = ""
-
-
-    p = MyHTMLParser()
-    p.feed(rawcode)
-    p.close()
 
     def breakbefore(html):
 
         return bool(re.search(r"\n[ \t]*$", html, re.M))
 
     def spacebefore(html):
+
         return bool(re.search(r"[ ]*$", html, re.M))
 
     elements = []

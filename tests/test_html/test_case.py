@@ -80,5 +80,4 @@ def test_case(runner: CliRunner, tmp_file: TextIO) -> None:
 
     output = reformat(tmp_file, runner, html_in)
 
-
     assert output.text == html_out

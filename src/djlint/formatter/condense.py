@@ -16,7 +16,6 @@ def condense_html(html: str, config: Config) -> str:
     """Compress back tags that do not need to be expanded."""
     # put empty tags on one line
 
-
     # def strip_space(config: Config, html: str, match: re.Match) -> str:
     #     """Trim leading whitepsace."""
     #     if inside_ignored_block(config, html, match):

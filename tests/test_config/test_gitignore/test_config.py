@@ -70,7 +70,6 @@ def test_pyproject(runner: CliRunner) -> None:
         djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"]
     )
 
-
     assert result.exit_code == 0
 
     with open("tests/test_config/test_gitignore/pyproject.toml", "w") as git:
