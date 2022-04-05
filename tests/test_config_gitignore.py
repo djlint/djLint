@@ -21,7 +21,7 @@ from src.djlint import main as djlint
 
 
 def test_cli(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ["tests/config_gitignore/html_two.html", "--check"])
+    result = runner.invoke(djlint, ["tests/config_gitignore/html_two.html", "--lint"])
     assert result.exit_code == 1
 
     # create .git folder to make root

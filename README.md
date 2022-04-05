@@ -17,9 +17,6 @@
    <a href="https://www.codacy.com/gh/Riverside-Healthcare/djlint/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Riverside-Healthcare/djlint&amp;utm_campaign=Badge_Grade">
      <img src="https://app.codacy.com/project/badge/Grade/dba6338b0e7a4de896b45b382574f369" alt="Codacy Status">
    </a>
-   <a href="https://codeclimate.com/github/Riverside-Healthcare/djlint/maintainability">
-     <img src="https://api.codeclimate.com/v1/badges/5febe4111a36c7e0d2ed/maintainability" alt="Maintainability">
-   </a>
    <a href="https://pepy.tech/project/djlint">
      <img src="https://pepy.tech/badge/djlint" alt="Downloads">
    </a>
