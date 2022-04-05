@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "1.0.0",
-    "@11ty/eleventy-img": "1.1.0",
+    "@11ty/eleventy-img": "2.0.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "4.0.0",
     "@fontsource/inter": "4.5.4",
     "@fortawesome/fontawesome-free": "5.14.0",
