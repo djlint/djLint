@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "HTML Template Linter and Formatter",
   "main": "./bin/index.js",
   "directories": {
@@ -54,7 +54,7 @@
     "yargs": "^17.4.0"
   },
   "devDependencies": {
-    "cz-conventional-changelog": "^3.3.0"
+    "cz-conventional-changelog": "3.3.0"
   },
   "config": {
     "commitizen": {
