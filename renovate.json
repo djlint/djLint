@@ -18,5 +18,33 @@
   "labels": [
     "maintenance", 
     "renovate"
-  ]
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["pin","digest"],
+      "automerge": true
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true
+    },
+    {
+      "extends": "packages:linters",
+      "groupName": "linters",
+      "automerge": true
+    },
+    {
+      "extends": "packages:test",
+      "groupName": "test packages",
+      "automerge": true
+    },
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "automerge": true
+    }
+  ],
+  "schedule": ["on monday before 8:00am"],
+  "timezone": "America/Chicago"
 }
