@@ -95,7 +95,7 @@ Yes!
 
 *Would you like to add a rule to the linter?* Take a look at the [linter docs](https://djlint.com/docs/linter/) and [source code](https://github.com/Riverside-Healthcare/djLint/blob/master/src/djlint/rules.yaml)
 
-*Are you a regex pro?* Benchmark and submit a pr with improved regex for the [linter rules]((https://github.com/Riverside-Healthcare/djLint/blob/master/src/djlint/rules.yaml)
+*Are you a regex pro?* Benchmark and submit a pr with improved regex for the [linter rules](https://github.com/Riverside-Healthcare/djLint/blob/master/src/djlint/rules.yaml)
 
 **⚠️ Help Needed! ⚠️** *Good with python?* djLint was an experimental project and is catching on with other devs. Help out with a rewrite of the formatter to improve speed and html style for edge cases. Contribute on the [2.0 branch](https://github.com/Riverside-Healthcare/djLint/tree/block_indent)
 
