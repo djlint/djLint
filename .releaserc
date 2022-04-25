@@ -1,0 +1,19 @@
+{
+  "branches": ["master", "dev"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    ["@semantic-release/npm", {
+      "publish": "false"
+    }],
+
+    ["@semantic-release/exec", {
+      "prepareCmd" : "poetry version ${nextRelease.version}"
+    }],
+    ["@semantic-release/git", {
+      "assets": ["package.json", "pyproject.toml"]
+    }],
+    "@semantic-release/github"
+  ]
+}
