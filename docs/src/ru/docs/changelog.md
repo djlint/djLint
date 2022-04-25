@@ -9,7 +9,7 @@ keywords: облицовка шаблонов, форматер шаблонов
 # Изменения
 
 <!--## {{ "next_release" i18n }}-->
-## 0.7.7
+## 1.0.0
 ::: content
 - Исправления ошибок [#224](https://github.com/Riverside-Healthcare/djLint/issues/224)
   :::
