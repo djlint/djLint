@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -45,7 +45,7 @@
     "eslint-plugin-import": "2.26.0",
     "fontawesome-subset": "3.0.0",
     "html-minifier": "4.0.0",
-    "markdown-it": "12.3.2",
+    "markdown-it": "13.0.0",
     "markdown-it-anchor": "8.6.2",
     "markdown-it-div": "1.1.0",
     "markdown-it-imsize": "2.0.1",
