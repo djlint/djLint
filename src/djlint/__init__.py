@@ -135,6 +135,9 @@ def main(
         temp_file.write(str.encode(stdin_text))
         temp_file.seek(0)
 
+        # cannot use gitignore for stdin paths.
+        config.use_gitignore = False
+
         file_list = get_src([Path(temp_file.name)], config)
 
     else:

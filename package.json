@@ -39,7 +39,7 @@
   },
   "scripts": {
     "postinstall": "node ./bin/install.js",
-    "commit": "git add . && cz"
+    "commit": "git add . && pre-commit run && git add . && cz --no-verify"
   },
   "author": {
     "name": "Christopher Pickering",
