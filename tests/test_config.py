@@ -13,9 +13,13 @@ for a single test, run::
 """
 # pylint: disable=C0116
 
+from typing import TextIO
+
 from click.testing import CliRunner
 
 from src.djlint import main as djlint
+
+from .conftest import reformat
 
 
 def test_custom_tags(runner: CliRunner) -> None:
@@ -34,7 +38,7 @@ def test_custom_tags(runner: CliRunner) -> None:
     assert result.exit_code == 1
 
 
-def test_custom_html(runner: CliRunner) -> None:
+def test_custom_html(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, ["tests/config_custom_html/html.html", "--check"])
     print(result.output)
     assert (
@@ -48,6 +52,10 @@ def test_custom_html(runner: CliRunner) -> None:
         in result.output
     )
     assert result.exit_code == 1
+
+    # https://github.com/Riverside-Healthcare/djLint/issues/236
+    output = reformat(tmp_file, runner, b"<some-long-custom-element></some-long-custom-element>\n")
+    assert output.exit_code == 0
 
 
 def test_extension(runner: CliRunner) -> None:
