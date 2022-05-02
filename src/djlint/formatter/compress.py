@@ -30,7 +30,7 @@ def compress_html(html: str, config: Config) -> str:
     # put attributes on one line
     html = re.sub(
         re.compile(
-            rf"(<(?:{config.indent_html_tags})\b)((?:\"[^\"]*\"|'[^']*'|{{{{(?:(?!}}}}).)*}}}}|{{%(?:(?!%}}).)*%}}|[^'\">{{}}])+)(/?>)",
+            rf"(<(?:{config.indent_html_tags}))\s((?:\"[^\"]*\"|'[^']*'|{{{{(?:(?!}}}}).)*}}}}|{{%(?:(?!%}}).)*%}}|[^'\">{{}}])+)(/?>)",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         _flatten_attributes,
