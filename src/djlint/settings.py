@@ -19,7 +19,7 @@ from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
 try:
     import tomllib
 except ImportError:
-    import tomli as tomllib
+    import tomli as tomllib  # type: ignore
 
 logger = logging.getLogger(__name__)
 
