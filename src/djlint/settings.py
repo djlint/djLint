@@ -10,12 +10,16 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-import tomlkit
 import yaml
 from click import echo
 from colorama import Fore
 from pathspec import PathSpec
 from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
+
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +101,7 @@ def load_project_settings(src: Path) -> Dict:
     pyproject_file = find_pyproject(src)
 
     if pyproject_file:
-        content = tomlkit.parse(pyproject_file.read_text(encoding="utf8"))
+        content = tomllib.load(pyproject_file.open("rb"))
         try:
             return content["tool"]["djlint"]  # type: ignore
         except KeyError:
