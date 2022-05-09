@@ -9,6 +9,12 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 # Changelog
 
 <!--## {{ "next_release" i18n }}-->
+
+## 1.0.1
+::: content
+- Correction de bugs [#236](https://github.com/Riverside-Healthcare/djLint/issues/236)
+  :::
+
 ## 1.0.0
 ::: content
 - Correction de bugs [#224](https://github.com/Riverside-Healthcare/djLint/issues/224)
