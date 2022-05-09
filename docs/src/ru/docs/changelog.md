@@ -9,6 +9,11 @@ keywords: облицовка шаблонов, форматер шаблонов
 # Изменения
 
 <!--## {{ "next_release" i18n }}-->
+## 1.0.2
+::: content
+- Исправления ошибок [#240](https://github.com/Riverside-Healthcare/djLint/issues/240)
+  :::
+
 ## 1.0.1
 ::: content
 - Исправления ошибок [#236](https://github.com/Riverside-Healthcare/djLint/issues/236)
