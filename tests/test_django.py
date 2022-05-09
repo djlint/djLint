@@ -7,7 +7,7 @@ run::
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_comment --cov=src/djlint \
+   pytest tests/test_django.py::test_alpine_js --cov=src/djlint \
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -52,6 +52,17 @@ def test_reformat_asset_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 """
     )
     assert output.exit_code == 1
+
+
+def test_alpine_js(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file, runner, b"""<div id="collapse"
+     x-data="{ show: true }"
+     x-show="show"
+     x-transition.duration.500ms></div>"""
+     )
+
+    assert output.exit_code == 0
 
 
 def test_autoescape(runner: CliRunner, tmp_file: TextIO) -> None:
