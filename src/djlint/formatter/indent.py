@@ -63,13 +63,13 @@ def indent_html(rawcode: str, config: Config) -> str:
         # if a one-line, inline tag, just process it, only if line starts w/ it
         elif (
             re.findall(
-                rf"(<({slt_html})>)(.*?)(</(\2)>$)",
+                rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
                 item,
                 re.IGNORECASE | re.VERBOSE | re.MULTILINE,
             )
             or re.findall(
                 re.compile(
-                    rf"(<({slt_html})\b.+?>)(.*?)(</(\2)>$)",
+                    rf"(<({slt_html})\b.+?>)(.*?)(</(\2)>[^<]*?$)",
                     re.IGNORECASE | re.VERBOSE | re.MULTILINE,
                 ),
                 item,

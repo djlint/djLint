@@ -33,7 +33,6 @@ def expand_html(html: str, config: Config) -> str:
     break_char = config.break_before
 
     # html tags - break before
-
     html = re.sub(
         re.compile(
             rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)",
