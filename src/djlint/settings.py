@@ -530,36 +530,6 @@ class Config:
               )
             """
 
-        # the contents of these tag blocks will be indented, then unindented
-        self.tag_indent: str = (
-            self.template_indent
-            + """
-            | (?:<
-                (?:
-                    """
-            + self.indent_html_tags
-            + """
-                )\\b
-              )
-        """
-        )
-
-        self.tag_unindent: str = (
-            r"""
-                ^
-                """
-            + self.template_unindent
-            + """
-            | (?:</
-                (?:
-                    """
-            + self.indent_html_tags
-            + """
-                )\\b
-              )
-        """
-        )
-
         # these tags should be unindented and next line will be indented
         self.tag_unindent_line: str = r"""
               (?:\{%-?[ ]*?(?:elif|else|empty))
@@ -833,5 +803,35 @@ class Config:
             + self.always_self_closing_html_tags
             + self.custom_html
             + """
+        """
+        )
+
+        # the contents of these tag blocks will be indented, then unindented
+        self.tag_indent: str = (
+            self.template_indent
+            + """
+            | (?:<
+                (?:
+                    """
+            + self.indent_html_tags
+            + """
+                )\\b
+              )
+        """
+        )
+
+        self.tag_unindent: str = (
+            r"""
+                ^
+                """
+            + self.template_unindent
+            + """
+            | (?:</
+                (?:
+                    """
+            + self.indent_html_tags
+            + """
+                )\\b
+              )
         """
         )

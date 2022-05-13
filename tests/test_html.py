@@ -33,6 +33,18 @@ layout: <div><div></div></div>
     assert output.exit_code == 0
 
 
+def test_code_tag(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<ol>
+    <li>
+        <code>a</code> b
+    </li>
+</ol>""",
+    )
+    assert output.exit_code == 0
+
 def test_pre_tag(runner: CliRunner, tmp_file: TextIO) -> None:
     # added for https://github.com/Riverside-Healthcare/djLint/issues/187
     output = reformat(
