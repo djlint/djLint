@@ -20,16 +20,7 @@ from src.djlint import main as djlint
 from tests.conftest import reformat, write_to_file
 
 
-def test_front_matter(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""---
-layout: <div><div></div></div>
----
-<div></div>""",
-    )
-    assert output.exit_code == 0
+
 
 
 def test_code_tag(runner: CliRunner, tmp_file: TextIO) -> None:
