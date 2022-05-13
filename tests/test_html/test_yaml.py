@@ -9,13 +9,12 @@ run:
 
 """
 # pylint: disable=C0116
-from pathlib import Path
 from typing import TextIO
 
 from click.testing import CliRunner
 
-from src.djlint import main as djlint
-from tests.conftest import reformat, write_to_file
+from tests.conftest import reformat
+
 
 def test_invalid(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
@@ -30,7 +29,9 @@ invalid:
 
 <html><head></head><body></body></html>""",
     )
-    assert output.text == """---
+    assert (
+        output.text
+        == """---
     invalid:
 invalid:
 ---
@@ -41,6 +42,7 @@ invalid:
     </body>
 </html>
 """
+    )
 
 
 def test_valid(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -53,7 +55,9 @@ hello:     world
 ---
 <html><head></head><body></body></html>""",
     )
-    assert output.text == """---
+    assert (
+        output.text
+        == """---
 hello:     world
 ---
 <html>
@@ -63,6 +67,8 @@ hello:     world
     </body>
 </html>
 """
+    )
+
 
 def test_more(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
