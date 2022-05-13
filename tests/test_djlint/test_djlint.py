@@ -65,7 +65,12 @@ def test_existing_file(runner: CliRunner) -> None:
 
 def test_multiple_files(runner: CliRunner) -> None:
     result = runner.invoke(
-        djlint, ["tests/test_djlint/multiple_files/a", "tests/test_djlint/multiple_files/b", "--check"]
+        djlint,
+        [
+            "tests/test_djlint/multiple_files/a",
+            "tests/test_djlint/multiple_files/b",
+            "--check",
+        ],
     )
     assert result.exit_code == 1
     assert "3 files would be updated." in result.output
