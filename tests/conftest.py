@@ -1,4 +1,5 @@
 """Djlint test config."""
+# pylint: disable=W0621,C0116
 import os
 import tempfile
 from pathlib import Path
@@ -37,5 +38,8 @@ def reformat(the_file: TextIO, runner: CliRunner, the_text: bytes) -> SimpleName
     write_to_file(the_file.name, the_text)
     result = runner.invoke(djlint, [the_file.name, "--reformat"])
     return SimpleNamespace(
-        **{"text": Path(the_file.name).read_text(), "exit_code": result.exit_code}
+        **{
+            "text": Path(the_file.name).read_text(encoding="utf8"),
+            "exit_code": result.exit_code,
+        }
     )
