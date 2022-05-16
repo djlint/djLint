@@ -2,13 +2,10 @@
 
 run::
 
-   pytest tests/test_config.py --cov=src/djlint --cov-branch \
+   pytest tests/test_config/test_pragmas/test_config.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-for a single test, run::
-
-   pytest tests/test_config.py::test_custom_html --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
+   pytest tests/test_config/test_pragmas/test_config.py::test_require_pragma
 
 """
 # pylint: disable=C0116
@@ -68,14 +65,11 @@ def test_require_pragma(runner: CliRunner) -> None:
 
     assert (
         """ {{!-- djlint:on --}}
- <p>
+-<p>
 -
 -{{firstname}} </p><p>{{lastname}}</p>
-+    {{firstname}}
-+</p>
-+<p>
-+    {{lastname}}
-+</p>"""
++<p>{{firstname}}</p>
++<p>{{lastname}}</p>"""
         in result.output
     )
     assert """1 file would be updated.""" in result.output
@@ -98,13 +92,9 @@ def test_require_pragma(runner: CliRunner) -> None:
 -
 -</p>{{ end }}
 +<h1>Test</h1>
-+<p>
-+    {{ .Variable }}
-+</p>
++<p>{{ .Variable }}</p>
 +{{ range .Items }}
-+<p>
-+    {{ . }}
-+</p>
++<p>{{ . }}</p>
 +{{ end }}
 
 1 file would be updated."""

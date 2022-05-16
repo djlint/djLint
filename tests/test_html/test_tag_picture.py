@@ -1,12 +1,11 @@
-"""Djlint tests specific to html.
+"""Djlint tests for html picture tag.
 
-run::
+run:
 
-   pytest tests/test_html.py --cov=src/djlint --cov-branch \
+    pytest tests/test_html/test_tag_picture.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_front_matter --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
+    pytest tests/test_html/test_tag_picture.py::test_picture_source_img_tags
 
 
 """

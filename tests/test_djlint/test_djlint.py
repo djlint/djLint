@@ -5,9 +5,7 @@ run::
 
     pytest tests/test_djlint/test_djlint.py --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
-for a single test::
-
-    pytest tests/test_djlint/test_djlint.py::test_version
+    pytest tests/test_djlint/test_djlint.py::test_check_reformatter_no_error
 
 or::
 
@@ -162,9 +160,7 @@ def test_check_reformatter_simple_error_quiet(
 
 
 def test_check_reformatter_no_error(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(
-        tmp_file.name, b"<div>\n    <p>\n        nice stuff here\n    </p>\n</div>"
-    )
+    write_to_file(tmp_file.name, b"<div>\n    <p>nice stuff here</p>\n</div>")
     result = runner.invoke(djlint, [tmp_file.name, "--check"])
     assert result.exit_code == 0
     assert "0 files would be updated." in result.output

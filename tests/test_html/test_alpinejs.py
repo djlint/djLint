@@ -1,4 +1,13 @@
-"""DjLint tests for alpine.js."""
+"""DjLint tests for alpine.js.
+
+run:
+
+   pytest tests/test_html/test_alpinejs.py --cov=src/djlint --cov-branch \
+          --cov-report xml:coverage.xml --cov-report term-missing
+
+   pytest tests/test_html/test_alpinejs.py::test_alpine_js
+
+"""
 # pylint: disable=C0116
 from typing import TextIO
 

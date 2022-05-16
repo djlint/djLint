@@ -2,13 +2,10 @@
 
 run::
 
-   pytest tests/test_config_json.py --cov=src/djlint --cov-branch \
+   pytest tests/test_config/test_json/test_config.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-for a single test, run::
-
-   pytest tests/test_config_json.py::test_custom_html --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
+   pytest tests/test_config/test_json/test_config.py::test_config
 
 """
 # pylint: disable=C0116
@@ -26,9 +23,7 @@ def test_config(runner: CliRunner) -> None:
     assert (
         """-{% example stuff %}<p>this is a long paragraph</p>{% endexample %}
 +{% example stuff %}
-+  <p>
-+    this is a long paragraph
-+  </p>
++  <p>this is a long paragraph</p>
 +{% endexample %}
 """
         in result.output

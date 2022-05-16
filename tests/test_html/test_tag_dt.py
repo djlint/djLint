@@ -1,13 +1,11 @@
-"""Djlint tests specific to html.
+"""Djlint tests for html dt tag.
 
-run::
+run:
 
-   pytest tests/test_html.py --cov=src/djlint --cov-branch \
+    pytest tests/test_html/test_tag_dt.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_html.py::test_front_matter --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
+    pytest tests/test_html/test_tag_dt.py::test_dt_tag
 
 """
 # pylint: disable=C0116

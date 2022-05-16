@@ -28,9 +28,7 @@ def test_with(runner: CliRunner, tmp_file: TextIO) -> None:
     assert (
         output.text
         == r"""{{#with person }}
-    <p>
-        {{ firstname }} {{ lastname }}
-    </p>
+    <p>{{ firstname }} {{ lastname }}</p>
 {{/with }}
 """
     )

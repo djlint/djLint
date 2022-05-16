@@ -30,9 +30,7 @@ def test_each(runner: CliRunner, tmp_file: TextIO) -> None:
         output.text
         == r"""{{#each people }}
     {{ print_person }}
-    <p>
-        and more long stuff
-    </p>
+    <p>and more long stuff</p>
 {{/each }}
 """
     )

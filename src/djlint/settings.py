@@ -726,6 +726,9 @@ class Config:
             | li
             | script
             | style
+            | head
+            | body
+            | p
         """
 
         self.always_self_closing_html_tags: str = r"""

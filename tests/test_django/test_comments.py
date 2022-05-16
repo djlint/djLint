@@ -2,13 +2,10 @@
 
 run::
 
-   pytest tests/test_django.py --cov=src/djlint --cov-branch \
+   pytest tests/test_django/test_comments.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-for a single test, run::
-
-   pytest tests/test_django.py::test_alpine_js --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
+   pytest tests/test_django/test_comments.py::test_comment
 
 """
 # pylint: disable=C0116
@@ -100,8 +97,7 @@ def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:
         {% endcomment %}
         <script src="file5.js"></script>
     </head>
-    <body>
-    </body>
+    <body></body>
 </html>
 """,
     )
@@ -123,8 +119,7 @@ def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:
         {# djlint:on #}
         <script src="file5.js"></script>
     </head>
-    <body>
-    </body>
+    <body></body>
 </html>
 """,
     )
