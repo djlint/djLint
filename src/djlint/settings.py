@@ -10,11 +10,11 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from HtmlVoidElements import html_void_elements
-
 import yaml
 from click import echo
 from colorama import Fore
+from HtmlTagNames import html_tag_names
+from HtmlVoidElements import html_void_elements
 from pathspec import PathSpec
 from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
 
@@ -366,134 +366,7 @@ class Config:
         """
 
         # all html tags possible
-        self.indent_html_tags: str = (
-            r""" a
-                | abbr
-                | acronym
-                | address
-                | applet
-                | area
-                | article
-                | aside
-                | audio
-                | b
-                | base
-                | basefont
-                | bdi
-                | bdo
-                | big
-                | blockquote
-                | body
-                | br
-                | button
-                | canvas
-                | caption
-                | center
-                | cite
-                | code
-                | col
-                | colgroup
-                | data
-                | datalist
-                | dd
-                | del
-                | details
-                | dfn
-                | dialog
-                | dir
-                | div
-                | dl
-                | dt
-                | em
-                | embed
-                | fieldset
-                | figcaption
-                | figure
-                | font
-                | footer
-                | form
-                | frame
-                | frameset
-                | h1
-                | h2
-                | h3
-                | h4
-                | h5
-                | h6
-                | head
-                | header
-                | hr
-                | html
-                | i
-                | iframe
-                | icon
-                | img
-                | input
-                | ins
-                | kbd
-                | label
-                | legend
-                | li
-                | link
-                | main
-                | map
-                | mark
-                | meta
-                | meter
-                | nav
-                | noframes
-                | noscript
-                | object
-                | ol
-                | optgroup
-                | option
-                | output
-                | p
-                | pre
-                | path
-                | param
-                | picture
-                | progress
-                | q
-                | rp
-                | rt
-                | ruby
-                | s
-                | samp
-                | script
-                | section
-                | select
-                | small
-                | source
-                | span
-                | strike
-                | strong
-                | style
-                | sub
-                | summary
-                | sup
-                | svg
-                | table
-                | tbody
-                | td
-                | template
-                | textarea
-                | tfoot
-                | th
-                | thead
-                | time
-                | title
-                | tr
-                | track
-                | tt
-                | u
-                | ul
-                | var
-                | video
-                | wbr
-            """
-            + self.custom_html
-        )
+        self.indent_html_tags: str = "|".join(html_tag_names) + self.custom_html
 
         self.indent_template_tags: str = (
             r"""  if
