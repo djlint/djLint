@@ -10,6 +10,8 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+from HtmlVoidElements import html_void_elements
+
 import yaml
 from click import echo
 from colorama import Fore
@@ -731,20 +733,7 @@ class Config:
             | p
         """
 
-        self.always_self_closing_html_tags: str = r"""
-              link
-            | img
-            | meta
-            | source
-            | br
-            | input
-            | hr
-            | area
-            | col
-            | embed
-            | track
-            | wbr
-        """
+        self.always_self_closing_html_tags: str = "|".join(html_void_elements)
 
         self.optional_single_line_template_tags: str = r"""
               if
