@@ -228,8 +228,7 @@ def main(
 
     if temp_file and (config.reformat or config.check):
         # if using stdin, only give back formatted code.
-        echo(Path(temp_file.name).read_text(encoding="utf8").rstrip().encode('utf8'))
-
+        echo(Path(temp_file.name).read_text(encoding="utf8").rstrip().encode("utf8"))
 
     if temp_file:
         temp_file.close()
