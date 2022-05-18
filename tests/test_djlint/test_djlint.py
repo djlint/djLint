@@ -120,6 +120,20 @@ def test_stdin(runner: CliRunner) -> None:
     assert result.output == "<div></div>\n"
 
 
+def test_stdin_non_ascii(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ["-", "--reformat"], input="必須")
+    assert result.output == "必須\n"
+
+    result = runner.invoke(djlint, ["-", "--reformat"], input="Вход")
+    assert result.output == "Вход\n"
+
+    result = runner.invoke(djlint, ["-", "--reformat"], input="çéâêîôûàèìòùëïü")
+    assert result.output == "çéâêîôûàèìòùëïü\n"
+
+    result = runner.invoke(djlint, ["-", "--reformat"], input="😀😂🤣😆🥰")
+    assert result.output == "😀😂🤣😆🥰\n"
+
+
 def test_check(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<div></div>")
     result = runner.invoke(djlint, [tmp_file.name, "--check"])
