@@ -7,8 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter.py::test_H021 --cov=src/djlint --cov-branch \
-         --cov-report xml:coverage.xml --cov-report term-missing
+   pytest tests/test_linter/test_linter.py::test_DJ018
 
 """
 # pylint: disable=C0116,C0103
@@ -294,6 +293,16 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
         b'<a href="mailto:joe"></a>',
     )
     result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+
+    # test attribute names
+    write_to_file(
+        tmp_file.name,
+        b'<div data-row-selection-action="highlight"></div>',
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 0
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
     assert result.exit_code == 0
 
 
