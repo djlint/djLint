@@ -128,7 +128,7 @@ def main(
     temp_file = None
 
     if "-" in src:
-        stdin_stream = click.get_text_stream("stdin")
+        stdin_stream = click.get_text_stream("stdin", encoding="utf8")
         stdin_text = stdin_stream.read()
 
         temp_file = tempfile.NamedTemporaryFile(delete=False)
