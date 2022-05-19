@@ -14,7 +14,7 @@ repos:
   rev: v1.4
   hooks:
   - id: autoflake
-    exclude: &fixtures tests/functional/|tests/input|tests/extensions/data|tests/regrtest_data/|tests/data/
+    exclude: &fixtures tests/functional/|tests/input|tests/extensions/data|tests/regrtest_data/|tests/data/|__init__.py
     args:
     - --in-place
     - --remove-all-unused-imports

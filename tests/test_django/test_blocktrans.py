@@ -2,13 +2,12 @@
 
 run::
 
-   pytest tests/test_django.py --cov=src/djlint --cov-branch \
+   pytest tests/test_django/test_blocktrans.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 for a single test, run::
 
-   pytest tests/test_django.py::test_alpine_js --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
+   pytest tests/test_django/test_blocktrans.py::test_alpine_js
 
 """
 # pylint: disable=C0116

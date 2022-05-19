@@ -5,7 +5,7 @@ run::
    pytest tests/test_django/test_comments.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_django/test_comments.py::test_comment
+   pytest tests/test_django/test_comments.py::test_dj_comments_tag
 
 """
 # pylint: disable=C0116

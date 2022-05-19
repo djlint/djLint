@@ -43,6 +43,7 @@ pathspec = "^0.9.0"
 importlib-metadata = "^4.11.0"
 html-void-elements = "^0.1.0"
 html-tag-names = "^0.1.2"
+html-template-parser = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
