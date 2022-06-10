@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "HTML Template Linter and Formatter",
   "private": true,
   "main": "./bin/index.js",
@@ -63,7 +63,7 @@
     "@semantic-release/npm": "9.0.1",
     "@semantic-release/release-notes-generator": "10.0.3",
     "cz-conventional-changelog": "3.3.0",
-    "semantic-release": "19.0.2"
+    "semantic-release": "19.0.3"
   },
   "config": {
     "commitizen": {
