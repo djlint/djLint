@@ -94,6 +94,11 @@ from .src import get_src
     is_flag=True,
     help="Return errors as warnings.",
 )
+@click.option(
+    "--preserve-leading-space",
+    is_flag=True,
+    help="Attempt to preserve leading space on text.",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -108,6 +113,7 @@ def main(
     lint: bool,
     use_gitignore: bool,
     warn: bool,
+    preserve_leading_space: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -123,6 +129,7 @@ def main(
         check=check,
         use_gitignore=use_gitignore,
         warn=warn,
+        preserve_leading_space=preserve_leading_space,
     )
 
     temp_file = None

@@ -25,7 +25,8 @@ def condense_html(html: str, config: Config) -> str:
 
     func = partial(strip_space, config, html)
 
-    html = re.sub(re.compile(r"^[ \t]*(.*?)[\n \t]*$", re.M), func, html)
+    if not config.preserve_leading_space:
+        html = re.sub(re.compile(r"^[ \t]*(.*?)[\n \t]*$", re.M), func, html)
 
     def if_blank_line_after_match(config: Config, html: str) -> bool:
         """Check if there should be a blank line after."""
