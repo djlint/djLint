@@ -191,6 +191,7 @@ class Config:
         lint: bool = False,
         use_gitignore: bool = False,
         warn: bool = False,
+        preserve_leading_space: bool = False,
     ):
 
         self.reformat = reformat
@@ -226,6 +227,11 @@ class Config:
 
         self.format_attribute_template_tags: bool = djlint_settings.get(
             "format_attribute_template_tags", False
+        )
+
+        self.preserve_leading_space: bool = (
+            preserve_leading_space
+            or djlint_settings.get("preserve_leading_space", False)
         )
 
         # ignore is based on input and also profile

@@ -366,3 +366,30 @@ linter_output_format="{filename}:{line}: {code} {message} {match}"
   "linter_output_format": "{filename}:{line}: {code} {message} {match}"
 }
 ```
+
+## preserve_leading_space
+
+Preserve leading space on text, where possible. Ideal for non-html template files where text indent is intentional.
+
+Usage:
+
+**flag**
+
+```bash
+--preserve-leading-space
+```
+
+**pyproject.toml**
+
+```ini
+preserve_leading_space=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "preserve_leading_space": true
+}
+```
+
