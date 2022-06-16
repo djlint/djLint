@@ -362,3 +362,29 @@ linter_output_format="{filename}:{line}: {code} {message} {match}"
   "linter_output_format": "{filename}:{line}: {code} {message} {match}"
 }
 ```
+
+## preserve_leading_space
+
+Сохраняет пробелы в тексте, где это возможно. Идеально подходит для не-html файлов шаблонов, где отступ текста является намеренным.
+
+Использование:
+
+**flag**
+
+```bash
+--preserve-leading-space
+```
+
+**pyproject.toml**
+
+```ini
+preserve_leading_space=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "preserve_leading_space": true
+}
+```
