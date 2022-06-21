@@ -8,6 +8,12 @@
 <h4 align="center">The missing formatter and linter for HTML templates.</h4>
 
 <p align="center">
+    <a href="https://twitter.com/intent/tweet?text=djLint%20%7C%20The%20missing%20formatter%20and%20linter%20for%20HTML%20templates.&url=https://djlint.com/&hashtags=djlint,html-templates,django,jinja,developers"><img alt="tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" /></a>
+    <a href="https://discord.gg/taghAqebzU">
+     <img src="https://badgen.net/discord/online-members/taghAqebzU?icon=discord&label" alt="Discord Chat">
+   </a>
+    </p>
+    <p align="center">
    <a href="https://codecov.io/gh/Riverside-Healthcare/djlint">
      <img src="https://codecov.io/gh/Riverside-Healthcare/djlint/branch/master/graph/badge.svg?token=eNTG721BAA" alt="Codecov Status">
    </a>
@@ -19,9 +25,6 @@
    </a>
    <a href="https://pepy.tech/project/djlint">
      <img src="https://pepy.tech/badge/djlint" alt="Downloads">
-   </a>
-   <a href="https://discord.gg/taghAqebzU">
-     <img src="https://img.shields.io/badge/chat-discord-green" alt="Discord Chat">
    </a>
    <a href="https://pypi.org/project/djlint/">
      <img src="https://img.shields.io/pypi/v/djlint" alt="Pypi Download">
