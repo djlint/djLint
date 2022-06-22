@@ -4,4 +4,8 @@ layout: layout.njk
 
 <div class="container">
   {{ content | safe }}
+  <div class="is-flex is-justify-content-space-between">
+    <span>{% gh_edit page %}</span>
+    <em><small>{{ "updated" | i18n }} <strong>{{ page.date | niceDate }}</strong></small></em>
+  </div>
 </div>
