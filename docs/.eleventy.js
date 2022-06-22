@@ -190,7 +190,7 @@ module.exports = function(eleventyConfig) {
 
 
   const icons = {
-    note: '<span class="icon has-text-info"><i class="fas fa-pencil-alt"></i></span>',
+    note: '<span class="icon has-text-info mr-1"><i class="fas fa-pencil-alt"></i></span>',
     hint: "./src/_includes/icons/green_question.njk",
     alert: "./src/_includes/icons/red_triangle.njk"
   };

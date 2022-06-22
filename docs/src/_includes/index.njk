@@ -164,6 +164,11 @@ date: Last Modified
 </div>
 </div>
 
-
+<div class="container">
+  <div class="is-flex is-justify-content-space-between mb-3">
+    <span>{% gh_edit page %}</span>
+    <em><small>{{ "updated" | i18n }} <strong>{{ page.date | niceDate }}</strong></small></em>
+  </div>
+</div>
 
 {% endblock body %}
