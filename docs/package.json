@@ -38,6 +38,7 @@
     "bulma-pricingtable": "0.2.0",
     "cssnano": "5.1.7",
     "cz-conventional-changelog": "3.3.0",
+    "eleventy-plugin-edit-on-github": "^1.1.0",
     "eleventy-plugin-metagen": "1.7.1",
     "esbuild": "0.14.38",
     "eslint": "8.18.0",

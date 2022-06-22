@@ -3,27 +3,29 @@ layout: layout.njk
 ---
 
 <div class="container">
-<div class="columns">
-<div class="column is-narrow mr-5">
-
-<aside class="menu is-sticky">
-
-  <p class="menu-label">
-    {{ "documentation" | i18n }}
-  </p>
-  <ul class="menu-list">
-
-        <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/getting-started/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/getting-started/">{{ "getting_started" | i18n }}</a></li>
-        <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/formatter/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/formatter/">{{ "formatter" | i18n }}</a></li>
-        <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/linter/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/linter">{{ "linter" | i18n }}</a></li>
-        <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/configuration/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/configuration/">{{ "configuration" | i18n }}</a></li>
-        <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/integrations/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/integrations">{{ "integrations" | i18n }}</a></li>
-        <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/best-practices/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/best-practices/">{{ "best_practices" | i18n }}</a></li>
-        <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/changelog/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/changelog">{{ "changelog" | i18n }}</a></li>
-    </ul>
-</aside>
-</div>
-<div class="column mb-5">
-{{ content | safe }}
-</div>
+  <div class="columns">
+    <div class="column is-narrow mr-5">
+      <aside class="menu is-sticky">
+        <p class="menu-label">
+          {{ "documentation" | i18n }}
+        </p>
+        <ul class="menu-list">
+          <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/getting-started/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/getting-started/">{{ "getting_started" | i18n }}</a></li>
+          <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/formatter/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/formatter/">{{ "formatter" | i18n }}</a></li>
+          <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/linter/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/linter">{{ "linter" | i18n }}</a></li>
+          <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/configuration/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/configuration/">{{ "configuration" | i18n }}</a></li>
+          <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/integrations/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/integrations">{{ "integrations" | i18n }}</a></li>
+          <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/best-practices/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/best-practices/">{{ "best_practices" | i18n }}</a></li>
+          <li><a class="{% if page.url == "lang_code_url" | i18n + "/docs/changelog/" %}is-active{% endif %}" href="{{ "lang_code_url" | i18n }}/docs/changelog">{{ "changelog" | i18n }}</a></li>
+          </ul>
+      </aside>
+    </div>
+    <div class="column mb-5">
+      {{ content | safe }}
+      <div class="is-flex is-justify-content-space-between">
+        <span>{% gh_edit page %}</span>
+        <em><small>{{ "updated" | i18n }} <strong>{{ page.date | niceDate }}</strong></small></em>
+      </div>
+    </div>
+  </div>
 </div>

@@ -23,7 +23,7 @@ module.exports = class {
     return await postcss([
       require('postcss-nested'),
       purgecss({
-        content: ['./src/**/*.njk', './src/**/*.md'],
+        content: ['./src/**/*.njk', './src/**/*.md', './src/**/*.js'],
         safelist: {
           deep: [
             /headShake/,
@@ -46,6 +46,9 @@ module.exports = class {
             /is-light/,
             /is-active/,
             /is-info/,
+            /fa-*/,
+            /mr-1/,
+            /mr-2/
           ],
         },
       }),

@@ -125,4 +125,9 @@ module.exports = {
     ru: 'Вклад в работу сайта приветствуется. Пришлите письмо с новой функцией или ознакомьтесь со <a href="https://github.com/Riverside-Healthcare/djlint/issues">списком проблем</a> и помогите, чем можете.',
     fr: 'Les contributions sont les bienvenues. Envoyez un pr avec une nouvelle fonctionnalité, ou consultez la <a href="https://github.com/Riverside-Healthcare/djlint/issues">liste</a> et aidez où vous pouvez.'
   },
+  edit_page: {
+    'en-US': 'Edit this page',
+    ru: 'Редактировать эту страницу',
+    fr: 'Modifier cette page',
+  }
 };

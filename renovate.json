@@ -45,6 +45,9 @@
       "automerge": true
     }
   ],
+  "pre-commit": {
+    "enabled": true
+  },
   "schedule": ["on monday before 8:00am"],
   "timezone": "America/Chicago"
 }

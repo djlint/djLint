@@ -9,7 +9,8 @@ const locales = require('./src/_data/locales');
 const fs = require('fs');
 const outdent = require('outdent');
 const schema = require("@quasibit/eleventy-plugin-schema");
-
+const editOnGithub = require('eleventy-plugin-edit-on-github');
+const i18n_func = require('eleventy-plugin-i18n/i18n.js');
 
 const slugifyCustom = (s) =>
   slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g });
@@ -72,8 +73,29 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(syntaxHighlight);
   eleventyConfig.addPlugin(metagen);
   eleventyConfig.addPlugin(criticalCss);
-
   eleventyConfig.addPlugin(schema);
+  eleventyConfig.addPlugin(editOnGithub, {
+    // required
+    github_edit_repo: 'https://github.com/Riverside-Healthcare/djLint',
+    // optional: defaults
+    github_edit_path: "/docs/", // non-root location in git url. root is assumed
+    github_edit_branch: 'master',
+    github_edit_text: (page) => {
+
+      i18n_options = Object.assign({},{
+        translations,
+        fallbackLocales: {
+          '*': 'en-US'
+        }})
+
+      return `<span class="icon-text"><span class="icon mr-1"><i class="fas fa-pencil-alt"></i></span><span>${i18n_func("edit_page", undefined,undefined, i18n_options,  page)}</span></span>`;
+      return x.inputPath
+    },
+    github_edit_class: 'edit-on-github',
+    github_edit_tag: 'a',
+    github_edit_attributes: 'target="_blank" rel="noopener"',
+    github_edit_wrapper: undefined, //ex: "<div stuff>${edit_on_github}</div>"
+  });
 
   /* Markdown Plugins */
   const markdownItAnchor = require("markdown-it-anchor");
