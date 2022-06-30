@@ -192,6 +192,7 @@ class Config:
         use_gitignore: bool = False,
         warn: bool = False,
         preserve_leading_space: bool = False,
+        preserve_blank_lines: bool = False,
     ):
 
         self.reformat = reformat
@@ -232,6 +233,10 @@ class Config:
         self.preserve_leading_space: bool = (
             preserve_leading_space
             or djlint_settings.get("preserve_leading_space", False)
+        )
+
+        self.preserve_blank_lines: bool = preserve_blank_lines or djlint_settings.get(
+            "preserve_blank_lines", False
         )
 
         # ignore is based on input and also profile

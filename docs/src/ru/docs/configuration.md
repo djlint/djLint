@@ -388,3 +388,30 @@ preserve_leading_space=true
   "preserve_leading_space": true
 }
 ```
+
+
+## preserve_blank_lines
+
+Сохраняйте пробелы там, где это возможно. Идеально подходит для не-html файлов шаблонов, где пустые строки являются намеренными.
+
+Использование:
+
+**flag**
+
+```bash
+--preserve-blank-lines
+```
+
+**pyproject.toml**
+
+```ini
+preserve_blank_lines=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "preserve_blank_lines": true
+}
+```

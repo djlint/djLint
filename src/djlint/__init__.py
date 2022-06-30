@@ -99,6 +99,11 @@ from .src import get_src
     is_flag=True,
     help="Attempt to preserve leading space on text.",
 )
+@click.option(
+    "--preserve-blank-lines",
+    is_flag=True,
+    help="Attempt to preserve blank lines.",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -114,6 +119,7 @@ def main(
     use_gitignore: bool,
     warn: bool,
     preserve_leading_space: bool,
+    preserve_blank_lines: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -130,6 +136,7 @@ def main(
         use_gitignore=use_gitignore,
         warn=warn,
         preserve_leading_space=preserve_leading_space,
+        preserve_blank_lines=preserve_blank_lines,
     )
 
     temp_file = None

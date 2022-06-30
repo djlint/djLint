@@ -393,3 +393,28 @@ preserve_leading_space=true
 }
 ```
 
+## preserve_blank_lines
+
+Preserve blank where possible. Ideal for non-html template files where blank lines are intentional.
+
+Usage:
+
+**flag**
+
+```bash
+--preserve-blank-lines
+```
+
+**pyproject.toml**
+
+```ini
+preserve_blank_lines=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "preserve_blank_lines": true
+}
+```

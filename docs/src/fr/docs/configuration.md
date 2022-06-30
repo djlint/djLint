@@ -392,3 +392,30 @@ preserve_leading_space=true
   "preserve_leading_space": true
 }
 ```
+
+
+## preserve_blank_lines
+
+Préserve les blancs lorsque cela est possible. Idéal pour les fichiers de modèles non-html où les lignes vides sont intentionnelles.
+
+Utilisation:
+
+**flag**
+
+```bash
+--preserve-blank-lines
+```
+
+**pyproject.toml**
+
+```ini
+preserve_blank_lines=true
+```
+
+**.djlintrc**
+
+```json
+{
+  "preserve_blank_lines": true
+}
+```

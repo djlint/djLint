@@ -184,7 +184,7 @@
     message: Tag seems to be an orphan.
     flags: re.I|re.DOTALL
     patterns:
-    - <((/?(\w+))\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|[^'\">{}])*)(?<!/)>
+    - <((/?(\w+))\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^%]*#}|[^'\">{}])*)(?<!/)>
 - rule:
     name: H026
     message: Empty id and class tags can be removed.
