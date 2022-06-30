@@ -242,55 +242,6 @@ pre .number {
   width: 2.5em;
 }
 
-/* search */
-#search-form .icon svg {
-  height: 1.2rem;
-}
-
-#search-results {
-  position: absolute;
-  top: 70px;
-  left: 0;
-  right: 0;
-  display: none;
-  border-radius: $radius;
-}
-
-#search-results:empty {
-  display: none !important;
-}
-
-#search:focus {
-  border-color: $info;
-  box-shadow: $input-focus-box-shadow-size bulmaRgba($info, 0.25);
-}
-#search:active {
-  border-color: $info;
-  box-shadow: $input-focus-box-shadow-size bulmaRgba($info, 0.25);
-}
-
-#search-wrap:focus-within #search-results {
-  display: block;
-  box-shadow: $input-focus-box-shadow-size bulmaRgba($info, 0.25);
-  border: 1px solid $info;
-}
-
-#search-results:active {
-  display: block;
-  box-shadow: $input-focus-box-shadow-size bulmaRgba($info, 0.25);
-  border: 1px solid $info;
-}
-
-#search-results .panel-block:first-of-type {
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
-}
-
-#search-results em {
-  background-color: $info-light;
-  color: $info;
-}
-
 .story {
   font-family: Crimson Pro, Georgia, serif;
   font-size: 24px;
@@ -398,15 +349,11 @@ pre .number {
 .is-collapsible-menu .is-collapsible-menu {
   margin-bottom: 0 !important;
 }
+
 .menu .menu-label {
   font-weight: 600;
   font-size: unset;
   color: $grey-dark;
-}
-
-.menu li a {
-  position: relative;
-  padding-left: 20px;
 }
 
 .menu li a.is-active {
@@ -427,41 +374,6 @@ pre .number {
 .menu-list a:hover,
 .menu li a:hover {
   background-color: unset;
-}
-
-.menu li a:before {
-  position: absolute;
-  display: block;
-  margin-right: 18px;
-  margin-left: -18px;
-  content: '';
-}
-
-.menu li a:not([data-action='collapse-menu']):before {
-  height: 4px;
-  width: 4px;
-  border-radius: 4px;
-  background: $grey;
-  top: calc(50% - 2px);
-}
-
-.menu li a[data-action='collapse-menu']:before {
-  border: 2px solid $grey-light;
-  border-radius: 2px;
-  border-right: 0;
-  border-top: 0;
-  height: 7px;
-  margin-top: -0.4375em;
-  transform-origin: 3px 4px;
-  width: 7px;
-  transition: transform 0.2s;
-  transform: rotate(-135deg);
-  top: calc(50% + 3px);
-  margin-left: -19px;
-}
-.menu li a.is-active[data-action='collapse-menu']:before {
-  transform: rotate(-45deg);
-  transition: transform 0.2s;
 }
 
 pre {

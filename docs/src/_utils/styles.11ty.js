@@ -48,7 +48,8 @@ module.exports = class {
             /is-info/,
             /fa-*/,
             /mr-1/,
-            /mr-2/
+            /mr-2/,
+            /has-text-info/,
           ],
         },
       }),

@@ -88,7 +88,7 @@ module.exports = function(eleventyConfig) {
           '*': 'en-US'
         }})
 
-      return `<span class="icon-text"><span class="icon mr-1"><i class="fas fa-pencil-alt"></i></span><span>${i18n_func("edit_page", undefined,undefined, i18n_options,  page)}</span></span>`;
+      return `<span class="icon-text"><span class="icon mr-1"><i class="fas fa-pencil"></i></span><span>${i18n_func("edit_page", undefined,undefined, i18n_options,  page)}</span></span>`;
       return x.inputPath
     },
     github_edit_class: 'edit-on-github',
@@ -190,18 +190,16 @@ module.exports = function(eleventyConfig) {
 
 
   const icons = {
-    note: '<span class="icon has-text-info mr-1"><i class="fas fa-pencil-alt"></i></span>',
-    hint: "./src/_includes/icons/green_question.njk",
-    alert: "./src/_includes/icons/red_triangle.njk"
+    note: '<span class="icon has-text-info mr-1"><i class="fas fa-pencil"></i></span>',
   };
 
   eleventyConfig.addShortcode("admonition", function(icon, title, text) {
     return outdent`
-    <article class="message ` + icon + ` box">
+    <article class="message ${icon} box">
       <div class="message-header">
-        <p>` + icons[icon] +title+`</p>
+        <p>${icons[icon]} ${title}</p>
       </div>
-      <div class="message-body">` + `${markdownIt.render(text)}`+ `</div>
+      <div class="message-body">${markdownIt.render(text)}</div>
     </article>`;
   });
 
@@ -213,8 +211,8 @@ module.exports = function(eleventyConfig) {
   const { fontawesomeSubset } = require('fontawesome-subset');
   fontawesomeSubset({
     brands:['discord', 'github'],
-    regular:['envelope', 'life-ring'],
-    solid: ['globe', 'arrow-circle-right', 'pencil-alt', 'envelope', 'share', 'infinity', 'search', 'book', 'project-diagram', 'heart', 'address-card', 'server', 'database', 'ship', 'code', 'chart-bar', 'sitemap', 'tasks', 'lock', 'sliders-h', 'user', 'users', 'compass', 'download', 'sync-alt']
+    regular:['envelope'],
+    solid: ['globe', 'circle-arrow-right', 'pencil', 'infinity','download','code-commit']
         }, '_site/static/font/fontawesome/webfonts');
 
   eleventyConfig.addPlugin(i18n, {
