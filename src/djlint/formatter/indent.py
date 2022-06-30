@@ -248,4 +248,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # handlebars templates
         beautified_code = re.sub(r"({{#(?:each|if).+?[^ ])(}})", func, beautified_code)
 
-    return beautified_code.strip() + "\n"
+    if not config.preserve_blank_lines:
+        beautified_code = beautified_code.lstrip()
+
+    return beautified_code.rstrip() + "\n"
