@@ -129,5 +129,10 @@ module.exports = {
     'en-US': 'Edit this page',
     ru: 'Редактировать эту страницу',
     fr: 'Modifier cette page',
+  },
+  ignoring_code: {
+    'en-US': 'Ignoring Code',
+    ru: 'Игнорирование Контент',
+    fr: 'Ignorer le Contenu',
   }
 };

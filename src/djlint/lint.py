@@ -5,7 +5,7 @@ from typing import Dict, List
 
 import regex as re
 
-from .helpers import inside_ignored_block
+from .helpers import inside_ignored_block, inside_ignored_rule
 from .settings import Config
 
 flags = {
@@ -88,7 +88,11 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                                 open_tags.insert(0, match)
 
                 for match in open_tags:
-                    if inside_ignored_block(config, html, match) is False:
+                    if (
+                        inside_ignored_block(config, html, match) is False
+                        and inside_ignored_rule(config, html, match, rule["name"])
+                        is False
+                    ):
                         errors[filename].append(
                             {
                                 "code": rule["name"],
@@ -105,7 +109,11 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     ),
                     html,
                 ):
-                    if inside_ignored_block(config, html, match) is False:
+                    if (
+                        inside_ignored_block(config, html, match) is False
+                        and inside_ignored_rule(config, html, match, rule["name"])
+                        is False
+                    ):
                         errors[filename].append(
                             {
                                 "code": rule["name"],

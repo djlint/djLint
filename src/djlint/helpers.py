@@ -100,3 +100,21 @@ def inside_ignored_block(config: Config, html: str, match: re.Match) -> bool:
             )
         )
     )
+
+
+def inside_ignored_rule(config: Config, html: str, match: re.Match, rule: str) -> bool:
+    """Check if match is inside an ignored pattern."""
+    for rule_regex in config.ignored_rules:
+        for ignored_match in list(
+            re.finditer(
+                re.compile(rule_regex, re.DOTALL | re.IGNORECASE | re.VERBOSE),
+                html,
+            )
+        ):
+            if (
+                rule in list(set(re.split(r"\s|,", ignored_match.group(1).strip())))
+                and ignored_match.start(0) <= match.start()
+                and match.end(0) <= ignored_match.end()
+            ):
+                return True
+    return False

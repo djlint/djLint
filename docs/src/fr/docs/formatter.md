@@ -38,45 +38,6 @@ djlint . --reformat
    "djLint n'est pas un analyseur html ou un validateur de syntaxe."
 %}
 
-## Ignorer le code
-
-Le code peut être ignoré en l'entourant de balises `djlint` :
-
-{% raw %}
-
-Pour le simple html -
-
-```html
-<!-- djlint:off -->
-<mauvais html à ignorer> <!-- djlint:on --></bad>
-```
-
-ou comme un long commentaire -
-
-```html
-{# djlint:off #} <mauvais html à ignorer> {# djlint:on #}</bad>
-```
-
-ou comme un long commentaire -
-
-```html
-{% comment %} djlint:off {% endcomment %}
-<mauvais html à ignorer> {% comment %} djlint:on {% endcomment %}</bad>
-```
-
-ou comme un commentaire de style javascript -
-
-```html
-{{ /* djlint:off */ }} <mauvais html à ignorer> {{ /* djlint:on */ }}</bad>
-```
-
-ou comme un commentaire de style golang -
-
-```html
-{{!-- djlint:off --}} <mauvais html à ignorer> {{!-- djlint:on --}}</bad>
-```
-
-{% endraw %}
 
 ## Voici un exemple !
 
