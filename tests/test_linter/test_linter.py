@@ -762,3 +762,32 @@ H025 2:4 Tag seems to be an orphan. <h3>
 H025 2:12 Tag seems to be an orphan. </h4>"""
         in result.output
     )
+
+
+def test_ignoring_rules(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""{# djlint:off H025,H026 #}
+<p>
+{# djlint:on #}
+
+<!-- djlint:off H025-->
+<p>
+<!-- djlint:on -->
+
+{% comment %} djlint:off H025 {% endcomment %}
+<p>
+{% comment %} djlint:on {% endcomment %}
+
+{{!-- djlint:off H025 --}}
+<p>
+{{!-- djlint:on --}}
+
+{{ /* djlint:off H025 */ }}
+<p>
+{{ /* djlint:on */ }}
+
+""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H025" not in result.output

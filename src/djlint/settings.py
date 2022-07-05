@@ -579,6 +579,18 @@ class Config:
             | ^---[\s\S]+?---
         """
 
+        self.ignored_rules: List[str] = [
+            # html comment
+            r"<!--\s*djlint\:off(.+?)-->.*?(?=<!--\s*djlint\:on\s*-->)",
+            # django/jinja/nunjucks
+            r"{\#\s*djlint\:\s*off(.+?)\#}.*?(?={\#\s*djlint\:\s*on\s*\#})",
+            r"{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})",
+            # handlebars
+            r"{{!--\s*djlint\:off(.*?)--}}.*?(?={{!--\s*djlint\:on\s*--}})",
+            # golang
+            r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})",
+        ]
+
         self.ignored_inline_blocks: str = r"""
               <!--.*?-->
             | <(script|style).*?\</(?:\1)>
