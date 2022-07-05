@@ -44,7 +44,7 @@
     "eslint": "8.19.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.26.0",
-    "fontawesome-subset": "^4.0.0",
+    "fontawesome-subset": "4.0.0",
     "html-minifier": "4.0.0",
     "markdown-it": "13.0.0",
     "markdown-it-anchor": "8.6.2",
