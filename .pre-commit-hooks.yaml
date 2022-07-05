@@ -1,7 +1,7 @@
 - id: djlint-django
   name: djLint for Django
   entry: djlint --profile=django
-  files: "templates/.*\\.html$"
+  types_or: [html]
   language: python
 
 - id: djlint-jinja
