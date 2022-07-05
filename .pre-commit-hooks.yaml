@@ -1,29 +1,29 @@
 - id: djlint-django
   name: djLint for Django
   entry: djlint --profile=django
-  files: "templates/.*\\.html$"
+  types_or: [html]
   language: python
 
 - id: djlint-jinja
   name: djLint for Jinja
   entry: djlint --profile=jinja
-  files: "\\.j2$"
+  types_or: [jinja]
   language: python
 
 - id: djlint-nunjucks
   name: djLint for Nunjucks
   entry: djlint --profile=nunjucks
-  files: "\\.njk$"
+  types_or: [nunjucks]
   language: python
 
 - id: djlint-handlebars
   name: djLint for Handlebars/Mustache
   entry: djlint --profile=handlebars
-  files: "\\.hbs"
+  types_or: [handlebars]
   language: python
 
 - id: djlint-golang
   name: djLint for Golang templates
   entry: djlint --profile=golang
-  files: "\\.tmpl"
+  types_or: [gotmpl]
   language: python
