@@ -55,4 +55,3 @@ def indent_html(rawcode: str, config: Config):
     output = front_matter + output
 
     return output
-
