@@ -549,6 +549,10 @@ def test_H026(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 0
     assert "H026" not in result.output
 
+    write_to_file(tmp_file.name, b"<div x-id-y><div id-y><div x-id>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H026" not in result.output
+
 
 def test_T027(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{% blah 'asdf %}")
