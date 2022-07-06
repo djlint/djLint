@@ -49,7 +49,7 @@ jobs:
 
     steps:
     - name: install xcode-select
-        if: ${{ matrix.os }} == 'macOS-latest'
+        if: matrix.os == 'macOS-latest'
       uses: devbotsxyz/xcode-select@v1
     - name: checkout
       uses: actions/checkout@v3
