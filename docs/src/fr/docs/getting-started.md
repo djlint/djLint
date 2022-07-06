@@ -14,6 +14,12 @@ djLint est construit avec [Python 3.7+](https://python.org), il peut être insta
 pip install djlint
 ```
 
+_Ou avec l'installation expérimentale npm - Note, ceci requiert que python et pip soient dans votre chemin système._
+
+```bash
+npm i djlint
+```
+
 ## Utilisation de l'interface CLI
 
 djLint est une application en ligne de commande. Voir `configuration` pour une configuration avancée.

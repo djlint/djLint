@@ -58,6 +58,12 @@ Grab it with `pip`
 pip install djlint
 ```
 
+*Or with the npm experimental install - Note, this requires python and pip to be on your system path.*
+
+```bash
+npm i djlint
+```
+
 Lint your project
 
 ```bash

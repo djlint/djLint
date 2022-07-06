@@ -11,24 +11,32 @@ keywords: облицовка шаблонов, форматер шаблонов
 Изменения теперь включен в [релиз](https://github.com/Riverside-Healthcare/djLint/releases).
 
 <!--## {{ "next_release" i18n }}-->
+
 ## 1.0.2
+
 ::: content
+
 - Исправления ошибок [#240](https://github.com/Riverside-Healthcare/djLint/issues/240)
   :::
 
 ## 1.0.1
+
 ::: content
+
 - Исправления ошибок [#236](https://github.com/Riverside-Healthcare/djLint/issues/236)
   :::
 
 ## 1.0.0
+
 ::: content
+
 - Исправления ошибок [#224](https://github.com/Riverside-Healthcare/djLint/issues/224)
   :::
 
 ## 0.7.6
 
 ::: content
+
 - Исправления ошибок [#189](https://github.com/Riverside-Healthcare/djLint/issues/189), [#197](https://github.com/Riverside-Healthcare/djLint/issues/189)
 - Добавлен флаг `--warn` для возврата ошибок в виде предупреждений.
   :::
@@ -38,11 +46,11 @@ keywords: облицовка шаблонов, форматер шаблонов
 ::: content
 
 - Исправления ошибок [#187](https://github.com/Riverside-Healthcare/djLint/issues/187)
-- Добавлена улучшенная поддержка ``yaml`` front matter в файлах шаблонов
+- Добавлена улучшенная поддержка `yaml` front matter в файлах шаблонов
 - Добавлено правило T032 для [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
 - Добавлено правило H033 для [#124](https://github.com/Riverside-Healthcare/djLint/issues/124)
 - Изменены профили линтеров, чтобы они были инклюзивными, а не эксклюзивными для [#178](https://github.com/Riverside-Healthcare/djLint/issues/178)
-- Добавлена альтернативная опция файла конфигурации ``.djlintrc`` для [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
+- Добавлена альтернативная опция файла конфигурации `.djlintrc` для [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
   :::
 
 ## 0.7.4

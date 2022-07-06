@@ -1,5 +1,4 @@
-const path = require('path');
-const generateContentHash = require('../lib/generateContentHash');
+const generateContentHash = require('../lib/generate-content-hash.js');
 
 const hash = generateContentHash('src/static/**/*.{scss,css}');
 

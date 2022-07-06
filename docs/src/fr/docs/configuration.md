@@ -8,17 +8,18 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 La configuration se fait soit à travers le fichier `pyproject.toml` de votre projet, soit à travers un fichier `.djlintrc`. Les arguments de la ligne de commande remplaceront toujours les paramètres du fichier `pyproject.toml`.
 
-Le format du fichier ``pyproject.toml`` est ``toml``.
+Le format du fichier `pyproject.toml` est `toml`.
 
 ```ini
 [tool.djlint]
 <options de configuration>
 ```
-Le format du fichier ``djlintrc`` est ``json``.
+
+Le format du fichier `djlintrc` est `json`.
 
 ```json
 {
-  "option" : "valeur"
+  "option": "valeur"
 }
 ```
 
@@ -38,7 +39,7 @@ ignore="H014,H015"
 
 ```json
 {
-  "ignore" : "H014,H015"
+  "ignore": "H014,H015"
 }
 ```
 
@@ -85,7 +86,6 @@ custom_blocks="toc,example"
 ## custom_html
 
 Permet d'indenter les balises HTML personnalisées. Par exemple, `<mjml>` ou `<simple-greeting>` ou `<mj-\w+>`.
-
 
 Utilisation:
 
@@ -182,6 +182,7 @@ blank_line_after_tag="load,extends,include"
   "blank_line_after_tag": "load,extends,include"
 }
 ```
+
 ## profile
 
 Définissez un profil pour la langue du modèle. Le profil activera les règles de linter qui s'appliquent à votre langage de modèle, et peut également changer le reformatage. Par exemple, dans `handlebars`, il n'y a pas d'espaces dans les balises {% raw %}`{{#if}}`{% endraw %}.
@@ -329,7 +330,8 @@ Par exemple, avec cette option activée, le html suivant sera acceptable :
 
 ```html
 {% raw %}
-<input class="{% if this %}
+<input
+  class="{% if this %}
                   then something neat
               {% else %}
                   that is long stuff asdf and more even
@@ -344,12 +346,13 @@ Personnalise l'ordre du message de sortie. Défaut="{code} {ligne} {message} {ma
 
 Variables facultatives :
 ::: content
+
 - `{filename}`
 - `{line}`
 - `{code}`
 - `{message}`
 - `{match}`
-:::
+  :::
 
 Utilisation:
 
@@ -392,7 +395,6 @@ preserve_leading_space=true
   "preserve_leading_space": true
 }
 ```
-
 
 ## preserve_blank_lines
 

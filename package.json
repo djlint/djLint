@@ -1,8 +1,7 @@
 {
   "name": "djlint",
-  "version": "1.3.0",
+  "version": "0.0.1-beta1.0",
   "description": "HTML Template Linter and Formatter",
-  "private": true,
   "main": "./bin/index.js",
   "directories": {
     "doc": "docs",
@@ -31,16 +30,17 @@
     "angular template formatter"
   ],
   "files": [
-    "src",
-    "bin",
-    "requirements.txt"
+    "bin"
   ],
   "bin": {
     "djlint": "./bin/index.js"
   },
   "scripts": {
+    "format": "prettier --config .prettierrc \"{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write",
     "postinstall": "node ./bin/install.js",
-    "commit": "git add . && pre-commit run && git add . && cz --no-verify"
+    "pre-commit": "lint-staged",
+    "commit": "git add . && pre-commit run && git add . && npm run pre-commit && cz --no-verify",
+    "test": "xo"
   },
   "author": {
     "name": "Christopher Pickering",
@@ -52,6 +52,7 @@
   },
   "homepage": "https://djlint.com",
   "dependencies": {
+    "python-shell": "^3.0.1",
     "yargs": "17.4.0"
   },
   "devDependencies": {
@@ -63,11 +64,36 @@
     "@semantic-release/npm": "9.0.1",
     "@semantic-release/release-notes-generator": "10.0.3",
     "cz-conventional-changelog": "3.3.0",
-    "semantic-release": "19.0.3"
+    "lint-staged": "^13.0.3",
+    "semantic-release": "19.0.3",
+    "xo": "^0.50.0"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "lint-staged": {
+    "{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}": [
+      "npm run format"
+    ]
+  },
+  "xo": {
+        "space": true,
+        "prettier": true,
+        "rules": {
+            "unicorn/prefer-module": "off",
+            "no-var": "warn",
+            "camelcase": "warn",
+            "unicorn/filename-case":"warn",
+            "unicorn/no-process-exit":"off"
+        },
+        "globals": [
+            "document",
+            "window",
+            "data",
+            "debounce",
+            "history"
+        ]
+    }
 }

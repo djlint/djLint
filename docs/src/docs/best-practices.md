@@ -16,7 +16,7 @@ This pattern is recommended:
 
 ```html
 <div class="class1 {% if condition -%}class2{%- endif %}">content</div>
-                  ^ space here
+^ space here
 ```
 
 {% endraw %}

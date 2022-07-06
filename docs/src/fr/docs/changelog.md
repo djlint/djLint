@@ -11,24 +11,32 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 Changelog est maintenant inclus dans la [release](https://github.com/Riverside-Healthcare/djLint/releases).
 
 <!--## {{ "next_release" i18n }}-->
+
 ## 1.0.2
+
 ::: content
+
 - Correction de bugs [#240](https://github.com/Riverside-Healthcare/djLint/issues/240)
   :::
 
 ## 1.0.1
+
 ::: content
+
 - Correction de bugs [#236](https://github.com/Riverside-Healthcare/djLint/issues/236)
   :::
 
 ## 1.0.0
+
 ::: content
+
 - Correction de bugs [#224](https://github.com/Riverside-Healthcare/djLint/issues/224)
   :::
 
 ## 0.7.6
 
 ::: content
+
 - Correction de bugs [#189](https://github.com/Riverside-Healthcare/djLint/issues/189), [#197](https://github.com/Riverside-Healthcare/djLint/issues/189)
 - Ajouté le drapeau `--warn` pour retourner les erreurs de retour comme des avertissements.
   :::
@@ -38,11 +46,11 @@ Changelog est maintenant inclus dans la [release](https://github.com/Riverside-H
 ::: content
 
 - Correction de bugs [#187](https://github.com/Riverside-Healthcare/djLint/issues/187)
-- Ajout d'une meilleure prise en charge de la matière première ``yaml`` dans les fichiers modèles
+- Ajout d'une meilleure prise en charge de la matière première `yaml` dans les fichiers modèles
 - Ajouté la règle T032 pour [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
 - Ajouté la règle H033 pour [#124](https://github.com/Riverside-Healthcare/djLint/issues/124)
 - Modification des profils des liners pour qu'ils soient inclusifs et non exclusifs pour [#178](https://github.com/Riverside-Healthcare/djLint/issues/178)
-- Ajout d'une option alternative pour le fichier de configuration ``.djlintrc``.  pour [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
+- Ajout d'une option alternative pour le fichier de configuration `.djlintrc`. pour [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
   :::
 
 ## 0.7.4

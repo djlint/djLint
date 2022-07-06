@@ -13,5 +13,5 @@ module.exports = [
     label: 'Français',
     code: 'fr',
     url: 'fr',
-  }
+  },
 ];

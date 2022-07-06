@@ -11,24 +11,32 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 Changelog is now included in the [release](https://github.com/Riverside-Healthcare/djLint/releases).
 
 <!--## {{ "next_release" i18n }}-->
+
 ## 1.0.2
+
 ::: content
+
 - Bug fixes [#240](https://github.com/Riverside-Healthcare/djLint/issues/240)
   :::
 
 ## 1.0.1
+
 ::: content
+
 - Bug fixes [#236](https://github.com/Riverside-Healthcare/djLint/issues/236)
   :::
 
 ## 1.0.0
+
 ::: content
+
 - Bug fixes [#224](https://github.com/Riverside-Healthcare/djLint/issues/224)
   :::
 
 ## 0.7.6
 
 ::: content
+
 - Bug fixes [#189](https://github.com/Riverside-Healthcare/djLint/issues/189), [#197](https://github.com/Riverside-Healthcare/djLint/issues/189)
 - Added `--warn` flag to return return errors as warnings.
   :::
@@ -38,11 +46,11 @@ Changelog is now included in the [release](https://github.com/Riverside-Healthca
 ::: content
 
 - Bug fixes [#187](https://github.com/Riverside-Healthcare/djLint/issues/187)
-- Added better support for ``yaml`` front matter in template files
+- Added better support for `yaml` front matter in template files
 - Added rule T032 for [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
 - Added rule H033 for [#124](https://github.com/Riverside-Healthcare/djLint/issues/124)
 - Changed linter profiles to be inclusive vs exclusive for [#178](https://github.com/Riverside-Healthcare/djLint/issues/178)
-- Added alternate config file option ``.djlintrc`` for [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
+- Added alternate config file option `.djlintrc` for [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
   :::
 
 ## 0.7.4
