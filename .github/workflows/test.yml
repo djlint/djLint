@@ -55,7 +55,7 @@ jobs:
         xcode-version: latest-stable
     - name: install xcode cli tools
       if: ${{ matrix.os == 'macos-latest' }}
-      run: xcode-select --install
+      run: xcode-select --reset
     - name: checkout
       uses: actions/checkout@v3
     - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
