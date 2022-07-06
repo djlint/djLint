@@ -41,8 +41,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      #  remove macos, can't get xcode working yet for installing regex
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest,  windows-latest]
         python-version: [3.7, 3.8, 3.9, '3.10']
         node: [ 12, 14, 16 ]
       fail-fast: true
