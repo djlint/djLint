@@ -38,7 +38,6 @@ djlint . --reformat
    "djLint n'est pas un analyseur html ou un validateur de syntaxe."
 %}
 
-
 ## Voici un exemple !
 
 ### Avant

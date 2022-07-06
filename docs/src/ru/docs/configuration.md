@@ -12,7 +12,8 @@ keywords: облицовка шаблонов, форматер шаблонов
 [tool.djlint]
 <config options>
 ```
-Формат для ``.djlintrc`` - ``json``.
+
+Формат для `.djlintrc` - `json`.
 
 ```json
 {
@@ -179,6 +180,7 @@ blank_line_after_tag="load,extends,include"
   "blank_line_after_tag": "load,extends,include"
 }
 ```
+
 ## profile
 
 Установите профиль для языка шаблона. Профиль будет включать правила линтера, применимые к языку шаблонов, а также может изменять переформатирование. Например, в `handlebars` нет пробелов внутри тегов {% raw %}`{{#if}}`{% endraw %}.
@@ -325,7 +327,8 @@ format_attribute_template_tags=true
 
 ```html
 {% raw %}
-<input class="{% if this %}
+<input
+  class="{% if this %}
                   then something neat
               {% else %}
                   that is long stuff asdf and more even
@@ -340,12 +343,13 @@ format_attribute_template_tags=true
 
 Необязательные переменные:
 ::: content
+
 - `{filename}`
 - `{line}`
 - `{code}`
 - `{message}`
 - `{match}`
-:::
+  :::
 
 Использование:
 
@@ -388,7 +392,6 @@ preserve_leading_space=true
   "preserve_leading_space": true
 }
 ```
-
 
 ## preserve_blank_lines
 

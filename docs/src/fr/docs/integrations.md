@@ -30,7 +30,6 @@ Le repo fournit de multiples hooks pré-configurés pour des profils djLint spé
 
 Notez que ces hooks prédéfinis sont parfois trop conservateurs dans les entrées qu'ils acceptent (vos templates peuvent utiliser une extension différente) donc pre-commit vous permet explicitement de remplacer n'importe laquelle de ces options prédéfinies. Consultez la [docs pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) pour une configuration supplémentaire.
 
-
 ### Exemple de Django par défaut
 
 ```yaml
@@ -73,21 +72,21 @@ Assurez-vous que djLint est installé dans votre python global, ou sur votre `PA
 
 - [Page du marché](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
 - [GitHub dépôt](https://github.com/monosans/djlint-vscode)
-   :::
+  :::
 
 ## neovim
 
-djLint peut être utilisé comme formateur dans neovim en utilisant le plugin ``null-ls``.
+djLint peut être utilisé comme formateur dans neovim en utilisant le plugin `null-ls`.
 
 ::: content
 
 - [GitHub dépôt](https://github.com/jose-elias-alvarez/null-ls.nvim/)
 - [Exemple de configuration](https://github.com/shaeinst/roshnivim/blob/5d991fcfa1b8f865f9653a98c6d97a829d4a2add/lua/plugins/null-ls_nvim.lua#L84-L91)
-   :::
+  :::
 
 ## coc.nvim
 
 ::: content
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
-   :::
+  :::

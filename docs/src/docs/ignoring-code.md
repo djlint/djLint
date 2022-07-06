@@ -50,25 +50,26 @@ or as a golang style comment -
 Specific linter rules can also be ignored by adding the rule name into the ignored block opening tag.
 
 {% raw %}
+
 ```html
 {# djlint:off H025,H026 #}
 <p>
-{# djlint:on #}
+  {# djlint:on #}
 
-<!-- djlint:off H025-->
-<p>
-<!-- djlint:on -->
+  <!-- djlint:off H025-->
+</p>
 
-{% comment %} djlint:off H025 {% endcomment %}
 <p>
-{% comment %} djlint:on {% endcomment %}
+  <!-- djlint:on -->
 
-{{!-- djlint:off H025 --}}
-<p>
-{{!-- djlint:on --}}
+  {% comment %} djlint:off H025 {% endcomment %}
+</p>
 
-{{ /* djlint:off H025 */ }}
-<p>
-{{ /* djlint:on */ }}
+<p>{% comment %} djlint:on {% endcomment %} {{!-- djlint:off H025 --}}</p>
+
+<p>{{!-- djlint:on --}} {{ /* djlint:off H025 */ }}</p>
+
+<p>{{ /* djlint:on */ }}</p>
 ```
+
 {% endraw %}

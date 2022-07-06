@@ -8,13 +8,14 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 Configuration is done either through your projects `pyproject.toml` file, or a `.djlintrc` file. Command line args will always override any settings in `pyproject.toml`.
 
-The format for ``pyproject.toml`` is ``toml``.
+The format for `pyproject.toml` is `toml`.
 
 ```ini
 [tool.djlint]
 <config options>
 ```
-The format for ``.djlintrc`` is ``json``.
+
+The format for `.djlintrc` is `json`.
 
 ```json
 {
@@ -329,7 +330,8 @@ For example, with this option enabled, the following html will be acceptable:
 
 ```html
 {% raw %}
-<input class="{% if this %}
+<input
+  class="{% if this %}
                   then something neat
               {% else %}
                   that is long stuff asdf and more even
@@ -344,12 +346,13 @@ Customize order of output message. Default="{code} {line} {message} {match}". If
 
 Optional variables:
 ::: content
+
 - `{filename}`
 - `{line}`
 - `{code}`
 - `{message}`
 - `{match}`
-:::
+  :::
 
 Usage:
 

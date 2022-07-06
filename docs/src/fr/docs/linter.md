@@ -8,7 +8,6 @@ keywords: template linter, template formatter, djLint, HTML, modèles, formatter
 
 djLint inclut de nombreuses règles pour vérifier le style et la validité de vos modèles. Profitez pleinement du linter en le configurant pour utiliser un profil prédéfini pour la langue du modèle de votre choix.
 
-
 ```bash
 djlint /path/to/templates --lint
 
@@ -23,7 +22,6 @@ djlint /path/to/this.html.j2  --profile=jinja
     <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/fr/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
 </div>
 
-
 ## Règles personnalisées
 
 Créez un fichier `.djlint_rules.yaml` à côté de votre `pyproject.toml`. Des règles peuvent être ajoutées à ce fichier et djLint les reprendra.
@@ -31,11 +29,11 @@ Créez un fichier `.djlint_rules.yaml` à côté de votre `pyproject.toml`. Des 
 Une bonne règle suit ce modèle :
 
 ```yaml
-- règle :
-    name : T001
-    message : Trouver la Trichotillomanie
-    indicateurs : re.DOTALL|re.I
-    modèles :
+- règle:
+    name: T001
+    message: Trouver la Trichotillomanie
+    indicateurs: re.DOTALL|re.I
+    modèles:
       - Trichotillomanie
 ```
 
@@ -78,7 +76,6 @@ Une bonne règle suit ce modèle :
 | H031 | Pensez à ajouter des méta keywords.                                                                                       |
 | T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            |
 | H033 | Espace supplémentaire dans l'action du formulaire.                                                                        |
-
 
 ### Ajout de règles
 

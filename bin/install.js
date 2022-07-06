@@ -1,17 +1,21 @@
-const {spawn} = require('child_process');
-var dataToSend;
-const python = spawn('python3', ['-m', 'pip', 'install', '--upgrade','--quiet', '-r', '../requirements.txt'], {"cwd": "./src"});
+const { PythonShell } = require('python-shell');
 
+PythonShell.defaultOptions = {};
+const options = {
+  mode: 'text',
+  args: ['pip', 'install', 'djlint'],
+  pythonOptions: ['-u'],
+  env: { PYCHARM_HOSTED: 1 },
+};
 
-python.stdout.on('data', function (data) {
-    dataToSend += data.toString();
-});
+try {
+  PythonShell.getVersionSync();
 
-python.stderr.on('data', function (data) {
-    dataToSend += data.toString();
-});
-
-python.on('close', (code) => {
-    process.stdout.write(dataToSend.replace("undefined",""))
-    process.exit(code)
-});
+  PythonShell.run('-m', options, function (error, results) {
+    if (error) throw error;
+    console.log(results.join('\n'));
+  });
+} catch (e) {
+  console.log(e.message);
+  process.exit(1);
+}

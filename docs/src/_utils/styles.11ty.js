@@ -1,9 +1,10 @@
-const util = require('util');
-const sass = require('sass'); // `npm i -D sass`
-const renderSass = util.promisify(sass.render);
+const { promisify } = require('util');
+const sass = require('sass');
+// `npm i -D sass`
+const renderSass = promisify(sass.render);
 const purgecss = require('@fullhuman/postcss-purgecss');
 const postcss = require('postcss');
-const generateContentHash = require('../lib/generateContentHash');
+const generateContentHash = require('../lib/generate-content-hash.js');
 
 module.exports = class {
   async data() {
@@ -20,7 +21,7 @@ module.exports = class {
       file: 'src/static/css/site.scss',
     });
 
-    return await postcss([
+    return postcss([
       require('postcss-nested'),
       purgecss({
         content: ['./src/**/*.njk', './src/**/*.md', './src/**/*.js'],

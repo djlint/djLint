@@ -1,6 +1,6 @@
 const esbuild = require('esbuild');
+const generateContentHash = require('../lib/generate-content-hash.js');
 
-const generateContentHash = require('../lib/generateContentHash');
 module.exports = class {
   data() {
     return {
