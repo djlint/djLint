@@ -66,6 +66,6 @@ jobs:
     - name: test run help
       run: node ./bin/index.js -h
     - name: test run lint
-      run: echo "<div></div>" | node ./bin/index.js
+      run: echo "<div>a</div>" | node ./bin/index.js
     - name: test run check
       run: echo "<div>" | node ./bin/index.js --check
