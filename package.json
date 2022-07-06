@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "HTML Template Linter and Formatter",
   "main": "./bin/index.js",
   "directories": {
@@ -79,21 +79,21 @@
     ]
   },
   "xo": {
-        "space": true,
-        "prettier": true,
-        "rules": {
-            "unicorn/prefer-module": "off",
-            "no-var": "warn",
-            "camelcase": "warn",
-            "unicorn/filename-case":"warn",
-            "unicorn/no-process-exit":"off"
-        },
-        "globals": [
-            "document",
-            "window",
-            "data",
-            "debounce",
-            "history"
-        ]
-    }
+    "space": true,
+    "prettier": true,
+    "rules": {
+      "unicorn/prefer-module": "off",
+      "no-var": "warn",
+      "camelcase": "warn",
+      "unicorn/filename-case": "warn",
+      "unicorn/no-process-exit": "off"
+    },
+    "globals": [
+      "document",
+      "window",
+      "data",
+      "debounce",
+      "history"
+    ]
+  }
 }
