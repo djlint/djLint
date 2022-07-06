@@ -48,11 +48,14 @@ jobs:
       fail-fast: true
 
     steps:
-    - name: install xcode-select
+    - name: install xcode
       if: ${{ matrix.os == 'macos-latest' }}
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest-stable
+    - name: install xcode cli tools
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: xcode-select --install
     - name: checkout
       uses: actions/checkout@v3
     - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
