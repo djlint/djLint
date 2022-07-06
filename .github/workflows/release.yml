@@ -38,6 +38,7 @@ jobs:
           @semantic-release/git@10
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: Build and publish package
       if: steps.semantic.outputs.new_release_published == 'true'
