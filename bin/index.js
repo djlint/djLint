@@ -8,11 +8,7 @@ PythonShell.defaultOptions = {
 };
 
 function clean(output) {
-  if (typeof output === 'string' || output instanceof String)
-  {
-    return output.replaceAll('python -m ', '');
-  }
-  return output;
+  return output.replace(/python -m /g, '');
 }
 
 const yargs = require('yargs');
