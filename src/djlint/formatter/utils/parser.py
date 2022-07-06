@@ -1,7 +1,10 @@
-from HtmlTemplateParser import Htp
-from typing import Dict, List, Optional, Tuple
-from . import Tag
 import re
+from typing import Dict, List, Optional, Tuple
+
+from HtmlTemplateParser import Htp
+
+from .tag import Tag
+
 
 class TemplateParser(Htp):
     def __init__(self, config):
@@ -36,39 +39,48 @@ class TemplateParser(Htp):
 
     def current_indent(self) -> str:
         indent = ""
-        spacing =self.indent * self.level
+        spacing = self.indent * self.level
 
         if self.tag.type in self.open_types:
             if (
                 not self.tag.is_indentation_sensitive
                 and not self.tag.is_space_sensitive
                 and not (self.tag.parent and self.tag.parent.is_space_sensitive)
-                or self.tag.parent and self.tag.parent.is_hidden
+                or self.tag.parent
+                and self.tag.parent.is_hidden
             ):
-                if (self.tag.data is None  and self.output
-                and self.output[-1] != "\n"):
+                if self.tag.data is None and self.output and self.output[-1] != "\n":
                     return "\n" + spacing
 
                 return spacing
 
-            elif (self.tag.data is None and self.last_sibling and self.last_sibling.data is None
+            elif (
+                self.tag.data is None
+                and self.last_sibling
+                and self.last_sibling.data is None
                 and not self.tag.is_indentation_sensitive
                 and self.output
                 and self.output[-1] != "\n"
-                and not(self.tag.parent and  self.tag.parent.type == "open" and self.tag.parent.is_space_sensitive)
-                ):
+                and not (
+                    self.tag.parent
+                    and self.tag.parent.type == "open"
+                    and self.tag.parent.is_space_sensitive
+                )
+            ):
                 return "\n" + spacing
+            elif not self.tag.is_indentation_sensitive and self.tag.data is not None:
+
+                return ""
             elif (
-                not self.tag.is_indentation_sensitive
-                and self.tag.data is not None
-                ):
+                self.output
+                and self.output[-1] != "\n"
+                and (self.tag.data and len(self.tag.data) > 0)
+            ):
 
                 return ""
-            elif (self.output and self.output[-1] != "\n" and
-                 (self.tag.data and len(self.tag.data) > 0)):
-
-                return ""
-            elif self.tag.is_hidden and not (self.tag.parent and self.tag.parent.is_space_sensitive):
+            elif self.tag.is_hidden and not (
+                self.tag.parent and self.tag.parent.is_space_sensitive
+            ):
                 if self.output and self.output[-1] == "\n":
                     return spacing
                 else:
@@ -78,20 +90,27 @@ class TemplateParser(Htp):
             return ""
         elif self.tag.type in self.close_types:
 
-            if not (self.tag.parent and  self.tag.parent.type in self.open_types and self.tag.parent.is_space_sensitive) :
+            if not (
+                self.tag.parent
+                and self.tag.parent.type in self.open_types
+                and self.tag.parent.is_space_sensitive
+            ):
 
                 if self.output and self.output[-1] == "\n":
 
                     return spacing
 
                 # do not add empty space to empty tags
-                elif (self.tag.name == self.last_sibling.name and self.tag.type != self.last_sibling.type
-                    and self.last_parent.data is None):
+                elif (
+                    self.tag.name == self.last_sibling.name
+                    and self.tag.type != self.last_sibling.type
+                    and self.last_parent.data is None
+                ):
 
                     return ""
                 else:
                     return "\n" + spacing
-            elif not ( self.tag.parent.type in self.open_types):
+            elif not (self.tag.parent.type in self.open_types):
 
                 return spacing
             else:
@@ -107,7 +126,7 @@ class TemplateParser(Htp):
 
         return ""
 
-    def get_open_parent(self,tag: Tag) -> Optional[Tag]:
+    def get_open_parent(self, tag: Tag) -> Optional[Tag]:
         while tag and tag.parent:
             if tag.parent.type in self.open_types:
                 return tag.parent
@@ -130,7 +149,6 @@ class TemplateParser(Htp):
 
         If the tag is not void, update last parent.
         """
-
         if self.tag.type == "open":
             self.last_sibling = self.tag
 
@@ -144,8 +162,6 @@ class TemplateParser(Htp):
 
         self.tree.handle_starttag(self.tag)
 
-
-
     # def handle_tempstatestarttag(self, tag, attrs):
     #     attribs = " " + (" ").join(attrs) + "" if attrs else ""
     #     if tag in self.indent_temp_tags:
@@ -155,13 +171,24 @@ class TemplateParser(Htp):
     #         self.level += 1
 
     def handle_starttag_curly_perc(self, tag, attrs, props):
+
         self.last_sibling = self.tag
-        self.tag = Tag(tag,self.config,parent=self.last_parent, attributes=attrs,properties=props)
+        self.tag = Tag(
+            tag,
+            self.config,
+            parent=self.last_parent,
+            attributes=attrs,
+            properties=props,
+        )
+
         self.tag.type = "starttag_curly_perc"
-        self.output += self.current_indent()
-        self.level += 1
-        self.output += self.tag.open_tag
-        self.last_parent = self.tag
+
+        self.tree.handle_starttag(self.tag)
+       # self.output += self.current_indent()
+       # self.level += 1
+       # self.output += self.tag.open_tag
+       # self.last_parent = self.tag
+
 
     def handle_starttag_curly_hash(self, tag, attrs):
         print("starttag_curly_hash", tag, attrs)
@@ -173,8 +200,14 @@ class TemplateParser(Htp):
 
         last_tag = self.tag
 
-        self.tag = Tag(tag,self.config,parent=self.last_parent,attributes=attrs,properties=props)
-        self.tag.type ="endtag_curly_perc"
+        self.tag = Tag(
+            tag,
+            self.config,
+            parent=self.last_parent,
+            attributes=attrs,
+            properties=props,
+        )
+        self.tag.type = "endtag_curly_perc"
         self.level -= 1
         self.output += self.current_indent()
         self.output += self.tag.close_tag
@@ -183,10 +216,8 @@ class TemplateParser(Htp):
         # if (self.tag.name == self.last_sibling.name and self.tag.type != self.last_sibling.type
         #     and self.last_parent.data is None):
 
-
         self.last_sibling = self.tag
         self.last_parent = self.get_open_parent(self.tag.parent)
-
 
     def handle_endtag_curly_hash(self, tag):
         print("endtag_curly_hash", tag)
@@ -249,74 +280,65 @@ class TemplateParser(Htp):
             # void tags are handled in the open tag block.
             return
 
-
-
     def handle_curly(self, data, attrs):
 
         # curly handles as data. build the tag and pass it to the
         # data processor.
-        tag = Tag(data,self.config,attributes=attrs)
+        tag = Tag(data, self.config, attributes=attrs)
         tag.type = "curly"
 
         self.handle_data(tag.statement_tag)
 
     def handle_data(self, data: str) -> None:
+        self.tag.data.append(data.strip())
+        print(data.strip())
+        # if self.ignored_level > 0:
 
-        if self.ignored_level > 0:
+        #     self.output += data
 
-            self.output += data
+        # elif self.tag.parent and self.tag.parent.is_space_sensitive:
 
-        elif self.tag.parent and self.tag.parent.is_space_sensitive:
+        #     # long text can be wrapped to meet line length
+        #     data = re.sub(r"\s+", " ", data)
+        #     data_split = data.split(" ")
+        #     cleaned_data = ""
+        #     for x, chunck in enumerate(data_split, 1):
 
-            # long text can be wrapped to meet line length
-            data = re.sub(r"\s+", " ", data)
-            data_split = data.split(" ")
-            cleaned_data = ""
-            for x, chunck in enumerate(data_split, 1):
+        #         cleaned_data += chunck
+        #         if x == len(data_split):
 
-                cleaned_data += chunck
-                if x == len(data_split):
+        #             continue
+        #         if len(cleaned_data.split("\n")[-1]) < self.config.max_line_length:
+        #             cleaned_data += " "
+        #         else:
+        #             cleaned_data += "\n" + self.current_indent()
 
-                    continue
-                if len(cleaned_data.split("\n")[-1]) < self.config.max_line_length:
-                    cleaned_data += " "
-                else:
-                    cleaned_data += "\n" + self.current_indent()
+        #     if re.search(r"\s$", cleaned_data, flags=re.M):
+        #         cleaned_data = cleaned_data[:-1] + "\n"
 
-            if re.search(r"\s$", cleaned_data, flags=re.M):
-                cleaned_data = cleaned_data[:-1] + "\n"
+        #     self.tag.data = cleaned_data
+        #     self.output += cleaned_data
 
-            self.tag.data = cleaned_data
-            self.output += cleaned_data
+        # elif self.tag.parent and self.tag.parent.is_indentation_sensitive:
 
-        elif self.tag.parent and self.tag.parent.is_indentation_sensitive:
+        #     data = re.sub(r"\s+", " ", data)
+        #     self.tag.data = data
+        #     self.output += data
 
-            data = re.sub(r"\s+", " ", data)
-            self.tag.data = data
-            self.output += data
-
-        elif data.strip() != "":
-            # for example, "." following "</a>"
-            if self.tag.is_void:
-                data = re.sub(r"\s+", " ", data).lstrip()
-                self.output += self.current_indent() + data.rstrip() + "\n"
-            elif self.tag.is_space_sensitive:
-                data = re.sub(r"\s+", " ", data)
-                self.output += data.rstrip() + "\n"
-            elif self.tag.data is None:
-                self.tag.data = (
-                    "\n" + self.current_indent() + data.strip()
-                )
-                self.output += (
-                    "\n" + self.current_indent() + data.strip()
-                )
-            else:
-                self.tag.data = (
-                    " " + data.strip()
-                )
-                self.output += (
-                    " " + data.strip()
-                )
+        # elif data.strip() != "":
+        #     # for example, "." following "</a>"
+        #     if self.tag.is_void:
+        #         data = re.sub(r"\s+", " ", data).lstrip()
+        #         self.output += self.current_indent() + data.rstrip() + "\n"
+        #     elif self.tag.is_space_sensitive:
+        #         data = re.sub(r"\s+", " ", data)
+        #         self.output += data.rstrip() + "\n"
+        #     elif self.tag.data is None:
+        #         self.tag.data = "\n" + self.current_indent() + data.strip()
+        #         self.output += "\n" + self.current_indent() + data.strip()
+        #     else:
+        #         self.tag.data = " " + data.strip()
+        #         self.output += " " + data.strip()
         # else:
         # print("skipped data")
         # if self.ignored_level > 0 or self.inline_level > 0 and data.strip() != "":

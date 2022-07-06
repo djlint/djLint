@@ -78,6 +78,22 @@ tomli = {version = "*", optional = true, markers = "extra == \"toml\""}
 toml = ["tomli"]
 
 [[package]]
+name = "html-element-attributes"
+version = "0.1.2"
+description = "List of known HTML tag attributes"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[[package]]
+name = "html-styles"
+version = "0.1.2"
+description = "List of HTML tag default styles."
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[[package]]
 name = "html-tag-names"
 version = "0.1.2"
 description = "List of known HTML tag names"
@@ -325,7 +341,7 @@ test = ["coverage", "pytest", "pytest-cov"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7,<4.0"
-content-hash = "adc482ed1503b0550ad53d94df7007222e772c927770ac00af31678deb7bfd74"
+content-hash = "8e8775d36a40427f76d9dd5fe6ef68f64e1a51434c5231462121b532eb6ab5e3"
 
 [metadata.files]
 atomicwrites = [
@@ -411,6 +427,14 @@ coverage = [
     {file = "coverage-6.3.3-cp39-cp39-win_amd64.whl", hash = "sha256:9c9441d57b0963cf8340268ad62fc83de61f1613034b79c2b1053046af0c5284"},
     {file = "coverage-6.3.3-pp36.pp37.pp38-none-any.whl", hash = "sha256:d522f1dc49127eab0bfbba4e90fa068ecff0899bbf61bf4065c790ddd6c177fe"},
     {file = "coverage-6.3.3.tar.gz", hash = "sha256:2781c43bffbbec2b8867376d4d61916f5e9c4cc168232528562a61d1b4b01879"},
+]
+html-element-attributes = [
+    {file = "html-element-attributes-0.1.2.tar.gz", hash = "sha256:e487c945d9ab82d79656143c8f326273df3c812350fa5317dfe440715a35b8e4"},
+    {file = "html_element_attributes-0.1.2-py3-none-any.whl", hash = "sha256:45f84b0f241bf374150f35d6e49d4c91f3615b8862145342178e4cdfcc9cda69"},
+]
+html-styles = [
+    {file = "html-styles-0.1.2.tar.gz", hash = "sha256:c5a4a1b40210bbb1df44d701e526cad40f009a4c84f0c4884ce19616d56e9d80"},
+    {file = "html_styles-0.1.2-py3-none-any.whl", hash = "sha256:f67efb5155629a909ee4440ded03592abcfc582ac1ed221cc944989fbd0b5a68"},
 ]
 html-tag-names = [
     {file = "html-tag-names-0.1.2.tar.gz", hash = "sha256:04924aca48770f36b5a41c27e4d917062507be05118acb0ba869c97389084297"},

@@ -2,8 +2,7 @@ import re
 from typing import Dict, List, Optional, Tuple
 
 from ..settings import Config
-
-from .utils import Tag, TreeBuilder, TemplateParser
+from .utils import Tag, TemplateParser, TreeBuilder
 
 """
 options needed > no
@@ -42,14 +41,12 @@ def indent_html(rawcode: str, config: Config):
 
         return bool(re.search(r"[ ]*$", html, re.M))
 
-
     p = TreeBuilder(config, rawcode)
 
+    # p = TemplateParser(config)
 
-    #p = TemplateParser(config)
-
-    #p.feed(rawcode)
-    #output = p.close()
+    # p.feed(rawcode)
+    # output = p.close()
     output = p.format()
 
     output = front_matter + output

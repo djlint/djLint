@@ -44,6 +44,8 @@ importlib-metadata = "^4.11.0"
 html-void-elements = "^0.1.0"
 html-tag-names = "^0.1.2"
 html-template-parser = "^1.0.0"
+html-element-attributes = "^0.1.2"
+html-styles = "^0.1.2"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

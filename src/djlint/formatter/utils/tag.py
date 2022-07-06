@@ -48,10 +48,11 @@ class Tag:
                 }.items()
             ),
         )
-        self.data: Optional[str] = None
+        self.data: List[str] = []
         self.type: Optional[str] = None
         self._is_html = False
         self.parent = parent
+        self.config = config
         self.previous_tag = None
         self.next_tag = None
         self.rawname = tag
@@ -63,7 +64,7 @@ class Tag:
         self.is_pre = self.__tag_is_pre(self.name)
         self.raw_attributes = attributes
         self.raw_properties = properties
-        self.is_void = self.name in html_void_elements
+        self.is_void = self.name in html_void_elements + ["extends", "load", "include"]
 
     def __str__(self) -> str:
         return self.name
@@ -172,7 +173,9 @@ class Tag:
     @property
     def is_hidden(self) -> bool:
         if self._is_html:
-            return self.__css_display.get(self.name, self.__css_default_display) == "none"
+            return (
+                self.__css_display.get(self.name, self.__css_default_display) == "none"
+            )
         return False
 
     @property
@@ -183,9 +186,9 @@ class Tag:
 
     def __tag_is_pre(self, tag: str) -> bool:
         if self._is_html:
-            return self.__css_whitespace.get(tag, self.__css_default_whitespace).startswith(
-                "pre"
-            )
+            return self.__css_whitespace.get(
+                tag, self.__css_default_whitespace
+            ).startswith("pre")
         return False
 
     @property
@@ -251,29 +254,39 @@ class Tag:
 
             return " " + (" ").join(attribs) if len(attribs) > 0 else ""
 
+    def current_indent(self, level):
+        return level * self.config.indent
 
-    def current_indent(self):
-        return ""
     def format(self, level=0):
+
         if not self.hidden:
 
             if self.type in ["open", "void"]:
                 if self.is_space_sensitive:
-                    self.output += self.current_indent() + self.open_tag
+                    self.output += self.current_indent(level) + self.open_tag
 
                 elif self.is_indentation_sensitive:
-                    self.output += self.current_indent() + self.open_tag
+                    self.output += self.current_indent(level) + self.open_tag
 
                 elif self.is_script:
-                    self.output += self.current_indent() + self.open_tag
-                    #self.ignored_level += 1
+                    self.output += self.current_indent(level) + self.open_tag
+                    # self.ignored_level += 1
 
                 else:
-                    self.output += self.current_indent() + self.open_tag
+                    self.output += self.current_indent(level) + self.open_tag
 
                 if not self.is_void:
                     level += 1
-            #self.last_sibling = self
+                    self.output += "\n"
+
+            if self.type == "starttag_curly_perc":
+                # print("here")
+                # print(self.open_tag)
+                self.output += self.current_indent(level) + self.open_tag
+
+            self.output += ''.join(self.data)
+#            if not self.tag.is_void:
+            # self.last_sibling = self
 
             # if self.last_parent is None:
             #     self.last_parent = self
@@ -288,10 +301,10 @@ class Tag:
             # print(self.output)
 
         self.output += self.format_contents(level)
-
-        self.output += self.current_indent()
-        #self.last_sibling = close_tag
-
+        if not self.is_void:
+            level -= 1
+        #self.output += self.current_indent()
+        # self.last_sibling = close_tag
 
         # if close_tag.is_script:
         #     self.last_parent = self.get_open_parent(close_tag)
@@ -300,18 +313,15 @@ class Tag:
 
         # if close_tag.is_script:
         #     self.ignored_level -= 1
-
-
-        self.output += self.close_tag
+        print(self.current_indent(level) + self.close_tag + "\n")
+        self.output += self.current_indent(level) + self.close_tag + "\n"
 
         return self.output
 
     def format_contents(self, level):
         s = []
         for child in self.children:
-            print(f"{self.name}'s child: {child.name}")
+            #print(f"{self.name}'s child: {child.name}")
             s.append(child.format(level))
 
         return "".join(s)
-
-

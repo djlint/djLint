@@ -5,9 +5,15 @@ A lot of inspiration coming from an older bs4 release.
 https://github.com/waylan/beautifulsoup/blob/480367ce8c8a4d1ada3012a95f0b5c2cce4cf497/bs4/__init__.py#L278
 https://github.com/waylan/beautifulsoup/blob/master/COPYING.txt
 
+All sections are a tag, even text blocks.
+
+While text continues, it is added to the same block.
+node type of text
+
 """
 from .parser import TemplateParser
 from .tag import Tag
+
 
 class TreeBuilder(Tag):
 
@@ -21,15 +27,14 @@ class TreeBuilder(Tag):
         self._feed()
 
     def _reset(self):
-        Tag.__init__(self,self.ROOT_TAG_NAME, self.config)
+        Tag.__init__(self, self.ROOT_TAG_NAME, self.config)
         self.hidden = 1
         self.parser.reset()
 
-        self.tagStack = [] # children of current tag
+        self.tagStack = []  # children of current tag
         self.current_tag = None
         self._most_recent_tag = None
         self.current_data = []
-
 
         self.pushTag(self)
 
@@ -48,7 +53,7 @@ class TreeBuilder(Tag):
 
     def handle_starttag(self, tag):
         self.endData()
-        #print("start")
+        # print("start")
         tag.parent = self.current_tag
         tag.previous_tag = self._most_recent_tag
         if self._most_recent_tag:
@@ -62,7 +67,7 @@ class TreeBuilder(Tag):
 
     def popTag(self):
         tag = self.tagStack.pop()
-        #print("pop: ", tag.name)
+        # print("pop: ", tag.name)
 
         if self.tagStack:
             self.current_tag = self.tagStack[-1]
@@ -87,7 +92,9 @@ class TreeBuilder(Tag):
 
         for i in range(stack_size - 1, 0, -1):
             t = self.tagStack[i]
-            if (name == t.name and namespace == t.namespace): # and t.type = type... curly=curly, html=html etc
+            if (
+                name == t.name and namespace == t.namespace
+            ):  # and t.type = type... curly=curly, html=html etc
                 if inclusivePop:
                     last_pop = self.popTag()
                 break
@@ -99,6 +106,6 @@ class TreeBuilder(Tag):
         self.endData()
         self._popToTag(tag.name, tag.namespace)
 
-
-    def handle_data(self):
+    def handle_data(self, data):
         print("data")
+        self.data.append(data)

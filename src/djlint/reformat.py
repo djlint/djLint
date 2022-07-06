@@ -37,7 +37,6 @@ import difflib
 from pathlib import Path
 
 from .formatter.indent import indent_html
-
 from .settings import Config
 
 
@@ -48,7 +47,7 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     indented = indent_html(rawcode, config)
     # indented = condense_html(indented, config)
 
-    beautified_code = indented + "\n"
+    beautified_code = indented #+ "\n"
 
     if config.check is not True:
         # update the file
