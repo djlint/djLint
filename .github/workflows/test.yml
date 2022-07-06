@@ -37,7 +37,7 @@ jobs:
         verbose: true
 
   test_npm:
-    name: python ${{ matrix.python-version }} on ${{ matrix.os }} with node ${{ matrix.node }}
+    name: node ${{ matrix.node }} with python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
