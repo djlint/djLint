@@ -17,14 +17,14 @@
    <a href="https://codecov.io/gh/Riverside-Healthcare/djlint">
      <img src="https://codecov.io/gh/Riverside-Healthcare/djlint/branch/master/graph/badge.svg?token=eNTG721BAA" alt="Codecov Status">
    </a>
-   <a href="https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml">
-     <img src="https://github.com/Riverside-Healthcare/djlint/actions/workflows/test.yml/badge.svg" alt="Test Status">
-   </a>
    <a href="https://www.codacy.com/gh/Riverside-Healthcare/djlint/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Riverside-Healthcare/djlint&amp;utm_campaign=Badge_Grade">
      <img src="https://app.codacy.com/project/badge/Grade/dba6338b0e7a4de896b45b382574f369" alt="Codacy Status">
    </a>
    <a href="https://pepy.tech/project/djlint">
      <img src="https://pepy.tech/badge/djlint" alt="Downloads">
+   </a>
+   <a href="https://www.npmjs.com/package/djlint">
+       <img alt="npm" src="https://img.shields.io/npm/dt/djlint?label=npm%20downloads">
    </a>
    <a href="https://pypi.org/project/djlint/">
      <img src="https://img.shields.io/pypi/v/djlint" alt="Pypi Download">
