@@ -9,6 +9,15 @@ from colorama import Fore, Style
 
 from .settings import Config
 
+try:
+    # this is used for windows + gitbash to set encoding correctly.
+    import sys
+
+    sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+# pylint:disable=W0703
+except BaseException:
+    pass
+
 
 def print_output(
     config: Config, file_errors: List[Dict[Any, Any]], file_count: int
