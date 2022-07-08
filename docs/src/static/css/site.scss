@@ -30,6 +30,10 @@ pre .tag {
   padding-right: unset;
   white-space: unset;
 }
+pre .section {
+  padding: unset;
+}
+
 @import '../../../node_modules/prismjs/themes/prism';
 
 @include fontFace(

@@ -54,10 +54,20 @@ def lint_file(config: Config, this_file: Path) -> Dict:
         for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)
     ]
 
+    ignored_rules: List[str] = []
+
+    # remove ignored rules for file
+    for pattern, rules in config.per_file_ignores.items():
+        if re.search(pattern, this_file.as_posix(), re.VERBOSE):
+            ignored_rules += [x.strip() for x in rules.split(",")]
+
     for rule in config.linter_rules:
         rule = rule["rule"]
 
         for pattern in rule["patterns"]:
+            # skip ignored rules
+            if rule["name"] in ignored_rules:
+                continue
 
             # rule H025 is a special case where the output must be an even number.
             if rule["name"] == "H025":

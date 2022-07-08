@@ -327,6 +327,8 @@ class Config:
                 x.strip() for x in extend_exclude.split(",")
             )
 
+        self.per_file_ignores = djlint_settings.get("per-file-ignores", {})
+
         # add blank line after load tags
         self.blank_line_after_tag: Optional[str] = djlint_settings.get(
             "blank_line_after_tag", None

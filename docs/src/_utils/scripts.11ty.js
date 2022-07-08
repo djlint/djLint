@@ -14,7 +14,11 @@ module.exports = class {
   async render() {
     await esbuild.build({
       entryPoints: ['src/static/js/hamburger.js'],
-      inject: ['./src/static/js/animate.js', './src/static/js/modal.js'],
+      inject: [
+        './src/static/js/animate.js',
+        './src/static/js/modal.js',
+        './src/static/js/tabs.js',
+      ],
       bundle: true,
       minify: true,
       outfile: `_site/static/js/${generateContentHash(
