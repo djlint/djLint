@@ -45,6 +45,8 @@ Options:
   --lint                Lint for common issues. [default option]
   --use-gitignore       Use .gitignore file to extend excludes.
   --warn                Return errors as warnings.
+  --preserve-leading-space  Attempt to preserve leading space on text.
+  --preserve-blank-lines    Attempt to preserve blank lines.
   -h, --help            Show this message and exit.
 ```
 
