@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -51,7 +51,7 @@
     "markdown-it-div": "1.1.0",
     "markdown-it-imsize": "2.0.1",
     "outdent": "0.8.0",
-    "postcss-cli": "9.1.0",
+    "postcss-cli": "10.0.0",
     "postcss-nested": "5.0.6",
     "prettier": "2.6.2",
     "prismjs": "1.28.0",
