@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter/test_linter.py::test_DJ018
+   pytest tests/test_linter/test_linter.py::test_T001
 
 """
 # pylint: disable=C0116,C0103
@@ -39,6 +39,15 @@ def test_T001(runner: CliRunner, tmp_file: TextIO) -> None:
 
     write_to_file(tmp_file.name, b"{%- test -%}")
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "nunjucks"])
+    assert result.exit_code == 0
+
+    # this test will pass, because the jinja comment is an ignored block
+    write_to_file(tmp_file.name, b"{#-test -#}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert result.exit_code == 0
+
+    write_to_file(tmp_file.name, b"{#- test -#}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
     assert result.exit_code == 0
 
 

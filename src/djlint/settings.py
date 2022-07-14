@@ -568,7 +568,7 @@ class Config:
             | {\#\s*djlint\:\s*off\s*\#}.*?(?={\#\s*djlint\:\s*on\s*\#})
             | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})
             # inline jinja comments
-            | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
+            # | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
             # handlebars
             | {{!--\s*djlint\:off\s*--}}.*?(?={{!--\s*djlint\:on\s*--}})
             # golang
