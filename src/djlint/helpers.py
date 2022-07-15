@@ -12,7 +12,11 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = list(
-        re.finditer(config.ignored_blocks, item, flags=re.IGNORECASE | re.VERBOSE)
+        re.finditer(
+            config.ignored_blocks,
+            item,
+            flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL,
+        )
     )
 
     if inline:
@@ -64,7 +68,7 @@ def is_safe_closing_tag(config: Config, item: str) -> bool:
         re.finditer(
             re.compile(
                 config.ignored_inline_blocks + r" | " + config.ignored_blocks,
-                flags=re.IGNORECASE | re.VERBOSE,
+                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL,
             ),
             item,
         )
@@ -88,7 +92,8 @@ def inside_ignored_block(config: Config, html: str, match: re.Match) -> bool:
         for ignored_match in list(
             re.finditer(
                 re.compile(
-                    config.ignored_blocks, re.DOTALL | re.IGNORECASE | re.VERBOSE
+                    config.ignored_blocks,
+                    re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL,
                 ),
                 html,
             )
