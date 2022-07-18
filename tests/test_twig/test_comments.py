@@ -30,3 +30,20 @@ def test_macro(runner: CliRunner, tmp_file: TextIO) -> None:
 """,
     )
     assert output.exit_code == 0
+
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div>
+    {#
+    multi
+    line
+    comment
+    #}
+</div>
+<div>
+    <p></p>
+</div>
+""",
+    )
+    assert output.exit_code == 0

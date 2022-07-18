@@ -33,9 +33,9 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
 
 
 def is_ignored_block_closing(config: Config, item: str) -> bool:
-    """Find ignored group opening.
+    """Find ignored group closing.
 
-    A valid ignored group opening tag will not be part of a
+    A valid ignored group closing tag will not be part of a
     single line block.
     """
     last_index = 0
