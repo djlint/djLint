@@ -112,7 +112,6 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                             }
                         )
             else:
-
                 for match in re.finditer(
                     re.compile(
                         pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))

@@ -18,8 +18,11 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     rawcode = this_file.read_text(encoding="utf8")
 
     compressed = compress_html(rawcode, config)
+
     expanded = expand_html(compressed, config)
+
     condensed = condense_html(expanded, config)
+
     indented = indent_html(condensed, config)
 
     beautified_code = indented

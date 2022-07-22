@@ -341,7 +341,8 @@ class Config:
             | <\?php
             | <script
             | <!--
-            | [^\{]{\#
+            | [^\{]{\#(?!\s*djlint\:\s*on)
+            | ^{\#(?!\s*djlint\:\s*on)
             | <pre
             | <textarea
             | {%[ ]*?blocktrans(?:late)?[^(?:%})]*?%}
@@ -357,7 +358,7 @@ class Config:
             | \?>
             | </script
             |  -->
-            # | \#}
+            | ^(?:(?!{\#).)*\#} # lines that have a #}, but not a {#
             | </pre
             | </textarea
             | {\#\s*djlint\:\s*on\s*\#}
