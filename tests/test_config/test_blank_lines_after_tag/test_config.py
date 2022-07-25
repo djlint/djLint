@@ -2,7 +2,7 @@
 
 run::
 
-   pytest tests/test_config.py --cov=src/djlint --cov-branch \
+   pytest tests/test_config/test_blank_lines_after_tag/test_config.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 for a single test, run::
@@ -92,5 +92,16 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint,
         ["tests/test_config/test_blank_lines_after_tag/html_seven.html", "--check"],
+    )
+    assert result.exit_code == 0
+
+    # check that multiple blank lines are not added
+    result = runner.invoke(
+        djlint,
+        [
+            "tests/test_config/test_blank_lines_after_tag/html_eight.html",
+            "--preserve-blank-lines",
+            "--check",
+        ],
     )
     assert result.exit_code == 0
