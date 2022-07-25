@@ -9,16 +9,13 @@
     ":npm",
     "npm:unpublishSafe"
   ],
-  "ignoreDeps": ["@fortawesome/fontawesome-free"],
-  "assignees": [
-    "christopherpickering"
-  ],
   "bumpVersion": "patch",
   "commitMessagePrefix": "chore(deps)",
   "labels": [
     "maintenance", 
     "renovate"
   ],
+  "baseBranches": ["dev"],
   "packageRules": [
     {
       "matchUpdateTypes": ["pin","digest"],
