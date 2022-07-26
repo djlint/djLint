@@ -51,5 +51,5 @@ def test_whitespace(runner: CliRunner) -> None:
             "--preserve-blank-lines",
         ],
     )
-    print(result.output)
+
     assert result.exit_code == 0
