@@ -23,6 +23,9 @@ def expand_html(html: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group(1)
 
+        if out_format == "\n%s" and match.start() == 0:
+            return match.group(1)
+
         return out_format % match.group(1)
 
     html_tags = config.break_html_tags
@@ -45,7 +48,7 @@ def expand_html(html: str, config: Config) -> str:
     # html tags - break after
     html = re.sub(
         re.compile(
-            rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?=[^\n])",
+            rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?!\s*?\n)(?=[^\n])",
             flags=re.IGNORECASE | re.VERBOSE,
         ),
         add_right,
@@ -54,7 +57,7 @@ def expand_html(html: str, config: Config) -> str:
 
     # template tag breaks
     def should_i_move_template_tag(out_format: str, match: re.Match) -> str:
-        # ensure template tag is not inside an html tag
+        # ensure template tag is not inside an html tag and also not the first line of the file
 
         if inside_ignored_block(config, html, match):
             return match.group(1)
@@ -68,13 +71,14 @@ def expand_html(html: str, config: Config) -> str:
             html[: match.end()],
             re.MULTILINE | re.VERBOSE,
         ):
+            if out_format == "\n%s" and match.start() == 0:
+                return match.group(1)
             return out_format % match.group(1)
 
         return match.group(1)
 
     # template tags
     # break before
-
     html = re.sub(
         re.compile(
             break_char
