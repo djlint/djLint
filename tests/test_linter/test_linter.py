@@ -593,6 +593,14 @@ def test_T027(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert "T027" not in result.output
 
+    # test mixed quotes
+    write_to_file(
+        tmp_file.name,
+        b"{% macro rendersubmit(buttons=[], class=\"\", index='', url='', that=\"\" , test='') -%}",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T027" not in result.output
+
 
 def test_T028(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<a href=\"{% blah 'asdf' -%}\">")
