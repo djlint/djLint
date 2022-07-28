@@ -13,9 +13,13 @@ def format_css(html: str, config: Config) -> str:
 
     def launch_formatter(config: Config, match: re.Match) -> str:
         """Add break after if not in ignored block."""
+        if not match.group(3).strip():
+            return match.group()
+
         indent = len(match.group(1)) * " "
         inner_indent = indent + config.indent
         opts = BeautifierOptions(config.css_config)
+
         beautified = (
             "\n"
             + inner_indent
@@ -30,7 +34,7 @@ def format_css(html: str, config: Config) -> str:
 
     return re.sub(
         re.compile(
-            r"([ ]*?)(<style\b.*?>)(.+?)(?=</style>)",
+            r"([ ]*?)(<(?:style)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</style>)",
             re.IGNORECASE | re.DOTALL,
         ),
         func,
