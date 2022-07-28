@@ -20,6 +20,9 @@ To format the code and update files run:
 
 ```bash
 djlint . --reformat
+
+# how about formatting scripts and styles?
+djlint . --reformat --format-css --format-js
 ```
 
 <div class="box notification is-info is-light">

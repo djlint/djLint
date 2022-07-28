@@ -193,6 +193,8 @@ class Config:
         warn: bool = False,
         preserve_leading_space: bool = False,
         preserve_blank_lines: bool = False,
+        format_css: bool = False,
+        format_js: bool = False,
     ):
 
         self.reformat = reformat
@@ -238,6 +240,13 @@ class Config:
         self.preserve_blank_lines: bool = preserve_blank_lines or djlint_settings.get(
             "preserve_blank_lines", False
         )
+
+        self.format_js: bool = format_js or djlint_settings.get("format_js", False)
+
+        self.js_config = djlint_settings.get("js")
+        self.css_config = djlint_settings.get("css")
+
+        self.format_css: bool = format_css or djlint_settings.get("format_css", False)
 
         # ignore is based on input and also profile
         self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))

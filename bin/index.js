@@ -127,6 +127,16 @@ function run(stdin) {
       describe: 'Use .gitignore file to extend excludes.',
       type: 'boolean',
       demandOption: false,
+    })
+    .option('format-css', {
+      describe: 'Also format contents of <style> tags.',
+      type: 'boolean',
+      demandOption: false,
+    })
+    .option('format-js', {
+      describe: 'Also format contents of <script> tags.',
+      type: 'boolean',
+      demandOption: false,
     }).argv;
 
   // Set flags
@@ -142,6 +152,8 @@ function run(stdin) {
   const use_gitignore = options['use-gitignore']
     ? '--use-gitignore'
     : undefined;
+  const format_css = options['format-css'] ? '--format-css' : undefined;
+  const format_js = options['format-js'] ? '--format-js' : undefined;
   const has_stdin = stdin === '' ? options._[0] : '-';
 
   // Set variables
@@ -164,6 +176,8 @@ function run(stdin) {
     indent,
     profile,
     ignore,
+    format_css,
+    format_js,
   ].filter((x) => {
     return x !== undefined;
   });
