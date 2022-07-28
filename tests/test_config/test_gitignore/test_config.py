@@ -11,7 +11,7 @@ for a single test, run::
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
-# pylint: disable=C0116,W0702
+# pylint: disable=C0116,W0702,W0703,C0103
 import os
 import shutil
 from pathlib import Path
@@ -59,11 +59,9 @@ def test_cli(runner: CliRunner) -> None:
     except BaseException as e:
         print("cleanup failed")
         print(e)
-        assert 2 == 1
 
-
-@pytest.mark.xdist_group(name="group1")
-def test_pyproject(runner: CliRunner) -> None:
+    # @pytest.mark.xdist_group(name="group1")
+    # def test_pyproject(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ["tests/test_config/test_gitignore/html_two.html", "--check"]
     )
@@ -117,11 +115,9 @@ def test_pyproject(runner: CliRunner) -> None:
     except BaseException as e:
         print("cleanup failed")
         print(e)
-        assert 2 == 1
 
-
-@pytest.mark.xdist_group(name="group1")
-def test_ignored_path(runner: CliRunner) -> None:
+    # @pytest.mark.xdist_group(name="group1")
+    # def test_ignored_path(runner: CliRunner) -> None:
     # test for https://github.com/Riverside-Healthcare/djLint/issues/224
     # create .git folder to make root
     Path("tests/test_config/test_gitignore/.git").mkdir(parents=True, exist_ok=True)
@@ -144,4 +140,3 @@ def test_ignored_path(runner: CliRunner) -> None:
     except BaseException as e:
         print("cleanup failed")
         print(e)
-        assert 2 == 1
