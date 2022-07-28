@@ -105,3 +105,12 @@ def test_blank_lines_after_tag(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0
+
+    result = runner.invoke(
+        djlint,
+        [
+            "tests/test_config/test_blank_lines_after_tag/html_nine.html",
+            "--check",
+        ],
+    )
+    assert result.exit_code == 0
