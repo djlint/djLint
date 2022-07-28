@@ -56,8 +56,10 @@ def test_cli(runner: CliRunner) -> None:
     try:
         os.remove("tests/test_config/test_gitignore/.gitignore")
         shutil.rmtree("tests/test_config/test_gitignore/.git")
-    except:
+    except BaseException as e:
         print("cleanup failed")
+        print(e)
+        assert 2 == 1
 
 
 @pytest.mark.xdist_group(name="group1")
@@ -105,14 +107,17 @@ def test_pyproject(runner: CliRunner) -> None:
             "--use-gitignore",
         ],
     )
+    print(result.output)
     assert result.exit_code == 0
 
     try:
         os.remove("tests/test_config/test_gitignore/.gitignore")
         os.remove("tests/test_config/test_gitignore/pyproject.toml")
         shutil.rmtree("tests/test_config/test_gitignore/.git")
-    except:
+    except BaseException as e:
         print("cleanup failed")
+        print(e)
+        assert 2 == 1
 
 
 @pytest.mark.xdist_group(name="group1")
@@ -136,5 +141,7 @@ def test_ignored_path(runner: CliRunner) -> None:
     try:
         os.remove("tests/test_config/test_gitignore/.gitignore")
         shutil.rmtree("tests/test_config/test_gitignore/.git")
-    except:
+    except BaseException as e:
         print("cleanup failed")
+        print(e)
+        assert 2 == 1

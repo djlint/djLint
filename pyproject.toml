@@ -50,6 +50,7 @@ isort = "^5.9.3"
 coverage = "^6.4.2"
 pytest = "^7.1.2"
 pytest-cov = "^3.0.0"
+pytest-xdist = "^2.5.0"
 
 [tool.poetry.scripts]
 djlint = "djlint:main"
