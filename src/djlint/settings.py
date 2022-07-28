@@ -334,6 +334,11 @@ class Config:
             "blank_line_after_tag", None
         )
 
+        # add blank line before load tags
+        self.blank_line_before_tag: Optional[str] = djlint_settings.get(
+            "blank_line_before_tag", None
+        )
+
         # contents of tags will not be formatted
         self.ignored_block_opening: str = r"""
               <style
