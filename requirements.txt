@@ -4,12 +4,15 @@ black==22.1.0; python_full_version >= "3.6.2"
 click==8.0.3; python_version >= "3.6"
 colorama==0.4.4; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 coverage==6.4.2; python_version >= "3.7"
+cssbeautifier==1.14.4
+editorconfig==0.12.3
 execnet==1.9.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 html-tag-names==0.1.2; python_version >= "3.7" and python_version < "4.0"
 html-void-elements==0.1.0; python_version >= "3.7" and python_version < "4.0"
 importlib-metadata==4.11.0; python_version >= "3.7"
 iniconfig==1.1.1; python_version >= "3.7"
 isort==5.10.1; python_full_version >= "3.6.1" and python_version < "4.0"
+jsbeautifier==1.14.4
 mypy-extensions==0.4.3; python_full_version >= "3.6.2"
 packaging==21.3; python_version >= "3.7"
 pathspec==0.9.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
@@ -23,6 +26,7 @@ pytest-xdist==2.5.0; python_version >= "3.6"
 pytest==7.1.2; python_version >= "3.7"
 pyyaml==6.0; python_version >= "3.6"
 regex==2022.1.18
+six==1.16.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.3.0"
 tomli==2.0.1; python_full_version <= "3.11.0a6" and python_version >= "3.7" and python_full_version >= "3.6.2" or python_version < "3.11"
 tqdm==4.62.3; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
 typed-ast==1.4.3; python_version < "3.8" and implementation_name == "cpython" and python_full_version >= "3.6.2"

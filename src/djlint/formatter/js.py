@@ -13,6 +13,9 @@ def format_js(html: str, config: Config) -> str:
 
     def launch_formatter(config: Config, match: re.Match) -> str:
         """Add break after if not in ignored block."""
+        if not match.group(3).strip():
+            return match.group()
+
         indent = len(match.group(1)) * " "
         inner_indent = indent + config.indent
         opts = BeautifierOptions(config.js_config)
@@ -31,7 +34,7 @@ def format_js(html: str, config: Config) -> str:
 
     return re.sub(
         re.compile(
-            r"([ ]*?)(<script\b.*?>)(.+?)(?=</script>)",
+            r"([ ]*?)(<(?:script)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</script>)",
             re.IGNORECASE | re.DOTALL,
         ),
         func,
