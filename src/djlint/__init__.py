@@ -104,6 +104,16 @@ from .src import get_src
     is_flag=True,
     help="Attempt to preserve blank lines.",
 )
+@click.option(
+    "--format-css",
+    is_flag=True,
+    help="Also format contents of <style> tags.",
+)
+@click.option(
+    "--format-js",
+    is_flag=True,
+    help="Also format contents of <script> tags.",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -120,6 +130,8 @@ def main(
     warn: bool,
     preserve_leading_space: bool,
     preserve_blank_lines: bool,
+    format_css: bool,
+    format_js: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -137,6 +149,8 @@ def main(
         warn=warn,
         preserve_leading_space=preserve_leading_space,
         preserve_blank_lines=preserve_blank_lines,
+        format_css=format_css,
+        format_js=format_js,
     )
 
     temp_file = None

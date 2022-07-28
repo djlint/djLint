@@ -30,24 +30,26 @@ Usage: djlint [OPTIONS] SRC ...
   djLint · lint and reformat HTML templates.
 
 Options:
-  --version             Show the version and exit.
-  -e, --extension TEXT  File extension to check [default: html]
-  -i, --ignore TEXT     Codes to ignore. ex: "H014,H017"
-  --reformat            Reformat the file(s).
-  --check               Check formatting on the file(s).
-  --indent INTEGER      Indent spacing. [default: 4]
-  --quiet               Do not print diff when reformatting.
-  --profile TEXT        Enable defaults by template language. ops: django,
-                        jinja, nunjucks, handlebars, golang, angular,
-                        html [default: html]
-  --require-pragma      Only format or lint files that starts with a comment
-                        with the text 'djlint:on'
-  --lint                Lint for common issues. [default option]
-  --use-gitignore       Use .gitignore file to extend excludes.
-  --warn                Return errors as warnings.
+  --version                 Show the version and exit.
+  -e, --extension TEXT      File extension to check [default: html]
+  -i, --ignore TEXT         Codes to ignore. ex: "H014,H017"
+  --reformat                Reformat the file(s).
+  --check                   Check formatting on the file(s).
+  --indent INTEGER          Indent spacing. [default: 4]
+  --quiet                   Do not print diff when reformatting.
+  --profile TEXT            Enable defaults by template language. ops: django,
+                            jinja, nunjucks, handlebars, golang, angular,
+                            html [default: html]
+  --require-pragma          Only format or lint files that starts with a comment
+                            with the text 'djlint:on'
+  --lint                    Lint for common issues. [default option]
+  --use-gitignore           Use .gitignore file to extend excludes.
+  --warn                    Return errors as warnings.
   --preserve-leading-space  Attempt to preserve leading space on text.
   --preserve-blank-lines    Attempt to preserve blank lines.
-  -h, --help            Show this message and exit.
+  --format-css              Also format contents of <style> tags.
+  --format-js               Also format contents of <script> tags.
+  -h, --help                Show this message and exit.
 ```
 
 {% admonition

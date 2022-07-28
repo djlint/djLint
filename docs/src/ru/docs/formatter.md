@@ -20,6 +20,9 @@ djlint . --check
 
 ```bash
 djlint . --reformat
+
+# как насчет скриптов и стилей форматирования?
+djlint . --reformat --format-css --format-js
 ```
 
 <div class="box notification is-info is-light">

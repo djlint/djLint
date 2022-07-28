@@ -340,5 +340,41 @@
         "value": "\"per-file-ignores\": {\n        \"file.html\": \"H026,H025\",\n        \"file_two.html\":\"H001\"\n    }"
       }
     ]
+  },
+  {
+    "name": "format_js",
+    "description": {
+      "en": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
+      "ru": "Форматирование содержимого тегов `script` с помощью `js-beautify`. Все параметры конфигурации см. в [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
+      "fr": "Formate le contenu des balises `script` en utilisant `js-beautify`. Voir [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "[tool.djlint]\nformat_js=true\n\n[tool.djlint.js]\nindent_size=5\n"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"format_js\": true\n\"js\": {\n        \"indent_size\": 5\n    }"
+      }
+    ]
+  },
+  {
+    "name": "format_css",
+    "description": {
+      "en": "Format contents of `script` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
+      "ru": "Форматирование содержимого тегов `script` с помощью `css-beautify`. Все параметры конфигурации см. в [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
+      "fr": "Formate le contenu des balises `script` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "[tool.djlint]\nformat_css=true\n\n[tool.djlint.css]\nindent_size=5\n"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"format_css\": true\n\"css\": {\n        \"indent_size\": 5\n    }"
+      }
+    ]
   }
 ]
