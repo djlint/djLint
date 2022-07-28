@@ -144,6 +144,24 @@
     ]
   },
   {
+    "name": "blank_line_before_tag",
+    "description": {
+      "en": "Add an additional blank line before `{% <tag> ... %}` tag groups. Blank lines will never be added to start of file or between similar tags.",
+      "ru": "Добавляет дополнительную пустую строку перед группами тегов `{% <tag> ... %}`. Пустые строки никогда не будут добавлены в начало файла или между похожими тегами.",
+      "fr": "Ajoute une ligne blanche supplémentaire avant les groupes de balises `{% <tag> ... %}`. Les lignes vides ne seront jamais ajoutées au début du fichier ou entre des balises similaires."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "blank_line_before_tag=\"load,extends,include\""
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"blank_line_before_tag\": \"load,extends,include\""
+      }
+    ]
+  },
+  {
     "name": "profile",
     "description": {
       "en": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::",
