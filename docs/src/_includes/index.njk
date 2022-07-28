@@ -161,6 +161,19 @@ date: Last Modified
 <h2 class="title is-2 mt-5">{{ "contributing" | i18n }}</h2>
 <p class="has-text-left">
 {{ "contributing_message" | i18n | safe }}</p>
+
+{% highlight "bash" %}
+# install poetry
+curl -sSL https://install.python-poetry.org | python3 -
+
+# install project deps
+poetry install
+
+# run tests
+poetry run pytest tests
+# or
+poetry run tox -e test-fast
+{% endhighlight %}
 </div>
 </div>
 
