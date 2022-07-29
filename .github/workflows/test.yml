@@ -71,11 +71,9 @@ jobs:
 
     - name: install project
       run: npm --omit=dev install
-    - name: test post install
-      run: node ./bin/install.js
     - name: test run help
-      run: node ./bin/index.js -h
+      run: djlint -h
     - name: test run lint
-      run: echo "<div>a</div>" | node ./bin/index.js
+      run: echo "<div>a</div>" | djlint -
     - name: test run check
-      run: echo "<div>" | node ./bin/index.js --check
+      run: echo "<div>" | djlint - --check

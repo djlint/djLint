@@ -590,7 +590,7 @@ def test_T027(runner: CliRunner, tmp_file: TextIO) -> None:
         tmp_file.name,
         b'{% trans "Check box if you\'re interested in this location." %}',
     )
-    result = runner.invoke(djlint, [tmp_file.name])
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert "T027" not in result.output
 
     # test mixed quotes
