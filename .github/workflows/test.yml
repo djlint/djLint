@@ -74,6 +74,6 @@ jobs:
     - name: test run help
       run: djlint -h
     - name: test run lint
-      run: echo "<div>a</div>" | djlint
+      run: echo "<div>a</div>" | djlint -
     - name: test run check
-      run: echo "<div>" | djlint --check
+      run: echo "<div>" | djlint - --check
