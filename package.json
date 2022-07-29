@@ -37,7 +37,7 @@
   },
   "scripts": {
     "format": "prettier --config .prettierrc \"{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write",
-    "postinstall": "python3 -m pip install --upgrade djlint && python3 -m pip list -v",
+    "postinstall": "python3 -m pip install --upgrade djlint",
     "pre-commit": "lint-staged",
     "commit": "git add . && pre-commit run; npm run pre-commit && cz --no-verify",
     "test": "xo"
