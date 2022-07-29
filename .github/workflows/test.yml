@@ -71,8 +71,6 @@ jobs:
 
     - name: install project
       run: npm --omit=dev install
-    - name: test post install
-      run: node ./bin/install.js
     - name: test run help
       run: node ./bin/index.js -h
     - name: test run lint
