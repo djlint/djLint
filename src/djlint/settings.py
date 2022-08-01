@@ -355,8 +355,8 @@ class Config:
             | <\?php
             | <script
             | <!--
-            | [^\{]{\#(?!\s*djlint\:\s*on)
-            | ^{\#(?!\s*djlint\:\s*on)
+            | [^\{]{\#(?!\s*djlint\:\s*(?:on|off))
+            | ^{\#(?!\s*djlint\:\s*(?:on|off))
             | <pre
             | <textarea
             | {%[ ]*?blocktrans(?:late)?[^(?:%})]*?%}
