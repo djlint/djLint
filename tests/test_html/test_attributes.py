@@ -98,7 +98,7 @@ def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""<div
     class="a long list of meaningless classes"
-    id="somthing_meaning_less_is_here"
+    id="something_meaning_less_is_here"
     required
     checked="checked"
     json-data='{"menu":{"header":"SVG Viewer","items":[{"id":"Open"}]}}'>
@@ -110,7 +110,7 @@ def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     assert (
         output.text
         == """<div class="a long list of meaningless classes"
-     id="somthing_meaning_less_is_here"
+     id="something_meaning_less_is_here"
      required
      checked="checked"
      json-data='{"menu":{"header":"SVG Viewer","items":[{"id":"Open"}]}}'>\n</div>
