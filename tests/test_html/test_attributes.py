@@ -83,6 +83,14 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     assert output.exit_code == 0
 
+    # attributes with space around = are not brocken
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n""",
+    )
+    assert output.exit_code == 0
+
 
 def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
