@@ -53,20 +53,20 @@
   "homepage": "https://djlint.com",
   "dependencies": {
     "python-shell": "^3.0.1",
-    "yargs": "17.4.0"
+    "yargs": "17.5.1"
   },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
     "@semantic-release/commit-analyzer": "9.0.2",
     "@semantic-release/exec": "6.0.3",
     "@semantic-release/git": "10.0.1",
-    "@semantic-release/github": "8.0.4",
+    "@semantic-release/github": "8.0.5",
     "@semantic-release/npm": "9.0.1",
     "@semantic-release/release-notes-generator": "10.0.3",
     "cz-conventional-changelog": "3.3.0",
-    "lint-staged": "^13.0.3",
+    "lint-staged": "13.0.3",
     "semantic-release": "19.0.3",
-    "xo": "^0.50.0"
+    "xo": "0.51.0"
   },
   "config": {
     "commitizen": {
