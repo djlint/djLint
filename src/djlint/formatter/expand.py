@@ -1,7 +1,7 @@
 """Expand html.
 
 1. put html tags on individual lines, if needed.
-2. puth template tags on individual lines, if needed.
+2. put template tags on individual lines, if needed.
 """
 
 from functools import partial

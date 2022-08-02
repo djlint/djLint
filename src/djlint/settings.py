@@ -86,7 +86,7 @@ def find_djlintrc(root: Path) -> Optional[Path]:
 
 
 def find_djlint_rules(root: Path) -> Optional[Path]:
-    """Search upstream for a pyprojec.toml file."""
+    """Search upstream for a pyproject.toml file."""
 
     rules = root / ".djlint_rules.yaml"
 
