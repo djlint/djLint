@@ -10,5 +10,5 @@ jobs:
 
     - name: run lint
       run: |
-        pip install tox
+        pip install tox poetry tox-poetry
         tox -e lint
