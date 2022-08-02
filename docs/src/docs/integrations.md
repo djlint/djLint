@@ -59,7 +59,7 @@ djLint can be used as a SublimeText Linter plugin. It can be installed via [pack
 
 ::: content
 
-1. `cmd + shft + p`
+1. `cmd + shift + p`
 2. Install SublimeLinter
 3. Install SublimeLinter-contrib-djlint
    :::

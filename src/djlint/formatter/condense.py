@@ -1,7 +1,7 @@
 """Condense HTML.
 
 1. Put short html tags back on one line
-2. Put short templage tags back on one line
+2. Put short template tags back on one line
 """
 
 from functools import partial

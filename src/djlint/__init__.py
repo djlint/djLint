@@ -231,7 +231,7 @@ def main(
                     pbar.update()
                     elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
 
-            finshed_bar_message = "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{}{}    ".format(
+            finished_bar_message = "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{}{}    ".format(
                 Fore.BLUE + Style.BRIGHT,
                 message,
                 Style.RESET_ALL,
@@ -247,7 +247,7 @@ def main(
             finished_bar = tqdm(
                 total=len(file_list),
                 initial=len(file_list),
-                bar_format=finshed_bar_message,
+                bar_format=finished_bar_message,
                 colour="GREEN",
                 ascii="┈━",
                 leave=True,

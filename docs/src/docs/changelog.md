@@ -168,7 +168,7 @@ Changelog is now included in the [release](https://github.com/Riverside-Healthca
 - Added rule T027 to check for unclosed in template syntax
 - Added rule T028 to check for missing spaceless tags in attributes
 - Added rule H029 to check for lowercase form method
-- Ignored djagno blocktranslate tags that do not have "trimmed" from formatter
+- Ignored django blocktranslate tags that do not have "trimmed" from formatter
 - Bug fixes
   :::
 
