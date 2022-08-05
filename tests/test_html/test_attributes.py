@@ -6,6 +6,8 @@ run::
           --cov-report xml:coverage.xml --cov-report term-missing
 
    pytest tests/test_html/test_attributes.py::test_long_attributes
+   pytest tests/test_html/test_attributes.py::test_ignored_attributes
+   pytest tests/test_html/test_attributes.py::test_boolean_attributes
 
 
 Some tests may be from prettier.io's html test suite.
@@ -117,6 +119,67 @@ def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 """
     )
 
+
+def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<select 
+    multiple
+      class="selectpicker show-tick"
+      id="device-select"
+      title="">
+</select>""",
+    )
+    
+    # boolean attributes after tag must be reformatted correctly
+    assert output.exit_code == 1
+    print(output.text)
+    assert (
+        output.text
+        == """<select multiple class="selectpicker show-tick" id="device-select" title="">
+</select>
+"""
+    )
+
+    # boolean attributes after tag with long attributes must be reformatted correctly
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<select 
+    multiple
+      class="selectpicker show-tick"
+      id="device-select"
+      title=""
+      value="something pretty long goes here"
+      style="width:100px;cursor: text;border:1px solid pink">
+</select>""",
+    )
+    assert output.exit_code == 1
+    print(output.text)
+    assert (
+        output.text
+        == """<select multiple
+        class="selectpicker show-tick"
+        id="device-select"
+        title=""
+        value="something pretty long goes here"
+        style="width:100px;cursor: text;border:1px solid pink">
+</select>
+"""
+    )
+
+    # boolean attributes after tag are accepted
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<input readonly
+       class="form-control"
+       type="text"
+       name="driver_id"
+       value="{{ id|default(' sample_text ') }}"/>"""
+    )
+    assert output.exit_code == 0
 
 # def test_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 

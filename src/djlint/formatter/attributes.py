@@ -56,7 +56,9 @@ def format_template_tags(config: Config, attributes: str) -> str:
                     attributes.splitlines()[0].strip(),
                 )
             )
-        )[-1]
+        )
+        if start_test:
+            start_test = start_test[-1]
 
         base_indent = len(attr_name.group())
 
