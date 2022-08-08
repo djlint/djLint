@@ -50,6 +50,7 @@ html-styles = "^0.1.2"
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
 isort = "^5.9.3"
+pytest = "^7.1.2"
 
 [tool.poetry.extras]
 test = ["coverage", "pytest", "pytest-cov"]

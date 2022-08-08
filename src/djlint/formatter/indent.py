@@ -14,7 +14,7 @@ empty-attributes-are-booleans >> required will either be "require =''" or just r
 2. output is in a stack of tags
 3. tag stack is formatted
 
-We cannot format directly from the parser as me must know
+We cannot format directly from the parser as we must know
 future tags when formattings.
 """
 
