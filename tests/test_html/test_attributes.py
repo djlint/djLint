@@ -21,7 +21,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-# pylint: disable=C0116
+# pylint: disable=C0116,C0302
 from typing import TextIO
 
 from click.testing import CliRunner
@@ -124,14 +124,14 @@ def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""<select 
+        b"""<select
     multiple
       class="selectpicker show-tick"
       id="device-select"
       title="">
 </select>""",
     )
-    
+
     # boolean attributes after tag must be reformatted correctly
     assert output.exit_code == 1
     print(output.text)
@@ -146,7 +146,7 @@ def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""<select 
+        b"""<select
     multiple
       class="selectpicker show-tick"
       id="device-select"
@@ -177,9 +177,10 @@ def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
        class="form-control"
        type="text"
        name="driver_id"
-       value="{{ id|default(' sample_text ') }}"/>"""
+       value="{{ id|default(' sample_text ') }}"/>""",
     )
     assert output.exit_code == 0
+
 
 # def test_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 

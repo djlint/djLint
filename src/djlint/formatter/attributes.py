@@ -41,24 +41,21 @@ def format_template_tags(config: Config, attributes: str) -> str:
             )
         )[-1]
 
-        start_test = (
-            list(
-                re.finditer(
-                    re.compile(
-                        r"^.*?(?=" + config.template_indent + r")", re.I | re.X | re.M
-                    ),
-                    attributes.splitlines()[0].strip(),
-                )
+        start_test_list = list(
+            re.finditer(
+                re.compile(
+                    r"^.*?(?=" + config.template_indent + r")", re.I | re.X | re.M
+                ),
+                attributes.splitlines()[0].strip(),
             )
-            + list(
-                re.finditer(
-                    re.compile(r"^<\w+\b\s*[^\"']+?[\"']", re.M),
-                    attributes.splitlines()[0].strip(),
-                )
+        ) + list(
+            re.finditer(
+                re.compile(r"^<\w+\b\s*[^\"']+?[\"']", re.M),
+                attributes.splitlines()[0].strip(),
             )
         )
-        if start_test:
-            start_test = start_test[-1]
+
+        start_test = start_test_list[-1] if start_test_list else None
 
         base_indent = len(attr_name.group())
 
