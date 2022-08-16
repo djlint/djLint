@@ -6,6 +6,8 @@ run::
           --cov-report xml:coverage.xml --cov-report term-missing
 
    pytest tests/test_html/test_attributes.py::test_long_attributes
+   pytest tests/test_html/test_attributes.py::test_ignored_attributes
+   pytest tests/test_html/test_attributes.py::test_boolean_attributes
 
 
 Some tests may be from prettier.io's html test suite.
@@ -19,7 +21,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-# pylint: disable=C0116
+# pylint: disable=C0116,C0302
 from typing import TextIO
 
 from click.testing import CliRunner
@@ -116,6 +118,68 @@ def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
      json-data='{"menu":{"header":"SVG Viewer","items":[{"id":"Open"}]}}'>\n</div>
 """
     )
+
+
+def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<select
+    multiple
+      class="selectpicker show-tick"
+      id="device-select"
+      title="">
+</select>""",
+    )
+
+    # boolean attributes after tag must be reformatted correctly
+    assert output.exit_code == 1
+    print(output.text)
+    assert (
+        output.text
+        == """<select multiple class="selectpicker show-tick" id="device-select" title="">
+</select>
+"""
+    )
+
+    # boolean attributes after tag with long attributes must be reformatted correctly
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<select
+    multiple
+      class="selectpicker show-tick"
+      id="device-select"
+      title=""
+      value="something pretty long goes here"
+      style="width:100px;cursor: text;border:1px solid pink">
+</select>""",
+    )
+    assert output.exit_code == 1
+    print(output.text)
+    assert (
+        output.text
+        == """<select multiple
+        class="selectpicker show-tick"
+        id="device-select"
+        title=""
+        value="something pretty long goes here"
+        style="width:100px;cursor: text;border:1px solid pink">
+</select>
+"""
+    )
+
+    # boolean attributes after tag are accepted
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<input readonly
+       class="form-control"
+       type="text"
+       name="driver_id"
+       value="{{ id|default(' sample_text ') }}"/>""",
+    )
+    assert output.exit_code == 0
 
 
 # def test_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
