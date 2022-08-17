@@ -299,7 +299,7 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     # test mailto:
     write_to_file(
         tmp_file.name,
-        b'<a href="mailto:joe"></a>',
+        b'<a href="mailto:joe"></a><a href="tel:joe"></a>',
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
