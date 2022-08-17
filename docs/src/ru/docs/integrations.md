@@ -34,8 +34,8 @@ djLint можно использовать как [pre-commit](https://pre-commi
 
 ```yaml
 repos:
-- repo: https://github.com/Riverside-Healthcare/djLint
-    rev: 0.5.10  # grab latest tag from GitHub
+  - repo: https://github.com/Riverside-Healthcare/djLint
+    rev: 0.5.10 # grab latest tag from GitHub
     hooks:
       - id: djlint-django
 ```
@@ -44,8 +44,8 @@ repos:
 
 ```yaml
 repos:
-- repo: https://github.com/Riverside-Healthcare/djLint
-    rev: 0.5.10  # grab latest tag from GitHub
+  - repo: https://github.com/Riverside-Healthcare/djLint
+    rev: 0.5.10 # grab latest tag from GitHub
     hooks:
       - id: djlint-handlebars
         files: "\\.html"
