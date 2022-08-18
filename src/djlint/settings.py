@@ -412,6 +412,7 @@ class Config:
                 | filter
                 | each
                 | macro
+                | call
                 | raw
             """
             + self.custom_blocks
@@ -527,6 +528,7 @@ class Config:
             | verbatim
             | each
             | macro
+            | call
             | raw
             """
             + self.custom_blocks
@@ -568,6 +570,8 @@ class Config:
             | endmacro
             | raw
             | endraw
+            | call
+            | endcall
             """
             + self.custom_blocks
             + r"""
