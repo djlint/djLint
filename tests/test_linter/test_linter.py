@@ -91,6 +91,18 @@ def test_H006(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H006 1:" in result.output
     assert "found 1 error" in result.output
 
+    # check that we don't partial match in an ignored block
+    write_to_file(
+        tmp_file.name,
+        b"""{# [INFO][JINJA] I use syntax "{% if <img alt=\""",
+ if I want that something happened solely if "img" exists in the content of my articles #}
+
+ <script src="KiraJS.js" defer></script>
+""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H006" not in result.output
+
 
 def test_H007(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<html lang="en">')
