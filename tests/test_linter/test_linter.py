@@ -715,6 +715,24 @@ def test_T032(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert "T032" not in result.output
 
+    write_to_file(
+        tmp_file.name,
+        b"""{# [INFO] Simple example #}
+ {% set kira = [
+     'Goddess', 'Genius'
+ ] %}
+
+ {# [INFO] Real example #}
+ {% set kira_online_scaners = [
+     ('https://quttera.com/sitescan/', 'SashaButtonLightSkyBlue', 'Quttera'),
+     ('https://sitecheck.sucuri.net/results/', 'SashaButtonLimeGreen', 'Sucuri'),
+     ('https://www.isithacked.com/check/', 'SashaButtonPlum', 'Is It Hacked?'),
+ ] %}
+""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T032" not in result.output
+
 
 def test_H033(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
