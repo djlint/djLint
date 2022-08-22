@@ -70,7 +70,7 @@
     message: Attributes should be double quoted.
     flags: re.DOTALL|re.I
     patterns:
-    - (?:class|id|src|width|height|alt|style|lang|title|srcset|media)=\'[^\']*'
+    - <(?:\w+)\b(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*(?:class|id|src|width|height|alt|style|lang|title|srcset|media)=\'[^\']*'
 - rule:
     name: H009
     message: Tag names should be lowercase.
@@ -106,7 +106,7 @@
     - <img\s(?:(?!(?:alt)=).)*/?>
 - rule:
     name: H014
-    message: More than 2 blank lines.
+    message: Found extra blank lines.
     flags: re.DOTALL
     patterns:
     - "[^\n]{,10}\n{3,}"
@@ -185,7 +185,7 @@
     message: Tag seems to be an orphan.
     flags: re.I|re.DOTALL
     patterns:
-    - <((/?(\w+))\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^%]*#}|[^'\">{}])*)(?<!/)>
+    - <((/?(\w+))\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
 - rule:
     name: H026
     message: Empty id and class tags can be removed.
@@ -242,8 +242,8 @@
     name: T032
     message: Extra whitespace found in template tags.
     patterns:
-    - "{%(([\"|'](?:(?!'|\"|%}).)*?[\"|'])|[^(?:%}|'|\")])*?\\s{2,}"
-    - "{{(([\"|'](?:(?!'|\"|}}).)*?[\"|'])|[^(?:}}|'|\")])*?\\s{2,}"
+    - "{%(([\"|'](?:(?!'|\"|%}).)*?[\"|'])|[^(?:%}|'|\"|\n)])*?[ \t]{2,}"
+    - "{{(([\"|'](?:(?!'|\"|}}).)*?[\"|'])|[^(?:}}|'|\"|\n)])*?[ \t]{2,}"
 - rule:
     name: H033
     message: Extra whitespace found in form action.

@@ -61,13 +61,13 @@ def expand_html(html: str, config: Config) -> str:
 
         if inside_ignored_block(config, html, match):
             return match.group(1)
-
         if not re.findall(
             r"\<(?:"
             + str(config.indent_html_tags)
-            + r")\b(?:[^>]|{%[^(?:%}]*?%}|{{[^(?:}}]*?}})*?"
-            + re.escape(match.group(1))
-            + "$",
+            + r")\b(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^>{}])*?"
+            # original
+            # + r")\b(?:[^>]|{%[^(?:%}]*?%}|{{[^(?:}}]*?}})*?"
+            + re.escape(match.group(1)) + "$",
             html[: match.end()],
             re.MULTILINE | re.VERBOSE,
         ):

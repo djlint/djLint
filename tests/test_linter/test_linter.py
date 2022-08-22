@@ -91,6 +91,18 @@ def test_H006(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H006 1:" in result.output
     assert "found 1 error" in result.output
 
+    # check that we don't partial match in an ignored block
+    write_to_file(
+        tmp_file.name,
+        b"""{# [INFO][JINJA] I use syntax "{% if <img alt=\""",
+ if I want that something happened solely if "img" exists in the content of my articles #}
+
+ <script src="KiraJS.js" defer></script>
+""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H006" not in result.output
+
 
 def test_H007(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<html lang="en">')
@@ -104,6 +116,21 @@ def test_H008(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
     assert "H008 1:" in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b"""<link rel="stylesheet" href="KiraCSS.css" media="print" onload="this.media='all'" media=''/>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H008 1:" in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b"""<link rel="stylesheet" href="KiraCSS.css" media="print" onload="this.media='all'"/>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H008 1:" not in result.output
 
 
 def test_H009(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -713,6 +740,24 @@ def test_T032(runner: CliRunner, tmp_file: TextIO) -> None:
 
     write_to_file(tmp_file.name, b"{{ static '' \"     \" 'foo/bar.min.css' }}")
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert "T032" not in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b"""{# [INFO] Simple example #}
+ {% set kira = [
+     'Goddess', 'Genius'
+ ] %}
+
+ {# [INFO] Real example #}
+ {% set kira_online_scaners = [
+     ('https://quttera.com/sitescan/', 'SashaButtonLightSkyBlue', 'Quttera'),
+     ('https://sitecheck.sucuri.net/results/', 'SashaButtonLimeGreen', 'Sucuri'),
+     ('https://www.isithacked.com/check/', 'SashaButtonPlum', 'Is It Hacked?'),
+ ] %}
+""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
     assert "T032" not in result.output
 
 
