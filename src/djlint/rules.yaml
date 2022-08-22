@@ -70,7 +70,7 @@
     message: Attributes should be double quoted.
     flags: re.DOTALL|re.I
     patterns:
-    - (?:class|id|src|width|height|alt|style|lang|title|srcset|media)=\'[^\']*'
+    - <(?:\w+)\b(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*(?:class|id|src|width|height|alt|style|lang|title|srcset|media)=\'[^\']*'
 - rule:
     name: H009
     message: Tag names should be lowercase.

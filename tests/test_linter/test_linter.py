@@ -105,6 +105,21 @@ def test_H008(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "H008 1:" in result.output
 
+    write_to_file(
+        tmp_file.name,
+        b"""<link rel="stylesheet" href="KiraCSS.css" media="print" onload="this.media='all'" media=''/>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H008 1:" in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b"""<link rel="stylesheet" href="KiraCSS.css" media="print" onload="this.media='all'"/>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H008 1:" not in result.output
+
 
 def test_H009(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<H1>")
