@@ -50,6 +50,18 @@ def test_T001(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
     assert result.exit_code == 0
 
+    # test line break around tag
+    write_to_file(
+        tmp_file.name,
+        b"""<div>
+    {%
+        ("SashaNose", "1"),
+    %}
+</div>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T001" not in result.output
+
 
 def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{% extends 'this' %}")
