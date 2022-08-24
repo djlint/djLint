@@ -148,8 +148,14 @@ def inside_ignored_rule(config: Config, html: str, match: re.Match, rule: str) -
         ):
             if (
                 rule in list(set(re.split(r"\s|,", ignored_match.group(1).strip())))
-                and ignored_match.start(0) <= match.start()
-                and match.end(0) <= ignored_match.end()
+                and (
+                    ignored_match.start(0) <= match.start()
+                    and match.start() <= ignored_match.end()
+                )
+                or (
+                    ignored_match.start(0) <= match.end()
+                    and match.end() <= ignored_match.end()
+                )
             ):
                 return True
     return False

@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter/test_linter.py::test_T001
+   pytest tests/test_linter/test_linter.py::test_ignoring_rules
 
 """
 # pylint: disable=C0116,C0103
@@ -897,3 +897,20 @@ def test_ignoring_rules(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output
+
+    # using tabs
+    write_to_file(
+        tmp_file.name,
+        b"""<div>
+
+\t\t{# djlint:off H006 #}
+
+\t\t<img src="{{ kira_variable }}.webp" alt="Kira Goddess!" />
+
+\t\t{# djlint:on #}
+
+</div>
+""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H006" not in result.output
