@@ -405,6 +405,11 @@ def test_H021(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 0
     assert "H021" not in result.output
 
+    # allow template syntax inside styles
+    write_to_file(tmp_file.name, b'<div style="test {%"><div style="test {{">')
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H021" not in result.output
+
 
 def test_H022(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<a href="http://">')

@@ -161,7 +161,7 @@
     message: Inline styles should be avoided.
     flags: re.I
     patterns:
-    - <\w+\s(?:[^>]*\s)?style=(?=[^>]*>)
+    - <\w+\s(?:[^>]*\s)?style=(?=((?!>|{{|{%).)*>)
 - rule:
     name: H022
     message: Use HTTPS for external links.
