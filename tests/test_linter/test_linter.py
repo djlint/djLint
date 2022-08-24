@@ -219,6 +219,16 @@ def test_H012(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 0
     assert "H012 1:" not in result.output
 
+    # space allowed inside attributes.
+    write_to_file(
+        tmp_file.name,
+        b"""<button x-on:click="myVariable = {{ myObj.id }}" class="text-red-600 hover:text-red-800">
+<span x-text="showSource == true ? 'Hide source' : 'Show source'"></span>
+<button x-on:click="open = !open" class="flex items-center mt-2">""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H012" not in result.output
+
 
 def test_H013(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<img height="12" width="12"/>')

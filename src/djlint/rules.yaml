@@ -96,8 +96,8 @@
     message: There should be no spaces around attribute =.
     flags: re.DOTALL
     patterns:
-    - <\w+?(?:(?!\{[%|{|#])[^\n|>])*\s+=
-    - <\w+?(?:(?!\{[%|{|#])[^\n|>])*=\s
+    - <\w+?(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*\s+=
+    - <\w+?(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*=\s
 - rule:
     name: H013
     message: Img tag should have an alt attribute.
