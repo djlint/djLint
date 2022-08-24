@@ -18,14 +18,14 @@
     # close
     - '[^(\s|^|\-)]+[}|%|#]}'
     - '[^(\s|^)]+\-[}|%|#]}'
-    - \s{2,}[}|%|#]}
-    - '{[{|%|#]-?\s{2,}'
+    - '[^\s][ ]{2,}[}|%|#]}'
+    - '{[{|%|#]-?[ ]{2,}'
 - rule:
     name: T002
     message: Double quotes should be used in tags.
     flags: re.DOTALL
     patterns:
-    - '{%.?extends\s+?[^\"]\w+'
+    - "{%[ \t]*?extends[ \t]+?'[^']*'"
 - rule:
     name: T003
     message: 'Endblock should have name. Ex: {% endblock body %}.'
@@ -96,8 +96,8 @@
     message: There should be no spaces around attribute =.
     flags: re.DOTALL
     patterns:
-    - <\w+?(?:(?!\{[%|{|#])[^\n|>])*\s+=
-    - <\w+?(?:(?!\{[%|{|#])[^\n|>])*=\s
+    - <\w+?(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*\s+=
+    - <\w+?(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*=\s
 - rule:
     name: H013
     message: Img tag should have an alt attribute.
@@ -161,7 +161,7 @@
     message: Inline styles should be avoided.
     flags: re.I
     patterns:
-    - <\w+\s(?:[^>]*\s)?style=(?=[^>]*>)
+    - <\w+\s(?:[^>]*\s)?style=(?=((?!>|{{|{%).)*>)
 - rule:
     name: H022
     message: Use HTTPS for external links.

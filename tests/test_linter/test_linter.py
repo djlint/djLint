@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter/test_linter.py::test_T001
+   pytest tests/test_linter/test_linter.py::test_ignoring_rules
 
 """
 # pylint: disable=C0116,C0103
@@ -50,12 +50,29 @@ def test_T001(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
     assert result.exit_code == 0
 
+    # test line break around tag
+    write_to_file(
+        tmp_file.name,
+        b"""<div>
+    {%
+        ("SashaNose", "1"),
+    %}
+</div>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T001" not in result.output
+
 
 def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{% extends 'this' %}")
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert result.exit_code == 1
     assert "T002 1:" in result.output
+
+    # allow variable names (unquoted)
+    write_to_file(tmp_file.name, b"{% extends this %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert "T002" not in result.output
 
 
 def test_T003(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -201,6 +218,16 @@ def test_H012(runner: CliRunner, tmp_file: TextIO) -> None:
     print(result.output)
     assert result.exit_code == 0
     assert "H012 1:" not in result.output
+
+    # space allowed inside attributes.
+    write_to_file(
+        tmp_file.name,
+        b"""<button x-on:click="myVariable = {{ myObj.id }}" class="text-red-600 hover:text-red-800">
+<span x-text="showSource == true ? 'Hide source' : 'Show source'"></span>
+<button x-on:click="open = !open" class="flex items-center mt-2">""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H012" not in result.output
 
 
 def test_H013(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -391,6 +418,11 @@ def test_H021(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
+    assert "H021" not in result.output
+
+    # allow template syntax inside styles
+    write_to_file(tmp_file.name, b'<div style="test {%"><div style="test {{">')
+    result = runner.invoke(djlint, [tmp_file.name])
     assert "H021" not in result.output
 
 
@@ -865,3 +897,20 @@ def test_ignoring_rules(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output
+
+    # using tabs
+    write_to_file(
+        tmp_file.name,
+        b"""<div>
+
+\t\t{# djlint:off H006 #}
+
+\t\t<img src="{{ kira_variable }}.webp" alt="Kira Goddess!" />
+
+\t\t{# djlint:on #}
+
+</div>
+""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H006" not in result.output
