@@ -69,6 +69,11 @@ def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "T002 1:" in result.output
 
+    # allow variable names (unquoted)
+    write_to_file(tmp_file.name, b"{% extends this %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert "T002" not in result.output
+
 
 def test_T003(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{% endblock %}")
