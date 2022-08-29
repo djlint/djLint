@@ -55,10 +55,15 @@ def test_T001(runner: CliRunner, tmp_file: TextIO) -> None:
         tmp_file.name,
         b"""<div>
     {%
-        ("SashaNose", "1"),
+        ("something", "1"),
     %}
 </div>""",
     )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T001" not in result.output
+
+    # allow jinja spaceless tags
+    write_to_file(tmp_file.name, b"{{- foo }}{{+ bar }}{{ biz -}}{{ baz +}}")
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
     assert "T001" not in result.output
 
@@ -114,7 +119,7 @@ def test_H006(runner: CliRunner, tmp_file: TextIO) -> None:
         b"""{# [INFO][JINJA] I use syntax "{% if <img alt=\""",
  if I want that something happened solely if "img" exists in the content of my articles #}
 
- <script src="KiraJS.js" defer></script>
+ <script src="script.js" defer></script>
 """,
     )
     result = runner.invoke(djlint, [tmp_file.name])
@@ -136,7 +141,7 @@ def test_H008(runner: CliRunner, tmp_file: TextIO) -> None:
 
     write_to_file(
         tmp_file.name,
-        b"""<link rel="stylesheet" href="KiraCSS.css" media="print" onload="this.media='all'" media=''/>""",
+        b"""<link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'" media=''/>""",
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
@@ -144,7 +149,7 @@ def test_H008(runner: CliRunner, tmp_file: TextIO) -> None:
 
     write_to_file(
         tmp_file.name,
-        b"""<link rel="stylesheet" href="KiraCSS.css" media="print" onload="this.media='all'"/>""",
+        b"""<link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'"/>""",
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H008 1:" not in result.output
@@ -777,15 +782,15 @@ def test_T032(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
         tmp_file.name,
         b"""{# [INFO] Simple example #}
- {% set kira = [
-     'Goddess', 'Genius'
+ {% set stuff = [
+     'value', 'value'
  ] %}
 
  {# [INFO] Real example #}
- {% set kira_online_scaners = [
-     ('https://quttera.com/sitescan/', 'SashaButtonLightSkyBlue', 'Quttera'),
-     ('https://sitecheck.sucuri.net/results/', 'SashaButtonLimeGreen', 'Sucuri'),
-     ('https://www.isithacked.com/check/', 'SashaButtonPlum', 'Is It Hacked?'),
+ {% set online_scaners = [
+     ('https://example.com', 'blue', 'One'),
+     ('https://example.com', 'green', 'Two'),
+     ('https://example.com', 'plum', 'Three'),
  ] %}
 """,
     )
@@ -905,7 +910,7 @@ def test_ignoring_rules(runner: CliRunner, tmp_file: TextIO) -> None:
 
 \t\t{# djlint:off H006 #}
 
-\t\t<img src="{{ kira_variable }}.webp" alt="Kira Goddess!" />
+\t\t<img src="{{ variable }}.webp" alt="stuff" />
 
 \t\t{# djlint:on #}
 
