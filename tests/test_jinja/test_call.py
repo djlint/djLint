@@ -42,3 +42,7 @@ def test_call(runner: CliRunner, tmp_file: TextIO) -> None:
 {% endcall %}
 """
     )
+
+    # tags inside template tags should not be formatted.
+    output = reformat(tmp_file, runner, b"{% call (a, b) render_form(form, '<hr>'>) %}")
+    assert output.exit_code == 0

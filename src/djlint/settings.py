@@ -577,7 +577,9 @@ class Config:
             + r"""
         """
         )
-
+        self.template_blocks: str = r"""
+        {%((?!%}).)+%}
+        """
         self.ignored_blocks: str = r"""
               <(pre|textarea).*?</(\1)>
             | <(script|style).*?(?=(\</(?:\3)>))
