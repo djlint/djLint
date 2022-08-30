@@ -8,7 +8,7 @@ from functools import partial
 
 import regex as re
 
-from ..helpers import inside_ignored_block
+from ..helpers import inside_ignored_block, inside_template_block
 from ..settings import Config
 
 
@@ -19,8 +19,13 @@ def expand_html(html: str, config: Config) -> str:
         """Add whitespace.
 
         Do not add whitespace if the tag is in a non indent block.
+
+        Do not add whiatespace if the tag is a in a template block
         """
         if inside_ignored_block(config, html, match):
+            return match.group(1)
+
+        if inside_template_block(config, html, match):
             return match.group(1)
 
         if out_format == "\n%s" and match.start() == 0:
@@ -54,6 +59,7 @@ def expand_html(html: str, config: Config) -> str:
         add_right,
         html,
     )
+    print(html)
 
     # template tag breaks
     def should_i_move_template_tag(out_format: str, match: re.Match) -> str:
