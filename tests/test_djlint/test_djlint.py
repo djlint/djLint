@@ -5,7 +5,7 @@ run::
 
     pytest tests/test_djlint/test_djlint.py --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
-    pytest tests/test_djlint/test_djlint.py::test_check_reformatter_no_error
+    pytest tests/test_djlint/test_djlint.py::test_stdin
 
 or::
 
@@ -117,6 +117,10 @@ def test_stdin(runner: CliRunner) -> None:
 
     # check with reformat
     result = runner.invoke(djlint, ["-", "--reformat"], input="<div></div>")
+    assert result.output == "<div></div>\n"
+
+    # check with check
+    result = runner.invoke(djlint, ["-", "--check"], input="<div></div>")
     assert result.output == "<div></div>\n"
 
 

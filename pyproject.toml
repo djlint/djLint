@@ -43,6 +43,7 @@ html-void-elements = "^0.1.0"
 html-tag-names = "^0.1.2"
 jsbeautifier = "^1.14.4"
 cssbeautifier = "^1.14.4"
+flake8-print = "^5.0.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
