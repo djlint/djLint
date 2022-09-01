@@ -59,7 +59,6 @@ def expand_html(html: str, config: Config) -> str:
         add_right,
         html,
     )
-    print(html)
 
     # template tag breaks
     def should_i_move_template_tag(out_format: str, match: re.Match) -> str:
