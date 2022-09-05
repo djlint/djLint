@@ -42,6 +42,6 @@ jobs:
 
     - name: Build and publish package
       if: steps.semantic.outputs.new_release_published == 'true'
-      uses: JRubics/poetry-publish@v1.12
+      uses: JRubics/poetry-publish@v1.13
       with:
         pypi_token: ${{ secrets.PYPI_API_TOKEN }}
