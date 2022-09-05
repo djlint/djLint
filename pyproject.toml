@@ -37,7 +37,7 @@ colorama = "^0.4.4"
 regex = "^2022.1.18"
 tqdm = "^4.62.2"
 tomli = { version = "^2.0.1", python = "<3.11" }
-pathspec = "^0.9.0"
+pathspec = "^0.10.0"
 importlib-metadata = "^4.11.0"
 html-void-elements = "^0.1.0"
 html-tag-names = "^0.1.2"
