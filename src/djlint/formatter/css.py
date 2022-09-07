@@ -20,13 +20,37 @@ def format_css(html: str, config: Config) -> str:
         inner_indent = indent + config.indent
         opts = BeautifierOptions(config.css_config)
 
-        beautified = (
-            "\n"
-            + inner_indent
-            + ("\n" + inner_indent).join(
-                cssbeautifier.beautify(match.group(3), opts).splitlines()
-            )
-        )
+        beautified_lines = cssbeautifier.beautify(match.group(3), opts).splitlines()
+        beautified = ""
+
+        # add indent back
+        ignore_indent = False
+        for line in beautified_lines:
+
+            if re.search(
+                re.compile(
+                    r"\/\*[ ]*?beautify[ ]+?ignore:end[ ]*?\*\/",
+                    re.DOTALL | re.IGNORECASE | re.MULTILINE,
+                ),
+                line,
+            ):
+                line = line.lstrip()
+                ignore_indent = False
+
+            if ignore_indent is False:
+
+                beautified += "\n" + inner_indent + line
+            else:
+                beautified += "\n" + line
+
+            if re.search(
+                re.compile(
+                    r"\/\*[ ]*?beautify[ ]+?ignore:start[ ]*?\*\/",
+                    re.DOTALL | re.IGNORECASE | re.MULTILINE,
+                ),
+                line,
+            ):
+                ignore_indent = True
 
         return match.group(1) + match.group(2) + beautified + "\n" + indent
 
