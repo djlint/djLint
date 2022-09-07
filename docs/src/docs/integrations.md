@@ -90,3 +90,11 @@ djLint can use used as formatter in neovim using the `null-ls` plugin.
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
   :::
+
+## null-ls.nvim
+
+::: content
+
+- [GitHub repository](https://github.com/jose-elias-alvarez/null-ls.nvim)
+- [Lint](https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/lua/null-ls/builtins/diagnostics/djlint.lua#L14)
+- [Format](https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/lua/null-ls/builtins/formatting/djlint.lua#L13)
