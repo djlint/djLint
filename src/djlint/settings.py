@@ -96,10 +96,20 @@ def find_djlint_rules(root: Path) -> Optional[Path]:
     return None
 
 
-def load_project_settings(src: Path) -> Dict:
+def load_project_settings(src: Path, config: Optional[str]) -> Dict:
     """Load djlint config from pyproject.toml."""
 
     djlint_content: Dict = {}
+
+    if config:
+        try:
+            return json.loads(Path(config).resolve().read_text(encoding="utf8"))
+        # pylint: disable=broad-except
+        except BaseException:
+            logger.info(
+                "Failed to load config file. Ensure file exists and is in json format."
+            )
+
     pyproject_file = find_pyproject(src)
 
     if pyproject_file:
@@ -195,6 +205,7 @@ class Config:
         preserve_blank_lines: bool = False,
         format_css: bool = False,
         format_js: bool = False,
+        configuration: Optional[str] = None,
     ):
 
         self.reformat = reformat
@@ -205,7 +216,7 @@ class Config:
 
         self.project_root = find_project_root(Path(src))
 
-        djlint_settings = load_project_settings(self.project_root)
+        djlint_settings = load_project_settings(self.project_root, configuration)
 
         self.gitignore = load_gitignore(self.project_root)
         # custom configuration options

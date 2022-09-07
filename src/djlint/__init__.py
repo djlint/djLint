@@ -114,6 +114,14 @@ from .src import get_src
     is_flag=True,
     help="Also format contents of <script> tags.",
 )
+@click.option(
+    "--configuration",
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=True, readable=True, allow_dash=True
+    ),
+    required=False,
+    help="Path to global configuration file in .djlintrc format",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -132,6 +140,7 @@ def main(
     preserve_blank_lines: bool,
     format_css: bool,
     format_js: bool,
+    configuration: Optional[str],
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -151,6 +160,7 @@ def main(
         preserve_blank_lines=preserve_blank_lines,
         format_css=format_css,
         format_js=format_js,
+        configuration=configuration,
     )
 
     temp_file = None

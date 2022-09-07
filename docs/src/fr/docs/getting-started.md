@@ -49,6 +49,7 @@ Options:
   --preserve-blank-lines    Attempt to preserve blank lines.
   --format-css              Also format contents of <style> tags.
   --format-js               Also format contents of <script> tags.
+  --configuration           Path to global configuration file in .djlintrc format
   -h, --help                Show this message and exit.
 ```
 
