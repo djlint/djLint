@@ -28,4 +28,7 @@ labels: [":microbe: bug", ":mag: linter"]
 ## How To Reproduce
 <!-- Steps to reproduce the behavior -->
 
+## Contents of .djlintrc/pyproject.toml [tool.djlint]
+<!-- please include your config -->
+
 <!-- Thanks! 🤠 -->

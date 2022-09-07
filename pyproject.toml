@@ -69,3 +69,6 @@ disable = "E1120, R0914, E0401, R0912, R0916, R0913, W0104, R0801, W1404, R0902,
 
 [tool.pylint.TYPECHECK]
 ignored-modules = "regex"
+
+[tool.djlint]
+format_js = true
