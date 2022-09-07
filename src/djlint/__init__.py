@@ -215,9 +215,12 @@ def main(
 
     worker_count = os.cpu_count() or 1
 
+    progress_char ="┈━"
+
     if sys.platform == "win32":
         # Work around https://bugs.python.org/issue26903
         worker_count = min(worker_count, 60)
+        progress_char =" »"
 
     with ProcessPoolExecutor(max_workers=worker_count) as exe:
         file_errors = []
@@ -231,7 +234,7 @@ def main(
                 total=len(file_list),
                 bar_format=bar_message,
                 colour="BLUE",
-                ascii="┈━",
+                ascii=progress_char,
                 leave=False,
             ) as pbar:
 
@@ -259,7 +262,7 @@ def main(
                 initial=len(file_list),
                 bar_format=finished_bar_message,
                 colour="GREEN",
-                ascii="┈━",
+                ascii=progress_char,
                 leave=True,
             )
             finished_bar.close()
