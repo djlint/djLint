@@ -30,7 +30,7 @@ def format_js(html: str, config: Config) -> str:
 
             if re.search(
                 re.compile(
-                    r"\/\*[ ]*?beautify[ ]+?preserve:end[ ]*?\*\/",
+                    r"\/\*[ ]*?beautify[ ]+?(?:preserve|ignore):end[ ]*?\*\/",
                     re.DOTALL | re.IGNORECASE | re.MULTILINE,
                 ),
                 line,
@@ -46,7 +46,7 @@ def format_js(html: str, config: Config) -> str:
 
             if re.search(
                 re.compile(
-                    r"\/\*[ ]*?beautify[ ]+?preserve:start[ ]*?\*\/",
+                    r"\/\*[ ]*?beautify[ ]+?(?:preserve|ignore):start[ ]*?\*\/",
                     re.DOTALL | re.IGNORECASE | re.MULTILINE,
                 ),
                 line,
