@@ -166,17 +166,21 @@ def main(
     temp_file = None
 
     if "-" in src:
-        stdin_stream = click.get_text_stream("stdin", encoding="utf8")
-        stdin_text = stdin_stream.read()
+        if config.files:
+            file_list = get_src([Path(x) for x in config.files], config)
 
-        temp_file = tempfile.NamedTemporaryFile(delete=False)
-        temp_file.write(str.encode(stdin_text))
-        temp_file.seek(0)
+        else:
+            stdin_stream = click.get_text_stream("stdin", encoding="utf8")
+            stdin_text = stdin_stream.read()
 
-        # cannot use gitignore for stdin paths.
-        config.use_gitignore = False
+            temp_file = tempfile.NamedTemporaryFile(delete=False)
+            temp_file.write(str.encode(stdin_text))
+            temp_file.seek(0)
 
-        file_list = get_src([Path(temp_file.name)], config)
+            # cannot use gitignore for stdin paths.
+            config.use_gitignore = False
+
+            file_list = get_src([Path(temp_file.name)], config)
 
     else:
         file_list = get_src([Path(x) for x in src], config)

@@ -212,7 +212,6 @@ class Config:
         self.check = check
         self.lint = lint
         self.warn = warn
-        self.stdin = "-" in src
 
         self.project_root = find_project_root(Path(src))
 
@@ -261,6 +260,9 @@ class Config:
 
         # ignore is based on input and also profile
         self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
+
+        self.files: Optional[List[str]] = djlint_settings.get("files", None)
+        self.stdin = "-" in src and self.files is None
 
         # codes to exclude
         profile_dict: Dict[str, List[str]] = {
