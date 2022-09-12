@@ -38,7 +38,7 @@ def reformat_file(config: Config, this_file: Path) -> dict:
         this_file.write_text(beautified_code, encoding="utf8")
 
     out = {
-        this_file: list(
+        str(this_file): list(
             difflib.unified_diff(rawcode.splitlines(), beautified_code.splitlines())
         )
     }
