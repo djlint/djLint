@@ -746,18 +746,29 @@ class Config:
         """
         )
 
+        # either a template tag at the start of a line,
+        # a html tag at the start of a line,
+        # or an html tag as the end of a line.
+        # Nothing in between!
         self.tag_unindent: str = (
             r"""
                 ^
                 """
             + self.template_unindent
             + """
-            | (?:</
+            | (?:^</
                 (?:
                     """
             + self.indent_html_tags
             + """
                 )\\b
+              )
+            | (?:</
+                (?:
+                    """
+            + self.indent_html_tags
+            + """
+                )>$
               )
         """
         )

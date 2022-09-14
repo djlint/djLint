@@ -5,7 +5,7 @@ run:
     pytest tests/test_html/test_tag_textarea.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-    pytest tests/test_html/test_tag_textarea.py::test_textarea_tag
+    pytest tests/test_html/test_tag_textarea.py::test_a_tag
 
 
 """
