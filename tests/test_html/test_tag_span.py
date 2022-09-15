@@ -5,7 +5,7 @@ run:
     pytest tests/test_html/test_tag_span.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-    pytest tests/test_html/test_tag_span.py::test_span_tag
+    pytest tests/test_html/test_tag_span.py::test_nested_string
 
 
 """
@@ -45,3 +45,23 @@ def test_span_tag(runner: CliRunner, tmp_file: TextIO) -> None:
 </div>""",
     )  # noqa: E501
     assert output.exit_code == 0
+
+
+def test_nested_string(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""<p><p><span><strong>asdf</strong><br></span></p></p>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+
+    assert (
+        Path(tmp_file.name).read_text(encoding="utf8")
+        == """<p>
+    <p>
+        <span><strong>asdf</strong>
+            <br>
+        </span>
+    </p>
+</p>
+"""
+    )
