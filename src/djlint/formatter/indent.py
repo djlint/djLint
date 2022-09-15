@@ -101,6 +101,17 @@ def indent_html(rawcode: str, config: Config) -> str:
             )
             and is_block_raw is False
             and not is_safe_closing_tag(config, item)
+            # and not ending in a slt like <span><strong></strong>.
+            and not re.findall(
+                rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
+                item,
+                re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            )
+            and not re.findall(
+                rf"(<({slt_html})\\b.+?>)(.*?)(</(\2)>[^<]*?$)",
+                item,
+                re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            )
         ):
             # block to catch inline block followed by a non-break tag
             if (
