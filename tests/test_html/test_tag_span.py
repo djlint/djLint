@@ -65,3 +65,24 @@ def test_nested_string(runner: CliRunner, tmp_file: TextIO) -> None:
 </p>
 """
     )
+
+    write_to_file(
+        tmp_file.name,
+        b"""<ul>
+    <li>
+        <span>C</span> <a>D</a> <strong>Q</strong>
+    </li>
+</ul>
+""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+
+    assert (
+        Path(tmp_file.name).read_text(encoding="utf8")
+        == """<ul>
+    <li>
+        <span>C</span> <a>D</a> <strong>Q</strong>
+    </li>
+</ul>
+"""
+    )

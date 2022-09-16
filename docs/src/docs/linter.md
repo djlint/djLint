@@ -90,6 +90,7 @@ The first letter of a code follows the pattern:
 | T027 | Unclosed string found in template syntax.                                                    |
 | T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} |
 | T032 | Extra whitespace found in template tags.                                                     |
+| T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  |
 
 ### Adding Rules
 

@@ -62,34 +62,24 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if a one-line, inline tag, just process it, only if line starts w/ it
         elif (
-            re.findall(
-                rf"(^<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
-                item,
-                re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            )
-            or re.findall(
-                re.compile(
-                    rf"(<({slt_html})\b.+?>)(.*?)(</(\2)>[^<]*?$)",
+            (
+                re.findall(
+                    rf"""^ # start of a line
+                    (?:
+                        (?:<({slt_html})>)(?:.*?)(?:</(?:\1)>[ \t]*?) # <span>stuff</span> >>>> match 1
+                       |(?:<({slt_html})\b[^>]+?>)(?:.*?)(?:</(?:\2)>[ \t]*?) # <span stuff>stuff</span> >>> match 2
+                       |(?:<(?:{always_self_closing_html})\b[^>]*?/?>[ \t]*?) # <img stuff />
+                       |(?:<(?:{slt_html})\b[^>]*?/>[ \t]*?) # <img />
+                       |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(\3)[ ]+?.*?%}}[ \t]*?) # >>> match 3
+                    )
+                    +?[^<]*?$ # with no other tags following until end of line
+                """,
+                    item,
                     re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-                ),
-                item,
+                )
             )
-            or re.findall(
-                rf"^({{%[ ]*?({slt_template})[ ]+?.*?%}})(.*?)({{%[ ]+?end(\2)[ ]+?.*?%}})",
-                item,
-                re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
-            or re.findall(
-                rf"(<({slt_html})\b.*?/>)", item, flags=re.IGNORECASE | re.VERBOSE
-            )
-            or re.findall(
-                re.compile(
-                    rf"(<({always_self_closing_html})\b.*?/?>)",
-                    re.IGNORECASE | re.VERBOSE,
-                ),
-                item,
-            )
-        ) and is_block_raw is False:
+            and is_block_raw is False
+        ):
             tmp = (indent * indent_level) + item + "\n"
 
         # if unindent, move left
@@ -108,7 +98,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 re.IGNORECASE | re.VERBOSE | re.MULTILINE,
             )
             and not re.findall(
-                rf"(<({slt_html})\\b.+?>)(.*?)(</(\2)>[^<]*?$)",
+                rf"(<({slt_html})\\b[^>]+?>)(.*?)(</(\2)>[^<]*?$)",
                 item,
                 re.IGNORECASE | re.VERBOSE | re.MULTILINE,
             )
@@ -123,7 +113,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     )
                     or re.findall(
                         re.compile(
-                            rf"(^<({slt_html})\b.+?>)(.*?)(</(\2)>)",
+                            rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)",
                             re.IGNORECASE | re.VERBOSE | re.MULTILINE,
                         ),
                         item,
@@ -157,6 +147,17 @@ def indent_html(rawcode: str, config: Config) -> str:
                 ),
                 item,
             )
+            # # and not ending in a slt like <span><strong></strong>.
+            # and not re.findall(
+            #     rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
+            #     item,
+            #     re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            # )
+            # and not re.findall(
+            #     rf"(<({slt_html})\\b.+?>)(.*?)(</(\2)>[^<]*?$)",
+            #     item,
+            #     re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            # )
             and is_block_raw is False
         ):
             tmp = (indent * indent_level) + item + "\n"

@@ -90,6 +90,7 @@ La première lettre d'un code suit le modèle :
 | T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      |
 | T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} |
 | T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            |
+| T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  |
 
 ### Ajout de règles
 
