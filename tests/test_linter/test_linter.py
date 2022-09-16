@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter/test_linter.py::test_ignoring_rules
+   pytest tests/test_linter/test_linter.py::test_T034
 
 """
 # pylint: disable=C0116,C0103
@@ -835,6 +835,16 @@ def test_H033(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<form action=" asdf " ...>...</form>')
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H033" in result.output
+
+
+def test_T034(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"{% not ok }%")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T034" in result.output
+
+    write_to_file(tmp_file.name, b"{% not ok \n%}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T034" not in result.output
 
 
 def test_rules_not_matched_in_ignored_block(
