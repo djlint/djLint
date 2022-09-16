@@ -25,7 +25,7 @@ def test_config(runner: CliRunner) -> None:
             "--preserve-blank-lines",
         ],
     )
-
+    print(result.output)
     assert result.exit_code == 0
 
 
