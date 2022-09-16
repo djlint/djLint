@@ -26,7 +26,7 @@
     message: Double quotes should be used in tags.
     flags: re.DOTALL
     patterns:
-    - "{%[ \t]*?extends[ \t]+?'[^']*'"
+    - "{%[ \t]*?(?:trans(?:late)?|with|extends|include|now)?[ \t]+?(?:[^']+?=)?'[^']*'"
 - rule:
     name: T003
     message: 'Endblock should have name. Ex: {% endblock body %}.'
@@ -251,3 +251,9 @@
     patterns:
     - <form[^>]+?action=['|"]\s
     - <form[^>]+?action=(['|"])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^"'{]))*\s+?\1
+- rule:
+    name: T034
+    message: Did you intend to use {% ... %} instead of {% ... }%?
+    flags: re.DOTALL
+    patterns:
+    - '{%(?:(?!%}).)*}%'

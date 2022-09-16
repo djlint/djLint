@@ -7,7 +7,7 @@ run::
 
    # for a single test
 
-   pytest tests/test_linter/test_linter.py::test_ignoring_rules
+   pytest tests/test_linter/test_linter.py::test_T034
 
 """
 # pylint: disable=C0116,C0103
@@ -78,6 +78,31 @@ def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{% extends this %}")
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert "T002" not in result.output
+
+    write_to_file(tmp_file.name, b"{% with a='this' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
+    write_to_file(tmp_file.name, b"{% trans 'this' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
+    write_to_file(tmp_file.name, b"{% translate 'this' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
+    write_to_file(tmp_file.name, b"{% include 'this' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
+    write_to_file(tmp_file.name, b"{% now 'Y-m-d G:i:s' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
 
 
 def test_T003(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -835,6 +860,16 @@ def test_H033(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<form action=" asdf " ...>...</form>')
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H033" in result.output
+
+
+def test_T034(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"{% not ok }%")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T034" in result.output
+
+    write_to_file(tmp_file.name, b"{% not ok \n%}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert "T034" not in result.output
 
 
 def test_rules_not_matched_in_ignored_block(
