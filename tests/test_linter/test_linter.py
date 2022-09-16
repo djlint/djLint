@@ -79,6 +79,31 @@ def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert "T002" not in result.output
 
+    write_to_file(tmp_file.name, b"{% with a='this' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
+    write_to_file(tmp_file.name, b"{% trans 'this' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
+    write_to_file(tmp_file.name, b"{% translate 'this' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
+    write_to_file(tmp_file.name, b"{% include 'this' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
+    write_to_file(tmp_file.name, b"{% now 'Y-m-d G:i:s' %}")
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002" in result.output
+
 
 def test_T003(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{% endblock %}")

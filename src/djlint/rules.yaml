@@ -26,7 +26,7 @@
     message: Double quotes should be used in tags.
     flags: re.DOTALL
     patterns:
-    - "{%[ \t]*?extends[ \t]+?'[^']*'"
+    - "{%[ \t]*?(?:trans(?:late)?|with|extends|include|now)?[ \t]+?(?:[^']+?=)?'[^']*'"
 - rule:
     name: T003
     message: 'Endblock should have name. Ex: {% endblock body %}.'
