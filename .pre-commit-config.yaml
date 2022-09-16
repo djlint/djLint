@@ -43,9 +43,3 @@ repos:
     args: [--autofix]
   - id: pretty-format-yaml
     args: [--autofix, --indent, '2']
-repos:
-  - repo: https://github.com/christopherpickering/pre-commit-hooks
-    rev: 0.0.6
-    hooks:
-      - id: poetry-to-requirements
-        args: [--output=requirements.txt]
