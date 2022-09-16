@@ -76,7 +76,7 @@ Une bonne règle suit ce modèle :
 | H031 | Pensez à ajouter des méta keywords.                                                                                       |
 | T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            |
 | H033 | Espace supplémentaire dans l'action du formulaire.                                                                        |
-| T034 | Aviez-vous l'intention d'utiliser {% ... %} au lieu de {% ... }% ?                                                        |
+| T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  |
 
 ### Ajout de règles
 

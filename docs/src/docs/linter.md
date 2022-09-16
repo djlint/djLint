@@ -76,7 +76,7 @@ A good rule follows this pattern:
 | H031 | Consider adding meta keywords.                                                               |
 | T032 | Extra whitespace found in template tags.                                                     |
 | H033 | Extra whitespace found in form action.                                                       |
-| T034 | Did you intend to use {% ... %} instead of {% ... }%?                                        |
+| T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  |
 
 ### Adding Rules
 
