@@ -37,15 +37,26 @@ A good rule follows this pattern:
       - Trichotillomania
 ```
 
+### Code Patterns
+
+The first letter of a code follows the pattern:
+
+::: content
+
+- D: applies specifically to Django
+- H: applies to html
+- J: applies specifically to Jinja
+- M: applies specifically to Handlebars
+- N: applies specifically to Nunjucks
+- T: applies generally to templates
+  :::
+
 ## Rules
 
 | Code | Meaning                                                                                      |
 | ---- | -------------------------------------------------------------------------------------------- |
-| T001 | Variables should be wrapped in a single whitespace. Ex: {% raw %}`{{ this }}`{% endraw %}    |
-| T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    |
-| T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   |
 | D004 | (Django) Static urls should follow {% raw %}`{% static path/to/file %}`{% endraw %} pattern. |
-| J004 | (Jinja) Static urls should follow {% raw %}`{{ url_for('static'..) }}`{% endraw %} pattern.  |
+| D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         |
 | H005 | Html tag should have `lang` attribute.                                                       |
 | H006 | `img` tag should have `height` and `width` attributes.                                       |
 | H007 | `<!DOCTYPE ... >` should be present before the html tag.                                     |
@@ -59,8 +70,6 @@ A good rule follows this pattern:
 | H015 | Follow `h` tags with a line break.                                                           |
 | H016 | Missing `title` tag in html.                                                                 |
 | H017 | Tag should be self closing.                                                                  |
-| D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         |
-| J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          |
 | H019 | Replace `javascript:abc()` with `on_` event and real url.                                    |
 | H020 | Empty tag pair found. Consider removing.                                                     |
 | H021 | Inline styles should be avoided.                                                             |
@@ -69,13 +78,18 @@ A good rule follows this pattern:
 | H024 | Omit type on scripts and styles.                                                             |
 | H025 | Tag seems to be an orphan.                                                                   |
 | H026 | Empty id and class tags can be removed.                                                      |
-| T027 | Unclosed string found in template syntax.                                                    |
-| T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} |
 | H029 | Consider using lowercase form method values.                                                 |
 | H030 | Consider adding a meta description.                                                          |
 | H031 | Consider adding meta keywords.                                                               |
-| T032 | Extra whitespace found in template tags.                                                     |
 | H033 | Extra whitespace found in form action.                                                       |
+| J004 | (Jinja) Static urls should follow {% raw %}`{{ url_for('static'..) }}`{% endraw %} pattern.  |
+| J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          |
+| T001 | Variables should be wrapped in a single whitespace. Ex: {% raw %}`{{ this }}`{% endraw %}    |
+| T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    |
+| T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   |
+| T027 | Unclosed string found in template syntax.                                                    |
+| T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} |
+| T032 | Extra whitespace found in template tags.                                                     |
 | T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  |
 
 ### Adding Rules
@@ -95,17 +109,3 @@ A good rule consists of
   :::
 
 Please include a test to validate the rule.
-
-### Code Patterns
-
-The first letter of a code follows the pattern:
-
-::: content
-
-- T: applies generally to templates
-- H: applies to html
-- D: applies specifically to Django
-- J: applies specifically to Jinja
-- N: applies specifically to Nunjucks
-- M: applies specifically to Handlebars
-  :::
