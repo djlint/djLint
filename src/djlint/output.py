@@ -1,7 +1,8 @@
 """Build djLint console output."""
 import shutil
+from collections import Counter
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import regex as re
 from click import echo
@@ -33,14 +34,22 @@ def print_output(
     if config.stdin is False or config.lint:
         echo()
 
-    for error in sorted(file_errors, key=lambda x: next(iter(list(x.values())[0]))):
-        if error.get("format_message") and config.stdin is False:
-            # reformat message
-            format_error_count += build_check_output(error["format_message"], config)
+    if config.statistics:
+        lint_error_count = build_stats_output(
+            [x.get("lint_message") for x in file_errors], config
+        )
 
-        if error.get("lint_message"):
-            # lint message
-            lint_error_count += build_output(error["lint_message"], config)
+    else:
+        for error in sorted(file_errors, key=lambda x: next(iter(list(x.values())[0]))):
+            if error.get("format_message") and config.stdin is False:
+                # reformat message
+                format_error_count += build_check_output(
+                    error["format_message"], config
+                )
+
+            if error.get("lint_message"):
+                # lint message
+                lint_error_count += build_output(error["lint_message"], config)
 
     tense_message = (
         build_quantity(format_error_count) + " would be"
@@ -180,3 +189,37 @@ def build_quantity_tense(size: int) -> str:
         + " "
         + ("were" if size > 1 or size == 0 else "was")
     )
+
+
+def build_stats_output(errors: List[Optional[Any]], config: Config) -> int:
+    """Build output for linter statistics."""
+    if len(errors) == 0:
+        return 0
+
+    codes = []
+    for error in errors:
+        if error:
+            for code in list(error.values())[0]:
+                codes.append(code["code"])
+
+    messages = {
+        rule["rule"]["name"]: rule["rule"]["message"] for rule in config.linter_rules
+    }
+
+    if messages and codes:
+
+        longest_code = len(max(messages.keys(), key=len))
+        longest_count = len(
+            str(max(Counter(codes).values(), key=lambda x: len(str(x))))
+        )
+
+        for code in sorted(Counter(codes).items()):
+
+            code_space = (longest_code - len(str(code[0]))) * " "
+            count_space = (longest_count - len(str(code[1]))) * " "
+
+            echo(
+                f"{Fore.YELLOW}{code[0]}{Fore.BLUE} {code_space}{code[1]}{Style.RESET_ALL} {count_space}{messages[code[0]]}"
+            )
+
+    return sum(Counter(codes).values())

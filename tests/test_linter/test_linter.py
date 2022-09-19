@@ -954,3 +954,17 @@ def test_ignoring_rules(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H006" not in result.output
+
+
+def test_statistics_empty(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"")
+    result = runner.invoke(djlint, [tmp_file.name, "--statistics"])
+
+    assert result.exit_code == 0
+
+
+def test_statistics_with_results(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<div>")
+    result = runner.invoke(djlint, [tmp_file.name, "--statistics"])
+
+    assert result.exit_code == 1

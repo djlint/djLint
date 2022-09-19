@@ -122,6 +122,11 @@ from .src import get_src
     required=False,
     help="Path to global configuration file in .djlintrc format",
 )
+@click.option(
+    "--statistics",
+    is_flag=True,
+    help="Count the number of occurrences of each error/warning code.",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -141,6 +146,7 @@ def main(
     format_css: bool,
     format_js: bool,
     configuration: Optional[str],
+    statistics: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -161,6 +167,7 @@ def main(
         format_css=format_css,
         format_js=format_js,
         configuration=configuration,
+        statistics=statistics,
     )
 
     temp_file = None
