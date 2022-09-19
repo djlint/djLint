@@ -104,6 +104,15 @@ def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 1
     assert "T002" in result.output
 
+    # verify regex doesn't over grab
+    write_to_file(
+        tmp_file.name,
+        b"""{% extends "layout.h" %}
+<div class="card" data-list='{"name": "blah"}'>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert "T002" not in result.output
+
 
 def test_T003(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{% endblock %}")
@@ -954,3 +963,17 @@ def test_ignoring_rules(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H006" not in result.output
+
+
+def test_statistics_empty(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"")
+    result = runner.invoke(djlint, [tmp_file.name, "--statistics"])
+
+    assert result.exit_code == 0
+
+
+def test_statistics_with_results(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<div>")
+    result = runner.invoke(djlint, [tmp_file.name, "--statistics"])
+
+    assert result.exit_code == 1

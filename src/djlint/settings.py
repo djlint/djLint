@@ -206,6 +206,7 @@ class Config:
         format_css: bool = False,
         format_js: bool = False,
         configuration: Optional[str] = None,
+        statistics: bool = False,
     ):
 
         self.reformat = reformat
@@ -305,6 +306,8 @@ class Config:
                 rule_set,
             )
         )
+
+        self.statistics = statistics
 
         # base options
         default_indent = 4
