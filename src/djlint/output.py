@@ -34,22 +34,17 @@ def print_output(
     if config.stdin is False or config.lint:
         echo()
 
-    if config.statistics:
-        lint_error_count = build_stats_output(
-            [x.get("lint_message") for x in file_errors], config
-        )
+    for error in sorted(file_errors, key=lambda x: next(iter(list(x.values())[0]))):
+        if error.get("format_message") and config.stdin is False:
+            # reformat message
+            format_error_count += build_check_output(error["format_message"], config)
 
-    else:
-        for error in sorted(file_errors, key=lambda x: next(iter(list(x.values())[0]))):
-            if error.get("format_message") and config.stdin is False:
-                # reformat message
-                format_error_count += build_check_output(
-                    error["format_message"], config
-                )
+        if error.get("lint_message"):
+            # lint message
+            lint_error_count += build_output(error["lint_message"], config)
 
-            if error.get("lint_message"):
-                # lint message
-                lint_error_count += build_output(error["lint_message"], config)
+    if config.statistics and config.lint:
+        build_stats_output([x.get("lint_message") for x in file_errors], config)
 
     tense_message = (
         build_quantity(format_error_count) + " would be"
@@ -205,6 +200,12 @@ def build_stats_output(errors: List[Optional[Any]], config: Config) -> int:
     messages = {
         rule["rule"]["name"]: rule["rule"]["message"] for rule in config.linter_rules
     }
+
+    echo()
+    width, _ = shutil.get_terminal_size()
+    echo(
+        f"{Fore.GREEN}{Style.BRIGHT}Statistics{Style.RESET_ALL}\n{Style.DIM}{'─' * width}{Style.RESET_ALL}"
+    )
 
     if messages and codes:
 
