@@ -61,10 +61,11 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
 
         # if a one-line, inline tag, just process it, only if line starts w/ it
+        # or if it is trailing text
         elif (
             (
                 re.findall(
-                    rf"""^ # start of a line
+                    rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
                     (?:
                         (?:<({slt_html})>)(?:.*?)(?:</(?:\1)>[ \t]*?) # <span>stuff</span> >>>> match 1
                        |(?:<({slt_html})\b[^>]+?>)(?:.*?)(?:</(?:\2)>[ \t]*?) # <span stuff>stuff</span> >>> match 2
@@ -147,19 +148,9 @@ def indent_html(rawcode: str, config: Config) -> str:
                 ),
                 item,
             )
-            # # and not ending in a slt like <span><strong></strong>.
-            # and not re.findall(
-            #     rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
-            #     item,
-            #     re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            # )
-            # and not re.findall(
-            #     rf"(<({slt_html})\\b.+?>)(.*?)(</(\2)>[^<]*?$)",
-            #     item,
-            #     re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            # )
             and is_block_raw is False
         ):
+
             tmp = (indent * indent_level) + item + "\n"
             indent_level = indent_level + 1
 

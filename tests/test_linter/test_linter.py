@@ -113,6 +113,17 @@ def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert "T002" not in result.output
 
+    # verify regex doesn't match other stuff
+    write_to_file(
+        tmp_file.name,
+        b"""{% if form.action_url %}
+  ='stuff'
+{% endif %}
+""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert "T002" not in result.output
+
 
 def test_T003(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"{% endblock %}")

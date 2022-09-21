@@ -86,3 +86,21 @@ def test_nested_string(runner: CliRunner, tmp_file: TextIO) -> None:
 </ul>
 """
     )
+
+
+def test_span_leading_text(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""{% if this %}<p>Text <span>text</span></p>{% endif %}""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+
+    assert (
+        Path(tmp_file.name).read_text(encoding="utf8")
+        == """{% if this %}
+    <p>
+        Text <span>text</span>
+    </p>
+{% endif %}
+"""
+    )
