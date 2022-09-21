@@ -204,9 +204,7 @@ def build_stats_output(errors: List[Optional[Any]], config: Config) -> int:
     echo()
     width, _ = shutil.get_terminal_size()
     echo(
-        f"{Fore.GREEN}{Style.BRIGHT}Statistics{Style.RESET_ALL}\n{Style.DIM}"
-        + "".join(["─" for x in range(1, width)])
-        + Style.RESET_ALL
+        f"{Fore.GREEN}{Style.BRIGHT}Statistics{Style.RESET_ALL}\n{Style.DIM}{'─' * width}{Style.RESET_ALL}"
     )
 
     if messages and codes:
