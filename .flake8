@@ -1,6 +1,3 @@
-[mypy]
-ignore_missing_imports = True
-
 [flake8]
 ignore = D103, F401, E501, W503, SIM114, D403, RST219, RST299, E999
 per-file-ignores =
