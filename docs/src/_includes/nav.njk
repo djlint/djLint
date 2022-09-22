@@ -15,58 +15,61 @@
         </div>
         <div id="djlint-nav-menu" class="navbar-menu">
             <div class="navbar-start my-5 mx-0 is-justify-content-center is-flex-grow-1">
-                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/getting-started/">
+                <a class="navbar-item has-text-grey-dark umami--nav--gettingstarted" href="{{ "lang_code_url" | i18n }}/docs/getting-started/">
                     {{ "getting_started" | i18n }}
                 </a>
 
-                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/formatter/">
+                <a class="navbar-item has-text-grey-dark umami--nav--formatter" href="{{ "lang_code_url" | i18n }}/docs/formatter/">
                     {{ "formatter" | i18n }}
                 </a>
-                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/linter/">
+                <a class="navbar-item has-text-grey-dark umami--nav--linter" href="{{ "lang_code_url" | i18n }}/docs/linter/">
                     {{ "linter" | i18n }}
                 </a>
-                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/configuration">
+                <a class="navbar-item has-text-grey-dark umami--nav--configuration" href="{{ "lang_code_url" | i18n }}/docs/configuration">
                     {{ "configuration" | i18n }}
                 </a>
-                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/integrations">
+                <a class="navbar-item has-text-grey-dark umami--nav--integrations" href="{{ "lang_code_url" | i18n }}/docs/integrations">
                     {{ "integrations" | i18n }}
                 </a>
-                <a class="navbar-item has-text-grey" href="{{ "lang_code_url" | i18n }}/docs/best-practices">
+                <a class="navbar-item has-text-grey-dark umami--nav--bestpractices" href="{{ "lang_code_url" | i18n }}/docs/best-practices">
                     {{ "best_practices" | i18n }}
                 </a>
             </div>
             <div class="navbar-end mx-0">
-                <a class="navbar-item button is-white animated fadeIn"
+                <a class="navbar-item button is-white animated fadeIn umami--nav--github"
                    href="https://github.com/Riverside-Healthcare/djlint"
                    target="_blank"
-                   rel="noopener">
-                    <span class="icon is-large has-text-grey is-nav-icon">
+                   rel="noopener"
+                   aria-label="GitHub">
+                    <span class="icon is-large has-text-grey-dark is-nav-icon">
                         <i class="fab fa-2x fa-github"></i>
                     </span>
                 </a>
-                <a class="navbar-item button is-white animated fadeIn"
+                <a class="navbar-item button is-white animated fadeIn umami--nav--discord"
                    href="https://discord.gg/taghAqebzU"
                    target="_blank"
-                   rel="noopener">
-                    <span class="icon is-large has-text-grey  is-nav-icon">
+                   rel="noopener"
+                   aria-label="Discord">
+                    <span class="icon is-large has-text-grey-dark  is-nav-icon">
                         <i class="fab fa-2x fa-discord"></i>
                     </span>
                 </a>
-                <a class="navbar-item button is-white animated fadeIn"
+                <a class="navbar-item button is-white animated fadeIn umami--nav--download"
                    href="https://pypi.org/project/djlint/"
                    target="_blank"
-                   rel="noopener">
-                    <span class="icon is-large has-text-grey  is-nav-icon">
+                   rel="noopener"
+                   aria-label="Download">
+                    <span class="icon is-large has-text-grey-dark  is-nav-icon">
                         <i class="fas fa-2x fa-download"></i>
                     </span>
                 </a>
-                 <div class="navbar-item has-dropdown has-text-grey is-hoverable">
-                    <a class="navbar-link has-text-grey is-transparent">
+                 <div class="navbar-item has-dropdown has-text-grey-dark is-hoverable">
+                    <div class="navbar-link has-text-grey-dark is-transparent">
                         <span class="icon is-large">
                             <i class="fas fa-lg  fa-globe"></i>
                         </span>
                         <span>{{ locale | i18n_locale(locales) }}
-                    </a>
+                    </div>
                     <div class="navbar-dropdown">
                         {%  for page in page.url | i18n_urls(collections.all) %}
                             <a class="navbar-item" href="{{ page.url }}">{{ page.meta.label }}

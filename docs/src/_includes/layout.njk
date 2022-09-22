@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}" class="has-navbar-fixed-top">
+<html lang="{{ locale or "en" }}" dir="{{ dir or "ltr" }}" class="has-navbar-fixed-top">
     <head>
         {% block meta %}
             {% metagen
@@ -92,14 +92,6 @@
               type="font/woff2"
               crossorigin/>
         {% jsonLdScript meta, type, tags %}
-        <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
-        <script>
-          TrackJS.install({
-            token: "43e6548fbc654c889ce75878d88c9071",
-            application: "djlint"
-            // for more configuration options, see https://docs.trackjs.com
-          });
-        </script>
     </head>
     <body>
         {% include "src/_includes/nav.njk" %}
@@ -109,7 +101,14 @@
             {% endblock body %}
         </section>
         {% include "src/_includes/foot.njk" %}
-        <!--<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"></script>-->
+        <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+        <script>
+          TrackJS.install({
+            token: "43e6548fbc654c889ce75878d88c9071",
+            application: "djlint"
+            // for more configuration options, see https://docs.trackjs.com
+          });
+        </script>
         <script src="{{ js.scriptsJs }}" async></script>
     </body>
 </html>
