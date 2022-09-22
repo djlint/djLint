@@ -1,5 +1,5 @@
-$link-hover: hsl(207, 61%, 53%);
-$link: hsl(207, 61%, 53%);
+$link-hover: hsl(207, 61%, 44%);
+$link: hsl(207, 61%, 44%);
 
 @import '../../../node_modules/bulma/bulma';
 @import '../../../node_modules/bulma-pricingtable/src/sass/index';
@@ -34,7 +34,7 @@ pre .section {
   padding: unset;
 }
 
-@import '../../../node_modules/prismjs/themes/prism';
+@import '../../../node_modules/prismjs/themes/prism-tomorrow';
 
 @include fontFace(
   $fontName: Inter,
