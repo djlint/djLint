@@ -104,7 +104,11 @@ def condense_html(html: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group()
 
-        return match.group() + "\n"
+        # check that next line is not blank.
+        if html[match.end() : match.end() + 1] != "\n":  # noqa:E203
+            return match.group() + "\n"
+
+        return match.group()
 
     func = partial(add_blank_line_after, config, html)
 
@@ -113,7 +117,7 @@ def condense_html(html: str, config: Config) -> str:
         for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
             html = re.sub(
                 re.compile(
-                    rf"((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)(?=[^\n])",
+                    rf"((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)",
                     re.IGNORECASE | re.MULTILINE | re.DOTALL,
                 ),
                 func,
@@ -132,6 +136,7 @@ def condense_html(html: str, config: Config) -> str:
     # should we add blank lines before load tags?
     if config.blank_line_before_tag:
         for tag in [x.strip() for x in config.blank_line_before_tag.split(",")]:
+
             html = re.sub(
                 re.compile(
                     rf"(?<!^\n)((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)",
