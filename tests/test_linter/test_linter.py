@@ -10,7 +10,7 @@ run::
    pytest tests/test_linter/test_linter.py::test_T034
 
 """
-# pylint: disable=C0116,C0103
+# pylint: disable=C0116,C0103,C0302
 
 from typing import TextIO
 
@@ -108,7 +108,9 @@ def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
         tmp_file.name,
         b"""{% extends "layout.h" %}
-<div class="card" data-list='{"name": "blah"}'>""",
+<div class="card" data-list='{"name": "blah"}'>
+{% include "template.html" %}
+<div {% fpr %} data-{{ name }}='{{ value }}'{% endfor %}/>""",
     )
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert "T002" not in result.output
@@ -123,6 +125,16 @@ def test_T002(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert "T002" not in result.output
+
+    # verify correct line is returned
+    write_to_file(
+        tmp_file.name,
+        b"""{% include "template.html" %}
+{% include "template.html" with type='mono' %}""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 1
+    assert "T002 2:" in result.output
 
 
 def test_T003(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -336,6 +348,11 @@ def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
     print(result.output)
     assert result.exit_code == 0
     assert "H017 1:" not in result.output
+
+    # test template tags inside html
+    write_to_file(tmp_file.name, b"<image {{ > }} />")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H017" not in result.output
 
 
 def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
