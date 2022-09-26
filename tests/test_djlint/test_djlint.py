@@ -174,7 +174,7 @@ def test_check_reformatter_simple_error_quiet(
     write_to_file(tmp_file.name, b"<div><p>nice stuff here</p></div>")
     result = runner.invoke(djlint, [tmp_file.name, "--check", "--quiet"])
     assert result.exit_code == 1
-    assert "1 file would be updated." in result.output
+    assert "1 file would be updated." not in result.output
 
 
 def test_check_reformatter_no_error(runner: CliRunner, tmp_file: TextIO) -> None:

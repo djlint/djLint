@@ -31,7 +31,9 @@ def print_output(
     lint_error_count = 0
     format_error_count = 0
 
-    if config.stdin is False or config.lint:
+    print_blanks = config.stdin is False and config.quiet is False
+
+    if print_blanks:
         echo()
 
     for error in sorted(file_errors, key=lambda x: next(iter(list(x.values())[0]))):
@@ -58,22 +60,26 @@ def print_output(
         f"Linted {file_quantity}, found {lint_error_count} {error_case}."
     )
 
-    if config.stdin is False or config.lint:
+    if print_blanks:
         echo()
 
-    if config.stdin is False and (config.reformat or config.check):
+    if (
+        config.quiet is False
+        and config.stdin is False
+        and (config.reformat or config.check)
+    ):
         reformat_success_color = (
             Fore.RED + Style.BRIGHT if (format_error_count) > 0 else Fore.BLUE
         )
         echo(f"{reformat_success_color}{reformat_success_message}{Style.RESET_ALL}")
 
-    if config.lint:
+    if config.lint and config.quiet is False:
         lint_success_color = (
             Fore.RED + Style.BRIGHT if (lint_error_count) > 0 else Fore.BLUE
         )
         echo(f"{lint_success_color}{lint_success_message}{Style.RESET_ALL}")
 
-    if config.stdin is False or config.lint:
+    if print_blanks:
         echo()
 
     return lint_error_count + format_error_count
@@ -100,7 +106,7 @@ def build_output(error: dict, config: Config) -> int:
 
     filename = build_relative_path(list(error.keys())[0], config.project_root.resolve())
 
-    if "{filename}" not in config.linter_output_format:
+    if "{filename}" not in config.linter_output_format and not config.stdin:
         echo(
             f"{Fore.GREEN}{Style.BRIGHT}\n{filename}\n{Style.DIM}"
             + "".join(["─" for x in range(1, width)])
@@ -140,16 +146,7 @@ def build_check_output(errors: dict, config: Config) -> int:
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
     width, _ = shutil.get_terminal_size()
 
-    if config.quiet is True and len(list(errors.values())[0]) > 0:
-        echo(
-            Fore.GREEN
-            + Style.BRIGHT
-            + build_relative_path(list(errors.keys())[0], config.project_root.resolve())
-            + Style.DIM
-            + Style.RESET_ALL
-        )
-
-    elif config.quiet is False and len(list(errors.values())[0]) > 0:
+    if config.quiet is False and len(list(errors.values())[0]) > 0:
         echo(
             Fore.GREEN
             + Style.BRIGHT
