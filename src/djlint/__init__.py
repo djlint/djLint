@@ -221,7 +221,7 @@ def main(
             Style.RESET_ALL + "    ",
         )
     )
-    if config.stdin is False or config.lint:
+    if config.stdin is False and config.quiet is False:
         echo()
 
     worker_count = os.cpu_count() or 1
@@ -239,7 +239,7 @@ def main(
         func = partial(process, config)
         futures = {exe.submit(func, this_file): this_file for this_file in file_list}
 
-        if temp_file is None or config.lint:
+        if temp_file is None:
             elapsed = "00:00"
             with tqdm(
                 total=len(file_list),
@@ -277,6 +277,9 @@ def main(
                 leave=True,
             )
             finished_bar.close()
+        else:
+            for future in as_completed(futures):
+                file_errors.append(future.result())
 
     if temp_file and (config.reformat or config.check):
         # if using stdin, only give back formatted code.
