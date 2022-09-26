@@ -337,6 +337,11 @@ def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
     assert result.exit_code == 0
     assert "H017 1:" not in result.output
 
+    # test template tags inside html
+    write_to_file(tmp_file.name, b"<image {{ > }} />")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H017" not in result.output
+
 
 def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
