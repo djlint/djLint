@@ -53,7 +53,7 @@
   "homepage": "https://djlint.com",
   "dependencies": {
     "python-shell": "^3.0.1",
-    "yargs": "17.5.1"
+    "yargs": "17.6.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
@@ -66,7 +66,7 @@
     "cz-conventional-changelog": "3.3.0",
     "lint-staged": "13.0.3",
     "semantic-release": "19.0.5",
-    "xo": "0.52.3"
+    "xo": "0.52.4"
   },
   "config": {
     "commitizen": {
