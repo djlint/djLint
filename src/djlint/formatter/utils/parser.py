@@ -47,7 +47,7 @@ class TemplateParser(Htp):
                 and not self.tag.is_space_sensitive
                 and not (self.tag.parent and self.tag.parent.is_space_sensitive)
                 or self.tag.parent
-                and self.tag.parent.is_hidden
+                and self.tag.parent.is_display_none
             ):
                 if self.tag.data is None and self.output and self.output[-1] != "\n":
                     return "\n" + spacing
@@ -78,7 +78,7 @@ class TemplateParser(Htp):
             ):
 
                 return ""
-            elif self.tag.is_hidden and not (
+            elif self.tag.is_display_none and not (
                 self.tag.parent and self.tag.parent.is_space_sensitive
             ):
                 if self.output and self.output[-1] == "\n":
@@ -115,7 +115,7 @@ class TemplateParser(Htp):
                 return spacing
             else:
 
-                if self.tag.is_hidden and not self.last_parent.is_hidden:
+                if self.tag.is_display_none and not self.last_parent.is_display_none:
                     if self.output and self.output[-1] == "\n":
                         return spacing
                     else:

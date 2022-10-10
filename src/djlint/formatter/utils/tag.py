@@ -342,7 +342,7 @@ class Tag:
         return False
 
     @property
-    def is_hidden(self) -> bool:
+    def is_display_none(self) -> bool:
         """
         Describe if Tag is an hidden element.
 
