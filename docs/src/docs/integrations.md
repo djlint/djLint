@@ -49,6 +49,7 @@ repos:
     hooks:
       - id: djlint-handlebars
         files: "\\.html"
+        types_or: ['html']
 ```
 
 You can use the `files` or `exclude` parameters to constrain each hook to its own directory, allowing you to support multiple template languages within the same repo.
