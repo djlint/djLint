@@ -54,7 +54,9 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         if (
             re.findall(
-                config.ignored_inline_blocks, item, flags=re.IGNORECASE | re.VERBOSE
+                rf"^\s*?(?:{config.ignored_inline_blocks})",
+                item,
+                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
             )
             and is_block_raw is False
         ):
@@ -150,7 +152,6 @@ def indent_html(rawcode: str, config: Config) -> str:
             )
             and is_block_raw is False
         ):
-
             tmp = (indent * indent_level) + item + "\n"
             indent_level = indent_level + 1
 

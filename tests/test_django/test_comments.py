@@ -5,7 +5,7 @@ run::
    pytest tests/test_django/test_comments.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_django/test_comments.py::test_comment
+   pytest tests/test_django/test_comments.py::test_nested_inline_comment
 
 """
 # pylint: disable=C0116
@@ -132,4 +132,23 @@ def test_inline_comment(runner: CliRunner, tmp_file: TextIO) -> None:
         tmp_file, runner, b"{# <div></div> #}\n{% if this %}<div></div>{% endif %}"
     )
     assert output.text == """{# <div></div> #}\n{% if this %}<div></div>{% endif %}\n"""
+    assert output.exit_code == 0
+
+
+def test_nested_inline_comment(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div>
+    {% if 1 %}
+        <div class="{% if 1 %}class {% else %} class {% endif %}">
+            <div class="class"
+                 data-parameters="{#?@ViewBag.DefaultFilters#}"
+                 data-target="profile-{{ profile_type }}-{{ profile_id }}">
+            </div>
+        </div>
+    {% endif %}
+""",
+    )
+
     assert output.exit_code == 0
