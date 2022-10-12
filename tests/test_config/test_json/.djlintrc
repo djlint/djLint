@@ -1,5 +1,4 @@
 {
     "profile": "django",
-    "indent": 2,
     "custom_blocks": "toc,example"
 }

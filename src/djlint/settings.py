@@ -103,7 +103,10 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
 
     if config:
         try:
-            return json.loads(Path(config).resolve().read_text(encoding="utf8"))
+            djlint_content = json.loads(
+                Path(config).resolve().read_text(encoding="utf8")
+            )
+
         # pylint: disable=broad-except
         except BaseException:
             logger.info(
@@ -115,7 +118,7 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
     if pyproject_file:
         content = tomllib.load(pyproject_file.open("rb"))
         try:
-            return content["tool"]["djlint"]  # type: ignore
+            return {**djlint_content, **content["tool"]["djlint"]}  # type: ignore
         except KeyError:
             logger.info("No pyproject.toml found.")
 
@@ -123,7 +126,10 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
 
     if djlintrc_file:
         try:
-            return json.loads(djlintrc_file.read_text(encoding="utf8"))
+            return {
+                **djlint_content,
+                **json.loads(djlintrc_file.read_text(encoding="utf8")),
+            }
         # pylint: disable=broad-except
         except BaseException:
             logger.info("Failed to load .djlintrc file.")
