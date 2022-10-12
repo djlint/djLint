@@ -18,12 +18,10 @@ from src.djlint import main as djlint
 def test_config(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/test_config/test_json/html.html", "--check"])
 
-    print(result.output)
-
     assert (
         """-{% example stuff %}<p>this is a long paragraph</p>{% endexample %}
 +{% example stuff %}
-+  <p>this is a long paragraph</p>
++    <p>this is a long paragraph</p>
 +{% endexample %}
 """
         in result.output
@@ -41,7 +39,6 @@ def test_custom_config(runner: CliRunner) -> None:
             "tests/test_config/test_json/.djlint-cust",
         ],
     )
-
     assert (
         """-{% example stuff %}<p>this is a long paragraph</p>{% endexample %}
 +{% example stuff %}

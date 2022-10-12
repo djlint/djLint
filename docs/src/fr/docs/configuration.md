@@ -6,7 +6,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # {{ "configuration" | i18n }}
 
-La configuration se fait soit à travers le fichier `pyproject.toml` de votre projet, soit à travers un fichier `.djlintrc`. Les arguments de la ligne de commande remplaceront toujours les paramètres du fichier `pyproject.toml`.
+La configuration se fait soit à travers le fichier `pyproject.toml` de votre projet, soit à travers un fichier `.djlintrc`. Les arguments de la ligne de commande remplaceront toujours les paramètres du fichier `pyproject.toml`. Les paramètres locaux du projet prévaudront toujours sur les fichiers de configuration globaux.
 
 Le format du fichier `pyproject.toml` est `toml`.
 
