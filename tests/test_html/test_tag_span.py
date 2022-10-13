@@ -104,3 +104,22 @@ def test_span_leading_text(runner: CliRunner, tmp_file: TextIO) -> None:
 {% endif %}
 """
     )
+
+
+def test_span_and_template(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""{% block content %}
+    <span></span>{% blocktrans %}<div></div>{% endblocktrans %}
+    {% endblock content %}
+""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+
+    assert (
+        Path(tmp_file.name).read_text(encoding="utf8")
+        == """{% block content %}
+    <span></span>{% blocktrans %}<div></div>{% endblocktrans %}
+{% endblock content %}
+"""
+    )
