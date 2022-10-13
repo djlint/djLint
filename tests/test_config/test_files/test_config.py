@@ -11,7 +11,6 @@ run::
 # pylint: disable=C0116
 
 import os
-from pathlib import Path
 
 from click.testing import CliRunner
 

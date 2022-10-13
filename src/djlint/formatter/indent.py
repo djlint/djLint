@@ -64,6 +64,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if a one-line, inline tag, just process it, only if line starts w/ it
         # or if it is trailing text
+
         elif (
             (
                 re.findall(
@@ -74,6 +75,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                        |(?:<(?:{always_self_closing_html})\b[^>]*?/?>[ \t]*?) # <img stuff />
                        |(?:<(?:{slt_html})\b[^>]*?/>[ \t]*?) # <img />
                        |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(\3)[ ]+?.*?%}}[ \t]*?) # >>> match 3
+                       |{config.ignored_inline_blocks}
                     )
                     +?[^<]*?$ # with no other tags following until end of line
                 """,
