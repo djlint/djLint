@@ -71,8 +71,9 @@ djLint можно использовать в качестве плагина Su
 
 ::: content
 
-- [Страница рынка](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
 - [GitHub репозиторий](https://github.com/monosans/djlint-vscode)
+- [Страница на VS Marketplace](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
+- [Страница на Open VSX](https://open-vsx.org/extension/monosans/djlint)
   :::
 
 ## neovim
