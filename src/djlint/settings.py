@@ -220,7 +220,10 @@ class Config:
         self.lint = lint
         self.warn = warn
 
-        self.project_root = find_project_root(Path(src))
+        if src == "-":
+            self.project_root = find_project_root(Path.cwd())
+        else:
+            self.project_root = find_project_root(Path(src))
 
         djlint_settings = load_project_settings(self.project_root, configuration)
 
