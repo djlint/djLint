@@ -105,6 +105,22 @@ def test_span_leading_text(runner: CliRunner, tmp_file: TextIO) -> None:
 """
     )
 
+    write_to_file(
+        tmp_file.name,
+        b"""<p>
+    <span class="badge">New</span> You can now use <strong>this feature</strong>
+</p>""",
+    )
+    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+
+    assert (
+        Path(tmp_file.name).read_text(encoding="utf8")
+        == """<p>
+    <span class="badge">New</span> You can now use <strong>this feature</strong>
+</p>
+"""
+    )
+
 
 def test_span_and_template(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(
