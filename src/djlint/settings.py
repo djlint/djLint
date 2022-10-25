@@ -641,7 +641,8 @@ class Config:
 
         self.ignored_inline_blocks: str = r"""
               <!--.*?-->
-            | <(script|style).*?\</(?:\1)>
+            | <script.*?\</script>
+            | <style.*?\</style>
             | {\*.*?\*}
             | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
             | <\?php.*?\?>

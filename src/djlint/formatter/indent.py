@@ -37,6 +37,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     ignored_level = 0
 
     for item in rawcode_flat_list:
+
         # if a raw tag first line
         if not is_block_raw and is_ignored_block_opening(config, item):
             is_raw_first_line = True
@@ -68,19 +69,32 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif (
             (
                 re.findall(
-                    rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
+                    re.compile(
+                        rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
                     (?:
-                        (?:<({slt_html})>)(?:.*?)(?:</(?:\1)>[ \t]*?) # <span>stuff</span> >>>> match 1
-                       |(?:<({slt_html})\b[^>]+?>)(?:.*?)(?:</(?:\2)>[ \t]*?) # <span stuff>stuff</span> >>> match 2
-                       |(?:<(?:{always_self_closing_html})\b[^>]*?/?>[ \t]*?) # <img stuff />
-                       |(?:<(?:{slt_html})\b[^>]*?/>[ \t]*?) # <img />
-                       |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(\3)[ ]+?.*?%}}[ \t]*?) # >>> match 3
+                        (?:<({slt_html})>)(?:.*?)(?:</(?:\1)>) # <span>stuff</span> >>>> match 1
+                       |(?:<({slt_html})\b[^>]+?>)(?:.*?)(?:</(?:\2)>) # <span stuff>stuff</span> >>> match 2
+                       |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
+                       |(?:<(?:{slt_html})\b[^>]*?/>) # <img />
+                       |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\3)[ ]+?.*?%}}) # >>> match 3
                        |{config.ignored_inline_blocks}
-                    )
-                    +?[^<]*?$ # with no other tags following until end of line
+                    )[ \t]*?
+                    (?:
+                    .*? # anything
+                    (?: # followed by another slt
+                        (?:<({slt_html})>)(?:.*?)(?:</(?:\4)>) # <span>stuff</span> >>>> match 1
+                       |(?:<({slt_html})\b[^>]+?>)(?:.*?)(?:</(?:\5)>) # <span stuff>stuff</span> >>> match 2
+                       |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
+                       |(?:<(?:{slt_html})\b[^>]*?/>) # <img />
+                       |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\6)[ ]+?.*?%}}) # >>> match 3
+                       |{config.ignored_inline_blocks}
+                    )[ \t]*?
+                    )*? # optional of course
+                    [^<]*?$ # with no other tags following until end of line
                 """,
+                        re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                    ),
                     item,
-                    re.IGNORECASE | re.VERBOSE | re.MULTILINE,
                 )
             )
             and is_block_raw is False
