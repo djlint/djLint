@@ -510,29 +510,54 @@ class Config:
         self.template_if_for_pattern = (
             r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
         )
+
         self.attribute_pattern: str = (
-            r"""
-            (?:[^\s]+?[ ]*?=[ ]*?(?:\"[^\"]*?"""
-            + self.template_if_for_pattern
-            + r"""[^\"]*?\"|\'[^\']*?"""
-            + self.template_if_for_pattern
-            + r"""[^\']*?\'))
-            | (?:[^\s]+?[ ]*?=[ ]*?(?:\"[^\"]*?{{.*?}}[^\"]*?\"|\'[^\']*?{{.*?}}[^\']*?\'))
-            | """
-            + self.template_if_for_pattern
+            rf"""
+            (?:
+                (?:
+                    (?:\w|-|\.)+ | required | checked
+                ) # attribute name
+                (?:  [ ]*?=[ ]*? # followed by "="
+                    (?:
+                        \"[^\"]*? # double quoted attribute
+                        (?:
+                            {self.template_if_for_pattern} # if or for loop
+                           | {{{{.*?}}}} # template stuff
+                           | {{%[^}}]*?%}}
+                           | [^\"] # anything else
+                        )*?
+                        \" # closing quote
+                      | '[^']*? # single quoted attribute
+                        (?:
+                            {self.template_if_for_pattern} # if or for loop
+                           | {{{{.*?}}}} # template stuff
+                           | {{%[^}}]*?%}}
+                           | [^'] # anything else
+                        )*?
+                        \' # closing quote
+                      | (?:\w|-)+ # or a non-quoted value
+
+                    )
+                )? # attribute value
+            )
+            | {self.template_if_for_pattern}
+            """
             + r"""
-            | (?:[^\s]+?[ ]*?=[ ]*?(?:\"(?:[^\"]*?{%[^}]*?%}[^\"]*?)+?\"))
-            | (?:[^\s]+?[ ]*?=[ ]*?(?:\'(?:[^\']*?{%[^}]*?%}[^\']*?)+?\'))
-            | (?:[^\s]+?[ ]*?=[ ]*?(?:\".*?\"|\'.*?\'))
-            | required
-            | checked
-            | (?:\w|-|\.)+
-            | (?:\w|-|\.)+[ ]*?=[ ]*?(?:\w|-)+
             | {{.*?}}
             | {%.*?%}
         """
         )
 
+        # + r"""[^\"]*?\"|\'[^\']*?"""
+        #            + self.template_if_for_pattern
+        #            + r"""[^\']*?\'))
+        #            | (?:[^\s]+?[ ]*?=[ ]*?(?:\"[^\"]*?{{.*?}}[^\"]*?\"|\'[^\']*?{{.*?}}[^\']*?\'))
+        #            | """
+        #            + self.template_if_for_pattern
+        #            + r"""
+        #            | (?:[^\s]+?[ ]*?=[ ]*?(?:\"(?:[^\"]*?{%[^}]*?%}[^\"]*?)+?\"))
+        ##            | (?:[^\s]+?[ ]*?=[ ]*?(?:\'(?:[^\']*?{%[^}]*?%}[^\']*?)+?\'))
+        #           | (?:[^\s]+?[ ]*?=[ ]*?(?:\".*?\"|\'.*?\'))
         self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
 
         self.start_template_tags: str = (

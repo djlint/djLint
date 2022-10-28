@@ -258,7 +258,12 @@ def format_attributes(config: Config, html: str, match: re.match) -> str:
 
     # format attributes as groups
     attributes = (spacing).join(
-        re.findall(config.attribute_pattern, match.group(3).strip(), re.VERBOSE)
+        [
+            x.group()
+            for x in re.finditer(
+                config.attribute_pattern, match.group(3).strip(), re.VERBOSE
+            )
+        ]
     )
 
     close = match.group(4)
