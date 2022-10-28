@@ -498,15 +498,6 @@ class Config:
                 + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}"
             )
 
-        # pattern used to find attributes in a tag
-        # order is important.
-        # 1. attributes="{% if %}with if or for statement{% endif %}"
-        # 2. attributes="{{ stuff in here }}"
-        # 3. {% if %}with if or for statement{% endif %}
-        # 4. attributes="normal html"
-        # 5. require | checked | otherword | other-word
-        # 6. {{ stuff }}
-
         self.template_if_for_pattern = (
             r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
         )
@@ -548,16 +539,6 @@ class Config:
         """
         )
 
-        # + r"""[^\"]*?\"|\'[^\']*?"""
-        #            + self.template_if_for_pattern
-        #            + r"""[^\']*?\'))
-        #            | (?:[^\s]+?[ ]*?=[ ]*?(?:\"[^\"]*?{{.*?}}[^\"]*?\"|\'[^\']*?{{.*?}}[^\']*?\'))
-        #            | """
-        #            + self.template_if_for_pattern
-        #            + r"""
-        #            | (?:[^\s]+?[ ]*?=[ ]*?(?:\"(?:[^\"]*?{%[^}]*?%}[^\"]*?)+?\"))
-        ##            | (?:[^\s]+?[ ]*?=[ ]*?(?:\'(?:[^\']*?{%[^}]*?%}[^\']*?)+?\'))
-        #           | (?:[^\s]+?[ ]*?=[ ]*?(?:\".*?\"|\'.*?\'))
         self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
 
         self.start_template_tags: str = (
