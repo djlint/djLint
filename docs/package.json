@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "autoprefixer": "10.4.13",
     "bulma": "0.9.4",
     "bulma-pricingtable": "0.2.0",
-    "cssnano": "5.1.13",
+    "cssnano": "5.1.14",
     "cz-conventional-changelog": "3.3.0",
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "1.7.11",
