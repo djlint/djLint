@@ -498,43 +498,60 @@ class Config:
                 + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}"
             )
 
-        # pattern used to find attributes in a tag
-        # order is important.
-        # 1. attributes="{% if %}with if or for statement{% endif %}"
-        # 2. attributes="{{ stuff in here }}"
-        # 3. {% if %}with if or for statement{% endif %}
-        # 4. attributes="normal html"
-        # 5. require | checked | otherword | other-word
-        # 6. {{ stuff }}
-
         self.template_if_for_pattern = (
             r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
         )
+
         self.attribute_pattern: str = (
-            r"""
-            (?:[^\s]+?[ ]*?=[ ]*?(?:\"[^\"]*?"""
-            + self.template_if_for_pattern
-            + r"""[^\"]*?\"|\'[^\']*?"""
-            + self.template_if_for_pattern
-            + r"""[^\']*?\'))
-            | (?:[^\s]+?[ ]*?=[ ]*?(?:\"[^\"]*?{{.*?}}[^\"]*?\"|\'[^\']*?{{.*?}}[^\']*?\'))
-            | """
-            + self.template_if_for_pattern
+            rf"""
+            (?:
+                (
+                    (?:\w|-|\.)+ | required | checked
+                ) # attribute name
+                (?:  [ ]*?=[ ]*? # followed by "="
+                    (
+                        \"[^\"]*? # double quoted attribute
+                        (?:
+                            {self.template_if_for_pattern} # if or for loop
+                           | {{{{.*?}}}} # template stuff
+                           | {{%[^}}]*?%}}
+                           | [^\"] # anything else
+                        )*?
+                        \" # closing quote
+                      | '[^']*? # single quoted attribute
+                        (?:
+                            {self.template_if_for_pattern} # if or for loop
+                           | {{{{.*?}}}} # template stuff
+                           | {{%[^}}]*?%}}
+                           | [^'] # anything else
+                        )*?
+                        \' # closing quote
+                      | (?:\w|-)+ # or a non-quoted string value
+                      | {{{{.*?}}}} # a non-quoted template var
+                      | {{%[^}}]*?%}} # a non-quoted template tag
+                      | {self.template_if_for_pattern} # a non-quoted if statement
+
+                    )
+                )? # attribute value
+            )
+            | ({self.template_if_for_pattern}
+            """
             + r"""
-            | (?:[^\s]+?[ ]*?=[ ]*?(?:\"(?:[^\"]*?{%[^}]*?%}[^\"]*?)+?\"))
-            | (?:[^\s]+?[ ]*?=[ ]*?(?:\'(?:[^\']*?{%[^}]*?%}[^\']*?)+?\'))
-            | (?:[^\s]+?[ ]*?=[ ]*?(?:\".*?\"|\'.*?\'))
-            | required
-            | checked
-            | (?:\w|-|\.)+
-            | (?:\w|-|\.)+[ ]*?=[ ]*?(?:\w|-)+
             | {{.*?}}
-            | {%.*?%}
+            | {%.*?%})
         """
         )
 
         self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
-
+        self.ignored_attributes = [
+            "href",
+            "action",
+            "data-url",
+            "src",
+            "url",
+            "srcset",
+            "data-src",
+        ]
         self.start_template_tags: str = (
             r"""
               if
@@ -597,6 +614,7 @@ class Config:
             | endraw
             | call
             | endcall
+            | image
             """
             + self.custom_blocks
             + r"""

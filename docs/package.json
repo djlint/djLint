@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.39",
+  "version": "1.0.41",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -33,10 +33,10 @@
     "@fullhuman/postcss-purgecss": "5.0.0",
     "@toycode/markdown-it-class": "1.2.4",
     "algoliasearch": "4.14.2",
-    "autoprefixer": "10.4.12",
+    "autoprefixer": "10.4.13",
     "bulma": "0.9.4",
     "bulma-pricingtable": "0.2.0",
-    "cssnano": "5.1.13",
+    "cssnano": "5.1.14",
     "cz-conventional-changelog": "3.3.0",
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "1.7.11",

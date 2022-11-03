@@ -4,11 +4,7 @@
               {% else %}
                   that is long stuff asdf and more even
               {% endif %}"/>
-<img data-src="{% if report.imgs.exists %}
-                   {{ report.imgs.first.get_absolute_url|size:"96x96" }}
-               {% else %}
-                   {% static '/img/report_thumb_placeholder_400x300.png' %}
-               {% endif %}"
+<img data-src="{% if report.imgs.exists %}{{ report.imgs.first.get_absolute_url|size:"96x96" }}{% else %}{% static '/img/report_thumb_placeholder_400x300.png' %}{% endif %}"
      src="{% static '/img/loader.gif' %}"
      alt="report image"/>
 <a class="asdf
@@ -22,8 +18,9 @@
                      Add to Favorites
                  {% endif %}"
    fav-type="report"
-   object-id="{{ report.report_id }}">
-    <span class="icon has-text-grey is-large ">
+   object-id="{{ report.report_id }}"
+   href="{% if %}{% endif %}">
+    <span class="icon has-text-grey is-large">
         <i class="fas fa-lg fa-star"></i>
     </span>
 </a>

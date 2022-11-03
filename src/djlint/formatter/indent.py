@@ -197,6 +197,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # if a normal tag, we can try to expand attributes
         elif is_block_raw is False:
             # get leading space, and attributes
+
             func = partial(format_attributes, config, item)
 
             tmp = re.sub(

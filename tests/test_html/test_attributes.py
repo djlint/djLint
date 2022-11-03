@@ -29,6 +29,30 @@ from click.testing import CliRunner
 from tests.conftest import reformat
 
 
+def test_srcset(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<img {% image value.image fill-640x360   as block_image_640 %}
+     {% image value.image fill-768x432   as block_image_768 %}
+     {% image value.image fill-1024x576  as block_image_1024 %}
+     {% image value.image fill-1600x900  as block_image_1600 %}
+     data-src="{{ block_image_640.url }}"
+     data-srcset="{{ block_image_640.url }} 640w,
+                  {{ block_image_768.url }} 768w,
+                  {{ block_image_1024.url }} 1024w,
+                  {{ block_image_1600.url }} 1600w"
+     sizes="(min-width: 1200px) 458px,
+            (min-width: 992px) 374px,
+            (min-width: 768px) 720px,
+            calc(100vw - 30px)"
+     class="richtext-image imageblock overflow {{ value.image_position }} lazy"
+     title="{{ value.image.title }}"
+     alt="Block image"/>""",
+    )
+    assert output.exit_code == 0
+
+
 def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
@@ -46,7 +70,9 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
        class="class one class two"
        disabled="true"
        value="something pretty long goes here"
-       style="width:100px;cursor: text;border:1px solid pink"
+       style="width:100px;
+              cursor: text;
+              border:1px solid pink"
        required="true"/>
 """
     )
@@ -62,7 +88,7 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
      style="margin-left: 90px;
             display: contents;
             font-weight: bold;
-            font-size: 1.5rem;">
+            font-size: 1.5rem">
 """,
     )
 
@@ -76,7 +102,7 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     <div style="margin-left: 90px;
                 display: contents;
                 font-weight: bold;
-                font-size: 1.5rem;"
+                font-size: 1.5rem"
          data-attr="stuff"
          class="my long class goes here">
     </div>
@@ -85,13 +111,18 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     assert output.exit_code == 0
 
-    # attributes with space around = are not brocken
+    # attributes with space around = are not broken
+    # https://github.com/Riverside-Healthcare/djLint/issues/317
+    # https://github.com/Riverside-Healthcare/djLint/issues/330
     output = reformat(
         tmp_file,
         runner,
         b"""<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n""",
     )
-    assert output.exit_code == 0
+    assert (
+        output.text
+        == """<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n"""
+    )
 
 
 def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -156,7 +187,7 @@ def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 </select>""",
     )
     assert output.exit_code == 1
-    print(output.text)
+
     assert (
         output.text
         == """<select multiple
@@ -164,7 +195,9 @@ def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         id="device-select"
         title=""
         value="something pretty long goes here"
-        style="width:100px;cursor: text;border:1px solid pink">
+        style="width:100px;
+               cursor: text;
+               border:1px solid pink">
 </select>
 """
     )
