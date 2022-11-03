@@ -29,6 +29,30 @@ from click.testing import CliRunner
 from tests.conftest import reformat
 
 
+def test_srcset(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<img {% image value.image fill-640x360   as block_image_640 %}
+     {% image value.image fill-768x432   as block_image_768 %}
+     {% image value.image fill-1024x576  as block_image_1024 %}
+     {% image value.image fill-1600x900  as block_image_1600 %}
+     data-src="{{ block_image_640.url }}"
+     data-srcset="{{ block_image_640.url }} 640w,
+                  {{ block_image_768.url }} 768w,
+                  {{ block_image_1024.url }} 1024w,
+                  {{ block_image_1600.url }} 1600w"
+     sizes="(min-width: 1200px) 458px,
+            (min-width: 992px) 374px,
+            (min-width: 768px) 720px,
+            calc(100vw - 30px)"
+     class="richtext-image imageblock overflow {{ value.image_position }} lazy"
+     title="{{ value.image.title }}"
+     alt="Block image"/>""",
+    )
+    assert output.exit_code == 0
+
+
 def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,

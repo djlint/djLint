@@ -145,16 +145,22 @@ def format_attributes(config: Config, html: str, match: re.match) -> str:
             # for the equals sign
             quote_length += 1
 
+        if config.format_attribute_template_tags:
+            join_space = "\n" + spacing
+        else:
+            join_space = (
+                "\n" + spacing + int(quote_length + len(attrib_name or "")) * " "
+            )
+
         # format style attribute
         if attrib_name and attrib_name.lower() == "style":
-            if config.format_attribute_template_tags:
-                join_space = "\n" + spacing
-            else:
-                join_space = (
-                    "\n" + spacing + int(quote_length + len(attrib_name or "")) * " "
-                )
             attrib_value = (";" + join_space).join(
                 [value.strip() for value in attrib_value.split(";") if value.strip()]
+            )
+
+        elif attrib_name and attrib_name.lower() in ["srcset", "data-srcset", "sizes"]:
+            attrib_value = ("," + join_space).join(
+                [value.strip() for value in attrib_value.split(",") if value.strip()]
             )
 
         # format template stuff

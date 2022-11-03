@@ -614,6 +614,7 @@ class Config:
             | endraw
             | call
             | endcall
+            | image
             """
             + self.custom_blocks
             + r"""
