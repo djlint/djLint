@@ -505,11 +505,11 @@ class Config:
         self.attribute_pattern: str = (
             rf"""
             (?:
-                (?:
+                (
                     (?:\w|-|\.)+ | required | checked
                 ) # attribute name
                 (?:  [ ]*?=[ ]*? # followed by "="
-                    (?:
+                    (
                         \"[^\"]*? # double quoted attribute
                         (?:
                             {self.template_if_for_pattern} # if or for loop
@@ -526,21 +526,32 @@ class Config:
                            | [^'] # anything else
                         )*?
                         \' # closing quote
-                      | (?:\w|-)+ # or a non-quoted value
+                      | (?:\w|-)+ # or a non-quoted string value
+                      | {{{{.*?}}}} # a non-quoted template var
+                      | {{%[^}}]*?%}} # a non-quoted template tag
+                      | {self.template_if_for_pattern} # a non-quoted if statement
 
                     )
                 )? # attribute value
             )
-            | {self.template_if_for_pattern}
+            | ({self.template_if_for_pattern}
             """
             + r"""
             | {{.*?}}
-            | {%.*?%}
+            | {%.*?%})
         """
         )
 
         self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
-
+        self.ignored_attributes = [
+            "href",
+            "action",
+            "data-url",
+            "src",
+            "url",
+            "srcset",
+            "data-src",
+        ]
         self.start_template_tags: str = (
             r"""
               if

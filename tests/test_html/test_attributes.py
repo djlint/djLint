@@ -46,7 +46,9 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
        class="class one class two"
        disabled="true"
        value="something pretty long goes here"
-       style="width:100px;cursor: text;border:1px solid pink"
+       style="width:100px;
+              cursor: text;
+              border:1px solid pink"
        required="true"/>
 """
     )
@@ -62,7 +64,7 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
      style="margin-left: 90px;
             display: contents;
             font-weight: bold;
-            font-size: 1.5rem;">
+            font-size: 1.5rem">
 """,
     )
 
@@ -76,7 +78,7 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     <div style="margin-left: 90px;
                 display: contents;
                 font-weight: bold;
-                font-size: 1.5rem;"
+                font-size: 1.5rem"
          data-attr="stuff"
          class="my long class goes here">
     </div>
@@ -85,13 +87,18 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     assert output.exit_code == 0
 
-    # attributes with space around = are not brocken
+    # attributes with space around = are not broken
+    # https://github.com/Riverside-Healthcare/djLint/issues/317
+    # https://github.com/Riverside-Healthcare/djLint/issues/330
     output = reformat(
         tmp_file,
         runner,
         b"""<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n""",
     )
-    assert output.exit_code == 0
+    assert (
+        output.text
+        == """<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n"""
+    )
 
 
 def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -156,7 +163,7 @@ def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 </select>""",
     )
     assert output.exit_code == 1
-    print(output.text)
+
     assert (
         output.text
         == """<select multiple
@@ -164,7 +171,9 @@ def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
         id="device-select"
         title=""
         value="something pretty long goes here"
-        style="width:100px;cursor: text;border:1px solid pink">
+        style="width:100px;
+               cursor: text;
+               border:1px solid pink">
 </select>
 """
     )

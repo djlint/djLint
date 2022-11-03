@@ -8,19 +8,13 @@ from ..helpers import inside_ignored_block
 from ..settings import Config
 
 
-def format_template_tags(config: Config, attributes: str) -> str:
+def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
     """Format template tags in attributes."""
     # find break tags, add breaks + indent
     # find unindent lines and move back
     # put short stuff back on one line
-    leading_space = ""
 
-    if re.search(r"^[ ]+", attributes.splitlines()[0], re.MULTILINE):
-        leading_space = re.search(
-            r"^[ ]+", attributes.splitlines()[0], re.MULTILINE
-        ).group()
-
-    def add_indentation(config: Config, attributes: str) -> str:
+    def add_indentation(config: Config, attributes: str, spacing: int) -> str:
         """Indent template tags.
 
         |    <form class="this"
@@ -33,67 +27,35 @@ def format_template_tags(config: Config, attributes: str) -> str:
         |    ^----^ base indent
         |
         """
-        attr_name = (
-            list(
-                re.finditer(
-                    re.compile(r"^<\w+\b\s*", re.M), attributes.splitlines()[0].strip()
-                )
-            )
-        )[-1]
-
-        start_test_list = list(
-            re.finditer(
-                re.compile(
-                    r"^.*?(?=" + config.template_indent + r")", re.I | re.X | re.M
-                ),
-                attributes.splitlines()[0].strip(),
-            )
-        ) + list(
-            re.finditer(
-                re.compile(r"^<\w+\b\s*[^\"']+?[\"']", re.M),
-                attributes.splitlines()[0].strip(),
-            )
-        )
-
-        start_test = start_test_list[-1] if start_test_list else None
-
-        base_indent = len(attr_name.group())
-
         indent = 0
         indented = ""
-        indent_adder = 0
-
-        # if the "start test" open is actually closed, then ignore the indent.
-        if not re.findall(
-            re.compile(r"[\"']$", re.M), attributes.splitlines()[0].strip()
-        ):
-            indent_adder = len(start_test.group()) - base_indent if start_test else 0
+        indent_adder = spacing or 0
 
         for line_number, line in enumerate(attributes.splitlines()):
+
             # when checking for template tag, use "match" to force start of line check.
             if re.match(
                 re.compile(config.template_unindent, re.I | re.X), line.strip()
             ):
-
                 indent = indent - 1
                 tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
 
-                # if we are leaving an indented group, then remove the indent_adder
             elif re.match(
                 re.compile(config.tag_unindent_line, re.I | re.X), line.strip()
             ):
+                # if we are leaving an indented group, then remove the indent_adder
                 tmp = (
                     max(indent - 1, 0) * config.indent
                     + indent_adder * " "
                     + line.strip()
                 )
 
-            # for open tags, search, but then check that they are not closed.
             elif re.search(
                 re.compile(config.template_indent, re.I | re.X), line.strip()
             ) and not re.search(
                 re.compile(config.template_unindent, re.I | re.X), line.strip()
             ):
+                # for open tags, search, but then check that they are not closed.
                 tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
                 indent = indent + 1
 
@@ -102,97 +64,28 @@ def format_template_tags(config: Config, attributes: str) -> str:
 
             if line_number == 0:
                 # don't touch first line
-                indented += f"{leading_space}{line.strip()}"
+                indented += line.strip()
             else:
-                # if changing indent level and not the first item on the line, then
-                # check if base indent is changed.
-                # match must start at first of string
-                start_test = list(
-                    re.finditer(re.compile(r"^(\w+?=[\"'])", re.M), line.strip())
-                ) + list(
-                    re.finditer(
-                        re.compile(
-                            r"^(.+?)" + config.template_indent, re.I | re.X | re.M
-                        ),
-                        line.strip(),
-                    )
-                )
-
-                if start_test:
-                    indent_adder = len(start_test[-1].group(1)) - (
-                        base_indent if line_number == 0 else 0
-                    )
-
-                base_indent_space = base_indent * " "
-
                 if tmp.strip() != "":
-                    indented += f"\n{leading_space}{base_indent_space}{tmp}"
-
-            end_text = re.findall(re.compile(r"[\"']$", re.M), line.strip())
-
-            if end_text:
-                indent_adder = 0
+                    indented += f"\n{tmp}"
 
         return indented
 
-    def add_break(
-        config: Config, attributes: str, pattern: str, match: re.Match
-    ) -> str:
+    def add_break(pattern: str, match: re.Match) -> str:
         """Make a decision if a break should be added."""
-        # check if we are inside an attribute.
-        inside_attribute = any(
-            x.start() <= match.start() and match.end() <= x.end()
-            for x in re.finditer(
-                re.compile(
-                    r"[a-zA-Z-_]+[ ]*?=[ ]*?([\"'])([^\1]*?"
-                    + config.template_if_for_pattern
-                    + r"[^\1]*?)\1",
-                    re.I | re.M | re.X | re.DOTALL,
-                ),
-                attributes,
-            )
-        )
-
-        if inside_attribute:
-            attr_name = list(
-                re.finditer(
-                    re.compile(r"^.+?\w+[ ]*?=[ ]*?[\"|']", re.M),
-                    attributes[: match.start()],
-                )
-            )[-1]
-        else:
-            # if we don't know where we are, then return what we started with.
-            if not re.findall(
-                re.compile(r"^<\w+[^=\"']\s*", re.M), attributes[: match.start()]
-            ):
-                return match.group()
-
-            attr_name = list(
-                re.finditer(
-                    re.compile(r"^<\w+[^=\"']\s*", re.M), attributes[: match.start()]
-                )
-            )[-1]
-
         if pattern == "before":
-            # but don't add break if we are the first thing in an attribute.
-            if attr_name.end() == match.start():
-                return match.group()
-
             return f"\n{match.group()}"
-
-        # but don't add a break if the next char closes the attr.
-        if re.match(r"\s*?[\"|'|>]", match.group(2)):
-            return match.group(1) + match.group(2)
 
         return f"{match.group(1)}\n{match.group(2).strip()}"
 
     break_char = config.break_before
 
-    func = partial(add_break, config, attributes, "before")
+    func = partial(add_break, "before")
+
     attributes = re.sub(
         re.compile(
             break_char
-            + r"\K((?:{%|{{\#)[ ]*?(?:"
+            + r".\K((?:{%|{{\#)[ ]*?(?:"
             + config.break_template_tags
             + ")[^}]+?[%|}]})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
@@ -201,7 +94,7 @@ def format_template_tags(config: Config, attributes: str) -> str:
         attributes,
     )
 
-    func = partial(add_break, config, attributes, "after")
+    func = partial(add_break, "after")
     # break after
     attributes = re.sub(
         re.compile(
@@ -213,32 +106,9 @@ def format_template_tags(config: Config, attributes: str) -> str:
         func,
         attributes,
     )
-
-    attributes = add_indentation(config, attributes)
+    attributes = add_indentation(config, attributes, spacing)
 
     return attributes
-
-
-def format_style(match: re.match) -> str:
-    """Format inline styles."""
-    tag = match.group(2)
-
-    quote = match.group(3)
-
-    # if the style attrib is following the tag name
-    leading_stuff = (
-        match.group(1)
-        if not bool(re.match(r"^\s+$", match.group(1), re.MULTILINE))
-        else len(match.group(1)) * " "
-    )
-
-    spacing = "\n" + len(match.group(1)) * " " + len(tag) * " " + len(quote) * " "
-
-    styles = (spacing).join(
-        [x.strip() + ";" for x in match.group(4).split(";") if x.strip()]
-    )
-
-    return f"{leading_stuff}{tag}{quote}{styles}{quote}"
 
 
 def format_attributes(config: Config, html: str, match: re.match) -> str:
@@ -254,38 +124,68 @@ def format_attributes(config: Config, html: str, match: re.match) -> str:
 
     tag = match.group(2) + " "
 
-    spacing = "\n" + leading_space + len(tag) * " "
+    spacing = leading_space + len(tag) * " "
+
+    attributes = []
 
     # format attributes as groups
-    attributes = (spacing).join(
-        [
-            x.group()
-            for x in re.finditer(
-                config.attribute_pattern, match.group(3).strip(), re.VERBOSE
+    for attr_grp in re.finditer(
+        config.attribute_pattern, match.group(3).strip(), re.VERBOSE
+    ):
+
+        attrib_name = attr_grp.group(1)
+        is_quoted = attr_grp.group(2) and attr_grp.group(2)[0] in ["'", '"']
+        quote = attr_grp.group(2)[0] if is_quoted else '"'
+        attrib_value = attr_grp.group(2).strip("\"'") if attr_grp.group(2) else None
+        standalone = attr_grp.group(3)
+
+        quote_length = 1
+
+        if attrib_name and attrib_value:
+            # for the equals sign
+            quote_length += 1
+
+        # format style attribute
+        if attrib_name and attrib_name.lower() == "style":
+            if config.format_attribute_template_tags:
+                join_space = "\n" + spacing
+            else:
+                join_space = (
+                    "\n" + spacing + int(quote_length + len(attrib_name or "")) * " "
+                )
+            attrib_value = (";" + join_space).join(
+                [value.strip() for value in attrib_value.split(";") if value.strip()]
             )
-        ]
-    )
+
+        # format template stuff
+        if config.format_attribute_template_tags:
+            if attrib_value and attrib_name not in config.ignored_attributes:
+                attrib_value = format_template_tags(
+                    config,
+                    attrib_value,
+                    int(len(spacing) + len(attrib_name or "") + quote_length),
+                )
+
+            if standalone:
+                standalone = format_template_tags(
+                    config, standalone, int(len(spacing) + len(attrib_name or ""))
+                )
+
+        if attrib_name and attrib_value or is_quoted:
+            attrib_value = attrib_value or ""
+            attributes.append(f"{attrib_name}={quote}{attrib_value}{quote}")
+        else:
+            attributes.append(
+                (attrib_name or "") + (attrib_value or "") + (standalone or "")
+            )
+
+    attribute_string = ("\n" + spacing).join([x for x in attributes if x])
 
     close = match.group(4)
 
-    attributes = f"{leading_space}{tag}{attributes}{close}"
-
-    # format template tags
-    if config.format_attribute_template_tags:
-        attributes = format_template_tags(config, attributes)
-
-    # format styles
-    func = partial(format_style)
-    attributes = re.sub(
-        re.compile(
-            config.attribute_style_pattern,
-            re.VERBOSE | re.IGNORECASE | re.M,
-        ),
-        func,
-        attributes,
-    )
+    attribute_string = f"{leading_space}{tag}{attribute_string}{close}"
 
     # clean trailing spaces added by breaks
-    attributes = "\n".join([x.rstrip() for x in attributes.splitlines()])
+    attribute_string = "\n".join([x.rstrip() for x in attribute_string.splitlines()])
 
-    return f"{attributes}"
+    return f"{attribute_string}"
