@@ -77,7 +77,7 @@ def print_output(
         lint_success_color = (
             Fore.RED + Style.BRIGHT if (lint_error_count) > 0 else Fore.BLUE
         )
-        echo(f"{lint_success_color}{lint_success_message}{Style.RESET_ALL}")
+        echo(f"{lint_success_color}{lint_success_message}{Style.RESET_ALL}", err=True)
 
     if print_blanks:
         echo()
@@ -132,7 +132,7 @@ def build_output(error: dict, config: Config) -> int:
             config.linter_output_format.format(
                 filename=filename, line=line, code=code, message=message, match=match
             ),
-            err=False,
+            err=True,
         )
 
     return len(errors)
