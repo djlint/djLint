@@ -507,7 +507,7 @@ class Config:
             (?:
                 (
                     (?:\w|-|\.)+ | required | checked
-                ) # attribute name
+                )? # attribute name
                 (?:  [ ]*?=[ ]*? # followed by "="
                     (
                         \"[^\"]*? # double quoted attribute
@@ -538,6 +538,7 @@ class Config:
             """
             + r"""
             | {{.*?}}
+            | {\#.*?\#}
             | {%.*?%})
         """
         )
