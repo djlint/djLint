@@ -71,26 +71,38 @@ def lint_file(config: Config, this_file: Path) -> Dict:
 
             # rule H025 is a special case where the output must be an even number.
             if rule["name"] == "H025":
+
                 open_tags: List[re.Match] = []
 
+                # for match in re.finditer(
+                #     re.compile(
+                #         pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))
+                #     ),
+                #     html,
+                # ):
+                # print(r"<(/?(\w+))\s*" +config.attribute_pattern + r"\s*?>")
                 for match in re.finditer(
                     re.compile(
-                        pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))
+                        r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
+                        re.VERBOSE,
                     ),
                     html,
                 ):
-                    if match.group(2) and not re.search(
+                    # print(match)
+                    # print(match.group(2))
+                    # print(match.group(1))
+                    if match.group(1) and not re.search(
                         re.compile(
                             rf"^/?{config.always_self_closing_html_tags}\b", re.I | re.X
                         ),
-                        match.group(2),
+                        match.group(1),
                     ):
                         # close tags should equal open tags
-                        if match.group(2)[0] != "/":
+                        if match.group(1)[0] != "/":
                             open_tags.insert(0, match)
                         else:
                             for i, tag in enumerate(copy.deepcopy(open_tags)):
-                                if tag.group(3) == match.group(2)[1:]:
+                                if tag.group(2) == match.group(1)[1:]:
                                     open_tags.pop(i)
                                     break
                             else:
