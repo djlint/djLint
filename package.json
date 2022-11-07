@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.18.0",
+  "version": "1.18.1",
   "description": "HTML Template Linter and Formatter",
   "main": "./bin/index.js",
   "directories": {
@@ -53,7 +53,7 @@
   "homepage": "https://djlint.com",
   "dependencies": {
     "python-shell": "^3.0.1",
-    "yargs": "17.6.0"
+    "yargs": "17.6.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
