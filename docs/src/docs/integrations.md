@@ -71,8 +71,9 @@ Ensure djLint is installed in your global python, or on your `PATH`.
 
 ::: content
 
-- [Marketplace page](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
 - [GitHub repository](https://github.com/monosans/djlint-vscode)
+- [VS Marketplace page](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
+- [Open VSX page](https://open-vsx.org/extension/monosans/djlint)
   :::
 
 ## neovim
