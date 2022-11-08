@@ -37,7 +37,7 @@ def format_css(html: str, config: Config) -> str:
                 line = line.lstrip()
                 ignore_indent = False
 
-            if ignore_indent is False:
+            if ignore_indent is False and line:
 
                 beautified += "\n" + inner_indent + line
             else:
