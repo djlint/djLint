@@ -35,3 +35,14 @@ def test_ignore(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0
+
+
+def text_blank_lines(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint,
+        [
+            "tests/test_config/test_scripts_styles/blank_lines.html",
+            "--check",
+        ],
+    )
+    assert result.exit_code == 0
