@@ -506,7 +506,7 @@ class Config:
             rf"""
             (?:
                 (
-                    (?:\w|-|\.)+ | required | checked
+                    (?:\w|-|\.|\:|@)+ | required | checked
                 )? # attribute name
                 (?:  [ ]*?=[ ]*? # followed by "="
                     (
