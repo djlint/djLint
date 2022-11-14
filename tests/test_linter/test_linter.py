@@ -417,13 +417,29 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
     assert "J018 1:" in result.output
 
-    # test mailto:
+    # test mailto:, tel:
     write_to_file(
         tmp_file.name,
         b'<a href="mailto:joe"></a><a href="tel:joe"></a>',
     )
-    result = runner.invoke(djlint, [tmp_file.name])
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
     assert result.exit_code == 0
+    assert "D018" not in result.output
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert result.exit_code == 0
+    assert "J018" not in result.output
+
+    # test data:
+    write_to_file(
+        tmp_file.name,
+        b'<a href="data:,Hello%2C%20World%21"></a>',
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert result.exit_code == 0
+    assert "D018" not in result.output
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+    assert result.exit_code == 0
+    assert "J018" not in result.output
 
     # test attribute names
     write_to_file(
