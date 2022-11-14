@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.43",
+  "version": "1.0.44",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -55,7 +55,7 @@
     "postcss-nested": "6.0.0",
     "prettier": "2.7.1",
     "prismjs": "1.29.0",
-    "sass": "1.56.0",
+    "sass": "1.56.1",
     "slugify": "1.6.5"
   },
   "config": {
