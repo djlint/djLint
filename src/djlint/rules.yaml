@@ -135,14 +135,14 @@
     message: (Django) Internal links should use the {% url ... %} pattern.
     flags: re.DOTALL|re.I
     patterns:
-    - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/]+
+    - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:|data:)[\w|/]+
     - <form\s+?[^>]*?(?:action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/]+
 - rule:
     name: J018
     message: (Jinja) Internal links should use the {{ url_for() ... }} pattern.
     flags: re.DOTALL|re.I
     patterns:
-    - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/]+
+    - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:|data:)[\w|/]+
     - <form\s+?[^>]*?(?:action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/]+
 - rule:
     name: H019
