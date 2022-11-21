@@ -1,0 +1,22 @@
+---
+layout: layout.njk
+date: Last Modified
+description: Online HTML Template formatter. Reformat your HTML templates online with djLint.
+keywords: online template formatter, djLint, HTML, templates, formatter, linter, rules, online html template formatter
+---
+
+
+
+<div class="section">
+  <div class="container">
+    <h1 class="title is-3">Online HTML Template formatter using djLint!</h1>
+    <div class="columns">
+      <div class="column" id="djlint-input">
+      </div>
+      <div class="column" id="djlint-output">
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.js"></script>
+{% rollup "src/static/js/editor.js" | url %}

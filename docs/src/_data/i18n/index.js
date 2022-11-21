@@ -135,4 +135,9 @@ module.exports = {
     ru: 'Игнорирование Контент',
     fr: 'Ignorer le Contenu',
   },
+  try_online: {
+    'en-US': '🤩 Try Online',
+    ru: '🤩 Essayez',
+    fr: '🤩 Попробуйте онлайн',
+  },
 };
