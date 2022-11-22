@@ -1,0 +1,127 @@
+---
+layout: layout.njk
+date: Last Modified
+description: Online HTML Template formatter. Reformat your HTML templates online with djLint.
+keywords: online template formatter, djLint, HTML, templates, formatter, linter, rules, online html template formatter
+---
+
+
+
+<div class="section">
+  <div class="container">
+    <h1 class="title is-3">Online HTML Template formatter using djLint!</h1>
+    <div class="block" id="djlint-status">
+    <span class="icon-text">
+      <span class="icon">
+        <i class="fas fa-spinner fa-spin"></i>
+      </span>
+      <span><strong>Loading djLint ..</strong></span>
+      </span>
+    </div>
+    <div class="columns is-hidden">
+      <div class="column is-narrow">
+
+<form id="djlint-settings">
+  <div class="field">
+  <label class="label">Custom Blocks</label>
+  <div class="control">
+    <input id="settings-custom-blocks" class="input" type="text" placeholder="toc,example">
+  </div>
+</div>
+
+ <div class="field">
+  <label class="label">Custom HTML</label>
+  <div class="control">
+    <input id="settings-custom-html" class="input" type="text" placeholder="mjml,simple-greeting,mj-\w+">
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Indent</label>
+  <div class="control">
+    <input id="settings-indent" class="input" type="text" placeholder="4">
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Blank Line after Tag</label>
+  <div class="control">
+    <input id="settings-blank-line-after-tag" class="input" type="text" placeholder="load,extends,include">
+  </div>
+</div>
+<div class="field">
+  <label class="label">Blank Line before Tag</label>
+  <div class="control">
+    <input id="settings-blank-line-before-tag" class="input" type="text" placeholder="load,extends,include">
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Profile</label>
+  <div class="control">
+    <div class="select">
+  <select id="settings-profile" >
+    <option value="html">html (default)</option>
+    <option value="django">django</option>
+    <option value="jinja">jinja</option>
+    <option value="nunjucks">nunjucks (nunjucks and twig)</option>
+    <option value="handlebars">handlebars (handlebars and mustache)</option>
+    <option value="golang">golang</option>
+    <option value="angular">angular</option>
+  </select>
+</div>
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Max Line Length</label>
+  <div class="control">
+    <input id="settings-max-line-length"  class="input" type="text" placeholder="80">
+  </div>
+</div>
+<div class="field">
+  <label class="label">Max Attribute Length</label>
+  <div class="control">
+    <input id="settings-max-attribute-length" class="input" type="text" placeholder="0">
+  </div>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-format-attribute-template-tags" type="checkbox">
+  Format Attribute Template Tags
+</label>
+</div>
+<div class="field">
+<label  class="checkbox">
+  <input id="settings-preserve-leading-space" type="checkbox">
+  Preserve Leading Space
+</label>
+</div>
+<div class="field">
+<label  class="checkbox">
+  <input id="settings-preserve-blank-space" type="checkbox">
+  Preserve Blank Space
+</label>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-format-js"  type="checkbox">
+  Format JS
+</label>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-format-css"  type="checkbox">
+  Format CSS
+</label>
+</div>
+</form>
+      </div>
+      <div class="column" id="djlint-input">
+      </div>
+      <div class="column" id="djlint-output">
+      </div>
+    </div>
+  </div>
+</div>
+{% rollup "src/static/js/editor.js" | url %}

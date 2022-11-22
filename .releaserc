@@ -9,7 +9,7 @@
       "prepareCmd" : "poetry version ${nextRelease.version}"
     }],
     ["@semantic-release/git", {
-      "assets": ["package.json", "pyproject.toml"]
+      "assets": ["package.json", "pyproject.toml", "docs"]
     }],
     "@semantic-release/github"
   ]
