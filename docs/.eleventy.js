@@ -206,6 +206,11 @@ module.exports = function (eleventyConfig) {
     'src/static/py': 'static/py',
   });
 
+  // copy python
+  eleventyConfig.addPassthroughCopy({
+    'src/static/js/worker.js': 'static/js/worker.js',
+  });
+
   eleventyConfig.addFilter('jsonify', (text) => {
     return JSON.stringify(text).replace(/(?:\\n\s*){2,}/g, '\\n');
   });
@@ -260,6 +265,7 @@ module.exports = function (eleventyConfig) {
         'infinity',
         'download',
         'code-commit',
+        'spinner',
       ],
     },
     '_site/static/font/fontawesome/webfonts',

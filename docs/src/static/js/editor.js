@@ -2,141 +2,166 @@ import { EditorView, basicSetup } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { html } from '@codemirror/lang-html';
 
-let timer;
+let session_id = 0;
+if (typeof Worker !== 'undefined') {
+  console.log('creating web worker ');
+  let w;
 
-let editor = new EditorView({
-  state: EditorState.create({
-    extensions: [
-      basicSetup,
-      html(),
-      EditorView.updateListener.of((v) => {
-        if (v.docChanged) {
-          if (timer) clearTimeout(timer);
-          timer = setTimeout(() => {
-            evaluatePython();
-          }, 50);
-        }
-      }),
-    ],
-    doc: `Initializing...\n`,
-  }),
+  if (typeof w == 'undefined') {
+    w = new Worker('/static/js/worker.js');
+  }
 
-  parent: document.getElementById('djlint-input'),
-});
+  function getConfig() {
+    let config = {};
+    const customBlocks = document.getElementById(
+      'settings-custom-blocks',
+    ).value;
+    if (customBlocks) config['customBlocks'] = customBlocks;
+    const customHtml = document.getElementById('settings-custom-html').value;
+    if (customHtml) config['customHtml'] = customHtml;
+    const indent = document.getElementById('settings-indent').value;
+    if (indent) config['indent'] = indent;
+    const blankLineAfterTag = document.getElementById(
+      'settings-blank-line-after-tag',
+    ).value;
+    if (blankLineAfterTag) config['blankLineAfterTag'] = blankLineAfterTag;
+    const blankLineBeforeTag = document.getElementById(
+      'settings-blank-line-before-tag',
+    ).value;
+    if (blankLineBeforeTag) config['blankLineBeforeTag'] = blankLineBeforeTag;
+    const profile = document.getElementById('settings-profile').value;
+    if (profile) config['profile'] = profile;
+    const maxLineLength = document.getElementById(
+      'settings-max-line-length',
+    ).value;
+    if (maxLineLength) config['maxLineLength'] = maxLineLength;
+    const maxAttributeLength = document.getElementById(
+      'settings-max-attribute-length',
+    ).value;
+    if (maxAttributeLength) config['maxAttributeLength'] = maxAttributeLength;
+    const formatAttributeTemplateTags = document.getElementById(
+      'settings-format-attribute-template-tags',
+    ).checked;
+    if (formatAttributeTemplateTags)
+      config['formatAttributeTemplateTags'] = formatAttributeTemplateTags;
+    const preserveLeadingSpace = document.getElementById(
+      'settings-preserve-leading-space',
+    ).checked;
+    if (preserveLeadingSpace)
+      config['preserveLeadingSpace'] = preserveLeadingSpace;
+    const preserveBlankSpace = document.getElementById(
+      'settings-preserve-blank-space',
+    ).checked;
+    if (preserveBlankSpace) config['preserveBlankSpace'] = preserveBlankSpace;
+    const formatJs = document.getElementById('settings-format-js').checked;
+    if (formatJs) config['formatJs'] = formatJs;
+    const formatCss = document.getElementById('settings-format-css').checked;
+    if (formatCss) config['formatCss'] = formatCss;
 
-let output = new EditorView({
-  state: EditorState.create({
-    extensions: [basicSetup, html()],
-    doc: ``,
-    readonly: true,
-  }),
-  parent: document.getElementById('djlint-output'),
-});
+    return config;
+  }
 
-// add pyodide returned value to the output
-function setOutput(stdout) {
-  const currentValue = output.state.doc.toString();
-  const endPosition = currentValue.length;
-  output.dispatch({
-    changes: {
-      from: 0,
-      to: endPosition,
-      insert: stdout,
-    },
+  const runPython = (script) => {
+    session_id += 1;
+    w.postMessage({
+      config: getConfig(),
+      html: script,
+      id: session_id,
+    });
+  };
+
+  w.onmessage = (event) => {
+    const { id, type, message, ...data } = event.data;
+    if (type == 'status') {
+      const div = document.createElement('div');
+      div.innerText = message;
+      const status = document.getElementById('djlint-status');
+      status.insertBefore(div, status.lastElementChild);
+
+      if (message === 'ready') {
+        document.getElementById('djlint-status').classList.add('is-hidden');
+        document
+          .getElementById('djlint-settings')
+          .closest('.columns.is-hidden')
+          .classList.remove('is-hidden');
+        runPython(editor.state.doc.toString());
+      }
+    }
+    if ((type == 'error' || type == 'html') && id == session_id) {
+      setOutput(message);
+    } else {
+      console.log(event.data);
+    }
+  };
+
+  let timer;
+
+  let editor = new EditorView({
+    state: EditorState.create({
+      extensions: [
+        basicSetup,
+        html(),
+        EditorView.updateListener.of((v) => {
+          if (v.docChanged) {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => {
+              runPython(v.state.doc.toString());
+            }, 100);
+          }
+        }),
+      ],
+      doc: `<div>\n    <p>Welcome to djLint online!</p>\n</div>`,
+    }),
+
+    parent: document.getElementById('djlint-input'),
   });
-}
 
-function setInput(stdout) {
-  const currentValue = editor.state.doc.toString();
-  const endPosition = currentValue.length;
-  editor.dispatch({
-    changes: {
-      from: 0,
-      to: endPosition,
-      insert: stdout,
-    },
-  });
-}
-
-// init pyodide and show sys.version when it's loaded successfully
-async function main() {
-  let pyodide = await loadPyodide({
-    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.20.0/full/',
+  let output = new EditorView({
+    state: EditorState.create({
+      extensions: [basicSetup, html()],
+      doc: ``,
+      readonly: true,
+    }),
+    parent: document.getElementById('djlint-output'),
   });
 
-  const origin = window.location.origin;
+  // add pyodide returned value to the output
+  function setOutput(stdout) {
+    const currentValue = output.state.doc.toString();
+    const endPosition = currentValue.length;
+    output.dispatch({
+      changes: {
+        from: 0,
+        to: endPosition,
+        insert: stdout,
+      },
+    });
+  }
 
-  // build wheels with pip wheel .
+  function setInput(stdout) {
+    const currentValue = editor.state.doc.toString();
+    const endPosition = currentValue.length;
+    editor.dispatch({
+      changes: {
+        from: 0,
+        to: endPosition,
+        insert: stdout,
+      },
+    });
+  }
 
-  await pyodide.loadPackage([
-    `${origin}/static/py/djlint-99-py3-none-any.whl`,
-    `${origin}/static/py/click-99-py3-none-any.whl`,
-    `${origin}/static/py/colorama-99-py3-none-any.whl`,
-    `${origin}/static/py/cssbeautifier-99-py3-none-any.whl`,
-    `${origin}/static/py/EditorConfig-99-py3-none-any.whl`,
-    `${origin}/static/py/html_tag_names-99-py3-none-any.whl`,
-    `${origin}/static/py/html_void_elements-99-py3-none-any.whl`,
-    `${origin}/static/py/importlib_metadata-99-py3-none-any.whl`,
-    `${origin}/static/py/jsbeautifier-99-py3-none-any.whl`,
-    `${origin}/static/py/pathspec-99-py3-none-any.whl`,
-    `${origin}/static/py/PyYAML-99-py3-none-any.whl`,
-    `${origin}/static/py/zipp-99-py3-none-any.whl`,
-  ]);
-
-  await pyodide.loadPackage('regex');
-  await pyodide.loadPackage('six');
-  await pyodide.loadPackage('tomli');
-  await pyodide.loadPackage('tqdm');
-
-  console.log(
-    pyodide.runPython(`
-    import sys
-    sys.version
-  `),
-  );
-
-  setInput(`<div>
-    <p>Welcome to djLint!</p>
-</div>`);
-  console.log('Python Ready !');
-  return pyodide;
+  document.getElementById('djlint-settings').addEventListener('change', () => {
+    runPython(editor.state.doc.toString());
+  });
+} else {
+  // Sorry! No Web Worker support..
+  document
+    .getElementById('djlint-status')
+    .innerText(
+      'Sorry, a browser that supports web workers is required to use this online tool.',
+    );
 }
-
-// run the main function
-let pyodideReadyPromise = main();
 
 // pass the editor value to the pyodide.runPython function and show the result in the output section
-async function evaluatePython() {
-  let pyodide = await pyodideReadyPromise;
-  try {
-    pyodide.runPython(`
-      import io
-      import os
-      sys.modules['_multiprocessing'] = object
-      from multiprocessing.pool import ThreadPool
-      sys.stdout = io.StringIO()
 
-      from pathlib import Path
-      from djlint.reformat import reformat_file
-      from djlint.settings import Config
-      import tempfile
-
-    `);
-
-    let result = await pyodide.runPythonAsync(`
-temp_file = tempfile.NamedTemporaryFile(delete=False)
-temp_file.write(b"""${editor.state.doc.toString()}""")
-temp_file.seek(0)
-config = Config(temp_file.name)
-print(Path(list(reformat_file(config, Path(temp_file.name)).keys())[0]).read_text().rstrip())
-temp_file.close()
-os.unlink(temp_file.name)
-    `);
-
-    let stdout = pyodide.runPython('sys.stdout.getvalue()');
-    pyodide.runPython('sys.stdout.flush()');
-    setOutput(stdout);
-  } catch (err) {
-    setOutput(err);
-  }
-}
+// document.getElementById("djlint-settings").addEventListener("change", () => {evaluatePython()})
