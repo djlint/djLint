@@ -224,6 +224,15 @@ module.exports = function (eleventyConfig) {
     }
   });
 
+  eleventyConfig.addFilter('year', (value) => {
+    try {
+      const options = { year: 'numeric' };
+      return value.toLocaleDateString('en-us', options);
+    } catch (e) {
+      return value;
+    }
+  });
+
   eleventyConfig.addFilter('algExcerpt', (text) => {
     return text
       .replace(/<code class="language-.*?">.*?<\/code>/gs, '')
@@ -266,6 +275,7 @@ module.exports = function (eleventyConfig) {
         'download',
         'code-commit',
         'spinner',
+        'circle-question',
       ],
     },
     '_site/static/font/fontawesome/webfonts',

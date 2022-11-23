@@ -1,0 +1,154 @@
+---
+layout: layout.njk
+date: Last Modified
+description: Online HTML Template formatter. Reformat your HTML templates online with djLint.
+keywords: online template formatter, djLint, HTML, templates, formatter, linter, rules, online html template formatter
+---
+
+
+
+
+  <div class="container is-fluid pb-5">
+  <hr class="mt-0" />
+    <h1 class="title is-3">{{ "demo_description" | i18n | safe }}</h1>
+    <div class="block" id="djlint-status">
+    <span class="icon-text">
+      <span class="icon">
+        <i class="fas fa-spinner fa-spin"></i>
+      </span>
+      <span><strong>Loading djLint ..</strong></span>
+      </span>
+    </div>
+    <div class="columns is-hidden">
+      <div class="column is-narrow">
+
+<form id="djlint-settings">
+  <div class="field">
+  <label class="label">Custom Blocks <a href="/docs/configuration/#custom_blocks" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-custom-blocks" class="input" type="text" placeholder="toc,example">
+  </div>
+</div>
+
+ <div class="field">
+  <label class="label">Custom HTML <a href="/docs/configuration/#custom_html" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-custom-html" class="input" type="text" placeholder="mjml,simple-greeting,mj-\w+">
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Indent <a href="/docs/configuration/#indent" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-indent" class="input" type="text" placeholder="4">
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Blank Line after Tag <a href="/docs/configuration/#blank_line_after_tag" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-blank-line-after-tag" class="input" type="text" placeholder="load,extends,include">
+  </div>
+</div>
+<div class="field">
+  <label class="label">Blank Line before Tag <a href="/docs/configuration/#blank_line_before_tag" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-blank-line-before-tag" class="input" type="text" placeholder="load,extends,include">
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Profile  <a href="/docs/configuration/#profile" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <div class="select">
+  <select id="settings-profile" >
+    <option value="html">html (default)</option>
+    <option value="django">django</option>
+    <option value="jinja">jinja</option>
+    <option value="nunjucks">nunjucks (nunjucks and twig)</option>
+    <option value="handlebars">handlebars (handlebars and mustache)</option>
+    <option value="golang">golang</option>
+    <option value="angular">angular</option>
+  </select>
+</div>
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Max Line Length <a href="/docs/configuration/#max_line_length" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-max-line-length"  class="input" type="text" placeholder="80">
+  </div>
+</div>
+<div class="field">
+  <label class="label">Max Attribute Length <a href="/docs/configuration/#max_attribute_length" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-max-attribute-length" class="input" type="text" placeholder="0">
+  </div>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-format-attribute-template-tags" type="checkbox">
+  Format Attribute Template Tags <a href="/docs/configuration/#format_attribute_template_tags" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+<div class="field">
+<label  class="checkbox">
+  <input id="settings-preserve-leading-space" type="checkbox">
+  Preserve Leading Space <a href="/docs/configuration/#preserve_leading_space" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+<div class="field">
+<label  class="checkbox">
+  <input id="settings-preserve-blank-space" type="checkbox">
+  Preserve Blank Space <a href="/docs/configuration/#preserve_blank_lines" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-format-js"  type="checkbox">
+  Format JS <a href="/docs/configuration/#format_js" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-format-css"  type="checkbox">
+  Format CSS <a href="/docs/configuration/#format_css" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+</form>
+      </div>
+      <div class="column" id="djlint-input">
+      </div>
+      <div class="column" id="djlint-output">
+      </div>
+    </div>
+  </div>
+
+{% rollup "src/static/js/editor.js" | url %}

@@ -12,7 +12,10 @@
             <div class="column"></div>
             <div class="column">
                 <p class="copyright has-text-grey-dark has-text-right">
-                    djLint | ©2021 Riverside Healthcare
+                    djLint | ©{{ page.date | year }} Riverside Healthcare
+                </p>
+                <p class="has-text-grey-dark has-text-right mt-2">
+                    <small>{{ "footer_credits" | i18n | safe }}</small>
                 </p>
             </div>
         </div>
