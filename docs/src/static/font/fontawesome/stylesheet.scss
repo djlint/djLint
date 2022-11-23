@@ -68,6 +68,7 @@ $icons: (
   globe: $fa-var-globe,
   code-commit: $fa-var-code-commit,
   spinner: $fa-var-spinner,
+  circle-question: $fa-var-circle-question,
 );
 
 @each $key, $value in $icons {

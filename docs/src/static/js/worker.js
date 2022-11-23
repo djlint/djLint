@@ -117,7 +117,7 @@ self.onmessage = async (event) => {
 
     await pyodide.runPythonAsync(`
 temp_file = tempfile.NamedTemporaryFile(delete=False)
-temp_file.write(b"""${html}""")
+temp_file.write(str.encode("""${html}"""))
 temp_file.seek(0)
 config = Config(
   temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
