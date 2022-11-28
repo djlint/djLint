@@ -34,7 +34,7 @@ Notez que ces hooks prédéfinis sont parfois trop conservateurs dans les entré
 
 ```yaml
 repos:
-  - repo: https://github.com/Riverside-Healthcare/djLint
+  - repo: https://github.com/Riverside-Healthcare/djlint
     rev: 0.5.10 # grab latest tag from GitHub
     hooks:
       - id: djlint-django
@@ -44,7 +44,7 @@ repos:
 
 ```yaml
 repos:
-  - repo: https://github.com/Riverside-Healthcare/djLint
+  - repo: https://github.com/Riverside-Healthcare/djlint
     rev: 0.5.10 # grab latest tag from GitHub
     hooks:
       - id: djlint-handlebars
