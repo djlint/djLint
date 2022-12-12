@@ -51,7 +51,7 @@ pylint = "^2.14.5"
 mypy = "^0.991"
 types-PyYAML = "^6.0.11"
 pep8-naming = "^0.13.1"
-tox = "^3.25.1"
+tox = "^4.0.0"
 
 [tool.poetry.scripts]
 djlint = "djlint:main"
