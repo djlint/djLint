@@ -128,7 +128,6 @@ def format_attributes(config: Config, html: str, match: re.match) -> str:
 
     attributes = []
 
-    print(match, match.group(3))
     # format attributes as groups
     for attr_grp in re.finditer(
         config.attribute_pattern, match.group(3).strip(), re.VERBOSE
@@ -136,7 +135,21 @@ def format_attributes(config: Config, html: str, match: re.match) -> str:
         attrib_name = attr_grp.group(1)
         is_quoted = attr_grp.group(2) and attr_grp.group(2)[0] in ["'", '"']
         quote = attr_grp.group(2)[0] if is_quoted else '"'
-        attrib_value = attr_grp.group(2).strip("\"'") if attr_grp.group(2) else None
+
+        attrib_value = None
+
+        if attr_grp.group(2) and attr_grp.group(2)[0] == attr_grp.group(2)[-1]:
+            if attr_grp.group(2)[0] == "'":
+                attrib_value = attr_grp.group(2).strip("'")
+
+            elif attr_grp.group(2)[0] == '"':
+                attrib_value = attr_grp.group(2).strip('"')
+
+            else:
+                attrib_value = attr_grp.group(2)
+        else:
+            attrib_value = attr_grp.group(2)
+
         standalone = attr_grp.group(3)
 
         quote_length = 1
@@ -184,7 +197,6 @@ def format_attributes(config: Config, html: str, match: re.match) -> str:
             attributes.append(
                 (attrib_name or "") + (attrib_value or "") + (standalone or "")
             )
-
     attribute_string = ("\n" + spacing).join([x for x in attributes if x])
 
     close = match.group(4)

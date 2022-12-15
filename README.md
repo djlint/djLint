@@ -100,7 +100,7 @@ Looks like this:
 
 ## 🛠️ Can I help?
 
-Yes! 
+Yes!
 
 *Would you like to add a rule to the linter?* Take a look at the [linter docs](https://djlint.com/docs/linter/) and [source code](https://github.com/Riverside-Healthcare/djLint/blob/master/src/djlint/rules.yaml)
 

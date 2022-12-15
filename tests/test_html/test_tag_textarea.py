@@ -69,8 +69,11 @@ asdf
     )
 
     output = reformat(
-        tmp_file,runner,b"""<div><textarea type="textarea" id="messageContent" name="adContent" maxlength="300" class="form-control class_two" rows="10">{{ adContent|default }}</textarea></div>
-""")
+        tmp_file,
+        runner,
+        b"""<div><textarea type="textarea" id="messageContent" name="adContent" maxlength="300" class="form-control class_two" rows="10">{{ adContent|default }}</textarea></div>
+""",
+    )
 
     assert (
         output.text

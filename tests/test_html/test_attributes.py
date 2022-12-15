@@ -215,6 +215,21 @@ def test_boolean_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
     assert output.exit_code == 0
 
 
+def test_attribute_quotes(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<button id="test"
+        name="test"
+        type="submit"
+        one="isTrue ? 'True' : 'False'"
+        two="'Test' ."
+        three="'Test'"></button>""",
+    )
+
+    assert output.exit_code == 0
+
+
 # def test_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
 
 #     html_in = (

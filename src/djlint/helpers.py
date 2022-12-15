@@ -122,6 +122,7 @@ def inside_ignored_block(config: Config, html: str, match: re.Match) -> bool:
         )
     )
 
+
 def child_of_ignored_block(config: Config, html: str, match: re.Match) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     return any(
