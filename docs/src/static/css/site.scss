@@ -380,7 +380,7 @@ pre .number {
   background-color: unset;
 }
 
-pre {
+pre:not(.CodeMirror-line) {
   margin-bottom: 1.5rem !important;
 }
 

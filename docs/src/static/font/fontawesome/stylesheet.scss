@@ -5,6 +5,7 @@
 @import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_mixins';
 @import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_core';
 @import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_sizing';
+@import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_animated';
 
 $fa-font-path: '/static/font/fontawesome/webfonts';
 @font-face {
@@ -66,6 +67,8 @@ $icons: (
   circle-arrow-right: $fa-var-circle-arrow-right,
   globe: $fa-var-globe,
   code-commit: $fa-var-code-commit,
+  spinner: $fa-var-spinner,
+  circle-question: $fa-var-circle-question,
 );
 
 @each $key, $value in $icons {

@@ -11,6 +11,8 @@ const outdent = require('outdent');
 const schema = require('@quasibit/eleventy-plugin-schema');
 const editOnGithub = require('eleventy-plugin-edit-on-github');
 const i18n_func = require('eleventy-plugin-i18n/i18n.js');
+const rollupper = require('./src/_utils/rollupper');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
 const slugifyCustom = (s) =>
   slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g });
@@ -93,6 +95,15 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(metagen);
   eleventyConfig.addPlugin(criticalCss);
   eleventyConfig.addPlugin(schema);
+  eleventyConfig.addPlugin(rollupper, {
+    rollup: {
+      output: {
+        format: 'umd',
+        dir: '_site/static/js',
+      },
+      plugins: [nodeResolve()],
+    },
+  });
   eleventyConfig.addPlugin(editOnGithub, {
     // required
     github_edit_repo: 'https://github.com/Riverside-Healthcare/djLint',
@@ -190,6 +201,16 @@ module.exports = function (eleventyConfig) {
     'src/static/img/favicon.ico': 'favicon.ico',
   });
 
+  // copy wheels
+  eleventyConfig.addPassthroughCopy({
+    'src/static/py': 'static/py',
+  });
+
+  // copy python
+  eleventyConfig.addPassthroughCopy({
+    'src/static/js/worker.js': 'static/js/worker.js',
+  });
+
   eleventyConfig.addFilter('jsonify', (text) => {
     return JSON.stringify(text).replace(/(?:\\n\s*){2,}/g, '\\n');
   });
@@ -197,6 +218,15 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter('niceDate', (value) => {
     try {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return value.toLocaleDateString('en-us', options);
+    } catch (e) {
+      return value;
+    }
+  });
+
+  eleventyConfig.addFilter('year', (value) => {
+    try {
+      const options = { year: 'numeric' };
       return value.toLocaleDateString('en-us', options);
     } catch (e) {
       return value;
@@ -244,6 +274,8 @@ module.exports = function (eleventyConfig) {
         'infinity',
         'download',
         'code-commit',
+        'spinner',
+        'circle-question',
       ],
     },
     '_site/static/font/fontawesome/webfonts',

@@ -135,4 +135,20 @@ module.exports = {
     ru: 'Игнорирование Контент',
     fr: 'Ignorer le Contenu',
   },
+  try_online: {
+    'en-US': '🤩 Try Online',
+    fr: '🤩 Essayez Ici',
+    ru: '🤩 Попробуйте онлайн',
+  },
+  demo_description: {
+    'en-US': 'Online HTML Template formatter using djLint!',
+    ru: 'Онлайн форматировщик HTML-шаблонов с использованием djLint',
+    fr: 'Formateur de modèles HTML en ligne utilisant djLint !',
+  },
+  footer_credits: {
+    'en-US':
+      'djLint was originally created for use in the <a href="https://atlas.bi" target="_blank">Atlas</a> projects by the <a href="https://github.com/riverside-Healthcare/" target="_blank">Riverside Healthcare Analytics</a> team.',
+    fr: 'djLint a été créé à l\'origine pour être utilisé dans les projets <a href="https://atlas.bi" target="_blank">Atlas</a> par l\'équipe <a href="https://github.com/riverside-Healthcare/" target="_blank">Riverside Healthcare Analytics</a>.',
+    ru: 'Изначально djLint был создан для использования в проектах <a href="https://atlas.bi" target="_blank">Atlas</a> командой <a href="https://github.com/riverside-Healthcare/" target="_blank">Riverside Healthcare Analytics</a>.',
+  },
 };
