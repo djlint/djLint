@@ -116,7 +116,7 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
     pyproject_file = find_pyproject(src)
 
     if pyproject_file:
-        content = tomllib.load(pyproject_file.open("rb"))
+        content = tomllib.loads(pyproject_file.read_text(encoding="utf8"))
         try:
             return {**djlint_content, **content["tool"]["djlint"]}  # type: ignore
         except KeyError:
