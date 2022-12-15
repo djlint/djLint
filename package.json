@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.19.12",
+  "version": "1.19.8",
   "description": "HTML Template Linter and Formatter",
   "main": "./bin/index.js",
   "directories": {
