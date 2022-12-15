@@ -4,7 +4,7 @@
   <a href="https://www.djlint.com"><img src="https://raw.githubusercontent.com/Riverside-Healthcare/djLint/master/docs/src/static/img/icon.png" alt="djLint Logo" width="270"></a>
   <br>
 </h1>
-<h3 align="center">🙏 Passed 100k downloads! Thank you! 🙏</h3>
+<h3 align="center">🏗️ Maintainers needed, please reach out on discord or email!</h3>
 <h4 align="center">The missing formatter and linter for HTML templates.</h4>
 
 <p align="center">
