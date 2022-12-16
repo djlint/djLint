@@ -14,6 +14,8 @@ const i18n_func = require('eleventy-plugin-i18n/i18n.js');
 const rollupper = require('./src/_utils/rollupper');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
+process.setMaxListeners(0);
+
 const slugifyCustom = (s) =>
   slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g });
 
