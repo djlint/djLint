@@ -33,7 +33,7 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     if config.format_js:
         beautified_code = format_js(beautified_code, config)
 
-    if config.check is not True:
+    if config.check is not True or config.stdin is True:
         # update the file
         this_file.write_text(beautified_code, encoding="utf8")
 
