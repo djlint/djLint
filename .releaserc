@@ -6,7 +6,7 @@
     "@semantic-release/changelog",
     "@semantic-release/npm",
     ["@semantic-release/exec", {
-      "prepareCmd" : "poetry version ${nextRelease.version}"
+      "prepareCmd" : "poetry version ${nextRelease.version}; ./build_demo.sh"
     }],
     ["@semantic-release/git", {
       "assets": ["package.json", "pyproject.toml", "docs"]
