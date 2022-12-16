@@ -10,44 +10,44 @@ jobs:
     name: format_django 
     runs-on: ubuntu-latest
     steps:
-      - name: install deps
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: install deps
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      - name: setup python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    - name: setup python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-      - name: Setup Poetry
-        uses: snok/install-poetry@v1
+    - name: Setup Poetry
+      uses: snok/install-poetry@v1
 
-      - name: install
-        run: |
-          poetry install
-      - name: get source
-        run: |
-          mkdir {django_raw, django_source, django_djlint}
-          cd django_raw; git clone --depth 1 https://github.com/django/django .; cd ..
-          find django_raw -iname '*.html*' -exec mv '{}' django_source/ \;
-          cp -r -a django_source django_djlint
+    - name: install
+      run: |
+        poetry install
+    - name: get source
+      run: |
+        mkdir {django_raw, django_source, django_djlint}
+        cd django_raw; git clone --depth 1 https://github.com/django/django .; cd ..
+        find django_raw -iname '*.html*' -exec mv '{}' django_source/ \;
+        cp -r -a django_source django_djlint
           
-      - name: format
-        run: |
-          cd src
-          poetry run python -m djlint ../django_djlint --profile=django --reformat
+    - name: format
+      run: |
+        cd src
+        poetry run python -m djlint ../django_djlint --profile=django --reformat
       
-      - name: publish source
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./django_source
-          publish_branch: django-source
+    - name: publish source
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./django_source
+        publish_branch: django-source
           
-      - name: publish foramtted
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./django_djlint
-          publish_branch: django-djlint
+    - name: publish foramtted
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./django_djlint
+        publish_branch: django-djlint
           
