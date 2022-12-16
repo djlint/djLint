@@ -41,12 +41,13 @@ async function loadPyodideAndPackages() {
   postMessage({ type: 'status', message: 'Installing tqdm..' });
 
   postMessage({
-    type: 'status',
+    type: 'version',
     message:
       'Running Python ' +
       pyodide.runPython(`
-    import sys
-    sys.version
+    import platform
+    from importlib import metadata
+    f"running with Python {platform.python_version()}; djLint {metadata.version('djlint')}"
   `),
   });
 
@@ -103,6 +104,7 @@ self.onmessage = async (event) => {
     await self.pyodide.runPythonAsync(`
       import io
       import os
+      import sys
       sys.modules['_multiprocessing'] = object
       from multiprocessing.pool import ThreadPool
       sys.stdout = io.StringIO()

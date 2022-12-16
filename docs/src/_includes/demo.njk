@@ -10,7 +10,9 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 
   <div class="container is-fluid pb-5">
   <hr class="mt-0" />
-    <h1 class="title is-3">{{ "demo_description" | i18n | safe }}</h1>
+    <h1 class="title is-3 mb-0">{{ "demo_description" | i18n | safe }}</h1>
+    <small class="mb-4  is-italic is-block" id="djlint-version"></small>
+
     <div class="block" id="djlint-status">
     <span class="icon-text">
       <span class="icon">
@@ -20,6 +22,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
       </span>
     </div>
     <div class="columns is-hidden">
+
       <div class="column is-narrow">
 
 <form id="djlint-settings">
