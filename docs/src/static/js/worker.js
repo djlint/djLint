@@ -43,7 +43,6 @@ async function loadPyodideAndPackages() {
   postMessage({
     type: 'version',
     message:
-      'Running Python ' +
       pyodide.runPython(`
     import platform
     from importlib import metadata
