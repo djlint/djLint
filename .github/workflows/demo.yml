@@ -27,7 +27,7 @@ jobs:
 
     - name: get source
       run: |
-        mkdir {django_raw, django_source, django_djlint}
+        mkdir django_raw, django_source, django_djlint
         cd django_raw; git clone --depth 1 https://github.com/django/django .; cd ..
         find django_raw -iname '*.html*' -exec mv '{}' django_source/ \;
         cp -r -a django_source django_djlint
