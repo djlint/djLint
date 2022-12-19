@@ -51,6 +51,8 @@ jobs:
     - name: format
       run: |
         cd django-source
+        git config --global user.email "${GITHUB_ACTOR}"
+        git config --global user.name "${GITHUB_ACTOR}@users.noreply.github.com"
         git fetch
         git checkout django-source
         git branch django-djlint
@@ -63,6 +65,7 @@ jobs:
         
     - name: publish foramtted
       run: |
+        cd django-source
         git add .
         git commit -m "formatted"
         git push
