@@ -53,8 +53,8 @@ jobs:
         cd django-source
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
-        git branch django-source -u origin/django-djlint
-        git push --force  
+        git branch --unset-upstream
+        git push --set-upstream django-djlint --force  
         
     - name: format
       run: |
