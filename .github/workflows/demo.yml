@@ -40,6 +40,7 @@ jobs:
         publish_dir: ./django_source
         publish_branch: django-source
         enable_jekyll: true
+        force_orphan: true
     
     - name: cleanup source
       run: rm -r django_source; rm -r django_raw
