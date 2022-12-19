@@ -28,10 +28,8 @@ jobs:
     - name: get source
       run: |
         mkdir django_raw; mkdir django_source
-        #; mkdir django_djlint
         cd django_raw; git clone --depth 1 https://github.com/django/django .; cd ..
         find django_raw -iname '*.html*' -exec mv '{}' django_source/ \;
-        # cp -r -a django_source/* django_djlint/
   
     - name: publish source
       uses: peaceiris/actions-gh-pages@v3
@@ -48,18 +46,15 @@ jobs:
     - uses: actions/checkout@v3
       with:
         path: django-source
+        ref: django-source
 
     - name: setup branch
       run: |
         cd django-source
-        #git config --global user.email "${GITHUB_ACTOR}"
-        #git config --global user.name "${GITHUB_ACTOR}@users.noreply.github.com"
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
-        git fetch
-        git checkout django-source
-        git branch django-djlint
-        git push origin django-djlint --force  
+        git branch django-source -u origin/django-djlint
+        git push --force  
         
     - name: format
       run: |
@@ -71,5 +66,5 @@ jobs:
         cd django-source
         git add .
         git commit -m "formatted"
-        git push origin django-djlint
+        git push
  
