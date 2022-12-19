@@ -52,8 +52,9 @@ jobs:
       run: |
         cd django-source
         git fetch
-        git checkout django-source --force
-        git push --set-upstream origin django-djlint --force  
+        git checkout django-source
+        git branch django-djlint
+        git push origin django-djlint --force  
         
     - name: format
       run: |
