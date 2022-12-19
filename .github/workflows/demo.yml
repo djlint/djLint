@@ -35,7 +35,7 @@ jobs:
     - name: format
       run: |
         cd src
-        poetry run python -m djlint ../django_djlint --profile=django --reformat
+        poetry run python -m djlint ../django_djlint --profile=django --reformat --warn --quiet
 
     - name: publish source
       uses: peaceiris/actions-gh-pages@v3
