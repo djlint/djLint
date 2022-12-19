@@ -30,7 +30,7 @@ jobs:
         mkdir django_raw; mkdir django_source; mkdir django_djlint
         cd django_raw; git clone --depth 1 https://github.com/django/django .; cd ..
         find django_raw -iname '*.html*' -exec mv '{}' django_source/ \;
-        cp -r -a django_source django_djlint
+        cp -r -a django_source/ django_djlint
 
     - name: format
       run: |
@@ -43,6 +43,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./django_source
         publish_branch: django-source
+        enable_jekyll: true
 
     - name: publish foramtted
       uses: peaceiris/actions-gh-pages@v3
@@ -50,3 +51,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./django_djlint
         publish_branch: django-djlint
+        enable_jekyll: true
