@@ -41,18 +41,20 @@ jobs:
         publish_branch: django-source
         enable_jekyll: true
     
-    - name: cleanup
+    - name: cleanup source
       run: rm -r django_source; rm -r django_raw
 
     - uses: actions/checkout@v3
       with:
         path: django-source
 
-    - name: format
+    - name: setup branch
       run: |
         cd django-source
-        git config --global user.email "${GITHUB_ACTOR}"
-        git config --global user.name "${GITHUB_ACTOR}@users.noreply.github.com"
+        #git config --global user.email "${GITHUB_ACTOR}"
+        #git config --global user.name "${GITHUB_ACTOR}@users.noreply.github.com"
+        git config user.name "$(git log -n 1 --pretty=format:%an)"
+        git config user.email "$(git log -n 1 --pretty=format:%ae)"
         git fetch
         git checkout django-source
         git branch django-djlint
@@ -68,10 +70,5 @@ jobs:
         cd django-source
         git add .
         git commit -m "formatted"
-        git push
-  #  uses: peaceiris/actions-gh-pages@v3
-  #    with:
-  #      github_token: ${{ secrets.GITHUB_TOKEN }}
-  #      publish_dir: ./django_djlint
-  #      publish_branch: django-djlint
-  #      enable_jekyll: true
+        git push origin django-djlint
+ 
