@@ -100,3 +100,15 @@ djLint can use used as formatter in neovim using the `null-ls` plugin.
 - [GitHub repository](https://github.com/jose-elias-alvarez/null-ls.nvim)
 - [Lint](https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/lua/null-ls/builtins/diagnostics/djlint.lua#L14)
 - [Format](https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/lua/null-ls/builtins/formatting/djlint.lua#L13)
+
+## MegaLinter
+
+djlint is natively embedded within the 100+ linters of [MegaLinter](https://megalinter.io)
+
+To install it, just run `npx mega-linter-runner --install` and follow instructions
+
+::: content
+
+- [GitHub repository](https://github.com/oxsecurity/megalinter)
+- [djlint in MegaLinter documentation](https://megalinter.io/latest/descriptors/html_djlint/)
+  :::

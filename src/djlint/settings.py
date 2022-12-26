@@ -272,7 +272,7 @@ class Config:
         self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
 
         self.files: Optional[List[str]] = djlint_settings.get("files", None)
-        self.stdin = "-" in src and self.files is None
+        self.stdin = False
 
         # codes to exclude
         profile_dict: Dict[str, List[str]] = {

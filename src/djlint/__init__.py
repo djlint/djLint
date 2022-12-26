@@ -172,11 +172,12 @@ def main(
 
     temp_file = None
 
-    if "-" in src:
+    if set("-").intersection(set(src)):
         if config.files:
             file_list = get_src([Path(x) for x in config.files], config)
 
         else:
+            config.stdin = True
             stdin_stream = click.get_text_stream("stdin", encoding="utf8")
             stdin_text = stdin_stream.read()
 
