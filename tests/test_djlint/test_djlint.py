@@ -5,7 +5,7 @@ run::
 
     pytest tests/test_djlint/test_djlint.py --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
-    pytest tests/test_djlint/test_djlint.py::test_stdin
+    pytest tests/test_djlint/test_djlint.py::test_hyphen_file
 
 or::
 
@@ -59,6 +59,13 @@ def test_existing_file(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ["tests/test_djlint/bad.html"])
     assert result.exit_code == 1
     assert str(Path("tests/test_djlint/bad.html")) in result.output
+
+
+def test_hyphen_file(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ["tests/test_djlint/-.html"])
+    assert result.exit_code == 1
+    print(result.output)
+    assert str(Path("tests/test_djlint/-.html")) in result.output
 
 
 def test_multiple_files(runner: CliRunner) -> None:

@@ -30,7 +30,6 @@ def print_output(
     lint_success_message = ""
     lint_error_count = 0
     format_error_count = 0
-
     print_blanks = config.stdin is False and config.quiet is False
 
     if print_blanks:
@@ -99,6 +98,7 @@ def build_output(error: dict, config: Config) -> int:
     errors = sorted(
         list(error.values())[0], key=lambda x: tuple(map(int, x["line"].split(":")))
     )
+
     width, _ = shutil.get_terminal_size()
 
     if len(errors) == 0:
