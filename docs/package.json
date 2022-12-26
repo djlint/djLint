@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.53",
+  "version": "1.0.54",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -37,7 +37,7 @@
     "@fortawesome/fontawesome-free": "6.2.1",
     "@fullhuman/postcss-purgecss": "5.0.0",
     "@toycode/markdown-it-class": "1.2.4",
-    "algoliasearch": "4.14.2",
+    "algoliasearch": "4.14.3",
     "autoprefixer": "10.4.13",
     "bulma": "0.9.4",
     "bulma-pricingtable": "0.2.0",
@@ -45,14 +45,14 @@
     "cz-conventional-changelog": "3.3.0",
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "1.7.11",
-    "esbuild": "0.16.7",
+    "esbuild": "0.16.10",
     "eslint": "8.30.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.26.0",
     "fontawesome-subset": "4.3.1",
     "html-minifier": "4.0.0",
     "markdown-it": "13.0.1",
-    "markdown-it-anchor": "8.6.5",
+    "markdown-it-anchor": "8.6.6",
     "markdown-it-div": "1.1.0",
     "markdown-it-imsize": "2.0.1",
     "outdent": "0.8.0",
@@ -60,7 +60,7 @@
     "postcss-nested": "6.0.0",
     "prettier": "2.8.1",
     "prismjs": "1.29.0",
-    "sass": "1.56.2",
+    "sass": "1.57.1",
     "slugify": "1.6.5"
   },
   "config": {
