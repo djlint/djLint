@@ -451,6 +451,15 @@ def test_DJ018(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
     assert result.exit_code == 0
 
+    # test data-actions
+    write_to_file(
+        tmp_file.name,
+        b"""<form action="{% url 'something' %}" data-action="xxx"></form>""",
+    )
+
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "django"])
+    assert "D018" not in result.output
+
 
 def test_H019(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<a href='javascript:abc()'>asdf</a>")
