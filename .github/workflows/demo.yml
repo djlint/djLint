@@ -54,7 +54,8 @@ jobs:
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
         git branch --unset-upstream
-        git push --force --set-upstream origin django-djlint
+        git push --force origin django-source:django-djlint
+        # git push --force --set-upstream origin django-djlint
         
     - name: format
       run: |
@@ -66,5 +67,5 @@ jobs:
         cd django-source
         git add .
         git commit -m "formatted"
-        git push
+        git push origin django-source:django-djlint
  
