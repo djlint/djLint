@@ -1,0 +1,90 @@
+name: demo
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+jobs:
+  demo:
+    strategy:
+      matrix:
+        tool: [django, wagtail, pallets, apostrophe, bolt]
+        include:
+          - tool: django
+            repo: https://github.com/django/django
+            profile: django
+          - tool: wagtail
+            repo: https://github.com/wagtail/wagtail
+            profile: django
+          - tool: pallets
+            repo: https://github.com/pallets/website
+            profile: jinja
+          - tool: apostrophe
+            repo: https://github.com/apostrophecms/apostrophe
+            profile: nunjucks
+          - tool: bolt
+            repo: https://github.com/bolt/core
+            profile: nunjucks
+    name: format
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - name: setup python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Setup Poetry
+      uses: snok/install-poetry@v1
+
+    - name: install
+      run: |
+        poetry install
+
+    - name: get source
+      run: |
+        mkdir "${{ matrix.tool }}_raw"; mkdir "${{ matrix.tool }}_source"
+        cd "${{ matrix.tool }}_raw"; git clone --depth 1 "${{ matrix.repo }}" .; cd ..
+        find "${{ matrix.tool }}_raw" -iname '*.html*' -exec mv '{}' "${{ matrix.tool }}_source/" \;
+  
+    - name: publish source
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: "./${{ matrix.tool }}_source"
+        publish_branch: "${{ matrix.tool }}-source"
+        enable_jekyll: true
+        force_orphan: true
+    
+    - name: cleanup source
+      run: rm -r "${{ matrix.tool }}_source"; rm -r "${{ matrix.tool }}_raw"
+
+    - uses: actions/checkout@v3
+      with:
+        path: "${{ matrix.tool }}-source"
+        ref: "${{ matrix.tool }}-source"
+
+    - name: setup branch
+      run: |
+        cd "${{ matrix.tool }}-source"
+        git config user.name "$(git log -n 1 --pretty=format:%an)"
+        git config user.email "$(git log -n 1 --pretty=format:%ae)"
+        git branch --unset-upstream
+        git push --force origin "${{ matrix.tool }}-source":"${{ matrix.tool }}-djlint"
+        
+    - name: format
+      run: |
+        cd src
+        poetry run python -m djlint "../${{ matrix.tool }}-source" --profile=${{ matrix.profile }} --reformat --warn --quiet
+        
+    - name: publish foramtted
+      run: |
+        cd "${{ matrix.tool }}-source"
+        export DJ_VERSION=$(poetry version --short)
+        git add .
+        git commit -m "formatted with djLint $DJ_VERSION"
+        git push origin "${{ matrix.tool }}-source":"${{ matrix.tool }}-djlint"
+ 
