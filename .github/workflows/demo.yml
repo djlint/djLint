@@ -6,8 +6,16 @@ on:
     branches: [master]
 
 jobs:
-  django:
-    name: format_django
+  
+  :
+    strategy:
+      matrix:
+        tool: [django]
+        include:
+          - tool: django
+            repo: https://github.com/django/django
+            profile: django
+    name: format
     runs-on: ubuntu-latest
     steps:
     - name: checkout
@@ -27,45 +35,45 @@ jobs:
 
     - name: get source
       run: |
-        mkdir django_raw; mkdir django_source
-        cd django_raw; git clone --depth 1 https://github.com/django/django .; cd ..
-        find django_raw -iname '*.html*' -exec mv '{}' django_source/ \;
+        mkdir "${{ matrix.tool }}_raw"; mkdir "${{ matrix.tool }}_source"
+        cd "${{ matrix.tool }}_raw"; git clone --depth 1 "${{ matrix.repo }}" .; cd ..
+        find "${{ matrix.tool }}_raw" -iname '*.html*' -exec mv '{}' "${{ matrix.tool }}_source/" \;
   
     - name: publish source
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./django_source
-        publish_branch: django-source
+        publish_dir: "./${{ matrix.tool }}_source"
+        publish_branch: "${{ matrix.tool }}-source"
         enable_jekyll: true
         force_orphan: true
     
     - name: cleanup source
-      run: rm -r django_source; rm -r django_raw
+      run: rm -r "${{ matrix.tool }}_source"; rm -r "${{ matrix.tool }}_raw"
 
     - uses: actions/checkout@v3
       with:
-        path: django-source
-        ref: django-source
+        path: "${{ matrix.tool }}-source"
+        ref: "${{ matrix.tool }}-source"
 
     - name: setup branch
       run: |
-        cd django-source
+        cd "${{ matrix.tool }}-source"
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
         git branch --unset-upstream
-        git push --force origin django-source:django-djlint
+        git push --force origin "${{ matrix.tool }}-source":"${{ matrix.tool }}-djlint"
         
     - name: format
       run: |
         cd src
-        poetry run python -m djlint ../django-source --profile=django --reformat --warn --quiet
+        poetry run python -m djlint "../${{ matrix.tool }}-source" --profile=${{ matrix.profile }} --reformat --warn --quiet
         
     - name: publish foramtted
       run: |
-        cd django-source
+        cd "${{ matrix.tool }}-source"
         export DJ_VERSION=$(poetry version --short)
         git add .
         git commit -m "formatted with djLint $DJ_VERSION"
-        git push origin django-source:django-djlint
+        git push origin "${{ matrix.tool }}-source":"${{ matrix.tool }}-djlint"
  
