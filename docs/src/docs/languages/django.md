@@ -29,3 +29,8 @@ profile="{{ tool }}"
 <div class="box notification is-info is-light">
     <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/docs/configuration/">Check out the configuration guide for all the options!</a></div>
 </div>
+
+## Real Life Examples!
+
+- [Django](https://github.com/django/django) source code [reformatted](https://github.com/RiversideHealthcare/djLint/compare/django-source...RiversideHealthcare:djLint:django-djlint)
+- [Wagtail](https://github.com/wagtail/wagtail) source code [reformatted](https://github.com/RiversideHealthcare/djLint/compare/wagtail-source...RiversideHealthcare:djLint:wagtail-djlint)
