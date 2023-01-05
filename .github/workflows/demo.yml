@@ -6,8 +6,7 @@ on:
     branches: [master]
 
 jobs:
-  
-  :
+  demo:
     strategy:
       matrix:
         tool: [django]
