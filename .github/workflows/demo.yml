@@ -9,7 +9,7 @@ jobs:
   demo:
     strategy:
       matrix:
-        tool: [django, wagtail]
+        tool: [django, wagtail, pallets, apostrophe, bolt]
         include:
           - tool: django
             repo: https://github.com/django/django
@@ -17,6 +17,15 @@ jobs:
           - tool: wagtail
             repo: https://github.com/wagtail/wagtail
             profile: django
+          - tool: pallets
+            repo: https://github.com/pallets/website
+            profile: jinja
+          - tool: apostrophe
+            repo: https://github.com/apostrophecms/apostrophe
+            profile: nunjucks
+          - tool: bolt
+            repo: https://github.com/bolt/core
+            profile: nunjucks
     name: format
     runs-on: ubuntu-latest
     steps:
