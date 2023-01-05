@@ -9,10 +9,13 @@ jobs:
   demo:
     strategy:
       matrix:
-        tool: [django]
+        tool: [django, wagtail]
         include:
           - tool: django
             repo: https://github.com/django/django
+            profile: django
+          - tool: wagtail
+            repo: https://github.com/wagtail/wagtail
             profile: django
     name: format
     runs-on: ubuntu-latest
