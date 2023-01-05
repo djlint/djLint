@@ -32,4 +32,4 @@ profile="{{ tool }}"
 
 ## Real Life Examples!
 
-- [bolt](https://github.com/bolt/core) source code [reformatted](https://github.com/RiversideHealthcare/djLint/compare/bolt-source...RiversideHealthcare:djLint:bolt-djlint)
+- [bolt](https://github.com/bolt/core) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/bolt-source...Riverside-Healthcare:djLint:bolt-djlint)

@@ -32,4 +32,4 @@ profile="{{ tool }}"
 
 ## Real Life Examples!
 
-- [Pallets](https://github.com/pallets/website) source code [reformatted](https://github.com/RiversideHealthcare/djLint/compare/pallets-source...RiversideHealthcare:djLint:pallets-djlint)
+- [Pallets](https://github.com/pallets/website) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/pallets-source...Riverside-Healthcare:djLint:pallets-djlint)

@@ -32,5 +32,5 @@ profile="{{ tool }}"
 
 ## Real Life Examples!
 
-- [Django](https://github.com/django/django) source code [reformatted](https://github.com/RiversideHealthcare/djLint/compare/django-source...RiversideHealthcare:djLint:django-djlint)
-- [Wagtail](https://github.com/wagtail/wagtail) source code [reformatted](https://github.com/RiversideHealthcare/djLint/compare/wagtail-source...RiversideHealthcare:djLint:wagtail-djlint)
+- [Django](https://github.com/django/django) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/django-source...Riverside-Healthcare:djLint:django-djlint)
+- [Wagtail](https://github.com/wagtail/wagtail) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/wagtail-source...Riverside-Healthcare:djLint:wagtail-djlint)
