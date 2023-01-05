@@ -55,7 +55,6 @@ jobs:
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
         git branch --unset-upstream
         git push --force origin django-source:django-djlint
-        # git push --force --set-upstream origin django-djlint
         
     - name: format
       run: |
@@ -65,7 +64,8 @@ jobs:
     - name: publish foramtted
       run: |
         cd django-source
+        export DJ_VERSION=$(poetry version --short)
         git add .
-        git commit -m "formatted"
+        git commit -m "formatted with djLint $DJ_VERSION"
         git push origin django-source:django-djlint
  
