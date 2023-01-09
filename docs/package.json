@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.56",
+  "version": "1.0.57",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -46,7 +46,7 @@
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "1.7.11",
     "esbuild": "0.16.14",
-    "eslint": "8.30.0",
+    "eslint": "8.31.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.26.0",
     "fontawesome-subset": "4.3.1",
