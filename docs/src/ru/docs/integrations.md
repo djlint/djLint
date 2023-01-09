@@ -35,7 +35,7 @@ djLint можно использовать как [pre-commit](https://pre-commi
 ```yaml
 repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
-    rev: {{ djlint_version }}
+    rev: v{{ djlint_version }}
     hooks:
       - id: djlint-django
 ```
@@ -45,7 +45,7 @@ repos:
 ```yaml
 repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
-    rev: {{ djlint_version }}
+    rev: v{{ djlint_version }}
     hooks:
       - id: djlint-handlebars
         files: "\\.html"
