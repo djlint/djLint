@@ -85,6 +85,7 @@ const widont = (string) => {
 };
 
 module.exports = function (eleventyConfig) {
+  eleventyConfig.addGlobalData("djlint_version", require('../package.json').version);
   eleventyConfig.setUseGitIgnore(false);
   eleventyConfig.addFilter('widont', widont);
   eleventyConfig.addWatchTarget('./src/static/');
