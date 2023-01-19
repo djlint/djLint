@@ -39,8 +39,7 @@ def reformat_file(config: Config, this_file: Path) -> dict:
         beautified_code = beautified_code.replace("\n", "\r\n")
 
     if config.check is not True or config.stdin is True:
-        # update the file
-        this_file.write_text(beautified_code, encoding="utf8", newline="")
+        this_file.write_bytes(beautified_code.encode("utf8"))
 
     out = {
         str(this_file): list(
