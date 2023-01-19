@@ -19,7 +19,8 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     """Reformat html file."""
     rawcode = this_file.read_bytes().decode("utf8")
 
-    compressed = compress_html(rawcode, config)
+    # naturalize the line breaks
+    compressed = compress_html(("\n").join(rawcode.splitlines()), config)
 
     expanded = expand_html(compressed, config)
 
