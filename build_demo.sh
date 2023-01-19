@@ -11,8 +11,6 @@ mv cssbeautifier* cssbeautifier-99-py3-none-any.whl
 mv EditorConfig* EditorConfig-99-py3-none-any.whl
 mv html_tag_names* html_tag_names-99-py3-none-any.whl
 mv html_void_elements* html_void_elements-99-py3-none-any.whl
-mv importlib_metadata* importlib_metadata-99-py3-none-any.whl
 mv jsbeautifier* jsbeautifier-99-py3-none-any.whl
 mv pathspec* pathspec-99-py3-none-any.whl
 mv PyYAML* PyYAML-99-py3-none-any.whl
-mv zipp* zipp-99-py3-none-any.whl

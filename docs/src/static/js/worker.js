@@ -19,17 +19,15 @@ async function loadPyodideAndPackages() {
     `${origin}/static/py/EditorConfig-99-py3-none-any.whl`,
     `${origin}/static/py/html_tag_names-99-py3-none-any.whl`,
     `${origin}/static/py/html_void_elements-99-py3-none-any.whl`,
-    `${origin}/static/py/importlib_metadata-99-py3-none-any.whl`,
     `${origin}/static/py/jsbeautifier-99-py3-none-any.whl`,
     `${origin}/static/py/pathspec-99-py3-none-any.whl`,
     `${origin}/static/py/PyYAML-99-py3-none-any.whl`,
-    `${origin}/static/py/zipp-99-py3-none-any.whl`,
   ]);
 
   postMessage({
     type: 'status',
     message:
-      'Installing djlint, click, colorama, cssbeautifier, editorconfig, html_tag_names, html_void_elements, importlib_metadata, jsbeautifier, pathspec, pyyaml, zipp ..',
+      'Installing djlint, click, colorama, cssbeautifier, editorconfig, html_tag_names, html_void_elements, jsbeautifier, pathspec, pyyaml ..',
   });
   await self.pyodide.loadPackage('regex');
   postMessage({ type: 'status', message: 'Installing regex..' });
@@ -42,8 +40,7 @@ async function loadPyodideAndPackages() {
 
   postMessage({
     type: 'version',
-    message:
-      pyodide.runPython(`
+    message: pyodide.runPython(`
     import platform
     from importlib import metadata
     f"running with Python {platform.python_version()}; djLint {metadata.version('djlint')}"
