@@ -36,7 +36,8 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     # preserve original line endings
     line_ending = rawcode.find("\n")
     if line_ending > -1 and rawcode[max(line_ending - 1, 0)] == "\r":
-        beautified_code = beautified_code.replace("\n", "\r\n")
+        # convert \r?\n to \r\n
+        beautified_code = beautified_code.replace("\r", "").replace("\n", "\r\n")
 
     if config.check is not True or config.stdin is True:
         this_file.write_bytes(beautified_code.encode("utf8"))
