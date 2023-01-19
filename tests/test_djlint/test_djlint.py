@@ -222,3 +222,18 @@ def test_python_call() -> None:
         )
         assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
         assert py_sub.returncode == 0
+
+
+def test_line_ending(runner: CliRunner, tmp_file: TextIO) -> None:
+    # write a windows line ending to file
+    text_in = "<div></div>\r\n"
+    with open(tmp_file.name, "w", encoding="utf8", newline="") as windows:
+        windows.write(text_in)
+
+    # make sure line ending was still there
+    assert Path(tmp_file.name).read_bytes().decode("utf8") == text_in
+
+    # check formatting
+    result = runner.invoke(djlint, [tmp_file.name, "--check", "--quiet"])
+
+    assert result.exit_code == 0
