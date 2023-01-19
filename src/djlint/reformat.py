@@ -17,7 +17,7 @@ from .settings import Config
 
 def reformat_file(config: Config, this_file: Path) -> dict:
     """Reformat html file."""
-    rawcode = this_file.read_text(encoding="utf8")
+    rawcode = this_file.read_bytes().decode("utf8")
 
     compressed = compress_html(rawcode, config)
 
@@ -33,9 +33,14 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     if config.format_js:
         beautified_code = format_js(beautified_code, config)
 
+    # preserve original line endings
+    line_ending = rawcode.find("\n")
+    if line_ending > -1 and rawcode[max(line_ending - 1, 0)] == "\r":
+        beautified_code = beautified_code.replace("\n", "\r\n")
+
     if config.check is not True or config.stdin is True:
         # update the file
-        this_file.write_text(beautified_code, encoding="utf8")
+        this_file.write_text(beautified_code, encoding="utf8", newline="")
 
     out = {
         str(this_file): list(

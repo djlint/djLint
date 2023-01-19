@@ -180,7 +180,6 @@ def main(
             config.stdin = True
             stdin_stream = click.get_text_stream("stdin", encoding="utf8")
             stdin_text = stdin_stream.read()
-
             temp_file = tempfile.NamedTemporaryFile(delete=False)
             temp_file.write(str.encode(stdin_text))
             temp_file.seek(0)
