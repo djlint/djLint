@@ -33,4 +33,3 @@ profile="{{ tool }}"
 ## Real Life Examples!
 
 - [apostrophe](https://github.com/apostrophecms/apostrophe) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/apostrophe-source...Riverside-Healthcare:djLint:apostrophe-djlint)
-
