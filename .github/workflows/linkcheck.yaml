@@ -16,6 +16,6 @@ jobs:
         npm install
         npm run build
 
-    - uses: untitaker/hyperlink@0.1.26
+    - uses: untitaker/hyperlink@0.1.27
       with:
         args: docs/_site/
