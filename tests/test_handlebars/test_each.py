@@ -5,7 +5,7 @@ run::
    pytest tests/test_handlebars.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
-   pytest tests/test_handlebars.py::test_each --cov=src/djlint --cov-branch \
+   pytest tests/test_handlebars/test_each.py::test_each_with_pipe --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 """
@@ -34,3 +34,12 @@ def test_each(runner: CliRunner, tmp_file: TextIO) -> None:
 {{/each }}
 """
     )
+
+
+def test_each_with_pipe(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""{{#each (cprFindConfigObj "inventoryCategories") as |category c |}}\n""",
+    )
+    assert output.exit_code == 0

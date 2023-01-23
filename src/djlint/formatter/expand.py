@@ -89,7 +89,7 @@ def expand_html(html: str, config: Config) -> str:
             break_char
             + r"\K((?:{%|{{\#)[ ]*?(?:"
             + config.break_template_tags
-            + ")[^}]+?[%|}]})",
+            + ")[^}]+?[%}]})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         partial(should_i_move_template_tag, "\n%s"),
@@ -101,7 +101,7 @@ def expand_html(html: str, config: Config) -> str:
         re.compile(
             r"((?:{%|{{\#)[ ]*?(?:"
             + config.break_template_tags
-            + ")[^}]+?[%|}]})(?=[^\n])",
+            + ")[^}]+?[%}]})(?=[^\n])",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         partial(should_i_move_template_tag, "%s\n"),

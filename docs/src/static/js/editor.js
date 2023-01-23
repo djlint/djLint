@@ -89,11 +89,11 @@ if (typeof Worker !== 'undefined') {
     }
     if ((type == 'error' || type == 'html') && id == session_id) {
       setOutput(message);
-    } else if (type == "status") {
-      console.log(message)
-    } else if (type == "version") {
+    } else if (type == 'status') {
+      console.log(message);
+    } else if (type == 'version') {
       document.getElementById('djlint-version').textContent = message;
-    }else {
+    } else {
       console.log(event.data);
     }
   };
