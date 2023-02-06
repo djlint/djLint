@@ -114,7 +114,6 @@ def build_output(error: dict, config: Config) -> int:
         )
 
     for message_dict in errors:
-
         line = Fore.BLUE + message_dict["line"] + Style.RESET_ALL
         code = (
             (Fore.RED if message_dict["code"][:1] == "E" else Fore.YELLOW)
@@ -205,14 +204,12 @@ def build_stats_output(errors: List[Optional[Any]], config: Config) -> int:
     )
 
     if messages and codes:
-
         longest_code = len(max(messages.keys(), key=len))
         longest_count = len(
             str(max(Counter(codes).values(), key=lambda x: len(str(x))))
         )
 
         for code in sorted(Counter(codes).items()):
-
             code_space = (longest_code - len(str(code[0]))) * " "
             count_space = (longest_count - len(str(code[1]))) * " "
 

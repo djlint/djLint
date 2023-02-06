@@ -15,7 +15,6 @@ from src.djlint import main as djlint
 
 
 def test_config(runner: CliRunner) -> None:
-
     result = runner.invoke(
         djlint,
         [

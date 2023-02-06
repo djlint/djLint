@@ -89,7 +89,6 @@ layout: <div><div></div></div>
 
 
 def test_custom_parser(runner: CliRunner, tmp_file: TextIO) -> None:
-
     html_in = (
         b"""
 ---mycustomparser
@@ -114,7 +113,6 @@ slug: home
 
 
 def test_empty(runner: CliRunner, tmp_file: TextIO) -> None:
-
     html_in = (
         b"""
 ---
@@ -134,7 +132,6 @@ def test_empty(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_empty_2(runner: CliRunner, tmp_file: TextIO) -> None:
-
     html_in = (
         b"""
 ---
@@ -155,7 +152,6 @@ def test_empty_2(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_issue_9042_no_empty_line(runner: CliRunner, tmp_file: TextIO) -> None:
-
     html_in = (
         b"""
 ---
@@ -177,7 +173,6 @@ Test <a href="https://djlint.com">abc</a>.
 
 
 def test_issue_9042(runner: CliRunner, tmp_file: TextIO) -> None:
-
     html_in = (
         b"""
 ---

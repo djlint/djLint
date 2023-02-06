@@ -26,7 +26,6 @@ def format_css(html: str, config: Config) -> str:
         # add indent back
         ignore_indent = False
         for line in beautified_lines:
-
             if re.search(
                 re.compile(
                     r"\/\*[ ]*?beautify[ ]+?ignore:end[ ]*?\*\/",
@@ -38,7 +37,6 @@ def format_css(html: str, config: Config) -> str:
                 ignore_indent = False
 
             if ignore_indent is False and line:
-
                 beautified += "\n" + inner_indent + line
             else:
                 beautified += "\n" + line

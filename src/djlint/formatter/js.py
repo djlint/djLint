@@ -27,7 +27,6 @@ def format_js(html: str, config: Config) -> str:
         # add indent back
         ignore_indent = False
         for line in beautified_lines:
-
             if re.search(
                 re.compile(
                     r"\/\*[ ]*?beautify[ ]+?(?:preserve|ignore):end[ ]*?\*\/",
