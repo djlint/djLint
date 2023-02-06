@@ -33,14 +33,14 @@ colorama = "^0.4.4"
 regex = "^2022.1.18"
 tqdm = "^4.62.2"
 tomli = { version = "^2.0.1", python = "<3.11" }
-pathspec = "^0.10.0"
+pathspec = "^0.11.0"
 html-void-elements = "^0.1.0"
 html-tag-names = "^0.1.2"
 jsbeautifier = "^1.14.4"
 cssbeautifier = "^1.14.4"
 
 [tool.poetry.dev-dependencies]
-black = "^22.1.0"
+black = "^23.0.0"
 isort = "^5.9.3"
 coverage = "^7.0.0"
 pytest = "^7.1.2"

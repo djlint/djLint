@@ -136,7 +136,6 @@ def condense_html(html: str, config: Config) -> str:
     # should we add blank lines before load tags?
     if config.blank_line_before_tag:
         for tag in [x.strip() for x in config.blank_line_before_tag.split(",")]:
-
             html = re.sub(
                 re.compile(
                     rf"(?<!^\n)((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)",

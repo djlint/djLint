@@ -32,7 +32,6 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
         indent_adder = spacing or 0
 
         for line_number, line in enumerate(attributes.splitlines()):
-
             # when checking for template tag, use "match" to force start of line check.
             if re.match(
                 re.compile(config.template_unindent, re.I | re.X), line.strip()
