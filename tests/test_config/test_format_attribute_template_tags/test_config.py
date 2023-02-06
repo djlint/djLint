@@ -31,7 +31,6 @@ def test_with_config(runner: CliRunner) -> None:
 
 
 def test_without_config(runner: CliRunner, tmp_file: TextIO) -> None:
-
     output = reformat(
         tmp_file,
         runner,

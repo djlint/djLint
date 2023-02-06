@@ -37,7 +37,6 @@ def indent_html(rawcode: str, config: Config) -> str:
     ignored_level = 0
 
     for item in rawcode_flat_list:
-
         # if a raw tag first line
         if not is_block_raw and is_ignored_block_opening(config, item):
             is_raw_first_line = True
@@ -225,7 +224,6 @@ def indent_html(rawcode: str, config: Config) -> str:
         def fix_non_handlebars_template_tags(
             html: str, out_format: str, match: re.Match
         ) -> str:
-
             if inside_ignored_block(config, html, match):
                 return match.group()
 
@@ -255,7 +253,6 @@ def indent_html(rawcode: str, config: Config) -> str:
         def fix_handlebars_template_tags(
             html: str, out_format: str, match: re.Match
         ) -> str:
-
             if inside_ignored_block(config, html, match):
                 return match.group()
 

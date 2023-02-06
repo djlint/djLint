@@ -49,7 +49,6 @@ comment-->
 
 
 def test_before_text(runner: CliRunner, tmp_file: TextIO) -> None:
-
     html_in = (
         b"""
 <!-- hello -->
@@ -67,7 +66,6 @@ def test_before_text(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_bogus(runner: CliRunner, tmp_file: TextIO) -> None:
-
     html_in = (
         b"""
 <? hello ?>
@@ -268,7 +266,6 @@ def test_bogus(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_hidden(runner: CliRunner, tmp_file: TextIO) -> None:
-
     html_in = (
         b"""
 <!DOCTYPE html>

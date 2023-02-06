@@ -29,7 +29,6 @@ logger = logging.getLogger(__name__)
 def find_project_root(src: Path) -> Path:
     """Attempt to get the project root."""
     for directory in [src, *src.resolve().parents]:
-
         if (directory / ".git").exists():
             return directory
 
@@ -214,7 +213,6 @@ class Config:
         configuration: Optional[str] = None,
         statistics: bool = False,
     ):
-
         self.reformat = reformat
         self.check = check
         self.lint = lint

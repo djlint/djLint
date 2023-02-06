@@ -248,9 +248,7 @@ def main(
                 ascii=progress_char,
                 leave=False,
             ) as pbar:
-
                 for future in as_completed(futures):
-
                     file_errors.append(future.result())
                     pbar.update()
                     elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
