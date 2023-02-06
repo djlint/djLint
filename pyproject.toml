@@ -40,7 +40,7 @@ jsbeautifier = "^1.14.4"
 cssbeautifier = "^1.14.4"
 
 [tool.poetry.dev-dependencies]
-black = "^22.1.0"
+black = "^23.0.0"
 isort = "^5.9.3"
 coverage = "^7.0.0"
 pytest = "^7.1.2"
