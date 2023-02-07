@@ -29,7 +29,6 @@ logger = logging.getLogger(__name__)
 def find_project_root(src: Path) -> Path:
     """Attempt to get the project root."""
     for directory in [src, *src.resolve().parents]:
-
         if (directory / ".git").exists():
             return directory
 
@@ -108,9 +107,12 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
             )
 
         # pylint: disable=broad-except
-        except BaseException:
-            logger.info(
-                "Failed to load config file. Ensure file exists and is in json format."
+        except BaseException as error:
+            logger.error(
+                "%sFailed to load config file %s. %s",
+                Fore.RED,
+                Path(config).resolve(),
+                error,
             )
 
     pyproject_file = find_pyproject(src)
@@ -131,8 +133,8 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
                 **json.loads(djlintrc_file.read_text(encoding="utf8")),
             }
         # pylint: disable=broad-except
-        except BaseException:
-            logger.info("Failed to load .djlintrc file.")
+        except BaseException as error:
+            logger.error("%sFailed to load .djlintrc file. %s", Fore.RED, error)
 
     return djlint_content
 
@@ -214,7 +216,6 @@ class Config:
         configuration: Optional[str] = None,
         statistics: bool = False,
     ):
-
         self.reformat = reformat
         self.check = check
         self.lint = lint

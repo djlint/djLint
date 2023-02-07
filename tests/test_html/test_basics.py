@@ -104,7 +104,6 @@ def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_empty(runner: CliRunner, tmp_file: TextIO) -> None:
-
     output = reformat(
         tmp_file,
         runner,
@@ -314,7 +313,6 @@ def test_empty(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_hello_world(runner: CliRunner, tmp_file: TextIO) -> None:
-
     output = reformat(
         tmp_file,
         runner,
@@ -338,7 +336,6 @@ def test_hello_world(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_html_comments(runner: CliRunner, tmp_file: TextIO) -> None:
-
     output = reformat(
         tmp_file,
         runner,
@@ -483,7 +480,6 @@ def test_html_comments(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_issue_9368_3(runner: CliRunner, tmp_file: TextIO) -> None:
-
     output = reformat(
         tmp_file,
         runner,
@@ -495,7 +491,6 @@ def test_issue_9368_3(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_issue_9368(runner: CliRunner, tmp_file: TextIO) -> None:
-
     output = reformat(
         tmp_file,
         runner,
@@ -533,7 +528,6 @@ def test_issue_9368(runner: CliRunner, tmp_file: TextIO) -> None:
 
 
 def test_void_elements(runner: CliRunner, tmp_file: TextIO) -> None:
-
     output = reformat(
         tmp_file,
         runner,

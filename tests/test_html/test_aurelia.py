@@ -27,7 +27,6 @@ from tests.conftest import reformat
 
 
 def test_aurelia(runner: CliRunner, tmp_file: TextIO) -> None:
-
     output = reformat(
         tmp_file,
         runner,
