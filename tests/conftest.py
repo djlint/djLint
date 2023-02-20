@@ -34,9 +34,11 @@ def write_to_file(the_file: str, the_text: bytes) -> None:
         open_file.write(the_text)
 
 
-def reformat(the_file: TextIO, runner: CliRunner, the_text: bytes) -> SimpleNamespace:
+def reformat(
+    the_file: TextIO, runner: CliRunner, the_text: bytes, profile: str = "html"
+) -> SimpleNamespace:
     write_to_file(the_file.name, the_text)
-    result = runner.invoke(djlint, [the_file.name, "--reformat"])
+    result = runner.invoke(djlint, [the_file.name, "--profile", profile, "--reformat"])
     return SimpleNamespace(
         **{
             "text": Path(the_file.name).read_text(encoding="utf8"),

@@ -240,7 +240,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         func = partial(fix_non_handlebars_template_tags, beautified_code, "%s%s %s")
         beautified_code = re.sub(
-            r"({[{|%])([^}].+?[^(?:\ |\-)])([}|%]})", func, beautified_code
+            r"({[{|%])([^}].+?[^\ \-])([}|%]})", func, beautified_code
         )
 
         func = partial(fix_non_handlebars_template_tags, beautified_code, "%s%s %s")

@@ -24,7 +24,7 @@ def test_each(runner: CliRunner, tmp_file: TextIO) -> None:
         runner,
         b"""{{#each people}}{{print_person}} <p>and more long stuff</p>{{/each}}""",
     )
-    print(output.text)
+
     assert output.exit_code == 1
     assert (
         output.text
@@ -40,6 +40,7 @@ def test_each_with_pipe(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b"""{{#each (cprFindConfigObj "inventoryCategories") as |category c |}}\n""",
+        b"""{{#each (cprFindConfigObj "inventoryCategories") as |category c | }}\n""",
+        "handlebars",
     )
     assert output.exit_code == 0
