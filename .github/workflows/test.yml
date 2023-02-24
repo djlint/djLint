@@ -51,7 +51,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-        node: [12, 14, 16]
+        node: [14, 16, 18]
       fail-fast: true
 
     steps:
