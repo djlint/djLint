@@ -46,11 +46,9 @@ coverage = "^7.0.0"
 pytest = "^7.1.2"
 pytest-cov = "^4.0.0"
 pytest-xdist = "^3.0.0"
-pylint = "^2.14.5"  # Can be removed with ruff
-# ruff = "^0.0.252"
+ruff = "^0.0.252"
 mypy = "^1.0"
 types-PyYAML = "^6.0.11"
-pep8-naming = "^0.13.1"  # Can be removed with ruff
 tox = "^4.0.0"
 
 [tool.poetry.scripts]
