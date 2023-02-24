@@ -7,7 +7,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name="djlint"
-version="1.19.14"
+version="1.19.15"
 description="HTML Template Linter and Formatter"
 license="GPL-3.0-or-later"
 authors=["Christopher Pickering <cpickering@rhc.net>"]
@@ -41,15 +41,14 @@ cssbeautifier = "^1.14.4"
 
 [tool.poetry.dev-dependencies]
 black = "^23.0.0"
-isort = "^5.9.3"
+isort = "^5.9.3"  # Can be removed with ruff
 coverage = "^7.0.0"
 pytest = "^7.1.2"
 pytest-cov = "^4.0.0"
 pytest-xdist = "^3.0.0"
-pylint = "^2.14.5"
+ruff = "^0.0.252"
 mypy = "^1.0"
 types-PyYAML = "^6.0.11"
-pep8-naming = "^0.13.1"
 tox = "^4.0.0"
 
 [tool.poetry.scripts]
@@ -71,3 +70,25 @@ disable = "E1120, R0914, E0401, R0912, R0916, R0913, W0104, R0801, W1404, R0902,
 
 [tool.pylint.TYPECHECK]
 ignored-modules = "regex"
+
+[tool.ruff]
+line-length = 146
+select = [
+    "A",
+    "C4",
+    "D",
+    "DJ",
+    "E",
+    "F",
+    "I",
+    "N",
+    "PL",
+    "PT",
+    "SIM",
+    "T20",
+    "W",
+]
+target-version = "py37"
+
+[tool.ruff.mccabe]
+max-complexity = 10
