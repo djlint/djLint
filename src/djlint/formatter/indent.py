@@ -179,13 +179,12 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = item + "\n"
 
         # otherwise, just leave same level
+        elif not config.preserve_leading_space:
+            # if we are not trying to preserve indenting
+            # on text, the add it now.
+            tmp = (indent * indent_level) + item + "\n"
         else:
-            if not config.preserve_leading_space:
-                # if we are not trying to preserve indenting
-                # on text, the add it now.
-                tmp = (indent * indent_level) + item + "\n"
-            else:
-                tmp = item + "\n"
+            tmp = item + "\n"
 
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line

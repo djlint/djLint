@@ -1,5 +1,4 @@
-"""
-Djlint base tests.
+"""Djlint base tests.
 
 run::
 

@@ -64,9 +64,8 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
             if line_number == 0:
                 # don't touch first line
                 indented += line.strip()
-            else:
-                if tmp.strip() != "":
-                    indented += f"\n{tmp}"
+            elif tmp.strip() != "":
+                indented += f"\n{tmp}"
 
         return indented
 

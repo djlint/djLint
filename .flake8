@@ -1,5 +1,0 @@
-[flake8]
-ignore = D103, F401, E501, W503, SIM114, D403, RST219, RST299, E999
-per-file-ignores =
-    tests/*: S404,S101,E800,S607,N802,T201,S603,B001,E722
-    **/__init__.py: D104
