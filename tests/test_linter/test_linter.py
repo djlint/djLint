@@ -996,7 +996,7 @@ def test_ignoring_rules(runner: CliRunner, tmp_file: TextIO) -> None:
 {% comment %} djlint:on {% endcomment %}
 
 {{!-- djlint:off H025 --}}
-<p>
+<p style="color:red">
 {{!-- djlint:on --}}
 
 {{ /* djlint:off H025 */ }}
@@ -1007,6 +1007,7 @@ def test_ignoring_rules(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H025" not in result.output
+    assert "H021" in result.output  # other codes should still show
 
     # using tabs
     write_to_file(

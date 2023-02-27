@@ -190,7 +190,8 @@ def inside_ignored_rule(config: Config, html: str, match: re.Match, rule: str) -
                     ignored_match.start(0) <= match.start()
                     and match.start() <= ignored_match.end()
                 )
-                or (
+                or ignored_match.group(1).strip() == ""
+                and (
                     ignored_match.start(0) <= match.end()
                     and match.end() <= ignored_match.end()
                 )

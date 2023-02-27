@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.66",
+  "version": "1.0.68",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "rollup": "^3.3.0"
   },
   "devDependencies": {
-    "@11ty/eleventy": "1.0.2",
+    "@11ty/eleventy": "2.0.0",
     "@11ty/eleventy-img": "3.0.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "4.2.0",
     "@fontsource/inter": "4.5.15",
@@ -45,7 +45,7 @@
     "cz-conventional-changelog": "3.3.0",
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "1.7.11",
-    "esbuild": "0.17.8",
+    "esbuild": "0.17.10",
     "eslint": "8.34.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.27.5",
@@ -57,10 +57,10 @@
     "markdown-it-imsize": "2.0.1",
     "outdent": "0.8.0",
     "postcss-cli": "10.1.0",
-    "postcss-nested": "6.0.0",
+    "postcss-nested": "6.0.1",
     "prettier": "2.8.4",
     "prismjs": "1.29.0",
-    "sass": "1.58.2",
+    "sass": "1.58.3",
     "slugify": "1.6.5"
   },
   "config": {
