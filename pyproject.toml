@@ -42,7 +42,7 @@ cssbeautifier = "^1.14.4"
 [tool.poetry.scripts]
 djlint = "djlint:main"
 
-[tool.poetry.group.dev.dependencies]
+[tool.poetry.dev.dependencies]
 black = "^23.0.0"
 isort = "^5.9.3"  # Can be removed with ruff
 coverage = "^7.0.0"
