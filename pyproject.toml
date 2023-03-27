@@ -30,7 +30,7 @@ python = "^3.8.0,<4.0"
 click = "^8.0.1"
 PyYAML = "^6.0"
 colorama = "^0.4.4"
-regex = "^2022.1.18"
+regex = "^2023.0.0"
 tqdm = "^4.62.2"
 tomli = { version = "^2.0.1", python = "<3.11" }
 pathspec = "^0.11.0"
