@@ -39,6 +39,6 @@
   "pre-commit": {
     "enabled": true
   },
-  "schedule": ["on monday before 8:00am"],
+  "schedule": ["before 10pm on Sunday"],
   "timezone": "America/Chicago"
 }
