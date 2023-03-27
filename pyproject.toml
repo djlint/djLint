@@ -26,11 +26,11 @@ packages = [
 include = ["rules.yaml"]
 
 [tool.poetry.dependencies]
-python = "^3.7.2,<4.0"
+python = "^3.8.0,<4.0"
 click = "^8.0.1"
 PyYAML = "^6.0"
 colorama = "^0.4.4"
-regex = "^2022.1.18"
+regex = "^2023.0.0"
 tqdm = "^4.62.2"
 tomli = { version = "^2.0.1", python = "<3.11" }
 pathspec = "^0.11.0"
@@ -42,17 +42,18 @@ cssbeautifier = "^1.14.4"
 [tool.poetry.scripts]
 djlint = "djlint:main"
 
+
 [tool.poetry.group.dev.dependencies]
-black = "^23.0.0"
-isort = "^5.9.3"  # Can be removed with ruff
-coverage = "^7.0.0"
-pytest = "^7.1.2"
+black = "^23.1.0"
+isort = "^5.12.0"
+coverage = "^7.2.2"
+pytest = "^7.2.2"
 pytest-cov = "^4.0.0"
-pytest-xdist = "^3.0.0"
-ruff = "^0.0.253"
-mypy = "^1.0"
-types-PyYAML = "^6.0.11"
-tox = "^4.0.0"
+pytest-xdist = "^3.2.1"
+ruff = "^0.0.259"
+mypy = "^1.1.1"
+types-pyyaml = "^6.0.12.8"
+tox = "^4.4.8"
 
 [tool.black]
 max_line_length = 99

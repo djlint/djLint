@@ -175,7 +175,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         ):
             tmp = (indent * indent_level) + item + "\n"
 
-        elif is_block_raw is True or item.strip() == "":
+        elif is_block_raw is True or not item.strip():
             tmp = item + "\n"
 
         # otherwise, just leave same level

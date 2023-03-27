@@ -8,7 +8,7 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 ## Установка от [Pypi](https://pypi.org/project/djlint/)
 
-djLint собирается с [Python 3.7+](https://python.org), он может быть установлен простым запуском:
+djLint собирается с [Python](https://python.org), он может быть установлен простым запуском:
 
 ```bash
 pip install djlint

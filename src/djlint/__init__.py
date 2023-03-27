@@ -203,7 +203,7 @@ def main(
         message = "Reformatting"
 
     if config.lint:
-        if message != "":
+        if message:
             message += " and "
         message += "Linting"
 
