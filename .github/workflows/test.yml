@@ -36,6 +36,7 @@ jobs:
       run: poetry run tox -e test
     - name: upload cov
       uses: codecov/codecov-action@v3
+      continue-on-error: true
       with:
         files: ./coverage.xml
         fail_ci_if_error: true
