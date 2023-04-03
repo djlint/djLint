@@ -25,8 +25,7 @@ def test_alpine_js(runner: CliRunner, tmp_file: TextIO) -> None:
      x-show="show"
      x-transition.duration.500ms
      :disabled="!$store.userPreferences.deleteConfirm"
-     @click="clicked=true">
-</div>""",
+     @click="clicked=true"></div>""",
     )
 
     assert output.exit_code == 0

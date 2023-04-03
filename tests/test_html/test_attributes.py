@@ -104,8 +104,7 @@ def test_long_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
                 font-weight: bold;
                 font-size: 1.5rem"
          data-attr="stuff"
-         class="my long class goes here">
-    </div>
+         class="my long class goes here"></div>
 </div>
 """,
     )
@@ -146,7 +145,7 @@ def test_ignored_attributes(runner: CliRunner, tmp_file: TextIO) -> None:
      id="something_meaning_less_is_here"
      required
      checked="checked"
-     json-data='{"menu":{"header":"SVG Viewer","items":[{"id":"Open"}]}}'>\n</div>
+     json-data='{"menu":{"header":"SVG Viewer","items":[{"id":"Open"}]}}'></div>
 """
     )
 

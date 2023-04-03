@@ -144,8 +144,7 @@ def test_nested_inline_comment(runner: CliRunner, tmp_file: TextIO) -> None:
         <div class="{% if 1 %}class {% else %} class {% endif %}">
             <div class="class"
                  data-parameters="{#?@ViewBag.DefaultFilters#}"
-                 data-target="profile-{{ profile_type }}-{{ profile_id }}">
-            </div>
+                 data-target="profile-{{ profile_type }}-{{ profile_id }}"></div>
         </div>
     {% endif %}
 """,

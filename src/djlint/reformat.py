@@ -7,7 +7,7 @@ import difflib
 from pathlib import Path
 
 from .formatter.compress import compress_html
-from .formatter.condense import condense_html
+from .formatter.condense import clean_whitespace, condense_html
 from .formatter.css import format_css
 from .formatter.expand import expand_html
 from .formatter.indent import indent_html
@@ -24,9 +24,10 @@ def reformat_file(config: Config, this_file: Path) -> dict:
 
     expanded = expand_html(compressed, config)
 
-    condensed = condense_html(expanded, config)
+    condensed = clean_whitespace(expanded, config)
 
     beautified_code = indent_html(condensed, config)
+    beautified_code = condense_html(beautified_code, config)
 
     if config.format_css:
         beautified_code = format_css(beautified_code, config)
