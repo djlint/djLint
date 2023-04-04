@@ -405,7 +405,7 @@ class Config:
             | </pre
             | </textarea
             | {\#\s*djlint\:\s*on\s*\#}
-            | {%[ ]+?endcomment[ ]+?%}
+            | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
             | {{!--\s*djlint\:on\s*--}}
             | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
             | {%[ ]*?endblocktrans(?:late)?[^(?:%})]*?%}
@@ -646,7 +646,7 @@ class Config:
             | <\?php.*?\?>
             | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
             | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-            | {%[ ]*?comment\b[^(?:%})]*?%}.*?(?={%[ ]*?endcomment[ ]*?%})
+            | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
         """
 
@@ -669,7 +669,7 @@ class Config:
             | {\*.*?\*}
             | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
             | <\?php.*?\?>
-            | {%[ ]*?comment\b[^(?:%})]*?%}.*?{%[ ]*?endcomment[ ]*?%}
+            | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
             | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
             | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
         """

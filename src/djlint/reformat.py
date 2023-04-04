@@ -26,8 +26,9 @@ def reformat_file(config: Config, this_file: Path) -> dict:
 
     condensed = clean_whitespace(expanded, config)
 
-    beautified_code = indent_html(condensed, config)
-    beautified_code = condense_html(beautified_code, config)
+    indented_code = indent_html(condensed, config)
+
+    beautified_code = condense_html(indented_code, config)
 
     if config.format_css:
         beautified_code = format_css(beautified_code, config)
