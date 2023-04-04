@@ -1039,3 +1039,15 @@ def test_statistics_with_results(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--statistics"])
 
     assert result.exit_code == 1
+
+
+def test_raw_blocks_are_ignored(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(
+        tmp_file.name,
+        b"""{% raw %}
+;      e.g. for a ISO8601 formatted timestring, use: %{%Y-%m-%dT%H:%M:%S%z}t
+{% endraw %}""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name, "--profile", "jinja"])
+
+    assert result.exit_code == 0

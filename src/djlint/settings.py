@@ -628,6 +628,11 @@ class Config:
         self.template_blocks: str = r"""
         {%((?!%}).)+%}
         """
+
+        self.ignored_linter_blocks: str = r"""
+           {%-?[ ]*?raw\b[^(?:%})]*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
+        """
+
         self.ignored_blocks: str = r"""
               <(pre|textarea).*?</(\1)>
             | <(script|style).*?(?=(\</(?:\3)>))

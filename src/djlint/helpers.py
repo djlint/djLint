@@ -101,6 +101,22 @@ def inside_template_block(config: Config, html: str, match: re.Match) -> bool:
     )
 
 
+def inside_ignored_linter_block(config: Config, html: str, match: re.Match) -> bool:
+    """Check if a re.Match is inside of a ignored linter block."""
+    return any(
+        ignored_match.start(0) <= match.start() and match.end(0) <= ignored_match.end()
+        for ignored_match in list(
+            re.finditer(
+                re.compile(
+                    config.ignored_linter_blocks,
+                    re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                ),
+                html,
+            )
+        )
+    )
+
+
 def inside_ignored_block(config: Config, html: str, match: re.Match) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     return any(

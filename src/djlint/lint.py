@@ -5,7 +5,11 @@ from typing import Dict, List
 
 import regex as re
 
-from .helpers import inside_ignored_rule, overlaps_ignored_block
+from .helpers import (
+    inside_ignored_linter_block,
+    inside_ignored_rule,
+    overlaps_ignored_block,
+)
 from .settings import Config
 
 flags = {
@@ -73,13 +77,6 @@ def lint_file(config: Config, this_file: Path) -> Dict:
             if rule["name"] == "H025":
                 open_tags: List[re.Match] = []
 
-                # for match in re.finditer(
-                #     re.compile(
-                #         pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))
-                #     ),
-                #     html,
-                # ):
-                # print(r"<(/?(\w+))\s*" +config.attribute_pattern + r"\s*?>")
                 for match in re.finditer(
                     re.compile(
                         r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
@@ -87,9 +84,6 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     ),
                     html,
                 ):
-                    # print(match)
-                    # print(match.group(2))
-                    # print(match.group(1))
                     if match.group(1) and not re.search(
                         re.compile(
                             rf"^/?{config.always_self_closing_html_tags}\b", re.I | re.X
@@ -113,6 +107,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                         overlaps_ignored_block(config, html, match) is False
                         and inside_ignored_rule(config, html, match, rule["name"])
                         is False
+                        and inside_ignored_linter_block(config, html, match) is False
                     ):
                         errors[filename].append(
                             {
@@ -133,6 +128,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                         overlaps_ignored_block(config, html, match) is False
                         and inside_ignored_rule(config, html, match, rule["name"])
                         is False
+                        and inside_ignored_linter_block(config, html, match) is False
                     ):
                         errors[filename].append(
                             {
