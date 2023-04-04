@@ -43,11 +43,9 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     else:
         # only remove leading space in front of tags
-        # <, {%, {#, {{
+        # <, {%
         html = re.sub(
-            re.compile(
-                rf"^[ \t]*((?:<|{{%|{{\#|{{{{).*?)[{trailing_contents}]*$", re.M
-            ),
+            re.compile(rf"^[ \t]*((?:<|{{%).*?)[{trailing_contents}]*$", re.M),
             func,
             html,
         )
@@ -106,6 +104,10 @@ def clean_whitespace(html: str, config: Config) -> str:
 
 def condense_html(html, config):
     """Put short tags back on a single line."""
+    if config.preserve_leading_space:
+        # if a user is attempting to reuse any leading
+        # space for other purposes, we should not try to remove it.
+        return html
 
     def condense_line(config: Config, match: re.Match) -> str:
         """Put contents on a single line if below max line length."""
