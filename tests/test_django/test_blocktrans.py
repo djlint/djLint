@@ -70,6 +70,47 @@ def test_blocktranslate(runner: CliRunner, tmp_file: TextIO) -> None:
     assert output.exit_code == 0
 
 
+def test_blocktrans_indent(runner: CliRunner, tmp_file: TextIO) -> None:
+    output = reformat(
+        tmp_file,
+        runner,
+        b"""<div>
+     {% translate "View all" %}
+    <br />
+     ({% blocktranslate count counter=images|length trimmed %}
+            {{ counter }} photo
+            {% plural %}
+            {{ counter }} photos
+{% endblocktranslate %})
+     ({% blocktrans count counter=images|length trimmed %}
+            {{ counter }} photo
+            {% plural %}
+            {{ counter }} photos
+{% endblocktrans %})
+</div>
+""",
+    )
+
+    assert (
+        output.text
+        == """<div>
+    {% translate "View all" %}
+    <br />
+    ({% blocktranslate count counter=images|length trimmed %}
+            {{ counter }} photo
+            {% plural %}
+            {{ counter }} photos
+    {% endblocktranslate %})
+    ({% blocktrans count counter=images|length trimmed %}
+            {{ counter }} photo
+            {% plural %}
+            {{ counter }} photos
+    {% endblocktrans %})
+</div>
+"""
+    )
+
+
 # def test_trans(runner: CliRunner, tmp_file: TextIO) -> None:
 #     output = reformat(
 #         tmp_file, runner, b"""<p>{% trans 'Please do <b>Blah</b>.' %}</p>"""

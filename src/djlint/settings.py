@@ -420,6 +420,8 @@ class Config:
             | {%[ ]+?endcomment[ ]+?%}
             | {{!--\s*djlint\:on\s*--}}
             | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
+            # only if has a leading whitespace
+            | (?:\s|^){%[ ]+?endblocktrans(?:late)?[ ]+?%}
         """
 
         # all html tags possible
@@ -649,8 +651,12 @@ class Config:
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
             | <!--.*?-->
             | <\?php.*?\?>
-            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+            # either with a space before the close block > then we can format the endblock
+            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktranslate[ ]*?%})
+            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktrans[ ]*?%})
+            # or with no space before it, and then we cannot format it.
+            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktrans[ ]*?%}
             | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
         """
@@ -675,8 +681,7 @@ class Config:
             | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
             | <\?php.*?\?>
             | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
-            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+            | {%[ ]*?blocktrans(?:late)?\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
         """
 
         self.optional_single_line_html_tags: str = r"""
