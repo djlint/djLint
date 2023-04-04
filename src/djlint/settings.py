@@ -181,7 +181,10 @@ def load_custom_rules(src: Path) -> List:
 def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
     """Build regex string for custom template blocks."""
     if custom_blocks:
-        return "|" + "|".join(x.strip() for x in custom_blocks.split(","))
+        # need to also do "end<tag>"
+        open_tags = [x.strip() for x in custom_blocks.split(",")]
+        close_tags = ["end" + x.strip() for x in custom_blocks.split(",")]
+        return "|" + "|".join(list(set(open_tags + close_tags)))
     return None
 
 

@@ -22,14 +22,19 @@ def test_custom_tags(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ["tests/test_config/test_custom_tags/html.html", "--check"]
     )
-    print(result.output)
+
     assert (
         """-{% example stuff %}<p>this is a very very long paragraph that does nothing except be a long paragraph asdfasdfasdfasdfasdf fasdf asdfasdfasdf</p>{% endexample %}
+-
+-{% verylongexampletagthatiskindaneattolookat stuff%}{{ tag }}{% endverylongexampletagthatiskindaneattolookat %}
 +{% example stuff %}
 +    <p>
 +        this is a very very long paragraph that does nothing except be a long paragraph asdfasdfasdfasdfasdf fasdf asdfasdfasdf
 +    </p>
 +{% endexample %}
++{% verylongexampletagthatiskindaneattolookat stuff %}
++    {{ tag }}
++{% endverylongexampletagthatiskindaneattolookat %}
 """
         in result.output
     )
