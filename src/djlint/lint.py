@@ -5,7 +5,11 @@ from typing import Dict, List
 
 import regex as re
 
-from .helpers import inside_ignored_rule, overlaps_ignored_block
+from .helpers import (
+    inside_ignored_linter_block,
+    inside_ignored_rule,
+    overlaps_ignored_block,
+)
 from .settings import Config
 
 flags = {
@@ -42,12 +46,9 @@ def get_line(start: int, line_ends: List) -> str:
     return "%d:%d" % (line_ends.index(line) + 1, start - line["start"])
 
 
-def lint_file(config: Config, this_file: Path) -> Dict:
-    """Check file for formatting errors."""
-    filename = str(this_file)
+def linter(config: Config, html: str, filename: str, filepath: str) -> Dict:
+    """Lint a html string."""
     errors: dict = {filename: []}
-    html = this_file.read_text(encoding="utf8")
-
     # build list of line ends for file
     line_ends = [
         {"start": m.start(), "end": m.end()}
@@ -58,7 +59,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
 
     # remove ignored rules for file
     for pattern, rules in config.per_file_ignores.items():
-        if re.search(pattern, this_file.as_posix(), re.VERBOSE):
+        if re.search(pattern, filepath, re.VERBOSE):
             ignored_rules += [x.strip() for x in rules.split(",")]
 
     for rule in config.linter_rules:
@@ -73,13 +74,6 @@ def lint_file(config: Config, this_file: Path) -> Dict:
             if rule["name"] == "H025":
                 open_tags: List[re.Match] = []
 
-                # for match in re.finditer(
-                #     re.compile(
-                #         pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))
-                #     ),
-                #     html,
-                # ):
-                # print(r"<(/?(\w+))\s*" +config.attribute_pattern + r"\s*?>")
                 for match in re.finditer(
                     re.compile(
                         r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
@@ -87,9 +81,6 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                     ),
                     html,
                 ):
-                    # print(match)
-                    # print(match.group(2))
-                    # print(match.group(1))
                     if match.group(1) and not re.search(
                         re.compile(
                             rf"^/?{config.always_self_closing_html_tags}\b", re.I | re.X
@@ -113,6 +104,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                         overlaps_ignored_block(config, html, match) is False
                         and inside_ignored_rule(config, html, match, rule["name"])
                         is False
+                        and inside_ignored_linter_block(config, html, match) is False
                     ):
                         errors[filename].append(
                             {
@@ -133,6 +125,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                         overlaps_ignored_block(config, html, match) is False
                         and inside_ignored_rule(config, html, match, rule["name"])
                         is False
+                        and inside_ignored_linter_block(config, html, match) is False
                     ):
                         errors[filename].append(
                             {
@@ -151,3 +144,12 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                 unique_errors.append(dict_)
         errors[filename] = unique_errors
     return errors
+
+
+def lint_file(config: Config, this_file: Path) -> Dict:
+    """Check file for formatting errors."""
+    filename = str(this_file)
+
+    html = this_file.read_text(encoding="utf8")
+
+    return linter(config, html, filename, this_file.as_posix())

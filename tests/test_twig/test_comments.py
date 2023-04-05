@@ -1,49 +1,51 @@
-"""Djlint tests specific to twig.
+"""Test twig comment tags.
 
-run::
-
-   pytest tests/test_twig/test_comments.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_twig/test_comments.py::test_nested --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_twig/test_comments.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("{% if %}\n" "    {#\n" "        line\n" "    #}\n" "{% endif %}"),
+        ("{% if %}\n" "    {#\n" "        line\n" "    #}\n" "{% endif %}\n"),
+        id="comments",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {#\n"
+            "    multi\n"
+            "    line\n"
+            "    comment\n"
+            "    #}\n"
+            "</div>\n"
+            "<div>\n"
+            "    <p></p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    {#\n"
+            "    multi\n"
+            "    line\n"
+            "    comment\n"
+            "    #}\n"
+            "</div>\n"
+            "<div>\n"
+            "    <p></p>\n"
+            "</div>\n"
+        ),
+        id="comments",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, nunjucks_config):
+    output = formatter(nunjucks_config, source)
 
-def test_macro(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{% if %}
-    {#
-        line
-    #}
-{% endif %}
-""",
-    )
-    assert output.exit_code == 0
-
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div>
-    {#
-    multi
-    line
-    comment
-    #}
-</div>
-<div>
-    <p></p>
-</div>
-""",
-    )
-    assert output.exit_code == 0
+    printer(expected, source, output)
+    assert expected == output

@@ -1,40 +1,34 @@
-"""Djlint tests for symbol entities.
+"""Test symbol entities.
 
-Some tests may be from prettier.io's html test suite.
-
-Where applicable this notice may be needed:
-
-#### Prettier.io license ####
-Copyright © James Long and contributors
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-run:
-
-    pytest tests/test_html/test_symbol_entities.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_symbol_entities.py::test_symbol_entities
-
+poetry run pytest tests/test_html/test_symbol_entities.py
 """
-# pylint: disable=C0116
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from tests.conftest import reformat
+test_data = [
+    pytest.param(
+        (
+            "<p>I will display &euro;</p>\n"
+            "<p>I will display &excl;</p>\n"
+            "<p>I will display &#8364;</p>\n"
+            "<p>I will display &#x20AC;</p>\n"
+        ),
+        (
+            "<p>I will display &euro;</p>\n"
+            "<p>I will display &excl;</p>\n"
+            "<p>I will display &#8364;</p>\n"
+            "<p>I will display &#x20AC;</p>\n"
+        ),
+        id="symbol_entities",
+    ),
+]
 
 
-def test_symbol_entities(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<p>I will display &euro;</p>
-<p>I will display &excl;</p>
-<p>I will display &#8364;</p>
-<p>I will display &#x20AC;</p>
-""",
-    )
-    print(output.text)
-    assert output.exit_code == 0
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, basic_config):
+    output = formatter(basic_config, source)
+
+    printer(expected, source, output)
+    assert expected == output

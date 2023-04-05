@@ -1,38 +1,30 @@
-"""Djlint tests specific to django.
+"""Test django spaceless tag.
 
-run::
-
-   pytest tests/test_django.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-for a single test, run::
-
-   pytest tests/test_django.py::test_alpine_js --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_django/test_spaceless.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ('{% spaceless %}<p><a href="foo/">Foo</a></p>{% endspaceless %}'),
+        (
+            "{% spaceless %}\n"
+            "    <p>\n"
+            '        <a href="foo/">Foo</a>\n'
+            "    </p>\n"
+            "{% endspaceless %}\n"
+        ),
+        id="spaceless_tag",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, django_config):
+    output = formatter(django_config, source)
 
-def test_spaceless(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{% spaceless %}<p><a href="foo/">Foo</a></p>{% endspaceless %}""",
-    )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% spaceless %}
-    <p>
-        <a href="foo/">Foo</a>
-    </p>
-{% endspaceless %}
-"""
-    )
+    printer(expected, source, output)
+    assert expected == output

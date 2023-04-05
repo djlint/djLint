@@ -1,34 +1,45 @@
-"""Djlint tests for html pre tag.
+"""Test html pre tag.
 
-run:
-
-    pytest tests/test_html/test_tag_pre.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_tag_pre.py::test_pre_tag
-
+poetry run pytest tests/test_html/test_tag_pre.py
 """
-# pylint: disable=C0116
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from tests.conftest import reformat
+# added for https://github.com/Riverside-Healthcare/djLint/issues/187
+test_data = [
+    pytest.param(
+        (
+            "{% if a %}\n"
+            "    <div>\n"
+            "        <pre><code>asdf</code></pre>\n"
+            "        <pre><code>asdf\n"
+            "            </code></pre>\n"
+            "        <!-- other html -->\n"
+            "        <h2>title</h2>\n"
+            "    </div>\n"
+            "{% endif %}\n"
+        ),
+        (
+            "{% if a %}\n"
+            "    <div>\n"
+            "        <pre><code>asdf</code></pre>\n"
+            "        <pre><code>asdf\n"
+            "            </code></pre>\n"
+            "        <!-- other html -->\n"
+            "        <h2>title</h2>\n"
+            "    </div>\n"
+            "{% endif %}\n"
+        ),
+        id="pre_tag",
+    ),
+]
 
 
-def test_pre_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    # added for https://github.com/Riverside-Healthcare/djLint/issues/187
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{% if a %}
-    <div>
-        <pre><code>asdf</code></pre>
-        <pre><code>asdf
-            </code></pre>
-        <!-- other html -->
-        <h2>title</h2>
-    </div>
-{% endif %}""",
-    )
-    assert output.exit_code == 0
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, basic_config):
+    output = formatter(basic_config, source)
+
+    printer(expected, source, output)
+    assert expected == output

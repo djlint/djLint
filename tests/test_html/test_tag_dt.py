@@ -1,33 +1,24 @@
-"""Djlint tests for html dt tag.
+"""Test html dt tag.
 
-run:
-
-    pytest tests/test_html/test_tag_dt.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_tag_dt.py::test_dt_tag
-
+poetry run pytest tests/test_html/test_tag_dt.py
 """
-# pylint: disable=C0116
-from pathlib import Path
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from src.djlint import main as djlint
-from tests.conftest import write_to_file
+test_data = [
+    pytest.param(
+        "<dt>text</dt>",
+        ("<dt>text</dt>\n"),
+        id="dt_tag",
+    ),
+]
 
 
-def test_dt_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(
-        tmp_file.name,
-        b"""<dt>text</dt>""",
-    )
-    runner.invoke(djlint, [tmp_file.name, "--reformat"])
-    assert (
-        Path(tmp_file.name).read_text(encoding="utf8")
-        == """<dt>
-    text
-</dt>
-"""
-    )
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, basic_config):
+    output = formatter(basic_config, source)
+
+    printer(expected, source, output)
+    assert expected == output

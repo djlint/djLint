@@ -1,48 +1,34 @@
-"""Djlint tests specific to jinja.
+"""Test jinja call tag.
 
-run::
-
-   pytest tests/test_jinja/test_call.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_jinja/test_call.py::test_call --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_jinja/test_call.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("{% call 'cool' %}<div>some html</div>{% endcall %}"),
+        ("{% call 'cool' %}\n" "    <div>some html</div>\n" "{% endcall %}\n"),
+        id="call_tag",
+    ),
+    pytest.param(
+        ("{% call('cool') %}<div>some html</div>{% endcall %}"),
+        ("{% call('cool') %}\n" "    <div>some html</div>\n" "{% endcall %}\n"),
+        id="call_tag_with_function",
+    ),
+    pytest.param(
+        ("{% call (a, b) render_form(form, '<hr>'>) %}"),
+        ("{% call (a, b) render_form(form, '<hr>'>) %}\n"),
+        id="call_tag_with_nested_html",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, jinja_config):
+    output = formatter(jinja_config, source)
 
-def test_call(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file, runner, b"{% call 'cool' %}<div>some html</div>{% endcall %}"
-    )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% call 'cool' %}
-    <div>some html</div>
-{% endcall %}
-"""
-    )
-
-    output = reformat(
-        tmp_file, runner, b"{% call('cool') %}<div>some html</div>{% endcall %}"
-    )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% call('cool') %}
-    <div>some html</div>
-{% endcall %}
-"""
-    )
-
-    # tags inside template tags should not be formatted.
-    output = reformat(tmp_file, runner, b"{% call (a, b) render_form(form, '<hr>'>) %}")
-    assert output.exit_code == 0
+    printer(expected, source, output)
+    assert expected == output

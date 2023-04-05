@@ -181,7 +181,10 @@ def load_custom_rules(src: Path) -> List:
 def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
     """Build regex string for custom template blocks."""
     if custom_blocks:
-        return "|" + "|".join(x.strip() for x in custom_blocks.split(","))
+        # need to also do "end<tag>"
+        open_tags = [x.strip() for x in custom_blocks.split(",")]
+        close_tags = ["end" + x.strip() for x in custom_blocks.split(",")]
+        return "|" + "|".join(list(set(open_tags + close_tags)))
     return None
 
 
@@ -402,7 +405,7 @@ class Config:
             | </pre
             | </textarea
             | {\#\s*djlint\:\s*on\s*\#}
-            | {%[ ]+?endcomment[ ]+?%}
+            | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
             | {{!--\s*djlint\:on\s*--}}
             | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
             | {%[ ]*?endblocktrans(?:late)?[^(?:%})]*?%}
@@ -417,6 +420,8 @@ class Config:
             | {%[ ]+?endcomment[ ]+?%}
             | {{!--\s*djlint\:on\s*--}}
             | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
+            # only if has a leading whitespace
+            | (?:\s|^){%[ ]+?endblocktrans(?:late)?[ ]+?%}
         """
 
         # all html tags possible
@@ -625,6 +630,11 @@ class Config:
         self.template_blocks: str = r"""
         {%((?!%}).)+%}
         """
+
+        self.ignored_linter_blocks: str = r"""
+           {%-?[ ]*?raw\b[^(?:%})]*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
+        """
+
         self.ignored_blocks: str = r"""
               <(pre|textarea).*?</(\1)>
             | <(script|style).*?(?=(\</(?:\3)>))
@@ -641,9 +651,13 @@ class Config:
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
             | <!--.*?-->
             | <\?php.*?\?>
-            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-            | {%[ ]*?comment\b[^(?:%})]*?%}.*?(?={%[ ]*?endcomment[ ]*?%})
+            # either with a space before the close block > then we can format the endblock
+            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktranslate[ ]*?%})
+            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktrans[ ]*?%})
+            # or with no space before it, and then we cannot format it.
+            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktrans[ ]*?%}
+            | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
         """
 
@@ -666,9 +680,8 @@ class Config:
             | {\*.*?\*}
             | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
             | <\?php.*?\?>
-            | {%[ ]*?comment\b[^(?:%})]*?%}.*?{%[ ]*?endcomment[ ]*?%}
-            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+            | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
+            | {%[ ]*?blocktrans(?:late)?\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
         """
 
         self.optional_single_line_html_tags: str = r"""
@@ -698,6 +711,15 @@ class Config:
             | head
             | body
             | p
+            | select
+            | article
+            | option
+            | legend
+            | summary
+            | dt
+            | figcaption
+            | tr
+            | li
         """
 
         self.always_self_closing_html_tags: str = "|".join(html_void_elements)

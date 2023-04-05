@@ -1,23 +1,24 @@
-"""Djlint tests specific to Handlebars.js.
+"""Test handlebars else tag.
 
-run::
-
-   pytest tests/test_handlebars.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_handlebars.py::test_each --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_handlebars/test_else.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("{{^}}"),
+        ("{{^}}\n"),
+        id="else_tag",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, handlebars_config):
+    output = formatter(handlebars_config, source)
 
-def test_handlebars_else(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(tmp_file, runner, b"{{^}}")
-    assert output.exit_code == 0
+    printer(expected, source, output)
+    assert expected == output

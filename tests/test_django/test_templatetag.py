@@ -1,56 +1,40 @@
-"""Djlint tests specific to django.
+"""Test django templatetags.
 
-run::
-
-   pytest tests/test_django.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-for a single test, run::
-
-   pytest tests/test_django.py::test_alpine_js --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_django/test_templatetag.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("{% if stuff %}\n{% endif %}"),
+        ("{% if stuff %}{% endif %}\n"),
+        id="tags_on_one_line",
+    ),
+    pytest.param(
+        ("{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}"),
+        ("{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}\n"),
+        id="tags_random_text",
+    ),
+    pytest.param(
+        (
+            "{% if messages|length %}{% for message in messages %}{{ message }}{% endfor %}{% endif %}"
+        ),
+        (
+            "{% if messages|length %}\n"
+            "    {% for message in messages %}{{ message }}{% endfor %}\n"
+            "{% endif %}\n"
+        ),
+        id="single_liner",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, django_config):
+    output = formatter(django_config, source)
 
-def test_empty_tags_on_one_line(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(tmp_file, runner, b"{% if stuff %}\n{% endif %}")
-    assert output.text == """{% if stuff %}{% endif %}\n"""
-    assert output.exit_code == 1
-
-
-def test_templatetag(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}""",
-    )
-    assert output.exit_code == 0
-    assert (
-        output.text
-        == r"""{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}
-"""
-    )
-
-
-def test_single_line_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{% if messages|length %}{% for message in messages %}{{ message }}{% endfor %}{% endif %}""",
-    )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% if messages|length %}
-    {% for message in messages %}{{ message }}{% endfor %}
-{% endif %}
-"""
-    )
+    printer(expected, source, output)
+    assert expected == output

@@ -8,9 +8,7 @@
      src="{% static '/img/loader.gif' %}"
      alt="report image"/>
 <a class="asdf
-          {% if favorite == "yes" %}
-              favorite
-          {% endif %}
+          {% if favorite == "yes" %}favorite{% endif %}
           has-tooltip-arrow has-tooltip-right"
    data-tooltip="{% if favorite == "yes" %}
                      Remove from Favorites
@@ -29,14 +27,10 @@
          comments-msg
      {% else %}
          comments-newMsgReply
-     {% endifchanged %}>
-</div>
+     {% endifchanged %}></div>
 <a class="piwik_download"
-   href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}">
-</a>
-<span {% if a %}
-          required
-      {% endif %}
+   href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}"></a>
+<span {% if a %}required{% endif %}
       title="{% if eev.status == eev.STATUS_CURRENT %}
                  {% trans 'A' %}
              {% elif eev.status == eev.STATUS_APPROVED %}
@@ -45,14 +39,9 @@
                  {% trans 'C' %}
              {% endif %}"
       class="asdf
-             {% if a %}
-                 b
-             {% endif %}
+             {% if a %}b{% endif %}
              asdf"
-      {% if a %}
-          checked
-      {% endif %}>
-</span>
+      {% if a %}checked{% endif %}></span>
 {% block body %}
     <form action="{% if gpg -%}asdf something pretty long. can't beat this length{%- endif %}"
           method="POST">
@@ -68,7 +57,5 @@
            {% endfor %}
            is-collapsible">
 </ul>
-<div {% if true %}
-         class="test"
-     {% endif %}
+<div {% if true %}class="test"{% endif %}
      {% include "django/forms/widgets/attrs.html" %}></div>

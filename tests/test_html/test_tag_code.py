@@ -1,30 +1,24 @@
-"""Djlint tests for html code tag.
+"""Test html code tag.
 
-run:
-
-    pytest tests/test_html/test_tag_code.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_tag_code.py::test_code_tag
-
+poetry run pytest tests/test_html/test_tag_code.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("<ol>\n" "    <li>\n" "        <code>a</code> b\n" "    </li>\n" "</ol>\n"),
+        ("<ol>\n" "    <li>\n" "        <code>a</code> b\n" "    </li>\n" "</ol>\n"),
+        id="code_tag",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, basic_config):
+    output = formatter(basic_config, source)
 
-def test_code_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<ol>
-    <li>
-        <code>a</code> b
-    </li>
-</ol>""",
-    )
-    assert output.exit_code == 0
+    printer(expected, source, output)
+    assert expected == output
