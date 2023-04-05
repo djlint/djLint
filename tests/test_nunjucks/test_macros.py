@@ -1,32 +1,24 @@
-"""Djlint tests specific to nunjucks.
+"""Test nunjucks macro tag.
 
-run::
-
-   pytest tests/test_nunjucks.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_nunjucks.py::test_macro --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_nunjucks/test_macros.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("{% macro 'cool' %}<div>some html</div>{% endmacro %}"),
+        ("{% macro 'cool' %}\n" "    <div>some html</div>\n" "{% endmacro %}\n"),
+        id="macro_tag",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, nunjucks_config):
+    output = formatter(nunjucks_config, source)
 
-def test_macro(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file, runner, b"{% macro 'cool' %}<div>some html</div>{% endmacro %}"
-    )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% macro 'cool' %}
-    <div>some html</div>
-{% endmacro %}
-"""
-    )
+    printer(expected, source, output)
+    assert expected == output

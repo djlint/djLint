@@ -1,36 +1,24 @@
-"""Djlint tests specific to django.
+"""Test django load tag.
 
-run::
-
-   pytest tests/test_django.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-for a single test, run::
-
-   pytest tests/test_django.py::test_alpine_js --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_django/test_load.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("{% block content %}{% load i18n %}{% endblock %}"),
+        ("{% block content %}\n" "    {% load i18n %}\n" "{% endblock %}\n"),
+        id="load_tag",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, django_config):
+    output = formatter(django_config, source)
 
-def test_load_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{% block content %}{% load i18n %}{% endblock %}""",
-    )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% block content %}
-    {% load i18n %}
-{% endblock %}
-"""
-    )
+    printer(expected, source, output)
+    assert expected == output

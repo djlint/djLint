@@ -15,10 +15,8 @@ from .formatter.js import format_js
 from .settings import Config
 
 
-def reformat_file(config: Config, this_file: Path) -> dict:
-    """Reformat html file."""
-    rawcode = this_file.read_bytes().decode("utf8")
-
+def formatter(config: Config, rawcode: str) -> str:
+    """Format a html string."""
     # naturalize the line breaks
     compressed = compress_html(("\n").join(rawcode.splitlines()), config)
 
@@ -41,6 +39,15 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     if line_ending > -1 and rawcode[max(line_ending - 1, 0)] == "\r":
         # convert \r?\n to \r\n
         beautified_code = beautified_code.replace("\r", "").replace("\n", "\r\n")
+
+    return beautified_code
+
+
+def reformat_file(config: Config, this_file: Path) -> dict:
+    """Reformat html file."""
+    rawcode = this_file.read_bytes().decode("utf8")
+
+    beautified_code = formatter(config, rawcode)
 
     if config.check is not True or config.stdin is True:
         this_file.write_bytes(beautified_code.encode("utf8"))

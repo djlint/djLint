@@ -1,37 +1,32 @@
-"""Djlint tests for html picture tag.
+"""Test html picture tag.
 
-run:
-
-    pytest tests/test_html/test_tag_picture.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_tag_picture.py::test_picture_source_img_tags
-
-
+poetry run pytest tests/test_html/test_tag_picture.py
 """
-# pylint: disable=C0116
-from pathlib import Path
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from src.djlint import main as djlint
-from tests.conftest import write_to_file
+test_data = [
+    pytest.param(
+        (
+            '<picture><source media="(max-width:640px)"\n'
+            'srcset="image.jpg"><img src="image.jpg" alt="image"></picture>\n'
+        ),
+        (
+            "<picture>\n"
+            '    <source media="(max-width:640px)" srcset="image.jpg">\n'
+            '    <img src="image.jpg" alt="image">\n'
+            "</picture>\n"
+        ),
+        id="picture_source_img_tags",
+    ),
+]
 
 
-def test_picture_source_img_tags(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(
-        tmp_file.name,
-        b"""\
-<picture><source media="(max-width:640px)"
-srcset="image.jpg"><img src="image.jpg" alt="image"></picture>""",
-    )
-    runner.invoke(djlint, [tmp_file.name, "--reformat"])
-    assert (
-        Path(tmp_file.name).read_text(encoding="utf8")
-        == """<picture>
-    <source media="(max-width:640px)" srcset="image.jpg">
-    <img src="image.jpg" alt="image">
-</picture>
-"""
-    )
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, basic_config):
+    output = formatter(basic_config, source)
+
+    printer(expected, source, output)
+    assert expected == output

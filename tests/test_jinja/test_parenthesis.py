@@ -1,28 +1,24 @@
-"""Djlint tests specific to jinja.
+"""Test jinja parenthesis.
 
-run::
-
-   pytest tests/test_jinja/test_parenthesis.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_jinja/test_parenthesis.py::test_parenthesis --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_jinja/test_parenthesis.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("{{ url('foo')}}"),
+        ("{{ url('foo') }}\n"),
+        id="parenthesis_tag",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, jinja_config):
+    output = formatter(jinja_config, source)
 
-def test_parenthesis(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(tmp_file, runner, b"{{ url('foo')}}")
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{{ url('foo') }}
-"""
-    )
+    printer(expected, source, output)
+    assert expected == output

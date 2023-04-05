@@ -711,6 +711,15 @@ class Config:
             | head
             | body
             | p
+            | select
+            | article
+            | option
+            | legend
+            | summary
+            | dt
+            | figcaption
+            | tr
+            | li
         """
 
         self.always_self_closing_html_tags: str = "|".join(html_void_elements)

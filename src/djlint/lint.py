@@ -46,12 +46,9 @@ def get_line(start: int, line_ends: List) -> str:
     return "%d:%d" % (line_ends.index(line) + 1, start - line["start"])
 
 
-def lint_file(config: Config, this_file: Path) -> Dict:
-    """Check file for formatting errors."""
-    filename = str(this_file)
+def linter(config: Config, html: str, filename: str, filepath: str) -> Dict:
+    """Lint a html string."""
     errors: dict = {filename: []}
-    html = this_file.read_text(encoding="utf8")
-
     # build list of line ends for file
     line_ends = [
         {"start": m.start(), "end": m.end()}
@@ -62,7 +59,7 @@ def lint_file(config: Config, this_file: Path) -> Dict:
 
     # remove ignored rules for file
     for pattern, rules in config.per_file_ignores.items():
-        if re.search(pattern, this_file.as_posix(), re.VERBOSE):
+        if re.search(pattern, filepath, re.VERBOSE):
             ignored_rules += [x.strip() for x in rules.split(",")]
 
     for rule in config.linter_rules:
@@ -147,3 +144,12 @@ def lint_file(config: Config, this_file: Path) -> Dict:
                 unique_errors.append(dict_)
         errors[filename] = unique_errors
     return errors
+
+
+def lint_file(config: Config, this_file: Path) -> Dict:
+    """Check file for formatting errors."""
+    filename = str(this_file)
+
+    html = this_file.read_text(encoding="utf8")
+
+    return linter(config, html, filename, this_file.as_posix())

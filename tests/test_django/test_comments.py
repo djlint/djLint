@@ -1,153 +1,164 @@
-"""Djlint tests specific to django.
+"""Test django comment tag.
 
-run::
-
-   pytest tests/test_django/test_comments.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_django/test_comments.py::test_nested_inline_comment
-
+poetry run pytest tests/test_django/test_comments.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        ("{# comment #}{% if this %}<div></div>{% endif %}"),
+        ("{# comment #}\n" "{% if this %}<div></div>{% endif %}\n"),
+        id="dj_comments_tag",
+    ),
+    pytest.param(
+        ('{% comment "Optional note" %}{{ body }}{% endcomment %}'),
+        ('{% comment "Optional note" %}{{ body }}{% endcomment %}\n'),
+        id="multi_line",
+    ),
+    pytest.param(
+        (
+            '<div class="hi">\n'
+            '    <div class="poor">\n'
+            '        <p class="format">\n'
+            "            Lorem ipsum dolor\n"
+            '            <span class="bold">sit</span>\n'
+            "            amet\n"
+            "        </p>\n"
+            '        <img src="./pic.jpg">\n'
+            "    </div>\n"
+            '    <script src="file1.js"></script>\n'
+            '    {% comment %} <script src="file2.js"></script>\n'
+            '    <script src="file3.js"></script> {% endcomment %}\n'
+            '    <script src="file4.js"></script>\n'
+            "</div>"
+        ),
+        (
+            '<div class="hi">\n'
+            '    <div class="poor">\n'
+            '        <p class="format">\n'
+            "            Lorem ipsum dolor\n"
+            '            <span class="bold">sit</span>\n'
+            "            amet\n"
+            "        </p>\n"
+            '        <img src="./pic.jpg">\n'
+            "    </div>\n"
+            '    <script src="file1.js"></script>\n'
+            '    {% comment %} <script src="file2.js"></script>\n'
+            '    <script src="file3.js"></script> {% endcomment %}\n'
+            '    <script src="file4.js"></script>\n'
+            "</div>\n"
+        ),
+        id="nested_multi_line",
+    ),
+    pytest.param(
+        (
+            '<div class="hi">\n'
+            '    <div class="poor">\n'
+            "        {# djlint:off #}\n"
+            '        <p class="format">\n'
+            '            Lorem ipsum dolor <span class="bold">sit</span> amet\n'
+            "        </p>\n"
+            "        {# djlint:on #}\n"
+            '        <img src="./pic.jpg">\n'
+            "    </div>\n"
+            "    <ul>\n"
+            "        {% for i in items %}\n"
+            "            <li>item {{i}}</li>\n"
+            "            {% if i > 10 %}{% endif %}\n"
+            "            <li>item {{i}}</li>\n"
+            "        {% endfor %}\n"
+            "    </ul>\n"
+            "</div>"
+        ),
+        (
+            '<div class="hi">\n'
+            '    <div class="poor">\n'
+            "        {# djlint:off #}\n"
+            '        <p class="format">\n'
+            '            Lorem ipsum dolor <span class="bold">sit</span> amet\n'
+            "        </p>\n"
+            "        {# djlint:on #}\n"
+            '        <img src="./pic.jpg">\n'
+            "    </div>\n"
+            "    <ul>\n"
+            "        {% for i in items %}\n"
+            "            <li>item {{i}}</li>\n"
+            "            {% if i > 10 %}{% endif %}\n"
+            "            <li>item {{i}}</li>\n"
+            "        {% endfor %}\n"
+            "    </ul>\n"
+            "</div>\n"
+        ),
+        id="djlint_comment",
+    ),
+    pytest.param(
+        (
+            "<html>\n"
+            "    <head>\n"
+            '        <script src="file1.js"></script>\n'
+            "        {% comment %}\n"
+            '        <script src="file2.js"></script>\n'
+            '        <script src="file3.js"></script>\n'
+            '        <script src="file4.js"></script>\n'
+            "        {% endcomment %}\n"
+            '        <script src="file5.js"></script>\n'
+            "    </head>\n"
+            "    <body></body>\n"
+            "</html>"
+        ),
+        (
+            "<html>\n"
+            "    <head>\n"
+            '        <script src="file1.js"></script>\n'
+            "        {% comment %}\n"
+            '        <script src="file2.js"></script>\n'
+            '        <script src="file3.js"></script>\n'
+            '        <script src="file4.js"></script>\n'
+            "        {% endcomment %}\n"
+            '        <script src="file5.js"></script>\n'
+            "    </head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+        ),
+        id="comment_around_script",
+    ),
+    pytest.param(
+        ("{# <div></div> #}\n" "{% if this %}<div></div>{% endif %}"),
+        ("{# <div></div> #}\n" "{% if this %}<div></div>{% endif %}\n"),
+        id="inline_comment",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {% if 1 %}\n"
+            '        <div class="{% if 1 %}class {% else %} class {% endif %}">\n'
+            '            <div class="class"\n'
+            '                 data-parameters="{#?@ViewBag.DefaultFilters#}"\n'
+            '                 data-target="profile-{{ profile_type }}-{{ profile_id }}"></div>\n'
+            "        </div>\n"
+            "    {% endif %}"
+        ),
+        (
+            "<div>\n"
+            "    {% if 1 %}\n"
+            '        <div class="{% if 1 %}class {% else %} class {% endif %}">\n'
+            '            <div class="class"\n'
+            '                 data-parameters="{#?@ViewBag.DefaultFilters#}"\n'
+            '                 data-target="profile-{{ profile_type }}-{{ profile_id }}"></div>\n'
+            "        </div>\n"
+            "    {% endif %}\n"
+        ),
+        id="nested_inline_comment",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, django_config):
+    output = formatter(django_config, source)
 
-def test_dj_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file, runner, b"{# comment #}\n{% if this %}<div></div>{% endif %}"
-    )
-    assert output.text == """{# comment #}\n{% if this %}<div></div>{% endif %}\n"""
-    # no change was required
-    assert output.exit_code == 0
-
-
-def test_comment(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file, runner, b"""{% comment "Optional note" %}{{ body }}{% endcomment %}"""
-    )
-    assert output.exit_code == 0
-    # too short to put on multiple lines
-    assert (
-        output.text
-        == r"""{% comment "Optional note" %}{{ body }}{% endcomment %}
-"""
-    )
-
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div class="hi">
-    <div class="poor">
-        <p class="format">
-            Lorem ipsum dolor
-            <span class="bold">sit</span>
-            amet
-        </p>
-        <img src="./pic.jpg">
-    </div>
-    <script src="file1.js"></script>
-    {% comment %} <script src="file2.js"></script>
-    <script src="file3.js"></script> {% endcomment %}
-    <script src="file4.js"></script>
-</div>""",
-    )
-
-    assert output.exit_code == 0
-
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div class="hi">
-    <div class="poor">
-        {# djlint:off #}
-        <p class="format">
-            Lorem ipsum dolor <span class="bold">sit</span> amet
-        </p>
-        {# djlint:on #}
-        <img src="./pic.jpg">
-    </div>
-    <ul>
-        {% for i in items %}
-            <li>item {{i}}</li>
-            {% if i > 10 %}{% endif %}
-            <li>item {{i}}</li>
-        {% endfor %}
-    </ul>
-</div>
-""",
-    )
-
-    assert output.exit_code == 0
-
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<html>
-    <head>
-        <script src="file1.js"></script>
-        {% comment %}
-        <script src="file2.js"></script>
-        <script src="file3.js"></script>
-        <script src="file4.js"></script>
-        {% endcomment %}
-        <script src="file5.js"></script>
-    </head>
-    <body></body>
-</html>
-""",
-    )
-
-    assert output.exit_code == 0
-
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<html>
-    <head>
-        <script src="file1.js"></script>
-        {# djlint:off #}
-        {% comment %}
-        <script src="file2.js"></script>
-        <script src="file3.js"></script>
-        <script src="file4.js"></script>
-        {% endcomment %}
-        {# djlint:on #}
-        <script src="file5.js"></script>
-    </head>
-    <body></body>
-</html>
-""",
-    )
-
-    assert output.exit_code == 0
-
-
-def test_inline_comment(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file, runner, b"{# <div></div> #}\n{% if this %}<div></div>{% endif %}"
-    )
-    assert output.text == """{# <div></div> #}\n{% if this %}<div></div>{% endif %}\n"""
-    assert output.exit_code == 0
-
-
-def test_nested_inline_comment(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div>
-    {% if 1 %}
-        <div class="{% if 1 %}class {% else %} class {% endif %}">
-            <div class="class"
-                 data-parameters="{#?@ViewBag.DefaultFilters#}"
-                 data-target="profile-{{ profile_type }}-{{ profile_id }}"></div>
-        </div>
-    {% endif %}
-""",
-    )
-
-    assert output.exit_code == 0
+    printer(expected, source, output)
+    assert expected == output

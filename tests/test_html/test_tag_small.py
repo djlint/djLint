@@ -1,32 +1,24 @@
-"""Djlint tests for html small tag.
+"""Test html small tag.
 
-run:
-
-    pytest tests/test_html/test_tag_small.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_tag_small.py::test_small_tag
-
-
+poetry run pytest tests/test_html/test_tag_small.py
 """
-# pylint: disable=C0116
-from pathlib import Path
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from src.djlint import main as djlint
-from tests.conftest import write_to_file
+test_data = [
+    pytest.param(
+        "<small>text</small>",
+        "<small>text</small>\n",
+        id="small_tag",
+    ),
+]
 
 
-def test_small_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(
-        tmp_file.name,
-        b"""<small>text</small>""",
-    )
-    runner.invoke(djlint, [tmp_file.name, "--reformat"])
-    assert (
-        Path(tmp_file.name).read_text(encoding="utf8")
-        == """<small>text</small>
-"""
-    )
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, basic_config):
+    output = formatter(basic_config, source)
+
+    printer(expected, source, output)
+    assert expected == output

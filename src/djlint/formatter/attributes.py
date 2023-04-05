@@ -170,8 +170,13 @@ def format_attributes(config: Config, html: str, match: re.match) -> str:
             )
 
         elif attrib_name and attrib_name.lower() in ["srcset", "data-srcset", "sizes"]:
-            attrib_value = ("," + join_space).join(
-                [value.strip() for value in attrib_value.split(",") if value.strip()]
+            # vw
+            attrib_value = ("w," + join_space).join(
+                [value.strip() for value in attrib_value.split("w,") if value.strip()]
+            )
+            # px
+            attrib_value = ("x," + join_space).join(
+                [value.strip() for value in attrib_value.split("x,") if value.strip()]
             )
 
         # format template stuff

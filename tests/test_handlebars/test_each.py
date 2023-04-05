@@ -1,46 +1,34 @@
-"""Djlint tests specific to Handlebars.js.
+"""Test handlebars each tag.
 
-run::
-
-   pytest tests/test_handlebars.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_handlebars/test_each.py::test_each_with_pipe --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_handlebars/test_each.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
-
-from tests.conftest import reformat
-
-
-def test_each(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{{#each people}}{{print_person}} <p>and more long stuff</p>{{/each}}""",
-    )
-
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{{#each people }}
-    {{ print_person }}
-    <p>and more long stuff</p>
-{{/each }}
-"""
-    )
+test_data = [
+    pytest.param(
+        ("{{#each people}}{{print_person}} <p>and more long stuff</p>{{/each}}"),
+        (
+            "{{#each people }}\n"
+            "    {{print_person}}\n"
+            "    <p>and more long stuff</p>\n"
+            "{{/each}}\n"
+        ),
+        id="each_tag",
+    ),
+    pytest.param(
+        ('{{#each (cprFindConfigObj "inventoryCategories") as |category c | }}'),
+        ('{{#each (cprFindConfigObj "inventoryCategories") as |category c | }}\n'),
+        id="each_tag_with_pipe",
+    ),
+]
 
 
-def test_each_with_pipe(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{{#each (cprFindConfigObj "inventoryCategories") as |category c | }}\n""",
-        "handlebars",
-    )
-    assert output.exit_code == 0
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, handlebars_config):
+    output = formatter(handlebars_config, source)
+
+    printer(expected, source, output)
+    assert expected == output

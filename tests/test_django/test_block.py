@@ -1,33 +1,29 @@
-"""Djlint tests specific to django.
+"""Test django block tag.
 
-run::
-
-   pytest tests/test_django.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-for a single test, run::
-
-   pytest tests/test_django.py::test_alpine_js --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_django/test_block.py
 """
-# pylint: disable=C0116
 
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from tests.conftest import reformat
+test_data = [
+    pytest.param(
+        ("{% block content %}{% block scripts %}{% endblock %}{% endblock %}"),
+        (
+            "{% block content %}\n"
+            "    {% block scripts %}{% endblock %}\n"
+            "{% endblock %}\n"
+        ),
+        id="asset_tag",
+    ),
+]
 
 
-def test_multiple_endblocks(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{% block content %}{% block scripts %}{% endblock %}{% endblock %}""",
-    )
-    assert output.exit_code == 1
-    assert output.text == (
-        """{% block content %}\n    {% block scripts %}{% endblock %}\n{% endblock %}
-"""
-    )
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, django_config):
+    output = formatter(django_config, source)
+
+    printer(expected, source, output)
+    assert expected == output

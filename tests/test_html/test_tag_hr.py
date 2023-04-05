@@ -1,44 +1,29 @@
-"""Djlint tests for html hr tag.
+"""Test html hr tag.
 
-run:
-
-    pytest tests/test_html/test_tag_hr.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_tag_hr.py::test_hr_tag
-
-
+poetry run pytest tests/test_html/test_tag_hr.py
 """
-# pylint: disable=C0116
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from tests.conftest import reformat
+test_data = [
+    pytest.param(
+        ("<div>\n" "    <div>\n" "        <hr>\n" "    </div>\n" "</div>\n"),
+        ("<div>\n" "    <div>\n" "        <hr>\n" "    </div>\n" "</div>\n"),
+        id="hr",
+    ),
+    pytest.param(
+        ("<div>\n" "    <div>\n" "        <hr />\n" "    </div>\n" "</div>\n"),
+        ("<div>\n" "    <div>\n" "        <hr />\n" "    </div>\n" "</div>\n"),
+        id="hr_void",
+    ),
+]
 
 
-def test_hr_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div>
-    <div>
-        <hr>
-    </div>
-</div>
-""",
-    )
-    assert output.exit_code == 0
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, basic_config):
+    output = formatter(basic_config, source)
 
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div>
-    <div>
-        <hr />
-    </div>
-</div>
-""",
-    )
-
-    assert output.exit_code == 0
+    printer(expected, source, output)
+    assert expected == output

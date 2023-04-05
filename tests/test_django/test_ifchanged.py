@@ -1,43 +1,37 @@
-"""Djlint tests specific to django.
+"""Test django ifchanged tag.
 
-run::
-
-   pytest tests/test_django.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-for a single test, run::
-
-   pytest tests/test_django.py::test_alpine_js --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+poetry run pytest tests/test_django/test_ifchanged.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        (
+            '{% for match in matches %}<div style="background-color:"pink">{% ifchanged match.ballot_id %}{% cycle "red" "blue" %}{% else %}gray{% endifchanged %}{{ match }}</div>{% endfor %}'
+        ),
+        (
+            "{% for match in matches %}\n"
+            '    <div style="background-color:"pink">\n'
+            "        {% ifchanged match.ballot_id %}\n"
+            '            {% cycle "red" "blue" %}\n'
+            "        {% else %}\n"
+            "            gray\n"
+            "        {% endifchanged %}\n"
+            "        {{ match }}\n"
+            "    </div>\n"
+            "{% endfor %}\n"
+        ),
+        id="ifchanged_tag",
+    ),
+]
 
-from tests.conftest import reformat
 
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, django_config):
+    output = formatter(django_config, source)
 
-def test_ifchanged(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{% for match in matches %}<div style="background-color:"pink">{% ifchanged match.ballot_id %}{% cycle "red" "blue" %}{% else %}gray{% endifchanged %}{{ match }}</div>{% endfor %}""",
-    )
-    assert output.exit_code == 1
-    assert (
-        output.text
-        == r"""{% for match in matches %}
-    <div style="background-color:"pink">
-        {% ifchanged match.ballot_id %}
-            {% cycle "red" "blue" %}
-        {% else %}
-            gray
-        {% endifchanged %}
-        {{ match }}
-    </div>
-{% endfor %}
-"""
-    )
+    printer(expected, source, output)
+    assert expected == output

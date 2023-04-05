@@ -1,115 +1,82 @@
-"""Djlint tests for html textarea tag.
+"""Test html textarea tag.
 
-run:
-
-    pytest tests/test_html/test_tag_textarea.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_tag_textarea.py::test_a_tag
-
-
+poetry run pytest tests/test_html/test_tag_textarea.py
 """
-# pylint: disable=C0116
-from pathlib import Path
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.reformat import formatter
+from tests.conftest import printer
 
-from src.djlint import main as djlint
-from tests.conftest import reformat, write_to_file
-
-
-def test_textarea_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b"""<div><textarea>\nasdf\n  asdf</textarea></div>""")
-    runner.invoke(djlint, [tmp_file.name, "--reformat"])
-    assert (
-        Path(tmp_file.name).read_text(encoding="utf8")
-        == """<div>
-    <textarea>
-asdf
-  asdf</textarea>
-</div>
-"""
-    )
-    # check double nesting
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div>
-    <div class="field">
-        <textarea>asdf</textarea>
-    </div>
-</div>
-""",
-    )
-
-    assert output.exit_code == 0
-
-    # check attributes
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div>
-    <div class="field">
-        <textarea class="this"
-                  name="that">asdf</textarea>
-    </div>
-</div>
-""",
-    )
-
-    assert (
-        output.text
-        == """<div>
-    <div class="field">
-        <textarea class="this" name="that">asdf</textarea>
-    </div>
-</div>
-"""
-    )
-
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<div><textarea type="textarea" id="messageContent" name="adContent" maxlength="300" class="form-control class_two" rows="10">{{ adContent|default }}</textarea></div>
-""",
-    )
-
-    assert (
-        output.text
-        == """<div>
-    <textarea type="textarea"
-              id="messageContent"
-              name="adContent"
-              maxlength="300"
-              class="form-control class_two"
-              rows="10">{{ adContent|default }}</textarea>
-</div>
-"""
-    )
-
-
-def test_a_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<p>
-    some nice text <a href="this">asdf</a>, ok
-</p>""",
-    )
-
-    assert output.exit_code == 0
-
+test_data = [
+    pytest.param(
+        ("<div><textarea>\n" "asdf\n" "  asdf</textarea></div>\n"),
+        ("<div>\n" "    <textarea>\n" "asdf\n" "  asdf</textarea>\n" "</div>\n"),
+        id="textarea",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            '    <div class="field">\n'
+            "        <textarea>asdf</textarea>\n"
+            "    </div>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            '    <div class="field">\n'
+            "        <textarea>asdf</textarea>\n"
+            "    </div>\n"
+            "</div>\n"
+        ),
+        id="nesting",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            '    <div class="field">\n'
+            '        <textarea class="this"\n'
+            '                  name="that">asdf</textarea>\n'
+            "    </div>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            '    <div class="field">\n'
+            '        <textarea class="this" name="that">asdf</textarea>\n'
+            "    </div>\n"
+            "</div>\n"
+        ),
+        id="attributes",
+    ),
+    pytest.param(
+        ("<p>\n" '    some nice text <a href="this">asdf</a>, ok\n' "</p>\n"),
+        ("<p>\n" '    some nice text <a href="this">asdf</a>, ok\n' "</p>\n"),
+        id="a_tag",
+    ),
     # test added for https://github.com/Riverside-Healthcare/djLint/issues/189
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<a>
-    <span>hi</span>hi</a>
-<div>
-    <h4>{{ _("Options") }}</h4>
-</div>
-""",
-    )
+    pytest.param(
+        (
+            "<a>\n"
+            "    <span>hi</span>hi</a>\n"
+            "<div>\n"
+            '    <h4>{{ _("Options") }}</h4>\n'
+            "</div>\n"
+        ),
+        (
+            "<a>\n"
+            "    <span>hi</span>hi</a>\n"
+            "<div>\n"
+            '    <h4>{{ _("Options") }}</h4>\n'
+            "</div>\n"
+        ),
+        id="a_with_nesting",
+    ),
+]
 
-    assert output.exit_code == 0
+
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, basic_config):
+    output = formatter(basic_config, source)
+
+    printer(expected, source, output)
+    assert expected == output
