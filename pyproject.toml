@@ -7,7 +7,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name="djlint"
-version="1.21.0"
+version="1.22.0"
 description="HTML Template Linter and Formatter"
 license="GPL-3.0-or-later"
 authors=["Christopher Pickering <cpickering@rhc.net>"]
