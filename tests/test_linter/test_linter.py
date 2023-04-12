@@ -627,6 +627,27 @@ def test_H035(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H035 1:" in result.output
 
 
+def test_H036(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<br><br ><br />")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H036" not in result.output
+
+    write_to_file(tmp_file.name, b"<br>")
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H036"])
+    assert result.exit_code == 1
+    assert "H036" in result.output
+
+    write_to_file(tmp_file.name, b"<br />")
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H036"])
+    assert result.exit_code == 1
+    assert "H036" in result.output
+
+    write_to_file(tmp_file.name, b"<br/>")
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H036"])
+    assert result.exit_code == 1
+    assert "H036" in result.output
+
+
 def test_rules_not_matched_in_ignored_block(
     runner: CliRunner, tmp_file: TextIO
 ) -> None:
