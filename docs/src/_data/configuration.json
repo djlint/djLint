@@ -18,6 +18,24 @@
     ]
   },
   {
+    "name": "include",
+    "description": {
+      "en": "Include linter codes.",
+      "ru": "Включите коды линтера.",
+      "fr": "Inclure les codes des liners."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "include=\"H014,H015\""
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"include\": \"H014,H015\""
+      }
+    ]
+  },
+  {
     "name": "extension",
     "description": {
       "en": "Use to only find files with a specific extension.",

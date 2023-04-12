@@ -211,6 +211,8 @@ def test_python_call() -> None:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+        print(py_sub.stdout)
+        print(py_sub.returncode)
         assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
         assert py_sub.returncode == 0
 
@@ -219,6 +221,8 @@ def test_python_call() -> None:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+        print(py_sub.stdout)
+        print(py_sub.returncode)
         assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
         assert py_sub.returncode == 0
 

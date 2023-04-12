@@ -36,11 +36,8 @@
         <!-- languages -->
         <link rel="alternate" hreflang="en-US" href="{{site.url}}{{ page.url | baseUrl }}" />
         <link rel="alternate" hreflang="ru" href="{{site.url}}/ru{{ page.url | baseUrl }}" />
-
-        <!-- critical css is inlined, so we can async the rest -->
-        <link rel="stylesheet preload"
-              href="{{ css.stylesCss }}"
-              as="style" />
+        <link rel="stylesheet"
+              href="{{ "/static/css/site.css" | rev }}"/>
          <link rel="preload"
               href="/static/font/crimson-pro/files/crimson-pro-latin-400-normal.woff2"
               as="font"
