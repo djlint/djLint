@@ -127,6 +127,13 @@ from .src import get_src
     is_flag=True,
     help="Count the number of occurrences of each error/warning code.",
 )
+@click.option(
+    "--include",
+    type=str,
+    default="",
+    help='Codes to include. ex: "H014,H017"',
+    show_default=False,
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -147,6 +154,7 @@ def main(
     format_js: bool,
     configuration: Optional[str],
     statistics: bool,
+    include: str,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -168,6 +176,7 @@ def main(
         format_js=format_js,
         configuration=configuration,
         statistics=statistics,
+        include=include,
     )
 
     temp_file = None

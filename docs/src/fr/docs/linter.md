@@ -22,6 +22,18 @@ djlint /path/to/this.html.j2  --profile=jinja
     <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/fr/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
 </div>
 
+## Activation ou désactivation des règles
+
+La plupart des règles sont activées par défaut. Les règles peuvent être désactivées en ligne de commande avec l'option `--ignore`. Les règles peuvent être activées avec l'option `--include`.
+
+Par exemple :
+
+```bash
+djlint . --lint --include=H017,H035 --ignore=H013,H015
+```
+
+Cela peut également se faire par l'intermédiaire de l'option [{{ "configuration" | i18n }}]({{ "lang_code_url" | i18n }}/docs/configuration) fichier.
+
 ## Règles personnalisées
 
 Créez un fichier `.djlint_rules.yaml` à côté de votre `pyproject.toml`. Des règles peuvent être ajoutées à ce fichier et djLint les reprendra.
@@ -53,44 +65,45 @@ La première lettre d'un code suit le modèle :
 
 ## Rules
 
-| Code | Signification                                                                                                             |
-| ---- | ------------------------------------------------------------------------------------------------------------------------- |
-| D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                    |
-| D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                              |
-| H005 | La balise Html doit avoir l'attribut `lang`.                                                                              |
-| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             |
-| H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                       |
-| H008 | Les attributs doivent être entre guillemets.                                                                              |
-| H009 | Les noms de balises doivent être en minuscules.                                                                           |
-| H010 | Les noms d'attributs doivent être en minuscules.                                                                          |
-| H011 | Les valeurs des attributs doivent être citées.                                                                            |
-| H012 | Il ne doit pas y avoir d'espace autour de l'attribut `=`.                                                                 |
-| H013 | La balise `img` doit avoir des attributs alt.                                                                             |
-| H014 | Plus de 2 lignes vides.                                                                                                   |
-| H015 | Les balises "h" doivent être suivies d'un retour à la ligne.                                                              |
-| H016 | Balise `title` manquante dans le html.                                                                                    |
-| H017 | La balise doit se fermer automatiquement.                                                                                 |
-| H019 | Remplacez `javascript:abc()` par l'événement `on_` et l'url réelle.                                                       |
-| H020 | Couple de balises vide trouvé. Envisagez de le supprimer.                                                                 |
-| H021 | Les styles en ligne doivent être évités.                                                                                  |
-| H022 | Utilisez HTTPS pour les liens externes.                                                                                   |
-| H023 | N'utilisez pas de références d'entités.                                                                                   |
-| H024 | Omettre le type sur les scripts et les styles.                                                                            |
-| H025 | La balise semble être orpheline.                                                                                          |
-| H026 | Les balises id et class vides peuvent être supprimées.                                                                    |
-| H029 | Pensez à utiliser des valeurs de méthode de formulaire en minuscules.                                                     |
-| H030 | Pensez à ajouter une méta-description.                                                                                    |
-| H031 | Pensez à ajouter des méta keywords.                                                                                       |
-| H033 | Espace supplémentaire dans l'action du formulaire.                                                                        |
-| J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                      |
-| J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                               |
-| T001 | Les variables doivent être entourées d'un seul espace. Ex : {% raw %}`{{ this }}`{% endraw %}                             |
-| T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         |
-| T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                        |
-| T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      |
-| T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} |
-| T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            |
-| T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  |
+| Code | Signification                                                                                                             | Défaut |
+| ---- | ------------------------------------------------------------------------------------------------------------------------- | ------ |
+| D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                    | ✔️     |
+| D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                              | ✔️     |
+| H005 | La balise Html doit avoir l'attribut `lang`.                                                                              | ✔️     |
+| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | ✔️     |
+| H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                       | ✔️     |
+| H008 | Les attributs doivent être entre guillemets.                                                                              | ✔️     |
+| H009 | Les noms de balises doivent être en minuscules.                                                                           | ✔️     |
+| H010 | Les noms d'attributs doivent être en minuscules.                                                                          | ✔️     |
+| H011 | Les valeurs des attributs doivent être citées.                                                                            | ✔️     |
+| H012 | Il ne doit pas y avoir d'espace autour de l'attribut `=`.                                                                 | ✔️     |
+| H013 | La balise `img` doit avoir des attributs alt.                                                                             | ✔️     |
+| H014 | Plus de 2 lignes vides.                                                                                                   | ✔️     |
+| H015 | Les balises "h" doivent être suivies d'un retour à la ligne.                                                              | ✔️     |
+| H016 | Balise `title` manquante dans le html.                                                                                    | ✔️     |
+| H017 | Les étiquettes vides doivent se refermer automatiquement.                                                                 | -      |
+| H019 | Remplacez `javascript:abc()` par l'événement `on_` et l'url réelle.                                                       | ✔️     |
+| H020 | Couple de balises vide trouvé. Envisagez de le supprimer.                                                                 | ✔️     |
+| H021 | Les styles en ligne doivent être évités.                                                                                  | ✔️     |
+| H022 | Utilisez HTTPS pour les liens externes.                                                                                   | ✔️     |
+| H023 | N'utilisez pas de références d'entités.                                                                                   | ✔️     |
+| H024 | Omettre le type sur les scripts et les styles.                                                                            | ✔️     |
+| H025 | La balise semble être orpheline.                                                                                          | ✔️     |
+| H026 | Les balises id et class vides peuvent être supprimées.                                                                    | ✔️     |
+| H029 | Pensez à utiliser des valeurs de méthode de formulaire en minuscules.                                                     | ✔️     |
+| H030 | Pensez à ajouter une méta-description.                                                                                    | ✔️     |
+| H031 | Pensez à ajouter des méta keywords.                                                                                       | ✔️     |
+| H033 | Espace supplémentaire dans l'action du formulaire.                                                                        | ✔️     |
+| J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                      | ✔️     |
+| J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                               | ✔️     |
+| T001 | Les variables doivent être entourées d'un seul espace. Ex : {% raw %}`{{ this }}`{% endraw %}                             | ✔️     |
+| T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         | ✔️     |
+| T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                        | ✔️     |
+| T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      | ✔️     |
+| T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} | ✔️     |
+| T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            | ✔️     |
+| T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  | ✔️     |
+| H035 | Meta doivent se fermer d'elles-mêmes.                                                                                     | -      |
 
 ### Ajout de règles
 

@@ -71,11 +71,11 @@
                         <span class="icon is-large">
                             <i class="fas fa-lg  fa-globe"></i>
                         </span>
-                        <span>{{ locale | i18n_locale(locales) }}
+                        <span>{{ locale | i18n_locale(locales) }}</span>
                     </div>
                     <div class="navbar-dropdown">
                         {%  for page in page.url | i18n_urls(collections.all) %}
-                            <a class="navbar-item" href="{{ page.url }}">{{ page.meta.label }}
+                            <a class="navbar-item" href="{{ page.url }}">{{ page.meta.label }}</a>
                         {%  endfor %}
                     </div>
                 </div>

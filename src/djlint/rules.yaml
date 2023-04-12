@@ -125,11 +125,12 @@
     - <html[^>]*?>(?:(?!<title>).)*</html>
 - rule:
     name: H017
-    message: Tag should be self closing.
+    message: Void tags should be self closing.
     flags: re.DOTALL|re.I
+    default: false
     patterns:
-    - <(img|input|area|base|br|col[^(?:group)]|embed|hr|link|meta|param|source|track|wbr|command|keygen|menuitem|path)(\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
-    - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|command|keygen|menuitem|path)>
+    - <(img|input|area|base|br|col[^(?:group)]|embed|hr|link|param|source|track|wbr|command|keygen|menuitem|path)(\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
+    - <(img|input|area|base|br|col|embed|hr|link|param|source|track|wbr|command|keygen|menuitem|path)>
 - rule:
     name: D018
     message: (Django) Internal links should use the {% url ... %} pattern.
@@ -256,3 +257,11 @@
     flags: re.DOTALL
     patterns:
     - '{%(?:(?!%}).)*}%'
+- rule:
+    name: H035
+    message: Meta tags should be self closing.
+    flags: re.DOTALL|re.I
+    default: false
+    patterns:
+    - <(meta)(\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
+    - <(meta)>

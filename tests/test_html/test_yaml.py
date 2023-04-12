@@ -24,6 +24,7 @@ test_data = [
             "    invalid:\n"
             "invalid:\n"
             "---\n"
+            "\n"
             "<html>\n"
             "    <head></head>\n"
             "    <body></body>\n"
@@ -42,6 +43,7 @@ test_data = [
             "---\n"
             "hello:     world\n"
             "---\n"
+            "\n"
             "<html>\n"
             "    <head></head>\n"
             "    <body></body>\n"
@@ -51,7 +53,7 @@ test_data = [
     ),
     pytest.param(
         ("---\n" "layout: <div><div></div></div>\n" "---\n" "<div></div>\n"),
-        ("---\n" "layout: <div><div></div></div>\n" "---\n" "<div></div>\n"),
+        ("---\n" "layout: <div><div></div></div>\n" "---\n" "\n" "<div></div>\n"),
         id="more",
     ),
     pytest.param(
@@ -68,18 +70,19 @@ test_data = [
             "title: Hello\n"
             "slug: home\n"
             "---\n"
+            "\n"
             "<h1>Hello world!</h1>\n"
         ),
         id="custom_parser",
     ),
     pytest.param(
         ("---\n" "---\n" "<h1>\n" "  Hello world!</h1>\n"),
-        ("---\n" "---\n" "<h1>Hello world!</h1>\n"),
+        ("---\n" "---\n" "\n" "<h1>Hello world!</h1>\n"),
         id="empty",
     ),
     pytest.param(
         ("---\n" "---\n" "<div>\n" "---\n" "</div>\n"),
-        ("---\n" "---\n" "<div>---</div>\n"),
+        ("---\n" "---\n" "\n" "<div>---</div>\n"),
         id="empty_2",
     ),
     pytest.param(
@@ -94,6 +97,7 @@ test_data = [
             "---\n"
             "layout: foo\n"
             "---\n"
+            "\n"
             'Test <a href="https://djlint.com">abc</a>.\n'
         ),
         id="issue_9042_no_empty_line",
@@ -110,6 +114,7 @@ test_data = [
             "---\n"
             "layout: foo\n"
             "---\n"
+            "\n"
             'Test <a href="https://djlint.com">abc</a>.\n'
         ),
         id="issue_9042",

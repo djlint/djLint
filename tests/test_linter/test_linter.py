@@ -198,29 +198,40 @@ def test_H016(runner: CliRunner, tmp_file: TextIO) -> None:
 def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<img this >")
     result = runner.invoke(djlint, [tmp_file.name])
+    assert "H017 1:" not in result.output
+
+    write_to_file(tmp_file.name, b"<img this >")
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H017"])
     assert result.exit_code == 1
     assert "H017 1:" in result.output
 
     write_to_file(tmp_file.name, b"<br>")
     result = runner.invoke(djlint, [tmp_file.name])
+    assert "H017 1:" not in result.output
+
+    write_to_file(tmp_file.name, b"<br>")
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H017"])
     assert result.exit_code == 1
     assert "H017 1:" in result.output
 
     write_to_file(tmp_file.name, b"<br >")
     result = runner.invoke(djlint, [tmp_file.name])
+    assert "H017 1:" not in result.output
+
+    write_to_file(tmp_file.name, b"<br >")
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H017"])
     assert result.exit_code == 1
     assert "H017 1:" in result.output
 
     # test colgroup tag
     write_to_file(tmp_file.name, b"<colgroup><colgroup asdf></colgroup></colgroup>")
-    result = runner.invoke(djlint, [tmp_file.name])
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H017"])
     print(result.output)
-    assert result.exit_code == 0
     assert "H017 1:" not in result.output
 
     # test template tags inside html
     write_to_file(tmp_file.name, b"<image {{ > }} />")
-    result = runner.invoke(djlint, [tmp_file.name])
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H017"])
     assert "H017" not in result.output
 
 
@@ -592,6 +603,28 @@ def test_H033(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b'<form action=" asdf " ...>...</form>')
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H033" in result.output
+
+
+def test_H035(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<meta this >")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "H035 1:" not in result.output
+
+    write_to_file(tmp_file.name, b"<meta this >")
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H035"])
+    assert result.exit_code == 1
+    assert "H035 1:" in result.output
+
+    write_to_file(tmp_file.name, b"<meta>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 0
+    assert "H035 1:" not in result.output
+
+    write_to_file(tmp_file.name, b"<meta>")
+    result = runner.invoke(djlint, [tmp_file.name, "--include", "H035"])
+    assert result.exit_code == 1
+    assert "H035 1:" in result.output
 
 
 def test_rules_not_matched_in_ignored_block(

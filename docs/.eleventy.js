@@ -1,6 +1,5 @@
 const Image = require('@11ty/eleventy-img');
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
-const criticalCss = require('eleventy-critical-css');
 const slugify = require('slugify');
 const metagen = require('eleventy-plugin-metagen');
 const i18n = require('eleventy-plugin-i18n');
@@ -13,8 +12,10 @@ const editOnGithub = require('eleventy-plugin-edit-on-github');
 const i18n_func = require('eleventy-plugin-i18n/i18n.js');
 const rollupper = require('./src/_utils/rollupper');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
-
-process.setMaxListeners(0);
+const eleventySass = require('eleventy-sass');
+const pluginRev = require('eleventy-plugin-rev');
+const purgecss = require('@fullhuman/postcss-purgecss');
+const postcss = require('postcss');
 
 const slugifyCustom = (s) =>
   slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g });
@@ -93,13 +94,14 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter('widont', widont);
   eleventyConfig.addWatchTarget('./src/static/');
   eleventyConfig.addNunjucksAsyncShortcode('image', imageShortcode);
-  eleventyConfig.addTransform(
-    'htmlmin',
-    require('./src/_utils/minify-html.js'),
-  );
+  if (process.env.ELEVENTY_PRODUCTION == true) {
+    eleventyConfig.addTransform(
+      'htmlmin',
+      require('./src/_utils/minify-html.js'),
+    );
+  }
   eleventyConfig.addPlugin(syntaxHighlight);
   eleventyConfig.addPlugin(metagen);
-  eleventyConfig.addPlugin(criticalCss);
   eleventyConfig.addPlugin(schema);
   eleventyConfig.addPlugin(rollupper, {
     rollup: {
@@ -267,6 +269,50 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter('markdown', (value) => {
     return `${markdownIt.render(value)}`;
   });
+
+  eleventyConfig.addPlugin(pluginRev);
+
+  eleventyConfig.addPlugin(eleventySass, [
+    {
+      rev: true,
+      postcss: postcss([
+        require('postcss-nested'),
+        purgecss({
+          content: ['./src/**/*.njk', './src/**/*.md', './src/**/*.js'],
+          safelist: {
+            deep: [
+              /headShake/,
+              /zoomIn/,
+              /fadeInUp/,
+              /pre/,
+              /code/,
+              /block/,
+              /box/,
+              /title/,
+              /is-\d/,
+              /table/,
+              /message/,
+              /message-header/,
+              /message-body/,
+              /panel-block/,
+              /p-3/,
+              /is-block/,
+              /is-justify-content-space-between/,
+              /is-light/,
+              /is-active/,
+              /is-info/,
+              /fa-*/,
+              /mr-1/,
+              /mr-2/,
+              /has-text-info/,
+            ],
+          },
+        }),
+        require('autoprefixer'),
+        require('cssnano'),
+      ]),
+    },
+  ]);
 
   const { fontawesomeSubset } = require('fontawesome-subset');
   fontawesomeSubset(

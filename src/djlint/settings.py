@@ -218,6 +218,7 @@ class Config:
         format_js: bool = False,
         configuration: Optional[str] = None,
         statistics: bool = False,
+        include: Optional[str] = None,
     ):
         self.reformat = reformat
         self.check = check
@@ -274,6 +275,7 @@ class Config:
 
         # ignore is based on input and also profile
         self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
+        self.include: str = str(include or djlint_settings.get("include", ""))
 
         self.files: Optional[List[str]] = djlint_settings.get("files", None)
         self.stdin = False
@@ -315,7 +317,11 @@ class Config:
                 and not any(
                     x["rule"]["name"].startswith(code) for code in self.profile_code
                 )
-                and self.profile not in x["rule"].get("exclude", []),
+                and self.profile not in x["rule"].get("exclude", [])
+                and (
+                    x["rule"].get("default", True)
+                    or x["rule"]["name"] in self.include.split(",")
+                ),
                 rule_set,
             )
         )
