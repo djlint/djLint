@@ -123,11 +123,11 @@ test_data = [
             "    <body></body>\n"
             "</html>\n"
             '<body width="100%" align="center">\n'
-            "    <center >\n"
+            "    <center>\n"
             '        <!--[if (gte mso 9)|(IE)]><table cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td><![endif]-->\n'
             "        <div></div>\n"
             "        <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->\n"
-            "    </center  >\n"
+            "    </center>\n"
             "</body>\n"
             "<!DOCTYPE html>\n"
             '<!--[if lt IE 9]><html class="legacy-ie"><![endif]-->\n'

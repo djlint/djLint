@@ -94,7 +94,7 @@ test_data = [
             "<p>\n"
             '    <img src="/images/pansies.jpg"\n'
             '         alt="about fedco bottom image"\n'
-            '         style="float: left"/>\n'
+            '         style="float: left" />\n'
             "    <strong>We are a cooperative</strong>, one of the few seed companies so organized\n"
             "    in the United States. Because we do not have an individual owner or beneficiary,\n"
             "    profit is not our primary goal. Consumers own 60% of the cooperative and worker\n"
@@ -161,15 +161,8 @@ test_data = [
             '><span class="syllable"><span class="letter consonant onset">s</span><span class="letter vowel">u</span><span class="letter consonant">m</span></span></span>\n'
         ),
         (
-            '<a href="/wiki/Help:IPA/English" title="Help:IPA/English">/<span style="border-bottom:1px dotted"><span title="/ˌ/: secondary stress follows">ˌ</span\n'
-            '    ><span title="/ɪ/: &#39;i&#39; in &#39;kit&#39;">ɪ</span\n'
-            '    ><span title="&#39;l&#39; in &#39;lie&#39;">l</span\n'
-            '    ><span title="/ə/: &#39;a&#39; in &#39;about&#39;">ə</span\n'
-            '    ><span title="/ˈ/: primary stress follows">ˈ</span\n'
-            '    ><span title="&#39;n&#39; in &#39;nigh&#39;">n</span\n'
-            '><span title="/ɔɪ/: &#39;oi&#39; in &#39;choice&#39;">ɔɪ</span></span>/</a>\n'
-            '<span class="word"><span class="syllable"><span class="letter vowel">i</span><span class="letter consonant">p</span></span\n'
-            '    ><span class="syllable"><span class="letter consonant onset">s</span><span class="letter vowel">u</span><span class="letter consonant">m</span></span></span>\n'
+            '<a href="/wiki/Help:IPA/English" title="Help:IPA/English">/<span style="border-bottom:1px dotted"><span title="/ˌ/: secondary stress follows">ˌ</span><span title="/ɪ/: &#39;i&#39; in &#39;kit&#39;">ɪ</span><span title="&#39;l&#39; in &#39;lie&#39;">l</span><span title="/ə/: &#39;a&#39; in &#39;about&#39;">ə</span><span title="/ˈ/: primary stress follows">ˈ</span><span title="&#39;n&#39; in &#39;nigh&#39;">n</span><span title="/ɔɪ/: &#39;oi&#39; in &#39;choice&#39;">ɔɪ</span></span>/</a>\n'
+            '<span class="word"><span class="syllable"><span class="letter vowel">i</span><span class="letter consonant">p</span></span><span class="syllable"><span class="letter consonant onset">s</span><span class="letter vowel">u</span><span class="letter consonant">m</span></span></span>\n'
         ),
         id="nested_inline_without_whitespace",
     ),
@@ -206,14 +199,12 @@ test_data = [
             ")\n"
             "html_out = (\n"
             "<!-- normal whitespaces -->\n"
-            "<span >Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores\n"
-            "    voluptas quaerat ut qui sunt vitae error.</span\n"
-            "    >\n"
-            "    <!-- non-breaking whitespaces -->\n"
-            "    <span >Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores voluptas quaerat ut qui sunt vitae error.</span\n"
-            "        >\n"
-            "        <!-- non-breaking narrow whitespaces -->\n"
-            "        <span>Prix : 32 €</span>\n"
+            "<span>Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores\n"
+            "voluptas quaerat ut qui sunt vitae error.</span>\n"
+            "<!-- non-breaking whitespaces -->\n"
+            "<span>Nihil aut odit omnis. Quam maxime est molestiae. Maxime dolorem dolores voluptas quaerat ut qui sunt vitae error.</span>\n"
+            "<!-- non-breaking narrow whitespaces -->\n"
+            "<span>Prix : 32 €</span>\n"
         ),
         id="non_breaking_whitespace",
     ),
@@ -259,22 +250,22 @@ test_data = [
     ),
     pytest.param(
         ("<img/> <img/>\n"),
-        ("<img/> \n" "<img/>\n"),
+        ("<img /> \n" "<img />\n"),
         id="snippet_26",
     ),
     pytest.param(
         ("<img/>          <img/>\n"),
-        ("<img/>  \n" "<img/>\n"),
+        ("<img />  \n" "<img />\n"),
         id="snippet_27",
     ),
     pytest.param(
         ("<img/>           <img/>\n"),
-        ("<img/>          \n" "<img/>\n"),
+        ("<img />          \n" "<img />\n"),
         id="snippet_28",
     ),
     pytest.param(
         ("<img/>                   <img/>\n"),
-        ("<img/>                  \n" "<img/>\n"),
+        ("<img />                  \n" "<img />\n"),
         id="snippet_29",
     ),
     pytest.param(

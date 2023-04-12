@@ -44,7 +44,7 @@ test_data = [
             '            calc(100vw - 30px)"\n'
             '     class="richtext-image imageblock overflow {{ value.image_position }} lazy"\n'
             '     title="{{ value.image.title }}"\n'
-            '     alt="Block image"/>\n'
+            '     alt="Block image" />\n'
         ),
         id="srcset",
     ),
@@ -62,7 +62,7 @@ test_data = [
             '       style="width:100px;\n'
             "              cursor: text;\n"
             '              border:1px solid pink"\n'
-            '       required="true"/>\n'
+            '       required="true" />\n'
         ),
         id="long_attributes",
     ),
@@ -195,7 +195,7 @@ test_data = [
             '       class="form-control"\n'
             '       type="text"\n'
             '       name="driver_id"\n'
-            "       value=\"{{ id|default(' sample_text ') }}\"/>\n"
+            "       value=\"{{ id|default(' sample_text ') }}\" />\n"
         ),
         id="another_boolean_after_tag",
     ),
@@ -477,11 +477,10 @@ test_data = [
             '               target="_blank"\n'
             '               role="tab"\n'
             '               href="https://yandex.ru/news?msid=1581089780.29024.161826.172442&mlid=1581088893.glob_225"\n'
-            '               rel="noopener">...</a\n'  # broken tags not handled in djlint currently.
-            "                >\n"
-            "            </h1>\n"
-            "        </div>\n"
+            '               rel="noopener">...</a>\n'
+            "        </h1>\n"
             "    </div>\n"
+            "</div>\n"
         ),
         id="class_bem2",
     ),
@@ -594,7 +593,7 @@ test_data = [
             '                     src="https://s.yimg.com/rz/p/yahoo_frontpage_en-US_s_f_p_205x58_frontpage_2x.png"\n'
             '                     height="58px"\n'
             '                     width="205px"\n'
-            '                     alt="Yahoo"/>\n'
+            '                     alt="Yahoo" />\n'
             "            </a>\n"
             "        </h1>\n"
             "    </div>\n"
@@ -755,7 +754,7 @@ test_data = [
             '             /assets/visual.png      805w"\n'
             '     sizes="(max-width: 66rem) 100vw,\n'
             '            66rem"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
             '<img src="/assets/visual.png"\n'
             '     srcset="/assets/visual@0.5.png  400w,\n'
             "             /assets/visual.png      805w,\n"
@@ -763,7 +762,7 @@ test_data = [
             '             /assets/visual@3x.png   2415w"\n'
             '     sizes="(max-width: 66rem) 100vw,\n'
             '            66rem"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
             '<img src="/assets/visual.png"\n'
             '     srcset="/assets/visual@0.5.png  0.5x,\n'
             "             /assets/visual.png      1111x,\n"
@@ -771,7 +770,7 @@ test_data = [
             '             /assets/visual@3x.png   3.3333x"\n'
             '     sizes="(max-width: 66rem) 100vw,\n'
             '            66rem"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
             '<img srcset=" /media/examples/surfer-240-200.jpg ">\n'
             "<!-- #8150 -->\n"
             '<img sizes="(max-width: 1400px) 100vw,\n'
@@ -800,7 +799,7 @@ test_data = [
             '             /assets/visual.png 805w"\n'
             '     sizes="(max-width: 66rem) 100vw,\n'
             '            66rem"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
             '<img src="/assets/visual.png"\n'
             '     srcset="/assets/visual@0.5.png  400w,\n'
             "             /assets/visual.png      805w,\n"
@@ -808,7 +807,7 @@ test_data = [
             '             /assets/visual@3x.png  2415w"\n'
             '     sizes="(max-width: 66rem) 100vw,\n'
             '            66rem"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
             '<img src="/assets/visual.png"\n'
             '     srcset="/assets/visual@0.5.png    0.5x,\n'
             "             /assets/visual.png     1111x,\n"
@@ -816,7 +815,7 @@ test_data = [
             '             /assets/visual@3x.png     3.3333x"\n'
             '     sizes="(max-width: 66rem) 100vw,\n'
             '            66rem"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
             '<img srcset="/media/examples/surfer-240-200.jpg" />\n'
             "<!-- #8150 -->\n"
             '<img sizes="(max-width: 1400px) 100vw,\n'
@@ -837,7 +836,7 @@ test_data = [
             "             _20200401_145009_szrhju_c_scale,w_1398.jpg 1398w,\n"
             '             _20200401_145009_szrhju_c_scale,w_1400.jpg 1400w"\n'
             '     src="_20200401_145009_szrhju_c_scale,w_1400.jpg"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
         ),
         id="src_set",
     ),

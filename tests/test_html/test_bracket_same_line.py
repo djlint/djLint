@@ -141,12 +141,12 @@ test_data = [
         ),
         (
             '<img long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"\n'
-            '     src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
+            '     src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
         ),
         id="void",
     ),
@@ -157,12 +157,12 @@ test_data = [
         ),
         (
             '<img long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"\n'
-            '     src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/>\n'
+            '     src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" />\n'
         ),
         id="void_braket_same_line",
     ),

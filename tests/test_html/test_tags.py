@@ -34,15 +34,13 @@ test_data = [
         (
             "<div>\n"
             "    aaaaaaaaaa\n"
-            '    <a href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong">bbbbbbbbbb</a\n'
-            "        >\n"
-            "        cccccccccc\n"
-            "    </div>\n"
-            "    <div>\n"
-            "        aaaaaaaaaa\n"
-            '        <a href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong">bbbbbbbbbb</a\n'
-            "            >cccccccccc\n"
-            "        </div>\n"
+            '    <a href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong">bbbbbbbbbb</a>\n'
+            "    cccccccccc\n"
+            "</div>\n"
+            "<div>\n"
+            "    aaaaaaaaaa\n"
+            '    <a href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong">bbbbbbbbbb</a>cccccccccc\n'
+            "</div>\n"
         ),
         id="close_at_start",
     ),
@@ -84,28 +82,19 @@ test_data = [
             ">\n"
         ),
         (
-            "<p >\n"
-            "    Want to write us a letter? Use our<a ><b ><a>mailing address</a></b\n"
-            "    ></a\n"
-            "    >.\n"
-            "</p\n"
-            ">\n"
-            "<p >\n"
-            '    Want to write us a letter? Use our<a href="contacts.html#Mailing_address"><b ><a>mailing address</a></b\n'
-            "    ></a\n"
-            "    >.\n"
-            "</p\n"
-            ">\n"
-            "<p >\n"
+            "<p>\n"
+            "    Want to write us a letter? Use our<a><b><a>mailing address</a></b></a>.\n"
+            "</p>\n"
+            "<p>\n"
+            '    Want to write us a letter? Use our<a href="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.\n'
+            "</p>\n"
+            "<p>\n"
             '    Want to write us a letter? Use our<a href="contacts.html#Mailing_address"\n'
             '   href1="contacts.html#Mailing_address"\n'
             '   href2="contacts.html#Mailing_address"\n'
             '   href3="contacts.html#Mailing_address"\n'
-            '   href4="contacts.html#Mailing_address"><b ><a>mailing address</a></b\n'
-            "    ></a\n"
-            "    >.\n"
-            "</p\n"
-            ">\n"
+            '   href4="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.\n'
+            "</p>\n"
         ),
         id="opening_at_end",
     ),
@@ -328,14 +317,14 @@ test_data = [
             "<!-- #6028 -->\n"
             "<pre><br></pre>\n"
             "<PRE><HR></PRE>\n"
-            "<pre><br/></pre>\n"
-            "<PRE><HR/></PRE>\n"
+            "<pre><br /></pre>\n"
+            "<PRE><HR /></PRE>\n"
             "<pre><br /></pre>\n"
             "<PRE><HR /></PRE>\n"
             "<pre><span></span></pre>\n"
             "<PRE><DIV></DIV></PRE>\n"
-            "<pre><br/>long long long text long long long text long long long text long long long text <br></pre>\n"
-            "<pre><br>long long long text long long long text long long long text long long long text <BR/></pre>\n"
+            "<pre><br />long long long text long long long text long long long text long long long text <br></pre>\n"
+            "<pre><br>long long long text long long long text long long long text long long long text <BR /></pre>\n"
         ),
         id="pre",
     ),
@@ -468,22 +457,22 @@ test_data = [
             '<span><input type="checkbox"/></span>\n'
         ),
         (
-            "<br/>\n"
+            "<br />\n"
             "<br />\n"
             "<br />\n"
             "<br />\n"
             "<br attribute-a />\n"
-            "<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute/>\n"
+            "<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute />\n"
             '<br attribute-a="value" />\n'
             '<br attribute-a="value" />\n'
-            '<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value"/>\n'
-            '<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value"/>\n'
+            '<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value" />\n'
+            '<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value" />\n'
             '<br attribute-a="value"\n'
             '    attribute-b="value"\n'
             '    attribute-c="value"\n'
             '    attribute-d="value"\n'
             '    attribute-e="value"\n'
-            '    attribute-f="value"/>\n'
+            '    attribute-f="value" />\n'
             "<div>string</div>\n"
             "<div>very very very very very very very very very very very very very very very very long string</div>\n"
             "<div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute>\n"
@@ -566,26 +555,19 @@ test_data = [
             "    <div>string</div>\n"
             "    <div>string</div>\n"
             "</div>\n"
-            "<ul >\n"
+            "<ul>\n"
             "    123\n"
-            '    <li class="foo" id="bar">\n'
-            "        First\n"
-            "    </li\n"
-            "    >\n"
+            '    <li class="foo" id="bar">First</li>\n'
             "    456\n"
-            '    <li class="baz">\n'
-            "        Second\n"
-            "    </li\n"
-            "    >\n"
+            '    <li class="baz">Second</li>\n'
             "    789\n"
-            "</ul\n"
-            ">\n"
+            "</ul>\n"
             "<span>*<b>200</b></span>\n"
-            '<img src="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"/>\n'
+            '<img src="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong" />\n'
             "123\n"
             "<div>\n"
             "    123\n"
-            "    <meta attr/>\n"
+            "    <meta attr />\n"
             "    456\n"
             "</div>\n"
             "<p>\n"
@@ -600,32 +582,29 @@ test_data = [
             "    <meta>\n"
             "</p>\n"
             "<span></span>\n"
-            "<label aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa></label>\n"
+            "<label aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa>\n"
+            "</label>\n"
             "|\n"
             "<span></span>\n"
             "<br />\n"
             "<button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>\n"
             "    12345678901234567890\n"
-            "</button\n"
-            ">\n"
+            "</button>\n"
             "<br />\n"
             "<br />\n"
             '<button bind-disabled="isUnchanged" on-click="onSave($event)">\n'
             "    Disabled Cancel\n"
-            "</button\n"
-            ">\n"
+            "</button>\n"
             "<br />\n"
             "<br />\n"
             "<button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>\n"
             "    12345678901234567890\n"
-            "</button\n"
-            ">\n"
+            "</button>\n"
             "<br />\n"
             "<br />\n"
             '<button bind-disabled="isUnchanged" on-click="onSave($event)">\n'
             "    Disabled Cancel\n"
-            "</button\n"
-            ">\n"
+            "</button>\n"
             "<br />\n"
             "<br />\n"
             "<p>\n"
@@ -669,13 +648,13 @@ test_data = [
             "</div>\n"
             "<!-- self-closing -->\n"
             "<span>\n"
-            '    <input type="checkbox"/>\n'
+            '    <input type="checkbox" />\n'
             "</span>\n"
             "<span><span>\n"
-            '    <input type="checkbox"/>\n'
+            '    <input type="checkbox" />\n'
             "</span></span>\n"
             "<span>\n"
-            '    <input type="checkbox"/>\n'
+            '    <input type="checkbox" />\n'
             "</span>\n"
         ),
         id="tags",
@@ -754,8 +733,8 @@ test_data = [
             "</div>\n"
             "<div>\n"
             '    before<object data="horse.wav">\n'
-            '    <param name="autoplay" value="true"/>\n'
-            '    <param name="autoplay" value="true"/>\n'
+            '    <param name="autoplay" value="true" />\n'
+            '    <param name="autoplay" value="true" />\n'
             "</object>after\n"
             "</div>\n"
             "<div>\n"
@@ -767,8 +746,7 @@ test_data = [
             ")\n"
             "html_out = (\n"
             "<div>\n"
-            "    before<noscript>noscript long long long long long long long long</noscript\n"
-            "    >after\n"
+            "    before<noscript>noscript long long long long long long long long</noscript>after\n"
             "</div>\n"
             "<div>\n"
             "    before\n"
@@ -787,12 +765,10 @@ test_data = [
             '    before<object data="horse.wav">\n'
             '    <param name="autoplay" value="true" />\n'
             '    <param name="autoplay" value="true" />\n'
-            "</object\n"
-            ">after\n"
+            "</object>after\n"
             "</div>\n"
             "<div>\n"
-            '    before<meter min="0" max="1" low=".4" high=".7" optimum=".5" value=".2"></meter\n'
-            "    >after\n"
+            '    before<meter min="0" max="1" low=".4" high=".7" optimum=".5" value=".2"></meter>after\n'
             "</div>\n"
             "<div>\n"
             '    before<progress value=".5" max="1"></progress>after\n'
