@@ -99,6 +99,25 @@ def clean_whitespace(html: str, config: Config) -> str:
                 html,
             )
 
+    # add line after yaml front matter
+
+    def yaml_add_blank_line_after(html: str, match: re.Match) -> str:
+        """Add break after if not in ignored block."""
+        if match.start() == 0:
+            return match.group() + "\n"
+
+        return match.group()
+
+    func = partial(yaml_add_blank_line_after, html)
+    html = re.sub(
+        re.compile(
+            r"(^---.+?---)$",
+            re.MULTILINE | re.DOTALL,
+        ),
+        func,
+        html,
+    )
+
     return html
 
 
