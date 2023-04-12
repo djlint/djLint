@@ -104,6 +104,7 @@ The first letter of a code follows the pattern:
 | T032 | Extra whitespace found in template tags.                                                     | ✔️      |
 | T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  | ✔️      |
 | H035 | Meta tags should be self closing.                                                            | -       |
+| H036 | Avoid use of <br> tags.                                                                      | -       |
 
 ### Adding Rules
 

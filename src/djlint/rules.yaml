@@ -265,3 +265,10 @@
     patterns:
     - <(meta)(\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
     - <(meta)>
+- rule:
+    name: H036
+    message: Avoid use of <br> tags.
+    flags: re.I
+    default: false
+    patterns:
+    - <br\s*?\/?>
