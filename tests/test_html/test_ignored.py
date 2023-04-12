@@ -86,7 +86,7 @@ test_data = [
         (
             "<html>\n"
             "    <head>\n"
-            '        <link href="{% static  \'foo/bar.css\' %}" rel="stylesheet"/>\n'
+            '        <link href="{% static  \'foo/bar.css\' %}" rel="stylesheet" />\n'
             "        <!--JS-->\n"
             "        <script src=\"{% static  'foo/bar.js' %}\"></script>\n"
             "    </head>\n"

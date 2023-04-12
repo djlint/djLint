@@ -38,7 +38,7 @@ test_data = [
             '<img src="/images/foo.png" />\n'
             '<img src="/images/foo.png" alt="bar" />\n'
             '<img src="/images/foo.png"\n'
-            '     alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."/>\n'
+            '     alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />\n'
         ),
         id="single_attrib_per_line_enabled",
     ),
@@ -58,7 +58,7 @@ test_data = [
             "</div>\n"
             '<img src="/images/foo.png" />\n'
             '<img src="/images/foo.png" alt="bar" />\n'
-            '<img src="/images/foo.png" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />\n'
+            '<img src="/images/foo.png" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."     />\n'
         ),
         (
             '<div data-a="1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>\n'
@@ -72,7 +72,7 @@ test_data = [
             '<img src="/images/foo.png" />\n'
             '<img src="/images/foo.png" alt="bar" />\n'
             '<img src="/images/foo.png"\n'
-            '     alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."/>\n'
+            '     alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />\n'
         ),
         id="single_attrib_per_line_disabled",
     ),

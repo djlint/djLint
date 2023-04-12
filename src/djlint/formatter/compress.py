@@ -25,20 +25,68 @@ def compress_html(html: str, config: Config) -> str:
         if child_of_ignored_block(config, html, match):
             return match.group()
 
+        close = match.group(3) if "/" not in match.group(3) else f" {match.group(3)}"
+
         # pylint: disable=C0209
         return "{} {}{}".format(
             match.group(1),
             " ".join(x.strip() for x in match.group(2).strip().splitlines()),
-            match.group(3),
+            close,
         )
 
     # put attributes on one line
     html = re.sub(
         re.compile(
-            rf"(<(?:{config.indent_html_tags}))\s((?:\"[^\"]*\"|'[^']*'|{{{{(?:(?!}}}}).)*}}}}|{{%(?:(?!%}}).)*%}}|[^'\">{{}}])+)(/?>)",
+            rf"(<(?:{config.indent_html_tags}))\s((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{{{(?:(?!}}}}).)*}}}}|{{%(?:(?!%}}).)*%}}|[^'\">{{}}\/\s]))+)\s*?(/?>)",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         _flatten_attributes,
+        html,
+    )
+
+    # put closing tags back on one line
+    # <a ...
+    #     >
+    html = re.sub(
+        re.compile(
+            rf"(</(?:{config.indent_html_tags}))\s*?(>)",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        ),
+        r"\1\2",
+        html,
+    )
+
+    # remove extra space from empty tags
+    # <a >
+    #   ^
+    html = re.sub(
+        re.compile(
+            rf"(<(?:{config.indent_html_tags}))\s*?(>)",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        ),
+        r"\1\2",
+        html,
+    )
+
+    # ensure space before closing tag
+    # <a />
+    #   ^
+    html = re.sub(
+        re.compile(
+            rf"(<(?:{config.indent_html_tags}))\s*?(/>)",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        ),
+        r"\1 \2",
+        html,
+    )
+
+    # cleanup whitespace in doctype
+    html = re.sub(
+        re.compile(
+            r"(<!(?:doctype))\s((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^'\">{}\/\s]))+)\s*?(>)",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        ),
+        r"\1 \2\3",
         html,
     )
 

@@ -15,7 +15,7 @@ test_data = [
             " should-not-format  400w 100h,\n"
             "       should-not-format  500w 200h\n"
             '"\n'
-            ' alt=""/>\n'
+            ' alt=""      />\n'
             '<img src="a"\n'
             'srcset="\n'
             " should-not-format ,, should-not-format 0q,,,\n"
@@ -25,10 +25,10 @@ test_data = [
         (
             '<img src="a"\n'
             '     srcset="should-not-format  400w 100h, should-not-format  500w 200h"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
             '<img src="a"\n'
             '     srcset="should-not-format ,, should-not-format 0q,,,"\n'
-            '     alt=""/>\n'
+            '     alt="" />\n'
         ),
         id="invalid",
     ),

@@ -3,10 +3,10 @@
                   then something neat
               {% else %}
                   that is long stuff asdf and more even
-              {% endif %}"/>
+              {% endif %}" />
 <img data-src="{% if report.imgs.exists %}{{ report.imgs.first.get_absolute_url|size:"96x96" }}{% else %}{% static '/img/report_thumb_placeholder_400x300.png' %}{% endif %}"
      src="{% static '/img/loader.gif' %}"
-     alt="report image"/>
+     alt="report image" />
 <a class="asdf
           {% if favorite == "yes" %}favorite{% endif %}
           has-tooltip-arrow has-tooltip-right"

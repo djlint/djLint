@@ -15,7 +15,7 @@ test_data = [
     ),
     pytest.param(
         ("<!DocType htMl  >"),
-        ("<!DocType htMl  >\n"),
+        ("<!DocType htMl>\n"),
         id="case_2",
     ),
     pytest.param(
@@ -38,7 +38,7 @@ test_data = [
             "<html>\n"
             "    <head>\n"
             "        <title>An HTML standard template</title>\n"
-            '        <meta charset="utf-8"  />\n'
+            '        <meta charset="utf-8" />\n'
             "    </head>\n"
             "    <body>\n"
             "        <p>… Your HTML content here …</p>\n"
@@ -173,7 +173,7 @@ test_data = [
             '                 width="400"\n'
             '                 height="250"\n'
             '                 alt="Beep"\n'
-            '                 vspace="20"/>\n'
+            '                 vspace="20" />\n'
             "        </div>\n"
             '        <p align="center" style="font-size:17px">\n'
             "            Bar Foo,\n"

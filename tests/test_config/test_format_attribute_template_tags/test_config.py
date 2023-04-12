@@ -34,7 +34,7 @@ def test_without_config(runner: CliRunner, tmp_file: TextIO) -> None:
     output = reformat(
         tmp_file,
         runner,
-        b'<input class="{% if this %}then something neat{% else %}that is long stuff asdf and more even{% endif %}"/>\n',
+        b'<input class="{% if this %}then something neat{% else %}that is long stuff asdf and more even{% endif %}" />\n',
     )
 
     assert output.exit_code == 0
@@ -58,7 +58,7 @@ def test_without_config(runner: CliRunner, tmp_file: TextIO) -> None:
         output.text
         == r"""<img data-src="{% if report.imgs.exists %}{{ report.imgs.first.get_absolute_url|size:"96x96" }}{% else %}{% static '/img/report_thumb_placeholder_400x300.png' %}{% endif %}"
      src="{% static '/img/loader.gif' %}"
-     alt="report image"/>
+     alt="report image" />
 """
     )
 
