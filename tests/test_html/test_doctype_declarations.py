@@ -10,12 +10,12 @@ from tests.conftest import printer
 test_data = [
     pytest.param(
         ("<!DocType htMl>"),
-        ("<!DocType htMl>\n"),
+        ("<!DOCTYPE htMl>\n"),
         id="case",
     ),
     pytest.param(
         ("<!DocType htMl  >"),
-        ("<!DocType htMl>\n"),
+        ("<!DOCTYPE htMl>\n"),
         id="case_2",
     ),
     pytest.param(

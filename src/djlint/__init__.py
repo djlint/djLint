@@ -134,6 +134,11 @@ from .src import get_src
     help='Codes to include. ex: "H014,H017"',
     show_default=False,
 )
+@click.option(
+    "--ignore-case",
+    is_flag=True,
+    help="Do not fix case on known html tags.",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -155,6 +160,7 @@ def main(
     configuration: Optional[str],
     statistics: bool,
     include: str,
+    ignore_case: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -177,6 +183,7 @@ def main(
         configuration=configuration,
         statistics=statistics,
         include=include,
+        ignore_case=ignore_case,
     )
 
     temp_file = None

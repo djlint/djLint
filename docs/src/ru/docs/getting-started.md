@@ -33,6 +33,7 @@ Options:
   --version                 Show the version and exit.
   -e, --extension TEXT      File extension to check [default: html]
   -i, --ignore TEXT         Codes to ignore. ex: "H014,H017"
+  --include TEXT            Codes to include. ex: "H014,H017"
   --reformat                Reformat the file(s).
   --check                   Check formatting on the file(s).
   --indent INTEGER          Indent spacing. [default: 4]
@@ -52,6 +53,7 @@ Options:
   --configuration PATH      Path to global configuration file in .djlintrc format
   --statistics              Count the number of occurrences of each
                             error/warning code.
+  --ignore-case             Do not fix case on known html tags.
   -h, --help                Show this message and exit.
 ```
 

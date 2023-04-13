@@ -219,6 +219,7 @@ class Config:
         configuration: Optional[str] = None,
         statistics: bool = False,
         include: Optional[str] = None,
+        ignore_case: bool = False,
     ):
         self.reformat = reformat
         self.check = check
@@ -272,6 +273,10 @@ class Config:
         self.css_config = djlint_settings.get("css")
 
         self.format_css: bool = format_css or djlint_settings.get("format_css", False)
+
+        self.ignore_case: bool = ignore_case or djlint_settings.get(
+            "ignore_case", False
+        )
 
         # ignore is based on input and also profile
         self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
