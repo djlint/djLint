@@ -184,7 +184,6 @@ def condense_html(html, config):
         ),
         func,
         html,
-        re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
 
     # put short template tags back on one line. must have leading space
