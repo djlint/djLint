@@ -66,13 +66,13 @@ test_data = [
         ),
         (
             "<!DOCTYPE html>\n"
-            '<HTML CLASS="no-js mY-ClAsS">\n'
-            "    <HEAD>\n"
-            '        <META CHARSET="utf-8">\n'
-            "        <TITLE>My tITlE</TITLE>\n"
-            '        <META NAME="description" content="My CoNtEnT">\n'
-            "    </HEAD>\n"
-            "</HTML>\n"
+            '<html CLASS="no-js mY-ClAsS">\n'
+            "    <head>\n"
+            '        <meta CHARSET="utf-8">\n'
+            "        <title>My tITlE</title>\n"
+            '        <meta NAME="description" content="My CoNtEnT">\n'
+            "    </head>\n"
+            "</html>\n"
         ),
         id="display_none",
     ),

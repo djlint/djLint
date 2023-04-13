@@ -435,5 +435,24 @@
         "value": "\"files\": [\n        \"index.html\"\n    }"
       }
     ]
+  },
+  {
+    "name": "ignore_case",
+    "tags": ["formatter"],
+    "description": {
+      "en": "Do not attempt to fix the case of known html tags.",
+      "ru": "Не пытайтесь исправить регистр известных html-тегов.",
+      "fr": "N'essayez pas de corriger la casse des balises html connues."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "[tool.djlint]\nignore-case=true\n"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"ignore_case\": true"
+      }
+    ]
   }
 ]

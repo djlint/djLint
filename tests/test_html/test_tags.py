@@ -316,15 +316,15 @@ test_data = [
             "</details>\n"
             "<!-- #6028 -->\n"
             "<pre><br></pre>\n"
-            "<PRE><HR></PRE>\n"
+            "<pre><hr></pre>\n"
             "<pre><br /></pre>\n"
-            "<PRE><HR /></PRE>\n"
+            "<pre><hr /></pre>\n"
             "<pre><br /></pre>\n"
-            "<PRE><HR /></PRE>\n"
+            "<pre><hr /></pre>\n"
             "<pre><span></span></pre>\n"
-            "<PRE><DIV></DIV></PRE>\n"
+            "<pre><div></div></pre>\n"
             "<pre><br />long long long text long long long text long long long text long long long text <br></pre>\n"
-            "<pre><br>long long long text long long long text long long long text long long long text <BR /></pre>\n"
+            "<pre><br>long long long text long long long text long long long text long long long text <br /></pre>\n"
         ),
         id="pre",
     ),
@@ -624,7 +624,7 @@ test_data = [
             "    <router-outlet></router-outlet>\n"
             '    <app-footer [input]="something"></app-footer>\n'
             "</div>\n"
-            "<x:root><SPAN>tag name in other namespace should also lower cased</SPAN></x:root>\n"
+            "<x:root><span>tag name in other namespace should also lower cased</span></x:root>\n"
             "<div>\n"
             "    Lorem ipsum dolor sit amet, consectetur adipiscing elit,\n"
             '    "<strong>seddoeiusmod</strong>".\n'
