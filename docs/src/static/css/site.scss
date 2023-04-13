@@ -485,6 +485,13 @@ a.card:hover {
 .is-transparent:hover {
   background-color: transparent !important;
 }
+.is-rounded {
+  border-radius: $radius;
+}
+
+pre[class*='language'] {
+  border-radius: $radius;
+}
 /* purgecss end ignore */
 
 .navbar-item.is-mega {
