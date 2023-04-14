@@ -523,7 +523,7 @@ class Config:
             rf"""
             (?:
                 (
-                    (?:\w|-|\.|\:|@)+ | required | checked
+                    (?:\w|-|\.|\:|@|/(?!>))+ | required | checked
                 )? # attribute name
                 (?:  [ ]*?=[ ]*? # followed by "="
                     (
@@ -560,7 +560,21 @@ class Config:
         """
         )
 
+        self.html_tag_regex = (
+            r"""
+            (</?(?:!(?!--))?) # an opening bracket (< or </ or <!), but not a comment
+            ([^\s>!]+\b) # a tag name
+            # ((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^'\">{}/\s]|/(?!>)))+)? # any attributes
+            ((?:\s*?"""
+            + self.attribute_pattern
+            + r""")+)?
+            \s*? # potentially some whitespace
+            (/?>) # a closing braket (/> or >)
+        """
+        )
+
         self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
+
         self.ignored_attributes = [
             "href",
             "action",
@@ -570,6 +584,7 @@ class Config:
             "srcset",
             "data-src",
         ]
+
         self.start_template_tags: str = (
             r"""
               if
@@ -644,6 +659,21 @@ class Config:
 
         self.ignored_linter_blocks: str = r"""
            {%-?[ ]*?raw\b[^(?:%})]*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
+        """
+
+        self.unformatted_blocks: str = r"""
+            # html comment
+            | <!--\s*djlint\:off\s*-->.*?(?=<!--\s*djlint\:on\s*-->)
+            # django/jinja/nunjucks
+            | {\#\s*djlint\:\s*off\s*\#}.*?(?={\#\s*djlint\:\s*on\s*\#})
+            | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})
+            # inline jinja comments
+            | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
+            # handlebars
+            | {{!--\s*djlint\:off\s*--}}.*?(?={{!--\s*djlint\:on\s*--}})
+            # golang
+            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
+            | ^---[\s\S]+?---
         """
 
         self.ignored_blocks: str = r"""

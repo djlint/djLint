@@ -6,7 +6,7 @@
 import regex as re
 from HtmlTagNames import html_tag_names
 
-from ..helpers import child_of_ignored_block
+from ..helpers import child_of_unformatted_block
 from ..settings import Config
 
 
@@ -16,9 +16,12 @@ def compress_html(html: str, config: Config) -> str:
     def _fix_case(tag):
         if config.ignore_case is False and tag.lower() in html_tag_names:
             return tag.lower()
+
+        if config.ignore_case is False and tag.lower() == "doctype":
+            return "DOCTYPE"
         return tag
 
-    def _flatten_attributes(match: re.Match) -> str:
+    def _clean_tag(match: re.Match) -> str:
         """Flatten multiline attributes back to one line.
 
         Skip when attribute is ignored.
@@ -28,85 +31,28 @@ def compress_html(html: str, config: Config) -> str:
         tags starting ignored blocks can have their attributes formatted,
         for example <textarea class="..." id="..."> can be formatted.
         """
-        if child_of_ignored_block(config, html, match):
+        if child_of_unformatted_block(config, html, match):
             return match.group()
 
-        close = match.group(3) if "/" not in match.group(3) else f" {match.group(3)}"
-
-        # pylint: disable=C0209
-        return "<{} {}{}".format(
-            _fix_case(match.group(1)),
-            " ".join(x.strip() for x in match.group(2).strip().splitlines()),
-            close,
+        open_braket = match.group(1)
+        tag = _fix_case(match.group(2))
+        attributes = (
+            (" " + " ".join(x.strip() for x in match.group(3).strip().splitlines()))
+            if match.group(3)
+            else ""
+        )
+        close_braket = (
+            match.group(7) if "/" not in match.group(7) else f" {match.group(7)}"
         )
 
-    # put attributes on one line
+        return f"{open_braket}{tag}{attributes}{close_braket}"
+
     html = re.sub(
         re.compile(
-            rf"<({config.indent_html_tags})\s((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{{{(?:(?!}}}}).)*}}}}|{{%(?:(?!%}}).)*%}}|[^'\">{{}}\/\s]))+)\s*?(/?>)",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+            config.html_tag_regex,
+            flags=re.MULTILINE | re.VERBOSE | re.IGNORECASE,
         ),
-        _flatten_attributes,
-        html,
-    )
-
-    def _closing_clean_space(match):
-        return f"</{_fix_case(match.group(1))}>"
-
-    # put closing tags back on one line
-    # <a ...
-    #     >
-    html = re.sub(
-        re.compile(
-            rf"</({config.indent_html_tags})\s*?>",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-        ),
-        _closing_clean_space,
-        html,
-    )
-
-    def _emtpy_clean_space(match):
-        return f"<{_fix_case(match.group(1))}>"
-
-    # remove extra space from empty tags
-    # <a >
-    #   ^
-    html = re.sub(
-        re.compile(
-            rf"<({config.indent_html_tags})\s*?>",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-        ),
-        _emtpy_clean_space,
-        html,
-    )
-
-    def _void_clean_space(match):
-        return f"<{_fix_case(match.group(1))} />"
-
-    # ensure space before closing tag
-    # <a />
-    #   ^
-    html = re.sub(
-        re.compile(
-            rf"<({config.indent_html_tags})\s*?/>",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-        ),
-        _void_clean_space,
-        html,
-    )
-
-    def _doctype_clean_space(match):
-        if config.ignore_case is False:
-            return f"<!DOCTYPE {match.group(2)}>"
-        return f"<!{match.group(1)} {match.group(2)}>"
-
-    # cleanup whitespace in doctype
-    html = re.sub(
-        re.compile(
-            r"<!(doctype)\s((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^'\">{}\/\s]))+)\s*?>",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-        ),
-        _doctype_clean_space,
+        _clean_tag,
         html,
     )
 
