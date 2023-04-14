@@ -139,6 +139,22 @@ def inside_ignored_block(config: Config, html: str, match: re.Match) -> bool:
     )
 
 
+def child_of_unformatted_block(config: Config, html: str, match: re.Match) -> bool:
+    """Do not add whitespace if the tag is in a non indent block."""
+    return any(
+        ignored_match.start(0) < match.start() and match.end(0) <= ignored_match.end()
+        for ignored_match in list(
+            re.finditer(
+                re.compile(
+                    config.unformatted_blocks,
+                    re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                ),
+                html,
+            )
+        )
+    )
+
+
 def child_of_ignored_block(config: Config, html: str, match: re.Match) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     return any(
