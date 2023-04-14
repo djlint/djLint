@@ -5,7 +5,7 @@ run::
 
     pytest tests/test_djlint/test_djlint.py --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
-    pytest tests/test_djlint/test_djlint.py::test_stdin
+    pytest tests/test_djlint/test_djlint.py::test_stdin_non_ascii
 
 or::
 

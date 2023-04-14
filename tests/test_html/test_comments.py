@@ -1,414 +1,336 @@
-"""Djlint tests for comments.
+"""Test for comments.
 
-Some tests may be from prettier.io's html test suite.
-
-Where applicable this notice may be needed:
-
-#### Prettier.io license ####
-Copyright © James Long and contributors
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-run:
-
-    pytest tests/test_html/test_comments.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_comments.py::test_html_comments_tag
-
-
+poetry run pytest tests/test_html/test_comments.py
 """
-# pylint: disable=C0116
-from pathlib import Path
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.formatter.indent import indent_html
+from tests.conftest import printer
 
-from src.djlint import main as djlint
-from tests.conftest import reformat, write_to_file
+test_data = [
+    pytest.param(
+        ("<div>\n" "    <!-- asdf--><!--\n" " multi\n" "line\n" "comment--></div>"),
+        (
+            "<div>\n"
+            "    <!-- asdf--><!--\n"
+            " multi\n"
+            "line\n"
+            "comment-->\n"
+            "</div>\n"
+        ),
+        id="comments_tag",
+    ),
+    pytest.param(
+        ("<!-- hello -->\n" "123\n"),
+        ("<!-- hello -->\n" "123\n"),
+        id="before_text",
+    ),
+    pytest.param(
+        ("<? hello ?>\n" "<!- world ->\n"),
+        ("<? hello ?>\n" "<!- world ->\n"),
+        id="bogus",
+    ),
+    pytest.param(
+        (
+            "<!DOCTYPE html>\n"
+            "<html>\n"
+            "  <body>\n"
+            "    <!--[if IE 5]>This is IE 5<br><![endif]-->\n"
+            "    <!--[if IE 6]>This is IE 6<br><![endif]-->\n"
+            "    <!--[if IE 7]>This is IE 7<br><![endif]-->\n"
+            "    <!--[if IE 8]>This is IE 8<br><![endif]-->\n"
+            "    <!--[if IE 9]>This is IE 9<br><![endif]-->\n"
+            "  </body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html lang="zh-CN"><![endif]-->\n'
+            '<html lang="zh-CN">\n'
+            "  <head></head>\n"
+            "  <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html lang="zh-CN"><div><![endif]-->\n'
+            '<html lang="zh-CN">\n'
+            "  <head></head>\n"
+            "  <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html lang="zh-CN"><div></div><![endif]-->\n'
+            '<html lang="zh-CN">\n'
+            "  <head></head>\n"
+            "  <body></body>\n"
+            "</html>\n"
+            '<body width="100%" align="center">\n'
+            "  <center  >\n"
+            '    <!--[if (gte mso 9)|(IE)]><table cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td><![endif]-->\n'
+            "    <div>  </div>\n"
+            "    <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->\n"
+            "  </center  >\n"
+            "</body>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html class="legacy-ie"><![endif]-->\n'
+            "<!--[if gte IE 9]><!--><html><!--<![endif]-->\n"
+            "  <head></head>\n"
+            "  <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html class="legacy-ie"><![endif]-->\n'
+            "<!--[if gte IE 9]><!--><html hello><!--<![endif]-->\n"
+            "  <head></head>\n"
+            "  <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html class="legacy-ie"><head><![endif]-->\n'
+            "<!--[if gte IE 9]><!--><html><head><!--<![endif]-->\n"
+            "  </head>\n"
+            "  <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html class="legacy-ie"><![endif]-->\n'
+            "<!--[if gte IE 9\n"
+            "]><!--><html><!--<![endif]-->\n"
+            "  <head></head>\n"
+            "  <body></body>\n"
+            "</html>\n"
+        ),
+        (
+            "<!DOCTYPE html>\n"
+            "<html>\n"
+            "    <body>\n"
+            "        <!--[if IE 5]>This is IE 5<br /><![endif]-->\n"
+            "        <!--[if IE 6]>This is IE 6<br /><![endif]-->\n"
+            "        <!--[if IE 7]>This is IE 7<br /><![endif]-->\n"
+            "        <!--[if IE 8]>This is IE 8<br /><![endif]-->\n"
+            "        <!--[if IE 9]>This is IE 9<br /><![endif]-->\n"
+            "    </body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html lang="zh-CN"><![endif]-->\n'
+            '<html lang="zh-CN">\n'
+            "    <head></head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html lang="zh-CN"><div><![endif]-->\n'
+            '<html lang="zh-CN">\n'
+            "    <head></head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html lang="zh-CN"><div></div><![endif]-->\n'
+            '<html lang="zh-CN">\n'
+            "    <head></head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+            '<body width="100%" align="center">\n'
+            "    <center>\n"
+            '        <!--[if (gte mso 9)|(IE)]><table cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td><![endif]-->\n'
+            "        <div></div>\n"
+            "        <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->\n"
+            "    </center>\n"
+            "</body>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html class="legacy-ie"><![endif]-->\n'
+            "<!--[if gte IE 9]><!--><html><!--<![endif]-->\n"
+            "    <head></head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html class="legacy-ie"><![endif]-->\n'
+            "<!--[if gte IE 9]><!--><html hello><!--<![endif]-->\n"
+            "    <head></head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html class="legacy-ie"><head><![endif]-->\n'
+            "<!--[if gte IE 9]><!-->\n"
+            "<html>\n"
+            "    <head>\n"
+            "        <!--<![endif]-->\n"
+            "    </head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+            "<!DOCTYPE html>\n"
+            '<!--[if lt IE 9]><html class="legacy-ie"><![endif]-->\n'
+            "<!--[if gte IE 9]><!--><html><!--<![endif]-->\n"
+            "    <head></head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+        ),
+        id="conditional",
+    ),
+    # opened https://github.com/Riverside-Healthcare/djLint/issues/247
+    pytest.param(
+        (
+            "<!DOCTYPE html>\n"
+            "<html>\n"
+            "  <body>\n"
+            "<!-- Do not display this at the moment\n"
+            '<img border="0" src="pic_trulli.jpg" alt="Trulli">\n'
+            "-->\n"
+            "  <!-- Do not display this at the moment\n"
+            '  <img border="0" src="pic_trulli.jpg" alt="Trulli">\n'
+            "  -->\n"
+            "    <!-- Do not display this at the moment\n"
+            '    <img border="0" src="pic_trulli.jpg" alt="Trulli">\n'
+            "    -->\n"
+            "  </body>\n"
+            "</html>\n"
+        ),
+        (
+            "<!DOCTYPE html>\n"
+            "<html>\n"
+            "    <body>\n"
+            "        <!-- Do not display this at the moment\n"
+            '        <img border="0" src="pic_trulli.jpg" alt="Trulli">\n'
+            "        -->\n"
+            "        <!-- Do not display this at the moment\n"
+            '        <img border="0" src="pic_trulli.jpg" alt="Trulli">\n'
+            "        -->\n"
+            "        <!-- Do not display this at the moment\n"
+            '        <img border="0" src="pic_trulli.jpg" alt="Trulli">\n'
+            "        -->\n"
+            "  </body>\n"
+            "</html>\n"
+        ),
+        id="debugging",
+    ),
+    pytest.param(
+        (
+            "<!DOCTYPE html>\n"
+            "<html>\n"
+            "    <body>\n"
+            "        <!--This is a comment-->\n"
+            "        <!-- This is a comment -->\n"
+            "        <!--  This is a comment  -->\n"
+            "        <!--   This   is   a   comment   -->\n"
+            "        <p>This is a paragraph.</p>\n"
+            "        <!-- Comments are not displayed in the browser -->\n"
+            "    </body>\n"
+            "</html>\n"
+        ),
+        (
+            "<!DOCTYPE html>\n"
+            "<html>\n"
+            "    <body>\n"
+            "        <!--This is a comment-->\n"
+            "        <!-- This is a comment -->\n"
+            "        <!--  This is a comment  -->\n"
+            "        <!--   This   is   a   comment   -->\n"
+            "        <p>This is a paragraph.</p>\n"
+            "        <!-- Comments are not displayed in the browser -->\n"
+            "    </body>\n"
+            "</html>\n"
+        ),
+        id="hidden",
+    ),
+    pytest.param(
+        (
+            "<ul><!-- 123\n"
+            "--><li>First</li><!-- 123\n"
+            "456\n"
+            "   789\n"
+            "--><li>Second</li><!--\n"
+            "    123\n"
+            "       456\n"
+            "          789\n"
+            "--><li>Second</li><!--\n"
+            "           123\n"
+            "        456\n"
+            "    789\n"
+            "--></ul>\n"
+            "<span><!--\n"
+            "--><span>a</span><!--\n"
+            "--><span>b</span><!--\n"
+            "--></span>\n"
+            "<span><!-- 1\n"
+            "--><span>a</span><!-- 2\n"
+            "--><span>b</span><!-- 3\n"
+            "--></span>\n"
+            "<span><!--\n"
+            "1 --><span>a</span><!--\n"
+            "2 --><span>b</span><!--\n"
+            "3 --></span>\n"
+            "123<!---->456\n"
+            "123<!--x-->456\n"
+            "<!-- A\n"
+            "     B -->\n"
+            "<!--\n"
+            "The null hero's name is {{nullHero.name}}\n"
+            "See console log:\n"
+            "  TypeError: Cannot read property 'name' of null in [null]\n"
+            "-->\n"
+            "<!--\n"
+            "    The null hero's name is {{nullHero.name}}\n"
+            "    See console log:\n"
+            "    TypeError: Cannot read property 'name' of null in [null]\n"
+            "-->\n"
+        ),
+        (
+            "<ul>\n"
+            "    <!-- 123\n"
+            "-->\n"
+            "    <li>First</li>\n"
+            "    <!-- 123\n"
+            "456\n"
+            "   789\n"
+            "-->\n"
+            "    <li>Second</li>\n"
+            "    <!--\n"
+            "    123\n"
+            "       456\n"
+            "          789\n"
+            "-->\n"
+            "    <li>Second</li>\n"
+            "    <!--\n"
+            "           123\n"
+            "        456\n"
+            "    789\n"
+            "--></ul>\n"
+            "<span\n"
+            "    ><!--\n"
+            "--><span>a</span\n"
+            "    ><!--\n"
+            "--><span>b</span\n"
+            "    ><!--\n"
+            "--></span>\n"
+            "<span\n"
+            "    ><!-- 1\n"
+            "--><span>a</span\n"
+            "    ><!-- 2\n"
+            "--><span>b</span\n"
+            "    ><!-- 3\n"
+            "--></span>\n"
+            "<span\n"
+            "    ><!--\n"
+            "1 --><span>a</span\n"
+            "    ><!--\n"
+            "2 --><span>b</span\n"
+            "    ><!--\n"
+            "3 --></span\n"
+            ">\n"
+            "123<!---->456 123<!--x-->456\n"
+            "<!-- A\n"
+            "     B -->\n"
+            "<!--\n"
+            "The null hero's name is {{nullHero.name}}\n"
+            "See console log:\n"
+            "    TypeError: Cannot read property 'name' of null in [null]\n"
+            "-->\n"
+            "<!--\n"
+            "    The null hero's name is {{nullHero.name}}\n"
+            "    See console log:\n"
+            "    TypeError: Cannot read property 'name' of null in [null]\n"
+            "-->\n"
+        ),
+        id="surrounding_empty_line",
+    ),
+]
 
 
-def test_html_comments_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(
-        tmp_file.name,
-        b"""<div>\n    <!-- asdf--><!--\n multi\nline\ncomment--></div>""",
-    )
-    runner.invoke(djlint, [tmp_file.name, "--reformat"])
+@pytest.mark.parametrize("source,expected", test_data)
+def test_base(source, expected, basic_config):
+    output = indent_html(source, basic_config)
 
-    assert (
-        Path(tmp_file.name).read_text(encoding="utf8")
-        == """<div>
-    <!-- asdf--><!--
- multi
-line
-comment-->
-</div>
-"""
-    )
-
-
-def test_before_text(runner: CliRunner, tmp_file: TextIO) -> None:
-
-    html_in = (
-        b"""
-<!-- hello -->
-123
-    """
-    ).strip()
-
-    html_out = """<!-- hello -->
-123
-"""
-
-    output = reformat(tmp_file, runner, html_in)
-
-    assert output.text == html_out
-
-
-def test_bogus(runner: CliRunner, tmp_file: TextIO) -> None:
-
-    html_in = (
-        b"""
-<? hello ?>
-<!- world ->
-    """
-    ).strip()
-
-    html_out = """<? hello ?>
-<!- world ->
-"""
-
-    output = reformat(tmp_file, runner, html_in)
-
-    assert output.text == html_out
-
-
-# def test_conditional(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <!DOCTYPE html>
-# <html>
-#   <body>
-#     <!--[if IE 5]>This is IE 5<br><![endif]-->
-#     <!--[if IE 6]>This is IE 6<br><![endif]-->
-#     <!--[if IE 7]>This is IE 7<br><![endif]-->
-#     <!--[if IE 8]>This is IE 8<br><![endif]-->
-#     <!--[if IE 9]>This is IE 9<br><![endif]-->
-#   </body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html lang="zh-CN"><![endif]-->
-# <html lang="zh-CN">
-#   <head></head>
-#   <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html lang="zh-CN"><div><![endif]-->
-# <html lang="zh-CN">
-#   <head></head>
-#   <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html lang="zh-CN"><div></div><![endif]-->
-# <html lang="zh-CN">
-#   <head></head>
-#   <body></body>
-# </html>
-# <body width="100%" align="center">
-#   <center  >
-#     <!--[if (gte mso 9)|(IE)]><table cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td><![endif]-->
-#     <div>  </div>
-#     <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
-#   </center  >
-# </body>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
-# <!--[if gte IE 9]><!--><html><!--<![endif]-->
-#   <head></head>
-#   <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
-# <!--[if gte IE 9]><!--><html hello><!--<![endif]-->
-#   <head></head>
-#   <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html class="legacy-ie"><head><![endif]-->
-# <!--[if gte IE 9]><!--><html><head><!--<![endif]-->
-#   </head>
-#   <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
-# <!--[if gte IE 9
-# ]><!--><html><!--<![endif]-->
-#   <head></head>
-#   <body></body>
-# </html>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <!DOCTYPE html>
-# <html>
-#     <body>
-#         <!--[if IE 5]>This is IE 5<br /><![endif]-->
-#         <!--[if IE 6]>This is IE 6<br /><![endif]-->
-#         <!--[if IE 7]>This is IE 7<br /><![endif]-->
-#         <!--[if IE 8]>This is IE 8<br /><![endif]-->
-#         <!--[if IE 9]>This is IE 9<br /><![endif]-->
-#     </body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html lang="zh-CN"><![endif]-->
-# <html lang="zh-CN">
-#     <head></head>
-#     <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html lang="zh-CN"><div><![endif]-->
-# <html lang="zh-CN">
-#     <head></head>
-#     <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html lang="zh-CN"><div></div><![endif]-->
-# <html lang="zh-CN">
-#     <head></head>
-#     <body></body>
-# </html>
-# <body width="100%" align="center">
-#     <center>
-#         <!--[if (gte mso 9)|(IE)]><table cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td><![endif]-->
-#         <div></div>
-#         <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
-#     </center>
-# </body>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
-# <!--[if gte IE 9]><!--><html><!--<![endif]-->
-#     <head></head>
-#     <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
-# <!--[if gte IE 9]><!--><html hello><!--<![endif]-->
-#     <head></head>
-#     <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html class="legacy-ie"><head><![endif]-->
-# <!--[if gte IE 9]><!-->
-# <html>
-#     <head>
-#         <!--<![endif]-->
-#     </head>
-#     <body></body>
-# </html>
-# <!DOCTYPE html>
-# <!--[if lt IE 9]><html class="legacy-ie"><![endif]-->
-# <!--[if gte IE 9]><!--><html><!--<![endif]-->
-#     <head></head>
-#     <body></body>
-# </html>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-#     assert output.text == html_out
-
-
-# def test_for_debugging(runner: CliRunner, tmp_file: TextIO) -> None:
-#     # opened https://github.com/Riverside-Healthcare/djLint/issues/247
-#     html_in = (
-#         b"""
-# <!DOCTYPE html>
-# <html>
-#   <body>
-# <!-- Do not display this at the moment
-# <img border="0" src="pic_trulli.jpg" alt="Trulli">
-# -->
-#   <!-- Do not display this at the moment
-#   <img border="0" src="pic_trulli.jpg" alt="Trulli">
-#   -->
-#     <!-- Do not display this at the moment
-#     <img border="0" src="pic_trulli.jpg" alt="Trulli">
-#     -->
-#   </body>
-# </html>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """<!DOCTYPE html>
-# <html>
-#     <body>
-#         <!-- Do not display this at the moment
-#         <img border="0" src="pic_trulli.jpg" alt="Trulli">
-#         -->
-#         <!-- Do not display this at the moment
-#         <img border="0" src="pic_trulli.jpg" alt="Trulli">
-#         -->
-#         <!-- Do not display this at the moment
-#         <img border="0" src="pic_trulli.jpg" alt="Trulli">
-#         -->
-#   </body>
-# </html>
-# """
-#     )
-
-#     output = reformat(tmp_file, runner, html_in)
-
-#     assert output.text == html_out
-
-
-def test_hidden(runner: CliRunner, tmp_file: TextIO) -> None:
-
-    html_in = (
-        b"""
-<!DOCTYPE html>
-<html>
-    <body>
-        <!--This is a comment-->
-        <!-- This is a comment -->
-        <!--  This is a comment  -->
-        <!--   This   is   a   comment   -->
-        <p>This is a paragraph.</p>
-        <!-- Comments are not displayed in the browser -->
-    </body>
-</html>
-    """
-    ).strip()
-
-    html_out = """<!DOCTYPE html>
-<html>
-    <body>
-        <!--This is a comment-->
-        <!-- This is a comment -->
-        <!--  This is a comment  -->
-        <!--   This   is   a   comment   -->
-        <p>This is a paragraph.</p>
-        <!-- Comments are not displayed in the browser -->
-    </body>
-</html>
-"""
-
-    output = reformat(tmp_file, runner, html_in)
-
-    assert output.text == html_out
-
-
-# def test_surrounding_empty_line(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <ul><!-- 123
-# --><li>First</li><!-- 123
-# 456
-#    789
-# --><li>Second</li><!--
-#     123
-#        456
-#           789
-# --><li>Second</li><!--
-#            123
-#         456
-#     789
-# --></ul>
-# <span><!--
-# --><span>a</span><!--
-# --><span>b</span><!--
-# --></span>
-# <span><!-- 1
-# --><span>a</span><!-- 2
-# --><span>b</span><!-- 3
-# --></span>
-# <span><!--
-# 1 --><span>a</span><!--
-# 2 --><span>b</span><!--
-# 3 --></span>
-# 123<!---->456
-# 123<!--x-->456
-# <!-- A
-#      B -->
-# <!--
-# The null hero's name is {{nullHero.name}}
-# See console log:
-#   TypeError: Cannot read property 'name' of null in [null]
-# -->
-# <!--
-#     The null hero's name is {{nullHero.name}}
-#     See console log:
-#     TypeError: Cannot read property 'name' of null in [null]
-# -->
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <ul>
-#     <!-- 123
-# -->
-#     <li>First</li>
-#     <!-- 123
-# 456
-#    789
-# -->
-#     <li>Second</li>
-#     <!--
-#     123
-#        456
-#           789
-# -->
-#     <li>Second</li>
-#     <!--
-#            123
-#         456
-#     789
-# --></ul>
-# <span
-#     ><!--
-# --><span>a</span
-#     ><!--
-# --><span>b</span
-#     ><!--
-# --></span>
-# <span
-#     ><!-- 1
-# --><span>a</span
-#     ><!-- 2
-# --><span>b</span
-#     ><!-- 3
-# --></span>
-# <span
-#     ><!--
-# 1 --><span>a</span
-#     ><!--
-# 2 --><span>b</span
-#     ><!--
-# 3 --></span
-# >
-# 123<!---->456 123<!--x-->456
-# <!-- A
-#      B -->
-# <!--
-# The null hero's name is {{nullHero.name}}
-# See console log:
-#     TypeError: Cannot read property 'name' of null in [null]
-# -->
-# <!--
-#     The null hero's name is {{nullHero.name}}
-#     See console log:
-#     TypeError: Cannot read property 'name' of null in [null]
-# -->
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-#     assert output.text == html_out
+    printer(expected, source, output)
+    assert expected == output

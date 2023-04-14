@@ -1,150 +1,141 @@
-"""Djlint tests for ignored content.
+"""Test ignored content.
 
-run:
-
-    pytest tests/test_html/test_ignored.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_ignored.py::test_ignored_block
-
-
+poetry run pytest tests/test_html/test_ignored.py
 """
-# pylint: disable=C0116
+import pytest
 
-from typing import TextIO
+from src.djlint.formatter.indent import indent_html
+from tests.conftest import printer
 
-from click.testing import CliRunner
-
-from tests.conftest import reformat
-
-
-def test_ignored_block(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<!-- <span> -->
-    <div><p><span></span></p></div>
-    <!-- <div> -->
-    """,
-    )
-
-    assert output.exit_code == 1
-
-    assert (
-        output.text
-        == """<!-- <span> -->
-<div>
-    <p>
-        <span></span>
-    </p>
-</div>
-<!-- <div> -->
-"""
-    )
-
+test_data = [
+    pytest.param(
+        ("<!-- <span> -->\n" "<div><p><span></span></p></div>\n" "<!-- <div> -->\n"),
+        (
+            "<!-- <span> -->\n"
+            "<div>\n"
+            "    <p>\n"
+            "        <span></span>\n"
+            "    </p>\n"
+            "</div>\n"
+            "<!-- <div> -->\n"
+        ),
+        id="ignored_1",
+    ),
     # check custom ignore tag {# djlint:off #} {# djlint:on #}
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<!-- djlint:off -->
-<div><p><span></span></p></div>
-<!-- djlint:on -->
-{# djlint:off #}
-<div><p><span></span></p></div>
-{# djlint:on #}
-{% comment %} djlint:off {% endcomment %}
-<div><p><span></span></p></div>
-{% comment %} djlint:on {% endcomment %}
-{{ /* djlint:off */ }}
-<div><p><span></span></p></div>
-{{ /* djlint:on */ }}
-{{!-- djlint:off --}}
-<div><p><span></span></p></div>
-{{!-- djlint:on --}}
-""",
-    )
+    pytest.param(
+        (
+            "<!-- djlint:off -->\n"
+            "<div><p><span></span></p></div>\n"
+            "<!-- djlint:on -->\n"
+            "{# djlint:off #}\n"
+            "<div><p><span></span></p></div>\n"
+            "{# djlint:on #}\n"
+            "{% comment %} djlint:off {% endcomment %}\n"
+            "<div><p><span></span></p></div>\n"
+            "{% comment %} djlint:on {% endcomment %}\n"
+            "{{ /* djlint:off */ }}\n"
+            "<div><p><span></span></p></div>\n"
+            "{{ /* djlint:on */ }}\n"
+            "{{!-- djlint:off --}}\n"
+            "<div><p><span></span></p></div>\n"
+            "{{!-- djlint:on --}}\n"
+        ),
+        (
+            "<!-- djlint:off -->\n"
+            "<div><p><span></span></p></div>\n"
+            "<!-- djlint:on -->\n"
+            "{# djlint:off #}\n"
+            "<div><p><span></span></p></div>\n"
+            "{# djlint:on #}\n"
+            "{% comment %} djlint:off {% endcomment %}\n"
+            "<div><p><span></span></p></div>\n"
+            "{% comment %} djlint:on {% endcomment %}\n"
+            "{{ /* djlint:off */ }}\n"
+            "<div><p><span></span></p></div>\n"
+            "{{ /* djlint:on */ }}\n"
+            "{{!-- djlint:off --}}\n"
+            "<div><p><span></span></p></div>\n"
+            "{{!-- djlint:on --}}\n"
+        ),
+        id="ignored_2",
+    ),
+    pytest.param(
+        (
+            '{# djlint: off #}<meta name="description" content="{% block meta_content %}Alle vogelkijkhutten van Nederland{% endblock %}">{# djlint:on #}'
+        ),
+        (
+            '{# djlint: off #}<meta name="description" content="{% block meta_content %}Alle vogelkijkhutten van Nederland{% endblock %}">{# djlint:on #}'
+        ),
+        id="ignored_3",
+    ),
+    pytest.param(
+        ("<script>\n" "    <div><p><span></span></p></div>\n" "</script>\n"),
+        ("<script>\n" "    <div><p><span></span></p></div>\n" "</script>\n"),
+        id="script",
+    ),
+    pytest.param(
+        (
+            "<html>\n"
+            "    <head>\n"
+            '        <link href="{% static  \'foo/bar.css\' %}" rel="stylesheet"/>\n'
+            "        <!--JS-->\n"
+            "        <script src=\"{% static  'foo/bar.js' %}\"></script>\n"
+            "    </head>\n"
+            "</html>\n"
+        ),
+        (
+            "<html>\n"
+            "    <head>\n"
+            '        <link href="{% static  \'foo/bar.css\' %}" rel="stylesheet"/>\n'
+            "        <!--JS-->\n"
+            "        <script src=\"{% static  'foo/bar.js' %}\"></script>\n"
+            "    </head>\n"
+            "</html>\n"
+        ),
+        id="inline_scripts_links",
+    ),
+    pytest.param(
+        (
+            "<style>\n"
+            "    {# override to fix text all over the place in media upload box #}\n"
+            "    .k-dropzone .k-upload-status {\n"
+            "        color: #a1a1a1;\n"
+            "    }\n"
+            "</style>\n"
+        ),
+        (
+            "<style>\n"
+            "    {# override to fix text all over the place in media upload box #}\n"
+            "    .k-dropzone .k-upload-status {\n"
+            "        color: #a1a1a1;\n"
+            "    }\n"
+            "</style>\n"
+        ),
+        id="style_tag_1",
+    ),
+    pytest.param(
+        (
+            "<style>\n"
+            " .k-dropzone .k-upload-status {\n"
+            "       color: #a1a1a1;\n"
+            "           }\n"
+            "</style>\n"
+        ),
+        (
+            "<style>\n"
+            " .k-dropzone .k-upload-status {\n"
+            "       color: #a1a1a1;\n"
+            "           }\n"
+            "</style>\n"
+        ),
+        id="style_tag_2",
+    ),
+]
 
-    assert output.exit_code == 0
 
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""{# djlint: off #}<meta name="description" content="{% block meta_content %}Alle vogelkijkhutten van Nederland{% endblock %}">{# djlint:on #}
-""",
-    )
+@pytest.mark.parametrize("source,expected", test_data)
+def test_base(source, expected, basic_config):
+    output = indent_html(source, basic_config)
 
-    assert output.exit_code == 0
-
-    # check script tag
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<script>
-    <div><p><span></span></p></div>
-</script>
-""",
-    )
-
-    assert output.exit_code == 0
-
-    assert (
-        """<script>
-    <div><p><span></span></p></div>
-</script>
-"""
-        in output.text
-    )
-
-    # check inline script includes
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<html>
-    <head>
-        <link href="{% static  'foo/bar.css' %}" rel="stylesheet"/>
-        <!--JS-->
-        <script src="{% static  'foo/bar.js' %}"></script>
-    </head>
-</html>
-""",
-    )
-    print(output.text)
-    assert output.exit_code == 0
-
-
-def test_style_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<style>
-    {# override to fix text all over the place in media upload box #}
-    .k-dropzone .k-upload-status {
-        color: #a1a1a1;
-    }
-</style>
-""",
-    )
-
-    assert output.exit_code == 0
-
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<style>
- .k-dropzone .k-upload-status {
-       color: #a1a1a1;
-           }
-</style>
-""",
-    )
-
-    assert output.exit_code == 0
-
-    # check style includes
-    output = reformat(
-        tmp_file,
-        runner,
-        b"""<link href="{% static 'common/js/foo.min.js' %}"/>""",
-    )
-
-    assert output.exit_code == 0
+    printer(expected, source, output)
+    assert expected == output

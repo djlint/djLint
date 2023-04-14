@@ -1,63 +1,45 @@
-"""Djlint tests for self closing tags.
+"""Test self closing tags.
 
-run:
-
-    pytest tests/test_html/test_selfclosing.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_selfclosing.py::test_self_closing_tags
-
-
+poetry run pytest tests/test_html/test_selfclosing.py
 """
-# pylint: disable=C0116
-from pathlib import Path
-from typing import TextIO
+import pytest
 
-from click.testing import CliRunner
+from src.djlint.formatter.indent import indent_html
+from tests.conftest import printer
 
-from src.djlint import main as djlint
-from tests.conftest import write_to_file
+test_data = [
+    pytest.param(
+        (
+            "<p><span>Hello</span> <br /><input /><link /><img /><source /><meta /> <span>World</span></p>\n"
+        ),
+        (
+            "<p>\n"
+            "    <span>Hello</span> <br /><input /><link /><img />\n"
+            "    <source />\n"
+            "    <meta /> <span>World</span>\n"
+            "</p>\n"
+        ),
+        id="self_closing",
+    ),
+    pytest.param(
+        (
+            "<p><span>Hello</span> <br><input><link><img><source><meta> <span>World</span></p>\n"
+        ),
+        (
+            "<p>\n"
+            "    <span>Hello</span> <br /><input /><link /><img />\n"
+            "    <source />\n"
+            "    <meta /> <span>World</span>\n"
+            "</p>\n"
+        ),
+        id="void_self_closing",
+    ),
+]
 
 
-def test_self_closing_tags(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(
-        tmp_file.name,
-        b"""<p><span>Hello</span> <br /><input /><link /><img /><source /><meta /> <span>World</span></p>""",
-    )
-    runner.invoke(djlint, [tmp_file.name, "--reformat"])
-    assert (
-        Path(tmp_file.name).read_text(encoding="utf8")
-        == """<p>
-    <span>Hello</span>
-    <br />
-    <input />
-    <link />
-    <img />
-    <source />
-    <meta />
-    <span>World</span>
-</p>
-"""
-    )
+@pytest.mark.parametrize("source,expected", test_data)
+def test_base(source, expected, basic_config):
+    output = indent_html(source, basic_config)
 
-
-def test_void_self_closing_tag(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(
-        tmp_file.name,
-        b"""<p><span>Hello</span> <br><input><link><img><source><meta> <span>World</span></p>""",
-    )
-    runner.invoke(djlint, [tmp_file.name, "--reformat"])
-    assert (
-        Path(tmp_file.name).read_text(encoding="utf8")
-        == """<p>
-    <span>Hello</span>
-    <br>
-    <input>
-    <link>
-    <img>
-    <source>
-    <meta>
-    <span>World</span>
-</p>
-"""
-    )
+    printer(expected, source, output)
+    assert expected == output

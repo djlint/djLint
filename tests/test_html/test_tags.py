@@ -1,927 +1,882 @@
-"""Djlint tests for tags.
+"""Test html tags.
 
-Some tests may be from prettier.io's html test suite.
-
-Where applicable this notice may be needed:
-
-#### Prettier.io license ####
-Copyright © James Long and contributors
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-run:
-
-    pytest tests/test_html/test_tags.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_tags.py::test_case_sensitive
-
+pytest tests/test_html/test_tags.py
 """
-
-# from typing import TextIO
-
-# from click.testing import CliRunner
-
-# from tests.conftest import reformat
-
-
-# def test_case_sensitive(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <CaseSensitive CaseSensitive="true">hello world</CaseSensitive>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <CaseSensitive CaseSensitive="true">hello world</CaseSensitive>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_close_at_start(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <div>
-#     aaaaaaaaaa
-#     <a
-#       href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"
-#       >bbbbbbbbbb</a
-#     >
-#     cccccccccc
-# </div>
-# <div>
-#     aaaaaaaaaa
-#     <a
-#       href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"
-#       >bbbbbbbbbb</a
-#     >cccccccccc
-# </div>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <div>
-#     aaaaaaaaaa
-#     <a
-#         href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"
-#         >bbbbbbbbbb</a
-#     >
-#     cccccccccc
-# </div>
-# <div>
-#     aaaaaaaaaa
-#     <a
-#         href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"
-#         >bbbbbbbbbb</a
-#     >cccccccccc
-# </div>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_custom_element(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <app-foo></app-foo>
-# <app-bar></app-bar>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <app-foo></app-foo>
-# <app-bar></app-bar>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_opening_at_end(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <p
-#   >Want to write us a letter? Use our<a
-#     ><b
-#       ><a>mailing address</a></b
-#     ></a
-#   >.</p
-# >
-
-# <p
-#   >Want to write us a letter? Use our<a
-#   href="contacts.html#Mailing_address"
-#     ><b
-#       ><a>mailing address</a></b
-#     ></a
-#   >.</p
-# >
-
-# <p
-#   >Want to write us a letter? Use our<a
-#   href="contacts.html#Mailing_address"
-#   href1="contacts.html#Mailing_address"
-#   href2="contacts.html#Mailing_address"
-#   href3="contacts.html#Mailing_address"
-#   href4="contacts.html#Mailing_address"
-#     ><b
-#       ><a>mailing address</a></b
-#     ></a
-#   >.</p
-# >
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <p>
-#     Want to write us a letter? Use our<a
-#         ><b><a>mailing address</a></b></a
-#     >.
-# </p>
-
-# <p>
-#     Want to write us a letter? Use our<a href="contacts.html#Mailing_address"
-#         ><b><a>mailing address</a></b></a
-#     >.
-# </p>
-
-# <p>
-#     Want to write us a letter? Use our<a
-#         href="contacts.html#Mailing_address"
-#         href1="contacts.html#Mailing_address"
-#         href2="contacts.html#Mailing_address"
-#         href3="contacts.html#Mailing_address"
-#         href4="contacts.html#Mailing_address"
-#         ><b><a>mailing address</a></b></a
-#     >.
-# </p>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_option(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <select><option>Blue</option><option>Green</option><optgroup label="Darker"><option>Dark Blue</option><option>Dark Green</option></optgroup></select>
-# <input list=colors>
-# <datalist id=colors><option>Blue</option><option>Green</option></datalist>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <select>
-#     <option>Blue</option>
-#     <option>Green</option>
-#     <optgroup label="Darker">
-#         <option>Dark Blue</option>
-#         <option>Dark Green</option>
-#     </optgroup>
-# </select>
-# <input list="colors" />
-# <datalist id="colors">
-#     <option>Blue</option>
-#     <option>Green</option>
-# </datalist>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_pre(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <pre>
-# --------------------------------------------------------------------------------
-
-
-#                                       *         *       *
-#                                      **        **      ***
-#                                      **        **       *
-#    ****    ***  ****               ********  ********                   ***  ****
-#   * ***  *  **** **** *    ***    ********  ********  ***        ***     **** **** *
-#  *   ****    **   ****    * ***      **        **      ***      * ***     **   ****
-# **    **     **          *   ***     **        **       **     *   ***    **
-# **    **     **         **    ***    **        **       **    **    ***   **
-# **    **     **         ********     **        **       **    ********    **
-# **    **     **         *******      **        **       **    *******     **
-# **    **     **         **           **        **       **    **          **
-# *******      ***        ****    *    **        **       **    ****    *   ***
-# ******        ***        *******      **        **      *** *  *******     ***
-# **                        *****                          ***    *****
-# **
-# **
-#  **
-
-# --------------------------------------------------------------------------------
-# </pre>
-# <pre>
-
-#         Text in a pre element
-
-#     is displayed in a fixed-width
-
-#    font, and it preserves
-
-#    both             spaces and
-
-#    line breaks
-
-# </pre>
-# <pre>     Foo     Bar     </pre>
-# <pre>
-#      Foo     Bar
-# </pre>
-# <pre>Foo     Bar
-# </pre>
-# <pre>
-#      Foo     Bar</pre>
-# <figure role="img" aria-labelledby="cow-caption">
-#   <pre>
-# ___________________________
-# < I'm an expert in my field. >
-# ---------------------------
-#      \\   ^__^
-#       \\  (oo)\\_______
-#          (__)\\       )\\/\\
-#              ||----w |
-#              ||     ||
-# ___________________________
-#   </pre>
-#   <figcaption id="cow-caption">
-#     A cow saying, "I'm an expert in my field." The cow is illustrated using preformatted text characters.
-#   </figcaption>
-# </figure>
-# <pre data-attr-1="foo" data-attr-2="foo" data-attr-3="foo" data-attr-4="foo" data-attr-5="foo" data-attr-6="foo">
-#      Foo     Bar
-# </pre>
-# <div>
-#   <div>
-#     <div>
-#       <div>
-#         <pre>
-#           ______
-#           STRING
-#           ______
-#         </pre>
-#       </div>
-#     </div>
-#   </div>
-# </div>
-# <pre></pre>
-
-# <pre><code #foo></code></pre>
-
-# <details>
-#   <pre><!--Comments-->
-#   </pre></details>
-
-# <details><pre>
-#   <!--Comments-->
-# </pre>
-# </details>
-
-# <!-- #6028 -->
-# <pre><br></pre>
-# <PRE><HR></PRE>
-# <pre><br/></pre>
-# <PRE><HR/></PRE>
-# <pre><br /></pre>
-# <PRE><HR /></PRE>
-# <pre><span></span></pre>
-# <PRE><DIV></DIV></PRE>
-# <pre><br/>long long long text long long long text long long long text long long long text <br></pre>
-# <pre><br>long long long text long long long text long long long text long long long text <BR/></pre>
-
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <pre>
-# --------------------------------------------------------------------------------
-
-
-#                                       *         *       *
-#                                      **        **      ***
-#                                      **        **       *
-#    ****    ***  ****               ********  ********                   ***  ****
-#   * ***  *  **** **** *    ***    ********  ********  ***        ***     **** **** *
-#  *   ****    **   ****    * ***      **        **      ***      * ***     **   ****
-# **    **     **          *   ***     **        **       **     *   ***    **
-# **    **     **         **    ***    **        **       **    **    ***   **
-# **    **     **         ********     **        **       **    ********    **
-# **    **     **         *******      **        **       **    *******     **
-# **    **     **         **           **        **       **    **          **
-# *******      ***        ****    *    **        **       **    ****    *   ***
-# ******        ***        *******      **        **      *** *  *******     ***
-# **                        *****                          ***    *****
-# **
-# **
-#  **
-
-# --------------------------------------------------------------------------------
-# </pre>
-# <pre>
-
-#         Text in a pre element
-
-#     is displayed in a fixed-width
-
-#    font, and it preserves
-
-#    both             spaces and
-
-#    line breaks
-
-# </pre>
-# <pre>     Foo     Bar     </pre>
-# <pre>
-#      Foo     Bar
-# </pre>
-# <pre>
-# Foo     Bar
-# </pre>
-# <pre>     Foo     Bar</pre>
-# <figure role="img" aria-labelledby="cow-caption">
-#     <pre>
-# ___________________________
-# < I'm an expert in my field. >
-# ---------------------------
-#      \\   ^__^
-#       \\  (oo)\\_______
-#          (__)\\       )\\/\\
-#              ||----w |
-#              ||     ||
-# ___________________________
-#     </pre>
-#     <figcaption id="cow-caption">
-#         A cow saying, "I'm an expert in my field." The cow is illustrated using
-#         preformatted text characters.
-#     </figcaption>
-# </figure>
-# <pre
-#     data-attr-1="foo"
-#     data-attr-2="foo"
-#     data-attr-3="foo"
-#     data-attr-4="foo"
-#     data-attr-5="foo"
-#     data-attr-6="foo"
-# >
-#      Foo     Bar
-# </pre>
-# <div>
-#     <div>
-#         <div>
-#             <div>
-#                 <pre>
-#           ______
-#           STRING
-#           ______
-#                 </pre>
-#             </div>
-#         </div>
-#     </div>
-# </div>
-# <pre></pre>
-
-# <pre><code #foo></code></pre>
-
-# <details>
-#     <pre><!--Comments-->
-#     </pre>
-# </details>
-
-# <details>
-#     <pre>
-#   <!--Comments-->
-#     </pre>
-# </details>
-
-# <!-- #6028 -->
-# <pre><br></pre>
-# <pre><HR></pre>
-# <pre><br/></pre>
-# <pre><HR/></pre>
-# <pre><br /></pre>
-# <pre><HR /></pre>
-# <pre><span></span></pre>
-# <pre><DIV></DIV></pre>
-# <pre><br/>long long long text long long long text long long long text long long long text <br></pre>
-# <pre><br>long long long text long long long text long long long text long long long text <BR/></pre>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_tags(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <br/>
-# <br />
-# <br  />
-# <br
-# />
-# <br attribute-a />
-# <br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute />
-# <br attribute-a="value" />
-# <br
-#   attribute-a="value"
-# />
-# <br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value" />
-# <br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value" />
-# <br attribute-a="value" attribute-b="value" attribute-c="value" attribute-d="value" attribute-e="value" attribute-f="value" />
-# <div>string</div>
-# <div>very very very very very very very very very very very very very very very very long string</div>
-# <div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute>string</div>
-# <div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value">string</div>
-# <div attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value">string</div>
-# <div attribute="value">very very very very very very very very very very very very very very very very long string</div>
-# <div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value">string</div>
-# <div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value">very very very very very very very very very very very very very very very very long string</div>
-# <video width="320" height="240" controls>
-#   <source src="movie.mp4" type="video/mp4">
-#   <source src="movie.ogg" type="video/ogg">
-#   Your browser does not support the video tag.
-# </video>
-# <div><div>string</div></div>
-# <div><div>string</div><div>string</div></div>
-# <div><div><div>string</div></div><div>string</div></div>
-# <div><div>string</div><div><div>string</div></div></div>
-# <div><div></div></div>
-# <div><div></div><div></div></div>
-# <div><div><div><div><div><div><div>string</div></div></div></div></div></div></div>
-# <div>
-#   <div>string</div>
-# </div>
-# <div>
-
-#   <div>string</div>
-
-# </div>
-# <div>
-
-#   <div>string</div>
-
-#   <div>string</div>
-
-# </div>
-# <ul
-#   >123<li
-#     class="foo"
-#     id="bar"
-#   >First</li
-#   >456<li
-#     class="baz"
-#   >Second</li
-#   >789</ul
-# >
-# <span>*<b>200</b></span>
-# <img src="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong" />123
-# <div>123<meta attr/>456</div>
-# <p>x<span a="b"></span></p>
-# <p>x<meta a></p>
-# <p>x<meta></p>
-# <span></span>
-
-# <label aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa></label> |
-# <span></span>
-# <br />
-# <button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-#   >12345678901234567890</button
-# > <br /><br />
-
-# <button bind-disabled="isUnchanged" on-click="onSave($event)"
-#   >Disabled Cancel</button
-# >
-# <br /><br />
-# <button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-#   >12345678901234567890</button
-# > <br /><br />
-
-# <button bind-disabled="isUnchanged" on-click="onSave($event)"
-#   >Disabled Cancel</button
-# >
-# <br /><br />
-# <p>"<span [innerHTML]="title"></span>" is the <i>property bound</i> title.</p>
-# <li>12345678901234567890123456789012345678901234567890123456789012345678901234567890</li>
-# <div>
-# <app-nav></app-nav>
-# <router-outlet></router-outlet>
-# <app-footer></app-footer>
-
-# <app-nav [input]="something"></app-nav>
-# <router-outlet></router-outlet>
-# <app-footer></app-footer>
-
-# <app-primary-navigation></app-primary-navigation>
-# <router-outlet></router-outlet>
-# <app-footer [input]="something"></app-footer>
-# </div>
-# <x:root><SPAN>tag name in other namespace should also lower cased</SPAN></x:root>
-# <div>
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-#   "<strong>seddoeiusmod</strong>".
-# </div>
-# <div>
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-#   <strong>seddoeiusmod</strong>.
-# </div>
-# <span>
-#   <i class="fa fa-refresh fa-spin" />
-#   <i class="fa fa-refresh fa-spin" />
-#   <i class="fa fa-refresh fa-spin" />
-# </span>
-
-# <!-- #5810 -->
-# <table><tr>
-# </tr>
-# </table><div>Should not insert empty line before this div</div>
-
-# <!-- self-closing -->
-# <span><input type="checkbox"/> </span>
-# <span><span><input type="checkbox"/></span></span>
-# <span><input type="checkbox"/></span>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <br />
-# <br />
-# <br />
-# <br />
-# <br attribute-a />
-# <br
-#     very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute
-# />
-# <br attribute-a="value" />
-# <br attribute-a="value" />
-# <br
-#     very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value"
-# />
-# <br
-#     very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value"
-# />
-# <br
-#     attribute-a="value"
-#     attribute-b="value"
-#     attribute-c="value"
-#     attribute-d="value"
-#     attribute-e="value"
-#     attribute-f="value"
-# />
-# <div>string</div>
-# <div>
-#     very very very very very very very very very very very very very very very
-#     very long string
-# </div>
-# <div
-#     very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute
-# >
-#     string
-# </div>
-# <div
-#     very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value"
-# >
-#     string
-# </div>
-# <div
-#     attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value"
-# >
-#     string
-# </div>
-# <div attribute="value">
-#     very very very very very very very very very very very very very very very
-#     very long string
-# </div>
-# <div
-#     attribute="value"
-#     attributea="value"
-#     attributeb="value"
-#     attributec="value"
-#     attributed="value"
-#     attributef="value"
-# >
-#     string
-# </div>
-# <div
-#     attribute="value"
-#     attributea="value"
-#     attributeb="value"
-#     attributec="value"
-#     attributed="value"
-#     attributef="value"
-# >
-#     very very very very very very very very very very very very very very very
-#     very long string
-# </div>
-# <video width="320" height="240" controls>
-#     <source src="movie.mp4" type="video/mp4" />
-#     <source src="movie.ogg" type="video/ogg" />
-#     Your browser does not support the video tag.
-# </video>
-# <div><div>string</div></div>
-# <div>
-#     <div>string</div>
-#     <div>string</div>
-# </div>
-# <div>
-#     <div><div>string</div></div>
-#     <div>string</div>
-# </div>
-# <div>
-#     <div>string</div>
-#     <div><div>string</div></div>
-# </div>
-# <div><div></div></div>
-# <div>
-#     <div></div>
-#     <div></div>
-# </div>
-# <div>
-#     <div>
-#         <div>
-#             <div>
-#                 <div>
-#                     <div><div>string</div></div>
-#                 </div>
-#             </div>
-#         </div>
-#     </div>
-# </div>
-# <div>
-#     <div>string</div>
-# </div>
-# <div>
-#     <div>string</div>
-# </div>
-# <div>
-#     <div>string</div>
-
-#     <div>string</div>
-# </div>
-# <ul>
-#     123
-#     <li class="foo" id="bar">First</li>
-#     456
-#     <li class="baz">Second</li>
-#     789
-# </ul>
-# <span>*<b>200</b></span>
-# <img
-#     src="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"
-# />123
-# <div>123<meta attr />456</div>
-# <p>x<span a="b"></span></p>
-# <p>x<meta a /></p>
-# <p>x<meta /></p>
-# <span></span>
-
-# <label
-#     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-# ></label>
-# |
-# <span></span>
-# <br />
-# <button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>12345678901234567890</button>
-# <br /><br />
-
-# <button bind-disabled="isUnchanged" on-click="onSave($event)">
-#     Disabled Cancel
-# </button>
-# <br /><br />
-# <button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>12345678901234567890</button>
-# <br /><br />
-
-# <button bind-disabled="isUnchanged" on-click="onSave($event)">
-#     Disabled Cancel
-# </button>
-# <br /><br />
-# <p>"<span [innerHTML]="title"></span>" is the <i>property bound</i> title.</p>
-# <li>
-#     12345678901234567890123456789012345678901234567890123456789012345678901234567890
-# </li>
-# <div>
-#     <app-nav></app-nav>
-#     <router-outlet></router-outlet>
-#     <app-footer></app-footer>
-
-#     <app-nav [input]="something"></app-nav>
-#     <router-outlet></router-outlet>
-#     <app-footer></app-footer>
-
-#     <app-primary-navigation></app-primary-navigation>
-#     <router-outlet></router-outlet>
-#     <app-footer [input]="something"></app-footer>
-# </div>
-# <x:root
-#     ><span>tag name in other namespace should also lower cased</span></x:root
-# >
-# <div>
-#     Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-#     "<strong>seddoeiusmod</strong>".
-# </div>
-# <div>
-#     Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-#     <strong>seddoeiusmod</strong>.
-# </div>
-# <span>
-#     <i class="fa fa-refresh fa-spin" />
-#     <i class="fa fa-refresh fa-spin" />
-#     <i class="fa fa-refresh fa-spin" />
-# </span>
-
-# <!-- #5810 -->
-# <table>
-#     <tr></tr>
-# </table>
-# <div>Should not insert empty line before this div</div>
-
-# <!-- self-closing -->
-# <span><input type="checkbox" /> </span>
-# <span
-#     ><span><input type="checkbox" /></span
-# ></span>
-# <span><input type="checkbox" /></span>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_tags2(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <div>before<noscript>noscript long long long long long long long long</noscript>after</div>
-
-# <div>before<details><summary>summary long long long long </summary>details</details>after</div>
-
-# <div>before<dialog open>dialog long long long long  long long long long </dialog>after</div>
-
-# <div>before<object data="horse.wav"><param name="autoplay" value="true"/><param name="autoplay" value="true"/></object>after</div>
-
-# <div>before<meter min="0" max="1" low=".4" high=".7" optimum=".5" value=".2"></meter>after</div>
-
-# <div>before<progress value=".5" max="1"></progress>after</div>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <div>
-#     before<noscript>noscript long long long long long long long long</noscript
-#     >after
-# </div>
-
-# <div>
-#     before
-#     <details>
-#         <summary>summary long long long long</summary>
-#         details
-#     </details>
-#     after
-# </div>
-
-# <div>
-#     before
-#     <dialog open>dialog long long long long long long long long</dialog>
-#     after
-# </div>
-
-# <div>
-#     before<object data="horse.wav">
-#         <param name="autoplay" value="true" />
-#         <param name="autoplay" value="true" /></object
-#     >after
-# </div>
-
-# <div>
-#     before<meter
-#         min="0"
-#         max="1"
-#         low=".4"
-#         high=".7"
-#         optimum=".5"
-#         value=".2"
-#         ></meter
-#     >after
-# </div>
-
-# <div>before<progress value=".5" max="1"></progress>after</div>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_textarea(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <div>
-#   <div>
-#     <div>
-#       <div>
-#         <div>
-#           <div>
-#             <div>
-#               <div>
-#                 <div>
-#                   <div>
-#                     <div>
-#                       <div>
-#                         <textarea rows="10" cols="45" name="text">
-#                         String
-#                         </textarea>
-#                       </div>
-#                     </div>
-#                   </div>
-#                 </div>
-#               </div>
-#             </div>
-#           </div>
-#         </div>
-#       </div>
-#     </div>
-#   </div>
-# </div>
-# <textarea></textarea>
-
-# <div><textarea>lorem ipsum</textarea></div>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <div>
-#     <div>
-#         <div>
-#             <div>
-#                 <div>
-#                     <div>
-#                         <div>
-#                             <div>
-#                                 <div>
-#                                     <div>
-#                                         <div>
-#                                             <div>
-#                                                 <textarea rows="10" cols="45" name="text">
-#                           String
-#                                                 </textarea>
-#                                             </div>
-#                                         </div>
-#                                     </div>
-#                                 </div>
-#                             </div>
-#                         </div>
-#                     </div>
-#                 </div>
-#             </div>
-#         </div>
-#     </div>
-# </div>
-# <textarea></textarea>
-
-# <div><textarea>lorem ipsum</textarea></div>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-
-
-# def test_unsupported(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <center></center>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <center></center>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
+import pytest
+
+from src.djlint.formatter.indent import indent_html
+from tests.conftest import printer
+
+test_data = [
+    pytest.param(
+        ('<CaseSensitive CaseSensitive="true">hello world</CaseSensitive>\n'),
+        ('<CaseSensitive CaseSensitive="true">hello world</CaseSensitive>\n'),
+        id="case_sensitive",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    aaaaaaaaaa\n"
+            "    <a\n"
+            '      href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'
+            "      >bbbbbbbbbb</a\n"
+            "    >\n"
+            "    cccccccccc\n"
+            "</div>\n"
+            "<div>\n"
+            "    aaaaaaaaaa\n"
+            "    <a\n"
+            '      href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'
+            "      >bbbbbbbbbb</a\n"
+            "    >cccccccccc\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    aaaaaaaaaa\n"
+            "    <a\n"
+            '        href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'
+            "        >bbbbbbbbbb</a\n"
+            "    >\n"
+            "    cccccccccc\n"
+            "</div>\n"
+            "<div>\n"
+            "    aaaaaaaaaa\n"
+            "    <a\n"
+            '        href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'
+            "        >bbbbbbbbbb</a\n"
+            "    >cccccccccc\n"
+            "</div>\n"
+        ),
+        id="close_at_start",
+    ),
+    pytest.param(
+        ("<app-foo></app-foo>\n" "<app-bar></app-bar>\n"),
+        ("<app-foo></app-foo>\n" "<app-bar></app-bar>\n"),
+        id="custom_element",
+    ),
+    pytest.param(
+        (
+            "<p\n"
+            "  >Want to write us a letter? Use our<a\n"
+            "    ><b\n"
+            "      ><a>mailing address</a></b\n"
+            "    ></a\n"
+            "  >.</p\n"
+            ">\n"
+            "\n"
+            "<p\n"
+            "  >Want to write us a letter? Use our<a\n"
+            '  href="contacts.html#Mailing_address"\n'
+            "    ><b\n"
+            "      ><a>mailing address</a></b\n"
+            "    ></a\n"
+            "  >.</p\n"
+            ">\n"
+            "\n"
+            "<p\n"
+            "  >Want to write us a letter? Use our<a\n"
+            '  href="contacts.html#Mailing_address"\n'
+            '  href1="contacts.html#Mailing_address"\n'
+            '  href2="contacts.html#Mailing_address"\n'
+            '  href3="contacts.html#Mailing_address"\n'
+            '  href4="contacts.html#Mailing_address"\n'
+            "    ><b\n"
+            "      ><a>mailing address</a></b\n"
+            "    ></a\n"
+            "  >.</p\n"
+            ">\n"
+        ),
+        (
+            "<p>\n"
+            "    Want to write us a letter? Use our<a\n"
+            "        ><b><a>mailing address</a></b></a\n"
+            "    >.\n"
+            "</p>\n"
+            "\n"
+            "<p>\n"
+            '    Want to write us a letter? Use our<a href="contacts.html#Mailing_address"\n'
+            "        ><b><a>mailing address</a></b></a\n"
+            "    >.\n"
+            "</p>\n"
+            "\n"
+            "<p>\n"
+            "    Want to write us a letter? Use our<a\n"
+            '        href="contacts.html#Mailing_address"\n'
+            '        href1="contacts.html#Mailing_address"\n'
+            '        href2="contacts.html#Mailing_address"\n'
+            '        href3="contacts.html#Mailing_address"\n'
+            '        href4="contacts.html#Mailing_address"\n'
+            "        ><b><a>mailing address</a></b></a\n"
+            "    >.\n"
+            "</p>\n"
+        ),
+        id="opening_at_end",
+    ),
+    pytest.param(
+        (
+            '<select><option>Blue</option><option>Green</option><optgroup label="Darker"><option>Dark Blue</option><option>Dark Green</option></optgroup></select>\n'
+            "<input list=colors>\n"
+            "<datalist id=colors><option>Blue</option><option>Green</option></datalist>\n"
+        ),
+        (
+            "<select>\n"
+            "    <option>Blue</option>\n"
+            "    <option>Green</option>\n"
+            '    <optgroup label="Darker">\n'
+            "        <option>Dark Blue</option>\n"
+            "        <option>Dark Green</option>\n"
+            "    </optgroup>\n"
+            "</select>\n"
+            '<input list="colors" />\n'
+            '<datalist id="colors">\n'
+            "    <option>Blue</option>\n"
+            "    <option>Green</option>\n"
+            "</datalist>\n"
+        ),
+        id="option",
+    ),
+    pytest.param(
+        (
+            "<pre>\n"
+            "--------------------------------------------------------------------------------\n"
+            "\n"
+            "\n"
+            "                                      *         *       *\n"
+            "                                     **        **      ***\n"
+            "                                     **        **       *\n"
+            "   ****    ***  ****               ********  ********                   ***  ****\n"
+            "  * ***  *  **** **** *    ***    ********  ********  ***        ***     **** **** *\n"
+            " *   ****    **   ****    * ***      **        **      ***      * ***     **   ****\n"
+            "**    **     **          *   ***     **        **       **     *   ***    **\n"
+            "**    **     **         **    ***    **        **       **    **    ***   **\n"
+            "**    **     **         ********     **        **       **    ********    **\n"
+            "**    **     **         *******      **        **       **    *******     **\n"
+            "**    **     **         **           **        **       **    **          **\n"
+            "*******      ***        ****    *    **        **       **    ****    *   ***\n"
+            "******        ***        *******      **        **      *** *  *******     ***\n"
+            "**                        *****                          ***    *****\n"
+            "**\n"
+            "**\n"
+            " **\n"
+            "\n"
+            "--------------------------------------------------------------------------------\n"
+            "</pre>\n"
+            "<pre>\n"
+            "\n"
+            "        Text in a pre element\n"
+            "\n"
+            "    is displayed in a fixed-width\n"
+            "\n"
+            "   font, and it preserves\n"
+            "\n"
+            "   both             spaces and\n"
+            "\n"
+            "   line breaks\n"
+            "\n"
+            "</pre>\n"
+            "<pre>     Foo     Bar     </pre>\n"
+            "<pre>\n"
+            "     Foo     Bar\n"
+            "</pre>\n"
+            "<pre>Foo     Bar\n"
+            "</pre>\n"
+            "<pre>\n"
+            "     Foo     Bar</pre>\n"
+            '<figure role="img" aria-labelledby="cow-caption">\n'
+            "  <pre>\n"
+            "___________________________\n"
+            "< I'm an expert in my field. >\n"
+            "---------------------------\n"
+            "     \\   ^__^\n"
+            "      \\  (oo)\\_______\n"
+            "         (__)\\       )\\/\\\n"
+            "             ||----w |\n"
+            "             ||     ||\n"
+            "___________________________\n"
+            "  </pre>\n"
+            '  <figcaption id="cow-caption">\n'
+            '    A cow saying, "I\'m an expert in my field." The cow is illustrated using preformatted text characters.\n'
+            "  </figcaption>\n"
+            "</figure>\n"
+            '<pre data-attr-1="foo" data-attr-2="foo" data-attr-3="foo" data-attr-4="foo" data-attr-5="foo" data-attr-6="foo">\n'
+            "     Foo     Bar\n"
+            "</pre>\n"
+            "<div>\n"
+            "  <div>\n"
+            "    <div>\n"
+            "      <div>\n"
+            "        <pre>\n"
+            "          ______\n"
+            "          STRING\n"
+            "          ______\n"
+            "        </pre>\n"
+            "      </div>\n"
+            "    </div>\n"
+            "  </div>\n"
+            "</div>\n"
+            "<pre></pre>\n"
+            "\n"
+            "<pre><code #foo></code></pre>\n"
+            "\n"
+            "<details>\n"
+            "  <pre><!--Comments-->\n"
+            "  </pre></details>\n"
+            "\n"
+            "<details><pre>\n"
+            "  <!--Comments-->\n"
+            "</pre>\n"
+            "</details>\n"
+            "\n"
+            "<!-- #6028 -->\n"
+            "<pre><br></pre>\n"
+            "<PRE><HR></PRE>\n"
+            "<pre><br/></pre>\n"
+            "<PRE><HR/></PRE>\n"
+            "<pre><br /></pre>\n"
+            "<PRE><HR /></PRE>\n"
+            "<pre><span></span></pre>\n"
+            "<PRE><DIV></DIV></PRE>\n"
+            "<pre><br/>long long long text long long long text long long long text long long long text <br></pre>\n"
+            "<pre><br>long long long text long long long text long long long text long long long text <BR/></pre>\n"
+        ),
+        (
+            "<pre>\n"
+            "--------------------------------------------------------------------------------\n"
+            "\n"
+            "\n"
+            "                                      *         *       *\n"
+            "                                     **        **      ***\n"
+            "                                     **        **       *\n"
+            "   ****    ***  ****               ********  ********                   ***  ****\n"
+            "  * ***  *  **** **** *    ***    ********  ********  ***        ***     **** **** *\n"
+            " *   ****    **   ****    * ***      **        **      ***      * ***     **   ****\n"
+            "**    **     **          *   ***     **        **       **     *   ***    **\n"
+            "**    **     **         **    ***    **        **       **    **    ***   **\n"
+            "**    **     **         ********     **        **       **    ********    **\n"
+            "**    **     **         *******      **        **       **    *******     **\n"
+            "**    **     **         **           **        **       **    **          **\n"
+            "*******      ***        ****    *    **        **       **    ****    *   ***\n"
+            "******        ***        *******      **        **      *** *  *******     ***\n"
+            "**                        *****                          ***    *****\n"
+            "**\n"
+            "**\n"
+            " **\n"
+            "\n"
+            "--------------------------------------------------------------------------------\n"
+            "</pre>\n"
+            "<pre>\n"
+            "\n"
+            "        Text in a pre element\n"
+            "\n"
+            "    is displayed in a fixed-width\n"
+            "\n"
+            "   font, and it preserves\n"
+            "\n"
+            "   both             spaces and\n"
+            "\n"
+            "   line breaks\n"
+            "\n"
+            "</pre>\n"
+            "<pre>     Foo     Bar     </pre>\n"
+            "<pre>\n"
+            "     Foo     Bar\n"
+            "</pre>\n"
+            "<pre>\n"
+            "Foo     Bar\n"
+            "</pre>\n"
+            "<pre>     Foo     Bar</pre>\n"
+            '<figure role="img" aria-labelledby="cow-caption">\n'
+            "    <pre>\n"
+            "___________________________\n"
+            "< I'm an expert in my field. >\n"
+            "---------------------------\n"
+            "     \\   ^__^\n"
+            "      \\  (oo)\\_______\n"
+            "         (__)\\       )\\/\\\n"
+            "             ||----w |\n"
+            "             ||     ||\n"
+            "___________________________\n"
+            "    </pre>\n"
+            '    <figcaption id="cow-caption">\n'
+            '        A cow saying, "I\'m an expert in my field." The cow is illustrated using\n'
+            "        preformatted text characters.\n"
+            "    </figcaption>\n"
+            "</figure>\n"
+            "<pre\n"
+            '    data-attr-1="foo"\n'
+            '    data-attr-2="foo"\n'
+            '    data-attr-3="foo"\n'
+            '    data-attr-4="foo"\n'
+            '    data-attr-5="foo"\n'
+            '    data-attr-6="foo"\n'
+            ">\n"
+            "     Foo     Bar\n"
+            "</pre>\n"
+            "<div>\n"
+            "    <div>\n"
+            "        <div>\n"
+            "            <div>\n"
+            "                <pre>\n"
+            "          ______\n"
+            "          STRING\n"
+            "          ______\n"
+            "                </pre>\n"
+            "            </div>\n"
+            "        </div>\n"
+            "    </div>\n"
+            "</div>\n"
+            "<pre></pre>\n"
+            "\n"
+            "<pre><code #foo></code></pre>\n"
+            "\n"
+            "<details>\n"
+            "    <pre><!--Comments-->\n"
+            "    </pre>\n"
+            "</details>\n"
+            "\n"
+            "<details>\n"
+            "    <pre>\n"
+            "  <!--Comments-->\n"
+            "    </pre>\n"
+            "</details>\n"
+            "\n"
+            "<!-- #6028 -->\n"
+            "<pre><br></pre>\n"
+            "<pre><HR></pre>\n"
+            "<pre><br/></pre>\n"
+            "<pre><HR/></pre>\n"
+            "<pre><br /></pre>\n"
+            "<pre><HR /></pre>\n"
+            "<pre><span></span></pre>\n"
+            "<pre><DIV></DIV></pre>\n"
+            "<pre><br/>long long long text long long long text long long long text long long long text <br></pre>\n"
+            "<pre><br>long long long text long long long text long long long text long long long text <BR/></pre>\n"
+        ),
+        id="pre",
+    ),
+    pytest.param(
+        (
+            "<br/>\n"
+            "<br />\n"
+            "<br  />\n"
+            "<br\n"
+            "/>\n"
+            "<br attribute-a />\n"
+            "<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute />\n"
+            '<br attribute-a="value" />\n'
+            "<br\n"
+            '  attribute-a="value"\n'
+            "/>\n"
+            '<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value" />\n'
+            '<br very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value" />\n'
+            '<br attribute-a="value" attribute-b="value" attribute-c="value" attribute-d="value" attribute-e="value" attribute-f="value" />\n'
+            "<div>string</div>\n"
+            "<div>very very very very very very very very very very very very very very very very long string</div>\n"
+            "<div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute>string</div>\n"
+            '<div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value">string</div>\n'
+            '<div attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value">string</div>\n'
+            '<div attribute="value">very very very very very very very very very very very very very very very very long string</div>\n'
+            '<div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value">string</div>\n'
+            '<div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value">very very very very very very very very very very very very very very very very long string</div>\n'
+            '<video width="320" height="240" controls>\n'
+            '  <source src="movie.mp4" type="video/mp4">\n'
+            '  <source src="movie.ogg" type="video/ogg">\n'
+            "  Your browser does not support the video tag.\n"
+            "</video>\n"
+            "<div><div>string</div></div>\n"
+            "<div><div>string</div><div>string</div></div>\n"
+            "<div><div><div>string</div></div><div>string</div></div>\n"
+            "<div><div>string</div><div><div>string</div></div></div>\n"
+            "<div><div></div></div>\n"
+            "<div><div></div><div></div></div>\n"
+            "<div><div><div><div><div><div><div>string</div></div></div></div></div></div></div>\n"
+            "<div>\n"
+            "  <div>string</div>\n"
+            "</div>\n"
+            "<div>\n"
+            "\n"
+            "  <div>string</div>\n"
+            "\n"
+            "</div>\n"
+            "<div>\n"
+            "\n"
+            "  <div>string</div>\n"
+            "\n"
+            "  <div>string</div>\n"
+            "\n"
+            "</div>\n"
+            "<ul\n"
+            "  >123<li\n"
+            '    class="foo"\n'
+            '    id="bar"\n'
+            "  >First</li\n"
+            "  >456<li\n"
+            '    class="baz"\n'
+            "  >Second</li\n"
+            "  >789</ul\n"
+            ">\n"
+            "<span>*<b>200</b></span>\n"
+            '<img src="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong" />123\n'
+            "<div>123<meta attr/>456</div>\n"
+            '<p>x<span a="b"></span></p>\n'
+            "<p>x<meta a></p>\n"
+            "<p>x<meta></p>\n"
+            "<span></span>\n"
+            "\n"
+            "<label aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa></label> |\n"
+            "<span></span>\n"
+            "<br />\n"
+            "<button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n"
+            "  >12345678901234567890</button\n"
+            "> <br /><br />\n"
+            "\n"
+            '<button bind-disabled="isUnchanged" on-click="onSave($event)"\n'
+            "  >Disabled Cancel</button\n"
+            ">\n"
+            "<br /><br />\n"
+            "<button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n"
+            "  >12345678901234567890</button\n"
+            "> <br /><br />\n"
+            "\n"
+            '<button bind-disabled="isUnchanged" on-click="onSave($event)"\n'
+            "  >Disabled Cancel</button\n"
+            ">\n"
+            "<br /><br />\n"
+            '<p>"<span [innerHTML]="title"></span>" is the <i>property bound</i> title.</p>\n'
+            "<li>12345678901234567890123456789012345678901234567890123456789012345678901234567890</li>\n"
+            "<div>\n"
+            "<app-nav></app-nav>\n"
+            "<router-outlet></router-outlet>\n"
+            "<app-footer></app-footer>\n"
+            "\n"
+            '<app-nav [input]="something"></app-nav>\n'
+            "<router-outlet></router-outlet>\n"
+            "<app-footer></app-footer>\n"
+            "\n"
+            "<app-primary-navigation></app-primary-navigation>\n"
+            "<router-outlet></router-outlet>\n"
+            '<app-footer [input]="something"></app-footer>\n'
+            "</div>\n"
+            "<x:root><SPAN>tag name in other namespace should also lower cased</SPAN></x:root>\n"
+            "<div>\n"
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit,\n"
+            '  "<strong>seddoeiusmod</strong>".\n'
+            "</div>\n"
+            "<div>\n"
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit,\n"
+            "  <strong>seddoeiusmod</strong>.\n"
+            "</div>\n"
+            "<span>\n"
+            '  <i class="fa fa-refresh fa-spin" />\n'
+            '  <i class="fa fa-refresh fa-spin" />\n'
+            '  <i class="fa fa-refresh fa-spin" />\n'
+            "</span>\n"
+            "\n"
+            "<!-- #5810 -->\n"
+            "<table><tr>\n"
+            "</tr>\n"
+            "</table><div>Should not insert empty line before this div</div>\n"
+            "\n"
+            "<!-- self-closing -->\n"
+            '<span><input type="checkbox"/> </span>\n'
+            '<span><span><input type="checkbox"/></span></span>\n'
+            '<span><input type="checkbox"/></span>\n'
+        ),
+        (
+            "<br />\n"
+            "<br />\n"
+            "<br />\n"
+            "<br />\n"
+            "<br attribute-a />\n"
+            "<br\n"
+            "    very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute\n"
+            "/>\n"
+            '<br attribute-a="value" />\n'
+            '<br attribute-a="value" />\n'
+            "<br\n"
+            '    very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value"\n'
+            "/>\n"
+            "<br\n"
+            '    very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value"\n'
+            "/>\n"
+            "<br\n"
+            '    attribute-a="value"\n'
+            '    attribute-b="value"\n'
+            '    attribute-c="value"\n'
+            '    attribute-d="value"\n'
+            '    attribute-e="value"\n'
+            '    attribute-f="value"\n'
+            "/>\n"
+            "<div>string</div>\n"
+            "<div>\n"
+            "    very very very very very very very very very very very very very very very\n"
+            "    very long string\n"
+            "</div>\n"
+            "<div\n"
+            "    very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute\n"
+            ">\n"
+            "    string\n"
+            "</div>\n"
+            "<div\n"
+            '    very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value"\n'
+            ">\n"
+            "    string\n"
+            "</div>\n"
+            "<div\n"
+            '    attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value"\n'
+            ">\n"
+            "    string\n"
+            "</div>\n"
+            '<div attribute="value">\n'
+            "    very very very very very very very very very very very very very very very\n"
+            "    very long string\n"
+            "</div>\n"
+            "<div\n"
+            '    attribute="value"\n'
+            '    attributea="value"\n'
+            '    attributeb="value"\n'
+            '    attributec="value"\n'
+            '    attributed="value"\n'
+            '    attributef="value"\n'
+            ">\n"
+            "    string\n"
+            "</div>\n"
+            "<div\n"
+            '    attribute="value"\n'
+            '    attributea="value"\n'
+            '    attributeb="value"\n'
+            '    attributec="value"\n'
+            '    attributed="value"\n'
+            '    attributef="value"\n'
+            ">\n"
+            "    very very very very very very very very very very very very very very very\n"
+            "    very long string\n"
+            "</div>\n"
+            '<video width="320" height="240" controls>\n'
+            '    <source src="movie.mp4" type="video/mp4" />\n'
+            '    <source src="movie.ogg" type="video/ogg" />\n'
+            "    Your browser does not support the video tag.\n"
+            "</video>\n"
+            "<div><div>string</div></div>\n"
+            "<div>\n"
+            "    <div>string</div>\n"
+            "    <div>string</div>\n"
+            "</div>\n"
+            "<div>\n"
+            "    <div><div>string</div></div>\n"
+            "    <div>string</div>\n"
+            "</div>\n"
+            "<div>\n"
+            "    <div>string</div>\n"
+            "    <div><div>string</div></div>\n"
+            "</div>\n"
+            "<div><div></div></div>\n"
+            "<div>\n"
+            "    <div></div>\n"
+            "    <div></div>\n"
+            "</div>\n"
+            "<div>\n"
+            "    <div>\n"
+            "        <div>\n"
+            "            <div>\n"
+            "                <div>\n"
+            "                    <div><div>string</div></div>\n"
+            "                </div>\n"
+            "            </div>\n"
+            "        </div>\n"
+            "    </div>\n"
+            "</div>\n"
+            "<div>\n"
+            "    <div>string</div>\n"
+            "</div>\n"
+            "<div>\n"
+            "    <div>string</div>\n"
+            "</div>\n"
+            "<div>\n"
+            "    <div>string</div>\n"
+            "\n"
+            "    <div>string</div>\n"
+            "</div>\n"
+            "<ul>\n"
+            "    123\n"
+            '    <li class="foo" id="bar">First</li>\n'
+            "    456\n"
+            '    <li class="baz">Second</li>\n'
+            "    789\n"
+            "</ul>\n"
+            "<span>*<b>200</b></span>\n"
+            "<img\n"
+            '    src="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'
+            "/>123\n"
+            "<div>123<meta attr />456</div>\n"
+            '<p>x<span a="b"></span></p>\n'
+            "<p>x<meta a /></p>\n"
+            "<p>x<meta /></p>\n"
+            "<span></span>\n"
+            "\n"
+            "<label\n"
+            "    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n"
+            "></label>\n"
+            "|\n"
+            "<span></span>\n"
+            "<br />\n"
+            "<button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>12345678901234567890</button>\n"
+            "<br /><br />\n"
+            "\n"
+            '<button bind-disabled="isUnchanged" on-click="onSave($event)">\n'
+            "    Disabled Cancel\n"
+            "</button>\n"
+            "<br /><br />\n"
+            "<button xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>12345678901234567890</button>\n"
+            "<br /><br />\n"
+            "\n"
+            '<button bind-disabled="isUnchanged" on-click="onSave($event)">\n'
+            "    Disabled Cancel\n"
+            "</button>\n"
+            "<br /><br />\n"
+            '<p>"<span [innerHTML]="title"></span>" is the <i>property bound</i> title.</p>\n'
+            "<li>\n"
+            "    12345678901234567890123456789012345678901234567890123456789012345678901234567890\n"
+            "</li>\n"
+            "<div>\n"
+            "    <app-nav></app-nav>\n"
+            "    <router-outlet></router-outlet>\n"
+            "    <app-footer></app-footer>\n"
+            "\n"
+            '    <app-nav [input]="something"></app-nav>\n'
+            "    <router-outlet></router-outlet>\n"
+            "    <app-footer></app-footer>\n"
+            "\n"
+            "    <app-primary-navigation></app-primary-navigation>\n"
+            "    <router-outlet></router-outlet>\n"
+            '    <app-footer [input]="something"></app-footer>\n'
+            "</div>\n"
+            "<x:root\n"
+            "    ><span>tag name in other namespace should also lower cased</span></x:root\n"
+            ">\n"
+            "<div>\n"
+            "    Lorem ipsum dolor sit amet, consectetur adipiscing elit,\n"
+            '    "<strong>seddoeiusmod</strong>".\n'
+            "</div>\n"
+            "<div>\n"
+            "    Lorem ipsum dolor sit amet, consectetur adipiscing elit,\n"
+            "    <strong>seddoeiusmod</strong>.\n"
+            "</div>\n"
+            "<span>\n"
+            '    <i class="fa fa-refresh fa-spin" />\n'
+            '    <i class="fa fa-refresh fa-spin" />\n'
+            '    <i class="fa fa-refresh fa-spin" />\n'
+            "</span>\n"
+            "\n"
+            "<!-- #5810 -->\n"
+            "<table>\n"
+            "    <tr></tr>\n"
+            "</table>\n"
+            "<div>Should not insert empty line before this div</div>\n"
+            "\n"
+            "<!-- self-closing -->\n"
+            '<span><input type="checkbox" /> </span>\n'
+            "<span\n"
+            '    ><span><input type="checkbox" /></span\n'
+            "></span>\n"
+            '<span><input type="checkbox" /></span>\n'
+        ),
+        id="tags",
+    ),
+    pytest.param(
+        (
+            "<div>before<noscript>noscript long long long long long long long long</noscript>after</div>\n"
+            "\n"
+            "<div>before<details><summary>summary long long long long </summary>details</details>after</div>\n"
+            "\n"
+            "<div>before<dialog open>dialog long long long long  long long long long </dialog>after</div>\n"
+            "\n"
+            '<div>before<object data="horse.wav"><param name="autoplay" value="true"/><param name="autoplay" value="true"/></object>after</div>\n'
+            "\n"
+            '<div>before<meter min="0" max="1" low=".4" high=".7" optimum=".5" value=".2"></meter>after</div>\n'
+            "\n"
+            '<div>before<progress value=".5" max="1"></progress>after</div>\n'
+            "    )\n"
+            "\n"
+            "    html_out = (\n"
+            "<div>\n"
+            "    before<noscript>noscript long long long long long long long long</noscript\n"
+            "    >after\n"
+            "</div>\n"
+            "\n"
+            "<div>\n"
+            "    before\n"
+            "    <details>\n"
+            "        <summary>summary long long long long</summary>\n"
+            "        details\n"
+            "    </details>\n"
+            "    after\n"
+            "</div>\n"
+            "\n"
+            "<div>\n"
+            "    before\n"
+            "    <dialog open>dialog long long long long long long long long</dialog>\n"
+            "    after\n"
+            "</div>\n"
+            "\n"
+            "<div>\n"
+            '    before<object data="horse.wav">\n'
+            '        <param name="autoplay" value="true" />\n'
+            '        <param name="autoplay" value="true" /></object\n'
+            "    >after\n"
+            "</div>\n"
+            "\n"
+            "<div>\n"
+            "    before<meter\n"
+            '        min="0"\n'
+            '        max="1"\n'
+            '        low=".4"\n'
+            '        high=".7"\n'
+            '        optimum=".5"\n'
+            '        value=".2"\n'
+            "        ></meter\n"
+            "    >after\n"
+            "</div>\n"
+            "\n"
+            '<div>before<progress value=".5" max="1"></progress>after</div>\n'
+        ),
+        (
+            "<div>before<noscript>noscript long long long long long long long long</noscript>after</div>\n"
+            "\n"
+            "<div>before<details><summary>summary long long long long </summary>details</details>after</div>\n"
+            "\n"
+            "<div>before<dialog open>dialog long long long long  long long long long </dialog>after</div>\n"
+            "\n"
+            '<div>before<object data="horse.wav"><param name="autoplay" value="true"/><param name="autoplay" value="true"/></object>after</div>\n'
+            "\n"
+            '<div>before<meter min="0" max="1" low=".4" high=".7" optimum=".5" value=".2"></meter>after</div>\n'
+            "\n"
+            '<div>before<progress value=".5" max="1"></progress>after</div>\n'
+            "    )\n"
+            "\n"
+            "    html_out = (\n"
+            "<div>\n"
+            "    before<noscript>noscript long long long long long long long long</noscript\n"
+            "    >after\n"
+            "</div>\n"
+            "\n"
+            "<div>\n"
+            "    before\n"
+            "    <details>\n"
+            "        <summary>summary long long long long</summary>\n"
+            "        details\n"
+            "    </details>\n"
+            "    after\n"
+            "</div>\n"
+            "\n"
+            "<div>\n"
+            "    before\n"
+            "    <dialog open>dialog long long long long long long long long</dialog>\n"
+            "    after\n"
+            "</div>\n"
+            "\n"
+            "<div>\n"
+            '    before<object data="horse.wav">\n'
+            '        <param name="autoplay" value="true" />\n'
+            '        <param name="autoplay" value="true" /></object\n'
+            "    >after\n"
+            "</div>\n"
+            "\n"
+            "<div>\n"
+            "    before<meter\n"
+            '        min="0"\n'
+            '        max="1"\n'
+            '        low=".4"\n'
+            '        high=".7"\n'
+            '        optimum=".5"\n'
+            '        value=".2"\n'
+            "        ></meter\n"
+            "    >after\n"
+            "</div>\n"
+            "\n"
+            '<div>before<progress value=".5" max="1"></progress>after</div>\n'
+        ),
+        id="tags_2",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "  <div>\n"
+            "    <div>\n"
+            "      <div>\n"
+            "        <div>\n"
+            "          <div>\n"
+            "            <div>\n"
+            "              <div>\n"
+            "                <div>\n"
+            "                  <div>\n"
+            "                    <div>\n"
+            "                      <div>\n"
+            '                        <textarea rows="10" cols="45" name="text">\n'
+            "                        String\n"
+            "                        </textarea>\n"
+            "                      </div>\n"
+            "                    </div>\n"
+            "                  </div>\n"
+            "                </div>\n"
+            "              </div>\n"
+            "            </div>\n"
+            "          </div>\n"
+            "        </div>\n"
+            "      </div>\n"
+            "    </div>\n"
+            "  </div>\n"
+            "</div>\n"
+            "<textarea></textarea>\n"
+            "\n"
+            "<div><textarea>lorem ipsum</textarea></div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <div>\n"
+            "        <div>\n"
+            "            <div>\n"
+            "                <div>\n"
+            "                    <div>\n"
+            "                        <div>\n"
+            "                            <div>\n"
+            "                                <div>\n"
+            "                                    <div>\n"
+            "                                        <div>\n"
+            "                                            <div>\n"
+            '                                                <textarea rows="10" cols="45" name="text">\n'
+            "                          String\n"
+            "                                                </textarea>\n"
+            "                                            </div>\n"
+            "                                        </div>\n"
+            "                                    </div>\n"
+            "                                </div>\n"
+            "                            </div>\n"
+            "                        </div>\n"
+            "                    </div>\n"
+            "                </div>\n"
+            "            </div>\n"
+            "        </div>\n"
+            "    </div>\n"
+            "</div>\n"
+            "<textarea></textarea>\n"
+            "\n"
+            "<div><textarea>lorem ipsum</textarea></div>\n"
+        ),
+        id="textarea",
+    ),
+    pytest.param(
+        ("<center></center>\n"),
+        ("<center></center>\n"),
+        id="unsupported",
+    ),
+]
+
+
+@pytest.mark.parametrize("source,expected", test_data)
+def test_base(source, expected, basic_config):
+    output = indent_html(source, basic_config)
+
+    printer(expected, source, output)
+    assert expected == output

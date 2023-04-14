@@ -329,7 +329,8 @@ class Config:
                     + f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}"
                 )
                 indent = default_indent
-        self.indent: str = indent * " "
+        self.indent: int = indent
+        self.indent_type = " "
 
         default_exclude: str = r"""
             \.venv
@@ -474,7 +475,7 @@ class Config:
         self.break_before = r"(?<!\n[ ]*?)"
 
         # if lines are longer than x
-        self.max_line_length = 120
+        self.max_line_length = 80
 
         try:
             self.max_line_length = int(

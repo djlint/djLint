@@ -39,6 +39,10 @@ html-void-elements = "^0.1.0"
 html-tag-names = "^0.1.2"
 jsbeautifier = "^1.14.4"
 cssbeautifier = "^1.14.4"
+html-template-parser = "^1.6.0"
+html-element-attributes = "^0.1.2"
+html-styles = "^0.1.2"
+
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

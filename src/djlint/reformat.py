@@ -19,26 +19,20 @@ def reformat_file(config: Config, this_file: Path) -> dict:
     """Reformat html file."""
     rawcode = this_file.read_text(encoding="utf8")
 
-    compressed = compress_html(rawcode, config)
+    start = time.time()
+    indented = indent_html(rawcode, config)
 
-    expanded = expand_html(compressed, config)
+    elapsed = round((time.time() - start) * 1000, 2)
+    # indented = condense_html(indented, config)
 
-    condensed = condense_html(expanded, config)
-
-    beautified_code = indent_html(condensed, config)
-
-    if config.format_css:
-        beautified_code = format_css(beautified_code, config)
-
-    if config.format_js:
-        beautified_code = format_js(beautified_code, config)
+    beautified_code = indented  # + "\n"
 
     if config.check is not True:
         # update the file
         this_file.write_text(beautified_code, encoding="utf8")
 
     out = {
-        str(this_file): list(
+        f"{this_file} ({elapsed}ms)": list(
             difflib.unified_diff(rawcode.splitlines(), beautified_code.splitlines())
         )
     }

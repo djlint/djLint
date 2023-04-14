@@ -2,7 +2,7 @@
 
 run::
 
-   pytest tests/test_django.py --cov=src/djlint --cov-branch \
+   pytest tests/test_django/test_asset.py --cov=src/djlint --cov-branch \
           --cov-report xml:coverage.xml --cov-report term-missing
 
 for a single test, run::

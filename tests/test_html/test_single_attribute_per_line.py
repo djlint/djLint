@@ -1,138 +1,119 @@
-"""Djlint tests for single attribute per line.
+"""Test single attribute per line.
 
-Some tests may be from prettier.io's html test suite.
-
-Where applicable this notice may be needed:
-
-#### Prettier.io license ####
-Copyright © James Long and contributors
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-run:
-
-    pytest tests/test_html/test_single_attribute_per_line.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_single_attribute_per_line.py::test_single_attribute_per_line
+pytest tests/test_html/test_single_attribute_per_line.py
 
 """
+import pytest
 
-# from typing import TextIO
+from src.djlint.formatter.indent import indent_html
+from tests.conftest import printer
 
-# from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        (
+            '<div data-a="1">\n'
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<div data-a="1" data-b="2" data-c="3">\n'
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<div data-a="Lorem ipsum dolor sit amet" data-b="Lorem ipsum dolor sit amet" data-c="Lorem ipsum dolor sit amet">\n'
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<div data-long-attribute-a="1" data-long-attribute-b="2" data-long-attribute-c="3">\n'
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<img src="/images/foo.png" />\n'
+            '<img src="/images/foo.png" alt="bar" />\n'
+            '<img src="/images/foo.png" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />\n'
+        ),
+        (
+            '<div data-a="1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>\n'
+            "<div\n"
+            '    data-a="1"\n'
+            '    data-b="2"\n'
+            '    data-c="3"\n'
+            ">\n"
+            "    Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            "<div\n"
+            '    data-a="Lorem ipsum dolor sit amet"\n'
+            '    data-b="Lorem ipsum dolor sit amet"\n'
+            '    data-c="Lorem ipsum dolor sit amet"\n'
+            ">\n"
+            "    Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            "<div\n"
+            '    data-long-attribute-a="1"\n'
+            '    data-long-attribute-b="2"\n'
+            '    data-long-attribute-c="3"\n'
+            ">\n"
+            "    Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<img src="/images/foo.png" />\n'
+            "<img\n"
+            '    src="/images/foo.png"\n'
+            '    alt="bar"\n'
+            "/>\n"
+            "<img\n"
+            '    src="/images/foo.png"\n'
+            '    alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."\n'
+            "/>\n"
+        ),
+        id="single_attrib_per_line_enabled",
+    ),
+    pytest.param(
+        (
+            '<div data-a="1">\n'
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<div data-a="1" data-b="2" data-c="3">\n'
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<div data-a="Lorem ipsum dolor sit amet" data-b="Lorem ipsum dolor sit amet" data-c="Lorem ipsum dolor sit amet">\n'
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<div data-long-attribute-a="1" data-long-attribute-b="2" data-long-attribute-c="3">\n'
+            "  Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<img src="/images/foo.png" />\n'
+            '<img src="/images/foo.png" alt="bar" />\n'
+            '<img src="/images/foo.png" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />\n'
+        ),
+        (
+            '<div data-a="1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>\n'
+            '<div data-a="1" data-b="2" data-c="3">\n'
+            "    Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            "<div\n"
+            '    data-a="Lorem ipsum dolor sit amet"\n'
+            '    data-b="Lorem ipsum dolor sit amet"\n'
+            '    data-c="Lorem ipsum dolor sit amet"\n'
+            ">\n"
+            "    Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            "<div\n"
+            '    data-long-attribute-a="1"\n'
+            '    data-long-attribute-b="2"\n'
+            '    data-long-attribute-c="3"\n'
+            ">\n"
+            "    Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "</div>\n"
+            '<img src="/images/foo.png" />\n'
+            '<img src="/images/foo.png" alt="bar" />\n'
+            "<img\n"
+            '    src="/images/foo.png"\n'
+            '    alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."\n'
+            "/>\n"
+        ),
+        id="single_attrib_per_line_disabled",
+    ),
+]
 
-# from tests.conftest import reformat
 
+@pytest.mark.parametrize("source,expected", test_data)
+def test_base(source, expected, basic_config):
+    output = indent_html(source, basic_config)
 
-# def test_single_attribute_per_line(runner: CliRunner, tmp_file: TextIO) -> None:
-#     # single-attribute-per-line: true
-#     html_in = (
-#         b"""
-# <div data-a="1">
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div data-a="1" data-b="2" data-c="3">
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div data-a="Lorem ipsum dolor sit amet" data-b="Lorem ipsum dolor sit amet" data-c="Lorem ipsum dolor sit amet">
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div data-long-attribute-a="1" data-long-attribute-b="2" data-long-attribute-c="3">
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <img src="/images/foo.png" />
-# <img src="/images/foo.png" alt="bar" />
-# <img src="/images/foo.png" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <div data-a="1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-# <div
-#     data-a="1"
-#     data-b="2"
-#     data-c="3"
-# >
-#     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div
-#     data-a="Lorem ipsum dolor sit amet"
-#     data-b="Lorem ipsum dolor sit amet"
-#     data-c="Lorem ipsum dolor sit amet"
-# >
-#     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div
-#     data-long-attribute-a="1"
-#     data-long-attribute-b="2"
-#     data-long-attribute-c="3"
-# >
-#     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <img src="/images/foo.png" />
-# <img
-#     src="/images/foo.png"
-#     alt="bar"
-# />
-# <img
-#     src="/images/foo.png"
-#     alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-# />
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-#     # single-attribute-per-line: false
-#     html_in = (
-#         b"""
-# <div data-a="1">
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div data-a="1" data-b="2" data-c="3">
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div data-a="Lorem ipsum dolor sit amet" data-b="Lorem ipsum dolor sit amet" data-c="Lorem ipsum dolor sit amet">
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div data-long-attribute-a="1" data-long-attribute-b="2" data-long-attribute-c="3">
-#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <img src="/images/foo.png" />
-# <img src="/images/foo.png" alt="bar" />
-# <img src="/images/foo.png" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <div data-a="1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-# <div data-a="1" data-b="2" data-c="3">
-#     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div
-#     data-a="Lorem ipsum dolor sit amet"
-#     data-b="Lorem ipsum dolor sit amet"
-#     data-c="Lorem ipsum dolor sit amet"
-# >
-#     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <div
-#     data-long-attribute-a="1"
-#     data-long-attribute-b="2"
-#     data-long-attribute-c="3"
-# >
-#     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-# </div>
-# <img src="/images/foo.png" />
-# <img src="/images/foo.png" alt="bar" />
-# <img
-#     src="/images/foo.png"
-#     alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-# />
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
+    printer(expected, source, output)
+    assert expected == output

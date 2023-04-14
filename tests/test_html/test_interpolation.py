@@ -1,66 +1,49 @@
-"""Djlint tests for interpolation.
+"""Test interpolation.
 
-Some tests may be from prettier.io's html test suite.
-
-Where applicable this notice may be needed:
-
-#### Prettier.io license ####
-Copyright © James Long and contributors
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-run:
-
-    pytest tests/test_html/test_interpolation.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_html/test_interpolation.py::test_example
-
+poetry run pytest tests/test_html/test_interpolation.py
 """
+import pytest
 
-# from typing import TextIO
+from src.djlint.formatter.indent import indent_html
+from tests.conftest import printer
 
-# from click.testing import CliRunner
+test_data = [
+    pytest.param(
+        (
+            "<!--interpolations in html should be treated as normal text--><div>Fuga magnam facilis. Voluptatem quaerat porro.{{\n"
+            "x => {\n"
+            "    const hello = 'world'\n"
+            "    return hello;\n"
+            "}\n"
+            "}} Magni consectetur in et molestias neque esse voluptatibus voluptas. {{\n"
+            "\n"
+            "\n"
+            "    some_variable\n"
+            "}} Eum quia nihil nulla esse. Dolorem asperiores vero est error {{\n"
+            "                    preserve\n"
+            "                    invalid\n"
+            "\n"
+            "                    interpolation\n"
+            "}} reprehenderit voluptates minus {{console.log(  short_interpolation )}} nemo.</div>\n"
+        ),
+        (
+            "<!--interpolations in html should be treated as normal text-->\n"
+            "<div>\n"
+            "    Fuga magnam facilis. Voluptatem quaerat porro.{{ x => { const hello = 'world'\n"
+            "    return hello; } }} Magni consectetur in et molestias neque esse voluptatibus\n"
+            "    voluptas. {{ some_variable }} Eum quia nihil nulla esse. Dolorem asperiores\n"
+            "    vero est error {{ preserve invalid interpolation }} reprehenderit voluptates\n"
+            "    minus {{console.log( short_interpolation )}} nemo.\n"
+            "</div>\n"
+        ),
+        id="interpolation_in_text",
+    ),
+]
 
-# from tests.conftest import reformat
 
+@pytest.mark.parametrize("source,expected", test_data)
+def test_base(source, expected, basic_config):
+    output = indent_html(source, basic_config)
 
-# def test_example(runner: CliRunner, tmp_file: TextIO) -> None:
-
-#     html_in = (
-#         b"""
-# <!--interpolations in html should be treated as normal text--><div>Fuga magnam facilis. Voluptatem quaerat porro.{{
-# x => {
-#     const hello = 'world'
-#     return hello;
-# }
-# }} Magni consectetur in et molestias neque esse voluptatibus voluptas. {{
-
-
-#     some_variable
-# }} Eum quia nihil nulla esse. Dolorem asperiores vero est error {{
-#                     preserve
-#                     invalid
-
-#                     interpolation
-# }} reprehenderit voluptates minus {{console.log(  short_interpolation )}} nemo.</div>
-#     """
-#     ).strip()
-
-#     html_out = (
-#         """
-# <!--interpolations in html should be treated as normal text-->
-# <div>
-#     Fuga magnam facilis. Voluptatem quaerat porro.{{ x => { const hello = 'world'
-#     return hello; } }} Magni consectetur in et molestias neque esse voluptatibus
-#     voluptas. {{ some_variable }} Eum quia nihil nulla esse. Dolorem asperiores
-#     vero est error {{ preserve invalid interpolation }} reprehenderit voluptates
-#     minus {{console.log( short_interpolation )}} nemo.
-# </div>
-#         """
-#     ).strip()
-
-#     output = reformat(tmp_file, runner, html_in)
-#     print(output.text)
-#     assert output.exit_code == 0
+    printer(expected, source, output)
+    assert expected == output
