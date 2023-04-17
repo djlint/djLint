@@ -90,7 +90,7 @@ test_data = [
         ("---\n" "---\n" "\n" "<div>---</div>\n"),
         id="blank_lines",
     ),
-     pytest.param(
+    pytest.param(
         ("---\n" "---\n\n\n\n" "{{ this }}\n"),
         ("---\n" "---\n" "\n" "{{ this }}\n"),
         id="blank_lines_2",
