@@ -86,6 +86,16 @@ test_data = [
         id="empty_2",
     ),
     pytest.param(
+        ("---\n" "---\n\n\n" "<div>\n" "---\n" "</div>\n"),
+        ("---\n" "---\n" "\n" "<div>---</div>\n"),
+        id="blank_lines",
+    ),
+    pytest.param(
+        ("---\n" "---\n\n\n\n" "{{ this }}\n"),
+        ("---\n" "---\n" "\n" "{{ this }}\n"),
+        id="blank_lines_2",
+    ),
+    pytest.param(
         (
             "---\n"
             "layout: foo\n"
