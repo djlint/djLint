@@ -118,6 +118,48 @@ test_data = [
         id="blocktrans_indent_2",
     ),
     pytest.param(
+        (
+            "<tr>\n"
+            "    {% if status.stage.value == 0 %}\n"
+            "        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}\n"
+            "          {% elif status.stage.value == 2 %}\n"
+            "        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned {% endblocktranslate %}\n"
+            "    {% endif %}\n"
+            "</tr>\n"
+        ),
+        (
+            "<tr>\n"
+            "    {% if status.stage.value == 0 %}\n"
+            "        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}\n"
+            "    {% elif status.stage.value == 2 %}\n"
+            "        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned {% endblocktranslate %}\n"
+            "    {% endif %}\n"
+            "</tr>\n"
+        ),
+        id="blocktrans_indent_if",
+    ),
+    pytest.param(
+        (
+            "<tr>\n"
+            "    {% if status.stage.value == 0 %}\n"
+            "        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned {% endblocktranslate %}\n"
+            "          {% elif status.stage.value == 2 %}\n"
+            "        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}\n"
+            "    {% endif %}\n"
+            "</tr>\n"
+        ),
+        (
+            "<tr>\n"
+            "    {% if status.stage.value == 0 %}\n"
+            "        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned {% endblocktranslate %}\n"
+            "    {% elif status.stage.value == 2 %}\n"
+            "        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}\n"
+            "    {% endif %}\n"
+            "</tr>\n"
+        ),
+        id="blocktrans_indent_if_2",
+    ),
+    pytest.param(
         ("<p>{% trans 'Please do <b>Blah</b>.' %}</p>\n"),
         ("<p>\n" "    {% trans 'Please do <b>Blah</b>.' %}\n" "</p>\n"),
         id="blocktrans_indent_3",

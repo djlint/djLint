@@ -692,12 +692,16 @@ class Config:
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
             | <!--.*?-->
             | <\?php.*?\?>
-            # either with a space before the close block > then we can format the endblock
-            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktranslate[ ]*?%})
-            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktrans[ ]*?%})
-            # or with no space before it, and then we cannot format it.
-            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktrans[ ]*?%}
+            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+            # this fancy regex breaks when there are two back to back statements..
+            # tests pass without it.
+            # either with no space before it, and then we cannot format it.
+            # | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktranslate[ ]*?%}
+            # | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktrans[ ]*?%}
+            # or with a space before the close block > then we can format the endblock
+            # | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktranslate[ ]*?%})
+            # | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktrans[ ]*?%})
             | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
         """
