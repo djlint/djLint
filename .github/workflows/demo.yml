@@ -9,7 +9,7 @@ jobs:
   demo:
     strategy:
       matrix:
-        tool: [django, wagtail, pallets, apostrophe, bolt]
+        tool: [django, wagtail, pallets, apostrophe, bolt, sylius]
         include:
         - tool: django
           repo: https://github.com/django/django
