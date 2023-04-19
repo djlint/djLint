@@ -33,8 +33,7 @@ test_data = [
             "</html>\n"
         ),
         (
-            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"\n'
-            '"http://www.w3.org/TR/html4/frameset.dtd">\n'
+            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">\n'
             "<html>\n"
             "    <head>\n"
             "        <title>An HTML standard template</title>\n"
@@ -62,8 +61,7 @@ test_data = [
             "</html>\n"
         ),
         (
-            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"\n'
-            '"http://www.w3.org/TR/html4/strict.dtd">\n'
+            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">\n'
             "<html>\n"
             "    <head>\n"
             "        <title>An HTML standard template</title>\n"
@@ -91,8 +89,7 @@ test_data = [
             "</html>\n"
         ),
         (
-            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"\n'
-            '"http://www.w3.org/TR/html4/loose.dtd">\n'
+            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n'
             "<html>\n"
             "    <head>\n"
             "        <title>An HTML standard template</title>\n"

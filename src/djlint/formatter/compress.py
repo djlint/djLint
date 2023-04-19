@@ -36,13 +36,14 @@ def compress_html(html: str, config: Config) -> str:
 
         open_braket = match.group(1)
         tag = _fix_case(match.group(2))
+
         attributes = (
             (" " + " ".join(x.strip() for x in match.group(3).strip().splitlines()))
             if match.group(3)
             else ""
         )
         close_braket = (
-            match.group(7) if "/" not in match.group(7) else f" {match.group(7)}"
+            match.group(4) if "/" not in match.group(4) else f" {match.group(4)}"
         )
 
         return f"{open_braket}{tag}{attributes}{close_braket}"
