@@ -560,18 +560,13 @@ class Config:
         """
         )
 
-        self.html_tag_regex = (
-            r"""
+        self.html_tag_regex = r"""
             (</?(?:!(?!--))?) # an opening bracket (< or </ or <!), but not a comment
-            ([^\s>!]+\b) # a tag name
-            # ((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^'\">{}/\s]|/(?!>)))+)? # any attributes
-            ((?:\s*?"""
-            + self.attribute_pattern
-            + r""")+)?
+            ([^\s>!\[]+\b) # a tag name
+            ((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^'\">{}/\s]|/(?!>)))+)? # any attributes
             \s*? # potentially some whitespace
             (/?>) # a closing braket (/> or >)
         """
-        )
 
         self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
 
