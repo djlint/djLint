@@ -26,6 +26,9 @@ jobs:
           - tool: bolt
             repo: https://github.com/bolt/core
             profile: nunjucks
+          - tool: sylius
+            repo: https://github.com/Sylius/Sylius
+            profile: nunjucks
     name: format
     runs-on: ubuntu-latest
     steps:
