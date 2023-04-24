@@ -78,9 +78,9 @@
   {
     "name": "ignore_blocks",
     "description": {
-      "en": "Use to skip formatting on template tags. Tags themselves may be formatted, but the children will be treated as siblings, not children.",
-      "ru": "Используется для пропуска форматирования тегов шаблона. Сами теги могут быть отформатированы, но дочерние теги будут рассматриваться как братья и сестры, а не как дети.",
-      "fr": "Permet d'ignorer le formatage des balises de modèle. Les balises elles-mêmes peuvent être formatées, mais les enfants seront traités comme des frères et sœurs, et non comme des enfants."
+      "en": "Used to skip indentation on children of template tags. Children will be treated as siblings and indented accordingly.",
+      "ru": "Используется для пропуска отступов для дочерних тегов шаблона. Дочерние теги будут рассматриваться как родные братья и сестры и будут иметь соответствующий отступ.",
+      "fr": "Permet d'ignorer l'indentation des enfants des balises de modèle. Les enfants seront traités comme des frères et sœurs et indentés en conséquence."
     },
     "tags": ["formatter"],
     "usage": [
