@@ -5,6 +5,7 @@ source_django
 report.xml
 _site
 .ruff_cache
+docs/package-lock.json
 # Created by https://www.toptal.com/developers/gitignore/api/macos,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,python
 
