@@ -76,6 +76,29 @@
     ]
   },
   {
+    "name": "ignore_blocks",
+    "description": {
+      "en": "Used to skip indentation on children of template tags. Children will be treated as siblings and indented accordingly.",
+      "ru": "Используется для пропуска отступов для дочерних тегов шаблона. Дочерние теги будут рассматриваться как родные братья и сестры и будут иметь соответствующий отступ.",
+      "fr": "Permet d'ignorer l'indentation des enfants des balises de modèle. Les enfants seront traités comme des frères et sœurs et indentés en conséquence."
+    },
+    "tags": ["formatter"],
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "ignore_blocks=\"raw,example\""
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"ignore_blocks\": \"raw,example\""
+      },
+      {
+        "name": "cli",
+        "value": "--ignore-blocks \"raw,example\""
+      }
+    ]
+  },
+  {
     "name": "custom_html",
     "description": {
       "en": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\w+>`",

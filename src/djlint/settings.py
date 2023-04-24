@@ -188,6 +188,16 @@ def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
     return None
 
 
+def build_ignore_blocks(ignore_blocks: Union[str, None]) -> Optional[str]:
+    """Build regex string for template blocks to not format."""
+    if ignore_blocks:
+        # need to also do "end<tag>"
+        open_tags = [x.strip() + r"\b" for x in ignore_blocks.split(",")]
+        close_tags = ["end" + x.strip() + r"\b" for x in ignore_blocks.split(",")]
+        return "|".join(list(set(open_tags + close_tags)))
+    return None
+
+
 def build_custom_html(custom_html: Union[str, None]) -> Optional[str]:
     """Build regex string for custom HTML blocks."""
     if custom_html:
@@ -220,6 +230,8 @@ class Config:
         statistics: bool = False,
         include: Optional[str] = None,
         ignore_case: bool = False,
+        ignore_blocks: str = "",
+        custom_blocks: str = "",
     ):
         self.reformat = reformat
         self.check = check
@@ -247,7 +259,8 @@ class Config:
         )
 
         self.custom_blocks: str = str(
-            build_custom_blocks(djlint_settings.get("custom_blocks")) or ""
+            build_custom_blocks(custom_blocks or djlint_settings.get("custom_blocks"))
+            or ""
         )
 
         self.custom_html: str = str(
@@ -261,6 +274,9 @@ class Config:
         self.preserve_leading_space: bool = (
             preserve_leading_space
             or djlint_settings.get("preserve_leading_space", False)
+        )
+        self.ignore_blocks: Optional[str] = build_ignore_blocks(
+            ignore_blocks or djlint_settings.get("ignore_blocks", "")
         )
 
         self.preserve_blank_lines: bool = preserve_blank_lines or djlint_settings.get(
@@ -439,10 +455,10 @@ class Config:
         self.indent_html_tags: str = "|".join(html_tag_names) + self.custom_html
 
         self.indent_template_tags: str = (
-            r"""  if
+            (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
+            + r""" (?:if
                 | for
                 | block(?!trans|translate)
-            #    | blocktrans(?:late)?[ ]+?trimmed
                 | spaceless
                 | compress
                 | addto
@@ -458,6 +474,7 @@ class Config:
                 | raw
             """
             + self.custom_blocks
+            + r")"
         )
 
         self.template_indent: str = (
@@ -581,8 +598,9 @@ class Config:
         ]
 
         self.start_template_tags: str = (
-            r"""
-              if
+            (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
+            + r"""
+              (?:if
             | for
             | block(?!trans)
             | spaceless
@@ -602,13 +620,14 @@ class Config:
             | raw
             """
             + self.custom_blocks
-            + r"""
+            + r""")
         """
         )
 
         self.break_template_tags: str = (
-            r"""
-              if
+            (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
+            + r"""
+              (?:if
             | endif
             | for
             | endfor
@@ -645,7 +664,7 @@ class Config:
             | image
             """
             + self.custom_blocks
-            + r"""
+            + r""")
         """
         )
         self.template_blocks: str = r"""

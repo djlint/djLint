@@ -54,6 +54,7 @@ Options:
   --statistics              Count the number of occurrences of each
                             error/warning code.
   --ignore-case             Do not fix case on known html tags.
+  --ignore-blocks           Comma list of template blocks to not indent.
   -h, --help                Show this message and exit.
 ```
 

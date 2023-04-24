@@ -7,7 +7,7 @@ import shutil
 import tempfile
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Generator, List, TextIO
+from typing import Dict, Generator, List, Optional, TextIO
 
 import pytest
 from _pytest.reports import BaseReport
@@ -216,6 +216,12 @@ def reformat(
             "exit_code": result.exit_code,
         }
     )
+
+
+def config_builder(args: Optional[Dict] = None) -> Config:
+    if args:
+        return Config("dummy/source.html", **args)
+    return Config("dummy/source.html")
 
 
 @pytest.fixture()

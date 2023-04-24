@@ -139,6 +139,12 @@ from .src import get_src
     is_flag=True,
     help="Do not fix case on known html tags.",
 )
+@click.option(
+    "--ignore-blocks",
+    type=str,
+    default="",
+    help="Comma list of template blocks to not indent.",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -161,6 +167,7 @@ def main(
     statistics: bool,
     include: str,
     ignore_case: bool,
+    ignore_blocks: str,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -184,6 +191,7 @@ def main(
         statistics=statistics,
         include=include,
         ignore_case=ignore_case,
+        ignore_blocks=ignore_blocks,
     )
 
     temp_file = None
