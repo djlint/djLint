@@ -8,7 +8,7 @@ import logging
 
 ## get pyproject.toml settings
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import yaml
 from click import echo
@@ -184,7 +184,7 @@ def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
         # need to also do "end<tag>"
         open_tags = [x.strip() for x in custom_blocks.split(",")]
         close_tags = ["end" + x.strip() for x in custom_blocks.split(",")]
-        return "|" + "|".join(list(set(open_tags + close_tags)))
+        return "|" + "|".join(sorted(set(open_tags + close_tags)))
     return None
 
 
@@ -194,7 +194,7 @@ def build_ignore_blocks(ignore_blocks: Union[str, None]) -> Optional[str]:
         # need to also do "end<tag>"
         open_tags = [x.strip() + r"\b" for x in ignore_blocks.split(",")]
         close_tags = ["end" + x.strip() + r"\b" for x in ignore_blocks.split(",")]
-        return "|".join(list(set(open_tags + close_tags)))
+        return "|".join(sorted(set(open_tags + close_tags)))
     return None
 
 
@@ -232,6 +232,18 @@ class Config:
         ignore_case: bool = False,
         ignore_blocks: str = "",
         custom_blocks: str = "",
+        blank_line_after_tag: str = "",
+        blank_line_before_tag: str = "",
+        custom_html: str = "",
+        exclude: str = "",
+        extend_exclude: str = "",
+        linter_output_format: str = "",
+        max_line_length: Optional[int] = None,
+        max_attribute_length: Optional[int] = None,
+        format_attribute_template_tags: bool = False,
+        per_file_ignores: Optional[List[Tuple[str, str]]] = None,
+        indent_css: Optional[int] = None,
+        indent_js: Optional[int] = None,
     ):
         self.reformat = reformat
         self.check = check
@@ -264,11 +276,12 @@ class Config:
         )
 
         self.custom_html: str = str(
-            build_custom_html(djlint_settings.get("custom_html")) or ""
+            build_custom_html(custom_html or djlint_settings.get("custom_html")) or ""
         )
 
-        self.format_attribute_template_tags: bool = djlint_settings.get(
-            "format_attribute_template_tags", False
+        self.format_attribute_template_tags: bool = (
+            format_attribute_template_tags
+            or djlint_settings.get("format_attribute_template_tags", False)
         )
 
         self.preserve_leading_space: bool = (
@@ -285,8 +298,13 @@ class Config:
 
         self.format_js: bool = format_js or djlint_settings.get("format_js", False)
 
-        self.js_config = djlint_settings.get("js")
-        self.css_config = djlint_settings.get("css")
+        self.js_config = (
+            {"indent_size": indent_js} if indent_js else djlint_settings.get("js")
+        )
+
+        self.css_config = (
+            {"indent_size": indent_css} if indent_css else djlint_settings.get("css")
+        )
 
         self.format_css: bool = format_css or djlint_settings.get("format_css", False)
 
@@ -319,7 +337,7 @@ class Config:
             profile or djlint_settings.get("profile", "all")
         ).lower()
 
-        self.linter_output_format: str = djlint_settings.get(
+        self.linter_output_format: str = linter_output_format or djlint_settings.get(
             "linter_output_format", "{code} {line} {message} {match}"
         )
 
@@ -360,7 +378,7 @@ class Config:
                     + f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}"
                 )
                 indent = default_indent
-        self.indent: str = indent * " "
+        self.indent: str = int(indent) * " "
 
         default_exclude: str = r"""
             \.venv
@@ -383,26 +401,30 @@ class Config:
             | __pypackages__
         """
 
-        self.exclude: str = djlint_settings.get("exclude", default_exclude)
+        self.exclude: str = exclude or djlint_settings.get("exclude", default_exclude)
 
-        extend_exclude: str = djlint_settings.get("extend_exclude", "")
+        extend_exclude = extend_exclude or djlint_settings.get("extend_exclude", "")
 
         if extend_exclude:
             self.exclude += r" | " + r" | ".join(
                 x.strip() for x in extend_exclude.split(",")
             )
 
-        self.per_file_ignores = djlint_settings.get("per-file-ignores", {})
+        self.per_file_ignores = (
+            ({x: y for x, y in per_file_ignores})
+            if per_file_ignores
+            else djlint_settings.get("per-file-ignores", {})
+        )
 
         # add blank line after load tags
-        self.blank_line_after_tag: Optional[str] = djlint_settings.get(
-            "blank_line_after_tag", None
-        )
+        self.blank_line_after_tag: Optional[
+            str
+        ] = blank_line_after_tag or djlint_settings.get("blank_line_after_tag", None)
 
         # add blank line before load tags
-        self.blank_line_before_tag: Optional[str] = djlint_settings.get(
-            "blank_line_before_tag", None
-        )
+        self.blank_line_before_tag: Optional[
+            str
+        ] = blank_line_before_tag or djlint_settings.get("blank_line_before_tag", None)
 
         # contents of tags will not be formatted
         self.ignored_block_opening: str = r"""
@@ -511,7 +533,7 @@ class Config:
         self.max_line_length = 120
 
         try:
-            self.max_line_length = int(
+            self.max_line_length = max_line_length or int(
                 djlint_settings.get("max_line_length", self.max_line_length)
             )
         except ValueError:
@@ -523,7 +545,7 @@ class Config:
         self.max_attribute_length = 70
 
         try:
-            self.max_attribute_length = int(
+            self.max_attribute_length = max_attribute_length or int(
                 djlint_settings.get("max_attribute_length", self.max_attribute_length)
             )
         except ValueError:

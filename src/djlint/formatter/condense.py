@@ -8,7 +8,7 @@ from functools import partial
 
 import regex as re
 
-from ..helpers import inside_ignored_block
+from ..helpers import inside_ignored_block, is_safe_closing_tag
 from ..settings import Config
 
 
@@ -18,7 +18,11 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     def strip_space(config: Config, html: str, match: re.Match) -> str:
         """Trim leading whitespace."""
-        if inside_ignored_block(config, html, match):
+        # either inside a block, or this is a newline + closing block tag.
+        # if it is a newline + closing block we can format it.
+        if inside_ignored_block(config, html, match) and not is_safe_closing_tag(
+            config, match.group()
+        ):
             return match.group()
 
         return match.group(1)
@@ -34,7 +38,6 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     if not config.preserve_leading_space:
         # remove any leading/trailing space
-
         html = re.sub(
             re.compile(rf"^[ \t]*{line_contents}[{trailing_contents}]*$", re.M),
             func,

@@ -1,0 +1,38 @@
+{
+   "blank_line_after_tag": "load,extends,include",
+   "blank_line_before_tag": "load,extends,include",
+   "custom_blocks": "toc,example",
+   "files": [
+        "index.html"
+    ],
+   "custom_html": "mjml,simple-greeting,mj-\\w+",
+   "exclude": ".venv,venv,.tox,.egg,...",
+   "extend_exclude": ".customs",
+   "extension": "html.dj",
+   "format_attribute_template_tags": true,
+   "format_css": true,
+    "css": {
+        "indent_size": 4
+    },
+    "format_js": true,
+    "js": {
+        "indent_size": 4
+    },
+    "ignore": "H014,H015",
+    "ignore_blocks": "raw,example",
+    "ignore_case": true,
+    "include": "H014,H015",
+    "indent": "4",
+    "linter_output_format": "{filename}:{line}: {code} {message} {match}",
+    "max_attribute_length": "10",
+    "max_line_length": "120",
+    "per-file-ignores": {
+        "file.html": "H026,H025",
+        "file_two.html":"H001"
+    },
+    "preserve_blank_lines": true,
+    "preserve_leading_space": true,
+    "profile": "django",
+    "require_pragma": true,
+    "use_gitignore": true
+}

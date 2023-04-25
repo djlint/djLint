@@ -14,6 +14,10 @@
       {
         "name": ".djlintrc",
         "value": "\"ignore\": \"H014,H015\""
+      },
+      {
+        "name": "cli",
+        "value": "--ignore \"H014,H015\""
       }
     ],
     "tags": ["linter"]
@@ -34,6 +38,10 @@
       {
         "name": ".djlintrc",
         "value": "\"include\": \"H014,H015\""
+      },
+      {
+        "name": "cli",
+        "value": "--include \"H014,H015\""
       }
     ]
   },
@@ -53,6 +61,10 @@
       {
         "name": ".djlintrc",
         "value": "\"extension\": \"html.dj\""
+      },
+      {
+        "name": "cli",
+        "value": "--extension \"html.dj\"\n# or\n-e \"html.dj\""
       }
     ]
   },
@@ -72,6 +84,10 @@
       {
         "name": ".djlintrc",
         "value": "\"custom_blocks\": \"toc,example\""
+      },
+      {
+        "name": "cli",
+        "value": "--custom-blocks \"toc,example\""
       }
     ]
   },
@@ -101,9 +117,9 @@
   {
     "name": "custom_html",
     "description": {
-      "en": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\w+>`",
-      "ru": "Используется для отступа пользовательских HTML-тегов. Например, `<mjml>` или `<simple-greeting>` или `<mj-\\w+>`.",
-      "fr": "Permet d'indenter les balises HTML personnalisées. Par exemple, `<mjml>` ou `<simple-greeting>` ou `<mj-\\w+>`."
+      "en": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\\\w+>`",
+      "ru": "Используется для отступа пользовательских HTML-тегов. Например, `<mjml>` или `<simple-greeting>` или `<mj-\\\\w+>`.",
+      "fr": "Permet d'indenter les balises HTML personnalisées. Par exemple, `<mjml>` ou `<simple-greeting>` ou `<mj-\\\\w+>`."
     },
     "tags": ["formatter"],
     "usage": [
@@ -114,6 +130,10 @@
       {
         "name": ".djlintrc",
         "value": "\"custom_html\": \"mjml,simple-greeting,mj-\\w+\""
+      },
+      {
+        "name": "cli",
+        "value": "--custom_html \"mjml,simple-greeting,mj-\\\\w+\""
       }
     ]
   },
@@ -133,6 +153,10 @@
       {
         "name": ".djlintrc",
         "value": "\"indent\": \"3\""
+      },
+      {
+        "name": "cli",
+        "value": "--indent 3"
       }
     ]
   },
@@ -152,6 +176,10 @@
       {
         "name": ".djlintrc",
         "value": "\"exclude\": \".venv,venv,.tox,.eggs,...\""
+      },
+      {
+        "name": "cli",
+        "value": "--exclude \".venv,venv,.tox,.eggs,...\""
       }
     ]
   },
@@ -171,6 +199,10 @@
       {
         "name": ".djlintrc",
         "value": "\"extend_exclude\": \".custom\""
+      },
+      {
+        "name": "cli",
+        "value": "--extend-exclude \".custom\""
       }
     ]
   },
@@ -190,6 +222,10 @@
       {
         "name": ".djlintrc",
         "value": "\"blank_line_after_tag\": \"load,extends,include\""
+      },
+      {
+        "name": "cli",
+        "value": "--blank-line-after-tag \"load,extends,include\""
       }
     ]
   },
@@ -209,6 +245,10 @@
       {
         "name": ".djlintrc",
         "value": "\"blank_line_before_tag\": \"load,extends,include\""
+      },
+      {
+        "name": "cli",
+        "value": "--blank-line-before-tag \"load,extends,include\""
       }
     ]
   },
@@ -228,6 +268,10 @@
       {
         "name": ".djlintrc",
         "value": "\"profile\": \"django\""
+      },
+      {
+        "name": "cli",
+        "value": "--profile \"django\""
       }
     ]
   },
@@ -246,7 +290,11 @@
       },
       {
         "name": ".djlintrc",
-        "value": "\"require_pragma\": \"true\""
+        "value": "\"require_pragma\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--require_pragma"
       }
     ]
   },
@@ -266,6 +314,10 @@
       {
         "name": ".djlintrc",
         "value": "\"max_line_length\": \"120\""
+      },
+      {
+        "name": "cli",
+        "value": "--max_line_length 120"
       }
     ]
   },
@@ -285,6 +337,10 @@
       {
         "name": ".djlintrc",
         "value": "\"max_attribute_length\": \"10\""
+      },
+      {
+        "name": "cli",
+        "value": "--max-attribute-length 10"
       }
     ]
   },
@@ -299,11 +355,15 @@
     "usage": [
       {
         "name": "pyproject.toml",
-        "value": "use_gitignore=True"
+        "value": "use_gitignore=true"
       },
       {
         "name": ".djlintrc",
-        "value": "\"use_gitignore\": \"True\""
+        "value": "\"use_gitignore\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--use_gitignore"
       }
     ]
   },
@@ -322,7 +382,11 @@
       },
       {
         "name": ".djlintrc",
-        "value": "\"format_attribute_template_tags\": \"true\""
+        "value": "\"format_attribute_template_tags\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--format-attribute-template-tags"
       }
     ]
   },
@@ -342,6 +406,10 @@
       {
         "name": ".djlintrc",
         "value": "\"linter_output_format\": \"{filename}:{line}: {code} {message} {match}\""
+      },
+      {
+        "name": "cli",
+        "value": "--linter_output_format \"{filename}:{line}: {code} {message} {match}\""
       }
     ]
   },
@@ -361,6 +429,10 @@
       {
         "name": ".djlintrc",
         "value": "\"preserve_leading_space\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--preserve_leading_space"
       }
     ]
   },
@@ -380,6 +452,10 @@
       {
         "name": ".djlintrc",
         "value": "\"preserve_blank_lines\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--preserve_blank_lines"
       }
     ]
   },
@@ -399,6 +475,10 @@
       {
         "name": ".djlintrc",
         "value": "\"per-file-ignores\": {\n        \"file.html\": \"H026,H025\",\n        \"file_two.html\":\"H001\"\n    }"
+      },
+      {
+        "name": "cli",
+        "value": "--per-file-ignores \"file.html\" \"H026,H025\" --per-file-ignores \"file_two.html\" \"H001\""
       }
     ]
   },
@@ -418,6 +498,10 @@
       {
         "name": ".djlintrc",
         "value": "\"format_js\": true\n\"js\": {\n        \"indent_size\": 5\n    }"
+      },
+      {
+        "name": "cli",
+        "value": "--format-js --indent-js 5"
       }
     ]
   },
@@ -437,6 +521,10 @@
       {
         "name": ".djlintrc",
         "value": "\"format_css\": true\n\"css\": {\n        \"indent_size\": 5\n    }"
+      },
+      {
+        "name": "cli",
+        "value": "--format-css --indent-css 5"
       }
     ]
   },
@@ -455,7 +543,11 @@
       },
       {
         "name": ".djlintrc",
-        "value": "\"files\": [\n        \"index.html\"\n    }"
+        "value": "\"files\": [\n    \"index.html\"\n]"
+      },
+      {
+        "name": "cli",
+        "value": "index.html"
       }
     ]
   },
@@ -470,11 +562,15 @@
     "usage": [
       {
         "name": "pyproject.toml",
-        "value": "[tool.djlint]\nignore-case=true\n"
+        "value": "[tool.djlint]\nignore_case=true\n"
       },
       {
         "name": ".djlintrc",
         "value": "\"ignore_case\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--ignore_case"
       }
     ]
   }
