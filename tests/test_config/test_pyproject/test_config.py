@@ -9,7 +9,7 @@ from src.djlint.settings import Config
 
 
 def test_profile() -> None:
-    config = Config(Path(__file__) / "blank.html")
+    config = Config(str(Path(__file__) / "blank.html"))
 
     assert config.exclude == "foo/excluded.html | excluded.html"
     assert config.blank_line_after_tag == "load,extends,include"

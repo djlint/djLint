@@ -9,7 +9,7 @@ from src.djlint.settings import Config
 
 
 def test_default() -> None:
-    config = Config(Path(__file__).parent / "blank.html")
+    config = Config(str(Path(__file__).parent / "blank.html"))
 
     assert config.exclude == ".venv,venv,.tox,.eggs,... | .custom"
     assert config.blank_line_after_tag == "load,extends,include"

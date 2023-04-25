@@ -10,8 +10,8 @@ from src.djlint.settings import Config
 
 def test_custom() -> None:
     config = Config(
-        Path(__file__).parent / "blank.html",
-        configuration=Path(__file__).parent / ".djlint-cust",
+        str(Path(__file__).parent / "blank.html"),
+        configuration=str(Path(__file__).parent / ".djlint-cust"),
     )
 
     print(config.exclude)

@@ -411,7 +411,7 @@ class Config:
             )
 
         self.per_file_ignores = (
-            (dict((x, y) for x, y in per_file_ignores))
+            ({x: y for x, y in per_file_ignores})
             if per_file_ignores
             else djlint_settings.get("per-file-ignores", {})
         )
