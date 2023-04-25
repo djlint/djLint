@@ -38,7 +38,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
-def test_base(source, expected, args, basic_config):
+def test_base(source, expected, args):
     output = formatter(config_builder(args), source)
 
     printer(expected, source, output)

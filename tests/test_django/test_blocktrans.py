@@ -165,29 +165,33 @@ test_data = [
         id="blocktrans_indent_3",
     ),
     pytest.param(
-        ("{% autoescape off %}\n"
-         "\n"
-         "  {% blocktrans %}\n"
-         "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
-         "  {% endblocktrans %}\n"
+        (
+            "{% autoescape off %}\n"
+            "\n"
+            "  {% blocktrans %}\n"
+            "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
+            "  {% endblocktrans %}\n"
         ),
-        ("{% autoescape off %}\n"
-         "    {% blocktrans %}\n"
-         "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
-         "    {% endblocktrans %}\n"
+        (
+            "{% autoescape off %}\n"
+            "    {% blocktrans %}\n"
+            "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
+            "    {% endblocktrans %}\n"
         ),
         id="blocktrans_autoescape",
     ),
     pytest.param(
-        ("{% autoescape off %}\n"
-         "    {% blocktrans %}\n"
-         "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
-         "    {% endblocktrans %}\n"
+        (
+            "{% autoescape off %}\n"
+            "    {% blocktrans %}\n"
+            "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
+            "    {% endblocktrans %}\n"
         ),
-        ("{% autoescape off %}\n"
-         "    {% blocktrans %}\n"
-         "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
-         "    {% endblocktrans %}\n"
+        (
+            "{% autoescape off %}\n"
+            "    {% blocktrans %}\n"
+            "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
+            "    {% endblocktrans %}\n"
         ),
         id="blocktrans_autoescape_two",
     ),

@@ -1,3 +1,0 @@
-[tool]
-[tool.djlint]
-blank_line_after_tag = "load, extends,     include     ,endblock "

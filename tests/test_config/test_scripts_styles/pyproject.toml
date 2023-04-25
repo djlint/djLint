@@ -1,9 +1,0 @@
-[tool.djlint]
-format_js = true
-format_css = true
-
-[tool.djlint.js]
-indent_size = 5
-
-[tool.djlint.css]
-indent_size = 3
