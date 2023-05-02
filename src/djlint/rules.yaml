@@ -185,8 +185,7 @@
 - rule:
     name: H025
     message: Tag seems to be an orphan.
-    patterns:
-    - None
+    python_module: djlint.rules.H025
 - rule:
     name: H026
     message: Empty id and class tags can be removed.

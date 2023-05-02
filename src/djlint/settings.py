@@ -150,9 +150,12 @@ def validate_rules(rules: List) -> List:
         if "name" not in rule["rule"]:
             warning += 1
             echo(Fore.RED + "Warning: A rule is missing a name! 😢")
-        if "patterns" not in rule["rule"]:
+        if "patterns" not in rule["rule"] and "python_module" not in rule["rule"]:
             warning += 1
-            echo(Fore.RED + f"Warning: Rule {name} is missing a pattern! 😢")
+            echo(
+                Fore.RED
+                + f"Warning: Rule {name} is missing a pattern or a python_module! 😢"
+            )
         if "message" not in rule["rule"]:
             warning += 1
             echo(Fore.RED + f"Warning: Rule {name} is missing a message! 😢")
