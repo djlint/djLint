@@ -142,6 +142,8 @@ personalisée.
 Le module indiqué dans `python_module` doit contenir une fonction `run()` qui sera
 executé sur chacun des fichiers testés. La fonction doit accepter les arguments suivants :
 
+::: content
+
 - `rule`: Le dictionnaire python qui représente votre règle dans `.djlint_rules.yaml`.
 Utilisez cette variable pour accéder aux `name` et `message` que vous avez défini dans
 le `yaml`.
@@ -152,15 +154,19 @@ le `yaml`.
 dictionnaire avec `start` et `end` qui donnent les indexes globaux dans le fichier du
 début et fin de la ligne. Cette variable peut être utilisée avec `djlint.lint.get_line()`
 pour récupérer le numéro de ligne à partir de l'indexe du caractère dans le fichier html.
+  :::
 
 La fonction doit retourner une liste de dictionnaire, un pour chacune des erreurs
 trouvées. Le dictionnaire doit contenir les clées suivantes :
+
+::: content
 
 - `code`: Code de la règle qui rapporte l'erreur (généralement `rule['name']`)
 - `line`: Numéro de ligne et numéro de caractère dans cette ligne, séparées par un `:`.
 Par exemple, `"2:3"` veut dire que l'erreur a été trouvée sur la ligne 2, au caractère 3.
 - `match`: La partie du contenu qui contient l'erreur
 - `message`: Le message qui serra affiché pour signaler l'erreur (généralement `rule['message']`)
+  :::
 
 ```python
 from typing import Any, Dict, List

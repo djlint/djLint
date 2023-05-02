@@ -140,6 +140,8 @@ You can add rules that import and execute a custom python function:
 The specified `python_module` must contain a `run()` function that will be executed on
 every checked file. It must accept the following arguments:
 
+::: content
+
 - `rule`: The dict that represent your rule in `.djlint_rules.yaml`. You will typically
 use this variable to access the rule name and message.
 - `config`: The DJLint configuration object.
@@ -147,14 +149,18 @@ use this variable to access the rule name and message.
 - `filepath`: Path to the file that we are currently checking.
 - `line_ends`: List of line `start` and `end` character position that you can use with
 `djlint.lint.get_line()` to get line numbers from a character position. See the exemple.
+  :::
 
 It must return a list of dict, one for each errors, with the following keys:
+
+::: content
 
 - `code`: Code name of the rule that report the error (typically `rule['name']`)
 - `line`: Line number and character number on this line, separated by a ':' as a string.
 For example `"2:3"` means that the error has been found on line 2, character 3
 - `match`: The part of the content that contains the error
 - `message`: The message that will be printed to signal the error (typically `rule['message']`)
+  :::
 
 ```python
 from typing import Any, Dict, List
