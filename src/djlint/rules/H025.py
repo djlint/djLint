@@ -1,4 +1,4 @@
-"""rule H025 is a special case where the output must be an even number."""
+"""rule H025: Check for orphans html tags."""
 import copy
 from typing import Any, Dict, List
 
@@ -17,11 +17,10 @@ def run(
     rule: Dict[str, Any],
     config: Config,
     html: str,
-    filename: str,
     filepath: str,
     line_ends: List[Dict[str, int]],
 ) -> List[Dict[str, str]]:
-    """Check the special python rule on an html string"""
+    """Check for orphans html tags."""
     errors: List[Dict[str, str]] = []
     open_tags: List[re.Match] = []
     for match in re.finditer(

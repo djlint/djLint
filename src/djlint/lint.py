@@ -76,7 +76,6 @@ def linter(config: Config, html: str, filename: str, filepath: str) -> Dict:
                 rule=rule,
                 config=config,
                 html=html,
-                filename=filename,
                 filepath=filepath,
                 line_ends=line_ends,
             )
