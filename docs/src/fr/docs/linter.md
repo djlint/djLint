@@ -34,35 +34,6 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 
 Cela peut également se faire par l'intermédiaire de l'option [{{ "configuration" | i18n }}]({{ "lang_code_url" | i18n }}/docs/configuration) fichier.
 
-## Règles personnalisées
-
-Créez un fichier `.djlint_rules.yaml` à côté de votre `pyproject.toml`. Des règles peuvent être ajoutées à ce fichier et djLint les reprendra.
-
-Une bonne règle suit ce modèle :
-
-```yaml
-- règle:
-    name: T001
-    message: Trouver la Trichotillomanie
-    indicateurs: re.DOTALL|re.I
-    modèles:
-      - Trichotillomanie
-```
-
-### Modèles de code
-
-La première lettre d'un code suit le modèle :
-
-::: content
-
-- D : s'applique spécifiquement à Django
-- H : s'applique au html
-- J : s'applique spécifiquement à Jinja
-- M : s'applique spécifiquement à Handlebars
-- N : s'applique spécifiquement à Nunjucks
-- T : s'applique généralement aux modèles
-  :::
-
 ## Rules
 
 | Code | Signification                                                                                                             | Défaut |
@@ -106,6 +77,20 @@ La première lettre d'un code suit le modèle :
 | H035 | Meta doivent se fermer d'elles-mêmes.                                                                                     | -      |
 | H036 | Évitez d'utiliser les balises <br>.                                                                                       | -      |
 
+### Modèles de code
+
+La première lettre d'un code suit le modèle :
+
+::: content
+
+- D : s'applique spécifiquement à Django
+- H : s'applique au html
+- J : s'applique spécifiquement à Jinja
+- M : s'applique spécifiquement à Handlebars
+- N : s'applique spécifiquement à Nunjucks
+- T : s'applique généralement aux modèles
+  :::
+
 ### Ajout de règles
 
 Nous accueillons volontiers les pull requests contenant de nouvelles règles !
@@ -123,3 +108,86 @@ Une bonne règle consiste en
   :::
 
 Veuillez inclure un test pour valider la règle.
+
+## Règles personnalisées
+
+Il est possible d'ajouter des règles personnalisées directement au sein de votre projet.
+Pour cela, créez un fichier `.djlint_rules.yaml` à côté de votre `pyproject.toml`.
+Des règles peuvent être ajoutées à ce fichier et djLint les reprendra.
+
+### Règle basé sur la recherche d'un regex
+Vous pouvez ajouter une règle qui échouera si l'un des regex listés dans `patterns`
+est trouvé dans le code html.
+
+```yaml
+- rule:
+    name: T001
+    message: Trouver la Trichotillomanie
+    flags: re.DOTALL|re.I
+    pattern:
+      - Trichotillomanie
+```
+
+### Règle utilisant un module python externe
+Vous pouvez ajouter une règle qui va importer et executer une fonction python
+personalisée.
+
+```yaml
+- rule:
+    name: T001
+    message: Le mot 'bad' a été trouvé
+    python_module: votre_package.votre_module
+```
+
+Le module indiqué dans `python_module` doit contenir une fonction `run()` qui sera
+executé sur chacun des fichiers testés. La fonction doit accepter les arguments suivants :
+
+- `rule`: Le dictionnaire python qui représente votre règle dans `.djlint_rules.yaml`.
+Utilisez cette variable pour accéder aux `name` et `message` que vous avez défini dans
+le `yaml`.
+- `config`: L'objet de configuration global de DJLint.
+- `html`: Le contenu html complet du fichier testé.
+- `filepath`: Chemin du fichier testé.
+- `line_ends`: Liste qui, pour chacune des lignes du fichier html testé, contient un
+dictionnaire avec `start` et `end` qui donnent les indexes globaux dans le fichier du
+début et fin de la ligne. Cette variable peut être utilisée avec `djlint.lint.get_line()`
+pour récupérer le numéro de ligne à partir de l'indexe du caractère dans le fichier html.
+
+La fonction doit retourner une liste de dictionnaire, un pour chacune des erreurs
+trouvées. Le dictionnaire doit contenir les clées suivantes :
+
+- `code`: Code de la règle qui rapporte l'erreur (généralement `rule['name']`)
+- `line`: Numéro de ligne et numéro de caractère dans cette ligne, séparées par un `:`.
+Par exemple, `"2:3"` veut dire que l'erreur a été trouvée sur la ligne 2, au caractère 3.
+- `match`: La partie du contenu qui contient l'erreur
+- `message`: Le message qui serra affiché pour signaler l'erreur (généralement `rule['message']`)
+
+```python
+from typing import Any, Dict, List
+from djlint.settings import Config
+from djlint.lint import get_line
+import re
+
+def run(
+    rule: Dict[str, Any],
+    config: djlint.settings.Config,
+    html: str,
+    filepath: str,
+    line_ends: List[Dict[str, int]],
+) -> List[Dict[str, str]]:
+    """
+    Rule that fails if if the html file contains 'bad'. This is just an exemple, in
+    reality it's much simpler to do that with "pattern rule".
+    """
+    errors: List[Dict[str, str]] = []
+    for match in re.finditer(r"bad", html):
+        errors.append(
+            {
+                "code": rule["name"],
+                "line": get_line(match.start(), line_ends),
+                "match": match.group().strip()[:20],
+                "message": rule["message"],
+            }
+        )
+    return errors
+```
