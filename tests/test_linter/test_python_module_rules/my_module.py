@@ -1,3 +1,4 @@
+"""Test module for custom rules."""
 import re
 from typing import Any, Dict, List
 
@@ -12,9 +13,9 @@ def run(
     filepath: str,
     line_ends: List[Dict[str, int]],
 ) -> List[Dict[str, str]]:
-    """
-    Rule that fails if if the html file contains 'bad'. In the real world, this should
-    be done with a simple regex rule.
+    """Rule that fails if if the html file contains 'bad'.
+
+    In the real world, this should be done with a simple regex rule.
     """
     print(filepath, line_ends)
     errors: List[Dict[str, str]] = []
