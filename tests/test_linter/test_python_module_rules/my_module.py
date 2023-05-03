@@ -12,12 +12,13 @@ def run(
     html: str,
     filepath: str,
     line_ends: List[Dict[str, int]],
+    *args: Any,
+    **kwargs: Any,
 ) -> List[Dict[str, str]]:
     """Rule that fails if if the html file contains 'bad'.
 
     In the real world, this should be done with a simple regex rule.
     """
-    print(filepath, line_ends)
     errors: List[Dict[str, str]] = []
     for match in re.finditer(r"bad", html):
         errors.append(

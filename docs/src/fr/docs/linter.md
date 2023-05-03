@@ -154,6 +154,9 @@ le `yaml`.
 dictionnaire avec `start` et `end` qui donnent les indexes globaux dans le fichier du
 début et fin de la ligne. Cette variable peut être utilisée avec `djlint.lint.get_line()`
 pour récupérer le numéro de ligne à partir de l'indexe du caractère dans le fichier html.
+- `*args, **kwargs`: Il est possible que nous ajoutions d'autres arguments à l'avenir,
+il est donc fortement conseillé d'ajouter ces deux arguments pour diminuer les risques
+de bugs en cas de mise à jour de djLint.
   :::
 
 La fonction doit retourner une liste de dictionnaire, un pour chacune des erreurs
@@ -180,6 +183,8 @@ def run(
     html: str,
     filepath: str,
     line_ends: List[Dict[str, int]],
+    *args: Any,
+    **kwargs: Any,
 ) -> List[Dict[str, str]]:
     """
     Rule that fails if if the html file contains 'bad'. This is just an exemple, in

@@ -149,6 +149,8 @@ use this variable to access the rule name and message.
 - `filepath`: Path to the file that we are currently checking.
 - `line_ends`: List of line `start` and `end` character position that you can use with
 `djlint.lint.get_line()` to get line numbers from a character position. See the exemple.
+- `*args, **kwargs`: We might add other arguments in the future, so you should include
+those two arguments to reduce the risk of failure on djLint upgrade.
   :::
 
 It must return a list of dict, one for each errors, with the following keys:
@@ -174,6 +176,8 @@ def run(
     html: str,
     filepath: str,
     line_ends: List[Dict[str, int]],
+    *args: Any,
+    **kwargs: Any,
 ) -> List[Dict[str, str]]:
     """
     Rule that fails if if the html file contains 'bad'. This is just an exemple, in

@@ -19,6 +19,8 @@ def run(
     html: str,
     filepath: str,
     line_ends: List[Dict[str, int]],
+    *args: Any,
+    **kwargs: Any,
 ) -> List[Dict[str, str]]:
     """Check for orphans html tags."""
     errors: List[Dict[str, str]] = []
