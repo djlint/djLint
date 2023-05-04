@@ -1,0 +1,4 @@
+- rule:
+    name: T001
+    message: Found the 'bad' word
+    python_module: tests.test_linter.test_python_module_rules.my_module

@@ -53,7 +53,7 @@
   "homepage": "https://djlint.com",
   "dependencies": {
     "python-shell": "^5.0.0",
-    "yargs": "17.7.1"
+    "yargs": "17.7.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.3",
@@ -64,7 +64,7 @@
     "@semantic-release/npm": "10.0.3",
     "@semantic-release/release-notes-generator": "10.0.3",
     "cz-conventional-changelog": "3.3.0",
-    "lint-staged": "13.2.1",
+    "lint-staged": "13.2.2",
     "semantic-release": "21.0.1",
     "xo": "0.54.1"
   },

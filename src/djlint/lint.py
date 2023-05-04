@@ -1,5 +1,5 @@
 """Djlint html linter."""
-import copy
+import importlib
 from pathlib import Path
 from typing import Dict, List
 
@@ -65,56 +65,29 @@ def linter(config: Config, html: str, filename: str, filepath: str) -> Dict:
     for rule in config.linter_rules:
         rule = rule["rule"]
 
-        for pattern in rule["patterns"]:
-            # skip ignored rules
-            if rule["name"] in ignored_rules:
-                continue
+        # skip ignored rules
+        if rule["name"] in ignored_rules:
+            continue
 
-            # rule H025 is a special case where the output must be an even number.
-            if rule["name"] == "H025":
-                open_tags: List[re.Match] = []
+        # rule based on python module
+        if "python_module" in rule:
+            rule_module = importlib.import_module(rule["python_module"])
+            module_errors = rule_module.run(
+                rule=rule,
+                config=config,
+                html=html,
+                filepath=filepath,
+                line_ends=line_ends,
+            )
+            assert isinstance(module_errors, list), (
+                f"Error: {rule['name']} python_module run() should return a list of "
+                "dict with keys: code, line, match, message."
+            )
+            errors[filename].extend(module_errors)
 
-                for match in re.finditer(
-                    re.compile(
-                        r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
-                        re.VERBOSE,
-                    ),
-                    html,
-                ):
-                    if match.group(1) and not re.search(
-                        re.compile(
-                            rf"^/?{config.always_self_closing_html_tags}\b", re.I | re.X
-                        ),
-                        match.group(1),
-                    ):
-                        # close tags should equal open tags
-                        if match.group(1)[0] != "/":
-                            open_tags.insert(0, match)
-                        else:
-                            for i, tag in enumerate(copy.deepcopy(open_tags)):
-                                if tag.group(2) == match.group(1)[1:]:
-                                    open_tags.pop(i)
-                                    break
-                            else:
-                                # there was no open tag matching the close tag
-                                open_tags.insert(0, match)
-
-                for match in open_tags:
-                    if (
-                        overlaps_ignored_block(config, html, match) is False
-                        and inside_ignored_rule(config, html, match, rule["name"])
-                        is False
-                        and inside_ignored_linter_block(config, html, match) is False
-                    ):
-                        errors[filename].append(
-                            {
-                                "code": rule["name"],
-                                "line": get_line(match.start(), line_ends),
-                                "match": match.group().strip()[:20],
-                                "message": rule["message"],
-                            }
-                        )
-            else:
+        # rule based on patterns
+        else:
+            for pattern in rule["patterns"]:
                 for match in re.finditer(
                     re.compile(
                         pattern, flags=build_flags(rule.get("flags", "re.DOTALL"))
