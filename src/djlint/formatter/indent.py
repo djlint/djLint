@@ -113,7 +113,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 item,
             )
             and is_block_raw is False
-            and in_set_tag > 0
+            and in_set_tag is True
         ):
             indent_level = max(indent_level - 1, 0)
             in_set_tag = False
@@ -129,7 +129,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 item,
             )
             and is_block_raw is False
-            and in_set_tag > 0
+            and in_set_tag is True
         ):
             indent_level = max(indent_level - 1, 0)
             tmp = (indent * indent_level) + item + "\n"
@@ -201,6 +201,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 item,
             )
             and is_block_raw is False
+            and in_set_tag is False
         ):
             tmp = (indent * indent_level) + item + "\n"
             indent_level = indent_level + 1
@@ -220,7 +221,6 @@ def indent_html(rawcode: str, config: Config) -> str:
         ):
             tmp = (indent * indent_level) + item + "\n"
             indent_level = indent_level + 1
-            in_set_tag = True
 
         elif (
             re.search(
