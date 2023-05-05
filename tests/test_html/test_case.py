@@ -46,7 +46,7 @@ test_data = [
             "      window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;\n"
             "      ga('create', 'UA-XXXXX-Y', 'auto'); ga('send', 'pageview')\n"
             "        </script>\n"
-            '        <script src="https://www.google-analytics.com/analytics.js" ASYNC DEFER></script>\n'
+            '        <script src="https://www.google-analytics.com/analytics.js" ASYNC DEFER> </script>\n'
             "    </body>\n"
             "</html>\n"
         ),

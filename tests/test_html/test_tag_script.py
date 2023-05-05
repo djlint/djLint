@@ -158,7 +158,7 @@ test_data = [
     ),
     pytest.param(
         ('<script type="text/template">\n' " <div>\n" "    </div>\n" "</script>\n"),
-        ('<script type="text/template">\n' " <div></div>\n" "</script>\n"),
+        ('<script type="text/template">\n' " <div>\n" "    </div>\n" "</script>\n"),
         id="something_else",
     ),
     pytest.param(

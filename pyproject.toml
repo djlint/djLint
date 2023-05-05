@@ -38,6 +38,7 @@ html-void-elements = "^0.1.0"
 html-tag-names = "^0.1.2"
 jsbeautifier = "^1.14.4"
 cssbeautifier = "^1.14.4"
+json5 = "^0.9.11"
 
 [tool.poetry.scripts]
 djlint = "djlint:main"
@@ -93,7 +94,7 @@ ignore = ["E501", "PLR0913", "PLR0915", "PLR0912", "D203", "D213"]
 "src/djlint/formatter/css.py" = ["PLW2901"]
 "src/djlint/formatter/js.py" = ["PLW2901"]
 "src/djlint/lint.py" = ["PLW2901"]
-"src/djlint/formatter/indent.py" = ["SIM114"]
+"src/djlint/formatter/indent.py" = ["SIM114", "E722"]
 
 [tool.ruff.mccabe]
 max-complexity = 10

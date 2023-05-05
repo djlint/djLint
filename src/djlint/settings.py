@@ -381,6 +381,7 @@ class Config:
                     + f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}"
                 )
                 indent = default_indent
+        self.indent_size = indent
         self.indent: str = int(indent) * " "
 
         default_exclude: str = r"""
