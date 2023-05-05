@@ -28,9 +28,9 @@ test_data = [
         (
             "<div>\n"
             "    <script>\n"
-            "        () => {\n"
-            '         console.log("hi")\n'
-            "        }\n"
+            "     () => {\n"
+            '      console.log("hi")\n'
+            "     }\n"
             "    </script>\n"
             "</div>\n"
         ),
@@ -165,6 +165,34 @@ test_data = [
         ),
         ({"format_js": True}),
         id="ignore",
+    ),
+    pytest.param(
+        (
+            '<script type="text/javascript">\n'
+            "    let s = `\n"
+            "        <p>Text.</p>`;\n"
+            "</script>\n"
+            "<div>"
+            '<script type="text/javascript">\n'
+            "    let s = `\n"
+            "        <p>Text.\n"
+            "      </p>`;\n"
+            "</script></div>"
+        ),
+        (
+            '<script type="text/javascript">\n'
+            "   let s = `\n"
+            "        <p>Text.</p>`;\n"
+            "</script>\n"
+            "<div>\n"
+            '    <script type="text/javascript">\n'
+            "       let s = `\n"
+            "        <p>Text.</p>`;\n"
+            "    </script>\n"
+            "</div>\n"
+        ),
+        ({"format_js": True, "indent_js": 3}),
+        id="literals",
     ),
 ]
 
