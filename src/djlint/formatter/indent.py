@@ -22,6 +22,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
     beautified_code = ""
     indent_level = 0
+    in_set_tag = False
     is_raw_first_line = False
     is_block_raw = False
 
@@ -101,6 +102,38 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
 
         # if unindent, move left
+
+        # closing set tag
+        elif (
+            re.search(
+                re.compile(
+                    r"^(?!.*\{\%).*%\}.*$",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
+                item,
+            )
+            and is_block_raw is False
+            and in_set_tag > 0
+        ):
+            indent_level = max(indent_level - 1, 0)
+            in_set_tag = False
+            tmp = (indent * indent_level) + item + "\n"
+
+        # closing curly brace inside a set tag
+        elif (
+            re.search(
+                re.compile(
+                    r"^[ ]*}|^[ ]*]",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
+                item,
+            )
+            and is_block_raw is False
+            and in_set_tag > 0
+        ):
+            indent_level = max(indent_level - 1, 0)
+            tmp = (indent * indent_level) + item + "\n"
+
         elif (
             re.search(
                 config.tag_unindent,
@@ -157,6 +190,38 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * (indent_level - 1)) + item + "\n"
 
         # if indent, move right
+
+        # opening set tag
+        elif (
+            re.search(
+                re.compile(
+                    r"^([ ]*{%[ ]*set)(?!.*%}).*$",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
+                item,
+            )
+            and is_block_raw is False
+        ):
+            tmp = (indent * indent_level) + item + "\n"
+            indent_level = indent_level + 1
+            in_set_tag = True
+
+        # opening curly brace inside a set tag
+        elif (
+            re.search(
+                re.compile(
+                    r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
+                item,
+            )
+            and is_block_raw is False
+            and in_set_tag is True
+        ):
+            tmp = (indent * indent_level) + item + "\n"
+            indent_level = indent_level + 1
+            in_set_tag = True
+
         elif (
             re.search(
                 re.compile(
