@@ -2,6 +2,7 @@
 
 from functools import partial
 
+import json5 as json
 import regex as re
 
 from ..helpers import (
@@ -22,6 +23,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
     beautified_code = ""
     indent_level = 0
+    in_set_tag = False
     is_raw_first_line = False
     is_block_raw = False
 
@@ -100,6 +102,37 @@ def indent_html(rawcode: str, config: Config) -> str:
         ):
             tmp = (indent * indent_level) + item + "\n"
 
+        # closing set tag
+        elif (
+            re.search(
+                re.compile(
+                    r"^(?!.*\{\%).*%\}.*$",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
+                item,
+            )
+            and is_block_raw is False
+            and in_set_tag is True
+        ):
+            indent_level = max(indent_level - 1, 0)
+            in_set_tag = False
+            tmp = (indent * indent_level) + item + "\n"
+
+        # closing curly brace inside a set tag
+        elif (
+            re.search(
+                re.compile(
+                    r"^[ ]*}|^[ ]*]",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
+                item,
+            )
+            and is_block_raw is False
+            and in_set_tag is True
+        ):
+            indent_level = max(indent_level - 1, 0)
+            tmp = (indent * indent_level) + item + "\n"
+
         # if unindent, move left
         elif (
             re.search(
@@ -157,6 +190,38 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * (indent_level - 1)) + item + "\n"
 
         # if indent, move right
+
+        # opening set tag
+        elif (
+            re.search(
+                re.compile(
+                    r"^([ ]*{%[ ]*?set)(?!.*%}).*$",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
+                item,
+            )
+            and is_block_raw is False
+            and in_set_tag is False
+        ):
+            tmp = (indent * indent_level) + item + "\n"
+            indent_level = indent_level + 1
+            in_set_tag = True
+
+        # opening curly brace inside a set tag
+        elif (
+            re.search(
+                re.compile(
+                    r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
+                    re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                ),
+                item,
+            )
+            and is_block_raw is False
+            and in_set_tag is True
+        ):
+            tmp = (indent * indent_level) + item + "\n"
+            indent_level = indent_level + 1
+
         elif (
             re.search(
                 re.compile(
@@ -263,6 +328,64 @@ def indent_html(rawcode: str, config: Config) -> str:
         func = partial(fix_handlebars_template_tags, beautified_code, "%s %s")
         # handlebars templates
         beautified_code = re.sub(r"({{#(?:each|if).+?[^ ])(}})", func, beautified_code)
+
+    # try to fix internal formatting of set tag
+    def format_set(config, match):
+        open_bracket = match.group(1)
+        tag = match.group(2)
+        close_braket = match.group(4)
+        contents = match.group(3).strip()
+        contents_split = contents.split("=", 1)
+
+        if len(contents_split) > 1:
+            try:
+                # try to format the contents as json
+                data = json.loads(contents_split[-1])
+                contents = (
+                    contents_split[0].strip()
+                    + " = "
+                    + json.dumps(data, trailing_commas=False)
+                )
+                completed_tag = f"{open_bracket} {tag} {contents} {close_braket}"
+
+                if len(completed_tag) >= config.max_line_length:
+                    # if the line is too long we can indent the json
+                    contents = (
+                        contents_split[0].strip()
+                        + " = "
+                        + json.dumps(
+                            data, indent=config.indent_size, trailing_commas=False
+                        )
+                    )
+                    completed_tag = f"{open_bracket} {tag} {contents} {close_braket}"
+                    return completed_tag
+
+            except:
+                # was not json.. try to eval as set
+                try:
+                    contents = (
+                        contents_split[0].strip()
+                        + " = "
+                        + str(eval(contents_split[-1]))
+                    )
+                except:
+                    contents = (
+                        contents_split[0].strip() + " = " + contents_split[-1].strip()
+                    )
+                    pass
+
+        return f"{open_bracket} {tag} {contents} {close_braket}"
+
+    func = partial(format_set, config)
+    # format set contents
+    beautified_code = re.sub(
+        re.compile(
+            r"([ ]*{%-?)[ ]*(set)((?:(?!%}).)*?)(-?%})",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
+        ),
+        func,
+        beautified_code,
+    )
 
     if not config.preserve_blank_lines:
         beautified_code = beautified_code.lstrip()

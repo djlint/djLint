@@ -132,10 +132,11 @@ def condense_html(html, config):
         # space for other purposes, we should not try to remove it.
         return html
 
-    def condense_line(config: Config, match: re.Match) -> str:
+    def condense_line(config: Config, html: str, match: re.Match) -> str:
         """Put contents on a single line if below max line length."""
         if (
-            (
+            not inside_ignored_block(config, html, match)
+            and (
                 len(match.group(1).splitlines()[-1] + match.group(3) + match.group(4))
                 < config.max_line_length
             )
@@ -177,8 +178,7 @@ def condense_html(html, config):
         return True
 
     # add blank lines before tags
-
-    func = partial(condense_line, config)
+    func = partial(condense_line, config, html)
 
     # put short single line tags on one line
     html = re.sub(
@@ -194,7 +194,7 @@ def condense_html(html, config):
     # jinja +%} and {%+ intentionally omitted.
     html = re.sub(
         re.compile(
-            rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})[^\n(?:%}})]*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
+            rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         func,
