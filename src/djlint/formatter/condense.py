@@ -8,7 +8,11 @@ from functools import partial
 
 import regex as re
 
-from ..helpers import inside_ignored_block, is_safe_closing_tag
+from ..helpers import (
+    inside_ignored_block,
+    inside_protected_trans_block,
+    is_safe_closing_tag,
+)
 from ..settings import Config
 
 
@@ -20,10 +24,17 @@ def clean_whitespace(html: str, config: Config) -> str:
         """Trim leading whitespace."""
         # either inside a block, or this is a newline + closing block tag.
         # if it is a newline + closing block we can format it.
+
         if inside_ignored_block(config, html, match) and not is_safe_closing_tag(
             config, match.group()
         ):
             return match.group()
+
+        # trimmed blocks should not be here.
+        # we need to full html to check what type of
+        # opening block it was - trimmed or not trimmed
+        if inside_protected_trans_block(config, html[: match.end()], match):
+            return match.group().rstrip()
 
         return match.group(1)
 

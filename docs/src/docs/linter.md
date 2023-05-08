@@ -76,6 +76,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  | ✔️      |
 | H035 | Meta tags should be self closing.                                                            | -       |
 | H036 | Avoid use of <br> tags.                                                                      | -       |
+| H037 | Duplicate attribute found.                                                                   | ✔️      |
 
 ### Code Patterns
 
@@ -109,13 +110,13 @@ A good rule consists of
 
 Please include a test to validate the rule.
 
-
 ## Custom Rules
 
 You can add custom rules just for your project by creating a `.djlint_rules.yaml` alongside
 your `pyproject.toml`. Rules can be added to this files and djLint will pick them up.
 
 ### Pattern Rules
+
 You can add rules that fails if one of the regex pattern has a match:
 
 ```yaml
@@ -128,6 +129,7 @@ You can add rules that fails if one of the regex pattern has a match:
 ```
 
 ### Python module Rules
+
 You can add rules that import and execute a custom python function:
 
 ```yaml
@@ -143,14 +145,14 @@ every checked file. It must accept the following arguments:
 ::: content
 
 - `rule`: The dict that represent your rule in `.djlint_rules.yaml`. You will typically
-use this variable to access the rule name and message.
+  use this variable to access the rule name and message.
 - `config`: The DJLint configuration object.
 - `html`: The full html content of the file.
 - `filepath`: Path to the file that we are currently checking.
 - `line_ends`: List of line `start` and `end` character position that you can use with
-`djlint.lint.get_line()` to get line numbers from a character position. See the exemple.
+  `djlint.lint.get_line()` to get line numbers from a character position. See the exemple.
 - `*args, **kwargs`: We might add other arguments in the future, so you should include
-those two arguments to reduce the risk of failure on djLint upgrade.
+  those two arguments to reduce the risk of failure on djLint upgrade.
   :::
 
 It must return a list of dict, one for each errors, with the following keys:
@@ -159,7 +161,7 @@ It must return a list of dict, one for each errors, with the following keys:
 
 - `code`: Code name of the rule that report the error (typically `rule['name']`)
 - `line`: Line number and character number on this line, separated by a ':' as a string.
-For example `"2:3"` means that the error has been found on line 2, character 3
+  For example `"2:3"` means that the error has been found on line 2, character 3
 - `match`: The part of the content that contains the error
 - `message`: The message that will be printed to signal the error (typically `rule['message']`)
   :::

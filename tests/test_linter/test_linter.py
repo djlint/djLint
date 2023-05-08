@@ -648,6 +648,20 @@ def test_H036(runner: CliRunner, tmp_file: TextIO) -> None:
     assert "H036" in result.output
 
 
+def test_H037(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<br class='a' id=asdf class='b'>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H037" in result.output
+
+    write_to_file(tmp_file.name, b"<div data-class='a' id=asdf data-class='b'>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H037" in result.output
+
+    write_to_file(tmp_file.name, b"<div data-class='a' data=asdf class='b'>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H037" not in result.output
+
+
 def test_rules_not_matched_in_ignored_block(
     runner: CliRunner, tmp_file: TextIO
 ) -> None:

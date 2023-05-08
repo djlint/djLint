@@ -76,6 +76,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  | ✔️     |
 | H035 | Meta doivent se fermer d'elles-mêmes.                                                                                     | -      |
 | H036 | Évitez d'utiliser les balises <br>.                                                                                       | -      |
+| H037 | Attribut en double trouvé.                                                                                                | ✔️     |
 
 ### Modèles de code
 
@@ -116,6 +117,7 @@ Pour cela, créez un fichier `.djlint_rules.yaml` à côté de votre `pyproject.
 Des règles peuvent être ajoutées à ce fichier et djLint les reprendra.
 
 ### Règle basé sur la recherche d'un regex
+
 Vous pouvez ajouter une règle qui échouera si l'un des regex listés dans `patterns`
 est trouvé dans le code html.
 
@@ -129,6 +131,7 @@ est trouvé dans le code html.
 ```
 
 ### Règle utilisant un module python externe
+
 Vous pouvez ajouter une règle qui va importer et executer une fonction python
 personalisée.
 
@@ -145,18 +148,18 @@ executé sur chacun des fichiers testés. La fonction doit accepter les argument
 ::: content
 
 - `rule`: Le dictionnaire python qui représente votre règle dans `.djlint_rules.yaml`.
-Utilisez cette variable pour accéder aux `name` et `message` que vous avez défini dans
-le `yaml`.
+  Utilisez cette variable pour accéder aux `name` et `message` que vous avez défini dans
+  le `yaml`.
 - `config`: L'objet de configuration global de DJLint.
 - `html`: Le contenu html complet du fichier testé.
 - `filepath`: Chemin du fichier testé.
 - `line_ends`: Liste qui, pour chacune des lignes du fichier html testé, contient un
-dictionnaire avec `start` et `end` qui donnent les indexes globaux dans le fichier du
-début et fin de la ligne. Cette variable peut être utilisée avec `djlint.lint.get_line()`
-pour récupérer le numéro de ligne à partir de l'indexe du caractère dans le fichier html.
+  dictionnaire avec `start` et `end` qui donnent les indexes globaux dans le fichier du
+  début et fin de la ligne. Cette variable peut être utilisée avec `djlint.lint.get_line()`
+  pour récupérer le numéro de ligne à partir de l'indexe du caractère dans le fichier html.
 - `*args, **kwargs`: Il est possible que nous ajoutions d'autres arguments à l'avenir,
-il est donc fortement conseillé d'ajouter ces deux arguments pour diminuer les risques
-de bugs en cas de mise à jour de djLint.
+  il est donc fortement conseillé d'ajouter ces deux arguments pour diminuer les risques
+  de bugs en cas de mise à jour de djLint.
   :::
 
 La fonction doit retourner une liste de dictionnaire, un pour chacune des erreurs
@@ -166,7 +169,7 @@ trouvées. Le dictionnaire doit contenir les clées suivantes :
 
 - `code`: Code de la règle qui rapporte l'erreur (généralement `rule['name']`)
 - `line`: Numéro de ligne et numéro de caractère dans cette ligne, séparées par un `:`.
-Par exemple, `"2:3"` veut dire que l'erreur a été trouvée sur la ligne 2, au caractère 3.
+  Par exemple, `"2:3"` veut dire que l'erreur a été trouvée sur la ligne 2, au caractère 3.
 - `match`: La partie du contenu qui contient l'erreur
 - `message`: Le message qui serra affiché pour signaler l'erreur (généralement `rule['message']`)
   :::

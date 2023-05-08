@@ -271,3 +271,9 @@
     default: false
     patterns:
     - <br\s*?\/?>
+- rule:
+    name: H037
+    message: Duplicate attribute found.
+    flags: re.I
+    patterns:
+    - <\w[^>]*?\s([a-z][a-z-]*?)(?==.+?\1=[^>]*?>)

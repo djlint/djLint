@@ -247,6 +247,7 @@ class Config:
         per_file_ignores: Optional[List[Tuple[str, str]]] = None,
         indent_css: Optional[int] = None,
         indent_js: Optional[int] = None,
+        close_void_tags: bool = False,
     ):
         self.reformat = reformat
         self.check = check
@@ -313,6 +314,10 @@ class Config:
 
         self.ignore_case: bool = ignore_case or djlint_settings.get(
             "ignore_case", False
+        )
+
+        self.close_void_tags: bool = close_void_tags or djlint_settings.get(
+            "close_void_tags", False
         )
 
         # ignore is based on input and also profile
@@ -441,9 +446,9 @@ class Config:
             | ^{\#(?!\s*djlint\:\s*(?:on|off))
             | <pre
             | <textarea
-            | {%[ ]*?blocktrans(?:late)?[^(?:%})]*?%}
+            | {%[ ]*?blocktrans(?:late)?(?:(?!%}|\btrimmed\b).)*?%}
             | {\#\s*djlint\:\s*off\s*\#}
-            | {%[ ]+?comment[ ]+?[^(?:%})]*?%}
+            | {%[ ]+?comment[ ]+?(?:(?!%}).)*?%}
             | {{!--\s*djlint\:off\s*--}}
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
         """
@@ -461,7 +466,7 @@ class Config:
             | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
             | {{!--\s*djlint\:on\s*--}}
             | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
-            | {%[ ]*?endblocktrans(?:late)?[^(?:%})]*?%}
+            | {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
         """
 
         # ignored block closing tags that
@@ -473,8 +478,6 @@ class Config:
             | {%[ ]+?endcomment[ ]+?%}
             | {{!--\s*djlint\:on\s*--}}
             | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
-            # only if has a leading whitespace
-            | (?:\s|^){%[ ]+?endblocktrans(?:late)?[ ]+?%}
         """
 
         # all html tags possible
@@ -498,6 +501,8 @@ class Config:
                 | macro
                 | call
                 | raw
+                | blocktrans(?!late)
+                | blocktranslate
             """
             + self.custom_blocks
             + r")"
@@ -644,6 +649,9 @@ class Config:
             | macro
             | call
             | raw
+            | blocktrans(?!late)
+            | blocktranslate
+
             """
             + self.custom_blocks
             + r""")
@@ -688,6 +696,10 @@ class Config:
             | call
             | endcall
             | image
+            | blocktrans(?!late)
+            | endblocktrans(?!late)
+            | blocktranslate
+            | endblocktranslate
             """
             + self.custom_blocks
             + r""")
@@ -698,7 +710,7 @@ class Config:
         """
 
         self.ignored_linter_blocks: str = r"""
-           {%-?[ ]*?raw\b[^(?:%})]*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
+           {%-?[ ]*?raw\b(?:(?!%}).)*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
         """
 
         self.unformatted_blocks: str = r"""
@@ -732,17 +744,9 @@ class Config:
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
             | <!--.*?-->
             | <\?php.*?\?>
-            | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-            # this fancy regex breaks when there are two back to back statements..
-            # tests pass without it.
-            # either with no space before it, and then we cannot format it.
-            # | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktranslate[ ]*?%}
-            # | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?[^\s]{%[ ]*?endblocktrans[ ]*?%}
-            # or with a space before the close block > then we can format the endblock
-            # | {%[ ]*?blocktranslate\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktranslate[ ]*?%})
-            # | {%[ ]*?blocktrans\b[^(?:%})]*?%}.*?(?=\s{%[ ]*?endblocktrans[ ]*?%})
-            | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
+            | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+            | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
         """
 
@@ -758,6 +762,18 @@ class Config:
             r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})",
         ]
 
+        self.ignored_trans_blocks: str = r"""
+              {%[ ]*?blocktranslate?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate?[ ]*?%}
+            | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+        """
+        self.trans_trimmed_blocks: str = r"""
+              {%[ ]*?blocktranslate\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?blocktrans\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+        """
+        self.ignored_trans_blocks_closing: str = r"""
+         {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
+        """
+
         self.ignored_inline_blocks: str = r"""
               <!--.*?-->
             | <script.*?\</script>
@@ -765,8 +781,8 @@ class Config:
             | {\*.*?\*}
             | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
             | <\?php.*?\?>
-            | {%[ ]*?comment\b[^(?:%})]*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
-            | {%[ ]*?blocktrans(?:late)?\b[^(?:%})]*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
+            | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
+            | {%[ ]*?blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
         """
 
         self.optional_single_line_html_tags: str = r"""

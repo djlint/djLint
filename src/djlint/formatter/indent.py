@@ -17,6 +17,42 @@ from .attributes import format_attributes
 
 def indent_html(rawcode: str, config: Config) -> str:
     """Indent raw code."""
+    if config.profile not in ["handlebars", "golang"]:
+        # we can try to fix template tags. ignore handlebars
+        # this should be done before indenting to line length
+        # calc is preserved.
+
+        def fix_tag_spacing(html: str, match: re.Match) -> str:
+            if inside_ignored_block(config, html, match):
+                return match.group()
+
+            return f"{match.group(1)} {match.group(2)} {match.group(3)}"
+
+        """
+        We should have tags like this:
+        {{ tag }}
+        {%- tag atrib -%}
+        """
+        func = partial(fix_tag_spacing, rawcode)
+
+        rawcode = re.sub(
+            r"({%-?\+?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?(\+?-?%})", func, rawcode
+        )
+
+        rawcode = re.sub(r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", func, rawcode)
+
+    elif config.profile == "handlebars":
+
+        def fix_handlebars_template_tags(html: str, match: re.Match) -> str:
+            if inside_ignored_block(config, html, match):
+                return match.group()
+
+            return f"{match.group(1)} {match.group(2)}"
+
+        func = partial(fix_handlebars_template_tags, rawcode)
+        # handlebars templates
+        rawcode = re.sub(r"({{#(?:each|if).+?[^ ])(}})", func, rawcode)
+
     rawcode_flat_list = re.split("\n", rawcode)
 
     indent = config.indent
@@ -282,53 +318,6 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         beautified_code = beautified_code + tmp
 
-    # we can try to fix template tags. ignore handlebars
-    if config.profile not in ["handlebars", "golang"]:
-
-        def fix_non_handlebars_template_tags(
-            html: str, out_format: str, match: re.Match
-        ) -> str:
-            if inside_ignored_block(config, html, match):
-                return match.group()
-
-            return out_format % (
-                match.group(1),
-                match.group(2),
-                match.group(3),
-            )
-
-        func = partial(fix_non_handlebars_template_tags, beautified_code, "%s %s%s")
-        beautified_code = re.sub(
-            r"({[{|%]\-?)(\w[^}].+?)([}|%]})", func, beautified_code
-        )
-
-        func = partial(fix_non_handlebars_template_tags, beautified_code, "%s%s %s")
-        beautified_code = re.sub(
-            r"({[{|%])([^}].+?[^\ \-])([}|%]})", func, beautified_code
-        )
-
-        func = partial(fix_non_handlebars_template_tags, beautified_code, "%s%s %s")
-        beautified_code = re.sub(
-            r"({[{|%])([^}].+?[^ -])(\-+?[}|%]})", func, beautified_code
-        )
-
-    elif config.profile == "handlebars":
-
-        def fix_handlebars_template_tags(
-            html: str, out_format: str, match: re.Match
-        ) -> str:
-            if inside_ignored_block(config, html, match):
-                return match.group()
-
-            return out_format % (
-                match.group(1),
-                match.group(2),
-            )
-
-        func = partial(fix_handlebars_template_tags, beautified_code, "%s %s")
-        # handlebars templates
-        beautified_code = re.sub(r"({{#(?:each|if).+?[^ ])(}})", func, beautified_code)
-
     # try to fix internal formatting of set tag
     def format_set(config, match):
         open_bracket = match.group(1)
@@ -372,7 +361,6 @@ def indent_html(rawcode: str, config: Config) -> str:
                     contents = (
                         contents_split[0].strip() + " = " + contents_split[-1].strip()
                     )
-                    pass
 
         return f"{open_bracket} {tag} {contents} {close_braket}"
 

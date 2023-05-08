@@ -32,6 +32,95 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     )
 
 
+def inside_protected_trans_block(config: Config, html: str, match: re.Match) -> bool:
+    """Find ignored group closing.
+
+    A valid ignored group closing tag will not be part of a
+    single line block.
+
+    True = non indentable > inside ignored trans block
+    False = indentable > either inside a trans trimmed block, or somewhere else, but not a trans non trimmed :)
+    """
+    last_index = 0
+    close_block = re.search(
+        re.compile(
+            config.ignored_trans_blocks_closing, flags=re.IGNORECASE | re.VERBOSE
+        ),
+        match.group(),
+    )
+
+    if not close_block:
+        return False
+
+    non_trimmed = list(
+        re.finditer(
+            re.compile(
+                config.ignored_trans_blocks,
+                flags=re.IGNORECASE | re.VERBOSE | re.DOTALL,
+            ),
+            html,
+        )
+    )
+
+    trimmed = list(
+        re.finditer(
+            re.compile(
+                config.trans_trimmed_blocks,
+                flags=re.IGNORECASE | re.VERBOSE | re.DOTALL,
+            ),
+            html,
+        )
+    )
+
+    # who is max?
+    if non_trimmed and (not trimmed or non_trimmed[-1].end() > trimmed[-1].end()):
+        # non trimmed!
+        # check that this is not an inline block.
+        non_trimmed_inline = list(
+            re.finditer(
+                re.compile(
+                    config.ignored_trans_blocks,
+                    flags=re.IGNORECASE | re.VERBOSE | re.DOTALL,
+                ),
+                match.group(),
+            )
+        )
+
+        if non_trimmed_inline:
+            last_index = non_trimmed[
+                -1
+            ].end()  # get the last index. The ignored opening should start after this.
+
+            return re.search(
+                re.compile(
+                    config.ignored_trans_blocks_closing,
+                    flags=re.IGNORECASE | re.VERBOSE,
+                ),
+                html[last_index:],
+            )
+
+        return close_block.end(0) <= non_trimmed[-1].end()
+
+    elif trimmed:
+        # inside a trimmed block, we can return true to continue as if
+        # this is a indentable block
+        return close_block.end(0) > trimmed[-1].end()
+    return False
+
+    # print(close_block)
+    # if non_trimmed:
+    #     last_index = non_trimmed[
+    #         -1
+    #     ].end()  # get the last index. The ignored opening should start after this.
+
+    # return re.search(
+    #     re.compile(
+    #         config.ignored_trans_blocks_closing, flags=re.IGNORECASE | re.VERBOSE
+    #     ),
+    #     html[last_index:],
+    # )
+
+
 def is_ignored_block_closing(config: Config, item: str) -> bool:
     """Find ignored group closing.
 

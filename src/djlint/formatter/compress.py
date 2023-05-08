@@ -5,6 +5,7 @@
 
 import regex as re
 from HtmlTagNames import html_tag_names
+from HtmlVoidElements import html_void_elements
 
 from ..helpers import child_of_unformatted_block
 from ..settings import Config
@@ -42,9 +43,12 @@ def compress_html(html: str, config: Config) -> str:
             if match.group(3)
             else ""
         )
-        close_braket = (
-            match.group(4) if "/" not in match.group(4) else f" {match.group(4)}"
-        )
+        if tag.lower() in html_void_elements and config.close_void_tags:
+            close_braket = " />"
+        else:
+            close_braket = (
+                match.group(4) if "/" not in match.group(4) else f" {match.group(4)}"
+            )
 
         return f"{open_braket}{tag}{attributes}{close_braket}"
 
