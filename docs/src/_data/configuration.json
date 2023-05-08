@@ -253,6 +253,29 @@
     ]
   },
   {
+    "name": "line_break_after_multiline_tag",
+    "tags": ["formatter"],
+    "description": {
+      "en": "Do not condense the content of multi-line tags into the line of the last attribute.",
+      "ru": "Не сжимайте содержимое многострочных тегов в строку последнего атрибута.",
+      "fr": "Ne pas condenser le contenu des balises multilignes dans la ligne du dernier attribut."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "line_break_after_multiline_tag=true"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"line_break_after_multiline_tag\": \"true\""
+      },
+      {
+        "name": "cli",
+        "value": "--line-break-after-multiline-tag"
+      }
+    ]
+  },
+  {
     "name": "profile",
     "tags": ["linter", "formatter"],
     "description": {
