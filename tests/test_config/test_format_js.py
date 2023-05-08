@@ -187,7 +187,8 @@ test_data = [
             "<div>\n"
             '    <script type="text/javascript">\n'
             "       let s = `\n"
-            "        <p>Text.</p>`;\n"
+            "        <p>Text.\n"
+            "      </p>`;\n"
             "    </script>\n"
             "</div>\n"
         ),
