@@ -303,11 +303,11 @@ class Config:
 
         self.js_config = (
             {"indent_size": indent_js} if indent_js else djlint_settings.get("js")
-        )
+        ) or {}
 
         self.css_config = (
             {"indent_size": indent_css} if indent_css else djlint_settings.get("css")
-        )
+        ) or {}
 
         self.format_css: bool = format_css or djlint_settings.get("format_css", False)
 

@@ -30,9 +30,9 @@ test_data = [
         (
             "<div>\n"
             "    <style>\n"
-            "        body {\n"
-            "         color: red\n"
-            "        }\n"
+            "     body {\n"
+            "      color: red\n"
+            "     }\n"
             "    </style>\n"
             "</div>\n"
         ),

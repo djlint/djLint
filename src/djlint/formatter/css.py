@@ -17,38 +17,30 @@ def format_css(html: str, config: Config) -> str:
             return match.group()
 
         indent = len(match.group(1)) * " "
-        inner_indent = indent + config.indent
+
+        # because of the param options for js-beautifier we cannot pass
+        # in a fixed space leading.
+        # so, call formatter twice, once with a fake indent.
+        # check which lines changed (these are the formattable lines)
+        # and add the leading space to them.
+
+        config.css_config["indent_level"] = 1
         opts = BeautifierOptions(config.css_config)
-
         beautified_lines = cssbeautifier.beautify(match.group(3), opts).splitlines()
+
+        config.js_config["indent_level"] = 2
+        opts = BeautifierOptions(config.js_config)
+        beautified_lines_test = cssbeautifier.beautify(
+            match.group(3), opts
+        ).splitlines()
+
         beautified = ""
-
-        # add indent back
-        ignore_indent = False
-        for line in beautified_lines:
-            if re.search(
-                re.compile(
-                    r"\/\*[ ]*?beautify[ ]+?ignore:end[ ]*?\*\/",
-                    re.DOTALL | re.IGNORECASE | re.MULTILINE,
-                ),
-                line,
-            ):
-                line = line.lstrip()
-                ignore_indent = False
-
-            if ignore_indent is False and line:
-                beautified += "\n" + inner_indent + line
-            else:
-                beautified += "\n" + line
-
-            if re.search(
-                re.compile(
-                    r"\/\*[ ]*?beautify[ ]+?ignore:start[ ]*?\*\/",
-                    re.DOTALL | re.IGNORECASE | re.MULTILINE,
-                ),
-                line,
-            ):
-                ignore_indent = True
+        for line, test in zip(beautified_lines, beautified_lines_test):
+            beautified += "\n"
+            if line == test:
+                beautified += line
+                continue
+            beautified += indent + line
 
         return match.group(1) + match.group(2) + beautified + "\n" + indent
 
