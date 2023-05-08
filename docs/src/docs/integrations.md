@@ -19,7 +19,7 @@ The repo provides multiple pre-configured hooks for specific djLint profiles (it
 - `djlint-django` for Django templates:
   This will look for files matching `templates/**.html` and set `--profile=django`.
 - `djlint-jinja`
-  This will look for files matching `*.j2` and set `--profile=jinja`.
+  This will look for files matching `*.j2`,`*.jinja` or `*.jinja2`  and set `--profile=jinja`.
 - `djlint-nunjucks`
   This will look for files matching `*.njk` and set `--profile=nunjucks`.
 - `djlint-handlebars`
