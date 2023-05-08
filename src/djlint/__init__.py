@@ -222,6 +222,11 @@ from .src import get_src
     help="Set JS indent level.",
     show_default=False,
 )
+@click.option(
+    "--close-void-tags",
+    is_flag=True,
+    help="Add closing mark on known void tags. Ex: <img> becomse <img />",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -258,6 +263,7 @@ def main(
     per_file_ignores: Optional[List[Tuple[str, str]]],
     indent_css: Optional[int],
     indent_js: Optional[int],
+    close_void_tags: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -295,6 +301,7 @@ def main(
         per_file_ignores=per_file_ignores,
         indent_css=indent_css,
         indent_js=indent_js,
+        close_void_tags=close_void_tags,
     )
 
     temp_file = None

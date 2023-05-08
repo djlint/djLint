@@ -1,5 +1,28 @@
 [
   {
+    "name": "close_void_tags",
+    "description": {
+      "en": "Close void tags.",
+      "ru": "Закрыть недействительные теги.",
+      "fr": "Fermer les étiquettes vides."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "close_void_tags=true"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"close_void_tags\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--close-void-tags"
+      }
+    ],
+    "tags": ["formatter"]
+  },
+  {
     "name": "ignore",
     "description": {
       "en": "Ignore linter codes.",

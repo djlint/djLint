@@ -247,6 +247,7 @@ class Config:
         per_file_ignores: Optional[List[Tuple[str, str]]] = None,
         indent_css: Optional[int] = None,
         indent_js: Optional[int] = None,
+        close_void_tags: bool = False,
     ):
         self.reformat = reformat
         self.check = check
@@ -313,6 +314,10 @@ class Config:
 
         self.ignore_case: bool = ignore_case or djlint_settings.get(
             "ignore_case", False
+        )
+
+        self.close_void_tags: bool = close_void_tags or djlint_settings.get(
+            "close_void_tags", False
         )
 
         # ignore is based on input and also profile
