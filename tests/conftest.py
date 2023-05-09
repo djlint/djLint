@@ -134,23 +134,16 @@ def printer(expected, source, actual):
         print(f"{ color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}")
 
 
-def lint_printer(source, expected, excluded, actual):
+def lint_printer(source, expected, actual):
     width, _ = shutil.get_terminal_size()
 
     expected_text = "Expected Rules"
-    excluded_text = "Excluded Rules"
     actual_text = "Actual"
     source_text = "Source"
 
     expected_width = int((width - len(expected_text) - 2) / 2)
-    excluded_width = int((width - len(excluded_text) - 2) / 2)
     actual_width = int((width - len(actual_text) - 2) / 2)
     source_width = int((width - len(source_text) - 2) / 2)
-
-    def padder(value, width):
-        if len(value) < width:
-            return str(value) + " " * (width - len(value))
-        return value[:20]
 
     print()
     print(
@@ -160,42 +153,34 @@ def lint_printer(source, expected, excluded, actual):
     print(source)
     print()
 
-    if expected != ():
+    print(
+        f"{Fore.BLUE}{Style.BRIGHT}{'─' * expected_width} {expected_text} {'─' * expected_width}{Style.RESET_ALL}"
+    )
+    print()
+    for x in expected:
         print(
-            f"{Fore.BLUE}{Style.BRIGHT}{'─' * expected_width} {expected_text} {'─' * expected_width}{Style.RESET_ALL}"
+            f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}"
         )
+        print(f'     {x["message"]}')
         print()
-        for x in expected:
-            if isinstance(x, tuple):
-                print(f"{x[0]}, line #{x[1]}")
-            else:
-                print(x)
-        print()
-    if excluded != ():
-        print(
-            f"{Fore.BLUE}{Style.BRIGHT}{'─' * excluded_width} {excluded_text} {'─' * excluded_width}{Style.RESET_ALL}"
-        )
-        print()
-        for x in excluded:
-            if isinstance(x, tuple):
-                print(f"{x[0]}, line #{x[1]}")
-            else:
-                print(x)
-        print()
+
     print(
         f"{Fore.BLUE}{Style.BRIGHT}{'─' * actual_width} {actual_text} {'─' * actual_width}{Style.RESET_ALL}"
     )
     print()
 
-    if actual:
-        max_code = max(len(x["code"]) for x in actual)
-        max_line = max(len(x["line"]) for x in actual)
-        max_match = min(max(len(x["match"]) for x in actual), 20)
-        for x in actual:
-            print(
-                f'{padder(x["code"],max_code)} {padder(x["line"], max_line)} {padder(x["match"],max_match)} >> {x["message"]}'
-            )
+    for x in actual:
+        print(
+            f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}"
+        )
+        print(f'     {x["message"]}')
+        print()
+    if len(actual) == 0:
+        print(f"{Fore.YELLOW}No codes found.{Style.RESET_ALL}")
+        print()
 
+    else:
+        print(f"{Fore.YELLOW}{actual}{Style.RESET_ALL}")
         print()
 
 

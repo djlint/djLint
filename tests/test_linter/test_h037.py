@@ -1,7 +1,6 @@
-"""Djlint linter rule tests for nunjucks.
+"""Test twig comment tags.
 
-poetry run pytest tests/test_linter/test_nunjucks_linter.py
-
+poetry run pytest tests/test_linter/test_h037.py
 """
 import pytest
 
@@ -10,37 +9,44 @@ from tests.conftest import lint_printer
 
 test_data = [
     pytest.param(
-        ("{%- test-%}"),
+        ('<br class="a" id="asdf" class="b" />'),
         (
             [
                 {
-                    "code": "T001",
+                    "code": "H037",
                     "line": "1:4",
-                    "match": "test-%}",
-                    "message": "Variables should be wrapped in a single whitespace.",
+                    "match": "class",
+                    "message": "Duplicate attribute found.",
                 }
             ]
         ),
-        id="T001",
+        id="one",
     ),
     pytest.param(
-        ("{%-test -%}"),
+        ('<div data-class="a" id="asdf" data-class="b"></div>'),
         (
             [
                 {
-                    "code": "T001",
-                    "line": "1:0",
-                    "match": "{%-test",
-                    "message": "Variables should be wrapped in a single whitespace.",
+                    "code": "H037",
+                    "line": "1:5",
+                    "match": "data-class",
+                    "message": "Duplicate attribute found.",
                 }
             ]
         ),
-        id="T001_2",
+        id="two",
     ),
     pytest.param(
-        ("{%- test -%}"),
+        ('<div data-class="a" data=asdf class="b"></div>'),
         ([]),
-        id="T001_3",
+        id="mismatch names",
+    ),
+    pytest.param(
+        (
+            '<a href="" ></a><a href=""></a><a href=""></a><a href=""></a><a href=""></a><a href=""></a>'
+        ),
+        ([]),
+        id="repeating tags",
     ),
 ]
 

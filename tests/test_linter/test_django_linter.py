@@ -1,22 +1,8 @@
-"""Djlint linter rule tests.
+"""Djlint linter rule tests for django.
 
-run::
-
-   pytest tests/test_linter.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   # for a single test
-
-   pytest tests/test_linter/test_linter.py::test_random
-
-Test setup
-
-(html, (list of codes that should file, plus optional line number))
-
+poetry run pytest tests/test_linter/test_django_linter.py
 
 """
-# pylint: disable=C0116,C0103,C0302
-
 
 import pytest
 
@@ -26,54 +12,117 @@ from tests.conftest import lint_printer
 test_data = [
     pytest.param(
         ("{{test }}\n{% test%}<a>"),
-        ([("T001", 1), ("T001", 2)]),
-        (),
+        (
+            [
+                {
+                    "code": "T001",
+                    "line": "1:0",
+                    "match": "{{test",
+                    "message": "Variables should be wrapped in a single whitespace.",
+                },
+                {
+                    "code": "T001",
+                    "line": "2:3",
+                    "match": "test%}",
+                    "message": "Variables should be wrapped in a single whitespace.",
+                },
+                {
+                    "code": "H025",
+                    "line": "2:9",
+                    "match": "<a>",
+                    "message": "Tag seems to be an orphan.",
+                },
+            ]
+        ),
         id="T001",
     ),
     pytest.param(
         ("{% extends 'this' %}"),
         (
             [
-                ("T002", 1),
+                {
+                    "code": "T002",
+                    "line": "1:0",
+                    "match": "{% extends 'this' %}",
+                    "message": "Double quotes should be used in tags.",
+                }
             ]
         ),
-        (),
         id="T002",
     ),
     pytest.param(
         ("{% extends this %}"),
-        (),
-        (["T002"]),
+        ([]),
         id="T002_unquoted_var_names",
     ),
     pytest.param(
         ("{% with a='this' %}"),
-        (["T002"]),
-        (),
+        (
+            [
+                {
+                    "code": "T002",
+                    "line": "1:0",
+                    "match": "{% with a='this' %}",
+                    "message": "Double quotes should be used in tags.",
+                }
+            ]
+        ),
         id="T002_with",
     ),
     pytest.param(
         ("{% trans 'this' %}"),
-        (["T002"]),
-        (),
+        (
+            [
+                {
+                    "code": "T002",
+                    "line": "1:0",
+                    "match": "{% trans 'this' %}",
+                    "message": "Double quotes should be used in tags.",
+                }
+            ]
+        ),
         id="T002_trans",
     ),
     pytest.param(
         ("{% translate 'this' %}"),
-        (["T002"]),
-        (),
+        (
+            [
+                {
+                    "code": "T002",
+                    "line": "1:0",
+                    "match": "{% translate 'this' ",
+                    "message": "Double quotes should be used in tags.",
+                }
+            ]
+        ),
         id="T002_translate",
     ),
     pytest.param(
         ("{% include 'this' %}"),
-        (["T002"]),
-        (),
+        (
+            [
+                {
+                    "code": "T002",
+                    "line": "1:0",
+                    "match": "{% include 'this' %}",
+                    "message": "Double quotes should be used in tags.",
+                }
+            ]
+        ),
         id="T002_include",
     ),
     pytest.param(
         ("{% now 'Y-m-d G:i:s' %}"),
-        (["T002"]),
-        (),
+        (
+            [
+                {
+                    "code": "T002",
+                    "line": "1:0",
+                    "match": "{% now 'Y-m-d G:i:s'",
+                    "message": "Double quotes should be used in tags.",
+                }
+            ]
+        ),
         id="T002_now",
     ),
     pytest.param(
@@ -83,14 +132,21 @@ test_data = [
             '{% include "template.html" %}\n'
             "<div {% fpr %} data-{{ name }}='{{ value }}'{% endfor %}/>"
         ),
-        (),
-        (["T002"]),
+        (
+            [
+                {
+                    "code": "H025",
+                    "line": "2:0",
+                    "match": '<div class="card" da',
+                    "message": "Tag seems to be an orphan.",
+                }
+            ]
+        ),
         id="T002_test_greedy_regex",
     ),
     pytest.param(
         ("{% if form.action_url %}\n" "   ='stuff'\n" " {% endif %}"),
-        (),
-        (["T002"]),
+        ([]),
         id="T002_test_greedy_regex_2",
     ),
     pytest.param(
@@ -98,20 +154,44 @@ test_data = [
             '{% include "template.html" %}\n'
             " {% include \"template.html\" with type='mono' %}"
         ),
-        ([("T002", 2)]),
-        (),
+        (
+            [
+                {
+                    "code": "T002",
+                    "line": "2:1",
+                    "match": '{% include "template',
+                    "message": "Double quotes should be used in tags.",
+                }
+            ]
+        ),
         id="T002_test_line_num",
     ),
     pytest.param(
         ("{% endblock %}"),
-        ([("T003", 1)]),
-        (),
+        (
+            [
+                {
+                    "code": "T003",
+                    "line": "1:0",
+                    "match": "{% endblock %}",
+                    "message": "Endblock should have name. Ex: {% endblock body %}.",
+                }
+            ]
+        ),
         id="T003",
     ),
     pytest.param(
         ('<link src="/static/there">'),
-        ([("D004", 1)]),
-        (),
+        (
+            [
+                {
+                    "code": "D004",
+                    "line": "1:0",
+                    "match": '<link src="/static/',
+                    "message": "(Django) Static urls should follow {% static path/to/file %} pattern.",
+                }
+            ]
+        ),
         id="DJ004",
     ),
     pytest.param(
@@ -119,14 +199,42 @@ test_data = [
             '<a href="/Collections?handler=RemoveAgreement&id=@a.Id">\n'
             '<form action="/Collections"></form></a>'
         ),
-        ([("D018", 1), ("D018", 2)]),
-        (),
+        (
+            [
+                {
+                    "code": "D018",
+                    "line": "1:0",
+                    "match": '<a href="/Collection',
+                    "message": "(Django) Internal links should use the {% url ... %} pattern.",
+                },
+                {
+                    "code": "D018",
+                    "line": "2:0",
+                    "match": '<form action="/Colle',
+                    "message": "(Django) Internal links should use the {% url ... %} pattern.",
+                },
+            ]
+        ),
         id="DJ018",
     ),
     pytest.param(
         ('<a href="javascript:abc()">\n' '<form action="javascript:abc()"></form></a>'),
-        (),
-        ([("D018", 1), ("D018", 2)]),
+        (
+            [
+                {
+                    "code": "H019",
+                    "line": "1:0",
+                    "match": '<a href="javascript:',
+                    "message": "Replace 'javascript:abc()' with on_ event and real url.",
+                },
+                {
+                    "code": "H019",
+                    "line": "2:0",
+                    "match": '<form action="javasc',
+                    "message": "Replace 'javascript:abc()' with on_ event and real url.",
+                },
+            ]
+        ),
         id="DJ018_no_match",
     ),
     pytest.param(
@@ -134,169 +242,244 @@ test_data = [
             '<a href="#">\n<form action="#"><a href="#tab">\n'
             '<form action="#go"></form></a></form></a>'
         ),
-        (),
-        ([("D018", 1), ("D018", 2)]),
+        ([]),
         id="DJ018_has_urls",
     ),
     pytest.param(
         ('<div class="em-ajaxLogs" data-src="/table/task/{{ t.id }}/log"></div>'),
-        ([("D018", 1)]),
-        (),
+        (
+            [
+                {
+                    "code": "D018",
+                    "line": "1:0",
+                    "match": '<div class="em-ajaxL',
+                    "message": "(Django) Internal links should use the {% url ... %} pattern.",
+                }
+            ]
+        ),
         id="DJ018_data_src",
     ),
     pytest.param(
         ('<a href="mailto:joe"></a><a href="tel:joe"></a>'),
-        (),
-        (["D018"]),
+        ([]),
         id="DJ018_mailto",
     ),
     pytest.param(
         ('<a href="data:,Hello%2C%20World%21"></a>'),
-        (),
-        (["D018"]),
+        ([]),
         id="DJ018_data",
     ),
     pytest.param(
         ('<div data-row-selection-action="highlight"></div>'),
-        (),
-        (["D018"]),
+        ([]),
         id="DJ018_attribute_names",
     ),
     pytest.param(
         ('<form action="{% url \'something\' %}" data-action="xxx"></form>'),
-        (),
-        (["D018"]),
+        (
+            [
+                {
+                    "code": "H037",
+                    "line": "1:6",
+                    "match": "action",
+                    "message": "Duplicate attribute found.",
+                }
+            ]
+        ),
         id="DJ018_data_action",
     ),
     pytest.param(
         ("{% blah 'asdf %}"),
-        (["T027"]),
-        (),
+        (
+            [
+                {
+                    "code": "T027",
+                    "line": "1:0",
+                    "match": "{% blah 'asdf %}",
+                    "message": "Unclosed string found in template syntax.",
+                }
+            ]
+        ),
         id="T027",
     ),
     pytest.param(
         ("{% blah 'asdf' %}{{ blah \"asdf\" }}"),
-        (),
-        (["T027"]),
+        ([]),
         id="T027_no",
     ),
     pytest.param(
         ("{% blah 'asdf' 'blah %}"),
-        (["T027"]),
-        (),
+        (
+            [
+                {
+                    "code": "T027",
+                    "line": "1:0",
+                    "match": "{% blah 'asdf' 'blah",
+                    "message": "Unclosed string found in template syntax.",
+                }
+            ]
+        ),
         id="T027_long_name",
     ),
     pytest.param(
         ('{% trans "Check box if you\'re interested in this location." %}'),
-        (),
-        (["T027"]),
+        ([]),
         id="T027_trans",
     ),
     pytest.param(
         (
             "{% macro rendersubmit(buttons=[], class=\"\", index='', url='', that=\"\" , test='') -%}"
         ),
-        (),
-        (["T027"]),
+        ([]),
         id="T027_mixed_quotes",
     ),
     pytest.param(
         ("<a href=\"{{ blah 'asdf' -}}\">"),
-        (),
-        (["T028"]),
+        (
+            [
+                {
+                    "code": "H025",
+                    "line": "1:0",
+                    "match": "<a href=\"{{ blah 'as",
+                    "message": "Tag seems to be an orphan.",
+                }
+            ]
+        ),
         id="T028_no",
     ),
     pytest.param(
         ("<a {{ blah 'asdf' }}>"),
-        (),
-        (["T028"]),
+        (
+            [
+                {
+                    "code": "H025",
+                    "line": "1:0",
+                    "match": "<a {{ blah 'asdf' }}",
+                    "message": "Tag seems to be an orphan.",
+                }
+            ]
+        ),
         id="T028_no_2",
     ),
     pytest.param(
         ("<a {% blah 'asdf' %}>"),
-        (),
-        (["T028"]),
+        (
+            [
+                {
+                    "code": "H025",
+                    "line": "1:0",
+                    "match": "<a {% blah 'asdf' %}",
+                    "message": "Tag seems to be an orphan.",
+                }
+            ]
+        ),
         id="T028_no_3",
     ),
     pytest.param(
         ("{% blah 'asdf' %}"),
-        (),
-        (["T028"]),
+        ([]),
         id="T028_no_5",
     ),
     pytest.param(
         ("{% for 'asdf' %}"),
-        (),
-        (["T028"]),
+        ([]),
         id="T028_no_6",
     ),
     pytest.param(
         ('<input class="{% if %}{% endif %}" />'),
-        (),
-        (["T028"]),
+        ([]),
         id="T028_no_7",
     ),
     pytest.param(
         ("{% static ''  \"  \"  'foo/bar.min.css' %}"),
-        (["T032"]),
-        (),
+        (
+            [
+                {
+                    "code": "T032",
+                    "line": "1:0",
+                    "match": "{% static ''",
+                    "message": "Extra whitespace found in template tags.",
+                }
+            ]
+        ),
         id="T032",
     ),
     pytest.param(
         ("{% static  ''  %}"),
-        (["T032"]),
-        (),
+        (
+            [
+                {
+                    "code": "T001",
+                    "line": "1:12",
+                    "match": "'  %}",
+                    "message": "Variables should be wrapped in a single whitespace.",
+                },
+                {
+                    "code": "T032",
+                    "line": "1:0",
+                    "match": "{% static",
+                    "message": "Extra whitespace found in template tags.",
+                },
+            ]
+        ),
         id="T032_2",
     ),
     pytest.param(
         ("{% static '' \"     \" 'foo/bar.min.css' %}"),
-        (),
-        (["T032"]),
+        ([]),
         id="T032_no",
     ),
     pytest.param(
         ("{{ static ''  \"  \"  'foo/bar.min.css' }}"),
-        (["T032"]),
-        (),
+        (
+            [
+                {
+                    "code": "T032",
+                    "line": "1:0",
+                    "match": "{{ static ''",
+                    "message": "Extra whitespace found in template tags.",
+                }
+            ]
+        ),
         id="T032_3",
     ),
     pytest.param(
         ("{{ static  ''  }}"),
-        (["T032"]),
-        (),
+        (
+            [
+                {
+                    "code": "T001",
+                    "line": "1:12",
+                    "match": "'  }}",
+                    "message": "Variables should be wrapped in a single whitespace.",
+                },
+                {
+                    "code": "T032",
+                    "line": "1:0",
+                    "match": "{{ static",
+                    "message": "Extra whitespace found in template tags.",
+                },
+            ]
+        ),
         id="T032_4",
     ),
     pytest.param(
         ("{{ static '' \"     \" 'foo/bar.min.css' }}"),
-        (),
-        (["T032"]),
+        ([]),
         id="T032_no_2",
     ),
 ]
 
 
-@pytest.mark.parametrize(("source", "expected", "excluded"), test_data)
-def test_django_linter(source, expected, excluded, django_config) -> None:
-    filename = "file"
-    filepath = filename
-    lint = linter(django_config, source, filename, filepath)[filename]
+@pytest.mark.parametrize(("source", "expected"), test_data)
+def test_base(source, expected, django_config):
+    filename = "test.html"
+    output = linter(django_config, source, filename, filename)
 
-    lint_printer(source, expected, excluded, lint)
+    lint_printer(source, expected, output[filename])
 
-    def check_rule(rule, lint):
-        if isinstance(rule, tuple):
-            return (
-                any(
-                    x["code"] == rule[0] and int(x["line"].split(":")[0]) == rule[1]
-                    for x in lint
-                )
-                is True
-            )
-        else:
-            return any(x["code"] == rule for x in lint) is True
+    mismatch = list(filter(lambda x: x not in expected, output[filename])) + list(
+        filter(lambda x: x not in output[filename], expected)
+    )
 
-    for rule in expected:
-        assert check_rule(rule, lint) is True
-
-    for rule in excluded:
-        assert check_rule(rule, lint) is False
+    assert len(mismatch) == 0
