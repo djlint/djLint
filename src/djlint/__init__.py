@@ -158,6 +158,11 @@ from .src import get_src
     help="Add an additional blank line before {% <tag> ... %} tag groups.",
 )
 @click.option(
+    "--line-break-after-multiline-tag",
+    is_flag=True,
+    help="Do not condense the content of multi-line tags into the line of the last attribute.",
+)
+@click.option(
     "--custom-blocks",
     type=str,
     default="",
@@ -252,6 +257,7 @@ def main(
     ignore_blocks: str,
     blank_line_after_tag: str,
     blank_line_before_tag: str,
+    line_break_after_multiline_tag: bool,
     custom_blocks: str,
     custom_html: str,
     exclude: str,
@@ -290,6 +296,7 @@ def main(
         ignore_blocks=ignore_blocks,
         blank_line_after_tag=blank_line_after_tag,
         blank_line_before_tag=blank_line_before_tag,
+        line_break_after_multiline_tag=line_break_after_multiline_tag,
         custom_blocks=custom_blocks,
         custom_html=custom_html,
         exclude=exclude,

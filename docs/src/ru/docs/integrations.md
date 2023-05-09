@@ -19,7 +19,7 @@ djLint можно использовать как [pre-commit](https://pre-commi
 - `djlint-django` для шаблонов Django:
   Это будет искать файлы, соответствующие `templates/**.html` и устанавливать `--profile=django`.
 - `djlint-jinja`.
-  Это будет искать файлы, соответствующие `*.j2` и устанавливать `--профиль=jinja`.
+  Это будет искать файлы, соответствующие `*.j2`, `*.jinja` или `*.jinja2` и устанавливать `--профиль=jinja`.
 - `djlint-nunjucks`.
   Будет искать файлы, соответствующие `*.njk` и устанавливать `--profile=nunjucks`.
 - `djlint-handlebars`
