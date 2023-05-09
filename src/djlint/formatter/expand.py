@@ -20,7 +20,7 @@ def expand_html(html: str, config: Config) -> str:
 
         Do not add whitespace if the tag is in a non indent block.
 
-        Do not add whiatespace if the tag is a in a template block
+        Do not add whitespace if the tag is a in a template block
         """
         if inside_ignored_block(config, html, match):
             return match.group(1)

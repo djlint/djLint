@@ -237,6 +237,7 @@ class Config:
         custom_blocks: str = "",
         blank_line_after_tag: str = "",
         blank_line_before_tag: str = "",
+        line_break_after_multiline_tag: bool = False,
         custom_html: str = "",
         exclude: str = "",
         extend_exclude: str = "",
@@ -434,6 +435,12 @@ class Config:
         self.blank_line_before_tag: Optional[
             str
         ] = blank_line_before_tag or djlint_settings.get("blank_line_before_tag", None)
+
+        # add line break after multi-line tags
+        self.line_break_after_multiline_tag: bool = (
+            line_break_after_multiline_tag
+            or djlint_settings.get("line_break_after_multiline_tag", False)
+        )
 
         # contents of tags will not be formatted
         self.ignored_block_opening: str = r"""
