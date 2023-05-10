@@ -42,6 +42,25 @@ test_data = [
         id="mismatch names",
     ),
     pytest.param(
+        ('<svg -width="16" -width="2"></svg>'),
+        (
+            [
+                {
+                    "code": "H037",
+                    "line": "1:5",
+                    "match": "-width",
+                    "message": "Duplicate attribute found.",
+                }
+            ]
+        ),
+        id="leading hyphen names",
+    ),
+    pytest.param(
+        ('<svg width="16" stroke-width="2"></svg>'),
+        ([]),
+        id="mismatch hyphen names",
+    ),
+    pytest.param(
         (
             '<a href="" ></a><a href=""></a><a href=""></a><a href=""></a><a href=""></a><a href=""></a>'
         ),
