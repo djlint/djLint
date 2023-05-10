@@ -21,6 +21,12 @@ test_data = [
         id="set_with_sibling",
     ),
     pytest.param(
+        ('<title>{% set_title "My Title" %}</title>'),
+        ('<title>{% set_title "My Title" %}</title>\n'),
+        ({}),
+        id="don't break underscore stuff",
+    ),
+    pytest.param(
         (
             "{% set schema=[\n"
             "{\n"
