@@ -368,7 +368,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     # format set contents
     beautified_code = re.sub(
         re.compile(
-            r"([ ]*{%-?)[ ]*(set)((?:(?!%}).)*?)(-?%})",
+            r"([ ]*{%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
         ),
         func,

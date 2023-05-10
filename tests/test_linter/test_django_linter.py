@@ -276,16 +276,7 @@ test_data = [
     ),
     pytest.param(
         ('<form action="{% url \'something\' %}" data-action="xxx"></form>'),
-        (
-            [
-                {
-                    "code": "H037",
-                    "line": "1:6",
-                    "match": "action",
-                    "message": "Duplicate attribute found.",
-                }
-            ]
-        ),
+        ([]),
         id="DJ018_data_action",
     ),
     pytest.param(
