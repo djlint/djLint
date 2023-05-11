@@ -115,14 +115,14 @@ test_data = [
             "    (\n"
             "    {% blocktranslate count counter=images|length trimmed %}\n"
             "        {{ counter }} photo\n"
-            "        {% plural %}\n"
+            "    {% plural %}\n"
             "        {{ counter }} photos\n"
             "    {% endblocktranslate %}\n"
             "    )\n"
             "    (\n"
             "    {% blocktrans count counter=images|length trimmed %}\n"
             "        {{ counter }} photo\n"
-            "        {% plural %}\n"
+            "    {% plural %}\n"
             "        {{ counter }} photos\n"
             "    {% endblocktrans %}\n"
             "    )\n"
@@ -156,7 +156,7 @@ test_data = [
             "    (\n"
             "    {% blocktranslate count counter=images|length trimmed %}\n"
             "        {{ counter }} photo\n"
-            "        {% plural %}\n"
+            "    {% plural %}\n"
             "        asdf\n"
             "        {{ counter }} photos\n"
             "    {% endblocktranslate %}\n"
@@ -164,7 +164,7 @@ test_data = [
             "    (\n"
             "    {% blocktrans count counter=images|length trimmed %}\n"
             "        {{ counter }} photo\n"
-            "        {% plural %}\n"
+            "    {% plural %}\n"
             "        {{ counter }} photos\n"
             "    {% endblocktrans %}\n"
             "    )\n"
@@ -253,6 +253,23 @@ test_data = [
         ),
         ({"max_line_length": 10}),
         id="blocktrans_autoescape_two",
+    ),
+    pytest.param(
+        (
+            "{% blocktranslate count counter=list|length trimmed  %}\n"
+            "There is only one {{ name }} object.\n"
+            "  {% plural %}   There are {{ counter }} {{ name }} objects.\n"
+            "{% endblocktranslate %}\n"
+        ),
+        (
+            "{% blocktranslate count counter=list|length trimmed %}\n"
+            "    There is only one {{ name }} object.\n"
+            "{% plural %}\n"
+            "    There are {{ counter }} {{ name }} objects.\n"
+            "{% endblocktranslate %}\n"
+        ),
+        ({}),
+        id="plural formatted",
     ),
 ]
 
