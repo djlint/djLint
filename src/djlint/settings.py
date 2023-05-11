@@ -533,7 +533,7 @@ class Config:
 
         # these tags should be unindented and next line will be indented
         self.tag_unindent_line: str = r"""
-              (?:\{%-?[ ]*?(?:elif|else|empty))
+              (?:\{%-?[ ]*?(?:elif|else|empty|plural))
             | (?:
                 \{\{[ ]*?
                 (
@@ -675,6 +675,7 @@ class Config:
             | block(?!trans)
             | endblock(?!trans)
             | else
+            | plural
             | spaceless
             | endspaceless
             | compress

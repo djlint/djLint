@@ -77,7 +77,7 @@
     message: Tag names should be lowercase.
     flags: re.DOTALL
     patterns:
-    - (?<=<)(?:HTML|BODY|DIV|P|SPAN|TABLE|TR|TD|TH|THEAD|TBODY|CODE|UL|OL|LI|H1|H2|H3|H4|H5|H6)
+    - (?<=<)/?(?:HTML|BODY|DIV|P|SPAN|TABLE|TR|TD|TH|THEAD|TBODY|CODE|UL|OL|LI|H1|H2|H3|H4|H5|H6)
 - rule:
     name: H010
     message: Attribute names should be lowercase.
@@ -276,4 +276,4 @@
     message: Duplicate attribute found.
     flags: re.I
     patterns:
-    - <\w[^>]*?\s\K([a-z-][a-z-]*?)(?==[^>]+?[^-]\1=[^>]*?>)
+    - <\w[^>]*?\s\K([a-z-:][a-z-]*?)(?==(?:\"[^\"]*\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|{#(?:(?!#}).)*#}|[^'\">{}])*[^-:]\1=[^>]*?>)

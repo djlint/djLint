@@ -5,14 +5,18 @@ import jsbeautifier
 import regex as re
 from jsbeautifier.javascript.options import BeautifierOptions
 
+from ..helpers import child_of_unformatted_block
 from ..settings import Config
 
 
 def format_js(html: str, config: Config) -> str:
     """Format javascript inside <script> tags."""
 
-    def launch_formatter(config: Config, match: re.Match) -> str:
+    def launch_formatter(config: Config, html: str, match: re.Match) -> str:
         """Add break after if not in ignored block."""
+        if child_of_unformatted_block(config, html, match):
+            return match.group()
+
         if not match.group(3).strip():
             return match.group()
 
@@ -42,7 +46,7 @@ def format_js(html: str, config: Config) -> str:
 
         return match.group(1) + match.group(2) + beautified + "\n" + indent
 
-    func = partial(launch_formatter, config)
+    func = partial(launch_formatter, config, html)
 
     return re.sub(
         re.compile(

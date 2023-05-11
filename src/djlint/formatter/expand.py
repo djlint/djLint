@@ -63,16 +63,16 @@ def expand_html(html: str, config: Config) -> str:
     # template tag breaks
     def should_i_move_template_tag(out_format: str, match: re.Match) -> str:
         # ensure template tag is not inside an html tag and also not the first line of the file
-
         if inside_ignored_block(config, html, match):
             return match.group(1)
+
         if not re.findall(
-            r"\<(?:"
-            + str(config.indent_html_tags)
-            + r")\b(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^>{}])*?"
-            # original
-            # + r")\b(?:[^>]|{%[^(?:%}]*?%}|{{[^(?:}}]*?}})*?"
-            + re.escape(match.group(1)) + "$",
+            r"\<(?:" + str(config.indent_html_tags)
+            # added > as not allowed inside a "" or '' to prevent invalid wild html matches
+            # for issue #640
+            + r")\b(?:\"[^\">]*\"|'[^'>]*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^>{}])*?"
+            + re.escape(match.group(1))
+            + "$",
             html[: match.end()],
             re.MULTILINE | re.VERBOSE,
         ):

@@ -172,6 +172,20 @@ test_data = [
         ({"format_css": True}),
         id="ignore",
     ),
+    pytest.param(
+        (
+            "<!-- djlint:off -->\n"
+            "  <style> body{color:{{ search_index }};}</style><div></div>\n"
+            "  <!-- djlint:on -->"
+        ),
+        (
+            "<!-- djlint:off -->\n"
+            "  <style> body{color:{{ search_index }};}</style><div></div>\n"
+            "<!-- djlint:on -->\n"
+        ),
+        ({"format_js": True}),
+        id="ignored blocks",
+    ),
 ]
 
 

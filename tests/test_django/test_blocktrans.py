@@ -210,6 +210,21 @@ test_data = [
         ),
         id="blocktrans_autoescape_two",
     ),
+    pytest.param(
+        (
+            "{% blocktranslate count counter=list|length  %}\n"
+            "There is only one {{ name }} object.\n"
+            "  {% plural %}   There are {{ counter }} {{ name }} objects.\n"
+            "{% endblocktranslate %}\n"
+        ),
+        (
+            "{% blocktranslate count counter=list|length  %}\n"
+            "There is only one {{ name }} object.\n"
+            "  {% plural %}   There are {{ counter }} {{ name }} objects.\n"
+            "{% endblocktranslate %}\n"
+        ),
+        id="plural not formatted",
+    ),
 ]
 
 
