@@ -195,6 +195,20 @@ test_data = [
         ({"format_js": True, "indent_js": 3}),
         id="literals",
     ),
+    pytest.param(
+        (
+            "<!-- djlint:off -->\n"
+            '  <script id="search-index" type="application/json">{{ search_index }}</script><div></div>\n'
+            "  <!-- djlint:on -->"
+        ),
+        (
+            "<!-- djlint:off -->\n"
+            '  <script id="search-index" type="application/json">{{ search_index }}</script><div></div>\n'
+            "<!-- djlint:on -->\n"
+        ),
+        ({"format_js": True}),
+        id="ignored blocks",
+    ),
 ]
 
 
