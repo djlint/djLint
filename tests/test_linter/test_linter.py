@@ -25,62 +25,6 @@ from src.djlint import main as djlint
 from tests.conftest import write_to_file
 
 
-def test_H005(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b"<!DOCTYPE html>\n<html>")
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H005 2:" in result.output
-
-
-def test_H006(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b'<img alt="test"/>')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H006 1:" in result.output
-    assert "found 1 error" in result.output
-
-    # check that we don't partial match in an ignored block
-    write_to_file(
-        tmp_file.name,
-        b"""{# [INFO][JINJA] I use syntax "{% if <img alt=\""",
- if I want that something happened solely if "img" exists in the content of my articles #}
-
- <script src="script.js" defer></script>
-""",
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H006" not in result.output
-
-
-def test_H007(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b'<html lang="en">')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H007 1:" in result.output
-
-
-def test_H008(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b"<div class='test'>")
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H008 1:" in result.output
-
-    write_to_file(
-        tmp_file.name,
-        b"""<link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'" media=''/>""",
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H008 1:" in result.output
-
-    write_to_file(
-        tmp_file.name,
-        b"""<link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'"/>""",
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H008 1:" not in result.output
-
-
 def test_H009(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<H1>")
     result = runner.invoke(djlint, [tmp_file.name])
