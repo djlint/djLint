@@ -67,6 +67,72 @@ test_data = [
         ([]),
         id="repeating tags",
     ),
+    pytest.param(
+        (
+            '<img src="img.jpg" :src="isLoaded ? url : defaultValue" />\n'
+            '<tbody class="bg-white" x-data="{ open{{ item.history_id }}: false }" x-bind:class="open{{ item.history_id }} ? \'bg-gray-50\' : '
+            '">'
+        ),
+        (
+            [
+                {
+                    "code": "H006",
+                    "line": "1:0",
+                    "match": '<img src="img.jpg" :',
+                    "message": "Img tag should have height and width attributes.",
+                },
+                {
+                    "code": "H013",
+                    "line": "1:0",
+                    "match": '<img src="img.jpg" :',
+                    "message": "Img tag should have an alt attribute.",
+                },
+                {
+                    "code": "H025",
+                    "line": "2:0",
+                    "match": '<tbody class="bg-whi',
+                    "message": "Tag seems to be an orphan.",
+                },
+            ]
+        ),
+        id="apline tags no match",
+    ),
+    pytest.param(
+        (
+            '<img :src="img.jpg" :src="isLoaded ? url : defaultValue" />\n'
+            '<tbody x-bind:class="bg-white" x-data="{ open{{ item.history_id }}: false }" x-bind:class="open{{ item.history_id }} ? \'bg-gray-50\' : '
+            '">'
+        ),
+        (
+            [
+                {
+                    "code": "H006",
+                    "line": "1:0",
+                    "match": '<img :src="img.jpg" ',
+                    "message": "Img tag should have height and width attributes.",
+                },
+                {
+                    "code": "H013",
+                    "line": "1:0",
+                    "match": '<img :src="img.jpg" ',
+                    "message": "Img tag should have an alt attribute.",
+                },
+                {
+                    "code": "H025",
+                    "line": "2:0",
+                    "match": "<tbody x-bind:class=",
+                    "message": "Tag seems to be an orphan.",
+                },
+                {
+                    "code": "H037",
+                    "line": "1:5",
+                    "match": ":src",
+                    "message": "Duplicate attribute found.",
+                },
+            ]
+        ),
+        id="apline tags match",
+    ),
 ]
 
 
