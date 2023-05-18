@@ -10,22 +10,24 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 ## Pre-Commit
 
-djLint можно использовать как [pre-commit](https://pre-commit.com) крючок.
+djLint можно использовать как [pre-commit](https://pre-commit.com) хук в качестве как линтера, так и форматировщика.
 
 Репозиторий предоставляет несколько предварительно настроенных хуков для определенных профилей djLint (он просто задает аргумент `--profile` и указывает pre-commit, какие расширения файлов искать):
 
 ::: content
 
-- `djlint-django` для шаблонов Django:
-  Это будет искать файлы, соответствующие `templates/**.html` и устанавливать `--profile=django`.
-- `djlint-jinja`.
-  Это будет искать файлы, соответствующие `*.j2`, `*.jinja` или `*.jinja2` и устанавливать `--профиль=jinja`.
-- `djlint-nunjucks`.
-  Будет искать файлы, соответствующие `*.njk` и устанавливать `--profile=nunjucks`.
-- `djlint-handlebars`
-  Будет искать файлы, соответствующие `*.hbs` и устанавливать `--profile=handlebars`.
-- `djlint-golang`
-  Будет искать файлы, соответствующие `*.tmpl` и устанавливать `--profile=golang`.
+- `djlint` для линтинга и `djlint-reformat` для форматирования
+  Будет искать файлы, соответствующие `templates/**.html`, без установки `--profile`.
+- `djlint-django` и `djlint-reformat-django`
+  Будет искать файлы, соответствующие `templates/**.html`, и устанавливать `--profile=django`.
+- `djlint-jinja` и `djlint-reformat-jinja`
+  Будет искать файлы, соответствующие `*.j2`, `*.jinja` или `*.jinja2`, и устанавливать `--profile=jinja`.
+- `djlint-nunjucks` и `djlint-reformat-nunjucks`
+  Будет искать файлы, соответствующие `*.njk`, и устанавливать `--profile=nunjucks`.
+- `djlint-handlebars` и `djlint-reformat-handlebars`
+  Будет искать файлы, соответствующие `*.hbs`, и устанавливать `--profile=handlebars`.
+- `djlint-golang` и `djlint-reformat-golang`
+  Будет искать файлы, соответствующие `*.tmpl`, и устанавливать `--profile=golang`.
   :::
 
 Обратите внимание, что эти предопределенные хуки иногда слишком консервативны в принимаемых ими входных данных (ваши шаблоны могут использовать другое расширение), поэтому pre-commit явно позволяет вам переопределять любые из этих предопределенных опций. См. [pre-commit документы](https://pre-commit.com/#pre-commit-configyaml---hooks) для дополнительной настройки.
@@ -37,6 +39,7 @@ repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v{{ djlint_version }}
     hooks:
+      - id: djlint-reformat-django
       - id: djlint-django
 ```
 
@@ -47,6 +50,9 @@ repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v{{ djlint_version }}
     hooks:
+      - id: djlint-reformat-handlebars
+        files: "\\.html"
+        types_or: ['html']
       - id: djlint-handlebars
         files: "\\.html"
         types_or: ['html']

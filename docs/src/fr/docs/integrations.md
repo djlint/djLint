@@ -10,21 +10,23 @@ Il existe plusieurs intégrations d'éditeurs construites pour djLint.
 
 ## Pre-Commit
 
-djLint peut être utilisé comme un hook [pre-commit](https://pre-commit.com).
+djLint peut être utilisé comme un hook [pre-commit](https://pre-commit.com) en tant que linter et formatter.
 
 Le repo fournit de multiples hooks pré-configurés pour des profils djLint spécifiques (il suffit de prédéfinir l'argument `--profile` et d'indiquer à pre-commit les extensions de fichiers à rechercher) :
 
-:: : contenu
+:: : content
 
-- `djlint-django` pour les modèles Django :
-  Il recherchera les fichiers correspondant à `templates/**.html` et définira `--profile=django`.
-- `djlint-jinja`
+- `djlint` pour le linting et `djlint-reformat` pour le formatage
+  Ceci recherchera les fichiers correspondant à `templates/**.html` sans définir `--profile`.
+- `djlint-django` et `djlint-reformat-django`
+  Ceci recherchera les fichiers correspondant à `templates/**.html` et définira `--profile=django`.
+- `djlint-jinja` et `djlint-reformat-jinja`
   Ceci recherchera les fichiers correspondant à `*.j2`, `*.jinja` ou `*.jinja2` et définira `--profile=jinja`.
-- `djlint-nunjucks`
-  Cette commande recherchera les fichiers correspondant à `*.njk` et définira `--profile=nunjucks`.
-- `djlint-handlebars`
+- `djlint-nunjucks` et `djlint-reformat-nunjucks`
+  Ceci recherchera les fichiers correspondant à `*.njk` et définira `--profile=nunjucks`.
+- `djlint-handlebars` et `djlint-reformat-handlebars`
   Ceci recherchera les fichiers correspondant à `*.hbs` et définira `--profile=handlebars`.
-- `djlint-golang`
+- `djlint-golang` et `djlint-reformat-golang`
   Ceci recherchera les fichiers correspondant à `*.tmpl` et définira `--profile=golang`.
   :: :
 
@@ -37,6 +39,7 @@ repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v{{ djlint_version }}
     hooks:
+      - id: djlint-reformat-django
       - id: djlint-django
 ```
 
@@ -47,6 +50,9 @@ repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v{{ djlint_version }}
     hooks:
+      - id: djlint-reformat-handlebars
+        files: "\\.html"
+        types_or: ['html']
       - id: djlint-handlebars
         files: "\\.html"
         types_or: ['html']
