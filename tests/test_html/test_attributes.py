@@ -195,7 +195,7 @@ test_data = [
             '       class="form-control"\n'
             '       type="text"\n'
             '       name="driver_id"\n'
-            "       value=\"{{ id|default(' sample_text ') }}\" />\n"
+            '       value="{{ id|default(" sample_text ") }}" />\n'
         ),
         id="another_boolean_after_tag",
     ),

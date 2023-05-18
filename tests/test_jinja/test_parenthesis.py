@@ -10,7 +10,7 @@ from tests.conftest import printer
 test_data = [
     pytest.param(
         ("{{ url('foo')}}"),
-        ("{{ url('foo') }}\n"),
+        ('{{ url("foo") }}\n'),
         id="parenthesis_tag",
     ),
 ]

@@ -40,7 +40,7 @@ test_data = [
             "    preserve\n"
             "    invalid\n"
             "    interpolation\n"
-            "    }} reprehenderit voluptates minus {{ console.log(  short_interpolation ) }} nemo.\n"
+            "    }} reprehenderit voluptates minus {{ console.log(short_interpolation) }} nemo.\n"
             "</div>\n"
         ),
         id="interpolation_in_text",

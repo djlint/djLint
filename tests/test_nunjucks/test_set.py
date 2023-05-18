@@ -60,6 +60,40 @@ test_data = [
     ),
     pytest.param(
         (
+            "<div>{% set schema=[\n"
+            "{\n"
+            '"name":"id",\n'
+            '"type":      "integer",\n'
+            '"primary": true,\n'
+            "id:1\n"
+            "},\n"
+            "{\n"
+            '"name": "name",\n'
+            '"type": "string"\n'
+            "}\n"
+            "] %}</div>"
+        ),
+        (
+            "<div>\n"
+            "    {% set schema = [\n"
+            "        {\n"
+            '            name: "id",\n'
+            '            type: "integer",\n'
+            "            primary: true,\n"
+            "            id: 1\n"
+            "        },\n"
+            "        {\n"
+            '            name: "name",\n'
+            '            type: "string"\n'
+            "        }\n"
+            "    ] %}\n"
+            "</div>\n"
+        ),
+        ({"max_line_length": 10}),
+        id="nestedindent multiilne",
+    ),
+    pytest.param(
+        (
             '{% set schema=[{"name": "id",\n'
             '"type": "integer",\n'
             '"primary": true\n'
