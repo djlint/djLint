@@ -122,6 +122,23 @@ test_data = [
         ({}),
         id="indent py style list",
     ),
+    pytest.param(
+        (
+            '{% set cta %}{% include "partials/cta.njk" %}<div></div>{% endset %}\n'
+            "{%-set posts = collections.docs-%}\n"
+            "{%asdf%}"
+        ),
+        (
+            "{% set cta %}\n"
+            '    {% include "partials/cta.njk" %}\n'
+            "    <div></div>\n"
+            "{% endset %}\n"
+            "{%- set posts = collections.docs -%}\n"
+            "{% asdf %}\n"
+        ),
+        ({}),
+        id="set block",
+    ),
 ]
 
 

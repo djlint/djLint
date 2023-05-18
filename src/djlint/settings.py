@@ -510,6 +510,7 @@ class Config:
                 | raw
                 | blocktrans(?!late)
                 | blocktranslate
+                | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
             + r")"
@@ -658,6 +659,7 @@ class Config:
             | raw
             | blocktrans(?!late)
             | blocktranslate
+            | set(?!(?:(?!%}).)*=)
 
             """
             + self.custom_blocks
@@ -708,6 +710,7 @@ class Config:
             | endblocktrans(?!late)
             | blocktranslate
             | endblocktranslate
+            | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
             + r""")
