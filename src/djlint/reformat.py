@@ -17,6 +17,9 @@ from .settings import Config
 
 def formatter(config: Config, rawcode: str) -> str:
     """Format a html string."""
+    if not rawcode:
+        return rawcode
+
     # naturalize the line breaks
     compressed = compress_html(("\n").join(rawcode.splitlines()), config)
 

@@ -69,6 +69,58 @@ test_data = [
         id="ignored_3",
     ),
     pytest.param(
+        (
+            "{% comment %}djlint:off{% endcomment %}<div><img><p></p></div>{% comment %}djlint:on{% endcomment %}<div><img></div>{% comment %}djlint:off{% endcomment %}<div><img><p></p></div>"
+        ),
+        (
+            "{% comment %}djlint:off{% endcomment %}<div><img><p></p></div>{% comment %}djlint:on{% endcomment %}\n"
+            "<div>\n"
+            "    <img>\n"
+            "</div>\n"
+            "{% comment %}djlint:off{% endcomment %}<div><img><p></p></div>\n"
+        ),
+        id="{% comment don't require an on block",
+    ),
+    pytest.param(
+        (
+            "{# djlint: off #}<div><img><p></p></div>{# djlint: on #}<div><img></div>{# djlint: off #}<div><img><p></p></div>"
+        ),
+        (
+            "{# djlint: off #}<div><img><p></p></div>{# djlint: on #}\n"
+            "<div>\n"
+            "    <img>\n"
+            "</div>\n"
+            "{# djlint: off #}<div><img><p></p></div>\n"
+        ),
+        id="{# don't require an on block",
+    ),
+    pytest.param(
+        (
+            "{{!-- djlint:off--}}<div><img><p></p></div>{{!-- djlint:on--}}<div><img></div>{{!-- djlint:off--}}<div><img><p></p></div>"
+        ),
+        (
+            "{{!-- djlint:off--}}<div><img><p></p></div>{{!-- djlint:on--}}\n"
+            "<div>\n"
+            "    <img>\n"
+            "</div>\n"
+            "{{!-- djlint:off--}}<div><img><p></p></div>\n"
+        ),
+        id="{{!-- don't require an on block",
+    ),
+    pytest.param(
+        (
+            "{{ /* djlint:off */ }}<div><img><p></p></div>{{ /* djlint:on */ }}<div><img></div>{{ /* djlint:off */ }}<div><img><p></p></div>"
+        ),
+        (
+            "{{ /* djlint:off */ }}<div><img><p></p></div>{{ /* djlint:on */ }}\n"
+            "<div>\n"
+            "    <img>\n"
+            "</div>\n"
+            "{{ /* djlint:off */ }}<div><img><p></p></div>\n"
+        ),
+        id="{{ /* don't require an on block",
+    ),
+    pytest.param(
         ("<script>\n" "    <div><p><span></span></p></div>\n" "</script>\n"),
         ("<script>\n" "    <div><p><span></span></p></div>\n" "</script>\n"),
         id="script",

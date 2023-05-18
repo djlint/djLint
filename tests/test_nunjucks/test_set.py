@@ -60,6 +60,40 @@ test_data = [
     ),
     pytest.param(
         (
+            "<div>{% set schema=[\n"
+            "{\n"
+            '"name":"id",\n'
+            '"type":      "integer",\n'
+            '"primary": true,\n'
+            "id:1\n"
+            "},\n"
+            "{\n"
+            '"name": "name",\n'
+            '"type": "string"\n'
+            "}\n"
+            "] %}</div>"
+        ),
+        (
+            "<div>\n"
+            "    {% set schema = [\n"
+            "        {\n"
+            '            name: "id",\n'
+            '            type: "integer",\n'
+            "            primary: true,\n"
+            "            id: 1\n"
+            "        },\n"
+            "        {\n"
+            '            name: "name",\n'
+            '            type: "string"\n'
+            "        }\n"
+            "    ] %}\n"
+            "</div>\n"
+        ),
+        ({"max_line_length": 10}),
+        id="nestedindent multiilne",
+    ),
+    pytest.param(
+        (
             '{% set schema=[{"name": "id",\n'
             '"type": "integer",\n'
             '"primary": true\n'
@@ -87,6 +121,23 @@ test_data = [
         ("{% set table_keys = [('date_started', 'Start date'), ('name', 'Name')] %}\n"),
         ({}),
         id="indent py style list",
+    ),
+    pytest.param(
+        (
+            '{% set cta %}{% include "partials/cta.njk" %}<div></div>{% endset %}\n'
+            "{%-set posts = collections.docs-%}\n"
+            "{%asdf%}"
+        ),
+        (
+            "{% set cta %}\n"
+            '    {% include "partials/cta.njk" %}\n'
+            "    <div></div>\n"
+            "{% endset %}\n"
+            "{%- set posts = collections.docs -%}\n"
+            "{% asdf %}\n"
+        ),
+        ({}),
+        id="set block",
     ),
 ]
 

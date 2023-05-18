@@ -510,6 +510,7 @@ class Config:
                 | raw
                 | blocktrans(?!late)
                 | blocktranslate
+                | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
             + r")"
@@ -658,6 +659,7 @@ class Config:
             | raw
             | blocktrans(?!late)
             | blocktranslate
+            | set(?!(?:(?!%}).)*=)
 
             """
             + self.custom_blocks
@@ -708,6 +710,7 @@ class Config:
             | endblocktrans(?!late)
             | blocktranslate
             | endblocktranslate
+            | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
             + r""")
@@ -737,6 +740,27 @@ class Config:
         """
 
         self.ignored_blocks: str = r"""
+              <(pre|textarea).*?</(\1)>
+            | <(script|style).*?(?=(\</(?:\3)>))
+            # html comment
+            | <!--\s*djlint\:off\s*-->.*?(?=<!--\s*djlint\:on\s*-->)
+            # django/jinja/nunjucks
+            | {\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
+            | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
+            # inline jinja comments
+            | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
+            # handlebars
+            | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
+            # golang
+            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
+            | <!--.*?-->
+            | <\?php.*?\?>
+            | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+            | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+            | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
+            | ^---[\s\S]+?---
+        """
+        self.ignored_blocks_inline: str = r"""
               <(pre|textarea).*?</(\1)>
             | <(script|style).*?(?=(\</(?:\3)>))
             # html comment

@@ -319,56 +319,78 @@ def indent_html(rawcode: str, config: Config) -> str:
         beautified_code = beautified_code + tmp
 
     # try to fix internal formatting of set tag
-    def format_set(config, match):
-        open_bracket = match.group(1)
-        tag = match.group(2)
-        close_braket = match.group(4)
-        contents = match.group(3).strip()
+    def format_data(config: Config, contents: str, tag_size: int, leading_space) -> str:
+        try:
+            # try to format the contents as json
+            data = json.loads(contents)
+            contents = json.dumps(data, trailing_commas=False)
+
+            if tag_size + len(contents) >= config.max_line_length:
+                # if the line is too long we can indent the json
+                contents = json.dumps(
+                    data, indent=config.indent_size, trailing_commas=False
+                )
+
+        except:
+            # was not json.. try to eval as set
+            try:
+                contents = str(eval(contents))
+            except:
+                contents = contents.strip()
+        return (f"\n{leading_space}").join(contents.splitlines())
+
+    def format_set(config: Config, match: re.Match) -> str:
+        leading_space = match.group(1)
+        open_bracket = match.group(2)
+        tag = match.group(3)
+        close_bracket = match.group(5)
+        contents = match.group(4).strip()
         contents_split = contents.split("=", 1)
 
         if len(contents_split) > 1:
-            try:
-                # try to format the contents as json
-                data = json.loads(contents_split[-1])
-                contents = (
-                    contents_split[0].strip()
-                    + " = "
-                    + json.dumps(data, trailing_commas=False)
+            contents = (
+                contents_split[0].strip()
+                + " = "
+                + format_data(
+                    config,
+                    contents_split[-1],
+                    len(f"{open_bracket} {tag}  {close_bracket}"),
+                    leading_space,
                 )
-                completed_tag = f"{open_bracket} {tag} {contents} {close_braket}"
+            )
 
-                if len(completed_tag) >= config.max_line_length:
-                    # if the line is too long we can indent the json
-                    contents = (
-                        contents_split[0].strip()
-                        + " = "
-                        + json.dumps(
-                            data, indent=config.indent_size, trailing_commas=False
-                        )
-                    )
-                    completed_tag = f"{open_bracket} {tag} {contents} {close_braket}"
-                    return completed_tag
+        return f"{leading_space}{open_bracket} {tag} {contents} {close_bracket}"
 
-            except:
-                # was not json.. try to eval as set
-                try:
-                    contents = (
-                        contents_split[0].strip()
-                        + " = "
-                        + str(eval(contents_split[-1]))
-                    )
-                except:
-                    contents = (
-                        contents_split[0].strip() + " = " + contents_split[-1].strip()
-                    )
+    def format_function(config: Config, match: re.Match) -> str:
+        leading_space = match.group(1)
+        open_bracket = match.group(2)
+        tag = match.group(3).strip()
+        close_bracket = match.group(5)
+        contents = format_data(
+            config,
+            match.group(4).strip()[1:-1],
+            len(f"{open_bracket} {tag}() {close_bracket}"),
+            leading_space,
+        )
 
-        return f"{open_bracket} {tag} {contents} {close_braket}"
+        return f"{leading_space}{open_bracket} {tag}({contents}) {close_bracket}"
 
     func = partial(format_set, config)
     # format set contents
     beautified_code = re.sub(
         re.compile(
-            r"([ ]*{%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
+            r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
+            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
+        ),
+        func,
+        beautified_code,
+    )
+
+    func = partial(format_function, config)
+    # format function contents
+    beautified_code = re.sub(
+        re.compile(
+            r"([ ]*)({{)[ ]*?((?:(?!}}).)*?\w)(\([^\)]*?\)[ ]*)((?:(?!}}).)*?}})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
         ),
         func,

@@ -54,7 +54,7 @@ test_data = [
         ),
         id="emtpy_doc",
     ),
-    pytest.param("", "\n", id="empty"),
+    pytest.param("", "", id="empty"),
     pytest.param(
         (
             "<form>\n"

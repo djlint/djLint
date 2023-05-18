@@ -1,29 +1,71 @@
+- id: djlint
+  name: djLint linting
+  entry: djlint
+  types_or: [html]
+  language: python
+
 - id: djlint-django
-  name: djLint for Django
+  name: djLint linting for Django
   entry: djlint --profile=django
   types_or: [html]
   language: python
 
 - id: djlint-jinja
-  name: djLint for Jinja
+  name: djLint linting for Jinja
   entry: djlint --profile=jinja
   types_or: [jinja]
   language: python
 
 - id: djlint-nunjucks
-  name: djLint for Nunjucks
+  name: djLint linting for Nunjucks
   entry: djlint --profile=nunjucks
   types_or: [nunjucks]
   language: python
 
 - id: djlint-handlebars
-  name: djLint for Handlebars/Mustache
+  name: djLint linting for Handlebars/Mustache
   entry: djlint --profile=handlebars
   types_or: [handlebars]
   language: python
 
 - id: djlint-golang
-  name: djLint for Golang templates
+  name: djLint linting for Golang templates
   entry: djlint --profile=golang
+  types_or: [gotmpl]
+  language: python
+
+- id: djlint-reformat
+  name: djLint formatting
+  entry: djlint --reformat
+  types_or: [html]
+  language: python
+
+- id: djlint-reformat-django
+  name: djLint formatting for Django
+  entry: djlint --reformat --profile=django
+  types_or: [html]
+  language: python
+
+- id: djlint-reformat-jinja
+  name: djLint formatting for Jinja
+  entry: djlint --reformat --profile=jinja
+  types_or: [jinja]
+  language: python
+
+- id: djlint-reformat-nunjucks
+  name: djLint formatting for Nunjucks
+  entry: djlint --reformat --profile=nunjucks
+  types_or: [nunjucks]
+  language: python
+
+- id: djlint-reformat-handlebars
+  name: djLint formatting for Handlebars/Mustache
+  entry: djlint --reformat --profile=handlebars
+  types_or: [handlebars]
+  language: python
+
+- id: djlint-reformat-golang
+  name: djLint formatting for Golang templates
+  entry: djlint --reformat --profile=golang
   types_or: [gotmpl]
   language: python

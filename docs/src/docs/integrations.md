@@ -10,21 +10,23 @@ There are several editor integrations build for djLint.
 
 ## Pre-Commit
 
-djLint can be used as a [pre-commit](https://pre-commit.com) hook.
+djLint can be used as a [pre-commit](https://pre-commit.com) hook as both a linter and a formatter.
 
 The repo provides multiple pre-configured hooks for specific djLint profiles (it just pre-sets the `--profile` argument and tells pre-commit which file extensions to look for):
 
 ::: content
 
-- `djlint-django` for Django templates:
+- `djlint` for linting and `djlint-reformat` for formatting
+  This will look for files matching `templates/**.html` without setting `--profile`.
+- `djlint-django` and `djlint-reformat-django`
   This will look for files matching `templates/**.html` and set `--profile=django`.
-- `djlint-jinja`
+- `djlint-jinja` and `djlint-reformat-jinja`
   This will look for files matching `*.j2`,`*.jinja` or `*.jinja2` and set `--profile=jinja`.
-- `djlint-nunjucks`
+- `djlint-nunjucks` and `djlint-reformat-nunjucks`
   This will look for files matching `*.njk` and set `--profile=nunjucks`.
-- `djlint-handlebars`
+- `djlint-handlebars` and `djlint-reformat-handlebars`
   This will look for files matching `*.hbs` and set `--profile=handlebars`.
-- `djlint-golang`
+- `djlint-golang` and `djlint-reformat-golang`
   This will look for files matching `*.tmpl` and set `--profile=golang`.
   :::
 
@@ -37,6 +39,7 @@ repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v{{ djlint_version }}
     hooks:
+      - id: djlint-reformat-django
       - id: djlint-django
 ```
 
@@ -47,6 +50,9 @@ repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v{{ djlint_version }}
     hooks:
+      - id: djlint-reformat-handlebars
+        files: "\\.html"
+        types_or: ['html']
       - id: djlint-handlebars
         files: "\\.html"
         types_or: ['html']
