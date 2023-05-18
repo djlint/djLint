@@ -14,3 +14,4 @@ mv html_void_elements* html_void_elements-99-py3-none-any.whl
 mv jsbeautifier* jsbeautifier-99-py3-none-any.whl
 mv pathspec* pathspec-99-py3-none-any.whl
 mv PyYAML* PyYAML-99-py3-none-any.whl
+mv json5* json5-99-py3-none-any.whl

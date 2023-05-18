@@ -22,6 +22,7 @@ async function loadPyodideAndPackages() {
     `${origin}/static/py/jsbeautifier-99-py3-none-any.whl`,
     `${origin}/static/py/pathspec-99-py3-none-any.whl`,
     `${origin}/static/py/PyYAML-99-py3-none-any.whl`,
+    `${origin}/static/py/json5-99-py3-none-any.whl`,
   ]);
 
   postMessage({
