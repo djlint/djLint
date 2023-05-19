@@ -187,7 +187,9 @@ def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
         # need to also do "end<tag>"
         open_tags = [x.strip() for x in custom_blocks.split(",")]
         close_tags = ["end" + x.strip() for x in custom_blocks.split(",")]
-        return "|" + "|".join(sorted(set(open_tags + close_tags)))
+        # Group all tags together with a negative lookahead.
+        tags = set([tag + r"(?!.*\d)\b" for tag in open_tags + close_tags])
+        return "|" + "|".join(sorted(tags))
     return None
 
 
