@@ -31,9 +31,9 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, nunjucks_config):
+def test_base(source, expected, basic_config):
     filename = "test.html"
-    output = linter(nunjucks_config, source, filename, filename)
+    output = linter(basic_config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 

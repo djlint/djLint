@@ -33,7 +33,7 @@ test_data = [
         id="partial ignored",
     ),
     pytest.param(
-        ("<img>"),
+        ("<img><img>"),
         (
             [
                 {
@@ -43,22 +43,34 @@ test_data = [
                     "message": "Img tag should have height and width attributes.",
                 },
                 {
+                    "code": "H006",
+                    "line": "1:5",
+                    "match": "<img>",
+                    "message": "Img tag should have height and width attributes.",
+                },
+                {
                     "code": "H013",
                     "line": "1:0",
                     "match": "<img>",
                     "message": "Img tag should have an alt attribute.",
                 },
+                {
+                    "code": "H013",
+                    "line": "1:5",
+                    "match": "<img>",
+                    "message": "Img tag should have an alt attribute.",
+                },
             ]
         ),
-        id="test empty",
+        id="test empty with two blocks",
     ),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, nunjucks_config):
+def test_base(source, expected, basic_config):
     filename = "test.html"
-    output = linter(nunjucks_config, source, filename, filename)
+    output = linter(basic_config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 

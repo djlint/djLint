@@ -1,5 +1,28 @@
 [
   {
+    "name": "no_line_after_yaml",
+    "description": {
+      "en": "Do not add a blank line after yaml front matter.",
+      "ru": "Не добавляйте пустую строку после лицевой части yaml.",
+      "fr": "N'ajoutez pas de ligne vierge après la matière première yaml."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "no_line_after_yaml=true"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"no_line_after_yaml\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--no-line-after-yaml"
+      }
+    ],
+    "tags": ["formatter"]
+  },
+  {
     "name": "close_void_tags",
     "description": {
       "en": "Close void tags.",

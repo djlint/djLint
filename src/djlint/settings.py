@@ -187,7 +187,9 @@ def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
         # need to also do "end<tag>"
         open_tags = [x.strip() for x in custom_blocks.split(",")]
         close_tags = ["end" + x.strip() for x in custom_blocks.split(",")]
-        return "|" + "|".join(sorted(set(open_tags + close_tags)))
+        # Group all tags together with a negative lookahead.
+        tags = {tag + r"\b" for tag in open_tags + close_tags}
+        return "|" + "|".join(sorted(tags))
     return None
 
 
@@ -249,6 +251,7 @@ class Config:
         indent_css: Optional[int] = None,
         indent_js: Optional[int] = None,
         close_void_tags: bool = False,
+        no_line_after_yaml: bool = False,
     ):
         self.reformat = reformat
         self.check = check
@@ -319,6 +322,9 @@ class Config:
 
         self.close_void_tags: bool = close_void_tags or djlint_settings.get(
             "close_void_tags", False
+        )
+        self.no_line_after_yaml: bool = no_line_after_yaml or djlint_settings.get(
+            "no_line_after_yaml", False
         )
 
         # ignore is based on input and also profile
@@ -784,14 +790,14 @@ class Config:
 
         self.ignored_rules: List[str] = [
             # html comment
-            r"<!--\s*djlint\:off(.+?)-->.*?(?=<!--\s*djlint\:on\s*-->)",
+            r"<!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*",
             # django/jinja/nunjucks
-            r"{\#\s*djlint\:\s*off(.+?)\#}.*?(?={\#\s*djlint\:\s*on\s*\#})",
-            r"{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})",
+            r"{\#\s*djlint\:\s*off(.+?)\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*",
+            r"{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*",
             # handlebars
-            r"{{!--\s*djlint\:off(.*?)--}}.*?(?={{!--\s*djlint\:on\s*--}})",
+            r"{{!--\s*djlint\:off(.*?)--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*",
             # golang
-            r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})",
+            r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*",
         ]
 
         self.ignored_trans_blocks: str = r"""

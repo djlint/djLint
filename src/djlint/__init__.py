@@ -232,6 +232,11 @@ from .src import get_src
     is_flag=True,
     help="Add closing mark on known void tags. Ex: <img> becomse <img />",
 )
+@click.option(
+    "--no-line-after-yaml",
+    is_flag=True,
+    help="Do not add a blank line after yaml front matter.",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -270,6 +275,7 @@ def main(
     indent_css: Optional[int],
     indent_js: Optional[int],
     close_void_tags: bool,
+    no_line_after_yaml: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -309,6 +315,7 @@ def main(
         indent_css=indent_css,
         indent_js=indent_js,
         close_void_tags=close_void_tags,
+        no_line_after_yaml=no_line_after_yaml,
     )
 
     temp_file = None

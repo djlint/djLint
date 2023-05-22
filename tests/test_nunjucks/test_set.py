@@ -139,6 +139,36 @@ test_data = [
         ({}),
         id="set block",
     ),
+    pytest.param(
+        (
+            "<ul>\n"
+            "  {# djlint:off #}\n"
+            "  <li>{%set a=[{'x':1}]%}</li>\n"
+            "  {# djlint:on #}\n"
+            "</ul>"
+        ),
+        (
+            "<ul>\n"
+            "    {# djlint:off #}\n"
+            "  <li>{%set a=[{'x':1}]%}</li>\n"
+            "    {# djlint:on #}\n"
+            "</ul>\n"
+        ),
+        ({"max_line_length": 1}),
+        id="ignored code should not be touched",
+    ),
+    pytest.param(
+        ('{%- set posts = "¿Spécial çhärs 👻?" -%}'),
+        ('{%- set posts = "¿Spécial çhärs 👻?" -%}\n'),
+        ({}),
+        id="set",
+    ),
+    pytest.param(
+        ("<li>{{ foo(1,2) }}</li>"),
+        ("<li>{{ foo(1, 2) }}</li>\n"),
+        ({}),
+        id="don't add parenth to lists",
+    ),
 ]
 
 

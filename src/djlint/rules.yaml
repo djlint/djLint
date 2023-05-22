@@ -58,8 +58,8 @@
     message: Img tag should have height and width attributes.
     flags: re.DOTALL|re.I
     patterns:
-    - <img\b(?:(?!(?:height)=).)*/?>
-    - <img\b(?:(?!(?:width)=).)*/?>
+    - <img\b(?:(?!(?:height)=)[^>])*/?>
+    - <img\b(?:(?!(?:width)=)[^>])*/?>
 - rule:
     name: H007
     message: <!DOCTYPE ... > should be present before the html tag.
@@ -104,7 +104,7 @@
     message: Img tag should have an alt attribute.
     flags: re.DOTALL|re.I
     patterns:
-    - <img\b(?:(?!(?:alt)=).)*/?>
+    - <img\b(?:(?!(?:alt)=)[^>])*/?>
 - rule:
     name: H014
     message: Found extra blank lines.
