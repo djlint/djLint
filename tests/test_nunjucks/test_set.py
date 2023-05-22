@@ -139,6 +139,12 @@ test_data = [
         ({}),
         id="set block",
     ),
+    pytest.param(
+        ("{%- set posts = \"¿Spécial çhärs 👻?\" -%}"),
+        ("{%- set posts = \"¿Spécial çhärs 👻?\" -%}\n"),
+        ({}),
+        id="set",
+    ),
 ]
 
 
