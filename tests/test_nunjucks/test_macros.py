@@ -13,6 +13,23 @@ test_data = [
         ("{% macro 'cool' %}\n" "    <div>some html</div>\n" "{% endmacro %}\n"),
         id="macro_tag",
     ),
+    pytest.param(
+        (
+            "<ul>\n"
+            "  {# djlint:off #}\n"
+            "  <li>{{foo(1)}}</li>\n"
+            "  {# djlint:on #}\n"
+            "</ul>"
+        ),
+        (
+            "<ul>\n"
+            "    {# djlint:off #}\n"
+            "  <li>{{foo(1)}}</li>\n"
+            "    {# djlint:on #}\n"
+            "</ul>\n"
+        ),
+        id="ignored code should not be touched",
+    ),
 ]
 
 

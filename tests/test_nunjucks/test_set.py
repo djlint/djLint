@@ -139,6 +139,24 @@ test_data = [
         ({}),
         id="set block",
     ),
+    pytest.param(
+        (
+            "<ul>\n"
+            "  {# djlint:off #}\n"
+            "  <li>{%set a=[{'x':1}]%}</li>\n"
+            "  {# djlint:on #}\n"
+            "</ul>"
+        ),
+        (
+            "<ul>\n"
+            "    {# djlint:off #}\n"
+            "  <li>{%set a=[{'x':1}]%}</li>\n"
+            "    {# djlint:on #}\n"
+            "</ul>\n"
+        ),
+        ({"max_line_length": 1}),
+        id="ignored code should not be touched",
+    ),
 ]
 
 

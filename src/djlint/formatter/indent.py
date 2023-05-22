@@ -339,7 +339,10 @@ def indent_html(rawcode: str, config: Config) -> str:
                 contents = contents.strip()
         return (f"\n{leading_space}").join(contents.splitlines())
 
-    def format_set(config: Config, match: re.Match) -> str:
+    def format_set(config: Config, html: str, match: re.Match) -> str:
+        if inside_ignored_block(config, html, match):
+            return match.group()
+
         leading_space = match.group(1)
         open_bracket = match.group(2)
         tag = match.group(3)
@@ -361,7 +364,9 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         return f"{leading_space}{open_bracket} {tag} {contents} {close_bracket}"
 
-    def format_function(config: Config, match: re.Match) -> str:
+    def format_function(config: Config, html: str, match: re.Match) -> str:
+        if inside_ignored_block(config, html, match):
+            return match.group()
         leading_space = match.group(1)
         open_bracket = match.group(2)
         tag = match.group(3).strip()
@@ -375,7 +380,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         return f"{leading_space}{open_bracket} {tag}({contents}) {close_bracket}"
 
-    func = partial(format_set, config)
+    func = partial(format_set, config, beautified_code)
     # format set contents
     beautified_code = re.sub(
         re.compile(
@@ -386,7 +391,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         beautified_code,
     )
 
-    func = partial(format_function, config)
+    func = partial(format_function, config, beautified_code)
     # format function contents
     beautified_code = re.sub(
         re.compile(
