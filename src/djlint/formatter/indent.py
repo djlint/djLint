@@ -323,12 +323,15 @@ def indent_html(rawcode: str, config: Config) -> str:
         try:
             # try to format the contents as json
             data = json.loads(contents)
-            contents = json.dumps(data, trailing_commas=False)
+            contents = json.dumps(data, trailing_commas=False, ensure_ascii=False)
 
             if tag_size + len(contents) >= config.max_line_length:
                 # if the line is too long we can indent the json
                 contents = json.dumps(
-                    data, indent=config.indent_size, trailing_commas=False
+                    data,
+                    indent=config.indent_size,
+                    trailing_commas=False,
+                    ensure_ascii=False,
                 )
 
         except:

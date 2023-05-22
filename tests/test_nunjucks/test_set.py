@@ -157,6 +157,12 @@ test_data = [
         ({"max_line_length": 1}),
         id="ignored code should not be touched",
     ),
+    pytest.param(
+        ('{%- set posts = "¿Spécial çhärs 👻?" -%}'),
+        ('{%- set posts = "¿Spécial çhärs 👻?" -%}\n'),
+        ({}),
+        id="set",
+    ),
 ]
 
 
