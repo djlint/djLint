@@ -29,6 +29,22 @@ test_data = [
         ({"custom_blocks": "toc,example,verylongexampletagthatiskindaneattolookat"}),
         id="one",
     ),
+    pytest.param(
+        (
+            "{% custom_block %}\n"
+            "    {% custom_block_but_different %}\n"
+            "    <p>some other content</p>\n"
+            "{% endcustom_block %}\n"
+        ),
+        (
+            "{% custom_block %}\n"
+            "    {% custom_block_but_different %}\n"
+            "    <p>some other content</p>\n"
+            "{% endcustom_block %}\n"
+        ),
+        ({"custom_blocks": "custom_block"}),
+        id="custom_block_with_similar_tag",
+    ),
 ]
 
 
