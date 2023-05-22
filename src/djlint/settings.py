@@ -790,14 +790,14 @@ class Config:
 
         self.ignored_rules: List[str] = [
             # html comment
-            r"<!--\s*djlint\:off(.+?)-->.*?(?=<!--\s*djlint\:on\s*-->)",
+            r"<!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*",
             # django/jinja/nunjucks
-            r"{\#\s*djlint\:\s*off(.+?)\#}.*?(?={\#\s*djlint\:\s*on\s*\#})",
-            r"{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})",
+            r"{\#\s*djlint\:\s*off(.+?)\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*",
+            r"{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*",
             # handlebars
-            r"{{!--\s*djlint\:off(.*?)--}}.*?(?={{!--\s*djlint\:on\s*--}})",
+            r"{{!--\s*djlint\:off(.*?)--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*",
             # golang
-            r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})",
+            r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*",
         ]
 
         self.ignored_trans_blocks: str = r"""

@@ -1,6 +1,6 @@
 """Test linter code H005.
 
-poetry run pytest tests/test_linter/test_h005.py
+poetry run pytest tests/test_linter/test_ignore_rules.py
 """
 import pytest
 
@@ -9,20 +9,20 @@ from tests.conftest import lint_printer
 
 test_data = [
     pytest.param(
-        ("<!DOCTYPE html>\n<html>"),
+        ("<img>{# djlint:off H004,H006,H013 #}\n" "<img>\n"),
         (
             [
                 {
-                    "code": "H005",
-                    "line": "2:0",
-                    "match": "<html>",
-                    "message": "Html tag should have lang attribute.",
+                    "code": "H006",
+                    "line": "1:0",
+                    "match": "<img>",
+                    "message": "Img tag should have height and width attributes.",
                 },
                 {
-                    "code": "H025",
-                    "line": "2:0",
-                    "match": "<html>",
-                    "message": "Tag seems to be an orphan.",
+                    "code": "H013",
+                    "line": "1:0",
+                    "match": "<img>",
+                    "message": "Img tag should have an alt attribute.",
                 },
             ]
         ),
