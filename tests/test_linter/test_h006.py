@@ -33,7 +33,7 @@ test_data = [
         id="partial ignored",
     ),
     pytest.param(
-        ("<img>"),
+        ("<img><img>"),
         (
             [
                 {
@@ -43,14 +43,26 @@ test_data = [
                     "message": "Img tag should have height and width attributes.",
                 },
                 {
+                    "code": "H006",
+                    "line": "1:5",
+                    "match": "<img>",
+                    "message": "Img tag should have height and width attributes.",
+                },
+                {
                     "code": "H013",
                     "line": "1:0",
                     "match": "<img>",
                     "message": "Img tag should have an alt attribute.",
                 },
+                {
+                    "code": "H013",
+                    "line": "1:5",
+                    "match": "<img>",
+                    "message": "Img tag should have an alt attribute.",
+                },
             ]
         ),
-        id="test empty",
+        id="test empty with two blocks",
     ),
 ]
 
