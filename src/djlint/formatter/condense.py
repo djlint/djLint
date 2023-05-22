@@ -123,15 +123,16 @@ def clean_whitespace(html: str, config: Config) -> str:
 
         return match.group()
 
-    func = partial(yaml_add_blank_line_after, html)
-    html = re.sub(
-        re.compile(
-            r"(^---.+?---)$",
-            re.MULTILINE | re.DOTALL,
-        ),
-        func,
-        html,
-    )
+    if config.no_line_after_yaml is False:
+        func = partial(yaml_add_blank_line_after, html)
+        html = re.sub(
+            re.compile(
+                r"(^---.+?---)$",
+                re.MULTILINE | re.DOTALL,
+            ),
+            func,
+            html,
+        )
 
     return html
 
