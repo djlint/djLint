@@ -18,10 +18,7 @@ def test_custom() -> None:
     assert config.exclude == ".venv,venv,.tox,.egg,... | .customs"
     assert config.blank_line_after_tag == "load,extends,include"
     assert config.blank_line_before_tag == "load,extends,include"
-    assert (
-        config.custom_blocks
-        == r"|endexample(?!.*\d)\b|endtoc(?!.*\d)\b|example(?!.*\d)\b|toc(?!.*\d)\b"
-    )
+    assert config.custom_blocks == r"|endexample\b|endtoc\b|example\b|toc\b"
     assert config.custom_html == r"|mjml|simple-greeting|mj-\w+"
     assert config.extension == "html.dj"
     assert config.files == ["index.html"]
