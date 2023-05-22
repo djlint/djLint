@@ -337,9 +337,16 @@ def indent_html(rawcode: str, config: Config) -> str:
         except:
             # was not json.. try to eval as set
             try:
-                contents = str(eval(contents))
+                evaluated = str(eval(contents))
+                # need to unwrap the eval
+                contents = (
+                    evaluated[1:-1]
+                    if contents[:1] != "(" and evaluated[:1] == "("
+                    else evaluated
+                )
             except:
                 contents = contents.strip()
+
         return (f"\n{leading_space}").join(contents.splitlines())
 
     def format_set(config: Config, html: str, match: re.Match) -> str:

@@ -163,6 +163,12 @@ test_data = [
         ({}),
         id="set",
     ),
+    pytest.param(
+        ("<li>{{ foo(1,2) }}</li>"),
+        ("<li>{{ foo(1, 2) }}</li>\n"),
+        ({}),
+        id="don't add parenth to lists",
+    ),
 ]
 
 
