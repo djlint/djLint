@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.70",
+  "version": "1.0.73",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,8 @@
     "@codemirror/lang-html": "^6.4.3",
     "@codemirror/state": "^6.2.0",
     "@creativebulma/bulma-divider": "^1.1.0",
-    "@fontsource/crimson-pro": "^4.5.11",
-    "@fontsource/rasa": "^4.5.14",
+    "@fontsource/crimson-pro": "^5.0.0",
+    "@fontsource/rasa": "^5.0.0",
     "@quasibit/eleventy-plugin-schema": "^1.11.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@sindresorhus/slugify": "^2.2.0",
@@ -35,7 +35,7 @@
     "@11ty/eleventy": "2.0.1",
     "@11ty/eleventy-img": "3.1.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "5.0.0",
-    "@fontsource/inter": "4.5.15",
+    "@fontsource/inter": "5.0.1",
     "@fortawesome/fontawesome-free": "^6.4.0",
     "@fullhuman/postcss-purgecss": "5.0.0",
     "@toycode/markdown-it-class": "1.2.4",

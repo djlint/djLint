@@ -32,5 +32,9 @@ profile="{{ tool }}"
 
 ## Real Life Examples!
 
+<div class="mb-5">
+
 - [Django](https://github.com/django/django) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/django-source...Riverside-Healthcare:djLint:django-djlint)
 - [Wagtail](https://github.com/wagtail/wagtail) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/wagtail-source...Riverside-Healthcare:djLint:wagtail-djlint)
+
+</div>

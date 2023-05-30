@@ -50,9 +50,9 @@ jobs:
       # remove macos, can't get xcode working yet for installing regex
       # remove windows-latest, half tests seem to randomly pass
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
         python-version: ['3.8', '3.9', '3.10', '3.11']
-        node: [14, 16, 18]
+        node: [18, 19]
       fail-fast: true
 
     steps:

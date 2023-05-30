@@ -14,21 +14,27 @@ jobs:
         - tool: django
           repo: https://github.com/django/django
           profile: django
+          args: --indent 2
         - tool: wagtail
           repo: https://github.com/wagtail/wagtail
           profile: django
+          args: --indent 4
         - tool: pallets
           repo: https://github.com/pallets/website
           profile: jinja
+          args: --indent 2
         - tool: apostrophe
           repo: https://github.com/apostrophecms/apostrophe
           profile: nunjucks
+          args: --indent 2
         - tool: bolt
           repo: https://github.com/bolt/core
           profile: nunjucks
+          args: --indent 4
         - tool: sylius
           repo: https://github.com/Sylius/Sylius
           profile: nunjucks
+          args: --indent 2
     name: format
     runs-on: ubuntu-latest
     steps:
@@ -81,7 +87,7 @@ jobs:
     - name: format
       run: |
         cd src
-        poetry run python -m djlint "../${{ matrix.tool }}-source" --profile=${{ matrix.profile }} --reformat --warn --quiet
+        poetry run python -m djlint "../${{ matrix.tool }}-source" --profile=${{ matrix.profile }} --reformat --warn --quiet ${{ matrix.args }}
 
     - name: publish foramtted
       run: |
