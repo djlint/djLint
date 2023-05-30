@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.71",
+  "version": "1.0.72",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "@codemirror/lang-html": "^6.4.3",
     "@codemirror/state": "^6.2.0",
     "@creativebulma/bulma-divider": "^1.1.0",
-    "@fontsource/crimson-pro": "^4.5.11",
+    "@fontsource/crimson-pro": "^5.0.0",
     "@fontsource/rasa": "^5.0.0",
     "@quasibit/eleventy-plugin-schema": "^1.11.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
