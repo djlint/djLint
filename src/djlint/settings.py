@@ -717,6 +717,7 @@ class Config:
             | blocktranslate
             | endblocktranslate
             | set(?!(?:(?!%}).)*=)
+            | endset
             """
             + self.custom_blocks
             + r""")
