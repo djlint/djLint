@@ -32,4 +32,8 @@ profile="{{ tool }}"
 
 ## Real Life Examples!
 
+<div class="mb-5">
+
 - [Pallets](https://github.com/pallets/website) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/pallets-source...Riverside-Healthcare:djLint:pallets-djlint)
+
+</div>

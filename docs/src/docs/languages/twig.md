@@ -32,6 +32,10 @@ profile="{{ tool }}"
 
 ## Real Life Examples!
 
+<div class="mb-5">
+
 - [bolt](https://github.com/bolt/core) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/bolt-source...Riverside-Healthcare:djLint:bolt-djlint)
 
 - [Sylius](https://github.com/Sylius/Sylius) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/sylius-source...Riverside-Healthcare:djLint:sylius-djlint)
+
+</div>
