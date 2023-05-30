@@ -169,6 +169,12 @@ test_data = [
         ({}),
         id="don't add parenth to lists",
     ),
+    pytest.param(
+        ('{{- foo("bar") -}}'),
+        ('{{- foo("bar") -}}\n'),
+        ({}),
+        id="don't break spaceless tags #667",
+    ),
 ]
 
 

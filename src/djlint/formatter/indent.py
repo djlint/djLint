@@ -405,7 +405,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     # format function contents
     beautified_code = re.sub(
         re.compile(
-            r"([ ]*)({{)[ ]*?((?:(?!}}).)*?\w)(\([^\)]*?\)[ ]*)((?:(?!}}).)*?}})",
+            r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\([^\)]*?\)[ ]*)((?:(?!}}).)*?-?\+?}})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
         ),
         func,
