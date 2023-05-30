@@ -6,7 +6,7 @@ const updateVersion = async () => {
   const packageJson = JSON.parse(
     (await fs.readFile('package.json')).toString(),
   );
-  packageJson.scripts.postinstall = `python3 -m pip install djlint==${nextVersion}`;
+  packageJson.scripts.postinstall = `python3 -m pip install --upgrade djlint==${nextVersion}`;
   await fs.writeFile(
     'package.json',
     prettier.format(JSON.stringify(packageJson), { filepath: 'package.json' }),
