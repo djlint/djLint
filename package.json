@@ -2,7 +2,6 @@
   "name": "djlint",
   "version": "1.29.0",
   "description": "HTML Template Linter and Formatter",
-  "main": "./bin/index.js",
   "directories": {
     "doc": "docs",
     "test": "tests"
@@ -29,12 +28,6 @@
     "angular template linter",
     "angular template formatter"
   ],
-  "files": [
-    "bin"
-  ],
-  "bin": {
-    "djlint": "./bin/index.js"
-  },
   "scripts": {
     "format": "prettier --config .prettierrc \"{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write",
     "postinstall": "python3 -m pip install --upgrade djlint==1.29.0",
@@ -51,10 +44,6 @@
     "url": "https://github.com/Riverside-Healthcare/djLint/issues"
   },
   "homepage": "https://djlint.com",
-  "dependencies": {
-    "python-shell": "^5.0.0",
-    "yargs": "17.7.2"
-  },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "9.0.2",
@@ -66,8 +55,7 @@
     "cz-conventional-changelog": "3.3.0",
     "lint-staged": "13.2.2",
     "prettier": "^2.8.8",
-    "semantic-release": "21.0.2",
-    "xo": "0.54.2"
+    "semantic-release": "21.0.2"
   },
   "config": {
     "commitizen": {
@@ -77,24 +65,6 @@
   "lint-staged": {
     "{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}": [
       "npm run format"
-    ]
-  },
-  "xo": {
-    "space": true,
-    "prettier": true,
-    "rules": {
-      "unicorn/prefer-module": "off",
-      "no-var": "warn",
-      "camelcase": "warn",
-      "unicorn/filename-case": "warn",
-      "unicorn/no-process-exit": "off"
-    },
-    "globals": [
-      "document",
-      "window",
-      "data",
-      "debounce",
-      "history"
     ]
   }
 }
