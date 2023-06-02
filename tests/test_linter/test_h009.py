@@ -28,6 +28,26 @@ test_data = [
         ),
         id="opening",
     ),
+    pytest.param(
+        ("<A\n>"),
+        (
+            [
+                {
+                    "code": "H009",
+                    "line": "1:1",
+                    "match": "A",
+                    "message": "Tag names should be lowercase.",
+                },
+                {
+                    "code": "H025",
+                    "line": "1:0",
+                    "match": "<A\n>",
+                    "message": "Tag seems to be an orphan.",
+                },
+            ]
+        ),
+        id="line break",
+    ),
 ]
 
 

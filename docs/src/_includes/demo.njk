@@ -27,16 +27,24 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 
 <form id="djlint-settings">
   <div class="field">
-  <label class="label">Custom Blocks <a href="/docs/configuration/#custom_blocks" target="_blank"><span class="icon has-text-grey-light">
+  <label class="label">Custom Blocks <a href="/docs/configuration/#custom-blocks" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a></label>
   <div class="control">
     <input id="settings-custom-blocks" class="input" type="text" placeholder="toc,example">
   </div>
 </div>
+<div class="field">
+  <label class="label">Ignore Blocks <a href="/docs/configuration/#ignore-blocks" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-ignore-blocks" class="input" type="text" placeholder="toc,example">
+  </div>
+</div>
 
  <div class="field">
-  <label class="label">Custom HTML <a href="/docs/configuration/#custom_html" target="_blank"><span class="icon has-text-grey-light">
+  <label class="label">Custom HTML <a href="/docs/configuration/#custom-html" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a></label>
   <div class="control">
@@ -54,7 +62,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 </div>
 
 <div class="field">
-  <label class="label">Blank Line after Tag <a href="/docs/configuration/#blank_line_after_tag" target="_blank"><span class="icon has-text-grey-light">
+  <label class="label">Blank Line after Tag <a href="/docs/configuration/#blank-line-after-tag" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a></label>
   <div class="control">
@@ -62,7 +70,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
   </div>
 </div>
 <div class="field">
-  <label class="label">Blank Line before Tag <a href="/docs/configuration/#blank_line_before_tag" target="_blank"><span class="icon has-text-grey-light">
+  <label class="label">Blank Line before Tag <a href="/docs/configuration/#blank-line-before-tag" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a></label>
   <div class="control">
@@ -90,7 +98,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 </div>
 
 <div class="field">
-  <label class="label">Max Line Length <a href="/docs/configuration/#max_line_length" target="_blank"><span class="icon has-text-grey-light">
+  <label class="label">Max Line Length <a href="/docs/configuration/#max-line-length" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a></label>
   <div class="control">
@@ -98,7 +106,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
   </div>
 </div>
 <div class="field">
-  <label class="label">Max Attribute Length <a href="/docs/configuration/#max_attribute_length" target="_blank"><span class="icon has-text-grey-light">
+  <label class="label">Max Attribute Length <a href="/docs/configuration/#max-attribute-length" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a></label>
   <div class="control">
@@ -108,7 +116,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 <div class="field">
 <label class="checkbox">
   <input id="settings-format-attribute-template-tags" type="checkbox">
-  Format Attribute Template Tags <a href="/docs/configuration/#format_attribute_template_tags" target="_blank"><span class="icon has-text-grey-light">
+  Format Attribute Template Tags <a href="/docs/configuration/#format-attribute-template-tags" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a>
 </label>
@@ -116,7 +124,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 <div class="field">
 <label  class="checkbox">
   <input id="settings-preserve-leading-space" type="checkbox">
-  Preserve Leading Space <a href="/docs/configuration/#preserve_leading_space" target="_blank"><span class="icon has-text-grey-light">
+  Preserve Leading Space <a href="/docs/configuration/#preserve-leading-space" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a>
 </label>
@@ -124,7 +132,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 <div class="field">
 <label  class="checkbox">
   <input id="settings-preserve-blank-space" type="checkbox">
-  Preserve Blank Space <a href="/docs/configuration/#preserve_blank_lines" target="_blank"><span class="icon has-text-grey-light">
+  Preserve Blank Space <a href="/docs/configuration/#preserve-blank-lines" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a>
 </label>
@@ -132,7 +140,7 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 <div class="field">
 <label class="checkbox">
   <input id="settings-format-js"  type="checkbox">
-  Format JS <a href="/docs/configuration/#format_js" target="_blank"><span class="icon has-text-grey-light">
+  Format JS <a href="/docs/configuration/#format-js" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a>
 </label>
@@ -140,11 +148,46 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 <div class="field">
 <label class="checkbox">
   <input id="settings-format-css"  type="checkbox">
-  Format CSS <a href="/docs/configuration/#format_css" target="_blank"><span class="icon has-text-grey-light">
+  Format CSS <a href="/docs/configuration/#format-css" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a>
 </label>
 </div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-close-void-tags"  type="checkbox">
+  Close Void Tags <a href="/docs/configuration/#close-void-tags" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-ignore-case"  type="checkbox">
+  Ignore Case <a href="/docs/configuration/#ignore-case" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-line-break-after-multiline-tag"  type="checkbox">
+  Line Break After Multiline Tag <a href="/docs/configuration/#line-break-after-multiline-tag" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-no-line-after-yaml"  type="checkbox">
+  No Line After YAML <a href="/docs/configuration/#no-line-after-yaml" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+
+
+
 </form>
       </div>
       <div class="column" id="djlint-input">
