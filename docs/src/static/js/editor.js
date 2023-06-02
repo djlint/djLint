@@ -74,6 +74,16 @@ if (typeof Worker !== 'undefined') {
     ).checked;
     if (noLineAfterYaml) config['noLineAfterYaml'] = noLineAfterYaml;
 
+    const noFunctionFormatting = document.getElementById(
+      'settings-no-function-formatting',
+    ).checked;
+    if (noFunctionFormatting)
+      config['noFunctionFormatting'] = noFunctionFormatting;
+    const noSetFormatting = document.getElementById(
+      'settings-no-set-formatting',
+    ).checked;
+    if (noSetFormatting) config['noSetFormatting'] = noSetFormatting;
+
     return config;
   }
 

@@ -237,6 +237,16 @@ from .src import get_src
     is_flag=True,
     help="Do not add a blank line after yaml front matter.",
 )
+@click.option(
+    "--no-function-formatting",
+    is_flag=True,
+    help="Do not attempt to format function contents.",
+)
+@click.option(
+    "--no-set-formatting",
+    is_flag=True,
+    help="Do not attempt to format set contents.",
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -276,6 +286,8 @@ def main(
     indent_js: Optional[int],
     close_void_tags: bool,
     no_line_after_yaml: bool,
+    no_function_formatting: bool,
+    no_set_formatting: bool,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -316,6 +328,8 @@ def main(
         indent_js=indent_js,
         close_void_tags=close_void_tags,
         no_line_after_yaml=no_line_after_yaml,
+        no_function_formatting=no_function_formatting,
+        no_set_formatting=no_set_formatting,
     )
 
     temp_file = None

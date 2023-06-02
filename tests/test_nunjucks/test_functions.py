@@ -18,7 +18,7 @@ test_data = [
             "  }\n"
             "})}}"
         ),
-        ("{{ myfunc({bar: {baz: {cux: 1}}}) }}\n"),
+        ('{{ myfunc({"bar": {"baz": {"cux": 1}}}) }}\n'),
         ({}),
         id="long line",
     ),
@@ -32,11 +32,25 @@ test_data = [
             "  }\n"
             "})}}"
         ),
+        ("{{ myfunc({\n" "bar: {\n" "baz: {\n" "cux: 1\n" "}\n" "}\n" "})}}\n"),
+        ({"no_function_formatting": True}),
+        id="disabled",
+    ),
+    pytest.param(
         (
             "{{ myfunc({\n"
-            "    bar: {\n"
-            "        baz: {\n"
-            "            cux: 1\n"
+            "  bar: {\n"
+            "    baz: {\n"
+            "      cux: 1\n"
+            "    }\n"
+            "  }\n"
+            "})}}"
+        ),
+        (
+            "{{ myfunc({\n"
+            '    "bar": {\n'
+            '        "baz": {\n'
+            '            "cux": 1\n'
             "        }\n"
             "    }\n"
             "}) }}\n"
@@ -57,9 +71,9 @@ test_data = [
         (
             "<div>\n"
             "    {{ myfunc({\n"
-            "        bar: {\n"
-            "            baz: {\n"
-            "                cux: 1\n"
+            '        "bar": {\n'
+            '            "baz": {\n'
+            '                "cux": 1\n'
             "            }\n"
             "        }\n"
             "    }) }}\n"
