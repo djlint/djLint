@@ -29,6 +29,26 @@ test_data = [
         id="one",
     ),
     pytest.param(
+        ("<div class='test\nclass-two'>"),
+        (
+            [
+                {
+                    "code": "H008",
+                    "line": "1:0",
+                    "match": "<div class='test\ncla",
+                    "message": "Attributes should be double quoted.",
+                },
+                {
+                    "code": "H025",
+                    "line": "1:0",
+                    "match": "<div class='test\ncla",
+                    "message": "Tag seems to be an orphan.",
+                },
+            ]
+        ),
+        id="line break",
+    ),
+    pytest.param(
         (
             '<link rel="stylesheet" href="styles.css" media="print" onload="this.media=\'all\'" media='
             "/>"

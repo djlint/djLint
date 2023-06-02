@@ -28,6 +28,20 @@ test_data = [
         ),
         id="one",
     ),
+    pytest.param(
+        ("<a\n>"),
+        (
+            [
+                {
+                    "code": "H025",
+                    "line": "1:0",
+                    "match": "<a\n>",
+                    "message": "Tag seems to be an orphan.",
+                }
+            ]
+        ),
+        id="one",
+    ),
 ]
 
 

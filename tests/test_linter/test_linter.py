@@ -25,24 +25,6 @@ from src.djlint import main as djlint
 from tests.conftest import write_to_file
 
 
-def test_H009(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b"<H1>")
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H009 1:" in result.output
-
-
-def test_H010(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b'<img HEIGHT="12">')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H010 1:" in result.output
-
-    write_to_file(tmp_file.name, b"<li>ID=username</li>")
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 0
-
-
 def test_H011(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<div class=test></div>")
     result = runner.invoke(djlint, [tmp_file.name])
@@ -221,34 +203,6 @@ def test_H020(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 0
     assert "H020" not in result.output
-
-
-def test_H021(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b'<div style="asdf"></div>')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H021 1:" in result.output
-
-    write_to_file(
-        tmp_file.name,
-        b'<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" />',
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 0
-    assert "H021" not in result.output
-
-    write_to_file(
-        tmp_file.name,
-        b'<acronym title="Cascading Style Sheets">CSS</acronym>',
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 0
-    assert "H021" not in result.output
-
-    # allow template syntax inside styles
-    write_to_file(tmp_file.name, b'<div style="test {%"><div style="test {{">')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H021" not in result.output
 
 
 def test_H022(runner: CliRunner, tmp_file: TextIO) -> None:
