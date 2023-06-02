@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/Riverside-Healthcare/djLint.git"
   },
+  "files": [],
   "keywords": [
     "html template linter",
     "html template formatter",

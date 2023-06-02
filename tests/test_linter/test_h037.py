@@ -42,6 +42,11 @@ test_data = [
         id="mismatch names",
     ),
     pytest.param(
+        ('<rect x="2" y="3" rx="1" />'),
+        ([]),
+        id="substring names",
+    ),
+    pytest.param(
         ('<svg -width="16" -width="2"></svg>'),
         (
             [
