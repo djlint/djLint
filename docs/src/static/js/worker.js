@@ -93,6 +93,22 @@ self.onmessage = async (event) => {
   const blankLineAfterTag = config.blankLineAfterTag
     ? `config.blank_line_after_tag="${config.blankLineAfterTag}"`
     : '';
+  const closeVoidTags = config.closeVoidTags
+    ? `config.close_void_tags="${config.closeVoidTags}"`
+    : '';
+
+  const ignoreCase = config.ignoreCase
+    ? `config.ignore_case="${config.ignoreCase}"`
+    : '';
+
+  const lineBreakAfterMultilineTag = config.lineBreakAfterMultilineTag
+    ? `config.line_break_after_multiline_tag="${config.lineBreakAfterMultilineTag}"`
+    : '';
+
+  const noLineAfterYaml = config.noLineAfterYaml
+    ? `config.no_line_after_yaml="${config.noLineAfterYaml}"`
+    : '';
+
   const blankLineBeforeTag = config.blankLineBeforeTag
     ? `config.blank_line_before_tag="${config.blankLineBeforeTag}"`
     : '';
@@ -127,6 +143,11 @@ ${maxLineLength}
 ${maxAttributeLength}
 ${formatAttributeTemplateTags}
 ${blankLineAfterTag}
+${blankLineBeforeTag}
+${closeVoidTags}
+${ignoreCase}
+${lineBreakAfterMultilineTag}
+${noLineAfterYaml}
 ${blankLineBeforeTag}
 print(Path(list(reformat_file(config, Path(temp_file.name)).keys())[0]).read_text().rstrip())
 temp_file.close()
