@@ -28,6 +28,24 @@ test_data = [
     ),
     pytest.param(
         (
+            "{% set classes =  {\n"
+            "'sPaging': 'd-flex justify-content-center ',\n"
+            "'sPageButton': 'btn btn-outline-primary ms-1 me-1',\n"
+            "'sPageButtonActive': 'active',\n"
+            "}%}\n"
+        ),
+        (
+            "{% set classes = {\n"
+            '    "sPaging": "d-flex justify-content-center ",\n'
+            '    "sPageButton": "btn btn-outline-primary ms-1 me-1",\n'
+            '    "sPageButtonActive": "active"\n'
+            "} %}\n"
+        ),
+        ({}),
+        id="quote json keys",
+    ),
+    pytest.param(
+        (
             "{% set schema=[\n"
             "{\n"
             '"name":"id",\n'
@@ -44,14 +62,14 @@ test_data = [
         (
             "{% set schema = [\n"
             "    {\n"
-            '        name: "id",\n'
-            '        type: "integer",\n'
-            "        primary: true,\n"
-            "        id: 1\n"
+            '        "name": "id",\n'
+            '        "type": "integer",\n'
+            '        "primary": true,\n'
+            '        "id": 1\n'
             "    },\n"
             "    {\n"
-            '        name: "name",\n'
-            '        type: "string"\n'
+            '        "name": "name",\n'
+            '        "type": "string"\n'
             "    }\n"
             "] %}\n"
         ),
@@ -77,14 +95,14 @@ test_data = [
             "<div>\n"
             "    {% set schema = [\n"
             "        {\n"
-            '            name: "id",\n'
-            '            type: "integer",\n'
-            "            primary: true,\n"
-            "            id: 1\n"
+            '            "name": "id",\n'
+            '            "type": "integer",\n'
+            '            "primary": true,\n'
+            '            "id": 1\n'
             "        },\n"
             "        {\n"
-            '            name: "name",\n'
-            '            type: "string"\n'
+            '            "name": "name",\n'
+            '            "type": "string"\n'
             "        }\n"
             "    ] %}\n"
             "</div>\n"
@@ -99,9 +117,25 @@ test_data = [
             '"primary": true\n'
             "},] %}"
         ),
-        ('{% set schema = [{name: "id", type: "integer", primary: true}] %}\n'),
+        ('{% set schema = [{"name": "id", "type": "integer", "primary": true}] %}\n'),
         ({}),
         id="indent invalid json",
+    ),
+    pytest.param(
+        (
+            '{% set schema=[{"name": "id",\n'
+            '"type": "integer",\n'
+            '"primary": true\n'
+            "},] %}"
+        ),
+        (
+            '{% set schema=[{"name": "id",\n'
+            '"type": "integer",\n'
+            '"primary": true\n'
+            "},] %}\n"
+        ),
+        ({"no_set_formatting": True}),
+        id="disabled",
     ),
     pytest.param(
         (
@@ -110,7 +144,7 @@ test_data = [
             '"primary+1": true\n'
             "}] %}"
         ),
-        ('{% set schema = [{name: "id", type: "1", "primary+1": true}] %}\n'),
+        ('{% set schema = [{"name": "id", "type": "1", "primary+1": true}] %}\n'),
         ({}),
         id="indent valid json",
     ),

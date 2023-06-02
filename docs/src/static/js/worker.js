@@ -113,6 +113,14 @@ self.onmessage = async (event) => {
     ? `config.blank_line_before_tag="${config.blankLineBeforeTag}"`
     : '';
 
+  const noSetFormatting = config.noSetFormatting
+    ? `config.no_set_formatting="${config.noSetFormatting}"`
+    : '';
+
+  const noFunctionFormatting = config.noFunctionFormatting
+    ? `config.no_function_formatting="${config.noFunctionFormatting}"`
+    : '';
+
   try {
     await self.pyodide.runPythonAsync(`
       import io

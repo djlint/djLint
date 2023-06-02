@@ -140,7 +140,8 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # closing set tag
         elif (
-            re.search(
+            config.no_set_formatting is False
+            and re.search(
                 re.compile(
                     r"^(?!.*\{\%).*%\}.*$",
                     re.IGNORECASE | re.MULTILINE | re.VERBOSE,
@@ -156,7 +157,8 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # closing curly brace inside a set tag
         elif (
-            re.search(
+            config.no_set_formatting is False
+            and re.search(
                 re.compile(
                     r"^[ ]*}|^[ ]*]",
                     re.IGNORECASE | re.MULTILINE | re.VERBOSE,
@@ -229,7 +231,8 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # opening set tag
         elif (
-            re.search(
+            config.no_set_formatting is False
+            and re.search(
                 re.compile(
                     r"^([ ]*{%[ ]*?set)(?!.*%}).*$",
                     re.IGNORECASE | re.MULTILINE | re.VERBOSE,
@@ -245,7 +248,8 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # opening curly brace inside a set tag
         elif (
-            re.search(
+            config.no_set_formatting is False
+            and re.search(
                 re.compile(
                     r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
                     re.IGNORECASE | re.MULTILINE | re.VERBOSE,
@@ -323,7 +327,9 @@ def indent_html(rawcode: str, config: Config) -> str:
         try:
             # try to format the contents as json
             data = json.loads(contents)
-            contents = json.dumps(data, trailing_commas=False, ensure_ascii=False)
+            contents = json.dumps(
+                data, trailing_commas=False, ensure_ascii=False, quote_keys=True
+            )
 
             if tag_size + len(contents) >= config.max_line_length:
                 # if the line is too long we can indent the json
@@ -332,6 +338,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     indent=config.indent_size,
                     trailing_commas=False,
                     ensure_ascii=False,
+                    quote_keys=True,
                 )
 
         except:
@@ -390,27 +397,29 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         return f"{leading_space}{open_bracket} {tag}({contents}) {close_bracket}"
 
-    func = partial(format_set, config, beautified_code)
-    # format set contents
-    beautified_code = re.sub(
-        re.compile(
-            r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
-        ),
-        func,
-        beautified_code,
-    )
+    if config.no_set_formatting is False:
+        func = partial(format_set, config, beautified_code)
+        # format set contents
+        beautified_code = re.sub(
+            re.compile(
+                r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
+                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
+            ),
+            func,
+            beautified_code,
+        )
 
-    func = partial(format_function, config, beautified_code)
-    # format function contents
-    beautified_code = re.sub(
-        re.compile(
-            r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\([^\)]*?\)[ ]*)((?:(?!}}).)*?-?\+?}})",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
-        ),
-        func,
-        beautified_code,
-    )
+    if config.no_function_formatting is False:
+        func = partial(format_function, config, beautified_code)
+        # format function contents
+        beautified_code = re.sub(
+            re.compile(
+                r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\([^\)]*?\)[ ]*)((?:(?!}}).)*?-?\+?}})",
+                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
+            ),
+            func,
+            beautified_code,
+        )
 
     if not config.preserve_blank_lines:
         beautified_code = beautified_code.lstrip()

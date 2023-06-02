@@ -1,5 +1,51 @@
 [
   {
+    "name": "no_set_formatting",
+    "description": {
+      "en": "Do not attempt to format set contents. ** If you use this option please open a gh issue explaining what caused you to use it.",
+      "ru": "Не пытайтесь форматировать содержимое набора. ** Если вы используете эту опцию, пожалуйста, откройте проблему gh, объяснив, что заставило вас использовать ее.",
+      "fr": "Ne pas tenter de formater le contenu du jeu. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser"
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "no_set_formatting=true"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"no_set_formatting\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--no-set-formatting"
+      }
+    ],
+    "tags": ["formatter"]
+  },
+  {
+    "name": "no_function_formatting",
+    "description": {
+      "en": "Do not attempt to format function contents. ** If you use this option please open a gh issue explaining what caused you to use it.",
+      "ru": "Не пытайтесь форматировать содержимое функции. ** Если вы используете эту опцию, пожалуйста, откройте проблему gh, объяснив, что заставило вас ее использовать.",
+      "fr": "Ne pas tenter de formater le contenu de la fonction. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "no_function_formatting=true"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"no_function_formatting\": true"
+      },
+      {
+        "name": "cli",
+        "value": "--no-function-formatting"
+      }
+    ],
+    "tags": ["formatter"]
+  },
+  {
     "name": "no_line_after_yaml",
     "description": {
       "en": "Do not add a blank line after yaml front matter.",

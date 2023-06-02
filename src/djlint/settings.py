@@ -252,6 +252,8 @@ class Config:
         indent_js: Optional[int] = None,
         close_void_tags: bool = False,
         no_line_after_yaml: bool = False,
+        no_function_formatting: bool = False,
+        no_set_formatting: bool = False,
     ):
         self.reformat = reformat
         self.check = check
@@ -325,6 +327,13 @@ class Config:
         )
         self.no_line_after_yaml: bool = no_line_after_yaml or djlint_settings.get(
             "no_line_after_yaml", False
+        )
+        self.no_set_formatting: bool = no_set_formatting or djlint_settings.get(
+            "no_set_formatting", False
+        )
+        self.no_function_formatting: bool = (
+            no_function_formatting
+            or djlint_settings.get("no_function_formatting", False)
         )
 
         # ignore is based on input and also profile
