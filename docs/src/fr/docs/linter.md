@@ -67,7 +67,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H033 | Espace supplémentaire dans l'action du formulaire.                                                                        | ✔️     |
 | J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                      | ✔️     |
 | J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                               | ✔️     |
-| T001 | Les variables doivent être entourées d'un seul espace. Ex : {% raw %}`{{ this }}`{% endraw %}                             | ✔️     |
+| T001 | Les variables doivent être entourées d'un espace. Ex : {% raw %}`{{ this }}`{% endraw %}                                  | ✔️     |
 | T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         | ✔️     |
 | T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                        | ✔️     |
 | T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      | ✔️     |

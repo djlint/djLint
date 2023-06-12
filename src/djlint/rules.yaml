@@ -1,26 +1,15 @@
 - rule:
     name: T001
-    message: Variables should be wrapped in a single whitespace.
+    message: Variables should be wrapped in a whitespace.
     flags: re.DOTALL
     exclude:
     - handlebars
     - golang
     patterns:
-    # open
-    - '{{[^\s#/@^\-\+]+'
-    - '{%[\-\+][^\s]+'
-    - '{%[^\s|\-|\+]+'
-    # handlebars
-    - '[^{]{#[^\s-]+|^{#[^\s-]+'
-    - '[^{]{#-[^\s]+|^{#-[^\s]+'
-    - '[^{]{\/[^\s]+|^{\/[^\s]+'
-    - '[^{]{\@[^\s]+|^{\@[^\s]+'
-    # close
-    - '[^(\s|^|\-|\+)]+[}|%|#]}'
-    - '[^(\s|^)]+\-[}|%|#]}'
-    - '[^(\s|^)]+\+[}|%|#]}'
-    - '[^\s\-\+][ ]{2,}[}|%|#]}'
-    - '{[{|%|#]\-?\+?[ ]{2,}'
+    # double curly
+    - '{{[-+]?(?:[^\s\-\+](?:(?!}}|{{).)*?|(?:(?!}}|{{).)*?[^\s\-\+])[-+]?}}'
+    # curly percent
+    - '{%(?:[-+]?[^\s\-\+](?:(?!%}|{%).)*?|(?:(?!%}|{%).)*?[^\s\-\+])[-+]?%}'
 - rule:
     name: T002
     message: Double quotes should be used in tags.

@@ -254,6 +254,7 @@ class Config:
         no_line_after_yaml: bool = False,
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
+        max_blank_lines: Optional[int] = None,
     ):
         self.reformat = reformat
         self.check = check
@@ -405,6 +406,17 @@ class Config:
         self.indent_size = indent
         self.indent: str = int(indent) * " "
 
+        try:
+            self.max_blank_lines = int(
+                djlint_settings.get("max_blank_lines", max_blank_lines or 0)
+            )
+        except ValueError:
+            echo(
+                Fore.RED
+                + f"Error: Invalid pyproject.toml indent value {djlint_settings['max_blank_lines']}"
+            )
+            self.max_blank_lines = max_blank_lines or 0
+
         default_exclude: str = r"""
             \.venv
             | venv/
@@ -508,6 +520,7 @@ class Config:
         self.indent_template_tags: str = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
             + r""" (?:if
+                | ifchanged
                 | for
                 | block(?!trans|translate)
                 | spaceless
@@ -528,7 +541,7 @@ class Config:
                 | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
-            + r")"
+            + r")\b"
         )
 
         self.template_indent: str = (
@@ -537,13 +550,15 @@ class Config:
                 ("""
             + self.indent_template_tags
             + r"""
-            )"""
+            ) | \{{-?[ ]*?form_start
+            """
         )
 
         self.template_unindent: str = r"""
                 (?:
                   (?:\{\{\/)
                 | (?:\{%-?[ ]*?end(?!comment))
+                | (?:\{{-?[ ]*?form_end)
               )
             """
 
@@ -625,6 +640,7 @@ class Config:
             | ({self.template_if_for_pattern}
             """
             + r"""
+            | (?:\'|\") # allow random trailing quotes
             | {{.*?}}
             | {\#.*?\#}
             | {%.*?%})

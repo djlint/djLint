@@ -15,9 +15,9 @@ test_data = [
             [
                 {
                     "code": "T001",
-                    "line": "1:4",
-                    "match": "test-%}",
-                    "message": "Variables should be wrapped in a single whitespace.",
+                    "line": "1:0",
+                    "match": "{%- test-%}",
+                    "message": "Variables should be wrapped in a whitespace.",
                 }
             ]
         ),
@@ -30,8 +30,8 @@ test_data = [
                 {
                     "code": "T001",
                     "line": "1:0",
-                    "match": "{%-test",
-                    "message": "Variables should be wrapped in a single whitespace.",
+                    "match": "{%-test -%}",
+                    "message": "Variables should be wrapped in a whitespace.",
                 }
             ]
         ),

@@ -1,5 +1,28 @@
 [
   {
+    "name": "max_blank_lines",
+    "description": {
+      "en": "Consolidate blank lines down to x lines. Default is 0 meaning blank lines will be removed.",
+      "ru": "Объедините пустые строки до х строк. По умолчанию 0, что означает, что пустые строки будут удалены.",
+      "fr": "Consolider les lignes vierges en les ramenant à x lignes. La valeur par défaut est 0, ce qui signifie que les lignes vierges seront supprimées."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "max_blank_lines=5"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"max_blank_lines\": 5"
+      },
+      {
+        "name": "cli",
+        "value": "--max_blank_lines 5"
+      }
+    ],
+    "tags": ["formatter"]
+  },
+  {
     "name": "no_set_formatting",
     "description": {
       "en": "Do not attempt to format set contents. ** If you use this option please open a gh issue explaining what caused you to use it.",

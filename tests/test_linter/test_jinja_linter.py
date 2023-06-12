@@ -11,6 +11,20 @@ from tests.conftest import lint_printer
 
 test_data = [
     pytest.param(
+        ('<button onclick="util.request(`set`, {to_set : {tags: ' '}});">'),
+        (
+            [
+                {
+                    "code": "H025",
+                    "line": "1:0",
+                    "match": '<button onclick="uti',
+                    "message": "Tag seems to be an orphan.",
+                }
+            ]
+        ),
+        id="T001 fix for #606",
+    ),
+    pytest.param(
         ("{#-test -#}"),
         ([]),
         id="T001",

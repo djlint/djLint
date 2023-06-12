@@ -1,6 +1,6 @@
 """Test django quoted tags.
 
-poetry run pytest tests/test_django/test_filter.py
+poetry run pytest tests/test_django/test_quoted.py
 """
 import pytest
 
@@ -22,6 +22,28 @@ test_data = [
             "</h1>\n"
         ),
         id="issue #640",
+    ),
+    pytest.param(
+        (
+            '<a {% if piece.owner == request.user %} class="disabled {% if not piece.like_count %}hidden{% endif %}"\n'
+            "   {% else %}\n"
+            '   hx-post="x"\n'
+            "   {% endif %}>\n"
+            "    test\n"
+            "    {% if piece.like_count %}<span>{{ piece.like_count }}</span>{% endif %}\n"
+            "</a>\n"
+        ),
+        (
+            '<a {% if piece.owner == request.user %} class="disabled {% if not piece.like_count %}hidden{% endif %}\n'
+            '   "\n'
+            "   {% else %}\n"
+            '   hx-post="x"\n'
+            "   {% endif %}>\n"
+            "    test\n"
+            "    {% if piece.like_count %}<span>{{ piece.like_count }}</span>{% endif %}\n"
+            "</a>\n"
+        ),
+        id="issue #652",
     ),
 ]
 

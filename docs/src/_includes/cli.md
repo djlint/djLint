@@ -57,6 +57,7 @@ Options:
                                   matter.
   --no-function-formatting        Do not attempt to format function contents.
   --no-set-formatting             Do not attempt to format set contents.
+  --max-blank-lines INTEGER       Consolidate blank lines down to x lines. [default: 0]
   -h, --help                      Show this message and exit.
 ```
 
