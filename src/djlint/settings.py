@@ -537,13 +537,15 @@ class Config:
                 ("""
             + self.indent_template_tags
             + r"""
-            )"""
+            ) | \{{-?[ ]*?form_start
+            """
         )
 
         self.template_unindent: str = r"""
                 (?:
                   (?:\{\{\/)
                 | (?:\{%-?[ ]*?end(?!comment))
+                | (?:\{{-?[ ]*?form_end)
               )
             """
 
