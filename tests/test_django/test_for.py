@@ -23,6 +23,15 @@ test_data = [
         ),
         id="for_tag",
     ),
+    pytest.param(
+        ("{% for i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endfor %}"),
+        (
+            "{% for i in items %}\n"
+            "    <div>{% formfield i %}</div>\n"
+            "{% endfor %}\n"
+        ),
+        id="test nested formfield",
+    ),
 ]
 
 

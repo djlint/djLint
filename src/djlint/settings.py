@@ -520,6 +520,7 @@ class Config:
         self.indent_template_tags: str = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
             + r""" (?:if
+                | ifchanged
                 | for
                 | block(?!trans|translate)
                 | spaceless
@@ -540,7 +541,7 @@ class Config:
                 | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
-            + r")"
+            + r")\b"
         )
 
         self.template_indent: str = (
