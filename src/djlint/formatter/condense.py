@@ -155,9 +155,9 @@ def condense_html(html, config):
 
     def condense_line(config: Config, html: str, match: re.Match) -> str:
         """Put contents on a single line if below max line length."""
-        # match.group(1) contains the opening tag, which may be split over multiple lines
         if config.line_break_after_multiline_tag:
-            combined_length = len(match.group(1) + match.group(3) + match.group(4))
+            # always force a break by pretending the line is too long.
+            combined_length = config.max_line_length + 1
         else:
             combined_length = len(
                 match.group(1).splitlines()[-1] + match.group(3) + match.group(4)

@@ -1,6 +1,6 @@
-"""Tests html details/summary tag.
+"""Tests forced line break when a tag has breaks in attributes tag.
 
-poetry run pytest tests/test_html/test_tag_details_summary.py
+poetry run pytest tests/test_config/test_line_break_after_multiline_tag.py
 """
 import pytest
 
@@ -83,6 +83,38 @@ test_data = [
         ),
         ({"line_break_after_multiline_tag": True}),
         id="line_break_after_multiline_tag_when_already_condensed",
+    ),
+    pytest.param(
+        (
+            '<div class="ds-flex ds-items-center ds-justify-center"\n'
+            '     style="grid-column: 3/4">\n'
+            "    {{ here_is_a_long_variable }}\n"
+            "</div>\n"
+            '<a class="ds-flex ds-items-center ds-justify-center"\n'
+            '   style="grid-column: 3/4">\n'
+            "    {{ here_is_a_long_variable }}\n"
+            "</a>\n"
+            '<span class="ds-flex ds-items-center ds-justify-center"\n'
+            '      style="grid-column: 3/4">\n'
+            "    {{ here_is_a_long_variable }}\n"
+            "</span>\n"
+        ),
+        (
+            '<div class="ds-flex ds-items-center ds-justify-center"\n'
+            '     style="grid-column: 3/4">\n'
+            "    {{ here_is_a_long_variable }}\n"
+            "</div>\n"
+            '<a class="ds-flex ds-items-center ds-justify-center"\n'
+            '   style="grid-column: 3/4">\n'
+            "    {{ here_is_a_long_variable }}\n"
+            "</a>\n"
+            '<span class="ds-flex ds-items-center ds-justify-center"\n'
+            '      style="grid-column: 3/4">\n'
+            "    {{ here_is_a_long_variable }}\n"
+            "</span>\n"
+        ),
+        ({"line_break_after_multiline_tag": True}),
+        id="more complex tags. #680",
     ),
 ]
 
