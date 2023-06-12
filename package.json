@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.29.0",
+  "version": "1.29.4",
   "description": "HTML Template Linter and Formatter",
   "directories": {
     "doc": "docs",
@@ -47,16 +47,16 @@
   "homepage": "https://djlint.com",
   "devDependencies": {
     "@semantic-release/changelog": "6.0.3",
-    "@semantic-release/commit-analyzer": "9.0.2",
+    "@semantic-release/commit-analyzer": "10.0.1",
     "@semantic-release/exec": "6.0.3",
     "@semantic-release/git": "10.0.1",
-    "@semantic-release/github": "8.0.7",
+    "@semantic-release/github": "9.0.3",
     "@semantic-release/npm": "10.0.3",
-    "@semantic-release/release-notes-generator": "11.0.1",
+    "@semantic-release/release-notes-generator": "11.0.3",
     "cz-conventional-changelog": "3.3.0",
     "lint-staged": "13.2.2",
     "prettier": "^2.8.8",
-    "semantic-release": "21.0.2"
+    "semantic-release": "21.0.3"
   },
   "config": {
     "commitizen": {
