@@ -627,6 +627,7 @@ class Config:
             | ({self.template_if_for_pattern}
             """
             + r"""
+            | (?:\'|\") # allow random trailing quotes
             | {{.*?}}
             | {\#.*?\#}
             | {%.*?%})
