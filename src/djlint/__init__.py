@@ -247,6 +247,12 @@ from .src import get_src
     is_flag=True,
     help="Do not attempt to format set contents.",
 )
+@click.option(
+    "--max-blank-lines",
+    type=int,
+    help="Consolidate blank lines down to x lines. [default: 0]",
+    show_default=False,
+)
 @colorama_text(autoreset=True)
 def main(
     src: List[str],
@@ -288,6 +294,7 @@ def main(
     no_line_after_yaml: bool,
     no_function_formatting: bool,
     no_set_formatting: bool,
+    max_blank_lines: Optional[int],
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -330,6 +337,7 @@ def main(
         no_line_after_yaml=no_line_after_yaml,
         no_function_formatting=no_function_formatting,
         no_set_formatting=no_set_formatting,
+        max_blank_lines=max_blank_lines,
     )
 
     temp_file = None

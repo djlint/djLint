@@ -36,7 +36,16 @@ def clean_whitespace(html: str, config: Config) -> str:
         if inside_protected_trans_block(config, html[: match.end()], match):
             return match.group().rstrip()
 
-        return match.group(1)
+        lines = len(
+            re.findall(
+                r"\n",
+                match.group(2),
+            )
+        )
+        blank_lines = "\n" * lines
+        if lines > config.max_blank_lines:
+            blank_lines = "\n" * max(config.max_blank_lines, 0)
+        return match.group(1) + blank_lines
 
     func = partial(strip_space, config, html)
 
@@ -50,7 +59,7 @@ def clean_whitespace(html: str, config: Config) -> str:
     if not config.preserve_leading_space:
         # remove any leading/trailing space
         html = re.sub(
-            re.compile(rf"^[ \t]*{line_contents}[{trailing_contents}]*$", re.M),
+            re.compile(rf"^[ \t]*{line_contents}([{trailing_contents}]*)$", re.M),
             func,
             html,
         )
@@ -59,12 +68,12 @@ def clean_whitespace(html: str, config: Config) -> str:
         # only remove leading space in front of tags
         # <, {%
         html = re.sub(
-            re.compile(rf"^[ \t]*((?:<|{{%).*?)[{trailing_contents}]*$", re.M),
+            re.compile(rf"^[ \t]*((?:<|{{%).*?)([{trailing_contents}]*)$", re.M),
             func,
             html,
         )
         html = re.sub(
-            re.compile(rf"^{line_contents}[{trailing_contents}]*$", re.M), func, html
+            re.compile(rf"^{line_contents}([{trailing_contents}]*)$", re.M), func, html
         )
 
     def add_blank_line_after(config: Config, html: str, match: re.Match) -> str:

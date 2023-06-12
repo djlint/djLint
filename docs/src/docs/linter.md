@@ -67,7 +67,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H033 | Extra whitespace found in form action.                                                       | ✔️      |
 | J004 | (Jinja) Static urls should follow {% raw %}`{{ url_for('static'..) }}`{% endraw %} pattern.  | ✔️      |
 | J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          | ✔️      |
-| T001 | Variables should be wrapped in a single whitespace. Ex: {% raw %}`{{ this }}`{% endraw %}    | ✔️      |
+| T001 | Variables should be wrapped in whitespace. Ex: {% raw %}`{{ this }}`{% endraw %}             | ✔️      |
 | T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    | ✔️      |
 | T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   | ✔️      |
 | T027 | Unclosed string found in template syntax.                                                    | ✔️      |

@@ -254,6 +254,7 @@ class Config:
         no_line_after_yaml: bool = False,
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
+        max_blank_lines: Optional[int] = None,
     ):
         self.reformat = reformat
         self.check = check
@@ -404,6 +405,17 @@ class Config:
                 indent = default_indent
         self.indent_size = indent
         self.indent: str = int(indent) * " "
+
+        try:
+            self.max_blank_lines = int(
+                djlint_settings.get("max_blank_lines", max_blank_lines or 0)
+            )
+        except ValueError:
+            echo(
+                Fore.RED
+                + f"Error: Invalid pyproject.toml indent value {djlint_settings['max_blank_lines']}"
+            )
+            self.max_blank_lines = max_blank_lines or 0
 
         default_exclude: str = r"""
             \.venv
