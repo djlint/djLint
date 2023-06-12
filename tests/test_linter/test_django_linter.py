@@ -17,14 +17,14 @@ test_data = [
                 {
                     "code": "T001",
                     "line": "1:0",
-                    "match": "{{test",
-                    "message": "Variables should be wrapped in a single whitespace.",
+                    "match": "{{test }}",
+                    "message": "Variables should be wrapped in a whitespace.",
                 },
                 {
                     "code": "T001",
-                    "line": "2:3",
-                    "match": "test%}",
-                    "message": "Variables should be wrapped in a single whitespace.",
+                    "line": "2:0",
+                    "match": "{% test%}",
+                    "message": "Variables should be wrapped in a whitespace.",
                 },
                 {
                     "code": "H025",
@@ -400,17 +400,11 @@ test_data = [
         (
             [
                 {
-                    "code": "T001",
-                    "line": "1:12",
-                    "match": "'  %}",
-                    "message": "Variables should be wrapped in a single whitespace.",
-                },
-                {
                     "code": "T032",
                     "line": "1:0",
                     "match": "{% static",
                     "message": "Extra whitespace found in template tags.",
-                },
+                }
             ]
         ),
         id="T032_2",
@@ -439,17 +433,11 @@ test_data = [
         (
             [
                 {
-                    "code": "T001",
-                    "line": "1:12",
-                    "match": "'  }}",
-                    "message": "Variables should be wrapped in a single whitespace.",
-                },
-                {
                     "code": "T032",
                     "line": "1:0",
                     "match": "{{ static",
                     "message": "Extra whitespace found in template tags.",
-                },
+                }
             ]
         ),
         id="T032_4",
