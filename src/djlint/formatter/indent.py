@@ -387,7 +387,8 @@ def indent_html(rawcode: str, config: Config) -> str:
         leading_space = match.group(1)
         open_bracket = match.group(2)
         tag = match.group(3).strip()
-        close_bracket = match.group(5)
+        index = (match.group(5) or "").strip()
+        close_bracket = match.group(6)
         contents = format_data(
             config,
             match.group(4).strip()[1:-1],
@@ -395,7 +396,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             leading_space,
         )
 
-        return f"{leading_space}{open_bracket} {tag}({contents}) {close_bracket}"
+        return f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
 
     if config.no_set_formatting is False:
         func = partial(format_set, config, beautified_code)
@@ -414,7 +415,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # format function contents
         beautified_code = re.sub(
             re.compile(
-                r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\([^\)]*?\)[ ]*)((?:(?!}}).)*?-?\+?}})",
+                r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)[ ]*)((?:\[[^\]]*?\]|\.\d+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
                 flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
             ),
             func,

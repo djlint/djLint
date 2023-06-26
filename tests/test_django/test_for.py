@@ -32,6 +32,41 @@ test_data = [
         ),
         id="test nested formfield",
     ),
+    pytest.param(
+        (
+            '<div class="form-inputs plans-form">\n'
+            '    <div class="trans-wrapper pos-comparator-flex">\n'
+            "        {% for field in POSOptimizer %}\n"
+            "            <div>\n"
+            "                <label>{{ field.label }}</label>\n"
+            "                {% formfield field show_label=False %}\n"
+            "            </div>\n"
+            "        {% endfor %}\n"
+            "        <div>\n"
+            "            <label>&nbsp</label>\n"
+            '            <button type="submit">{% trans "Calcola" %}</button>\n'
+            "        </div>\n"
+            "    </div>\n"
+            "</div>\n"
+        ),
+        (
+            '<div class="form-inputs plans-form">\n'
+            '    <div class="trans-wrapper pos-comparator-flex">\n'
+            "        {% for field in POSOptimizer %}\n"
+            "            <div>\n"
+            "                <label>{{ field.label }}</label>\n"
+            "                {% formfield field show_label=False %}\n"
+            "            </div>\n"
+            "        {% endfor %}\n"
+            "        <div>\n"
+            "            <label>&nbsp</label>\n"
+            '            <button type="submit">{% trans "Calcola" %}</button>\n'
+            "        </div>\n"
+            "    </div>\n"
+            "</div>\n"
+        ),
+        id="test nested formfield inside for",
+    ),
 ]
 
 
