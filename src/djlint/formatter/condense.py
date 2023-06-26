@@ -220,7 +220,7 @@ def condense_html(html, config):
     # jinja +%} and {%+ intentionally omitted.
     html = re.sub(
         re.compile(
-            rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
+            rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
             flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         ),
         func,
