@@ -23,6 +23,12 @@ test_data = [
         id="long line",
     ),
     pytest.param(
+        ('<span class="nav">{{ _("Orders (Selling)") }}</span>'),
+        ('<span class="nav">{{ _("Orders (Selling)") }}</span>\n'),
+        ({}),
+        id="test quoting",
+    ),
+    pytest.param(
         (
             "{{ myfunc({\n"
             "  bar: {\n"
