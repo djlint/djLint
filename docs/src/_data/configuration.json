@@ -1,5 +1,50 @@
 [
   {
+    "name": "warn",
+    "description": {
+      "en": "Return errors as warnings.",
+      "ru": "Возвращать ошибки в виде предупреждений.",
+      "fr": "Renvoyer les erreurs sous forme d'avertissements."
+    },
+    "usage": [
+      {
+        "name": "cli",
+        "value": "--warn"
+      }
+    ],
+    "tags": ["formatter", "linter"]
+  },
+  {
+    "name": "version",
+    "description": {
+      "en": "Show the version and exit.",
+      "ru": "Покажите версию и выйдите.",
+      "fr": "Afficher la version et quitter."
+    },
+    "usage": [
+      {
+        "name": "cli",
+        "value": "--version"
+      }
+    ],
+    "tags": ["formatter", "linter"]
+  },
+  {
+    "name": "quiet",
+    "description": {
+      "en": "Do not print diff when reformatting.",
+      "ru": "Не печатайте diff при переформатировании.",
+      "fr": "N'imprimez pas de différences lors du reformatage."
+    },
+    "usage": [
+      {
+        "name": "cli",
+        "value": "--quiet"
+      }
+    ],
+    "tags": ["formatter", "linter"]
+  },
+  {
     "name": "max_blank_lines",
     "description": {
       "en": "Consolidate blank lines down to x lines. Default is 0 meaning blank lines will be removed.",
