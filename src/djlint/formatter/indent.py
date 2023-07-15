@@ -320,6 +320,10 @@ def indent_html(rawcode: str, config: Config) -> str:
             if ignored_level == 0:
                 is_block_raw = False
 
+        # set a rule for tmp content to have outer double quotes only for jinja
+        if config.profile == "jinja":
+            tmp = re.sub(r"=(')(.*?)(')", r'="\2"', tmp)
+
         beautified_code = beautified_code + tmp
 
     # try to fix internal formatting of set tag
@@ -396,7 +400,24 @@ def indent_html(rawcode: str, config: Config) -> str:
             leading_space,
         )
 
-        return f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
+        cleaned_match = (
+            f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
+        )
+
+        if config.profile == "jinja":
+            # remove inconsistent quotes from the content
+            contents = contents.replace('"', "'")
+
+            # check for trailing or leading spaces inside the single quotes and remove them
+            contents = re.sub(r"(?<=')\s+|\s+(?=')", "", contents)
+
+            # update cleaned match
+            cleaned_match = f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
+
+            # strip any potential white space from the cleaned match
+            cleaned_match = cleaned_match.strip()
+
+        return cleaned_match
 
     if config.no_set_formatting is False:
         func = partial(format_set, config, beautified_code)
