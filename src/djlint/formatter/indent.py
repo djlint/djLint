@@ -405,7 +405,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         )
 
         if config.profile == "jinja":
-            # remove inconsistent quotes from the content
+            # remove double quotes from contents
             contents = contents.replace('"', "'")
 
             # check for trailing or leading spaces inside the single quotes and remove them
