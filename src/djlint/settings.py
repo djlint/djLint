@@ -538,6 +538,7 @@ class Config:
                 | raw
                 | blocktrans(?!late)
                 | blocktranslate
+                | thumbnail
                 | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
@@ -690,6 +691,7 @@ class Config:
             | raw
             | blocktrans(?!late)
             | blocktranslate
+            | thumbnail
             | set(?!(?:(?!%}).)*=)
 
             """
@@ -743,6 +745,8 @@ class Config:
             | endblocktranslate
             | set(?!(?:(?!%}).)*=)
             | endset
+            | thumbnail
+            | endthumbnail
             """
             + self.custom_blocks
             + r""")
