@@ -29,10 +29,30 @@ test_data = [
         id="test quoting",
     ),
     pytest.param(
-        ('{{ item.split("/")[1] }}\n' '{{ item.split("/").123 }}'),
-        ('{{ item.split("/")[1] }}\n' '{{ item.split("/").123 }}\n'),
+        (
+            '{{ item.split("/")[1] }}\n'
+            '{{ item.split("/").123 }}\n'
+            '{{ item.split("/").bar }}'
+        ),
+        (
+            '{{ item.split("/")[1] }}\n'
+            '{{ item.split("/").123 }}\n'
+            '{{ item.split("/").bar }}\n'
+        ),
         ({}),
         id="test index",
+    ),
+    pytest.param(
+        ("{{ url('foo').foo }}"),
+        ('{{ url("foo").foo }}\n'),
+        ({}),
+        id="function_call_attribute_access",
+    ),
+    pytest.param(
+        ("{{ url('foo').foo().bar[1] }}"),
+        ('{{ url("foo").foo().bar[1] }}\n'),
+        ({}),
+        id="function_call_attribute_access_multiple",
     ),
     pytest.param(
         (
