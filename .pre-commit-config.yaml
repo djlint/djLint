@@ -22,7 +22,7 @@ repos:
     - --remove-duplicate-keys
     - --remove-unused-variables
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.7.0
+  rev: v3.9.0
   hooks:
   - id: pyupgrade
     args: [--py36-plus]
@@ -33,11 +33,11 @@ repos:
     exclude: docs*
     additional_dependencies: [toml]
 - repo: https://github.com/psf/black
-  rev: 23.3.0
+  rev: 23.7.0
   hooks:
   - id: black
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.9.0
+  rev: v2.10.0
   hooks:
   - id: pretty-format-ini
     args: [--autofix]

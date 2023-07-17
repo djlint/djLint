@@ -538,6 +538,7 @@ class Config:
                 | raw
                 | blocktrans(?!late)
                 | blocktranslate
+                | thumbnail
                 | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
@@ -690,6 +691,7 @@ class Config:
             | raw
             | blocktrans(?!late)
             | blocktranslate
+            | thumbnail
             | set(?!(?:(?!%}).)*=)
 
             """
@@ -743,6 +745,8 @@ class Config:
             | endblocktranslate
             | set(?!(?:(?!%}).)*=)
             | endset
+            | thumbnail
+            | endthumbnail
             """
             + self.custom_blocks
             + r""")
@@ -785,6 +789,8 @@ class Config:
             | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
             # golang
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
+            # inline golang comments
+            | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
             | <!--.*?-->
             | <\?php.*?\?>
             | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
@@ -806,6 +812,8 @@ class Config:
             | {{!--\s*djlint\:off\s*--}}.*?(?={{!--\s*djlint\:on\s*--}})
             # golang
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
+            # inline golang comments
+            | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
             | <!--.*?-->
             | <\?php.*?\?>
             | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}

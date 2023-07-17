@@ -318,9 +318,12 @@ test_data = [
         id="T027_trans",
     ),
     pytest.param(
-        (
-            "{% macro rendersubmit(buttons=[], class=\"\", index='', url='', that=\"\" , test='') -%}"
-        ),
+        ('{% trans "Check box if you\'re interested in this location." %}'),
+        ([]),
+        id="T027_golang comment",
+    ),
+    pytest.param(
+        ("{{/* can't */}}"),
         ([]),
         id="T027_mixed_quotes",
     ),

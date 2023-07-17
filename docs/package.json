@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.75",
+  "version": "1.0.77",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -35,7 +35,7 @@
     "@11ty/eleventy": "2.0.1",
     "@11ty/eleventy-img": "3.1.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "5.0.0",
-    "@fontsource/inter": "5.0.3",
+    "@fontsource/inter": "5.0.5",
     "@fortawesome/fontawesome-free": "^6.4.0",
     "@fullhuman/postcss-purgecss": "5.0.0",
     "@toycode/markdown-it-class": "1.2.4",
@@ -60,7 +60,7 @@
     "outdent": "0.8.0",
     "postcss-cli": "10.1.0",
     "postcss-nested": "6.0.1",
-    "prettier": "^2.8.7",
+    "prettier": "^3.0.0",
     "prismjs": "1.29.0",
     "sass": "^1.60.0",
     "slugify": "^1.6.6"
