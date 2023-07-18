@@ -9,7 +9,7 @@ const updateVersion = async () => {
   packageJson.scripts.postinstall = `python3 -m pip install --upgrade djlint==${nextVersion}`;
   await fs.writeFile(
     'package.json',
-    prettier.format(JSON.stringify(packageJson), { filepath: 'package.json' }),
+    await prettier.format(JSON.stringify(packageJson), { filepath: 'package.json' }),
   );
 };
 
