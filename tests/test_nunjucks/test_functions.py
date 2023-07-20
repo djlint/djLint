@@ -37,6 +37,7 @@ test_data = [
         (
             '{{ item.split("/")[1] }}\n'
             '{{ item.split("/").123 }}\n'
+            # https://github.com/Riverside-Healthcare/djLint/issues/704
             '{{ item.split("/").bar }}\n'
         ),
         ({}),
@@ -44,12 +45,14 @@ test_data = [
     ),
     pytest.param(
         ("{{ url('foo').foo }}"),
+        # https://github.com/Riverside-Healthcare/djLint/issues/704
         ('{{ url("foo").foo }}\n'),
         ({}),
         id="function_call_attribute_access",
     ),
     pytest.param(
         ("{{ url('foo').foo().bar[1] }}"),
+        # https://github.com/Riverside-Healthcare/djLint/issues/704
         ('{{ url("foo").foo().bar[1] }}\n'),
         ({}),
         id="function_call_attribute_access_multiple",
