@@ -382,51 +382,22 @@ def indent_html(rawcode: str, config: Config) -> str:
         return f"{leading_space}{open_bracket} {tag} {contents} {close_bracket}"
 
     def format_function(config: Config, html: str, match: re.Match) -> str:
-        # will accept stuff like ` url("foo").foo().bar[1] `
-        if inside_ignored_block(config, html, match) or not match.group(3):
+        if inside_ignored_block(config, html, match):
             return match.group()
 
         leading_space = match.group(1)
         open_bracket = match.group(2)
         tag = match.group(3).strip()
-        close_bracket = match.group(4)
+        index = (match.group(5) or "").strip()
+        close_bracket = match.group(6)
+        contents = format_data(
+            config,
+            match.group(4).strip()[1:-1],
+            len(f"{open_bracket} {tag}() {close_bracket}"),
+            leading_space,
+        )
 
-        functions = ""
-        for function in tag.split("."):
-            parts = re.search(
-                r"""
-                    ((?:\w|\|)*) # function name including pipe: id|default()
-                    (?:
-                        (
-                            \((?:\"[^\"]*\"|'[^']*'|[^\)])*?\) # ()
-                          | \[(?:\"[^\"]*\"|'[^']*'|[^\]])*?\] # []
-                        )
-                        (\[(?:\"[^\"]*\"|'[^']*'|[^\]])*?\])? # [] trailing
-                    )?
-                    """,
-                function,
-                re.I | re.DOTALL | re.VERBOSE,
-            )
-            if functions != "":
-                functions += "."
-            functions += parts.group(1)
-
-            if parts.group(2):
-                functions += (
-                    parts.group(2)[0]
-                    + format_data(
-                        config,
-                        parts.group(2).strip()[1:-1],
-                        len(f"{open_bracket} {tag} {close_bracket}"),
-                        leading_space,
-                    )
-                    + parts.group(2)[-1]
-                )
-
-            if parts.group(3):
-                functions += parts.group(3)
-
-        return f"{leading_space}{open_bracket} {functions} {close_bracket}"
+        return f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
 
     if config.no_set_formatting is False:
         func = partial(format_set, config, beautified_code)
@@ -445,29 +416,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # format function contents
         beautified_code = re.sub(
             re.compile(
-                r"""
-                ([ ]*)
-                ({{-?\+?)
-                [ ]*?
-                (
-                    (?:
-                        (?:
-                            (?:(?:(?!}}).)*?\w) # function name
-                            (?:
-                                (?:\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)) # (stuff)
-                              | (?:\[(?:\"[^\"]*\"|'[^']*'|[^\]])*?\]) # [stuff]
-                            )
-                        )
-                    \.?)+
-                    (?:
-                        (?:\[(?:\"[^\"]*\"|'[^']*'|[^\]])*?\]) # [] following ()
-                      | [a-z\d]*  # .stuff
-
-                    )?
-                [ ]*
-                )?
-                ((?:(?!}}).)*?-?\+?}})
-                """,
+                r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
                 flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
             ),
             func,
