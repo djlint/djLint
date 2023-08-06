@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.78",
+  "version": "1.0.79",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "esbuild": "^0.18.0",
     "eslint": "^8.36.0",
     "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-import": "2.28.0",
     "fontawesome-subset": "4.4.0",
     "html-minifier": "4.0.0",
     "markdown-it": "13.0.1",
