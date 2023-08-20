@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.31.4",
+  "version": "1.31.5",
   "description": "HTML Template Linter and Formatter",
   "directories": {
     "doc": "docs",
@@ -54,7 +54,7 @@
     "@semantic-release/npm": "10.0.4",
     "@semantic-release/release-notes-generator": "11.0.4",
     "cz-conventional-changelog": "3.3.0",
-    "lint-staged": "13.2.3",
+    "lint-staged": "14.0.0",
     "prettier": "^3.0.0",
     "semantic-release": "21.0.7"
   },
