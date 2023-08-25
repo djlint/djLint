@@ -237,8 +237,8 @@
     name: H033
     message: Extra whitespace found in form action.
     patterns:
-    - <form[^>]+?(?<!data-)action=['|"]\s
-    - <form[^>]+?(?<!data-)action=(['|"])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^"'{]))*\s+?\1
+    - <form[^>]+?(?<!\w-)action=['|"]\s
+    - <form[^>]+?(?<!\w-)action=(['|"])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^"'{]))*\s+?\1
 - rule:
     name: T034
     message: Did you intend to use {% ... %} instead of {% ... }%?
