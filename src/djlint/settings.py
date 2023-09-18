@@ -470,6 +470,10 @@ class Config:
         )
 
         # contents of tags will not be formatted
+        self.script_style_opening: str = r"""
+           <style
+         | <script
+        """
         self.ignored_block_opening: str = r"""
               <style
             | {\*
@@ -486,7 +490,10 @@ class Config:
             | {{!--\s*djlint\:off\s*--}}
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
         """
-
+        self.script_style_closing: str = r"""
+              </style
+            | </script
+        """
         self.ignored_block_closing: str = r"""
               </style
             | \*}
@@ -522,6 +529,8 @@ class Config:
             + r""" (?:if
                 | ifchanged
                 | for
+                | asyncEach
+                | asyncAll
                 | block(?!trans|translate)
                 | spaceless
                 | compress
@@ -602,9 +611,7 @@ class Config:
                 + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}"
             )
 
-        self.template_if_for_pattern = (
-            r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
-        )
+        self.template_if_for_pattern = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
 
         self.attribute_pattern: str = (
             rf"""
@@ -673,6 +680,8 @@ class Config:
             + r"""
               (?:if
             | for
+            | asyncEach
+            | asyncAll
             | block(?!trans)
             | spaceless
             | compress
@@ -707,6 +716,10 @@ class Config:
             | endif
             | for
             | endfor
+            | asyncEach
+            | endeach
+            | asyncAll
+            | endall
             | block(?!trans)
             | endblock(?!trans)
             | else
@@ -753,7 +766,7 @@ class Config:
         """
         )
         self.template_blocks: str = r"""
-        {%((?!%}).)+%}
+        {%((?!%}).)+%}|{{((?!}}).)+}}
         """
 
         self.ignored_linter_blocks: str = r"""
@@ -797,6 +810,9 @@ class Config:
             | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
             | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
+        """
+        self.script_style_inline: str = r"""
+        <(script|style).*?(?=(\</(?:\1)>))
         """
         self.ignored_blocks_inline: str = r"""
               <(pre|textarea).*?</(\1)>
@@ -902,6 +918,8 @@ class Config:
             | for
             | block
             | with
+            | asyncEach
+            | asyncAll
         """
 
         self.break_html_tags: str = (

@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         persist-credentials: false
@@ -43,7 +43,7 @@ jobs:
 
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
       uses: actions/setup-python@v4
       with:
@@ -61,7 +61,38 @@ jobs:
       continue-on-error: true
       with:
         files: ./coverage.xml
-        fail_ci_if_error: true
+        fail_ci_if_error: false
+        verbose: true
+
+  test_alpine:
+    name: python ${{ matrix.python-version }} on alpine-latest
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+      fail-fast: true
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - uses: jirutka/setup-alpine@v1
+    - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: setup poetry
+      uses: abatilo/actions-poetry@v2
+      with:
+        poetry-version: 1.2.2
+    - name: install deps
+      run: poetry install
+    - name: test
+      run: poetry run tox -e test
+    - name: upload cov
+      uses: codecov/codecov-action@v3
+      continue-on-error: true
+      with:
+        files: ./coverage.xml
+        fail_ci_if_error: false
         verbose: true
 
   test_npm:
@@ -87,7 +118,7 @@ jobs:
       if: ${{ matrix.os == 'macos-latest' }}
       run: sudo xcode-select --reset
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
       uses: actions/setup-python@v4
       with:

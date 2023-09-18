@@ -135,6 +135,11 @@ test_data = [
         id="J018_attributes",
     ),
     pytest.param(
+        ('<form action="{{ url_for(\'something\', action="xxx") }}"></form>'),
+        ([]),
+        id="J018_action_attr_url",
+    ),
+    pytest.param(
         (
             "{% macro rendersubmit(buttons=[], class=\"\", index='', url='', that=\"\" , test='') -%}"
         ),

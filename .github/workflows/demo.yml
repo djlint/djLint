@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: setup python 3.11
       uses: actions/setup-python@v4
@@ -71,7 +71,7 @@ jobs:
     - name: cleanup source
       run: rm -r "${{ matrix.tool }}_source"; rm -r "${{ matrix.tool }}_raw"
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         path: ${{ matrix.tool }}-source
         ref: ${{ matrix.tool }}-source

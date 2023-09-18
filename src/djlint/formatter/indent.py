@@ -10,6 +10,8 @@ from ..helpers import (
     is_ignored_block_closing,
     is_ignored_block_opening,
     is_safe_closing_tag,
+    is_script_style_block_closing,
+    is_script_style_block_opening,
 )
 from ..settings import Config
 from .attributes import format_attributes
@@ -61,6 +63,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     indent_level = 0
     in_set_tag = False
     is_raw_first_line = False
+    in_script_style_tag = False
     is_block_raw = False
 
     slt_html = config.indent_html_tags
@@ -83,6 +86,9 @@ def indent_html(rawcode: str, config: Config) -> str:
         if is_ignored_block_opening(config, item):
             is_block_raw = True
             ignored_level += 1
+
+        if is_script_style_block_opening(config, item):
+            in_script_style_tag = True
 
         if is_safe_closing_tag(config, item):
             ignored_level -= 1
@@ -313,7 +319,11 @@ def indent_html(rawcode: str, config: Config) -> str:
             )
 
         # turn off raw block if we hit end - for one line raw blocks, but not an inline raw
-        if is_ignored_block_closing(config, item):
+        if is_ignored_block_closing(config, item) and (
+            in_script_style_tag is False
+            or (in_script_style_tag and is_script_style_block_closing(config, item))
+        ):
+            in_script_style_tag = False
             if not is_safe_closing_tag(config, item):
                 ignored_level -= 1
                 ignored_level = max(ignored_level, 0)
@@ -344,7 +354,10 @@ def indent_html(rawcode: str, config: Config) -> str:
         except:
             # was not json.. try to eval as set
             try:
-                evaluated = str(eval(contents))
+                # if contents is a python keyword, do not evaluate it.
+                evaluated = (
+                    str(eval(contents)) if contents not in ["object"] else contents
+                )
                 # need to unwrap the eval
                 contents = (
                     evaluated[1:-1]
