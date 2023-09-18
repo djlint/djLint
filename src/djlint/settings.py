@@ -522,6 +522,8 @@ class Config:
             + r""" (?:if
                 | ifchanged
                 | for
+                | asyncEach
+                | asyncAll
                 | block(?!trans|translate)
                 | spaceless
                 | compress
@@ -602,9 +604,7 @@ class Config:
                 + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}"
             )
 
-        self.template_if_for_pattern = (
-            r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
-        )
+        self.template_if_for_pattern = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
 
         self.attribute_pattern: str = (
             rf"""
@@ -673,6 +673,8 @@ class Config:
             + r"""
               (?:if
             | for
+            | asyncEach
+            | asyncAll
             | block(?!trans)
             | spaceless
             | compress
@@ -707,6 +709,10 @@ class Config:
             | endif
             | for
             | endfor
+            | asyncEach
+            | endeach
+            | asyncAll
+            | endall
             | block(?!trans)
             | endblock(?!trans)
             | else
@@ -902,6 +908,8 @@ class Config:
             | for
             | block
             | with
+            | asyncEach
+            | asyncAll
         """
 
         self.break_html_tags: str = (
