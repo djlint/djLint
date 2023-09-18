@@ -131,6 +131,13 @@ test_data = [
         ({}),
         id="broken",
     ),
+    pytest.param(
+        ("{{ url(object) }}"),
+        # https://github.com/Riverside-Healthcare/djLint/issues/756
+        ("{{ url(object) }}\n"),
+        ({}),
+        id="function param is python keyword",
+    ),
 ]
 
 

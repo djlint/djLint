@@ -344,7 +344,10 @@ def indent_html(rawcode: str, config: Config) -> str:
         except:
             # was not json.. try to eval as set
             try:
-                evaluated = str(eval(contents))
+                # if contents is a python keyword, do not evaluate it.
+                evaluated = (
+                    str(eval(contents)) if contents not in ["object"] else contents
+                )
                 # need to unwrap the eval
                 contents = (
                     evaluated[1:-1]
