@@ -759,7 +759,7 @@ class Config:
         """
         )
         self.template_blocks: str = r"""
-        {%((?!%}).)+%}
+        {%((?!%}).)+%}|{{((?!}}).)+}}
         """
 
         self.ignored_linter_blocks: str = r"""
