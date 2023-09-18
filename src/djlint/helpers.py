@@ -32,6 +32,34 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     )
 
 
+def is_script_style_block_opening(config: Config, item: str) -> bool:
+    """Find ignored group opening.
+
+    A valid ignored group opening tag will not be part of a
+    single line block.
+    """
+    last_index = 0
+    inline = list(
+        re.finditer(
+            config.script_style_inline,
+            item,
+            flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL,
+        )
+    )
+
+    if inline:
+        last_index = inline[
+            -1
+        ].end()  # get the last index. The ignored opening should start after this.
+
+    return bool(
+        re.search(
+            re.compile(config.script_style_opening, re.IGNORECASE | re.VERBOSE),
+            item[last_index:],
+        )
+    )
+
+
 def inside_protected_trans_block(config: Config, html: str, match: re.Match) -> bool:
     """Find ignored group closing.
 
@@ -142,6 +170,31 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
 
     return re.search(
         re.compile(config.ignored_block_closing, flags=re.IGNORECASE | re.VERBOSE),
+        item[last_index:],
+    )
+
+
+def is_script_style_block_closing(config: Config, item: str) -> bool:
+    """Find ignored group closing.
+
+    A valid ignored group closing tag will not be part of a
+    single line block.
+    """
+    last_index = 0
+    inline = list(
+        re.finditer(
+            re.compile(config.script_style_inline, flags=re.IGNORECASE | re.VERBOSE),
+            item,
+        )
+    )
+
+    if inline:
+        last_index = inline[
+            -1
+        ].end()  # get the last index. The ignored opening should start after this.
+
+    return re.search(
+        re.compile(config.script_style_closing, flags=re.IGNORECASE | re.VERBOSE),
         item[last_index:],
     )
 

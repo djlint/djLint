@@ -10,6 +10,27 @@ from tests.conftest import printer
 test_data = [
     pytest.param(
         (
+            "{% block script %}\n"
+            "    <script>\n"
+            '        let arrow = "-->";\n'
+            "        let on_the_move = 1;\n"
+            "        let just_following_the_sign = 2;\n"
+            "    </script>\n"
+            "{% endblock %}\n"
+        ),
+        (
+            "{% block script %}\n"
+            "    <script>\n"
+            '        let arrow = "-->";\n'
+            "        let on_the_move = 1;\n"
+            "        let just_following_the_sign = 2;\n"
+            "    </script>\n"
+            "{% endblock %}\n"
+        ),
+        id="github issue 733",
+    ),
+    pytest.param(
+        (
             "<div>\n"
             "    <script>console.log();\n"
             "    console.log();\n"

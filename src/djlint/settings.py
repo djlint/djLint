@@ -470,6 +470,10 @@ class Config:
         )
 
         # contents of tags will not be formatted
+        self.script_style_opening: str = r"""
+           <style
+         | <script
+        """
         self.ignored_block_opening: str = r"""
               <style
             | {\*
@@ -486,7 +490,10 @@ class Config:
             | {{!--\s*djlint\:off\s*--}}
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
         """
-
+        self.script_style_closing: str = r"""
+              </style
+            | </script
+        """
         self.ignored_block_closing: str = r"""
               </style
             | \*}
@@ -803,6 +810,9 @@ class Config:
             | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
             | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
+        """
+        self.script_style_inline: str = r"""
+        <(script|style).*?(?=(\</(?:\1)>))
         """
         self.ignored_blocks_inline: str = r"""
               <(pre|textarea).*?</(\1)>
