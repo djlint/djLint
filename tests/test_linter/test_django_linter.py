@@ -280,6 +280,11 @@ test_data = [
         id="DJ018_data_action",
     ),
     pytest.param(
+        ('<form action="{% url \'something\' action="xxx" %}"></form>'),
+        ([]),
+        id="DJ018_action_attr_url",
+    ),
+    pytest.param(
         ("{% blah 'asdf %}"),
         (
             [
