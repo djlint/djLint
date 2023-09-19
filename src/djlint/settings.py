@@ -96,14 +96,13 @@ def find_djlint_rules(root: Path) -> Optional[Path]:
 
 
 def load_pyproject_config(filepath: Path) -> Dict:
-    """ Load djlint config from pyproject.toml """
+    """Load djlint config from pyproject.toml"""
     data = tomllib.loads(filepath.resolve().read_text(encoding="utf-8"))
     return data.get("tool", {}).get("djlint", {})
 
 
-
 def load_djlintrc_config(filepath: Path) -> Dict:
-    """ Load djlint config from .djlintrc """
+    """Load djlint config from .djlintrc"""
     return json.loads(filepath.resolve().read_text(encoding="utf-8"))
 
 
@@ -128,7 +127,6 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
                 Path(config).resolve(),
                 error,
             )
-    print(djlint_content)
 
     pyproject_file = find_pyproject(src)
 

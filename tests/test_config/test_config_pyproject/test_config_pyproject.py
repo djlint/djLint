@@ -9,8 +9,6 @@ run::
 
 """
 
-import os
-
 from click.testing import CliRunner
 
 from src.djlint import main as djlint
