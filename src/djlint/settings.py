@@ -95,6 +95,18 @@ def find_djlint_rules(root: Path) -> Optional[Path]:
     return None
 
 
+def load_pyproject_config(filepath: Path) -> Dict:
+    """ Load djlint config from pyproject.toml """
+    data = tomllib.loads(filepath.resolve().read_text(encoding="utf-8"))
+    return data.get("tool", {}).get("djlint", {})
+
+
+
+def load_djlintrc_config(filepath: Path) -> Dict:
+    """ Load djlint config from .djlintrc """
+    return json.loads(filepath.resolve().read_text(encoding="utf-8"))
+
+
 def load_project_settings(src: Path, config: Optional[str]) -> Dict:
     """Load djlint config from pyproject.toml."""
 
@@ -102,9 +114,11 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
 
     if config:
         try:
-            djlint_content = json.loads(
-                Path(config).resolve().read_text(encoding="utf8")
-            )
+            path = Path(config)
+            if path.name == "pyproject.toml":
+                djlint_content.update(load_pyproject_config(path))
+            else:
+                djlint_content.update(load_djlintrc_config(path))
 
         # pylint: disable=broad-except
         except BaseException as error:
@@ -114,24 +128,24 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
                 Path(config).resolve(),
                 error,
             )
+    print(djlint_content)
 
     pyproject_file = find_pyproject(src)
 
     if pyproject_file:
-        content = tomllib.loads(pyproject_file.read_text(encoding="utf8"))
-        try:
-            return {**djlint_content, **content["tool"]["djlint"]}  # type: ignore
-        except KeyError:
+        content = load_pyproject_config(pyproject_file)
+        if content != {}:
+            djlint_content.update(content)
+            return content
+        else:
             logger.info("No pyproject.toml found.")
 
     djlintrc_file = find_djlintrc(src)
 
     if djlintrc_file:
         try:
-            return {
-                **djlint_content,
-                **json.loads(djlintrc_file.read_text(encoding="utf8")),
-            }
+            djlint_content.update(load_djlintrc_config(djlintrc_file))
+            return content
         # pylint: disable=broad-except
         except BaseException as error:
             logger.error("%sFailed to load .djlintrc file. %s", Fore.RED, error)
