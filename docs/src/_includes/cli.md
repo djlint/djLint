@@ -25,8 +25,8 @@ Options:
   --preserve-blank-lines          Attempt to preserve blank lines.
   --format-css                    Also format contents of <style> tags.
   --format-js                     Also format contents of <script> tags.
-  --configuration PATH            Path to global configuration file in
-                                  .djlintrc format
+  --configuration PATH            Path to global configuration file.
+                                  .djlintrc OR pyproject.toml formats are valid
   --statistics                    Count the number of occurrences of each
                                   error/warning code.
   --include TEXT                  Codes to include. ex: "H014,H017"
