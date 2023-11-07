@@ -143,7 +143,6 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
     if djlintrc_file:
         try:
             djlint_content.update(load_djlintrc_config(djlintrc_file))
-            return content
         # pylint: disable=broad-except
         except BaseException as error:
             logger.error("%sFailed to load .djlintrc file. %s", Fore.RED, error)
