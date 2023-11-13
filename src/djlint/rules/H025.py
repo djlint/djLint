@@ -25,6 +25,8 @@ def run(
     """Check for orphans html tags."""
     errors: List[Dict[str, str]] = []
     open_tags: List[re.Match] = []
+    orphan_tags: List[re.Match] = []
+
     for match in re.finditer(
         re.compile(
             r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
@@ -46,9 +48,9 @@ def run(
                         break
                 else:
                     # there was no open tag matching the close tag
-                    open_tags.insert(0, match)
+                    orphan_tags.append(match)
 
-    for match in open_tags:
+    for match in open_tags + orphan_tags:
         if (
             overlaps_ignored_block(config, html, match) is False
             and inside_ignored_rule(config, html, match, rule["name"]) is False
