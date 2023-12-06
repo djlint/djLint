@@ -52,7 +52,9 @@ def reformat_file(config: Config, this_file: Path) -> dict:
 
     beautified_code = formatter(config, rawcode)
 
-    if config.check is not True or config.stdin is True:
+    if (
+        config.check is not True and beautified_code != rawcode
+    ) or config.stdin is True:
         this_file.write_bytes(beautified_code.encode("utf8"))
 
     out = {
