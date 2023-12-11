@@ -1,6 +1,6 @@
 {
   "name": "djlint_docs",
-  "version": "1.0.82",
+  "version": "1.0.84",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -33,9 +33,9 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "2.0.1",
-    "@11ty/eleventy-img": "3.1.0",
+    "@11ty/eleventy-img": "3.1.1",
     "@11ty/eleventy-plugin-syntaxhighlight": "5.0.0",
-    "@fontsource/inter": "5.0.8",
+    "@fontsource/inter": "5.0.14",
     "@fortawesome/fontawesome-free": "^6.4.0",
     "@fullhuman/postcss-purgecss": "5.0.0",
     "@toycode/markdown-it-class": "1.2.4",
@@ -53,7 +53,7 @@
     "eslint-plugin-import": "2.28.1",
     "fontawesome-subset": "4.4.0",
     "html-minifier": "4.0.0",
-    "markdown-it": "13.0.1",
+    "markdown-it": "13.0.2",
     "markdown-it-anchor": "8.6.7",
     "markdown-it-div": "1.1.0",
     "markdown-it-imsize": "2.0.1",
