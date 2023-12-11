@@ -390,6 +390,18 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     assert "H025" not in result.output
 
+    write_to_file(tmp_file.name, b"</p></p>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H025 1:0" in result.output
+    assert "H025 1:4" in result.output
+
+    write_to_file(tmp_file.name, b"</p><p></p></p>")
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert result.exit_code == 1
+    assert "H025 1:0" in result.output
+    assert "H025 1:11" in result.output
+
 
 def test_T027(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<a href=\"{{- blah 'asdf' }}\">")
