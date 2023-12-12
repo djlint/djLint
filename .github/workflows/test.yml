@@ -21,7 +21,7 @@ jobs:
         persist-credentials: false
 
     - name: ⎔ Setup node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 18
 
@@ -124,7 +124,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: setup node ${{ matrix.node }} on ${{ matrix.os }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node }}
 
