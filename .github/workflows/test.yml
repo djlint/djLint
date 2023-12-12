@@ -73,7 +73,7 @@ jobs:
       fail-fast: true
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - uses: jirutka/setup-alpine@v1
     - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
       uses: actions/setup-python@v4
