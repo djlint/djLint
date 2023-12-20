@@ -8,7 +8,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # Changelog
 
-Changelog est maintenant inclus dans la [release](https://github.com/Riverside-Healthcare/djLint/releases).
+Changelog est maintenant inclus dans la [release](https://github.com/djlint/djLint/releases).
 
 <!--## {{ "next_release" i18n }}-->
 
@@ -16,28 +16,28 @@ Changelog est maintenant inclus dans la [release](https://github.com/Riverside-H
 
 ::: content
 
-- Correction de bugs [#240](https://github.com/Riverside-Healthcare/djLint/issues/240)
+- Correction de bugs [#240](https://github.com/djlint/djLint/issues/240)
   :::
 
 ## 1.0.1
 
 ::: content
 
-- Correction de bugs [#236](https://github.com/Riverside-Healthcare/djLint/issues/236)
+- Correction de bugs [#236](https://github.com/djlint/djLint/issues/236)
   :::
 
 ## 1.0.0
 
 ::: content
 
-- Correction de bugs [#224](https://github.com/Riverside-Healthcare/djLint/issues/224)
+- Correction de bugs [#224](https://github.com/djlint/djLint/issues/224)
   :::
 
 ## 0.7.6
 
 ::: content
 
-- Correction de bugs [#189](https://github.com/Riverside-Healthcare/djLint/issues/189), [#197](https://github.com/Riverside-Healthcare/djLint/issues/189)
+- Correction de bugs [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
 - Ajouté le drapeau `--warn` pour retourner les erreurs de retour comme des avertissements.
   :::
 
@@ -45,26 +45,26 @@ Changelog est maintenant inclus dans la [release](https://github.com/Riverside-H
 
 ::: content
 
-- Correction de bugs [#187](https://github.com/Riverside-Healthcare/djLint/issues/187)
+- Correction de bugs [#187](https://github.com/djlint/djLint/issues/187)
 - Ajout d'une meilleure prise en charge de la matière première `yaml` dans les fichiers modèles
-- Ajouté la règle T032 pour [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
-- Ajouté la règle H033 pour [#124](https://github.com/Riverside-Healthcare/djLint/issues/124)
-- Modification des profils des liners pour qu'ils soient inclusifs et non exclusifs pour [#178](https://github.com/Riverside-Healthcare/djLint/issues/178)
-- Ajout d'une option alternative pour le fichier de configuration `.djlintrc`. pour [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
+- Ajouté la règle T032 pour [#123](https://github.com/djlint/djLint/issues/123)
+- Ajouté la règle H033 pour [#124](https://github.com/djlint/djLint/issues/124)
+- Modification des profils des liners pour qu'ils soient inclusifs et non exclusifs pour [#178](https://github.com/djlint/djLint/issues/178)
+- Ajout d'une option alternative pour le fichier de configuration `.djlintrc`. pour [#188](https://github.com/djlint/djLint/issues/188)
   :::
 
 ## 0.7.4
 
 ::: content
 
-- Correction de bugs [#177](https://github.com/Riverside-Healthcare/djLint/issues/177)
+- Correction de bugs [#177](https://github.com/djlint/djLint/issues/177)
   :::
 
 ## 0.7.3
 
 ::: content
 
-- Correction de bugs [#173](https://github.com/Riverside-Healthcare/djLint/issues/173), [#174](https://github.com/Riverside-Healthcare/djLint/issues/174)
+- Correction de bugs [#173](https://github.com/djlint/djLint/issues/173), [#174](https://github.com/djlint/djLint/issues/174)
 - Suppression de Py3.6 de `pyproject.toml`..
   :::
 
@@ -72,14 +72,14 @@ Changelog est maintenant inclus dans la [release](https://github.com/Riverside-H
 
 ::: content
 
-- Correction de bugs [#167](https://github.com/Riverside-Healthcare/djLint/issues/167), [#166](https://github.com/Riverside-Healthcare/djLint/issues/166), [#171](https://github.com/Riverside-Healthcare/djLint/issues/171), [#169](https://github.com/Riverside-Healthcare/djLint/issues/169)
+- Correction de bugs [#167](https://github.com/djlint/djLint/issues/167), [#166](https://github.com/djlint/djLint/issues/166), [#171](https://github.com/djlint/djLint/issues/171), [#169](https://github.com/djlint/djLint/issues/169)
   :::
 
 ## 0.7.1
 
 ::: content
 
-- Correction de bugs [#166](https://github.com/Riverside-Healthcare/djLint/issues/166)
+- Correction de bugs [#166](https://github.com/djlint/djLint/issues/166)
   :::
 
 ## 0.7.0
@@ -288,14 +288,14 @@ Changelog est maintenant inclus dans la [release](https://github.com/Riverside-H
 
 ::: content
 
-- Correction du bug [#35](https://github.com/Riverside-Healthcare/djLint/issues/35)
+- Correction du bug [#35](https://github.com/djlint/djLint/issues/35)
   :::
 
 ## 0.4.8
 
 ::: content
 
-- Correction du bug [#34](https://github.com/Riverside-Healthcare/djLint/issues/34)
+- Correction du bug [#34](https://github.com/djlint/djLint/issues/34)
   :::
 
 ## 0.4.7
@@ -309,7 +309,7 @@ Changelog est maintenant inclus dans la [release](https://github.com/Riverside-H
 
 ::: content
 
-- Correction du bug [#31](https://github.com/Riverside-Healthcare/djLint/issues/31)
+- Correction du bug [#31](https://github.com/djlint/djLint/issues/31)
   :::
 
 ## 0.4.5

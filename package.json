@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Riverside-Healthcare/djLint.git"
+    "url": "git+https://github.com/djlint/djLint.git"
   },
   "files": [],
   "keywords": [
@@ -42,7 +42,7 @@
   },
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/Riverside-Healthcare/djLint/issues"
+    "url": "https://github.com/djlint/djLint/issues"
   },
   "homepage": "https://djlint.com",
   "devDependencies": {

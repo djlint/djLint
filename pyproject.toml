@@ -10,10 +10,10 @@ name="djlint"
 version="1.34.1"
 description="HTML Template Linter and Formatter"
 license="GPL-3.0-or-later"
-authors=["Christopher Pickering <cpickering@rhc.net>"]
-maintainers=["Christopher Pickering <cpickering@rhc.net>"]
+authors=["Christopher Pickering"]
+maintainers=["Christopher Pickering", "monosans"]
 readme="README.md"
-repository="https://github.com/Riverside-Healthcare/djlint"
+repository="https://github.com/djlint/djLint"
 documentation="https://djlint.com"
 classifiers=[
         "Programming Language :: Python :: 3",

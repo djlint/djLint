@@ -114,7 +114,7 @@ module.exports = function (eleventyConfig) {
   });
   eleventyConfig.addPlugin(editOnGithub, {
     // required
-    github_edit_repo: 'https://github.com/Riverside-Healthcare/djLint',
+    github_edit_repo: 'https://github.com/djlint/djLint',
     // optional: defaults
     github_edit_path: '/docs/', // non-root location in git url. root is assumed
     github_edit_branch: 'master',

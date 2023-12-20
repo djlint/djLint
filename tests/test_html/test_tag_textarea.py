@@ -53,7 +53,7 @@ test_data = [
         ("<p>\n" '    some nice text <a href="this">asdf</a>, ok\n' "</p>\n"),
         id="a_tag",
     ),
-    # test added for https://github.com/Riverside-Healthcare/djLint/issues/189
+    # test added for https://github.com/djlint/djLint/issues/189
     pytest.param(
         (
             "<a>\n"

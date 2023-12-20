@@ -11,7 +11,7 @@ labels: enhancement
     Have you...
 -->
 
-- [ ] I've searched the [issues](https://github.com/Riverside-Healthcare/djLint/issues)
+- [ ] I've searched the [issues](https://github.com/djlint/djLint/issues)
 - [ ] I've read the [docs](https://djlint.com)
 
 ## Feature Request

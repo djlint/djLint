@@ -34,6 +34,6 @@ profile="{{ tool }}"
 
 <div class="mb-5">
 
-- [Pallets](https://github.com/pallets/website) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/pallets-source...Riverside-Healthcare:djLint:pallets-djlint)
+- [Pallets](https://github.com/pallets/website) source code [reformatted](https://github.com/djlint/djLint/compare/pallets-source...djlint:djLint:pallets-djlint)
 
 </div>
