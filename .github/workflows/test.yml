@@ -45,7 +45,7 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
     - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: setup poetry
@@ -76,7 +76,7 @@ jobs:
       uses: actions/checkout@v4
     - uses: jirutka/setup-alpine@v1
     - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: setup poetry
@@ -120,7 +120,7 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
     - name: setup python ${{ matrix.python-version }} on ${{ matrix.os }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: setup node ${{ matrix.node }} on ${{ matrix.os }}
