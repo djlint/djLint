@@ -8,7 +8,7 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 # Изменения
 
-Изменения теперь включен в [релиз](https://github.com/Riverside-Healthcare/djLint/releases).
+Изменения теперь включен в [релиз](https://github.com/djlint/djLint/releases).
 
 <!--## {{ "next_release" i18n }}-->
 
@@ -16,28 +16,28 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 ::: content
 
-- Исправления ошибок [#240](https://github.com/Riverside-Healthcare/djLint/issues/240)
+- Исправления ошибок [#240](https://github.com/djlint/djLint/issues/240)
   :::
 
 ## 1.0.1
 
 ::: content
 
-- Исправления ошибок [#236](https://github.com/Riverside-Healthcare/djLint/issues/236)
+- Исправления ошибок [#236](https://github.com/djlint/djLint/issues/236)
   :::
 
 ## 1.0.0
 
 ::: content
 
-- Исправления ошибок [#224](https://github.com/Riverside-Healthcare/djLint/issues/224)
+- Исправления ошибок [#224](https://github.com/djlint/djLint/issues/224)
   :::
 
 ## 0.7.6
 
 ::: content
 
-- Исправления ошибок [#189](https://github.com/Riverside-Healthcare/djLint/issues/189), [#197](https://github.com/Riverside-Healthcare/djLint/issues/189)
+- Исправления ошибок [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
 - Добавлен флаг `--warn` для возврата ошибок в виде предупреждений.
   :::
 
@@ -45,26 +45,26 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 ::: content
 
-- Исправления ошибок [#187](https://github.com/Riverside-Healthcare/djLint/issues/187)
+- Исправления ошибок [#187](https://github.com/djlint/djLint/issues/187)
 - Добавлена улучшенная поддержка `yaml` front matter в файлах шаблонов
-- Добавлено правило T032 для [#123](https://github.com/Riverside-Healthcare/djLint/issues/123)
-- Добавлено правило H033 для [#124](https://github.com/Riverside-Healthcare/djLint/issues/124)
-- Изменены профили линтеров, чтобы они были инклюзивными, а не эксклюзивными для [#178](https://github.com/Riverside-Healthcare/djLint/issues/178)
-- Добавлена альтернативная опция файла конфигурации `.djlintrc` для [#188](https://github.com/Riverside-Healthcare/djLint/issues/188)
+- Добавлено правило T032 для [#123](https://github.com/djlint/djLint/issues/123)
+- Добавлено правило H033 для [#124](https://github.com/djlint/djLint/issues/124)
+- Изменены профили линтеров, чтобы они были инклюзивными, а не эксклюзивными для [#178](https://github.com/djlint/djLint/issues/178)
+- Добавлена альтернативная опция файла конфигурации `.djlintrc` для [#188](https://github.com/djlint/djLint/issues/188)
   :::
 
 ## 0.7.4
 
 ::: content
 
-- Исправления ошибок [#177](https://github.com/Riverside-Healthcare/djLint/issues/177)
+- Исправления ошибок [#177](https://github.com/djlint/djLint/issues/177)
   :::
 
 ## 0.7.3
 
 ::: content
 
-- Исправления ошибок [#173](https://github.com/Riverside-Healthcare/djLint/issues/173), [#174](https://github.com/Riverside-Healthcare/djLint/issues/174)
+- Исправления ошибок [#173](https://github.com/djlint/djLint/issues/173), [#174](https://github.com/djlint/djLint/issues/174)
 - Упал Py3.6 с сайта `pyproject.toml`.
   :::
 
@@ -72,14 +72,14 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 ::: content
 
-- Исправления ошибок [#167](https://github.com/Riverside-Healthcare/djLint/issues/167), [#166](https://github.com/Riverside-Healthcare/djLint/issues/166), [#171](https://github.com/Riverside-Healthcare/djLint/issues/171), [#169](https://github.com/Riverside-Healthcare/djLint/issues/169)
+- Исправления ошибок [#167](https://github.com/djlint/djLint/issues/167), [#166](https://github.com/djlint/djLint/issues/166), [#171](https://github.com/djlint/djLint/issues/171), [#169](https://github.com/djlint/djLint/issues/169)
   :::
 
 ## 0.7.1
 
 ::: content
 
-- Исправления ошибок [#166](https://github.com/Riverside-Healthcare/djLint/issues/166)
+- Исправления ошибок [#166](https://github.com/djlint/djLint/issues/166)
   :::
 
 ## 0.7.0
@@ -289,14 +289,14 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 ::: content
 
-- Исправлена ошибка [#35](https://github.com/Riverside-Healthcare/djLint/issues/35)
+- Исправлена ошибка [#35](https://github.com/djlint/djLint/issues/35)
   :::
 
 ## 0.4.8
 
 ::: content
 
-- Исправлена ошибка [#34](https://github.com/Riverside-Healthcare/djLint/issues/34)
+- Исправлена ошибка [#34](https://github.com/djlint/djLint/issues/34)
   :::
 
 ## 0.4.7
@@ -310,7 +310,7 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 ::: content
 
-- Исправлена ошибка [#31](https://github.com/Riverside-Healthcare/djLint/issues/31)
+- Исправлена ошибка [#31](https://github.com/djlint/djLint/issues/31)
   :::
 
 ## 0.4.5

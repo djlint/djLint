@@ -164,7 +164,7 @@ test_data = [
         ),
         id="conditional",
     ),
-    # opened https://github.com/Riverside-Healthcare/djLint/issues/247
+    # opened https://github.com/djlint/djLint/issues/247
     pytest.param(
         (
             "<!DOCTYPE html>\n"

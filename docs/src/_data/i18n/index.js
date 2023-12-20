@@ -121,9 +121,9 @@ module.exports = {
   },
   contributing_message: {
     'en-US':
-      'Contributions are welcome. Send a pr with a new feature, or checkout the <a href="https://github.com/Riverside-Healthcare/djlint/issues">issue</a> list and help where you can.',
-    ru: 'Вклад в работу сайта приветствуется. Пришлите письмо с новой функцией или ознакомьтесь со <a href="https://github.com/Riverside-Healthcare/djlint/issues">списком проблем</a> и помогите, чем можете.',
-    fr: 'Les contributions sont les bienvenues. Envoyez un pr avec une nouvelle fonctionnalité, ou consultez la <a href="https://github.com/Riverside-Healthcare/djlint/issues">liste</a> et aidez où vous pouvez.',
+      'Contributions are welcome. Send a pr with a new feature, or checkout the <a href="https://github.com/djlint/djlint/issues">issue</a> list and help where you can.',
+    ru: 'Вклад в работу сайта приветствуется. Пришлите письмо с новой функцией или ознакомьтесь со <a href="https://github.com/djlint/djlint/issues">списком проблем</a> и помогите, чем можете.',
+    fr: 'Les contributions sont les bienvenues. Envoyez un pr avec une nouvelle fonctionnalité, ou consultez la <a href="https://github.com/djlint/djlint/issues">liste</a> et aidez où vous pouvez.',
   },
   edit_page: {
     'en-US': 'Edit this page',
@@ -147,9 +147,9 @@ module.exports = {
   },
   footer_credits: {
     'en-US':
-      'djLint was originally created for use in the <a href="https://atlas.bi" target="_blank">Atlas</a> projects by the <a href="https://github.com/riverside-Healthcare/" target="_blank">Riverside Healthcare Analytics</a> team.',
-    fr: 'djLint a été créé à l\'origine pour être utilisé dans les projets <a href="https://atlas.bi" target="_blank">Atlas</a> par l\'équipe <a href="https://github.com/riverside-Healthcare/" target="_blank">Riverside Healthcare Analytics</a>.',
-    ru: 'Изначально djLint был создан для использования в проектах <a href="https://atlas.bi" target="_blank">Atlas</a> командой <a href="https://github.com/riverside-Healthcare/" target="_blank">Riverside Healthcare Analytics</a>.',
+      'djLint was originally created for use in the <a href="https://atlas.bi" target="_blank">Atlas</a> projects by the <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a> team.',
+    fr: 'djLint a été créé à l\'origine pour être utilisé dans les projets <a href="https://atlas.bi" target="_blank">Atlas</a> par l\'équipe <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a>.',
+    ru: 'Изначально djLint был создан для использования в проектах <a href="https://atlas.bi" target="_blank">Atlas</a> командой <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a>.',
   },
   site_analytics: {
     'en-US': 'Site Analytics',

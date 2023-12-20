@@ -7,7 +7,7 @@ import pytest
 from src.djlint.reformat import formatter
 from tests.conftest import printer
 
-# added for https://github.com/Riverside-Healthcare/djLint/issues/187
+# added for https://github.com/djlint/djLint/issues/187
 test_data = [
     pytest.param(
         (
