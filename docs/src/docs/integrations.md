@@ -77,7 +77,7 @@ Ensure djLint is installed in your global python, or on your `PATH`.
 
 ::: content
 
-- [GitHub repository](https://github.com/monosans/djlint-vscode)
+- [GitHub repository](https://github.com/djlint/djlint-vscode)
 - [VS Marketplace page](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
 - [Open VSX page](https://open-vsx.org/extension/monosans/djlint)
   :::
