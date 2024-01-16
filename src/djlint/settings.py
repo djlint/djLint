@@ -671,7 +671,7 @@ class Config:
             ([^\s>!\[]+\b) # a tag name
             ((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^'\">{}/\s]|/(?!>)))+)? # any attributes
             \s*? # potentially some whitespace
-            (/?>) # a closing braket (/> or >)
+            (/?>) # a closing bracket (/> or >)
         """
 
         self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
