@@ -130,7 +130,7 @@ test_data = [
             '{% extends "layout.h" %}\n'
             '<div class="card" data-list=\'{"name": "blah"}\'>\n'
             '{% include "template.html" %}\n'
-            "<div {% fpr %} data-{{ name }}='{{ value }}'{% endfor %}/>"
+            "<div {% for %} data-{{ name }}='{{ value }}'{% endfor %}/>"
         ),
         (
             [
