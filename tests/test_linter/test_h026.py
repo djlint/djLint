@@ -26,7 +26,7 @@ test_data = [
                 },
             ]
         ),
-        id="empted quotes",
+        id="emptied quotes",
     ),
     pytest.param(
         ("<asdf id >"),

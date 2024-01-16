@@ -164,7 +164,7 @@ test_data = [
             '<img src="./1.jpg" />\n'
             '<img src="./1.jpg" />\n'
         ),
-        id="void_braket_same_line",
+        id="void_bracket_same_line",
     ),
 ]
 

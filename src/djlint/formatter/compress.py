@@ -35,7 +35,7 @@ def compress_html(html: str, config: Config) -> str:
         if child_of_unformatted_block(config, html, match):
             return match.group()
 
-        open_braket = match.group(1)
+        open_bracket = match.group(1)
         tag = _fix_case(match.group(2))
 
         attributes = (
@@ -44,13 +44,13 @@ def compress_html(html: str, config: Config) -> str:
             else ""
         )
         if tag.lower() in html_void_elements and config.close_void_tags:
-            close_braket = " />"
+            close_bracket = " />"
         else:
-            close_braket = (
+            close_bracket = (
                 match.group(4) if "/" not in match.group(4) else f" {match.group(4)}"
             )
 
-        return f"{open_braket}{tag}{attributes}{close_braket}"
+        return f"{open_bracket}{tag}{attributes}{close_bracket}"
 
     html = re.sub(
         re.compile(

@@ -150,7 +150,7 @@ every checked file. It must accept the following arguments:
 - `html`: The full html content of the file.
 - `filepath`: Path to the file that we are currently checking.
 - `line_ends`: List of line `start` and `end` character position that you can use with
-  `djlint.lint.get_line()` to get line numbers from a character position. See the exemple.
+  `djlint.lint.get_line()` to get line numbers from a character position. See the example.
 - `*args, **kwargs`: We might add other arguments in the future, so you should include
   those two arguments to reduce the risk of failure on djLint upgrade.
   :::
@@ -182,7 +182,7 @@ def run(
     **kwargs: Any,
 ) -> List[Dict[str, str]]:
     """
-    Rule that fails if if the html file contains 'bad'. This is just an exemple, in
+    Rule that fails if if the html file contains 'bad'. This is just an example, in
     reality it's much simpler to do that with "pattern rule".
     """
     errors: List[Dict[str, str]] = []

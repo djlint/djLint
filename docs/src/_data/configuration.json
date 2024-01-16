@@ -715,7 +715,7 @@
     "name": "files",
     "tags": ["linter", "formatter"],
     "description": {
-      "en": "A list of paths to use as djlint's source. When this option is specfied, the command line souce must be `-` as if using stdin.",
+      "en": "A list of paths to use as djlint's source. When this option is specified, the command line source must be `-` as if using stdin.",
       "ru": "Список путей для использования в качестве источника djlint. Когда указана эта опция, источник командной строки должен быть `-`, как при использовании stdin.",
       "fr": "Une liste de chemins à utiliser comme source de djlint. Lorsque cette option est spécifiée, la source de la ligne de commande doit être `-` comme si vous utilisiez stdin."
     },

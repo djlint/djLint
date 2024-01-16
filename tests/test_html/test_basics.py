@@ -52,7 +52,7 @@ test_data = [
             "    <body></body>\n"
             "</html>\n"
         ),
-        id="emtpy_doc",
+        id="empty_doc",
     ),
     pytest.param("", "", id="empty"),
     pytest.param(
