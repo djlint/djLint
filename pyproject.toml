@@ -28,17 +28,17 @@ include = ["rules.yaml"]
 [tool.poetry.dependencies]
 python = "^3.8.0,<4.0"
 click = "^8.0.1"
-PyYAML = "^6.0"
 colorama = "^0.4.4"
-regex = "^2023.0.0"
-tqdm = "^4.62.2"
-tomli = { version = "^2.0.1", python = "<3.11" }
-pathspec = "^0.12.0"
-html-void-elements = "^0.1.0"
-html-tag-names = "^0.1.2"
-jsbeautifier = "^1.14.4"
 cssbeautifier = "^1.14.4"
+html-tag-names = "^0.1.2"
+html-void-elements = "^0.1.0"
+jsbeautifier = "^1.14.4"
 json5 = "^0.9.11"
+pathspec = "^0.12.0"
+PyYAML = "^6.0"
+regex = "^2023.0.0"
+tomli = { version = "^2.0.1", python = "<3.11" }
+tqdm = "^4.62.2"
 
 [tool.poetry.scripts]
 djlint = "djlint:main"
