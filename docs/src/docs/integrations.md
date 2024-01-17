@@ -84,28 +84,23 @@ Ensure djLint is installed in your global python, or on your `PATH`.
 
 ## neovim
 
-djLint can use used as formatter in neovim using the `null-ls` plugin.
+djLint can be used as linter and formatter in neovim.
+
+Using `none-ls` plugin.
 
 ::: content
 
-- [GitHub repository](https://github.com/jose-elias-alvarez/null-ls.nvim/)
-- [Config example](https://github.com/shaeinst/roshnivim/blob/5d991fcfa1b8f865f9653a98c6d97a829d4a2add/lua/plugins/null-ls_nvim.lua#L84-L91)
+- [GitHub repository](https://github.com/nvimtools/none-ls.nvim)
+- [Lint](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
+- [Format](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
   :::
 
-## coc.nvim
+Using `coc.nvim`.
 
 ::: content
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
   :::
-
-## null-ls.nvim
-
-::: content
-
-- [GitHub repository](https://github.com/jose-elias-alvarez/null-ls.nvim)
-- [Lint](https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/lua/null-ls/builtins/diagnostics/djlint.lua#L14)
-- [Format](https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/lua/null-ls/builtins/formatting/djlint.lua#L13)
 
 ## MegaLinter
 
