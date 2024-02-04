@@ -270,6 +270,11 @@ test_data = [
         id="DJ018_data",
     ),
     pytest.param(
+        ('<a href="sms:?body=This%20is%20an%20sms"></a>'),
+        ([]),
+        id="DJ018_data",
+    ),
+    pytest.param(
         ('<div data-row-selection-action="highlight"></div>'),
         ([]),
         id="DJ018_attribute_names",
