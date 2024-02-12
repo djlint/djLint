@@ -280,6 +280,11 @@ test_data = [
         id="DJ018_data_action",
     ),
     pytest.param(
+        ('<form action="{% url \'something\' action="xxx" %}"></form>'),
+        ([]),
+        id="DJ018_action_attr_url",
+    ),
+    pytest.param(
         ("{% blah 'asdf %}"),
         (
             [
@@ -318,9 +323,12 @@ test_data = [
         id="T027_trans",
     ),
     pytest.param(
-        (
-            "{% macro rendersubmit(buttons=[], class=\"\", index='', url='', that=\"\" , test='') -%}"
-        ),
+        ('{% trans "Check box if you\'re interested in this location." %}'),
+        ([]),
+        id="T027_golang comment",
+    ),
+    pytest.param(
+        ("{{/* can't */}}"),
         ([]),
         id="T027_mixed_quotes",
     ),

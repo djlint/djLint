@@ -23,6 +23,7 @@ except ImportError:
 
 
 # pylint: disable=C0116
+from os.path import getmtime
 from pathlib import Path
 from typing import TextIO
 
@@ -172,6 +173,16 @@ def test_reformatter_simple_error(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name, "--reformat"])
     assert result.exit_code == 1
     assert "1 file was updated." in result.output
+
+
+def test_reformatter_no_error(runner: CliRunner, tmp_file: TextIO) -> None:
+    write_to_file(tmp_file.name, b"<div>\n    <p>nice stuff here</p>\n</div>\n")
+    old_mtime = getmtime(tmp_file.name)
+    result = runner.invoke(djlint, [tmp_file.name, "--reformat"])
+    assert result.exit_code == 0
+    assert "0 files were updated." in result.output
+    new_mtime = getmtime(tmp_file.name)
+    assert new_mtime == old_mtime
 
 
 def test_check_reformatter_simple_error_quiet(

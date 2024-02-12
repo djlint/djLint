@@ -95,6 +95,17 @@ def find_djlint_rules(root: Path) -> Optional[Path]:
     return None
 
 
+def load_pyproject_config(filepath: Path) -> Dict:
+    """Load djlint config from pyproject.toml"""
+    data = tomllib.loads(filepath.resolve().read_text(encoding="utf-8"))
+    return data.get("tool", {}).get("djlint", {})
+
+
+def load_djlintrc_config(filepath: Path) -> Dict:
+    """Load djlint config from .djlintrc"""
+    return json.loads(filepath.resolve().read_text(encoding="utf-8"))
+
+
 def load_project_settings(src: Path, config: Optional[str]) -> Dict:
     """Load djlint config from pyproject.toml."""
 
@@ -102,9 +113,11 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
 
     if config:
         try:
-            djlint_content = json.loads(
-                Path(config).resolve().read_text(encoding="utf8")
-            )
+            path = Path(config)
+            if path.name == "pyproject.toml":
+                djlint_content.update(load_pyproject_config(path))
+            else:
+                djlint_content.update(load_djlintrc_config(path))
 
         # pylint: disable=broad-except
         except BaseException as error:
@@ -118,20 +131,18 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
     pyproject_file = find_pyproject(src)
 
     if pyproject_file:
-        content = tomllib.loads(pyproject_file.read_text(encoding="utf8"))
-        try:
-            return {**djlint_content, **content["tool"]["djlint"]}  # type: ignore
-        except KeyError:
+        content = load_pyproject_config(pyproject_file)
+        if content != {}:
+            djlint_content.update(content)
+            return content
+        else:
             logger.info("No pyproject.toml found.")
 
     djlintrc_file = find_djlintrc(src)
 
     if djlintrc_file:
         try:
-            return {
-                **djlint_content,
-                **json.loads(djlintrc_file.read_text(encoding="utf8")),
-            }
+            djlint_content.update(load_djlintrc_config(djlintrc_file))
         # pylint: disable=broad-except
         except BaseException as error:
             logger.error("%sFailed to load .djlintrc file. %s", Fore.RED, error)
@@ -470,6 +481,10 @@ class Config:
         )
 
         # contents of tags will not be formatted
+        self.script_style_opening: str = r"""
+           <style
+         | <script
+        """
         self.ignored_block_opening: str = r"""
               <style
             | {\*
@@ -486,7 +501,10 @@ class Config:
             | {{!--\s*djlint\:off\s*--}}
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
         """
-
+        self.script_style_closing: str = r"""
+              </style
+            | </script
+        """
         self.ignored_block_closing: str = r"""
               </style
             | \*}
@@ -522,6 +540,8 @@ class Config:
             + r""" (?:if
                 | ifchanged
                 | for
+                | asyncEach
+                | asyncAll
                 | block(?!trans|translate)
                 | spaceless
                 | compress
@@ -538,6 +558,7 @@ class Config:
                 | raw
                 | blocktrans(?!late)
                 | blocktranslate
+                | thumbnail
                 | set(?!(?:(?!%}).)*=)
             """
             + self.custom_blocks
@@ -601,9 +622,7 @@ class Config:
                 + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}"
             )
 
-        self.template_if_for_pattern = (
-            r"(?:{%-?\s?(?:if|for)[^}]*?%}(?:.*?{%\s?end(?:if|for)[^}]*?-?%})+?)"
-        )
+        self.template_if_for_pattern = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
 
         self.attribute_pattern: str = (
             rf"""
@@ -672,6 +691,8 @@ class Config:
             + r"""
               (?:if
             | for
+            | asyncEach
+            | asyncAll
             | block(?!trans)
             | spaceless
             | compress
@@ -690,6 +711,7 @@ class Config:
             | raw
             | blocktrans(?!late)
             | blocktranslate
+            | thumbnail
             | set(?!(?:(?!%}).)*=)
 
             """
@@ -705,6 +727,10 @@ class Config:
             | endif
             | for
             | endfor
+            | asyncEach
+            | endeach
+            | asyncAll
+            | endall
             | block(?!trans)
             | endblock(?!trans)
             | else
@@ -743,13 +769,15 @@ class Config:
             | endblocktranslate
             | set(?!(?:(?!%}).)*=)
             | endset
+            | thumbnail
+            | endthumbnail
             """
             + self.custom_blocks
             + r""")
         """
         )
         self.template_blocks: str = r"""
-        {%((?!%}).)+%}
+        {%((?!%}).)+%}|{{((?!}}).)+}}
         """
 
         self.ignored_linter_blocks: str = r"""
@@ -785,12 +813,17 @@ class Config:
             | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
             # golang
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
+            # inline golang comments
+            | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
             | <!--.*?-->
             | <\?php.*?\?>
             | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
             | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
             | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
+        """
+        self.script_style_inline: str = r"""
+        <(script|style).*?(?=(\</(?:\1)>))
         """
         self.ignored_blocks_inline: str = r"""
               <(pre|textarea).*?</(\1)>
@@ -806,6 +839,8 @@ class Config:
             | {{!--\s*djlint\:off\s*--}}.*?(?={{!--\s*djlint\:on\s*--}})
             # golang
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
+            # inline golang comments
+            | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
             | <!--.*?-->
             | <\?php.*?\?>
             | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
@@ -894,6 +929,8 @@ class Config:
             | for
             | block
             | with
+            | asyncEach
+            | asyncAll
         """
 
         self.break_html_tags: str = (

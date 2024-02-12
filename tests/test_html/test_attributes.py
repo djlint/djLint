@@ -115,8 +115,8 @@ test_data = [
         id="style_before_others",
     ),
     # attributes with space around = are not broken
-    # https://github.com/Riverside-Healthcare/djLint/issues/317
-    # https://github.com/Riverside-Healthcare/djLint/issues/330
+    # https://github.com/djlint/djLint/issues/317
+    # https://github.com/djlint/djLint/issues/330
     pytest.param(
         (
             '<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'

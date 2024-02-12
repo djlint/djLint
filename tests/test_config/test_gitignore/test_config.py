@@ -118,7 +118,7 @@ def test_cli(runner: CliRunner) -> None:
 
     # @pytest.mark.xdist_group(name="group1")
     # def test_ignored_path(runner: CliRunner) -> None:
-    # test for https://github.com/Riverside-Healthcare/djLint/issues/224
+    # test for https://github.com/djlint/djLint/issues/224
     # create .git folder to make root
     Path("tests/test_config/test_gitignore/.git").mkdir(parents=True, exist_ok=True)
     # add a gitignore file

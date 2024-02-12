@@ -126,14 +126,14 @@
     flags: re.DOTALL|re.I
     patterns:
     - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:|data:)[\w|/]+
-    - <form\b[^>]*?(?:\saction)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/]+
+    - <form(?:(?!>|\saction=(?:\"[^\"]*\"|'[^']*')).)*?\saction=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/|\s]+
 - rule:
     name: J018
     message: (Jinja) Internal links should use the {{ url_for() ... }} pattern.
     flags: re.DOTALL|re.I
     patterns:
     - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:|data:)[\w|/]+
-    - <form\s+?[^>]*?(?:action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/]+
+    - <form(?:(?!>|\saction=(?:\"[^\"]*\"|'[^']*')).)*?\saction=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/|\s]+
 - rule:
     name: H019
     message: Replace 'javascript:abc()' with on_ event and real url.
@@ -180,8 +180,8 @@
     message: Empty id and class tags can be removed.
     flags: re.I
     patterns:
-    - <\w+\b[^(?:{(?:%|{|#))>]*?\b(class|id)\b=(\"\"|'')
-    - <\w+\b[^(?:{(?:%|{|#))>-]*?\b(class|id)\b[^=\"-]
+    - <\w+\b[^(?:{(?:%|{|#))>]*?\s(class|id)\b=(\"\"|'')
+    - <\w+\b[^(?:{(?:%|{|#))>-]*?\s(class|id)\b[^=\"-]
 - rule:
     name: T027
     message: Unclosed string found in template syntax.
@@ -237,8 +237,8 @@
     name: H033
     message: Extra whitespace found in form action.
     patterns:
-    - <form[^>]+?action=['|"]\s
-    - <form[^>]+?action=(['|"])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^"'{]))*\s+?\1
+    - <form[^>]*\saction=['|"]\s
+    - <form[^>]*\saction=(['|"])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^"'{]))*\s+?\1
 - rule:
     name: T034
     message: Did you intend to use {% ... %} instead of {% ... }%?

@@ -12,7 +12,7 @@ labels: [":microbe: bug", ":sponge: formatter"]
 -->
 
 - [ ] I'm on the [latest version](https://pypi.org/project/djlint/) of djLint
-- [ ] I've searched the [issues](https://github.com/Riverside-Healthcare/djLint/issues)
+- [ ] I've searched the [issues](https://github.com/djlint/djLint/issues)
 - [ ] I've read the [docs](https://djlint.com)
 
 ## System Info

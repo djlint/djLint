@@ -390,31 +390,17 @@ def test_H025(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     assert "H025" not in result.output
 
-
-def test_H026(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(tmp_file.name, b'<asdf id="" >')
+    write_to_file(tmp_file.name, b"</p></p>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
-    assert "H026" in result.output
+    assert "H025 1:0" in result.output
+    assert "H025 1:4" in result.output
 
-    write_to_file(tmp_file.name, b"<asdf id >")
+    write_to_file(tmp_file.name, b"</p><p></p></p>")
     result = runner.invoke(djlint, [tmp_file.name])
     assert result.exit_code == 1
-    assert "H026" in result.output
-
-    write_to_file(tmp_file.name, b'<asdf class="" >')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 1
-    assert "H026" in result.output
-
-    write_to_file(tmp_file.name, b'<asdf {% class="" %}></asdf>')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert result.exit_code == 0
-    assert "H026" not in result.output
-
-    write_to_file(tmp_file.name, b"<div x-id-y><div id-y><div x-id>")
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H026" not in result.output
+    assert "H025 1:0" in result.output
+    assert "H025 1:11" in result.output
 
 
 def test_T027(runner: CliRunner, tmp_file: TextIO) -> None:
@@ -462,45 +448,6 @@ def test_H031(runner: CliRunner, tmp_file: TextIO) -> None:
     )
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H031" not in result.output
-
-
-def test_H033(runner: CliRunner, tmp_file: TextIO) -> None:
-    write_to_file(
-        tmp_file.name, b"<form action=\" {% url 'foo:bar' %} \" ...>...</form>"
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H033" in result.output
-
-    write_to_file(
-        tmp_file.name,
-        b"<form action=\" {% url 'foo:bar' %} {{ asdf}} \" ...>...</form>",
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H033" in result.output
-
-    write_to_file(
-        tmp_file.name, b"<form action=\" {% url 'foo:bar' %} \" ...>...</form>"
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H033" in result.output
-
-    write_to_file(tmp_file.name, b'<form action=" {{ asdf}} " ...>...</form>')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H033" in result.output
-
-    write_to_file(
-        tmp_file.name, b"<form action=\"{% url 'foo:bar' %} \" ...>...</form>"
-    )
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H033" in result.output
-
-    write_to_file(tmp_file.name, b'<form action="asdf " ...>...</form>')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H033" in result.output
-
-    write_to_file(tmp_file.name, b'<form action=" asdf " ...>...</form>')
-    result = runner.invoke(djlint, [tmp_file.name])
-    assert "H033" in result.output
 
 
 def test_H035(runner: CliRunner, tmp_file: TextIO) -> None:

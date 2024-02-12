@@ -34,8 +34,8 @@ profile="{{ tool }}"
 
 <div class="mb-5">
 
-- [bolt](https://github.com/bolt/core) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/bolt-source...Riverside-Healthcare:djLint:bolt-djlint)
+- [bolt](https://github.com/bolt/core) source code [reformatted](https://github.com/djlint/djLint/compare/bolt-source...djlint:djLint:bolt-djlint)
 
-- [Sylius](https://github.com/Sylius/Sylius) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/sylius-source...Riverside-Healthcare:djLint:sylius-djlint)
+- [Sylius](https://github.com/Sylius/Sylius) source code [reformatted](https://github.com/djlint/djLint/compare/sylius-source...djlint:djLint:sylius-djlint)
 
 </div>

@@ -29,10 +29,33 @@ test_data = [
         id="test quoting",
     ),
     pytest.param(
-        ('{{ item.split("/")[1] }}\n' '{{ item.split("/").123 }}'),
-        ('{{ item.split("/")[1] }}\n' '{{ item.split("/").123 }}\n'),
+        (
+            '{{ item.split("/")[1] }}\n'
+            '{{ item.split("/").123 }}\n'
+            '{{ item.split("/").bar }}'
+        ),
+        (
+            '{{ item.split("/")[1] }}\n'
+            '{{ item.split("/").123 }}\n'
+            # https://github.com/djlint/djLint/issues/704
+            '{{ item.split("/").bar }}\n'
+        ),
         ({}),
         id="test index",
+    ),
+    pytest.param(
+        ("{{ url('foo').foo }}"),
+        # https://github.com/djlint/djLint/issues/704
+        ('{{ url("foo").foo }}\n'),
+        ({}),
+        id="function_call_attribute_access",
+    ),
+    pytest.param(
+        ("{{ url('foo').foo().bar[1] }}"),
+        # https://github.com/djlint/djLint/issues/704
+        ('{{ url("foo").foo().bar[1] }}\n'),
+        ({}),
+        id="function_call_attribute_access_multiple",
     ),
     pytest.param(
         (
@@ -107,6 +130,13 @@ test_data = [
         ("{{ myfunc({\n" "bar: {\n" "baz: {\n" "cux: 1\n" "}\n" "}\n" "})}\n"),
         ({}),
         id="broken",
+    ),
+    pytest.param(
+        ("{{ url(object) }}"),
+        # https://github.com/djlint/djLint/issues/756
+        ("{{ url(object) }}\n"),
+        ({}),
+        id="function param is python keyword",
     ),
 ]
 

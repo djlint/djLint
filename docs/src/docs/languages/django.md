@@ -34,7 +34,7 @@ profile="{{ tool }}"
 
 <div class="mb-5">
 
-- [Django](https://github.com/django/django) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/django-source...Riverside-Healthcare:djLint:django-djlint)
-- [Wagtail](https://github.com/wagtail/wagtail) source code [reformatted](https://github.com/Riverside-Healthcare/djLint/compare/wagtail-source...Riverside-Healthcare:djLint:wagtail-djlint)
+- [Django](https://github.com/django/django) source code [reformatted](https://github.com/djlint/djLint/compare/django-source...djlint:djLint:django-djlint)
+- [Wagtail](https://github.com/wagtail/wagtail) source code [reformatted](https://github.com/djlint/djLint/compare/wagtail-source...djlint:djLint:wagtail-djlint)
 
 </div>

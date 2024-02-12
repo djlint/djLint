@@ -16,7 +16,7 @@ Ce modèle est recommandé :
 
 ```html
 <div class="class1 {% if condition -%}class2{%- endif %}">contenu</div>
-^ espace ici
+                  ^ espace ici
 ```
 
 {% endraw %}
@@ -27,7 +27,7 @@ Ce modèle n'est pas recommandé :
 
 ```html
 <div class="class1{% if condition -%} class2{%- endif %}">contenu</div>
-^ espace ici
+                                     ^ espace ici
 ```
 
 {% endraw %}
@@ -46,7 +46,8 @@ Ce modèle est recommandé :
 <input
   value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
 />
-^ ^ ^ ^ -- tags sans espace
+                        ^                       ^      ^        ^ -- tags sans
+espace
 ```
 
 {% endraw %}

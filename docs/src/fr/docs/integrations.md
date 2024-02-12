@@ -36,7 +36,7 @@ Notez que ces hooks prédéfinis sont parfois trop conservateurs dans les entré
 
 ```yaml
 repos:
-  - repo: https://github.com/Riverside-Healthcare/djLint
+  - repo: https://github.com/djlint/djLint
     rev: v{{ djlint_version }}
     hooks:
       - id: djlint-reformat-django
@@ -47,7 +47,7 @@ repos:
 
 ```yaml
 repos:
-  - repo: https://github.com/Riverside-Healthcare/djLint
+  - repo: https://github.com/djlint/djLint
     rev: v{{ djlint_version }}
     hooks:
       - id: djlint-reformat-handlebars
@@ -77,7 +77,7 @@ Assurez-vous que djLint est installé dans votre python global, ou sur votre `PA
 
 ::: content
 
-- [GitHub dépôt](https://github.com/monosans/djlint-vscode)
+- [GitHub dépôt](https://github.com/djlint/djlint-vscode)
 - [Page sur VS Marketplace](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)
 - [Page sur Open VSX](https://open-vsx.org/extension/monosans/djlint)
   :::

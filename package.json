@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.31.1",
+  "version": "1.34.1",
   "description": "HTML Template Linter and Formatter",
   "directories": {
     "doc": "docs",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Riverside-Healthcare/djLint.git"
+    "url": "git+https://github.com/djlint/djLint.git"
   },
   "files": [],
   "keywords": [
@@ -31,7 +31,7 @@
   ],
   "scripts": {
     "format": "prettier --config .prettierrc \"{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write",
-    "postinstall": "python3 -m pip install --upgrade djlint==1.31.1",
+    "postinstall": "python3 -m pip install --upgrade djlint==1.34.1",
     "pre-commit": "lint-staged",
     "commit": "git add . && pre-commit run; git add . && npm run pre-commit && cz --no-verify",
     "test": "xo"
@@ -42,21 +42,21 @@
   },
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/Riverside-Healthcare/djLint/issues"
+    "url": "https://github.com/djlint/djLint/issues"
   },
   "homepage": "https://djlint.com",
   "devDependencies": {
     "@semantic-release/changelog": "6.0.3",
-    "@semantic-release/commit-analyzer": "10.0.1",
+    "@semantic-release/commit-analyzer": "11.1.0",
     "@semantic-release/exec": "6.0.3",
     "@semantic-release/git": "10.0.1",
-    "@semantic-release/github": "9.0.3",
-    "@semantic-release/npm": "10.0.4",
-    "@semantic-release/release-notes-generator": "11.0.3",
+    "@semantic-release/github": "9.2.5",
+    "@semantic-release/npm": "11.0.2",
+    "@semantic-release/release-notes-generator": "12.1.0",
     "cz-conventional-changelog": "3.3.0",
-    "lint-staged": "13.2.2",
-    "prettier": "^2.8.8",
-    "semantic-release": "21.0.5"
+    "lint-staged": "15.2.0",
+    "prettier": "^3.0.0",
+    "semantic-release": "22.0.12"
   },
   "config": {
     "commitizen": {
