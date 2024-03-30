@@ -692,7 +692,7 @@
     "name": "format_css",
     "tags": ["formatter"],
     "description": {
-      "en": "Format contents of `script` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
+      "en": "Format contents of `style` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
       "ru": "Форматирование содержимого тегов `script` с помощью `css-beautify`. Все параметры конфигурации см. в [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
       "fr": "Formate le contenu des balises `script` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge."
     },
