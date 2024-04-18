@@ -120,6 +120,16 @@ def test_H016(runner: CliRunner, tmp_file: TextIO) -> None:
     result = runner.invoke(djlint, [tmp_file.name])
     assert "H016" not in result.output
 
+    write_to_file(
+        tmp_file.name,
+        b"""\
+        <html>
+        <title id="title-reload-with-htmx" data-foo="bar">stuff</title>
+        </html>""",
+    )
+    result = runner.invoke(djlint, [tmp_file.name])
+    assert "H016" not in result.output
+
 
 def test_H017(runner: CliRunner, tmp_file: TextIO) -> None:
     write_to_file(tmp_file.name, b"<img this >")

@@ -111,7 +111,9 @@
     message: Missing title tag in html.
     flags: re.DOTALL|re.I
     patterns:
-    - <html[^>]*?>(?:(?!<title>).)*</html>
+      # Title allow a list of global attributes.
+      # https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes#list_of_global_attributes
+      - <html[^>]*?>(?:(?!<title(\s+(class|data-[\-\._0-9a-zA-Z:]+|dir|id|lang|translate)=\"[^"]*\")*>).)*</html>
 - rule:
     name: H017
     message: Void tags should be self closing.
