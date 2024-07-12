@@ -49,7 +49,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: setup poetry
-      uses: abatilo/actions-poetry@v2
+      uses: abatilo/actions-poetry@v3
       with:
         poetry-version: 1.2.2
     - name: install deps
@@ -80,7 +80,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: setup poetry
-      uses: abatilo/actions-poetry@v2
+      uses: abatilo/actions-poetry@v3
       with:
         poetry-version: 1.2.2
     - name: install deps
