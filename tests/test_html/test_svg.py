@@ -38,7 +38,7 @@ test_data = [
             "  <!-- Common use case: embed HTML text into SVG -->\n"
             '  <foreignObject x="20" y="20" width="160" height="160">\n'
             "    <!--\n"
-            "      In the context of SVG embeded into HTML, the XHTML namespace could be avoided, but it is mandatory in the context of an SVG document\n"
+            "      In the context of SVG embedded into HTML, the XHTML namespace could be avoided, but it is mandatory in the context of an SVG document\n"
             "    -->\n"
             '    <div xmlns="http://www.w3.org/1999/xhtml">\n'
             "    <p>\n"
@@ -82,7 +82,7 @@ test_data = [
             "    <!-- Common use case: embed HTML text into SVG -->\n"
             '    <foreignObject x="20" y="20" width="160" height="160">\n'
             "    <!--\n"
-            "      In the context of SVG embeded into HTML, the XHTML namespace could be avoided, but it is mandatory in the context of an SVG document\n"
+            "      In the context of SVG embedded into HTML, the XHTML namespace could be avoided, but it is mandatory in the context of an SVG document\n"
             "    -->\n"
             '    <div xmlns="http://www.w3.org/1999/xhtml">\n'
             "        <p>123</p>\n"
