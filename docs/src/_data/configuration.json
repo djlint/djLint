@@ -577,7 +577,7 @@
     "name": "linter_output_format",
     "tags": ["linter"],
     "description": {
-      "en": "Customize order of output message. Default=\"{code} {line} {message} {match}\". If `{filename}` is not include in message, then the output will be grouped by file and a header will automatically be added to each group.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "en": "Customize order of output message. Default=\"{code} {line} {message} {match}\". If `{filename}` is not included in message, then the output will be grouped by file and a header will automatically be added to each group.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
       "ru": "Настройка порядка вывода сообщения. По умолчанию=\"{code} {line} {message} {match}\". Если `{filename}` не включено в сообщение, то вывод будет сгруппирован по файлам и к каждой группе будет автоматически добавлен заголовок.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
       "fr": "Personnalise l'ordre du message de sortie. Défaut=\"{code} {ligne} {message} {match}\". Si `{filename}` n'est pas inclus dans le message, alors la sortie sera groupée par fichier et un en-tête sera automatiquement ajouté à chaque groupe.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::"
     },
@@ -692,7 +692,7 @@
     "name": "format_css",
     "tags": ["formatter"],
     "description": {
-      "en": "Format contents of `script` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
+      "en": "Format contents of `style` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
       "ru": "Форматирование содержимого тегов `script` с помощью `css-beautify`. Все параметры конфигурации см. в [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
       "fr": "Formate le contenu des balises `script` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge."
     },
@@ -715,7 +715,7 @@
     "name": "files",
     "tags": ["linter", "formatter"],
     "description": {
-      "en": "A list of paths to use as djlint's source. When this option is specfied, the command line souce must be `-` as if using stdin.",
+      "en": "A list of paths to use as djlint's source. When this option is specified, the command line source must be `-` as if using stdin.",
       "ru": "Список путей для использования в качестве источника djlint. Когда указана эта опция, источник командной строки должен быть `-`, как при использовании stdin.",
       "fr": "Une liste de chemins à utiliser comme source de djlint. Lorsque cette option est spécifiée, la source de la ligne de commande doit être `-` comme si vous utilisiez stdin."
     },
