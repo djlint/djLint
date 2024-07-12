@@ -57,7 +57,7 @@ jobs:
     - name: test
       run: poetry run tox -e test
     - name: upload cov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       continue-on-error: true
       with:
         files: ./coverage.xml
@@ -88,7 +88,7 @@ jobs:
     - name: test
       run: poetry run tox -e test
     - name: upload cov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       continue-on-error: true
       with:
         files: ./coverage.xml
