@@ -9,9 +9,39 @@ from tests.conftest import printer
 
 test_data = [
     pytest.param(
-        ("{{ url('foo')}}"),
-        ('{{ url("foo") }}\n'),
-        id="parenthesis_tag",
+        "{{ url('foo') }}",
+        '{{ url("foo") }}\n',
+        id="single_parenthesis_tag",
+    ),
+    pytest.param(
+        '<a href="{{ url(\'fo"o\') }}"\n'
+        '   href="{{ url(\'fo\\"o\') }}"\n'
+        '   href="{{ url("fo\'o") }}"\n'
+        '   href="{{ url("fo\\\'o") }}"\n'
+        "   href=\"{{ url('foo') }}\"\n"
+        '   href="{{ url("foo") }}"></a>',
+        '<a href="{{ url(\'fo"o\') }}"\n'
+        '   href="{{ url(\'fo\\"o\') }}"\n'
+        "   href=\"{{ url('fo\\'o') }}\"\n"
+        "   href=\"{{ url('fo\\\\'o') }}\"\n"
+        "   href=\"{{ url('foo') }}\"\n"
+        "   href=\"{{ url('foo') }}\"></a>",
+        id="single_escaped quote",
+    ),
+    pytest.param(
+        '<a href="{{ url_for(\'test_reminders\') }}" class="btn clr sm">Test reminders</a>',
+        '<a href="{{ url_for(\'test_reminders\') }}" class="btn clr sm">Test reminders</a>\n',
+        id="single_url_for",
+    ),
+    pytest.param(
+        '{{ url("foo") }}',
+        '{{ url("foo") }}\n',
+        id="double_parenthesis_tag",
+    ),
+    pytest.param(
+        '<a href="{{ url_for("test_reminders") }}" class="btn clr sm">Test reminders</a>',
+        '<a href="{{ url_for(\'test_reminders\') }}" class="btn clr sm">Test reminders</a>\n',
+        id="double_url_for",
     ),
 ]
 
