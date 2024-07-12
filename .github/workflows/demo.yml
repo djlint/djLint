@@ -60,7 +60,7 @@ jobs:
         find "${{ matrix.tool }}_raw" -iname '*.html*' -exec mv '{}' "${{ matrix.tool }}_source/" \;
 
     - name: publish source
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./${{ matrix.tool }}_source
