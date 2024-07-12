@@ -98,8 +98,13 @@ test_data = [
         ({"preserve_blank_lines": True}),
         id="whitespace test",
     ),
+    pytest.param(
+        ("<div>\n\t\n\t<div>\n\t\n\t</div>\n\t\n</div>"),
+        ("<div>\n\n    <div></div>\n\n</div>\n"),
+        ({"preserve_blank_lines": True}),
+        id="whitespace test with tabs",
+    ),
 ]
-
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
 def test_base(source, expected, args):

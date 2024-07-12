@@ -595,7 +595,7 @@ class Config:
               )
         """
 
-        self.break_before = r"(?<!\n[ ]*?)"
+        self.break_before = r"(?<!\n[ \t]*?)"
 
         # if lines are longer than x
         self.max_line_length = 120

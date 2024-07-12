@@ -53,7 +53,7 @@ def clean_whitespace(html: str, config: Config) -> str:
     trailing_contents = r"\n \t"
 
     if config.preserve_blank_lines:
-        line_contents = r"([^\n]+?)"
+        line_contents = r"([^\n]*?)"
         trailing_contents = r" \t"
 
     if not config.preserve_leading_space:
