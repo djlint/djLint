@@ -12,10 +12,10 @@ updates:
       interval: daily
       time: "00:30"
     target-branch: dev
-    # groups:
-    #   pip-semver-minor:
-    #     patterns:
-    #       - "*"
-    #     update-types:
-    #       - minor
-    #       - patch
+    groups:
+      pip-semver-minor:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
