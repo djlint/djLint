@@ -93,7 +93,7 @@ test_data = [
         ("<tag-looooong></tag-looooong>\n"),
         ("<tag-looooong>\n</tag-looooong>\n"),
         ({"max_attribute_length": 3, "custom_html": "[\\w\\-]+"}),
-        id="longest lines",
+        id="long tag custom_html",
     ),
 ]
 
