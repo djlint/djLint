@@ -2,15 +2,27 @@
 
 poetry run pytest tests/test_nunjucks/test_macros.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from src.djlint.reformat import formatter
 from tests.conftest import printer
 
+if TYPE_CHECKING:
+    from src.djlint.settings import Config
+
 test_data = [
     pytest.param(
         ("{% macro 'cool' %}<div>some html</div>{% endmacro %}"),
-        ("{% macro 'cool' %}\n" "    <div>some html</div>\n" "{% endmacro %}\n"),
+        (
+            "{% macro 'cool' %}\n"
+            "    <div>some html</div>\n"
+            "{% endmacro %}\n"
+        ),
         id="macro_tag",
     ),
     pytest.param(
@@ -34,7 +46,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, nunjucks_config):
+def test_base(source: str, expected: str, nunjucks_config: Config) -> None:
     output = formatter(nunjucks_config, source)
 
     printer(expected, source, output)

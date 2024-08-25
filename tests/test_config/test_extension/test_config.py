@@ -11,16 +11,21 @@ for a single test, run::
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
-# pylint: disable=C0116
 
+from __future__ import annotations
 
-from click.testing import CliRunner
+from typing import TYPE_CHECKING
 
 from src.djlint import main as djlint
 
+if TYPE_CHECKING:
+    from click.testing import CliRunner
+
 
 def test_extension(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ["tests/test_config/test_extension", "--check"])
+    result = runner.invoke(
+        djlint, ("tests/test_config/test_extension", "--check")
+    )
     assert """Checking""" in result.output
     assert """1/1""" in result.output
     assert """0 files would be updated.""" in result.output

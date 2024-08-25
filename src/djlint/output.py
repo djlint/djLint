@@ -1,27 +1,40 @@
 """Build djLint console output."""
+
+from __future__ import annotations
+
+import math
 import shutil
+import sys
 from collections import Counter
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING
 
 import regex as re
 from click import echo
 from colorama import Fore, Style
 
-from .settings import Config
+if TYPE_CHECKING:
+    from typing import Collection, Iterable, Mapping, Sequence
+
+    from . import ProcessResult
+    from .lint import LintError
+    from .settings import Config
 
 try:
-    # this is used for windows + gitbash to set encoding correctly.
-    import sys
-
     sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
-# pylint:disable=W0703
-except BaseException:
+except Exception:
     pass
 
 
+def _count_digits(num: int, /) -> int:
+    """Faster alternative to len(str(num))"""
+    if num == 0:
+        return 1
+    return math.floor(math.log10(abs(num))) + 1
+
+
 def print_output(
-    config: Config, file_errors: List[Dict[Any, Any]], file_count: int
+    config: Config, file_errors: Iterable[ProcessResult], file_count: int
 ) -> int:
     """Print results to console."""
     file_quantity = build_quantity(file_count)
@@ -30,15 +43,20 @@ def print_output(
     lint_success_message = ""
     lint_error_count = 0
     format_error_count = 0
-    print_blanks = config.stdin is False and config.quiet is False
+    print_blanks = not config.stdin and not config.quiet
 
     if print_blanks:
         echo()
 
-    for error in sorted(file_errors, key=lambda x: next(iter(list(x.values())[0]))):
-        if error.get("format_message") and config.stdin is False:
+    for error in sorted(
+        file_errors,
+        key=lambda x: next(iter(next(iter(x.values())))),  # type: ignore[call-overload]
+    ):
+        if error.get("format_message") and not config.stdin:
             # reformat message
-            format_error_count += build_check_output(error["format_message"], config)
+            format_error_count += build_check_output(
+                error["format_message"], config
+            )
 
         if error.get("lint_message"):
             # lint message
@@ -49,7 +67,7 @@ def print_output(
 
     tense_message = (
         build_quantity(format_error_count) + " would be"
-        if config.check is True
+        if config.check
         else build_quantity_tense(format_error_count)
     )
     reformat_success_message = f"{tense_message} updated."
@@ -63,16 +81,18 @@ def print_output(
         echo()
 
     if (
-        config.quiet is False
-        and config.stdin is False
+        not config.quiet
+        and not config.stdin
         and (config.reformat or config.check)
     ):
         reformat_success_color = (
             Fore.RED + Style.BRIGHT if (format_error_count) > 0 else Fore.BLUE
         )
-        echo(f"{reformat_success_color}{reformat_success_message}{Style.RESET_ALL}")
+        echo(
+            f"{reformat_success_color}{reformat_success_message}{Style.RESET_ALL}"
+        )
 
-    if config.lint and config.quiet is False:
+    if config.lint and not config.quiet:
         lint_success_color = (
             Fore.RED + Style.BRIGHT if (lint_error_count) > 0 else Fore.BLUE
         )
@@ -93,18 +113,23 @@ def build_relative_path(url: str, project_root: Path) -> str:
     return url
 
 
-def build_output(error: dict, config: Config) -> int:
+def build_output(
+    error: Mapping[str, Iterable[LintError]], config: Config
+) -> int:
     """Build output for file errors."""
     errors = sorted(
-        list(error.values())[0], key=lambda x: tuple(map(int, x["line"].split(":")))
+        next(iter(error.values())),
+        key=lambda x: tuple(int(i) for i in x["line"].split(":")),
     )
 
     width, _ = shutil.get_terminal_size()
 
-    if len(errors) == 0:
+    if not errors:
         return 0
 
-    filename = build_relative_path(list(error.keys())[0], config.project_root.resolve())
+    filename = build_relative_path(
+        next(iter(error.keys())), config.project_root.resolve()
+    )
 
     if "{filename}" not in config.linter_output_format and not config.stdin:
         echo(
@@ -129,7 +154,11 @@ def build_output(error: dict, config: Config) -> int:
 
         echo(
             config.linter_output_format.format(
-                filename=filename, line=line, code=code, message=message, match=match
+                filename=filename,
+                line=line,
+                code=code,
+                message=message,
+                match=match,
             ),
             err=False,
         )
@@ -137,33 +166,37 @@ def build_output(error: dict, config: Config) -> int:
     return len(errors)
 
 
-def build_check_output(errors: dict, config: Config) -> int:
+def build_check_output(
+    errors: Mapping[str, Sequence[str]], config: Config
+) -> int:
     """Build output for reformat check."""
-    if len(errors) == 0:
+    if not errors:
         return 0
 
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
     width, _ = shutil.get_terminal_size()
 
-    if config.quiet is False and len(list(errors.values())[0]) > 0:
+    if not config.quiet and bool(next(iter(errors.values()))):
         echo(
             Fore.GREEN
             + Style.BRIGHT
             + "\n"
-            + build_relative_path(list(errors.keys())[0], config.project_root.resolve())
+            + build_relative_path(
+                next(iter(errors.keys())), config.project_root.resolve()
+            )
             + "\n"
             + Style.DIM
             + "".join(["─" for x in range(1, width)])
             + Style.RESET_ALL
         )
 
-        for diff in list(errors.values())[0][2:]:
+        for diff in next(iter(errors.values()))[2:]:
             echo(
-                f"{ color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}",
+                f"{color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}",
                 err=False,
             )
 
-    return len(list(filter(lambda x: len(x) > 0, errors.values())))
+    return sum(1 for v in errors.values() if v)
 
 
 def build_quantity(size: int) -> str:
@@ -182,19 +215,23 @@ def build_quantity_tense(size: int) -> str:
     )
 
 
-def build_stats_output(errors: List[Optional[Any]], config: Config) -> int:
+def build_stats_output(
+    errors: Collection[Mapping[str, Iterable[LintError]] | None], config: Config
+) -> int:
     """Build output for linter statistics."""
-    if len(errors) == 0:
+    if not errors:
         return 0
 
-    codes = []
-    for error in errors:
-        if error:
-            for code in list(error.values())[0]:
-                codes.append(code["code"])
+    codes = tuple(
+        code["code"]
+        for error in errors
+        if error
+        for code in next(iter(error.values()))
+    )
 
     messages = {
-        rule["rule"]["name"]: rule["rule"]["message"] for rule in config.linter_rules
+        rule["rule"]["name"]: rule["rule"]["message"]
+        for rule in config.linter_rules
     }
 
     echo()
@@ -206,12 +243,12 @@ def build_stats_output(errors: List[Optional[Any]], config: Config) -> int:
     if messages and codes:
         longest_code = len(max(messages.keys(), key=len))
         longest_count = len(
-            str(max(Counter(codes).values(), key=lambda x: len(str(x))))
+            str(max(Counter(codes).values(), key=_count_digits))
         )
 
         for code in sorted(Counter(codes).items()):
-            code_space = (longest_code - len(str(code[0]))) * " "
-            count_space = (longest_count - len(str(code[1]))) * " "
+            code_space = (longest_code - len(code[0])) * " "
+            count_space = (longest_count - _count_digits(code[1])) * " "
 
             echo(
                 f"{Fore.YELLOW}{code[0]}{Fore.BLUE} {code_space}{code[1]}{Style.RESET_ALL} {count_space}{messages[code[0]]}"

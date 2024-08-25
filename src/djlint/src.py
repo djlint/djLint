@@ -1,15 +1,21 @@
 """Build src file list."""
-import re
-from pathlib import Path
-from typing import List
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import regex as re
 from click import echo
 from colorama import Fore
 
-from .settings import Config
+if TYPE_CHECKING:
+    from pathlib import Path
+    from typing import Iterable
+
+    from .settings import Config
 
 
-def get_src(src: List[Path], config: Config) -> List[Path]:
+def get_src(src: Iterable[Path], config: Config) -> list[Path]:
     """Get source files."""
     paths = []
     for item in src:
@@ -18,7 +24,7 @@ def get_src(src: List[Path], config: Config) -> List[Path]:
         normalized_item = item.resolve()
 
         if (
-            Path.is_file(normalized_item)
+            normalized_item.is_file()
             and no_pragma(config, normalized_item)
             and (
                 (
@@ -36,39 +42,38 @@ def get_src(src: List[Path], config: Config) -> List[Path]:
         extension = extension[1:] if extension.startswith(".") else extension
 
         paths.extend(
-            filter(
-                lambda x: not re.search(config.exclude, x.as_posix(), re.VERBOSE)
-                and no_pragma(config, x)
-                and (
-                    (config.use_gitignore and not config.gitignore.match_file(x))
-                    or not config.use_gitignore
-                ),
-                list(normalized_item.glob(f"**/*.{extension}")),
+            x
+            for x in normalized_item.glob(f"**/*.{extension}")
+            if not re.search(config.exclude, x.as_posix(), flags=re.VERBOSE)
+            and no_pragma(config, x)
+            and (
+                (config.use_gitignore and not config.gitignore.match_file(x))
+                or not config.use_gitignore
             )
         )
 
-    if len(paths) == 0:
+    if not paths:
         echo(Fore.BLUE + "No files to check! 😢")
 
     return paths
 
 
-html_patterns = [re.compile(r"<!--\s*djlint\:on\s*-->")]
-django_jinja_patterns = [
-    re.compile(r"\{#\s*djlint\:on\s*#\}"),
-    re.compile(r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}"),
-]
-nunjucks_patterns = [re.compile(r"\{#\s*djlint\:on\s*#\}")]
-handlebars_patterns = [re.compile(r"\{\{!--\s*djlint\:on\s*--\}\}")]
-golang_patterns = [re.compile(r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}")]
+html_patterns = (r"<!--\s*djlint\:on\s*-->",)
+django_jinja_patterns = (
+    r"\{#\s*djlint\:on\s*#\}",
+    r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}",
+)
+nunjucks_patterns = (r"\{#\s*djlint\:on\s*#\}",)
+handlebars_patterns = (r"\{\{!--\s*djlint\:on\s*--\}\}",)
+golang_patterns = (r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}",)
 
 
 def no_pragma(config: Config, this_file: Path) -> bool:
     """Verify there is no pragma present."""
-    if config.require_pragma is False:
+    if not config.require_pragma:
         return True
 
-    with this_file.open(encoding="utf8") as open_file:
+    with this_file.open(encoding="utf-8") as open_file:
         first_line = open_file.readline()
 
         pragma_patterns = {
@@ -87,5 +92,6 @@ def no_pragma(config: Config, this_file: Path) -> bool:
         }
 
         return any(
-            re.match(pattern, first_line) for pattern in pragma_patterns[config.profile]
+            re.match(pattern, first_line)
+            for pattern in pragma_patterns[config.profile]
         )
