@@ -79,8 +79,18 @@ test_data = [
         ({"max_line_length": 1000}),
         id="longer lines",
     ),
-    pytest.param(("<div></div>\n"), ("<div></div>\n"), ({"max_line_length": 12}), id="twelve"),
-    pytest.param(("<div></div>\n"), ("<div>\n" "</div>\n"), ({"max_line_length": 11}), id="eleven"),
+    pytest.param(
+        ("<div></div>\n"),
+        ("<div></div>\n"),
+        ({"max_line_length": 12}),
+        id="twelve",
+    ),
+    pytest.param(
+        ("<div></div>\n"),
+        ("<div>\n" "</div>\n"),
+        ({"max_line_length": 11}),
+        id="eleven",
+    ),
 ]
 
 

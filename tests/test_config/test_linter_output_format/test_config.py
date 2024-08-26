@@ -23,7 +23,9 @@ if TYPE_CHECKING:
 
 
 def test_with_config(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ("tests/test_config/test_linter_output_format", "--lint"))
+    result = runner.invoke(
+        djlint, ("tests/test_config/test_linter_output_format", "--lint")
+    )
     assert result.exit_code == 1
 
     print(result.output)

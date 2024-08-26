@@ -18,9 +18,24 @@ if TYPE_CHECKING:
     from typing_extensions import Any
 
 test_data = [
-    pytest.param(("<Div></dIV><CaTs></CaTs>"), ("<Div></dIV>\n" "<CaTs></CaTs>\n"), ({"ignore_case": True}), id="ignore"),
-    pytest.param(("<Div></dIV><CaTs></CaTs>"), ("<div></div>\n" "<CaTs></CaTs>\n"), ({"ignore_case": False}), id="specify keep"),
-    pytest.param(("<Div></dIV><CaTs></CaTs>"), ("<div></div>\n" "<CaTs></CaTs>\n"), (), id="keep"),
+    pytest.param(
+        ("<Div></dIV><CaTs></CaTs>"),
+        ("<Div></dIV>\n" "<CaTs></CaTs>\n"),
+        ({"ignore_case": True}),
+        id="ignore",
+    ),
+    pytest.param(
+        ("<Div></dIV><CaTs></CaTs>"),
+        ("<div></div>\n" "<CaTs></CaTs>\n"),
+        ({"ignore_case": False}),
+        id="specify keep",
+    ),
+    pytest.param(
+        ("<Div></dIV><CaTs></CaTs>"),
+        ("<div></div>\n" "<CaTs></CaTs>\n"),
+        (),
+        id="keep",
+    ),
 ]
 
 

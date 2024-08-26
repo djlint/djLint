@@ -17,7 +17,15 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{{ myfunc({\n" "  bar: {\n" "    baz: {\n" "      cux: 1\n" "    }\n" "  }\n" "})}}"),
+        (
+            "{{ myfunc({\n"
+            "  bar: {\n"
+            "    baz: {\n"
+            "      cux: 1\n"
+            "    }\n"
+            "  }\n"
+            "})}}"
+        ),
         ('{{ myfunc({"bar": {"baz": {"cux": 1}}}) }}\n'),
         ({}),
         id="long line",
@@ -29,7 +37,11 @@ test_data = [
         id="test quoting",
     ),
     pytest.param(
-        ('{{ item.split("/")[1] }}\n' '{{ item.split("/").123 }}\n' '{{ item.split("/").bar }}'),
+        (
+            '{{ item.split("/")[1] }}\n'
+            '{{ item.split("/").123 }}\n'
+            '{{ item.split("/").bar }}'
+        ),
         (
             '{{ item.split("/")[1] }}\n'
             '{{ item.split("/").123 }}\n'
@@ -54,19 +66,51 @@ test_data = [
         id="function_call_attribute_access_multiple",
     ),
     pytest.param(
-        ("{{ myfunc({\n" "  bar: {\n" "    baz: {\n" "      cux: 1\n" "    }\n" "  }\n" "})}}"),
+        (
+            "{{ myfunc({\n"
+            "  bar: {\n"
+            "    baz: {\n"
+            "      cux: 1\n"
+            "    }\n"
+            "  }\n"
+            "})}}"
+        ),
         ("{{ myfunc({\n" "bar: {\n" "baz: {\n" "cux: 1\n" "}\n" "}\n" "})}}\n"),
         ({"no_function_formatting": True}),
         id="disabled",
     ),
     pytest.param(
-        ("{{ myfunc({\n" "  bar: {\n" "    baz: {\n" "      cux: 1\n" "    }\n" "  }\n" "})}}"),
-        ("{{ myfunc({\n" '    "bar": {\n' '        "baz": {\n' '            "cux": 1\n' "        }\n" "    }\n" "}) }}\n"),
+        (
+            "{{ myfunc({\n"
+            "  bar: {\n"
+            "    baz: {\n"
+            "      cux: 1\n"
+            "    }\n"
+            "  }\n"
+            "})}}"
+        ),
+        (
+            "{{ myfunc({\n"
+            '    "bar": {\n'
+            '        "baz": {\n'
+            '            "cux": 1\n'
+            "        }\n"
+            "    }\n"
+            "}) }}\n"
+        ),
         ({"max_line_length": 1}),
         id="short line",
     ),
     pytest.param(
-        ("<div>{{ myfunc({\n" "  bar: {\n" "    baz: {\n" "      cux: 1\n" "    }\n" "  }\n" "})}}</div>"),
+        (
+            "<div>{{ myfunc({\n"
+            "  bar: {\n"
+            "    baz: {\n"
+            "      cux: 1\n"
+            "    }\n"
+            "  }\n"
+            "})}}</div>"
+        ),
         (
             "<div>\n"
             "    {{ myfunc({\n"
@@ -82,7 +126,15 @@ test_data = [
         id="nested",
     ),
     pytest.param(
-        ("{{ myfunc({\n" "  bar: {\n" "    baz: {\n" "      cux: 1\n" "    }\n" "  }\n" "})}"),
+        (
+            "{{ myfunc({\n"
+            "  bar: {\n"
+            "    baz: {\n"
+            "      cux: 1\n"
+            "    }\n"
+            "  }\n"
+            "})}"
+        ),
         ("{{ myfunc({\n" "bar: {\n" "baz: {\n" "cux: 1\n" "}\n" "}\n" "})}\n"),
         ({}),
         id="broken",

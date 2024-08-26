@@ -65,7 +65,14 @@ def test_hyphen_file(runner: CliRunner) -> None:
 
 
 def test_multiple_files(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ("tests/test_djlint/multiple_files/a", "tests/test_djlint/multiple_files/b", "--check"))
+    result = runner.invoke(
+        djlint,
+        (
+            "tests/test_djlint/multiple_files/a",
+            "tests/test_djlint/multiple_files/b",
+            "--check",
+        ),
+    )
     assert result.exit_code == 1
     assert "3 files would be updated." in result.output
 
@@ -83,19 +90,25 @@ def test_good_path_with_e(runner: CliRunner) -> None:
 
 
 def test_good_path_with_extension(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ("tests/test_djlint/", "--extension", "html*"))
+    result = runner.invoke(
+        djlint, ("tests/test_djlint/", "--extension", "html*")
+    )
     assert result.exit_code == 1
     assert str(Path("tests", "test_djlint", "bad.html")) in result.output
     assert str(Path("tests", "test_djlint", "bad.html.dj")) in result.output
 
 
 def test_good_path_with_bad_ext(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ("tests/test_djlint/", "-e", "html.alphabet"))
+    result = runner.invoke(
+        djlint, ("tests/test_djlint/", "-e", "html.alphabet")
+    )
     assert result.exit_code == 0
     assert "No files to check!" in result.output
 
 
-def test_empty_file(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_empty_file(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     write_to_file(tmp_file.name, b"")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 0
@@ -107,7 +120,9 @@ def test_stdin(runner: CliRunner) -> None:
     assert "Linted 1 file" in result.output
 
     # check with multiple inputs
-    result = runner.invoke(djlint, ("-", "-"), input='<div><p id="a"></p></div>')
+    result = runner.invoke(
+        djlint, ("-", "-"), input='<div><p id="a"></p></div>'
+    )
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
 
@@ -134,14 +149,18 @@ def test_stdin_non_ascii(runner: CliRunner) -> None:
     assert result.output == "😀😂🤣😆🥰\n"
 
 
-def test_check(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_check(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     write_to_file(tmp_file.name, b"<div></div>")
     result = runner.invoke(djlint, (tmp_file.name, "--check"))
     assert result.exit_code == 0
 
 
 def test_check_non_existing_file(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ("tests/test_djlint/nothing.html", "--check"))
+    result = runner.invoke(
+        djlint, ("tests/test_djlint/nothing.html", "--check")
+    )
     assert result.exit_code == 2
 
 
@@ -150,21 +169,27 @@ def test_check_non_existing_folder(runner: CliRunner) -> None:
     assert result.exit_code == 2
 
 
-def test_check_reformatter_simple_error(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_check_reformatter_simple_error(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     write_to_file(tmp_file.name, b"<div><p>nice stuff here</p></div>")
     result = runner.invoke(djlint, (tmp_file.name, "--check"))
     assert result.exit_code == 1
     assert "1 file would be updated." in result.output
 
 
-def test_reformatter_simple_error(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_reformatter_simple_error(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     write_to_file(tmp_file.name, b"<div><p>nice stuff here</p></div>")
     result = runner.invoke(djlint, (tmp_file.name, "--reformat"))
     assert result.exit_code == 1
     assert "1 file was updated." in result.output
 
 
-def test_reformatter_no_error(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_reformatter_no_error(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     write_to_file(tmp_file.name, b"<div>\n    <p>nice stuff here</p>\n</div>\n")
     old_mtime = Path(tmp_file.name).stat().st_mtime
     result = runner.invoke(djlint, (tmp_file.name, "--reformat"))
@@ -174,22 +199,30 @@ def test_reformatter_no_error(runner: CliRunner, tmp_file: _TemporaryFileWrapper
     assert new_mtime == old_mtime
 
 
-def test_check_reformatter_simple_error_quiet(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_check_reformatter_simple_error_quiet(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     write_to_file(tmp_file.name, b"<div><p>nice stuff here</p></div>")
     result = runner.invoke(djlint, (tmp_file.name, "--check", "--quiet"))
     assert result.exit_code == 1
     assert "1 file would be updated." not in result.output
 
 
-def test_check_reformatter_no_error(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_check_reformatter_no_error(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     write_to_file(tmp_file.name, b"<div>\n    <p>nice stuff here</p>\n</div>")
     result = runner.invoke(djlint, (tmp_file.name, "--check"))
     assert result.exit_code == 0
     assert "0 files would be updated." in result.output
 
 
-def test_warn(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
-    write_to_file(tmp_file.name, b"<div style='color:pink;'><p>nice stuff here</p></div>")
+def test_warn(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(
+        tmp_file.name, b"<div style='color:pink;'><p>nice stuff here</p></div>"
+    )
     result = runner.invoke(djlint, (tmp_file.name, "--lint", "--warn"))
     assert result.exit_code == 0
 
@@ -211,7 +244,9 @@ def test_python_call() -> None:
         assert py_sub.returncode == 0
 
         py_sub = subprocess.run(  # noqa: S603
-            ("python", "-m", "djlint", "__init__", "-h"), capture_output=True, check=False
+            ("python", "-m", "djlint", "__init__", "-h"),
+            capture_output=True,
+            check=False,
         )
         print(py_sub.stdout)
         print(py_sub.returncode)
@@ -219,7 +254,9 @@ def test_python_call() -> None:
         assert py_sub.returncode == 0
 
 
-def test_line_ending(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_line_ending(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     # write a windows line ending to file
     text_in = "<div></div>\r\n"
     with Path(tmp_file.name).open("w", encoding="utf-8", newline="") as windows:

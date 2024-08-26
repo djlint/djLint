@@ -124,25 +124,37 @@ def printer(expected: str, source: str, actual: str) -> None:
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
 
     print()
-    print(f"{Fore.BLUE}{Style.BRIGHT}{'─' * source_width} {source_text} {'─' * source_width}{Style.RESET_ALL}")
+    print(
+        f"{Fore.BLUE}{Style.BRIGHT}{'─' * source_width} {source_text} {'─' * source_width}{Style.RESET_ALL}"
+    )
     print()
     print(source)
     print()
-    print(f"{Fore.BLUE}{Style.BRIGHT}{'─' * expected_width} {expected_text} {'─' * expected_width}{Style.RESET_ALL}")
+    print(
+        f"{Fore.BLUE}{Style.BRIGHT}{'─' * expected_width} {expected_text} {'─' * expected_width}{Style.RESET_ALL}"
+    )
     print()
     print(expected)
     print()
-    print(f"{Fore.BLUE}{Style.BRIGHT}{'─' * actual_width} {actual_text} {'─' * actual_width}{Style.RESET_ALL}")
+    print(
+        f"{Fore.BLUE}{Style.BRIGHT}{'─' * actual_width} {actual_text} {'─' * actual_width}{Style.RESET_ALL}"
+    )
     print()
     print(actual)
     print()
-    print(f"{Fore.BLUE}{Style.BRIGHT}{'─' * diff_width} {diff_text} {'─' * diff_width}{Style.RESET_ALL}")
+    print(
+        f"{Fore.BLUE}{Style.BRIGHT}{'─' * diff_width} {diff_text} {'─' * diff_width}{Style.RESET_ALL}"
+    )
     print()
-    for diff in tuple(difflib.unified_diff(expected.split("\n"), actual.split("\n")))[2:]:
+    for diff in tuple(
+        difflib.unified_diff(expected.split("\n"), actual.split("\n"))
+    )[2:]:
         print(f"{color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}")
 
 
-def lint_printer(source: str, expected: list[LintError], actual: list[LintError]) -> None:
+def lint_printer(
+    source: str, expected: list[LintError], actual: list[LintError]
+) -> None:
     width, _ = shutil.get_terminal_size()
 
     expected_text = "Expected Rules"
@@ -154,23 +166,33 @@ def lint_printer(source: str, expected: list[LintError], actual: list[LintError]
     source_width = (width - len(source_text) - 2) // 2
 
     print()
-    print(f"{Fore.BLUE}{Style.BRIGHT}{'─' * source_width} {source_text} {'─' * source_width}{Style.RESET_ALL}")
+    print(
+        f"{Fore.BLUE}{Style.BRIGHT}{'─' * source_width} {source_text} {'─' * source_width}{Style.RESET_ALL}"
+    )
     print()
     print(source)
     print()
 
-    print(f"{Fore.BLUE}{Style.BRIGHT}{'─' * expected_width} {expected_text} {'─' * expected_width}{Style.RESET_ALL}")
+    print(
+        f"{Fore.BLUE}{Style.BRIGHT}{'─' * expected_width} {expected_text} {'─' * expected_width}{Style.RESET_ALL}"
+    )
     print()
     for x in expected:
-        print(f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}")
+        print(
+            f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}"
+        )
         print(f'     {x["message"]}')
         print()
 
-    print(f"{Fore.BLUE}{Style.BRIGHT}{'─' * actual_width} {actual_text} {'─' * actual_width}{Style.RESET_ALL}")
+    print(
+        f"{Fore.BLUE}{Style.BRIGHT}{'─' * actual_width} {actual_text} {'─' * actual_width}{Style.RESET_ALL}"
+    )
     print()
 
     for x in actual:
-        print(f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}")
+        print(
+            f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}"
+        )
         print(f'     {x["message"]}')
         print()
     if not actual:
@@ -187,10 +209,17 @@ def write_to_file(the_file: str | os.PathLike[str], the_text: bytes) -> None:
     Path(the_file).write_bytes(the_text)
 
 
-def reformat(the_file: TextIO, runner: CliRunner, the_text: bytes, profile: str = "html") -> SimpleNamespace:
+def reformat(
+    the_file: TextIO, runner: CliRunner, the_text: bytes, profile: str = "html"
+) -> SimpleNamespace:
     write_to_file(the_file.name, the_text)
-    result = runner.invoke(djlint, (the_file.name, "--profile", profile, "--reformat"))
-    return SimpleNamespace(text=Path(the_file.name).read_text(encoding="utf-8"), exit_code=result.exit_code)
+    result = runner.invoke(
+        djlint, (the_file.name, "--profile", profile, "--reformat")
+    )
+    return SimpleNamespace(
+        text=Path(the_file.name).read_text(encoding="utf-8"),
+        exit_code=result.exit_code,
+    )
 
 
 def config_builder(args: Mapping[str, Any] | None = None) -> Config:

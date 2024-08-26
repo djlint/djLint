@@ -29,7 +29,10 @@ def test_default() -> None:
     assert config.ignore_case is True
     assert config.include == "H014,H015"
     assert config.indent == 3 * " "
-    assert config.linter_output_format == "{filename}:{line}: {code} {message} {match}"
+    assert (
+        config.linter_output_format
+        == "{filename}:{line}: {code} {message} {match}"
+    )
     assert config.max_attribute_length == 10
     assert config.max_line_length == 120
     assert config.preserve_blank_lines is True
@@ -41,4 +44,7 @@ def test_default() -> None:
     assert config.js_config == {"indent_size": 5}
     assert config.css_config == {"indent_size": 5}
 
-    assert config.per_file_ignores == {"file.html": "H026,H025", "file_two.html": "H001"}
+    assert config.per_file_ignores == {
+        "file.html": "H026,H025",
+        "file_two.html": "H001",
+    }

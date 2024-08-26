@@ -44,12 +44,30 @@ def compress_html(html: str, config: Config) -> str:
         open_bracket = match.group(1)
         tag = _fix_case(match.group(2))
 
-        attributes = (" " + " ".join(x.strip() for x in match.group(3).strip().splitlines())) if match.group(3) else ""
+        attributes = (
+            (
+                " "
+                + " ".join(
+                    x.strip() for x in match.group(3).strip().splitlines()
+                )
+            )
+            if match.group(3)
+            else ""
+        )
         if tag.lower() in html_void_elements and config.close_void_tags:
             close_bracket = " />"
         else:
-            close_bracket = match.group(4) if "/" not in match.group(4) else f" {match.group(4)}"
+            close_bracket = (
+                match.group(4)
+                if "/" not in match.group(4)
+                else f" {match.group(4)}"
+            )
 
         return f"{open_bracket}{tag}{attributes}{close_bracket}"
 
-    return re.sub(config.html_tag_regex, _clean_tag, html, flags=re.MULTILINE | re.VERBOSE | re.IGNORECASE)
+    return re.sub(
+        config.html_tag_regex,
+        _clean_tag,
+        html,
+        flags=re.MULTILINE | re.VERBOSE | re.IGNORECASE,
+    )

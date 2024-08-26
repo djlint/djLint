@@ -15,7 +15,11 @@ from tests.conftest import printer
 if TYPE_CHECKING:
     from src.djlint.settings import Config
 
-test_data = [pytest.param(("{{ url('foo')}}"), ('{{ url("foo") }}\n'), id="parenthesis_tag")]
+test_data = [
+    pytest.param(
+        ("{{ url('foo')}}"), ('{{ url("foo") }}\n'), id="parenthesis_tag"
+    )
+]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)

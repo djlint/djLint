@@ -17,7 +17,12 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(("<img><meta>"), ("<img>\n" "<meta>\n"), ({}), id="default"),
-    pytest.param(("<img><div><meta>"), ("<img />\n" "<div>\n" "    <meta />\n"), ({"close_void_tags": True}), id="config"),
+    pytest.param(
+        ("<img><div><meta>"),
+        ("<img />\n" "<div>\n" "    <meta />\n"),
+        ({"close_void_tags": True}),
+        id="config",
+    ),
 ]
 
 

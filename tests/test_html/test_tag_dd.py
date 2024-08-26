@@ -15,7 +15,11 @@ from tests.conftest import printer
 if TYPE_CHECKING:
     from src.djlint.settings import Config
 
-test_data = [pytest.param(("<dd>text</dd>"), ("<dd>\n" "    text\n" "</dd>\n"), id="dd_tag")]
+test_data = [
+    pytest.param(
+        ("<dd>text</dd>"), ("<dd>\n" "    text\n" "</dd>\n"), id="dd_tag"
+    )
+]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)

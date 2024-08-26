@@ -18,7 +18,11 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{% block content %}{% block scripts %}{% endblock %}{% endblock %}"),
-        ("{% block content %}\n" "    {% block scripts %}{% endblock %}\n" "{% endblock %}\n"),
+        (
+            "{% block content %}\n"
+            "    {% block scripts %}{% endblock %}\n"
+            "{% endblock %}\n"
+        ),
         id="asset_tag",
     )
 ]

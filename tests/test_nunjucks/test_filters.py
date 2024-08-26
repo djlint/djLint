@@ -17,14 +17,24 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{% set absoluteUrl %}{{ page.url | htmlBaseUrl(metadata.url) }}{% endset %}\n"),
-        ("{% set absoluteUrl %}\n" "    {{ page.url | htmlBaseUrl(metadata.url) }}\n" "{% endset %}\n"),
+        (
+            "{% set absoluteUrl %}{{ page.url | htmlBaseUrl(metadata.url) }}{% endset %}\n"
+        ),
+        (
+            "{% set absoluteUrl %}\n"
+            "    {{ page.url | htmlBaseUrl(metadata.url) }}\n"
+            "{% endset %}\n"
+        ),
         ({}),
         id="one",
     ),
     pytest.param(
-        ("{{ post.templateContent | transformWithHtmlBase(absolutePostUrl, post.url) | dump | safe }}"),
-        ("{{ post.templateContent | transformWithHtmlBase(absolutePostUrl, post.url) | dump | safe }}\n"),
+        (
+            "{{ post.templateContent | transformWithHtmlBase(absolutePostUrl, post.url) | dump | safe }}"
+        ),
+        (
+            "{{ post.templateContent | transformWithHtmlBase(absolutePostUrl, post.url) | dump | safe }}\n"
+        ),
         ({}),
         id="two",
     ),

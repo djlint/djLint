@@ -18,7 +18,9 @@ if TYPE_CHECKING:
 def format_css(html: str, config: Config) -> str:
     """Format css inside <style> tags."""
 
-    def launch_formatter(config: Config, html: str, match: re.Match[str]) -> str:
+    def launch_formatter(
+        config: Config, html: str, match: re.Match[str]
+    ) -> str:
         """Add break after if not in ignored block."""
         if child_of_unformatted_block(config, html, match):
             return match.group()
@@ -36,11 +38,15 @@ def format_css(html: str, config: Config) -> str:
 
         config.css_config["indent_level"] = 1
         opts = BeautifierOptions(config.css_config)
-        beautified_lines = cssbeautifier.beautify(match.group(3), opts).splitlines()
+        beautified_lines = cssbeautifier.beautify(
+            match.group(3), opts
+        ).splitlines()
 
         config.js_config["indent_level"] = 2
         opts = BeautifierOptions(config.js_config)
-        beautified_lines_test = cssbeautifier.beautify(match.group(3), opts).splitlines()
+        beautified_lines_test = cssbeautifier.beautify(
+            match.group(3), opts
+        ).splitlines()
 
         beautified = ""
         for line, test in zip(beautified_lines, beautified_lines_test):
@@ -55,5 +61,8 @@ def format_css(html: str, config: Config) -> str:
     func = partial(launch_formatter, config, html)
 
     return re.sub(
-        r"([ ]*?)(<(?:style)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</style>)", func, html, flags=re.IGNORECASE | re.DOTALL
+        r"([ ]*?)(<(?:style)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</style>)",
+        func,
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
     )

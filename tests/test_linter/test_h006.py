@@ -19,10 +19,19 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ('<img alt="test"/>'),
-        ([{"code": "H006", "line": "1:0", "match": '<img alt="test"/>', "message": "Img tag should have height and width attributes."}]),
+        ([
+            {
+                "code": "H006",
+                "line": "1:0",
+                "match": '<img alt="test"/>',
+                "message": "Img tag should have height and width attributes.",
+            }
+        ]),
         id="one",
     ),
-    pytest.param(('<img \n alt="test" width="10" height="10"/>'), ([]), id="line break"),
+    pytest.param(
+        ('<img \n alt="test" width="10" height="10"/>'), ([]), id="line break"
+    ),
     pytest.param(
         (
             '{# [INFO][JINJA] I use syntax "{% if <img alt=""\n'
@@ -36,10 +45,30 @@ test_data = [
     pytest.param(
         ("<img><img>"),
         ([
-            {"code": "H006", "line": "1:0", "match": "<img>", "message": "Img tag should have height and width attributes."},
-            {"code": "H006", "line": "1:5", "match": "<img>", "message": "Img tag should have height and width attributes."},
-            {"code": "H013", "line": "1:0", "match": "<img>", "message": "Img tag should have an alt attribute."},
-            {"code": "H013", "line": "1:5", "match": "<img>", "message": "Img tag should have an alt attribute."},
+            {
+                "code": "H006",
+                "line": "1:0",
+                "match": "<img>",
+                "message": "Img tag should have height and width attributes.",
+            },
+            {
+                "code": "H006",
+                "line": "1:5",
+                "match": "<img>",
+                "message": "Img tag should have height and width attributes.",
+            },
+            {
+                "code": "H013",
+                "line": "1:0",
+                "match": "<img>",
+                "message": "Img tag should have an alt attribute.",
+            },
+            {
+                "code": "H013",
+                "line": "1:5",
+                "match": "<img>",
+                "message": "Img tag should have an alt attribute.",
+            },
         ]),
         id="test empty with two blocks",
     ),
@@ -47,11 +76,16 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
+def test_base(
+    source: str, expected: list[LintError], basic_config: Config
+) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 
-    mismatch = (*(x for x in output[filename] if x not in expected), *(x for x in expected if x not in output[filename]))
+    mismatch = (
+        *(x for x in output[filename] if x not in expected),
+        *(x for x in expected if x not in output[filename]),
+    )
     assert not mismatch

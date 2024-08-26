@@ -20,8 +20,18 @@ test_data = [
     pytest.param(
         ('<html lang="en">'),
         ([
-            {"code": "H007", "line": "1:0", "match": "<html", "message": "<!DOCTYPE ... > should be present before the html tag."},
-            {"code": "H025", "line": "1:0", "match": '<html lang="en">', "message": "Tag seems to be an orphan."},
+            {
+                "code": "H007",
+                "line": "1:0",
+                "match": "<html",
+                "message": "<!DOCTYPE ... > should be present before the html tag.",
+            },
+            {
+                "code": "H025",
+                "line": "1:0",
+                "match": '<html lang="en">',
+                "message": "Tag seems to be an orphan.",
+            },
         ]),
         id="one",
     )
@@ -29,11 +39,16 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
+def test_base(
+    source: str, expected: list[LintError], basic_config: Config
+) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 
-    mismatch = (*(x for x in output[filename] if x not in expected), *(x for x in expected if x not in output[filename]))
+    mismatch = (
+        *(x for x in output[filename] if x not in expected),
+        *(x for x in expected if x not in output[filename]),
+    )
     assert not mismatch

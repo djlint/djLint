@@ -18,12 +18,28 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{% macro 'cool' %}<div>some html</div>{% endmacro %}"),
-        ("{% macro 'cool' %}\n" "    <div>some html</div>\n" "{% endmacro %}\n"),
+        (
+            "{% macro 'cool' %}\n"
+            "    <div>some html</div>\n"
+            "{% endmacro %}\n"
+        ),
         id="macro_tag",
     ),
     pytest.param(
-        ("<ul>\n" "  {# djlint:off #}\n" "  <li>{{foo(1)}}</li>\n" "  {# djlint:on #}\n" "</ul>"),
-        ("<ul>\n" "    {# djlint:off #}\n" "  <li>{{foo(1)}}</li>\n" "    {# djlint:on #}\n" "</ul>\n"),
+        (
+            "<ul>\n"
+            "  {# djlint:off #}\n"
+            "  <li>{{foo(1)}}</li>\n"
+            "  {# djlint:on #}\n"
+            "</ul>"
+        ),
+        (
+            "<ul>\n"
+            "    {# djlint:off #}\n"
+            "  <li>{{foo(1)}}</li>\n"
+            "    {# djlint:on #}\n"
+            "</ul>\n"
+        ),
         id="ignored code should not be touched",
     ),
 ]
