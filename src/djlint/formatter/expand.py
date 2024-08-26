@@ -4,18 +4,23 @@
 2. put template tags on individual lines, if needed.
 """
 
+from __future__ import annotations
+
 from functools import partial
+from typing import TYPE_CHECKING
 
 import regex as re
 
 from ..helpers import inside_ignored_block, inside_template_block
-from ..settings import Config
+
+if TYPE_CHECKING:
+    from ..settings import Config
 
 
 def expand_html(html: str, config: Config) -> str:
     """Split single line html into many lines based on tags."""
 
-    def add_html_line(out_format: str, match: re.Match) -> str:
+    def add_html_line(out_format: str, match: re.Match[str]) -> str:
         """Add whitespace.
 
         Do not add whitespace if the tag is in a non indent block.
@@ -42,39 +47,33 @@ def expand_html(html: str, config: Config) -> str:
 
     # html tags - break before
     html = re.sub(
-        re.compile(
-            rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)",
-            flags=re.IGNORECASE | re.VERBOSE,
-        ),
-        add_left,
-        html,
+        rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)", add_left, html, flags=re.IGNORECASE | re.VERBOSE
     )
 
     # html tags - break after
     html = re.sub(
-        re.compile(
-            rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?!\s*?\n)(?=[^\n])",
-            flags=re.IGNORECASE | re.VERBOSE,
-        ),
+        rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?!\s*?\n)(?=[^\n])",
         add_right,
         html,
+        flags=re.IGNORECASE | re.VERBOSE,
     )
 
     # template tag breaks
-    def should_i_move_template_tag(out_format: str, match: re.Match) -> str:
+    def should_i_move_template_tag(out_format: str, match: re.Match[str]) -> str:
         # ensure template tag is not inside an html tag and also not the first line of the file
         if inside_ignored_block(config, html, match):
             return match.group(1)
 
         if not re.findall(
-            r"\<(?:" + str(config.indent_html_tags)
+            r"\<(?:"
+            + str(config.indent_html_tags)
             # added > as not allowed inside a "" or '' to prevent invalid wild html matches
             # for issue #640
             + r")\b(?:\"[^\">]*\"|'[^'>]*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^>{}])*?"
             + re.escape(match.group(1))
             + "$",
             html[: match.end()],
-            re.MULTILINE | re.VERBOSE,
+            flags=re.MULTILINE | re.VERBOSE,
         ):
             if out_format == "\n%s" and match.start() == 0:
                 return match.group(1)
@@ -85,27 +84,16 @@ def expand_html(html: str, config: Config) -> str:
     # template tags
     # break before
     html = re.sub(
-        re.compile(
-            break_char
-            + r"\K((?:{%|{{\#)[ ]*?(?:"
-            + config.break_template_tags
-            + ")[^}]+?[%}]})",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-        ),
+        break_char + r"\K((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%}]})",
         partial(should_i_move_template_tag, "\n%s"),
         html,
+        flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
     )
 
     # break after
-    html = re.sub(
-        re.compile(
-            r"((?:{%|{{\#)[ ]*?(?:"
-            + config.break_template_tags
-            + ")[^}]+?[%}]})(?=[^\n])",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-        ),
+    return re.sub(
+        r"((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%}]})(?=[^\n])",
         partial(should_i_move_template_tag, "%s\n"),
         html,
+        flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
     )
-
-    return html

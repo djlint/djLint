@@ -7,17 +7,19 @@ run::
 
 """
 
+from __future__ import annotations
 
-from click.testing import CliRunner
+from typing import TYPE_CHECKING
 
 from src.djlint import main as djlint
+
+if TYPE_CHECKING:
+    from click.testing import CliRunner
 
 
 def test_custom_rules(runner: CliRunner) -> None:
     """Test that our python_module is properly loaded and run."""
-    result = runner.invoke(
-        djlint, ["tests/test_linter/test_python_module_rules/", "--profile", "django"]
-    )
+    result = runner.invoke(djlint, ("tests/test_linter/test_python_module_rules/", "--profile", "django"))
     print(result.output)
     assert """Linting""" in result.output
     assert """2/2""" in result.output

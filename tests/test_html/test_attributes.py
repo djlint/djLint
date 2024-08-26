@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_html/test_attributes.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from src.djlint.reformat import formatter
 from tests.conftest import printer
+
+if TYPE_CHECKING:
+    from src.djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -118,12 +126,8 @@ test_data = [
     # https://github.com/djlint/djLint/issues/317
     # https://github.com/djlint/djLint/issues/330
     pytest.param(
-        (
-            '<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'
-        ),
-        (
-            '<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'
-        ),
+        ('<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'),
+        ('<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'),
         id="space_around_equals",
     ),
     pytest.param(
@@ -146,17 +150,8 @@ test_data = [
         id="ignored_attributes",
     ),
     pytest.param(
-        (
-            "<select\n"
-            "   multiple\n"
-            '  class="selectpicker show-tick"\n'
-            '  id="device-select"\n'
-            '  title="">\n'
-            "</select>\n"
-        ),
-        (
-            '<select multiple class="selectpicker show-tick" id="device-select" title=""></select>\n'
-        ),
+        ("<select\n" "   multiple\n" '  class="selectpicker show-tick"\n' '  id="device-select"\n' '  title="">\n' "</select>\n"),
+        ('<select multiple class="selectpicker show-tick" id="device-select" title=""></select>\n'),
         id="boolean_attribute",
     ),
     pytest.param(
@@ -403,15 +398,7 @@ test_data = [
             "<div CaseSensitive></div>\n"
             '        """\n'
         ),
-        (
-            "<div CaseSensitive></div>\n"
-            '"""\n'
-            ")\n"
-            "html_out = (\n"
-            '"""\n'
-            "<div CaseSensitive></div>\n"
-            '"""\n'
-        ),
+        ("<div CaseSensitive></div>\n" '"""\n' ")\n" "html_out = (\n" '"""\n' "<div CaseSensitive></div>\n" '"""\n'),
         id="CaseSensitive",
     ),
     pytest.param(
@@ -625,33 +612,15 @@ test_data = [
         id="print_width_edge",
     ),
     pytest.param(
-        ('<img src="test.png" alt="John \'ShotGun\' Nelson">\n'),
-        ('<img src="test.png" alt="John \'ShotGun\' Nelson">\n'),
-        id="double_quotes",
+        ('<img src="test.png" alt="John \'ShotGun\' Nelson">\n'), ('<img src="test.png" alt="John \'ShotGun\' Nelson">\n'), id="double_quotes"
+    ),
+    pytest.param(('<a href="1" href="2">123</a>'), ('<a href="1" href="2">123</a>\n'), id="duplicate"),
+    pytest.param(
+        ('<img src="test.png" alt=\'John "ShotGun" Nelson\'>'), ('<img src="test.png" alt=\'John "ShotGun" Nelson\'>\n'), id="single_quotes"
     ),
     pytest.param(
-        ('<a href="1" href="2">123</a>'),
-        ('<a href="1" href="2">123</a>\n'),
-        id="duplicate",
-    ),
-    pytest.param(
-        ('<img src="test.png" alt=\'John "ShotGun" Nelson\'>'),
-        ('<img src="test.png" alt=\'John "ShotGun" Nelson\'>\n'),
-        id="single_quotes",
-    ),
-    pytest.param(
-        (
-            "<div\n"
-            "    smart-quotes='123 \" 456'\n"
-            '    smart-quotes="123 \' 456"\n'
-            "    smart-quotes='123 &apos;&quot; 456'\n"
-            "></div>\n"
-        ),
-        (
-            "<div smart-quotes='123 \" 456'\n"
-            '     smart-quotes="123 \' 456"\n'
-            "     smart-quotes='123 &apos;&quot; 456'></div>\n"
-        ),
+        ("<div\n" "    smart-quotes='123 \" 456'\n" '    smart-quotes="123 \' 456"\n' "    smart-quotes='123 &apos;&quot; 456'\n" "></div>\n"),
+        ("<div smart-quotes='123 \" 456'\n" '     smart-quotes="123 \' 456"\n' "     smart-quotes='123 &apos;&quot; 456'></div>\n"),
         id="smart_quotes",
     ),
     pytest.param(
@@ -916,16 +885,12 @@ test_data = [
         ),
         id="style",
     ),
-    pytest.param(
-        ("<p title=Title>String</p>"),
-        ("<p title=Title>String</p>\n"),
-        id="without_quotes",
-    ),
+    pytest.param(("<p title=Title>String</p>"), ("<p title=Title>String</p>\n"), id="without_quotes"),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, basic_config):
+def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)

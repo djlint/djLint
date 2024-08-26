@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_nunjucks/test_async.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from src.djlint.reformat import formatter
 from tests.conftest import printer
+
+if TYPE_CHECKING:
+    from src.djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -39,29 +47,13 @@ test_data = [
         id="eachAll",
     ),
     pytest.param(
-        (
-            "{% asyncEach i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endeach %}"
-        ),
-        (
-            "{% asyncEach i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endeach %}\n"
-        ),
+        ("{% asyncEach i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endeach %}"),
+        ("{% asyncEach i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endeach %}\n"),
         id="each test nested formfield",
     ),
     pytest.param(
-        (
-            "{% asyncAll i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endall %}"
-        ),
-        (
-            "{% asyncAll i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endall %}\n"
-        ),
+        ("{% asyncAll i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endall %}"),
+        ("{% asyncAll i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endall %}\n"),
         id="all test nested formfield",
     ),
     pytest.param(
@@ -115,7 +107,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, django_config):
+def test_base(source: str, expected: str, django_config: Config) -> None:
     output = formatter(django_config, source)
 
     printer(expected, source, output)

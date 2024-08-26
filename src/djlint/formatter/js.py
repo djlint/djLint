@@ -1,18 +1,24 @@
 """djLint function to call jsbeautifier."""
+
+from __future__ import annotations
+
 from functools import partial
+from typing import TYPE_CHECKING
 
 import jsbeautifier
 import regex as re
 from jsbeautifier.javascript.options import BeautifierOptions
 
 from ..helpers import child_of_unformatted_block
-from ..settings import Config
+
+if TYPE_CHECKING:
+    from ..settings import Config
 
 
 def format_js(html: str, config: Config) -> str:
     """Format javascript inside <script> tags."""
 
-    def launch_formatter(config: Config, html: str, match: re.Match) -> str:
+    def launch_formatter(config: Config, html: str, match: re.Match[str]) -> str:
         """Add break after if not in ignored block."""
         if child_of_unformatted_block(config, html, match):
             return match.group()
@@ -49,10 +55,5 @@ def format_js(html: str, config: Config) -> str:
     func = partial(launch_formatter, config, html)
 
     return re.sub(
-        re.compile(
-            r"([ ]*?)(<(?:script)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</script>)",
-            re.IGNORECASE | re.DOTALL,
-        ),
-        func,
-        html,
+        r"([ ]*?)(<(?:script)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</script>)", func, html, flags=re.IGNORECASE | re.DOTALL
     )

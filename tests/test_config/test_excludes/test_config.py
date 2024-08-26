@@ -11,18 +11,19 @@ for a single test, run::
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
-# pylint: disable=C0116
 
+from __future__ import annotations
 
-from click.testing import CliRunner
+from typing import TYPE_CHECKING
 
 from src.djlint import main as djlint
 
+if TYPE_CHECKING:
+    from click.testing import CliRunner
+
 
 def test_exclude(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ["tests/test_config/test_excludes", "--profile", "django"]
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_excludes", "--profile", "django"))
     print(result.output)
     assert """html.html""" in result.output
     assert """excluded.html""" not in result.output

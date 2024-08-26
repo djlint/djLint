@@ -1,45 +1,35 @@
-exclude: >
-  (?x)(
-      docs/|
-      node_modules/
-  )
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
-  hooks:
-  - id: trailing-whitespace
-  - id: end-of-file-fixer
-  - id: check-yaml
-- repo: https://github.com/myint/autoflake
-  rev: v2.2.1
-  hooks:
-  - id: autoflake
-    exclude: &fixtures tests/functional/|tests/input|tests/extensions/data|tests/regrtest_data/|tests/data/
-    args:
-    - --in-place
-    - --remove-all-unused-imports
-    - --expand-star-imports
-    - --remove-duplicate-keys
-    - --remove-unused-variables
-- repo: https://github.com/asottile/pyupgrade
-  rev: v3.15.0
-  hooks:
-  - id: pyupgrade
-    args: [--py36-plus]
-- repo: https://github.com/PyCQA/isort
-  rev: 5.13.2
-  hooks:
-  - id: isort
-    exclude: docs*
-    additional_dependencies: [toml]
-- repo: https://github.com/psf/black
-  rev: 23.12.0
-  hooks:
-  - id: black
-- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.11.0
-  hooks:
-  - id: pretty-format-ini
-    args: [--autofix]
-  - id: pretty-format-yaml
-    args: [--autofix, --indent, '2']
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-xml
+      - id: destroyed-symlinks
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+        args:
+          - --fix=lf
+      - id: trailing-whitespace
+  - repo: https://github.com/monosans/pre-commit-prettier
+    rev: v3.3.3
+    hooks:
+      - id: prettier
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.6.2
+    hooks:
+      - id: ruff
+        args:
+          - --fix
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        args:
+          - --scripts-are-modules

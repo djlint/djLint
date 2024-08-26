@@ -1,0 +1,80 @@
+line-length = 146
+preview = true
+target-version = "py38"
+
+[format]
+docstring-code-format = true
+line-ending = "lf"
+skip-magic-trailing-comma = true
+
+[lint]
+ignore = [
+  "A005",
+  "ANN401",
+  "ASYNC109",
+  "BLE001",
+  "C901",
+  "COM812",
+  "CPY001",
+  "D100",
+  "D101",
+  "D102",
+  "D103",
+  "D104",
+  "D105",
+  "D106",
+  "D107",
+  "D403",
+  "D415",
+  "D417",
+  "DJ008",
+  "DOC201",
+  "DOC402",
+  "DOC501",
+  "E501",
+  "FURB180",
+  "ISC001",
+  "PLR0904",
+  "PLR0911",
+  "PLR0912",
+  "PLR0913",
+  "PLR0914",
+  "PLR0915",
+  "PLR0916",
+  "PLR0917",
+  "PLR1702",
+  "RUF001",
+  "RUF002",
+  "RUF003",
+  "RUF027",
+  "S110",
+  "S112",
+  "S308",
+  "S311",
+  "S404",
+  "SIM105",
+  "TID252",
+  "TRY400",
+]
+select = ["ALL"]
+unfixable = ["RUF027", "T"]
+
+[lint.per-file-ignores]
+"tests/*" = ["FBT001", "S101", "T201", "PLR2004"]
+"src/djlint/rules/*" = ["ARG001", "N999"]
+"tests/test_linter/test_linter.py" = ["N802"]
+
+[lint.flake8-self]
+ignore-names = ["_name_", "_value_"]
+
+[lint.flake8-type-checking]
+exempt-modules = []
+strict = true
+
+[lint.isort]
+combine-as-imports = true
+required-imports = ["from __future__ import annotations"]
+split-on-trailing-comma = false
+
+[lint.pydocstyle]
+convention = "google"

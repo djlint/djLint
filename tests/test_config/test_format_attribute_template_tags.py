@@ -4,10 +4,18 @@
 
 poetry run pytest tests/test_config/test_format_attribute_template_tags.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from src.djlint.reformat import formatter
 from tests.conftest import config_builder, printer
+
+if TYPE_CHECKING:
+    from typing_extensions import Any
 
 test_data = [
     pytest.param(
@@ -141,22 +149,14 @@ test_data = [
         id="one",
     ),
     pytest.param(
-        (
-            '<input class="{% if this %}then something neat{% else %}that is long stuff asdf and more even{% endif %}" />\n'
-        ),
-        (
-            '<input class="{% if this %}then something neat{% else %}that is long stuff asdf and more even{% endif %}" />\n'
-        ),
+        ('<input class="{% if this %}then something neat{% else %}that is long stuff asdf and more even{% endif %}" />\n'),
+        ('<input class="{% if this %}then something neat{% else %}that is long stuff asdf and more even{% endif %}" />\n'),
         (),
         id="no option",
     ),
     pytest.param(
-        (
-            '<a href="#"\n   class="list-group-item{% if not is_allowed %} disabled{% endif %}">foo</a>\n'
-        ),
-        (
-            '<a href="#"\n   class="list-group-item{% if not is_allowed %} disabled{% endif %}">foo</a>\n'
-        ),
+        ('<a href="#"\n   class="list-group-item{% if not is_allowed %} disabled{% endif %}">foo</a>\n'),
+        ('<a href="#"\n   class="list-group-item{% if not is_allowed %} disabled{% endif %}">foo</a>\n'),
         (),
         id="no option two",
     ),
@@ -186,9 +186,7 @@ test_data = [
         id="no option four",
     ),
     pytest.param(
-        (
-            '<div class="media-content" {% ifchanged comment.stream_id %} comments-msg {% else %} comments-newMsgReply {% endifchanged %}>\n'
-        ),
+        ('<div class="media-content" {% ifchanged comment.stream_id %} comments-msg {% else %} comments-newMsgReply {% endifchanged %}>\n'),
         (
             '<div class="media-content"\n'
             "     {% ifchanged comment.stream_id %} comments-msg {% else %} comments-newMsgReply {% endifchanged %}>\n"
@@ -197,13 +195,8 @@ test_data = [
         id="no option five",
     ),
     pytest.param(
-        (
-            '<a class="piwik_download" href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}">'
-        ),
-        (
-            '<a class="piwik_download"\n'
-            '   href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}">\n'
-        ),
+        ('<a class="piwik_download" href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}">'),
+        ('<a class="piwik_download"\n' '   href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}">\n'),
         (),
         id="no option six",
     ),
@@ -221,12 +214,8 @@ test_data = [
         id="no option seven",
     ),
     pytest.param(
-        (
-            '<div class="bg-level{% if value >= 70 %}1{% elif value >= 60 %}2{% elif value >= 50 %}3{% else %}4{% endif %}>\n</div>\n'
-        ),
-        (
-            '<div class="bg-level{% if value >= 70 %}1{% elif value >= 60 %}2{% elif value >= 50 %}3{% else %}4{% endif %}>\n</div>\n'
-        ),
+        ('<div class="bg-level{% if value >= 70 %}1{% elif value >= 60 %}2{% elif value >= 50 %}3{% else %}4{% endif %}>\n</div>\n'),
+        ('<div class="bg-level{% if value >= 70 %}1{% elif value >= 60 %}2{% elif value >= 50 %}3{% else %}4{% endif %}>\n</div>\n'),
         (),
         id="no option eight",
     ),
@@ -259,13 +248,8 @@ test_data = [
         id="no option for loop",
     ),
     pytest.param(
-        (
-            '<div {% if true %}class="test"{% endif %} {% include "django/forms/widgets/attrs.html" %}></div>'
-        ),
-        (
-            '<div {% if true %}class="test"{% endif %}\n'
-            '     {% include "django/forms/widgets/attrs.html" %}></div>\n'
-        ),
+        ('<div {% if true %}class="test"{% endif %} {% include "django/forms/widgets/attrs.html" %}></div>'),
+        ('<div {% if true %}class="test"{% endif %}\n' '     {% include "django/forms/widgets/attrs.html" %}></div>\n'),
         (),
         id="no option include",
     ),
@@ -273,7 +257,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
-def test_base(source, expected, args):
+def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
     output = formatter(config_builder(args), source)
 
     printer(expected, source, output)

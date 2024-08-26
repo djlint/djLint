@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_html/test_tag_textarea.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from src.djlint.reformat import formatter
 from tests.conftest import printer
+
+if TYPE_CHECKING:
+    from src.djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -14,20 +22,8 @@ test_data = [
         id="textarea",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            '    <div class="field">\n'
-            "        <textarea>asdf</textarea>\n"
-            "    </div>\n"
-            "</div>\n"
-        ),
-        (
-            "<div>\n"
-            '    <div class="field">\n'
-            "        <textarea>asdf</textarea>\n"
-            "    </div>\n"
-            "</div>\n"
-        ),
+        ("<div>\n" '    <div class="field">\n' "        <textarea>asdf</textarea>\n" "    </div>\n" "</div>\n"),
+        ("<div>\n" '    <div class="field">\n' "        <textarea>asdf</textarea>\n" "    </div>\n" "</div>\n"),
         id="nesting",
     ),
     pytest.param(
@@ -39,13 +35,7 @@ test_data = [
             "    </div>\n"
             "</div>\n"
         ),
-        (
-            "<div>\n"
-            '    <div class="field">\n'
-            '        <textarea class="this" name="that">asdf</textarea>\n'
-            "    </div>\n"
-            "</div>\n"
-        ),
+        ("<div>\n" '    <div class="field">\n' '        <textarea class="this" name="that">asdf</textarea>\n' "    </div>\n" "</div>\n"),
         id="attributes",
     ),
     pytest.param(
@@ -55,27 +45,15 @@ test_data = [
     ),
     # test added for https://github.com/djlint/djLint/issues/189
     pytest.param(
-        (
-            "<a>\n"
-            "    <span>hi</span>hi</a>\n"
-            "<div>\n"
-            '    <h4>{{ _("Options") }}</h4>\n'
-            "</div>\n"
-        ),
-        (
-            "<a>\n"
-            "    <span>hi</span>hi</a>\n"
-            "<div>\n"
-            '    <h4>{{ _("Options") }}</h4>\n'
-            "</div>\n"
-        ),
+        ("<a>\n" "    <span>hi</span>hi</a>\n" "<div>\n" '    <h4>{{ _("Options") }}</h4>\n' "</div>\n"),
+        ("<a>\n" "    <span>hi</span>hi</a>\n" "<div>\n" '    <h4>{{ _("Options") }}</h4>\n' "</div>\n"),
         id="a_with_nesting",
     ),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, basic_config):
+def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)

@@ -1,15 +1,17 @@
 """Settings for reformater."""
-# pylint: disable=C0301,C0103
-# flake8: noqa
 
+from __future__ import annotations
 
 import json
 import logging
+import sys
+from itertools import chain
 
-## get pyproject.toml settings
+# get pyproject.toml settings
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING
 
+import regex as re
 import yaml
 from click import echo
 from colorama import Fore
@@ -18,17 +20,368 @@ from HtmlVoidElements import html_void_elements
 from pathspec import PathSpec
 from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
 
-try:
-    import tomllib
-except ImportError:
-    import tomli as tomllib  # type: ignore
+if sys.version_info >= (3, 11):
+    try:
+        import tomllib
+    except ImportError:
+        # Help users on older alphas
+        if not TYPE_CHECKING:
+            import tomli as tomllib
+else:
+    import tomli as tomllib
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
+
+    from typing_extensions import Any, TypeVar
+
+    from .lint import LintRule
+
+    _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
+
 
 logger = logging.getLogger(__name__)
+
+RULES: tuple[LintRule, ...] = (
+    {
+        "rule": {
+            "name": "T001",
+            "message": "Variables should be wrapped in a whitespace.",
+            "flags": re.DOTALL,
+            "exclude": frozenset({"handlebars", "golang"}),
+            "patterns": (
+                "{{[-+]?(?:[^\\s\\-\\+](?:(?!}}|{{).)*?|(?:(?!}}|{{).)*?[^\\s\\-\\+])[-+]?}}",
+                "{%(?:[-+]?[^\\s\\-\\+](?:(?!%}|{%).)*?|(?:(?!%}|{%).)*?[^\\s\\-\\+])[-+]?%}",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "T002",
+            "message": "Double quotes should be used in tags.",
+            "flags": re.DOTALL,
+            "patterns": ("{%[ \t]*?(?:trans(?:late)?|with|extends|include|now)[\\s]+?(?:(?:(?!%}|').)+?=)?'(?:(?!%}|').)*?'(?:(?!%}).)*?%}",),
+        }
+    },
+    {
+        "rule": {
+            "name": "T003",
+            "message": "Endblock should have name. Ex: {% endblock body %}.",
+            "flags": re.DOTALL,
+            "patterns": ("{%\\s*?endblock\\s*?%}",),
+        }
+    },
+    {
+        "rule": {
+            "name": "D004",
+            "message": "(Django) Static urls should follow {% static path/to/file %} pattern.",
+            "flags": re.DOTALL,
+            "patterns": ("<(?:link|img|script|source)\\s[^\\>]*?(?:href|src|srcset)=[\\\"\\']/?static/?",),
+        }
+    },
+    {
+        "rule": {
+            "name": "J004",
+            "message": "(Jinja) Static urls should follow {{ url_for('static'..) }} pattern.",
+            "flags": re.DOTALL,
+            "patterns": ("<(?:link|img|script|source)\\s[^\\>]*?(?:href|src|srcset)=[\\\"\\']/?static/?",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H005",
+            "message": "Html tag should have lang attribute.",
+            "flags": re.DOTALL | re.I,
+            "patterns": ("<html\\s*(?:(?!lang).)*>",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H006",
+            "message": "Img tag should have height and width attributes.",
+            "flags": re.DOTALL | re.I,
+            "patterns": ("<img\\b(?:(?!(?:height)=)[^>])*/?>", "<img\\b(?:(?!(?:width)=)[^>])*/?>"),
+        }
+    },
+    {
+        "rule": {
+            "name": "H007",
+            "message": "<!DOCTYPE ... > should be present before the html tag.",
+            "flags": re.DOTALL | re.I,
+            "patterns": ("^<html",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H008",
+            "message": "Attributes should be double quoted.",
+            "flags": re.DOTALL | re.I,
+            "patterns": (
+                "<(?:\\w+)\\b(\\\"[^\\\"]*\\\"|'[^']*'|{[^}]*}|[^'\\\">{}])*(?:class|id|src|width|height|alt|style|lang|title|srcset|media)=\\'[^\\']*'",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H009",
+            "message": "Tag names should be lowercase.",
+            "flags": re.DOTALL,
+            "patterns": (
+                "(?<=<)/?(?:HTML|BODY|DIV|P|SPAN|TABLE|TR|TD|TH|THEAD|TBODY|CODE|UL|OL|LI|H1|H2|H3|H4|H5|H6|A|DD|DT|BLOCKQUOTE|SELECT|FORM|FIELDSET|OPTGROUP|LEGEND|LABEL|HEADER|CACHE|MAIN|ASIDE|FOOTER|SECTION|NAME|FIGURE|FIGCAPTION|VIDEO|G|SVG|BUTTON|PATH|PICTURE|SCRIPT|STYLE|DETAILS|SUMMARY)\\b",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H010",
+            "message": "Attribute names should be lowercase.",
+            "flags": re.DOTALL,
+            "patterns": ("<\\w+[^\\>]+?(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE|MEDIA|SRCSET)=",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H011",
+            "message": "Attribute values should be quoted.",
+            "flags": re.DOTALL | re.I | re.M | re.X,
+            "patterns": (
+                "<(?:(?!meta)\\w+)\\b(\\\"[^\\\"]*\\\"|'[^']*'|{[^}]*}|[^'\\\">{}])*(?:class|id|src|width|height|alt|style|lang|title|href|action|method|checked|required|srcset)=[a-zA-Z_-]+\n",
+                "<(?:meta)\\s+?[^>]*?(?:class|id|src|alt|style|lang|title|href|action|method|name)=[a-zA-Z_-]+",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H012",
+            "message": "There should be no spaces around attribute =.",
+            "flags": re.DOTALL,
+            "patterns": (
+                "<\\w+?(\\\"[^\\\"]*\\\"|'[^']*'|{[^}]*}|[^'\\\">{}])*\\s+=",
+                "<\\w+?(\\\"[^\\\"]*\\\"|'[^']*'|{[^}]*}|[^'\\\">{}])*=\\s",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H013",
+            "message": "Img tag should have an alt attribute.",
+            "flags": re.DOTALL | re.I,
+            "patterns": ("<img\\b(?:(?!(?:alt)=)[^>])*/?>",),
+        }
+    },
+    {"rule": {"name": "H014", "message": "Found extra blank lines.", "flags": re.DOTALL, "patterns": ("[^\n]{,10}\n{3,}",)}},
+    {
+        "rule": {
+            "name": "H015",
+            "message": "Follow h tags with a line break.",
+            "flags": re.DOTALL,
+            "patterns": ("</h\\d?>(?:(?!(.+\\r?\\n){1,}).)*<[a-zA-Z]+\\d?",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H016",
+            "message": "Missing title tag in html.",
+            "flags": re.DOTALL | re.I,
+            "patterns": ('<html[^>]*?>(?:(?!<title(\\s+(class|data-[\\-\\._0-9a-zA-Z:]+|dir|id|lang|translate)=\\"[^"]*\\")*>).)*</html>',),
+        }
+    },
+    {
+        "rule": {
+            "name": "H017",
+            "message": "Void tags should be self closing.",
+            "flags": re.DOTALL | re.I,
+            "default": False,
+            "patterns": (
+                "<(img|input|area|base|br|col[^(?:group)]|embed|hr|link|param|source|track|wbr|command|keygen|menuitem|path)(\\b(\\\"[^\\\"]*\\\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\\\">{}])*)(?<!/)>",
+                "<(img|input|area|base|br|col|embed|hr|link|param|source|track|wbr|command|keygen|menuitem|path)>",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "D018",
+            "message": "(Django) Internal links should use the {% url ... %} pattern.",
+            "flags": re.DOTALL | re.I,
+            "patterns": (
+                "<(?:a|div|span|input)\\b[^>]*?\\s(?:href|data-url|data-src|action)=[\\\"|'](?!(?:https?://)|javascript:|on\\w+:|mailto:|tel:|data:|sms:)[\\w|/]+",
+                "<form(?:(?!>|\\saction=(?:\\\"[^\\\"]*\\\"|'[^']*')).)*?\\saction=[\\\"|'](?!(?:https?://)|javascript:|on\\w+:|mailto:|tel:)[\\w|/|\\s]+",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "J018",
+            "message": "(Jinja) Internal links should use the {{ url_for() ... }} pattern.",
+            "flags": re.DOTALL | re.I,
+            "patterns": (
+                "<(?:a|div|span|input)\\b[^>]*?\\s(?:href|data-url|data-src|action)=[\\\"|'](?!(?:https?://)|javascript:|on\\w+:|mailto:|tel:|data:|sms:)[\\w|/]+",
+                "<form(?:(?!>|\\saction=(?:\\\"[^\\\"]*\\\"|'[^']*')).)*?\\saction=[\\\"|'](?!(?:https?://)|javascript:|on\\w+:|mailto:|tel:)[\\w|/|\\s]+",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H019",
+            "message": "Replace 'javascript:abc()' with on_ event and real url.",
+            "flags": re.DOTALL | re.I,
+            "patterns": (
+                "<(?:a|div|span|input)\\s+?[^>]*?(?:href|data-url)=[\\\"|']javascript:[\\w|/]+",
+                "<form\\s+?[^>]*?(?:action)=[\\\"|']javascript:[\\w|/]+",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H020",
+            "message": "Empty tag pair found. Consider removing.",
+            "flags": re.DOTALL | re.I,
+            "patterns": ("<((?!td|li|th|dt|dd)\\w+)\\s*?>\\s*?<\\/\\1>",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H021",
+            "message": "Inline styles should be avoided.",
+            "flags": re.I | re.DOTALL,
+            "patterns": ("<\\w+\\s(?:[^>]*\\s)?style=(?=((?!>|{{|{%).)*>)",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H022",
+            "message": "Use HTTPS for external links.",
+            "flags": re.I,
+            "patterns": ("<\\w+\\s[^>]*?(?:href|data-url|action|src|url|srcset)=[\\\"|']http://[^>]*?>",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H023",
+            "message": "Do not use entity references.",
+            "flags": re.I,
+            "patterns": ("&(?!(lt|gt|amp|quot|nbsp|ensp|emsp|thinsp))[#0-9a-z]{,30};",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H024",
+            "message": "Omit type on scripts and styles.",
+            "flags": re.I,
+            "patterns": ("<(?:script|style)[^>]*?type=[\\\"|'](?:(?:text/css)|(?:text/javascript))[^>]*?>",),
+        }
+    },
+    {"rule": {"name": "H025", "message": "Tag seems to be an orphan.", "python_module": "djlint.rules.H025"}},
+    {
+        "rule": {
+            "name": "H026",
+            "message": "Empty id and class tags can be removed.",
+            "flags": re.I,
+            "patterns": ("<\\w+\\b[^(?:{(?:%|{|#))>]*?\\s(class|id)\\b=(\\\"\\\"|'')", '<\\w+\\b[^(?:{(?:%|{|#))>-]*?\\s(class|id)\\b[^=\\"-]'),
+        }
+    },
+    {
+        "rule": {
+            "name": "T027",
+            "message": "Unclosed string found in template syntax.",
+            "flags": re.I,
+            "patterns": (
+                "{%((?:(?!'|%}).)*?(')(?:(?!\\2|%}).)*?\\2(?:(?!\\2|%}).)*?)*\\2(?:(?!\\2|%}).)*?%}",
+                '{%((?:(?!"|%}).)*?(")(?:(?!\\2|%}).)*?\\2(?:(?!\\2|%}).)*?)*\\2(?:(?!\\2|%}).)*?%}',
+                "{{((?:(?!'|}}).)*?(')(?:(?!\\2|}}).)*?\\2(?:(?!\\2|}}).)*?)*\\2(?:(?!\\2|}}).)*?}}",
+                '{{((?:(?!"|}}).)*?(")(?:(?!\\2|}}).)*?\\2(?:(?!\\2|}}).)*?)*\\2(?:(?!\\2|}}).)*?}}',
+                "{%((?:(?!'|\"|%}).)*?('|\")(?:(?!\\2|%}).)*?)%}",
+                "{{((?:(?!'|\"|}}).)*?('|\")(?:(?!\\2|}}).)*?)}}",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "T028",
+            "message": "Consider using spaceless tags inside attribute values. {%- if/for -%}",
+            "exclude": frozenset({"django"}),
+            "patterns": (
+                "<(?:/?(?:\\w+)\\b(?:\\\"[^\\\"]*\\\"|'[^']*'|{[^}]*}|[^'\\\">{}/])*(?<!\\bclass)=([\\\"'])(?:(?!\\1).)*?({%)[^-])\\s*?(?:if|for|else|end)",
+                "<(?:/?(?:\\w+)\\b(?:\\\"[^\\\"]*\\\"|'[^']*'|{[^}]*}|[^'\\\">{}/])*(?<!\\bclass)=([\\\"'])(?:(?!\\1).)*?{%(?:(?!%}).)*(?:if|else|for|end)(?:(?!%}).)*[^-](%}))",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H029",
+            "message": "Consider using lowercase form method values.",
+            "patterns": (
+                "<[fF][oO][rR][mM]\\b(?:\\\"[^\\\"]*\\\"|'[^']*'|{[^}]*}|[^'\\\">{}/])*([mM][eE][tT][hH][oO][dD])=(([\\\"'])[a-zA-Z]*?[A-Z][a-zA-Z]*?\\3)",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H030",
+            "message": "Consider adding a meta description.",
+            "flags": re.DOTALL | re.I,
+            "patterns": ("<html[^>]*?>(?:(?!<meta[^>]*?name=([\\\"|'])description\\b).)*</html>",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H031",
+            "message": "Consider adding meta keywords.",
+            "flags": re.DOTALL | re.I,
+            "patterns": ("<html[^>]*?>(?:(?!<meta[^>]*?name=([\\\"|'])keywords\\b).)*</html>",),
+        }
+    },
+    {
+        "rule": {
+            "name": "T032",
+            "message": "Extra whitespace found in template tags.",
+            "patterns": (
+                "{%(([\"|'](?:(?!'|\"|%}).)*?[\"|'])|[^(?:%}|'|\"|\n)])*?[ \t]{2,}",
+                "{{(([\"|'](?:(?!'|\"|}}).)*?[\"|'])|[^(?:}}|'|\"|\n)])*?[ \t]{2,}",
+            ),
+        }
+    },
+    {
+        "rule": {
+            "name": "H033",
+            "message": "Extra whitespace found in form action.",
+            "patterns": ("<form[^>]*\\saction=['|\"]\\s", "<form[^>]*\\saction=(['|\"])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^\"'{]))*\\s+?\\1"),
+        }
+    },
+    {
+        "rule": {
+            "name": "T034",
+            "message": "Did you intend to use {% ... %} instead of {% ... }%?",
+            "flags": re.DOTALL,
+            "patterns": ("{%(?:(?!%}).)*}%",),
+        }
+    },
+    {
+        "rule": {
+            "name": "H035",
+            "message": "Meta tags should be self closing.",
+            "flags": re.DOTALL | re.I,
+            "default": False,
+            "patterns": ("<(meta)(\\b(\\\"[^\\\"]*\\\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\\\">{}])*)(?<!/)>", "<(meta)>"),
+        }
+    },
+    {"rule": {"name": "H036", "message": "Avoid use of <br> tags.", "flags": re.I, "default": False, "patterns": ("<br\\s*?\\/?>",)}},
+    {
+        "rule": {
+            "name": "H037",
+            "message": "Duplicate attribute found.",
+            "flags": re.I,
+            "patterns": (
+                "<\\w[^>]*?\\s\\K([a-z-:][a-z-]*?)(?==(?:\\\"[^\\\"]*\\\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|{#(?:(?!#}).)*#}|[^'\\\">{}])*[^-:a-z]\\1=[^>]*?>)",
+            ),
+        }
+    },
+)
 
 
 def find_project_root(src: Path) -> Path:
     """Attempt to get the project root."""
-    for directory in [src, *src.resolve().parents]:
+    for directory in (src, *src.resolve().parents):
         if (directory / ".git").exists():
             return directory
 
@@ -41,18 +394,17 @@ def find_project_root(src: Path) -> Path:
         if (directory / ".djlintrc").is_file():
             return directory
 
-    # pylint: disable=W0631
     return directory
 
 
 def load_gitignore(root: Path) -> PathSpec:
     """Search upstream for a .gitignore file."""
-
     gitignore = root / ".gitignore"
-    git_lines: List[str] = []
     if gitignore.is_file():
         with gitignore.open(encoding="utf-8") as this_file:
             git_lines = this_file.readlines()
+    else:
+        git_lines = []
 
     try:
         return PathSpec.from_lines("gitwildmatch", git_lines)
@@ -62,9 +414,8 @@ def load_gitignore(root: Path) -> PathSpec:
         raise
 
 
-def find_pyproject(root: Path) -> Optional[Path]:
+def find_pyproject(root: Path) -> Path | None:
     """Search upstream for a pyproject.toml file."""
-
     pyproject = root / "pyproject.toml"
 
     if pyproject.is_file():
@@ -73,9 +424,8 @@ def find_pyproject(root: Path) -> Optional[Path]:
     return None
 
 
-def find_djlintrc(root: Path) -> Optional[Path]:
+def find_djlintrc(root: Path) -> Path | None:
     """Search upstream for a pyproject.toml file."""
-
     djlintrc = root / ".djlintrc"
 
     if djlintrc.is_file():
@@ -84,9 +434,8 @@ def find_djlintrc(root: Path) -> Optional[Path]:
     return None
 
 
-def find_djlint_rules(root: Path) -> Optional[Path]:
+def find_djlint_rules(root: Path) -> Path | None:
     """Search upstream for a pyproject.toml file."""
-
     rules = root / ".djlint_rules.yaml"
 
     if rules.is_file():
@@ -95,21 +444,20 @@ def find_djlint_rules(root: Path) -> Optional[Path]:
     return None
 
 
-def load_pyproject_config(filepath: Path) -> Dict:
+def load_pyproject_config(filepath: Path) -> Any:
     """Load djlint config from pyproject.toml"""
     data = tomllib.loads(filepath.resolve().read_text(encoding="utf-8"))
     return data.get("tool", {}).get("djlint", {})
 
 
-def load_djlintrc_config(filepath: Path) -> Dict:
+def load_djlintrc_config(filepath: Path) -> Any:
     """Load djlint config from .djlintrc"""
     return json.loads(filepath.resolve().read_text(encoding="utf-8"))
 
 
-def load_project_settings(src: Path, config: Optional[str]) -> Dict:
+def load_project_settings(src: Path, config: str | None) -> Any:
     """Load djlint config from pyproject.toml."""
-
-    djlint_content: Dict = {}
+    djlint_content: dict[str, Any] = {}
 
     if config:
         try:
@@ -119,102 +467,82 @@ def load_project_settings(src: Path, config: Optional[str]) -> Dict:
             else:
                 djlint_content.update(load_djlintrc_config(path))
 
-        # pylint: disable=broad-except
-        except BaseException as error:
-            logger.error(
-                "%sFailed to load config file %s. %s",
-                Fore.RED,
-                Path(config).resolve(),
-                error,
-            )
+        except Exception as error:
+            logger.error("%sFailed to load config file %s. %s", Fore.RED, Path(config).resolve(), error)
 
     pyproject_file = find_pyproject(src)
 
     if pyproject_file:
         content = load_pyproject_config(pyproject_file)
-        if content != {}:
+        if content:
             djlint_content.update(content)
             return content
-        else:
-            logger.info("No pyproject.toml found.")
+        logger.info("No pyproject.toml found.")
 
     djlintrc_file = find_djlintrc(src)
 
     if djlintrc_file:
         try:
             djlint_content.update(load_djlintrc_config(djlintrc_file))
-        # pylint: disable=broad-except
-        except BaseException as error:
+
+        except Exception as error:
             logger.error("%sFailed to load .djlintrc file. %s", Fore.RED, error)
 
     return djlint_content
 
 
-def validate_rules(rules: List) -> List:
+def validate_rules(rules: Iterable[_TMappingStrAny]) -> list[_TMappingStrAny]:
     """Validate a list of linter rules. Returns valid rules."""
     clean_rules = []
 
     for rule in rules:
-        # check for name
-        warning = 0
+        warning = False
         name = rule["rule"].get("name", "undefined")
         if "name" not in rule["rule"]:
-            warning += 1
+            warning = True
             echo(Fore.RED + "Warning: A rule is missing a name! 😢")
         if "patterns" not in rule["rule"] and "python_module" not in rule["rule"]:
-            warning += 1
-            echo(
-                Fore.RED
-                + f"Warning: Rule {name} is missing a pattern or a python_module! 😢"
-            )
+            warning = True
+            echo(Fore.RED + f"Warning: Rule {name} is missing a pattern or a python_module! 😢")
         if "message" not in rule["rule"]:
-            warning += 1
+            warning = True
             echo(Fore.RED + f"Warning: Rule {name} is missing a message! 😢")
 
-        if warning == 0:
+        if not warning:
             clean_rules.append(rule)
 
     return clean_rules
 
 
-def load_custom_rules(src: Path) -> List:
+def load_custom_rules(src: Path) -> tuple[Any, ...]:
     """Load djlint config from pyproject.toml."""
-
-    djlint_content: List = []
     djlint_rules_file = find_djlint_rules(src)
 
     if djlint_rules_file:
-        djlint_content = yaml.load(
-            Path(djlint_rules_file).read_text(encoding="utf8"),
-            Loader=yaml.SafeLoader,
-        )
+        return tuple(yaml.load(djlint_rules_file.read_text(encoding="utf-8"), Loader=yaml.SafeLoader))
 
-    return djlint_content
+    return ()
 
 
-def build_custom_blocks(custom_blocks: Union[str, None]) -> Optional[str]:
+def build_custom_blocks(custom_blocks: str | None) -> str | None:
     """Build regex string for custom template blocks."""
     if custom_blocks:
-        # need to also do "end<tag>"
-        open_tags = [x.strip() for x in custom_blocks.split(",")]
-        close_tags = ["end" + x.strip() for x in custom_blocks.split(",")]
-        # Group all tags together with a negative lookahead.
-        tags = {tag + r"\b" for tag in open_tags + close_tags}
-        return "|" + "|".join(sorted(tags))
+        open_tags = {x.strip() + r"\b" for x in custom_blocks.split(",")}
+        close_tags = {"end" + x for x in open_tags}
+        return "|" + "|".join(sorted(open_tags | close_tags))
     return None
 
 
-def build_ignore_blocks(ignore_blocks: Union[str, None]) -> Optional[str]:
+def build_ignore_blocks(ignore_blocks: str | None) -> str | None:
     """Build regex string for template blocks to not format."""
     if ignore_blocks:
-        # need to also do "end<tag>"
-        open_tags = [x.strip() + r"\b" for x in ignore_blocks.split(",")]
-        close_tags = ["end" + x.strip() + r"\b" for x in ignore_blocks.split(",")]
-        return "|".join(sorted(set(open_tags + close_tags)))
+        open_tags = {x.strip() + r"\b" for x in ignore_blocks.split(",")}
+        close_tags = {"end" + x for x in open_tags}
+        return "|".join(sorted(open_tags | close_tags))
     return None
 
 
-def build_custom_html(custom_html: Union[str, None]) -> Optional[str]:
+def build_custom_html(custom_html: str | None) -> str | None:
     """Build regex string for custom HTML blocks."""
     if custom_html:
         return "|" + "|".join(x.strip() for x in custom_html.split(","))
@@ -227,11 +555,12 @@ class Config:
     def __init__(
         self,
         src: str,
-        ignore: Optional[str] = None,
-        extension: Optional[str] = None,
-        indent: Optional[int] = None,
+        *,
+        ignore: str | None = None,
+        extension: str | None = None,
+        indent: int | None = None,
         quiet: bool = False,
-        profile: Optional[str] = None,
+        profile: str | None = None,
         require_pragma: bool = False,
         reformat: bool = False,
         check: bool = False,
@@ -242,9 +571,9 @@ class Config:
         preserve_blank_lines: bool = False,
         format_css: bool = False,
         format_js: bool = False,
-        configuration: Optional[str] = None,
+        configuration: str | None = None,
         statistics: bool = False,
-        include: Optional[str] = None,
+        include: str | None = None,
         ignore_case: bool = False,
         ignore_blocks: str = "",
         custom_blocks: str = "",
@@ -255,18 +584,18 @@ class Config:
         exclude: str = "",
         extend_exclude: str = "",
         linter_output_format: str = "",
-        max_line_length: Optional[int] = None,
-        max_attribute_length: Optional[int] = None,
+        max_line_length: int | None = None,
+        max_attribute_length: int | None = None,
         format_attribute_template_tags: bool = False,
-        per_file_ignores: Optional[List[Tuple[str, str]]] = None,
-        indent_css: Optional[int] = None,
-        indent_js: Optional[int] = None,
+        per_file_ignores: list[tuple[str, str]] | None = None,
+        indent_css: int | None = None,
+        indent_js: int | None = None,
         close_void_tags: bool = False,
         no_line_after_yaml: bool = False,
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
-        max_blank_lines: Optional[int] = None,
-    ):
+        max_blank_lines: int | None = None,
+    ) -> None:
         self.reformat = reformat
         self.check = check
         self.lint = lint
@@ -282,123 +611,70 @@ class Config:
         self.gitignore = load_gitignore(self.project_root)
         # custom configuration options
 
-        self.use_gitignore: bool = use_gitignore or djlint_settings.get(
-            "use_gitignore", False
-        )
+        self.use_gitignore: bool = use_gitignore or djlint_settings.get("use_gitignore", False)
         self.extension: str = str(extension or djlint_settings.get("extension", "html"))
         self.quiet: bool = quiet or djlint_settings.get("quiet", False)
-        self.require_pragma: bool = (
-            require_pragma
-            or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
-        )
+        self.require_pragma: bool = require_pragma or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
 
-        self.custom_blocks: str = str(
-            build_custom_blocks(custom_blocks or djlint_settings.get("custom_blocks"))
-            or ""
-        )
+        self.custom_blocks: str = str(build_custom_blocks(custom_blocks or djlint_settings.get("custom_blocks")) or "")
 
-        self.custom_html: str = str(
-            build_custom_html(custom_html or djlint_settings.get("custom_html")) or ""
-        )
+        self.custom_html: str = str(build_custom_html(custom_html or djlint_settings.get("custom_html")) or "")
 
-        self.format_attribute_template_tags: bool = (
-            format_attribute_template_tags
-            or djlint_settings.get("format_attribute_template_tags", False)
-        )
+        self.format_attribute_template_tags: bool = format_attribute_template_tags or djlint_settings.get("format_attribute_template_tags", False)
 
-        self.preserve_leading_space: bool = (
-            preserve_leading_space
-            or djlint_settings.get("preserve_leading_space", False)
-        )
-        self.ignore_blocks: Optional[str] = build_ignore_blocks(
-            ignore_blocks or djlint_settings.get("ignore_blocks", "")
-        )
+        self.preserve_leading_space: bool = preserve_leading_space or djlint_settings.get("preserve_leading_space", False)
+        self.ignore_blocks: str | None = build_ignore_blocks(ignore_blocks or djlint_settings.get("ignore_blocks", ""))
 
-        self.preserve_blank_lines: bool = preserve_blank_lines or djlint_settings.get(
-            "preserve_blank_lines", False
-        )
+        self.preserve_blank_lines: bool = preserve_blank_lines or djlint_settings.get("preserve_blank_lines", False)
 
         self.format_js: bool = format_js or djlint_settings.get("format_js", False)
 
-        self.js_config = (
-            {"indent_size": indent_js} if indent_js else djlint_settings.get("js")
-        ) or {}
+        self.js_config = ({"indent_size": indent_js} if indent_js else djlint_settings.get("js")) or {}
 
-        self.css_config = (
-            {"indent_size": indent_css} if indent_css else djlint_settings.get("css")
-        ) or {}
+        self.css_config = ({"indent_size": indent_css} if indent_css else djlint_settings.get("css")) or {}
 
         self.format_css: bool = format_css or djlint_settings.get("format_css", False)
 
-        self.ignore_case: bool = ignore_case or djlint_settings.get(
-            "ignore_case", False
-        )
+        self.ignore_case: bool = ignore_case or djlint_settings.get("ignore_case", False)
 
-        self.close_void_tags: bool = close_void_tags or djlint_settings.get(
-            "close_void_tags", False
-        )
-        self.no_line_after_yaml: bool = no_line_after_yaml or djlint_settings.get(
-            "no_line_after_yaml", False
-        )
-        self.no_set_formatting: bool = no_set_formatting or djlint_settings.get(
-            "no_set_formatting", False
-        )
-        self.no_function_formatting: bool = (
-            no_function_formatting
-            or djlint_settings.get("no_function_formatting", False)
-        )
+        self.close_void_tags: bool = close_void_tags or djlint_settings.get("close_void_tags", False)
+        self.no_line_after_yaml: bool = no_line_after_yaml or djlint_settings.get("no_line_after_yaml", False)
+        self.no_set_formatting: bool = no_set_formatting or djlint_settings.get("no_set_formatting", False)
+        self.no_function_formatting: bool = no_function_formatting or djlint_settings.get("no_function_formatting", False)
 
         # ignore is based on input and also profile
         self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
         self.include: str = str(include or djlint_settings.get("include", ""))
 
-        self.files: Optional[List[str]] = djlint_settings.get("files", None)
+        self.files: list[str] | None = djlint_settings.get("files", None)
         self.stdin = False
 
         # codes to exclude
-        profile_dict: Dict[str, List[str]] = {
-            "html": ["D", "J", "T", "N", "M"],
-            "django": ["J", "N", "M"],
-            "jinja": ["D", "N", "M"],
-            "nunjucks": ["D", "J", "M"],
-            "handlebars": ["D", "J", "N"],
-            "golang": ["D", "J", "N", "M"],
-            "angular": ["D", "J", "H012", "H026", "H028"],
+        profile_dict: dict[str, tuple[str, ...]] = {
+            "html": ("D", "J", "T", "N", "M"),
+            "django": ("J", "N", "M"),
+            "jinja": ("D", "N", "M"),
+            "nunjucks": ("D", "J", "M"),
+            "handlebars": ("D", "J", "N"),
+            "golang": ("D", "J", "N", "M"),
+            "angular": ("D", "J", "H012", "H026", "H028"),
         }
 
-        self.profile_code: List[str] = profile_dict.get(
-            str(profile or djlint_settings.get("profile", "html")).lower(), []
-        )
-        self.profile: str = str(
-            profile or djlint_settings.get("profile", "all")
-        ).lower()
+        self.profile_code: tuple[str, ...] = profile_dict.get(str(profile or djlint_settings.get("profile", "html")).lower(), ())
+        self.profile: str = str(profile or djlint_settings.get("profile", "all")).lower()
 
-        self.linter_output_format: str = linter_output_format or djlint_settings.get(
-            "linter_output_format", "{code} {line} {message} {match}"
-        )
+        self.linter_output_format: str = linter_output_format or djlint_settings.get("linter_output_format", "{code} {line} {message} {match}")
 
         # load linter rules
-        rule_set = validate_rules(
-            yaml.load(
-                (Path(__file__).parent / "rules.yaml").read_text(encoding="utf8"),
-                Loader=yaml.SafeLoader,
-            )
-            + load_custom_rules(self.project_root)
-        )
+        rule_set = chain(RULES, validate_rules(load_custom_rules(self.project_root)))
 
-        self.linter_rules = list(
-            filter(
-                lambda x: x["rule"]["name"] not in self.ignore.split(",")
-                and not any(
-                    x["rule"]["name"].startswith(code) for code in self.profile_code
-                )
-                and self.profile not in x["rule"].get("exclude", [])
-                and (
-                    x["rule"].get("default", True)
-                    or x["rule"]["name"] in self.include.split(",")
-                ),
-                rule_set,
-            )
+        self.linter_rules = tuple(
+            x
+            for x in rule_set
+            if x["rule"]["name"] not in self.ignore.split(",")
+            and not any(x["rule"]["name"].startswith(code) for code in self.profile_code)
+            and self.profile not in x["rule"].get("exclude", set())
+            and (x["rule"].get("default", True) or x["rule"]["name"] in self.include.split(","))
         )
 
         self.statistics = statistics
@@ -409,23 +685,15 @@ class Config:
             try:
                 indent = int(djlint_settings.get("indent", default_indent))
             except ValueError:
-                echo(
-                    Fore.RED
-                    + f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}"
-                )
+                echo(Fore.RED + f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}")
                 indent = default_indent
         self.indent_size = indent
-        self.indent: str = int(indent) * " "
+        self.indent: str = indent * " "
 
         try:
-            self.max_blank_lines = int(
-                djlint_settings.get("max_blank_lines", max_blank_lines or 0)
-            )
+            self.max_blank_lines = int(djlint_settings.get("max_blank_lines", max_blank_lines or 0))
         except ValueError:
-            echo(
-                Fore.RED
-                + f"Error: Invalid pyproject.toml indent value {djlint_settings['max_blank_lines']}"
-            )
+            echo(Fore.RED + f"Error: Invalid pyproject.toml indent value {djlint_settings['max_blank_lines']}")
             self.max_blank_lines = max_blank_lines or 0
 
         default_exclude: str = r"""
@@ -454,31 +722,18 @@ class Config:
         extend_exclude = extend_exclude or djlint_settings.get("extend_exclude", "")
 
         if extend_exclude:
-            self.exclude += r" | " + r" | ".join(
-                x.strip() for x in extend_exclude.split(",")
-            )
+            self.exclude += r" | " + r" | ".join(x.strip() for x in extend_exclude.split(","))
 
-        self.per_file_ignores = (
-            ({x: y for x, y in per_file_ignores})
-            if per_file_ignores
-            else djlint_settings.get("per-file-ignores", {})
-        )
+        self.per_file_ignores = (dict(per_file_ignores)) if per_file_ignores else djlint_settings.get("per-file-ignores", {})
 
         # add blank line after load tags
-        self.blank_line_after_tag: Optional[
-            str
-        ] = blank_line_after_tag or djlint_settings.get("blank_line_after_tag", None)
+        self.blank_line_after_tag: str | None = blank_line_after_tag or djlint_settings.get("blank_line_after_tag", None)
 
         # add blank line before load tags
-        self.blank_line_before_tag: Optional[
-            str
-        ] = blank_line_before_tag or djlint_settings.get("blank_line_before_tag", None)
+        self.blank_line_before_tag: str | None = blank_line_before_tag or djlint_settings.get("blank_line_before_tag", None)
 
         # add line break after multi-line tags
-        self.line_break_after_multiline_tag: bool = (
-            line_break_after_multiline_tag
-            or djlint_settings.get("line_break_after_multiline_tag", False)
-        )
+        self.line_break_after_multiline_tag: bool = line_break_after_multiline_tag or djlint_settings.get("line_break_after_multiline_tag", False)
 
         # contents of tags will not be formatted
         self.script_style_opening: str = r"""
@@ -601,26 +856,16 @@ class Config:
         self.max_line_length = 120
 
         try:
-            self.max_line_length = max_line_length or int(
-                djlint_settings.get("max_line_length", self.max_line_length)
-            )
+            self.max_line_length = max_line_length or int(djlint_settings.get("max_line_length", self.max_line_length))
         except ValueError:
-            echo(
-                Fore.RED
-                + f"Error: Invalid pyproject.toml max_line_length value {djlint_settings['max_line_length']}"
-            )
+            echo(Fore.RED + f"Error: Invalid pyproject.toml max_line_length value {djlint_settings['max_line_length']}")
 
         self.max_attribute_length = 70
 
         try:
-            self.max_attribute_length = max_attribute_length or int(
-                djlint_settings.get("max_attribute_length", self.max_attribute_length)
-            )
+            self.max_attribute_length = max_attribute_length or int(djlint_settings.get("max_attribute_length", self.max_attribute_length))
         except ValueError:
-            echo(
-                Fore.RED
-                + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}"
-            )
+            echo(Fore.RED + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}")
 
         self.template_if_for_pattern = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
 
@@ -658,7 +903,7 @@ class Config:
             )
             | ({self.template_if_for_pattern}
             """
-            + r"""
+            r"""
             | (?:\'|\") # allow random trailing quotes
             | {{.*?}}
             | {\#.*?\#}
@@ -676,15 +921,7 @@ class Config:
 
         self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
 
-        self.ignored_attributes = [
-            "href",
-            "action",
-            "data-url",
-            "src",
-            "url",
-            "srcset",
-            "data-src",
-        ]
+        self.ignored_attributes = frozenset({"href", "action", "data-url", "src", "url", "srcset", "data-src"})
 
         self.start_template_tags: str = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
@@ -849,7 +1086,7 @@ class Config:
             | ^---[\s\S]+?---
         """
 
-        self.ignored_rules: List[str] = [
+        self.ignored_rules = (
             # html comment
             r"<!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*",
             # django/jinja/nunjucks
@@ -859,7 +1096,7 @@ class Config:
             r"{{!--\s*djlint\:off(.*?)--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*",
             # golang
             r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*",
-        ]
+        )
 
         self.ignored_trans_blocks: str = r"""
               {%[ ]*?blocktranslate?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate?[ ]*?%}
