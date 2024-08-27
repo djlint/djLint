@@ -4,18 +4,18 @@ updates:
     directory: /
     schedule:
       interval: daily
-      time: '00:30'
+      time: "00:30"
     target-branch: dev
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: daily
-      time: '00:30'
+      time: "00:30"
     target-branch: dev
     groups:
       pip-semver-minor:
         patterns:
-          - '*'
+          - "*"
         update-types:
           - minor
           - patch

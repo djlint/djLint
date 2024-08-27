@@ -61,4 +61,4 @@ jobs:
           git add -A
           git commit -m "Reformat with djLint v$(poetry version --short)"
           git push --force 'https://github.com/djlint/djlint' 'demo-${{ matrix.tool }}'
-        working_directory: '${{ matrix.tool }}_source'
+        working_directory: "${{ matrix.tool }}_source"

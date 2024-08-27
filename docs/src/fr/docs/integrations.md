@@ -52,10 +52,10 @@ repos:
     hooks:
       - id: djlint-reformat-handlebars
         files: "\\.html"
-        types_or: ['html']
+        types_or: ["html"]
       - id: djlint-handlebars
         files: "\\.html"
-        types_or: ['html']
+        types_or: ["html"]
 ```
 
 Vous pouvez utiliser les paramètres `files` ou `exclude` pour contraindre chaque hook à son propre répertoire, ce qui vous permet de supporter plusieurs langages de template dans le même repo.

@@ -1,4 +1,4 @@
-importScripts('https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js');
+importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js");
 
 function capitalize(raw_word) {
   const word = raw_word.toString();
@@ -26,21 +26,21 @@ async function loadPyodideAndPackages() {
   ]);
 
   postMessage({
-    type: 'status',
+    type: "status",
     message:
-      'Installing djlint, click, colorama, cssbeautifier, editorconfig, html_tag_names, html_void_elements, jsbeautifier, pathspec, pyyaml ..',
+      "Installing djlint, click, colorama, cssbeautifier, editorconfig, html_tag_names, html_void_elements, jsbeautifier, pathspec, pyyaml ..",
   });
-  await self.pyodide.loadPackage('regex');
-  postMessage({ type: 'status', message: 'Installing regex..' });
-  await self.pyodide.loadPackage('six');
-  postMessage({ type: 'status', message: 'Installing six..' });
-  await self.pyodide.loadPackage('tomli');
-  postMessage({ type: 'status', message: 'Installing tomli..' });
-  await self.pyodide.loadPackage('tqdm');
-  postMessage({ type: 'status', message: 'Installing tqdm..' });
+  await self.pyodide.loadPackage("regex");
+  postMessage({ type: "status", message: "Installing regex.." });
+  await self.pyodide.loadPackage("six");
+  postMessage({ type: "status", message: "Installing six.." });
+  await self.pyodide.loadPackage("tomli");
+  postMessage({ type: "status", message: "Installing tomli.." });
+  await self.pyodide.loadPackage("tqdm");
+  postMessage({ type: "status", message: "Installing tqdm.." });
 
   postMessage({
-    type: 'version',
+    type: "version",
     message: pyodide.runPython(`
     import platform
     from importlib import metadata
@@ -48,7 +48,7 @@ async function loadPyodideAndPackages() {
   `),
   });
 
-  postMessage({ type: 'status', message: 'ready' });
+  postMessage({ type: "status", message: "ready" });
   return pyodide;
 }
 
@@ -59,67 +59,67 @@ self.onmessage = async (event) => {
 
   const { id, config, html } = event.data;
 
-  const profile = config.profile ? `\n,profile="${config.profile}"` : '';
-  const indent = config.indent ? `\n,indent=${config.indent}` : '';
+  const profile = config.profile ? `\n,profile="${config.profile}"` : "";
+  const indent = config.indent ? `\n,indent=${config.indent}` : "";
   const preserveLeadingSpace = config.preserveLeadingSpace
     ? `\n,preserve_leading_space=${capitalize(config.preserveLeadingSpace)}`
-    : '';
+    : "";
   const preserveBlankSpace = config.preserveBlankSpace
     ? `\n,preserve_blank_lines=${capitalize(config.preserveBlankSpace)}`
-    : '';
+    : "";
   const formatJs = config.formatJs
     ? `\n,format_js=${capitalize(config.formatJs)}`
-    : '';
+    : "";
   const formatCss = config.formatCss
     ? `\n,format_css=${capitalize(config.formatCss)}`
-    : '';
+    : "";
   const customBlocks = config.customBlocks
     ? `config.custom_blocks="${config.customBlocks}"`
-    : '';
+    : "";
   const customHtml = config.customHtml
     ? `config.custom_html="${config.customHtml}"`
-    : '';
+    : "";
   const maxLineLength = config.maxLineLength
     ? `config.max_line_length=${config.maxLineLength}`
-    : '';
+    : "";
   const maxAttributeLength = config.maxAttributeLength
     ? `config.max_attribute_length=${config.maxAttributeLength}`
-    : '';
+    : "";
   const formatAttributeTemplateTags = config.formatAttributeTemplateTags
     ? `config.format_attribute_template_tags=${capitalize(
         config.formatAttributeTemplateTags,
       )}`
-    : '';
+    : "";
   const blankLineAfterTag = config.blankLineAfterTag
     ? `config.blank_line_after_tag="${config.blankLineAfterTag}"`
-    : '';
+    : "";
   const closeVoidTags = config.closeVoidTags
     ? `config.close_void_tags="${config.closeVoidTags}"`
-    : '';
+    : "";
 
   const ignoreCase = config.ignoreCase
     ? `config.ignore_case="${config.ignoreCase}"`
-    : '';
+    : "";
 
   const lineBreakAfterMultilineTag = config.lineBreakAfterMultilineTag
     ? `config.line_break_after_multiline_tag="${config.lineBreakAfterMultilineTag}"`
-    : '';
+    : "";
 
   const noLineAfterYaml = config.noLineAfterYaml
     ? `config.no_line_after_yaml="${config.noLineAfterYaml}"`
-    : '';
+    : "";
 
   const blankLineBeforeTag = config.blankLineBeforeTag
     ? `config.blank_line_before_tag="${config.blankLineBeforeTag}"`
-    : '';
+    : "";
 
   const noSetFormatting = config.noSetFormatting
     ? `config.no_set_formatting="${config.noSetFormatting}"`
-    : '';
+    : "";
 
   const noFunctionFormatting = config.noFunctionFormatting
     ? `config.no_function_formatting="${config.noFunctionFormatting}"`
-    : '';
+    : "";
 
   try {
     await self.pyodide.runPythonAsync(`
@@ -136,7 +136,7 @@ self.onmessage = async (event) => {
       import tempfile
 
     `);
-    await self.pyodide.runPythonAsync('sys.stdout.flush()');
+    await self.pyodide.runPythonAsync("sys.stdout.flush()");
 
     await pyodide.runPythonAsync(`
 temp_file = tempfile.NamedTemporaryFile(delete=False)
@@ -162,10 +162,10 @@ temp_file.close()
 os.unlink(temp_file.name)
     `);
 
-    let stdout = await self.pyodide.runPythonAsync('sys.stdout.getvalue()');
-    await self.pyodide.runPythonAsync('sys.stdout.flush()');
-    postMessage({ type: 'html', message: stdout, id: id });
+    let stdout = await self.pyodide.runPythonAsync("sys.stdout.getvalue()");
+    await self.pyodide.runPythonAsync("sys.stdout.flush()");
+    postMessage({ type: "html", message: stdout, id: id });
   } catch (err) {
-    self.postMessage({ type: 'error', message: err.message, id: id });
+    self.postMessage({ type: "error", message: err.message, id: id });
   }
 };
