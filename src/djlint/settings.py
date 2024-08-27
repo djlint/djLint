@@ -50,7 +50,9 @@ RULES: tuple[LintRule, ...] = (
             "flags": re.DOTALL,
             "exclude": frozenset({"handlebars", "golang"}),
             "patterns": (
+                # double curly
                 "{{[-+]?(?:[^\\s\\-\\+](?:(?!}}|{{).)*?|(?:(?!}}|{{).)*?[^\\s\\-\\+])[-+]?}}",
+                # curly percent
                 "{%(?:[-+]?[^\\s\\-\\+](?:(?!%}|{%).)*?|(?:(?!%}|{%).)*?[^\\s\\-\\+])[-+]?%}",
             ),
         }
@@ -78,6 +80,7 @@ RULES: tuple[LintRule, ...] = (
             "name": "D004",
             "message": "(Django) Static urls should follow {% static path/to/file %} pattern.",
             "flags": re.DOTALL,
+            # this should be using the static path from django settings
             "patterns": (
                 "<(?:link|img|script|source)\\s[^\\>]*?(?:href|src|srcset)=[\\\"\\']/?static/?",
             ),
@@ -88,6 +91,7 @@ RULES: tuple[LintRule, ...] = (
             "name": "J004",
             "message": "(Jinja) Static urls should follow {{ url_for('static'..) }} pattern.",
             "flags": re.DOTALL,
+            # this should be using the static path from django settings
             "patterns": (
                 "<(?:link|img|script|source)\\s[^\\>]*?(?:href|src|srcset)=[\\\"\\']/?static/?",
             ),
@@ -201,6 +205,8 @@ RULES: tuple[LintRule, ...] = (
             "name": "H016",
             "message": "Missing title tag in html.",
             "flags": re.DOTALL | re.I,
+            # Title allow a list of global attributes.
+            # https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes#list_of_global_attributes
             "patterns": (
                 '<html[^>]*?>(?:(?!<title(\\s+(class|data-[\\-\\._0-9a-zA-Z:]+|dir|id|lang|translate)=\\"[^"]*\\")*>).)*</html>',
             ),
@@ -321,10 +327,16 @@ RULES: tuple[LintRule, ...] = (
             "message": "Unclosed string found in template syntax.",
             "flags": re.I,
             "patterns": (
+                # for tags with 3/5/7... quotes
+                # for single quotes
                 "{%((?:(?!'|%}).)*?(')(?:(?!\\2|%}).)*?\\2(?:(?!\\2|%}).)*?)*\\2(?:(?!\\2|%}).)*?%}",
+                # for double quotes
                 '{%((?:(?!"|%}).)*?(")(?:(?!\\2|%}).)*?\\2(?:(?!\\2|%}).)*?)*\\2(?:(?!\\2|%}).)*?%}',
+                # for single quotes
                 "{{((?:(?!'|}}).)*?(')(?:(?!\\2|}}).)*?\\2(?:(?!\\2|}}).)*?)*\\2(?:(?!\\2|}}).)*?}}",
+                # for double quotes
                 '{{((?:(?!"|}}).)*?(")(?:(?!\\2|}}).)*?\\2(?:(?!\\2|}}).)*?)*\\2(?:(?!\\2|}}).)*?}}',
+                # for tags with a single quote
                 "{%((?:(?!'|\"|%}).)*?('|\")(?:(?!\\2|%}).)*?)%}",
                 "{{((?:(?!'|\"|}}).)*?('|\")(?:(?!\\2|}}).)*?)}}",
             ),
