@@ -33,3 +33,12 @@ repos:
       - id: mypy
         args:
           - --scripts-are-modules
+        additional_dependencies:
+          - click
+          - json5
+          - pathspec
+          - tomli
+          - types-colorama
+          - types-pyyaml
+          - types-regex
+          - types-tqdm
