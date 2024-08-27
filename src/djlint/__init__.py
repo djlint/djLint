@@ -5,7 +5,11 @@ from __future__ import annotations
 import os
 import sys
 import tempfile
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import (
+    ProcessPoolExecutor,
+    ThreadPoolExecutor,
+    as_completed,
+)
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -377,16 +381,13 @@ def main(
         if not config.stdin and not config.quiet:
             echo()
 
-        worker_count = os.cpu_count() or 1
+        progress_char = " »" if sys.platform == "win32" else "┈━"
+        worker_count = min(os.cpu_count() or 4, 4)
+        executor_cls = (
+            ProcessPoolExecutor if worker_count > 1 else ThreadPoolExecutor
+        )
 
-        progress_char = "┈━"
-
-        if sys.platform == "win32":
-            # Work around https://bugs.python.org/issue26903
-            worker_count = min(worker_count, 60)
-            progress_char = " »"
-
-        with ProcessPoolExecutor(max_workers=worker_count) as exe:
+        with executor_cls(max_workers=worker_count) as exe:
             func = partial(process, config)
             futures = {
                 exe.submit(func, this_file): this_file
