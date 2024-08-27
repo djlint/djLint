@@ -2,15 +2,20 @@
   "name": "djlint_docs",
   "version": "1.0.84",
   "description": "",
+  "keywords": [],
+  "license": "AGPL-3.0-or-later",
+  "author": "Christopher Pickering",
   "main": "index.js",
   "scripts": {
-    "start": "eleventy --serve --watch",
     "build": "ELEVENTY_PRODUCTION=true eleventy",
-    "format": "prettier --config .prettierrc \"src/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write"
+    "format": "prettier --config .prettierrc \"src/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write",
+    "start": "eleventy --serve --watch"
   },
-  "keywords": [],
-  "author": "Christopher Pickering",
-  "license": "AGPL-3.0-or-later",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
   "browserslist": "> 2%, not dead",
   "dependencies": {
     "@codemirror/lang-html": "^6.4.3",
@@ -64,10 +69,5 @@
     "prismjs": "1.29.0",
     "sass": "^1.60.0",
     "slugify": "^1.6.6"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   }
 }

@@ -17,29 +17,10 @@ from .helpers import (
 if TYPE_CHECKING:
     from collections.abc import Mapping
     from pathlib import Path
-    from typing import Union
 
-    from typing_extensions import NotRequired, TypeAlias, TypedDict
+    from typing_extensions import TypedDict
 
     from .settings import Config
-
-    class _LintRuleBodyBase(TypedDict):
-        name: str
-        message: str
-        default: NotRequired[bool]
-        exclude: NotRequired[frozenset[str]]
-
-    class RegexLintRuleBody(_LintRuleBodyBase):
-        patterns: tuple[str, ...]
-        flags: NotRequired[int]
-
-    class PythonLintRuleBody(_LintRuleBodyBase):
-        python_module: str
-
-    LintRuleBody: TypeAlias = Union[RegexLintRuleBody, PythonLintRuleBody]
-
-    class LintRule(TypedDict):
-        rule: LintRuleBody
 
     class LintError(TypedDict):
         code: str

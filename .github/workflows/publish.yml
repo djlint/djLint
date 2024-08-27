@@ -1,0 +1,24 @@
+name: Publish
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  publish-pypi:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'monosans' }}
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: pipx run poetry build --no-interaction
+      - uses: pypa/gh-action-pypi-publish@release/v1
+  publish-npm:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'monosans' }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

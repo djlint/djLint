@@ -1,8 +1,8 @@
 ---
 name: "\U0001F9A0 Formatter Bug Report"
 about: You've found a bug?
-title: "[BUG] [Formatter]"
-labels: [":microbe: bug", ":sponge: formatter"]
+title: '[BUG] [Formatter]'
+labels: [':microbe: bug', ':sponge: formatter']
 ---
 
 <!--
@@ -16,15 +16,18 @@ labels: [":microbe: bug", ":sponge: formatter"]
 - [ ] I've read the [docs](https://djlint.com)
 
 ## System Info
- - OS: e.g. ubuntu 20.04
- - Python Version (``python --version``)
- - djLint Version (``djlint --version``)
- - template language: e.g. mustache
+
+- OS: e.g. ubuntu 20.04
+- Python Version (`python --version`)
+- djLint Version (`djlint --version`)
+- template language: e.g. mustache
 
 ## Issue
+
 <!-- A clear and concise description of what the bug is. -->
 
 ## How To Reproduce
+
 <!-- Steps to reproduce the behavior -->
 
 <!-- Thanks! 🤠 -->

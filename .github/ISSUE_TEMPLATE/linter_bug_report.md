@@ -1,8 +1,8 @@
 ---
 name: "\U0001F9A0 Linter Bug Report"
 about: You've found a bug?
-title: "[BUG] [Linter]"
-labels: [":microbe: bug", ":mag: linter"]
+title: '[BUG] [Linter]'
+labels: [':microbe: bug', ':mag: linter']
 ---
 
 <!--
@@ -16,19 +16,22 @@ labels: [":microbe: bug", ":mag: linter"]
 - [ ] I've read the [docs](https://djlint.com)
 
 ## System Info
- - OS: e.g. ubuntu 20.04
- - Python Version (``python --version``)
- - djLint Version (``djlint --version``)
- - template language: e.g. mustache
 
+- OS: e.g. ubuntu 20.04
+- Python Version (`python --version`)
+- djLint Version (`djlint --version`)
+- template language: e.g. mustache
 
 ## Issue
+
 <!-- A clear and concise description of what the bug is. -->
 
 ## How To Reproduce
+
 <!-- Steps to reproduce the behavior -->
 
 ## Contents of .djlintrc/pyproject.toml [tool.djlint]
+
 <!-- please include your config -->
 
 <!-- Thanks! 🤠 -->

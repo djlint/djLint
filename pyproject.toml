@@ -1,6 +1,6 @@
 [build-system]
-requires = ["poetry_core"]
 build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
 
 [tool.poetry]
 name = "djlint"
@@ -13,17 +13,17 @@ readme = "README.md"
 repository = "https://github.com/djlint/djLint"
 documentation = "https://djlint.com"
 classifiers = [
-    "Environment :: Web Environment",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Information Technology",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python",
-    "Topic :: Internet :: WWW/HTTP",
-    "Topic :: Internet",
-    "Topic :: Software Development",
-    "Typing :: Typed",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet",
+  "Topic :: Software Development",
+  "Typing :: Typed",
 ]
 packages = [{ include = "djlint", from = "src" }]
 include = ["rules.yaml"]

@@ -13,7 +13,8 @@ $fa-font-path: '/static/font/fontawesome/webfonts';
   font-style: normal;
   font-weight: 400;
   font-display: $fa-font-display;
-  src: url('#{$fa-font-path}/fa-brands-400.woff2') format('woff2'),
+  src:
+    url('#{$fa-font-path}/fa-brands-400.woff2') format('woff2'),
     url('#{$fa-font-path}/fa-brands-400.ttf') format('truetype');
 }
 
@@ -22,7 +23,8 @@ $fa-font-path: '/static/font/fontawesome/webfonts';
   font-style: normal;
   font-weight: 900;
   font-display: $fa-font-display;
-  src: url('#{$fa-font-path}/fa-solid-900.woff2') format('woff2'),
+  src:
+    url('#{$fa-font-path}/fa-solid-900.woff2') format('woff2'),
     url('#{$fa-font-path}/fa-solid-900.ttf') format('truetype');
 }
 
@@ -31,7 +33,8 @@ $fa-font-path: '/static/font/fontawesome/webfonts';
   font-style: normal;
   font-weight: 400;
   font-display: $fa-font-display;
-  src: url('#{$fa-font-path}/fa-regular-400.woff2') format('woff2'),
+  src:
+    url('#{$fa-font-path}/fa-regular-400.woff2') format('woff2'),
     url('#{$fa-font-path}/fa-regular-400.ttf') format('truetype');
 }
 

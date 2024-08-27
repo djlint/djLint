@@ -1,98 +1,64 @@
 name: demo
-
 on:
-  workflow_dispatch:
   push:
-    branches: [master]
-
+    branches:
+      - master
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 jobs:
   demo:
     strategy:
       matrix:
-        tool: [django, wagtail, pallets, apostrophe, bolt, sylius]
         include:
-        - tool: django
-          repo: https://github.com/django/django
-          profile: django
-          args: --indent 2
-        - tool: wagtail
-          repo: https://github.com/wagtail/wagtail
-          profile: django
-          args: --indent 4
-        - tool: pallets
-          repo: https://github.com/pallets/website
-          profile: jinja
-          args: --indent 2
-        - tool: apostrophe
-          repo: https://github.com/apostrophecms/apostrophe
-          profile: nunjucks
-          args: --indent 2
-        - tool: bolt
-          repo: https://github.com/bolt/core
-          profile: nunjucks
-          args: --indent 4
-        - tool: sylius
-          repo: https://github.com/Sylius/Sylius
-          profile: nunjucks
-          args: --indent 2
-    name: format
+          - tool: django
+            repo: https://github.com/django/django
+            profile: django
+            args: --indent 2
+          - tool: wagtail
+            repo: https://github.com/wagtail/wagtail
+            profile: django
+            args: --indent 4
+          - tool: pallets
+            repo: https://github.com/pallets/website
+            profile: jinja
+            args: --indent 2
+          - tool: apostrophe
+            repo: https://github.com/apostrophecms/apostrophe
+            profile: nunjucks
+            args: --indent 2
+          - tool: bolt
+            repo: https://github.com/bolt/core
+            profile: nunjucks
+            args: --indent 4
+          - tool: sylius
+            repo: https://github.com/Sylius/Sylius
+            profile: nunjucks
+            args: --indent 2
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
-      uses: actions/checkout@v4
-
-    - name: setup python 3.11
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Setup Poetry
-      uses: snok/install-poetry@v1
-
-    - name: install
-      run: |
-        poetry install
-
-    - name: get source
-      run: |
-        mkdir "${{ matrix.tool }}_raw"; mkdir "${{ matrix.tool }}_source"
-        cd "${{ matrix.tool }}_raw"; git clone --depth 1 "${{ matrix.repo }}" .; cd ..
-        find "${{ matrix.tool }}_raw" -iname '*.html*' -exec mv '{}' "${{ matrix.tool }}_source/" \;
-
-    - name: publish source
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./${{ matrix.tool }}_source
-        publish_branch: ${{ matrix.tool }}-source
-        enable_jekyll: true
-        force_orphan: true
-
-    - name: cleanup source
-      run: rm -r "${{ matrix.tool }}_source"; rm -r "${{ matrix.tool }}_raw"
-
-    - uses: actions/checkout@v4
-      with:
-        path: ${{ matrix.tool }}-source
-        ref: ${{ matrix.tool }}-source
-
-    - name: setup branch
-      run: |
-        cd "${{ matrix.tool }}-source"
-        git config user.name "$(git log -n 1 --pretty=format:%an)"
-        git config user.email "$(git log -n 1 --pretty=format:%ae)"
-        git branch --unset-upstream
-        git push --force origin "${{ matrix.tool }}-source":"${{ matrix.tool }}-djlint"
-
-    - name: format
-      run: |
-        cd src
-        poetry run python -m djlint "../${{ matrix.tool }}-source" --profile=${{ matrix.profile }} --reformat --warn --quiet ${{ matrix.args }}
-
-    - name: publish foramtted
-      run: |
-        cd "${{ matrix.tool }}-source"
-        export DJ_VERSION=$(poetry version --short)
-        git add .
-        git commit -m "formatted with djLint $DJ_VERSION"
-        git push origin "${{ matrix.tool }}-source":"${{ matrix.tool }}-djlint"
+      - uses: actions/checkout@v4
+      - run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+          cache: poetry
+          check-latest: true
+      - run: poetry install --only main --sync --no-root --no-interaction
+      - run: git clone --depth 1 '${{ matrix.repo }}' '${{ matrix.tool }}_raw'
+      - run: mkdir '${{ matrix.tool }}_source'
+      - run: find "${{ matrix.tool }}_raw" -iname '*.html*' -exec mv -t "${{ matrix.tool }}_source/" {} +
+      - run: rm -rf '${{ matrix.tool }}_raw'
+      - run: |
+          git init
+          git branch -m 'demo-${{ matrix.tool }}'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'git clone ${{ matrix.repo }}'
+          poetry run python -m djlint "../${{ matrix.tool }}-source" --profile=${{ matrix.profile }} --reformat --warn --quiet ${{ matrix.args }}
+          git add -A
+          git commit -m "Reformat with djLint v$(poetry version --short)"
+          git push --force 'https://github.com/djlint/djlint' 'demo-${{ matrix.tool }}'
+        working_directory: '${{ matrix.tool }}_source'
