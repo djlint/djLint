@@ -842,25 +842,32 @@ class Config:
             )
             self.max_blank_lines = max_blank_lines or 0
 
+        # From ruff and black
         default_exclude: str = r"""
-            \.venv
-            | venv/
-            | \.tox
+            __pypackages__
+            | _build
+            | \.bzr
+            | \.direnv
             | \.eggs
             | \.git
+            | \.git-rewrite
             | \.hg
+            | \.ipynb_checkpoints
             | \.mypy_cache
             | \.nox
-            | \.svn
-            | \.bzr
-            | _build/
-            | buck-out/
-            | build/
-            | dist/
             | \.pants\.d
-            | \.direnv
-            | node_modules/
-            | __pypackages__
+            | \.pytest_cache
+            | \.pytype
+            | \.ruff_cache
+            | \.svn
+            | \.tox
+            | \.venv
+            | \.vscode
+            | buck-out
+            | build
+            | dist
+            | node_modules
+            | venv
         """
 
         self.exclude: str = exclude or djlint_settings.get(
