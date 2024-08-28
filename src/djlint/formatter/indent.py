@@ -312,7 +312,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
             tmp = re.sub(
                 re.compile(
-                    rf"(\s*?)(<(?:{config.indent_html_tags})\b)((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}\/])+?)(\s?/?>)",
+                    rf"(\s*?)(<(?:{config.indent_html_tags}))\s((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}\/])+?)(\s?/?>)",
                     re.VERBOSE | re.IGNORECASE,
                 ),
                 func,
