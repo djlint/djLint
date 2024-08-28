@@ -177,11 +177,11 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
 
         # format style attribute
         if attrib_name and attrib_name.lower() == "style":
-            attrib_value = (";" + join_space).join([
-                value.strip()
+            attrib_value = f";{join_space}".join(
+                stripped
                 for value in attrib_value.split(";")
-                if value.strip()
-            ])
+                if (stripped := value.strip())
+            )
 
         elif attrib_name and attrib_name.lower() in {
             "srcset",
@@ -189,17 +189,17 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
             "sizes",
         }:
             # vw
-            attrib_value = ("w," + join_space).join([
-                value.strip()
+            attrib_value = f"w,{join_space}".join(
+                stripped
                 for value in attrib_value.split("w,")
-                if value.strip()
-            ])
+                if (stripped := value.strip())
+            )
             # px
-            attrib_value = ("x," + join_space).join([
-                value.strip()
+            attrib_value = f"x,{join_space}".join(
+                stripped
                 for value in attrib_value.split("x,")
-                if value.strip()
-            ])
+                if (stripped := value.strip())
+            )
 
         # format template stuff
         if config.format_attribute_template_tags:
@@ -222,15 +222,15 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
             attributes.append(
                 (attrib_name or "") + (attrib_value or "") + (standalone or "")
             )
-    attribute_string = ("\n" + spacing).join([x for x in attributes if x])
+    attribute_string = f"\n{spacing}".join(x for x in attributes if x)
 
     close = match.group(4)
 
     attribute_string = f"{leading_space}{tag}{attribute_string}{close}"
 
     # clean trailing spaces added by breaks
-    attribute_string = "\n".join([
+    attribute_string = "\n".join(
         x.rstrip() for x in attribute_string.splitlines()
-    ])
+    )
 
     return f"{attribute_string}"

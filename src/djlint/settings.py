@@ -203,7 +203,7 @@ def build_custom_blocks(custom_blocks: str | None) -> str | None:
     """Build regex string for custom template blocks."""
     if custom_blocks:
         open_tags = {x.strip() + r"\b" for x in custom_blocks.split(",")}
-        close_tags = {"end" + x for x in open_tags}
+        close_tags = {f"end{x}" for x in open_tags}
         return "|" + "|".join(sorted(open_tags | close_tags))
     return None
 
@@ -212,7 +212,7 @@ def build_ignore_blocks(ignore_blocks: str | None) -> str | None:
     """Build regex string for template blocks to not format."""
     if ignore_blocks:
         open_tags = {x.strip() + r"\b" for x in ignore_blocks.split(",")}
-        close_tags = {"end" + x for x in open_tags}
+        close_tags = {f"end{x}" for x in open_tags}
         return "|".join(sorted(open_tags | close_tags))
     return None
 

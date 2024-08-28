@@ -140,7 +140,7 @@ def build_output(
     if "{filename}" not in config.linter_output_format and not config.stdin:
         echo(
             f"{Fore.GREEN}{Style.BRIGHT}\n{filename}\n{Style.DIM}"
-            + "".join(["─" for x in range(1, width)])
+            + "".join("─" for _ in range(1, width))
             + Style.RESET_ALL
         )
 
@@ -192,7 +192,7 @@ def build_check_output(
             )
             + "\n"
             + Style.DIM
-            + "".join(["─" for x in range(1, width)])
+            + "".join("─" for _ in range(1, width))
             + Style.RESET_ALL
         )
 
