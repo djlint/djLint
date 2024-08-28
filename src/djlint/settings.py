@@ -184,16 +184,14 @@ def validate_rules(
             yield rule
 
 
-def load_custom_rules(src: Path) -> tuple[Any, ...]:
+def load_custom_rules(src: Path) -> Any:
     """Load djlint config from pyproject.toml."""
     djlint_rules_file = find_djlint_rules(src)
 
     if djlint_rules_file:
-        return tuple(
-            yaml.load(
-                djlint_rules_file.read_text(encoding="utf-8"),
-                Loader=yaml.SafeLoader,
-            )
+        return yaml.load(
+            djlint_rules_file.read_text(encoding="utf-8"),
+            Loader=yaml.SafeLoader,
         )
 
     return ()
