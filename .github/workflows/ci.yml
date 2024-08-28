@@ -14,9 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
-        working_directory: docs
+        working-directory: docs
       - run: npm run build
-        working_directory: docs
+        working-directory: docs
       - uses: untitaker/hyperlink@0.1.32
         with:
           args: docs/_site/
