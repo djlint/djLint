@@ -11,84 +11,20 @@ from types import SimpleNamespace
 from typing import TYPE_CHECKING
 
 import pytest
-import regex as re
-from _pytest.terminal import TerminalReporter  # noqa: PLC2701
 from click.testing import CliRunner
 from colorama import Fore, Style
 
 from src.djlint import main as djlint
 from src.djlint.settings import Config
 
-if sys.version_info >= (3, 12):
-    from typing_extensions import override
-else:
-    from typing_extensions import override
-
 if TYPE_CHECKING:
     import os
-    from typing import Iterator, Mapping, TextIO
+    from collections.abc import Iterator, Mapping
+    from typing import TextIO
 
-    from _pytest.reports import BaseReport
     from typing_extensions import Any
 
     from src.djlint.lint import LintError
-
-
-class MyReporter(TerminalReporter):  # type: ignore[misc]
-    """Override default reporter to print more interesting details."""
-
-    @override
-    def short_test_summary(self) -> None:
-        """Override summary."""
-        failed = self.stats.get("failed", ())
-
-        if failed:
-            self.write_sep("=", "Short Test Summary")
-            for rep in failed:
-                self.write_line(f"failed {rep.nodeid}")
-
-    @override
-    def summary_failures(self) -> None:
-        """Override failure printer."""
-        if self.config.option.tbstyle != "no":
-            reports: list[BaseReport] = self.getreports("failed")
-            if not reports:
-                return
-            self.write_sep("=", "FAILURES")
-            if self.config.option.tbstyle == "line":
-                for rep in reports:
-                    line: str = self._getcrashline(rep)  # type: ignore[no-untyped-call]
-                    self.write_line(line)
-            else:
-                for rep in reports:
-                    msg: str | None = self._getfailureheadline(rep)  # type: ignore[no-untyped-call]
-                    self.write_sep("_", msg, red=True, bold=True)
-                    # modified version of _outrep_summary()
-                    # only show error if not assertion error,
-                    # otherwise our print function shows the diff better.
-                    if not re.search(r"AssertionError:", rep.longreprtext):
-                        rep.toterminal(self._tw)
-                    showcapture = self.config.option.showcapture
-                    if showcapture == "no":
-                        return
-                    for secname, content in rep.sections:
-                        if showcapture != "all" and showcapture not in secname:
-                            continue
-                        # self._tw.sep("-", secname)  # noqa: ERA001
-                        line_content = content
-                        if content[-1:] == "\n":
-                            line_content = content[:-1]
-                        self._tw.line(line_content)
-                    # continue original code
-                    self._handle_teardown_sections(rep.nodeid)
-
-
-@pytest.hookimpl(trylast=True)
-def pytest_configure(config: pytest.Config) -> None:
-    vanilla_reporter = config.pluginmanager.getplugin("terminalreporter")
-    my_reporter = MyReporter(config)
-    config.pluginmanager.unregister(vanilla_reporter)
-    config.pluginmanager.register(my_reporter, "terminalreporter")
 
 
 @pytest.fixture
