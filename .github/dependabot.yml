@@ -19,3 +19,29 @@ updates:
         update-types:
           - minor
           - patch
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+      time: "00:30"
+    target-branch: dev
+    groups:
+      npm-semver-minor:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: npm
+    directory: /docs
+    schedule:
+      interval: daily
+      time: "00:30"
+    target-branch: dev
+    groups:
+      npm-semver-minor:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
