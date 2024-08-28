@@ -333,7 +333,7 @@ def main(
     try:
         if "-" in src:
             if config.files:
-                file_list = get_src([Path(x) for x in config.files], config)
+                file_list = get_src((Path(x) for x in config.files), config)
 
             else:
                 config.stdin = True
@@ -349,7 +349,7 @@ def main(
                 file_list = get_src([Path(temp_file.name)], config)
 
         else:
-            file_list = get_src([Path(x) for x in src], config)
+            file_list = get_src((Path(x) for x in src), config)
 
         if not file_list:
             return
