@@ -10,7 +10,6 @@ from concurrent.futures import (
     ThreadPoolExecutor,
     as_completed,
 )
-from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -388,9 +387,8 @@ def main(
         )
 
         with executor_cls(max_workers=worker_count) as exe:
-            func = partial(process, config)
             futures = {
-                exe.submit(func, this_file): this_file
+                exe.submit(process, config, this_file): this_file
                 for this_file in file_list
             }
 
