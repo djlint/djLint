@@ -111,7 +111,9 @@
     message: Missing title tag in html.
     flags: re.DOTALL|re.I
     patterns:
-      - <html[^>]*?>(?:(?!<title>).)*</html>
+      # Title allow a list of global attributes.
+      # https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes#list_of_global_attributes
+      - <html[^>]*?>(?:(?!<title(\s+(class|data-[\-\._0-9a-zA-Z:]+|dir|id|lang|translate)=\"[^"]*\")*>).)*</html>
 - rule:
     name: H017
     message: Void tags should be self closing.
@@ -125,14 +127,14 @@
     message: (Django) Internal links should use the {% url ... %} pattern.
     flags: re.DOTALL|re.I
     patterns:
-      - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:|data:)[\w|/]+
+      - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:|data:|sms:)[\w|/]+
       - <form(?:(?!>|\saction=(?:\"[^\"]*\"|'[^']*')).)*?\saction=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/|\s]+
 - rule:
     name: J018
     message: (Jinja) Internal links should use the {{ url_for() ... }} pattern.
     flags: re.DOTALL|re.I
     patterns:
-      - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:|data:)[\w|/]+
+      - <(?:a|div|span|input)\b[^>]*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:|data:|sms:)[\w|/]+
       - <form(?:(?!>|\saction=(?:\"[^\"]*\"|'[^']*')).)*?\saction=[\"|'](?!(?:https?://)|javascript:|on\w+:|mailto:|tel:)[\w|/|\s]+
 - rule:
     name: H019
