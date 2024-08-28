@@ -11,17 +11,20 @@ for a single test, run::
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
-# pylint: disable=C0116
 
+from __future__ import annotations
 
-from click.testing import CliRunner
+from typing import TYPE_CHECKING
 
 from src.djlint import main as djlint
+
+if TYPE_CHECKING:
+    from click.testing import CliRunner
 
 
 def test_custom_rules(runner: CliRunner) -> None:
     result = runner.invoke(
-        djlint, ["tests/test_linter/test_custom_rules/", "--profile", "django"]
+        djlint, ("tests/test_linter/test_custom_rules/", "--profile", "django")
     )
     assert """Linting""" in result.output
     assert """1/1""" in result.output

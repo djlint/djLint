@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_html/test_tag_script.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from src.djlint.reformat import formatter
 from tests.conftest import printer
+
+if TYPE_CHECKING:
+    from src.djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -79,11 +87,7 @@ test_data = [
         ("<script>{{missing_space}}</script>\n"),
         id="bad_tag",
     ),
-    pytest.param(
-        ("<script></script>\n"),
-        ("<script></script>\n"),
-        id="empty",
-    ),
+    pytest.param(("<script></script>\n"), ("<script></script>\n"), id="empty"),
     pytest.param(
         (
             '<script type="text/javascript">\n'
@@ -178,8 +182,18 @@ test_data = [
         id="single_script",
     ),
     pytest.param(
-        ('<script type="text/template">\n' " <div>\n" "    </div>\n" "</script>\n"),
-        ('<script type="text/template">\n' " <div>\n" "    </div>\n" "</script>\n"),
+        (
+            '<script type="text/template">\n'
+            " <div>\n"
+            "    </div>\n"
+            "</script>\n"
+        ),
+        (
+            '<script type="text/template">\n'
+            " <div>\n"
+            "    </div>\n"
+            "</script>\n"
+        ),
         id="something_else",
     ),
     pytest.param(
@@ -465,8 +479,12 @@ test_data = [
         id="module",
     ),
     pytest.param(
-        ('<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'),
-        ('<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'),
+        (
+            '<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'
+        ),
+        (
+            '<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'
+        ),
         id="module_attributes",
     ),
     pytest.param(
@@ -530,7 +548,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, basic_config):
+def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)

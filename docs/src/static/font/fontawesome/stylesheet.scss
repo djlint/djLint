@@ -1,55 +1,58 @@
-@use 'sass:math';
+@use "sass:math";
 
-@import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_functions';
-@import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_variables';
-@import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_mixins';
-@import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_core';
-@import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_sizing';
-@import '../../../../node_modules/@fortawesome/fontawesome-free/scss/_animated';
+@import "../../../../node_modules/@fortawesome/fontawesome-free/scss/_functions";
+@import "../../../../node_modules/@fortawesome/fontawesome-free/scss/_variables";
+@import "../../../../node_modules/@fortawesome/fontawesome-free/scss/_mixins";
+@import "../../../../node_modules/@fortawesome/fontawesome-free/scss/_core";
+@import "../../../../node_modules/@fortawesome/fontawesome-free/scss/_sizing";
+@import "../../../../node_modules/@fortawesome/fontawesome-free/scss/_animated";
 
-$fa-font-path: '/static/font/fontawesome/webfonts';
+$fa-font-path: "/static/font/fontawesome/webfonts";
 @font-face {
-  font-family: 'Font Awesome 6 Brands';
+  font-family: "Font Awesome 6 Brands";
   font-style: normal;
   font-weight: 400;
   font-display: $fa-font-display;
-  src: url('#{$fa-font-path}/fa-brands-400.woff2') format('woff2'),
-    url('#{$fa-font-path}/fa-brands-400.ttf') format('truetype');
+  src:
+    url("#{$fa-font-path}/fa-brands-400.woff2") format("woff2"),
+    url("#{$fa-font-path}/fa-brands-400.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Font Awesome 6 Free';
+  font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 900;
   font-display: $fa-font-display;
-  src: url('#{$fa-font-path}/fa-solid-900.woff2') format('woff2'),
-    url('#{$fa-font-path}/fa-solid-900.ttf') format('truetype');
+  src:
+    url("#{$fa-font-path}/fa-solid-900.woff2") format("woff2"),
+    url("#{$fa-font-path}/fa-solid-900.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Font Awesome 6 Free';
+  font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 400;
   font-display: $fa-font-display;
-  src: url('#{$fa-font-path}/fa-regular-400.woff2') format('woff2'),
-    url('#{$fa-font-path}/fa-regular-400.ttf') format('truetype');
+  src:
+    url("#{$fa-font-path}/fa-regular-400.woff2") format("woff2"),
+    url("#{$fa-font-path}/fa-regular-400.ttf") format("truetype");
 }
 
 .far,
 .#{$fa-css-prefix}-regular {
-  font-family: 'Font Awesome 6 Free';
+  font-family: "Font Awesome 6 Free";
   font-weight: 400;
 }
 
 .fas,
 .#{$fa-css-prefix}-solid {
-  font-family: 'Font Awesome 6 Free';
+  font-family: "Font Awesome 6 Free";
   font-weight: 900;
 }
 
 .fab,
 .#{$fa-css-prefix}-brands {
-  font-family: 'Font Awesome 6 Brands';
+  font-family: "Font Awesome 6 Brands";
   font-weight: 400;
 }
 

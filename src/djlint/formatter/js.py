@@ -1,18 +1,26 @@
 """djLint function to call jsbeautifier."""
+
+from __future__ import annotations
+
 from functools import partial
+from typing import TYPE_CHECKING
 
 import jsbeautifier
 import regex as re
 from jsbeautifier.javascript.options import BeautifierOptions
 
 from ..helpers import child_of_unformatted_block
-from ..settings import Config
+
+if TYPE_CHECKING:
+    from ..settings import Config
 
 
 def format_js(html: str, config: Config) -> str:
     """Format javascript inside <script> tags."""
 
-    def launch_formatter(config: Config, html: str, match: re.Match) -> str:
+    def launch_formatter(
+        config: Config, html: str, match: re.Match[str]
+    ) -> str:
         """Add break after if not in ignored block."""
         if child_of_unformatted_block(config, html, match):
             return match.group()
@@ -30,11 +38,15 @@ def format_js(html: str, config: Config) -> str:
 
         config.js_config["indent_level"] = 1
         opts = BeautifierOptions(config.js_config)
-        beautified_lines = jsbeautifier.beautify(match.group(3), opts).splitlines()
+        beautified_lines = jsbeautifier.beautify(
+            match.group(3), opts
+        ).splitlines()
 
         config.js_config["indent_level"] = 2
         opts = BeautifierOptions(config.js_config)
-        beautified_lines_test = jsbeautifier.beautify(match.group(3), opts).splitlines()
+        beautified_lines_test = jsbeautifier.beautify(
+            match.group(3), opts
+        ).splitlines()
 
         beautified = ""
         for line, test in zip(beautified_lines, beautified_lines_test):
@@ -49,10 +61,8 @@ def format_js(html: str, config: Config) -> str:
     func = partial(launch_formatter, config, html)
 
     return re.sub(
-        re.compile(
-            r"([ ]*?)(<(?:script)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</script>)",
-            re.IGNORECASE | re.DOTALL,
-        ),
+        r"([ ]*?)(<(?:script)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</script>)",
         func,
         html,
+        flags=re.IGNORECASE | re.DOTALL,
     )

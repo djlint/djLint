@@ -1,5 +1,5 @@
 module.exports = {
-  type: 'page',
+  type: "page",
   meta: {
     site: {
       name: (data) => data.site.title,
@@ -9,7 +9,7 @@ module.exports = {
         src: (data) => data.site.image,
       },
     },
-    language: 'en-US',
+    language: "en-US",
     url: (data) => data.site.url + data.page.url,
     title: (data) => data.title || data.site.title,
     description: (data) => data.description || data.site.description,

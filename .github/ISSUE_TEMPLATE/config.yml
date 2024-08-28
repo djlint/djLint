@@ -1,6 +1,6 @@
 blank_issues_enabled: false
 contact_links:
-- name: 💬 Discord Server
-  url: https://discord.gg/taghAqebzU
-  about: |
-    Chat with the community, ask questions and learn about best practices.
+  - name: 💬 Discord Server
+    url: https://discord.gg/taghAqebzU
+    about: |
+      Chat with the community, ask questions and learn about best practices.

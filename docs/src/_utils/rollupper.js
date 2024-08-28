@@ -2,10 +2,10 @@
 rollup plugin from https://www.hoeser.dev/blog/2021-02-28-11ty-and-rollup/
 */
 
-const rollup = require('rollup');
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+const rollup = require("rollup");
+const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
 
 module.exports = (eleventyConfig, options) => {
   new Rollupper(eleventyConfig, options);
@@ -15,10 +15,10 @@ class Rollupper {
   inputFiles = {};
   rollupOptions = {};
 
-  constructor(eleventyConfig, { shortcode = 'rollup', rollup } = {}) {
+  constructor(eleventyConfig, { shortcode = "rollup", rollup } = {}) {
     this.rollupOptions = rollup;
-    eleventyConfig.on('beforeBuild', () => this.beforeBuild());
-    eleventyConfig.on('afterBuild', () => this.afterBuild());
+    eleventyConfig.on("beforeBuild", () => this.beforeBuild());
+    eleventyConfig.on("afterBuild", () => this.afterBuild());
 
     // We want to use "this" in the callback function, so we save the class instance beforehand
     const thisRollupper = this;
@@ -43,20 +43,20 @@ class Rollupper {
     // generate a unique name for the file.
     // we take the first 6 chars of the sha256 of the absolute paths.
     const fileHash = await new Promise(function (resolve, reject) {
-      const hash = crypto.createHash('sha256');
+      const hash = crypto.createHash("sha256");
       const input = fs.createReadStream(src);
 
-      input.on('error', reject);
+      input.on("error", reject);
 
-      input.on('data', function (chunk) {
+      input.on("data", function (chunk) {
         hash.update(chunk);
       });
 
-      input.on('close', function () {
-        resolve(hash.digest('hex'));
+      input.on("close", function () {
+        resolve(hash.digest("hex"));
       });
     });
-    const scriptSrc = fileHash.substr(0, 6) + '.js';
+    const scriptSrc = fileHash.substr(0, 6) + ".js";
 
     // register for rollup bundling
     this.inputFiles[src] = scriptSrc;

@@ -3,8 +3,10 @@
 Much code is borrowed from https://github.com/rareyman/HTMLBeautify, many thanks!
 """
 
+from __future__ import annotations
+
 import difflib
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from .formatter.compress import compress_html
 from .formatter.condense import clean_whitespace, condense_html
@@ -12,7 +14,11 @@ from .formatter.css import format_css
 from .formatter.expand import expand_html
 from .formatter.indent import indent_html
 from .formatter.js import format_js
-from .settings import Config
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from .settings import Config
 
 
 def formatter(config: Config, rawcode: str) -> str:
@@ -21,7 +27,7 @@ def formatter(config: Config, rawcode: str) -> str:
         return rawcode
 
     # naturalize the line breaks
-    compressed = compress_html(("\n").join(rawcode.splitlines()), config)
+    compressed = compress_html("\n".join(rawcode.splitlines()), config)
 
     expanded = expand_html(compressed, config)
 
@@ -41,25 +47,32 @@ def formatter(config: Config, rawcode: str) -> str:
     line_ending = rawcode.find("\n")
     if line_ending > -1 and rawcode[max(line_ending - 1, 0)] == "\r":
         # convert \r?\n to \r\n
-        beautified_code = beautified_code.replace("\r", "").replace("\n", "\r\n")
+        beautified_code = beautified_code.replace("\r", "").replace(
+            "\n", "\r\n"
+        )
 
     return beautified_code
 
 
-def reformat_file(config: Config, this_file: Path) -> dict:
+def reformat_file(
+    config: Config, this_file: Path
+) -> dict[str, tuple[str, ...]]:
     """Reformat html file."""
-    rawcode = this_file.read_bytes().decode("utf8")
+    with this_file.open(encoding="utf-8", newline="") as f:
+        rawcode = f.read()
 
     beautified_code = formatter(config, rawcode)
 
     if (
         config.check is not True and beautified_code != rawcode
-    ) or config.stdin is True:
-        this_file.write_bytes(beautified_code.encode("utf8"))
+    ) or config.stdin:
+        with this_file.open("w", encoding="utf-8", newline="") as f:
+            f.write(beautified_code)
 
-    out = {
-        str(this_file): list(
-            difflib.unified_diff(rawcode.splitlines(), beautified_code.splitlines())
+    return {
+        str(this_file): tuple(
+            difflib.unified_diff(
+                rawcode.splitlines(), beautified_code.splitlines()
+            )
         )
     }
-    return out

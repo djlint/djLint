@@ -3,22 +3,22 @@
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
-    - Trichotillomania
+      - Trichotillomania
 
 - rule:
     name: T002
     flags: re.DOTALL|re.I
     patterns:
-    - Trichotillomania
+      - Trichotillomania
 
 - rule:
     name: T003
     patterns:
-    - Trichotillomania
+      - Trichotillomania
 
 - rule:
     name: T004
 
 - rule:
     patterns:
-    - Trichotillomania
+      - Trichotillomania

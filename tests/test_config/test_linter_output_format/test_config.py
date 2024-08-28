@@ -11,16 +11,20 @@ for a single test, run::
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
-# pylint: disable=C0116
 
-from click.testing import CliRunner
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from src.djlint import main as djlint
+
+if TYPE_CHECKING:
+    from click.testing import CliRunner
 
 
 def test_with_config(runner: CliRunner) -> None:
     result = runner.invoke(
-        djlint, ["tests/test_config/test_linter_output_format", "--lint"]
+        djlint, ("tests/test_config/test_linter_output_format", "--lint")
     )
     assert result.exit_code == 1
 

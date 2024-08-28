@@ -52,10 +52,10 @@ repos:
     hooks:
       - id: djlint-reformat-handlebars
         files: "\\.html"
-        types_or: ['html']
+        types_or: ["html"]
       - id: djlint-handlebars
         files: "\\.html"
-        types_or: ['html']
+        types_or: ["html"]
 ```
 
 Вы можете использовать параметры `files` или `exclude`, чтобы ограничить каждый хук своим каталогом, что позволит вам поддерживать несколько языков шаблонов в одном репозитории.

@@ -2,16 +2,22 @@
 
 poetry run pytest tests/test_cli.py
 """
-from click.testing import CliRunner
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from src.djlint import main as djlint
+
+if TYPE_CHECKING:
+    from click.testing import CliRunner
 
 
 def test_cli(runner: CliRunner) -> None:
     # missing options:
     result = runner.invoke(
         djlint,
-        [
+        (
             "-",
             "--check",
             "--blank-line-after-tag",
@@ -62,7 +68,7 @@ def test_cli(runner: CliRunner) -> None:
             "4",
             "--indent-js",
             "4",
-        ],
+        ),
         input="<div></div>\n",
     )
 

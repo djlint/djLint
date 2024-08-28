@@ -4,7 +4,10 @@
 2. Put short template tags back on one line
 """
 
+from __future__ import annotations
+
 from functools import partial
+from typing import TYPE_CHECKING
 
 import regex as re
 
@@ -13,21 +16,23 @@ from ..helpers import (
     inside_protected_trans_block,
     is_safe_closing_tag,
 )
-from ..settings import Config
+
+if TYPE_CHECKING:
+    from ..settings import Config
 
 
 def clean_whitespace(html: str, config: Config) -> str:
     """Compress back tags that do not need to be expanded."""
     # put empty tags on one line
 
-    def strip_space(config: Config, html: str, match: re.Match) -> str:
+    def strip_space(config: Config, html: str, match: re.Match[str]) -> str:
         """Trim leading whitespace."""
         # either inside a block, or this is a newline + closing block tag.
         # if it is a newline + closing block we can format it.
 
-        if inside_ignored_block(config, html, match) and not is_safe_closing_tag(
-            config, match.group()
-        ):
+        if inside_ignored_block(
+            config, html, match
+        ) and not is_safe_closing_tag(config, match.group()):
             return match.group()
 
         # trimmed blocks should not be here.
@@ -36,12 +41,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         if inside_protected_trans_block(config, html[: match.end()], match):
             return match.group().rstrip()
 
-        lines = len(
-            re.findall(
-                r"\n",
-                match.group(2),
-            )
-        )
+        lines = len(re.findall(r"\n", match.group(2)))
         blank_lines = "\n" * lines
         if lines > config.max_blank_lines:
             blank_lines = "\n" * max(config.max_blank_lines, 0)
@@ -59,30 +59,37 @@ def clean_whitespace(html: str, config: Config) -> str:
     if not config.preserve_leading_space:
         # remove any leading/trailing space
         html = re.sub(
-            re.compile(rf"^[ \t]*{line_contents}([{trailing_contents}]*)$", re.M),
+            rf"^[ \t]*{line_contents}([{trailing_contents}]*)$",
             func,
             html,
+            flags=re.M,
         )
 
     else:
         # only remove leading space in front of tags
         # <, {%
         html = re.sub(
-            re.compile(rf"^[ \t]*((?:<|{{%).*?)([{trailing_contents}]*)$", re.M),
+            rf"^[ \t]*((?:<|{{%).*?)([{trailing_contents}]*)$",
             func,
             html,
+            flags=re.M,
         )
         html = re.sub(
-            re.compile(rf"^{line_contents}([{trailing_contents}]*)$", re.M), func, html
+            rf"^{line_contents}([{trailing_contents}]*)$",
+            func,
+            html,
+            flags=re.M,
         )
 
-    def add_blank_line_after(config: Config, html: str, match: re.Match) -> str:
+    def add_blank_line_after(
+        config: Config, html: str, match: re.Match[str]
+    ) -> str:
         """Add break after if not in ignored block."""
         if inside_ignored_block(config, html, match):
             return match.group()
 
         # check that next line is not blank.
-        if html[match.end() : match.end() + 1] != "\n":  # noqa:E203
+        if html[match.end() : match.end() + 1] != "\n":
             return match.group() + "\n"
 
         return match.group()
@@ -91,17 +98,17 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     # should we add blank lines after load tags?
     if config.blank_line_after_tag:
-        for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]:
+        for tag in config.blank_line_after_tag.split(","):
             html = re.sub(
-                re.compile(
-                    rf"((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)",
-                    re.IGNORECASE | re.MULTILINE | re.DOTALL,
-                ),
+                rf"((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
                 func,
                 html,
+                flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
             )
 
-    def add_blank_line_before(config: Config, html: str, match: re.Match) -> str:
+    def add_blank_line_before(
+        config: Config, html: str, match: re.Match[str]
+    ) -> str:
         """Add break before if not in ignored block and not first line in file."""
         if inside_ignored_block(config, html, match) or match.start() == 0:
             return match.group()
@@ -112,19 +119,17 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     # should we add blank lines before load tags?
     if config.blank_line_before_tag:
-        for tag in [x.strip() for x in config.blank_line_before_tag.split(",")]:
+        for tag in config.blank_line_before_tag.split(","):
             html = re.sub(
-                re.compile(
-                    rf"(?<!^\n)((?:{{%\s*?{tag}\b[^}}]+?%}}\n?)+)",
-                    re.IGNORECASE | re.MULTILINE | re.DOTALL,
-                ),
+                rf"(?<!^\n)((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
                 func,
                 html,
+                flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
             )
 
     # add line after yaml front matter
 
-    def yaml_add_blank_line_after(html: str, match: re.Match) -> str:
+    def yaml_add_blank_line_after(html: str, match: re.Match[str]) -> str:
         """Add break after if not in ignored block."""
         if match.start() == 0 and not html.startswith("\n\n", match.end()):
             # verify there are not already blank lines
@@ -132,35 +137,32 @@ def clean_whitespace(html: str, config: Config) -> str:
 
         return match.group()
 
-    if config.no_line_after_yaml is False:
+    if not config.no_line_after_yaml:
         func = partial(yaml_add_blank_line_after, html)
         html = re.sub(
-            re.compile(
-                r"(^---.+?---)$",
-                re.MULTILINE | re.DOTALL,
-            ),
-            func,
-            html,
+            r"(^---.+?---)$", func, html, flags=re.MULTILINE | re.DOTALL
         )
 
     return html
 
 
-def condense_html(html, config):
+def condense_html(html: str, config: Config) -> str:
     """Put short tags back on a single line."""
     if config.preserve_leading_space:
         # if a user is attempting to reuse any leading
         # space for other purposes, we should not try to remove it.
         return html
 
-    def condense_line(config: Config, html: str, match: re.Match) -> str:
+    def condense_line(config: Config, html: str, match: re.Match[str]) -> str:
         """Put contents on a single line if below max line length."""
         if config.line_break_after_multiline_tag:
             # always force a break by pretending the line is too long.
             combined_length = config.max_line_length + 1
         else:
             combined_length = len(
-                match.group(1).splitlines()[-1] + match.group(3) + match.group(4)
+                match.group(1).splitlines()[-1]
+                + match.group(3)
+                + match.group(4)
             )
 
         if (
@@ -178,13 +180,13 @@ def condense_html(html, config):
         if config.blank_line_after_tag:
             return not any(
                 re.findall(
-                    re.compile(
-                        rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
-                        re.IGNORECASE | re.MULTILINE | re.DOTALL,
-                    ),
+                    rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
                     html,
+                    flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
                 )
-                for tag in [x.strip() for x in config.blank_line_after_tag.split(",")]
+                for tag in (
+                    x.strip() for x in config.blank_line_after_tag.split(",")
+                )
             )
         return True
 
@@ -193,13 +195,13 @@ def condense_html(html, config):
         if config.blank_line_before_tag:
             return not any(
                 re.findall(
-                    re.compile(
-                        rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
-                        re.IGNORECASE | re.MULTILINE | re.DOTALL,
-                    ),
+                    rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
                     html,
+                    flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
                 )
-                for tag in [x.strip() for x in config.blank_line_before_tag.split(",")]
+                for tag in (
+                    x.strip() for x in config.blank_line_before_tag.split(",")
+                )
             )
         return True
 
@@ -208,23 +210,17 @@ def condense_html(html, config):
 
     # put short single line tags on one line
     html = re.sub(
-        re.compile(
-            rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)\s*([^<\n]*?)\s*?(</(\2)>)",
-            re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
-        ),
+        rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)\s*([^<\n]*?)\s*?(</(\2)>)",
         func,
         html,
+        flags=re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE,
     )
 
     # put short template tags back on one line. must have leading space
     # jinja +%} and {%+ intentionally omitted.
-    html = re.sub(
-        re.compile(
-            rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-        ),
+    return re.sub(
+        rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
         func,
         html,
+        flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
     )
-
-    return html

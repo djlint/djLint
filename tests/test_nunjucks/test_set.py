@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_nunjucks/test_set.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from src.djlint.reformat import formatter
 from tests.conftest import config_builder, printer
+
+if TYPE_CHECKING:
+    from typing_extensions import Any
 
 test_data = [
     pytest.param(
@@ -117,7 +125,9 @@ test_data = [
             '"primary": true\n'
             "},] %}"
         ),
-        ('{% set schema = [{"name": "id", "type": "integer", "primary": true}] %}\n'),
+        (
+            '{% set schema = [{"name": "id", "type": "integer", "primary": true}] %}\n'
+        ),
         ({}),
         id="indent invalid json",
     ),
@@ -144,7 +154,9 @@ test_data = [
             '"primary+1": true\n'
             "}] %}"
         ),
-        ('{% set schema = [{"name": "id", "type": "1", "primary+1": true}] %}\n'),
+        (
+            '{% set schema = [{"name": "id", "type": "1", "primary+1": true}] %}\n'
+        ),
         ({}),
         id="indent valid json",
     ),
@@ -152,7 +164,9 @@ test_data = [
         (
             '{% set table_keys = [ ( "date_started", "Start date"), ( "name", "Name" )] %}'
         ),
-        ("{% set table_keys = [('date_started', 'Start date'), ('name', 'Name')] %}\n"),
+        (
+            "{% set table_keys = [('date_started', 'Start date'), ('name', 'Name')] %}\n"
+        ),
         ({}),
         id="indent py style list",
     ),
@@ -232,7 +246,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
-def test_base(source, expected, args, nunjucks_config):
+def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
     args["profile"] = "nunjucks"
     output = formatter(config_builder(args), source)
 

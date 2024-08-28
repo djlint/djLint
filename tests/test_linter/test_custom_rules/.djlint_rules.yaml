@@ -3,4 +3,4 @@
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
-    - Trichotillomania
+      - Trichotillomania

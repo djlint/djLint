@@ -1,88 +1,88 @@
-import { EditorView, basicSetup } from 'codemirror';
-import { EditorState, Compartment } from '@codemirror/state';
-import { html } from '@codemirror/lang-html';
+import { html } from "@codemirror/lang-html";
+import { Compartment, EditorState } from "@codemirror/state";
+import { basicSetup, EditorView } from "codemirror";
 
 let session_id = 0;
-if (typeof Worker !== 'undefined') {
-  console.log('creating web worker ');
+if (typeof Worker !== "undefined") {
+  console.log("creating web worker ");
   let w;
 
-  if (typeof w == 'undefined') {
-    w = new Worker('/static/js/worker.js');
+  if (typeof w == "undefined") {
+    w = new Worker("/static/js/worker.js");
   }
 
   function getConfig() {
     let config = {};
     const customBlocks = document.getElementById(
-      'settings-custom-blocks',
+      "settings-custom-blocks",
     ).value;
-    if (customBlocks) config['customBlocks'] = customBlocks;
-    const customHtml = document.getElementById('settings-custom-html').value;
-    if (customHtml) config['customHtml'] = customHtml;
-    const indent = document.getElementById('settings-indent').value;
-    if (indent) config['indent'] = indent;
+    if (customBlocks) config["customBlocks"] = customBlocks;
+    const customHtml = document.getElementById("settings-custom-html").value;
+    if (customHtml) config["customHtml"] = customHtml;
+    const indent = document.getElementById("settings-indent").value;
+    if (indent) config["indent"] = indent;
     const blankLineAfterTag = document.getElementById(
-      'settings-blank-line-after-tag',
+      "settings-blank-line-after-tag",
     ).value;
-    if (blankLineAfterTag) config['blankLineAfterTag'] = blankLineAfterTag;
+    if (blankLineAfterTag) config["blankLineAfterTag"] = blankLineAfterTag;
     const blankLineBeforeTag = document.getElementById(
-      'settings-blank-line-before-tag',
+      "settings-blank-line-before-tag",
     ).value;
-    if (blankLineBeforeTag) config['blankLineBeforeTag'] = blankLineBeforeTag;
-    const profile = document.getElementById('settings-profile').value;
-    if (profile) config['profile'] = profile;
+    if (blankLineBeforeTag) config["blankLineBeforeTag"] = blankLineBeforeTag;
+    const profile = document.getElementById("settings-profile").value;
+    if (profile) config["profile"] = profile;
     const maxLineLength = document.getElementById(
-      'settings-max-line-length',
+      "settings-max-line-length",
     ).value;
-    if (maxLineLength) config['maxLineLength'] = maxLineLength;
+    if (maxLineLength) config["maxLineLength"] = maxLineLength;
     const maxAttributeLength = document.getElementById(
-      'settings-max-attribute-length',
+      "settings-max-attribute-length",
     ).value;
-    if (maxAttributeLength) config['maxAttributeLength'] = maxAttributeLength;
+    if (maxAttributeLength) config["maxAttributeLength"] = maxAttributeLength;
     const formatAttributeTemplateTags = document.getElementById(
-      'settings-format-attribute-template-tags',
+      "settings-format-attribute-template-tags",
     ).checked;
     if (formatAttributeTemplateTags)
-      config['formatAttributeTemplateTags'] = formatAttributeTemplateTags;
+      config["formatAttributeTemplateTags"] = formatAttributeTemplateTags;
     const preserveLeadingSpace = document.getElementById(
-      'settings-preserve-leading-space',
+      "settings-preserve-leading-space",
     ).checked;
     if (preserveLeadingSpace)
-      config['preserveLeadingSpace'] = preserveLeadingSpace;
+      config["preserveLeadingSpace"] = preserveLeadingSpace;
     const preserveBlankSpace = document.getElementById(
-      'settings-preserve-blank-space',
+      "settings-preserve-blank-space",
     ).checked;
-    if (preserveBlankSpace) config['preserveBlankSpace'] = preserveBlankSpace;
-    const formatJs = document.getElementById('settings-format-js').checked;
-    if (formatJs) config['formatJs'] = formatJs;
-    const formatCss = document.getElementById('settings-format-css').checked;
-    if (formatCss) config['formatCss'] = formatCss;
+    if (preserveBlankSpace) config["preserveBlankSpace"] = preserveBlankSpace;
+    const formatJs = document.getElementById("settings-format-js").checked;
+    if (formatJs) config["formatJs"] = formatJs;
+    const formatCss = document.getElementById("settings-format-css").checked;
+    if (formatCss) config["formatCss"] = formatCss;
 
     const closeVoidTags = document.getElementById(
-      'settings-close-void-tags',
+      "settings-close-void-tags",
     ).checked;
-    if (closeVoidTags) config['closeVoidTags'] = closeVoidTags;
-    const ignoreCase = document.getElementById('settings-ignore-case').checked;
-    if (ignoreCase) config['ignoreCase'] = ignoreCase;
+    if (closeVoidTags) config["closeVoidTags"] = closeVoidTags;
+    const ignoreCase = document.getElementById("settings-ignore-case").checked;
+    if (ignoreCase) config["ignoreCase"] = ignoreCase;
     const lineBreakAfterMultilineTag = document.getElementById(
-      'settings-line-break-after-multiline-tag',
+      "settings-line-break-after-multiline-tag",
     ).checked;
     if (lineBreakAfterMultilineTag)
-      config['lineBreakAfterMultilineTag'] = lineBreakAfterMultilineTag;
+      config["lineBreakAfterMultilineTag"] = lineBreakAfterMultilineTag;
     const noLineAfterYaml = document.getElementById(
-      'settings-no-line-after-yaml',
+      "settings-no-line-after-yaml",
     ).checked;
-    if (noLineAfterYaml) config['noLineAfterYaml'] = noLineAfterYaml;
+    if (noLineAfterYaml) config["noLineAfterYaml"] = noLineAfterYaml;
 
     const noFunctionFormatting = document.getElementById(
-      'settings-no-function-formatting',
+      "settings-no-function-formatting",
     ).checked;
     if (noFunctionFormatting)
-      config['noFunctionFormatting'] = noFunctionFormatting;
+      config["noFunctionFormatting"] = noFunctionFormatting;
     const noSetFormatting = document.getElementById(
-      'settings-no-set-formatting',
+      "settings-no-set-formatting",
     ).checked;
-    if (noSetFormatting) config['noSetFormatting'] = noSetFormatting;
+    if (noSetFormatting) config["noSetFormatting"] = noSetFormatting;
 
     return config;
   }
@@ -98,27 +98,27 @@ if (typeof Worker !== 'undefined') {
 
   w.onmessage = (event) => {
     const { id, type, message, ...data } = event.data;
-    if (type == 'status') {
-      const div = document.createElement('div');
+    if (type == "status") {
+      const div = document.createElement("div");
       div.innerText = message;
-      const status = document.getElementById('djlint-status');
+      const status = document.getElementById("djlint-status");
       status.insertBefore(div, status.lastElementChild);
 
-      if (message === 'ready') {
-        document.getElementById('djlint-status').classList.add('is-hidden');
+      if (message === "ready") {
+        document.getElementById("djlint-status").classList.add("is-hidden");
         document
-          .getElementById('djlint-settings')
-          .closest('.columns.is-hidden')
-          .classList.remove('is-hidden');
+          .getElementById("djlint-settings")
+          .closest(".columns.is-hidden")
+          .classList.remove("is-hidden");
         runPython(editor.state.doc.toString());
       }
     }
-    if ((type == 'error' || type == 'html') && id == session_id) {
+    if ((type == "error" || type == "html") && id == session_id) {
       setOutput(message);
-    } else if (type == 'status') {
+    } else if (type == "status") {
       console.log(message);
-    } else if (type == 'version') {
-      document.getElementById('djlint-version').textContent = message;
+    } else if (type == "version") {
+      document.getElementById("djlint-version").textContent = message;
     } else {
       console.log(event.data);
     }
@@ -143,7 +143,7 @@ if (typeof Worker !== 'undefined') {
       doc: `<div>\n    <p>Welcome to djLint online!</p>\n</div>`,
     }),
 
-    parent: document.getElementById('djlint-input'),
+    parent: document.getElementById("djlint-input"),
   });
 
   let output = new EditorView({
@@ -152,7 +152,7 @@ if (typeof Worker !== 'undefined') {
       doc: ``,
       readonly: true,
     }),
-    parent: document.getElementById('djlint-output'),
+    parent: document.getElementById("djlint-output"),
   });
 
   // add pyodide returned value to the output
@@ -180,15 +180,15 @@ if (typeof Worker !== 'undefined') {
     });
   }
 
-  document.getElementById('djlint-settings').addEventListener('change', () => {
+  document.getElementById("djlint-settings").addEventListener("change", () => {
     runPython(editor.state.doc.toString());
   });
 } else {
   // Sorry! No Web Worker support..
   document
-    .getElementById('djlint-status')
+    .getElementById("djlint-status")
     .innerText(
-      'Sorry, a browser that supports web workers is required to use this online tool.',
+      "Sorry, a browser that supports web workers is required to use this online tool.",
     );
 }
 

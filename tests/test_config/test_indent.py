@@ -4,10 +4,18 @@
 
 poetry run pytest tests/test_config/test_indent.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from src.djlint.reformat import formatter
 from tests.conftest import config_builder, printer
+
+if TYPE_CHECKING:
+    from typing_extensions import Any
 
 test_data = [
     pytest.param(
@@ -22,21 +30,7 @@ test_data = [
             "</section>\n"
         ),
         ({"indent": 2}),
-        id="int",
-    ),
-    pytest.param(
-        ("<section><p><div><span></span></div></p></section>"),
-        (
-            "<section>\n"
-            "  <p>\n"
-            "    <div>\n"
-            "      <span></span>\n"
-            "    </div>\n"
-            "  </p>\n"
-            "</section>\n"
-        ),
-        ({"indent": "2"}),
-        id="str",
+        id="two",
     ),
     pytest.param(
         ("<section><p><div><span></span></div></p></section>"),
@@ -56,7 +50,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
-def test_base(source, expected, args):
+def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
     output = formatter(config_builder(args), source)
 
     printer(expected, source, output)

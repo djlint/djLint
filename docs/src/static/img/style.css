@@ -76,7 +76,7 @@
 }
 .breadcrumb li + li:before {
   color: #b5b5b5;
-  content: '/';
+  content: "/";
 }
 .breadcrumb ol,
 .breadcrumb ul {
@@ -109,14 +109,14 @@
   font-size: 1.5rem;
 }
 .breadcrumb.has-arrow-separator li + li:before {
-  content: '→';
+  content: "→";
 }
 .breadcrumb.has-bullet-separator li + li:before {
-  content: '•';
+  content: "•";
 }
 .breadcrumb.has-dot-separator li + li:before {
-  content: '·';
+  content: "·";
 }
 .breadcrumb.has-succeeds-separator li + li:before {
-  content: '≻';
+  content: "≻";
 }

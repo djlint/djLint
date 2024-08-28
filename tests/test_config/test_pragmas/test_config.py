@@ -8,24 +8,27 @@ run::
    pytest tests/test_config/test_pragmas/test_config.py::test_require_pragma
 
 """
-# pylint: disable=C0116
 
+from __future__ import annotations
 
-from click.testing import CliRunner
+from typing import TYPE_CHECKING
 
 from src.djlint import main as djlint
+
+if TYPE_CHECKING:
+    from click.testing import CliRunner
 
 
 def test_require_pragma(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint,
-        [
+        (
             "tests/test_config/test_pragmas/html_one.html",
             "--lint",
             "--check",
             "--profile",
             "django",
-        ],
+        ),
     )
 
     assert """No files to check!""" in result.output
@@ -33,12 +36,12 @@ def test_require_pragma(runner: CliRunner) -> None:
 
     result = runner.invoke(
         djlint,
-        [
+        (
             "tests/test_config/test_pragmas/html_two.html",
             "--check",
             "--profile",
             "django",
-        ],
+        ),
     )
     assert (
         """ {# djlint:on #}
@@ -55,12 +58,12 @@ def test_require_pragma(runner: CliRunner) -> None:
 
     result = runner.invoke(
         djlint,
-        [
+        (
             "tests/test_config/test_pragmas/html_three.html",
             "--check",
             "--profile",
             "handlebars",
-        ],
+        ),
     )
 
     assert (
@@ -77,12 +80,12 @@ def test_require_pragma(runner: CliRunner) -> None:
 
     result = runner.invoke(
         djlint,
-        [
+        (
             "tests/test_config/test_pragmas/html_four.html",
             "--check",
             "--profile",
             "golang",
-        ],
+        ),
     )
 
     assert (
@@ -104,7 +107,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert result.exit_code == 1
 
     result = runner.invoke(
-        djlint, ["tests/test_config/test_pragmas/html_five.html", "--check"]
+        djlint, ("tests/test_config/test_pragmas/html_five.html", "--check")
     )
     assert (
         """ <!-- djlint:on -->
@@ -121,12 +124,12 @@ def test_require_pragma(runner: CliRunner) -> None:
 
     result = runner.invoke(
         djlint,
-        [
+        (
             "tests/test_config/test_pragmas/html_six.html",
             "--check",
             "--profile",
             "django",
-        ],
+        ),
     )
     assert (
         """ {% comment %} djlint:on {% endcomment %}

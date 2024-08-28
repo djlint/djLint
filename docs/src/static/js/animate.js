@@ -20,12 +20,12 @@
   var d = document,
     load = function () {
       [].forEach.call(
-        d.querySelectorAll('.animated[data-animate]'),
+        d.querySelectorAll(".animated[data-animate]"),
         function (el) {
           if (isInViewport(el)) {
             // set image to nothing to clear, then load new
-            el.classList.add(el.getAttribute('data-animate'));
-            el.removeAttribute('data-animate');
+            el.classList.add(el.getAttribute("data-animate"));
+            el.removeAttribute("data-animate");
           }
         },
       );
@@ -46,22 +46,22 @@
   };
 
   load();
-  d.addEventListener('lazy', function () {
+  d.addEventListener("lazy", function () {
     setTimeout(function () {
       load();
     }, 0);
   });
 
   var resetHash = function () {
-    if (window.location.hash != '') {
+    if (window.location.hash != "") {
       history.pushState(
-        '',
+        "",
         document.title,
         window.location.pathname + window.location.search,
       );
     }
   };
-  d.addEventListener('scroll', function () {
+  d.addEventListener("scroll", function () {
     debounce(load(), 200);
 
     debounce(resetHash(), 500);

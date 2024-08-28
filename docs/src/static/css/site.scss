@@ -1,18 +1,18 @@
-@use '../../../node_modules/@fontsource/inter/scss/mixins' as Inter;
-@use '../../../node_modules/@fontsource/rasa/scss/mixins' as Rasa;
-@use '../../../node_modules/@fontsource/crimson-pro/scss/mixins' as Crimson;
+@use "../../../node_modules/@fontsource/inter/scss/mixins" as Inter;
+@use "../../../node_modules/@fontsource/rasa/scss/mixins" as Rasa;
+@use "../../../node_modules/@fontsource/crimson-pro/scss/mixins" as Crimson;
 $link-hover: hsl(207, 61%, 44%);
 $link: hsl(207, 61%, 44%);
 
-@import '../../../node_modules/bulma/bulma';
-@import '../../../node_modules/bulma-pricingtable/src/sass/index';
-@import '../../../node_modules/@creativebulma/bulma-divider/src/sass/index';
+@import "../../../node_modules/bulma/bulma";
+@import "../../../node_modules/bulma-pricingtable/src/sass/index";
+@import "../../../node_modules/@creativebulma/bulma-divider/src/sass/index";
 
 $use-all: true;
 $use-slideInDown: true;
-@import '../../../node_modules/animate-sass/animate';
+@import "../../../node_modules/animate-sass/animate";
 
-@import '../font/fontawesome/stylesheet';
+@import "../font/fontawesome/stylesheet";
 
 /* purgecss start ignore */
 
@@ -34,7 +34,7 @@ pre .section {
   padding: unset;
 }
 
-@import '../../../node_modules/prismjs/themes/prism-tomorrow';
+@import "../../../node_modules/prismjs/themes/prism-tomorrow";
 
 @include Inter.faces(
   $family: Inter,
@@ -45,7 +45,7 @@ pre .section {
   ),
   $display: swap,
   $subsets: latin,
-  $directory: '/static/font/inter/files/'
+  $directory: "/static/font/inter/files/"
 );
 
 @include Rasa.faces(
@@ -58,15 +58,15 @@ pre .section {
   ),
   $display: swap,
   $subsets: latin,
-  $directory: '/static/font/rasa/files/'
+  $directory: "/static/font/rasa/files/"
 );
 
 @include Crimson.faces(
-  $family: 'Crimson Pro',
+  $family: "Crimson Pro",
   $weights: 400,
   $display: swap,
   $subsets: latin,
-  $directory: '/static/font/crimson-pro/files/'
+  $directory: "/static/font/crimson-pro/files/"
 );
 
 html {
@@ -74,14 +74,14 @@ html {
 }
 
 body {
-  font-family: 'Inter', Arial, Verdana, Tahoma, sans-serif;
+  font-family: "Inter", Arial, Verdana, Tahoma, sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100%;
 }
 
 .title {
-  font-family: 'Rasa', Georgia, 'Times New Roman', Times, serif;
+  font-family: "Rasa", Georgia, "Times New Roman", Times, serif;
 }
 .huge {
   font-size: 100px;
@@ -210,7 +210,10 @@ pre .number {
 }
 
 .story {
-  font-family: Crimson Pro, Georgia, serif;
+  font-family:
+    Crimson Pro,
+    Georgia,
+    serif;
   font-size: 24px;
   font-weight: 400;
   line-height: 1.6666666667;
@@ -364,13 +367,15 @@ pre:not(.CodeMirror-line) {
   border: 8px solid $grey-lightest;
   border-radius: 4px;
   border-top: 24px solid $grey-lightest;
-  box-shadow: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
+  box-shadow:
+    0 0.5em 1em -0.125em #0a0a0a1a,
+    0 0 0 1px #0a0a0a05;
   position: relative;
 }
 
 .is-framed::before {
   border-radius: 10px;
-  content: '';
+  content: "";
   height: 15px;
   left: 0px;
   position: absolute;
@@ -381,7 +386,7 @@ pre:not(.CodeMirror-line) {
 
 .is-framed::after {
   border-radius: 10px;
-  content: '';
+  content: "";
   height: 15px;
   left: 20px;
   position: absolute;
@@ -399,7 +404,9 @@ pre:not(.CodeMirror-line) {
 }
 
 a.card:hover {
-  box-shadow: 0 0.5em 2em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
+  box-shadow:
+    0 0.5em 2em -0.125em #0a0a0a1a,
+    0 0 0 1px #0a0a0a05;
 }
 
 .title {
@@ -452,7 +459,7 @@ a.card:hover {
   border-radius: $radius;
 }
 
-pre[class*='language'] {
+pre[class*="language"] {
   border-radius: $radius;
 }
 /* purgecss end ignore */
