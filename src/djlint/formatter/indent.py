@@ -74,6 +74,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     is_raw_first_line = False
     in_script_style_tag = False
     is_block_raw = False
+    jinja_replace_list = []
 
     slt_html = config.indent_html_tags
 
@@ -289,7 +290,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             func = partial(format_attributes, config, item)
 
             tmp = re.sub(
-                rf"(\s*?)(<(?:{config.indent_html_tags})\b)((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}\/])+?)(\s?/?>)",
+                rf"(\s*?)(<(?:{config.indent_html_tags}))\s((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}\/])+?)(\s?/?>)",
                 func,
                 tmp,
                 flags=re.VERBOSE | re.IGNORECASE,
@@ -306,6 +307,20 @@ def indent_html(rawcode: str, config: Config) -> str:
                 ignored_level = max(ignored_level, 0)
             if ignored_level == 0:
                 is_block_raw = False
+
+        # detect the outer quotes for jinja
+        if config.profile == "jinja":
+            matches = re.findall(
+                r"=([\"'])(\{\{[\s\S]*?\}\})\1", tmp, flags=re.MULTILINE
+            )
+
+            for match in matches:
+                outer_quotes = match[0]
+                inner_content = match[1]
+                jinja_replace_list.append({
+                    "outer_quote": outer_quotes,
+                    "content": inner_content,
+                })
 
         beautified_code += tmp
 
@@ -391,7 +406,43 @@ def indent_html(rawcode: str, config: Config) -> str:
             leading_space,
         )
 
-        return f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
+        # # define cleaned match with both quote styles
+        cleaned_match = f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
+
+        if config.profile == "jinja":
+            outer_quotes = None
+            inner_quotes = None
+
+            # Determine user quote type
+            for jinja_content in jinja_replace_list:
+                content = cleaned_match.replace(
+                    '"', "'"
+                )  # Replace double quotes
+                if content == jinja_content.get("content"):
+                    outer_quotes = jinja_content.get("outer_quote")
+                    inner_quotes = "'" if outer_quotes == '"' else '"'
+                    break
+                content = cleaned_match.replace(
+                    "'", '"'
+                )  # Replace single quotes
+                if content == jinja_content.get("content"):
+                    outer_quotes = jinja_content.get("outer_quote")
+                    inner_quotes = '"' if outer_quotes == "'" else "'"
+                    break
+
+            if outer_quotes is not None and inner_quotes is not None:
+                # Replace all content inner quotes and remove trailing/leading spaces
+                cleaned_contents = re.sub(
+                    rf"(?<=\{re.escape(outer_quotes)})\s+|\s+(?=\{re.escape(outer_quotes)})",
+                    "",
+                    contents.replace(outer_quotes, inner_quotes),
+                )
+
+                # Update cleaned match
+                cleaned_match = f"{leading_space}{open_bracket} {tag}({cleaned_contents}){index} {close_bracket}"
+                cleaned_match = cleaned_match.strip()
+
+        return cleaned_match
 
     if not config.no_set_formatting:
         func = partial(format_set, config, beautified_code)

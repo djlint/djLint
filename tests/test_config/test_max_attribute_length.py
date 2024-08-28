@@ -97,6 +97,12 @@ test_data = [
         ({"max_attribute_length": 10000, "max_line_length": 1000}),
         id="longest lines",
     ),
+    pytest.param(
+        ("<tag-looooong></tag-looooong>\n"),
+        ("<tag-looooong>\n</tag-looooong>\n"),
+        ({"max_attribute_length": 3, "custom_html": "[\\w\\-]+"}),
+        id="long tag custom_html",
+    ),
 ]
 
 
