@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.34.1",
+  "version": "1.34.2",
   "description": "HTML Template Linter and Formatter",
   "directories": {
     "doc": "docs",
@@ -31,7 +31,7 @@
   ],
   "scripts": {
     "format": "prettier --config .prettierrc \"{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write",
-    "postinstall": "python3 -m pip install --upgrade djlint==1.34.1",
+    "postinstall": "python3 -m pip install --upgrade djlint==1.34.2",
     "pre-commit": "lint-staged",
     "commit": "git add . && pre-commit run; git add . && npm run pre-commit && cz --no-verify",
     "test": "xo"
