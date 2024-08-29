@@ -18,12 +18,7 @@ if TYPE_CHECKING:
     from typing_extensions import Any
 
 test_data = [
-    pytest.param(
-        ("{% raw%}   {%endraw %}"),
-        ("{% raw %}   {% endraw %}\n"),
-        ({"ignore_blocks": "raw"}),
-        id="ignore_raw",
-    ),
+    pytest.param(("{% raw%}   {%endraw %}"), ("{% raw %}   {% endraw %}\n"), ({"ignore_blocks": "raw"}), id="ignore_raw"),
     pytest.param(
         ("{% raw%} <div><img/></div>  {%endraw %}"),
         ("{% raw %}\n" "<div>\n" "    <img />\n" "</div>\n" "{% endraw %}\n"),

@@ -17,24 +17,13 @@ if TYPE_CHECKING:
 
 
 def run(
-    rule: dict[str, Any],
-    config: Config,
-    html: str,
-    filepath: str,
-    line_ends: list[dict[str, int]],
-    *args: Any,
-    **kwargs: Any,
+    rule: dict[str, Any], config: Config, html: str, filepath: str, line_ends: list[dict[str, int]], *args: Any, **kwargs: Any
 ) -> tuple[LintError, ...]:
     """Rule that fails if if the html file contains 'bad'.
 
     In the real world, this should be done with a simple regex rule.
     """
     return tuple(
-        {
-            "code": rule["name"],
-            "line": get_line(match.start(), line_ends),
-            "match": match.group().strip()[:20],
-            "message": rule["message"],
-        }
+        {"code": rule["name"], "line": get_line(match.start(), line_ends), "match": match.group().strip()[:20], "message": rule["message"]}
         for match in re.finditer(r"bad", html)
     )

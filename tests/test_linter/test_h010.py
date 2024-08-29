@@ -19,14 +19,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ('<img HEIGHT="12" Width="3" alT="none" />'),
-        ([
-            {
-                "code": "H010",
-                "line": "1:0",
-                "match": "<img HEIGHT=",
-                "message": "Attribute names should be lowercase.",
-            }
-        ]),
+        ([{"code": "H010", "line": "1:0", "match": "<img HEIGHT=", "message": "Attribute names should be lowercase."}]),
         id="opening",
     ),
     pytest.param(("<li>ID=username</li>"), ([]), id="opening"),
@@ -34,16 +27,11 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 
-    mismatch = (
-        *(x for x in output[filename] if x not in expected),
-        *(x for x in expected if x not in output[filename]),
-    )
+    mismatch = (*(x for x in output[filename] if x not in expected), *(x for x in expected if x not in output[filename]))
     assert not mismatch

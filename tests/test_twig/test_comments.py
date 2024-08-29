@@ -22,30 +22,8 @@ test_data = [
         id="comments",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            "    {#\n"
-            "    multi\n"
-            "    line\n"
-            "    comment\n"
-            "    #}\n"
-            "</div>\n"
-            "<div>\n"
-            "    <p></p>\n"
-            "</div>\n"
-        ),
-        (
-            "<div>\n"
-            "    {#\n"
-            "    multi\n"
-            "    line\n"
-            "    comment\n"
-            "    #}\n"
-            "</div>\n"
-            "<div>\n"
-            "    <p></p>\n"
-            "</div>\n"
-        ),
+        ("<div>\n" "    {#\n" "    multi\n" "    line\n" "    comment\n" "    #}\n" "</div>\n" "<div>\n" "    <p></p>\n" "</div>\n"),
+        ("<div>\n" "    {#\n" "    multi\n" "    line\n" "    comment\n" "    #}\n" "</div>\n" "<div>\n" "    <p></p>\n" "</div>\n"),
         id="comments",
     ),
 ]

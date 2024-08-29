@@ -5,11 +5,7 @@ from __future__ import annotations
 import os
 import sys
 import tempfile
-from concurrent.futures import (
-    ProcessPoolExecutor,
-    ThreadPoolExecutor,
-    as_completed,
-)
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -30,216 +26,59 @@ if TYPE_CHECKING:
 
 @click.command(context_settings={"help_option_names": ["-h", "--help"]})  # type: ignore[operator]
 @click.argument(
-    "src",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=True,
-        readable=True,
-        allow_dash=True,
-    ),
-    nargs=-1,
-    required=True,
-    metavar="SRC ...",
+    "src", type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, allow_dash=True), nargs=-1, required=True, metavar="SRC ..."
 )
 @click.version_option(package_name="djlint")
-@click.option(
-    "-e",
-    "--extension",
-    type=str,
-    default="",
-    help="File extension to check [default: html]",
-    show_default=False,
-)
-@click.option(
-    "-i",
-    "--ignore",
-    type=str,
-    default="",
-    help='Codes to ignore. ex: "H014,H017"',
-    show_default=False,
-)
+@click.option("-e", "--extension", type=str, default="", help="File extension to check [default: html]", show_default=False)
+@click.option("-i", "--ignore", type=str, default="", help='Codes to ignore. ex: "H014,H017"', show_default=False)
 @click.option("--reformat", is_flag=True, help="Reformat the file(s).")
 @click.option("--check", is_flag=True, help="Check formatting on the file(s).")
-@click.option(
-    "--indent",
-    type=int,
-    help="Indent spacing. [default: 4]",
-    show_default=False,
-)
-@click.option(
-    "--quiet", is_flag=True, help="Do not print diff when reformatting."
-)
+@click.option("--indent", type=int, help="Indent spacing. [default: 4]", show_default=False)
+@click.option("--quiet", is_flag=True, help="Do not print diff when reformatting.")
 @click.option(
     "--profile",
     type=str,
     help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars, golang, angular, html [default: html]",
 )
-@click.option(
-    "--require-pragma",
-    is_flag=True,
-    help="Only format or lint files that starts with a comment with the text 'djlint:on'",
-)
-@click.option(
-    "--lint", is_flag=True, help="Lint for common issues. [default option]"
-)
-@click.option(
-    "--use-gitignore",
-    is_flag=True,
-    help="Use .gitignore file to extend excludes.",
-)
+@click.option("--require-pragma", is_flag=True, help="Only format or lint files that starts with a comment with the text 'djlint:on'")
+@click.option("--lint", is_flag=True, help="Lint for common issues. [default option]")
+@click.option("--use-gitignore", is_flag=True, help="Use .gitignore file to extend excludes.")
 @click.option("--warn", is_flag=True, help="Return errors as warnings.")
-@click.option(
-    "--preserve-leading-space",
-    is_flag=True,
-    help="Attempt to preserve leading space on text.",
-)
-@click.option(
-    "--preserve-blank-lines",
-    is_flag=True,
-    help="Attempt to preserve blank lines.",
-)
-@click.option(
-    "--format-css", is_flag=True, help="Also format contents of <style> tags."
-)
-@click.option(
-    "--format-js", is_flag=True, help="Also format contents of <script> tags."
-)
+@click.option("--preserve-leading-space", is_flag=True, help="Attempt to preserve leading space on text.")
+@click.option("--preserve-blank-lines", is_flag=True, help="Attempt to preserve blank lines.")
+@click.option("--format-css", is_flag=True, help="Also format contents of <style> tags.")
+@click.option("--format-js", is_flag=True, help="Also format contents of <script> tags.")
 @click.option(
     "--configuration",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=True,
-        readable=True,
-        allow_dash=True,
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, allow_dash=True),
     required=False,
     help="Path to global configuration file in .djlintrc format",
 )
+@click.option("--statistics", is_flag=True, help="Count the number of occurrences of each error/warning code.")
+@click.option("--include", type=str, default="", help='Codes to include. ex: "H014,H017"', show_default=False)
+@click.option("--ignore-case", is_flag=True, help="Do not fix case on known html tags.")
+@click.option("--ignore-blocks", type=str, default="", help="Comma list of template blocks to not indent.")
+@click.option("--blank-line-after-tag", type=str, default="", help="Add an additional blank line after {% <tag> ... %} tag groups.")
+@click.option("--blank-line-before-tag", type=str, default="", help="Add an additional blank line before {% <tag> ... %} tag groups.")
 @click.option(
-    "--statistics",
-    is_flag=True,
-    help="Count the number of occurrences of each error/warning code.",
+    "--line-break-after-multiline-tag", is_flag=True, help="Do not condense the content of multi-line tags into the line of the last attribute."
 )
-@click.option(
-    "--include",
-    type=str,
-    default="",
-    help='Codes to include. ex: "H014,H017"',
-    show_default=False,
-)
-@click.option(
-    "--ignore-case", is_flag=True, help="Do not fix case on known html tags."
-)
-@click.option(
-    "--ignore-blocks",
-    type=str,
-    default="",
-    help="Comma list of template blocks to not indent.",
-)
-@click.option(
-    "--blank-line-after-tag",
-    type=str,
-    default="",
-    help="Add an additional blank line after {% <tag> ... %} tag groups.",
-)
-@click.option(
-    "--blank-line-before-tag",
-    type=str,
-    default="",
-    help="Add an additional blank line before {% <tag> ... %} tag groups.",
-)
-@click.option(
-    "--line-break-after-multiline-tag",
-    is_flag=True,
-    help="Do not condense the content of multi-line tags into the line of the last attribute.",
-)
-@click.option(
-    "--custom-blocks",
-    type=str,
-    default="",
-    help="Indent custom template blocks. For example {% toc %}...{% endtoc %}",
-)
-@click.option(
-    "--custom-html",
-    type=str,
-    default="",
-    help="Indent custom HTML tags. For example <mjml>",
-)
-@click.option(
-    "--exclude",
-    type=str,
-    default="",
-    help="Override the default exclude paths.",
-)
-@click.option(
-    "--extend-exclude",
-    type=str,
-    default="",
-    help="Add additional paths to the default exclude.",
-)
-@click.option(
-    "--linter-output-format",
-    type=str,
-    default="",
-    help="Customize order of linter output message.",
-)
-@click.option(
-    "--max-line-length",
-    type=int,
-    help="Max line length. [default: 120]",
-    show_default=False,
-)
-@click.option(
-    "--max-attribute-length",
-    type=int,
-    help="Max attribute length. [default: 70]",
-    show_default=False,
-)
-@click.option(
-    "--format-attribute-template-tags",
-    is_flag=True,
-    help="Attempt to format template syntax inside of tag attributes.",
-)
-@click.option(
-    "--per-file-ignores",
-    type=(str, str),
-    multiple=True,
-    help="Ignore linter rules on a per-file basis.",
-)
-@click.option(
-    "--indent-css", type=int, help="Set CSS indent level.", show_default=False
-)
-@click.option(
-    "--indent-js", type=int, help="Set JS indent level.", show_default=False
-)
-@click.option(
-    "--close-void-tags",
-    is_flag=True,
-    help="Add closing mark on known void tags. Ex: <img> becomse <img />",
-)
-@click.option(
-    "--no-line-after-yaml",
-    is_flag=True,
-    help="Do not add a blank line after yaml front matter.",
-)
-@click.option(
-    "--no-function-formatting",
-    is_flag=True,
-    help="Do not attempt to format function contents.",
-)
-@click.option(
-    "--no-set-formatting",
-    is_flag=True,
-    help="Do not attempt to format set contents.",
-)
-@click.option(
-    "--max-blank-lines",
-    type=int,
-    help="Consolidate blank lines down to x lines. [default: 0]",
-    show_default=False,
-)
+@click.option("--custom-blocks", type=str, default="", help="Indent custom template blocks. For example {% toc %}...{% endtoc %}")
+@click.option("--custom-html", type=str, default="", help="Indent custom HTML tags. For example <mjml>")
+@click.option("--exclude", type=str, default="", help="Override the default exclude paths.")
+@click.option("--extend-exclude", type=str, default="", help="Add additional paths to the default exclude.")
+@click.option("--linter-output-format", type=str, default="", help="Customize order of linter output message.")
+@click.option("--max-line-length", type=int, help="Max line length. [default: 120]", show_default=False)
+@click.option("--max-attribute-length", type=int, help="Max attribute length. [default: 70]", show_default=False)
+@click.option("--format-attribute-template-tags", is_flag=True, help="Attempt to format template syntax inside of tag attributes.")
+@click.option("--per-file-ignores", type=(str, str), multiple=True, help="Ignore linter rules on a per-file basis.")
+@click.option("--indent-css", type=int, help="Set CSS indent level.", show_default=False)
+@click.option("--indent-js", type=int, help="Set JS indent level.", show_default=False)
+@click.option("--close-void-tags", is_flag=True, help="Add closing mark on known void tags. Ex: <img> becomse <img />")
+@click.option("--no-line-after-yaml", is_flag=True, help="Do not add a blank line after yaml front matter.")
+@click.option("--no-function-formatting", is_flag=True, help="Do not attempt to format function contents.")
+@click.option("--no-set-formatting", is_flag=True, help="Do not attempt to format set contents.")
+@click.option("--max-blank-lines", type=int, help="Consolidate blank lines down to x lines. [default: 0]", show_default=False)
 @colorama_text(autoreset=True)
 def main(
     *,
@@ -382,57 +221,32 @@ def main(
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
         worker_count = min(os.cpu_count() or 1, 4)
-        executor_cls = (
-            ProcessPoolExecutor if worker_count > 1 else ThreadPoolExecutor
-        )
+        executor_cls = ProcessPoolExecutor if worker_count > 1 else ThreadPoolExecutor
 
         with executor_cls(max_workers=worker_count) as exe:
-            futures = {
-                exe.submit(process, config, this_file): this_file
-                for this_file in file_list
-            }
+            futures = {exe.submit(process, config, this_file): this_file for this_file in file_list}
 
             if temp_file is None:
                 file_errors = []
                 elapsed = "00:00"
-                with tqdm(
-                    total=len(file_list),
-                    bar_format=bar_message,
-                    colour="BLUE",
-                    ascii=progress_char,
-                    leave=False,
-                ) as pbar:
+                with tqdm(total=len(file_list), bar_format=bar_message, colour="BLUE", ascii=progress_char, leave=False) as pbar:
                     for future in as_completed(futures):
                         file_errors.append(future.result())
                         pbar.update()
-                        elapsed = pbar.format_interval(
-                            pbar.format_dict["elapsed"]
-                        )
+                        elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
 
                 finished_bar_message = f"{Fore.BLUE + Style.BRIGHT}{message}{Style.RESET_ALL} {Fore.GREEN + Style.BRIGHT}{{n_fmt}}/{{total_fmt}}{Style.RESET_ALL} {Fore.BLUE + Style.BRIGHT}files{Style.RESET_ALL} {{bar}} {Fore.GREEN + Style.BRIGHT}{elapsed}{Style.RESET_ALL}    "
 
                 with tqdm(
-                    total=len(file_list),
-                    initial=len(file_list),
-                    bar_format=finished_bar_message,
-                    colour="GREEN",
-                    ascii=progress_char,
-                    leave=True,
+                    total=len(file_list), initial=len(file_list), bar_format=finished_bar_message, colour="GREEN", ascii=progress_char, leave=True
                 ):
                     pass
             else:
-                file_errors = [
-                    future.result() for future in as_completed(futures)
-                ]
+                file_errors = [future.result() for future in as_completed(futures)]
 
         if temp_file and (config.reformat or config.check):
             # if using stdin, only give back formatted code.
-            echo(
-                Path(temp_file.name)
-                .read_text(encoding="utf-8")
-                .rstrip()
-                .encode("utf-8")
-            )
+            echo(Path(temp_file.name).read_text(encoding="utf-8").rstrip().encode("utf-8"))
     finally:
         if temp_file:
             try:

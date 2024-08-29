@@ -17,15 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            '<figure><img src="" alt=""><figcaption>caption</figcaption></figure>'
-        ),
-        (
-            "<figure>\n"
-            '    <img src="" alt="">\n'
-            "    <figcaption>caption</figcaption>\n"
-            "</figure>\n"
-        ),
+        ('<figure><img src="" alt=""><figcaption>caption</figcaption></figure>'),
+        ("<figure>\n" '    <img src="" alt="">\n' "    <figcaption>caption</figcaption>\n" "</figure>\n"),
         id="figure_figcaption_tags",
     )
 ]

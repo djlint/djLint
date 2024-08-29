@@ -42,19 +42,13 @@ def indent_html(rawcode: str, config: Config) -> str:
         """
         func = partial(fix_tag_spacing, rawcode)
 
-        rawcode = re.sub(
-            r"({%-?\+?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?(\+?-?%})", func, rawcode
-        )
+        rawcode = re.sub(r"({%-?\+?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?(\+?-?%})", func, rawcode)
 
-        rawcode = re.sub(
-            r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", func, rawcode
-        )
+        rawcode = re.sub(r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", func, rawcode)
 
     elif config.profile == "handlebars":
 
-        def fix_handlebars_template_tags(
-            html: str, match: re.Match[str]
-        ) -> str:
+        def fix_handlebars_template_tags(html: str, match: re.Match[str]) -> str:
             if inside_ignored_block(config, html, match):
                 return match.group()
 
@@ -107,12 +101,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 is_block_raw = False
 
         if (
-            re.findall(
-                rf"^\s*?(?:{config.ignored_inline_blocks})",
-                item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            )
-            and not is_block_raw
+            re.findall(rf"^\s*?(?:{config.ignored_inline_blocks})", item, flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE) and not is_block_raw
         ) or (
             (
                 re.findall(
@@ -149,11 +138,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # closing set tag
         elif (
             not config.no_set_formatting
-            and re.search(
-                r"^(?!.*\{\%).*%\}.*$",
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
+            and re.search(r"^(?!.*\{\%).*%\}.*$", item, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE)
             and not is_block_raw
             and in_set_tag
         ):
@@ -164,11 +149,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # closing curly brace inside a set tag
         elif (
             not config.no_set_formatting
-            and re.search(
-                r"^[ ]*}|^[ ]*]",
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
+            and re.search(r"^[ ]*}|^[ ]*]", item, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE)
             and not is_block_raw
             and in_set_tag
         ):
@@ -177,34 +158,16 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if unindent, move left
         elif (
-            re.search(
-                config.tag_unindent,
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
+            re.search(config.tag_unindent, item, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE)
             and not is_block_raw
             and not is_safe_closing_tag(config, item)
             # and not ending in a slt like <span><strong></strong>.
-            and not re.findall(
-                rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
-                item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            )
-            and not re.findall(
-                rf"(<({slt_html})\\b[^>]+?>)(.*?)(</(\2)>[^<]*?$)",
-                item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            )
+            and not re.findall(rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)", item, flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE)
+            and not re.findall(rf"(<({slt_html})\\b[^>]+?>)(.*?)(</(\2)>[^<]*?$)", item, flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE)
         ):
             # block to catch inline block followed by a non-break tag
-            if re.findall(
-                rf"(^<({slt_html})>)(.*?)(</(\2)>)",
-                item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            ) or re.findall(
-                rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)",
-                item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            if re.findall(rf"(^<({slt_html})>)(.*?)(</(\2)>)", item, flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE) or re.findall(
+                rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)", item, flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE
             ):
                 # unindent after instead of before
                 tmp = (indent * indent_level) + item + "\n"
@@ -213,14 +176,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 indent_level = max(indent_level - 1, 0)
                 tmp = (indent * indent_level) + item + "\n"
 
-        elif (
-            re.search(
-                r"^" + str(config.tag_unindent_line),
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
-            and not is_block_raw
-        ):
+        elif re.search(r"^" + str(config.tag_unindent_line), item, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE) and not is_block_raw:
             tmp = (indent * (indent_level - 1)) + item + "\n"
 
         # if indent, move right
@@ -228,11 +184,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # opening set tag
         elif (
             not config.no_set_formatting
-            and re.search(
-                r"^([ ]*{%[ ]*?set)(?!.*%}).*$",
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
+            and re.search(r"^([ ]*{%[ ]*?set)(?!.*%}).*$", item, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE)
             and not is_block_raw
             and not in_set_tag
         ):
@@ -243,27 +195,14 @@ def indent_html(rawcode: str, config: Config) -> str:
         # opening curly brace inside a set tag
         elif (
             not config.no_set_formatting
-            and re.search(
-                r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
+            and re.search(r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))", item, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE)
             and not is_block_raw
             and in_set_tag
-        ) or (
-            re.search(
-                r"^(?:" + str(config.tag_indent) + r")",
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
-            and not is_block_raw
-        ):
+        ) or (re.search(r"^(?:" + str(config.tag_indent) + r")", item, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE) and not is_block_raw):
             tmp = (indent * indent_level) + item + "\n"
             indent_level += 1
 
-        elif is_raw_first_line or (
-            is_safe_closing_tag(config, item) and not is_block_raw
-        ):
+        elif is_raw_first_line or (is_safe_closing_tag(config, item) and not is_block_raw):
             tmp = (indent * indent_level) + item + "\n"
 
         elif is_block_raw or not item.strip():
@@ -297,10 +236,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             )
 
         # turn off raw block if we hit end - for one line raw blocks, but not an inline raw
-        if is_ignored_block_closing(config, item) and (
-            not in_script_style_tag
-            or is_script_style_block_closing(config, item)
-        ):
+        if is_ignored_block_closing(config, item) and (not in_script_style_tag or is_script_style_block_closing(config, item)):
             in_script_style_tag = False
             if not is_safe_closing_tag(config, item):
                 ignored_level -= 1
@@ -310,40 +246,25 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # detect the outer quotes for jinja
         if config.profile == "jinja":
-            matches = re.findall(
-                r"=([\"'])(\{\{[\s\S]*?\}\})\1", tmp, flags=re.MULTILINE
-            )
+            matches = re.findall(r"=([\"'])(\{\{[\s\S]*?\}\})\1", tmp, flags=re.MULTILINE)
 
             for match in matches:
                 outer_quotes = match[0]
                 inner_content = match[1]
-                jinja_replace_list.append({
-                    "outer_quote": outer_quotes,
-                    "content": inner_content,
-                })
+                jinja_replace_list.append({"outer_quote": outer_quotes, "content": inner_content})
 
         beautified_code += tmp
 
     # try to fix internal formatting of set tag
-    def format_data(
-        config: Config, contents: str, tag_size: int, leading_space: str
-    ) -> str:
+    def format_data(config: Config, contents: str, tag_size: int, leading_space: str) -> str:
         try:
             # try to format the contents as json
             data = json.loads(contents)
-            contents = json.dumps(
-                data, trailing_commas=False, ensure_ascii=False, quote_keys=True
-            )
+            contents = json.dumps(data, trailing_commas=False, ensure_ascii=False, quote_keys=True)
 
             if tag_size + len(contents) >= config.max_line_length:
                 # if the line is too long we can indent the json
-                contents = json.dumps(
-                    data,
-                    indent=config.indent_size,
-                    trailing_commas=False,
-                    ensure_ascii=False,
-                    quote_keys=True,
-                )
+                contents = json.dumps(data, indent=config.indent_size, trailing_commas=False, ensure_ascii=False, quote_keys=True)
 
         except Exception:
             # was not json.. try to eval as set
@@ -355,11 +276,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     else contents
                 )
                 # need to unwrap the eval
-                contents = (
-                    evaluated[1:-1]
-                    if contents[:1] != "(" and evaluated[:1] == "("
-                    else evaluated
-                )
+                contents = evaluated[1:-1] if contents[:1] != "(" and evaluated[:1] == "(" else evaluated
             except Exception:
                 contents = contents.strip()
 
@@ -380,12 +297,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             contents = (
                 contents_split[0].strip()
                 + " = "
-                + format_data(
-                    config,
-                    contents_split[-1],
-                    len(f"{open_bracket} {tag}  {close_bracket}"),
-                    leading_space,
-                )
+                + format_data(config, contents_split[-1], len(f"{open_bracket} {tag}  {close_bracket}"), leading_space)
             )
 
         return f"{leading_space}{open_bracket} {tag} {contents} {close_bracket}"
@@ -399,12 +311,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         tag = match.group(3).strip()
         index = (match.group(5) or "").strip()
         close_bracket = match.group(6)
-        contents = format_data(
-            config,
-            match.group(4).strip()[1:-1],
-            len(f"{open_bracket} {tag}() {close_bracket}"),
-            leading_space,
-        )
+        contents = format_data(config, match.group(4).strip()[1:-1], len(f"{open_bracket} {tag}() {close_bracket}"), leading_space)
 
         # # define cleaned match with both quote styles
         cleaned_match = f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
@@ -415,16 +322,12 @@ def indent_html(rawcode: str, config: Config) -> str:
 
             # Determine user quote type
             for jinja_content in jinja_replace_list:
-                content = cleaned_match.replace(
-                    '"', "'"
-                )  # Replace double quotes
+                content = cleaned_match.replace('"', "'")  # Replace double quotes
                 if content == jinja_content.get("content"):
                     outer_quotes = jinja_content.get("outer_quote")
                     inner_quotes = "'" if outer_quotes == '"' else '"'
                     break
-                content = cleaned_match.replace(
-                    "'", '"'
-                )  # Replace single quotes
+                content = cleaned_match.replace("'", '"')  # Replace single quotes
                 if content == jinja_content.get("content"):
                     outer_quotes = jinja_content.get("outer_quote")
                     inner_quotes = '"' if outer_quotes == "'" else "'"
@@ -433,9 +336,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             if outer_quotes is not None and inner_quotes is not None:
                 # Replace all content inner quotes and remove trailing/leading spaces
                 cleaned_contents = re.sub(
-                    rf"(?<=\{re.escape(outer_quotes)})\s+|\s+(?=\{re.escape(outer_quotes)})",
-                    "",
-                    contents.replace(outer_quotes, inner_quotes),
+                    rf"(?<=\{re.escape(outer_quotes)})\s+|\s+(?=\{re.escape(outer_quotes)})", "", contents.replace(outer_quotes, inner_quotes)
                 )
 
                 # Update cleaned match
@@ -448,10 +349,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         func = partial(format_set, config, beautified_code)
         # format set contents
         beautified_code = re.sub(
-            r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
-            func,
-            beautified_code,
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
+            r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})", func, beautified_code, flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL
         )
 
     if not config.no_function_formatting:

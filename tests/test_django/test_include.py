@@ -15,13 +15,7 @@ from tests.conftest import printer
 if TYPE_CHECKING:
     from src.djlint.settings import Config
 
-test_data = [
-    pytest.param(
-        ('{% include "this" %}{% include "that" %}'),
-        ('{% include "this" %}\n' '{% include "that" %}\n'),
-        id="include_tag",
-    )
-]
+test_data = [pytest.param(('{% include "this" %}{% include "that" %}'), ('{% include "this" %}\n' '{% include "that" %}\n'), id="include_tag")]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)

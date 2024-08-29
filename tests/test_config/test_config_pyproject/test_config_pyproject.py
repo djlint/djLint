@@ -20,13 +20,5 @@ if TYPE_CHECKING:
 
 
 def test_check_pyproject_as_config(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint,
-        (
-            "-",
-            "--check",
-            "--configuration",
-            "tests/test_config/test_config_pyproject/subfolder/pyproject.toml",
-        ),
-    )
+    result = runner.invoke(djlint, ("-", "--check", "--configuration", "tests/test_config/test_config_pyproject/subfolder/pyproject.toml"))
     assert """Checking 2/2 files""" in result.output

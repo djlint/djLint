@@ -20,36 +20,16 @@ test_data = [
     pytest.param(
         ("<H1>h1</H1>"),
         ([
-            {
-                "code": "H009",
-                "line": "1:1",
-                "match": "H1",
-                "message": "Tag names should be lowercase.",
-            },
-            {
-                "code": "H009",
-                "line": "1:7",
-                "match": "/H1",
-                "message": "Tag names should be lowercase.",
-            },
+            {"code": "H009", "line": "1:1", "match": "H1", "message": "Tag names should be lowercase."},
+            {"code": "H009", "line": "1:7", "match": "/H1", "message": "Tag names should be lowercase."},
         ]),
         id="opening",
     ),
     pytest.param(
         ("<A\n>"),
         ([
-            {
-                "code": "H009",
-                "line": "1:1",
-                "match": "A",
-                "message": "Tag names should be lowercase.",
-            },
-            {
-                "code": "H025",
-                "line": "1:0",
-                "match": "<A\n>",
-                "message": "Tag seems to be an orphan.",
-            },
+            {"code": "H009", "line": "1:1", "match": "A", "message": "Tag names should be lowercase."},
+            {"code": "H025", "line": "1:0", "match": "<A\n>", "message": "Tag seems to be an orphan."},
         ]),
         id="line break",
     ),
@@ -57,16 +37,11 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 
-    mismatch = (
-        *(x for x in output[filename] if x not in expected),
-        *(x for x in expected if x not in output[filename]),
-    )
+    mismatch = (*(x for x in output[filename] if x not in expected), *(x for x in expected if x not in output[filename]))
     assert not mismatch

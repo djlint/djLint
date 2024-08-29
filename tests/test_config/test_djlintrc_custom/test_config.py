@@ -12,10 +12,7 @@ from src.djlint.settings import Config
 
 
 def test_custom() -> None:
-    config = Config(
-        str(Path(__file__).parent / "blank.html"),
-        configuration=str(Path(__file__).parent / ".djlint-cust"),
-    )
+    config = Config(str(Path(__file__).parent / "blank.html"), configuration=str(Path(__file__).parent / ".djlint-cust"))
 
     print(config.exclude)
     assert config.exclude == ".venv,venv,.tox,.egg,... | .customs"
@@ -33,10 +30,7 @@ def test_custom() -> None:
     assert config.ignore_case is True
     assert config.include == "H014,H015"
     assert config.indent == 4 * " "
-    assert (
-        config.linter_output_format
-        == "{filename}:{line}: {code} {message} {match}"
-    )
+    assert config.linter_output_format == "{filename}:{line}: {code} {message} {match}"
     assert config.max_attribute_length == 10
     assert config.max_line_length == 120
     assert config.preserve_blank_lines is True
@@ -48,7 +42,4 @@ def test_custom() -> None:
     assert config.js_config == {"indent_size": 4}
     assert config.css_config == {"indent_size": 4}
 
-    assert config.per_file_ignores == {
-        "file.html": "H026,H025",
-        "file_two.html": "H001",
-    }
+    assert config.per_file_ignores == {"file.html": "H026,H025", "file_two.html": "H001"}

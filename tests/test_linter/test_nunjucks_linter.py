@@ -20,26 +20,12 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{%- test-%}"),
-        ([
-            {
-                "code": "T001",
-                "line": "1:0",
-                "match": "{%- test-%}",
-                "message": "Variables should be wrapped in a whitespace.",
-            }
-        ]),
+        ([{"code": "T001", "line": "1:0", "match": "{%- test-%}", "message": "Variables should be wrapped in a whitespace."}]),
         id="T001",
     ),
     pytest.param(
         ("{%-test -%}"),
-        ([
-            {
-                "code": "T001",
-                "line": "1:0",
-                "match": "{%-test -%}",
-                "message": "Variables should be wrapped in a whitespace.",
-            }
-        ]),
+        ([{"code": "T001", "line": "1:0", "match": "{%-test -%}", "message": "Variables should be wrapped in a whitespace."}]),
         id="T001_2",
     ),
     pytest.param(("{%- test -%}"), ([]), id="T001_3"),
@@ -47,16 +33,11 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], nunjucks_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], nunjucks_config: Config) -> None:
     filename = "test.html"
     output = linter(nunjucks_config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 
-    mismatch = (
-        *(x for x in output[filename] if x not in expected),
-        *(x for x in expected if x not in output[filename]),
-    )
+    mismatch = (*(x for x in output[filename] if x not in expected), *(x for x in expected if x not in output[filename]))
     assert not mismatch

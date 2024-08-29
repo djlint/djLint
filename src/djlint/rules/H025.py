@@ -8,11 +8,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..helpers import (
-    inside_ignored_linter_block,
-    inside_ignored_rule,
-    overlaps_ignored_block,
-)
+from ..helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
 from ..lint import get_line
 
 if TYPE_CHECKING:
@@ -23,28 +19,14 @@ if TYPE_CHECKING:
 
 
 def run(
-    rule: dict[str, Any],
-    config: Config,
-    html: str,
-    filepath: str,
-    line_ends: list[dict[str, int]],
-    *args: Any,
-    **kwargs: Any,
+    rule: dict[str, Any], config: Config, html: str, filepath: str, line_ends: list[dict[str, int]], *args: Any, **kwargs: Any
 ) -> tuple[LintError, ...]:
     """Check for orphans html tags."""
     open_tags: list[re.Match[str]] = []
     orphan_tags: list[re.Match[str]] = []
 
-    for match in re.finditer(
-        r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
-        html,
-        flags=re.VERBOSE,
-    ):
-        if match.group(1) and not re.search(
-            rf"^/?{config.always_self_closing_html_tags}\b",
-            match.group(1),
-            flags=re.I | re.X,
-        ):
+    for match in re.finditer(r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>", html, flags=re.VERBOSE):
+        if match.group(1) and not re.search(rf"^/?{config.always_self_closing_html_tags}\b", match.group(1), flags=re.I | re.X):
             # close tags should equal open tags
             if match.group(1)[0] != "/":
                 open_tags.insert(0, match)
@@ -58,12 +40,7 @@ def run(
                     orphan_tags.append(match)
 
     return tuple(
-        {
-            "code": rule["name"],
-            "line": get_line(match.start(), line_ends),
-            "match": match.group().strip()[:20],
-            "message": rule["message"],
-        }
+        {"code": rule["name"], "line": get_line(match.start(), line_ends), "match": match.group().strip()[:20], "message": rule["message"]}
         for match in chain(open_tags, orphan_tags)
         if (
             not overlaps_ignored_block(config, html, match)

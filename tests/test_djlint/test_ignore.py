@@ -15,13 +15,7 @@ from tests.conftest import printer
 if TYPE_CHECKING:
     from src.djlint.settings import Config
 
-test_data = [
-    pytest.param(
-        ("{# djlint:off #}\n" "<img \n" "/>"),
-        ("{# djlint:off #}\n" "<img \n" "/>\n"),
-        id="don't compress",
-    )
-]
+test_data = [pytest.param(("{# djlint:off #}\n" "<img \n" "/>"), ("{# djlint:off #}\n" "<img \n" "/>\n"), id="don't compress")]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)

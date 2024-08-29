@@ -1,21 +1,21 @@
-const Image = require("@11ty/eleventy-img");
-const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
-const slugify = require("slugify");
-const metagen = require("eleventy-plugin-metagen");
-const i18n = require("eleventy-plugin-i18n");
-const translations = require("./src/_data/i18n");
-const locales = require("./src/_data/locales");
-const fs = require("fs");
-const outdent = require("outdent");
-const schema = require("@quasibit/eleventy-plugin-schema");
-const editOnGithub = require("eleventy-plugin-edit-on-github");
-const i18n_func = require("eleventy-plugin-i18n/i18n.js");
-const rollupper = require("./src/_utils/rollupper");
-const { nodeResolve } = require("@rollup/plugin-node-resolve");
-const eleventySass = require("eleventy-sass");
-const pluginRev = require("eleventy-plugin-rev");
-const purgecss = require("@fullhuman/postcss-purgecss");
-const postcss = require("postcss");
+const Image = require('@11ty/eleventy-img');
+const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
+const slugify = require('slugify');
+const metagen = require('eleventy-plugin-metagen');
+const i18n = require('eleventy-plugin-i18n');
+const translations = require('./src/_data/i18n');
+const locales = require('./src/_data/locales');
+const fs = require('fs');
+const outdent = require('outdent');
+const schema = require('@quasibit/eleventy-plugin-schema');
+const editOnGithub = require('eleventy-plugin-edit-on-github');
+const i18n_func = require('eleventy-plugin-i18n/i18n.js');
+const rollupper = require('./src/_utils/rollupper');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
+const eleventySass = require('eleventy-sass');
+const pluginRev = require('eleventy-plugin-rev');
+const purgecss = require('@fullhuman/postcss-purgecss');
+const postcss = require('postcss');
 
 const slugifyCustom = (s) =>
   slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g });
@@ -24,20 +24,20 @@ async function imageShortcode(
   src,
   alt,
   sizes,
-  type = "asdf",
-  loading = "lazy",
-  decoding = "async",
+  type = 'asdf',
+  loading = 'lazy',
+  decoding = 'async',
 ) {
   let metadata = await Image(src, {
     widths: [24, 300, 400, 500, 600, 800, 1200],
-    formats: ["webp", "png"],
+    formats: ['webp', 'png'],
     sharpWebpOptions: {
       options: {
         quality: 70,
       },
     },
-    outputDir: "./_site/static/img/",
-    urlPath: "/static/img/",
+    outputDir: './_site/static/img/',
+    urlPath: '/static/img/',
   });
 
   let imageAttributes = {
@@ -47,7 +47,7 @@ async function imageShortcode(
     decoding: decoding,
   };
 
-  if (type == "boxed") {
+  if (type == 'boxed') {
     return (
       `<div class="block"><div class="box is-inlineblock">` +
       Image.generateHTML(metadata, imageAttributes) +
@@ -64,9 +64,9 @@ async function imageShortcode(
           imageFormat[0].sourceType
         }" srcset="${imageFormat
           .map((entry) => entry.srcset)
-          .join(", ")}" sizes="${sizes}">`;
+          .join(', ')}" sizes="${sizes}">`;
       })
-      .join("\n")}
+      .join('\n')}
       <img
         src="${highsrc.url}"
         width="${highsrc.width}"
@@ -80,24 +80,24 @@ async function imageShortcode(
 // from https://github.com/pusher/docs/blob/main/.eleventy.js
 // widont is a function that takes a string and replaces the space between the last two words with a non breaking space. This stops typographic widows forming
 const widont = (string) => {
-  return string.split(" ").length > 2
-    ? string.replace(/\s([^\s<]+)\s*$/, "\u00A0$1")
+  return string.split(' ').length > 2
+    ? string.replace(/\s([^\s<]+)\s*$/, '\u00A0$1')
     : string;
 };
 
 module.exports = function (eleventyConfig) {
   eleventyConfig.addGlobalData(
-    "djlint_version",
-    require("../package.json").version,
+    'djlint_version',
+    require('../package.json').version,
   );
   eleventyConfig.setUseGitIgnore(false);
-  eleventyConfig.addFilter("widont", widont);
-  eleventyConfig.addWatchTarget("./src/static/");
-  eleventyConfig.addNunjucksAsyncShortcode("image", imageShortcode);
+  eleventyConfig.addFilter('widont', widont);
+  eleventyConfig.addWatchTarget('./src/static/');
+  eleventyConfig.addNunjucksAsyncShortcode('image', imageShortcode);
   if (process.env.ELEVENTY_PRODUCTION == true) {
     eleventyConfig.addTransform(
-      "htmlmin",
-      require("./src/_utils/minify-html.js"),
+      'htmlmin',
+      require('./src/_utils/minify-html.js'),
     );
   }
   eleventyConfig.addPlugin(syntaxHighlight);
@@ -106,31 +106,31 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(rollupper, {
     rollup: {
       output: {
-        format: "umd",
-        dir: "_site/static/js",
+        format: 'umd',
+        dir: '_site/static/js',
       },
       plugins: [nodeResolve()],
     },
   });
   eleventyConfig.addPlugin(editOnGithub, {
     // required
-    github_edit_repo: "https://github.com/djlint/djLint",
+    github_edit_repo: 'https://github.com/djlint/djLint',
     // optional: defaults
-    github_edit_path: "/docs/", // non-root location in git url. root is assumed
-    github_edit_branch: "master",
+    github_edit_path: '/docs/', // non-root location in git url. root is assumed
+    github_edit_branch: 'master',
     github_edit_text: (page) => {
       i18n_options = Object.assign(
         {},
         {
           translations,
           fallbackLocales: {
-            "*": "en-US",
+            '*': 'en-US',
           },
         },
       );
 
       return `<span class="icon-text"><span class="icon mr-1"><i class="fas fa-pencil"></i></span><span>${i18n_func(
-        "edit_page",
+        'edit_page',
         undefined,
         undefined,
         i18n_options,
@@ -138,15 +138,15 @@ module.exports = function (eleventyConfig) {
       )}</span></span>`;
       return x.inputPath;
     },
-    github_edit_class: "edit-on-github",
-    github_edit_tag: "a",
+    github_edit_class: 'edit-on-github',
+    github_edit_tag: 'a',
     github_edit_attributes: 'target="_blank" rel="noopener"',
     github_edit_wrapper: undefined, //ex: "<div stuff>${edit_on_github}</div>"
   });
 
   /* Markdown Plugins */
-  const markdownItAnchor = require("markdown-it-anchor");
-  const markdownIt = require("markdown-it")({
+  const markdownItAnchor = require('markdown-it-anchor');
+  const markdownIt = require('markdown-it')({
     html: true,
     breaks: true,
     linkify: true,
@@ -156,107 +156,107 @@ module.exports = function (eleventyConfig) {
   const opts = {
     level: [2, 3, 4, 5],
     permalink: markdownItAnchor.permalink.linkInsideHeader({
-      class: "link bn",
-      symbol: "∞",
-      placement: "before",
+      class: 'link bn',
+      symbol: '∞',
+      placement: 'before',
     }),
     slugify: slugifyCustom,
   };
 
   const mapping = {
-    h1: "title is-1",
-    h2: "title is-2",
-    h3: "title is-3",
-    h4: "title is-4",
-    h5: "title is-5",
-    h6: "title is-5",
-    p: "block",
-    table: "table",
+    h1: 'title is-1',
+    h2: 'title is-2',
+    h3: 'title is-3',
+    h4: 'title is-4',
+    h5: 'title is-5',
+    h6: 'title is-5',
+    p: 'block',
+    table: 'table',
   };
 
   markdownIt
     .use(markdownItAnchor, opts)
-    .use(require("markdown-it-imsize"), { autofill: true })
-    .use(require("@toycode/markdown-it-class"), mapping)
-    .use(require("markdown-it-div"), "div", {});
+    .use(require('markdown-it-imsize'), { autofill: true })
+    .use(require('@toycode/markdown-it-class'), mapping)
+    .use(require('markdown-it-div'), 'div', {});
 
-  eleventyConfig.setLibrary("md", markdownIt);
+  eleventyConfig.setLibrary('md', markdownIt);
 
   // copy font
   eleventyConfig.addPassthroughCopy({
-    "./node_modules/@fontsource/inter/files": "static/font/inter/files",
+    './node_modules/@fontsource/inter/files': 'static/font/inter/files',
   });
   eleventyConfig.addPassthroughCopy({
-    "./node_modules/@fontsource/rasa/files": "static/font/rasa/files",
+    './node_modules/@fontsource/rasa/files': 'static/font/rasa/files',
   });
   eleventyConfig.addPassthroughCopy({
-    "./node_modules/@fontsource/crimson-pro/files":
-      "static/font/crimson-pro/files",
+    './node_modules/@fontsource/crimson-pro/files':
+      'static/font/crimson-pro/files',
   });
 
   // copy images
   eleventyConfig.addPassthroughCopy({
-    "src/static/img": "static/img",
+    'src/static/img': 'static/img',
   });
 
   // copy robots
   eleventyConfig.addPassthroughCopy({
-    "src/robots.txt": "robots.txt",
+    'src/robots.txt': 'robots.txt',
   });
 
   // copy favicon
   eleventyConfig.addPassthroughCopy({
-    "src/static/img/favicon.ico": "favicon.ico",
+    'src/static/img/favicon.ico': 'favicon.ico',
   });
 
   // copy wheels
   eleventyConfig.addPassthroughCopy({
-    "src/static/py": "static/py",
+    'src/static/py': 'static/py',
   });
 
   // copy python
   eleventyConfig.addPassthroughCopy({
-    "src/static/js/worker.js": "static/js/worker.js",
+    'src/static/js/worker.js': 'static/js/worker.js',
   });
 
-  eleventyConfig.addFilter("jsonify", (text) => {
-    return JSON.stringify(text).replace(/(?:\\n\s*){2,}/g, "\\n");
+  eleventyConfig.addFilter('jsonify', (text) => {
+    return JSON.stringify(text).replace(/(?:\\n\s*){2,}/g, '\\n');
   });
 
-  eleventyConfig.addFilter("niceDate", (value) => {
+  eleventyConfig.addFilter('niceDate', (value) => {
     try {
-      const options = { year: "numeric", month: "short", day: "numeric" };
-      return value.toLocaleDateString("en-us", options);
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return value.toLocaleDateString('en-us', options);
     } catch (e) {
       return value;
     }
   });
 
-  eleventyConfig.addFilter("year", (value) => {
+  eleventyConfig.addFilter('year', (value) => {
     try {
-      const options = { year: "numeric" };
-      return value.toLocaleDateString("en-us", options);
+      const options = { year: 'numeric' };
+      return value.toLocaleDateString('en-us', options);
     } catch (e) {
       return value;
     }
   });
 
-  eleventyConfig.addFilter("algExcerpt", (text) => {
+  eleventyConfig.addFilter('algExcerpt', (text) => {
     return text
-      .replace(/<code class="language-.*?">.*?<\/code>/gs, "")
-      .replace(/<.*?>/g, "")
+      .replace(/<code class="language-.*?">.*?<\/code>/gs, '')
+      .replace(/<.*?>/g, '')
       .substring(0, 8000);
   });
 
-  eleventyConfig.addCollection("algolia", function (collection) {
-    return collection.getFilteredByGlob("**/*.md");
+  eleventyConfig.addCollection('algolia', function (collection) {
+    return collection.getFilteredByGlob('**/*.md');
   });
 
   const icons = {
     note: '<span class="icon has-text-info mr-1"><i class="fas fa-pencil"></i></span>',
   };
 
-  eleventyConfig.addShortcode("admonition", function (icon, title, text) {
+  eleventyConfig.addShortcode('admonition', function (icon, title, text) {
     return outdent`
     <article class="message ${icon} box">
       <div class="message-header">
@@ -266,7 +266,7 @@ module.exports = function (eleventyConfig) {
     </article>`;
   });
 
-  eleventyConfig.addFilter("markdown", (value) => {
+  eleventyConfig.addFilter('markdown', (value) => {
     return `${markdownIt.render(value)}`;
   });
 
@@ -276,9 +276,9 @@ module.exports = function (eleventyConfig) {
     {
       rev: true,
       postcss: postcss([
-        require("postcss-nested"),
+        require('postcss-nested'),
         purgecss({
-          content: ["./src/**/*.njk", "./src/**/*.md", "./src/**/*.js"],
+          content: ['./src/**/*.njk', './src/**/*.md', './src/**/*.js'],
           safelist: {
             deep: [
               /headShake/,
@@ -312,61 +312,61 @@ module.exports = function (eleventyConfig) {
             ],
           },
         }),
-        require("autoprefixer"),
-        require("cssnano"),
+        require('autoprefixer'),
+        require('cssnano'),
       ]),
     },
   ]);
 
-  const { fontawesomeSubset } = require("fontawesome-subset");
+  const { fontawesomeSubset } = require('fontawesome-subset');
   fontawesomeSubset(
     {
-      brands: ["discord", "github"],
-      regular: ["envelope"],
+      brands: ['discord', 'github'],
+      regular: ['envelope'],
       solid: [
-        "globe",
-        "circle-arrow-right",
-        "pencil",
-        "infinity",
-        "download",
-        "code-commit",
-        "spinner",
-        "circle-question",
+        'globe',
+        'circle-arrow-right',
+        'pencil',
+        'infinity',
+        'download',
+        'code-commit',
+        'spinner',
+        'circle-question',
       ],
     },
-    "_site/static/font/fontawesome/webfonts",
+    '_site/static/font/fontawesome/webfonts',
   );
 
   eleventyConfig.addPlugin(i18n, {
     translations,
     fallbackLocales: {
-      "*": "en-US",
+      '*': 'en-US',
     },
   });
 
-  eleventyConfig.addFilter("baseUrl", (text) => {
-    return text.replace(/(?:ru)\//g, "");
+  eleventyConfig.addFilter('baseUrl', (text) => {
+    return text.replace(/(?:ru)\//g, '');
   });
 
-  eleventyConfig.addFilter("i18n_locale", (current_locale, locale_list) => {
+  eleventyConfig.addFilter('i18n_locale', (current_locale, locale_list) => {
     return locale_list.filter((x) => {
-      return x.code === (current_locale ?? "en-US");
+      return x.code === (current_locale ?? 'en-US');
     })[0].label;
   });
 
-  eleventyConfig.addFilter("i18n_urls", (page, all) => {
+  eleventyConfig.addFilter('i18n_urls', (page, all) => {
     var locale_urls = locales
       .map((x) => {
-        if (x.url != "") return x.url;
+        if (x.url != '') return x.url;
       })
       .filter((x) => {
         return x !== undefined;
       });
 
-    var split_url = page.split("/").length > 1 ? page.split("/")[1] : "";
+    var split_url = page.split('/').length > 1 ? page.split('/')[1] : '';
 
     // find the current locale
-    var active_local = "";
+    var active_local = '';
 
     locale_urls.forEach((locale) => {
       if (locale === split_url) {
@@ -392,9 +392,9 @@ module.exports = function (eleventyConfig) {
     });
 
     remaining_locals.forEach((x) => {
-      var new_url = ("/" + page.replace(active_local, x)).replace(
+      var new_url = ('/' + page.replace(active_local, x)).replace(
         /\/{2,}/,
-        "/",
+        '/',
       );
       if (valid_urls.indexOf(new_url) !== -1) {
         i18n_pages.push({
@@ -411,15 +411,15 @@ module.exports = function (eleventyConfig) {
 
   return {
     dir: {
-      input: "src",
-      formats: "njk",
-      includes: "_includes",
-      data: "_data",
-      output: "_site",
+      input: 'src',
+      formats: 'njk',
+      includes: '_includes',
+      data: '_data',
+      output: '_site',
     },
-    templateFormats: ["md", "html", "njk", "11ty.js"],
-    htmlTemplateEngine: "njk",
-    markdownTemplateEngine: "njk",
+    templateFormats: ['md', 'html', 'njk', '11ty.js'],
+    htmlTemplateEngine: 'njk',
+    markdownTemplateEngine: 'njk',
     passthroughFileCopy: true,
   };
 };

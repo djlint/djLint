@@ -17,9 +17,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "{% with total=business.employees.count %}{{ total }}<div>employee</div>{{ total|pluralize }}{% endwith %}"
-        ),
+        ("{% with total=business.employees.count %}{{ total }}<div>employee</div>{{ total|pluralize }}{% endwith %}"),
         (
             "{% with total=business.employees.count %}\n"
             "    {{ total }}\n"

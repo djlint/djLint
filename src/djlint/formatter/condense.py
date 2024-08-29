@@ -11,11 +11,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..helpers import (
-    inside_ignored_block,
-    inside_protected_trans_block,
-    is_safe_closing_tag,
-)
+from ..helpers import inside_ignored_block, inside_protected_trans_block, is_safe_closing_tag
 
 if TYPE_CHECKING:
     from ..settings import Config
@@ -30,9 +26,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         # either inside a block, or this is a newline + closing block tag.
         # if it is a newline + closing block we can format it.
 
-        if inside_ignored_block(
-            config, html, match
-        ) and not is_safe_closing_tag(config, match.group()):
+        if inside_ignored_block(config, html, match) and not is_safe_closing_tag(config, match.group()):
             return match.group()
 
         # trimmed blocks should not be here.
@@ -58,32 +52,15 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     if not config.preserve_leading_space:
         # remove any leading/trailing space
-        html = re.sub(
-            rf"^[ \t]*{line_contents}([{trailing_contents}]*)$",
-            func,
-            html,
-            flags=re.M,
-        )
+        html = re.sub(rf"^[ \t]*{line_contents}([{trailing_contents}]*)$", func, html, flags=re.M)
 
     else:
         # only remove leading space in front of tags
         # <, {%
-        html = re.sub(
-            rf"^[ \t]*((?:<|{{%).*?)([{trailing_contents}]*)$",
-            func,
-            html,
-            flags=re.M,
-        )
-        html = re.sub(
-            rf"^{line_contents}([{trailing_contents}]*)$",
-            func,
-            html,
-            flags=re.M,
-        )
+        html = re.sub(rf"^[ \t]*((?:<|{{%).*?)([{trailing_contents}]*)$", func, html, flags=re.M)
+        html = re.sub(rf"^{line_contents}([{trailing_contents}]*)$", func, html, flags=re.M)
 
-    def add_blank_line_after(
-        config: Config, html: str, match: re.Match[str]
-    ) -> str:
+    def add_blank_line_after(config: Config, html: str, match: re.Match[str]) -> str:
         """Add break after if not in ignored block."""
         if inside_ignored_block(config, html, match):
             return match.group()
@@ -99,16 +76,9 @@ def clean_whitespace(html: str, config: Config) -> str:
     # should we add blank lines after load tags?
     if config.blank_line_after_tag:
         for tag in config.blank_line_after_tag.split(","):
-            html = re.sub(
-                rf"((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
-                func,
-                html,
-                flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
-            )
+            html = re.sub(rf"((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)", func, html, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL)
 
-    def add_blank_line_before(
-        config: Config, html: str, match: re.Match[str]
-    ) -> str:
+    def add_blank_line_before(config: Config, html: str, match: re.Match[str]) -> str:
         """Add break before if not in ignored block and not first line in file."""
         if inside_ignored_block(config, html, match) or match.start() == 0:
             return match.group()
@@ -120,12 +90,7 @@ def clean_whitespace(html: str, config: Config) -> str:
     # should we add blank lines before load tags?
     if config.blank_line_before_tag:
         for tag in config.blank_line_before_tag.split(","):
-            html = re.sub(
-                rf"(?<!^\n)((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
-                func,
-                html,
-                flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
-            )
+            html = re.sub(rf"(?<!^\n)((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)", func, html, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL)
 
     # add line after yaml front matter
 
@@ -139,9 +104,7 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     if not config.no_line_after_yaml:
         func = partial(yaml_add_blank_line_after, html)
-        html = re.sub(
-            r"(^---.+?---)$", func, html, flags=re.MULTILINE | re.DOTALL
-        )
+        html = re.sub(r"(^---.+?---)$", func, html, flags=re.MULTILINE | re.DOTALL)
 
     return html
 
@@ -159,11 +122,7 @@ def condense_html(html: str, config: Config) -> str:
             # always force a break by pretending the line is too long.
             combined_length = config.max_line_length + 1
         else:
-            combined_length = len(
-                match.group(1).splitlines()[-1]
-                + match.group(3)
-                + match.group(4)
-            )
+            combined_length = len(match.group(1).splitlines()[-1] + match.group(3) + match.group(4))
 
         if (
             not inside_ignored_block(config, html, match)
@@ -179,14 +138,8 @@ def condense_html(html: str, config: Config) -> str:
         """Check if there should be a blank line after."""
         if config.blank_line_after_tag:
             return not any(
-                re.findall(
-                    rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
-                    html,
-                    flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
-                )
-                for tag in (
-                    x.strip() for x in config.blank_line_after_tag.split(",")
-                )
+                re.findall(rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)", html, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL)
+                for tag in (x.strip() for x in config.blank_line_after_tag.split(","))
             )
         return True
 
@@ -194,14 +147,8 @@ def condense_html(html: str, config: Config) -> str:
         """Check if there should be a blank line before."""
         if config.blank_line_before_tag:
             return not any(
-                re.findall(
-                    rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
-                    html,
-                    flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
-                )
-                for tag in (
-                    x.strip() for x in config.blank_line_before_tag.split(",")
-                )
+                re.findall(rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)", html, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL)
+                for tag in (x.strip() for x in config.blank_line_before_tag.split(","))
             )
         return True
 

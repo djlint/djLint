@@ -17,9 +17,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "<ul>{% for athlete in athlete_list %}<li>{{ athlete.name }}</li>{% empty %}<li>Sorry, no athletes in this list.</li>{% endfor %}</ul>"
-        ),
+        ("<ul>{% for athlete in athlete_list %}<li>{{ athlete.name }}</li>{% empty %}<li>Sorry, no athletes in this list.</li>{% endfor %}</ul>"),
         (
             "<ul>\n"
             "    {% for athlete in athlete_list %}\n"
@@ -32,16 +30,8 @@ test_data = [
         id="for_tag",
     ),
     pytest.param(
-        (
-            "{% for i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endfor %}"
-        ),
-        (
-            "{% for i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endfor %}\n"
-        ),
+        ("{% for i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endfor %}"),
+        ("{% for i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endfor %}\n"),
         id="test nested formfield",
     ),
     pytest.param(

@@ -18,7 +18,7 @@
       - "{%[ \t]*?(?:trans(?:late)?|with|extends|include|now)[\\s]+?(?:(?:(?!%}|').)+?=)?'(?:(?!%}|').)*?'(?:(?!%}).)*?%}"
 - rule:
     name: T003
-    message: "Endblock should have name. Ex: {% endblock body %}."
+    message: 'Endblock should have name. Ex: {% endblock body %}.'
     flags: re.DOTALL
     patterns:
       - '{%\s*?endblock\s*?%}'
@@ -166,7 +166,7 @@
     message: Do not use entity references.
     flags: re.I
     patterns:
-      - "&(?!(lt|gt|amp|quot|nbsp|ensp|emsp|thinsp))[#0-9a-z]{,30};"
+      - '&(?!(lt|gt|amp|quot|nbsp|ensp|emsp|thinsp))[#0-9a-z]{,30};'
 - rule:
     name: H024
     message: Omit type on scripts and styles.
@@ -246,7 +246,7 @@
     message: Did you intend to use {% ... %} instead of {% ... }%?
     flags: re.DOTALL
     patterns:
-      - "{%(?:(?!%}).)*}%"
+      - '{%(?:(?!%}).)*}%'
 - rule:
     name: H035
     message: Meta tags should be self closing.

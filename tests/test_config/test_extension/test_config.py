@@ -23,9 +23,7 @@ if TYPE_CHECKING:
 
 
 def test_extension(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_extension", "--check")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_extension", "--check"))
     assert """Checking""" in result.output
     assert """1/1""" in result.output
     assert """0 files would be updated.""" in result.output

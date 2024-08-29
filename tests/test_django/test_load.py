@@ -17,9 +17,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{% block content %}{% load i18n %}{% endblock %}"),
-        ("{% block content %}\n" "    {% load i18n %}\n" "{% endblock %}\n"),
-        id="load_tag",
+        ("{% block content %}{% load i18n %}{% endblock %}"), ("{% block content %}\n" "    {% load i18n %}\n" "{% endblock %}\n"), id="load_tag"
     )
 ]
 

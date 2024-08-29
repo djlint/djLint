@@ -19,9 +19,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            '{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>'
-        ),
+        ('{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>'),
         (
             '{% extends "nothing.html" %}\n'
             "\n"
@@ -60,28 +58,13 @@ test_data = [
     ),
     pytest.param(
         ("{% block this %}\n" "{% load i18n %}\n" "{% endblock this %}"),
-        (
-            "{% block this %}\n"
-            "\n"
-            "    {% load i18n %}\n"
-            "\n"
-            "{% endblock this %}\n"
-        ),
+        ("{% block this %}\n" "\n" "    {% load i18n %}\n" "\n" "{% endblock this %}\n"),
         ({"blank_line_before_tag": "endblock  , junk,load "}),
         id="nested_indent",
     ),
     pytest.param(
-        (
-            "{% block include %}\n"
-            "    {#    {% include 'common/sticky-topbar-hidden-nav.html' %}#}\n"
-            "{% endblock %}\n"
-        ),
-        (
-            "{% block include %}\n"
-            "    {#    {% include 'common/sticky-topbar-hidden-nav.html' %}#}\n"
-            "\n"
-            "{% endblock %}\n"
-        ),
+        ("{% block include %}\n" "    {#    {% include 'common/sticky-topbar-hidden-nav.html' %}#}\n" "{% endblock %}\n"),
+        ("{% block include %}\n" "    {#    {% include 'common/sticky-topbar-hidden-nav.html' %}#}\n" "\n" "{% endblock %}\n"),
         ({"blank_line_before_tag": "load, extends,endblock"}),
         id="test inside comment",
     ),
@@ -108,23 +91,13 @@ test_data = [
     pytest.param(
         ("{% extends nothing %}\n" "\n" "<div></div>\n"),
         ("{% extends nothing %}\n" "\n" "<div></div>\n"),
-        ({
-            "blank_line_before_tag": "load, extends",
-            "preserve_blank_lines": True,
-        }),
+        ({"blank_line_before_tag": "load, extends", "preserve_blank_lines": True}),
         id="option should work with preserve blank lines",
     ),
     pytest.param(
-        (
-            "{% block %}stuff{% endblock %}\n"
-            "\n"
-            "{% block %}stuff{% endblock %}\n"
-            "\n"
-        ),
+        ("{% block %}stuff{% endblock %}\n" "\n" "{% block %}stuff{% endblock %}\n" "\n"),
         ("{% block %}stuff{% endblock %}\n" "{% block %}stuff{% endblock %}\n"),
-        ({
-            "blank_line_before_tag": "load, extends,     include     ,endblock "
-        }),
+        ({"blank_line_before_tag": "load, extends,     include     ,endblock "}),
         id="double block",
     ),
     pytest.param(

@@ -17,12 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            '<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>\n'
-        ),
-        (
-            '<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>\n'
-        ),
+        ('<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>\n'),
+        ('<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>\n'),
         id="icon",
     ),
     # issue #171, span is an inline tag
@@ -51,69 +47,27 @@ test_data = [
     ),
     pytest.param(
         ("<p><p><span><strong>asdf</strong><br></span></p></p>\n"),
-        (
-            "<p>\n"
-            "    <p>\n"
-            "        <span><strong>asdf</strong>\n"
-            "            <br>\n"
-            "        </span>\n"
-            "    </p>\n"
-            "</p>\n"
-        ),
+        ("<p>\n" "    <p>\n" "        <span><strong>asdf</strong>\n" "            <br>\n" "        </span>\n" "    </p>\n" "</p>\n"),
         id="nested string",
     ),
     pytest.param(
-        (
-            "<ul>\n"
-            "    <li>\n"
-            "        <span>C</span> <a>D</a> <strong>Q</strong>\n"
-            "    </li>\n"
-            "</ul>\n"
-        ),
-        (
-            "<ul>\n"
-            "    <li>\n"
-            "        <span>C</span> <a>D</a> <strong>Q</strong>\n"
-            "    </li>\n"
-            "</ul>\n"
-        ),
+        ("<ul>\n" "    <li>\n" "        <span>C</span> <a>D</a> <strong>Q</strong>\n" "    </li>\n" "</ul>\n"),
+        ("<ul>\n" "    <li>\n" "        <span>C</span> <a>D</a> <strong>Q</strong>\n" "    </li>\n" "</ul>\n"),
         id="more_strings",
     ),
     pytest.param(
         ("{% if this %}<p>Text <span>text</span></p>{% endif %}\n"),
-        (
-            "{% if this %}\n"
-            "    <p>\n"
-            "        Text <span>text</span>\n"
-            "    </p>\n"
-            "{% endif %}\n"
-        ),
+        ("{% if this %}\n" "    <p>\n" "        Text <span>text</span>\n" "    </p>\n" "{% endif %}\n"),
         id="span_leading_text",
     ),
     pytest.param(
-        (
-            "<p>\n"
-            '    <span class="badge">New</span> You can now use <strong>this feature</strong>\n'
-            "</p>\n"
-        ),
-        (
-            "<p>\n"
-            '    <span class="badge">New</span> You can now use <strong>this feature</strong>\n'
-            "</p>\n"
-        ),
+        ("<p>\n" '    <span class="badge">New</span> You can now use <strong>this feature</strong>\n' "</p>\n"),
+        ("<p>\n" '    <span class="badge">New</span> You can now use <strong>this feature</strong>\n' "</p>\n"),
         id="span_text_strong",
     ),
     pytest.param(
-        (
-            "{% block content %}\n"
-            "    <span></span>{% blocktrans %}<div></div>{% endblocktrans %}\n"
-            "    {% endblock content %}\n"
-        ),
-        (
-            "{% block content %}\n"
-            "    <span></span>{% blocktrans %}<div></div>{% endblocktrans %}\n"
-            "{% endblock content %}\n"
-        ),
+        ("{% block content %}\n" "    <span></span>{% blocktrans %}<div></div>{% endblocktrans %}\n" "    {% endblock content %}\n"),
+        ("{% block content %}\n" "    <span></span>{% blocktrans %}<div></div>{% endblocktrans %}\n" "{% endblock content %}\n"),
         id="span_with_template",
     ),
 ]

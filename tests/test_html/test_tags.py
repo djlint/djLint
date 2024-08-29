@@ -52,11 +52,7 @@ test_data = [
         ),
         id="close_at_start",
     ),
-    pytest.param(
-        ("<app-foo></app-foo>\n" "<app-bar></app-bar>\n"),
-        ("<app-foo></app-foo>\n" "<app-bar></app-bar>\n"),
-        id="custom_element",
-    ),
+    pytest.param(("<app-foo></app-foo>\n" "<app-bar></app-bar>\n"), ("<app-foo></app-foo>\n" "<app-bar></app-bar>\n"), id="custom_element"),
     pytest.param(
         (
             "<p\n"
@@ -834,9 +830,7 @@ test_data = [
         ),
         id="textarea",
     ),
-    pytest.param(
-        ("<center></center>\n"), ("<center></center>\n"), id="unsupported"
-    ),
+    pytest.param(("<center></center>\n"), ("<center></center>\n"), id="unsupported"),
 ]
 
 

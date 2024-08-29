@@ -15,13 +15,7 @@ from tests.conftest import printer
 if TYPE_CHECKING:
     from src.djlint.settings import Config
 
-test_data = [
-    pytest.param(
-        ("{{ range .Items }} {{ end }}"),
-        ("{{ range .Items }} {{ end }}\n"),
-        id="range_tag",
-    )
-]
+test_data = [pytest.param(("{{ range .Items }} {{ end }}"), ("{{ range .Items }} {{ end }}\n"), id="range_tag")]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)

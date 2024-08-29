@@ -29,43 +29,21 @@ def test_profile(runner: CliRunner) -> None:
     assert "J018" not in result.output
     assert "D018" in result.output
 
-    result = runner.invoke(
-        djlint,
-        ("tests/test_config/test_profile/html.html", "--profile", "jinja"),
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html", "--profile", "jinja"))
     assert "T001" in result.output
     assert "J018" in result.output
     assert "D018" not in result.output
 
-    result = runner.invoke(
-        djlint,
-        ("tests/test_config/test_profile/html.html", "--profile", "handlebars"),
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html", "--profile", "handlebars"))
     assert "T001" not in result.output
     assert "J018" not in result.output
     assert "D018" not in result.output
 
-    result = runner.invoke(
-        djlint,
-        (
-            "tests/test_config/test_profile/html.html",
-            "--check",
-            "--profile",
-            "handlebars",
-        ),
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html", "--check", "--profile", "handlebars"))
 
     assert result.exit_code == 0
 
-    result = runner.invoke(
-        djlint,
-        (
-            "tests/test_config/test_profile/html.html",
-            "--check",
-            "--profile",
-            "jinja",
-        ),
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html", "--check", "--profile", "jinja"))
     assert result.exit_code == 1
     assert (
         """-{{test}}

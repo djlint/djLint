@@ -16,23 +16,12 @@ if TYPE_CHECKING:
     from typing_extensions import Any
 
 test_data = [
+    pytest.param(("{%- set posts = collections.docs -%}"), ("{%- set posts = collections.docs -%}\n"), ({}), id="set"),
     pytest.param(
-        ("{%- set posts = collections.docs -%}"),
-        ("{%- set posts = collections.docs -%}\n"),
-        ({}),
-        id="set",
+        ("{%-set posts = collections.docs-%}\n{%asdf%}"), ("{%- set posts = collections.docs -%}\n" "{% asdf %}\n"), ({}), id="set_with_sibling"
     ),
     pytest.param(
-        ("{%-set posts = collections.docs-%}\n{%asdf%}"),
-        ("{%- set posts = collections.docs -%}\n" "{% asdf %}\n"),
-        ({}),
-        id="set_with_sibling",
-    ),
-    pytest.param(
-        ('<title>{% set_title "My Title" %}</title>'),
-        ('<title>{% set_title "My Title" %}</title>\n'),
-        ({}),
-        id="don't break underscore stuff",
+        ('<title>{% set_title "My Title" %}</title>'), ('<title>{% set_title "My Title" %}</title>\n'), ({}), id="don't break underscore stuff"
     ),
     pytest.param(
         (
@@ -119,63 +108,31 @@ test_data = [
         id="nestedindent multiilne",
     ),
     pytest.param(
-        (
-            '{% set schema=[{"name": "id",\n'
-            '"type": "integer",\n'
-            '"primary": true\n'
-            "},] %}"
-        ),
-        (
-            '{% set schema = [{"name": "id", "type": "integer", "primary": true}] %}\n'
-        ),
+        ('{% set schema=[{"name": "id",\n' '"type": "integer",\n' '"primary": true\n' "},] %}"),
+        ('{% set schema = [{"name": "id", "type": "integer", "primary": true}] %}\n'),
         ({}),
         id="indent invalid json",
     ),
     pytest.param(
-        (
-            '{% set schema=[{"name": "id",\n'
-            '"type": "integer",\n'
-            '"primary": true\n'
-            "},] %}"
-        ),
-        (
-            '{% set schema=[{"name": "id",\n'
-            '"type": "integer",\n'
-            '"primary": true\n'
-            "},] %}\n"
-        ),
+        ('{% set schema=[{"name": "id",\n' '"type": "integer",\n' '"primary": true\n' "},] %}"),
+        ('{% set schema=[{"name": "id",\n' '"type": "integer",\n' '"primary": true\n' "},] %}\n"),
         ({"no_set_formatting": True}),
         id="disabled",
     ),
     pytest.param(
-        (
-            '{% set schema=[{name: "id",\n'
-            "'type': \"1\",\n"
-            '"primary+1": true\n'
-            "}] %}"
-        ),
-        (
-            '{% set schema = [{"name": "id", "type": "1", "primary+1": true}] %}\n'
-        ),
+        ('{% set schema=[{name: "id",\n' "'type': \"1\",\n" '"primary+1": true\n' "}] %}"),
+        ('{% set schema = [{"name": "id", "type": "1", "primary+1": true}] %}\n'),
         ({}),
         id="indent valid json",
     ),
     pytest.param(
-        (
-            '{% set table_keys = [ ( "date_started", "Start date"), ( "name", "Name" )] %}'
-        ),
-        (
-            "{% set table_keys = [('date_started', 'Start date'), ('name', 'Name')] %}\n"
-        ),
+        ('{% set table_keys = [ ( "date_started", "Start date"), ( "name", "Name" )] %}'),
+        ("{% set table_keys = [('date_started', 'Start date'), ('name', 'Name')] %}\n"),
         ({}),
         id="indent py style list",
     ),
     pytest.param(
-        (
-            '{% set cta %}{% include "partials/cta.njk" %}<div></div>{% endset %}\n'
-            "{%-set posts = collections.docs-%}\n"
-            "{%asdf%}"
-        ),
+        ('{% set cta %}{% include "partials/cta.njk" %}<div></div>{% endset %}\n' "{%-set posts = collections.docs-%}\n" "{%asdf%}"),
         (
             "{% set cta %}\n"
             '    {% include "partials/cta.njk" %}\n'
@@ -188,41 +145,14 @@ test_data = [
         id="set block",
     ),
     pytest.param(
-        (
-            "<ul>\n"
-            "  {# djlint:off #}\n"
-            "  <li>{%set a=[{'x':1}]%}</li>\n"
-            "  {# djlint:on #}\n"
-            "</ul>"
-        ),
-        (
-            "<ul>\n"
-            "    {# djlint:off #}\n"
-            "  <li>{%set a=[{'x':1}]%}</li>\n"
-            "    {# djlint:on #}\n"
-            "</ul>\n"
-        ),
+        ("<ul>\n" "  {# djlint:off #}\n" "  <li>{%set a=[{'x':1}]%}</li>\n" "  {# djlint:on #}\n" "</ul>"),
+        ("<ul>\n" "    {# djlint:off #}\n" "  <li>{%set a=[{'x':1}]%}</li>\n" "    {# djlint:on #}\n" "</ul>\n"),
         ({"max_line_length": 1}),
         id="ignored code should not be touched",
     ),
-    pytest.param(
-        ('{%- set posts = "¿Spécial çhärs 👻?" -%}'),
-        ('{%- set posts = "¿Spécial çhärs 👻?" -%}\n'),
-        ({}),
-        id="set",
-    ),
-    pytest.param(
-        ("<li>{{ foo(1,2) }}</li>"),
-        ("<li>{{ foo(1, 2) }}</li>\n"),
-        ({}),
-        id="don't add parenth to lists",
-    ),
-    pytest.param(
-        ('{{- foo("bar") -}}'),
-        ('{{- foo("bar") -}}\n'),
-        ({}),
-        id="don't break spaceless tags #667",
-    ),
+    pytest.param(('{%- set posts = "¿Spécial çhärs 👻?" -%}'), ('{%- set posts = "¿Spécial çhärs 👻?" -%}\n'), ({}), id="set"),
+    pytest.param(("<li>{{ foo(1,2) }}</li>"), ("<li>{{ foo(1, 2) }}</li>\n"), ({}), id="don't add parenth to lists"),
+    pytest.param(('{{- foo("bar") -}}'), ('{{- foo("bar") -}}\n'), ({}), id="don't break spaceless tags #667"),
     pytest.param(
         (
             "{% for tag in collections.all | getAllTags | filterTagList | sort %}\n"

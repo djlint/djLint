@@ -23,9 +23,7 @@ if TYPE_CHECKING:
 
 
 def test_custom_rules(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_linter/test_custom_rules/", "--profile", "django")
-    )
+    result = runner.invoke(djlint, ("tests/test_linter/test_custom_rules/", "--profile", "django"))
     assert """Linting""" in result.output
     assert """1/1""" in result.output
     assert """T001 1:""" in result.output

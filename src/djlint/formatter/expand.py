@@ -47,10 +47,7 @@ def expand_html(html: str, config: Config) -> str:
 
     # html tags - break before
     html = re.sub(
-        rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)",
-        add_left,
-        html,
-        flags=re.IGNORECASE | re.VERBOSE,
+        rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)", add_left, html, flags=re.IGNORECASE | re.VERBOSE
     )
 
     # html tags - break after
@@ -62,9 +59,7 @@ def expand_html(html: str, config: Config) -> str:
     )
 
     # template tag breaks
-    def should_i_move_template_tag(
-        out_format: str, match: re.Match[str]
-    ) -> str:
+    def should_i_move_template_tag(out_format: str, match: re.Match[str]) -> str:
         # ensure template tag is not inside an html tag and also not the first line of the file
         if inside_ignored_block(config, html, match):
             return match.group(1)
@@ -89,10 +84,7 @@ def expand_html(html: str, config: Config) -> str:
     # template tags
     # break before
     html = re.sub(
-        break_char
-        + r"\K((?:{%|{{\#)[ ]*?(?:"
-        + config.break_template_tags
-        + ")[^}]+?[%}]})",
+        break_char + r"\K((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%}]})",
         partial(should_i_move_template_tag, "\n%s"),
         html,
         flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
@@ -100,9 +92,7 @@ def expand_html(html: str, config: Config) -> str:
 
     # break after
     return re.sub(
-        r"((?:{%|{{\#)[ ]*?(?:"
-        + config.break_template_tags
-        + ")[^}]+?[%}]})(?=[^\n])",
+        r"((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%}]})(?=[^\n])",
         partial(should_i_move_template_tag, "%s\n"),
         html,
         flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,

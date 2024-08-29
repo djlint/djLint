@@ -38,45 +38,23 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
 
         for line_number, line in enumerate(attributes.splitlines()):
             # when checking for template tag, use "match" to force start of line check.
-            if re.match(
-                config.template_unindent, line.strip(), flags=re.I | re.X
-            ):
+            if re.match(config.template_unindent, line.strip(), flags=re.I | re.X):
                 indent -= 1
-                tmp = (
-                    (indent * config.indent)
-                    + (indent_adder * " ")
-                    + line.strip()
-                )
+                tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
 
-            elif re.match(
-                config.tag_unindent_line, line.strip(), flags=re.I | re.X
-            ):
+            elif re.match(config.tag_unindent_line, line.strip(), flags=re.I | re.X):
                 # if we are leaving an indented group, then remove the indent_adder
-                tmp = (
-                    max(indent - 1, 0) * config.indent
-                    + indent_adder * " "
-                    + line.strip()
-                )
+                tmp = max(indent - 1, 0) * config.indent + indent_adder * " " + line.strip()
 
-            elif re.search(
-                config.template_indent, line.strip(), flags=re.I | re.X
-            ) and not re.search(
+            elif re.search(config.template_indent, line.strip(), flags=re.I | re.X) and not re.search(
                 config.template_unindent, line.strip(), flags=re.I | re.X
             ):
                 # for open tags, search, but then check that they are not closed.
-                tmp = (
-                    (indent * config.indent)
-                    + (indent_adder * " ")
-                    + line.strip()
-                )
+                tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
                 indent += 1
 
             else:
-                tmp = (
-                    (indent * config.indent)
-                    + (indent_adder * " ")
-                    + line.strip()
-                )
+                tmp = (indent * config.indent) + (indent_adder * " ") + line.strip()
 
             if line_number == 0:
                 # don't touch first line
@@ -98,10 +76,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
     func = partial(add_break, "before")
 
     attributes = re.sub(
-        break_char
-        + r".\K((?:{%|{{\#)[ ]*?(?:"
-        + config.break_template_tags
-        + ")[^}]+?[%|}]})",
+        break_char + r".\K((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%|}]})",
         func,
         attributes,
         flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
@@ -110,9 +85,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
     func = partial(add_break, "after")
     # break after
     attributes = re.sub(
-        r"((?:{%|{{\#)[ ]*?(?:"
-        + config.break_template_tags
-        + ")[^}]+?[%|}]})([^\n]+)$",
+        r"((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%|}]})([^\n]+)$",
         func,
         attributes,
         flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
@@ -123,10 +96,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
 def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
     """Spread long attributes over multiple lines."""
     # check that we are not inside an ignored block
-    if (
-        child_of_ignored_block(config, html, match)
-        or len(match.group(3).strip()) < config.max_attribute_length
-    ):
+    if child_of_ignored_block(config, html, match) or len(match.group(3).strip()) < config.max_attribute_length:
         return match.group()
 
     leading_space = match.group(1)
@@ -138,9 +108,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
     attributes = []
 
     # format attributes as groups
-    for attr_grp in re.finditer(
-        config.attribute_pattern, match.group(3).strip(), flags=re.VERBOSE
-    ):
+    for attr_grp in re.finditer(config.attribute_pattern, match.group(3).strip(), flags=re.VERBOSE):
         attrib_name = attr_grp.group(1)
         is_quoted = attr_grp.group(2) and attr_grp.group(2)[0] in {"'", '"'}
         quote = attr_grp.group(2)[0] if is_quoted else '"'
@@ -167,61 +135,31 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
             # for the equals sign
             quote_length += 1
 
-        join_space = (
-            f"\n{spacing}"
-            if config.format_attribute_template_tags
-            else (
-                f"\n{spacing}" + (quote_length + len(attrib_name or "")) * " "
-            )
-        )
+        join_space = f"\n{spacing}" if config.format_attribute_template_tags else (f"\n{spacing}" + (quote_length + len(attrib_name or "")) * " ")
 
         # format style attribute
         if attrib_name and attrib_name.lower() == "style":
-            attrib_value = f";{join_space}".join(
-                stripped
-                for value in attrib_value.split(";")
-                if (stripped := value.strip())
-            )
+            attrib_value = f";{join_space}".join(stripped for value in attrib_value.split(";") if (stripped := value.strip()))
 
-        elif attrib_name and attrib_name.lower() in {
-            "srcset",
-            "data-srcset",
-            "sizes",
-        }:
+        elif attrib_name and attrib_name.lower() in {"srcset", "data-srcset", "sizes"}:
             # vw
-            attrib_value = f"w,{join_space}".join(
-                stripped
-                for value in attrib_value.split("w,")
-                if (stripped := value.strip())
-            )
+            attrib_value = f"w,{join_space}".join(stripped for value in attrib_value.split("w,") if (stripped := value.strip()))
             # px
-            attrib_value = f"x,{join_space}".join(
-                stripped
-                for value in attrib_value.split("x,")
-                if (stripped := value.strip())
-            )
+            attrib_value = f"x,{join_space}".join(stripped for value in attrib_value.split("x,") if (stripped := value.strip()))
 
         # format template stuff
         if config.format_attribute_template_tags:
             if attrib_value and attrib_name not in config.ignored_attributes:
-                attrib_value = format_template_tags(
-                    config,
-                    attrib_value,
-                    len(spacing) + len(attrib_name or "") + quote_length,
-                )
+                attrib_value = format_template_tags(config, attrib_value, len(spacing) + len(attrib_name or "") + quote_length)
 
             if standalone:
-                standalone = format_template_tags(
-                    config, standalone, len(spacing) + len(attrib_name or "")
-                )
+                standalone = format_template_tags(config, standalone, len(spacing) + len(attrib_name or ""))
 
         if (attrib_name and attrib_value) or is_quoted:
             attrib_value = attrib_value or ""
             attributes.append(f"{attrib_name}={quote}{attrib_value}{quote}")
         else:
-            attributes.append(
-                (attrib_name or "") + (attrib_value or "") + (standalone or "")
-            )
+            attributes.append((attrib_name or "") + (attrib_value or "") + (standalone or ""))
     attribute_string = f"\n{spacing}".join(x for x in attributes if x)
 
     close = match.group(4)
@@ -229,8 +167,6 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
     attribute_string = f"{leading_space}{tag}{attribute_string}{close}"
 
     # clean trailing spaces added by breaks
-    attribute_string = "\n".join(
-        x.rstrip() for x in attribute_string.splitlines()
-    )
+    attribute_string = "\n".join(x.rstrip() for x in attribute_string.splitlines())
 
     return f"{attribute_string}"

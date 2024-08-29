@@ -100,12 +100,7 @@ test_data = [
         ({"preserve_blank_lines": True}),
         id="whitespace test",
     ),
-    pytest.param(
-        ("<div>"),
-        ("<div>\n"),
-        ({"preserve_blank_lines": True}),
-        id="whitespace test",
-    ),
+    pytest.param(("<div>"), ("<div>\n"), ({"preserve_blank_lines": True}), id="whitespace test"),
     pytest.param(
         ("<div>\n\t\n\t<div>\n\t\n\t</div>\n\t\n</div>"),
         ("<div>\n\n    <div></div>\n\n</div>\n"),

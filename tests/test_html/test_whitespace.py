@@ -217,56 +217,21 @@ test_data = [
         id="non_breaking_whitespace",
     ),
     pytest.param(("<div> </div>\n"), ("<div></div>\n"), id="snippet_18"),
-    pytest.param(
-        ("<div>          </div>\n"), ("<div></div>\n"), id="snippet_19"
-    ),
-    pytest.param(
-        ("<div>           </div>\n"), ("<div></div>\n"), id="snippet_20"
-    ),
-    pytest.param(
-        ("<div>                   </div>\n"), ("<div></div>\n"), id="snippet_21"
-    ),
+    pytest.param(("<div>          </div>\n"), ("<div></div>\n"), id="snippet_19"),
+    pytest.param(("<div>           </div>\n"), ("<div></div>\n"), id="snippet_20"),
+    pytest.param(("<div>                   </div>\n"), ("<div></div>\n"), id="snippet_21"),
     pytest.param(("<span> </span>\n"), ("<span></span>\n"), id="snippet_22"),
-    pytest.param(
-        ("<span>          </span>\n"), ("<span></span>\n"), id="snippet_23"
-    ),
-    pytest.param(
-        ("<span>           </span>\n"), ("<span></span>\n"), id="snippet_24"
-    ),
-    pytest.param(
-        ("<span>                   </span>\n"),
-        ("<span></span>\n"),
-        id="snippet_25",
-    ),
-    pytest.param(
-        ("<img/> <img/>\n"), ("<img /> \n" "<img />\n"), id="snippet_26"
-    ),
-    pytest.param(
-        ("<img/>          <img/>\n"),
-        ("<img />  \n" "<img />\n"),
-        id="snippet_27",
-    ),
-    pytest.param(
-        ("<img/>           <img/>\n"),
-        ("<img />          \n" "<img />\n"),
-        id="snippet_28",
-    ),
-    pytest.param(
-        ("<img/>                   <img/>\n"),
-        ("<img />                  \n" "<img />\n"),
-        id="snippet_29",
-    ),
-    pytest.param(
-        ("<i />   |   <i />\n"), ("<i />   |   <i />\n"), id="snippet_30"
-    ),
+    pytest.param(("<span>          </span>\n"), ("<span></span>\n"), id="snippet_23"),
+    pytest.param(("<span>           </span>\n"), ("<span></span>\n"), id="snippet_24"),
+    pytest.param(("<span>                   </span>\n"), ("<span></span>\n"), id="snippet_25"),
+    pytest.param(("<img/> <img/>\n"), ("<img /> \n" "<img />\n"), id="snippet_26"),
+    pytest.param(("<img/>          <img/>\n"), ("<img />  \n" "<img />\n"), id="snippet_27"),
+    pytest.param(("<img/>           <img/>\n"), ("<img />          \n" "<img />\n"), id="snippet_28"),
+    pytest.param(("<img/>                   <img/>\n"), ("<img />                  \n" "<img />\n"), id="snippet_29"),
+    pytest.param(("<i />   |   <i />\n"), ("<i />   |   <i />\n"), id="snippet_30"),
     pytest.param(
         ("<p><span>X</span>   or   <span>Y</span></p><p>X   or   Y</p>\n"),
-        (
-            "<p>\n"
-            "    <span>X</span>   or   <span>Y</span>\n"
-            "</p>\n"
-            "<p>X   or   Y</p>\n"
-        ),
+        ("<p>\n" "    <span>X</span>   or   <span>Y</span>\n" "</p>\n" "<p>X   or   Y</p>\n"),
         id="snippet_31",
     ),
     pytest.param(

@@ -47,29 +47,13 @@ test_data = [
         id="eachAll",
     ),
     pytest.param(
-        (
-            "{% asyncEach i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endeach %}"
-        ),
-        (
-            "{% asyncEach i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endeach %}\n"
-        ),
+        ("{% asyncEach i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endeach %}"),
+        ("{% asyncEach i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endeach %}\n"),
         id="each test nested formfield",
     ),
     pytest.param(
-        (
-            "{% asyncAll i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endall %}"
-        ),
-        (
-            "{% asyncAll i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endall %}\n"
-        ),
+        ("{% asyncAll i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endall %}"),
+        ("{% asyncAll i in items %}\n" "    <div>{% formfield i %}</div>\n" "{% endall %}\n"),
         id="all test nested formfield",
     ),
     pytest.param(

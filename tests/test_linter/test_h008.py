@@ -20,68 +20,30 @@ test_data = [
     pytest.param(
         ("<div class='test'>"),
         ([
-            {
-                "code": "H008",
-                "line": "1:0",
-                "match": "<div class='test'",
-                "message": "Attributes should be double quoted.",
-            },
-            {
-                "code": "H025",
-                "line": "1:0",
-                "match": "<div class='test'>",
-                "message": "Tag seems to be an orphan.",
-            },
+            {"code": "H008", "line": "1:0", "match": "<div class='test'", "message": "Attributes should be double quoted."},
+            {"code": "H025", "line": "1:0", "match": "<div class='test'>", "message": "Tag seems to be an orphan."},
         ]),
         id="one",
     ),
     pytest.param(
         ("<div class='test\nclass-two'>"),
         ([
-            {
-                "code": "H008",
-                "line": "1:0",
-                "match": "<div class='test\ncla",
-                "message": "Attributes should be double quoted.",
-            },
-            {
-                "code": "H025",
-                "line": "1:0",
-                "match": "<div class='test\ncla",
-                "message": "Tag seems to be an orphan.",
-            },
+            {"code": "H008", "line": "1:0", "match": "<div class='test\ncla", "message": "Attributes should be double quoted."},
+            {"code": "H025", "line": "1:0", "match": "<div class='test\ncla", "message": "Tag seems to be an orphan."},
         ]),
         id="line break",
     ),
-    pytest.param(
-        (
-            '<link rel="stylesheet" href="styles.css" media="print" onload="this.media=\'all\'" media='
-            "/>"
-        ),
-        ([]),
-        id="one",
-    ),
-    pytest.param(
-        (
-            '<link rel="stylesheet" href="styles.css" media="print" onload="this.media=\'all\'"/>'
-        ),
-        ([]),
-        id="one",
-    ),
+    pytest.param(('<link rel="stylesheet" href="styles.css" media="print" onload="this.media=\'all\'" media=' "/>"), ([]), id="one"),
+    pytest.param(('<link rel="stylesheet" href="styles.css" media="print" onload="this.media=\'all\'"/>'), ([]), id="one"),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 
-    mismatch = (
-        *(x for x in output[filename] if x not in expected),
-        *(x for x in expected if x not in output[filename]),
-    )
+    mismatch = (*(x for x in output[filename] if x not in expected), *(x for x in expected if x not in output[filename]))
     assert not mismatch

@@ -18,30 +18,12 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("<div><textarea>\n" "asdf\n" "  asdf</textarea></div>\n"),
-        (
-            "<div>\n"
-            "    <textarea>\n"
-            "asdf\n"
-            "  asdf</textarea>\n"
-            "</div>\n"
-        ),
+        ("<div>\n" "    <textarea>\n" "asdf\n" "  asdf</textarea>\n" "</div>\n"),
         id="textarea",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            '    <div class="field">\n'
-            "        <textarea>asdf</textarea>\n"
-            "    </div>\n"
-            "</div>\n"
-        ),
-        (
-            "<div>\n"
-            '    <div class="field">\n'
-            "        <textarea>asdf</textarea>\n"
-            "    </div>\n"
-            "</div>\n"
-        ),
+        ("<div>\n" '    <div class="field">\n' "        <textarea>asdf</textarea>\n" "    </div>\n" "</div>\n"),
+        ("<div>\n" '    <div class="field">\n' "        <textarea>asdf</textarea>\n" "    </div>\n" "</div>\n"),
         id="nesting",
     ),
     pytest.param(
@@ -53,13 +35,7 @@ test_data = [
             "    </div>\n"
             "</div>\n"
         ),
-        (
-            "<div>\n"
-            '    <div class="field">\n'
-            '        <textarea class="this" name="that">asdf</textarea>\n'
-            "    </div>\n"
-            "</div>\n"
-        ),
+        ("<div>\n" '    <div class="field">\n' '        <textarea class="this" name="that">asdf</textarea>\n' "    </div>\n" "</div>\n"),
         id="attributes",
     ),
     pytest.param(
@@ -69,20 +45,8 @@ test_data = [
     ),
     # test added for https://github.com/djlint/djLint/issues/189
     pytest.param(
-        (
-            "<a>\n"
-            "    <span>hi</span>hi</a>\n"
-            "<div>\n"
-            '    <h4>{{ _("Options") }}</h4>\n'
-            "</div>\n"
-        ),
-        (
-            "<a>\n"
-            "    <span>hi</span>hi</a>\n"
-            "<div>\n"
-            '    <h4>{{ _("Options") }}</h4>\n'
-            "</div>\n"
-        ),
+        ("<a>\n" "    <span>hi</span>hi</a>\n" "<div>\n" '    <h4>{{ _("Options") }}</h4>\n' "</div>\n"),
+        ("<a>\n" "    <span>hi</span>hi</a>\n" "<div>\n" '    <h4>{{ _("Options") }}</h4>\n' "</div>\n"),
         id="a_with_nesting",
     ),
 ]

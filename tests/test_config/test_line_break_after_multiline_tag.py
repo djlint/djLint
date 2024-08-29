@@ -17,9 +17,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            '<div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value">string</div>\n'
-        ),
+        ('<div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value">string</div>\n'),
         (
             '<div attribute="value"\n'
             '     attributea="value"\n'
@@ -54,9 +52,7 @@ test_data = [
         id="no_line_break_after_multiline_tag_when_already_split",
     ),
     pytest.param(
-        (
-            '<div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value">string</div>\n'
-        ),
+        ('<div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value">string</div>\n'),
         (
             '<div attribute="value"\n'
             '     attributea="value"\n'
