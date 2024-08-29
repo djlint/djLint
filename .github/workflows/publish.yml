@@ -19,11 +19,13 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'djlint' }}
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          registry-url: "https://registry.npmjs.org"
+          registry-url: 'https://registry.npmjs.org'
       - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
