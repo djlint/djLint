@@ -124,24 +124,24 @@ self.onmessage = async (event) => {
 
     await pyodide.runPythonAsync(`
       with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as temp_file:
-          temp_file.write("""${html}""")
-          temp_file.close()
-          config = Config(
-            temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
-          )
-          ${customBlocks}
-          ${customHtml}
-          ${maxLineLength}
-          ${maxAttributeLength}
-          ${formatAttributeTemplateTags}
-          ${blankLineAfterTag}
-          ${blankLineBeforeTag}
-          ${closeVoidTags}
-          ${ignoreCase}
-          ${lineBreakAfterMultilineTag}
-          ${noLineAfterYaml}
-          ${blankLineBeforeTag}
-          print(Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8").rstrip())
+        temp_file.write("""${html}""")
+        temp_file.close()
+        config = Config(
+          temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
+        )
+        ${customBlocks}
+        ${customHtml}
+        ${maxLineLength}
+        ${maxAttributeLength}
+        ${formatAttributeTemplateTags}
+        ${blankLineAfterTag}
+        ${blankLineBeforeTag}
+        ${closeVoidTags}
+        ${ignoreCase}
+        ${lineBreakAfterMultilineTag}
+        ${noLineAfterYaml}
+        ${blankLineBeforeTag}
+        print(Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8").rstrip())
     `);
 
     let stdout = await self.pyodide.runPythonAsync("sys.stdout.getvalue()");
