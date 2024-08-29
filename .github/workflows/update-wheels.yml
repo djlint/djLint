@@ -1,4 +1,4 @@
-name: Update dependencies
+name: Update wheels
 on:
   workflow_dispatch:
   push:
