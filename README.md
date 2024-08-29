@@ -104,9 +104,9 @@ Looks like this:
 
 Yes!
 
-_Would you like to add a rule to the linter?_ Take a look at the [linter docs](https://djlint.com/docs/linter/) and [source code](https://github.com/djlint/djLint/blob/master/src/djlint/rules.yaml)
+_Would you like to add a rule to the linter?_ Take a look at the [linter docs](https://djlint.com/docs/linter/) and [source code](https://github.com/djlint/djLint/blob/master/djlint/rules.yaml)
 
-_Are you a regex pro?_ Benchmark and submit a pr with improved regex for the [linter rules](https://github.com/djlint/djLint/blob/master/src/djlint/rules.yaml)
+_Are you a regex pro?_ Benchmark and submit a pr with improved regex for the [linter rules](https://github.com/djlint/djLint/blob/master/djlint/rules.yaml)
 
 **⚠️ Help Needed! ⚠️** _Good with python?_ djLint was an experimental project and is catching on with other devs. Help out with a rewrite of the formatter to improve speed and html style for edge cases. Contribute on the [2.0 branch](https://github.com/djlint/djLint/tree/block_indent)
 

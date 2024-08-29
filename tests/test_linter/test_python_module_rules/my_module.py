@@ -7,13 +7,13 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from src.djlint.lint import get_line
+from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from typing_extensions import Any
 
-    from src.djlint.lint import LintError
-    from src.djlint.settings import Config
+    from djlint.lint import LintError
+    from djlint.settings import Config
 
 
 def run(

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.djlint.settings import Config
+from djlint.settings import Config
 
 
 def test_default() -> None:

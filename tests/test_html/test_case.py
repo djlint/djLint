@@ -7,8 +7,8 @@ from __future__ import annotations
 
 import pytest
 
-from src.djlint.reformat import formatter
-from src.djlint.settings import Config
+from djlint.reformat import formatter
+from djlint.settings import Config
 from tests.conftest import printer
 
 test_data = [

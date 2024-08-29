@@ -14,7 +14,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from src.djlint import main as djlint
+from djlint import main as djlint
 
 if TYPE_CHECKING:
     from click.testing import CliRunner

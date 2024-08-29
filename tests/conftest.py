@@ -13,8 +13,8 @@ import pytest
 from click.testing import CliRunner
 from colorama import Fore, Style
 
-from src.djlint import main as djlint
-from src.djlint.settings import Config
+from djlint import main as djlint
+from djlint.settings import Config
 
 if TYPE_CHECKING:
     import os
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
     from typing_extensions import Any
 
-    from src.djlint.lint import LintError
+    from djlint.lint import LintError
 
 
 @pytest.fixture

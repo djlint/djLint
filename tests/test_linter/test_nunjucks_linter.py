@@ -10,12 +10,12 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from src.djlint.lint import linter
+from djlint.lint import linter
 from tests.conftest import lint_printer
 
 if TYPE_CHECKING:
-    from src.djlint.lint import LintError
-    from src.djlint.settings import Config
+    from djlint.lint import LintError
+    from djlint.settings import Config
 
 test_data = [
     pytest.param(

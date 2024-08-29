@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from src.djlint.reformat import formatter
+from djlint.reformat import formatter
 from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:

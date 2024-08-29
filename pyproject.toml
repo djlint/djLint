@@ -25,7 +25,6 @@ classifiers = [
   "Topic :: Software Development",
   "Typing :: Typed",
 ]
-packages = [{ include = "djlint", from = "src" }]
 include = ["rules.yaml"]
 
 [tool.poetry.dependencies]

@@ -9,11 +9,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from src.djlint.reformat import formatter
+from djlint.reformat import formatter
 from tests.conftest import printer
 
 if TYPE_CHECKING:
-    from src.djlint.settings import Config
+    from djlint.settings import Config
 
 test_data = [pytest.param(("{{ range .Items }} {{ end }}"), ("{{ range .Items }} {{ end }}\n"), id="range_tag")]
 
