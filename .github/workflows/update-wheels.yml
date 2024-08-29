@@ -37,7 +37,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           commit-message: Update wheels
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          branch: update-wheels
+          branch: update/wheels
           delete-branch: true
           title: Update wheels
           body:
