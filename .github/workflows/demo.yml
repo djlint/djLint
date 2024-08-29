@@ -52,6 +52,7 @@ jobs:
       - run: rm -rf '${{ matrix.tool }}_raw'
       - run: |
           git init
+          git remote add origin 'https://github.com/djlint/djlint'
           git branch -m 'demo-${{ matrix.tool }}'
           git config --global user.name 'github-actions[bot]'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -60,5 +61,5 @@ jobs:
           poetry run python -m djlint . --profile=${{ matrix.profile }} --reformat --warn --quiet ${{ matrix.args }}
           git add -A
           git commit -m "Reformat with djLint v$(poetry version --short)"
-          git push --force 'https://github.com/djlint/djlint' 'demo-${{ matrix.tool }}'
-        working-directory: "${{ matrix.tool }}_source"
+          git push --force origin 'demo-${{ matrix.tool }}'
+        working-directory: '${{ matrix.tool }}_source'
