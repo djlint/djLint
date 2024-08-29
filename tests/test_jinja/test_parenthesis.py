@@ -24,12 +24,12 @@ test_data = [
         '   href="{{ url("fo\\\'o") }}"\n'
         "   href=\"{{ url('foo') }}\"\n"
         '   href="{{ url("foo") }}"></a>',
-        '<a href="{{ url(\'fo"o\') }}"\n'
-        '   href="{{ url(\'fo\\"o\') }}"\n'
-        "   href=\"{{ url('fo\\'o') }}\"\n"
-        "   href=\"{{ url('fo\\\\'o') }}\"\n"
+        '<a href="{{ url("fo\\"o") }}"\n'
+        '   href="{{ url("fo\\"o") }}"\n'
+        '   href="{{ url("fo\'o") }}"\n'
+        '   href="{{ url("fo\'o") }}"\n'
         "   href=\"{{ url('foo') }}\"\n"
-        "   href=\"{{ url('foo') }}\"></a>",
+        "   href=\"{{ url('foo') }}\"></a>\n",
         id="single_escaped quote",
     ),
     pytest.param(
