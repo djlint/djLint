@@ -2,6 +2,10 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.35.1] - 2024-08-29
+
+- Fix npm publishing
+
 ## [1.35.0] - 2024-08-29
 
 - Unpin dependencies upper bounds.
