@@ -1,8 +1,8 @@
 ---
 name: "\U0001F310 Translation Issue"
 about: You've found a translation issue?
-title: '[Translation]'
-labels: ':globe_with_meridians: translation'
+title: "[Translation]"
+labels: ":globe_with_meridians: translation"
 ---
 
 <!--

@@ -30,7 +30,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - '3.8'
+          - "3.8"
           - 3.x
       fail-fast: false
     steps:
