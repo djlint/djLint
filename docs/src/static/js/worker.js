@@ -19,15 +19,15 @@ async function loadPyodideAndPackages() {
   ]);
   postMessage({ type: "status", message: "Installing djlint" });
   await pyodide.runPythonAsync(`
-    import micropip
-    micropip.install("djlint", keep_going=True)
+        import micropip
+        micropip.install("djlint", keep_going=True)
   `);
   postMessage({
     type: "version",
-    message: pyodide.runPython(`
-    import platform
-    from importlib import metadata
-    f"running with Python {platform.python_version()}; djLint {metadata.version('djlint')}"
+    message: await pyodide.runPythonAsync(`
+        import platform
+        from importlib import metadata
+        f"running with Python {platform.python_version()}; djLint {metadata.version('djlint')}"
   `),
   });
 
@@ -42,19 +42,19 @@ self.onmessage = async (event) => {
 
   const { id, config, html } = event.data;
 
-  const profile = config.profile ? `\n,profile="${config.profile}"` : "";
-  const indent = config.indent ? `\n,indent=${config.indent}` : "";
+  const profile = config.profile ? ` ,profile="${config.profile}"` : "";
+  const indent = config.indent ? ` ,indent=${config.indent}` : "";
   const preserveLeadingSpace = config.preserveLeadingSpace
-    ? `\n,preserve_leading_space=${capitalize(config.preserveLeadingSpace)}`
+    ? ` ,preserve_leading_space=${capitalize(config.preserveLeadingSpace)}`
     : "";
   const preserveBlankSpace = config.preserveBlankSpace
-    ? `\n,preserve_blank_lines=${capitalize(config.preserveBlankSpace)}`
+    ? ` ,preserve_blank_lines=${capitalize(config.preserveBlankSpace)}`
     : "";
   const formatJs = config.formatJs
-    ? `\n,format_js=${capitalize(config.formatJs)}`
+    ? ` ,format_js=${capitalize(config.formatJs)}`
     : "";
   const formatCss = config.formatCss
-    ? `\n,format_css=${capitalize(config.formatCss)}`
+    ? ` ,format_css=${capitalize(config.formatCss)}`
     : "";
   const customBlocks = config.customBlocks
     ? `config.custom_blocks="${config.customBlocks}"`
@@ -69,9 +69,7 @@ self.onmessage = async (event) => {
     ? `config.max_attribute_length=${config.maxAttributeLength}`
     : "";
   const formatAttributeTemplateTags = config.formatAttributeTemplateTags
-    ? `config.format_attribute_template_tags=${capitalize(
-        config.formatAttributeTemplateTags,
-      )}`
+    ? `config.format_attribute_template_tags=${capitalize(config.formatAttributeTemplateTags)}`
     : "";
   const blankLineAfterTag = config.blankLineAfterTag
     ? `config.blank_line_after_tag="${config.blankLineAfterTag}"`
@@ -106,42 +104,45 @@ self.onmessage = async (event) => {
 
   try {
     await self.pyodide.runPythonAsync(`
-      import sys
+        import sys
 
-      sys.modules["_multiprocessing"] = object
+        sys.modules["_multiprocessing"] = object
 
-      from io import StringIO
+        from io import StringIO
 
-      sys.stdout = StringIO()
+        sys.stdout = StringIO()
 
-      from pathlib import Path
-      from tempfile import NamedTemporaryFile
+        from pathlib import Path
+        from tempfile import NamedTemporaryFile
 
-      from djlint.reformat import reformat_file
-      from djlint.settings import Config
+        from djlint.reformat import reformat_file
+        from djlint.settings import Config
     `);
-    await self.pyodide.runPythonAsync("sys.stdout.flush()");
+    await self.pyodide.runPythonAsync(`
+        sys.stdout.flush()
+    `);
 
     await pyodide.runPythonAsync(`
-      with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as temp_file:
-        temp_file.write("""${html}""")
-        temp_file.close()
-        config = Config(
-          temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
-        )
-        ${customBlocks}
-        ${customHtml}
-        ${maxLineLength}
-        ${maxAttributeLength}
-        ${formatAttributeTemplateTags}
-        ${blankLineAfterTag}
-        ${blankLineBeforeTag}
-        ${closeVoidTags}
-        ${ignoreCase}
-        ${lineBreakAfterMultilineTag}
-        ${noLineAfterYaml}
-        ${blankLineBeforeTag}
-        print(Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8").rstrip())
+        with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as temp_file:
+            temp_file.write("""${html}""")
+            temp_file.close()
+            config = Config(
+              temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
+            )
+            ${customBlocks}
+            ${customHtml}
+            ${maxLineLength}
+            ${maxAttributeLength}
+            ${formatAttributeTemplateTags}
+            ${blankLineAfterTag}
+            ${blankLineBeforeTag}
+            ${closeVoidTags}
+            ${ignoreCase}
+            ${lineBreakAfterMultilineTag}
+            ${noLineAfterYaml}
+            ${blankLineBeforeTag}
+            result = Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8")
+        print(result.rstrip())
     `);
 
     let stdout = await self.pyodide.runPythonAsync("sys.stdout.getvalue()");
