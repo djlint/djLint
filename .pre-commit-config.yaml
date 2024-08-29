@@ -21,8 +21,8 @@ repos:
     hooks:
       - id: prettier
         args:
-          - --plugin
-          - "[]"
+          - --no-config
+          - --single-quote
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.6.2
     hooks:
