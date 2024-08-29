@@ -48,7 +48,7 @@ jobs:
       - run: poetry install --only main --sync --no-root --no-interaction
       - run: git clone --depth 1 '${{ matrix.repo }}' '${{ matrix.tool }}_raw'
       - run: mkdir '${{ matrix.tool }}_source'
-      - run: find "${{ matrix.tool }}_raw" -iname '*.html*' -exec mv -f -t "${{ matrix.tool }}_source/" {} +
+      - run: find "${{ matrix.tool }}_raw" -iname '*.html*' -exec mv '{}' "${{ matrix.tool }}_source/" \;
       - run: rm -rf '${{ matrix.tool }}_raw'
       - run: |
           git init
