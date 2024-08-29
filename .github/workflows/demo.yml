@@ -53,8 +53,8 @@ jobs:
       - run: |
           git init
           git branch -m 'demo-${{ matrix.tool }}'
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           git commit -m 'git clone ${{ matrix.repo }}'
           poetry run python -m djlint . --profile=${{ matrix.profile }} --reformat --warn --quiet ${{ matrix.args }}
