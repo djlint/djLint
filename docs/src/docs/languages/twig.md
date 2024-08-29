@@ -29,13 +29,3 @@ profile="{{ tool }}"
 <div class="box notification is-info is-light">
     <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/docs/configuration/">Check out the configuration guide for all the options!</a></div>
 </div>
-
-## Real Life Examples!
-
-<div class="mb-5">
-
-- [bolt](https://github.com/bolt/core) source code [reformatted](https://github.com/djlint/djLint/compare/bolt-source...djlint:djLint:bolt-djlint)
-
-- [Sylius](https://github.com/Sylius/Sylius) source code [reformatted](https://github.com/djlint/djLint/compare/sylius-source...djlint:djLint:sylius-djlint)
-
-</div>
