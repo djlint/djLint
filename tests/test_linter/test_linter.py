@@ -1,3 +1,4 @@
+# ruff: noqa: N802
 """Djlint linter rule tests.
 
 run::

@@ -62,7 +62,6 @@ unfixable = ["RUF027", "T"]
 [lint.per-file-ignores]
 "djlint/rules/*" = ["ARG001", "N999"]
 "tests/*" = ["FBT001", "S101", "T201", "PLR2004"]
-"tests/test_linter/test_linter.py" = ["N802"]
 
 [lint.flake8-self]
 ignore-names = ["_name_", "_value_"]
