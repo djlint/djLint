@@ -27,7 +27,9 @@ test_data = [
         id="call_tag_with_function",
     ),
     pytest.param(
-        ("{% call (a, b) render_form(form, '<hr>'>) %}"), ("{% call (a, b) render_form(form, '<hr>'>) %}\n"), id="call_tag_with_nested_html"
+        ("{% call (a, b) render_form(form, '<hr>'>) %}"),
+        ("{% call (a, b) render_form(form, '<hr>'>) %}\n"),
+        id="call_tag_with_nested_html",
     ),
 ]
 

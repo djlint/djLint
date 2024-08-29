@@ -8,7 +8,11 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from .helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
+from .helpers import (
+    inside_ignored_linter_block,
+    inside_ignored_rule,
+    overlaps_ignored_block,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -59,11 +63,16 @@ def get_line(start: int, line_ends: Sequence[Mapping[str, int]]) -> str:
     return "{}:{}".format(line_ends.index(line) + 1, start - line["start"])
 
 
-def linter(config: Config, html: str, filename: str, filepath: str) -> dict[str, list[LintError]]:
+def linter(
+    config: Config, html: str, filename: str, filepath: str
+) -> dict[str, list[LintError]]:
     """Lint a html string."""
     errors: dict[str, list[LintError]] = {filename: []}
     # build list of line ends for file
-    line_ends = [{"start": m.start(), "end": m.end()} for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)]
+    line_ends = [
+        {"start": m.start(), "end": m.end()}
+        for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)
+    ]
 
     ignored_rules: set[str] = set()
 
@@ -82,19 +91,34 @@ def linter(config: Config, html: str, filename: str, filepath: str) -> dict[str,
         # rule based on python module
         if "python_module" in rule:
             rule_module = importlib.import_module(rule["python_module"])
-            module_errors = rule_module.run(rule=rule, config=config, html=html, filepath=filepath, line_ends=line_ends)
+            module_errors = rule_module.run(
+                rule=rule,
+                config=config,
+                html=html,
+                filepath=filepath,
+                line_ends=line_ends,
+            )
             if not isinstance(module_errors, Sequence):
-                msg = f"Error: {rule['name']} python_module run() should return" " a sequence of dict with keys: code, line, match, message."
+                msg = (
+                    f"Error: {rule['name']} python_module run() should return"
+                    " a sequence of dict with keys: code, line, match, message."
+                )
                 raise AssertionError(msg)
             errors[filename].extend(module_errors)
 
         # rule based on patterns
         else:
             for pattern in rule["patterns"]:
-                for match in re.finditer(pattern, html, flags=build_flags(rule.get("flags", "re.DOTALL"))):
+                for match in re.finditer(
+                    pattern,
+                    html,
+                    flags=build_flags(rule.get("flags", "re.DOTALL")),
+                ):
                     if (
                         not overlaps_ignored_block(config, html, match)
-                        and not inside_ignored_rule(config, html, match, rule["name"])
+                        and not inside_ignored_rule(
+                            config, html, match, rule["name"]
+                        )
                         and not inside_ignored_linter_block(config, html, match)
                     ):
                         errors[filename].append({

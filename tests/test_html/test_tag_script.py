@@ -38,8 +38,22 @@ test_data = [
         id="github issue 733",
     ),
     pytest.param(
-        ("<div>\n" "    <script>console.log();\n" "    console.log();\n" "\n" "    </script>\n" "    </div>\n"),
-        ("<div>\n" "    <script>console.log();\n" "    console.log();\n" "\n" "    </script>\n" "</div>\n"),
+        (
+            "<div>\n"
+            "    <script>console.log();\n"
+            "    console.log();\n"
+            "\n"
+            "    </script>\n"
+            "    </div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <script>console.log();\n"
+            "    console.log();\n"
+            "\n"
+            "    </script>\n"
+            "</div>\n"
+        ),
         id="script",
     ),
     pytest.param(
@@ -68,7 +82,11 @@ test_data = [
         ),
         id="complex_js",
     ),
-    pytest.param(("<script>{{missing_space}}</script>\n"), ("<script>{{missing_space}}</script>\n"), id="bad_tag"),
+    pytest.param(
+        ("<script>{{missing_space}}</script>\n"),
+        ("<script>{{missing_space}}</script>\n"),
+        id="bad_tag",
+    ),
     pytest.param(("<script></script>\n"), ("<script></script>\n"), id="empty"),
     pytest.param(
         (
@@ -151,13 +169,31 @@ test_data = [
         id="simple",
     ),
     pytest.param(
-        ("<script>alert('test');</script>\n" "<script>\n" '  document.getElementById("demo").innerHTML = "Hello JavaScript!";\n' "</script>\n"),
-        ("<script>alert('test');</script>\n" '<script>document.getElementById("demo").innerHTML = "Hello JavaScript!";</script>\n'),
+        (
+            "<script>alert('test');</script>\n"
+            "<script>\n"
+            '  document.getElementById("demo").innerHTML = "Hello JavaScript!";\n'
+            "</script>\n"
+        ),
+        (
+            "<script>alert('test');</script>\n"
+            '<script>document.getElementById("demo").innerHTML = "Hello JavaScript!";</script>\n'
+        ),
         id="single_script",
     ),
     pytest.param(
-        ('<script type="text/template">\n' " <div>\n" "    </div>\n" "</script>\n"),
-        ('<script type="text/template">\n' " <div>\n" "    </div>\n" "</script>\n"),
+        (
+            '<script type="text/template">\n'
+            " <div>\n"
+            "    </div>\n"
+            "</script>\n"
+        ),
+        (
+            '<script type="text/template">\n'
+            " <div>\n"
+            "    </div>\n"
+            "</script>\n"
+        ),
         id="something_else",
     ),
     pytest.param(
@@ -379,8 +415,30 @@ test_data = [
         id="babel",
     ),
     pytest.param(
-        ("<script>\n" "<!--\n" "alert(1)\n" "-->\n" "</script>\n" "<script>\n" "<!--\n" "alert(2)\n" "//-->\n" "</script>\n"),
-        ("<script>\n" "<!--\n" "alert(1)\n" "-->\n" "</script>\n" "<script>\n" "<!--\n" "alert(2)\n" "//-->\n" "</script>\n"),
+        (
+            "<script>\n"
+            "<!--\n"
+            "alert(1)\n"
+            "-->\n"
+            "</script>\n"
+            "<script>\n"
+            "<!--\n"
+            "alert(2)\n"
+            "//-->\n"
+            "</script>\n"
+        ),
+        (
+            "<script>\n"
+            "<!--\n"
+            "alert(1)\n"
+            "-->\n"
+            "</script>\n"
+            "<script>\n"
+            "<!--\n"
+            "alert(2)\n"
+            "//-->\n"
+            "</script>\n"
+        ),
         id="legacy",
     ),
     pytest.param(
@@ -421,8 +479,12 @@ test_data = [
         id="module",
     ),
     pytest.param(
-        ('<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'),
-        ('<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'),
+        (
+            '<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'
+        ),
+        (
+            '<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'
+        ),
         id="module_attributes",
     ),
     pytest.param(

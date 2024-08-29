@@ -18,7 +18,12 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("<details><summary>summary</summary>body</details>"),
-        ("<details>\n" "    <summary>summary</summary>\n" "    body\n" "</details>\n"),
+        (
+            "<details>\n"
+            "    <summary>summary</summary>\n"
+            "    body\n"
+            "</details>\n"
+        ),
         id="details_summary_tags",
     )
 ]

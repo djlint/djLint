@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{# comment #}{% if this %}<div></div>{% endif %}"), ("{# comment #}\n" "{% if this %}<div></div>{% endif %}\n"), id="dj_comments_tag"
+        ("{# comment #}{% if this %}<div></div>{% endif %}"),
+        ("{# comment #}\n" "{% if this %}<div></div>{% endif %}\n"),
+        id="dj_comments_tag",
     ),
     pytest.param(
         ('{% comment "Optional note" %}{{ body }}{% endcomment %}'),

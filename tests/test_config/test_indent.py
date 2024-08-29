@@ -20,13 +20,29 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("<section><p><div><span></span></div></p></section>"),
-        ("<section>\n" "  <p>\n" "    <div>\n" "      <span></span>\n" "    </div>\n" "  </p>\n" "</section>\n"),
+        (
+            "<section>\n"
+            "  <p>\n"
+            "    <div>\n"
+            "      <span></span>\n"
+            "    </div>\n"
+            "  </p>\n"
+            "</section>\n"
+        ),
         ({"indent": 2}),
         id="two",
     ),
     pytest.param(
         ("<section><p><div><span></span></div></p></section>"),
-        ("<section>\n" " <p>\n" "  <div>\n" "   <span></span>\n" "  </div>\n" " </p>\n" "</section>\n"),
+        (
+            "<section>\n"
+            " <p>\n"
+            "  <div>\n"
+            "   <span></span>\n"
+            "  </div>\n"
+            " </p>\n"
+            "</section>\n"
+        ),
         ({"indent": 1}),
         id="one",
     ),

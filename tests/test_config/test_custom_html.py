@@ -20,7 +20,13 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("<mjml><mj-body>this is a email text</mj-body></mjml>"),
-        ("<mjml>\n" "    <mj-body>\n" "        this is a email text\n" "    </mj-body>\n" "</mjml>\n"),
+        (
+            "<mjml>\n"
+            "    <mj-body>\n"
+            "        this is a email text\n"
+            "    </mj-body>\n"
+            "</mjml>\n"
+        ),
         ({"custom_html": "mjml,mj-body"}),
         id="with_flag",
     ),

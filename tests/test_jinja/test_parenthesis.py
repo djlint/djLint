@@ -16,7 +16,9 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 test_data = [
-    pytest.param("{{ url('foo') }}", '{{ url("foo") }}\n', id="single_parenthesis_tag"),
+    pytest.param(
+        "{{ url('foo') }}", '{{ url("foo") }}\n', id="single_parenthesis_tag"
+    ),
     pytest.param(
         '<a href="{{ url(\'fo"o\') }}"\n'
         '   href="{{ url(\'fo\\"o\') }}"\n'
@@ -37,7 +39,9 @@ test_data = [
         '<a href="{{ url_for(\'test_reminders\') }}" class="btn clr sm">Test reminders</a>\n',
         id="single_url_for",
     ),
-    pytest.param('{{ url("foo") }}', '{{ url("foo") }}\n', id="double_parenthesis_tag"),
+    pytest.param(
+        '{{ url("foo") }}', '{{ url("foo") }}\n', id="double_parenthesis_tag"
+    ),
     pytest.param(
         '<a href="{{ url_for("test_reminders") }}" class="btn clr sm">Test reminders</a>',
         '<a href="{{ url_for(\'test_reminders\') }}" class="btn clr sm">Test reminders</a>\n',

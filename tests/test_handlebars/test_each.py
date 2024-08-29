@@ -17,13 +17,24 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{{#each people}}{{print_person}} <p>and more long stuff</p>{{/each}}"),
-        ("{{#each people }}\n" "    {{print_person}}\n" "    <p>and more long stuff</p>\n" "{{/each}}\n"),
+        (
+            "{{#each people}}{{print_person}} <p>and more long stuff</p>{{/each}}"
+        ),
+        (
+            "{{#each people }}\n"
+            "    {{print_person}}\n"
+            "    <p>and more long stuff</p>\n"
+            "{{/each}}\n"
+        ),
         id="each_tag",
     ),
     pytest.param(
-        ('{{#each (cprFindConfigObj "inventoryCategories") as |category c | }}'),
-        ('{{#each (cprFindConfigObj "inventoryCategories") as |category c | }}\n'),
+        (
+            '{{#each (cprFindConfigObj "inventoryCategories") as |category c | }}'
+        ),
+        (
+            '{{#each (cprFindConfigObj "inventoryCategories") as |category c | }}\n'
+        ),
         id="each_tag_with_pipe",
     ),
 ]

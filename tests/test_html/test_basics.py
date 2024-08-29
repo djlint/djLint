@@ -46,8 +46,20 @@ test_data = [
     ),
     pytest.param("<!--hello world-->", "<!--hello world-->\n", id="comment"),
     pytest.param(
-        ("<!doctype html>\n" "<html>\n" "<head></head>\n" "<body></body>\n" "</html>\n"),
-        ("<!DOCTYPE html>\n" "<html>\n" "    <head></head>\n" "    <body></body>\n" "</html>\n"),
+        (
+            "<!doctype html>\n"
+            "<html>\n"
+            "<head></head>\n"
+            "<body></body>\n"
+            "</html>\n"
+        ),
+        (
+            "<!DOCTYPE html>\n"
+            "<html>\n"
+            "    <head></head>\n"
+            "    <body></body>\n"
+            "</html>\n"
+        ),
         id="empty_doc",
     ),
     pytest.param("", "", id="empty"),
@@ -350,13 +362,21 @@ test_data = [
         ),
         id="html5_boilerplate",
     ),
-    pytest.param("<strong>a</strong>-<strong>b</strong>-", "<strong>a</strong>-<strong>b</strong>-\n", id="issue_9368_2"),
+    pytest.param(
+        "<strong>a</strong>-<strong>b</strong>-",
+        "<strong>a</strong>-<strong>b</strong>-\n",
+        id="issue_9368_2",
+    ),
     pytest.param(
         "a track<strong>pad</strong>, or a <strong>gyro</strong>scope.",
         "a track<strong>pad</strong>, or a <strong>gyro</strong>scope.\n",
         id="issue_9368_3",
     ),
-    pytest.param("<strong>a</strong>-&gt;<strong>b</strong>-&gt;", "<strong>a</strong>-&gt;<strong>b</strong>-&gt;\n", id="issue_9368"),
+    pytest.param(
+        "<strong>a</strong>-&gt;<strong>b</strong>-&gt;",
+        "<strong>a</strong>-&gt;<strong>b</strong>-&gt;\n",
+        id="issue_9368",
+    ),
     pytest.param(
         (
             "<html>\n"

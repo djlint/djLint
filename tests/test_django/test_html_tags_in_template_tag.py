@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{{ some_val | default:'some_comment1<br>some_comment2' }}"), ("{{ some_val | default:'some_comment1<br>some_comment2' }}\n"), id="test"
+        ("{{ some_val | default:'some_comment1<br>some_comment2' }}"),
+        ("{{ some_val | default:'some_comment1<br>some_comment2' }}\n"),
+        id="test",
     )
 ]
 

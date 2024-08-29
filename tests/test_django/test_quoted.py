@@ -17,8 +17,18 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("<h1>\n" '    {% if condition1 %}<span class="cls"></span>{% endif %}\n' ' {% if condition2 %}"{{ text }}"{% endif %}\n' "     </h1>\n"),
-        ("<h1>\n" '    {% if condition1 %}<span class="cls"></span>{% endif %}\n' '    {% if condition2 %}"{{ text }}"{% endif %}\n' "</h1>\n"),
+        (
+            "<h1>\n"
+            '    {% if condition1 %}<span class="cls"></span>{% endif %}\n'
+            ' {% if condition2 %}"{{ text }}"{% endif %}\n'
+            "     </h1>\n"
+        ),
+        (
+            "<h1>\n"
+            '    {% if condition1 %}<span class="cls"></span>{% endif %}\n'
+            '    {% if condition2 %}"{{ text }}"{% endif %}\n'
+            "</h1>\n"
+        ),
         id="issue #640",
     ),
     pytest.param(

@@ -17,8 +17,20 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("<!-- <span> -->\n" "<div><p><span></span></p></div>\n" "<!-- <div> -->\n"),
-        ("<!-- <span> -->\n" "<div>\n" "    <p>\n" "        <span></span>\n" "    </p>\n" "</div>\n" "<!-- <div> -->\n"),
+        (
+            "<!-- <span> -->\n"
+            "<div><p><span></span></p></div>\n"
+            "<!-- <div> -->\n"
+        ),
+        (
+            "<!-- <span> -->\n"
+            "<div>\n"
+            "    <p>\n"
+            "        <span></span>\n"
+            "    </p>\n"
+            "</div>\n"
+            "<!-- <div> -->\n"
+        ),
         id="ignored_1",
     ),
     # check custom ignore tag {# djlint:off #} {# djlint:on #}
@@ -82,7 +94,9 @@ test_data = [
         id="{% comment don't require an on block",
     ),
     pytest.param(
-        ("{# djlint: off #}<div><img><p></p></div>{# djlint: on #}<div><img></div>{# djlint: off #}<div><img><p></p></div>"),
+        (
+            "{# djlint: off #}<div><img><p></p></div>{# djlint: on #}<div><img></div>{# djlint: off #}<div><img><p></p></div>"
+        ),
         (
             "{# djlint: off #}<div><img><p></p></div>{# djlint: on #}\n"
             "<div>\n"
@@ -93,7 +107,9 @@ test_data = [
         id="{# don't require an on block",
     ),
     pytest.param(
-        ("{{!-- djlint:off--}}<div><img><p></p></div>{{!-- djlint:on--}}<div><img></div>{{!-- djlint:off--}}<div><img><p></p></div>"),
+        (
+            "{{!-- djlint:off--}}<div><img><p></p></div>{{!-- djlint:on--}}<div><img></div>{{!-- djlint:off--}}<div><img><p></p></div>"
+        ),
         (
             "{{!-- djlint:off--}}<div><img><p></p></div>{{!-- djlint:on--}}\n"
             "<div>\n"
@@ -104,7 +120,9 @@ test_data = [
         id="{{!-- don't require an on block",
     ),
     pytest.param(
-        ("{{ /* djlint:off */ }}<div><img><p></p></div>{{ /* djlint:on */ }}<div><img></div>{{ /* djlint:off */ }}<div><img><p></p></div>"),
+        (
+            "{{ /* djlint:off */ }}<div><img><p></p></div>{{ /* djlint:on */ }}<div><img></div>{{ /* djlint:off */ }}<div><img><p></p></div>"
+        ),
         (
             "{{ /* djlint:off */ }}<div><img><p></p></div>{{ /* djlint:on */ }}\n"
             "<div>\n"
@@ -160,8 +178,20 @@ test_data = [
         id="style_tag_1",
     ),
     pytest.param(
-        ("<style>\n" " .k-dropzone .k-upload-status {\n" "       color: #a1a1a1;\n" "           }\n" "</style>\n"),
-        ("<style>\n" " .k-dropzone .k-upload-status {\n" "       color: #a1a1a1;\n" "           }\n" "</style>\n"),
+        (
+            "<style>\n"
+            " .k-dropzone .k-upload-status {\n"
+            "       color: #a1a1a1;\n"
+            "           }\n"
+            "</style>\n"
+        ),
+        (
+            "<style>\n"
+            " .k-dropzone .k-upload-status {\n"
+            "       color: #a1a1a1;\n"
+            "           }\n"
+            "</style>\n"
+        ),
         id="style_tag_2",
     ),
 ]

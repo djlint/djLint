@@ -26,7 +26,13 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
         if (
             normalized_item.is_file()
             and no_pragma(config, normalized_item)
-            and ((config.use_gitignore and not config.gitignore.match_file(normalized_item)) or not config.use_gitignore)
+            and (
+                (
+                    config.use_gitignore
+                    and not config.gitignore.match_file(normalized_item)
+                )
+                or not config.use_gitignore
+            )
         ):
             paths.append(normalized_item)
             continue
@@ -40,7 +46,10 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
             for x in normalized_item.glob(f"**/*.{extension}")
             if not re.search(config.exclude, x.as_posix(), flags=re.VERBOSE)
             and no_pragma(config, x)
-            and ((config.use_gitignore and not config.gitignore.match_file(x)) or not config.use_gitignore)
+            and (
+                (config.use_gitignore and not config.gitignore.match_file(x))
+                or not config.use_gitignore
+            )
         )
 
     if not paths:
@@ -50,7 +59,10 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
 
 
 html_patterns = (r"<!--\s*djlint\:on\s*-->",)
-django_jinja_patterns = (r"\{#\s*djlint\:on\s*#\}", r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}")
+django_jinja_patterns = (
+    r"\{#\s*djlint\:on\s*#\}",
+    r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}",
+)
 nunjucks_patterns = (r"\{#\s*djlint\:on\s*#\}",)
 handlebars_patterns = (r"\{\{!--\s*djlint\:on\s*--\}\}",)
 golang_patterns = (r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}",)
@@ -72,7 +84,14 @@ def no_pragma(config: Config, this_file: Path) -> bool:
             "handlebars": handlebars_patterns + html_patterns,
             "golang": golang_patterns + html_patterns,
             "angular": html_patterns,
-            "all": django_jinja_patterns + nunjucks_patterns + handlebars_patterns + golang_patterns + html_patterns,
+            "all": django_jinja_patterns
+            + nunjucks_patterns
+            + handlebars_patterns
+            + golang_patterns
+            + html_patterns,
         }
 
-        return any(re.match(pattern, first_line) for pattern in pragma_patterns[config.profile])
+        return any(
+            re.match(pattern, first_line)
+            for pattern in pragma_patterns[config.profile]
+        )

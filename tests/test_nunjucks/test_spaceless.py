@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{%- if entry.children.length -%}<strong>{%- endif -%}"), ("{%- if entry.children.length -%}<strong>{%- endif -%}\n"), id="spaceless_tag"
+        ("{%- if entry.children.length -%}<strong>{%- endif -%}"),
+        ("{%- if entry.children.length -%}<strong>{%- endif -%}\n"),
+        id="spaceless_tag",
     )
 ]
 

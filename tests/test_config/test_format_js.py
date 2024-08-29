@@ -21,13 +21,27 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ('<div><script>console.log("hi");</script></div>'),
-        ("<div>\n" "    <script>\n" '        console.log("hi");\n' "    </script>\n" "</div>\n"),
+        (
+            "<div>\n"
+            "    <script>\n"
+            '        console.log("hi");\n'
+            "    </script>\n"
+            "</div>\n"
+        ),
         ({"format_js": True}),
         id="enabled",
     ),
     pytest.param(
         ('<div><script>() => {console.log("hi")}</script></div>'),
-        ("<div>\n" "    <script>\n" "     () => {\n" '      console.log("hi")\n' "     }\n" "    </script>\n" "</div>\n"),
+        (
+            "<div>\n"
+            "    <script>\n"
+            "     () => {\n"
+            '      console.log("hi")\n'
+            "     }\n"
+            "    </script>\n"
+            "</div>\n"
+        ),
         ({"format_js": True, "indent_js": 1}),
         id="enabled_with_indent",
     ),

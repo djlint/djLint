@@ -17,8 +17,16 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ('<picture><source media="(max-width:640px)"\n' 'srcset="image.jpg"><img src="image.jpg" alt="image"></picture>\n'),
-        ("<picture>\n" '    <source media="(max-width:640px)" srcset="image.jpg">\n' '    <img src="image.jpg" alt="image">\n' "</picture>\n"),
+        (
+            '<picture><source media="(max-width:640px)"\n'
+            'srcset="image.jpg"><img src="image.jpg" alt="image"></picture>\n'
+        ),
+        (
+            "<picture>\n"
+            '    <source media="(max-width:640px)" srcset="image.jpg">\n'
+            '    <img src="image.jpg" alt="image">\n'
+            "</picture>\n"
+        ),
         id="picture_source_img_tags",
     )
 ]

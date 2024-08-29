@@ -17,8 +17,18 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("<p>I will display &euro;</p>\n" "<p>I will display &excl;</p>\n" "<p>I will display &#8364;</p>\n" "<p>I will display &#x20AC;</p>\n"),
-        ("<p>I will display &euro;</p>\n" "<p>I will display &excl;</p>\n" "<p>I will display &#8364;</p>\n" "<p>I will display &#x20AC;</p>\n"),
+        (
+            "<p>I will display &euro;</p>\n"
+            "<p>I will display &excl;</p>\n"
+            "<p>I will display &#8364;</p>\n"
+            "<p>I will display &#x20AC;</p>\n"
+        ),
+        (
+            "<p>I will display &euro;</p>\n"
+            "<p>I will display &excl;</p>\n"
+            "<p>I will display &#8364;</p>\n"
+            "<p>I will display &#x20AC;</p>\n"
+        ),
         id="symbol_entities",
     )
 ]
