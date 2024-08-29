@@ -2,6 +2,10 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.35.2] - 2024-08-29
+
+- Fix npm publishing
+
 ## [1.35.1] - 2024-08-29
 
 - Fix npm publishing
