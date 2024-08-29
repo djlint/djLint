@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_html/test_svg.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
-from src.djlint.reformat import formatter
+from djlint.reformat import formatter
 from tests.conftest import printer
+
+if TYPE_CHECKING:
+    from djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -38,7 +46,7 @@ test_data = [
             "  <!-- Common use case: embed HTML text into SVG -->\n"
             '  <foreignObject x="20" y="20" width="160" height="160">\n'
             "    <!--\n"
-            "      In the context of SVG embeded into HTML, the XHTML namespace could be avoided, but it is mandatory in the context of an SVG document\n"
+            "      In the context of SVG embedded into HTML, the XHTML namespace could be avoided, but it is mandatory in the context of an SVG document\n"
             "    -->\n"
             '    <div xmlns="http://www.w3.org/1999/xhtml">\n'
             "    <p>\n"
@@ -82,7 +90,7 @@ test_data = [
             "    <!-- Common use case: embed HTML text into SVG -->\n"
             '    <foreignObject x="20" y="20" width="160" height="160">\n'
             "    <!--\n"
-            "      In the context of SVG embeded into HTML, the XHTML namespace could be avoided, but it is mandatory in the context of an SVG document\n"
+            "      In the context of SVG embedded into HTML, the XHTML namespace could be avoided, but it is mandatory in the context of an SVG document\n"
             "    -->\n"
             '    <div xmlns="http://www.w3.org/1999/xhtml">\n'
             "        <p>123</p>\n"
@@ -92,12 +100,12 @@ test_data = [
             "</svg>\n"
         ),
         id="svg",
-    ),
+    )
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, basic_config):
+def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)

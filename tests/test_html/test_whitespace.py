@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_html/test_whitespace.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
-from src.djlint.reformat import formatter
+from djlint.reformat import formatter
 from tests.conftest import printer
+
+if TYPE_CHECKING:
+    from djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -208,79 +216,22 @@ test_data = [
         ),
         id="non_breaking_whitespace",
     ),
-    pytest.param(
-        ("<div> </div>\n"),
-        ("<div></div>\n"),
-        id="snippet_18",
-    ),
-    pytest.param(
-        ("<div>          </div>\n"),
-        ("<div></div>\n"),
-        id="snippet_19",
-    ),
-    pytest.param(
-        ("<div>           </div>\n"),
-        ("<div></div>\n"),
-        id="snippet_20",
-    ),
-    pytest.param(
-        ("<div>                   </div>\n"),
-        ("<div></div>\n"),
-        id="snippet_21",
-    ),
-    pytest.param(
-        ("<span> </span>\n"),
-        ("<span></span>\n"),
-        id="snippet_22",
-    ),
-    pytest.param(
-        ("<span>          </span>\n"),
-        ("<span></span>\n"),
-        id="snippet_23",
-    ),
-    pytest.param(
-        ("<span>           </span>\n"),
-        ("<span></span>\n"),
-        id="snippet_24",
-    ),
-    pytest.param(
-        ("<span>                   </span>\n"),
-        ("<span></span>\n"),
-        id="snippet_25",
-    ),
-    pytest.param(
-        ("<img/> <img/>\n"),
-        ("<img /> \n" "<img />\n"),
-        id="snippet_26",
-    ),
-    pytest.param(
-        ("<img/>          <img/>\n"),
-        ("<img />  \n" "<img />\n"),
-        id="snippet_27",
-    ),
-    pytest.param(
-        ("<img/>           <img/>\n"),
-        ("<img />          \n" "<img />\n"),
-        id="snippet_28",
-    ),
-    pytest.param(
-        ("<img/>                   <img/>\n"),
-        ("<img />                  \n" "<img />\n"),
-        id="snippet_29",
-    ),
-    pytest.param(
-        ("<i />   |   <i />\n"),
-        ("<i />   |   <i />\n"),
-        id="snippet_30",
-    ),
+    pytest.param(("<div> </div>\n"), ("<div></div>\n"), id="snippet_18"),
+    pytest.param(("<div>          </div>\n"), ("<div></div>\n"), id="snippet_19"),
+    pytest.param(("<div>           </div>\n"), ("<div></div>\n"), id="snippet_20"),
+    pytest.param(("<div>                   </div>\n"), ("<div></div>\n"), id="snippet_21"),
+    pytest.param(("<span> </span>\n"), ("<span></span>\n"), id="snippet_22"),
+    pytest.param(("<span>          </span>\n"), ("<span></span>\n"), id="snippet_23"),
+    pytest.param(("<span>           </span>\n"), ("<span></span>\n"), id="snippet_24"),
+    pytest.param(("<span>                   </span>\n"), ("<span></span>\n"), id="snippet_25"),
+    pytest.param(("<img/> <img/>\n"), ("<img /> \n" "<img />\n"), id="snippet_26"),
+    pytest.param(("<img/>          <img/>\n"), ("<img />  \n" "<img />\n"), id="snippet_27"),
+    pytest.param(("<img/>           <img/>\n"), ("<img />          \n" "<img />\n"), id="snippet_28"),
+    pytest.param(("<img/>                   <img/>\n"), ("<img />                  \n" "<img />\n"), id="snippet_29"),
+    pytest.param(("<i />   |   <i />\n"), ("<i />   |   <i />\n"), id="snippet_30"),
     pytest.param(
         ("<p><span>X</span>   or   <span>Y</span></p><p>X   or   Y</p>\n"),
-        (
-            "<p>\n"
-            "    <span>X</span>   or   <span>Y</span>\n"
-            "</p>\n"
-            "<p>X   or   Y</p>\n"
-        ),
+        ("<p>\n" "    <span>X</span>   or   <span>Y</span>\n" "</p>\n" "<p>X   or   Y</p>\n"),
         id="snippet_31",
     ),
     pytest.param(
@@ -470,7 +421,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, basic_config):
+def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)

@@ -1,7 +1,1 @@
-node_modules/*
-docs/_site/*
-dist/*
-.mypy_cache/*
-.pytest_cache/*
-.tox/*
-tests/*
+tests/**/*.html

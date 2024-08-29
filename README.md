@@ -1,4 +1,3 @@
-
 <h1 align="center">
   <br>
   <a href="https://www.djlint.com"><img src="https://raw.githubusercontent.com/djlint/djLint/master/docs/src/static/img/icon.png" alt="djLint Logo" width="270"></a>
@@ -58,7 +57,7 @@ Grab it with `pip`
 pip install djlint
 ```
 
-*Or with the npm experimental install - Note, this requires python and pip to be on your system path.*
+_Or with the npm experimental install - Note, this requires python and pip to be on your system path._
 
 ```bash
 npm i djlint
@@ -69,47 +68,50 @@ Lint your project
 ```bash
 djlint . --extension=html.j2 --lint
 ```
+
 Check your format
 
 ```bash
 djlint . --extension=html.j2 --check
 ```
+
 Fix my format!
+
 ```bash
 djlint . --extension=html.j2 --reformat
 ```
 
 ## 💙 Like it?
 
-Add a badge to your projects ```readme.md```:
+Add a badge to your projects `readme.md`:
 
 ```md
 [![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://www.djlint.com)
 ```
 
-Add a badge to your ```readme.rst```:
+Add a badge to your `readme.rst`:
 
 ```rst
 .. image:: https://img.shields.io/badge/html%20style-djlint-blue.svg
    :target: https://www.djlint.com
 ```
+
 Looks like this:
 
 [![djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://github.com/djlint/djlint)
-
 
 ## 🛠️ Can I help?
 
 Yes!
 
-*Would you like to add a rule to the linter?* Take a look at the [linter docs](https://djlint.com/docs/linter/) and [source code](https://github.com/djlint/djLint/blob/master/src/djlint/rules.yaml)
+_Would you like to add a rule to the linter?_ Take a look at the [linter docs](https://djlint.com/docs/linter/) and [source code](https://github.com/djlint/djLint/blob/master/djlint/rules.yaml)
 
-*Are you a regex pro?* Benchmark and submit a pr with improved regex for the [linter rules](https://github.com/djlint/djLint/blob/master/src/djlint/rules.yaml)
+_Are you a regex pro?_ Benchmark and submit a pr with improved regex for the [linter rules](https://github.com/djlint/djLint/blob/master/djlint/rules.yaml)
 
-**⚠️ Help Needed! ⚠️** *Good with python?* djLint was an experimental project and is catching on with other devs. Help out with a rewrite of the formatter to improve speed and html style for edge cases. Contribute on the [2.0 branch](https://github.com/djlint/djLint/tree/block_indent)
+**⚠️ Help Needed! ⚠️** _Good with python?_ djLint was an experimental project and is catching on with other devs. Help out with a rewrite of the formatter to improve speed and html style for edge cases. Contribute on the [2.0 branch](https://github.com/djlint/djLint/tree/block_indent)
 
 ## 🏃 Other Tools Of Note
 
-* [DjHTML](https://github.com/rtts/djhtml) A pure-Python Django/Jinja template indenter without dependencies.
-* [HTMLHint](https://htmlhint.com) Static code analysis tool you need for your HTML
-* [curlylint](https://www.curlylint.org) Experimental HTML templates linting for Jinja, Nunjucks, Django templates, Twig, Liquid
+- [DjHTML](https://github.com/rtts/djhtml) A pure-Python Django/Jinja template indenter without dependencies.
+- [HTMLHint](https://htmlhint.com) Static code analysis tool you need for your HTML
+- [curlylint](https://www.curlylint.org) Experimental HTML templates linting for Jinja, Nunjucks, Django templates, Twig, Liquid

@@ -2,10 +2,13 @@
 
 poetry run pytest tests/test_html/test_case.py
 """
+
+from __future__ import annotations
+
 import pytest
 
-from src.djlint.reformat import formatter
-from src.djlint.settings import Config
+from djlint.reformat import formatter
+from djlint.settings import Config
 from tests.conftest import printer
 
 test_data = [
@@ -56,7 +59,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, basic_config):
+def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)
@@ -73,7 +76,7 @@ test_data_two = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data_two)
-def test_base_two(source, expected):
+def test_base_two(source: str, expected: str) -> None:
     config = Config("dummy/source.html", ignore_case=True)
     output = formatter(config, source)
 

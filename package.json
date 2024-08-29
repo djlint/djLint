@@ -2,15 +2,6 @@
   "name": "djlint",
   "version": "1.34.2",
   "description": "HTML Template Linter and Formatter",
-  "directories": {
-    "doc": "docs",
-    "test": "tests"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/djlint/djLint.git"
-  },
-  "files": [],
   "keywords": [
     "html template linter",
     "html template formatter",
@@ -29,43 +20,26 @@
     "angular template linter",
     "angular template formatter"
   ],
-  "scripts": {
-    "format": "prettier --config .prettierrc \"{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write",
-    "postinstall": "python3 -m pip install --upgrade djlint==1.34.2",
-    "pre-commit": "lint-staged",
-    "commit": "git add . && pre-commit run; git add . && npm run pre-commit && cz --no-verify",
-    "test": "xo"
+  "homepage": "https://djlint.com",
+  "bugs": {
+    "url": "https://github.com/djlint/djLint/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/djlint/djLint.git"
+  },
+  "license": "GPL-3.0-or-later",
   "author": {
     "name": "Christopher Pickering",
     "url": "https://going.bg"
   },
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/djlint/djLint/issues"
+  "files": [],
+  "scripts": {
+    "postinstall": "python3 -m pip install --upgrade djlint==1.34.1"
   },
-  "homepage": "https://djlint.com",
   "devDependencies": {
-    "@semantic-release/changelog": "6.0.3",
-    "@semantic-release/commit-analyzer": "11.1.0",
-    "@semantic-release/exec": "6.0.3",
-    "@semantic-release/git": "10.0.1",
-    "@semantic-release/github": "9.2.5",
-    "@semantic-release/npm": "11.0.2",
-    "@semantic-release/release-notes-generator": "12.1.0",
-    "cz-conventional-changelog": "3.3.0",
-    "lint-staged": "15.2.0",
-    "prettier": "^3.0.0",
-    "semantic-release": "22.0.12"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
-  "lint-staged": {
-    "{bin,docs}/**/*.{ts,css,less,scss,js,json,md,yaml,html}": [
-      "npm run format"
-    ]
+    "@ianvs/prettier-plugin-sort-imports": "4.3.1",
+    "prettier": "3.3.3",
+    "prettier-plugin-packagejson": "2.5.2"
   }
 }

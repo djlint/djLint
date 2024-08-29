@@ -4,10 +4,18 @@
 
 poetry run pytest tests/test_config/test_custom_blocks.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
-from src.djlint.reformat import formatter
+from djlint.reformat import formatter
 from tests.conftest import config_builder, printer
+
+if TYPE_CHECKING:
+    from typing_extensions import Any
 
 test_data = [
     pytest.param(
@@ -30,18 +38,8 @@ test_data = [
         id="one",
     ),
     pytest.param(
-        (
-            "{% custom_block %}\n"
-            "    {% custom_block_but_different %}\n"
-            "    <p>some other content</p>\n"
-            "{% endcustom_block %}\n"
-        ),
-        (
-            "{% custom_block %}\n"
-            "    {% custom_block_but_different %}\n"
-            "    <p>some other content</p>\n"
-            "{% endcustom_block %}\n"
-        ),
+        ("{% custom_block %}\n" "    {% custom_block_but_different %}\n" "    <p>some other content</p>\n" "{% endcustom_block %}\n"),
+        ("{% custom_block %}\n" "    {% custom_block_but_different %}\n" "    <p>some other content</p>\n" "{% endcustom_block %}\n"),
         ({"custom_blocks": "custom_block"}),
         id="custom_block_with_similar_tag",
     ),
@@ -49,7 +47,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
-def test_base(source, expected, args):
+def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
     output = formatter(config_builder(args), source)
 
     printer(expected, source, output)

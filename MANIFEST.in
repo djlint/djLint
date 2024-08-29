@@ -1,2 +1,0 @@
-include pyproject.toml
-include src/djlint/rules.yaml

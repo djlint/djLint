@@ -11,51 +11,39 @@ for a single test, run::
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
-# pylint: disable=C0116
 
+from __future__ import annotations
 
-from click.testing import CliRunner
+from typing import TYPE_CHECKING
 
-from src.djlint import main as djlint
+from djlint import main as djlint
+
+if TYPE_CHECKING:
+    from click.testing import CliRunner
 
 
 def test_profile(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ["tests/test_config/test_profile/html.html"])
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html"))
 
     assert "T001" in result.output
     assert "J018" not in result.output
     assert "D018" in result.output
 
-    result = runner.invoke(
-        djlint, ["tests/test_config/test_profile/html.html", "--profile", "jinja"]
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html", "--profile", "jinja"))
     assert "T001" in result.output
     assert "J018" in result.output
     assert "D018" not in result.output
 
-    result = runner.invoke(
-        djlint, ["tests/test_config/test_profile/html.html", "--profile", "handlebars"]
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html", "--profile", "handlebars"))
     assert "T001" not in result.output
     assert "J018" not in result.output
     assert "D018" not in result.output
 
-    result = runner.invoke(
-        djlint,
-        [
-            "tests/test_config/test_profile/html.html",
-            "--check",
-            "--profile",
-            "handlebars",
-        ],
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html", "--check", "--profile", "handlebars"))
 
     assert result.exit_code == 0
 
-    result = runner.invoke(
-        djlint,
-        ["tests/test_config/test_profile/html.html", "--check", "--profile", "jinja"],
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_profile/html.html", "--check", "--profile", "jinja"))
     assert result.exit_code == 1
     assert (
         """-{{test}}

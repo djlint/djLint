@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_html/test_basics.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
-from src.djlint.reformat import formatter
+from djlint.reformat import formatter
 from tests.conftest import printer
+
+if TYPE_CHECKING:
+    from djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -38,21 +46,9 @@ test_data = [
     ),
     pytest.param("<!--hello world-->", "<!--hello world-->\n", id="comment"),
     pytest.param(
-        (
-            "<!doctype html>\n"
-            "<html>\n"
-            "<head></head>\n"
-            "<body></body>\n"
-            "</html>\n"
-        ),
-        (
-            "<!DOCTYPE html>\n"
-            "<html>\n"
-            "    <head></head>\n"
-            "    <body></body>\n"
-            "</html>\n"
-        ),
-        id="emtpy_doc",
+        ("<!doctype html>\n" "<html>\n" "<head></head>\n" "<body></body>\n" "</html>\n"),
+        ("<!DOCTYPE html>\n" "<html>\n" "    <head></head>\n" "    <body></body>\n" "</html>\n"),
+        id="empty_doc",
     ),
     pytest.param("", "", id="empty"),
     pytest.param(
@@ -354,21 +350,13 @@ test_data = [
         ),
         id="html5_boilerplate",
     ),
-    pytest.param(
-        "<strong>a</strong>-<strong>b</strong>-",
-        "<strong>a</strong>-<strong>b</strong>-\n",
-        id="issue_9368_2",
-    ),
+    pytest.param("<strong>a</strong>-<strong>b</strong>-", "<strong>a</strong>-<strong>b</strong>-\n", id="issue_9368_2"),
     pytest.param(
         "a track<strong>pad</strong>, or a <strong>gyro</strong>scope.",
         "a track<strong>pad</strong>, or a <strong>gyro</strong>scope.\n",
         id="issue_9368_3",
     ),
-    pytest.param(
-        "<strong>a</strong>-&gt;<strong>b</strong>-&gt;",
-        "<strong>a</strong>-&gt;<strong>b</strong>-&gt;\n",
-        id="issue_9368",
-    ),
+    pytest.param("<strong>a</strong>-&gt;<strong>b</strong>-&gt;", "<strong>a</strong>-&gt;<strong>b</strong>-&gt;\n", id="issue_9368"),
     pytest.param(
         (
             "<html>\n"
@@ -898,7 +886,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, basic_config):
+def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)

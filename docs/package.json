@@ -2,15 +2,14 @@
   "name": "djlint_docs",
   "version": "1.0.84",
   "description": "",
+  "keywords": [],
+  "license": "AGPL-3.0-or-later",
+  "author": "Christopher Pickering",
   "main": "index.js",
   "scripts": {
-    "start": "eleventy --serve --watch",
     "build": "ELEVENTY_PRODUCTION=true eleventy",
-    "format": "prettier --config .prettierrc \"src/**/*.{ts,css,less,scss,js,json,md,yaml,html}\" --write"
+    "start": "eleventy --serve --watch"
   },
-  "keywords": [],
-  "author": "Christopher Pickering",
-  "license": "AGPL-3.0-or-later",
   "browserslist": "> 2%, not dead",
   "dependencies": {
     "@codemirror/lang-html": "^6.4.3",
@@ -44,13 +43,9 @@
     "bulma": "0.9.4",
     "bulma-pricingtable": "0.2.0",
     "cssnano": "^6.0.0",
-    "cz-conventional-changelog": "3.3.0",
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "^1.8.3",
     "esbuild": "^0.19.0",
-    "eslint": "^8.36.0",
-    "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-import": "^2.29.0",
     "fontawesome-subset": "4.4.0",
     "html-minifier": "4.0.0",
     "markdown-it": "^14.0.0",
@@ -60,14 +55,8 @@
     "outdent": "0.8.0",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "6.0.1",
-    "prettier": "^3.1.1",
     "prismjs": "1.29.0",
     "sass": "^1.60.0",
     "slugify": "^1.6.6"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   }
 }

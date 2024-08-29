@@ -1,6 +1,6 @@
-import { EditorView, basicSetup } from 'codemirror';
-import { EditorState, Compartment } from '@codemirror/state';
 import { html } from '@codemirror/lang-html';
+import { Compartment, EditorState } from '@codemirror/state';
+import { basicSetup, EditorView } from 'codemirror';
 
 let session_id = 0;
 if (typeof Worker !== 'undefined') {

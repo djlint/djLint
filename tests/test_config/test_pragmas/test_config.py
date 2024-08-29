@@ -8,38 +8,24 @@ run::
    pytest tests/test_config/test_pragmas/test_config.py::test_require_pragma
 
 """
-# pylint: disable=C0116
 
+from __future__ import annotations
 
-from click.testing import CliRunner
+from typing import TYPE_CHECKING
 
-from src.djlint import main as djlint
+from djlint import main as djlint
+
+if TYPE_CHECKING:
+    from click.testing import CliRunner
 
 
 def test_require_pragma(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint,
-        [
-            "tests/test_config/test_pragmas/html_one.html",
-            "--lint",
-            "--check",
-            "--profile",
-            "django",
-        ],
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_pragmas/html_one.html", "--lint", "--check", "--profile", "django"))
 
     assert """No files to check!""" in result.output
     assert result.exit_code == 0
 
-    result = runner.invoke(
-        djlint,
-        [
-            "tests/test_config/test_pragmas/html_two.html",
-            "--check",
-            "--profile",
-            "django",
-        ],
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_pragmas/html_two.html", "--check", "--profile", "django"))
     assert (
         """ {# djlint:on #}
 -{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
@@ -53,15 +39,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert """1 file would be updated.""" in result.output
     assert result.exit_code == 1
 
-    result = runner.invoke(
-        djlint,
-        [
-            "tests/test_config/test_pragmas/html_three.html",
-            "--check",
-            "--profile",
-            "handlebars",
-        ],
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_pragmas/html_three.html", "--check", "--profile", "handlebars"))
 
     assert (
         """ {{!-- djlint:on --}}
@@ -75,15 +53,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert """1 file would be updated.""" in result.output
     assert result.exit_code == 1
 
-    result = runner.invoke(
-        djlint,
-        [
-            "tests/test_config/test_pragmas/html_four.html",
-            "--check",
-            "--profile",
-            "golang",
-        ],
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_pragmas/html_four.html", "--check", "--profile", "golang"))
 
     assert (
         """ {{ /* djlint:on */ }}
@@ -103,9 +73,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert """1 file would be updated.""" in result.output
     assert result.exit_code == 1
 
-    result = runner.invoke(
-        djlint, ["tests/test_config/test_pragmas/html_five.html", "--check"]
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_pragmas/html_five.html", "--check"))
     assert (
         """ <!-- djlint:on -->
 -{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
@@ -119,15 +87,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert """1 file would be updated.""" in result.output
     assert result.exit_code == 1
 
-    result = runner.invoke(
-        djlint,
-        [
-            "tests/test_config/test_pragmas/html_six.html",
-            "--check",
-            "--profile",
-            "django",
-        ],
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_pragmas/html_six.html", "--check", "--profile", "django"))
     assert (
         """ {% comment %} djlint:on {% endcomment %}
 -{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>

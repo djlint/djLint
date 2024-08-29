@@ -1,4 +1,4 @@
-importScripts('https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js');
+importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js');
 
 function capitalize(raw_word) {
   const word = raw_word.toString();
@@ -9,36 +9,19 @@ async function loadPyodideAndPackages() {
   const origin = location.origin;
 
   self.pyodide = await loadPyodide();
-  // build wheels with pip wheel .
-
-  await self.pyodide.loadPackage([
-    `${origin}/static/py/djlint-99-py3-none-any.whl`,
-    `${origin}/static/py/click-99-py3-none-any.whl`,
-    `${origin}/static/py/colorama-99-py3-none-any.whl`,
+  postMessage({ type: 'status', message: 'Loading micropip' });
+  await pyodide.loadPackage([
+    'micropip',
+    // These packages have no prebuilt wheels
     `${origin}/static/py/cssbeautifier-99-py3-none-any.whl`,
     `${origin}/static/py/EditorConfig-99-py3-none-any.whl`,
-    `${origin}/static/py/html_tag_names-99-py3-none-any.whl`,
-    `${origin}/static/py/html_void_elements-99-py3-none-any.whl`,
     `${origin}/static/py/jsbeautifier-99-py3-none-any.whl`,
-    `${origin}/static/py/pathspec-99-py3-none-any.whl`,
-    `${origin}/static/py/PyYAML-99-py3-none-any.whl`,
-    `${origin}/static/py/json5-99-py3-none-any.whl`,
   ]);
-
-  postMessage({
-    type: 'status',
-    message:
-      'Installing djlint, click, colorama, cssbeautifier, editorconfig, html_tag_names, html_void_elements, jsbeautifier, pathspec, pyyaml ..',
-  });
-  await self.pyodide.loadPackage('regex');
-  postMessage({ type: 'status', message: 'Installing regex..' });
-  await self.pyodide.loadPackage('six');
-  postMessage({ type: 'status', message: 'Installing six..' });
-  await self.pyodide.loadPackage('tomli');
-  postMessage({ type: 'status', message: 'Installing tomli..' });
-  await self.pyodide.loadPackage('tqdm');
-  postMessage({ type: 'status', message: 'Installing tqdm..' });
-
+  postMessage({ type: 'status', message: 'Installing djlint' });
+  await pyodide.runPythonAsync(`
+    import micropip
+    micropip.install("djlint", keep_going=True)
+  `);
   postMessage({
     type: 'version',
     message: pyodide.runPython(`
@@ -123,43 +106,42 @@ self.onmessage = async (event) => {
 
   try {
     await self.pyodide.runPythonAsync(`
-      import io
-      import os
       import sys
-      sys.modules['_multiprocessing'] = object
-      from multiprocessing.pool import ThreadPool
-      sys.stdout = io.StringIO()
+
+      sys.modules["_multiprocessing"] = object
+
+      from io import StringIO
+
+      sys.stdout = StringIO()
 
       from pathlib import Path
+      from tempfile import NamedTemporaryFile
+
       from djlint.reformat import reformat_file
       from djlint.settings import Config
-      import tempfile
-
     `);
     await self.pyodide.runPythonAsync('sys.stdout.flush()');
 
     await pyodide.runPythonAsync(`
-temp_file = tempfile.NamedTemporaryFile(delete=False)
-temp_file.write(str.encode("""${html}"""))
-temp_file.seek(0)
-config = Config(
-  temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
-)
-${customBlocks}
-${customHtml}
-${maxLineLength}
-${maxAttributeLength}
-${formatAttributeTemplateTags}
-${blankLineAfterTag}
-${blankLineBeforeTag}
-${closeVoidTags}
-${ignoreCase}
-${lineBreakAfterMultilineTag}
-${noLineAfterYaml}
-${blankLineBeforeTag}
-print(Path(list(reformat_file(config, Path(temp_file.name)).keys())[0]).read_text().rstrip())
-temp_file.close()
-os.unlink(temp_file.name)
+      with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as temp_file:
+          temp_file.write("""${html}""")
+          temp_file.close()
+          config = Config(
+            temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
+          )
+          ${customBlocks}
+          ${customHtml}
+          ${maxLineLength}
+          ${maxAttributeLength}
+          ${formatAttributeTemplateTags}
+          ${blankLineAfterTag}
+          ${blankLineBeforeTag}
+          ${closeVoidTags}
+          ${ignoreCase}
+          ${lineBreakAfterMultilineTag}
+          ${noLineAfterYaml}
+          ${blankLineBeforeTag}
+          print(Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8").rstrip())
     `);
 
     let stdout = await self.pyodide.runPythonAsync('sys.stdout.getvalue()');

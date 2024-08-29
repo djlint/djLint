@@ -3,9 +3,12 @@
 poetry run pytest tests/test_config/test_djlintrc
 
 """
+
+from __future__ import annotations
+
 from pathlib import Path
 
-from src.djlint.settings import Config
+from djlint.settings import Config
 
 
 def test_default() -> None:
@@ -38,7 +41,4 @@ def test_default() -> None:
     assert config.js_config == {"indent_size": 5}
     assert config.css_config == {"indent_size": 5}
 
-    assert config.per_file_ignores == {
-        "file.html": "H026,H025",
-        "file_two.html": "H001",
-    }
+    assert config.per_file_ignores == {"file.html": "H026,H025", "file_two.html": "H001"}

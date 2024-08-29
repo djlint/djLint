@@ -2,10 +2,18 @@
 
 poetry run pytest tests/test_html/test_tag_script.py
 """
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
-from src.djlint.reformat import formatter
+from djlint.reformat import formatter
 from tests.conftest import printer
+
+if TYPE_CHECKING:
+    from djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -30,22 +38,8 @@ test_data = [
         id="github issue 733",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            "    <script>console.log();\n"
-            "    console.log();\n"
-            "\n"
-            "    </script>\n"
-            "    </div>\n"
-        ),
-        (
-            "<div>\n"
-            "    <script>console.log();\n"
-            "    console.log();\n"
-            "\n"
-            "    </script>\n"
-            "</div>\n"
-        ),
+        ("<div>\n" "    <script>console.log();\n" "    console.log();\n" "\n" "    </script>\n" "    </div>\n"),
+        ("<div>\n" "    <script>console.log();\n" "    console.log();\n" "\n" "    </script>\n" "</div>\n"),
         id="script",
     ),
     pytest.param(
@@ -74,16 +68,8 @@ test_data = [
         ),
         id="complex_js",
     ),
-    pytest.param(
-        ("<script>{{missing_space}}</script>\n"),
-        ("<script>{{missing_space}}</script>\n"),
-        id="bad_tag",
-    ),
-    pytest.param(
-        ("<script></script>\n"),
-        ("<script></script>\n"),
-        id="empty",
-    ),
+    pytest.param(("<script>{{missing_space}}</script>\n"), ("<script>{{missing_space}}</script>\n"), id="bad_tag"),
+    pytest.param(("<script></script>\n"), ("<script></script>\n"), id="empty"),
     pytest.param(
         (
             '<script type="text/javascript">\n'
@@ -165,16 +151,8 @@ test_data = [
         id="simple",
     ),
     pytest.param(
-        (
-            "<script>alert('test');</script>\n"
-            "<script>\n"
-            '  document.getElementById("demo").innerHTML = "Hello JavaScript!";\n'
-            "</script>\n"
-        ),
-        (
-            "<script>alert('test');</script>\n"
-            '<script>document.getElementById("demo").innerHTML = "Hello JavaScript!";</script>\n'
-        ),
+        ("<script>alert('test');</script>\n" "<script>\n" '  document.getElementById("demo").innerHTML = "Hello JavaScript!";\n' "</script>\n"),
+        ("<script>alert('test');</script>\n" '<script>document.getElementById("demo").innerHTML = "Hello JavaScript!";</script>\n'),
         id="single_script",
     ),
     pytest.param(
@@ -401,30 +379,8 @@ test_data = [
         id="babel",
     ),
     pytest.param(
-        (
-            "<script>\n"
-            "<!--\n"
-            "alert(1)\n"
-            "-->\n"
-            "</script>\n"
-            "<script>\n"
-            "<!--\n"
-            "alert(2)\n"
-            "//-->\n"
-            "</script>\n"
-        ),
-        (
-            "<script>\n"
-            "<!--\n"
-            "alert(1)\n"
-            "-->\n"
-            "</script>\n"
-            "<script>\n"
-            "<!--\n"
-            "alert(2)\n"
-            "//-->\n"
-            "</script>\n"
-        ),
+        ("<script>\n" "<!--\n" "alert(1)\n" "-->\n" "</script>\n" "<script>\n" "<!--\n" "alert(2)\n" "//-->\n" "</script>\n"),
+        ("<script>\n" "<!--\n" "alert(1)\n" "-->\n" "</script>\n" "<script>\n" "<!--\n" "alert(2)\n" "//-->\n" "</script>\n"),
         id="legacy",
     ),
     pytest.param(
@@ -530,7 +486,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(source, expected, basic_config):
+def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)

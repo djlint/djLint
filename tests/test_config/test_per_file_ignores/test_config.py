@@ -11,15 +11,18 @@ for a single test, run::
      --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
 
 """
-# pylint: disable=C0116
 
+from __future__ import annotations
 
-from click.testing import CliRunner
+from typing import TYPE_CHECKING
 
-from src.djlint import main as djlint
+from djlint import main as djlint
+
+if TYPE_CHECKING:
+    from click.testing import CliRunner
 
 
 def test_ignores(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ["tests/test_config/test_per_file_ignores"])
+    result = runner.invoke(djlint, ("tests/test_config/test_per_file_ignores"))
     assert "H025" not in result.output
     assert "H020" in result.output

@@ -3,16 +3,16 @@
 poetry run pytest tests/test_config/test_djlintrc_custom
 
 """
+
+from __future__ import annotations
+
 from pathlib import Path
 
-from src.djlint.settings import Config
+from djlint.settings import Config
 
 
 def test_custom() -> None:
-    config = Config(
-        str(Path(__file__).parent / "blank.html"),
-        configuration=str(Path(__file__).parent / ".djlint-cust"),
-    )
+    config = Config(str(Path(__file__).parent / "blank.html"), configuration=str(Path(__file__).parent / ".djlint-cust"))
 
     print(config.exclude)
     assert config.exclude == ".venv,venv,.tox,.egg,... | .customs"
@@ -42,7 +42,4 @@ def test_custom() -> None:
     assert config.js_config == {"indent_size": 4}
     assert config.css_config == {"indent_size": 4}
 
-    assert config.per_file_ignores == {
-        "file.html": "H026,H025",
-        "file_two.html": "H001",
-    }
+    assert config.per_file_ignores == {"file.html": "H026,H025", "file_two.html": "H001"}
