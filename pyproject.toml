@@ -57,3 +57,10 @@ types-pyyaml = "6.0.12.20240808"
 types-regex = "2024.7.24.20240726"
 types-tqdm = "4.66.0.20240417"
 typing-extensions = "4.12.2"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "^9.5.33"
+mkdocs-minify-html-plugin = "^0.2.3"

@@ -1,0 +1,46 @@
+site_name: djLint
+repo_url: https://github.com/djlint/djLint
+repo_name: djlint/djLint
+edit_uri: edit/master/docs/
+nav:
+  - index.md
+  - install.md
+  - api.md
+theme:
+  name: material
+  features:
+    - content.action.edit
+    - content.code.copy
+    - navigation.footer
+    - navigation.top
+    - toc.follow
+  icon:
+    logo: fontawesome/solid/cloud-sun
+    repo: fontawesome/brands/github
+  language: en
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: black
+      toggle:
+        icon: material/lightbulb
+        name: Dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: black
+      toggle:
+        icon: material/lightbulb-outline
+        name: Light mode
+extra:
+  social:
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/taghAqebzU
+      name: Discord
+markdown_extensions:
+  - admonition
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+plugins:
+  - search
+  - minify_html
