@@ -1,0 +1,43 @@
+name: Update dependencies
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - ./poetry.lock
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  update-wheels:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'djlint' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+          cache: pip
+          check-latest: true
+      - run: |
+          rm -f *
+          pip wheel --no-deps cssbeautifier EditorConfig jsbeautifier
+          mv cssbeautifier-*.whl cssbeautifier-99-py3-none-any.whl
+          mv EditorConfig-*.whl EditorConfig-99-py3-none-any.whl
+          mv jsbeautifier-*.whl jsbeautifier-99-py3-none-any.whl
+        working-directory: docs/src/static/py
+      - id: generate-token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          commit-message: Update wheels
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          branch: update-wheels
+          delete-branch: true
+          title: Update wheels
+          body:
