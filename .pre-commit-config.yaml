@@ -39,6 +39,7 @@ repos:
           - click
           - json5
           - pathspec
+          - pytest
           - tomli
           - types-colorama
           - types-pyyaml
