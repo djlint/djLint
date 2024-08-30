@@ -12,7 +12,7 @@ async function loadPyodideAndPackages() {
   self.postMessage({ type: "status", message: "Loading micropip" });
   await self.pyodide.loadPackage("micropip");
   self.postMessage({ type: "status", message: "Importing micropip" });
-  const micropip = await self.pyodide.pyImport("micropip");
+  const micropip = await self.pyodide.pyimport("micropip");
   self.postMessage({ type: "status", message: "Installing djLint" });
   await micropip.install([
     // These packages have no prebuilt wheels
