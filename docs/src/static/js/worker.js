@@ -9,30 +9,30 @@ async function loadPyodideAndPackages() {
   const origin = location.origin;
 
   self.pyodide = await loadPyodide();
-  postMessage({ type: "status", message: "Loading micropip" });
-  await pyodide.loadPackage([
-    "micropip",
+  self.postMessage({ type: "status", message: "Loading micropip" });
+  await self.pyodide.loadPackage("micropip");
+  self.postMessage({ type: "status", message: "Importing micropip" });
+  const micropip = await self.pyodide.pyImport("micropip");
+  self.postMessage({ type: "status", message: "Installing djLint" });
+  await micropip.install([
     // These packages have no prebuilt wheels
     `${origin}/static/py/cssbeautifier-99-py3-none-any.whl`,
     `${origin}/static/py/EditorConfig-99-py3-none-any.whl`,
     `${origin}/static/py/jsbeautifier-99-py3-none-any.whl`,
+
+    "djlint",
   ]);
-  postMessage({ type: "status", message: "Installing djlint" });
-  await pyodide.runPythonAsync(`
-        import micropip
-        micropip.install("djlint", keep_going=True)
-  `);
-  postMessage({
+  self.postMessage({
     type: "version",
-    message: await pyodide.runPythonAsync(`
-        import platform
-        from importlib import metadata
-        f"running with Python {platform.python_version()}; djLint {metadata.version('djlint')}"
-  `),
+    message: await self.pyodide.runPythonAsync(`
+import platform
+from importlib import metadata
+
+f"Running with Python {platform.python_version()}; djLint {metadata.version('djlint')}"
+`),
   });
 
-  postMessage({ type: "status", message: "ready" });
-  return pyodide;
+  postMessage({ type: "status", message: "Ready" });
 }
 
 let pyodideReadyPromise = loadPyodideAndPackages();
@@ -104,48 +104,47 @@ self.onmessage = async (event) => {
 
   try {
     await self.pyodide.runPythonAsync(`
-        import sys
-        from types import ModuleType
+import sys
+from types import ModuleType
 
-        sys.modules["_multiprocessing"] = ModuleType("_multiprocessing")
+sys.modules["_multiprocessing"] = ModuleType("_multiprocessing")
 
-        from io import StringIO
+from io import StringIO
 
-        sys.stdout = StringIO()
+sys.stdout = StringIO()
 
-        from pathlib import Path
-        from tempfile import NamedTemporaryFile
+from pathlib import Path
+from tempfile import NamedTemporaryFile
 
-        from djlint.reformat import reformat_file
-        from djlint.settings import Config
-    `);
+from djlint.reformat import reformat_file
+from djlint.settings import Config
+`);
     await self.pyodide.runPythonAsync("sys.stdout.flush()");
     await self.pyodide.runPythonAsync(`
-        with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as temp_file:
-            temp_file.write("""${html}""")
-            temp_file.close()
-            config = Config(
-              temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
-            )
-            ${customBlocks}
-            ${customHtml}
-            ${maxLineLength}
-            ${maxAttributeLength}
-            ${formatAttributeTemplateTags}
-            ${blankLineAfterTag}
-            ${blankLineBeforeTag}
-            ${closeVoidTags}
-            ${ignoreCase}
-            ${lineBreakAfterMultilineTag}
-            ${noLineAfterYaml}
-            ${blankLineBeforeTag}
-            result = Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8")
-        print(result.rstrip())
-    `);
-
+with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as temp_file:
+    temp_file.write("""${html}""")
+    temp_file.close()
+    config = Config(
+      temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
+    )
+    ${customBlocks}
+    ${customHtml}
+    ${maxLineLength}
+    ${maxAttributeLength}
+    ${formatAttributeTemplateTags}
+    ${blankLineAfterTag}
+    ${blankLineBeforeTag}
+    ${closeVoidTags}
+    ${ignoreCase}
+    ${lineBreakAfterMultilineTag}
+    ${noLineAfterYaml}
+    ${blankLineBeforeTag}
+    result = Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8")
+print(result.rstrip())
+`);
     const stdout = await self.pyodide.runPythonAsync("sys.stdout.getvalue()");
     await self.pyodide.runPythonAsync("sys.stdout.flush()");
-    postMessage({ type: "html", message: stdout, id: id });
+    self.postMessage({ type: "html", message: stdout, id: id });
   } catch (err) {
     self.postMessage({ type: "error", message: err.message, id: id });
   }
