@@ -339,8 +339,10 @@ def main(
                 config.stdin = True
                 stdin_stream = click.get_text_stream("stdin", encoding="utf-8")
                 stdin_text = stdin_stream.read()
-                temp_file = tempfile.NamedTemporaryFile(delete=False)  # noqa: SIM115
-                temp_file.write(stdin_text.encode("utf-8"))
+                temp_file = tempfile.NamedTemporaryFile(  # noqa: SIM115
+                    mode="w", encoding="utf-8", delete=False
+                )
+                temp_file.write(stdin_text)
                 temp_file.seek(0)
 
                 # cannot use gitignore for stdin paths.
