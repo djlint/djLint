@@ -105,8 +105,9 @@ self.onmessage = async (event) => {
   try {
     await self.pyodide.runPythonAsync(`
         import sys
+        from types import ModuleType
 
-        sys.modules["_multiprocessing"] = object
+        sys.modules["_multiprocessing"] = ModuleType("_multiprocessing")
 
         from io import StringIO
 
@@ -118,11 +119,8 @@ self.onmessage = async (event) => {
         from djlint.reformat import reformat_file
         from djlint.settings import Config
     `);
+    await self.pyodide.runPythonAsync("sys.stdout.flush()");
     await self.pyodide.runPythonAsync(`
-        sys.stdout.flush()
-    `);
-
-    await pyodide.runPythonAsync(`
         with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as temp_file:
             temp_file.write("""${html}""")
             temp_file.close()
@@ -145,7 +143,7 @@ self.onmessage = async (event) => {
         print(result.rstrip())
     `);
 
-    let stdout = await self.pyodide.runPythonAsync("sys.stdout.getvalue()");
+    const stdout = await self.pyodide.runPythonAsync("sys.stdout.getvalue()");
     await self.pyodide.runPythonAsync("sys.stdout.flush()");
     postMessage({ type: "html", message: stdout, id: id });
   } catch (err) {
