@@ -348,7 +348,7 @@ def main(
                 # cannot use gitignore for stdin paths.
                 config.use_gitignore = False
 
-                file_list = get_src([Path(temp_file.name)], config)
+                file_list = get_src((Path(temp_file.name),), config)
 
         else:
             file_list = get_src((Path(x) for x in src), config)
