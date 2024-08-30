@@ -32,7 +32,7 @@ f"Running with Python {platform.python_version()}; djLint {metadata.version('djl
 `),
   });
 
-  postMessage({ type: "status", message: "Ready" });
+  self.postMessage({ type: "status", message: "ready" });
 }
 
 let pyodideReadyPromise = loadPyodideAndPackages();
