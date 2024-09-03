@@ -32,12 +32,12 @@ jobs:
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.PRIVATE_KEY }}
-      - uses: peter-evans/create-pull-request@v6
+      - uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.generate-token.outputs.token }}
           commit-message: Update wheels
-          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           branch: update/wheels
           delete-branch: true
+          sign-commits: true
           title: Update wheels
           body:
