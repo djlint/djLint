@@ -47,7 +47,7 @@ djlint = "djlint:main"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "1.11.2"
-pytest = "8.3.2"
+pytest = "8.3.3"
 pytest-cov = "5.0.0"
 pytest-xdist = "3.6.1"
 ruff = "0.6.4"
