@@ -636,13 +636,13 @@ files = [
 
 [[package]]
 name = "types-regex"
-version = "2024.7.24.20240726"
+version = "2024.9.11.20240912"
 description = "Typing stubs for regex"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-regex-2024.7.24.20240726.tar.gz", hash = "sha256:f9cbebe607f53860bf5979de1e2a80cc04faf4849ee324461f982a3d46276d76"},
-    {file = "types_regex-2024.7.24.20240726-py3-none-any.whl", hash = "sha256:c436d7eace8e6c33cec31630135c804c15cd4ef110baf9cdd370ac6e376ff661"},
+    {file = "types-regex-2024.9.11.20240912.tar.gz", hash = "sha256:2c298bcf06a63b6a8254984698e32b74059d360ba6576e3d28bcde698c78e2e5"},
+    {file = "types_regex-2024.9.11.20240912-py3-none-any.whl", hash = "sha256:2ee9a15b5a9a4d6e9a8589e60d3f36bbae5f224393f15611c965e6d2a797107d"},
 ]
 
 [[package]]
@@ -670,4 +670,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "f8f06b48f2819fff83ccb329de6fb647ede3359b05c25aa8fd164ec7a21daf1d"
+content-hash = "a45a0d571e1d61120f0af7a4fd2e94b68a4eae16522635778667b6648c556078"
