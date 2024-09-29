@@ -45,7 +45,7 @@
     "cssnano": "^6.0.0",
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "^1.8.3",
-    "esbuild": "^0.19.0",
+    "esbuild": "^0.24.0",
     "fontawesome-subset": "4.4.0",
     "html-minifier": "4.0.0",
     "markdown-it": "^14.0.0",
