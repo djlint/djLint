@@ -54,7 +54,7 @@
     "markdown-it-imsize": "2.0.1",
     "outdent": "0.8.0",
     "postcss-cli": "^11.0.0",
-    "postcss-nested": "6.0.1",
+    "postcss-nested": "6.2.0",
     "prismjs": "1.29.0",
     "sass": "^1.60.0",
     "slugify": "^1.6.6"
