@@ -49,7 +49,7 @@
     "fontawesome-subset": "4.4.0",
     "html-minifier": "4.0.0",
     "markdown-it": "^14.0.0",
-    "markdown-it-anchor": "8.6.7",
+    "markdown-it-anchor": "9.2.0",
     "markdown-it-div": "1.1.0",
     "markdown-it-imsize": "2.0.1",
     "outdent": "0.8.0",
