@@ -8,14 +8,14 @@ jobs:
   publish-pypi:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'djlint' }}
-    # permissions:
-    #   id-token: write
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - run: pipx run poetry build --no-interaction
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          attestations: true
   publish-npm:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'djlint' }}
