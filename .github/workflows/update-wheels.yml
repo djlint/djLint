@@ -35,9 +35,9 @@ jobs:
       - uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          commit-message: Update wheels
+          commit-message: "chore(deps): update wheels"
           branch: update/wheels
           delete-branch: true
           sign-commits: true
-          title: Update wheels
+          title: "chore(deps): update wheels"
           body:
