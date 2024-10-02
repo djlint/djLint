@@ -18,6 +18,7 @@ classifiers = [
   "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Natural Language :: English",
   "Operating System :: OS Independent",
+  "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
@@ -25,9 +26,8 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python",
-  "Topic :: Internet :: WWW/HTTP",
   "Topic :: Internet",
+  "Topic :: Internet :: WWW/HTTP",
   "Topic :: Software Development",
   "Typing :: Typed",
 ]
@@ -42,7 +42,7 @@ dependencies = [
   "pathspec>=0.12",
   "pyyaml>=6",
   "regex>=2023",
-  "tomli>=2.0.1; python_version < '3.11'",
+  "tomli>=2.0.1; python_version<'3.11'",
   "tqdm>=4.62.2",
 ]
 urls.documentation = "https://djlint.com"
