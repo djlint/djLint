@@ -1,6 +1,6 @@
 """Test django autoescape tag.
 
-poetry run pytest tests/test_django/test_autoescape.py
+uv run pytest tests/test_django/test_autoescape.py
 """
 
 from __future__ import annotations

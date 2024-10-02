@@ -1,6 +1,6 @@
 """Djlint linter tests for jinja.
 
-poetry run pytest tests/test_linter/test_jinja_linter.py
+uv run pytest tests/test_linter/test_jinja_linter.py
 
 """
 

@@ -1,6 +1,6 @@
 """Test symbol entities.
 
-poetry run pytest tests/test_html/test_symbol_entities.py
+uv run pytest tests/test_html/test_symbol_entities.py
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 
 --max-line-length 4
 
-poetry run pytest tests/test_config/test_max_line_length.py
+uv run pytest tests/test_config/test_max_line_length.py
 """
 
 from __future__ import annotations

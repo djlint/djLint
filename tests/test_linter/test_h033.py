@@ -1,6 +1,6 @@
 """Test form action tags.
 
-poetry run pytest tests/test_linter/test_h033.py
+uv run pytest tests/test_linter/test_h033.py
 """
 
 from __future__ import annotations

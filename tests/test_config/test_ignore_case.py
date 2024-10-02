@@ -2,7 +2,7 @@
 
 --ignore-case
 
-poetry run pytest tests/test_config/test_ignore_case.py
+uv run pytest tests/test_config/test_ignore_case.py
 """
 
 from __future__ import annotations

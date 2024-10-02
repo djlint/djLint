@@ -24,22 +24,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: pipx run pre-commit run --all-files
+      - uses: astral-sh/setup-uv@v3
+      - run: uv tool run --from pre-commit@latest --with pre-commit-uv --no-cache --python 3.12 pre-commit run --all-files
   run-pytest:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version:
           - "3.8"
-          - 3.x
+          - "3.12"
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - run: pipx install poetry
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v3
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: poetry
-          check-latest: true
-      - run: poetry install --sync --no-interaction
-      - run: poetry run --no-interaction pytest
+          enable-cache: true
+      - run: uv run --frozen --python ${{ matrix.python-version }} pytest

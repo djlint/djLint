@@ -1,59 +1,68 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core"]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
+[project]
 name = "djlint"
 version = "1.35.2"
 description = "HTML Template Linter and Formatter"
-license = "GPL-3.0-or-later"
-authors = ["Christopher Pickering"]
-maintainers = ["Christopher Pickering", "monosans"]
 readme = "README.md"
-repository = "https://github.com/djlint/djLint"
-documentation = "https://djlint.com"
+license = { text = "GPL-3.0-or-later" }
+maintainers = [{ name = "Christopher Pickering" }, { name = "monosans" }]
+authors = [{ name = "Christopher Pickering" }]
+requires-python = ">=3.8"
 classifiers = [
   "Environment :: Web Environment",
   "Intended Audience :: Developers",
   "Intended Audience :: Information Technology",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Natural Language :: English",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Internet",
   "Topic :: Software Development",
   "Typing :: Typed",
 ]
-include = ["rules.yaml"]
+dependencies = [
+  "click>=8.0.1",
+  "colorama>=0.4.4",
+  "cssbeautifier>=1.14.4",
+  "html-tag-names>=0.1.2",
+  "html-void-elements>=0.1",
+  "jsbeautifier>=1.14.4",
+  "json5>=0.9.11",
+  "pathspec>=0.12",
+  "pyyaml>=6",
+  "regex>=2023",
+  "tomli>=2.0.1; python_version < '3.11'",
+  "tqdm>=4.62.2",
+]
+urls.documentation = "https://djlint.com"
+urls.repository = "https://github.com/djlint/djLint"
+scripts.djlint = "djlint:main"
 
-[tool.poetry.dependencies]
-python = "^3.8"
-click = ">=8.0.1"
-colorama = ">=0.4.4"
-cssbeautifier = ">=1.14.4"
-html-tag-names = ">=0.1.2"
-html-void-elements = ">=0.1.0"
-jsbeautifier = ">=1.14.4"
-json5 = ">=0.9.11"
-pathspec = ">=0.12.0"
-PyYAML = ">=6.0"
-regex = ">=2023"
-tomli = { version = ">=2.0.1", python = "<3.11" }
-tqdm = ">=4.62.2"
+[tool.hatch.build.targets.sdist]
+include = ["djlint"]
 
-[tool.poetry.scripts]
-djlint = "djlint:main"
-
-[tool.poetry.group.dev.dependencies]
-mypy = "1.11.2"
-pytest = "8.3.3"
-pytest-cov = "5.0.0"
-pytest-xdist = "3.6.1"
-ruff = "0.6.8"
-tomli = "2.0.1"
-types-colorama = "0.4.15.20240311"
-types-pyyaml = "6.0.12.20240917"
-types-regex = "2024.9.11.20240912"
-types-tqdm = "4.66.0.20240417"
-typing-extensions = "4.12.2"
+[tool.uv]
+dev-dependencies = [
+  "mypy==1.11.2",
+  "pytest==8.3.3",
+  "pytest-cov==5.0.0",
+  "pytest-xdist==3.6.1",
+  "ruff==0.6.8",
+  "tomli==2.0.1",
+  "types-colorama==0.4.15.20240311",
+  "types-pyyaml==6.0.12.20240917",
+  "types-regex==2024.9.11.20240912",
+  "types-tqdm==4.66.0.20240417",
+  "typing-extensions==4.12.2",
+]

@@ -1,6 +1,6 @@
 """Test django quoted tags.
 
-poetry run pytest tests/test_django/test_quoted.py
+uv run pytest tests/test_django/test_quoted.py
 """
 
 from __future__ import annotations

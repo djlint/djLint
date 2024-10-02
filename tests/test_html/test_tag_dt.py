@@ -1,6 +1,6 @@
 """Test html dt tag.
 
-poetry run pytest tests/test_html/test_tag_dt.py
+uv run pytest tests/test_html/test_tag_dt.py
 """
 
 from __future__ import annotations

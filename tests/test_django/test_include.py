@@ -1,6 +1,6 @@
 """Test django include tag.
 
-poetry run pytest tests/test_django/test_include.py
+uv run pytest tests/test_django/test_include.py
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """Djlint linter rule tests for django.
 
-poetry run pytest tests/test_linter/test_django_linter.py
+uv run pytest tests/test_linter/test_django_linter.py
 
 """
 

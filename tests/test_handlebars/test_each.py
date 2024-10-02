@@ -1,6 +1,6 @@
 """Test handlebars each tag.
 
-poetry run pytest tests/test_handlebars/test_each.py
+uv run pytest tests/test_handlebars/test_each.py
 """
 
 from __future__ import annotations

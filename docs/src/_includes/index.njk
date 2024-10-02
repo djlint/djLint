@@ -163,16 +163,13 @@ date: Last Modified
 {{ "contributing_message" | i18n | safe }}</p>
 
 {% highlight "bash" %}
-# install poetry
-curl -sSL https://install.python-poetry.org | python3 -
+# install uv https://docs.astral.sh/uv/getting-started/installation/
 
 # install project deps
-poetry install
+uv sync
 
 # run tests
-poetry run pytest tests
-# or
-poetry run tox -e test-fast
+uv run pytest
 {% endhighlight %}
 </div>
 </div>

@@ -1,6 +1,6 @@
 """Test nunjucks ascyn tags.
 
-poetry run pytest tests/test_nunjucks/test_async.py
+uv run pytest tests/test_nunjucks/test_async.py
 """
 
 from __future__ import annotations

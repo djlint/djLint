@@ -1,6 +1,6 @@
 """Test cdata.
 
-poetry run pytest tests/test_html/test_cdata.py
+uv run pytest tests/test_html/test_cdata.py
 """
 
 from __future__ import annotations

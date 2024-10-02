@@ -1,6 +1,6 @@
 """Test twig comment tags.
 
-poetry run pytest tests/test_linter/test_h037.py
+uv run pytest tests/test_linter/test_h037.py
 """
 
 from __future__ import annotations

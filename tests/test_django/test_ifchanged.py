@@ -1,6 +1,6 @@
 """Test django ifchanged tag.
 
-poetry run pytest tests/test_django/test_ifchanged.py
+uv run pytest tests/test_django/test_ifchanged.py
 """
 
 from __future__ import annotations

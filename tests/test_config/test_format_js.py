@@ -3,7 +3,7 @@
 --format-js
 --indent-js
 
-poetry run pytest tests/test_config/test_format_js.py
+uv run pytest tests/test_config/test_format_js.py
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """Test djlintrc config.
 
-poetry run pytest tests/test_config/test_djlintrc
+uv run pytest tests/test_config/test_djlintrc
 
 """
 

@@ -2,7 +2,7 @@
 
 https://github.com/jazzband/sorl-thumbnail
 
-poetry run pytest tests/test_django/test_thumbnail.py
+uv run pytest tests/test_django/test_thumbnail.py
 """
 
 from __future__ import annotations

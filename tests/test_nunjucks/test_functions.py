@@ -1,6 +1,6 @@
 """Test nunjucks functions.
 
-poetry run pytest tests/test_nunjucks/test_functions.py
+uv run pytest tests/test_nunjucks/test_functions.py
 """
 
 from __future__ import annotations

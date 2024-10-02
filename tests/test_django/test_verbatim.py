@@ -1,6 +1,6 @@
 """Test django verbatim tag.
 
-poetry run pytest tests/test_django/test_verbatim.py
+uv run pytest tests/test_django/test_verbatim.py
 """
 
 from __future__ import annotations

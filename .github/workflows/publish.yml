@@ -1,9 +1,9 @@
 name: Publish
 on:
-  workflow_dispatch:
   push:
     tags:
       - v*
+  workflow_dispatch:
 jobs:
   publish-pypi:
     runs-on: ubuntu-latest
@@ -12,7 +12,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - run: pipx run poetry build --no-interaction
+      - uses: astral-sh/setup-uv@v3
+      - run: uv build --python 3.12 --no-cache
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: true

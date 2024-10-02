@@ -1,6 +1,6 @@
 """Test html textarea tag.
 
-poetry run pytest tests/test_html/test_tag_textarea.py
+uv run pytest tests/test_html/test_tag_textarea.py
 """
 
 from __future__ import annotations

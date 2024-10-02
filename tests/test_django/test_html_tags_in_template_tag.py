@@ -1,6 +1,6 @@
 """Test html inside template tags for tag.
 
-poetry run pytest tests/test_django/test_html_tags_in_template_tag.py
+uv run pytest tests/test_django/test_html_tags_in_template_tag.py
 """
 
 from __future__ import annotations

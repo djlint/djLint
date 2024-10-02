@@ -1,6 +1,6 @@
 """Tests forced line break when a tag has breaks in attributes tag.
 
-poetry run pytest tests/test_config/test_line_break_after_multiline_tag.py
+uv run pytest tests/test_config/test_line_break_after_multiline_tag.py
 """
 
 from __future__ import annotations

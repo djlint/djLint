@@ -1,6 +1,6 @@
 """Test django comment tag.
 
-poetry run pytest tests/test_django/test_comments.py
+uv run pytest tests/test_django/test_comments.py
 """
 
 from __future__ import annotations

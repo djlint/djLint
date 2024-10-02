@@ -1,6 +1,6 @@
 """Test django block tag.
 
-poetry run pytest tests/test_django/test_block.py
+uv run pytest tests/test_django/test_block.py
 """
 
 from __future__ import annotations

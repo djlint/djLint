@@ -1,6 +1,6 @@
 """Test linter code H010.
 
-poetry run pytest tests/test_linter/test_h021.py
+uv run pytest tests/test_linter/test_h021.py
 """
 
 from __future__ import annotations

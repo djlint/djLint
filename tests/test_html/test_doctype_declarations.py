@@ -1,6 +1,6 @@
 """Tests for doctype.
 
-poetry run pytest tests/test_html/test_doctype_declarations.py
+uv run pytest tests/test_html/test_doctype_declarations.py
 """
 
 from __future__ import annotations

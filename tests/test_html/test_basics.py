@@ -1,6 +1,6 @@
 """Basic html tests.
 
-poetry run pytest tests/test_html/test_basics.py
+uv run pytest tests/test_html/test_basics.py
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 
 --custom-blocks 'toc'
 
-poetry run pytest tests/test_config/test_custom_blocks.py
+uv run pytest tests/test_config/test_custom_blocks.py
 """
 
 from __future__ import annotations

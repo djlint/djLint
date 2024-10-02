@@ -1,6 +1,6 @@
 """Test nunjucks set tags.
 
-poetry run pytest tests/test_nunjucks/test_set.py
+uv run pytest tests/test_nunjucks/test_set.py
 """
 
 from __future__ import annotations

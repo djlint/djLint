@@ -2,7 +2,7 @@
 
 --preserve-leading-space
 
-poetry run pytest tests/test_config/test_preserve_leading_space.py
+uv run pytest tests/test_config/test_preserve_leading_space.py
 """
 
 from __future__ import annotations

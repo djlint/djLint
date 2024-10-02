@@ -1,6 +1,6 @@
 """Test django spaceless tag.
 
-poetry run pytest tests/test_django/test_spaceless.py
+uv run pytest tests/test_django/test_spaceless.py
 """
 
 from __future__ import annotations

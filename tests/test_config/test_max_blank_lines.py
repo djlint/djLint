@@ -1,6 +1,6 @@
 """Test for max blank lines.
 
-poetry run pytest tests/test_config/test_max_blank_lines.py
+uv run pytest tests/test_config/test_max_blank_lines.py
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """Test for custom html.
 
-poetry run pytest tests/test_config/test_close_void_tags.py
+uv run pytest tests/test_config/test_close_void_tags.py
 """
 
 from __future__ import annotations

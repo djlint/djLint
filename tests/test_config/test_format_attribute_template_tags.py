@@ -2,7 +2,7 @@
 
 --format-attribute-template-tags
 
-poetry run pytest tests/test_config/test_format_attribute_template_tags.py
+uv run pytest tests/test_config/test_format_attribute_template_tags.py
 """
 
 from __future__ import annotations

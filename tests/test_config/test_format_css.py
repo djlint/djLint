@@ -3,7 +3,7 @@
 --format-css
 --indent-css
 
-poetry run pytest tests/test_config/test_format_css.py
+uv run pytest tests/test_config/test_format_css.py
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """Test nunjucks spaceless tag.
 
-poetry run pytest tests/test_nunjucks/test_spaceless.py
+uv run pytest tests/test_nunjucks/test_spaceless.py
 """
 
 from __future__ import annotations

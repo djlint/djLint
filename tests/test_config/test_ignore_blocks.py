@@ -2,7 +2,7 @@
 
 --ignore-blocks 'raw'
 
-poetry run pytest tests/test_config/test_ignore_blocks.py
+uv run pytest tests/test_config/test_ignore_blocks.py
 """
 
 from __future__ import annotations

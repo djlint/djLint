@@ -1,6 +1,6 @@
 """Test single attribute per line.
 
-poetry run pytest tests/test_html/test_single_attribute_per_line.py
+uv run pytest tests/test_html/test_single_attribute_per_line.py
 """
 
 from __future__ import annotations

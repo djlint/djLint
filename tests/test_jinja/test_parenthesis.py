@@ -1,6 +1,6 @@
 """Test jinja parenthesis.
 
-poetry run pytest tests/test_jinja/test_parenthesis.py
+uv run pytest tests/test_jinja/test_parenthesis.py
 """
 
 from __future__ import annotations

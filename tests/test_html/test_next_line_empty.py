@@ -1,6 +1,6 @@
 """Test next line empty.
 
-poetry run pytest tests/test_html/test_next_line_empty.py
+uv run pytest tests/test_html/test_next_line_empty.py
 """
 
 from __future__ import annotations

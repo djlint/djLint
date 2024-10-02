@@ -1,6 +1,6 @@
 """Test django asset tag.
 
-poetry run pytest tests/test_django/test_asset.py
+uv run pytest tests/test_django/test_asset.py
 """
 
 from __future__ import annotations

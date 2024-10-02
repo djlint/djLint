@@ -1,6 +1,6 @@
 """Test django if tag.
 
-poetry run pytest tests/test_django/test_if.py
+uv run pytest tests/test_django/test_if.py
 """
 
 from __future__ import annotations

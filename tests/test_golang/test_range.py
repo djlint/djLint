@@ -1,6 +1,6 @@
 """Test golang range tag.
 
-poetry run pytest tests/test_golang/test_range.py
+uv run pytest tests/test_golang/test_range.py
 """
 
 from __future__ import annotations

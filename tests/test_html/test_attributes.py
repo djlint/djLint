@@ -1,6 +1,6 @@
 """Tests for attributes.
 
-poetry run pytest tests/test_html/test_attributes.py
+uv run pytest tests/test_html/test_attributes.py
 """
 
 from __future__ import annotations

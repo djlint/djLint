@@ -1,6 +1,6 @@
 """Test for cli inputs.
 
-poetry run pytest tests/test_cli.py
+uv run pytest tests/test_cli.py
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """Test html span tag.
 
-poetry run pytest tests/test_html/test_tag_span.py
+uv run pytest tests/test_html/test_tag_span.py
 """
 
 from __future__ import annotations

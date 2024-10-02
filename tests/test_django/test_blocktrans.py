@@ -1,6 +1,6 @@
 """Test django blocktrans(late) tag.
 
-poetry run pytest tests/test_django/test_blocktrans.py
+uv run pytest tests/test_django/test_blocktrans.py
 
 blocktrans/late contents cannot be touched.
 

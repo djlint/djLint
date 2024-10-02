@@ -2,7 +2,7 @@
 
 --custom-html 'dov'
 
-poetry run pytest tests/test_config/test_custom_html.py
+uv run pytest tests/test_config/test_custom_html.py
 """
 
 from __future__ import annotations

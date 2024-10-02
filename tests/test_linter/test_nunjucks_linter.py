@@ -1,6 +1,6 @@
 """Djlint linter rule tests for nunjucks.
 
-poetry run pytest tests/test_linter/test_nunjucks_linter.py
+uv run pytest tests/test_linter/test_nunjucks_linter.py
 
 """
 

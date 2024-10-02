@@ -1,6 +1,6 @@
 """Test for alpine.js.
 
-poetry run pytest tests/test_html/test_alpinejs.py
+uv run pytest tests/test_html/test_alpinejs.py
 """
 
 from __future__ import annotations

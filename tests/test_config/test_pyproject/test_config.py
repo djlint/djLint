@@ -1,6 +1,6 @@
 """Test pyproject.toml config.
 
-poetry run pytest tests/test_config/test_pyproject
+uv run pytest tests/test_config/test_pyproject
 
 """
 

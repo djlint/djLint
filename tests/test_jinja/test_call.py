@@ -1,6 +1,6 @@
 """Test jinja call tag.
 
-poetry run pytest tests/test_jinja/test_call.py
+uv run pytest tests/test_jinja/test_call.py
 """
 
 from __future__ import annotations

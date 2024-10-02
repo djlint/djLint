@@ -2,7 +2,7 @@
 
 --indent 4
 
-poetry run pytest tests/test_config/test_indent.py
+uv run pytest tests/test_config/test_indent.py
 """
 
 from __future__ import annotations

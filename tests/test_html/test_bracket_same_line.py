@@ -1,6 +1,6 @@
 """Test bracket on same line flag.
 
-poetry run pytest tests/test_html/test_bracket_same_line.py
+uv run pytest tests/test_html/test_bracket_same_line.py
 """
 
 from __future__ import annotations

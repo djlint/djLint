@@ -1,6 +1,6 @@
 """Test case.
 
-poetry run pytest tests/test_html/test_case.py
+uv run pytest tests/test_html/test_case.py
 """
 
 from __future__ import annotations

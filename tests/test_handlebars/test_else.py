@@ -1,6 +1,6 @@
 """Test handlebars else tag.
 
-poetry run pytest tests/test_handlebars/test_else.py
+uv run pytest tests/test_handlebars/test_else.py
 """
 
 from __future__ import annotations

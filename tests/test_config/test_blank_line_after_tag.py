@@ -2,7 +2,7 @@
 
 --blank-line-after-tag 'include,load'
 
-poetry run pytest tests/test_config/test_blank_line_after_tag.py
+uv run pytest tests/test_config/test_blank_line_after_tag.py
 """
 
 from __future__ import annotations

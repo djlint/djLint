@@ -1,6 +1,6 @@
 """Test disable.
 
-poetry run pytest tests/test_djlint/test_ignore.py
+uv run pytest tests/test_djlint/test_ignore.py
 """
 
 from __future__ import annotations

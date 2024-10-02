@@ -1,6 +1,6 @@
 """Test twig symfony form tags.
 
-poetry run pytest tests/test_twig/test_symfony.py
+uv run pytest tests/test_twig/test_symfony.py
 """
 
 from __future__ import annotations

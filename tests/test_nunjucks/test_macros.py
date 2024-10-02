@@ -1,6 +1,6 @@
 """Test nunjucks macro tag.
 
-poetry run pytest tests/test_nunjucks/test_macros.py
+uv run pytest tests/test_nunjucks/test_macros.py
 """
 
 from __future__ import annotations

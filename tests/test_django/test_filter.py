@@ -1,6 +1,6 @@
 """Test django filter tag.
 
-poetry run pytest tests/test_django/test_filter.py
+uv run pytest tests/test_django/test_filter.py
 """
 
 from __future__ import annotations
