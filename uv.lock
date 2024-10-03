@@ -171,7 +171,7 @@ requires-dist = [
 dev = [
     { name = "mypy", specifier = "==1.11.2" },
     { name = "pytest", specifier = "==8.3.3" },
-    { name = "pytest-cov", specifier = "==5.0.0" },
+    { name = "pytest-cov", specifier = "==5" },
     { name = "pytest-xdist", specifier = "==3.6.1" },
     { name = "ruff", specifier = "==0.6.8" },
     { name = "tomli", specifier = "==2.0.2" },
