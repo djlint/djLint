@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling"]
 build-backend = "hatchling.build"
+requires = ["hatchling"]
 
 [project]
 name = "djlint"
@@ -8,13 +8,13 @@ version = "1.35.2"
 description = "HTML Template Linter and Formatter"
 readme = "README.md"
 license = { text = "GPL-3.0-or-later" }
-maintainers = [{ name = "Christopher Pickering" }, { name = "monosans" }]
+maintainers = [
+  { name = "Christopher Pickering" },
+  { name = "monosans", email = "hsyqixco@protonmail.com" },
+]
 authors = [{ name = "Christopher Pickering" }]
 requires-python = ">=3.8"
 classifiers = [
-  "Environment :: Web Environment",
-  "Intended Audience :: Developers",
-  "Intended Audience :: Information Technology",
   "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Natural Language :: English",
   "Operating System :: OS Independent",
@@ -26,9 +26,6 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Topic :: Internet",
-  "Topic :: Internet :: WWW/HTTP",
-  "Topic :: Software Development",
   "Typing :: Typed",
 ]
 dependencies = [
@@ -56,7 +53,7 @@ include = ["djlint"]
 dev-dependencies = [
   "mypy==1.11.2",
   "pytest==8.3.3",
-  "pytest-cov==5.0.0",
+  "pytest-cov==5",
   "pytest-xdist==3.6.1",
   "ruff==0.6.8",
   "tomli==2.0.2",
