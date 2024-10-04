@@ -23,7 +23,7 @@ repos:
         args:
           - --no-config
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.6.8
+    rev: v0.6.9
     hooks:
       - id: ruff
         args:
