@@ -27,12 +27,6 @@
     {
       "matchUpdateTypes": ["lockFileMaintenance", "patch", "pin"],
       "automerge": true
-    },
-    {
-      "matchCategories": ["docker"],
-      "matchDepNames": ["python"],
-      "matchUpdateTypes": ["minor"],
-      "automerge": false
     }
   ],
   "prConcurrentLimit": 0,
