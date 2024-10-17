@@ -39,7 +39,7 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
 
         # remove leading . from extension
         extension = str(config.extension)
-        extension = extension[1:] if extension.startswith(".") else extension
+        extension = extension.removeprefix(".")
 
         paths.extend(
             x
