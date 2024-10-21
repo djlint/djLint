@@ -137,7 +137,7 @@ def build_output(
         next(iter(error.keys())), config.project_root.resolve()
     )
 
-    if "{filename}" not in config.linter_output_format and not config.stdin:
+    if "{filename}" not in config.linter_output_format and not config.stdin:  # noqa: RUF027
         echo(
             f"{Fore.GREEN}{Style.BRIGHT}\n{filename}\n{Style.DIM}"
             + "".join("─" for _ in range(1, width))
