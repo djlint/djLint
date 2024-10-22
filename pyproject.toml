@@ -50,7 +50,7 @@ include = ["djlint"]
 
 [tool.uv]
 dev-dependencies = [
-  "mypy==1.12.1",
+  "mypy==1.13.0",
   "pytest==8.3.3",
   "pytest-cov==5",
   "pytest-xdist==3.6.1",
