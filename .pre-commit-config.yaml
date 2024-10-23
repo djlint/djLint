@@ -37,6 +37,7 @@ repos:
         args:
           - --scripts-are-modules
         additional_dependencies:
+          - orjson
           - click
           - json5
           - pathspec
