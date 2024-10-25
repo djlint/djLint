@@ -17,15 +17,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "{{ myfunc({\n"
-            "  bar: {\n"
-            "    baz: {\n"
-            "      cux: 1\n"
-            "    }\n"
-            "  }\n"
-            "})}}"
-        ),
+        ("{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}}"),
         ('{{ myfunc({"bar": {"baz": {"cux": 1}}}) }}\n'),
         ({}),
         id="long line",
@@ -66,29 +58,13 @@ test_data = [
         id="function_call_attribute_access_multiple",
     ),
     pytest.param(
-        (
-            "{{ myfunc({\n"
-            "  bar: {\n"
-            "    baz: {\n"
-            "      cux: 1\n"
-            "    }\n"
-            "  }\n"
-            "})}}"
-        ),
-        ("{{ myfunc({\n" "bar: {\n" "baz: {\n" "cux: 1\n" "}\n" "}\n" "})}}\n"),
+        ("{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}}"),
+        ("{{ myfunc({\nbar: {\nbaz: {\ncux: 1\n}\n}\n})}}\n"),
         ({"no_function_formatting": True}),
         id="disabled",
     ),
     pytest.param(
-        (
-            "{{ myfunc({\n"
-            "  bar: {\n"
-            "    baz: {\n"
-            "      cux: 1\n"
-            "    }\n"
-            "  }\n"
-            "})}}"
-        ),
+        ("{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}}"),
         (
             "{{ myfunc({\n"
             '    "bar": {\n'
@@ -126,16 +102,8 @@ test_data = [
         id="nested",
     ),
     pytest.param(
-        (
-            "{{ myfunc({\n"
-            "  bar: {\n"
-            "    baz: {\n"
-            "      cux: 1\n"
-            "    }\n"
-            "  }\n"
-            "})}"
-        ),
-        ("{{ myfunc({\n" "bar: {\n" "baz: {\n" "cux: 1\n" "}\n" "}\n" "})}\n"),
+        ("{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}"),
+        ("{{ myfunc({\nbar: {\nbaz: {\ncux: 1\n}\n}\n})}\n"),
         ({}),
         id="broken",
     ),

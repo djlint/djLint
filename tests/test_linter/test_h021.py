@@ -65,7 +65,7 @@ test_data = [
         id="outside tag",
     ),
     pytest.param(
-        ('<div style="color:green"\n' '     class="foo">\n' "</div>"),
+        ('<div style="color:green"\n     class="foo">\n</div>'),
         ([
             {
                 "code": "H021",

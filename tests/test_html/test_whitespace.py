@@ -113,8 +113,8 @@ test_data = [
         id="fill",
     ),
     pytest.param(
-        ("<span> 321 </span>\n" "\n" "<span> <a>321</a> </span>\n"),
-        ("<span>321</span>\n" "<span> <a>321</a> </span>\n"),
+        ("<span> 321 </span>\n\n<span> <a>321</a> </span>\n"),
+        ("<span>321</span>\n<span> <a>321</a> </span>\n"),
         id="inline_leading_trailing_spaces",
     ),
     pytest.param(
@@ -238,22 +238,18 @@ test_data = [
         ("<span></span>\n"),
         id="snippet_25",
     ),
+    pytest.param(("<img/> <img/>\n"), ("<img /> \n<img />\n"), id="snippet_26"),
     pytest.param(
-        ("<img/> <img/>\n"), ("<img /> \n" "<img />\n"), id="snippet_26"
-    ),
-    pytest.param(
-        ("<img/>          <img/>\n"),
-        ("<img />  \n" "<img />\n"),
-        id="snippet_27",
+        ("<img/>          <img/>\n"), ("<img />  \n<img />\n"), id="snippet_27"
     ),
     pytest.param(
         ("<img/>           <img/>\n"),
-        ("<img />          \n" "<img />\n"),
+        ("<img />          \n<img />\n"),
         id="snippet_28",
     ),
     pytest.param(
         ("<img/>                   <img/>\n"),
-        ("<img />                  \n" "<img />\n"),
+        ("<img />                  \n<img />\n"),
         id="snippet_29",
     ),
     pytest.param(

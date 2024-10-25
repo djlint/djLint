@@ -95,8 +95,8 @@ test_data = [
         id="network stuff",
     ),
     pytest.param(
-        ("{% block someblock %}{% endblock %}\n" "<br />\n" "<br />\n"),
-        ("{% block someblock %}{% endblock %}\n" "<br />\n" "<br />\n"),
+        ("{% block someblock %}{% endblock %}\n<br />\n<br />\n"),
+        ("{% block someblock %}{% endblock %}\n<br />\n<br />\n"),
         ({"preserve_blank_lines": True}),
         id="whitespace test",
     ),

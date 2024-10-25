@@ -17,11 +17,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "<!-- <span> -->\n"
-            "<div><p><span></span></p></div>\n"
-            "<!-- <div> -->\n"
-        ),
+        ("<!-- <span> -->\n<div><p><span></span></p></div>\n<!-- <div> -->\n"),
         (
             "<!-- <span> -->\n"
             "<div>\n"
@@ -133,8 +129,8 @@ test_data = [
         id="{{ /* don't require an on block",
     ),
     pytest.param(
-        ("<script>\n" "    <div><p><span></span></p></div>\n" "</script>\n"),
-        ("<script>\n" "    <div><p><span></span></p></div>\n" "</script>\n"),
+        ("<script>\n    <div><p><span></span></p></div>\n</script>\n"),
+        ("<script>\n    <div><p><span></span></p></div>\n</script>\n"),
         id="script",
     ),
     pytest.param(

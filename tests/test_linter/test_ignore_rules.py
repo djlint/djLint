@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("<img>{# djlint:off H004,H006,H013 #}\n" "<img>\n"),
+        ("<img>{# djlint:off H004,H006,H013 #}\n<img>\n"),
         ([
             {
                 "code": "H006",

@@ -68,8 +68,8 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
 
 test_data_two = [
     pytest.param(
-        ("<dIV></Div>\n" "<bR>\n" "<Br />\n" "<MeTa class='asdf' />\n"),
-        ("<dIV></Div>\n" "<bR>\n" "<Br />\n" "<MeTa class='asdf' />\n"),
+        ("<dIV></Div>\n<bR>\n<Br />\n<MeTa class='asdf' />\n"),
+        ("<dIV></Div>\n<bR>\n<Br />\n<MeTa class='asdf' />\n"),
         id="preserve_case",
     )
 ]

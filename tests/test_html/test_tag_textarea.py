@@ -17,14 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("<div><textarea>\n" "asdf\n" "  asdf</textarea></div>\n"),
-        (
-            "<div>\n"
-            "    <textarea>\n"
-            "asdf\n"
-            "  asdf</textarea>\n"
-            "</div>\n"
-        ),
+        ("<div><textarea>\nasdf\n  asdf</textarea></div>\n"),
+        ("<div>\n    <textarea>\nasdf\n  asdf</textarea>\n</div>\n"),
         id="textarea",
     ),
     pytest.param(
@@ -63,8 +57,8 @@ test_data = [
         id="attributes",
     ),
     pytest.param(
-        ("<p>\n" '    some nice text <a href="this">asdf</a>, ok\n' "</p>\n"),
-        ("<p>\n" '    some nice text <a href="this">asdf</a>, ok\n' "</p>\n"),
+        ('<p>\n    some nice text <a href="this">asdf</a>, ok\n</p>\n'),
+        ('<p>\n    some nice text <a href="this">asdf</a>, ok\n</p>\n'),
         id="a_tag",
     ),
     # test added for https://github.com/djlint/djLint/issues/189

@@ -17,31 +17,16 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "<div>\n"
-            "    <!-- asdf--><!--\n"
-            " multi\n"
-            "line\n"
-            "comment--></div>"
-        ),
-        (
-            "<div>\n"
-            "    <!-- asdf--><!--\n"
-            " multi\n"
-            "line\n"
-            "comment-->\n"
-            "</div>\n"
-        ),
+        ("<div>\n    <!-- asdf--><!--\n multi\nline\ncomment--></div>"),
+        ("<div>\n    <!-- asdf--><!--\n multi\nline\ncomment-->\n</div>\n"),
         id="comments_tag",
     ),
     pytest.param(
-        ("<!-- hello -->\n" "123\n"),
-        ("<!-- hello -->\n" "123\n"),
-        id="before_text",
+        ("<!-- hello -->\n123\n"), ("<!-- hello -->\n123\n"), id="before_text"
     ),
     pytest.param(
-        ("<? hello ?>\n" "<!- world ->\n"),
-        ("<? hello ?>\n" "<!- world ->\n"),
+        ("<? hello ?>\n<!- world ->\n"),
+        ("<? hello ?>\n<!- world ->\n"),
         id="bogus",
     ),
     pytest.param(

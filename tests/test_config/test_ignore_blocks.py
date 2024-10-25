@@ -26,19 +26,19 @@ test_data = [
     ),
     pytest.param(
         ("{% raw%} <div><img/></div>  {%endraw %}"),
-        ("{% raw %}\n" "<div>\n" "    <img />\n" "</div>\n" "{% endraw %}\n"),
+        ("{% raw %}\n<div>\n    <img />\n</div>\n{% endraw %}\n"),
         ({"ignore_blocks": "raw"}),
         id="ignore_raw",
     ),
     pytest.param(
         ("{% raw%}<div></div>{%endraw %}"),
-        ("{% raw %}\n" "    <div></div>\n" "{% endraw %}\n"),
+        ("{% raw %}\n    <div></div>\n{% endraw %}\n"),
         ({"ignore_blocks": "junk"}),
         id="dont_ignore_raw",
     ),
     pytest.param(
         ("{% raws%}<div></div>{%endraws %}"),
-        ("{% raws %}\n" "    <div></div>\n" "{% endraws %}\n"),
+        ("{% raws %}\n    <div></div>\n{% endraws %}\n"),
         ({"ignore_blocks": "raw", "custom_blocks": "raws"}),
         id="test overlap",
     ),

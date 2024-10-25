@@ -116,7 +116,7 @@ def lint_printer(
         print(
             f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}"
         )
-        print(f'     {x["message"]}')
+        print(f"     {x['message']}")
         print()
 
     print(
@@ -128,7 +128,7 @@ def lint_printer(
         print(
             f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}"
         )
-        print(f'     {x["message"]}')
+        print(f"     {x['message']}")
         print()
     if not actual:
         print(f"{Fore.YELLOW}No codes found.{Style.RESET_ALL}")

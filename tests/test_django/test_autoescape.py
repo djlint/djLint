@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{% autoescape on %}{{ body }}{% endautoescape %}"),
-        ("{% autoescape on %}\n" "    {{ body }}\n" "{% endautoescape %}\n"),
+        ("{% autoescape on %}\n    {{ body }}\n{% endautoescape %}\n"),
         id="autoescape_tag",
     )
 ]

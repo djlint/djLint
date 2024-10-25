@@ -62,14 +62,8 @@ test_data = [
         id="valid",
     ),
     pytest.param(
-        ("---\n" "layout: <div><div></div></div>\n" "---\n" "<div></div>\n"),
-        (
-            "---\n"
-            "layout: <div><div></div></div>\n"
-            "---\n"
-            "\n"
-            "<div></div>\n"
-        ),
+        ("---\nlayout: <div><div></div></div>\n---\n<div></div>\n"),
+        ("---\nlayout: <div><div></div></div>\n---\n\n<div></div>\n"),
         ({}),
         id="more",
     ),
@@ -94,26 +88,26 @@ test_data = [
         id="custom_parser",
     ),
     pytest.param(
-        ("---\n" "---\n" "<h1>\n" "  Hello world!</h1>\n"),
-        ("---\n" "---\n" "\n" "<h1>Hello world!</h1>\n"),
+        ("---\n---\n<h1>\n  Hello world!</h1>\n"),
+        ("---\n---\n\n<h1>Hello world!</h1>\n"),
         ({}),
         id="empty",
     ),
     pytest.param(
-        ("---\n" "---\n" "<div>\n" "---\n" "</div>\n"),
-        ("---\n" "---\n" "\n" "<div>---</div>\n"),
+        ("---\n---\n<div>\n---\n</div>\n"),
+        ("---\n---\n\n<div>---</div>\n"),
         ({}),
         id="empty_2",
     ),
     pytest.param(
-        ("---\n" "---\n\n\n" "<div>\n" "---\n" "</div>\n"),
-        ("---\n" "---\n" "\n" "<div>---</div>\n"),
+        ("---\n---\n\n\n<div>\n---\n</div>\n"),
+        ("---\n---\n\n<div>---</div>\n"),
         ({}),
         id="blank_lines",
     ),
     pytest.param(
-        ("---\n" "---\n\n\n\n" "{{ this }}\n"),
-        ("---\n" "---\n" "\n" "{{ this }}\n"),
+        ("---\n---\n\n\n\n{{ this }}\n"),
+        ("---\n---\n\n{{ this }}\n"),
         ({}),
         id="blank_lines_2",
     ),
@@ -154,8 +148,8 @@ test_data = [
         id="issue_9042",
     ),
     pytest.param(
-        ("---\n" "---\n\n\n\n" "{{ this }}\n"),
-        ("---\n" "---\n" "{{ this }}\n"),
+        ("---\n---\n\n\n\n{{ this }}\n"),
+        ("---\n---\n{{ this }}\n"),
         ({"no_line_after_yaml": True}),
         id="blank_lines_2",
     ),

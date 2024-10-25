@@ -133,7 +133,7 @@ test_data = [
         id="T002_test_greedy_regex",
     ),
     pytest.param(
-        ("{% if form.action_url %}\n" "   ='stuff'\n" " {% endif %}"),
+        ("{% if form.action_url %}\n   ='stuff'\n {% endif %}"),
         ([]),
         id="T002_test_greedy_regex_2",
     ),

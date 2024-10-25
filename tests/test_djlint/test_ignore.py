@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{# djlint:off #}\n" "<img \n" "/>"),
-        ("{# djlint:off #}\n" "<img \n" "/>\n"),
+        ("{# djlint:off #}\n<img \n/>"),
+        ("{# djlint:off #}\n<img \n/>\n"),
         id="don't compress",
     )
 ]

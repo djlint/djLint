@@ -16,10 +16,10 @@ if TYPE_CHECKING:
     from typing_extensions import Any
 
 test_data = [
-    pytest.param(("<img><meta>"), ("<img>\n" "<meta>\n"), ({}), id="default"),
+    pytest.param(("<img><meta>"), ("<img>\n<meta>\n"), ({}), id="default"),
     pytest.param(
         ("<img><div><meta>"),
-        ("<img />\n" "<div>\n" "    <meta />\n"),
+        ("<img />\n<div>\n    <meta />\n"),
         ({"close_void_tags": True}),
         id="config",
     ),

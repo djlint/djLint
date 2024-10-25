@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{% verbatim %}Still alive.{% endverbatim %}"),
-        ("{% verbatim %}\n" "    Still alive.\n" "{% endverbatim %}\n"),
+        ("{% verbatim %}\n    Still alive.\n{% endverbatim %}\n"),
         id="verbatim_tag",
     )
 ]

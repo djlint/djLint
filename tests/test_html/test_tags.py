@@ -53,8 +53,8 @@ test_data = [
         id="close_at_start",
     ),
     pytest.param(
-        ("<app-foo></app-foo>\n" "<app-bar></app-bar>\n"),
-        ("<app-foo></app-foo>\n" "<app-bar></app-bar>\n"),
+        ("<app-foo></app-foo>\n<app-bar></app-bar>\n"),
+        ("<app-foo></app-foo>\n<app-bar></app-bar>\n"),
         id="custom_element",
     ),
     pytest.param(

@@ -59,14 +59,8 @@ test_data = [
         id="blank_nested",
     ),
     pytest.param(
-        ("{% block this %}\n" "{% load i18n %}\n" "{% endblock this %}"),
-        (
-            "{% block this %}\n"
-            "\n"
-            "    {% load i18n %}\n"
-            "\n"
-            "{% endblock this %}\n"
-        ),
+        ("{% block this %}\n{% load i18n %}\n{% endblock this %}"),
+        ("{% block this %}\n\n    {% load i18n %}\n\n{% endblock this %}\n"),
         ({"blank_line_before_tag": "endblock  , junk,load "}),
         id="nested_indent",
     ),
@@ -106,8 +100,8 @@ test_data = [
         id="endblock is not endblocktrans",
     ),
     pytest.param(
-        ("{% extends nothing %}\n" "\n" "<div></div>\n"),
-        ("{% extends nothing %}\n" "\n" "<div></div>\n"),
+        ("{% extends nothing %}\n\n<div></div>\n"),
+        ("{% extends nothing %}\n\n<div></div>\n"),
         ({
             "blank_line_before_tag": "load, extends",
             "preserve_blank_lines": True,
@@ -121,7 +115,7 @@ test_data = [
             "{% block %}stuff{% endblock %}\n"
             "\n"
         ),
-        ("{% block %}stuff{% endblock %}\n" "{% block %}stuff{% endblock %}\n"),
+        ("{% block %}stuff{% endblock %}\n{% block %}stuff{% endblock %}\n"),
         ({
             "blank_line_before_tag": "load, extends,     include     ,endblock "
         }),
