@@ -17,11 +17,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "{% a %}\n"
-            "{%b       %}{%+c%}{%-d+%}\n"
-            "{#a}{{g {%a%}}}{%l{{q}}+%}"
-        ),
+        ("{% a %}\n{%b       %}{%+c%}{%-d+%}\n{#a}{{g {%a%}}}{%l{{q}}+%}"),
         (
             "{% a %}\n"
             "{% b %}{%+ c %}{%- d +%}\n"
@@ -31,8 +27,8 @@ test_data = [
         id="messy stuff",
     ),
     pytest.param(
-        ("{% a %}\n" "{%b%}{%c%}{%-d+%}\n" "{#a}{{g {%a%}}}{%l{{q}}+%}"),
-        ("{% a %}\n" "{%b%}{%c%}{%-d+%}\n" "{#a}{{g {%a%}}}{%l{{q}}+%}\n"),
+        ("{% a %}\n{%b%}{%c%}{%-d+%}\n{#a}{{g {%a%}}}{%l{{q}}+%}"),
+        ("{% a %}\n{%b%}{%c%}{%-d+%}\n{#a}{{g {%a%}}}{%l{{q}}+%}\n"),
         ({"profile": "handlebars"}),
         id="messy stuff",
     ),

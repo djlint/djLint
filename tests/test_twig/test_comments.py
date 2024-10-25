@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{% if %}\n" "    {#\n" "        line\n" "    #}\n" "{% endif %}"),
-        ("{% if %}\n" "    {#\n" "        line\n" "    #}\n" "{% endif %}\n"),
+        ("{% if %}\n    {#\n        line\n    #}\n{% endif %}"),
+        ("{% if %}\n    {#\n        line\n    #}\n{% endif %}\n"),
         id="comments",
     ),
     pytest.param(

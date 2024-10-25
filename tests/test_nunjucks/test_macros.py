@@ -18,11 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{% macro 'cool' %}<div>some html</div>{% endmacro %}"),
-        (
-            "{% macro 'cool' %}\n"
-            "    <div>some html</div>\n"
-            "{% endmacro %}\n"
-        ),
+        ("{% macro 'cool' %}\n    <div>some html</div>\n{% endmacro %}\n"),
         id="macro_tag",
     ),
     pytest.param(

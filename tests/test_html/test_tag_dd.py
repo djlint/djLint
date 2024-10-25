@@ -16,9 +16,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 test_data = [
-    pytest.param(
-        ("<dd>text</dd>"), ("<dd>\n" "    text\n" "</dd>\n"), id="dd_tag"
-    )
+    pytest.param(("<dd>text</dd>"), ("<dd>\n    text\n</dd>\n"), id="dd_tag")
 ]
 
 

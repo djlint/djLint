@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ('<button onclick="util.request(`set`, {to_set : {tags: ' '}});">'),
+        ('<button onclick="util.request(`set`, {to_set : {tags: }});">'),
         ([
             {
                 "code": "H025",
@@ -33,13 +33,7 @@ test_data = [
     pytest.param(("{#-test -#}"), ([]), id="T001"),
     pytest.param(("{#- test -#}"), ([]), id="T001_2"),
     pytest.param(
-        (
-            "<div>\n"
-            "     {%\n"
-            '         ("something", "1"),\n'
-            "     %}\n"
-            " </div>"
-        ),
+        ('<div>\n     {%\n         ("something", "1"),\n     %}\n </div>'),
         ([]),
         id="T001_3",
     ),

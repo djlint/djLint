@@ -17,13 +17,13 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("<div>\n" "    <div>\n" "        <hr>\n" "    </div>\n" "</div>\n"),
-        ("<div>\n" "    <div>\n" "        <hr>\n" "    </div>\n" "</div>\n"),
+        ("<div>\n    <div>\n        <hr>\n    </div>\n</div>\n"),
+        ("<div>\n    <div>\n        <hr>\n    </div>\n</div>\n"),
         id="hr",
     ),
     pytest.param(
-        ("<div>\n" "    <div>\n" "        <hr />\n" "    </div>\n" "</div>\n"),
-        ("<div>\n" "    <div>\n" "        <hr />\n" "    </div>\n" "</div>\n"),
+        ("<div>\n    <div>\n        <hr />\n    </div>\n</div>\n"),
+        ("<div>\n    <div>\n        <hr />\n    </div>\n</div>\n"),
         id="hr_void",
     ),
 ]

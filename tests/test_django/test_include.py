@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ('{% include "this" %}{% include "that" %}'),
-        ('{% include "this" %}\n' '{% include "that" %}\n'),
+        ('{% include "this" %}\n{% include "that" %}\n'),
         id="include_tag",
     )
 ]

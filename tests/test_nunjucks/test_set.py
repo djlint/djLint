@@ -24,7 +24,7 @@ test_data = [
     ),
     pytest.param(
         ("{%-set posts = collections.docs-%}\n{%asdf%}"),
-        ("{%- set posts = collections.docs -%}\n" "{% asdf %}\n"),
+        ("{%- set posts = collections.docs -%}\n{% asdf %}\n"),
         ({}),
         id="set_with_sibling",
     ),

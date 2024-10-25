@@ -20,19 +20,19 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("<Div></dIV><CaTs></CaTs>"),
-        ("<Div></dIV>\n" "<CaTs></CaTs>\n"),
+        ("<Div></dIV>\n<CaTs></CaTs>\n"),
         ({"ignore_case": True}),
         id="ignore",
     ),
     pytest.param(
         ("<Div></dIV><CaTs></CaTs>"),
-        ("<div></div>\n" "<CaTs></CaTs>\n"),
+        ("<div></div>\n<CaTs></CaTs>\n"),
         ({"ignore_case": False}),
         id="specify keep",
     ),
     pytest.param(
         ("<Div></dIV><CaTs></CaTs>"),
-        ("<div></div>\n" "<CaTs></CaTs>\n"),
+        ("<div></div>\n<CaTs></CaTs>\n"),
         (),
         id="keep",
     ),

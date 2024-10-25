@@ -192,7 +192,7 @@ test_data = [
     ),
     pytest.param(
         ("<p>{% trans 'Please do <b>Blah</b>.' %}</p>\n"),
-        ("<p>\n" "    {% trans 'Please do <b>Blah</b>.' %}\n" "</p>\n"),
+        ("<p>\n    {% trans 'Please do <b>Blah</b>.' %}\n</p>\n"),
         id="blocktrans_indent_3",
     ),
     pytest.param(

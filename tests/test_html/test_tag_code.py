@@ -17,20 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "<ol>\n"
-            "    <li>\n"
-            "        <code>a</code> b\n"
-            "    </li>\n"
-            "</ol>\n"
-        ),
-        (
-            "<ol>\n"
-            "    <li>\n"
-            "        <code>a</code> b\n"
-            "    </li>\n"
-            "</ol>\n"
-        ),
+        ("<ol>\n    <li>\n        <code>a</code> b\n    </li>\n</ol>\n"),
+        ("<ol>\n    <li>\n        <code>a</code> b\n    </li>\n</ol>\n"),
         id="code_tag",
     )
 ]

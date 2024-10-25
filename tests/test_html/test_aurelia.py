@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("<template>\n" '    <i class.bind="icon"></i>\n' "</template>\n"),
-        ("<template>\n" '    <i class.bind="icon"></i>\n' "</template>\n"),
+        ('<template>\n    <i class.bind="icon"></i>\n</template>\n'),
+        ('<template>\n    <i class.bind="icon"></i>\n</template>\n'),
         id="aurelia",
     )
 ]

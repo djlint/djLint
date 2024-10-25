@@ -18,12 +18,12 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{% call 'cool' %}<div>some html</div>{% endcall %}"),
-        ("{% call 'cool' %}\n" "    <div>some html</div>\n" "{% endcall %}\n"),
+        ("{% call 'cool' %}\n    <div>some html</div>\n{% endcall %}\n"),
         id="call_tag",
     ),
     pytest.param(
         ("{% call('cool') %}<div>some html</div>{% endcall %}"),
-        ("{% call('cool') %}\n" "    <div>some html</div>\n" "{% endcall %}\n"),
+        ("{% call('cool') %}\n    <div>some html</div>\n{% endcall %}\n"),
         id="call_tag_with_function",
     ),
     pytest.param(
