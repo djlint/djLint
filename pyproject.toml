@@ -48,8 +48,8 @@ scripts.djlint = "djlint:main"
 [tool.hatch.build.targets.sdist]
 include = ["djlint"]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
   "mypy[faster-cache]==1.13",
   "pytest==8.3.3",
   "pytest-cov==5",
