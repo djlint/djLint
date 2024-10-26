@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import itertools
 from typing import TYPE_CHECKING
 
@@ -10,6 +11,56 @@ import regex as re
 
 if TYPE_CHECKING:
     from .settings import Config
+
+child_of_unformatted_block_cache_: dict[str, list[tuple[int, int]]] = {}
+inside_ignored_block_cache_: dict[str, list[tuple[int, int]]] = {}
+
+
+def child_of_unformatted_block_cache(
+    config: Config, html: str
+) -> list[tuple[int, int]]:
+    key = hashlib.sha256(
+        (html + config.unformatted_blocks).encode("utf-8")
+    ).hexdigest()
+    if key in child_of_unformatted_block_cache_:
+        return child_of_unformatted_block_cache_[key]
+    matches = [
+        (x.start(0), x.end())
+        for x in re.finditer(
+            config.unformatted_blocks,
+            html,
+            flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+        )
+    ]
+    child_of_unformatted_block_cache_[key] = matches
+    return matches
+
+
+def inside_ignored_block_cache(
+    config: Config, html: str
+) -> list[tuple[int, int]]:
+    key = hashlib.sha256(
+        (html + config.unformatted_blocks).encode("utf-8")
+    ).hexdigest()
+    if key in inside_ignored_block_cache_:
+        return inside_ignored_block_cache_[key]
+    matches = [
+        (x.start(0), x.end())
+        for x in itertools.chain(
+            re.finditer(
+                config.ignored_blocks,
+                html,
+                flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            ),
+            re.finditer(
+                config.ignored_inline_blocks,
+                html,
+                flags=re.IGNORECASE | re.VERBOSE,
+            ),
+        )
+    ]
+    inside_ignored_block_cache_[key] = matches
+    return matches
 
 
 def is_ignored_block_opening(config: Config, item: str) -> bool:
@@ -272,21 +323,11 @@ def inside_ignored_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
+    match_start = match.start()
+    match_end = match.end(0)
     return any(
-        ignored_match.start(0) <= match.start()
-        and match.end(0) <= ignored_match.end()
-        for ignored_match in itertools.chain(
-            re.finditer(
-                config.ignored_blocks,
-                html,
-                flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            ),
-            re.finditer(
-                config.ignored_inline_blocks,
-                html,
-                flags=re.IGNORECASE | re.VERBOSE,
-            ),
-        )
+        ignored_match[0] <= match_start and match_end <= ignored_match[1]
+        for ignored_match in inside_ignored_block_cache(config, html)
     )
 
 
@@ -294,14 +335,11 @@ def child_of_unformatted_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
+    match_start = match.start()
+    match_end = match.end(0)
     return any(
-        ignored_match.start(0) < match.start()
-        and match.end(0) <= ignored_match.end()
-        for ignored_match in re.finditer(
-            config.unformatted_blocks,
-            html,
-            flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-        )
+        ignored_match[0] < match_start and match_end <= ignored_match[1]
+        for ignored_match in child_of_unformatted_block_cache(config, html)
     )
 
 
