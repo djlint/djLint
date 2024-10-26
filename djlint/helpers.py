@@ -337,10 +337,13 @@ def child_of_unformatted_block(
     """Do not add whitespace if the tag is in a non indent block."""
     match_start = match.start()
     match_end = match.end(0)
-    return any(
-        ignored_match[0] < match_start and match_end <= ignored_match[1]
-        for ignored_match in child_of_unformatted_block_cache(config, html)
-    )
+    ignored_matches = child_of_unformatted_block_cache(config, html)
+    if ignored_matches == []:
+        return False
+    for ignored_match in ignored_matches:
+        if ignored_match[0] < match_start and match_end <= ignored_match[1]:
+            return True
+    return False
 
 
 def child_of_ignored_block(
