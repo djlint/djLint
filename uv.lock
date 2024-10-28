@@ -126,7 +126,7 @@ dependencies = [
     { name = "tqdm" },
 ]
 
-[package.dependency-groups]
+[package.dev-dependencies]
 dev = [
     { name = "mypy", extra = ["faster-cache"] },
     { name = "pytest" },
@@ -157,7 +157,7 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.62.2" },
 ]
 
-[package.metadata.dependency-groups]
+[package.metadata.requires-dev]
 dev = [
     { name = "mypy", extras = ["faster-cache"], specifier = "==1.13" },
     { name = "pytest", specifier = "==8.3.3" },
