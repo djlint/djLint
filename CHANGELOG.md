@@ -10,6 +10,7 @@ Formatting <https://github.com/openedx/edx-platform> took 87 seconds in the prev
 
 - Performance improved by caching some functions. Thanks to @JCWasmx86!
 - Removed the limitation on the number of workers introduced in v1.35.0.
+- Drop Python 3.8 support.
 
 ## [1.35.2] - 2024-08-29
 
