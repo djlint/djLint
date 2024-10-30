@@ -15,8 +15,6 @@ jobs:
       - uses: astral-sh/setup-uv@v3
       - run: uv build --python 3.12 --no-cache
       - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          attestations: true
   publish-npm:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'djlint' }}

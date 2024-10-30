@@ -2,6 +2,15 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.35.3] - 2024-10-30
+
+This release significantly improves performance, especially for large files and large projects.
+
+Formatting <https://github.com/openedx/edx-platform> took 87 seconds in the previous version, now it takes only 4 seconds (>2000% speedup)! Tested on a 32-core computer.
+
+- Performance improved by caching some functions. Thanks to @JCWasmx86!
+- Removed the limitation on the number of workers introduced in v1.35.0.
+
 ## [1.35.2] - 2024-08-29
 
 - Fix npm publishing
