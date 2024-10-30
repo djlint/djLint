@@ -3,64 +3,14 @@
 
 from __future__ import annotations
 
-import hashlib
 import itertools
+from functools import cache
 from typing import TYPE_CHECKING
 
 import regex as re
 
 if TYPE_CHECKING:
     from .settings import Config
-
-child_of_unformatted_block_cache_: dict[str, list[tuple[int, int]]] = {}
-inside_ignored_block_cache_: dict[str, list[tuple[int, int]]] = {}
-
-
-def child_of_unformatted_block_cache(
-    config: Config, html: str
-) -> list[tuple[int, int]]:
-    key = hashlib.sha256(
-        (html + config.unformatted_blocks).encode("utf-8")
-    ).hexdigest()
-    if key in child_of_unformatted_block_cache_:
-        return child_of_unformatted_block_cache_[key]
-    matches = [
-        (x.start(0), x.end())
-        for x in re.finditer(
-            config.unformatted_blocks,
-            html,
-            flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-        )
-    ]
-    child_of_unformatted_block_cache_[key] = matches
-    return matches
-
-
-def inside_ignored_block_cache(
-    config: Config, html: str
-) -> list[tuple[int, int]]:
-    key = hashlib.sha256(
-        (html + config.unformatted_blocks).encode("utf-8")
-    ).hexdigest()
-    if key in inside_ignored_block_cache_:
-        return inside_ignored_block_cache_[key]
-    matches = [
-        (x.start(0), x.end())
-        for x in itertools.chain(
-            re.finditer(
-                config.ignored_blocks,
-                html,
-                flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            ),
-            re.finditer(
-                config.ignored_inline_blocks,
-                html,
-                flags=re.IGNORECASE | re.VERBOSE,
-            ),
-        )
-    ]
-    inside_ignored_block_cache_[key] = matches
-    return matches
 
 
 def is_ignored_block_opening(config: Config, item: str) -> bool:
@@ -293,9 +243,11 @@ def inside_template_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Check if a re.Match is inside of a template block."""
+    match_start = match.start()
+    match_end = match.end(0)
     return any(
-        ignored_match.start(0) <= match.start()
-        and match.end(0) <= ignored_match.end()
+        ignored_match.start(0) <= match_start
+        and match_end <= ignored_match.end()
         for ignored_match in re.finditer(
             config.template_blocks,
             html,
@@ -308,13 +260,34 @@ def inside_ignored_linter_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Check if a re.Match is inside of a ignored linter block."""
+    match_start = match.start()
+    match_end = match.end(0)
     return any(
-        ignored_match.start(0) <= match.start()
-        and match.end(0) <= ignored_match.end()
+        ignored_match.start(0) <= match_start
+        and match_end <= ignored_match.end()
         for ignored_match in re.finditer(
             config.ignored_linter_blocks,
             html,
             flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+        )
+    )
+
+
+@cache
+def _inside_ignored_block(
+    html: str, /, *, ignored_blocks: str, ignored_inline_blocks: str
+) -> tuple[tuple[int, int], ...]:
+    return tuple(
+        (x.start(0), x.end())
+        for x in itertools.chain(
+            re.finditer(
+                ignored_blocks,
+                html,
+                flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            ),
+            re.finditer(
+                ignored_inline_blocks, html, flags=re.IGNORECASE | re.VERBOSE
+            ),
         )
     )
 
@@ -326,8 +299,26 @@ def inside_ignored_block(
     match_start = match.start()
     match_end = match.end(0)
     return any(
-        ignored_match[0] <= match_start and match_end <= ignored_match[1]
-        for ignored_match in inside_ignored_block_cache(config, html)
+        ignored_match_start <= match_start and match_end <= ignored_match_end
+        for ignored_match_start, ignored_match_end in _inside_ignored_block(
+            html,
+            ignored_blocks=config.ignored_blocks,
+            ignored_inline_blocks=config.ignored_inline_blocks,
+        )
+    )
+
+
+@cache
+def _child_of_unformatted_block(
+    html: str, /, *, unformatted_blocks: str
+) -> tuple[tuple[int, int], ...]:
+    return tuple(
+        (x.start(0), x.end())
+        for x in re.finditer(
+            unformatted_blocks,
+            html,
+            flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+        )
     )
 
 
@@ -337,22 +328,23 @@ def child_of_unformatted_block(
     """Do not add whitespace if the tag is in a non indent block."""
     match_start = match.start()
     match_end = match.end(0)
-    ignored_matches = child_of_unformatted_block_cache(config, html)
-    if ignored_matches == []:
-        return False
-    for ignored_match in ignored_matches:
-        if ignored_match[0] < match_start and match_end <= ignored_match[1]:
-            return True
-    return False
+    return any(
+        ignored_match_start < match_start and match_end <= ignored_match_end
+        for ignored_match_start, ignored_match_end in _child_of_unformatted_block(
+            html, unformatted_blocks=config.unformatted_blocks
+        )
+    )
 
 
 def child_of_ignored_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
+    match_start = match.start()
+    match_end = match.end(0)
     return any(
-        ignored_match.start(0) < match.start()
-        and match.end(0) <= ignored_match.end()
+        ignored_match.start(0) < match_start
+        and match_end <= ignored_match.end()
         for ignored_match in itertools.chain(
             re.finditer(
                 config.ignored_blocks,
@@ -372,17 +364,13 @@ def overlaps_ignored_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
+    match_start = match.start()
+    match_end = match.end()
     return any(
         # don't require the match to be fully inside the ignored block.
         # poorly build html will probably span ignored blocks and should be ignored.
-        (
-            ignored_match.start(0) <= match.start()
-            and match.start() <= ignored_match.end()
-        )
-        or (
-            ignored_match.start(0) <= match.end()
-            and match.end() <= ignored_match.end()
-        )
+        (ignored_match.start(0) <= match_start <= ignored_match.end())
+        or (ignored_match.start() <= match_end <= ignored_match.end())
         for ignored_match in itertools.chain(
             re.finditer(
                 config.ignored_blocks,
@@ -406,22 +394,19 @@ def inside_ignored_rule(
     config: Config, html: str, match: re.Match[str], rule: str
 ) -> bool:
     """Check if match is inside an ignored pattern."""
-    for rule_regex in config.ignored_rules:
+    match_start = match.start()
+    match_end = match.end()
+    return any(
+        (
+            rule in re.split(r"\s|,", ignored_match.group(1).strip())
+            and (ignored_match.start(0) <= match_start <= ignored_match.end())
+        )
+        or (
+            not ignored_match.group(1).strip()
+            and (ignored_match.start(0) <= match_end <= ignored_match.end())
+        )
+        for rule_regex in config.ignored_rules
         for ignored_match in re.finditer(
             rule_regex, html, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE
-        ):
-            if (
-                rule in re.split(r"\s|,", ignored_match.group(1).strip())
-                and (
-                    ignored_match.start(0) <= match.start()
-                    and match.start() <= ignored_match.end()
-                )
-            ) or (
-                not ignored_match.group(1).strip()
-                and (
-                    ignored_match.start(0) <= match.end()
-                    and match.end() <= ignored_match.end()
-                )
-            ):
-                return True
-    return False
+        )
+    )
