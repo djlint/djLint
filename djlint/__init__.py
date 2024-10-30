@@ -383,7 +383,11 @@ def main(
             echo()
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
-        worker_count = min(os.cpu_count() or 1, len(file_list), 4)
+
+        worker_count = os.cpu_count() or 1
+        if sys.platform == "win32":
+            worker_count = min(worker_count, 60)
+
         executor_cls = (
             ProcessPoolExecutor if worker_count > 1 else ThreadPoolExecutor
         )
