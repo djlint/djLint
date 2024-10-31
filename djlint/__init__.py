@@ -28,7 +28,10 @@ if TYPE_CHECKING:
     from .output import ProcessResult
 
 
-@click.command(context_settings={"help_option_names": ["-h", "--help"]})  # type: ignore[operator]
+@click.command(  # type: ignore[operator]
+    context_settings={"help_option_names": ["-h", "--help"]},
+    help="djLint · HTML template linter and formatter.",
+)
 @click.argument(
     "src",
     type=click.Path(

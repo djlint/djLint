@@ -124,6 +124,7 @@ dependencies = [
     { name = "regex" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "tqdm" },
+    { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
@@ -138,7 +139,6 @@ dev = [
     { name = "types-pyyaml" },
     { name = "types-regex" },
     { name = "types-tqdm" },
-    { name = "typing-extensions" },
 ]
 
 [package.metadata]
@@ -155,6 +155,7 @@ requires-dist = [
     { name = "regex", specifier = ">=2023" },
     { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.0.1" },
     { name = "tqdm", specifier = ">=4.62.2" },
+    { name = "typing-extensions", specifier = ">=3.7.4" },
 ]
 
 [package.metadata.requires-dev]
@@ -169,7 +170,6 @@ dev = [
     { name = "types-pyyaml", specifier = "==6.0.12.20240917" },
     { name = "types-regex", specifier = "==2024.9.11.20240912" },
     { name = "types-tqdm", specifier = "==4.66.0.20240417" },
-    { name = "typing-extensions", specifier = "==4.12.2" },
 ]
 
 [[package]]

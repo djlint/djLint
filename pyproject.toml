@@ -40,6 +40,7 @@ dependencies = [
   "regex>=2023",
   "tomli>=2.0.1; python_version<'3.11'",
   "tqdm>=4.62.2",
+  "typing-extensions>=3.7.4",
 ]
 urls.documentation = "https://djlint.com"
 urls.repository = "https://github.com/djlint/djLint"
@@ -57,8 +58,24 @@ dev = [
   "types-pyyaml==6.0.12.20240917",
   "types-regex==2024.9.11.20240912",
   "types-tqdm==4.66.0.20240417",
-  "typing-extensions==4.12.2",
 ]
 
 [tool.hatch.build.targets.sdist]
-include = ["djlint"]
+include = ["djlint", "mypy.ini"]
+
+[tool.hatch.build.targets.wheel.hooks.mypyc]
+dependencies = [
+  "hatch-mypyc",
+  "types-colorama",
+  "types-pyyaml",
+  "types-regex",
+  "types-tqdm",
+  "typing-extensions",
+]
+enable-by-default = false
+exclude = ["djlint/__main__.py"]
+options = { opt_level = "3", debug_level = "0" }
+require-runtime-dependencies = true
+
+[tool.cibuildwheel.environment]
+HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
