@@ -245,15 +245,17 @@ def inside_template_block(
     """Check if a re.Match is inside of a template block."""
     match_start = match.start()
     match_end = match.end(0)
-    return any(
-        ignored_match.start(0) <= match_start
-        and match_end <= ignored_match.end()
-        for ignored_match in re.finditer(
-            config.template_blocks,
-            html,
-            flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-        )
-    )
+    for ignored_match in re.finditer(
+        config.template_blocks,
+        html,
+        flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+    ):
+        if (
+            ignored_match.start(0) <= match_start
+            and match_end <= ignored_match.end()
+        ):
+            return True
+    return False
 
 
 def inside_ignored_linter_block(
@@ -298,14 +300,17 @@ def inside_ignored_block(
     """Do not add whitespace if the tag is in a non indent block."""
     match_start = match.start()
     match_end = match.end(0)
-    return any(
-        ignored_match_start <= match_start and match_end <= ignored_match_end
-        for ignored_match_start, ignored_match_end in _inside_ignored_block(
-            html,
-            ignored_blocks=config.ignored_blocks,
-            ignored_inline_blocks=config.ignored_inline_blocks,
-        )
-    )
+    for ignored_match_start, ignored_match_end in _inside_ignored_block(
+        html,
+        ignored_blocks=config.ignored_blocks,
+        ignored_inline_blocks=config.ignored_inline_blocks,
+    ):
+        if (
+            ignored_match_start <= match_start
+            and match_end <= ignored_match_end
+        ):
+            return True
+    return False
 
 
 @cache
@@ -328,12 +333,15 @@ def child_of_unformatted_block(
     """Do not add whitespace if the tag is in a non indent block."""
     match_start = match.start()
     match_end = match.end(0)
-    return any(
-        ignored_match_start < match_start and match_end <= ignored_match_end
-        for ignored_match_start, ignored_match_end in _child_of_unformatted_block(
-            html, unformatted_blocks=config.unformatted_blocks
-        )
-    )
+    for ignored_match_start, ignored_match_end in _child_of_unformatted_block(
+        html, unformatted_blocks=config.unformatted_blocks
+    ):
+        if (
+            ignored_match_start <= match_start
+            and match_end <= ignored_match_end
+        ):
+            return True
+    return False
 
 
 def child_of_ignored_block(
