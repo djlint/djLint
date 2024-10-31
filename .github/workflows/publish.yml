@@ -4,9 +4,6 @@ on:
     tags:
       - v*
   workflow_dispatch:
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
 jobs:
   build-compiled:
     runs-on: ${{ matrix.os }}
