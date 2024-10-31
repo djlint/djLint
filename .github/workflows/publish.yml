@@ -1,9 +1,14 @@
 name: Publish
 on:
   push:
+    branches:
+      - master
     tags:
       - v*
-  workflow_dispatch:
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 jobs:
   build-pure:
     runs-on: ubuntu-latest
@@ -37,7 +42,7 @@ jobs:
           path: dist
   publish-pypi:
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'djlint' }}
+    if: ${{ github.repository_owner == 'djlint' && startsWith(github.ref, 'refs/tags/')  }}
     permissions:
       id-token: write
     steps:
@@ -45,7 +50,7 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
   publish-npm:
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'djlint' }}
+    if: ${{ github.repository_owner == 'djlint' && startsWith(github.ref, 'refs/tags/')  }}
     permissions:
       id-token: write
     steps:
