@@ -65,7 +65,9 @@ include = ["djlint", "mypy.ini"]
 
 [tool.hatch.build.targets.wheel.hooks.mypyc]
 dependencies = [
+  "click",
   "hatch-mypyc",
+  "json5",
   "types-colorama",
   "types-pyyaml",
   "types-regex",
@@ -75,9 +77,9 @@ dependencies = [
 enable-by-default = false
 exclude = ["djlint/__main__.py"]
 options = { opt_level = "3", debug_level = "0" }
-require-runtime-dependencies = true
 
 [tool.cibuildwheel]
-skip = "pp*"
+build = "cp*"
 build-frontend = "build[uv]"
 environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
+linux.manylinux-x86_64-image = "manylinux_2_28"
