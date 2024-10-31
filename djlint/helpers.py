@@ -12,6 +12,15 @@ import regex as re
 if TYPE_CHECKING:
     from .settings import Config
 
+RE_FLAGS_IVMD = re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL
+RE_FLAGS_IVD = re.IGNORECASE | re.VERBOSE | re.DOTALL
+RE_FLAGS_IV = re.IGNORECASE | re.VERBOSE
+RE_FLAGS_IVM = re.IGNORECASE | re.VERBOSE | re.MULTILINE
+RE_FLAGS_MD = re.MULTILINE | re.DOTALL
+RE_FLAGS_IMD = re.IGNORECASE | re.MULTILINE | re.DOTALL
+RE_FLAGS_ID = re.IGNORECASE | re.DOTALL
+RE_FLAGS_MV = re.MULTILINE | re.VERBOSE
+
 
 def is_ignored_block_opening(config: Config, item: str) -> bool:
     """Find ignored group opening.
@@ -21,11 +30,7 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = tuple(
-        re.finditer(
-            config.ignored_blocks_inline,
-            item,
-            flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL,
-        )
+        re.finditer(config.ignored_blocks_inline, item, flags=RE_FLAGS_IVMD)
     )
 
     if inline:
@@ -35,9 +40,7 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
 
     return bool(
         re.search(
-            config.ignored_block_opening,
-            item[last_index:],
-            flags=re.IGNORECASE | re.VERBOSE,
+            config.ignored_block_opening, item[last_index:], flags=RE_FLAGS_IV
         )
     )
 
@@ -50,11 +53,7 @@ def is_script_style_block_opening(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = tuple(
-        re.finditer(
-            config.script_style_inline,
-            item,
-            flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL,
-        )
+        re.finditer(config.script_style_inline, item, flags=RE_FLAGS_IVMD)
     )
 
     if inline:
@@ -64,9 +63,7 @@ def is_script_style_block_opening(config: Config, item: str) -> bool:
 
     return bool(
         re.search(
-            config.script_style_opening,
-            item[last_index:],
-            flags=re.IGNORECASE | re.VERBOSE,
+            config.script_style_opening, item[last_index:], flags=RE_FLAGS_IV
         )
     )
 
@@ -84,28 +81,18 @@ def inside_protected_trans_block(
     """
     last_index = 0
     close_block = re.search(
-        config.ignored_trans_blocks_closing,
-        match.group(),
-        flags=re.IGNORECASE | re.VERBOSE,
+        config.ignored_trans_blocks_closing, match.group(), flags=RE_FLAGS_IV
     )
 
     if not close_block:
         return False
 
     non_trimmed = tuple(
-        re.finditer(
-            config.ignored_trans_blocks,
-            html,
-            flags=re.IGNORECASE | re.VERBOSE | re.DOTALL,
-        )
+        re.finditer(config.ignored_trans_blocks, html, flags=RE_FLAGS_IVD)
     )
 
     trimmed = tuple(
-        re.finditer(
-            config.trans_trimmed_blocks,
-            html,
-            flags=re.IGNORECASE | re.VERBOSE | re.DOTALL,
-        )
+        re.finditer(config.trans_trimmed_blocks, html, flags=RE_FLAGS_IVD)
     )
 
     # who is max?
@@ -116,9 +103,7 @@ def inside_protected_trans_block(
         # check that this is not an inline block.
         non_trimmed_inline = any(
             re.finditer(
-                config.ignored_trans_blocks,
-                match.group(),
-                flags=re.IGNORECASE | re.VERBOSE | re.DOTALL,
+                config.ignored_trans_blocks, match.group(), flags=RE_FLAGS_IVD
             )
         )
 
@@ -131,7 +116,7 @@ def inside_protected_trans_block(
                 re.search(
                     config.ignored_trans_blocks_closing,
                     html[last_index:],
-                    flags=re.IGNORECASE | re.VERBOSE,
+                    flags=RE_FLAGS_IV,
                 )
             )
 
@@ -152,7 +137,7 @@ def inside_protected_trans_block(
     # return re.search(
     #     config.ignored_trans_blocks_closing,
     #     html[last_index:],
-    #     flags=re.IGNORECASE | re.VERBOSE,
+    #     flags=RE_FLAGS_IV,
     # )
 
 
@@ -164,9 +149,7 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = tuple(
-        re.finditer(
-            config.ignored_inline_blocks, item, flags=re.IGNORECASE | re.VERBOSE
-        )
+        re.finditer(config.ignored_inline_blocks, item, flags=RE_FLAGS_IV)
     )
 
     if inline:
@@ -176,9 +159,7 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
 
     return bool(
         re.search(
-            config.ignored_block_closing,
-            item[last_index:],
-            flags=re.IGNORECASE | re.VERBOSE,
+            config.ignored_block_closing, item[last_index:], flags=RE_FLAGS_IV
         )
     )
 
@@ -191,9 +172,7 @@ def is_script_style_block_closing(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = tuple(
-        re.finditer(
-            config.script_style_inline, item, flags=re.IGNORECASE | re.VERBOSE
-        )
+        re.finditer(config.script_style_inline, item, flags=RE_FLAGS_IV)
     )
 
     if inline:
@@ -203,9 +182,7 @@ def is_script_style_block_closing(config: Config, item: str) -> bool:
 
     return bool(
         re.search(
-            config.script_style_closing,
-            item[last_index:],
-            flags=re.IGNORECASE | re.VERBOSE,
+            config.script_style_closing, item[last_index:], flags=RE_FLAGS_IV
         )
     )
 
@@ -221,7 +198,7 @@ def is_safe_closing_tag(config: Config, item: str) -> bool:
         re.finditer(
             config.ignored_inline_blocks + r" | " + config.ignored_blocks,
             item,
-            flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL,
+            flags=RE_FLAGS_IVMD,
         )
     )
 
@@ -231,11 +208,7 @@ def is_safe_closing_tag(config: Config, item: str) -> bool:
         )  # get the last index. The ignored opening should start after this.
 
     return bool(
-        re.search(
-            config.safe_closing_tag,
-            item[last_index:],
-            flags=re.IGNORECASE | re.VERBOSE,
-        )
+        re.search(config.safe_closing_tag, item[last_index:], flags=RE_FLAGS_IV)
     )
 
 
@@ -249,9 +222,7 @@ def inside_template_block(
         ignored_match.start(0) <= match_start
         and match_end <= ignored_match.end()
         for ignored_match in re.finditer(
-            config.template_blocks,
-            html,
-            flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            config.template_blocks, html, flags=RE_FLAGS_IVMD
         )
     )
 
@@ -266,9 +237,7 @@ def inside_ignored_linter_block(
         ignored_match.start(0) <= match_start
         and match_end <= ignored_match.end()
         for ignored_match in re.finditer(
-            config.ignored_linter_blocks,
-            html,
-            flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+            config.ignored_linter_blocks, html, flags=RE_FLAGS_IVMD
         )
     )
 
@@ -280,14 +249,8 @@ def _inside_ignored_block(
     return tuple(
         (x.start(0), x.end())
         for x in itertools.chain(
-            re.finditer(
-                ignored_blocks,
-                html,
-                flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            ),
-            re.finditer(
-                ignored_inline_blocks, html, flags=re.IGNORECASE | re.VERBOSE
-            ),
+            re.finditer(ignored_blocks, html, flags=RE_FLAGS_IVMD),
+            re.finditer(ignored_inline_blocks, html, flags=RE_FLAGS_IV),
         )
     )
 
@@ -314,11 +277,7 @@ def _child_of_unformatted_block(
 ) -> tuple[tuple[int, int], ...]:
     return tuple(
         (x.start(0), x.end())
-        for x in re.finditer(
-            unformatted_blocks,
-            html,
-            flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-        )
+        for x in re.finditer(unformatted_blocks, html, flags=RE_FLAGS_IVMD)
     )
 
 
@@ -346,16 +305,8 @@ def child_of_ignored_block(
         ignored_match.start(0) < match_start
         and match_end <= ignored_match.end()
         for ignored_match in itertools.chain(
-            re.finditer(
-                config.ignored_blocks,
-                html,
-                flags=re.DOTALL | re.IGNORECASE | re.VERBOSE | re.MULTILINE,
-            ),
-            re.finditer(
-                config.ignored_inline_blocks,
-                html,
-                flags=re.IGNORECASE | re.VERBOSE,
-            ),
+            re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IVMD),
+            re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IV),
         )
     )
 
@@ -372,20 +323,8 @@ def overlaps_ignored_block(
         (ignored_match.start(0) <= match_start <= ignored_match.end())
         or (ignored_match.start() <= match_end <= ignored_match.end())
         for ignored_match in itertools.chain(
-            re.finditer(
-                config.ignored_blocks,
-                html,
-                flags=re.DOTALL
-                | re.IGNORECASE
-                | re.VERBOSE
-                | re.MULTILINE
-                | re.DOTALL,
-            ),
-            re.finditer(
-                config.ignored_inline_blocks,
-                html,
-                flags=re.IGNORECASE | re.VERBOSE,
-            ),
+            re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IVMD),
+            re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IV),
         )
     )
 
@@ -406,7 +345,5 @@ def inside_ignored_rule(
             and (ignored_match.start(0) <= match_end <= ignored_match.end())
         )
         for rule_regex in config.ignored_rules
-        for ignored_match in re.finditer(
-            rule_regex, html, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE
-        )
+        for ignored_match in re.finditer(rule_regex, html, flags=RE_FLAGS_IVD)
     )

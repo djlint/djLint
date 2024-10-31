@@ -11,7 +11,13 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..helpers import inside_ignored_block, inside_template_block
+from ..helpers import (
+    RE_FLAGS_IV,
+    RE_FLAGS_IVM,
+    RE_FLAGS_MV,
+    inside_ignored_block,
+    inside_template_block,
+)
 
 if TYPE_CHECKING:
     from ..settings import Config
@@ -50,7 +56,7 @@ def expand_html(html: str, config: Config) -> str:
         rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)",
         add_left,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
+        flags=RE_FLAGS_IV,
     )
 
     # html tags - break after
@@ -58,7 +64,7 @@ def expand_html(html: str, config: Config) -> str:
         rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?!\s*?\n)(?=[^\n])",
         add_right,
         html,
-        flags=re.IGNORECASE | re.VERBOSE,
+        flags=RE_FLAGS_IV,
     )
 
     # template tag breaks
@@ -78,7 +84,7 @@ def expand_html(html: str, config: Config) -> str:
             + re.escape(match.group(1))
             + "$",
             html[: match.end()],
-            flags=re.MULTILINE | re.VERBOSE,
+            flags=RE_FLAGS_MV,
         ):
             if out_format == "\n%s" and match.start() == 0:
                 return match.group(1)
@@ -95,7 +101,7 @@ def expand_html(html: str, config: Config) -> str:
         + ")[^}]+?[%}]})",
         partial(should_i_move_template_tag, "\n%s"),
         html,
-        flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        flags=RE_FLAGS_IVM,
     )
 
     # break after
@@ -105,5 +111,5 @@ def expand_html(html: str, config: Config) -> str:
         + ")[^}]+?[%}]})(?=[^\n])",
         partial(should_i_move_template_tag, "%s\n"),
         html,
-        flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        flags=RE_FLAGS_IVM,
     )
