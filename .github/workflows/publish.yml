@@ -32,6 +32,7 @@ jobs:
           - windows-latest
           - macos-13
           - macos-latest
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3

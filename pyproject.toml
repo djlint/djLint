@@ -77,5 +77,6 @@ exclude = ["djlint/__main__.py"]
 options = { opt_level = "3", debug_level = "0" }
 require-runtime-dependencies = true
 
-[tool.cibuildwheel.environment]
-HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
+[tool.cibuildwheel]
+build = "cp3*"
+environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
