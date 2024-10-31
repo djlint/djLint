@@ -6,8 +6,6 @@ import json
 import logging
 import sys
 from itertools import chain
-
-# get pyproject.toml settings
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -227,7 +225,7 @@ class Config:
 
     def __init__(
         self,
-        src: str,
+        src: str = ".",
         *,
         ignore: str = "",
         extension: str = "",
