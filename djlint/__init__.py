@@ -384,15 +384,13 @@ def main(
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
 
-        worker_count = os.cpu_count() or 1
-        if sys.platform == "win32":
-            worker_count = min(worker_count, 60)
-
         executor_cls = (
-            ProcessPoolExecutor if worker_count > 1 else ThreadPoolExecutor
+            ThreadPoolExecutor
+            if min(os.cpu_count() or 1, len(file_list)) == 1
+            else ProcessPoolExecutor
         )
 
-        with executor_cls(max_workers=worker_count) as exe:
+        with executor_cls() as exe:
             futures = {
                 exe.submit(process, config, this_file): this_file
                 for this_file in file_list
