@@ -50,6 +50,8 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'djlint' && startsWith(github.ref, 'refs/tags/')  }}
+    needs:
+      - publish-pypi
     permissions:
       id-token: write
     steps:
