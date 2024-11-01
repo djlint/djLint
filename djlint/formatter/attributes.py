@@ -123,9 +123,10 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
 def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
     """Spread long attributes over multiple lines."""
     # check that we are not inside an ignored block
-    if (
-        child_of_ignored_block(config, html, match)
-        or len(match.group(3).strip()) < config.max_attribute_length
+    if len(
+        match.group(3).strip()
+    ) < config.max_attribute_length or child_of_ignored_block(
+        config, html, match
     ):
         return match.group()
 

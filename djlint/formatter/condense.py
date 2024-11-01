@@ -168,8 +168,8 @@ def condense_html(html: str, config: Config) -> str:
             )
 
         if (
-            not inside_ignored_block(config, html, match)
-            and combined_length < config.max_line_length
+            combined_length < config.max_line_length
+            and not inside_ignored_block(config, html, match)
             and if_blank_line_after_match(config, match.group(3))
             and if_blank_line_before_match(config, match.group(3))
         ):
