@@ -12,9 +12,9 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from ..helpers import (
-    RE_FLAGS_IV,
-    RE_FLAGS_IVM,
-    RE_FLAGS_MV,
+    RE_FLAGS_IMX,
+    RE_FLAGS_IX,
+    RE_FLAGS_MX,
     inside_ignored_block,
     inside_template_block,
 )
@@ -56,7 +56,7 @@ def expand_html(html: str, config: Config) -> str:
         rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)",
         add_left,
         html,
-        flags=RE_FLAGS_IV,
+        flags=RE_FLAGS_IX,
     )
 
     # html tags - break after
@@ -64,7 +64,7 @@ def expand_html(html: str, config: Config) -> str:
         rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?!\s*?\n)(?=[^\n])",
         add_right,
         html,
-        flags=RE_FLAGS_IV,
+        flags=RE_FLAGS_IX,
     )
 
     # template tag breaks
@@ -84,7 +84,7 @@ def expand_html(html: str, config: Config) -> str:
             + re.escape(match.group(1))
             + "$",
             html[: match.end()],
-            flags=RE_FLAGS_MV,
+            flags=RE_FLAGS_MX,
         ):
             if out_format == "\n%s" and match.start() == 0:
                 return match.group(1)
@@ -101,7 +101,7 @@ def expand_html(html: str, config: Config) -> str:
         + ")[^}]+?[%}]})",
         partial(should_i_move_template_tag, "\n%s"),
         html,
-        flags=RE_FLAGS_IVM,
+        flags=RE_FLAGS_IMX,
     )
 
     # break after
@@ -111,5 +111,5 @@ def expand_html(html: str, config: Config) -> str:
         + ")[^}]+?[%}]})(?=[^\n])",
         partial(should_i_move_template_tag, "%s\n"),
         html,
-        flags=RE_FLAGS_IVM,
+        flags=RE_FLAGS_IMX,
     )

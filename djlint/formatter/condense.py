@@ -12,10 +12,10 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from ..helpers import (
-    RE_FLAGS_IMD,
-    RE_FLAGS_IVM,
-    RE_FLAGS_IVMD,
-    RE_FLAGS_MD,
+    RE_FLAGS_IMS,
+    RE_FLAGS_IMSX,
+    RE_FLAGS_IMX,
+    RE_FLAGS_MS,
     inside_ignored_block,
     inside_protected_trans_block,
     is_safe_closing_tag,
@@ -107,7 +107,7 @@ def clean_whitespace(html: str, config: Config) -> str:
                 rf"((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
                 func,
                 html,
-                flags=RE_FLAGS_IMD,
+                flags=RE_FLAGS_IMS,
             )
 
     def add_blank_line_before(
@@ -128,7 +128,7 @@ def clean_whitespace(html: str, config: Config) -> str:
                 rf"(?<!^\n)((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
                 func,
                 html,
-                flags=RE_FLAGS_IMD,
+                flags=RE_FLAGS_IMS,
             )
 
     # add line after yaml front matter
@@ -143,7 +143,7 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     if not config.no_line_after_yaml:
         func = partial(yaml_add_blank_line_after, html)
-        html = re.sub(r"(^---.+?---)$", func, html, flags=RE_FLAGS_MD)
+        html = re.sub(r"(^---.+?---)$", func, html, flags=RE_FLAGS_MS)
 
     return html
 
@@ -184,7 +184,7 @@ def condense_html(html: str, config: Config) -> str:
                 re.findall(
                     rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
                     html,
-                    flags=RE_FLAGS_IMD,
+                    flags=RE_FLAGS_IMS,
                 )
                 for tag in (
                     x.strip() for x in config.blank_line_after_tag.split(",")
@@ -199,7 +199,7 @@ def condense_html(html: str, config: Config) -> str:
                 re.findall(
                     rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
                     html,
-                    flags=RE_FLAGS_IMD,
+                    flags=RE_FLAGS_IMS,
                 )
                 for tag in (
                     x.strip() for x in config.blank_line_before_tag.split(",")
@@ -215,7 +215,7 @@ def condense_html(html: str, config: Config) -> str:
         rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)\s*([^<\n]*?)\s*?(</(\2)>)",
         func,
         html,
-        flags=RE_FLAGS_IVMD,
+        flags=RE_FLAGS_IMSX,
     )
 
     # put short template tags back on one line. must have leading space
@@ -224,5 +224,5 @@ def condense_html(html: str, config: Config) -> str:
         rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
         func,
         html,
-        flags=RE_FLAGS_IVM,
+        flags=RE_FLAGS_IMX,
     )

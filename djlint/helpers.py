@@ -10,16 +10,18 @@ from typing import TYPE_CHECKING
 import regex as re
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from .settings import Config
 
-RE_FLAGS_IVMD = re.IGNORECASE | re.VERBOSE | re.MULTILINE | re.DOTALL
-RE_FLAGS_IVD = re.IGNORECASE | re.VERBOSE | re.DOTALL
-RE_FLAGS_IV = re.IGNORECASE | re.VERBOSE
-RE_FLAGS_IVM = re.IGNORECASE | re.VERBOSE | re.MULTILINE
-RE_FLAGS_MD = re.MULTILINE | re.DOTALL
-RE_FLAGS_IMD = re.IGNORECASE | re.MULTILINE | re.DOTALL
-RE_FLAGS_ID = re.IGNORECASE | re.DOTALL
-RE_FLAGS_MV = re.MULTILINE | re.VERBOSE
+RE_FLAGS_IS: Final = re.I | re.S
+RE_FLAGS_IX: Final = re.I | re.X
+RE_FLAGS_MS: Final = re.M | re.S
+RE_FLAGS_MX: Final = re.M | re.X
+RE_FLAGS_IMS: Final = re.I | re.M | re.S
+RE_FLAGS_IMX: Final = re.I | re.M | re.X
+RE_FLAGS_ISX: Final = re.I | re.S | re.X
+RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 
 
 def is_ignored_block_opening(config: Config, item: str) -> bool:
@@ -30,7 +32,7 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = tuple(
-        re.finditer(config.ignored_blocks_inline, item, flags=RE_FLAGS_IVMD)
+        re.finditer(config.ignored_blocks_inline, item, flags=RE_FLAGS_IMSX)
     )
 
     if inline:
@@ -40,7 +42,7 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
 
     return bool(
         re.search(
-            config.ignored_block_opening, item[last_index:], flags=RE_FLAGS_IV
+            config.ignored_block_opening, item[last_index:], flags=RE_FLAGS_IX
         )
     )
 
@@ -53,7 +55,7 @@ def is_script_style_block_opening(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = tuple(
-        re.finditer(config.script_style_inline, item, flags=RE_FLAGS_IVMD)
+        re.finditer(config.script_style_inline, item, flags=RE_FLAGS_IMSX)
     )
 
     if inline:
@@ -63,7 +65,7 @@ def is_script_style_block_opening(config: Config, item: str) -> bool:
 
     return bool(
         re.search(
-            config.script_style_opening, item[last_index:], flags=RE_FLAGS_IV
+            config.script_style_opening, item[last_index:], flags=RE_FLAGS_IX
         )
     )
 
@@ -81,18 +83,18 @@ def inside_protected_trans_block(
     """
     last_index = 0
     close_block = re.search(
-        config.ignored_trans_blocks_closing, match.group(), flags=RE_FLAGS_IV
+        config.ignored_trans_blocks_closing, match.group(), flags=RE_FLAGS_IX
     )
 
     if not close_block:
         return False
 
     non_trimmed = tuple(
-        re.finditer(config.ignored_trans_blocks, html, flags=RE_FLAGS_IVD)
+        re.finditer(config.ignored_trans_blocks, html, flags=RE_FLAGS_ISX)
     )
 
     trimmed = tuple(
-        re.finditer(config.trans_trimmed_blocks, html, flags=RE_FLAGS_IVD)
+        re.finditer(config.trans_trimmed_blocks, html, flags=RE_FLAGS_ISX)
     )
 
     # who is max?
@@ -103,7 +105,7 @@ def inside_protected_trans_block(
         # check that this is not an inline block.
         non_trimmed_inline = any(
             re.finditer(
-                config.ignored_trans_blocks, match.group(), flags=RE_FLAGS_IVD
+                config.ignored_trans_blocks, match.group(), flags=RE_FLAGS_ISX
             )
         )
 
@@ -116,7 +118,7 @@ def inside_protected_trans_block(
                 re.search(
                     config.ignored_trans_blocks_closing,
                     html[last_index:],
-                    flags=RE_FLAGS_IV,
+                    flags=RE_FLAGS_IX,
                 )
             )
 
@@ -149,7 +151,7 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = tuple(
-        re.finditer(config.ignored_inline_blocks, item, flags=RE_FLAGS_IV)
+        re.finditer(config.ignored_inline_blocks, item, flags=RE_FLAGS_IX)
     )
 
     if inline:
@@ -159,7 +161,7 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
 
     return bool(
         re.search(
-            config.ignored_block_closing, item[last_index:], flags=RE_FLAGS_IV
+            config.ignored_block_closing, item[last_index:], flags=RE_FLAGS_IX
         )
     )
 
@@ -172,7 +174,7 @@ def is_script_style_block_closing(config: Config, item: str) -> bool:
     """
     last_index = 0
     inline = tuple(
-        re.finditer(config.script_style_inline, item, flags=RE_FLAGS_IV)
+        re.finditer(config.script_style_inline, item, flags=RE_FLAGS_IX)
     )
 
     if inline:
@@ -182,7 +184,7 @@ def is_script_style_block_closing(config: Config, item: str) -> bool:
 
     return bool(
         re.search(
-            config.script_style_closing, item[last_index:], flags=RE_FLAGS_IV
+            config.script_style_closing, item[last_index:], flags=RE_FLAGS_IX
         )
     )
 
@@ -198,7 +200,7 @@ def is_safe_closing_tag(config: Config, item: str) -> bool:
         re.finditer(
             config.ignored_inline_blocks + r" | " + config.ignored_blocks,
             item,
-            flags=RE_FLAGS_IVMD,
+            flags=RE_FLAGS_IMSX,
         )
     )
 
@@ -208,7 +210,7 @@ def is_safe_closing_tag(config: Config, item: str) -> bool:
         )  # get the last index. The ignored opening should start after this.
 
     return bool(
-        re.search(config.safe_closing_tag, item[last_index:], flags=RE_FLAGS_IV)
+        re.search(config.safe_closing_tag, item[last_index:], flags=RE_FLAGS_IX)
     )
 
 
@@ -222,7 +224,7 @@ def inside_template_block(
         ignored_match.start(0) <= match_start
         and match_end <= ignored_match.end()
         for ignored_match in re.finditer(
-            config.template_blocks, html, flags=RE_FLAGS_IVMD
+            config.template_blocks, html, flags=RE_FLAGS_IMSX
         )
     )
 
@@ -237,7 +239,7 @@ def inside_ignored_linter_block(
         ignored_match.start(0) <= match_start
         and match_end <= ignored_match.end()
         for ignored_match in re.finditer(
-            config.ignored_linter_blocks, html, flags=RE_FLAGS_IVMD
+            config.ignored_linter_blocks, html, flags=RE_FLAGS_IMSX
         )
     )
 
@@ -249,8 +251,8 @@ def _inside_ignored_block(
     return tuple(
         (x.start(0), x.end())
         for x in itertools.chain(
-            re.finditer(ignored_blocks, html, flags=RE_FLAGS_IVMD),
-            re.finditer(ignored_inline_blocks, html, flags=RE_FLAGS_IV),
+            re.finditer(ignored_blocks, html, flags=RE_FLAGS_IMSX),
+            re.finditer(ignored_inline_blocks, html, flags=RE_FLAGS_IX),
         )
     )
 
@@ -277,7 +279,7 @@ def _child_of_unformatted_block(
 ) -> tuple[tuple[int, int], ...]:
     return tuple(
         (x.start(0), x.end())
-        for x in re.finditer(unformatted_blocks, html, flags=RE_FLAGS_IVMD)
+        for x in re.finditer(unformatted_blocks, html, flags=RE_FLAGS_IMSX)
     )
 
 
@@ -305,8 +307,8 @@ def child_of_ignored_block(
         ignored_match.start(0) < match_start
         and match_end <= ignored_match.end()
         for ignored_match in itertools.chain(
-            re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IVMD),
-            re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IV),
+            re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
+            re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IX),
         )
     )
 
@@ -323,8 +325,8 @@ def overlaps_ignored_block(
         (ignored_match.start(0) <= match_start <= ignored_match.end())
         or (ignored_match.start() <= match_end <= ignored_match.end())
         for ignored_match in itertools.chain(
-            re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IVMD),
-            re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IV),
+            re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
+            re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IX),
         )
     )
 
@@ -345,5 +347,5 @@ def inside_ignored_rule(
             and (ignored_match.start(0) <= match_end <= ignored_match.end())
         )
         for rule_regex in config.ignored_rules
-        for ignored_match in re.finditer(rule_regex, html, flags=RE_FLAGS_IVD)
+        for ignored_match in re.finditer(rule_regex, html, flags=RE_FLAGS_ISX)
     )

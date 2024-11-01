@@ -78,7 +78,7 @@ def linter(
 
     # remove ignored rules for file
     for pattern, rules in config.per_file_ignores.items():
-        if re.search(pattern, filepath, flags=re.VERBOSE):
+        if re.search(pattern, filepath, flags=re.X):
             ignored_rules.update(x.strip() for x in rules.split(","))
 
     for rule in config.linter_rules:
@@ -110,9 +110,7 @@ def linter(
         else:
             for pattern in rule["patterns"]:
                 for match in re.finditer(
-                    pattern,
-                    html,
-                    flags=build_flags(rule.get("flags", "re.DOTALL")),
+                    pattern, html, flags=build_flags(rule.get("flags", "re.S"))
                 ):
                     if (
                         not overlaps_ignored_block(config, html, match)

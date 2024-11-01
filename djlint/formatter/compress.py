@@ -11,7 +11,7 @@ import regex as re
 from HtmlTagNames import html_tag_names
 from HtmlVoidElements import html_void_elements
 
-from ..helpers import RE_FLAGS_IVM, child_of_unformatted_block
+from ..helpers import RE_FLAGS_IMX, child_of_unformatted_block
 
 if TYPE_CHECKING:
     from ..settings import Config
@@ -65,4 +65,4 @@ def compress_html(html: str, config: Config) -> str:
 
         return f"{open_bracket}{tag}{attributes}{close_bracket}"
 
-    return re.sub(config.html_tag_regex, _clean_tag, html, flags=RE_FLAGS_IVM)
+    return re.sub(config.html_tag_regex, _clean_tag, html, flags=RE_FLAGS_IMX)
