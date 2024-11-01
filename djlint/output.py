@@ -9,9 +9,10 @@ from collections import Counter
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import regex as re
 from click import echo
 from colorama import Fore, Style
+
+from djlint import regex_utils
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
@@ -148,7 +149,7 @@ def build_output(
         message = message_dict["message"]
         match = (
             Fore.BLUE
-            + re.sub(r"\s{2,}|\n", " ", message_dict["match"])
+            + regex_utils.sub(r"\s{2,}|\n", " ", message_dict["match"])
             + Style.RESET_ALL
         )
 

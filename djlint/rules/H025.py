@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint import regex_utils
 from djlint.helpers import (
     RE_FLAGS_IX,
     inside_ignored_linter_block,
@@ -36,12 +37,12 @@ def run(
     open_tags: list[re.Match[str]] = []
     orphan_tags: list[re.Match[str]] = []
 
-    for match in re.finditer(
+    for match in regex_utils.finditer(
         r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
         html,
         flags=re.X,
     ):
-        if match.group(1) and not re.search(
+        if match.group(1) and not regex_utils.search(
             rf"^/?{config.always_self_closing_html_tags}\b",
             match.group(1),
             flags=RE_FLAGS_IX,

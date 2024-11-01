@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint import regex_utils
 from djlint.helpers import (
     RE_FLAGS_IMS,
     RE_FLAGS_IMSX,
@@ -45,7 +46,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         if inside_protected_trans_block(config, html[: match.end()], match):
             return match.group().rstrip()
 
-        lines = sum(1 for _ in re.finditer(r"\n", match.group(2)))
+        lines = sum(1 for _ in regex_utils.finditer(r"\n", match.group(2)))
         blank_lines = "\n" * lines
         if lines > config.max_blank_lines:
             blank_lines = "\n" * max(config.max_blank_lines, 0)
@@ -62,7 +63,7 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     if not config.preserve_leading_space:
         # remove any leading/trailing space
-        html = re.sub(
+        html = regex_utils.sub(
             rf"^[ \t]*{line_contents}([{trailing_contents}]*)$",
             func,
             html,
@@ -72,13 +73,13 @@ def clean_whitespace(html: str, config: Config) -> str:
     else:
         # only remove leading space in front of tags
         # <, {%
-        html = re.sub(
+        html = regex_utils.sub(
             rf"^[ \t]*((?:<|{{%).*?)([{trailing_contents}]*)$",
             func,
             html,
             flags=re.M,
         )
-        html = re.sub(
+        html = regex_utils.sub(
             rf"^{line_contents}([{trailing_contents}]*)$",
             func,
             html,
@@ -104,7 +105,7 @@ def clean_whitespace(html: str, config: Config) -> str:
     # should we add blank lines after load tags?
     if config.blank_line_after_tag:
         for tag in config.blank_line_after_tag.split(","):
-            html = re.sub(
+            html = regex_utils.sub(
                 rf"((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
                 func,
                 html,
@@ -125,7 +126,7 @@ def clean_whitespace(html: str, config: Config) -> str:
     # should we add blank lines before load tags?
     if config.blank_line_before_tag:
         for tag in config.blank_line_before_tag.split(","):
-            html = re.sub(
+            html = regex_utils.sub(
                 rf"(?<!^\n)((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
                 func,
                 html,
@@ -145,7 +146,7 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     if not config.no_line_after_yaml:
         func = partial(yaml_add_blank_line_after, html)
-        html = re.sub(r"(^---.+?---)$", func, html, flags=RE_FLAGS_MS)
+        html = regex_utils.sub(r"(^---.+?---)$", func, html, flags=RE_FLAGS_MS)
 
     return html
 
@@ -183,7 +184,7 @@ def condense_html(html: str, config: Config) -> str:
         """Check if there should be a blank line after."""
         if config.blank_line_after_tag:
             for tag in config.blank_line_after_tag.split(","):
-                if re.search(
+                if regex_utils.search(
                     rf"((?:{{%\s*?{tag.strip()}[^}}]+?%}}\n?)+)",
                     html,
                     flags=RE_FLAGS_IMS,
@@ -195,7 +196,7 @@ def condense_html(html: str, config: Config) -> str:
         """Check if there should be a blank line before."""
         if config.blank_line_before_tag:
             for tag in config.blank_line_before_tag.split(","):
-                if re.search(
+                if regex_utils.search(
                     rf"((?:{{%\s*?{tag.strip()}[^}}]+?%}}\n?)+)",
                     html,
                     flags=RE_FLAGS_IMS,
@@ -207,7 +208,7 @@ def condense_html(html: str, config: Config) -> str:
     func = partial(condense_line, config, html)
 
     # put short single line tags on one line
-    html = re.sub(
+    html = regex_utils.sub(
         rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)\s*([^<\n]*?)\s*?(</(\2)>)",
         func,
         html,
@@ -216,7 +217,7 @@ def condense_html(html: str, config: Config) -> str:
 
     # put short template tags back on one line. must have leading space
     # jinja +%} and {%+ intentionally omitted.
-    return re.sub(
+    return regex_utils.sub(
         rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
         func,
         html,

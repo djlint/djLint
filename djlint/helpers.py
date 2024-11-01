@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint import regex_utils
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from typing import Final
@@ -51,7 +53,7 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
         else 0
     )
     return bool(
-        re.search(
+        regex_utils.search(
             config.ignored_block_opening, item[last_index:], flags=RE_FLAGS_IX
         )
     )
@@ -72,7 +74,7 @@ def is_script_style_block_opening(config: Config, item: str) -> bool:
         else 0
     )
     return bool(
-        re.search(
+        regex_utils.search(
             config.script_style_opening, item[last_index:], flags=RE_FLAGS_IX
         )
     )
@@ -89,7 +91,7 @@ def inside_protected_trans_block(
     True = non indentable > inside ignored trans block
     False = indentable > either inside a trans trimmed block, or somewhere else, but not a trans non trimmed :)
     """
-    close_block = re.search(
+    close_block = regex_utils.search(
         config.ignored_trans_blocks_closing, match.group(), flags=RE_FLAGS_IX
     )
 
@@ -97,11 +99,11 @@ def inside_protected_trans_block(
         return False
 
     non_trimmed = _last_item(
-        re.finditer(config.ignored_trans_blocks, html, flags=RE_FLAGS_ISX)
+        regex_utils.finditer(config.ignored_trans_blocks, html, flags=RE_FLAGS_ISX)
     )
 
     trimmed = _last_item(
-        re.finditer(config.trans_trimmed_blocks, html, flags=RE_FLAGS_ISX)
+        regex_utils.finditer(config.trans_trimmed_blocks, html, flags=RE_FLAGS_ISX)
     )
 
     # who is max?
@@ -118,7 +120,7 @@ def inside_protected_trans_block(
             last_index = non_trimmed.end()  # get the last index. The ignored opening should start after this.
 
             return bool(
-                re.search(
+                regex_utils.search(
                     config.ignored_trans_blocks_closing,
                     html[last_index:],
                     flags=RE_FLAGS_IX,
@@ -139,7 +141,7 @@ def inside_protected_trans_block(
     #         non_trimmed[-1].end()
     #     )  # get the last index. The ignored opening should start after this.
 
-    # return re.search(
+    # return regex_utils.search(
     #     config.ignored_trans_blocks_closing,
     #     html[last_index:],
     #     flags=RE_FLAGS_IX,
@@ -161,7 +163,7 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
         else 0
     )
     return bool(
-        re.search(
+        regex_utils.search(
             config.ignored_block_closing, item[last_index:], flags=RE_FLAGS_IX
         )
     )
@@ -182,7 +184,7 @@ def is_script_style_block_closing(config: Config, item: str) -> bool:
         else 0
     )
     return bool(
-        re.search(
+        regex_utils.search(
             config.script_style_closing, item[last_index:], flags=RE_FLAGS_IX
         )
     )
@@ -207,7 +209,9 @@ def is_safe_closing_tag(config: Config, item: str) -> bool:
         else 0
     )
     return bool(
-        re.search(config.safe_closing_tag, item[last_index:], flags=RE_FLAGS_IX)
+        regex_utils.search(
+            config.safe_closing_tag, item[last_index:], flags=RE_FLAGS_IX
+        )
     )
 
 
@@ -280,8 +284,10 @@ def _inside_ignored_block(
     return tuple(
         x.span()
         for x in itertools.chain(
-            re.finditer(ignored_blocks, html, flags=RE_FLAGS_IMSX),
-            re.finditer(ignored_inline_blocks, html, flags=RE_FLAGS_IX),
+            regex_utils.finditer(ignored_blocks, html, flags=RE_FLAGS_IMSX),
+            regex_utils.finditer(
+                ignored_inline_blocks, html, flags=RE_FLAGS_IX
+            ),
         )
     )
 
@@ -337,8 +343,10 @@ def child_of_ignored_block(
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
     for ignored_match in itertools.chain(
-        re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
-        re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IX),
+        regex_utils.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
+        regex_utils.finditer(
+            config.ignored_inline_blocks, html, flags=RE_FLAGS_IX
+        ),
     ):
         ignored_match_start, ignored_match_end = ignored_match.span()
         if ignored_match_start < match_start and match_end <= ignored_match_end:
