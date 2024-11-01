@@ -139,7 +139,7 @@ def inside_protected_trans_block(
     # return re.search(
     #     config.ignored_trans_blocks_closing,
     #     html[last_index:],
-    #     flags=RE_FLAGS_IV,
+    #     flags=RE_FLAGS_IX,
     # )
 
 
