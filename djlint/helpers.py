@@ -221,9 +221,7 @@ def inside_template_block(
     match_start = match.start()
     match_end = match.end(0)
     for ignored_match in re.finditer(
-        config.template_blocks,
-        html,
-        flags=RE_FLAGS_IMSX,
+        config.template_blocks, html, flags=RE_FLAGS_IMSX
     ):
         if (
             ignored_match.start(0) <= match_start
