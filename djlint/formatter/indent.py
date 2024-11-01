@@ -296,11 +296,9 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # detect the outer quotes for jinja
         if config.profile == "jinja":
-            matches = re.finditer(
+            for match in re.finditer(
                 r"=([\"'])(\{\{[\s\S]*?\}\})\1", tmp, flags=re.M
-            )
-
-            for match in matches:
+            ):
                 outer_quotes = match.group(1)
                 inner_content = match.group(2)
                 jinja_replace_list.append({
