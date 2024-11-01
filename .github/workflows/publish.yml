@@ -46,6 +46,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/download-artifact@v4
+      - run: mkdir dist
+      - run: mv wheels-*/* dist
       - uses: pypa/gh-action-pypi-publish@release/v1
   publish-npm:
     runs-on: ubuntu-latest
