@@ -180,31 +180,25 @@ def condense_html(html: str, config: Config) -> str:
     def if_blank_line_after_match(config: Config, html: str) -> bool:
         """Check if there should be a blank line after."""
         if config.blank_line_after_tag:
-            return not any(
-                re.findall(
-                    rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+            for tag in config.blank_line_after_tag.split(","):
+                if re.findall(
+                    rf"((?:{{%\s*?{tag.strip()}[^}}]+?%}}\n?)+)",
                     html,
                     flags=RE_FLAGS_IMS,
-                )
-                for tag in (
-                    x.strip() for x in config.blank_line_after_tag.split(",")
-                )
-            )
+                ):
+                    return False
         return True
 
     def if_blank_line_before_match(config: Config, html: str) -> bool:
         """Check if there should be a blank line before."""
         if config.blank_line_before_tag:
-            return not any(
-                re.findall(
-                    rf"((?:{{%\s*?{tag}[^}}]+?%}}\n?)+)",
+            for tag in config.blank_line_before_tag.split(","):
+                if re.findall(
+                    rf"((?:{{%\s*?{tag.strip()}[^}}]+?%}}\n?)+)",
                     html,
                     flags=RE_FLAGS_IMS,
-                )
-                for tag in (
-                    x.strip() for x in config.blank_line_before_tag.split(",")
-                )
-            )
+                ):
+                    return False
         return True
 
     # add blank lines before tags

@@ -91,7 +91,7 @@ def no_pragma(config: Config, this_file: Path) -> bool:
             + html_patterns,
         }
 
-        return any(
-            re.match(pattern, first_line)
-            for pattern in pragma_patterns[config.profile]
-        )
+        for pattern in pragma_patterns[config.profile]:
+            if re.match(pattern, first_line):
+                return True
+        return False

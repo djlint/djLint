@@ -237,13 +237,15 @@ def inside_ignored_linter_block(
     """Check if a re.Match is inside of a ignored linter block."""
     match_start = match.start()
     match_end = match.end(0)
-    return any(
-        ignored_match.start(0) <= match_start
-        and match_end <= ignored_match.end()
-        for ignored_match in re.finditer(
-            config.ignored_linter_blocks, html, flags=RE_FLAGS_IMSX
-        )
-    )
+    for ignored_match in re.finditer(
+        config.ignored_linter_blocks, html, flags=RE_FLAGS_IMSX
+    ):
+        if (
+            ignored_match.start(0) <= match_start
+            and match_end <= ignored_match.end()
+        ):
+            return True
+    return False
 
 
 @cache
@@ -308,14 +310,16 @@ def child_of_ignored_block(
     """Do not add whitespace if the tag is in a non indent block."""
     match_start = match.start()
     match_end = match.end(0)
-    return any(
-        ignored_match.start(0) < match_start
-        and match_end <= ignored_match.end()
-        for ignored_match in itertools.chain(
-            re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
-            re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IX),
-        )
-    )
+    for ignored_match in itertools.chain(
+        re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
+        re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IX),
+    ):
+        if (
+            ignored_match.start(0) < match_start
+            and match_end <= ignored_match.end()
+        ):
+            return True
+    return False
 
 
 def overlaps_ignored_block(
@@ -324,16 +328,18 @@ def overlaps_ignored_block(
     """Do not add whitespace if the tag is in a non indent block."""
     match_start = match.start()
     match_end = match.end()
-    return any(
+
+    for ignored_match in itertools.chain(
+        re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
+        re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IX),
+    ):
         # don't require the match to be fully inside the ignored block.
         # poorly build html will probably span ignored blocks and should be ignored.
-        (ignored_match.start(0) <= match_start <= ignored_match.end())
-        or (ignored_match.start() <= match_end <= ignored_match.end())
-        for ignored_match in itertools.chain(
-            re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
-            re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IX),
-        )
-    )
+        if (ignored_match.start(0) <= match_start <= ignored_match.end()) or (
+            ignored_match.start() <= match_end <= ignored_match.end()
+        ):
+            return True
+    return False
 
 
 def inside_ignored_rule(
@@ -342,15 +348,17 @@ def inside_ignored_rule(
     """Check if match is inside an ignored pattern."""
     match_start = match.start()
     match_end = match.end()
-    return any(
-        (
-            rule in re.split(r"\s|,", ignored_match.group(1).strip())
-            and (ignored_match.start(0) <= match_start <= ignored_match.end())
-        )
-        or (
-            not ignored_match.group(1).strip()
-            and (ignored_match.start(0) <= match_end <= ignored_match.end())
-        )
-        for rule_regex in config.ignored_rules
-        for ignored_match in re.finditer(rule_regex, html, flags=RE_FLAGS_ISX)
-    )
+
+    for rule_regex in config.ignored_rules:
+        for ignored_match in re.finditer(rule_regex, html, flags=RE_FLAGS_ISX):
+            if (
+                rule in re.split(r"\s|,", ignored_match.group(1).strip())
+                and (
+                    ignored_match.start(0) <= match_start <= ignored_match.end()
+                )
+            ) or (
+                not ignored_match.group(1).strip()
+                and (ignored_match.start(0) <= match_end <= ignored_match.end())
+            ):
+                return True
+    return False
