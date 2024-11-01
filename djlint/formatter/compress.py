@@ -7,12 +7,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import regex as re
-
+from .. import regex_utils
 from ..const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 from ..helpers import RE_FLAGS_IMX, child_of_unformatted_block
 
 if TYPE_CHECKING:
+    import regex as re
+
     from ..settings import Config
 
 
@@ -64,4 +65,6 @@ def compress_html(html: str, config: Config) -> str:
 
         return f"{open_bracket}{tag}{attributes}{close_bracket}"
 
-    return re.sub(config.html_tag_regex, _clean_tag, html, flags=RE_FLAGS_IMX)
+    return regex_utils.sub(
+        config.html_tag_regex, _clean_tag, html, flags=RE_FLAGS_IMX
+    )

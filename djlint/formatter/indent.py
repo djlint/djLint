@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import json5 as json
 import regex as re
 
+from .. import regex_utils
 from ..helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
@@ -45,11 +46,11 @@ def indent_html(rawcode: str, config: Config) -> str:
         """
         func = partial(fix_tag_spacing, rawcode)
 
-        rawcode = re.sub(
+        rawcode = regex_utils.sub(
             r"({%-?\+?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?(\+?-?%})", func, rawcode
         )
 
-        rawcode = re.sub(
+        rawcode = regex_utils.sub(
             r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", func, rawcode
         )
 
@@ -65,7 +66,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         func = partial(fix_handlebars_template_tags, rawcode)
         # handlebars templates
-        rawcode = re.sub(r"({{#(?:each|if).+?[^ ])(}})", func, rawcode)
+        rawcode = regex_utils.sub(r"({{#(?:each|if).+?[^ ])(}})", func, rawcode)
 
     rawcode_flat_list = re.split("\n", rawcode)
 
@@ -114,7 +115,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         if (
             not is_block_raw
-            and re.search(
+            and regex_utils.search(
                 rf"^\s*?(?:{config.ignored_inline_blocks})",
                 item,
                 flags=RE_FLAGS_IMX,
@@ -122,7 +123,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         ) or (
             not is_block_raw
             and (
-                re.search(
+                regex_utils.search(
                     rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
                     (?:
                         (?:<({slt_html})>)(?:.*?)(?:</(?:\1)>) # <span>stuff</span> >>>> match 1
@@ -157,7 +158,9 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and in_set_tag
-            and re.search(r"^(?!.*\{\%).*%\}.*$", item, flags=RE_FLAGS_IMX)
+            and regex_utils.search(
+                r"^(?!.*\{\%).*%\}.*$", item, flags=RE_FLAGS_IMX
+            )
         ):
             indent_level = max(indent_level - 1, 0)
             in_set_tag = False
@@ -168,7 +171,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and in_set_tag
-            and re.search(r"^[ ]*}|^[ ]*]", item, flags=RE_FLAGS_IMX)
+            and regex_utils.search(r"^[ ]*}|^[ ]*]", item, flags=RE_FLAGS_IMX)
         ):
             indent_level = max(indent_level - 1, 0)
             tmp = (indent * indent_level) + item + "\n"
@@ -177,23 +180,25 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif (
             not is_block_raw
             and not is_safe_closing_tag_
-            and re.search(config.tag_unindent, item, flags=RE_FLAGS_IMX)
+            and regex_utils.search(
+                config.tag_unindent, item, flags=RE_FLAGS_IMX
+            )
             # and not ending in a slt like <span><strong></strong>.
-            and not re.search(
+            and not regex_utils.search(
                 rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
                 item,
                 flags=RE_FLAGS_IMX,
             )
-            and not re.search(
+            and not regex_utils.search(
                 rf"(<({slt_html})\\b[^>]+?>)(.*?)(</(\2)>[^<]*?$)",
                 item,
                 flags=RE_FLAGS_IMX,
             )
         ):
             # block to catch inline block followed by a non-break tag
-            if re.search(
+            if regex_utils.search(
                 rf"(^<({slt_html})>)(.*?)(</(\2)>)", item, flags=RE_FLAGS_IMX
-            ) or re.search(
+            ) or regex_utils.search(
                 rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)",
                 item,
                 flags=RE_FLAGS_IMX,
@@ -205,7 +210,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 indent_level = max(indent_level - 1, 0)
                 tmp = (indent * indent_level) + item + "\n"
 
-        elif not is_block_raw and re.search(
+        elif not is_block_raw and regex_utils.search(
             r"^" + str(config.tag_unindent_line), item, flags=RE_FLAGS_IMX
         ):
             tmp = (indent * (indent_level - 1)) + item + "\n"
@@ -217,7 +222,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and not in_set_tag
-            and re.search(
+            and regex_utils.search(
                 r"^([ ]*{%[ ]*?set)(?!.*%}).*$", item, flags=RE_FLAGS_IMX
             )
         ):
@@ -230,13 +235,13 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and in_set_tag
-            and re.search(
+            and regex_utils.search(
                 r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
                 item,
                 flags=RE_FLAGS_IMX,
             )
         ) or (
-            re.search(
+            regex_utils.search(
                 r"^(?:" + str(config.tag_indent) + r")",
                 item,
                 flags=RE_FLAGS_IMX,
@@ -272,7 +277,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
             func = partial(format_attributes, config, item)
 
-            tmp = re.sub(
+            tmp = regex_utils.sub(
                 rf"(\s*?)(<(?:{config.indent_html_tags}))\s((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}\/])+?)(\s?/?>)",
                 func,
                 tmp,
@@ -293,7 +298,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # detect the outer quotes for jinja
         if config.profile == "jinja":
-            for match in re.finditer(
+            for match in regex_utils.finditer(
                 r"=([\"'])(\{\{[\s\S]*?\}\})\1", tmp, flags=re.M
             ):
                 outer_quotes = match.group(1)
@@ -413,7 +418,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
             if outer_quotes is not None and inner_quotes is not None:
                 # Replace all content inner quotes and remove trailing/leading spaces
-                cleaned_contents = re.sub(
+                cleaned_contents = regex_utils.sub(
                     rf"(?<=\{re.escape(outer_quotes)})\s+|\s+(?=\{re.escape(outer_quotes)})",
                     "",
                     contents.replace(outer_quotes, inner_quotes),
@@ -428,7 +433,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     if not config.no_set_formatting:
         func = partial(format_set, config, beautified_code)
         # format set contents
-        beautified_code = re.sub(
+        beautified_code = regex_utils.sub(
             r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
             func,
             beautified_code,
@@ -438,7 +443,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     if not config.no_function_formatting:
         func = partial(format_function, config, beautified_code)
         # format function contents
-        beautified_code = re.sub(
+        beautified_code = regex_utils.sub(
             r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
             func,
             beautified_code,

@@ -8,6 +8,8 @@ import regex as re
 from click import echo
 from colorama import Fore
 
+from . import regex_utils
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
@@ -44,7 +46,7 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
         paths.extend(
             x
             for x in normalized_item.glob(f"**/*.{extension}")
-            if not re.search(config.exclude, x.as_posix(), flags=re.X)
+            if not regex_utils.search(config.exclude, x.as_posix(), flags=re.X)
             and no_pragma(config, x)
             and (
                 (config.use_gitignore and not config.gitignore.match_file(x))
@@ -92,6 +94,6 @@ def no_pragma(config: Config, this_file: Path) -> bool:
     }
 
     for pattern in pragma_patterns[config.profile]:
-        if re.match(pattern, first_line):
+        if regex_utils.match(pattern, first_line):
             return True
     return False
