@@ -75,7 +75,7 @@ def expand_html(html: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group(1)
 
-        if not re.findall(
+        if not re.search(
             r"\<(?:"
             + str(config.indent_html_tags)
             # added > as not allowed inside a "" or '' to prevent invalid wild html matches

@@ -113,7 +113,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 is_block_raw = False
 
         if (
-            re.findall(
+            re.search(
                 rf"^\s*?(?:{config.ignored_inline_blocks})",
                 item,
                 flags=RE_FLAGS_IMX,
@@ -121,7 +121,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             and not is_block_raw
         ) or (
             (
-                re.findall(
+                re.search(
                     rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
                     (?:
                         (?:<({slt_html})>)(?:.*?)(?:</(?:\1)>) # <span>stuff</span> >>>> match 1
@@ -179,21 +179,21 @@ def indent_html(rawcode: str, config: Config) -> str:
             and not is_block_raw
             and not is_safe_closing_tag_
             # and not ending in a slt like <span><strong></strong>.
-            and not re.findall(
+            and not re.search(
                 rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
                 item,
                 flags=RE_FLAGS_IMX,
             )
-            and not re.findall(
+            and not re.search(
                 rf"(<({slt_html})\\b[^>]+?>)(.*?)(</(\2)>[^<]*?$)",
                 item,
                 flags=RE_FLAGS_IMX,
             )
         ):
             # block to catch inline block followed by a non-break tag
-            if re.findall(
+            if re.search(
                 rf"(^<({slt_html})>)(.*?)(</(\2)>)", item, flags=RE_FLAGS_IMX
-            ) or re.findall(
+            ) or re.search(
                 rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)",
                 item,
                 flags=RE_FLAGS_IMX,
@@ -296,13 +296,13 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # detect the outer quotes for jinja
         if config.profile == "jinja":
-            matches = re.findall(
+            matches = re.finditer(
                 r"=([\"'])(\{\{[\s\S]*?\}\})\1", tmp, flags=re.M
             )
 
             for match in matches:
-                outer_quotes = match[0]
-                inner_content = match[1]
+                outer_quotes = match.group(1)
+                inner_content = match.group(2)
                 jinja_replace_list.append({
                     "outer_quote": outer_quotes,
                     "content": inner_content,

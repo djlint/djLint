@@ -45,7 +45,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         if inside_protected_trans_block(config, html[: match.end()], match):
             return match.group().rstrip()
 
-        lines = len(re.findall(r"\n", match.group(2)))
+        lines = sum(1 for _ in re.finditer(r"\n", match.group(2)))
         blank_lines = "\n" * lines
         if lines > config.max_blank_lines:
             blank_lines = "\n" * max(config.max_blank_lines, 0)
@@ -181,7 +181,7 @@ def condense_html(html: str, config: Config) -> str:
         """Check if there should be a blank line after."""
         if config.blank_line_after_tag:
             for tag in config.blank_line_after_tag.split(","):
-                if re.findall(
+                if re.search(
                     rf"((?:{{%\s*?{tag.strip()}[^}}]+?%}}\n?)+)",
                     html,
                     flags=RE_FLAGS_IMS,
@@ -193,7 +193,7 @@ def condense_html(html: str, config: Config) -> str:
         """Check if there should be a blank line before."""
         if config.blank_line_before_tag:
             for tag in config.blank_line_before_tag.split(","):
-                if re.findall(
+                if re.search(
                     rf"((?:{{%\s*?{tag.strip()}[^}}]+?%}}\n?)+)",
                     html,
                     flags=RE_FLAGS_IMS,
