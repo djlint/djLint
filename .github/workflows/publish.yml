@@ -39,6 +39,9 @@ jobs:
   publish-pypi:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'djlint' && startsWith(github.ref, 'refs/tags/')  }}
+    needs:
+      - build-compiled
+      - build-pure
     permissions:
       id-token: write
     steps:
@@ -47,9 +50,6 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'djlint' && startsWith(github.ref, 'refs/tags/')  }}
-    needs:
-      - build-compiled
-      - build-pure
     permissions:
       id-token: write
     steps:
