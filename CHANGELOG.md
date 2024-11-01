@@ -2,6 +2,20 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.35.4] - 2024-11-01
+
+Compiled mypyc wheels are now also available for djLint, which improve performance by ~21% over Pure Python. They will be automatically installed by your package manager when available for your platform. Pure Python wheel is still available.
+
+Other changes have been made to improve performance, thanks to @JCWasmx86. See the commits for more details.
+
+Formatting performance comparison with the previous version (tested on <https://github.com/openedx/edx-platform> with single thread):
+
+| Version             | Seconds |
+| ------------------- | ------- |
+| v1.35.3             | 20.39   |
+| v1.35.4 pure Python | 14.39   |
+| v1.35.4 compiled    | 11.35   |
+
 ## [1.35.3] - 2024-10-30
 
 This release significantly improves performance, especially for large files and large projects.
