@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from ..helpers import (
+    RE_FLAGS_IX,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -38,12 +39,12 @@ def run(
     for match in re.finditer(
         r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
         html,
-        flags=re.VERBOSE,
+        flags=re.X,
     ):
         if match.group(1) and not re.search(
             rf"^/?{config.always_self_closing_html_tags}\b",
             match.group(1),
-            flags=re.I | re.X,
+            flags=RE_FLAGS_IX,
         ):
             # close tags should equal open tags
             if match.group(1)[0] != "/":

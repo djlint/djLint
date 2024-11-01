@@ -9,7 +9,7 @@ import cssbeautifier
 import regex as re
 from jsbeautifier.javascript.options import BeautifierOptions
 
-from ..helpers import child_of_unformatted_block
+from ..helpers import RE_FLAGS_IS, child_of_unformatted_block
 
 if TYPE_CHECKING:
     from ..settings import Config
@@ -64,5 +64,5 @@ def format_css(html: str, config: Config) -> str:
         r"([ ]*?)(<(?:style)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</style>)",
         func,
         html,
-        flags=re.IGNORECASE | re.DOTALL,
+        flags=RE_FLAGS_IS,
     )

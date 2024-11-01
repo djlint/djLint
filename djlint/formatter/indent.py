@@ -9,6 +9,9 @@ import json5 as json
 import regex as re
 
 from ..helpers import (
+    RE_FLAGS_IMSX,
+    RE_FLAGS_IMX,
+    RE_FLAGS_IX,
     inside_ignored_block,
     is_ignored_block_closing,
     is_ignored_block_opening,
@@ -113,7 +116,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             re.findall(
                 rf"^\s*?(?:{config.ignored_inline_blocks})",
                 item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                flags=RE_FLAGS_IMX,
             )
             and not is_block_raw
         ) or (
@@ -142,7 +145,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     [^<]*?$ # with no other tags following until end of line
                 """,
                     item,
-                    flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                    flags=RE_FLAGS_IMX,
                 )
             )
             and not is_block_raw
@@ -152,11 +155,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # closing set tag
         elif (
             not config.no_set_formatting
-            and re.search(
-                r"^(?!.*\{\%).*%\}.*$",
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
+            and re.search(r"^(?!.*\{\%).*%\}.*$", item, flags=RE_FLAGS_IMX)
             and not is_block_raw
             and in_set_tag
         ):
@@ -167,11 +166,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # closing curly brace inside a set tag
         elif (
             not config.no_set_formatting
-            and re.search(
-                r"^[ ]*}|^[ ]*]",
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
+            and re.search(r"^[ ]*}|^[ ]*]", item, flags=RE_FLAGS_IMX)
             and not is_block_raw
             and in_set_tag
         ):
@@ -180,34 +175,28 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         # if unindent, move left
         elif (
-            re.search(
-                config.tag_unindent,
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
-            )
+            re.search(config.tag_unindent, item, flags=RE_FLAGS_IMX)
             and not is_block_raw
             and not is_safe_closing_tag_
             # and not ending in a slt like <span><strong></strong>.
             and not re.findall(
                 rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)",
                 item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                flags=RE_FLAGS_IMX,
             )
             and not re.findall(
                 rf"(<({slt_html})\\b[^>]+?>)(.*?)(</(\2)>[^<]*?$)",
                 item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                flags=RE_FLAGS_IMX,
             )
         ):
             # block to catch inline block followed by a non-break tag
             if re.findall(
-                rf"(^<({slt_html})>)(.*?)(</(\2)>)",
-                item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                rf"(^<({slt_html})>)(.*?)(</(\2)>)", item, flags=RE_FLAGS_IMX
             ) or re.findall(
                 rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)",
                 item,
-                flags=re.IGNORECASE | re.VERBOSE | re.MULTILINE,
+                flags=RE_FLAGS_IMX,
             ):
                 # unindent after instead of before
                 tmp = (indent * indent_level) + item + "\n"
@@ -218,9 +207,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         elif (
             re.search(
-                r"^" + str(config.tag_unindent_line),
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                r"^" + str(config.tag_unindent_line), item, flags=RE_FLAGS_IMX
             )
             and not is_block_raw
         ):
@@ -232,9 +219,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif (
             not config.no_set_formatting
             and re.search(
-                r"^([ ]*{%[ ]*?set)(?!.*%}).*$",
-                item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                r"^([ ]*{%[ ]*?set)(?!.*%}).*$", item, flags=RE_FLAGS_IMX
             )
             and not is_block_raw
             and not in_set_tag
@@ -249,7 +234,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             and re.search(
                 r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
                 item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                flags=RE_FLAGS_IMX,
             )
             and not is_block_raw
             and in_set_tag
@@ -257,7 +242,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             re.search(
                 r"^(?:" + str(config.tag_indent) + r")",
                 item,
-                flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+                flags=RE_FLAGS_IMX,
             )
             and not is_block_raw
         ):
@@ -294,7 +279,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 rf"(\s*?)(<(?:{config.indent_html_tags}))\s((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}\/])+?)(\s?/?>)",
                 func,
                 tmp,
-                flags=re.VERBOSE | re.IGNORECASE,
+                flags=RE_FLAGS_IX,
             )
 
         # turn off raw block if we hit end - for one line raw blocks, but not an inline raw
@@ -312,7 +297,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # detect the outer quotes for jinja
         if config.profile == "jinja":
             matches = re.findall(
-                r"=([\"'])(\{\{[\s\S]*?\}\})\1", tmp, flags=re.MULTILINE
+                r"=([\"'])(\{\{[\s\S]*?\}\})\1", tmp, flags=re.M
             )
 
             for match in matches:
@@ -452,7 +437,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
             func,
             beautified_code,
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
+            flags=RE_FLAGS_IMSX,
         )
 
     if not config.no_function_formatting:
@@ -462,7 +447,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
             func,
             beautified_code,
-            flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE | re.DOTALL,
+            flags=RE_FLAGS_IMSX,
         )
 
     if not config.preserve_blank_lines:

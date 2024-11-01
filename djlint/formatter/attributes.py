@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..helpers import child_of_ignored_block
+from ..helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
 
 if TYPE_CHECKING:
     from ..settings import Config
@@ -39,7 +39,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
         for line_number, line in enumerate(attributes.splitlines()):
             # when checking for template tag, use "match" to force start of line check.
             if re.match(
-                config.template_unindent, line.strip(), flags=re.I | re.X
+                config.template_unindent, line.strip(), flags=RE_FLAGS_IX
             ):
                 indent -= 1
                 tmp = (
@@ -49,7 +49,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
                 )
 
             elif re.match(
-                config.tag_unindent_line, line.strip(), flags=re.I | re.X
+                config.tag_unindent_line, line.strip(), flags=RE_FLAGS_IX
             ):
                 # if we are leaving an indented group, then remove the indent_adder
                 tmp = (
@@ -59,9 +59,9 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
                 )
 
             elif re.search(
-                config.template_indent, line.strip(), flags=re.I | re.X
+                config.template_indent, line.strip(), flags=RE_FLAGS_IX
             ) and not re.search(
-                config.template_unindent, line.strip(), flags=re.I | re.X
+                config.template_unindent, line.strip(), flags=RE_FLAGS_IX
             ):
                 # for open tags, search, but then check that they are not closed.
                 tmp = (
@@ -104,7 +104,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
         + ")[^}]+?[%|}]})",
         func,
         attributes,
-        flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        flags=RE_FLAGS_IMX,
     )
 
     func = partial(add_break, "after")
@@ -115,7 +115,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
         + ")[^}]+?[%|}]})([^\n]+)$",
         func,
         attributes,
-        flags=re.IGNORECASE | re.MULTILINE | re.VERBOSE,
+        flags=RE_FLAGS_IMX,
     )
     return add_indentation(config, attributes, spacing)
 
@@ -139,7 +139,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
 
     # format attributes as groups
     for attr_grp in re.finditer(
-        config.attribute_pattern, match.group(3).strip(), flags=re.VERBOSE
+        config.attribute_pattern, match.group(3).strip(), flags=re.X
     ):
         attrib_name = attr_grp.group(1)
         is_quoted = attr_grp.group(2) and attr_grp.group(2)[0] in {"'", '"'}
