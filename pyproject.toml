@@ -79,7 +79,6 @@ exclude = ["djlint/__main__.py"]
 options = { opt_level = "3", debug_level = "0" }
 
 [tool.cibuildwheel]
-archs = ["all"]
 build = "cp*"
 build-frontend = "build[uv]"
 environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
