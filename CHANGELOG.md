@@ -4,9 +4,9 @@
 
 ## [1.35.4] - 2024-11-01
 
-Compiled mypyc wheels are now also available for djLint, which improve performance by ~21% over Pure Python. They will be automatically installed by your package manager when available for your platform. Pure Python wheel is still available.
+Compiled [mypyc](https://mypyc.readthedocs.io/en/stable/introduction.html) wheels are now also available, which improve performance by ~21% over Pure Python. They will be automatically installed by your package manager when available for your platform. Pure Python wheel is still available.
 
-Other changes have been made to improve performance, thanks to @JCWasmx86. See the commits for more details.
+Other changes have been made to improve performance, thanks to @JCWasmx86. See the [commits](https://github.com/djlint/djLint/compare/v1.35.3...v1.35.4) for more details.
 
 Formatting performance comparison with the previous version (tested on <https://github.com/openedx/edx-platform> with single thread):
 
