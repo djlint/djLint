@@ -337,7 +337,7 @@ def child_of_unformatted_block(
         html, unformatted_blocks=config.unformatted_blocks
     ):
         if (
-            ignored_match_start <= match_start
+            ignored_match_start < match_start
             and match_end <= ignored_match_end
         ):
             return True
