@@ -69,7 +69,9 @@ def print_output(
             lint_error_count += build_output(error["lint_message"], config)
 
     if config.statistics and config.lint:
-        build_stats_output([x.get("lint_message") for x in file_errors], config)
+        build_stats_output(
+            tuple(x.get("lint_message") for x in file_errors), config
+        )
 
     tense_message = (
         build_quantity(format_error_count) + " would be"
