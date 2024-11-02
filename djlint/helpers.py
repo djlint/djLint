@@ -234,12 +234,11 @@ def inside_template_block(
 
 @cache
 def _inside_html_attribute(
-    html: str, /, *, html_tag_regex: str
+    html: str, html_tag_regex: str, /
 ) -> tuple[tuple[int, int], ...]:
     return tuple(
-        # group 3 are the attributes
         x.span(3)
-        for x in re.finditer(html_tag_regex, html, flags=RE_FLAGS_IMSX)
+        for x in regex_utils.finditer(html_tag_regex, html, flags=RE_FLAGS_IMSX)
     )
 
 
@@ -247,6 +246,7 @@ def inside_html_attribute(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Check if a re.Match is inside of an html attribute."""
+
     match_start, match_end = match.span()
     for ignored_match_start, ignored_match_end in _inside_html_attribute(
         html, html_tag_regex=config.html_tag_regex
