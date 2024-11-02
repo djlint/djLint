@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from functools import partial
+from io import StringIO
 from typing import TYPE_CHECKING
 
 import cssbeautifier
@@ -48,13 +49,15 @@ def format_css(html: str, config: Config) -> str:
             match.group(3), opts
         ).splitlines()
 
-        beautified = ""
-        for line, test in zip(beautified_lines, beautified_lines_test):
-            beautified += "\n"
-            if line == test:
-                beautified += line
-                continue
-            beautified += indent + line
+        with StringIO() as buf:
+            for line, test in zip(beautified_lines, beautified_lines_test):
+                buf.write("\n")
+                if line == test:
+                    buf.write(line)
+                else:
+                    buf.write(indent)
+                    buf.write(line)
+            beautified = buf.getvalue()
 
         return match.group(1) + match.group(2) + beautified + "\n" + indent
 
