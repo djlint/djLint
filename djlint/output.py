@@ -12,18 +12,12 @@ from typing import TYPE_CHECKING
 import regex as re
 from click import echo
 from colorama import Fore, Style
-from typing_extensions import TypedDict
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
 
-    from .lint import LintError
     from .settings import Config
-
-
-class ProcessResult(TypedDict, total=False):
-    format_message: dict[str, tuple[str, ...]]
-    lint_message: dict[str, list[LintError]]
+    from .types import LintError, ProcessResult
 
 
 try:
