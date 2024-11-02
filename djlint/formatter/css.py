@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import cssbeautifier
 import regex as re
-from jsbeautifier.javascript.options import BeautifierOptions
+from cssbeautifier.css.options import BeautifierOptions
 
 from ..helpers import RE_FLAGS_IS, child_of_unformatted_block
 
@@ -31,7 +31,7 @@ def format_css(html: str, config: Config) -> str:
 
         indent = len(match.group(1)) * " "
 
-        # because of the param options for js-beautifier we cannot pass
+        # because of the param options for css-beautifier we cannot pass
         # in a fixed space leading.
         # so, call formatter twice, once with a fake indent.
         # check which lines changed (these are the formattable lines)
@@ -43,8 +43,8 @@ def format_css(html: str, config: Config) -> str:
             match.group(3), opts
         ).splitlines()
 
-        config.js_config["indent_level"] = 2
-        opts = BeautifierOptions(config.js_config)
+        config.css_config["indent_level"] = 2
+        opts = BeautifierOptions(config.css_config)
         beautified_lines_test = cssbeautifier.beautify(
             match.group(3), opts
         ).splitlines()
