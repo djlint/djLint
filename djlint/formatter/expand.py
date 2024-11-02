@@ -15,6 +15,7 @@ from ..helpers import (
     RE_FLAGS_IMX,
     RE_FLAGS_IX,
     RE_FLAGS_MX,
+    inside_html_attribute,
     inside_ignored_block,
     inside_template_block,
 )
@@ -31,12 +32,17 @@ def expand_html(html: str, config: Config) -> str:
 
         Do not add whitespace if the tag is in a non indent block.
 
-        Do not add whitespace if the tag is a in a template block
+        Do not add whitespace if the tag is a in a template block.
+
+        Do not add whitespace if the tag is in an html attribute string.
         """
         if inside_ignored_block(config, html, match):
             return match.group(1)
 
         if inside_template_block(config, html, match):
+            return match.group(1)
+
+        if inside_html_attribute(config, html, match):
             return match.group(1)
 
         if out_format == "\n%s" and match.start() == 0:

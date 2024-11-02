@@ -231,6 +231,26 @@ def inside_template_block(
     return False
 
 
+def inside_html_attribute(
+    config: Config, html: str, match: re.Match[str]
+) -> bool:
+    """Check if a re.Match is inside of an html attribute."""
+    match_start = match.start()
+    match_end = match.end(0)
+    for ignored_match in re.finditer(
+        config.html_tag_regex, html, flags=RE_FLAGS_IMSX
+    ):
+        # group 3 are the attributes
+        span = ignored_match.span(3)
+        # span = (-1, -1) if no attributes are present
+        if (
+            span[0] <= match_start
+            and match_end <= span[1]
+        ):
+            return True
+    return False
+
+
 def inside_ignored_linter_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
