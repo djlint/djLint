@@ -30,7 +30,7 @@ labels: [":microbe: bug", ":mag: linter"]
 
 <!-- Steps to reproduce the behavior -->
 
-## Contents of .djlintrc/pyproject.toml [tool.djlint]
+## Contents of djlint.toml/.djlintrc/pyproject.toml [tool.djlint]
 
 <!-- please include your config -->
 

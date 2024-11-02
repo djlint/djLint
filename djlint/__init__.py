@@ -113,12 +113,13 @@ if TYPE_CHECKING:
     type=click.Path(
         exists=True,
         file_okay=True,
-        dir_okay=True,
+        dir_okay=False,
         readable=True,
+        resolve_path=True,
         allow_dash=True,
+        path_type=Path,
     ),
-    required=False,
-    help="Path to global configuration file in .djlintrc format",
+    help="Path to global configuration file in djlint.toml or .djlintrc format",
 )
 @click.option(
     "--statistics",
@@ -262,7 +263,7 @@ def main(
     preserve_blank_lines: bool,
     format_css: bool,
     format_js: bool,
-    configuration: str | None,
+    configuration: Path | None,
     statistics: bool,
     include: str,
     ignore_case: bool,
