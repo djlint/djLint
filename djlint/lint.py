@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib
 from collections.abc import Sequence
+from functools import cache
 from typing import TYPE_CHECKING
 
 import regex as re
@@ -39,6 +40,7 @@ flags = {
 }
 
 
+@cache
 def build_flags(flag_list: str | int) -> int:
     """Build list of regex flags."""
     if isinstance(flag_list, int):
