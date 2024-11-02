@@ -1,6 +1,6 @@
-"""Test djlintrc custom config.
+"""Test djlintrc config.
 
-uv run pytest tests/test_config/test_djlintrc_custom
+uv run pytest tests/test_config/test_djlintrc
 
 """
 
@@ -8,20 +8,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from djlint.settings import Config
 
 
-@pytest.mark.parametrize("config_path", ["djlint-cust.toml", ".djlint-cust"])
-def test_custom(config_path: str) -> None:
-    config = Config(
-        str(Path(__file__).parent / "blank.html"),
-        configuration=Path(__file__).parent / config_path,
-    )
+def test_default() -> None:
+    config = Config(str(Path(__file__).parent / "blank.html"))
 
-    print(config.exclude)
-    assert config.exclude == ".venv,venv,.tox,.egg,... | .customs"
+    assert config.exclude == ".venv,venv,.tox,.eggs,... | .custom"
     assert config.blank_line_after_tag == "load,extends,include"
     assert config.blank_line_before_tag == "load,extends,include"
     assert config.custom_blocks == r"|endexample\b|endtoc\b|example\b|toc\b"
@@ -35,7 +28,7 @@ def test_custom(config_path: str) -> None:
     assert config.ignore_blocks == r"endexample\b|endraw\b|example\b|raw\b"
     assert config.ignore_case is True
     assert config.include == "H014,H015"
-    assert config.indent == 4 * " "
+    assert config.indent == 3 * " "
     assert (
         config.linter_output_format
         == "{filename}:{line}: {code} {message} {match}"
@@ -48,8 +41,8 @@ def test_custom(config_path: str) -> None:
     assert config.require_pragma is True
     assert config.use_gitignore is True
 
-    assert config.js_config == {"indent_size": 4}
-    assert config.css_config == {"indent_size": 4}
+    assert config.js_config == {"indent_size": 5}
+    assert config.css_config == {"indent_size": 5}
 
     assert config.per_file_ignores == {
         "file.html": "H026,H025",

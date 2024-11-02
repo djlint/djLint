@@ -76,22 +76,22 @@ def no_pragma(config: Config, this_file: Path) -> bool:
     with this_file.open(encoding="utf-8") as open_file:
         first_line = open_file.readline()
 
-        pragma_patterns = {
-            "html": html_patterns,
-            "django": django_jinja_patterns + html_patterns,
-            "jinja": django_jinja_patterns + html_patterns,
-            "nunjucks": nunjucks_patterns + html_patterns,
-            "handlebars": handlebars_patterns + html_patterns,
-            "golang": golang_patterns + html_patterns,
-            "angular": html_patterns,
-            "all": django_jinja_patterns
-            + nunjucks_patterns
-            + handlebars_patterns
-            + golang_patterns
-            + html_patterns,
-        }
+    pragma_patterns = {
+        "html": html_patterns,
+        "django": django_jinja_patterns + html_patterns,
+        "jinja": django_jinja_patterns + html_patterns,
+        "nunjucks": nunjucks_patterns + html_patterns,
+        "handlebars": handlebars_patterns + html_patterns,
+        "golang": golang_patterns + html_patterns,
+        "angular": html_patterns,
+        "all": django_jinja_patterns
+        + nunjucks_patterns
+        + handlebars_patterns
+        + golang_patterns
+        + html_patterns,
+    }
 
-        for pattern in pragma_patterns[config.profile]:
-            if re.match(pattern, first_line):
-                return True
-        return False
+    for pattern in pragma_patterns[config.profile]:
+        if re.match(pattern, first_line):
+            return True
+    return False

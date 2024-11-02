@@ -3,7 +3,7 @@
 ```bash
 Usage: djlint [OPTIONS] SRC ...
 
-  djLint · lint and reformat HTML templates.
+  djLint · HTML template linter and formatter.
 
 Options:
   --version                       Show the version and exit.
@@ -25,8 +25,8 @@ Options:
   --preserve-blank-lines          Attempt to preserve blank lines.
   --format-css                    Also format contents of <style> tags.
   --format-js                     Also format contents of <script> tags.
-  --configuration PATH            Path to global configuration file.
-                                  .djlintrc OR pyproject.toml formats are valid
+  --configuration FILE            Path to global configuration file in
+                                  djlint.toml or .djlintrc format
   --statistics                    Count the number of occurrences of each
                                   error/warning code.
   --include TEXT                  Codes to include. ex: "H014,H017"
@@ -36,6 +36,9 @@ Options:
                                   ... %} tag groups.
   --blank-line-before-tag TEXT    Add an additional blank line before {% <tag>
                                   ... %} tag groups.
+  --line-break-after-multiline-tag
+                                  Do not condense the content of multi-line
+                                  tags into the line of the last attribute.
   --custom-blocks TEXT            Indent custom template blocks. For example
                                   {% toc %}...{% endtoc %}
   --custom-html TEXT              Indent custom HTML tags. For example <mjml>
@@ -57,7 +60,8 @@ Options:
                                   matter.
   --no-function-formatting        Do not attempt to format function contents.
   --no-set-formatting             Do not attempt to format set contents.
-  --max-blank-lines INTEGER       Consolidate blank lines down to x lines. [default: 0]
+  --max-blank-lines INTEGER       Consolidate blank lines down to x lines.
+                                  [default: 0]
   -h, --help                      Show this message and exit.
 ```
 
