@@ -17,7 +17,7 @@ Le format de `pyproject.toml` est `toml`.
 
 Le format de `djlint.toml` est `toml`.
 
-``toml
+```toml
 <options de configuration>
 ```
 

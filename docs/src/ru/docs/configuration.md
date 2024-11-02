@@ -10,20 +10,20 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 Формат файла `pyproject.toml` - `toml`.
 
-``toml
+```toml
 [tool.djlint]
 <опции конфигурации>
 ```
 
 Формат файла `djlint.toml` - `toml`.
 
-``toml
+```toml
 <опции конфигурации>
 ```
 
 Формат файла `.djlintrc` - `json`.
 
-``json
+```json
 {
   "ключ": "значение"
 }
