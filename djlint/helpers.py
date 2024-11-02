@@ -243,10 +243,7 @@ def inside_html_attribute(
         # group 3 are the attributes
         span = ignored_match.span(3)
         # span = (-1, -1) if no attributes are present
-        if (
-            span[0] <= match_start
-            and match_end <= span[1]
-        ):
+        if span[0] <= match_start and match_end <= span[1]:
             return True
     return False
 

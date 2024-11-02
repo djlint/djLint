@@ -935,8 +935,12 @@ test_data = [
         id="with_html_tag_in_attribute",
     ),
     pytest.param(
-        ('<select data-json=\'{"html": "<div></div>"}\' data-normal="hello"></select>'),
-        ('<select data-json=\'{"html": "<div></div>"}\' data-normal="hello"></select>\n'),
+        (
+            '<select data-json=\'{"html": "<div></div>"}\' data-normal="hello"></select>'
+        ),
+        (
+            '<select data-json=\'{"html": "<div></div>"}\' data-normal="hello"></select>\n'
+        ),
         id="with_json_html_tag_in_attribute",
     ),
 ]
