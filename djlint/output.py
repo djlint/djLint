@@ -110,7 +110,7 @@ def build_relative_path(url: str, project_root: Path) -> str:
     """Get path relative to project."""
     url_path = Path(url)
     if project_root != url_path and project_root in url_path.parents:
-        return str(url_path.relative_to(project_root.resolve()))
+        return str(url_path.relative_to(project_root))
 
     return url
 
@@ -129,9 +129,7 @@ def build_output(
     if not errors:
         return 0
 
-    filename = build_relative_path(
-        next(iter(error.keys())), config.project_root.resolve()
-    )
+    filename = build_relative_path(next(iter(error)), config.project_root)
 
     if "{filename}" not in config.linter_output_format and not config.stdin:  # noqa: RUF027
         echo(
@@ -183,9 +181,7 @@ def build_check_output(
             Fore.GREEN
             + Style.BRIGHT
             + "\n"
-            + build_relative_path(
-                next(iter(errors.keys())), config.project_root.resolve()
-            )
+            + build_relative_path(next(iter(errors)), config.project_root)
             + "\n"
             + Style.DIM
             + "".join("─" for _ in range(1, width))
@@ -243,7 +239,7 @@ def build_stats_output(
     )
 
     if messages and codes:
-        longest_code = len(max(messages.keys(), key=len))
+        longest_code = len(max(messages, key=len))
         longest_count = len(
             str(max(Counter(codes).values(), key=_count_digits))
         )

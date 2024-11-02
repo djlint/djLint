@@ -1,0 +1,7 @@
+profile = "django"
+indent = 2
+ignore = ""
+files = [
+  "./tests/test_config/test_files/test.html",
+  "./tests/test_config/test_files/test_two.html",
+]

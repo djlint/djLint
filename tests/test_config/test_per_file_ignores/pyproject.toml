@@ -1,2 +1,2 @@
 [tool.djlint.per-file-ignores]
-"html.html"= "H025"
+"html.html" = "H025"

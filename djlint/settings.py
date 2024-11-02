@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 def find_project_root(src: Path) -> Path:
     """Attempt to get the project root."""
-    for directory in (src, *src.resolve().parents):
+    for directory in (src, *src.parents):
         if (directory / ".git").exists():
             return directory
 
@@ -48,6 +48,9 @@ def find_project_root(src: Path) -> Path:
             return directory
 
         if (directory / "pyproject.toml").is_file():
+            return directory
+
+        if (directory / "djlint.toml").is_file():
             return directory
 
         if (directory / ".djlintrc").is_file():
@@ -83,8 +86,18 @@ def find_pyproject(root: Path) -> Path | None:
     return None
 
 
+def find_djlint_toml(root: Path) -> Path | None:
+    """Search upstream for a djlint.toml file."""
+    djlint_toml = root / "djlint.toml"
+
+    if djlint_toml.is_file():
+        return djlint_toml
+
+    return None
+
+
 def find_djlintrc(root: Path) -> Path | None:
-    """Search upstream for a pyproject.toml file."""
+    """Search upstream for a .djlintrc file."""
     djlintrc = root / ".djlintrc"
 
     if djlintrc.is_file():
@@ -94,7 +107,7 @@ def find_djlintrc(root: Path) -> Path | None:
 
 
 def find_djlint_rules(root: Path) -> Path | None:
-    """Search upstream for a pyproject.toml file."""
+    """Search upstream for a .djlint_rules.yaml file."""
     rules = root / ".djlint_rules.yaml"
 
     if rules.is_file():
@@ -104,51 +117,61 @@ def find_djlint_rules(root: Path) -> Path | None:
 
 
 def load_pyproject_config(filepath: Path) -> Any:
-    """Load djlint config from pyproject.toml"""
-    data = tomllib.loads(filepath.resolve().read_text(encoding="utf-8"))
+    """Load djlint config from pyproject.toml."""
+    data = tomllib.loads(filepath.read_text(encoding="utf-8"))
     return data.get("tool", {}).get("djlint", {})
 
 
+def load_djlint_toml_config(filepath: Path) -> Any:
+    """Load djlint config from djlint.toml."""
+    return tomllib.loads(filepath.read_text(encoding="utf-8"))
+
+
 def load_djlintrc_config(filepath: Path) -> Any:
-    """Load djlint config from .djlintrc"""
-    return json.loads(filepath.resolve().read_text(encoding="utf-8"))
+    """Load djlint config from .djlintrc."""
+    return json.loads(filepath.read_bytes())
 
 
-def load_project_settings(src: Path, config: str | None) -> Any:
-    """Load djlint config from pyproject.toml."""
+def load_project_settings(src: Path, config: Path | None) -> Any:
+    """Load djlint config."""
     djlint_content: dict[str, Any] = {}
 
     if config:
         try:
-            path = Path(config)
-            if path.name == "pyproject.toml":
-                djlint_content.update(load_pyproject_config(path))
+            if config.name == "pyproject.toml":
+                djlint_content.update(load_pyproject_config(config))
+            elif config.suffix == ".toml":
+                djlint_content.update(load_djlint_toml_config(config))
             else:
-                djlint_content.update(load_djlintrc_config(path))
-
+                djlint_content.update(load_djlintrc_config(config))
         except Exception as error:
             logger.error(
-                "%sFailed to load config file %s. %s",
-                Fore.RED,
-                Path(config).resolve(),
-                error,
+                "%sFailed to load config file %s. %s", Fore.RED, config, error
             )
 
-    pyproject_file = find_pyproject(src)
+    if pyproject_file := find_pyproject(src):
+        try:
+            content = load_pyproject_config(pyproject_file)
+        except Exception as error:
+            logger.error(
+                "%sFailed to load djlint.toml file. %s", Fore.RED, error
+            )
+        else:
+            if content:
+                djlint_content.update(content)
+                return djlint_content
 
-    if pyproject_file:
-        content = load_pyproject_config(pyproject_file)
-        if content:
-            djlint_content.update(content)
-            return content
-        logger.info("No pyproject.toml found.")
+    if djlint_toml_file := find_djlint_toml(src):
+        try:
+            djlint_content.update(load_djlint_toml_config(djlint_toml_file))
+        except Exception as error:
+            logger.error(
+                "%sFailed to load djlint.toml file. %s", Fore.RED, error
+            )
 
-    djlintrc_file = find_djlintrc(src)
-
-    if djlintrc_file:
+    elif djlintrc_file := find_djlintrc(src):
         try:
             djlint_content.update(load_djlintrc_config(djlintrc_file))
-
         except Exception as error:
             logger.error("%sFailed to load .djlintrc file. %s", Fore.RED, error)
 
@@ -242,7 +265,7 @@ class Config:
         preserve_blank_lines: bool = False,
         format_css: bool = False,
         format_js: bool = False,
-        configuration: str | None = None,
+        configuration: Path | None = None,
         statistics: bool = False,
         include: str = "",
         ignore_case: bool = False,
@@ -275,7 +298,7 @@ class Config:
         if src == "-":
             self.project_root = find_project_root(Path.cwd())
         else:
-            self.project_root = find_project_root(Path(src))
+            self.project_root = find_project_root(Path(src).resolve())
 
         djlint_settings = load_project_settings(
             self.project_root, configuration
