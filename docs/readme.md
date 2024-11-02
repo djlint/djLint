@@ -5,7 +5,7 @@ Docs are made with [11ty](https://www.11ty.dev).
 ## Running the docs website locally
 
 1. change into the docs dir. `cd docs`
-2. install node deps. `npm install`
+2. install node deps. `npm install --ignore-scripts`
 3. turn on the website. `npm start`
 
 ## How the demo works
