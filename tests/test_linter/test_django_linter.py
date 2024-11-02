@@ -14,8 +14,8 @@ from djlint.lint import linter
 from tests.conftest import lint_printer
 
 if TYPE_CHECKING:
-    from djlint.lint import LintError
     from djlint.settings import Config
+    from djlint.types import LintError
 
 test_data = [
     pytest.param(

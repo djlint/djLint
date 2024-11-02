@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
     from typing_extensions import Any
 
-    from djlint.lint import LintError
+    from djlint.types import LintError
 
 
 @pytest.fixture

@@ -19,8 +19,8 @@ from ..lint import get_line
 if TYPE_CHECKING:
     from typing_extensions import Any
 
-    from ..lint import LintError
     from ..settings import Config
+    from ..types import LintError
 
 
 def run(

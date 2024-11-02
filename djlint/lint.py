@@ -7,7 +7,6 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 import regex as re
-from typing_extensions import TypedDict
 
 from .helpers import (
     inside_ignored_linter_block,
@@ -20,13 +19,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from .settings import Config
-
-
-class LintError(TypedDict):
-    code: str
-    line: str
-    match: str
-    message: str
+    from .types import LintError
 
 
 flags = {

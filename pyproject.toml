@@ -31,8 +31,6 @@ dependencies = [
   "click>=8.0.1",
   "colorama>=0.4.4",
   "cssbeautifier>=1.14.4",
-  "html-tag-names>=0.1.2",
-  "html-void-elements>=0.1",
   "jsbeautifier>=1.14.4",
   "json5>=0.9.11",
   "pathspec>=0.12",
@@ -40,7 +38,6 @@ dependencies = [
   "regex>=2023",
   "tomli>=2.0.1; python_version<'3.11'",
   "tqdm>=4.62.2",
-  "typing-extensions>=3.7.4",
 ]
 urls.documentation = "https://djlint.com"
 urls.repository = "https://github.com/djlint/djLint"
@@ -58,6 +55,7 @@ dev = [
   "types-pyyaml==6.0.12.20240917",
   "types-regex==2024.9.11.20240912",
   "types-tqdm==4.66.0.20240417",
+  "typing-extensions==4.12.2",
 ]
 
 [tool.hatch.build.targets.sdist]

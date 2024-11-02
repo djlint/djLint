@@ -25,7 +25,7 @@ from .settings import Config
 from .src import get_src
 
 if TYPE_CHECKING:
-    from .output import ProcessResult
+    from .types import ProcessResult
 
 
 @click.command(  # type: ignore[operator]
