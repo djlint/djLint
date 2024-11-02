@@ -12,10 +12,10 @@ from typing import TYPE_CHECKING
 import yaml
 from click import echo
 from colorama import Fore
-from HtmlTagNames import html_tag_names
-from HtmlVoidElements import html_void_elements
 from pathspec import PathSpec
 from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
+
+from .const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 
 if sys.version_info >= (3, 11):
     try:
@@ -569,7 +569,7 @@ class Config:
         """
 
         # all html tags possible
-        self.indent_html_tags: str = "|".join(html_tag_names) + self.custom_html
+        self.indent_html_tags: str = "|".join(HTML_TAG_NAMES) + self.custom_html
 
         self.indent_template_tags: str = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
@@ -962,7 +962,7 @@ class Config:
             | li
         """
 
-        self.always_self_closing_html_tags: str = "|".join(html_void_elements)
+        self.always_self_closing_html_tags: str = "|".join(HTML_VOID_ELEMENTS)
 
         self.optional_single_line_template_tags: str = r"""
               if

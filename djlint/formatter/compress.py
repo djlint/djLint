@@ -8,9 +8,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import regex as re
-from HtmlTagNames import html_tag_names
-from HtmlVoidElements import html_void_elements
 
+from ..const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 from ..helpers import RE_FLAGS_IMX, child_of_unformatted_block
 
 if TYPE_CHECKING:
@@ -21,7 +20,7 @@ def compress_html(html: str, config: Config) -> str:
     """Compress html."""
 
     def _fix_case(tag: str) -> str:
-        if not config.ignore_case and tag.lower() in html_tag_names:
+        if not config.ignore_case and tag.lower() in HTML_TAG_NAMES:
             return tag.lower()
 
         if not config.ignore_case and tag.lower() == "doctype":
@@ -54,7 +53,7 @@ def compress_html(html: str, config: Config) -> str:
             if match.group(3)
             else ""
         )
-        if tag.lower() in html_void_elements and config.close_void_tags:
+        if tag.lower() in HTML_VOID_ELEMENTS and config.close_void_tags:
             close_bracket = " />"
         else:
             close_bracket = (
