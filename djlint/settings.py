@@ -154,7 +154,7 @@ def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
             logger.error(
-                "%sFailed to load djlint.toml file. %s", Fore.RED, error
+                "%sFailed to load pyproject.toml file. %s", Fore.RED, error
             )
         else:
             if content:
