@@ -52,11 +52,9 @@ def format_js(html: str, config: Config) -> str:
         with StringIO() as buf:
             for line, test in zip(beautified_lines, beautified_lines_test):
                 buf.write("\n")
-                if line == test:
-                    buf.write(line)
-                else:
+                if line != test:
                     buf.write(indent)
-                    buf.write(line)
+                buf.write(line)
             beautified = buf.getvalue()
 
         return match.group(1) + match.group(2) + beautified + "\n" + indent
