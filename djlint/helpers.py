@@ -246,7 +246,6 @@ def inside_html_attribute(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Check if a re.Match is inside of an html attribute."""
-
     match_start, match_end = match.span()
     for ignored_match_start, ignored_match_end in _inside_html_attribute(
         html, html_tag_regex=config.html_tag_regex

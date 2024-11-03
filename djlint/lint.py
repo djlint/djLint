@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib
+import itertools
 from collections.abc import Sequence
 from functools import cache
 from typing import TYPE_CHECKING
@@ -11,9 +12,10 @@ import regex as re
 
 from djlint import regex_utils
 from djlint.helpers import (
+    RE_FLAGS_IMSX,
+    RE_FLAGS_IX,
     inside_ignored_linter_block,
     inside_ignored_rule,
-    overlaps_ignored_block,
 )
 
 if TYPE_CHECKING:
@@ -59,6 +61,19 @@ def get_line(start: int, line_ends: Sequence[Mapping[str, int]]) -> str:
     return "{}:{}".format(line_ends.index(line) + 1, start - line["start"])
 
 
+def overlaps_ignored(
+    blocks: list[tuple[int, int, int]], match: re.Match[str]
+) -> bool:
+    match_start = match.start()
+    match_end = match.end()
+    for block in blocks:
+        if (block[0] <= match_start <= block[2]) or (
+            block[1] <= match_end <= block[2]
+        ):
+            return True
+    return False
+
+
 def linter(
     config: Config, html: str, filename: str, filepath: str
 ) -> dict[str, list[LintError]]:
@@ -77,6 +92,17 @@ def linter(
         if regex_utils.search(pattern, filepath, flags=re.X):
             ignored_rules.update(x.strip() for x in rules.split(","))
 
+    ignored_blocks = [
+        (x.start(0), x.start(), x.end())
+        for x in itertools.chain(
+            regex_utils.finditer(
+                config.ignored_blocks, html, flags=RE_FLAGS_IMSX
+            ),
+            regex_utils.finditer(
+                config.ignored_inline_blocks, html, flags=RE_FLAGS_IX
+            ),
+        )
+    ]
     for rule in config.linter_rules:
         rule = rule["rule"]  # noqa: PLW2901
 
@@ -109,7 +135,7 @@ def linter(
                     pattern, html, flags=build_flags(rule.get("flags", "re.S"))
                 ):
                     if (
-                        not overlaps_ignored_block(config, html, match)
+                        not overlaps_ignored(ignored_blocks, match)
                         and not inside_ignored_rule(
                             config, html, match, rule["name"]
                         )
