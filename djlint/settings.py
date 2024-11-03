@@ -122,7 +122,7 @@ def load_pyproject_config(filepath: Path) -> Any:
     return data.get("tool", {}).get("djlint", {})
 
 
-def load_djlint_toml_config(filepath: Path) -> Any:
+def load_djlint_toml_config(filepath: Path) -> dict[str, Any]:
     """Load djlint config from djlint.toml."""
     return tomllib.loads(filepath.read_text(encoding="utf-8"))
 
@@ -132,7 +132,7 @@ def load_djlintrc_config(filepath: Path) -> Any:
     return json.loads(filepath.read_bytes())
 
 
-def load_project_settings(src: Path, config: Path | None) -> Any:
+def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
     """Load djlint config."""
     djlint_content: dict[str, Any] = {}
 
