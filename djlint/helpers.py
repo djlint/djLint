@@ -342,16 +342,29 @@ def child_of_ignored_block(
     return False
 
 
+@cache
+def _overlaps_ignored_block(
+    html: str, /, *, ignored_blocks: str, ignored_inline_blocks: str
+) -> tuple[tuple[int, int], ...]:
+    return tuple(
+        x.span()
+        for x in itertools.chain(
+            re.finditer(ignored_blocks, html, flags=RE_FLAGS_IMSX),
+            re.finditer(ignored_inline_blocks, html, flags=RE_FLAGS_IX),
+        )
+    )
+
+
 def overlaps_ignored_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
-    for ignored_match in itertools.chain(
-        re.finditer(config.ignored_blocks, html, flags=RE_FLAGS_IMSX),
-        re.finditer(config.ignored_inline_blocks, html, flags=RE_FLAGS_IX),
+    for ignored_match_start, ignored_match_end in _overlaps_ignored_block(
+        html,
+        ignored_blocks=config.ignored_blocks,
+        ignored_inline_blocks=config.ignored_inline_blocks,
     ):
-        ignored_match_start, ignored_match_end = ignored_match.span()
         # don't require the match to be fully inside the ignored block.
         # poorly build html will probably span ignored blocks and should be ignored.
         if (ignored_match_start <= match_start <= ignored_match_end) or (
