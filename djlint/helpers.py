@@ -10,9 +10,14 @@ from typing import TYPE_CHECKING
 import regex as re
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from typing import Final
 
+    from typing_extensions import TypeVar
+
     from .settings import Config
+
+    T = TypeVar("T")
 
 RE_FLAGS_IS: Final = re.I | re.S
 RE_FLAGS_IX: Final = re.I | re.X
@@ -24,22 +29,27 @@ RE_FLAGS_ISX: Final = re.I | re.S | re.X
 RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 
 
+def _last_item(iterable: Iterable[T], /) -> T | None:
+    last = None
+    for item in iterable:
+        last = item
+    return last
+
+
 def is_ignored_block_opening(config: Config, item: str) -> bool:
     """Find ignored group opening.
 
     A valid ignored group opening tag will not be part of a
     single line block.
     """
-    last_index = 0
-    inline = tuple(
+    inline = _last_item(
         re.finditer(config.ignored_blocks_inline, item, flags=RE_FLAGS_IMSX)
     )
-
-    if inline:
-        last_index = (
-            inline[-1].end()
-        )  # get the last index. The ignored opening should start after this.
-
+    last_index = (
+        inline.end()  # get the last index. The ignored opening should start after this.
+        if inline
+        else 0
+    )
     return bool(
         re.search(
             config.ignored_block_opening, item[last_index:], flags=RE_FLAGS_IX
@@ -53,16 +63,14 @@ def is_script_style_block_opening(config: Config, item: str) -> bool:
     A valid ignored group opening tag will not be part of a
     single line block.
     """
-    last_index = 0
-    inline = tuple(
+    inline = _last_item(
         re.finditer(config.script_style_inline, item, flags=RE_FLAGS_IMSX)
     )
-
-    if inline:
-        last_index = (
-            inline[-1].end()
-        )  # get the last index. The ignored opening should start after this.
-
+    last_index = (
+        inline.end()  # get the last index. The ignored opening should start after this.
+        if inline
+        else 0
+    )
     return bool(
         re.search(
             config.script_style_opening, item[last_index:], flags=RE_FLAGS_IX
@@ -81,7 +89,6 @@ def inside_protected_trans_block(
     True = non indentable > inside ignored trans block
     False = indentable > either inside a trans trimmed block, or somewhere else, but not a trans non trimmed :)
     """
-    last_index = 0
     close_block = re.search(
         config.ignored_trans_blocks_closing, match.group(), flags=RE_FLAGS_IX
     )
@@ -89,30 +96,26 @@ def inside_protected_trans_block(
     if not close_block:
         return False
 
-    non_trimmed = tuple(
+    non_trimmed = _last_item(
         re.finditer(config.ignored_trans_blocks, html, flags=RE_FLAGS_ISX)
     )
 
-    trimmed = tuple(
+    trimmed = _last_item(
         re.finditer(config.trans_trimmed_blocks, html, flags=RE_FLAGS_ISX)
     )
 
     # who is max?
-    if non_trimmed and (
-        not trimmed or non_trimmed[-1].end() > trimmed[-1].end()
-    ):
+    if non_trimmed and (not trimmed or non_trimmed.end() > trimmed.end()):
         # non trimmed!
         # check that this is not an inline block.
-        non_trimmed_inline = any(
-            re.finditer(
+        non_trimmed_inline = bool(
+            re.search(
                 config.ignored_trans_blocks, match.group(), flags=RE_FLAGS_ISX
             )
         )
 
         if non_trimmed_inline:
-            last_index = non_trimmed[
-                -1
-            ].end()  # get the last index. The ignored opening should start after this.
+            last_index = non_trimmed.end()  # get the last index. The ignored opening should start after this.
 
             return bool(
                 re.search(
@@ -122,12 +125,12 @@ def inside_protected_trans_block(
                 )
             )
 
-        return close_block.end(0) <= non_trimmed[-1].end()
+        return close_block.end(0) <= non_trimmed.end()
 
     if trimmed:
         # inside a trimmed block, we can return true to continue as if
         # this is a indentable block
-        return close_block.end(0) > trimmed[-1].end()
+        return close_block.end(0) > trimmed.end()
     return False
 
     # print(close_block)
@@ -149,16 +152,14 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
     A valid ignored group closing tag will not be part of a
     single line block.
     """
-    last_index = 0
-    inline = tuple(
+    inline = _last_item(
         re.finditer(config.ignored_inline_blocks, item, flags=RE_FLAGS_IX)
     )
-
-    if inline:
-        last_index = (
-            inline[-1].end()
-        )  # get the last index. The ignored opening should start after this.
-
+    last_index = (
+        inline.end()  # get the last index. The ignored opening should start after this.
+        if inline
+        else 0
+    )
     return bool(
         re.search(
             config.ignored_block_closing, item[last_index:], flags=RE_FLAGS_IX
@@ -172,16 +173,14 @@ def is_script_style_block_closing(config: Config, item: str) -> bool:
     A valid ignored group closing tag will not be part of a
     single line block.
     """
-    last_index = 0
-    inline = tuple(
+    inline = _last_item(
         re.finditer(config.script_style_inline, item, flags=RE_FLAGS_IX)
     )
-
-    if inline:
-        last_index = (
-            inline[-1].end()
-        )  # get the last index. The ignored opening should start after this.
-
+    last_index = (
+        inline.end()  # get the last index. The ignored opening should start after this.
+        if inline
+        else 0
+    )
     return bool(
         re.search(
             config.script_style_closing, item[last_index:], flags=RE_FLAGS_IX
@@ -195,20 +194,18 @@ def is_safe_closing_tag(config: Config, item: str) -> bool:
     A valid ignored group opening tag will not be part of a
     single line block.
     """
-    last_index = 0
-    inline = tuple(
+    inline = _last_item(
         re.finditer(
             config.ignored_inline_blocks + r" | " + config.ignored_blocks,
             item,
             flags=RE_FLAGS_IMSX,
         )
     )
-
-    if inline:
-        last_index = (
-            inline[-1].end()
-        )  # get the last index. The ignored opening should start after this.
-
+    last_index = (
+        inline.end()  # get the last index. The ignored opening should start after this.
+        if inline
+        else 0
+    )
     return bool(
         re.search(config.safe_closing_tag, item[last_index:], flags=RE_FLAGS_IX)
     )
