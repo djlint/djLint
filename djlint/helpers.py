@@ -231,7 +231,7 @@ def inside_template_block(
 @cache
 def _inside_html_attribute(
     html: str, /, *, html_tag_regex: str
-) -> tuple[tuple[int, int]]:
+) -> tuple[tuple[int, int], ...]:
     return tuple(
         # group 3 are the attributes
         x.span(3)
