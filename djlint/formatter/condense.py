@@ -93,7 +93,8 @@ def clean_whitespace(html: str, config: Config) -> str:
             return match.group()
 
         # check that next line is not blank.
-        if html[match.end() : match.end() + 1] != "\n":
+        match_end = match.end()
+        if html[match_end : match_end + 1] != "\n":
             return match.group() + "\n"
 
         return match.group()
@@ -135,7 +136,8 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     def yaml_add_blank_line_after(html: str, match: re.Match[str]) -> str:
         """Add break after if not in ignored block."""
-        if match.start() == 0 and not html.startswith("\n\n", match.end()):
+        match_start, match_end = match.span()
+        if match_start == 0 and not html.startswith("\n\n", match_end):
             # verify there are not already blank lines
             return match.group() + "\n"
 

@@ -80,7 +80,7 @@ def expand_html(html: str, config: Config) -> str:
         # ensure template tag is not inside an html tag and also not the first line of the file
         if inside_ignored_block(config, html, match):
             return match.group(1)
-
+        match_start, match_end = match.span()
         if not re.search(
             r"\<(?:"
             + str(config.indent_html_tags)
@@ -89,10 +89,10 @@ def expand_html(html: str, config: Config) -> str:
             + r")\b(?:\"[^\">]*\"|'[^'>]*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^>{}])*?"
             + re.escape(match.group(1))
             + "$",
-            html[: match.end()],
+            html[:match_end],
             flags=RE_FLAGS_MX,
         ):
-            if out_format == "\n%s" and match.start() == 0:
+            if out_format == "\n%s" and match_start == 0:
                 return match.group(1)
             return out_format % match.group(1)
 
