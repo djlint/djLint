@@ -847,6 +847,8 @@ class Config:
            {%-?[ ]*?raw\b(?:(?!%}).)*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
         """
 
+        self.unformatted_blocks_coarse: str = r"djlint\:\s*off"
+
         self.unformatted_blocks: str = r"""
             # html comment
             | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
