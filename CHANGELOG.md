@@ -2,6 +2,21 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.36.0] - 2024-11-05
+
+### Feature
+
+- Add support for `djlint.toml` config file. The format is identical to `pyproject.toml`, but it does not use `[tool.djlint]` table.
+
+### Fix
+
+- Do not format HTML in attributes. Thanks, @oliverhaas.
+- Fix using `js_config` instead of `css_config`.
+
+### Performance
+
+- Increase performance by ~30% by using regex more efficiently and caching more stuff.
+
 ## [1.35.4] - 2024-11-01
 
 Compiled [mypyc](https://mypyc.readthedocs.io/en/stable/introduction.html) wheels are now also available, which improve performance by ~21% over Pure Python. They will be automatically installed by your package manager when available for your platform. Pure Python wheel is still available.
