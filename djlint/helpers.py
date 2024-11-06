@@ -306,8 +306,10 @@ def inside_ignored_block(
 
 @cache
 def _child_of_unformatted_block(
-    html: str, /, *, unformatted_blocks: str
+    html: str, /, *, unformatted_blocks: str, unformatted_blocks_coarse: str
 ) -> tuple[tuple[int, int], ...]:
+    if not re.search(unformatted_blocks_coarse, html, flags=RE_FLAGS_IMSX):
+        return ()
     return tuple(
         x.span()
         for x in re.finditer(unformatted_blocks, html, flags=RE_FLAGS_IMSX)
@@ -320,7 +322,9 @@ def child_of_unformatted_block(
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
     for ignored_match_start, ignored_match_end in _child_of_unformatted_block(
-        html, unformatted_blocks=config.unformatted_blocks
+        html,
+        unformatted_blocks=config.unformatted_blocks,
+        unformatted_blocks_coarse=config.unformatted_blocks_coarse,
     ):
         if ignored_match_start < match_start and match_end <= ignored_match_end:
             return True
