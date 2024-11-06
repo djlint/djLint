@@ -413,7 +413,8 @@ def inside_ignored_rule(
             ignored_match_start, ignored_match_end = ignored_match.span()
             if (
                 (ignored_match_start <= match_start <= ignored_match_end)
-                and rule in re.split(r"\s|,", ignored_match.group(1).strip())
+                and rule
+                in regex_utils.split(r"\s|,", ignored_match.group(1).strip())
             ) or (
                 (ignored_match_start <= match_end <= ignored_match_end)
                 and not ignored_match.group(1).strip()
