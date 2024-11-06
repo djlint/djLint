@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint import regex_utils
+from . import regex_utils
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
