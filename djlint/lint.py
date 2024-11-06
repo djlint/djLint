@@ -147,6 +147,7 @@ def linter(
                             "match": match.group().strip()[:20],
                             "message": rule["message"],
                         })
+            build_flags.cache_clear()
 
     # remove duplicate matches
     for filename, error_dict in errors.items():  # noqa: PLR1704
