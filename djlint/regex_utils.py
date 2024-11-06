@@ -1,45 +1,47 @@
 from __future__ import annotations
 
 from functools import cache
-from typing import TYPE_CHECKING, Union
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-    from typing import Any, Callable
+from typing import TYPE_CHECKING
 
 import regex as re
 
-FlagsType = Union[re.RegexFlag, int, None]
+if TYPE_CHECKING:
+    from typing import Any, Callable
 
-
-def search(
-    regex: str, text: str, flags: FlagsType = None, **kwargs: Any
-) -> re.Match[str] | None:
-    return _compile_cached(regex, flags=flags).search(text, **kwargs)
-
-
-def finditer(
-    regex: str, text: str, flags: FlagsType = None, **kwargs: Any
-) -> Iterable[re.Match[str]]:
-    return _compile_cached(regex, flags=flags).finditer(text, **kwargs)
-
-
-def sub(
-    regex: str,
-    repl: str | Callable[[re.Match[str]], str],
-    text: str,
-    flags: FlagsType = None,
-    **kwargs: Any,
-) -> str:
-    return _compile_cached(regex, flags=flags).sub(repl, text, **kwargs)
+    from regex._regex import Scanner
 
 
 def match(
-    regex: str, text: str, flags: FlagsType = None, **kwargs: Any
+    pattern: str, string: str, /, *, flags: int = 0
 ) -> re.Match[str] | None:
-    return _compile_cached(regex, flags=flags).match(text, **kwargs)
+    return _compile_cached(pattern, flags=flags).match(string)
+
+
+def search(
+    pattern: str, string: str, /, *, flags: int = 0
+) -> re.Match[str] | None:
+    return _compile_cached(pattern, flags=flags).search(string)
+
+
+def sub(
+    pattern: str,
+    repl: str | Callable[[re.Match[str]], str],
+    string: str,
+    /,
+    *,
+    flags: int = 0,
+) -> str:
+    return _compile_cached(pattern, flags=flags).sub(repl, string)
+
+
+def split(pattern: str, string: str, /) -> list[str | Any]:
+    return _compile_cached(pattern).split(string)
+
+
+def finditer(pattern: str, string: str, /, *, flags: int = 0) -> Scanner[str]:
+    return _compile_cached(pattern, flags=flags).finditer(string)
 
 
 @cache
-def _compile_cached(regex: str, flags: FlagsType = None) -> re.Pattern[str]:
-    return re.compile(regex, flags=flags or 0)
+def _compile_cached(pattern: str, /, *, flags: int = 0) -> re.Pattern[str]:
+    return re.compile(pattern, flags=flags, cache_pattern=False)
