@@ -2,6 +2,10 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.36.1] - 2024-11-07
+
+- Improve performance by ~30%. Thanks, @oliverhaas.
+
 ## [1.36.0] - 2024-11-05
 
 ### Feature
