@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import copy
 from itertools import chain
 from typing import TYPE_CHECKING
 
@@ -36,12 +35,8 @@ def run(
     """Check for orphans html tags."""
     open_tags: list[re.Match[str]] = []
     orphan_tags: list[re.Match[str]] = []
-
-    for match in regex_utils.finditer(
-        r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
-        html,
-        flags=re.X,
-    ):
+    regex_str = r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>"
+    for match in regex_utils.finditer(regex_str, html, flags=re.X):
         if match.group(1) and not regex_utils.search(
             rf"^/?{config.always_self_closing_html_tags}\b",
             match.group(1),
@@ -51,13 +46,16 @@ def run(
             if match.group(1)[0] != "/":
                 open_tags.insert(0, match)
             else:
-                for i, tag in enumerate(copy.deepcopy(open_tags)):
+                to_pop: int | None = None
+                for i, tag in enumerate(open_tags):
                     if tag.group(2) == match.group(1)[1:]:
-                        open_tags.pop(i)
+                        to_pop = i
                         break
-                else:
+                if to_pop is None:
                     # there was no open tag matching the close tag
                     orphan_tags.append(match)
+                else:
+                    open_tags.pop(to_pop)
 
     return tuple(
         {
