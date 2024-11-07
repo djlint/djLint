@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from . import regex_utils
+from djlint import regex_utils
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -343,8 +343,6 @@ def child_of_unformatted_block(
         unformatted_blocks=config.unformatted_blocks,
         unformatted_blocks_coarse=config.unformatted_blocks_coarse,
     ):
-        if ignored_match_start > match_start:
-            break
         if ignored_match_start < match_start and match_end <= ignored_match_end:
             return True
     return False
