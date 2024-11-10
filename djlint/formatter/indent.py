@@ -125,21 +125,17 @@ def indent_html(rawcode: str, config: Config) -> str:
                 re.search(
                     rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
                     (?:
-                        (?:<({slt_html})>)(?:.*?)(?:</(?:\1)>) # <span>stuff</span> >>>> match 1
-                       |(?:<({slt_html})\b[^>]+?>)(?:.*?)(?:</(?:\2)>) # <span stuff>stuff</span> >>> match 2
-                       |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
-                       |(?:<(?:{slt_html})\b[^>]*?/>) # <img />
-                       |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\3)[ ]+?.*?%}}) # >>> match 3
-                       |{config.ignored_inline_blocks}
+                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b[^>]*?/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
+                        |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
+                        |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\2)[ ]+?.*?%}}) # >>> match 2
+                        |{config.ignored_inline_blocks}
                     )[ \t]*?
                     (?:
                     .*? # anything
                     (?: # followed by another slt
-                        (?:<({slt_html})>)(?:.*?)(?:</(?:\4)>) # <span>stuff</span> >>>> match 1
-                       |(?:<({slt_html})\b[^>]+?>)(?:.*?)(?:</(?:\5)>) # <span stuff>stuff</span> >>> match 2
+                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\3)>)|\b[^>]*?/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 3
                        |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
-                       |(?:<(?:{slt_html})\b[^>]*?/>) # <img />
-                       |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\6)[ ]+?.*?%}}) # >>> match 3
+                       |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\4)[ ]+?.*?%}}) # >>> match 4
                        |{config.ignored_inline_blocks}
                     )[ \t]*?
                     )*? # optional of course
