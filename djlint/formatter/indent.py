@@ -260,7 +260,6 @@ def indent_html(rawcode: str, config: Config) -> str:
         else:
             tmp = item + "\n"
 
-        # TODO(oliverhaas): This block fails in the end
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
         if is_ignored_block_opening_:
