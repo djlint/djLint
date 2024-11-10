@@ -260,6 +260,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         else:
             tmp = item + "\n"
 
+        # TODO(oliverhaas): This block fails in the end
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line
         if is_ignored_block_opening_:
@@ -273,7 +274,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             func = partial(format_attributes, config, item)
 
             tmp = re.sub(
-                rf"(\s*?)(<(?:{config.indent_html_tags}))\s((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}\/])+?)(\s?/?>)",
+                config.indent_html_tags_regex,
                 func,
                 tmp,
                 flags=RE_FLAGS_IX,
