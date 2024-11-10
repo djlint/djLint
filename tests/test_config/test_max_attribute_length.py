@@ -105,10 +105,10 @@ test_data = [
     ),
     pytest.param(
         (
-            "<option data-json='{ \"icon\": \"<img class=\\\"ss\\\">\" }' {% if True %}selected{% endif %}>"
+            '<option data-json=\'{ "icon": "<img class=\\"ss\\">" }\' {% if True %}selected{% endif %}>'
         ),
         (
-            "<option data-json='{ \"icon\": \"<img class=\\\"ss\\\">\" }'\n"
+            '<option data-json=\'{ "icon": "<img class=\\"ss\\">" }\'\n'
             "    {% if True %}selected{% endif %}\n"
             "    >\n"
         ),
