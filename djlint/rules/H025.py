@@ -37,7 +37,7 @@ def run(
     orphan_tags: list[re.Match[str]] = []
     regex_str = r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>"
     for match in regex_utils.finditer(regex_str, html, flags=re.X):
-        if match.group(1) and not regex_utils.search(
+        if match.group(1) and not regex_utils.search_cached(
             rf"^/?{config.always_self_closing_html_tags}\b",
             match.group(1),
             flags=RE_FLAGS_IX,

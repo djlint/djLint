@@ -55,7 +55,7 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
         else 0
     )
     return bool(
-        regex_utils.search(
+        regex_utils.search_cached(
             config.ignored_block_opening, item[last_index:], flags=RE_FLAGS_IX
         )
     )
@@ -95,6 +95,8 @@ def inside_protected_trans_block(
     True = non indentable > inside ignored trans block
     False = indentable > either inside a trans trimmed block, or somewhere else, but not a trans non trimmed :)
     """
+    if "endblocktrans" not in match.group():
+        return False
     close_block = regex_utils.search(
         config.ignored_trans_blocks_closing, match.group(), flags=RE_FLAGS_IX
     )
@@ -173,7 +175,7 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
         else 0
     )
     return bool(
-        regex_utils.search(
+        regex_utils.search_cached(
             config.ignored_block_closing, item[last_index:], flags=RE_FLAGS_IX
         )
     )

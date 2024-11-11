@@ -23,6 +23,13 @@ def search(
     return _compile_cached(pattern, flags=flags).search(string)
 
 
+@cache
+def search_cached(
+    pattern: str, string: str, /, *, flags: int = 0
+) -> re.Match[str] | None:
+    return _compile_cached(pattern, flags=flags).search(string)
+
+
 def sub(
     pattern: str,
     repl: str | Callable[[re.Match[str]], str],

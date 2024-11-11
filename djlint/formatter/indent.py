@@ -68,7 +68,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # handlebars templates
         rawcode = regex_utils.sub(r"({{#(?:each|if).+?[^ ])(}})", func, rawcode)
 
-    rawcode_flat_list = regex_utils.split("\n", rawcode)
+    rawcode_flat_list = rawcode.split("\n")
 
     indent = config.indent
 
@@ -123,7 +123,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         ) or (
             not is_block_raw
             and (
-                regex_utils.search(
+                regex_utils.search_cached(
                     rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
                     (?:
                         <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b[^>]*?/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
@@ -237,12 +237,12 @@ def indent_html(rawcode: str, config: Config) -> str:
                 flags=RE_FLAGS_IMX,
             )
         ) or (
-            regex_utils.search(
+            not is_block_raw
+            and regex_utils.search(
                 r"^(?:" + str(config.tag_indent) + r")",
                 item,
                 flags=RE_FLAGS_IMX,
             )
-            and not is_block_raw
         ):
             tmp = (indent * indent_level) + item + "\n"
             indent_level += 1
