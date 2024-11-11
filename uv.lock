@@ -213,11 +213,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/69/3e/dd37e1a7223247e3e
 
 [[package]]
 name = "json5"
-version = "0.9.25"
+version = "0.9.27"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/91/59/51b032d53212a51f17ebbcc01bd4217faab6d6c09ed0d856a987a5f42bbc/json5-0.9.25.tar.gz", hash = "sha256:548e41b9be043f9426776f05df8635a00fe06104ea51ed24b67f908856e151ae", size = 40332 }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/04/69fff96cffa54cbd60645ea94d36f40f3e90f1cff0e4c7b27475753f1724/json5-0.9.27.tar.gz", hash = "sha256:5a19de4a6ca24ba664dc7d50307eb73ba9a16dea5d6bde85677ae85d3ed2d8e0", size = 41842 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8a/3c/4f8791ee53ab9eeb0b022205aa79387119a74cc9429582ce04098e6fc540/json5-0.9.25-py3-none-any.whl", hash = "sha256:34ed7d834b1341a86987ed52f3f76cd8ee184394906b6e22a1e0deb9ab294e8f", size = 30109 },
+    { url = "https://files.pythonhosted.org/packages/a1/55/4bd7bcf5be870b5806cab717d68fbf26a8d1bf54583337950c70f0dc729b/json5-0.9.27-py3-none-any.whl", hash = "sha256:17b43d78d3a6daeca4d7030e9bf22092dba29b1282cc2d0cfa56f6febee8dc93", size = 30894 },
 ]
 
 [[package]]
