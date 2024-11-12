@@ -50,7 +50,7 @@ dev = [
   "pytest-cov==6",
   "pytest-xdist==3.6.1",
   "ruff==0.7.3",
-  "tomli==2.0.2",
+  "tomli==2.1.0",
   "types-colorama==0.4.15.20240311",
   "types-pyyaml==6.0.12.20240917",
   "types-regex==2024.11.6.20241108",
