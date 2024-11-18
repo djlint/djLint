@@ -727,12 +727,41 @@ class Config:
         """
         )
 
-        self.html_tag_regex = r"""
+        self.template_tags = r"""
+        {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
+        """
+
+        self.html_tag_attribute_regex = rf"""
+            ((?:\s*?(?:
+                \"(?:{self.template_tags}|\\\"|[^\"])*\"
+                |'(?:{self.template_tags}|\\'|[^'])*'
+                |{self.template_tags}
+                |[^'\">{{}}/\s]|/(?!>)
+            ))+)?
+        """
+
+        self.html_tag_regex = rf"""
             (</?(?:!(?!--))?) # an opening bracket (< or </ or <!), but not a comment
             ([^\s>!\[]+\b) # a tag name
-            ((?:\s*?(?:\"[^\"]*\"|'[^']*'|{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^'\">{}/\s]|/(?!>)))+)? # any attributes
+            {self.html_tag_attribute_regex} # any attributes
             \s*? # potentially some whitespace
             (/?>) # a closing bracket (/> or >)
+        """
+
+        self.indent_html_tags_attribute_regex = rf"""
+            \s((?:
+                (?<!\\)\"(?:{self.template_tags}|\\\"|[^\"])*\"
+                |(?<!\\)'(?:{self.template_tags}|\\'|[^'])*'
+                |{self.template_tags}
+                |[^'\">{{}}\/]
+            )+?)
+        """
+
+        self.indent_html_tags_regex: str = rf"""
+            (\s*?)
+            (<(?:{self.indent_html_tags}))
+            {self.indent_html_tags_attribute_regex}
+            (\s*?/?>)
         """
 
         self.attribute_style_pattern: str = (
