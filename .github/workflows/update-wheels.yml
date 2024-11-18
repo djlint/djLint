@@ -15,9 +15,11 @@ jobs:
     if: ${{ github.repository_owner == 'djlint' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
           cache: pip
           check-latest: true
       - run: |
