@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
+from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
 
 if TYPE_CHECKING:
-    from ..settings import Config
+    from djlint.settings import Config
 
 
 def format_template_tags(config: Config, attributes: str, spacing: int) -> str:

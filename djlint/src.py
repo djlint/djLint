@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
 
-    from .settings import Config
+    from djlint.settings import Config
 
 
 def get_src(src: Iterable[Path], config: Config) -> list[Path]:

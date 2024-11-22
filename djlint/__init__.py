@@ -18,14 +18,14 @@ from click import echo
 from colorama import Fore, Style, colorama_text
 from tqdm import tqdm
 
-from .lint import lint_file
-from .output import print_output
-from .reformat import reformat_file
-from .settings import Config
-from .src import get_src
+from djlint.lint import lint_file
+from djlint.output import print_output
+from djlint.reformat import reformat_file
+from djlint.settings import Config
+from djlint.src import get_src
 
 if TYPE_CHECKING:
-    from .types import ProcessResult
+    from djlint.types import ProcessResult
 
 
 @click.command(  # type: ignore[operator]

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from .helpers import (
+from djlint.helpers import (
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from collections.abc import Mapping
     from pathlib import Path
 
-    from .settings import Config
-    from .types import LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 
 flags = {

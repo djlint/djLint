@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..helpers import (
+from djlint.helpers import (
     RE_FLAGS_IMS,
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
@@ -22,7 +22,7 @@ from ..helpers import (
 )
 
 if TYPE_CHECKING:
-    from ..settings import Config
+    from djlint.settings import Config
 
 
 def clean_whitespace(html: str, config: Config) -> str:

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from typing_extensions import TypeVar
 
-    from .settings import Config
+    from djlint.settings import Config
 
     T = TypeVar("T")
 

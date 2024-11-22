@@ -10,10 +10,10 @@ import jsbeautifier
 import regex as re
 from jsbeautifier.javascript.options import BeautifierOptions
 
-from ..helpers import RE_FLAGS_IS, child_of_unformatted_block
+from djlint.helpers import RE_FLAGS_IS, child_of_unformatted_block
 
 if TYPE_CHECKING:
-    from ..settings import Config
+    from djlint.settings import Config
 
 
 def format_js(html: str, config: Config) -> str:

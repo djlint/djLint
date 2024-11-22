@@ -9,11 +9,11 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
-from ..helpers import RE_FLAGS_IMX, child_of_unformatted_block
+from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.helpers import RE_FLAGS_IMX, child_of_unformatted_block
 
 if TYPE_CHECKING:
-    from ..settings import Config
+    from djlint.settings import Config
 
 
 def compress_html(html: str, config: Config) -> str:

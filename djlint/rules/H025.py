@@ -8,19 +8,19 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..helpers import (
+from djlint.helpers import (
     RE_FLAGS_IX,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
 )
-from ..lint import get_line
+from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from typing_extensions import Any
 
-    from ..settings import Config
-    from ..types import LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def run(

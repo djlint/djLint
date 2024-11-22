@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING
 import json5 as json
 import regex as re
 
-from ..helpers import (
+from djlint.formatter.attributes import format_attributes
+from djlint.helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
     RE_FLAGS_IX,
@@ -19,10 +20,9 @@ from ..helpers import (
     is_script_style_block_closing,
     is_script_style_block_opening,
 )
-from .attributes import format_attributes
 
 if TYPE_CHECKING:
-    from ..settings import Config
+    from djlint.settings import Config
 
 
 def indent_html(rawcode: str, config: Config) -> str:

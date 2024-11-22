@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from ..helpers import (
+from djlint.helpers import (
     RE_FLAGS_IMX,
     RE_FLAGS_IX,
     RE_FLAGS_MX,
@@ -21,7 +21,7 @@ from ..helpers import (
 )
 
 if TYPE_CHECKING:
-    from ..settings import Config
+    from djlint.settings import Config
 
 
 def expand_html(html: str, config: Config) -> str:

@@ -8,17 +8,17 @@ from __future__ import annotations
 import difflib
 from typing import TYPE_CHECKING
 
-from .formatter.compress import compress_html
-from .formatter.condense import clean_whitespace, condense_html
-from .formatter.css import format_css
-from .formatter.expand import expand_html
-from .formatter.indent import indent_html
-from .formatter.js import format_js
+from djlint.formatter.compress import compress_html
+from djlint.formatter.condense import clean_whitespace, condense_html
+from djlint.formatter.css import format_css
+from djlint.formatter.expand import expand_html
+from djlint.formatter.indent import indent_html
+from djlint.formatter.js import format_js
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from .settings import Config
+    from djlint.settings import Config
 
 
 def formatter(config: Config, rawcode: str) -> str:

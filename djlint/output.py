@@ -16,8 +16,8 @@ from colorama import Fore, Style
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
 
-    from .settings import Config
-    from .types import LintError, ProcessResult
+    from djlint.settings import Config
+    from djlint.types import LintError, ProcessResult
 
 
 try:

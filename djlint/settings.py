@@ -15,7 +15,7 @@ from colorama import Fore
 from pathspec import PathSpec
 from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
 
-from .const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 
 if sys.version_info >= (3, 11):
     try:
