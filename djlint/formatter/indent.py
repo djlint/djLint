@@ -67,7 +67,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # handlebars templates
         rawcode = re.sub(r"({{#(?:each|if).+?[^ ])(}})", func, rawcode)
 
-    rawcode_flat_list = re.split("\n", rawcode)
+    rawcode_flat_list = re.split(r"\n", rawcode)
 
     indent = config.indent
 
