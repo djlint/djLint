@@ -1123,3 +1123,9 @@ class Config:
               )
         """
         )
+
+    def get_exclude_paths(self) -> list[Path]:
+        return [
+            Path(p.strip().replace("\\.", ".")).resolve()
+            for p in self.exclude.split("|")
+        ]
