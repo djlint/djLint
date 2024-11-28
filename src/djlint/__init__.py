@@ -23,6 +23,7 @@ from djlint.output import print_output
 from djlint.reformat import reformat_file
 from djlint.settings import Config
 from djlint.src import get_src
+from djlint.github_output import print_github_output
 
 if TYPE_CHECKING:
     from djlint.types import ProcessResult
@@ -70,9 +71,7 @@ if TYPE_CHECKING:
     help="Indent spacing. [default: 4]",
     show_default=False,
 )
-@click.option(
-    "--quiet", is_flag=True, help="Do not print diff when reformatting."
-)
+@click.option("--quiet", is_flag=True, help="Do not print diff when reformatting.")
 @click.option(
     "--profile",
     type=str,
@@ -83,9 +82,7 @@ if TYPE_CHECKING:
     is_flag=True,
     help="Only format or lint files that starts with a comment with the text 'djlint:on'",
 )
-@click.option(
-    "--lint", is_flag=True, help="Lint for common issues. [default option]"
-)
+@click.option("--lint", is_flag=True, help="Lint for common issues. [default option]")
 @click.option(
     "--use-gitignore",
     is_flag=True,
@@ -133,9 +130,7 @@ if TYPE_CHECKING:
     help='Codes to include. ex: "H014,H017"',
     show_default=False,
 )
-@click.option(
-    "--ignore-case", is_flag=True, help="Do not fix case on known html tags."
-)
+@click.option("--ignore-case", is_flag=True, help="Do not fix case on known html tags.")
 @click.option(
     "--ignore-blocks",
     type=str,
@@ -215,9 +210,7 @@ if TYPE_CHECKING:
 @click.option(
     "--indent-css", type=int, help="Set CSS indent level.", show_default=False
 )
-@click.option(
-    "--indent-js", type=int, help="Set JS indent level.", show_default=False
-)
+@click.option("--indent-js", type=int, help="Set JS indent level.", show_default=False)
 @click.option(
     "--close-void-tags",
     is_flag=True,
@@ -243,6 +236,11 @@ if TYPE_CHECKING:
     type=int,
     help="Consolidate blank lines down to x lines. [default: 0]",
     show_default=False,
+)
+@click.option(
+    "--github-output",
+    is_flag=True,
+    help="Output GitHub-compatible formatting.",
 )
 @colorama_text(autoreset=True)
 def main(
@@ -287,8 +285,10 @@ def main(
     no_function_formatting: bool,
     no_set_formatting: bool,
     max_blank_lines: int | None,
+    github_output: bool = False,
 ) -> None:
     """djLint · HTML template linter and formatter."""
+
     config = Config(
         src[0],
         extension=extension,
@@ -383,7 +383,7 @@ def main(
             Fore.GREEN + Style.BRIGHT,
             Style.RESET_ALL + "    ",
         )
-        if not config.stdin and not config.quiet:
+        if not config.stdin and not config.quiet and not github_output:
             echo()
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
@@ -409,13 +409,12 @@ def main(
                     colour="BLUE",
                     ascii=progress_char,
                     leave=False,
+                    disable=github_output,
                 ) as pbar:
                     for future in as_completed(futures):
                         file_errors.append(future.result())
                         pbar.update()
-                        elapsed = pbar.format_interval(
-                            pbar.format_dict["elapsed"]
-                        )
+                        elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
 
                 finished_bar_message = f"{Fore.BLUE + Style.BRIGHT}{message}{Style.RESET_ALL} {Fore.GREEN + Style.BRIGHT}{{n_fmt}}/{{total_fmt}}{Style.RESET_ALL} {Fore.BLUE + Style.BRIGHT}files{Style.RESET_ALL} {{bar}} {Fore.GREEN + Style.BRIGHT}{elapsed}{Style.RESET_ALL}    "
 
@@ -426,12 +425,11 @@ def main(
                     colour="GREEN",
                     ascii=progress_char,
                     leave=True,
+                    disable=github_output,
                 ):
                     pass
             else:
-                file_errors = [
-                    future.result() for future in as_completed(futures)
-                ]
+                file_errors = [future.result() for future in as_completed(futures)]
 
         if temp_file and (config.reformat or config.check):
             # if using stdin, only give back formatted code.
@@ -447,6 +445,13 @@ def main(
                 temp_file.close()
             finally:
                 Path(temp_file.name).unlink(missing_ok=True)
+
+    if (
+        github_output
+        and print_github_output(config, file_errors, len(file_list))
+        and not config.warn
+    ):
+        sys.exit(1)
 
     if print_output(config, file_errors, len(file_list)) and not config.warn:
         sys.exit(1)
