@@ -27,7 +27,6 @@ jobs:
           path: dist
   build-pure:
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'djlint' }}
     permissions:
       id-token: write
     steps:
