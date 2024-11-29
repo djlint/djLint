@@ -733,8 +733,8 @@ class Config:
 
         self.html_tag_attribute_regex = rf"""
             ((?:\s*?(?:
-                \"(?:{self.template_tags}|\\\"|[^\"])*\"
-                |'(?:{self.template_tags}|\\'|[^'])*'
+                \"(?>{self.template_tags}|\\\"|[^\"])*\"
+                |'(?>{self.template_tags}|\\'|[^'])*'
                 |{self.template_tags}
                 |[^'\">{{}}/\s]|/(?!>)
             ))+)?
