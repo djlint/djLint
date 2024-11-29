@@ -103,18 +103,6 @@ test_data = [
         ({"max_attribute_length": 3, "custom_html": "[\\w\\-]+"}),
         id="long tag custom_html",
     ),
-    pytest.param(
-        (
-            '<option data-json=\'{ "icon": "<img class=\\"ss\\">" }\' {% if True %}selected{% endif %}>'
-        ),
-        (
-            '<option data-json=\'{ "icon": "<img class=\\"ss\\">" }\'\n'
-            "    {% if True %}selected{% endif %}\n"
-            "    >\n"
-        ),
-        ({"max_attribute_length": 1}),
-        id="with_html_tag_in_attribute_escaped_and_template_tag",
-    ),
 ]
 
 

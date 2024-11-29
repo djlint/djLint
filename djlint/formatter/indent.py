@@ -269,7 +269,10 @@ def indent_html(rawcode: str, config: Config) -> str:
             func = partial(format_attributes, config, item)
 
             tmp = re.sub(
-                config.indent_html_tags_regex, func, tmp, flags=RE_FLAGS_IX
+                rf"(\s*?)(<(?:{config.indent_html_tags}))\s((?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}\/])+?)(\s?/?>)",
+                func,
+                tmp,
+                flags=RE_FLAGS_IX,
             )
 
         # turn off raw block if we hit end - for one line raw blocks, but not an inline raw
