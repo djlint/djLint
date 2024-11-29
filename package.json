@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.36.2",
+  "version": "1.36.3",
   "description": "HTML Template Linter and Formatter",
   "keywords": [
     "html template linter",
@@ -35,7 +35,7 @@
   },
   "files": [],
   "scripts": {
-    "postinstall": "python3 -m pip install --upgrade djlint==1.36.2"
+    "postinstall": "python3 -m pip install --upgrade djlint==1.36.3"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.4.0",
