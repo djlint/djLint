@@ -4,7 +4,7 @@ requires = ["hatchling"]
 
 [project]
 name = "djlint"
-version = "1.36.1"
+version = "1.36.3"
 description = "HTML Template Linter and Formatter"
 readme = "README.md"
 license = { text = "GPL-3.0-or-later" }
@@ -49,8 +49,8 @@ dev = [
   "pytest==8.3.3",
   "pytest-cov==6",
   "pytest-xdist==3.6.1",
-  "ruff==0.8.0",
-  "tomli==2.1.0",
+  "ruff==0.8.1",
+  "tomli==2.2.1",
   "types-colorama==0.4.15.20240311",
   "types-pyyaml==6.0.12.20240917",
   "types-regex==2024.11.6.20241108",

@@ -2,6 +2,24 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.36.3] - 2024-11-29
+
+This release reverts the following changes from the last release as they caused issues:
+
+- Fix specific mixture of quotes and escaped quotes (e.g. in a json string in an html attribute) breaks the html. Issue #1048.
+- Resolve exclude paths. Issue #1047.
+
+## [1.36.2] - 2024-11-28
+
+Fix:
+
+- Fix specific mixture of quotes and escaped quotes (e.g. in a json string in an html attribute) breaks the html. Thanks, @oliverhaas.
+- Resolve exclude paths. Thanks, @antoineauger.
+
+Performance:
+
+- Minor regex indent optimization. Thanks, @oliverhaas.
+
 ## [1.36.1] - 2024-11-07
 
 - Improve performance by ~30%. Thanks, @oliverhaas.

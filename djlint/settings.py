@@ -750,8 +750,8 @@ class Config:
 
         self.indent_html_tags_attribute_regex = rf"""
             \s((?:
-                (?<!\\)\"(?:{self.template_tags}|\\\"|[^\"])*\"
-                |(?<!\\)'(?:{self.template_tags}|\\'|[^'])*'
+                (?<!\\)\"(?>{self.template_tags}|\\\"|[^\"])*\"
+                |(?<!\\)'(?>{self.template_tags}|\\'|[^'])*'
                 |{self.template_tags}
                 |[^'\">{{}}\/]
             )+?)
