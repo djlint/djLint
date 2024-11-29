@@ -23,32 +23,27 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
 
         normalized_item = item.resolve()
 
-        if (
-            normalized_item.is_file()
-            and no_pragma(config, normalized_item)
-            and (
-                (
-                    config.use_gitignore
-                    and not config.gitignore.match_file(normalized_item)
-                )
-                or not config.use_gitignore
-            )
-        ):
-            paths.append(normalized_item)
+        if normalized_item.is_file():
+            if no_pragma(config, normalized_item) and (
+                not config.use_gitignore
+                or not config.gitignore.match_file(normalized_item)
+            ):
+                paths.append(normalized_item)
             continue
 
         # remove leading . from extension
-        extension = str(config.extension)
-        extension = extension.removeprefix(".")
+        extension = config.extension.removeprefix(".")
 
         paths.extend(
             x
             for x in normalized_item.glob(f"**/*.{extension}")
-            if not re.search(config.exclude, x.as_posix(), flags=re.X)
-            and no_pragma(config, x)
-            and (
-                (config.use_gitignore and not config.gitignore.match_file(x))
-                or not config.use_gitignore
+            if (
+                not re.search(config.exclude, x.as_posix(), flags=re.X)
+                and no_pragma(config, x)
+                and (
+                    not config.use_gitignore
+                    or not config.gitignore.match_file(x)
+                )
             )
         )
 
