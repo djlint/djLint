@@ -44,7 +44,7 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
         paths.extend(
             x
             for x in normalized_item.glob(f"**/*.{extension}")
-            if not any(x.is_relative_to(p) for p in config.get_exclude_paths())
+            if not re.search(config.exclude, x.as_posix(), flags=re.X)
             and no_pragma(config, x)
             and (
                 (config.use_gitignore and not config.gitignore.match_file(x))

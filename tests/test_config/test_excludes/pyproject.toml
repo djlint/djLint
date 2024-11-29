@@ -1,3 +1,3 @@
 [tool.djlint]
-exclude = "tests/test_config/test_excludes/foo/excluded.html"
-extend_exclude = "tests/test_config/test_excludes/excluded.html"
+exclude = "foo/excluded.html"
+extend_exclude = "excluded.html"
