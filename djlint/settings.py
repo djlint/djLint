@@ -727,10 +727,6 @@ class Config:
         """
         )
 
-        self.template_tags = r"""
-            {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
-        """
-
         self.template_tags_self_closing = r"""
             {%(?:(?!%}).)*\/\s%}
         """
