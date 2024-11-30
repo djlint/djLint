@@ -238,6 +238,11 @@ def indent_html(rawcode: str, config: Config) -> str:
                 flags=RE_FLAGS_IMX,
             )
             and not is_block_raw
+            and not re.search(
+                config.template_tags_self_closing,
+                item,
+                flags=RE_FLAGS_IMX,
+            )
         ):
             tmp = (indent * indent_level) + item + "\n"
             indent_level += 1
