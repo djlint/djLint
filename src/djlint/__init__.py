@@ -240,7 +240,9 @@ if TYPE_CHECKING:
 @click.option(
     "--github-output",
     is_flag=True,
+    default=bool(os.getenv("GITHUB_ACTIONS")),
     help="Output GitHub-compatible formatting.",
+    show_default=True,
 )
 @colorama_text(autoreset=True)
 def main(
