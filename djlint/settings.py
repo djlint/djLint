@@ -727,6 +727,10 @@ class Config:
         """
         )
 
+        self.template_tags = r"""
+            {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
+        """
+
         self.html_tag_regex = r"""
             (</?(?:!(?!--))?) # an opening bracket (< or </ or <!), but not a comment
             ([^\s>!\[]+\b) # a tag name
