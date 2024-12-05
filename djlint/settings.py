@@ -728,7 +728,7 @@ class Config:
         )
 
         self.template_tags = r"""
-            {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
+        {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
         """
 
         self.html_tag_attribute_regex = rf"""
