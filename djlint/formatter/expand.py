@@ -112,9 +112,7 @@ def expand_html(html: str, config: Config) -> str:
 
     # break after
     return re.sub(
-        r"((?:{%|{{\#)[ ]*?(?:"
-        + config.break_template_tags
-        + ")[^}]+?[%}]})(?=[^\n])",
+        rf"((?:{{%|{{{{\#)[ ]*?(?:{config.break_template_tags})(?>{config.template_tags}|[^}}])+?[%}}]}})(?=[^\n])",
         partial(should_i_move_template_tag, "%s\n"),
         html,
         flags=RE_FLAGS_IMX,
