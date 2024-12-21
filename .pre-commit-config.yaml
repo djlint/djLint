@@ -47,3 +47,4 @@ repos:
           - types-pyyaml
           - types-regex
           - types-tqdm
+          - typing-extensions
