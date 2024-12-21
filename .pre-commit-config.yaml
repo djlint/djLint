@@ -39,6 +39,8 @@ repos:
         additional_dependencies:
           - orjson
           - click
+          - cssbeautifier
+          - jsbeautifier
           - json5
           - pathspec
           - pytest
