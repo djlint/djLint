@@ -27,6 +27,11 @@ if sys.version_info >= (3, 11):
 else:
     import tomli as tomllib
 
+if sys.version_info >= (3, 11):
+    from typing import final
+else:
+    from typing_extensions import final
+
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
 
@@ -243,6 +248,7 @@ def build_custom_html(custom_html: str | None) -> str | None:
     return None
 
 
+@final
 class Config:
     """Djlint Config."""
 

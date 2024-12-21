@@ -38,6 +38,7 @@ dependencies = [
   "regex>=2023",
   "tomli>=2.0.1; python_version<'3.11'",
   "tqdm>=4.62.2",
+  "typing-extensions>=3.6.6; python_version<'3.11'",
 ]
 urls.documentation = "https://djlint.com"
 urls.repository = "https://github.com/djlint/djLint"

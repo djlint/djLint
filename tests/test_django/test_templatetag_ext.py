@@ -13,7 +13,7 @@ from djlint.reformat import formatter
 from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing_extensions import Any
 
 test_data = [
     pytest.param(

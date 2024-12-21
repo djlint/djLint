@@ -122,6 +122,7 @@ dependencies = [
     { name = "regex" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "tqdm" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 
 [package.dev-dependencies]
@@ -151,6 +152,7 @@ requires-dist = [
     { name = "regex", specifier = ">=2023" },
     { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.0.1" },
     { name = "tqdm", specifier = ">=4.62.2" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=3.6.6" },
 ]
 
 [package.metadata.requires-dev]
