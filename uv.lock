@@ -163,7 +163,7 @@ dev = [
     { name = "tomli", specifier = "==2.2.1" },
     { name = "types-colorama", specifier = "==0.4.15.20240311" },
     { name = "types-pyyaml", specifier = "==6.0.12.20241221" },
-    { name = "types-regex", specifier = "==2024.11.6.20241108" },
+    { name = "types-regex", specifier = "==2024.11.6.20241221" },
     { name = "types-tqdm", specifier = "==4.67.0.20241221" },
     { name = "typing-extensions", specifier = "==4.12.2" },
 ]
@@ -658,11 +658,11 @@ wheels = [
 
 [[package]]
 name = "types-regex"
-version = "2024.11.6.20241108"
+version = "2024.11.6.20241221"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/2e/88/f17e60fbd342b219da6225d10be84d0d1b2d52ce89dbb27badf6c2064e27/types-regex-2024.11.6.20241108.tar.gz", hash = "sha256:a774e307b99b3df49481b29e8b4962f021693052a8d8a2b9e6792fcec896cf5e", size = 7493 }
+sdist = { url = "https://files.pythonhosted.org/packages/7e/6a/1f4ede7c1c07cb4ae87bb81cbd247a7d20241bada6664c444b58c1679443/types_regex-2024.11.6.20241221.tar.gz", hash = "sha256:903c7b557d935363ba01f07a75981c78ada7df66623e415f32bda2afecfa5cca", size = 12107 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6e/e5/aa327953b14811299005f435beed9f81feaa4ddefe7581ef9b020c63e4f4/types_regex-2024.11.6.20241108-py3-none-any.whl", hash = "sha256:adec2ff2dfed00855551057334466fde923606599d01e7440556d53a3ef20835", size = 5671 },
+    { url = "https://files.pythonhosted.org/packages/d4/96/dbcf9a88f84747809de55eb3ba1da4637f1678e5c6e5d4c9a97115a30ea1/types_regex-2024.11.6.20241221-py3-none-any.whl", hash = "sha256:9d29ab639df22a86e15e2cc037e92ad100a4e8f4ecd2ad261d6f0c6d8d87f54e", size = 10396 },
 ]
 
 [[package]]
