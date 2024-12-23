@@ -37,7 +37,6 @@ repos:
         args:
           - --scripts-are-modules
         additional_dependencies:
-          - orjson
           - click
           - cssbeautifier
           - jsbeautifier
