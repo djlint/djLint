@@ -64,8 +64,10 @@ include = ["djlint", "mypy.ini"]
 
 [tool.hatch.build.targets.wheel.hooks.mypyc]
 dependencies = [
-  "click",
   "hatch-mypyc",
+  "click",
+  "cssbeautifier",
+  "jsbeautifier",
   "json5",
   "types-colorama",
   "types-pyyaml",
