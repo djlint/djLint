@@ -65,15 +65,15 @@ include = ["djlint", "mypy.ini"]
 [tool.hatch.build.targets.wheel.hooks.mypyc]
 dependencies = [
   "hatch-mypyc",
-  # "click",
-  # "cssbeautifier",
-  # "jsbeautifier",
-  # "json5",
-  # "types-colorama",
-  # "types-pyyaml",
-  # "types-regex",
-  # "types-tqdm",
-  # "typing-extensions",
+  "click",
+  "cssbeautifier",
+  "jsbeautifier",
+  "json5",
+  "types-colorama",
+  "types-pyyaml",
+  "types-regex",
+  "types-tqdm",
+  "typing-extensions",
 ]
 enable-by-default = false
 exclude = ["djlint/__main__.py"]
