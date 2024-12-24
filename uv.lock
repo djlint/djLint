@@ -109,7 +109,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/e5/66/9bfd2d69fb4479d38
 
 [[package]]
 name = "djlint"
-version = "1.36.3"
+version = "1.36.4"
 source = { editable = "." }
 dependencies = [
     { name = "click" },

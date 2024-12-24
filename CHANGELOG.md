@@ -2,6 +2,11 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.36.4] - 2024-12-24
+
+- Fix specific mixture of quotes and escaped quotes (e.g. in a json string in an html attribute) breaks the html. Thanks, @oliverhaas.
+- Fix broken formatting of template tags inside template tags. Thanks, @oliverhass.
+
 ## [1.36.3] - 2024-11-29
 
 This release reverts the following changes from the last release as they caused issues:
