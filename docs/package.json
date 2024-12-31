@@ -46,7 +46,7 @@
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "^1.8.3",
     "esbuild": "^0.24.0",
-    "fontawesome-subset": "4.4.0",
+    "fontawesome-subset": "4.5.0",
     "html-minifier": "4.0.0",
     "markdown-it": "^14.0.0",
     "markdown-it-anchor": "9.2.0",
