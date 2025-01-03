@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import importlib
 from collections.abc import Sequence
+from functools import cache
 from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint import regex_utils
 from djlint.helpers import (
     inside_ignored_linter_block,
     inside_ignored_rule,
@@ -38,6 +40,7 @@ flags = {
 }
 
 
+@cache
 def build_flags(flag_list: str | int) -> int:
     """Build list of regex flags."""
     if isinstance(flag_list, int):
@@ -64,14 +67,14 @@ def linter(
     # build list of line ends for file
     line_ends = [
         {"start": m.start(), "end": m.end()}
-        for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)
+        for m in regex_utils.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)
     ]
 
     ignored_rules: set[str] = set()
 
     # remove ignored rules for file
     for pattern, rules in config.per_file_ignores.items():
-        if re.search(pattern, filepath, flags=re.X):
+        if regex_utils.search(pattern, filepath, flags=re.X):
             ignored_rules.update(x.strip() for x in rules.split(","))
 
     for rule in config.linter_rules:
@@ -102,7 +105,7 @@ def linter(
         # rule based on patterns
         else:
             for pattern in rule["patterns"]:
-                for match in re.finditer(
+                for match in regex_utils.finditer(
                     pattern, html, flags=build_flags(rule.get("flags", "re.S"))
                 ):
                     if (
@@ -118,6 +121,7 @@ def linter(
                             "match": match.group().strip()[:20],
                             "message": rule["message"],
                         })
+            build_flags.cache_clear()
 
     # remove duplicate matches
     for filename, error_dict in errors.items():  # noqa: PLR1704

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint import regex_utils
 from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
 
 if TYPE_CHECKING:
@@ -38,7 +39,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
 
         for line_number, line in enumerate(attributes.splitlines()):
             # when checking for template tag, use "match" to force start of line check.
-            if re.match(
+            if regex_utils.match(
                 config.template_unindent, line.strip(), flags=RE_FLAGS_IX
             ):
                 indent -= 1
@@ -48,7 +49,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
                     + line.strip()
                 )
 
-            elif re.match(
+            elif regex_utils.match(
                 config.tag_unindent_line, line.strip(), flags=RE_FLAGS_IX
             ):
                 # if we are leaving an indented group, then remove the indent_adder
@@ -58,9 +59,9 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
                     + line.strip()
                 )
 
-            elif re.search(
+            elif regex_utils.search(
                 config.template_indent, line.strip(), flags=RE_FLAGS_IX
-            ) and not re.search(
+            ) and not regex_utils.search(
                 config.template_unindent, line.strip(), flags=RE_FLAGS_IX
             ):
                 # for open tags, search, but then check that they are not closed.
@@ -97,7 +98,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
 
     func = partial(add_break, "before")
 
-    attributes = re.sub(
+    attributes = regex_utils.sub(
         break_char
         + r".\K((?:{%|{{\#)[ ]*?(?:"
         + config.break_template_tags
@@ -109,7 +110,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
 
     func = partial(add_break, "after")
     # break after
-    attributes = re.sub(
+    attributes = regex_utils.sub(
         r"((?:{%|{{\#)[ ]*?(?:"
         + config.break_template_tags
         + ")[^}]+?[%|}]})([^\n]+)$",
@@ -139,7 +140,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
     attributes = []
 
     # format attributes as groups
-    for attr_grp in re.finditer(
+    for attr_grp in regex_utils.finditer(
         config.attribute_pattern, match.group(3).strip(), flags=re.X
     ):
         attrib_name = attr_grp.group(1)

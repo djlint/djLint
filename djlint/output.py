@@ -9,9 +9,10 @@ from collections import Counter
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import regex as re
 from click import echo
 from colorama import Fore, Style
+
+from djlint import regex_utils
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
@@ -137,7 +138,7 @@ def build_output(
             + "".join("─" for _ in range(1, width))
             + Style.RESET_ALL
         )
-
+    full_msg = ""
     for message_dict in errors:
         line = Fore.BLUE + message_dict["line"] + Style.RESET_ALL
         code = (
@@ -148,20 +149,22 @@ def build_output(
         message = message_dict["message"]
         match = (
             Fore.BLUE
-            + re.sub(r"\s{2,}|\n", " ", message_dict["match"])
+            + regex_utils.sub(r"\s{2,}|\n", " ", message_dict["match"])
             + Style.RESET_ALL
         )
 
-        echo(
+        full_msg += (
             config.linter_output_format.format(
                 filename=filename,
                 line=line,
                 code=code,
                 message=message,
                 match=match,
-            ),
-            err=False,
+            )
+            + "\n"
         )
+    if full_msg:
+        echo(full_msg, nl=False)
 
     return len(errors)
 
@@ -176,8 +179,9 @@ def build_check_output(
     color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
     width, _ = shutil.get_terminal_size()
 
+    full_msg = ""
     if not config.quiet and bool(next(iter(errors.values()))):
-        echo(
+        full_msg += (
             Fore.GREEN
             + Style.BRIGHT
             + "\n"
@@ -186,13 +190,13 @@ def build_check_output(
             + Style.DIM
             + "".join("─" for _ in range(1, width))
             + Style.RESET_ALL
+            + "\n"
         )
 
         for diff in next(iter(errors.values()))[2:]:
-            echo(
-                f"{color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}",
-                err=False,
-            )
+            full_msg += f"{color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}\n"
+    if full_msg:
+        echo(full_msg, nl=False)
 
     return sum(1 for v in errors.values() if v)
 
