@@ -7,12 +7,14 @@ from io import StringIO
 from typing import TYPE_CHECKING
 
 import jsbeautifier
-import regex as re
 from jsbeautifier.javascript.options import BeautifierOptions
 
+from djlint import regex_utils
 from djlint.helpers import RE_FLAGS_IS, child_of_unformatted_block
 
 if TYPE_CHECKING:
+    import regex as re
+
     from djlint.settings import Config
 
 
@@ -61,7 +63,7 @@ def format_js(html: str, config: Config) -> str:
 
     func = partial(launch_formatter, config, html)
 
-    return re.sub(
+    return regex_utils.sub(
         r"([ ]*?)(<(?:script)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</script>)",
         func,
         html,

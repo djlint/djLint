@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint import regex_utils
 from djlint.helpers import (
     RE_FLAGS_IMX,
     RE_FLAGS_IX,
@@ -58,7 +59,7 @@ def expand_html(html: str, config: Config) -> str:
     break_char = config.break_before
 
     # html tags - break before
-    html = re.sub(
+    html = regex_utils.sub(
         rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)",
         add_left,
         html,
@@ -66,7 +67,7 @@ def expand_html(html: str, config: Config) -> str:
     )
 
     # html tags - break after
-    html = re.sub(
+    html = regex_utils.sub(
         rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?!\s*?\n)(?=[^\n])",
         add_right,
         html,
@@ -81,7 +82,7 @@ def expand_html(html: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group(1)
         match_start, match_end = match.span()
-        if not re.search(
+        if not regex_utils.search(
             r"\<(?:"
             + str(config.indent_html_tags)
             # added > as not allowed inside a "" or '' to prevent invalid wild html matches
@@ -100,7 +101,7 @@ def expand_html(html: str, config: Config) -> str:
 
     # template tags
     # break before
-    html = re.sub(
+    html = regex_utils.sub(
         break_char
         + r"\K((?:{%|{{\#)[ ]*?(?:"
         + config.break_template_tags
@@ -111,7 +112,7 @@ def expand_html(html: str, config: Config) -> str:
     )
 
     # break after
-    return re.sub(
+    return regex_utils.sub(
         rf"((?:{{%|{{{{\#)[ ]*?(?:{config.break_template_tags})(?>{config.template_tags}|[^}}])+?[%}}]}})(?=[^\n])",
         partial(should_i_move_template_tag, "%s\n"),
         html,
