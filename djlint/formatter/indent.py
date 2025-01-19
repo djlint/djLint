@@ -125,7 +125,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 re.search(
                     rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
                     (?:
-                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b[^>]*?/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
+                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
                         |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
                         |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\2)[ ]+?.*?%}}) # >>> match 2
                         |{config.ignored_inline_blocks}
@@ -133,7 +133,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     (?:
                     .*? # anything
                     (?: # followed by another slt
-                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\3)>)|\b[^>]*?/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 3
+                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\3)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 3
                        |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
                        |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\4)[ ]+?.*?%}}) # >>> match 4
                        |{config.ignored_inline_blocks}
