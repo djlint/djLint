@@ -603,6 +603,7 @@ class Config:
         self.indent_template_tags: str = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
             + r""" (?:if
+                | unless
                 | ifchanged
                 | for
                 | asyncEach
@@ -788,6 +789,7 @@ class Config:
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
             + r"""
               (?:if
+            | unless
             | for
             | asyncEach
             | asyncAll
@@ -822,6 +824,7 @@ class Config:
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
             + r"""
               (?:if
+            | unless
             | endif
             | for
             | endfor
@@ -1027,6 +1030,7 @@ class Config:
         self.optional_single_line_template_tags: str = r"""
               if
             | for
+            | unless
             | block
             | with
             | asyncEach
