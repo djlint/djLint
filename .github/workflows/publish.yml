@@ -11,9 +11,9 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - windows-latest
+          - windows-2025
           - macos-13
-          - macos-latest
+          - macos-15
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
