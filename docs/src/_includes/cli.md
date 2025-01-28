@@ -55,7 +55,7 @@ Options:
   --indent-css INTEGER            Set CSS indent level.
   --indent-js INTEGER             Set JS indent level.
   --close-void-tags               Add closing mark on known void tags. Ex:
-                                  <img> becomse <img />
+                                  <img> becomes <img />
   --no-line-after-yaml            Do not add a blank line after yaml front
                                   matter.
   --no-function-formatting        Do not attempt to format function contents.
