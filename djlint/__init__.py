@@ -221,7 +221,7 @@ if TYPE_CHECKING:
 @click.option(
     "--close-void-tags",
     is_flag=True,
-    help="Add closing mark on known void tags. Ex: <img> becomse <img />",
+    help="Add closing mark on known void tags. Ex: <img> becomes <img />",
 )
 @click.option(
     "--no-line-after-yaml",
