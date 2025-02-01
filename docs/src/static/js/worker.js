@@ -17,7 +17,6 @@ async function loadPyodideAndPackages() {
   await micropip.install([
     // These packages have no prebuilt wheels
     `${origin}/static/py/cssbeautifier-99-py3-none-any.whl`,
-    `${origin}/static/py/EditorConfig-99-py3-none-any.whl`,
     `${origin}/static/py/jsbeautifier-99-py3-none-any.whl`,
 
     "djlint",
