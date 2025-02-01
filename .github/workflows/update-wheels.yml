@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - ./uv.lock
+      - uv.lock
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
