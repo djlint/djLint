@@ -24,9 +24,8 @@ jobs:
           check-latest: true
       - run: |
           rm -f *
-          pip wheel --no-deps cssbeautifier EditorConfig jsbeautifier
+          pip wheel --no-deps cssbeautifier jsbeautifier
           mv cssbeautifier-*.whl cssbeautifier-99-py3-none-any.whl
-          mv EditorConfig-*.whl EditorConfig-99-py3-none-any.whl
           mv jsbeautifier-*.whl jsbeautifier-99-py3-none-any.whl
         working-directory: docs/src/static/py
       - id: generate-token
