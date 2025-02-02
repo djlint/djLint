@@ -69,7 +69,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          registry-url: "https://registry.npmjs.org"
+          node-version: lts/*
+          check-latest: true
+          registry-url: https://registry.npmjs.org
       - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
