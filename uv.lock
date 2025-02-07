@@ -98,14 +98,17 @@ toml = [
 
 [[package]]
 name = "cssbeautifier"
-version = "1.15.1"
+version = "1.15.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "editorconfig" },
     { name = "jsbeautifier" },
     { name = "six" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e5/66/9bfd2d69fb4479d38439076132a620972939f7949015563dce5e61d29a8b/cssbeautifier-1.15.1.tar.gz", hash = "sha256:9f7064362aedd559c55eeecf6b6bed65e05f33488dcbe39044f0403c26e1c006", size = 25673 }
+sdist = { url = "https://files.pythonhosted.org/packages/d1/d9/03a4e864e0fc75e86f48e56749dbabf9ded65e0a4ae70cc755aaba67b4cf/cssbeautifier-1.15.2.tar.gz", hash = "sha256:02d42ffa6aefaa87f18452b437dbb73f6b98f42e9a84759810dc58f7a6bfc26c", size = 25354 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ea/5d/f4d627a62757f5dccd5561997e272fe44d67efe8636ed238001e0f2fa927/cssbeautifier-1.15.2-py3-none-any.whl", hash = "sha256:6daf7f6012ff2914092d675793a5a7f602ca36a10159d0cf5c119183004306e0", size = 123664 },
+]
 
 [[package]]
 name = "djlint"
@@ -208,13 +211,16 @@ wheels = [
 
 [[package]]
 name = "jsbeautifier"
-version = "1.15.1"
+version = "1.15.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "editorconfig" },
     { name = "six" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/69/3e/dd37e1a7223247e3ef94714abf572415b89c4e121c4af48e9e4c392e2ca0/jsbeautifier-1.15.1.tar.gz", hash = "sha256:ebd733b560704c602d744eafc839db60a1ee9326e30a2a80c4adb8718adc1b24", size = 75606 }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/fb/309b9b87222957a1314087e8ac5103463444c692b2a082532a463641d4a1/jsbeautifier-1.15.2.tar.gz", hash = "sha256:6aff11af2c6cb9a2ce135f33a5b223cf5ee676ab7ff5da0edac01e23734f5755", size = 75266 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fc/20/40b00db549c49766c0d499acedf93ba3a17072c44bad3b097e7fd90f8e80/jsbeautifier-1.15.2-py3-none-any.whl", hash = "sha256:d599aed6dcb0d5431190e5ad7335900d5fdc67236082fe6b6d3fb61d568d7417", size = 94708 },
+]
 
 [[package]]
 name = "json5"
