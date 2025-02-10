@@ -25,9 +25,7 @@ The format for `djlint.toml` is `toml`.
 The format for `.djlintrc` is `json`.
 
 ```json
-{
-  "option": "value"
-}
+{ "option": "value" }
 ```
 
 ## Options

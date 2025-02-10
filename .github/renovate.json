@@ -2,14 +2,9 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "configMigration": true,
   "dependencyDashboard": false,
-  "docker-compose": {
-    "enabled": true
-  },
+  "docker-compose": { "enabled": true },
   "extends": ["config:recommended"],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["at any time"]
-  },
+  "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
   "packageRules": [
     {
       "matchUpdateTypes": ["minor"],
@@ -25,20 +20,12 @@
       ],
       "automerge": true
     },
-    {
-      "matchDepTypes": ["devDependencies"],
-      "automerge": true
-    },
-    {
-      "matchManagers": ["pre-commit"],
-      "automerge": true
-    }
+    { "matchDepTypes": ["devDependencies"], "automerge": true },
+    { "matchManagers": ["pre-commit"], "automerge": true }
   ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
-  "pre-commit": {
-    "enabled": true
-  },
+  "pre-commit": { "enabled": true },
   "rollbackPrs": true,
   "semanticCommits": "enabled",
   "schedule": ["at any time"]

@@ -6,12 +6,7 @@
       "ru": "Возвращать ошибки в виде предупреждений.",
       "fr": "Renvoyer les erreurs sous forme d'avertissements."
     },
-    "usage": [
-      {
-        "name": "cli",
-        "value": "--warn"
-      }
-    ],
+    "usage": [{ "name": "cli", "value": "--warn" }],
     "tags": ["formatter", "linter"]
   },
   {
@@ -21,12 +16,7 @@
       "ru": "Покажите версию и выйдите.",
       "fr": "Afficher la version et quitter."
     },
-    "usage": [
-      {
-        "name": "cli",
-        "value": "--version"
-      }
-    ],
+    "usage": [{ "name": "cli", "value": "--version" }],
     "tags": ["formatter", "linter"]
   },
   {
@@ -36,12 +26,7 @@
       "ru": "Не печатайте diff при переформатировании.",
       "fr": "N'imprimez pas de différences lors du reformatage."
     },
-    "usage": [
-      {
-        "name": "cli",
-        "value": "--quiet"
-      }
-    ],
+    "usage": [{ "name": "cli", "value": "--quiet" }],
     "tags": ["formatter", "linter"]
   },
   {
@@ -52,18 +37,9 @@
       "fr": "Consolider les lignes vierges en les ramenant à x lignes. La valeur par défaut est 0, ce qui signifie que les lignes vierges seront supprimées."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "max_blank_lines=5"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"max_blank_lines\": 5"
-      },
-      {
-        "name": "cli",
-        "value": "--max_blank_lines 5"
-      }
+      { "name": "pyproject.toml", "value": "max_blank_lines=5" },
+      { "name": ".djlintrc", "value": "\"max_blank_lines\": 5" },
+      { "name": "cli", "value": "--max_blank_lines 5" }
     ],
     "tags": ["formatter"]
   },
@@ -75,18 +51,9 @@
       "fr": "Ne pas tenter de formater le contenu du jeu. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "no_set_formatting=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"no_set_formatting\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--no-set-formatting"
-      }
+      { "name": "pyproject.toml", "value": "no_set_formatting=true" },
+      { "name": ".djlintrc", "value": "\"no_set_formatting\": true" },
+      { "name": "cli", "value": "--no-set-formatting" }
     ],
     "tags": ["formatter"]
   },
@@ -98,18 +65,9 @@
       "fr": "Ne pas tenter de formater le contenu de la fonction. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "no_function_formatting=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"no_function_formatting\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--no-function-formatting"
-      }
+      { "name": "pyproject.toml", "value": "no_function_formatting=true" },
+      { "name": ".djlintrc", "value": "\"no_function_formatting\": true" },
+      { "name": "cli", "value": "--no-function-formatting" }
     ],
     "tags": ["formatter"]
   },
@@ -121,18 +79,9 @@
       "fr": "N'ajoutez pas de ligne vierge après la matière première yaml."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "no_line_after_yaml=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"no_line_after_yaml\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--no-line-after-yaml"
-      }
+      { "name": "pyproject.toml", "value": "no_line_after_yaml=true" },
+      { "name": ".djlintrc", "value": "\"no_line_after_yaml\": true" },
+      { "name": "cli", "value": "--no-line-after-yaml" }
     ],
     "tags": ["formatter"]
   },
@@ -144,18 +93,9 @@
       "fr": "Fermer les étiquettes vides."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "close_void_tags=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"close_void_tags\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--close-void-tags"
-      }
+      { "name": "pyproject.toml", "value": "close_void_tags=true" },
+      { "name": ".djlintrc", "value": "\"close_void_tags\": true" },
+      { "name": "cli", "value": "--close-void-tags" }
     ],
     "tags": ["formatter"]
   },
@@ -167,18 +107,9 @@
       "fr": "Ignore les codes de linter."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "ignore=\"H014,H015\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"ignore\": \"H014,H015\""
-      },
-      {
-        "name": "cli",
-        "value": "--ignore \"H014,H015\""
-      }
+      { "name": "pyproject.toml", "value": "ignore=\"H014,H015\"" },
+      { "name": ".djlintrc", "value": "\"ignore\": \"H014,H015\"" },
+      { "name": "cli", "value": "--ignore \"H014,H015\"" }
     ],
     "tags": ["linter"]
   },
@@ -191,18 +122,9 @@
     },
     "tags": ["linter"],
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "include=\"H014,H015\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"include\": \"H014,H015\""
-      },
-      {
-        "name": "cli",
-        "value": "--include \"H014,H015\""
-      }
+      { "name": "pyproject.toml", "value": "include=\"H014,H015\"" },
+      { "name": ".djlintrc", "value": "\"include\": \"H014,H015\"" },
+      { "name": "cli", "value": "--include \"H014,H015\"" }
     ]
   },
   {
@@ -214,14 +136,8 @@
     },
     "tags": ["linter", "formatter"],
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "extension=\"html.dj\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"extension\": \"html.dj\""
-      },
+      { "name": "pyproject.toml", "value": "extension=\"html.dj\"" },
+      { "name": ".djlintrc", "value": "\"extension\": \"html.dj\"" },
       {
         "name": "cli",
         "value": "--extension \"html.dj\"\n# or\n-e \"html.dj\""
@@ -237,18 +153,9 @@
     },
     "tags": ["formatter"],
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "custom_blocks=\"toc,example\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"custom_blocks\": \"toc,example\""
-      },
-      {
-        "name": "cli",
-        "value": "--custom-blocks \"toc,example\""
-      }
+      { "name": "pyproject.toml", "value": "custom_blocks=\"toc,example\"" },
+      { "name": ".djlintrc", "value": "\"custom_blocks\": \"toc,example\"" },
+      { "name": "cli", "value": "--custom-blocks \"toc,example\"" }
     ]
   },
   {
@@ -260,18 +167,9 @@
     },
     "tags": ["formatter"],
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "ignore_blocks=\"raw,example\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"ignore_blocks\": \"raw,example\""
-      },
-      {
-        "name": "cli",
-        "value": "--ignore-blocks \"raw,example\""
-      }
+      { "name": "pyproject.toml", "value": "ignore_blocks=\"raw,example\"" },
+      { "name": ".djlintrc", "value": "\"ignore_blocks\": \"raw,example\"" },
+      { "name": "cli", "value": "--ignore-blocks \"raw,example\"" }
     ]
   },
   {
@@ -306,18 +204,9 @@
       "fr": "Permet de modifier l'indentation du code. La valeur par défaut est 4 (quatre espaces)."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "indent=3"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"indent\": \"3\""
-      },
-      {
-        "name": "cli",
-        "value": "--indent 3"
-      }
+      { "name": "pyproject.toml", "value": "indent=3" },
+      { "name": ".djlintrc", "value": "\"indent\": \"3\"" },
+      { "name": "cli", "value": "--indent 3" }
     ]
   },
   {
@@ -337,10 +226,7 @@
         "name": ".djlintrc",
         "value": "\"exclude\": \".venv,venv,.tox,.eggs,...\""
       },
-      {
-        "name": "cli",
-        "value": "--exclude \".venv,venv,.tox,.eggs,...\""
-      }
+      { "name": "cli", "value": "--exclude \".venv,venv,.tox,.eggs,...\"" }
     ]
   },
   {
@@ -352,18 +238,9 @@
       "fr": "Ajouter des chemins supplémentaires à l'exclusion par défaut."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "extend_exclude=\".custom\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"extend_exclude\": \".custom\""
-      },
-      {
-        "name": "cli",
-        "value": "--extend-exclude \".custom\""
-      }
+      { "name": "pyproject.toml", "value": "extend_exclude=\".custom\"" },
+      { "name": ".djlintrc", "value": "\"extend_exclude\": \".custom\"" },
+      { "name": "cli", "value": "--extend-exclude \".custom\"" }
     ]
   },
   {
@@ -429,10 +306,7 @@
         "name": ".djlintrc",
         "value": "\"line_break_after_multiline_tag\": \"true\""
       },
-      {
-        "name": "cli",
-        "value": "--line-break-after-multiline-tag"
-      }
+      { "name": "cli", "value": "--line-break-after-multiline-tag" }
     ]
   },
   {
@@ -444,18 +318,9 @@
       "fr": "Définissez un profil pour la langue du modèle. Le profil activera les règles de linter qui s'appliquent à votre langage de modèle, et peut également changer le reformatage. Par exemple, dans `handlebars`, il n'y a pas d'espaces dans les balises `{{#if}}`.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "profile=\"django\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"profile\": \"django\""
-      },
-      {
-        "name": "cli",
-        "value": "--profile \"django\""
-      }
+      { "name": "pyproject.toml", "value": "profile=\"django\"" },
+      { "name": ".djlintrc", "value": "\"profile\": \"django\"" },
+      { "name": "cli", "value": "--profile \"django\"" }
     ]
   },
   {
@@ -467,18 +332,9 @@
       "fr": "Ne formatez ou ne limez que les fichiers qui commencent par un commentaire contenant uniquement le texte 'djlint:on'. Le commentaire peut être un commentaire HTML ou un commentaire dans le langage de modèle défini par le paramètre de profil. Si aucun profil n'est spécifié, un commentaire dans l'un des langages de modèle est accepté.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "require_pragma=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"require_pragma\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--require_pragma"
-      }
+      { "name": "pyproject.toml", "value": "require_pragma=true" },
+      { "name": ".djlintrc", "value": "\"require_pragma\": true" },
+      { "name": "cli", "value": "--require_pragma" }
     ]
   },
   {
@@ -490,18 +346,9 @@
       "fr": "Le formateur essaiera de mettre certaines balises html et template sur une seule ligne au lieu de les envelopper si la longueur de la ligne ne dépasse pas cette valeur."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "max_line_length=120"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"max_line_length\": \"120\""
-      },
-      {
-        "name": "cli",
-        "value": "--max_line_length 120"
-      }
+      { "name": "pyproject.toml", "value": "max_line_length=120" },
+      { "name": ".djlintrc", "value": "\"max_line_length\": \"120\"" },
+      { "name": "cli", "value": "--max_line_length 120" }
     ]
   },
   {
@@ -513,18 +360,9 @@
       "fr": "Le formateur tentera d'envelopper les attributs de la balise si la longueur de l'attribut dépasse cette valeur."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "max_attribute_length=10"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"max_attribute_length\": \"10\""
-      },
-      {
-        "name": "cli",
-        "value": "--max-attribute-length 10"
-      }
+      { "name": "pyproject.toml", "value": "max_attribute_length=10" },
+      { "name": ".djlintrc", "value": "\"max_attribute_length\": \"10\"" },
+      { "name": "cli", "value": "--max-attribute-length 10" }
     ]
   },
   {
@@ -536,18 +374,9 @@
       "fr": "Ajouter les exclusions .gitignore à l'exclusion par défaut."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "use_gitignore=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"use_gitignore\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--use_gitignore"
-      }
+      { "name": "pyproject.toml", "value": "use_gitignore=true" },
+      { "name": ".djlintrc", "value": "\"use_gitignore\": true" },
+      { "name": "cli", "value": "--use_gitignore" }
     ]
   },
   {
@@ -567,10 +396,7 @@
         "name": ".djlintrc",
         "value": "\"format_attribute_template_tags\": true"
       },
-      {
-        "name": "cli",
-        "value": "--format-attribute-template-tags"
-      }
+      { "name": "cli", "value": "--format-attribute-template-tags" }
     ]
   },
   {
@@ -605,18 +431,9 @@
       "fr": "Préserve l'espace de tête du texte, dans la mesure du possible. Idéal pour les fichiers de modèles non-html où l'indentation du texte est intentionnelle."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "preserve_leading_space=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"preserve_leading_space\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--preserve_leading_space"
-      }
+      { "name": "pyproject.toml", "value": "preserve_leading_space=true" },
+      { "name": ".djlintrc", "value": "\"preserve_leading_space\": true" },
+      { "name": "cli", "value": "--preserve_leading_space" }
     ]
   },
   {
@@ -628,18 +445,9 @@
       "fr": "Préserve les blancs lorsque cela est possible. Idéal pour les fichiers de modèles non-html où les lignes vides sont intentionnelles."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "preserve_blank_lines=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"preserve_blank_lines\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--preserve_blank_lines"
-      }
+      { "name": "pyproject.toml", "value": "preserve_blank_lines=true" },
+      { "name": ".djlintrc", "value": "\"preserve_blank_lines\": true" },
+      { "name": "cli", "value": "--preserve_blank_lines" }
     ]
   },
   {
@@ -682,10 +490,7 @@
         "name": ".djlintrc",
         "value": "\"format_js\": true\n\"js\": {\n        \"indent_size\": 5\n    }"
       },
-      {
-        "name": "cli",
-        "value": "--format-js --indent-js 5"
-      }
+      { "name": "cli", "value": "--format-js --indent-js 5" }
     ]
   },
   {
@@ -705,10 +510,7 @@
         "name": ".djlintrc",
         "value": "\"format_css\": true\n\"css\": {\n        \"indent_size\": 5\n    }"
       },
-      {
-        "name": "cli",
-        "value": "--format-css --indent-css 5"
-      }
+      { "name": "cli", "value": "--format-css --indent-css 5" }
     ]
   },
   {
@@ -724,14 +526,8 @@
         "name": "pyproject.toml",
         "value": "[tool.djlint]\nfiles=[\"index.html\"]\n"
       },
-      {
-        "name": ".djlintrc",
-        "value": "\"files\": [\n    \"index.html\"\n]"
-      },
-      {
-        "name": "cli",
-        "value": "index.html"
-      }
+      { "name": ".djlintrc", "value": "\"files\": [\n    \"index.html\"\n]" },
+      { "name": "cli", "value": "index.html" }
     ]
   },
   {
@@ -747,14 +543,8 @@
         "name": "pyproject.toml",
         "value": "[tool.djlint]\nignore_case=true\n"
       },
-      {
-        "name": ".djlintrc",
-        "value": "\"ignore_case\": true"
-      },
-      {
-        "name": "cli",
-        "value": "--ignore_case"
-      }
+      { "name": ".djlintrc", "value": "\"ignore_case\": true" },
+      { "name": "cli", "value": "--ignore_case" }
     ]
   }
 ]

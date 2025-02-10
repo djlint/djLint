@@ -1,9 +1,5 @@
 module.exports = {
-  hello: {
-    "en-US": "Hello",
-    ru: "Hola",
-    fr: "Salut",
-  },
+  hello: { "en-US": "Hello", ru: "Hola", fr: "Salut" },
   title: {
     "en-US": "HTML Template Linter and Formatter",
     ru: "Программа проверки и форматирования шаблонов HTML",
@@ -17,11 +13,7 @@ module.exports = {
   //   'en-US': "en",
   //   ru: "ru"
   // },
-  lang_code_url: {
-    "en-US": "",
-    ru: "/ru",
-    fr: "/fr",
-  },
+  lang_code_url: { "en-US": "", ru: "/ru", fr: "/fr" },
   next_release: {
     "en-US": "Next Release",
     ru: "Следующая публикация",
@@ -32,16 +24,8 @@ module.exports = {
     ru: "Начало Работы",
     fr: "Commencer",
   },
-  formatter: {
-    "en-US": "Formatter",
-    ru: "Форматер",
-    fr: "Formateur",
-  },
-  linter: {
-    "en-US": "Linter",
-    ru: "Линтер",
-    fr: "Linter",
-  },
+  formatter: { "en-US": "Formatter", ru: "Форматер", fr: "Formateur" },
+  linter: { "en-US": "Linter", ru: "Линтер", fr: "Linter" },
   configuration: {
     "en-US": "Configuration",
     ru: "Конфигурация",
@@ -63,16 +47,8 @@ module.exports = {
     ru: "Найдите распространенные синтаксические ошибки, переформатируйте, чтобы ваши HTML-шаблоны сияли! Поддерживает django, jinja, nunjucks, twig, handlebars, mustache, golang и многое другое!",
     fr: "Trouvez les erreurs de syntaxe courantes, reformatez pour faire briller vos modèles HTML ! Supporte django, jinja, nunjucks, twig, handlebars, mustache, golang, et plus encore !",
   },
-  updated: {
-    "en-US": "Updated",
-    ru: "Обновлен",
-    fr: "Actualisé",
-  },
-  changelog: {
-    "en-US": "Changelog",
-    ru: "Изменения",
-    fr: "Changelog",
-  },
+  updated: { "en-US": "Updated", ru: "Обновлен", fr: "Actualisé" },
+  changelog: { "en-US": "Changelog", ru: "Изменения", fr: "Changelog" },
   documentation: {
     "en-US": "Documentation",
     ru: "Документация",
@@ -114,11 +90,7 @@ module.exports = {
     ru: "Выглядит вот так:",
     fr: "Ça ressemble à ça:",
   },
-  contributing: {
-    "en-US": "Contributing",
-    ru: "Вклад",
-    fr: "Contribuer",
-  },
+  contributing: { "en-US": "Contributing", ru: "Вклад", fr: "Contribuer" },
   contributing_message: {
     "en-US":
       'Contributions are welcome. Send a pr with a new feature, or checkout the <a href="https://github.com/djlint/djlint/issues">issue</a> list and help where you can.',

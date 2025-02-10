@@ -1,4 +1,1 @@
-{
-  "layout": "docs_layout.njk",
-  "date": "git Last Modified"
-}
+{ "layout": "docs_layout.njk", "date": "git Last Modified" }

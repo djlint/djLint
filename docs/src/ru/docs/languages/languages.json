@@ -1,3 +1,1 @@
-{
-  "layout": "languages_layout.njk"
-}
+{ "layout": "languages_layout.njk" }

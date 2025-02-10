@@ -31,21 +31,12 @@ async function imageShortcode(
   let metadata = await Image(src, {
     widths: [24, 300, 400, 500, 600, 800, 1200],
     formats: ["webp", "png"],
-    sharpWebpOptions: {
-      options: {
-        quality: 70,
-      },
-    },
+    sharpWebpOptions: { options: { quality: 70 } },
     outputDir: "./_site/static/img/",
     urlPath: "/static/img/",
   });
 
-  let imageAttributes = {
-    alt,
-    sizes,
-    loading: loading,
-    decoding: decoding,
-  };
+  let imageAttributes = { alt, sizes, loading: loading, decoding: decoding };
 
   if (type == "boxed") {
     return (
@@ -105,10 +96,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(schema);
   eleventyConfig.addPlugin(rollupper, {
     rollup: {
-      output: {
-        format: "umd",
-        dir: "_site/static/js",
-      },
+      output: { format: "umd", dir: "_site/static/js" },
       plugins: [nodeResolve()],
     },
   });
@@ -121,12 +109,7 @@ module.exports = function (eleventyConfig) {
     github_edit_text: (page) => {
       i18n_options = Object.assign(
         {},
-        {
-          translations,
-          fallbackLocales: {
-            "*": "en-US",
-          },
-        },
+        { translations, fallbackLocales: { "*": "en-US" } },
       );
 
       return `<span class="icon-text"><span class="icon mr-1"><i class="fas fa-pencil"></i></span><span>${i18n_func(
@@ -195,14 +178,10 @@ module.exports = function (eleventyConfig) {
   });
 
   // copy images
-  eleventyConfig.addPassthroughCopy({
-    "src/static/img": "static/img",
-  });
+  eleventyConfig.addPassthroughCopy({ "src/static/img": "static/img" });
 
   // copy robots
-  eleventyConfig.addPassthroughCopy({
-    "src/robots.txt": "robots.txt",
-  });
+  eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
 
   // copy favicon
   eleventyConfig.addPassthroughCopy({
@@ -210,9 +189,7 @@ module.exports = function (eleventyConfig) {
   });
 
   // copy wheels
-  eleventyConfig.addPassthroughCopy({
-    "src/static/py": "static/py",
-  });
+  eleventyConfig.addPassthroughCopy({ "src/static/py": "static/py" });
 
   // copy python
   eleventyConfig.addPassthroughCopy({
@@ -339,9 +316,7 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addPlugin(i18n, {
     translations,
-    fallbackLocales: {
-      "*": "en-US",
-    },
+    fallbackLocales: { "*": "en-US" },
   });
 
   eleventyConfig.addFilter("baseUrl", (text) => {

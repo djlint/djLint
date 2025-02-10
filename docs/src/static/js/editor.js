@@ -89,11 +89,7 @@ if (typeof Worker !== "undefined") {
 
   const runPython = (script) => {
     session_id += 1;
-    w.postMessage({
-      config: getConfig(),
-      html: script,
-      id: session_id,
-    });
+    w.postMessage({ config: getConfig(), html: script, id: session_id });
   };
 
   w.onmessage = (event) => {
@@ -159,25 +155,13 @@ if (typeof Worker !== "undefined") {
   function setOutput(stdout) {
     const currentValue = output.state.doc.toString();
     const endPosition = currentValue.length;
-    output.dispatch({
-      changes: {
-        from: 0,
-        to: endPosition,
-        insert: stdout,
-      },
-    });
+    output.dispatch({ changes: { from: 0, to: endPosition, insert: stdout } });
   }
 
   function setInput(stdout) {
     const currentValue = editor.state.doc.toString();
     const endPosition = currentValue.length;
-    editor.dispatch({
-      changes: {
-        from: 0,
-        to: endPosition,
-        insert: stdout,
-      },
-    });
+    editor.dispatch({ changes: { from: 0, to: endPosition, insert: stdout } });
   }
 
   document.getElementById("djlint-settings").addEventListener("change", () => {
