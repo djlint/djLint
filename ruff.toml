@@ -60,7 +60,7 @@ select = ["ALL"]
 unfixable = ["RUF027", "T"]
 
 [lint.per-file-ignores]
-"djlint/rules/*" = ["ARG001", "N999"]
+"src/djlint/rules/*" = ["ARG001", "N999"]
 "tests/*" = ["FBT001", "S101", "T201", "PLR2004"]
 
 [lint.flake8-self]
