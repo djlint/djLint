@@ -71,7 +71,9 @@ if TYPE_CHECKING:
     help="Indent spacing. [default: 4]",
     show_default=False,
 )
-@click.option("--quiet", is_flag=True, help="Do not print diff when reformatting.")
+@click.option(
+    "--quiet", is_flag=True, help="Do not print diff when reformatting."
+)
 @click.option(
     "--profile",
     type=str,
@@ -82,7 +84,9 @@ if TYPE_CHECKING:
     is_flag=True,
     help="Only format or lint files that starts with a comment with the text 'djlint:on'",
 )
-@click.option("--lint", is_flag=True, help="Lint for common issues. [default option]")
+@click.option(
+    "--lint", is_flag=True, help="Lint for common issues. [default option]"
+)
 @click.option(
     "--use-gitignore",
     is_flag=True,
@@ -130,7 +134,9 @@ if TYPE_CHECKING:
     help='Codes to include. ex: "H014,H017"',
     show_default=False,
 )
-@click.option("--ignore-case", is_flag=True, help="Do not fix case on known html tags.")
+@click.option(
+    "--ignore-case", is_flag=True, help="Do not fix case on known html tags."
+)
 @click.option(
     "--ignore-blocks",
     type=str,
@@ -210,7 +216,9 @@ if TYPE_CHECKING:
 @click.option(
     "--indent-css", type=int, help="Set CSS indent level.", show_default=False
 )
-@click.option("--indent-js", type=int, help="Set JS indent level.", show_default=False)
+@click.option(
+    "--indent-js", type=int, help="Set JS indent level.", show_default=False
+)
 @click.option(
     "--close-void-tags",
     is_flag=True,
@@ -416,7 +424,9 @@ def main(
                     for future in as_completed(futures):
                         file_errors.append(future.result())
                         pbar.update()
-                        elapsed = pbar.format_interval(pbar.format_dict["elapsed"])
+                        elapsed = pbar.format_interval(
+                            pbar.format_dict["elapsed"]
+                        )
 
                 finished_bar_message = f"{Fore.BLUE + Style.BRIGHT}{message}{Style.RESET_ALL} {Fore.GREEN + Style.BRIGHT}{{n_fmt}}/{{total_fmt}}{Style.RESET_ALL} {Fore.BLUE + Style.BRIGHT}files{Style.RESET_ALL} {{bar}} {Fore.GREEN + Style.BRIGHT}{elapsed}{Style.RESET_ALL}    "
 
@@ -431,7 +441,9 @@ def main(
                 ):
                     pass
             else:
-                file_errors = [future.result() for future in as_completed(futures)]
+                file_errors = [
+                    future.result() for future in as_completed(futures)
+                ]
 
         if temp_file and (config.reformat or config.check):
             # if using stdin, only give back formatted code.
