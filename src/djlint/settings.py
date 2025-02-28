@@ -152,13 +152,17 @@ def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
             else:
                 djlint_content.update(load_djlintrc_config(config))
         except Exception as error:
-            logger.error("%sFailed to load config file %s. %s", Fore.RED, config, error)
+            logger.error(
+                "%sFailed to load config file %s. %s", Fore.RED, config, error
+            )
 
     if pyproject_file := find_pyproject(src):
         try:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
-            logger.error("%sFailed to load pyproject.toml file. %s", Fore.RED, error)
+            logger.error(
+                "%sFailed to load pyproject.toml file. %s", Fore.RED, error
+            )
         else:
             if content:
                 djlint_content.update(content)
@@ -168,7 +172,9 @@ def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
         try:
             djlint_content.update(load_djlint_toml_config(djlint_toml_file))
         except Exception as error:
-            logger.error("%sFailed to load djlint.toml file. %s", Fore.RED, error)
+            logger.error(
+                "%sFailed to load djlint.toml file. %s", Fore.RED, error
+            )
 
     elif djlintrc_file := find_djlintrc(src):
         try:
@@ -189,7 +195,10 @@ def validate_rules(
         if "name" not in rule["rule"]:
             warning = True
             echo(Fore.RED + "Warning: A rule is missing a name! 😢")
-        if "patterns" not in rule["rule"] and "python_module" not in rule["rule"]:
+        if (
+            "patterns" not in rule["rule"]
+            and "python_module" not in rule["rule"]
+        ):
             warning = True
             echo(
                 Fore.RED
@@ -300,7 +309,9 @@ class Config:
         else:
             self.project_root = find_project_root(Path(src).resolve())
 
-        djlint_settings = load_project_settings(self.project_root, configuration)
+        djlint_settings = load_project_settings(
+            self.project_root, configuration
+        )
 
         self.gitignore = load_gitignore(self.project_root)
         # custom configuration options
@@ -308,20 +319,26 @@ class Config:
         self.use_gitignore: bool = use_gitignore or djlint_settings.get(
             "use_gitignore", False
         )
-        self.extension: str = str(extension or djlint_settings.get("extension", "html"))
+        self.extension: str = str(
+            extension or djlint_settings.get("extension", "html")
+        )
         self.quiet: bool = quiet or djlint_settings.get("quiet", False)
         self.require_pragma: bool = (
             require_pragma
-            or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
+            or str(djlint_settings.get("require_pragma", "false")).lower()
+            == "true"
         )
 
         self.custom_blocks: str = str(
-            build_custom_blocks(custom_blocks or djlint_settings.get("custom_blocks"))
+            build_custom_blocks(
+                custom_blocks or djlint_settings.get("custom_blocks")
+            )
             or ""
         )
 
         self.custom_html: str = str(
-            build_custom_html(custom_html or djlint_settings.get("custom_html")) or ""
+            build_custom_html(custom_html or djlint_settings.get("custom_html"))
+            or ""
         )
 
         self.format_attribute_template_tags: bool = (
@@ -337,21 +354,30 @@ class Config:
             ignore_blocks or djlint_settings.get("ignore_blocks", "")
         )
 
-        self.preserve_blank_lines: bool = preserve_blank_lines or djlint_settings.get(
-            "preserve_blank_lines", False
+        self.preserve_blank_lines: bool = (
+            preserve_blank_lines
+            or djlint_settings.get("preserve_blank_lines", False)
         )
 
-        self.format_js: bool = format_js or djlint_settings.get("format_js", False)
+        self.format_js: bool = format_js or djlint_settings.get(
+            "format_js", False
+        )
 
         self.js_config = (
-            {"indent_size": indent_js} if indent_js else djlint_settings.get("js")
+            {"indent_size": indent_js}
+            if indent_js
+            else djlint_settings.get("js")
         ) or {}
 
         self.css_config = (
-            {"indent_size": indent_css} if indent_css else djlint_settings.get("css")
+            {"indent_size": indent_css}
+            if indent_css
+            else djlint_settings.get("css")
         ) or {}
 
-        self.format_css: bool = format_css or djlint_settings.get("format_css", False)
+        self.format_css: bool = format_css or djlint_settings.get(
+            "format_css", False
+        )
 
         self.ignore_case: bool = ignore_case or djlint_settings.get(
             "ignore_case", False
@@ -360,8 +386,9 @@ class Config:
         self.close_void_tags: bool = close_void_tags or djlint_settings.get(
             "close_void_tags", False
         )
-        self.no_line_after_yaml: bool = no_line_after_yaml or djlint_settings.get(
-            "no_line_after_yaml", False
+        self.no_line_after_yaml: bool = (
+            no_line_after_yaml
+            or djlint_settings.get("no_line_after_yaml", False)
         )
         self.no_set_formatting: bool = no_set_formatting or djlint_settings.get(
             "no_set_formatting", False
@@ -396,15 +423,20 @@ class Config:
             profile or djlint_settings.get("profile", "all")
         ).lower()
 
-        self.linter_output_format: str = linter_output_format or djlint_settings.get(
-            "linter_output_format", "{code} {line} {message} {match}"
+        self.linter_output_format: str = (
+            linter_output_format
+            or djlint_settings.get(
+                "linter_output_format", "{code} {line} {message} {match}"
+            )
         )
 
         # load linter rules
         rule_set = validate_rules(
             chain(
                 yaml.safe_load(
-                    (Path(__file__).parent / "rules.yaml").read_text(encoding="utf-8")
+                    (Path(__file__).parent / "rules.yaml").read_text(
+                        encoding="utf-8"
+                    )
                 ),
                 load_custom_rules(self.project_root),
             )
@@ -479,9 +511,13 @@ class Config:
             | venv
         """
 
-        self.exclude: str = exclude or djlint_settings.get("exclude", default_exclude)
+        self.exclude: str = exclude or djlint_settings.get(
+            "exclude", default_exclude
+        )
 
-        extend_exclude = extend_exclude or djlint_settings.get("extend_exclude", "")
+        extend_exclude = extend_exclude or djlint_settings.get(
+            "extend_exclude", ""
+        )
 
         if extend_exclude:
             self.exclude += r" | " + r" | ".join(
@@ -496,12 +532,14 @@ class Config:
 
         # add blank line after load tags
         self.blank_line_after_tag: str | None = (
-            blank_line_after_tag or djlint_settings.get("blank_line_after_tag", None)
+            blank_line_after_tag
+            or djlint_settings.get("blank_line_after_tag", None)
         )
 
         # add blank line before load tags
         self.blank_line_before_tag: str | None = (
-            blank_line_before_tag or djlint_settings.get("blank_line_before_tag", None)
+            blank_line_before_tag
+            or djlint_settings.get("blank_line_before_tag", None)
         )
 
         # add line break after multi-line tags
@@ -645,7 +683,9 @@ class Config:
 
         try:
             self.max_attribute_length = max_attribute_length or int(
-                djlint_settings.get("max_attribute_length", self.max_attribute_length)
+                djlint_settings.get(
+                    "max_attribute_length", self.max_attribute_length
+                )
             )
         except ValueError:
             echo(
@@ -734,19 +774,19 @@ class Config:
             (\s*?/?>)
         """
 
-        self.attribute_style_pattern: str = r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
-
-        self.ignored_attributes = frozenset(
-            {
-                "href",
-                "action",
-                "data-url",
-                "src",
-                "url",
-                "srcset",
-                "data-src",
-            }
+        self.attribute_style_pattern: str = (
+            r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
         )
+
+        self.ignored_attributes = frozenset({
+            "href",
+            "action",
+            "data-url",
+            "src",
+            "url",
+            "srcset",
+            "data-src",
+        })
 
         self.start_template_tags: str = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
