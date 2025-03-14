@@ -168,7 +168,7 @@ dev = [
     { name = "pytest-cov", specifier = "==6" },
     { name = "pytest-github-actions-annotate-failures", specifier = "==0.3" },
     { name = "pytest-xdist", specifier = "==3.6.1" },
-    { name = "ruff", specifier = "==0.10.0" },
+    { name = "ruff", specifier = "==0.10" },
     { name = "tomli", specifier = "==2.2.1" },
     { name = "types-colorama", specifier = "==0.4.15.20240311" },
     { name = "types-pyyaml", specifier = "==6.0.12.20241230" },
