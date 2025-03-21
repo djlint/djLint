@@ -102,6 +102,42 @@ Using `coc.nvim`.
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
   :::
 
+Using `efm-languageserver`.
+
+::: content
+
+- [GitHub repository](https://github.com/mattn/efm-langserver)
+
+0. Install djlint with Mason via `:MasonInstall djlint`
+1. Add `htmldjango` to `filetypes`
+2. Create format configuration
+```
+local djlint = {
+    formatCommand = "djlint --reformat --quiet --warn -",
+    formatStdin = true,
+}
+```
+3. Connect language to formatter with `htmldjango = {djlint}`
+
+Sample configuration
+``` lua
+local djlint = {
+    formatCommand = "djlint --reformat --quiet --warn -",
+    formatStdin = true,
+}
+
+require "lspconfig".efm.setup {
+    filetypes = {"htmldjango"},
+    init_options = {documentFormatting = true},
+    settings = {
+        rootMarkers = {".git/"},
+        languages = {
+            htmldjango = {djlint}
+        }
+    }
+}
+```
+
 ## MegaLinter
 
 djlint is natively embedded within the 100+ linters of [MegaLinter](https://megalinter.io)
