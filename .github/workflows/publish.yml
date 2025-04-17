@@ -50,10 +50,13 @@ jobs:
     permissions:
       id-token: write
     steps:
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
       - uses: actions/download-artifact@v4
       - run: mkdir dist
       - run: mv wheels-*/* dist
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - run: uv publish --trusted-publishing always --no-cache
   publish-npm:
     runs-on: ubuntu-24.04
     if: ${{ github.repository_owner == 'djlint' && startsWith(github.ref, 'refs/tags/')  }}
