@@ -23,6 +23,7 @@ from djlint.output import print_output
 from djlint.reformat import reformat_file
 from djlint.settings import Config
 from djlint.src import get_src
+from djlint.github_output import print_github_output
 
 if TYPE_CHECKING:
     from djlint.types import ProcessResult
@@ -244,6 +245,13 @@ if TYPE_CHECKING:
     help="Consolidate blank lines down to x lines. [default: 0]",
     show_default=False,
 )
+@click.option(
+    "--github-output",
+    is_flag=True,
+    default=bool(os.getenv("GITHUB_ACTIONS")),
+    help="Output GitHub-compatible formatting.",
+    show_default=True,
+)
 @colorama_text(autoreset=True)
 def main(
     *,
@@ -287,8 +295,10 @@ def main(
     no_function_formatting: bool,
     no_set_formatting: bool,
     max_blank_lines: int | None,
+    github_output: bool = False,
 ) -> None:
     """djLint · HTML template linter and formatter."""
+
     config = Config(
         src[0],
         extension=extension,
@@ -383,7 +393,7 @@ def main(
             Fore.GREEN + Style.BRIGHT,
             Style.RESET_ALL + "    ",
         )
-        if not config.stdin and not config.quiet:
+        if not config.stdin and not config.quiet and not github_output:
             echo()
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
@@ -409,6 +419,7 @@ def main(
                     colour="BLUE",
                     ascii=progress_char,
                     leave=False,
+                    disable=github_output,
                 ) as pbar:
                     for future in as_completed(futures):
                         file_errors.append(future.result())
@@ -426,6 +437,7 @@ def main(
                     colour="GREEN",
                     ascii=progress_char,
                     leave=True,
+                    disable=github_output,
                 ):
                     pass
             else:
@@ -447,6 +459,13 @@ def main(
                 temp_file.close()
             finally:
                 Path(temp_file.name).unlink(missing_ok=True)
+
+    if (
+        github_output
+        and print_github_output(config, file_errors, len(file_list))
+        and not config.warn
+    ):
+        sys.exit(1)
 
     if print_output(config, file_errors, len(file_list)) and not config.warn:
         sys.exit(1)
