@@ -235,7 +235,7 @@ def test_version(runner: CliRunner) -> None:
 def test_python_call() -> None:
     # give up fighting windows lol
     if sys.platform != "win32":
-        py_sub = subprocess.run(  # noqa: S603
+        py_sub = subprocess.run(
             ("python", "-m", "djlint", "-h"), capture_output=True, check=False
         )
         print(py_sub.stdout)
@@ -243,7 +243,7 @@ def test_python_call() -> None:
         assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
         assert py_sub.returncode == 0
 
-        py_sub = subprocess.run(  # noqa: S603
+        py_sub = subprocess.run(
             ("python", "-m", "djlint", "__init__", "-h"),
             capture_output=True,
             check=False,
