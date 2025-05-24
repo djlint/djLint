@@ -85,4 +85,4 @@ build = "cp*"
 build-frontend = "build[uv]"
 environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
 manylinux-x86_64-image = "manylinux_2_28"
-skip = ["*-manylinux_i686", "*-musllinux_*", "*-win32"]
+# skip = ["*-manylinux_i686", "*-musllinux_*", "*-win32"]
