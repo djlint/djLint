@@ -4,7 +4,8 @@
     "description": {
       "en": "Return errors as warnings.",
       "ru": "Возвращать ошибки в виде предупреждений.",
-      "fr": "Renvoyer les erreurs sous forme d'avertissements."
+      "fr": "Renvoyer les erreurs sous forme d'avertissements.",
+      "zh": "以警告形式报错。"
     },
     "usage": [{ "name": "cli", "value": "--warn" }],
     "tags": ["formatter", "linter"]
@@ -14,7 +15,8 @@
     "description": {
       "en": "Show the version and exit.",
       "ru": "Покажите версию и выйдите.",
-      "fr": "Afficher la version et quitter."
+      "fr": "Afficher la version et quitter.",
+      "zh": "显示版本并退出。"
     },
     "usage": [{ "name": "cli", "value": "--version" }],
     "tags": ["formatter", "linter"]
@@ -24,7 +26,8 @@
     "description": {
       "en": "Do not print diff when reformatting.",
       "ru": "Не печатайте diff при переформатировании.",
-      "fr": "N'imprimez pas de différences lors du reformatage."
+      "fr": "N'imprimez pas de différences lors du reformatage.",
+      "zh": "格式化时不展示差异。"
     },
     "usage": [{ "name": "cli", "value": "--quiet" }],
     "tags": ["formatter", "linter"]
@@ -34,7 +37,8 @@
     "description": {
       "en": "Consolidate blank lines down to x lines. Default is 0 meaning blank lines will be removed.",
       "ru": "Объедините пустые строки до х строк. По умолчанию 0, что означает, что пустые строки будут удалены.",
-      "fr": "Consolider les lignes vierges en les ramenant à x lignes. La valeur par défaut est 0, ce qui signifie que les lignes vierges seront supprimées."
+      "fr": "Consolider les lignes vierges en les ramenant à x lignes. La valeur par défaut est 0, ce qui signifie que les lignes vierges seront supprimées.",
+      "zh": "将合并空行为最多 x 行。默认值为 0，表示将移除所有空行。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "max_blank_lines=5" },
@@ -48,7 +52,8 @@
     "description": {
       "en": "Do not attempt to format set contents. ** If you use this option please open a gh issue explaining what caused you to use it.",
       "ru": "Не пытайтесь форматировать содержимое набора. ** Если вы используете эту опцию, пожалуйста, откройте проблему gh, объяснив, что заставило вас использовать ее.",
-      "fr": "Ne pas tenter de formater le contenu du jeu. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser"
+      "fr": "Ne pas tenter de formater le contenu du jeu. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser",
+      "zh": "不格式化集合（set）。** 如果你使用了此选项，请在 GitHub 上打开一个 issue，解释你为什么使用它。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_set_formatting=true" },
@@ -62,7 +67,8 @@
     "description": {
       "en": "Do not attempt to format function contents. ** If you use this option please open a gh issue explaining what caused you to use it.",
       "ru": "Не пытайтесь форматировать содержимое функции. ** Если вы используете эту опцию, пожалуйста, откройте проблему gh, объяснив, что заставило вас ее использовать.",
-      "fr": "Ne pas tenter de formater le contenu de la fonction. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser."
+      "fr": "Ne pas tenter de formater le contenu de la fonction. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser.",
+      "zh": "不格式化函数。** 如果你使用了此选项，请在 GitHub 上打开一个 issue，解释你为什么使用它。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_function_formatting=true" },
@@ -76,7 +82,8 @@
     "description": {
       "en": "Do not add a blank line after yaml front matter.",
       "ru": "Не добавляйте пустую строку после лицевой части yaml.",
-      "fr": "N'ajoutez pas de ligne vierge après la matière première yaml."
+      "fr": "N'ajoutez pas de ligne vierge après la matière première yaml.",
+      "zh": "在YAML front matter后不添加空行。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_line_after_yaml=true" },
@@ -90,7 +97,8 @@
     "description": {
       "en": "Close void tags.",
       "ru": "Закрыть недействительные теги.",
-      "fr": "Fermer les étiquettes vides."
+      "fr": "Fermer les étiquettes vides.",
+      "zh": "关闭空标签。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "close_void_tags=true" },
@@ -104,7 +112,8 @@
     "description": {
       "en": "Ignore linter codes.",
       "ru": "Игнорируйте коды линтера.",
-      "fr": "Ignore les codes de linter."
+      "fr": "Ignore les codes de linter.",
+      "zh": "不进行代码检查。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "ignore=\"H014,H015\"" },
@@ -118,7 +127,8 @@
     "description": {
       "en": "Include linter codes.",
       "ru": "Включите коды линтера.",
-      "fr": "Inclure les codes des liners."
+      "fr": "Inclure les codes des liners.",
+      "zh": "进行代码检查。"
     },
     "tags": ["linter"],
     "usage": [
@@ -132,7 +142,8 @@
     "description": {
       "en": "Use to only find files with a specific extension.",
       "ru": "Используется для поиска файлов только с определенным расширением.",
-      "fr": "Permet de trouver uniquement les fichiers ayant une extension spécifique."
+      "fr": "Permet de trouver uniquement les fichiers ayant une extension spécifique.",
+      "zh": "仅查找具有特定扩展名的文件。"
     },
     "tags": ["linter", "formatter"],
     "usage": [
@@ -147,9 +158,10 @@
   {
     "name": "custom_blocks",
     "description": {
-      "en": "Use to indent custom code blocks. For example `{% toc %}...{% endtoc %}`",
-      "ru": "Используется для отступов в пользовательских блоках кода. Например, `{% toc %}...{% endtoc %}`",
-      "fr": "Sert à indenter les blocs de code personnalisés. Par exemple `{% toc %}...{% endtoc %}`"
+      "en": "Use to indent custom code blocks. For example `{% toc %}...{% endtoc %}`.",
+      "ru": "Используется для отступов в пользовательских блоках кода. Например, `{% toc %}...{% endtoc %}`.",
+      "fr": "Sert à indenter les blocs de code personnalisés. Par exemple `{% toc %}...{% endtoc %}`.",
+      "zh": "设置自定义代码块的缩进，例如 `{% toc %}...{% endtoc %}`。"
     },
     "tags": ["formatter"],
     "usage": [
@@ -163,7 +175,8 @@
     "description": {
       "en": "Used to skip indentation on children of template tags. Children will be treated as siblings and indented accordingly.",
       "ru": "Используется для пропуска отступов для дочерних тегов шаблона. Дочерние теги будут рассматриваться как родные братья и сестры и будут иметь соответствующий отступ.",
-      "fr": "Permet d'ignorer l'indentation des enfants des balises de modèle. Les enfants seront traités comme des frères et sœurs et indentés en conséquence."
+      "fr": "Permet d'ignorer l'indentation des enfants des balises de modèle. Les enfants seront traités comme des frères et sœurs et indentés en conséquence.",
+      "zh": "跳过模板标签子元素上的缩进。子元素将被视为同级元素，并相应地进行缩进处理。"
     },
     "tags": ["formatter"],
     "usage": [
@@ -177,7 +190,8 @@
     "description": {
       "en": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\\\w+>`",
       "ru": "Используется для отступа пользовательских HTML-тегов. Например, `<mjml>` или `<simple-greeting>` или `<mj-\\\\w+>`.",
-      "fr": "Permet d'indenter les balises HTML personnalisées. Par exemple, `<mjml>` ou `<simple-greeting>` ou `<mj-\\\\w+>`."
+      "fr": "Permet d'indenter les balises HTML personnalisées. Par exemple, `<mjml>` ou `<simple-greeting>` ou `<mj-\\\\w+>`.",
+      "zh": "设置自定义HTML标签的缩进，例如 `<mjml>`、`<simple-greeting>`和`<mj-\\\\w+>`。"
     },
     "tags": ["formatter"],
     "usage": [
@@ -201,7 +215,8 @@
     "description": {
       "en": "Use to change the code indentation. Default is 4 (four spaces).",
       "ru": "Используется для изменения отступа кода. По умолчанию - 4 (четыре пробела).",
-      "fr": "Permet de modifier l'indentation du code. La valeur par défaut est 4 (quatre espaces)."
+      "fr": "Permet de modifier l'indentation du code. La valeur par défaut est 4 (quatre espaces).",
+      "zh": "代码缩进。默认4空格。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "indent=3" },
@@ -215,7 +230,8 @@
     "description": {
       "en": "Override the default exclude paths.",
       "ru": "Переопределите пути исключения по умолчанию.",
-      "fr": "Remplacer les chemins d'exclusion par défaut."
+      "fr": "Remplacer les chemins d'exclusion par défaut.",
+      "zh": "覆盖默认排除路径。"
     },
     "usage": [
       {
@@ -235,7 +251,8 @@
     "description": {
       "en": "Add additional paths to the default exclude.",
       "ru": "Добавьте дополнительные пути к исключаемым по умолчанию.",
-      "fr": "Ajouter des chemins supplémentaires à l'exclusion par défaut."
+      "fr": "Ajouter des chemins supplémentaires à l'exclusion par défaut.",
+      "zh": "向默认排除列表中添加额外路径。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "extend_exclude=\".custom\"" },
@@ -249,7 +266,8 @@
     "description": {
       "en": "Add an additional blank line after `{% <tag> ... %}` tag groups.",
       "ru": "Добавьте дополнительную пустую строку после групп тегов `{% <tag> ... %}`.",
-      "fr": "Ajout d'une ligne vide supplémentaire après les groupes de balises `{% <tag> ... %}`."
+      "fr": "Ajout d'une ligne vide supplémentaire après les groupes de balises `{% <tag> ... %}`.",
+      "zh": "在 `{% <tag> ... %}` 标签组后添加空行。"
     },
     "usage": [
       {
@@ -272,7 +290,8 @@
     "description": {
       "en": "Add an additional blank line before `{% <tag> ... %}` tag groups. Blank lines will never be added to start of file or between similar tags.",
       "ru": "Добавляет дополнительную пустую строку перед группами тегов `{% <tag> ... %}`. Пустые строки никогда не будут добавлены в начало файла или между похожими тегами.",
-      "fr": "Ajoute une ligne blanche supplémentaire avant les groupes de balises `{% <tag> ... %}`. Les lignes vides ne seront jamais ajoutées au début du fichier ou entre des balises similaires."
+      "fr": "Ajoute une ligne blanche supplémentaire avant les groupes de balises `{% <tag> ... %}`. Les lignes vides ne seront jamais ajoutées au début du fichier ou entre des balises similaires.",
+      "zh": "在 `{% <tag> ... %}` 标签组前添加空行。（空行不会添加到文件开头或同一个标签之间）"
     },
     "usage": [
       {
@@ -295,7 +314,8 @@
     "description": {
       "en": "Do not condense the content of multi-line tags into the line of the last attribute.",
       "ru": "Не сжимайте содержимое многострочных тегов в строку последнего атрибута.",
-      "fr": "Ne pas condenser le contenu des balises multilignes dans la ligne du dernier attribut."
+      "fr": "Ne pas condenser le contenu des balises multilignes dans la ligne du dernier attribut.",
+      "zh": "不将多行标签的内容压缩到最后一个属性的行中。"
     },
     "usage": [
       {
@@ -315,7 +335,8 @@
     "description": {
       "en": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::",
       "ru": "Установите профиль для языка шаблона. Профиль будет включать правила линтера, применимые к языку шаблонов, а также может изменять переформатирование. Например, в `handlebars` нет пробелов внутри тегов `{{#if}}`.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::",
-      "fr": "Définissez un profil pour la langue du modèle. Le profil activera les règles de linter qui s'appliquent à votre langage de modèle, et peut également changer le reformatage. Par exemple, dans `handlebars`, il n'y a pas d'espaces dans les balises `{{#if}}`.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::"
+      "fr": "Définissez un profil pour la langue du modèle. Le profil activera les règles de linter qui s'appliquent à votre langage de modèle, et peut également changer le reformatage. Par exemple, dans `handlebars`, il n'y a pas d'espaces dans les balises `{{#if}}`.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::",
+      "zh": "设置一个模板文件。该模板会启用全部代码检查规则，并应用到你的整个语言中。例如，`handlebars` 语言中 `{{#if}}` 花括号内没有空格。\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "profile=\"django\"" },
@@ -329,7 +350,8 @@
     "description": {
       "en": "Only format or lint files that starts with a comment with only the text 'djlint:on'. The comment can be a HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
       "ru": "Форматировать или линтовать только те файлы, которые начинаются с комментария, содержащего только текст 'djlint:on'. Комментарий может быть HTML-комментарием или комментарием на языке шаблонов, определенном настройкой профиля. Если профиль не указан, принимается комментарий на любом из языков шаблонов.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
-      "fr": "Ne formatez ou ne limez que les fichiers qui commencent par un commentaire contenant uniquement le texte 'djlint:on'. Le commentaire peut être un commentaire HTML ou un commentaire dans le langage de modèle défini par le paramètre de profil. Si aucun profil n'est spécifié, un commentaire dans l'un des langages de modèle est accepté.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n"
+      "fr": "Ne formatez ou ne limez que les fichiers qui commencent par un commentaire contenant uniquement le texte 'djlint:on'. Le commentaire peut être un commentaire HTML ou un commentaire dans le langage de modèle défini par le paramètre de profil. Si aucun profil n'est spécifié, un commentaire dans l'un des langages de modèle est accepté.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
+      "zh": "只检查并格式化以 'djlint:on' 注释开头的文件。该注释可为 HTML 注释或模板文件定义的注释，若无特殊模板文件，则使用模板语言的注释。\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "require_pragma=true" },
@@ -343,7 +365,8 @@
     "description": {
       "en": "Formatter will attempt to put some html and template tags on a single line instead of wrapping them if the line length will not exceed this value.",
       "ru": "Форматировщик попытается разместить некоторые html и шаблонные теги на одной строке вместо того, чтобы обернуть их, если длина строки не превышает этого значения.",
-      "fr": "Le formateur essaiera de mettre certaines balises html et template sur une seule ligne au lieu de les envelopper si la longueur de la ligne ne dépasse pas cette valeur."
+      "fr": "Le formateur essaiera de mettre certaines balises html et template sur une seule ligne au lieu de les envelopper si la longueur de la ligne ne dépasse pas cette valeur.",
+      "zh": "设置单行最大长度。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "max_line_length=120" },
@@ -357,7 +380,8 @@
     "description": {
       "en": "Formatter will attempt to wrap tag attributes if the attribute length exceeds this value.",
       "ru": "Форматировщик попытается обернуть атрибуты тега, если длина атрибута превышает это значение.",
-      "fr": "Le formateur tentera d'envelopper les attributs de la balise si la longueur de l'attribut dépasse cette valeur."
+      "fr": "Le formateur tentera d'envelopper les attributs de la balise si la longueur de l'attribut dépasse cette valeur.",
+      "zh": "设置标签参数最大长度。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "max_attribute_length=10" },
@@ -371,7 +395,8 @@
     "description": {
       "en": "Add .gitignore excludes to the default exclude.",
       "ru": "Добавьте исключения .gitignore к исключениям по умолчанию.",
-      "fr": "Ajouter les exclusions .gitignore à l'exclusion par défaut."
+      "fr": "Ajouter les exclusions .gitignore à l'exclusion par défaut.",
+      "zh": "排除 .gitignore 规定的排除文件。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "use_gitignore=true" },
@@ -385,7 +410,8 @@
     "description": {
       "en": "Formatter will attempt to format template syntax inside of tag attributes. Disabled by default.",
       "ru": "Форматировщик будет пытаться форматировать синтаксис шаблона внутри атрибутов тега. По умолчанию отключен.",
-      "fr": "Le formateur tentera de formater la syntaxe des modèles à l'intérieur des attributs des balises. Désactivé par défaut."
+      "fr": "Le formateur tentera de formater la syntaxe des modèles à l'intérieur des attributs des balises. Désactivé par défaut.",
+      "zh": "格式化标签参数的语法错误。（默认关闭）"
     },
     "usage": [
       {
@@ -405,7 +431,8 @@
     "description": {
       "en": "Customize order of output message. Default=\"{code} {line} {message} {match}\". If `{filename}` is not included in message, then the output will be grouped by file and a header will automatically be added to each group.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
       "ru": "Настройка порядка вывода сообщения. По умолчанию=\"{code} {line} {message} {match}\". Если `{filename}` не включено в сообщение, то вывод будет сгруппирован по файлам и к каждой группе будет автоматически добавлен заголовок.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
-      "fr": "Personnalise l'ordre du message de sortie. Défaut=\"{code} {ligne} {message} {match}\". Si `{filename}` n'est pas inclus dans le message, alors la sortie sera groupée par fichier et un en-tête sera automatiquement ajouté à chaque groupe.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::"
+      "fr": "Personnalise l'ordre du message de sortie. Défaut=\"{code} {ligne} {message} {match}\". Si `{filename}` n'est pas inclus dans le message, alors la sortie sera groupée par fichier et un en-tête sera automatiquement ajouté à chaque groupe.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "zh": "自定义输出文本顺序。默认=\"{code} {line} {message} {match}\"。如果消息中不包含{filename}，则输出将按文件进行分组，并且每个分组会自动添加一个标题。\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::"
     },
     "usage": [
       {
@@ -428,7 +455,8 @@
     "description": {
       "en": "Preserve leading space on text, where possible. Ideal for non-html template files where text indent is intentional.",
       "ru": "Сохраняет пробелы в тексте, где это возможно. Идеально подходит для не-html файлов шаблонов, где отступ текста является намеренным.",
-      "fr": "Préserve l'espace de tête du texte, dans la mesure du possible. Idéal pour les fichiers de modèles non-html où l'indentation du texte est intentionnelle."
+      "fr": "Préserve l'espace de tête du texte, dans la mesure du possible. Idéal pour les fichiers de modèles non-html où l'indentation du texte est intentionnelle.",
+      "zh": "尽可能保留文本开头的空格。（建议用于非HTML模板文件，它们的缩进是有意为之的）"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_leading_space=true" },
@@ -442,7 +470,8 @@
     "description": {
       "en": "Preserve blank where possible. Ideal for non-html template files where blank lines are intentional.",
       "ru": "Сохраняйте пробелы там, где это возможно. Идеально подходит для не-html файлов шаблонов, где пустые строки являются намеренными.",
-      "fr": "Préserve les blancs lorsque cela est possible. Idéal pour les fichiers de modèles non-html où les lignes vides sont intentionnelles."
+      "fr": "Préserve les blancs lorsque cela est possible. Idéal pour les fichiers de modèles non-html où les lignes vides sont intentionnelles.",
+      "zh": "尽可能保留文件开头的空行。（建议用于非HTML模板文件，它们的空行是有意为之的）"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_blank_lines=true" },
@@ -456,7 +485,8 @@
     "description": {
       "en": "Ignore linter rules on a per-file basis.",
       "ru": "Игнорировать правила линтера на основе каждого файла.",
-      "fr": "Ignorer les règles de linter sur une base par fichier."
+      "fr": "Ignorer les règles de linter sur une base par fichier.",
+      "zh": "某文件单独应用代码检查忽略规则。"
     },
     "usage": [
       {
@@ -479,7 +509,8 @@
     "description": {
       "en": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
       "ru": "Форматирование содержимого тегов `script` с помощью `js-beautify`. Все параметры конфигурации см. в [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
-      "fr": "Formate le contenu des balises `script` en utilisant `js-beautify`. Voir [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge."
+      "fr": "Formate le contenu des balises `script` en utilisant `js-beautify`. Voir [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge.",
+      "zh": "使用 `js-beautify` 格式化 `script` 标签中的内容。全部配置项请参阅 [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py)，目前模板语法并未得到[完全支持](https://github.com/beautify-web/js-beautify/issues)。"
     },
     "usage": [
       {
@@ -499,7 +530,8 @@
     "description": {
       "en": "Format contents of `style` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
       "ru": "Форматирование содержимого тегов `script` с помощью `css-beautify`. Все параметры конфигурации см. в [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
-      "fr": "Formate le contenu des balises `script` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge."
+      "fr": "Formate le contenu des balises `script` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge.",
+      "zh": "使用 `css-beautify` 格式化 `style` 标签中的内容。全部配置项请参阅 [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py)，目前模板语法并未得到[完全支持](https://github.com/beautify-web/js-beautify/issues)。"
     },
     "usage": [
       {
@@ -519,7 +551,8 @@
     "description": {
       "en": "A list of paths to use as djlint's source. When this option is specified, the command line source must be `-` as if using stdin.",
       "ru": "Список путей для использования в качестве источника djlint. Когда указана эта опция, источник командной строки должен быть `-`, как при использовании stdin.",
-      "fr": "Une liste de chemins à utiliser comme source de djlint. Lorsque cette option est spécifiée, la source de la ligne de commande doit être `-` comme si vous utilisiez stdin."
+      "fr": "Une liste de chemins à utiliser comme source de djlint. Lorsque cette option est spécifiée, la source de la ligne de commande doit être `-` comme si vous utilisiez stdin.",
+      "zh": "定义一个作为 djlint 源的路径列表。当指定该选项时，命令行中的源必须设置为 `-`，就如同使用标准输入（stdin）一样。"
     },
     "usage": [
       {
@@ -536,7 +569,8 @@
     "description": {
       "en": "Do not attempt to fix the case of known html tags.",
       "ru": "Не пытайтесь исправить регистр известных html-тегов.",
-      "fr": "N'essayez pas de corriger la casse des balises html connues."
+      "fr": "N'essayez pas de corriger la casse des balises html connues.",
+      "zh": "不修正已知 HtMl 标签的大小写。"
     },
     "usage": [
       {
