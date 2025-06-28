@@ -1,51 +1,51 @@
 ---
-description: Format your HTML Templates with djLint. Fast, accurate, output will make your templates shine.
-title: Formatter Usage
-keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, formatter usage
+description: 使用 djLint 格式化你的 HTML 模板。又快又准的使你的模板焕发光彩。
+title: 代码格式化
+keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 检查, 格式化工具
 ---
 
-# Formatter Usage
+# 代码格式化
 
-djLint's formatter will take sloppy html templates and make the formatting consistent and easy to follow!
+djLint 的格式化工具可以处理混乱的HTML模板，使之变得格式统一且易于模仿！
 
-Formatting is a beta tool. `--check` the output before applying changes.
+代码格式化是个 beta 工具。在确认修改之前使用 `--check` 查看输出。
 
-To review what may change in formatting run:
+预览格式化修改内容：
 
 ```bash
 djlint . --check
 ```
 
-To format the code and update files run:
+直接格式化：
 
 ```bash
 djlint . --reformat
 
-# how about formatting scripts and styles?
+# 顺带格式化一下脚本和样式？
 djlint . --reformat --format-css --format-js
 ```
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/docs/configuration/">Check out the configuration guide for all the options!</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/docs/configuration/">详情请参考 `配置` 章节</a></div>
 </div>
 
 {% admonition
    "note",
-   "Note",
-   "Reformatting does not work with long json/html embedded into attribute data."
+   "注意",
+   "对于嵌入属性中的长段 JSON/HTML 内容，不会进行格式化。"
 %}
 
 {% admonition
    "note",
-   "Note",
-   "djLint is not an html parser or syntax validator."
+   "注意",
+   "djLint 并非 HTML 解析器或语法验证器。"
 %}
 
-## Here's an example!
+## 示例
 
-### Before
+### 处理前
 
-Here's a blob of HTML that's in desperate need of attention -
+下面是一段急需处理的 HTML 代码块 -
 {% raw %}
 
 ```
@@ -54,9 +54,9 @@ Here's a blob of HTML that's in desperate need of attention -
 
 {% endraw %}
 
-### After
+### 处理后
 
-It looks a bit better now... we can read it :)
+看起来好多了…… 至少我们能读得下去了：
 
 {% raw %}
 
