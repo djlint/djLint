@@ -1,43 +1,43 @@
 ---
-description: How to prevent djLint from formatting a block of code. How ignore djLint rules inline.
-title: Ignoring Code
-keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, formatter usage, ignore code, ignore rules
+description: 如何防止 djLint 格式化代码块以及如何在行内忽略 djLint 规则。
+title: 忽略码
+keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 检查, 代码格式化, 忽略规则, 忽略码
 date: Last Modified
 ---
 
-# Ignoring Code
+# 忽略码
 
-Code can be ignored by wrapping it in `djlint` tags:
+使用包裹在 djLint 标签等忽略码来调过代码检查/格式化：
 
 {% raw %}
 
-For plain old html -
+对于传统 HTML -
 
 ```html
 <!-- djlint:off -->
 <bad html to ignore> <!-- djlint:on --></bad>
 ```
 
-or as a comment -
+或使用注释 -
 
 ```html
 {# djlint:off #} <bad html to ignore> {# djlint:on #}</bad>
 ```
 
-or as a long comment -
+或使用长注释 -
 
 ```html
 {% comment %} djlint:off {% endcomment %}
 <bad html to ignore> {% comment %} djlint:on {% endcomment %}</bad>
 ```
 
-or as a javascript style comment -
+亦或是 javascript 风格注释 -
 
 ```html
 {{ /* djlint:off */ }} <bad html to ignore> {{ /* djlint:on */ }}</bad>
 ```
 
-or as a golang style comment -
+以及 golang 风格注释 -
 
 ```html
 {{!-- djlint:off --}} <bad html to ignore> {{!-- djlint:on --}}</bad>
@@ -45,9 +45,9 @@ or as a golang style comment -
 
 {% endraw %}
 
-## Ignoring Rules
+## 忽略规则
 
-Specific linter rules can also be ignored by adding the rule name into the ignored block opening tag.
+通过这忽略模块中添加规则名，可以忽略特定代码检查规则。
 
 {% raw %}
 
