@@ -1,38 +1,38 @@
 ---
-description: djLint configuration for HTML Template Linting and Formatting. Take advantage of the many formatter options.
-title: Configuration
-keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, configuration
+description: djLint配置
+title: 配置
+keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 检查, 规则, 配置
 ---
 
-# Configuration
+# 配置
 
-Configuration is done either through your projects `pyproject.toml` file, a `djlint.toml` file or a `.djlintrc` file. Command line args will always override any settings in `pyproject.toml`. Local project settings will always override global configuration files.
+配置可通过项目的 `pyproject.toml` 文件、`djlint.toml` 文件或 `.djlintrc` 文件来完成。命令行参数优先级大于配置文件的任何配置，本地项目设置优先级大于全局配置文件。
 
-The format for `pyproject.toml` is `toml`.
+这是 `pyproject.toml` 的格式，遵循 `toml` 文件格式。
 
 ```toml
 [tool.djlint]
 <config options>
 ```
 
-The format for `djlint.toml` is `toml`.
+这是 `djlint.toml` 的格式，遵循 `toml` 文件格式。
 
 ```toml
 <config options>
 ```
 
-The format for `.djlintrc` is `json`.
+这是 `.djlintrc` 的格式，遵循 `json` 文件格式。
 
 ```json
 { "option": "value" }
 ```
 
-## Options
+## 参数
 
 <div class="field">
-  <label class="label">Filter Options</label>
+  <label class="label">筛选参数</label>
   <div class="control">
-    <input id="filter" class="input" type="text" placeholder="type to filter options..." />
+    <input id="filter" class="input" type="text" placeholder="输入筛选参数..." />
 
   </div>
 </div>
