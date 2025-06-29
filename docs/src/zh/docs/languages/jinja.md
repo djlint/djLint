@@ -1,7 +1,7 @@
 ---
-title: Jinja Template Linter and Formatter
-keywords: jinja, djlint, jinja template linter, jinja template formatter, format jinja templates
-description: djLint is a jinja template linter and a jinja template formatter! Take advantage of the pre-build profile when linting and formatting your templates with djLint.
+title: Jinja 模板检查与格式化
+keywords: jinja, djlint, jinja 模板检查, jinja 模板格式化
+description: djLint是一个 jinja 模板的代码检查与格式化工具！使用与构建的配置文件，充分利用djLint来检查并格式化你的模板。
 tool: jinja
 ---
 
@@ -9,17 +9,17 @@ tool: jinja
 
 {{ description }}
 
-**[What is Jinja?](https://jinja2docs.readthedocs.io/en/stable/)**
+**[Jinja简介](https://jinja2docs.readthedocs.io/en/stable/)**
 
-#### Using the Command Line
+#### 使用命令行
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Or, Use a Config File
+#### 使用配置文件
 
-Configure djLint in your projects `pyproject.toml`.
+在你项目中的 `pyproject..toml` 配置 djLint。
 
 ```toml
 [tool.djlint]
@@ -27,5 +27,5 @@ profile="{{ tool }}"
 ```
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/docs/configuration/">Check out the configuration guide for all the options!</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block">详情请参考 <a href="/docs/configuration/">配置</a> 章节</div>
 </div>
