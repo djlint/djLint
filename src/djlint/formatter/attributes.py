@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -11,6 +12,63 @@ from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
 
 if TYPE_CHECKING:
     from djlint.settings import Config
+
+
+def has_object_braces(value: str) -> bool:
+    """Check if attribute value contains object-like braces."""
+    stripped = value.strip()
+    return stripped.startswith("{") and stripped.endswith("}")
+
+
+def has_single_property(value: str) -> bool:
+    """Check if JSON/JS object has only one property."""
+    try:
+        # Try parsing as JSON first
+        data = json.loads(value)
+        return len(data) == 1
+    except Exception:
+        # For JS objects, count property-like patterns
+        # Simple heuristic: count comma-separated properties
+        cleaned = re.sub(r'["\']([^"\']*)["\']', "", value)  # Remove strings
+        property_count = len(re.findall(r"[a-zA-Z_$][a-zA-Z0-9_$]*\s*:", cleaned))
+        return property_count <= 1
+
+
+def is_json_object(value: str) -> bool:
+    """Check if attribute value is a valid JSON object."""
+    try:
+        json.loads(value)
+        return True
+    except Exception:
+        return False
+
+
+def is_js_attribute(attribute_name: str, pattern: str) -> bool:
+    """Check if attribute name matches JavaScript attribute pattern."""
+    return re.match(pattern, attribute_name, re.IGNORECASE) is not None
+
+
+def format_json_with_indent(value: str, base_indent: str, indent_size: int) -> str:
+    """Format JSON with proper HTML-relative indentation."""
+    try:
+        data = json.loads(value)
+        # Use indent_size spaces for JSON formatting
+        formatted = json.dumps(data, indent=indent_size)
+        # Add base_indent to each line (except first)
+        lines = formatted.split("\n")
+        if len(lines) > 1:
+            indented_lines = [lines[0]]
+            for i, line in enumerate(lines[1:], 1):
+                if i == len(lines) - 1:  # Last line (closing brace)
+                    # Indent closing brace less than properties
+                    closing_indent = base_indent[:-2]  # Remove 2 spaces
+                    indented_lines.append(closing_indent + line)
+                else:
+                    indented_lines.append(base_indent + line)
+            return "\n".join(indented_lines)
+        return formatted
+    except Exception:
+        return value
 
 
 def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
@@ -201,6 +259,30 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
                 for value in attrib_value.split("x,")
                 if (stripped := value.strip())
             )
+
+        # format JS/JSON attributes
+        if (
+            config.format_js_attributes
+            and attrib_name
+            and attrib_value
+            and has_object_braces(attrib_value)
+            and is_js_attribute(attrib_name, config.js_attribute_pattern)
+            and not has_single_property(attrib_value)
+        ):
+            # Get indent size from JS config
+            indent_size = config.js_config.get("indent_size", 4)
+
+            # Calculate proper base indentation for JSON content
+            # Include space for attribute name, equals sign, opening quote, and opening brace
+            base_indent = spacing + (quote_length + len(attrib_name or "") + 2) * " "
+
+            # Format JSON objects
+            if is_json_object(attrib_value):
+                attrib_value = format_json_with_indent(
+                    attrib_value,
+                    base_indent,
+                    indent_size
+                )
 
         # format template stuff
         if config.format_attribute_template_tags:

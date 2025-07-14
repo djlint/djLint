@@ -109,6 +109,16 @@ if TYPE_CHECKING:
     "--format-js", is_flag=True, help="Also format contents of <script> tags."
 )
 @click.option(
+    "--format-js-attributes", is_flag=True, help="Also format JavaScript/JSON inside HTML attributes."
+)
+@click.option(
+    "--js-attribute-pattern",
+    type=str,
+    default="",
+    help="Regex pattern to match JavaScript attributes.",
+    show_default=False,
+)
+@click.option(
     "--configuration",
     type=click.Path(
         exists=True,
@@ -279,6 +289,8 @@ def main(
     max_line_length: int | None,
     max_attribute_length: int | None,
     format_attribute_template_tags: bool,
+    format_js_attributes: bool,
+    js_attribute_pattern: str,
     per_file_ignores: tuple[tuple[str, str], ...],
     indent_css: int | None,
     indent_js: int | None,
@@ -322,6 +334,8 @@ def main(
         max_line_length=max_line_length,
         max_attribute_length=max_attribute_length,
         format_attribute_template_tags=format_attribute_template_tags,
+        format_js_attributes=format_js_attributes,
+        js_attribute_pattern=js_attribute_pattern,
         per_file_ignores=per_file_ignores,
         indent_css=indent_css,
         indent_js=indent_js,
