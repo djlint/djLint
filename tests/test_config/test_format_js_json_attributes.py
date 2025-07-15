@@ -90,7 +90,6 @@ test_data = [
         ),
         ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
         id="js_two_properties_multiline",
-        marks=pytest.mark.xfail(reason="JavaScript object formatting not yet implemented"),
     ),
     pytest.param(
         (
