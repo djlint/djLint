@@ -376,6 +376,16 @@ class Config:
             js_pattern_string, flags=RE_FLAGS_IX
         )
 
+        # Pre-compile regex for object braces detection
+        self.object_braces_pattern: re.Pattern[str] = re.compile(
+            r"^\s*\{.*\}\s*$", flags=re.I
+        )
+
+        # Pre-compile regex for Django template tags (to exclude them)
+        self.django_template_pattern: re.Pattern[str] = re.compile(
+            r"^\s*(\{\{.*\}\}|\{%.*%\})\s*$", flags=re.I
+        )
+
         self.preserve_leading_space: bool = (
             preserve_leading_space
             or djlint_settings.get("preserve_leading_space", False)

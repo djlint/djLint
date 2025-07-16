@@ -16,10 +16,6 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-def has_object_braces(value: str) -> bool:
-    """Check if attribute value contains object-like braces."""
-    stripped = value.strip()
-    return stripped.startswith("{") and stripped.endswith("}")
 
 
 def has_single_property(value: str) -> bool:
@@ -46,9 +42,6 @@ def is_json_object(value: str) -> bool:
         return True
 
 
-def is_js_attribute(attribute_name: str, pattern: re.Pattern[str]) -> bool:
-    """Check if attribute name matches JavaScript attribute pattern."""
-    return pattern.match(attribute_name) is not None
 
 
 def format_json_with_indent(config: Config, value: str, base_indent: str) -> str:
@@ -301,13 +294,14 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
             config.format_js_attributes
             and attrib_name
             and attrib_value
-            and is_js_attribute(attrib_name, config.js_attribute_pattern)
+            and config.js_attribute_pattern.match(attrib_name)
         ):
             # Get indent size from JS config
             indent_size = config.js_config.get("indent_size", 4)
 
             # Check if it's an object or general JavaScript code
-            if has_object_braces(attrib_value):
+            if (config.object_braces_pattern.match(attrib_value)
+                and not config.django_template_pattern.match(attrib_value)):
                 # Skip single property objects
                 if not has_single_property(attrib_value):
                     # Format JSON objects first, then JavaScript objects
