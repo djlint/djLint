@@ -102,7 +102,6 @@ test_data = [
         ),
         ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
         id="js_code_block_multiline",
-        marks=pytest.mark.xfail(reason="JavaScript code block formatting not yet implemented"),
     ),
 ]
 
