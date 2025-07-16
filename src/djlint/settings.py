@@ -287,6 +287,8 @@ class Config:
         max_line_length: int | None = None,
         max_attribute_length: int | None = None,
         format_attribute_template_tags: bool = False,
+        format_js_attributes: bool = False,
+        js_attribute_pattern: str = "",
         per_file_ignores: tuple[tuple[str, str], ...] = (),
         indent_css: int | None = None,
         indent_js: int | None = None,
@@ -341,6 +343,32 @@ class Config:
         self.format_attribute_template_tags: bool = (
             format_attribute_template_tags
             or djlint_settings.get("format_attribute_template_tags", False)
+        )
+
+        self.format_js_attributes: bool = (
+            format_js_attributes
+            or djlint_settings.get("format_js_attributes", False)
+        )
+
+        # Default comprehensive regex pattern for JavaScript attributes
+        default_js_pattern = r'^(?:' \
+            r'on[a-z]+|' \
+            r'data-[a-z-]+|' \
+            r'x-[a-z-]+|' \
+            r'@[a-z-]+|' \
+            r':[a-z-]+|' \
+            r'v-[a-z-]+|' \
+            r'\([a-z-]+\)|' \
+            r'\[[a-z-]+\]|' \
+            r'\*ng[A-Z][a-zA-Z]*|' \
+            r'[a-z-]+\.(bind|delegate|call|trigger)|' \
+            r'_|' \
+            r'[a-z]+[A-Z][a-zA-Z]*' \
+            r')$'
+
+        self.js_attribute_pattern: str = (
+            js_attribute_pattern
+            or djlint_settings.get("js_attribute_pattern", default_js_pattern)
         )
 
         self.preserve_leading_space: bool = (
@@ -679,9 +707,13 @@ class Config:
         self.max_attribute_length = 70
 
         try:
-            self.max_attribute_length = max_attribute_length or int(
-                djlint_settings.get(
-                    "max_attribute_length", self.max_attribute_length
+            self.max_attribute_length = (
+                max_attribute_length
+                if max_attribute_length is not None
+                else int(
+                    djlint_settings.get(
+                        "max_attribute_length", self.max_attribute_length
+                    )
                 )
             )
         except ValueError:
