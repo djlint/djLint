@@ -328,7 +328,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
             else:
                 # Format general JavaScript code (non-objects)
                 # Calculate base indentation for general JS code
-                js_code_base_indent = spacing + (quote_length + len(attrib_name or "") + 1) * " "
+                js_code_base_indent = spacing + (quote_length + len(attrib_name or "") + 0) * " "
                 attrib_value = format_js_with_indent(
                     attrib_value,
                     js_code_base_indent,

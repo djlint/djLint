@@ -93,12 +93,22 @@ test_data = [
     ),
     pytest.param(
         (
+            '<div onclick=\'console.log("start");\'></div>'
+        ),
+        (
+            '<div onclick=\'console.log("start");\'></div>\n'
+        ),
+        ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
+        id="js_code_block_multiline",
+    ),
+    pytest.param(
+        (
             '<div onclick=\'console.log("start"); var x = 1; console.log("end");\'></div>'
         ),
         (
             '<div onclick=\'console.log("start");\n'
-            '               var x = 1;\n'
-            '               console.log("end");\'></div>\n'
+            '              var x = 1;\n'
+            '              console.log("end");\'></div>\n'
         ),
         ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
         id="js_code_block_multiline",
