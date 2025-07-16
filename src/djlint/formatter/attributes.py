@@ -79,10 +79,10 @@ def format_js_with_indent(value: str, base_indent: str, config: Config) -> str:
         # Use the same JS config as the main JS formatter
         js_config = dict(config.js_config)
         js_config["indent_level"] = 0  # No extra indentation from jsbeautifier
-        
+
         opts = BeautifierOptions(js_config)
         formatted = jsbeautifier.beautify(value, opts)
-        
+
         # Add base_indent to each line (except first)
         lines = formatted.split("\n")
         if len(lines) > 1:
@@ -90,7 +90,7 @@ def format_js_with_indent(value: str, base_indent: str, config: Config) -> str:
             for i, line in enumerate(lines[1:], 1):
                 # Check if this is an object (starts and ends with braces)
                 is_object = value.strip().startswith("{") and value.strip().endswith("}")
-                
+
                 if is_object and i == len(lines) - 1:  # Last line of object (closing brace)
                     # Indent closing brace less than properties for objects
                     closing_indent = base_indent[:-4]  # Remove 4 spaces for JS objects
