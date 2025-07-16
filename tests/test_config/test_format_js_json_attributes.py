@@ -93,25 +93,35 @@ test_data = [
     ),
     pytest.param(
         (
-            '<div onclick=\'console.log("start");\'></div>'
+            '<div onclick=\'foo();\'></div>'
         ),
         (
-            '<div onclick=\'console.log("start");\'></div>\n'
+            '<div onclick=\'foo();\'></div>\n'
         ),
         ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
-        id="js_code_block_multiline",
+        id="js_code_single_function_no_formatting",
     ),
     pytest.param(
         (
-            '<div onclick=\'console.log("start"); var x = 1; console.log("end");\'></div>'
+            '<div onclick=\'foo(); var x = 1; baz();\'></div>'
         ),
         (
-            '<div onclick=\'console.log("start");\n'
+            '<div onclick=\'foo();\n'
             '              var x = 1;\n'
-            '              console.log("end");\'></div>\n'
+            '              baz();\'></div>\n'
         ),
         ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
-        id="js_code_block_multiline",
+        id="js_code_multiple_statements_multiline",
+    ),
+    pytest.param(
+        (
+            "<div onclick='foo(); baz();'></div>"
+        ),
+        (
+            "<div onclick='foo(); baz();'></div>\n"
+        ),
+        ({"format_js_attributes": True, "max_attribute_length": 50, "indent_js": 2}),
+        id="js_code_under_max_length_no_formatting",
     ),
 ]
 
