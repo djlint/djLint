@@ -159,8 +159,8 @@ def reformat(
 
 def config_builder(args: Mapping[str, Any] | None = None) -> Config:
     if args:
-        return Config(src="dummy/source.html", **args)
-    return Config(src="dummy/source.html")
+        return Config("dummy/source.html", **args)
+    return Config("dummy/source.html")
 
 
 @pytest.fixture
