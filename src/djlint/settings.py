@@ -9,10 +9,13 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import regex as re
 import yaml
 from click import echo
 from colorama import Fore
 from pathspec import PathSpec
+
+from djlint.helpers import RE_FLAGS_IX
 from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
@@ -351,24 +354,26 @@ class Config:
         )
 
         # Default comprehensive regex pattern for JavaScript attributes
-        default_js_pattern = r'^(?:' \
-            r'on[a-z]+|' \
-            r'data-[a-z-]+|' \
-            r'x-[a-z-]+|' \
-            r'@[a-z-]+|' \
-            r':[a-z-]+|' \
-            r'v-[a-z-]+|' \
-            r'\([a-z-]+\)|' \
-            r'\[[a-z-]+\]|' \
-            r'\*ng[A-Z][a-zA-Z]*|' \
-            r'[a-z-]+\.(bind|delegate|call|trigger)|' \
-            r'_|' \
-            r'[a-z]+[A-Z][a-zA-Z]*' \
-            r')$'
+        default_js_pattern = r"^(?:" \
+            r"on[a-z]+|" \
+            r"data-[a-z\-]+|" \
+            r"x-[a-z\-]+|" \
+            r"@[a-z\-]+|" \
+            r":[a-z\-]+|" \
+            r"v-[a-z\-]+|" \
+            r"\([a-z\-]+\)|" \
+            r"\[[a-z\-]+\]|" \
+            r"\*ng[A-Z][a-zA-Z]*|" \
+            r"[a-z\-]+\.(bind|delegate|call|trigger)" \
+            r")$"
 
-        self.js_attribute_pattern: str = (
+        # Pre-compile the JS attribute pattern for better performance
+        js_pattern_string = (
             js_attribute_pattern
             or djlint_settings.get("js_attribute_pattern", default_js_pattern)
+        )
+        self.js_attribute_pattern: re.Pattern[str] = re.compile(
+            js_pattern_string, flags=RE_FLAGS_IX
         )
 
         self.preserve_leading_space: bool = (
