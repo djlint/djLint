@@ -25,8 +25,12 @@ def count_object_properties(config: Config, value: str) -> int:
     except Exception:
         # For JS objects, count property-like patterns
         # Simple heuristic: count comma-separated properties
-        cleaned = config.js_string_pattern.sub("", value)  # Remove strings
-        return len(config.js_property_pattern.findall(cleaned))
+        cleaned = config.format_attribute_js_json_string_pattern.sub(
+            "", value
+        )  # Remove strings
+        return len(
+            config.format_attribute_js_json_property_pattern.findall(cleaned)
+        )
 
 
 def is_json_object(value: str) -> bool:
@@ -312,14 +316,16 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
             config.format_attribute_js_json
             and attrib_name
             and attrib_value
-            and config.js_attribute_pattern.match(attrib_name)
+            and config.format_attribute_js_json_pattern.match(attrib_name)
         ):
             # Check if it's an object or general JavaScript code
-            if config.object_braces_pattern.match(attrib_value):
+            if config.format_attribute_js_json_object_pattern.match(
+                attrib_value
+            ):
                 # Skip objects with fewer than minimum properties
                 if (
                     count_object_properties(config, attrib_value)
-                    >= config.js_attribute_minimum_properties
+                    >= config.format_attribute_js_json_min_props
                 ):
                     # Format JSON objects first, then JavaScript objects
                     if is_json_object(attrib_value):

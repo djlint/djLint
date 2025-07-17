@@ -290,8 +290,8 @@ class Config:
         max_attribute_length: int | None = None,
         format_attribute_template_tags: bool = False,
         format_attribute_js_json: bool = False,
-        js_attribute_pattern: str = "",
-        js_attribute_minimum_properties: int = 2,
+        format_attribute_js_json_pattern: str = "",
+        format_attribute_js_json_min_props: int = 2,
         per_file_ignores: tuple[tuple[str, str], ...] = (),
         indent_css: int | None = None,
         indent_js: int | None = None,
@@ -353,9 +353,9 @@ class Config:
             or djlint_settings.get("format_attribute_js_json", False)
         )
 
-        self.js_attribute_minimum_properties: int = (
-            js_attribute_minimum_properties
-            or djlint_settings.get("js_attribute_minimum_properties", 2)
+        self.format_attribute_js_json_min_props: int = (
+            format_attribute_js_json_min_props
+            or djlint_settings.get("format_attribute_js_json_min_props", 2)
         )
 
         # Default comprehensive regex pattern for JavaScript attributes
@@ -373,27 +373,27 @@ class Config:
             r"[a-z\-]+\.(bind|delegate|call|trigger)"
             r")$"
         )
-
-        # Pre-compile the JS attribute pattern for better performance
-        js_pattern_string = js_attribute_pattern or djlint_settings.get(
-            "js_attribute_pattern", default_js_pattern
+        js_pattern_string = (
+            format_attribute_js_json_pattern
+            or djlint_settings.get(
+                "format_attribute_js_json_pattern", default_js_pattern
+            )
         )
-        self.js_attribute_pattern: re.Pattern[str] = re.compile(
+        self.format_attribute_js_json_pattern: re.Pattern[str] = re.compile(
             js_pattern_string, flags=RE_FLAGS_IX
         )
 
-        # Pre-compile regex for object braces detection
-        self.object_braces_pattern: re.Pattern[str] = re.compile(
-            r"^\s*\{(?![{%]).*\}\s*$", flags=RE_FLAGS_IX
+        self.format_attribute_js_json_object_pattern: re.Pattern[str] = (
+            re.compile(r"^\s*\{(?![{%]).*\}\s*$", flags=RE_FLAGS_IX)
         )
-
-        # Pre-compile regex patterns for property counting
-        self.js_string_pattern: re.Pattern[str] = re.compile(
-            r'["\']([^"\']*)["\']', flags=RE_FLAGS_IX
+        self.format_attribute_js_json_string_pattern: re.Pattern[str] = (
+            re.compile(r'["\']([^"\']*)["\']', flags=RE_FLAGS_IX)
         )
-        self.js_property_pattern: re.Pattern[str] = re.compile(
-            r"(?:[a-zA-Z_$][a-zA-Z0-9_$]*\s*:|(?:get|set)\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\()",
-            flags=RE_FLAGS_IX,
+        self.format_attribute_js_json_property_pattern: re.Pattern[str] = (
+            re.compile(
+                r"(?:[a-zA-Z_$][a-zA-Z0-9_$]*\s*:|(?:get|set)\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\()",
+                flags=RE_FLAGS_IX,
+            )
         )
 
         self.preserve_leading_space: bool = (

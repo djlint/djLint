@@ -551,9 +551,9 @@
     "name": "format_attribute_js_json",
     "tags": ["formatter"],
     "description": {
-      "en": "Format JavaScript and JSON code inside HTML attributes. This will format object literals and JavaScript code in attributes like `onclick`, `data-*`, and other JavaScript-related attributes. Objects with fewer properties than `js_attribute_minimum_properties` will not be formatted.",
-      "ru": "Форматировать JavaScript и JSON код внутри HTML атрибутов. Это форматирует объектные литералы и JavaScript код в атрибутах типа `onclick`, `data-*` и других JavaScript-связанных атрибутах. Объекты с количеством свойств меньше `js_attribute_minimum_properties` не будут форматироваться.",
-      "fr": "Formater le code JavaScript et JSON à l'intérieur des attributs HTML. Cela formatera les littéraux d'objet et le code JavaScript dans les attributs comme `onclick`, `data-*` et d'autres attributs liés à JavaScript. Les objets avec moins de propriétés que `js_attribute_minimum_properties` ne seront pas formatés."
+      "en": "Format JavaScript and JSON code inside HTML attributes. This will format object literals and JavaScript code in attributes like `onclick`, `data-*`, and other JavaScript-related attributes. Objects with fewer properties than `format_attribute_js_json_min_props` will not be formatted.",
+      "ru": "Форматировать JavaScript и JSON код внутри HTML атрибутов. Это форматирует объектные литералы и JavaScript код в атрибутах типа `onclick`, `data-*` и других JavaScript-связанных атрибутах. Объекты с количеством свойств меньше `format_attribute_js_json_min_props` не будут форматироваться.",
+      "fr": "Formater le code JavaScript et JSON à l'intérieur des attributs HTML. Cela formatera les littéraux d'objet et le code JavaScript dans les attributs comme `onclick`, `data-*` et d'autres attributs liés à JavaScript. Les objets avec moins de propriétés que `format_attribute_js_json_min_props` ne seront pas formatés."
     },
     "usage": [
       {
@@ -568,7 +568,7 @@
     ]
   },
   {
-    "name": "js_attribute_pattern",
+    "name": "format_attribute_js_json_pattern",
     "tags": ["formatter"],
     "description": {
       "en": "Custom regex pattern to match JavaScript attributes for formatting. Default pattern matches common JavaScript attributes like `onclick`, `data-*`, Vue.js directives, Alpine.js directives, Angular directives, and more.",
@@ -578,11 +578,11 @@
     "usage": [
       {
         "name": "pyproject.toml",
-        "value": "js_attribute_pattern=\"^(on[a-z]+|data-[a-z-]+|x-[a-z-]+)$\""
+        "value": "format_attribute_js_json_pattern=\"^(on[a-z]+|data-[a-z-]+|x-[a-z-]+)$\""
       },
       {
         "name": ".djlintrc",
-        "value": "\"js_attribute_pattern\": \"^(on[a-z]+|data-[a-z-]+|x-[a-z-]+)$\""
+        "value": "\"format_attribute_js_json_pattern\": \"^(on[a-z]+|data-[a-z-]+|x-[a-z-]+)$\""
       },
       {
         "name": "cli",
@@ -591,7 +591,7 @@
     ]
   },
   {
-    "name": "js_attribute_minimum_properties",
+    "name": "format_attribute_js_json_min_props",
     "tags": ["formatter"],
     "description": {
       "en": "Minimum number of properties required in a JavaScript/JSON object for it to be formatted. Default is 2. Objects with fewer properties will remain on a single line.",
@@ -601,11 +601,11 @@
     "usage": [
       {
         "name": "pyproject.toml",
-        "value": "js_attribute_minimum_properties=3"
+        "value": "format_attribute_js_json_min_props=3"
       },
       {
         "name": ".djlintrc",
-        "value": "\"js_attribute_minimum_properties\": 3"
+        "value": "\"format_attribute_js_json_min_props\": 3"
       }
     ]
   }
