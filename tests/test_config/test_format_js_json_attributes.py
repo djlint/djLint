@@ -29,8 +29,8 @@ test_data = [
         ('<div data-config=\'{"name": "value", "enabled": true}\'></div>'),
         (
             "<div data-config='{\n"
-            '                      "name": "value",\n'
-            '                      "enabled": true\n'
+            '                    "name": "value",\n'
+            '                    "enabled": true\n'
             "                  }'></div>\n"
         ),
         ({
@@ -44,8 +44,8 @@ test_data = [
         ('<div data-x=\'{"name": "value", "enabled": true}\'></div>'),
         (
             "<div data-x='{\n"
-            '                 "name": "value",\n'
-            '                 "enabled": true\n'
+            '               "name": "value",\n'
+            '               "enabled": true\n'
             "             }'></div>\n"
         ),
         ({
@@ -61,8 +61,8 @@ test_data = [
         ),
         (
             "<div data-very-long-attribute-name='{\n"
-            '                                        "name": "value",\n'
-            '                                        "enabled": true\n'
+            '                                      "name": "value",\n'
+            '                                      "enabled": true\n'
             "                                    }'></div>\n"
         ),
         ({
@@ -82,8 +82,8 @@ test_data = [
         ("<div onclick='{action: \"click\", preventDefault: true}'></div>"),
         (
             "<div onclick='{\n"
-            '                  action: "click",\n'
-            "                  preventDefault: true\n"
+            '                action: "click",\n'
+            "                preventDefault: true\n"
             "              }'></div>\n"
         ),
         ({
@@ -167,10 +167,10 @@ test_data = [
         ),
         (
             "<div onclick='{\n"
-            '                   foo: "bar",\n'
-            "                   get baz() {\n"
-            "                      return this.foo;\n"
-            "                   }\n"
+            '                 foo: "bar",\n'
+            "                 get baz() {\n"
+            "                    return this.foo;\n"
+            "                 }\n"
             "              }'></div>\n"
         ),
         ({
@@ -185,8 +185,8 @@ test_data = [
         ('<div onclick=\'{"foo": "bar", "baz": "qux"}\'></div>'),
         (
             "<div onclick='{\n"
-            '                    "foo": "bar",\n'
-            '                    "baz": "qux"\n'
+            '                  "foo": "bar",\n'
+            '                  "baz": "qux"\n'
             "              }'></div>\n"
         ),
         ({

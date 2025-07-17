@@ -61,8 +61,13 @@ def format_json_with_indent(
             indented_lines = [lines[0]]
             for i, line in enumerate(lines[1:], 1):
                 if i == len(lines) - 1:  # Last line (closing brace)
-                    # Indent closing brace less than properties
-                    closing_indent = base_indent[:-2]  # Remove 2 spaces
+                    # Indent closing brace indent_size spaces less than properties
+                    # Content lines get: base_indent + json_indent_size
+                    # Closing should get: base_indent + json_indent_size - indent_size
+                    content_indent = base_indent + (" " * indent_size)
+                    closing_indent = content_indent[
+                        :-indent_size
+                    ]  # Remove indent_size spaces from content indent
                     indented_lines.append(closing_indent + line)
                 else:
                     indented_lines.append(base_indent + line)
@@ -105,12 +110,13 @@ def format_js_with_indent(config: Config, value: str, base_indent: str) -> str:
                 if (
                     is_object and i == len(lines) - 1
                 ):  # Last line of object (closing brace)
-                    # Indent closing brace less than properties for objects
-                    closing_indent = base_indent[
-                        :-2
-                    ]  # Remove 2 spaces for JS objects
+                    # Indent closing brace 2 spaces less than properties for objects
+                    # jsbeautifier already provides the correct line_indent difference
+                    # Content lines get: base_indent + (" " * line_indent_for_content) (e.g., 14 + 2 = 16)
+                    # Closing line gets: base_indent + (" " * line_indent_for_closing) (e.g., 14 + 0 = 14)
+                    # This naturally creates the 2-space difference we want
                     indented_lines.append(
-                        closing_indent + (" " * line_indent) + line.strip()
+                        base_indent + (" " * line_indent) + line.strip()
                     )
                 else:
                     # For general JS code or object properties, use full base_indent + jsbeautifier indent
@@ -331,7 +337,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
                         # Calculate proper base indentation for JSON content
                         json_base_indent = (
                             spacing
-                            + (quote_length + len(attrib_name or "") + 2) * " "
+                            + (quote_length + len(attrib_name or "")) * " "
                         )
                         attrib_value = format_json_with_indent(
                             config, attrib_value, json_base_indent
@@ -340,7 +346,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
                         # Calculate proper base indentation for JavaScript objects
                         js_base_indent = (
                             spacing
-                            + (quote_length + len(attrib_name or "") + 2) * " "
+                            + (quote_length + len(attrib_name or "")) * " "
                         )
                         # Format JavaScript objects
                         attrib_value = format_js_with_indent(
@@ -350,7 +356,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
                 # Format general JavaScript code (non-objects)
                 # Calculate base indentation for general JS code
                 js_code_base_indent = (
-                    spacing + (quote_length + len(attrib_name or "") + 0) * " "
+                    spacing + (quote_length + len(attrib_name or "")) * " "
                 )
                 attrib_value = format_js_with_indent(
                     config, attrib_value, js_code_base_indent
