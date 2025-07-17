@@ -78,13 +78,21 @@ def format_js_with_indent(config: Config, value: str, base_indent: str) -> str:
     except Exception:
         return value
     else:
-        # Add base_indent to each line (except first)
+        # Add base_indent to each line while preserving relative indentation
         lines = formatted.split("\n")
         if len(lines) > 1:
             indented_lines = [
                 lines[0].strip()
             ]  # Remove jsbeautifier's indentation from first line
+
             for i, line in enumerate(lines[1:], 1):
+                if not line.strip():  # Handle empty lines
+                    indented_lines.append("")
+                    continue
+
+                # Preserve the original jsbeautifier indentation structure
+                line_indent = len(line) - len(line.lstrip())
+
                 # Check if this is an object (starts and ends with braces)
                 is_object = value.strip().startswith(
                     "{"
@@ -94,13 +102,18 @@ def format_js_with_indent(config: Config, value: str, base_indent: str) -> str:
                     is_object and i == len(lines) - 1
                 ):  # Last line of object (closing brace)
                     # Indent closing brace less than properties for objects
+                    js_indent_size = config.js_config.get("indent_size", 4)
                     closing_indent = base_indent[
-                        :-4
-                    ]  # Remove 4 spaces for JS objects
-                    indented_lines.append(closing_indent + line.strip())
+                        :-js_indent_size
+                    ]  # Remove js_indent_size spaces for JS objects
+                    indented_lines.append(
+                        closing_indent + (" " * line_indent) + line.strip()
+                    )
                 else:
-                    # For general JS code or object properties, use full base_indent
-                    indented_lines.append(base_indent + line.strip())
+                    # For general JS code or object properties, use full base_indent + jsbeautifier indent
+                    indented_lines.append(
+                        base_indent + (" " * line_indent) + line.strip()
+                    )
             return "\n".join(indented_lines)
         return formatted
 
@@ -320,9 +333,15 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
                         )
                     else:
                         # Calculate proper base indentation for JavaScript objects
+                        js_indent_size = config.js_config.get("indent_size", 4)
                         js_base_indent = (
                             spacing
-                            + (quote_length + len(attrib_name or "") + 4) * " "
+                            + (
+                                quote_length
+                                + len(attrib_name or "")
+                                + js_indent_size
+                            )
+                            * " "
                         )
                         # Format JavaScript objects
                         attrib_value = format_js_with_indent(

@@ -161,6 +161,25 @@ test_data = [
         }),
         id="non_js_attributes_no_formatting",
     ),
+    pytest.param(
+        (
+            "<div onclick='{foo: \"bar\", get baz() { return this.foo; }}'></div>"
+        ),
+        (
+            "<div onclick='{\n"
+            '                    foo: "bar",\n'
+            "                    get baz() {\n"
+            "                       return this.foo;\n"
+            "                    }\n"
+            "              }'></div>\n"
+        ),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 0,
+            "indent_js": 3,
+        }),
+        id="js_getter_function_nested_indent",
+    ),
 ]
 
 
