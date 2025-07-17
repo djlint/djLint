@@ -167,10 +167,10 @@ test_data = [
         ),
         (
             "<div onclick='{\n"
-            '                    foo: "bar",\n'
-            "                    get baz() {\n"
-            "                       return this.foo;\n"
-            "                    }\n"
+            '                   foo: "bar",\n'
+            "                   get baz() {\n"
+            "                      return this.foo;\n"
+            "                   }\n"
             "              }'></div>\n"
         ),
         ({
@@ -179,6 +179,22 @@ test_data = [
             "indent_js": 3,
         }),
         id="js_getter_function_nested_indent",
+    ),
+    pytest.param(
+        # Test default indent_js behavior (no indent_js specified)
+        ('<div onclick=\'{"foo": "bar", "baz": "qux"}\'></div>'),
+        (
+            "<div onclick='{\n"
+            '                    "foo": "bar",\n'
+            '                    "baz": "qux"\n'
+            "              }'></div>\n"
+        ),
+        ({
+            "format_attribute_js_json": True,
+            "max_attribute_length": 0,
+            # Note: no indent_js specified, should use default
+        }),
+        id="js_object_default_indent",
     ),
 ]
 

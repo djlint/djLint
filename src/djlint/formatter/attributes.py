@@ -106,10 +106,9 @@ def format_js_with_indent(config: Config, value: str, base_indent: str) -> str:
                     is_object and i == len(lines) - 1
                 ):  # Last line of object (closing brace)
                     # Indent closing brace less than properties for objects
-                    js_indent_size = config.js_config.get("indent_size", 4)
                     closing_indent = base_indent[
-                        :-js_indent_size
-                    ]  # Remove js_indent_size spaces for JS objects
+                        :-2
+                    ]  # Remove 2 spaces for JS objects
                     indented_lines.append(
                         closing_indent + (" " * line_indent) + line.strip()
                     )
@@ -339,15 +338,9 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
                         )
                     else:
                         # Calculate proper base indentation for JavaScript objects
-                        js_indent_size = config.js_config.get("indent_size", 4)
                         js_base_indent = (
                             spacing
-                            + (
-                                quote_length
-                                + len(attrib_name or "")
-                                + js_indent_size
-                            )
-                            * " "
+                            + (quote_length + len(attrib_name or "") + 2) * " "
                         )
                         # Format JavaScript objects
                         attrib_value = format_js_with_indent(
