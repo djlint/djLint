@@ -20,39 +20,39 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            '<div data-config=\'{"name": "value"}\'></div>'
-        ),
-        (
-            '<div data-config=\'{"name": "value"}\'></div>\n'
-        ),
+        ('<div data-config=\'{"name": "value"}\'></div>'),
+        ('<div data-config=\'{"name": "value"}\'></div>\n'),
         ({"format_js_attributes": True, "max_attribute_length": 0}),
         id="json_single_property_no_formatting",
     ),
     pytest.param(
+        ('<div data-config=\'{"name": "value", "enabled": true}\'></div>'),
         (
-            '<div data-config=\'{"name": "value", "enabled": true}\'></div>'
-        ),
-        (
-            '<div data-config=\'{\n'
+            "<div data-config='{\n"
             '                      "name": "value",\n'
             '                      "enabled": true\n'
-            '                  }\'></div>\n'
+            "                  }'></div>\n"
         ),
-        ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
         id="json_two_properties_multiline_medium_attr",
     ),
     pytest.param(
+        ('<div data-x=\'{"name": "value", "enabled": true}\'></div>'),
         (
-            '<div data-x=\'{"name": "value", "enabled": true}\'></div>'
-        ),
-        (
-            '<div data-x=\'{\n'
+            "<div data-x='{\n"
             '                 "name": "value",\n'
             '                 "enabled": true\n'
-            '             }\'></div>\n'
+            "             }'></div>\n"
         ),
-        ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
         id="json_two_properties_multiline_short_attr",
     ),
     pytest.param(
@@ -60,67 +60,71 @@ test_data = [
             '<div data-very-long-attribute-name=\'{"name": "value", "enabled": true}\'></div>'
         ),
         (
-            '<div data-very-long-attribute-name=\'{\n'
+            "<div data-very-long-attribute-name='{\n"
             '                                        "name": "value",\n'
             '                                        "enabled": true\n'
-            '                                    }\'></div>\n'
+            "                                    }'></div>\n"
         ),
-        ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
         id="json_two_properties_multiline_long_attr",
     ),
     pytest.param(
-        (
-            '<div onclick=\'{action: "click"}\'></div>'
-        ),
-        (
-            '<div onclick=\'{action: "click"}\'></div>\n'
-        ),
+        ("<div onclick='{action: \"click\"}'></div>"),
+        ("<div onclick='{action: \"click\"}'></div>\n"),
         ({"format_js_attributes": True, "max_attribute_length": 0}),
         id="js_single_property_no_formatting",
     ),
     pytest.param(
+        ("<div onclick='{action: \"click\", preventDefault: true}'></div>"),
         (
-            '<div onclick=\'{action: "click", preventDefault: true}\'></div>'
-        ),
-        (
-            '<div onclick=\'{\n'
+            "<div onclick='{\n"
             '                  action: "click",\n'
-            '                  preventDefault: true\n'
-            '              }\'></div>\n'
+            "                  preventDefault: true\n"
+            "              }'></div>\n"
         ),
-        ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
         id="js_two_properties_multiline",
     ),
     pytest.param(
-        (
-            "<div onclick='foo();'></div>"
-        ),
-        (
-            "<div onclick='foo();'></div>\n"
-        ),
-        ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
+        ("<div onclick='foo();'></div>"),
+        ("<div onclick='foo();'></div>\n"),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
         id="js_code_single_function_no_formatting",
     ),
     pytest.param(
-        (
-            "<div onclick='foo(); var x = 1; baz();'></div>"
-        ),
+        ("<div onclick='foo(); var x = 1; baz();'></div>"),
         (
             "<div onclick='foo();\n"
             "              var x = 1;\n"
             "              baz();'></div>\n"
         ),
-        ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
         id="js_code_multiple_statements_multiline",
     ),
     pytest.param(
-        (
-            "<div onclick='foo(); baz();'></div>"
-        ),
-        (
-            "<div onclick='foo(); baz();'></div>\n"
-        ),
-        ({"format_js_attributes": True, "max_attribute_length": 50, "indent_js": 2}),
+        ("<div onclick='foo(); baz();'></div>"),
+        ("<div onclick='foo(); baz();'></div>\n"),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 50,
+            "indent_js": 2,
+        }),
         id="js_code_under_max_length_no_formatting",
     ),
     pytest.param(
@@ -150,7 +154,11 @@ test_data = [
             "<img src='/path/to/image.jpg' />\n"
             "<img alt='Image Description' />\n"
         ),
-        ({"format_js_attributes": True, "max_attribute_length": 0, "indent_js": 2}),
+        ({
+            "format_js_attributes": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
         id="non_js_attributes_no_formatting",
     ),
 ]

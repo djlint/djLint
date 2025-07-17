@@ -109,7 +109,9 @@ if TYPE_CHECKING:
     "--format-js", is_flag=True, help="Also format contents of <script> tags."
 )
 @click.option(
-    "--format-js-attributes", is_flag=True, help="Also format JavaScript/JSON inside HTML attributes."
+    "--format-js-attributes",
+    is_flag=True,
+    help="Also format JavaScript/JSON inside HTML attributes.",
 )
 @click.option(
     "--js-attribute-pattern",

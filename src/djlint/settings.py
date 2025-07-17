@@ -14,11 +14,10 @@ import yaml
 from click import echo
 from colorama import Fore
 from pathspec import PathSpec
-
-from djlint.helpers import RE_FLAGS_IX
 from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.helpers import RE_FLAGS_IX
 
 if sys.version_info >= (3, 11):
     try:
@@ -292,6 +291,7 @@ class Config:
         format_attribute_template_tags: bool = False,
         format_js_attributes: bool = False,
         js_attribute_pattern: str = "",
+        js_attribute_minimum_properties: int = 2,
         per_file_ignores: tuple[tuple[str, str], ...] = (),
         indent_css: int | None = None,
         indent_js: int | None = None,
@@ -353,24 +353,30 @@ class Config:
             or djlint_settings.get("format_js_attributes", False)
         )
 
+        self.js_attribute_minimum_properties: int = (
+            js_attribute_minimum_properties
+            or djlint_settings.get("js_attribute_minimum_properties", 2)
+        )
+
         # Default comprehensive regex pattern for JavaScript attributes
-        default_js_pattern = r"^(?:" \
-            r"on[a-z]+|" \
-            r"data-[a-z\-]+|" \
-            r"x-[a-z\-]+|" \
-            r"@[a-z\-]+|" \
-            r":[a-z\-]+|" \
-            r"v-[a-z\-]+|" \
-            r"\([a-z\-]+\)|" \
-            r"\[[a-z\-]+\]|" \
-            r"\*ng[A-Z][a-zA-Z]*|" \
-            r"[a-z\-]+\.(bind|delegate|call|trigger)" \
+        default_js_pattern = (
+            r"^(?:"
+            r"on[a-z]+|"
+            r"data-[a-z\-]+|"
+            r"x-[a-z\-]+|"
+            r"@[a-z\-]+|"
+            r":[a-z\-]+|"
+            r"v-[a-z\-]+|"
+            r"\([a-z\-]+\)|"
+            r"\[[a-z\-]+\]|"
+            r"\*ng[A-Z][a-zA-Z]*|"
+            r"[a-z\-]+\.(bind|delegate|call|trigger)"
             r")$"
+        )
 
         # Pre-compile the JS attribute pattern for better performance
-        js_pattern_string = (
-            js_attribute_pattern
-            or djlint_settings.get("js_attribute_pattern", default_js_pattern)
+        js_pattern_string = js_attribute_pattern or djlint_settings.get(
+            "js_attribute_pattern", default_js_pattern
         )
         self.js_attribute_pattern: re.Pattern[str] = re.compile(
             js_pattern_string, flags=RE_FLAGS_IX
@@ -378,12 +384,15 @@ class Config:
 
         # Pre-compile regex for object braces detection
         self.object_braces_pattern: re.Pattern[str] = re.compile(
-            r"^\s*\{.*\}\s*$", flags=re.I
+            r"^\s*\{(?![{%]).*\}\s*$", flags=RE_FLAGS_IX
         )
 
-        # Pre-compile regex for Django template tags (to exclude them)
-        self.django_template_pattern: re.Pattern[str] = re.compile(
-            r"^\s*(\{\{.*\}\}|\{%.*%\})\s*$", flags=re.I
+        # Pre-compile regex patterns for property counting
+        self.js_string_pattern: re.Pattern[str] = re.compile(
+            r'["\']([^"\']*)["\']', flags=RE_FLAGS_IX
+        )
+        self.js_property_pattern: re.Pattern[str] = re.compile(
+            r"[a-zA-Z_$][a-zA-Z0-9_$]*\s*:", flags=RE_FLAGS_IX
         )
 
         self.preserve_leading_space: bool = (
