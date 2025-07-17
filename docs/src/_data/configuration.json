@@ -548,7 +548,7 @@
     ]
   },
   {
-    "name": "format_js_attributes",
+    "name": "format_attribute_js_json",
     "tags": ["formatter"],
     "description": {
       "en": "Format JavaScript and JSON code inside HTML attributes. This will format object literals and JavaScript code in attributes like `onclick`, `data-*`, and other JavaScript-related attributes. Objects with fewer properties than `js_attribute_minimum_properties` will not be formatted.",
@@ -558,11 +558,11 @@
     "usage": [
       {
         "name": "pyproject.toml",
-        "value": "format_js_attributes=true"
+        "value": "format_attribute_js_json=true"
       },
       {
         "name": ".djlintrc",
-        "value": "\"format_js_attributes\": true"
+        "value": "\"format_attribute_js_json\": true"
       },
       { "name": "cli", "value": "--format-js-attributes" }
     ]

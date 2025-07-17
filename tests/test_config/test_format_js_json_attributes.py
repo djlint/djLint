@@ -22,7 +22,7 @@ test_data = [
     pytest.param(
         ('<div data-config=\'{"name": "value"}\'></div>'),
         ('<div data-config=\'{"name": "value"}\'></div>\n'),
-        ({"format_js_attributes": True, "max_attribute_length": 0}),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0}),
         id="json_single_property_no_formatting",
     ),
     pytest.param(
@@ -34,7 +34,7 @@ test_data = [
             "                  }'></div>\n"
         ),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -49,7 +49,7 @@ test_data = [
             "             }'></div>\n"
         ),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -66,7 +66,7 @@ test_data = [
             "                                    }'></div>\n"
         ),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -75,7 +75,7 @@ test_data = [
     pytest.param(
         ("<div onclick='{action: \"click\"}'></div>"),
         ("<div onclick='{action: \"click\"}'></div>\n"),
-        ({"format_js_attributes": True, "max_attribute_length": 0}),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0}),
         id="js_single_property_no_formatting",
     ),
     pytest.param(
@@ -87,7 +87,7 @@ test_data = [
             "              }'></div>\n"
         ),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -97,7 +97,7 @@ test_data = [
         ("<div onclick='foo();'></div>"),
         ("<div onclick='foo();'></div>\n"),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -111,7 +111,7 @@ test_data = [
             "              baz();'></div>\n"
         ),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -121,7 +121,7 @@ test_data = [
         ("<div onclick='foo(); baz();'></div>"),
         ("<div onclick='foo(); baz();'></div>\n"),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 50,
             "indent_js": 2,
         }),
@@ -155,7 +155,7 @@ test_data = [
             "<img alt='Image Description' />\n"
         ),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -174,7 +174,7 @@ test_data = [
             "              }'></div>\n"
         ),
         ({
-            "format_js_attributes": True,
+            "format_attribute_js_json": True,
             "max_attribute_length": 0,
             "indent_js": 3,
         }),

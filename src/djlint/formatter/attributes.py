@@ -309,7 +309,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
 
         # format JS/JSON attributes
         if (
-            config.format_js_attributes
+            config.format_attribute_js_json
             and attrib_name
             and attrib_value
             and config.js_attribute_pattern.match(attrib_name)

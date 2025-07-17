@@ -289,7 +289,7 @@ class Config:
         max_line_length: int | None = None,
         max_attribute_length: int | None = None,
         format_attribute_template_tags: bool = False,
-        format_js_attributes: bool = False,
+        format_attribute_js_json: bool = False,
         js_attribute_pattern: str = "",
         js_attribute_minimum_properties: int = 2,
         per_file_ignores: tuple[tuple[str, str], ...] = (),
@@ -348,9 +348,9 @@ class Config:
             or djlint_settings.get("format_attribute_template_tags", False)
         )
 
-        self.format_js_attributes: bool = (
-            format_js_attributes
-            or djlint_settings.get("format_js_attributes", False)
+        self.format_attribute_js_json: bool = (
+            format_attribute_js_json
+            or djlint_settings.get("format_attribute_js_json", False)
         )
 
         self.js_attribute_minimum_properties: int = (
