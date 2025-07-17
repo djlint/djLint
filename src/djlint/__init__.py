@@ -109,12 +109,12 @@ if TYPE_CHECKING:
     "--format-js", is_flag=True, help="Also format contents of <script> tags."
 )
 @click.option(
-    "--format-js-attributes",
+    "--format-attribute-js-json",
     is_flag=True,
     help="Also format JavaScript/JSON inside HTML attributes.",
 )
 @click.option(
-    "--js-attribute-pattern",
+    "--format-attribute-js-json-pattern",
     type=str,
     default="",
     help="Regex pattern to match JavaScript attributes.",
