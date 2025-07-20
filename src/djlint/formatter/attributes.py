@@ -84,7 +84,7 @@ def format_js_with_indent(config: Config, value: str, base_indent: str) -> str:
 
         opts = BeautifierOptions(js_config)
         formatted: str = jsbeautifier.beautify(value, opts)
-    except Exception:
+    except (jsbeautifier.BeautifierError, ValueError):
         return value
     else:
         # Add base_indent to each line while preserving relative indentation
