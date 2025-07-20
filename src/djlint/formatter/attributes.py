@@ -49,7 +49,7 @@ def format_json_with_indent(
     """Format JSON with proper HTML-relative indentation."""
     try:
         data = json.loads(value)
-    except Exception:
+    except json.JSONDecodeError:
         return value
     else:
         # Use indent_size from config for JSON formatting
