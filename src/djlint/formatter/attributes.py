@@ -65,9 +65,12 @@ def format_json_with_indent(
                     # Content lines get: base_indent + json_indent_size
                     # Closing should get: base_indent + json_indent_size - indent_size
                     content_indent = base_indent + (" " * indent_size)
-                    closing_indent = content_indent[
-                        :-indent_size
-                    ]  # Remove indent_size spaces from content indent
+                    if len(content_indent) >= indent_size:
+                        closing_indent = content_indent[
+                            :-indent_size
+                        ]  # Remove indent_size spaces from content indent
+                    else:
+                        closing_indent = base_indent  # Fallback to base_indent
                     indented_lines.append(closing_indent + line)
                 else:
                     indented_lines.append(base_indent + line)
