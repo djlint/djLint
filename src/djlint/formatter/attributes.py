@@ -37,7 +37,7 @@ def is_json_object(value: str) -> bool:
     """Check if attribute value is a valid JSON object."""
     try:
         json.loads(value)
-    except Exception:
+    except json.JSONDecodeError:
         return False
     else:
         return True
