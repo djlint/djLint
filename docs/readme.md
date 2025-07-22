@@ -15,3 +15,4 @@ The demo is running python as a webworker in web assembly from [pyodide](https:/
 When the page is access a webworker starts, downloads python, installs djLint and deps (notice the wheels in `/src/static/py` that are updated when a new release is created.).
 
 Once the worker responds "ready" the web UI is shown.
+	
