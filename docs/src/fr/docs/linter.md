@@ -75,7 +75,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            | ✔️     |
 | T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  | ✔️     |
 | H035 | Meta doivent se fermer d'elles-mêmes.                                                                                     | -      |
-| H036 | Évitez d'utiliser les balises <br>.                                                                                       | -      |
+| H036 | Évitez d'utiliser les balises `br`.                                                                                       | -      |
 | H037 | Attribut en double trouvé.                                                                                                | ✔️     |
 
 ### Modèles de code
