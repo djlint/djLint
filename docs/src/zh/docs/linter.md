@@ -97,7 +97,6 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 欢迎前来 PR 新规则！
 
 优雅的规则应该包含
-A good rule consists of
 
 ::: content
 
@@ -159,7 +158,7 @@ A good rule consists of
 
 - `code`: 报告错误的规则的代码名称（通常为 `rule['name']`）。
 - `line`: 行号和该行的字符号，以字符串形式表示，中间用冒号 : 分隔。例如 `"2:3"` 表示错误出现在第 2 行第 3 个字符处。
-- `match`: T包含错误的内容部分。
+- `match`: 包含错误的内容部分。
 - `message`: 用于提示错误的消息（通常为 `rule['message']`）。
   :::
 

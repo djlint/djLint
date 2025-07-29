@@ -19,7 +19,7 @@ djlint /path/to/templates --profile={{ tool }}
 
 #### 使用配置文件
 
-在你项目中的 `pyproject..toml` 配置 djLint。
+在你项目中的 `pyproject.toml` 配置 djLint。
 
 ```toml
 [tool.djlint]
