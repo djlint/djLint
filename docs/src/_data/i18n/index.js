@@ -27,7 +27,12 @@ module.exports = {
     fr: "Commencer",
     zh: "入门指南",
   },
-  formatter: { "en-US": "Formatter", ru: "Форматер", fr: "Formateur", zh: "代码格式化" },
+  formatter: {
+    "en-US": "Formatter",
+    ru: "Форматер",
+    fr: "Formateur",
+    zh: "代码格式化",
+  },
   linter: { "en-US": "Linter", ru: "Линтер", fr: "Linter", zh: "代码检查" },
   configuration: {
     "en-US": "Configuration",
@@ -54,8 +59,18 @@ module.exports = {
     fr: "Trouvez les erreurs de syntaxe courantes, reformatez pour faire briller vos modèles HTML ! Supporte django, jinja, nunjucks, twig, handlebars, mustache, golang, et plus encore !",
     zh: "发现常见的语法错误，重新格式化以让你的 HTML 模板焕发光彩！支持 Django、Jinja、Nunjucks、Twig、Handlebars、Mustache、Golang 等更多模板引擎！",
   },
-  updated: { "en-US": "Updated", ru: "Обновлен", fr: "Actualisé", zh: "最后更新" },
-  changelog: { "en-US": "Changelog", ru: "Изменения", fr: "Changelog", zh: "更新日志"},
+  updated: {
+    "en-US": "Updated",
+    ru: "Обновлен",
+    fr: "Actualisé",
+    zh: "最后更新",
+  },
+  changelog: {
+    "en-US": "Changelog",
+    ru: "Изменения",
+    fr: "Changelog",
+    zh: "更新日志",
+  },
   documentation: {
     "en-US": "Documentation",
     ru: "Документация",
@@ -105,7 +120,12 @@ module.exports = {
     fr: "Ça ressemble à ça:",
     zh: "实际效果:",
   },
-  contributing: { "en-US": "Contributing", ru: "Вклад", fr: "Contribuer", zh: "参与贡献" },
+  contributing: {
+    "en-US": "Contributing",
+    ru: "Вклад",
+    fr: "Contribuer",
+    zh: "参与贡献",
+  },
   contributing_message: {
     "en-US":
       'Contributions are welcome. Send a pr with a new feature, or checkout the <a href="https://github.com/djlint/djlint/issues">issue</a> list and help where you can.',
