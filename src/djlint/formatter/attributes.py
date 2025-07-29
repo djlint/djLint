@@ -22,7 +22,7 @@ def count_object_properties(config: Config, value: str) -> int:
         # Try parsing as JSON first
         data = json.loads(value)
         return len(data)
-    except Exception:
+    except json.JSONDecodeError:
         # For JS objects, count property-like patterns
         # Simple heuristic: count comma-separated properties
         cleaned = config.format_attribute_js_json_string_pattern.sub(
