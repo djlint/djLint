@@ -323,17 +323,18 @@ def indent_html(rawcode: str, config: Config) -> str:
             # was not json.. try to eval as set
             try:
                 # if contents is a python keyword, do not evaluate it.
-                evaluated = (
-                    str(eval(contents))  # noqa: S307
-                    if contents != "object"
-                    else contents
-                )
-                # need to unwrap the eval
-                contents = (
-                    evaluated[1:-1]
-                    if contents[:1] != "(" and evaluated[:1] == "("
-                    else evaluated
-                )
+                # Also avoid evaluating contents with ** syntax (like **kwargs)
+                # to prevent replacing valid template syntax with eval results
+                if contents != "object" and "**" not in contents:
+                    evaluated = str(eval(contents))  # noqa: S307
+                    # need to unwrap the eval
+                    contents = (
+                        evaluated[1:-1]
+                        if contents[:1] != "(" and evaluated[:1] == "("
+                        else evaluated
+                    )
+                else:
+                    contents = contents.strip()
             except Exception:
                 contents = contents.strip()
 
