@@ -5,6 +5,8 @@ uv run pytest tests/test_cli.py
 
 from __future__ import annotations
 
+import tempfile
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from djlint import main as djlint
@@ -75,3 +77,48 @@ def test_cli(runner: CliRunner) -> None:
     print(result.output)
 
     assert result.exit_code == 0
+
+
+def test_no_files_exit_code(runner: CliRunner) -> None:
+    """Test that djLint exits with code 1 when no files are found."""
+    # Create a temporary empty directory
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Test with --lint flag
+        result = runner.invoke(djlint, ["--lint", temp_dir])
+        assert result.exit_code == 1
+        assert "No files to check! 😢" in result.output
+
+        # Test with --check flag  
+        result = runner.invoke(djlint, ["--check", temp_dir])
+        assert result.exit_code == 1
+        assert "No files to check! 😢" in result.output
+
+        # Test with --reformat flag
+        result = runner.invoke(djlint, ["--reformat", temp_dir]) 
+        assert result.exit_code == 1
+        assert "No files to check! 😢" in result.output
+
+
+def test_no_files_with_specific_extension(runner: CliRunner) -> None:
+    """Test that djLint exits with code 1 when no files match the extension."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Create a file with different extension
+        Path(temp_dir, "test.txt").write_text("some content")
+        
+        # Should still exit with code 1 since no .html files found
+        result = runner.invoke(djlint, ["--lint", temp_dir])
+        assert result.exit_code == 1
+        assert "No files to check! 😢" in result.output
+
+
+def test_files_found_normal_exit(runner: CliRunner) -> None:
+    """Test that djLint exits normally when files are found."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Create an HTML file
+        html_file = Path(temp_dir, "test.html")
+        html_file.write_text("<div></div>")
+        
+        # Should exit with code 0 when files are found (assuming no lint errors)
+        result = runner.invoke(djlint, ["--lint", temp_dir])
+        assert result.exit_code == 0
+        assert "No files to check! 😢" not in result.output
