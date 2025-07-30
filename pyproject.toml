@@ -7,7 +7,8 @@ name = "djlint"
 version = "1.36.4"
 description = "HTML Template Linter and Formatter"
 readme = "README.md"
-license = { text = "GPL-3.0-or-later" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 maintainers = [
   { name = "Christopher Pickering" },
   { name = "monosans", email = "hsyqixco@protonmail.com" },
@@ -15,7 +16,6 @@ maintainers = [
 authors = [{ name = "Christopher Pickering" }]
 requires-python = ">=3.9"
 classifiers = [
-  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Natural Language :: English",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
@@ -25,6 +25,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Typing :: Typed",
 ]
 dependencies = [
@@ -46,18 +47,18 @@ scripts.djlint = "djlint:main"
 
 [dependency-groups]
 dev = [
-  "mypy[faster-cache]==1.15",
-  "pytest==8.3.5",
-  "pytest-cov==6.1.1",
+  "mypy[faster-cache]==1.17",
+  "pytest==8.4.1",
+  "pytest-cov==6.2.1",
   "pytest-github-actions-annotate-failures==0.3",
-  "pytest-xdist==3.6.1",
-  "ruff==0.11.10",
+  "pytest-xdist==3.8",
+  "ruff==0.12.7",
   "tomli==2.2.1",
   "types-colorama==0.4.15.20240311",
   "types-pyyaml==6.0.12.20250516",
   "types-regex==2024.11.6.20250403",
   "types-tqdm==4.67.0.20250516",
-  "typing-extensions==4.13.2",
+  "typing-extensions==4.14.1",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -84,5 +85,4 @@ options = { opt_level = "3", debug_level = "0" }
 build = "cp*"
 build-frontend = "build[uv]"
 environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
-manylinux-x86_64-image = "manylinux_2_28"
 skip = ["*-manylinux_i686", "*-musllinux_*", "*-win32"]

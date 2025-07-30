@@ -18,21 +18,21 @@ repos:
           - --fix=lf
       - id: trailing-whitespace
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.5.3
+    rev: v3.6.2
     hooks:
       - id: prettier
         args:
           - --objectWrap=collapse
           - --no-config
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.11.10
+    rev: v0.12.7
     hooks:
       - id: ruff
         args:
           - --fix
       - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.15.0
+    rev: v1.17.0
     hooks:
       - id: mypy
         args:
