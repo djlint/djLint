@@ -54,6 +54,11 @@ test_data = [
         ("{{ func(a=1, b=2, **kwargs) }}\n"),
         id="kwargs_with_keyword_args",
     ),
+    pytest.param(
+        ("{{ func(**data, **kwargs) }}"),
+        ("{{ func(**data, **kwargs) }}\n"),
+        id="multiple_unpacking_syntax",
+    ),
 ]
 
 
@@ -65,8 +70,17 @@ def test_kwargs_preservation(source: str, expected: str, jinja_config: Config) -
     # Ensure **kwargs is preserved
     if "**kwargs" in source:
         assert "**kwargs" in output, f"**kwargs was removed from output: {output}"
-        assert "{}" not in output.replace("{%", "").replace("%}", "").replace("{{", "").replace("}}", ""), \
+        # Check that it wasn't replaced with empty dict
+        # We need to be careful not to match template braces {{ }} 
+        content_without_template_braces = output
+        for template_marker in ["{{", "}}", "{%", "%}"]:
+            content_without_template_braces = content_without_template_braces.replace(template_marker, " ")
+        assert "{}" not in content_without_template_braces.strip(), \
             f"**kwargs appears to have been replaced with {{}}: {output}"
+    
+    # Test for other ** unpacking syntax too
+    if "**" in source and "**" not in output:
+        pytest.fail(f"Python unpacking syntax (**) was removed: {output}")
 
     printer(expected, source, output)
     assert expected == output
