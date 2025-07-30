@@ -122,3 +122,22 @@ def test_files_found_normal_exit(runner: CliRunner) -> None:
         result = runner.invoke(djlint, ["--lint", temp_dir])
         assert result.exit_code == 0
         assert "No files to check! 😢" not in result.output
+
+
+def test_stdin_normal_operation(runner: CliRunner) -> None:
+    """Test that djLint works normally with stdin input."""
+    # Test with stdin content - should not exit with code 1
+    result = runner.invoke(djlint, ["--lint", "-"], input="<div></div>")
+    # Stdin should always work as it creates a temp file
+    assert result.exit_code == 0
+    assert "No files to check! 😢" not in result.output
+
+
+def test_nonexistent_path_exit_code(runner: CliRunner) -> None:
+    """Test that djLint exits with code 1 for nonexistent paths."""
+    # This should fail before we even get to the file check logic
+    # Click should handle this case, but let's test our understanding
+    result = runner.invoke(djlint, ["--lint", "/tmp/nonexistent_directory_12345"])
+    # Click will fail before our code is reached for nonexistent paths
+    # because of exists=True in the path parameter
+    assert result.exit_code != 0  # Could be 1 or 2 depending on Click's handling
