@@ -23,7 +23,7 @@ wheels = [
 
 [[package]]
 name = "click"
-version = "8.2.1"
+version = "8.2.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.10'",
@@ -31,9 +31,9 @@ resolution-markers = [
 dependencies = [
     { name = "colorama", marker = "python_full_version >= '3.10' and sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/60/6c/8ca2efa64cf75a977a0d7fac081354553ebe483345c734fb6b6515d96bbc/click-8.2.1.tar.gz", hash = "sha256:27c491cc05d968d271d5a1db13e3b5a184636d9d930f148c50b038f0d0646202", size = 286342, upload-time = "2025-05-20T23:19:49.832Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e9/87/105111999772ec9730e3d4d910c723ea9763ece2ec441533a5cea1e87e3c/click-8.2.2.tar.gz", hash = "sha256:068616e6ef9705a07b6db727cb9c248f4eb9dae437a30239f56fa94b18b852ef", size = 263977, upload-time = "2025-08-02T02:23:41.102Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/85/32/10bb5764d90a8eee674e9dc6f4db6a0ab47c8c4d0d83c27f7c39ac415a4d/click-8.2.1-py3-none-any.whl", hash = "sha256:61a3265b914e850b85317d0b3109c7f8cd35a670f963866005d6ef1d5175a12b", size = 102215, upload-time = "2025-05-20T23:19:47.796Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/85/e7297e34133ae1cfde3bffd30c24e1ef055248251baa877834e048687a28/click-8.2.2-py3-none-any.whl", hash = "sha256:52e1e9f5d3db8c85aa76968c7c67ed41ddbacb167f43201511c8fd61eb5ba2ca", size = 103900, upload-time = "2025-08-02T02:23:39.299Z" },
 ]
 
 [[package]]
@@ -165,7 +165,7 @@ version = "1.36.4"
 source = { editable = "." }
 dependencies = [
     { name = "click", version = "8.1.8", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
-    { name = "click", version = "8.2.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "click", version = "8.2.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "colorama" },
     { name = "cssbeautifier" },
     { name = "jsbeautifier" },
