@@ -53,7 +53,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: false
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
       - run: mkdir dist
       - run: mv wheels-*/* dist
       - run: uv publish --trusted-publishing always --no-cache
