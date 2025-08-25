@@ -58,7 +58,7 @@ dev = [
   "types-pyyaml==6.0.12.20250822",
   "types-regex==2025.7.34.20250809",
   "types-tqdm==4.67.0.20250809",
-  "typing-extensions==4.14.1",
+  "typing-extensions==4.15.0",
 ]
 
 [tool.hatch.build.targets.sdist]
