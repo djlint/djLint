@@ -52,13 +52,13 @@ dev = [
   "pytest-cov==6.2.1",
   "pytest-github-actions-annotate-failures==0.3",
   "pytest-xdist==3.8",
-  "ruff==0.12.7",
+  "ruff==0.12.10",
   "tomli==2.2.1",
   "types-colorama==0.4.15.20250801",
-  "types-pyyaml==6.0.12.20250516",
-  "types-regex==2024.11.6.20250403",
-  "types-tqdm==4.67.0.20250516",
-  "typing-extensions==4.14.1",
+  "types-pyyaml==6.0.12.20250822",
+  "types-regex==2025.7.34.20250809",
+  "types-tqdm==4.67.0.20250809",
+  "typing-extensions==4.15.0",
 ]
 
 [tool.hatch.build.targets.sdist]
