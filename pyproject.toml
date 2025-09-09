@@ -49,7 +49,7 @@ scripts.djlint = "djlint:main"
 dev = [
   "mypy[faster-cache]==1.17.1",
   "pytest==8.4.2",
-  "pytest-cov==6.3.0",
+  "pytest-cov==7.0.0",
   "pytest-github-actions-annotate-failures==0.3",
   "pytest-xdist==3.8",
   "ruff==0.12.12",
