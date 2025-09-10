@@ -65,4 +65,4 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv run --frozen --python ${{ matrix.python-version }} pytest
+      - run: uv run --locked --python ${{ matrix.python-version }} pytest
