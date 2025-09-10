@@ -22,7 +22,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: false
-      - run: uv tool run --from cibuildwheel@latest --no-cache --python 3.13 cibuildwheel --output-dir dist
+      - run: uv tool run --no-cache --python 3.13 cibuildwheel --output-dir dist
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
