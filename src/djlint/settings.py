@@ -295,6 +295,7 @@ class Config:
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
         max_blank_lines: int | None = None,
+        github_output: bool = False,
     ) -> None:
         self.reformat = reformat
         self.check = check
