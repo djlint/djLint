@@ -48,7 +48,7 @@ scripts.djlint = "djlint:main"
 
 [dependency-groups]
 dev = [
-  "mypy[faster-cache]==1.18.1",
+  "mypy[faster-cache]==1.18.2",
   "pytest==8.4.2",
   "pytest-cov==7.0.0",
   "pytest-github-actions-annotate-failures==0.3",
