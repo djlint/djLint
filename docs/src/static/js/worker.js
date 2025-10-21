@@ -14,13 +14,7 @@ async function loadPyodideAndPackages() {
   self.postMessage({ type: "status", message: "Importing micropip" });
   const micropip = await self.pyodide.pyimport("micropip");
   self.postMessage({ type: "status", message: "Installing djLint" });
-  await micropip.install([
-    // These packages have no prebuilt wheels
-    `${origin}/static/py/cssbeautifier-99-py3-none-any.whl`,
-    `${origin}/static/py/jsbeautifier-99-py3-none-any.whl`,
-
-    "djlint",
-  ]);
+  await micropip.install(["djlint"]);
   self.postMessage({
     type: "version",
     message: await self.pyodide.runPythonAsync(`
