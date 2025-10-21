@@ -1,4 +1,4 @@
-importScripts("https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js");
+importScripts("https://cdn.jsdelivr.net/pyodide/v0.29.0/full/pyodide.js");
 
 function capitalize(raw_word) {
   const word = raw_word.toString();
@@ -14,7 +14,7 @@ async function loadPyodideAndPackages() {
   self.postMessage({ type: "status", message: "Importing micropip" });
   const micropip = await self.pyodide.pyimport("micropip");
   self.postMessage({ type: "status", message: "Installing djLint" });
-  await micropip.install(["djlint"]);
+  await micropip.install("djlint");
   self.postMessage({
     type: "version",
     message: await self.pyodide.runPythonAsync(`
