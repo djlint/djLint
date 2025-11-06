@@ -358,7 +358,7 @@ def main(
             file_list = get_src((Path(x) for x in src), config)
 
         if not file_list:
-            return
+            sys.exit(1)
 
         message = ""
 
