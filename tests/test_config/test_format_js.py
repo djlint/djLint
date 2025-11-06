@@ -217,6 +217,38 @@ test_data = [
         ({"format_js": True}),
         id="ignored blocks",
     ),
+    pytest.param(
+        (
+            "<script>\n"
+            "{# djlint:off #}\n"
+            "function test() {\n"
+            "    var x = 1;\n"
+            "        var y = 2;\n"
+            "}\n"
+            "{# djlint:on #}\n"
+            "function other() {\n"
+            "    var a = 1;\n"
+            "    var b = 2;\n"
+            "}\n"
+            "</script>"
+        ),
+        (
+            "<script>\n"
+            "    {# djlint:off #}\n"
+            "function test() {\n"
+            "    var x = 1;\n"
+            "        var y = 2;\n"
+            "}\n"
+            "{# djlint:on #}\n"
+            "    function other() {\n"
+            "        var a = 1;\n"
+            "        var b = 2;\n"
+            "    }\n"
+            "</script>\n"
+        ),
+        ({"format_js": True, "profile": "django"}),
+        id="djlint:off inside script",
+    ),
 ]
 
 
