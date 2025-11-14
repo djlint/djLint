@@ -341,6 +341,7 @@ def main(
         no_function_formatting=no_function_formatting,
         no_set_formatting=no_set_formatting,
         max_blank_lines=max_blank_lines,
+        github_output=github_output,
     )
 
     temp_file = None
@@ -394,7 +395,7 @@ def main(
             Fore.GREEN + Style.BRIGHT,
             Style.RESET_ALL + "    ",
         )
-        if not config.stdin and not config.quiet and not github_output:
+        if not config.stdin and not config.quiet and not config.github_output:
             echo()
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
@@ -420,7 +421,7 @@ def main(
                     colour="BLUE",
                     ascii=progress_char,
                     leave=False,
-                    disable=github_output,
+                    disable=config.github_output,
                 ) as pbar:
                     for future in as_completed(futures):
                         file_errors.append(future.result())
@@ -438,7 +439,7 @@ def main(
                     colour="GREEN",
                     ascii=progress_char,
                     leave=True,
-                    disable=github_output,
+                    disable=config.github_output,
                 ):
                     pass
             else:
@@ -462,7 +463,7 @@ def main(
                 Path(temp_file.name).unlink(missing_ok=True)
 
     if (
-        github_output
+        config.github_output
         and print_github_output(config, file_errors, len(file_list))
         and not config.warn
     ):

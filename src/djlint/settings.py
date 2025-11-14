@@ -303,6 +303,7 @@ class Config:
         self.check = check
         self.lint = lint
         self.warn = warn
+        self.github_output = github_output
 
         if src == "-":
             self.project_root = find_project_root(Path.cwd())
