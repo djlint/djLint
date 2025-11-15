@@ -1,25 +1,29 @@
 """Build djLint GitHub workflow command output."""
 
 from __future__ import annotations
+
 from pathlib import Path
 from typing import TYPE_CHECKING
+
 from click import echo
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
+
     from djlint.settings import Config
     from djlint.types import LintError, ProcessResult
 
 
 def print_github_output(
-    config: Config, file_errors: Iterable[ProcessResult], file_count: int
+    config: Config, file_errors: Iterable[ProcessResult], _file_count: int
 ) -> int:
     """Print results as GitHub workflow commands."""
     lint_error_count = 0
     format_error_count = 0
 
     for error in sorted(
-        file_errors, key=lambda x: next(iter(next(iter(x.values()))))
+        file_errors,
+        key=lambda x: next(iter(next(iter(x.values())))),  # type: ignore[call-overload]
     ):
         if error.get("format_message") and not config.stdin:
             format_error_count += print_format_errors(
