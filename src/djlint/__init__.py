@@ -19,12 +19,12 @@ from click import echo
 from colorama import Fore, Style, colorama_text
 from tqdm import tqdm
 
+from djlint.github_output import print_github_output
 from djlint.lint import lint_file
 from djlint.output import print_output
 from djlint.reformat import reformat_file
 from djlint.settings import Config
 from djlint.src import get_src
-from djlint.github_output import print_github_output
 
 if TYPE_CHECKING:
     from djlint.types import ProcessResult
@@ -299,7 +299,6 @@ def main(
     github_output: bool = False,
 ) -> None:
     """djLint · HTML template linter and formatter."""
-
     config = Config(
         src[0],
         extension=extension,
