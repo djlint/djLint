@@ -16,7 +16,7 @@ jobs:
           - windows-2025
       fail-fast: false
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: astral-sh/setup-uv@v7
@@ -30,7 +30,7 @@ jobs:
   build-pure:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: astral-sh/setup-uv@v7
@@ -65,7 +65,7 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: actions/setup-node@v6
