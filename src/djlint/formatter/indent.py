@@ -322,18 +322,21 @@ def indent_html(rawcode: str, config: Config) -> str:
         except Exception:
             # was not json.. try to eval as set
             try:
-                # if contents is a python keyword, do not evaluate it.
-                evaluated = (
-                    str(eval(contents))  # noqa: S307
-                    if contents != "object"
-                    else contents
-                )
-                # need to unwrap the eval
-                contents = (
-                    evaluated[1:-1]
-                    if contents[:1] != "(" and evaluated[:1] == "("
-                    else evaluated
-                )
+                # Only evaluate if it looks like a Python literal, not a variable name
+                # This prevents issues with template variables that shadow built-in names like 'dir'
+                if (contents.strip() and 
+                    not contents.strip().isidentifier() and  # Don't eval simple identifiers
+                    not contents.strip().startswith(('_', 'object'))):  # Don't eval private/special names
+                    evaluated = str(eval(contents))  # noqa: S307
+                    # need to unwrap the eval
+                    contents = (
+                        evaluated[1:-1]
+                        if contents[:1] != "(" and evaluated[:1] == "("
+                        else evaluated
+                    )
+                else:
+                    # Don't evaluate simple identifiers - they're likely template variables
+                    contents = contents.strip()
             except Exception:
                 contents = contents.strip()
 
