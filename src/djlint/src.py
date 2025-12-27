@@ -19,16 +19,12 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
     """Get source files."""
     paths = []
     for item in src:
-        # normalize path
-
-        normalized_item = item.resolve()
-
-        if normalized_item.is_file():
-            if no_pragma(config, normalized_item) and (
+        if item.is_file():
+            if no_pragma(config, item) and (
                 not config.use_gitignore
-                or not config.gitignore.match_file(normalized_item)
+                or not config.gitignore.match_file(item)
             ):
-                paths.append(normalized_item)
+                paths.append(item)
             continue
 
         # remove leading . from extension
@@ -36,7 +32,7 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
 
         paths.extend(
             x
-            for x in normalized_item.glob(f"**/*.{extension}")
+            for x in item.glob(f"**/*.{extension}")
             if (
                 not re.search(config.exclude, x.as_posix(), flags=re.X)
                 and no_pragma(config, x)
