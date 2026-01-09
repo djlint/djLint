@@ -76,9 +76,7 @@ def load_gitignore(root: Path) -> PathSpec:
         git_lines = []
 
     try:
-        return PathSpec.from_lines(  # type: ignore[no-any-return]
-            "gitwildmatch", git_lines
-        )
+        return PathSpec.from_lines("gitwildmatch", git_lines)
 
     except GitWildMatchPatternError as e:
         echo(f"Could not parse {gitignore}: {e}", err=True)
