@@ -30,9 +30,9 @@ def test_with_config(runner: CliRunner) -> None:
 
     print(result.output)
     assert (
-        """html-one.html:1:0: H025 Tag seems to be an orphan. <h1>
-html-one.html:1:8: H025 Tag seems to be an orphan. </h2>
-html-two.html:1:0: H025 Tag seems to be an orphan. <h1>
-html-two.html:1:8: H025 Tag seems to be an orphan. </h2>"""
+        """tests/test_config/test_linter_output_format/html-one.html:1:0: H025 Tag seems to be an orphan. <h1>
+tests/test_config/test_linter_output_format/html-one.html:1:8: H025 Tag seems to be an orphan. </h2>
+tests/test_config/test_linter_output_format/html-two.html:1:0: H025 Tag seems to be an orphan. <h1>
+tests/test_config/test_linter_output_format/html-two.html:1:8: H025 Tag seems to be an orphan. </h2>"""
         in result.output
     )
