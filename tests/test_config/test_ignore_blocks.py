@@ -42,6 +42,12 @@ test_data = [
         ({"ignore_blocks": "raw", "custom_blocks": "raws"}),
         id="test overlap",
     ),
+    pytest.param(
+        ("<p>\n{% raw %}\ntest\n{% endraw %}\n</p>"),
+        ("<p>\n    {% raw %}\n    test\n    {% endraw %}\n</p>\n"),
+        ({"ignore_blocks": "raw"}),
+        id="ignore_raw_indented",
+    ),
 ]
 
 
