@@ -13,7 +13,9 @@ import yaml
 from click import echo
 from colorama import Fore
 from pathspec import PathSpec
-from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
+from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
+    GitWildMatchPatternError,
+)
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 
@@ -74,7 +76,9 @@ def load_gitignore(root: Path) -> PathSpec:
         git_lines = []
 
     try:
-        return PathSpec.from_lines("gitwildmatch", git_lines)
+        return PathSpec.from_lines(  # type: ignore[no-any-return]
+            "gitwildmatch", git_lines
+        )
 
     except GitWildMatchPatternError as e:
         echo(f"Could not parse {gitignore}: {e}", err=True)
