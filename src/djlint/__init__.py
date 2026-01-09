@@ -19,6 +19,7 @@ from click import echo
 from colorama import Fore, Style, colorama_text
 from tqdm import tqdm
 
+from djlint.github_output import print_github_output
 from djlint.lint import lint_file
 from djlint.output import print_output
 from djlint.reformat import reformat_file
@@ -245,6 +246,13 @@ if TYPE_CHECKING:
     help="Consolidate blank lines down to x lines. [default: 0]",
     show_default=False,
 )
+@click.option(
+    "--github-output",
+    is_flag=True,
+    default=bool(os.getenv("GITHUB_ACTIONS")),
+    help="Output GitHub-compatible formatting.",
+    show_default=True,
+)
 @colorama_text(autoreset=True)
 def main(
     *,
@@ -288,6 +296,7 @@ def main(
     no_function_formatting: bool,
     no_set_formatting: bool,
     max_blank_lines: int | None,
+    github_output: bool = False,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     config = Config(
@@ -331,6 +340,7 @@ def main(
         no_function_formatting=no_function_formatting,
         no_set_formatting=no_set_formatting,
         max_blank_lines=max_blank_lines,
+        github_output=github_output,
     )
 
     temp_file = None
@@ -384,7 +394,7 @@ def main(
             Fore.GREEN + Style.BRIGHT,
             Style.RESET_ALL + "    ",
         )
-        if not config.stdin and not config.quiet:
+        if not config.stdin and not config.quiet and not config.github_output:
             echo()
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
@@ -410,6 +420,7 @@ def main(
                     colour="BLUE",
                     ascii=progress_char,
                     leave=False,
+                    disable=config.github_output,
                 ) as pbar:
                     for future in as_completed(futures):
                         file_errors.append(future.result())
@@ -427,6 +438,7 @@ def main(
                     colour="GREEN",
                     ascii=progress_char,
                     leave=True,
+                    disable=config.github_output,
                 ):
                     pass
             else:
@@ -448,6 +460,13 @@ def main(
                 temp_file.close()
             finally:
                 Path(temp_file.name).unlink(missing_ok=True)
+
+    if (
+        config.github_output
+        and print_github_output(config, file_errors, len(file_list))
+        and not config.warn
+    ):
+        sys.exit(1)
 
     if print_output(config, file_errors, len(file_list)) and not config.warn:
         sys.exit(1)
