@@ -40,6 +40,6 @@
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.7.0",
     "prettier": "3.8.0",
-    "prettier-plugin-packagejson": "2.5.22"
+    "prettier-plugin-packagejson": "3.0.0"
   }
 }
