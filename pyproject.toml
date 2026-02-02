@@ -57,7 +57,7 @@ dev = [
   "types-colorama==0.4.15.20250801",
   "types-pyyaml==6.0.12.20250915",
   "types-regex==2026.1.15.20260116",
-  "types-tqdm==4.67.0.20250809",
+  "types-tqdm==4.67.2.20260202",
   "typing-extensions==4.15.0",
 ]
 
