@@ -13,7 +13,9 @@ import yaml
 from click import echo
 from colorama import Fore
 from pathspec import PathSpec
-from pathspec.patterns.gitwildmatch import GitWildMatchPatternError
+from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
+    GitWildMatchPatternError,
+)
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 

@@ -1,4 +1,5 @@
 """djLint · lint and reformat HTML templates."""
+# ruff: noqa: RUF067
 
 from __future__ import annotations
 
