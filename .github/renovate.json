@@ -7,21 +7,25 @@
   "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor"],
       "matchCurrentVersion": "!/^0/",
+      "matchUpdateTypes": ["minor"],
       "automerge": true
     },
     {
-      "matchUpdateTypes": [
-        "lockFileMaintenance",
-        "patch",
-        "replacement",
-        "rollback"
-      ],
+      "matchUpdateTypes": ["lockFileMaintenance", "patch", "replacement"],
       "automerge": true
     },
-    { "matchDepTypes": ["devDependencies"], "automerge": true },
-    { "matchManagers": ["pre-commit"], "automerge": true }
+    {
+      "matchDepTypes": ["dependency-groups"],
+      "matchManagers": ["pep621"],
+      "automerge": true
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchManagers": ["npm"],
+      "automerge": true
+    },
+    { "matchManagers": ["github-actions", "pre-commit"], "automerge": true }
   ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
