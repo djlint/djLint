@@ -114,9 +114,9 @@ def test_no_files_with_specific_extension(runner: CliRunner) -> None:
 def test_files_found_normal_exit(runner: CliRunner) -> None:
     """Test that djLint exits normally when files are found."""
     with tempfile.TemporaryDirectory() as temp_dir:
-        # Create an HTML file
+        # Create an HTML file with valid content
         html_file = Path(temp_dir, "test.html")
-        html_file.write_text("<div></div>")
+        html_file.write_text("<div>content</div>")
         
         # Should exit with code 0 when files are found (assuming no lint errors)
         result = runner.invoke(djlint, ["--lint", temp_dir])
@@ -127,7 +127,7 @@ def test_files_found_normal_exit(runner: CliRunner) -> None:
 def test_stdin_normal_operation(runner: CliRunner) -> None:
     """Test that djLint works normally with stdin input."""
     # Test with stdin content - should not exit with code 1
-    result = runner.invoke(djlint, ["--lint", "-"], input="<div></div>")
+    result = runner.invoke(djlint, ["--lint", "-"], input="<div>content</div>")
     # Stdin should always work as it creates a temp file
     assert result.exit_code == 0
     assert "No files to check! 😢" not in result.output

@@ -359,7 +359,11 @@ def main(
             file_list = get_src((Path(x) for x in src), config)
 
         if not file_list:
-            sys.exit(1)
+            # Exit with 0 for stdin to maintain backward compatibility
+            # Exit with 1 for file-based operations to catch config issues
+            if not config.stdin:
+                sys.exit(1)
+            return
 
         message = ""
 
