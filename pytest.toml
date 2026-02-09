@@ -1,0 +1,4 @@
+[pytest]
+addopts = ["-n=auto"]
+strict = true
+strict_parametrization_ids = false

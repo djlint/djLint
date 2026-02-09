@@ -259,8 +259,7 @@ def test_line_ending(
 ) -> None:
     # write a windows line ending to file
     text_in = "<div></div>\r\n"
-    with Path(tmp_file.name).open("w", encoding="utf-8", newline="") as windows:
-        windows.write(text_in)
+    Path(tmp_file.name).write_text(text_in, encoding="utf-8", newline="")
 
     # make sure line ending was still there
     assert Path(tmp_file.name).read_bytes().decode("utf-8") == text_in
