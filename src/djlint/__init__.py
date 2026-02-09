@@ -361,9 +361,9 @@ def main(
         if not file_list:
             # Exit with 0 for stdin to maintain backward compatibility
             # Exit with 1 for file-based operations to catch config issues
-            if not config.stdin:
-                sys.exit(1)
-            return
+            if config.stdin:
+                sys.exit(0)
+            sys.exit(1)
 
         message = ""
 
