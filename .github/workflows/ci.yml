@@ -23,10 +23,10 @@ jobs:
   linkcheck:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: lts/*
           check-latest: true
@@ -35,19 +35,19 @@ jobs:
         working-directory: docs
       - run: npm run build
         working-directory: docs
-      - uses: untitaker/hyperlink@0.1.44
+      - uses: untitaker/hyperlink@0.2.0
         with:
           args: docs/_site/
   pre-commit:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - run: uv tool run --from pre-commit@latest --with pre-commit-uv --no-cache --python 3.13 pre-commit run --all-files --show-diff-on-failure
+      - run: uv tool run --no-cache --python 3.14 prek run --all-files --show-diff-on-failure
         env:
           RUFF_OUTPUT_FORMAT: github
   pytest:
@@ -55,14 +55,14 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.9"
-          - "3.13"
+          - "3.10"
+          - "3.14"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-      - run: uv run --frozen --python ${{ matrix.python-version }} pytest
+      - run: uv run --locked --python ${{ matrix.python-version }} pytest
