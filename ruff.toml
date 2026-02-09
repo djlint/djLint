@@ -1,6 +1,7 @@
+extend-include = ["*.md"]
 line-length = 80
 preview = true
-target-version = "py39"
+target-version = "py310"
 
 [format]
 docstring-code-format = true
@@ -8,8 +9,8 @@ line-ending = "lf"
 skip-magic-trailing-comma = true
 
 [lint]
+future-annotations = true
 ignore = [
-  "A005",
   "ANN401",
   "ASYNC109",
   "BLE001",
@@ -33,7 +34,6 @@ ignore = [
   "DOC501",
   "E501",
   "FURB180",
-  "ISC001",
   "PLR0904",
   "PLR0911",
   "PLR0912",

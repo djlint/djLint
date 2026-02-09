@@ -14,13 +14,12 @@ maintainers = [
   { name = "monosans", email = "hsyqixco@protonmail.com" },
 ]
 authors = [{ name = "Christopher Pickering" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
   "Natural Language :: English",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -40,7 +39,7 @@ dependencies = [
   "regex>=2023",
   "tomli>=2.0.1; python_version<'3.11'",
   "tqdm>=4.62.2",
-  "typing-extensions>=3.6.6; python_version<'3.11'",
+  "typing-extensions>=3.7.4; python_version<'3.11'",
 ]
 urls.documentation = "https://djlint.com"
 urls.repository = "https://github.com/djlint/djLint"
@@ -48,17 +47,17 @@ scripts.djlint = "djlint:main"
 
 [dependency-groups]
 dev = [
-  "mypy[faster-cache]==1.18.2",
-  "pytest==8.4.2",
+  "mypy[faster-cache]==1.19.1",
+  "pytest==9.0.2",
   "pytest-cov==7.0.0",
   "pytest-github-actions-annotate-failures==0.3",
   "pytest-xdist==3.8",
-  "ruff==0.13.3",
-  "tomli==2.2.1",
+  "ruff==0.15.0",
+  "tomli==2.4.0",
   "types-colorama==0.4.15.20250801",
   "types-pyyaml==6.0.12.20250915",
-  "types-regex==2025.9.18.20250921",
-  "types-tqdm==4.67.0.20250809",
+  "types-regex==2026.1.15.20260116",
+  "types-tqdm==4.67.3.20260205",
   "typing-extensions==4.15.0",
 ]
 
