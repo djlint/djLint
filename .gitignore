@@ -182,6 +182,9 @@ build/Release
 node_modules/
 jspm_packages/
 
+# Eleventy output (docs)
+docs/_site/
+
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
