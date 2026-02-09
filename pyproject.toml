@@ -7,24 +7,25 @@ name = "djlint"
 version = "1.37.0"
 description = "HTML Template Linter and Formatter"
 readme = "README.md"
-license = { text = "GPL-3.0-or-later" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 maintainers = [
   { name = "Christopher Pickering" },
   { name = "monosans", email = "hsyqixco@protonmail.com" },
 ]
 authors = [{ name = "Christopher Pickering" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
-  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Natural Language :: English",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Typing :: Typed",
 ]
 dependencies = [
@@ -38,7 +39,7 @@ dependencies = [
   "regex>=2023",
   "tomli>=2.0.1; python_version<'3.11'",
   "tqdm>=4.62.2",
-  "typing-extensions>=3.6.6; python_version<'3.11'",
+  "typing-extensions>=3.7.4; python_version<'3.11'",
 ]
 urls.documentation = "https://djlint.com"
 urls.repository = "https://github.com/djlint/djLint"
@@ -46,18 +47,18 @@ scripts.djlint = "djlint:main"
 
 [dependency-groups]
 dev = [
-  "mypy[faster-cache]==1.16.1",
-  "pytest==8.4.1",
-  "pytest-cov==6.2.1",
+  "mypy[faster-cache]==1.19.1",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
   "pytest-github-actions-annotate-failures==0.3",
   "pytest-xdist==3.8",
-  "ruff==0.12.3",
-  "tomli==2.2.1",
-  "types-colorama==0.4.15.20240311",
-  "types-pyyaml==6.0.12.20250516",
-  "types-regex==2024.11.6.20250403",
-  "types-tqdm==4.67.0.20250516",
-  "typing-extensions==4.14.1",
+  "ruff==0.15.0",
+  "tomli==2.4.0",
+  "types-colorama==0.4.15.20250801",
+  "types-pyyaml==6.0.12.20250915",
+  "types-regex==2026.1.15.20260116",
+  "types-tqdm==4.67.3.20260205",
+  "typing-extensions==4.15.0",
 ]
 
 [tool.hatch.build.targets.sdist]

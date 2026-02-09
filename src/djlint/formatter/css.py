@@ -50,7 +50,9 @@ def format_css(html: str, config: Config) -> str:
         ).splitlines()
 
         with StringIO() as buf:
-            for line, test in zip(beautified_lines, beautified_lines_test):
+            for line, test in zip(
+                beautified_lines, beautified_lines_test, strict=False
+            ):
                 buf.write("\n")
                 if line != test:
                     buf.write(indent)
