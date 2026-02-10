@@ -157,6 +157,12 @@ module.exports = {
     fr: "Formateur de modèles HTML en ligne utilisant djLint !",
     zh: "在线体验djLint格式化HTML模板！",
   },
+	demo_loading: {
+		"en-US": "Loading djLint ..",
+		ru: "Loading djLint ..",
+		fr: "Loading djLint ..",
+		zh: "正在加载 djLint ..",
+	},
   footer_credits: {
     "en-US":
       'djLint was originally created for use in the <a href="https://atlas.bi" target="_blank">Atlas</a> projects by the <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a> team.',
