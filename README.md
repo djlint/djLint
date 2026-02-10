@@ -57,6 +57,12 @@ Grab it with `pip`
 pip install djlint
 ```
 
+Or with Homebrew on macOS
+
+```bash
+brew install djlint
+```
+
 _Or with the npm experimental install - Note, this requires python and pip to be on your system path._
 
 ```bash
