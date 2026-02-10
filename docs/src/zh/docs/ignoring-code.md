@@ -7,7 +7,7 @@ date: Last Modified
 
 # 忽略码
 
-使用包裹在 djLint 标签等忽略码来调过代码检查/格式化：
+使用包裹在 djLint 标签等忽略码来跳过代码检查/格式化：
 
 {% raw %}
 

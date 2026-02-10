@@ -21,7 +21,7 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 
 {% endraw %}
 
-不推荐使用一下模式：
+不推荐使用以下模式：
 
 {% raw %}
 
@@ -34,7 +34,7 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 
 ## `format_attribute_template_tags` 与无空格条件属性
 
-若启用了 `format_attribute_template_tags`，条件属性应使用无空格标签，例如 numjuck 和 jinja 的 {% raw %}`{% if a -%}`{% endraw %}，应移除内部的空格。
+若启用了 `format_attribute_template_tags`，条件属性应使用无空格标签，例如 nunjucks 和 jinja 的 {% raw %}`{% if a -%}`{% endraw %}，应移除内部的空格。
 
 djLint 会将长属性格式化为多行，而属性内部节省的空格可能会破坏您的代码。
 

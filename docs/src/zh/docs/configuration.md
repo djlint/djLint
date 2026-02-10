@@ -115,7 +115,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 
 {% endfor %}
 
-<div id="no-matches" class="is-hidden mb-5">Nothing found. Try another search.</div>
+<div id="no-matches" class="is-hidden mb-5">未找到匹配结果，请尝试其他搜索。</div>
 
 <script>
 document.addEventListener('click', function (e) {

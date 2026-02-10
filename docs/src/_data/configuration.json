@@ -113,7 +113,7 @@
       "en": "Ignore linter codes.",
       "ru": "Игнорируйте коды линтера.",
       "fr": "Ignore les codes de linter.",
-      "zh": "不进行代码检查。"
+      "zh": "忽略指定的检查规则代码。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "ignore=\"H014,H015\"" },
@@ -128,7 +128,7 @@
       "en": "Include linter codes.",
       "ru": "Включите коды линтера.",
       "fr": "Inclure les codes des liners.",
-      "zh": "进行代码检查。"
+      "zh": "进行制定规则的代码检查。"
     },
     "tags": ["linter"],
     "usage": [
@@ -336,7 +336,7 @@
       "en": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::",
       "ru": "Установите профиль для языка шаблона. Профиль будет включать правила линтера, применимые к языку шаблонов, а также может изменять переформатирование. Например, в `handlebars` нет пробелов внутри тегов `{{#if}}`.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::",
       "fr": "Définissez un profil pour la langue du modèle. Le profil activera les règles de linter qui s'appliquent à votre langage de modèle, et peut également changer le reformatage. Par exemple, dans `handlebars`, il n'y a pas d'espaces dans les balises `{{#if}}`.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::",
-      "zh": "设置一个模板文件。该模板会启用全部代码检查规则，并应用到你的整个语言中。例如，`handlebars` 语言中 `{{#if}}` 花括号内没有空格。\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::"
+      "zh": "为模板语言设置一个预设配置（profile）。该预设会应用于所有文件的代码检查与格式化中。例如，启用 `handlebars` 配置，则 `{{#if}}` 标签内部不包含空格。\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- golang\n- angular\n  :::"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "profile=\"django\"" },

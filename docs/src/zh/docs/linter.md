@@ -19,7 +19,7 @@ djlint /path/to/this.html.j2  --profile=jinja
 ```
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block">详情请参考 <a href="/docs/configuration/">配置</a> 章节</div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block">详情请参考 <a href="/zh/docs/configuration/">配置</a> 章节</div>
 </div>
 
 ## 启用或禁用某规则

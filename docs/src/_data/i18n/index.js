@@ -112,7 +112,7 @@ module.exports = {
     "en-US": "Add a badge to your projects",
     ru: "Добавьте значок к своим проектам",
     fr: "Ajoutez un badge à vos projets",
-    zh: "在你项目中添加一个badge - ",
+    zh: "在你项目中添加一个badge",
   },
   index_looks_like: {
     "en-US": "Looks like this:",
