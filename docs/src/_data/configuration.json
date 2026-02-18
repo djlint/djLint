@@ -546,5 +546,67 @@
       { "name": ".djlintrc", "value": "\"ignore_case\": true" },
       { "name": "cli", "value": "--ignore_case" }
     ]
+  },
+  {
+    "name": "format_attribute_js_json",
+    "tags": ["formatter"],
+    "description": {
+      "en": "Format JavaScript and JSON code inside HTML attributes. This will format object literals and JavaScript code in attributes like `onclick`, `data-*`, and other JavaScript-related attributes. Objects with fewer properties than `format_attribute_js_json_min_props` will not be formatted.",
+      "ru": "Форматировать JavaScript и JSON код внутри HTML атрибутов. Это форматирует объектные литералы и JavaScript код в атрибутах типа `onclick`, `data-*` и других JavaScript-связанных атрибутах. Объекты с количеством свойств меньше `format_attribute_js_json_min_props` не будут форматироваться.",
+      "fr": "Formater le code JavaScript et JSON à l'intérieur des attributs HTML. Cela formatera les littéraux d'objet et le code JavaScript dans les attributs comme `onclick`, `data-*` et d'autres attributs liés à JavaScript. Les objets avec moins de propriétés que `format_attribute_js_json_min_props` ne seront pas formatés."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "format_attribute_js_json=true"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"format_attribute_js_json\": true"
+      },
+      { "name": "cli", "value": "--format-js-attributes" }
+    ]
+  },
+  {
+    "name": "format_attribute_js_json_pattern",
+    "tags": ["formatter"],
+    "description": {
+      "en": "Custom regex pattern to match JavaScript attributes for formatting. Default pattern matches common JavaScript attributes like `onclick`, `data-*`, Vue.js directives, Alpine.js directives, Angular directives, and more.",
+      "ru": "Пользовательский regex шаблон для сопоставления JavaScript атрибутов для форматирования. Шаблон по умолчанию соответствует распространенным JavaScript атрибутам, таким как `onclick`, `data-*`, директивы Vue.js, директивы Alpine.js, директивы Angular и другие.",
+      "fr": "Modèle regex personnalisé pour faire correspondre les attributs JavaScript pour le formatage. Le modèle par défaut correspond aux attributs JavaScript courants comme `onclick`, `data-*`, les directives Vue.js, les directives Alpine.js, les directives Angular et plus encore."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "format_attribute_js_json_pattern=\"^(on[a-z]+|data-[a-z-]+|x-[a-z-]+)$\""
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"format_attribute_js_json_pattern\": \"^(on[a-z]+|data-[a-z-]+|x-[a-z-]+)$\""
+      },
+      {
+        "name": "cli",
+        "value": "--js-attribute-pattern \"^(on[a-z]+|data-[a-z-]+|x-[a-z-]+)$\""
+      }
+    ]
+  },
+  {
+    "name": "format_attribute_js_json_min_props",
+    "tags": ["formatter"],
+    "description": {
+      "en": "Minimum number of properties required in a JavaScript/JSON object for it to be formatted. Default is 2. Objects with fewer properties will remain on a single line.",
+      "ru": "Минимальное количество свойств, необходимое в объекте JavaScript/JSON для его форматирования. По умолчанию 2. Объекты с меньшим количеством свойств останутся на одной строке.",
+      "fr": "Nombre minimum de propriétés requises dans un objet JavaScript/JSON pour qu'il soit formaté. La valeur par défaut est 2. Les objets avec moins de propriétés resteront sur une seule ligne."
+    },
+    "usage": [
+      {
+        "name": "pyproject.toml",
+        "value": "format_attribute_js_json_min_props=3"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"format_attribute_js_json_min_props\": 3"
+      }
+    ]
   }
 ]
