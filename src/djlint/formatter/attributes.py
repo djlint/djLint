@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
+from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block, inside_template_block
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -128,6 +128,11 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
     ) < config.max_attribute_length or child_of_ignored_block(
         config, html, match
     ):
+        return match.group()
+
+    # Skip processing if the match is inside a template block to prevent
+    # template variables from being incorrectly processed as HTML attributes
+    if inside_template_block(config, html, match):
         return match.group()
 
     leading_space = match.group(1)
