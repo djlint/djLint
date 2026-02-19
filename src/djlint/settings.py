@@ -297,11 +297,13 @@ class Config:
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
         max_blank_lines: int | None = None,
+        github_output: bool = False,
     ) -> None:
         self.reformat = reformat
         self.check = check
         self.lint = lint
         self.warn = warn
+        self.github_output = github_output
 
         if src == "-":
             self.project_root = find_project_root(Path.cwd())
