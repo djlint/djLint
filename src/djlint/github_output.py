@@ -2,16 +2,33 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from click import echo
+
+from djlint.output import build_relative_path
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
 
     from djlint.settings import Config
     from djlint.types import LintError, ProcessResult
+
+
+def escape_data(data: str) -> str:
+    """Escape data for GitHub Actions."""
+    return data.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
+def escape_property(data: str) -> str:
+    """Escape property for GitHub Actions."""
+    return (
+        data.replace("%", "%25")
+        .replace("\r", "%0D")
+        .replace("\n", "%0A")
+        .replace(":", "%3A")
+        .replace(",", "%2C")
+    )
 
 
 def print_github_output(
@@ -46,14 +63,17 @@ def print_lint_errors(
     if not errors:
         return 0
 
-    filename = build_relative_path(next(iter(error)), config.project_root)
+    filename = escape_property(
+        build_relative_path(next(iter(error)), config.project_root)
+    )
 
     for message_dict in errors:
-        line = message_dict["line"].split(":")[0]
+        line = escape_property(message_dict["line"].split(":")[0])
         level = "error" if message_dict["code"].startswith("E") else "warning"
-        echo(
-            f"::{level} file={filename},line={line}::{message_dict['code']} {message_dict['message']}"
+        message = escape_data(
+            f"{message_dict['code']} {message_dict['message']}"
         )
+        echo(f"::{level} file={filename},line={line}::{message}")
 
     return len(errors)
 
@@ -65,16 +85,10 @@ def print_format_errors(
     if not errors:
         return 0
 
-    filename = build_relative_path(next(iter(errors)), config.project_root)
+    filename = escape_property(
+        build_relative_path(next(iter(errors)), config.project_root)
+    )
     if bool(next(iter(errors.values()))):
         echo(f"::error file={filename}::Formatting changes required")
 
     return sum(1 for v in errors.values() if v)
-
-
-def build_relative_path(url: str, project_root: Path) -> str:
-    """Get path relative to project."""
-    url_path = Path(url)
-    if project_root != url_path and project_root in url_path.parents:
-        return str(url_path.relative_to(project_root))
-    return url

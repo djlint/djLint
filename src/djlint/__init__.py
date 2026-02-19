@@ -247,11 +247,10 @@ if TYPE_CHECKING:
     show_default=False,
 )
 @click.option(
-    "--github-output",
+    "--github-output/--no-github-output",
     is_flag=True,
-    default=bool(os.getenv("GITHUB_ACTIONS")),
+    default=None,
     help="Output GitHub-compatible formatting.",
-    show_default=True,
 )
 @colorama_text(autoreset=True)
 def main(
@@ -296,9 +295,12 @@ def main(
     no_function_formatting: bool,
     no_set_formatting: bool,
     max_blank_lines: int | None,
-    github_output: bool = False,
+    github_output: bool | None = None,
 ) -> None:
     """djLint · HTML template linter and formatter."""
+    if github_output is None:
+        github_output = bool(os.getenv("GITHUB_ACTIONS"))
+
     config = Config(
         src[0],
         extension=extension,
@@ -461,14 +463,14 @@ def main(
             finally:
                 Path(temp_file.name).unlink(missing_ok=True)
 
-    if (
-        config.github_output
-        and print_github_output(config, file_errors, len(file_list))
-        and not config.warn
-    ):
-        sys.exit(1)
+    if config.github_output:
+        if (
+            print_github_output(config, file_errors, len(file_list))
+            and not config.warn
+        ):
+            sys.exit(1)
 
-    if print_output(config, file_errors, len(file_list)) and not config.warn:
+    elif print_output(config, file_errors, len(file_list)) and not config.warn:
         sys.exit(1)
 
 
