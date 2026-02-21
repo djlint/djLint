@@ -17,7 +17,7 @@
     "@creativebulma/bulma-divider": "^1.1.0",
     "@fontsource/crimson-pro": "^5.0.0",
     "@fontsource/rasa": "^5.0.0",
-    "@quasibit/eleventy-plugin-schema": "1.11.1",
+    "@quasibit/eleventy-plugin-schema": "1.13.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@sindresorhus/slugify": "^3.0.0",
     "animate-sass": "^0.8.2",
