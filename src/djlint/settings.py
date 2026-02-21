@@ -60,6 +60,9 @@ def find_project_root(src: Path) -> Path:
         if (directory / "djlint.toml").is_file():
             return directory
 
+        if (directory / ".djlint.toml").is_file():
+            return directory
+
         if (directory / ".djlintrc").is_file():
             return directory
 
@@ -94,11 +97,17 @@ def find_pyproject(root: Path) -> Path | None:
 
 
 def find_djlint_toml(root: Path) -> Path | None:
-    """Search upstream for a djlint.toml file."""
+    """Search upstream for a djlint.toml or .djlint.toml file."""
     djlint_toml = root / "djlint.toml"
 
     if djlint_toml.is_file():
         return djlint_toml
+
+    # Fall back to .djlint.toml if djlint.toml doesn't exist
+    dotted_djlint_toml = root / ".djlint.toml"
+
+    if dotted_djlint_toml.is_file():
+        return dotted_djlint_toml
 
     return None
 
