@@ -20,6 +20,7 @@ repos:
     rev: v0.9.3
     hooks:
       - id: tombi-format
+        exclude: ^uv.lock$
   - repo: https://github.com/rbubley/mirrors-prettier
     rev: v3.8.1
     hooks:
