@@ -52,7 +52,7 @@ dev = [
   "tomli==2.4.1",
   "types-colorama==0.4.15.20250801",
   "types-pyyaml==6.0.12.20250915",
-  "types-regex==2026.2.28.20260301",
+  "types-regex==2026.3.32.20260329",
   "types-tqdm==4.67.3.20260303",
   "typing-extensions==4.15.0",
 ]
