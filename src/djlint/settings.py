@@ -643,13 +643,17 @@ class Config:
             """
         )
 
-        self.template_unindent: str = r"""
+        self.template_unindent: str = (
+            r"""
                 (?:
                   (?:\{\{\/)
-                | (?:\{%-?[ ]*?end(?!comment))
+                | (?:\{%-?[ ]*?end(?!comment)"""
+            + (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
+            + r""")
                 | (?:\{{-?[ ]*?form_end)
               )
             """
+        )
 
         # these tags should be unindented and next line will be indented
         self.tag_unindent_line: str = r"""
