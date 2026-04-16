@@ -29,7 +29,7 @@ repos:
           - --object-wrap=collapse
           - --no-config
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.15.10
+    rev: v0.15.11
     hooks:
       - id: ruff-check
         args:
