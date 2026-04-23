@@ -37,6 +37,7 @@ else:
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
 
+    from pathspec import Pattern
     from typing_extensions import Any, TypeVar
 
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
@@ -66,7 +67,7 @@ def find_project_root(src: Path) -> Path:
     return directory
 
 
-def load_gitignore(root: Path) -> PathSpec:
+def load_gitignore(root: Path) -> PathSpec[Pattern]:
     """Search upstream for a .gitignore file."""
     gitignore = root / ".gitignore"
     if gitignore.is_file():
