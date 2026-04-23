@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
-from djlint.helpers import RE_FLAGS_IMX, child_of_unformatted_block
+from djlint.helpers import RE_FLAGS_IMX, child_of_unformatted_block, inside_template_block
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -38,6 +38,11 @@ def compress_html(html: str, config: Config) -> str:
         for example <textarea class="..." id="..."> can be formatted.
         """
         if child_of_unformatted_block(config, html, match):
+            return match.group()
+
+        # Skip processing if the match is inside a template block to prevent
+        # template variables from being incorrectly processed as HTML tags
+        if inside_template_block(config, html, match):
             return match.group()
 
         open_bracket = match.group(1)
