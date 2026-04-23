@@ -102,7 +102,7 @@ def test_good_path_with_bad_ext(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ("tests/test_djlint/", "-e", "html.alphabet")
     )
-    assert result.exit_code == 0
+    assert result.exit_code == 1
     assert "No files to check!" in result.output
 
 
