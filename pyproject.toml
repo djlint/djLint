@@ -48,7 +48,7 @@ dev = [
   "pytest-cov==7.1.0",
   "pytest-github-actions-annotate-failures==0.4.0",
   "pytest-xdist==3.8",
-  "ruff==0.15.11",
+  "ruff==0.15.12",
   "tomli==2.4.1",
   "types-colorama==0.4.15.20260408",
   "types-pyyaml==6.0.12.20260408",
