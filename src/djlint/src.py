@@ -15,6 +15,20 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
+def _gitignore_match(config: Config, filepath: Path) -> bool:
+    """Check if a file matches gitignore patterns using a relative path.
+
+    pathspec.match_file matches against all path components, so passing
+    an absolute path causes false positives when parent directories
+    (outside the project) match a gitignore pattern.
+    """
+    try:
+        rel = filepath.relative_to(config.project_root)
+    except ValueError:
+        return False
+    return config.gitignore.match_file(rel)
+
+
 def get_src(src: Iterable[Path], config: Config) -> list[Path]:
     """Get source files."""
     paths = []
@@ -26,7 +40,7 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
         if normalized_item.is_file():
             if no_pragma(config, normalized_item) and (
                 not config.use_gitignore
-                or not config.gitignore.match_file(normalized_item)
+                or not _gitignore_match(config, normalized_item)
             ):
                 paths.append(normalized_item)
             continue
@@ -38,11 +52,15 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
             x
             for x in normalized_item.glob(f"**/*.{extension}")
             if (
-                not re.search(config.exclude, x.as_posix(), flags=re.X)
+                not re.search(
+                    config.exclude,
+                    x.relative_to(normalized_item).as_posix(),
+                    flags=re.X,
+                )
                 and no_pragma(config, x)
                 and (
                     not config.use_gitignore
-                    or not config.gitignore.match_file(x)
+                    or not _gitignore_match(config, x)
                 )
             )
         )
