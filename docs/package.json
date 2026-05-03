@@ -38,7 +38,7 @@
     "@fortawesome/fontawesome-free": "6.7.2",
     "@fullhuman/postcss-purgecss": "8.0.0",
     "@toycode/markdown-it-class": "1.2.4",
-    "algoliasearch": "5.51.0",
+    "algoliasearch": "5.52.0",
     "autoprefixer": "10.5.0",
     "bulma": "0.9.4",
     "bulma-pricingtable": "0.2.0",
