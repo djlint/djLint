@@ -51,7 +51,7 @@ repos:
           - pytest
           - tomli
           - types-colorama==0.4.15.20260508
-          - types-pyyaml==6.0.12.20260508
+          - types-pyyaml==6.0.12.20260510
           - types-regex==2026.4.4.20260508
           - types-tqdm==4.67.3.20260508
           - typing-extensions==4.15.0
