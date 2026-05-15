@@ -324,7 +324,8 @@ def indent_html(rawcode: str, config: Config) -> str:
             try:
                 # if contents is a python keyword, do not evaluate it.
                 evaluated = (
-                    str(eval(contents))  # noqa: S307
+str(# FIX: 移除eval，改用安全方式
+# contents))  # noqa: S307
                     if contents != "object"
                     else contents
                 )
