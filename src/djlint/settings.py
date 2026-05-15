@@ -218,7 +218,7 @@ def load_custom_rules(src: Path) -> Any:
     djlint_rules_file = find_djlint_rules(src)
 
     if djlint_rules_file:
-        return yaml.load(
+return yaml.safe_load(
             djlint_rules_file.read_text(encoding="utf-8"),
             Loader=yaml.SafeLoader,
         )
