@@ -72,8 +72,7 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
                 not _exclude_match(config, x, normalized_item)
                 and no_pragma(config, x)
                 and (
-                    not config.use_gitignore
-                    or not _gitignore_match(config, x)
+                    not config.use_gitignore or not _gitignore_match(config, x)
                 )
             )
         )

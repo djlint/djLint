@@ -200,9 +200,7 @@ def test_gitignore_does_not_match_parent_path(tmp_path: Path) -> None:
     # Gitignore with a pattern that matches a parent directory name
     (worktree / ".gitignore").write_text("worktrees\n", encoding="utf-8")
 
-    config = Config(
-        str(templates / "index.html"), use_gitignore=True
-    )
+    config = Config(str(templates / "index.html"), use_gitignore=True)
     # Test single file path (the xargs codepath)
     paths = get_src([templates / "index.html"], config)
     assert len(paths) == 1
