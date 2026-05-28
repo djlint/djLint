@@ -24,7 +24,6 @@ profile = "django"
 require_pragma = true
 use_gitignore = true
 
-
 [tool.djlint.js]
 indent_size = 5
 
