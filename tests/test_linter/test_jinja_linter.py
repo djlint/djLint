@@ -122,6 +122,14 @@ test_data = [
         id="J018_root",
     ),
     pytest.param(
+        (
+            '<a href="//cdn.example.com/path"></a>\n'
+            '<form action="//cdn.example.com/path"></form>'
+        ),
+        ([]),
+        id="J018_protocol_relative",
+    ),
+    pytest.param(
         ('<a href="data:,Hello%2C%20World%21"></a>'), ([]), id="J018_data"
     ),
     pytest.param(
