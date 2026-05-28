@@ -73,7 +73,7 @@ def find_project_root(src: Path) -> Path:
         if (directory / ".djlintrc").is_file():
             return directory
 
-    return directory
+    return src if src.is_dir() else src.parent
 
 
 def load_gitignore(root: Path) -> PathSpec[Pattern]:
@@ -149,18 +149,24 @@ def load_djlintrc_config(filepath: Path) -> Any:
     return json.loads(filepath.read_bytes())
 
 
+def load_config_file(filepath: Path) -> Any:
+    """Load djlint config from a config file."""
+    if filepath.name == "pyproject.toml":
+        return load_pyproject_config(filepath)
+
+    if filepath.suffix == ".toml":
+        return load_djlint_toml_config(filepath)
+
+    return load_djlintrc_config(filepath)
+
+
 def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
     """Load djlint config."""
     djlint_content: dict[str, Any] = {}
 
     if config:
         try:
-            if config.name == "pyproject.toml":
-                djlint_content.update(load_pyproject_config(config))
-            elif config.suffix == ".toml":
-                djlint_content.update(load_djlint_toml_config(config))
-            else:
-                djlint_content.update(load_djlintrc_config(config))
+            djlint_content.update(load_config_file(config))
         except Exception as error:
             logger.error(
                 "%sFailed to load config file %s. %s", Fore.RED, config, error
