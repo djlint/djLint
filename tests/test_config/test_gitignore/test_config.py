@@ -145,10 +145,7 @@ def test_cli(runner: CliRunner) -> None:
 
 
 def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
-    """Exclude patterns should match relative paths within the search dir,
-    not the absolute path. This ensures files are found when the project
-    lives under a path containing '.git' (e.g. a git worktree at
-    '.git-worktrees/feature/')."""
+    """Exclude patterns should not match parent dirs outside the project."""
     # Simulate a worktree path that contains ".git" in a parent directory
     worktree = tmp_path / ".git-worktrees" / "feature"
     templates = worktree / "templates"
@@ -174,12 +171,23 @@ def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
     # exclude pattern
     assert "sub/.git/objects/stale.html" not in resolved_paths
 
+    (worktree / ".git").touch()
+    generated = templates / "generated"
+    generated.mkdir()
+    (generated / "bad.html").write_text("<div>bad</div>", encoding="utf-8")
+
+    config = Config(str(templates), exclude="templates/generated")
+    paths = get_src([templates], config)
+    resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+
+    # Exclude patterns relative to project root must still work when
+    # searching only a subdirectory.
+    assert "templates/index.html" in resolved_paths
+    assert "templates/generated/bad.html" not in resolved_paths
+
 
 def test_gitignore_does_not_match_parent_path(tmp_path: Path) -> None:
-    """Gitignore patterns should be matched against paths relative to the
-    project root, not absolute paths. When a project lives under a path
-    like .claude/worktrees/<name>/, a gitignore pattern such as 'worktrees'
-    would incorrectly exclude every file."""
+    """Gitignore patterns should not match parent dirs outside the project."""
     worktree = tmp_path / ".claude" / "worktrees" / "my-feature"
     templates = worktree / "templates"
     templates.mkdir(parents=True)

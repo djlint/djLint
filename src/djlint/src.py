@@ -29,6 +29,23 @@ def _gitignore_match(config: Config, filepath: Path) -> bool:
     return config.gitignore.match_file(rel)
 
 
+def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
+    """Check if a file matches exclude patterns using relative paths."""
+    relative_roots = (
+        (config.project_root,)
+        if config.project_root == root
+        else (config.project_root, root)
+    )
+    for relative_root in relative_roots:
+        try:
+            rel = filepath.relative_to(relative_root)
+        except ValueError:
+            continue
+        if re.search(config.exclude, rel.as_posix(), flags=re.X):
+            return True
+    return False
+
+
 def get_src(src: Iterable[Path], config: Config) -> list[Path]:
     """Get source files."""
     paths = []
@@ -52,11 +69,7 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
             x
             for x in normalized_item.glob(f"**/*.{extension}")
             if (
-                not re.search(
-                    config.exclude,
-                    x.relative_to(normalized_item).as_posix(),
-                    flags=re.X,
-                )
+                not _exclude_match(config, x, normalized_item)
                 and no_pragma(config, x)
                 and (
                     not config.use_gitignore
