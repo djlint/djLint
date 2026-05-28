@@ -38,11 +38,11 @@ def test_help(runner: CliRunner) -> None:
 def test_bad_args(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ("-a",))
     assert result.exit_code == 2
-    assert "Error: No such option: -a" in result.output
+    assert "Error: No such option '-a'" in result.output
 
     result = runner.invoke(djlint, ("--aasdf",))
     assert result.exit_code == 2
-    assert "Error: No such option: --aasdf" in result.output
+    assert "Error: No such option '--aasdf'" in result.output
 
 
 def test_nonexisting_file(runner: CliRunner) -> None:
@@ -236,7 +236,9 @@ def test_python_call() -> None:
     # give up fighting windows lol
     if sys.platform != "win32":
         py_sub = subprocess.run(
-            ("python", "-m", "djlint", "-h"), capture_output=True, check=False
+            ("python", "-m", "djlint", "-h"),  # noqa: S607
+            capture_output=True,
+            check=False,
         )
         print(py_sub.stdout)
         print(py_sub.returncode)
@@ -244,7 +246,7 @@ def test_python_call() -> None:
         assert py_sub.returncode == 0
 
         py_sub = subprocess.run(
-            ("python", "-m", "djlint", "__init__", "-h"),
+            ("python", "-m", "djlint", "__init__", "-h"),  # noqa: S607
             capture_output=True,
             check=False,
         )

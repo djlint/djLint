@@ -180,6 +180,7 @@ from djlint.settings import Config
 from djlint.lint import get_line
 import re
 
+
 def run(
     rule: Dict[str, Any],
     config: djlint.settings.Config,
@@ -195,13 +196,11 @@ def run(
     """
     errors: List[Dict[str, str]] = []
     for match in re.finditer(r"bad", html):
-        errors.append(
-            {
-                "code": rule["name"],
-                "line": get_line(match.start(), line_ends),
-                "match": match.group().strip()[:20],
-                "message": rule["message"],
-            }
-        )
+        errors.append({
+            "code": rule["name"],
+            "line": get_line(match.start(), line_ends),
+            "match": match.group().strip()[:20],
+            "message": rule["message"],
+        })
     return errors
 ```

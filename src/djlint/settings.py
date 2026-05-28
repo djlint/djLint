@@ -13,9 +13,18 @@ import yaml
 from click import echo
 from colorama import Fore
 from pathspec import PathSpec
-from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
-    GitWildMatchPatternError,
-)
+
+try:
+    from pathspec.patterns.gitignore import GitIgnorePatternError
+except ImportError:
+    # pathspec < 1.0 exposes the older gitwildmatch implementation.
+    from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
+        GitWildMatchPatternError as GitIgnorePatternError,
+    )
+
+    _GITIGNORE_PATTERN = "gitwildmatch"
+else:
+    _GITIGNORE_PATTERN = "gitignore"
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 
@@ -37,6 +46,7 @@ else:
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
 
+    from pathspec import Pattern
     from typing_extensions import Any, TypeVar
 
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
@@ -66,7 +76,7 @@ def find_project_root(src: Path) -> Path:
     return directory
 
 
-def load_gitignore(root: Path) -> PathSpec:
+def load_gitignore(root: Path) -> PathSpec[Pattern]:
     """Search upstream for a .gitignore file."""
     gitignore = root / ".gitignore"
     if gitignore.is_file():
@@ -76,9 +86,9 @@ def load_gitignore(root: Path) -> PathSpec:
         git_lines = []
 
     try:
-        return PathSpec.from_lines("gitwildmatch", git_lines)
+        return PathSpec.from_lines(_GITIGNORE_PATTERN, git_lines)
 
-    except GitWildMatchPatternError as e:
+    except GitIgnorePatternError as e:
         echo(f"Could not parse {gitignore}: {e}", err=True)
         raise
 
@@ -297,11 +307,13 @@ class Config:
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
         max_blank_lines: int | None = None,
+        github_output: bool = False,
     ) -> None:
         self.reformat = reformat
         self.check = check
         self.lint = lint
         self.warn = warn
+        self.github_output = github_output
 
         if src == "-":
             self.project_root = find_project_root(Path.cwd())
