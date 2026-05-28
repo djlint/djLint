@@ -23,7 +23,8 @@ def escape_data(data: str) -> str:
 def escape_property(data: str) -> str:
     """Escape property for GitHub Actions."""
     return (
-        data.replace("%", "%25")
+        data
+        .replace("%", "%25")
         .replace("\r", "%0D")
         .replace("\n", "%0A")
         .replace(":", "%3A")

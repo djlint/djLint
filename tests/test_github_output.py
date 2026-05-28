@@ -15,11 +15,7 @@ def test_github_output_flag(runner: CliRunner) -> None:
     # Ensure GITHUB_ACTIONS is unset or overridden by flag
     result = runner.invoke(
         djlint,
-        (
-            "-",
-            "--lint",
-            "--github-output",
-        ),
+        ("-", "--lint", "--github-output"),
         input="<div></div>",
         env={"GITHUB_ACTIONS": ""},
     )
@@ -34,10 +30,7 @@ def test_github_output_env_var(runner: CliRunner) -> None:
     """Test that GITHUB_ACTIONS env var triggers github output."""
     result = runner.invoke(
         djlint,
-        (
-            "-",
-            "--lint",
-        ),
+        ("-", "--lint"),
         input="<div></div>",
         env={"GITHUB_ACTIONS": "true"},
     )
@@ -49,11 +42,7 @@ def test_no_github_output_flag(runner: CliRunner) -> None:
     """Test that --no-github-output overrides GITHUB_ACTIONS."""
     result = runner.invoke(
         djlint,
-        (
-            "-",
-            "--lint",
-            "--no-github-output",
-        ),
+        ("-", "--lint", "--no-github-output"),
         input="<div></div>",
         env={"GITHUB_ACTIONS": "true"},
     )
@@ -67,11 +56,7 @@ def test_escaping(runner: CliRunner) -> None:
     """Test character escaping in GitHub output."""
     result = runner.invoke(
         djlint,
-        (
-            "-",
-            "--lint",
-            "--github-output",
-        ),
+        ("-", "--lint", "--github-output"),
         input="<div></div>",
         env={"GITHUB_ACTIONS": ""},
     )
