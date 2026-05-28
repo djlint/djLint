@@ -8,7 +8,6 @@ repos:
       - id: check-merge-conflict
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
-      - id: check-toml
       - id: check-xml
       - id: destroyed-symlinks
       - id: end-of-file-fixer
@@ -17,24 +16,30 @@ repos:
         args:
           - --fix=lf
       - id: trailing-whitespace
+  - repo: https://github.com/tombi-toml/tombi-pre-commit
+    rev: v1.0.0
+    hooks:
+      - id: tombi-format
+        exclude: ^uv.lock$
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.8.1
+    rev: v3.8.3
     hooks:
       - id: prettier
         args:
           - --object-wrap=collapse
           - --no-config
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.15.2
+    rev: v0.15.13
     hooks:
       - id: ruff-check
         args:
           - --fix
       - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.19.1
+    rev: v2.1.0
     hooks:
       - id: mypy
+        language: python
         args:
           - --scripts-are-modules
         additional_dependencies:
@@ -45,8 +50,8 @@ repos:
           - pathspec
           - pytest
           - tomli
-          - types-colorama
-          - types-pyyaml
-          - types-regex
-          - types-tqdm
-          - typing-extensions
+          - types-colorama==0.4.15.20260508
+          - types-pyyaml==6.0.12.20260518
+          - types-regex==2026.5.9.20260518
+          - types-tqdm==4.67.3.20260518
+          - typing-extensions==4.15.0
