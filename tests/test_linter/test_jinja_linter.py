@@ -117,6 +117,11 @@ test_data = [
         id="J018_mailto",
     ),
     pytest.param(
+        ('<a href="/">Home</a>\n<form action="/"></form>'),
+        ([]),
+        id="J018_root",
+    ),
+    pytest.param(
         ('<a href="data:,Hello%2C%20World%21"></a>'), ([]), id="J018_data"
     ),
     pytest.param(
