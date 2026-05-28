@@ -27,8 +27,9 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture
-def runner() -> CliRunner:
+def runner(monkeypatch: pytest.MonkeyPatch) -> CliRunner:
     """Click runner for djlint tests."""
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
     return CliRunner()
 
 

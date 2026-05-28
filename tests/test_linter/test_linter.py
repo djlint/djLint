@@ -272,6 +272,10 @@ def test_H023(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 0
 
+    write_to_file(tmp_file.name, b'<a href=" &shy; "></a>')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert result.exit_code == 0
+
     write_to_file(tmp_file.name, b'<a href=" foo & bar; "></a>')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 0
