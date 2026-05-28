@@ -75,6 +75,6 @@ def test_escaping(runner: CliRunner) -> None:
         input="<div></div>",
         env={"GITHUB_ACTIONS": ""},
     )
-    # ::warning file=...,line=1::H020 ...
-    assert "::warning file=" in result.output
-    assert ",line=1::H020" in result.output
+    # ::warning line=1::H020 ...
+    assert "::warning line=1::H020" in result.output
+    assert "file=" not in result.output

@@ -63,9 +63,13 @@ def print_lint_errors(
     if not errors:
         return 0
 
-    filename = escape_property(
-        build_relative_path(next(iter(error)), config.project_root)
-    )
+    if config.stdin:
+        file_property = ""
+    else:
+        filename = escape_property(
+            build_relative_path(next(iter(error)), config.project_root)
+        )
+        file_property = f"file={filename},"
 
     for message_dict in errors:
         line = escape_property(message_dict["line"].split(":")[0])
@@ -73,7 +77,7 @@ def print_lint_errors(
         message = escape_data(
             f"{message_dict['code']} {message_dict['message']}"
         )
-        echo(f"::{level} file={filename},line={line}::{message}")
+        echo(f"::{level} {file_property}line={line}::{message}")
 
     return len(errors)
 
