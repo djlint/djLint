@@ -38,11 +38,11 @@ def test_help(runner: CliRunner) -> None:
 def test_bad_args(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ("-a",))
     assert result.exit_code == 2
-    assert "Error: No such option: -a" in result.output
+    assert "Error: No such option '-a'" in result.output
 
     result = runner.invoke(djlint, ("--aasdf",))
     assert result.exit_code == 2
-    assert "Error: No such option: --aasdf" in result.output
+    assert "Error: No such option '--aasdf'" in result.output
 
 
 def test_nonexisting_file(runner: CliRunner) -> None:

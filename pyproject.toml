@@ -43,17 +43,17 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-  "mypy==1.20.0",
+  "mypy==2.1.0",
   "pytest==9.0.3",
   "pytest-cov==7.1.0",
   "pytest-github-actions-annotate-failures==0.4.0",
   "pytest-xdist==3.8",
-  "ruff==0.15.9",
+  "ruff==0.15.14",
   "tomli==2.4.1",
-  "types-colorama==0.4.15.20250801",
-  "types-pyyaml==6.0.12.20250915",
-  "types-regex==2026.4.4.20260405",
-  "types-tqdm==4.67.3.20260402",
+  "types-colorama==0.4.15.20260508",
+  "types-pyyaml==6.0.12.20260518",
+  "types-regex==2026.5.9.20260518",
+  "types-tqdm==4.67.3.20260518",
   "typing-extensions==4.15.0",
 ]
 
@@ -65,7 +65,11 @@ build-backend = "hatchling.build"
 build = "cp*"
 build-frontend = "build[uv]"
 environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
-skip = ["*-manylinux_i686", "*-musllinux_*", "*-win32"]
+# skip = [
+#   "cp313t-*",
+#   "*-win32",
+#   "*-musllinux_aarch64",
+# ]
 
 [tool.hatch.build.targets.sdist]
 include = ["djlint", "mypy.ini"]
@@ -86,3 +90,6 @@ dependencies = [
 enable-by-default = false
 exclude = ["djlint/__main__.py"]
 options = { opt_level = "3", debug_level = "0" }
+
+[tool.uv]
+exclude-newer = "3 days"
