@@ -26,6 +26,11 @@ from djlint.reformat import reformat_file
 from djlint.settings import Config
 from djlint.src import get_src
 
+if sys.version_info >= (3, 13):
+    from os import process_cpu_count
+else:
+    from os import cpu_count as process_cpu_count
+
 if TYPE_CHECKING:
     from djlint.types import ProcessResult
 
@@ -417,13 +422,17 @@ def main(
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
 
-        executor_cls = (
-            ThreadPoolExecutor
-            if min(os.cpu_count() or 1, len(file_list)) == 1
-            else ProcessPoolExecutor
-        )
+        files_count = len(file_list)
+        max_workers = min(process_cpu_count() or 1, files_count)
+        if (max_workers == 1) or _is_free_threaded_python():
+            executor_cls = ThreadPoolExecutor
+        else:
+            executor_cls = ProcessPoolExecutor
+            if sys.platform == "win32":
+                # Windows has a hard limit of 61 processes
+                max_workers = min(max_workers, 61)
 
-        with executor_cls() as exe:
+        with executor_cls(max_workers=max_workers) as exe:
             futures = {
                 exe.submit(process, config, this_file): this_file
                 for this_file in file_list
@@ -433,7 +442,7 @@ def main(
                 file_errors = []
                 elapsed = "00:00"
                 with tqdm(
-                    total=len(file_list),
+                    total=files_count,
                     bar_format=bar_message,
                     colour="BLUE",
                     ascii=progress_char,
@@ -450,8 +459,8 @@ def main(
                 finished_bar_message = f"{Fore.BLUE + Style.BRIGHT}{message}{Style.RESET_ALL} {Fore.GREEN + Style.BRIGHT}{{n_fmt}}/{{total_fmt}}{Style.RESET_ALL} {Fore.BLUE + Style.BRIGHT}files{Style.RESET_ALL} {{bar}} {Fore.GREEN + Style.BRIGHT}{elapsed}{Style.RESET_ALL}    "
 
                 with tqdm(
-                    total=len(file_list),
-                    initial=len(file_list),
+                    total=files_count,
+                    initial=files_count,
                     bar_format=finished_bar_message,
                     colour="GREEN",
                     ascii=progress_char,
@@ -481,13 +490,20 @@ def main(
 
     if config.github_output:
         if (
-            print_github_output(config, file_errors, len(file_list))
+            print_github_output(config, file_errors, files_count)
             and not config.warn
         ):
             sys.exit(1)
 
-    elif print_output(config, file_errors, len(file_list)) and not config.warn:
+    elif print_output(config, file_errors, files_count) and not config.warn:
         sys.exit(1)
+
+
+def _is_free_threaded_python() -> bool:
+    is_gil_enabled = getattr(sys, "_is_gil_enabled", None)
+    if not callable(is_gil_enabled):
+        return False
+    return not bool(is_gil_enabled())
 
 
 def process(config: Config, this_file: Path) -> ProcessResult:
