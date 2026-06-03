@@ -19,11 +19,17 @@ from click import echo
 from colorama import Fore, Style, colorama_text
 from tqdm import tqdm
 
+from djlint.github_output import print_github_output
 from djlint.lint import lint_file
 from djlint.output import print_output
 from djlint.reformat import reformat_file
 from djlint.settings import Config
 from djlint.src import get_src
+
+if sys.version_info >= (3, 13):
+    from os import process_cpu_count
+else:
+    from os import cpu_count as process_cpu_count
 
 if TYPE_CHECKING:
     from djlint.types import ProcessResult
@@ -245,6 +251,12 @@ if TYPE_CHECKING:
     help="Consolidate blank lines down to x lines. [default: 0]",
     show_default=False,
 )
+@click.option(
+    "--github-output/--no-github-output",
+    is_flag=True,
+    default=None,
+    help="Output GitHub-compatible formatting.",
+)
 @colorama_text(autoreset=True)
 def main(
     *,
@@ -288,8 +300,12 @@ def main(
     no_function_formatting: bool,
     no_set_formatting: bool,
     max_blank_lines: int | None,
+    github_output: bool | None = None,
 ) -> None:
     """djLint · HTML template linter and formatter."""
+    if github_output is None:
+        github_output = bool(os.getenv("GITHUB_ACTIONS"))
+
     config = Config(
         src[0],
         extension=extension,
@@ -331,6 +347,7 @@ def main(
         no_function_formatting=no_function_formatting,
         no_set_formatting=no_set_formatting,
         max_blank_lines=max_blank_lines,
+        github_output=github_output,
     )
 
     temp_file = None
@@ -384,18 +401,22 @@ def main(
             Fore.GREEN + Style.BRIGHT,
             Style.RESET_ALL + "    ",
         )
-        if not config.stdin and not config.quiet:
+        if not config.stdin and not config.quiet and not config.github_output:
             echo()
 
         progress_char = " »" if sys.platform == "win32" else "┈━"
 
-        executor_cls = (
-            ThreadPoolExecutor
-            if min(os.cpu_count() or 1, len(file_list)) == 1
-            else ProcessPoolExecutor
-        )
+        files_count = len(file_list)
+        max_workers = min(process_cpu_count() or 1, files_count)
+        if (max_workers == 1) or _is_free_threaded_python():
+            executor_cls = ThreadPoolExecutor
+        else:
+            executor_cls = ProcessPoolExecutor
+            if sys.platform == "win32":
+                # Windows has a hard limit of 61 processes
+                max_workers = min(max_workers, 61)
 
-        with executor_cls() as exe:
+        with executor_cls(max_workers=max_workers) as exe:
             futures = {
                 exe.submit(process, config, this_file): this_file
                 for this_file in file_list
@@ -405,11 +426,12 @@ def main(
                 file_errors = []
                 elapsed = "00:00"
                 with tqdm(
-                    total=len(file_list),
+                    total=files_count,
                     bar_format=bar_message,
                     colour="BLUE",
                     ascii=progress_char,
                     leave=False,
+                    disable=config.github_output,
                 ) as pbar:
                     for future in as_completed(futures):
                         file_errors.append(future.result())
@@ -421,12 +443,13 @@ def main(
                 finished_bar_message = f"{Fore.BLUE + Style.BRIGHT}{message}{Style.RESET_ALL} {Fore.GREEN + Style.BRIGHT}{{n_fmt}}/{{total_fmt}}{Style.RESET_ALL} {Fore.BLUE + Style.BRIGHT}files{Style.RESET_ALL} {{bar}} {Fore.GREEN + Style.BRIGHT}{elapsed}{Style.RESET_ALL}    "
 
                 with tqdm(
-                    total=len(file_list),
-                    initial=len(file_list),
+                    total=files_count,
+                    initial=files_count,
                     bar_format=finished_bar_message,
                     colour="GREEN",
                     ascii=progress_char,
                     leave=True,
+                    disable=config.github_output,
                 ):
                     pass
             else:
@@ -449,8 +472,22 @@ def main(
             finally:
                 Path(temp_file.name).unlink(missing_ok=True)
 
-    if print_output(config, file_errors, len(file_list)) and not config.warn:
+    if config.github_output:
+        if (
+            print_github_output(config, file_errors, files_count)
+            and not config.warn
+        ):
+            sys.exit(1)
+
+    elif print_output(config, file_errors, files_count) and not config.warn:
         sys.exit(1)
+
+
+def _is_free_threaded_python() -> bool:
+    is_gil_enabled = getattr(sys, "_is_gil_enabled", None)
+    if not callable(is_gil_enabled):
+        return False
+    return not bool(is_gil_enabled())
 
 
 def process(config: Config, this_file: Path) -> ProcessResult:

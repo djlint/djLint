@@ -13,9 +13,18 @@ import yaml
 from click import echo
 from colorama import Fore
 from pathspec import PathSpec
-from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
-    GitWildMatchPatternError,
-)
+
+try:
+    from pathspec.patterns.gitignore import GitIgnorePatternError
+except ImportError:
+    # pathspec < 1.0 exposes the older gitwildmatch implementation.
+    from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
+        GitWildMatchPatternError as GitIgnorePatternError,
+    )
+
+    _GITIGNORE_PATTERN = "gitwildmatch"
+else:
+    _GITIGNORE_PATTERN = "gitignore"
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 
@@ -37,6 +46,7 @@ else:
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
 
+    from pathspec import Pattern
     from typing_extensions import Any, TypeVar
 
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
@@ -63,10 +73,10 @@ def find_project_root(src: Path) -> Path:
         if (directory / ".djlintrc").is_file():
             return directory
 
-    return directory
+    return src if src.is_dir() else src.parent
 
 
-def load_gitignore(root: Path) -> PathSpec:
+def load_gitignore(root: Path) -> PathSpec[Pattern]:
     """Search upstream for a .gitignore file."""
     gitignore = root / ".gitignore"
     if gitignore.is_file():
@@ -76,9 +86,9 @@ def load_gitignore(root: Path) -> PathSpec:
         git_lines = []
 
     try:
-        return PathSpec.from_lines("gitwildmatch", git_lines)
+        return PathSpec.from_lines(_GITIGNORE_PATTERN, git_lines)
 
-    except GitWildMatchPatternError as e:
+    except GitIgnorePatternError as e:
         echo(f"Could not parse {gitignore}: {e}", err=True)
         raise
 
@@ -139,18 +149,24 @@ def load_djlintrc_config(filepath: Path) -> Any:
     return json.loads(filepath.read_bytes())
 
 
+def load_config_file(filepath: Path) -> Any:
+    """Load djlint config from a config file."""
+    if filepath.name == "pyproject.toml":
+        return load_pyproject_config(filepath)
+
+    if filepath.suffix == ".toml":
+        return load_djlint_toml_config(filepath)
+
+    return load_djlintrc_config(filepath)
+
+
 def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
     """Load djlint config."""
     djlint_content: dict[str, Any] = {}
 
     if config:
         try:
-            if config.name == "pyproject.toml":
-                djlint_content.update(load_pyproject_config(config))
-            elif config.suffix == ".toml":
-                djlint_content.update(load_djlint_toml_config(config))
-            else:
-                djlint_content.update(load_djlintrc_config(config))
+            djlint_content.update(load_config_file(config))
         except Exception as error:
             logger.error(
                 "%sFailed to load config file %s. %s", Fore.RED, config, error
@@ -297,11 +313,13 @@ class Config:
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
         max_blank_lines: int | None = None,
+        github_output: bool = False,
     ) -> None:
         self.reformat = reformat
         self.check = check
         self.lint = lint
         self.warn = warn
+        self.github_output = github_output
 
         if src == "-":
             self.project_root = find_project_root(Path.cwd())
