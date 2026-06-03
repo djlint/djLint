@@ -17,7 +17,7 @@ repos:
           - --fix=lf
       - id: trailing-whitespace
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v1.0.0
+    rev: v1.1.1
     hooks:
       - id: tombi-format
         exclude: ^uv.lock$
@@ -29,7 +29,7 @@ repos:
           - --object-wrap=collapse
           - --no-config
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.15.13
+    rev: v0.15.15
     hooks:
       - id: ruff-check
         args:
