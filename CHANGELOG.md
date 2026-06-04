@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.38.1] - 2026-06-04
+
+### Fix
+
+- Match exclude paths on path boundaries.
+
 ## [1.38.0] - 2026-06-04
 
 ### Feature
