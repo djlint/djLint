@@ -20,9 +20,7 @@ test_data = [
         ('{% spaceless %}<p><a href="foo/">Foo</a></p>{% endspaceless %}'),
         (
             "{% spaceless %}\n"
-            "    <p>\n"
-            '        <a href="foo/">Foo</a>\n'
-            "    </p>\n"
+            '    <p><a href="foo/">Foo</a></p>\n'
             "{% endspaceless %}\n"
         ),
         id="spaceless_tag",

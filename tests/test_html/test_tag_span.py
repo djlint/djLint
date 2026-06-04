@@ -81,13 +81,7 @@ test_data = [
     ),
     pytest.param(
         ("{% if this %}<p>Text <span>text</span></p>{% endif %}\n"),
-        (
-            "{% if this %}\n"
-            "    <p>\n"
-            "        Text <span>text</span>\n"
-            "    </p>\n"
-            "{% endif %}\n"
-        ),
+        ("{% if this %}<p>Text <span>text</span></p>{% endif %}\n"),
         id="span_leading_text",
     ),
     pytest.param(

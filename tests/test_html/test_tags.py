@@ -90,12 +90,8 @@ test_data = [
             ">\n"
         ),
         (
-            "<p>\n"
-            "    Want to write us a letter? Use our<a><b><a>mailing address</a></b></a>.\n"
-            "</p>\n"
-            "<p>\n"
-            '    Want to write us a letter? Use our<a href="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.\n'
-            "</p>\n"
+            "<p>Want to write us a letter? Use our<a><b><a>mailing address</a></b></a>.</p>\n"
+            '<p>Want to write us a letter? Use our<a href="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.</p>\n'
             "<p>\n"
             '    Want to write us a letter? Use our<a href="contacts.html#Mailing_address"\n'
             '   href1="contacts.html#Mailing_address"\n'
@@ -574,9 +570,7 @@ test_data = [
             "    <meta attr />\n"
             "    456\n"
             "</div>\n"
-            "<p>\n"
-            '    x<span a="b"></span>\n'
-            "</p>\n"
+            '<p>x<span a="b"></span></p>\n'
             "<p>\n"
             "    x\n"
             "    <meta a>\n"
@@ -602,9 +596,7 @@ test_data = [
             '<button bind-disabled="isUnchanged" on-click="onSave($event)">Disabled Cancel</button>\n'
             "<br />\n"
             "<br />\n"
-            "<p>\n"
-            '    "<span [innerHTML]="title"></span>" is the <i>property bound</i> title.\n'
-            "</p>\n"
+            '<p>"<span [innerHTML]="title"></span>" is the <i>property bound</i> title.</p>\n'
             "<li>12345678901234567890123456789012345678901234567890123456789012345678901234567890</li>\n"
             "<div>\n"
             "    <app-nav></app-nav>\n"

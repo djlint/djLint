@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint.reformat import formatter
-from tests.conftest import printer
+from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -24,13 +24,9 @@ test_data = [
         ),
         (
             "<a>Lorem</a>, ispum dolor sit <strong>amet</strong>.\n"
+            "<div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div>\n"
             "<div>\n"
-            "    <a>Lorem</a>, ispum dolor sit <strong>amet</strong>.\n"
-            "</div>\n"
-            "<div>\n"
-            "    <div>\n"
-            "        <a>Lorem</a>, ispum dolor sit <strong>amet</strong>.\n"
-            "    </div>\n"
+            "    <div><a>Lorem</a>, ispum dolor sit <strong>amet</strong>.</div>\n"
             "</div>\n"
         ),
         id="break_tags",
@@ -257,12 +253,7 @@ test_data = [
     ),
     pytest.param(
         ("<p><span>X</span>   or   <span>Y</span></p><p>X   or   Y</p>\n"),
-        (
-            "<p>\n"
-            "    <span>X</span>   or   <span>Y</span>\n"
-            "</p>\n"
-            "<p>X   or   Y</p>\n"
-        ),
+        ("<p><span>X</span>   or   <span>Y</span></p>\n<p>X   or   Y</p>\n"),
         id="snippet_31",
     ),
     pytest.param(
@@ -457,3 +448,21 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+def test_single_line_nested_html_elements_are_preserved() -> None:
+    source = (
+        "<ul>\n"
+        '  <li><a href="test1">Test1</a></li>\n'
+        '  <li><a href="test2">Test2</a></li>\n'
+        '  <li><a href="test3">Test3</a></li>\n'
+        "</ul>\n"
+        "<p>Test <span>1</span></p>\n"
+    )
+
+    output = formatter(
+        config_builder({"indent": 2, "profile": "jinja"}), source
+    )
+
+    printer(source, source, output)
+    assert source == output

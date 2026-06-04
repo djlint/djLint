@@ -181,9 +181,7 @@ test_data = [
             "            <br />\n"
             "            Foo\n"
             "        </p>\n"
-            '        <p align="center">\n'
-            "            <em>String</em>\n"
-            "        </p>\n"
+            '        <p align="center"><em>String</em></p>\n'
             "        <br />\n"
             "        <hr />\n"
             "    </body>\n"

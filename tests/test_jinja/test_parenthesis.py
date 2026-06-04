@@ -20,9 +20,7 @@ test_data = [
         "{{ url('foo') }}", '{{ url("foo") }}\n', id="single_parenthesis_tag"
     ),
     pytest.param(
-        "{{_(error)}}",
-        "{{ _(error) }}\n",
-        id="function_arg_named_error",
+        "{{_(error)}}", "{{ _(error) }}\n", id="function_arg_named_error"
     ),
     pytest.param(
         "{{ content | addID(id) | toc(tags=['h2']) | safe }}",
