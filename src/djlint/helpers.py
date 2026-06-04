@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import itertools
-from functools import cache
+from functools import lru_cache
 from typing import TYPE_CHECKING
 
 import regex as re
@@ -27,6 +27,8 @@ RE_FLAGS_IMS: Final = re.I | re.M | re.S
 RE_FLAGS_IMX: Final = re.I | re.M | re.X
 RE_FLAGS_ISX: Final = re.I | re.S | re.X
 RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
+
+_SPAN_CACHE_SIZE = 1
 
 
 def _last_item(iterable: Iterable[T], /) -> T | None:
@@ -228,7 +230,7 @@ def inside_template_block(
     return False
 
 
-@cache
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _inside_html_attribute(
     html: str, /, *, html_tag_regex: str
 ) -> tuple[tuple[int, int], ...]:
@@ -273,7 +275,7 @@ def inside_ignored_linter_block(
     return False
 
 
-@cache
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _inside_ignored_block(
     html: str, /, *, ignored_blocks: str, ignored_inline_blocks: str
 ) -> tuple[tuple[int, int], ...]:
@@ -304,7 +306,7 @@ def inside_ignored_block(
     return False
 
 
-@cache
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _child_of_unformatted_block(
     html: str, /, *, unformatted_blocks: str, unformatted_blocks_coarse: str
 ) -> tuple[tuple[int, int], ...]:
@@ -346,7 +348,7 @@ def child_of_ignored_block(
     return False
 
 
-@cache
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _overlaps_ignored_block(
     html: str, /, *, ignored_blocks: str, ignored_inline_blocks: str
 ) -> tuple[tuple[int, int], ...]:
