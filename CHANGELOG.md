@@ -2,6 +2,39 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.37.0] - 2026-06-04
+
+### Feature
+
+- Add `--format-attribute-js-json` for formatting JavaScript and JSON inside HTML attributes. It also supports `format_attribute_js_json_pattern` and `format_attribute_js_json_min_props` for tuning which attributes are formatted. Thanks, @oliverhaas.
+- Add `--github-output` for GitHub Actions annotations. Thanks, @iloveitaly.
+
+### Fix
+
+- Fix `ignore_blocks` matching when ignored blocks are indented. Thanks, @tdryer.
+- Use relative paths for `--exclude` and `--use-gitignore` matching so path filters work consistently from nested directories. Thanks, @satya-waylit.
+- Stop D018/J018 from flagging root links such as `href="/"`. Thanks, @SAY-5.
+- Do not treat soft hyphen entities as text for H023. Thanks, @kotutuloro.
+- Fix Handlebars `{{#unless}}` indentation. Thanks, @S1mplePixels.
+- Fix formatting when `/>` appears inside an HTML attribute value. Thanks, @novucs.
+- Improve CPU count handling for worker setup.
+
+### Performance
+
+- Improve formatter caching and reduce cache memory usage. Formatting is about 19% faster.
+
+### Documentation
+
+- Add Chinese translation. Thanks, @Twisuki.
+- Add Homebrew installation instructions. Thanks, @alfawal.
+- Add EFM Neovim integration documentation. Thanks, @danielebra.
+- Add copy-pastable pre-commit YAML to the README. Thanks, @Pierre-Sassoulas.
+- Polish linter and CLI documentation. Thanks, @jasonaowen and @dotWee.
+
+### Packaging
+
+- Drop Python 3.9 support.
+
 ## [1.36.4] - 2024-12-24
 
 - Fix specific mixture of quotes and escaped quotes (e.g. in a json string in an html attribute) breaks the html. Thanks, @oliverhaas.
