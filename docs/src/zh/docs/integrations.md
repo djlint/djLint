@@ -109,8 +109,8 @@ djLint 可以在 neovim 中检查或格式化代码。
 - [GitHub 仓库](https://github.com/mattn/efm-langserver)
 
 1. 通过 Mason 安装 efm-langserver 和 djLint：`:MasonInstall efm djlint`
-2. 将 `htmldjango` 添加到 `filetypes`。
-3. 创建格式化配置：
+1. 将 `htmldjango` 添加到 `filetypes`。
+1. 创建格式化配置：
 
 ```lua
 local djlint = {
@@ -119,7 +119,7 @@ local djlint = {
 }
 ```
 
-4. 使用 `htmldjango = { djlint }` 将语言连接到格式化工具。
+1. 使用 `htmldjango = { djlint }` 将语言连接到格式化工具。
 
 示例配置：
 

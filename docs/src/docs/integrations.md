@@ -109,8 +109,8 @@ Using `efm-langserver`.
 - [GitHub repository](https://github.com/mattn/efm-langserver)
 
 1. Install efm-langserver and djLint with Mason via `:MasonInstall efm djlint`
-2. Add `htmldjango` to `filetypes`.
-3. Create format configuration:
+1. Add `htmldjango` to `filetypes`.
+1. Create format configuration:
 
 ```lua
 local djlint = {
@@ -119,7 +119,7 @@ local djlint = {
 }
 ```
 
-4. Connect language to formatter with `htmldjango = { djlint }`.
+1. Connect language to formatter with `htmldjango = { djlint }`.
 
 Sample configuration:
 

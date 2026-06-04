@@ -30,7 +30,7 @@ npm i djlint
 
 djLint - это приложение командной строки. Для расширенной настройки смотрите `конфигурация`.
 
-{% include 'src/\_includes/cli.md' %}
+{% include 'src/_includes/cli.md' %}
 
 {% admonition
    "note",

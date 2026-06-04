@@ -30,7 +30,7 @@ npm i djlint
 
 djLint est une application en ligne de commande. Voir `configuration` pour une configuration avancée.
 
-{% include 'src/\_includes/cli.md' %}
+{% include 'src/_includes/cli.md' %}
 
 {% admonition
    "note",

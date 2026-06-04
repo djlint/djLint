@@ -30,7 +30,7 @@ npm i djlint
 
 djLint 是一个命令行程序。详情请参考 `配置` 章节。
 
-{% include 'src/\_includes/cli.md' %}
+{% include 'src/_includes/cli.md' %}
 
 {% admonition
    "note",
