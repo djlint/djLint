@@ -98,3 +98,46 @@ djLint peut être utilisé comme formateur dans neovim en utilisant le plugin `n
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
   :::
+
+## efm-langserver
+
+djLint peut être utilisé comme formateur dans neovim avec `efm-langserver`.
+
+::: content
+
+- [GitHub dépôt](https://github.com/mattn/efm-langserver)
+
+1. Installez efm-langserver et djLint avec Mason via `:MasonInstall efm djlint`
+2. Ajoutez `htmldjango` à `filetypes`.
+3. Créez la configuration de formatage :
+
+```lua
+local djlint = {
+    formatCommand = "djlint --reformat --quiet --warn -",
+    formatStdin = true,
+}
+```
+
+4. Associez le langage au formateur avec `htmldjango = { djlint }`.
+
+Exemple de configuration :
+
+```lua
+local djlint = {
+    formatCommand = "djlint --reformat --quiet --warn -",
+    formatStdin = true,
+}
+
+require("lspconfig").efm.setup({
+    filetypes = { "htmldjango" },
+    init_options = { documentFormatting = true },
+    settings = {
+        rootMarkers = { ".git/" },
+        languages = {
+            htmldjango = { djlint },
+        },
+    },
+})
+```
+
+:::
