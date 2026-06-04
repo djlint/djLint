@@ -17,7 +17,7 @@ module.exports = {
   lang_code_url: { "en-US": "", ru: "/ru", fr: "/fr", zh: "/zh" },
   next_release: {
     "en-US": "Next Release",
-    ru: "Следующая публикация",
+    ru: "Следующий релиз",
     fr: "Prochaine Version",
     zh: "未来版本",
   },
@@ -29,7 +29,7 @@ module.exports = {
   },
   formatter: {
     "en-US": "Formatter",
-    ru: "Форматер",
+    ru: "Форматтер",
     fr: "Formateur",
     zh: "代码格式化",
   },
@@ -93,7 +93,7 @@ module.exports = {
   index_fav_lang: {
     "en-US": "find your favorite template language!",
     ru: "найдите свой любимый язык шаблонов!",
-    fr: "retrouvez votre language informatique préféré!",
+    fr: "trouvez votre langage de modèle préféré !",
     zh: "你喜欢的模板语言!",
   },
   index_show_format: {
@@ -104,8 +104,8 @@ module.exports = {
   },
   index_watch: {
     "en-US": "Watch it run!",
-    ru: "Смотрите, как он идет!",
-    fr: "Regardez-le marcher!",
+    ru: "Посмотрите, как он работает!",
+    fr: "Regardez-le fonctionner !",
     zh: "看看它的运行!",
   },
   index_add_badge: {
@@ -141,13 +141,13 @@ module.exports = {
   },
   ignoring_code: {
     "en-US": "Ignoring Code",
-    ru: "Игнорирование Контент",
-    fr: "Ignorer le Contenu",
-    zh: "忽略码",
+    ru: "Игнорирование кода",
+    fr: "Ignorer le code",
+    zh: "忽略代码",
   },
   try_online: {
     "en-US": "🤩 Try Online",
-    fr: "🤩 Essayez Ici",
+    fr: "🤩 Essayez en ligne",
     ru: "🤩 Попробуйте онлайн",
     zh: "🤩 在线体验",
   },
@@ -159,8 +159,8 @@ module.exports = {
   },
   demo_loading: {
     "en-US": "Loading djLint ..",
-    ru: "Loading djLint ..",
-    fr: "Loading djLint ..",
+    ru: "Загрузка djLint ..",
+    fr: "Chargement de djLint ..",
     zh: "正在加载 djLint ..",
   },
   footer_credits: {
@@ -172,7 +172,7 @@ module.exports = {
   },
   site_analytics: {
     "en-US": "Site Analytics",
-    fr: "Site Analytics",
+    fr: "Analyse du site",
     ru: "Аналитика сайта",
     zh: "站点分析",
   },

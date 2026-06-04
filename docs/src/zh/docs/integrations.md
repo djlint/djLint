@@ -16,7 +16,7 @@ djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检
 
 ::: content
 
-- 使用 `djlint` 进行代码检查并使用 `djlin-reformat` 进行代码格式化。
+- 使用 `djlint` 进行代码检查并使用 `djlint-reformat` 进行代码格式化。
   在未设置 `--profile` 时会查找 `templates/**.html`。
 - 使用 `djlint-django` 和 `djlint-reformat-django`。
   这时会查找 `templates/**.html` 并设置 `--profile=django`。
@@ -101,6 +101,47 @@ djLint 可以在 neovim 中检查或格式化代码。
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
   :::
+
+使用 `efm-langserver`。
+
+::: content
+
+- [GitHub 仓库](https://github.com/mattn/efm-langserver)
+
+1. 通过 Mason 安装 efm-langserver 和 djLint：`:MasonInstall efm djlint`
+2. 将 `htmldjango` 添加到 `filetypes`。
+3. 创建格式化配置：
+
+```lua
+local djlint = {
+    formatCommand = "djlint --reformat --quiet --warn -",
+    formatStdin = true,
+}
+```
+
+4. 使用 `htmldjango = { djlint }` 将语言连接到格式化工具。
+
+示例配置：
+
+```lua
+local djlint = {
+    formatCommand = "djlint --reformat --quiet --warn -",
+    formatStdin = true,
+}
+
+require("lspconfig").efm.setup({
+    filetypes = { "htmldjango" },
+    init_options = { documentFormatting = true },
+    settings = {
+        rootMarkers = { ".git/" },
+        languages = {
+            htmldjango = { djlint },
+        },
+    },
+})
+```
+
+:::
 
 ## MegaLinter
 
