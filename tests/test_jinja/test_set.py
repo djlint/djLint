@@ -26,6 +26,11 @@ test_data = [
         '{% set x = print("Hello") %}\n',
         id="do_not_execute_expression",
     ),
+    pytest.param(
+        "{% set card_title_1 = object %}",
+        "{% set card_title_1 = object %}\n",
+        id="object_context_var",
+    ),
 ]
 
 
