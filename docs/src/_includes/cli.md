@@ -26,7 +26,8 @@ Options:
   --format-css                    Also format contents of <style> tags.
   --format-js                     Also format contents of <script> tags.
   --configuration FILE            Path to global configuration file in
-                                  djlint.toml or .djlintrc format
+                                  djlint.toml, .djlint.toml, or .djlintrc
+                                  format
   --statistics                    Count the number of occurrences of each
                                   error/warning code.
   --include TEXT                  Codes to include. ex: "H014,H017"

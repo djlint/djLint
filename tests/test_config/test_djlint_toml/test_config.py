@@ -49,3 +49,29 @@ def test_default() -> None:
         "file.html": "H026,H025",
         "file_two.html": "H001",
     }
+
+
+def test_dot_djlint_toml(tmp_path: Path) -> None:
+    html_file = tmp_path / "templates" / "blank.html"
+    html_file.parent.mkdir()
+    html_file.write_text("<div></div>", encoding="utf-8")
+    (tmp_path / ".djlint.toml").write_text(
+        'extension = "html.j2"\nignore = "H014,H015"', encoding="utf-8"
+    )
+
+    config = Config(str(html_file))
+
+    assert config.project_root == tmp_path
+    assert config.extension == "html.j2"
+    assert config.ignore == "H014,H015"
+
+
+def test_djlint_toml_precedes_dot_djlint_toml(tmp_path: Path) -> None:
+    html_file = tmp_path / "blank.html"
+    html_file.write_text("<div></div>", encoding="utf-8")
+    (tmp_path / "djlint.toml").write_text('ignore = "H014"', encoding="utf-8")
+    (tmp_path / ".djlint.toml").write_text('ignore = "H015"', encoding="utf-8")
+
+    config = Config(str(html_file))
+
+    assert config.ignore == "H014"

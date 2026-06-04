@@ -144,7 +144,7 @@ if TYPE_CHECKING:
         allow_dash=True,
         path_type=Path,
     ),
-    help="Path to global configuration file in djlint.toml or .djlintrc format",
+    help="Path to global configuration file in djlint.toml, .djlint.toml, or .djlintrc format",
 )
 @click.option(
     "--statistics",
