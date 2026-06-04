@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import copy
 from itertools import chain
 from typing import TYPE_CHECKING
 
@@ -50,7 +49,7 @@ def run(
             if match.group(1)[0] != "/":
                 open_tags.insert(0, match)
             else:
-                for i, tag in enumerate(copy.deepcopy(open_tags)):
+                for i, tag in enumerate(open_tags):
                     if tag.group(2) == match.group(1)[1:]:
                         open_tags.pop(i)
                         break
