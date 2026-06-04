@@ -556,14 +556,8 @@
       "fr": "Formater le code JavaScript et JSON à l'intérieur des attributs HTML. Cela formatera les littéraux d'objet et le code JavaScript dans les attributs comme `onclick`, `x-*` et d'autres attributs liés à JavaScript. Les objets avec moins de propriétés que `format_attribute_js_json_min_props` ne seront pas formatés."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "format_attribute_js_json=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"format_attribute_js_json\": true"
-      },
+      { "name": "pyproject.toml", "value": "format_attribute_js_json=true" },
+      { "name": ".djlintrc", "value": "\"format_attribute_js_json\": true" },
       { "name": "cli", "value": "--format-attribute-js-json" }
     ]
   },
@@ -607,10 +601,7 @@
         "name": ".djlintrc",
         "value": "\"format_attribute_js_json_min_props\": 3"
       },
-      {
-        "name": "cli",
-        "value": "--format-attribute-js-json-min-props 3"
-      }
+      { "name": "cli", "value": "--format-attribute-js-json-min-props 3" }
     ]
   }
 ]
