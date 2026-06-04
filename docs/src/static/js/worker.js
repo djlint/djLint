@@ -5,6 +5,22 @@ function capitalize(raw_word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
+function pythonString(value) {
+  return JSON.stringify(value.toString());
+}
+
+function addBoolArg(args, name, value) {
+  if (value) args.push(`${name}=${capitalize(value)}`);
+}
+
+function addStringArg(args, name, value) {
+  if (value) args.push(`${name}=${pythonString(value)}`);
+}
+
+function addValueArg(args, name, value) {
+  if (value) args.push(`${name}=${value}`);
+}
+
 async function loadPyodideAndPackages() {
   const origin = location.origin;
 
@@ -35,64 +51,57 @@ self.onmessage = async (event) => {
 
   const { id, config, html } = event.data;
 
-  const profile = config.profile ? ` ,profile="${config.profile}"` : "";
-  const indent = config.indent ? ` ,indent=${config.indent}` : "";
-  const preserveLeadingSpace = config.preserveLeadingSpace
-    ? ` ,preserve_leading_space=${capitalize(config.preserveLeadingSpace)}`
-    : "";
-  const preserveBlankSpace = config.preserveBlankSpace
-    ? ` ,preserve_blank_lines=${capitalize(config.preserveBlankSpace)}`
-    : "";
-  const formatJs = config.formatJs
-    ? ` ,format_js=${capitalize(config.formatJs)}`
-    : "";
-  const formatCss = config.formatCss
-    ? ` ,format_css=${capitalize(config.formatCss)}`
-    : "";
-  const customBlocks = config.customBlocks
-    ? `config.custom_blocks="${config.customBlocks}"`
-    : "";
-  const customHtml = config.customHtml
-    ? `config.custom_html="${config.customHtml}"`
-    : "";
-  const maxLineLength = config.maxLineLength
-    ? `config.max_line_length=${config.maxLineLength}`
-    : "";
-  const maxAttributeLength = config.maxAttributeLength
-    ? `config.max_attribute_length=${config.maxAttributeLength}`
-    : "";
-  const formatAttributeTemplateTags = config.formatAttributeTemplateTags
-    ? `config.format_attribute_template_tags=${capitalize(config.formatAttributeTemplateTags)}`
-    : "";
-  const blankLineAfterTag = config.blankLineAfterTag
-    ? `config.blank_line_after_tag="${config.blankLineAfterTag}"`
-    : "";
-  const closeVoidTags = config.closeVoidTags
-    ? `config.close_void_tags="${config.closeVoidTags}"`
-    : "";
+  const configArgs = [];
+  addStringArg(configArgs, "profile", config.profile);
+  addValueArg(configArgs, "indent", config.indent);
+  addBoolArg(configArgs, "preserve_leading_space", config.preserveLeadingSpace);
+  addBoolArg(configArgs, "preserve_blank_lines", config.preserveBlankSpace);
+  addBoolArg(configArgs, "format_js", config.formatJs);
+  addValueArg(configArgs, "indent_js", config.indentJs);
+  addBoolArg(configArgs, "format_css", config.formatCss);
+  addValueArg(configArgs, "indent_css", config.indentCss);
+  addStringArg(configArgs, "custom_blocks", config.customBlocks);
+  addStringArg(configArgs, "ignore_blocks", config.ignoreBlocks);
+  addStringArg(configArgs, "custom_html", config.customHtml);
+  addValueArg(configArgs, "max_line_length", config.maxLineLength);
+  addValueArg(configArgs, "max_attribute_length", config.maxAttributeLength);
+  addValueArg(configArgs, "max_blank_lines", config.maxBlankLines);
+  addBoolArg(
+    configArgs,
+    "format_attribute_template_tags",
+    config.formatAttributeTemplateTags,
+  );
+  addBoolArg(
+    configArgs,
+    "format_attribute_js_json",
+    config.formatAttributeJsJson,
+  );
+  addStringArg(
+    configArgs,
+    "format_attribute_js_json_pattern",
+    config.formatAttributeJsJsonPattern,
+  );
+  addValueArg(
+    configArgs,
+    "format_attribute_js_json_min_props",
+    config.formatAttributeJsJsonMinProps,
+  );
+  addStringArg(configArgs, "blank_line_after_tag", config.blankLineAfterTag);
+  addStringArg(configArgs, "blank_line_before_tag", config.blankLineBeforeTag);
+  addBoolArg(configArgs, "close_void_tags", config.closeVoidTags);
+  addBoolArg(configArgs, "ignore_case", config.ignoreCase);
+  addBoolArg(
+    configArgs,
+    "line_break_after_multiline_tag",
+    config.lineBreakAfterMultilineTag,
+  );
+  addBoolArg(configArgs, "no_line_after_yaml", config.noLineAfterYaml);
+  addBoolArg(configArgs, "no_set_formatting", config.noSetFormatting);
+  addBoolArg(configArgs, "no_function_formatting", config.noFunctionFormatting);
 
-  const ignoreCase = config.ignoreCase
-    ? `config.ignore_case="${config.ignoreCase}"`
-    : "";
-
-  const lineBreakAfterMultilineTag = config.lineBreakAfterMultilineTag
-    ? `config.line_break_after_multiline_tag="${config.lineBreakAfterMultilineTag}"`
-    : "";
-
-  const noLineAfterYaml = config.noLineAfterYaml
-    ? `config.no_line_after_yaml="${config.noLineAfterYaml}"`
-    : "";
-
-  const blankLineBeforeTag = config.blankLineBeforeTag
-    ? `config.blank_line_before_tag="${config.blankLineBeforeTag}"`
-    : "";
-
-  const noSetFormatting = config.noSetFormatting
-    ? `config.no_set_formatting="${config.noSetFormatting}"`
-    : "";
-
-  const noFunctionFormatting = config.noFunctionFormatting
-    ? `config.no_function_formatting="${config.noFunctionFormatting}"`
+  const configArguments = configArgs.length
+    ? `,
+      ${configArgs.join(",\n      ")}`
     : "";
 
   try {
@@ -118,20 +127,8 @@ with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as te
     temp_file.write("""${html}""")
     temp_file.close()
     config = Config(
-      temp_file.name${indent}${profile}${preserveLeadingSpace}${preserveBlankSpace}${formatJs}${formatCss}
+      temp_file.name${configArguments}
     )
-    ${customBlocks}
-    ${customHtml}
-    ${maxLineLength}
-    ${maxAttributeLength}
-    ${formatAttributeTemplateTags}
-    ${blankLineAfterTag}
-    ${blankLineBeforeTag}
-    ${closeVoidTags}
-    ${ignoreCase}
-    ${lineBreakAfterMultilineTag}
-    ${noLineAfterYaml}
-    ${blankLineBeforeTag}
     result = Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8")
 print(result.rstrip())
 `);

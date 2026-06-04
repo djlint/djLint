@@ -25,6 +25,14 @@ Options:
   --preserve-blank-lines          Attempt to preserve blank lines.
   --format-css                    Also format contents of <style> tags.
   --format-js                     Also format contents of <script> tags.
+  --format-attribute-js-json      Also format JavaScript/JSON inside HTML
+                                  attributes.
+  --format-attribute-js-json-pattern TEXT
+                                  Regex pattern to match JavaScript
+                                  attributes.
+  --format-attribute-js-json-min-props INTEGER
+                                  Minimum number of properties to treat
+                                  attribute content as JS/JSON.
   --configuration FILE            Path to global configuration file in
                                   djlint.toml, .djlint.toml, or .djlintrc
                                   format
@@ -63,6 +71,8 @@ Options:
   --no-set-formatting             Do not attempt to format set contents.
   --max-blank-lines INTEGER       Consolidate blank lines down to x lines.
                                   [default: 0]
+  --github-output / --no-github-output
+                                  Output GitHub-compatible formatting.
   -h, --help                      Show this message and exit.
 ```
 

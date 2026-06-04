@@ -114,12 +114,44 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
   </div>
 </div>
 <div class="field">
+  <label class="label">Max Blank Lines <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#max-blank-lines" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-max-blank-lines" class="input" type="text" placeholder="0">
+  </div>
+</div>
+<div class="field">
 <label class="checkbox">
   <input id="settings-format-attribute-template-tags" type="checkbox">
   Format Attribute Template Tags <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#format-attribute-template-tags" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a>
 </label>
+</div>
+<div class="field">
+<label class="checkbox">
+  <input id="settings-format-attribute-js-json" type="checkbox">
+  Format Attribute JS/JSON <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#format-attribute-js-json" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a>
+</label>
+</div>
+<div class="field">
+  <label class="label">Attribute JS/JSON Pattern <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#format-attribute-js-json-pattern" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-format-attribute-js-json-pattern" class="input" type="text" placeholder="^(on[a-z]+|x-[a-z-]+)$">
+  </div>
+</div>
+<div class="field">
+  <label class="label">Attribute JS/JSON Min Props <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#format-attribute-js-json-min-props" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-format-attribute-js-json-min-props" class="input" type="text" placeholder="2">
+  </div>
 </div>
 <div class="field">
 <label  class="checkbox">
@@ -146,12 +178,28 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 </label>
 </div>
 <div class="field">
+  <label class="label">JS Indent <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#format-js" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-indent-js" class="input" type="text" placeholder="4">
+  </div>
+</div>
+<div class="field">
 <label class="checkbox">
   <input id="settings-format-css"  type="checkbox">
   Format CSS <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#format-css" target="_blank"><span class="icon has-text-grey-light">
   <i class="fas fa-circle-question"></i>
 </span></a>
 </label>
+</div>
+<div class="field">
+  <label class="label">CSS Indent <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#format-css" target="_blank"><span class="icon has-text-grey-light">
+  <i class="fas fa-circle-question"></i>
+</span></a></label>
+  <div class="control">
+    <input id="settings-indent-css" class="input" type="text" placeholder="4">
+  </div>
 </div>
 <div class="field">
 <label class="checkbox">

@@ -17,6 +17,10 @@ if (typeof Worker !== "undefined") {
       "settings-custom-blocks",
     ).value;
     if (customBlocks) config["customBlocks"] = customBlocks;
+    const ignoreBlocks = document.getElementById(
+      "settings-ignore-blocks",
+    ).value;
+    if (ignoreBlocks) config["ignoreBlocks"] = ignoreBlocks;
     const customHtml = document.getElementById("settings-custom-html").value;
     if (customHtml) config["customHtml"] = customHtml;
     const indent = document.getElementById("settings-indent").value;
@@ -39,11 +43,30 @@ if (typeof Worker !== "undefined") {
       "settings-max-attribute-length",
     ).value;
     if (maxAttributeLength) config["maxAttributeLength"] = maxAttributeLength;
+    const maxBlankLines = document.getElementById(
+      "settings-max-blank-lines",
+    ).value;
+    if (maxBlankLines) config["maxBlankLines"] = maxBlankLines;
     const formatAttributeTemplateTags = document.getElementById(
       "settings-format-attribute-template-tags",
     ).checked;
     if (formatAttributeTemplateTags)
       config["formatAttributeTemplateTags"] = formatAttributeTemplateTags;
+    const formatAttributeJsJson = document.getElementById(
+      "settings-format-attribute-js-json",
+    ).checked;
+    if (formatAttributeJsJson)
+      config["formatAttributeJsJson"] = formatAttributeJsJson;
+    const formatAttributeJsJsonPattern = document.getElementById(
+      "settings-format-attribute-js-json-pattern",
+    ).value;
+    if (formatAttributeJsJsonPattern)
+      config["formatAttributeJsJsonPattern"] = formatAttributeJsJsonPattern;
+    const formatAttributeJsJsonMinProps = document.getElementById(
+      "settings-format-attribute-js-json-min-props",
+    ).value;
+    if (formatAttributeJsJsonMinProps)
+      config["formatAttributeJsJsonMinProps"] = formatAttributeJsJsonMinProps;
     const preserveLeadingSpace = document.getElementById(
       "settings-preserve-leading-space",
     ).checked;
@@ -55,8 +78,12 @@ if (typeof Worker !== "undefined") {
     if (preserveBlankSpace) config["preserveBlankSpace"] = preserveBlankSpace;
     const formatJs = document.getElementById("settings-format-js").checked;
     if (formatJs) config["formatJs"] = formatJs;
+    const indentJs = document.getElementById("settings-indent-js").value;
+    if (indentJs) config["indentJs"] = indentJs;
     const formatCss = document.getElementById("settings-format-css").checked;
     if (formatCss) config["formatCss"] = formatCss;
+    const indentCss = document.getElementById("settings-indent-css").value;
+    if (indentCss) config["indentCss"] = indentCss;
 
     const closeVoidTags = document.getElementById(
       "settings-close-void-tags",

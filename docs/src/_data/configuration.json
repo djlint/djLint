@@ -43,7 +43,7 @@
     "usage": [
       { "name": "pyproject.toml", "value": "max_blank_lines=5" },
       { "name": ".djlintrc", "value": "\"max_blank_lines\": 5" },
-      { "name": "cli", "value": "--max_blank_lines 5" }
+      { "name": "cli", "value": "--max-blank-lines 5" }
     ],
     "tags": ["formatter"]
   },
@@ -205,7 +205,7 @@
       },
       {
         "name": "cli",
-        "value": "--custom_html \"mjml,simple-greeting,mj-\\\\w+\""
+        "value": "--custom-html \"mjml,simple-greeting,mj-\\\\w+\""
       }
     ]
   },
@@ -356,7 +356,7 @@
     "usage": [
       { "name": "pyproject.toml", "value": "require_pragma=true" },
       { "name": ".djlintrc", "value": "\"require_pragma\": true" },
-      { "name": "cli", "value": "--require_pragma" }
+      { "name": "cli", "value": "--require-pragma" }
     ]
   },
   {
@@ -371,7 +371,7 @@
     "usage": [
       { "name": "pyproject.toml", "value": "max_line_length=120" },
       { "name": ".djlintrc", "value": "\"max_line_length\": \"120\"" },
-      { "name": "cli", "value": "--max_line_length 120" }
+      { "name": "cli", "value": "--max-line-length 120" }
     ]
   },
   {
@@ -401,7 +401,7 @@
     "usage": [
       { "name": "pyproject.toml", "value": "use_gitignore=true" },
       { "name": ".djlintrc", "value": "\"use_gitignore\": true" },
-      { "name": "cli", "value": "--use_gitignore" }
+      { "name": "cli", "value": "--use-gitignore" }
     ]
   },
   {
@@ -445,7 +445,7 @@
       },
       {
         "name": "cli",
-        "value": "--linter_output_format \"{filename}:{line}: {code} {message} {match}\""
+        "value": "--linter-output-format \"{filename}:{line}: {code} {message} {match}\""
       }
     ]
   },
@@ -461,7 +461,7 @@
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_leading_space=true" },
       { "name": ".djlintrc", "value": "\"preserve_leading_space\": true" },
-      { "name": "cli", "value": "--preserve_leading_space" }
+      { "name": "cli", "value": "--preserve-leading-space" }
     ]
   },
   {
@@ -476,7 +476,7 @@
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_blank_lines=true" },
       { "name": ".djlintrc", "value": "\"preserve_blank_lines\": true" },
-      { "name": "cli", "value": "--preserve_blank_lines" }
+      { "name": "cli", "value": "--preserve-blank-lines" }
     ]
   },
   {
@@ -578,7 +578,7 @@
         "value": "[tool.djlint]\nignore_case=true\n"
       },
       { "name": ".djlintrc", "value": "\"ignore_case\": true" },
-      { "name": "cli", "value": "--ignore_case" }
+      { "name": "cli", "value": "--ignore-case" }
     ]
   },
   {
