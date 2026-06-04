@@ -87,6 +87,17 @@ Fix my format!
 djlint . --extension=html.j2 --reformat
 ```
 
+Or use `pre-commit` to reformat, then lint!
+
+```yaml
+repos:
+  - repo: https://github.com/djlint/djLint
+    rev: v1.36.4 # use latest version instead
+    hooks:
+      - id: djlint-reformat
+      - id: djlint
+```
+
 ## 💙 Like it?
 
 Add a badge to your projects `readme.md`:
