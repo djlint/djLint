@@ -22,6 +22,7 @@ def test_default() -> None:
     assert config.extension == "html.dj"
     assert config.files == ["index.html"]
     assert config.format_attribute_template_tags is True
+    assert config.format_attribute_js_json_min_props == 3
     assert config.format_css is True
     assert config.format_js is True
     assert config.ignore == "H014,H015"

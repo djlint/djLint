@@ -1,7 +1,8 @@
 """Test for JS/JSON attribute formatting.
 
---format-js-attributes
---js-attribute-pattern
+--format-attribute-js-json
+--format-attribute-js-json-pattern
+--format-attribute-js-json-min-props
 
 uv run pytest tests/test_config/test_format_js_json_attributes.py
 """
@@ -27,6 +28,16 @@ test_data = [
     ),
     pytest.param(
         ('<div data-config=\'{"name": "value", "enabled": true}\'></div>'),
+        ('<div data-config=\'{"name": "value", "enabled": true}\'></div>\n'),
+        ({
+            "format_attribute_js_json": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
+        id="data_attribute_not_formatted_by_default",
+    ),
+    pytest.param(
+        ('<div data-config=\'{"name": "value", "enabled": true}\'></div>'),
         (
             "<div data-config='{\n"
             '                    "name": "value",\n'
@@ -35,6 +46,7 @@ test_data = [
         ),
         ({
             "format_attribute_js_json": True,
+            "format_attribute_js_json_pattern": r"^data-[a-z-]+$",
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -50,6 +62,7 @@ test_data = [
         ),
         ({
             "format_attribute_js_json": True,
+            "format_attribute_js_json_pattern": r"^data-[a-z-]+$",
             "max_attribute_length": 0,
             "indent_js": 2,
         }),
@@ -67,6 +80,7 @@ test_data = [
         ),
         ({
             "format_attribute_js_json": True,
+            "format_attribute_js_json_pattern": r"^data-[a-z-]+$",
             "max_attribute_length": 0,
             "indent_js": 2,
         }),

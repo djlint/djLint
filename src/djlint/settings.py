@@ -309,7 +309,7 @@ class Config:
         format_attribute_template_tags: bool = False,
         format_attribute_js_json: bool = False,
         format_attribute_js_json_pattern: str = "",
-        format_attribute_js_json_min_props: int = 2,
+        format_attribute_js_json_min_props: int | None = None,
         per_file_ignores: tuple[tuple[str, str], ...] = (),
         indent_css: int | None = None,
         indent_js: int | None = None,
@@ -373,16 +373,28 @@ class Config:
             or djlint_settings.get("format_attribute_js_json", False)
         )
 
-        self.format_attribute_js_json_min_props: int = (
-            format_attribute_js_json_min_props
-            or djlint_settings.get("format_attribute_js_json_min_props", 2)
-        )
+        try:
+            self.format_attribute_js_json_min_props: int = (
+                format_attribute_js_json_min_props
+                if format_attribute_js_json_min_props is not None
+                else int(
+                    djlint_settings.get("format_attribute_js_json_min_props", 2)
+                )
+            )
+        except ValueError:
+            echo(
+                Fore.RED
+                + "Error: Invalid pyproject.toml "
+                + "format_attribute_js_json_min_props value "
+                + f"{djlint_settings['format_attribute_js_json_min_props']}"
+            )
+            self.format_attribute_js_json_min_props = 2
 
-        # Default comprehensive regex pattern for JavaScript attributes
+        # Default pattern for common JS-bearing attributes. data-* attributes
+        # are intentionally opt-in via format_attribute_js_json_pattern.
         default_js_pattern = (
             r"^(?:"
             r"on[a-z]+|"
-            r"data-[a-z\-]+|"
             r"x-[a-z\-]+|"
             r"@[a-z\-]+|"
             r":[a-z\-]+|"
