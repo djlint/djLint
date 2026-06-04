@@ -10,7 +10,7 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 
 更新日志请查看 [release](https://github.com/djlint/djLint/releases).
 
-<!--## {{ "next_release" i18n }}-->
+<!--## {{ "next_release" | i18n }}-->
 
 ## 1.0.2
 

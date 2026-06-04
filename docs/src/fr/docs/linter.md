@@ -19,7 +19,7 @@ djlint /path/to/this.html.j2  --profile=jinja
 ```
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="/fr/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
 </div>
 
 ## Activation ou désactivation des règles
@@ -183,7 +183,7 @@ import re
 
 def run(
     rule: Dict[str, Any],
-    config: djlint.settings.Config,
+    config: Config,
     html: str,
     filepath: str,
     line_ends: List[Dict[str, int]],

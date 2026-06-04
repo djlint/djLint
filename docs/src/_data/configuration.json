@@ -509,7 +509,7 @@
     "description": {
       "en": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
       "ru": "Форматирование содержимого тегов `script` с помощью `js-beautify`. Все параметры конфигурации см. в [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
-      "fr": "Formate le contenu des balises `script` en utilisant `js-beautify`. Voir [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge.",
+      "fr": "Formate le contenu des balises `script` en utilisant `js-beautify`. Voir [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge](https://github.com/beautify-web/js-beautify/issues) dans pris en charge.",
       "zh": "使用 `js-beautify` 格式化 `script` 标签中的内容。全部配置项请参阅 [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py)，目前模板语法并未得到[完全支持](https://github.com/beautify-web/js-beautify/issues)。"
     },
     "usage": [
@@ -530,7 +530,7 @@
     "description": {
       "en": "Format contents of `style` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
       "ru": "Форматирование содержимого тегов `script` с помощью `css-beautify`. Все параметры конфигурации см. в [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
-      "fr": "Formate le contenu des balises `script` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge] (https://github.com/beautify-web/js-beautify/issues) dans pris en charge.",
+      "fr": "Formate le contenu des balises `script` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge](https://github.com/beautify-web/js-beautify/issues) dans pris en charge.",
       "zh": "使用 `css-beautify` 格式化 `style` 标签中的内容。全部配置项请参阅 [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py)，目前模板语法并未得到[完全支持](https://github.com/beautify-web/js-beautify/issues)。"
     },
     "usage": [
@@ -587,7 +587,8 @@
     "description": {
       "en": "Format JavaScript and JSON code inside HTML attributes. This will format object literals and JavaScript code in attributes like `onclick`, `x-*`, and other JavaScript-related attributes. Objects with fewer properties than `format_attribute_js_json_min_props` will not be formatted.",
       "ru": "Форматировать JavaScript и JSON код внутри HTML атрибутов. Это форматирует объектные литералы и JavaScript код в атрибутах типа `onclick`, `x-*` и других JavaScript-связанных атрибутах. Объекты с количеством свойств меньше `format_attribute_js_json_min_props` не будут форматироваться.",
-      "fr": "Formater le code JavaScript et JSON à l'intérieur des attributs HTML. Cela formatera les littéraux d'objet et le code JavaScript dans les attributs comme `onclick`, `x-*` et d'autres attributs liés à JavaScript. Les objets avec moins de propriétés que `format_attribute_js_json_min_props` ne seront pas formatés."
+      "fr": "Formater le code JavaScript et JSON à l'intérieur des attributs HTML. Cela formatera les littéraux d'objet et le code JavaScript dans les attributs comme `onclick`, `x-*` et d'autres attributs liés à JavaScript. Les objets avec moins de propriétés que `format_attribute_js_json_min_props` ne seront pas formatés.",
+      "zh": "格式化 HTML 属性中的 JavaScript 和 JSON 代码。这会格式化 `onclick`、`x-*` 以及其他 JavaScript 相关属性中的对象字面量和 JavaScript 代码。属性数量少于 `format_attribute_js_json_min_props` 的对象不会被格式化。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "format_attribute_js_json=true" },
@@ -601,7 +602,8 @@
     "description": {
       "en": "Custom regex pattern to match JavaScript attributes for formatting. Default pattern matches common JavaScript attributes like `onclick`, `x-*`, Vue.js directives, Alpine.js directives, Angular directives, and more.",
       "ru": "Пользовательский regex шаблон для сопоставления JavaScript атрибутов для форматирования. Шаблон по умолчанию соответствует распространенным JavaScript атрибутам, таким как `onclick`, `x-*`, директивы Vue.js, директивы Alpine.js, директивы Angular и другие.",
-      "fr": "Modèle regex personnalisé pour faire correspondre les attributs JavaScript pour le formatage. Le modèle par défaut correspond aux attributs JavaScript courants comme `onclick`, `x-*`, les directives Vue.js, les directives Alpine.js, les directives Angular et plus encore."
+      "fr": "Modèle regex personnalisé pour faire correspondre les attributs JavaScript pour le formatage. Le modèle par défaut correspond aux attributs JavaScript courants comme `onclick`, `x-*`, les directives Vue.js, les directives Alpine.js, les directives Angular et plus encore.",
+      "zh": "用于匹配需要格式化的 JavaScript 属性的自定义正则表达式。默认模式会匹配常见 JavaScript 属性，如 `onclick`、`x-*`、Vue.js 指令、Alpine.js 指令、Angular 指令等。"
     },
     "usage": [
       {
@@ -624,7 +626,8 @@
     "description": {
       "en": "Minimum number of properties required in a JavaScript/JSON object for it to be formatted. Default is 2. Objects with fewer properties will remain on a single line.",
       "ru": "Минимальное количество свойств, необходимое в объекте JavaScript/JSON для его форматирования. По умолчанию 2. Объекты с меньшим количеством свойств останутся на одной строке.",
-      "fr": "Nombre minimum de propriétés requises dans un objet JavaScript/JSON pour qu'il soit formaté. La valeur par défaut est 2. Les objets avec moins de propriétés resteront sur une seule ligne."
+      "fr": "Nombre minimum de propriétés requises dans un objet JavaScript/JSON pour qu'il soit formaté. La valeur par défaut est 2. Les objets avec moins de propriétés resteront sur une seule ligne.",
+      "zh": "JavaScript/JSON 对象需要被格式化的最少属性数量。默认值为 2。属性数量更少的对象会保持在单行。"
     },
     "usage": [
       {

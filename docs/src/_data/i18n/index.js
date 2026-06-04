@@ -1,5 +1,5 @@
 module.exports = {
-  hello: { "en-US": "Hello", ru: "Hola", fr: "Salut", zh: "你好" },
+  hello: { "en-US": "Hello", ru: "Привет", fr: "Salut", zh: "你好" },
   title: {
     "en-US": "HTML Template Linter and Formatter",
     ru: "Программа проверки и форматирования шаблонов HTML",
