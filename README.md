@@ -51,10 +51,16 @@ HTML templates were left out there on their own, in the cold, unformatted and un
 
 ## ✨ How?
 
-Grab it with `pip`
+Grab it from PyPI with `pip`
 
 ```bash
 pip install djlint
+```
+
+Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux
+
+```bash
+brew install djlint
 ```
 
 _Or with the npm experimental install - Note, this requires python and pip to be on your system path._
@@ -79,6 +85,17 @@ Fix my format!
 
 ```bash
 djlint . --extension=html.j2 --reformat
+```
+
+Or use `pre-commit` to reformat, then lint!
+
+```yaml
+repos:
+  - repo: https://github.com/djlint/djLint
+    rev: v1.36.4 # use latest version instead
+    hooks:
+      - id: djlint-reformat
+      - id: djlint
 ```
 
 ## 💙 Like it?

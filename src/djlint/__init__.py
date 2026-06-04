@@ -116,6 +116,24 @@ if TYPE_CHECKING:
     "--format-js", is_flag=True, help="Also format contents of <script> tags."
 )
 @click.option(
+    "--format-attribute-js-json",
+    is_flag=True,
+    help="Also format JavaScript/JSON inside HTML attributes.",
+)
+@click.option(
+    "--format-attribute-js-json-pattern",
+    type=str,
+    default="",
+    help="Regex pattern to match JavaScript attributes.",
+    show_default=False,
+)
+@click.option(
+    "--format-attribute-js-json-min-props",
+    type=int,
+    help="Minimum number of properties to treat attribute content as JS/JSON.",
+    show_default=False,
+)
+@click.option(
     "--configuration",
     type=click.Path(
         exists=True,
@@ -292,6 +310,9 @@ def main(
     max_line_length: int | None,
     max_attribute_length: int | None,
     format_attribute_template_tags: bool,
+    format_attribute_js_json: bool,
+    format_attribute_js_json_pattern: str,
+    format_attribute_js_json_min_props: int | None,
     per_file_ignores: tuple[tuple[str, str], ...],
     indent_css: int | None,
     indent_js: int | None,
@@ -339,6 +360,9 @@ def main(
         max_line_length=max_line_length,
         max_attribute_length=max_attribute_length,
         format_attribute_template_tags=format_attribute_template_tags,
+        format_attribute_js_json=format_attribute_js_json,
+        format_attribute_js_json_pattern=format_attribute_js_json_pattern,
+        format_attribute_js_json_min_props=format_attribute_js_json_min_props,
         per_file_ignores=per_file_ignores,
         indent_css=indent_css,
         indent_js=indent_js,
