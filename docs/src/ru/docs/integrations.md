@@ -108,8 +108,8 @@ djLint можно использовать как форматировщик в 
 - [GitHub репозиторий](https://github.com/mattn/efm-langserver)
 
 1. Установите efm-langserver и djLint через Mason: `:MasonInstall efm djlint`
-2. Добавьте `htmldjango` в `filetypes`.
-3. Создайте конфигурацию форматирования:
+1. Добавьте `htmldjango` в `filetypes`.
+1. Создайте конфигурацию форматирования:
 
 ```lua
 local djlint = {
@@ -118,7 +118,7 @@ local djlint = {
 }
 ```
 
-4. Свяжите язык с форматировщиком через `htmldjango = { djlint }`.
+1. Свяжите язык с форматировщиком через `htmldjango = { djlint }`.
 
 Пример конфигурации:
 
