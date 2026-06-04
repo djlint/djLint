@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -318,14 +319,9 @@ def indent_html(rawcode: str, config: Config) -> str:
                 )
 
         except Exception:
-            # was not json.. try to eval as set
+            # was not json.. try to format as a Python literal.
             try:
-                # if contents is a python keyword, do not evaluate it.
-                evaluated = (
-                    str(eval(contents))  # noqa: S307
-                    if contents != "object"
-                    else contents
-                )
+                evaluated = str(ast.literal_eval(contents))
                 # need to unwrap the eval
                 contents = (
                     evaluated[1:-1]

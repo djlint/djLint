@@ -114,6 +114,12 @@ test_data = [
         ({}),
         id="function param is python keyword",
     ),
+    pytest.param(
+        ("{{ _expand_attrs(kwargs) }}"),
+        ("{{ _expand_attrs(kwargs) }}\n"),
+        ({}),
+        id="function param named kwargs",
+    ),
 ]
 
 
