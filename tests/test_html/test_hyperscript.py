@@ -30,6 +30,19 @@ test_data = [
             "</div>\n"
         ),
         id="html_tags_in_attributes",
+    ),
+    pytest.param(
+        (
+            '<div _="on click toggle .d-none on <#button-2, #button-6/>">\n'
+            "    <button id=\"button-2\">Button 2</button>\n"
+            "</div>\n"
+        ),
+        (
+            '<div _="on click toggle .d-none on <#button-2, #button-6/>">\n'
+            "    <button id=\"button-2\">Button 2</button>\n"
+            "</div>\n"
+        ),
+        id="css_query_literal_in_attributes",
     )
 ]
 
