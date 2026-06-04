@@ -81,16 +81,15 @@ Fix my format!
 djlint . --extension=html.j2 --reformat
 ```
 
-Or use `pre-commit` to reformat, then check!
+Or use `pre-commit` to reformat, then lint!
 
 ```yaml
+repos:
   - repo: https://github.com/djlint/djLint
     rev: v1.36.4  # use latest version instead
     hooks:
-      - id: djlint  # For an exhaustive list check 'id' in the project's '.pre-commit-hooks.yaml'
-        args: ["--reformat"]
+      - id: djlint-reformat
       - id: djlint
-        args: ["--check"]
 ```
 
 ## 💙 Like it?
