@@ -14,6 +14,12 @@ djLint est construit avec [Python](https://python.org), il peut être installé 
 pip install djlint
 ```
 
+Ou avec la formule [Homebrew](https://formulae.brew.sh/formula/djlint) maintenue par la communauté sur macOS ou Linux:
+
+```bash
+brew install djlint
+```
+
 _Ou avec l'installation expérimentale npm - Note, ceci requiert que python et pip soient dans votre chemin système._
 
 ```bash

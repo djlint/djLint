@@ -51,13 +51,13 @@ HTML templates were left out there on their own, in the cold, unformatted and un
 
 ## ✨ How?
 
-Grab it with `pip`
+Grab it from PyPI with `pip`
 
 ```bash
 pip install djlint
 ```
 
-Or with Homebrew on macOS
+Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux
 
 ```bash
 brew install djlint

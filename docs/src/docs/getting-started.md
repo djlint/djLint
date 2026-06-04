@@ -6,12 +6,18 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # Getting Started
 
-## Installation from [Pypi](https://pypi.org/project/djlint/)
+## Installation
 
-djLint is build with [Python](https://python.org), it can be installed by simply running:
+djLint is built with [Python](https://python.org), it can be installed from [PyPI](https://pypi.org/project/djlint/) by simply running:
 
 ```bash
 pip install djlint
+```
+
+Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux:
+
+```bash
+brew install djlint
 ```
 
 _Or with the npm experimental install - Note, this requires python and pip to be on your system path._
