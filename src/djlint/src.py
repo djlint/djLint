@@ -41,7 +41,13 @@ def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
             rel = filepath.relative_to(relative_root)
         except ValueError:
             continue
-        if re.search(config.exclude, rel.as_posix(), flags=re.X):
+        rel_path = rel.as_posix()
+        if config.exclude_pattern.search(rel_path):
+            return True
+        if (
+            relative_root == config.project_root
+            and config.exclude_pattern.search(f"/{rel_path}")
+        ):
             return True
     return False
 

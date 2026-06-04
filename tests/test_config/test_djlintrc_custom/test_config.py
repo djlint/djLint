@@ -21,7 +21,7 @@ def test_custom(config_path: str) -> None:
     )
 
     print(config.exclude)
-    assert config.exclude == ".venv,venv,.tox,.egg,... | .customs"
+    assert config.exclude == ".venv | venv | .tox | .egg | ... | .customs"
     assert config.blank_line_after_tag == "load,extends,include"
     assert config.blank_line_before_tag == "load,extends,include"
     assert config.custom_blocks == r"|endexample\b|endtoc\b|example\b|toc\b"

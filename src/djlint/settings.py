@@ -277,6 +277,13 @@ def build_custom_html(custom_html: str | None) -> str | None:
     return None
 
 
+def build_exclude(exclude: str) -> str:
+    """Build regex string for exclude paths."""
+    if "," not in exclude:
+        return exclude
+    return r" | ".join(x.strip() for x in exclude.split(",") if x.strip())
+
+
 @final
 class Config:
     """Djlint Config."""
@@ -296,6 +303,7 @@ class Config:
         "custom_blocks",
         "custom_html",
         "exclude",
+        "exclude_pattern",
         "extension",
         "files",
         "format_attribute_js_json",
@@ -696,8 +704,8 @@ class Config:
             | venv
         """
 
-        self.exclude: str = exclude or djlint_settings.get(
-            "exclude", default_exclude
+        self.exclude: str = build_exclude(
+            exclude or djlint_settings.get("exclude", default_exclude)
         )
 
         extend_exclude = extend_exclude or djlint_settings.get(
@@ -705,9 +713,11 @@ class Config:
         )
 
         if extend_exclude:
-            self.exclude += r" | " + r" | ".join(
-                x.strip() for x in extend_exclude.split(",")
-            )
+            self.exclude += r" | " + build_exclude(extend_exclude)
+
+        self.exclude_pattern: re.Pattern[str] = re.compile(
+            rf"(?:^|/)(?:{self.exclude})(?=$|/|(?<=/))", flags=re.X
+        )
 
         self.per_file_ignores = (
             (dict(per_file_ignores))

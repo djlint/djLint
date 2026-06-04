@@ -186,6 +186,141 @@ def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
     assert "templates/generated/bad.html" not in resolved_paths
 
 
+def test_exclude_matches_path_segments_not_substrings(tmp_path: Path) -> None:
+    """Exclude paths should not match partial path component names."""
+    worktree = tmp_path / "project"
+    for directory in ("build", "builds", "build-my-template"):
+        path = worktree / directory
+        path.mkdir(parents=True)
+        (path / "template.html").write_text(
+            "<div>hello</div>", encoding="utf-8"
+        )
+
+    config = Config(str(worktree), exclude="build")
+    paths = get_src([worktree], config)
+
+    resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+
+    assert "build/template.html" not in resolved_paths
+    assert "builds/template.html" in resolved_paths
+    assert "build-my-template/template.html" in resolved_paths
+
+
+def test_exclude_supports_comma_separated_paths(tmp_path: Path) -> None:
+    """Exclude should support documented comma-separated paths."""
+    worktree = tmp_path / "project"
+    for directory in ("build", "dist", "builds"):
+        path = worktree / directory
+        path.mkdir(parents=True)
+        (path / "template.html").write_text(
+            "<div>hello</div>", encoding="utf-8"
+        )
+
+    config = Config(str(worktree), exclude="build,dist")
+    paths = get_src([worktree], config)
+
+    resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+
+    assert "build/template.html" not in resolved_paths
+    assert "dist/template.html" not in resolved_paths
+    assert "builds/template.html" in resolved_paths
+
+
+def test_exclude_matches_slash_separated_path_segments(tmp_path: Path) -> None:
+    """Exclude paths with slashes should match exact path segments."""
+    worktree = tmp_path / "project"
+    for directory in (
+        "templates/generated",
+        "templates/generated-assets",
+        "my-templates/generated",
+    ):
+        path = worktree / directory
+        path.mkdir(parents=True)
+        (path / "template.html").write_text(
+            "<div>hello</div>", encoding="utf-8"
+        )
+
+    for exclude in ("templates/generated", "templates/generated/"):
+        config = Config(str(worktree), exclude=exclude)
+        paths = get_src([worktree], config)
+
+        resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+
+        assert "templates/generated/template.html" not in resolved_paths
+        assert "templates/generated-assets/template.html" in resolved_paths
+        assert "my-templates/generated/template.html" in resolved_paths
+
+
+def test_exclude_trailing_slash_matches_nested_path_segment(
+    tmp_path: Path,
+) -> None:
+    """Exclude paths should still match nested path segments."""
+    worktree = tmp_path / "project"
+    templates = worktree / "apps" / "account" / "templates" / "user"
+    emails = templates / "emails"
+    emails.mkdir(parents=True)
+    (emails / "test.html").write_text("<div>hello</div>", encoding="utf-8")
+
+    other = templates / "email-assets"
+    other.mkdir()
+    (other / "test.html").write_text("<div>hello</div>", encoding="utf-8")
+
+    config = Config(str(worktree), exclude="emails/")
+    paths = get_src([worktree], config)
+
+    resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+
+    assert "apps/account/templates/user/emails/test.html" not in resolved_paths
+    assert (
+        "apps/account/templates/user/email-assets/test.html" in resolved_paths
+    )
+
+
+def test_exclude_leading_slash_matches_project_root_only(
+    tmp_path: Path,
+) -> None:
+    """Exclude paths with leading slashes should match from the project root."""
+    worktree = tmp_path / "project"
+    for directory in ("emails", "apps/emails"):
+        path = worktree / directory
+        path.mkdir(parents=True)
+        (path / "test.html").write_text("<div>hello</div>", encoding="utf-8")
+
+    config = Config(str(worktree), exclude="/emails/")
+    paths = get_src([worktree], config)
+
+    resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+
+    assert "emails/test.html" not in resolved_paths
+    assert "apps/emails/test.html" in resolved_paths
+
+
+def test_exclude_leading_slash_does_not_match_source_root(
+    tmp_path: Path,
+) -> None:
+    """Leading slash excludes should not anchor to the searched directory."""
+    worktree = tmp_path / "project"
+    (worktree / ".git").mkdir(parents=True)
+    templates = worktree / "templates"
+    for directory in (worktree / "generated", templates / "generated"):
+        directory.mkdir(parents=True)
+        (directory / "test.html").write_text(
+            "<div>hello</div>", encoding="utf-8"
+        )
+
+    config = Config(str(templates), exclude="/generated/")
+    paths = get_src([templates], config)
+    resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+
+    assert "templates/generated/test.html" in resolved_paths
+
+    paths = get_src([worktree], config)
+    resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+
+    assert "generated/test.html" not in resolved_paths
+    assert "templates/generated/test.html" in resolved_paths
+
+
 def test_gitignore_does_not_match_parent_path(tmp_path: Path) -> None:
     """Gitignore patterns should not match parent dirs outside the project."""
     worktree = tmp_path / ".claude" / "worktrees" / "my-feature"
