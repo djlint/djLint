@@ -2,6 +2,21 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.38.0] - 2026-06-04
+
+### Feature
+
+- Add support for `.djlint.toml` project and global config files.
+
+### Fix
+
+- Preserve single-line inline HTML tag bodies when they fit within `max_line_length`.
+- Avoid evaluating template expressions while formatting tag contents.
+
+### Packaging
+
+- Fix npm publish workflow.
+
 ## [1.37.0] - 2026-06-04
 
 ### Feature
