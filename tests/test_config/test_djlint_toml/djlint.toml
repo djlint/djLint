@@ -7,6 +7,7 @@ exclude = ".venv,venv,.tox,.eggs,..."
 extend_exclude = ".custom"
 extension = "html.dj"
 format_attribute_template_tags = true
+format_attribute_js_json_min_props = 3
 format_css = true
 format_js = true
 ignore = "H014,H015"

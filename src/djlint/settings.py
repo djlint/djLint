@@ -9,6 +9,7 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import regex as re
 import yaml
 from click import echo
 from colorama import Fore
@@ -27,6 +28,7 @@ else:
     _GITIGNORE_PATTERN = "gitignore"
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.helpers import RE_FLAGS_IX
 
 if sys.version_info >= (3, 11):
     try:
@@ -287,6 +289,12 @@ class Config:
         "exclude",
         "extension",
         "files",
+        "format_attribute_js_json",
+        "format_attribute_js_json_min_props",
+        "format_attribute_js_json_object_pattern",
+        "format_attribute_js_json_pattern",
+        "format_attribute_js_json_property_pattern",
+        "format_attribute_js_json_string_pattern",
         "format_attribute_template_tags",
         "format_css",
         "format_js",
@@ -393,6 +401,9 @@ class Config:
         max_line_length: int | None = None,
         max_attribute_length: int | None = None,
         format_attribute_template_tags: bool = False,
+        format_attribute_js_json: bool = False,
+        format_attribute_js_json_pattern: str = "",
+        format_attribute_js_json_min_props: int | None = None,
         per_file_ignores: tuple[tuple[str, str], ...] = (),
         indent_css: int | None = None,
         indent_js: int | None = None,
@@ -449,6 +460,66 @@ class Config:
         self.format_attribute_template_tags: bool = (
             format_attribute_template_tags
             or djlint_settings.get("format_attribute_template_tags", False)
+        )
+
+        self.format_attribute_js_json: bool = (
+            format_attribute_js_json
+            or djlint_settings.get("format_attribute_js_json", False)
+        )
+
+        try:
+            self.format_attribute_js_json_min_props: int = (
+                format_attribute_js_json_min_props
+                if format_attribute_js_json_min_props is not None
+                else int(
+                    djlint_settings.get("format_attribute_js_json_min_props", 2)
+                )
+            )
+        except ValueError:
+            echo(
+                Fore.RED
+                + "Error: Invalid pyproject.toml "
+                + "format_attribute_js_json_min_props value "
+                + f"{djlint_settings['format_attribute_js_json_min_props']}"
+            )
+            self.format_attribute_js_json_min_props = 2
+
+        # Default pattern for common JS-bearing attributes. data-* attributes
+        # are intentionally opt-in via format_attribute_js_json_pattern.
+        default_js_pattern = (
+            r"^(?:"
+            r"on[a-z]+|"
+            r"x-[a-z\-]+|"
+            r"@[a-z\-]+|"
+            r":[a-z\-]+|"
+            r"v-[a-z\-]+|"
+            r"\([a-z\-]+\)|"
+            r"\[[a-z\-]+\]|"
+            r"\*ng[A-Z][a-zA-Z]*|"
+            r"[a-z\-]+\.(bind|delegate|call|trigger)"
+            r")$"
+        )
+        js_pattern_string = (
+            format_attribute_js_json_pattern
+            or djlint_settings.get(
+                "format_attribute_js_json_pattern", default_js_pattern
+            )
+        )
+        self.format_attribute_js_json_pattern: re.Pattern[str] = re.compile(
+            js_pattern_string, flags=RE_FLAGS_IX
+        )
+
+        self.format_attribute_js_json_object_pattern: re.Pattern[str] = (
+            re.compile(r"^\s*\{(?![{%]).*\}\s*$", flags=RE_FLAGS_IX)
+        )
+        self.format_attribute_js_json_string_pattern: re.Pattern[str] = (
+            re.compile(r'["\']([^"\']*)["\']', flags=RE_FLAGS_IX)
+        )
+        self.format_attribute_js_json_property_pattern: re.Pattern[str] = (
+            re.compile(
+                r"(?:[a-zA-Z_$][a-zA-Z0-9_$]*\s*:|(?:get|set)\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\()",
+                flags=RE_FLAGS_IX,
+            )
         )
 
         self.preserve_leading_space: bool = (
@@ -787,9 +858,13 @@ class Config:
         self.max_attribute_length = 70
 
         try:
-            self.max_attribute_length = max_attribute_length or int(
-                djlint_settings.get(
-                    "max_attribute_length", self.max_attribute_length
+            self.max_attribute_length = (
+                max_attribute_length
+                if max_attribute_length is not None
+                else int(
+                    djlint_settings.get(
+                        "max_attribute_length", self.max_attribute_length
+                    )
                 )
             )
         except ValueError:
