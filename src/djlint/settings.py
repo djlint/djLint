@@ -822,6 +822,7 @@ class Config:
                 | raw
                 | blocktrans(?!late)
                 | blocktranslate
+                | partialdef
                 | thumbnail
                 | set(?!(?:(?!%}).)*=)
             """
@@ -1017,6 +1018,7 @@ class Config:
             | raw
             | blocktrans(?!late)
             | blocktranslate
+            | partialdef
             | thumbnail
             | set(?!(?:(?!%}).)*=)
 
@@ -1074,6 +1076,9 @@ class Config:
             | endblocktrans(?!late)
             | blocktranslate
             | endblocktranslate
+            | partialdef
+            | endpartialdef
+            | partial
             | set(?!(?:(?!%}).)*=)
             | endset
             | thumbnail
