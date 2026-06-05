@@ -19,6 +19,7 @@ linter_output_format = "{code} {message} {match} {filename}:{line}"
 max_attribute_length = 10
 max_line_length = 120
 preserve_blank_lines = true
+preserve_class_newlines = true
 preserve_leading_space = true
 profile = "django"
 require_pragma = true

@@ -23,6 +23,8 @@ Options:
   --warn                          Return errors as warnings.
   --preserve-leading-space        Attempt to preserve leading space on text.
   --preserve-blank-lines          Attempt to preserve blank lines.
+  --preserve-class-newlines       Preserve line breaks inside multiline class
+                                  attributes.
   --format-css                    Also format contents of <style> tags.
   --format-js                     Also format contents of <script> tags.
   --format-attribute-js-json      Also format JavaScript/JSON inside HTML

@@ -76,6 +76,11 @@ if (typeof Worker !== "undefined") {
       "settings-preserve-blank-space",
     ).checked;
     if (preserveBlankSpace) config["preserveBlankSpace"] = preserveBlankSpace;
+    const preserveClassNewlines = document.getElementById(
+      "settings-preserve-class-newlines",
+    ).checked;
+    if (preserveClassNewlines)
+      config["preserveClassNewlines"] = preserveClassNewlines;
     const formatJs = document.getElementById("settings-format-js").checked;
     if (formatJs) config["formatJs"] = formatJs;
     const indentJs = document.getElementById("settings-indent-js").value;

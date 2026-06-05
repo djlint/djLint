@@ -43,6 +43,7 @@ def test_custom(config_path: str) -> None:
     assert config.max_attribute_length == 10
     assert config.max_line_length == 120
     assert config.preserve_blank_lines is True
+    assert config.preserve_class_newlines is True
     assert config.preserve_leading_space is True
     assert config.profile == "django"
     assert config.require_pragma is True

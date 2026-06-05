@@ -110,6 +110,11 @@ if TYPE_CHECKING:
     help="Attempt to preserve blank lines.",
 )
 @click.option(
+    "--preserve-class-newlines",
+    is_flag=True,
+    help="Preserve line breaks inside multiline class attributes.",
+)
+@click.option(
     "--format-css", is_flag=True, help="Also format contents of <style> tags."
 )
 @click.option(
@@ -292,6 +297,7 @@ def main(
     warn: bool,
     preserve_leading_space: bool,
     preserve_blank_lines: bool,
+    preserve_class_newlines: bool,
     format_css: bool,
     format_js: bool,
     configuration: Path | None,
@@ -342,6 +348,7 @@ def main(
         warn=warn,
         preserve_leading_space=preserve_leading_space,
         preserve_blank_lines=preserve_blank_lines,
+        preserve_class_newlines=preserve_class_newlines,
         format_css=format_css,
         format_js=format_js,
         configuration=configuration,

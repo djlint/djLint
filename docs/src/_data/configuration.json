@@ -480,6 +480,21 @@
     ]
   },
   {
+    "name": "preserve_class_newlines",
+    "tags": ["formatter"],
+    "description": {
+      "en": "Preserve line breaks inside multiline class attributes.",
+      "ru": "Preserve line breaks inside multiline class attributes.",
+      "fr": "Preserve line breaks inside multiline class attributes.",
+      "zh": "Preserve line breaks inside multiline class attributes."
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "preserve_class_newlines=true" },
+      { "name": ".djlintrc", "value": "\"preserve_class_newlines\": true" },
+      { "name": "cli", "value": "--preserve-class-newlines" }
+    ]
+  },
+  {
     "name": "per_file_ignores",
     "tags": ["linter"],
     "description": {

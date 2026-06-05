@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.formatter.class_attributes import encode_class_attribute_newlines
 from djlint.helpers import RE_FLAGS_IMX, child_of_unformatted_block
 
 if TYPE_CHECKING:
@@ -43,14 +44,16 @@ def compress_html(html: str, config: Config) -> str:
         open_bracket = match.group(1)
         tag = _fix_case(match.group(2))
 
-        attributes = (
-            (
-                " "
-                + " ".join(
-                    x.strip() for x in match.group(3).strip().splitlines()
-                )
+        raw_attributes = match.group(3)
+        if raw_attributes and config.preserve_class_newlines:
+            raw_attributes = encode_class_attribute_newlines(
+                raw_attributes, config
             )
-            if match.group(3)
+
+        attributes = (
+            " "
+            + " ".join(x.strip() for x in raw_attributes.strip().splitlines())
+            if raw_attributes
             else ""
         )
         if tag.lower() in HTML_VOID_ELEMENTS and config.close_void_tags:

@@ -31,6 +31,7 @@
         "file_two.html":"H001"
     },
     "preserve_blank_lines": true,
+    "preserve_class_newlines": true,
     "preserve_leading_space": true,
     "profile": "django",
     "require_pragma": true,

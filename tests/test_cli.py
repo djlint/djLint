@@ -58,6 +58,7 @@ def test_cli(runner: CliRunner) -> None:
             "--max-line-length",
             "100",
             "--preserve-blank-lines",
+            "--preserve-class-newlines",
             "--preserve-leading-space",
             "--profile",
             "django",

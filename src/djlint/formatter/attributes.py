@@ -10,6 +10,10 @@ import jsbeautifier
 import regex as re
 from jsbeautifier.javascript.options import BeautifierOptions
 
+from djlint.formatter.class_attributes import (
+    CLASS_ATTRIBUTE_NEWLINE,
+    decode_class_attribute_newlines,
+)
 from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
 
 if TYPE_CHECKING:
@@ -240,11 +244,11 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
 def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
     """Spread long attributes over multiple lines."""
     # check that we are not inside an ignored block
-    if len(
-        match.group(3).strip()
-    ) < config.max_attribute_length or child_of_ignored_block(
-        config, html, match
-    ):
+    attribute_group = match.group(3).strip()
+    if (
+        len(attribute_group) < config.max_attribute_length
+        and CLASS_ATTRIBUTE_NEWLINE not in attribute_group
+    ) or child_of_ignored_block(config, html, match):
         return match.group()
 
     leading_space = match.group(1)
@@ -378,6 +382,16 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
                 standalone = format_template_tags(
                     config, standalone, len(spacing) + len(attrib_name or "")
                 )
+
+        if (
+            config.preserve_class_newlines
+            and attrib_name
+            and attrib_name.lower() == "class"
+            and attrib_value
+        ):
+            attrib_value = decode_class_attribute_newlines(
+                attrib_value, join_space
+            )
 
         if (attrib_name and attrib_value) or is_quoted:
             attrib_value = attrib_value or ""

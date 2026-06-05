@@ -175,9 +175,7 @@ def _multiline_template_block_states(
     ]
 
 
-def condense_html(
-    html: str, config: Config, source: str | None = None
-) -> str:
+def condense_html(html: str, config: Config, source: str | None = None) -> str:
     """Put short tags back on a single line."""
     if config.preserve_leading_space:
         # if a user is attempting to reuse any leading
@@ -241,7 +239,9 @@ def condense_html(
         flags=RE_FLAGS_IMSX,
     )
 
-    template_block_states = iter(_multiline_template_block_states(source, config))
+    template_block_states = iter(
+        _multiline_template_block_states(source, config)
+    )
 
     def condense_template_line(
         config: Config, html: str, match: re.Match[str]

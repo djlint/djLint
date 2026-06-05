@@ -56,6 +56,11 @@ self.onmessage = async (event) => {
   addValueArg(configArgs, "indent", config.indent);
   addBoolArg(configArgs, "preserve_leading_space", config.preserveLeadingSpace);
   addBoolArg(configArgs, "preserve_blank_lines", config.preserveBlankSpace);
+  addBoolArg(
+    configArgs,
+    "preserve_class_newlines",
+    config.preserveClassNewlines,
+  );
   addBoolArg(configArgs, "format_js", config.formatJs);
   addValueArg(configArgs, "indent_js", config.indentJs);
   addBoolArg(configArgs, "format_css", config.formatCss);

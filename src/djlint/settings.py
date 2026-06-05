@@ -354,6 +354,7 @@ class Config:
         "optional_single_line_template_tags",
         "per_file_ignores",
         "preserve_blank_lines",
+        "preserve_class_newlines",
         "preserve_leading_space",
         "profile",
         "profile_code",
@@ -400,6 +401,7 @@ class Config:
         warn: bool = False,
         preserve_leading_space: bool = False,
         preserve_blank_lines: bool = False,
+        preserve_class_newlines: bool = False,
         format_css: bool = False,
         format_js: bool = False,
         configuration: Path | None = None,
@@ -550,6 +552,11 @@ class Config:
         self.preserve_blank_lines: bool = (
             preserve_blank_lines
             or djlint_settings.get("preserve_blank_lines", False)
+        )
+
+        self.preserve_class_newlines: bool = (
+            preserve_class_newlines
+            or djlint_settings.get("preserve_class_newlines", False)
         )
 
         self.format_js: bool = format_js or djlint_settings.get(

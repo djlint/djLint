@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Feature
+
+- Add `preserve_class_newlines` / `--preserve-class-newlines` to keep authored line breaks inside multiline `class` attributes.
+
 ### Fix
 
 - Fix Django 6.0 `{% partialdef %}` block indentation so `{% endpartialdef %}` aligns with its opener.
