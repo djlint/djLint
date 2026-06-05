@@ -267,17 +267,11 @@ test_data = [
         ),
         (
             "<!-- U+2005 -->\n"
-            "<div>\n"
-            "    before<span></span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter\n"
-            "</div>\n"
+            "<div>before<span></span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>\n"
             "<!-- U+005F -->\n"
-            "<div>\n"
-            "    before<span>_</span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter\n"
-            "</div>\n"
+            "<div>before<span>_</span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>\n"
             "<!-- U+0020 -->\n"
-            "<div>\n"
-            "    before<span></span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter\n"
-            "</div>\n"
+            "<div>before<span></span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>\n"
         ),
         id="snippet_2005",
     ),
@@ -462,6 +456,19 @@ def test_single_line_nested_html_elements_are_preserved() -> None:
 
     output = formatter(
         config_builder({"indent": 2, "profile": "jinja"}), source
+    )
+
+    printer(source, source, output)
+    assert source == output
+
+
+def test_single_line_nested_html_elements_ignore_max_line_length() -> None:
+    source = '<p>Test <span class="value">1</span></p>\n'
+    output = formatter(
+        config_builder(
+            {"indent": 2, "max_line_length": 1, "profile": "jinja"}
+        ),
+        source,
     )
 
     printer(source, source, output)

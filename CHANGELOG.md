@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Preserve single-line inline HTML and template tag bodies during expansion, even when they exceed `max_line_length`.
+
 ## [1.38.2] - 2026-06-05
 
 ### Fix

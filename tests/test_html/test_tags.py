@@ -92,13 +92,11 @@ test_data = [
         (
             "<p>Want to write us a letter? Use our<a><b><a>mailing address</a></b></a>.</p>\n"
             '<p>Want to write us a letter? Use our<a href="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.</p>\n'
-            "<p>\n"
-            '    Want to write us a letter? Use our<a href="contacts.html#Mailing_address"\n'
+            '<p>Want to write us a letter? Use our<a href="contacts.html#Mailing_address"\n'
             '   href1="contacts.html#Mailing_address"\n'
             '   href2="contacts.html#Mailing_address"\n'
             '   href3="contacts.html#Mailing_address"\n'
-            '   href4="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.\n'
-            "</p>\n"
+            '   href4="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.</p>\n'
         ),
         id="opening_at_end",
     ),
@@ -475,18 +473,10 @@ test_data = [
             '    attribute-f="value" />\n'
             "<div>string</div>\n"
             "<div>very very very very very very very very very very very very very very very very long string</div>\n"
-            "<div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute>\n"
-            "    string\n"
-            "</div>\n"
-            '<div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value">\n'
-            "    string\n"
-            "</div>\n"
-            '<div attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value">\n'
-            "    string\n"
-            "</div>\n"
-            '<div attribute="value">\n'
-            "    very very very very very very very very very very very very very very very very long string\n"
-            "</div>\n"
+            "<div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute>string</div>\n"
+            '<div very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-attribute="value">string</div>\n'
+            '<div attribute="very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-value">string</div>\n'
+            '<div attribute="value">very very very very very very very very very very very very very very very very long string</div>\n'
             '<div attribute="value"\n'
             '     attributea="value"\n'
             '     attributeb="value"\n'
@@ -498,9 +488,7 @@ test_data = [
             '     attributeb="value"\n'
             '     attributec="value"\n'
             '     attributed="value"\n'
-            '     attributef="value">\n'
-            "    very very very very very very very very very very very very very very very very long string\n"
-            "</div>\n"
+            '     attributef="value">very very very very very very very very very very very very very very very very long string</div>\n'
             '<video width="320" height="240" controls>\n'
             '    <source src="movie.mp4" type="video/mp4">\n'
             '    <source src="movie.ogg" type="video/ogg">\n'

@@ -435,9 +435,7 @@ test_data = [
             "</div></div> </div>\n"
         ),
         (
-            '<div class="ProviderMeasuresContainer__heading-row d-flex flex-column flex-lg-row justify-content-start justify-content-lg-between align-items-start align-items-lg-center">\n'
-            "    Foo\n"
-            "</div>\n"
+            '<div class="ProviderMeasuresContainer__heading-row d-flex flex-column flex-lg-row justify-content-start justify-content-lg-between align-items-start align-items-lg-center">Foo</div>\n'
             '<div class="a-bem-block a-bem-block--with-modifier ">\n'
             '    <div class="a-bem-block__element a-bem-block__element--with-modifier also-another-block">\n'
             '        <div class="a-bem-block__element a-bem-block__element--with-modifier also-another-block__element"></div>\n'

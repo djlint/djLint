@@ -26,9 +26,7 @@ test_data = [
         ),
         (
             "{% example stuff %}\n"
-            "    <p>\n"
-            "        this is a very very long paragraph that does nothing except be a long paragraph asdfasdfasdfasdfasdf fasdf asdfasdfasdf\n"
-            "    </p>\n"
+            "    <p>this is a very very long paragraph that does nothing except be a long paragraph asdfasdfasdfasdfasdf fasdf asdfasdfasdf</p>\n"
             "{% endexample %}\n"
             "{% verylongexampletagthatiskindaneattolookat stuff %}\n"
             "    {{ tag }}\n"

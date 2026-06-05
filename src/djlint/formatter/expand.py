@@ -57,8 +57,22 @@ _INLINE_CHILD_HTML_TAGS = frozenset({
 })
 
 _TAG_NAME_PATTERN = re.compile(r"^</?\s*([^\s>/]+)", flags=RE_FLAGS_IX)
+_TEMPLATE_TAG_NAME_PATTERN = re.compile(
+    r"^\{%-?\s*([^\s%]+)", flags=RE_FLAGS_IX
+)
 _BODY_TAG_PATTERN = re.compile(r"</?\s*([^\s>/]+)", flags=RE_FLAGS_IX)
 _BODY_HTML_TAG_PATTERN = re.compile(r"<[^>\n]*>", flags=RE_FLAGS_IX)
+_BODY_TEMPLATE_TAG_PATTERN = re.compile(
+    r"\{%-?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX
+)
+_TEMPLATE_END_TAG_NAMES = {
+    "endall": "asyncall",
+    "endeach": "asynceach",
+}
+_TEMPLATE_START_TAG_END_NAMES = {
+    "asyncall": "endall",
+    "asynceach": "endeach",
+}
 
 
 @lru_cache(maxsize=_EXPAND_PATTERN_CACHE_SIZE)
@@ -84,11 +98,57 @@ def _open_close_tag_patterns(
     )
 
 
+@lru_cache(maxsize=_EXPAND_PATTERN_CACHE_SIZE)
+def _open_close_template_tag_patterns(
+    tag_name: str,
+) -> tuple[re.Pattern[str], re.Pattern[str]]:
+    tag = re.escape(tag_name)
+    end_tag = re.escape(
+        _TEMPLATE_START_TAG_END_NAMES.get(tag_name, f"end{tag_name}")
+    )
+    return (
+        re.compile(
+            rf"{{%-?\s*{tag}\b(?:(?!%}}).)*?%}}",
+            flags=RE_FLAGS_IX,
+        ),
+        re.compile(
+            rf"{{%-?\s*{end_tag}\b(?:(?!%}}).)*?%}}",
+            flags=RE_FLAGS_IX,
+        ),
+    )
+
+
+def _template_start_tag_name(tag: str) -> str | None:
+    tag_name_match = _TEMPLATE_TAG_NAME_PATTERN.match(tag)
+    if not tag_name_match:
+        return None
+
+    tag_name = tag_name_match.group(1).lower()
+    if tag_name in _TEMPLATE_END_TAG_NAMES:
+        return _TEMPLATE_END_TAG_NAMES[tag_name]
+    if tag_name.startswith("end"):
+        return tag_name[3:]
+    return tag_name
+
+
+def _is_closing_template_tag(tag: str) -> bool:
+    tag_name_match = _TEMPLATE_TAG_NAME_PATTERN.match(tag)
+    return bool(
+        tag_name_match
+        and tag_name_match.group(1).lower().startswith("end")
+    )
+
+
 def expand_html(html: str, config: Config) -> str:
     """Split single line html into many lines based on tags."""
     html_tags = config.break_html_tags
     optional_single_line_tag_pattern = _optional_single_line_tag_pattern(
         config.optional_single_line_html_tags
+    )
+    optional_single_line_template_tag_pattern = (
+        _optional_single_line_tag_pattern(
+            config.optional_single_line_template_tags
+        )
     )
 
     def should_preserve_inline_body(
@@ -103,14 +163,21 @@ def expand_html(html: str, config: Config) -> str:
         if not optional_single_line_tag_pattern.match(tag_name):
             return False
 
+        def should_break_multiline_opening_tag(opening_tag: str) -> bool:
+            return (
+                config.line_break_after_multiline_tag
+                and len(opening_tag) >= config.max_attribute_length
+            )
+
+        if should_break_multiline_opening_tag(tag):
+            return False
+
         line_start = html.rfind("\n", 0, match.start()) + 1
         line_end = html.find("\n", match.end())
         if line_end == -1:
             line_end = len(html)
 
         line = html[line_start:line_end]
-        if len(line) >= config.max_line_length:
-            return False
 
         match_start = match.start() - line_start
         match_end = match.end() - line_start
@@ -122,6 +189,8 @@ def expand_html(html: str, config: Config) -> str:
                 return False
             open_matches = tuple(open_tag_pattern.finditer(line[:match_start]))
             if not open_matches:
+                return False
+            if should_break_multiline_opening_tag(open_matches[-1].group()):
                 return False
             body = line[open_matches[-1].end() : match_start]
         else:
@@ -139,6 +208,62 @@ def expand_html(html: str, config: Config) -> str:
             return False
 
         if not _BODY_HTML_TAG_PATTERN.sub("", body).strip():
+            return False
+
+        for body_tag in body_tags:
+            if body_tag not in _INLINE_CHILD_HTML_TAGS:
+                return False
+
+        return True
+
+    def should_preserve_template_body(
+        out_format: str, match: re.Match[str]
+    ) -> bool:
+        tag = match.group(1)
+        tag_name = _template_start_tag_name(tag)
+        if (
+            not tag_name
+            or not optional_single_line_template_tag_pattern.match(tag_name)
+        ):
+            return False
+
+        line_start = html.rfind("\n", 0, match.start()) + 1
+        line_end = html.find("\n", match.end())
+        if line_end == -1:
+            line_end = len(html)
+
+        line = html[line_start:line_end]
+
+        match_start = match.start() - line_start
+        match_end = match.end() - line_start
+
+        open_tag_pattern, close_tag_pattern = (
+            _open_close_template_tag_patterns(tag_name)
+        )
+
+        if _is_closing_template_tag(tag):
+            if out_format != "\n%s":
+                return False
+            open_matches = tuple(open_tag_pattern.finditer(line[:match_start]))
+            if not open_matches:
+                return False
+            body = line[open_matches[-1].end() : match_start]
+        else:
+            if out_format != "%s\n":
+                return False
+            close_match = close_tag_pattern.search(line, match_end)
+            if not close_match:
+                return False
+            body = line[match_end : close_match.start()]
+
+        body_without_html = _BODY_HTML_TAG_PATTERN.sub("", body)
+        if _BODY_TEMPLATE_TAG_PATTERN.search(body_without_html):
+            return False
+
+        body_tags = [
+            body_tag.lower() for body_tag in _BODY_TAG_PATTERN.findall(body)
+        ]
+        if not body_without_html.strip():
             return False
 
         for body_tag in body_tags:
@@ -201,6 +326,10 @@ def expand_html(html: str, config: Config) -> str:
         # ensure template tag is not inside an html tag and also not the first line of the file
         if inside_ignored_block(config, html, match):
             return match.group(1)
+
+        if should_preserve_template_body(out_format, match):
+            return match.group(1)
+
         match_start, match_end = match.span()
         if not re.search(
             r"\<(?:"
