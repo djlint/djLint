@@ -150,7 +150,34 @@ def clean_whitespace(html: str, config: Config) -> str:
     return html
 
 
-def condense_html(html: str, config: Config) -> str:
+def _multiline_template_block_states(
+    source: str | None, config: Config
+) -> list[bool]:
+    """Track simple template blocks that were authored across lines."""
+    if source is None:
+        return []
+
+    source = "\n".join(source.splitlines())
+    if "{%" not in source or "\n" not in source:
+        return []
+
+    return [
+        "\n" in match.group(2) and bool(match.group(2).strip())
+        for match in re.finditer(
+            rf"""
+            {{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}}
+            ([^%]*?)
+            {{%-?[ ]+?end\1[ ]*?%}}
+            """,
+            source,
+            flags=RE_FLAGS_IMX,
+        )
+    ]
+
+
+def condense_html(
+    html: str, config: Config, source: str | None = None
+) -> str:
     """Put short tags back on a single line."""
     if config.preserve_leading_space:
         # if a user is attempting to reuse any leading
@@ -214,8 +241,24 @@ def condense_html(html: str, config: Config) -> str:
         flags=RE_FLAGS_IMSX,
     )
 
+    template_block_states = iter(_multiline_template_block_states(source, config))
+
+    def condense_template_line(
+        config: Config, html: str, match: re.Match[str]
+    ) -> str:
+        try:
+            was_authored_multiline = next(template_block_states)
+        except StopIteration:
+            was_authored_multiline = False
+
+        if was_authored_multiline:
+            return match.group()
+
+        return condense_line(config, html, match)
+
     # put short template tags back on one line. must have leading space
     # jinja +%} and {%+ intentionally omitted.
+    func = partial(condense_template_line, config, html)
     return re.sub(
         rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
         func,

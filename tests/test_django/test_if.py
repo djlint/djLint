@@ -30,7 +30,72 @@ test_data = [
             "{% endif %}\n"
         ),
         id="if_tag",
-    )
+    ),
+    pytest.param(
+        (
+            "{% if show_the_thing %}\n"
+            "  <div>Please do not collapse this into a single line</div>\n"
+            "{% endif %}\n"
+        ),
+        (
+            "{% if show_the_thing %}\n"
+            "    <div>Please do not collapse this into a single line</div>\n"
+            "{% endif %}\n"
+        ),
+        id="issue_1597_preserve_multiline_short_if",
+    ),
+    pytest.param(
+        (
+            "{% if show_the_thing %}<div>Please keep inline source inline</div>{% endif %}\n"
+        ),
+        (
+            "{% if show_the_thing %}<div>Please keep inline source inline</div>{% endif %}\n"
+        ),
+        id="issue_1597_keep_inline_short_if",
+    ),
+    pytest.param(
+        (
+            "{{ terms_form.move_in_date }}\n"
+            "{% if terms_form.move_in_date.errors %}\n"
+            '<span class="form-text text-danger">{{ terms_form.move_in_date.errors.0 }}</span>\n'
+            "{% endif %}\n"
+        ),
+        (
+            "{{ terms_form.move_in_date }}\n"
+            "{% if terms_form.move_in_date.errors %}\n"
+            '    <span class="form-text text-danger">{{ terms_form.move_in_date.errors.0 }}</span>\n'
+            "{% endif %}\n"
+        ),
+        id="issue_1597_preserve_variable_before_if",
+    ),
+    pytest.param(
+        (
+            "{% csrf_token %}\n"
+            "\n"
+            "{% if messages %}\n"
+            "  {% for message in messages %}\n"
+            '  <div class="row mb-3">\n'
+            '    <div class="col">\n'
+            '      <div class="alert alert-danger">{{ message }}</div>\n'
+            "    </div>\n"
+            "  </div>\n"
+            "  {% endfor %}\n"
+            "{% endif %}\n"
+        ),
+        (
+            "{% csrf_token %}\n"
+            "{% if messages %}\n"
+            "    {% for message in messages %}\n"
+            '        <div class="row mb-3">\n'
+            '            <div class="col">\n'
+            '                <div class="alert alert-danger">{{ message }}</div>\n'
+            "            </div>\n"
+            "        </div>\n"
+            "    {% endfor %}\n"
+            "{% endif %}\n"
+        ),
+        id="issue_1597_preserve_nested_template_lines",
+    ),
 ]
 
 

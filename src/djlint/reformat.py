@@ -35,7 +35,7 @@ def formatter(config: Config, rawcode: str) -> str:
 
     indented_code = indent_html(condensed, config)
 
-    beautified_code = condense_html(indented_code, config)
+    beautified_code = condense_html(indented_code, config, rawcode)
 
     if config.format_css:
         beautified_code = format_css(beautified_code, config)
