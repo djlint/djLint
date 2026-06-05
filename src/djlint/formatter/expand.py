@@ -65,14 +65,8 @@ _BODY_HTML_TAG_PATTERN = re.compile(r"<[^>\n]*>", flags=RE_FLAGS_IX)
 _BODY_TEMPLATE_TAG_PATTERN = re.compile(
     r"\{%-?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX
 )
-_TEMPLATE_END_TAG_NAMES = {
-    "endall": "asyncall",
-    "endeach": "asynceach",
-}
-_TEMPLATE_START_TAG_END_NAMES = {
-    "asyncall": "endall",
-    "asynceach": "endeach",
-}
+_TEMPLATE_END_TAG_NAMES = {"endall": "asyncall", "endeach": "asynceach"}
+_TEMPLATE_START_TAG_END_NAMES = {"asyncall": "endall", "asynceach": "endeach"}
 
 
 @lru_cache(maxsize=_EXPAND_PATTERN_CACHE_SIZE)
@@ -107,14 +101,8 @@ def _open_close_template_tag_patterns(
         _TEMPLATE_START_TAG_END_NAMES.get(tag_name, f"end{tag_name}")
     )
     return (
-        re.compile(
-            rf"{{%-?\s*{tag}\b(?:(?!%}}).)*?%}}",
-            flags=RE_FLAGS_IX,
-        ),
-        re.compile(
-            rf"{{%-?\s*{end_tag}\b(?:(?!%}}).)*?%}}",
-            flags=RE_FLAGS_IX,
-        ),
+        re.compile(rf"{{%-?\s*{tag}\b(?:(?!%}}).)*?%}}", flags=RE_FLAGS_IX),
+        re.compile(rf"{{%-?\s*{end_tag}\b(?:(?!%}}).)*?%}}", flags=RE_FLAGS_IX),
     )
 
 
@@ -134,8 +122,7 @@ def _template_start_tag_name(tag: str) -> str | None:
 def _is_closing_template_tag(tag: str) -> bool:
     tag_name_match = _TEMPLATE_TAG_NAME_PATTERN.match(tag)
     return bool(
-        tag_name_match
-        and tag_name_match.group(1).lower().startswith("end")
+        tag_name_match and tag_name_match.group(1).lower().startswith("end")
     )
 
 
@@ -221,9 +208,8 @@ def expand_html(html: str, config: Config) -> str:
     ) -> bool:
         tag = match.group(1)
         tag_name = _template_start_tag_name(tag)
-        if (
-            not tag_name
-            or not optional_single_line_template_tag_pattern.match(tag_name)
+        if not tag_name or not optional_single_line_template_tag_pattern.match(
+            tag_name
         ):
             return False
 
@@ -237,8 +223,8 @@ def expand_html(html: str, config: Config) -> str:
         match_start = match.start() - line_start
         match_end = match.end() - line_start
 
-        open_tag_pattern, close_tag_pattern = (
-            _open_close_template_tag_patterns(tag_name)
+        open_tag_pattern, close_tag_pattern = _open_close_template_tag_patterns(
+            tag_name
         )
 
         if _is_closing_template_tag(tag):

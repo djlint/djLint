@@ -465,9 +465,7 @@ def test_single_line_nested_html_elements_are_preserved() -> None:
 def test_single_line_nested_html_elements_ignore_max_line_length() -> None:
     source = '<p>Test <span class="value">1</span></p>\n'
     output = formatter(
-        config_builder(
-            {"indent": 2, "max_line_length": 1, "profile": "jinja"}
-        ),
+        config_builder({"indent": 2, "max_line_length": 1, "profile": "jinja"}),
         source,
     )
 
