@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.38.2] - 2026-06-05
+
+### Fix
+
+- Fix `python -m djlint` not working due to mypyc compilation.
+
 ## [1.38.1] - 2026-06-04
 
 ### Fix
