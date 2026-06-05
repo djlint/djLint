@@ -20,6 +20,13 @@ const postcss = require("postcss");
 const slugifyCustom = (s) =>
   slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g });
 
+const schemaShortcodes = {};
+const schemaReady = schema({
+  addShortcode(name, callback) {
+    schemaShortcodes[name] = callback;
+  },
+});
+
 async function imageShortcode(
   src,
   alt,
@@ -93,7 +100,20 @@ module.exports = function (eleventyConfig) {
   }
   eleventyConfig.addPlugin(syntaxHighlight);
   eleventyConfig.addPlugin(metagen);
-  eleventyConfig.addPlugin(schema);
+  eleventyConfig.addNunjucksAsyncShortcode(
+    "jsonLdScript",
+    async (meta, type, tags) => {
+      await schemaReady;
+      return schemaShortcodes.jsonLdScript(meta, type, tags);
+    },
+  );
+  eleventyConfig.addNunjucksAsyncShortcode(
+    "jsonLd",
+    async (meta, type, tags) => {
+      await schemaReady;
+      return schemaShortcodes.jsonLd(meta, type, tags);
+    },
+  );
   eleventyConfig.addPlugin(rollupper, {
     rollup: {
       output: { format: "umd", dir: "_site/static/js" },
