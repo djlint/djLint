@@ -7,75 +7,75 @@
 @import "../../../../node_modules/@fortawesome/fontawesome-free/scss/_sizing";
 @import "../../../../node_modules/@fortawesome/fontawesome-free/scss/_animated";
 
-$fa-font-path: "/static/font/fontawesome/webfonts";
+$font-path: "/static/font/fontawesome/webfonts";
 @font-face {
-  font-family: "Font Awesome 6 Brands";
+  font-family: "Font Awesome 7 Brands";
   font-style: normal;
   font-weight: 400;
-  font-display: $fa-font-display;
+  font-display: $font-display;
   src:
-    url("#{$fa-font-path}/fa-brands-400.woff2") format("woff2"),
-    url("#{$fa-font-path}/fa-brands-400.ttf") format("truetype");
+    url("#{$font-path}/fa-brands-400.woff2") format("woff2"),
+    url("#{$font-path}/fa-brands-400.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "Font Awesome 6 Free";
+  font-family: "Font Awesome 7 Free";
   font-style: normal;
   font-weight: 900;
-  font-display: $fa-font-display;
+  font-display: $font-display;
   src:
-    url("#{$fa-font-path}/fa-solid-900.woff2") format("woff2"),
-    url("#{$fa-font-path}/fa-solid-900.ttf") format("truetype");
+    url("#{$font-path}/fa-solid-900.woff2") format("woff2"),
+    url("#{$font-path}/fa-solid-900.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "Font Awesome 6 Free";
+  font-family: "Font Awesome 7 Free";
   font-style: normal;
   font-weight: 400;
-  font-display: $fa-font-display;
+  font-display: $font-display;
   src:
-    url("#{$fa-font-path}/fa-regular-400.woff2") format("woff2"),
-    url("#{$fa-font-path}/fa-regular-400.ttf") format("truetype");
+    url("#{$font-path}/fa-regular-400.woff2") format("woff2"),
+    url("#{$font-path}/fa-regular-400.ttf") format("truetype");
 }
 
 .far,
-.#{$fa-css-prefix}-regular {
-  font-family: "Font Awesome 6 Free";
+.#{$css-prefix}-regular {
+  font-family: "Font Awesome 7 Free";
   font-weight: 400;
 }
 
 .fas,
-.#{$fa-css-prefix}-solid {
-  font-family: "Font Awesome 6 Free";
+.#{$css-prefix}-solid {
+  font-family: "Font Awesome 7 Free";
   font-weight: 900;
 }
 
 .fab,
-.#{$fa-css-prefix}-brands {
-  font-family: "Font Awesome 6 Brands";
+.#{$css-prefix}-brands {
+  font-family: "Font Awesome 7 Brands";
   font-weight: 400;
 }
 
-.#{$fa-css-prefix}-2_3x {
+.#{$css-prefix}-2_3x {
   font-size: 2.3em;
 }
 
 /* build icon list */
 $icons: (
-  infinity: $fa-var-infinity,
-  discord: $fa-var-discord,
-  github: $fa-var-github,
-  download: $fa-var-download,
-  pencil: $fa-var-pencil,
-  circle-arrow-right: $fa-var-circle-arrow-right,
-  globe: $fa-var-globe,
-  code-commit: $fa-var-code-commit,
-  spinner: $fa-var-spinner,
-  circle-question: $fa-var-circle-question,
+  infinity: $var-infinity,
+  discord: $var-discord,
+  github: $var-github,
+  download: $var-download,
+  pencil: $var-pencil,
+  circle-arrow-right: $var-circle-arrow-right,
+  globe: $var-globe,
+  code-commit: $var-code-commit,
+  spinner: $var-spinner,
+  circle-question: $var-circle-question,
 );
 
 @each $key, $value in $icons {
-  .#{$fa-css-prefix}-#{$key}:before {
+  .#{$css-prefix}-#{$key}:before {
     content: fa-content($value);
   }
 }
