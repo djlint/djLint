@@ -40,7 +40,7 @@
     "@toycode/markdown-it-class": "1.2.4",
     "algoliasearch": "5.53.0",
     "autoprefixer": "10.5.0",
-    "bulma": "0.9.4",
+    "bulma": "1.0.4",
     "bulma-pricingtable": "0.2.0",
     "cssnano": "8.0.1",
     "eleventy-plugin-edit-on-github": "1.1.0",
