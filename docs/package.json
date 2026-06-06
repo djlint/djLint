@@ -14,7 +14,6 @@
   "dependencies": {
     "@codemirror/lang-html": "^6.4.3",
     "@codemirror/state": "^6.2.0",
-    "@creativebulma/bulma-divider": "^1.1.0",
     "@fontsource/crimson-pro": "^5.0.0",
     "@fontsource/rasa": "^5.0.0",
     "@quasibit/eleventy-plugin-schema": "1.13.0",
@@ -40,8 +39,7 @@
     "@toycode/markdown-it-class": "1.2.4",
     "algoliasearch": "5.53.0",
     "autoprefixer": "10.5.0",
-    "bulma": "0.9.4",
-    "bulma-pricingtable": "0.2.0",
+    "bulma": "1.0.4",
     "cssnano": "8.0.1",
     "eleventy-plugin-edit-on-github": "1.1.0",
     "eleventy-plugin-metagen": "1.8.4",

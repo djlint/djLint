@@ -1,12 +1,21 @@
 @use "../../../node_modules/@fontsource/inter/scss/mixins" as Inter;
 @use "../../../node_modules/@fontsource/rasa/scss/mixins" as Rasa;
 @use "../../../node_modules/@fontsource/crimson-pro/scss/mixins" as Crimson;
+@use "../../../node_modules/bulma/sass/utilities/functions" as bulma;
+
 $link-hover: hsl(207, 61%, 44%);
 $link: hsl(207, 61%, 44%);
+$message-body-border-width: 0 0 0 4px;
 
+@import "../../../node_modules/bulma/sass/utilities/initial-variables";
+@import "../../../node_modules/bulma/sass/utilities/derived-variables";
+@import "../../../node_modules/bulma/sass/utilities/extends";
 @import "../../../node_modules/bulma/bulma";
-@import "../../../node_modules/bulma-pricingtable/src/sass/index";
-@import "../../../node_modules/@creativebulma/bulma-divider/src/sass/index";
+
+$info-light: bulma.bulmaFindLightColor($info);
+$success-light: bulma.bulmaFindLightColor($success);
+$danger-light: bulma.bulmaFindLightColor($danger);
+$info-dark: bulma.bulmaFindDarkColor($info);
 
 $use-all: true;
 $use-slideInDown: true;
@@ -181,29 +190,6 @@ pre .number {
 .mail-icon > img {
   margin-top: 3px;
 }
-/* comparison */
-.plan-item .icon {
-  height: auto;
-}
-.plan-item .icon svg {
-  height: 15px;
-  width: 15px;
-}
-
-.pricing-table .pricing-plan .plan-group {
-  align-content: center;
-  background-color: #fff;
-  color: #4a4a4a;
-  font-size: $size-6;
-  font-weight: 600;
-  padding: 0.75em;
-  text-align: center;
-}
-
-.pricing-table .pricing-plan .plan-header {
-  font-size: $size-6;
-}
-
 .icon.is-huge {
   height: 2.5em;
   width: 2.5em;
