@@ -35,7 +35,7 @@ jobs:
         working-directory: docs
       - run: npm run build
         working-directory: docs
-      - uses: untitaker/hyperlink@fb5bb9c5011a3d143a54b4b30aedc30ec5bc0f89 # 0.2.0
+      - uses: untitaker/hyperlink@1ae2cef25222e3307a82bc7388f0667137f4240b # 0.2.1
         with:
           args: docs/_site/
   pre-commit:
