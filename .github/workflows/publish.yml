@@ -3,7 +3,9 @@ on:
   push:
     tags:
       - v*
-  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   build-compiled:
     runs-on: ${{ matrix.os }}
