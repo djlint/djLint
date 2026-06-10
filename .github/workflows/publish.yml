@@ -23,8 +23,9 @@ jobs:
           persist-credentials: false
       - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
+          python-version: "3.14"
           enable-cache: false
-      - run: uv tool run --exclude-newer '3 days' --no-cache --python 3.14 cibuildwheel --output-dir dist
+      - run: uv tool run --exclude-newer '3 days' --no-cache cibuildwheel --output-dir dist
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: wheels-${{ matrix.os }}
@@ -37,8 +38,9 @@ jobs:
           persist-credentials: false
       - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
+          python-version: "3.14"
           enable-cache: false
-      - run: uv build --python 3.14 --no-cache
+      - run: uv build --no-cache
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: wheels-any
@@ -54,6 +56,7 @@ jobs:
     steps:
       - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
+          python-version: "3.14"
           enable-cache: false
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
       - run: mkdir dist
