@@ -7,6 +7,8 @@ on:
 jobs:
   build-compiled:
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         os:
@@ -32,6 +34,8 @@ jobs:
           path: dist
   build-pure:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
