@@ -536,7 +536,14 @@ class Config:
         )
         self.format_attribute_js_json_property_pattern: re.Pattern[str] = (
             re.compile(
-                r"(?:[a-zA-Z_$][a-zA-Z0-9_$]*\s*:|(?:get|set)\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\()",
+                r"""
+                (?:^|[,{]\s*)
+                (?:
+                    [a-zA-Z_$][a-zA-Z0-9_$]*\s*:
+                  | (?:get|set)\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(
+                  | (?:async\s+)?\*?\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(
+                )
+                """,
                 flags=RE_FLAGS_IX,
             )
         )

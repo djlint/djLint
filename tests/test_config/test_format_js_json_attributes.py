@@ -108,6 +108,40 @@ test_data = [
         id="js_two_properties_multiline",
     ),
     pytest.param(
+        (
+            '<div x-data="{\n'
+            "  open: false,\n"
+            "  toggle() {\n"
+            "    this.open = !this.open\n"
+            "  }\n"
+            '}"></div>'
+        ),
+        (
+            '<div x-data="{\n'
+            "               open: false,\n"
+            "               toggle() {\n"
+            "                 this.open = !this.open\n"
+            "               }\n"
+            '             }"></div>\n'
+        ),
+        ({
+            "format_attribute_js_json": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
+        id="alpine_x_data_method_multiline",
+    ),
+    pytest.param(
+        ("<div x-data='{value: foo()}'></div>"),
+        ("<div x-data='{value: foo()}'></div>\n"),
+        ({
+            "format_attribute_js_json": True,
+            "max_attribute_length": 0,
+            "indent_js": 2,
+        }),
+        id="js_function_call_not_counted_as_property",
+    ),
+    pytest.param(
         ("<div onclick='foo();'></div>"),
         ("<div onclick='foo();'></div>\n"),
         ({
