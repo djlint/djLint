@@ -310,9 +310,13 @@ test_data = [
         id="T027_trans",
     ),
     pytest.param(
-        ('{% trans "Check box if you\'re interested in this location." %}'),
+        ("{% trans \"Click 'submit' if you know what you're doing.\" %}"),
         ([]),
-        id="T027_golang comment",
+        id="T027_trans_odd_apostrophes",
+    ),
+    pytest.param(("{% '', \"'\" %}"), ([]), id="T027_quoted_apostrophe"),
+    pytest.param(
+        ("{% 'foo', \"can't\" %}"), ([]), id="T027_mixed_quote_strings"
     ),
     pytest.param(("{{/* can't */}}"), ([]), id="T027_mixed_quotes"),
     pytest.param(

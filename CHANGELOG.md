@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Avoid false T027 reports for apostrophes inside quoted template strings.
 - Format Alpine.js object methods in attributes when `format_attribute_js_json` is enabled.
 - Preserve indentation after inline Jinja control-flow blocks that start with whitespace trim markers, such as `{%- if ... %}...{% endif %}`.
 - Preserve safe inner quote style for Jinja function calls inside quoted HTML attributes.

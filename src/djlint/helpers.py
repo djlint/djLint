@@ -14,11 +14,15 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from typing import Final
 
-    from typing_extensions import TypeVar
+    from typing_extensions import Protocol, TypeVar
 
     from djlint.settings import Config
 
     T = TypeVar("T")
+
+    class SpanMatch(Protocol):
+        def span(self) -> tuple[int, int]: ...
+
 
 RE_FLAGS_IS: Final = re.I | re.S
 RE_FLAGS_IX: Final = re.I | re.X
@@ -299,7 +303,7 @@ def _inside_ignored_linter_block(
 
 
 def inside_ignored_linter_block(
-    config: Config, html: str, match: re.Match[str]
+    config: Config, html: str, match: SpanMatch
 ) -> bool:
     """Check if a re.Match is inside of a ignored linter block."""
     match_start, match_end = match.span()
@@ -398,9 +402,7 @@ def _overlaps_ignored_block(
     )
 
 
-def overlaps_ignored_block(
-    config: Config, html: str, match: re.Match[str]
-) -> bool:
+def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
     for ignored_match_start, ignored_match_end in _overlaps_ignored_block(
@@ -436,7 +438,7 @@ def _inside_ignored_rule(
 
 
 def inside_ignored_rule(
-    config: Config, html: str, match: re.Match[str], rule: str
+    config: Config, html: str, match: SpanMatch, rule: str
 ) -> bool:
     """Check if match is inside an ignored pattern."""
     match_start, match_end = match.span()
