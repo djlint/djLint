@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import ast
+import io
+import tokenize
 from functools import partial
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import json5 as json
 import regex as re
+from json5.lib import QuoteStyle
 
 from djlint.formatter.attributes import format_attributes
 from djlint.helpers import (
@@ -24,6 +27,93 @@ from djlint.helpers import (
 
 if TYPE_CHECKING:
     from djlint.settings import Config
+
+
+def _attribute_quote_at(html: str, start: int) -> str | None:
+    """Return the surrounding HTML attribute quote at start, if any."""
+    tag_start = html.rfind("<", 0, start)
+    if tag_start == -1:
+        return None
+
+    quote = None
+
+    for index in range(tag_start + 1, start):
+        char = html[index]
+
+        if quote is not None:
+            if char == quote:
+                quote = None
+            continue
+
+        if char == ">":
+            return None
+
+        if char not in {"'", '"'}:
+            continue
+
+        attr_index = index - 1
+        while attr_index > tag_start and html[attr_index].isspace():
+            attr_index -= 1
+
+        if attr_index > tag_start and html[attr_index] == "=":
+            quote = char
+
+    return quote
+
+
+def _offset(line_offsets: list[int], position: tuple[int, int]) -> int:
+    row, column = position
+    return line_offsets[row - 1] + column
+
+
+def _format_string_token(token_value: str, quote_style: QuoteStyle) -> str:
+    try:
+        value = ast.literal_eval(token_value)
+    except (SyntaxError, ValueError):
+        return token_value
+
+    if not isinstance(value, str):
+        return token_value
+
+    return cast(
+        "str", json.dumps(value, ensure_ascii=False, quote_style=quote_style)
+    )
+
+
+def _format_string_tokens(contents: str, quote_style: QuoteStyle) -> str:
+    try:
+        tokens = tuple(tokenize.generate_tokens(io.StringIO(contents).readline))
+    except (IndentationError, tokenize.TokenError):
+        return contents
+
+    line_offsets = [0]
+    for line in contents.splitlines(keepends=True):
+        line_offsets.append(line_offsets[-1] + len(line))
+
+    replacements: list[tuple[int, int, str]] = []
+
+    for token in tokens:
+        if token.type != tokenize.STRING:
+            continue
+
+        replacements.append((
+            _offset(line_offsets, token.start),
+            _offset(line_offsets, token.end),
+            _format_string_token(token.string, quote_style),
+        ))
+
+    if not replacements:
+        return contents
+
+    formatted: list[str] = []
+    last_offset = 0
+
+    for start, end, value in replacements:
+        formatted.extend((contents[last_offset:start], value))
+        last_offset = end
+
+    formatted.append(contents[last_offset:])
+    return "".join(formatted)
 
 
 def indent_html(rawcode: str, config: Config) -> str:
@@ -78,7 +168,6 @@ def indent_html(rawcode: str, config: Config) -> str:
     is_raw_first_line = False
     in_script_style_tag = False
     is_block_raw = False
-    jinja_replace_list = []
 
     slt_html = config.indent_html_tags
 
@@ -144,11 +233,6 @@ def indent_html(rawcode: str, config: Config) -> str:
     )
     indent_html_tags_pattern = re.compile(
         config.indent_html_tags_regex, flags=RE_FLAGS_IX
-    )
-    jinja_outer_quote_pattern = (
-        re.compile(r"=([\"'])(\{\{[\s\S]*?\}\})\1", flags=re.M)
-        if config.profile == "jinja"
-        else None
     )
 
     for item in rawcode_flat_list:
@@ -285,27 +369,27 @@ def indent_html(rawcode: str, config: Config) -> str:
             if ignored_level == 0:
                 is_block_raw = False
 
-        # detect the outer quotes for jinja
-        if jinja_outer_quote_pattern is not None:
-            for match in jinja_outer_quote_pattern.finditer(tmp):
-                outer_quotes = match.group(1)
-                inner_content = match.group(2)
-                jinja_replace_list.append({
-                    "outer_quote": outer_quotes,
-                    "content": inner_content,
-                })
-
         beautified_code += tmp
 
     # try to fix internal formatting of set tag
     def format_data(
-        config: Config, contents: str, tag_size: int, leading_space: str
+        config: Config,
+        contents: str,
+        tag_size: int,
+        leading_space: str,
+        *,
+        quote_style: QuoteStyle = QuoteStyle.ALWAYS_DOUBLE,
+        normalize_string_quotes: bool = False,
     ) -> str:
         try:
             # try to format the contents as json
             data = json.loads(contents)
             contents = json.dumps(
-                data, trailing_commas=False, ensure_ascii=False, quote_keys=True
+                data,
+                trailing_commas=False,
+                ensure_ascii=False,
+                quote_keys=True,
+                quote_style=quote_style,
             )
 
             if tag_size + len(contents) >= config.max_line_length:
@@ -316,6 +400,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     trailing_commas=False,
                     ensure_ascii=False,
                     quote_keys=True,
+                    quote_style=quote_style,
                 )
 
         except Exception:
@@ -330,6 +415,9 @@ def indent_html(rawcode: str, config: Config) -> str:
                 )
             except Exception:
                 contents = contents.strip()
+
+            if normalize_string_quotes:
+                contents = _format_string_tokens(contents, quote_style)
 
         return (f"\n{leading_space}").join(contents.splitlines())
 
@@ -367,50 +455,27 @@ def indent_html(rawcode: str, config: Config) -> str:
         tag = match.group(3).strip()
         index = (match.group(5) or "").strip()
         close_bracket = match.group(6)
+        quote_style = QuoteStyle.ALWAYS_DOUBLE
+        normalize_string_quotes = False
+
+        if config.profile == "jinja":
+            outer_quote = _attribute_quote_at(html, match.start(2))
+            if outer_quote == '"':
+                quote_style = QuoteStyle.ALWAYS_SINGLE
+                normalize_string_quotes = True
+            elif outer_quote == "'":
+                normalize_string_quotes = True
+
         contents = format_data(
             config,
             match.group(4).strip()[1:-1],
             len(f"{open_bracket} {tag}() {close_bracket}"),
             leading_space,
+            quote_style=quote_style,
+            normalize_string_quotes=normalize_string_quotes,
         )
 
-        # # define cleaned match with both quote styles
-        cleaned_match = f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
-
-        if config.profile == "jinja":
-            outer_quotes = None
-            inner_quotes = None
-
-            # Determine user quote type
-            for jinja_content in jinja_replace_list:
-                content = cleaned_match.replace(
-                    '"', "'"
-                )  # Replace double quotes
-                if content == jinja_content.get("content"):
-                    outer_quotes = jinja_content.get("outer_quote")
-                    inner_quotes = "'" if outer_quotes == '"' else '"'
-                    break
-                content = cleaned_match.replace(
-                    "'", '"'
-                )  # Replace single quotes
-                if content == jinja_content.get("content"):
-                    outer_quotes = jinja_content.get("outer_quote")
-                    inner_quotes = '"' if outer_quotes == "'" else "'"
-                    break
-
-            if outer_quotes is not None and inner_quotes is not None:
-                # Replace all content inner quotes and remove trailing/leading spaces
-                cleaned_contents = re.sub(
-                    rf"(?<=\{re.escape(outer_quotes)})\s+|\s+(?=\{re.escape(outer_quotes)})",
-                    "",
-                    contents.replace(outer_quotes, inner_quotes),
-                )
-
-                # Update cleaned match
-                cleaned_match = f"{leading_space}{open_bracket} {tag}({cleaned_contents}){index} {close_bracket}"
-                cleaned_match = cleaned_match.strip()
-
-        return cleaned_match
+        return f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
 
     if not config.no_set_formatting:
         func = partial(format_set, config, beautified_code)

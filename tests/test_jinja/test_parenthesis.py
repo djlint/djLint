@@ -34,10 +34,10 @@ test_data = [
         '   href="{{ url("fo\\\'o") }}"\n'
         "   href=\"{{ url('foo') }}\"\n"
         '   href="{{ url("foo") }}"></a>',
-        '<a href="{{ url("fo\\"o") }}"\n'
-        '   href="{{ url("fo\\"o") }}"\n'
-        '   href="{{ url("fo\'o") }}"\n'
-        '   href="{{ url("fo\'o") }}"\n'
+        '<a href="{{ url(\'fo"o\') }}"\n'
+        '   href="{{ url(\'fo"o\') }}"\n'
+        "   href=\"{{ url('fo\\'o') }}\"\n"
+        "   href=\"{{ url('fo\\'o') }}\"\n"
         "   href=\"{{ url('foo') }}\"\n"
         "   href=\"{{ url('foo') }}\"></a>\n",
         id="single_escaped quote",
@@ -48,12 +48,37 @@ test_data = [
         id="single_url_for",
     ),
     pytest.param(
+        "<a href = \"{{ url_for('test_reminders') }}\">Test reminders</a>",
+        "<a href = \"{{ url_for('test_reminders') }}\">Test reminders</a>\n",
+        id="single_url_for_spaced_attribute_equals",
+    ),
+    pytest.param(
+        "<a href=\"/{{ url_for('test_reminders') }}/\">Test reminders</a>",
+        "<a href=\"/{{ url_for('test_reminders') }}/\">Test reminders</a>\n",
+        id="single_url_for_partial_attribute_value",
+    ),
+    pytest.param(
         '{{ url("foo") }}', '{{ url("foo") }}\n', id="double_parenthesis_tag"
     ),
     pytest.param(
         '<a href="{{ url_for("test_reminders") }}" class="btn clr sm">Test reminders</a>',
         '<a href="{{ url_for(\'test_reminders\') }}" class="btn clr sm">Test reminders</a>\n',
         id="double_url_for",
+    ),
+    pytest.param(
+        '<a href="/{{ url_for("test_reminders") }}/">Test reminders</a>',
+        "<a href=\"/{{ url_for('test_reminders') }}/\">Test reminders</a>\n",
+        id="double_url_for_partial_attribute_value",
+    ),
+    pytest.param(
+        '<a href="{{ url_for("test_reminders", next="foo") }}">Test reminders</a>',
+        "<a href=\"{{ url_for('test_reminders', next='foo') }}\">Test reminders</a>\n",
+        id="double_url_for_keyword_args",
+    ),
+    pytest.param(
+        "<a href='{{ url_for('test_reminders') }}'>Test reminders</a>",
+        "<a href='{{ url_for(\"test_reminders\") }}'>Test reminders</a>\n",
+        id="single_quoted_attribute_url_for",
     ),
 ]
 

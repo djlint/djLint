@@ -7,6 +7,7 @@
 ### Fix
 
 - Preserve indentation after inline Jinja control-flow blocks that start with whitespace trim markers, such as `{%- if ... %}...{% endif %}`.
+- Preserve safe inner quote style for Jinja function calls inside quoted HTML attributes.
 
 ## [1.39.0] - 2026-06-05
 
