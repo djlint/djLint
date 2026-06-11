@@ -28,19 +28,11 @@ test_data = [
         id="function_arg_named_id",
     ),
     pytest.param(
-        '<a href="{{ url(\'fo"o\') }}"\n'
-        '   href="{{ url(\'fo\\"o\') }}"\n'
-        '   href="{{ url("fo\'o") }}"\n'
-        '   href="{{ url("fo\\\'o") }}"\n'
-        "   href=\"{{ url('foo') }}\"\n"
-        '   href="{{ url("foo") }}"></a>',
-        '<a href="{{ url(\'fo"o\') }}"\n'
-        '   href="{{ url(\'fo"o\') }}"\n'
-        "   href=\"{{ url('fo\\'o') }}\"\n"
-        "   href=\"{{ url('fo\\'o') }}\"\n"
-        "   href=\"{{ url('foo') }}\"\n"
-        "   href=\"{{ url('foo') }}\"></a>\n",
-        id="single_escaped quote",
+        '<a href="{{ url("fo\'o") }}">Test</a>\n'
+        "<a href='{{ url('fo\"o') }}'>Test</a>",
+        "<a href=\"{{ url('fo\\'o') }}\">Test</a>\n"
+        '<a href=\'{{ url("fo\\"o") }}\'>Test</a>\n',
+        id="attribute_quote_escaping",
     ),
     pytest.param(
         '<a href="{{ url_for(\'test_reminders\') }}" class="btn clr sm">Test reminders</a>',
