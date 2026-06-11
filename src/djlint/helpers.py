@@ -14,14 +14,12 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from typing import Final
 
-    from typing_extensions import Protocol, TypeVar
+    from typing_extensions import TypeVar
 
     from djlint.settings import Config
+    from djlint.types import SpanMatch
 
     T = TypeVar("T")
-
-    class SpanMatch(Protocol):
-        def span(self) -> tuple[int, int]: ...
 
 
 RE_FLAGS_IS: Final = re.I | re.S

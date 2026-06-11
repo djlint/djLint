@@ -1,4 +1,4 @@
-from typing_extensions import TypedDict
+from typing_extensions import Protocol, TypedDict
 
 class LintError(TypedDict):
     code: str
@@ -9,3 +9,6 @@ class LintError(TypedDict):
 class ProcessResult(TypedDict, total=False):
     format_message: dict[str, tuple[str, ...]]
     lint_message: dict[str, list[LintError]]
+
+class SpanMatch(Protocol):
+    def span(self) -> tuple[int, int]: ...
