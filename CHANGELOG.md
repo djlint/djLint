@@ -2,6 +2,14 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.39.2] - 2026-06-11
+
+v1.39.1 was not published due to mypyc compilation error.
+
+### Packaging
+
+- Fix mypyc compilation.
+
 ## [1.39.1] - 2026-06-11
 
 ### Fix
