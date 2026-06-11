@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Preserve indentation after inline Jinja control-flow blocks that start with whitespace trim markers, such as `{%- if ... %}...{% endif %}`.
+
 ## [1.39.0] - 2026-06-05
 
 ### Feature

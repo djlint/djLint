@@ -99,7 +99,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     (?:
                         <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
                         |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
-                        |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\2)[ ]+?.*?%}}) # >>> match 2
+                        |(?:{{%-?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%-?[ ]*?end(?:\2)\b(?:(?!%}}).)*?%}}) # >>> match 2
                         |{config.ignored_inline_blocks}
                     )[ \t]*?
                     (?:
@@ -107,7 +107,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     (?: # followed by another slt
                         <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\3)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 3
                        |(?:<(?:{always_self_closing_html})\b[^>]*?/?>) # <img stuff />
-                       |(?:{{%[ ]*?({slt_template})[ ]+?.*?%}})(?:.*?)(?:{{%[ ]+?end(?:\4)[ ]+?.*?%}}) # >>> match 4
+                       |(?:{{%-?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%-?[ ]*?end(?:\4)\b(?:(?!%}}).)*?%}}) # >>> match 4
                        |{config.ignored_inline_blocks}
                     )[ \t]*?
                     )*? # optional of course
