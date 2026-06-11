@@ -49,7 +49,7 @@ jobs:
         with:
           python-version: "3.14"
           enable-cache: false
-      - run: uv tool run --exclude-newer '3 days' --no-cache prek run --all-files --show-diff-on-failure
+      - run: uvx --no-cache prek run --all-files --show-diff-on-failure
         env:
           RUFF_OUTPUT_FORMAT: github
   pytest:

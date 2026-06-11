@@ -55,3 +55,7 @@ repos:
           - types-regex==2026.5.9.20260518
           - types-tqdm==4.68.0.20260608
           - typing-extensions==4.15.0
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.25.2
+    hooks:
+      - id: zizmor
