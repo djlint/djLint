@@ -387,6 +387,16 @@ def test_H025(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
 
+    write_to_file(
+        tmp_file.name,
+        b"""<div
+    data-x="{{Func
+        "a"}}">
+</div>""",
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--profile=golang"))
+    assert "H025" not in result.output
+
     write_to_file(tmp_file.name, b"<col>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
