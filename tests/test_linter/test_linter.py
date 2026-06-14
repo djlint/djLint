@@ -395,6 +395,7 @@ def test_H025(
 </div>""",
     )
     result = runner.invoke(djlint, (tmp_file.name, "--profile=golang"))
+    assert result.exit_code == 0
     assert "H025" not in result.output
 
     write_to_file(tmp_file.name, b"<col>")
