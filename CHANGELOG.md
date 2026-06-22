@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## Unreleased
+
+### Fix
+
+- Respect whitespace-control dashes when applying `blank_line_after_tag` and `blank_line_before_tag`.
+
 ## [1.39.2] - 2026-06-11
 
 v1.39.1 was not published due to mypyc compilation error.

@@ -137,6 +137,23 @@ test_data = [
         ({"blank_line_before_tag": "   include     ,endblock "}),
         id="test multiple",
     ),
+    pytest.param(
+        (
+            "<p>before macro</p>\n"
+            "{%- macro Foo() -%}\n"
+            "  <div>foo</div>\n"
+            "{%- endmacro -%}\n"
+        ),
+        (
+            "<p>before macro</p>\n"
+            "\n"
+            "{%- macro Foo() -%}\n"
+            "    <div>foo</div>\n"
+            "{%- endmacro -%}\n"
+        ),
+        ({"blank_line_before_tag": "macro"}),
+        id="nunjucks whitespace control dash - before",
+    ),
 ]
 
 
