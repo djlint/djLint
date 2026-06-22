@@ -924,22 +924,22 @@ class Config:
                         \"[^\"]*? # double quoted attribute
                         (?:
                             {self.template_if_for_pattern} # if or for loop
-                           | {{{{.*?}}}} # template stuff
-                           | {{%[^}}]*?%}}
+                           | {{{{[\s\S]*?}}}} # template stuff
+                           | {{%[\s\S]*?%}}
                            | [^\"] # anything else
                         )*?
                         \" # closing quote
                       | '[^']*? # single quoted attribute
                         (?:
                             {self.template_if_for_pattern} # if or for loop
-                           | {{{{.*?}}}} # template stuff
-                           | {{%[^}}]*?%}}
+                           | {{{{[\s\S]*?}}}} # template stuff
+                           | {{%[\s\S]*?%}}
                            | [^'] # anything else
                         )*?
                         \' # closing quote
                       | (?:\w|-)+ # or a non-quoted string value
-                      | {{{{.*?}}}} # a non-quoted template var
-                      | {{%[^}}]*?%}} # a non-quoted template tag
+                      | {{{{[\s\S]*?}}}} # a non-quoted template var
+                      | {{%[\s\S]*?%}} # a non-quoted template tag
                       | {self.template_if_for_pattern} # a non-quoted if statement
 
                     )
@@ -949,9 +949,9 @@ class Config:
             """
             r"""
             | (?:\'|\") # allow random trailing quotes
-            | {{.*?}}
-            | {\#.*?\#}
-            | {%.*?%})
+            | {{[\s\S]*?}}
+            | {\#[\s\S]*?\#}
+            | {%[\s\S]*?%})
         """
         )
 
