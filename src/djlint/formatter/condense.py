@@ -105,7 +105,7 @@ def clean_whitespace(html: str, config: Config) -> str:
     if config.blank_line_after_tag:
         for tag in config.blank_line_after_tag.split(","):
             html = re.sub(
-                rf"((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
+                rf"((?:{{%-?\s*?{tag.strip()}\b[^}}]+?-?%}}\n?)+)",
                 func,
                 html,
                 flags=RE_FLAGS_IMS,
@@ -126,7 +126,7 @@ def clean_whitespace(html: str, config: Config) -> str:
     if config.blank_line_before_tag:
         for tag in config.blank_line_before_tag.split(","):
             html = re.sub(
-                rf"(?<!^\n)((?:{{%\s*?{tag.strip()}\b[^}}]+?%}}\n?)+)",
+                rf"(?<!^\n)((?:{{%-?\s*?{tag.strip()}\b[^}}]+?-?%}}\n?)+)",
                 func,
                 html,
                 flags=RE_FLAGS_IMS,
@@ -209,7 +209,7 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
         if config.blank_line_after_tag:
             for tag in config.blank_line_after_tag.split(","):
                 if re.search(
-                    rf"((?:{{%\s*?{tag.strip()}[^}}]+?%}}\n?)+)",
+                    rf"((?:{{%-?\s*?{tag.strip()}[^}}]+?-?%}}\n?)+)",
                     html,
                     flags=RE_FLAGS_IMS,
                 ):
@@ -221,7 +221,7 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
         if config.blank_line_before_tag:
             for tag in config.blank_line_before_tag.split(","):
                 if re.search(
-                    rf"((?:{{%\s*?{tag.strip()}[^}}]+?%}}\n?)+)",
+                    rf"((?:{{%-?\s*?{tag.strip()}[^}}]+?-?%}}\n?)+)",
                     html,
                     flags=RE_FLAGS_IMS,
                 ):
