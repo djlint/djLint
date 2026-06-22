@@ -7,6 +7,7 @@
 ### Fix
 
 - Avoid false H025 reports for multiline Go template attributes.
+- Keep Django child-template reformatting idempotent when inline control blocks also appear inside HTML attributes.
 - Respect whitespace-control dashes when applying `blank_line_after_tag` and `blank_line_before_tag`.
 
 ## [1.39.2] - 2026-06-11

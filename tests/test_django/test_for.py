@@ -88,3 +88,26 @@ def test_base(source: str, expected: str, django_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+def test_issue_2098_child_template_inline_for_idempotent(
+    django_config: Config,
+) -> None:
+    source = (
+        '    <form id="my-form"\n'
+        '          action="{% url \'some-view-name\' object.identifier %}{% if request.GET.show_extra == \'true\' %}?show_extra=true{% endif %}"\n'
+        '              {{ form.first_field|add_class:"form-control"|add_error_class:"is-invalid" }}\n'
+        '              {% for error in form.first_field.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}\n'
+        "              {% for error in extra_errors.first_field %}\n"
+        '                <div class="form-text text-danger">{{ error }}</div>\n'
+        "              {% endfor %}\n"
+        '              {% for error in extra_errors.second_field %}<div class="form-text text-danger">{{ error }}</div>{% endfor %}\n'
+        '              {% for error in form.third_field.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}\n'
+        '              {% for error in extra_errors.third_field %}<div class="form-text text-danger">{{ error }}</div>{% endfor %}\n'
+    )
+
+    output = formatter(django_config, source)
+    second_output = formatter(django_config, output)
+
+    printer(output, source, second_output)
+    assert output == second_output

@@ -165,6 +165,7 @@ def _multiline_template_block_states(
         "\n" in match.group(2) and bool(match.group(2).strip())
         for match in re.finditer(
             rf"""
+            (?:\s|^)
             {{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}}
             ([^%]*?)
             {{%-?[ ]+?end\1[ ]*?%}}
