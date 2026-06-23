@@ -36,26 +36,32 @@ def run(
     orphan_tags: list[re.Match[str]] = []
 
     for match in re.finditer(
-        r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*?>",
+        r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*/?>",
         html,
         flags=re.X,
     ):
-        if match.group(1) and not re.search(
-            rf"^/?{config.always_self_closing_html_tags}\b",
-            match.group(1),
-            flags=RE_FLAGS_IX,
+        if (
+            match.group().rstrip().endswith("/>")
+            or not match.group(1)
+            or re.search(
+                rf"^/?{config.always_self_closing_html_tags}\b",
+                match.group(1),
+                flags=RE_FLAGS_IX,
+            )
         ):
-            # close tags should equal open tags
-            if match.group(1)[0] != "/":
-                open_tags.insert(0, match)
+            continue
+
+        # close tags should equal open tags
+        if match.group(1)[0] != "/":
+            open_tags.insert(0, match)
+        else:
+            for i, tag in enumerate(open_tags):
+                if tag.group(2) == match.group(1)[1:]:
+                    open_tags.pop(i)
+                    break
             else:
-                for i, tag in enumerate(open_tags):
-                    if tag.group(2) == match.group(1)[1:]:
-                        open_tags.pop(i)
-                        break
-                else:
-                    # there was no open tag matching the close tag
-                    orphan_tags.append(match)
+                # there was no open tag matching the close tag
+                orphan_tags.append(match)
 
     return tuple(
         {

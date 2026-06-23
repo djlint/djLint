@@ -398,6 +398,28 @@ def test_H025(
     assert result.exit_code == 0
     assert "H025" not in result.output
 
+    write_to_file(
+        tmp_file.name,
+        b"""  <div class="list-group-item">
+    <h3 class="mb-3 text-center">
+    </h3>
+    <form method="post" action="{% url 'account_login' %}">
+        <input type="hidden"
+               value="{{ redirect_field_value }}" />
+      <div class="mb-3 text-center">
+      </div>
+      <button type="submit" class="btn btn-primary w-100">
+      </button>
+    </form>
+  </div>
+  <div class="list-group-item text-center">
+      <a href="{{ signup_url }}"
+         class="link-underline link-underline-opacity-0 link-underline-opacity-100-hover">sign up</a>.
+  </div>""",
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--profile=django"))
+    assert "H025" not in result.output
+
     write_to_file(tmp_file.name, b"<col>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
