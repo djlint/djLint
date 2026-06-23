@@ -5,8 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import regex as re
-from click import echo
-from colorama import Fore
+from click import echo, style
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -84,7 +83,7 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
         )
 
     if not paths:
-        echo(Fore.BLUE + "No files to check! 😢")
+        echo(style("No files to check! 😢", fg="blue"))
 
     return paths
 

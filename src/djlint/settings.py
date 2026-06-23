@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import logging
 import sys
 from itertools import chain
 from pathlib import Path
@@ -11,8 +10,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 import yaml
-from click import echo
-from colorama import Fore
+from click import echo, style
 from pathspec import PathSpec
 
 try:
@@ -53,8 +51,6 @@ if TYPE_CHECKING:
 
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
 
-
-logger = logging.getLogger(__name__)
 
 DJLINT_TOML_CONFIG_FILES = ("djlint.toml", ".djlint.toml")
 
@@ -176,16 +172,20 @@ def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
         try:
             djlint_content.update(load_config_file(config))
         except Exception as error:
-            logger.error(
-                "%sFailed to load config file %s. %s", Fore.RED, config, error
+            echo(
+                style(
+                    f"Failed to load config file {config}. {error}", fg="red"
+                ),
+                err=True,
             )
 
     if pyproject_file := find_pyproject(src):
         try:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
-            logger.error(
-                "%sFailed to load pyproject.toml file. %s", Fore.RED, error
+            echo(
+                style(f"Failed to load pyproject.toml file. {error}", fg="red"),
+                err=True,
             )
         else:
             if content:
@@ -196,18 +196,22 @@ def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
         try:
             djlint_content.update(load_djlint_toml_config(djlint_toml_file))
         except Exception as error:
-            logger.error(
-                "%sFailed to load %s file. %s",
-                Fore.RED,
-                djlint_toml_file.name,
-                error,
+            echo(
+                style(
+                    f"Failed to load {djlint_toml_file.name} file. {error}",
+                    fg="red",
+                ),
+                err=True,
             )
 
     elif djlintrc_file := find_djlintrc(src):
         try:
             djlint_content.update(load_djlintrc_config(djlintrc_file))
         except Exception as error:
-            logger.error("%sFailed to load .djlintrc file. %s", Fore.RED, error)
+            echo(
+                style(f"Failed to load .djlintrc file. {error}", fg="red"),
+                err=True,
+            )
 
     return djlint_content
 
@@ -221,19 +225,30 @@ def validate_rules(
         name = rule["rule"].get("name", "undefined")
         if "name" not in rule["rule"]:
             warning = True
-            echo(Fore.RED + "Warning: A rule is missing a name! 😢")
+            echo(
+                style("Warning: A rule is missing a name! 😢", fg="red"),
+                err=True,
+            )
         if (
             "patterns" not in rule["rule"]
             and "python_module" not in rule["rule"]
         ):
             warning = True
             echo(
-                Fore.RED
-                + f"Warning: Rule {name} is missing a pattern or a python_module! 😢"
+                style(
+                    f"Warning: Rule {name} is missing a pattern or a python_module! 😢",
+                    fg="red",
+                ),
+                err=True,
             )
         if "message" not in rule["rule"]:
             warning = True
-            echo(Fore.RED + f"Warning: Rule {name} is missing a message! 😢")
+            echo(
+                style(
+                    f"Warning: Rule {name} is missing a message! 😢", fg="red"
+                ),
+                err=True,
+            )
 
         if not warning:
             yield rule
@@ -496,10 +511,13 @@ class Config:
             )
         except ValueError:
             echo(
-                Fore.RED
-                + "Error: Invalid pyproject.toml "
-                + "format_attribute_js_json_min_props value "
-                + f"{djlint_settings['format_attribute_js_json_min_props']}"
+                style(
+                    "Error: Invalid pyproject.toml "
+                    "format_attribute_js_json_min_props value "
+                    f"{djlint_settings['format_attribute_js_json_min_props']}",
+                    fg="red",
+                ),
+                err=True,
             )
             self.format_attribute_js_json_min_props = 2
 
@@ -672,8 +690,11 @@ class Config:
                 indent = int(djlint_settings.get("indent", default_indent))
             except ValueError:
                 echo(
-                    Fore.RED
-                    + f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}"
+                    style(
+                        f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}",
+                        fg="red",
+                    ),
+                    err=True,
                 )
                 indent = default_indent
         self.indent_size = indent
@@ -685,8 +706,11 @@ class Config:
             )
         except ValueError:
             echo(
-                Fore.RED
-                + f"Error: Invalid pyproject.toml indent value {djlint_settings['max_blank_lines']}"
+                style(
+                    f"Error: Invalid pyproject.toml indent value {djlint_settings['max_blank_lines']}",
+                    fg="red",
+                ),
+                err=True,
             )
             self.max_blank_lines = max_blank_lines or 0
 
@@ -889,8 +913,11 @@ class Config:
             )
         except ValueError:
             echo(
-                Fore.RED
-                + f"Error: Invalid pyproject.toml max_line_length value {djlint_settings['max_line_length']}"
+                style(
+                    f"Error: Invalid pyproject.toml max_line_length value {djlint_settings['max_line_length']}",
+                    fg="red",
+                ),
+                err=True,
             )
 
         self.max_attribute_length = 70
@@ -907,8 +934,11 @@ class Config:
             )
         except ValueError:
             echo(
-                Fore.RED
-                + f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}"
+                style(
+                    f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}",
+                    fg="red",
+                ),
+                err=True,
             )
 
         self.template_if_for_pattern = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"

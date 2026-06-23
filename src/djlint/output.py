@@ -10,11 +10,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import regex as re
-from click import echo
-from colorama import Fore, Style
+from click import echo, style
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
+    from typing import Any
 
     from djlint.settings import Config
     from djlint.types import LintError, ProcessResult
@@ -87,18 +87,22 @@ def print_output(
         and not config.stdin
         and (config.reformat or config.check)
     ):
-        reformat_success_color = (
-            Fore.RED + Style.BRIGHT if (format_error_count) > 0 else Fore.BLUE
-        )
         echo(
-            f"{reformat_success_color}{reformat_success_message}{Style.RESET_ALL}"
+            style(
+                reformat_success_message,
+                fg="red" if format_error_count > 0 else "blue",
+                bold=format_error_count > 0,
+            )
         )
 
     if config.lint and not config.quiet:
-        lint_success_color = (
-            Fore.RED + Style.BRIGHT if (lint_error_count) > 0 else Fore.BLUE
+        echo(
+            style(
+                lint_success_message,
+                fg="red" if lint_error_count > 0 else "blue",
+                bold=lint_error_count > 0,
+            )
         )
-        echo(f"{lint_success_color}{lint_success_message}{Style.RESET_ALL}")
 
     if print_blanks:
         echo()
@@ -133,23 +137,19 @@ def build_output(
 
     if "{filename}" not in config.linter_output_format and not config.stdin:  # noqa: RUF027
         echo(
-            f"{Fore.GREEN}{Style.BRIGHT}\n{filename}\n{Style.DIM}"
-            + "".join("─" for _ in range(1, width))
-            + Style.RESET_ALL
+            style(f"\n{filename}\n", fg="green", bold=True)
+            + style("".join("─" for _ in range(1, width)), dim=True)
         )
 
     for message_dict in errors:
-        line = Fore.BLUE + message_dict["line"] + Style.RESET_ALL
-        code = (
-            (Fore.RED if message_dict["code"][:1] == "E" else Fore.YELLOW)
-            + message_dict["code"]
-            + Style.RESET_ALL
+        line = style(message_dict["line"], fg="blue")
+        code = style(
+            message_dict["code"],
+            fg="red" if message_dict["code"][:1] == "E" else "yellow",
         )
         message = message_dict["message"]
-        match = (
-            Fore.BLUE
-            + re.sub(r"\s{2,}|\n", " ", message_dict["match"])
-            + Style.RESET_ALL
+        match = style(
+            re.sub(r"\s{2,}|\n", " ", message_dict["match"]), fg="blue"
         )
 
         echo(
@@ -159,8 +159,7 @@ def build_output(
                 code=code,
                 message=message,
                 match=match,
-            ),
-            err=False,
+            )
         )
 
     return len(errors)
@@ -173,26 +172,25 @@ def build_check_output(
     if not errors:
         return 0
 
-    color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
+    colors: dict[str, dict[str, Any]] = {
+        "-": {"fg": "yellow"},
+        "+": {"fg": "green"},
+        "@": {"fg": "blue", "bold": True},
+    }
     width, _ = shutil.get_terminal_size()
 
     if not config.quiet and bool(next(iter(errors.values()))):
         echo(
-            Fore.GREEN
-            + Style.BRIGHT
-            + "\n"
-            + build_relative_path(next(iter(errors)), config.project_root)
-            + "\n"
-            + Style.DIM
-            + "".join("─" for _ in range(1, width))
-            + Style.RESET_ALL
+            style(
+                f"\n{build_relative_path(next(iter(errors)), config.project_root)}\n",
+                fg="green",
+                bold=True,
+            )
+            + style("".join("─" for _ in range(1, width)), dim=True)
         )
 
         for diff in next(iter(errors.values()))[2:]:
-            echo(
-                f"{color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}",
-                err=False,
-            )
+            echo(style(diff, **colors.get(diff[:1], {})))
 
     return sum(1 for v in errors.values() if v)
 
@@ -235,7 +233,9 @@ def build_stats_output(
     echo()
     width, _ = shutil.get_terminal_size()
     echo(
-        f"{Fore.GREEN}{Style.BRIGHT}Statistics{Style.RESET_ALL}\n{Style.DIM}{'─' * width}{Style.RESET_ALL}"
+        style("Statistics", fg="green", bold=True)
+        + "\n"
+        + style("─" * width, dim=True)
     )
 
     if messages and codes:
@@ -249,7 +249,9 @@ def build_stats_output(
             count_space = (longest_count - _count_digits(code[1])) * " "
 
             echo(
-                f"{Fore.YELLOW}{code[0]}{Fore.BLUE} {code_space}{code[1]}{Style.RESET_ALL} {count_space}{messages[code[0]]}"
+                style(code[0], fg="yellow")
+                + style(f" {code_space}{code[1]}", fg="blue")
+                + f" {count_space}{messages[code[0]]}"
             )
 
     return sum(Counter(codes).values())

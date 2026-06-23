@@ -16,8 +16,6 @@ from typing import TYPE_CHECKING
 
 import click
 from click import echo
-from colorama import Fore, Style, colorama_text
-from tqdm import tqdm
 
 from djlint.github_output import print_github_output
 from djlint.lint import lint_file
@@ -35,7 +33,7 @@ if TYPE_CHECKING:
     from djlint.types import ProcessResult
 
 
-@click.command(  # type: ignore[operator]
+@click.command(
     context_settings={"help_option_names": ["-h", "--help"]},
     help="djLint · HTML template linter and formatter.",
 )
@@ -280,7 +278,6 @@ if TYPE_CHECKING:
     default=None,
     help="Output GitHub-compatible formatting.",
 )
-@colorama_text(autoreset=True)
 def main(
     *,
     src: tuple[str, ...],
@@ -330,6 +327,9 @@ def main(
     github_output: bool | None = None,
 ) -> None:
     """djLint · HTML template linter and formatter."""
+    if os.getenv("NO_COLOR") is not None:
+        click.get_current_context().color = False
+
     if github_output is None:
         github_output = bool(os.getenv("GITHUB_ACTIONS"))
 
@@ -421,21 +421,8 @@ def main(
                 message += " and "
             message += "Linting"
 
-        bar_message = "{}{}{} {}{{n_fmt}}/{{total_fmt}}{} {}files{} {{bar}} {}{{elapsed}}{}".format(
-            Fore.BLUE + Style.BRIGHT,
-            message,
-            Style.RESET_ALL,
-            Fore.RED + Style.BRIGHT,
-            Style.RESET_ALL,
-            Fore.BLUE + Style.BRIGHT,
-            Style.RESET_ALL,
-            Fore.GREEN + Style.BRIGHT,
-            Style.RESET_ALL + "    ",
-        )
         if not config.stdin and not config.quiet and not config.github_output:
             echo()
-
-        progress_char = " »" if sys.platform == "win32" else "┈━"
 
         files_count = len(file_list)
         max_workers = min(process_cpu_count() or 1, files_count)
@@ -455,34 +442,31 @@ def main(
 
             if temp_file is None:
                 file_errors = []
-                elapsed = "00:00"
-                with tqdm(
-                    total=files_count,
-                    bar_format=bar_message,
-                    colour="BLUE",
-                    ascii=progress_char,
-                    leave=False,
-                    disable=config.github_output,
-                ) as pbar:
+                progress_label = click.style(
+                    f"{message} {files_count}/{files_count} files",
+                    fg="blue",
+                    bold=True,
+                )
+                progress_template = (
+                    click.style(
+                        f"{message} %(info)s files", fg="blue", bold=True
+                    )
+                    + " "
+                    + click.style("[%(bar)s]", fg="blue")
+                )
+                with click.progressbar(
+                    length=files_count,
+                    label=progress_label,
+                    show_eta=False,
+                    show_percent=False,
+                    show_pos=True,
+                    bar_template=progress_template,
+                    file=click.get_text_stream("stderr"),
+                    hidden=config.github_output or config.quiet,
+                ) as bar:
                     for future in as_completed(futures):
                         file_errors.append(future.result())
-                        pbar.update()
-                        elapsed = pbar.format_interval(
-                            pbar.format_dict["elapsed"]
-                        )
-
-                finished_bar_message = f"{Fore.BLUE + Style.BRIGHT}{message}{Style.RESET_ALL} {Fore.GREEN + Style.BRIGHT}{{n_fmt}}/{{total_fmt}}{Style.RESET_ALL} {Fore.BLUE + Style.BRIGHT}files{Style.RESET_ALL} {{bar}} {Fore.GREEN + Style.BRIGHT}{elapsed}{Style.RESET_ALL}    "
-
-                with tqdm(
-                    total=files_count,
-                    initial=files_count,
-                    bar_format=finished_bar_message,
-                    colour="GREEN",
-                    ascii=progress_char,
-                    leave=True,
-                    disable=config.github_output,
-                ):
-                    pass
+                        bar.update(1)
             else:
                 file_errors = [
                     future.result() for future in as_completed(futures)

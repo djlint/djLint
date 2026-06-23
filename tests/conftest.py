@@ -10,8 +10,8 @@ from types import SimpleNamespace
 from typing import TYPE_CHECKING
 
 import pytest
+from click import style
 from click.testing import CliRunner
-from colorama import Fore, Style
 
 from djlint import main as djlint
 from djlint.settings import Config
@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 def runner(monkeypatch: pytest.MonkeyPatch) -> CliRunner:
     """Click runner for djlint tests."""
     monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("NO_COLOR", raising=False)
     return CliRunner()
 
 
@@ -57,35 +58,55 @@ def printer(expected: str, source: str, actual: str) -> None:
     diff_width = (width - len(diff_text) - 2) // 2
     source_width = (width - len(source_text) - 2) // 2
 
-    color = {"-": Fore.YELLOW, "+": Fore.GREEN, "@": Style.BRIGHT + Fore.BLUE}
+    colors: dict[str, dict[str, Any]] = {
+        "-": {"fg": "yellow"},
+        "+": {"fg": "green"},
+        "@": {"fg": "blue", "bold": True},
+    }
 
     print()
     print(
-        f"{Fore.BLUE}{Style.BRIGHT}{'─' * source_width} {source_text} {'─' * source_width}{Style.RESET_ALL}"
+        style(
+            f"{'─' * source_width} {source_text} {'─' * source_width}",
+            fg="blue",
+            bold=True,
+        )
     )
     print()
     print(source)
     print()
     print(
-        f"{Fore.BLUE}{Style.BRIGHT}{'─' * expected_width} {expected_text} {'─' * expected_width}{Style.RESET_ALL}"
+        style(
+            f"{'─' * expected_width} {expected_text} {'─' * expected_width}",
+            fg="blue",
+            bold=True,
+        )
     )
     print()
     print(expected)
     print()
     print(
-        f"{Fore.BLUE}{Style.BRIGHT}{'─' * actual_width} {actual_text} {'─' * actual_width}{Style.RESET_ALL}"
+        style(
+            f"{'─' * actual_width} {actual_text} {'─' * actual_width}",
+            fg="blue",
+            bold=True,
+        )
     )
     print()
     print(actual)
     print()
     print(
-        f"{Fore.BLUE}{Style.BRIGHT}{'─' * diff_width} {diff_text} {'─' * diff_width}{Style.RESET_ALL}"
+        style(
+            f"{'─' * diff_width} {diff_text} {'─' * diff_width}",
+            fg="blue",
+            bold=True,
+        )
     )
     print()
     for diff in tuple(
         difflib.unified_diff(expected.split("\n"), actual.split("\n"))
     )[2:]:
-        print(f"{color.get(diff[:1], Style.RESET_ALL)}{diff}{Style.RESET_ALL}")
+        print(style(diff, **colors.get(diff[:1], {})))
 
 
 def lint_printer(
@@ -103,40 +124,52 @@ def lint_printer(
 
     print()
     print(
-        f"{Fore.BLUE}{Style.BRIGHT}{'─' * source_width} {source_text} {'─' * source_width}{Style.RESET_ALL}"
+        style(
+            f"{'─' * source_width} {source_text} {'─' * source_width}",
+            fg="blue",
+            bold=True,
+        )
     )
     print()
     print(source)
     print()
 
     print(
-        f"{Fore.BLUE}{Style.BRIGHT}{'─' * expected_width} {expected_text} {'─' * expected_width}{Style.RESET_ALL}"
+        style(
+            f"{'─' * expected_width} {expected_text} {'─' * expected_width}",
+            fg="blue",
+            bold=True,
+        )
     )
     print()
     for x in expected:
         print(
-            f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}"
+            f"{style(x['code'], fg='red', bold=True)} {x['line']} {x['match']}"
         )
         print(f"     {x['message']}")
         print()
 
     print(
-        f"{Fore.BLUE}{Style.BRIGHT}{'─' * actual_width} {actual_text} {'─' * actual_width}{Style.RESET_ALL}"
+        style(
+            f"{'─' * actual_width} {actual_text} {'─' * actual_width}",
+            fg="blue",
+            bold=True,
+        )
     )
     print()
 
     for x in actual:
         print(
-            f"{Fore.RED}{Style.BRIGHT}{x['code']}{Style.RESET_ALL} {x['line']} {x['match']}"
+            f"{style(x['code'], fg='red', bold=True)} {x['line']} {x['match']}"
         )
         print(f"     {x['message']}")
         print()
     if not actual:
-        print(f"{Fore.YELLOW}No codes found.{Style.RESET_ALL}")
+        print(style("No codes found.", fg="yellow"))
         print()
 
     else:
-        print(f"{Fore.YELLOW}{actual}{Style.RESET_ALL}")
+        print(style(str(actual), fg="yellow"))
         print()
 
 

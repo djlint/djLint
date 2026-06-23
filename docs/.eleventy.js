@@ -5,8 +5,6 @@ const metagen = require("eleventy-plugin-metagen");
 const i18n = require("eleventy-plugin-i18n");
 const translations = require("./src/_data/i18n");
 const locales = require("./src/_data/locales");
-const fs = require("fs");
-const outdent = require("outdent");
 const schema = require("@quasibit/eleventy-plugin-schema");
 const editOnGithub = require("eleventy-plugin-edit-on-github");
 const i18n_func = require("eleventy-plugin-i18n/i18n.js");
@@ -139,7 +137,6 @@ module.exports = function (eleventyConfig) {
         i18n_options,
         page,
       )}</span></span>`;
-      return x.inputPath;
     },
     github_edit_class: "edit-on-github",
     github_edit_tag: "a",
@@ -216,10 +213,6 @@ module.exports = function (eleventyConfig) {
     "src/static/js/worker.js": "static/js/worker.js",
   });
 
-  eleventyConfig.addFilter("jsonify", (text) => {
-    return JSON.stringify(text).replace(/(?:\\n\s*){2,}/g, "\\n");
-  });
-
   eleventyConfig.addFilter("niceDate", (value) => {
     try {
       const options = { year: "numeric", month: "short", day: "numeric" };
@@ -238,29 +231,17 @@ module.exports = function (eleventyConfig) {
     }
   });
 
-  eleventyConfig.addFilter("algExcerpt", (text) => {
-    return text
-      .replace(/<code class="language-.*?">.*?<\/code>/gs, "")
-      .replace(/<.*?>/g, "")
-      .substring(0, 8000);
-  });
-
-  eleventyConfig.addCollection("algolia", function (collection) {
-    return collection.getFilteredByGlob("**/*.md");
-  });
-
   const icons = {
     note: '<span class="icon has-text-info mr-1"><i class="fas fa-pencil"></i></span>',
   };
 
   eleventyConfig.addShortcode("admonition", function (icon, title, text) {
-    return outdent`
-    <article class="message ${icon} box">
-      <div class="message-header">
-        <p>${icons[icon]} ${title}</p>
-      </div>
-      <div class="message-body">${markdownIt.render(text)}</div>
-    </article>`;
+    return `<article class="message ${icon} box">
+  <div class="message-header">
+    <p>${icons[icon]} ${title}</p>
+  </div>
+  <div class="message-body">${markdownIt.render(text)}</div>
+</article>`;
   });
 
   eleventyConfig.addFilter("markdown", (value) => {

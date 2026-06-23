@@ -38,6 +38,20 @@ def test_check_custom_file_src(runner: CliRunner, config_path: str) -> None:
     assert """Checking 2/2 files""" in result.output
 
 
+def test_check_custom_file_src_quiet(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint,
+        (
+            "-",
+            "--check",
+            "--quiet",
+            "--configuration",
+            "tests/test_config/test_files/djlint_toml_global.toml",
+        ),
+    )
+    assert not result.output
+
+
 @pytest.mark.parametrize(
     "config_path", [".djlintrc_global", "djlint_toml_global.toml"]
 )
