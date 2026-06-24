@@ -280,7 +280,7 @@ if TYPE_CHECKING:
     default=None,
     help="Output GitHub-compatible formatting.",
 )
-@partial
+@partial  # mypyc-compiled wheels crash without this hack
 def main(
     *,
     src: tuple[str, ...],
