@@ -11,6 +11,7 @@ from concurrent.futures import (
     ThreadPoolExecutor,
     as_completed,
 )
+from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -34,6 +35,7 @@ if TYPE_CHECKING:
 
 
 @click.command(
+    "main",
     context_settings={"help_option_names": ["-h", "--help"]},
     help="djLint · HTML template linter and formatter.",
 )
@@ -278,6 +280,7 @@ if TYPE_CHECKING:
     default=None,
     help="Output GitHub-compatible formatting.",
 )
+@partial
 def main(
     *,
     src: tuple[str, ...],

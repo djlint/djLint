@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.39.4] - 2026-06-24
+
+### Fix
+
+- Fix crashes in mypyc-compiled wheels.
+
 ## [1.39.3] - 2026-06-23
 
 ### Fix
