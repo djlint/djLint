@@ -114,11 +114,10 @@ def has_pragma(config: Config, first_line: str) -> bool:
         + golang_patterns
         + html_patterns,
     }
-
-    return any(
-        re.match(pattern, first_line)
-        for pattern in pragma_patterns[config.profile]
-    )
+    for pattern in pragma_patterns[config.profile]:
+        if re.match(pattern, first_line):
+            return True
+    return False
 
 
 def no_pragma(config: Config, this_file: Path) -> bool:

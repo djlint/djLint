@@ -143,7 +143,7 @@ def build_output(
     if "{filename}" not in config.linter_output_format and not config.stdin:  # noqa: RUF027
         echo(
             style(f"\n{filename}\n", fg="green", bold=True)
-            + style("".join("─" for _ in range(1, width)), dim=True)
+            + style("─" * (width - 1), dim=True)
         )
 
     for message_dict in errors:
@@ -191,7 +191,7 @@ def build_check_output(
                 fg="green",
                 bold=True,
             )
-            + style("".join("─" for _ in range(1, width)), dim=True)
+            + style("─" * (width - 1), dim=True)
         )
 
         for diff in next(iter(errors.values()))[2:]:
