@@ -58,6 +58,21 @@ def formatter(config: Config, rawcode: str) -> str:
     return beautified_code
 
 
+def reformat_string(
+    config: Config, rawcode: str, filename: str
+) -> tuple[dict[str, tuple[str, ...]], str]:
+    """Reformat an html string."""
+    beautified_code = formatter(config, rawcode)
+
+    return {
+        filename: tuple(
+            difflib.unified_diff(
+                rawcode.splitlines(), beautified_code.splitlines()
+            )
+        )
+    }, beautified_code
+
+
 def reformat_file(
     config: Config, this_file: Path
 ) -> dict[str, tuple[str, ...]]:
@@ -65,18 +80,12 @@ def reformat_file(
     with this_file.open(encoding="utf-8", newline="") as f:
         rawcode = f.read()
 
-    beautified_code = formatter(config, rawcode)
+    format_message, beautified_code = reformat_string(
+        config, rawcode, str(this_file)
+    )
 
-    if (
-        config.check is not True and beautified_code != rawcode
-    ) or config.stdin:
+    if config.check is not True and beautified_code != rawcode:
         with this_file.open("w", encoding="utf-8", newline="") as f:
             f.write(beautified_code)
 
-    return {
-        str(this_file): tuple(
-            difflib.unified_diff(
-                rawcode.splitlines(), beautified_code.splitlines()
-            )
-        )
-    }
+    return format_message

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import tempfile
 from importlib import metadata
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -26,6 +27,7 @@ from tests.conftest import write_to_file
 if TYPE_CHECKING:
     from tempfile import _TemporaryFileWrapper
 
+    import pytest
     from click.testing import CliRunner
 
 
@@ -102,7 +104,7 @@ def test_good_path_with_bad_ext(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ("tests/test_djlint/", "-e", "html.alphabet")
     )
-    assert result.exit_code == 0
+    assert result.exit_code == 1
     assert "No files to check!" in result.output
 
 
@@ -128,11 +130,29 @@ def test_stdin(runner: CliRunner) -> None:
 
     # check with reformat
     result = runner.invoke(djlint, ("-", "--reformat"), input="<div></div>")
+    assert result.exit_code == 0
     assert result.output == "<div></div>\n"
 
     # check with check
     result = runner.invoke(djlint, ("-", "--check"), input="<div></div>")
+    assert result.exit_code == 0
     assert result.output == "<div></div>\n"
+
+
+def test_stdin_reformat_without_temp_file(
+    runner: CliRunner, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def fail_named_temp_file(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError
+
+    monkeypatch.setattr(tempfile, "NamedTemporaryFile", fail_named_temp_file)
+
+    result = runner.invoke(
+        djlint, ("-", "--check"), input="<div><p>nice stuff here</p></div>"
+    )
+
+    assert result.exit_code == 1
+    assert result.output == "<div>\n    <p>nice stuff here</p>\n</div>\n"
 
 
 def test_stdin_non_ascii(runner: CliRunner) -> None:

@@ -75,7 +75,7 @@ def test_cli(runner: CliRunner) -> None:
             "--indent-js",
             "4",
         ),
-        input="<div></div>\n",
+        input="{# djlint:on #}\n<div>\n</div>\n",
     )
 
     print(result.output)

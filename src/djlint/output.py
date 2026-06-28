@@ -52,11 +52,16 @@ def print_output(
         file_errors,
         key=lambda x: next(iter(next(iter(x.values())))),  # type: ignore[call-overload]
     ):
-        if error.get("format_message") and not config.stdin:
-            # reformat message
-            format_error_count += build_check_output(
-                error["format_message"], config
-            )
+        if error.get("format_message"):
+            if config.stdin and config.check:
+                format_error_count += count_format_errors(
+                    error["format_message"]
+                )
+            elif not config.stdin:
+                # reformat message
+                format_error_count += build_check_output(
+                    error["format_message"], config
+                )
 
         if error.get("lint_message"):
             # lint message
@@ -192,6 +197,11 @@ def build_check_output(
         for diff in next(iter(errors.values()))[2:]:
             echo(style(diff, **colors.get(diff[:1], {})))
 
+    return count_format_errors(errors)
+
+
+def count_format_errors(errors: Mapping[str, Sequence[str]]) -> int:
+    """Count files with formatting changes."""
     return sum(1 for v in errors.values() if v)
 
 

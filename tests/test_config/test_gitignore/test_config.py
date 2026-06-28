@@ -54,7 +54,7 @@ def test_cli(runner: CliRunner) -> None:
         ),
     )
 
-    assert result.exit_code == 0
+    assert result.exit_code == 1
 
     result = runner.invoke(
         djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
@@ -90,7 +90,7 @@ def test_cli(runner: CliRunner) -> None:
         djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
     )
 
-    assert result.exit_code == 0
+    assert result.exit_code == 1
 
     pyproject_path.write_text(
         "[tool]\n[tool.djlint]\nuse_gitignore=false", encoding="utf-8"
@@ -111,7 +111,7 @@ def test_cli(runner: CliRunner) -> None:
         ),
     )
     print(result.output)
-    assert result.exit_code == 0
+    assert result.exit_code == 1
 
     try:
         gitignore_path.unlink()

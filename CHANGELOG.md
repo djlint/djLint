@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Process stdin formatting in memory instead of creating a temporary file, make `--check -` return 1 when formatting changes are needed, and return 1 when no files match the requested lint or format run.
+
 ## [1.39.4] - 2026-06-24
 
 ### Fix

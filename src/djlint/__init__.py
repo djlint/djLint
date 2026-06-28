@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import os
 import sys
-import tempfile
 from concurrent.futures import (
     ProcessPoolExecutor,
     ThreadPoolExecutor,
@@ -19,11 +18,11 @@ import click
 from click import echo
 
 from djlint.github_output import print_github_output
-from djlint.lint import lint_file
+from djlint.lint import lint_file, linter
 from djlint.output import print_output
-from djlint.reformat import reformat_file
+from djlint.reformat import reformat_file, reformat_string
 from djlint.settings import Config
-from djlint.src import get_src
+from djlint.src import get_src, has_pragma
 
 if sys.version_info >= (3, 13):
     from os import process_cpu_count
@@ -384,33 +383,41 @@ def main(
         github_output=github_output,
     )
 
-    temp_file = None
+    file_list = []
+    file_errors = []
+    files_count = 0
 
-    try:
-        if "-" in src:
-            if config.files:
-                file_list = get_src((Path(x) for x in config.files), config)
-
-            else:
-                config.stdin = True
-                stdin_stream = click.get_text_stream("stdin", encoding="utf-8")
-                stdin_text = stdin_stream.read()
-                temp_file = tempfile.NamedTemporaryFile(  # noqa: SIM115
-                    mode="w", encoding="utf-8", delete=False
-                )
-                temp_file.write(stdin_text)
-                temp_file.seek(0)
-
-                # cannot use gitignore for stdin paths.
-                config.use_gitignore = False
-
-                file_list = get_src((Path(temp_file.name),), config)
+    if "-" in src:
+        if config.files:
+            file_list = get_src((Path(x) for x in config.files), config)
 
         else:
-            file_list = get_src((Path(x) for x in src), config)
+            config.stdin = True
+            stdin_stream = click.get_text_stream("stdin", encoding="utf-8")
+            stdin_text = stdin_stream.read()
 
+            # cannot use gitignore for stdin paths.
+            config.use_gitignore = False
+
+            if config.require_pragma and not has_pragma(
+                config, stdin_text.split("\n", 1)[0]
+            ):
+                get_src((), config)
+                sys.exit(1)
+
+            file_error, formatted_code = process_stdin(config, stdin_text)
+            file_errors = [file_error]
+            files_count = 1
+
+            if config.reformat or config.check:
+                echo((formatted_code or "").rstrip().encode("utf-8"))
+
+    else:
+        file_list = get_src((Path(x) for x in src), config)
+
+    if not config.stdin:
         if not file_list:
-            return
+            sys.exit(1)
 
         message = ""
 
@@ -424,7 +431,7 @@ def main(
                 message += " and "
             message += "Linting"
 
-        if not config.stdin and not config.quiet and not config.github_output:
+        if not config.quiet and not config.github_output:
             echo()
 
         files_count = len(file_list)
@@ -443,52 +450,30 @@ def main(
                 for this_file in file_list
             }
 
-            if temp_file is None:
-                file_errors = []
-                progress_label = click.style(
-                    f"{message} {files_count}/{files_count} files",
-                    fg="blue",
-                    bold=True,
-                )
-                progress_template = (
-                    click.style(
-                        f"{message} %(info)s files", fg="blue", bold=True
-                    )
-                    + " "
-                    + click.style("[%(bar)s]", fg="blue")
-                )
-                with click.progressbar(
-                    length=files_count,
-                    label=progress_label,
-                    show_eta=False,
-                    show_percent=False,
-                    show_pos=True,
-                    bar_template=progress_template,
-                    file=click.get_text_stream("stderr"),
-                    hidden=config.github_output or config.quiet,
-                ) as bar:
-                    for future in as_completed(futures):
-                        file_errors.append(future.result())
-                        bar.update(1)
-            else:
-                file_errors = [
-                    future.result() for future in as_completed(futures)
-                ]
-
-        if temp_file and (config.reformat or config.check):
-            # if using stdin, only give back formatted code.
-            echo(
-                Path(temp_file.name)
-                .read_text(encoding="utf-8")
-                .rstrip()
-                .encode("utf-8")
+            file_errors = []
+            progress_label = click.style(
+                f"{message} {files_count}/{files_count} files",
+                fg="blue",
+                bold=True,
             )
-    finally:
-        if temp_file:
-            try:
-                temp_file.close()
-            finally:
-                Path(temp_file.name).unlink(missing_ok=True)
+            progress_template = (
+                click.style(f"{message} %(info)s files", fg="blue", bold=True)
+                + " "
+                + click.style("[%(bar)s]", fg="blue")
+            )
+            with click.progressbar(
+                length=files_count,
+                label=progress_label,
+                show_eta=False,
+                show_percent=False,
+                show_pos=True,
+                bar_template=progress_template,
+                file=click.get_text_stream("stderr"),
+                hidden=config.github_output or config.quiet,
+            ) as bar:
+                for future in as_completed(futures):
+                    file_errors.append(future.result())
+                    bar.update(1)
 
     if config.github_output:
         if (
@@ -518,3 +503,23 @@ def process(config: Config, this_file: Path) -> ProcessResult:
         output["lint_message"] = lint_file(config, this_file)
 
     return output
+
+
+def process_stdin(
+    config: Config, stdin_text: str
+) -> tuple[ProcessResult, str | None]:
+    """Run linter or formatter on stdin."""
+    output: ProcessResult = {}
+    html = stdin_text
+    formatted_code = None
+
+    if config.reformat or config.check:
+        output["format_message"], formatted_code = reformat_string(
+            config, stdin_text, "-"
+        )
+        html = formatted_code
+
+    if config.lint:
+        output["lint_message"] = linter(config, html, "-", "-")
+
+    return output, formatted_code

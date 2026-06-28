@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from click import echo
 
-from djlint.output import build_relative_path
+from djlint.output import build_relative_path, count_format_errors
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
@@ -43,10 +43,15 @@ def print_github_output(
         file_errors,
         key=lambda x: next(iter(next(iter(x.values())))),  # type: ignore[call-overload]
     ):
-        if error.get("format_message") and not config.stdin:
-            format_error_count += print_format_errors(
-                error["format_message"], config
-            )
+        if error.get("format_message"):
+            if config.stdin and config.check:
+                format_error_count += count_format_errors(
+                    error["format_message"]
+                )
+            elif not config.stdin:
+                format_error_count += print_format_errors(
+                    error["format_message"], config
+                )
         if error.get("lint_message"):
             lint_error_count += print_lint_errors(error["lint_message"], config)
 

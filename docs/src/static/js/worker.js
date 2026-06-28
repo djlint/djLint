@@ -120,21 +120,13 @@ from io import StringIO
 
 sys.stdout = StringIO()
 
-from pathlib import Path
-from tempfile import NamedTemporaryFile
-
-from djlint.reformat import reformat_file
+from djlint.reformat import formatter
 from djlint.settings import Config
 `);
     await self.pyodide.runPythonAsync("sys.stdout.flush()");
     await self.pyodide.runPythonAsync(`
-with NamedTemporaryFile(mode="w", encoding="utf-8", delete_on_close=False) as temp_file:
-    temp_file.write("""${html}""")
-    temp_file.close()
-    config = Config(
-      temp_file.name${configArguments}
-    )
-    result = Path(next(iter(reformat_file(config, Path(temp_file.name))))).read_text(encoding="utf-8")
+config = Config("."${configArguments})
+result = formatter(config, ${pythonString(html)})
 print(result.rstrip())
 `);
     const stdout = await self.pyodide.runPythonAsync("sys.stdout.getvalue()");
