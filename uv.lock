@@ -219,14 +219,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.0.1" },
-    { name = "cssbeautifier", specifier = ">=1.14.4" },
-    { name = "jsbeautifier", specifier = ">=1.14.4" },
-    { name = "json5", specifier = ">=0.9.11" },
-    { name = "pathspec", specifier = ">=0.12" },
-    { name = "pyyaml", specifier = ">=6" },
-    { name = "regex", specifier = ">=2023" },
-    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.0.1" },
+    { name = "click", specifier = ">=8.2.0" },
+    { name = "cssbeautifier", specifier = ">=1.13.0" },
+    { name = "jsbeautifier", specifier = ">=1.13.0" },
+    { name = "json5", specifier = ">=0.10.0" },
+    { name = "pathspec", specifier = ">=0.9.0" },
+    { name = "pyyaml", specifier = ">=5.1" },
+    { name = "regex", specifier = ">=2021.8.21" },
+    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=0.2.0" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=3.7.4" },
 ]
 

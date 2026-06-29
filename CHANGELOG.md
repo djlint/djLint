@@ -2,6 +2,20 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Packaging
+
+- Revise the minimum required dependency versions:
+  - click raised from 8.0.1 to 8.2.0
+  - cssbeautifier lowered from 1.14.4 to 1.13.0
+  - jsbeautifier lowered from 1.14.4 to 1.13.0
+  - json5 raised from 0.9.11 to 0.10.0
+  - pathspec lowered from 0.12 to 0.9.0
+  - pyyaml lowered from 6 to 5.1
+  - regex lowered from 2023 to 2021.8.21
+  - tomli is lowered from 2.0.1 to 0.2.0
+
 ## [1.39.5] - 2026-06-29
 
 ### Fix
