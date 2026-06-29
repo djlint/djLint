@@ -11,10 +11,8 @@ from typing import TYPE_CHECKING
 from djlint.formatter.class_attributes import restore_class_attribute_newlines
 from djlint.formatter.compress import compress_html
 from djlint.formatter.condense import clean_whitespace, condense_html
-from djlint.formatter.css import format_css
 from djlint.formatter.expand import expand_html
 from djlint.formatter.indent import indent_html
-from djlint.formatter.js import format_js
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -39,9 +37,13 @@ def formatter(config: Config, rawcode: str) -> str:
     beautified_code = condense_html(indented_code, config, rawcode)
 
     if config.format_css:
+        from djlint.formatter.css import format_css  # noqa: PLC0415
+
         beautified_code = format_css(beautified_code, config)
 
     if config.format_js:
+        from djlint.formatter.js import format_js  # noqa: PLC0415
+
         beautified_code = format_js(beautified_code, config)
 
     if config.preserve_class_newlines:

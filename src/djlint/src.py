@@ -83,9 +83,13 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
         )
 
     if not paths:
-        echo(style("No files to check! 😢", fg="blue"))
+        print_no_files_to_check()
 
     return paths
+
+
+def print_no_files_to_check() -> None:
+    echo(style("No files to check! 😢", fg="blue"))
 
 
 html_patterns = (r"<!--\s*djlint\:on\s*-->",)

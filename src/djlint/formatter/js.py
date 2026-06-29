@@ -6,9 +6,7 @@ from functools import partial
 from io import StringIO
 from typing import TYPE_CHECKING
 
-import jsbeautifier
 import regex as re
-from jsbeautifier.javascript.options import BeautifierOptions
 
 from djlint.helpers import RE_FLAGS_IS, child_of_unformatted_block
 
@@ -18,6 +16,10 @@ if TYPE_CHECKING:
 
 def format_js(html: str, config: Config) -> str:
     """Format javascript inside <script> tags."""
+    import jsbeautifier  # noqa: PLC0415
+    from jsbeautifier.javascript.options import (  # noqa: PLC0415
+        BeautifierOptions,
+    )
 
     def launch_formatter(
         config: Config, html: str, match: re.Match[str]

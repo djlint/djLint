@@ -21,6 +21,7 @@ from importlib import metadata
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import djlint as djlint_module
 from djlint import main as djlint
 from tests.conftest import write_to_file
 
@@ -120,6 +121,7 @@ def test_stdin(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ("-",), input='<div><p id="a"></p></div>')
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
+    assert "1/1 files" not in result.stderr
 
     # check with multiple inputs
     result = runner.invoke(
@@ -137,6 +139,13 @@ def test_stdin(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ("-", "--check"), input="<div></div>")
     assert result.exit_code == 0
     assert result.output == "<div></div>\n"
+
+    # check require pragma
+    result = runner.invoke(
+        djlint, ("-", "--require-pragma"), input="<div></div>"
+    )
+    assert result.exit_code == 1
+    assert "No files to check!" in result.output
 
 
 def test_stdin_reformat_without_temp_file(
@@ -175,6 +184,41 @@ def test_check(
     write_to_file(tmp_file.name, b"<div></div>")
     result = runner.invoke(djlint, (tmp_file.name, "--check"))
     assert result.exit_code == 0
+
+
+def test_single_worker_skips_executor(
+    runner: CliRunner,
+    tmp_file: _TemporaryFileWrapper[bytes],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    write_to_file(tmp_file.name, b"<div></div>")
+    monkeypatch.setattr(djlint_module, "process_cpu_count", lambda: 1)
+
+    result = runner.invoke(djlint, (tmp_file.name, "--check"))
+
+    assert result.exit_code == 0
+
+
+def test_import_skips_runtime_helpers() -> None:
+    src_path = str(Path(__file__).parents[2] / "src")
+    code = (
+        "import sys; "
+        f"sys.path.insert(0, {src_path!r}); "
+        "import djlint; "
+        "blocked = {'concurrent.futures', 'cssbeautifier', 'jsbeautifier', "
+        "'djlint.lint', 'djlint.reformat'}; "
+        "loaded = sorted(blocked & sys.modules.keys()); "
+        "print('\\n'.join(loaded)); "
+        "raise SystemExit(bool(loaded))"
+    )
+    py_sub = subprocess.run(  # noqa: S603
+        (sys.executable, "-c", code),
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+
+    assert py_sub.returncode == 0, py_sub.stdout
 
 
 def test_check_non_existing_file(runner: CliRunner) -> None:

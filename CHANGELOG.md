@@ -6,7 +6,15 @@
 
 ### Fix
 
-- Process stdin formatting in memory instead of creating a temporary file, make `--check -` return 1 when formatting changes are needed, and return 1 when no files match the requested lint or format run.
+- Return 1 when no files match the requested lint or format run.
+- Make `--check -` return 1 when formatting changes are needed.
+- Keep progress output off stdin runs.
+
+### Performance
+
+- Defer runtime-only imports until the CLI code paths that need them.
+- Process stdin formatting in memory instead of creating a temporary file.
+- Avoid creating an executor when a run only has one worker.
 
 ## [1.39.4] - 2026-06-24
 

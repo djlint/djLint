@@ -6,9 +6,7 @@ from functools import partial
 from io import StringIO
 from typing import TYPE_CHECKING
 
-import cssbeautifier
 import regex as re
-from cssbeautifier.css.options import BeautifierOptions
 
 from djlint.helpers import RE_FLAGS_IS, child_of_unformatted_block
 
@@ -18,6 +16,8 @@ if TYPE_CHECKING:
 
 def format_css(html: str, config: Config) -> str:
     """Format css inside <style> tags."""
+    import cssbeautifier  # noqa: PLC0415
+    from cssbeautifier.css.options import BeautifierOptions  # noqa: PLC0415
 
     def launch_formatter(
         config: Config, html: str, match: re.Match[str]
