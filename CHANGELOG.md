@@ -2,7 +2,9 @@
 
 [Semantic Versioning](https://semver.org/)
 
-## [Unreleased]
+## [1.39.7] - 2026-06-30
+
+### Fix
 
 - Preserve Jinja template comments inside formatted `<script>` and `<style>` blocks.
 
