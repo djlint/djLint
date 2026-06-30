@@ -9,8 +9,10 @@ import regex as re
 
 from djlint.helpers import (
     RE_FLAGS_IX,
+    inside_ignored_block,
     inside_ignored_linter_block,
     inside_ignored_rule,
+    inside_template_block,
     overlaps_ignored_block,
 )
 from djlint.lint import get_line
@@ -40,6 +42,14 @@ def run(
         html,
         flags=re.X,
     ):
+        if (
+            inside_ignored_block(config, html, match)
+            or inside_ignored_rule(config, html, match, rule["name"])
+            or inside_ignored_linter_block(config, html, match)
+            or inside_template_block(config, html, match)
+        ):
+            continue
+
         if (
             match.group().rstrip().endswith("/>")
             or not match.group(1)

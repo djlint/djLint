@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Avoid false H025 reports for HTML-like strings inside template tags.
 - Preserve Jinja template tags inside formatted `<script>` and `<style>` blocks.
 
 ### Packaging

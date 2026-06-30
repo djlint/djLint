@@ -387,6 +387,20 @@ def test_H025(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
 
+    # issue #364
+    write_to_file(
+        tmp_file.name,
+        b'{% if tag|startswith:"<del>" %}\n{% if tag|startswith:"<ins>" %}',
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--profile=django"))
+    assert result.exit_code == 0
+    assert "H025" not in result.output
+
+    write_to_file(tmp_file.name, b"<div><span>x</span>{# <div> #}</div>")
+    result = runner.invoke(djlint, (tmp_file.name, "--profile=django"))
+    assert result.exit_code == 0
+    assert "H025" not in result.output
+
     write_to_file(
         tmp_file.name,
         b"""<div
