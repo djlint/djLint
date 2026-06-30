@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- Preserve Jinja template tags inside formatted `<script>` and `<style>` blocks.
+
 ### Packaging
 
 - Revise the minimum required dependency versions:

@@ -217,6 +217,30 @@ test_data = [
         ({"format_js": True}),
         id="ignored blocks",
     ),
+    pytest.param(
+        (
+            "<script>\n"
+            "{% if x %}\n"
+            "a();\n"
+            "{% else %}\n"
+            'const literal = "__DJLINT_TEMPLATE_TAG_0__";\n'
+            "const value = {{ value }};\n"
+            "{% endif %}\n"
+            "</script>"
+        ),
+        (
+            "<script>\n"
+            "    {% if x %}\n"
+            "    a();\n"
+            "    {% else %}\n"
+            '    const literal = "__DJLINT_TEMPLATE_TAG_0__";\n'
+            "    const value = {{ value }};\n"
+            "    {% endif %}\n"
+            "</script>\n"
+        ),
+        ({"format_js": True, "profile": "jinja"}),
+        id="template tags",
+    ),
 ]
 
 

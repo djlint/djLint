@@ -8,7 +8,12 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.helpers import RE_FLAGS_IS, child_of_unformatted_block
+from djlint.helpers import (
+    RE_FLAGS_IS,
+    child_of_unformatted_block,
+    mask_template_tags,
+    restore_template_tags,
+)
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -39,17 +44,15 @@ def format_js(html: str, config: Config) -> str:
         # check which lines changed (these are the formattable lines)
         # and add the leading space to them.
 
+        js, replacements = mask_template_tags(config, match.group(3))
+
         config.js_config["indent_level"] = 1
         opts = BeautifierOptions(config.js_config)
-        beautified_lines = jsbeautifier.beautify(
-            match.group(3), opts
-        ).splitlines()
+        beautified_lines = jsbeautifier.beautify(js, opts).splitlines()
 
         config.js_config["indent_level"] = 2
         opts = BeautifierOptions(config.js_config)
-        beautified_lines_test = jsbeautifier.beautify(
-            match.group(3), opts
-        ).splitlines()
+        beautified_lines_test = jsbeautifier.beautify(js, opts).splitlines()
 
         with StringIO() as buf:
             for line, test in zip(
@@ -59,7 +62,7 @@ def format_js(html: str, config: Config) -> str:
                 if line != test:
                     buf.write(indent)
                 buf.write(line)
-            beautified = buf.getvalue()
+            beautified = restore_template_tags(buf.getvalue(), replacements)
 
         return match.group(1) + match.group(2) + beautified + "\n" + indent
 

@@ -8,7 +8,12 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.helpers import RE_FLAGS_IS, child_of_unformatted_block
+from djlint.helpers import (
+    RE_FLAGS_IS,
+    child_of_unformatted_block,
+    mask_template_tags,
+    restore_template_tags,
+)
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -37,17 +42,15 @@ def format_css(html: str, config: Config) -> str:
         # check which lines changed (these are the formattable lines)
         # and add the leading space to them.
 
+        css, replacements = mask_template_tags(config, match.group(3))
+
         config.css_config["indent_level"] = 1
         opts = BeautifierOptions(config.css_config)
-        beautified_lines = cssbeautifier.beautify(
-            match.group(3), opts
-        ).splitlines()
+        beautified_lines = cssbeautifier.beautify(css, opts).splitlines()
 
         config.css_config["indent_level"] = 2
         opts = BeautifierOptions(config.css_config)
-        beautified_lines_test = cssbeautifier.beautify(
-            match.group(3), opts
-        ).splitlines()
+        beautified_lines_test = cssbeautifier.beautify(css, opts).splitlines()
 
         with StringIO() as buf:
             for line, test in zip(
@@ -58,6 +61,13 @@ def format_css(html: str, config: Config) -> str:
                     buf.write(indent)
                 buf.write(line)
             beautified = buf.getvalue()
+            for marker, _ in replacements:
+                beautified = re.sub(
+                    rf"\n[ \t]*\n([ \t]*/\*{re.escape(marker)}\*/[ \t]*(?=\n|$))",
+                    r"\n\1",
+                    beautified,
+                )
+            beautified = restore_template_tags(beautified, replacements)
 
         return match.group(1) + match.group(2) + beautified + "\n" + indent
 

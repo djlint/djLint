@@ -194,6 +194,32 @@ test_data = [
         ({"format_js": True}),
         id="ignored blocks",
     ),
+    pytest.param(
+        (
+            "<style>\n"
+            "{% if x %}\n"
+            "body{color:{{ color }};}\n"
+            "{% else %}\n"
+            "body{color:blue;}\n"
+            "{% endif %}\n"
+            "</style>"
+        ),
+        (
+            "<style>\n"
+            "    {% if x %}\n"
+            "    body {\n"
+            "        color: {{ color }};\n"
+            "    }\n"
+            "    {% else %}\n"
+            "    body {\n"
+            "        color: blue;\n"
+            "    }\n"
+            "    {% endif %}\n"
+            "</style>\n"
+        ),
+        ({"format_css": True, "profile": "jinja"}),
+        id="template tags",
+    ),
 ]
 
 

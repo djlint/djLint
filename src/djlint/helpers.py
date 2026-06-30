@@ -266,6 +266,49 @@ def inside_template_block(
     )
 
 
+def mask_template_tags(
+    config: Config, html: str
+) -> tuple[str, list[tuple[str, str]]]:
+    """Hide template tags from formatters that parse JS or CSS."""
+    if "{%" not in html and "{{" not in html:
+        return html, []
+
+    replacements: list[tuple[str, str]] = []
+    marker_prefix = "__DJLINT_TEMPLATE_TAG_"
+    while marker_prefix in html:
+        marker_prefix = f"_{marker_prefix}"
+
+    def replace(match: re.Match[str]) -> str:
+        marker = f"{marker_prefix}{len(replacements)}__"
+        replacements.append((marker, match.group()))
+        line_start = html.rfind("\n", 0, match.start()) + 1
+        line_end = html.find("\n", match.end())
+        if line_end < 0:
+            line_end = len(html)
+        if (
+            not html[line_start : match.start()].strip()
+            and not html[match.end() : line_end].strip()
+        ):
+            return f"/*{marker}*/"
+        return marker
+
+    return (
+        _compile_pattern(config.template_tags, RE_FLAGS_ISX).sub(replace, html),
+        replacements,
+    )
+
+
+def restore_template_tags(
+    html: str, replacements: list[tuple[str, str]]
+) -> str:
+    """Put masked template tags back after JS or CSS formatting."""
+    for marker, replacement in replacements:
+        html = html.replace(f"/*{marker}*/", replacement).replace(
+            marker, replacement
+        )
+    return html
+
+
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _inside_html_attribute(
     html: str, /, *, html_tag_regex: str
