@@ -270,7 +270,7 @@ def mask_template_tags(
     config: Config, html: str
 ) -> tuple[str, list[tuple[str, str]]]:
     """Hide template tags from formatters that parse JS or CSS."""
-    if "{%" not in html and "{{" not in html:
+    if "{%" not in html and "{{" not in html and "{#" not in html:
         return html, []
 
     replacements: list[tuple[str, str]] = []
@@ -292,8 +292,10 @@ def mask_template_tags(
             return f"/*{marker}*/"
         return marker
 
+    template_tags = rf"(?:{config.template_tags})|\{{\#(?:(?!\#\}}).)*\#\}}"
+
     return (
-        _compile_pattern(config.template_tags, RE_FLAGS_ISX).sub(replace, html),
+        _compile_pattern(template_tags, RE_FLAGS_ISX).sub(replace, html),
         replacements,
     )
 

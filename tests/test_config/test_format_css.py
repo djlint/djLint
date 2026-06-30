@@ -195,6 +195,19 @@ test_data = [
         id="ignored blocks",
     ),
     pytest.param(
+        ("<style>\n{# TODO: fix later #}\nbody{color:red;}\n</style>"),
+        (
+            "<style>\n"
+            "    {# TODO: fix later #}\n"
+            "    body {\n"
+            "        color: red;\n"
+            "    }\n"
+            "</style>\n"
+        ),
+        ({"format_css": True, "profile": "jinja"}),
+        id="template comments",
+    ),
+    pytest.param(
         (
             "<style>\n"
             "{% if x %}\n"

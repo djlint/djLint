@@ -218,6 +218,12 @@ test_data = [
         id="ignored blocks",
     ),
     pytest.param(
+        ("<script>\n{# TODO: fix later #}\nvar x = 1;\n</script>"),
+        ("<script>\n    {# TODO: fix later #}\n    var x = 1;\n</script>\n"),
+        ({"format_js": True, "profile": "jinja"}),
+        id="template comments",
+    ),
+    pytest.param(
         (
             "<script>\n"
             "{% if x %}\n"
