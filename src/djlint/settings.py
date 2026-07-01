@@ -381,6 +381,7 @@ class Config:
         "script_style_closing",
         "script_style_inline",
         "script_style_opening",
+        "single_attribute_per_line",
         "start_template_tags",
         "statistics",
         "stdin",
@@ -435,6 +436,7 @@ class Config:
         max_line_length: int | None = None,
         max_attribute_length: int | None = None,
         format_attribute_template_tags: bool = False,
+        single_attribute_per_line: bool = False,
         format_attribute_js_json: bool = False,
         format_attribute_js_json_pattern: str = "",
         format_attribute_js_json_min_props: int | None = None,
@@ -494,6 +496,11 @@ class Config:
         self.format_attribute_template_tags: bool = (
             format_attribute_template_tags
             or djlint_settings.get("format_attribute_template_tags", False)
+        )
+
+        self.single_attribute_per_line: bool = (
+            single_attribute_per_line
+            or djlint_settings.get("single_attribute_per_line", False)
         )
 
         self.format_attribute_js_json: bool = (

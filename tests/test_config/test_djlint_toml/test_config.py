@@ -21,6 +21,7 @@ def test_default() -> None:
     assert config.custom_html == r"|mjml|simple-greeting|mj-\w+"
     assert config.extension == "html.dj"
     assert config.files == ["index.html"]
+    assert config.single_attribute_per_line is True
     assert config.format_attribute_template_tags is True
     assert config.format_attribute_js_json_min_props == 3
     assert config.format_css is True

@@ -6,6 +6,7 @@ custom_html = "mjml,simple-greeting,mj-\\w+"
 exclude = ".venv,venv,.tox,.eggs,..."
 extend_exclude = ".custom"
 extension = "html.dj"
+single_attribute_per_line = true
 format_attribute_template_tags = true
 format_attribute_js_json_min_props = 3
 format_css = true

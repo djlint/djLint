@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Feature
+
+- Add `single_attribute_per_line` to wrap attributes in a Prettier-like layout using the configured indent.
+
 ## [1.39.7] - 2026-06-30
 
 ### Fix

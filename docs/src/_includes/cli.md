@@ -61,6 +61,9 @@ Options:
   --format-attribute-template-tags
                                   Attempt to format template syntax inside of
                                   tag attributes.
+  --single-attribute-per-line
+                                  When an opening tag wraps, put each
+                                  attribute on its own line.
   --per-file-ignores <TEXT TEXT>...
                                   Ignore linter rules on a per-file basis.
   --indent-css INTEGER            Set CSS indent level.

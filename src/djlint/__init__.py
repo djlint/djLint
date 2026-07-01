@@ -225,6 +225,11 @@ if TYPE_CHECKING:
     help="Attempt to format template syntax inside of tag attributes.",
 )
 @click.option(
+    "--single-attribute-per-line",
+    is_flag=True,
+    help="When an opening tag wraps, put each attribute on its own line.",
+)
+@click.option(
     "--per-file-ignores",
     type=(str, str),
     multiple=True,
@@ -304,6 +309,7 @@ def main(
     max_line_length: int | None,
     max_attribute_length: int | None,
     format_attribute_template_tags: bool,
+    single_attribute_per_line: bool,
     format_attribute_js_json: bool,
     format_attribute_js_json_pattern: str,
     format_attribute_js_json_min_props: int | None,
@@ -365,6 +371,7 @@ def main(
         max_line_length=max_line_length,
         max_attribute_length=max_attribute_length,
         format_attribute_template_tags=format_attribute_template_tags,
+        single_attribute_per_line=single_attribute_per_line,
         format_attribute_js_json=format_attribute_js_json,
         format_attribute_js_json_pattern=format_attribute_js_json_pattern,
         format_attribute_js_json_min_props=format_attribute_js_json_min_props,

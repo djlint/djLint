@@ -8,6 +8,7 @@ custom_html = "mjml,simple-greeting,mj-\\w+"
 extension = "html.dj"
 files = ["index.html"]
 format_attribute_template_tags = true
+single_attribute_per_line = true
 format_css = true
 format_js = true
 ignore = "H014,H015"

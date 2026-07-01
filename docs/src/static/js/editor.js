@@ -52,6 +52,11 @@ if (typeof Worker !== "undefined") {
     ).checked;
     if (formatAttributeTemplateTags)
       config["formatAttributeTemplateTags"] = formatAttributeTemplateTags;
+    const singleAttributePerLine = document.getElementById(
+      "settings-single-attribute-per-line",
+    ).checked;
+    if (singleAttributePerLine)
+      config["singleAttributePerLine"] = singleAttributePerLine;
     const formatAttributeJsJson = document.getElementById(
       "settings-format-attribute-js-json",
     ).checked;

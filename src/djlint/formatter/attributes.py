@@ -258,7 +258,11 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
 
     tag = match.group(2) + " "
 
-    spacing = leading_space + len(tag) * " "
+    spacing = (
+        leading_space + config.indent
+        if config.single_attribute_per_line
+        else leading_space + len(tag) * " "
+    )
 
     attributes = []
 
@@ -407,7 +411,14 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
 
     close = match.group(4)
 
-    attribute_string = f"{leading_space}{tag}{attribute_string}{close}"
+    if config.single_attribute_per_line:
+        attribute_string = (
+            f"{leading_space}{match.group(2)}"
+            f"\n{spacing}{attribute_string}"
+            f"\n{leading_space}{close.strip()}"
+        )
+    else:
+        attribute_string = f"{leading_space}{tag}{attribute_string}{close}"
 
     # clean trailing spaces added by breaks
     attribute_string = "\n".join(

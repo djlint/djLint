@@ -63,6 +63,7 @@ def test_cli(runner: CliRunner) -> None:
             "--profile",
             "django",
             "--require-pragma",
+            "--single-attribute-per-line",
             "--use-gitignore",
             "--per-file-ignores",
             "test.html",
