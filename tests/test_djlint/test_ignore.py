@@ -5,11 +5,17 @@ uv run pytest tests/test_djlint/test_ignore.py
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from djlint.reformat import formatter
-from djlint.settings import Config
-from tests.conftest import printer
+from tests.conftest import config_builder, printer
+
+if TYPE_CHECKING:
+    from typing_extensions import Any
+
+    from djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -85,9 +91,9 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
 
 @pytest.mark.parametrize(("source", "ignored_block", "config"), test_off_blocks)
 def test_off_blocks_are_preserved(
-    source: str, ignored_block: str, config: dict[str, str | bool]
+    source: str, ignored_block: str, config: dict[str, Any]
 ) -> None:
-    output = formatter(Config("dummy/source.html", **config), source)
+    output = formatter(config_builder(config), source)
 
     printer(ignored_block, source, output)
     assert ignored_block in output

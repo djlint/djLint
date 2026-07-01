@@ -14,7 +14,8 @@ from click import echo, style
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
-    from typing import Any
+
+    from typing_extensions import Any
 
     from djlint.settings import Config
     from djlint.types import LintError, ProcessResult
