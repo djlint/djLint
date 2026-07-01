@@ -32,6 +32,16 @@ test_data = [
         id="issue_182_inline_if_in_tag_text",
     ),
     pytest.param(
+        "Dog{% if condition %}\ns{% endif %}",
+        "Dog{% if condition %}\ns{% endif %}\n",
+        id="issue_182_inline_if_prefix_multiline",
+    ),
+    pytest.param(
+        "__DJLINT_WS_LINE_0__\nDog{% if condition %}s{% endif %}",
+        "__DJLINT_WS_LINE_0__\nDog{% if condition %}s{% endif %}\n",
+        id="inline_if_preserves_marker_like_text",
+    ),
+    pytest.param(
         (
             "{% block content %}\n"
             "    <p>\n"

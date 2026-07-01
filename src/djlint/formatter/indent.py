@@ -231,6 +231,21 @@ def indent_html(rawcode: str, config: Config) -> str:
     tag_indent_pattern = re.compile(
         r"^(?:" + str(config.tag_indent) + r")", flags=RE_FLAGS_IMX
     )
+    template_start_pattern = re.compile(
+        r"(?:\{\{\#|\{%-?)[ ]*?" + str(config.start_template_tags),
+        flags=RE_FLAGS_IMX,
+    )
+    template_unindent_pattern = re.compile(
+        str(config.template_unindent), flags=RE_FLAGS_IMX
+    )
+    prefixed_template_tag_indent_pattern = re.compile(
+        r"^[^\S\n]*[\(\[](?:\{\{\#|\{%-?)[ ]*?"
+        + str(config.start_template_tags),
+        flags=RE_FLAGS_IMX,
+    )
+    template_tag_close_pattern = re.compile(
+        r"\{%-?\s*end|\{\{/", flags=RE_FLAGS_IMX
+    )
     indent_html_tags_pattern = re.compile(
         config.indent_html_tags_regex, flags=RE_FLAGS_IX
     )
@@ -238,6 +253,7 @@ def indent_html(rawcode: str, config: Config) -> str:
     for item in rawcode_flat_list:
         is_safe_closing_tag_ = is_safe_closing_tag(config, item)
         is_ignored_block_opening_ = is_ignored_block_opening(config, item)
+        dedent_after = 0
 
         # if a raw tag first line
         if not is_block_raw and is_ignored_block_opening_:
@@ -250,6 +266,18 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         if is_script_style_block_opening(config, item):
             in_script_style_tag = True
+
+        # Closing tags can trail rendered text; keep the line intact, then
+        # close indentation for following siblings.
+        if (
+            not is_block_raw
+            and ("{%" in item or "{{" in item)
+            and not template_unindent_pattern.match(item.lstrip())
+        ):
+            close_count = len(template_unindent_pattern.findall(item))
+            if close_count:
+                open_count = len(template_start_pattern.findall(item))
+                dedent_after = max(close_count - open_count, 0)
 
         if is_safe_closing_tag_:
             ignored_level -= 1
@@ -325,7 +353,16 @@ def indent_html(rawcode: str, config: Config) -> str:
             and not is_block_raw
             and in_set_tag
             and set_opening_brace_pattern.search(item)
-        ) or (tag_indent_pattern.search(item) and not is_block_raw):
+        ) or (
+            not is_block_raw
+            and (
+                tag_indent_pattern.search(item)
+                or (
+                    prefixed_template_tag_indent_pattern.search(item)
+                    and not template_tag_close_pattern.search(item)
+                )
+            )
+        ):
             tmp = (indent * indent_level) + item + "\n"
             indent_level += 1
 
@@ -350,6 +387,9 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
         else:
             tmp = item + "\n"
+
+        if dedent_after:
+            indent_level = max(indent_level - dedent_after, 0)
 
         # if a opening raw tag then start ignoring.. only if there is no closing tag
         # on the same line

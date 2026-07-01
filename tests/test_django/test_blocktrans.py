@@ -199,15 +199,17 @@ test_data = [
         (
             "{% autoescape off %}\n"
             "\n"
-            "  {% blocktrans %}\n"
-            "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
-            "  {% endblocktrans %}\n"
+            "    {% blocktrans %}\n"
+            "    You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
+            "    {% endblocktrans %}\n"
+            "{% endautoescape %}\n"
         ),
         (
             "{% autoescape off %}\n"
             "    {% blocktrans %}\n"
-            "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
-            "  {% endblocktrans %}\n"
+            "    You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
+            "    {% endblocktrans %}\n"
+            "{% endautoescape %}\n"
         ),
         id="blocktrans_autoescape",
     ),
@@ -215,14 +217,16 @@ test_data = [
         (
             "{% autoescape off %}\n"
             "    {% blocktrans %}\n"
-            "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
-            "      {% endblocktrans %}\n"
+            "    You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
+            "    {% endblocktrans %}\n"
+            "{% endautoescape %}\n"
         ),
         (
             "{% autoescape off %}\n"
             "    {% blocktrans %}\n"
-            "  You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
-            "      {% endblocktrans %}\n"
+            "    You're receiving this email because you requested a password reset for your user account at {{ site_name }}.\n"
+            "    {% endblocktrans %}\n"
+            "{% endautoescape %}\n"
         ),
         id="blocktrans_autoescape_two",
     ),
