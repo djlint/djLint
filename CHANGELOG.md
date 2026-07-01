@@ -2,6 +2,15 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Preserve inline template blocks embedded in rendered text or captured content so formatting does not add meaningful HTML whitespace.
+- Keep chained Jinja function calls and lookups intact when formatting template expressions.
+- Preserve whitespace-sensitive Django `filter` blocks instead of moving punctuation or translated text around them.
+- Keep Jinja/Nunjucks-trimmed `<textarea>` closing tags aligned without reformatting untrimmed textarea contents.
+
 ## [1.40.0] - 2026-07-01
 
 ### Feature

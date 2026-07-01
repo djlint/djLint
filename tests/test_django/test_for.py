@@ -21,13 +21,7 @@ test_data = [
             "<ul>{% for athlete in athlete_list %}<li>{{ athlete.name }}</li>{% empty %}<li>Sorry, no athletes in this list.</li>{% endfor %}</ul>"
         ),
         (
-            "<ul>\n"
-            "    {% for athlete in athlete_list %}\n"
-            "        <li>{{ athlete.name }}</li>\n"
-            "    {% empty %}\n"
-            "        <li>Sorry, no athletes in this list.</li>\n"
-            "    {% endfor %}\n"
-            "</ul>\n"
+            "<ul>{% for athlete in athlete_list %}<li>{{ athlete.name }}</li>{% empty %}<li>Sorry, no athletes in this list.</li>{% endfor %}</ul>\n"
         ),
         id="for_tag",
     ),

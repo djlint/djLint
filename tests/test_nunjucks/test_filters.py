@@ -21,9 +21,7 @@ test_data = [
             "{% set absoluteUrl %}{{ page.url | htmlBaseUrl(metadata.url) }}{% endset %}\n"
         ),
         (
-            "{% set absoluteUrl %}\n"
-            "    {{ page.url | htmlBaseUrl(metadata.url) }}\n"
-            "{% endset %}\n"
+            "{% set absoluteUrl %}{{ page.url | htmlBaseUrl(metadata.url) }}{% endset %}\n"
         ),
         ({}),
         id="one",

@@ -25,12 +25,8 @@ test_data = [
             "{% verylongexampletagthatiskindaneattolookat stuff%}{{ tag }}{% endverylongexampletagthatiskindaneattolookat %}"
         ),
         (
-            "{% example stuff %}\n"
-            "    <p>this is a very very long paragraph that does nothing except be a long paragraph asdfasdfasdfasdfasdf fasdf asdfasdfasdf</p>\n"
-            "{% endexample %}\n"
-            "{% verylongexampletagthatiskindaneattolookat stuff %}\n"
-            "    {{ tag }}\n"
-            "{% endverylongexampletagthatiskindaneattolookat %}\n"
+            "{% example stuff %}<p>this is a very very long paragraph that does nothing except be a long paragraph asdfasdfasdfasdfasdf fasdf asdfasdfasdf</p>{% endexample %}\n"
+            "{% verylongexampletagthatiskindaneattolookat stuff %}{{ tag }}{% endverylongexampletagthatiskindaneattolookat %}\n"
         ),
         ({
             "custom_blocks": "toc,example,verylongexampletagthatiskindaneattolookat"

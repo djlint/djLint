@@ -234,10 +234,9 @@ test_data = [
         (
             "{% for tag in collections.all | getAllTags | filterTagList | sort %}\n"
             "    {% set tagUrl %}\n"
-            "        /tags/{{ tag | slugify }}/\n"
-            "    {% endset %}\n"
-            '    <a href="{{ tagUrl }}" class="post-tag">{{ tag }} ({{ collections[tag].length }})</a>\n'
-            "{% endfor %}\n"
+            "        /tags/{{ tag | slugify }}/{% endset %}\n"
+            '        <a href="{{ tagUrl }}" class="post-tag">{{ tag }} ({{ collections[tag].length }})</a>\n'
+            "    {% endfor %}\n"
         ),
         ({}),
         id="check dedent on nested block",

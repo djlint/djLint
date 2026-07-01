@@ -333,7 +333,15 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
 
         elif is_block_raw or not item.strip():
-            tmp = item + "\n"
+            if (
+                config.profile in {"jinja", "nunjucks"}
+                and is_block_raw
+                and re.search(r"^\s*</textarea\b", item, flags=RE_FLAGS_IX)
+                and beautified_code.rstrip().endswith(("-}}", "-%}"))
+            ):
+                tmp = (indent * indent_level) + item.lstrip() + "\n"
+            else:
+                tmp = item + "\n"
 
         # otherwise, just leave same level
         elif not config.preserve_leading_space:

@@ -804,6 +804,7 @@ class Config:
             | <pre
             | <textarea
             | {%[ ]*?blocktrans(?:late)?(?:(?!%}|\btrimmed\b).)*?%}
+            | {%[ ]*?filter\b(?:(?!%}).)*?%}
             | {\#\s*djlint\:\s*off\s*\#}
             | {%[ ]+?comment[ ]+?(?:(?!%}).)*?%}
             | {{!--\s*djlint\:off\s*--}}
@@ -822,6 +823,7 @@ class Config:
             | ^(?:(?!{\#).)*\#} # lines that have a #}, but not a {#
             | </pre
             | </textarea
+            | {%[ ]*?endfilter(?:(?!%}).)*?%}
             | {\#\s*djlint\:\s*on\s*\#}
             | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
             | {{!--\s*djlint\:on\s*--}}
@@ -1182,6 +1184,7 @@ class Config:
             | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
             | <!--.*?-->
             | <\?php.*?\?>
+            | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
             | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
             | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
             | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
@@ -1208,6 +1211,7 @@ class Config:
             | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
             | <!--.*?-->
             | <\?php.*?\?>
+            | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
             | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
             | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
             | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
@@ -1246,6 +1250,7 @@ class Config:
             | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
             | <\?php.*?\?>
             | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
+            | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
             | {%[ ]*?blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
         """
 

@@ -88,3 +88,31 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+def test_jinja_trimmed_textarea_closing_indent(jinja_config: Config) -> None:
+    source = (
+        '<form method="post">\n'
+        '  <textarea name="code">\n'
+        "    {%- if object.code -%}\n"
+        "      {{- object.code -}}\n"
+        "    {%- endif -%}\n"
+        "  </textarea>\n"
+        "  <input>\n"
+        "</form>"
+    )
+    expected = (
+        '<form method="post">\n'
+        '    <textarea name="code">\n'
+        "    {%- if object.code -%}\n"
+        "      {{- object.code -}}\n"
+        "    {%- endif -%}\n"
+        "    </textarea>\n"
+        "    <input>\n"
+        "</form>\n"
+    )
+
+    output = formatter(jinja_config, source)
+
+    printer(expected, source, output)
+    assert expected == output

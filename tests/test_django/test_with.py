@@ -21,11 +21,7 @@ test_data = [
             "{% with total=business.employees.count %}{{ total }}<div>employee</div>{{ total|pluralize }}{% endwith %}"
         ),
         (
-            "{% with total=business.employees.count %}\n"
-            "    {{ total }}\n"
-            "    <div>employee</div>\n"
-            "    {{ total|pluralize }}\n"
-            "{% endwith %}\n"
+            "{% with total=business.employees.count %}{{ total }}<div>employee</div>{{ total|pluralize }}{% endwith %}\n"
         ),
         id="with_tag",
     )

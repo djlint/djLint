@@ -65,6 +65,26 @@ _BODY_HTML_TAG_PATTERN = re.compile(r"<[^>\n]*>", flags=RE_FLAGS_IX)
 _BODY_TEMPLATE_TAG_PATTERN = re.compile(
     r"\{%-?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX
 )
+_COMMENT_TEMPLATE_BLOCK_PATTERN = re.compile(
+    r"\{%-?\s*comment\b(?:(?!%}).)*?%\}.*?\{%-?\s*endcomment\s*-?%\}",
+    flags=RE_FLAGS_IX,
+)
+_NON_RENDERING_TEMPLATE_TAG_PATTERN = re.compile(
+    r"\{\#.*?\#\}|\{%-?.*?%\}|\{\{\s*(?:\#|/|else\b).*?\}\}", flags=RE_FLAGS_IX
+)
+_TRIMMED_TRANSLATION_BLOCK_PATTERN = re.compile(
+    r"\{%-?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}"
+    r".*?"
+    r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}",
+    flags=RE_FLAGS_IX,
+)
+_TRIMMED_TRANSLATION_OPEN_PATTERN = re.compile(
+    r"\{%-?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}",
+    flags=RE_FLAGS_IX,
+)
+_TRIMMED_TRANSLATION_CLOSE_PATTERN = re.compile(
+    r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}", flags=RE_FLAGS_IX
+)
 _TEMPLATE_END_TAG_NAMES = {"endall": "asyncall", "endeach": "asynceach"}
 _TEMPLATE_START_TAG_END_NAMES = {"asyncall": "endall", "asynceach": "endeach"}
 
@@ -128,6 +148,75 @@ def _is_closing_template_tag(tag: str) -> bool:
 
 def expand_html(html: str, config: Config) -> str:
     """Split single line html into many lines based on tags."""
+    marker_prefix = "__DJLINT_WS_LINE_"
+    while marker_prefix in html:
+        marker_prefix = f"_{marker_prefix}"
+
+    protected_lines: list[str] = []
+
+    def has_rendered_text(value: str) -> bool:
+        value = _COMMENT_TEMPLATE_BLOCK_PATTERN.sub("", value)
+        value = _TRIMMED_TRANSLATION_BLOCK_PATTERN.sub("", value)
+        value = _BODY_HTML_TAG_PATTERN.sub("", value)
+        value = _NON_RENDERING_TEMPLATE_TAG_PATTERN.sub("", value)
+        return bool(value.strip())
+
+    def has_template_block_tag(line: str) -> bool:
+        return ("{%" in line and "%}" in line) or (
+            "{{#" in line and "}}" in line
+        )
+
+    def is_trimmed_translation_content(
+        line: str, *, inside_trimmed_translation: bool
+    ) -> bool:
+        open_match = _TRIMMED_TRANSLATION_OPEN_PATTERN.search(line)
+        if open_match and has_rendered_text(line[: open_match.start()]):
+            return False
+
+        close_match = _TRIMMED_TRANSLATION_CLOSE_PATTERN.search(line)
+        if close_match and has_rendered_text(line[close_match.end() :]):
+            return False
+        if close_match:
+            return inside_trimmed_translation
+
+        return inside_trimmed_translation or bool(open_match)
+
+    def protect_line(line: str, *, inside_trimmed_translation: bool) -> str:
+        stripped = line.strip()
+        if (
+            not has_template_block_tag(line)
+            or (
+                stripped.startswith("<")
+                and stripped.endswith(">")
+                and "</" not in stripped
+            )
+            or is_trimmed_translation_content(
+                line, inside_trimmed_translation=inside_trimmed_translation
+            )
+            or not has_rendered_text(line)
+        ):
+            return line
+
+        marker = f"{marker_prefix}{len(protected_lines)}__"
+        protected_lines.append(line)
+        return marker
+
+    lines: list[str] = []
+    inside_trimmed_translation = False
+    for line in html.split("\n"):
+        lines.append(
+            protect_line(
+                line, inside_trimmed_translation=inside_trimmed_translation
+            )
+        )
+        if _TRIMMED_TRANSLATION_OPEN_PATTERN.search(
+            line
+        ) and not _TRIMMED_TRANSLATION_CLOSE_PATTERN.search(line):
+            inside_trimmed_translation = True
+        if _TRIMMED_TRANSLATION_CLOSE_PATTERN.search(line):
+            inside_trimmed_translation = False
+    html = "\n".join(lines)
+
     html_tags = config.break_html_tags
     optional_single_line_tag_pattern = _optional_single_line_tag_pattern(
         config.optional_single_line_html_tags
@@ -313,6 +402,9 @@ def expand_html(html: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group(1)
 
+        if inside_html_attribute(config, html, match):
+            return match.group(1)
+
         if should_preserve_template_body(out_format, match):
             return match.group(1)
 
@@ -347,9 +439,14 @@ def expand_html(html: str, config: Config) -> str:
     )
 
     # break after
-    return re.sub(
+    html = re.sub(
         rf"((?:{{%|{{{{\#)[ ]*?(?:{config.break_template_tags})(?>{config.template_tags}|[^}}])+?[%}}]}})(?=[^\n])",
         partial(should_i_move_template_tag, "%s\n"),
         html,
         flags=RE_FLAGS_IMX,
     )
+
+    for index, line in enumerate(protected_lines):
+        html = html.replace(f"{marker_prefix}{index}__", line)
+
+    return html

@@ -18,11 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ('{% spaceless %}<p><a href="foo/">Foo</a></p>{% endspaceless %}'),
-        (
-            "{% spaceless %}\n"
-            '    <p><a href="foo/">Foo</a></p>\n'
-            "{% endspaceless %}\n"
-        ),
+        ('{% spaceless %}<p><a href="foo/">Foo</a></p>{% endspaceless %}\n'),
         id="spaceless_tag",
     )
 ]

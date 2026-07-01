@@ -20,12 +20,7 @@ test_data = [
         (
             "{{#each people}}{{print_person}} <p>and more long stuff</p>{{/each}}"
         ),
-        (
-            "{{#each people }}\n"
-            "    {{print_person}}\n"
-            "    <p>and more long stuff</p>\n"
-            "{{/each}}\n"
-        ),
+        "{{#each people }}{{print_person}} <p>and more long stuff</p>{{/each}}\n",
         id="each_tag",
     ),
     pytest.param(

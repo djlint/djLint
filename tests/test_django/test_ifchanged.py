@@ -21,16 +21,7 @@ test_data = [
             '{% for match in matches %}<div style="background-color:"pink">{% ifchanged match.ballot_id %}{% cycle "red" "blue" %}{% else %}gray{% endifchanged %}{{ match }}</div>{% endfor %}'
         ),
         (
-            "{% for match in matches %}\n"
-            '    <div style="background-color:"pink">\n'
-            "        {% ifchanged match.ballot_id %}\n"
-            '            {% cycle "red" "blue" %}\n'
-            "        {% else %}\n"
-            "            gray\n"
-            "        {% endifchanged %}\n"
-            "        {{ match }}\n"
-            "    </div>\n"
-            "{% endfor %}\n"
+            '{% for match in matches %}<div style="background-color:"pink">{% ifchanged match.ballot_id %}{% cycle "red" "blue" %}{% else %}gray{% endifchanged %}{{ match }}</div>{% endfor %}\n'
         ),
         id="ifchanged_tag",
     )

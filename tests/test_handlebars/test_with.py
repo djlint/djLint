@@ -18,11 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{{#with person}}<p>{{firstname}} {{lastname}}</p>{{/with}}"),
-        (
-            "{{#with person}}\n"
-            "    <p>{{firstname}} {{lastname}}</p>\n"
-            "{{/with}}\n"
-        ),
+        "{{#with person}}<p>{{firstname}} {{lastname}}</p>{{/with}}\n",
         id="with_tag",
     )
 ]

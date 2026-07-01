@@ -35,9 +35,7 @@ test_data = [
             "{% if messages|length %}{% for message in messages %}{{ message }}{% endfor %}{% endif %}"
         ),
         (
-            "{% if messages|length %}\n"
-            "    {% for message in messages %}{{ message }}{% endfor %}\n"
-            "{% endif %}\n"
+            "{% if messages|length %}{% for message in messages %}{{ message }}{% endfor %}{% endif %}\n"
         ),
         id="single_liner",
     ),

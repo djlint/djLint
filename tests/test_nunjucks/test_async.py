@@ -21,13 +21,7 @@ test_data = [
             "<ul>{% asyncEach athlete in athlete_list %}<li>{{ athlete.name }}</li>{% empty %}<li>Sorry, no athletes in this list.</li>{% endeach %}</ul>"
         ),
         (
-            "<ul>\n"
-            "    {% asyncEach athlete in athlete_list %}\n"
-            "        <li>{{ athlete.name }}</li>\n"
-            "    {% empty %}\n"
-            "        <li>Sorry, no athletes in this list.</li>\n"
-            "    {% endeach %}\n"
-            "</ul>\n"
+            "<ul>{% asyncEach athlete in athlete_list %}<li>{{ athlete.name }}</li>{% empty %}<li>Sorry, no athletes in this list.</li>{% endeach %}</ul>\n"
         ),
         id="eachAsync",
     ),
@@ -36,13 +30,7 @@ test_data = [
             "<ul>{% asyncAll athlete in athlete_list %}<li>{{ athlete.name }}</li>{% empty %}<li>Sorry, no athletes in this list.</li>{% endall %}</ul>"
         ),
         (
-            "<ul>\n"
-            "    {% asyncAll athlete in athlete_list %}\n"
-            "        <li>{{ athlete.name }}</li>\n"
-            "    {% empty %}\n"
-            "        <li>Sorry, no athletes in this list.</li>\n"
-            "    {% endall %}\n"
-            "</ul>\n"
+            "<ul>{% asyncAll athlete in athlete_list %}<li>{{ athlete.name }}</li>{% empty %}<li>Sorry, no athletes in this list.</li>{% endall %}</ul>\n"
         ),
         id="eachAll",
     ),

@@ -68,6 +68,16 @@ test_data = [
         id="double_url_for_keyword_args",
     ),
     pytest.param(
+        "{{ foo('foo').bar }}",
+        '{{ foo("foo").bar }}\n',
+        id="issue_704_function_call_attribute_access",
+    ),
+    pytest.param(
+        "{{ url('foo').foo().bar[1] }}",
+        '{{ url("foo").foo().bar[1] }}\n',
+        id="issue_704_function_call_attribute_access_multiple",
+    ),
+    pytest.param(
         "<a href='{{ url_for('test_reminders') }}'>Test reminders</a>",
         "<a href='{{ url_for(\"test_reminders\") }}'>Test reminders</a>\n",
         id="single_quoted_attribute_url_for",

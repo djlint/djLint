@@ -21,12 +21,22 @@ test_data = [
             "{% filter force_escape|lower %}This text will be HTML-escaped, and will appear in all lowercase.{% endfilter %}"
         ),
         (
-            "{% filter force_escape|lower %}\n"
-            "    This text will be HTML-escaped, and will appear in all lowercase.\n"
-            "{% endfilter %}\n"
+            "{% filter force_escape|lower %}This text will be HTML-escaped, and will appear in all lowercase.{% endfilter %}\n"
         ),
         id="filter_tag",
-    )
+    ),
+    pytest.param(
+        (
+            "{% filter capfirst %}{% blocktrans %}dear {{ name }}{% endblocktrans %}{% endfilter %},\n"
+            "\n"
+            "How are you?"
+        ),
+        (
+            "{% filter capfirst %}{% blocktrans %}dear {{ name }}{% endblocktrans %}{% endfilter %},\n"
+            "How are you?\n"
+        ),
+        id="issue_165_inline_filter",
+    ),
 ]
 
 

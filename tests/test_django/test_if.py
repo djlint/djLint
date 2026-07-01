@@ -21,13 +21,7 @@ test_data = [
             "{% if athlete_list %}Number of athletes: {{ athlete_list|length }}{% elif athlete_in_locker_room_list %}Athletes should be out of the locker room soon!{% else %}No athletes.{% endif %}"
         ),
         (
-            "{% if athlete_list %}\n"
-            "    Number of athletes: {{ athlete_list|length }}\n"
-            "{% elif athlete_in_locker_room_list %}\n"
-            "    Athletes should be out of the locker room soon!\n"
-            "{% else %}\n"
-            "    No athletes.\n"
-            "{% endif %}\n"
+            "{% if athlete_list %}Number of athletes: {{ athlete_list|length }}{% elif athlete_in_locker_room_list %}Athletes should be out of the locker room soon!{% else %}No athletes.{% endif %}\n"
         ),
         id="if_tag",
     ),

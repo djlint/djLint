@@ -17,6 +17,21 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
+        "Dog{% if another_condition != 1 %}s{% endif %}",
+        "Dog{% if another_condition != 1 %}s{% endif %}\n",
+        id="issue_182_inline_if_suffix",
+    ),
+    pytest.param(
+        "0 {% if plural %}dogs{% else %}dog{% endif %}",
+        "0 {% if plural %}dogs{% else %}dog{% endif %}\n",
+        id="issue_182_inline_if_else",
+    ),
+    pytest.param(
+        "<p>Dog{% if condition %}s{% endif %}</p>",
+        "<p>Dog{% if condition %}s{% endif %}</p>\n",
+        id="issue_182_inline_if_in_tag_text",
+    ),
+    pytest.param(
         (
             "{% block content %}\n"
             "    <p>\n"
@@ -38,7 +53,7 @@ test_data = [
             "{% endblock %}\n"
         ),
         id="issue_2071_inline_trim_if",
-    )
+    ),
 ]
 
 

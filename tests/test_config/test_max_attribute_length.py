@@ -109,8 +109,7 @@ test_data = [
         ),
         (
             '<option data-json=\'{ "icon": "<img class=\\"ss\\">" }\'\n'
-            "    {% if True %}selected{% endif %}\n"
-            "    >\n"
+            "        {% if True %}selected{% endif %}>\n"
         ),
         ({"max_attribute_length": 1}),
         id="with_html_tag_in_attribute_escaped_and_template_tag",
