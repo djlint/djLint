@@ -81,6 +81,12 @@ const widont = (string) => {
     : string;
 };
 
+const djlintTomlConfig = (value) =>
+  value
+    .replace(/\[tool\.djlint\.([^\]]+)\]/g, "[$1]")
+    .replace(/\[tool\.djlint\]\n?/g, "")
+    .trim();
+
 module.exports = function (eleventyConfig) {
   eleventyConfig.addGlobalData(
     "djlint_version",
@@ -88,6 +94,7 @@ module.exports = function (eleventyConfig) {
   );
   eleventyConfig.setUseGitIgnore(false);
   eleventyConfig.addFilter("widont", widont);
+  eleventyConfig.addFilter("djlintTomlConfig", djlintTomlConfig);
   eleventyConfig.addWatchTarget("./src/static/");
   eleventyConfig.addNunjucksAsyncShortcode("image", imageShortcode);
   if (process.env.ELEVENTY_PRODUCTION == true) {

@@ -6,7 +6,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # {{ "configuration" | i18n }}
 
-La configuration se fait soit dans le fichier `pyproject.toml` de votre projet, soit dans le fichier `djlint.toml`, soit dans le fichier `.djlintrc`. Les arguments de la ligne de commande auront toujours la priorité sur les réglages du fichier `pyproject.toml`. Les paramètres locaux du projet auront toujours la priorité sur les fichiers de configuration globaux.
+La configuration se fait soit dans le fichier `pyproject.toml` de votre projet, soit dans le fichier `djlint.toml` ou `.djlint.toml`, soit dans le fichier `.djlintrc`. Les arguments de la ligne de commande auront toujours la priorité sur les réglages des fichiers de configuration. Les paramètres locaux du projet auront toujours la priorité sur les fichiers de configuration globaux.
 
 Le format de `pyproject.toml` est `toml`.
 
@@ -15,7 +15,7 @@ Le format de `pyproject.toml` est `toml`.
 <options de configuration>
 ```
 
-Le format de `djlint.toml` est `toml`.
+Le format de `djlint.toml` et `.djlint.toml` est `toml`.
 
 ```toml
 <options de configuration>
@@ -94,6 +94,9 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 {% for flag in option.usage %}
 
 <li class="{% if loop.index == 1 %}is-active{% endif %}"><a tab="{{- flag.name | slugify -}}-tab">{{ flag.name }}</a></li>
+{% if flag.name == "pyproject.toml" %}
+<li><a tab="djlint-toml-tab">djlint.toml / .djlint.toml</a></li>
+{% endif %}
 
 {% endfor %}
 
@@ -109,6 +112,15 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 ```
 
 </div>
+{% if flag.name == "pyproject.toml" %}
+<div class="tab"id="djlint-toml-tab">
+
+```toml
+{{ flag.value | djlintTomlConfig | safe }}
+```
+
+</div>
+{% endif %}
 {% endfor %}
 
 </div></div>

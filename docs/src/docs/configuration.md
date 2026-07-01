@@ -7,7 +7,7 @@ date: Last Modified
 
 # Configuration
 
-Configuration is done either through your projects `pyproject.toml` file, a `djlint.toml` or `.djlint.toml` file, or a `.djlintrc` file. Command line args will always override any settings in `pyproject.toml`. Local project settings will always override global configuration files.
+Configuration is done either through your project's `pyproject.toml` file, a `djlint.toml` or `.djlint.toml` file, or a `.djlintrc` file. Command line args will always override any settings in configuration files. Local project settings will always override global configuration files.
 
 The format for `pyproject.toml` is `toml`.
 
@@ -95,6 +95,9 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 {% for flag in option.usage %}
 
 <li class="{% if loop.index == 1 %}is-active{% endif %}"><a tab="{{- flag.name | slugify -}}-tab">{{ flag.name }}</a></li>
+{% if flag.name == "pyproject.toml" %}
+<li><a tab="djlint-toml-tab">djlint.toml / .djlint.toml</a></li>
+{% endif %}
 
 {% endfor %}
 
@@ -110,6 +113,15 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 ```
 
 </div>
+{% if flag.name == "pyproject.toml" %}
+<div class="tab"id="djlint-toml-tab">
+
+```toml
+{{ flag.value | djlintTomlConfig | safe }}
+```
+
+</div>
+{% endif %}
 {% endfor %}
 
 </div></div>

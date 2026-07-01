@@ -430,9 +430,9 @@
     "tags": ["formatter"],
     "description": {
       "en": "When an opening tag wraps, put the tag name, each attribute, and the closing bracket on separate lines. Disabled by default.",
-      "ru": "When an opening tag wraps, put the tag name, each attribute, and the closing bracket on separate lines. Disabled by default.",
-      "fr": "When an opening tag wraps, put the tag name, each attribute, and the closing bracket on separate lines. Disabled by default.",
-      "zh": "When an opening tag wraps, put the tag name, each attribute, and the closing bracket on separate lines. Disabled by default."
+      "ru": "Когда открывающий тег переносится, имя тега, каждый атрибут и закрывающая скобка помещаются на отдельные строки. По умолчанию отключено.",
+      "fr": "Lorsqu'une balise ouvrante est renvoyée à la ligne, le nom de la balise, chaque attribut et le chevron de fermeture sont placés sur des lignes séparées. Désactivé par défaut.",
+      "zh": "当开始标签换行时，将标签名、每个属性和结束括号分别放在单独的行上。默认禁用。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "single_attribute_per_line=true" },
@@ -499,9 +499,9 @@
     "tags": ["formatter"],
     "description": {
       "en": "Preserve line breaks inside multiline class attributes.",
-      "ru": "Preserve line breaks inside multiline class attributes.",
-      "fr": "Preserve line breaks inside multiline class attributes.",
-      "zh": "Preserve line breaks inside multiline class attributes."
+      "ru": "Сохранять переносы строк внутри многострочных атрибутов class.",
+      "fr": "Préserver les sauts de ligne dans les attributs class multilignes.",
+      "zh": "保留多行 class 属性中的换行。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_class_newlines=true" },

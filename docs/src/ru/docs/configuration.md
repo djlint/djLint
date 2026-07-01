@@ -6,7 +6,7 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 # {{ "configuration" | i18n }}
 
-Конфигурация выполняется либо через файл `pyproject.toml`, либо через файл `djlint.toml`, либо через файл `.djlintrc`. Параметры командной строки всегда будут переопределять любые настройки в `pyproject.toml`. Локальные настройки проекта всегда будут преобладать над глобальными конфигурационными файлами.
+Конфигурация выполняется либо через файл `pyproject.toml`, либо через файл `djlint.toml` или `.djlint.toml`, либо через файл `.djlintrc`. Параметры командной строки всегда будут переопределять любые настройки в конфигурационных файлах. Локальные настройки проекта всегда будут преобладать над глобальными конфигурационными файлами.
 
 Формат файла `pyproject.toml` - `toml`.
 
@@ -15,7 +15,7 @@ keywords: облицовка шаблонов, форматер шаблонов
 <опции конфигурации>
 ```
 
-Формат файла `djlint.toml` - `toml`.
+Формат файлов `djlint.toml` и `.djlint.toml` - `toml`.
 
 ```toml
 <опции конфигурации>
@@ -94,6 +94,9 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 {% for flag in option.usage %}
 
 <li class="{% if loop.index == 1 %}is-active{% endif %}"><a tab="{{- flag.name | slugify -}}-tab">{{ flag.name }}</a></li>
+{% if flag.name == "pyproject.toml" %}
+<li><a tab="djlint-toml-tab">djlint.toml / .djlint.toml</a></li>
+{% endif %}
 
 {% endfor %}
 
@@ -109,6 +112,15 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 ```
 
 </div>
+{% if flag.name == "pyproject.toml" %}
+<div class="tab"id="djlint-toml-tab">
+
+```toml
+{{ flag.value | djlintTomlConfig | safe }}
+```
+
+</div>
+{% endif %}
 {% endfor %}
 
 </div></div>

@@ -16,7 +16,7 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 
 ::: content
 
-- Bug fixes [#240](https://github.com/djlint/djLint/issues/240)
+- 修复了已知问题 [#240](https://github.com/djlint/djLint/issues/240)
   :::
 
 ## 1.0.1

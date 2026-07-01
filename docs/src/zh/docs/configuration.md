@@ -6,7 +6,7 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 
 # 配置
 
-配置可通过项目的 `pyproject.toml` 文件、`djlint.toml` 文件或 `.djlintrc` 文件来完成。命令行参数优先级大于配置文件的任何配置，本地项目设置优先级大于全局配置文件。
+配置可通过项目的 `pyproject.toml` 文件、`djlint.toml` 或 `.djlint.toml` 文件，或 `.djlintrc` 文件来完成。命令行参数优先级大于配置文件的任何配置，本地项目设置优先级大于全局配置文件。
 
 这是 `pyproject.toml` 的格式，遵循 `toml` 文件格式。
 
@@ -15,7 +15,7 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 <config options>
 ```
 
-这是 `djlint.toml` 的格式，遵循 `toml` 文件格式。
+这是 `djlint.toml` 和 `.djlint.toml` 的格式，遵循 `toml` 文件格式。
 
 ```toml
 <config options>
@@ -94,6 +94,9 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 {% for flag in option.usage %}
 
 <li class="{% if loop.index == 1 %}is-active{% endif %}"><a tab="{{- flag.name | slugify -}}-tab">{{ flag.name }}</a></li>
+{% if flag.name == "pyproject.toml" %}
+<li><a tab="djlint-toml-tab">djlint.toml / .djlint.toml</a></li>
+{% endif %}
 
 {% endfor %}
 
@@ -109,6 +112,15 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 ```
 
 </div>
+{% if flag.name == "pyproject.toml" %}
+<div class="tab"id="djlint-toml-tab">
+
+```toml
+{{ flag.value | djlintTomlConfig | safe }}
+```
+
+</div>
+{% endif %}
 {% endfor %}
 
 </div></div>
