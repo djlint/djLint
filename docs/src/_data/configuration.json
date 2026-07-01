@@ -435,14 +435,8 @@
       "zh": "When an opening tag wraps, put the tag name, each attribute, and the closing bracket on separate lines. Disabled by default."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "single_attribute_per_line=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"single_attribute_per_line\": true"
-      },
+      { "name": "pyproject.toml", "value": "single_attribute_per_line=true" },
+      { "name": ".djlintrc", "value": "\"single_attribute_per_line\": true" },
       { "name": "cli", "value": "--single-attribute-per-line" }
     ]
   },
