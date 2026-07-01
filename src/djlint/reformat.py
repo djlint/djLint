@@ -13,6 +13,7 @@ from djlint.formatter.compress import compress_html
 from djlint.formatter.condense import clean_whitespace, condense_html
 from djlint.formatter.expand import expand_html
 from djlint.formatter.indent import indent_html
+from djlint.helpers import mask_unformatted_blocks, restore_unformatted_blocks
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -26,7 +27,12 @@ def formatter(config: Config, rawcode: str) -> str:
         return rawcode
 
     # naturalize the line breaks
-    compressed = compress_html("\n".join(rawcode.splitlines()), config)
+    normalized_code = "\n".join(rawcode.splitlines())
+    normalized_code, unformatted_blocks = mask_unformatted_blocks(
+        normalized_code
+    )
+
+    compressed = compress_html(normalized_code, config)
 
     expanded = expand_html(compressed, config)
 
@@ -34,7 +40,7 @@ def formatter(config: Config, rawcode: str) -> str:
 
     indented_code = indent_html(condensed, config)
 
-    beautified_code = condense_html(indented_code, config, rawcode)
+    beautified_code = condense_html(indented_code, config, normalized_code)
 
     if config.format_css:
         from djlint.formatter.css import format_css  # noqa: PLC0415
@@ -48,6 +54,10 @@ def formatter(config: Config, rawcode: str) -> str:
 
     if config.preserve_class_newlines:
         beautified_code = restore_class_attribute_newlines(beautified_code)
+
+    beautified_code = restore_unformatted_blocks(
+        beautified_code, unformatted_blocks
+    )
 
     # preserve original line endings
     line_ending = rawcode.find("\n")

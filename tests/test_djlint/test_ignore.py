@@ -5,15 +5,11 @@ uv run pytest tests/test_djlint/test_ignore.py
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import pytest
 
 from djlint.reformat import formatter
+from djlint.settings import Config
 from tests.conftest import printer
-
-if TYPE_CHECKING:
-    from djlint.settings import Config
 
 test_data = [
     pytest.param(
@@ -23,6 +19,61 @@ test_data = [
     )
 ]
 
+test_off_blocks = [
+    pytest.param(
+        (
+            "<script>\n"
+            "    {# djlint:off #}\n"
+            "    const _steps = {\n"
+            "      {% for step in steps %}\n"
+            "        '{{ step.id }}': true\n"
+            "        {% if not forloop.last %},{% endif %}\n"
+            "      {% endfor %}\n"
+            "    };\n"
+            "    {# djlint:on #}\n"
+            "\n"
+            '    document.addEventListener("alpine:init", () => {\n'
+            '        Alpine.data("steps-table", () => ({ steps: _steps }));\n'
+            "    });\n"
+            "</script>"
+        ),
+        (
+            "    {# djlint:off #}\n"
+            "    const _steps = {\n"
+            "      {% for step in steps %}\n"
+            "        '{{ step.id }}': true\n"
+            "        {% if not forloop.last %},{% endif %}\n"
+            "      {% endfor %}\n"
+            "    };\n"
+            "    {# djlint:on #}"
+        ),
+        {"profile": "django", "format_js": True},
+        id="inside formatted script",
+    ),
+    pytest.param(
+        (
+            "{# djlint:off #}\n"
+            "{% block javascript %}\n"
+            "    <script>\n"
+            '        const someJavascript = "foo";\n'
+            "    </script>\n"
+            "{% endblock %}\n"
+            "{# djlint:on #}"
+        ),
+        (
+            "{# djlint:off #}\n"
+            "{% block javascript %}\n"
+            "    <script>\n"
+            '        const someJavascript = "foo";\n'
+            "    </script>\n"
+            "{% endblock %}\n"
+            "{# djlint:on #}"
+        ),
+        {"profile": "django", "format_js": False, "format_css": False},
+        id="around script block",
+    ),
+]
+
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_base(source: str, expected: str, basic_config: Config) -> None:
@@ -30,3 +81,13 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+@pytest.mark.parametrize(("source", "ignored_block", "config"), test_off_blocks)
+def test_off_blocks_are_preserved(
+    source: str, ignored_block: str, config: dict[str, str | bool]
+) -> None:
+    output = formatter(Config("dummy/source.html", **config), source)
+
+    printer(ignored_block, source, output)
+    assert ignored_block in output

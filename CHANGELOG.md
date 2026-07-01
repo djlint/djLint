@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Preserve full `djlint:off` blocks before formatter passes so ignored template, script, and style content is not rewritten.
 - Preserve inline template blocks embedded in rendered text or captured content so formatting does not add meaningful whitespace or misalign following content.
 - Keep chained Jinja function calls and lookups intact when formatting template expressions.
 - Preserve whitespace-sensitive Django `filter` blocks instead of moving punctuation or translated text around them.

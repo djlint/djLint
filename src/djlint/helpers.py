@@ -311,6 +311,59 @@ def restore_template_tags(
     return html
 
 
+_UNFORMATTED_BLOCKS = r"""
+      <!--\s*djlint\:off\s*-->.*?(?:<!--\s*djlint\:on\s*-->|\Z)
+    | {\#\s*djlint\:\s*off\s*\#}.*?(?:{\#\s*djlint\:\s*on\s*\#}|\Z)
+    | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?(?:{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}|\Z)
+    | {{!--\s*djlint\:off\s*--}}.*?(?:{{!--\s*djlint\:on\s*--}}|\Z)
+    | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?:{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}|\Z)
+"""
+
+
+def mask_unformatted_blocks(html: str) -> tuple[str, list[tuple[str, str]]]:
+    """Hide djlint:off blocks from the formatter pipeline."""
+    if "djlint:" not in html:
+        return html, []
+
+    replacements: list[tuple[str, str]] = []
+    marker_prefix = "__DJLINT_UNFORMATTED_BLOCK_"
+    while marker_prefix in html:
+        marker_prefix = f"_{marker_prefix}"
+
+    def replace(match: re.Match[str]) -> str:
+        marker = f"/*{marker_prefix}{len(replacements)}__*/"
+        replacements.append((marker, match.group()))
+        return marker
+
+    return (
+        _compile_pattern(_UNFORMATTED_BLOCKS, RE_FLAGS_IMSX).sub(replace, html),
+        replacements,
+    )
+
+
+def restore_unformatted_blocks(
+    html: str, replacements: list[tuple[str, str]]
+) -> str:
+    """Put masked djlint:off blocks back after formatting."""
+    for marker, replacement in replacements:
+
+        def replace_marker(
+            match: re.Match[str], replacement: str = replacement
+        ) -> str:
+            indent = match.group(1)
+            lines = replacement.split("\n")
+            lines[0] = indent + lines[0].lstrip()
+            if "djlint:on" in lines[-1]:
+                lines[-1] = indent + lines[-1].lstrip()
+            return "\n".join(lines)
+
+        html = _compile_pattern(
+            rf"^([ \t]*){re.escape(marker)}[ \t]*$", RE_FLAGS_MX
+        ).sub(replace_marker, html)
+        html = html.replace(marker, replacement)
+    return html
+
+
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _inside_html_attribute(
     html: str, /, *, html_tag_regex: str
