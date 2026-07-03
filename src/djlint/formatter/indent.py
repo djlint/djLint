@@ -231,6 +231,10 @@ def indent_html(rawcode: str, config: Config) -> str:
     tag_indent_pattern = re.compile(
         r"^(?:" + str(config.tag_indent) + r")", flags=RE_FLAGS_IMX
     )
+    html_tag_pattern = re.compile(config.html_tag_regex, flags=RE_FLAGS_IMSX)
+    void_html_tag_pattern = re.compile(
+        rf"^(?:{always_self_closing_html})$", flags=RE_FLAGS_IX
+    )
     template_start_pattern = re.compile(
         r"(?:\{\{\#|\{%-?)[ ]*?" + str(config.start_template_tags),
         flags=RE_FLAGS_IMX,
@@ -249,6 +253,31 @@ def indent_html(rawcode: str, config: Config) -> str:
     indent_html_tags_pattern = re.compile(
         config.indent_html_tags_regex, flags=RE_FLAGS_IX
     )
+
+    def starts_unclosed_html_tag(item: str) -> bool:
+        stripped_item = item.lstrip()
+        match = html_tag_pattern.match(stripped_item)
+        if (
+            not match
+            or match.group(1) != "<"
+            or match.group(4).startswith("/")
+            or void_html_tag_pattern.match(match.group(2))
+        ):
+            return False
+
+        tag = match.group(2).lower()
+        depth = 0
+        for tag_match in html_tag_pattern.finditer(stripped_item):
+            if tag_match.group(2).lower() != tag:
+                continue
+            is_self_closing = tag_match.group(4).startswith("/")
+            is_void = void_html_tag_pattern.match(tag_match.group(2))
+            if tag_match.group(1).startswith("</"):
+                depth -= 1
+            elif not is_self_closing and not is_void:
+                depth += 1
+
+        return depth > 0
 
     for item in rawcode_flat_list:
         is_safe_closing_tag_ = is_safe_closing_tag(config, item)
@@ -286,7 +315,9 @@ def indent_html(rawcode: str, config: Config) -> str:
                 is_block_raw = False
 
         if (not is_block_raw and ignored_inline_start_pattern.search(item)) or (
-            not is_block_raw and single_line_tag_pattern.search(item)
+            not is_block_raw
+            and single_line_tag_pattern.search(item)
+            and not starts_unclosed_html_tag(item)
         ):
             tmp = (indent * indent_level) + item + "\n"
 
@@ -319,6 +350,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             # and not ending in a slt like <span><strong></strong>.
             and not inline_slt_no_attrs_end_pattern.search(item)
             and not inline_slt_attrs_end_pattern.search(item)
+            and not starts_unclosed_html_tag(item)
         ):
             # block to catch inline block followed by a non-break tag
             if inline_slt_no_attrs_pattern.search(

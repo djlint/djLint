@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## Unreleased
+
+### Fix
+
+- Keep multiline inline-tag indentation when an inline child appears before following text.
+
 ## [1.40.1] - 2026-07-01
 
 ### Fix

@@ -110,6 +110,37 @@ test_data = [
         ),
         id="span_with_template",
     ),
+    pytest.param(
+        (
+            "<table>\n"
+            "    <tr>\n"
+            "        <th>End Date:</th>\n"
+            "        <td>\n"
+            '            <a href="">\n'
+            '                <span><i class=""></i>\n'
+            "                    Expires in {{ allocation.expires_in }} day{{ allocation.expires_in|pluralize }} - Click to renew\n"
+            "                </span>\n"
+            "            </a>\n"
+            "        </td>\n"
+            "    </tr>\n"
+            "</table>\n"
+        ),
+        (
+            "<table>\n"
+            "    <tr>\n"
+            "        <th>End Date:</th>\n"
+            "        <td>\n"
+            '            <a href="">\n'
+            '                <span><i class=""></i>\n'
+            "                    Expires in {{ allocation.expires_in }} day{{ allocation.expires_in|pluralize }} - Click to renew\n"
+            "                </span>\n"
+            "            </a>\n"
+            "        </td>\n"
+            "    </tr>\n"
+            "</table>\n"
+        ),
+        id="inline_child_before_text",
+    ),
 ]
 
 
