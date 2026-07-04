@@ -320,6 +320,14 @@ _UNFORMATTED_BLOCKS = r"""
 """
 
 
+def inside_opening_tag(html: str, index: int) -> bool:
+    """Return True when ``index`` falls inside an HTML tag's angle brackets."""
+    tag_start = html.rfind("<", 0, index)
+    return tag_start > html.rfind(">", 0, index) and bool(
+        re.match(r"</?\w", html[tag_start:])
+    )
+
+
 def mask_unformatted_blocks(html: str) -> tuple[str, list[tuple[str, str]]]:
     """Hide djlint:off blocks from the formatter pipeline."""
     if "djlint:" not in html:
@@ -330,16 +338,10 @@ def mask_unformatted_blocks(html: str) -> tuple[str, list[tuple[str, str]]]:
     while marker_prefix in html:
         marker_prefix = f"_{marker_prefix}"
 
-    def inside_opening_tag(index: int) -> bool:
-        tag_start = html.rfind("<", 0, index)
-        return tag_start > html.rfind(">", 0, index) and bool(
-            re.match(r"</?\w", html[tag_start:])
-        )
-
     def replace(match: re.Match[str]) -> str:
         marker = f"{marker_prefix}{len(replacements)}__"
         replacement = match.group()
-        if not inside_opening_tag(match.start()):
+        if not inside_opening_tag(html, match.start()):
             marker = f"/*{marker}*/"
         else:
             line_start = html.rfind("\n", 0, match.start()) + 1

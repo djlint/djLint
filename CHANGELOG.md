@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Do not add a `blank_line_after_tag` break after a template tag that sits inside an HTML tag's attribute value (e.g. a `{% block %}` embedded in a multiline `d="..."`); doing so corrupted the attribute and made `--reformat` non-idempotent.
+
 ## [1.40.3] - 2026-07-04
 
 ### Fix
