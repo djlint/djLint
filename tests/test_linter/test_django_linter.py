@@ -361,6 +361,17 @@ test_data = [
         ('<input class="{% if %}{% endif %}" />'), ([]), id="T028_no_7"
     ),
     pytest.param(
+        (
+            "{# djlint:off #}\n"
+            '<div class="wrapper">\n'
+            "{# djlint:on #}\n"
+            "  <p>hello</p>\n"
+            "</div>\n"
+        ),
+        ([]),
+        id="issue_2182_off_block_open_tag_matches_close_tag",
+    ),
+    pytest.param(
         ("{% static ''  \"  \"  'foo/bar.min.css' %}"),
         ([
             {

@@ -9,6 +9,7 @@ import regex as re
 
 from djlint.helpers import (
     RE_FLAGS_IX,
+    child_of_unformatted_block,
     inside_ignored_block,
     inside_ignored_linter_block,
     inside_ignored_rule,
@@ -42,9 +43,16 @@ def run(
         html,
         flags=re.X,
     ):
+        in_unformatted_block = child_of_unformatted_block(config, html, match)
         if (
-            inside_ignored_block(config, html, match)
-            or inside_ignored_rule(config, html, match, rule["name"])
+            (
+                inside_ignored_block(config, html, match)
+                and not in_unformatted_block
+            )
+            or (
+                inside_ignored_rule(config, html, match, rule["name"])
+                and not in_unformatted_block
+            )
             or inside_ignored_linter_block(config, html, match)
             or inside_template_block(config, html, match)
         ):

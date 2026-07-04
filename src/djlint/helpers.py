@@ -330,9 +330,23 @@ def mask_unformatted_blocks(html: str) -> tuple[str, list[tuple[str, str]]]:
     while marker_prefix in html:
         marker_prefix = f"_{marker_prefix}"
 
+    def inside_opening_tag(index: int) -> bool:
+        tag_start = html.rfind("<", 0, index)
+        return tag_start > html.rfind(">", 0, index) and bool(
+            re.match(r"</?\w", html[tag_start:])
+        )
+
     def replace(match: re.Match[str]) -> str:
-        marker = f"/*{marker_prefix}{len(replacements)}__*/"
-        replacements.append((marker, match.group()))
+        marker = f"{marker_prefix}{len(replacements)}__"
+        replacement = match.group()
+        if not inside_opening_tag(match.start()):
+            marker = f"/*{marker}*/"
+        else:
+            line_start = html.rfind("\n", 0, match.start()) + 1
+            leading = html[line_start : match.start()]
+            if leading and not leading.strip():
+                replacement = f"\n{leading}{replacement}"
+        replacements.append((marker, replacement))
         return marker
 
     return (
@@ -360,6 +374,10 @@ def restore_unformatted_blocks(
         html = _compile_pattern(
             rf"^([ \t]*){re.escape(marker)}[ \t]*$", RE_FLAGS_MX
         ).sub(replace_marker, html)
+        if replacement.startswith("\n"):
+            html = _compile_pattern(
+                rf"[ \t]*{re.escape(marker)}", RE_FLAGS_MX
+            ).sub(replacement, html)
         html = html.replace(marker, replacement)
     return html
 

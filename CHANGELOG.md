@@ -2,6 +2,13 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Preserve `djlint:off` blocks inside tag attributes and avoid false H025 orphan reports when a matching tag crosses a `djlint:off` block boundary.
+- Keep repeated single-line Django `{% if %}` blocks idempotent after one reformat pass.
+
 ## [1.40.2] - 2026-07-03
 
 ### Fix

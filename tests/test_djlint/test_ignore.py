@@ -89,6 +89,25 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
     assert expected == output
 
 
+def test_djlint_off_inside_attribute_list_is_preserved() -> None:
+    source = (
+        '<p class="text-gray-500"\n'
+        "  {# djlint:off #}\n"
+        '  x-text="\n'
+        "  items.length > 3\n"
+        "    ? items.slice(0, 3).join(', ') + '...'\n"
+        "    : items.join(', ')\n"
+        '  "{# djlint:on #}></p>'
+    )
+    expected = f"{source}\n"
+    output = formatter(
+        config_builder({"profile": "django", "indent": 2}), source
+    )
+
+    printer(expected, source, output)
+    assert expected == output
+
+
 @pytest.mark.parametrize(("source", "ignored_block", "config"), test_off_blocks)
 def test_off_blocks_are_preserved(
     source: str, ignored_block: str, config: dict[str, Any]
