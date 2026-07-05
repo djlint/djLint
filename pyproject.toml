@@ -50,7 +50,7 @@ dev = [
   "tomli==2.4.1",
   "types-pyyaml==6.0.12.20260518",
   "types-regex==2026.6.28.20260630",
-  "typing-extensions==4.15.0",
+  "typing-extensions==4.16.0",
 ]
 
 [build-system]
