@@ -84,6 +84,13 @@ test_data = [
         ([]),
         id="prefix and suffix quoted",
     ),
+    pytest.param(
+        (
+            '<input type="number" name="account_id" placeholder="enter account ID here" />'
+        ),
+        ([]),
+        id="id text inside quoted attributes",
+    ),
 ]
 
 
