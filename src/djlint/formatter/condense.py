@@ -16,6 +16,7 @@ from djlint.helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
     RE_FLAGS_MS,
+    inside_html_attribute,
     inside_ignored_block,
     inside_protected_trans_block,
     is_safe_closing_tag,
@@ -90,6 +91,9 @@ def clean_whitespace(html: str, config: Config) -> str:
     ) -> str:
         """Add break after if not in ignored block."""
         if inside_ignored_block(config, html, match):
+            return match.group()
+
+        if inside_html_attribute(config, html, match):
             return match.group()
 
         # check that next line is not blank.

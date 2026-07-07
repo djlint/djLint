@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Keep `blank_line_after_tag` from inserting blank lines inside multiline HTML attribute values, preserving idempotent reformatting for embedded template tags.
+
 ## [1.40.3] - 2026-07-04
 
 ### Fix
