@@ -227,6 +227,11 @@ test_data = [
         id="DJ018_has_urls",
     ),
     pytest.param(
+        ("<a href=\"#\" hx-post=\"{% url 'foo' action='bar' %}\">Link</a>"),
+        ([]),
+        id="DJ018_url_action_parameter",
+    ),
+    pytest.param(
         (
             '<div class="em-ajaxLogs" data-src="/table/task/{{ t.id }}/log"></div>'
         ),

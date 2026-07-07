@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Avoid false D018/J018 reports for `action` parameters inside quoted template URL helper attributes.
 - Report H007 when leading template tags appear before an HTML tag without a preceding doctype.
 - Keep `blank_line_after_tag` from inserting blank lines inside multiline HTML attribute values, preserving idempotent reformatting for embedded template tags.
 
