@@ -19,9 +19,7 @@
 - rule:
     name: T003
     message: "Endblock should have name. Ex: {% endblock body %}."
-    flags: re.DOTALL
-    patterns:
-      - '{%\s*?endblock\s*?%}'
+    python_module: djlint.rules.T003
 - rule:
     name: D004
     message: (Django) Static urls should follow {% static path/to/file %} pattern.

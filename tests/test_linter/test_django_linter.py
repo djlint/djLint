@@ -165,6 +165,23 @@ test_data = [
         id="T003",
     ),
     pytest.param(
+        ("{% block foo %}\n{% endblock bar %}"),
+        ([
+            {
+                "code": "T003",
+                "line": "2:0",
+                "match": "{% endblock bar %}",
+                "message": "Endblock name should match opening block name.",
+            }
+        ]),
+        id="T003_mismatched_block_name",
+    ),
+    pytest.param(
+        ("{% block foo %}\n{% endblock foo %}"),
+        ([]),
+        id="T003_matching_block_name",
+    ),
+    pytest.param(
         ('<link src="/static/there">'),
         ([
             {
