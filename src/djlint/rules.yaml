@@ -54,7 +54,7 @@
     message: <!DOCTYPE ... > should be present before the html tag.
     flags: re.DOTALL|re.I
     patterns:
-      - ^<html
+      - '^(?!(?:\s+|<!--.*?-->|{#.*?#}|{%.*?%})*<!doctype\b)(?:\s+|<!--.*?-->|{#.*?#}|{%.*?%})*\K<html'
 - rule:
     name: H008
     message: Attributes should be double quoted.

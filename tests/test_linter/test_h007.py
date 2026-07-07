@@ -52,3 +52,76 @@ def test_base(
         *(x for x in expected if x not in output[filename]),
     )
     assert not mismatch
+
+
+def test_django_load_before_html_reports_missing_doctype(
+    django_config: Config,
+) -> None:
+    source = "{% load static %}\n<html></html>"
+    filename = "test.html"
+    expected: list[LintError] = [
+        {
+            "code": "H005",
+            "line": "2:0",
+            "match": "<html></html>",
+            "message": "Html tag should have lang attribute.",
+        },
+        {
+            "code": "H007",
+            "line": "2:0",
+            "match": "<html",
+            "message": "<!DOCTYPE ... > should be present before the html tag.",
+        },
+        {
+            "code": "H016",
+            "line": "2:0",
+            "match": "<html></html>",
+            "message": "Missing title tag in html.",
+        },
+        {
+            "code": "H020",
+            "line": "2:0",
+            "match": "<html></html>",
+            "message": "Empty tag pair found. Consider removing.",
+        },
+        {
+            "code": "H030",
+            "line": "2:0",
+            "match": "<html></html>",
+            "message": "Consider adding a meta description.",
+        },
+        {
+            "code": "H031",
+            "line": "2:0",
+            "match": "<html></html>",
+            "message": "Consider adding meta keywords.",
+        },
+    ]
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, expected, output[filename])
+
+    mismatch = (
+        *(x for x in output[filename] if x not in expected),
+        *(x for x in expected if x not in output[filename]),
+    )
+    assert not mismatch
+
+
+def test_django_load_before_doctype_allows_html(django_config: Config) -> None:
+    source = (
+        "{% load static %}\n"
+        "<!DOCTYPE html>\n"
+        '<html lang="en"><head><title>Test</title>'
+        '<meta name="description" content="desc">'
+        '<meta name="keywords" content="kw"></head>'
+        "<body><p>Hi</p></body></html>"
+    )
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+
+    assert not output[filename]
