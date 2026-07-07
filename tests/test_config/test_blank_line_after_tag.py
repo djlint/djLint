@@ -164,18 +164,21 @@ test_data = [
         ),
         (
             '<svg viewBox="0 0 24 24">\n'
-            '    <path stroke-linecap="round" stroke-linejoin="round" d=" {% block svg_path %} {% endblock svg_path %}  " />\n'
+            '    <path stroke-linecap="round" stroke-linejoin="round" '
+            'd=" {% block svg_path %} {% endblock svg_path %}  " />\n'
             "</svg>\n"
         ),
         ({"blank_line_after_tag": "endblock"}),
-        id="endblock inside a multiline attribute value is not a block boundary",
+        id="endblock inside multiline attribute value",
     ),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
 def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
-    output = formatter(config_builder(args), source)
+    config = config_builder(args)
+    output = formatter(config, source)
 
     printer(expected, source, output)
     assert expected == output
+    assert output == formatter(config, output)

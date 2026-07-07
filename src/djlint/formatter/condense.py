@@ -16,8 +16,8 @@ from djlint.helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
     RE_FLAGS_MS,
+    inside_html_attribute,
     inside_ignored_block,
-    inside_opening_tag,
     inside_protected_trans_block,
     is_safe_closing_tag,
 )
@@ -93,10 +93,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group()
 
-        # a tag inside an opening html tag (e.g. a template tag embedded in a
-        # multiline attribute value) is not a real block boundary; adding a
-        # blank line there corrupts the attribute and is not idempotent.
-        if inside_opening_tag(html, match.start()):
+        if inside_html_attribute(config, html, match):
             return match.group()
 
         # check that next line is not blank.
