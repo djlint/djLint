@@ -25,6 +25,10 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
+P_LIST_CHILD_MESSAGE = "List tags should not be nested inside p tags."
+P_LIST_CHILD_TAGS = frozenset(("ol", "ul"))
+
+
 def run(
     rule: dict[str, Any],
     config: Config,
@@ -37,6 +41,7 @@ def run(
     """Check for orphans html tags."""
     open_tags: list[re.Match[str]] = []
     orphan_tags: list[re.Match[str]] = []
+    p_child_tags: list[re.Match[str]] = []
 
     for match in re.finditer(
         r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*/?>",
@@ -71,6 +76,10 @@ def run(
 
         # close tags should equal open tags
         if match.group(1)[0] != "/":
+            if match.group(2) in P_LIST_CHILD_TAGS and any(
+                tag.group(2) == "p" for tag in open_tags
+            ):
+                p_child_tags.append(match)
             open_tags.insert(0, match)
         else:
             for i, tag in enumerate(open_tags):
@@ -89,6 +98,19 @@ def run(
             "message": rule["message"],
         }
         for match in chain(open_tags, orphan_tags)
+        if (
+            not overlaps_ignored_block(config, html, match)
+            and not inside_ignored_rule(config, html, match, rule["name"])
+            and not inside_ignored_linter_block(config, html, match)
+        )
+    ) + tuple(
+        {
+            "code": rule["name"],
+            "line": get_line(match.start(), line_ends),
+            "match": match.group().strip()[:20],
+            "message": P_LIST_CHILD_MESSAGE,
+        }
+        for match in p_child_tags
         if (
             not overlaps_ignored_block(config, html, match)
             and not inside_ignored_rule(config, html, match, rule["name"])

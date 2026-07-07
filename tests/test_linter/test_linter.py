@@ -382,6 +382,21 @@ def test_H025(
     assert "H025 1:" in result.output
     assert "H025 2:" not in result.output
 
+    write_to_file(
+        tmp_file.name,
+        b"""<p>Here comes a paragraph
+<ul>
+    <li>First Item</li>
+</ul>
+</p>""",
+    )
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert result.exit_code == 1
+    assert (
+        "H025 2:0 List tags should not be nested inside p tags. <ul>"
+        in result.output
+    )
+
     # test tags inside attributes
     write_to_file(tmp_file.name, b'<span title="<p>Bar</p>">Foo</span>')
     result = runner.invoke(djlint, (tmp_file.name,))
