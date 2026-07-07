@@ -222,6 +222,9 @@ def indent_html(rawcode: str, config: Config) -> str:
     tag_unindent_line_pattern = re.compile(
         r"^" + str(config.tag_unindent_line), flags=RE_FLAGS_IMX
     )
+    single_line_template_tag_pattern = re.compile(
+        r"^\s*\{%-?(?:(?!%}).)*%}\s*$", flags=RE_FLAGS_IMSX
+    )
     set_open_pattern = re.compile(
         r"^([ ]*{%[ ]*?set)(?!.*%}).*$", flags=RE_FLAGS_IMX
     )
@@ -279,6 +282,9 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         return depth > 0
 
+    def formatted_item(item: str) -> str:
+        return item.lstrip() if config.preserve_leading_space else item
+
     for item in rawcode_flat_list:
         is_safe_closing_tag_ = is_safe_closing_tag(config, item)
         is_ignored_block_opening_ = is_ignored_block_opening(config, item)
@@ -319,7 +325,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             and single_line_tag_pattern.search(item)
             and not starts_unclosed_html_tag(item)
         ):
-            tmp = (indent * indent_level) + item + "\n"
+            tmp = (indent * indent_level) + formatted_item(item) + "\n"
 
         # closing set tag
         elif (
@@ -413,6 +419,12 @@ def indent_html(rawcode: str, config: Config) -> str:
                 tmp = item + "\n"
 
         # otherwise, just leave same level
+        elif (
+            config.preserve_leading_space
+            and single_line_template_tag_pattern.search(item)
+        ):
+            tmp = (indent * indent_level) + item.lstrip() + "\n"
+
         elif not config.preserve_leading_space:
             # if we are not trying to preserve indenting
             # on text, the add it now.

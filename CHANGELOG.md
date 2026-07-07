@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Keep Jinja comments and set tags idempotently indented with `preserve_leading_space`.
 - Avoid false H026 reports when `id` appears inside quoted attribute values.
 - Avoid false D018/J018 reports for `action` parameters inside quoted template URL helper attributes.
 - Report H007 when leading template tags appear before an HTML tag without a preceding doctype.

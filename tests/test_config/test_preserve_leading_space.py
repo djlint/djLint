@@ -156,12 +156,32 @@ test_data = [
         ({"preserve_blank_lines": True, "preserve_leading_space": True}),
         id="network stuff",
     ),
+    pytest.param(
+        (
+            "{% if condition %}\n"
+            "   {# aaa #}\n"
+            '   {%- set varx = "aaa" %}\n'
+            "   aaa\n"
+            "{% endif %}\n"
+        ),
+        (
+            "{% if condition %}\n"
+            "    {# aaa #}\n"
+            '    {%- set varx = "aaa" %}\n'
+            "   aaa\n"
+            "{% endif %}\n"
+        ),
+        ({"preserve_leading_space": True, "profile": "jinja"}),
+        id="jinja template lines",
+    ),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
 def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
-    output = formatter(config_builder(args), source)
+    config = config_builder(args)
+    output = formatter(config, source)
 
     printer(expected, source, output)
     assert expected == output
+    assert expected == formatter(config, output)
