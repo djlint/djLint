@@ -956,7 +956,12 @@ class Config:
             rf"""
             (?:
                 (
-                    (?:\w|-|\.|\:|@|/(?!>))+ | required | checked
+                    (?:\w|-|\.|\:|@|/(?!>)) # a name character
+                    (?:
+                        (?:\w|-|\.|\:|@|/(?!>)) # more name characters
+                       | (?>{{{{[\s\S]*?}}}}|{{%[\s\S]*?%}}) # or an embedded template tag
+                    )*
+                    | required | checked
                 )? # attribute name
                 (?:  [ ]*?=[ ]*? # followed by "="
                     (
