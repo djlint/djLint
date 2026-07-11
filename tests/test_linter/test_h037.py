@@ -46,6 +46,19 @@ test_data = [
         ([]),
         id="mismatch names",
     ),
+    pytest.param(
+        ('<input class="foo" placeholder="class=bar"/>'),
+        ([]),
+        id="name in quoted value",
+    ),
+    pytest.param(
+        (
+            '<c-recipe-card url="{{ recipe.url }}" '
+            'thumbnail_url="{{ recipe.thumbnail_url }}" />'
+        ),
+        ([]),
+        id="substring in underscore name",
+    ),
     pytest.param(('<rect x="2" y="3" rx="1" />'), ([]), id="substring names"),
     pytest.param(
         ('<svg -width="16" -width="2"></svg>'),
@@ -128,6 +141,12 @@ test_data = [
                 "code": "H037",
                 "line": "1:5",
                 "match": ":src",
+                "message": "Duplicate attribute found.",
+            },
+            {
+                "code": "H037",
+                "line": "2:7",
+                "match": "x-bind:class",
                 "message": "Duplicate attribute found.",
             },
         ]),

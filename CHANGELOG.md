@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Avoid false H037 reports when attribute names appear inside quoted values or other attribute names.
 - Preserve template expressions in HTML attribute names when wrapping attributes.
 - Preserve indentation after void tags containing markup in quoted attributes.
 
