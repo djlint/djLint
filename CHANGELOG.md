@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## Unreleased
+
+### Fix
+
+- Preserve template expressions in HTML attribute names when wrapping attributes.
+
 ## [1.40.4] - 2026-07-07
 
 ### Fix
