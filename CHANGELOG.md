@@ -7,6 +7,7 @@
 ### Fix
 
 - Preserve template expressions in HTML attribute names when wrapping attributes.
+- Preserve indentation after void tags containing markup in quoted attributes.
 
 ## [1.40.4] - 2026-07-07
 

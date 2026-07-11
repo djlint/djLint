@@ -52,6 +52,19 @@ test_data = [
         ),
         id="void_self_closing",
     ),
+    pytest.param(
+        (
+            '<head><link rel="icon" href="data:image/svg+xml,<svg><text>x</text></svg>">'
+            "<title>x</title></head>"
+        ),
+        (
+            "<head>\n"
+            '    <link rel="icon" href="data:image/svg+xml,<svg><text>x</text></svg>">\n'
+            "    <title>x</title>\n"
+            "</head>\n"
+        ),
+        id="void_tag_with_markup_in_attribute",
+    ),
 ]
 
 
