@@ -42,7 +42,7 @@ dependencies = [
 [dependency-groups]
 dev = [
   "covdefaults==2.3.0",
-  "mypy==2.1.0",
+  "mypy==2.2.0",
   "pytest==9.1.1",
   "pytest-cov==7.1.0",
   "pytest-github-actions-annotate-failures==0.4.2",
