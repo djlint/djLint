@@ -955,6 +955,34 @@ test_data = [
         ),
         id="template_var_in_attribute_name",
     ),
+    pytest.param(
+        (
+            '<input type="file" name="file" class="d-none"'
+            ' {{ st_controller }}-target= "documentFile" multiple />'
+        ),
+        (
+            '<input type="file"\n'
+            '       name="file"\n'
+            '       class="d-none"\n'
+            '       {{ st_controller }}-target="documentFile"\n'
+            "       multiple />\n"
+        ),
+        id="template_var_at_start_of_attribute_name",
+    ),
+    pytest.param(
+        (
+            '<input type="file" name="file" class="d-none"'
+            ' {{ attribute_name }}= "documentFile" multiple />'
+        ),
+        (
+            '<input type="file"\n'
+            '       name="file"\n'
+            '       class="d-none"\n'
+            '       {{ attribute_name }}="documentFile"\n'
+            "       multiple />\n"
+        ),
+        id="template_var_as_attribute_name",
+    ),
 ]
 
 

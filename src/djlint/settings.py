@@ -956,7 +956,11 @@ class Config:
             rf"""
             (?:
                 (
-                    (?:\w|-|\.|\:|@|/(?!>)) # a name character
+                    (?:
+                        (?:\w|-|\.|\:|@|/(?!>)) # a name character
+                       | (?>{{{{[\s\S]*?}}}})
+                         (?=(?:\w|-|\.|\:|@|/(?!>))|[ ]*=) # a leading template variable
+                    )
                     (?:
                         (?:\w|-|\.|\:|@|/(?!>)) # more name characters
                        | (?>{{{{[\s\S]*?}}}}|{{%[\s\S]*?%}}) # or an embedded template tag
