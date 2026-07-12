@@ -156,15 +156,23 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
         |    ^----^ base indent
         |
         """
+        template_unindent_pattern = re.compile(
+            config.template_unindent, RE_FLAGS_IX
+        )
+        tag_unindent_line_pattern = re.compile(
+            config.tag_unindent_line, RE_FLAGS_IX
+        )
+        template_indent_pattern = re.compile(
+            config.template_indent, RE_FLAGS_IX
+        )
+
         indent = 0
         indented = ""
         indent_adder = spacing or 0
 
         for line_number, line in enumerate(attributes.splitlines()):
             # when checking for template tag, use "match" to force start of line check.
-            if re.match(
-                config.template_unindent, line.strip(), flags=RE_FLAGS_IX
-            ):
+            if template_unindent_pattern.match(line.strip()):
                 indent -= 1
                 tmp = (
                     (indent * config.indent)
@@ -172,9 +180,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
                     + line.strip()
                 )
 
-            elif re.match(
-                config.tag_unindent_line, line.strip(), flags=RE_FLAGS_IX
-            ):
+            elif tag_unindent_line_pattern.match(line.strip()):
                 # if we are leaving an indented group, then remove the indent_adder
                 tmp = (
                     max(indent - 1, 0) * config.indent
@@ -182,11 +188,9 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
                     + line.strip()
                 )
 
-            elif re.search(
-                config.template_indent, line.strip(), flags=RE_FLAGS_IX
-            ) and not re.search(
-                config.template_unindent, line.strip(), flags=RE_FLAGS_IX
-            ):
+            elif template_indent_pattern.search(
+                line.strip()
+            ) and not template_unindent_pattern.search(line.strip()):
                 # for open tags, search, but then check that they are not closed.
                 tmp = (
                     (indent * config.indent)

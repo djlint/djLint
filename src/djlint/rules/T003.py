@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
+    RE_FLAGS_IS,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -20,11 +21,12 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-BLOCK_RE = re.compile(
+_BLOCK_PATTERN = re.compile(
     r"{%-?\s*(?P<closing>end)?block(?!trans)\b"
     r"(?:\s+(?P<name>[^\s%-][^\s%]*))?"
     r"(?:(?!%}).)*?-?%}",
-    flags=re.I | re.S,
+    RE_FLAGS_IS,
+    cache_pattern=False,
 )
 MISMATCH_MESSAGE = "Endblock name should match opening block name."
 MISSING_OPEN_MESSAGE = "Endblock should have matching block."
@@ -68,7 +70,7 @@ def run(
     errors: list[LintError] = []
     open_blocks: list[tuple[str, re.Match[str]]] = []
 
-    for match in BLOCK_RE.finditer(html):
+    for match in _BLOCK_PATTERN.finditer(html):
         if _ignored(rule, config, html, match):
             continue
 

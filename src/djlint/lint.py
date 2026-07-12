@@ -36,6 +36,7 @@ flags = {
     "re.L": re.L,
     "re.LOCALE": re.LOCALE,
 }
+_LINE_PATTERN = re.compile(r"(?:.*\n)|(?:[^\n]+$)", cache_pattern=False)
 
 
 def build_flags(flag_list: str | int) -> int:
@@ -64,7 +65,7 @@ def linter(
     # build list of line ends for file
     line_ends = [
         {"start": m.start(), "end": m.end()}
-        for m in re.finditer(r"(?:.*\n)|(?:[^\n]+$)", html)
+        for m in _LINE_PATTERN.finditer(html)
     ]
 
     ignored_rules: set[str] = set()

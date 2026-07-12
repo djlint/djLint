@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from functools import lru_cache, partial
+from functools import partial
 from typing import TYPE_CHECKING
 
 import regex as re
@@ -23,7 +23,6 @@ from djlint.helpers import (
 if TYPE_CHECKING:
     from djlint.settings import Config
 
-_EXPAND_PATTERN_CACHE_SIZE = 64
 _INLINE_CHILD_HTML_TAGS = frozenset({
     "a",
     "abbr",
@@ -56,49 +55,52 @@ _INLINE_CHILD_HTML_TAGS = frozenset({
     "var",
 })
 
-_TAG_NAME_PATTERN = re.compile(r"^</?\s*([^\s>/]+)", flags=RE_FLAGS_IX)
-_TEMPLATE_TAG_NAME_PATTERN = re.compile(
-    r"^\{%-?\s*([^\s%]+)", flags=RE_FLAGS_IX
+_TAG_NAME_PATTERN = re.compile(
+    r"^</?\s*([^\s>/]+)", RE_FLAGS_IX, cache_pattern=False
 )
-_BODY_TAG_PATTERN = re.compile(r"</?\s*([^\s>/]+)", flags=RE_FLAGS_IX)
-_BODY_HTML_TAG_PATTERN = re.compile(r"<[^>\n]*>", flags=RE_FLAGS_IX)
+_TEMPLATE_TAG_NAME_PATTERN = re.compile(
+    r"^\{%-?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
+)
+_BODY_TAG_PATTERN = re.compile(
+    r"</?\s*([^\s>/]+)", RE_FLAGS_IX, cache_pattern=False
+)
+_BODY_HTML_TAG_PATTERN = re.compile(
+    r"<[^>\n]*>", RE_FLAGS_IX, cache_pattern=False
+)
 _BODY_TEMPLATE_TAG_PATTERN = re.compile(
-    r"\{%-?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX
+    r"\{%-?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX, cache_pattern=False
 )
 _COMMENT_TEMPLATE_BLOCK_PATTERN = re.compile(
     r"\{%-?\s*comment\b(?:(?!%}).)*?%\}.*?\{%-?\s*endcomment\s*-?%\}",
     flags=RE_FLAGS_IX,
+    cache_pattern=False,
 )
 _NON_RENDERING_TEMPLATE_TAG_PATTERN = re.compile(
-    r"\{\#.*?\#\}|\{%-?.*?%\}|\{\{\s*(?:\#|/|else\b).*?\}\}", flags=RE_FLAGS_IX
+    r"\{\#.*?\#\}|\{%-?.*?%\}|\{\{\s*(?:\#|/|else\b).*?\}\}",
+    flags=RE_FLAGS_IX,
+    cache_pattern=False,
 )
 _TRIMMED_TRANSLATION_BLOCK_PATTERN = re.compile(
     r"\{%-?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}"
     r".*?"
     r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}",
     flags=RE_FLAGS_IX,
+    cache_pattern=False,
 )
 _TRIMMED_TRANSLATION_OPEN_PATTERN = re.compile(
     r"\{%-?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}",
     flags=RE_FLAGS_IX,
+    cache_pattern=False,
 )
 _TRIMMED_TRANSLATION_CLOSE_PATTERN = re.compile(
-    r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}", flags=RE_FLAGS_IX
+    r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}",
+    flags=RE_FLAGS_IX,
+    cache_pattern=False,
 )
 _TEMPLATE_END_TAG_NAMES = {"endall": "asyncall", "endeach": "asynceach"}
 _TEMPLATE_START_TAG_END_NAMES = {"asyncall": "endall", "asynceach": "endeach"}
 
 
-@lru_cache(maxsize=_EXPAND_PATTERN_CACHE_SIZE)
-def _optional_single_line_tag_pattern(
-    optional_single_line_html_tags: str,
-) -> re.Pattern[str]:
-    return re.compile(
-        rf"^(?:{optional_single_line_html_tags})$", flags=RE_FLAGS_IX
-    )
-
-
-@lru_cache(maxsize=_EXPAND_PATTERN_CACHE_SIZE)
 def _open_close_tag_patterns(
     tag_name: str,
 ) -> tuple[re.Pattern[str], re.Pattern[str]]:
@@ -106,13 +108,12 @@ def _open_close_tag_patterns(
     return (
         re.compile(
             rf"<{tag}\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>",
-            flags=RE_FLAGS_IX,
+            RE_FLAGS_IX,
         ),
-        re.compile(rf"</{tag}>", flags=RE_FLAGS_IX),
+        re.compile(rf"</{tag}>", RE_FLAGS_IX),
     )
 
 
-@lru_cache(maxsize=_EXPAND_PATTERN_CACHE_SIZE)
 def _open_close_template_tag_patterns(
     tag_name: str,
 ) -> tuple[re.Pattern[str], re.Pattern[str]]:
@@ -121,8 +122,8 @@ def _open_close_template_tag_patterns(
         _TEMPLATE_START_TAG_END_NAMES.get(tag_name, f"end{tag_name}")
     )
     return (
-        re.compile(rf"{{%-?\s*{tag}\b(?:(?!%}}).)*?%}}", flags=RE_FLAGS_IX),
-        re.compile(rf"{{%-?\s*{end_tag}\b(?:(?!%}}).)*?%}}", flags=RE_FLAGS_IX),
+        re.compile(rf"{{%-?\s*{tag}\b(?:(?!%}}).)*?%}}", RE_FLAGS_IX),
+        re.compile(rf"{{%-?\s*{end_tag}\b(?:(?!%}}).)*?%}}", RE_FLAGS_IX),
     )
 
 
@@ -218,13 +219,9 @@ def expand_html(html: str, config: Config) -> str:
     html = "\n".join(lines)
 
     html_tags = config.break_html_tags
-    optional_single_line_tag_pattern = _optional_single_line_tag_pattern(
-        config.optional_single_line_html_tags
-    )
+    optional_single_line_tag_pattern = config.optional_single_line_html_pattern
     optional_single_line_template_tag_pattern = (
-        _optional_single_line_tag_pattern(
-            config.optional_single_line_template_tags
-        )
+        config.optional_single_line_template_pattern
     )
 
     def should_preserve_inline_body(

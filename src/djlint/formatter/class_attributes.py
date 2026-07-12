@@ -12,6 +12,9 @@ if TYPE_CHECKING:
 
 CLASS_ATTRIBUTE_NEWLINE = "\x00DJLINT_CLASS_NEWLINE\x00"
 MIN_MULTILINE_CLASS_LINES = 2
+_CLASS_ATTRIBUTE_PATTERN = re.compile(
+    r"(?<![\w:.-])class(?![\w:.-])\s*=\s*(['\"])", re.I, cache_pattern=False
+)
 
 
 def encode_class_attribute_newlines(attributes: str, config: Config) -> str:
@@ -73,9 +76,6 @@ def restore_class_attribute_newlines(html: str) -> str:
     if CLASS_ATTRIBUTE_NEWLINE not in html:
         return html
 
-    class_pattern = re.compile(
-        r"(?<![\w:.-])class(?![\w:.-])\s*=\s*(['\"])", flags=re.I
-    )
     out: list[str] = []
     pos = 0
 
@@ -89,7 +89,7 @@ def restore_class_attribute_newlines(html: str) -> str:
 
         line_start = html.rfind("\n", 0, marker_pos) + 1
         line = html[line_start:marker_pos]
-        matches = tuple(class_pattern.finditer(line))
+        matches = tuple(_CLASS_ATTRIBUTE_PATTERN.finditer(line))
         if matches:
             indent_size = matches[-1].end()
         else:

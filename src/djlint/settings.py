@@ -26,7 +26,26 @@ else:
     _GITIGNORE_PATTERN = "gitignore"
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
-from djlint.helpers import RE_FLAGS_IX
+from djlint.helpers import RE_FLAGS_IMSX, RE_FLAGS_ISX, RE_FLAGS_IX
+
+_JS_JSON_OBJECT_PATTERN = re.compile(
+    r"^\s*\{(?![{%]).*\}\s*$", RE_FLAGS_IX, cache_pattern=False
+)
+_JS_JSON_STRING_PATTERN = re.compile(
+    r'["\']([^"\']*)["\']', RE_FLAGS_IX, cache_pattern=False
+)
+_JS_JSON_PROPERTY_PATTERN = re.compile(
+    r"""
+    (?:^|[,{]\s*)
+    (?:
+        [a-zA-Z_$][a-zA-Z0-9_$]*\s*:
+      | (?:get|set)\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(
+      | (?:async\s+)?\*?\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(
+    )
+    """,
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
 
 if sys.version_info >= (3, 11):
     try:
@@ -333,20 +352,30 @@ class Config:
         "github_output",
         "gitignore",
         "html_tag_attribute_regex",
+        "html_tag_pattern",
         "html_tag_regex",
         "ignore",
         "ignore_blocks",
         "ignore_case",
         "ignored_attributes",
         "ignored_block_closing",
+        "ignored_block_closing_pattern",
         "ignored_block_opening",
+        "ignored_block_opening_pattern",
         "ignored_blocks",
         "ignored_blocks_inline",
+        "ignored_blocks_inline_pattern",
+        "ignored_blocks_pattern",
         "ignored_inline_blocks",
+        "ignored_inline_blocks_ix_pattern",
         "ignored_linter_blocks",
+        "ignored_linter_blocks_pattern",
+        "ignored_rule_patterns",
         "ignored_rules",
         "ignored_trans_blocks",
         "ignored_trans_blocks_closing",
+        "ignored_trans_blocks_closing_pattern",
+        "ignored_trans_blocks_pattern",
         "include",
         "indent",
         "indent_html_tags",
@@ -365,7 +394,9 @@ class Config:
         "no_function_formatting",
         "no_line_after_yaml",
         "no_set_formatting",
+        "optional_single_line_html_pattern",
         "optional_single_line_html_tags",
+        "optional_single_line_template_pattern",
         "optional_single_line_template_tags",
         "per_file_ignores",
         "preserve_blank_lines",
@@ -377,10 +408,16 @@ class Config:
         "quiet",
         "reformat",
         "require_pragma",
+        "safe_closing_block_pattern",
         "safe_closing_tag",
+        "safe_closing_tag_pattern",
         "script_style_closing",
+        "script_style_closing_pattern",
         "script_style_inline",
+        "script_style_inline_imsx_pattern",
+        "script_style_inline_ix_pattern",
         "script_style_opening",
+        "script_style_opening_pattern",
         "single_attribute_per_line",
         "start_template_tags",
         "statistics",
@@ -389,13 +426,17 @@ class Config:
         "tag_unindent",
         "tag_unindent_line",
         "template_blocks",
+        "template_blocks_pattern",
         "template_if_for_pattern",
         "template_indent",
         "template_tags",
         "template_unindent",
         "trans_trimmed_blocks",
+        "trans_trimmed_blocks_pattern",
         "unformatted_blocks",
         "unformatted_blocks_coarse",
+        "unformatted_blocks_coarse_pattern",
+        "unformatted_blocks_pattern",
         "use_gitignore",
         "warn",
     )
@@ -550,27 +591,17 @@ class Config:
             )
         )
         self.format_attribute_js_json_pattern: re.Pattern[str] = re.compile(
-            js_pattern_string, flags=RE_FLAGS_IX
+            js_pattern_string, RE_FLAGS_IX, cache_pattern=False
         )
 
         self.format_attribute_js_json_object_pattern: re.Pattern[str] = (
-            re.compile(r"^\s*\{(?![{%]).*\}\s*$", flags=RE_FLAGS_IX)
+            _JS_JSON_OBJECT_PATTERN
         )
         self.format_attribute_js_json_string_pattern: re.Pattern[str] = (
-            re.compile(r'["\']([^"\']*)["\']', flags=RE_FLAGS_IX)
+            _JS_JSON_STRING_PATTERN
         )
         self.format_attribute_js_json_property_pattern: re.Pattern[str] = (
-            re.compile(
-                r"""
-                (?:^|[,{]\s*)
-                (?:
-                    [a-zA-Z_$][a-zA-Z0-9_$]*\s*:
-                  | (?:get|set)\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(
-                  | (?:async\s+)?\*?\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(
-                )
-                """,
-                flags=RE_FLAGS_IX,
-            )
+            _JS_JSON_PROPERTY_PATTERN
         )
 
         self.preserve_leading_space: bool = (
@@ -761,7 +792,9 @@ class Config:
             self.exclude += r" | " + build_exclude(extend_exclude)
 
         self.exclude_pattern: re.Pattern[str] = re.compile(
-            rf"(?:^|/)(?:{self.exclude})(?=$|/|(?<=/))", flags=re.X
+            rf"(?:^|/)(?:{self.exclude})(?=$|/|(?<=/))",
+            re.X,
+            cache_pattern=False,
         )
 
         self.per_file_ignores = (
@@ -1408,4 +1441,78 @@ class Config:
                 )>$
               )
         """
+        )
+
+        self.ignored_blocks_inline_pattern = re.compile(
+            self.ignored_blocks_inline, RE_FLAGS_IMSX, cache_pattern=False
+        )
+        self.ignored_block_opening_pattern = re.compile(
+            self.ignored_block_opening, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.script_style_inline_imsx_pattern = re.compile(
+            self.script_style_inline, RE_FLAGS_IMSX, cache_pattern=False
+        )
+        self.script_style_inline_ix_pattern = re.compile(
+            self.script_style_inline, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.script_style_opening_pattern = re.compile(
+            self.script_style_opening, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.ignored_trans_blocks_closing_pattern = re.compile(
+            self.ignored_trans_blocks_closing, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.ignored_trans_blocks_pattern = re.compile(
+            self.ignored_trans_blocks, RE_FLAGS_ISX, cache_pattern=False
+        )
+        self.trans_trimmed_blocks_pattern = re.compile(
+            self.trans_trimmed_blocks, RE_FLAGS_ISX, cache_pattern=False
+        )
+        self.ignored_inline_blocks_ix_pattern = re.compile(
+            self.ignored_inline_blocks, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.ignored_block_closing_pattern = re.compile(
+            self.ignored_block_closing, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.script_style_closing_pattern = re.compile(
+            self.script_style_closing, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.safe_closing_block_pattern = re.compile(
+            self.ignored_inline_blocks + r" | " + self.ignored_blocks,
+            RE_FLAGS_IMSX,
+            cache_pattern=False,
+        )
+        self.safe_closing_tag_pattern = re.compile(
+            self.safe_closing_tag, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.template_blocks_pattern = re.compile(
+            self.template_blocks, RE_FLAGS_IMSX, cache_pattern=False
+        )
+        self.html_tag_pattern = re.compile(
+            self.html_tag_regex, RE_FLAGS_IMSX, cache_pattern=False
+        )
+        self.ignored_linter_blocks_pattern = re.compile(
+            self.ignored_linter_blocks, RE_FLAGS_IMSX, cache_pattern=False
+        )
+        self.ignored_blocks_pattern = re.compile(
+            self.ignored_blocks, RE_FLAGS_IMSX, cache_pattern=False
+        )
+        self.unformatted_blocks_coarse_pattern = re.compile(
+            self.unformatted_blocks_coarse, RE_FLAGS_IMSX, cache_pattern=False
+        )
+        self.unformatted_blocks_pattern = re.compile(
+            self.unformatted_blocks, RE_FLAGS_IMSX, cache_pattern=False
+        )
+        self.ignored_rule_patterns = tuple(
+            re.compile(pattern, RE_FLAGS_ISX, cache_pattern=False)
+            for pattern in self.ignored_rules
+        )
+        self.optional_single_line_html_pattern = re.compile(
+            rf"^(?:{self.optional_single_line_html_tags})$",
+            RE_FLAGS_IX,
+            cache_pattern=False,
+        )
+        self.optional_single_line_template_pattern = re.compile(
+            rf"^(?:{self.optional_single_line_template_tags})$",
+            RE_FLAGS_IX,
+            cache_pattern=False,
         )

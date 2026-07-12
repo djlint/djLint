@@ -27,6 +27,9 @@ except Exception:
     pass
 
 
+_OUTPUT_WHITESPACE_PATTERN = re.compile(r"\s{2,}|\n", cache_pattern=False)
+
+
 def _count_digits(num: int, /) -> int:
     """Faster alternative to len(str(num))"""
     if num == 0:
@@ -155,7 +158,8 @@ def build_output(
         )
         message = message_dict["message"]
         match = style(
-            re.sub(r"\s{2,}|\n", " ", message_dict["match"]), fg="blue"
+            _OUTPUT_WHITESPACE_PATTERN.sub(" ", message_dict["match"]),
+            fg="blue",
         )
 
         echo(

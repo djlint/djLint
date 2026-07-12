@@ -92,34 +92,48 @@ def print_no_files_to_check() -> None:
     echo(style("No files to check! 😢", fg="blue"))
 
 
-html_patterns = (r"<!--\s*djlint\:on\s*-->",)
-django_jinja_patterns = (
-    r"\{#\s*djlint\:on\s*#\}",
-    r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}",
+_HTML_PRAGMA_PATTERNS = (
+    re.compile(r"<!--\s*djlint\:on\s*-->", cache_pattern=False),
 )
-nunjucks_patterns = (r"\{#\s*djlint\:on\s*#\}",)
-handlebars_patterns = (r"\{\{!--\s*djlint\:on\s*--\}\}",)
-golang_patterns = (r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}",)
+_TEMPLATE_COMMENT_PRAGMA_PATTERN = re.compile(
+    r"\{#\s*djlint\:on\s*#\}", cache_pattern=False
+)
+_DJANGO_JINJA_PRAGMA_PATTERNS = (
+    _TEMPLATE_COMMENT_PRAGMA_PATTERN,
+    re.compile(
+        r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}",
+        cache_pattern=False,
+    ),
+)
+_NUNJUCKS_PRAGMA_PATTERNS = (_TEMPLATE_COMMENT_PRAGMA_PATTERN,)
+_HANDLEBARS_PRAGMA_PATTERNS = (
+    re.compile(r"\{\{!--\s*djlint\:on\s*--\}\}", cache_pattern=False),
+)
+_GOLANG_PRAGMA_PATTERNS = (
+    re.compile(
+        r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}", cache_pattern=False
+    ),
+)
+_PRAGMA_PATTERNS = {
+    "html": _HTML_PRAGMA_PATTERNS,
+    "django": _DJANGO_JINJA_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
+    "jinja": _DJANGO_JINJA_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
+    "nunjucks": _NUNJUCKS_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
+    "handlebars": _HANDLEBARS_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
+    "golang": _GOLANG_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
+    "angular": _HTML_PRAGMA_PATTERNS,
+    "all": _DJANGO_JINJA_PRAGMA_PATTERNS
+    + _NUNJUCKS_PRAGMA_PATTERNS
+    + _HANDLEBARS_PRAGMA_PATTERNS
+    + _GOLANG_PRAGMA_PATTERNS
+    + _HTML_PRAGMA_PATTERNS,
+}
 
 
 def has_pragma(config: Config, first_line: str) -> bool:
     """Check whether a line enables djLint."""
-    pragma_patterns = {
-        "html": html_patterns,
-        "django": django_jinja_patterns + html_patterns,
-        "jinja": django_jinja_patterns + html_patterns,
-        "nunjucks": nunjucks_patterns + html_patterns,
-        "handlebars": handlebars_patterns + html_patterns,
-        "golang": golang_patterns + html_patterns,
-        "angular": html_patterns,
-        "all": django_jinja_patterns
-        + nunjucks_patterns
-        + handlebars_patterns
-        + golang_patterns
-        + html_patterns,
-    }
-    for pattern in pragma_patterns[config.profile]:
-        if re.match(pattern, first_line):
+    for pattern in _PRAGMA_PATTERNS[config.profile]:
+        if pattern.match(first_line):
             return True
     return False
 

@@ -29,6 +29,50 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
+_TAG_SPACING_PATTERN = re.compile(
+    r"({%-?\+?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?(\+?-?%})", cache_pattern=False
+)
+_INTERPOLATION_SPACING_PATTERN = re.compile(
+    r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", cache_pattern=False
+)
+_HANDLEBARS_BLOCK_END_PATTERN = re.compile(
+    r"({{#(?:each|if).+?[^ ])(}})", cache_pattern=False
+)
+_SET_CLOSE_PATTERN = re.compile(
+    r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX, cache_pattern=False
+)
+_SET_CLOSING_BRACE_PATTERN = re.compile(
+    r"^[ ]*}|^[ ]*]", RE_FLAGS_IMX, cache_pattern=False
+)
+_SINGLE_LINE_TEMPLATE_TAG_PATTERN = re.compile(
+    r"^\s*\{%-?(?:(?!%}).)*%}\s*$", RE_FLAGS_IMSX, cache_pattern=False
+)
+_SET_OPEN_PATTERN = re.compile(
+    r"^([ ]*{%[ ]*?set)(?!.*%}).*$", RE_FLAGS_IMX, cache_pattern=False
+)
+_SET_OPENING_BRACE_PATTERN = re.compile(
+    r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
+    RE_FLAGS_IMX,
+    cache_pattern=False,
+)
+_TEMPLATE_TAG_CLOSE_PATTERN = re.compile(
+    r"\{%-?\s*end|\{\{/", RE_FLAGS_IMX, cache_pattern=False
+)
+_TEXTAREA_CLOSE_PATTERN = re.compile(
+    r"^\s*</textarea\b", RE_FLAGS_IX, cache_pattern=False
+)
+_SET_CONTENT_PATTERN = re.compile(
+    r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
+    RE_FLAGS_IMSX,
+    cache_pattern=False,
+)
+_FUNCTION_CONTENT_PATTERN = re.compile(
+    r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
+    RE_FLAGS_IMSX,
+    cache_pattern=False,
+)
+
+
 def _attribute_quote_at(html: str, start: int) -> str | None:
     """Return the surrounding HTML attribute quote at start, if any."""
     tag_start = html.rfind("<", 0, start)
@@ -136,13 +180,9 @@ def indent_html(rawcode: str, config: Config) -> str:
         """
         func = partial(fix_tag_spacing, rawcode)
 
-        rawcode = re.sub(
-            r"({%-?\+?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?(\+?-?%})", func, rawcode
-        )
+        rawcode = _TAG_SPACING_PATTERN.sub(func, rawcode)
 
-        rawcode = re.sub(
-            r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", func, rawcode
-        )
+        rawcode = _INTERPOLATION_SPACING_PATTERN.sub(func, rawcode)
 
     elif config.profile == "handlebars":
 
@@ -156,9 +196,9 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         func = partial(fix_handlebars_template_tags, rawcode)
         # handlebars templates
-        rawcode = re.sub(r"({{#(?:each|if).+?[^ ])(}})", func, rawcode)
+        rawcode = _HANDLEBARS_BLOCK_END_PATTERN.sub(func, rawcode)
 
-    rawcode_flat_list = re.split(r"\n", rawcode)
+    rawcode_flat_list = rawcode.split("\n")
 
     indent = config.indent
 
@@ -204,9 +244,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 """,
         flags=RE_FLAGS_IMX,
     )
-    set_close_pattern = re.compile(r"^(?!.*\{\%).*%\}.*$", flags=RE_FLAGS_IMX)
-    set_closing_brace_pattern = re.compile(r"^[ ]*}|^[ ]*]", flags=RE_FLAGS_IMX)
-    tag_unindent_pattern = re.compile(config.tag_unindent, flags=RE_FLAGS_IMX)
+    tag_unindent_pattern = re.compile(config.tag_unindent, RE_FLAGS_IMX)
     inline_slt_no_attrs_end_pattern = re.compile(
         rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)", flags=RE_FLAGS_IMX
     )
@@ -222,19 +260,10 @@ def indent_html(rawcode: str, config: Config) -> str:
     tag_unindent_line_pattern = re.compile(
         r"^" + str(config.tag_unindent_line), flags=RE_FLAGS_IMX
     )
-    single_line_template_tag_pattern = re.compile(
-        r"^\s*\{%-?(?:(?!%}).)*%}\s*$", flags=RE_FLAGS_IMSX
-    )
-    set_open_pattern = re.compile(
-        r"^([ ]*{%[ ]*?set)(?!.*%}).*$", flags=RE_FLAGS_IMX
-    )
-    set_opening_brace_pattern = re.compile(
-        r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))", flags=RE_FLAGS_IMX
-    )
     tag_indent_pattern = re.compile(
         r"^(?:" + str(config.tag_indent) + r")", flags=RE_FLAGS_IMX
     )
-    html_tag_pattern = re.compile(config.html_tag_regex, flags=RE_FLAGS_IMSX)
+    html_tag_pattern = config.html_tag_pattern
     void_html_tag_pattern = re.compile(
         rf"^(?:{always_self_closing_html})$", flags=RE_FLAGS_IX
     )
@@ -249,9 +278,6 @@ def indent_html(rawcode: str, config: Config) -> str:
         r"^[^\S\n]*[\(\[](?:\{\{\#|\{%-?)[ ]*?"
         + str(config.start_template_tags),
         flags=RE_FLAGS_IMX,
-    )
-    template_tag_close_pattern = re.compile(
-        r"\{%-?\s*end|\{\{/", flags=RE_FLAGS_IMX
     )
     indent_html_tags_pattern = re.compile(
         config.indent_html_tags_regex, flags=RE_FLAGS_IX
@@ -332,7 +358,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and in_set_tag
-            and set_close_pattern.search(item)
+            and _SET_CLOSE_PATTERN.search(item)
         ):
             indent_level = max(indent_level - 1, 0)
             in_set_tag = False
@@ -343,7 +369,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and in_set_tag
-            and set_closing_brace_pattern.search(item)
+            and _SET_CLOSING_BRACE_PATTERN.search(item)
         ):
             indent_level = max(indent_level - 1, 0)
             tmp = (indent * indent_level) + item + "\n"
@@ -379,7 +405,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and not in_set_tag
-            and set_open_pattern.search(item)
+            and _SET_OPEN_PATTERN.search(item)
         ):
             tmp = (indent * indent_level) + item + "\n"
             indent_level += 1
@@ -390,14 +416,14 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and in_set_tag
-            and set_opening_brace_pattern.search(item)
+            and _SET_OPENING_BRACE_PATTERN.search(item)
         ) or (
             not is_block_raw
             and (
                 tag_indent_pattern.search(item)
                 or (
                     prefixed_template_tag_indent_pattern.search(item)
-                    and not template_tag_close_pattern.search(item)
+                    and not _TEMPLATE_TAG_CLOSE_PATTERN.search(item)
                 )
             )
         ):
@@ -411,7 +437,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             if (
                 config.profile in {"jinja", "nunjucks"}
                 and is_block_raw
-                and re.search(r"^\s*</textarea\b", item, flags=RE_FLAGS_IX)
+                and _TEXTAREA_CLOSE_PATTERN.search(item)
                 and beautified_code.rstrip().endswith(("-}}", "-%}"))
             ):
                 tmp = (indent * indent_level) + item.lstrip() + "\n"
@@ -421,7 +447,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         # otherwise, just leave same level
         elif (
             config.preserve_leading_space
-            and single_line_template_tag_pattern.search(item)
+            and _SINGLE_LINE_TEMPLATE_TAG_PATTERN.search(item)
         ):
             tmp = (indent * indent_level) + item.lstrip() + "\n"
 
@@ -572,22 +598,12 @@ def indent_html(rawcode: str, config: Config) -> str:
     if not config.no_set_formatting:
         func = partial(format_set, config, beautified_code)
         # format set contents
-        beautified_code = re.sub(
-            r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
-            func,
-            beautified_code,
-            flags=RE_FLAGS_IMSX,
-        )
+        beautified_code = _SET_CONTENT_PATTERN.sub(func, beautified_code)
 
     if not config.no_function_formatting:
         func = partial(format_function, config, beautified_code)
         # format function contents
-        beautified_code = re.sub(
-            r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
-            func,
-            beautified_code,
-            flags=RE_FLAGS_IMSX,
-        )
+        beautified_code = _FUNCTION_CONTENT_PATTERN.sub(func, beautified_code)
 
     if not config.preserve_blank_lines:
         beautified_code = beautified_code.lstrip()

@@ -43,34 +43,30 @@ def run(
     orphan_tags: list[re.Match[str]] = []
     p_child_tags: list[re.Match[str]] = []
 
-    for match in re.finditer(
-        r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*/?>",
-        html,
-        flags=re.X,
-    ):
-        in_unformatted_block = child_of_unformatted_block(config, html, match)
-        if (
-            (
-                inside_ignored_block(config, html, match)
-                and not in_unformatted_block
-            )
-            or (
-                inside_ignored_rule(config, html, match, rule["name"])
-                and not in_unformatted_block
-            )
-            or inside_ignored_linter_block(config, html, match)
-            or inside_template_block(config, html, match)
+    html_tag_pattern = re.compile(
+        r"<(/?(\w+))\s*(" + config.attribute_pattern + r"|\s*)*\s*/?>", re.X
+    )
+    void_tag_pattern = re.compile(
+        rf"^/?{config.always_self_closing_html_tags}\b", RE_FLAGS_IX
+    )
+
+    for match in html_tag_pattern.finditer(html):
+        if match.group().rstrip().endswith("/>") or void_tag_pattern.search(
+            match.group(1)
         ):
             continue
 
+        in_unformatted_block = child_of_unformatted_block(config, html, match)
         if (
-            match.group().rstrip().endswith("/>")
-            or not match.group(1)
-            or re.search(
-                rf"^/?{config.always_self_closing_html_tags}\b",
-                match.group(1),
-                flags=RE_FLAGS_IX,
+            (
+                not in_unformatted_block
+                and (
+                    inside_ignored_block(config, html, match)
+                    or inside_ignored_rule(config, html, match, rule["name"])
+                )
             )
+            or inside_ignored_linter_block(config, html, match)
+            or inside_template_block(config, html, match)
         ):
             continue
 

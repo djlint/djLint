@@ -26,6 +26,11 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
+_YAML_FRONT_MATTER_PATTERN = re.compile(
+    r"(^---.+?---)$", RE_FLAGS_MS, cache_pattern=False
+)
+
+
 def clean_whitespace(html: str, config: Config) -> str:
     """Compress back tags that do not need to be expanded."""
     # put empty tags on one line
@@ -90,18 +95,17 @@ def clean_whitespace(html: str, config: Config) -> str:
         config: Config, html: str, match: re.Match[str]
     ) -> str:
         """Add break after if not in ignored block."""
+        match_end = match.end()
+        if html[match_end : match_end + 1] == "\n":
+            return match.group()
+
         if inside_ignored_block(config, html, match):
             return match.group()
 
         if inside_html_attribute(config, html, match):
             return match.group()
 
-        # check that next line is not blank.
-        match_end = match.end()
-        if html[match_end : match_end + 1] != "\n":
-            return match.group() + "\n"
-
-        return match.group()
+        return match.group() + "\n"
 
     func = partial(add_blank_line_after, config, html)
 
@@ -119,7 +123,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         config: Config, html: str, match: re.Match[str]
     ) -> str:
         """Add break before if not in ignored block and not first line in file."""
-        if inside_ignored_block(config, html, match) or match.start() == 0:
+        if match.start() == 0 or inside_ignored_block(config, html, match):
             return match.group()
 
         return "\n" + match.group()
@@ -149,7 +153,7 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     if not config.no_line_after_yaml:
         func = partial(yaml_add_blank_line_after, html)
-        html = re.sub(r"(^---.+?---)$", func, html, flags=RE_FLAGS_MS)
+        html = _YAML_FRONT_MATTER_PATTERN.sub(func, html)
 
     return html
 
@@ -187,6 +191,27 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
         # space for other purposes, we should not try to remove it.
         return html
 
+    blank_line_after_patterns = (
+        tuple(
+            re.compile(
+                rf"((?:{{%-?\s*?{tag.strip()}[^}}]+?-?%}}\n?)+)", RE_FLAGS_IMS
+            )
+            for tag in config.blank_line_after_tag.split(",")
+        )
+        if config.blank_line_after_tag
+        else ()
+    )
+    blank_line_before_patterns = (
+        tuple(
+            re.compile(
+                rf"((?:{{%-?\s*?{tag.strip()}[^}}]+?-?%}}\n?)+)", RE_FLAGS_IMS
+            )
+            for tag in config.blank_line_before_tag.split(",")
+        )
+        if config.blank_line_before_tag
+        else ()
+    )
+
     def condense_line(config: Config, html: str, match: re.Match[str]) -> str:
         """Put contents on a single line if below max line length."""
         if config.line_break_after_multiline_tag:
@@ -202,35 +227,25 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
         if (
             combined_length < config.max_line_length
             and not inside_ignored_block(config, html, match)
-            and if_blank_line_after_match(config, match.group(3))
-            and if_blank_line_before_match(config, match.group(3))
+            and if_blank_line_after_match(match.group(3))
+            and if_blank_line_before_match(match.group(3))
         ):
             return match.group(1) + match.group(3) + match.group(4)
 
         return match.group()
 
-    def if_blank_line_after_match(config: Config, html: str) -> bool:
+    def if_blank_line_after_match(html: str) -> bool:
         """Check if there should be a blank line after."""
-        if config.blank_line_after_tag:
-            for tag in config.blank_line_after_tag.split(","):
-                if re.search(
-                    rf"((?:{{%-?\s*?{tag.strip()}[^}}]+?-?%}}\n?)+)",
-                    html,
-                    flags=RE_FLAGS_IMS,
-                ):
-                    return False
+        for pattern in blank_line_after_patterns:
+            if pattern.search(html):
+                return False
         return True
 
-    def if_blank_line_before_match(config: Config, html: str) -> bool:
+    def if_blank_line_before_match(html: str) -> bool:
         """Check if there should be a blank line before."""
-        if config.blank_line_before_tag:
-            for tag in config.blank_line_before_tag.split(","):
-                if re.search(
-                    rf"((?:{{%-?\s*?{tag.strip()}[^}}]+?-?%}}\n?)+)",
-                    html,
-                    flags=RE_FLAGS_IMS,
-                ):
-                    return False
+        for pattern in blank_line_before_patterns:
+            if pattern.search(html):
+                return False
         return True
 
     # add blank lines before tags

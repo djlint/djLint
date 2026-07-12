@@ -239,7 +239,7 @@ requires-dist = [
     { name = "json5", specifier = ">=0.10.0" },
     { name = "pathspec", specifier = ">=0.9.0" },
     { name = "pyyaml", specifier = ">=5.1" },
-    { name = "regex", specifier = ">=2021.8.21" },
+    { name = "regex", specifier = ">=2022.6.2" },
     { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=0.2.0" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=3.7.4" },
 ]

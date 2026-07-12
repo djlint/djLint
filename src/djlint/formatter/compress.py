@@ -56,7 +56,7 @@ def compress_html(html: str, config: Config) -> str:
             if raw_attributes
             else ""
         )
-        if tag.lower() in HTML_VOID_ELEMENTS and config.close_void_tags:
+        if config.close_void_tags and tag.lower() in HTML_VOID_ELEMENTS:
             close_bracket = " />"
         else:
             close_bracket = (
