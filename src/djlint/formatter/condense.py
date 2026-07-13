@@ -102,7 +102,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group()
 
-        if inside_html_attribute(config, html, match):
+        if inside_html_attribute(html, match):
             return match.group()
 
         return match.group() + "\n"

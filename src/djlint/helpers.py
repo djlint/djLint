@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.formatter.tokenizer import tokenize_tags
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from typing import Final
@@ -31,6 +33,7 @@ RE_FLAGS_ISX: Final = re.I | re.S | re.X
 RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 
 _SPAN_CACHE_SIZE = 1
+_LINE_CACHE_SIZE = 64
 
 
 def _last_item(iterable: Iterable[T], /) -> T | None:
@@ -51,6 +54,7 @@ def _inside_non_overlapping_span(
     return span_start <= match_start and match_end <= span_end
 
 
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_ignored_block_opening(config: Config, item: str) -> bool:
     """Find ignored group opening.
 
@@ -66,6 +70,7 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     return bool(config.ignored_block_opening_pattern.search(item[last_index:]))
 
 
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_script_style_block_opening(config: Config, item: str) -> bool:
     """Find ignored group opening.
 
@@ -129,6 +134,7 @@ def inside_protected_trans_block(
     return False
 
 
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_ignored_block_closing(config: Config, item: str) -> bool:
     """Find ignored group closing.
 
@@ -144,6 +150,7 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
     return bool(config.ignored_block_closing_pattern.search(item[last_index:]))
 
 
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_script_style_block_closing(config: Config, item: str) -> bool:
     """Find ignored group closing.
 
@@ -159,6 +166,7 @@ def is_script_style_block_closing(config: Config, item: str) -> bool:
     return bool(config.script_style_closing_pattern.search(item[last_index:]))
 
 
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_safe_closing_tag(config: Config, item: str) -> bool:
     """Find ignored group opening.
 
@@ -181,9 +189,7 @@ def _inside_template_block(
     return tuple(x.span() for x in template_blocks.finditer(html))
 
 
-def inside_template_block(
-    config: Config, html: str, match: re.Match[str]
-) -> bool:
+def inside_template_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Check if a re.Match is inside of a template block."""
     match_start, match_end = match.span()
     return _inside_non_overlapping_span(
@@ -321,26 +327,19 @@ def restore_unformatted_blocks(
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
-def _inside_html_attribute(
-    html: str, /, *, html_tag_pattern: re.Pattern[str]
-) -> tuple[tuple[int, int], ...]:
+def _html_attribute_spans(html: str, /) -> tuple[tuple[int, int], ...]:
     return tuple(
-        # group 3 are the attributes
-        attr_span
-        for x in html_tag_pattern.finditer(html)
-        if (attr_span := x.span(3))[0] >= 0
+        (token.name_end, token.attributes_end)
+        for token in tokenize_tags(html)
+        if token.name_end < token.attributes_end
     )
 
 
-def inside_html_attribute(
-    config: Config, html: str, match: re.Match[str]
-) -> bool:
+def inside_html_attribute(html: str, match: re.Match[str]) -> bool:
     """Check if a re.Match is inside of an html attribute."""
     match_start, match_end = match.span()
     return _inside_non_overlapping_span(
-        _inside_html_attribute(html, html_tag_pattern=config.html_tag_pattern),
-        match_start,
-        match_end,
+        _html_attribute_spans(html), match_start, match_end
     )
 
 
@@ -381,9 +380,7 @@ def _inside_ignored_block(
     )
 
 
-def inside_ignored_block(
-    config: Config, html: str, match: re.Match[str]
-) -> bool:
+def inside_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
     for ignored_match_start, ignored_match_end in _inside_ignored_block(
@@ -413,7 +410,7 @@ def _child_of_unformatted_block(
 
 
 def child_of_unformatted_block(
-    config: Config, html: str, match: re.Match[str]
+    config: Config, html: str, match: SpanMatch
 ) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
@@ -427,9 +424,7 @@ def child_of_unformatted_block(
     return False
 
 
-def child_of_ignored_block(
-    config: Config, html: str, match: re.Match[str]
-) -> bool:
+def child_of_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
     for ignored_match in itertools.chain(
@@ -442,26 +437,10 @@ def child_of_ignored_block(
     return False
 
 
-@lru_cache(maxsize=_SPAN_CACHE_SIZE)
-def _overlaps_ignored_block(
-    html: str,
-    /,
-    *,
-    ignored_blocks: re.Pattern[str],
-    ignored_inline_blocks: re.Pattern[str],
-) -> tuple[tuple[int, int], ...]:
-    return tuple(
-        x.span()
-        for x in itertools.chain(
-            ignored_blocks.finditer(html), ignored_inline_blocks.finditer(html)
-        )
-    )
-
-
 def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
-    for ignored_match_start, ignored_match_end in _overlaps_ignored_block(
+    for ignored_match_start, ignored_match_end in _inside_ignored_block(
         html,
         ignored_blocks=config.ignored_blocks_pattern,
         ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,

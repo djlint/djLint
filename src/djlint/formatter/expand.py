@@ -6,11 +6,12 @@
 
 from __future__ import annotations
 
-from functools import partial
+from functools import cache, partial
 from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IMX,
     RE_FLAGS_IX,
@@ -21,6 +22,7 @@ from djlint.helpers import (
 )
 
 if TYPE_CHECKING:
+    from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
 _INLINE_CHILD_HTML_TAGS = frozenset({
@@ -55,17 +57,8 @@ _INLINE_CHILD_HTML_TAGS = frozenset({
     "var",
 })
 
-_TAG_NAME_PATTERN = re.compile(
-    r"^</?\s*([^\s>/]+)", RE_FLAGS_IX, cache_pattern=False
-)
 _TEMPLATE_TAG_NAME_PATTERN = re.compile(
     r"^\{%-?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
-)
-_BODY_TAG_PATTERN = re.compile(
-    r"</?\s*([^\s>/]+)", RE_FLAGS_IX, cache_pattern=False
-)
-_BODY_HTML_TAG_PATTERN = re.compile(
-    r"<[^>\n]*>", RE_FLAGS_IX, cache_pattern=False
 )
 _BODY_TEMPLATE_TAG_PATTERN = re.compile(
     r"\{%-?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX, cache_pattern=False
@@ -99,19 +92,6 @@ _TRIMMED_TRANSLATION_CLOSE_PATTERN = re.compile(
 )
 _TEMPLATE_END_TAG_NAMES = {"endall": "asyncall", "endeach": "asynceach"}
 _TEMPLATE_START_TAG_END_NAMES = {"asyncall": "endall", "asynceach": "endeach"}
-
-
-def _open_close_tag_patterns(
-    tag_name: str,
-) -> tuple[re.Pattern[str], re.Pattern[str]]:
-    tag = re.escape(tag_name)
-    return (
-        re.compile(
-            rf"<{tag}\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>",
-            RE_FLAGS_IX,
-        ),
-        re.compile(rf"</{tag}>", RE_FLAGS_IX),
-    )
 
 
 def _open_close_template_tag_patterns(
@@ -149,6 +129,21 @@ def _is_closing_template_tag(tag: str) -> bool:
 
 def expand_html(html: str, config: Config) -> str:
     """Split single line html into many lines based on tags."""
+
+    # ponytail: per-document cache; bound it if very large templates become common.
+    @cache
+    def html_tokens(value: str) -> tuple[TagToken, ...]:
+        return tuple(tokenize_tags(value))
+
+    def without_html_tags(value: str) -> str:
+        output: list[str] = []
+        previous_end = 0
+        for token in html_tokens(value):
+            output.append(value[previous_end : token.start])
+            previous_end = token.end
+        output.append(value[previous_end:])
+        return "".join(output)
+
     marker_prefix = "__DJLINT_WS_LINE_"
     while marker_prefix in html:
         marker_prefix = f"_{marker_prefix}"
@@ -158,7 +153,7 @@ def expand_html(html: str, config: Config) -> str:
     def has_rendered_text(value: str) -> bool:
         value = _COMMENT_TEMPLATE_BLOCK_PATTERN.sub("", value)
         value = _TRIMMED_TRANSLATION_BLOCK_PATTERN.sub("", value)
-        value = _BODY_HTML_TAG_PATTERN.sub("", value)
+        value = without_html_tags(value)
         value = _NON_RENDERING_TEMPLATE_TAG_PATTERN.sub("", value)
         return bool(value.strip())
 
@@ -228,11 +223,12 @@ def expand_html(html: str, config: Config) -> str:
         out_format: str, match: re.Match[str]
     ) -> bool:
         tag = match.group(1)
-        tag_name_match = _TAG_NAME_PATTERN.match(tag)
-        if not tag_name_match:
+        tag_tokens = html_tokens(tag)
+        if not tag_tokens:
             return False
 
-        tag_name = tag_name_match.group(1).lower()
+        tag_token = tag_tokens[0]
+        tag_name = tag_token.name.lower()
         if not optional_single_line_tag_pattern.match(tag_name):
             return False
 
@@ -255,32 +251,47 @@ def expand_html(html: str, config: Config) -> str:
         match_start = match.start() - line_start
         match_end = match.end() - line_start
 
-        open_tag_pattern, close_tag_pattern = _open_close_tag_patterns(tag_name)
+        line_tokens = html_tokens(line)
 
-        if tag.startswith("</"):
+        if tag_token.closing:
             if out_format != "\n%s":
                 return False
-            open_matches = tuple(open_tag_pattern.finditer(line[:match_start]))
-            if not open_matches:
+            opening_tokens = tuple(
+                token
+                for token in line_tokens
+                if token.start < match_start
+                and not token.closing
+                and token.name.lower() == tag_name
+            )
+            if not opening_tokens:
                 return False
-            if should_break_multiline_opening_tag(open_matches[-1].group()):
+            opening_token = opening_tokens[-1]
+            opening_tag = line[opening_token.start : opening_token.end]
+            if should_break_multiline_opening_tag(opening_tag):
                 return False
-            body = line[open_matches[-1].end() : match_start]
+            body = line[opening_token.end : match_start]
         else:
             if out_format != "%s\n":
                 return False
-            close_match = close_tag_pattern.search(line, match_end)
-            if not close_match:
+            closing_token = next(
+                (
+                    token
+                    for token in line_tokens
+                    if token.start >= match_end
+                    and token.closing
+                    and token.name.lower() == tag_name
+                ),
+                None,
+            )
+            if closing_token is None:
                 return False
-            body = line[match_end : close_match.start()]
+            body = line[match_end : closing_token.start]
 
-        body_tags = [
-            body_tag.lower() for body_tag in _BODY_TAG_PATTERN.findall(body)
-        ]
+        body_tags = [token.name.lower() for token in html_tokens(body)]
         if tag_name in body_tags:
             return False
 
-        if not _BODY_HTML_TAG_PATTERN.sub("", body).strip():
+        if not without_html_tags(body).strip():
             return False
 
         for body_tag in body_tags:
@@ -328,13 +339,11 @@ def expand_html(html: str, config: Config) -> str:
                 return False
             body = line[match_end : close_match.start()]
 
-        body_without_html = _BODY_HTML_TAG_PATTERN.sub("", body)
+        body_without_html = without_html_tags(body)
         if _BODY_TEMPLATE_TAG_PATTERN.search(body_without_html):
             return False
 
-        body_tags = [
-            body_tag.lower() for body_tag in _BODY_TAG_PATTERN.findall(body)
-        ]
+        body_tags = [token.name.lower() for token in html_tokens(body)]
         if not body_without_html.strip():
             return False
 
@@ -359,7 +368,7 @@ def expand_html(html: str, config: Config) -> str:
         if inside_template_block(config, html, match):
             return match.group(1)
 
-        if inside_html_attribute(config, html, match):
+        if inside_html_attribute(html, match):
             return match.group(1)
 
         if should_preserve_inline_body(out_format, match):
@@ -399,7 +408,7 @@ def expand_html(html: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group(1)
 
-        if inside_html_attribute(config, html, match):
+        if inside_html_attribute(html, match):
             return match.group(1)
 
         if should_preserve_template_body(out_format, match):

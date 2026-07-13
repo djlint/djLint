@@ -7,13 +7,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import regex as re
-
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 from djlint.formatter.class_attributes import encode_class_attribute_newlines
-from djlint.helpers import RE_FLAGS_IMX, child_of_unformatted_block
+from djlint.formatter.tokenizer import tokenize_tags
+from djlint.helpers import child_of_unformatted_block
 
 if TYPE_CHECKING:
+    from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
 
@@ -28,7 +28,7 @@ def compress_html(html: str, config: Config) -> str:
             return "DOCTYPE"
         return tag
 
-    def _clean_tag(match: re.Match[str]) -> str:
+    def _clean_tag(token: TagToken) -> str:
         """Flatten multiline attributes back to one line.
 
         Skip when attribute is ignored.
@@ -38,13 +38,13 @@ def compress_html(html: str, config: Config) -> str:
         tags starting ignored blocks can have their attributes formatted,
         for example <textarea class="..." id="..."> can be formatted.
         """
-        if child_of_unformatted_block(config, html, match):
-            return match.group()
+        if child_of_unformatted_block(config, html, token):
+            return html[token.start : token.end]
 
-        open_bracket = match.group(1)
-        tag = _fix_case(match.group(2))
+        open_bracket = html[token.start : token.name_start]
+        tag = _fix_case(token.name)
 
-        raw_attributes = match.group(3)
+        raw_attributes = html[token.name_end : token.attributes_end]
         if raw_attributes and config.preserve_class_newlines:
             raw_attributes = encode_class_attribute_newlines(
                 raw_attributes, config
@@ -59,12 +59,14 @@ def compress_html(html: str, config: Config) -> str:
         if config.close_void_tags and tag.lower() in HTML_VOID_ELEMENTS:
             close_bracket = " />"
         else:
-            close_bracket = (
-                match.group(4)
-                if "/" not in match.group(4)
-                else f" {match.group(4)}"
-            )
+            close_bracket = " />" if token.self_closing else ">"
 
         return f"{open_bracket}{tag}{attributes}{close_bracket}"
 
-    return re.sub(config.html_tag_regex, _clean_tag, html, flags=RE_FLAGS_IMX)
+    output: list[str] = []
+    previous_end = 0
+    for token in tokenize_tags(html):
+        output.extend((html[previous_end : token.start], _clean_tag(token)))
+        previous_end = token.end
+    output.append(html[previous_end:])
+    return "".join(output)

@@ -351,9 +351,6 @@ class Config:
         "format_js",
         "github_output",
         "gitignore",
-        "html_tag_attribute_regex",
-        "html_tag_pattern",
-        "html_tag_regex",
         "ignore",
         "ignore_blocks",
         "ignore_case",
@@ -379,8 +376,6 @@ class Config:
         "include",
         "indent",
         "indent_html_tags",
-        "indent_html_tags_attribute_regex",
-        "indent_html_tags_regex",
         "indent_size",
         "indent_template_tags",
         "js_config",
@@ -1040,39 +1035,6 @@ class Config:
         {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
         """
 
-        self.html_tag_attribute_regex = rf"""
-            ((?:\s*?(?:
-                \"(?>{self.template_tags}|\\\"|[^\"])*\"
-                |'(?>{self.template_tags}|\\'|[^'])*'
-                |{self.template_tags}
-                |[^'\">{{}}/\s]|/(?!>)
-            ))+)?
-        """
-
-        self.html_tag_regex = rf"""
-            (</?(?:!(?!--))?) # an opening bracket (< or </ or <!), but not a comment
-            ([^\s>!\[]+\b) # a tag name
-            {self.html_tag_attribute_regex} # any attributes
-            \s*? # potentially some whitespace
-            (/?>) # a closing bracket (/> or >)
-        """
-
-        self.indent_html_tags_attribute_regex = rf"""
-            \s((?:
-                (?<!\\)\"(?>{self.template_tags}|\\\"|[^\"])*\"
-                |(?<!\\)'(?>{self.template_tags}|\\'|[^'])*'
-                |{self.template_tags}
-                |[^'\">{{}}\/]
-            )+?)
-        """
-
-        self.indent_html_tags_regex: str = rf"""
-            (\s*?)
-            (<(?:{self.indent_html_tags}))
-            {self.indent_html_tags_attribute_regex}
-            (\s*?/?>)
-        """
-
         self.attribute_style_pattern: str = (
             r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
         )
@@ -1486,9 +1448,6 @@ class Config:
         )
         self.template_blocks_pattern = re.compile(
             self.template_blocks, RE_FLAGS_IMSX, cache_pattern=False
-        )
-        self.html_tag_pattern = re.compile(
-            self.html_tag_regex, RE_FLAGS_IMSX, cache_pattern=False
         )
         self.ignored_linter_blocks_pattern = re.compile(
             self.ignored_linter_blocks, RE_FLAGS_IMSX, cache_pattern=False

@@ -1,0 +1,156 @@
+"""Lossless HTML tag tokenization."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+
+@dataclass(
+    repr=False,
+    eq=False,
+    frozen=True,
+    match_args=False,
+    kw_only=True,
+    slots=True,
+)
+class TagToken:
+    """Source positions for one HTML tag."""
+
+    start: int
+    end: int
+    name_start: int
+    name_end: int
+    attributes_end: int
+    name: str
+    closing: bool
+    declaration: bool
+    self_closing: bool
+
+    def span(self) -> tuple[int, int]:
+        """Return the source span."""
+        return self.start, self.end
+
+
+_TEMPLATE_DELIMITERS = {"{{": "}}", "{%": "%}", "{#": "#}"}
+
+
+def _after_mako_expression(source: str, start: int) -> int | None:
+    """Return the end of a balanced Mako expression."""
+    depth = 1
+    quote: str | None = None
+    cursor = start + 2
+    while cursor < len(source):
+        char = source[cursor]
+        if quote is not None:
+            if char == "\\":
+                cursor += 2
+                continue
+            if char == quote:
+                quote = None
+        elif char in "\"'":
+            quote = char
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return cursor + 1
+        cursor += 1
+    return None
+
+
+def _after_template(source: str, start: int) -> int | None:
+    if source.startswith("${", start):
+        return _after_mako_expression(source, start)
+
+    closing = _TEMPLATE_DELIMITERS.get(source[start : start + 2])
+    if not closing:
+        return None
+    end = source.find(closing, start + 2)
+    return end + len(closing) if end >= 0 else None
+
+
+def tokenize_tags(source: str) -> Iterator[TagToken]:
+    """Yield tags without normalizing or copying their contents."""
+    search_from = 0
+    while (start := source.find("<", search_from)) >= 0:
+        if source.startswith("<!--", start):
+            comment_end = source.find("-->", start + 4)
+            search_from = len(source) if comment_end < 0 else comment_end + 3
+            continue
+        if source.startswith("<![CDATA[", start):
+            cdata_end = source.find("]]>", start + 9)
+            search_from = len(source) if cdata_end < 0 else cdata_end + 3
+            continue
+
+        name_start = start + 1
+        closing = source[name_start : name_start + 1] == "/"
+        declaration = source[name_start : name_start + 1] == "!"
+        if closing or declaration:
+            name_start += 1
+        if name_start >= len(source) or not source[name_start].isalpha():
+            search_from = start + 1
+            continue
+
+        name_end = name_start
+        while (
+            name_end < len(source)
+            and not source[name_end].isspace()
+            and source[name_end] not in "/>{"
+        ):
+            name_end += 1
+
+        quote: str | None = None
+        cursor = name_end
+        while cursor < len(source):
+            char = source[cursor]
+            if char in "{$":
+                template_end = _after_template(source, cursor)
+                if template_end is not None:
+                    cursor = template_end
+                    continue
+
+            if char in "\"'":
+                quote = (
+                    None if quote == char else char if quote is None else quote
+                )
+            elif char in "{}" and quote is None:
+                search_from = start + 1
+                break
+            elif char == ">" and quote is None:
+                attributes_end = cursor
+                while (
+                    attributes_end > name_end
+                    and source[attributes_end - 1].isspace()
+                ):
+                    attributes_end -= 1
+                self_closing = (
+                    source[attributes_end - 1 : attributes_end] == "/"
+                )
+                if self_closing:
+                    attributes_end -= 1
+                    while (
+                        attributes_end > name_end
+                        and source[attributes_end - 1].isspace()
+                    ):
+                        attributes_end -= 1
+                yield TagToken(
+                    start=start,
+                    end=cursor + 1,
+                    name_start=name_start,
+                    name_end=name_end,
+                    attributes_end=attributes_end,
+                    name=source[name_start:name_end],
+                    closing=closing,
+                    declaration=declaration,
+                    self_closing=self_closing,
+                )
+                search_from = cursor + 1
+                break
+            cursor += 1
+        else:
+            return

@@ -15,6 +15,7 @@ from djlint.formatter.class_attributes import (
 from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
 
 if TYPE_CHECKING:
+    from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
 
@@ -248,19 +249,25 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
     return add_indentation(config, attributes, spacing)
 
 
-def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
+def format_attributes(config: Config, html: str, token: TagToken) -> str:
     """Spread long attributes over multiple lines."""
     # check that we are not inside an ignored block
-    attribute_group = match.group(3).strip()
+    attribute_group = html[token.name_end : token.attributes_end].strip()
     if (
-        len(attribute_group) < config.max_attribute_length
-        and CLASS_ATTRIBUTE_NEWLINE not in attribute_group
-    ) or child_of_ignored_block(config, html, match):
-        return match.group()
+        "${" in attribute_group
+        or (
+            len(attribute_group) < config.max_attribute_length
+            and CLASS_ATTRIBUTE_NEWLINE not in attribute_group
+        )
+    ) or child_of_ignored_block(config, html, token):
+        return html[token.start : token.end]
 
-    leading_space = match.group(1)
+    leading_start = token.start
+    while leading_start and html[leading_start - 1] in " \t":
+        leading_start -= 1
+    leading_space = html[leading_start : token.start]
 
-    tag = match.group(2) + " "
+    tag = f"<{token.name} "
 
     spacing = (
         leading_space + config.indent
@@ -272,7 +279,7 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
 
     # format attributes as groups
     for attr_grp in re.finditer(
-        config.attribute_pattern, match.group(3).strip(), flags=re.X
+        config.attribute_pattern, attribute_group, flags=re.X
     ):
         attrib_name = attr_grp.group(1)
         is_quoted = attr_grp.group(2) and attr_grp.group(2)[0] in {"'", '"'}
@@ -413,11 +420,11 @@ def format_attributes(config: Config, html: str, match: re.Match[str]) -> str:
             )
     attribute_string = f"\n{spacing}".join(x for x in attributes if x)
 
-    close = match.group(4)
+    close = " />" if token.self_closing else ">"
 
     if config.single_attribute_per_line:
         attribute_string = (
-            f"{leading_space}{match.group(2)}"
+            f"{leading_space}<{token.name}"
             f"\n{spacing}{attribute_string}"
             f"\n{leading_space}{close.strip()}"
         )
