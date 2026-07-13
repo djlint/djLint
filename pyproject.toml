@@ -83,4 +83,4 @@ options = { opt_level = "3", debug_level = "0" }
 
 [tool.uv]
 exclude-newer = "3 days"
-exclude-newer-package = { "types-regex" = "2026-07-11" }
+exclude-newer-package = { "types-regex" = "2026-07-12" }

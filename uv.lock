@@ -11,7 +11,7 @@ exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for 
 exclude-newer-span = "P3D"
 
 [options.exclude-newer-package]
-types-regex = "2026-07-11T21:00:00Z"
+types-regex = "2026-07-12T21:00:00Z"
 
 [[package]]
 name = "ast-serialize"
