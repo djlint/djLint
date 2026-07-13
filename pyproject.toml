@@ -1,6 +1,6 @@
 [project]
 name = "djlint"
-version = "1.40.5"
+version = "1.40.6"
 description = "HTML Template Linter and Formatter"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -50,7 +50,7 @@ dev = [
   "ruff==0.15.21",
   "tomli==2.4.1",
   "types-pyyaml==6.0.12.20260518",
-  "types-regex==2026.6.28.20260630",
+  "types-regex==2026.7.10.20260711",
   "typing-extensions==4.16.0",
 ]
 
@@ -62,11 +62,6 @@ build-backend = "hatchling.build"
 build = "cp*"
 build-frontend = "build[uv]"
 environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
-# skip = [
-#   "cp313t-*",
-#   "*-win32",
-#   "*-musllinux_aarch64",
-# ]
 
 [tool.hatch.build.targets.sdist]
 include = ["djlint", "mypy.ini"]
@@ -88,3 +83,4 @@ options = { opt_level = "3", debug_level = "0" }
 
 [tool.uv]
 exclude-newer = "3 days"
+exclude-newer-package = { "types-regex" = "2026-07-11" }

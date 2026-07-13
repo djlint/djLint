@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [1.40.6] - 2026-07-13
+
+### Performance and refactoring
+
+- Replace repeated HTML regex scans with tokenization.
+
 ## [1.40.5] - 2026-07-12
 
 ### Fix
