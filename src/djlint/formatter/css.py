@@ -16,10 +16,12 @@ from djlint.helpers import (
 )
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from djlint.settings import Config
 
 
-_STYLE_BLOCK_PATTERN = re.compile(
+_STYLE_BLOCK_PATTERN: Final = re.compile(
     r"([ ]*?)(<(?:style)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</style>)",
     RE_FLAGS_IS,
     cache_pattern=False,

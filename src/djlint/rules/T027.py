@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, final
 
 from djlint.helpers import (
     inside_ignored_linter_block,
@@ -20,13 +21,19 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
+@final
+@dataclass(
+    repr=False,
+    eq=False,
+    frozen=True,
+    match_args=False,
+    kw_only=False,
+    slots=True,
+)
 class _TemplateTagMatch:
-    __slots__ = ("_end", "_html", "_start")
-
-    def __init__(self, html: str, start: int, end: int) -> None:
-        self._html = html
-        self._start = start
-        self._end = end
+    _html: str
+    _start: int
+    _end: int
 
     def span(self) -> tuple[int, int]:
         return self._start, self._end

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 import regex as re
@@ -10,6 +11,7 @@ from click import echo, style
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
+    from typing import Final
 
     from djlint.settings import Config
 
@@ -92,29 +94,29 @@ def print_no_files_to_check() -> None:
     echo(style("No files to check! 😢", fg="blue"))
 
 
-_HTML_PRAGMA_PATTERNS = (
+_HTML_PRAGMA_PATTERNS: Final = (
     re.compile(r"<!--\s*djlint\:on\s*-->", cache_pattern=False),
 )
-_TEMPLATE_COMMENT_PRAGMA_PATTERN = re.compile(
+_TEMPLATE_COMMENT_PRAGMA_PATTERN: Final = re.compile(
     r"\{#\s*djlint\:on\s*#\}", cache_pattern=False
 )
-_DJANGO_JINJA_PRAGMA_PATTERNS = (
+_DJANGO_JINJA_PRAGMA_PATTERNS: Final = (
     _TEMPLATE_COMMENT_PRAGMA_PATTERN,
     re.compile(
         r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}",
         cache_pattern=False,
     ),
 )
-_NUNJUCKS_PRAGMA_PATTERNS = (_TEMPLATE_COMMENT_PRAGMA_PATTERN,)
-_HANDLEBARS_PRAGMA_PATTERNS = (
+_NUNJUCKS_PRAGMA_PATTERNS: Final = (_TEMPLATE_COMMENT_PRAGMA_PATTERN,)
+_HANDLEBARS_PRAGMA_PATTERNS: Final = (
     re.compile(r"\{\{!--\s*djlint\:on\s*--\}\}", cache_pattern=False),
 )
-_GOLANG_PRAGMA_PATTERNS = (
+_GOLANG_PRAGMA_PATTERNS: Final = (
     re.compile(
         r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}", cache_pattern=False
     ),
 )
-_PRAGMA_PATTERNS = {
+_PRAGMA_PATTERNS: Final = MappingProxyType({
     "html": _HTML_PRAGMA_PATTERNS,
     "django": _DJANGO_JINJA_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
     "jinja": _DJANGO_JINJA_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
@@ -127,7 +129,7 @@ _PRAGMA_PATTERNS = {
     + _HANDLEBARS_PRAGMA_PATTERNS
     + _GOLANG_PRAGMA_PATTERNS
     + _HTML_PRAGMA_PATTERNS,
-}
+})
 
 
 def has_pragma(config: Config, first_line: str) -> bool:

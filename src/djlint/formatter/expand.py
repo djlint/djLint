@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from functools import cache, partial
+from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 import regex as re
@@ -22,10 +23,12 @@ from djlint.helpers import (
 )
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
-_INLINE_CHILD_HTML_TAGS = frozenset({
+_INLINE_CHILD_HTML_TAGS: Final = frozenset({
     "a",
     "abbr",
     "acronym",
@@ -57,41 +60,47 @@ _INLINE_CHILD_HTML_TAGS = frozenset({
     "var",
 })
 
-_TEMPLATE_TAG_NAME_PATTERN = re.compile(
+_TEMPLATE_TAG_NAME_PATTERN: Final = re.compile(
     r"^\{%-?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
 )
-_BODY_TEMPLATE_TAG_PATTERN = re.compile(
+_BODY_TEMPLATE_TAG_PATTERN: Final = re.compile(
     r"\{%-?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX, cache_pattern=False
 )
-_COMMENT_TEMPLATE_BLOCK_PATTERN = re.compile(
+_COMMENT_TEMPLATE_BLOCK_PATTERN: Final = re.compile(
     r"\{%-?\s*comment\b(?:(?!%}).)*?%\}.*?\{%-?\s*endcomment\s*-?%\}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
-_NON_RENDERING_TEMPLATE_TAG_PATTERN = re.compile(
+_NON_RENDERING_TEMPLATE_TAG_PATTERN: Final = re.compile(
     r"\{\#.*?\#\}|\{%-?.*?%\}|\{\{\s*(?:\#|/|else\b).*?\}\}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
-_TRIMMED_TRANSLATION_BLOCK_PATTERN = re.compile(
+_TRIMMED_TRANSLATION_BLOCK_PATTERN: Final = re.compile(
     r"\{%-?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}"
     r".*?"
     r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
-_TRIMMED_TRANSLATION_OPEN_PATTERN = re.compile(
+_TRIMMED_TRANSLATION_OPEN_PATTERN: Final = re.compile(
     r"\{%-?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
-_TRIMMED_TRANSLATION_CLOSE_PATTERN = re.compile(
+_TRIMMED_TRANSLATION_CLOSE_PATTERN: Final = re.compile(
     r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
-_TEMPLATE_END_TAG_NAMES = {"endall": "asyncall", "endeach": "asynceach"}
-_TEMPLATE_START_TAG_END_NAMES = {"asyncall": "endall", "asynceach": "endeach"}
+_TEMPLATE_END_TAG_NAMES: Final = MappingProxyType({
+    "endall": "asyncall",
+    "endeach": "asynceach",
+})
+_TEMPLATE_START_TAG_END_NAMES: Final = MappingProxyType({
+    "asyncall": "endall",
+    "asynceach": "endeach",
+})
 
 
 def _open_close_template_tag_patterns(

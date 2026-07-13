@@ -14,6 +14,7 @@ from click import echo, style
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
+    from typing import Final
 
     from typing_extensions import Any
 
@@ -27,7 +28,9 @@ except Exception:
     pass
 
 
-_OUTPUT_WHITESPACE_PATTERN = re.compile(r"\s{2,}|\n", cache_pattern=False)
+_OUTPUT_WHITESPACE_PATTERN: Final = re.compile(
+    r"\s{2,}|\n", cache_pattern=False
+)
 
 
 def _count_digits(num: int, /) -> int:

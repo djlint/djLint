@@ -18,6 +18,8 @@ from djlint.helpers import (
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from typing_extensions import Any
 
     from djlint.formatter.tokenizer import TagToken
@@ -25,8 +27,8 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-P_LIST_CHILD_MESSAGE = "List tags should not be nested inside p tags."
-P_LIST_CHILD_TAGS = frozenset(("ol", "ul"))
+P_LIST_CHILD_MESSAGE: Final = "List tags should not be nested inside p tags."
+P_LIST_CHILD_TAGS: Final = frozenset(("ol", "ul"))
 
 
 def run(

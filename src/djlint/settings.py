@@ -28,13 +28,16 @@ else:
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 from djlint.helpers import RE_FLAGS_IMSX, RE_FLAGS_ISX, RE_FLAGS_IX
 
-_JS_JSON_OBJECT_PATTERN = re.compile(
+if TYPE_CHECKING:
+    from typing import Final
+
+_JS_JSON_OBJECT_PATTERN: Final = re.compile(
     r"^\s*\{(?![{%]).*\}\s*$", RE_FLAGS_IX, cache_pattern=False
 )
-_JS_JSON_STRING_PATTERN = re.compile(
+_JS_JSON_STRING_PATTERN: Final = re.compile(
     r'["\']([^"\']*)["\']', RE_FLAGS_IX, cache_pattern=False
 )
-_JS_JSON_PROPERTY_PATTERN = re.compile(
+_JS_JSON_PROPERTY_PATTERN: Final = re.compile(
     r"""
     (?:^|[,{]\s*)
     (?:
@@ -71,7 +74,7 @@ if TYPE_CHECKING:
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
 
 
-DJLINT_TOML_CONFIG_FILES = ("djlint.toml", ".djlint.toml")
+DJLINT_TOML_CONFIG_FILES: Final = ("djlint.toml", ".djlint.toml")
 
 
 def find_project_root(src: Path) -> Path:

@@ -32,8 +32,8 @@ RE_FLAGS_IMX: Final = re.I | re.M | re.X
 RE_FLAGS_ISX: Final = re.I | re.S | re.X
 RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 
-_SPAN_CACHE_SIZE = 1
-_LINE_CACHE_SIZE = 64
+_SPAN_CACHE_SIZE: Final = 1
+_LINE_CACHE_SIZE: Final = 64
 
 
 def _last_item(iterable: Iterable[T], /) -> T | None:
@@ -246,7 +246,7 @@ def restore_template_tags(
     return html
 
 
-_UNFORMATTED_BLOCK_PATTERN = re.compile(
+_UNFORMATTED_BLOCK_PATTERN: Final = re.compile(
     r"""
           <!--\s*djlint\:off\s*-->.*?(?:<!--\s*djlint\:on\s*-->|\Z)
         | {\#\s*djlint\:\s*off\s*\#}.*?(?:{\#\s*djlint\:\s*on\s*\#}|\Z)
@@ -257,8 +257,8 @@ _UNFORMATTED_BLOCK_PATTERN = re.compile(
     RE_FLAGS_IMSX,
     cache_pattern=False,
 )
-_OPENING_HTML_TAG_PATTERN = re.compile(r"</?\w", cache_pattern=False)
-_RULE_SEPARATOR_PATTERN = re.compile(r"\s|,", cache_pattern=False)
+_OPENING_HTML_TAG_PATTERN: Final = re.compile(r"</?\w", cache_pattern=False)
+_RULE_SEPARATOR_PATTERN: Final = re.compile(r"\s|,", cache_pattern=False)
 
 
 def mask_unformatted_blocks(html: str) -> tuple[str, list[tuple[str, str]]]:

@@ -23,10 +23,12 @@ from djlint.helpers import (
 )
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from djlint.settings import Config
 
 
-_YAML_FRONT_MATTER_PATTERN = re.compile(
+_YAML_FRONT_MATTER_PATTERN: Final = re.compile(
     r"(^---.+?---)$", RE_FLAGS_MS, cache_pattern=False
 )
 

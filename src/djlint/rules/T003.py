@@ -15,22 +15,24 @@ from djlint.helpers import (
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from typing_extensions import Any
 
     from djlint.settings import Config
     from djlint.types import LintError
 
 
-_BLOCK_PATTERN = re.compile(
+_BLOCK_PATTERN: Final = re.compile(
     r"{%-?\s*(?P<closing>end)?block(?!trans)\b"
     r"(?:\s+(?P<name>[^\s%-][^\s%]*))?"
     r"(?:(?!%}).)*?-?%}",
     RE_FLAGS_IS,
     cache_pattern=False,
 )
-MISMATCH_MESSAGE = "Endblock name should match opening block name."
-MISSING_OPEN_MESSAGE = "Endblock should have matching block."
-MISSING_CLOSE_MESSAGE = "Block should have matching endblock."
+MISMATCH_MESSAGE: Final = "Endblock name should match opening block name."
+MISSING_OPEN_MESSAGE: Final = "Endblock should have matching block."
+MISSING_CLOSE_MESSAGE: Final = "Block should have matching endblock."
 
 
 def _ignored(

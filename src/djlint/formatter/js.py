@@ -16,10 +16,12 @@ from djlint.helpers import (
 )
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from djlint.settings import Config
 
 
-_SCRIPT_BLOCK_PATTERN = re.compile(
+_SCRIPT_BLOCK_PATTERN: Final = re.compile(
     r"([ ]*?)(<(?:script)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*>)(.*?)(?=</script>)",
     RE_FLAGS_IS,
     cache_pattern=False,

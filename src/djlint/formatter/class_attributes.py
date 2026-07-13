@@ -7,12 +7,14 @@ from typing import TYPE_CHECKING
 import regex as re
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from djlint.settings import Config
 
 
-CLASS_ATTRIBUTE_NEWLINE = "\x00DJLINT_CLASS_NEWLINE\x00"
-MIN_MULTILINE_CLASS_LINES = 2
-_CLASS_ATTRIBUTE_PATTERN = re.compile(
+CLASS_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_CLASS_NEWLINE\x00"
+MIN_MULTILINE_CLASS_LINES: Final = 2
+_CLASS_ATTRIBUTE_PATTERN: Final = re.compile(
     r"(?<![\w:.-])class(?![\w:.-])\s*=\s*(['\"])", re.I, cache_pattern=False
 )
 

@@ -28,47 +28,49 @@ from djlint.helpers import (
 )
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from djlint.settings import Config
 
 
-_TAG_SPACING_PATTERN = re.compile(
+_TAG_SPACING_PATTERN: Final = re.compile(
     r"({%-?\+?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?(\+?-?%})", cache_pattern=False
 )
-_INTERPOLATION_SPACING_PATTERN = re.compile(
+_INTERPOLATION_SPACING_PATTERN: Final = re.compile(
     r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", cache_pattern=False
 )
-_HANDLEBARS_BLOCK_END_PATTERN = re.compile(
+_HANDLEBARS_BLOCK_END_PATTERN: Final = re.compile(
     r"({{#(?:each|if).+?[^ ])(}})", cache_pattern=False
 )
-_SET_CLOSE_PATTERN = re.compile(
+_SET_CLOSE_PATTERN: Final = re.compile(
     r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX, cache_pattern=False
 )
-_SET_CLOSING_BRACE_PATTERN = re.compile(
+_SET_CLOSING_BRACE_PATTERN: Final = re.compile(
     r"^[ ]*}|^[ ]*]", RE_FLAGS_IMX, cache_pattern=False
 )
-_SINGLE_LINE_TEMPLATE_TAG_PATTERN = re.compile(
+_SINGLE_LINE_TEMPLATE_TAG_PATTERN: Final = re.compile(
     r"^\s*\{%-?(?:(?!%}).)*%}\s*$", RE_FLAGS_IMSX, cache_pattern=False
 )
-_SET_OPEN_PATTERN = re.compile(
+_SET_OPEN_PATTERN: Final = re.compile(
     r"^([ ]*{%[ ]*?set)(?!.*%}).*$", RE_FLAGS_IMX, cache_pattern=False
 )
-_SET_OPENING_BRACE_PATTERN = re.compile(
+_SET_OPENING_BRACE_PATTERN: Final = re.compile(
     r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
     RE_FLAGS_IMX,
     cache_pattern=False,
 )
-_TEMPLATE_TAG_CLOSE_PATTERN = re.compile(
+_TEMPLATE_TAG_CLOSE_PATTERN: Final = re.compile(
     r"\{%-?\s*end|\{\{/", RE_FLAGS_IMX, cache_pattern=False
 )
-_TEXTAREA_CLOSE_PATTERN = re.compile(
+_TEXTAREA_CLOSE_PATTERN: Final = re.compile(
     r"^\s*</textarea\b", RE_FLAGS_IX, cache_pattern=False
 )
-_SET_CONTENT_PATTERN = re.compile(
+_SET_CONTENT_PATTERN: Final = re.compile(
     r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
     RE_FLAGS_IMSX,
     cache_pattern=False,
 )
-_FUNCTION_CONTENT_PATTERN = re.compile(
+_FUNCTION_CONTENT_PATTERN: Final = re.compile(
     r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
     RE_FLAGS_IMSX,
     cache_pattern=False,

@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from types import MappingProxyType
+from typing import TYPE_CHECKING, final
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    from typing import Final
 
 
+@final
 @dataclass(
     repr=False,
     eq=False,
@@ -35,7 +38,11 @@ class TagToken:
         return self.start, self.end
 
 
-_TEMPLATE_DELIMITERS = {"{{": "}}", "{%": "%}", "{#": "#}"}
+_TEMPLATE_DELIMITERS: Final = MappingProxyType({
+    "{{": "}}",
+    "{%": "%}",
+    "{#": "#}",
+})
 
 
 def _after_mako_expression(source: str, start: int) -> int | None:
