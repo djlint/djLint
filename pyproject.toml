@@ -50,7 +50,7 @@ dev = [
   "ruff==0.15.21",
   "tomli==2.4.1",
   "types-pyyaml==6.0.12.20260518",
-  "types-regex==2026.6.28.20260630",
+  "types-regex==2026.7.10.20260711",
   "typing-extensions==4.16.0",
 ]
 
