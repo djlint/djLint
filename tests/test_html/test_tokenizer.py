@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from djlint.formatter.compress import compress_html
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.reformat import formatter
 
@@ -36,6 +37,24 @@ def test_tokenize_tags_preserves_source_positions() -> None:
     ]
     assert source[tokens[0].name_end : tokens[0].attributes_end] == (
         '\n data-value="{{ value > limit }}" title="a > b"'
+    )
+
+
+def test_template_comment_text_does_not_change_tokenization() -> None:
+    source = "<script>{#</script><div></div>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<script>", "</script>", "<div>", "</div>"]
+
+
+def test_mixed_template_comments_are_compressed(basic_config: Config) -> None:
+    source = (
+        "{{#unless}}<DIV  id=x></DIV>{{/unless}}{# <DIV  id=x> #}<SPAN></SPAN>"
+    )
+
+    assert compress_html(source, basic_config) == (
+        "{{#unless}}<div id=x></div>{{/unless}}{# <DIV  id=x> #}<span></span>"
     )
 
 

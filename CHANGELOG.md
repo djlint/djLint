@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## Unreleased
+
+### Fix
+
+- Preserve URLs enclosed in angle brackets inside template comments.
+
 ## [1.40.6] - 2026-07-13
 
 ### Performance and refactoring

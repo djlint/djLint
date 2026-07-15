@@ -139,6 +139,11 @@ test_data = [
         id="inline_comment",
     ),
     pytest.param(
+        "{# comment with url <https://example.com/> #}",
+        "{# comment with url <https://example.com/> #}\n",
+        id="issue_2223",
+    ),
+    pytest.param(
         (
             "<div>\n"
             "    {% if 1 %}\n"

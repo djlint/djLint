@@ -65,7 +65,16 @@ def compress_html(html: str, config: Config) -> str:
 
     output: list[str] = []
     previous_end = 0
-    for token in tokenize_tags(html):
+    # Keep offsets while hiding template comments from the HTML tokenizer.
+    token_source = (
+        config.unformatted_blocks_pattern.sub(
+            lambda match: " " * len(match.group()), html
+        )
+        if config.profile in {"all", "django", "jinja", "nunjucks"}
+        and "{#" in html
+        else html
+    )
+    for token in tokenize_tags(token_source):
         output.extend((html[previous_end : token.start], _clean_tag(token)))
         previous_end = token.end
     output.append(html[previous_end:])
