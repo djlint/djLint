@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Avoid adding trailing whitespace after function calls in multiline template expressions.
 - Avoid false T002 reports for template tags inside HTML attributes.
 
 ## [1.40.7] - 2026-07-15

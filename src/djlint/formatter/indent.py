@@ -626,7 +626,8 @@ def indent_html(rawcode: str, config: Config) -> str:
             normalize_string_quotes=normalize_string_quotes,
         )
 
-        return f"{leading_space}{open_bracket} {tag}({contents}){index} {close_bracket}"
+        separator = "" if close_bracket[:1].isspace() else " "
+        return f"{leading_space}{open_bracket} {tag}({contents}){index}{separator}{close_bracket}"
 
     if not config.no_set_formatting:
         func = partial(format_set, config, beautified_code)

@@ -91,3 +91,16 @@ def test_base(source: str, expected: str, jinja_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+def test_issue_1428_no_trailing_whitespace(jinja_config: Config) -> None:
+    source = (
+        "{%- macro fix_user_string(value) -%}\n"
+        "    {{ value\n"
+        "    | replace('\\\\', '\\\\\\\\')\n"
+        '    | replace("\\n", "\\\\n")\n'
+        "    }}\n"
+        "{%- endmacro -%}\n"
+    )
+
+    assert formatter(jinja_config, source) == source
