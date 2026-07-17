@@ -42,16 +42,23 @@ test_data = [
             "</a>\n"
         ),
         (
-            '<a {% if piece.owner == request.user %} class="disabled {% if not piece.like_count %}hidden{% endif %}\n'
-            '   "\n'
-            "   {% else %}\n"
-            '   hx-post="x"\n'
-            "   {% endif %}>\n"
+            '<a {% if piece.owner == request.user %} class="disabled {% if not piece.like_count %}hidden{% endif %}" {% else %} hx-post="x" {% endif %}>\n'
             "    test\n"
             "    {% if piece.like_count %}<span>{{ piece.like_count }}</span>{% endif %}\n"
             "</a>\n"
         ),
         id="issue #652",
+    ),
+    pytest.param(
+        (
+            '<a {% if cond %} class="somelongclass {% if cond2 %}'
+            'otherlongclass{% endif %} anotherlongclass"{% endif %}></a>'
+        ),
+        (
+            '<a {% if cond %} class="somelongclass {% if cond2 %}'
+            'otherlongclass{% endif %} anotherlongclass"{% endif %}></a>\n'
+        ),
+        id="issue #443",
     ),
 ]
 

@@ -262,6 +262,24 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
     ) or child_of_ignored_block(config, html, token):
         return html[token.start : token.end]
 
+    if not config.format_attribute_template_tags:
+        template_depth = 0
+        for template_tag in re.finditer(
+            config.template_tags, attribute_group, flags=RE_FLAGS_IMX
+        ):
+            if re.match(
+                config.template_unindent,
+                template_tag.group(),
+                flags=RE_FLAGS_IMX,
+            ):
+                template_depth = max(template_depth - 1, 0)
+            elif re.match(
+                config.template_indent, template_tag.group(), flags=RE_FLAGS_IMX
+            ):
+                template_depth += 1
+                if template_depth > 1:
+                    return html[token.start : token.end]
+
     leading_start = token.start
     while leading_start and html[leading_start - 1] in " \t":
         leading_start -= 1
