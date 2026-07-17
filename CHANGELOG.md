@@ -6,8 +6,9 @@
 
 ### Fix
 
-- Avoid false H037 reports for attributes in mutually exclusive template branches. Issue #647.
-- Respect `exclude` and `extend_exclude` for explicitly provided files. Issue #664.
+- Indent content inside Twig `embed` blocks.
+- Avoid false H037 reports for attributes in mutually exclusive template branches.
+- Respect `exclude` and `extend_exclude` for explicitly provided files.
 - Preserve attributes containing nested template blocks when wrapping long tags.
 - Preserve template expressions used in dynamic HTML tag names.
 - Preserve asterisks in HTML attribute names such as htmx response targets.

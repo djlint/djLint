@@ -35,7 +35,30 @@ test_data = [
             "{{ form_end(form) }}\n"
         ),
         id="comments",
-    )
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            '    {% embed "card.twig" %}\n'
+            "    {% block content %}\n"
+            "    <p>Content</p>\n"
+            "    {% endblock %}\n"
+            "    {% endembed %}\n"
+            "    <p>After</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            '    {% embed "card.twig" %}\n'
+            "        {% block content %}\n"
+            "            <p>Content</p>\n"
+            "        {% endblock %}\n"
+            "    {% endembed %}\n"
+            "    <p>After</p>\n"
+            "</div>\n"
+        ),
+        id="github issue 1370",
+    ),
 ]
 
 

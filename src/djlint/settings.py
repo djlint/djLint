@@ -884,6 +884,7 @@ class Config:
                 | for
                 | asyncEach
                 | asyncAll
+                | embed
                 | block(?!trans|translate)
                 | spaceless
                 | compress
