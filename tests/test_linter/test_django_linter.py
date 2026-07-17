@@ -92,6 +92,11 @@ test_data = [
         id="T002_translate",
     ),
     pytest.param(
+        ("<span title=\"{% translate 'this' %}\"></span>"),
+        ([]),
+        id="T002_translate_in_attribute",
+    ),
+    pytest.param(
         ("{% include 'this' %}"),
         ([
             {

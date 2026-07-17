@@ -13,9 +13,7 @@
 - rule:
     name: T002
     message: Double quotes should be used in tags.
-    flags: re.DOTALL
-    patterns:
-      - "{%[ \t]*?(?:trans(?:late)?|with|extends|include|now)[\\s]+?(?:(?:(?!%}|').)+?=)?'(?:(?!%}|').)*?'(?:(?!%}).)*?%}"
+    python_module: djlint.rules.T002
 - rule:
     name: T003
     message: "Endblock should have name. Ex: {% endblock body %}."
