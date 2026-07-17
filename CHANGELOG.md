@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.40.8] - 2026-07-17
+
 ### Fix
 
 - Preserve conditional attribute names and significant whitespace in template-generated attributes.
