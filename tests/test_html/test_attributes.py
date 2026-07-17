@@ -983,6 +983,20 @@ test_data = [
         ),
         id="template_var_as_attribute_name",
     ),
+    pytest.param(
+        (
+            '<button hx-post="/register" hx-target="#response-div"'
+            ' hx-target-5*="#serious-errors"'
+            ' hx-target-404="#not-found">Register!</button>'
+        ),
+        (
+            '<button hx-post="/register"\n'
+            '        hx-target="#response-div"\n'
+            '        hx-target-5*="#serious-errors"\n'
+            '        hx-target-404="#not-found">Register!</button>\n'
+        ),
+        id="wildcard_attribute_name",
+    ),
 ]
 
 

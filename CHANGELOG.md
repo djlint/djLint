@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Preserve asterisks in HTML attribute names such as htmx response targets.
 - Avoid adding trailing whitespace after function calls in multiline template expressions.
 - Avoid false T002 reports for template tags inside HTML attributes.
 
