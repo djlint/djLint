@@ -117,6 +117,14 @@ test_data = [
         id="J018_mailto",
     ),
     pytest.param(
+        (
+            '<a href="maps://example.com"></a>\n'
+            '<form action="web+demo.example:submit"></form>'
+        ),
+        ([]),
+        id="J018_uri_scheme",
+    ),
+    pytest.param(
         ('<a href="/">Home</a>\n<form action="/"></form>'), ([]), id="J018_root"
     ),
     pytest.param(

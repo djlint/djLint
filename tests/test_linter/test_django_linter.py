@@ -273,6 +273,15 @@ test_data = [
         id="DJ018_mailto",
     ),
     pytest.param(
+        (
+            '<a href="maps://?ll={{ obj.address.position.coords.1 }},'
+            '{{ obj.address.position.coords.0 }}&z=20"></a>\n'
+            '<form action="web+demo.example:submit"></form>'
+        ),
+        ([]),
+        id="issue_831_uri_scheme",
+    ),
+    pytest.param(
         ('<a href="/">Home</a>\n<form action="/"></form>'),
         ([]),
         id="DJ018_root",

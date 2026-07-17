@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Avoid false D018/J018 reports for links using valid URI schemes.
 - Indent content inside Twig `embed` blocks.
 - Avoid false H037 reports for attributes in mutually exclusive template branches.
 - Respect `exclude` and `extend_exclude` for explicitly provided files.
