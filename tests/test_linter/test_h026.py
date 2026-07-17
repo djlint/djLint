@@ -91,6 +91,18 @@ test_data = [
         ([]),
         id="id text inside quoted attributes",
     ),
+    pytest.param(
+        ('<div id ="foo"></div>'),
+        ([
+            {
+                "code": "H012",
+                "line": "1:0",
+                "match": "<div id =",
+                "message": "There should be no spaces around attribute =.",
+            }
+        ]),
+        id="id value after spaced equals",
+    ),
 ]
 
 

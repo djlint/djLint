@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Avoid false H026 reports when `id` or `class` is followed by a spaced equals sign.
 - Keep short tag contents inline when attributes contain template expressions.
 - Avoid false D018/J018 reports for links using valid URI schemes.
 - Indent content inside Twig `embed` blocks.

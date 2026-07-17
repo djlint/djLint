@@ -179,7 +179,7 @@
     flags: re.I
     patterns:
       - <\w+\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*?\s(class|id)\b=(\"\"|'')
-      - <\w+\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*?\s(class|id)\b(?=\s|/?>)
+      - <\w+\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*?\s(class|id)\b(?!\s*=)(?=\s|/?>)
 - rule:
     name: T027
     message: Unclosed string found in template syntax.
