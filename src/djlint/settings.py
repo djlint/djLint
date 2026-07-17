@@ -992,6 +992,10 @@ class Config:
                         (?:\w|-|\.|\:|@|\*|/(?!>)) # a name character
                        | (?>{{{{[\s\S]*?}}}})
                          (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template variable
+                       | (?!{{%-?\s*(?:for|asyncAll|asyncEach)\b)
+                         (?!{{%-?\s*if\b[^}}]*?%}}(?:required|checked){{%-?\s*endif\b[^}}]*?%}})
+                         (?>{self.template_if_for_pattern})
+                         (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template block
                     )
                     (?:
                         (?:\w|-|\.|\:|@|\*|/(?!>)) # more name characters

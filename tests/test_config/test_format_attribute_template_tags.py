@@ -277,6 +277,56 @@ test_data = [
         (),
         id="no option include",
     ),
+    pytest.param(
+        (
+            '<div class="pricing-plans-card pricing-plans-card--{% if plan == current_plan %}active{% else %}other{% endif %} h-100 shadow-sm text-center">content</div>\n'
+        ),
+        (
+            '<div class="pricing-plans-card pricing-plans-card--{% if plan == current_plan %}active{% else %}other{% endif %}\n'
+            '            h-100 shadow-sm text-center">content</div>\n'
+        ),
+        ({"format_attribute_template_tags": True, "profile": "django"}),
+        id="issue_2240_preserve_template_class_token",
+    ),
+    pytest.param(
+        (
+            '<img {% if lazyload %}data-{% endif %}srcset="{{ thumb.large }} 1024w, {{ thumb.middle }} 512w, {{ thumb.small }} 256w" class="card-img-top" width="256" height="256" alt="{{ asset.name }}">\n'
+        ),
+        (
+            '<img {% if lazyload %}data-{% endif %}srcset="{{ thumb.large }} 1024w, {{ thumb.middle }} 512w, {{ thumb.small }} 256w"\n'
+            '     class="card-img-top"\n'
+            '     width="256"\n'
+            '     height="256"\n'
+            '     alt="{{ asset.name }}">\n'
+        ),
+        ({"profile": "django"}),
+        id="issue_2239_conditional_attribute_prefix",
+    ),
+    pytest.param(
+        (
+            '<img {% if lazyload %}data-srcset{% else %}srcset{% endif %}="{{ thumb.large }} 1024w, {{ thumb.middle }} 512w, {{ thumb.small }} 256w" class="card-img-top" width="256" height="256">\n'
+        ),
+        (
+            '<img {% if lazyload %}data-srcset{% else %}srcset{% endif %}="{{ thumb.large }} 1024w, {{ thumb.middle }} 512w, {{ thumb.small }} 256w"\n'
+            '     class="card-img-top"\n'
+            '     width="256"\n'
+            '     height="256">\n'
+        ),
+        ({"profile": "django"}),
+        id="issue_2238_conditional_attribute_name",
+    ),
+    pytest.param(
+        (
+            '<select name="order" {% for key, value in widget.attrs.items %}{{ key }}="{{ value }}" {% endfor %}class="form-select"></select>\n'
+        ),
+        (
+            '<select name="order"\n'
+            '        {% for key, value in widget.attrs.items %}{{ key }}="{{ value }}" {% endfor %}\n'
+            '        class="form-select"></select>\n'
+        ),
+        ({"profile": "django"}),
+        id="issue_2237_preserve_loop_attribute_separator",
+    ),
 ]
 
 

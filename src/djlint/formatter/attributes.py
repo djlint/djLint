@@ -228,7 +228,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
 
     attributes = re.sub(
         break_char
-        + r".\K((?:{%|{{\#)[ ]*?(?:"
+        + r"[ \t]\K((?:{%|{{\#)[ ]*?(?:"
         + config.break_template_tags
         + ")[^}]+?[%|}]})",
         func,
@@ -241,7 +241,7 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
     attributes = re.sub(
         r"((?:{%|{{\#)[ ]*?(?:"
         + config.break_template_tags
-        + ")[^}]+?[%|}]})([^\n]+)$",
+        + ")[^}]+?[%|}]})(?=[ \t])([^\n]+)$",
         func,
         attributes,
         flags=RE_FLAGS_IMX,

@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Preserve conditional attribute names and significant whitespace in template-generated attributes.
 - Keep parent closing tags aligned after multiline inline content.
 - Avoid false H026 reports when `id` or `class` is followed by a spaced equals sign.
 - Keep short tag contents inline when attributes contain template expressions.
