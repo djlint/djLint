@@ -79,6 +79,29 @@ test_data = [
     ),
     pytest.param(
         (
+            '<button {% if active %} class="on" title="On" '
+            '{% else %} class="off" title="Off" {% endif %}></button>'
+        ),
+        ([]),
+        id="attributes in mutually exclusive branches",
+    ),
+    pytest.param(
+        (
+            '<button {% if active %} class="on" '
+            '{% else %} id="off" {% endif %} class="always"></button>'
+        ),
+        ([
+            {
+                "code": "H037",
+                "line": "1:24",
+                "match": "class",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="attribute inside and outside conditional",
+    ),
+    pytest.param(
+        (
             '<a href="" ></a><a href=""></a><a href=""></a><a href=""></a><a href=""></a><a href=""></a>'
         ),
         ([]),

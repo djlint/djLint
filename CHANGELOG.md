@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Avoid false H037 reports for attributes in mutually exclusive template branches. Issue #647.
 - Respect `exclude` and `extend_exclude` for explicitly provided files. Issue #664.
 - Preserve attributes containing nested template blocks when wrapping long tags.
 - Preserve template expressions used in dynamic HTML tag names.
