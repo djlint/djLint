@@ -6,6 +6,7 @@
 
 ### Fix
 
+- Respect `exclude` and `extend_exclude` for explicitly provided files. Issue #664.
 - Preserve attributes containing nested template blocks when wrapping long tags.
 - Preserve template expressions used in dynamic HTML tag names.
 - Preserve asterisks in HTML attribute names such as htmx response targets.

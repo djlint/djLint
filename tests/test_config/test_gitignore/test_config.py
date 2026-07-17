@@ -186,6 +186,16 @@ def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
     assert "templates/generated/bad.html" not in resolved_paths
 
 
+def test_extend_exclude_matches_explicit_file(tmp_path: Path) -> None:
+    """Explicit files should still respect configured excludes."""
+    template = tmp_path / "generated.html"
+    template.write_text("<div>generated</div>", encoding="utf-8")
+
+    config = Config(str(tmp_path), extend_exclude="generated.html")
+
+    assert get_src([template], config) == []
+
+
 def test_exclude_matches_path_segments_not_substrings(tmp_path: Path) -> None:
     """Exclude paths should not match partial path component names."""
     worktree = tmp_path / "project"

@@ -62,9 +62,13 @@ def get_src(src: Iterable[Path], config: Config) -> list[Path]:
         normalized_item = item.resolve()
 
         if normalized_item.is_file():
-            if no_pragma(config, normalized_item) and (
-                not config.use_gitignore
-                or not _gitignore_match(config, normalized_item)
+            if (
+                not _exclude_match(config, normalized_item, config.project_root)
+                and no_pragma(config, normalized_item)
+                and (
+                    not config.use_gitignore
+                    or not _gitignore_match(config, normalized_item)
+                )
             ):
                 paths.append(normalized_item)
             continue
