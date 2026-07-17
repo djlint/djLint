@@ -997,6 +997,38 @@ test_data = [
         ),
         id="wildcard_attribute_name",
     ),
+    pytest.param(
+        (
+            '<button class="btn p-1 m-1"'
+            ' id="a-very-very-very-long-id"'
+            ' aria-label="some button"'
+            " {{ attributes(attr) }}>Press me!\n</button>\n"
+        ),
+        (
+            '<button class="btn p-1 m-1"\n'
+            '        id="a-very-very-very-long-id"\n'
+            '        aria-label="some button"\n'
+            "        {{ attributes(attr) }}>Press me!</button>\n"
+        ),
+        id="issue_806_template_expression",
+    ),
+    pytest.param(
+        (
+            '<button type="button"\n'
+            '        data-a="<p>x</p>"\n'
+            '        data-is-prepaid="{% if is_prepaid_mode %}'
+            'true{% else %}false{% endif %}">\n'
+            "    Label\n"
+            "</button>\n"
+        ),
+        (
+            '<button type="button"\n'
+            '        data-a="<p>x</p>"\n'
+            '        data-is-prepaid="{% if is_prepaid_mode %}'
+            'true{% else %}false{% endif %}">Label</button>\n'
+        ),
+        id="issue_806_html_in_attribute",
+    ),
 ]
 
 
