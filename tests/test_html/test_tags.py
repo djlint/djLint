@@ -22,6 +22,11 @@ test_data = [
         id="case_sensitive",
     ),
     pytest.param(
+        "<p>\n  <a>b\n    c</a> d\n</p>\n",
+        "<p>\n    <a>b\n        c</a> d\n</p>\n",
+        id="issue_834_closing_inline_tag_before_text",
+    ),
+    pytest.param(
         (
             "<div>\n"
             "    aaaaaaaaaa\n"

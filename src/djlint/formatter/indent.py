@@ -375,6 +375,20 @@ def indent_html(rawcode: str, config: Config) -> str:
                 open_count = len(template_start_pattern.findall(item))
                 dedent_after = max(close_count - open_count, 0)
 
+        if (
+            not is_block_raw
+            and "</" in item
+            and not tag_unindent_pattern.search(item)
+        ):
+            html_depth_change = sum(
+                -1 if token.closing else 1
+                for token in tokenize_tags(item)
+                if is_html_tag(token.name)
+                and not token.self_closing
+                and token.name.lower() not in HTML_VOID_ELEMENTS
+            )
+            dedent_after += max(-html_depth_change, 0)
+
         if is_safe_closing_tag_:
             ignored_level -= 1
             ignored_level = max(ignored_level, 0)
