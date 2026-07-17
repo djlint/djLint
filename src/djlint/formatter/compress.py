@@ -51,7 +51,7 @@ def compress_html(html: str, config: Config) -> str:
             )
 
         attributes = (
-            " "
+            (" " if raw_attributes[0].isspace() else "")
             + " ".join(x.strip() for x in raw_attributes.strip().splitlines())
             if raw_attributes
             else ""

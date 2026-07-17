@@ -74,3 +74,9 @@ def test_nested_mako_attribute_is_preserved(basic_config: Config) -> None:
     )
 
     assert formatter(basic_config, source) == source + "\n"
+
+
+def test_dynamic_tag_name_is_preserved(django_config: Config) -> None:
+    source = "<h{{ header_level }}>{{ value }}</h{{ header_level }}>"
+
+    assert formatter(django_config, source) == source + "\n"
