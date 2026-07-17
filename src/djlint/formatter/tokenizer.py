@@ -23,15 +23,15 @@ if TYPE_CHECKING:
 class TagToken:
     """Source positions for one HTML tag."""
 
-    start: int
-    end: int
-    name_start: int
-    name_end: int
-    attributes_end: int
-    name: str
-    closing: bool
-    declaration: bool
-    self_closing: bool
+    start: Final[int]
+    end: Final[int]
+    name_start: Final[int]
+    name_end: Final[int]
+    attributes_end: Final[int]
+    name: Final[str]
+    closing: Final[bool]
+    declaration: Final[bool]
+    self_closing: Final[bool]
 
     def span(self) -> tuple[int, int]:
         """Return the source span."""

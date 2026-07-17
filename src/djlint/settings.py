@@ -328,7 +328,6 @@ class Config:
     __slots__ = (
         "always_self_closing_html_tags",
         "attribute_pattern",
-        "attribute_style_pattern",
         "blank_line_after_tag",
         "blank_line_before_tag",
         "break_before",
@@ -358,29 +357,20 @@ class Config:
         "ignore_blocks",
         "ignore_case",
         "ignored_attributes",
-        "ignored_block_closing",
         "ignored_block_closing_pattern",
-        "ignored_block_opening",
         "ignored_block_opening_pattern",
-        "ignored_blocks",
-        "ignored_blocks_inline",
         "ignored_blocks_inline_pattern",
         "ignored_blocks_pattern",
         "ignored_inline_blocks",
         "ignored_inline_blocks_ix_pattern",
-        "ignored_linter_blocks",
         "ignored_linter_blocks_pattern",
         "ignored_rule_patterns",
-        "ignored_rules",
-        "ignored_trans_blocks",
-        "ignored_trans_blocks_closing",
         "ignored_trans_blocks_closing_pattern",
         "ignored_trans_blocks_pattern",
         "include",
         "indent",
         "indent_html_tags",
         "indent_size",
-        "indent_template_tags",
         "js_config",
         "line_break_after_multiline_tag",
         "lint",
@@ -401,20 +391,15 @@ class Config:
         "preserve_class_newlines",
         "preserve_leading_space",
         "profile",
-        "profile_code",
         "project_root",
         "quiet",
         "reformat",
         "require_pragma",
         "safe_closing_block_pattern",
-        "safe_closing_tag",
         "safe_closing_tag_pattern",
-        "script_style_closing",
         "script_style_closing_pattern",
-        "script_style_inline",
         "script_style_inline_imsx_pattern",
         "script_style_inline_ix_pattern",
-        "script_style_opening",
         "script_style_opening_pattern",
         "single_attribute_per_line",
         "start_template_tags",
@@ -423,16 +408,11 @@ class Config:
         "tag_indent",
         "tag_unindent",
         "tag_unindent_line",
-        "template_blocks",
         "template_blocks_pattern",
-        "template_if_for_pattern",
         "template_indent",
         "template_tags",
         "template_unindent",
-        "trans_trimmed_blocks",
         "trans_trimmed_blocks_pattern",
-        "unformatted_blocks",
-        "unformatted_blocks_coarse",
         "unformatted_blocks_coarse_pattern",
         "unformatted_blocks_pattern",
         "use_gitignore",
@@ -488,67 +468,67 @@ class Config:
         no_set_formatting: bool = False,
         max_blank_lines: int | None = None,
         github_output: bool = False,
+        stdin: bool | None = None,
     ) -> None:
-        self.reformat = reformat
-        self.check = check
-        self.lint = lint
-        self.warn = warn
-        self.github_output = github_output
+        self.reformat: Final = reformat
+        self.check: Final = check
+        self.lint: Final = lint
+        self.warn: Final = warn
+        self.github_output: Final = github_output
 
-        if src == "-":
-            self.project_root = find_project_root(Path.cwd())
-        else:
-            self.project_root = find_project_root(Path(src).resolve())
+        self.project_root: Final = find_project_root(
+            Path.cwd() if src == "-" else Path(src).resolve()
+        )
 
         djlint_settings = load_project_settings(
             self.project_root, configuration
         )
 
-        self.gitignore = load_gitignore(self.project_root)
+        self.gitignore: Final = load_gitignore(self.project_root)
         # custom configuration options
 
-        self.use_gitignore: bool = use_gitignore or djlint_settings.get(
+        use_gitignore = use_gitignore or djlint_settings.get(
             "use_gitignore", False
         )
-        self.extension: str = str(
+        self.extension: Final = str(
             extension or djlint_settings.get("extension", "html")
         )
-        self.quiet: bool = quiet or djlint_settings.get("quiet", False)
-        self.require_pragma: bool = (
+        self.quiet: Final = quiet or djlint_settings.get("quiet", False)
+        self.require_pragma: Final = (
             require_pragma
             or str(djlint_settings.get("require_pragma", "false")).lower()
             == "true"
         )
 
-        self.custom_blocks: str = str(
+        self.custom_blocks: Final = str(
             build_custom_blocks(
                 custom_blocks or djlint_settings.get("custom_blocks")
             )
             or ""
         )
 
-        self.custom_html: str = str(
+        self.custom_html: Final = str(
             build_custom_html(custom_html or djlint_settings.get("custom_html"))
             or ""
         )
 
-        self.format_attribute_template_tags: bool = (
+        self.format_attribute_template_tags: Final = (
             format_attribute_template_tags
             or djlint_settings.get("format_attribute_template_tags", False)
         )
 
-        self.single_attribute_per_line: bool = (
+        self.single_attribute_per_line: Final = (
             single_attribute_per_line
             or djlint_settings.get("single_attribute_per_line", False)
         )
 
-        self.format_attribute_js_json: bool = (
+        self.format_attribute_js_json: Final = (
             format_attribute_js_json
             or djlint_settings.get("format_attribute_js_json", False)
         )
 
         try:
-            self.format_attribute_js_json_min_props: int = (
+            js_json_min_props = (
                 format_attribute_js_json_min_props
                 if format_attribute_js_json_min_props is not None
                 else int(
@@ -565,7 +545,8 @@ class Config:
                 ),
                 err=True,
             )
-            self.format_attribute_js_json_min_props = 2
+            js_json_min_props = 2
+        self.format_attribute_js_json_min_props: Final = js_json_min_props
 
         # Default pattern for common JS-bearing attributes. data-* attributes
         # are intentionally opt-in via format_attribute_js_json_pattern.
@@ -588,83 +569,86 @@ class Config:
                 "format_attribute_js_json_pattern", default_js_pattern
             )
         )
-        self.format_attribute_js_json_pattern: re.Pattern[str] = re.compile(
+        self.format_attribute_js_json_pattern: Final = re.compile(
             js_pattern_string, RE_FLAGS_IX, cache_pattern=False
         )
 
-        self.format_attribute_js_json_object_pattern: re.Pattern[str] = (
+        self.format_attribute_js_json_object_pattern: Final = (
             _JS_JSON_OBJECT_PATTERN
         )
-        self.format_attribute_js_json_string_pattern: re.Pattern[str] = (
+        self.format_attribute_js_json_string_pattern: Final = (
             _JS_JSON_STRING_PATTERN
         )
-        self.format_attribute_js_json_property_pattern: re.Pattern[str] = (
+        self.format_attribute_js_json_property_pattern: Final = (
             _JS_JSON_PROPERTY_PATTERN
         )
 
-        self.preserve_leading_space: bool = (
+        self.preserve_leading_space: Final = (
             preserve_leading_space
             or djlint_settings.get("preserve_leading_space", False)
         )
-        self.ignore_blocks: str | None = build_ignore_blocks(
+        self.ignore_blocks: Final = build_ignore_blocks(
             ignore_blocks or djlint_settings.get("ignore_blocks", "")
         )
 
-        self.preserve_blank_lines: bool = (
+        self.preserve_blank_lines: Final = (
             preserve_blank_lines
             or djlint_settings.get("preserve_blank_lines", False)
         )
 
-        self.preserve_class_newlines: bool = (
+        self.preserve_class_newlines: Final = (
             preserve_class_newlines
             or djlint_settings.get("preserve_class_newlines", False)
         )
 
-        self.format_js: bool = format_js or djlint_settings.get(
+        self.format_js: Final = format_js or djlint_settings.get(
             "format_js", False
         )
 
-        self.js_config = (
+        self.js_config: Final = (
             {"indent_size": indent_js}
             if indent_js
             else djlint_settings.get("js")
         ) or {}
 
-        self.css_config = (
+        self.css_config: Final = (
             {"indent_size": indent_css}
             if indent_css
             else djlint_settings.get("css")
         ) or {}
 
-        self.format_css: bool = format_css or djlint_settings.get(
+        self.format_css: Final = format_css or djlint_settings.get(
             "format_css", False
         )
 
-        self.ignore_case: bool = ignore_case or djlint_settings.get(
+        self.ignore_case: Final = ignore_case or djlint_settings.get(
             "ignore_case", False
         )
 
-        self.close_void_tags: bool = close_void_tags or djlint_settings.get(
+        self.close_void_tags: Final = close_void_tags or djlint_settings.get(
             "close_void_tags", False
         )
-        self.no_line_after_yaml: bool = (
+        self.no_line_after_yaml: Final = (
             no_line_after_yaml
             or djlint_settings.get("no_line_after_yaml", False)
         )
-        self.no_set_formatting: bool = no_set_formatting or djlint_settings.get(
-            "no_set_formatting", False
+        self.no_set_formatting: Final = (
+            no_set_formatting or djlint_settings.get("no_set_formatting", False)
         )
-        self.no_function_formatting: bool = (
+        self.no_function_formatting: Final = (
             no_function_formatting
             or djlint_settings.get("no_function_formatting", False)
         )
 
         # ignore is based on input and also profile
-        self.ignore: str = str(ignore or djlint_settings.get("ignore", ""))
-        self.include: str = str(include or djlint_settings.get("include", ""))
+        self.ignore: Final = str(ignore or djlint_settings.get("ignore", ""))
+        self.include: Final = str(include or djlint_settings.get("include", ""))
 
-        self.files: list[str] | None = djlint_settings.get("files", None)
-        self.stdin = False
+        self.files: Final = djlint_settings.get("files", None)
+        self.stdin: Final = (
+            src == "-" if stdin is None else stdin
+        ) and not self.files
+        self.use_gitignore: Final = use_gitignore and not self.stdin
 
         # codes to exclude
         profile_dict: dict[str, tuple[str, ...]] = {
@@ -677,14 +661,14 @@ class Config:
             "angular": ("D", "J", "H012", "H026", "H028"),
         }
 
-        self.profile_code: tuple[str, ...] = profile_dict.get(
+        profile_code = profile_dict.get(
             str(profile or djlint_settings.get("profile", "html")).lower(), ()
         )
-        self.profile: str = str(
+        self.profile: Final = str(
             profile or djlint_settings.get("profile", "all")
         ).lower()
 
-        self.linter_output_format: str = (
+        self.linter_output_format: Final = (
             linter_output_format
             or djlint_settings.get(
                 "linter_output_format", "{code} {line} {message} {match}"
@@ -703,12 +687,12 @@ class Config:
             )
         )
 
-        self.linter_rules = tuple(
+        self.linter_rules: Final = tuple(
             x
             for x in rule_set
             if x["rule"]["name"] not in self.ignore.split(",")
             and not any(
-                x["rule"]["name"].startswith(code) for code in self.profile_code
+                x["rule"]["name"].startswith(code) for code in profile_code
             )
             and self.profile not in x["rule"].get("exclude", set())
             and (
@@ -717,7 +701,7 @@ class Config:
             )
         )
 
-        self.statistics = statistics
+        self.statistics: Final = statistics
 
         # base options
         default_indent = 4
@@ -733,11 +717,11 @@ class Config:
                     err=True,
                 )
                 indent = default_indent
-        self.indent_size = indent
-        self.indent: str = indent * " "
+        self.indent_size: Final = indent
+        self.indent: Final = indent * " "
 
         try:
-            self.max_blank_lines = int(
+            max_blank_lines_value = int(
                 djlint_settings.get("max_blank_lines", max_blank_lines or 0)
             )
         except ValueError:
@@ -748,7 +732,8 @@ class Config:
                 ),
                 err=True,
             )
-            self.max_blank_lines = max_blank_lines or 0
+            max_blank_lines_value = max_blank_lines or 0
+        self.max_blank_lines: Final = max_blank_lines_value
 
         # From ruff and black
         default_exclude: str = r"""
@@ -778,7 +763,7 @@ class Config:
             | venv
         """
 
-        self.exclude: str = build_exclude(
+        exclude_value = build_exclude(
             exclude or djlint_settings.get("exclude", default_exclude)
         )
 
@@ -787,44 +772,46 @@ class Config:
         )
 
         if extend_exclude:
-            self.exclude += r" | " + build_exclude(extend_exclude)
+            exclude_value += r" | " + build_exclude(extend_exclude)
 
-        self.exclude_pattern: re.Pattern[str] = re.compile(
+        self.exclude: Final = exclude_value
+
+        self.exclude_pattern: Final = re.compile(
             rf"(?:^|/)(?:{self.exclude})(?=$|/|(?<=/))",
             re.X,
             cache_pattern=False,
         )
 
-        self.per_file_ignores = (
+        self.per_file_ignores: Final = (
             (dict(per_file_ignores))
             if per_file_ignores
             else djlint_settings.get("per-file-ignores", {})
         )
 
         # add blank line after load tags
-        self.blank_line_after_tag: str | None = (
+        self.blank_line_after_tag: Final = (
             blank_line_after_tag
             or djlint_settings.get("blank_line_after_tag", None)
         )
 
         # add blank line before load tags
-        self.blank_line_before_tag: str | None = (
+        self.blank_line_before_tag: Final = (
             blank_line_before_tag
             or djlint_settings.get("blank_line_before_tag", None)
         )
 
         # add line break after multi-line tags
-        self.line_break_after_multiline_tag: bool = (
+        self.line_break_after_multiline_tag: Final = (
             line_break_after_multiline_tag
             or djlint_settings.get("line_break_after_multiline_tag", False)
         )
 
         # contents of tags will not be formatted
-        self.script_style_opening: str = r"""
+        script_style_opening = r"""
            <style
          | <script
         """
-        self.ignored_block_opening: str = r"""
+        ignored_block_opening = r"""
               <style
             | {\*
             | <\?php
@@ -841,11 +828,11 @@ class Config:
             | {{!--\s*djlint\:off\s*--}}
             | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
         """
-        self.script_style_closing: str = r"""
+        script_style_closing = r"""
               </style
             | </script
         """
-        self.ignored_block_closing: str = r"""
+        ignored_block_closing = r"""
               </style
             | \*}
             | \?>
@@ -864,7 +851,7 @@ class Config:
 
         # ignored block closing tags that
         # we can safely indent.
-        self.safe_closing_tag: str = r"""
+        safe_closing_tag = r"""
               </script
             | </style
             | {\#\s*djlint\:\s*on\s*\#}
@@ -874,9 +861,11 @@ class Config:
         """
 
         # all html tags possible
-        self.indent_html_tags: str = "|".join(HTML_TAG_NAMES) + self.custom_html
+        self.indent_html_tags: Final = (
+            "|".join(HTML_TAG_NAMES) + self.custom_html
+        )
 
-        self.indent_template_tags: str = (
+        indent_template_tags = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
             + r""" (?:if
                 | unless
@@ -909,17 +898,17 @@ class Config:
             + r")\b"
         )
 
-        self.template_indent: str = (
+        self.template_indent: Final = (
             r"""
             (?:\{\{\#|\{%-?)[ ]*?
                 ("""
-            + self.indent_template_tags
+            + indent_template_tags
             + r"""
             ) | \{{-?[ ]*?form_start
             """
         )
 
-        self.template_unindent: str = (
+        self.template_unindent: Final = (
             r"""
                 (?:
                   (?:\{\{\/)
@@ -932,7 +921,7 @@ class Config:
         )
 
         # these tags should be unindented and next line will be indented
-        self.tag_unindent_line: str = r"""
+        self.tag_unindent_line: Final = r"""
               (?:\{%-?[ ]*?(?:elif|else|empty|plural))
             | (?:
                 \{\{[ ]*?
@@ -943,14 +932,14 @@ class Config:
               )
         """
 
-        self.break_before = r"(?<!\n[ \t]*?)"
+        self.break_before: Final = r"(?<!\n[ \t]*?)"
 
         # if lines are longer than x
-        self.max_line_length = 120
+        max_line_length_value = 120
 
         try:
-            self.max_line_length = max_line_length or int(
-                djlint_settings.get("max_line_length", self.max_line_length)
+            max_line_length_value = max_line_length or int(
+                djlint_settings.get("max_line_length", max_line_length_value)
             )
         except ValueError:
             echo(
@@ -960,16 +949,17 @@ class Config:
                 ),
                 err=True,
             )
+        self.max_line_length: Final = max_line_length_value
 
-        self.max_attribute_length = 70
+        max_attribute_length_value = 70
 
         try:
-            self.max_attribute_length = (
+            max_attribute_length_value = (
                 max_attribute_length
                 if max_attribute_length is not None
                 else int(
                     djlint_settings.get(
-                        "max_attribute_length", self.max_attribute_length
+                        "max_attribute_length", max_attribute_length_value
                     )
                 )
             )
@@ -981,10 +971,11 @@ class Config:
                 ),
                 err=True,
             )
+        self.max_attribute_length: Final = max_attribute_length_value
 
-        self.template_if_for_pattern = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
+        template_if_for_pattern = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
 
-        self.attribute_pattern: str = (
+        self.attribute_pattern: Final = (
             rf"""
             (?:
                 (
@@ -994,7 +985,7 @@ class Config:
                          (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template variable
                        | (?!{{%-?\s*(?:for|asyncAll|asyncEach)\b)
                          (?!{{%-?\s*if\b[^}}]*?%}}(?:required|checked){{%-?\s*endif\b[^}}]*?%}})
-                         (?>{self.template_if_for_pattern})
+                         (?>{template_if_for_pattern})
                          (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template block
                     )
                     (?:
@@ -1007,7 +998,7 @@ class Config:
                     (
                         \"[^\"]*? # double quoted attribute
                         (?:
-                            {self.template_if_for_pattern} # if or for loop
+                            {template_if_for_pattern} # if or for loop
                            | {{{{[\s\S]*?}}}} # template stuff
                            | {{%[\s\S]*?%}}
                            | [^\"] # anything else
@@ -1015,7 +1006,7 @@ class Config:
                         \" # closing quote
                       | '[^']*? # single quoted attribute
                         (?:
-                            {self.template_if_for_pattern} # if or for loop
+                            {template_if_for_pattern} # if or for loop
                            | {{{{[\s\S]*?}}}} # template stuff
                            | {{%[\s\S]*?%}}
                            | [^'] # anything else
@@ -1024,12 +1015,12 @@ class Config:
                       | (?:\w|-)+ # or a non-quoted string value
                       | {{{{[\s\S]*?}}}} # a non-quoted template var
                       | {{%[\s\S]*?%}} # a non-quoted template tag
-                      | {self.template_if_for_pattern} # a non-quoted if statement
+                      | {template_if_for_pattern} # a non-quoted if statement
 
                     )
                 )? # attribute value
             )
-            | ({self.template_if_for_pattern}
+            | ({template_if_for_pattern}
             """
             r"""
             | (?:\'|\") # allow random trailing quotes
@@ -1039,15 +1030,15 @@ class Config:
         """
         )
 
-        self.template_tags = r"""
+        self.template_tags: Final = r"""
         {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
         """
 
-        self.attribute_style_pattern: str = (
-            r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"
-        )
+        # self.attribute_style_pattern = (
+        #     r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"  # noqa: ERA001
+        # )  # noqa: ERA001
 
-        self.ignored_attributes = frozenset({
+        self.ignored_attributes: Final = frozenset({
             "href",
             "action",
             "data-url",
@@ -1057,7 +1048,7 @@ class Config:
             "data-src",
         })
 
-        self.start_template_tags: str = (
+        self.start_template_tags: Final = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
             + r"""
               (?:if
@@ -1093,7 +1084,7 @@ class Config:
         """
         )
 
-        self.break_template_tags: str = (
+        self.break_template_tags: Final = (
             (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
             + r"""
               (?:if
@@ -1153,17 +1144,17 @@ class Config:
             + r""")
         """
         )
-        self.template_blocks: str = r"""
+        template_blocks = r"""
         {%((?!%}).)+%}|{{((?!}}).)+}}
         """
 
-        self.ignored_linter_blocks: str = r"""
+        ignored_linter_blocks = r"""
            {%-?[ ]*?raw\b(?:(?!%}).)*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
         """
 
-        self.unformatted_blocks_coarse: str = r"djlint\:\s*off"
+        unformatted_blocks_coarse = r"djlint\:\s*off"
 
-        self.unformatted_blocks: str = r"""
+        unformatted_blocks = r"""
             # html comment
             | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
             # django/jinja/nunjucks
@@ -1178,7 +1169,7 @@ class Config:
             | ^---[\s\S]+?---
         """
 
-        self.ignored_blocks: str = r"""
+        ignored_blocks = r"""
               <(pre|textarea).*?</(\1)>
             | <(script|style).*?(?=(\</(?:\3)>))
             # html comment
@@ -1202,10 +1193,10 @@ class Config:
             | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
             | ^---[\s\S]+?---
         """
-        self.script_style_inline: str = r"""
+        script_style_inline = r"""
         <(script|style).*?(?=(\</(?:\1)>))
         """
-        self.ignored_blocks_inline: str = r"""
+        ignored_blocks_inline = r"""
               <(pre|textarea).*?</(\1)>
             | <(script|style).*?(?=(\</(?:\3)>))
             # html comment
@@ -1230,7 +1221,7 @@ class Config:
             | ^---[\s\S]+?---
         """
 
-        self.ignored_rules = (
+        ignored_rules = (
             # html comment
             r"<!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*",
             # django/jinja/nunjucks
@@ -1242,19 +1233,19 @@ class Config:
             r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*",
         )
 
-        self.ignored_trans_blocks: str = r"""
+        ignored_trans_blocks = r"""
               {%[ ]*?blocktranslate?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate?[ ]*?%}
             | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
         """
-        self.trans_trimmed_blocks: str = r"""
+        trans_trimmed_blocks = r"""
               {%[ ]*?blocktranslate\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
             | {%[ ]*?blocktrans\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
         """
-        self.ignored_trans_blocks_closing: str = r"""
+        ignored_trans_blocks_closing = r"""
          {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
         """
 
-        self.ignored_inline_blocks: str = r"""
+        self.ignored_inline_blocks: Final = r"""
               <!--.*?-->
             | <script.*?\</script>
             | <style.*?\</style>
@@ -1266,7 +1257,7 @@ class Config:
             | {%[ ]*?blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
         """
 
-        self.optional_single_line_html_tags: str = r"""
+        self.optional_single_line_html_tags: Final = r"""
               button
             | a
             | h1
@@ -1304,9 +1295,9 @@ class Config:
             | li
         """
 
-        self.always_self_closing_html_tags: str = "|".join(HTML_VOID_ELEMENTS)
+        self.always_self_closing_html_tags: Final = "|".join(HTML_VOID_ELEMENTS)
 
-        self.optional_single_line_template_tags: str = r"""
+        self.optional_single_line_template_tags: Final = r"""
               if
             | for
             | unless
@@ -1316,7 +1307,7 @@ class Config:
             | asyncAll
         """
 
-        self.break_html_tags: str = (
+        self.break_html_tags: Final = (
             r"""
               html
             | head
@@ -1373,7 +1364,7 @@ class Config:
         )
 
         # the contents of these tag blocks will be indented, then unindented
-        self.tag_indent: str = (
+        self.tag_indent: Final = (
             self.template_indent
             + """
             | (?:<
@@ -1390,7 +1381,7 @@ class Config:
         # a html tag at the start of a line,
         # or an html tag as the end of a line.
         # Nothing in between!
-        self.tag_unindent: str = (
+        self.tag_unindent: Final = (
             r"""
                 ^
                 """
@@ -1413,72 +1404,72 @@ class Config:
         """
         )
 
-        self.ignored_blocks_inline_pattern = re.compile(
-            self.ignored_blocks_inline, RE_FLAGS_IMSX, cache_pattern=False
+        self.ignored_blocks_inline_pattern: Final = re.compile(
+            ignored_blocks_inline, RE_FLAGS_IMSX, cache_pattern=False
         )
-        self.ignored_block_opening_pattern = re.compile(
-            self.ignored_block_opening, RE_FLAGS_IX, cache_pattern=False
+        self.ignored_block_opening_pattern: Final = re.compile(
+            ignored_block_opening, RE_FLAGS_IX, cache_pattern=False
         )
-        self.script_style_inline_imsx_pattern = re.compile(
-            self.script_style_inline, RE_FLAGS_IMSX, cache_pattern=False
+        self.script_style_inline_imsx_pattern: Final = re.compile(
+            script_style_inline, RE_FLAGS_IMSX, cache_pattern=False
         )
-        self.script_style_inline_ix_pattern = re.compile(
-            self.script_style_inline, RE_FLAGS_IX, cache_pattern=False
+        self.script_style_inline_ix_pattern: Final = re.compile(
+            script_style_inline, RE_FLAGS_IX, cache_pattern=False
         )
-        self.script_style_opening_pattern = re.compile(
-            self.script_style_opening, RE_FLAGS_IX, cache_pattern=False
+        self.script_style_opening_pattern: Final = re.compile(
+            script_style_opening, RE_FLAGS_IX, cache_pattern=False
         )
-        self.ignored_trans_blocks_closing_pattern = re.compile(
-            self.ignored_trans_blocks_closing, RE_FLAGS_IX, cache_pattern=False
+        self.ignored_trans_blocks_closing_pattern: Final = re.compile(
+            ignored_trans_blocks_closing, RE_FLAGS_IX, cache_pattern=False
         )
-        self.ignored_trans_blocks_pattern = re.compile(
-            self.ignored_trans_blocks, RE_FLAGS_ISX, cache_pattern=False
+        self.ignored_trans_blocks_pattern: Final = re.compile(
+            ignored_trans_blocks, RE_FLAGS_ISX, cache_pattern=False
         )
-        self.trans_trimmed_blocks_pattern = re.compile(
-            self.trans_trimmed_blocks, RE_FLAGS_ISX, cache_pattern=False
+        self.trans_trimmed_blocks_pattern: Final = re.compile(
+            trans_trimmed_blocks, RE_FLAGS_ISX, cache_pattern=False
         )
-        self.ignored_inline_blocks_ix_pattern = re.compile(
+        self.ignored_inline_blocks_ix_pattern: Final = re.compile(
             self.ignored_inline_blocks, RE_FLAGS_IX, cache_pattern=False
         )
-        self.ignored_block_closing_pattern = re.compile(
-            self.ignored_block_closing, RE_FLAGS_IX, cache_pattern=False
+        self.ignored_block_closing_pattern: Final = re.compile(
+            ignored_block_closing, RE_FLAGS_IX, cache_pattern=False
         )
-        self.script_style_closing_pattern = re.compile(
-            self.script_style_closing, RE_FLAGS_IX, cache_pattern=False
+        self.script_style_closing_pattern: Final = re.compile(
+            script_style_closing, RE_FLAGS_IX, cache_pattern=False
         )
-        self.safe_closing_block_pattern = re.compile(
-            self.ignored_inline_blocks + r" | " + self.ignored_blocks,
+        self.safe_closing_block_pattern: Final = re.compile(
+            self.ignored_inline_blocks + r" | " + ignored_blocks,
             RE_FLAGS_IMSX,
             cache_pattern=False,
         )
-        self.safe_closing_tag_pattern = re.compile(
-            self.safe_closing_tag, RE_FLAGS_IX, cache_pattern=False
+        self.safe_closing_tag_pattern: Final = re.compile(
+            safe_closing_tag, RE_FLAGS_IX, cache_pattern=False
         )
-        self.template_blocks_pattern = re.compile(
-            self.template_blocks, RE_FLAGS_IMSX, cache_pattern=False
+        self.template_blocks_pattern: Final = re.compile(
+            template_blocks, RE_FLAGS_IMSX, cache_pattern=False
         )
-        self.ignored_linter_blocks_pattern = re.compile(
-            self.ignored_linter_blocks, RE_FLAGS_IMSX, cache_pattern=False
+        self.ignored_linter_blocks_pattern: Final = re.compile(
+            ignored_linter_blocks, RE_FLAGS_IMSX, cache_pattern=False
         )
-        self.ignored_blocks_pattern = re.compile(
-            self.ignored_blocks, RE_FLAGS_IMSX, cache_pattern=False
+        self.ignored_blocks_pattern: Final = re.compile(
+            ignored_blocks, RE_FLAGS_IMSX, cache_pattern=False
         )
-        self.unformatted_blocks_coarse_pattern = re.compile(
-            self.unformatted_blocks_coarse, RE_FLAGS_IMSX, cache_pattern=False
+        self.unformatted_blocks_coarse_pattern: Final = re.compile(
+            unformatted_blocks_coarse, RE_FLAGS_IMSX, cache_pattern=False
         )
-        self.unformatted_blocks_pattern = re.compile(
-            self.unformatted_blocks, RE_FLAGS_IMSX, cache_pattern=False
+        self.unformatted_blocks_pattern: Final = re.compile(
+            unformatted_blocks, RE_FLAGS_IMSX, cache_pattern=False
         )
-        self.ignored_rule_patterns = tuple(
+        self.ignored_rule_patterns: Final = tuple(
             re.compile(pattern, RE_FLAGS_ISX, cache_pattern=False)
-            for pattern in self.ignored_rules
+            for pattern in ignored_rules
         )
-        self.optional_single_line_html_pattern = re.compile(
+        self.optional_single_line_html_pattern: Final = re.compile(
             rf"^(?:{self.optional_single_line_html_tags})$",
             RE_FLAGS_IX,
             cache_pattern=False,
         )
-        self.optional_single_line_template_pattern = re.compile(
+        self.optional_single_line_template_pattern: Final = re.compile(
             rf"^(?:{self.optional_single_line_template_tags})$",
             RE_FLAGS_IX,
             cache_pattern=False,

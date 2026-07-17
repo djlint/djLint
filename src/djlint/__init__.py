@@ -384,15 +384,12 @@ def main(
         no_set_formatting=no_set_formatting,
         max_blank_lines=max_blank_lines,
         github_output=github_output,
+        stdin="-" in src,
     )
 
     if "-" in src and not config.files:
-        config.stdin = True
         stdin_stream = click.get_text_stream("stdin", encoding="utf-8")
         stdin_text = stdin_stream.read()
-
-        # cannot use gitignore for stdin paths.
-        config.use_gitignore = False
 
         if config.require_pragma and not has_pragma(
             config, stdin_text.split("\n", 1)[0]
