@@ -37,10 +37,10 @@ def _exclusive(
 ) -> bool:
     """Return whether two attributes are in different conditional branches."""
     right_branches = dict(right)
-    return any(
-        block in right_branches and branch != right_branches[block]
-        for block, branch in left
-    )
+    for block, branch in left:
+        if block in right_branches and branch != right_branches[block]:
+            return True
+    return False
 
 
 def run(

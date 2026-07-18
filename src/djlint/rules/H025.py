@@ -70,10 +70,11 @@ def run(
 
         # close tags should equal open tags
         if not token.closing:
-            if tag_name in P_LIST_CHILD_TAGS and any(
-                tag.name.lower() == "p" for tag in open_tags
-            ):
-                p_child_tags.append(token)
+            if tag_name in P_LIST_CHILD_TAGS:
+                for tag in open_tags:
+                    if tag.name.lower() == "p":
+                        p_child_tags.append(token)
+                        break
             open_tags.insert(0, token)
         else:
             for i, tag in enumerate(open_tags):

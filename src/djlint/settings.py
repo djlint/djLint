@@ -89,11 +89,9 @@ def find_project_root(src: Path) -> Path:
         if (directory / "pyproject.toml").is_file():
             return directory
 
-        if any(
-            (directory / config_file).is_file()
-            for config_file in DJLINT_TOML_CONFIG_FILES
-        ):
-            return directory
+        for config_file in DJLINT_TOML_CONFIG_FILES:
+            if (directory / config_file).is_file():
+                return directory
 
         if (directory / ".djlintrc").is_file():
             return directory

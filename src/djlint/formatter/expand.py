@@ -272,7 +272,10 @@ def expand_html(html: str, config: Config) -> str:
         if not without_html_tags(body).strip():
             return False
 
-        return all(body_tag in HTML_INLINE_ELEMENTS for body_tag in body_tags)
+        for body_tag in body_tags:
+            if body_tag not in HTML_INLINE_ELEMENTS:
+                return False
+        return True
 
     def should_preserve_template_body(
         out_format: str, match: re.Match[str]
@@ -321,7 +324,10 @@ def expand_html(html: str, config: Config) -> str:
         if not body_without_html.strip():
             return False
 
-        return all(body_tag in HTML_INLINE_ELEMENTS for body_tag in body_tags)
+        for body_tag in body_tags:
+            if body_tag not in HTML_INLINE_ELEMENTS:
+                return False
+        return True
 
     def add_html_line(out_format: str, match: re.Match[str]) -> str:
         """Add whitespace.
