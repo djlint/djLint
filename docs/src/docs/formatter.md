@@ -46,9 +46,11 @@ djlint . --reformat --format-css --format-js
 ### Before
 
 Here's a blob of HTML that's in desperate need of attention -
+
 {% raw %}
 
-```
+<!-- prettier-ignore -->
+```html
 {% load admin_list %}
 {% load i18n %}
 <p class="paginator">

@@ -49,7 +49,8 @@ Voilà un pâté de HTML qui a désespérément besoin d’attention...
 
 {% raw %}
 
-```
+<!-- prettier-ignore -->
+```html
 {% load admin_list %}
 {% load i18n %}
 <p class="paginator">

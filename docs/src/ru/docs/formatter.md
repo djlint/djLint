@@ -46,9 +46,11 @@ djlint . --reformat --format-css --format-js
 ### До
 
 Вот кусок HTML, который отчаянно нуждается во внимании -
+
 {% raw %}
 
-```
+<!-- prettier-ignore -->
+```html
 {% load admin_list %}
 {% load i18n %}
 <p class="paginator">

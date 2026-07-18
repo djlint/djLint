@@ -46,9 +46,11 @@ djlint . --reformat --format-css --format-js
 ### 处理前
 
 下面是一段急需处理的 HTML 代码块 -
+
 {% raw %}
 
-```
+<!-- prettier-ignore -->
+```html
 {% load admin_list %}
 {% load i18n %}
 <p class="paginator">

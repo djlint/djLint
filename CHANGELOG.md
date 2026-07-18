@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.40.9] - 2026-07-18
+
 ### Fix
 
 - Indent content inside Django `{% cache %}`, `{% timezone %}`, `{% localtime %}` and `{% localize %}` blocks instead of dedenting everything after them.
