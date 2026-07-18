@@ -507,9 +507,16 @@ class Config:
             or ""
         )
 
-        self.custom_html: Final = str(
-            build_custom_html(custom_html or djlint_settings.get("custom_html"))
-            or ""
+        # django-cotton component tags (<c-name>, <c-folder.name>) are
+        # treated as block html tags out of the box.
+        self.custom_html: Final = (
+            str(
+                build_custom_html(
+                    custom_html or djlint_settings.get("custom_html")
+                )
+                or ""
+            )
+            + r"|c-[\w.-]+"
         )
 
         self.format_attribute_template_tags: Final = (

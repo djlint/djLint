@@ -25,7 +25,7 @@ def test_custom(config_path: str) -> None:
     assert config.blank_line_after_tag == "load,extends,include"
     assert config.blank_line_before_tag == "load,extends,include"
     assert config.custom_blocks == r"|endexample\b|endtoc\b|example\b|toc\b"
-    assert config.custom_html == r"|mjml|simple-greeting|mj-\w+"
+    assert config.custom_html == r"|mjml|simple-greeting|mj-\w+|c-[\w.-]+"
     assert config.extension == "html.dj"
     assert config.files == ["index.html"]
     assert config.single_attribute_per_line is True

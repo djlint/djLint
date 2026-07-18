@@ -197,11 +197,11 @@
     "usage": [
       {
         "name": "pyproject.toml",
-        "value": "custom_html=\"mjml,simple-greeting,mj-\\w+\""
+        "value": "custom_html=\"mjml,simple-greeting,mj-\\\\w+\""
       },
       {
         "name": ".djlintrc",
-        "value": "\"custom_html\": \"mjml,simple-greeting,mj-\\w+\""
+        "value": "\"custom_html\": \"mjml,simple-greeting,mj-\\\\w+\""
       },
       {
         "name": "cli",
