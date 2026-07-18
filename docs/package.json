@@ -30,7 +30,7 @@
     "@11ty/eleventy-img": "6.0.4",
     "@11ty/eleventy-plugin-syntaxhighlight": "5.0.2",
     "@fontsource/inter": "5.2.8",
-    "@fortawesome/fontawesome-free": "7.3.0",
+    "@fortawesome/fontawesome-free": "7.3.1",
     "@fullhuman/postcss-purgecss": "8.0.0",
     "@toycode/markdown-it-class": "1.2.4",
     "autoprefixer": "10.5.3",
