@@ -145,6 +145,25 @@ test_data = [
     ),
     pytest.param(
         (
+            "{% comment %}\n"
+            "    Consult `Django's forms documentation\n"
+            "    <http://docs.djangoproject.com/en/dev/topics/forms/>`_ for\n"
+            "    information on how to display this in a template.\n"
+            "{% endcomment %}\n"
+            "<p>hello</p>\n"
+        ),
+        (
+            "{% comment %}\n"
+            "    Consult `Django's forms documentation\n"
+            "    <http://docs.djangoproject.com/en/dev/topics/forms/>`_ for\n"
+            "    information on how to display this in a template.\n"
+            "{% endcomment %}\n"
+            "<p>hello</p>\n"
+        ),
+        id="issue_2244_url_in_comment_block",
+    ),
+    pytest.param(
+        (
             "<div>\n"
             "    {% if 1 %}\n"
             '        <div class="{% if 1 %}class {% else %} class {% endif %}">\n'

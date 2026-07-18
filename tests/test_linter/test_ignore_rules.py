@@ -34,7 +34,17 @@ test_data = [
             },
         ]),
         id="one",
-    )
+    ),
+    pytest.param(
+        (
+            '<div class="show-timeout"\n'
+            "     {# djlint:off H021 #}\n"
+            '     style="display:none"\n'
+            "     {# djlint:on #}>x</div>\n"
+        ),
+        ([]),
+        id="issue_2245_match_starting_before_pragma",
+    ),
 ]
 
 

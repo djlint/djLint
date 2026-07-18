@@ -68,6 +68,13 @@ test_data = [
         ([]),
         id="one",
     ),
+    pytest.param(
+        (
+            '{% bootstrap_button button_type="submit" content="<i class=\'fas fa-edit\'></i> Save" %}'
+        ),
+        ([]),
+        id="issue_2247_template_tag_string_argument",
+    ),
 ]
 
 

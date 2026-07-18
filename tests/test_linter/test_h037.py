@@ -109,6 +109,30 @@ test_data = [
     ),
     pytest.param(
         (
+            '<img {% if lazyload %}data-{% endif %}srcset="{{ full }}"\n'
+            '     {% if lazyload %}srcset="{{ placeholder }}"{% endif %}\n'
+            '     class="card-img-top"\n'
+            '     width="256"\n'
+            '     height="256"\n'
+            '     alt="x">'
+        ),
+        ([]),
+        id="issue_2246_conditional_attribute_name_prefix",
+    ),
+    pytest.param(
+        ('<br {% if a %}class="x" {% endif %}class="b" />'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:14",
+                "match": "class",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="unprefixed name after conditional block still reported",
+    ),
+    pytest.param(
+        (
             '<img src="img.jpg" :src="isLoaded ? url : defaultValue" />\n'
             '<tbody class="bg-white" x-data="{ open{{ item.history_id }}: false }" x-bind:class="open{{ item.history_id }} ? \'bg-gray-50\' : '
             '">'

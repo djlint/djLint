@@ -12,6 +12,7 @@ import regex as re
 from djlint.helpers import (
     inside_ignored_linter_block,
     inside_ignored_rule,
+    inside_template_block,
     overlaps_ignored_block,
 )
 
@@ -110,6 +111,14 @@ def linter(
                 ):
                     if (
                         not overlaps_ignored_block(config, html, match)
+                        # html-like content inside a template tag, e.g. a
+                        # string argument, is not part of the document.
+                        # rules that target template syntax itself match
+                        # starting at the tag delimiters and still apply.
+                        and not (
+                            not match.group().startswith(("{%", "{{"))
+                            and inside_template_block(config, html, match)
+                        )
                         and not inside_ignored_rule(
                             config, html, match, rule["name"]
                         )

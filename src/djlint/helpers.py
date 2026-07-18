@@ -486,7 +486,10 @@ def inside_ignored_rule(
         ignore_all_rules,
     ) in _inside_ignored_rule(html, ignored_rules=config.ignored_rule_patterns):
         if (
-            (ignored_match_start <= match_start <= ignored_match_end)
+            (
+                match_start < ignored_match_end
+                and ignored_match_start < match_end
+            )
             and rule in ignored_rule_names
         ) or (
             (ignored_match_start <= match_end <= ignored_match_end)

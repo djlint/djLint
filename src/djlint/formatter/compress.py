@@ -7,14 +7,28 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import regex as re
+
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 from djlint.formatter.class_attributes import encode_class_attribute_newlines
 from djlint.formatter.tokenizer import tokenize_tags
-from djlint.helpers import child_of_unformatted_block
+from djlint.helpers import RE_FLAGS_ISX, child_of_unformatted_block
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
+
+_TEMPLATE_COMMENT_BLOCK_PATTERN: Final = re.compile(
+    r"{%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})",
+    RE_FLAGS_ISX,
+    cache_pattern=False,
+)
+
+
+def _blank_match(match: re.Match[str]) -> str:
+    return " " * len(match.group())
 
 
 def compress_html(html: str, config: Config) -> str:
@@ -66,14 +80,16 @@ def compress_html(html: str, config: Config) -> str:
     output: list[str] = []
     previous_end = 0
     # Keep offsets while hiding template comments from the HTML tokenizer.
-    token_source = (
-        config.unformatted_blocks_pattern.sub(
-            lambda match: " " * len(match.group()), html
-        )
-        if config.profile in {"all", "django", "jinja", "nunjucks"}
-        and "{#" in html
-        else html
-    )
+    token_source = html
+    if config.profile in {"all", "django", "jinja", "nunjucks"}:
+        if "{#" in html:
+            token_source = config.unformatted_blocks_pattern.sub(
+                _blank_match, token_source
+            )
+        if "comment" in html:
+            token_source = _TEMPLATE_COMMENT_BLOCK_PATTERN.sub(
+                _blank_match, token_source
+            )
     for token in tokenize_tags(token_source):
         output.extend((html[previous_end : token.start], _clean_tag(token)))
         previous_end = token.end

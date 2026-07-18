@@ -95,11 +95,7 @@ test_data = [
             '<a class="asdf\n'
             '          {% if favorite == "yes" %}favorite{% endif %}\n'
             '          has-tooltip-arrow has-tooltip-right"\n'
-            '   data-tooltip="{% if favorite == "yes" %}\n'
-            "                     Remove from Favorites\n"
-            "                 {% else %}\n"
-            "                     Add to Favorites\n"
-            '                 {% endif %}"\n'
+            '   data-tooltip="{% if favorite == "yes" %} Remove from Favorites {% else %} Add to Favorites {% endif %}"\n'
             '   fav-type="report"\n'
             '   object-id="{{ report.report_id }}"\n'
             '   href="{% if %}{% endif %}">\n'
@@ -116,13 +112,7 @@ test_data = [
             '<a class="piwik_download"\n'
             '   href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}"></a>\n'
             "<span {% if a %}required{% endif %}\n"
-            '      title="{% if eev.status == eev.STATUS_CURRENT %}\n'
-            "                 {% trans 'A' %}\n"
-            "             {% elif eev.status == eev.STATUS_APPROVED %}\n"
-            "                 {% trans 'B' %}\n"
-            "             {% elif eev.status == eev.STATUS_EXPIRED %}\n"
-            "                 {% trans 'C' %}\n"
-            '             {% endif %}"\n'
+            "      title=\"{% if eev.status == eev.STATUS_CURRENT %} {% trans 'A' %} {% elif eev.status == eev.STATUS_APPROVED %} {% trans 'B' %} {% elif eev.status == eev.STATUS_EXPIRED %} {% trans 'C' %} {% endif %}\"\n"
             '      class="asdf\n'
             "             {% if a %}b{% endif %}\n"
             '             asdf"\n'
@@ -287,6 +277,19 @@ test_data = [
         ),
         ({"format_attribute_template_tags": True, "profile": "django"}),
         id="issue_2240_preserve_template_class_token",
+    ),
+    pytest.param(
+        (
+            '<div title="{{ name }}: {{ score }} {% if count > 0 %}(based on {{ count }} ratings){% endif %}" class="ratings-container" data-bs-toggle="tooltip" data-bs-placement="top">x</div>\n'
+        ),
+        (
+            '<div title="{{ name }}: {{ score }} {% if count > 0 %}(based on {{ count }} ratings){% endif %}"\n'
+            '     class="ratings-container"\n'
+            '     data-bs-toggle="tooltip"\n'
+            '     data-bs-placement="top">x</div>\n'
+        ),
+        ({"format_attribute_template_tags": True, "profile": "django"}),
+        id="issue_2243_no_break_inside_title_value",
     ),
     pytest.param(
         (

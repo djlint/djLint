@@ -29,6 +29,7 @@ _EVENT_PATTERN = re.compile(
     re.I | re.S,
     cache_pattern=False,
 )
+_NAME_CHAR_PATTERN = re.compile(r"[-:\w]", cache_pattern=False)
 
 
 def _exclusive(
@@ -72,8 +73,15 @@ def run(
         ] = {}
         next_block = 0
 
+        prefixed_from = -1
+
         for match in _EVENT_PATTERN.finditer(attributes):
             if name := match.group("attribute"):
+                # the rendered name has a template-generated prefix glued
+                # on, e.g. {% if x %}data-{% endif %}srcset, so it is not
+                # a definite duplicate of a plain occurrence of the name.
+                if match.start("attribute") == prefixed_from:
+                    continue
                 occurrences.setdefault(name.lower(), []).append((
                     token.name_end + match.start("attribute"),
                     name,
@@ -84,15 +92,22 @@ def run(
             template_tag = match.group("template")
             if not template_tag:
                 continue
+            prefixed_from = -1
             if re.match(config.tag_unindent_line, template_tag, RE_FLAGS_IX):
                 if blocks:
                     blocks[-1][1] += 1
             elif re.match(config.template_unindent, template_tag, RE_FLAGS_IX):
                 if blocks:
                     blocks.pop()
+                if match.start() and _NAME_CHAR_PATTERN.match(
+                    attributes[match.start() - 1]
+                ):
+                    prefixed_from = match.end()
             elif re.match(config.template_indent, template_tag, RE_FLAGS_IX):
                 blocks.append([next_block, 0])
                 next_block += 1
+            elif template_tag.startswith("{{"):
+                prefixed_from = match.end()
 
         for repeated in occurrences.values():
             for index, (start, name, branches) in enumerate(repeated[:-1]):

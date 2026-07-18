@@ -407,7 +407,15 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
 
         # format template stuff
         if config.format_attribute_template_tags:
-            if attrib_value and attrib_name not in config.ignored_attributes:
+            # only spread values whose whitespace collapses when rendered;
+            # other values (title, alt, data-*, ...) are shown verbatim and
+            # an added line break would change the rendered output.
+            if (
+                attrib_value
+                and attrib_name
+                and attrib_name.lower() in {"class", "style"}
+                and attrib_name not in config.ignored_attributes
+            ):
                 attrib_value = format_template_tags(
                     config,
                     attrib_value,

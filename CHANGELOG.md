@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Fix
+
+- Stop inserting line breaks into attribute values that render whitespace verbatim; only `class` and `style` values are spread over multiple lines with `format_attribute_template_tags`.
+- Leave `{% comment %}` block content untouched when reformatting, e.g. bare URLs ending in `/>`.
+- Apply rule-specific `djlint:off RULE` suppression to any finding overlapping the region, so reformatted guards keep linting clean.
+- Avoid false H037 reports for attribute names with a conditional template prefix, e.g. `{% if x %}data-{% endif %}srcset`.
+- Avoid false reports for HTML-like content inside template tag arguments, e.g. H008 on quotes in a string argument.
+
 ## [1.40.8] - 2026-07-17
 
 ### Fix
