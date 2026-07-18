@@ -15,6 +15,7 @@
 - Apply rule-specific `djlint:off RULE` suppression to any finding overlapping the region, so reformatted guards keep linting clean.
 - Avoid false H037 reports for attribute names with a conditional template prefix, e.g. `{% if x %}data-{% endif %}srcset`.
 - Avoid false reports for HTML-like content inside template tag arguments, e.g. H008 on quotes in a string argument.
+- Show genuine djLint output in the documentation formatter and ignoring-code examples, which Prettier had rewritten into output djLint never produces, and guard those code blocks against future reformatting.
 
 ## [1.40.8] - 2026-07-17
 

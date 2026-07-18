@@ -13,34 +13,47 @@ date: Last Modified
 
 对于传统 HTML -
 
+<!-- prettier-ignore -->
 ```html
 <!-- djlint:off -->
-<bad html to ignore> <!-- djlint:on --></bad>
+   <bad html to ignore>
+<!-- djlint:on -->
 ```
 
 或使用注释 -
 
+<!-- prettier-ignore -->
 ```html
-{# djlint:off #} <bad html to ignore> {# djlint:on #}</bad>
+{# djlint:off #}
+   <bad html to ignore>
+{# djlint:on #}
 ```
 
 或使用长注释 -
 
+<!-- prettier-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
-<bad html to ignore> {% comment %} djlint:on {% endcomment %}</bad>
+   <bad html to ignore>
+{% comment %} djlint:on {% endcomment %}
 ```
 
 亦或是 javascript 风格注释 -
 
+<!-- prettier-ignore -->
 ```html
-{{ /* djlint:off */ }} <bad html to ignore> {{ /* djlint:on */ }}</bad>
+{{ /* djlint:off */ }}
+   <bad html to ignore>
+{{ /* djlint:on */ }}
 ```
 
 以及 golang 风格注释 -
 
+<!-- prettier-ignore -->
 ```html
-{{!-- djlint:off --}} <bad html to ignore> {{!-- djlint:on --}}</bad>
+{{!-- djlint:off --}}
+   <bad html to ignore>
+{{!-- djlint:on --}}
 ```
 
 {% endraw %}
@@ -51,25 +64,27 @@ date: Last Modified
 
 {% raw %}
 
+<!-- prettier-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>
-  {# djlint:on #}
+{# djlint:on #}
 
-  <!-- djlint:off H025-->
-</p>
-
+<!-- djlint:off H025-->
 <p>
-  <!-- djlint:on -->
+<!-- djlint:on -->
 
-  {% comment %} djlint:off H025 {% endcomment %}
-</p>
+{% comment %} djlint:off H025 {% endcomment %}
+<p>
+{% comment %} djlint:on {% endcomment %}
 
-<p>{% comment %} djlint:on {% endcomment %} {{!-- djlint:off H025 --}}</p>
+{{!-- djlint:off H025 --}}
+<p>
+{{!-- djlint:on --}}
 
-<p>{{!-- djlint:on --}} {{ /* djlint:off H025 */ }}</p>
-
-<p>{{ /* djlint:on */ }}</p>
+{{ /* djlint:off H025 */ }}
+<p>
+{{ /* djlint:on */ }}
 ```
 
 {% endraw %}

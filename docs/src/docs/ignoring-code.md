@@ -13,34 +13,47 @@ Code can be ignored by wrapping it in `djlint` tags:
 
 For plain old html -
 
+<!-- prettier-ignore -->
 ```html
 <!-- djlint:off -->
-<bad html to ignore> <!-- djlint:on --></bad>
+   <bad html to ignore>
+<!-- djlint:on -->
 ```
 
 or as a comment -
 
+<!-- prettier-ignore -->
 ```html
-{# djlint:off #} <bad html to ignore> {# djlint:on #}</bad>
+{# djlint:off #}
+   <bad html to ignore>
+{# djlint:on #}
 ```
 
 or as a long comment -
 
+<!-- prettier-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
-<bad html to ignore> {% comment %} djlint:on {% endcomment %}</bad>
+   <bad html to ignore>
+{% comment %} djlint:on {% endcomment %}
 ```
 
 or as a javascript style comment -
 
+<!-- prettier-ignore -->
 ```html
-{{ /* djlint:off */ }} <bad html to ignore> {{ /* djlint:on */ }}</bad>
+{{ /* djlint:off */ }}
+   <bad html to ignore>
+{{ /* djlint:on */ }}
 ```
 
 or as a golang style comment -
 
+<!-- prettier-ignore -->
 ```html
-{{!-- djlint:off --}} <bad html to ignore> {{!-- djlint:on --}}</bad>
+{{!-- djlint:off --}}
+   <bad html to ignore>
+{{!-- djlint:on --}}
 ```
 
 {% endraw %}
@@ -51,25 +64,27 @@ Specific linter rules can also be ignored by adding the rule name into the ignor
 
 {% raw %}
 
+<!-- prettier-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>
-  {# djlint:on #}
+{# djlint:on #}
 
-  <!-- djlint:off H025-->
-</p>
-
+<!-- djlint:off H025-->
 <p>
-  <!-- djlint:on -->
+<!-- djlint:on -->
 
-  {% comment %} djlint:off H025 {% endcomment %}
-</p>
+{% comment %} djlint:off H025 {% endcomment %}
+<p>
+{% comment %} djlint:on {% endcomment %}
 
-<p>{% comment %} djlint:on {% endcomment %} {{!-- djlint:off H025 --}}</p>
+{{!-- djlint:off H025 --}}
+<p>
+{{!-- djlint:on --}}
 
-<p>{{!-- djlint:on --}} {{ /* djlint:off H025 */ }}</p>
-
-<p>{{ /* djlint:on */ }}</p>
+{{ /* djlint:off H025 */ }}
+<p>
+{{ /* djlint:on */ }}
 ```
 
 {% endraw %}

@@ -30,7 +30,7 @@
    </a>
 </p>
 
-<h4 align="center"><a href="https://www.djlint.com">How to use</a> • <a href="https://www.djlint.com/ru/">Как пользоваться</a> • <a href="https://www.djlint.com/fr/">Utilisation</a></h4>
+<h4 align="center"><a href="https://www.djlint.com">How to use</a> • <a href="https://www.djlint.com/ru/">Как пользоваться</a> • <a href="https://www.djlint.com/fr/">Utilisation</a> • <a href="https://www.djlint.com/zh/">如何使用</a></h4>
 <h4 align="center">What lang are you using?</h4>
 
 <p align="center">
