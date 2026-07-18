@@ -109,3 +109,41 @@ djlint . --reformat --format-css --format-js
 ```
 
 {% endraw %}
+
+### 使用 `single_attribute_per_line` 的处理结果
+
+如果你更喜欢 Prettier 风格的属性排版，可以启用 `single_attribute_per_line` 选项：
+
+{% raw %}
+
+<!-- prettier-ignore -->
+```html
+{% load admin_list %}
+{% load i18n %}
+<p class="paginator">
+    {% if pagination_required %}
+        {% for i in page_range %}
+            {% paginator_number cl i %}
+        {% endfor %}
+    {% endif %}
+    {{ cl.result_count }}
+    {% if cl.result_count == 1 %}
+        {{ cl.opts.verbose_name }}
+    {% else %}
+        {{ cl.opts.verbose_name_plural }}
+    {% endif %}
+    {% if show_all_url %}
+        <a href="{{ show_all_url }}" class="showall">{% translate 'Show all' %}</a>
+    {% endif %}
+    {% if cl.formset and cl.result_count %}
+        <input
+            type="submit"
+            name="_save"
+            class="default"
+            value="{% translate 'Save' %}"
+        >
+    {% endif %}
+</p>
+```
+
+{% endraw %}

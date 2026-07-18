@@ -110,3 +110,41 @@ C'est un peu mieux maintenant... on peut le lire :)
 ```
 
 {% endraw %}
+
+### Après avec `single_attribute_per_line`
+
+Vous préférez les attributs à la manière de Prettier ? Activez l'option `single_attribute_per_line` :
+
+{% raw %}
+
+<!-- prettier-ignore -->
+```html
+{% load admin_list %}
+{% load i18n %}
+<p class="paginator">
+    {% if pagination_required %}
+        {% for i in page_range %}
+            {% paginator_number cl i %}
+        {% endfor %}
+    {% endif %}
+    {{ cl.result_count }}
+    {% if cl.result_count == 1 %}
+        {{ cl.opts.verbose_name }}
+    {% else %}
+        {{ cl.opts.verbose_name_plural }}
+    {% endif %}
+    {% if show_all_url %}
+        <a href="{{ show_all_url }}" class="showall">{% translate 'Show all' %}</a>
+    {% endif %}
+    {% if cl.formset and cl.result_count %}
+        <input
+            type="submit"
+            name="_save"
+            class="default"
+            value="{% translate 'Save' %}"
+        >
+    {% endif %}
+</p>
+```
+
+{% endraw %}
