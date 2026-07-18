@@ -877,6 +877,10 @@ class Config:
                 | block(?!trans|translate)
                 | spaceless
                 | compress
+                | cache
+                | localize
+                | localtime
+                | timezone
                 | addto
                 | language
                 | with
@@ -1059,6 +1063,10 @@ class Config:
             | block(?!trans)
             | spaceless
             | compress
+            | cache
+            | localize
+            | localtime
+            | timezone
             | load
             | assets
             | addto
@@ -1104,6 +1112,14 @@ class Config:
             | endspaceless
             | compress
             | endcompress
+            | cache
+            | endcache
+            | localize
+            | endlocalize
+            | localtime
+            | endlocaltime
+            | timezone
+            | endtimezone
             | load
             | include
             | assets
