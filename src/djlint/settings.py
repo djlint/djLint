@@ -487,8 +487,8 @@ class Config:
         self.gitignore: Final = load_gitignore(self.project_root)
         # custom configuration options
 
-        use_gitignore = use_gitignore or djlint_settings.get(
-            "use_gitignore", False
+        use_gitignore = use_gitignore or bool(
+            djlint_settings.get("use_gitignore", False)
         )
         self.extension: Final = str(
             extension or djlint_settings.get("extension", "html")
