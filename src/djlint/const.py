@@ -158,6 +158,38 @@ HTML_TAG_NAMES: Final = frozenset((
     "xmp",
 ))
 
+HTML_INLINE_ELEMENTS: Final = frozenset((
+    "a",
+    "abbr",
+    "acronym",
+    "b",
+    "bdi",
+    "bdo",
+    "big",
+    "cite",
+    "code",
+    "data",
+    "del",
+    "dfn",
+    "em",
+    "font",
+    "i",
+    "ins",
+    "kbd",
+    "mark",
+    "q",
+    "s",
+    "samp",
+    "small",
+    "span",
+    "strong",
+    "sub",
+    "sup",
+    "time",
+    "u",
+    "var",
+))
+
 HTML_VOID_ELEMENTS: Final = frozenset((
     "area",
     "base",

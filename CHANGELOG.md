@@ -6,6 +6,8 @@
 
 ### Fix
 
+- Preserve whitespace-only content of inline elements as a single space instead of dropping it, so runs like `<b>bold</b><span> </span><i>italic</i>` keep rendering a space; non-collapsible whitespace such as U+2005 is kept verbatim.
+- Preserve line breaks inside hyperscript `_` attribute values, where a newline separates commands and `--` comments run to the end of the line.
 - Stop inserting line breaks into attribute values that render whitespace verbatim; only `class` and `style` values are spread over multiple lines with `format_attribute_template_tags`.
 - Leave `{% comment %}` block content untouched when reformatting, e.g. bare URLs ending in `/>`.
 - Apply rule-specific `djlint:off RULE` suppression to any finding overlapping the region, so reformatted guards keep linting clean.

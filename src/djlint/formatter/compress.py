@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
-from djlint.formatter.class_attributes import encode_class_attribute_newlines
+from djlint.formatter.class_attributes import encode_attribute_newlines
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import RE_FLAGS_ISX, child_of_unformatted_block
 
@@ -59,10 +59,8 @@ def compress_html(html: str, config: Config) -> str:
         tag = _fix_case(token.name)
 
         raw_attributes = html[token.name_end : token.attributes_end]
-        if raw_attributes and config.preserve_class_newlines:
-            raw_attributes = encode_class_attribute_newlines(
-                raw_attributes, config
-            )
+        if raw_attributes:
+            raw_attributes = encode_attribute_newlines(raw_attributes, config)
 
         attributes = (
             (" " if raw_attributes[0].isspace() else "")

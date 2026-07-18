@@ -33,7 +33,7 @@ test_data = [
             '<a href="foo"\n'
             '   class="inline-flex items-center p-4\n'
             "          bg-white hover:bg-gray-200\n"
-            '          text-sm font-medium text-gray-500 hover:text-gray-700"></a>\n'
+            '          text-sm font-medium text-gray-500 hover:text-gray-700"> </a>\n'
         ),
         ({"preserve_class_newlines": True}),
         id="preserves multiline class groups",

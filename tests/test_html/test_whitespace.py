@@ -222,16 +222,36 @@ test_data = [
     pytest.param(
         ("<div>                   </div>\n"), ("<div></div>\n"), id="snippet_21"
     ),
-    pytest.param(("<span> </span>\n"), ("<span></span>\n"), id="snippet_22"),
     pytest.param(
-        ("<span>          </span>\n"), ("<span></span>\n"), id="snippet_23"
+        ("<span>     </span>\n"),
+        ("<span> </span>\n"),
+        id="issue_583_whitespace_only_span",
     ),
     pytest.param(
-        ("<span>           </span>\n"), ("<span></span>\n"), id="snippet_24"
+        ("<p><b>bold</b><span> </span><i>italic</i></p>\n"),
+        ("<p><b>bold</b><span> </span><i>italic</i></p>\n"),
+        id="issue_583_space_between_inline_siblings",
+    ),
+    pytest.param(
+        ("<span>\n</span>\n"),
+        ("<span> </span>\n"),
+        id="issue_583_multiline_whitespace_only_span",
+    ),
+    pytest.param(
+        ("<div>     </div>\n"),
+        ("<div></div>\n"),
+        id="issue_583_whitespace_only_block_stays_empty",
+    ),
+    pytest.param(("<span> </span>\n"), ("<span> </span>\n"), id="snippet_22"),
+    pytest.param(
+        ("<span>          </span>\n"), ("<span>   </span>\n"), id="snippet_23"
+    ),
+    pytest.param(
+        ("<span>           </span>\n"), ("<span>    </span>\n"), id="snippet_24"
     ),
     pytest.param(
         ("<span>                   </span>\n"),
-        ("<span></span>\n"),
+        ("<span>     </span>\n"),
         id="snippet_25",
     ),
     pytest.param(("<img/> <img/>\n"), ("<img /> \n<img />\n"), id="snippet_26"),
@@ -267,11 +287,11 @@ test_data = [
         ),
         (
             "<!-- U+2005 -->\n"
-            "<div>before<span></span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>\n"
+            "<div>before<span> </span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>\n"
             "<!-- U+005F -->\n"
             "<div>before<span>_</span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>\n"
             "<!-- U+0020 -->\n"
-            "<div>before<span></span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>\n"
+            "<div>before<span> </span>afterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafterafter</div>\n"
         ),
         id="snippet_2005",
     ),

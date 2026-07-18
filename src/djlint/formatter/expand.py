@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.const import HTML_INLINE_ELEMENTS
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IMX,
@@ -27,38 +28,6 @@ if TYPE_CHECKING:
 
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
-
-_INLINE_CHILD_HTML_TAGS: Final = frozenset({
-    "a",
-    "abbr",
-    "acronym",
-    "b",
-    "bdi",
-    "bdo",
-    "big",
-    "cite",
-    "code",
-    "data",
-    "del",
-    "dfn",
-    "em",
-    "font",
-    "i",
-    "ins",
-    "kbd",
-    "mark",
-    "q",
-    "s",
-    "samp",
-    "small",
-    "span",
-    "strong",
-    "sub",
-    "sup",
-    "time",
-    "u",
-    "var",
-})
 
 _TEMPLATE_TAG_NAME_PATTERN: Final = re.compile(
     r"^\{%-?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
@@ -303,11 +272,7 @@ def expand_html(html: str, config: Config) -> str:
         if not without_html_tags(body).strip():
             return False
 
-        for body_tag in body_tags:
-            if body_tag not in _INLINE_CHILD_HTML_TAGS:
-                return False
-
-        return True
+        return all(body_tag in HTML_INLINE_ELEMENTS for body_tag in body_tags)
 
     def should_preserve_template_body(
         out_format: str, match: re.Match[str]
@@ -356,11 +321,7 @@ def expand_html(html: str, config: Config) -> str:
         if not body_without_html.strip():
             return False
 
-        for body_tag in body_tags:
-            if body_tag not in _INLINE_CHILD_HTML_TAGS:
-                return False
-
-        return True
+        return all(body_tag in HTML_INLINE_ELEMENTS for body_tag in body_tags)
 
     def add_html_line(out_format: str, match: re.Match[str]) -> str:
         """Add whitespace.

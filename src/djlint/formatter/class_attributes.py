@@ -1,4 +1,8 @@
-"""Helpers for preserving multiline class attributes."""
+"""Helpers for preserving significant attribute line breaks.
+
+Covers multiline class values and whitespace-sensitive values such as
+hyperscript `_` attributes.
+"""
 
 from __future__ import annotations
 
@@ -13,14 +17,20 @@ if TYPE_CHECKING:
 
 
 CLASS_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_CLASS_NEWLINE\x00"
+VERBATIM_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_ATTR_NEWLINE\x00"
 MIN_MULTILINE_CLASS_LINES: Final = 2
 _CLASS_ATTRIBUTE_PATTERN: Final = re.compile(
     r"(?<![\w:.-])class(?![\w:.-])\s*=\s*(['\"])", re.I, cache_pattern=False
 )
 
+# attribute values where line breaks are semantically significant: in
+# hyperscript ("_") a newline separates commands and a "--" comment runs
+# to the end of the line, so joining lines can change the program.
+_VERBATIM_ATTRIBUTE_NAMES: Final = frozenset({"_"})
 
-def encode_class_attribute_newlines(attributes: str, config: Config) -> str:
-    """Replace class attribute line breaks with an internal marker."""
+
+def encode_attribute_newlines(attributes: str, config: Config) -> str:
+    """Replace significant attribute line breaks with internal markers."""
     if "\n" not in attributes:
         return attributes
 
@@ -36,7 +46,6 @@ def encode_class_attribute_newlines(attributes: str, config: Config) -> str:
         value = match.group(2)
         if (
             not name
-            or name.lower() != "class"
             or not value
             or "\n" not in value
             or value[0] not in {'"', "'"}
@@ -44,12 +53,19 @@ def encode_class_attribute_newlines(attributes: str, config: Config) -> str:
         ):
             continue
 
-        lines = [line.strip() for line in value[1:-1].splitlines()]
-        class_lines = [line for line in lines if line]
-        if len(class_lines) < MIN_MULTILINE_CLASS_LINES:
-            encoded_value = " ".join(class_lines)
+        if name in _VERBATIM_ATTRIBUTE_NAMES:
+            encoded_value = VERBATIM_ATTRIBUTE_NEWLINE.join(
+                line.rstrip() for line in value[1:-1].splitlines()
+            )
+        elif name.lower() == "class" and config.preserve_class_newlines:
+            lines = [line.strip() for line in value[1:-1].splitlines()]
+            class_lines = [line for line in lines if line]
+            if len(class_lines) < MIN_MULTILINE_CLASS_LINES:
+                encoded_value = " ".join(class_lines)
+            else:
+                encoded_value = CLASS_ATTRIBUTE_NEWLINE.join(class_lines)
         else:
-            encoded_value = CLASS_ATTRIBUTE_NEWLINE.join(class_lines)
+            continue
 
         parts.extend((
             attributes[last_end : match.start()],
@@ -63,6 +79,14 @@ def encode_class_attribute_newlines(attributes: str, config: Config) -> str:
 
     parts.append(attributes[last_end:])
     return "".join(parts)
+
+
+def restore_verbatim_attribute_newlines(html: str) -> str:
+    """Restore preserved verbatim attribute line breaks."""
+    if VERBATIM_ATTRIBUTE_NEWLINE not in html:
+        return html
+
+    return html.replace(VERBATIM_ATTRIBUTE_NEWLINE, "\n")
 
 
 def decode_class_attribute_newlines(value: str, join_space: str) -> str:

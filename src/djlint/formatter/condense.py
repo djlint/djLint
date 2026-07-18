@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.const import HTML_INLINE_ELEMENTS
 from djlint.helpers import (
     RE_FLAGS_IMS,
     RE_FLAGS_IMSX,
@@ -30,6 +31,11 @@ if TYPE_CHECKING:
 
 _YAML_FRONT_MATTER_PATTERN: Final = re.compile(
     r"(^---.+?---)$", RE_FLAGS_MS, cache_pattern=False
+)
+
+# whitespace that css collapses; other whitespace (e.g. u+2005) is rendered.
+_COLLAPSIBLE_WHITESPACE_PATTERN: Final = re.compile(
+    r"[ \t\n\r\f]+", cache_pattern=False
 )
 
 
@@ -216,12 +222,26 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
 
     def condense_line(config: Config, html: str, match: re.Match[str]) -> str:
         """Put contents on a single line if below max line length."""
+        # whitespace-only content of an inline element is rendered; collapse
+        # it to one space instead of dropping it. template tag names never
+        # match the inline element set, so the template path is unaffected.
+        whitespace = ""
+        if (
+            not match.group(3)
+            and match.start(4) > match.end(1)
+            and match.group(2).lower() in HTML_INLINE_ELEMENTS
+        ):
+            whitespace = _COLLAPSIBLE_WHITESPACE_PATTERN.sub(
+                " ", match.string[match.end(1) : match.start(4)]
+            )
+
         if config.line_break_after_multiline_tag:
             # always force a break by pretending the line is too long.
             combined_length = config.max_line_length + 1
         else:
             combined_length = len(
                 match.group(1).splitlines()[-1]
+                + whitespace
                 + match.group(3)
                 + match.group(4)
             )
@@ -232,7 +252,7 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
             and if_blank_line_after_match(match.group(3))
             and if_blank_line_before_match(match.group(3))
         ):
-            return match.group(1) + match.group(3) + match.group(4)
+            return match.group(1) + whitespace + match.group(3) + match.group(4)
 
         return match.group()
 

@@ -1029,6 +1029,34 @@ test_data = [
         ),
         id="issue_806_html_in_attribute",
     ),
+    pytest.param(
+        (
+            '<button class="whatever whatever whatever whatever whatever whatever whatever"\n'
+            '    id="hyperscript-button"\n'
+            '    _="on htmx:afterRequest\n'
+            "    if event.detail.xhr.status == 200\n"
+            "        set me.disabled to true\n"
+            "    else\n"
+            '        set me.disabled to false">\n'
+            "    Refresh search index\n"
+            "</button>\n"
+        ),
+        (
+            '<button class="whatever whatever whatever whatever whatever whatever whatever"\n'
+            '        id="hyperscript-button"\n'
+            '        _="on htmx:afterRequest\n'
+            "    if event.detail.xhr.status == 200\n"
+            "        set me.disabled to true\n"
+            "    else\n"
+            '        set me.disabled to false">Refresh search index</button>\n'
+        ),
+        id="issue_1202_hyperscript_newlines",
+    ),
+    pytest.param(
+        ('<div _="on click\n-- toggle the thing\ntoggle .on">x</div>\n'),
+        ('<div _="on click\n-- toggle the thing\ntoggle .on">x</div>\n'),
+        id="issue_1202_hyperscript_comment_short_tag",
+    ),
 ]
 
 
