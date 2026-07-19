@@ -240,6 +240,12 @@ def indent_html(rawcode: str, config: Config) -> str:
     # nested ignored blocks..
     ignored_level = 0
 
+    # (level at open tag, first branch depth delta, deltas consistent) for
+    # each open template block; closing a block restores its saved level so
+    # html tags left unclosed inside (e.g. a conditionally rendered wrapper)
+    # don't leak indentation to following siblings.
+    template_block_stack: list[tuple[int, int | None, bool]] = []
+
     ignored_inline_start_pattern = re.compile(
         rf"^\s*?(?:{config.ignored_inline_blocks})", flags=RE_FLAGS_IMX
     )
@@ -291,6 +297,9 @@ def indent_html(rawcode: str, config: Config) -> str:
     template_start_pattern = re.compile(
         r"(?:\{\{\#|\{%-?)[ ]*?" + str(config.start_template_tags),
         flags=RE_FLAGS_IMX,
+    )
+    template_indent_pattern = re.compile(
+        str(config.template_indent), flags=RE_FLAGS_IMX
     )
     template_unindent_pattern = re.compile(
         str(config.template_unindent), flags=RE_FLAGS_IMX
@@ -390,6 +399,8 @@ def indent_html(rawcode: str, config: Config) -> str:
             if close_count:
                 open_count = len(template_start_pattern.findall(item))
                 dedent_after = max(close_count - open_count, 0)
+                if dedent_after:
+                    del template_block_stack[-dedent_after:]
 
         if (
             not is_block_raw
@@ -454,6 +465,8 @@ def indent_html(rawcode: str, config: Config) -> str:
             indent_level = multiline_tag_level + (
                 1 if multiline_tag_is_block else 0
             )
+            if multiline_tag_is_block:
+                template_block_stack.append((multiline_tag_level, None, True))
             # the line may also close an html tag, e.g. ") }}</span>"
             if tag_unindent_pattern.search(item):
                 indent_level = max(indent_level - 1, 0)
@@ -502,12 +515,55 @@ def indent_html(rawcode: str, config: Config) -> str:
                 # unindent after instead of before
                 tmp = (indent * indent_level) + item + "\n"
                 indent_level = max(indent_level - 1, 0)
+            elif template_block_stack and template_unindent_pattern.match(
+                item.lstrip()
+            ):
+                # closing a template block; restore the level saved at its
+                # open tag. When every branch shifted the depth equally
+                # (e.g. a tag opened in both if and else) keep that shift.
+                saved_level, branch_delta, consistent = (
+                    template_block_stack.pop()
+                )
+                delta = indent_level - saved_level - 1
+                target = (
+                    saved_level + delta
+                    if consistent and branch_delta == delta
+                    else saved_level
+                )
+                indent_level = min(max(indent_level - 1, 0), max(target, 0))
+                tmp = (indent * min(indent_level, saved_level)) + item + "\n"
             else:
-                indent_level = max(indent_level - 1, 0)
+                # an html close tag never dedents below the content level
+                # of the template block it is in; it may close a tag opened
+                # outside the block (or in another block).
+                floor = (
+                    template_block_stack[-1][0] + 1
+                    if template_block_stack
+                    else 0
+                )
+                indent_level = max(indent_level - 1, floor)
                 tmp = (indent * indent_level) + item + "\n"
 
         elif not is_block_raw and tag_unindent_line_pattern.search(item):
-            tmp = (indent * (indent_level - 1)) + item + "\n"
+            if template_block_stack:
+                # a branch tag ({% else %}, {% elif %}, ...) aligns with its
+                # block's open tag and starts the new branch at the same
+                # level, so branches don't inherit a sibling's leftovers.
+                saved_level, branch_delta, consistent = template_block_stack[-1]
+                delta = indent_level - saved_level - 1
+                if branch_delta is None:
+                    branch_delta = delta
+                elif branch_delta != delta:
+                    consistent = False
+                template_block_stack[-1] = (
+                    saved_level,
+                    branch_delta,
+                    consistent,
+                )
+                tmp = (indent * saved_level) + item + "\n"
+                indent_level = saved_level + 1
+            else:
+                tmp = (indent * (indent_level - 1)) + item + "\n"
 
         # if indent, move right
 
@@ -559,6 +615,8 @@ def indent_html(rawcode: str, config: Config) -> str:
             )
         ):
             tmp = (indent * indent_level) + item + "\n"
+            if template_indent_pattern.match(item.lstrip()):
+                template_block_stack.append((indent_level, None, True))
             indent_level += 1
 
         elif is_raw_first_line or (is_safe_closing_tag_ and not is_block_raw):

@@ -90,6 +90,48 @@ test_data = [
         ),
         id="issue_1597_preserve_nested_template_lines",
     ),
+    pytest.param(
+        (
+            "{% if enclose_in_div %}\n"
+            "    <div>\n"
+            "{% endif %}\n"
+            "<h1>Test</h1>\n"
+            "{% if enclose_in_div %}\n"
+            "    </div>\n"
+            "{% endif %}\n"
+        ),
+        (
+            "{% if enclose_in_div %}\n"
+            "    <div>\n"
+            "{% endif %}\n"
+            "<h1>Test</h1>\n"
+            "{% if enclose_in_div %}\n"
+            "    </div>\n"
+            "{% endif %}\n"
+        ),
+        id="issue_840_conditional_wrapper_tag",
+    ),
+    pytest.param(
+        (
+            "{% if foo.bar %}\n"
+            '<tr class="foo">\n'
+            "{% else %}\n"
+            "<tr>\n"
+            "{% endif %}\n"
+            "  <td>Foo</td>\n"
+            "</tr>\n"
+        ),
+        (
+            "{% if foo.bar %}\n"
+            '    <tr class="foo">\n'
+            "{% else %}\n"
+            "    <tr>\n"
+            "{% endif %}\n"
+            "    <td>Foo</td>\n"
+            "</tr>\n"
+        ),
+        id="issue_483_tag_opened_in_every_branch",
+    ),
 ]
 
 

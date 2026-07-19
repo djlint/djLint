@@ -516,6 +516,56 @@ def test_H025(
     assert "H025 1:0" in result.output
     assert "H025 1:11" in result.output
 
+    # issue #483: the same tag opened in both branches of a conditional
+    # shares one close tag.
+    write_to_file(
+        tmp_file.name,
+        b"""{% if foo.bar %}
+<tr class="foo">
+{% else %}
+<tr>
+{% endif %}
+    <td>Foo</td>
+</tr>""",
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--profile=jinja"))
+    assert result.exit_code == 0
+    assert "H025" not in result.output
+
+    # a close tag in each branch of a conditional shares one open tag
+    write_to_file(
+        tmp_file.name,
+        b"""<div>
+{% if x %}
+</div>
+{% else %}
+</div>
+{% endif %}""",
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--profile=django"))
+    assert result.exit_code == 0
+    assert "H025" not in result.output
+
+    # issue #787: mis-nested tags
+    write_to_file(
+        tmp_file.name, b"<h1>blah <b>bold</h1>\n<p>blah</b> blah blah</p>"
+    )
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert result.exit_code == 1
+    assert "H025 1:9" in result.output
+    assert "H025 2:7" in result.output
+
+    # tags conditionally opened and closed in separate conditionals are
+    # not mis-nesting
+    write_to_file(
+        tmp_file.name,
+        b"{% if a %}<b>{% else %}<i>{% endif %}text"
+        b"{% if a %}</b>{% else %}</i>{% endif %}",
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--profile=django"))
+    assert result.exit_code == 0
+    assert "H025" not in result.output
+
 
 def test_T027(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
