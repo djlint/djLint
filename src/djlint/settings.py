@@ -283,6 +283,13 @@ def load_custom_rules(src: Path) -> Any:
     return ()
 
 
+def _as_comma_separated(value: Any) -> Any:
+    """Allow comma-separated config options to be given as lists."""
+    if isinstance(value, (list, tuple)):
+        return ",".join(str(x).strip() for x in value)
+    return value
+
+
 def build_custom_blocks(custom_blocks: str | None) -> str | None:
     """Build regex string for custom template blocks."""
     if custom_blocks:
@@ -1174,13 +1181,15 @@ class Config:
             else djlint_settings.get("per-file-ignores", {})
         )
         # add blank line after load tags
-        self.blank_line_after_tag = blank_line_after_tag or djlint_settings.get(
-            "blank_line_after_tag", None
+        self.blank_line_after_tag = blank_line_after_tag or _as_comma_separated(
+            djlint_settings.get("blank_line_after_tag", None)
         )
         # add blank line before load tags
         self.blank_line_before_tag = (
             blank_line_before_tag
-            or djlint_settings.get("blank_line_before_tag", None)
+            or _as_comma_separated(
+                djlint_settings.get("blank_line_before_tag", None)
+            )
         )
         # add line break after multi-line tags
         self.line_break_after_multiline_tag = (
@@ -1217,10 +1226,13 @@ class Config:
 
         # regex for excluded paths
         exclude = build_exclude(
-            exclude or djlint_settings.get("exclude", _DEFAULT_EXCLUDE)
+            exclude
+            or _as_comma_separated(
+                djlint_settings.get("exclude", _DEFAULT_EXCLUDE)
+            )
         )
-        extend_exclude = extend_exclude or djlint_settings.get(
-            "extend_exclude", ""
+        extend_exclude = extend_exclude or _as_comma_separated(
+            djlint_settings.get("extend_exclude", "")
         )
         if extend_exclude:
             exclude += r" | " + build_exclude(extend_exclude)
@@ -1242,8 +1254,12 @@ class Config:
         profile_codes = _PROFILE_CODES.get(
             str(profile or djlint_settings.get("profile", "html")).lower(), ()
         )
-        self.ignore = str(ignore or djlint_settings.get("ignore", ""))
-        self.include = str(include or djlint_settings.get("include", ""))
+        self.ignore = str(
+            ignore or _as_comma_separated(djlint_settings.get("ignore", ""))
+        )
+        self.include = str(
+            include or _as_comma_separated(djlint_settings.get("include", ""))
+        )
         rule_set = validate_rules(
             chain(
                 yaml.safe_load(
@@ -1271,7 +1287,8 @@ class Config:
         # patterns built from configuration options
         self.custom_blocks = str(
             build_custom_blocks(
-                custom_blocks or djlint_settings.get("custom_blocks")
+                custom_blocks
+                or _as_comma_separated(djlint_settings.get("custom_blocks"))
             )
             or ""
         )
@@ -1280,14 +1297,16 @@ class Config:
         self.custom_html = (
             str(
                 build_custom_html(
-                    custom_html or djlint_settings.get("custom_html")
+                    custom_html
+                    or _as_comma_separated(djlint_settings.get("custom_html"))
                 )
                 or ""
             )
             + r"|c-[\w.-]+"
         )
         self.ignore_blocks = build_ignore_blocks(
-            ignore_blocks or djlint_settings.get("ignore_blocks", "")
+            ignore_blocks
+            or _as_comma_separated(djlint_settings.get("ignore_blocks", ""))
         )
         ignore_blocks_guard = (
             rf"(?!{self.ignore_blocks})" if self.ignore_blocks else ""
