@@ -273,9 +273,8 @@ def validate_rules(
 def load_custom_rules(rules_file: Path | None) -> Any:
     """Load custom linter rules from a .djlint_rules.yaml file."""
     if rules_file:
-        return yaml.load(
-            rules_file.read_text(encoding="utf-8"), Loader=yaml.SafeLoader
-        )
+        with rules_file.open("rb") as f:
+            return yaml.safe_load(f)
 
     return ()
 
@@ -1258,13 +1257,11 @@ class Config:
         self.include = str(
             include or _as_comma_separated(djlint_settings.get("include", ""))
         )
+        with (Path(__file__).parent / "rules.yaml").open("rb") as f:
+            default_rules = yaml.safe_load(f)
         rule_set = validate_rules(
             chain(
-                yaml.safe_load(
-                    (Path(__file__).parent / "rules.yaml").read_text(
-                        encoding="utf-8"
-                    )
-                ),
+                default_rules,
                 load_custom_rules(
                     rules or find_djlint_rules(self.project_root)
                 ),
