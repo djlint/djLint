@@ -35,6 +35,7 @@ def test_profile() -> None:
         == "{code} {message} {match} {filename}:{line}"
     )
     assert config.max_attribute_length == 10
+    assert config.max_blank_lines == 5
     assert config.max_line_length == 120
     assert config.preserve_blank_lines is True
     assert config.preserve_class_newlines is True
@@ -50,3 +51,9 @@ def test_profile() -> None:
         "file.html": "H026,H025",
         "file_two.html": "H001",
     }
+
+
+def test_cli_takes_precedence() -> None:
+    config = Config(str(Path(__file__) / "blank.html"), max_blank_lines=2)
+
+    assert config.max_blank_lines == 2

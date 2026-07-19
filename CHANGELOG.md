@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+## Fix
+
+- Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
+
 ## [1.40.10] - 2026-07-19
 
 ### Fix

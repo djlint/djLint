@@ -1209,10 +1209,10 @@ class Config:
             if max_attribute_length is not None
             else setting_int("max_attribute_length", 70)
         )
-        # NOTE: unlike the other options, the config file value takes
-        # precedence over the command line here
-        self.max_blank_lines = setting_int(
-            "max_blank_lines", max_blank_lines or 0
+        self.max_blank_lines = (
+            max_blank_lines
+            if max_blank_lines is not None
+            else setting_int("max_blank_lines", 0)
         )
 
         # regex for excluded paths
