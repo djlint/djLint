@@ -70,8 +70,10 @@ _SET_CONTENT_PATTERN: Final = re.compile(
     RE_FLAGS_IMSX,
     cache_pattern=False,
 )
+# possessive quantifiers keep an unbalanced "(" from backtracking
+# exponentially across the rest of the file.
 _FUNCTION_CONTENT_PATTERN: Final = re.compile(
-    r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)(\((?:\"[^\"]*\"|'[^']*'|[^\)])*?\)[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
+    r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)((?P<paren>\((?:\"[^\"]*+\"|'[^']*+'|[^()]++|(?&paren))*+\))[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
     RE_FLAGS_IMSX,
     cache_pattern=False,
 )
@@ -546,6 +548,10 @@ def indent_html(rawcode: str, config: Config) -> str:
         quote_style: QuoteStyle = QuoteStyle.ALWAYS_DOUBLE,
         normalize_string_quotes: bool = False,
     ) -> str:
+        # json.dumps produces relative indentation that must be shifted by
+        # leading_space; the fallback keeps the absolute indentation already
+        # applied by the indent pass, so its lines are joined unshifted.
+        joiner = "\n"
         try:
             # try to format the contents as json
             data = json.loads(contents)
@@ -567,6 +573,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     quote_keys=True,
                     quote_style=quote_style,
                 )
+                joiner = f"\n{leading_space}"
 
         except Exception:
             # was not json.. try to format as a Python literal.
@@ -584,7 +591,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             if normalize_string_quotes:
                 contents = _format_string_tokens(contents, quote_style)
 
-        return (f"\n{leading_space}").join(contents.splitlines())
+        return joiner.join(contents.splitlines())
 
     def format_set(config: Config, html: str, match: re.Match[str]) -> str:
         if inside_ignored_block(config, html, match):
@@ -618,8 +625,8 @@ def indent_html(rawcode: str, config: Config) -> str:
         leading_space = match.group(1)
         open_bracket = match.group(2)
         tag = match.group(3).strip()
-        index = (match.group(5) or "").strip()
-        close_bracket = match.group(6)
+        index = (match.group(6) or "").strip()
+        close_bracket = match.group(7)
         quote_style = QuoteStyle.ALWAYS_DOUBLE
         normalize_string_quotes = False
 

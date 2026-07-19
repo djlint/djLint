@@ -49,6 +49,26 @@ test_data = [
         ({"custom_blocks": "custom_block"}),
         id="custom_block_with_similar_tag",
     ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {% trans %}\n"
+            "        <p>content</p>\n"
+            "    {% endtrans %}\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    {% trans %}\n"
+            "        <p>content</p>\n"
+            "    {% endtrans %}\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        ({"custom_blocks": "trans", "profile": "jinja"}),
+        id="trans_as_custom_block_still_unindents",
+    ),
 ]
 
 

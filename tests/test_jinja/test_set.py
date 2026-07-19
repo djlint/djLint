@@ -31,6 +31,29 @@ test_data = [
         "{% set card_title_1 = object %}\n",
         id="object_context_var",
     ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    <div>\n"
+            "        {% set image_params = {\n"
+            "            image: item.image,\n"
+            "            lazy: loop.first\n"
+            "        } %}\n"
+            "    </div>\n"
+            "</div>"
+        ),
+        (
+            "<div>\n"
+            "    <div>\n"
+            "        {% set image_params = {\n"
+            "            image: item.image,\n"
+            "            lazy: loop.first\n"
+            "        } %}\n"
+            "    </div>\n"
+            "</div>\n"
+        ),
+        id="nested_multiline_set_keeps_relative_indent",
+    ),
 ]
 
 

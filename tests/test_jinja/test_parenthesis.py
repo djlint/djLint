@@ -53,6 +53,40 @@ test_data = [
         '{{ url("foo") }}', '{{ url("foo") }}\n', id="double_parenthesis_tag"
     ),
     pytest.param(
+        (
+            "<div>\n"
+            "    {{ render_partial('components/button.html.jinja2',\n"
+            "       content='Press me!',\n"
+            "       icon=render_partial('components/icon.html.jinja2', icon='icon'),\n"
+            "       some_other_arg='hello') }}\n"
+            "</div>"
+        ),
+        (
+            "<div>\n"
+            "    {{ render_partial('components/button.html.jinja2',\n"
+            "    content='Press me!',\n"
+            "    icon=render_partial('components/icon.html.jinja2', icon='icon'),\n"
+            "    some_other_arg='hello') }}\n"
+            "</div>\n"
+        ),
+        id="issue_805_nested_call_no_space_before_comma",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {{ render(value }}\n"
+            "    <a href=\"{{ url_for('page') }}\">{{ label(name='n') }}</a>\n"
+            "</div>"
+        ),
+        (
+            "<div>\n"
+            "    {{ render(value }}\n"
+            "    <a href=\"{{ url_for('page') }}\">{{ label(name='n') }}</a>\n"
+            "</div>\n"
+        ),
+        id="unbalanced_parenthesis_does_not_hang",
+    ),
+    pytest.param(
         '<a href="{{ url_for("test_reminders") }}" class="btn clr sm">Test reminders</a>',
         '<a href="{{ url_for(\'test_reminders\') }}" class="btn clr sm">Test reminders</a>\n',
         id="double_url_for",

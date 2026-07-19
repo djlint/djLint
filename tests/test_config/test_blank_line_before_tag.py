@@ -81,6 +81,37 @@ test_data = [
     ),
     pytest.param(
         (
+            "{% set first = 1 %}\n"
+            "{# comment about second #}\n"
+            "{% set second = 2 %}"
+        ),
+        (
+            "{% set first = 1 %}\n"
+            "\n"
+            "{# comment about second #}\n"
+            "{% set second = 2 %}\n"
+        ),
+        ({"blank_line_before_tag": "set"}),
+        id="issue_744_blank_line_above_comment",
+    ),
+    pytest.param(
+        (
+            "{% set first = 1 %}\n"
+            "\n"
+            "{# comment about second #}\n"
+            "{% set second = 2 %}"
+        ),
+        (
+            "{% set first = 1 %}\n"
+            "\n"
+            "{# comment about second #}\n"
+            "{% set second = 2 %}\n"
+        ),
+        ({"blank_line_before_tag": "set"}),
+        id="issue_744_comment_stays_attached_roundtrip",
+    ),
+    pytest.param(
+        (
             "{% blocktrans %}my words{% endblocktrans %}\n"
             "{% block body %}\n"
             "    <div></div>\n"

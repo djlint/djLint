@@ -38,6 +38,16 @@ _COLLAPSIBLE_WHITESPACE_PATTERN: Final = re.compile(
     r"[ \t\n\r\f]+", cache_pattern=False
 )
 
+# a line that closes a block and decreases the indentation.
+_CLOSING_LINE_PATTERN: Final = re.compile(
+    r"[ \t]*(?:</|\{%-?\s*end|\{\{/)", cache_pattern=False
+)
+
+# a whole line holding a single-line comment.
+_COMMENT_LINE_PATTERN: Final = re.compile(
+    r"[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*", cache_pattern=False
+)
+
 
 def clean_whitespace(html: str, config: Config) -> str:
     """Compress back tags that do not need to be expanded."""
@@ -113,6 +123,11 @@ def clean_whitespace(html: str, config: Config) -> str:
         if inside_html_attribute(html, match):
             return match.group()
 
+        # no blank line when the next line closes a block (decreased indent).
+        next_line = match.string[match_end:].split("\n", 1)[0]
+        if _CLOSING_LINE_PATTERN.match(next_line):
+            return match.group()
+
         return match.group() + "\n"
 
     func = partial(add_blank_line_after, config, html)
@@ -128,21 +143,39 @@ def clean_whitespace(html: str, config: Config) -> str:
             )
 
     def add_blank_line_before(
-        config: Config, html: str, match: re.Match[str]
+        config: Config,
+        html: str,
+        attach_comments: bool,  # noqa: FBT001
+        match: re.Match[str],
     ) -> str:
         """Add break before if not in ignored block and not first line in file."""
         if match.start() == 0 or inside_ignored_block(config, html, match):
             return match.group()
 
-        return "\n" + match.group()
+        # a comment line directly above belongs to this tag. if it was not
+        # swallowed into the match, there is already a blank line above it.
+        start = match.start()
+        if attach_comments and match.string[start - 1] == "\n":
+            prev_start = match.string.rfind("\n", 0, start - 1) + 1
+            if _COMMENT_LINE_PATTERN.fullmatch(
+                match.string, prev_start, start - 1
+            ):
+                return match.group()
 
-    func = partial(add_blank_line_before, config, html)
+        return "\n" + match.group()
 
     # should we add blank lines before load tags?
     if config.blank_line_before_tag:
-        for tag in config.blank_line_before_tag.split(","):
+        # keep comments attached to the tag they document: the blank line
+        # goes above any comment lines directly preceding the tag. a comment
+        # above an end tag is block content, not the end tag's comment.
+        comment_lines = r"(?:^[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*\n)*"
+        for raw_tag in config.blank_line_before_tag.split(","):
+            tag = raw_tag.strip()
+            attach_comments = not tag.startswith("end")
+            func = partial(add_blank_line_before, config, html, attach_comments)
             html = re.sub(
-                rf"(?<!^\n)((?:{{%-?\s*?{tag.strip()}\b[^}}]+?-?%}}\n?)+)",
+                rf"(?<!^\n)({comment_lines if attach_comments else ''}(?:{{%-?\s*?{tag}\b[^}}]+?-?%}}\n?)+)",
                 func,
                 html,
                 flags=RE_FLAGS_IMS,

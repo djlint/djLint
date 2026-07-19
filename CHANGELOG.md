@@ -8,6 +8,11 @@
 
 - Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
 - T003 no longer requires an endblock name when `{% endblock %}` is on the same line as its `{% block ... %}`, e.g. `{% block title %}{% endblock %}`. The formatter keeps such blocks on one line, so the linter and formatter no longer conflict.
+- Fix formatter: `{% endtrans %}` (Jinja/Twig block `{% trans %}`) no longer decreases the indentation level, which shifted the `{% endtrans %}` line and everything after it one level to the left.
+- Fix formatter: multiline `{% set %}` objects nested inside HTML elements are no longer over-indented in proportion to their nesting depth.
+- Fix formatter: in multi-line `{{ ... }}` function calls, a call passed as an argument no longer causes a stray space before the following comma, and the arguments after it keep the same indentation as the other arguments.
+- Fix formatter: `blank_line_after_tag` no longer inserts a blank line when the next line closes a block and decreases the indentation, e.g. between `{% endblock %}` and `</div>`.
+- Fix formatter: `blank_line_before_tag` now inserts the blank line above a comment directly preceding the tag, keeping the comment attached to the tag it documents.
 
 ## [1.40.10] - 2026-07-19
 

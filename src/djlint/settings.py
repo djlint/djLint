@@ -1317,11 +1317,21 @@ class Config:
             ) | \{{-?[ ]*?form_start
             """
         )
+        # jinja/twig block {% trans %} has no matching indent tag, so its
+        # end tag must not unindent — unless the user made trans a custom
+        # block, in which case the open tag does indent.
+        end_tag_guard = r"(?!comment)"
+        if (
+            r"|trans\b" not in self.custom_blocks
+            and r"|translate\b" not in self.custom_blocks
+        ):
+            end_tag_guard = r"(?!comment|trans(?:late)?\b)"
         self.template_unindent = (
             r"""
                 (?:
                   (?:\{\{\/)
-                | (?:\{%-?[ ]*?end(?!comment)"""
+                | (?:\{%-?[ ]*?end"""
+            + end_tag_guard
             + ignore_blocks_guard
             + r""")
                 | (?:\{{-?[ ]*?form_end)

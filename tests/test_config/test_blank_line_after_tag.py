@@ -51,7 +51,6 @@ test_data = [
             '    <div class="tab-dta active" id="details">\n'
             '        <div class="em-grid">\n'
             '            {% include "pages/task/details_source.html.j2" %}\n'
-            "\n"
             "        </div>\n"
             "    </div>\n"
             "</div>\n"
@@ -61,7 +60,7 @@ test_data = [
     ),
     pytest.param(
         ("{% block this %}\n{% load i18n %}\n{% endblock this %}"),
-        ("{% block this %}\n    {% load i18n %}\n\n{% endblock this %}\n"),
+        ("{% block this %}\n    {% load i18n %}\n{% endblock this %}\n"),
         ({"blank_line_after_tag": "endblock  , junk,load "}),
         id="nested_indent",
     ),
@@ -98,6 +97,29 @@ test_data = [
         ),
         ({"blank_line_after_tag": "endblock"}),
         id="endblock is not endblocktrans",
+    ),
+    pytest.param(
+        (
+            "<head>\n"
+            "    <title>\n"
+            "        {% block title %}My website{% endblock %}\n"
+            "    </title>\n"
+            "    {% block stylesheets %}{{ link_tags() }}{% endblock %}\n"
+            "    {% block javascripts %}{{ script_tags() }}{% endblock %}\n"
+            "</head>"
+        ),
+        (
+            "<head>\n"
+            "    <title>\n"
+            "        {% block title %}My website{% endblock %}\n"
+            "    </title>\n"
+            "    {% block stylesheets %}{{ link_tags() }}{% endblock %}\n"
+            "\n"
+            "    {% block javascripts %}{{ script_tags() }}{% endblock %}\n"
+            "</head>\n"
+        ),
+        ({"blank_line_after_tag": "endblock"}),
+        id="issue_827_no_blank_line_before_decreased_indent",
     ),
     pytest.param(
         ("{% extends nothing %}\n\n<div></div>\n"),
