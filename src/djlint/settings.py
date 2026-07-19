@@ -270,14 +270,11 @@ def validate_rules(
             yield rule
 
 
-def load_custom_rules(src: Path) -> Any:
-    """Load djlint config from pyproject.toml."""
-    djlint_rules_file = find_djlint_rules(src)
-
-    if djlint_rules_file:
+def load_custom_rules(rules_file: Path | None) -> Any:
+    """Load custom linter rules from a .djlint_rules.yaml file."""
+    if rules_file:
         return yaml.load(
-            djlint_rules_file.read_text(encoding="utf-8"),
-            Loader=yaml.SafeLoader,
+            rules_file.read_text(encoding="utf-8"), Loader=yaml.SafeLoader
         )
 
     return ()
@@ -1055,6 +1052,7 @@ class Config:
         format_css: bool = False,
         format_js: bool = False,
         configuration: Path | None = None,
+        rules: Path | None = None,
         statistics: bool = False,
         include: str = "",
         ignore_case: bool = False,
@@ -1267,7 +1265,9 @@ class Config:
                         encoding="utf-8"
                     )
                 ),
-                load_custom_rules(self.project_root),
+                load_custom_rules(
+                    rules or find_djlint_rules(self.project_root)
+                ),
             )
         )
         self.linter_rules = tuple(

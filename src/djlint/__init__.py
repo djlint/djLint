@@ -140,6 +140,18 @@ if TYPE_CHECKING:
     help="Path to global configuration file in djlint.toml, .djlint.toml, or .djlintrc format",
 )
 @click.option(
+    "--rules",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True,
+        path_type=Path,
+    ),
+    help="Path to custom rules file in .djlint_rules.yaml format",
+)
+@click.option(
     "--statistics",
     is_flag=True,
     help="Count the number of occurrences of each error/warning code.",
@@ -294,6 +306,7 @@ def main(
     format_css: bool,
     format_js: bool,
     configuration: Path | None,
+    rules: Path | None,
     statistics: bool,
     include: str,
     ignore_case: bool,
@@ -356,6 +369,7 @@ def main(
         format_css=format_css,
         format_js=format_js,
         configuration=configuration,
+        rules=rules,
         statistics=statistics,
         include=include,
         ignore_case=ignore_case,

@@ -115,6 +115,7 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 ## 自定义规则
 
 你可以在 `pyproject.toml` 相同路径下创建一个 `.djlint_rules.yaml` 来添加自定义规则。
+也可以使用 CLI 选项 `--rules` 指定其他位置的规则文件。
 你可以将规则添加到这个文件中，djLint 将会识别并应用这些规则。
 
 ### 形式规则

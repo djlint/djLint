@@ -116,6 +116,7 @@ Veuillez inclure un test pour valider la règle.
 
 Il est possible d'ajouter des règles personnalisées directement au sein de votre projet.
 Pour cela, créez un fichier `.djlint_rules.yaml` à côté de votre `pyproject.toml`.
+Un fichier de règles situé ailleurs peut être indiqué avec l'option CLI `--rules`.
 Des règles peuvent être ajoutées à ce fichier et djLint les reprendra.
 
 ### Règle basé sur la recherche d'un regex

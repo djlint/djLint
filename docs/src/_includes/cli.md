@@ -38,6 +38,8 @@ Options:
   --configuration FILE            Path to global configuration file in
                                   djlint.toml, .djlint.toml, or .djlintrc
                                   format
+  --rules FILE                    Path to custom rules file in
+                                  .djlint_rules.yaml format
   --statistics                    Count the number of occurrences of each
                                   error/warning code.
   --include TEXT                  Codes to include. ex: "H014,H017"

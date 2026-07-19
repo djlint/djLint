@@ -116,6 +116,7 @@ Please include a test to validate the rule.
 
 You can add custom rules just for your project by creating a `.djlint_rules.yaml` alongside
 your `pyproject.toml`. Rules can be added to this files and djLint will pick them up.
+A rules file in another location can be given with the `--rules` CLI option.
 
 ### Pattern Rules
 
