@@ -241,6 +241,12 @@ def test_H020(
     assert result.exit_code == 0
     assert "H020" not in result.output
 
+    # https://github.com/djlint/djLint/issues/866
+    write_to_file(tmp_file.name, b"<slot></slot>")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert result.exit_code == 0
+    assert "H020" not in result.output
+
 
 def test_H022(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
