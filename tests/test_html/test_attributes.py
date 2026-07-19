@@ -37,10 +37,10 @@ test_data = [
             '    alt="Block image"/>\n'
         ),
         (
-            "<img {% image value.image fill-640x360   as block_image_640 %}\n"
-            "     {% image value.image fill-768x432   as block_image_768 %}\n"
-            "     {% image value.image fill-1024x576  as block_image_1024 %}\n"
-            "     {% image value.image fill-1600x900  as block_image_1600 %}\n"
+            "<img {% image value.image fill-640x360 as block_image_640 %}\n"
+            "     {% image value.image fill-768x432 as block_image_768 %}\n"
+            "     {% image value.image fill-1024x576 as block_image_1024 %}\n"
+            "     {% image value.image fill-1600x900 as block_image_1600 %}\n"
             '     data-src="{{ block_image_640.url }}"\n'
             '     data-srcset="{{ block_image_640.url }} 640w,\n'
             "                  {{ block_image_768.url }} 768w,\n"

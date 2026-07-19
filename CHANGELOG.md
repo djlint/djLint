@@ -31,6 +31,7 @@
 - Comma-separated options in config files (`ignore`, `include`, `custom_blocks`, `custom_html`, `exclude`, `extend_exclude`, `ignore_blocks`, `blank_line_after_tag`, `blank_line_before_tag`) can now also be given as lists, e.g. `ignore = ["H017", "H031"]` in `pyproject.toml`; previously list values were silently ignored.
 - Self-closing custom block tags (django-components syntax, e.g. `{% component "calendar" date="2015-06-19" / %}` with `custom_blocks = "component"`) no longer indent the lines that follow them as if a block had been opened.
 - Linter rules no longer report errors for the literal contents of `{% verbatim %}`...`{% endverbatim %}` blocks, matching the existing treatment of jinja `{% raw %}` blocks.
+- The formatter now condenses runs of extra whitespace inside single-line template tags to a single space, e.g. `{% if   abc == 101 %}` becomes `{% if abc == 101 %}` — fixing what rule T032 reports, so the linter and formatter no longer conflict. Whitespace inside string literals is preserved, including strings with backslash-escaped quotes; multiline tags, ignored blocks, the literal contents of `{% verbatim %}`/`{% raw %}` and the handlebars/golang profiles are untouched.
 - Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
 
 ## [1.40.10] - 2026-07-19

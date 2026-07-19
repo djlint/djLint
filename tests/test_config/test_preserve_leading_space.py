@@ -63,7 +63,7 @@ test_data = [
             "\n"
             "\n"
             "\n"
-            "{% if   abc == 101 %}\n"
+            "{% if abc == 101 %}\n"
             " interface Ethernet1/2\n"
             "   description // Connected to leaf-2\n"
             "   no switchport\n"
@@ -125,7 +125,7 @@ test_data = [
             "            {% endif %}\n"
         ),
         (
-            "{% if   abc == 101 %}\n"
+            "{% if abc == 101 %}\n"
             " interface Ethernet1/2\n"
             "   description // Connected to leaf-2\n"
             "   no switchport\n"

@@ -20,6 +20,7 @@ from djlint.helpers import (
     RE_FLAGS_IMX,
     RE_FLAGS_IX,
     inside_ignored_block,
+    inside_ignored_linter_block,
     is_ignored_block_closing,
     is_ignored_block_opening,
     is_safe_closing_tag,
@@ -38,6 +39,10 @@ _TAG_SPACING_PATTERN: Final = re.compile(
 )
 _INTERPOLATION_SPACING_PATTERN: Final = re.compile(
     r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", cache_pattern=False
+)
+# string literals may contain backslash-escaped quotes (django, jinja)
+_EXTRA_TAG_WHITESPACE_PATTERN: Final = re.compile(
+    r"(\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*')|[ \t]{2,}", cache_pattern=False
 )
 _HANDLEBARS_BLOCK_END_PATTERN: Final = re.compile(
     r"({{#(?:each|if).+?[^ ])(}})", cache_pattern=False
@@ -188,7 +193,15 @@ def indent_html(rawcode: str, config: Config) -> str:
             if inside_ignored_block(config, html, match):
                 return match.group()
 
-            return f"{match.group(1)} {match.group(2)} {match.group(3)}"
+            content = match.group(2)
+            # {% verbatim %}/{% raw %} contents render literally; only
+            # normalize the tag edges there
+            if not inside_ignored_linter_block(config, html, match):
+                # collapse runs of whitespace outside string literals (T032)
+                content = _EXTRA_TAG_WHITESPACE_PATTERN.sub(
+                    lambda m: m.group(1) or " ", content
+                ).strip()
+            return f"{match.group(1)} {content} {match.group(3)}"
 
         """
         We should have tags like this:
@@ -198,6 +211,10 @@ def indent_html(rawcode: str, config: Config) -> str:
         func = partial(fix_tag_spacing, rawcode)
 
         rawcode = _TAG_SPACING_PATTERN.sub(func, rawcode)
+
+        # rebind: the first pass shifted the offsets the ignored-block
+        # spans are compared against
+        func = partial(fix_tag_spacing, rawcode)
 
         rawcode = _INTERPOLATION_SPACING_PATTERN.sub(func, rawcode)
 
