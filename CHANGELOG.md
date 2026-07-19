@@ -7,6 +7,7 @@
 ## Fix
 
 - Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
+- T003 no longer requires an endblock name when `{% endblock %}` is on the same line as its `{% block ... %}`, e.g. `{% block title %}{% endblock %}`. The formatter keeps such blocks on one line, so the linter and formatter no longer conflict.
 
 ## [1.40.10] - 2026-07-19
 

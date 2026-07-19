@@ -187,6 +187,21 @@ test_data = [
         id="T003_matching_block_name",
     ),
     pytest.param(
+        ("{% block foo %}{% endblock %}"), ([]), id="T003_single_line_block"
+    ),
+    pytest.param(
+        ("{% block foo %}\n{% endblock %}"),
+        ([
+            {
+                "code": "T003",
+                "line": "2:0",
+                "match": "{% endblock %}",
+                "message": "Endblock should have name. Ex: {% endblock body %}.",
+            }
+        ]),
+        id="T003_multi_line_block_without_name",
+    ),
+    pytest.param(
         ('<link src="/static/there">'),
         ([
             {

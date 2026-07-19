@@ -83,9 +83,13 @@ def run(
             continue
 
         if not name:
-            errors.append(_error(rule, match, line_ends, rule["message"]))
             if open_blocks:
-                open_blocks.pop()
+                _, open_match = open_blocks.pop()
+                if "\n" not in html[open_match.end() : match.start()]:
+                    # {% block foo %}{% endblock %} on one line is what the
+                    # formatter produces; don't require a name here.
+                    continue
+            errors.append(_error(rule, match, line_ends, rule["message"]))
             continue
 
         if not open_blocks:
