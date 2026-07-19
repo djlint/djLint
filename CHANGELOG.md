@@ -10,6 +10,10 @@
 - New rule T039: template tags that never reach their closing delimiter are now reported — e.g. `{% url 'x" user.url }}` (closed by `}}` instead of `%}`), `{{ user.name }` (missing a brace), or a tag cut off by the next tag or the end of the file. Complements T027 (unclosed string in a complete tag) and T034 (`}%` typo), which keep reporting their own cases.
 - New `--rules FILE` CLI option: path to a custom rules file in `.djlint_rules.yaml` format, for rules files that don't sit next to `pyproject.toml`.
 
+## Changed
+
+- The default `exclude` list is now tailored to djLint instead of copying ruff/black. Added directories that hold generated or third-party HTML: `htmlcov` (coverage.py HTML reports), `site-packages` (installed packages' templates — Django admin, DRF — in any virtualenv layout, including non-standard venv names and Windows `Lib\site-packages`) and `_site` (Jekyll/Eleventy output). Removed Python tool caches and editor config that never contain HTML: `.ipynb_checkpoints`, `.mypy_cache`, `.pytest_cache`, `.pytype`, `.ruff_cache`, `.pants.d`, `.vscode` and `buck-out`.
+
 ## Fix
 
 - HTML tags left unclosed inside a template block (e.g. a wrapper `<div>` rendered by `{% if %}...{% endif %}` and closed by a later conditional) no longer shift the indentation of everything after the block; closing a template block restores the indentation of its opening tag. When every branch of an `{% if %}/{% elif %}/{% else %}` shifts the depth equally, e.g. a `<tr>` opened in both branches, the shift is kept after `{% endif %}`.

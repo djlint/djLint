@@ -332,31 +332,28 @@ _PROFILE_CODES: Final[dict[str, tuple[str, ...]]] = {
     "angular": ("D", "J", "H012", "H026", "H028"),
 }
 
-# From ruff and black
+# Directories that plausibly contain generated or third-party
+# HTML/templates: VCS internals, virtualenvs and installed packages,
+# and build/report output dirs.
 _DEFAULT_EXCLUDE: Final = r"""
     __pypackages__
     | _build
+    | _site
     | \.bzr
     | \.direnv
     | \.eggs
     | \.git
     | \.git-rewrite
     | \.hg
-    | \.ipynb_checkpoints
-    | \.mypy_cache
     | \.nox
-    | \.pants\.d
-    | \.pytest_cache
-    | \.pytype
-    | \.ruff_cache
     | \.svn
     | \.tox
     | \.venv
-    | \.vscode
-    | buck-out
     | build
     | dist
+    | htmlcov
     | node_modules
+    | site-packages
     | venv
 """
 
