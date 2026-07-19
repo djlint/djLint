@@ -13,6 +13,9 @@ import yaml
 from click import echo, style
 from pathspec import PathSpec
 
+from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.helpers import RE_FLAGS_IMSX, RE_FLAGS_ISX, RE_FLAGS_IX
+
 try:
     from pathspec.patterns.gitignore import GitIgnorePatternError
 except ImportError:
@@ -25,11 +28,28 @@ except ImportError:
 else:
     _GITIGNORE_PATTERN = "gitignore"
 
-from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
-from djlint.helpers import RE_FLAGS_IMSX, RE_FLAGS_ISX, RE_FLAGS_IX
+if sys.version_info >= (3, 11):
+    from typing import final
+
+    try:
+        import tomllib
+    except ImportError:
+        # Help users on older alphas
+        if not TYPE_CHECKING:
+            import tomli as tomllib
+else:
+    import tomli as tomllib
+    from typing_extensions import final
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator, Mapping
     from typing import Final
+
+    from pathspec import Pattern
+    from typing_extensions import Any, TypeVar
+
+    _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
+
 
 _JS_JSON_OBJECT_PATTERN: Final = re.compile(
     r"^\s*\{(?![{%]).*\}\s*$", RE_FLAGS_IX, cache_pattern=False
@@ -49,30 +69,6 @@ _JS_JSON_PROPERTY_PATTERN: Final = re.compile(
     RE_FLAGS_IX,
     cache_pattern=False,
 )
-
-if sys.version_info >= (3, 11):
-    try:
-        import tomllib
-    except ImportError:
-        # Help users on older alphas
-        if not TYPE_CHECKING:
-            import tomli as tomllib
-else:
-    import tomli as tomllib
-
-if sys.version_info >= (3, 11):
-    from typing import final
-else:
-    from typing_extensions import final
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Mapping
-
-    from pathspec import Pattern
-    from typing_extensions import Any, TypeVar
-
-    _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
-
 
 DJLINT_TOML_CONFIG_FILES: Final = ("djlint.toml", ".djlint.toml")
 
@@ -319,6 +315,620 @@ def build_exclude(exclude: str) -> str:
     return r" | ".join(x.strip() for x in exclude.split(",") if x.strip())
 
 
+# The patterns below do not depend on configuration and are built once at
+# import time, like the _JS_JSON_* patterns above.
+
+# codes to exclude per profile
+_PROFILE_CODES: Final[dict[str, tuple[str, ...]]] = {
+    "html": ("D", "J", "T", "N", "M"),
+    "django": ("J", "N", "M"),
+    "jinja": ("D", "N", "M"),
+    "nunjucks": ("D", "J", "M"),
+    "handlebars": ("D", "J", "N"),
+    "golang": ("D", "J", "N", "M"),
+    "angular": ("D", "J", "H012", "H026", "H028"),
+}
+
+# From ruff and black
+_DEFAULT_EXCLUDE: Final = r"""
+    __pypackages__
+    | _build
+    | \.bzr
+    | \.direnv
+    | \.eggs
+    | \.git
+    | \.git-rewrite
+    | \.hg
+    | \.ipynb_checkpoints
+    | \.mypy_cache
+    | \.nox
+    | \.pants\.d
+    | \.pytest_cache
+    | \.pytype
+    | \.ruff_cache
+    | \.svn
+    | \.tox
+    | \.venv
+    | \.vscode
+    | buck-out
+    | build
+    | dist
+    | node_modules
+    | venv
+"""
+
+# Default pattern for common JS-bearing attributes. data-* attributes
+# are intentionally opt-in via format_attribute_js_json_pattern.
+_DEFAULT_JS_JSON_PATTERN: Final = (
+    r"^(?:"
+    r"on[a-z]+|"
+    r"x-[a-z\-]+|"
+    r"@[a-z\-]+|"
+    r":[a-z\-]+|"
+    r"v-[a-z\-]+|"
+    r"\([a-z\-]+\)|"
+    r"\[[a-z\-]+\]|"
+    r"\*ng[A-Z][a-zA-Z]*|"
+    r"[a-z\-]+\.(bind|delegate|call|trigger)"
+    r")$"
+)
+
+_TEMPLATE_IF_FOR_PATTERN: Final = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
+
+_ATTRIBUTE_PATTERN: Final = (
+    rf"""
+    (?:
+        (
+            (?:
+                (?:\w|-|\.|\:|@|\*|/(?!>)) # a name character
+               | (?>{{{{[\s\S]*?}}}})
+                 (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template variable
+               | (?!{{%-?\s*(?:for|asyncAll|asyncEach)\b)
+                 (?!{{%-?\s*if\b[^}}]*?%}}(?:required|checked){{%-?\s*endif\b[^}}]*?%}})
+                 (?>{_TEMPLATE_IF_FOR_PATTERN})
+                 (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template block
+            )
+            (?:
+                (?:\w|-|\.|\:|@|\*|/(?!>)) # more name characters
+               | (?>{{{{[\s\S]*?}}}}|{{%[\s\S]*?%}}) # or an embedded template tag
+            )*
+            | required | checked
+        )? # attribute name
+        (?:  [ ]*?=[ ]*? # followed by "="
+            (
+                \"[^\"]*? # double quoted attribute
+                (?:
+                    {_TEMPLATE_IF_FOR_PATTERN} # if or for loop
+                   | {{{{[\s\S]*?}}}} # template stuff
+                   | {{%[\s\S]*?%}}
+                   | [^\"] # anything else
+                )*?
+                \" # closing quote
+              | '[^']*? # single quoted attribute
+                (?:
+                    {_TEMPLATE_IF_FOR_PATTERN} # if or for loop
+                   | {{{{[\s\S]*?}}}} # template stuff
+                   | {{%[\s\S]*?%}}
+                   | [^'] # anything else
+                )*?
+                \' # closing quote
+              | (?:\w|-)+ # or a non-quoted string value
+              | {{{{[\s\S]*?}}}} # a non-quoted template var
+              | {{%[\s\S]*?%}} # a non-quoted template tag
+              | {_TEMPLATE_IF_FOR_PATTERN} # a non-quoted if statement
+
+            )
+        )? # attribute value
+    )
+    | ({_TEMPLATE_IF_FOR_PATTERN}
+    """
+    r"""
+    | (?:\'|\") # allow random trailing quotes
+    | {{[\s\S]*?}}
+    | {\#[\s\S]*?\#}
+    | {%[\s\S]*?%})
+    """
+)
+
+_TEMPLATE_TAGS: Final = r"""
+    {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
+"""
+
+# these tags should be unindented and next line will be indented
+_TAG_UNINDENT_LINE: Final = r"""
+      (?:\{%-?[ ]*?(?:elif|else|empty|plural))
+    | (?:
+        \{\{[ ]*?
+        (
+            (?:else|\^)
+            [ ]*?\}\}
+        )
+      )
+"""
+
+_BREAK_BEFORE: Final = r"(?<!\n[ \t]*?)"
+
+_IGNORED_ATTRIBUTES: Final = frozenset({
+    "href",
+    "action",
+    "data-url",
+    "src",
+    "url",
+    "srcset",
+    "data-src",
+})
+
+_INDENT_TEMPLATE_TAGS: Final = r""" (?:if
+    | unless
+    | ifchanged
+    | for
+    | asyncEach
+    | asyncAll
+    | embed
+    | block(?!trans|translate)
+    | spaceless
+    | compress
+    | cache
+    | localize
+    | localtime
+    | timezone
+    | addto
+    | language
+    | with
+    | assets
+    | verbatim
+    | autoescape
+    | filter
+    | each
+    | macro
+    | call
+    | raw
+    | blocktrans(?!late)
+    | blocktranslate
+    | partialdef
+    | thumbnail
+    | set(?!(?:(?!%}).)*=)
+"""
+
+_START_TEMPLATE_TAGS: Final = r"""
+      (?:if
+    | unless
+    | for
+    | asyncEach
+    | asyncAll
+    | block(?!trans)
+    | spaceless
+    | compress
+    | cache
+    | localize
+    | localtime
+    | timezone
+    | load
+    | assets
+    | addto
+    | language
+    | with
+    | assets
+    | autoescape
+    | filter
+    | verbatim
+    | each
+    | macro
+    | call
+    | raw
+    | blocktrans(?!late)
+    | blocktranslate
+    | partialdef
+    | thumbnail
+    | set(?!(?:(?!%}).)*=)
+
+"""
+
+_BREAK_TEMPLATE_TAGS: Final = r"""
+      (?:if
+    | unless
+    | endif
+    | for
+    | endfor
+    | asyncEach
+    | endeach
+    | asyncAll
+    | endall
+    | block(?!trans)
+    | endblock(?!trans)
+    | else
+    | plural
+    | spaceless
+    | endspaceless
+    | compress
+    | endcompress
+    | cache
+    | endcache
+    | localize
+    | endlocalize
+    | localtime
+    | endlocaltime
+    | timezone
+    | endtimezone
+    | load
+    | include
+    | assets
+    | endassets
+    | addto
+    | language
+    | with
+    | endwith
+    | autoescape
+    | endautoescape
+    | filter
+    | endfilter
+    | elif
+    | resetcycle
+    | verbatim
+    | endverbatim
+    | each
+    | macro
+    | endmacro
+    | raw
+    | endraw
+    | call
+    | endcall
+    | image
+    | blocktrans(?!late)
+    | endblocktrans(?!late)
+    | blocktranslate
+    | endblocktranslate
+    | partialdef
+    | endpartialdef
+    | partial
+    | set(?!(?:(?!%}).)*=)
+    | endset
+    | thumbnail
+    | endthumbnail
+"""
+
+_BREAK_HTML_TAGS: Final = r"""
+      html
+    | head
+    | body
+    | div
+    #   | a # a gets no breaks #177
+    | nav
+    | ul
+    | ol
+    | dl
+    | dd
+    | dt
+    | li
+    | table
+    | thead
+    | tbody
+    | tr
+    | th
+    | td
+    | blockquote
+    | select
+    | form
+    | option
+    | optgroup
+    | fieldset
+    | legend
+    | label
+    | header
+    | cache
+    | main
+    | section
+    | aside
+    | footer
+    | figure
+    | figcaption
+    | video
+    #   | span # span gets no breaks #171
+    | p
+    | g
+    | svg
+    | h\d
+    | button
+    | path
+    | picture
+    | script
+    | style
+    | details
+    | summary
+    | """
+
+_ALWAYS_SELF_CLOSING_HTML_TAGS: Final = "|".join(HTML_VOID_ELEMENTS)
+
+_OPTIONAL_SINGLE_LINE_HTML_TAGS: Final = r"""
+      button
+    | a
+    | h1
+    | h2
+    | h3
+    | h4
+    | h5
+    | h6
+    | td
+    | th
+    | strong
+    | small
+    | em
+    | icon
+    | span
+    | title
+    | link
+    | path
+    | label
+    | div
+    | li
+    | script
+    | style
+    | head
+    | body
+    | p
+    | select
+    | article
+    | option
+    | legend
+    | summary
+    | dt
+    | figcaption
+    | tr
+    | li
+"""
+
+_OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS: Final = r"""
+      if
+    | for
+    | unless
+    | block
+    | with
+    | asyncEach
+    | asyncAll
+"""
+
+_IGNORED_INLINE_BLOCKS: Final = r"""
+      <!--.*?-->
+    | <script.*?\</script>
+    | <style.*?\</style>
+    | {\*.*?\*}
+    | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
+    | <\?php.*?\?>
+    | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
+    | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
+    | {%[ ]*?blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
+"""
+
+_IGNORED_BLOCKS: Final = r"""
+      <(pre|textarea).*?</(\1)>
+    | <(script|style).*?(?=(\</(?:\3)>))
+    # html comment
+    | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
+    # django/jinja/nunjucks
+    | {\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
+    | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
+    # inline jinja comments
+    | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
+    # handlebars
+    | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
+    # golang
+    | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
+    # inline golang comments
+    | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
+    | <!--.*?-->
+    | <\?php.*?\?>
+    | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
+    | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+    | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+    | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
+    | ^---[\s\S]+?---
+"""
+
+_SCRIPT_STYLE_INLINE: Final = r"""
+    <(script|style).*?(?=(\</(?:\1)>))
+"""
+
+# contents of tags will not be formatted
+_SCRIPT_STYLE_OPENING_PATTERN: Final = re.compile(
+    r"""
+      <style
+    | <script
+    """,
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+_SCRIPT_STYLE_CLOSING_PATTERN: Final = re.compile(
+    r"""
+      </style
+    | </script
+    """,
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+_SCRIPT_STYLE_INLINE_IMSX_PATTERN: Final = re.compile(
+    _SCRIPT_STYLE_INLINE, RE_FLAGS_IMSX, cache_pattern=False
+)
+_SCRIPT_STYLE_INLINE_IX_PATTERN: Final = re.compile(
+    _SCRIPT_STYLE_INLINE, RE_FLAGS_IX, cache_pattern=False
+)
+_IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
+    r"""
+      <style
+    | {\*
+    | <\?php
+    | <script
+    | <!--
+    | [^\{]{\#(?!\s*djlint\:\s*(?:on|off))
+    | ^{\#(?!\s*djlint\:\s*(?:on|off))
+    | <pre
+    | <textarea
+    | {%[ ]*?blocktrans(?:late)?(?:(?!%}|\btrimmed\b).)*?%}
+    | {%[ ]*?filter\b(?:(?!%}).)*?%}
+    | {\#\s*djlint\:\s*off\s*\#}
+    | {%[ ]+?comment[ ]+?(?:(?!%}).)*?%}
+    | {{!--\s*djlint\:off\s*--}}
+    | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
+    """,
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+_IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
+    r"""
+      </style
+    | \*}
+    | \?>
+    | </script
+    |  -->
+    | ^(?:(?!{\#).)*\#} # lines that have a #}, but not a {#
+    | </pre
+    | </textarea
+    | {%[ ]*?endfilter(?:(?!%}).)*?%}
+    | {\#\s*djlint\:\s*on\s*\#}
+    | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
+    | {{!--\s*djlint\:on\s*--}}
+    | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
+    | {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
+    """,
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+_IGNORED_BLOCKS_PATTERN: Final = re.compile(
+    _IGNORED_BLOCKS, RE_FLAGS_IMSX, cache_pattern=False
+)
+_IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
+    r"""
+      <(pre|textarea).*?</(\1)>
+    | <(script|style).*?(?=(\</(?:\3)>))
+    # html comment
+    | <!--\s*djlint\:off\s*-->.*?(?=<!--\s*djlint\:on\s*-->)
+    # django/jinja/nunjucks
+    | {\#\s*djlint\:\s*off\s*\#}.*?(?={\#\s*djlint\:\s*on\s*\#})
+    | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})
+    # inline jinja comments
+    | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
+    # handlebars
+    | {{!--\s*djlint\:off\s*--}}.*?(?={{!--\s*djlint\:on\s*--}})
+    # golang
+    | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
+    # inline golang comments
+    | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
+    | <!--.*?-->
+    | <\?php.*?\?>
+    | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
+    | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+    | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+    | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
+    | ^---[\s\S]+?---
+    """,
+    RE_FLAGS_IMSX,
+    cache_pattern=False,
+)
+_IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = re.compile(
+    _IGNORED_INLINE_BLOCKS, RE_FLAGS_IX, cache_pattern=False
+)
+_IGNORED_LINTER_BLOCKS_PATTERN: Final = re.compile(
+    r"""
+    {%-?[ ]*?raw\b(?:(?!%}).)*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
+    """,
+    RE_FLAGS_IMSX,
+    cache_pattern=False,
+)
+_UNFORMATTED_BLOCKS_COARSE_PATTERN: Final = re.compile(
+    r"djlint\:\s*off", RE_FLAGS_IMSX, cache_pattern=False
+)
+_UNFORMATTED_BLOCKS_PATTERN: Final = re.compile(
+    r"""
+    # html comment
+    | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
+    # django/jinja/nunjucks
+    | (?<!{){\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
+    | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
+    # inline jinja comments
+    | (?<!{){\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
+    # handlebars
+    | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
+    # golang
+    | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
+    | ^---[\s\S]+?---
+    """,
+    RE_FLAGS_IMSX,
+    cache_pattern=False,
+)
+_IGNORED_RULE_PATTERNS: Final = tuple(
+    re.compile(pattern, RE_FLAGS_ISX, cache_pattern=False)
+    for pattern in (
+        # html comment
+        r"<!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*",
+        # django/jinja/nunjucks
+        r"{\#\s*djlint\:\s*off(.+?)\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*",
+        r"{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*",
+        # handlebars
+        r"{{!--\s*djlint\:off(.*?)--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*",
+        # golang
+        r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*",
+    )
+)
+_IGNORED_TRANS_BLOCKS_PATTERN: Final = re.compile(
+    r"""
+      {%[ ]*?blocktranslate?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate?[ ]*?%}
+    | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+    """,
+    RE_FLAGS_ISX,
+    cache_pattern=False,
+)
+_TRANS_TRIMMED_BLOCKS_PATTERN: Final = re.compile(
+    r"""
+      {%[ ]*?blocktranslate\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
+    | {%[ ]*?blocktrans\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+    """,
+    RE_FLAGS_ISX,
+    cache_pattern=False,
+)
+_IGNORED_TRANS_BLOCKS_CLOSING_PATTERN: Final = re.compile(
+    r"""
+    {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
+    """,
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+# ignored block closing tags that
+# we can safely indent.
+_SAFE_CLOSING_TAG_PATTERN: Final = re.compile(
+    r"""
+      </script
+    | </style
+    | {\#\s*djlint\:\s*on\s*\#}
+    | {%[ ]+?endcomment[ ]+?%}
+    | {{!--\s*djlint\:on\s*--}}
+    | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
+    """,
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+_SAFE_CLOSING_BLOCK_PATTERN: Final = re.compile(
+    _IGNORED_INLINE_BLOCKS + r" | " + _IGNORED_BLOCKS,
+    RE_FLAGS_IMSX,
+    cache_pattern=False,
+)
+_TEMPLATE_BLOCKS_PATTERN: Final = re.compile(
+    r"""
+    {%((?!%}).)+%}|{{((?!}}).)+}}
+    """,
+    RE_FLAGS_IMSX,
+    cache_pattern=False,
+)
+_OPTIONAL_SINGLE_LINE_HTML_PATTERN: Final = re.compile(
+    rf"^(?:{_OPTIONAL_SINGLE_LINE_HTML_TAGS})$",
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+_OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN: Final = re.compile(
+    rf"^(?:{_OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS})$",
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+
+
 @final
 class Config:
     """Djlint Config."""
@@ -468,219 +1078,172 @@ class Config:
         github_output: bool = False,
         stdin: bool | None = None,
     ) -> None:
-        self.reformat: Final = reformat
-        self.check: Final = check
-        self.lint: Final = lint
-        self.warn: Final = warn
-        self.github_output: Final = github_output
-
-        self.project_root: Final = find_project_root(
+        self.project_root = find_project_root(
             Path.cwd() if src == "-" else Path(src).resolve()
         )
-
         djlint_settings = load_project_settings(
             self.project_root, configuration
         )
+        self.gitignore = load_gitignore(self.project_root)
 
-        self.gitignore: Final = load_gitignore(self.project_root)
-        # custom configuration options
+        def setting_int(key: str, default: int) -> int:
+            """Read an integer option from the config file."""
+            try:
+                return int(djlint_settings.get(key, default))
+            except ValueError:
+                echo(
+                    style(
+                        f"Error: Invalid pyproject.toml {key} value"
+                        f" {djlint_settings[key]}",
+                        fg="red",
+                    ),
+                    err=True,
+                )
+                return default
 
-        use_gitignore = use_gitignore or bool(
-            djlint_settings.get("use_gitignore", False)
-        )
-        self.extension: Final = str(
+        # command line only options
+        self.reformat = reformat
+        self.check = check
+        self.lint = lint
+        self.warn = warn
+        self.github_output = github_output
+        self.statistics = statistics
+
+        # simple options; the command line takes precedence over the config
+        self.extension = str(
             extension or djlint_settings.get("extension", "html")
         )
-        self.quiet: Final = quiet or djlint_settings.get("quiet", False)
-        self.require_pragma: Final = (
+        self.quiet = quiet or djlint_settings.get("quiet", False)
+        self.require_pragma = (
             require_pragma
             or str(djlint_settings.get("require_pragma", "false")).lower()
             == "true"
         )
-
-        self.custom_blocks: Final = str(
-            build_custom_blocks(
-                custom_blocks or djlint_settings.get("custom_blocks")
-            )
-            or ""
-        )
-
-        # django-cotton component tags (<c-name>, <c-folder.name>) are
-        # treated as block html tags out of the box.
-        self.custom_html: Final = (
-            str(
-                build_custom_html(
-                    custom_html or djlint_settings.get("custom_html")
-                )
-                or ""
-            )
-            + r"|c-[\w.-]+"
-        )
-
-        self.format_attribute_template_tags: Final = (
-            format_attribute_template_tags
-            or djlint_settings.get("format_attribute_template_tags", False)
-        )
-
-        self.single_attribute_per_line: Final = (
-            single_attribute_per_line
-            or djlint_settings.get("single_attribute_per_line", False)
-        )
-
-        self.format_attribute_js_json: Final = (
-            format_attribute_js_json
-            or djlint_settings.get("format_attribute_js_json", False)
-        )
-
-        try:
-            js_json_min_props = (
-                format_attribute_js_json_min_props
-                if format_attribute_js_json_min_props is not None
-                else int(
-                    djlint_settings.get("format_attribute_js_json_min_props", 2)
-                )
-            )
-        except ValueError:
-            echo(
-                style(
-                    "Error: Invalid pyproject.toml "
-                    "format_attribute_js_json_min_props value "
-                    f"{djlint_settings['format_attribute_js_json_min_props']}",
-                    fg="red",
-                ),
-                err=True,
-            )
-            js_json_min_props = 2
-        self.format_attribute_js_json_min_props: Final = js_json_min_props
-
-        # Default pattern for common JS-bearing attributes. data-* attributes
-        # are intentionally opt-in via format_attribute_js_json_pattern.
-        default_js_pattern = (
-            r"^(?:"
-            r"on[a-z]+|"
-            r"x-[a-z\-]+|"
-            r"@[a-z\-]+|"
-            r":[a-z\-]+|"
-            r"v-[a-z\-]+|"
-            r"\([a-z\-]+\)|"
-            r"\[[a-z\-]+\]|"
-            r"\*ng[A-Z][a-zA-Z]*|"
-            r"[a-z\-]+\.(bind|delegate|call|trigger)"
-            r")$"
-        )
-        js_pattern_string = (
-            format_attribute_js_json_pattern
-            or djlint_settings.get(
-                "format_attribute_js_json_pattern", default_js_pattern
-            )
-        )
-        self.format_attribute_js_json_pattern: Final = re.compile(
-            js_pattern_string, RE_FLAGS_IX, cache_pattern=False
-        )
-
-        self.format_attribute_js_json_object_pattern: Final = (
-            _JS_JSON_OBJECT_PATTERN
-        )
-        self.format_attribute_js_json_string_pattern: Final = (
-            _JS_JSON_STRING_PATTERN
-        )
-        self.format_attribute_js_json_property_pattern: Final = (
-            _JS_JSON_PROPERTY_PATTERN
-        )
-
-        self.preserve_leading_space: Final = (
+        self.preserve_leading_space = (
             preserve_leading_space
             or djlint_settings.get("preserve_leading_space", False)
         )
-        self.ignore_blocks: Final = build_ignore_blocks(
-            ignore_blocks or djlint_settings.get("ignore_blocks", "")
+        self.preserve_blank_lines = preserve_blank_lines or djlint_settings.get(
+            "preserve_blank_lines", False
         )
-
-        self.preserve_blank_lines: Final = (
-            preserve_blank_lines
-            or djlint_settings.get("preserve_blank_lines", False)
-        )
-
-        self.preserve_class_newlines: Final = (
+        self.preserve_class_newlines = (
             preserve_class_newlines
             or djlint_settings.get("preserve_class_newlines", False)
         )
-
-        self.format_js: Final = format_js or djlint_settings.get(
-            "format_js", False
+        self.format_js = format_js or djlint_settings.get("format_js", False)
+        self.format_css = format_css or djlint_settings.get("format_css", False)
+        self.ignore_case = ignore_case or djlint_settings.get(
+            "ignore_case", False
         )
-
-        self.js_config: Final = (
+        self.close_void_tags = close_void_tags or djlint_settings.get(
+            "close_void_tags", False
+        )
+        self.no_line_after_yaml = no_line_after_yaml or djlint_settings.get(
+            "no_line_after_yaml", False
+        )
+        self.no_set_formatting = no_set_formatting or djlint_settings.get(
+            "no_set_formatting", False
+        )
+        self.no_function_formatting = (
+            no_function_formatting
+            or djlint_settings.get("no_function_formatting", False)
+        )
+        self.format_attribute_template_tags = (
+            format_attribute_template_tags
+            or djlint_settings.get("format_attribute_template_tags", False)
+        )
+        self.single_attribute_per_line = (
+            single_attribute_per_line
+            or djlint_settings.get("single_attribute_per_line", False)
+        )
+        self.format_attribute_js_json = (
+            format_attribute_js_json
+            or djlint_settings.get("format_attribute_js_json", False)
+        )
+        self.format_attribute_js_json_min_props = (
+            format_attribute_js_json_min_props
+            if format_attribute_js_json_min_props is not None
+            else setting_int("format_attribute_js_json_min_props", 2)
+        )
+        self.linter_output_format = linter_output_format or djlint_settings.get(
+            "linter_output_format", "{code} {line} {message} {match}"
+        )
+        self.per_file_ignores = (
+            dict(per_file_ignores)
+            if per_file_ignores
+            else djlint_settings.get("per-file-ignores", {})
+        )
+        # add blank line after load tags
+        self.blank_line_after_tag = blank_line_after_tag or djlint_settings.get(
+            "blank_line_after_tag", None
+        )
+        # add blank line before load tags
+        self.blank_line_before_tag = (
+            blank_line_before_tag
+            or djlint_settings.get("blank_line_before_tag", None)
+        )
+        # add line break after multi-line tags
+        self.line_break_after_multiline_tag = (
+            line_break_after_multiline_tag
+            or djlint_settings.get("line_break_after_multiline_tag", False)
+        )
+        self.js_config = (
             {"indent_size": indent_js}
             if indent_js
             else djlint_settings.get("js")
         ) or {}
-
-        self.css_config: Final = (
+        self.css_config = (
             {"indent_size": indent_css}
             if indent_css
             else djlint_settings.get("css")
         ) or {}
 
-        self.format_css: Final = format_css or djlint_settings.get(
-            "format_css", False
+        indent = indent or setting_int("indent", 4)
+        self.indent_size = indent
+        self.indent = indent * " "
+        self.max_line_length = max_line_length or setting_int(
+            "max_line_length", 120
+        )
+        self.max_attribute_length = (
+            max_attribute_length
+            if max_attribute_length is not None
+            else setting_int("max_attribute_length", 70)
+        )
+        # NOTE: unlike the other options, the config file value takes
+        # precedence over the command line here
+        self.max_blank_lines = setting_int(
+            "max_blank_lines", max_blank_lines or 0
         )
 
-        self.ignore_case: Final = ignore_case or djlint_settings.get(
-            "ignore_case", False
+        # regex for excluded paths
+        exclude = build_exclude(
+            exclude or djlint_settings.get("exclude", _DEFAULT_EXCLUDE)
+        )
+        extend_exclude = extend_exclude or djlint_settings.get(
+            "extend_exclude", ""
+        )
+        if extend_exclude:
+            exclude += r" | " + build_exclude(extend_exclude)
+        self.exclude = exclude
+        self.exclude_pattern = re.compile(
+            rf"(?:^|/)(?:{exclude})(?=$|/|(?<=/))", re.X, cache_pattern=False
         )
 
-        self.close_void_tags: Final = close_void_tags or djlint_settings.get(
-            "close_void_tags", False
-        )
-        self.no_line_after_yaml: Final = (
-            no_line_after_yaml
-            or djlint_settings.get("no_line_after_yaml", False)
-        )
-        self.no_set_formatting: Final = (
-            no_set_formatting or djlint_settings.get("no_set_formatting", False)
-        )
-        self.no_function_formatting: Final = (
-            no_function_formatting
-            or djlint_settings.get("no_function_formatting", False)
-        )
+        self.files = djlint_settings.get("files", None)
+        self.stdin = (src == "-" if stdin is None else stdin) and not self.files
+        self.use_gitignore = (
+            use_gitignore or bool(djlint_settings.get("use_gitignore", False))
+        ) and not self.stdin
 
-        # ignore is based on input and also profile
-        self.ignore: Final = str(ignore or djlint_settings.get("ignore", ""))
-        self.include: Final = str(include or djlint_settings.get("include", ""))
-
-        self.files: Final = djlint_settings.get("files", None)
-        self.stdin: Final = (
-            src == "-" if stdin is None else stdin
-        ) and not self.files
-        self.use_gitignore: Final = use_gitignore and not self.stdin
-
-        # codes to exclude
-        profile_dict: dict[str, tuple[str, ...]] = {
-            "html": ("D", "J", "T", "N", "M"),
-            "django": ("J", "N", "M"),
-            "jinja": ("D", "N", "M"),
-            "nunjucks": ("D", "J", "M"),
-            "handlebars": ("D", "J", "N"),
-            "golang": ("D", "J", "N", "M"),
-            "angular": ("D", "J", "H012", "H026", "H028"),
-        }
-
-        profile_code = profile_dict.get(
-            str(profile or djlint_settings.get("profile", "html")).lower(), ()
-        )
-        self.profile: Final = str(
+        # linter rules, minus the ignored codes and the profile's excludes
+        self.profile = str(
             profile or djlint_settings.get("profile", "all")
         ).lower()
-
-        self.linter_output_format: Final = (
-            linter_output_format
-            or djlint_settings.get(
-                "linter_output_format", "{code} {line} {message} {match}"
-            )
+        profile_codes = _PROFILE_CODES.get(
+            str(profile or djlint_settings.get("profile", "html")).lower(), ()
         )
-
-        # load linter rules
+        self.ignore = str(ignore or djlint_settings.get("ignore", ""))
+        self.include = str(include or djlint_settings.get("include", ""))
         rule_set = validate_rules(
             chain(
                 yaml.safe_load(
@@ -691,13 +1254,12 @@ class Config:
                 load_custom_rules(self.project_root),
             )
         )
-
-        self.linter_rules: Final = tuple(
+        self.linter_rules = tuple(
             x
             for x in rule_set
             if x["rule"]["name"] not in self.ignore.split(",")
             and not any(
-                x["rule"]["name"].startswith(code) for code in profile_code
+                x["rule"]["name"].startswith(code) for code in profile_codes
             )
             and self.profile not in x["rule"].get("exclude", set())
             and (
@@ -706,686 +1268,89 @@ class Config:
             )
         )
 
-        self.statistics: Final = statistics
-
-        # base options
-        default_indent = 4
-        if not indent:
-            try:
-                indent = int(djlint_settings.get("indent", default_indent))
-            except ValueError:
-                echo(
-                    style(
-                        f"Error: Invalid pyproject.toml indent value {djlint_settings['indent']}",
-                        fg="red",
-                    ),
-                    err=True,
+        # patterns built from configuration options
+        self.custom_blocks = str(
+            build_custom_blocks(
+                custom_blocks or djlint_settings.get("custom_blocks")
+            )
+            or ""
+        )
+        # django-cotton component tags (<c-name>, <c-folder.name>) are
+        # treated as block html tags out of the box.
+        self.custom_html = (
+            str(
+                build_custom_html(
+                    custom_html or djlint_settings.get("custom_html")
                 )
-                indent = default_indent
-        self.indent_size: Final = indent
-        self.indent: Final = indent * " "
-
-        try:
-            max_blank_lines_value = int(
-                djlint_settings.get("max_blank_lines", max_blank_lines or 0)
+                or ""
             )
-        except ValueError:
-            echo(
-                style(
-                    f"Error: Invalid pyproject.toml indent value {djlint_settings['max_blank_lines']}",
-                    fg="red",
-                ),
-                err=True,
-            )
-            max_blank_lines_value = max_blank_lines or 0
-        self.max_blank_lines: Final = max_blank_lines_value
-
-        # From ruff and black
-        default_exclude: str = r"""
-            __pypackages__
-            | _build
-            | \.bzr
-            | \.direnv
-            | \.eggs
-            | \.git
-            | \.git-rewrite
-            | \.hg
-            | \.ipynb_checkpoints
-            | \.mypy_cache
-            | \.nox
-            | \.pants\.d
-            | \.pytest_cache
-            | \.pytype
-            | \.ruff_cache
-            | \.svn
-            | \.tox
-            | \.venv
-            | \.vscode
-            | buck-out
-            | build
-            | dist
-            | node_modules
-            | venv
-        """
-
-        exclude_value = build_exclude(
-            exclude or djlint_settings.get("exclude", default_exclude)
+            + r"|c-[\w.-]+"
         )
-
-        extend_exclude = extend_exclude or djlint_settings.get(
-            "extend_exclude", ""
+        self.ignore_blocks = build_ignore_blocks(
+            ignore_blocks or djlint_settings.get("ignore_blocks", "")
         )
-
-        if extend_exclude:
-            exclude_value += r" | " + build_exclude(extend_exclude)
-
-        self.exclude: Final = exclude_value
-
-        self.exclude_pattern: Final = re.compile(
-            rf"(?:^|/)(?:{self.exclude})(?=$|/|(?<=/))",
-            re.X,
+        ignore_blocks_guard = (
+            rf"(?!{self.ignore_blocks})" if self.ignore_blocks else ""
+        )
+        self.format_attribute_js_json_pattern = re.compile(
+            format_attribute_js_json_pattern
+            or djlint_settings.get(
+                "format_attribute_js_json_pattern", _DEFAULT_JS_JSON_PATTERN
+            ),
+            RE_FLAGS_IX,
             cache_pattern=False,
         )
 
-        self.per_file_ignores: Final = (
-            (dict(per_file_ignores))
-            if per_file_ignores
-            else djlint_settings.get("per-file-ignores", {})
-        )
-
-        # add blank line after load tags
-        self.blank_line_after_tag: Final = (
-            blank_line_after_tag
-            or djlint_settings.get("blank_line_after_tag", None)
-        )
-
-        # add blank line before load tags
-        self.blank_line_before_tag: Final = (
-            blank_line_before_tag
-            or djlint_settings.get("blank_line_before_tag", None)
-        )
-
-        # add line break after multi-line tags
-        self.line_break_after_multiline_tag: Final = (
-            line_break_after_multiline_tag
-            or djlint_settings.get("line_break_after_multiline_tag", False)
-        )
-
-        # contents of tags will not be formatted
-        script_style_opening = r"""
-           <style
-         | <script
-        """
-        ignored_block_opening = r"""
-              <style
-            | {\*
-            | <\?php
-            | <script
-            | <!--
-            | [^\{]{\#(?!\s*djlint\:\s*(?:on|off))
-            | ^{\#(?!\s*djlint\:\s*(?:on|off))
-            | <pre
-            | <textarea
-            | {%[ ]*?blocktrans(?:late)?(?:(?!%}|\btrimmed\b).)*?%}
-            | {%[ ]*?filter\b(?:(?!%}).)*?%}
-            | {\#\s*djlint\:\s*off\s*\#}
-            | {%[ ]+?comment[ ]+?(?:(?!%}).)*?%}
-            | {{!--\s*djlint\:off\s*--}}
-            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
-        """
-        script_style_closing = r"""
-              </style
-            | </script
-        """
-        ignored_block_closing = r"""
-              </style
-            | \*}
-            | \?>
-            | </script
-            |  -->
-            | ^(?:(?!{\#).)*\#} # lines that have a #}, but not a {#
-            | </pre
-            | </textarea
-            | {%[ ]*?endfilter(?:(?!%}).)*?%}
-            | {\#\s*djlint\:\s*on\s*\#}
-            | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
-            | {{!--\s*djlint\:on\s*--}}
-            | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
-            | {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
-        """
-
-        # ignored block closing tags that
-        # we can safely indent.
-        safe_closing_tag = r"""
-              </script
-            | </style
-            | {\#\s*djlint\:\s*on\s*\#}
-            | {%[ ]+?endcomment[ ]+?%}
-            | {{!--\s*djlint\:on\s*--}}
-            | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
-        """
-
         # all html tags possible
-        self.indent_html_tags: Final = (
-            "|".join(HTML_TAG_NAMES) + self.custom_html
-        )
+        self.indent_html_tags = "|".join(HTML_TAG_NAMES) + self.custom_html
+        self.always_self_closing_html_tags = _ALWAYS_SELF_CLOSING_HTML_TAGS
 
-        indent_template_tags = (
-            (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
-            + r""" (?:if
-                | unless
-                | ifchanged
-                | for
-                | asyncEach
-                | asyncAll
-                | embed
-                | block(?!trans|translate)
-                | spaceless
-                | compress
-                | cache
-                | localize
-                | localtime
-                | timezone
-                | addto
-                | language
-                | with
-                | assets
-                | verbatim
-                | autoescape
-                | filter
-                | each
-                | macro
-                | call
-                | raw
-                | blocktrans(?!late)
-                | blocktranslate
-                | partialdef
-                | thumbnail
-                | set(?!(?:(?!%}).)*=)
-            """
-            + self.custom_blocks
-            + r")\b"
-        )
-
-        self.template_indent: Final = (
+        self.template_indent = (
             r"""
             (?:\{\{\#|\{%-?)[ ]*?
                 ("""
-            + indent_template_tags
+            + ignore_blocks_guard
+            + _INDENT_TEMPLATE_TAGS
+            + self.custom_blocks
+            + r")\b"
             + r"""
             ) | \{{-?[ ]*?form_start
             """
         )
-
-        self.template_unindent: Final = (
+        self.template_unindent = (
             r"""
                 (?:
                   (?:\{\{\/)
                 | (?:\{%-?[ ]*?end(?!comment)"""
-            + (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
+            + ignore_blocks_guard
             + r""")
                 | (?:\{{-?[ ]*?form_end)
               )
             """
         )
-
-        # these tags should be unindented and next line will be indented
-        self.tag_unindent_line: Final = r"""
-              (?:\{%-?[ ]*?(?:elif|else|empty|plural))
-            | (?:
-                \{\{[ ]*?
-                (
-                    (?:else|\^)
-                    [ ]*?\}\}
-                )
-              )
-        """
-
-        self.break_before: Final = r"(?<!\n[ \t]*?)"
-
-        # if lines are longer than x
-        max_line_length_value = 120
-
-        try:
-            max_line_length_value = max_line_length or int(
-                djlint_settings.get("max_line_length", max_line_length_value)
-            )
-        except ValueError:
-            echo(
-                style(
-                    f"Error: Invalid pyproject.toml max_line_length value {djlint_settings['max_line_length']}",
-                    fg="red",
-                ),
-                err=True,
-            )
-        self.max_line_length: Final = max_line_length_value
-
-        max_attribute_length_value = 70
-
-        try:
-            max_attribute_length_value = (
-                max_attribute_length
-                if max_attribute_length is not None
-                else int(
-                    djlint_settings.get(
-                        "max_attribute_length", max_attribute_length_value
-                    )
-                )
-            )
-        except ValueError:
-            echo(
-                style(
-                    f"Error: Invalid pyproject.toml max_attribute_length value {djlint_settings['max_attribute_length']}",
-                    fg="red",
-                ),
-                err=True,
-            )
-        self.max_attribute_length: Final = max_attribute_length_value
-
-        template_if_for_pattern = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
-
-        self.attribute_pattern: Final = (
-            rf"""
-            (?:
-                (
-                    (?:
-                        (?:\w|-|\.|\:|@|\*|/(?!>)) # a name character
-                       | (?>{{{{[\s\S]*?}}}})
-                         (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template variable
-                       | (?!{{%-?\s*(?:for|asyncAll|asyncEach)\b)
-                         (?!{{%-?\s*if\b[^}}]*?%}}(?:required|checked){{%-?\s*endif\b[^}}]*?%}})
-                         (?>{template_if_for_pattern})
-                         (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template block
-                    )
-                    (?:
-                        (?:\w|-|\.|\:|@|\*|/(?!>)) # more name characters
-                       | (?>{{{{[\s\S]*?}}}}|{{%[\s\S]*?%}}) # or an embedded template tag
-                    )*
-                    | required | checked
-                )? # attribute name
-                (?:  [ ]*?=[ ]*? # followed by "="
-                    (
-                        \"[^\"]*? # double quoted attribute
-                        (?:
-                            {template_if_for_pattern} # if or for loop
-                           | {{{{[\s\S]*?}}}} # template stuff
-                           | {{%[\s\S]*?%}}
-                           | [^\"] # anything else
-                        )*?
-                        \" # closing quote
-                      | '[^']*? # single quoted attribute
-                        (?:
-                            {template_if_for_pattern} # if or for loop
-                           | {{{{[\s\S]*?}}}} # template stuff
-                           | {{%[\s\S]*?%}}
-                           | [^'] # anything else
-                        )*?
-                        \' # closing quote
-                      | (?:\w|-)+ # or a non-quoted string value
-                      | {{{{[\s\S]*?}}}} # a non-quoted template var
-                      | {{%[\s\S]*?%}} # a non-quoted template tag
-                      | {template_if_for_pattern} # a non-quoted if statement
-
-                    )
-                )? # attribute value
-            )
-            | ({template_if_for_pattern}
-            """
-            r"""
-            | (?:\'|\") # allow random trailing quotes
-            | {{[\s\S]*?}}
-            | {\#[\s\S]*?\#}
-            | {%[\s\S]*?%})
-        """
-        )
-
-        self.template_tags: Final = r"""
-        {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
-        """
-
-        # self.attribute_style_pattern = (
-        #     r"^(.*?)(style=)([\"|'])(([^\"']+?;)+?)\3"  # noqa: ERA001
-        # )  # noqa: ERA001
-
-        self.ignored_attributes: Final = frozenset({
-            "href",
-            "action",
-            "data-url",
-            "src",
-            "url",
-            "srcset",
-            "data-src",
-        })
-
-        self.start_template_tags: Final = (
-            (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
-            + r"""
-              (?:if
-            | unless
-            | for
-            | asyncEach
-            | asyncAll
-            | block(?!trans)
-            | spaceless
-            | compress
-            | cache
-            | localize
-            | localtime
-            | timezone
-            | load
-            | assets
-            | addto
-            | language
-            | with
-            | assets
-            | autoescape
-            | filter
-            | verbatim
-            | each
-            | macro
-            | call
-            | raw
-            | blocktrans(?!late)
-            | blocktranslate
-            | partialdef
-            | thumbnail
-            | set(?!(?:(?!%}).)*=)
-
-            """
+        self.start_template_tags = (
+            ignore_blocks_guard
+            + _START_TEMPLATE_TAGS
             + self.custom_blocks
             + r""")
         """
         )
-
-        self.break_template_tags: Final = (
-            (rf"(?!{self.ignore_blocks})" if self.ignore_blocks else "")
-            + r"""
-              (?:if
-            | unless
-            | endif
-            | for
-            | endfor
-            | asyncEach
-            | endeach
-            | asyncAll
-            | endall
-            | block(?!trans)
-            | endblock(?!trans)
-            | else
-            | plural
-            | spaceless
-            | endspaceless
-            | compress
-            | endcompress
-            | cache
-            | endcache
-            | localize
-            | endlocalize
-            | localtime
-            | endlocaltime
-            | timezone
-            | endtimezone
-            | load
-            | include
-            | assets
-            | endassets
-            | addto
-            | language
-            | with
-            | endwith
-            | autoescape
-            | endautoescape
-            | filter
-            | endfilter
-            | elif
-            | resetcycle
-            | verbatim
-            | endverbatim
-            | each
-            | macro
-            | endmacro
-            | raw
-            | endraw
-            | call
-            | endcall
-            | image
-            | blocktrans(?!late)
-            | endblocktrans(?!late)
-            | blocktranslate
-            | endblocktranslate
-            | partialdef
-            | endpartialdef
-            | partial
-            | set(?!(?:(?!%}).)*=)
-            | endset
-            | thumbnail
-            | endthumbnail
-            """
+        self.break_template_tags = (
+            ignore_blocks_guard
+            + _BREAK_TEMPLATE_TAGS
             + self.custom_blocks
             + r""")
         """
         )
-        template_blocks = r"""
-        {%((?!%}).)+%}|{{((?!}}).)+}}
-        """
-
-        ignored_linter_blocks = r"""
-           {%-?[ ]*?raw\b(?:(?!%}).)*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
-        """
-
-        unformatted_blocks_coarse = r"djlint\:\s*off"
-
-        unformatted_blocks = r"""
-            # html comment
-            | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
-            # django/jinja/nunjucks
-            | (?<!{){\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
-            | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
-            # inline jinja comments
-            | (?<!{){\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
-            # handlebars
-            | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
-            # golang
-            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
-            | ^---[\s\S]+?---
-        """
-
-        ignored_blocks = r"""
-              <(pre|textarea).*?</(\1)>
-            | <(script|style).*?(?=(\</(?:\3)>))
-            # html comment
-            | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
-            # django/jinja/nunjucks
-            | {\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
-            | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
-            # inline jinja comments
-            | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
-            # handlebars
-            | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
-            # golang
-            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
-            # inline golang comments
-            | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
-            | <!--.*?-->
-            | <\?php.*?\?>
-            | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
-            | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-            | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
-            | ^---[\s\S]+?---
-        """
-        script_style_inline = r"""
-        <(script|style).*?(?=(\</(?:\1)>))
-        """
-        ignored_blocks_inline = r"""
-              <(pre|textarea).*?</(\1)>
-            | <(script|style).*?(?=(\</(?:\3)>))
-            # html comment
-            | <!--\s*djlint\:off\s*-->.*?(?=<!--\s*djlint\:on\s*-->)
-            # django/jinja/nunjucks
-            | {\#\s*djlint\:\s*off\s*\#}.*?(?={\#\s*djlint\:\s*on\s*\#})
-            | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})
-            # inline jinja comments
-            | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
-            # handlebars
-            | {{!--\s*djlint\:off\s*--}}.*?(?={{!--\s*djlint\:on\s*--}})
-            # golang
-            | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?={{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}})
-            # inline golang comments
-            | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
-            | <!--.*?-->
-            | <\?php.*?\?>
-            | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
-            | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-            | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
-            | ^---[\s\S]+?---
-        """
-
-        ignored_rules = (
-            # html comment
-            r"<!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*",
-            # django/jinja/nunjucks
-            r"{\#\s*djlint\:\s*off(.+?)\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*",
-            r"{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*",
-            # handlebars
-            r"{{!--\s*djlint\:off(.*?)--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*",
-            # golang
-            r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*",
-        )
-
-        ignored_trans_blocks = r"""
-              {%[ ]*?blocktranslate?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate?[ ]*?%}
-            | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-        """
-        trans_trimmed_blocks = r"""
-              {%[ ]*?blocktranslate\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-            | {%[ ]*?blocktrans\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-        """
-        ignored_trans_blocks_closing = r"""
-         {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
-        """
-
-        self.ignored_inline_blocks: Final = r"""
-              <!--.*?-->
-            | <script.*?\</script>
-            | <style.*?\</style>
-            | {\*.*?\*}
-            | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
-            | <\?php.*?\?>
-            | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
-            | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
-            | {%[ ]*?blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
-        """
-
-        self.optional_single_line_html_tags: Final = r"""
-              button
-            | a
-            | h1
-            | h2
-            | h3
-            | h4
-            | h5
-            | h6
-            | td
-            | th
-            | strong
-            | small
-            | em
-            | icon
-            | span
-            | title
-            | link
-            | path
-            | label
-            | div
-            | li
-            | script
-            | style
-            | head
-            | body
-            | p
-            | select
-            | article
-            | option
-            | legend
-            | summary
-            | dt
-            | figcaption
-            | tr
-            | li
-        """
-
-        self.always_self_closing_html_tags: Final = "|".join(HTML_VOID_ELEMENTS)
-
-        self.optional_single_line_template_tags: Final = r"""
-              if
-            | for
-            | unless
-            | block
-            | with
-            | asyncEach
-            | asyncAll
-        """
-
-        self.break_html_tags: Final = (
-            r"""
-              html
-            | head
-            | body
-            | div
-         #   | a # a gets no breaks #177
-            | nav
-            | ul
-            | ol
-            | dl
-            | dd
-            | dt
-            | li
-            | table
-            | thead
-            | tbody
-            | tr
-            | th
-            | td
-            | blockquote
-            | select
-            | form
-            | option
-            | optgroup
-            | fieldset
-            | legend
-            | label
-            | header
-            | cache
-            | main
-            | section
-            | aside
-            | footer
-            | figure
-            | figcaption
-            | video
-         #   | span # span gets no breaks #171
-            | p
-            | g
-            | svg
-            | h\d
-            | button
-            | path
-            | picture
-            | script
-            | style
-            | details
-            | summary
-            | """
+        self.break_html_tags = (
+            _BREAK_HTML_TAGS
             + self.always_self_closing_html_tags
             + self.custom_html
             + """
         """
         )
-
         # the contents of these tag blocks will be indented, then unindented
-        self.tag_indent: Final = (
+        self.tag_indent = (
             self.template_indent
             + """
             | (?:<
@@ -1397,12 +1362,11 @@ class Config:
               )
         """
         )
-
         # either a template tag at the start of a line,
         # a html tag at the start of a line,
         # or an html tag as the end of a line.
         # Nothing in between!
-        self.tag_unindent: Final = (
+        self.tag_unindent = (
             r"""
                 ^
                 """
@@ -1425,73 +1389,52 @@ class Config:
         """
         )
 
-        self.ignored_blocks_inline_pattern: Final = re.compile(
-            ignored_blocks_inline, RE_FLAGS_IMSX, cache_pattern=False
+        # static patterns, built once at module import
+        self.attribute_pattern = _ATTRIBUTE_PATTERN
+        self.template_tags = _TEMPLATE_TAGS
+        self.tag_unindent_line = _TAG_UNINDENT_LINE
+        self.break_before = _BREAK_BEFORE
+        self.ignored_attributes = _IGNORED_ATTRIBUTES
+        self.ignored_inline_blocks = _IGNORED_INLINE_BLOCKS
+        self.optional_single_line_html_tags = _OPTIONAL_SINGLE_LINE_HTML_TAGS
+        self.optional_single_line_template_tags = (
+            _OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS
         )
-        self.ignored_block_opening_pattern: Final = re.compile(
-            ignored_block_opening, RE_FLAGS_IX, cache_pattern=False
+        self.format_attribute_js_json_object_pattern = _JS_JSON_OBJECT_PATTERN
+        self.format_attribute_js_json_string_pattern = _JS_JSON_STRING_PATTERN
+        self.format_attribute_js_json_property_pattern = (
+            _JS_JSON_PROPERTY_PATTERN
         )
-        self.script_style_inline_imsx_pattern: Final = re.compile(
-            script_style_inline, RE_FLAGS_IMSX, cache_pattern=False
+        self.script_style_opening_pattern = _SCRIPT_STYLE_OPENING_PATTERN
+        self.script_style_closing_pattern = _SCRIPT_STYLE_CLOSING_PATTERN
+        self.script_style_inline_imsx_pattern = (
+            _SCRIPT_STYLE_INLINE_IMSX_PATTERN
         )
-        self.script_style_inline_ix_pattern: Final = re.compile(
-            script_style_inline, RE_FLAGS_IX, cache_pattern=False
+        self.script_style_inline_ix_pattern = _SCRIPT_STYLE_INLINE_IX_PATTERN
+        self.ignored_block_opening_pattern = _IGNORED_BLOCK_OPENING_PATTERN
+        self.ignored_block_closing_pattern = _IGNORED_BLOCK_CLOSING_PATTERN
+        self.ignored_blocks_pattern = _IGNORED_BLOCKS_PATTERN
+        self.ignored_blocks_inline_pattern = _IGNORED_BLOCKS_INLINE_PATTERN
+        self.ignored_inline_blocks_ix_pattern = (
+            _IGNORED_INLINE_BLOCKS_IX_PATTERN
         )
-        self.script_style_opening_pattern: Final = re.compile(
-            script_style_opening, RE_FLAGS_IX, cache_pattern=False
+        self.ignored_linter_blocks_pattern = _IGNORED_LINTER_BLOCKS_PATTERN
+        self.ignored_trans_blocks_pattern = _IGNORED_TRANS_BLOCKS_PATTERN
+        self.ignored_trans_blocks_closing_pattern = (
+            _IGNORED_TRANS_BLOCKS_CLOSING_PATTERN
         )
-        self.ignored_trans_blocks_closing_pattern: Final = re.compile(
-            ignored_trans_blocks_closing, RE_FLAGS_IX, cache_pattern=False
+        self.trans_trimmed_blocks_pattern = _TRANS_TRIMMED_BLOCKS_PATTERN
+        self.safe_closing_block_pattern = _SAFE_CLOSING_BLOCK_PATTERN
+        self.safe_closing_tag_pattern = _SAFE_CLOSING_TAG_PATTERN
+        self.template_blocks_pattern = _TEMPLATE_BLOCKS_PATTERN
+        self.unformatted_blocks_coarse_pattern = (
+            _UNFORMATTED_BLOCKS_COARSE_PATTERN
         )
-        self.ignored_trans_blocks_pattern: Final = re.compile(
-            ignored_trans_blocks, RE_FLAGS_ISX, cache_pattern=False
+        self.unformatted_blocks_pattern = _UNFORMATTED_BLOCKS_PATTERN
+        self.ignored_rule_patterns = _IGNORED_RULE_PATTERNS
+        self.optional_single_line_html_pattern = (
+            _OPTIONAL_SINGLE_LINE_HTML_PATTERN
         )
-        self.trans_trimmed_blocks_pattern: Final = re.compile(
-            trans_trimmed_blocks, RE_FLAGS_ISX, cache_pattern=False
-        )
-        self.ignored_inline_blocks_ix_pattern: Final = re.compile(
-            self.ignored_inline_blocks, RE_FLAGS_IX, cache_pattern=False
-        )
-        self.ignored_block_closing_pattern: Final = re.compile(
-            ignored_block_closing, RE_FLAGS_IX, cache_pattern=False
-        )
-        self.script_style_closing_pattern: Final = re.compile(
-            script_style_closing, RE_FLAGS_IX, cache_pattern=False
-        )
-        self.safe_closing_block_pattern: Final = re.compile(
-            self.ignored_inline_blocks + r" | " + ignored_blocks,
-            RE_FLAGS_IMSX,
-            cache_pattern=False,
-        )
-        self.safe_closing_tag_pattern: Final = re.compile(
-            safe_closing_tag, RE_FLAGS_IX, cache_pattern=False
-        )
-        self.template_blocks_pattern: Final = re.compile(
-            template_blocks, RE_FLAGS_IMSX, cache_pattern=False
-        )
-        self.ignored_linter_blocks_pattern: Final = re.compile(
-            ignored_linter_blocks, RE_FLAGS_IMSX, cache_pattern=False
-        )
-        self.ignored_blocks_pattern: Final = re.compile(
-            ignored_blocks, RE_FLAGS_IMSX, cache_pattern=False
-        )
-        self.unformatted_blocks_coarse_pattern: Final = re.compile(
-            unformatted_blocks_coarse, RE_FLAGS_IMSX, cache_pattern=False
-        )
-        self.unformatted_blocks_pattern: Final = re.compile(
-            unformatted_blocks, RE_FLAGS_IMSX, cache_pattern=False
-        )
-        self.ignored_rule_patterns: Final = tuple(
-            re.compile(pattern, RE_FLAGS_ISX, cache_pattern=False)
-            for pattern in ignored_rules
-        )
-        self.optional_single_line_html_pattern: Final = re.compile(
-            rf"^(?:{self.optional_single_line_html_tags})$",
-            RE_FLAGS_IX,
-            cache_pattern=False,
-        )
-        self.optional_single_line_template_pattern: Final = re.compile(
-            rf"^(?:{self.optional_single_line_template_tags})$",
-            RE_FLAGS_IX,
-            cache_pattern=False,
+        self.optional_single_line_template_pattern = (
+            _OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN
         )

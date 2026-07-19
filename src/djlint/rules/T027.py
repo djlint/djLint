@@ -14,7 +14,6 @@ from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from typing import Final
 
     from typing_extensions import Any
 
@@ -32,9 +31,9 @@ if TYPE_CHECKING:
     slots=True,
 )
 class _TemplateTagMatch:
-    _html: Final[str]
-    _start: Final[int]
-    _end: Final[int]
+    _html: str
+    _start: int
+    _end: int
 
     def span(self) -> tuple[int, int]:
         return self._start, self._end
