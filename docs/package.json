@@ -33,7 +33,7 @@
     "@fortawesome/fontawesome-free": "7.3.1",
     "@fullhuman/postcss-purgecss": "8.0.0",
     "@toycode/markdown-it-class": "1.2.4",
-    "autoprefixer": "10.5.3",
+    "autoprefixer": "10.5.4",
     "bulma": "1.0.4",
     "cssnano": "8.0.2",
     "eleventy-plugin-edit-on-github": "1.1.0",
