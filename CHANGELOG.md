@@ -7,6 +7,7 @@
 ## Feature
 
 - New rule T038: block template tags with no matching end tag are now reported — `{% if %}` without `{% endif %}`, handlebars `{{#if}}` without `{{/if}}`, end tags with no opening tag, and crossed blocks like `{% if %}{% for %}{% endif %}`. Custom blocks from `custom_blocks` are checked too. `{% block %}`/`{% endblock %}` pairs are already covered by T003.
+- New rule T039: template tags that never reach their closing delimiter are now reported — e.g. `{% url 'x" user.url }}` (closed by `}}` instead of `%}`), `{{ user.name }` (missing a brace), or a tag cut off by the next tag or the end of the file. Complements T027 (unclosed string in a complete tag) and T034 (`}%` typo), which keep reporting their own cases.
 
 ## Fix
 

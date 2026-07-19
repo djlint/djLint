@@ -77,6 +77,8 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H035 | Meta doivent se fermer d'elles-mêmes.                                                                                     | -      |
 | H036 | Évitez d'utiliser les balises `br`.                                                                                       | -      |
 | H037 | Attribut en double trouvé.                                                                                                | ✔️     |
+| T038 | La balise de bloc n'a pas de balise de fin correspondante.                                                                | ✔️     |
+| T039 | Balise de template non fermée trouvée.                                                                                    | ✔️     |
 
 ### Modèles de code
 

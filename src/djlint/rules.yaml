@@ -251,3 +251,7 @@
     name: T038
     message: Block tag has no matching end tag.
     python_module: djlint.rules.T038
+- rule:
+    name: T039
+    message: Unclosed template tag found.
+    python_module: djlint.rules.T039

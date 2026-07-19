@@ -77,6 +77,8 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H035 | Meta tags should be self closing.                                                            | -       |
 | H036 | Avoid use of `br` tags.                                                                      | -       |
 | H037 | Duplicate attribute found.                                                                   | ✔️      |
+| T038 | Block tag has no matching end tag.                                                           | ✔️      |
+| T039 | Unclosed template tag found.                                                                 | ✔️      |
 
 ### Code Patterns
 
