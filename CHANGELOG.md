@@ -6,6 +6,7 @@
 
 ## Fix
 
+- Fix formatter: template tags and expressions spanning multiple lines keep the relative indentation of their contents instead of flattening every line to the tag's level. Nested objects and arrays in e.g. `{% story ... with { ... } %}`, `{% include ... with { ... } %}` and non-JSON `{{ func(...) }}` calls are now indented by bracket depth.
 - Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
 - T003 no longer requires an endblock name when `{% endblock %}` is on the same line as its `{% block ... %}`, e.g. `{% block title %}{% endblock %}`. The formatter keeps such blocks on one line, so the linter and formatter no longer conflict.
 - Fix formatter: `{% endtrans %}` (Jinja/Twig block `{% trans %}`) no longer decreases the indentation level, which shifted the `{% endtrans %}` line and everything after it one level to the left.

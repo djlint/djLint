@@ -64,9 +64,9 @@ test_data = [
         (
             "<div>\n"
             "    {{ render_partial('components/button.html.jinja2',\n"
-            "    content='Press me!',\n"
-            "    icon=render_partial('components/icon.html.jinja2', icon='icon'),\n"
-            "    some_other_arg='hello') }}\n"
+            "        content='Press me!',\n"
+            "        icon=render_partial('components/icon.html.jinja2', icon='icon'),\n"
+            "        some_other_arg='hello') }}\n"
             "</div>\n"
         ),
         id="issue_805_nested_call_no_space_before_comma",
@@ -136,5 +136,15 @@ def test_issue_1428_no_trailing_whitespace(jinja_config: Config) -> None:
         "    }}\n"
         "{%- endmacro -%}\n"
     )
+    expected = (
+        "{%- macro fix_user_string(value) -%}\n"
+        "    {{ value\n"
+        "        | replace('\\\\', '\\\\\\\\')\n"
+        '        | replace("\\n", "\\\\n")\n'
+        "    }}\n"
+        "{%- endmacro -%}\n"
+    )
 
-    assert formatter(jinja_config, source) == source
+    output = formatter(jinja_config, source)
+    assert output == expected
+    assert formatter(jinja_config, output) == output

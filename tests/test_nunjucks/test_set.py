@@ -140,8 +140,8 @@ test_data = [
         ),
         (
             '{% set schema=[{"name": "id",\n'
-            '"type": "integer",\n'
-            '"primary": true\n'
+            '    "type": "integer",\n'
+            '    "primary": true\n'
             "},] %}\n"
         ),
         ({"no_set_formatting": True}),

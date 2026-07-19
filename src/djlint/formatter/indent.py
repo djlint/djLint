@@ -62,6 +62,17 @@ _SET_OPENING_BRACE_PATTERN: Final = re.compile(
 _TEMPLATE_TAG_CLOSE_PATTERN: Final = re.compile(
     r"\{%-?\s*end|\{\{/", RE_FLAGS_IMX, cache_pattern=False
 )
+# a line ending inside a template tag or expression that opened on it.
+_MULTILINE_TAG_OPEN_PATTERN: Final = re.compile(
+    r"(?:\{\{|\{%)(?:(?!\}\}|%\}).)*$", cache_pattern=False
+)
+# a line closing a template tag or expression opened on an earlier line.
+_MULTILINE_TAG_CLOSE_PATTERN: Final = re.compile(
+    r"^(?:(?!\{\{|\{%).)*?(?:\}\}|%\})", cache_pattern=False
+)
+_LEADING_CLOSE_BRACKET_PATTERN: Final = re.compile(
+    r"[ ]*[)\]}]", cache_pattern=False
+)
 _TEXTAREA_CLOSE_PATTERN: Final = re.compile(
     r"^\s*</textarea\b", RE_FLAGS_IX, cache_pattern=False
 )
@@ -211,6 +222,9 @@ def indent_html(rawcode: str, config: Config) -> str:
     beautified_code = ""
     indent_level = 0
     in_set_tag = False
+    in_multiline_tag = False
+    multiline_tag_level = 0
+    multiline_tag_is_block = False
     is_raw_first_line = False
     in_script_style_tag = False
     is_block_raw = False
@@ -425,6 +439,52 @@ def indent_html(rawcode: str, config: Config) -> str:
             indent_level = max(indent_level - 1, 0)
             tmp = (indent * indent_level) + item + "\n"
 
+        # closing line of a template tag or expression spanning multiple lines
+        elif (
+            not is_block_raw
+            and in_multiline_tag
+            and _MULTILINE_TAG_CLOSE_PATTERN.search(item)
+        ):
+            tmp_level = (
+                multiline_tag_level
+                if _LEADING_CLOSE_BRACKET_PATTERN.match(item)
+                else multiline_tag_level + 1
+            )
+            tmp = (indent * tmp_level) + item + "\n"
+            indent_level = multiline_tag_level + (
+                1 if multiline_tag_is_block else 0
+            )
+            # the line may also close an html tag, e.g. ") }}</span>"
+            if tag_unindent_pattern.search(item):
+                indent_level = max(indent_level - 1, 0)
+            # the same line may open another multi-line tag or expression
+            if _MULTILINE_TAG_OPEN_PATTERN.search(item):
+                multiline_tag_level = indent_level
+                multiline_tag_is_block = len(
+                    template_start_pattern.findall(item)
+                ) > len(template_unindent_pattern.findall(item))
+                indent_level += 1
+            else:
+                in_multiline_tag = False
+
+        # closing bracket inside a multi-line template tag or expression
+        elif (
+            not is_block_raw
+            and in_multiline_tag
+            and _SET_CLOSING_BRACE_PATTERN.search(item)
+        ):
+            indent_level = max(indent_level - 1, 0)
+            tmp = (indent * indent_level) + item + "\n"
+
+        # opening bracket inside a multi-line template tag or expression
+        elif (
+            not is_block_raw
+            and in_multiline_tag
+            and _SET_OPENING_BRACE_PATTERN.search(item)
+        ):
+            tmp = (indent * indent_level) + item + "\n"
+            indent_level += 1
+
         # if unindent, move left
         elif (
             not is_block_raw
@@ -461,6 +521,26 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
             indent_level += 1
             in_set_tag = True
+
+        # opening line of a template tag or expression that continues on the
+        # next line; its contents are indented by bracket depth until the
+        # closing line.
+        elif (
+            not is_block_raw
+            and not config.preserve_leading_space
+            and not in_set_tag
+            and not in_multiline_tag
+            and _MULTILINE_TAG_OPEN_PATTERN.search(item)
+            # a line opening an html tag is indented as html instead.
+            and not starts_unclosed_html_tag(item)
+        ):
+            tmp = (indent * indent_level) + item + "\n"
+            in_multiline_tag = True
+            multiline_tag_level = indent_level
+            multiline_tag_is_block = len(
+                template_start_pattern.findall(item)
+            ) > len(template_unindent_pattern.findall(item))
+            indent_level += 1
 
         # opening curly brace inside a set tag
         elif (

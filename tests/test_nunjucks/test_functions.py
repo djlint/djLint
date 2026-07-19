@@ -59,7 +59,15 @@ test_data = [
     ),
     pytest.param(
         ("{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}}"),
-        ("{{ myfunc({\nbar: {\nbaz: {\ncux: 1\n}\n}\n})}}\n"),
+        (
+            "{{ myfunc({\n"
+            "    bar: {\n"
+            "        baz: {\n"
+            "            cux: 1\n"
+            "        }\n"
+            "    }\n"
+            "})}}\n"
+        ),
         ({"no_function_formatting": True}),
         id="disabled",
     ),
@@ -103,9 +111,48 @@ test_data = [
     ),
     pytest.param(
         ("{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}"),
-        ("{{ myfunc({\nbar: {\nbaz: {\ncux: 1\n}\n}\n})}\n"),
+        (
+            "{{ myfunc({\n"
+            "    bar: {\n"
+            "        baz: {\n"
+            "            cux: 1\n"
+            "        }\n"
+            "    }\n"
+            "})}\n"
+        ),
         ({}),
         id="broken",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {{ apos.singleton(data.global, 'footerHead', {\n"
+            "        toolbar: ['Styles', 'Bold'],\n"
+            "        styles: [\n"
+            "            {\n"
+            "                name: 'footerHead',\n"
+            "                element: 'div'\n"
+            "            }\n"
+            "        ]\n"
+            "    }) }}\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    {{ apos.singleton(data.global, 'footerHead', {\n"
+            "        toolbar: ['Styles', 'Bold'],\n"
+            "        styles: [\n"
+            "            {\n"
+            "                name: 'footerHead',\n"
+            "                element: 'div'\n"
+            "            }\n"
+            "        ]\n"
+            "    }) }}\n"
+            "</div>\n"
+        ),
+        ({}),
+        # https://github.com/djlint/djLint/issues/808
+        id="issue_808_non_json_args_keep_indent",
     ),
     pytest.param(
         ("{{ url(object) }}"),

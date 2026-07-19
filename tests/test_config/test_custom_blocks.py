@@ -69,6 +69,41 @@ test_data = [
         ({"custom_blocks": "trans", "profile": "jinja"}),
         id="trans_as_custom_block_still_unindents",
     ),
+    pytest.param(
+        (
+            "{% story default with {\n"
+            "    name: 'Footer',\n"
+            "    parameters: {\n"
+            "        docs: {\n"
+            "            story: 'A footer.',\n"
+            "        },\n"
+            "    },\n"
+            "} %}\n"
+            "    {% include 'footer.html.twig' with {\n"
+            "        page: page,\n"
+            "        has_footer: true,\n"
+            "    } %}\n"
+            "{% endstory %}\n"
+        ),
+        (
+            "{% story default with {\n"
+            "    name: 'Footer',\n"
+            "    parameters: {\n"
+            "        docs: {\n"
+            "            story: 'A footer.',\n"
+            "        },\n"
+            "    },\n"
+            "} %}\n"
+            "    {% include 'footer.html.twig' with {\n"
+            "        page: page,\n"
+            "        has_footer: true,\n"
+            "    } %}\n"
+            "{% endstory %}\n"
+        ),
+        ({"custom_blocks": "story", "profile": "nunjucks"}),
+        # https://github.com/djlint/djLint/issues/1040
+        id="issue_1040_multiline_tag_params_keep_indent",
+    ),
 ]
 
 
