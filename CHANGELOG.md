@@ -19,6 +19,7 @@
 - H025 now reports mis-nested tags whose close tag crosses another open tag, e.g. `<b>` in `<h1>blah <b>bold</h1>`.
 - T003 no longer requires an endblock name when `{% endblock %}` is on the same line as its `{% block ... %}`, e.g. `{% block title %}{% endblock %}`. The formatter keeps such blocks on one line, so the linter and formatter no longer conflict.
 - Comma-separated options in config files (`ignore`, `include`, `custom_blocks`, `custom_html`, `exclude`, `extend_exclude`, `ignore_blocks`, `blank_line_after_tag`, `blank_line_before_tag`) can now also be given as lists, e.g. `ignore = ["H017", "H031"]` in `pyproject.toml`; previously list values were silently ignored.
+- Self-closing custom block tags (django-components syntax, e.g. `{% component "calendar" date="2015-06-19" / %}` with `custom_blocks = "component"`) no longer indent the lines that follow them as if a block had been opened.
 - Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
 
 ## [1.40.10] - 2026-07-19

@@ -104,6 +104,40 @@ test_data = [
         # https://github.com/djlint/djLint/issues/1040
         id="issue_1040_multiline_tag_params_keep_indent",
     ),
+    pytest.param(
+        (
+            '{% component "calendar" date="2015-06-19" / %}\n'
+            "<div>\n"
+            "    <p>hello</p>\n"
+            "</div>\n"
+        ),
+        (
+            '{% component "calendar" date="2015-06-19" / %}\n'
+            "<div>\n"
+            "    <p>hello</p>\n"
+            "</div>\n"
+        ),
+        ({"custom_blocks": "component,slot,fill"}),
+        # https://github.com/djlint/djLint/issues/1113
+        id="issue_1113_self_closing_tag_does_not_indent",
+    ),
+    pytest.param(
+        (
+            '{% component "card" %}\n'
+            '    {% slot "icon" url="/static/icon.svg" / %}\n'
+            "    <p>text</p>\n"
+            "{% endcomponent %}\n"
+        ),
+        (
+            '{% component "card" %}\n'
+            '    {% slot "icon" url="/static/icon.svg" / %}\n'
+            "    <p>text</p>\n"
+            "{% endcomponent %}\n"
+        ),
+        ({"custom_blocks": "component,slot,fill"}),
+        # https://github.com/djlint/djLint/issues/1113
+        id="issue_1113_self_closing_tag_inside_block",
+    ),
 ]
 
 

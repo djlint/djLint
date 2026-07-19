@@ -1324,13 +1324,19 @@ class Config:
         self.indent_html_tags = "|".join(HTML_TAG_NAMES) + self.custom_html
         self.always_self_closing_html_tags = _ALWAYS_SELF_CLOSING_HTML_TAGS
 
+        # a self-closing custom block ({% component ... / %},
+        # django-components syntax) doesn't open a block, so it must not
+        # match block-opener patterns. It still line-breaks like any tag.
+        custom_block_openers = self.custom_blocks.replace(
+            r"\b", r"\b(?!(?:(?!%\}).)*/\s*-?%\})"
+        )
         self.template_indent = (
             r"""
             (?:\{\{\#|\{%-?)[ ]*?
                 ("""
             + ignore_blocks_guard
             + _INDENT_TEMPLATE_TAGS
-            + self.custom_blocks
+            + custom_block_openers
             + r")\b"
             + r"""
             ) | \{{-?[ ]*?form_start
@@ -1360,7 +1366,7 @@ class Config:
         self.start_template_tags = (
             ignore_blocks_guard
             + _START_TEMPLATE_TAGS
-            + self.custom_blocks
+            + custom_block_openers
             + r""")
         """
         )
