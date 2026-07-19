@@ -12,12 +12,6 @@
    </a>
     </p>
     <p align="center">
-   <a href="https://codecov.io/gh/djlint/djlint">
-     <img src="https://codecov.io/gh/djlint/djlint/branch/master/graph/badge.svg?token=eNTG721BAA" alt="Codecov Status">
-   </a>
-   <a href="https://www.codacy.com/gh/djlint/djlint/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=djlint/djlint&amp;utm_campaign=Badge_Grade">
-     <img src="https://app.codacy.com/project/badge/Grade/dba6338b0e7a4de896b45b382574f369" alt="Codacy Status">
-   </a>
    <a href="https://pepy.tech/project/djlint">
      <img src="https://pepy.tech/badge/djlint" alt="Downloads">
    </a>
@@ -103,7 +97,7 @@ Or use `pre-commit` to reformat, then lint!
 ```yaml
 repos:
   - repo: https://github.com/djlint/djLint
-    rev: v1.36.4 # use latest version instead
+    rev: v1.41.0 # use latest version instead
     hooks:
       - id: djlint-reformat
       - id: djlint
