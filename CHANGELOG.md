@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Feature
+
+- New rule T040: `{% extends %}` and `{% include %}` tags with a missing or empty template name are now reported — `{% extends '' %}` raises `TemplateDoesNotExist` only at render time, so the typo is easy to ship.
+- New rule H041: an html tag opened in one `{% block %}` and closed in a different one is now reported. The pair looks balanced file-wide, but a child template overriding either block renders unbalanced html.
+
 ## [1.41.0] - 2026-07-19
 
 ### Feature

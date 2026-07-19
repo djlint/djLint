@@ -79,6 +79,8 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H037 | Attribut en double trouvé.                                                                                                | ✔️     |
 | T038 | La balise de bloc n'a pas de balise de fin correspondante.                                                                | ✔️     |
 | T039 | Balise de template non fermée trouvée.                                                                                    | ✔️     |
+| T040 | Nom de template manquant ou vide dans une balise extends ou include.                                                      | ✔️     |
+| H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                   | ✔️     |
 
 ### Modèles de code
 

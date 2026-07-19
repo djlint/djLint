@@ -79,6 +79,8 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H037 | Duplicate attribute found.                                                                   | ✔️      |
 | T038 | Block tag has no matching end tag.                                                           | ✔️      |
 | T039 | Unclosed template tag found.                                                                 | ✔️      |
+| T040 | Missing or empty template name in extends or include tag.                                    | ✔️      |
+| H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
 
 ### Code Patterns
 

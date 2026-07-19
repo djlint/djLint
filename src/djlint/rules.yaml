@@ -255,3 +255,13 @@
     name: T039
     message: Unclosed template tag found.
     python_module: djlint.rules.T039
+- rule:
+    name: T040
+    message: Missing or empty template name in extends or include tag.
+    patterns:
+      - "{%-?[ \\t]*?(?:extends|include)[ \\t]*?(?:'[ \\t]*'|\"[ \\t]*\")"
+      - "{%-?[ \\t]*?(?:extends|include)[ \\t]*?-?%}"
+- rule:
+    name: H041
+    message: Tag is closed in a different template block than it was opened.
+    python_module: djlint.rules.H041
