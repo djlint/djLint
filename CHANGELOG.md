@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.40.10] - 2026-07-19
+
 ### Fix
 
 - Fix crashes in mypyc-compiled wheels: `AttributeError: attribute 'reformat' of 'Config' objects is not writable` when linting or formatting multiple files, and `AttributeError: attribute 'start' of 'TagToken' objects is not writable` when processing a file.
