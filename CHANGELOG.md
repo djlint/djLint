@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.41.0] - 2026-07-19
+
 ### Feature
 
 - New rule T038: block template tags with no matching end tag are now reported: `{% if %}` without `{% endif %}`, handlebars `{{#if}}` without `{{/if}}`, end tags with no opening tag, and crossed blocks like `{% if %}{% for %}{% endif %}`. Tags from `custom_blocks` are checked too; `{% block %}`/`{% endblock %}` pairs stay covered by T003.
