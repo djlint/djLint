@@ -4,35 +4,46 @@
 
 ## [Unreleased]
 
-## Feature
+### Feature
 
-- New rule T038: block template tags with no matching end tag are now reported — `{% if %}` without `{% endif %}`, handlebars `{{#if}}` without `{{/if}}`, end tags with no opening tag, and crossed blocks like `{% if %}{% for %}{% endif %}`. Custom blocks from `custom_blocks` are checked too. `{% block %}`/`{% endblock %}` pairs are already covered by T003.
-- New rule T039: template tags that never reach their closing delimiter are now reported — e.g. `{% url 'x" user.url }}` (closed by `}}` instead of `%}`), `{{ user.name }` (missing a brace), or a tag cut off by the next tag or the end of the file. Complements T027 (unclosed string in a complete tag) and T034 (`}%` typo), which keep reporting their own cases.
-- New `--rules FILE` CLI option: path to a custom rules file in `.djlint_rules.yaml` format, for rules files that don't sit next to `pyproject.toml`.
+- New rule T038: block template tags with no matching end tag are now reported: `{% if %}` without `{% endif %}`, handlebars `{{#if}}` without `{{/if}}`, end tags with no opening tag, and crossed blocks like `{% if %}{% for %}{% endif %}`. Tags from `custom_blocks` are checked too; `{% block %}`/`{% endblock %}` pairs stay covered by T003.
+- New rule T039: template tags that never reach their closing delimiter are now reported, e.g. `{% url 'x" user.url }}` (closed by `}}` instead of `%}`), `{{ user.name }` (missing a brace), or a tag cut off by the next tag or the end of the file. Complements T027 (unclosed string in a complete tag) and T034 (`}%` typo), which keep reporting their own cases.
+- New `--rules FILE` CLI option: load a custom rules file in `.djlint_rules.yaml` format from any path, instead of only next to `pyproject.toml`.
 
-## Changed
+### Changed
 
-- The default `exclude` list is now tailored to djLint instead of copying ruff/black. Added directories that hold generated or third-party HTML: `htmlcov` (coverage.py HTML reports), `site-packages` (installed packages' templates — Django admin, DRF — in any virtualenv layout, including non-standard venv names and Windows `Lib\site-packages`) and `_site` (Jekyll/Eleventy output). Removed Python tool caches and editor config that never contain HTML: `.ipynb_checkpoints`, `.mypy_cache`, `.pytest_cache`, `.pytype`, `.ruff_cache`, `.pants.d`, `.vscode` and `buck-out`.
+- The formatter now condenses runs of extra whitespace inside single-line template tags to a single space, e.g. `{% if   abc == 101 %}` becomes `{% if abc == 101 %}`. This fixes what rule T032 reports, so the linter and formatter no longer conflict. Whitespace inside string literals is preserved, including strings with backslash-escaped quotes; multiline tags, ignored blocks, the literal contents of `{% verbatim %}`/`{% raw %}` and the handlebars/golang profiles are untouched.
+- The default `exclude` list is now tailored to djLint instead of copying ruff/black. Added directories that hold generated or third-party HTML: `htmlcov` (coverage.py reports), `site-packages` (installed packages' templates such as Django admin and DRF, matched in any virtualenv layout) and `_site` (Jekyll/Eleventy output). Removed Python tool caches and editor config that never contain HTML: `.ipynb_checkpoints`, `.mypy_cache`, `.pytest_cache`, `.pytype`, `.ruff_cache`, `.pants.d`, `.vscode` and `buck-out`.
 
-## Fix
+### Fix
 
-- HTML tags left unclosed inside a template block (e.g. a wrapper `<div>` rendered by `{% if %}...{% endif %}` and closed by a later conditional) no longer shift the indentation of everything after the block; closing a template block restores the indentation of its opening tag. When every branch of an `{% if %}/{% elif %}/{% else %}` shifts the depth equally, e.g. a `<tr>` opened in both branches, the shift is kept after `{% endif %}`.
+Formatter indentation:
+
+- Closing a template block now restores the indentation of its opening tag, so HTML tags left unclosed inside the block (e.g. a wrapper `<div>` rendered by `{% if %}...{% endif %}` and closed by a later conditional) no longer shift the indentation of everything after it. When every branch of an `{% if %}/{% elif %}/{% else %}` shifts the depth equally, e.g. a `<tr>` opened in both branches, the shift is kept after `{% endif %}`.
 - Template tags and expressions spanning multiple lines keep the relative indentation of their contents instead of flattening every line to the tag's level. Nested objects and arrays in e.g. `{% story ... with { ... } %}`, `{% include ... with { ... } %}` and non-JSON `{{ func(...) }}` calls are now indented by bracket depth.
 - `{% endtrans %}` (Jinja/Twig block `{% trans %}`) no longer decreases the indentation level, which shifted the `{% endtrans %}` line and everything after it one level to the left.
 - Multiline `{% set %}` objects nested inside HTML elements are no longer over-indented in proportion to their nesting depth.
+- Self-closing custom block tags (django-components syntax, e.g. `{% component "calendar" date="2015-06-19" / %}` with `custom_blocks = "component"`) no longer indent the lines that follow them as if a block had been opened.
+
+Formatter line breaks and spacing:
+
 - A single-line block-form `{% set x %}...{% endset %}` is no longer expanded onto multiple lines. The block captures its content verbatim, so the added whitespace changed the value of the variable. Authored multi-line set blocks are still indented as before.
 - In multi-line `{{ ... }}` function calls, a call passed as an argument no longer causes a stray space before the following comma, and the arguments after it keep the same indentation as the other arguments.
 - `blank_line_after_tag` no longer inserts a blank line when the next line closes a block and decreases the indentation, e.g. between `{% endblock %}` and `</div>`.
 - `blank_line_before_tag` now inserts the blank line above a comment directly preceding the tag, keeping the comment attached to the tag it documents.
+
+Linter:
+
 - H020 no longer reports `<slot></slot>`: an empty slot element is the standard way to declare a default slot outlet.
 - H025 no longer reports a tag as an orphan when the same tag is opened in each branch of an `{% if %}/{% else %}` and closed once outside it (and vice versa for close tags), since only one branch renders.
 - H025 now reports mis-nested tags whose close tag crosses another open tag, e.g. `<b>` in `<h1>blah <b>bold</h1>`.
 - T003 no longer requires an endblock name when `{% endblock %}` is on the same line as its `{% block ... %}`, e.g. `{% block title %}{% endblock %}`. The formatter keeps such blocks on one line, so the linter and formatter no longer conflict.
-- Comma-separated options in config files (`ignore`, `include`, `custom_blocks`, `custom_html`, `exclude`, `extend_exclude`, `ignore_blocks`, `blank_line_after_tag`, `blank_line_before_tag`) can now also be given as lists, e.g. `ignore = ["H017", "H031"]` in `pyproject.toml`; previously list values were silently ignored.
-- Self-closing custom block tags (django-components syntax, e.g. `{% component "calendar" date="2015-06-19" / %}` with `custom_blocks = "component"`) no longer indent the lines that follow them as if a block had been opened.
 - Linter rules no longer report errors for the literal contents of `{% verbatim %}`...`{% endverbatim %}` blocks, matching the existing treatment of jinja `{% raw %}` blocks.
-- The formatter now condenses runs of extra whitespace inside single-line template tags to a single space, e.g. `{% if   abc == 101 %}` becomes `{% if abc == 101 %}` — fixing what rule T032 reports, so the linter and formatter no longer conflict. Whitespace inside string literals is preserved, including strings with backslash-escaped quotes; multiline tags, ignored blocks, the literal contents of `{% verbatim %}`/`{% raw %}` and the handlebars/golang profiles are untouched.
-- Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
+
+Configuration:
+
+- Comma-separated options in config files (`ignore`, `include`, `custom_blocks`, `custom_html`, `exclude`, `extend_exclude`, `ignore_blocks`, `blank_line_after_tag`, `blank_line_before_tag`) can now also be given as lists, e.g. `ignore = ["H017", "H031"]` in `pyproject.toml`; previously list values were silently ignored.
+- `--max-blank-lines` given on the command line is no longer overridden by the config file, matching all other options.
 
 ## [1.40.10] - 2026-07-19
 
