@@ -152,7 +152,14 @@ test_data = [
         (
             "{% macro rendersubmit(buttons=[], class=\"\", index='', url='', that=\"\" , test='') -%}"
         ),
-        ([]),
+        ([
+            {
+                "code": "T038",
+                "line": "1:0",
+                "match": "{% macro rendersubmi",
+                "message": "Block tag has no matching end tag.",
+            }
+        ]),
         id="T027",
     ),
     pytest.param(("<a href=\"{% blah 'asdf' -%}\"></a>"), ([]), id="T028"),
@@ -164,7 +171,13 @@ test_data = [
                 "line": "1:0",
                 "match": "<a href=\"{%- if 'asd",
                 "message": "Consider using spaceless tags inside attribute values. {%- if/for -%}",
-            }
+            },
+            {
+                "code": "T038",
+                "line": "1:9",
+                "match": "{%- if 'asdf' %}",
+                "message": "Block tag has no matching end tag.",
+            },
         ]),
         id="T028_2",
     ),
@@ -176,7 +189,13 @@ test_data = [
                 "line": "1:0",
                 "match": "<a href=\"{%- if 'asd",
                 "message": "Consider using spaceless tags inside attribute values. {%- if/for -%}",
-            }
+            },
+            {
+                "code": "T038",
+                "line": "1:9",
+                "match": "{%- if 'asdf' %}",
+                "message": "Block tag has no matching end tag.",
+            },
         ]),
         id="T028_3",
     ),

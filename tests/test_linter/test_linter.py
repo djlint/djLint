@@ -411,7 +411,7 @@ def test_H025(
     # issue #364
     write_to_file(
         tmp_file.name,
-        b'{% if tag|startswith:"<del>" %}\n{% if tag|startswith:"<ins>" %}',
+        b'{% if tag|startswith:"<del>" %}\n{% if tag|startswith:"<ins>" %}\n{% endif %}\n{% endif %}',
     )
     result = runner.invoke(djlint, (tmp_file.name, "--profile=django"))
     assert result.exit_code == 0

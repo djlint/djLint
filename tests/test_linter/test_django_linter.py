@@ -63,7 +63,13 @@ test_data = [
                 "line": "1:0",
                 "match": "{% with a='this' %}",
                 "message": "Double quotes should be used in tags.",
-            }
+            },
+            {
+                "code": "T038",
+                "line": "1:0",
+                "match": "{% with a='this' %}",
+                "message": "Block tag has no matching end tag.",
+            },
         ]),
         id="T002_with",
     ),
@@ -407,7 +413,18 @@ test_data = [
         id="T028_no_3",
     ),
     pytest.param(("{% blah 'asdf' %}"), ([]), id="T028_no_5"),
-    pytest.param(("{% for 'asdf' %}"), ([]), id="T028_no_6"),
+    pytest.param(
+        ("{% for 'asdf' %}"),
+        ([
+            {
+                "code": "T038",
+                "line": "1:0",
+                "match": "{% for 'asdf' %}",
+                "message": "Block tag has no matching end tag.",
+            }
+        ]),
+        id="T028_no_6",
+    ),
     pytest.param(
         ('<input class="{% if %}{% endif %}" />'), ([]), id="T028_no_7"
     ),

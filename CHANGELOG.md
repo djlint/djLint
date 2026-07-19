@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+## Feature
+
+- New rule T038: block template tags with no matching end tag are now reported — `{% if %}` without `{% endif %}`, handlebars `{{#if}}` without `{{/if}}`, end tags with no opening tag, and crossed blocks like `{% if %}{% for %}{% endif %}`. Custom blocks from `custom_blocks` are checked too. `{% block %}`/`{% endblock %}` pairs are already covered by T003.
+
 ## Fix
 
 - HTML tags left unclosed inside a template block (e.g. a wrapper `<div>` rendered by `{% if %}...{% endif %}` and closed by a later conditional) no longer shift the indentation of everything after the block; closing a template block restores the indentation of its opening tag. When every branch of an `{% if %}/{% elif %}/{% else %}` shifts the depth equally, e.g. a `<tr>` opened in both branches, the shift is kept after `{% endif %}`.
@@ -20,6 +24,7 @@
 - T003 no longer requires an endblock name when `{% endblock %}` is on the same line as its `{% block ... %}`, e.g. `{% block title %}{% endblock %}`. The formatter keeps such blocks on one line, so the linter and formatter no longer conflict.
 - Comma-separated options in config files (`ignore`, `include`, `custom_blocks`, `custom_html`, `exclude`, `extend_exclude`, `ignore_blocks`, `blank_line_after_tag`, `blank_line_before_tag`) can now also be given as lists, e.g. `ignore = ["H017", "H031"]` in `pyproject.toml`; previously list values were silently ignored.
 - Self-closing custom block tags (django-components syntax, e.g. `{% component "calendar" date="2015-06-19" / %}` with `custom_blocks = "component"`) no longer indent the lines that follow them as if a block had been opened.
+- Linter rules no longer report errors for the literal contents of `{% verbatim %}`...`{% endverbatim %}` blocks, matching the existing treatment of jinja `{% raw %}` blocks.
 - Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
 
 ## [1.40.10] - 2026-07-19

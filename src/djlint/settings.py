@@ -835,7 +835,7 @@ _IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = re.compile(
 )
 _IGNORED_LINTER_BLOCKS_PATTERN: Final = re.compile(
     r"""
-    {%-?[ ]*?raw\b(?:(?!%}).)*?-?%}.*?(?={%-?[ ]*?endraw[ ]*?-?%})
+    {%-?[ ]*?(raw|verbatim)\b(?:(?!%}).)*?-?%}.*?{%-?[ ]*?end\1[ ]*?-?%}
     """,
     RE_FLAGS_IMSX,
     cache_pattern=False,

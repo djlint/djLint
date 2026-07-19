@@ -247,3 +247,7 @@
     name: H037
     message: Duplicate attribute found.
     python_module: djlint.rules.H037
+- rule:
+    name: T038
+    message: Block tag has no matching end tag.
+    python_module: djlint.rules.T038
