@@ -13,6 +13,7 @@
 - Fix formatter: in multi-line `{{ ... }}` function calls, a call passed as an argument no longer causes a stray space before the following comma, and the arguments after it keep the same indentation as the other arguments.
 - Fix formatter: `blank_line_after_tag` no longer inserts a blank line when the next line closes a block and decreases the indentation, e.g. between `{% endblock %}` and `</div>`.
 - Fix formatter: `blank_line_before_tag` now inserts the blank line above a comment directly preceding the tag, keeping the comment attached to the tag it documents.
+- Fix formatter: a single-line block-form `{% set x %}...{% endset %}` is no longer expanded onto multiple lines. The block captures its content verbatim, so the added whitespace changed the value of the variable. Authored multi-line set blocks are still indented as before.
 
 ## [1.40.10] - 2026-07-19
 

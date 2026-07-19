@@ -62,6 +62,16 @@ _TRIMMED_TRANSLATION_CLOSE_PATTERN: Final = re.compile(
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
+# block-form {% set x %}...{% endset %} captures its body verbatim, so a
+# single-line pair must not be expanded: added whitespace would change the
+# captured value.
+_SET_BLOCK_PATTERN: Final = re.compile(
+    r"\{%-?\s*set\b(?!(?:(?!%\}).)*=)(?:(?!%\}).)*?%\}"
+    r".*?"
+    r"\{%-?\s*endset\s*-?%\}",
+    flags=RE_FLAGS_IX,
+    cache_pattern=False,
+)
 _TEMPLATE_END_TAG_NAMES: Final = MappingProxyType({
     "endall": "asyncall",
     "endeach": "asynceach",
@@ -167,7 +177,7 @@ def expand_html(html: str, config: Config) -> str:
             or is_trimmed_translation_content(
                 line, inside_trimmed_translation=inside_trimmed_translation
             )
-            or not has_rendered_text(line)
+            or not (has_rendered_text(line) or _SET_BLOCK_PATTERN.search(line))
         ):
             return line
 

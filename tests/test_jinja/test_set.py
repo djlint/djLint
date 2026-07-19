@@ -54,6 +54,26 @@ test_data = [
         ),
         id="nested_multiline_set_keeps_relative_indent",
     ),
+    pytest.param(
+        "{% set hero_content %}{% block hero %}{% endblock %}{% endset %}",
+        "{% set hero_content %}{% block hero %}{% endblock %}{% endset %}\n",
+        id="single_line_set_block_captures_verbatim",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {% set hero_content %}{% block hero %}{% endblock %}{% endset %}\n"
+            "    <p>after</p>\n"
+            "</div>"
+        ),
+        (
+            "<div>\n"
+            "    {% set hero_content %}{% block hero %}{% endblock %}{% endset %}\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="single_line_set_block_nested_in_html",
+    ),
 ]
 
 

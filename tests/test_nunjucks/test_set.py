@@ -177,15 +177,28 @@ test_data = [
             "{%asdf%}"
         ),
         (
-            "{% set cta %}\n"
-            '    {% include "partials/cta.njk" %}\n'
-            "    <div></div>\n"
-            "{% endset %}\n"
+            '{% set cta %}{% include "partials/cta.njk" %}<div></div>{% endset %}\n'
             "{%- set posts = collections.docs -%}\n"
             "{% asdf %}\n"
         ),
         ({}),
         id="set block",
+    ),
+    pytest.param(
+        (
+            "{% set cta %}\n"
+            '{% include "partials/cta.njk" %}\n'
+            "<div></div>\n"
+            "{% endset %}"
+        ),
+        (
+            "{% set cta %}\n"
+            '    {% include "partials/cta.njk" %}\n'
+            "    <div></div>\n"
+            "{% endset %}\n"
+        ),
+        ({}),
+        id="multiline set block is indented",
     ),
     pytest.param(
         (
