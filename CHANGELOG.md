@@ -7,19 +7,19 @@
 ## Fix
 
 - HTML tags left unclosed inside a template block (e.g. a wrapper `<div>` rendered by `{% if %}...{% endif %}` and closed by a later conditional) no longer shift the indentation of everything after the block; closing a template block restores the indentation of its opening tag. When every branch of an `{% if %}/{% elif %}/{% else %}` shifts the depth equally, e.g. a `<tr>` opened in both branches, the shift is kept after `{% endif %}`.
-- H025 no longer reports a tag as an orphan when the same tag is opened in each branch of an `{% if %}/{% else %}` and closed once outside it (and vice versa for close tags), since only one branch renders.
-- H025 now reports mis-nested tags whose close tag crosses another open tag, e.g. `<b>` in `<h1>blah <b>bold</h1>`.
 - Template tags and expressions spanning multiple lines keep the relative indentation of their contents instead of flattening every line to the tag's level. Nested objects and arrays in e.g. `{% story ... with { ... } %}`, `{% include ... with { ... } %}` and non-JSON `{{ func(...) }}` calls are now indented by bracket depth.
-- Comma-separated options in config files (`ignore`, `include`, `custom_blocks`, `custom_html`, `exclude`, `extend_exclude`, `ignore_blocks`, `blank_line_after_tag`, `blank_line_before_tag`) can now also be given as lists, e.g. `ignore = ["H017", "H031"]` in `pyproject.toml`; previously list values were silently ignored.
-- H020 no longer reports `<slot></slot>`: an empty slot element is the standard way to declare a default slot outlet.
-- Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
-- T003 no longer requires an endblock name when `{% endblock %}` is on the same line as its `{% block ... %}`, e.g. `{% block title %}{% endblock %}`. The formatter keeps such blocks on one line, so the linter and formatter no longer conflict.
 - `{% endtrans %}` (Jinja/Twig block `{% trans %}`) no longer decreases the indentation level, which shifted the `{% endtrans %}` line and everything after it one level to the left.
 - Multiline `{% set %}` objects nested inside HTML elements are no longer over-indented in proportion to their nesting depth.
+- A single-line block-form `{% set x %}...{% endset %}` is no longer expanded onto multiple lines. The block captures its content verbatim, so the added whitespace changed the value of the variable. Authored multi-line set blocks are still indented as before.
 - In multi-line `{{ ... }}` function calls, a call passed as an argument no longer causes a stray space before the following comma, and the arguments after it keep the same indentation as the other arguments.
 - `blank_line_after_tag` no longer inserts a blank line when the next line closes a block and decreases the indentation, e.g. between `{% endblock %}` and `</div>`.
 - `blank_line_before_tag` now inserts the blank line above a comment directly preceding the tag, keeping the comment attached to the tag it documents.
-- A single-line block-form `{% set x %}...{% endset %}` is no longer expanded onto multiple lines. The block captures its content verbatim, so the added whitespace changed the value of the variable. Authored multi-line set blocks are still indented as before.
+- H020 no longer reports `<slot></slot>`: an empty slot element is the standard way to declare a default slot outlet.
+- H025 no longer reports a tag as an orphan when the same tag is opened in each branch of an `{% if %}/{% else %}` and closed once outside it (and vice versa for close tags), since only one branch renders.
+- H025 now reports mis-nested tags whose close tag crosses another open tag, e.g. `<b>` in `<h1>blah <b>bold</h1>`.
+- T003 no longer requires an endblock name when `{% endblock %}` is on the same line as its `{% block ... %}`, e.g. `{% block title %}{% endblock %}`. The formatter keeps such blocks on one line, so the linter and formatter no longer conflict.
+- Comma-separated options in config files (`ignore`, `include`, `custom_blocks`, `custom_html`, `exclude`, `extend_exclude`, `ignore_blocks`, `blank_line_after_tag`, `blank_line_before_tag`) can now also be given as lists, e.g. `ignore = ["H017", "H031"]` in `pyproject.toml`; previously list values were silently ignored.
+- Fix `--max-blank-lines`: the command line value is no longer overridden by the config file, matching all other options.
 
 ## [1.40.10] - 2026-07-19
 

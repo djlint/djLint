@@ -393,10 +393,10 @@
     "name": "use_gitignore",
     "tags": ["linter", "formatter"],
     "description": {
-      "en": "Add .gitignore excludes to the default exclude.",
-      "ru": "Добавьте исключения .gitignore к исключениям по умолчанию.",
-      "fr": "Ajouter les exclusions .gitignore à l'exclusion par défaut.",
-      "zh": "排除 .gitignore 规定的排除文件。"
+      "en": "Add .gitignore excludes to the default exclude. Disabled by default.",
+      "ru": "Добавьте исключения .gitignore к исключениям по умолчанию. По умолчанию отключено.",
+      "fr": "Ajouter les exclusions .gitignore à l'exclusion par défaut. Désactivé par défaut.",
+      "zh": "排除 .gitignore 规定的排除文件。（默认关闭）"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "use_gitignore=true" },
