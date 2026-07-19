@@ -14,13 +14,25 @@ djLint is built with [Python](https://python.org), it can be installed from [PyP
 pip install djlint
 ```
 
+Or as a standalone tool with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uv tool install djlint
+```
+
+Or with [pipx](https://pipx.pypa.io/):
+
+```bash
+pipx install djlint
+```
+
 Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux:
 
 ```bash
 brew install djlint
 ```
 
-_Or with the npm experimental install - Note, this requires python and pip to be on your system path._
+_Or with npm - **warning**: the npm package is only a wrapper, its install script runs `pip install --upgrade djlint` on whatever `python3` is on your system path. npm will not manage or uninstall the actual package - prefer pip directly when possible._
 
 ```bash
 npm i djlint

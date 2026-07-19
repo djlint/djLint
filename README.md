@@ -3,7 +3,6 @@
   <a href="https://www.djlint.com"><img src="https://raw.githubusercontent.com/djlint/djLint/master/docs/src/static/img/icon.png" alt="djLint Logo" width="270"></a>
   <br>
 </h1>
-<h3 align="center">🏗️ Maintainers needed, please reach out on discord or email!</h3>
 <h4 align="center">The missing formatter and linter for HTML templates.</h4>
 
 <p align="center">
@@ -57,13 +56,25 @@ Grab it from PyPI with `pip`
 pip install djlint
 ```
 
+Or as a standalone tool with [uv](https://docs.astral.sh/uv/)
+
+```bash
+uv tool install djlint
+```
+
+Or with [pipx](https://pipx.pypa.io/)
+
+```bash
+pipx install djlint
+```
+
 Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux
 
 ```bash
 brew install djlint
 ```
 
-_Or with the npm experimental install - Note, this requires python and pip to be on your system path._
+_Or with npm - **warning**: the npm package is only a wrapper, its install script runs `pip install --upgrade djlint` on whatever `python3` is on your system path. npm will not manage or uninstall the actual package - prefer pip directly when possible._
 
 ```bash
 npm i djlint
@@ -125,10 +136,10 @@ _Would you like to add a rule to the linter?_ Take a look at the [linter docs](h
 
 _Are you a regex pro?_ Benchmark and submit a pr with improved regex for the [linter rules](https://github.com/djlint/djLint/blob/master/djlint/rules.yaml)
 
-**⚠️ Help Needed! ⚠️** _Good with python?_ djLint was an experimental project and is catching on with other devs. Help out with a rewrite of the formatter to improve speed and html style for edge cases. Contribute on the [2.0 branch](https://github.com/djlint/djLint/tree/block_indent)
-
 ## 🏃 Other Tools Of Note
 
+- [djade](https://github.com/adamchainz/djade) A fast Django template formatter that formats template syntax whilst leaving HTML as-is, and applies fixes for older Django versions.
+- [djangofmt](https://github.com/UnknownPlatypus/djangofmt) A fast, HTML-aware Django/Jinja template formatter written in Rust that formats HTML and template syntax together.
 - [DjHTML](https://github.com/rtts/djhtml) A pure-Python Django/Jinja template indenter without dependencies.
-- [HTMLHint](https://htmlhint.com) Static code analysis tool you need for your HTML
-- [curlylint](https://www.curlylint.org) Experimental HTML templates linting for Jinja, Nunjucks, Django templates, Twig, Liquid
+- [prettier-plugin-jinja-template](https://github.com/davidodenwald/prettier-plugin-jinja-template) Prettier plugin for formatting Jinja and Django templates.
+- [Twig-CS-Fixer](https://github.com/VincentLanglet/Twig-CS-Fixer) A PHP tool that lints and automatically fixes Twig coding-standard issues.

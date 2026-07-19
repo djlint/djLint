@@ -8,7 +8,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 djLint's formatter will take sloppy html templates and make the formatting consistent and easy to follow!
 
-Formatting is a beta tool. `--check` the output before applying changes.
+Review the output with `--check` before applying changes.
 
 To review what may change in formatting run:
 
