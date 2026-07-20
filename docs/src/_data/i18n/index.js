@@ -54,10 +54,10 @@ module.exports = {
   },
   description: {
     "en-US":
-      "Find common syntax errors, reformat to make your HTML templates shine! Supports django, jinja, nunjucks, twig, handlebars, mustache, golang, and more!",
-    ru: "Найдите распространенные синтаксические ошибки, переформатируйте, чтобы ваши HTML-шаблоны сияли! Поддерживает django, jinja, nunjucks, twig, handlebars, mustache, golang и многое другое!",
-    fr: "Trouvez les erreurs de syntaxe courantes, reformatez pour faire briller vos modèles HTML ! Supporte django, jinja, nunjucks, twig, handlebars, mustache, golang, et plus encore !",
-    zh: "发现常见的语法错误，重新格式化以让你的 HTML 模板焕发光彩！支持 Django、Jinja、Nunjucks、Twig、Handlebars、Mustache、Golang 等更多模板引擎！",
+      "Find common syntax errors, reformat to make your HTML templates shine! Supports django, jinja, askama, tera, liquid, nunjucks, twig, handlebars, mustache, golang, and more!",
+    ru: "Найдите распространенные синтаксические ошибки, переформатируйте, чтобы ваши HTML-шаблоны сияли! Поддерживает django, jinja, askama, tera, liquid, nunjucks, twig, handlebars, mustache, golang и многое другое!",
+    fr: "Trouvez les erreurs de syntaxe courantes, reformatez pour faire briller vos modèles HTML ! Supporte django, jinja, askama, tera, liquid, nunjucks, twig, handlebars, mustache, golang, et plus encore !",
+    zh: "发现常见的语法错误，重新格式化以让你的 HTML 模板焕发光彩！支持 Django、Jinja、Askama、Tera、Liquid、Nunjucks、Twig、Handlebars、Mustache、Golang 等更多模板引擎！",
   },
   updated: {
     "en-US": "Updated",

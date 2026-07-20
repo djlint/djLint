@@ -1,6 +1,6 @@
 ---
 title: Twig Template Linter and Formatter
-keywords: twig, djlint, twig template linter, twig template formatter, format twig templates
+keywords: twig, djlint, twig template linter, twig template formatter, format twig templates, pebble, pebble template linter
 description: djLint est un linter de modèles twig et un formateur de modèles twig ! Profitez du profil pré-construit lorsque vous limez et formatez vos modèles avec djLint.
 tool: nunjucks
 ---
@@ -10,6 +10,8 @@ tool: nunjucks
 {{ description }}
 
 **[C'est quoi Twig?](https://twig.symfony.com/)**
+
+Les modèles Pebble (Java) sont compatibles Twig — utilisez ce même profil pour eux.
 
 #### Utilisation de la ligne de commande
 

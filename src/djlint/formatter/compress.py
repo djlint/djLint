@@ -79,7 +79,14 @@ def compress_html(html: str, config: Config) -> str:
     previous_end = 0
     # Keep offsets while hiding template comments from the HTML tokenizer.
     token_source = html
-    if config.profile in {"all", "django", "jinja", "nunjucks"}:
+    if config.profile in {
+        "all",
+        "django",
+        "jinja",
+        "askama",
+        "tera",
+        "nunjucks",
+    }:
         if "{#" in html:
             token_source = config.unformatted_blocks_pattern.sub(
                 _blank_match, token_source

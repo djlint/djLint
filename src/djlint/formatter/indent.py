@@ -82,14 +82,35 @@ _TEXTAREA_CLOSE_PATTERN: Final = re.compile(
     r"^\s*</textarea\b", RE_FLAGS_IX, cache_pattern=False
 )
 _SET_CONTENT_PATTERN: Final = re.compile(
-    r"([ ]*)({%-?)[ ]*(set)[ ]+?((?:(?!%}).)*?)(-?%})",
+    r"""
+    ([ ]*)                # 1: leading indentation
+    ({%-?)                # 2: tag open
+    [ ]*(set)[ ]+?        # 3: the set keyword
+    ((?:(?!%}).)*?)       # 4: assignment contents
+    (-?%})                # 5: tag close
+    """,
     RE_FLAGS_IMSX,
     cache_pattern=False,
 )
 # possessive quantifiers keep an unbalanced "(" from backtracking
 # exponentially across the rest of the file.
 _FUNCTION_CONTENT_PATTERN: Final = re.compile(
-    r"([ ]*)({{-?\+?)[ ]*?((?:(?!}}).)*?\w)((?P<paren>\((?:\"[^\"]*+\"|'[^']*+'|[^()]++|(?&paren))*+\))[ ]*)((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)?((?:(?!}}).)*?-?\+?}})",
+    r"""
+    ([ ]*)                          # 1: leading indentation
+    ({{-?\+?)                       # 2: expression open
+    [ ]*?
+    ((?:(?!}}).)*?\w)               # 3: function name and path
+    (                               # 4: the call, parens balanced
+      (?P<paren>
+        \(
+        (?:\"[^\"]*+\"|'[^']*+'|[^()]++|(?&paren))*+
+        \)
+      )
+      [ ]*
+    )
+    ((?:\[[^\]]*?\]|\.[^\s]+)[ ]*)? # 6: trailing index or attribute
+    ((?:(?!}}).)*?-?\+?}})          # 7: filters and expression close
+    """,
     RE_FLAGS_IMSX,
     cache_pattern=False,
 )
@@ -266,12 +287,21 @@ def indent_html(rawcode: str, config: Config) -> str:
     ignored_inline_start_pattern = re.compile(
         rf"^\s*?(?:{config.ignored_inline_blocks})", flags=RE_FLAGS_IMX
     )
+    # a golang block opened and closed on one line is self-contained;
+    # strictly non-capturing so match 1-4 group numbers stay stable
+    golang_slt = (
+        r"(?:\{\{-?[ ]*?(?:if|range|with|block|define)\b(?:(?!\}\}).)*?\}\})"
+        r"(?:.*?)(?:\{\{-?[ ]*?end[ ]*?-?\}\})"
+        if config.profile == "golang"
+        else r"(?!x)x"
+    )
     single_line_tag_pattern = re.compile(
         rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
                     (?:
                         <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
                         |(?:<(?:{always_self_closing_html})\b(?:[^>"']|"[^"]*"|'[^']*')*?/?>) # <img stuff />
                         |(?:{{%-?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%-?[ ]*?end(?:\2)\b(?:(?!%}}).)*?%}}) # >>> match 2
+                        |{golang_slt}
                         |{config.ignored_inline_blocks}
                     )[ \t]*?
                     (?:
@@ -280,6 +310,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                         <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\3)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 3
                        |(?:<(?:{always_self_closing_html})\b(?:[^>"']|"[^"]*"|'[^']*')*?/?>) # <img stuff />
                        |(?:{{%-?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%-?[ ]*?end(?:\4)\b(?:(?!%}}).)*?%}}) # >>> match 4
+                       |{golang_slt}
                        |{config.ignored_inline_blocks}
                     )[ \t]*?
                     )*? # optional of course
@@ -321,9 +352,12 @@ def indent_html(rawcode: str, config: Config) -> str:
     template_unindent_pattern = re.compile(
         str(config.template_unindent), flags=RE_FLAGS_IMX
     )
+    # the inner group keeps profile alternatives (e.g. golang {{ if )
+    # anchored behind the bracket prefix
     prefixed_template_tag_indent_pattern = re.compile(
-        r"^[^\S\n]*[\(\[](?:\{\{\#|\{%-?)[ ]*?"
-        + str(config.start_template_tags),
+        r"^[^\S\n]*[\(\[](?:(?:\{\{\#|\{%-?)[ ]*?"
+        + str(config.start_template_tags)
+        + r")",
         flags=RE_FLAGS_IMX,
     )
 
@@ -549,6 +583,16 @@ def indent_html(rawcode: str, config: Config) -> str:
                 )
                 indent_level = min(max(indent_level - 1, 0), max(target, 0))
                 tmp = (indent * min(indent_level, saved_level)) + item + "\n"
+                if config.profile == "golang":
+                    # golang lines are not split by expand, so a close
+                    # glued to a new opener ({{ end }}{{ if .B }}) must
+                    # open its block here
+                    glued = len(template_start_pattern.findall(item)) - (
+                        len(template_unindent_pattern.findall(item)) - 1
+                    )
+                    for _ in range(max(glued, 0)):
+                        template_block_stack.append((indent_level, None, True))
+                        indent_level += 1
             else:
                 # an html close tag never dedents below the content level
                 # of the template block it is in; it may close a tag opened
@@ -641,7 +685,8 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         elif is_block_raw or not item.strip():
             if (
-                config.profile in {"jinja", "nunjucks"}
+                config.profile
+                in {"jinja", "askama", "tera", "liquid", "nunjucks"}
                 and is_block_raw
                 and _TEXTAREA_CLOSE_PATTERN.search(item)
                 and beautified_code.rstrip().endswith(("-}}", "-%}"))

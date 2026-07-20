@@ -326,6 +326,11 @@ _PROFILE_CODES: Final[dict[str, tuple[str, ...]]] = {
     "html": ("D", "J", "T", "N", "M"),
     "django": ("J", "N", "M"),
     "jinja": ("D", "N", "M"),
+    # askama templates are rust, not python flask, so the jinja url_for
+    # rules (J) do not apply either
+    "askama": ("D", "J", "N", "M"),
+    "tera": ("D", "J", "N", "M"),
+    "liquid": ("D", "J", "N", "M"),
     "nunjucks": ("D", "J", "M"),
     "handlebars": ("D", "J", "N"),
     "golang": ("D", "J", "N", "M"),
@@ -373,7 +378,14 @@ _DEFAULT_JS_JSON_PATTERN: Final = (
     r")$"
 )
 
-_TEMPLATE_IF_FOR_PATTERN: Final = r"(?:{%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}(?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?)"
+# a complete {% if %}/{% for %} block with its end tag; embedded only in
+# verbose (re.X) patterns
+_TEMPLATE_IF_FOR_PATTERN: Final = r"""
+    (?:
+        {%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}
+        (?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?
+    )
+"""
 
 _ATTRIBUTE_PATTERN: Final = (
     rf"""
@@ -434,9 +446,10 @@ _TEMPLATE_TAGS: Final = r"""
     {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
 """
 
-# these tags should be unindented and next line will be indented
-_TAG_UNINDENT_LINE: Final = r"""
-      (?:\{%-?[ ]*?(?:elif|else|empty|plural))
+# a branch tag ({% elif %}, {% else %}, handlebars {{else}}/{{^}}, ...)
+# is unindented and the next line is indented again
+_TAG_UNINDENT_LINE_TEMPLATE: Final = r"""
+      (?:\{%-?[ ]*?(?:BRANCHES))
     | (?:
         \{\{[ ]*?
         (
@@ -445,8 +458,28 @@ _TAG_UNINDENT_LINE: Final = r"""
         )
       )
 """
+_TAG_UNINDENT_LINE: Final = _TAG_UNINDENT_LINE_TEMPLATE.replace(
+    "BRANCHES", "elif|else|empty|plural"
+)
+# liquid spells its branches elsif and {% when %}
+_LIQUID_TAG_UNINDENT_LINE: Final = _TAG_UNINDENT_LINE_TEMPLATE.replace(
+    "BRANCHES", "elif|elsif|else|empty|plural|when"
+)
 
 _BREAK_BEFORE: Final = r"(?<!\n[ \t]*?)"
+
+# block tags recognized only under a specific profile, injected through
+# the custom blocks channel so they never affect other profiles
+_PROFILE_BLOCKS: Final[dict[str, str]] = {
+    "tera": "component",
+    "liquid": "case,capture,tablerow,form,paginate,highlight",
+}
+
+# golang template blocks use plain {{ }} delimiters; only the golang
+# profile treats them as blocks, closed by a bare {{ end }}
+_GOLANG_BLOCK_OPEN: Final = r"|\{\{-?[ ]*?(?:if|range|with|block|define)\b"
+_GOLANG_BLOCK_CLOSE: Final = r"|(?:\{\{-?[ ]*?end(?![\w]))"
+_GOLANG_BRANCH: Final = r"|(?:\{\{-?[ ]*?else(?![\w]))"
 
 _IGNORED_ATTRIBUTES: Final = frozenset({
     "href",
@@ -696,6 +729,10 @@ _IGNORED_INLINE_BLOCKS: Final = r"""
     | <\?php.*?\?>
     | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
     | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
+    # liquid/shopify blocks whose bodies are json, css or js
+    | {%-?[ ]*?(?:schema|javascript|stylesheet|style)[ ]*?-?%}
+      .*?
+      {%-?[ ]*?end(?:schema|javascript|stylesheet|style)[ ]*?-?%}
     | {%[ ]*?blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
 """
 
@@ -718,6 +755,10 @@ _IGNORED_BLOCKS: Final = r"""
     | <!--.*?-->
     | <\?php.*?\?>
     | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
+    # liquid/shopify blocks whose bodies are json, css or js
+    | {%-?[ ]*?(?:schema|javascript|stylesheet|style)[ ]*?-?%}
+      .*?
+      {%-?[ ]*?end(?:schema|javascript|stylesheet|style)[ ]*?-?%}
     | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
     | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
     | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
@@ -763,6 +804,7 @@ _IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
     | <pre
     | <textarea
     | {%[ ]*?blocktrans(?:late)?(?:(?!%}|\btrimmed\b).)*?%}
+    | {%-?[ ]*?(?:schema|javascript|stylesheet|style)[ ]*?-?%}
     | {%[ ]*?filter\b(?:(?!%}).)*?%}
     | {\#\s*djlint\:\s*off\s*\#}
     | {%[ ]+?comment[ ]+?(?:(?!%}).)*?%}
@@ -788,6 +830,7 @@ _IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
     | {{!--\s*djlint\:on\s*--}}
     | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
     | {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
+    | {%-?[ ]*?end(?:schema|javascript|stylesheet|style)[ ]*?-?%}
     """,
     RE_FLAGS_IX,
     cache_pattern=False,
@@ -861,7 +904,8 @@ _IGNORED_RULE_PATTERNS: Final = tuple(
         r"<!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*",
         # django/jinja/nunjucks
         r"{\#\s*djlint\:\s*off(.+?)\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*",
-        r"{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*",
+        r"""{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}
+            (?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*""",
         # handlebars
         r"{{!--\s*djlint\:off(.*?)--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*",
         # golang
@@ -1142,12 +1186,21 @@ class Config:
         self.no_line_after_yaml = no_line_after_yaml or djlint_settings.get(
             "no_line_after_yaml", False
         )
-        self.no_set_formatting = no_set_formatting or djlint_settings.get(
-            "no_set_formatting", False
+        # askama expressions are rust: char literals, ? operators and
+        # macro! calls don't survive python-style literal/call formatting
+        is_askama = (
+            str(profile or djlint_settings.get("profile", "")).lower()
+            == "askama"
+        )
+        self.no_set_formatting = (
+            no_set_formatting
+            or djlint_settings.get("no_set_formatting", False)
+            or is_askama
         )
         self.no_function_formatting = (
             no_function_formatting
             or djlint_settings.get("no_function_formatting", False)
+            or is_askama
         )
         self.format_attribute_template_tags = (
             format_attribute_template_tags
@@ -1281,8 +1334,20 @@ class Config:
         # patterns built from configuration options
         self.custom_blocks = str(
             build_custom_blocks(
-                custom_blocks
-                or _as_comma_separated(djlint_settings.get("custom_blocks"))
+                ",".join(
+                    x
+                    for x in (
+                        str(
+                            custom_blocks
+                            or _as_comma_separated(
+                                djlint_settings.get("custom_blocks")
+                            )
+                            or ""
+                        ),
+                        _PROFILE_BLOCKS.get(self.profile, ""),
+                    )
+                    if x
+                )
             )
             or ""
         )
@@ -1324,6 +1389,7 @@ class Config:
         custom_block_openers = self.custom_blocks.replace(
             r"\b", r"\b(?!(?:(?!%\}).)*/\s*-?%\})"
         )
+        is_golang = self.profile == "golang"
         self.template_indent = (
             r"""
             (?:\{\{\#|\{%-?)[ ]*?
@@ -1335,6 +1401,7 @@ class Config:
             + r"""
             ) | \{{-?[ ]*?form_start
             """
+            + (_GOLANG_BLOCK_OPEN if is_golang else "")
         )
         # jinja/twig block {% trans %} has no matching indent tag, so its
         # end tag must not unindent — unless the user made trans a custom
@@ -1354,6 +1421,9 @@ class Config:
             + ignore_blocks_guard
             + r""")
                 | (?:\{{-?[ ]*?form_end)
+            """
+            + (_GOLANG_BLOCK_CLOSE if is_golang else "")
+            + r"""
               )
             """
         )
@@ -1363,11 +1433,13 @@ class Config:
             + custom_block_openers
             + r""")
         """
+            + (_GOLANG_BLOCK_OPEN if is_golang else "")
         )
         self.break_template_tags = (
             ignore_blocks_guard
             + _BREAK_TEMPLATE_TAGS
             + self.custom_blocks
+            + (r"|when\b|elsif\b" if self.profile == "liquid" else "")
             + r""")
         """
         )
@@ -1421,7 +1493,14 @@ class Config:
         # static patterns, built once at module import
         self.attribute_pattern = _ATTRIBUTE_PATTERN
         self.template_tags = _TEMPLATE_TAGS
-        self.tag_unindent_line = _TAG_UNINDENT_LINE
+        self.tag_unindent_line = (
+            _LIQUID_TAG_UNINDENT_LINE
+            if self.profile == "liquid"
+            else _TAG_UNINDENT_LINE
+        )
+        if is_golang:
+            # {{ else }} and {{ else if ... }} are branch tags
+            self.tag_unindent_line += _GOLANG_BRANCH
         self.break_before = _BREAK_BEFORE
         self.ignored_attributes = _IGNORED_ATTRIBUTES
         self.ignored_inline_blocks = _IGNORED_INLINE_BLOCKS
@@ -1467,3 +1546,13 @@ class Config:
         self.optional_single_line_template_pattern = (
             _OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN
         )
+        if profile_blocks := _PROFILE_BLOCKS.get(self.profile):
+            # profile block pairs may open and close on one line
+            self.optional_single_line_template_tags += "|" + "|".join(
+                profile_blocks.split(",")
+            )
+            self.optional_single_line_template_pattern = re.compile(
+                rf"^(?:{self.optional_single_line_template_tags})$",
+                RE_FLAGS_IX,
+                cache_pattern=False,
+            )

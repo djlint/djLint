@@ -1,6 +1,6 @@
 ---
 title: Nunjucks Template Linter and Formatter
-keywords: nunjucks, djlint, nunjucks template linter, nunjucks template formatter, format nunjucks templates
+keywords: nunjucks, djlint, nunjucks template linter, nunjucks template formatter, format nunjucks templates, pebble, pebble template linter
 description: djLint is a nunjucks template linter and a nunjucks template formatter! Take advantage of the pre-build profile when linting and formatting your templates with djLint.
 tool: nunjucks
 ---
@@ -10,6 +10,8 @@ tool: nunjucks
 {{ description }}
 
 **[What is Nunjucks?](https://mozilla.github.io/nunjucks/)**
+
+Pebble (Java) templates are Twig-compatible — use this same profile for them.
 
 #### Using the Command Line
 

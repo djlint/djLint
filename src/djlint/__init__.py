@@ -71,7 +71,7 @@ if TYPE_CHECKING:
 @click.option(
     "--profile",
     type=str,
-    help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars, golang, angular, html [default: html]",
+    help="Enable defaults by template language. ops: django, jinja, askama, tera, liquid, nunjucks, handlebars, golang, angular, html [default: html]",
 )
 @click.option(
     "--require-pragma",

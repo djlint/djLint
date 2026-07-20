@@ -97,7 +97,7 @@ def test_require_pragma(runner: CliRunner) -> None:
 +<h1>Test</h1>
 +<p>{{ .Variable }}</p>
 +{{ range .Items }}
-+<p>{{ . }}</p>
++    <p>{{ . }}</p>
 +{{ end }}
 
 1 file would be updated."""

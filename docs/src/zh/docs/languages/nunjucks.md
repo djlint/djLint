@@ -1,6 +1,6 @@
 ---
 title: Nunjucks 模板检查与格式化
-keywords: nunjucks, djlint, nunjucks 模板检查, nunjucks 模板格式化
+keywords: nunjucks, djlint, nunjucks 模板检查, nunjucks 模板格式化, pebble, pebble template linter
 description: djLint是一个 nunjucks 模板的代码检查与格式化工具！使用与构建的配置文件，充分利用djLint来检查并格式化你的模板。
 tool: nunjucks
 ---
@@ -10,6 +10,8 @@ tool: nunjucks
 {{ description }}
 
 **[Nunjucks简介](https://mozilla.github.io/nunjucks/)**
+
+Pebble（Java）模板与 Twig 兼容 — 请为其使用同一个配置。
 
 #### 使用命令行
 

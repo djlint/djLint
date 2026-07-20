@@ -16,6 +16,24 @@
   types_or: [jinja]
   language: python
 
+- id: djlint-askama
+  name: djLint linting for Askama
+  entry: djlint --profile=askama
+  types_or: [html]
+  language: python
+
+- id: djlint-tera
+  name: djLint linting for Tera
+  entry: djlint --profile=tera
+  types_or: [html]
+  language: python
+
+- id: djlint-liquid
+  name: djLint linting for Liquid
+  entry: djlint --profile=liquid
+  types_or: [html]
+  language: python
+
 - id: djlint-nunjucks
   name: djLint linting for Nunjucks
   entry: djlint --profile=nunjucks
@@ -50,6 +68,24 @@
   name: djLint formatting for Jinja
   entry: djlint --reformat --profile=jinja
   types_or: [jinja]
+  language: python
+
+- id: djlint-reformat-askama
+  name: djLint formatting for Askama
+  entry: djlint --reformat --profile=askama
+  types_or: [html]
+  language: python
+
+- id: djlint-reformat-tera
+  name: djLint formatting for Tera
+  entry: djlint --reformat --profile=tera
+  types_or: [html]
+  language: python
+
+- id: djlint-reformat-liquid
+  name: djLint formatting for Liquid
+  entry: djlint --reformat --profile=liquid
+  types_or: [html]
   language: python
 
 - id: djlint-reformat-nunjucks
