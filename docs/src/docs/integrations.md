@@ -17,11 +17,17 @@ The repo provides multiple pre-configured hooks for specific djLint profiles (it
 ::: content
 
 - `djlint` for linting and `djlint-reformat` for formatting
-  This will look for files matching `templates/**.html` without setting `--profile`.
+  This will look for files matching `*.html` without setting `--profile`.
 - `djlint-django` and `djlint-reformat-django`
-  This will look for files matching `templates/**.html` and set `--profile=django`.
+  This will look for files matching `*.html` and set `--profile=django`.
 - `djlint-jinja` and `djlint-reformat-jinja`
   This will look for files matching `*.j2`,`*.jinja` or `*.jinja2` and set `--profile=jinja`.
+- `djlint-askama` and `djlint-reformat-askama`
+  This will look for files matching `*.html` and set `--profile=askama`.
+- `djlint-tera` and `djlint-reformat-tera`
+  This will look for files matching `*.html` and set `--profile=tera`.
+- `djlint-liquid` and `djlint-reformat-liquid`
+  This will look for files matching `*.html` and set `--profile=liquid`.
 - `djlint-nunjucks` and `djlint-reformat-nunjucks`
   This will look for files matching `*.njk` and set `--profile=nunjucks`.
 - `djlint-handlebars` and `djlint-reformat-handlebars`

@@ -17,11 +17,17 @@ djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检
 ::: content
 
 - 使用 `djlint` 进行代码检查并使用 `djlint-reformat` 进行代码格式化。
-  在未设置 `--profile` 时会查找 `templates/**.html`。
+  在未设置 `--profile` 时会查找 `*.html`。
 - 使用 `djlint-django` 和 `djlint-reformat-django`。
-  这时会查找 `templates/**.html` 并设置 `--profile=django`。
+  这时会查找 `*.html` 并设置 `--profile=django`。
 - 使用 `djlint-jinja` 和 `djlint-reformat-jinja`。
   这时会查找 `*.j2` 、 `*.jinja` 或 `*.jinja2` 并设置 `--profile=jinja`。
+- 使用 `djlint-askama` 和 `djlint-reformat-askama`。
+  这时会查找 `*.html` 并设置 `--profile=askama`。
+- 使用 `djlint-tera` 和 `djlint-reformat-tera`。
+  这时会查找 `*.html` 并设置 `--profile=tera`。
+- 使用 `djlint-liquid` 和 `djlint-reformat-liquid`。
+  这时会查找 `*.html` 并设置 `--profile=liquid`。
 - 使用 `djlint-nunjucks` 和 `djlint-reformat-nunjucks`。
   这时会查找 `*.njk` 并设置 `--profile=nunjucks`。
 - 使用 `djlint-handlebars` 和 `djlint-reformat-handlebars`。

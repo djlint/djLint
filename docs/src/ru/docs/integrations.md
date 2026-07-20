@@ -17,11 +17,17 @@ djLint можно использовать как [pre-commit](https://pre-commi
 ::: content
 
 - `djlint` для линтинга и `djlint-reformat` для форматирования
-  Будет искать файлы, соответствующие `templates/**.html`, без установки `--profile`.
+  Будет искать файлы, соответствующие `*.html`, без установки `--profile`.
 - `djlint-django` и `djlint-reformat-django`
-  Будет искать файлы, соответствующие `templates/**.html`, и устанавливать `--profile=django`.
+  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=django`.
 - `djlint-jinja` и `djlint-reformat-jinja`
   Будет искать файлы, соответствующие `*.j2`, `*.jinja` или `*.jinja2`, и устанавливать `--profile=jinja`.
+- `djlint-askama` и `djlint-reformat-askama`
+  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=askama`.
+- `djlint-tera` и `djlint-reformat-tera`
+  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=tera`.
+- `djlint-liquid` и `djlint-reformat-liquid`
+  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=liquid`.
 - `djlint-nunjucks` и `djlint-reformat-nunjucks`
   Будет искать файлы, соответствующие `*.njk`, и устанавливать `--profile=nunjucks`.
 - `djlint-handlebars` и `djlint-reformat-handlebars`
