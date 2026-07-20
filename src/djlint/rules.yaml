@@ -116,7 +116,7 @@
     flags: re.DOTALL|re.I
     default: false
     patterns:
-      - <(img|input|area|base|br|col|embed|hr|link|param|source|track|wbr|command|keygen|menuitem|path)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
+      - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|command|keygen|menuitem|path)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
 - rule:
     name: H018
     message: Void tags are self closing by nature and must end with ">", not "/>"

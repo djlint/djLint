@@ -178,6 +178,11 @@ def test_H017(
     assert result.exit_code == 1
     assert "H017 1:" in result.output
 
+    write_to_file(tmp_file.name, b'<meta charset="utf-8">')
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
+    assert result.exit_code == 1
+    assert "H017 1:" in result.output
+
     # test colgroup tag
     write_to_file(
         tmp_file.name, b"<colgroup><colgroup asdf></colgroup></colgroup>"
@@ -221,6 +226,16 @@ def test_H018(
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
     assert result.exit_code == 1
     assert "H018 1:" in result.output
+
+    write_to_file(tmp_file.name, b'<meta charset="utf-8" />')
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
+    assert result.exit_code == 1
+    assert "H018 1:" in result.output
+
+    # test svg path tag
+    write_to_file(tmp_file.name, b'<svg><path d="M0 0" /></svg>')
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
+    assert "H018" not in result.output
 
     # test colgroup tag
     write_to_file(
