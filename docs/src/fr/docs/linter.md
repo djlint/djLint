@@ -52,8 +52,8 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H014 | Plus de 2 lignes vides.                                                                                                   | ✔️     |
 | H015 | Les balises "h" doivent être suivies d'un retour à la ligne.                                                              | ✔️     |
 | H016 | Balise `title` manquante dans le html.                                                                                    | ✔️     |
-| H017 | Les balises vides doivent être auto-fermantes (incompatible avec : H018).                                                | -      |
-| H018 | Les balises vides sont auto-fermantes par nature et doivent se terminer par ">", et non "/>" (incompatible avec : H017).  | -       |
+| H017 | Les balises vides doivent être auto-fermantes (incompatible avec : H018).                                                 | -      |
+| H018 | Les balises vides sont auto-fermantes par nature et doivent se terminer par ">", et non "/>" (incompatible avec : H017).  | -      |
 | H019 | Remplacez `javascript:abc()` par l'événement `on_` et l'url réelle.                                                       | ✔️     |
 | H020 | Couple de balises vide trouvé. Envisagez de le supprimer.                                                                 | ✔️     |
 | H021 | Les styles en ligne doivent être évités.                                                                                  | ✔️     |
