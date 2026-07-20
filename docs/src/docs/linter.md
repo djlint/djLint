@@ -52,7 +52,8 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H014 | More than 2 blank lines.                                                                     | ✔️      |
 | H015 | Follow `h` tags with a line break.                                                           | ✔️      |
 | H016 | Missing `title` tag in html.                                                                 | ✔️      |
-| H017 | Void tags should be self closing.                                                            | -       |
+| H017 | Void tags should be self closing (conflicts with: H018).                                     | -       |
+| H018 | Void tags are self closing by nature and must end with ">", not "/>" (conflicts with: H017). | -       |
 | H019 | Replace `javascript:abc()` with `on_` event and real url.                                    | ✔️      |
 | H020 | Empty tag pair found. Consider removing.                                                     | ✔️      |
 | H021 | Inline styles should be avoided.                                                             | ✔️      |

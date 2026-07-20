@@ -192,6 +192,50 @@ def test_H017(
     assert "H017" not in result.output
 
 
+def test_H018(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b"<img this />")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H018 1:" not in result.output
+
+    write_to_file(tmp_file.name, b"<img this />")
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
+    assert result.exit_code == 1
+    assert "H018 1:" in result.output
+
+    write_to_file(tmp_file.name, b"<br/>")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H018 1:" not in result.output
+
+    write_to_file(tmp_file.name, b"<br/>")
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
+    assert result.exit_code == 1
+    assert "H018 1:" in result.output
+
+    write_to_file(tmp_file.name, b"<br />")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H018 1:" not in result.output
+
+    write_to_file(tmp_file.name, b"<br />")
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
+    assert result.exit_code == 1
+    assert "H018 1:" in result.output
+
+    # test colgroup tag
+    write_to_file(
+        tmp_file.name, b"<colgroup><colgroup asdf></colgroup></colgroup>"
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
+    print(result.output)
+    assert "H018 1:" not in result.output
+
+    # test template tags inside html
+    write_to_file(tmp_file.name, b"<image {{ > }} />")
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
+    assert "H018" not in result.output
+
+
 def test_DJ018(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
