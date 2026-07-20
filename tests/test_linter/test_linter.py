@@ -231,7 +231,7 @@ def test_H018(
     assert "H018 1:" not in result.output
 
     # test template tags inside html
-    write_to_file(tmp_file.name, b"<image {{ > }} />")
+    write_to_file(tmp_file.name, b"<image {{ /> }} >")
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
     assert "H018" not in result.output
 
