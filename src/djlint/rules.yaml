@@ -123,7 +123,7 @@
     flags: re.DOTALL|re.I
     default: false
     patterns:
-      - <(img|input|area|base|br|col|embed|hr|link|param|source|track|wbr|command|keygen|menuitem|path)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)/>
+      - <(area|base|br|col|command|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)/>
 - rule:
     name: D018
     message: (Django) Internal links should use the {% url ... %} pattern.
