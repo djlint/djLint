@@ -100,6 +100,9 @@ La première lettre d'un code suit le modèle :
 
 ### Détails des règles
 
+<!-- prettier-ignore-start -->
+<!-- the examples below are verified against djlint itself; prettier's html style would change what they demonstrate -->
+
 {% raw %}
 
 #### T001
@@ -1015,6 +1018,8 @@ Désactivée par défaut ; à activer avec `--include=H042`.
 ```
 
 {% endraw %}
+
+<!-- prettier-ignore-end -->
 
 ### Ajout de règles
 
