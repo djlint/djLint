@@ -1,6 +1,6 @@
 [project]
 name = "djlint"
-version = "1.42.0"
+version = "1.42.1"
 description = "HTML Template Linter and Formatter"
 readme = "README.md"
 requires-python = ">=3.10"

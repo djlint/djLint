@@ -2,22 +2,22 @@
 
 [Semantic Versioning](https://semver.org/)
 
-## [Unreleased]
+## [1.42.1] - 2026-07-20
 
 ### Fix
 
-- H017 and H018 no longer style `command`, `keygen` and `menuitem` — elements that were removed from the HTML standard. `path` intentionally stays in H017 only: SVG requires the closing slash, so H017 may demand it while H018 exempts it.
-- Enabling H018 together with H017 or H035 now prints a warning when linting — they enforce opposite void tag conventions, so only one should be on.
+- H017 and H018 no longer style `command`, `keygen` and `menuitem` - elements that were removed from the HTML standard.
+- Enabling H018 together with H017 or H035 now prints a warning when linting - they enforce opposite void tag conventions, so only one should be on.
 
 ### Changed
 
-Linter rule defaults were reviewed against a simple bar: on by default means correctness, security, clear accessibility, or a consistency check the formatter also enforces — with near-zero false positives. Four rules moved to opt-in (`--include=...`):
+Linter rule defaults were reviewed against a simple bar: on by default means correctness, security, clear accessibility, or a consistency check the formatter also enforces - with near-zero false positives. Four rules moved to opt-in (`--include=...`):
 
-- T003 (endblock names): neither Django nor Jinja requires a name on `{% endblock %}`; the name demand is a style preference. The correctness checks T003 used to bundle — unclosed `{% block %}`, orphan `{% endblock %}` and mismatched endblock names, all hard template errors — moved into T038, which stays on by default, so nothing real is lost when T003 is off.
+- T003 (endblock names): neither Django nor Jinja requires a name on `{% endblock %}`; the name demand is a style preference. The correctness checks T003 used to bundle - unclosed `{% block %}`, orphan `{% endblock %}` and mismatched endblock names, all hard template errors - moved into T038, which stays on by default, so nothing real is lost when T003 is off.
 - T002 (double quotes in tags): engines accept both quote styles, no autofix exists, and quote-style rules are the canonical example of style checks that don't belong in a default tier.
-- H006 (img width/height): valuable performance advice (browsers map the attributes to a default `aspect-ratio`, preventing layout shift) but performance rather than correctness, and the dimensions are frequently unknowable in a template — user uploads, CMS urls, art-directed `<picture>` sources — so the rule demands data the author may not have.
+- H006 (img width/height): valuable performance advice (browsers map the attributes to a default `aspect-ratio`, preventing layout shift) but performance rather than correctness, and the dimensions are frequently unknowable in a template - user uploads, CMS urls, art-directed `<picture>` sources - so the rule demands data the author may not have.
 - H031 (meta keywords): major search engines have ignored keyword metadata for over a decade; recommending that it be added is outdated advice. The niche intranet-indexer use case keeps the rule available via `--include=H031`.
-- H042 (label/for) moved the other way — from opt-in to on by default — after its false-positive class was removed: the rule now checks a file only when nothing in it could render an id invisibly. Any `{{ ... }}` output (form widgets), `{% include %}`/`{% extends %}` or unrecognized template tag silences the rule for that file, so where it does run, every report is a genuinely broken label association (a WCAG 1.3.1/4.1.2 failure the W3C validator also treats as an error).
+- H042 (label/for) moved the other way - from opt-in to on by default - after its false-positive class was removed: the rule now checks a file only when nothing in it could render an id invisibly. Any `{{ ... }}` output (form widgets), `{% include %}`/`{% extends %}` or unrecognized template tag silences the rule for that file, so where it does run, every report is a genuinely broken label association (a WCAG 1.3.1/4.1.2 failure the W3C validator also treats as an error).
 
 ## [1.42.0] - 2026-07-20
 
