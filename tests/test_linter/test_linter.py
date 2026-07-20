@@ -160,6 +160,22 @@ def test_H017(
     assert result.exit_code == 1
     assert "H017 1:" in result.output
 
+    # H017 and H018 enforce opposite conventions
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H017,H018"))
+    assert "H018 conflicts with H017" in result.output
+
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
+    assert "conflicts" not in result.output
+
+    # obsolete elements are no longer styled
+    write_to_file(tmp_file.name, b"<keygen><command><menuitem>")
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
+    assert "H017" not in result.output
+
+    write_to_file(tmp_file.name, b"<keygen/><command/><menuitem/>")
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
+    assert "H018" not in result.output
+
     write_to_file(tmp_file.name, b"<br>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H017 1:" not in result.output
@@ -672,6 +688,9 @@ def test_H031(
 ) -> None:
     write_to_file(tmp_file.name, b"<html>\nstuff\n</html>")
     result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H031" not in result.output
+
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H031"))
     assert result.exit_code == 1
     assert "H031 1:" in result.output
 

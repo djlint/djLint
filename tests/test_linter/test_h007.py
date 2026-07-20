@@ -90,12 +90,6 @@ def test_django_load_before_html_reports_missing_doctype(
             "match": "<html></html>",
             "message": "Consider adding a meta description.",
         },
-        {
-            "code": "H031",
-            "line": "2:0",
-            "match": "<html></html>",
-            "message": "Consider adding meta keywords.",
-        },
     ]
 
     output = linter(django_config, source, filename, filename)

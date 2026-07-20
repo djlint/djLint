@@ -41,7 +41,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                    | ✔️     |
 | D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                              | ✔️     |
 | H005 | La balise Html doit avoir l'attribut `lang`.                                                                              | ✔️     |
-| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | ✔️     |
+| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | -      |
 | H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                       | ✔️     |
 | H008 | Les attributs doivent être entre guillemets.                                                                              | ✔️     |
 | H009 | Les noms de balises doivent être en minuscules.                                                                           | ✔️     |
@@ -64,13 +64,13 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H026 | Les balises id et class vides peuvent être supprimées.                                                                    | ✔️     |
 | H029 | Pensez à utiliser des valeurs de méthode de formulaire en minuscules.                                                     | ✔️     |
 | H030 | Pensez à ajouter une méta-description.                                                                                    | ✔️     |
-| H031 | Pensez à ajouter des méta keywords.                                                                                       | ✔️     |
+| H031 | Pensez à ajouter des méta keywords.                                                                                       | -      |
 | H033 | Espace supplémentaire dans l'action du formulaire.                                                                        | ✔️     |
 | J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                      | ✔️     |
 | J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                               | ✔️     |
 | T001 | Les variables doivent être entourées d'un espace. Ex : {% raw %}`{{ this }}`{% endraw %}                                  | ✔️     |
-| T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         | ✔️     |
-| T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                        | ✔️     |
+| T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         | -      |
+| T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                        | -      |
 | T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      | ✔️     |
 | T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} | ✔️     |
 | T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            | ✔️     |
@@ -82,7 +82,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T039 | Balise de template non fermée trouvée.                                                                                    | ✔️     |
 | T040 | Nom de template manquant ou vide dans une balise extends ou include.                                                      | ✔️     |
 | H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                   | ✔️     |
-| H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | -      |
+| H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | ✔️     |
 
 ### Modèles de code
 
@@ -129,6 +129,8 @@ Non appliquée aux profils handlebars et golang.
 
 `Les doubles quotes doivent être utilisées dans les balises. Ex : {% extends "this.html" %}`
 
+Désactivée par défaut ; à activer avec `--include=T002`.
+
 Mélanger guillemets simples et doubles dans les balises de modèle (`{% extends %}`, `{% include %}`, `{% with %}`, `{% trans %}`, `{% now %}`) fait apparaître le même nom de modèle sous deux orthographes : les recherches et les renommages en masse manquent alors la moitié des occurrences. Standardiser sur les guillemets doubles garde les arguments des balises cohérents avec les guillemets des attributs HTML dans le reste du fichier.
 
 Les guillemets simples à l'intérieur des valeurs d'attributs HTML (par exemple `<span title="{% trans 'x' %}">`) ne sont pas signalés, puisque les guillemets doubles de l'attribut y imposent des guillemets simples.
@@ -149,7 +151,9 @@ Les guillemets simples à l'intérieur des valeurs d'attributs HTML (par exemple
 
 `Le bloc de fin doit avoir un nom. Ex : {% endblock body %}.`
 
-Lorsqu'un `{% block %}` s'étend sur de nombreuses lignes ou que des blocs sont imbriqués, un simple `{% endblock %}` ne donne aucun indice sur le bloc qu'il ferme : il est alors facile de fermer le mauvais bloc en éditant — les modèles enfants remplacent alors le mauvais contenu. Nommer le endblock documente l'appariement et permet à djLint comme à Django (qui lève une TemplateSyntaxError en cas de nom de endblock non concordant) de détecter un bloc fermé au mauvais endroit. La règle signale aussi les noms de endblock qui ne correspondent pas à leur bloc d'ouverture et les blocs laissés sans aucun endblock.
+Lorsqu'un `{% block %}` s'étend sur de nombreuses lignes ou que des blocs sont imbriqués, un simple `{% endblock %}` ne donne aucun indice sur le bloc qu'il ferme : il est alors facile de fermer le mauvais bloc en éditant — les modèles enfants remplacent alors le mauvais contenu. Nommer le endblock documente l'appariement et permet à djLint comme à Django (qui lève une TemplateSyntaxError en cas de nom de endblock non concordant) de détecter un bloc fermé au mauvais endroit. Les erreurs d'appariement — blocs non fermés, endblock orphelins et noms non concordants — sont des vérifications de justesse assurées par T038.
+
+Désactivée par défaut ; à activer avec `--include=T003`.
 
 Un nom n'est pas requis lorsque le bloc s'ouvre et se ferme sur la même ligne, par exemple `{% block title %}``{% endblock %}`.
 
@@ -230,6 +234,8 @@ Sans attribut lang sur `<html>`, les lecteurs d'écran devinent les règles de p
 #### H006
 
 `La balise img doit avoir les attributs height et width.`
+
+Désactivée par défaut ; à activer avec `--include=H006`.
 
 Lorsqu'une `<img>` n'a ni width ni height, le navigateur ne peut pas réserver l'espace avant le téléchargement de l'image, donc le contenu environnant saute pendant le chargement des images. Ce décalage de mise en page dégrade le Cumulative Layout Shift (une métrique Core Web Vitals) et peut amener les utilisateurs à cliquer au mauvais endroit pendant que la page se stabilise.
 
@@ -760,6 +766,8 @@ Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>`
 
 `Pensez à ajouter des méta keywords.`
 
+Désactivée par défaut ; à activer avec `--include=H031`.
+
 Les métadonnées de mots-clés sont encore consommées par certains outils de recherche de site, indexeurs d'intranet et robots plus anciens : une page qui ne déclare jamais `<meta name="keywords">` peut être invisible pour ces systèmes. Les grands moteurs de recherche publics l'ignorent toutefois, si bien que les équipes qui ne dépendent pas de tels outils désactivent couramment cette règle.
 
 Ne se déclenche que sur les fichiers contenant un document `<html>...</html>` complet.
@@ -912,7 +920,7 @@ Les attributs en double sont du HTML invalide, et les navigateurs ne conservent 
 
 Une balise de bloc telle que `{% if %}`, `{% for %}` ou `{% macro %}` sans sa balise de fin correspondante est une TemplateSyntaxError pure et simple dans Django et Jinja — la page échoue au rendu au moment de la requête, ce que cette règle détecte avant le déploiement. Elle signale aussi les balises de fin orphelines sans balise d'ouverture et les blocs incorrectement entrelacés (par exemple `{% if %}``{% for %}``{% endif %}`).
 
-L'appariement `{% block %}`/`{% endblock %}` est vérifié par T003, pas par cette règle. Les balises de bloc personnalisées enregistrées via custom_blocks sont également vérifiées, y compris leur forme auto-fermante / %}.
+L'appariement `{% block %}`/`{% endblock %}` et les noms de endblock non concordants sont vérifiés par cette règle ; T003 (désactivée par défaut) exige en plus un nom sur chaque `{% endblock %}` multiligne. Les balises de bloc personnalisées enregistrées via custom_blocks sont également vérifiées, y compris leur forme auto-fermante / %}.
 
 À éviter :
 
@@ -997,11 +1005,7 @@ Lorsqu'une balise HTML est ouverte dans un `{% block %}` mais fermée dans un au
 
 `L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.`
 
-Désactivée par défaut ; à activer avec --include=H042.
-
-La vérification se fait fichier par fichier et ne voit que les attributs id littéraux : un input rendu par un widget de formulaire Django (`{{ form.email }}` émet id="id_email") ou situé dans un partiel inclus via `{% include %}` lui est invisible, si bien que ces labels sont signalés alors que la page rendue est correcte — la raison principale pour laquelle cette règle est désactivée par défaut.
-
-Désactivée par défaut ; à activer avec `--include=H042`.
+La vérification ne s'exécute que sur les fichiers analysables de façon fiable : si le fichier contient quoi que ce soit pouvant rendre un id invisible ici — une sortie `{{ ... }}` telle qu'un widget de formulaire, un `{% include %}` ou `{% extends %}`, ou une balise de modèle inconnue — la règle reste silencieuse pour ce fichier. Là où elle s'exécute, un signalement est une association réellement cassée.
 
 À éviter :
 

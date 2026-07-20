@@ -60,13 +60,30 @@ django_test_data = [
         ("{% block a %}\n<p>hello</p>\n"),
         ([
             {
-                "code": "T003",
+                "code": "T038",
                 "line": "1:0",
                 "match": "{% block a %}",
-                "message": "Block should have matching endblock.",
+                "message": "Block tag has no matching end tag.",
             }
         ]),
-        id="unclosed_block_is_T003s_job",
+        id="unclosed_block",
+    ),
+    pytest.param(
+        ("{% block a %}\n<p>hello</p>\n{% endblock b %}\n"),
+        ([
+            {
+                "code": "T038",
+                "line": "3:0",
+                "match": "{% endblock b %}",
+                "message": "Endblock name should match opening block name.",
+            }
+        ]),
+        id="mismatched_endblock_name",
+    ),
+    pytest.param(
+        ("{% block a %}\n<p>hello</p>\n{% endblock a %}\n"),
+        ([]),
+        id="named_endblock_matches",
     ),
     pytest.param(
         ("{% verbatim %}\n{% if x %}\n{% endverbatim %}\n"),

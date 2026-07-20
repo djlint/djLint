@@ -41,7 +41,7 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 | D004 | （Django） 静态 URL 应遵循 {% raw %}`{% static path/to/file %}`{% endraw %} 形式。 | ✔️       |
 | D018 | （Django） 内部链接应使用 {% raw %}`{% url ... %}`{% endraw %} 形式。              | ✔️       |
 | H005 | HTML 标签应包含 `lang` 属性。                                                      | ✔️       |
-| H006 | `img` 标签应包含 `height` 和 `width` 属性。                                        | ✔️       |
+| H006 | `img` 标签应包含 `height` 和 `width` 属性。                                        | -        |
 | H007 | `<!DOCTYPE ... >` 应在 HTML 标签之前。                                             | ✔️       |
 | H008 | 属性应使用双引号。                                                                 | ✔️       |
 | H009 | 标签名应小写。                                                                     | ✔️       |
@@ -64,13 +64,13 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 | H026 | 空的 id 和 class 标签应被移除。                                                    | ✔️       |
 | H029 | 建议使用小写表单方法值。                                                           | ✔️       |
 | H030 | 建议添加 meta 描述。                                                               | ✔️       |
-| H031 | 建议添加 meta 关键字。                                                             | ✔️       |
+| H031 | 建议添加 meta 关键字。                                                             | -        |
 | H033 | 表单 action 发现多余空格。                                                         | ✔️       |
 | J004 | (Jinja) 静态 URL 应遵循 {% raw %}`{{ url_for('static'..) }}`{% endraw %} 形式。    | ✔️       |
 | J018 | (Jinja) 内部链接应使用 {% raw %}`{% url ... %}`{% endraw %} 形式。                 | ✔️       |
 | T001 | 变量外包含空格。示例：{% raw %}`{{ this }}`{% endraw %}                            | ✔️       |
-| T002 | 标签中应使用双引号。示例：{% raw %}`{% extends "this.html" %}`{% endraw %}         | ✔️       |
-| T003 | `Endblock` 应包含名称。示例：{% raw %}`{% endblock body %}`{% endraw %}.           | ✔️       |
+| T002 | 标签中应使用双引号。示例：{% raw %}`{% extends "this.html" %}`{% endraw %}         | -        |
+| T003 | `Endblock` 应包含名称。示例：{% raw %}`{% endblock body %}`{% endraw %}.           | -        |
 | T027 | 模板语法中发现未闭合的字符串。.                                                    | ✔️       |
 | T028 | 建议在属性值中使用无空格标签，例如：{% raw %}`{%- if/for -%}`{% endraw %}          | ✔️       |
 | T032 | 模板标签中发现多余空格。                                                           | ✔️       |
@@ -82,7 +82,7 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 | T039 | 发现未闭合的模板标签。                                                             | ✔️       |
 | T040 | extends 或 include 标签中缺少模板名或模板名为空。                                  | ✔️       |
 | H041 | 标签在与打开它不同的模板块中关闭。                                                 | ✔️       |
-| H042 | label 的 for 属性在此文件中没有匹配的元素 id。                                     | -        |
+| H042 | label 的 for 属性在此文件中没有匹配的元素 id。                                     | ✔️       |
 
 ### 编码规则
 
@@ -129,6 +129,8 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 
 `标签中应使用双引号。示例：{% extends "this.html" %}`
 
+默认禁用；使用 `--include=T002` 启用。
+
 在模板标签（`{% extends %}`、`{% include %}`、`{% with %}`、`{% trans %}`、`{% now %}`）中混用单引号和双引号，会让同一个模板名出现两种写法，导致搜索和批量重命名漏掉一半。统一使用双引号还能让标签参数与文件中其余 HTML 属性的引号风格保持一致。
 
 HTML 属性值内部的单引号（例如 `<span title="{% trans 'x' %}">`）不会被标记，因为属性本身的双引号迫使那里只能使用单引号。
@@ -149,7 +151,9 @@ HTML 属性值内部的单引号（例如 `<span title="{% trans 'x' %}">`）不
 
 `Endblock 应包含名称。示例：{% endblock body %}.`
 
-当 `{% block %}` 跨越多行或存在嵌套时，不带名称的 `{% endblock %}` 无法说明它闭合的是哪个块，编辑时很容易结束错误的块——子模板随之覆盖错误的内容。为 endblock 命名可以标明配对关系，让 djLint 和 Django（endblock 名称不匹配时会抛出 TemplateSyntaxError）都能发现闭合位置错误的块。该规则还会标记与开头块名不一致的 endblock 名称，以及没有任何 endblock 的块。
+当 `{% block %}` 跨越多行或存在嵌套时，不带名称的 `{% endblock %}` 无法说明它闭合的是哪个块，编辑时很容易结束错误的块——子模板随之覆盖错误的内容。为 endblock 命名可以标明配对关系，让 djLint 和 Django（endblock 名称不匹配时会抛出 TemplateSyntaxError）都能发现闭合位置错误的块。配对错误——未闭合的块、孤立的 endblock 以及名称不匹配——属于正确性检查，由 T038 负责。
+
+默认禁用；使用 `--include=T003` 启用。
 
 当块在同一行内开始并结束时不要求命名，例如 `{% block title %}``{% endblock %}`。
 
@@ -230,6 +234,8 @@ HTML 属性值内部的单引号（例如 `<span title="{% trans 'x' %}">`）不
 #### H006
 
 `img 标签应包含 height 和 width 属性。`
+
+默认禁用；使用 `--include=H006` 启用。
 
 当 `<img>` 没有 width 和 height 时，浏览器无法在图片下载前预留空间，图片加载过程中周围内容会随之跳动。这种布局偏移会恶化 Cumulative Layout Shift（Core Web Vitals 指标之一），还可能让用户在页面稳定前误点。
 
@@ -760,6 +766,8 @@ HTML 规范将表单 method 的关键字定义为小写（get、post）；浏览
 
 `建议添加 meta 关键字。`
 
+默认禁用；使用 `--include=H031` 启用。
+
 关键字元数据仍被一些站内搜索工具、内网索引器和较老的爬虫使用，因此从不声明 `<meta name="keywords">` 的页面对这些系统可能是不可见的。不过主流公共搜索引擎会忽略它，所以不依赖此类工具的团队通常会禁用此规则。
 
 只对包含完整 `<html>...</html>` 文档的文件生效。
@@ -912,7 +920,7 @@ HTML 规范将表单 method 的关键字定义为小写（get、post）；浏览
 
 像 `{% if %}`、`{% for %}` 或 `{% macro %}` 这样的块标签如果缺少对应的结束标签，在 Django 和 Jinja 中会直接导致 TemplateSyntaxError——页面在请求时无法渲染，而该规则能在部署前发现这一问题。它还会标记没有对应开始标签的孤立结束标签，以及嵌套交错错误的块（例如 `{% if %}``{% for %}``{% endif %}`）。
 
-`{% block %}`/`{% endblock %}` 的配对由 T003 检查，而不是本规则。通过 custom_blocks 注册的自定义块标签也会被检查，包括其自闭合的 / %} 形式。
+`{% block %}`/`{% endblock %}` 的配对以及 endblock 名称不匹配由本规则检查；T003（默认禁用）额外要求每个多行 `{% endblock %}` 都带名称。通过 custom_blocks 注册的自定义块标签也会被检查，包括其自闭合的 / %} 形式。
 
 错误示例：
 
@@ -999,9 +1007,7 @@ HTML 规范将表单 method 的关键字定义为小写（get、post）；浏览
 
 默认禁用；使用 --include=H042 启用。
 
-该检查以单个文件为单位，只能看到字面写出的 id 属性：由 Django 表单控件渲染出来的输入框（`{{ form.email }}` 会生成 id="id_email"），或位于被 `{% include %}` 引入的局部模板中的元素，对它都是不可见的，因此即使渲染后的页面是正确的，这些 label 仍会被标记——这也是该规则默认禁用的主要原因。
-
-默认禁用；使用 `--include=H042` 启用。
+该检查只在可以可靠分析的文件上运行：如果文件中包含任何可能渲染出本文件看不到的 id 的内容——如表单控件等 `{{ ... }}` 输出、`{% include %}` 或 `{% extends %}`、或无法识别的模板标签——该规则对此文件保持沉默。凡是它运行到的地方，报告都是真实的关联断裂。
 
 错误示例：
 

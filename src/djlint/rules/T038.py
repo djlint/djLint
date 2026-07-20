@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
 
 ORPHAN_END_MESSAGE: Final = "End tag has no matching block tag."
+MISMATCH_MESSAGE: Final = "Endblock name should match opening block name."
 
 _TEMPLATE_TAG_PATTERN: Final = re.compile(
     r"\{%(?:(?!%\}).)*%\}|\{\{[#^/](?:(?!\}\}).)*\}\}",
@@ -37,6 +38,10 @@ _OPEN_NAME_PATTERN: Final = re.compile(
 )
 _END_NAME_PATTERN: Final = re.compile(
     r"\{%-?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)", cache_pattern=False
+)
+# the label naming a {% block %} or {% endblock %}
+_BLOCK_LABEL_PATTERN: Final = re.compile(
+    r"\{%-?\s*(?:end)?block\s+([^\s%-][^\s%]*)", cache_pattern=False
 )
 
 
@@ -82,9 +87,7 @@ def run(
 
         if re.match(config.template_unindent, tag, RE_FLAGS_IX):
             end_name = _END_NAME_PATTERN.match(tag)
-            # {% block %}/{% endblock %} pairs are matched by T003, which
-            # also checks their names.
-            if end_name is None or end_name.group(1) == "block":
+            if end_name is None:
                 continue
             if _ignored(rule, config, html, match):
                 continue
@@ -105,7 +108,22 @@ def run(
                         _error(rule, open_match, line_ends, rule["message"])
                         for _, open_match in open_tags[index + 1 :]
                     )
+                    open_match = open_tags[index][1]
                     del open_tags[index:]
+                    if name == "block":
+                        # {% endblock foo %} must name its own block
+                        close_label = _BLOCK_LABEL_PATTERN.match(tag)
+                        open_label = _BLOCK_LABEL_PATTERN.match(
+                            open_match.group()
+                        )
+                        if (
+                            close_label
+                            and open_label
+                            and close_label.group(1) != open_label.group(1)
+                        ):
+                            errors.append(
+                                _error(rule, match, line_ends, MISMATCH_MESSAGE)
+                            )
                     break
             else:
                 errors.append(
@@ -116,11 +134,7 @@ def run(
             config.template_indent, tag, RE_FLAGS_IX
         ) or tag.startswith(("{{#", "{{^")):
             open_name = _OPEN_NAME_PATTERN.match(tag)
-            if (
-                open_name is None
-                or (tag.startswith("{%") and open_name.group(1) == "block")
-                or _ignored(rule, config, html, match)
-            ):
+            if open_name is None or _ignored(rule, config, html, match):
                 continue
             open_tags.append((open_name.group(1), match))
 

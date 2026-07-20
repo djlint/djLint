@@ -13,10 +13,12 @@
 - rule:
     name: T002
     message: Double quotes should be used in tags.
+    default: false
     python_module: djlint.rules.T002
 - rule:
     name: T003
     message: "Endblock should have name. Ex: {% endblock body %}."
+    default: false
     python_module: djlint.rules.T003
 - rule:
     name: D004
@@ -41,6 +43,7 @@
 - rule:
     name: H006
     message: Img tag should have height and width attributes.
+    default: false
     flags: re.DOTALL|re.I
     patterns:
       - <img\b(?:(?!(?:height)=)[^>])*/?>
@@ -116,14 +119,14 @@
     flags: re.DOTALL|re.I
     default: false
     patterns:
-      - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|command|keygen|menuitem|path)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
+      - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|path)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
 - rule:
     name: H018
     message: Void tags are self closing by nature and must end with ">", not "/>"
     flags: re.DOTALL|re.I
     default: false
     patterns:
-      - <(area|base|br|col|command|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)/>
+      - <(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)/>
 - rule:
     name: D018
     message: (Django) Internal links should use the {% url ... %} pattern.
@@ -213,6 +216,7 @@
 - rule:
     name: H031
     message: Consider adding meta keywords.
+    default: false
     flags: re.DOTALL|re.I
     patterns:
       - <html[^>]*?>(?:(?!<meta[^>]*?name=([\"|'])keywords\b).)*</html>
@@ -274,5 +278,4 @@
 - rule:
     name: H042
     message: Label for attribute has no matching element id in this file.
-    default: false
     python_module: djlint.rules.H042

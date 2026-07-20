@@ -59,12 +59,44 @@ test_data = [
     pytest.param(
         ('<label for="{{ field.id_for_label }}">Field</label>\n'),
         ([]),
-        id="template_generated_for_skipped",
+        id="output_expression_silences_file",
     ),
     pytest.param(
         ('<label for="wine">Wine</label>\n<input id="{{ prefix }}-wine">\n'),
         ([]),
-        id="template_generated_id_skips_file",
+        id="dynamic_id_silences_file",
+    ),
+    pytest.param(
+        ('<label for="id_email">Email</label>\n{{ form.email }}\n'),
+        ([]),
+        id="widget_output_silences_file",
+    ),
+    pytest.param(
+        ('<label for="x">X</label>\n{% include "form.html" %}\n'),
+        ([]),
+        id="include_silences_file",
+    ),
+    pytest.param(
+        ('<label for="x">X</label>\n{% render_field form.x %}\n'),
+        ([]),
+        id="unknown_tag_silences_file",
+    ),
+    pytest.param(
+        (
+            "{% if a %}\n"
+            '<label for="wine">Wine</label>\n'
+            '<input id="cheese">\n'
+            "{% endif %}\n"
+        ),
+        ([
+            {
+                "code": "H042",
+                "line": "2:0",
+                "match": '<label for="wine">',
+                "message": "Label for attribute has no matching element id in this file.",
+            }
+        ]),
+        id="control_flow_only_file_is_checked",
     ),
     pytest.param(
         ("<label>Wine <input></label>\n"), ([]), id="label_without_for"

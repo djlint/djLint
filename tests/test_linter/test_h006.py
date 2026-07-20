@@ -10,10 +10,10 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint.lint import linter
+from djlint.settings import Config
 from tests.conftest import lint_printer
 
 if TYPE_CHECKING:
-    from djlint.settings import Config
     from djlint.types import LintError
 
 test_data = [
@@ -76,11 +76,10 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError]) -> None:
+    config = Config("dummy/source.html", include="H006")
     filename = "test.html"
-    output = linter(basic_config, source, filename, filename)
+    output = linter(config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 

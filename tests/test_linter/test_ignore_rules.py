@@ -21,17 +21,11 @@ test_data = [
         ("<img>{# djlint:off H004,H006,H013 #}\n<img>\n"),
         ([
             {
-                "code": "H006",
-                "line": "1:0",
-                "match": "<img>",
-                "message": "Img tag should have height and width attributes.",
-            },
-            {
                 "code": "H013",
                 "line": "1:0",
                 "match": "<img>",
                 "message": "Img tag should have an alt attribute.",
-            },
+            }
         ]),
         id="one",
     ),

@@ -30,9 +30,8 @@ _BLOCK_PATTERN: Final = re.compile(
     RE_FLAGS_IS,
     cache_pattern=False,
 )
-MISMATCH_MESSAGE: Final = "Endblock name should match opening block name."
-MISSING_OPEN_MESSAGE: Final = "Endblock should have matching block."
-MISSING_CLOSE_MESSAGE: Final = "Block should have matching endblock."
+# pairing and name-mismatch correctness is checked by T038; this rule
+# only enforces the style demand that a multi-line endblock is named
 
 
 def _ignored(
@@ -92,16 +91,7 @@ def run(
             errors.append(_error(rule, match, line_ends, rule["message"]))
             continue
 
-        if not open_blocks:
-            errors.append(_error(rule, match, line_ends, MISSING_OPEN_MESSAGE))
-            continue
+        if open_blocks:
+            open_blocks.pop()
 
-        open_name, _ = open_blocks.pop()
-        if name != open_name:
-            errors.append(_error(rule, match, line_ends, MISMATCH_MESSAGE))
-
-    errors.extend(
-        _error(rule, match, line_ends, MISSING_CLOSE_MESSAGE)
-        for _, match in open_blocks
-    )
     return tuple(errors)

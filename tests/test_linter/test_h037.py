@@ -139,12 +139,6 @@ test_data = [
         ),
         ([
             {
-                "code": "H006",
-                "line": "1:0",
-                "match": '<img src="img.jpg" :',
-                "message": "Img tag should have height and width attributes.",
-            },
-            {
                 "code": "H013",
                 "line": "1:0",
                 "match": '<img src="img.jpg" :',
@@ -166,12 +160,6 @@ test_data = [
             '">'
         ),
         ([
-            {
-                "code": "H006",
-                "line": "1:0",
-                "match": '<img :src="img.jpg" ',
-                "message": "Img tag should have height and width attributes.",
-            },
             {
                 "code": "H013",
                 "line": "1:0",

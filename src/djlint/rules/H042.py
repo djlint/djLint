@@ -38,6 +38,59 @@ _ATTR_PATTERN: Final = re.compile(
 )
 _TEMPLATE_SYNTAX: Final = ("{{", "{%", "{#")
 
+# template tags that provably cannot render an element id. Anything
+# else — {{ }} outputs (form widgets), {% include %}/{% extends %}
+# (elements live in other files) or unknown custom tags (crispy,
+# render_field, ...) — can emit ids this file never shows, so the file
+# cannot be checked soundly and the rule stays silent for it.
+_SAFE_TAGS: Final = frozenset({
+    "if",
+    "elif",
+    "else",
+    "endif",
+    "for",
+    "empty",
+    "endfor",
+    "with",
+    "endwith",
+    "block",
+    "endblock",
+    "comment",
+    "endcomment",
+    "verbatim",
+    "endverbatim",
+    "autoescape",
+    "endautoescape",
+    "spaceless",
+    "endspaceless",
+    "filter",
+    "endfilter",
+    "load",
+    "csrf_token",
+    "now",
+    "url",
+    "static",
+    "trans",
+    "translate",
+    "blocktrans",
+    "blocktranslate",
+    "endblocktrans",
+    "endblocktranslate",
+    "plural",
+    "set",
+    "endset",
+    "macro",
+    "endmacro",
+})
+_TAG_NAME: Final = re.compile(r"\{%-?\s*(\w+)", cache_pattern=False)
+
+
+def _can_check(masked: str) -> bool:
+    """Whether every template construct is unable to emit an id."""
+    if "{{" in masked:
+        return False
+    return all(m.group(1) in _SAFE_TAGS for m in _TAG_NAME.finditer(masked))
+
 
 def _attributes(html: str, token: TagToken) -> tuple[tuple[str, str], ...]:
     """Extract id/for attribute names and values from a tag."""
@@ -86,6 +139,8 @@ def run(
     ids: set[str] = set()
     labels: list[tuple[TagToken, str]] = []
     masked = _masked(config, html)
+    if not _can_check(masked):
+        return ()
 
     for token in tokenize_tags(masked):
         if token.closing or token.declaration:

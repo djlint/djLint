@@ -1385,6 +1385,20 @@ class Config:
                 or x["rule"]["name"] in self.include.split(",")
             )
         )
+        if self.lint:
+            enabled_rules = {x["rule"]["name"] for x in self.linter_rules}
+            conflicting = {"H017", "H035"} & enabled_rules
+            if "H018" in enabled_rules and conflicting:
+                echo(
+                    style(
+                        "Warning: H018 conflicts with"
+                        f" {' and '.join(sorted(conflicting))} — they enforce"
+                        " opposite void tag styles. Enable only one"
+                        " convention. 😢",
+                        fg="yellow",
+                    ),
+                    err=True,
+                )
 
         # patterns built from configuration options
         self.custom_blocks = str(

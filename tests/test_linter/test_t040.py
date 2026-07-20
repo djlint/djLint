@@ -38,13 +38,7 @@ test_data = [
                 "line": "1:0",
                 "match": "{% include ''",
                 "message": "Missing or empty template name in extends or include tag.",
-            },
-            {
-                "code": "T002",
-                "line": "1:0",
-                "match": "{% include '' %}",
-                "message": "Double quotes should be used in tags.",
-            },
+            }
         ]),
         id="empty_include_single_quotes",
     ),

@@ -41,7 +41,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | D004 | (Django) Static urls should follow {% raw %}`{% static path/to/file %}`{% endraw %} pattern. | ✔️      |
 | D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         | ✔️      |
 | H005 | Html tag should have `lang` attribute.                                                       | ✔️      |
-| H006 | `img` tag should have `height` and `width` attributes.                                       | ✔️      |
+| H006 | `img` tag should have `height` and `width` attributes.                                       | -       |
 | H007 | `<!DOCTYPE ... >` should be present before the html tag.                                     | ✔️      |
 | H008 | Attributes should be double quoted.                                                          | ✔️      |
 | H009 | Tag names should be lowercase.                                                               | ✔️      |
@@ -64,13 +64,13 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H026 | Empty id and class tags can be removed.                                                      | ✔️      |
 | H029 | Consider using lowercase form method values.                                                 | ✔️      |
 | H030 | Consider adding a meta description.                                                          | ✔️      |
-| H031 | Consider adding meta keywords.                                                               | ✔️      |
+| H031 | Consider adding meta keywords.                                                               | -       |
 | H033 | Extra whitespace found in form action.                                                       | ✔️      |
 | J004 | (Jinja) Static urls should follow {% raw %}`{{ url_for('static'..) }}`{% endraw %} pattern.  | ✔️      |
 | J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          | ✔️      |
 | T001 | Variables should be wrapped in whitespace. Ex: {% raw %}`{{ this }}`{% endraw %}             | ✔️      |
-| T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    | ✔️      |
-| T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   | ✔️      |
+| T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    | -       |
+| T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   | -       |
 | T027 | Unclosed string found in template syntax.                                                    | ✔️      |
 | T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} | ✔️      |
 | T032 | Extra whitespace found in template tags.                                                     | ✔️      |
@@ -82,7 +82,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | T039 | Unclosed template tag found.                                                                 | ✔️      |
 | T040 | Missing or empty template name in extends or include tag.                                    | ✔️      |
 | H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
-| H042 | Label for attribute has no matching element id in this file.                                 | -       |
+| H042 | Label for attribute has no matching element id in this file.                                 | ✔️      |
 
 ### Code Patterns
 
@@ -129,6 +129,8 @@ Do:
 
 `Double quotes should be used in tags.`
 
+Off by default; enable with `--include=T002`.
+
 Mixing single and double quotes in template tags (`{% extends %}`, `{% include %}`, `{% with %}`, `{% trans %}`, `{% now %}`) makes the same template name appear in two spellings, so searches and bulk renames miss half the occurrences. Standardizing on double quotes keeps tag arguments consistent with HTML attribute quoting in the rest of the file.
 
 Single quotes inside HTML attribute values (e.g. `<span title="{% trans 'x' %}">`) are not flagged, since the attribute's double quotes force single quotes there.
@@ -149,7 +151,9 @@ Do:
 
 `Endblock should have name. Ex: {% endblock body %}.`
 
-When a `{% block %}` spans many lines or blocks are nested, a bare `{% endblock %}` gives no clue which block it closes, so it is easy to end the wrong one while editing — child templates then override the wrong content. Naming the endblock documents the pairing and lets both djLint and Django (which raises TemplateSyntaxError on a mismatched endblock name) catch a block closed in the wrong place. The rule also flags endblock names that do not match their opening block and blocks left without any endblock.
+When a `{% block %}` spans many lines or blocks are nested, a bare `{% endblock %}` gives no clue which block it closes, so it is easy to end the wrong one while editing — child templates then override the wrong content. Naming the endblock documents the pairing and lets both djLint and Django (which raises TemplateSyntaxError on a mismatched endblock name) catch a block closed in the wrong place. Pairing errors — unclosed blocks, orphan endblocks and mismatched names — are correctness checks handled by T038.
+
+Off by default; enable with `--include=T003`.
 
 A name is not required when the block opens and closes on the same line, e.g. `{% block title %}``{% endblock %}`.
 
@@ -230,6 +234,8 @@ Do:
 #### H006
 
 `Img tag should have height and width attributes.`
+
+Off by default; enable with `--include=H006`.
 
 When an `<img>` has no width and height, the browser cannot reserve space before the image downloads, so surrounding content jumps as images load. This layout shift degrades Cumulative Layout Shift (a Core Web Vitals metric) and can make users mis-click while the page settles.
 
@@ -760,6 +766,8 @@ Do:
 
 `Consider adding meta keywords.`
 
+Off by default; enable with `--include=H031`.
+
 Keyword metadata is still consumed by some site-search tools, intranet indexers, and older crawlers, so a page that never declares `<meta name="keywords">` can be invisible to those systems. Major public search engines ignore it, though, so teams that don't rely on such tooling commonly disable this rule.
 
 Only fires on files containing a complete `<html>...</html>` document.
@@ -912,7 +920,7 @@ Do:
 
 A block tag such as `{% if %}`, `{% for %}` or `{% macro %}` without its matching end tag is a hard TemplateSyntaxError in Django and Jinja — the page fails to render at request time, which this rule catches before deploy. It also flags orphan end tags with no opening tag and incorrectly interleaved blocks (e.g. `{% if %}``{% for %}``{% endif %}`).
 
-`{% block %}`/`{% endblock %}` pairing is checked by T003, not this rule. Custom block tags registered via custom_blocks are also checked, including their self-closing / %} form.
+`{% block %}`/`{% endblock %}` pairing and endblock-name mismatches are checked by this rule; T003 (off by default) additionally demands a name on every multi-line `{% endblock %}`. Custom block tags registered via custom_blocks are also checked, including their self-closing / %} form.
 
 Don't:
 
@@ -999,9 +1007,7 @@ Do:
 
 Off by default; enable with --include=H042.
 
-The check is per-file and only sees literal id attributes: an input rendered by a Django form widget (`{{ form.email }}` emits id="id_email") or living in an `{% include %}`d partial is invisible to it, so those labels are flagged even though the rendered page is correct — the main reason this rule is off by default.
-
-Off by default; enable with `--include=H042`.
+The check runs only on files it can analyze soundly: if the file contains anything that could render an id this file never shows — a `{{ ... }}` output such as a form widget, an `{% include %}` or `{% extends %}`, or an unrecognized template tag — the rule stays silent for that file. Where it does run, a report is a real broken association.
 
 Don't:
 
