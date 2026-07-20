@@ -82,6 +82,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | T039 | Unclosed template tag found.                                                                 | ✔️      |
 | T040 | Missing or empty template name in extends or include tag.                                    | ✔️      |
 | H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
+| H042 | Label for attribute has no matching element id in this file.                                 | -       |
 
 ### Code Patterns
 

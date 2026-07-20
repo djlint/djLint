@@ -8,6 +8,7 @@
 
 - New rule T040: `{% extends %}` and `{% include %}` tags with a missing or empty template name are now reported — `{% extends '' %}` raises `TemplateDoesNotExist` only at render time, so the typo is easy to ship.
 - New rule H041: an html tag opened in one `{% block %}` and closed in a different one is now reported. The pair looks balanced file-wide, but a child template overriding either block renders unbalanced html.
+- New rule H042 (off by default, enable with `--include=H042`): a `<label for="...">` whose value matches no element `id` in the same file is reported. Template-generated `for` values are skipped, and a file containing any template-generated `id` is not checked. Off by default because inputs rendered by e.g. `{{ form.field }}` carry ids the linter cannot see.
 - New optional rule H018: void tags closed with `/>` instead of `>` are now reported, e.g. `<br/>` or `<img src="x" />`. The trailing slash has no effect in HTML. This is the opposite convention of the optional H017 ("void tags should be self closing") — enable one or the other, not both.
 
 ### Fix

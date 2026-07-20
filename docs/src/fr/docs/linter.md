@@ -82,6 +82,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T039 | Balise de template non fermée trouvée.                                                                                    | ✔️     |
 | T040 | Nom de template manquant ou vide dans une balise extends ou include.                                                      | ✔️     |
 | H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                   | ✔️     |
+| H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | -      |
 
 ### Modèles de code
 

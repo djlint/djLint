@@ -271,3 +271,8 @@
     name: H041
     message: Tag is closed in a different template block than it was opened.
     python_module: djlint.rules.H041
+- rule:
+    name: H042
+    message: Label for attribute has no matching element id in this file.
+    default: false
+    python_module: djlint.rules.H042
