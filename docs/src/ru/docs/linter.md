@@ -100,6 +100,9 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 
 ### Подробное описание правил
 
+<!-- prettier-ignore-start -->
+<!-- the examples below are verified against djlint itself; prettier's html style would change what they demonstrate -->
+
 {% raw %}
 
 #### T001
@@ -1015,6 +1018,8 @@ text/javascript и text/css — значения по умолчанию в HTML
 ```
 
 {% endraw %}
+
+<!-- prettier-ignore-end -->
 
 ### Добавление правил
 

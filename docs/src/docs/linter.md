@@ -100,6 +100,9 @@ The first letter of a code follows the pattern:
 
 ### Rule Details
 
+<!-- prettier-ignore-start -->
+<!-- the examples below are verified against djlint itself; prettier's html style would change what they demonstrate -->
+
 {% raw %}
 
 #### T001
@@ -1015,6 +1018,8 @@ Do:
 ```
 
 {% endraw %}
+
+<!-- prettier-ignore-end -->
 
 ### Adding Rules
 
