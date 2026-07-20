@@ -8,6 +8,11 @@
 
 - New rule T040: `{% extends %}` and `{% include %}` tags with a missing or empty template name are now reported — `{% extends '' %}` raises `TemplateDoesNotExist` only at render time, so the typo is easy to ship.
 - New rule H041: an html tag opened in one `{% block %}` and closed in a different one is now reported. The pair looks balanced file-wide, but a child template overriding either block renders unbalanced html.
+- New optional rule H018: void tags closed with `/>` instead of `>` are now reported, e.g. `<br/>` or `<img src="x" />`. The trailing slash has no effect in HTML. This is the opposite convention of the optional H017 ("void tags should be self closing") — enable one or the other, not both.
+
+### Fix
+
+- H017 no longer misfires on tags that merely start with a void tag name: `<cola>` (matched by a broken `colgroup` exclusion) and custom elements like `<img-icon>` are no longer reported. `<meta>` tags, missing from the rule's void tag list, are now reported.
 
 ## [1.41.0] - 2026-07-19
 
