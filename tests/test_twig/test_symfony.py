@@ -59,6 +59,28 @@ test_data = [
         ),
         id="github issue 1370",
     ),
+    pytest.param(
+        (
+            "{{ form_start(form, {\n"
+            "                    attr: {\n"
+            "                    class: 'quiz',\n"
+            "                    'data-controller': 'ajax-form quiz',\n"
+            "'data-ajax-form-scroll-to-value': '#ajax-content-1',\n"
+            "}\n"
+            "}) }}\n"
+        ),
+        (
+            "{{ form_start(form, {\n"
+            "    attr: {\n"
+            "        class: 'quiz',\n"
+            "        'data-controller': 'ajax-form quiz',\n"
+            "        'data-ajax-form-scroll-to-value': '#ajax-content-1',\n"
+            "    }\n"
+            "}) }}\n"
+        ),
+        # https://github.com/djlint/djLint/issues/842
+        id="github issue 842",
+    ),
 ]
 
 
