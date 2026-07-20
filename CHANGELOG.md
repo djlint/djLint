@@ -6,15 +6,27 @@
 
 ### Feature
 
-- `indent` and `max_line_length` now fall back to `indent_size` and `max_line_length` from a `.editorconfig` at the project root when they are not set on the command line or in a djlint config file. Only sections applying to html (or the configured `extension`) are read.
-- New rule T040: `{% extends %}` and `{% include %}` tags with a missing or empty template name are now reported — `{% extends '' %}` raises `TemplateDoesNotExist` only at render time, so the typo is easy to ship.
-- New rule H041: an html tag opened in one `{% block %}` and closed in a different one is now reported. The pair looks balanced file-wide, but a child template overriding either block renders unbalanced html.
-- New rule H042 (off by default, enable with `--include=H042`): a `<label for="...">` whose value matches no element `id` in the same file is reported. Template-generated `for` values are skipped, and a file containing any template-generated `id` is not checked. Off by default because inputs rendered by e.g. `{{ form.field }}` carry ids the linter cannot see.
-- New optional rule H018: void tags closed with `/>` instead of `>` are now reported, e.g. `<br/>` or `<img src="x" />`. The trailing slash has no effect in HTML. This is the opposite convention of the optional H017 ("void tags should be self closing") — enable one or the other, not both.
-- New `askama` profile for [Askama](https://askama.readthedocs.io/) (jinja-style templates in Rust): behaves like the `jinja` profile, but function and `{% set %}`/`{% let %}` formatting are disabled so Rust expressions like `some_macro!("foo")?`, char literals `'a'` and tuples keep their exact spelling, string quotes inside expressions are never rewritten, and the Flask-specific `url_for` rules (J004/J018) don't apply.
-- New `tera` profile for [Tera](https://keats.github.io/tera/) (Rust, used by Zola): jinja-style behavior with Tera v2 `{% component %}`/`{% endcomponent %}` blocks indented and `{% set_global %}` treated as a single tag; the Flask-specific `url_for` rules don't apply. MiniJinja needs no profile of its own — it is fully Jinja2-compatible, use `--profile=jinja`.
-- New `liquid` profile for [Liquid](https://shopify.github.io/liquid/) (Shopify themes, Jekyll, Eleventy, the Rust `liquid` crate): `{% case %}`/`{% when %}`, `{% capture %}`, `{% tablerow %}`, `{% unless %}`/`{% elsif %}` indent correctly, `{%- -%}` whitespace control is handled, and the bodies of Shopify section tags (`{% schema %}`, `{% style %}`, `{% javascript %}`, `{% stylesheet %}`) are left untouched since they contain JSON, CSS or JS rather than html.
-- The `golang` profile now indents template blocks: `{{ if }}`, `{{ range }}`, `{{ with }}`, `{{ block }}` and `{{ define }}` indent their contents up to the matching `{{ end }}`, with `{{ else }}`/`{{ else if }}` as branches, including the `{{- -}}` whitespace-control forms. Blocks opened and closed on one line are left alone, and single tags like `{{ template }}` or variables such as `{{ .end }}` are unaffected.
+Template languages:
+
+- New `askama` profile for [Askama](https://askama.readthedocs.io/) (jinja-style templates in Rust). Rust expressions are never reformatted: function and `{% set %}`/`{% let %}` formatting are disabled so `some_macro!("foo")?`, char literals `'a'` and tuples keep their exact spelling, and string quotes are never rewritten. The Flask-specific `url_for` rules (J004/J018) don't apply.
+- New `tera` profile for [Tera](https://keats.github.io/tera/) (Rust, used by Zola): jinja-style formatting plus Tera v2 `{% component %}`/`{% endcomponent %}` blocks and single-tag `{% set_global %}`. The Flask-specific `url_for` rules don't apply. MiniJinja needs no profile of its own — it is fully Jinja2-compatible, use `--profile=jinja`.
+- New `liquid` profile for [Liquid](https://shopify.github.io/liquid/) (Shopify themes, Jekyll, Eleventy, the Rust `liquid` crate). `{% case %}`/`{% when %}`, `{% capture %}`, `{% tablerow %}`, `{% form %}`, `{% paginate %}`, `{% highlight %}` and `{% unless %}`/`{% elsif %}` indent correctly, `{%- -%}` whitespace control is handled, and the bodies of Shopify section tags (`{% schema %}`, `{% style %}`, `{% javascript %}`, `{% stylesheet %}`) are left untouched — they contain JSON, CSS or JS rather than html.
+- The `golang` profile now indents template blocks: `{{ if }}`, `{{ range }}`, `{{ with }}`, `{{ block }}` and `{{ define }}` indent their contents up to the matching `{{ end }}`, with `{{ else }}`/`{{ else if }}` as branches and the `{{- -}}` whitespace-control forms included. Blocks opened and closed on one line are left alone; single tags like `{{ template }}` and lookalike variables such as `{{ .end }}` are unaffected.
+
+New linter rules:
+
+- T040: `{% extends %}` or `{% include %}` with a missing or empty template name — an error the engine only raises at render time, so the typo is easy to ship.
+- H041: an html tag opened in one `{% block %}` and closed in a different one. The pair looks balanced in the file, but a child template overriding either block renders unbalanced html.
+- H018 (off by default, enable with `--include=H018`): void tags closed with `/>` instead of `>`, e.g. `<br/>` — the trailing slash has no effect in HTML. The opposite convention of the optional H017 ("void tags should be self closing"); enable one or the other, not both.
+- H042 (off by default, enable with `--include=H042`): a `<label for="...">` whose value matches no element `id` in the same file. Template-generated values are skipped; the rule is opt-in because inputs rendered by e.g. `{{ form.email }}` carry ids the linter cannot see.
+
+Configuration:
+
+- `indent` and `max_line_length` now fall back to `indent_size` and `max_line_length` from a `.editorconfig` at the project root. The command line and djlint config files still take precedence, and only sections applying to html (or the configured `extension`) are read.
+
+Documentation:
+
+- Every linter rule now has a detailed entry on the linter page — what it checks, why it matters, and a verified Don't/Do example pair — in English, French, Russian and Chinese. Askama, Tera and Liquid get language pages, logos and homepage cards, and engines covered by existing profiles (MiniJinja, Jinjava, Pebble, the Liquid dialects) are noted on the pages of the profiles that cover them.
 
 ### Fix
 
