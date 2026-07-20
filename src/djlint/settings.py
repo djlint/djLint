@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+from fnmatch import fnmatch
 from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -151,6 +152,56 @@ def find_djlint_rules(root: Path) -> Path | None:
         return rules
 
     return None
+
+
+def _editorconfig_glob_matches_html(glob: str, extension: str) -> bool:
+    """Whether an .editorconfig section applies to template files."""
+    if glob == "*":
+        return True
+    # expand one level of {a,b} alternation
+    globs = [glob]
+    if "{" in glob and "}" in glob:
+        head, _, rest = glob.partition("{")
+        body, _, tail = rest.partition("}")
+        globs = [head + alt + tail for alt in body.split(",")]
+    names = (f"test.{extension}", "test.html")
+    return any(
+        fnmatch(name, g.lstrip("*").lstrip("/") if g.startswith("**") else g)
+        for g in globs
+        for name in names
+    )
+
+
+def load_editorconfig(root: Path, extension: str) -> dict[str, int]:
+    """Read indent_size and max_line_length from a root .editorconfig.
+
+    Used as defaults only: the command line and djlint config files take
+    precedence. Sections are considered when their glob applies to html
+    or the configured extension.
+    """
+    path = root / ".editorconfig"
+    result: dict[str, int] = {}
+    if not path.is_file():
+        return result
+
+    section_applies = False
+    for raw_line in path.read_text(
+        encoding="utf-8", errors="ignore"
+    ).splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith(("#", ";")):
+            continue
+        if line.startswith("[") and line.endswith("]"):
+            section_applies = _editorconfig_glob_matches_html(
+                line[1:-1], extension
+            )
+            continue
+        key, sep, value = line.partition("=")
+        if sep and section_applies:
+            key, value = key.strip().lower(), value.strip()
+            if key in {"indent_size", "max_line_length"} and value.isdigit():
+                result[key] = int(value)
+    return result
 
 
 def load_pyproject_config(filepath: Path) -> Any:
@@ -1254,11 +1305,15 @@ class Config:
             else djlint_settings.get("css")
         ) or {}
 
-        indent = indent or setting_int("indent", 4)
+        # .editorconfig supplies defaults only; cli and config files win
+        editorconfig = load_editorconfig(self.project_root, self.extension)
+        indent = indent or setting_int(
+            "indent", editorconfig.get("indent_size", 4)
+        )
         self.indent_size = indent
         self.indent = indent * " "
         self.max_line_length = max_line_length or setting_int(
-            "max_line_length", 120
+            "max_line_length", editorconfig.get("max_line_length", 120)
         )
         self.max_attribute_length = (
             max_attribute_length

@@ -6,6 +6,7 @@
 
 ### Feature
 
+- `indent` and `max_line_length` now fall back to `indent_size` and `max_line_length` from a `.editorconfig` at the project root when they are not set on the command line or in a djlint config file. Only sections applying to html (or the configured `extension`) are read.
 - New rule T040: `{% extends %}` and `{% include %}` tags with a missing or empty template name are now reported — `{% extends '' %}` raises `TemplateDoesNotExist` only at render time, so the typo is easy to ship.
 - New rule H041: an html tag opened in one `{% block %}` and closed in a different one is now reported. The pair looks balanced file-wide, but a child template overriding either block renders unbalanced html.
 - New rule H042 (off by default, enable with `--include=H042`): a `<label for="...">` whose value matches no element `id` in the same file is reported. Template-generated `for` values are skipped, and a file containing any template-generated `id` is not checked. Off by default because inputs rendered by e.g. `{{ form.field }}` carry ids the linter cannot see.
