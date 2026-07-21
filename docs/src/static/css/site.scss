@@ -156,8 +156,9 @@ html.has-navbar-fixed-top {
   object-fit: contain;
 }
 @media (prefers-color-scheme: dark) {
-  /* the nav logo and the language logos are drawn for light backgrounds */
-  .djlint-nav .navbar-brand img {
+  /* the nav/footer logo and the language logos are drawn for light backgrounds */
+  .djlint-nav .navbar-brand img,
+  .footer .image img {
     filter: invert(1) hue-rotate(180deg);
   }
   .image.brand {
@@ -305,6 +306,10 @@ pre .number {
 .message.hint .message-body,
 .message.alert .message-body {
   color: var(--bulma-text);
+}
+
+.option {
+  background-color: var(--bulma-scheme-main-ter);
 }
 
 .notification.is-info.is-light {

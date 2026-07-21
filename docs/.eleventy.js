@@ -295,7 +295,7 @@ module.exports = function (eleventyConfig) {
               /mr-1/,
               /mr-2/,
               /has-text-info/,
-              /has-background-white-ter/,
+              /option/,
               /is-rounded/,
             ],
           },

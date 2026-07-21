@@ -81,7 +81,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 
 {% for option in configuration | sort(false, false, "name") %}
 
-<div class="option has-background-white-ter p-3 my-3 is-rounded" data-name="{{option.name}}">
+<div class="option p-3 my-3 is-rounded" data-name="{{option.name}}">
 <div class="is-flex is-justify-content-space-between">
     <h3 class="title is-3">
         <a class="link bn" href="#{{ option.name | slugify }}">∞</a> {{ option.name }}</h3>
