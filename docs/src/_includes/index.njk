@@ -177,41 +177,50 @@ date: Last Modified
 
 {% highlight "html" %}{% raw %}
 {% block content %}
-<main class="post-list">
-{% if posts %}
+<SECTION class="posts">
+
+
+<h2>Latest posts</h2>
+{%if posts%}
 <ul>
 {% for post in posts %}
-<li><a href="{% url 'post' post.slug %}">{{post.title}}</a>
-{% if post.draft %}<span class="tag">draft</span>{% endif %}
+<li>
+<a href="{% url 'post' post.slug %}" class="post-link {%if post.featured%}is-featured{%endif%}" data-analytics-id="post-{{post.id}}" aria-label="Read {{post.title}}">{{post.title|title}}</a>
 </li>
 {% endfor %}
 </ul>
-{% else %}
+{%else%}
 <p>No posts yet.</p>
-{% endif %}
-</main>
+{%endif%}
+</SECTION>
 {% endblock %}
 {% endraw %}{% endhighlight %}
 
       </div>
       <div class="column is-half">
-         <h3 class="title is-5"><code>djlint messy.html --reformat</code></h3>
+         <h3 class="title is-5"><code>djlint messy.html --reformat --single-attribute-per-line</code></h3>
 
 {% highlight "html" %}{% raw %}
 {% block content %}
-<main class="post-list">
-    {% if posts %}
-        <ul>
-            {% for post in posts %}
-                <li><a href="{% url 'post' post.slug %}">{{ post.title }}</a>
-                    {% if post.draft %}<span class="tag">draft</span>{% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No posts yet.</p>
-    {% endif %}
-</main>
+    <section class="posts">
+        <h2>Latest posts</h2>
+        {% if posts %}
+            <ul>
+                {% for post in posts %}
+                    <li>
+                        <a
+                            href="{% url 'post' post.slug %}"
+                            class="post-link {% if post.featured %}is-featured{% endif %}"
+                            data-analytics-id="post-{{ post.id }}"
+                            aria-label="Read {{ post.title }}"
+                        >{{ post.title|title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No posts yet.</p>
+        {% endif %}
+    </section>
 {% endblock %}
 {% endraw %}{% endhighlight %}
 

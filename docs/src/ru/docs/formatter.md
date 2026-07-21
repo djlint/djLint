@@ -19,10 +19,10 @@ djlint . --check
 Для форматирования кода и обновления файлов выполните:
 
 ```bash
-djlint . --reformat
+djlint . --reformat --single-attribute-per-line
 
 # как насчет скриптов и стилей форматирования?
-djlint . --reformat --format-css --format-js
+djlint . --reformat --single-attribute-per-line --format-css --format-js
 ```
 
 <div class="box notification is-info is-light">

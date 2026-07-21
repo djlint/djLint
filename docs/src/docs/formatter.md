@@ -19,10 +19,10 @@ djlint . --check
 To format the code and update files run:
 
 ```bash
-djlint . --reformat
+djlint . --reformat --single-attribute-per-line
 
 # how about formatting scripts and styles?
-djlint . --reformat --format-css --format-js
+djlint . --reformat --single-attribute-per-line --format-css --format-js
 ```
 
 <div class="box notification is-info is-light">

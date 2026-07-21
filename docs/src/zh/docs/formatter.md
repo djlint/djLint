@@ -19,10 +19,10 @@ djlint . --check
 直接格式化：
 
 ```bash
-djlint . --reformat
+djlint . --reformat --single-attribute-per-line
 
 # 顺带格式化一下脚本和样式？
-djlint . --reformat --format-css --format-js
+djlint . --reformat --single-attribute-per-line --format-css --format-js
 ```
 
 <div class="box notification is-info is-light">

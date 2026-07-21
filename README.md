@@ -31,41 +31,52 @@ Take a template only its author could love:
 
 ```django
 {% block content %}
-<main class="post-list">
-{% if posts %}
+<SECTION class="posts">
+
+
+<h2>Latest posts</h2>
+{%if posts%}
 <ul>
 {% for post in posts %}
-<li><a href="{% url 'post' post.slug %}">{{post.title}}</a>
-{% if post.draft %}<span class="tag">draft</span>{% endif %}
+<li>
+<a href="{% url 'post' post.slug %}" class="post-link {%if post.featured%}is-featured{%endif%}" data-analytics-id="post-{{post.id}}" aria-label="Read {{post.title}}">{{post.title|title}}</a>
 </li>
 {% endfor %}
 </ul>
-{% else %}
+{%else%}
 <p>No posts yet.</p>
-{% endif %}
-</main>
+{%endif%}
+</SECTION>
 {% endblock %}
 ```
 
-One `djlint --reformat` later:
+One `djlint --reformat --single-attribute-per-line` later:
 
 ```django
 {% block content %}
-<main class="post-list">
-    {% if posts %}
-        <ul>
-            {% for post in posts %}
-                <li><a href="{% url 'post' post.slug %}">{{ post.title }}</a>
-                    {% if post.draft %}<span class="tag">draft</span>{% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No posts yet.</p>
-    {% endif %}
-</main>
+    <section class="posts">
+        <h2>Latest posts</h2>
+        {% if posts %}
+            <ul>
+                {% for post in posts %}
+                    <li>
+                        <a
+                            href="{% url 'post' post.slug %}"
+                            class="post-link {% if post.featured %}is-featured{% endif %}"
+                            data-analytics-id="post-{{ post.id }}"
+                            aria-label="Read {{ post.title }}"
+                        >{{ post.title|title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No posts yet.</p>
+        {% endif %}
+    </section>
 {% endblock %}
 ```
+
+One command rebuilt the indentation, fixed the tag case, split the long tag into one attribute per line, normalized the template tags and collapsed stray blank lines.
 
 And the linter catches what formatting can't fix: orphan tags, missing `alt` attributes, hard-coded URLs and dozens of other checks.
 
@@ -118,13 +129,13 @@ djlint . --check
 Fix my format!
 
 ```bash
-djlint . --reformat
+djlint . --reformat --single-attribute-per-line
 ```
 
 Set a `--profile` to enable the rules and formatting of your template engine
 
 ```bash
-djlint . --reformat --profile=django
+djlint . --reformat --single-attribute-per-line --profile=django
 ```
 
 Or use `pre-commit` to reformat, then lint!
