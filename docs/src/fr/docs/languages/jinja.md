@@ -11,9 +11,9 @@ tool: jinja
 
 **[C'est quoi Jinja?](https://jinja2docs.readthedocs.io/en/stable/)**
 
-Les modèles MiniJinja sont entièrement compatibles avec Jinja2 — utilisez ce même profil `jinja`.
+Les modèles MiniJinja sont entièrement compatibles avec Jinja2, utilisez donc ce même profil `jinja`.
 
-Les modèles Jinjava de HubSpot sont également de style jinja — utilisez aussi ce profil pour eux.
+Les modèles Jinjava de HubSpot sont également de style jinja, utilisez donc aussi ce profil pour eux.
 
 #### Utilisation de la ligne de commande
 

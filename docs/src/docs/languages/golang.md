@@ -1,7 +1,7 @@
 ---
-title: GoLang Template Linter and Formatter
-keywords: GoLang, djlint, GoLang template linter, GoLang template formatter, format GoLang templates
-description: djLint is a GoLang template linter and a GoLang template formatter! Take advantage of the pre-build profile when linting and formatting your templates with djLint.
+title: Go Template Linter and Formatter
+keywords: go templates, golang, djlint, go template linter, go template formatter, golang template linter, golang template formatter, format go templates, hugo template linter, helm template linter
+description: djLint is a Go template linter and a Go template formatter! Take advantage of the pre-build profile when linting and formatting your templates with djLint.
 tool: golang
 ---
 
@@ -9,7 +9,9 @@ tool: golang
 
 {{ description }}
 
-**[What is GoLang?](https://pkg.go.dev/text/template)**
+**[What are Go templates?](https://pkg.go.dev/text/template)**
+
+Go templates (`text/template`, `html/template`) also power Hugo themes and Helm charts, so use this same profile for them.
 
 #### Using the Command Line
 

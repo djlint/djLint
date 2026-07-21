@@ -16,24 +16,6 @@
   types_or: [jinja]
   language: python
 
-- id: djlint-askama
-  name: djLint linting for Askama
-  entry: djlint --profile=askama
-  types_or: [html]
-  language: python
-
-- id: djlint-tera
-  name: djLint linting for Tera
-  entry: djlint --profile=tera
-  types_or: [html]
-  language: python
-
-- id: djlint-liquid
-  name: djLint linting for Liquid
-  entry: djlint --profile=liquid
-  types_or: [html]
-  language: python
-
 - id: djlint-nunjucks
   name: djLint linting for Nunjucks
   entry: djlint --profile=nunjucks
@@ -46,10 +28,28 @@
   types_or: [handlebars]
   language: python
 
+- id: djlint-liquid
+  name: djLint linting for Liquid
+  entry: djlint --profile=liquid
+  types_or: [html]
+  language: python
+
 - id: djlint-golang
-  name: djLint linting for Golang templates
+  name: djLint linting for Go templates
   entry: djlint --profile=golang
   types_or: [gotmpl]
+  language: python
+
+- id: djlint-tera
+  name: djLint linting for Tera
+  entry: djlint --profile=tera
+  types_or: [html]
+  language: python
+
+- id: djlint-askama
+  name: djLint linting for Askama
+  entry: djlint --profile=askama
+  types_or: [html]
   language: python
 
 - id: djlint-reformat
@@ -70,24 +70,6 @@
   types_or: [jinja]
   language: python
 
-- id: djlint-reformat-askama
-  name: djLint formatting for Askama
-  entry: djlint --reformat --profile=askama
-  types_or: [html]
-  language: python
-
-- id: djlint-reformat-tera
-  name: djLint formatting for Tera
-  entry: djlint --reformat --profile=tera
-  types_or: [html]
-  language: python
-
-- id: djlint-reformat-liquid
-  name: djLint formatting for Liquid
-  entry: djlint --reformat --profile=liquid
-  types_or: [html]
-  language: python
-
 - id: djlint-reformat-nunjucks
   name: djLint formatting for Nunjucks
   entry: djlint --reformat --profile=nunjucks
@@ -100,8 +82,26 @@
   types_or: [handlebars]
   language: python
 
+- id: djlint-reformat-liquid
+  name: djLint formatting for Liquid
+  entry: djlint --reformat --profile=liquid
+  types_or: [html]
+  language: python
+
 - id: djlint-reformat-golang
-  name: djLint formatting for Golang templates
+  name: djLint formatting for Go templates
   entry: djlint --reformat --profile=golang
   types_or: [gotmpl]
+  language: python
+
+- id: djlint-reformat-tera
+  name: djLint formatting for Tera
+  entry: djlint --reformat --profile=tera
+  types_or: [html]
+  language: python
+
+- id: djlint-reformat-askama
+  name: djLint formatting for Askama
+  entry: djlint --reformat --profile=askama
+  types_or: [html]
   language: python

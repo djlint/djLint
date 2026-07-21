@@ -39,10 +39,10 @@ _ATTR_PATTERN: Final = re.compile(
 _TEMPLATE_SYNTAX: Final = ("{{", "{%", "{#")
 
 # template tags that provably cannot render an element id. Anything
-# else — {{ }} outputs (form widgets), {% include %}/{% extends %}
-# (elements live in other files) or unknown custom tags (crispy,
-# render_field, ...) — can emit ids this file never shows, so the file
-# cannot be checked soundly and the rule stays silent for it.
+# else can emit ids this file never shows: {{ }} outputs (form
+# widgets), {% include %}/{% extends %} (elements live in other
+# files) or unknown custom tags (crispy, render_field, ...). So the
+# file cannot be checked soundly and the rule stays silent for it.
 _SAFE_TAGS: Final = frozenset({
     "if",
     "elif",

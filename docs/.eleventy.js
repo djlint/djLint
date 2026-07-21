@@ -265,6 +265,9 @@ module.exports = function (eleventyConfig) {
         purgecss({
           content: ["./src/**/*.njk", "./src/**/*.md", "./src/**/*.js"],
           safelist: {
+            // <picture> is emitted by the image shortcode at build time,
+            // so it never appears in the scanned source files
+            standard: ["picture"],
             deep: [
               /headShake/,
               /zoomIn/,

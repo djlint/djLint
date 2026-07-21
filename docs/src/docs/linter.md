@@ -151,7 +151,7 @@ Do:
 
 `Endblock should have name. Ex: {% endblock body %}.`
 
-When a `{% block %}` spans many lines or blocks are nested, a bare `{% endblock %}` gives no clue which block it closes, so it is easy to end the wrong one while editing — child templates then override the wrong content. Naming the endblock documents the pairing and lets both djLint and Django (which raises TemplateSyntaxError on a mismatched endblock name) catch a block closed in the wrong place. Pairing errors — unclosed blocks, orphan endblocks and mismatched names — are correctness checks handled by T038.
+When a `{% block %}` spans many lines or blocks are nested, a bare `{% endblock %}` gives no clue which block it closes, so it is easy to end the wrong one while editing; child templates then override the wrong content. Naming the endblock documents the pairing and lets both djLint and Django (which raises TemplateSyntaxError on a mismatched endblock name) catch a block closed in the wrong place. Pairing errors (unclosed blocks, orphan endblocks and mismatched names) are correctness checks handled by T038.
 
 Off by default; enable with `--include=T003`.
 
@@ -366,7 +366,7 @@ Do:
 
 `Img tag should have an alt attribute.`
 
-Without an alt attribute, screen readers announce the image's file name or nothing at all, failing WCAG 1.1.1 (Non-text Content). The alt text is also what users see when the image fails to load. Decorative images should carry an explicit empty alt="" so assistive technology knows to skip them — that also satisfies this rule.
+Without an alt attribute, screen readers announce the image's file name or nothing at all, failing WCAG 1.1.1 (Non-text Content). The alt text is also what users see when the image fails to load. Decorative images should carry an explicit empty alt="" so assistive technology knows to skip them; that also satisfies this rule.
 
 Don't:
 
@@ -426,9 +426,9 @@ Do:
 
 `Missing title tag in html.`
 
-The HTML spec requires a title element in every document. Without one, browser tabs, bookmarks, and history show a raw URL instead of a page name, search engines lose the primary label for the page, and screen-reader users lose the first thing announced on load — failing WCAG 2.4.2 (Page Titled, Level A).
+The HTML spec requires a title element in every document. Without one, browser tabs, bookmarks, and history show a raw URL instead of a page name, search engines lose the primary label for the page, and screen-reader users lose the first thing announced on load, failing WCAG 2.4.2 (Page Titled, Level A).
 
-Only fires on files containing a complete `<html>`...`</html>` document, so partials and child templates that extend a base are never flagged. SPA shells that set the title client-side still need a static `<title>` — it is what appears on first paint, in crawlers, and when JavaScript fails.
+Only fires on files containing a complete `<html>`...`</html>` document, so partials and child templates that extend a base are never flagged. SPA shells that set the title client-side still need a static `<title>`: it is what appears on first paint, in crawlers, and when JavaScript fails.
 
 Don't:
 
@@ -455,7 +455,7 @@ Do:
 
 Templates that must also parse as XML/XHTML (or feed XML-based tooling) reject void elements written without a closing slash, and mixing `<br>` with `<br />` across a codebase produces inconsistent diffs. This rule enforces the XHTML-style convention so every void element is closed the same way.
 
-Off by default; enable with `--include=H017`. Mutually exclusive with H018 — enable only one of the two conventions.
+Off by default; enable with `--include=H017`. Mutually exclusive with H018; enable only one of the two conventions.
 
 Don't:
 
@@ -493,9 +493,9 @@ Do:
 
 `Void tags are self closing by nature and must end with ">", not "/>"`
 
-In the HTML living standard the trailing slash on a void element has no meaning — the parser ignores it — so writing `<br />` implies XML-style self-closing behavior HTML does not have and can mislead readers into adding slashes to non-void tags, where a stray / is silently dropped and masks unclosed-tag bugs. This rule enforces plain > endings on void elements.
+In the HTML living standard the trailing slash on a void element has no meaning (the parser ignores it), so writing `<br />` implies XML-style self-closing behavior HTML does not have and can mislead readers into adding slashes to non-void tags, where a stray / is silently dropped and masks unclosed-tag bugs. This rule enforces plain > endings on void elements.
 
-Off by default; enable with `--include=H018`. Mutually exclusive with H017 — enable only one of the two conventions. SVG `<path />` is exempt, since SVG is XML and requires the slash.
+Off by default; enable with `--include=H018`. Mutually exclusive with H017; enable only one of the two conventions. SVG `<path />` is exempt, since SVG is XML and requires the slash.
 
 Don't:
 
@@ -533,7 +533,7 @@ Do:
 
 `Replace 'javascript:abc()' with on_ event and real url.`
 
-javascript: URLs break middle-click and open-in-new-tab, do nothing when JavaScript is disabled or fails to load, are blocked by strict Content Security Policies, and are a classic XSS injection sink. Use a real URL for the href and attach the behavior with an event handler instead. Under a strict CSP, inline on* handlers are blocked as well — the onclick shown is the minimal in-template fix; prefer attaching the listener with addEventListener from a script file.
+javascript: URLs break middle-click and open-in-new-tab, do nothing when JavaScript is disabled or fails to load, are blocked by strict Content Security Policies, and are a classic XSS injection sink. Use a real URL for the href and attach the behavior with an event handler instead. Under a strict CSP, inline on* handlers are blocked as well: the onclick shown is the minimal in-template fix; prefer attaching the listener with addEventListener from a script file.
 
 Don't:
 
@@ -551,7 +551,7 @@ Do:
 
 `Empty tag pair found. Consider removing.`
 
-An empty tag pair renders no content but still creates a DOM node that can pick up margins, borders, or flex/grid gaps from stylesheets, producing phantom spacing that is hard to trace; it is usually leftover markup from an earlier edit. Tags that are legitimately empty in normal markup (td, th, li, dt, dd, slot) are exempt. Tags carrying any attribute — JS mount points like `<div id="app">``</div>`, icon-font elements like `<i class="fa fa-user">``</i>` — are not flagged either; only fully attribute-less empty pairs match.
+An empty tag pair renders no content but still creates a DOM node that can pick up margins, borders, or flex/grid gaps from stylesheets, producing phantom spacing that is hard to trace; it is usually leftover markup from an earlier edit. Tags that are legitimately empty in normal markup (td, th, li, dt, dd, slot) are exempt. Tags carrying any attribute (JS mount points like `<div id="app">``</div>`, icon-font elements like `<i class="fa fa-user">``</i>`) are not flagged either; only fully attribute-less empty pairs match.
 
 Don't:
 
@@ -570,7 +570,7 @@ Do:
 
 `Inline styles should be avoided.`
 
-Inline styles carry higher specificity than any stylesheet selector, so overriding them later requires !important; they are blocked by Content Security Policies without 'unsafe-inline' in style-src; and they scatter presentation across templates, so a theme or design change means editing markup instead of one stylesheet. Move the declaration to a CSS class. One legitimate exception: HTML email templates, where many email clients strip `<style>` blocks and inline styles are the standard technique — exclude your email template directories or disable this rule for them.
+Inline styles carry higher specificity than any stylesheet selector, so overriding them later requires !important; they are blocked by Content Security Policies without 'unsafe-inline' in style-src; and they scatter presentation across templates, so a theme or design change means editing markup instead of one stylesheet. Move the declaration to a CSS class. One legitimate exception: HTML email templates, where many email clients strip `<style>` blocks and inline styles are the standard technique; exclude your email template directories or disable this rule for them.
 
 Don't:
 
@@ -588,7 +588,7 @@ Do:
 
 `Use HTTPS for external links.`
 
-Plain http:// subresources on a page served over HTTPS are mixed content: browsers block scripts, stylesheets, and iframes outright and auto-upgrade or warn on images. An `<a>` link to an http:// page is not mixed content, but it still sends visitors over an unencrypted connection open to interception and tampering. References to internal hosts that genuinely have no TLS will be flagged too — silence those spots with a `{# djlint:off H022 #}` block rather than disabling the rule.
+Plain http:// subresources on a page served over HTTPS are mixed content: browsers block scripts, stylesheets, and iframes outright and auto-upgrade or warn on images. An `<a>` link to an http:// page is not mixed content, but it still sends visitors over an unencrypted connection open to interception and tampering. References to internal hosts that genuinely have no TLS will be flagged too; silence those spots with a `{# djlint:off H022 #}` block rather than disabling the rule.
 
 Don't:
 
@@ -624,7 +624,7 @@ Do:
 
 `Omit type on scripts and styles.`
 
-text/javascript and text/css are the HTML5 defaults for `<script>` and `<style>`, so the attribute is dead weight the browser ignores — the WHATWG spec explicitly says to omit it. Dropping it also avoids stale MIME strings that break the element when copied onto module scripts (where type="module" actually matters).
+text/javascript and text/css are the HTML5 defaults for `<script>` and `<style>`, so the attribute is dead weight the browser ignores; the WHATWG spec explicitly says to omit it. Dropping it also avoids stale MIME strings that break the element when copied onto module scripts (where type="module" actually matters).
 
 Don't:
 
@@ -642,7 +642,7 @@ Do:
 
 `Tag seems to be an orphan.`
 
-A tag without its matching opening or closing tag forces the browser's error recovery to guess where the element ends, so following markup gets swallowed into the wrong element — layout, CSS selectors, and JavaScript DOM queries then break silently and differently across browsers. H025 also reports an `<ol>` or `<ul>` opened inside a `<p>`: the HTML parser closes the paragraph before the list, so the markup never nests the way it is written.
+A tag without its matching opening or closing tag forces the browser's error recovery to guess where the element ends, so following markup gets swallowed into the wrong element; layout, CSS selectors, and JavaScript DOM queries then break silently and differently across browsers. H025 also reports an `<ol>` or `<ul>` opened inside a `<p>`: the HTML parser closes the paragraph before the list, so the markup never nests the way it is written.
 
 Don't:
 
@@ -663,7 +663,7 @@ Do:
 
 `Empty id and class tags can be removed.`
 
-An empty id or class attribute does nothing — no styles or scripts can target it — and an empty id is invalid HTML (the id value must not be the empty string). It usually signals a template bug where a variable was meant to be interpolated, so removing or filling it keeps that bug from hiding in plain sight.
+An empty id or class attribute does nothing (no styles or scripts can target it), and an empty id is invalid HTML (the id value must not be the empty string). It usually signals a template bug where a variable was meant to be interpolated, so removing or filling it keeps that bug from hiding in plain sight.
 
 Don't:
 
@@ -701,7 +701,7 @@ Do:
 
 Template tags inside an attribute value emit the whitespace and newlines around them into the rendered attribute, so an href or src built with plain `{% if %}`/`{% for %}` tags can contain stray spaces and produce broken URLs. Jinja/Nunjucks whitespace-control tags (`{%- ... -%}`) strip that surrounding whitespace so the attribute renders as one clean value. The class attribute is exempt, since extra whitespace between class names is harmless.
 
-Not applied to the django profile — Django template tags do not support `{%- -%}` whitespace control.
+Not applied to the django profile: Django template tags do not support `{%- -%}` whitespace control.
 
 Don't:
 
@@ -739,7 +739,7 @@ Do:
 
 Search engines use the meta description as the snippet under your page title in results; without one they synthesize a snippet from arbitrary page text, which hurts click-through rates and produces poor link previews when the page is shared.
 
-Only fires on files containing a complete `<html>`...`</html>` document. The snippet argument applies to publicly indexed pages — for auth-gated or intranet apps this rule is commonly disabled.
+Only fires on files containing a complete `<html>`...`</html>` document. The snippet argument applies to publicly indexed pages; for auth-gated or intranet apps this rule is commonly disabled.
 
 Don't:
 
@@ -861,7 +861,7 @@ Do:
 
 In plain HTML5 the trailing slash on `<meta>` is optional, but templates that are also fed through XML/XHTML tooling (XML validators, email pipelines, XSLT) fail to parse when void elements are not self-closed. Enabling this rule keeps `<meta>` tags in the XHTML-compatible `<meta ... />` form so the same markup survives both parsers.
 
-Off by default; enable with `--include=H035`. A subset of H017 (which enforces the trailing slash on all void tags, meta included) — enable H035 alone only if you want the XHTML form just for meta. Mutually exclusive with H018; do not enable both.
+Off by default; enable with `--include=H035`. A subset of H017 (which enforces the trailing slash on all void tags, meta included); enable H035 alone only if you want the XHTML form just for meta. Mutually exclusive with H018; do not enable both.
 
 Don't:
 
@@ -879,7 +879,7 @@ Do:
 
 `Avoid use of <br> tags.`
 
-`<br>` encodes presentation in markup: using it for spacing or to fake paragraphs breaks text reflow at narrow widths and degrades accessibility, since screen readers announce forced breaks instead of a natural pause between blocks. Separate thoughts belong in separate block elements, and vertical spacing belongs to CSS margins. Note that `<br>` is legitimate where the line break is part of the content itself — postal addresses, poems, lyrics — and this rule cannot tell those apart from presentational use: it flags every `<br>`. Leave it disabled if your templates render such content.
+`<br>` encodes presentation in markup: using it for spacing or to fake paragraphs breaks text reflow at narrow widths and degrades accessibility, since screen readers announce forced breaks instead of a natural pause between blocks. Separate thoughts belong in separate block elements, and vertical spacing belongs to CSS margins. Note that `<br>` is legitimate where the line break is part of the content itself (postal addresses, poems, lyrics), and this rule cannot tell those apart from presentational use: it flags every `<br>`. Leave it disabled if your templates render such content.
 
 Off by default; enable with `--include=H036`.
 
@@ -900,7 +900,7 @@ Do:
 
 `Duplicate attribute found.`
 
-Duplicate attributes are invalid HTML, and browsers keep only the first occurrence and silently drop the rest — so the second class or style value never takes effect, which hides real bugs. The check is template-aware: an attribute repeated in mutually exclusive branches (`{% if %}`/`{% else %}`) is not flagged, since only one copy can render.
+Duplicate attributes are invalid HTML, and browsers keep only the first occurrence and silently drop the rest, so the second class or style value never takes effect, which hides real bugs. The check is template-aware: an attribute repeated in mutually exclusive branches (`{% if %}`/`{% else %}`) is not flagged, since only one copy can render.
 
 Don't:
 
@@ -918,7 +918,7 @@ Do:
 
 `Block tag has no matching end tag.`
 
-A block tag such as `{% if %}`, `{% for %}` or `{% macro %}` without its matching end tag is a hard TemplateSyntaxError in Django and Jinja — the page fails to render at request time, which this rule catches before deploy. It also flags orphan end tags with no opening tag and incorrectly interleaved blocks (e.g. `{% if %}``{% for %}``{% endif %}`).
+A block tag such as `{% if %}`, `{% for %}` or `{% macro %}` without its matching end tag is a hard TemplateSyntaxError in Django and Jinja: the page fails to render at request time, which this rule catches before deploy. It also flags orphan end tags with no opening tag and incorrectly interleaved blocks (e.g. `{% if %}``{% for %}``{% endif %}`).
 
 `{% block %}`/`{% endblock %}` pairing and endblock-name mismatches are checked by this rule; T003 (off by default) additionally demands a name on every multi-line `{% endblock %}`. Custom block tags registered via custom_blocks are also checked, including their self-closing / %} form.
 
@@ -977,7 +977,7 @@ Do:
 
 `Tag is closed in a different template block than it was opened.`
 
-When an HTML tag is opened in one `{% block %}` but closed in another, a child template that overrides only one of those blocks inherits half of the element, producing unbalanced markup in the rendered page — browsers then auto-close or re-nest elements unpredictably, breaking layout and CSS selectors far from the template that was actually edited. Keeping each element opened and closed within the same block makes every block safe to override independently.
+When an HTML tag is opened in one `{% block %}` but closed in another, a child template that overrides only one of those blocks inherits half of the element, producing unbalanced markup in the rendered page; browsers then auto-close or re-nest elements unpredictably, breaking layout and CSS selectors far from the template that was actually edited. Keeping each element opened and closed within the same block makes every block safe to override independently.
 
 Don't:
 
@@ -1007,7 +1007,7 @@ Do:
 
 Off by default; enable with --include=H042.
 
-The check runs only on files it can analyze soundly: if the file contains anything that could render an id this file never shows — a `{{ ... }}` output such as a form widget, an `{% include %}` or `{% extends %}`, or an unrecognized template tag — the rule stays silent for that file. Where it does run, a report is a real broken association.
+The check runs only on files it can analyze soundly: if the file contains anything that could render an id this file never shows (a `{{ ... }}` output such as a form widget, an `{% include %}` or `{% extends %}`, or an unrecognized template tag), the rule stays silent for that file. Where it does run, a report is a real broken association.
 
 Don't:
 

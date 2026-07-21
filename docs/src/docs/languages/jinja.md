@@ -11,9 +11,9 @@ tool: jinja
 
 **[What is Jinja?](https://jinja2docs.readthedocs.io/en/stable/)**
 
-MiniJinja templates are fully Jinja2-compatible — use this same `jinja` profile.
+MiniJinja templates are fully Jinja2-compatible, so use this same `jinja` profile.
 
-HubSpot's Jinjava templates are also jinja-style — use this profile for them too.
+HubSpot's Jinjava templates are also jinja-style, so use this profile for them too.
 
 #### Using the Command Line
 

@@ -22,18 +22,18 @@ The repo provides multiple pre-configured hooks for specific djLint profiles (it
   This will look for files matching `*.html` and set `--profile=django`.
 - `djlint-jinja` and `djlint-reformat-jinja`
   This will look for files matching `*.j2`,`*.jinja` or `*.jinja2` and set `--profile=jinja`.
-- `djlint-askama` and `djlint-reformat-askama`
-  This will look for files matching `*.html` and set `--profile=askama`.
-- `djlint-tera` and `djlint-reformat-tera`
-  This will look for files matching `*.html` and set `--profile=tera`.
-- `djlint-liquid` and `djlint-reformat-liquid`
-  This will look for files matching `*.html` and set `--profile=liquid`.
 - `djlint-nunjucks` and `djlint-reformat-nunjucks`
   This will look for files matching `*.njk` and set `--profile=nunjucks`.
 - `djlint-handlebars` and `djlint-reformat-handlebars`
   This will look for files matching `*.hbs` and set `--profile=handlebars`.
+- `djlint-liquid` and `djlint-reformat-liquid`
+  This will look for files matching `*.html` and set `--profile=liquid`.
 - `djlint-golang` and `djlint-reformat-golang`
   This will look for files matching `*.tmpl` and set `--profile=golang`.
+- `djlint-tera` and `djlint-reformat-tera`
+  This will look for files matching `*.html` and set `--profile=tera`.
+- `djlint-askama` and `djlint-reformat-askama`
+  This will look for files matching `*.html` and set `--profile=askama`.
   :::
 
 Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) for additional configuration

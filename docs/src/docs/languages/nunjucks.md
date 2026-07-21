@@ -11,7 +11,7 @@ tool: nunjucks
 
 **[What is Nunjucks?](https://mozilla.github.io/nunjucks/)**
 
-Pebble (Java) templates are Twig-compatible — use this same profile for them.
+Pebble (Java) templates are Twig-compatible, so use this same profile for them.
 
 #### Using the Command Line
 

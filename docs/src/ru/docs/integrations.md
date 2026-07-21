@@ -22,18 +22,18 @@ djLint можно использовать как [pre-commit](https://pre-commi
   Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=django`.
 - `djlint-jinja` и `djlint-reformat-jinja`
   Будет искать файлы, соответствующие `*.j2`, `*.jinja` или `*.jinja2`, и устанавливать `--profile=jinja`.
-- `djlint-askama` и `djlint-reformat-askama`
-  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=askama`.
-- `djlint-tera` и `djlint-reformat-tera`
-  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=tera`.
-- `djlint-liquid` и `djlint-reformat-liquid`
-  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=liquid`.
 - `djlint-nunjucks` и `djlint-reformat-nunjucks`
   Будет искать файлы, соответствующие `*.njk`, и устанавливать `--profile=nunjucks`.
 - `djlint-handlebars` и `djlint-reformat-handlebars`
   Будет искать файлы, соответствующие `*.hbs`, и устанавливать `--profile=handlebars`.
+- `djlint-liquid` и `djlint-reformat-liquid`
+  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=liquid`.
 - `djlint-golang` и `djlint-reformat-golang`
   Будет искать файлы, соответствующие `*.tmpl`, и устанавливать `--profile=golang`.
+- `djlint-tera` и `djlint-reformat-tera`
+  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=tera`.
+- `djlint-askama` и `djlint-reformat-askama`
+  Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=askama`.
   :::
 
 Обратите внимание, что эти предопределенные хуки иногда слишком консервативны в принимаемых ими входных данных (ваши шаблоны могут использовать другое расширение), поэтому pre-commit явно позволяет вам переопределять любые из этих предопределенных опций. См. [pre-commit документы](https://pre-commit.com/#pre-commit-configyaml---hooks) для дополнительной настройки.

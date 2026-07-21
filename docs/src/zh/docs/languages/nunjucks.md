@@ -11,7 +11,7 @@ tool: nunjucks
 
 **[Nunjucks简介](https://mozilla.github.io/nunjucks/)**
 
-Pebble（Java）模板与 Twig 兼容 — 请为其使用同一个配置。
+Pebble（Java）模板与 Twig 兼容，请为其使用同一个配置。
 
 #### 使用命令行
 

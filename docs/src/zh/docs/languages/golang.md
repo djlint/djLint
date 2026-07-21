@@ -1,7 +1,7 @@
 ---
-title: GoLang 模板检查与格式化
-keywords: GoLang, djlint, GoLang 模板检查, GoLang 模板格式化
-description: djLint是一个 GoLang 模板的代码检查与格式化工具！使用与构建的配置文件，充分利用djLint来检查并格式化你的模板。
+title: Go 模板检查与格式化
+keywords: Go 模板, golang, djlint, Go 模板检查, Go 模板格式化, go template linter, golang template formatter, hugo, helm
+description: djLint是一个 Go 模板的代码检查与格式化工具！使用与构建的配置文件，充分利用djLint来检查并格式化你的模板。
 tool: golang
 ---
 
@@ -9,7 +9,9 @@ tool: golang
 
 {{ description }}
 
-**[GoLang简介](https://pkg.go.dev/text/template)**
+**[Go 模板简介](https://pkg.go.dev/text/template)**
+
+Hugo 主题和 Helm chart 使用的正是 Go 模板（`text/template`、`html/template`），请为它们使用同一个配置。
 
 #### 使用命令行
 

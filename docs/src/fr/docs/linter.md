@@ -151,7 +151,7 @@ Les guillemets simples à l'intérieur des valeurs d'attributs HTML (par exemple
 
 `Le bloc de fin doit avoir un nom. Ex : {% endblock body %}.`
 
-Lorsqu'un `{% block %}` s'étend sur de nombreuses lignes ou que des blocs sont imbriqués, un simple `{% endblock %}` ne donne aucun indice sur le bloc qu'il ferme : il est alors facile de fermer le mauvais bloc en éditant — les modèles enfants remplacent alors le mauvais contenu. Nommer le endblock documente l'appariement et permet à djLint comme à Django (qui lève une TemplateSyntaxError en cas de nom de endblock non concordant) de détecter un bloc fermé au mauvais endroit. Les erreurs d'appariement — blocs non fermés, endblock orphelins et noms non concordants — sont des vérifications de justesse assurées par T038.
+Lorsqu'un `{% block %}` s'étend sur de nombreuses lignes ou que des blocs sont imbriqués, un simple `{% endblock %}` ne donne aucun indice sur le bloc qu'il ferme : il est alors facile de fermer le mauvais bloc en éditant ; les modèles enfants remplacent alors le mauvais contenu. Nommer le endblock documente l'appariement et permet à djLint comme à Django (qui lève une TemplateSyntaxError en cas de nom de endblock non concordant) de détecter un bloc fermé au mauvais endroit. Les erreurs d'appariement (blocs non fermés, endblock orphelins et noms non concordants) sont des vérifications de justesse assurées par T038.
 
 Désactivée par défaut ; à activer avec `--include=T003`.
 
@@ -366,7 +366,7 @@ Avec des espaces autour de "=", la balise se lit comme trois éléments séparé
 
 `La balise img doit avoir des attributs alt.`
 
-Sans attribut alt, les lecteurs d'écran annoncent le nom de fichier de l'image, ou rien du tout, ce qui enfreint WCAG 1.1.1 (Contenu non textuel). Le texte alternatif est aussi ce que voient les utilisateurs lorsque l'image ne se charge pas. Les images décoratives doivent porter un alt="" explicitement vide pour que les technologies d'assistance sachent les ignorer — cela satisfait également cette règle.
+Sans attribut alt, les lecteurs d'écran annoncent le nom de fichier de l'image, ou rien du tout, ce qui enfreint WCAG 1.1.1 (Contenu non textuel). Le texte alternatif est aussi ce que voient les utilisateurs lorsque l'image ne se charge pas. Les images décoratives doivent porter un alt="" explicitement vide pour que les technologies d'assistance sachent les ignorer ; cela satisfait également cette règle.
 
 À éviter :
 
@@ -426,9 +426,9 @@ Les titres sont des repères de niveau bloc qui définissent le plan du document
 
 `Balise title manquante dans le html.`
 
-La spécification HTML exige un élément title dans chaque document. Sans lui, les onglets du navigateur, les favoris et l'historique affichent une URL brute au lieu d'un nom de page, les moteurs de recherche perdent l'étiquette principale de la page, et les utilisateurs de lecteurs d'écran perdent la première chose annoncée au chargement — un manquement à WCAG 2.4.2 (Titre de page, niveau A).
+La spécification HTML exige un élément title dans chaque document. Sans lui, les onglets du navigateur, les favoris et l'historique affichent une URL brute au lieu d'un nom de page, les moteurs de recherche perdent l'étiquette principale de la page, et les utilisateurs de lecteurs d'écran perdent la première chose annoncée au chargement, un manquement à WCAG 2.4.2 (Titre de page, niveau A).
 
-Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>` complet, donc les partiels et les modèles enfants qui étendent une base ne sont jamais signalés. Les coquilles de SPA qui définissent le titre côté client ont quand même besoin d'un `<title>` statique — c'est ce qui apparaît au premier rendu, pour les robots d'indexation et lorsque JavaScript échoue.
+Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>` complet, donc les partiels et les modèles enfants qui étendent une base ne sont jamais signalés. Les coquilles de SPA qui définissent le titre côté client ont quand même besoin d'un `<title>` statique : c'est ce qui apparaît au premier rendu, pour les robots d'indexation et lorsque JavaScript échoue.
 
 À éviter :
 
@@ -455,7 +455,7 @@ Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>`
 
 Les modèles qui doivent aussi être analysés comme du XML/XHTML (ou alimenter des outils basés sur XML) rejettent les éléments vides écrits sans barre oblique de fermeture, et mélanger `<br>` et `<br />` à travers une base de code produit des diffs incohérents. Cette règle impose la convention de style XHTML afin que chaque élément vide soit fermé de la même manière.
 
-Désactivée par défaut ; à activer avec `--include=H017`. Mutuellement exclusive avec H018 — n'activez qu'une seule des deux conventions.
+Désactivée par défaut ; à activer avec `--include=H017`. Mutuellement exclusive avec H018 : n'activez qu'une seule des deux conventions.
 
 À éviter :
 
@@ -493,9 +493,9 @@ Les URLs internes codées en dur deviennent silencieusement obsolètes lorsque l
 
 `Les balises vides sont auto-fermantes par nature et doivent se terminer par ">", et non "/>" (incompatible avec : H017).`
 
-Dans le standard vivant HTML, la barre oblique finale d'un élément vide n'a aucune signification — l'analyseur l'ignore — donc écrire `<br />` suggère un comportement d'auto-fermeture à la XML que le HTML n'a pas, et peut inciter les lecteurs à ajouter des barres obliques à des balises non vides, où un / parasite est silencieusement ignoré et masque des bugs de balises non fermées. Cette règle impose des fins simples en > sur les éléments vides.
+Dans le standard vivant HTML, la barre oblique finale d'un élément vide n'a aucune signification (l'analyseur l'ignore), donc écrire `<br />` suggère un comportement d'auto-fermeture à la XML que le HTML n'a pas, et peut inciter les lecteurs à ajouter des barres obliques à des balises non vides, où un / parasite est silencieusement ignoré et masque des bugs de balises non fermées. Cette règle impose des fins simples en > sur les éléments vides.
 
-Désactivée par défaut ; à activer avec `--include=H018`. Mutuellement exclusive avec H017 — n'activez qu'une seule des deux conventions. Le `<path />` SVG est exempté, car SVG est du XML et exige la barre oblique.
+Désactivée par défaut ; à activer avec `--include=H018`. Mutuellement exclusive avec H017 : n'activez qu'une seule des deux conventions. Le `<path />` SVG est exempté, car SVG est du XML et exige la barre oblique.
 
 À éviter :
 
@@ -533,7 +533,7 @@ Les URLs internes codées en dur cassent silencieusement lorsque le chemin d'une
 
 `Remplacez javascript:abc() par l'événement on_ et l'url réelle.`
 
-Les URLs javascript: cassent le clic du milieu et l'ouverture dans un nouvel onglet, ne font rien quand JavaScript est désactivé ou ne se charge pas, sont bloquées par les Content Security Policies strictes, et constituent un point d'injection XSS classique. Utilisez plutôt une véritable URL pour le href et attachez le comportement avec un gestionnaire d'événement. Sous une CSP stricte, les gestionnaires on* en ligne sont eux aussi bloqués — le onclick montré est le correctif minimal dans le modèle ; préférez attacher l'écouteur avec addEventListener depuis un fichier de script.
+Les URLs javascript: cassent le clic du milieu et l'ouverture dans un nouvel onglet, ne font rien quand JavaScript est désactivé ou ne se charge pas, sont bloquées par les Content Security Policies strictes, et constituent un point d'injection XSS classique. Utilisez plutôt une véritable URL pour le href et attachez le comportement avec un gestionnaire d'événement. Sous une CSP stricte, les gestionnaires on* en ligne sont eux aussi bloqués : le onclick montré est le correctif minimal dans le modèle ; préférez attacher l'écouteur avec addEventListener depuis un fichier de script.
 
 À éviter :
 
@@ -551,7 +551,7 @@ Les URLs javascript: cassent le clic du milieu et l'ouverture dans un nouvel ong
 
 `Couple de balises vide trouvé. Envisagez de le supprimer.`
 
-Une paire de balises vide ne rend aucun contenu mais crée quand même un nœud DOM qui peut récupérer des marges, des bordures ou des espacements flex/grid depuis les feuilles de style, produisant un espacement fantôme difficile à tracer ; c'est généralement un reste de balisage d'une modification antérieure. Les balises légitimement vides dans un balisage normal (td, th, li, dt, dd, slot) sont exemptées. Les balises portant un attribut quelconque — points de montage JS comme `<div id="app">``</div>`, éléments de police d'icônes comme `<i class="fa fa-user">``</i>` — ne sont pas signalées non plus ; seules les paires vides totalement dépourvues d'attributs sont concernées.
+Une paire de balises vide ne rend aucun contenu mais crée quand même un nœud DOM qui peut récupérer des marges, des bordures ou des espacements flex/grid depuis les feuilles de style, produisant un espacement fantôme difficile à tracer ; c'est généralement un reste de balisage d'une modification antérieure. Les balises légitimement vides dans un balisage normal (td, th, li, dt, dd, slot) sont exemptées. Les balises portant un attribut quelconque (points de montage JS comme `<div id="app">``</div>`, éléments de police d'icônes comme `<i class="fa fa-user">``</i>`) ne sont pas signalées non plus ; seules les paires vides totalement dépourvues d'attributs sont concernées.
 
 À éviter :
 
@@ -570,7 +570,7 @@ Une paire de balises vide ne rend aucun contenu mais crée quand même un nœud 
 
 `Les styles en ligne doivent être évités.`
 
-Les styles en ligne ont une spécificité supérieure à n'importe quel sélecteur de feuille de style, donc les surcharger ensuite exige !important ; ils sont bloqués par les Content Security Policies sans 'unsafe-inline' dans style-src ; et ils éparpillent la présentation dans les modèles, si bien qu'un changement de thème ou de design signifie éditer le balisage plutôt qu'une seule feuille de style. Déplacez la déclaration vers une classe CSS. Une exception légitime : les modèles d'e-mails HTML, où de nombreux clients de messagerie suppriment les blocs `<style>` et où les styles en ligne sont la technique standard — excluez vos répertoires de modèles d'e-mails ou désactivez cette règle pour eux.
+Les styles en ligne ont une spécificité supérieure à n'importe quel sélecteur de feuille de style, donc les surcharger ensuite exige !important ; ils sont bloqués par les Content Security Policies sans 'unsafe-inline' dans style-src ; et ils éparpillent la présentation dans les modèles, si bien qu'un changement de thème ou de design signifie éditer le balisage plutôt qu'une seule feuille de style. Déplacez la déclaration vers une classe CSS. Une exception légitime : les modèles d'e-mails HTML, où de nombreux clients de messagerie suppriment les blocs `<style>` et où les styles en ligne sont la technique standard ; excluez vos répertoires de modèles d'e-mails ou désactivez cette règle pour eux.
 
 À éviter :
 
@@ -588,7 +588,7 @@ Les styles en ligne ont une spécificité supérieure à n'importe quel sélecte
 
 `Utilisez HTTPS pour les liens externes.`
 
-Les sous-ressources en simple http:// sur une page servie en HTTPS constituent du contenu mixte : les navigateurs bloquent purement et simplement les scripts, feuilles de style et iframes, et mettent automatiquement à niveau les images ou affichent un avertissement. Un lien `<a>` vers une page http:// n'est pas du contenu mixte, mais il envoie tout de même les visiteurs sur une connexion non chiffrée, exposée à l'interception et à la falsification. Les références à des hôtes internes qui n'ont réellement pas de TLS seront signalées aussi — faites taire ces endroits avec un bloc `{# djlint:off H022 #}` plutôt qu'en désactivant la règle.
+Les sous-ressources en simple http:// sur une page servie en HTTPS constituent du contenu mixte : les navigateurs bloquent purement et simplement les scripts, feuilles de style et iframes, et mettent automatiquement à niveau les images ou affichent un avertissement. Un lien `<a>` vers une page http:// n'est pas du contenu mixte, mais il envoie tout de même les visiteurs sur une connexion non chiffrée, exposée à l'interception et à la falsification. Les références à des hôtes internes qui n'ont réellement pas de TLS seront signalées aussi ; faites taire ces endroits avec un bloc `{# djlint:off H022 #}` plutôt qu'en désactivant la règle.
 
 À éviter :
 
@@ -624,7 +624,7 @@ Les documents HTML5 sont en UTF-8, donc le caractère littéral fonctionne parto
 
 `Omettre le type sur les scripts et les styles.`
 
-text/javascript et text/css sont les valeurs par défaut de HTML5 pour `<script>` et `<style>`, donc l'attribut est un poids mort que le navigateur ignore — la spécification WHATWG dit explicitement de l'omettre. Le supprimer évite aussi les chaînes MIME périmées qui cassent l'élément une fois copié sur des scripts de module (où type="module" compte réellement).
+text/javascript et text/css sont les valeurs par défaut de HTML5 pour `<script>` et `<style>`, donc l'attribut est un poids mort que le navigateur ignore ; la spécification WHATWG dit explicitement de l'omettre. Le supprimer évite aussi les chaînes MIME périmées qui cassent l'élément une fois copié sur des scripts de module (où type="module" compte réellement).
 
 À éviter :
 
@@ -642,7 +642,7 @@ text/javascript et text/css sont les valeurs par défaut de HTML5 pour `<script>
 
 `La balise semble être orpheline.`
 
-Une balise sans sa balise d'ouverture ou de fermeture correspondante force la récupération d'erreur du navigateur à deviner où l'élément se termine : le balisage qui suit se fait avaler par le mauvais élément — la mise en page, les sélecteurs CSS et les requêtes DOM de JavaScript cassent alors silencieusement, et différemment selon les navigateurs. H025 signale aussi un `<ol>` ou `<ul>` ouvert à l'intérieur d'un `<p>` : l'analyseur HTML ferme le paragraphe avant la liste, donc le balisage ne s'imbrique jamais comme il est écrit.
+Une balise sans sa balise d'ouverture ou de fermeture correspondante force la récupération d'erreur du navigateur à deviner où l'élément se termine : le balisage qui suit se fait avaler par le mauvais élément ; la mise en page, les sélecteurs CSS et les requêtes DOM de JavaScript cassent alors silencieusement, et différemment selon les navigateurs. H025 signale aussi un `<ol>` ou `<ul>` ouvert à l'intérieur d'un `<p>` : l'analyseur HTML ferme le paragraphe avant la liste, donc le balisage ne s'imbrique jamais comme il est écrit.
 
 À éviter :
 
@@ -663,7 +663,7 @@ Une balise sans sa balise d'ouverture ou de fermeture correspondante force la r�
 
 `Les balises id et class vides peuvent être supprimées.`
 
-Un attribut id ou class vide ne fait rien — aucun style ni script ne peut le cibler — et un id vide est du HTML invalide (la valeur de l'id ne doit pas être la chaîne vide). Cela signale généralement un bug de modèle où une variable devait être interpolée : le supprimer ou le remplir empêche ce bug de se cacher au grand jour.
+Un attribut id ou class vide ne fait rien (aucun style ni script ne peut le cibler) et un id vide est du HTML invalide (la valeur de l'id ne doit pas être la chaîne vide). Cela signale généralement un bug de modèle où une variable devait être interpolée : le supprimer ou le remplir empêche ce bug de se cacher au grand jour.
 
 À éviter :
 
@@ -701,7 +701,7 @@ Un guillemet ouvert mais jamais fermé à l'intérieur de `{% ... %}` ou `{{ ...
 
 Les balises de modèle à l'intérieur d'une valeur d'attribut émettent dans l'attribut rendu les espaces et sauts de ligne qui les entourent : un href ou un src construit avec de simples balises `{% if %}`/`{% for %}` peut donc contenir des espaces parasites et produire des URLs cassées. Les balises de contrôle des espaces de Jinja/Nunjucks (`{%- ... -%}`) suppriment ces espaces environnants, si bien que l'attribut se rend comme une seule valeur propre. L'attribut class est exempté, car des espaces supplémentaires entre noms de classes sont sans conséquence.
 
-Non appliquée au profil django — les balises de modèle Django ne prennent pas en charge le contrôle des espaces `{%- -%}`.
+Non appliquée au profil django : les balises de modèle Django ne prennent pas en charge le contrôle des espaces `{%- -%}`.
 
 À éviter :
 
@@ -739,7 +739,7 @@ La spécification HTML définit les mots-clés de méthode de formulaire en minu
 
 Les moteurs de recherche utilisent la meta description comme extrait affiché sous le titre de votre page dans les résultats ; sans elle, ils synthétisent un extrait à partir d'un texte arbitraire de la page, ce qui nuit au taux de clic et produit de mauvais aperçus de lien lorsque la page est partagée.
 
-Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>` complet. L'argument de l'extrait s'applique aux pages indexées publiquement — pour les applications derrière authentification ou en intranet, cette règle est couramment désactivée.
+Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>` complet. L'argument de l'extrait s'applique aux pages indexées publiquement ; pour les applications derrière authentification ou en intranet, cette règle est couramment désactivée.
 
 À éviter :
 
@@ -861,7 +861,7 @@ Les espaces en début ou en fin de la valeur action d'un formulaire deviennent p
 
 En HTML5 pur, la barre oblique finale sur `<meta>` est facultative, mais les modèles qui passent aussi par des outils XML/XHTML (validateurs XML, pipelines d'e-mails, XSLT) échouent à l'analyse quand les éléments vides ne sont pas auto-fermés. Activer cette règle maintient les balises `<meta>` sous la forme compatible XHTML `<meta ... />` afin que le même balisage survive aux deux analyseurs.
 
-Désactivée par défaut ; à activer avec `--include=H035`. Sous-ensemble de H017 (qui impose la barre oblique finale sur toutes les balises vides, meta comprise) — n'activez H035 seule que si vous voulez la forme XHTML uniquement pour meta. Mutuellement exclusive avec H018 ; n'activez pas les deux.
+Désactivée par défaut ; à activer avec `--include=H035`. Sous-ensemble de H017 (qui impose la barre oblique finale sur toutes les balises vides, meta comprise) ; n'activez H035 seule que si vous voulez la forme XHTML uniquement pour meta. Mutuellement exclusive avec H018 ; n'activez pas les deux.
 
 À éviter :
 
@@ -879,7 +879,7 @@ Désactivée par défaut ; à activer avec `--include=H035`. Sous-ensemble de H0
 
 `Évitez d'utiliser les balises br.`
 
-`<br>` encode de la présentation dans le balisage : l'utiliser pour l'espacement ou pour simuler des paragraphes casse le renvoi à la ligne du texte aux largeurs étroites et dégrade l'accessibilité, puisque les lecteurs d'écran annoncent des sauts forcés au lieu d'une pause naturelle entre les blocs. Les idées distinctes relèvent d'éléments de bloc distincts, et l'espacement vertical relève des marges CSS. Notez que `<br>` est légitime lorsque le saut de ligne fait partie du contenu lui-même — adresses postales, poèmes, paroles de chansons — et cette règle ne peut pas distinguer ces cas de l'usage purement présentationnel : elle signale chaque `<br>`. Laissez-la désactivée si vos modèles rendent ce type de contenu.
+`<br>` encode de la présentation dans le balisage : l'utiliser pour l'espacement ou pour simuler des paragraphes casse le renvoi à la ligne du texte aux largeurs étroites et dégrade l'accessibilité, puisque les lecteurs d'écran annoncent des sauts forcés au lieu d'une pause naturelle entre les blocs. Les idées distinctes relèvent d'éléments de bloc distincts, et l'espacement vertical relève des marges CSS. Notez que `<br>` est légitime lorsque le saut de ligne fait partie du contenu lui-même (adresses postales, poèmes, paroles de chansons) et cette règle ne peut pas distinguer ces cas de l'usage purement présentationnel : elle signale chaque `<br>`. Laissez-la désactivée si vos modèles rendent ce type de contenu.
 
 Désactivée par défaut ; à activer avec `--include=H036`.
 
@@ -900,7 +900,7 @@ Désactivée par défaut ; à activer avec `--include=H036`.
 
 `Attribut en double trouvé.`
 
-Les attributs en double sont du HTML invalide, et les navigateurs ne conservent que la première occurrence et abandonnent silencieusement les suivantes — la deuxième valeur de class ou de style ne prend donc jamais effet, ce qui cache de vrais bugs. La vérification tient compte des modèles : un attribut répété dans des branches mutuellement exclusives (`{% if %}`/`{% else %}`) n'est pas signalé, puisqu'une seule copie peut être rendue.
+Les attributs en double sont du HTML invalide, et les navigateurs ne conservent que la première occurrence et abandonnent silencieusement les suivantes : la deuxième valeur de class ou de style ne prend donc jamais effet, ce qui cache de vrais bugs. La vérification tient compte des modèles : un attribut répété dans des branches mutuellement exclusives (`{% if %}`/`{% else %}`) n'est pas signalé, puisqu'une seule copie peut être rendue.
 
 À éviter :
 
@@ -918,7 +918,7 @@ Les attributs en double sont du HTML invalide, et les navigateurs ne conservent 
 
 `La balise de bloc n'a pas de balise de fin correspondante.`
 
-Une balise de bloc telle que `{% if %}`, `{% for %}` ou `{% macro %}` sans sa balise de fin correspondante est une TemplateSyntaxError pure et simple dans Django et Jinja — la page échoue au rendu au moment de la requête, ce que cette règle détecte avant le déploiement. Elle signale aussi les balises de fin orphelines sans balise d'ouverture et les blocs incorrectement entrelacés (par exemple `{% if %}``{% for %}``{% endif %}`).
+Une balise de bloc telle que `{% if %}`, `{% for %}` ou `{% macro %}` sans sa balise de fin correspondante est une TemplateSyntaxError pure et simple dans Django et Jinja : la page échoue au rendu au moment de la requête, ce que cette règle détecte avant le déploiement. Elle signale aussi les balises de fin orphelines sans balise d'ouverture et les blocs incorrectement entrelacés (par exemple `{% if %}``{% for %}``{% endif %}`).
 
 L'appariement `{% block %}`/`{% endblock %}` et les noms de endblock non concordants sont vérifiés par cette règle ; T003 (désactivée par défaut) exige en plus un nom sur chaque `{% endblock %}` multiligne. Les balises de bloc personnalisées enregistrées via custom_blocks sont également vérifiées, y compris leur forme auto-fermante / %}.
 
@@ -977,7 +977,7 @@ Une balise `{% extends %}` ou `{% include %}` dont le nom de modèle est manquan
 
 `La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.`
 
-Lorsqu'une balise HTML est ouverte dans un `{% block %}` mais fermée dans un autre, un modèle enfant qui ne remplace qu'un seul de ces blocs hérite de la moitié de l'élément, produisant un balisage déséquilibré dans la page rendue — les navigateurs ferment ou réimbriquent alors les éléments de façon imprévisible, cassant la mise en page et les sélecteurs CSS loin du modèle réellement modifié. Garder chaque élément ouvert et fermé dans le même bloc rend chaque bloc sûr à remplacer indépendamment.
+Lorsqu'une balise HTML est ouverte dans un `{% block %}` mais fermée dans un autre, un modèle enfant qui ne remplace qu'un seul de ces blocs hérite de la moitié de l'élément, produisant un balisage déséquilibré dans la page rendue : les navigateurs ferment ou réimbriquent alors les éléments de façon imprévisible, cassant la mise en page et les sélecteurs CSS loin du modèle réellement modifié. Garder chaque élément ouvert et fermé dans le même bloc rend chaque bloc sûr à remplacer indépendamment.
 
 À éviter :
 
@@ -1005,7 +1005,7 @@ Lorsqu'une balise HTML est ouverte dans un `{% block %}` mais fermée dans un au
 
 `L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.`
 
-La vérification ne s'exécute que sur les fichiers analysables de façon fiable : si le fichier contient quoi que ce soit pouvant rendre un id invisible ici — une sortie `{{ ... }}` telle qu'un widget de formulaire, un `{% include %}` ou `{% extends %}`, ou une balise de modèle inconnue — la règle reste silencieuse pour ce fichier. Là où elle s'exécute, un signalement est une association réellement cassée.
+La vérification ne s'exécute que sur les fichiers analysables de façon fiable : si le fichier contient quoi que ce soit pouvant rendre un id invisible ici (une sortie `{{ ... }}` telle qu'un widget de formulaire, un `{% include %}` ou `{% extends %}`, ou une balise de modèle inconnue), la règle reste silencieuse pour ce fichier. Là où elle s'exécute, un signalement est une association réellement cassée.
 
 À éviter :
 

@@ -11,7 +11,7 @@ tool: nunjucks
 
 **[C'est quoi Twig?](https://twig.symfony.com/)**
 
-Les modèles Pebble (Java) sont compatibles Twig — utilisez ce même profil pour eux.
+Les modèles Pebble (Java) sont compatibles Twig, utilisez donc ce même profil pour eux.
 
 #### Utilisation de la ligne de commande
 

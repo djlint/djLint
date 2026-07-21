@@ -1392,8 +1392,8 @@ class Config:
                 echo(
                     style(
                         "Warning: H018 conflicts with"
-                        f" {' and '.join(sorted(conflicting))} — they enforce"
-                        " opposite void tag styles. Enable only one"
+                        f" {' and '.join(sorted(conflicting))} because they"
+                        " enforce opposite void tag styles. Enable only one"
                         " convention. 😢",
                         fg="yellow",
                     ),
@@ -1473,7 +1473,7 @@ class Config:
             + (_GOLANG_BLOCK_OPEN if is_golang else "")
         )
         # jinja/twig block {% trans %} has no matching indent tag, so its
-        # end tag must not unindent — unless the user made trans a custom
+        # end tag must not unindent, unless the user made trans a custom
         # block, in which case the open tag does indent.
         end_tag_guard = r"(?!comment)"
         if (

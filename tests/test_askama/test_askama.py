@@ -35,7 +35,7 @@ test_data = [
     ),
     pytest.param(
         # set is an askama alias for let; 'a' is a rust char literal and
-        # ("ab", "cd") is a tuple — neither survives python-style
+        # ("ab", "cd") is a tuple; neither survives python-style
         # literal formatting
         ('{% set x = \'a\' %}\n{% set y = ("ab", "cd") %}\n'),
         ('{% set x = \'a\' %}\n{% set y = ("ab", "cd") %}\n'),

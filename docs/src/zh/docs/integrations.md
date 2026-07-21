@@ -22,18 +22,18 @@ djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检
   这时会查找 `*.html` 并设置 `--profile=django`。
 - 使用 `djlint-jinja` 和 `djlint-reformat-jinja`。
   这时会查找 `*.j2` 、 `*.jinja` 或 `*.jinja2` 并设置 `--profile=jinja`。
-- 使用 `djlint-askama` 和 `djlint-reformat-askama`。
-  这时会查找 `*.html` 并设置 `--profile=askama`。
-- 使用 `djlint-tera` 和 `djlint-reformat-tera`。
-  这时会查找 `*.html` 并设置 `--profile=tera`。
-- 使用 `djlint-liquid` 和 `djlint-reformat-liquid`。
-  这时会查找 `*.html` 并设置 `--profile=liquid`。
 - 使用 `djlint-nunjucks` 和 `djlint-reformat-nunjucks`。
   这时会查找 `*.njk` 并设置 `--profile=nunjucks`。
 - 使用 `djlint-handlebars` 和 `djlint-reformat-handlebars`。
   这时会查找 `*.hbs` 并设置 `--profile=handlebars`。
+- 使用 `djlint-liquid` 和 `djlint-reformat-liquid`。
+  这时会查找 `*.html` 并设置 `--profile=liquid`。
 - 使用 `djlint-golang` 和 `djlint-reformat-golang`。
   这时会查找 `*.tmpl` 并设置 `--profile=golang`。
+- 使用 `djlint-tera` 和 `djlint-reformat-tera`。
+  这时会查找 `*.html` 并设置 `--profile=tera`。
+- 使用 `djlint-askama` 和 `djlint-reformat-askama`。
+  这时会查找 `*.html` 并设置 `--profile=askama`。
   :::
 
 请注意，这些预定义的 hook 在它们接受的输入方面有时会过于保守（您的模板可能使用了不同的扩展名），因此 pre-commit 明确允许您覆盖这些预定义的选项。有关额外的配置信息，请参阅 pre-commit 的文档。

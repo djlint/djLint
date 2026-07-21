@@ -14,8 +14,8 @@ Options:
   --indent INTEGER                Indent spacing. [default: 4]
   --quiet                         Do not print diff when reformatting.
   --profile TEXT                  Enable defaults by template language. ops:
-                                  django, jinja, askama, tera, liquid,
-                                  nunjucks, handlebars, golang, angular, html
+                                  django, jinja, nunjucks, handlebars, liquid,
+                                  golang, angular, tera, askama, html
                                   [default: html]
   --require-pragma                Only format or lint files that starts with a
                                   comment with the text 'djlint:on'

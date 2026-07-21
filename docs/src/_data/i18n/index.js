@@ -54,10 +54,10 @@ module.exports = {
   },
   description: {
     "en-US":
-      "Find common syntax errors, reformat to make your HTML templates shine! Supports django, jinja, askama, tera, liquid, nunjucks, twig, handlebars, mustache, golang, and more!",
-    ru: "Найдите распространенные синтаксические ошибки, переформатируйте, чтобы ваши HTML-шаблоны сияли! Поддерживает django, jinja, askama, tera, liquid, nunjucks, twig, handlebars, mustache, golang и многое другое!",
-    fr: "Trouvez les erreurs de syntaxe courantes, reformatez pour faire briller vos modèles HTML ! Supporte django, jinja, askama, tera, liquid, nunjucks, twig, handlebars, mustache, golang, et plus encore !",
-    zh: "发现常见的语法错误，重新格式化以让你的 HTML 模板焕发光彩！支持 Django、Jinja、Askama、Tera、Liquid、Nunjucks、Twig、Handlebars、Mustache、Golang 等更多模板引擎！",
+      "Find common syntax errors, reformat to make your HTML templates shine! Supports django, jinja, twig, nunjucks, handlebars, liquid, go templates, mustache, tera, askama, and more!",
+    ru: "Найдите распространенные синтаксические ошибки, переформатируйте, чтобы ваши HTML-шаблоны сияли! Поддерживает django, jinja, twig, nunjucks, handlebars, liquid, go templates, mustache, tera, askama и многое другое!",
+    fr: "Trouvez les erreurs de syntaxe courantes, reformatez pour faire briller vos modèles HTML ! Supporte django, jinja, twig, nunjucks, handlebars, liquid, go templates, mustache, tera, askama, et plus encore !",
+    zh: "发现常见的语法错误，重新格式化以让你的 HTML 模板焕发光彩！支持 Django、Jinja、Twig、Nunjucks、Handlebars、Liquid、Go 模板、Mustache、Tera、Askama 等更多模板引擎！",
   },
   updated: {
     "en-US": "Updated",
@@ -85,10 +85,10 @@ module.exports = {
   },
   index_description: {
     "en-US":
-      "Once upon a time all the other programming languages had a formatter and linter. Css, javascript, python, the c suite, typescript, ruby, php, go, swift, and you know the others. <i>The cool kids on the block.</i><br>HTML templates were left out there on their own, in the cold, unformatted and unlinted :( The dirty corner in your repository. <i>Something had to change.</i><br>Welcome djLint, the free cleaning service for html templates!<br>And the html templates lived happily ever after.",
-    ru: "Когда-то давно все другие языки программирования имели форматтер и линтер. Css, javascript, python, c suite, typescript, ruby, php, go, swift, и вы знаете другие. <i>Крутые ребята в квартале.</i><br>HTML-шаблоны остались там сами по себе, на холоде, неформатированные и нелинкованные :( Грязный угол в вашем репозитории. <i>Что-то должно было измениться.</i><br>Добро пожаловать djLint, бесплатный сервис очистки html-шаблонов!<br>И html-шаблоны жили долго и счастливо.",
-    fr: "Il était une fois, un royaume où tous les autres langages de programmation avaient un formateur et un linter. Css, javascript, python, la suite c, typescript, ruby, php, go, swift, et vous connaissez les autres. <i>Les gamins cool du quartier.</i><br>Les modèles HTML restaient là, seuls, dans le froid, non formatés et non non-lintés :( Le coin cracra de votre entrepôt. <i>Quelque chose devait changer.</i><br>Bienvenue à djLint, le service gratuit de nettoyage des modèles html !<br>Et les modèles html vécurent heureux jusqu'à la fin des temps.",
-    zh: "盖闻鸿蒙初辟，万码争流，皆禀格律：CSS、JavaScript之流，得格式校验之道，若吴钩越甲，锋芒曜日；Python、C族，得语法规范之器，如周鼎商彝，法度森然。<br/>唯HTML模板，犹屈子行吟泽畔，衣发散乱；类杜陵野老吞声，尘面蓬头。此诚《五蠹》所讥守株，《过秦》所叹敝帚者也！<br/>今者djLint出世，秉周公制礼之精，承仓颉造字之智，法大禹治水之则，正衣冠、明句读、修沟渎、立法言。<br/>昔韩退之起八代之衰，今吾辈当振模板之弊！使千行代码若《兰亭》之有序，万段标签如《史记》之有法。此非独技术之进境，实乃文明之薪传！",
+      "Every language in your stack has a formatter and a linter. HTML templates are the exception. Generic HTML tools can't parse <code>{% %}</code> and <code>{{ }}</code>, and template engines don't care what the markup around them looks like. djLint covers that blind spot: it reformats template-heavy HTML and lints it for common mistakes, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more.",
+    ru: "У каждого языка в вашем стеке есть форматтер и линтер. У HTML-шаблонов их нет. Обычные HTML-инструменты не понимают <code>{% %}</code> и <code>{{ }}</code>, а шаблонизаторам безразлично, как выглядит разметка вокруг. djLint закрывает это слепое пятно: форматирует HTML с шаблонным синтаксисом и находит типичные ошибки. Профили для Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, шаблонов Go и не только.",
+    fr: "Chaque langage de votre stack a son formateur et son linter, sauf vos templates HTML. Les outils HTML classiques ne comprennent pas <code>{% %}</code> ni <code>{{ }}</code>, et les moteurs de templates ignorent l'apparence du balisage. djLint comble cet angle mort : il reformate le HTML riche en syntaxe de template et détecte les erreurs courantes, avec des profils pour Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, les modèles Go et plus encore.",
+    zh: "技术栈里的每种语言都有格式化和检查工具，唯独 HTML 模板没有。普通 HTML 工具无法解析 <code>{% %}</code> 和 <code>{{ }}</code>，模板引擎也不关心标记的排版。djLint 填补了这个盲区：既能格式化带模板语法的 HTML，也能检查常见错误，并为 Django、Jinja、Twig、Nunjucks、Handlebars、Liquid、Go 模板等提供预设配置。",
   },
   index_fav_lang: {
     "en-US": "find your favorite template language!",
@@ -102,11 +102,11 @@ module.exports = {
     fr: "Montre ton format!",
     zh: "看看你的格式!",
   },
-  index_watch: {
-    "en-US": "Watch it run!",
-    ru: "Посмотрите, как он работает!",
-    fr: "Regardez-le fonctionner !",
-    zh: "看看它的运行!",
+  index_before_after: {
+    "en-US": "Messy in. Clean out.",
+    ru: "Хаос на входе. Порядок на выходе.",
+    fr: "Le désordre entre. L'ordre ressort.",
+    zh: "输入混乱，输出整洁。",
   },
   index_add_badge: {
     "en-US": "Add a badge to your projects",

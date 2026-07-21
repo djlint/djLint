@@ -133,14 +133,27 @@ html.has-navbar-fixed-top {
 }
 
 .image.brand {
-  height: 200px;
+  height: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 0.75rem;
+}
+.install-chip {
+  display: inline-block;
+  font-size: 1.25rem;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+}
+
+.image.brand picture {
+  display: contents;
 }
 .image.brand img {
-  max-width: 200px;
-  max-height: 200px;
+  height: 100px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 a.navbar-item:hover,

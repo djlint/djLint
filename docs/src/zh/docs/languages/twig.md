@@ -11,7 +11,7 @@ tool: nunjucks
 
 **[Twig简介](https://twig.symfony.com/)**
 
-Pebble（Java）模板与 Twig 兼容 — 请为其使用同一个配置。
+Pebble（Java）模板与 Twig 兼容，请为其使用同一个配置。
 
 #### 使用命令行
 

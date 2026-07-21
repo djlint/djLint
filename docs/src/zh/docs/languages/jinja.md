@@ -11,9 +11,9 @@ tool: jinja
 
 **[Jinja简介](https://jinja2docs.readthedocs.io/en/stable/)**
 
-MiniJinja 模板与 Jinja2 完全兼容 — 请使用同一个 `jinja` 配置。
+MiniJinja 模板与 Jinja2 完全兼容，请使用同一个 `jinja` 配置。
 
-HubSpot 的 Jinjava 模板也是 jinja 风格 — 也请使用此配置。
+HubSpot 的 Jinjava 模板也是 jinja 风格，也请使用此配置。
 
 #### 使用命令行
 

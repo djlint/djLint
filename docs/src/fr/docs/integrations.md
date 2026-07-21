@@ -22,18 +22,18 @@ Le repo fournit de multiples hooks pré-configurés pour des profils djLint spé
   Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=django`.
 - `djlint-jinja` et `djlint-reformat-jinja`
   Ceci recherchera les fichiers correspondant à `*.j2`, `*.jinja` ou `*.jinja2` et définira `--profile=jinja`.
-- `djlint-askama` et `djlint-reformat-askama`
-  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=askama`.
-- `djlint-tera` et `djlint-reformat-tera`
-  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=tera`.
-- `djlint-liquid` et `djlint-reformat-liquid`
-  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=liquid`.
 - `djlint-nunjucks` et `djlint-reformat-nunjucks`
   Ceci recherchera les fichiers correspondant à `*.njk` et définira `--profile=nunjucks`.
 - `djlint-handlebars` et `djlint-reformat-handlebars`
   Ceci recherchera les fichiers correspondant à `*.hbs` et définira `--profile=handlebars`.
+- `djlint-liquid` et `djlint-reformat-liquid`
+  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=liquid`.
 - `djlint-golang` et `djlint-reformat-golang`
   Ceci recherchera les fichiers correspondant à `*.tmpl` et définira `--profile=golang`.
+- `djlint-tera` et `djlint-reformat-tera`
+  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=tera`.
+- `djlint-askama` et `djlint-reformat-askama`
+  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=askama`.
   :: :
 
 Notez que ces hooks prédéfinis sont parfois trop conservateurs dans les entrées qu'ils acceptent (vos templates peuvent utiliser une extension différente) donc pre-commit vous permet explicitement de remplacer n'importe laquelle de ces options prédéfinies. Consultez la [docs pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) pour une configuration supplémentaire.
