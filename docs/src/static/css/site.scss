@@ -155,6 +155,19 @@ html.has-navbar-fixed-top {
   max-width: 100%;
   object-fit: contain;
 }
+@media (prefers-color-scheme: dark) {
+  /* the nav logo and the language logos are drawn for light backgrounds */
+  .djlint-nav .navbar-brand img {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  .image.brand {
+    background-color: hsl(221, 14%, 96%);
+    border-radius: $radius;
+  }
+  .image.brand img {
+    height: 88px;
+  }
+}
 
 a.navbar-item:hover,
 a.navbar-link:hover,
@@ -244,42 +257,63 @@ pre .number {
   border-width: $message-body-border-width;
   border-style: solid;
   border-color: $info;
-  background-color: $white;
+  background-color: var(--bulma-scheme-main);
   padding: 0;
 }
 .message.hint {
   border-width: $message-body-border-width;
   border-style: solid;
   border-color: $success;
-  background-color: $white;
+  background-color: var(--bulma-scheme-main);
   padding: 0;
 }
 .message.alert {
   border-width: $message-body-border-width;
   border-style: solid;
   border-color: $danger;
-  background-color: $white;
+  background-color: var(--bulma-scheme-main);
   padding: 0;
 }
 .message.note .message-header {
-  color: $text;
-  background-color: $info-light;
+  color: var(--bulma-text);
+  background-color: hsl(
+    var(--bulma-info-h),
+    var(--bulma-info-s),
+    var(--bulma-soft-l)
+  );
 }
 
 .message.hint .message-header {
-  color: $text;
-  background-color: $success-light;
+  color: var(--bulma-text);
+  background-color: hsl(
+    var(--bulma-success-h),
+    var(--bulma-success-s),
+    var(--bulma-soft-l)
+  );
 }
 
 .message.alert .message-header {
-  color: $text;
-  background-color: $danger-light;
+  color: var(--bulma-text);
+  background-color: hsl(
+    var(--bulma-danger-h),
+    var(--bulma-danger-s),
+    var(--bulma-soft-l)
+  );
 }
 
 .message.note .message-body,
 .message.hint .message-body,
 .message.alert .message-body {
-  color: $text;
+  color: var(--bulma-text);
+}
+
+.notification.is-info.is-light {
+  background-color: hsl(
+    var(--bulma-info-h),
+    var(--bulma-info-s),
+    var(--bulma-soft-l)
+  );
+  color: var(--bulma-text);
 }
 
 .image.is-35x35 {
@@ -322,7 +356,7 @@ pre .number {
 .menu .menu-label {
   font-weight: 600;
   font-size: unset;
-  color: $grey-dark;
+  color: var(--bulma-text);
 }
 
 .menu li a.is-active {
@@ -409,7 +443,7 @@ a.card:hover {
 }
 
 .title {
-  color: $grey-darker;
+  color: var(--bulma-text-strong);
 }
 @media screen and (min-width: $tablet) {
   .is-sticky {
@@ -424,6 +458,11 @@ a.card:hover {
   .navbar.is-transparent a.is-info.navbar-item:hover {
     background-color: $info-dark !important;
   }
+}
+.navbar-item.button.is-white {
+  --bulma-button-background-color: transparent;
+  --bulma-button-border-color: transparent;
+  --bulma-button-color: var(--bulma-text);
 }
 .navbar-item.button.is-white:hover {
   background: transparent !important;
