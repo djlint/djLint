@@ -114,6 +114,28 @@ test_data = [
         ({"max_attribute_length": 1}),
         id="with_html_tag_in_attribute_escaped_and_template_tag",
     ),
+    pytest.param(
+        # https://github.com/djlint/djLint/issues/2266
+        (
+            '<input :name="`x[${i}]`" placeholder="some long placeholder text to exceed the attribute length limit" />\n'
+        ),
+        (
+            '<input :name="`x[${i}]`"\n'
+            '       placeholder="some long placeholder text to exceed the attribute length limit" />\n'
+        ),
+        ({"profile": "jinja"}),
+        id="quoted_js_template_literal",
+    ),
+    pytest.param(
+        (
+            "<div ${'class=\"a\"' if x else ''} data-foo=\"some very long attribute value that exceeds the maximum attribute length\">x</div>\n"
+        ),
+        (
+            "<div ${'class=\"a\"' if x else ''} data-foo=\"some very long attribute value that exceeds the maximum attribute length\">x</div>\n"
+        ),
+        ({}),
+        id="unquoted_mako_expression_untouched",
+    ),
 ]
 
 

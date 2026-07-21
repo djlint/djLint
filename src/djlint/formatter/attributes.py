@@ -20,6 +20,15 @@ if TYPE_CHECKING:
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
+_QUOTED_VALUE_PATTERN = re.compile(r"\"[^\"]*\"|'[^']*'", cache_pattern=False)
+
+
+def has_unquoted_template_expression(attribute_group: str) -> bool:
+    """Check for a ${...} template expression outside quoted values."""
+    return "${" in attribute_group and "${" in _QUOTED_VALUE_PATTERN.sub(
+        "", attribute_group
+    )
+
 
 def count_object_properties(config: Config, value: str) -> int:
     """Count the number of properties in a JSON/JS object."""
@@ -256,7 +265,7 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
     # check that we are not inside an ignored block
     attribute_group = html[token.name_end : token.attributes_end].strip()
     if (
-        "${" in attribute_group
+        has_unquoted_template_expression(attribute_group)
         or (
             len(attribute_group) < config.max_attribute_length
             and CLASS_ATTRIBUTE_NEWLINE not in attribute_group

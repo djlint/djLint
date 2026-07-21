@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Attributes containing `${...}` inside a quoted value (e.g. JS template literals like `` :name="`x[${i}]`" ``) respect `max_attribute_length` again and are spread over multiple lines - a regression in 1.40.6. Unquoted Mako-style `${...}` expressions in tags are still left unformatted.
+
 ## [1.42.1] - 2026-07-20
 
 ### Fix
