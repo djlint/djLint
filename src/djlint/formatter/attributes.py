@@ -306,10 +306,30 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
 
     attributes = []
 
+    # the tag is rebuilt from the matched attribute groups, so any
+    # non-whitespace byte the pattern cannot match would be dropped. Bail out
+    # and leave malformed attributes untouched rather than corrupting them.
+    attribute_matches = list(
+        re.finditer(config.attribute_pattern, attribute_group, flags=re.X)
+    )
+    covered = 0
+    for attr_grp in attribute_matches:
+        if attribute_group[covered : attr_grp.start()].strip():
+            return html[token.start : token.end]
+        if attr_grp.group(1) is None and attr_grp.group().strip().startswith(
+            "="
+        ):
+            # a nameless "=value" attribute is malformed; leave the tag
+            # untouched rather than emitting a bogus "None=" attribute.
+            # (template-conditional attributes like "{% if x %}sel{% endif %}"
+            # also have no name group but must still be formatted.)
+            return html[token.start : token.end]
+        covered = attr_grp.end()
+    if attribute_group[covered:].strip():
+        return html[token.start : token.end]
+
     # format attributes as groups
-    for attr_grp in re.finditer(
-        config.attribute_pattern, attribute_group, flags=re.X
-    ):
+    for attr_grp in attribute_matches:
         attrib_name = attr_grp.group(1)
         is_quoted = attr_grp.group(2) and attr_grp.group(2)[0] in {"'", '"'}
         quote = attr_grp.group(2)[0] if is_quoted else '"'

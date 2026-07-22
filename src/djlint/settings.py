@@ -457,7 +457,7 @@ _ATTRIBUTE_PATTERN: Final = (
             )*
             | required | checked
         )? # attribute name
-        (?:  [ ]*?=[ ]*? # followed by "="
+        (?:  [ ]*=[ ]* # followed by "="
             (
                 \"[^\"]*? # double quoted attribute
                 (?:
@@ -475,7 +475,7 @@ _ATTRIBUTE_PATTERN: Final = (
                    | [^'] # anything else
                 )*?
                 \' # closing quote
-              | (?:\w|-)+ # or a non-quoted string value
+              | (?:\w|-|\.|\:|@|\*|/(?!>))+ # or a non-quoted string value
               | {{{{[\s\S]*?}}}} # a non-quoted template var
               | {{%[\s\S]*?%}} # a non-quoted template tag
               | {_TEMPLATE_IF_FOR_PATTERN} # a non-quoted if statement
@@ -500,12 +500,12 @@ _TEMPLATE_TAGS: Final = r"""
 # a branch tag ({% elif %}, {% else %}, handlebars {{else}}/{{^}}, ...)
 # is unindented and the next line is indented again
 _TAG_UNINDENT_LINE_TEMPLATE: Final = r"""
-      (?:\{%-?[ ]*?(?:BRANCHES))
+      (?:\{%-?[ ]*(?:BRANCHES))
     | (?:
-        \{\{[ ]*?
+        \{\{[ ]*
         (
             (?:else|\^)
-            [ ]*?\}\}
+            [ ]*\}\}
         )
       )
 """
@@ -528,9 +528,9 @@ _PROFILE_BLOCKS: Final[dict[str, str]] = {
 
 # golang template blocks use plain {{ }} delimiters; only the golang
 # profile treats them as blocks, closed by a bare {{ end }}
-_GOLANG_BLOCK_OPEN: Final = r"|\{\{-?[ ]*?(?:if|range|with|block|define)\b"
-_GOLANG_BLOCK_CLOSE: Final = r"|(?:\{\{-?[ ]*?end(?![\w]))"
-_GOLANG_BRANCH: Final = r"|(?:\{\{-?[ ]*?else(?![\w]))"
+_GOLANG_BLOCK_OPEN: Final = r"|\{\{-?[ ]*(?:if|range|with|block|define)\b"
+_GOLANG_BLOCK_CLOSE: Final = r"|(?:\{\{-?[ ]*end(?![\w]))"
+_GOLANG_BRANCH: Final = r"|(?:\{\{-?[ ]*else(?![\w]))"
 
 _IGNORED_ATTRIBUTES: Final = frozenset({
     "href",
@@ -776,15 +776,15 @@ _IGNORED_INLINE_BLOCKS: Final = r"""
     | <script.*?\</script>
     | <style.*?\</style>
     | {\*.*?\*}
-    | {\#(?!.*djlint:[ ]*?(?:off|on)\b).*\#}
+    | {\#(?!.*djlint:[ ]*(?:off|on)\b).*\#}
     | <\?php.*?\?>
-    | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*?endcomment[ ]*?%}
-    | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
+    | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*endcomment[ ]*%}
+    | {%[ ]*filter\b(?:(?!%}).)*?%}.*?{%[ ]*endfilter[ ]*%}
     # liquid/shopify blocks whose bodies are json, css or js
-    | {%-?[ ]*?(?:schema|javascript|stylesheet|style)[ ]*?-?%}
+    | {%-?[ ]*(?:schema|javascript|stylesheet|style)[ ]*-?%}
       .*?
-      {%-?[ ]*?end(?:schema|javascript|stylesheet|style)[ ]*?-?%}
-    | {%[ ]*?blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans(?:late)?[ ]*?%}
+      {%-?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*-?%}
+    | {%[ ]*blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans(?:late)?[ ]*%}
 """
 
 _IGNORED_BLOCKS: Final = r"""
@@ -805,14 +805,14 @@ _IGNORED_BLOCKS: Final = r"""
     | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
     | <!--.*?-->
     | <\?php.*?\?>
-    | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
+    | {%[ ]*filter\b(?:(?!%}).)*?%}.*?{%[ ]*endfilter[ ]*%}
     # liquid/shopify blocks whose bodies are json, css or js
-    | {%-?[ ]*?(?:schema|javascript|stylesheet|style)[ ]*?-?%}
+    | {%-?[ ]*(?:schema|javascript|stylesheet|style)[ ]*-?%}
       .*?
-      {%-?[ ]*?end(?:schema|javascript|stylesheet|style)[ ]*?-?%}
-    | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-    | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-    | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
+      {%-?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*-?%}
+    | {%[ ]*blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktranslate[ ]*%}
+    | {%[ ]*blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
+    | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*endcomment[ ]*%})
     | ^---[\s\S]+?---
 """
 
@@ -854,9 +854,9 @@ _IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
     | ^{\#(?!\s*djlint\:\s*(?:on|off))
     | <pre
     | <textarea
-    | {%[ ]*?blocktrans(?:late)?(?:(?!%}|\btrimmed\b).)*?%}
-    | {%-?[ ]*?(?:schema|javascript|stylesheet|style)[ ]*?-?%}
-    | {%[ ]*?filter\b(?:(?!%}).)*?%}
+    | {%[ ]*blocktrans(?:late)?(?:(?!%}|\btrimmed\b).)*?%}
+    | {%-?[ ]*(?:schema|javascript|stylesheet|style)[ ]*-?%}
+    | {%[ ]*filter\b(?:(?!%}).)*?%}
     | {\#\s*djlint\:\s*off\s*\#}
     | {%[ ]+?comment[ ]+?(?:(?!%}).)*?%}
     | {{!--\s*djlint\:off\s*--}}
@@ -875,13 +875,13 @@ _IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
     | ^(?:(?!{\#).)*\#} # lines that have a #}, but not a {#
     | </pre
     | </textarea
-    | {%[ ]*?endfilter(?:(?!%}).)*?%}
+    | {%[ ]*endfilter(?:(?!%}).)*?%}
     | {\#\s*djlint\:\s*on\s*\#}
     | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
     | {{!--\s*djlint\:on\s*--}}
     | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
-    | {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
-    | {%-?[ ]*?end(?:schema|javascript|stylesheet|style)[ ]*?-?%}
+    | {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
+    | {%-?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*-?%}
     """,
     RE_FLAGS_IX,
     cache_pattern=False,
@@ -908,10 +908,10 @@ _IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
     | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
     | <!--.*?-->
     | <\?php.*?\?>
-    | {%[ ]*?filter\b(?:(?!%}).)*?%}.*?{%[ ]*?endfilter[ ]*?%}
-    | {%[ ]*?blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-    | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
-    | {%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})
+    | {%[ ]*filter\b(?:(?!%}).)*?%}.*?{%[ ]*endfilter[ ]*%}
+    | {%[ ]*blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktranslate[ ]*%}
+    | {%[ ]*blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
+    | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*endcomment[ ]*%})
     | ^---[\s\S]+?---
     """,
     RE_FLAGS_IMSX,
@@ -922,7 +922,7 @@ _IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = re.compile(
 )
 _IGNORED_LINTER_BLOCKS_PATTERN: Final = re.compile(
     r"""
-    {%-?[ ]*?(raw|verbatim)\b(?:(?!%}).)*?-?%}.*?{%-?[ ]*?end\1[ ]*?-?%}
+    {%-?[ ]*(raw|verbatim)\b(?:(?!%}).)*?-?%}.*?{%-?[ ]*end\1[ ]*-?%}
     """,
     RE_FLAGS_IMSX,
     cache_pattern=False,
@@ -965,23 +965,23 @@ _IGNORED_RULE_PATTERNS: Final = tuple(
 )
 _IGNORED_TRANS_BLOCKS_PATTERN: Final = re.compile(
     r"""
-      {%[ ]*?blocktranslate?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktranslate?[ ]*?%}
-    | {%[ ]*?blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+      {%[ ]*blocktranslate?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktranslate?[ ]*%}
+    | {%[ ]*blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
     """,
     RE_FLAGS_ISX,
     cache_pattern=False,
 )
 _TRANS_TRIMMED_BLOCKS_PATTERN: Final = re.compile(
     r"""
-      {%[ ]*?blocktranslate\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktranslate[ ]*?%}
-    | {%[ ]*?blocktrans\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*?endblocktrans[ ]*?%}
+      {%[ ]*blocktranslate\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*endblocktranslate[ ]*%}
+    | {%[ ]*blocktrans\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
     """,
     RE_FLAGS_ISX,
     cache_pattern=False,
 )
 _IGNORED_TRANS_BLOCKS_CLOSING_PATTERN: Final = re.compile(
     r"""
-    {%[ ]*?endblocktrans(?:late)?(?:(?!%}).)*?%}
+    {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
     """,
     RE_FLAGS_IX,
     cache_pattern=False,
@@ -1461,14 +1461,14 @@ class Config:
         is_golang = self.profile == "golang"
         self.template_indent = (
             r"""
-            (?:\{\{\#|\{%-?)[ ]*?
+            (?:\{\{\#|\{%-?)[ ]*
                 ("""
             + ignore_blocks_guard
             + _INDENT_TEMPLATE_TAGS
             + custom_block_openers
             + r")\b"
             + r"""
-            ) | \{{-?[ ]*?form_start
+            ) | \{{-?[ ]*form_start
             """
             + (_GOLANG_BLOCK_OPEN if is_golang else "")
         )
@@ -1485,11 +1485,11 @@ class Config:
             r"""
                 (?:
                   (?:\{\{\/)
-                | (?:\{%-?[ ]*?end"""
+                | (?:\{%-?[ ]*end"""
             + end_tag_guard
             + ignore_blocks_guard
             + r""")
-                | (?:\{{-?[ ]*?form_end)
+                | (?:\{{-?[ ]*form_end)
             """
             + (_GOLANG_BLOCK_CLOSE if is_golang else "")
             + r"""

@@ -27,7 +27,14 @@ ORPHAN_END_MESSAGE: Final = "End tag has no matching block tag."
 MISMATCH_MESSAGE: Final = "Endblock name should match opening block name."
 
 _TEMPLATE_TAG_PATTERN: Final = re.compile(
-    r"\{%(?:(?!%\}).)*%\}|\{\{[#^/](?:(?!\}\}).)*\}\}",
+    # a handlebars raw block ({{{{raw}}}}...{{{{/raw}}}}) and handlebars
+    # comments ({{!-- --}}, {{! }}) are matched whole so the block/comment
+    # tags nested inside them are not scanned as real tags.
+    r"\{\{\{\{#?\s*([\w.-]+)(?:(?!\}\}\}\}).)*\}\}\}\}(?:(?!\{\{\{\{/).)*?\{\{\{\{/\s*\1\s*\}\}\}\}"
+    r"|\{\{!--(?:(?!--\}\}).)*--\}\}"
+    r"|\{\{!(?:(?!\}\}).)*\}\}"
+    r"|\{%(?:(?!%\}).)*%\}"
+    r"|\{\{[#^/](?:(?!\}\}).)*\}\}",
     re.S,
     cache_pattern=False,
 )
@@ -84,6 +91,10 @@ def run(
 
     for match in _TEMPLATE_TAG_PATTERN.finditer(html):
         tag = match.group()
+
+        if tag.startswith(("{{{{", "{{!")):
+            # a whole handlebars raw block or comment - nothing to pair
+            continue
 
         if re.match(config.template_unindent, tag, RE_FLAGS_IX):
             end_name = _END_NAME_PATTERN.match(tag)

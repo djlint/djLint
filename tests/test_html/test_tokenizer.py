@@ -48,6 +48,95 @@ def test_template_comment_text_does_not_change_tokenization() -> None:
     ] == ["<script>", "</script>", "<div>", "</div>"]
 
 
+def test_unterminated_comment_in_template_comment_keeps_following_tags() -> (
+    None
+):
+    # https://github.com/djlint/djLint/issues/2266 neighborhood: a stray
+    # "<!--" inside a {# #} template comment must not swallow the rest of
+    # the document.
+    source = "<div>\n{# <!-- #}\n</div>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<div>", "</div>"]
+
+
+def test_unterminated_comment_in_raw_text_element_keeps_following_tags() -> (
+    None
+):
+    source = "<textarea><!--</textarea>\n<p>a</p>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<textarea>", "</textarea>", "<p>", "</p>"]
+
+
+def test_terminated_comment_still_hides_tags() -> None:
+    source = "<div><!-- <span> --></div>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<div>", "</div>"]
+
+
+def test_less_than_in_mako_expression_in_text_is_not_a_tag() -> None:
+    source = "<p>${x<y}</p>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<p>", "</p>"]
+
+
+def test_less_than_in_variable_expression_in_text_is_not_a_tag() -> None:
+    source = "<p>{{a<b}}</p>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<p>", "</p>"]
+
+
+def test_template_expression_between_tags_does_not_hide_real_tags() -> None:
+    source = "{% if a<b %}<div>x</div>{% endif %}"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<div>", "</div>"]
+
+
+def test_quoted_literal_braces_do_not_escape_attribute() -> None:
+    # A quoted literal "{{" must not make the scanner hunt for a "}}" in
+    # later content and swallow the tag boundary.
+    source = '<div a="{{">x</div>\n<pre>\n  keep }}  me\n</pre>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ['<div a="{{">', "</div>", "<pre>", "</pre>"]
+
+
+def test_template_expression_with_gt_in_quoted_attribute() -> None:
+    source = '<div data-value="{{ value > limit }}" title="a > b">x</div>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ['<div data-value="{{ value > limit }}" title="a > b">', "</div>"]
+
+
+def test_triple_stache_attribute_is_one_tag() -> None:
+    source = "<a {{{u}}}></a>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<a {{{u}}}>", "</a>"]
+
+
+def test_handlebars_raw_block_open_tag_attribute() -> None:
+    source = "<a {{{{raw}}}}></a>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<a {{{{raw}}}}>", "</a>"]
+
+
 def test_mixed_template_comments_are_compressed(basic_config: Config) -> None:
     source = (
         "{{#unless}}<DIV  id=x></DIV>{{/unless}}{# <DIV  id=x> #}<SPAN></SPAN>"

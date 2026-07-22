@@ -38,6 +38,11 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
 
         scan = start + 2
         if close == "}}":
+            if html.startswith("{{{{", start):
+                # handlebars raw block delimiter: {{{{name}}}} / {{{{/name}}}}
+                raw_end = html.find("}}}}", start + 4)
+                pos = start + 4 if raw_end == -1 else raw_end + 4
+                continue
             # skip comment tags: {{! }}, {{!-- --}}, {{/* */}} (golang)
             content_start = scan + 1 if html.startswith("-", scan) else scan
             if html.startswith("!--", content_start):

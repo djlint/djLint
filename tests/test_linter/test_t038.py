@@ -198,6 +198,18 @@ handlebars_test_data = [
         ]),
         id="orphan_close",
     ),
+    pytest.param(
+        ("{{!-- {{#if x}} --}}\n"), ([]), id="block_tag_inside_comment"
+    ),
+    pytest.param(
+        ("{{! {{#if x}} }}\n"), ([]), id="block_tag_inside_inline_comment"
+    ),
+    pytest.param(("{{{{raw}}}}{{{{/raw}}}}\n"), ([]), id="raw_block"),
+    pytest.param(
+        ("{{{{raw}}}}{{#if x}}{{{{/raw}}}}\n"),
+        ([]),
+        id="raw_block_with_content",
+    ),
 ]
 
 

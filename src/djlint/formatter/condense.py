@@ -20,6 +20,7 @@ from djlint.helpers import (
     inside_html_attribute,
     inside_ignored_block,
     inside_protected_trans_block,
+    is_ignored_block_opening,
     is_safe_closing_tag,
 )
 
@@ -62,6 +63,13 @@ def clean_whitespace(html: str, config: Config) -> str:
             config, html, match
         ) and not is_safe_closing_tag(config, match.group()):
             return match.group()
+
+        # a line that opens a multi-line ignored block (e.g. "<textarea>x")
+        # has verbatim content after the opening tag; keep its trailing
+        # whitespace, stripping only the leading indentation so the line can
+        # still be re-indented.
+        if is_ignored_block_opening(config, match.group()):
+            return match.group(1) + match.group(2)
 
         # trimmed blocks should not be here.
         # we need to full html to check what type of

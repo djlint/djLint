@@ -7,6 +7,21 @@
 ### Fix
 
 - Attributes containing `${...}` inside a quoted value (e.g. JS template literals like ``:name="`x[${i}]`"``) respect `max_attribute_length` again and are spread over multiple lines - a regression in 1.40.6. Unquoted Mako-style `${...}` expressions in tags are still left unformatted.
+- A stray `<!--` that is not a real HTML comment (for example inside a `{# ... #}` template comment or inside a `<textarea>`/`<pre>`) no longer swallows the rest of the document. This fixes false `H025` orphan-tag reports and over-indentation of the tags that follow - a regression in 1.40.6.
+- Handlebars triple-stache `{{{ ... }}}` and raw-block `{{{{ ... }}}}` expressions used as tag attributes are tokenized correctly again, fixing false `H025` orphan-tag reports - a regression in 1.40.6.
+- A quoted literal brace in an attribute value (e.g. `data-x="{{"`) no longer makes the tokenizer scan into later content looking for a matching `}}`, which could collapse `<pre>`/`<textarea>` whitespace - a regression in 1.40.6.
+- Spacing the `}}` of a handlebars `{{#if}}`/`{{#each}}` block-open tag is now idempotent; it no longer leaks a trailing space into the following `{{...}}` tag on later formatting passes.
+- `T038` no longer reports block tags that appear only inside a handlebars comment (`{{!-- ... --}}`, `{{! ... }}`) or inside a handlebars raw block (`{{{{raw}}}} ... {{{{/raw}}}}`).
+- `T039` no longer reports handlebars raw-block delimiters (`{{{{raw}}}}` / `{{{{/raw}}}}`) as unclosed template tags.
+- Malformed tag attributes that the attribute parser cannot fully parse (e.g. a stray `<` or dangling `=`) are now left untouched instead of having the unparsable characters silently dropped when attributes are wrapped.
+- A `<` used as a less-than operator inside a template expression in text or `<script>` content (e.g. `${a<b}`, `{{a<b}}`) is no longer mistaken for an HTML tag start, which could merge or drop following content and break idempotency - a regression in 1.40.6.
+- Unquoted attribute values containing `:` or `/` (e.g. `href=https://example.com/page`) are no longer split into a truncated value plus a bogus standalone attribute when attributes are wrapped - a regression in 1.40.6.
+- A nameless `="value"` attribute is no longer rewritten with the literal attribute name `None`; malformed attributes are left untouched.
+- Trailing whitespace inside an indented `<textarea>`/`<pre>` is preserved instead of being collapsed by whitespace cleanup (it is verbatim content).
+
+### Performance
+
+- Detecting ignored/verbatim blocks (`{% comment %}`, `{% blocktrans %}`, `{% filter %}`, `<pre>`, `<script>`, etc.) is dramatically faster on templates with many `{% ... %}` tags. A lazy `[ ]*?` before the block keywords caused pathological backtracking; the equivalent greedy `[ ]*` removes it, cutting reformat time on large template-heavy files by roughly 5x.
 
 ## [1.42.1] - 2026-07-20
 

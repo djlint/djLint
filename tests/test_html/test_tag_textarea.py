@@ -79,6 +79,20 @@ test_data = [
         ),
         id="a_with_nesting",
     ),
+    # a stray "<!--" in raw text must not swallow the closing tag and
+    # over-indent the following siblings.
+    pytest.param(
+        ("<textarea><!--</textarea>\n<p>a</p>\n"),
+        ("<textarea><!--</textarea>\n<p>a</p>\n"),
+        id="unterminated_comment_in_textarea",
+    ),
+    # trailing whitespace inside an indented textarea is verbatim content and
+    # must be preserved, not collapsed by clean_whitespace.
+    pytest.param(
+        ("<div>\n    <textarea>Hello   \nWorld</textarea>\n</div>\n"),
+        ("<div>\n    <textarea>Hello   \nWorld</textarea>\n</div>\n"),
+        id="indented_textarea_trailing_whitespace_preserved",
+    ),
 ]
 
 

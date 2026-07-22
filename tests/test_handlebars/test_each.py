@@ -41,3 +41,15 @@ def test_base(source: str, expected: str, handlebars_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+def test_block_open_spacing_is_idempotent(handlebars_config: Config) -> None:
+    # Spacing the "}}" of a {{#if}}/{{#each}} block-open tag must not leak
+    # into the following {{...}} tags on later passes.
+    source = "{{#if a}}x{{/if}}\n"
+
+    once = formatter(handlebars_config, source)
+    twice = formatter(handlebars_config, once)
+
+    assert once == "{{#if a }}x{{/if}}\n"
+    assert twice == once

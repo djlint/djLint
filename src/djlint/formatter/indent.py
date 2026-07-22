@@ -45,7 +45,10 @@ _EXTRA_TAG_WHITESPACE_PATTERN: Final = re.compile(
     r"(\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*')|[ \t]{2,}", cache_pattern=False
 )
 _HANDLEBARS_BLOCK_END_PATTERN: Final = re.compile(
-    r"({{#(?:each|if).+?[^ ])(}})", cache_pattern=False
+    # keep the content bounded to a single tag so spacing "}}" cannot make
+    # the match spill into the following {{...}} tag on later passes.
+    r"({{#(?:each|if)(?:(?!}}).)+?[^ ])(}})",
+    cache_pattern=False,
 )
 _SET_CLOSE_PATTERN: Final = re.compile(
     r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX, cache_pattern=False

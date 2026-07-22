@@ -136,6 +136,41 @@ test_data = [
         ({}),
         id="unquoted_mako_expression_untouched",
     ),
+    pytest.param(
+        # malformed attributes must not be silently corrupted: the stray
+        # "=<" cannot be parsed, so the tag is left untouched.
+        (
+            '<div data-x=< class="some long value that exceeds the attribute length limit">x</div>\n'
+        ),
+        (
+            '<div data-x=< class="some long value that exceeds the attribute length limit">x</div>\n'
+        ),
+        ({"max_attribute_length": 20}),
+        id="malformed_attribute_not_dropped",
+    ),
+    pytest.param(
+        # a nameless ="value" attribute must not become None="value"
+        (
+            '<div ="some long value that exceeds the attribute length limit here">z</div>\n'
+        ),
+        (
+            '<div ="some long value that exceeds the attribute length limit here">z</div>\n'
+        ),
+        ({"max_attribute_length": 20}),
+        id="nameless_attribute_not_renamed_none",
+    ),
+    pytest.param(
+        # an unquoted URL/path value must not be split at ":" or "/" into a
+        # bogus standalone attribute; it stays one value (quoted when spread).
+        (
+            "<a href=https://example.com/some/long/path/that/exceeds/limit>x</a>\n"
+        ),
+        (
+            '<a href="https://example.com/some/long/path/that/exceeds/limit">x</a>\n'
+        ),
+        ({"max_attribute_length": 20}),
+        id="unquoted_url_value_not_split",
+    ),
 ]
 
 

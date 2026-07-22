@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 _TEMPLATE_COMMENT_BLOCK_PATTERN: Final = re.compile(
-    r"{%[ ]*?comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*?endcomment[ ]*?%})",
+    r"{%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*endcomment[ ]*%})",
     RE_FLAGS_ISX,
     cache_pattern=False,
 )
