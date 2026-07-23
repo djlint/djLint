@@ -51,7 +51,7 @@ repos:
           - pytest
           - tomli
           - types-pyyaml==6.0.12.20260518
-          - types-regex==2026.7.10.20260711
+          - types-regex==2026.7.19.20260720
           - typing-extensions==4.16.0
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: v1.27.0
