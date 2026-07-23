@@ -1,15 +1,6 @@
-importScripts("https://cdn.jsdelivr.net/pyodide/v0.29.4/full/pyodide.js");
+import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.mjs";
 
-function pythonString(value) {
-  return JSON.stringify(value.toString());
-}
-
-function pythonValue(value, kind) {
-  if (kind === "bool") return value ? "True" : "False";
-  if (kind === "string") return pythonString(value);
-  return value;
-}
-
+// [djLint Config kwarg, config key from editor.js, value kind]
 const CONFIG_ARGS = [
   ["profile", "profile", "string"],
   ["indent", "indent", "value"],
@@ -29,16 +20,8 @@ const CONFIG_ARGS = [
   ["format_attribute_template_tags", "formatAttributeTemplateTags", "bool"],
   ["single_attribute_per_line", "singleAttributePerLine", "bool"],
   ["format_attribute_js_json", "formatAttributeJsJson", "bool"],
-  [
-    "format_attribute_js_json_pattern",
-    "formatAttributeJsJsonPattern",
-    "string",
-  ],
-  [
-    "format_attribute_js_json_min_props",
-    "formatAttributeJsJsonMinProps",
-    "value",
-  ],
+  ["format_attribute_js_json_pattern", "formatAttributeJsJsonPattern", "string"],
+  ["format_attribute_js_json_min_props", "formatAttributeJsJsonMinProps", "value"],
   ["blank_line_after_tag", "blankLineAfterTag", "string"],
   ["blank_line_before_tag", "blankLineBeforeTag", "string"],
   ["close_void_tags", "closeVoidTags", "bool"],
@@ -49,58 +32,67 @@ const CONFIG_ARGS = [
   ["no_function_formatting", "noFunctionFormatting", "bool"],
 ];
 
-function buildConfigArguments(config) {
-  const args = CONFIG_ARGS.flatMap(([name, key, kind]) =>
-    config[key] ? [`${name}=${pythonValue(config[key], kind)}`] : [],
-  );
-
-  return args.length
-    ? `,
-      ${args.join(",\n      ")}`
-    : "";
+// Build a plain JS object of djLint Config kwargs from the editor settings.
+// Passed to Python via toPy (a dict) instead of interpolating into source.
+function buildConfig(config) {
+  const options = {};
+  for (const [name, key, kind] of CONFIG_ARGS) {
+    const value = config[key];
+    if (!value) continue;
+    options[name] = kind === "value" ? Number(value) : value;
+  }
+  return options;
 }
 
+let pyodide;
+let formatHtml;
+
 async function loadPyodideAndPackages() {
-  self.pyodide = await loadPyodide();
+  pyodide = await loadPyodide({
+    indexURL: "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/",
+  });
   self.postMessage({ type: "status", message: "Loading micropip" });
-  await self.pyodide.loadPackage("micropip");
-  self.postMessage({ type: "status", message: "Importing micropip" });
-  const micropip = await self.pyodide.pyimport("micropip");
+  await pyodide.loadPackage("micropip");
   self.postMessage({ type: "status", message: "Installing djLint" });
+  const micropip = pyodide.pyimport("micropip");
   await micropip.install("djlint");
   self.postMessage({
     type: "version",
-    message: await self.pyodide.runPythonAsync(`
+    message: await pyodide.runPythonAsync(`
 import platform
 from importlib import metadata
 
 f"Running with Python {platform.python_version()}; djLint {metadata.version('djlint')}"
 `),
   });
-  await self.pyodide.runPythonAsync(`
+  // Call the library API directly. Config("-") is stdin mode (no filesystem
+  // walking); options is a dict unpacked into Config's keyword arguments.
+  formatHtml = await pyodide.runPythonAsync(`
 from djlint.reformat import formatter
 from djlint.settings import Config
-`);
 
+def _djlint_format(html, options):
+    return formatter(Config("-", **options), html).rstrip()
+
+_djlint_format
+`);
   self.postMessage({ type: "status", message: "ready" });
 }
 
-let pyodideReadyPromise = loadPyodideAndPackages();
+const pyodideReadyPromise = loadPyodideAndPackages();
 
 self.onmessage = async (event) => {
   await pyodideReadyPromise;
 
   const { id, config, html } = event.data;
 
-  const configArguments = buildConfigArguments(config);
-
+  const options = pyodide.toPy(buildConfig(config));
   try {
-    self.pyodide.globals.set("djlint_html", html);
-    const output = await self.pyodide.runPythonAsync(`
-formatter(Config("."${configArguments}), djlint_html).rstrip()
-`);
+    const output = formatHtml(html, options);
     self.postMessage({ type: "html", message: output, id: id });
   } catch (err) {
     self.postMessage({ type: "error", message: err.message, id: id });
+  } finally {
+    options.destroy();
   }
 };

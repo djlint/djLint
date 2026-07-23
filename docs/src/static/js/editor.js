@@ -8,7 +8,7 @@ if (typeof Worker !== "undefined") {
   let w;
 
   if (typeof w == "undefined") {
-    w = new Worker("/static/js/worker.js");
+    w = new Worker("/static/js/worker.js", { type: "module" });
   }
 
   function getConfig() {
