@@ -62,6 +62,22 @@ test_data = [
         ),
         id="alpine_nested_html",
     ),
+    pytest.param(
+        (
+            '<input type="text" style="anchor-name: --anchor" '
+            'class="rounded-md border border-gray-200 p-1" '
+            '@keydown.prevent.?="$refs.examples.togglePopover()" '
+            'x-on:blur="$refs.examples.hidePopover()">\n'
+        ),
+        (
+            '<input type="text"\n'
+            '       style="anchor-name: --anchor"\n'
+            '       class="rounded-md border border-gray-200 p-1"\n'
+            '       @keydown.prevent.?="$refs.examples.togglePopover()"\n'
+            '       x-on:blur="$refs.examples.hidePopover()">\n'
+        ),
+        id="issue_2276_punctuation_key_modifier",
+    ),
 ]
 
 

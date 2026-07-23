@@ -2,6 +2,13 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Fix
+
+- Attribute names containing punctuation beyond `-`, `.`, `:`, `@` and `*` no longer stop a tag from being wrapped over multiple lines. The attribute parser now accepts any character HTML allows in an attribute name, so Alpine key modifiers (`@keydown.prevent.?`), Angular bindings (`(click)`, `[disabled]`) and Vue shorthands (`#slot`) are formatted like every other attribute instead of leaving the whole tag on one long line. Angular bindings also reach `--format-attribute-js-json` for the first time, which already listed them.
+- An unquoted attribute value with a template tag glued to the rest of the value (e.g. `src={{ MEDIA_URL }}/logo.png`, `href={{ .Permalink }}#{{ .Anchor }}`) is no longer split into a truncated value plus a bogus standalone attribute when attributes are wrapped; it stays one value, quoted when spread.
+
 ## [1.42.2] - 2026-07-22
 
 ### Fix

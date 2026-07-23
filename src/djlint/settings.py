@@ -438,21 +438,30 @@ _TEMPLATE_IF_FOR_PATTERN: Final = r"""
     )
 """
 
+# HTML allows anything in an attribute name except whitespace, quotes, "=",
+# "<", ">" and "/", and frameworks use that freedom: Alpine key modifiers
+# (@keydown.?), Angular bindings ((click), [disabled]) and Vue shorthands
+# such as "#default". A "/" that does not close the tag is still a name
+# character. "{" and "}" are excluded so template tags are consumed by the
+# template alternatives below instead of character by character, and NUL is
+# excluded to keep the class_attributes newline markers out of names.
+_ATTRIBUTE_NAME_CHAR: Final = r"""(?:[^\s"'=<>/{}\x00]|/(?!>))"""
+
 _ATTRIBUTE_PATTERN: Final = (
     rf"""
     (?:
         (
             (?:
-                (?:\w|-|\.|\:|@|\*|/(?!>)) # a name character
+                {_ATTRIBUTE_NAME_CHAR} # a name character
                | (?>{{{{[\s\S]*?}}}})
-                 (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template variable
+                 (?={_ATTRIBUTE_NAME_CHAR}|[ ]*=) # a leading template variable
                | (?!{{%-?\s*(?:for|asyncAll|asyncEach)\b)
                  (?!{{%-?\s*if\b[^}}]*?%}}(?:required|checked){{%-?\s*endif\b[^}}]*?%}})
                  (?>{_TEMPLATE_IF_FOR_PATTERN})
-                 (?=(?:\w|-|\.|\:|@|\*|/(?!>))|[ ]*=) # a leading template block
+                 (?={_ATTRIBUTE_NAME_CHAR}|[ ]*=) # a leading template block
             )
             (?:
-                (?:\w|-|\.|\:|@|\*|/(?!>)) # more name characters
+                {_ATTRIBUTE_NAME_CHAR} # more name characters
                | (?>{{{{[\s\S]*?}}}}|{{%[\s\S]*?%}}) # or an embedded template tag
             )*
             | required | checked
@@ -475,9 +484,12 @@ _ATTRIBUTE_PATTERN: Final = (
                    | [^'] # anything else
                 )*?
                 \' # closing quote
-              | (?:\w|-|\.|\:|@|\*|/(?!>))+ # or a non-quoted string value
-              | {{{{[\s\S]*?}}}} # a non-quoted template var
-              | {{%[\s\S]*?%}} # a non-quoted template tag
+              | (?: # or a non-quoted string value. A template tag glued to
+                    # the rest of the value is part of that one value, not
+                    # the start of a second attribute.
+                    {_ATTRIBUTE_NAME_CHAR}
+                   | (?>{{{{[\s\S]*?}}}}|{{%[\s\S]*?%}}) # embedded template tag
+                )+
               | {_TEMPLATE_IF_FOR_PATTERN} # a non-quoted if statement
 
             )

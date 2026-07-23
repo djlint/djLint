@@ -171,6 +171,53 @@ test_data = [
         ({"max_attribute_length": 20}),
         id="unquoted_url_value_not_split",
     ),
+    pytest.param(
+        # punctuation is legal in an unquoted value; it must not truncate the
+        # value and leave the rest as a bogus standalone attribute.
+        ("<a href=/help/faq#billing-and-refunds target=_blank>x</a>\n"),
+        ('<a href="/help/faq#billing-and-refunds"\n   target="_blank">x</a>\n'),
+        ({"max_attribute_length": 20}),
+        id="unquoted_punctuation_value_not_split",
+    ),
+    pytest.param(
+        # a template tag glued to the rest of an unquoted value is part of
+        # that value, not the start of a second attribute.
+        ("<img src={{ MEDIA_URL }}/logo/some-long-name.png alt=logo>\n"),
+        (
+            '<img src="{{ MEDIA_URL }}/logo/some-long-name.png"\n'
+            '     alt="logo">\n'
+        ),
+        ({"max_attribute_length": 20, "profile": "django"}),
+        id="unquoted_template_value_not_split",
+    ),
+    pytest.param(
+        # ... including when the value is several template tags joined by
+        # punctuation, as in a golang permalink + anchor.
+        ("<a href={{ .Permalink }}#{{ .Anchor }} rel=noopener>x</a>\n"),
+        ('<a href="{{ .Permalink }}#{{ .Anchor }}"\n   rel="noopener">x</a>\n'),
+        ({"max_attribute_length": 20, "profile": "golang"}),
+        id="unquoted_golang_template_value_not_split",
+    ),
+    pytest.param(
+        # a template variable may prefix an attribute name whose remainder
+        # starts with punctuation.
+        ('<div {{ prefix }}?suffix="1" class="one two three">z</div>\n'),
+        ('<div {{ prefix }}?suffix="1"\n     class="one two three">z</div>\n'),
+        ({"max_attribute_length": 20, "profile": "django"}),
+        id="template_var_attribute_name_prefix",
+    ),
+    pytest.param(
+        # ... and so may a complete template block.
+        (
+            '<div {% if a %}data{% endif %}?y="1" class="one two three">z</div>\n'
+        ),
+        (
+            '<div {% if a %}data{% endif %}?y="1"\n'
+            '     class="one two three">z</div>\n'
+        ),
+        ({"max_attribute_length": 20, "profile": "django"}),
+        id="template_block_attribute_name_prefix",
+    ),
 ]
 
 

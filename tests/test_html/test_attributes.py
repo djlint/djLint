@@ -1057,6 +1057,22 @@ test_data = [
         ('<div _="on click\n-- toggle the thing\ntoggle .on">x</div>\n'),
         id="issue_1202_hyperscript_comment_short_tag",
     ),
+    pytest.param(
+        (
+            '<button class="rounded-md border border-gray-200 p-1" '
+            '(click)="save()" [disabled]="busy" *ngIf="visible" #saveButton '
+            'v-slot:footer="{ close }">Save</button>\n'
+        ),
+        (
+            '<button class="rounded-md border border-gray-200 p-1"\n'
+            '        (click)="save()"\n'
+            '        [disabled]="busy"\n'
+            '        *ngIf="visible"\n'
+            "        #saveButton\n"
+            '        v-slot:footer="{ close }">Save</button>\n'
+        ),
+        id="issue_2276_punctuation_attribute_names",
+    ),
 ]
 
 

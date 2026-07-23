@@ -244,6 +244,24 @@ test_data = [
         }),
         id="js_object_default_indent",
     ),
+    pytest.param(
+        # angular bindings are in the default js/json pattern; they only
+        # reach it once "(" and ")" are accepted in an attribute name.
+        (
+            '<div (click)="{ alpha: 1, beta: 2, gamma: 3 }" '
+            'class="aaa bbb ccc ddd eee fff ggg">x</div>'
+        ),
+        (
+            '<div (click)="{\n'
+            "                  alpha: 1,\n"
+            "                  beta: 2,\n"
+            "                  gamma: 3\n"
+            '              }"\n'
+            '     class="aaa bbb ccc ddd eee fff ggg">x</div>\n'
+        ),
+        ({"format_attribute_js_json": True}),
+        id="angular_click_binding_js_object",
+    ),
 ]
 
 
