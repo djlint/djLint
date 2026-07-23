@@ -20,8 +20,16 @@ const CONFIG_ARGS = [
   ["format_attribute_template_tags", "formatAttributeTemplateTags", "bool"],
   ["single_attribute_per_line", "singleAttributePerLine", "bool"],
   ["format_attribute_js_json", "formatAttributeJsJson", "bool"],
-  ["format_attribute_js_json_pattern", "formatAttributeJsJsonPattern", "string"],
-  ["format_attribute_js_json_min_props", "formatAttributeJsJsonMinProps", "value"],
+  [
+    "format_attribute_js_json_pattern",
+    "formatAttributeJsJsonPattern",
+    "string",
+  ],
+  [
+    "format_attribute_js_json_min_props",
+    "formatAttributeJsJsonMinProps",
+    "value",
+  ],
   ["blank_line_after_tag", "blankLineAfterTag", "string"],
   ["blank_line_before_tag", "blankLineBeforeTag", "string"],
   ["close_void_tags", "closeVoidTags", "bool"],
