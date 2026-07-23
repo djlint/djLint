@@ -11,6 +11,9 @@ Options:
   -i, --ignore TEXT               Codes to ignore. ex: "H014,H017"
   --reformat                      Reformat the file(s).
   --check                         Check formatting on the file(s).
+  --stdin-filename TEXT           Filename to use for per-file-ignores and
+                                  messages when reading from stdin. [default:
+                                  -]
   --indent INTEGER                Indent spacing. [default: 4]
   --quiet                         Do not print diff when reformatting.
   --profile TEXT                  Enable defaults by template language. ops:

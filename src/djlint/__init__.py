@@ -60,6 +60,16 @@ if TYPE_CHECKING:
 @click.option("--reformat", is_flag=True, help="Reformat the file(s).")
 @click.option("--check", is_flag=True, help="Check formatting on the file(s).")
 @click.option(
+    "--stdin-filename",
+    type=str,
+    default=None,
+    help=(
+        "Filename to use for per-file-ignores and messages when reading"
+        " from stdin. [default: -]"
+    ),
+    show_default=False,
+)
+@click.option(
     "--indent",
     type=int,
     help="Indent spacing. [default: 4]",
@@ -294,6 +304,7 @@ def main(
     reformat: bool,
     indent: int | None,
     check: bool,
+    stdin_filename: str | None,
     quiet: bool,
     profile: str | None,
     require_pragma: bool,
@@ -361,6 +372,7 @@ def main(
         lint=lint or not (reformat or check),
         reformat=reformat,
         check=check,
+        stdin_filename=stdin_filename,
         use_gitignore=use_gitignore,
         warn=warn,
         preserve_leading_space=preserve_leading_space,
@@ -531,18 +543,21 @@ def process_stdin(
     output: ProcessResult = {}
     html = stdin_text
     formatted_code = None
+    stdin_filename = config.stdin_filename or "-"
 
     if config.reformat or config.check:
         from djlint.reformat import reformat_string  # noqa: PLC0415
 
         output["format_message"], formatted_code = reformat_string(
-            config, stdin_text, "-"
+            config, stdin_text, stdin_filename
         )
         html = formatted_code
 
     if config.lint:
         from djlint.lint import linter  # noqa: PLC0415
 
-        output["lint_message"] = linter(config, html, "-", "-")
+        output["lint_message"] = linter(
+            config, html, stdin_filename, stdin_filename
+        )
 
     return output, formatted_code

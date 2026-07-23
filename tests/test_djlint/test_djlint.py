@@ -148,6 +148,21 @@ def test_stdin(runner: CliRunner) -> None:
     assert "No files to check!" in result.output
 
 
+def test_stdin_filename_option(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint,
+        ("-", "--stdin-filename", "custom.html"),
+        input='<div><p id="a"></p></div>',
+    )
+    assert result.exit_code == 0
+    assert "Linted 1 file" in result.output
+
+
+def test_stdin_filename_in_help(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ("-h",))
+    assert "--stdin-filename" in result.output
+
+
 def test_stdin_reformat_without_temp_file(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch
 ) -> None:
