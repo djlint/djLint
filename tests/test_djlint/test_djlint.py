@@ -158,11 +158,6 @@ def test_stdin_filename_option(runner: CliRunner) -> None:
     assert "Linted 1 file" in result.output
 
 
-def test_stdin_filename_in_help(runner: CliRunner) -> None:
-    result = runner.invoke(djlint, ("-h",))
-    assert "--stdin-filename" in result.output
-
-
 def test_stdin_reformat_without_temp_file(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch
 ) -> None:

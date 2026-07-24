@@ -556,8 +556,9 @@ def process_stdin(
     if config.lint:
         from djlint.lint import linter  # noqa: PLC0415
 
+        # as lint_file() does, match per_file_ignores against a posix path
         output["lint_message"] = linter(
-            config, html, stdin_filename, stdin_filename
+            config, html, stdin_filename, Path(stdin_filename).as_posix()
         )
 
     return output, formatted_code

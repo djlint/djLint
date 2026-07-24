@@ -14,6 +14,7 @@ for a single test, run::
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from djlint import main as djlint
@@ -22,8 +23,9 @@ if TYPE_CHECKING:
     from click.testing import CliRunner
 
 # the pyproject.toml in this directory has:
-#   "myfile.html" = "H025"
-#   "^-$"         = "H020"
+#   "myfile.html"          = "H025"
+#   "templates/index.html" = "H025"
+#   "^-$"                  = "H020"
 # and the html below triggers both H025 and H020 when neither is ignored.
 _HTML = "<div>\n    <div></div>"
 _CONFIG = "tests/test_config/test_stdin_filename/pyproject.toml"
@@ -60,6 +62,23 @@ def test_stdin_filename_default_unchanged(runner: CliRunner) -> None:
     )
     assert "H020" not in result.output
     assert "H025" in result.output
+
+
+def test_stdin_filename_uses_native_separators(runner: CliRunner) -> None:
+    """A native-separator path matches a pattern written with "/"."""
+    result = runner.invoke(
+        djlint,
+        (
+            "-",
+            "--stdin-filename",
+            str(Path("templates", "index.html")),
+            "--configuration",
+            _CONFIG,
+        ),
+        input=_HTML,
+    )
+    assert "H025" not in result.output
+    assert "H020" in result.output
 
 
 def test_stdin_filename_used_in_lint_message(runner: CliRunner) -> None:
