@@ -16,7 +16,7 @@
     "@codemirror/state": "^6.2.0",
     "@fontsource/crimson-pro": "^5.0.0",
     "@fontsource/rasa": "^5.0.0",
-    "@quasibit/eleventy-plugin-schema": "1.13.0",
+    "@quasibit/eleventy-plugin-schema": "1.14.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "animate-sass": "^0.8.2",
     "codemirror": "^6.0.1",
@@ -45,10 +45,10 @@
     "markdown-it-anchor": "9.2.1",
     "markdown-it-div": "1.1.0",
     "markdown-it-imsize": "2.0.1",
-    "postcss": "8.5.20",
+    "postcss": "8.5.21",
     "postcss-nested": "7.0.2",
     "prismjs": "1.30.0",
-    "sass": "1.101.0",
+    "sass": "1.101.3",
     "slugify": "1.6.9"
   }
 }
