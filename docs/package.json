@@ -16,7 +16,7 @@
     "@codemirror/state": "^6.2.0",
     "@fontsource/crimson-pro": "^5.0.0",
     "@fontsource/rasa": "^5.0.0",
-    "@quasibit/eleventy-plugin-schema": "1.13.0",
+    "@quasibit/eleventy-plugin-schema": "1.14.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "animate-sass": "^0.8.2",
     "codemirror": "^6.0.1",
