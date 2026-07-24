@@ -2,6 +2,12 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Feature
+
+- New `--stdin-filename` option tells djLint the real path of content piped in on stdin (`djlint -`). Stdin previously always carried the name `-`, which no realistic `per-file-ignores` pattern matches, so per-file ignores were silently dead for piped input; the given name is now what `per-file-ignores` matches against and what linter messages report. Editor integrations that lint the open buffer through stdin get the same per-file ignores as a run over the file on disk. Path separators are normalized the same way they are for files on disk, so a Windows-style path matches a pattern written with `/`.
+
 ## [1.42.3] - 2026-07-23
 
 ### Fix

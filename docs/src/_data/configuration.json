@@ -670,5 +670,18 @@
       },
       { "name": "cli", "value": "--format-attribute-js-json-min-props 3" }
     ]
+  },
+  {
+    "name": "stdin_filename",
+    "tags": ["formatter", "linter"],
+    "description": {
+      "en": "Filename to use for per-file-ignores and messages when reading from stdin. Defaults to \"-\".",
+      "ru": "Имя файла, используемое для per-file-ignores и сообщений при чтении из stdin. По умолчанию \"-\".",
+      "fr": "Nom de fichier à utiliser pour per-file-ignores et les messages lors de la lecture depuis stdin. La valeur par défaut est \"-\".",
+      "zh": "从标准输入（stdin）读取时，用于 per-file-ignores 及消息中的文件名。默认值为 \"-\"。"
+    },
+    "usage": [
+      { "name": "cli", "value": "--stdin-filename templates/index.html" }
+    ]
   }
 ]

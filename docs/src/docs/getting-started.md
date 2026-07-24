@@ -83,3 +83,9 @@ Output -
 ```html
 <div></div>
 ```
+
+When reading from stdin, djLint has no real path to match against `per-file-ignores` or to show in messages, so it uses `-` by default. Pass `--stdin-filename` to tell djLint the real path of the piped content, for example when an editor integration pipes a file's contents in on save.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```

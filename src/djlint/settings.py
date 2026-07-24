@@ -1120,6 +1120,7 @@ class Config:
         "start_template_tags",
         "statistics",
         "stdin",
+        "stdin_filename",
         "tag_indent",
         "tag_unindent",
         "tag_unindent_line",
@@ -1185,6 +1186,7 @@ class Config:
         max_blank_lines: int | None = None,
         github_output: bool = False,
         stdin: bool | None = None,
+        stdin_filename: str | None = None,
     ) -> None:
         self.project_root = find_project_root(
             Path.cwd() if src == "-" else Path(src).resolve()
@@ -1216,6 +1218,7 @@ class Config:
         self.warn = warn
         self.github_output = github_output
         self.statistics = statistics
+        self.stdin_filename = stdin_filename
 
         # simple options; the command line takes precedence over the config
         self.extension = str(

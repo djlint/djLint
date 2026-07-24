@@ -1,0 +1,4 @@
+[tool.djlint.per-file-ignores]
+"myfile.html" = "H025"
+"templates/index.html" = "H025"
+"^-$" = "H020"
