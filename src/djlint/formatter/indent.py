@@ -287,6 +287,11 @@ def indent_html(rawcode: str, config: Config) -> str:
     # don't leak indentation to following siblings.
     template_block_stack: list[tuple[int, int | None, bool]] = []
 
+    # one entry per html tag left open by an earlier line, telling whether
+    # closing it gives back an indent level. A line is only indented when it
+    # starts with the opening tag, so a tag opened after text owes nothing.
+    open_html_indents: list[bool] = []
+
     ignored_inline_start_pattern = re.compile(
         rf"^\s*?(?:{config.ignored_inline_blocks})", flags=RE_FLAGS_IMX
     )
@@ -429,6 +434,8 @@ def indent_html(rawcode: str, config: Config) -> str:
         is_safe_closing_tag_ = is_safe_closing_tag(config, item)
         is_ignored_block_opening_ = is_ignored_block_opening(config, item)
         dedent_after = 0
+        indent_level_before = indent_level
+        opened_html = 0
 
         # if a raw tag first line
         if not is_block_raw and is_ignored_block_opening_:
@@ -456,19 +463,34 @@ def indent_html(rawcode: str, config: Config) -> str:
                 if dedent_after:
                     del template_block_stack[-dedent_after:]
 
-        if (
-            not is_block_raw
-            and "</" in item
-            and not tag_unindent_pattern.search(item)
-        ):
-            html_depth_change = sum(
-                -1 if token.closing else 1
-                for token in tokenize_tags(item)
-                if is_html_tag(token.name)
-                and not token.self_closing
-                and token.name.lower() not in HTML_VOID_ELEMENTS
-            )
-            dedent_after += max(-html_depth_change, 0)
+        if not is_block_raw and "<" in item:
+            # tags this line leaves open, and tags it closes that were
+            # opened by an earlier line
+            unclosed_closes = 0
+            for token in tokenize_tags(item):
+                if token.self_closing:
+                    continue
+                name = token.name.lower()
+                if name in HTML_VOID_ELEMENTS or not is_html_tag(name):
+                    continue
+                if not token.closing:
+                    opened_html += 1
+                elif opened_html:
+                    opened_html -= 1
+                else:
+                    unclosed_closes += 1
+
+            if unclosed_closes:
+                # only a tag that owns the start of its line is indented,
+                # so closing one opened after text owes no dedent
+                indented_closes = 0
+                for _ in range(min(unclosed_closes, len(open_html_indents))):
+                    indented_closes += open_html_indents.pop()
+                # a leading close tag is dedented by the unindent branch
+                if indented_closes and not tag_unindent_pattern.search(item):
+                    dedent_after += min(
+                        max(unclosed_closes - opened_html, 0), indented_closes
+                    )
 
         if is_safe_closing_tag_:
             ignored_level -= 1
@@ -711,6 +733,14 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
         else:
             tmp = item + "\n"
+
+        if opened_html:
+            # the line adds at most one level, and it is owed until the
+            # outermost tag it opened is closed again
+            if indent_level > indent_level_before:
+                open_html_indents.append(True)
+                opened_html -= 1
+            open_html_indents.extend([False] * opened_html)
 
         if dedent_after:
             indent_level = max(indent_level - dedent_after, 0)

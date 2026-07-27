@@ -29,6 +29,27 @@ test_data = [
     pytest.param(
         (
             "<div>\n"
+            "    <p>\n"
+            "        text <b>bold\n"
+            "        more</b> tail\n"
+            "    </p>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        text <b>bold\n"
+            "        more</b> tail\n"
+            "    </p>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="issue_2298_inline_tag_opened_after_text",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
             "    aaaaaaaaaa\n"
             "    <a\n"
             '      href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'

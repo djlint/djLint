@@ -10,6 +10,8 @@
 
 ### Fix
 
+- An inline element that opens after text on its line and closes on a later line no longer dedents everything that follows it by one level. Since 1.40.8 the formatter gave back an indent level whenever a line closed more html tags than it opened, but a line only takes an indent level when the opening tag starts it, so `text <b>bold` / `more</b> tail` inside a `<p>` pushed the closing `</p>` and every following sibling one level to the left. The dedent is now paired with the indent it undoes, so it only fires for a tag that owned the start of its line, and the shape from #834 keeps its dedent. The wrong output was idempotent, so it silently survived later runs.
+
 - A tag that merely touches an ignored block is no longer treated as being inside it. A tag ending exactly where an ignored block starts (or starting exactly where one ends) - such as `{% if x %}{# comment #}` - was skipped by the linter, which both hid real problems and produced false reports for the tags that depended on it. Most visibly, `T038` reported `End tag has no matching block tag` for the `{% endif %}` of an `{% if %}` followed immediately by a `{# ... #}` comment, and stayed silent about a genuinely unclosed one. Affects every rule that skips ignored blocks (`H025`, `H037`, `H041`, `H042`, `T002`, `T003`, `T027`, `T038`, `T039`) and every kind of ignored block (`{# ... #}`, `<!-- ... -->`, `<script>`, `<pre>`, `{% comment %}`, etc.). Tags that genuinely overlap or sit inside an ignored block are still skipped as before.
 
 ## [1.42.3] - 2026-07-23
