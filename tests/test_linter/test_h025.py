@@ -71,3 +71,25 @@ def test_triple_stache_attribute_is_not_an_orphan(
 
     lint_printer(source, [], output[filename])
     assert not output[filename]
+
+
+def test_apostrophe_in_translated_attribute_is_not_an_orphan(
+    django_config: Config,
+) -> None:
+    # The quotes of a template tag nested in an attribute value must not be
+    # read as ending the attribute, or the apostrophe in the translated text
+    # opens a value that never closes and swallows the rest of the document.
+    source = (
+        "<div>\n"
+        "<p>\n"
+        '<a href="#"\n'
+        '   title="{% translate "You don\'t have permission" %}">/</a>\n'
+        "</p>\n"
+        "</div>"
+    )
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]

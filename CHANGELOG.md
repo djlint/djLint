@@ -10,6 +10,8 @@
 
 ### Fix
 
+- An apostrophe in the text of a template tag nested in an attribute value (`title="{% translate "You don't have permission" %}"`) no longer swallows the rest of the document. The tag scanner read the template tag's own quotes as ending the attribute, which left the apostrophe looking like the start of a quoted value; that value never closed, so no tag after it was seen at all and `H025` reported every enclosing element as an orphan. A template tag inside a value is now skipped whole, as long as it holds no `>` - a quoted literal like `a="{{"` is still left alone, since the `}}` a naive search settles on always lies beyond the `>` that ends the tag.
+
 - A line that starts with a closing tag and ends with a whole tag (`</span>tail<textarea>y</textarea>`) unindents again. Such a line is not written by the branch that unindents, so nothing gave the level back and everything after it stayed one level too deep. What a line owes back is now settled from the level it ends on rather than from an assumption about which branch will write it.
 
 - A template block tag followed by a whole html tag on the same line (`{% endif %} <td class="x">y</td>`, `{% else %} <td class="x">y</td>`) indents as a block tag again. The line was handled as if it were only that html tag, so `{% endif %}` did not unindent and `{% else %}` did not align with its `{% if %}` - and since the line only takes that shape once the tag it holds fits on one line, reformatting an already formatted file moved it.

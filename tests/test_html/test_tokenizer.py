@@ -113,6 +113,21 @@ def test_quoted_literal_braces_do_not_escape_attribute() -> None:
     ] == ['<div a="{{">', "</div>", "<pre>", "</pre>"]
 
 
+def test_quote_inside_template_tag_does_not_end_attribute() -> None:
+    # a template tag nested in an attribute value carries its own quotes;
+    # an apostrophe in the translated text must not open a value either.
+    source = (
+        '<a href="#" title="{% translate "You don\'t have permission" %}">/</a>'
+    )
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == [
+        '<a href="#" title="{% translate "You don\'t have permission" %}">',
+        "</a>",
+    ]
+
+
 def test_template_expression_with_gt_in_quoted_attribute() -> None:
     source = '<div data-value="{{ value > limit }}" title="a > b">x</div>'
 

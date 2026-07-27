@@ -171,13 +171,19 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
         while cursor < len(source):
             char = source[cursor]
             # Skip over template expressions so their contents cannot end the
-            # tag. Inside a quoted value, ">" / "{" / "}" are already quote
-            # guarded, so only the brace-balancing "${...}" scanner runs
-            # there; the naive "{{"/"{%"/"{#" search is skipped to keep a
-            # quoted literal like a="{{" from consuming later "}}" content.
-            if char == "$" or (char == "{" and quote is None):
+            # tag. Inside a quoted value the quotes of a template tag would
+            # otherwise be read as ending the attribute, as in
+            # {% translate "You don't have permission" %}, so skip it too -
+            # but only when it holds no ">". A quoted literal like a="{{"
+            # has no end tag of its own, and the "}}" that a naive search
+            # settles on lies beyond the ">" that ends the tag.
+            if char in {"$", "{"}:
                 template_end = _after_template(source, cursor)
-                if template_end is not None:
+                if template_end is not None and (
+                    quote is None
+                    or char == "$"
+                    or source.find(">", cursor, template_end) < 0
+                ):
                     cursor = template_end
                     continue
 
