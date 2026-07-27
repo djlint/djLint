@@ -10,6 +10,8 @@
 
 ### Fix
 
+- A template control block written across lines is kept that way even when it opens against a tag (`<div>{% if x %}`), and the choice is no longer applied to the wrong block. Which blocks to leave spread (#1597) was recorded from the source and then paired off against the expanded html by position, but the two do not line up - expanding splits some lines and joins others, and a block written against a tag was not recorded at all. One missing entry shifted every later block onto another block's setting, so a block the author spread was collapsed while an inline one was left spread. Blocks are now matched by tag and contents rather than by position.
+
 - A tag whose `style`, `srcset`, `data-srcset` or `sizes` value was written over several lines is no longer spread over multiple lines and then pulled back together on the next run. Flattening such a value leaves a space against each quote, and those spaces counted toward `max_attribute_length` even though rewriting the value drops them - a tag two characters over the limit was spread, came back under it, and collapsed again. The limit is now measured against what will actually be written out.
 
 - A `<pre>` or `<textarea>` opened on a line that also holds a self-contained comment (`<pre>x<!--c-->`) is recognized as opening a verbatim block again. It was not, so its contents were re-indented instead of left alone, and the closing `</pre>` gained one indent level on **every** format run - unbounded whitespace growth inside preformatted text, which changes what the page renders. The check looked for a block opening only after the last self-contained block on the line, missing an opening that comes before one.

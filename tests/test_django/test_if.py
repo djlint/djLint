@@ -39,6 +39,30 @@ test_data = [
         id="issue_1597_preserve_multiline_short_if",
     ),
     pytest.param(
+        ("<div>{% if x %}\ntext\n{% endif %}</div>\n"),
+        ("<div>\n    {% if x %}\n        text\n    {% endif %}\n</div>\n"),
+        id="preserve_multiline_if_opened_against_a_tag",
+    ),
+    pytest.param(
+        (
+            "<div>{% if x %}\na\n{% endif %}</div>\n"
+            "<div>\n{% if x %}\nb\n{% endif %}\n</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    {% if x %}\n"
+            "        a\n"
+            "    {% endif %}\n"
+            "</div>\n"
+            "<div>\n"
+            "    {% if x %}\n"
+            "        b\n"
+            "    {% endif %}\n"
+            "</div>\n"
+        ),
+        id="preserve_multiline_if_for_each_block_independently",
+    ),
+    pytest.param(
         (
             "{% if show_the_thing %}<div>Please keep inline source inline</div>{% endif %}\n"
         ),

@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -207,22 +208,38 @@ def clean_whitespace(html: str, config: Config) -> str:
     return html
 
 
-def _multiline_template_block_states(
+def _template_block_key(tag: str, contents: str) -> tuple[str, str]:
+    """Identify a template block by what it is, not by where it is.
+
+    All whitespace is dropped: the two sides being compared differ in line
+    breaks and indentation, and indenting also respaces template tags
+    ("{{x}}" -> "{{ x }}").
+    """
+    return tag.lower(), "".join(contents.split())
+
+
+def _multiline_template_blocks(
     source: str | None, config: Config
-) -> list[bool]:
-    """Track simple template blocks that were authored across lines."""
+) -> Counter[tuple[str, str]]:
+    """Count simple template blocks that were authored across lines.
+
+    The condensing pass runs over the expanded html, whose blocks do not
+    line up one for one with the source's: expanding splits some lines and
+    joins others, and a block inside an attribute is matched in one and not
+    the other. Key the blocks by tag and contents so each is looked up
+    rather than paired off by position.
+    """
     if source is None:
-        return []
+        return Counter()
 
     source = "\n".join(source.splitlines())
     if "{%" not in source or "\n" not in source:
-        return []
+        return Counter()
 
-    return [
-        "\n" in match.group(2) and bool(match.group(2).strip())
+    return Counter(
+        _template_block_key(match.group(1), match.group(2))
         for match in re.finditer(
             rf"""
-            (?:\s|^)
             {{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}}
             ([^%]*?)
             {{%-?[ ]+?end\1[ ]*?%}}
@@ -230,7 +247,8 @@ def _multiline_template_block_states(
             source,
             flags=RE_FLAGS_IMX,
         )
-    ]
+        if "\n" in match.group(2) and match.group(2).strip()
+    )
 
 
 def condense_html(html: str, config: Config, source: str | None = None) -> str:
@@ -322,19 +340,18 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
         flags=RE_FLAGS_IMSX,
     )
 
-    template_block_states = iter(
-        _multiline_template_block_states(source, config)
-    )
+    multiline_blocks = _multiline_template_blocks(source, config)
 
     def condense_template_line(
         config: Config, html: str, match: re.Match[str]
     ) -> str:
-        try:
-            was_authored_multiline = next(template_block_states)
-        except StopIteration:
-            was_authored_multiline = False
+        if inside_html_attribute(html, match):
+            return match.group()
 
-        if was_authored_multiline or inside_html_attribute(html, match):
+        # one block of a kind stays spread for each one written that way
+        key = _template_block_key(match.group(2), match.group(3))
+        if multiline_blocks[key]:
+            multiline_blocks[key] -= 1
             return match.group()
 
         return condense_line(config, html, match)

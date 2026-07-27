@@ -43,7 +43,10 @@ def formatter(config: Config, rawcode: str) -> str:
 
     indented_code = indent_html(condensed, config)
 
-    beautified_code = condense_html(indented_code, config, normalized_code)
+    # compressed still carries the author's line breaks, but has had the
+    # rewrites (tag case, void tags, attributes) that indenting also applies,
+    # so its blocks can be matched against the indented ones.
+    beautified_code = condense_html(indented_code, config, compressed)
 
     if config.format_css:
         from djlint.formatter.css import format_css  # noqa: PLC0415
