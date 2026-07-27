@@ -215,3 +215,11 @@ HTML_VOID_ELEMENTS: Final = frozenset((
     "track",
     "wbr",
 ))
+
+# elements whose content is text, not markup: a "<" inside one starts no tag
+HTML_RAW_TEXT_ELEMENTS: Final = frozenset((
+    "script",
+    "style",
+    "textarea",
+    "title",
+))

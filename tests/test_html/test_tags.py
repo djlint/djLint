@@ -50,6 +50,29 @@ test_data = [
     pytest.param(
         (
             "<div>\n"
+            "    <a>b\n"
+            "        <script>var a = '<span>'</script>\n"
+            "        <style>a::after { content: '</div>' }</style>\n"
+            "        <textarea><p></textarea>\n"
+            "        c</a> d\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <a>b\n"
+            "        <script>var a = '<span>'</script>\n"
+            "        <style>a::after { content: '</div>' }</style>\n"
+            "        <textarea><p></textarea>\n"
+            "        c</a> d\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="tag_inside_inline_raw_text_element_is_not_markup",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
             "    aaaaaaaaaa\n"
             "    <a\n"
             '      href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'

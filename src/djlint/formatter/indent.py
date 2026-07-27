@@ -12,7 +12,11 @@ import json5 as json
 import regex as re
 from json5.lib import QuoteStyle
 
-from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.const import (
+    HTML_RAW_TEXT_ELEMENTS,
+    HTML_TAG_NAMES,
+    HTML_VOID_ELEMENTS,
+)
 from djlint.formatter.attributes import format_attributes
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
@@ -467,10 +471,23 @@ def indent_html(rawcode: str, config: Config) -> str:
             # tags this line leaves open, and tags it closes that were
             # opened by an earlier line
             unclosed_closes = 0
+            raw_text_element = ""
             for token in tokenize_tags(item):
+                name = token.name.lower()
+                if raw_text_element:
+                    # a raw text element holds text, so a "<" in it opens no
+                    # tag; only its own end tag leaves the element
+                    if not (token.closing and name == raw_text_element):
+                        continue
+                    raw_text_element = ""
+                elif (
+                    not token.closing
+                    and not token.self_closing
+                    and name in HTML_RAW_TEXT_ELEMENTS
+                ):
+                    raw_text_element = name
                 if token.self_closing:
                     continue
-                name = token.name.lower()
                 if name in HTML_VOID_ELEMENTS or not is_html_tag(name):
                     continue
                 if not token.closing:
