@@ -159,6 +159,23 @@ test_data = [
     pytest.param(
         (
             "<div>\n"
+            '    <span class="c">' + ("word " * 24) + "\n"
+            "    </span>tail<textarea>y</textarea>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            '    <span class="c">' + ("word " * 23) + "word\n"
+            "        </span>tail<textarea>y</textarea>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="leading_close_tag_on_a_line_ending_in_a_whole_tag",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
             "    aaaaaaaaaa\n"
             "    <a\n"
             '      href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'

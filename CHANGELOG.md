@@ -10,6 +10,8 @@
 
 ### Fix
 
+- A line that starts with a closing tag and ends with a whole tag (`</span>tail<textarea>y</textarea>`) unindents again. Such a line is not written by the branch that unindents, so nothing gave the level back and everything after it stayed one level too deep. What a line owes back is now settled from the level it ends on rather than from an assumption about which branch will write it.
+
 - A template block tag followed by a whole html tag on the same line (`{% endif %} <td class="x">y</td>`, `{% else %} <td class="x">y</td>`) indents as a block tag again. The line was handled as if it were only that html tag, so `{% endif %}` did not unindent and `{% else %}` did not align with its `{% if %}` - and since the line only takes that shape once the tag it holds fits on one line, reformatting an already formatted file moved it.
 
 - A tag opened after the end of a verbatim block on the same line (`</pre> <span>x`) is tracked again. That line is written out as part of the block, so the tag it opened went unrecorded while the `</span>` closing it on a later line still took a level - from whichever tag was opened before the block - dedenting that tag's siblings by one.

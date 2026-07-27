@@ -514,9 +514,9 @@ def indent_html(rawcode: str, config: Config) -> str:
                 # nothing to pair a close against (a tag opened before this
                 # file, or unbalanced markup) still dedents, as it always did
                 closes_nothing_indented = bool(popped) and not indented_closes
-                # a leading close tag is dedented by the unindent branch
-                if not tag_unindent_pattern.search(item):
-                    html_dedent = max(unclosed_closes - opened_html, 0)
+                # what the line owes back; whether the branch that handles it
+                # already gave it is only known once that branch has run
+                html_dedent = max(unclosed_closes - opened_html, 0)
 
         if is_safe_closing_tag_:
             ignored_level -= 1
@@ -773,7 +773,14 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = item + "\n"
 
         if html_dedent:
-            if indent_level == indent_level_before:
+            stripped_item = item.lstrip()
+            if indent_level < indent_level_before:
+                # the branch that wrote the line already gave the level back
+                html_dedent = 0
+            elif indent_level == indent_level_before or not (
+                stripped_item.startswith("<")
+                and not stripped_item.startswith("</")
+            ):
                 # the line took no level of its own, so it gives back only
                 # what the tags it closes were given
                 html_dedent = min(html_dedent, indented_closes)
