@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.43.0] - 2026-07-27
+
 ### Feature
 
 - New `--stdin-filename` option gives content piped in on stdin (`djlint -`) its real path, so `per-file-ignores` matches against that name and linter messages report it. Per-file ignores were previously dead for piped input, since nothing matches the name `-`. Path separators are normalized as they are for files on disk.
