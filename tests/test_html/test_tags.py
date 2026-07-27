@@ -115,6 +115,27 @@ test_data = [
     pytest.param(
         (
             "<div>\n"
+            "    <p>\n"
+            "        t <b>x\n"
+            "        <span>y</span> z</b> w\n"
+            "    </p>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        t <b>x\n"
+            "        <span>y</span> z</b> w\n"
+            "    </p>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="line_opening_and_closing_a_tag_before_a_trailing_close",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
             "    aaaaaaaaaa\n"
             "    <a\n"
             '      href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'

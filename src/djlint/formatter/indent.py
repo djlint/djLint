@@ -440,6 +440,8 @@ def indent_html(rawcode: str, config: Config) -> str:
         dedent_after = 0
         indent_level_before = indent_level
         opened_html = 0
+        html_dedent = 0
+        indented_closes = 0
         closes_nothing_indented = False
 
         # if a raw tag first line
@@ -509,10 +511,8 @@ def indent_html(rawcode: str, config: Config) -> str:
                 # file, or unbalanced markup) still dedents, as it always did
                 closes_nothing_indented = bool(popped) and not indented_closes
                 # a leading close tag is dedented by the unindent branch
-                if indented_closes and not tag_unindent_pattern.search(item):
-                    dedent_after += min(
-                        max(unclosed_closes - opened_html, 0), indented_closes
-                    )
+                if not tag_unindent_pattern.search(item):
+                    html_dedent = max(unclosed_closes - opened_html, 0)
 
         if is_safe_closing_tag_:
             ignored_level -= 1
@@ -760,6 +760,15 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + item + "\n"
         else:
             tmp = item + "\n"
+
+        if html_dedent:
+            if indent_level == indent_level_before:
+                # the line took no level of its own, so it gives back only
+                # what the tags it closes were given
+                html_dedent = min(html_dedent, indented_closes)
+            # otherwise it opened a tag at its start and closed it again
+            # ("<span>y</span> z</b>"), and that level has to come back
+            dedent_after += html_dedent
 
         if opened_html:
             # the line adds at most one level, and it is owed until the
