@@ -434,6 +434,37 @@ def indent_html(rawcode: str, config: Config) -> str:
     def formatted_item(item: str) -> str:
         return item.lstrip() if config.preserve_leading_space else item
 
+    def scan_html_tags(text: str) -> tuple[int, int]:
+        """Count tags left open, and closes of tags opened before this."""
+        opened = 0
+        unclosed_closes = 0
+        raw_text_element = ""
+        for token in tokenize_tags(text):
+            name = token.name.lower()
+            if raw_text_element:
+                # a raw text element holds text, so a "<" in it opens no
+                # tag; only its own end tag leaves the element
+                if not (token.closing and name == raw_text_element):
+                    continue
+                raw_text_element = ""
+            elif (
+                not token.closing
+                and not token.self_closing
+                and name in HTML_RAW_TEXT_ELEMENTS
+            ):
+                raw_text_element = name
+            if token.self_closing:
+                continue
+            if name in HTML_VOID_ELEMENTS or not is_html_tag(name):
+                continue
+            if not token.closing:
+                opened += 1
+            elif opened:
+                opened -= 1
+            else:
+                unclosed_closes += 1
+        return opened, unclosed_closes
+
     for item in rawcode_flat_list:
         is_safe_closing_tag_ = is_safe_closing_tag(config, item)
         is_ignored_block_opening_ = is_ignored_block_opening(config, item)
@@ -471,34 +502,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     del template_block_stack[-dedent_after:]
 
         if not is_block_raw and "<" in item:
-            # tags this line leaves open, and tags it closes that were
-            # opened by an earlier line
-            unclosed_closes = 0
-            raw_text_element = ""
-            for token in tokenize_tags(item):
-                name = token.name.lower()
-                if raw_text_element:
-                    # a raw text element holds text, so a "<" in it opens no
-                    # tag; only its own end tag leaves the element
-                    if not (token.closing and name == raw_text_element):
-                        continue
-                    raw_text_element = ""
-                elif (
-                    not token.closing
-                    and not token.self_closing
-                    and name in HTML_RAW_TEXT_ELEMENTS
-                ):
-                    raw_text_element = name
-                if token.self_closing:
-                    continue
-                if name in HTML_VOID_ELEMENTS or not is_html_tag(name):
-                    continue
-                if not token.closing:
-                    opened_html += 1
-                elif opened_html:
-                    opened_html -= 1
-                else:
-                    unclosed_closes += 1
+            opened_html, unclosed_closes = scan_html_tags(item)
 
             if unclosed_closes:
                 # only a tag that owns the start of its line is indented,
@@ -803,7 +807,21 @@ def indent_html(rawcode: str, config: Config) -> str:
                 ignored_level -= 1
                 ignored_level = max(ignored_level, 0)
             if ignored_level == 0:
-                is_block_raw = False
+                was_block_raw, is_block_raw = is_block_raw, False
+                if was_block_raw and "<" in item:
+                    # markup written after the end of a verbatim block
+                    # ("</pre> <span>x") is real: the line was skipped as raw,
+                    # so track what it leaves open here or the tags closing it
+                    # later take levels from tags opened before the block
+                    tail = ""
+                    for close in config.ignored_block_closing_pattern.finditer(
+                        item
+                    ):
+                        tail = item[close.end() :]
+                    opened, closed = scan_html_tags(tail)
+                    del open_html_indents[len(open_html_indents) - closed :]
+                    # the line is written out verbatim, so it takes no level
+                    open_html_indents.extend([False] * opened)
 
         beautified_code += tmp
 

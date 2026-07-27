@@ -136,6 +136,29 @@ test_data = [
     pytest.param(
         (
             "<div>\n"
+            "    <div><pre>\n"
+            "  y\n"
+            "</pre> <span>text\n"
+            "</span>\n"
+            "    </div>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <div>\n"
+            "        <pre>\n"
+            "  y\n"
+            "</pre> <span>text</span>\n"
+            "    </div>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="tag_opened_after_the_end_of_a_verbatim_block",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
             "    aaaaaaaaaa\n"
             "    <a\n"
             '      href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'
