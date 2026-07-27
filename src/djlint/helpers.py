@@ -72,10 +72,12 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     # block open, even when a self-contained one follows it (<pre>a<!--b-->).
     # Probe the marker's last character: some alternatives start one
     # character early ("[^{]{#" matches the quote in class="{# x #}").
-    return any(
-        not _inside_non_overlapping_span(inline, match.end() - 1, match.end())
-        for match in config.ignored_block_opening_pattern.finditer(item)
-    )
+    for match in config.ignored_block_opening_pattern.finditer(item):
+        if not _inside_non_overlapping_span(
+            inline, match.end() - 1, match.end()
+        ):
+            return True
+    return False
 
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
