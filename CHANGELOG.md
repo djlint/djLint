@@ -10,6 +10,8 @@
 
 ### Fix
 
+- A `<pre>` or `<textarea>` opened on a line that also holds a self-contained comment (`<pre>x<!--c-->`) is recognized as opening a verbatim block again. It was not, so its contents were re-indented instead of left alone, and the closing `</pre>` gained one indent level on **every** format run - unbounded whitespace growth inside preformatted text, which changes what the page renders. The check looked for a block opening only after the last self-contained block on the line, missing an opening that comes before one.
+
 - A closing tag that starts its line no longer dedents when the tag it closes was opened after text on an earlier line. The counterpart of the fix above, on the other code path and predating it: `text <b>bold` / `</b> tail` inside a `<p>` shifted the closing `</p>` and every following sibling one level left, and the loss accumulated, so a document repeating that shape drifted further left with each occurrence until it hit column 0. A closing tag with nothing to pair against - unbalanced markup, or a tag opened outside the file - still dedents as before.
 
 - A `<` inside a one-line `<script>`, `<style>`, `<textarea>` or `<title>` no longer counts as a tag when indenting. The content of those elements is text, not markup, so `<script>var a = '<span>'</script>` left an unclosed `<span>` on the formatter's tag stack and shifted everything after it - the indent given back to a following closing tag went to the phantom instead, leaving that tag and its siblings one level too deep.

@@ -400,7 +400,7 @@ test_data = [
             "<pre><code #foo></code></pre>\n"
             "<details>\n"
             "    <pre><!--Comments-->\n"
-            "      </pre>\n"
+            "  </pre>\n"
             "</details>\n"
             "<details>\n"
             "    <pre>\n"
@@ -420,6 +420,29 @@ test_data = [
             "<pre><br>long long long text long long long text long long long text long long long text <br /></pre>\n"
         ),
         id="pre",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "  <pre>x<!--c-->\n"
+            "  </pre>\n"
+            "</div>\n"
+            "<div>\n"
+            "  <textarea>x<!--c-->\n"
+            "  </textarea>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <pre>x<!--c-->\n"
+            "  </pre>\n"
+            "</div>\n"
+            "<div>\n"
+            "    <textarea>x<!--c-->\n"
+            "  </textarea>\n"
+            "</div>\n"
+        ),
+        id="pre_opened_on_a_line_that_also_holds_a_comment",
     ),
     pytest.param(
         (

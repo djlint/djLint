@@ -61,13 +61,21 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     A valid ignored group opening tag will not be part of a
     single line block.
     """
-    inline = _last_item(config.ignored_blocks_inline_pattern.finditer(item))
-    last_index = (
-        inline.end()  # get the last index. The ignored opening should start after this.
-        if inline
-        else 0
+    inline = tuple(
+        match.span()
+        for match in config.ignored_blocks_inline_pattern.finditer(item)
     )
-    return bool(config.ignored_block_opening_pattern.search(item[last_index:]))
+    if not inline:
+        return bool(config.ignored_block_opening_pattern.search(item))
+
+    # an opening that is not part of a block closed on this line leaves a
+    # block open, even when a self-contained one follows it (<pre>a<!--b-->).
+    # Probe the marker's last character: some alternatives start one
+    # character early ("[^{]{#" matches the quote in class="{# x #}").
+    return any(
+        not _inside_non_overlapping_span(inline, match.end() - 1, match.end())
+        for match in config.ignored_block_opening_pattern.finditer(item)
+    )
 
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
