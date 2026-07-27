@@ -16,6 +16,8 @@
 
 - A tag that merely touches an ignored block is no longer treated as being inside it. A tag ending exactly where an ignored block starts (or starting exactly where one ends) - such as `{% if x %}{# comment #}` - was skipped by the linter, which both hid real problems and produced false reports for the tags that depended on it. Most visibly, `T038` reported `End tag has no matching block tag` for the `{% endif %}` of an `{% if %}` followed immediately by a `{# ... #}` comment, and stayed silent about a genuinely unclosed one. Affects every rule that skips ignored blocks (`H025`, `H037`, `H041`, `H042`, `T002`, `T003`, `T027`, `T038`, `T039`) and every kind of ignored block (`{# ... #}`, `<!-- ... -->`, `<script>`, `<pre>`, `{% comment %}`, etc.). Tags that genuinely overlap or sit inside an ignored block are still skipped as before.
 
+- A bare `djlint:off` pragma no longer ignores the tag written immediately before it. `<img>{# djlint:off #}` silently dropped every error on that `<img>`, while the equivalent `<img>{# djlint:off H013 #}` correctly reported it - a pragma covers what follows it, not what precedes it. Both forms now agree. A pragma still covers matches that end inside it, so wrapping part of a tag in `{# djlint:off #}` ... `{# djlint:on #}` keeps working.
+
 ## [1.42.3] - 2026-07-23
 
 ### Fix

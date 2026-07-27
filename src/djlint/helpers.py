@@ -487,6 +487,11 @@ def inside_ignored_rule(
         ignored_rule_names,
         ignore_all_rules,
     ) in _inside_ignored_rule(html, ignored_rules=config.ignored_rule_patterns):
+        # spans are half open, so a match ending exactly where a pragma starts
+        # is outside of it. a bare pragma ignores every rule, so it only covers
+        # matches ending inside it; a match merely wrapping one (e.g. the whole
+        # `<div ... {# djlint:off #} ... >` tag) keeps being checked, otherwise
+        # rules that pair tags would lose track of it.
         if (
             (
                 match_start < ignored_match_end
@@ -494,7 +499,7 @@ def inside_ignored_rule(
             )
             and rule in ignored_rule_names
         ) or (
-            (ignored_match_start <= match_end <= ignored_match_end)
+            (ignored_match_start < match_end <= ignored_match_end)
             and ignore_all_rules
         ):
             return True

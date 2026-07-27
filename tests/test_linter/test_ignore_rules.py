@@ -39,6 +39,30 @@ test_data = [
         ([]),
         id="issue_2245_match_starting_before_pragma",
     ),
+    pytest.param(
+        # a bare `djlint:off` ignores every rule, but it still starts where it
+        # is written - the `<img>` before it is not covered by it.
+        ("<img>{# djlint:off #}\n<img>\n"),
+        ([
+            {
+                "code": "H013",
+                "line": "1:0",
+                "match": "<img>",
+                "message": "Img tag should have an alt attribute.",
+            }
+        ]),
+        id="bare_pragma_does_not_cover_preceding_match",
+    ),
+    pytest.param(
+        (
+            '<div class="show-timeout"\n'
+            "     {# djlint:off #}\n"
+            '     style="display:none"\n'
+            "     {# djlint:on #}>x</div>\n"
+        ),
+        ([]),
+        id="bare_pragma_covers_match_starting_before_it",
+    ),
 ]
 
 
