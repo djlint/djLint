@@ -14,13 +14,44 @@ from djlint.formatter.class_attributes import (
     decode_class_attribute_newlines,
     restore_verbatim_attribute_newlines,
 )
-from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IX, child_of_ignored_block
+from djlint.helpers import (
+    RE_FLAGS_IMX,
+    RE_FLAGS_IS,
+    RE_FLAGS_IX,
+    child_of_ignored_block,
+)
 
 if TYPE_CHECKING:
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
 _QUOTED_VALUE_PATTERN = re.compile(r"\"[^\"]*\"|'[^']*'", cache_pattern=False)
+
+# values spread over several lines are flattened with a space at each line
+# break, including the ones against the quotes. These attributes are rewritten
+# from stripped parts, so that padding never reaches the output.
+_PADDED_VALUE_PATTERN = re.compile(
+    r"\b(?:style|srcset|data-srcset|sizes)[ \t]*=[ \t]*([\"'])(.*?)\1",
+    RE_FLAGS_IS,
+    cache_pattern=False,
+)
+
+
+def _rendered_length(config: Config, attribute_group: str) -> int:
+    """Length of the attribute group as it will be written out.
+
+    Measuring padding that the rewrite drops spreads a tag whose attributes
+    then fit on one line again on the next run.
+    """
+    length = len(attribute_group)
+    if length < config.max_attribute_length:
+        return length
+
+    return length - sum(
+        len(value) - len(value.strip())
+        for match in _PADDED_VALUE_PATTERN.finditer(attribute_group)
+        if (value := match.group(2))
+    )
 
 
 def has_unquoted_template_expression(attribute_group: str) -> bool:
@@ -267,7 +298,8 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
     if (
         has_unquoted_template_expression(attribute_group)
         or (
-            len(attribute_group) < config.max_attribute_length
+            _rendered_length(config, attribute_group)
+            < config.max_attribute_length
             and CLASS_ATTRIBUTE_NEWLINE not in attribute_group
         )
     ) or child_of_ignored_block(config, html, token):

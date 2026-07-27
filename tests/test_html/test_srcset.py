@@ -34,9 +34,9 @@ test_data = [
             '<img src="a"\n'
             '     srcset="should-not-format  400w 100h, should-not-format  500w 200h"\n'
             '     alt="" />\n'
-            '<img src="a"\n'
-            '     srcset="should-not-format ,, should-not-format 0q,,,"\n'
-            '     alt="" />\n'
+            # short enough to stay on one line once the padding the rewrite
+            # would drop is discounted
+            '<img src="a" srcset=" should-not-format ,, should-not-format 0q,,, " alt="" />\n'
         ),
         id="invalid",
     )
