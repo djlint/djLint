@@ -10,6 +10,8 @@
 
 ### Fix
 
+- A template block tag followed by a whole html tag on the same line (`{% endif %} <td class="x">y</td>`, `{% else %} <td class="x">y</td>`) indents as a block tag again. The line was handled as if it were only that html tag, so `{% endif %}` did not unindent and `{% else %}` did not align with its `{% if %}` - and since the line only takes that shape once the tag it holds fits on one line, reformatting an already formatted file moved it.
+
 - A tag opened after the end of a verbatim block on the same line (`</pre> <span>x`) is tracked again. That line is written out as part of the block, so the tag it opened went unrecorded while the `</span>` closing it on a later line still took a level - from whichever tag was opened before the block - dedenting that tag's siblings by one.
 
 - A template control block written across lines is kept that way even when it opens against a tag (`<div>{% if x %}`), and the choice is no longer applied to the wrong block. Which blocks to leave spread (#1597) was recorded from the source and then paired off against the expanded html by position, but the two do not line up - expanding splits some lines and joins others, and a block written against a tag was not recorded at all. One missing entry shifted every later block onto another block's setting, so a block the author spread was collapsed while an inline one was left spread. Blocks are now matched by tag and contents rather than by position.

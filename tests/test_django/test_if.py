@@ -44,6 +44,16 @@ test_data = [
         id="preserve_multiline_if_opened_against_a_tag",
     ),
     pytest.param(
+        ('{% if x %}\nx\n{% endif %} <td title="t">y\n  </td>\n'),
+        ('{% if x %}\n    x\n{% endif %} <td title="t">y</td>\n'),
+        id="end_tag_unindents_with_a_whole_tag_after_it",
+    ),
+    pytest.param(
+        ('{% if x %}\na\n{% else %} <td title="t">b\n  </td>\n{% endif %}\n'),
+        ('{% if x %}\n    a\n{% else %} <td title="t">b</td>\n{% endif %}\n'),
+        id="branch_tag_aligns_with_a_whole_tag_after_it",
+    ),
+    pytest.param(
         (
             "<div>{% if x %}\na\n{% endif %}</div>\n"
             "<div>\n{% if x %}\nb\n{% endif %}\n</div>\n"

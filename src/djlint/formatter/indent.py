@@ -528,6 +528,10 @@ def indent_html(rawcode: str, config: Config) -> str:
             not is_block_raw
             and single_line_tag_pattern.search(item)
             and not starts_unclosed_html_tag(item)
+            # a line closing a template block still has to unindent, whether
+            # or not a whole tag happens to follow ("{% endif %} <td>x</td>")
+            and not template_unindent_pattern.match(item.lstrip())
+            and not tag_unindent_line_pattern.match(item.lstrip())
         ):
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
 
@@ -609,6 +613,9 @@ def indent_html(rawcode: str, config: Config) -> str:
             and not inline_slt_no_attrs_end_pattern.search(item)
             and not inline_slt_attrs_end_pattern.search(item)
             and not starts_unclosed_html_tag(item)
+            # a branch tag ({% else %}, {% elif %}) aligns with its block
+            # below, whatever html the rest of the line closes
+            and not tag_unindent_line_pattern.match(item.lstrip())
         ):
             # block to catch inline block followed by a non-break tag
             if inline_slt_no_attrs_pattern.search(
