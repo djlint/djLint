@@ -10,6 +10,8 @@
 
 ### Fix
 
+- A closing tag that starts its line no longer dedents when the tag it closes was opened after text on an earlier line. The counterpart of the fix above, on the other code path and predating it: `text <b>bold` / `</b> tail` inside a `<p>` shifted the closing `</p>` and every following sibling one level left, and the loss accumulated, so a document repeating that shape drifted further left with each occurrence until it hit column 0. A closing tag with nothing to pair against - unbalanced markup, or a tag opened outside the file - still dedents as before.
+
 - A `<` inside a one-line `<script>`, `<style>`, `<textarea>` or `<title>` no longer counts as a tag when indenting. The content of those elements is text, not markup, so `<script>var a = '<span>'</script>` left an unclosed `<span>` on the formatter's tag stack and shifted everything after it - the indent given back to a following closing tag went to the phantom instead, leaving that tag and its siblings one level too deep.
 
 - An inline element that opens after text on its line and closes on a later line no longer dedents everything that follows it by one level. Since 1.40.8 the formatter gave back an indent level whenever a line closed more html tags than it opened, but a line only takes an indent level when the opening tag starts it, so `text <b>bold` / `more</b> tail` inside a `<p>` pushed the closing `</p>` and every following sibling one level to the left. The dedent is now paired with the indent it undoes, so it only fires for a tag that owned the start of its line, and the shape from #834 keeps its dedent. The wrong output was idempotent, so it silently survived later runs.

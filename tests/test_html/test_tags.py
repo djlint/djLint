@@ -73,6 +73,48 @@ test_data = [
     pytest.param(
         (
             "<div>\n"
+            "    <p>\n"
+            "        text <b>bold\n"
+            "        </b>\n"
+            "    </p>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        text <b>bold\n"
+            "        </b>\n"
+            "    </p>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="inline_tag_opened_after_text_closed_on_own_line",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        text <b>bold\n"
+            "        </b> tail\n"
+            "    </p>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        text <b>bold\n"
+            "        </b> tail\n"
+            "    </p>\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="inline_tag_opened_after_text_closed_leading_with_tail",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
             "    aaaaaaaaaa\n"
             "    <a\n"
             '      href="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"\n'
@@ -754,7 +796,7 @@ test_data = [
             '    before<object data="horse.wav">\n'
             '    <param name="autoplay" value="true" />\n'
             '    <param name="autoplay" value="true" />\n'
-            "</object>after\n"
+            "    </object>after\n"
             "</div>\n"
             "<div>\n"
             '    before<meter min="0" max="1" low=".4" high=".7" optimum=".5" value=".2"></meter>after\n'
@@ -784,7 +826,7 @@ test_data = [
             '    before<object data="horse.wav">\n'
             '    <param name="autoplay" value="true" />\n'
             '    <param name="autoplay" value="true" />\n'
-            "</object>after\n"
+            "    </object>after\n"
             "</div>\n"
             "<div>\n"
             '    before<meter min="0" max="1" low=".4" high=".7" optimum=".5" value=".2"></meter>after\n'

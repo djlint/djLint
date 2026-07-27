@@ -440,6 +440,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         dedent_after = 0
         indent_level_before = indent_level
         opened_html = 0
+        closes_nothing_indented = False
 
         # if a raw tag first line
         if not is_block_raw and is_ignored_block_opening_:
@@ -500,9 +501,13 @@ def indent_html(rawcode: str, config: Config) -> str:
             if unclosed_closes:
                 # only a tag that owns the start of its line is indented,
                 # so closing one opened after text owes no dedent
+                popped = min(unclosed_closes, len(open_html_indents))
                 indented_closes = 0
-                for _ in range(min(unclosed_closes, len(open_html_indents))):
+                for _ in range(popped):
                     indented_closes += open_html_indents.pop()
+                # nothing to pair a close against (a tag opened before this
+                # file, or unbalanced markup) still dedents, as it always did
+                closes_nothing_indented = bool(popped) and not indented_closes
                 # a leading close tag is dedented by the unindent branch
                 if indented_closes and not tag_unindent_pattern.search(item):
                     dedent_after += min(
@@ -635,6 +640,11 @@ def indent_html(rawcode: str, config: Config) -> str:
                     for _ in range(max(glued, 0)):
                         template_block_stack.append((indent_level, None, True))
                         indent_level += 1
+            elif closes_nothing_indented:
+                # the tag was opened after text on its line, so it never
+                # took an indent level and must not give one back
+                tmp = (indent * indent_level) + item + "\n"
+
             else:
                 # an html close tag never dedents below the content level
                 # of the template block it is in; it may close a tag opened
