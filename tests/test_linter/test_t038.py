@@ -98,6 +98,35 @@ django_test_data = [
     pytest.param(
         ('{% url "home" %}\n{% include "a.html" %}\n'), ([]), id="single_tags"
     ),
+    pytest.param(
+        # https://github.com/djlint/djLint/issues/2297
+        ("{% if x %}{# comment #}\ntext\n{% endif %}\n"),
+        ([]),
+        id="comment_after_block_tag",
+    ),
+    pytest.param(
+        ("{# comment #}{% if x %}\ntext\n{% endif %}\n"),
+        ([]),
+        id="comment_before_block_tag",
+    ),
+    pytest.param(
+        ("{% if x %}{# comment #}\ntext\n"),
+        ([
+            {
+                "code": "T038",
+                "line": "1:0",
+                "match": "{% if x %}",
+                "message": "Block tag has no matching end tag.",
+            }
+        ]),
+        id="unclosed_if_with_comment_after",
+    ),
+    pytest.param(("{# {% if x %} #}\n"), ([]), id="block_tag_inside_comment"),
+    pytest.param(
+        ('{% if "<!-- x -->" %}\n<p>hello</p>\n{% endif %}\n'),
+        ([]),
+        id="block_tag_wrapping_ignored_block",
+    ),
 ]
 
 
@@ -138,6 +167,12 @@ jinja_test_data = [
             }
         ]),
         id="unclosed_macro",
+    ),
+    pytest.param(
+        # https://github.com/djlint/djLint/issues/2297
+        ("{% if my_variable %}{# Comment is here #}\ntext\n{% endif %}\n"),
+        ([]),
+        id="issue_2297_comment_after_block_tag",
     ),
 ]
 

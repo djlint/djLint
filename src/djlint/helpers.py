@@ -447,8 +447,10 @@ def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     ):
         # don't require the match to be fully inside the ignored block.
         # poorly build html will probably span ignored blocks and should be ignored.
-        if (ignored_match_start <= match_start <= ignored_match_end) or (
-            ignored_match_start <= match_end <= ignored_match_end
+        # spans are half open, so a match that only touches an ignored block
+        # (e.g. `{% if x %}{# comment #}`) starts and ends outside of it.
+        if (ignored_match_start <= match_start < ignored_match_end) or (
+            ignored_match_start < match_end <= ignored_match_end
         ):
             return True
     return False

@@ -8,6 +8,10 @@
 
 - New `--stdin-filename` option tells djLint the real path of content piped in on stdin (`djlint -`). Stdin previously always carried the name `-`, which no realistic `per-file-ignores` pattern matches, so per-file ignores were silently dead for piped input; the given name is now what `per-file-ignores` matches against and what linter messages report. Editor integrations that lint the open buffer through stdin get the same per-file ignores as a run over the file on disk. Path separators are normalized the same way they are for files on disk, so a Windows-style path matches a pattern written with `/`.
 
+### Fix
+
+- A tag that merely touches an ignored block is no longer treated as being inside it. A tag ending exactly where an ignored block starts (or starting exactly where one ends) - such as `{% if x %}{# comment #}` - was skipped by the linter, which both hid real problems and produced false reports for the tags that depended on it. Most visibly, `T038` reported `End tag has no matching block tag` for the `{% endif %}` of an `{% if %}` followed immediately by a `{# ... #}` comment, and stayed silent about a genuinely unclosed one. Affects every rule that skips ignored blocks (`H025`, `H037`, `H041`, `H042`, `T002`, `T003`, `T027`, `T038`, `T039`) and every kind of ignored block (`{# ... #}`, `<!-- ... -->`, `<script>`, `<pre>`, `{% comment %}`, etc.). Tags that genuinely overlap or sit inside an ignored block are still skipped as before.
+
 ## [1.42.3] - 2026-07-23
 
 ### Fix
