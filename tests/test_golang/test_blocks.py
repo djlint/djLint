@@ -92,6 +92,12 @@ test_data = [
         ),
         id="glued_end_and_opener_keep_stack_in_sync",
     ),
+    pytest.param(
+        # a comment is not a block close, despite starting with "{{/"
+        ("{{ if .A }}\n{{/* note */}}\n<p>a</p>\n{{ end }}\n"),
+        ("{{ if .A }}\n    {{/* note */}}\n    <p>a</p>\n{{ end }}\n"),
+        id="comment_does_not_close_block",
+    ),
 ]
 
 

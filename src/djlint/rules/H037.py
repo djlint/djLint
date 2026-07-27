@@ -30,6 +30,8 @@ _EVENT_PATTERN = re.compile(
     cache_pattern=False,
 )
 _NAME_CHAR_PATTERN = re.compile(r"[-:\w]", cache_pattern=False)
+# handlebars {{! }}, {{!-- --}} and golang {{/* */}} comments
+_COMMENT_PATTERN = re.compile(r"\{\{-?\s*(?:!|/\*)", cache_pattern=False)
 
 
 def _exclusive(
@@ -106,7 +108,11 @@ def run(
             elif re.match(config.template_indent, template_tag, RE_FLAGS_IX):
                 blocks.append([next_block, 0])
                 next_block += 1
-            elif template_tag.startswith("{{"):
+            elif template_tag.startswith("{{") and not _COMMENT_PATTERN.match(
+                template_tag
+            ):
+                # a comment renders as nothing, so it cannot glue a
+                # template-generated prefix onto the next attribute name.
                 prefixed_from = match.end()
 
         for repeated in occurrences.values():

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint.lint import linter
-from tests.conftest import lint_printer
+from tests.conftest import config_builder, lint_printer
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -120,6 +120,18 @@ test_data = [
         id="issue_2246_conditional_attribute_name_prefix",
     ),
     pytest.param(
+        ('<br {{! c }}class="a" class="b" />'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:12",
+                "match": "class",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="comment_does_not_prefix_attribute_name",
+    ),
+    pytest.param(
         ('<br {% if a %}class="x" {% endif %}class="b" />'),
         ([
             {
@@ -190,12 +202,54 @@ test_data = [
 ]
 
 
+golang_test_data = [
+    pytest.param(
+        # https://github.com/djlint/djLint/issues/2299
+        ('<a {{if .A}}href="a"{{else}}{{/* c */}}href="b"{{end}}>x</a>'),
+        ([]),
+        id="issue_2299_comment_keeps_branch_tracking",
+    ),
+    pytest.param(
+        ('<a {{if .A}}href="a"{{else}}{{- /* c */ -}}href="b"{{end}}>x</a>'),
+        ([]),
+        id="trimmed_comment_keeps_branch_tracking",
+    ),
+    pytest.param(
+        ('<a {{/* c */}}href="a" href="b">x</a>'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:14",
+                "match": "href",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="comment_does_not_hide_duplicate",
+    ),
+]
+
+
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_base(
     source: str, expected: list[LintError], basic_config: Config
 ) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
+
+    lint_printer(source, expected, output[filename])
+
+    mismatch = (
+        *(x for x in output[filename] if x not in expected),
+        *(x for x in expected if x not in output[filename]),
+    )
+    assert not mismatch
+
+
+@pytest.mark.parametrize(("source", "expected"), golang_test_data)
+def test_golang(source: str, expected: list[LintError]) -> None:
+    filename = "test.html"
+    config = config_builder({"profile": "golang"})
+    output = linter(config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 

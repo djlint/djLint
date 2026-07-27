@@ -1499,7 +1499,9 @@ class Config:
         self.template_unindent = (
             r"""
                 (?:
-                  (?:\{\{\/)
+                  # handlebars block close {{/name}}, but not a golang
+                  # comment {{/* ... */}}, which closes nothing
+                  (?:\{\{\/(?!\*))
                 | (?:\{%-?[ ]*end"""
             + end_tag_guard
             + ignore_blocks_guard
