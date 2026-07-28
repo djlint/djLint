@@ -448,11 +448,15 @@ def child_of_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
 
 
 def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
-    """Do not add whitespace if the tag is in a non indent block."""
+    """Check if a match is in a block the linter skips.
+
+    Uses the lint spans, which cover the tag closing a script/style block; the
+    formatter's stop short of it so it can still be indented.
+    """
     match_start, match_end = match.span()
     for ignored_match_start, ignored_match_end in _inside_ignored_block(
         html,
-        ignored_blocks=config.ignored_blocks_pattern,
+        ignored_blocks=config.lint_ignored_blocks_pattern,
         ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
     ):
         # don't require the match to be fully inside the ignored block.

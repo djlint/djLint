@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- `H025` no longer reports the closing tag of a multi-line `<script>` or `<style>` as an orphan - a regression in 1.43.0. A genuinely unmatched `</script>` is still reported.
+
 ## [1.43.0] - 2026-07-27
 
 ### Feature

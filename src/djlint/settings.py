@@ -799,9 +799,7 @@ _IGNORED_INLINE_BLOCKS: Final = r"""
     | {%[ ]*blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans(?:late)?[ ]*%}
 """
 
-_IGNORED_BLOCKS: Final = r"""
-      <(pre|textarea).*?</(\1)>
-    | <(script|style).*?(?=(\</(?:\3)>))
+_IGNORED_BLOCKS_TAIL: Final = r"""
     # html comment
     | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
     # django/jinja/nunjucks
@@ -827,6 +825,27 @@ _IGNORED_BLOCKS: Final = r"""
     | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*endcomment[ ]*%})
     | ^---[\s\S]+?---
 """
+
+# The script/style span stops at the "<" of the closing tag so the formatter
+# can still indent that tag; every other block covers what ends it.
+_IGNORED_BLOCKS: Final = (
+    r"""
+      <(pre|textarea).*?</(\1)>
+    | <(script|style).*?(?=(\</(?:\3)>))
+"""
+    + _IGNORED_BLOCKS_TAIL
+)
+
+# Linting needs the whole element instead. Stopping at the "<" leaves the
+# closing tag outside a block that its opening tag is inside, so a rule pairing
+# the two (H025) sees a close with no open and calls it an orphan.
+_LINT_IGNORED_BLOCKS: Final = (
+    r"""
+      <(pre|textarea).*?</(\1)>
+    | <(script|style).*?\</(?:\3)>
+"""
+    + _IGNORED_BLOCKS_TAIL
+)
 
 _SCRIPT_STYLE_INLINE: Final = r"""
     <(script|style).*?(?=(\</(?:\1)>))
@@ -900,6 +919,9 @@ _IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
 )
 _IGNORED_BLOCKS_PATTERN: Final = re.compile(
     _IGNORED_BLOCKS, RE_FLAGS_IMSX, cache_pattern=False
+)
+_LINT_IGNORED_BLOCKS_PATTERN: Final = re.compile(
+    _LINT_IGNORED_BLOCKS, RE_FLAGS_IMSX, cache_pattern=False
 )
 _IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
     r"""
@@ -1089,6 +1111,7 @@ class Config:
         "js_config",
         "line_break_after_multiline_tag",
         "lint",
+        "lint_ignored_blocks_pattern",
         "linter_output_format",
         "linter_rules",
         "max_attribute_length",
@@ -1608,6 +1631,7 @@ class Config:
         self.ignored_block_opening_pattern = _IGNORED_BLOCK_OPENING_PATTERN
         self.ignored_block_closing_pattern = _IGNORED_BLOCK_CLOSING_PATTERN
         self.ignored_blocks_pattern = _IGNORED_BLOCKS_PATTERN
+        self.lint_ignored_blocks_pattern = _LINT_IGNORED_BLOCKS_PATTERN
         self.ignored_blocks_inline_pattern = _IGNORED_BLOCKS_INLINE_PATTERN
         self.ignored_inline_blocks_ix_pattern = (
             _IGNORED_INLINE_BLOCKS_IX_PATTERN

@@ -93,3 +93,96 @@ def test_apostrophe_in_translated_attribute_is_not_an_orphan(
 
     lint_printer(source, [], output[filename])
     assert not output[filename]
+
+
+def test_multiline_script_is_not_an_orphan(django_config: Config) -> None:
+    # https://github.com/djlint/djLint/issues/2302
+    # The ignored block covering a <script> body stops at the "<" of its
+    # closing tag, so the closer must still pair with the opener.
+    source = "<div>\n  <script>\n  var x = 1;\n  </script>\n</div>\n"
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]
+
+
+def test_multiline_style_is_not_an_orphan(django_config: Config) -> None:
+    source = "<div>\n  <style>\n  a { color: red; }\n  </style>\n</div>\n"
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]
+
+
+def test_multiline_script_opening_tag_is_not_an_orphan(
+    django_config: Config,
+) -> None:
+    source = (
+        "<div>\n"
+        '  <script src="a.js"\n'
+        '          integrity="sha384-x"\n'
+        '          crossorigin="anonymous"></script>\n'
+        "</div>\n"
+    )
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]
+
+
+def test_multiline_ld_json_script_is_not_an_orphan(
+    django_config: Config,
+) -> None:
+    source = (
+        "<div>\n"
+        '  <script type="application/ld+json">\n'
+        '  {"a": 1}\n'
+        "  </script>\n"
+        "</div>\n"
+    )
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]
+
+
+def test_genuinely_orphan_script_close_is_still_reported(
+    django_config: Config,
+) -> None:
+    source = "<div>\n  </script>\n</div>\n"
+    filename = "test.html"
+    expected: list[LintError] = [
+        {
+            "code": "H025",
+            "line": "2:2",
+            "match": "</script>",
+            "message": "Tag seems to be an orphan.",
+        }
+    ]
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, expected, output[filename])
+    assert output[filename] == expected
+
+
+def test_html_inside_multiline_script_is_still_ignored(
+    django_config: Config,
+) -> None:
+    # The <div> in the JS string is not markup and must not pair with, or
+    # orphan against, the real tags around it.
+    source = '<div>\n  <script>\n  var s = "<div>";\n  </script>\n</div>\n'
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]
