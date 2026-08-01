@@ -2,7 +2,7 @@
 
 [Semantic Versioning](https://semver.org/)
 
-## [Unreleased]
+## [1.43.2] - 2026-08-01
 
 ### Fix
 
