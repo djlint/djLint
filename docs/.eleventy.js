@@ -263,7 +263,9 @@ module.exports = function (eleventyConfig) {
     {
       rev: true,
       postcss: postcss([
-        require("postcss-nested"),
+        // postcss-nested is ESM only since v8; require() of it yields the
+        // module namespace, and the plugin is its default export.
+        require("postcss-nested").default,
         purgecss({
           content: ["./src/**/*.njk", "./src/**/*.md", "./src/**/*.js"],
           safelist: {
