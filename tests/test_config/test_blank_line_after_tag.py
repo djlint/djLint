@@ -122,6 +122,33 @@ test_data = [
         id="issue_827_no_blank_line_before_decreased_indent",
     ),
     pytest.param(
+        (
+            "{% for item in items %}\n"
+            "{{ item }}\n"
+            "{% endfor %}\n"
+            "<p></p>\n"
+            "<p>\n"
+            "{% for item in items %}\n"
+            "{{ item }}\n"
+            "{% endfor %}\n"
+            "</p>\n"
+        ),
+        (
+            "{% for item in items %}\n"
+            "    {{ item }}\n"
+            "{% endfor %}\n"
+            "\n"
+            "<p></p>\n"
+            "<p>\n"
+            "    {% for item in items %}\n"
+            "        {{ item }}\n"
+            "    {% endfor %}\n"
+            "</p>\n"
+        ),
+        ({"blank_line_after_tag": "endfor"}),
+        id="issue_2317_only_a_sibling_is_separated",
+    ),
+    pytest.param(
         ("{% extends nothing %}\n\n<div></div>\n"),
         ("{% extends nothing %}\n\n<div></div>\n"),
         ({

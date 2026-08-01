@@ -1,4 +1,6 @@
-const Image = require("@11ty/eleventy-img");
+// eleventy-img is ESM only since v7; require() of it yields the module
+// namespace, and the callable Image is its default export.
+const Image = require("@11ty/eleventy-img").default;
 const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 const slugify = require("slugify");
 const metagen = require("eleventy-plugin-metagen");

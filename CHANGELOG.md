@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- `blank_line_before_tag` no longer inserts a blank line when the previous line opens a block and increases the indentation, e.g. between `<div>` and `{% block %}`. Since 1.41.0 `blank_line_after_tag` has left the closing edge of a block alone (`{% endblock %}` before `</div>`), while the opening edge kept its padding, so a template using both options came out lopsided.
+
 ## [1.43.1] - 2026-07-28
 
 ### Fix

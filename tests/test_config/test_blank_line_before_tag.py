@@ -49,7 +49,6 @@ test_data = [
             '<div class="tab-cnt">\n'
             '    <div class="tab-dta active" id="details">\n'
             '        <div class="em-grid">\n'
-            "\n"
             '            {% include "pages/task/details_source.html.j2" %}\n'
             "        </div>\n"
             "    </div>\n"
@@ -60,7 +59,7 @@ test_data = [
     ),
     pytest.param(
         ("{% block this %}\n{% load i18n %}\n{% endblock this %}"),
-        ("{% block this %}\n\n    {% load i18n %}\n\n{% endblock this %}\n"),
+        ("{% block this %}\n    {% load i18n %}\n\n{% endblock this %}\n"),
         ({"blank_line_before_tag": "endblock  , junk,load "}),
         id="nested_indent",
     ),
@@ -167,6 +166,61 @@ test_data = [
         ),
         ({"blank_line_before_tag": "   include     ,endblock "}),
         id="test multiple",
+    ),
+    pytest.param(
+        (
+            "{% block content %}\n"
+            '<div id="panel">\n'
+            "{% block panel %}\n"
+            "{% endblock panel %}\n"
+            "</div>\n"
+            "{% endblock content %}\n"
+            "{% block extra_css %}\n"
+            "{% block workflow_css %}\n"
+            "{% endblock workflow_css %}\n"
+            "{% endblock extra_css %}\n"
+        ),
+        (
+            "{% block content %}\n"
+            '    <div id="panel">\n'
+            "        {% block panel %}\n"
+            "        {% endblock panel %}\n"
+            "    </div>\n"
+            "{% endblock content %}\n"
+            "\n"
+            "{% block extra_css %}\n"
+            "    {% block workflow_css %}\n"
+            "    {% endblock workflow_css %}\n"
+            "{% endblock extra_css %}\n"
+        ),
+        ({
+            "blank_line_before_tag": "block",
+            "blank_line_after_tag": "endblock",
+        }),
+        id="issue_2317_no_blank_line_after_increased_indent",
+    ),
+    pytest.param(
+        (
+            '<img src="a.png">\n'
+            '{% include "x.html" %}\n'
+            "<div></div>\n"
+            '{% include "y.html" %}\n'
+            "<span>text</span>\n"
+            '{% include "z.html" %}\n'
+        ),
+        (
+            '<img src="a.png">\n'
+            "\n"
+            '{% include "x.html" %}\n'
+            "<div></div>\n"
+            "\n"
+            '{% include "y.html" %}\n'
+            "<span>text</span>\n"
+            "\n"
+            '{% include "z.html" %}\n'
+        ),
+        ({"blank_line_before_tag": "include"}),
+        id="a line that opens nothing is a sibling",
     ),
     pytest.param(
         (
