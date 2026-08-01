@@ -264,10 +264,10 @@
     "name": "blank_line_after_tag",
     "tags": ["formatter"],
     "description": {
-      "en": "Add an additional blank line after `{% <tag> ... %}` tag groups.",
-      "ru": "Добавьте дополнительную пустую строку после групп тегов `{% <tag> ... %}`.",
-      "fr": "Ajout d'une ligne vide supplémentaire après les groupes de balises `{% <tag> ... %}`.",
-      "zh": "在 `{% <tag> ... %}` 标签组后添加空行。"
+      "en": "Add an additional blank line after `{% <tag> ... %}` tag groups. Blank lines will never be added to end of block.",
+      "ru": "Добавьте дополнительную пустую строку после групп тегов `{% <tag> ... %}`. Пустые строки никогда не будут добавлены в конец блока.",
+      "fr": "Ajout d'une ligne vide supplémentaire après les groupes de balises `{% <tag> ... %}`. Les lignes vides ne seront jamais ajoutées à la fin d'un bloc.",
+      "zh": "在 `{% <tag> ... %}` 标签组后添加空行。（空行不会添加到块的末尾）"
     },
     "usage": [
       {
@@ -288,10 +288,10 @@
     "name": "blank_line_before_tag",
     "tags": ["formatter"],
     "description": {
-      "en": "Add an additional blank line before `{% <tag> ... %}` tag groups. Blank lines will never be added to start of file or between similar tags.",
-      "ru": "Добавляет дополнительную пустую строку перед группами тегов `{% <tag> ... %}`. Пустые строки никогда не будут добавлены в начало файла или между похожими тегами.",
-      "fr": "Ajoute une ligne blanche supplémentaire avant les groupes de balises `{% <tag> ... %}`. Les lignes vides ne seront jamais ajoutées au début du fichier ou entre des balises similaires.",
-      "zh": "在 `{% <tag> ... %}` 标签组前添加空行。（空行不会添加到文件开头或同一个标签之间）"
+      "en": "Add an additional blank line before `{% <tag> ... %}` tag groups. Blank lines will never be added to start of file or block, or between similar tags.",
+      "ru": "Добавляет дополнительную пустую строку перед группами тегов `{% <tag> ... %}`. Пустые строки никогда не будут добавлены в начало файла или блока, а также между похожими тегами.",
+      "fr": "Ajoute une ligne blanche supplémentaire avant les groupes de balises `{% <tag> ... %}`. Les lignes vides ne seront jamais ajoutées au début du fichier ou d'un bloc, ni entre des balises similaires.",
+      "zh": "在 `{% <tag> ... %}` 标签组前添加空行。（空行不会添加到文件或块的开头，也不会添加到同一个标签之间）"
     },
     "usage": [
       {

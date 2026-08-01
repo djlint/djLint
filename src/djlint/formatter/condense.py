@@ -17,6 +17,7 @@ from djlint.helpers import (
     RE_FLAGS_IMS,
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
+    RE_FLAGS_IX,
     RE_FLAGS_MS,
     inside_html_attribute,
     inside_ignored_block,
@@ -49,6 +50,29 @@ _CLOSING_LINE_PATTERN: Final = re.compile(
 _COMMENT_LINE_PATTERN: Final = re.compile(
     r"[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*", cache_pattern=False
 )
+
+
+def _opening_line_pattern(config: Config) -> re.Pattern[str]:
+    """Build the mirror of _CLOSING_LINE_PATTERN.
+
+    A line that opens a block and increases the indentation: a template
+    block tag, or an html tag that is neither void nor self closed, with
+    nothing else on the line.
+    """
+    return re.compile(
+        rf"""
+        [ \t]*
+        (?:
+            (?:{config.template_indent})
+            (?:(?!%\}}|\}}\}}).)*(?:%\}}|\}}\}})
+          | <(?!(?:{config.always_self_closing_html_tags})\b)
+            (?:{config.indent_html_tags})\b
+            (?:"[^"]*"|'[^']*'|[^>"'])*(?<!/)>
+        )
+        [ \t]*
+        """,
+        RE_FLAGS_IX,
+    )
 
 
 def clean_whitespace(html: str, config: Config) -> str:
@@ -154,21 +178,29 @@ def clean_whitespace(html: str, config: Config) -> str:
     def add_blank_line_before(
         config: Config,
         html: str,
+        opening_line: re.Pattern[str],
         attach_comments: bool,  # noqa: FBT001
         match: re.Match[str],
     ) -> str:
         """Add break before if not in ignored block and not first line in file."""
-        if match.start() == 0 or inside_ignored_block(config, html, match):
+        start = match.start()
+        if start == 0 or inside_ignored_block(config, html, match):
             return match.group()
 
-        # a comment line directly above belongs to this tag. if it was not
-        # swallowed into the match, there is already a blank line above it.
-        start = match.start()
-        if attach_comments and match.string[start - 1] == "\n":
+        if match.string[start - 1] == "\n":
             prev_start = match.string.rfind("\n", 0, start - 1) + 1
-            if _COMMENT_LINE_PATTERN.fullmatch(
+
+            # a comment line directly above belongs to this tag. if it was
+            # not swallowed into the match, there is already a blank line
+            # above it.
+            if attach_comments and _COMMENT_LINE_PATTERN.fullmatch(
                 match.string, prev_start, start - 1
             ):
+                return match.group()
+
+            # no blank line when the previous line opens a block (increased
+            # indent).
+            if opening_line.fullmatch(match.string, prev_start, start - 1):
                 return match.group()
 
         return "\n" + match.group()
@@ -179,10 +211,17 @@ def clean_whitespace(html: str, config: Config) -> str:
         # goes above any comment lines directly preceding the tag. a comment
         # above an end tag is block content, not the end tag's comment.
         comment_lines = r"(?:^[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*\n)*"
+        opening_line = _opening_line_pattern(config)
         for raw_tag in config.blank_line_before_tag.split(","):
             tag = raw_tag.strip()
             attach_comments = not tag.startswith("end")
-            func = partial(add_blank_line_before, config, html, attach_comments)
+            func = partial(
+                add_blank_line_before,
+                config,
+                html,
+                opening_line,
+                attach_comments,
+            )
             html = re.sub(
                 rf"(?<!^\n)({comment_lines if attach_comments else ''}(?:{{%-?\s*?{tag}\b[^}}]+?-?%}}\n?)+)",
                 func,
