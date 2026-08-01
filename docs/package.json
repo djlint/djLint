@@ -46,7 +46,7 @@
     "markdown-it-div": "1.1.0",
     "markdown-it-imsize": "2.0.1",
     "postcss": "8.5.25",
-    "postcss-nested": "7.0.2",
+    "postcss-nested": "8.0.0",
     "prismjs": "1.30.0",
     "sass": "1.102.0",
     "slugify": "1.6.9"
