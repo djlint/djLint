@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.44.0] - 2026-08-04
+
 ### Feature
 
 - New `--allow-empty-input` option, and the matching `allow_empty_input` config key, exits `0` instead of `2` when the given paths match no files.
