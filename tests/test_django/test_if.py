@@ -166,6 +166,63 @@ test_data = [
         ),
         id="issue_483_tag_opened_in_every_branch",
     ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        {% if required %}<strong>{% endif %}\n"
+            "        {% if required %}</strong>{% endif %}\n"
+            "    </p>\n"
+            "    <span>after</span>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        {% if required %}<strong>{% endif %}\n"
+            "        {% if required %}</strong>{% endif %}\n"
+            "    </p>\n"
+            "    <span>after</span>\n"
+            "</div>\n"
+        ),
+        id="close_tag_in_an_inline_if_keeps_the_block_level",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {% if x %}</b>{% endif %}\n"
+            "    <span>after</span>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    {% if x %}</b>{% endif %}\n"
+            "    <span>after</span>\n"
+            "</div>\n"
+        ),
+        id="unmatched_close_tag_in_an_inline_if_does_not_dedent",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        {% if r %}<b><i>{% endif %}\n"
+            "        {% if r %}</i></b>{% endif %}\n"
+            "    </p>\n"
+            "    <span>after</span>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <p>\n"
+            "        {% if r %}<b><i>{% endif %}\n"
+            "        {% if r %}</i></b>{% endif %}\n"
+            "    </p>\n"
+            "    <span>after</span>\n"
+            "</div>\n"
+        ),
+        id="two_close_tags_in_an_inline_if_keep_the_block_level",
+    ),
 ]
 
 

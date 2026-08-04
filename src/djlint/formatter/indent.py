@@ -665,6 +665,13 @@ def indent_html(rawcode: str, config: Config) -> str:
                     if template_block_stack
                     else 0
                 )
+                if indent_level - 1 < floor:
+                    # the floor held, so the tag being closed took its level
+                    # outside this block and giving it back is not this
+                    # line's to do - the block's own close restores it.
+                    # Without this the dedent lands after the line instead,
+                    # taking the rest of the block with it.
+                    html_dedent = 0
                 indent_level = max(indent_level - 1, floor)
                 tmp = (indent * indent_level) + item + "\n"
 

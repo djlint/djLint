@@ -10,6 +10,7 @@
 
 ### Fix
 
+- An html close tag inside an inline `{% if %}...{% endif %}` no longer dedents everything that follows it by one level, collapsing nested structures toward column 0 - a regression in 1.43.0. A close tag already at the content level of the template block it sits in is held there, but the level it was denied was then taken off the end of the line instead, so `{% if r %}</strong>{% endif %}` moved the rest of the block left. The matching open tag never took a level to give back, since `{% endif %}` had already returned it.
 - A run where every file found was skipped by `exclude`, `extend_exclude`, `use_gitignore` or `require_pragma` now exits `0` instead of `1`. Skipping them is the configuration doing its job, and it is what lets `exclude` work under pre-commit, which passes the names of every staged file. Paths that match no files at all now exit `2` rather than `1`, so exit `1` means only that djLint found something to report.
 - An unhandled error exits `2` instead of `1`, so a crash is no longer indistinguishable from a lint error. The traceback is still printed.
 - An unrecognized `--profile`, or `profile` in a config file, is now a usage error. A typo used to lint with a silently different rule set and exit `0`, and raised `KeyError` with `--require-pragma`.
