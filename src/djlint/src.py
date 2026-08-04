@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from types import MappingProxyType
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 import regex as re
 from click import echo, style
@@ -14,6 +14,19 @@ if TYPE_CHECKING:
     from typing import Final
 
     from djlint.settings import Config
+
+
+class SrcFiles(NamedTuple):
+    """Files to process, and why the list may be empty.
+
+    An empty ``paths`` with ``excluded`` set means candidates were found
+    and every one of them was deliberately skipped by the configuration -
+    a successful no-op. An empty ``paths`` without it means nothing
+    matched the requested paths at all, which is a usage error.
+    """
+
+    paths: list[Path]
+    excluded: bool
 
 
 def _gitignore_match(config: Config, filepath: Path) -> bool:
@@ -53,49 +66,57 @@ def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
     return False
 
 
-def get_src(src: Iterable[Path], config: Config) -> list[Path]:
+def _included(config: Config, filepath: Path, root: Path) -> bool:
+    """Check whether a file survives the exclude, gitignore and pragma filters."""
+    return (
+        not _exclude_match(config, filepath, root)
+        and no_pragma(config, filepath)
+        and (not config.use_gitignore or not _gitignore_match(config, filepath))
+    )
+
+
+def get_src(src: Iterable[Path], config: Config) -> SrcFiles:
     """Get source files."""
     paths = []
+    excluded = False
     for item in src:
         # normalize path
 
         normalized_item = item.resolve()
 
         if normalized_item.is_file():
-            if (
-                not _exclude_match(config, normalized_item, config.project_root)
-                and no_pragma(config, normalized_item)
-                and (
-                    not config.use_gitignore
-                    or not _gitignore_match(config, normalized_item)
-                )
-            ):
+            if _included(config, normalized_item, config.project_root):
                 paths.append(normalized_item)
+            else:
+                excluded = True
             continue
 
         # remove leading . from extension
         extension = config.extension.removeprefix(".")
 
-        paths.extend(
-            x
-            for x in normalized_item.glob(f"**/*.{extension}")
-            if (
-                not _exclude_match(config, x, normalized_item)
-                and no_pragma(config, x)
-                and (
-                    not config.use_gitignore or not _gitignore_match(config, x)
-                )
-            )
-        )
+        for candidate in normalized_item.glob(f"**/*.{extension}"):
+            # a directory can match the extension glob too, and it is not a
+            # candidate at all - opening one raises rather than excluding it
+            if not candidate.is_file():
+                continue
+            if _included(config, candidate, normalized_item):
+                paths.append(candidate)
+            else:
+                excluded = True
 
-    if not paths:
-        print_no_files_to_check()
-
-    return paths
+    return SrcFiles(paths, excluded)
 
 
-def print_no_files_to_check() -> None:
-    echo(style("No files to check! 😢", fg="blue"))
+def print_no_files_to_check(*, excluded: bool) -> None:
+    """Report an empty file list on stderr.
+
+    Never on stdout: that is where formatted code is written, and a
+    diagnostic mixed into it would be read back as file contents.
+    """
+    message = "No files to check! 😢"
+    if excluded:
+        message += " Everything that matched was skipped by the configuration."
+    echo(style(message, fg="blue"), err=True)
 
 
 _HTML_PRAGMA_PATTERNS: Final = (

@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 import yaml
-from click import echo, style
+from click import BadParameter, echo, style
 from pathspec import PathSpec
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
@@ -387,6 +387,11 @@ _PROFILE_CODES: Final[dict[str, tuple[str, ...]]] = {
     "golang": ("D", "J", "N", "M"),
     "angular": ("D", "J", "H012", "H026", "H028"),
 }
+
+# every profile djLint accepts. "all" enables every rule and is the default,
+# so it has no codes to exclude and is absent from _PROFILE_CODES above.
+# Kept in step with src._PRAGMA_PATTERNS by test_profile_sets_agree.
+_PROFILES: Final[frozenset[str]] = frozenset(_PROFILE_CODES) | {"all"}
 
 # Directories that plausibly contain generated or third-party
 # HTML/templates: VCS internals, virtualenvs and installed packages,
@@ -1063,6 +1068,7 @@ class Config:
     """Djlint Config."""
 
     __slots__ = (
+        "allow_empty_input",
         "always_self_closing_html_tags",
         "attribute_pattern",
         "blank_line_after_tag",
@@ -1172,6 +1178,7 @@ class Config:
         check: bool = False,
         lint: bool = False,
         use_gitignore: bool = False,
+        allow_empty_input: bool = False,
         warn: bool = False,
         preserve_leading_space: bool = False,
         preserve_blank_lines: bool = False,
@@ -1386,11 +1393,23 @@ class Config:
         self.use_gitignore = (
             use_gitignore or bool(djlint_settings.get("use_gitignore", False))
         ) and not self.stdin
+        self.allow_empty_input = allow_empty_input or bool(
+            djlint_settings.get("allow_empty_input", False)
+        )
 
         # linter rules, minus the ignored codes and the profile's excludes
         self.profile = str(
             profile or djlint_settings.get("profile", "all")
         ).lower()
+        if self.profile not in _PROFILES:
+            # an unrecognized profile used to fall through to an empty set of
+            # excluded codes, so a typo silently linted with the wrong rules
+            # and still exited 0. It also made require_pragma raise a KeyError.
+            msg = (
+                f"Invalid profile {self.profile!r}."
+                f" Choose from {', '.join(sorted(_PROFILES))}."
+            )
+            raise BadParameter(msg, param_hint="'--profile'")
         profile_codes = _PROFILE_CODES.get(
             str(profile or djlint_settings.get("profile", "html")).lower(), ()
         )

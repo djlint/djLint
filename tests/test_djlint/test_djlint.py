@@ -105,8 +105,19 @@ def test_good_path_with_bad_ext(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ("tests/test_djlint/", "-e", "html.alphabet")
     )
-    assert result.exit_code == 1
-    assert "No files to check!" in result.output
+    # nothing matched at all, so the run checked nothing it was asked to
+    assert result.exit_code == 2
+    assert "No files to check!" in result.stderr
+    assert not result.stdout
+
+
+def test_good_path_with_bad_ext_allow_empty_input(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint,
+        ("tests/test_djlint/", "-e", "html.alphabet", "--allow-empty-input"),
+    )
+    assert result.exit_code == 0
+    assert "No files to check!" in result.stderr
 
 
 def test_empty_file(
@@ -144,8 +155,20 @@ def test_stdin(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ("-", "--require-pragma"), input="<div></div>"
     )
-    assert result.exit_code == 1
-    assert "No files to check!" in result.output
+    assert result.exit_code == 0
+    assert "No files to check!" in result.stderr
+    assert not result.stdout
+
+    # input skipped by require-pragma must come back byte for byte, and the
+    # diagnostic must never land on stdout next to it
+    result = runner.invoke(
+        djlint,
+        ("-", "--reformat", "--require-pragma"),
+        input="<div>   <p>x</p></div>\n\n\n",
+    )
+    assert result.exit_code == 0
+    assert result.stdout == "<div>   <p>x</p></div>\n\n\n"
+    assert "No files to check!" in result.stderr
 
 
 def test_stdin_filename_option(runner: CliRunner) -> None:

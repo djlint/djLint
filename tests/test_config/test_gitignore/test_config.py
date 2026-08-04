@@ -54,11 +54,14 @@ def test_cli(runner: CliRunner) -> None:
         ),
     )
 
-    assert result.exit_code == 1
+    # the file is gitignored, so it is skipped on purpose - a success
+    assert result.exit_code == 0
+    assert "No files to check!" in result.stderr
 
     result = runner.invoke(
         djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
     )
+    # without --use-gitignore the file is checked, and it needs reformatting
     assert result.exit_code == 1
 
     try:
@@ -90,7 +93,8 @@ def test_cli(runner: CliRunner) -> None:
         djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
     )
 
-    assert result.exit_code == 1
+    assert result.exit_code == 0
+    assert "No files to check!" in result.stderr
 
     pyproject_path.write_text(
         "[tool]\n[tool.djlint]\nuse_gitignore=false", encoding="utf-8"
@@ -111,7 +115,8 @@ def test_cli(runner: CliRunner) -> None:
         ),
     )
     print(result.output)
-    assert result.exit_code == 1
+    assert result.exit_code == 0
+    assert "No files to check!" in result.stderr
 
     try:
         gitignore_path.unlink()
@@ -159,7 +164,7 @@ def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
     (git_dir / "stale.html").write_text("<div>bad</div>", encoding="utf-8")
 
     config = Config(str(worktree))
-    paths = get_src([worktree], config)
+    paths = get_src([worktree], config).paths
 
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
@@ -177,7 +182,7 @@ def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
     (generated / "bad.html").write_text("<div>bad</div>", encoding="utf-8")
 
     config = Config(str(templates), exclude="templates/generated")
-    paths = get_src([templates], config)
+    paths = get_src([templates], config).paths
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
     # Exclude patterns relative to project root must still work when
@@ -193,7 +198,7 @@ def test_extend_exclude_matches_explicit_file(tmp_path: Path) -> None:
 
     config = Config(str(tmp_path), extend_exclude="generated.html")
 
-    assert get_src([template], config) == []
+    assert get_src([template], config).paths == []
 
 
 def test_exclude_matches_path_segments_not_substrings(tmp_path: Path) -> None:
@@ -207,7 +212,7 @@ def test_exclude_matches_path_segments_not_substrings(tmp_path: Path) -> None:
         )
 
     config = Config(str(worktree), exclude="build")
-    paths = get_src([worktree], config)
+    paths = get_src([worktree], config).paths
 
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
@@ -227,7 +232,7 @@ def test_exclude_supports_comma_separated_paths(tmp_path: Path) -> None:
         )
 
     config = Config(str(worktree), exclude="build,dist")
-    paths = get_src([worktree], config)
+    paths = get_src([worktree], config).paths
 
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
@@ -252,7 +257,7 @@ def test_exclude_matches_slash_separated_path_segments(tmp_path: Path) -> None:
 
     for exclude in ("templates/generated", "templates/generated/"):
         config = Config(str(worktree), exclude=exclude)
-        paths = get_src([worktree], config)
+        paths = get_src([worktree], config).paths
 
         resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
@@ -276,7 +281,7 @@ def test_exclude_trailing_slash_matches_nested_path_segment(
     (other / "test.html").write_text("<div>hello</div>", encoding="utf-8")
 
     config = Config(str(worktree), exclude="emails/")
-    paths = get_src([worktree], config)
+    paths = get_src([worktree], config).paths
 
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
@@ -297,7 +302,7 @@ def test_exclude_leading_slash_matches_project_root_only(
         (path / "test.html").write_text("<div>hello</div>", encoding="utf-8")
 
     config = Config(str(worktree), exclude="/emails/")
-    paths = get_src([worktree], config)
+    paths = get_src([worktree], config).paths
 
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
@@ -319,12 +324,12 @@ def test_exclude_leading_slash_does_not_match_source_root(
         )
 
     config = Config(str(templates), exclude="/generated/")
-    paths = get_src([templates], config)
+    paths = get_src([templates], config).paths
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
     assert "templates/generated/test.html" in resolved_paths
 
-    paths = get_src([worktree], config)
+    paths = get_src([worktree], config).paths
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
     assert "generated/test.html" not in resolved_paths
@@ -347,11 +352,11 @@ def test_gitignore_does_not_match_parent_path(tmp_path: Path) -> None:
 
     config = Config(str(templates / "index.html"), use_gitignore=True)
     # Test single file path (the xargs codepath)
-    paths = get_src([templates / "index.html"], config)
+    paths = get_src([templates / "index.html"], config).paths
     assert len(paths) == 1
 
     # Test directory path
-    paths = get_src([worktree], config)
+    paths = get_src([worktree], config).paths
     resolved = {p.relative_to(worktree).as_posix() for p in paths}
     assert "templates/index.html" in resolved
 
@@ -361,7 +366,7 @@ def test_gitignore_does_not_match_parent_path(tmp_path: Path) -> None:
     ignored_dir.mkdir(parents=True)
     (ignored_dir / "bad.html").write_text("<div>bad</div>", encoding="utf-8")
 
-    paths = get_src([worktree], config)
+    paths = get_src([worktree], config).paths
     resolved = {p.relative_to(worktree).as_posix() for p in paths}
     assert "templates/index.html" in resolved
     assert "worktrees/nested/bad.html" not in resolved

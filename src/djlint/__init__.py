@@ -5,12 +5,12 @@ from __future__ import annotations
 
 import os
 import sys
-from functools import partial
+from functools import partial, wraps
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import click
-from click import echo
+from click import echo, style
 
 if sys.version_info >= (3, 13):
     from os import process_cpu_count
@@ -18,8 +18,47 @@ else:
     from os import cpu_count as process_cpu_count
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from djlint.settings import Config
     from djlint.types import ProcessResult
+
+
+def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
+    """Keep djLint failing apart from djLint finding things.
+
+    An unhandled error used to reach the interpreter and exit 1, the same
+    code as "found lint errors" or "would reformat", so a pipeline could
+    not tell a crash from a normal failing run - a template djLint cannot
+    read looked exactly like a template it disliked. Failures now exit 2,
+    alongside the usage errors click already exits 2 for. The traceback is
+    still printed, so bug reports lose nothing.
+    """
+
+    @wraps(func)
+    def wrapper(*args: object, **kwargs: object) -> None:
+        try:
+            func(*args, **kwargs)
+        except (click.ClickException, click.exceptions.Exit, click.Abort):
+            # click's own control flow, including --help and usage errors
+            raise
+        except Exception:
+            import traceback  # noqa: PLC0415
+
+            traceback.print_exc()
+            echo(
+                style(
+                    "djLint failed and did not finish checking. This is not a"
+                    " clean run - report unexpected failures at"
+                    " https://github.com/djlint/djLint/issues",
+                    fg="red",
+                    bold=True,
+                ),
+                err=True,
+            )
+            sys.exit(2)
+
+    return wrapper
 
 
 @click.command(
@@ -95,6 +134,11 @@ if TYPE_CHECKING:
     "--use-gitignore",
     is_flag=True,
     help="Use .gitignore file to extend excludes.",
+)
+@click.option(
+    "--allow-empty-input",
+    is_flag=True,
+    help="Exit with 0 instead of 2 when the given paths match no files.",
 )
 @click.option("--warn", is_flag=True, help="Return errors as warnings.")
 @click.option(
@@ -296,6 +340,7 @@ if TYPE_CHECKING:
     help="Output GitHub-compatible formatting.",
 )
 @partial  # mypyc-compiled wheels crash without this hack
+@_fail_with_usage_code
 def main(
     *,
     src: tuple[str, ...],
@@ -310,6 +355,7 @@ def main(
     require_pragma: bool,
     lint: bool,
     use_gitignore: bool,
+    allow_empty_input: bool,
     warn: bool,
     preserve_leading_space: bool,
     preserve_blank_lines: bool,
@@ -374,6 +420,7 @@ def main(
         check=check,
         stdin_filename=stdin_filename,
         use_gitignore=use_gitignore,
+        allow_empty_input=allow_empty_input,
         warn=warn,
         preserve_leading_space=preserve_leading_space,
         preserve_blank_lines=preserve_blank_lines,
@@ -420,8 +467,13 @@ def main(
         if config.require_pragma and not has_pragma(
             config, stdin_text.split("\n", 1)[0]
         ):
-            print_no_files_to_check()
-            sys.exit(1)
+            # the pragma is an opt-in, so input without one was skipped on
+            # purpose. Hand it back byte for byte: an editor piping a buffer
+            # through djLint writes whatever lands on stdout back to the file.
+            print_no_files_to_check(excluded=True)
+            if config.reformat or config.check:
+                echo(stdin_text.encode("utf-8"), nl=False)
+            return
 
         file_error, formatted_code = process_stdin(config, stdin_text)
         file_errors = [file_error]
@@ -432,9 +484,16 @@ def main(
 
     else:
         file_src = config.files if "-" in src and config.files else src
-        file_list = get_src((Path(x) for x in file_src), config)
+        file_list, excluded = get_src((Path(x) for x in file_src), config)
         if not file_list:
-            sys.exit(1)
+            print_no_files_to_check(excluded=excluded)
+            # excluding every candidate is the configuration doing its job,
+            # so it is a success. Matching nothing at all means the run
+            # checked nothing it was asked to check, which is a usage error
+            # and stays loud unless it was opted into.
+            if excluded or config.allow_empty_input:
+                return
+            sys.exit(2)
 
         if config.check:
             message = "Checking"

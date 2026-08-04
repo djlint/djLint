@@ -683,5 +683,20 @@
     "usage": [
       { "name": "cli", "value": "--stdin-filename templates/index.html" }
     ]
+  },
+  {
+    "name": "allow_empty_input",
+    "tags": ["formatter", "linter"],
+    "description": {
+      "en": "Exit with 0 instead of 2 when the given paths match no files at all. Files that were found and then skipped by exclude, extend_exclude, use_gitignore or require_pragma already exit with 0. Disabled by default.",
+      "ru": "Завершать работу с кодом 0 вместо 2, когда по указанным путям не найдено ни одного файла. Файлы, которые были найдены, но пропущены из-за exclude, extend_exclude, use_gitignore или require_pragma, и так завершаются с кодом 0. По умолчанию отключено.",
+      "fr": "Terminer avec le code 0 au lieu de 2 lorsque les chemins indiqués ne correspondent à aucun fichier. Les fichiers trouvés puis ignorés par exclude, extend_exclude, use_gitignore ou require_pragma se terminent déjà avec le code 0. Désactivé par défaut.",
+      "zh": "当指定路径未匹配到任何文件时，以 0 而非 2 退出。已找到但被 exclude、extend_exclude、use_gitignore 或 require_pragma 跳过的文件本来就以 0 退出。（默认关闭）"
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "allow_empty_input=true" },
+      { "name": ".djlintrc", "value": "\"allow_empty_input\": true" },
+      { "name": "cli", "value": "--allow-empty-input" }
+    ]
   }
 ]

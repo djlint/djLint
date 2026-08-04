@@ -2,6 +2,21 @@
 
 [Semantic Versioning](https://semver.org/)
 
+## [Unreleased]
+
+### Feature
+
+- New `--allow-empty-input` option, and the matching `allow_empty_input` config key, exits `0` instead of `2` when the given paths match no files.
+
+### Fix
+
+- A run where every file found was skipped by `exclude`, `extend_exclude`, `use_gitignore` or `require_pragma` now exits `0` instead of `1`. Skipping them is the configuration doing its job, and it is what lets `exclude` work under pre-commit, which passes the names of every staged file. Paths that match no files at all now exit `2` rather than `1`, so exit `1` means only that djLint found something to report.
+- An unhandled error exits `2` instead of `1`, so a crash is no longer indistinguishable from a lint error. The traceback is still printed.
+- An unrecognized `--profile`, or `profile` in a config file, is now a usage error. A typo used to lint with a silently different rule set and exit `0`, and raised `KeyError` with `--require-pragma`.
+- A directory whose name matches the file extension (`build.html/`) is no longer picked up as a template and opened as a file, crashing the run.
+- `No files to check!` is written to stderr instead of stdout, where formatted code is written.
+- Input piped to `djlint - --reformat` that `--require-pragma` skips is handed back byte for byte instead of being replaced by `No files to check!`.
+
 ## [1.43.2] - 2026-08-01
 
 ### Fix

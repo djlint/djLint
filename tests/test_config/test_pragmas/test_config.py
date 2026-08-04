@@ -31,8 +31,10 @@ def test_require_pragma(runner: CliRunner) -> None:
         ),
     )
 
-    assert """No files to check!""" in result.output
-    assert result.exit_code == 1
+    # the file has no pragma, so require_pragma skipped it on purpose;
+    # that is a successful no-op, not a failure
+    assert """No files to check!""" in result.stderr
+    assert result.exit_code == 0
 
     result = runner.invoke(
         djlint,
