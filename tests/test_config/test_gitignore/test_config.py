@@ -198,7 +198,11 @@ def test_extend_exclude_matches_explicit_file(tmp_path: Path) -> None:
 
     config = Config(str(tmp_path), extend_exclude="generated.html")
 
-    assert get_src([template], config).paths == []
+    found = get_src([template], config)
+
+    assert found.paths == []
+    # and the skip is recorded, which is what keeps the exit code at 0
+    assert found.excluded
 
 
 def test_exclude_matches_path_segments_not_substrings(tmp_path: Path) -> None:
