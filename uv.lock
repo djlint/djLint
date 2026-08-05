@@ -213,7 +213,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "regex" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
 
 [package.dev-dependencies]
@@ -241,7 +241,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=5.1" },
     { name = "regex", specifier = ">=2022.6.2" },
     { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=0.2.0" },
-    { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=3.7.4" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'", specifier = ">=4.3.0" },
 ]
 
 [package.metadata.requires-dev]

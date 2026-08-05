@@ -60,7 +60,7 @@ dependencies = [
   "pyyaml>=5.1",
   "regex>=2022.6.2",
   "tomli>=0.2.0; python_version<'3.11'",
-  "typing-extensions>=3.7.4; python_version<'3.11'",
+  "typing-extensions>=4.3.0; python_version<'3.13'",
 ]
 
 [dependency-groups]

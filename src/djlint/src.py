@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import sys
 from types import MappingProxyType
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING
 
 import regex as re
 from click import echo, style
+
+if sys.version_info >= (3, 13):
+    from typing import NamedTuple
+else:
+    from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, final
+from typing import TYPE_CHECKING
 
 from djlint.helpers import (
     inside_ignored_linter_block,
@@ -11,6 +12,11 @@ from djlint.helpers import (
     overlaps_ignored_block,
 )
 from djlint.lint import get_line
+
+if sys.version_info >= (3, 11):
+    from typing import final
+else:
+    from typing_extensions import final
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
