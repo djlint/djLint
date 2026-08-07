@@ -50,8 +50,7 @@ test_data = [
             "<button>Click here! Click here! Click here! Click here! Click here! Click here!</button>\n"
             "<button>Click here! Click here! Click here! Click here! Click here! Click here!</button>\n"
             "<div>\n"
-            "    <button>Click here! Click here! Click here! Click here! Click here! Click here!</button>\n"
-            "    <button>Click here! Click here! Click here! Click here! Click here! Click here!</button>\n"
+            "    <button>Click here! Click here! Click here! Click here! Click here! Click here!</button><button>Click here! Click here! Click here! Click here! Click here! Click here!</button>\n"
             "</div>\n"
             "<div>\n"
             "    <button>Click here! Click here! Click here! Click here! Click here! Click here!</button>\n"
@@ -98,8 +97,7 @@ test_data = [
             "<p>\n"
             '    <img src="/images/pansies.jpg"\n'
             '         alt="about fedco bottom image"\n'
-            '         style="float: left" />\n'
-            "    <strong>We are a cooperative</strong>, one of the few seed companies so organized\n"
+            '         style="float: left" /><strong>We are a cooperative</strong>, one of the few seed companies so organized\n'
             "    in the United States. Because we do not have an individual owner or beneficiary,\n"
             "    profit is not our primary goal. Consumers own 60% of the cooperative and worker\n"
             "    members 40%. Consumer and worker members share proportionately in the cooperative&#8217;s\n"
@@ -212,19 +210,21 @@ test_data = [
         ),
         id="non_breaking_whitespace",
     ),
-    pytest.param(("<div> </div>\n"), ("<div></div>\n"), id="snippet_18"),
+    pytest.param(("<div> </div>\n"), ("<div> </div>\n"), id="snippet_18"),
     pytest.param(
-        ("<div>          </div>\n"), ("<div></div>\n"), id="snippet_19"
+        ("<div>          </div>\n"), ("<div> </div>\n"), id="snippet_19"
     ),
     pytest.param(
-        ("<div>           </div>\n"), ("<div></div>\n"), id="snippet_20"
+        ("<div>           </div>\n"), ("<div>  </div>\n"), id="snippet_20"
     ),
     pytest.param(
-        ("<div>                   </div>\n"), ("<div></div>\n"), id="snippet_21"
+        ("<div>                   </div>\n"),
+        ("<div>   </div>\n"),
+        id="snippet_21",
     ),
     pytest.param(
         ("<span>     </span>\n"),
-        ("<span> </span>\n"),
+        ("<span></span>\n"),
         id="issue_583_whitespace_only_span",
     ),
     pytest.param(
@@ -234,27 +234,117 @@ test_data = [
     ),
     pytest.param(
         ("<span>\n</span>\n"),
-        ("<span> </span>\n"),
-        id="issue_583_multiline_whitespace_only_span",
+        ("<span></span>\n"),
+        id="issue_2343_line_break_only_span",
+    ),
+    pytest.param(
+        ("<div>\n    <span>\n    </span>\n</div>\n"),
+        ("<div>\n    <span></span>\n</div>\n"),
+        id="issue_2343_line_break_only_span_indented",
+    ),
+    pytest.param(
+        ("<p><b>a</b><span>\n</span><i>b</i></p>\n"),
+        ("<p>\n    <b>a</b><span> </span><i>b</i>\n</p>\n"),
+        id="issue_2343_line_break_only_span_that_renders_a_space",
+    ),
+    pytest.param(
+        ("<p>a<span>\n</span>b</p>\n"),
+        ("<p>\n    a<span> </span>b\n</p>\n"),
+        id="issue_2343_line_break_only_span_between_text",
+    ),
+    pytest.param(
+        ("<span>\n \n</span>\n"),
+        ("<span> </span>\n"),
+        id="issue_2343_line_break_around_rendered_whitespace",
+    ),
+    pytest.param(
+        ("<p>   x </p>\n"),
+        ("<p>  x</p>\n"),
+        id="non_collapsible_whitespace_in_a_block_is_content",
+    ),
+    pytest.param(
+        ("   x \n"),
+        ("  x\n"),
+        id="non_collapsible_whitespace_at_the_file_edge_is_content",
     ),
     pytest.param(
         ("<div>     </div>\n"),
         ("<div></div>\n"),
         id="issue_583_whitespace_only_block_stays_empty",
     ),
-    pytest.param(("<span> </span>\n"), ("<span> </span>\n"), id="snippet_22"),
     pytest.param(
-        ("<span>          </span>\n"), ("<span>   </span>\n"), id="snippet_23"
+        ("<p>a<span> x </span>b</p>\n"),
+        ("<p>a<span> x </span>b</p>\n"),
+        id="inline_edge_space_that_renders_is_kept",
     ),
     pytest.param(
-        ("<span>           </span>\n"), ("<span>    </span>\n"), id="snippet_24"
+        ("<p>x<img src=a>y</p>\n"),
+        ("<p>\n    x<img src=a>y\n</p>\n"),
+        id="no_break_between_a_replaced_element_and_the_text_it_touches",
+    ),
+    pytest.param(
+        ("<p><img src=a><img src=b></p>\n"),
+        ("<p>\n    <img src=a><img src=b>\n</p>\n"),
+        id="no_break_between_two_replaced_elements_that_touch",
+    ),
+    pytest.param(
+        ("<div>123<meta attr>456</div>\n"),
+        ("<div>\n    123<meta attr>456\n</div>\n"),
+        id="no_break_around_a_tag_that_renders_nothing_between_text",
+    ),
+    pytest.param(
+        ("<p>a<!-- c --><img src=x>b</p>\n"),
+        ("<p>\n    a<!-- c --><img src=x>b\n</p>\n"),
+        id="no_break_across_a_comment_between_rendered_content",
+    ),
+    pytest.param(
+        ("<p>a<img src=x>{# c #}<img src=y>b</p>\n"),
+        ("<p>\n    a<img src=x>{# c #}<img src=y>b\n</p>\n"),
+        id="no_break_across_a_template_comment_between_rendered_content",
+    ),
+    pytest.param(
+        ("<p>a <img src=x> b</p>\n"),
+        ("<p>\n    a\n    <img src=x>\n    b\n</p>\n"),
+        id="break_where_whitespace_already_renders_it",
+    ),
+    pytest.param(
+        ("<div><img src=a></div>\n"),
+        ("<div>\n    <img src=a>\n</div>\n"),
+        id="break_at_a_block_edge_renders_nothing",
+    ),
+    pytest.param(
+        ("<p>a<span>\n    x\n</span>b</p>\n"),
+        ("<p>\n    a<span> x </span>b\n</p>\n"),
+        id="inline_edge_line_break_that_renders_becomes_a_space",
+    ),
+    pytest.param(
+        ("<span>a</span><span> b </span><span>c</span>\n"),
+        ("<span>a</span><span> b </span><span>c</span>\n"),
+        id="inline_edge_space_between_siblings_is_kept",
+    ),
+    pytest.param(
+        ("<p>a <span> x </span> b</p>\n"),
+        ("<p>a <span>x</span> b</p>\n"),
+        id="inline_edge_space_the_neighbour_renders_is_dropped",
+    ),
+    pytest.param(
+        ("<div>\n    <span>\n        x\n    </span>\n</div>\n"),
+        ("<div>\n    <span>x</span>\n</div>\n"),
+        id="inline_edge_line_break_that_renders_nothing_is_dropped",
+    ),
+    pytest.param(("<span> </span>\n"), ("<span> </span>\n"), id="snippet_22"),
+    pytest.param(
+        ("<span>          </span>\n"), ("<span> </span>\n"), id="snippet_23"
+    ),
+    pytest.param(
+        ("<span>           </span>\n"), ("<span>  </span>\n"), id="snippet_24"
     ),
     pytest.param(
         ("<span>                   </span>\n"),
-        ("<span>     </span>\n"),
+        ("<span>   </span>\n"),
         id="snippet_25",
     ),
-    pytest.param(("<img/> <img/>\n"), ("<img /> \n<img />\n"), id="snippet_26"),
+    pytest.param(("<img/> <img/>\n"), ("<img /> <img />\n"), id="snippet_26"),
     pytest.param(
         ("<img/>          <img/>\n"), ("<img />  \n<img />\n"), id="snippet_27"
     ),
@@ -480,6 +570,26 @@ def test_single_line_nested_html_elements_are_preserved() -> None:
 
     printer(source, source, output)
     assert source == output
+
+
+def test_template_block_edge_whitespace_that_renders_is_kept() -> None:
+    """A template block lays out no box, so its edges run on with the text."""
+    source = "<p>x{% for i in y %} {{ i }} {% endfor %}z</p>\n"
+    output = formatter(config_builder({"profile": "django"}), source)
+
+    printer(source, source, output)
+    assert source == output
+
+
+def test_template_block_edge_whitespace_the_neighbour_renders_is_dropped() -> (
+    None
+):
+    source = "<p>x {% if a %} b {% endif %} y</p>\n"
+    expected = "<p>x {% if a %}b{% endif %} y</p>\n"
+    output = formatter(config_builder({"profile": "django"}), source)
+
+    printer(expected, source, output)
+    assert expected == output
 
 
 def test_single_line_nested_html_elements_ignore_max_line_length() -> None:

@@ -5,6 +5,11 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Final
 
+# whitespace css collapses to a single space and drops at a line edge.
+# any other whitespace (e.g. u+2005) is rendered as written, so it is
+# content rather than layout and must survive formatting.
+COLLAPSIBLE_WHITESPACE: Final = " \t\n\r\f"
+
 HTML_TAG_NAMES: Final = frozenset((
     "a",
     "abbr",
@@ -189,6 +194,36 @@ HTML_INLINE_ELEMENTS: Final = frozenset((
     "u",
     "var",
 ))
+
+# elements that lay out a box of their own rather than letting text run
+# through them; their content, if any, is laid out apart from it.
+HTML_ATOMIC_INLINE_ELEMENTS: Final = frozenset((
+    "audio",
+    "button",
+    "canvas",
+    "embed",
+    "iframe",
+    "img",
+    "input",
+    "math",
+    "meter",
+    "object",
+    "progress",
+    "select",
+    "svg",
+    "textarea",
+    "video",
+))
+
+# elements that lay out an inline-level box, so a line break written
+# against one renders as a space. the rest either start a block box, where
+# whitespace at the edge is dropped, or render nothing at all.
+HTML_INLINE_LEVEL_ELEMENTS: Final = (
+    HTML_INLINE_ELEMENTS
+    | HTML_ATOMIC_INLINE_ELEMENTS
+    # inline or display: contents - text runs through these
+    | frozenset(("label", "output", "picture"))
+)
 
 HTML_VOID_ELEMENTS: Final = frozenset((
     "area",

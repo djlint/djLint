@@ -167,7 +167,7 @@ test_data = [
         (
             "<div>\n"
             '    <span class="c">' + ("word " * 23) + "word\n"
-            "        </span>tail<textarea>y</textarea>\n"
+            "    </span>tail<textarea>y</textarea>\n"
             "    <p>after</p>\n"
             "</div>\n"
         ),
@@ -726,12 +726,9 @@ test_data = [
             "    789\n"
             "</ul>\n"
             "<span>*<b>200</b></span>\n"
-            '<img src="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong" />\n'
-            "123\n"
+            '<img src="longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong" />123\n'
             "<div>\n"
-            "    123\n"
-            "    <meta attr />\n"
-            "    456\n"
+            "    123<meta attr />456\n"
             "</div>\n"
             '<p>x<span a="b"></span></p>\n'
             "<p>\n"
@@ -991,6 +988,31 @@ test_data = [
     ),
     pytest.param(
         ("<center></center>\n"), ("<center></center>\n"), id="unsupported"
+    ),
+    pytest.param(
+        ("<div>\n<b>\n</b><i>\nx\n</i>\n</div>\n"),
+        ("<div>\n    <b>\n    </b><i>\n        x\n    </i>\n</div>\n"),
+        id="line_closing_a_tag_and_leaving_one_open_indents_its_contents",
+    ),
+    pytest.param(
+        ("<b><i>\n</i><em>x</em></b>\n"),
+        ("<b><i>\n</i><em>x</em></b>\n"),
+        id="line_closing_more_than_it_opens_unindents_past_a_whole_tag",
+    ),
+    pytest.param(
+        ("<b>\nx\n</b><small>y</small>\n"),
+        ("<b>\n    x\n</b><small>y</small>\n"),
+        id="close_tag_before_a_whole_tag_aligns_with_its_opener",
+    ),
+    pytest.param(
+        ("<pre>  keep\n  me  </pre> tail\n"),
+        ("<pre>  keep\n  me  </pre> tail\n"),
+        id="verbatim_indentation_survives_a_tail_after_the_close_tag",
+    ),
+    pytest.param(
+        ("<textarea>  keep\n  me  </textarea><pre>  x\n  y  </pre>\n"),
+        ("<textarea>  keep\n  me  </textarea><pre>  x\n  y  </pre>\n"),
+        id="verbatim_indentation_survives_a_block_opening_on_its_close_line",
     ),
 ]
 

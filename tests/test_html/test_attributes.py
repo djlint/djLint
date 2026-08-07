@@ -313,7 +313,9 @@ test_data = [
             "<div data-prettier></div>\n"
             '<div data-prettier="true"></div>\n'
             '<meta property="og:description"\n'
-            '      content="The Mozilla Developer Network (MDN) provides information about Open Web technologies including HTML, CSS, and APIs for both Web sites and HTML5 Apps. It also documents Mozilla products, like Firefox OS.">\n'
+            '      content="The Mozilla Developer Network (MDN) provides\n'
+            "information about Open Web technologies including HTML, CSS, and APIs for both Web sites\n"
+            'and HTML5 Apps. It also documents Mozilla products, like Firefox OS.">\n'
             "<div attribute>String</div>\n"
             '<div attribute="">String</div>\n'
             "<div attribute=''>String</div>\n"
@@ -355,7 +357,7 @@ test_data = [
             "</X>\n"
             '<X a="1" b="2" c="3">\n'
             "</X>\n"
-            '<p class=" foo bar baz "></p>\n'
+            '<p class="foo bar baz"></p>\n'
         ),
         id="long_attributes",
     ),
@@ -436,7 +438,7 @@ test_data = [
         ),
         (
             '<div class="ProviderMeasuresContainer__heading-row d-flex flex-column flex-lg-row justify-content-start justify-content-lg-between align-items-start align-items-lg-center">Foo</div>\n'
-            '<div class="a-bem-block a-bem-block--with-modifier ">\n'
+            '<div class="a-bem-block a-bem-block--with-modifier">\n'
             '    <div class="a-bem-block__element a-bem-block__element--with-modifier also-another-block">\n'
             '        <div class="a-bem-block__element a-bem-block__element--with-modifier also-another-block__element"></div>\n'
             "    </div>\n"
@@ -577,18 +579,18 @@ test_data = [
             'width="205px" alt="Yahoo"/></a></h1></div></div>\n'
         ),
         (
-            '<img class=" foo bar ">\n'
-            '<img class="  ">\n'
+            '<img class="foo bar">\n'
+            '<img class="">\n'
             "<img class>\n"
-            '<img class=" looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong a-long-long-long-long-long-class-name another-long-long-long-class-name foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar ">\n'
+            '<img class="looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong a-long-long-long-long-long-class-name another-long-long-long-class-name foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar">\n'
             '<img class="{{ ...classes }}">\n'
             '<img class="foo bar {{ otherClass }}">\n'
             "<!-- escaped -->\n"
             "<!-- from: https://developer.mozilla.org/en-US/docs/Web/API/CSS/escape#Basic_results -->\n"
-            '<img class=" \\.foo\\#bar \\(\\)\\[\\]\\{\\} --a \\30 \\ufffd ">\n'
+            '<img class="\\.foo\\#bar \\(\\)\\[\\]\\{\\} --a \\30 \\ufffd">\n'
             "<!-- from yahoo website -->\n"
             '<div id="header-wrapper"\n'
-            '     class="Bgc(#fff) Bdbc(t) Bdbs(s) Bdbw(1px) D(tb) Pos(f) Tbl(f) W(100%) Z(4) has-scrolled_Bdc($c-fuji-grey-d) Scrolling_Bdc($c-fuji-grey-d) has-scrolled_Bxsh($headerShadow) Scrolling_Bxsh($headerShadow) ">\n'
+            '     class="Bgc(#fff) Bdbc(t) Bdbs(s) Bdbw(1px) D(tb) Pos(f) Tbl(f) W(100%) Z(4) has-scrolled_Bdc($c-fuji-grey-d) Scrolling_Bdc($c-fuji-grey-d) has-scrolled_Bxsh($headerShadow) Scrolling_Bxsh($headerShadow)">\n'
             '    <div class="Bgc(#fff) M(a) Maw(1301px) Miw(1000px) Pb(12px) Pt(22px) Pos(r) TranslateZ(0) Z(6)">\n'
             '        <h1 class="Fz(0) Pstart(15px) Pos(a)">\n'
             '            <a id="header-logo"\n'
@@ -883,7 +885,7 @@ test_data = [
             "></div>\n"
         ),
         (
-            '<div style=" color: #fFf "></div>\n'
+            '<div style="color: #fFf"></div>\n'
             '<div style=" "></div>\n'
             "<div style></div>\n"
             '<div style="all: initial;\n'
@@ -897,8 +899,8 @@ test_data = [
             "            border-radius: 8px;\n"
             '            transition: transform .2s ease-out"></div>\n'
             '<div style="background: linear-gradient(to left, hotpink, hsla(240, 100%, 50%, .05), transparent)"></div>\n'
-            '<div style="   color : red; display    :inline "></div>\n'
-            '<div style=" color: green; display: inline "></div>\n'
+            '<div style="color : red; display    :inline"></div>\n'
+            '<div style="color: green; display: inline"></div>\n'
             "<div attribute-1\n"
             "     attribute-2\n"
             "     attribute-3\n"
@@ -1051,6 +1053,16 @@ test_data = [
             '        set me.disabled to false">Refresh search index</button>\n'
         ),
         id="issue_1202_hyperscript_newlines",
+    ),
+    pytest.param(
+        ('<img alt="a\nb" title="c\n  d">\n'),
+        ('<img alt="a\nb"\n     title="c\n  d">\n'),
+        id="a_line_break_inside_an_attribute_value_is_kept",
+    ),
+    pytest.param(
+        ('<div class="a\nb" style="c: 1;\nd: 2">x</div>\n'),
+        ('<div class="a b" style="c: 1; d: 2">x</div>\n'),
+        id="a_line_break_in_a_token_list_or_css_value_is_only_layout",
     ),
     pytest.param(
         ('<div _="on click\n-- toggle the thing\ntoggle .on">x</div>\n'),

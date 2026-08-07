@@ -433,17 +433,14 @@ test_data = [
             '<video controls width="250">\n'
             '    <source src="/media/examples/flower.webm" type="video/webm">\n'
             '    <source src="/media/examples/flower.mp4" type="video/mp4">\n'
-            "</video>\n"
-            "text after\n"
+            "</video>text after\n"
             "<!-- #8626 -->\n"
             '<object data="horse.wav">\n'
             '    <param name="autoplay" value="true">\n'
             '    <param name="autoplay" value="true">\n'
             "</object>1\n"
             "<span>\n"
-            '    <img src="1.png">\n'
-            '    <img src="1.png">\n'
-            "</span>1\n"
+            '    <img src="1.png"><img src="1.png"></span>1\n'
         ),
         id="more_void_elements",
     ),
@@ -586,7 +583,7 @@ test_data = [
             "    <textarea> pre-wrap pr\n"
             "e-wrap </textarea>\n"
             "    <span>looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog inline</span>\n"
-            "    <span>inline</span><span>inline</span> <span>inline</span><span>inline</span>\n"
+            "    <span>inline </span><span> inline</span> <span>inline </span><span> inline</span>\n"
             "    <html:div>\n"
             "        looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog block\n"
             "    </html:div>\n"
@@ -644,7 +641,7 @@ test_data = [
             "    <textarea> pre-wrap pr\n"
             "e-wrap </textarea>\n"
             "    <span>looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog inline</span>\n"
-            "    <span>inline</span><span>inline</span> <span>inline</span><span>inline</span>\n"
+            "    <span>inline </span><span> inline</span> <span>inline </span><span> inline</span>\n"
             "    <html:div>\n"
             "        looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog block\n"
             "    </html:div>\n"
@@ -702,7 +699,7 @@ test_data = [
             "    <textarea> pre-wrap pr\n"
             "e-wrap </textarea>\n"
             "    <span>looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog inline</span>\n"
-            "    <span>inline</span><span>inline</span> <span>inline</span><span>inline</span>\n"
+            "    <span>inline </span><span> inline</span> <span>inline </span><span> inline</span>\n"
             "    <html:div>\n"
             "        looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog block\n"
             "    </html:div>\n"
@@ -760,7 +757,7 @@ test_data = [
             "    <textarea> pre-wrap pr\n"
             "e-wrap </textarea>\n"
             "    <span>looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog inline</span>\n"
-            "    <span>inline</span><span>inline</span> <span>inline</span><span>inline</span>\n"
+            "    <span>inline </span><span> inline</span> <span>inline </span><span> inline</span>\n"
             "    <html:div>\n"
             "        looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog block\n"
             "    </html:div>\n"
@@ -818,7 +815,7 @@ test_data = [
             "        <textarea> pre-wrap pr\n"
             "e-wrap </textarea>\n"
             "        <span>looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog inline</span>\n"
-            "        <span>inline</span><span>inline</span> <span>inline</span><span>inline</span>\n"
+            "        <span>inline </span><span> inline</span> <span>inline </span><span> inline</span>\n"
             "        <html:div>\n"
             "            looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog block\n"
             "        </html:div>\n"

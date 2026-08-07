@@ -21,7 +21,7 @@ test_data = [
             '<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>\n'
         ),
         (
-            '<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>\n'
+            '<span class="icon has-text-grey is-large"><i class="fas fa-lg fa-star"></i></span>\n'
         ),
         id="icon",
     ),

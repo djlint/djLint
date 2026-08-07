@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Fix
+
+- Formatting no longer changes what the page renders. A space that shows was dropped (`<span>a</span><span> b </span>` rendered as `ab`, `a{% if x %} b {% endif %}c` as `abc`), a space that shows nothing was added (`<span>     </span>` became `<span> </span>`), and moving a tag onto its own line could add one (`x<img>y`, or across a comment as in `a{# c #}<img>`). Whitespace is now kept where it renders and dropped where it does not.
+- A line break inside an attribute value is kept, so a `title` tooltip no longer loses a line and a `data-` value read by script no longer comes back different. Line breaks in `class`, `style`, `srcset` and `sizes` mean nothing and are still joined.
+- Indentation inside `<pre>` and `<textarea>` is left alone when the closing tag has something after it on its line (`<pre>  a\n  b</pre> tail`).
+- Whitespace css does not collapse, such as U+2005, is text, and is no longer stripped from the edges of an element or of the file.
+- Two indenting fixes: a line that closes one tag and opens another (`</b><i>`) indents its contents again, and a line that closes more tags than it opens unindents even when a whole tag ends it (`</b><small></small>`). Both left the lines after them at the wrong level.
+- `--line-break-after-multiline-tag` now applies only to tags actually written over several lines, as its help says. It was holding back the content of every element, splitting tags that fit on one line.
+- A `class` value is tidied wherever it was written: `class=" a  b "` becomes `class="a b"`. A tag whose attribute value holds a line break is spread over lines, since it cannot fit on one.
+
 ## [1.44.0] - 2026-08-04
 
 ### Feature

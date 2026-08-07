@@ -13,6 +13,7 @@ import regex as re
 from json5.lib import QuoteStyle
 
 from djlint.const import (
+    COLLAPSIBLE_WHITESPACE,
     HTML_RAW_TEXT_ELEMENTS,
     HTML_TAG_NAMES,
     HTML_VOID_ELEMENTS,
@@ -471,6 +472,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         dedent_after = 0
         indent_level_before = indent_level
         opened_html = 0
+        unclosed_closes = 0
         html_dedent = 0
         indented_closes = 0
         closes_nothing_indented = False
@@ -609,9 +611,17 @@ def indent_html(rawcode: str, config: Config) -> str:
             not is_block_raw
             and not is_safe_closing_tag_
             and tag_unindent_pattern.search(item)
-            # and not ending in a slt like <span><strong></strong>.
-            and not inline_slt_no_attrs_end_pattern.search(item)
-            and not inline_slt_attrs_end_pattern.search(item)
+            # and not ending in a slt like <span><strong></strong>. a line
+            # closing more tags than it opens still owes a dedent, whatever
+            # whole tag happens to end it ("</b><small></small>") - which is
+            # the same line once condensing has pulled that tag together.
+            and (
+                unclosed_closes > opened_html
+                or not (
+                    inline_slt_no_attrs_end_pattern.search(item)
+                    or inline_slt_attrs_end_pattern.search(item)
+                )
+            )
             and not starts_unclosed_html_tag(item)
             # a branch tag ({% else %}, {% elif %}) aligns with its block
             # below, whatever html the rest of the line closes
@@ -801,6 +811,13 @@ def indent_html(rawcode: str, config: Config) -> str:
             if indent_level > indent_level_before:
                 open_html_indents.append(True)
                 opened_html -= 1
+            elif indent_level < indent_level_before:
+                # the line unindented for the tags it closed, but it also
+                # left one open ("</b><i>"); its contents indent from the
+                # level the line ends on, not the one it was written at
+                indent_level += 1
+                open_html_indents.append(True)
+                opened_html -= 1
             open_html_indents.extend([False] * opened_html)
 
         if dedent_after:
@@ -968,7 +985,9 @@ def indent_html(rawcode: str, config: Config) -> str:
         # format function contents
         beautified_code = _FUNCTION_CONTENT_PATTERN.sub(func, beautified_code)
 
+    # only collapsible whitespace: the document's edges are line edges, so
+    # css drops it there, but anything else (e.g. u+2005) is content.
     if not config.preserve_blank_lines:
-        beautified_code = beautified_code.lstrip()
+        beautified_code = beautified_code.lstrip(COLLAPSIBLE_WHITESPACE)
 
-    return beautified_code.rstrip() + "\n"
+    return beautified_code.rstrip(COLLAPSIBLE_WHITESPACE) + "\n"

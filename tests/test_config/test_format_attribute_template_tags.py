@@ -95,7 +95,11 @@ test_data = [
             '<a class="asdf\n'
             '          {% if favorite == "yes" %}favorite{% endif %}\n'
             '          has-tooltip-arrow has-tooltip-right"\n'
-            '   data-tooltip="{% if favorite == "yes" %} Remove from Favorites {% else %} Add to Favorites {% endif %}"\n'
+            '   data-tooltip="{% if favorite == "yes" %}\n'
+            "                     Remove from Favorites\n"
+            "                 {% else %}\n"
+            "                     Add to Favorites\n"
+            '                 {% endif %}"\n'
             '   fav-type="report"\n'
             '   object-id="{{ report.report_id }}"\n'
             '   href="{% if %}{% endif %}">\n'
@@ -112,7 +116,13 @@ test_data = [
             '<a class="piwik_download"\n'
             '   href="{% static activity_version.get_win_document_with_images_file_path %}?{% now "jSFYHi" %}"></a>\n'
             "<span {% if a %}required{% endif %}\n"
-            "      title=\"{% if eev.status == eev.STATUS_CURRENT %} {% trans 'A' %} {% elif eev.status == eev.STATUS_APPROVED %} {% trans 'B' %} {% elif eev.status == eev.STATUS_EXPIRED %} {% trans 'C' %} {% endif %}\"\n"
+            '      title="{% if eev.status == eev.STATUS_CURRENT %}\n'
+            "                 {% trans 'A' %}\n"
+            "             {% elif eev.status == eev.STATUS_APPROVED %}\n"
+            "                 {% trans 'B' %}\n"
+            "             {% elif eev.status == eev.STATUS_EXPIRED %}\n"
+            "                 {% trans 'C' %}\n"
+            '             {% endif %}"\n'
             '      class="asdf\n'
             "             {% if a %}b{% endif %}\n"
             '             asdf"\n'
@@ -178,7 +188,7 @@ test_data = [
             '<a class="asdf {% if favorite == "yes" %}favorite{% endif %} has-tooltip-arrow has-tooltip-right"\n'
             '   data-tooltip="{% if favorite == "yes" %}Remove from Favorites {% else %}Add to Favorites{% endif %}"\n'
             '   fav-type="report"\n'
-            '   object-id="{{ report.report_id }}"><span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span></a>\n'
+            '   object-id="{{ report.report_id }}"><span class="icon has-text-grey is-large"><i class="fas fa-lg fa-star"></i></span></a>\n'
         ),
         (),
         id="no option four",

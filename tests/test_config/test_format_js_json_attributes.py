@@ -194,13 +194,11 @@ test_data = [
             "<div id='my-element-id'></div>\n"
             "<input name='user-name' />\n"
             "<div title='Page Title'></div>\n"
-            "<input type='text' />\n"
-            "<input value='some-value' />\n"
+            "<input type='text' /><input value='some-value' />\n"
             "<div role='button'></div>\n"
             "<div aria-label='Close Button'></div>\n"
             "<a href='/path/to/page'></a>\n"
-            "<img src='/path/to/image.jpg' />\n"
-            "<img alt='Image Description' />\n"
+            "<img src='/path/to/image.jpg' /><img alt='Image Description' />\n"
         ),
         ({
             "format_attribute_js_json": True,

@@ -12,7 +12,13 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.const import HTML_INLINE_ELEMENTS
+from djlint.const import (
+    COLLAPSIBLE_WHITESPACE,
+    HTML_ATOMIC_INLINE_ELEMENTS,
+    HTML_INLINE_ELEMENTS,
+    HTML_INLINE_LEVEL_ELEMENTS,
+    HTML_VOID_ELEMENTS,
+)
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IMX,
@@ -29,6 +35,16 @@ if TYPE_CHECKING:
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
+_HTML_TAG_NAME_PATTERN: Final = re.compile(
+    r"^</?\s*([a-zA-Z][-\w:.]*)", cache_pattern=False
+)
+# tags that lay out nothing of their own, so what sits either side of one
+# is what a break written against it would part
+_TRANSPARENT_ELEMENTS: Final = (
+    (HTML_INLINE_LEVEL_ELEMENTS | HTML_VOID_ELEMENTS)
+    - HTML_ATOMIC_INLINE_ELEMENTS
+    - {"br", "hr"}
+)
 _TEMPLATE_TAG_NAME_PATTERN: Final = re.compile(
     r"^\{%-?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
 )
@@ -95,6 +111,12 @@ def _open_close_template_tag_patterns(
     )
 
 
+def _tag_name(tag: str) -> str:
+    """The lowercased name of an html tag, or "" if this is not one."""
+    match = _HTML_TAG_NAME_PATTERN.match(tag)
+    return match.group(1).lower() if match else ""
+
+
 def _template_start_tag_name(tag: str) -> str | None:
     tag_name_match = _TEMPLATE_TAG_NAME_PATTERN.match(tag)
     if not tag_name_match:
@@ -143,7 +165,8 @@ def expand_html(html: str, config: Config) -> str:
         value = _TRIMMED_TRANSLATION_BLOCK_PATTERN.sub("", value)
         value = without_html_tags(value)
         value = _NON_RENDERING_TEMPLATE_TAG_PATTERN.sub("", value)
-        return bool(value.strip())
+        # whitespace css does not collapse (e.g. u+2005) is rendered text
+        return bool(value.strip(COLLAPSIBLE_WHITESPACE))
 
     def has_template_block_tag(line: str) -> bool:
         return ("{%" in line and "%}" in line) or (
@@ -173,6 +196,7 @@ def expand_html(html: str, config: Config) -> str:
                 stripped.startswith("<")
                 and stripped.endswith(">")
                 and "</" not in stripped
+                and not has_rendered_text(line)
             )
             or is_trimmed_translation_content(
                 line, inside_trimmed_translation=inside_trimmed_translation
@@ -279,7 +303,7 @@ def expand_html(html: str, config: Config) -> str:
         if tag_name in body_tags:
             return False
 
-        if not without_html_tags(body).strip():
+        if not without_html_tags(body).strip(COLLAPSIBLE_WHITESPACE):
             return False
 
         for body_tag in body_tags:
@@ -331,13 +355,81 @@ def expand_html(html: str, config: Config) -> str:
             return False
 
         body_tags = [token.name.lower() for token in html_tokens(body)]
-        if not body_without_html.strip():
+        if not body_without_html.strip(COLLAPSIBLE_WHITESPACE):
             return False
 
         for body_tag in body_tags:
             if body_tag not in HTML_INLINE_ELEMENTS:
                 return False
         return True
+
+    def touches_rendered_content(index: int, *, back: bool) -> bool:
+        """Whether rendered content runs right up to this position.
+
+        Looks through tags that lay out nothing of their own, and through
+        the inside edge of a box - whitespace there is the edge of that
+        box's own content, so what lies beyond it is what would be parted.
+        """
+        while True:
+            char = html[index - 1 : index] if back else html[index : index + 1]
+            if not char or char in COLLAPSIBLE_WHITESPACE:
+                return False
+            if char == ("}" if back else "{"):
+                pair = (
+                    html[index - 2 : index] if back else html[index : index + 2]
+                )
+                if pair == ("#}" if back else "{#"):
+                    found = (
+                        html.rfind("{#", 0, index)
+                        if back
+                        else html.find("#}", index)
+                    )
+                    if found < 0:
+                        return True
+                    # a comment lays out nothing; look past it
+                    index = found if back else found + 2
+                    continue
+                # an interpolation renders a value; a statement lays out
+                # nothing, and where those break is the template rules'
+                # business rather than this check's
+                return pair == ("}}" if back else "{{")
+            if char != (">" if back else "<"):
+                return True  # text renders
+            if back:
+                start = html.rfind("<", 0, index)
+                if start < 0:
+                    return True
+                tag, index = html[start:index], start
+            else:
+                end = html.find(">", index)
+                if end < 0:
+                    return True
+                tag, index = html[index : end + 1], end + 1
+            if tag.startswith("<!--"):
+                continue  # a comment lays out nothing either
+            name = _tag_name(tag)
+            if name in HTML_ATOMIC_INLINE_ELEMENTS:
+                # a void tag is a box whichever side we came from; for the
+                # rest only the outside edge is, since against the inside
+                # one we are at the edge of the element's own content
+                return name in HTML_VOID_ELEMENTS or back == tag.startswith(
+                    "</"
+                )
+            if name not in _TRANSPARENT_ELEMENTS:
+                return False  # a block edge drops the whitespace anyway
+
+    def splits_inline_boxes(out_format: str, match: re.Match[str]) -> bool:
+        """Whether a break here would part rendered content that touches.
+
+        A line break between two inline boxes renders as a space, so
+        writing one would change the page: "x<img>y" is not "x <img> y".
+        Against a block edge, or whitespace already there, css drops it
+        either way, and there the break is only this formatter's layout.
+        """
+        index = match.start(1) if out_format == "\n%s" else match.end(1)
+        return touches_rendered_content(
+            index, back=True
+        ) and touches_rendered_content(index, back=False)
 
     def add_html_line(out_format: str, match: re.Match[str]) -> str:
         """Add whitespace.
@@ -358,6 +450,9 @@ def expand_html(html: str, config: Config) -> str:
             return match.group(1)
 
         if should_preserve_inline_body(out_format, match):
+            return match.group(1)
+
+        if splits_inline_boxes(out_format, match):
             return match.group(1)
 
         if out_format == "\n%s" and match.start() == 0:

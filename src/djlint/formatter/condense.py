@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.const import HTML_INLINE_ELEMENTS
+from djlint.const import COLLAPSIBLE_WHITESPACE, HTML_INLINE_ELEMENTS
 from djlint.helpers import (
     RE_FLAGS_IMS,
     RE_FLAGS_IMSX,
@@ -21,6 +21,7 @@ from djlint.helpers import (
     RE_FLAGS_MS,
     inside_html_attribute,
     inside_ignored_block,
+    inside_ignored_block_span,
     inside_protected_trans_block,
     is_ignored_block_opening,
     is_safe_closing_tag,
@@ -36,9 +37,9 @@ _YAML_FRONT_MATTER_PATTERN: Final = re.compile(
     r"(^---.+?---)$", RE_FLAGS_MS, cache_pattern=False
 )
 
-# whitespace that css collapses; other whitespace (e.g. u+2005) is rendered.
+_COLLAPSIBLE_WHITESPACE_CHARS: Final = frozenset(COLLAPSIBLE_WHITESPACE)
 _COLLAPSIBLE_WHITESPACE_PATTERN: Final = re.compile(
-    r"[ \t\n\r\f]+", cache_pattern=False
+    f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+", cache_pattern=False
 )
 
 # a line that closes a block and decreases the indentation.
@@ -89,12 +90,24 @@ def clean_whitespace(html: str, config: Config) -> str:
         ) and not is_safe_closing_tag(config, match.group()):
             return match.group()
 
+        # a line that starts inside a verbatim block but runs past its end
+        # ("  x  </pre> tail") opens with the block's own content, not with
+        # indentation, so that whitespace stays. a block whose closing tag
+        # is safe to indent (script, style) holds none to keep.
+        leading = ""
+        if not is_safe_closing_tag(
+            config, match.group()
+        ) and inside_ignored_block_span(
+            config, html, match.start(), match.start(1)
+        ):
+            leading = match.string[match.start() : match.start(1)]
+
         # a line that opens a multi-line ignored block (e.g. "<textarea>x")
         # has verbatim content after the opening tag; keep its trailing
         # whitespace, stripping only the leading indentation so the line can
         # still be re-indented.
         if is_ignored_block_opening(config, match.group()):
-            return match.group(1) + match.group(2)
+            return leading + match.group(1) + match.group(2)
 
         # trimmed blocks should not be here.
         # we need to full html to check what type of
@@ -106,7 +119,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         blank_lines = "\n" * lines
         if lines > config.max_blank_lines:
             blank_lines = "\n" * max(config.max_blank_lines, 0)
-        return match.group(1) + blank_lines
+        return leading + match.group(1) + blank_lines
 
     func = partial(strip_space, config, html)
 
@@ -290,6 +303,30 @@ def _multiline_template_blocks(
     )
 
 
+def _rendered_whitespace(text: str, left: str, right: str) -> str:
+    """Whitespace at the edge of an element's content, as it renders.
+
+    Css collapses each run of space, tab and line break to one space, then
+    drops that space where it falls against a line edge or against other
+    collapsible whitespace - the neighbour renders it instead. Whatever is
+    left over is layout this formatter owns rather than content, so it
+    goes. Other whitespace (e.g. u+2005) is never collapsed or dropped.
+
+    `left` and `right` are the single characters the whitespace sits
+    between, each empty at the edge of the document.
+    """
+    text = _COLLAPSIBLE_WHITESPACE_PATTERN.sub(" ", text)
+    if text.startswith(" ") and (
+        not left or left in _COLLAPSIBLE_WHITESPACE_CHARS
+    ):
+        text = text[1:]
+    if text.endswith(" ") and (
+        not right or right in _COLLAPSIBLE_WHITESPACE_CHARS
+    ):
+        text = text[:-1]
+    return text
+
+
 def condense_html(html: str, config: Config, source: str | None = None) -> str:
     """Put short tags back on a single line."""
     if config.preserve_leading_space:
@@ -318,29 +355,60 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
         else ()
     )
 
-    def condense_line(config: Config, html: str, match: re.Match[str]) -> str:
-        """Put contents on a single line if below max line length."""
-        # whitespace-only content of an inline element is rendered; collapse
-        # it to one space instead of dropping it. template tag names never
-        # match the inline element set, so the template path is unaffected.
-        whitespace = ""
-        if (
-            not match.group(3)
-            and match.start(4) > match.end(1)
-            and match.group(2).lower() in HTML_INLINE_ELEMENTS
-        ):
-            whitespace = _COLLAPSIBLE_WHITESPACE_PATTERN.sub(
-                " ", match.string[match.end(1) : match.start(4)]
-            )
+    def condense_line(
+        config: Config, html: str, match: re.Match[str], *, inline: bool
+    ) -> str:
+        """Put contents on a single line if below max line length.
 
-        if config.line_break_after_multiline_tag:
-            # always force a break by pretending the line is too long.
+        `inline` says whether the element shares a line box with what sits
+        either side of it, so that whitespace at its edges can render. A
+        block starts and ends one of its own, where css drops it.
+        """
+        leading = trailing = ""
+        if match.start(4) > match.end(1):
+            # the template pattern takes the whitespace before its opening
+            # tag into the match, so find where the tag itself starts
+            start = match.end(1) - len(match.group(1).lstrip())
+            end = match.end()
+            before = match.string[start - 1 : start] if inline and start else ""
+            after = match.string[end : end + 1] if inline else ""
+            content = match.group(3)
+            if content:
+                # each side is bounded by the content, which never starts
+                # or ends with whitespace, so only the outer neighbour can
+                # render the space for it.
+                leading = _rendered_whitespace(
+                    match.string[match.end(1) : match.start(3)],
+                    before,
+                    content[0],
+                )
+                trailing = _rendered_whitespace(
+                    match.string[match.end(3) : match.start(4)],
+                    content[-1],
+                    after,
+                )
+            else:
+                # one run between the tags, so both neighbours are outside.
+                leading = _rendered_whitespace(
+                    match.string[match.end(1) : match.start(4)], before, after
+                )
+
+        # the option holds back the content of a tag written over several
+        # lines; one that fits on a single line is condensed as usual, and
+        # an element with no content has none to hold back.
+        if (
+            config.line_break_after_multiline_tag
+            and match.group(3)
+            and "\n" in match.group(1).strip()
+        ):
+            # force a break by pretending the line is too long.
             combined_length = config.max_line_length + 1
         else:
             combined_length = len(
                 match.group(1).splitlines()[-1]
-                + whitespace
+                + leading
                 + match.group(3)
+                + trailing
                 + match.group(4)
             )
 
@@ -350,7 +418,13 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
             and if_blank_line_after_match(match.group(3))
             and if_blank_line_before_match(match.group(3))
         ):
-            return match.group(1) + whitespace + match.group(3) + match.group(4)
+            return (
+                match.group(1)
+                + leading
+                + match.group(3)
+                + trailing
+                + match.group(4)
+            )
 
         return match.group()
 
@@ -368,8 +442,17 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
                 return False
         return True
 
-    # add blank lines before tags
-    func = partial(condense_line, config, html)
+    def condense_html_line(
+        config: Config, html: str, match: re.Match[str]
+    ) -> str:
+        return condense_line(
+            config,
+            html,
+            match,
+            inline=match.group(2).lower() in HTML_INLINE_ELEMENTS,
+        )
+
+    func = partial(condense_html_line, config, html)
 
     # put short single line tags on one line
     html = re.sub(
@@ -393,7 +476,9 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
             multiline_blocks[key] -= 1
             return match.group()
 
-        return condense_line(config, html, match)
+        # a template block lays out no box of its own: its body runs on
+        # with the text either side, so whitespace at its edges can render
+        return condense_line(config, html, match, inline=True)
 
     # put short template tags back on one line. must have leading space
     # jinja +%} and {%+ intentionally omitted.

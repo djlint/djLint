@@ -390,20 +390,23 @@ def _inside_ignored_block(
     )
 
 
-def inside_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
-    """Do not add whitespace if the tag is in a non indent block."""
-    match_start, match_end = match.span()
+def inside_ignored_block_span(
+    config: Config, html: str, start: int, end: int
+) -> bool:
+    """Whether a span of the html lies inside an ignored block."""
     for ignored_match_start, ignored_match_end in _inside_ignored_block(
         html,
         ignored_blocks=config.ignored_blocks_pattern,
         ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
     ):
-        if (
-            ignored_match_start <= match_start
-            and match_end <= ignored_match_end
-        ):
+        if ignored_match_start <= start and end <= ignored_match_end:
             return True
     return False
+
+
+def inside_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
+    """Do not add whitespace if the tag is in a non indent block."""
+    return inside_ignored_block_span(config, html, *match.span())
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)

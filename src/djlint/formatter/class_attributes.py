@@ -10,11 +10,24 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.const import COLLAPSIBLE_WHITESPACE
+
 if TYPE_CHECKING:
     from typing import Final
 
     from djlint.settings import Config
 
+
+_COLLAPSIBLE_RUN_PATTERN: Final = re.compile(
+    f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+", cache_pattern=False
+)
+# a run of collapsible whitespace holding a line break: what joining the
+# value has to close up. whitespace written along a line is left alone.
+_JOINED_RUN_PATTERN: Final = re.compile(
+    rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*\n"
+    rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*",
+    cache_pattern=False,
+)
 
 CLASS_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_CLASS_NEWLINE\x00"
 VERBATIM_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_ATTR_NEWLINE\x00"
@@ -23,15 +36,33 @@ _CLASS_ATTRIBUTE_PATTERN: Final = re.compile(
     r"(?<![\w:.-])class(?![\w:.-])\s*=\s*(['\"])", re.I, cache_pattern=False
 )
 
-# attribute values where line breaks are semantically significant: in
-# hyperscript ("_") a newline separates commands and a "--" comment runs
-# to the end of the line, so joining lines can change the program.
-_VERBATIM_ATTRIBUTE_NAMES: Final = frozenset({"_"})
+# attribute values that hold a token list or css, where a line break is
+# only formatting. everything else is kept as written: a value reaches the
+# page as it stands, so joining its lines changes the document - a `title`
+# tooltip loses a line, hyperscript ("_") loses a command separator, and a
+# `data-` value read by script comes back different.
+_JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({
+    "class",
+    "data-srcset",
+    "sizes",
+    "srcset",
+    "style",
+})
+# of those, the ones whose edges mean nothing at all - a token list and
+# css - so joining their lines can close up rather than leave a space
+# behind. the rest are laid out by their own rules, which decide that.
+_TRIMMED_ATTRIBUTE_NAMES: Final = frozenset({"class", "style"})
 
 
 def encode_attribute_newlines(attributes: str, config: Config) -> str:
-    """Replace significant attribute line breaks with internal markers."""
-    if "\n" not in attributes:
+    """Replace significant attribute line breaks with internal markers.
+
+    A `class` value is normalized here too: it is a list of tokens, so the
+    whitespace between them and at its edges says nothing.
+    """
+    if "\n" not in attributes and not _CLASS_ATTRIBUTE_PATTERN.search(
+        attributes
+    ):
         return attributes
 
     changed = False
@@ -44,28 +75,49 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
 
         name = match.group(1)
         value = match.group(2)
+        lowered = name.lower() if name else ""
         if (
             not name
             or not value
-            or "\n" not in value
             or value[0] not in {'"', "'"}
             or value[-1] != value[0]
+            or ("\n" not in value and lowered != "class")
         ):
             continue
 
-        if name in _VERBATIM_ATTRIBUTE_NAMES:
-            encoded_value = VERBATIM_ATTRIBUTE_NEWLINE.join(
-                line.rstrip() for line in value[1:-1].splitlines()
-            )
-        elif name.lower() == "class" and config.preserve_class_newlines:
+        if lowered == "class" and config.preserve_class_newlines:
             lines = [line.strip() for line in value[1:-1].splitlines()]
             class_lines = [line for line in lines if line]
             if len(class_lines) < MIN_MULTILINE_CLASS_LINES:
                 encoded_value = " ".join(class_lines)
             else:
                 encoded_value = CLASS_ATTRIBUTE_NEWLINE.join(class_lines)
-        else:
+        elif (
+            # js and json are whitespace insensitive too, and the option
+            # asks for them to be laid out rather than left alone
+            config.format_attribute_js_json
+            and config.format_attribute_js_json_pattern.match(name)
+        ):
             continue
+        elif lowered == "class":
+            # a list of tokens: every run of whitespace in it separates two
+            # of them, and the ones at its edges separate nothing
+            encoded_value = _COLLAPSIBLE_RUN_PATTERN.sub(
+                " ", value[1:-1]
+            ).strip(COLLAPSIBLE_WHITESPACE)
+        elif lowered in _TRIMMED_ATTRIBUTE_NAMES:
+            # the breaks are only formatting, so join the value here rather
+            # than leave it to be collapsed with the space between the
+            # attributes, which would strand one at each of its edges
+            encoded_value = _JOINED_RUN_PATTERN.sub(" ", value[1:-1]).strip(
+                COLLAPSIBLE_WHITESPACE
+            )
+        elif lowered in _JOINABLE_ATTRIBUTE_NAMES:
+            continue
+        else:
+            encoded_value = VERBATIM_ATTRIBUTE_NEWLINE.join(
+                value[1:-1].split("\n")
+            )
 
         parts.extend((
             attributes[last_end : match.start()],

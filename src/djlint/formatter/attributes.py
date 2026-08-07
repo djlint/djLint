@@ -300,7 +300,10 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
         or (
             _rendered_length(config, attribute_group)
             < config.max_attribute_length
+            # a value that keeps a line break of its own spans lines
+            # whatever its length, so the tag never fits on one
             and CLASS_ATTRIBUTE_NEWLINE not in attribute_group
+            and VERBATIM_ATTRIBUTE_NEWLINE not in attribute_group
         )
     ) or child_of_ignored_block(config, html, token):
         return html[token.start : token.end]

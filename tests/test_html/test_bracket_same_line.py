@@ -112,7 +112,7 @@ test_data = [
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>\n'
             '<span class="a">text</span>\n'
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
-            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
+            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"> text</span>\n'
             '<span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span>\n'
         ),
         id="inline",
@@ -137,7 +137,7 @@ test_data = [
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>\n'
             '<span class="a">text</span>\n'
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
-            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
+            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"> text</span>\n'
             '<span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span>\n'
         ),
         id="inline_bracket_same_line",
@@ -150,11 +150,7 @@ test_data = [
         (
             '<img long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"\n'
             '     src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" />\n'
         ),
         id="void",
     ),
@@ -166,11 +162,7 @@ test_data = [
         (
             '<img long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"\n'
             '     src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
-            '<img src="./1.jpg" />\n'
+            '<img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" />\n'
         ),
         id="void_bracket_same_line",
     ),

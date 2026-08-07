@@ -124,6 +124,27 @@ test_data = [
         ({"line_break_after_multiline_tag": True}),
         id="more complex tags. #680",
     ),
+    pytest.param(
+        ('<div data-config=\'{"name": "value"}\'>text</div>\n'),
+        ('<div data-config=\'{"name": "value"}\'>text</div>\n'),
+        ({"line_break_after_multiline_tag": True}),
+        id="a tag that fits on one line keeps its content",
+    ),
+    pytest.param(
+        (
+            '<div attribute="value" attributea="value" attributeb="value" attributec="value" attributed="value" attributef="value"></div>\n'
+        ),
+        (
+            '<div attribute="value"\n'
+            '     attributea="value"\n'
+            '     attributeb="value"\n'
+            '     attributec="value"\n'
+            '     attributed="value"\n'
+            '     attributef="value"></div>\n'
+        ),
+        ({"line_break_after_multiline_tag": True}),
+        id="an element with no content has none to hold back",
+    ),
 ]
 
 
