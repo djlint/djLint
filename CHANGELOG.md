@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.44.1] - 2026-08-07
+
 ### Fix
 
 - Formatting no longer changes what the page renders. A space that shows was dropped (`<span>a</span><span> b </span>` rendered as `ab`, `a{% if x %} b {% endif %}c` as `abc`), a space that shows nothing was added (`<span>     </span>` became `<span> </span>`), and moving a tag onto its own line could add one (`x<img>y`, or across a comment as in `a{# c #}<img>`). Whitespace is now kept where it renders and dropped where it does not.
