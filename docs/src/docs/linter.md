@@ -879,7 +879,7 @@ Do:
 
 `Avoid use of <br> tags.`
 
-`<br>` encodes presentation in markup: using it for spacing or to fake paragraphs breaks text reflow at narrow widths and degrades accessibility, since screen readers announce forced breaks instead of a natural pause between blocks. Separate thoughts belong in separate block elements, and vertical spacing belongs to CSS margins. Note that `<br>` is legitimate where the line break is part of the content itself (postal addresses, poems, lyrics), and this rule cannot tell those apart from presentational use: it flags every `<br>`. Leave it disabled if your templates render such content.
+`<br>` encodes presentation in markup: using it for spacing or to fake paragraphs breaks text reflow at narrow widths and degrades accessibility, since screen readers announce forced breaks instead of a natural pause between blocks. Use separate block elements for separate thoughts, and CSS margins for the spacing between them. `<br>` is legitimate where the line break is part of the content itself (postal addresses, poems, lyrics), but this rule cannot tell those apart from presentational use and flags every `<br>`, so leave it disabled if your templates render such content.
 
 Off by default; enable with `--include=H036`.
 
@@ -1047,9 +1047,7 @@ Please include a test to validate the rule.
 
 ## Custom Rules
 
-You can add custom rules just for your project by creating a `.djlint_rules.yaml` alongside
-your `pyproject.toml`. Rules can be added to this files and djLint will pick them up.
-A rules file in another location can be given with the `--rules` CLI option.
+You can add custom rules just for your project by creating a `.djlint_rules.yaml` alongside your `pyproject.toml`. Rules can be added to this files and djLint will pick them up. A rules file in another location can be given with the `--rules` CLI option.
 
 ### Pattern Rules
 
@@ -1075,20 +1073,16 @@ You can add rules that import and execute a custom python function:
     python_module: your_package.your_module
 ```
 
-The specified `python_module` must contain a `run()` function that will be executed on
-every checked file. It must accept the following arguments:
+The specified `python_module` must contain a `run()` function that will be executed on every checked file. It must accept the following arguments:
 
 ::: content
 
-- `rule`: The dict that represent your rule in `.djlint_rules.yaml`. You will typically
-  use this variable to access the rule name and message.
+- `rule`: The dict that represent your rule in `.djlint_rules.yaml`. You will typically use this variable to access the rule name and message.
 - `config`: The DJLint configuration object.
 - `html`: The full html content of the file.
 - `filepath`: Path to the file that we are currently checking.
-- `line_ends`: List of line `start` and `end` character position that you can use with
-  `djlint.lint.get_line()` to get line numbers from a character position. See the example.
-- `*args, **kwargs`: We might add other arguments in the future, so you should include
-  those two arguments to reduce the risk of failure on djLint upgrade.
+- `line_ends`: List of line `start` and `end` character position that you can use with `djlint.lint.get_line()` to get line numbers from a character position. See the example.
+- `*args, **kwargs`: We might add other arguments in the future, so you should include those two arguments to reduce the risk of failure on djLint upgrade.
   :::
 
 It must return a list of dict, one for each errors, with the following keys:

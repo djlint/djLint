@@ -98,22 +98,13 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1`  | djLint found linting errors, or files that need reformatting. `--warn` reports these as warnings and exits `0` instead.          |
 | `2`  | djLint did not check what you asked it to: the paths matched no files, the command line or config was invalid, or djLint failed. |
 
-Only code `1` means "djLint looked at your templates and did not like what it
-found". Code `2` always means the run itself did not deliver, so a pipeline can
-treat the two differently instead of guessing.
+Only code `1` means djLint looked at your templates and did not like what it found. Code `2` always means the run itself did not deliver, so a pipeline can treat the two differently instead of guessing.
 
-That covers the "djLint checked nothing" case - a wrong path, an `--extension`
-that no longer matches, or templates that have moved - a run that would
-otherwise pass silently while checking none of your templates.
+Code `2` is what catches a run that checked nothing at all: a wrong path, an `--extension` that no longer matches, or templates that have moved. Without it such a run passes silently, having looked at none of your templates.
 
-Files that djLint _did_ find and then skipped on purpose - through `exclude`,
-`extend_exclude`, `use_gitignore` or `require_pragma` - are not an error. That
-run exits `0`, because the configuration did exactly what it was told to. This
-is what lets `exclude` work under pre-commit, which passes the names of your
-staged files whether or not you want djLint to look at them.
+Files that djLint _did_ find and then skipped on purpose, through `exclude`, `extend_exclude`, `use_gitignore` or `require_pragma`, are not an error. That run exits `0`, because the configuration did exactly what it was told to. It is also what lets `exclude` work under pre-commit, which passes the names of your staged files whether or not you want djLint to look at them.
 
-If a path that legitimately has no templates is normal for your pipeline, turn
-code `2` off with `allow_empty_input`:
+If a path that legitimately has no templates is normal for your pipeline, turn code `2` off with `allow_empty_input`:
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input

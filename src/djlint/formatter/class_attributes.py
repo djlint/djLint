@@ -38,7 +38,7 @@ _CLASS_ATTRIBUTE_PATTERN: Final = re.compile(
 
 # attribute values that hold a token list or css, where a line break is
 # only formatting. everything else is kept as written: a value reaches the
-# page as it stands, so joining its lines changes the document - a `title`
+# page as it stands, so joining its lines changes the document. a `title`
 # tooltip loses a line, hyperscript ("_") loses a command separator, and a
 # `data-` value read by script comes back different.
 _JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({
@@ -48,8 +48,8 @@ _JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({
     "srcset",
     "style",
 })
-# of those, the ones whose edges mean nothing at all - a token list and
-# css - so joining their lines can close up rather than leave a space
+# of those, the ones whose edges mean nothing at all (a token list and
+# css), so joining their lines can close up rather than leave a space
 # behind. the rest are laid out by their own rules, which decide that.
 _TRIMMED_ATTRIBUTE_NAMES: Final = frozenset({"class", "style"})
 

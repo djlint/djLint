@@ -23,9 +23,9 @@
 
 ## 🤔 For What?
 
-Every language in your stack has a formatter and a linter. HTML templates are the exception. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. Templates end up in a tooling blind spot: drifting indentation, mismatched tags and inconsistent spacing that survive every code review.
+Every language in your stack has a formatter and a linter. HTML templates are the exception. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
 
-djLint covers that blind spot. It understands HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more.
+djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more.
 
 Take a template only its author could love:
 
@@ -78,9 +78,9 @@ One `djlint --reformat --single-attribute-per-line` later:
 
 One command rebuilt the indentation, fixed the tag case, split the long tag into one attribute per line, normalized the template tags and collapsed stray blank lines.
 
-And the linter catches what formatting can't fix: orphan tags, missing `alt` attributes, hard-coded URLs and dozens of other checks.
+The linter catches what formatting can't fix: orphan tags, missing `alt` attributes, hard-coded URLs and dozens of other checks.
 
-**[Try it on your own templates in the online playground →](https://djlint.com/demo/)**
+You can [try it on your own templates in the online playground](https://djlint.com/demo/).
 
 ## ✨ How?
 
@@ -189,7 +189,7 @@ uv sync
 uv run pytest
 ```
 
-## 🏃 Other Tools Of Note
+## 🏃 Other tools of note
 
 - [djade](https://github.com/adamchainz/djade) A fast Django template formatter that formats template syntax whilst leaving HTML as-is, and applies fixes for older Django versions.
 - [djangofmt](https://github.com/UnknownPlatypus/djangofmt) A fast, HTML-aware Django/Jinja template formatter written in Rust that formats HTML and template syntax together.

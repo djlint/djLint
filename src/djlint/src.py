@@ -105,7 +105,7 @@ def get_src(src: Iterable[Path], config: Config) -> SrcFiles:
                 excluded = True
                 continue
             # a directory can match the extension glob too, and it is not a
-            # candidate at all - opening one raises rather than excluding it.
+            # candidate at all: opening one raises rather than excluding it.
             # The exclude pattern above is pure string work, so testing it
             # first spares this syscall for everything the pattern drops.
             if not candidate.is_file():

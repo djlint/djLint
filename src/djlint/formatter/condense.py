@@ -308,8 +308,8 @@ def _rendered_whitespace(text: str, left: str, right: str) -> str:
 
     Css collapses each run of space, tab and line break to one space, then
     drops that space where it falls against a line edge or against other
-    collapsible whitespace - the neighbour renders it instead. Whatever is
-    left over is layout this formatter owns rather than content, so it
+    collapsible whitespace, since the neighbour renders it instead. Whatever
+    is left over is layout this formatter owns rather than content, so it
     goes. Other whitespace (e.g. u+2005) is never collapsed or dropped.
 
     `left` and `right` are the single characters the whitespace sits

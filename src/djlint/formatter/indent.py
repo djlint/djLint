@@ -613,7 +613,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             and tag_unindent_pattern.search(item)
             # and not ending in a slt like <span><strong></strong>. a line
             # closing more tags than it opens still owes a dedent, whatever
-            # whole tag happens to end it ("</b><small></small>") - which is
+            # whole tag happens to end it ("</b><small></small>"), which is
             # the same line once condensing has pulled that tag together.
             and (
                 unclosed_closes > opened_html
@@ -678,7 +678,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 if indent_level - 1 < floor:
                     # the floor held, so the tag being closed took its level
                     # outside this block and giving it back is not this
-                    # line's to do - the block's own close restores it.
+                    # line's to do: the block's own close restores it.
                     # Without this the dedent lands after the line instead,
                     # taking the rest of the block with it.
                     html_dedent = 0

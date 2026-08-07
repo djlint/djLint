@@ -93,7 +93,7 @@ def run(
         tag = match.group()
 
         if tag.startswith(("{{{{", "{{!")):
-            # a whole handlebars raw block or comment - nothing to pair
+            # a whole handlebars raw block or comment, so nothing to pair
             continue
 
         if re.match(config.template_unindent, tag, RE_FLAGS_IX):

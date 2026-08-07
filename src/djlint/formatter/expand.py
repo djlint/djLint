@@ -367,8 +367,8 @@ def expand_html(html: str, config: Config) -> str:
         """Whether rendered content runs right up to this position.
 
         Looks through tags that lay out nothing of their own, and through
-        the inside edge of a box - whitespace there is the edge of that
-        box's own content, so what lies beyond it is what would be parted.
+        the inside edge of a box, where whitespace is the edge of that box's
+        own content, so what lies beyond it is what would be parted.
         """
         while True:
             char = html[index - 1 : index] if back else html[index : index + 1]

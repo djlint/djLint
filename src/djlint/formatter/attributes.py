@@ -64,15 +64,12 @@ def has_unquoted_template_expression(attribute_group: str) -> bool:
 def count_object_properties(config: Config, value: str) -> int:
     """Count the number of properties in a JSON/JS object."""
     try:
-        # Try parsing as JSON first
         data = json.loads(value)
         return len(data)
     except json.JSONDecodeError:
-        # For JS objects, count property-like patterns
-        # Simple heuristic: count comma-separated properties
-        cleaned = config.format_attribute_js_json_string_pattern.sub(
-            "", value
-        )  # Remove strings
+        # not json, so fall back to counting comma separated properties.
+        # strings go first, or a comma inside one counts as a separator.
+        cleaned = config.format_attribute_js_json_string_pattern.sub("", value)
         return len(
             config.format_attribute_js_json_property_pattern.findall(cleaned)
         )
@@ -97,25 +94,21 @@ def format_json_with_indent(
     except json.JSONDecodeError:
         return value
     else:
-        # Use indent_size from config for JSON formatting
         indent_size = config.js_config.get("indent_size", 4)
         formatted = json.dumps(data, indent=indent_size)
-        # Add base_indent to each line (except first)
+        # json.dumps indents from column 0, so the attribute's own indentation
+        # goes in front of every line but the first, which follows the quote.
+        # the closing brace sits one level back from the properties.
         lines = formatted.split("\n")
         if len(lines) > 1:
             indented_lines = [lines[0]]
             for i, line in enumerate(lines[1:], 1):
-                if i == len(lines) - 1:  # Last line (closing brace)
-                    # Indent closing brace indent_size spaces less than properties
-                    # Content lines get: base_indent + json_indent_size
-                    # Closing should get: base_indent + json_indent_size - indent_size
+                if i == len(lines) - 1:
                     content_indent = base_indent + (" " * indent_size)
                     if len(content_indent) >= indent_size:
-                        closing_indent = content_indent[
-                            :-indent_size
-                        ]  # Remove indent_size spaces from content indent
+                        closing_indent = content_indent[:-indent_size]
                     else:
-                        closing_indent = base_indent  # Fallback to base_indent
+                        closing_indent = base_indent
                     indented_lines.append(closing_indent + line)
                 else:
                     indented_lines.append(base_indent + line)
@@ -131,48 +124,38 @@ def format_js_with_indent(config: Config, value: str, base_indent: str) -> str:
     )
 
     try:
-        # Use the same JS config as the main JS formatter
+        # the same config the main js formatter uses, except that the
+        # attribute's indentation is added below, so jsbeautifier adds none.
         js_config = dict(config.js_config)
-        js_config["indent_level"] = 0  # No extra indentation from jsbeautifier
+        js_config["indent_level"] = 0
 
         opts = BeautifierOptions(js_config)
         formatted: str = jsbeautifier.beautify(value, opts)
     except ValueError:
         return value
     else:
-        # Add base_indent to each line while preserving relative indentation
+        # keep jsbeautifier's relative indentation and put the attribute's own
+        # in front of it. the first line follows the quote, so it takes none.
         lines = formatted.split("\n")
         if len(lines) > 1:
-            indented_lines = [
-                lines[0].strip()
-            ]  # Remove jsbeautifier's indentation from first line
+            indented_lines = [lines[0].strip()]
 
             for i, line in enumerate(lines[1:], 1):
-                if not line.strip():  # Handle empty lines
+                if not line.strip():
                     indented_lines.append("")
                     continue
 
-                # Preserve the original jsbeautifier indentation structure
                 line_indent = len(line) - len(line.lstrip())
 
-                # Check if this is an object (starts and ends with braces)
                 is_object = value.strip().startswith(
                     "{"
                 ) and value.strip().endswith("}")
 
-                if (
-                    is_object and i == len(lines) - 1
-                ):  # Last line of object (closing brace)
-                    # Indent closing brace 2 spaces less than properties for objects
-                    # jsbeautifier already provides the correct line_indent difference
-                    # Content lines get: base_indent + (" " * line_indent_for_content) (e.g., 14 + 2 = 16)
-                    # Closing line gets: base_indent + (" " * line_indent_for_closing) (e.g., 14 + 0 = 14)
-                    # This naturally creates the 2-space difference we want
+                if is_object and i == len(lines) - 1:
                     indented_lines.append(
                         base_indent + (" " * line_indent) + line.strip()
                     )
                 else:
-                    # For general JS code or object properties, use full base_indent + jsbeautifier indent
                     indented_lines.append(
                         base_indent + (" " * line_indent) + line.strip()
                     )
@@ -434,18 +417,17 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
             and VERBATIM_ATTRIBUTE_NEWLINE not in attrib_value
             and config.format_attribute_js_json_pattern.match(attrib_name)
         ):
-            # Check if it's an object or general JavaScript code
             if config.format_attribute_js_json_object_pattern.match(
                 attrib_value
             ):
-                # Skip objects with fewer than minimum properties
+                # an object short enough to read on one line is left there.
                 if (
                     count_object_properties(config, attrib_value)
                     >= config.format_attribute_js_json_min_props
                 ):
-                    # Format JSON objects first, then JavaScript objects
+                    # the value starts after the attribute name and its quote,
+                    # so that is where its content lines up.
                     if is_json_object(attrib_value):
-                        # Calculate proper base indentation for JSON content
                         json_base_indent = (
                             spacing
                             + (quote_length + len(attrib_name or "")) * " "
@@ -454,18 +436,15 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
                             config, attrib_value, json_base_indent
                         )
                     else:
-                        # Calculate proper base indentation for JavaScript objects
                         js_base_indent = (
                             spacing
                             + (quote_length + len(attrib_name or "")) * " "
                         )
-                        # Format JavaScript objects
                         attrib_value = format_js_with_indent(
                             config, attrib_value, js_base_indent
                         )
             else:
-                # Format general JavaScript code (non-objects)
-                # Calculate base indentation for general JS code
+                # not an object, so js code with no property count to check.
                 js_code_base_indent = (
                     spacing + (quote_length + len(attrib_name or "")) * " "
                 )

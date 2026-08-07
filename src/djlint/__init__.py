@@ -27,10 +27,10 @@ if TYPE_CHECKING:
 def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     """Keep djLint failing apart from djLint finding things.
 
-    An unhandled error used to reach the interpreter and exit 1, the same
-    code as "found lint errors" or "would reformat", so a pipeline could
-    not tell a crash from a normal failing run - a template djLint cannot
-    read looked exactly like a template it disliked. Failures now exit 2,
+    Left to reach the interpreter, an unhandled error exits 1, the same code
+    as "found lint errors" or "would reformat", and a pipeline cannot tell a
+    crash from a normal failing run: a template djLint cannot read looks
+    exactly like a template it disliked. So failures exit 2 instead,
     alongside the usage errors click already exits 2 for. The traceback is
     still printed, so bug reports lose nothing.
     """
@@ -49,7 +49,7 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
             echo(
                 style(
                     "djLint failed and did not finish checking. This is not a"
-                    " clean run - report unexpected failures at"
+                    " clean run. Please report unexpected failures at"
                     " https://github.com/djlint/djLint/issues",
                     fg="red",
                     bold=True,
