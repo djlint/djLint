@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.44.2] - 2026-08-08
+
 ### Fix
 
 - `H037` no longer reports two attributes whose names differ only before a `.` as duplicates (`data-a.checked` and `data-b.checked`, or alpine's `x-on:click.prevent` and `x-on:keyup.prevent`).
