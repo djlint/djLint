@@ -43,6 +43,30 @@ test_data = [
         id="partial ignored",
     ),
     pytest.param(
+        ('<img alt="test" data-height="10" data-width="10"/>'),
+        ([
+            {
+                "code": "H006",
+                "line": "1:0",
+                "match": '<img alt="test" data',
+                "message": "Img tag should have height and width attributes.",
+            }
+        ]),
+        id="names ending in height and width are not those attributes",
+    ),
+    pytest.param(
+        ('<img \n alt="test" width = "10" height = "10"/>'),
+        ([
+            {
+                "code": "H012",
+                "line": "1:0",
+                "match": '<img \n alt="test" wi',
+                "message": "There should be no spaces around attribute =.",
+            }
+        ]),
+        id="space around equals still counts as the attribute",
+    ),
+    pytest.param(
         ("<img><img>"),
         ([
             {

@@ -106,6 +106,24 @@ def test_H013(
     print(result.output)
     assert "found 1 error" in result.output
 
+    # a name that merely ends in "alt" is a different attribute
+    write_to_file(tmp_file.name, b'<img src="a" data-alt="b"/>')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H013 1:" in result.output
+
+    # and an "alt=" written inside a value is not an attribute at all
+    write_to_file(tmp_file.name, b'<img src="a" title="alt=x"/>')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H013 1:" in result.output
+
+    write_to_file(tmp_file.name, b'<img src="a" alt="b"/>')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H013" not in result.output
+
+    write_to_file(tmp_file.name, b'<img src="a" alt = "b"/>')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H013" not in result.output
+
 
 def test_H014(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
@@ -681,6 +699,14 @@ def test_H030(
     )
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H030" not in result.output
+
+    # a name that merely ends in "name" does not carry the description
+    write_to_file(
+        tmp_file.name,
+        b'<html>\n<meta data-name="description" content="nice"/>\n</html>',
+    )
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H030 1:" in result.output
 
 
 def test_H031(

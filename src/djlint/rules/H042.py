@@ -27,11 +27,13 @@ if TYPE_CHECKING:
 
 # id/for attributes with their values; a valueless attribute equals "".
 # Other name=value pairs and stray quoted values are consumed wholesale so
-# attribute-lookalikes inside values don't match.
+# attribute-lookalikes inside values don't match. "." is a name character
+# like "-" is, so data-x.id is one name and holds no id attribute.
+_NAME_CHAR: Final = r"[-.:\w]"
 _ATTR_PATTERN: Final = re.compile(
-    r"(?<![-:\w])(?P<name>id|for)(?![-:\w])"
+    rf"(?<!{_NAME_CHAR})(?P<name>id|for)(?!{_NAME_CHAR})"
     r"(?:\s*=\s*(?:\"(?P<dq>[^\"]*)\"|'(?P<sq>[^']*)'|(?P<uq>[^\s\"'<>`=]+)))?"
-    r"|[-:\w]+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s\"'<>`=]+)"
+    rf"|{_NAME_CHAR}+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s\"'<>`=]+)"
     r"|\"[^\"]*\"|'[^']*'",
     re.I,
     cache_pattern=False,

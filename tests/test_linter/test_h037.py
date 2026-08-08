@@ -78,6 +78,57 @@ test_data = [
         id="mismatch hyphen names",
     ),
     pytest.param(
+        # https://github.com/djlint/djLint/issues/2352
+        ('<a data-a.checked="1" data-b.checked="2">x</a>'),
+        ([]),
+        id="issue_2352_mismatch_dot_names",
+    ),
+    pytest.param(
+        ('<a data-a.checked="1" data-a.checked="2">x</a>'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:3",
+                "match": "data-a.checked",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="dot names",
+    ),
+    pytest.param(
+        ('<div x-on:click.prevent="a" x-on:keyup.prevent="b"></div>'),
+        ([]),
+        id="mismatch modifier names",
+    ),
+    pytest.param(
+        ('<div x-on:click.prevent="a" x-on:click.prevent="b"></div>'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:5",
+                "match": "x-on:click.prevent",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="modifier names",
+    ),
+    pytest.param(('<input .value="1" value="2">'), ([]), id="leading dot name"),
+    pytest.param(
+        ('<div 1a="x" 2a="y"></div>'), ([]), id="mismatch digit names"
+    ),
+    pytest.param(
+        ('<div 1a="x" 1a="y"></div>'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:5",
+                "match": "1a",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="digit names",
+    ),
+    pytest.param(
         (
             '<button {% if active %} class="on" title="On" '
             '{% else %} class="off" title="Off" {% endif %}></button>'
@@ -118,6 +169,15 @@ test_data = [
         ),
         ([]),
         id="issue_2246_conditional_attribute_name_prefix",
+    ),
+    pytest.param(
+        (
+            '<img {% if lazyload %}data.{% endif %}srcset="{{ full }}"\n'
+            '     {% if lazyload %}srcset="{{ placeholder }}"{% endif %}\n'
+            '     alt="x">'
+        ),
+        ([]),
+        id="dot_ended_conditional_attribute_name_prefix",
     ),
     pytest.param(
         ('<br {{! c }}class="a" class="b" />'),

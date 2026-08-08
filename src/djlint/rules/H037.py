@@ -22,14 +22,21 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
+# A name is read as a whole run of name characters, never from the middle
+# of one. Html allows "." in an attribute name and frameworks build names
+# around it (alpine's x-on:click.prevent, vue's @keyup.enter); read from
+# the middle, data-a.checked and data-b.checked would both come out as
+# "checked" and look like a duplicate.
+_NAME_CHAR = r"[-.:\w]"
 _EVENT_PATTERN = re.compile(
     r""""[^"]*"|'[^']*'|"""
     r"(?P<template>{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|{\#(?:(?!\#}).)*\#})|"
-    r"(?P<attribute>[-:a-z_][-:\w]*)(?=\s*=(?:\s*)(?:\"|'|{{|{%|{\#|[\w-]))",
+    rf"(?P<attribute>(?<!{_NAME_CHAR}){_NAME_CHAR}+)"
+    r"(?=\s*=(?:\s*)(?:\"|'|{{|{%|{\#|[\w-]))",
     re.I | re.S,
     cache_pattern=False,
 )
-_NAME_CHAR_PATTERN = re.compile(r"[-:\w]", cache_pattern=False)
+_NAME_CHAR_PATTERN = re.compile(_NAME_CHAR, cache_pattern=False)
 # handlebars {{! }}, {{!-- --}} and golang {{/* */}} comments
 _COMMENT_PATTERN = re.compile(r"\{\{-?\s*(?:!|/\*)", cache_pattern=False)
 

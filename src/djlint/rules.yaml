@@ -39,15 +39,15 @@
     message: Html tag should have lang attribute.
     flags: re.DOTALL|re.I
     patterns:
-      - <html\s*(?:(?!lang).)*>
+      - <html\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])lang\s*=)[^'">])*>
 - rule:
     name: H006
     message: Img tag should have height and width attributes.
     default: false
     flags: re.DOTALL|re.I
     patterns:
-      - <img\b(?:(?!(?:height)=)[^>])*/?>
-      - <img\b(?:(?!(?:width)=)[^>])*/?>
+      - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])height\s*=)[^'">])*/?>
+      - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])width\s*=)[^'">])*/?>
 - rule:
     name: H007
     message: <!DOCTYPE ... > should be present before the html tag.
@@ -71,7 +71,10 @@
     message: Attribute names should be lowercase.
     flags: re.DOTALL
     patterns:
-      - <\w+[^\>]+?(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE|MEDIA|SRCSET)=
+      # a quoted value is stepped over whole, so an uppercase name written
+      # inside one (title="the ID=5") is not read as an attribute name. No
+      # name boundary here: data-ID is an uppercase name and does count.
+      - <\w+(?:"[^"]*"|'[^']*'|[^'">])+?(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE|MEDIA|SRCSET)=
 - rule:
     name: H011
     message: Attribute values should be quoted.
@@ -92,7 +95,9 @@
     message: Img tag should have an alt attribute.
     flags: re.DOTALL|re.I
     patterns:
-      - <img\b(?:(?!(?:alt)=)[^>])*/?>
+      # a quoted value is stepped over whole, and the name must start on a
+      # name boundary, so neither title="alt=x" nor data-alt counts as alt
+      - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])alt\s*=)[^'">])*/?>
 - rule:
     name: H014
     message: Found extra blank lines.
@@ -212,14 +217,14 @@
     message: Consider adding a meta description.
     flags: re.DOTALL|re.I
     patterns:
-      - <html[^>]*?>(?:(?!<meta[^>]*?name=([\"|'])description\b).)*</html>
+      - <html[^>]*?>(?:(?!<meta[^>]*?(?<![-.:\w])name\s*=([\"|'])description\b).)*</html>
 - rule:
     name: H031
     message: Consider adding meta keywords.
     default: false
     flags: re.DOTALL|re.I
     patterns:
-      - <html[^>]*?>(?:(?!<meta[^>]*?name=([\"|'])keywords\b).)*</html>
+      - <html[^>]*?>(?:(?!<meta[^>]*?(?<![-.:\w])name\s*=([\"|'])keywords\b).)*</html>
 - rule:
     name: T032
     message: Extra whitespace found in template tags.

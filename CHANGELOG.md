@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### Fix
+
+- `H037` no longer reports two attributes whose names differ only before a `.` as duplicates (`data-a.checked` and `data-b.checked`, or alpine's `x-on:click.prevent` and `x-on:keyup.prevent`).
+- An attribute whose name merely ends in the name a rule looks for is no longer mistaken for it. `data-alt` and `data-x.alt` left `H013` silent on an image with no `alt`, `data-lang` and `xml:lang` silenced `H005`, `data-height` and `data-width` silenced `H006`, `data-name="description"` silenced `H030` and `data-name="keywords"` silenced `H031`, and `data-x.id` satisfied a `<label for>` for `H042`.
+- A name written inside an attribute value is no longer read as an attribute. `title="alt=x"` left `H013` silent, `class="language-en"` silenced `H005`, and `title="the ID=5"` was reported by `H010` as an uppercase attribute name.
+- `H005` no longer reports a tag whose name only starts with `html`, such as `<htmlx>`, and points at the `<html>` tag itself rather than at everything up to the last `>` in the file.
+
 ## [1.44.1] - 2026-08-07
 
 ### Fix

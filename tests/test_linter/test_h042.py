@@ -52,6 +52,23 @@ test_data = [
         id="matching_id",
     ),
     pytest.param(
+        ('<label for="wine">Wine</label>\n<input data-x.id="wine">\n'),
+        ([
+            {
+                "code": "H042",
+                "line": "1:0",
+                "match": '<label for="wine">',
+                "message": "Label for attribute has no matching element id in this file.",
+            }
+        ]),
+        id="name_ending_in_id_is_not_an_id",
+    ),
+    pytest.param(
+        ('<label data-x.for="wine">Wine</label>\n<input id="wine">\n'),
+        ([]),
+        id="name_ending_in_for_is_not_a_for",
+    ),
+    pytest.param(
         ('<label for=wine>Wine</label>\n<div id="wine"></div>\n'),
         ([]),
         id="unquoted_attributes",

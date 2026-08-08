@@ -47,6 +47,59 @@ test_data = [
         ]),
         id="one",
     ),
+    pytest.param(
+        ('<!DOCTYPE html>\n<html data-lang="en">'),
+        ([
+            {
+                "code": "H005",
+                "line": "2:0",
+                "match": '<html data-lang="en"',
+                "message": "Html tag should have lang attribute.",
+            },
+            {
+                "code": "H025",
+                "line": "2:0",
+                "match": '<html data-lang="en"',
+                "message": "Tag seems to be an orphan.",
+            },
+        ]),
+        id="name ending in lang is not lang",
+    ),
+    pytest.param(
+        ('<!DOCTYPE html>\n<html class="language-en">'),
+        ([
+            {
+                "code": "H005",
+                "line": "2:0",
+                "match": '<html class="languag',
+                "message": "Html tag should have lang attribute.",
+            },
+            {
+                "code": "H025",
+                "line": "2:0",
+                "match": '<html class="languag',
+                "message": "Tag seems to be an orphan.",
+            },
+        ]),
+        id="lang inside a value is not lang",
+    ),
+    pytest.param(
+        ("<!DOCTYPE html>\n<htmlx>y</htmlx>"),
+        ([]),
+        id="tag whose name only starts with html",
+    ),
+    pytest.param(
+        ('<!DOCTYPE html>\n<html lang="en">'),
+        ([
+            {
+                "code": "H025",
+                "line": "2:0",
+                "match": '<html lang="en">',
+                "message": "Tag seems to be an orphan.",
+            }
+        ]),
+        id="real lang",
+    ),
 ]
 
 

@@ -30,6 +30,21 @@ test_data = [
         id="opening",
     ),
     pytest.param(("<li>ID=username</li>"), ([]), id="opening"),
+    pytest.param(
+        ('<div title="the ID=5">y</div>'), ([]), id="name inside a value"
+    ),
+    pytest.param(
+        ('<div data-ID="5">y</div>'),
+        ([
+            {
+                "code": "H010",
+                "line": "1:0",
+                "match": "<div data-ID=",
+                "message": "Attribute names should be lowercase.",
+            }
+        ]),
+        id="uppercase inside a longer name",
+    ),
 ]
 
 
