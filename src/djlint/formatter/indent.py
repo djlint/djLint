@@ -963,6 +963,8 @@ def indent_html(rawcode: str, config: Config) -> str:
                     normalize_string_quotes = True
                 case "'":
                     normalize_string_quotes = True
+                case _:
+                    pass
 
         contents = format_data(
             config,
