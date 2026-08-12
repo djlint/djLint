@@ -348,25 +348,17 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
 
     # format attributes as groups
     for attr_grp in attribute_matches:
-        attrib_name = attr_grp.group(1)
-        is_quoted = attr_grp.group(2) and attr_grp.group(2)[0] in {"'", '"'}
-        quote = attr_grp.group(2)[0] if is_quoted else '"'
+        # Match.group() rebuilds the string from the span on every call, so
+        # pull the three groups out once instead of re-slicing per branch.
+        attrib_name, raw_value, standalone = attr_grp.group(1, 2, 3)
+        first_char = raw_value[0] if raw_value else ""
+        is_quoted = first_char in {"'", '"'}
+        quote = first_char if is_quoted else '"'
 
-        attrib_value = None
-
-        if attr_grp.group(2) and attr_grp.group(2)[0] == attr_grp.group(2)[-1]:
-            if attr_grp.group(2)[0] == "'":
-                attrib_value = attr_grp.group(2).strip("'")
-
-            elif attr_grp.group(2)[0] == '"':
-                attrib_value = attr_grp.group(2).strip('"')
-
-            else:
-                attrib_value = attr_grp.group(2)
+        if is_quoted and first_char == raw_value[-1]:
+            attrib_value = raw_value.strip(first_char)
         else:
-            attrib_value = attr_grp.group(2)
-
-        standalone = attr_grp.group(3)
+            attrib_value = raw_value
 
         quote_length = 1
 

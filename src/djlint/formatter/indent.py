@@ -957,11 +957,12 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         if config.profile == "jinja":
             outer_quote = _attribute_quote_at(html, match.start(2))
-            if outer_quote == '"':
-                quote_style = QuoteStyle.ALWAYS_SINGLE
-                normalize_string_quotes = True
-            elif outer_quote == "'":
-                normalize_string_quotes = True
+            match outer_quote:
+                case '"':
+                    quote_style = QuoteStyle.ALWAYS_SINGLE
+                    normalize_string_quotes = True
+                case "'":
+                    normalize_string_quotes = True
 
         contents = format_data(
             config,
