@@ -225,6 +225,38 @@ jinja_test_data = [
         id="issue_2396_named_endblock_with_plus",
     ),
     pytest.param(
+        # a marker written against the name is not part of the name, so this
+        # endblock matches its opening block (the T001 error is unrelated)
+        ("{% block a %}\ntext\n{% endblock a+%}\n"),
+        ([
+            {
+                "code": "T001",
+                "line": "3:0",
+                "match": "{% endblock a+%}",
+                "message": "Variables should be wrapped in a whitespace.",
+            }
+        ]),
+        id="issue_2396_named_endblock_marker_not_part_of_label",
+    ),
+    pytest.param(
+        ("{% block a %}\ntext\n{% endblock b+%}\n"),
+        ([
+            {
+                "code": "T001",
+                "line": "3:0",
+                "match": "{% endblock b+%}",
+                "message": "Variables should be wrapped in a whitespace.",
+            },
+            {
+                "code": "T038",
+                "line": "3:0",
+                "match": "{% endblock b+%}",
+                "message": "Endblock name should match opening block name.",
+            },
+        ]),
+        id="issue_2396_mismatched_endblock_name_no_space_before_marker",
+    ),
+    pytest.param(
         ("{%- block a -%}\ntext\n{%- endblock b -%}\n"),
         ([
             {

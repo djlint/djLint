@@ -46,9 +46,11 @@ _OPEN_NAME_PATTERN: Final = re.compile(
 _END_NAME_PATTERN: Final = re.compile(
     r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)", cache_pattern=False
 )
-# the label naming a {% block %} or {% endblock %}
+# the label naming a {% block %} or {% endblock %}. A trailing whitespace
+# control marker is not part of the label, so `{% endblock a+%}` names `a`.
 _BLOCK_LABEL_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*(?:end)?block\s+([^\s%+-][^\s%]*)", cache_pattern=False
+    r"\{%[-+]?\s*(?:end)?block\s+([^\s%+-](?:[^\s%]*[^\s%+-])?)",
+    cache_pattern=False,
 )
 
 
