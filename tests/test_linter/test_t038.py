@@ -174,6 +174,68 @@ jinja_test_data = [
         ([]),
         id="issue_2297_comment_after_block_tag",
     ),
+    pytest.param(
+        # https://github.com/djlint/djLint/issues/2396
+        ("{% for item in seq -%}\n{{ item }}\n{%- endfor %}\n"),
+        ([]),
+        id="issue_2396_whitespace_control_dash",
+    ),
+    pytest.param(
+        ("{%+ for item in seq +%}\n{{ item }}\n{%+ endfor +%}\n"),
+        ([]),
+        id="issue_2396_whitespace_control_plus",
+    ),
+    pytest.param(
+        ("{%+ if x %}\ntext\n{%- endif %}\n"),
+        ([]),
+        id="issue_2396_mixed_whitespace_control",
+    ),
+    pytest.param(
+        ("{%+ if x +%}\ntext\n"),
+        ([
+            {
+                "code": "T038",
+                "line": "1:0",
+                "match": "{%+ if x +%}",
+                "message": "Block tag has no matching end tag.",
+            }
+        ]),
+        id="issue_2396_unclosed_if_with_plus",
+    ),
+    pytest.param(
+        ("text\n{%+ endif +%}\n"),
+        ([
+            {
+                "code": "T038",
+                "line": "2:0",
+                "match": "{%+ endif +%}",
+                "message": "End tag has no matching block tag.",
+            }
+        ]),
+        id="issue_2396_orphan_endif_with_plus",
+    ),
+    pytest.param(
+        ("{% block a %}\ntext\n{% endblock +%}\n"),
+        ([]),
+        id="issue_2396_unnamed_endblock_with_plus",
+    ),
+    pytest.param(
+        ("{%+ block a +%}\ntext\n{%+ endblock a +%}\n"),
+        ([]),
+        id="issue_2396_named_endblock_with_plus",
+    ),
+    pytest.param(
+        ("{%- block a -%}\ntext\n{%- endblock b -%}\n"),
+        ([
+            {
+                "code": "T038",
+                "line": "3:0",
+                "match": "{%- endblock b -%}",
+                "message": "Endblock name should match opening block name.",
+            }
+        ]),
+        id="issue_2396_mismatched_endblock_name_with_dash",
+    ),
 ]
 
 

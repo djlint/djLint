@@ -41,14 +41,14 @@ _TEMPLATE_TAG_PATTERN: Final = re.compile(
 # {% name %}, {{#name}}, {{^name}} (inverted section), {{#> name}}
 # (handlebars partial block), {{#*name}} (handlebars decorator)
 _OPEN_NAME_PATTERN: Final = re.compile(
-    r"(?:\{%-?|\{\{[#^][*>]?)\s*([\w.-]+)", cache_pattern=False
+    r"(?:\{%[-+]?|\{\{[#^][*>]?)\s*([\w.-]+)", cache_pattern=False
 )
 _END_NAME_PATTERN: Final = re.compile(
-    r"\{%-?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)", cache_pattern=False
+    r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)", cache_pattern=False
 )
 # the label naming a {% block %} or {% endblock %}
 _BLOCK_LABEL_PATTERN: Final = re.compile(
-    r"\{%-?\s*(?:end)?block\s+([^\s%-][^\s%]*)", cache_pattern=False
+    r"\{%[-+]?\s*(?:end)?block\s+([^\s%+-][^\s%]*)", cache_pattern=False
 )
 
 
