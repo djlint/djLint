@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- `T038` no longer reports a balanced jinja block whose tags carry the `+` whitespace-control marker. `{%+ if x %}` was not read as a block tag, leaving its `{% endif %}` reported as `End tag has no matching block tag.`, and `{%+ endif %}` was not read as an end tag, leaving its `{% if %}` reported as `Block tag has no matching end tag.`. An unbalanced `{%+ if x %}` went unreported for the same reason, and a marker written against an endblock's name was read as part of it, so `{% endblock +%}` was reported as naming a block `+` and `{% endblock a+%}` as naming a block `a+`, neither matching its opening name. Formatting indents these blocks now too.
+
 ## [1.44.2] - 2026-08-08
 
 ### Fix

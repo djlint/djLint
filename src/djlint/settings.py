@@ -1518,7 +1518,7 @@ class Config:
         is_golang = self.profile == "golang"
         self.template_indent = (
             r"""
-            (?:\{\{\#|\{%-?)[ ]*
+            (?:\{\{\#|\{%[-+]?)[ ]*
                 ("""
             + ignore_blocks_guard
             + _INDENT_TEMPLATE_TAGS
@@ -1544,7 +1544,7 @@ class Config:
                   # handlebars block close {{/name}}, but not a golang
                   # comment {{/* ... */}}, which closes nothing
                   (?:\{\{\/(?!\*))
-                | (?:\{%-?[ ]*end"""
+                | (?:\{%[-+]?[ ]*end"""
             + end_tag_guard
             + ignore_blocks_guard
             + r""")
