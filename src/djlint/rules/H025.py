@@ -33,21 +33,22 @@ P_LIST_CHILD_MESSAGE: Final = "List tags should not be nested inside p tags."
 P_LIST_CHILD_TAGS: Final = frozenset(("ol", "ul"))
 
 _CONDITIONAL_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*(endif|elseif|elif|else|if)\b", cache_pattern=False
+    r"\{%[-+]?\s*(endfor|endif|elseif|elif|else|for|if)\b",
+    cache_pattern=False,
 )
 
 
 def _conditional_branches(html: str) -> tuple[tuple[tuple[int, int], ...], ...]:
-    """Branch spans of every complete {% if %}...{% endif %} block."""
+    """Branch spans of every complete if/endif or for/endfor block."""
     complete: list[tuple[tuple[int, int], ...]] = []
     open_blocks: list[tuple[list[tuple[int, int]], int]] = []
     for match in _CONDITIONAL_PATTERN.finditer(html):
         keyword = match.group(1)
-        if keyword == "if":
+        if keyword in {"if", "for"}:
             open_blocks.append(([], match.end()))
         elif not open_blocks:
             continue
-        elif keyword == "endif":
+        elif keyword in {"endif", "endfor"}:
             branches, start = open_blocks.pop()
             branches.append((start, match.start()))
             complete.append(tuple(branches))
