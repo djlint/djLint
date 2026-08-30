@@ -33,6 +33,7 @@
 - A trailing or empty entry in `custom_blocks`, `ignore_blocks`, `custom_html`, `blank_line_after_tag` or `blank_line_before_tag`, as in `ignore_blocks = "raw,"`, is now dropped. It used to build a pattern that matched everywhere: `ignore_blocks` silently turned off all template indentation, and the `blank_line_*` options padded every template tag in the file.
 - On free-threaded Python, `--format-css` and `--format-js` no longer share the beautifier indent level between the threads formatting different files, which could indent a `<style>` or `<script>` body by the wrong amount.
 - `--statistics` now prints its summary alongside GitHub annotations. It was silently dropped whenever the GitHub output was on, which happens by itself inside a workflow.
+- A `wrap_line_length` in the `css` or `js` settings no longer drops the tail of a `<style>` or `<script>` body. The block is laid out at two indent levels to find the lines the beautifier owns, and a width that wraps differently at the two left the extra lines with nothing to pair against.
 
 ### Feature
 

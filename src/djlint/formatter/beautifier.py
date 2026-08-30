@@ -39,19 +39,27 @@ def _beautify_indented(
 
     The beautifier options cannot express a fixed leading indent, so the
     source is laid out twice at different indent levels; the lines that move
-    are the ones the beautifier owns, and only those take `indent`.
+    are the ones the beautifier owns, and only those take `indent`. A
+    `wrap_line_length` narrow enough to wrap differently at the two levels
+    leaves the runs with nothing to compare, and there every line is taken
+    as the beautifier's.
     """
     options = dict(beautifier_config)
-
     options["indent_level"] = 1
     lines = beautify(source, options).splitlines()
 
+    if not indent:
+        return "".join(f"\n{line}" for line in lines)
+
     options["indent_level"] = 2
     shifted = beautify(source, options).splitlines()
+    comparable = len(lines) == len(shifted)
 
     return "".join(
-        f"\n{indent}{line}" if line != moved else f"\n{line}"
-        for line, moved in zip(lines, shifted, strict=False)
+        f"\n{line}"
+        if comparable and line == shifted[index]
+        else f"\n{indent}{line}"
+        for index, line in enumerate(lines)
     )
 
 

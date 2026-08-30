@@ -35,9 +35,9 @@ RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 _SPAN_CACHE_SIZE: Final = 1
 _LINE_CACHE_SIZE: Final = 64
 
-# front matter opens the file and holds the site generator's own data, so a
-# block tag in it means "---" is a yaml document separator instead
 YAML_FRONT_MATTER: Final = r"""
+    # front matter opens the file and holds the site generator's own data,
+    # so a block tag in it means "---" is a yaml document separator instead
     \A---(?:(?!\{%)[\s\S])*?^---[^\S\n]*$
 """
 

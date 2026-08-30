@@ -82,6 +82,14 @@ templates = [
         "{% set hero %}{% block h %}{% endblock %}{% endset %}\n",
         id="single line set block",
     ),
+    pytest.param(
+        "{{ function(\n    a=1,\n    b=2,\n) }}\n",
+        id="call arguments on their own lines",
+    ),
+    pytest.param(
+        "<p>\n    {% language 'de' %}text{% endlanguage %}\n    <span>x</span>\n</p>\n",
+        id="single line template block among siblings",
+    ),
 ]
 
 option_sets = [
