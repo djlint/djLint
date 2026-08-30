@@ -83,8 +83,8 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 | T040 | extends 或 include 标签中缺少模板名或模板名为空。                                  | ✔️       |
 | H041 | 标签在与打开它不同的模板块中关闭。                                                 | ✔️       |
 | H042 | label 的 for 属性在此文件中没有匹配的元素 id。                                     | ✔️       |
-| H043 | button 标签应有 `type` 属性。                                             | -        |
-| H044 | thead 中不应混用 `th` 和 `td` 单元格。                                       | -        |
+| H043 | button 标签应有 `type` 属性。                                                      | -        |
+| H044 | thead 中不应混用 `th` 和 `td` 单元格。                                             | -        |
 
 ### 编码规则
 
