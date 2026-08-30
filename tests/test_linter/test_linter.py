@@ -997,3 +997,37 @@ def test_H024_covers_link_and_anchors_the_name(
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))
         assert "H024" not in result.output
+
+
+def test_D018_only_reports_a_hardcoded_route(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    for quiet in (
+        b'<a href="{% url \'profile\' %}" data-src="lazy">p</a>',
+        b'<div class="card" data-src="avatar"></div>',
+        b"<form action=\" {% url 'search' %}\">f</form>",
+        b'<a href="/static/doc.pdf">d</a>',
+        b'<a href="/media/uploads/1.png">m</a>',
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+        assert "D018" not in result.output
+
+    for reported in (
+        b'<a href="/cart">c</a>',
+        b'<div data-src="/table/1/log"></div>',
+    ):
+        write_to_file(tmp_file.name, reported)
+        result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+        assert "D018 1:" in result.output
+
+
+def test_H043_steps_over_a_template_block(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(
+        tmp_file.name,
+        b'<button {% if n > 5 %}type="button"{% endif %}>S</button>',
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
+    assert "H043" not in result.output

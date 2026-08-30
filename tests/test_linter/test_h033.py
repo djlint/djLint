@@ -157,3 +157,13 @@ def test_base(
         *(x for x in expected if x not in output[filename]),
     )
     assert not mismatch
+
+
+def test_action_after_an_attribute_holding_a_bracket(
+    django_config: Config,
+) -> None:
+    source = '<form x-show="count > 0" action=" /x/">f</form>'
+    filename = "test.html"
+    output = linter(django_config, source, filename, filename)
+
+    assert any(error["code"] == "H033" for error in output[filename])

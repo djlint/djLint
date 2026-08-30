@@ -142,22 +142,28 @@
     message: (Django) Internal links should use the {% url ... %} pattern.
     flags: re.DOTALL|re.I
     patterns:
-      - <(?:a|div|span|input)\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:[a-z][a-z0-9+.-]*:|//|/[\"']))[\w|/]+
-      - <form\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\saction=[\"|'](?!(?:[a-z][a-z0-9+.-]*:|//|/[\"']))[\w|/|\s]+
+      # the value has to look like a path, so a data-src holding a word such
+      # as "lazy" is not read as a link, and padding is stepped over so a
+      # spaced {% url %} is not reported as a hardcoded one
+      - <(?:a|div|span|input)\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\s(?:href|data-url|data-src|action)\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
+      - <form\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\saction\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
 - rule:
     name: J018
     message: (Jinja) Internal links should use the {{ url_for() ... }} pattern.
     flags: re.DOTALL|re.I
     patterns:
-      - <(?:a|div|span|input)\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\s(?:href|data-url|data-src|action)=[\"|'](?!(?:[a-z][a-z0-9+.-]*:|//|/[\"']))[\w|/]+
-      - <form\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\saction=[\"|'](?!(?:[a-z][a-z0-9+.-]*:|//|/[\"']))[\w|/|\s]+
+      # the value has to look like a path, so a data-src holding a word such
+      # as "lazy" is not read as a link, and padding is stepped over so a
+      # spaced {% url %} is not reported as a hardcoded one
+      - <(?:a|div|span|input)\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\s(?:href|data-url|data-src|action)\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
+      - <form\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\saction\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
 - rule:
     name: H019
     message: Replace 'javascript:abc()' with on_ event and real url.
     flags: re.DOTALL|re.I
     patterns:
-      - <(?:a|div|span|input)\s+?[^>]*?(?:href|data-url)=[\"|']javascript:[\w|/]+
-      - <form\s+?[^>]*?(?:action)=[\"|']javascript:[\w|/]+
+      - '<(?:a|div|span|input)\s[^>]*?(?:href|data-url)\s*=["'']javascript:'
+      - '<form\s[^>]*?action\s*=["'']javascript:'
 - rule:
     name: H020
     message: Empty tag pair found. Consider removing.
@@ -242,8 +248,8 @@
     name: H033
     message: Extra whitespace found in form action.
     patterns:
-      - <form[^>]*\saction=['|"]\s
-      - <form[^>]*\saction=(['|"])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^"'{]))*\s+?\1
+      - <form\b(\"[^\"]*\"|'[^']*'|[^'\">])*?\saction\s*=(["'])\s
+      - <form\b(?:\"[^\"]*\"|'[^']*'|[^'\">])*?\saction\s*=([\"'])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^\"'{]))*\s+?\1
 - rule:
     name: T034
     message: Did you intend to use {% ... %} instead of {% ... }%?
@@ -299,7 +305,7 @@
     patterns:
       # a quoted value is stepped over whole, and the name must start on a
       # name boundary, so neither title="type=x" nor data-type counts as type
-      - <button\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])type\s*=)[^'">])*/?>
+      - <button\b(?:"[^"]*"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|(?!(?<![-.:\w])type\s*=)[^'">{}])*/?>
 - rule:
     name: H044
     message: Thead should not mix th and td cells.
