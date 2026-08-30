@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.const import HTML_LOWERCASE_ATTRIBUTE_NAMES
 from djlint.formatter.class_attributes import (
     CLASS_ATTRIBUTE_NEWLINE,
     VERBATIM_ATTRIBUTE_NEWLINE,
@@ -52,15 +53,20 @@ def _rendered_length(config: Config, attribute_group: str) -> int:
     )
 
 
-def quote_attribute_values(config: Config, attribute_group: str) -> str:
-    """Put quotes around an attribute value written without them.
+def normalize_attributes(config: Config, attribute_group: str) -> str:
+    """Lowercase a known attribute name and quote a bare value.
+
+    Only the names `H010` knows are lowercased, so a framework binding
+    such as `viewBox` or an angular input keeps the case it carries.
 
     A value holding a quote of its own is left as written. It is not valid
     html to begin with, and a browser reads `a=b'c` as the single value
     `b'c`, where the match stops at the quote: writing `a="b"'c` would make
     the rest an attribute of its own.
     """
-    if not _UNQUOTED_VALUE_PATTERN.search(attribute_group):
+    quotable = _UNQUOTED_VALUE_PATTERN.search(attribute_group) is not None
+    lowerable = not config.ignore_case and not attribute_group.islower()
+    if not (quotable or lowerable):
         return attribute_group
 
     matches = list(config.attribute_pattern.finditer(attribute_group))
@@ -69,17 +75,32 @@ def quote_attribute_values(config: Config, attribute_group: str) -> str:
 
     output: list[str] = []
     previous_end = 0
+
+    def rewrite(span: tuple[int, int], text: str) -> None:
+        nonlocal previous_end
+        output.extend((attribute_group[previous_end : span[0]], text))
+        previous_end = span[1]
+
     for match in matches:
-        value = match.group(2)
-        if not match.group(1) or not value or {'"', "'"} & set(value):
+        name, value = match.group(1, 2)
+        if not name:
             continue
 
-        start, end = match.span(2)
-        if attribute_group[end : end + 1] not in {"", " ", "\t"}:
-            continue
+        if (
+            lowerable
+            and not name.islower()
+            and name.lower() in HTML_LOWERCASE_ATTRIBUTE_NAMES
+        ):
+            rewrite(match.span(1), name.lower())
 
-        output.extend((attribute_group[previous_end:start], f'"{value}"'))
-        previous_end = end
+        if (
+            quotable
+            and value
+            and not {'"', "'"} & set(value)
+            and attribute_group[match.end(2) : match.end(2) + 1]
+            in {"", " ", "\t"}
+        ):
+            rewrite(match.span(2), f'"{value}"')
 
     output.append(attribute_group[previous_end:])
     return "".join(output)

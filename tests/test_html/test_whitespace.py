@@ -69,7 +69,7 @@ test_data = [
         ),
         (
             "<!DOCTYPE html>\n"
-            '<html CLASS="no-js mY-ClAsS">\n'
+            '<html class="no-js mY-ClAsS">\n'
             "    <head>\n"
             '        <meta CHARSET="utf-8">\n'
             "        <title>My tITlE</title>\n"

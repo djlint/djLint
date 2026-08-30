@@ -250,3 +250,17 @@ HTML_RAW_TEXT_ELEMENTS: Final = frozenset((
     "textarea",
     "title",
 ))
+
+HTML_LOWERCASE_ATTRIBUTE_NAMES: Final = frozenset((
+    "alt",
+    "class",
+    "height",
+    "id",
+    "lang",
+    "media",
+    "src",
+    "srcset",
+    "style",
+    "title",
+    "width",
+))

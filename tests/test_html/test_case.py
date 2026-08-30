@@ -33,7 +33,7 @@ test_data = [
         ),
         (
             "<!DOCTYPE html>\n"
-            '<html CLASS="no-js mY-ClAsS">\n'
+            '<html class="no-js mY-ClAsS">\n'
             "    <head>\n"
             '        <meta CHARSET="utf-8">\n'
             "        <title>My tITlE</title>\n"
@@ -58,6 +58,31 @@ test_data = [
 ]
 
 
+test_data_attributes = [
+    pytest.param(
+        ('<div CLASS="a" ID="b"></div>\n'),
+        ('<div class="a" id="b"></div>\n'),
+        id="known_attribute_names",
+    ),
+    pytest.param(
+        # a name H010 does not know keeps the case it carries
+        ('<path D="M0" [ngModel]="x" Charset="y" />\n'),
+        ('<path D="M0" [ngModel]="x" Charset="y" />\n'),
+        id="unknown_attribute_names",
+    ),
+]
+
+
+@pytest.mark.parametrize(("source", "expected"), test_data_attributes)
+def test_attribute_case(
+    source: str, expected: str, basic_config: Config
+) -> None:
+    output = formatter(basic_config, source)
+
+    printer(expected, source, output)
+    assert expected == output
+
+
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_base(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
@@ -71,7 +96,12 @@ test_data_two = [
         ("<dIV></Div>\n<bR>\n<Br />\n<MeTa class='asdf' />\n"),
         ("<dIV></Div>\n<bR>\n<Br />\n<MeTa class='asdf' />\n"),
         id="preserve_case",
-    )
+    ),
+    pytest.param(
+        ('<div CLASS="a" ID="b" viewBox="0 0"></div>\n'),
+        ('<div CLASS="a" ID="b" viewBox="0 0"></div>\n'),
+        id="preserve_attribute_case",
+    ),
 ]
 
 
