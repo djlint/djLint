@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from djlint.lint import linter
-from tests.conftest import lint_printer
+from tests.conftest import config_builder, lint_printer
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -208,6 +208,37 @@ def test_nested_jinja_for_else_is_not_an_orphan(jinja_config: Config) -> None:
     filename = "test.html"
 
     output = linter(jinja_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]
+
+
+def test_handlebars_conditional_wrapper_is_not_an_orphan(
+    handlebars_config: Config,
+) -> None:
+    source = (
+        '{{#if wide}}<div class="wide">{{else}}<div class="narrow">{{/if}}\n'
+        "  <p>Body</p>\n"
+        "</div>\n"
+    )
+    filename = "test.html"
+
+    output = linter(handlebars_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]
+
+
+def test_golang_conditional_wrapper_is_not_an_orphan() -> None:
+    config = config_builder({"profile": "golang"})
+    source = (
+        '{{if .Wide}}<div class="wide">{{else}}<div class="narrow">{{end}}\n'
+        "  <p>Body</p>\n"
+        "</div>\n"
+    )
+    filename = "test.html"
+
+    output = linter(config, source, filename, filename)
 
     lint_printer(source, [], output[filename])
     assert not output[filename]
