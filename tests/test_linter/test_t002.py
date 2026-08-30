@@ -171,16 +171,9 @@ single_quote_test_data = [
         id="double_quotes_reported",
     ),
     pytest.param(
-        # html attribute quoting stays H008's business
+        # the single quotes are load-bearing, so H008 leaves them alone too
         ("<span title='{% translate \"this\" %}'></span>"),
-        ([
-            {
-                "code": "H008",
-                "line": "1:0",
-                "match": "<span title='{% tran",
-                "message": "Attributes should be double quoted.",
-            }
-        ]),
+        ([]),
         id="double_quotes_in_attribute",
     ),
 ]

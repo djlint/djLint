@@ -100,6 +100,12 @@ test_data = [
         ]),
         id="real lang",
     ),
+    pytest.param(
+        # a custom element whose name starts with "html" is not the root
+        ('<html-midi-player src="a.mid"></html-midi-player>'),
+        ([]),
+        id="custom_element",
+    ),
 ]
 
 

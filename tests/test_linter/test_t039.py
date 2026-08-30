@@ -84,6 +84,31 @@ django_test_data = [
         id="inside_verbatim",
     ),
     pytest.param(("<p>plain</p>\n"), ([]), id="no_template_syntax"),
+    pytest.param(
+        ('{% set a = {"x": {"y": 1}} %}\n'), ([]), id="nested_mapping"
+    ),
+    pytest.param(
+        ("{% include 'x' with {'attr': {'class': 'y'}} %}\n"),
+        ([]),
+        id="nested_mapping_in_include",
+    ),
+    pytest.param(
+        ('{% set a = {"a": {"b": {"c": 1}}} %}\n'),
+        ([]),
+        id="deeply_nested_mapping",
+    ),
+    pytest.param(
+        ("{% if x }}\n"),
+        ([
+            {
+                "code": "T039",
+                "line": "1:0",
+                "match": "{% if x }}",
+                "message": "Unclosed template tag found.",
+            }
+        ]),
+        id="stray_closing_delimiter_with_nothing_open",
+    ),
 ]
 
 

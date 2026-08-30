@@ -29,6 +29,11 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
     skipped whole. Two malformed shapes belong to other rules and are left
     to them: `{% ... }%` is T034's typo, and a tag whose only closing
     delimiter sits inside an unterminated string is T027's.
+
+    Braces inside a block tag are counted, so the "}}" ending a nested
+    mapping, as in `{% set a = {"x": {"y": 1}} %}`, closes the literal
+    rather than the tag. A "}}" with nothing open is still the stray
+    delimiter it looks like.
     """
     pos = 0
     length = len(html)
@@ -64,6 +69,7 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
         end = -1
         quoted_end = -1
         typo_end = -1
+        depth = 0
         while scan < length:
             char = html[scan]
             if quote:
@@ -82,6 +88,14 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
             elif close == "%}" and html.startswith("}%", scan):
                 typo_end = scan + 2
                 break
+            elif (
+                close == "%}"
+                and char == "{"
+                and not html.startswith(("{%", "{{"), scan)
+            ):
+                depth += 1
+            elif close == "%}" and char == "}" and depth:
+                depth -= 1
             elif html.startswith(("{%", "{{"), scan) or (
                 close == "%}" and html.startswith("}}", scan)
             ):

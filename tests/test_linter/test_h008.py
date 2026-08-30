@@ -75,6 +75,24 @@ test_data = [
         ([]),
         id="issue_2247_template_tag_string_argument",
     ),
+    pytest.param(
+        # the single quotes are load-bearing here
+        ("""<div style='font-family: "Fira Code", monospace'>c</div>"""),
+        ([
+            {
+                "code": "H021",
+                "line": "1:0",
+                "match": "<div style=",
+                "message": "Inline styles should be avoided.",
+            }
+        ]),
+        id="value_holds_a_double_quote",
+    ),
+    pytest.param(
+        ("<div data-title='x'>c</div>"),
+        ([]),
+        id="name_merely_ends_in_a_known_one",
+    ),
 ]
 
 

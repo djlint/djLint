@@ -936,3 +936,64 @@ def test_H043(
     )
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
     assert "H043" not in result.output
+
+
+def test_H016_title_with_attributes(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    document = (
+        b'<!DOCTYPE html><html lang="en"><head>%s</head><body>x</body></html>'
+    )
+
+    for head in (
+        b"<title>P</title>",
+        b"<title id='t'>P</title>",
+        b'<title hx-swap-oob="true">P</title>',
+    ):
+        write_to_file(tmp_file.name, document % head)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H016" not in result.output
+
+    write_to_file(tmp_file.name, document % b'<meta charset="utf-8">')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H016 1:" in result.output
+
+
+def test_H022_loopback_and_prose(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b'<a href="http://example.com">x</a>')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H022 1:" in result.output
+
+    for quiet in (
+        b'<a href="http://localhost:8000/admin/">x</a>',
+        b'<a href="http://127.0.0.1:5432/health">x</a>',
+        b'<a href="http://192.168.1.1/">x</a>',
+        b'<a href="/docs" title="Set src=\'http://localhost\' in dev.ini">g</a>',
+        b'<a data-href="http://example.com">x</a>',
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H022" not in result.output
+
+
+def test_H024_covers_link_and_anchors_the_name(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    for reported in (
+        b'<script type="text/javascript" src="app.js"></script>',
+        b'<style type="text/css">a{color:red}</style>',
+        b'<link rel="stylesheet" type="text/css" href="a.css">',
+    ):
+        write_to_file(tmp_file.name, reported)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H024 1:" in result.output
+
+    for quiet in (
+        b'<script type="module" src="a.js"></script>',
+        b'<script data-type="text/css" src="a.js"></script>',
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H024" not in result.output

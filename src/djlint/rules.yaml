@@ -39,7 +39,8 @@
     message: Html tag should have lang attribute.
     flags: re.DOTALL|re.I
     patterns:
-      - <html\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])lang\s*=)[^'">])*>
+      # "(?![\w-])" keeps a custom element such as <html-midi-player> out
+      - <html(?![\w-])(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])lang\s*=)[^'">])*>
 - rule:
     name: H006
     message: Img tag should have height and width attributes.
@@ -53,13 +54,15 @@
     message: <!DOCTYPE ... > should be present before the html tag.
     flags: re.DOTALL|re.I
     patterns:
-      - '^(?!(?:\s+|<!--.*?-->|{#.*?#}|{%.*?%})*<!doctype\b)(?:\s+|<!--.*?-->|{#.*?#}|{%.*?%})*\K<html'
+      - '^(?!(?:\s+|<!--.*?-->|{#.*?#}|{%.*?%})*<!doctype\b)(?:\s+|<!--.*?-->|{#.*?#}|{%.*?%})*\K<html(?![\w-])'
 - rule:
     name: H008
     message: Attributes should be double quoted.
     flags: re.DOTALL|re.I
     patterns:
-      - <(?:\w+)\b(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*(?:class|id|src|width|height|alt|style|lang|title|srcset|media)=\'[^\']*'
+      # a value holding a double quote has to keep its single quotes, and
+      # the name must start on a name boundary so data-title is not title
+      - <(?:\w+)\b(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*(?<![-.:\w])(?:class|id|src|width|height|alt|style|lang|title|srcset|media)\s*='[^'\"]*'
 - rule:
     name: H009
     message: Tag names should be lowercase.
@@ -117,7 +120,9 @@
     patterns:
       # Title allow a list of global attributes.
       # https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes#list_of_global_attributes
-      - <html[^>]*?>(?:(?!<title(\s+(class|data-[\-\._0-9a-zA-Z:]+|dir|id|lang|translate)=\"[^"]*\")*>).)*</html>
+      # any attributes at all, so a <title id='x'> or a <title hx-swap-oob>
+      # is still a title
+      - <html(?![\w-])[^>]*?>(?:(?!<title(?:\s(?:\"[^\"]*\"|'[^']*'|[^>\"'])*)?>).)*</html>
 - rule:
     name: H017
     message: Void tags should be self closing.
@@ -170,7 +175,9 @@
     message: Use HTTPS for external links.
     flags: re.I
     patterns:
-      - <\w+\s[^>]*?(?:href|data-url|action|src|url|srcset)=[\"|']http://[^>]*?>
+      # a quoted value is stepped over whole, so an "http://" written inside
+      # one is not read as a link; a loopback or private host is not external
+      - <\w+\s(?:\"[^\"]*\"|'[^']*'|[^'\">])*?(?<![-.:\w])(?:href|data-url|action|src|url|srcset)\s*=[\"']http://(?!localhost[:/\"']|127\.0\.0\.1|0\.0\.0\.0|\[::1\]|10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.|[^\"'/]*\.(?:local|test|localhost)[:/\"'])
 - rule:
     name: H023
     message: Do not use entity references.
@@ -182,7 +189,7 @@
     message: Omit type on scripts and styles.
     flags: re.I
     patterns:
-      - <(?:script|style)[^>]*?type=[\"|'](?:(?:text/css)|(?:text/javascript))[^>]*?>
+      - <(?:script|style|link)\b(?:\"[^\"]*\"|'[^']*'|[^'\">])*?(?<![-.:\w])type\s*=[\"'](?:text/css|text/javascript)[\"']
 - rule:
     name: H025
     message: Tag seems to be an orphan.

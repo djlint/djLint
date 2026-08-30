@@ -119,3 +119,14 @@ def test_django_load_before_doctype_allows_html(django_config: Config) -> None:
     lint_printer(source, [], output[filename])
 
     assert not output[filename]
+
+
+def test_custom_element_is_not_the_document_root(django_config: Config) -> None:
+    source = '<html-midi-player src="a.mid"></html-midi-player>'
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+
+    assert not output[filename]
