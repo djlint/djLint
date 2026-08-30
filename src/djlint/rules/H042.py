@@ -1,4 +1,11 @@
-"""Rule H042: Check that label for attributes match an id in the file."""
+"""Rule H042: Check that label for attributes match an id in the file.
+
+The rule can only report a missing id when the file is the whole story.
+Anything that can emit an id this file never shows makes it unsound and
+silences it: `{{ }}` outputs (form widgets), `{% include %}`/`{% extends %}`
+(elements living in other files), unknown custom tags (crispy,
+render_field, ...) and ids built by a template tag.
+"""
 
 from __future__ import annotations
 
@@ -25,10 +32,6 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-# id/for attributes with their values; a valueless attribute equals "".
-# Other name=value pairs and stray quoted values are consumed wholesale so
-# attribute-lookalikes inside values don't match. "." is a name character
-# like "-" is, so data-x.id is one name and holds no id attribute.
 _NAME_CHAR: Final = r"[-.:\w]"
 _ATTR_PATTERN: Final = re.compile(
     rf"(?<!{_NAME_CHAR})(?P<name>id|for)(?!{_NAME_CHAR})"
@@ -40,12 +43,7 @@ _ATTR_PATTERN: Final = re.compile(
 )
 _TEMPLATE_SYNTAX: Final = ("{{", "{%", "{#")
 
-# template tags that provably cannot render an element id. Anything
-# else can emit ids this file never shows: {{ }} outputs (form
-# widgets), {% include %}/{% extends %} (elements live in other
-# files) or unknown custom tags (crispy, render_field, ...). So the
-# file cannot be checked soundly and the rule stays silent for it.
-_SAFE_TAGS: Final = frozenset({
+_TAGS_THAT_CANNOT_RENDER_AN_ID: Final = frozenset({
     "if",
     "elif",
     "else",
@@ -84,18 +82,27 @@ _SAFE_TAGS: Final = frozenset({
     "macro",
     "endmacro",
 })
-_TAG_NAME: Final = re.compile(r"\{%-?\s*(\w+)", cache_pattern=False)
+_TAG_NAME: Final = re.compile(r"\{%[-+]?\s*(\w+)", cache_pattern=False)
 
 
 def _can_check(masked: str) -> bool:
     """Whether every template construct is unable to emit an id."""
     if "{{" in masked:
         return False
-    return all(m.group(1) in _SAFE_TAGS for m in _TAG_NAME.finditer(masked))
+    return all(
+        m.group(1) in _TAGS_THAT_CANNOT_RENDER_AN_ID
+        for m in _TAG_NAME.finditer(masked)
+    )
 
 
 def _attributes(html: str, token: TagToken) -> tuple[tuple[str, str], ...]:
-    """Extract id/for attribute names and values from a tag."""
+    """Extract id/for attribute names and values from a tag.
+
+    A valueless attribute yields "". Other name=value pairs and stray
+    quoted values are consumed wholesale, so attribute-lookalikes inside a
+    value do not match; "." is a name character just as "-" is, so
+    data-x.id is one name and holds no id attribute.
+    """
     return tuple(
         (match.group("name").lower(), unescape(value))
         for match in _ATTR_PATTERN.finditer(
@@ -115,17 +122,27 @@ def _masked(config: Config, html: str) -> str:
     characters inside them would poison the tag tokenizer for the rest of
     the file.
     """
-    chars: list[str] | None = None
-    for pattern in (
-        config.ignored_blocks_pattern,
-        config.ignored_inline_blocks_ix_pattern,
-    ):
-        for match in pattern.finditer(html):
-            start, end = match.span()
-            if chars is None:
-                chars = list(html)
-            chars[start:end] = " " * (end - start)
-    return "".join(chars) if chars else html
+    spans = sorted(
+        match.span()
+        for pattern in (
+            config.ignored_blocks_pattern,
+            config.ignored_inline_blocks_ix_pattern,
+        )
+        for match in pattern.finditer(html)
+    )
+    if not spans:
+        return html
+
+    parts: list[str] = []
+    cursor = 0
+    for start, end in spans:
+        if end <= cursor:
+            continue
+        blank_from = max(start, cursor)
+        parts.extend((html[cursor:blank_from], " " * (end - blank_from)))
+        cursor = end
+    parts.append(html[cursor:])
+    return "".join(parts)
 
 
 def run(
@@ -151,11 +168,8 @@ def run(
         for name, value in _attributes(masked, token):
             if name == "id":
                 if any(marker in value for marker in _TEMPLATE_SYNTAX):
-                    # a template-generated id can match anything; the
-                    # file cannot be checked reliably
                     return ()
                 if value:
-                    # an empty id cannot be referenced by any for value
                     ids.add(value)
             elif token.name.lower() == "label":
                 labels.append((token, value))

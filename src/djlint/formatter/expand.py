@@ -38,53 +38,48 @@ if TYPE_CHECKING:
 _HTML_TAG_NAME_PATTERN: Final = re.compile(
     r"^</?\s*([a-zA-Z][-\w:.]*)", cache_pattern=False
 )
-# tags that lay out nothing of their own, so what sits either side of one
-# is what a break written against it would part
 _TRANSPARENT_ELEMENTS: Final = (
     (HTML_INLINE_LEVEL_ELEMENTS | HTML_VOID_ELEMENTS)
     - HTML_ATOMIC_INLINE_ELEMENTS
     - {"br", "hr"}
 )
 _TEMPLATE_TAG_NAME_PATTERN: Final = re.compile(
-    r"^\{%-?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
+    r"^\{%[-+]?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
 )
 _BODY_TEMPLATE_TAG_PATTERN: Final = re.compile(
-    r"\{%-?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX, cache_pattern=False
+    r"\{%[-+]?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX, cache_pattern=False
 )
 _COMMENT_TEMPLATE_BLOCK_PATTERN: Final = re.compile(
-    r"\{%-?\s*comment\b(?:(?!%}).)*?%\}.*?\{%-?\s*endcomment\s*-?%\}",
+    r"\{%[-+]?\s*comment\b(?:(?!%}).)*?%\}.*?\{%[-+]?\s*endcomment\s*[-+]?%}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
 _NON_RENDERING_TEMPLATE_TAG_PATTERN: Final = re.compile(
-    r"\{\#.*?\#\}|\{%-?.*?%\}|\{\{\s*(?:\#|/|else\b).*?\}\}",
+    r"\{\#.*?\#\}|\{%[-+]?.*?%\}|\{\{\s*(?:\#|/|else\b).*?\}\}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
 _TRIMMED_TRANSLATION_BLOCK_PATTERN: Final = re.compile(
-    r"\{%-?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}"
+    r"\{%[-+]?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}"
     r".*?"
-    r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}",
+    r"\{%[-+]?\s*endblocktrans(?:late)?\s*[-+]?%}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
 _TRIMMED_TRANSLATION_OPEN_PATTERN: Final = re.compile(
-    r"\{%-?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}",
+    r"\{%[-+]?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
 _TRIMMED_TRANSLATION_CLOSE_PATTERN: Final = re.compile(
-    r"\{%-?\s*endblocktrans(?:late)?\s*-?%\}",
+    r"\{%[-+]?\s*endblocktrans(?:late)?\s*[-+]?%}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
-# block-form {% set x %}...{% endset %} captures its body verbatim, so a
-# single-line pair must not be expanded: added whitespace would change the
-# captured value.
-_SET_BLOCK_PATTERN: Final = re.compile(
-    r"\{%-?\s*set\b(?!(?:(?!%\}).)*=)(?:(?!%\}).)*?%\}"
+_VERBATIM_SET_BLOCK_PATTERN: Final = re.compile(
+    r"\{%[-+]?\s*set\b(?!(?:(?!%\}).)*=)(?:(?!%\}).)*?%\}"
     r".*?"
-    r"\{%-?\s*endset\s*-?%\}",
+    r"\{%[-+]?\s*endset\s*[-+]?%}",
     flags=RE_FLAGS_IX,
     cache_pattern=False,
 )
@@ -106,8 +101,8 @@ def _open_close_template_tag_patterns(
         _TEMPLATE_START_TAG_END_NAMES.get(tag_name, f"end{tag_name}")
     )
     return (
-        re.compile(rf"{{%-?\s*{tag}\b(?:(?!%}}).)*?%}}", RE_FLAGS_IX),
-        re.compile(rf"{{%-?\s*{end_tag}\b(?:(?!%}}).)*?%}}", RE_FLAGS_IX),
+        re.compile(rf"{{%[-+]?\s*{tag}\b(?:(?!%}}).)*?%}}", RE_FLAGS_IX),
+        re.compile(rf"{{%[-+]?\s*{end_tag}\b(?:(?!%}}).)*?%}}", RE_FLAGS_IX),
     )
 
 
@@ -140,7 +135,6 @@ def _is_closing_template_tag(tag: str) -> bool:
 def expand_html(html: str, config: Config) -> str:
     """Split single line html into many lines based on tags."""
 
-    # ponytail: per-document cache; bound it if very large templates become common.
     @cache
     def html_tokens(value: str) -> tuple[TagToken, ...]:
         return tuple(tokenize_tags(value))
@@ -165,7 +159,6 @@ def expand_html(html: str, config: Config) -> str:
         value = _TRIMMED_TRANSLATION_BLOCK_PATTERN.sub("", value)
         value = without_html_tags(value)
         value = _NON_RENDERING_TEMPLATE_TAG_PATTERN.sub("", value)
-        # whitespace css does not collapse (e.g. u+2005) is rendered text
         return bool(value.strip(COLLAPSIBLE_WHITESPACE))
 
     def has_template_block_tag(line: str) -> bool:
@@ -201,7 +194,10 @@ def expand_html(html: str, config: Config) -> str:
             or is_trimmed_translation_content(
                 line, inside_trimmed_translation=inside_trimmed_translation
             )
-            or not (has_rendered_text(line) or _SET_BLOCK_PATTERN.search(line))
+            or not (
+                has_rendered_text(line)
+                or _VERBATIM_SET_BLOCK_PATTERN.search(line)
+            )
         ):
             return line
 
@@ -369,6 +365,10 @@ def expand_html(html: str, config: Config) -> str:
         Looks through tags that lay out nothing of their own, and through
         the inside edge of a box, where whitespace is the edge of that box's
         own content, so what lies beyond it is what would be parted.
+
+        Comments and template statements lay out nothing and are looked
+        past; an interpolation renders a value and counts. Where template
+        statements break is the template's own business, not this check's.
         """
         while True:
             char = html[index - 1 : index] if back else html[index : index + 1]
@@ -386,15 +386,11 @@ def expand_html(html: str, config: Config) -> str:
                     )
                     if found < 0:
                         return True
-                    # a comment lays out nothing; look past it
                     index = found if back else found + 2
                     continue
-                # an interpolation renders a value; a statement lays out
-                # nothing, and where those break is the template rules'
-                # business rather than this check's
                 return pair == ("}}" if back else "{{")
             if char != (">" if back else "<"):
-                return True  # text renders
+                return True
             if back:
                 start = html.rfind("<", 0, index)
                 if start < 0:
@@ -406,17 +402,13 @@ def expand_html(html: str, config: Config) -> str:
                     return True
                 tag, index = html[index : end + 1], end + 1
             if tag.startswith("<!--"):
-                continue  # a comment lays out nothing either
+                continue
             name = _tag_name(tag)
             if name in HTML_ATOMIC_INLINE_ELEMENTS:
-                # a void tag is a box whichever side we came from; for the
-                # rest only the outside edge is, since against the inside
-                # one we are at the edge of the element's own content
-                return name in HTML_VOID_ELEMENTS or back == tag.startswith(
-                    "</"
-                )
+                at_outside_edge = back == tag.startswith("</")
+                return name in HTML_VOID_ELEMENTS or at_outside_edge
             if name not in _TRANSPARENT_ELEMENTS:
-                return False  # a block edge drops the whitespace anyway
+                return False
 
     def splits_inline_boxes(out_format: str, match: re.Match[str]) -> bool:
         """Whether a break here would part rendered content that touches.
@@ -460,32 +452,35 @@ def expand_html(html: str, config: Config) -> str:
 
         return out_format % match.group(1)
 
-    add_left = partial(add_html_line, "\n%s")
-    add_right = partial(add_html_line, "%s\n")
+    break_before_html_tag = partial(add_html_line, "\n%s")
+    break_after_html_tag = partial(add_html_line, "%s\n")
 
     break_char = config.break_before
 
-    # html tags - break before
     html = re.sub(
         rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)",
-        add_left,
+        break_before_html_tag,
         html,
         flags=RE_FLAGS_IX,
     )
 
-    # html tags - break after
     html = re.sub(
         rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?!\s*?\n)(?=[^\n])",
-        add_right,
+        break_after_html_tag,
         html,
         flags=RE_FLAGS_IX,
     )
 
-    # template tag breaks
     def should_i_move_template_tag(
         out_format: str, match: re.Match[str]
     ) -> str:
-        # ensure template tag is not inside an html tag and also not the first line of the file
+        """Break against a template tag unless it belongs where it is.
+
+        A tag inside an html tag or an ignored block stays put, and so does
+        one already at the start of the file. The enclosing-tag search
+        excludes ">" from quoted values so a wild match cannot run past the
+        end of a tag (issue #640).
+        """
         if inside_ignored_block(config, html, match):
             return match.group(1)
 
@@ -499,8 +494,6 @@ def expand_html(html: str, config: Config) -> str:
         if not re.search(
             r"\<(?:"
             + str(config.indent_html_tags)
-            # added > as not allowed inside a "" or '' to prevent invalid wild html matches
-            # for issue #640
             + r")\b(?:\"[^\">]*\"|'[^'>]*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^>{}])*?"
             + re.escape(match.group(1))
             + "$",
@@ -513,27 +506,31 @@ def expand_html(html: str, config: Config) -> str:
 
         return match.group(1)
 
-    # template tags
-    # break before
+    break_before_template_tag = partial(should_i_move_template_tag, "\n%s")
+    break_after_template_tag = partial(should_i_move_template_tag, "%s\n")
+
     html = re.sub(
         break_char
         + r"\K((?:{%|{{\#)[ ]*?(?:"
         + config.break_template_tags
         + ")[^}]+?[%}]})",
-        partial(should_i_move_template_tag, "\n%s"),
+        break_before_template_tag,
         html,
         flags=RE_FLAGS_IMX,
     )
 
-    # break after
     html = re.sub(
         rf"((?:{{%|{{{{\#)[ ]*?(?:{config.break_template_tags})(?>{config.template_tags}|[^}}])+?[%}}]}})(?=[^\n])",
-        partial(should_i_move_template_tag, "%s\n"),
+        break_after_template_tag,
         html,
         flags=RE_FLAGS_IMX,
     )
 
-    for index, line in enumerate(protected_lines):
-        html = html.replace(f"{marker_prefix}{index}__", line)
+    if protected_lines:
+        html = re.sub(
+            rf"{re.escape(marker_prefix)}(\d+)__",
+            lambda match: protected_lines[int(match.group(1))],
+            html,
+        )
 
     return html

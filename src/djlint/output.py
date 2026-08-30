@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 import shutil
 from collections import Counter
 from pathlib import Path
@@ -26,13 +25,6 @@ _OUTPUT_WHITESPACE_PATTERN: Final = re.compile(
 )
 
 
-def _count_digits(num: int, /) -> int:
-    """Faster alternative to len(str(num))"""
-    if num == 0:
-        return 1
-    return math.floor(math.log10(abs(num))) + 1
-
-
 def report_on_stderr(config: Config, /) -> bool:
     """Whether the report has to keep off stdout.
 
@@ -43,13 +35,10 @@ def report_on_stderr(config: Config, /) -> bool:
 
 
 def print_output(
-    config: Config, file_errors: Iterable[ProcessResult], file_count: int
+    config: Config, file_errors: Sequence[ProcessResult], file_count: int
 ) -> int:
     """Print results to console."""
     file_quantity = build_quantity(file_count)
-    # format errors
-    reformat_success_message = ""
-    lint_success_message = ""
     lint_error_count = 0
     format_error_count = 0
     print_blanks = not config.stdin and not config.quiet
@@ -67,13 +56,11 @@ def print_output(
                     error["format_message"]
                 )
             elif not config.stdin:
-                # reformat message
                 format_error_count += build_check_output(
                     error["format_message"], config
                 )
 
         if error.get("lint_message"):
-            # lint message
             lint_error_count += build_output(error["lint_message"], config)
 
     if config.statistics and config.lint:
@@ -89,7 +76,7 @@ def print_output(
     reformat_success_message = f"{tense_message} updated."
 
     error_case = "error" if lint_error_count == 1 else "errors"
-    lint_success_message += (
+    lint_success_message = (
         f"Linted {file_quantity}, found {lint_error_count} {error_case}."
     )
 
@@ -143,8 +130,6 @@ def build_output(
         key=lambda x: tuple(int(i) for i in x["line"].split(":")),
     )
 
-    width, _ = shutil.get_terminal_size()
-
     if not errors:
         return 0
 
@@ -152,6 +137,7 @@ def build_output(
     filename = build_relative_path(next(iter(error)), config.project_root)
 
     if "{filename}" not in config.linter_output_format and not config.stdin:  # noqa: RUF027
+        width, _ = shutil.get_terminal_size()
         echo(
             style(f"\n{filename}\n", fg="green", bold=True)
             + style("─" * (width - 1), dim=True)
@@ -190,14 +176,13 @@ def build_check_output(
     if not errors:
         return 0
 
-    colors: dict[str, dict[str, Any]] = {
-        "-": {"fg": "yellow"},
-        "+": {"fg": "green"},
-        "@": {"fg": "blue", "bold": True},
-    }
-    width, _ = shutil.get_terminal_size()
-
     if not config.quiet and bool(next(iter(errors.values()))):
+        colors: dict[str, dict[str, Any]] = {
+            "-": {"fg": "yellow"},
+            "+": {"fg": "green"},
+            "@": {"fg": "blue", "bold": True},
+        }
+        width, _ = shutil.get_terminal_size()
         echo(
             style(
                 f"\n{build_relative_path(next(iter(errors)), config.project_root)}\n",
@@ -263,21 +248,20 @@ def build_stats_output(
         err=err,
     )
 
-    if messages and codes:
-        longest_code = len(max(messages, key=len))
-        longest_count = len(
-            str(max(Counter(codes).values(), key=_count_digits))
-        )
+    counts = Counter(codes)
 
-        for code in sorted(Counter(codes).items()):
-            code_space = (longest_code - len(code[0])) * " "
-            count_space = (longest_count - _count_digits(code[1])) * " "
+    if counts:
+        code_width = max(len(code) for code in counts)
+        count_width = len(str(max(counts.values())))
 
+        for code, count in sorted(counts.items()):
             echo(
-                style(code[0], fg="yellow")
-                + style(f" {code_space}{code[1]}", fg="blue")
-                + f" {count_space}{messages[code[0]]}",
+                (
+                    style(f"{code:<{code_width}}", fg="yellow")
+                    + style(f" {count:<{count_width}}", fg="blue")
+                    + f" {messages.get(code, '')}"
+                ).rstrip(),
                 err=err,
             )
 
-    return sum(Counter(codes).values())
+    return len(codes)

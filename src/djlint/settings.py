@@ -15,12 +15,18 @@ from click import BadParameter, UsageError, echo, style
 from pathspec import PathSpec
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
-from djlint.helpers import RE_FLAGS_IMSX, RE_FLAGS_ISX, RE_FLAGS_IX
+from djlint.helpers import (
+    RE_FLAGS_IMSX,
+    RE_FLAGS_IMX,
+    RE_FLAGS_ISX,
+    RE_FLAGS_IX,
+    YAML_FRONT_MATTER,
+    split_option_list,
+)
 
 try:
     from pathspec.patterns.gitignore import GitIgnorePatternError
 except ImportError:
-    # pathspec < 1.0 exposes the older gitwildmatch implementation.
     from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
         GitWildMatchPatternError as GitIgnorePatternError,
     )
@@ -35,7 +41,6 @@ if sys.version_info >= (3, 11):
     try:
         import tomllib
     except ImportError:
-        # Help users on older alphas
         if not TYPE_CHECKING:
             import tomli as tomllib
 else:
@@ -109,8 +114,6 @@ def load_gitignore(root: Path) -> PathSpec[Pattern]:
         return PathSpec.from_lines(_GITIGNORE_PATTERN, git_lines)
 
     except GitIgnorePatternError as e:
-        # the file is the user's, not djLint's, so say so plainly instead
-        # of raising through to the traceback and the bug report banner
         msg = f"Could not parse {gitignore}: {e}"
         raise UsageError(msg) from None
 
@@ -157,10 +160,12 @@ def find_djlint_rules(root: Path) -> Path | None:
 
 
 def _editorconfig_glob_matches_html(glob: str, extension: str) -> bool:
-    """Whether an .editorconfig section applies to template files."""
+    """Whether an .editorconfig section applies to template files.
+
+    One level of {a,b} alternation is expanded before matching.
+    """
     if glob == "*":
         return True
-    # expand one level of {a,b} alternation
     globs = [glob]
     if "{" in glob and "}" in glob:
         head, _, rest = glob.partition("{")
@@ -339,48 +344,49 @@ def _as_comma_separated(value: Any) -> Any:
     return value
 
 
+def _build_block_alternation(tags: Iterable[str]) -> str:
+    return "|".join(
+        sorted(
+            chain.from_iterable((rf"{tag}\b", rf"end{tag}\b") for tag in tags)
+        )
+    )
+
+
 def build_custom_blocks(custom_blocks: str | None) -> str | None:
     """Build regex string for custom template blocks."""
-    if custom_blocks:
-        open_tags = {x.strip() + r"\b" for x in custom_blocks.split(",")}
-        close_tags = {f"end{x}" for x in open_tags}
-        return "|" + "|".join(sorted(open_tags | close_tags))
-    return None
+    tags = split_option_list(custom_blocks)
+    if not tags:
+        return None
+    return "|" + _build_block_alternation(tags)
 
 
 def build_ignore_blocks(ignore_blocks: str | None) -> str | None:
     """Build regex string for template blocks to not format."""
-    if ignore_blocks:
-        open_tags = {x.strip() + r"\b" for x in ignore_blocks.split(",")}
-        close_tags = {f"end{x}" for x in open_tags}
-        return "|".join(sorted(open_tags | close_tags))
-    return None
+    tags = split_option_list(ignore_blocks)
+    if not tags:
+        return None
+    return _build_block_alternation(tags)
 
 
 def build_custom_html(custom_html: str | None) -> str | None:
     """Build regex string for custom HTML blocks."""
-    if custom_html:
-        return "|" + "|".join(x.strip() for x in custom_html.split(","))
-    return None
+    tags = split_option_list(custom_html)
+    if not tags:
+        return None
+    return "|" + "|".join(tags)
 
 
 def build_exclude(exclude: str) -> str:
     """Build regex string for exclude paths."""
     if "," not in exclude:
         return exclude
-    return r" | ".join(x.strip() for x in exclude.split(",") if x.strip())
+    return r" | ".join(split_option_list(exclude))
 
 
-# The patterns below do not depend on configuration and are built once at
-# import time, like the _JS_JSON_* patterns above.
-
-# codes to exclude per profile
-_PROFILE_CODES: Final[dict[str, tuple[str, ...]]] = {
+_CODES_EXCLUDED_BY_PROFILE: Final[dict[str, tuple[str, ...]]] = {
     "html": ("D", "J", "T", "N", "M"),
     "django": ("J", "N", "M"),
     "jinja": ("D", "N", "M"),
-    # askama templates are rust, not python flask, so the jinja url_for
-    # rules (J) do not apply either
     "askama": ("D", "J", "N", "M"),
     "tera": ("D", "J", "N", "M"),
     "liquid": ("D", "J", "N", "M"),
@@ -390,14 +396,10 @@ _PROFILE_CODES: Final[dict[str, tuple[str, ...]]] = {
     "angular": ("D", "J", "H012", "H026", "H028"),
 }
 
-# every profile djLint accepts. "all" enables every rule and is the default,
-# so it has no codes to exclude and is absent from _PROFILE_CODES above.
-# Kept in step with src._PRAGMA_PATTERNS by test_profile_sets_agree.
-_PROFILES: Final[frozenset[str]] = frozenset(_PROFILE_CODES) | {"all"}
+_PROFILES: Final[frozenset[str]] = frozenset(_CODES_EXCLUDED_BY_PROFILE) | {
+    "all"
+}
 
-# Directories that plausibly contain generated or third-party
-# HTML/templates: VCS internals, virtualenvs and installed packages,
-# and build/report output dirs.
 _DEFAULT_EXCLUDE: Final = r"""
     __pypackages__
     | _build
@@ -420,8 +422,6 @@ _DEFAULT_EXCLUDE: Final = r"""
     | venv
 """
 
-# Default pattern for common JS-bearing attributes. data-* attributes
-# are intentionally opt-in via format_attribute_js_json_pattern.
 _DEFAULT_JS_JSON_PATTERN: Final = (
     r"^(?:"
     r"on[a-z]+|"
@@ -436,22 +436,13 @@ _DEFAULT_JS_JSON_PATTERN: Final = (
     r")$"
 )
 
-# a complete {% if %}/{% for %} block with its end tag; embedded only in
-# verbose (re.X) patterns
-_TEMPLATE_IF_FOR_PATTERN: Final = r"""
+_TEMPLATE_IF_FOR_BLOCK_WITH_END_TAG: Final = r"""
     (?:
-        {%-?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}
-        (?:.*?{%\s?end(?:if|for|each|all)[^}]*?-?%})+?
+        {%[-+]?\s?(?:if|for|asyncAll|asyncEach)[^}]*?%}
+        (?:.*?{%[-+]?\s?end(?:if|for|each|all)[^}]*?[-+]?%})+?
     )
 """
 
-# HTML allows anything in an attribute name except whitespace, quotes, "=",
-# "<", ">" and "/", and frameworks use that freedom: Alpine key modifiers
-# (@keydown.?), Angular bindings ((click), [disabled]) and Vue shorthands
-# such as "#default". A "/" that does not close the tag is still a name
-# character. "{" and "}" are excluded so template tags are consumed by the
-# template alternatives below instead of character by character, and NUL is
-# excluded to keep the class_attributes newline markers out of names.
 _ATTRIBUTE_NAME_CHAR: Final = r"""(?:[^\s"'=<>/{}\x00]|/(?!>))"""
 
 _ATTRIBUTE_PATTERN: Final = (
@@ -462,9 +453,9 @@ _ATTRIBUTE_PATTERN: Final = (
                 {_ATTRIBUTE_NAME_CHAR} # a name character
                | (?>{{{{[\s\S]*?}}}})
                  (?={_ATTRIBUTE_NAME_CHAR}|[ ]*=) # a leading template variable
-               | (?!{{%-?\s*(?:for|asyncAll|asyncEach)\b)
-                 (?!{{%-?\s*if\b[^}}]*?%}}(?:required|checked){{%-?\s*endif\b[^}}]*?%}})
-                 (?>{_TEMPLATE_IF_FOR_PATTERN})
+               | (?!{{%[-+]?\s*(?:for|asyncAll|asyncEach)\b)
+                 (?!{{%[-+]?\s*if\b[^}}]*?%}}(?:required|checked){{%[-+]?\s*endif\b[^}}]*?%}})
+                 (?>{_TEMPLATE_IF_FOR_BLOCK_WITH_END_TAG})
                  (?={_ATTRIBUTE_NAME_CHAR}|[ ]*=) # a leading template block
             )
             (?:
@@ -477,7 +468,7 @@ _ATTRIBUTE_PATTERN: Final = (
             (
                 \"[^\"]*? # double quoted attribute
                 (?:
-                    {_TEMPLATE_IF_FOR_PATTERN} # if or for loop
+                    {_TEMPLATE_IF_FOR_BLOCK_WITH_END_TAG} # if or for loop
                    | {{{{[\s\S]*?}}}} # template stuff
                    | {{%[\s\S]*?%}}
                    | [^\"] # anything else
@@ -485,7 +476,7 @@ _ATTRIBUTE_PATTERN: Final = (
                 \" # closing quote
               | '[^']*? # single quoted attribute
                 (?:
-                    {_TEMPLATE_IF_FOR_PATTERN} # if or for loop
+                    {_TEMPLATE_IF_FOR_BLOCK_WITH_END_TAG} # if or for loop
                    | {{{{[\s\S]*?}}}} # template stuff
                    | {{%[\s\S]*?%}}
                    | [^'] # anything else
@@ -497,12 +488,12 @@ _ATTRIBUTE_PATTERN: Final = (
                     {_ATTRIBUTE_NAME_CHAR}
                    | (?>{{{{[\s\S]*?}}}}|{{%[\s\S]*?%}}) # embedded template tag
                 )+
-              | {_TEMPLATE_IF_FOR_PATTERN} # a non-quoted if statement
+              | {_TEMPLATE_IF_FOR_BLOCK_WITH_END_TAG} # a non-quoted if statement
 
             )
         )? # attribute value
     )
-    | ({_TEMPLATE_IF_FOR_PATTERN}
+    | ({_TEMPLATE_IF_FOR_BLOCK_WITH_END_TAG}
     """
     r"""
     | (?:\'|\") # allow random trailing quotes
@@ -512,14 +503,19 @@ _ATTRIBUTE_PATTERN: Final = (
     """
 )
 
+_ATTRIBUTE_X_PATTERN: Final = re.compile(
+    _ATTRIBUTE_PATTERN, re.X, cache_pattern=False
+)
+
 _TEMPLATE_TAGS: Final = r"""
     {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
 """
+_TEMPLATE_TAGS_IMX_PATTERN: Final = re.compile(
+    _TEMPLATE_TAGS, RE_FLAGS_IMX, cache_pattern=False
+)
 
-# a branch tag ({% elif %}, {% else %}, handlebars {{else}}/{{^}}, ...)
-# is unindented and the next line is indented again
 _TAG_UNINDENT_LINE_TEMPLATE: Final = r"""
-      (?:\{%-?[ ]*(?:BRANCHES))
+      (?:\{%[-+]?[ ]*(?:BRANCHES))
     | (?:
         \{\{[ ]*
         (
@@ -531,22 +527,17 @@ _TAG_UNINDENT_LINE_TEMPLATE: Final = r"""
 _TAG_UNINDENT_LINE: Final = _TAG_UNINDENT_LINE_TEMPLATE.replace(
     "BRANCHES", "elif|else|empty|plural"
 )
-# liquid spells its branches elsif and {% when %}
 _LIQUID_TAG_UNINDENT_LINE: Final = _TAG_UNINDENT_LINE_TEMPLATE.replace(
     "BRANCHES", "elif|elsif|else|empty|plural|when"
 )
 
 _BREAK_BEFORE: Final = r"(?<!\n[ \t]*?)"
 
-# block tags recognized only under a specific profile, injected through
-# the custom blocks channel so they never affect other profiles
-_PROFILE_BLOCKS: Final[dict[str, str]] = {
+_PROFILE_ONLY_BLOCKS: Final[dict[str, str]] = {
     "tera": "component",
     "liquid": "case,capture,tablerow,form,paginate,highlight",
 }
 
-# golang template blocks use plain {{ }} delimiters; only the golang
-# profile treats them as blocks, closed by a bare {{ end }}
 _GOLANG_BLOCK_OPEN: Final = r"|\{\{-?[ ]*(?:if|range|with|block|define)\b"
 _GOLANG_BLOCK_CLOSE: Final = r"|(?:\{\{-?[ ]*end(?![\w]))"
 _GOLANG_BRANCH: Final = r"|(?:\{\{-?[ ]*else(?![\w]))"
@@ -595,7 +586,9 @@ _INDENT_TEMPLATE_TAGS: Final = r""" (?:if
 
 _START_TEMPLATE_TAGS: Final = r"""
       (?:if
+    | ifchanged
     | unless
+    | embed
     | for
     | asyncEach
     | asyncAll
@@ -795,25 +788,26 @@ _IGNORED_INLINE_BLOCKS: Final = r"""
     | <script.*?\</script>
     | <style.*?\</style>
     | {\*.*?\*}
-    | {\#(?!.*djlint:[ ]*(?:off|on)\b).*\#}
+    | (?<!\{){\#(?!.*djlint:[ ]*(?:off|on)\b).*\#}
     | <\?php.*?\?>
     | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*endcomment[ ]*%}
     | {%[ ]*filter\b(?:(?!%}).)*?%}.*?{%[ ]*endfilter[ ]*%}
     # liquid/shopify blocks whose bodies are json, css or js
-    | {%-?[ ]*(?:schema|javascript|stylesheet|style)[ ]*-?%}
+    | {%[-+]?[ ]*(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
       .*?
-      {%-?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*-?%}
+      {%[-+]?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
     | {%[ ]*blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans(?:late)?[ ]*%}
 """
 
-_IGNORED_BLOCKS_TAIL: Final = r"""
+_IGNORED_BLOCKS_TAIL: Final = (
+    r"""
     # html comment
     | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
     # django/jinja/nunjucks
     | {\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
     | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
-    # inline jinja comments
-    | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
+    # inline jinja comments; "{{#" opens a handlebars section, not a comment
+    | (?<!\{){\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
     # handlebars
     | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
     # golang
@@ -824,62 +818,73 @@ _IGNORED_BLOCKS_TAIL: Final = r"""
     | <\?php.*?\?>
     | {%[ ]*filter\b(?:(?!%}).)*?%}.*?{%[ ]*endfilter[ ]*%}
     # liquid/shopify blocks whose bodies are json, css or js
-    | {%-?[ ]*(?:schema|javascript|stylesheet|style)[ ]*-?%}
+    | {%[-+]?[ ]*(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
       .*?
-      {%-?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*-?%}
+      {%[-+]?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
     | {%[ ]*blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktranslate[ ]*%}
     | {%[ ]*blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
     | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*endcomment[ ]*%})
-    | ^---[\s\S]+?---
-"""
-
-# The script/style span stops at the "<" of the closing tag so the formatter
-# can still indent that tag; every other block covers what ends it.
-_IGNORED_BLOCKS: Final = (
-    r"""
-      <(pre|textarea).*?</(\1)>
-    | <(script|style).*?(?=(\</(?:\3)>))
-"""
-    + _IGNORED_BLOCKS_TAIL
+    |"""
+    + YAML_FRONT_MATTER
 )
 
-# Linting needs the whole element instead. Stopping at the "<" leaves the
-# closing tag outside a block that its opening tag is inside, so a rule pairing
-# the two (H025) sees a close with no open and calls it an orphan.
-_LINT_IGNORED_BLOCKS: Final = (
-    r"""
+
+def _build_ignored_blocks(*, whole_script_style_element: bool) -> str:
+    """Build the alternation of blocks djLint leaves alone.
+
+    The formatter stops the script/style span at the "<" of the closing tag
+    so that it can still indent that tag. Linting needs the whole element:
+    stopping short leaves the closing tag outside a block that its opening
+    tag is inside, so a rule pairing the two (H025) sees a close with no
+    open and calls it an orphan.
+    """
+    script_style = (
+        r"<(script|style).*?\</(?:\3)>"
+        if whole_script_style_element
+        else r"<(script|style).*?(?=(\</(?:\3)>))"
+    )
+    return (
+        rf"""
       <(pre|textarea).*?</(\1)>
-    | <(script|style).*?\</(?:\3)>
+    | {script_style}
 """
-    + _IGNORED_BLOCKS_TAIL
+        + _IGNORED_BLOCKS_TAIL
+    )
+
+
+_IGNORED_BLOCKS: Final = _build_ignored_blocks(whole_script_style_element=False)
+_LINT_IGNORED_BLOCKS: Final = _build_ignored_blocks(
+    whole_script_style_element=True
 )
 
-_SCRIPT_STYLE_INLINE: Final = r"""
-    <(script|style).*?(?=(\</(?:\1)>))
+_RAW_TEXT_INLINE: Final = r"""
+    <(script|style|pre|textarea).*?(?=(\</(?:\1)>))
 """
-
-# contents of tags will not be formatted
-_SCRIPT_STYLE_OPENING_PATTERN: Final = re.compile(
+_RAW_TEXT_OPENING_PATTERN: Final = re.compile(
     r"""
       <style
     | <script
+    | <pre
+    | <textarea
     """,
     RE_FLAGS_IX,
     cache_pattern=False,
 )
-_SCRIPT_STYLE_CLOSING_PATTERN: Final = re.compile(
+_RAW_TEXT_CLOSING_PATTERN: Final = re.compile(
     r"""
       </style
     | </script
+    | </pre
+    | </textarea
     """,
     RE_FLAGS_IX,
     cache_pattern=False,
 )
-_SCRIPT_STYLE_INLINE_IMSX_PATTERN: Final = re.compile(
-    _SCRIPT_STYLE_INLINE, RE_FLAGS_IMSX, cache_pattern=False
+_RAW_TEXT_INLINE_IMSX_PATTERN: Final = re.compile(
+    _RAW_TEXT_INLINE, RE_FLAGS_IMSX, cache_pattern=False
 )
-_SCRIPT_STYLE_INLINE_IX_PATTERN: Final = re.compile(
-    _SCRIPT_STYLE_INLINE, RE_FLAGS_IX, cache_pattern=False
+_RAW_TEXT_INLINE_IX_PATTERN: Final = re.compile(
+    _RAW_TEXT_INLINE, RE_FLAGS_IX, cache_pattern=False
 )
 _IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
     r"""
@@ -893,7 +898,7 @@ _IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
     | <pre
     | <textarea
     | {%[ ]*blocktrans(?:late)?(?:(?!%}|\btrimmed\b).)*?%}
-    | {%-?[ ]*(?:schema|javascript|stylesheet|style)[ ]*-?%}
+    | {%[-+]?[ ]*(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
     | {%[ ]*filter\b(?:(?!%}).)*?%}
     | {\#\s*djlint\:\s*off\s*\#}
     | {%[ ]+?comment[ ]+?(?:(?!%}).)*?%}
@@ -909,7 +914,9 @@ _IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
     | \*}
     | \?>
     | </script
-    |  -->
+    # a "-->" reachable without crossing the start of a raw text element.
+    # Past one, markup is text: "<pre>&lt;!-- x -->" closes no comment.
+    | ^(?:(?!<pre\b|<textarea\b).)*?-->
     | ^(?:(?!{\#).)*\#} # lines that have a #}, but not a {#
     | </pre
     | </textarea
@@ -919,7 +926,7 @@ _IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
     | {{!--\s*djlint\:on\s*--}}
     | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
     | {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
-    | {%-?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*-?%}
+    | {%[-+]?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
     """,
     RE_FLAGS_IX,
     cache_pattern=False,
@@ -939,8 +946,8 @@ _IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
     # django/jinja/nunjucks
     | {\#\s*djlint\:\s*off\s*\#}.*?(?={\#\s*djlint\:\s*on\s*\#})
     | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}.*?(?={%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\})
-    # inline jinja comments
-    | {\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
+    # inline jinja comments; "{{#" opens a handlebars section, not a comment
+    | (?<!\{){\#(?!\s*djlint\:\s*(?:off|on)).*?\#}
     # handlebars
     | {{!--\s*djlint\:off\s*--}}.*?(?={{!--\s*djlint\:on\s*--}})
     # golang
@@ -953,8 +960,8 @@ _IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
     | {%[ ]*blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktranslate[ ]*%}
     | {%[ ]*blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
     | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*endcomment[ ]*%})
-    | ^---[\s\S]+?---
-    """,
+    |"""
+    + YAML_FRONT_MATTER,
     RE_FLAGS_IMSX,
     cache_pattern=False,
 )
@@ -963,7 +970,7 @@ _IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = re.compile(
 )
 _IGNORED_LINTER_BLOCKS_PATTERN: Final = re.compile(
     r"""
-    {%-?[ ]*(raw|verbatim)\b(?:(?!%}).)*?-?%}.*?{%-?[ ]*end\1[ ]*-?%}
+    {%[-+]?[ ]*(raw|verbatim)\b(?:(?!%}).)*?[-+]?%}.*?{%[-+]?[ ]*end\1[ ]*[-+]?%}
     """,
     RE_FLAGS_IMSX,
     cache_pattern=False,
@@ -984,24 +991,35 @@ _UNFORMATTED_BLOCKS_PATTERN: Final = re.compile(
     | {{!--\s*djlint\:off\s*--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
     # golang
     | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
-    | ^---[\s\S]+?---
-    """,
+    |"""
+    + YAML_FRONT_MATTER,
     RE_FLAGS_IMSX,
     cache_pattern=False,
 )
 _IGNORED_RULE_PATTERNS: Final = tuple(
     re.compile(pattern, RE_FLAGS_ISX, cache_pattern=False)
     for pattern in (
+        r"""
         # html comment
-        r"<!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*",
+        <!--\s*djlint\:off(.+?)-->(?:(?!<!--\s*djlint\:on\s*-->).)*
+        """,
+        r"""
         # django/jinja/nunjucks
-        r"{\#\s*djlint\:\s*off(.+?)\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*",
-        r"""{%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}
-            (?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*""",
+        {\#\s*djlint\:\s*off(.+?)\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
+        """,
+        r"""
+        # django/jinja/nunjucks comment block
+        {%\s*comment\s*%\}\s*djlint\:off(.*?)\{%\s*endcomment\s*%\}
+        (?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
+        """,
+        r"""
         # handlebars
-        r"{{!--\s*djlint\:off(.*?)--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*",
+        {{!--\s*djlint\:off(.*?)--}}(?:(?!{{!--\s*djlint\:on\s*--}}).)*
+        """,
+        r"""
         # golang
-        r"{{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*",
+        {{-?\s*/\*\s*djlint\:off(.*?)\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
+        """,
     )
 )
 _IGNORED_TRANS_BLOCKS_PATTERN: Final = re.compile(
@@ -1027,8 +1045,6 @@ _IGNORED_TRANS_BLOCKS_CLOSING_PATTERN: Final = re.compile(
     RE_FLAGS_IX,
     cache_pattern=False,
 )
-# ignored block closing tags that
-# we can safely indent.
 _SAFE_CLOSING_TAG_PATTERN: Final = re.compile(
     r"""
       </script
@@ -1139,15 +1155,16 @@ class Config:
         "profile",
         "project_root",
         "quiet",
+        "raw_text_closing_pattern",
+        "raw_text_inline_imsx_pattern",
+        "raw_text_inline_ix_pattern",
+        "raw_text_opening_pattern",
         "reformat",
         "require_pragma",
         "safe_closing_block_pattern",
         "safe_closing_tag_pattern",
-        "script_style_closing_pattern",
-        "script_style_inline_imsx_pattern",
-        "script_style_inline_ix_pattern",
-        "script_style_opening_pattern",
         "single_attribute_per_line",
+        "single_line_template_tags",
         "start_template_tags",
         "statistics",
         "stdin",
@@ -1155,10 +1172,16 @@ class Config:
         "tag_indent",
         "tag_unindent",
         "tag_unindent_line",
+        "tag_unindent_line_ix_pattern",
         "template_blocks_pattern",
         "template_indent",
+        "template_indent_imx_pattern",
+        "template_indent_ix_pattern",
         "template_tags",
+        "template_tags_imx_pattern",
         "template_unindent",
+        "template_unindent_imx_pattern",
+        "template_unindent_ix_pattern",
         "trans_trimmed_blocks_pattern",
         "unformatted_blocks_coarse_pattern",
         "unformatted_blocks_pattern",
@@ -1242,7 +1265,6 @@ class Config:
                 )
                 return default
 
-        # command line only options
         self.reformat = reformat
         self.check = check
         self.lint = lint
@@ -1251,7 +1273,6 @@ class Config:
         self.statistics = statistics
         self.stdin_filename = stdin_filename
 
-        # simple options; the command line takes precedence over the config
         self.extension = str(
             extension or djlint_settings.get("extension", "html")
         )
@@ -1283,21 +1304,19 @@ class Config:
         self.no_line_after_yaml = no_line_after_yaml or djlint_settings.get(
             "no_line_after_yaml", False
         )
-        # askama expressions are rust: char literals, ? operators and
-        # macro! calls don't survive python-style literal/call formatting
-        is_askama = (
-            str(profile or djlint_settings.get("profile", "")).lower()
-            == "askama"
-        )
+        selected_profile = str(
+            profile or djlint_settings.get("profile", "")
+        ).lower()
+        expressions_are_rust = selected_profile == "askama"
         self.no_set_formatting = (
             no_set_formatting
             or djlint_settings.get("no_set_formatting", False)
-            or is_askama
+            or expressions_are_rust
         )
         self.no_function_formatting = (
             no_function_formatting
             or djlint_settings.get("no_function_formatting", False)
-            or is_askama
+            or expressions_are_rust
         )
         self.format_attribute_template_tags = (
             format_attribute_template_tags
@@ -1324,18 +1343,15 @@ class Config:
             if per_file_ignores
             else djlint_settings.get("per-file-ignores", {})
         )
-        # add blank line after load tags
         self.blank_line_after_tag = blank_line_after_tag or _as_comma_separated(
             djlint_settings.get("blank_line_after_tag", None)
         )
-        # add blank line before load tags
         self.blank_line_before_tag = (
             blank_line_before_tag
             or _as_comma_separated(
                 djlint_settings.get("blank_line_before_tag", None)
             )
         )
-        # add line break after multi-line tags
         self.line_break_after_multiline_tag = (
             line_break_after_multiline_tag
             or djlint_settings.get("line_break_after_multiline_tag", False)
@@ -1351,7 +1367,6 @@ class Config:
             else djlint_settings.get("css")
         ) or {}
 
-        # .editorconfig supplies defaults only; cli and config files win
         editorconfig = load_editorconfig(self.project_root, self.extension)
         indent = indent or setting_int(
             "indent", editorconfig.get("indent_size", 4)
@@ -1372,7 +1387,6 @@ class Config:
             else setting_int("max_blank_lines", 0)
         )
 
-        # regex for excluded paths
         exclude = build_exclude(
             exclude
             or _as_comma_separated(
@@ -1394,9 +1408,6 @@ class Config:
         self.use_gitignore = (
             use_gitignore or bool(djlint_settings.get("use_gitignore", False))
         ) and not self.stdin
-        # only --use-gitignore ever reads this. pathspec rejects patterns
-        # git itself accepts and ignores, so parsing the file unasked lets
-        # one line in it stop a run that was never going to consult it.
         self.gitignore = (
             load_gitignore(self.project_root)
             if self.use_gitignore
@@ -1406,21 +1417,15 @@ class Config:
             djlint_settings.get("allow_empty_input", False)
         )
 
-        # linter rules, minus the ignored codes and the profile's excludes
-        self.profile = str(
-            profile or djlint_settings.get("profile", "all")
-        ).lower()
+        self.profile = selected_profile or "all"
         if self.profile not in _PROFILES:
-            # an unrecognized profile used to fall through to an empty set of
-            # excluded codes, so a typo silently linted with the wrong rules
-            # and still exited 0. It also made require_pragma raise a KeyError.
             msg = (
                 f"Invalid profile {self.profile!r}."
                 f" Choose from {', '.join(sorted(_PROFILES))}."
             )
             raise BadParameter(msg, param_hint="'--profile'")
-        profile_codes = _PROFILE_CODES.get(
-            str(profile or djlint_settings.get("profile", "html")).lower(), ()
+        profile_codes = _CODES_EXCLUDED_BY_PROFILE.get(
+            selected_profile or "html", ()
         )
         self.ignore = str(
             ignore or _as_comma_separated(djlint_settings.get("ignore", ""))
@@ -1466,7 +1471,6 @@ class Config:
                     err=True,
                 )
 
-        # patterns built from configuration options
         self.custom_blocks = str(
             build_custom_blocks(
                 ",".join(
@@ -1479,15 +1483,14 @@ class Config:
                             )
                             or ""
                         ),
-                        _PROFILE_BLOCKS.get(self.profile, ""),
+                        _PROFILE_ONLY_BLOCKS.get(self.profile, ""),
                     )
                     if x
                 )
             )
             or ""
         )
-        # django-cotton component tags (<c-name>, <c-folder.name>) are
-        # treated as block html tags out of the box.
+        django_cotton_components = r"|c-[\w.-]+"
         self.custom_html = (
             str(
                 build_custom_html(
@@ -1496,7 +1499,7 @@ class Config:
                 )
                 or ""
             )
-            + r"|c-[\w.-]+"
+            + django_cotton_components
         )
         self.ignore_blocks = build_ignore_blocks(
             ignore_blocks
@@ -1514,20 +1517,17 @@ class Config:
             cache_pattern=False,
         )
 
-        # all html tags possible
         self.indent_html_tags = "|".join(HTML_TAG_NAMES) + self.custom_html
         self.always_self_closing_html_tags = _ALWAYS_SELF_CLOSING_HTML_TAGS
 
-        # a self-closing custom block ({% component ... / %},
-        # django-components syntax) doesn't open a block, so it must not
-        # match block-opener patterns. It still line-breaks like any tag.
+        not_self_closed = r"\b(?!(?:(?!%\}).)*/\s*-?%\})"
         custom_block_openers = self.custom_blocks.replace(
-            r"\b", r"\b(?!(?:(?!%\}).)*/\s*-?%\})"
+            r"\b", not_self_closed
         )
         is_golang = self.profile == "golang"
         self.template_indent = (
             r"""
-            (?:\{\{\#|\{%-?)[ ]*
+            (?:\{\{\#|\{%[-+]?)[ ]*
                 ("""
             + ignore_blocks_guard
             + _INDENT_TEMPLATE_TAGS
@@ -1538,22 +1538,22 @@ class Config:
             """
             + (_GOLANG_BLOCK_OPEN if is_golang else "")
         )
-        # jinja/twig block {% trans %} has no matching indent tag, so its
-        # end tag must not unindent, unless the user made trans a custom
-        # block, in which case the open tag does indent.
-        end_tag_guard = r"(?!comment)"
-        if (
-            r"|trans\b" not in self.custom_blocks
-            and r"|translate\b" not in self.custom_blocks
-        ):
-            end_tag_guard = r"(?!comment|trans(?:late)?\b)"
+        trans_is_a_custom_block = (
+            r"|trans\b" in self.custom_blocks
+            or r"|translate\b" in self.custom_blocks
+        )
+        end_tag_guard = (
+            r"(?!comment)"
+            if trans_is_a_custom_block
+            else r"(?!comment|trans(?:late)?\b)"
+        )
         self.template_unindent = (
             r"""
                 (?:
                   # handlebars block close {{/name}}, but not a golang
                   # comment {{/* ... */}}, which closes nothing
                   (?:\{\{\/(?!\*))
-                | (?:\{%-?[ ]*end"""
+                | (?:\{%[-+]?[ ]*end"""
             + end_tag_guard
             + ignore_blocks_guard
             + r""")
@@ -1572,6 +1572,12 @@ class Config:
         """
             + (_GOLANG_BLOCK_OPEN if is_golang else "")
         )
+        self.single_line_template_tags = (
+            ignore_blocks_guard
+            + _INDENT_TEMPLATE_TAGS
+            + custom_block_openers
+            + r")"
+        )
         self.break_template_tags = (
             ignore_blocks_guard
             + _BREAK_TEMPLATE_TAGS
@@ -1587,7 +1593,6 @@ class Config:
             + """
         """
         )
-        # the contents of these tag blocks will be indented, then unindented
         self.tag_indent = (
             self.template_indent
             + """
@@ -1600,10 +1605,6 @@ class Config:
               )
         """
         )
-        # either a template tag at the start of a line,
-        # a html tag at the start of a line,
-        # or an html tag as the end of a line.
-        # Nothing in between!
         self.tag_unindent = (
             r"""
                 ^
@@ -1627,17 +1628,32 @@ class Config:
         """
         )
 
-        # static patterns, built once at module import
-        self.attribute_pattern = _ATTRIBUTE_PATTERN
+        self.template_indent_ix_pattern = re.compile(
+            self.template_indent, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.template_indent_imx_pattern = re.compile(
+            self.template_indent, RE_FLAGS_IMX, cache_pattern=False
+        )
+        self.template_unindent_ix_pattern = re.compile(
+            self.template_unindent, RE_FLAGS_IX, cache_pattern=False
+        )
+        self.template_unindent_imx_pattern = re.compile(
+            self.template_unindent, RE_FLAGS_IMX, cache_pattern=False
+        )
+
+        self.attribute_pattern = _ATTRIBUTE_X_PATTERN
         self.template_tags = _TEMPLATE_TAGS
+        self.template_tags_imx_pattern = _TEMPLATE_TAGS_IMX_PATTERN
         self.tag_unindent_line = (
             _LIQUID_TAG_UNINDENT_LINE
             if self.profile == "liquid"
             else _TAG_UNINDENT_LINE
         )
         if is_golang:
-            # {{ else }} and {{ else if ... }} are branch tags
             self.tag_unindent_line += _GOLANG_BRANCH
+        self.tag_unindent_line_ix_pattern = re.compile(
+            self.tag_unindent_line, RE_FLAGS_IX, cache_pattern=False
+        )
         self.break_before = _BREAK_BEFORE
         self.ignored_attributes = _IGNORED_ATTRIBUTES
         self.ignored_inline_blocks = _IGNORED_INLINE_BLOCKS
@@ -1650,12 +1666,10 @@ class Config:
         self.format_attribute_js_json_property_pattern = (
             _JS_JSON_PROPERTY_PATTERN
         )
-        self.script_style_opening_pattern = _SCRIPT_STYLE_OPENING_PATTERN
-        self.script_style_closing_pattern = _SCRIPT_STYLE_CLOSING_PATTERN
-        self.script_style_inline_imsx_pattern = (
-            _SCRIPT_STYLE_INLINE_IMSX_PATTERN
-        )
-        self.script_style_inline_ix_pattern = _SCRIPT_STYLE_INLINE_IX_PATTERN
+        self.raw_text_opening_pattern = _RAW_TEXT_OPENING_PATTERN
+        self.raw_text_closing_pattern = _RAW_TEXT_CLOSING_PATTERN
+        self.raw_text_inline_imsx_pattern = _RAW_TEXT_INLINE_IMSX_PATTERN
+        self.raw_text_inline_ix_pattern = _RAW_TEXT_INLINE_IX_PATTERN
         self.ignored_block_opening_pattern = _IGNORED_BLOCK_OPENING_PATTERN
         self.ignored_block_closing_pattern = _IGNORED_BLOCK_CLOSING_PATTERN
         self.ignored_blocks_pattern = _IGNORED_BLOCKS_PATTERN
@@ -1684,10 +1698,9 @@ class Config:
         self.optional_single_line_template_pattern = (
             _OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN
         )
-        if profile_blocks := _PROFILE_BLOCKS.get(self.profile):
-            # profile block pairs may open and close on one line
+        if profile_blocks := _PROFILE_ONLY_BLOCKS.get(self.profile):
             self.optional_single_line_template_tags += "|" + "|".join(
-                profile_blocks.split(",")
+                split_option_list(profile_blocks)
             )
             self.optional_single_line_template_pattern = re.compile(
                 rf"^(?:{self.optional_single_line_template_tags})$",

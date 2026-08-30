@@ -24,14 +24,12 @@ if TYPE_CHECKING:
 
 
 _BLOCK_PATTERN: Final = re.compile(
-    r"{%-?\s*(?P<closing>end)?block(?!trans)\b"
-    r"(?:\s+(?P<name>[^\s%-][^\s%]*))?"
-    r"(?:(?!%}).)*?-?%}",
+    r"{%[-+]?\s*(?P<closing>end)?block(?!trans)\b"
+    r"(?:\s+(?P<name>[^\s%+-](?:[^\s%]*[^\s%+-])?))?"
+    r"(?:(?!%}).)*?[-+]?%}",
     RE_FLAGS_IS,
     cache_pattern=False,
 )
-# pairing and name-mismatch correctness is checked by T038; this rule
-# only enforces the style demand that a multi-line endblock is named
 
 
 def _ignored(
@@ -67,7 +65,13 @@ def run(
     *args: Any,
     **kwargs: Any,
 ) -> tuple[LintError, ...]:
-    """Check block/endblock names."""
+    """Check block/endblock names.
+
+    Pairing and name mismatches are T038's job. This rule only enforces the
+    style demand that an endblock closing a block written across lines is
+    named; `{% block foo %}{% endblock %}` on one line is what the
+    formatter produces, so it is left alone.
+    """
     errors: list[LintError] = []
     open_blocks: list[tuple[str, re.Match[str]]] = []
 
@@ -85,8 +89,6 @@ def run(
             if open_blocks:
                 _, open_match = open_blocks.pop()
                 if "\n" not in html[open_match.end() : match.start()]:
-                    # {% block foo %}{% endblock %} on one line is what the
-                    # formatter produces; don't require a name here.
                     continue
             errors.append(_error(rule, match, line_ends, rule["message"]))
             continue

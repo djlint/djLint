@@ -186,3 +186,28 @@ def test_html_inside_multiline_script_is_still_ignored(
 
     lint_printer(source, [], output[filename])
     assert not output[filename]
+
+
+def test_nested_jinja_for_else_is_not_an_orphan(jinja_config: Config) -> None:
+    # https://github.com/djlint/djLint/issues/2412
+    source = (
+        "<div>\n"
+        "  {% if not thing %}\n"
+        "  <div>Message</div>\n"
+        "  {% else %}\n"
+        "  <div>\n"
+        "  {% for item in items %}\n"
+        "    <div>{{ item }}</div>\n"
+        "  {% else %}\n"
+        "    <div>No items!</div>\n"
+        "  {% endfor %}\n"
+        "  </div>\n"
+        "  {% endif %}\n"
+        "</div>\n"
+    )
+    filename = "test.html"
+
+    output = linter(jinja_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]

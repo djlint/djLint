@@ -81,6 +81,20 @@ def test_multiple_files(runner: CliRunner) -> None:
     assert "3 files would be updated." in result.output
 
 
+def test_overlapping_paths_are_checked_once(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint,
+        (
+            "tests/test_djlint/multiple_files/b",
+            "tests/test_djlint/multiple_files/b/b1.html",
+            "tests/test_djlint/multiple_files/b",
+            "--check",
+        ),
+    )
+    assert result.exit_code == 1
+    assert "2 files would be updated." in result.output
+
+
 def test_bad_path(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ("tests/nowhere",))
     assert result.exit_code == 2

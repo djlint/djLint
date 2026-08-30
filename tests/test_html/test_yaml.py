@@ -153,6 +153,18 @@ test_data = [
         ({"no_line_after_yaml": True}),
         id="blank_lines_2",
     ),
+    pytest.param(
+        ("<div></div>\n---\nlayout: foo\n---\n"),
+        ("<div></div>\n---\nlayout: foo\n---\n"),
+        ({}),
+        id="only_at_the_start_of_the_file",
+    ),
+    pytest.param(
+        ("---\nlayout: foo\n--- trailing\n<div></div>\n"),
+        ("---\nlayout: foo\n--- trailing\n<div></div>\n"),
+        ({}),
+        id="closing_delimiter_alone_on_its_line",
+    ),
 ]
 
 

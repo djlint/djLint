@@ -81,41 +81,31 @@ def _included(config: Config, filepath: Path) -> bool:
 
 def get_src(src: Iterable[Path], config: Config) -> SrcFiles:
     """Get source files."""
-    paths = []
+    paths: dict[Path, None] = {}
     excluded = False
     for item in src:
-        # normalize path
-
         normalized_item = item.resolve()
 
         if normalized_item.is_file():
-            if _exclude_match(
-                config, normalized_item, config.project_root
-            ) or not _included(config, normalized_item):
-                excluded = True
-            else:
-                paths.append(normalized_item)
-            continue
+            candidates: Iterable[Path] = (normalized_item,)
+            exclude_root = config.project_root
+        else:
+            extension = config.extension.removeprefix(".")
+            candidates = normalized_item.glob(f"**/*.{extension}")
+            exclude_root = normalized_item
 
-        # remove leading . from extension
-        extension = config.extension.removeprefix(".")
-
-        for candidate in normalized_item.glob(f"**/*.{extension}"):
-            if _exclude_match(config, candidate, normalized_item):
-                excluded = True
+        for candidate in candidates:
+            if candidate in paths:
                 continue
-            # a directory can match the extension glob too, and it is not a
-            # candidate at all: opening one raises rather than excluding it.
-            # The exclude pattern above is pure string work, so testing it
-            # first spares this syscall for everything the pattern drops.
-            if not candidate.is_file():
-                continue
-            if _included(config, candidate):
-                paths.append(candidate)
-            else:
+            if _exclude_match(config, candidate, exclude_root):
                 excluded = True
+            elif candidate.is_file():
+                if _included(config, candidate):
+                    paths[candidate] = None
+                else:
+                    excluded = True
 
-    return SrcFiles(paths, excluded)
+    return SrcFiles(list(paths), excluded)
 
 
 def print_no_files_to_check(*, excluded: bool) -> None:

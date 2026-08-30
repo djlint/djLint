@@ -38,7 +38,7 @@ date: Last Modified
 {% comment %} djlint:on {% endcomment %}
 ```
 
-亦或是 javascript 风格注释 -
+亦或是 golang 风格注释 -
 
 <!-- prettier-ignore -->
 ```html
@@ -47,7 +47,7 @@ date: Last Modified
 {{ /* djlint:on */ }}
 ```
 
-以及 golang 风格注释 -
+以及 handlebars 风格注释 -
 
 <!-- prettier-ignore -->
 ```html

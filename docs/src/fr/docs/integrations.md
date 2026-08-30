@@ -8,6 +8,17 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 Il existe plusieurs intégrations d'éditeurs construites pour djLint.
 
+## GitHub Actions
+
+Dans un workflow GitHub Actions, djLint signale chaque résultat sous forme d'annotation, qui apparaît donc directement dans le diff d'une pull request. Aucune configuration n'est nécessaire : djLint détecte le workflow et adapte sa sortie automatiquement.
+
+```yaml
+- run: pip install djlint
+- run: djlint . --lint --profile django
+```
+
+Utilisez `--no-github-output` pour obtenir la sortie console habituelle, ou `--github-output` pour forcer les annotations en dehors d'Actions.
+
 ## Pre-Commit
 
 djLint peut être utilisé comme un hook [pre-commit](https://pre-commit.com) en tant que linter et formatter.

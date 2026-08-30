@@ -34,7 +34,7 @@ This pattern is not recommended:
 
 ## `format_attribute_template_tags` and Spaceless Conditional Attributes
 
-If `format_attribute_template_tags` option is enabled, conditional attributes should use spaceless tags, for example {% raw %}`{% if a -%}`{% endraw %} in nunjuck and jinja, to remove spaces inside the.
+If the `format_attribute_template_tags` option is enabled, conditional attributes should use spaceless tags, for example {% raw %}`{% if a -%}`{% endraw %} in nunjucks and jinja, to remove the spaces inside the tag.
 
 djLint will format long attributes onto multiple lines, and the whitespace saved inside of attributes could break your code.
 
@@ -46,11 +46,12 @@ This pattern is recommended:
 <input
   value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
 />
-                        ^                       ^      ^        ^ -- spaceless
-tags
+                        ^                       ^      ^        ^
 ```
 
 {% endraw %}
+
+Each marked position is a spaceless tag.
 
 This pattern is not recommended:
 

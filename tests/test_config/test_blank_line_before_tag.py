@@ -239,12 +239,46 @@ test_data = [
         ({"blank_line_before_tag": "macro"}),
         id="nunjucks whitespace control dash - before",
     ),
+    pytest.param(
+        ("<p>before</p>\n{% macro Foo() %}\n<div>foo</div>\n{% endmacro %}\n"),
+        (
+            "<p>before</p>\n"
+            "\n"
+            "{% macro Foo() %}\n"
+            "    <div>foo</div>\n"
+            "{% endmacro %}\n"
+        ),
+        ({"blank_line_before_tag": "macro, ,"}),
+        id="blank entries are dropped",
+    ),
+    pytest.param(
+        (
+            '<svg viewBox="0 0 24 24">\n'
+            '    <path d="\n'
+            "    {% block p %}\n"
+            "    {% endblock p %}\n"
+            '    " />\n'
+            "</svg>\n"
+        ),
+        (
+            '<svg viewBox="0 0 24 24">\n'
+            '    <path d="\n'
+            "    {% block p %}\n"
+            "    {% endblock p %}\n"
+            '    " />\n'
+            "</svg>\n"
+        ),
+        ({"blank_line_before_tag": "block", "profile": "django"}),
+        id="no blank line inside an attribute value",
+    ),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
 def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
-    output = formatter(config_builder(args), source)
+    config = config_builder(args)
+    output = formatter(config, source)
 
     printer(expected, source, output)
     assert expected == output
+    assert expected == formatter(config, output)

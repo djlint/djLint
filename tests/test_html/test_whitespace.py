@@ -601,3 +601,32 @@ def test_single_line_nested_html_elements_ignore_max_line_length() -> None:
 
     printer(source, source, output)
     assert source == output
+
+
+@pytest.mark.parametrize(
+    "separator", ["\u2028", "\u2029", "\u0085", "\x0b", "\x0c"]
+)
+def test_non_line_ending_separators_are_content(separator: str) -> None:
+    source = f'<script>var x = "a{separator}b";</script>\n'
+    output = formatter(config_builder(), source)
+
+    printer(source, source, output)
+    assert source == output
+
+
+def test_crlf_line_endings_are_kept() -> None:
+    source = "<div>\r\n<p>x</p>\r\n</div>\r\n"
+    expected = "<div>\r\n    <p>x</p>\r\n</div>\r\n"
+    output = formatter(config_builder(), source)
+
+    printer(expected, source, output)
+    assert expected == output
+
+
+def test_lone_carriage_returns_are_line_endings() -> None:
+    source = "<div>\r<p>x</p>\r</div>\r"
+    expected = "<div>\n    <p>x</p>\n</div>\n"
+    output = formatter(config_builder(), source)
+
+    printer(expected, source, output)
+    assert expected == output

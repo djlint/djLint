@@ -21,10 +21,46 @@ else:
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-    from typing import TextIO
+    from typing import Final, TextIO
 
     from djlint.settings import Config
     from djlint.types import ProcessResult
+
+_WINDOWS_MAX_PROCESSES: Final = 61
+
+
+_keep_mypyc_wheels_from_crashing = partial
+
+
+def _drop_stdout_so_the_exit_flush_cannot_fail() -> None:
+    """Replace stdout when the consumer is gone.
+
+    The interpreter flushes stdout once more on the way out, and that flush
+    failing against the same dead pipe would replace the exit code with 120.
+    """
+    sys.stdout = io.StringIO()
+
+
+def _read_stdin_as_utf8_keeping_line_endings() -> str:
+    """Read stdin as utf-8, verbatim.
+
+    ``--reformat`` hands this text straight back to whatever piped it in, so
+    a replacement character would corrupt the buffer that gets saved, and
+    universal newlines would hand the formatter LF for a CRLF buffer and
+    rewrite every line of it.
+    """
+    try:
+        sys.stdin.reconfigure(  # type: ignore[union-attr]
+            encoding="utf-8", errors="strict", newline=""
+        )
+    except Exception:
+        pass
+
+    try:
+        return sys.stdin.read()
+    except UnicodeDecodeError as e:
+        msg = f"Input on stdin is not valid UTF-8: {e}"
+        raise click.UsageError(msg) from None
 
 
 def _use_utf8(stream: TextIO) -> None:
@@ -67,7 +103,8 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     as "found lint errors" or "would reformat", and a pipeline cannot tell a
     crash from a normal failing run: a template djLint cannot read looks
     exactly like a template it disliked. So failures exit 2 instead,
-    alongside the usage errors click already exits 2 for. The traceback is
+    alongside the usage errors click already exits 2 for, while click's own
+    control flow, including --help, is re-raised untouched. The traceback is
     still printed, so bug reports lose nothing.
     """
 
@@ -76,16 +113,10 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
         try:
             func(*args, **kwargs)
         except (click.ClickException, click.exceptions.Exit, click.Abort):
-            # click's own control flow, including --help and usage errors
             raise
         except Exception as error:
             if _consumer_hung_up(error):
-                # nothing is left to report to, and the report that was
-                # interrupted has nowhere to go, so leave quietly. stdout
-                # is swapped out first: the interpreter flushes it once
-                # more on the way out, and that flush failing against the
-                # same dead pipe would replace the exit code with 120.
-                sys.stdout = io.StringIO()
+                _drop_stdout_so_the_exit_flush_cannot_fail()
                 sys.exit(2)
 
             import traceback  # noqa: PLC0415
@@ -384,7 +415,7 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     default=None,
     help="Output GitHub-compatible formatting.",
 )
-@partial  # mypyc-compiled wheels crash without this hack
+@_keep_mypyc_wheels_from_crashing
 @_fail_with_usage_code
 def main(
     *,
@@ -439,10 +470,6 @@ def main(
     github_output: bool | None = None,
 ) -> None:
     """djLint · HTML template linter and formatter."""
-    # Both streams, before anything can write to either: djlint.output is
-    # imported too late for the config warnings and is skipped altogether on
-    # the --require-pragma path, and a library import has no business
-    # retuning the process's streams.
     _use_utf8(sys.stdout)
     _use_utf8(sys.stderr)
 
@@ -513,37 +540,12 @@ def main(
     )
 
     if "-" in src and not config.files:
-        # click's get_text_stream helper is deprecated, so decode stdin here:
-        # the bytes on the pipe are utf-8 whatever the locale's default is.
-        # Strict is deliberate: --reformat hands this text straight back to
-        # the editor that piped it in, so papering over a bad byte would
-        # silently corrupt the buffer it gets written to. newline="" is the
-        # same bargain for line endings - universal newlines would hand the
-        # formatter LF for a CRLF buffer and quietly rewrite every line of
-        # it, where reformat_file opens with newline="" and keeps them.
-        try:
-            sys.stdin.reconfigure(  # type: ignore[union-attr]
-                encoding="utf-8", errors="strict", newline=""
-            )
-        except Exception:
-            pass
-        try:
-            stdin_text = sys.stdin.read()
-        except UnicodeDecodeError as e:
-            # the pipe held something that is not utf-8. That is bad input,
-            # not a djLint bug, so it must not surface as a crash report.
-            msg = f"Input on stdin is not valid UTF-8: {e}"
-            raise click.UsageError(msg) from None
+        stdin_text = _read_stdin_as_utf8_keeping_line_endings()
 
         if config.require_pragma and not has_pragma(
             config, stdin_text.split("\n", 1)[0]
         ):
-            # the pragma is an opt-in, so input without one was skipped on
-            # purpose. Hand it back byte for byte: an editor piping a buffer
-            # through djLint writes whatever lands on stdout back to the file.
-            print_no_files_to_check(excluded=True)
-            if config.reformat or config.check:
-                echo(stdin_text.encode("utf-8"), nl=False)
+            _echo_unchanged_stdin(config, stdin_text)
             return
 
         file_error, formatted_code = process_stdin(config, stdin_text)
@@ -551,9 +553,6 @@ def main(
         files_count = 1
 
         if config.reformat or config.check:
-            # formatter() already ends its output with the line ending the
-            # input used, so stripping and re-adding one here would flatten
-            # a CRLF buffer's last line on its way back to the editor.
             echo((formatted_code or "").encode("utf-8"), nl=False)
 
     else:
@@ -561,10 +560,6 @@ def main(
         file_list, excluded = get_src((Path(x) for x in file_src), config)
         if not file_list:
             print_no_files_to_check(excluded=excluded)
-            # excluding every candidate is the configuration doing its job,
-            # so it is a success. Matching nothing at all means the run
-            # checked nothing it was asked to check, which is a usage error
-            # and stays loud unless it was opted into.
             if excluded or config.allow_empty_input:
                 return
             sys.exit(2)
@@ -618,8 +613,7 @@ def main(
                 else:
                     executor_cls = concurrent.futures.ProcessPoolExecutor
                     if sys.platform == "win32":
-                        # Windows has a hard limit of 61 processes
-                        max_workers = min(max_workers, 61)
+                        max_workers = min(max_workers, _WINDOWS_MAX_PROCESSES)
 
                 with executor_cls(max_workers=max_workers) as exe:
                     futures = {
@@ -644,6 +638,20 @@ def main(
 
         if print_output(config, file_errors, files_count) and not config.warn:
             sys.exit(1)
+
+
+def _echo_unchanged_stdin(config: Config, stdin_text: str) -> None:
+    """Hand stdin back byte for byte when its pragma opt-in is missing.
+
+    An editor piping a buffer through djLint writes whatever lands on
+    stdout back to the file, so input skipped on purpose has to come back
+    exactly as it went in.
+    """
+    from djlint.src import print_no_files_to_check  # noqa: PLC0415
+
+    print_no_files_to_check(excluded=True)
+    if config.reformat or config.check:
+        echo(stdin_text.encode("utf-8"), nl=False)
 
 
 def _is_free_threaded_python() -> bool:
@@ -672,7 +680,10 @@ def process(config: Config, this_file: Path) -> ProcessResult:
 def process_stdin(
     config: Config, stdin_text: str
 ) -> tuple[ProcessResult, str | None]:
-    """Run linter or formatter on stdin."""
+    """Run linter or formatter on stdin.
+
+    As lint_file() does, per_file_ignores is matched against a posix path.
+    """
     output: ProcessResult = {}
     html = stdin_text
     formatted_code = None
@@ -689,7 +700,6 @@ def process_stdin(
     if config.lint:
         from djlint.lint import linter  # noqa: PLC0415
 
-        # as lint_file() does, match per_file_ignores against a posix path
         output["lint_message"] = linter(
             config, html, stdin_filename, Path(stdin_filename).as_posix()
         )

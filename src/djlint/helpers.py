@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 RE_FLAGS_IS: Final = re.I | re.S
 RE_FLAGS_IX: Final = re.I | re.X
-RE_FLAGS_MS: Final = re.M | re.S
+RE_FLAGS_MSX: Final = re.M | re.S | re.X
 RE_FLAGS_MX: Final = re.M | re.X
 RE_FLAGS_IMS: Final = re.I | re.M | re.S
 RE_FLAGS_IMX: Final = re.I | re.M | re.X
@@ -34,6 +34,23 @@ RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 
 _SPAN_CACHE_SIZE: Final = 1
 _LINE_CACHE_SIZE: Final = 64
+
+# front matter opens the file and holds the site generator's own data, so a
+# block tag in it means "---" is a yaml document separator instead
+YAML_FRONT_MATTER: Final = r"""
+    \A---(?:(?!\{%)[\s\S])*?^---[^\S\n]*$
+"""
+
+
+def split_option_list(value: str | None) -> list[str]:
+    """Split a comma separated option, dropping blank entries.
+
+    A blank entry would build a pattern matching everywhere, so a trailing
+    comma in the configuration must not change what an option means.
+    """
+    if not value:
+        return []
+    return [entry for x in value.split(",") if (entry := x.strip())]
 
 
 def _last_item(iterable: Iterable[T], /) -> T | None:
@@ -56,10 +73,13 @@ def _inside_non_overlapping_span(
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_ignored_block_opening(config: Config, item: str) -> bool:
-    """Find ignored group opening.
+    """Whether the line opens an ignored block it does not close.
 
-    A valid ignored group opening tag will not be part of a
-    single line block.
+    An opening that is not part of a block closed on this line leaves a
+    block open, even when a self-contained one follows it, as in
+    `<pre>a<!--b-->`. Only the marker's last character is probed for
+    containment: some alternatives start one character early, so `[^{]{#`
+    matches the quote in `class="{# x #}"`.
     """
     inline = tuple(
         match.span()
@@ -68,44 +88,41 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     if not inline:
         return bool(config.ignored_block_opening_pattern.search(item))
 
-    # an opening that is not part of a block closed on this line leaves a
-    # block open, even when a self-contained one follows it (<pre>a<!--b-->).
-    # Probe the marker's last character: some alternatives start one
-    # character early ("[^{]{#" matches the quote in class="{# x #}").
-    for match in config.ignored_block_opening_pattern.finditer(item):
-        if not _inside_non_overlapping_span(
-            inline, match.end() - 1, match.end()
-        ):
-            return True
-    return False
+    return any(
+        not _inside_non_overlapping_span(inline, match.end() - 1, match.end())
+        for match in config.ignored_block_opening_pattern.finditer(item)
+    )
+
+
+def _marker_past_inline_blocks(
+    item: str, inline_blocks: re.Pattern[str], marker: re.Pattern[str], /
+) -> bool:
+    """Whether a marker sits past every block the line opens and closes.
+
+    One inside such a block belongs to it, so it leaves nothing open.
+    """
+    last_inline = _last_item(inline_blocks.finditer(item))
+    return bool(marker.search(item[last_inline.end() if last_inline else 0 :]))
 
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
-def is_script_style_block_opening(config: Config, item: str) -> bool:
-    """Find ignored group opening.
-
-    A valid ignored group opening tag will not be part of a
-    single line block.
-    """
-    inline = _last_item(config.script_style_inline_imsx_pattern.finditer(item))
-    last_index = (
-        inline.end()  # get the last index. The ignored opening should start after this.
-        if inline
-        else 0
+def is_raw_text_block_opening(config: Config, item: str) -> bool:
+    """Whether the line opens a raw text element it does not close."""
+    return _marker_past_inline_blocks(
+        item,
+        config.raw_text_inline_imsx_pattern,
+        config.raw_text_opening_pattern,
     )
-    return bool(config.script_style_opening_pattern.search(item[last_index:]))
 
 
 def inside_protected_trans_block(
     config: Config, html: str, match: re.Match[str]
 ) -> bool:
-    """Find ignored group closing.
+    """Whether the match closes a trans block whose contents keep their form.
 
-    A valid ignored group closing tag will not be part of a
-    single line block.
-
-    True = non indentable > inside ignored trans block
-    False = indentable > either inside a trans trimmed block, or somewhere else, but not a trans non trimmed :)
+    True means the match sits inside a non trimmed trans block, which is
+    not indentable. False means it is indentable: either inside a trimmed
+    trans block, or nowhere near one.
     """
     close_block = config.ignored_trans_blocks_closing_pattern.search(
         match.group()
@@ -115,81 +132,47 @@ def inside_protected_trans_block(
         return False
 
     non_trimmed = _last_item(config.ignored_trans_blocks_pattern.finditer(html))
-
     trimmed = _last_item(config.trans_trimmed_blocks_pattern.finditer(html))
 
-    # who is max?
     if non_trimmed and (not trimmed or non_trimmed.end() > trimmed.end()):
-        # non trimmed!
-        # check that this is not an inline block.
-        non_trimmed_inline = bool(
-            config.ignored_trans_blocks_pattern.search(match.group())
-        )
-
-        if non_trimmed_inline:
-            last_index = non_trimmed.end()  # get the last index. The ignored opening should start after this.
-
+        if config.ignored_trans_blocks_pattern.search(match.group()):
             return bool(
                 config.ignored_trans_blocks_closing_pattern.search(
-                    html[last_index:]
+                    html[non_trimmed.end() :]
                 )
             )
 
         return close_block.end() <= non_trimmed.end()
 
     if trimmed:
-        # inside a trimmed block, we can return true to continue as if
-        # this is a indentable block
         return close_block.end() > trimmed.end()
     return False
 
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_ignored_block_closing(config: Config, item: str) -> bool:
-    """Find ignored group closing.
-
-    A valid ignored group closing tag will not be part of a
-    single line block.
-    """
-    inline = _last_item(config.ignored_inline_blocks_ix_pattern.finditer(item))
-    last_index = (
-        inline.end()  # get the last index. The ignored opening should start after this.
-        if inline
-        else 0
+    """Whether the line closes an ignored block opened on an earlier one."""
+    return _marker_past_inline_blocks(
+        item,
+        config.ignored_inline_blocks_ix_pattern,
+        config.ignored_block_closing_pattern,
     )
-    return bool(config.ignored_block_closing_pattern.search(item[last_index:]))
 
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
-def is_script_style_block_closing(config: Config, item: str) -> bool:
-    """Find ignored group closing.
-
-    A valid ignored group closing tag will not be part of a
-    single line block.
-    """
-    inline = _last_item(config.script_style_inline_ix_pattern.finditer(item))
-    last_index = (
-        inline.end()  # get the last index. The ignored opening should start after this.
-        if inline
-        else 0
+def is_raw_text_block_closing(config: Config, item: str) -> bool:
+    """Whether the line closes a raw text element opened on an earlier one."""
+    return _marker_past_inline_blocks(
+        item, config.raw_text_inline_ix_pattern, config.raw_text_closing_pattern
     )
-    return bool(config.script_style_closing_pattern.search(item[last_index:]))
 
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_safe_closing_tag(config: Config, item: str) -> bool:
-    """Find ignored group opening.
-
-    A valid ignored group opening tag will not be part of a
-    single line block.
-    """
-    inline = _last_item(config.safe_closing_block_pattern.finditer(item))
-    last_index = (
-        inline.end()  # get the last index. The ignored opening should start after this.
-        if inline
-        else 0
+    """Whether the line closes an ignored block and can still be indented."""
+    return _marker_past_inline_blocks(
+        item, config.safe_closing_block_pattern, config.safe_closing_tag_pattern
     )
-    return bool(config.safe_closing_tag_pattern.search(item[last_index:]))
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
@@ -303,36 +286,35 @@ def mask_unformatted_blocks(html: str) -> tuple[str, list[tuple[str, str]]]:
     return (_UNFORMATTED_BLOCK_PATTERN.sub(replace, html), replacements)
 
 
+def _restore_unformatted_block(html: str, marker: str, replacement: str) -> str:
+    def reindent(match: re.Match[str]) -> str:
+        indent = match.group(1)
+        lines = replacement.split("\n")
+        lines[0] = indent + lines[0].lstrip()
+        if "djlint:on" in lines[-1]:
+            lines[-1] = indent + lines[-1].lstrip()
+        return "\n".join(lines)
+
+    escaped = re.escape(marker)
+    html = re.sub(
+        rf"^([ \t]*){escaped}[ \t]*$", reindent, html, flags=RE_FLAGS_MX
+    )
+    if replacement.startswith("\n"):
+        html = re.sub(
+            rf"[ \t]*{escaped}",
+            lambda _match: replacement,
+            html,
+            flags=RE_FLAGS_MX,
+        )
+    return html.replace(marker, replacement)
+
+
 def restore_unformatted_blocks(
     html: str, replacements: list[tuple[str, str]]
 ) -> str:
     """Put masked djlint:off blocks back after formatting."""
     for marker, replacement in replacements:
-
-        def replace_marker(
-            match: re.Match[str], replacement: str = replacement
-        ) -> str:
-            indent = match.group(1)
-            lines = replacement.split("\n")
-            lines[0] = indent + lines[0].lstrip()
-            if "djlint:on" in lines[-1]:
-                lines[-1] = indent + lines[-1].lstrip()
-            return "\n".join(lines)
-
-        html = re.sub(
-            rf"^([ \t]*){re.escape(marker)}[ \t]*$",
-            replace_marker,
-            html,
-            flags=RE_FLAGS_MX,
-        )
-        if replacement.startswith("\n"):
-            html = re.sub(
-                rf"[ \t]*{re.escape(marker)}",
-                replacement,
-                html,
-                flags=RE_FLAGS_MX,
-            )
-        html = html.replace(marker, replacement)
+        html = _restore_unformatted_block(html, marker, replacement)
     return html
 
 
@@ -440,11 +422,11 @@ def child_of_unformatted_block(
 def child_of_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
-    for ignored_match in itertools.chain(
-        config.ignored_blocks_pattern.finditer(html),
-        config.ignored_inline_blocks_ix_pattern.finditer(html),
+    for ignored_match_start, ignored_match_end in _inside_ignored_block(
+        html,
+        ignored_blocks=config.ignored_blocks_pattern,
+        ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
     ):
-        ignored_match_start, ignored_match_end = ignored_match.span()
         if ignored_match_start < match_start and match_end <= ignored_match_end:
             return True
     return False
@@ -453,24 +435,24 @@ def child_of_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
 def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Check if a match is in a block the linter skips.
 
-    Uses the lint spans, which cover the tag closing a script/style block; the
-    formatter's stop short of it so it can still be indented.
+    Uses the lint spans, which cover the tag closing a script/style block;
+    the formatter's stop short of it so it can still be indented.
+
+    A match need not lie wholly inside the block: poorly built html tends
+    to straddle one and should be skipped all the same. Spans are half
+    open, so a match that only touches an ignored block, as in
+    `{% if x %}{# comment #}`, starts and ends outside of it.
     """
     match_start, match_end = match.span()
-    for ignored_match_start, ignored_match_end in _inside_ignored_block(
-        html,
-        ignored_blocks=config.lint_ignored_blocks_pattern,
-        ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
-    ):
-        # don't require the match to be fully inside the ignored block.
-        # poorly build html will probably span ignored blocks and should be ignored.
-        # spans are half open, so a match that only touches an ignored block
-        # (e.g. `{% if x %}{# comment #}`) starts and ends outside of it.
-        if (ignored_match_start <= match_start < ignored_match_end) or (
-            ignored_match_start < match_end <= ignored_match_end
-        ):
-            return True
-    return False
+    return any(
+        (ignored_start <= match_start < ignored_end)
+        or (ignored_start < match_end <= ignored_end)
+        for ignored_start, ignored_end in _inside_ignored_block(
+            html,
+            ignored_blocks=config.lint_ignored_blocks_pattern,
+            ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
+        )
+    )
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
@@ -496,28 +478,28 @@ def _inside_ignored_rule(
 def inside_ignored_rule(
     config: Config, html: str, match: SpanMatch, rule: str
 ) -> bool:
-    """Check if match is inside an ignored pattern."""
+    """Check if match is inside an ignored pattern.
+
+    Spans are half open, so a match ending exactly where a pragma starts is
+    outside of it. A bare pragma ignores every rule, so it only covers
+    matches ending inside it; a match merely wrapping one, such as a whole
+    `<div ... {# djlint:off #} ... >` tag, keeps being checked, otherwise
+    rules that pair tags would lose track of it.
+    """
     match_start, match_end = match.span()
-    for (
-        ignored_match_start,
-        ignored_match_end,
-        ignored_rule_names,
-        ignore_all_rules,
-    ) in _inside_ignored_rule(html, ignored_rules=config.ignored_rule_patterns):
-        # spans are half open, so a match ending exactly where a pragma starts
-        # is outside of it. a bare pragma ignores every rule, so it only covers
-        # matches ending inside it; a match merely wrapping one (e.g. the whole
-        # `<div ... {# djlint:off #} ... >` tag) keeps being checked, otherwise
-        # rules that pair tags would lose track of it.
-        if (
-            (
-                match_start < ignored_match_end
-                and ignored_match_start < match_end
-            )
+    return any(
+        (
+            ignored_start < match_end
+            and match_start < ignored_end
             and rule in ignored_rule_names
-        ) or (
-            (ignored_match_start < match_end <= ignored_match_end)
-            and ignore_all_rules
-        ):
-            return True
-    return False
+        )
+        or (ignore_all_rules and ignored_start < match_end <= ignored_end)
+        for (
+            ignored_start,
+            ignored_end,
+            ignored_rule_names,
+            ignore_all_rules,
+        ) in _inside_ignored_rule(
+            html, ignored_rules=config.ignored_rule_patterns
+        )
+    )

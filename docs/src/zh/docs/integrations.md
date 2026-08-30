@@ -8,6 +8,17 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 
 有多个为 djLint 开发的编辑器集成方案。
 
+## GitHub Actions
+
+在 GitHub Actions 工作流中，djLint 会将每条结果输出为注解（annotation），直接显示在拉取请求的差异视图中。无需任何配置：djLint 会自动识别工作流并切换输出格式。
+
+```yaml
+- run: pip install djlint
+- run: djlint . --lint --profile django
+```
+
+使用 `--no-github-output` 可恢复普通的控制台输出，使用 `--github-output` 可在 Actions 之外强制输出注解。
+
 ## Pre-Commit
 
 djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检查工具和格式化工具。

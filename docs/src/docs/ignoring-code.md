@@ -38,7 +38,7 @@ or as a long comment -
 {% comment %} djlint:on {% endcomment %}
 ```
 
-or as a javascript style comment -
+or as a golang style comment -
 
 <!-- prettier-ignore -->
 ```html
@@ -47,7 +47,7 @@ or as a javascript style comment -
 {{ /* djlint:on */ }}
 ```
 
-or as a golang style comment -
+or as a handlebars style comment -
 
 <!-- prettier-ignore -->
 ```html

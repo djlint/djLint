@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
-    RE_FLAGS_IX,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -26,29 +25,24 @@ if TYPE_CHECKING:
 ORPHAN_END_MESSAGE: Final = "End tag has no matching block tag."
 MISMATCH_MESSAGE: Final = "Endblock name should match opening block name."
 
+_HANDLEBARS_RAW_BLOCK = r"\{\{\{\{#?\s*([\w.-]+)(?:(?!\}\}\}\}).)*\}\}\}\}(?:(?!\{\{\{\{/).)*?\{\{\{\{/\s*\1\s*\}\}\}\}"
+_HANDLEBARS_COMMENT = r"\{\{!--(?:(?!--\}\}).)*--\}\}|\{\{!(?:(?!\}\}).)*\}\}"
+_BLOCK_TAG = r"\{%(?:(?!%\}).)*%\}|\{\{[#^/](?:(?!\}\}).)*\}\}"
+
 _TEMPLATE_TAG_PATTERN: Final = re.compile(
-    # a handlebars raw block ({{{{raw}}}}...{{{{/raw}}}}) and handlebars
-    # comments ({{!-- --}}, {{! }}) are matched whole so the block/comment
-    # tags nested inside them are not scanned as real tags.
-    r"\{\{\{\{#?\s*([\w.-]+)(?:(?!\}\}\}\}).)*\}\}\}\}(?:(?!\{\{\{\{/).)*?\{\{\{\{/\s*\1\s*\}\}\}\}"
-    r"|\{\{!--(?:(?!--\}\}).)*--\}\}"
-    r"|\{\{!(?:(?!\}\}).)*\}\}"
-    r"|\{%(?:(?!%\}).)*%\}"
-    r"|\{\{[#^/](?:(?!\}\}).)*\}\}",
+    f"{_HANDLEBARS_RAW_BLOCK}|{_HANDLEBARS_COMMENT}|{_BLOCK_TAG}",
     re.S,
     cache_pattern=False,
 )
-# {% name %}, {{#name}}, {{^name}} (inverted section), {{#> name}}
-# (handlebars partial block), {{#*name}} (handlebars decorator)
 _OPEN_NAME_PATTERN: Final = re.compile(
-    r"(?:\{%-?|\{\{[#^][*>]?)\s*([\w.-]+)", cache_pattern=False
+    r"(?:\{%[-+]?|\{\{[#^][*>]?)\s*([\w.-]+)", cache_pattern=False
 )
 _END_NAME_PATTERN: Final = re.compile(
-    r"\{%-?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)", cache_pattern=False
+    r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)", cache_pattern=False
 )
-# the label naming a {% block %} or {% endblock %}
 _BLOCK_LABEL_PATTERN: Final = re.compile(
-    r"\{%-?\s*(?:end)?block\s+([^\s%-][^\s%]*)", cache_pattern=False
+    r"\{%[-+]?\s*(?:end)?block\s+([^\s%+-](?:[^\s%]*[^\s%+-])?)",
+    cache_pattern=False,
 )
 
 
@@ -85,7 +79,12 @@ def run(
     *args: Any,
     **kwargs: Any,
 ) -> tuple[LintError, ...]:
-    """Check that template block tags have matching end tags."""
+    """Check that template block tags have matching end tags.
+
+    Handlebars raw blocks and comments are matched whole, so the tags
+    nested inside them are never scanned as real tags and nothing in them
+    needs pairing.
+    """
     errors: list[LintError] = []
     open_tags: list[tuple[str, re.Match[str]]] = []
 
@@ -93,10 +92,9 @@ def run(
         tag = match.group()
 
         if tag.startswith(("{{{{", "{{!")):
-            # a whole handlebars raw block or comment, so nothing to pair
             continue
 
-        if re.match(config.template_unindent, tag, RE_FLAGS_IX):
+        if config.template_unindent_ix_pattern.match(tag):
             end_name = _END_NAME_PATTERN.match(tag)
             if end_name is None:
                 continue
@@ -104,7 +102,6 @@ def run(
                 continue
             name = end_name.group(1) or end_name.group(2)
             if not name:
-                # a bare {% end %} closes the innermost open block
                 if open_tags:
                     open_tags.pop()
                 else:
@@ -114,15 +111,14 @@ def run(
                 continue
             for index in range(len(open_tags) - 1, -1, -1):
                 if open_tags[index][0] == name:
-                    # block tags opened inside it were never closed
+                    never_closed = open_tags[index + 1 :]
                     errors.extend(
                         _error(rule, open_match, line_ends, rule["message"])
-                        for _, open_match in open_tags[index + 1 :]
+                        for _, open_match in never_closed
                     )
                     open_match = open_tags[index][1]
                     del open_tags[index:]
                     if name == "block":
-                        # {% endblock foo %} must name its own block
                         close_label = _BLOCK_LABEL_PATTERN.match(tag)
                         open_label = _BLOCK_LABEL_PATTERN.match(
                             open_match.group()
@@ -141,9 +137,10 @@ def run(
                     _error(rule, match, line_ends, ORPHAN_END_MESSAGE)
                 )
 
-        elif re.match(
-            config.template_indent, tag, RE_FLAGS_IX
-        ) or tag.startswith(("{{#", "{{^")):
+        elif config.template_indent_ix_pattern.match(tag) or tag.startswith((
+            "{{#",
+            "{{^",
+        )):
             open_name = _OPEN_NAME_PATTERN.match(tag)
             if open_name is None or _ignored(rule, config, html, match):
                 continue

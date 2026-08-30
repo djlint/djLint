@@ -190,6 +190,25 @@ test_data = [
         ),
         id="style_tag_2",
     ),
+    pytest.param(
+        (
+            "<div\n"
+            "     {# djlint:off #}\n"
+            '     data-path="C:\\dir\\file"\n'
+            '     data-re="\\1 \\g<x>"\n'
+            "     {# djlint:on #}\n"
+            '     class="a">\n'
+            "</div>\n"
+        ),
+        (
+            "<div\n"
+            "     {# djlint:off #}\n"
+            '     data-path="C:\\dir\\file"\n'
+            '     data-re="\\1 \\g<x>"\n'
+            '     {# djlint:on #} class="a"></div>\n'
+        ),
+        id="backslashes_in_ignored_attributes",
+    ),
 ]
 
 

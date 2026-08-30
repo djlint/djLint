@@ -5,7 +5,7 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 date: Last Modified
 ---
 
-## Ignorer le code
+# Ignorer le code
 
 Le code peut être ignoré en l'entourant de balises `djlint` :
 
@@ -13,34 +13,47 @@ Le code peut être ignoré en l'entourant de balises `djlint` :
 
 Pour le simple html -
 
+<!-- prettier-ignore -->
 ```html
 <!-- djlint:off -->
-<mauvais html à ignorer> <!-- djlint:on --></bad>
+   <mauvais html à ignorer>
+<!-- djlint:on -->
 ```
 
-ou comme un long commentaire -
+ou comme un commentaire -
 
+<!-- prettier-ignore -->
 ```html
-{# djlint:off #} <mauvais html à ignorer> {# djlint:on #}</bad>
+{# djlint:off #}
+   <mauvais html à ignorer>
+{# djlint:on #}
 ```
 
 ou comme un long commentaire -
 
+<!-- prettier-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
-<mauvais html à ignorer> {% comment %} djlint:on {% endcomment %}</bad>
-```
-
-ou comme un commentaire de style javascript -
-
-```html
-{{ /* djlint:off */ }} <mauvais html à ignorer> {{ /* djlint:on */ }}</bad>
+   <mauvais html à ignorer>
+{% comment %} djlint:on {% endcomment %}
 ```
 
 ou comme un commentaire de style golang -
 
+<!-- prettier-ignore -->
 ```html
-{{!-- djlint:off --}} <mauvais html à ignorer> {{!-- djlint:on --}}</bad>
+{{ /* djlint:off */ }}
+   <mauvais html à ignorer>
+{{ /* djlint:on */ }}
+```
+
+ou comme un commentaire de style handlebars -
+
+<!-- prettier-ignore -->
+```html
+{{!-- djlint:off --}}
+   <mauvais html à ignorer>
+{{!-- djlint:on --}}
 ```
 
 {% endraw %}
@@ -51,25 +64,27 @@ Des règles spécifiques de linter peuvent également être ignorées en ajoutan
 
 {% raw %}
 
+<!-- prettier-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>
-  {# djlint:on #}
+{# djlint:on #}
 
-  <!-- djlint:off H025-->
-</p>
-
+<!-- djlint:off H025-->
 <p>
-  <!-- djlint:on -->
+<!-- djlint:on -->
 
-  {% comment %} djlint:off H025 {% endcomment %}
-</p>
+{% comment %} djlint:off H025 {% endcomment %}
+<p>
+{% comment %} djlint:on {% endcomment %}
 
-<p>{% comment %} djlint:on {% endcomment %} {{!-- djlint:off H025 --}}</p>
+{{!-- djlint:off H025 --}}
+<p>
+{{!-- djlint:on --}}
 
-<p>{{!-- djlint:on --}} {{ /* djlint:off H025 */ }}</p>
-
-<p>{{ /* djlint:on */ }}</p>
+{{ /* djlint:off H025 */ }}
+<p>
+{{ /* djlint:on */ }}
 ```
 
 {% endraw %}

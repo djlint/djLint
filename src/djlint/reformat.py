@@ -8,6 +8,8 @@ from __future__ import annotations
 import difflib
 from typing import TYPE_CHECKING
 
+import regex as re
+
 from djlint.formatter.class_attributes import (
     restore_class_attribute_newlines,
     restore_verbatim_attribute_newlines,
@@ -20,17 +22,30 @@ from djlint.helpers import mask_unformatted_blocks, restore_unformatted_blocks
 
 if TYPE_CHECKING:
     from pathlib import Path
+    from typing import Final
 
     from djlint.settings import Config
 
 
+_CARRIAGE_RETURN_LINE_ENDING_PATTERN: Final = re.compile(
+    r"\r\n?", cache_pattern=False
+)
+
+
 def formatter(config: Config, rawcode: str) -> str:
-    """Format a html string."""
+    """Format a html string.
+
+    Line endings are normalized with a pattern rather than
+    str.splitlines(), which also breaks on U+2028, U+0085 and form feed.
+    Those are content: rewriting one as a newline breaks a javascript
+    string that holds it.
+    """
     if not rawcode:
         return rawcode
 
-    # naturalize the line breaks
-    normalized_code = "\n".join(rawcode.splitlines())
+    normalized_code = _CARRIAGE_RETURN_LINE_ENDING_PATTERN.sub(
+        "\n", rawcode
+    ).removesuffix("\n")
     normalized_code, unformatted_blocks = mask_unformatted_blocks(
         normalized_code
     )
@@ -43,10 +58,9 @@ def formatter(config: Config, rawcode: str) -> str:
 
     indented_code = indent_html(condensed, config)
 
-    # compressed still carries the author's line breaks, but has had the
-    # rewrites (tag case, void tags, attributes) that indenting also applies,
-    # so its blocks can be matched against the indented ones.
-    beautified_code = condense_html(indented_code, config, compressed)
+    beautified_code = condense_html(
+        indented_code, config, authored_html=compressed
+    )
 
     if config.format_css:
         from djlint.formatter.css import format_css  # noqa: PLC0415
@@ -67,15 +81,16 @@ def formatter(config: Config, rawcode: str) -> str:
         beautified_code, unformatted_blocks
     )
 
-    # preserve original line endings
-    line_ending = rawcode.find("\n")
-    if line_ending > -1 and rawcode[max(line_ending - 1, 0)] == "\r":
-        # convert \r?\n to \r\n
-        beautified_code = beautified_code.replace("\r", "").replace(
-            "\n", "\r\n"
-        )
+    return _match_source_line_endings(beautified_code, rawcode)
 
-    return beautified_code
+
+def _match_source_line_endings(formatted: str, rawcode: str) -> str:
+    """Write CRLF back when the source's first line ending used one."""
+    first_newline = rawcode.find("\n")
+    if first_newline < 0 or rawcode[max(first_newline - 1, 0)] != "\r":
+        return formatted
+
+    return formatted.replace("\r", "").replace("\n", "\r\n")
 
 
 def reformat_string(

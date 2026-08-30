@@ -60,6 +60,12 @@ test_data = [
         ({"ignore_blocks": "example"}),
         id="ignore_custom_block_indented",
     ),
+    pytest.param(
+        ("<p>\n{% raw %}\ntest\n{% endraw %}\n</p>"),
+        ("<p>\n    {% raw %}\n    test\n    {% endraw %}\n</p>\n"),
+        ({"ignore_blocks": "raw,"}),
+        id="blank_entries_are_dropped",
+    ),
 ]
 
 

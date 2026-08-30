@@ -51,3 +51,37 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        pytest.param(
+            "<div>\n    <pre>&lt;!-- x -->\n   indented\ntail</pre>\n</div>\n",
+            id="escaped_comment_close",
+        ),
+        pytest.param(
+            "<div>\n"
+            "    <pre>{# djlint:off H025 #}\n"
+            "{# djlint:on #}\n"
+            "<span></pre>\n"
+            "</div>\n",
+            id="djlint_pragmas_as_content",
+        ),
+        pytest.param(
+            '{{#if}}\n<pre class="language-html">\n{# djlint:on #}\n',
+            id="handlebars_section_is_not_a_jinja_comment",
+        ),
+    ],
+)
+def test_markers_in_pre_are_content(source: str, basic_config: Config) -> None:
+    """Text that looks like a marker must not end the verbatim block.
+
+    Reformatting must reach a fixed point; these used to add an indent
+    level to the pre contents on every run.
+    """
+    once = formatter(basic_config, source)
+    twice = formatter(basic_config, once)
+
+    printer(once, source, twice)
+    assert once == twice

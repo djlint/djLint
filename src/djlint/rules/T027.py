@@ -114,7 +114,8 @@ def run(
     """Check for unclosed strings in template syntax."""
     errors: list[LintError] = []
     for match in _iter_template_tags(html):
-        if not _has_unclosed_string(html, match.start(), match.span()[1]):
+        start, end = match.span()
+        if not _has_unclosed_string(html, start, end):
             continue
 
         if (
@@ -126,7 +127,7 @@ def run(
 
         errors.append({
             "code": rule["name"],
-            "line": get_line(match.start(), line_ends),
+            "line": get_line(start, line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         })

@@ -8,6 +8,7 @@ from click import echo
 
 from djlint.output import (
     build_relative_path,
+    build_stats_output,
     count_format_errors,
     report_on_stderr,
 )
@@ -37,7 +38,7 @@ def escape_property(data: str) -> str:
 
 
 def print_github_output(
-    config: Config, file_errors: Iterable[ProcessResult], _file_count: int
+    config: Config, file_errors: Sequence[ProcessResult], _file_count: int
 ) -> int:
     """Print results as GitHub workflow commands."""
     lint_error_count = 0
@@ -58,6 +59,11 @@ def print_github_output(
                 )
         if error.get("lint_message"):
             lint_error_count += print_lint_errors(error["lint_message"], config)
+
+    if config.statistics and config.lint:
+        build_stats_output(
+            tuple(x.get("lint_message") for x in file_errors), config
+        )
 
     return lint_error_count + format_error_count
 
@@ -104,7 +110,7 @@ def print_format_errors(
     filename = escape_property(
         build_relative_path(next(iter(errors)), config.project_root)
     )
-    if bool(next(iter(errors.values()))):
+    if next(iter(errors.values())):
         echo(f"::error file={filename}::Formatting changes required")
 
-    return sum(1 for v in errors.values() if v)
+    return count_format_errors(errors)

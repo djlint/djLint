@@ -1,6 +1,6 @@
-"""Test django autoescape tag.
+"""Test django language tag.
 
-uv run pytest tests/test_django/test_autoescape.py
+uv run pytest tests/test_django/test_language.py
 """
 
 from __future__ import annotations
@@ -17,24 +17,24 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{% autoescape on %}{{ body }}{% endautoescape %}"),
-        ("{% autoescape on %}{{ body }}{% endautoescape %}\n"),
-        id="autoescape_tag",
-    ),
-    pytest.param(
         (
             "<p>\n"
-            "    {% autoescape on %}Something{% endautoescape %}\n"
+            "    {% language 'de' %}Something{% endlanguage %}\n"
             "    <span>Test</span>\n"
             "</p>\n"
         ),
         (
             "<p>\n"
-            "    {% autoescape on %}Something{% endautoescape %}\n"
+            "    {% language 'de' %}Something{% endlanguage %}\n"
             "    <span>Test</span>\n"
             "</p>\n"
         ),
         id="issue_2411_siblings_keep_their_level",
+    ),
+    pytest.param(
+        ("{% language 'de' %}\n<p>Something</p>\n{% endlanguage %}\n"),
+        ("{% language 'de' %}\n    <p>Something</p>\n{% endlanguage %}\n"),
+        id="block_indents_its_contents",
     ),
 ]
 

@@ -34,7 +34,7 @@ Ce modèle n'est pas recommandé :
 
 ## `format_attribute_template_tags` et des attributs conditionnels non spatiaux
 
-Si l'option `format_attribute_template_tags` est activée, les attributs conditionnels devraient utiliser des balises sans espace, par exemple {% raw %}`{% if a -%}`{% endraw %} dans nunjuck et jinja, pour supprimer les espaces à l'intérieur des.
+Si l'option `format_attribute_template_tags` est activée, les attributs conditionnels devraient utiliser des balises sans espace, par exemple {% raw %}`{% if a -%}`{% endraw %} dans nunjucks et jinja, pour supprimer les espaces à l'intérieur de la balise.
 
 djLint formatera les attributs longs sur plusieurs lignes, et l'espacement conservé à l'intérieur des attributs pourrait casser votre code.
 
@@ -46,11 +46,12 @@ Ce modèle est recommandé :
 <input
   value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
 />
-                        ^                       ^      ^        ^ -- tags sans
-espace
+                        ^                       ^      ^        ^
 ```
 
 {% endraw %}
+
+Chaque position marquée est une balise sans espace.
 
 Ce modèle n'est pas recommandé :
 

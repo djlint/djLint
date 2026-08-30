@@ -72,21 +72,27 @@ def _after_mako_expression(source: str, start: int) -> int | None:
     return None
 
 
+def _after_brace_run_expression(source: str, start: int) -> int | None:
+    """Return the end of a {{ }}, {{{ }}} or {{{{ }}}} expression.
+
+    Handlebars allows a variable-length brace run, so the opening run is
+    matched with a closing run of the same length; a leftover brace would
+    otherwise abort the surrounding tag scan.
+    """
+    open_length = 2
+    while source[start + open_length : start + open_length + 1] == "{":
+        open_length += 1
+    closing = "}" * open_length
+    end = source.find(closing, start + open_length)
+    return end + open_length if end >= 0 else None
+
+
 def _after_template(source: str, start: int) -> int | None:
     if source.startswith("${", start):
         return _after_mako_expression(source, start)
 
     if source.startswith("{{", start):
-        # Handlebars allows a variable-length brace run: {{ }}, {{{ }}}
-        # (triple stache) and {{{{ }}}} (raw blocks). Match the opening run
-        # with an equal-length closing run so a leftover brace does not
-        # abort the surrounding tag scan.
-        open_length = 2
-        while source[start + open_length : start + open_length + 1] == "{":
-            open_length += 1
-        closing = "}" * open_length
-        end = source.find(closing, start + open_length)
-        return end + open_length if end >= 0 else None
+        return _after_brace_run_expression(source, start)
 
     closing = _TEMPLATE_DELIMITERS.get(source[start : start + 2])
     if not closing:
@@ -128,7 +134,15 @@ def _enclosing_template_end(source: str, start: int, lt: int) -> int | None:
 
 
 def tokenize_tags(source: str) -> Iterator[TagToken]:
-    """Yield tags without normalizing or copying their contents."""
+    """Yield tags without normalizing or copying their contents.
+
+    Template expressions are skipped so their contents cannot end the tag,
+    including inside a quoted value, where a tag such as
+    {% translate "You don't have permission" %} would otherwise be read as
+    closing the attribute. One spanning the tag's own ">" is left alone: a
+    quoted literal like a="{{" has no closing of its own, so the "}}" a
+    plain search settles on lies past the end of the tag.
+    """
     has_templates = "{" in source or "$" in source
     search_from = 0
     while (start := source.find("<", search_from)) >= 0:
@@ -140,9 +154,6 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
         if source.startswith("<!--", start):
             comment_end = source.find("-->", start + 4)
             if comment_end < 0:
-                # An unterminated "<!--" (e.g. a stray one inside a {# #}
-                # template comment or a <textarea>) must not swallow the
-                # rest of the document; skip the marker and keep scanning.
                 search_from = start + 4
                 continue
             search_from = comment_end + 3
@@ -176,20 +187,15 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
         cursor = name_end
         while cursor < len(source):
             char = source[cursor]
-            # Skip over template expressions so their contents cannot end the
-            # tag. Inside a quoted value the quotes of a template tag would
-            # otherwise be read as ending the attribute, as in
-            # {% translate "You don't have permission" %}, so skip it too -
-            # but only when it holds no ">". A quoted literal like a="{{"
-            # has no end tag of its own, and the "}}" that a naive search
-            # settles on lies beyond the ">" that ends the tag.
             if char in {"$", "{"}:
                 template_end = _after_template(source, cursor)
-                if template_end is not None and (
-                    quote is None
-                    or char == "$"
-                    or source.find(">", cursor, template_end) < 0
-                ):
+                spans_tag_end = (
+                    template_end is not None
+                    and quote is not None
+                    and char != "$"
+                    and source.find(">", cursor, template_end) >= 0
+                )
+                if template_end is not None and not spans_tag_end:
                     cursor = template_end
                     continue
 

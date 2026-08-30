@@ -6,7 +6,18 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # Integrations
 
-There are several editor integrations build for djLint.
+There are several editor integrations built for djLint.
+
+## GitHub Actions
+
+In a GitHub Actions workflow djLint reports each finding as an annotation, so it shows up inline on the diff of a pull request. No configuration is needed: djLint detects the workflow and switches output automatically.
+
+```yaml
+- run: pip install djlint
+- run: djlint . --lint --profile django
+```
+
+Use `--no-github-output` to get the plain console output instead, or `--github-output` to force annotations outside of Actions.
 
 ## Pre-Commit
 
@@ -36,7 +47,7 @@ The repo provides multiple pre-configured hooks for specific djLint profiles (it
   This will look for files matching `*.html` and set `--profile=askama`.
   :::
 
-Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) for additional configuration
+Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) for additional configuration.
 
 ### Default Django example
 

@@ -138,6 +138,24 @@ test_data = [
         # https://github.com/djlint/djLint/issues/1113
         id="issue_1113_self_closing_tag_inside_block",
     ),
+    pytest.param(
+        (
+            "{% component %}\n"
+            "    {% slot %}\n"
+            "    <p>text</p>\n"
+            "    {% endslot %}\n"
+            "{% endcomponent %}\n"
+        ),
+        (
+            "{% component %}\n"
+            "    {% slot %}\n"
+            "        <p>text</p>\n"
+            "    {% endslot %}\n"
+            "{% endcomponent %}\n"
+        ),
+        ({"custom_blocks": "component, ,slot,"}),
+        id="blank_entries_are_dropped",
+    ),
 ]
 
 

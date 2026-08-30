@@ -22,12 +22,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from djlint import main as djlint
+from djlint.output import build_stats_output
 from tests.conftest import write_to_file
 
 if TYPE_CHECKING:
     from tempfile import _TemporaryFileWrapper
 
+    import pytest
     from click.testing import CliRunner
+
+    from djlint.settings import Config
 
 
 def test_H011(
@@ -873,12 +877,32 @@ def test_statistics_empty(
     result = runner.invoke(djlint, (tmp_file.name, "--statistics"))
 
     assert result.exit_code == 0
+    assert "Statistics" in result.output
 
 
 def test_statistics_with_results(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
-    write_to_file(tmp_file.name, b"<div>")
+    write_to_file(tmp_file.name, b'<div>\n<img src="x">\n<img src="y">\n')
     result = runner.invoke(djlint, (tmp_file.name, "--statistics"))
 
     assert result.exit_code == 1
+    stats = result.output.split("Statistics", 1)[1].splitlines()
+    counted = [line for line in stats if line.startswith(("H013", "H025"))]
+    assert counted == [
+        "H013 2 Img tag should have an alt attribute.",
+        "H025 1 Tag seems to be an orphan.",
+    ]
+
+
+def test_statistics_counts_codes_of_custom_modules(
+    capsys: pytest.CaptureFixture[str], basic_config: Config
+) -> None:
+    lint_message = {
+        "source.html": [
+            {"code": "MY001a", "line": "1:0", "match": "x", "message": ""}
+        ]
+    }
+
+    assert build_stats_output((lint_message,), basic_config) == 1
+    assert "MY001a 1" in capsys.readouterr().out

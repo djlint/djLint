@@ -174,6 +174,44 @@ jinja_test_data = [
         ([]),
         id="issue_2297_comment_after_block_tag",
     ),
+    pytest.param(
+        # https://github.com/djlint/djLint/issues/2396
+        ("{%+ for item in seq +%}\n{{ item }}\n{%+ endfor +%}\n"),
+        ([]),
+        id="issue_2396_whitespace_control_plus",
+    ),
+    pytest.param(
+        ("{%+ if x +%}\ntext\n"),
+        ([
+            {
+                "code": "T038",
+                "line": "1:0",
+                "match": "{%+ if x +%}",
+                "message": "Block tag has no matching end tag.",
+            }
+        ]),
+        id="issue_2396_unclosed_if_with_plus",
+    ),
+    pytest.param(
+        ("{% block a %}\ntext\n{% endblock a +%}\n"),
+        ([]),
+        id="issue_2396_named_endblock_with_plus",
+    ),
+    pytest.param(
+        # https://github.com/djlint/djLint/issues/2429
+        (
+            "---\n"
+            "key: value\n"
+            "{% for x in [1, 2] %}\n"
+            "{% if x %}\n"
+            "---\n"
+            "key: value\n"
+            "{% endif %}\n"
+            "{% endfor %}\n"
+        ),
+        ([]),
+        id="issue_2429_yaml_document_separator",
+    ),
 ]
 
 

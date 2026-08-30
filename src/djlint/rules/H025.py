@@ -32,22 +32,30 @@ if TYPE_CHECKING:
 P_LIST_CHILD_MESSAGE: Final = "List tags should not be nested inside p tags."
 P_LIST_CHILD_TAGS: Final = frozenset(("ol", "ul"))
 
-_CONDITIONAL_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*(endif|elseif|elif|else|if)\b", cache_pattern=False
+_BRANCHED_BLOCK_PATTERN: Final = re.compile(
+    r"\{%[-+]?\s*(endif|endfor|elseif|elif|else|empty|if|for)\b",
+    cache_pattern=False,
 )
+_BLOCK_OPENINGS: Final = frozenset(("if", "for"))
+_BLOCK_ENDINGS: Final = frozenset(("endif", "endfor"))
 
 
-def _conditional_branches(html: str) -> tuple[tuple[tuple[int, int], ...], ...]:
-    """Branch spans of every complete {% if %}...{% endif %} block."""
+def _branched_blocks(html: str) -> tuple[tuple[tuple[int, int], ...], ...]:
+    """Branch spans of every complete if or for block.
+
+    A for block takes branches of its own, since jinja spells its empty
+    case {% else %} and django spells it {% empty %}. Without that, the
+    else of a for nested in an if would end the if's own branch.
+    """
     complete: list[tuple[tuple[int, int], ...]] = []
     open_blocks: list[tuple[list[tuple[int, int]], int]] = []
-    for match in _CONDITIONAL_PATTERN.finditer(html):
+    for match in _BRANCHED_BLOCK_PATTERN.finditer(html):
         keyword = match.group(1)
-        if keyword == "if":
+        if keyword in _BLOCK_OPENINGS:
             open_blocks.append(([], match.end()))
         elif not open_blocks:
             continue
-        elif keyword == "endif":
+        elif keyword in _BLOCK_ENDINGS:
             branches, start = open_blocks.pop()
             branches.append((start, match.start()))
             complete.append(tuple(branches))
@@ -59,20 +67,27 @@ def _conditional_branches(html: str) -> tuple[tuple[tuple[int, int], ...], ...]:
 
 
 def _branch_context(
-    conditionals: tuple[tuple[tuple[int, int], ...], ...], pos: int
+    blocks: tuple[tuple[tuple[int, int], ...], ...], pos: int
 ) -> dict[int, int]:
-    """Map each conditional containing pos to the branch pos is in."""
-    return {
-        index: branch
-        for index, branches in enumerate(conditionals)
-        for branch, (start, end) in enumerate(branches)
-        if start <= pos < end
-    }
+    """Map each block containing pos to the branch pos is in.
+
+    Branches run in order and do not overlap, so a block that does not
+    span pos at all is skipped without looking at its branches.
+    """
+    context: dict[int, int] = {}
+    for index, branches in enumerate(blocks):
+        if not branches[0][0] <= pos < branches[-1][1]:
+            continue
+        for branch, (start, end) in enumerate(branches):
+            if start <= pos < end:
+                context[index] = branch
+                break
+    return context
 
 
 def _mutually_exclusive(a: dict[int, int], b: dict[int, int]) -> bool:
-    """Whether two positions are in sibling branches of a conditional."""
-    return any(b.get(cond, branch) != branch for cond, branch in a.items())
+    """Whether two positions are in sibling branches of a block."""
+    return any(b.get(block, branch) != branch for block, branch in a.items())
 
 
 def run(
@@ -84,15 +99,29 @@ def run(
     *args: Any,
     **kwargs: Any,
 ) -> tuple[LintError, ...]:
-    """Check for orphans html tags."""
+    """Check for orphans html tags.
+
+    A tag left open when its parent closes is mis-nested and reported, as
+    the `<b>` in `<h1>a <b>b</h1>`.
+
+    Tags in sibling branches of a block are not orphans of each
+    other: only one branch renders, so several opens share one close, and
+    a close in another branch shares an open already matched.
+    """
     open_tags: list[TagToken] = []
     orphan_tags: list[TagToken] = []
     p_child_tags: list[TagToken] = []
     matched_closes: list[TagToken] = []
-    conditionals = _conditional_branches(html)
+    blocks = _branched_blocks(html)
+    branch_contexts: dict[int, dict[int, int]] = {}
 
     def context(token: TagToken) -> dict[int, int]:
-        return _branch_context(conditionals, token.start)
+        cached = branch_contexts.get(token.start)
+        if cached is None:
+            cached = branch_contexts[token.start] = _branch_context(
+                blocks, token.start
+            )
+        return cached
 
     for token in tokenize_tags(html):
         tag_name = token.name.lower()
@@ -117,7 +146,6 @@ def run(
         ):
             continue
 
-        # close tags should equal open tags
         if not token.closing:
             if tag_name in P_LIST_CHILD_TAGS:
                 for tag in open_tags:
@@ -129,8 +157,6 @@ def run(
                 and _mutually_exclusive(context(tag), context(token))
                 for tag in open_tags
             ):
-                # the same tag opened in a sibling branch of a conditional;
-                # only one branch renders, so they share one close tag.
                 continue
             open_tags.insert(0, token)
         else:
@@ -138,20 +164,16 @@ def run(
                 if tag.name.lower() != tag_name:
                     continue
                 close_context = context(token)
-                remaining: list[TagToken] = []
+                still_open: list[TagToken] = []
                 for crossed in open_tags[:i]:
                     if context(crossed) == close_context:
-                        # opened after the tag being closed but not closed
-                        # inside it, e.g. <h1>a <b>b</h1>: mis-nested.
                         orphan_tags.append(crossed)
                     else:
-                        remaining.append(crossed)
-                open_tags[: i + 1] = remaining
+                        still_open.append(crossed)
+                open_tags[: i + 1] = still_open
                 matched_closes.append(token)
                 break
             else:
-                # no open tag matches the close tag; a close tag in a
-                # sibling branch of a conditional may share the open tag.
                 close_context = context(token)
                 for j, matched in enumerate(matched_closes):
                     if matched.name.lower() == tag_name and _mutually_exclusive(

@@ -116,6 +116,21 @@ test_data = [
         "<a href='{{ url_for(\"test_reminders\") }}'>Test reminders</a>\n",
         id="single_quoted_attribute_url_for",
     ),
+    pytest.param(
+        '{{ _("test")|upper }}',
+        '{{ _("test")|upper }}\n',
+        id="issue_2409_filter_against_call",
+    ),
+    pytest.param(
+        '{{ _("test") | upper }}',
+        '{{ _("test") | upper }}\n',
+        id="issue_2409_filter_spaced_from_call",
+    ),
+    pytest.param(
+        "{{ function(\n    a=1,\n    b=2,\n) }}",
+        "{{ function(\n    a=1,\n    b=2,\n) }}\n",
+        id="issue_2410_arguments_on_their_own_lines",
+    ),
 ]
 
 

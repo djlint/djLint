@@ -97,3 +97,16 @@ def test_escaping(runner: CliRunner) -> None:
     # ::warning line=1::H020 ...
     assert "::warning line=1::H020" in result.output
     assert "file=" not in result.output
+
+
+def test_statistics_are_reported(runner: CliRunner) -> None:
+    """Test that --statistics is not swallowed by the github output."""
+    result = runner.invoke(
+        djlint,
+        ("-", "--lint", "--github-output", "--statistics"),
+        input="<div></div>",
+        env={"GITHUB_ACTIONS": ""},
+    )
+    assert "::warning" in result.output
+    assert "Statistics" in result.output
+    assert "H020" in result.output

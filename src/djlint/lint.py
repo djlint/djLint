@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import importlib
+from bisect import bisect_right
 from collections.abc import Sequence
+from operator import itemgetter
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
@@ -40,6 +42,7 @@ flags: Final = MappingProxyType({
     "re.LOCALE": re.LOCALE,
 })
 _LINE_PATTERN: Final = re.compile(r"(?:.*\n)|(?:[^\n]+$)", cache_pattern=False)
+_line_end: Final = itemgetter("end")
 
 
 def build_flags(flag_list: str | int) -> int:
@@ -55,17 +58,47 @@ def build_flags(flag_list: str | int) -> int:
 
 def get_line(start: int, line_ends: Sequence[Mapping[str, int]]) -> str:
     """Get the line number and index of match."""
-    line = next(pair for pair in line_ends if pair["end"] > start)
+    if not line_ends:
+        return f"1:{start}"
+    index = min(
+        bisect_right(line_ends, start, key=_line_end), len(line_ends) - 1
+    )
+    line = line_ends[index]
 
-    return "{}:{}".format(line_ends.index(line) + 1, start - line["start"])
+    return f"{index + 1}:{start - line['start']}"
+
+
+def _is_html_inside_template_tag(
+    config: Config, html: str, match: re.Match[str]
+) -> bool:
+    """Whether the match is markup written inside a template tag.
+
+    Html-like content in a template tag, such as a string argument, is not
+    part of the document. Rules that target template syntax itself match
+    starting at the tag delimiters, so they still apply.
+    """
+    return not match.group().startswith(("{%", "{{")) and inside_template_block(
+        config, html, match
+    )
+
+
+def _is_reported(
+    config: Config, html: str, match: re.Match[str], rule_name: str
+) -> bool:
+    """Whether a pattern match is a finding rather than ignored content."""
+    return (
+        not overlaps_ignored_block(config, html, match)
+        and not _is_html_inside_template_tag(config, html, match)
+        and not inside_ignored_rule(config, html, match, rule_name)
+        and not inside_ignored_linter_block(config, html, match)
+    )
 
 
 def linter(
     config: Config, html: str, filename: str, filepath: str
 ) -> dict[str, list[LintError]]:
     """Lint a html string."""
-    errors: dict[str, list[LintError]] = {filename: []}
-    # build list of line ends for file
+    file_errors: list[LintError] = []
     line_ends = [
         {"start": m.start(), "end": m.end()}
         for m in _LINE_PATTERN.finditer(html)
@@ -73,7 +106,6 @@ def linter(
 
     ignored_rules: set[str] = set()
 
-    # remove ignored rules for file
     for pattern, rules in config.per_file_ignores.items():
         if re.search(pattern, filepath, flags=re.X):
             ignored_rules.update(x.strip() for x in rules.split(","))
@@ -81,11 +113,9 @@ def linter(
     for rule in config.linter_rules:
         rule = rule["rule"]  # noqa: PLW2901
 
-        # skip ignored rules
         if rule["name"] in ignored_rules:
             continue
 
-        # rule based on python module
         if "python_module" in rule:
             rule_module = importlib.import_module(rule["python_module"])
             module_errors = rule_module.run(
@@ -101,44 +131,30 @@ def linter(
                     " a sequence of dict with keys: code, line, match, message."
                 )
                 raise AssertionError(msg)
-            errors[filename].extend(module_errors)
+            file_errors.extend(module_errors)
 
-        # rule based on patterns
         else:
+            flags = build_flags(rule.get("flags", "re.S"))
             for pattern in rule["patterns"]:
-                for match in re.finditer(
-                    pattern, html, flags=build_flags(rule.get("flags", "re.S"))
-                ):
-                    if (
-                        not overlaps_ignored_block(config, html, match)
-                        # html-like content inside a template tag, e.g. a
-                        # string argument, is not part of the document.
-                        # rules that target template syntax itself match
-                        # starting at the tag delimiters and still apply.
-                        and not (
-                            not match.group().startswith(("{%", "{{"))
-                            and inside_template_block(config, html, match)
-                        )
-                        and not inside_ignored_rule(
-                            config, html, match, rule["name"]
-                        )
-                        and not inside_ignored_linter_block(config, html, match)
-                    ):
-                        errors[filename].append({
-                            "code": rule["name"],
-                            "line": get_line(match.start(), line_ends),
-                            "match": match.group().strip()[:20],
-                            "message": rule["message"],
-                        })
+                file_errors.extend(
+                    {
+                        "code": rule["name"],
+                        "line": get_line(match.start(), line_ends),
+                        "match": match.group().strip()[:20],
+                        "message": rule["message"],
+                    }
+                    for match in re.finditer(pattern, html, flags=flags)
+                    if _is_reported(config, html, match, rule["name"])
+                )
 
-    # remove duplicate matches
-    for filename, error_dict in errors.items():  # noqa: PLR1704
-        unique_errors = []
-        for dict_ in error_dict:
-            if dict_ not in unique_errors:
-                unique_errors.append(dict_)
-        errors[filename] = unique_errors
-    return errors
+    seen: set[tuple[str, ...]] = set()
+    unique_errors = []
+    for error in file_errors:
+        key = (error["code"], error["line"], error["match"], error["message"])
+        if key not in seen:
+            seen.add(key)
+            unique_errors.append(error)
+    return {filename: unique_errors}
 
 
 def lint_file(config: Config, this_file: Path) -> dict[str, list[LintError]]:

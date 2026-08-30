@@ -8,6 +8,17 @@ keywords: облицовка шаблонов, форматер шаблонов
 
 Существует несколько интеграций редакторов для djLint.
 
+## GitHub Actions
+
+В workflow GitHub Actions djLint выводит каждую находку как аннотацию, поэтому она видна прямо в диффе пул-реквеста. Настраивать ничего не нужно: djLint сам определяет workflow и переключает вывод.
+
+```yaml
+- run: pip install djlint
+- run: djlint . --lint --profile django
+```
+
+`--no-github-output` возвращает обычный консольный вывод, а `--github-output` включает аннотации за пределами Actions.
+
 ## Pre-Commit
 
 djLint можно использовать как [pre-commit](https://pre-commit.com) хук в качестве как линтера, так и форматировщика.

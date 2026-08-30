@@ -50,10 +50,10 @@
   {
     "name": "no_set_formatting",
     "description": {
-      "en": "Do not attempt to format set contents. ** If you use this option please open a gh issue explaining what caused you to use it.",
-      "ru": "Не пытайтесь форматировать содержимое набора. ** Если вы используете эту опцию, пожалуйста, откройте проблему gh, объяснив, что заставило вас использовать ее.",
-      "fr": "Ne pas tenter de formater le contenu du jeu. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser",
-      "zh": "不格式化集合（set）。** 如果你使用了此选项，请在 GitHub 上打开一个 issue，解释你为什么使用它。"
+      "en": "Do not attempt to format the contents of `{% set %}` tags.",
+      "ru": "Не форматировать содержимое тегов `{% set %}`.",
+      "fr": "Ne pas tenter de formater le contenu des balises `{% set %}`.",
+      "zh": "不格式化 `{% set %}` 标签中的内容。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_set_formatting=true" },
@@ -65,10 +65,10 @@
   {
     "name": "no_function_formatting",
     "description": {
-      "en": "Do not attempt to format function contents. ** If you use this option please open a gh issue explaining what caused you to use it.",
-      "ru": "Не пытайтесь форматировать содержимое функции. ** Если вы используете эту опцию, пожалуйста, откройте проблему gh, объяснив, что заставило вас ее использовать.",
-      "fr": "Ne pas tenter de formater le contenu de la fonction. ** Si vous utilisez cette option, veuillez ouvrir un problème gh en expliquant ce qui vous a poussé à l'utiliser.",
-      "zh": "不格式化函数。** 如果你使用了此选项，请在 GitHub 上打开一个 issue，解释你为什么使用它。"
+      "en": "Do not attempt to format the arguments of function calls inside `{{ }}` expressions.",
+      "ru": "Не форматировать аргументы вызовов функций внутри выражений `{{ }}`.",
+      "fr": "Ne pas tenter de formater les arguments des appels de fonction dans les expressions `{{ }}`.",
+      "zh": "不格式化 `{{ }}` 表达式中函数调用的参数。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_function_formatting=true" },
@@ -95,10 +95,10 @@
   {
     "name": "close_void_tags",
     "description": {
-      "en": "Close void tags.",
-      "ru": "Закрыть недействительные теги.",
-      "fr": "Fermer les étiquettes vides.",
-      "zh": "关闭空标签。"
+      "en": "Add a closing mark to known void tags, so that `<img>` becomes `<img />`.",
+      "ru": "Добавлять закрывающую косую черту к известным пустым тегам: `<img>` становится `<img />`.",
+      "fr": "Ajoute une marque de fermeture aux balises vides connues : `<img>` devient `<img />`.",
+      "zh": "为已知的空元素标签添加自闭合标记，即 `<img>` 变为 `<img />`。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "close_void_tags=true" },
@@ -483,10 +483,10 @@
     "name": "preserve_blank_lines",
     "tags": ["formatter"],
     "description": {
-      "en": "Preserve blank where possible. Ideal for non-html template files where blank lines are intentional.",
-      "ru": "Сохраняйте пробелы там, где это возможно. Идеально подходит для не-html файлов шаблонов, где пустые строки являются намеренными.",
-      "fr": "Préserve les blancs lorsque cela est possible. Idéal pour les fichiers de modèles non-html où les lignes vides sont intentionnelles.",
-      "zh": "尽可能保留文件开头的空行。（建议用于非HTML模板文件，它们的空行是有意为之的）"
+      "en": "Preserve blank lines where possible. Ideal for non-html template files where blank lines are intentional.",
+      "ru": "Сохранять пустые строки там, где это возможно. Идеально подходит для не-html файлов шаблонов, где пустые строки являются намеренными.",
+      "fr": "Préserve les lignes vides lorsque cela est possible. Idéal pour les fichiers de modèles non-html où les lignes vides sont intentionnelles.",
+      "zh": "尽可能保留空行。（建议用于非HTML模板文件，它们的空行是有意为之的）"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_blank_lines=true" },
@@ -537,9 +537,9 @@
     "name": "format_js",
     "tags": ["formatter"],
     "description": {
-      "en": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
-      "ru": "Форматирование содержимого тегов `script` с помощью `js-beautify`. Все параметры конфигурации см. в [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
-      "fr": "Formate le contenu des balises `script` en utilisant `js-beautify`. Voir [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge](https://github.com/beautify-web/js-beautify/issues) dans pris en charge.",
+      "en": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues).",
+      "ru": "Форматирование содержимого тегов `script` с помощью `js-beautify`. Все параметры конфигурации см. в [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py). Синтаксис шаблонов [поддерживается не полностью](https://github.com/beautify-web/js-beautify/issues).",
+      "fr": "Formate le contenu des balises `script` en utilisant `js-beautify`. Voir [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge](https://github.com/beautify-web/js-beautify/issues).",
       "zh": "使用 `js-beautify` 格式化 `script` 标签中的内容。全部配置项请参阅 [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py)，目前模板语法并未得到[完全支持](https://github.com/beautify-web/js-beautify/issues)。"
     },
     "usage": [
@@ -558,9 +558,9 @@
     "name": "format_css",
     "tags": ["formatter"],
     "description": {
-      "en": "Format contents of `style` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues) in supported.",
-      "ru": "Форматирование содержимого тегов `script` с помощью `css-beautify`. Все параметры конфигурации см. в [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Синтаксис шаблона не [полностью поддерживается](https://github.com/beautify-web/js-beautify/issues) в поддерживается.",
-      "fr": "Formate le contenu des balises `script` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge](https://github.com/beautify-web/js-beautify/issues) dans pris en charge.",
+      "en": "Format contents of `style` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues).",
+      "ru": "Форматирование содержимого тегов `style` с помощью `css-beautify`. Все параметры конфигурации см. в [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Синтаксис шаблонов [поддерживается не полностью](https://github.com/beautify-web/js-beautify/issues).",
+      "fr": "Formate le contenu des balises `style` en utilisant `css-beautify`. Voir [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe des modèles n'est pas [entièrement prise en charge](https://github.com/beautify-web/js-beautify/issues).",
       "zh": "使用 `css-beautify` 格式化 `style` 标签中的内容。全部配置项请参阅 [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py)，目前模板语法并未得到[完全支持](https://github.com/beautify-web/js-beautify/issues)。"
     },
     "usage": [

@@ -42,6 +42,18 @@ test_data = [
         ({"custom_html": "mjml,mj-body"}),
         id="other tag",
     ),
+    pytest.param(
+        ("<mjml><mj-body>this is a email text</mj-body></mjml>"),
+        (
+            "<mjml>\n"
+            "    <mj-body>\n"
+            "        this is a email text\n"
+            "    </mj-body>\n"
+            "</mjml>\n"
+        ),
+        ({"custom_html": "mjml, ,mj-body,"}),
+        id="blank_entries_are_dropped",
+    ),
 ]
 
 

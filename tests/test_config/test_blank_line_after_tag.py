@@ -223,6 +223,12 @@ test_data = [
         ({"blank_line_after_tag": "endblock"}),
         id="endblock inside multiline attribute value",
     ),
+    pytest.param(
+        ("{% load static %}\n{% if x %}\n<p>hello</p>\n{% endif %}\n"),
+        ("{% load static %}\n\n{% if x %}\n    <p>hello</p>\n{% endif %}\n"),
+        ({"blank_line_after_tag": "load, ,"}),
+        id="blank entries are dropped",
+    ),
 ]
 
 

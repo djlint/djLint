@@ -12,18 +12,19 @@ Options:
   --reformat                      Reformat the file(s).
   --check                         Check formatting on the file(s).
   --stdin-filename TEXT           Filename to use for per-file-ignores and
-                                  messages when reading from stdin. [default:
-                                  -]
+                                  messages when reading from stdin. [default: -]
   --indent INTEGER                Indent spacing. [default: 4]
   --quiet                         Do not print diff when reformatting.
   --profile TEXT                  Enable defaults by template language. ops:
                                   django, jinja, nunjucks, handlebars, liquid,
-                                  golang, angular, tera, askama, html
-                                  [default: html]
+                                  golang, angular, tera, askama, html [default:
+                                  html]
   --require-pragma                Only format or lint files that starts with a
                                   comment with the text 'djlint:on'
   --lint                          Lint for common issues. [default option]
   --use-gitignore                 Use .gitignore file to extend excludes.
+  --allow-empty-input             Exit with 0 instead of 2 when the given paths
+                                  match no files.
   --warn                          Return errors as warnings.
   --preserve-leading-space        Attempt to preserve leading space on text.
   --preserve-blank-lines          Attempt to preserve blank lines.
@@ -34,14 +35,12 @@ Options:
   --format-attribute-js-json      Also format JavaScript/JSON inside HTML
                                   attributes.
   --format-attribute-js-json-pattern TEXT
-                                  Regex pattern to match JavaScript
-                                  attributes.
+                                  Regex pattern to match JavaScript attributes.
   --format-attribute-js-json-min-props INTEGER
                                   Minimum number of properties to treat
                                   attribute content as JS/JSON.
   --configuration FILE            Path to global configuration file in
-                                  djlint.toml, .djlint.toml, or .djlintrc
-                                  format
+                                  djlint.toml, .djlint.toml, or .djlintrc format
   --rules FILE                    Path to custom rules file in
                                   .djlint_rules.yaml format
   --statistics                    Count the number of occurrences of each
@@ -54,10 +53,10 @@ Options:
   --blank-line-before-tag TEXT    Add an additional blank line before {% <tag>
                                   ... %} tag groups.
   --line-break-after-multiline-tag
-                                  Do not condense the content of multi-line
-                                  tags into the line of the last attribute.
-  --custom-blocks TEXT            Indent custom template blocks. For example
-                                  {% toc %}...{% endtoc %}
+                                  Do not condense the content of multi-line tags
+                                  into the line of the last attribute.
+  --custom-blocks TEXT            Indent custom template blocks. For example {%
+                                  toc %}...{% endtoc %}
   --custom-html TEXT              Indent custom HTML tags. For example <mjml>
   --exclude TEXT                  Override the default exclude paths.
   --extend-exclude TEXT           Add additional paths to the default exclude.
@@ -67,15 +66,14 @@ Options:
   --format-attribute-template-tags
                                   Attempt to format template syntax inside of
                                   tag attributes.
-  --single-attribute-per-line
-                                  When an opening tag wraps, put each
-                                  attribute on its own line.
+  --single-attribute-per-line     When an opening tag wraps, put each attribute
+                                  on its own line.
   --per-file-ignores <TEXT TEXT>...
                                   Ignore linter rules on a per-file basis.
   --indent-css INTEGER            Set CSS indent level.
   --indent-js INTEGER             Set JS indent level.
-  --close-void-tags               Add closing mark on known void tags. Ex:
-                                  <img> becomes <img />
+  --close-void-tags               Add closing mark on known void tags. Ex: <img>
+                                  becomes <img />
   --no-line-after-yaml            Do not add a blank line after yaml front
                                   matter.
   --no-function-formatting        Do not attempt to format function contents.

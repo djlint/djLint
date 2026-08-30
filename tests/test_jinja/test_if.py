@@ -64,6 +64,12 @@ test_data = [
         ),
         id="issue_2071_inline_trim_if",
     ),
+    pytest.param(
+        # https://github.com/djlint/djLint/issues/2396
+        ("{%+ if x +%}\n<p>hello</p>\n{%+ endif +%}\n"),
+        ("{%+ if x +%}\n    <p>hello</p>\n{%+ endif +%}\n"),
+        id="issue_2396_whitespace_control_plus",
+    ),
 ]
 
 

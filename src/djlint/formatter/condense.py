@@ -18,13 +18,15 @@ from djlint.helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
     RE_FLAGS_IX,
-    RE_FLAGS_MS,
+    RE_FLAGS_MSX,
+    YAML_FRONT_MATTER,
     inside_html_attribute,
     inside_ignored_block,
     inside_ignored_block_span,
     inside_protected_trans_block,
     is_ignored_block_opening,
     is_safe_closing_tag,
+    split_option_list,
 )
 
 if TYPE_CHECKING:
@@ -34,7 +36,7 @@ if TYPE_CHECKING:
 
 
 _YAML_FRONT_MATTER_PATTERN: Final = re.compile(
-    r"(^---.+?---)$", RE_FLAGS_MS, cache_pattern=False
+    YAML_FRONT_MATTER, RE_FLAGS_MSX, cache_pattern=False
 )
 
 _COLLAPSIBLE_WHITESPACE_CHARS: Final = frozenset(COLLAPSIBLE_WHITESPACE)
@@ -42,19 +44,17 @@ _COLLAPSIBLE_WHITESPACE_PATTERN: Final = re.compile(
     f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+", cache_pattern=False
 )
 
-# a line that closes a block and decreases the indentation.
 _CLOSING_LINE_PATTERN: Final = re.compile(
-    r"[ \t]*(?:</|\{%-?\s*end|\{\{/)", cache_pattern=False
+    r"[ \t]*(?:</|\{%[-+]?\s*end|\{\{/)", cache_pattern=False
 )
 
-# a whole line holding a single-line comment.
 _COMMENT_LINE_PATTERN: Final = re.compile(
     r"[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*", cache_pattern=False
 )
 
 
 def _opening_line_pattern(config: Config) -> re.Pattern[str]:
-    """Build the mirror of _CLOSING_LINE_PATTERN.
+    """Build the mirror of the pattern for a line that closes a block.
 
     A line that opens a block and increases the indentation: a template
     block tag, or an html tag that is neither void nor self closed, with
@@ -78,22 +78,25 @@ def _opening_line_pattern(config: Config) -> re.Pattern[str]:
 
 def clean_whitespace(html: str, config: Config) -> str:
     """Compress back tags that do not need to be expanded."""
-    # put empty tags on one line
 
     def strip_space(config: Config, html: str, match: re.Match[str]) -> str:
-        """Trim leading whitespace."""
-        # either inside a block, or this is a newline + closing block tag.
-        # if it is a newline + closing block we can format it.
+        """Trim the whitespace on a line that is layout rather than content.
 
+        A line inside an ignored block keeps everything, unless it is a
+        closing tag safe to indent. One that starts inside a verbatim block
+        but runs past its end, as in "  x  </pre> tail", opens with the
+        block's own content rather than with indentation, so that
+        whitespace stays; a block whose closing tag is safe to indent
+        (script, style) holds none to keep. One that opens a multi-line
+        ignored block, as in "<textarea>x", has verbatim content after the
+        opening tag, so only its leading indentation goes and the line can
+        still be re-indented.
+        """
         if inside_ignored_block(
             config, html, match
         ) and not is_safe_closing_tag(config, match.group()):
             return match.group()
 
-        # a line that starts inside a verbatim block but runs past its end
-        # ("  x  </pre> tail") opens with the block's own content, not with
-        # indentation, so that whitespace stays. a block whose closing tag
-        # is safe to indent (script, style) holds none to keep.
         leading = ""
         if not is_safe_closing_tag(
             config, match.group()
@@ -102,16 +105,9 @@ def clean_whitespace(html: str, config: Config) -> str:
         ):
             leading = match.string[match.start() : match.start(1)]
 
-        # a line that opens a multi-line ignored block (e.g. "<textarea>x")
-        # has verbatim content after the opening tag; keep its trailing
-        # whitespace, stripping only the leading indentation so the line can
-        # still be re-indented.
         if is_ignored_block_opening(config, match.group()):
             return leading + match.group(1) + match.group(2)
 
-        # trimmed blocks should not be here.
-        # we need to full html to check what type of
-        # opening block it was - trimmed or not trimmed
         if inside_protected_trans_block(config, html[: match.end()], match):
             return match.group().rstrip()
 
@@ -131,7 +127,6 @@ def clean_whitespace(html: str, config: Config) -> str:
         trailing_contents = r" \t"
 
     if not config.preserve_leading_space:
-        # remove any leading/trailing space
         html = re.sub(
             rf"^[ \t]*{line_contents}([{trailing_contents}]*)$",
             func,
@@ -140,10 +135,9 @@ def clean_whitespace(html: str, config: Config) -> str:
         )
 
     else:
-        # only remove leading space in front of tags
-        # <, {%
+        leading_tag = r"(?:<|{%)"
         html = re.sub(
-            rf"^[ \t]*((?:<|{{%).*?)([{trailing_contents}]*)$",
+            rf"^[ \t]*({leading_tag}.*?)([{trailing_contents}]*)$",
             func,
             html,
             flags=re.M,
@@ -169,7 +163,6 @@ def clean_whitespace(html: str, config: Config) -> str:
         if inside_html_attribute(html, match):
             return match.group()
 
-        # no blank line when the next line closes a block (decreased indent).
         next_line = match.string[match_end:].split("\n", 1)[0]
         if _CLOSING_LINE_PATTERN.match(next_line):
             return match.group()
@@ -178,11 +171,10 @@ def clean_whitespace(html: str, config: Config) -> str:
 
     func = partial(add_blank_line_after, config, html)
 
-    # should we add blank lines after load tags?
     if config.blank_line_after_tag:
-        for tag in config.blank_line_after_tag.split(","):
+        for tag in split_option_list(config.blank_line_after_tag):
             html = re.sub(
-                rf"((?:{{%-?\s*?{tag.strip()}\b[^}}]+?-?%}}\n?)+)",
+                rf"((?:{{%[-+]?\s*?{tag}\b[^}}]+?[-+]?%}}\n?)+)",
                 func,
                 html,
                 flags=RE_FLAGS_IMS,
@@ -195,38 +187,42 @@ def clean_whitespace(html: str, config: Config) -> str:
         attach_comments: bool,  # noqa: FBT001
         match: re.Match[str],
     ) -> str:
-        """Add break before if not in ignored block and not first line in file."""
+        """Add a break before the tag, unless the line above rules it out.
+
+        The first line of the file gets none, nor does a line inside an
+        ignored block. A comment line directly above belongs to this tag,
+        and if it was not swallowed into the match there is already a blank
+        line above it. A previous line that opens a block gets none either,
+        since that increases the indent.
+        """
         start = match.start()
         if start == 0 or inside_ignored_block(config, html, match):
+            return match.group()
+
+        if inside_html_attribute(html, match):
+            return match.group()
+
+        line_start = match.string.rfind("\n", 0, start) + 1
+        if match.string[line_start:start].strip():
             return match.group()
 
         if match.string[start - 1] == "\n":
             prev_start = match.string.rfind("\n", 0, start - 1) + 1
 
-            # a comment line directly above belongs to this tag. if it was
-            # not swallowed into the match, there is already a blank line
-            # above it.
             if attach_comments and _COMMENT_LINE_PATTERN.fullmatch(
                 match.string, prev_start, start - 1
             ):
                 return match.group()
 
-            # no blank line when the previous line opens a block (increased
-            # indent).
             if opening_line.fullmatch(match.string, prev_start, start - 1):
                 return match.group()
 
         return "\n" + match.group()
 
-    # should we add blank lines before load tags?
     if config.blank_line_before_tag:
-        # keep comments attached to the tag they document: the blank line
-        # goes above any comment lines directly preceding the tag. a comment
-        # above an end tag is block content, not the end tag's comment.
         comment_lines = r"(?:^[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*\n)*"
         opening_line = _opening_line_pattern(config)
-        for raw_tag in config.blank_line_before_tag.split(","):
-            tag = raw_tag.strip()
+        for tag in split_option_list(config.blank_line_before_tag):
             attach_comments = not tag.startswith("end")
             func = partial(
                 add_blank_line_before,
@@ -236,22 +232,18 @@ def clean_whitespace(html: str, config: Config) -> str:
                 attach_comments,
             )
             html = re.sub(
-                rf"(?<!^\n)({comment_lines if attach_comments else ''}(?:{{%-?\s*?{tag}\b[^}}]+?-?%}}\n?)+)",
+                rf"(?<!^\n)({comment_lines if attach_comments else ''}(?:{{%[-+]?\s*?{tag}\b[^}}]+?[-+]?%}}\n?)+)",
                 func,
                 html,
                 flags=RE_FLAGS_IMS,
             )
 
-    # add line after yaml front matter
-
     def yaml_add_blank_line_after(html: str, match: re.Match[str]) -> str:
-        """Add break after if not in ignored block."""
-        match_start, match_end = match.span()
-        if match_start == 0 and not html.startswith("\n\n", match_end):
-            # verify there are not already blank lines
-            return match.group() + "\n"
+        """Add a blank line after yaml front matter that has none."""
+        if html.startswith("\n\n", match.end()):
+            return match.group()
 
-        return match.group()
+        return match.group() + "\n"
 
     if not config.no_line_after_yaml:
         func = partial(yaml_add_blank_line_after, html)
@@ -271,32 +263,32 @@ def _template_block_key(tag: str, contents: str) -> tuple[str, str]:
 
 
 def _multiline_template_blocks(
-    source: str | None, config: Config
+    authored_html: str | None, config: Config
 ) -> Counter[tuple[str, str]]:
     """Count simple template blocks that were authored across lines.
 
     The condensing pass runs over the expanded html, whose blocks do not
-    line up one for one with the source's: expanding splits some lines and
-    joins others, and a block inside an attribute is matched in one and not
-    the other. Key the blocks by tag and contents so each is looked up
+    line up one for one with the authored ones: expanding splits some lines
+    and joins others, and a block inside an attribute is matched in one and
+    not the other. Key the blocks by tag and contents so each is looked up
     rather than paired off by position.
     """
-    if source is None:
+    if authored_html is None:
         return Counter()
 
-    source = "\n".join(source.splitlines())
-    if "{%" not in source or "\n" not in source:
+    authored_html = "\n".join(authored_html.splitlines())
+    if "{%" not in authored_html or "\n" not in authored_html:
         return Counter()
 
     return Counter(
         _template_block_key(match.group(1), match.group(2))
         for match in re.finditer(
             rf"""
-            {{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}}
+            {{%[-+]?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}}
             ([^%]*?)
-            {{%-?[ ]+?end\1[ ]*?%}}
+            {{%[-+]?[ ]+?end\1[ ]*?%}}
             """,
-            source,
+            authored_html,
             flags=RE_FLAGS_IMX,
         )
         if "\n" in match.group(2) and match.group(2).strip()
@@ -327,17 +319,18 @@ def _rendered_whitespace(text: str, left: str, right: str) -> str:
     return text
 
 
-def condense_html(html: str, config: Config, source: str | None = None) -> str:
+def condense_html(
+    html: str, config: Config, authored_html: str | None = None
+) -> str:
     """Put short tags back on a single line."""
     if config.preserve_leading_space:
-        # if a user is attempting to reuse any leading
-        # space for other purposes, we should not try to remove it.
         return html
 
     blank_line_after_patterns = (
         tuple(
             re.compile(
-                rf"((?:{{%-?\s*?{tag.strip()}[^}}]+?-?%}}\n?)+)", RE_FLAGS_IMS
+                rf"((?:{{%[-+]?\s*?{tag.strip()}[^}}]+?[-+]?%}}\n?)+)",
+                RE_FLAGS_IMS,
             )
             for tag in config.blank_line_after_tag.split(",")
         )
@@ -347,7 +340,8 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
     blank_line_before_patterns = (
         tuple(
             re.compile(
-                rf"((?:{{%-?\s*?{tag.strip()}[^}}]+?-?%}}\n?)+)", RE_FLAGS_IMS
+                rf"((?:{{%[-+]?\s*?{tag.strip()}[^}}]+?[-+]?%}}\n?)+)",
+                RE_FLAGS_IMS,
             )
             for tag in config.blank_line_before_tag.split(",")
         )
@@ -363,20 +357,24 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
         `inline` says whether the element shares a line box with what sits
         either side of it, so that whitespace at its edges can render. A
         block starts and ends one of its own, where css drops it.
+
+        With content present, each side is bounded by that content, which
+        never starts or ends with whitespace, so only the outer neighbour
+        can render the space. With none, the tags enclose a single run and
+        both neighbours are outside it.
         """
         leading = trailing = ""
         if match.start(4) > match.end(1):
-            # the template pattern takes the whitespace before its opening
-            # tag into the match, so find where the tag itself starts
-            start = match.end(1) - len(match.group(1).lstrip())
+            opening_tag_start = match.end(1) - len(match.group(1).lstrip())
             end = match.end()
-            before = match.string[start - 1 : start] if inline and start else ""
+            before = (
+                match.string[opening_tag_start - 1 : opening_tag_start]
+                if inline and opening_tag_start
+                else ""
+            )
             after = match.string[end : end + 1] if inline else ""
             content = match.group(3)
             if content:
-                # each side is bounded by the content, which never starts
-                # or ends with whitespace, so only the outer neighbour can
-                # render the space for it.
                 leading = _rendered_whitespace(
                     match.string[match.end(1) : match.start(3)],
                     before,
@@ -388,20 +386,16 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
                     after,
                 )
             else:
-                # one run between the tags, so both neighbours are outside.
                 leading = _rendered_whitespace(
                     match.string[match.end(1) : match.start(4)], before, after
                 )
 
-        # the option holds back the content of a tag written over several
-        # lines; one that fits on a single line is condensed as usual, and
-        # an element with no content has none to hold back.
-        if (
+        holds_back_multiline_content = (
             config.line_break_after_multiline_tag
-            and match.group(3)
+            and bool(match.group(3))
             and "\n" in match.group(1).strip()
-        ):
-            # force a break by pretending the line is too long.
+        )
+        if holds_back_multiline_content:
             combined_length = config.max_line_length + 1
         else:
             combined_length = len(
@@ -454,7 +448,6 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
 
     func = partial(condense_html_line, config, html)
 
-    # put short single line tags on one line
     html = re.sub(
         rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{{{[^}}]*}}}}|{{[^}}]*}}|[^'\">{{}}])*>)\s*([^<\n]*?)\s*?(</(\2)>)",
         func,
@@ -462,29 +455,30 @@ def condense_html(html: str, config: Config, source: str | None = None) -> str:
         flags=RE_FLAGS_IMSX,
     )
 
-    multiline_blocks = _multiline_template_blocks(source, config)
+    multiline_blocks = _multiline_template_blocks(authored_html, config)
 
     def condense_template_line(
         config: Config, html: str, match: re.Match[str]
     ) -> str:
+        """Put a short template block back on one line.
+
+        One block of a kind stays spread for each one the author wrote that
+        way. A template block lays out no box of its own, so its body runs
+        on with the text either side and whitespace at its edges renders.
+        """
         if inside_html_attribute(html, match):
             return match.group()
 
-        # one block of a kind stays spread for each one written that way
         key = _template_block_key(match.group(2), match.group(3))
         if multiline_blocks[key]:
             multiline_blocks[key] -= 1
             return match.group()
 
-        # a template block lays out no box of its own: its body runs on
-        # with the text either side, so whitespace at its edges can render
         return condense_line(config, html, match, inline=True)
 
-    # put short template tags back on one line. must have leading space
-    # jinja +%} and {%+ intentionally omitted.
     func = partial(condense_template_line, config, html)
     return re.sub(
-        rf"((?:\s|^){{%-?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%-?[ ]+?end(\2)[ ]*?%}})",
+        rf"((?:\s|^){{%[-+]?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%[-+]?[ ]+?end(\2)[ ]*?%}})",
         func,
         html,
         flags=RE_FLAGS_IMX,

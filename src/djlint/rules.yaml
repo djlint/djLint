@@ -274,8 +274,8 @@
     name: T040
     message: Missing or empty template name in extends or include tag.
     patterns:
-      - "{%-?[ \\t]*?(?:extends|include)[ \\t]*?(?:'[ \\t]*'|\"[ \\t]*\")"
-      - "{%-?[ \\t]*?(?:extends|include)[ \\t]*?-?%}"
+      - "{%[-+]?[ \\t]*?(?:extends|include)[ \\t]*?(?:'[ \\t]*'|\"[ \\t]*\")"
+      - "{%[-+]?[ \\t]*?(?:extends|include)[ \\t]*?[-+]?%}"
 - rule:
     name: H041
     message: Tag is closed in a different template block than it was opened.

@@ -22,6 +22,14 @@ if TYPE_CHECKING:
 
 
 def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
+    """Yield template tags that never reach their closing delimiter.
+
+    Handlebars raw block delimiters ({{{{name}}}}) and comment tags
+    ({{! }}, {{!-- --}}, golang {{/* */}}) close by their own rules and are
+    skipped whole. Two malformed shapes belong to other rules and are left
+    to them: `{% ... }%` is T034's typo, and a tag whose only closing
+    delimiter sits inside an unterminated string is T027's.
+    """
     pos = 0
     length = len(html)
     while True:
@@ -39,11 +47,9 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
         scan = start + 2
         if close == "}}":
             if html.startswith("{{{{", start):
-                # handlebars raw block delimiter: {{{{name}}}} / {{{{/name}}}}
                 raw_end = html.find("}}}}", start + 4)
                 pos = start + 4 if raw_end == -1 else raw_end + 4
                 continue
-            # skip comment tags: {{! }}, {{!-- --}}, {{/* */}} (golang)
             content_start = scan + 1 if html.startswith("-", scan) else scan
             if html.startswith("!--", content_start):
                 comment_end = html.find("--}}", content_start + 3)
@@ -74,14 +80,11 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
                 end = scan + 2
                 break
             elif close == "%}" and html.startswith("}%", scan):
-                # {% ... }% is T034's typo; let T034 report it
                 typo_end = scan + 2
                 break
             elif html.startswith(("{%", "{{"), scan) or (
                 close == "%}" and html.startswith("}}", scan)
             ):
-                # another tag opens, or the wrong delimiter closes, before
-                # this tag is closed
                 break
             scan += 1
 
@@ -90,8 +93,6 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
         elif typo_end != -1:
             pos = typo_end
         elif quoted_end != -1:
-            # the tag's only close delimiter is inside an unclosed string;
-            # T027 reports that
             pos = quoted_end
         else:
             yield _TemplateTagMatch(html, start, min(scan + 2, length))

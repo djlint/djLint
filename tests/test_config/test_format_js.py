@@ -247,12 +247,33 @@ test_data = [
         ({"format_js": True, "profile": "jinja"}),
         id="template tags",
     ),
+    pytest.param(
+        (
+            "<script>\n"
+            "    function foo() {\n"
+            "        return 1;\n"
+            "    }\n"
+            "\n"
+            "</script>\n"
+        ),
+        (
+            "<script>\n"
+            "    function foo() {\n"
+            "        return 1;\n"
+            "    }\n"
+            "</script>\n"
+        ),
+        ({"format_js": True}),
+        id="no blank line added before the closing tag",
+    ),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
 def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
-    output = formatter(config_builder(args), source)
+    config = config_builder(args)
+    output = formatter(config, source)
 
     printer(expected, source, output)
     assert expected == output
+    assert expected == formatter(config, output)

@@ -12,7 +12,7 @@ import regex as re
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 from djlint.formatter.class_attributes import encode_attribute_newlines
 from djlint.formatter.tokenizer import tokenize_tags
-from djlint.helpers import RE_FLAGS_ISX, child_of_unformatted_block
+from djlint.helpers import RE_FLAGS_IS, RE_FLAGS_ISX, child_of_unformatted_block
 
 if TYPE_CHECKING:
     from typing import Final
@@ -27,8 +27,60 @@ _TEMPLATE_COMMENT_BLOCK_PATTERN: Final = re.compile(
 )
 
 
-def _blank_match(match: re.Match[str]) -> str:
+_TEMPLATE_COMMENT_PROFILES: Final = frozenset((
+    "all",
+    "askama",
+    "django",
+    "jinja",
+    "nunjucks",
+    "tera",
+))
+
+
+_PADDED_EQUALS_PATTERN: Final = re.compile(
+    r"\"[^\"]*\"|'[^']*'|\{\{.*?\}\}|\{%.*?%\}|\{\#.*?\#\}|[ \t]+=[ \t]*|=[ \t]+",
+    RE_FLAGS_IS,
+    cache_pattern=False,
+)
+
+
+def _tighten_equals(match: re.Match[str]) -> str:
+    text = match.group()
+    return "=" if text.strip() == "=" else text
+
+
+def _normalize_equals(attributes: str, config: Config) -> str:
+    """Drop the padding around "=" in a tag that will be spread.
+
+    Rebuilding the attributes drops it, so a tag measured with the
+    padding is spread and then measures short enough to be put back on
+    one line, spreading again on the next run. A tag that stays as
+    written keeps its padding: quoted values and template tags are
+    matched first, so their own whitespace is left alone either way.
+    """
+    if len(attributes.strip()) < config.max_attribute_length:
+        return attributes
+    return _PADDED_EQUALS_PATTERN.sub(_tighten_equals, attributes)
+
+
+def _same_length_blank(match: re.Match[str]) -> str:
     return " " * len(match.group())
+
+
+def _tokenizer_source(html: str, config: Config) -> str:
+    """Blank out template comments so the tag tokenizer skips over them.
+
+    Each is replaced by a blank of the same length, so a token's offsets
+    still index the original html.
+    """
+    if config.profile not in _TEMPLATE_COMMENT_PROFILES:
+        return html
+
+    if "{#" in html:
+        html = config.unformatted_blocks_pattern.sub(_same_length_blank, html)
+    if "comment" in html:
+        html = _TEMPLATE_COMMENT_BLOCK_PATTERN.sub(_same_length_blank, html)
+    return html
 
 
 def compress_html(html: str, config: Config) -> str:
@@ -64,7 +116,12 @@ def compress_html(html: str, config: Config) -> str:
 
         attributes = (
             (" " if raw_attributes[0].isspace() else "")
-            + " ".join(x.strip() for x in raw_attributes.strip().splitlines())
+            + _normalize_equals(
+                " ".join(
+                    x.strip() for x in raw_attributes.strip().splitlines()
+                ),
+                config,
+            )
             if raw_attributes
             else ""
         )
@@ -77,25 +134,7 @@ def compress_html(html: str, config: Config) -> str:
 
     output: list[str] = []
     previous_end = 0
-    # Keep offsets while hiding template comments from the HTML tokenizer.
-    token_source = html
-    if config.profile in {
-        "all",
-        "django",
-        "jinja",
-        "askama",
-        "tera",
-        "nunjucks",
-    }:
-        if "{#" in html:
-            token_source = config.unformatted_blocks_pattern.sub(
-                _blank_match, token_source
-            )
-        if "comment" in html:
-            token_source = _TEMPLATE_COMMENT_BLOCK_PATTERN.sub(
-                _blank_match, token_source
-            )
-    for token in tokenize_tags(token_source):
+    for token in tokenize_tags(_tokenizer_source(html, config)):
         output.extend((html[previous_end : token.start], _clean_tag(token)))
         previous_end = token.end
     output.append(html[previous_end:])

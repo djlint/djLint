@@ -51,16 +51,30 @@ test_data = [
         {"indent": 2, "max_attribute_length": 1, "profile": "django"},
         id="issue_1877",
     ),
+    pytest.param(
+        (
+            '<a href = "http://test.test:3000/'
+            'testtesttesttesttesttesttesttesttesttest">Test</a>\n'
+        ),
+        (
+            '<a href="http://test.test:3000/'
+            'testtesttesttesttesttesttesttesttesttest">Test</a>\n'
+        ),
+        ({"single_attribute_per_line": True}),
+        id="space around equals does not oscillate",
+    ),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
 def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
     args = {**args, "single_attribute_per_line": True}
-    output = formatter(config_builder(args), source)
+    config = config_builder(args)
+    output = formatter(config, source)
 
     printer(expected, source, output)
     assert expected == output
+    assert expected == formatter(config, output)
 
 
 def test_default_keeps_hanging_indent() -> None:
