@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from click.testing import CliRunner
 
     from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def test_H011(
@@ -898,7 +899,7 @@ def test_statistics_with_results(
 def test_statistics_counts_codes_of_custom_modules(
     capsys: pytest.CaptureFixture[str], basic_config: Config
 ) -> None:
-    lint_message = {
+    lint_message: dict[str, list[LintError]] = {
         "source.html": [
             {"code": "MY001a", "line": "1:0", "match": "x", "message": ""}
         ]
@@ -906,3 +907,32 @@ def test_statistics_counts_codes_of_custom_modules(
 
     assert build_stats_output((lint_message,), basic_config) == 1
     assert "MY001a 1" in capsys.readouterr().out
+
+
+def test_H043(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b"<button>Save</button>")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H043" not in result.output
+
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
+    assert result.exit_code == 1
+    assert "H043 1:" in result.output
+
+    write_to_file(tmp_file.name, b'<button type="submit">Save</button>')
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
+    assert "H043" not in result.output
+
+    # a name that merely ends in "type" is a different attribute
+    write_to_file(tmp_file.name, b'<button data-type="a">Save</button>')
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
+    assert "H043 1:" in result.output
+
+    # a type given by a template tag counts
+    write_to_file(
+        tmp_file.name,
+        b'<button {% if x %}type="button"{% endif %}>Save</button>',
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
+    assert "H043" not in result.output

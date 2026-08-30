@@ -83,6 +83,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T040 | Nom de template manquant ou vide dans une balise extends ou include.                                                      | ✔️     |
 | H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                   | ✔️     |
 | H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | ✔️     |
+| H043 | La balise button devrait avoir un attribut `type`.                                                                        | -      |
 
 ### Modèles de code
 
@@ -1019,6 +1020,30 @@ La vérification ne s'exécute que sur les fichiers analysables de façon fiable
 ```html
 <label for="email">Email</label>
 <input id="email">
+```
+
+#### H043
+
+`La balise button devrait avoir un attribut type.`
+
+Désactivée par défaut ; activez-la avec --include=H043.
+
+Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer un script soumet aussi le formulaire qui l'entoure et recharge la page. Nommer le type évite cet effet de bord.
+
+À éviter :
+
+```html
+<form>
+  <button onclick="preview()">Aperçu</button>
+</form>
+```
+
+À faire :
+
+```html
+<form>
+  <button type="button" onclick="preview()">Aperçu</button>
+</form>
 ```
 
 {% endraw %}

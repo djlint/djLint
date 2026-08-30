@@ -34,6 +34,10 @@
 - On free-threaded Python, `--format-css` and `--format-js` no longer share the beautifier indent level between the threads formatting different files, which could indent a `<style>` or `<script>` body by the wrong amount.
 - `--statistics` now prints its summary alongside GitHub annotations. It was silently dropped whenever the GitHub output was on, which happens by itself inside a workflow.
 
+### Feature
+
+- New rule `H043` reports a `<button>` written without a `type`. Such a button submits the form around it, so one meant to run a script reloads the page instead. Off by default; enable it with `--include=H043`.
+
 ### Tests
 
 - Formatting a file twice now has to give the same result as formatting it once, checked across the option combinations that reach the whitespace passes.
@@ -47,6 +51,7 @@
 
 - The GitHub Actions integration is documented: djLint reports findings as annotations on a pull request's diff by itself, and `--github-output` / `--no-github-output` override that.
 - The command line reference lists `--allow-empty-input`, which it had been missing, and a test now keeps it in step with `djlint --help`.
+- `H042` is no longer described as off by default, which it stopped being in 1.42.1.
 
 ## [1.44.2] - 2026-08-08
 

@@ -83,6 +83,7 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 | T040 | extends 或 include 标签中缺少模板名或模板名为空。                                  | ✔️       |
 | H041 | 标签在与打开它不同的模板块中关闭。                                                 | ✔️       |
 | H042 | label 的 for 属性在此文件中没有匹配的元素 id。                                     | ✔️       |
+| H043 | button 标签应有 `type` 属性。                                             | -        |
 
 ### 编码规则
 
@@ -1005,8 +1006,6 @@ HTML 规范将表单 method 的关键字定义为小写（get、post）；浏览
 
 `label 的 for 属性在此文件中没有匹配的元素 id。`
 
-默认禁用；使用 --include=H042 启用。
-
 该检查只在可以可靠分析的文件上运行：如果文件中包含任何可能渲染出本文件看不到的 id 的内容（如表单控件等 `{{ ... }}` 输出、`{% include %}` 或 `{% extends %}`、或无法识别的模板标签），该规则对此文件保持沉默。凡是它运行到的地方，报告都是真实的关联断裂。
 
 错误示例：
@@ -1021,6 +1020,30 @@ HTML 规范将表单 method 的关键字定义为小写（get、post）；浏览
 ```html
 <label for="email">Email</label>
 <input id="email">
+```
+
+#### H043
+
+`button 标签应有 type 属性。`
+
+默认禁用；使用 --include=H043 启用。
+
+没有 `type` 的 `<button>` 默认为 `submit`，因此本意是调用脚本的按钮还会提交外层表单并使页面重新加载。写明类型即可避免。
+
+错误示例：
+
+```html
+<form>
+  <button onclick="preview()">预览</button>
+</form>
+```
+
+正确示例：
+
+```html
+<form>
+  <button type="button" onclick="preview()">预览</button>
+</form>
 ```
 
 {% endraw %}

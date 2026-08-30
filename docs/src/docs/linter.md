@@ -83,6 +83,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | T040 | Missing or empty template name in extends or include tag.                                    | ✔️      |
 | H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
 | H042 | Label for attribute has no matching element id in this file.                                 | ✔️      |
+| H043 | Button tag should have a `type` attribute.                                                   | -       |
 
 ### Code Patterns
 
@@ -1005,8 +1006,6 @@ Do:
 
 `Label for attribute has no matching element id in this file.`
 
-Off by default; enable with --include=H042.
-
 The check runs only on files it can analyze soundly: if the file contains anything that could render an id this file never shows (a `{{ ... }}` output such as a form widget, an `{% include %}` or `{% extends %}`, or an unrecognized template tag), the rule stays silent for that file. Where it does run, a report is a real broken association.
 
 Don't:
@@ -1021,6 +1020,30 @@ Do:
 ```html
 <label for="email">Email</label>
 <input id="email">
+```
+
+#### H043
+
+`Button tag should have a type attribute.`
+
+Off by default; enable with --include=H043.
+
+A `<button>` with no `type` defaults to `submit`, so a button written to run a script also submits the form around it, reloading the page. Naming the type keeps that from happening by accident.
+
+Don't:
+
+```html
+<form>
+  <button onclick="preview()">Preview</button>
+</form>
+```
+
+Do:
+
+```html
+<form>
+  <button type="button" onclick="preview()">Preview</button>
+</form>
 ```
 
 {% endraw %}

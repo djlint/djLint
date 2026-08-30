@@ -284,3 +284,12 @@
     name: H042
     message: Label for attribute has no matching element id in this file.
     python_module: djlint.rules.H042
+- rule:
+    name: H043
+    message: Button tag should have a type attribute.
+    flags: re.DOTALL|re.I
+    default: false
+    patterns:
+      # a quoted value is stepped over whole, and the name must start on a
+      # name boundary, so neither title="type=x" nor data-type counts as type
+      - <button\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])type\s*=)[^'">])*/?>
