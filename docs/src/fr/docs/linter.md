@@ -1030,7 +1030,7 @@ La vérification ne s'exécute que sur les fichiers analysables de façon fiable
 
 Désactivée par défaut ; activez-la avec --include=H043.
 
-Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer un script soumet aussi le formulaire qui l'entoure et recharge la page. Nommer le type évite cet effet de bord.
+Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer un script soumet aussi le formulaire qui l'entoure et la page se recharge. Écrire le type l'évite.
 
 À éviter :
 

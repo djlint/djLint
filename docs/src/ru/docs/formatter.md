@@ -32,7 +32,7 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 {% admonition
    "note",
    "Note",
-   "Переформатирование не работает с длинными json/html, встроенными в данные атрибутов."
+   "JSON и JavaScript, записанные в атрибут, остаются как есть, если не включён `--format-attribute-js-json`. HTML внутри атрибута не трогается никогда."
 %}
 
 {% admonition

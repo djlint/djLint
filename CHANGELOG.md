@@ -11,7 +11,7 @@
 - `H025` no longer calls a tag an orphan when a `{% for %}...{% else %}...{% endfor %}` is written inside the `{% else %}` of an `{% if %}`. The loop's else was taken for a branch of the enclosing conditional.
 - A template block opened and closed on one line, such as `{% language 'de' %}text{% endlanguage %}`, no longer indents everything after it. Only `if`, `for`, `unless`, `block`, `with` and the two nunjucks async tags were recognised as balanced on a single line.
 - A filter written straight after a function call keeps its place: `{{ _("test")|upper }}` is no longer respaced to `{{ _("test") |upper }}`.
-- Arguments spread over their own lines inside `{{ }}` stay where they are. The first argument was pulled up against the opening bracket while the rest kept their lines, leaving the call in a shape neither run would settle on.
+- Arguments spread over their own lines inside `{{ }}` stay where they are. The first was pulled up against the opening bracket while the rest kept their lines.
 - `--blank-line-before-tag` no longer splits a line to place its blank line. A tag written after other content on the same line, such as the `{% block %}` inside a one line `{% set %}...{% endset %}`, was moved to a line of its own, which broke up a block whose body is captured verbatim and left the file formatting differently on the next run.
 - With `--preserve-leading-space`, the contents of a `{{ if }}` or `{{ range }}` block lost an indent level when an already formatted go template was formatted again. The block tag keeps its own indent under that option, and the patterns that recognise it are anchored to the start of the line.
 - `--single-attribute-per-line` no longer flips a tag between one line and many on alternate runs. Spreading a tag rewrites `href = "..."` as `href="..."`, which measured short enough to be put back on one line, and long enough to be spread again on the run after that.
@@ -37,8 +37,8 @@
 
 ### Feature
 
-- New option `--quote-style` / `quote_style` chooses the quotes djLint writes around strings inside template tags, `double` (the default, and what it has always written) or `single`. `T002` asks for whichever is configured, so `{% include 'a.html' %}` is now a way to write templates rather than something to be corrected. Quoting of html attributes is unchanged and stays with `H008`.
-- New rule `H043` reports a `<button>` written without a `type`. Such a button submits the form around it, so one meant to run a script reloads the page instead. Off by default; enable it with `--include=H043`.
+- New option `--quote-style` / `quote_style` chooses the quotes djLint writes around strings inside template tags, `double` (the default, and what it has always written) or `single`. `T002` asks for whichever is configured, so `{% include 'a.html' %}` is no longer reported in a project that writes single quotes. Quoting of html attributes is unchanged and stays with `H008`.
+- New rule `H043` reports a `<button>` written without a `type`. A button with no type submits the form around it, so one meant to run a script reloads the page instead. Off by default; enable it with `--include=H043`.
 
 ### Tests
 

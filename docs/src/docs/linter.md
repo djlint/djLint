@@ -136,7 +136,7 @@ Mixing single and double quotes in template tags (`{% extends %}`, `{% include %
 
 Single quotes inside HTML attribute values (e.g. `<span title="{% trans 'x' %}">`) are not flagged, since the attribute's double quotes force single quotes there.
 
-With `quote_style = "single"` the rule turns around and asks for single quotes, and the formatter writes them too.
+With `quote_style = "single"` the rule asks for single quotes instead, and the formatter writes them.
 
 Don't:
 
@@ -1030,7 +1030,7 @@ Do:
 
 Off by default; enable with --include=H043.
 
-A `<button>` with no `type` defaults to `submit`, so a button written to run a script also submits the form around it, reloading the page. Naming the type keeps that from happening by accident.
+A `<button>` with no `type` defaults to `submit`, so a button written to run a script also submits the form around it and the page reloads. Writing the type out prevents that.
 
 Don't:
 

@@ -32,7 +32,7 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 {% admonition
    "note",
    "注意",
-   "对于嵌入属性中的长段 JSON/HTML 内容，不会进行格式化。"
+   "写在属性里的 JSON 和 JavaScript 保持原样，除非开启 `--format-attribute-js-json`。属性中的 HTML 始终不作改动。"
 %}
 
 {% admonition
