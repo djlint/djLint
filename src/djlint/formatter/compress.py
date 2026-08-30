@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.formatter.attributes import quote_attribute_values
 from djlint.formatter.class_attributes import encode_attribute_newlines
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import RE_FLAGS_IS, RE_FLAGS_ISX, child_of_unformatted_block
@@ -36,6 +37,17 @@ _TEMPLATE_COMMENT_PROFILES: Final = frozenset((
     "tera",
 ))
 
+
+_RAW_TEXT_ELEMENT_PATTERN: Final = re.compile(
+    r"""
+    (<(script|style|textarea)\b
+      (?:\"[^\"]*\"|'[^']*'|\{[^}]*\}|[^'\">{}])*>)
+    (.*?)
+    (?=</\2)
+    """,
+    RE_FLAGS_ISX,
+    cache_pattern=False,
+)
 
 _PADDED_EQUALS_PATTERN: Final = re.compile(
     r"\"[^\"]*\"|'[^']*'|\{\{.*?\}\}|\{%.*?%\}|\{\#.*?\#\}|[ \t]+=[ \t]*|=[ \t]+",
@@ -67,12 +79,21 @@ def _same_length_blank(match: re.Match[str]) -> str:
     return " " * len(match.group())
 
 
-def _tokenizer_source(html: str, config: Config) -> str:
-    """Blank out template comments so the tag tokenizer skips over them.
+def _blank_raw_text(match: re.Match[str]) -> str:
+    return match.group(1) + " " * len(match.group(3))
 
-    Each is replaced by a blank of the same length, so a token's offsets
-    still index the original html.
+
+def _tokenizer_source(html: str, config: Config) -> str:
+    """Blank out what the tag tokenizer should not read as markup.
+
+    A raw text element holds text: the "<" of `var s = "<div>"` inside a
+    `<script>` opens no tag, and rewriting it would change what the page
+    shows. Template comments are skipped for the same reason. Each is
+    replaced by a blank of the same length, so a token's offsets still
+    index the original html.
     """
+    html = _RAW_TEXT_ELEMENT_PATTERN.sub(_blank_raw_text, html)
+
     if config.profile not in _TEMPLATE_COMMENT_PROFILES:
         return html
 
@@ -95,14 +116,11 @@ def compress_html(html: str, config: Config) -> str:
         return tag
 
     def _clean_tag(token: TagToken) -> str:
-        """Flatten multiline attributes back to one line.
+        """Flatten multiline attributes back to one line and quote values.
 
-        Skip when attribute is ignored.
-        Attribute name can be in group one or group 2.
-        for now, skipping if they are anywhere
-
-        tags starting ignored blocks can have their attributes formatted,
-        for example <textarea class="..." id="..."> can be formatted.
+        A tag opening an ignored block still has its own attributes
+        formatted, so `<textarea class="..." id="...">` is tidied while its
+        contents are left alone.
         """
         if child_of_unformatted_block(config, html, token):
             return html[token.start : token.end]
@@ -111,20 +129,18 @@ def compress_html(html: str, config: Config) -> str:
         tag = _fix_case(token.name)
 
         raw_attributes = html[token.name_end : token.attributes_end]
+        attributes = ""
         if raw_attributes:
-            raw_attributes = encode_attribute_newlines(raw_attributes, config)
-
-        attributes = (
-            (" " if raw_attributes[0].isspace() else "")
-            + _normalize_equals(
-                " ".join(
-                    x.strip() for x in raw_attributes.strip().splitlines()
-                ),
-                config,
+            leading = " " if raw_attributes[0].isspace() else ""
+            flattened = " ".join(
+                x.strip()
+                for x in encode_attribute_newlines(raw_attributes, config)
+                .strip()
+                .splitlines()
             )
-            if raw_attributes
-            else ""
-        )
+            attributes = leading + _normalize_equals(
+                quote_attribute_values(config, flattened), config
+            )
         if config.close_void_tags and tag.lower() in HTML_VOID_ELEMENTS:
             close_bracket = " />"
         else:

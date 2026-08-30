@@ -267,8 +267,8 @@ test_data = [
             "        <option>Dark Green</option>\n"
             "    </optgroup>\n"
             "</select>\n"
-            "<input list=colors>\n"
-            "<datalist id=colors>\n"
+            '<input list="colors">\n'
+            '<datalist id="colors">\n'
             "    <option>Blue</option>\n"
             "    <option>Green</option>\n"
             "</datalist>\n"

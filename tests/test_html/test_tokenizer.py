@@ -158,7 +158,7 @@ def test_mixed_template_comments_are_compressed(basic_config: Config) -> None:
     )
 
     assert compress_html(source, basic_config) == (
-        "{{#unless}}<div id=x></div>{{/unless}}{# <DIV  id=x> #}<span></span>"
+        '{{#unless}}<div id="x"></div>{{/unless}}{# <DIV  id=x> #}<span></span>'
     )
 
 
@@ -184,3 +184,19 @@ def test_dynamic_tag_name_is_preserved(django_config: Config) -> None:
     source = "<h{{ header_level }}>{{ value }}</h{{ header_level }}>"
 
     assert formatter(django_config, source) == source + "\n"
+
+
+def test_markup_inside_a_raw_text_element_is_text(basic_config: Config) -> None:
+    source = (
+        "<script>\n"
+        '    var s = "<DIV CLASS=x>";\n'
+        "</script>\n"
+        "<style>\n"
+        "    /* <DIV CLASS=x> */\n"
+        "</style>\n"
+        "<textarea>\n"
+        "<DIV CLASS=x>\n"
+        "</textarea>\n"
+    )
+
+    assert compress_html(source, basic_config) == source

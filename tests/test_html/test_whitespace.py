@@ -57,8 +57,8 @@ test_data = [
             "    <button>Click here! Click here! Click here! Click here! Click here! Click here!</button>\n"
             "</div>\n"
             '<video src="brave.webm">\n'
-            '    <track kind=subtitles src=brave.en.vtt srclang=en label="English">\n'
-            '    <track kind=subtitles src=brave.en.vtt srclang=en label="English">\n'
+            '    <track kind="subtitles" src="brave.en.vtt" srclang="en" label="English">\n'
+            '    <track kind="subtitles" src="brave.en.vtt" srclang="en" label="English">\n'
             "</video>\n"
         ),
         id="display_inline_block",
@@ -279,12 +279,12 @@ test_data = [
     ),
     pytest.param(
         ("<p>x<img src=a>y</p>\n"),
-        ("<p>\n    x<img src=a>y\n</p>\n"),
+        '<p>\n    x<img src="a">y\n</p>\n',
         id="no_break_between_a_replaced_element_and_the_text_it_touches",
     ),
     pytest.param(
         ("<p><img src=a><img src=b></p>\n"),
-        ("<p>\n    <img src=a><img src=b>\n</p>\n"),
+        '<p>\n    <img src="a"><img src="b">\n</p>\n',
         id="no_break_between_two_replaced_elements_that_touch",
     ),
     pytest.param(
@@ -294,22 +294,22 @@ test_data = [
     ),
     pytest.param(
         ("<p>a<!-- c --><img src=x>b</p>\n"),
-        ("<p>\n    a<!-- c --><img src=x>b\n</p>\n"),
+        '<p>\n    a<!-- c --><img src="x">b\n</p>\n',
         id="no_break_across_a_comment_between_rendered_content",
     ),
     pytest.param(
         ("<p>a<img src=x>{# c #}<img src=y>b</p>\n"),
-        ("<p>\n    a<img src=x>{# c #}<img src=y>b\n</p>\n"),
+        '<p>\n    a<img src="x">{# c #}<img src="y">b\n</p>\n',
         id="no_break_across_a_template_comment_between_rendered_content",
     ),
     pytest.param(
         ("<p>a <img src=x> b</p>\n"),
-        ("<p>\n    a\n    <img src=x>\n    b\n</p>\n"),
+        '<p>\n    a\n    <img src="x">\n    b\n</p>\n',
         id="break_where_whitespace_already_renders_it",
     ),
     pytest.param(
         ("<div><img src=a></div>\n"),
-        ("<div>\n    <img src=a>\n</div>\n"),
+        '<div>\n    <img src="a">\n</div>\n',
         id="break_at_a_block_edge_renders_nothing",
     ),
     pytest.param(

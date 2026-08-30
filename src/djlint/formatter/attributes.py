@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 _QUOTED_VALUE_PATTERN = re.compile(r"\"[^\"]*\"|'[^']*'", cache_pattern=False)
+_UNQUOTED_VALUE_PATTERN = re.compile(r"=[ \t]*[^\s\"'=<>]", cache_pattern=False)
 
 _SRCSET_ATTRIBUTE_NAMES = frozenset(("srcset", "data-srcset", "sizes"))
 _COLLAPSIBLE_VALUE_ATTRIBUTE_NAMES = frozenset(("class", "style"))
@@ -49,6 +50,39 @@ def _rendered_length(config: Config, attribute_group: str) -> int:
         )
         if (value := match.group(2))
     )
+
+
+def quote_attribute_values(config: Config, attribute_group: str) -> str:
+    """Put quotes around an attribute value written without them.
+
+    A value holding a quote of its own is left as written. It is not valid
+    html to begin with, and a browser reads `a=b'c` as the single value
+    `b'c`, where the match stops at the quote: writing `a="b"'c` would make
+    the rest an attribute of its own.
+    """
+    if not _UNQUOTED_VALUE_PATTERN.search(attribute_group):
+        return attribute_group
+
+    matches = list(config.attribute_pattern.finditer(attribute_group))
+    if not _is_fully_matched(attribute_group, matches):
+        return attribute_group
+
+    output: list[str] = []
+    previous_end = 0
+    for match in matches:
+        value = match.group(2)
+        if not match.group(1) or not value or {'"', "'"} & set(value):
+            continue
+
+        start, end = match.span(2)
+        if attribute_group[end : end + 1] not in {"", " ", "\t"}:
+            continue
+
+        output.extend((attribute_group[previous_end:start], f'"{value}"'))
+        previous_end = end
+
+    output.append(attribute_group[previous_end:])
+    return "".join(output)
 
 
 def has_unquoted_template_expression(attribute_group: str) -> bool:

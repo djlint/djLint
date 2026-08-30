@@ -302,7 +302,7 @@ test_data = [
             "</p>\n"
         ),
         (
-            "<input name=address maxlength=200>\n"
+            '<input name="address" maxlength="200">\n'
             "<input name='address' maxlength='200'>\n"
             '<input name="address" maxlength="200">\n'
             '<div class="foo"></div>\n'
@@ -386,18 +386,18 @@ test_data = [
             '<button type="submit" disabled>This is valid.</button>\n'
             '<button type="submit" disabled="">This is valid.</button>\n'
             '<button type="submit" disabled="disabled">This is valid.</button>\n'
-            '<button type="submit" disabled=true>This is valid. This will be disabled.</button>\n'
+            '<button type="submit" disabled="true">This is valid. This will be disabled.</button>\n'
             "<button type=\"submit\" disabled='true'>This is valid. This will be disabled.</button>\n"
             '<button type="submit" disabled="true">This is valid. This will be disabled.</button>\n'
-            '<button type="submit" disabled=false>This is valid. This will be disabled.</button>\n'
+            '<button type="submit" disabled="false">This is valid. This will be disabled.</button>\n'
             '<button type="submit" disabled="false">This is valid. This will be disabled.</button>\n'
             "<button type=\"submit\" disabled='false'>This is valid. This will be disabled.</button>\n"
-            '<button type="submit" disabled=hahah>This is valid. This will be disabled.</button>\n'
+            '<button type="submit" disabled="hahah">This is valid. This will be disabled.</button>\n'
             "<button type=\"submit\" disabled='hahah'>This is valid. This will be disabled.</button>\n"
             '<button type="submit" disabled="hahah">This is valid. This will be disabled.</button>\n'
             '<input type="checkbox" checked disabled name="cheese">\n'
             '<input type="checkbox" checked="checked" disabled="disabled" name="cheese">\n'
-            '<input type=\'checkbox\' checked="" disabled="" name=cheese>\n'
+            '<input type=\'checkbox\' checked="" disabled="" name="cheese">\n'
             '<div lang=""></div>\n'
         ),
         id="boolean",
@@ -926,8 +926,20 @@ test_data = [
     ),
     pytest.param(
         ("<p title=Title>String</p>"),
-        ("<p title=Title>String</p>\n"),
+        ('<p title="Title">String</p>\n'),
         id="without_quotes",
+    ),
+    pytest.param(
+        ("<img src={{ url }}>"),
+        ('<img src="{{ url }}">\n'),
+        id="without_quotes_around_a_template_tag",
+    ),
+    pytest.param(
+        # a browser reads this as the single value a'b, so quoting the a
+        # would turn the rest into an attribute of its own
+        ("<p title=a'b>String</p>"),
+        ("<p title=a'b>String\n</p>\n"),
+        id="without_quotes_around_a_single_quote",
     ),
     pytest.param(
         ('<select data-html="<div></div>" data-normal="hello"></select>'),

@@ -274,7 +274,7 @@ test_data = [
             "<html>\n"
             "    <body>\n"
             '        <a href="#">Anchor</a>\n'
-            '        <div hidden class="foo" id=bar></div>\n'
+            '        <div hidden class="foo" id="bar"></div>\n'
             "    </body>\n"
             "</html>\n"
         ),
@@ -386,7 +386,7 @@ test_data = [
             "    <head></head>\n"
             "    <body>\n"
             '        <a href="#">Anchor</a>\n'
-            '        <div hidden class="foo" id=bar></div>\n'
+            '        <div hidden class="foo" id="bar"></div>\n'
             "    </body>\n"
             "</html>\n"
         ),
