@@ -14,6 +14,7 @@ or::
 
 from __future__ import annotations
 
+import errno
 import subprocess
 import sys
 import tempfile
@@ -22,7 +23,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import djlint as djlint_module
-from djlint import main as djlint
+from djlint import main as djlint, output as djlint_output
 from tests.conftest import write_to_file
 
 if TYPE_CHECKING:
@@ -209,6 +210,80 @@ def test_stdin_non_ascii(runner: CliRunner) -> None:
 
     result = runner.invoke(djlint, ("-", "--reformat"), input="😀😂🤣😆🥰")
     assert result.output == "😀😂🤣😆🥰\n"
+
+
+def test_stdin_lint_output_stream(runner: CliRunner) -> None:
+    """Lint output moves to stderr only when stdout is carrying the file."""
+    src = '<div style="color:red"></div>'
+
+    # lint only: stdout is free, and editor integrations read the report there
+    result = runner.invoke(djlint, ("-",), input=src)
+    assert "H021" in result.stdout
+    assert "Linted 1 file" in result.stdout
+
+    # --reformat hands the file back on stdout, so the report must not join it
+    result = runner.invoke(djlint, ("-", "--reformat", "--lint"), input=src)
+    assert result.stdout == src + "\n"
+    assert "H021" in result.stderr
+    assert "Linted 1 file" in result.stderr
+
+    # same for --check, statistics block included
+    result = runner.invoke(
+        djlint, ("-", "--check", "--lint", "--statistics"), input=src
+    )
+    assert result.stdout == src + "\n"
+    assert "H021" in result.stderr
+    assert "Statistics" in result.stderr
+
+
+def test_stdin_invalid_utf8(runner: CliRunner) -> None:
+    """Undecodable input is bad data, not a djLint crash."""
+    result = runner.invoke(
+        djlint, ("-", "--reformat"), input=b"<div>\xff</div>"
+    )
+    assert result.exit_code == 2
+    assert not result.stdout
+    assert "not valid UTF-8" in result.stderr
+    assert "Traceback" not in result.stderr
+    assert "report unexpected failures" not in result.stderr
+
+
+def test_stdin_preserves_line_endings(runner: CliRunner) -> None:
+    """A CRLF buffer comes back CRLF, exactly as it does through a file."""
+    crlf = b"<div>\r\n<p>hi</p>\r\n</div>\r\n"
+
+    result = runner.invoke(djlint, ("-", "--reformat"), input=crlf)
+    assert result.stdout_bytes == b"<div>\r\n    <p>hi</p>\r\n</div>\r\n"
+
+    # the pragma passthrough really is byte for byte
+    result = runner.invoke(
+        djlint, ("-", "--reformat", "--require-pragma"), input=crlf
+    )
+    assert result.stdout_bytes == crlf
+
+    # and an LF buffer is left alone
+    result = runner.invoke(
+        djlint, ("-", "--reformat"), input=b"<div>\n<p>hi</p>\n</div>\n"
+    )
+    assert result.stdout_bytes == b"<div>\n    <p>hi</p>\n</div>\n"
+
+
+def test_closed_pipe_is_not_a_crash(
+    runner: CliRunner, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`djlint . | head` is the consumer's choice, not a djLint failure."""
+
+    def hang_up(*_args: object, **_kwargs: object) -> int:
+        raise BrokenPipeError(errno.EPIPE, "broken pipe")
+
+    monkeypatch.setattr(djlint_output, "print_output", hang_up)
+
+    result = runner.invoke(djlint, ("-", "--lint"), input="<div></div>")
+
+    assert result.exit_code == 2
+    # no traceback, and no invitation to file a bug against djLint
+    assert "Traceback" not in result.stderr
+    assert "report unexpected failures" not in result.stderr
 
 
 def test_check(

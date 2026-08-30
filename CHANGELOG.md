@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Fix
+
+- `djlint - --reformat --lint` no longer writes its report into the file. The findings and `Linted 1 file, found 1 error.` went to stdout after the formatted code, and an editor piping a buffer through djLint writes stdout back to the file. The lint report, the `--statistics` block and the `--github-output` annotations now go to stderr when stdout is carrying the file. A lint-only run is unchanged.
+- `--github-output` defaults to `$GITHUB_ACTIONS`, so this reached CI with no flag typed: `cat f.html | djlint - --reformat > f.html` wrote `::warning` lines into `f.html`.
+- Line endings survive `djlint -`. A CRLF buffer piped to `--reformat` came back LF throughout, while the same file reformatted in place kept it, so formatting on save rewrote every line. Input that `--require-pragma` skips is now handed back byte for byte, line endings included.
+- Console output is utf-8 on stderr as well as on stdout. A warning could reach a Windows console as `\U0001f622` rather than an emoji, and a template's own text quoted in a lint message came out in the console codepage.
+- A `.gitignore` is read only when `--use-gitignore` or `use_gitignore` asks for it. pathspec rejects patterns git accepts and ignores, such as one ending in a backslash, so a single line in it aborted every run in that project with a traceback and an invitation to report a bug.
+- Input on stdin that is not valid utf-8 is reported as bad input rather than as a djLint failure.
+- A closed pipe, as in `djlint . | head -1`, is no longer a djLint failure. It printed a traceback and exited `120`.
+
 ## [1.44.2] - 2026-08-08
 
 ### Fix

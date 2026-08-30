@@ -26,6 +26,40 @@ def test_github_output_flag(runner: CliRunner) -> None:
     assert "Statistics" not in result.output
 
 
+def test_github_output_stdin_reformat_stream(runner: CliRunner) -> None:
+    """Annotations keep off stdout while stdout is carrying the file."""
+    src = '<div style="color:red"></div>'
+
+    # lint only: stdout is free, so the annotations stay where CI reads them
+    result = runner.invoke(
+        djlint,
+        ("-", "--lint", "--github-output"),
+        input=src,
+        env={"GITHUB_ACTIONS": ""},
+    )
+    assert "::warning" in result.stdout
+
+    # --reformat hands the file back on stdout, so they must not join it
+    result = runner.invoke(
+        djlint,
+        ("-", "--reformat", "--lint", "--github-output"),
+        input=src,
+        env={"GITHUB_ACTIONS": ""},
+    )
+    assert result.stdout == src + "\n"
+    assert "::warning" in result.stderr
+
+    # and the same by way of the env var CI always sets
+    result = runner.invoke(
+        djlint,
+        ("-", "--reformat", "--lint"),
+        input=src,
+        env={"GITHUB_ACTIONS": "true"},
+    )
+    assert result.stdout == src + "\n"
+    assert "::warning" in result.stderr
+
+
 def test_github_output_env_var(runner: CliRunner) -> None:
     """Test that GITHUB_ACTIONS env var triggers github output."""
     result = runner.invoke(

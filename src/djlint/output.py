@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import math
 import shutil
-import sys
 from collections import Counter
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -22,12 +21,6 @@ if TYPE_CHECKING:
     from djlint.types import LintError, ProcessResult
 
 
-try:
-    sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
-except Exception:
-    pass
-
-
 _OUTPUT_WHITESPACE_PATTERN: Final = re.compile(
     r"\s{2,}|\n", cache_pattern=False
 )
@@ -38,6 +31,15 @@ def _count_digits(num: int, /) -> int:
     if num == 0:
         return 1
     return math.floor(math.log10(abs(num))) + 1
+
+
+def report_on_stderr(config: Config, /) -> bool:
+    """Whether the report has to keep off stdout.
+
+    In stdin mode stdout carries the file back to whatever piped it in, so a
+    report written there ends up inside the buffer the editor saves.
+    """
+    return config.stdin and (config.reformat or config.check)
 
 
 def print_output(
@@ -113,7 +115,8 @@ def print_output(
                 lint_success_message,
                 fg="red" if lint_error_count > 0 else "blue",
                 bold=lint_error_count > 0,
-            )
+            ),
+            err=report_on_stderr(config),
         )
 
     if print_blanks:
@@ -145,6 +148,7 @@ def build_output(
     if not errors:
         return 0
 
+    err = report_on_stderr(config)
     filename = build_relative_path(next(iter(error)), config.project_root)
 
     if "{filename}" not in config.linter_output_format and not config.stdin:  # noqa: RUF027
@@ -172,7 +176,8 @@ def build_output(
                 code=code,
                 message=message,
                 match=match,
-            )
+            ),
+            err=err,
         )
 
     return len(errors)
@@ -248,12 +253,14 @@ def build_stats_output(
         for rule in config.linter_rules
     }
 
-    echo()
+    err = report_on_stderr(config)
+    echo(err=err)
     width, _ = shutil.get_terminal_size()
     echo(
         style("Statistics", fg="green", bold=True)
         + "\n"
-        + style("─" * width, dim=True)
+        + style("─" * width, dim=True),
+        err=err,
     )
 
     if messages and codes:
@@ -269,7 +276,8 @@ def build_stats_output(
             echo(
                 style(code[0], fg="yellow")
                 + style(f" {code_space}{code[1]}", fg="blue")
-                + f" {count_space}{messages[code[0]]}"
+                + f" {count_space}{messages[code[0]]}",
+                err=err,
             )
 
     return sum(Counter(codes).values())

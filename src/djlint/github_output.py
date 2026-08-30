@@ -6,7 +6,11 @@ from typing import TYPE_CHECKING
 
 from click import echo
 
-from djlint.output import build_relative_path, count_format_errors
+from djlint.output import (
+    build_relative_path,
+    count_format_errors,
+    report_on_stderr,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
@@ -77,13 +81,15 @@ def print_lint_errors(
         )
         file_property = f"file={filename},"
 
+    err = report_on_stderr(config)
+
     for message_dict in errors:
         line = escape_property(message_dict["line"].split(":")[0])
         level = "error" if message_dict["code"].startswith("E") else "warning"
         message = escape_data(
             f"{message_dict['code']} {message_dict['message']}"
         )
-        echo(f"::{level} {file_property}line={line}::{message}")
+        echo(f"::{level} {file_property}line={line}::{message}", err=err)
 
     return len(errors)
 

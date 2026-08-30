@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 import yaml
-from click import BadParameter, echo, style
+from click import BadParameter, UsageError, echo, style
 from pathspec import PathSpec
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
@@ -109,8 +109,10 @@ def load_gitignore(root: Path) -> PathSpec[Pattern]:
         return PathSpec.from_lines(_GITIGNORE_PATTERN, git_lines)
 
     except GitIgnorePatternError as e:
-        echo(f"Could not parse {gitignore}: {e}", err=True)
-        raise
+        # the file is the user's, not djLint's, so say so plainly instead
+        # of raising through to the traceback and the bug report banner
+        msg = f"Could not parse {gitignore}: {e}"
+        raise UsageError(msg) from None
 
 
 def find_pyproject(root: Path) -> Path | None:
@@ -1224,7 +1226,6 @@ class Config:
         djlint_settings = load_project_settings(
             self.project_root, configuration
         )
-        self.gitignore = load_gitignore(self.project_root)
 
         def setting_int(key: str, default: int) -> int:
             """Read an integer option from the config file."""
@@ -1393,6 +1394,14 @@ class Config:
         self.use_gitignore = (
             use_gitignore or bool(djlint_settings.get("use_gitignore", False))
         ) and not self.stdin
+        # only --use-gitignore ever reads this. pathspec rejects patterns
+        # git itself accepts and ignores, so parsing the file unasked lets
+        # one line in it stop a run that was never going to consult it.
+        self.gitignore = (
+            load_gitignore(self.project_root)
+            if self.use_gitignore
+            else PathSpec([])
+        )
         self.allow_empty_input = allow_empty_input or bool(
             djlint_settings.get("allow_empty_input", False)
         )

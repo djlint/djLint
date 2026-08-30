@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import errno
+import io
 import os
 import sys
 from functools import partial, wraps
@@ -19,9 +21,43 @@ else:
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+    from typing import TextIO
 
     from djlint.settings import Config
     from djlint.types import ProcessResult
+
+
+def _use_utf8(stream: TextIO) -> None:
+    """Retune a std stream to utf-8, whatever codepage the locale hands us.
+
+    Windows consoles and Git Bash arrive on the locale codepage, which cannot
+    hold the report's rules or a template's own text. Naming the error handler
+    is not decoration: passing an encoding alone silently resets it to strict,
+    and a stream carrying diagnostics must never abort the run reporting them.
+    """
+    try:
+        stream.reconfigure(  # type: ignore[attr-defined]
+            encoding="utf-8", errors="backslashreplace"
+        )
+    except Exception:
+        pass
+
+
+def _consumer_hung_up(error: Exception) -> bool:
+    """Whether the failure is just the other end of the pipe closing.
+
+    `djlint . | head -1` leaves djLint writing into a pipe nobody is
+    reading. POSIX reports that as BrokenPipeError; Windows raises a plain
+    OSError with EINVAL out of the flush that follows. EINVAL is broader
+    than the case at hand, so the cost of guessing wrong is weighed rather
+    than avoided: a mistaken match loses a traceback, never an exit code.
+    """
+    if isinstance(error, BrokenPipeError):
+        return True
+    return isinstance(error, OSError) and error.errno in {
+        errno.EINVAL,
+        errno.EPIPE,
+    }
 
 
 def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
@@ -42,7 +78,16 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
         except (click.ClickException, click.exceptions.Exit, click.Abort):
             # click's own control flow, including --help and usage errors
             raise
-        except Exception:
+        except Exception as error:
+            if _consumer_hung_up(error):
+                # nothing is left to report to, and the report that was
+                # interrupted has nowhere to go, so leave quietly. stdout
+                # is swapped out first: the interpreter flushes it once
+                # more on the way out, and that flush failing against the
+                # same dead pipe would replace the exit code with 120.
+                sys.stdout = io.StringIO()
+                sys.exit(2)
+
             import traceback  # noqa: PLC0415
 
             traceback.print_exc()
@@ -394,6 +439,13 @@ def main(
     github_output: bool | None = None,
 ) -> None:
     """djLint · HTML template linter and formatter."""
+    # Both streams, before anything can write to either: djlint.output is
+    # imported too late for the config warnings and is skipped altogether on
+    # the --require-pragma path, and a library import has no business
+    # retuning the process's streams.
+    _use_utf8(sys.stdout)
+    _use_utf8(sys.stderr)
+
     from djlint.settings import Config  # noqa: PLC0415
     from djlint.src import (  # noqa: PLC0415
         get_src,
@@ -461,8 +513,27 @@ def main(
     )
 
     if "-" in src and not config.files:
-        stdin_stream = click.get_text_stream("stdin", encoding="utf-8")
-        stdin_text = stdin_stream.read()
+        # click's get_text_stream helper is deprecated, so decode stdin here:
+        # the bytes on the pipe are utf-8 whatever the locale's default is.
+        # Strict is deliberate: --reformat hands this text straight back to
+        # the editor that piped it in, so papering over a bad byte would
+        # silently corrupt the buffer it gets written to. newline="" is the
+        # same bargain for line endings - universal newlines would hand the
+        # formatter LF for a CRLF buffer and quietly rewrite every line of
+        # it, where reformat_file opens with newline="" and keeps them.
+        try:
+            sys.stdin.reconfigure(  # type: ignore[union-attr]
+                encoding="utf-8", errors="strict", newline=""
+            )
+        except Exception:
+            pass
+        try:
+            stdin_text = sys.stdin.read()
+        except UnicodeDecodeError as e:
+            # the pipe held something that is not utf-8. That is bad input,
+            # not a djLint bug, so it must not surface as a crash report.
+            msg = f"Input on stdin is not valid UTF-8: {e}"
+            raise click.UsageError(msg) from None
 
         if config.require_pragma and not has_pragma(
             config, stdin_text.split("\n", 1)[0]
@@ -480,7 +551,10 @@ def main(
         files_count = 1
 
         if config.reformat or config.check:
-            echo((formatted_code or "").rstrip().encode("utf-8"))
+            # formatter() already ends its output with the line ending the
+            # input used, so stripping and re-adding one here would flatten
+            # a CRLF buffer's last line on its way back to the editor.
+            echo((formatted_code or "").encode("utf-8"), nl=False)
 
     else:
         file_src = config.files if "-" in src and config.files else src
@@ -529,7 +603,7 @@ def main(
             show_percent=False,
             show_pos=True,
             bar_template=progress_template,
-            file=click.get_text_stream("stderr"),
+            file=sys.stderr,
             hidden=config.github_output or config.quiet,
         ) as bar:
             if max_workers == 1:

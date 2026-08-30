@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
+from click import UsageError
 
 from djlint import main as djlint
 from djlint.settings import Config
@@ -147,6 +148,21 @@ def test_cli(runner: CliRunner) -> None:
     except Exception as e:
         print("cleanup failed")
         print(e)
+
+
+def test_unread_gitignore_cannot_stop_the_run(tmp_path: Path) -> None:
+    """A .gitignore nobody asked djLint to read must not abort the run."""
+    (tmp_path / ".git").mkdir()
+    (tmp_path / "index.html").write_text("<div></div>", encoding="utf-8")
+    # git accepts a trailing backslash and simply drops the line; pathspec
+    # rejects the whole file over it
+    (tmp_path / ".gitignore").write_text("build\\\n", encoding="utf-8")
+
+    assert get_src([tmp_path], Config(str(tmp_path))).paths
+
+    # asking for it is another matter: that has to fail, but as bad input
+    with pytest.raises(UsageError):
+        Config(str(tmp_path), use_gitignore=True)
 
 
 def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
