@@ -39,6 +39,11 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
+_QUOTE_STYLES: Final = {
+    "double": QuoteStyle.ALWAYS_DOUBLE,
+    "single": QuoteStyle.ALWAYS_SINGLE,
+}
+
 _TAG_SPACING_PATTERN: Final = re.compile(
     r"({%[-+]?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?([-+]?%})", cache_pattern=False
 )
@@ -880,6 +885,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     contents_split[-1],
                     len(f"{open_bracket} {tag}  {close_bracket}"),
                     leading_space,
+                    quote_style=_QUOTE_STYLES[config.quote_style],
                 )
             )
 
@@ -894,7 +900,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         tag = match["name"].strip()
         index = match["index"] or ""
         close_bracket = match["close"]
-        quote_style = QuoteStyle.ALWAYS_DOUBLE
+        quote_style = _QUOTE_STYLES[config.quote_style]
         normalize_string_quotes = False
 
         if config.profile == "jinja":
@@ -904,6 +910,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     quote_style = QuoteStyle.ALWAYS_SINGLE
                     normalize_string_quotes = True
                 case "'":
+                    quote_style = QuoteStyle.ALWAYS_DOUBLE
                     normalize_string_quotes = True
                 case _:
                     pass

@@ -136,6 +136,8 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 
 HTML 属性值内部的单引号（例如 `<span title="{% trans 'x' %}">`）不会被标记，因为属性本身的双引号迫使那里只能使用单引号。
 
+设置 `quote_style = "single"` 后，该规则反过来要求单引号，格式化器也会写成单引号。
+
 错误示例：
 
 ```html

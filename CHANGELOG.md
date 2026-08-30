@@ -36,6 +36,7 @@
 
 ### Feature
 
+- New option `--quote-style` / `quote_style` chooses the quotes djLint writes around strings inside template tags, `double` (the default, and what it has always written) or `single`. `T002` asks for whichever is configured, so `{% include 'a.html' %}` is now a way to write templates rather than something to be corrected. Quoting of html attributes is unchanged and stays with `H008`.
 - New rule `H043` reports a `<button>` written without a `type`. Such a button submits the form around it, so one meant to run a script reloads the page instead. Off by default; enable it with `--include=H043`.
 
 ### Tests

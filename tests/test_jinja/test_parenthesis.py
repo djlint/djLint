@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint.reformat import formatter
-from tests.conftest import printer
+from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -163,3 +163,14 @@ def test_issue_1428_no_trailing_whitespace(jinja_config: Config) -> None:
     output = formatter(jinja_config, source)
     assert output == expected
     assert formatter(jinja_config, output) == output
+
+
+def test_quote_style_single() -> None:
+    config = config_builder({"profile": "jinja", "quote_style": "single"})
+    source = '{{ url("foo") }}\n{% set x = "a" %}\n<a href=\'{{ url("bar") }}\'>x</a>\n'
+    expected = "{{ url('foo') }}\n{% set x = 'a' %}\n<a href='{{ url(\"bar\") }}'>x</a>\n"
+
+    output = formatter(config, source)
+
+    printer(expected, source, output)
+    assert expected == output

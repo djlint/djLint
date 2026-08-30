@@ -154,3 +154,53 @@ def test_base(source: str, expected: list[LintError]) -> None:
         *(x for x in expected if x not in output[filename]),
     )
     assert not mismatch
+
+
+single_quote_test_data = [
+    pytest.param(("{% extends 'this' %}"), ([]), id="single_quotes_wanted"),
+    pytest.param(
+        ('{% extends "this" %}'),
+        ([
+            {
+                "code": "T002",
+                "line": "1:0",
+                "match": '{% extends "this" %}',
+                "message": "Single quotes should be used in tags.",
+            }
+        ]),
+        id="double_quotes_reported",
+    ),
+    pytest.param(
+        # html attribute quoting stays H008's business
+        ("<span title='{% translate \"this\" %}'></span>"),
+        ([
+            {
+                "code": "H008",
+                "line": "1:0",
+                "match": "<span title='{% tran",
+                "message": "Attributes should be double quoted.",
+            }
+        ]),
+        id="double_quotes_in_attribute",
+    ),
+]
+
+
+@pytest.mark.parametrize(("source", "expected"), single_quote_test_data)
+def test_single_quote_style(source: str, expected: list[LintError]) -> None:
+    config = Config(
+        "dummy/source.html",
+        profile="django",
+        include="T002",
+        quote_style="single",
+    )
+    filename = "test.html"
+    output = linter(config, source, filename, filename)
+
+    lint_printer(source, expected, output[filename])
+
+    mismatch = (
+        *(x for x in output[filename] if x not in expected),
+        *(x for x in expected if x not in output[filename]),
+    )
+    assert not mismatch

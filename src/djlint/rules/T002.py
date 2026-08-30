@@ -23,12 +23,18 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-_SINGLE_QUOTED_TAG_PATTERN: Final = re.compile(
+SINGLE_QUOTE_MESSAGE: Final = "Single quotes should be used in tags."
+
+_QUOTED_TAG_TEMPLATE: Final = (
     r"{%[ \t]*?(?:trans(?:late)?|with|extends|include|now)[\s]+?"
-    r"(?:(?:(?!%}|').)+?=)?'(?:(?!%}|').)*?'(?:(?!%}).)*?%}",
-    re.S,
-    cache_pattern=False,
+    r"(?:(?:(?!%}|QUOTE).)+?=)?QUOTE(?:(?!%}|QUOTE).)*?QUOTE(?:(?!%}).)*?%}"
 )
+_WRONGLY_QUOTED_TAG_PATTERNS: Final = {
+    style: re.compile(
+        _QUOTED_TAG_TEMPLATE.replace("QUOTE", quote), re.S, cache_pattern=False
+    )
+    for style, quote in (("double", "'"), ("single", '"'))
+}
 
 
 def run(
@@ -40,9 +46,16 @@ def run(
     *args: Any,
     **kwargs: Any,
 ) -> tuple[LintError, ...]:
-    """Check for single-quoted strings outside HTML attributes."""
+    """Check for wrongly quoted strings outside HTML attributes."""
+    message = (
+        SINGLE_QUOTE_MESSAGE
+        if config.quote_style == "single"
+        else rule["message"]
+    )
     errors: list[LintError] = []
-    for match in _SINGLE_QUOTED_TAG_PATTERN.finditer(html):
+    for match in _WRONGLY_QUOTED_TAG_PATTERNS[config.quote_style].finditer(
+        html
+    ):
         if (
             inside_html_attribute(html, match)
             or overlaps_ignored_block(config, html, match)
@@ -55,6 +68,6 @@ def run(
             "code": rule["name"],
             "line": get_line(match.start(), line_ends),
             "match": match.group().strip()[:20],
-            "message": rule["message"],
+            "message": message,
         })
     return tuple(errors)

@@ -136,6 +136,8 @@ Mélanger guillemets simples et doubles dans les balises de modèle (`{% extends
 
 Les guillemets simples à l'intérieur des valeurs d'attributs HTML (par exemple `<span title="{% trans 'x' %}">`) ne sont pas signalés, puisque les guillemets doubles de l'attribut y imposent des guillemets simples.
 
+Avec `quote_style = "single"`, la règle s'inverse et réclame des guillemets simples, que le formateur écrit également.
+
 À éviter :
 
 ```html

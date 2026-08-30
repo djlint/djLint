@@ -78,6 +78,21 @@
     "tags": ["formatter"]
   },
   {
+    "name": "quote_style",
+    "description": {
+      "en": "Quotes to use for strings inside template tags, either `double` (the default) or `single`. `T002` requires the same quotes. HTML attribute quoting is left to `H008`.",
+      "ru": "Кавычки для строк внутри тегов шаблона: `double` (по умолчанию) или `single`. `T002` требует тех же кавычек. Кавычки HTML-атрибутов остаются за `H008`.",
+      "fr": "Guillemets à utiliser pour les chaînes dans les balises de modèle : `double` (par défaut) ou `single`. `T002` exige les mêmes. Les guillemets des attributs HTML restent du ressort de `H008`.",
+      "zh": "模板标签内字符串使用的引号，可选 `double`（默认）或 `single`。`T002` 要求同样的引号。HTML 属性的引号由 `H008` 管理。"
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "quote_style=\"single\"" },
+      { "name": ".djlintrc", "value": "\"quote_style\": \"single\"" },
+      { "name": "cli", "value": "--quote-style single" }
+    ],
+    "tags": ["formatter", "linter"]
+  },
+  {
     "name": "no_line_after_yaml",
     "description": {
       "en": "Do not add a blank line after yaml front matter.",

@@ -136,6 +136,8 @@ Mixing single and double quotes in template tags (`{% extends %}`, `{% include %
 
 Single quotes inside HTML attribute values (e.g. `<span title="{% trans 'x' %}">`) are not flagged, since the attribute's double quotes force single quotes there.
 
+With `quote_style = "single"` the rule turns around and asks for single quotes, and the formatter writes them too.
+
 Don't:
 
 ```html

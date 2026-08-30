@@ -78,6 +78,8 @@ _JS_JSON_PROPERTY_PATTERN: Final = re.compile(
 
 DJLINT_TOML_CONFIG_FILES: Final = ("djlint.toml", ".djlint.toml")
 
+_QUOTE_STYLES: Final = frozenset(("double", "single"))
+
 
 def find_project_root(src: Path) -> Path:
     """Attempt to get the project root."""
@@ -1155,6 +1157,7 @@ class Config:
         "profile",
         "project_root",
         "quiet",
+        "quote_style",
         "raw_text_closing_pattern",
         "raw_text_inline_imsx_pattern",
         "raw_text_inline_ix_pattern",
@@ -1238,6 +1241,7 @@ class Config:
         no_line_after_yaml: bool = False,
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
+        quote_style: str | None = None,
         max_blank_lines: int | None = None,
         github_output: bool = False,
         stdin: bool | None = None,
@@ -1318,6 +1322,15 @@ class Config:
             or djlint_settings.get("no_function_formatting", False)
             or expressions_are_rust
         )
+        self.quote_style = str(
+            quote_style or djlint_settings.get("quote_style", "double")
+        ).lower()
+        if self.quote_style not in _QUOTE_STYLES:
+            msg = (
+                f"Invalid quote style {self.quote_style!r}."
+                f" Choose from {', '.join(sorted(_QUOTE_STYLES))}."
+            )
+            raise BadParameter(msg, param_hint="'--quote-style'")
         self.format_attribute_template_tags = (
             format_attribute_template_tags
             or djlint_settings.get("format_attribute_template_tags", False)
