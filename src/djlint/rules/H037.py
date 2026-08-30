@@ -13,11 +13,11 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
+    tokenize_markup,
 )
 from djlint.lint import get_line
 
@@ -73,7 +73,7 @@ def run(
     """
     errors: list[LintError] = []
 
-    for token in tokenize_tags(html):
+    for token in tokenize_markup(html):
         if (
             token.closing
             or token.declaration

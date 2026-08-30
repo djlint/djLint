@@ -8,13 +8,13 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import HTML_VOID_ELEMENTS
-from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IS,
     inside_ignored_linter_block,
     inside_ignored_rule,
     inside_template_block,
     overlaps_ignored_block,
+    tokenize_markup,
 )
 from djlint.lint import get_line
 
@@ -86,7 +86,7 @@ def run(
     errors: list[LintError] = []
     open_tags: list[tuple[str, tuple[int, ...]]] = []
 
-    for token in tokenize_tags(html):
+    for token in tokenize_markup(html):
         tag_name = token.name.lower()
         if (
             token.declaration

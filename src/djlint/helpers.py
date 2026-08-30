@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
     from typing_extensions import TypeVar
 
+    from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
     from djlint.types import SpanMatch
 
@@ -318,6 +319,39 @@ def restore_unformatted_blocks(
     return html
 
 
+_RAW_TEXT_ELEMENT_PATTERN: Final = re.compile(
+    r"""
+    (<(script|style|textarea)\b
+      (?:\"[^\"]*\"|'[^']*'|\{[^}]*\}|[^'\">{}])*>)
+    (.*?)
+    (?=</\2)
+    """,
+    RE_FLAGS_ISX,
+    cache_pattern=False,
+)
+
+
+def _blank_raw_text(match: re.Match[str]) -> str:
+    return match.group(1) + " " * len(match.group(3))
+
+
+def mask_raw_text_bodies(html: str) -> str:
+    """Blank out what the tag tokenizer should not read as markup.
+
+    A raw text element holds text, so the "<" of `var s = "<div>"` opens no
+    tag and the apostrophe in a comment starts no attribute value. Each
+    body is replaced by a blank of the same length, so a token's offsets
+    still index the html that was passed in.
+    """
+    return _RAW_TEXT_ELEMENT_PATTERN.sub(_blank_raw_text, html)
+
+
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
+def tokenize_markup(html: str) -> tuple[TagToken, ...]:
+    """Tokenize the tags of a document, skipping raw text bodies."""
+    return tuple(tokenize_tags(mask_raw_text_bodies(html)))
+
+
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _html_attribute_spans(html: str, /) -> tuple[tuple[int, int], ...]:
     return tuple(
@@ -450,7 +484,7 @@ def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
         for ignored_start, ignored_end in _inside_ignored_block(
             html,
             ignored_blocks=config.lint_ignored_blocks_pattern,
-            ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
+            ignored_inline_blocks=config.lint_ignored_inline_blocks_ix_pattern,
         )
     )
 

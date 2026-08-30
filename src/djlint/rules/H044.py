@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
+    tokenize_markup,
 )
 from djlint.lint import get_line
 
@@ -32,7 +32,7 @@ def _odd_cells(html: str) -> Iterator[TagToken]:
     """
     depth = 0
     first_cell = ""
-    for token in tokenize_tags(html):
+    for token in tokenize_markup(html):
         name = token.name.lower()
         if name == "thead":
             if token.closing:

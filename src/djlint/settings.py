@@ -785,10 +785,8 @@ _OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS: Final = r"""
     | asyncAll
 """
 
-_IGNORED_INLINE_BLOCKS: Final = r"""
+_IGNORED_INLINE_BLOCKS_TAIL: Final = r"""
       <!--.*?-->
-    | <script.*?\</script>
-    | <style.*?\</style>
     | {\*.*?\*}
     | (?<!\{){\#(?!.*djlint:[ ]*(?:off|on)\b).*\#}
     | <\?php.*?\?>
@@ -800,6 +798,17 @@ _IGNORED_INLINE_BLOCKS: Final = r"""
       {%[-+]?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
     | {%[ ]*blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans(?:late)?[ ]*%}
 """
+
+# the linter skips a script or style body but not the tags around it, so a
+# rule can still see the attributes on the opening tag
+_IGNORED_INLINE_BLOCKS: Final = (
+    r"""
+      <script.*?\</script>
+    | <style.*?\</style>
+    |"""
+    + _IGNORED_INLINE_BLOCKS_TAIL
+)
+_LINT_IGNORED_INLINE_BLOCKS: Final = _IGNORED_INLINE_BLOCKS_TAIL
 
 _IGNORED_BLOCKS_TAIL: Final = (
     r"""
@@ -831,33 +840,43 @@ _IGNORED_BLOCKS_TAIL: Final = (
 )
 
 
-def _build_ignored_blocks(*, whole_script_style_element: bool) -> str:
+_RAW_TEXT_OPENING_TAG: Final = r"""(?:\"[^\"]*\"|'[^']*'|[^>\"'])*>"""
+
+
+def _build_ignored_blocks(*, for_linting: bool) -> str:
     """Build the alternation of blocks djLint leaves alone.
 
-    The formatter stops the script/style span at the "<" of the closing tag
-    so that it can still indent that tag. Linting needs the whole element:
-    stopping short leaves the closing tag outside a block that its opening
-    tag is inside, so a rule pairing the two (H025) sees a close with no
-    open and calls it an orphan.
+    The formatter's span runs from the opening tag to the "<" of the
+    closing one, so that it can still indent the closing tag while leaving
+    the contents alone.
+
+    Linting skips the contents only. A span covering the opening tag would
+    hide it from every rule, which left `H024` unable to report the
+    `type="text/javascript"` it exists for, and `D004` blind to the
+    `<script src>` its own pattern names. A span covering the whole
+    element instead leaves a rule that pairs tags (`H025`) with a closing
+    tag whose opening tag it never saw.
     """
-    script_style = (
-        r"<(script|style).*?\</(?:\3)>"
-        if whole_script_style_element
-        else r"<(script|style).*?(?=(\</(?:\3)>))"
-    )
+    if for_linting:
+        return (
+            rf"""
+      <(pre|textarea){_RAW_TEXT_OPENING_TAG}\K(?:(?!</(?:\1)\b)[\s\S])*
+    | <(script|style){_RAW_TEXT_OPENING_TAG}\K(?:(?!</(?:\2)\b)[\s\S])*
+"""
+            + _IGNORED_BLOCKS_TAIL
+        )
+
     return (
-        rf"""
+        r"""
       <(pre|textarea).*?</(\1)>
-    | {script_style}
+    | <(script|style).*?(?=(\</(?:\3)>))
 """
         + _IGNORED_BLOCKS_TAIL
     )
 
 
-_IGNORED_BLOCKS: Final = _build_ignored_blocks(whole_script_style_element=False)
-_LINT_IGNORED_BLOCKS: Final = _build_ignored_blocks(
-    whole_script_style_element=True
-)
+_IGNORED_BLOCKS: Final = _build_ignored_blocks(for_linting=False)
+_LINT_IGNORED_BLOCKS: Final = _build_ignored_blocks(for_linting=True)
 
 _RAW_TEXT_INLINE: Final = r"""
     <(script|style|pre|textarea).*?(?=(\</(?:\1)>))
@@ -969,6 +988,9 @@ _IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
 )
 _IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = re.compile(
     _IGNORED_INLINE_BLOCKS, RE_FLAGS_IX, cache_pattern=False
+)
+_LINT_IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = re.compile(
+    _LINT_IGNORED_INLINE_BLOCKS, RE_FLAGS_IX, cache_pattern=False
 )
 _IGNORED_LINTER_BLOCKS_PATTERN: Final = re.compile(
     r"""
@@ -1138,6 +1160,7 @@ class Config:
         "line_break_after_multiline_tag",
         "lint",
         "lint_ignored_blocks_pattern",
+        "lint_ignored_inline_blocks_ix_pattern",
         "linter_output_format",
         "linter_rules",
         "max_attribute_length",
@@ -1690,6 +1713,9 @@ class Config:
         self.ignored_blocks_inline_pattern = _IGNORED_BLOCKS_INLINE_PATTERN
         self.ignored_inline_blocks_ix_pattern = (
             _IGNORED_INLINE_BLOCKS_IX_PATTERN
+        )
+        self.lint_ignored_inline_blocks_ix_pattern = (
+            _LINT_IGNORED_INLINE_BLOCKS_IX_PATTERN
         )
         self.ignored_linter_blocks_pattern = _IGNORED_LINTER_BLOCKS_PATTERN
         self.ignored_trans_blocks_pattern = _IGNORED_TRANS_BLOCKS_PATTERN

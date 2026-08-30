@@ -13,6 +13,7 @@
 
 ### Fix
 
+- The linter reads the opening tag of a `<script>`, `<style>`, `<pre>` or `<textarea>` again. It was skipping the whole element, so no rule could see those tags: `H024` could never report the `type="text/javascript"` it exists for, `D004` was blind to the `<script src>` its own pattern names, and `H008`, `H010`, `H011`, `H012` and `H037` ignored the attributes on all four. Only the body is skipped now, and a body is no longer read as markup at all, so an apostrophe in a `//` comment or a `<div>` in a javascript string cannot derail the rules that pair tags.
 - `djlint - --reformat --lint` no longer writes its report into the file. The findings and `Linted 1 file, found 1 error.` went to stdout after the formatted code, and an editor piping a buffer through djLint writes stdout back to the file. The lint report, the `--statistics` block and the `--github-output` annotations now go to stderr when stdout is carrying the file. A lint-only run is unchanged.
 - `--github-output` defaults to `$GITHUB_ACTIONS`, so this reached CI with no flag typed: `cat f.html | djlint - --reformat > f.html` wrote `::warning` lines into `f.html`.
 - Markup written as text inside a `<script>`, `<style>` or `<textarea>` is no longer rewritten. `var s = "<DIV CLASS=x>"` came back as `"<div CLASS=x>"`, changing what the script produced and what the textarea showed.
