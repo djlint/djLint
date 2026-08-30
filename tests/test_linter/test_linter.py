@@ -133,10 +133,30 @@ def test_H013(
 def test_H014(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
+    # the report points at the first blank line, not the content line above
     write_to_file(tmp_file.name, b"</div>\n\n\n<p>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 1
-    assert "H014 1:" in result.output
+    assert "H014 2:" in result.output
+
+    # a line holding only whitespace is a blank line too
+    write_to_file(tmp_file.name, b"</div>\n\n   \n<p>")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H014 2:" in result.output
+
+    # one blank line is a paragraph break rather than an extra
+    write_to_file(tmp_file.name, b"</div>\n\n<p>")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H014" not in result.output
+
+    # the threshold follows the options, so the formatter's own output is
+    # never rejected
+    write_to_file(tmp_file.name, b"</div>\n\n\n<p>")
+    result = runner.invoke(djlint, (tmp_file.name, "--max-blank-lines", "2"))
+    assert "H014" not in result.output
+
+    result = runner.invoke(djlint, (tmp_file.name, "--preserve-blank-lines"))
+    assert "H014" not in result.output
 
 
 def test_H015(
@@ -914,14 +934,11 @@ def test_H043(
 ) -> None:
     write_to_file(tmp_file.name, b"<button>Save</button>")
     result = runner.invoke(djlint, (tmp_file.name,))
-    assert "H043" not in result.output
-
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
     assert result.exit_code == 1
     assert "H043 1:" in result.output
 
     write_to_file(tmp_file.name, b'<button type="submit">Save</button>')
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
+    result = runner.invoke(djlint, (tmp_file.name,))
     assert "H043" not in result.output
 
     # a name that merely ends in "type" is a different attribute
@@ -934,7 +951,7 @@ def test_H043(
         tmp_file.name,
         b'<button {% if x %}type="button"{% endif %}>Save</button>',
     )
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
+    result = runner.invoke(djlint, (tmp_file.name,))
     assert "H043" not in result.output
 
 
@@ -1029,5 +1046,5 @@ def test_H043_steps_over_a_template_block(
         tmp_file.name,
         b'<button {% if n > 5 %}type="button"{% endif %}>S</button>',
     )
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
+    result = runner.invoke(djlint, (tmp_file.name,))
     assert "H043" not in result.output

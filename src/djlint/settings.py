@@ -1479,17 +1479,31 @@ class Config:
                 ),
             )
         )
+        # "all" is every template language at once, so a rule excluded for
+        # any one of them cannot be trusted here either
+        ignored_codes = set(self.ignore.split(","))
+        included_codes = set(self.include.split(","))
+        if self.ignore_case:
+            ignored_codes.update(("H009", "H010"))
+
+        def rule_applies(rule: Mapping[str, Any]) -> bool:
+            excluded_profiles = rule.get("exclude", ())
+            if excluded_profiles and (
+                self.profile == "all" or self.profile in excluded_profiles
+            ):
+                return False
+            return not any(
+                rule["name"].startswith(code) for code in profile_codes
+            )
+
         self.linter_rules = tuple(
             x
             for x in rule_set
-            if x["rule"]["name"] not in self.ignore.split(",")
-            and not any(
-                x["rule"]["name"].startswith(code) for code in profile_codes
-            )
-            and self.profile not in x["rule"].get("exclude", set())
+            if x["rule"]["name"] not in ignored_codes
+            and rule_applies(x["rule"])
             and (
                 x["rule"].get("default", True)
-                or x["rule"]["name"] in self.include.split(",")
+                or x["rule"]["name"] in included_codes
             )
         )
         if self.lint:

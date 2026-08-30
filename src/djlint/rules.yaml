@@ -44,7 +44,6 @@
 - rule:
     name: H006
     message: Img tag should have height and width attributes.
-    default: false
     flags: re.DOTALL|re.I
     patterns:
       - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])height\s*=)[^'">])*/?>
@@ -104,9 +103,7 @@
 - rule:
     name: H014
     message: Found extra blank lines.
-    flags: re.DOTALL
-    patterns:
-      - "[^\n]{,10}\n{3,}"
+    python_module: djlint.rules.H014
 - rule:
     name: H015
     message: Follow h tags with a line break.
@@ -169,7 +166,11 @@
     message: Empty tag pair found. Consider removing.
     flags: re.DOTALL|re.I
     patterns:
-      - <((?!td|li|th|dt|dd|slot)\w+)\s*?>\s*?<\/\1>
+      # an element whose empty form carries meaning is left alone: a blank
+      # <option> holds a select open, a <tbody> is a script's target, and a
+      # <canvas> or <template> is filled in at runtime. The names are
+      # anchored, so <theadx> is not read as <thead>.
+      - <((?!(?:td|th|tr|li|dt|dd|slot|option|optgroup|tbody|thead|tfoot|colgroup|canvas|noscript|template|iframe|textarea|script|style|svg|g|defs|mask|marker|symbol|pattern|clippath|video|audio|object|picture|body|head)\b)\w+)\s*?>\s*?<\/\1>
 - rule:
     name: H021
     message: Inline styles should be avoided.
@@ -215,6 +216,7 @@
 - rule:
     name: T028
     message: Consider using spaceless tags inside attribute values. {%- if/for -%}
+    default: false
     exclude:
       - django
     patterns:
@@ -301,7 +303,6 @@
     name: H043
     message: Button tag should have a type attribute.
     flags: re.DOTALL|re.I
-    default: false
     patterns:
       # a quoted value is stepped over whole, and the name must start on a
       # name boundary, so neither title="type=x" nor data-type counts as type

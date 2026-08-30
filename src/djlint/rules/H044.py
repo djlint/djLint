@@ -1,4 +1,4 @@
-"""Rule H044: Check that a thead does not mix th and td cells."""
+"""Rule H044: Check that a header row does not mix th and td cells."""
 
 from __future__ import annotations
 
@@ -25,30 +25,53 @@ _CELL_TAGS = frozenset(("th", "td"))
 
 
 def _odd_cells(html: str) -> Iterator[TagToken]:
-    """Yield the cells of a thead written unlike the first one in it.
+    """Yield the cells of a header row written unlike the rest of that row.
 
-    The first cell sets what the head is made of, so a report points at
-    the odd one rather than at the whole head.
+    A row is judged on its own, so the explanation row of `td` that the
+    html specification puts in a `thead` beside the row of headers is not
+    a mixture. An empty `td` opening the row is the corner cell of a table
+    with headers down its first column, which is the markup the W3C
+    accessibility tutorial asks for, so it sets nothing and is skipped.
     """
     depth = 0
-    first_cell = ""
+    row_cell = ""
+    open_cell: TagToken | None = None
     for token in tokenize_markup(html):
         name = token.name.lower()
+
         if name == "thead":
-            if token.closing:
-                depth = max(depth - 1, 0)
-            else:
-                depth += 1
-                first_cell = ""
+            depth = max(depth - 1, 0) if token.closing else depth + 1
+            row_cell = ""
             continue
 
-        if not depth or token.closing or name not in _CELL_TAGS:
+        if not depth:
             continue
 
-        if not first_cell:
-            first_cell = name
-        elif name != first_cell:
-            yield token
+        if name == "tr":
+            row_cell = ""
+            continue
+
+        if name not in _CELL_TAGS:
+            continue
+
+        if token.closing:
+            if (
+                open_cell is not None
+                and open_cell.name.lower() == "td"
+                and not row_cell
+                and not html[open_cell.end : token.start].strip()
+            ):
+                open_cell = None
+                continue
+            if open_cell is not None:
+                if not row_cell:
+                    row_cell = open_cell.name.lower()
+                elif open_cell.name.lower() != row_cell:
+                    yield open_cell
+                open_cell = None
+            continue
+
+        open_cell = token
 
 
 def run(
@@ -60,7 +83,7 @@ def run(
     *args: Any,
     **kwargs: Any,
 ) -> tuple[LintError, ...]:
-    """Check that a thead does not mix th and td cells."""
+    """Check that a header row does not mix th and td cells."""
     return tuple(
         {
             "code": rule["name"],

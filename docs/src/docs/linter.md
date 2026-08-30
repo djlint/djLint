@@ -41,7 +41,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | D004 | (Django) Static urls should follow {% raw %}`{% static path/to/file %}`{% endraw %} pattern. | ✔️      |
 | D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         | ✔️      |
 | H005 | Html tag should have `lang` attribute.                                                       | ✔️      |
-| H006 | `img` tag should have `height` and `width` attributes.                                       | -       |
+| H006 | `img` tag should have `height` and `width` attributes.                                       | ✔️      |
 | H007 | `<!DOCTYPE ... >` should be present before the html tag.                                     | ✔️      |
 | H008 | Attributes should be double quoted.                                                          | ✔️      |
 | H009 | Tag names should be lowercase.                                                               | ✔️      |
@@ -49,7 +49,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H011 | Attribute values should be quoted.                                                           | ✔️      |
 | H012 | There should be no spaces around attribute `=`.                                              | ✔️      |
 | H013 | `img` tag should have alt attributes.                                                        | ✔️      |
-| H014 | More than 2 blank lines.                                                                     | ✔️      |
+| H014 | More blank lines than the configuration keeps.                                               | ✔️      |
 | H015 | Follow `h` tags with a line break.                                                           | ✔️      |
 | H016 | Missing `title` tag in html.                                                                 | ✔️      |
 | H017 | Void tags should be self closing (conflicts with: H018).                                     | -       |
@@ -72,7 +72,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    | -       |
 | T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   | -       |
 | T027 | Unclosed string found in template syntax.                                                    | ✔️      |
-| T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} | ✔️      |
+| T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} | -       |
 | T032 | Extra whitespace found in template tags.                                                     | ✔️      |
 | T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  | ✔️      |
 | H035 | Meta tags should be self closing.                                                            | -       |
@@ -83,7 +83,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | T040 | Missing or empty template name in extends or include tag.                                    | ✔️      |
 | H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
 | H042 | Label for attribute has no matching element id in this file.                                 | ✔️      |
-| H043 | Button tag should have a `type` attribute.                                                   | -       |
+| H043 | Button tag should have a `type` attribute.                                                   | ✔️      |
 | H044 | Thead should not mix `th` and `td` cells.                                                    | -       |
 
 ### Code Patterns
@@ -238,8 +238,6 @@ Do:
 #### H006
 
 `Img tag should have height and width attributes.`
-
-Off by default; enable with `--include=H006`.
 
 When an `<img>` has no width and height, the browser cannot reserve space before the image downloads, so surrounding content jumps as images load. This layout shift degrades Cumulative Layout Shift (a Core Web Vitals metric) and can make users mis-click while the page settles.
 
@@ -703,6 +701,10 @@ Do:
 
 `Consider using spaceless tags inside attribute values. {%- if/for -%}`
 
+Off by default; enable with `--include=T028`.
+
+The whitespace a spaceless tag strips is whitespace that renders, so apply this only where the attribute has none to lose. `alt="{%- if brand -%}Acme{%- endif -%} logo"` renders as `Acmelogo`, and an svg `d="M12 {%- if big -%}20{%- endif -%} 4Z"` becomes a different path. This is why the rule is opt in.
+
 Template tags inside an attribute value emit the whitespace and newlines around them into the rendered attribute, so an href or src built with plain `{% if %}`/`{% for %}` tags can contain stray spaces and produce broken URLs. Jinja/Nunjucks whitespace-control tags (`{%- ... -%}`) strip that surrounding whitespace so the attribute renders as one clean value. The class attribute is exempt, since extra whitespace between class names is harmless.
 
 Not applied to the django profile: Django template tags do not support `{%- -%}` whitespace control.
@@ -1029,8 +1031,6 @@ Do:
 
 `Button tag should have a type attribute.`
 
-Off by default; enable with --include=H043.
-
 A `<button>` with no `type` defaults to `submit`, so a button written to run a script also submits the form around it and the page reloads. Writing the type out prevents that.
 
 Don't:
@@ -1054,6 +1054,8 @@ Do:
 `Thead should not mix th and td cells.`
 
 Off by default; enable with --include=H044.
+
+A row is judged on its own, so the explanation row of `td` that the html specification places in a `thead` beside the row of headers is not a mixture. An empty `td` opening the row is the corner cell of a table with headers down its first column, which is the markup the W3C accessibility tutorial asks for, so it is skipped.
 
 A `th` and a `td` carry different meaning to a screen reader and usually different css, so one stray cell in a header row reads as data and is styled unlike the columns beside it. The mixture is legal html, which is what makes it hard to spot.
 

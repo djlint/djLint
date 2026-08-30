@@ -11,10 +11,9 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint.lint import linter
-from tests.conftest import lint_printer
+from tests.conftest import config_builder, lint_printer
 
 if TYPE_CHECKING:
-    from djlint.settings import Config
     from djlint.types import LintError
 
 test_data = [
@@ -243,11 +242,15 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], jinja_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError]) -> None:
+    # T028 is opt in, and these fixtures cover it
+    config = config_builder({
+        "profile": "jinja",
+        "include": "T028",
+        "ignore": "H043",
+    })
     filename = "test.html"
-    output = linter(jinja_config, source, filename, filename)
+    output = linter(config, source, filename, filename)
 
     lint_printer(source, expected, output[filename])
 

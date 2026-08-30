@@ -8,8 +8,17 @@
 
 - New option `--quote-style` / `quote_style` chooses the quotes djLint writes around strings inside template tags, `double` (the default, and what it has always written) or `single`. `T002` asks for whichever is configured, so `{% include 'a.html' %}` is no longer reported in a project that writes single quotes. Quoting of html attributes is unchanged and stays with `H008`.
 - Formatting lowercases an attribute name written in another case, the same eleven names `H010` reports, so `<div CLASS="a">` is fixed rather than only complained about. A name the rule does not know, such as an svg `viewBox` or an angular input, keeps the case it carries, and `--ignore-case` turns the whole thing off as it already does for tag names.
-- New rule `H043` reports a `<button>` written without a `type`. A button with no type submits the form around it, so one meant to run a script reloads the page instead. Off by default; enable it with `--include=H043`.
-- New rule `H044` reports a `<thead>` holding both `th` and `td` cells. The mixture is legal html, so a single stray cell in a header row goes unnoticed while a screen reader reads it as data and the css styles it unlike the columns beside it. Off by default; enable it with `--include=H044`.
+- New rule `H043` reports a `<button>` written without a `type`. A button with no type submits the form around it, so one meant to run a script reloads the page instead, and pressing Enter anywhere in the form triggers it. html-validate ships the same check in its recommended set.
+- New rule `H044` reports a header row holding both `th` and `td` cells. A stray cell there is read as data by a screen reader and styled unlike the columns beside it, and the mixture is legal html, so nothing else catches it. Each row is judged on its own and an empty `td` opening the row is skipped, so neither the explanation row the html specification puts in a `thead` nor the corner cell the W3C accessibility tutorial asks for is reported. Off by default; enable it with `--include=H044`.
+
+### Changed
+
+- `H006` is on by default. An `<img>` written without `height` and `width` lets the page reflow as the image loads, the layout shift Lighthouse reports and the browser can avoid when the attributes are there.
+- `T028` is off by default. The whitespace its advice strips is whitespace that renders: `alt="{%- if brand -%}Acme{%- endif -%} logo"` renders as `Acmelogo`, and an svg `d="M12 {%- if big -%}20{%- endif -%} 4Z"` becomes a different path. It stays available with `--include=T028`.
+- `H014` counts blank lines the way the formatter does. It reported a run of two whatever the settings said, so `--max-blank-lines 2` and `--preserve-blank-lines` both produced files the linter then rejected. A run has to be longer than the configuration keeps now, a line holding only whitespace counts as blank, and the report points at the first blank line rather than at the content line above it.
+- `H020` leaves an element whose empty form carries meaning: a blank `<option>` holding a select open, a `<tbody>` a script fills in, a `<canvas>`, `<template>` or `<noscript>`. Its exempt names are anchored too, so `<theadx>` is no longer read as `<thead>`.
+- `--ignore-case` reaches the linter. It turned off the formatter's case fixing while `H009` and `H010` went on reporting the case the user had just asked djLint to leave alone.
+- `--profile=all` honours every `exclude` list. It is every template language at once, so a rule switched off for one of them was running under it: `T028` fired on django markup and recommended `{%- if -%}`, which django rejects.
 
 ### Fix
 

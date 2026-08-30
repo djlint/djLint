@@ -41,7 +41,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                    | ✔️     |
 | D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                              | ✔️     |
 | H005 | La balise Html doit avoir l'attribut `lang`.                                                                              | ✔️     |
-| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | -      |
+| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | ✔️     |
 | H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                       | ✔️     |
 | H008 | Les attributs doivent être entre guillemets.                                                                              | ✔️     |
 | H009 | Les noms de balises doivent être en minuscules.                                                                           | ✔️     |
@@ -49,7 +49,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H011 | Les valeurs des attributs doivent être citées.                                                                            | ✔️     |
 | H012 | Il ne doit pas y avoir d'espace autour de l'attribut `=`.                                                                 | ✔️     |
 | H013 | La balise `img` doit avoir des attributs alt.                                                                             | ✔️     |
-| H014 | Plus de 2 lignes vides.                                                                                                   | ✔️     |
+| H014 | Plus de lignes vides que la configuration n'en garde.                                                                     | ✔️     |
 | H015 | Les balises "h" doivent être suivies d'un retour à la ligne.                                                              | ✔️     |
 | H016 | Balise `title` manquante dans le html.                                                                                    | ✔️     |
 | H017 | Les balises vides doivent être auto-fermantes (incompatible avec : H018).                                                 | -      |
@@ -72,7 +72,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         | -      |
 | T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                        | -      |
 | T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      | ✔️     |
-| T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} | ✔️     |
+| T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} | -      |
 | T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            | ✔️     |
 | T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  | ✔️     |
 | H035 | Meta doivent se fermer d'elles-mêmes.                                                                                     | -      |
@@ -83,7 +83,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T040 | Nom de template manquant ou vide dans une balise extends ou include.                                                      | ✔️     |
 | H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                   | ✔️     |
 | H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | ✔️     |
-| H043 | La balise button devrait avoir un attribut `type`.                                                                        | -      |
+| H043 | La balise button devrait avoir un attribut `type`.                                                                        | ✔️     |
 | H044 | Un thead ne devrait pas mélanger des cellules `th` et `td`.                                                               | -      |
 
 ### Modèles de code
@@ -238,8 +238,6 @@ Sans attribut lang sur `<html>`, les lecteurs d'écran devinent les règles de p
 #### H006
 
 `La balise img doit avoir les attributs height et width.`
-
-Désactivée par défaut ; à activer avec `--include=H006`.
 
 Lorsqu'une `<img>` n'a ni width ni height, le navigateur ne peut pas réserver l'espace avant le téléchargement de l'image, donc le contenu environnant saute pendant le chargement des images. Ce décalage de mise en page dégrade le Cumulative Layout Shift (une métrique Core Web Vitals) et peut amener les utilisateurs à cliquer au mauvais endroit pendant que la page se stabilise.
 
@@ -703,6 +701,10 @@ Un guillemet ouvert mais jamais fermé à l'intérieur de `{% ... %}` ou `{{ ...
 
 `Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {%- if/for -%}`
 
+Désactivée par défaut ; à activer avec `--include=T028`.
+
+L'espace qu'une balise sans espace supprime est un espace qui s'affiche : ne l'appliquez que là où l'attribut n'a rien à perdre. `alt="{%- if brand -%}Acme{%- endif -%} logo"` s'affiche `Acmelogo`, et un `d="M12 {%- if big -%}20{%- endif -%} 4Z"` svg devient un autre tracé. D'où le caractère optionnel de cette règle.
+
 Les balises de modèle à l'intérieur d'une valeur d'attribut émettent dans l'attribut rendu les espaces et sauts de ligne qui les entourent : un href ou un src construit avec de simples balises `{% if %}`/`{% for %}` peut donc contenir des espaces parasites et produire des URLs cassées. Les balises de contrôle des espaces de Jinja/Nunjucks (`{%- ... -%}`) suppriment ces espaces environnants, si bien que l'attribut se rend comme une seule valeur propre. L'attribut class est exempté, car des espaces supplémentaires entre noms de classes sont sans conséquence.
 
 Non appliquée au profil django : les balises de modèle Django ne prennent pas en charge le contrôle des espaces `{%- -%}`.
@@ -1029,8 +1031,6 @@ La vérification ne s'exécute que sur les fichiers analysables de façon fiable
 
 `La balise button devrait avoir un attribut type.`
 
-Désactivée par défaut ; activez-la avec --include=H043.
-
 Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer un script soumet aussi le formulaire qui l'entoure et la page se recharge. Écrire le type l'évite.
 
 À éviter :
@@ -1054,6 +1054,8 @@ Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer
 `Un thead ne devrait pas mélanger des cellules th et td.`
 
 Désactivée par défaut ; activez-la avec --include=H044.
+
+Chaque ligne est jugée séparément : la ligne d'explication en `td` que la spécification html place dans un `thead` à côté de la ligne d'en-têtes n'est donc pas un mélange. Un `td` vide en tête de ligne est la cellule d'angle d'un tableau dont la première colonne porte des en-têtes, le balisage que recommande le tutoriel d'accessibilité du W3C ; il est ignoré.
 
 Un `th` et un `td` n'ont pas le même sens pour un lecteur d'écran et reçoivent en général un css différent : une cellule isolée dans une ligne d'en-tête se lit donc comme une donnée et s'affiche autrement que les colonnes voisines. Le mélange est du html valide, ce qui le rend difficile à repérer.
 
