@@ -58,7 +58,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H020 | Empty tag pair found. Consider removing.                                                     | ✔️      |
 | H021 | Inline styles should be avoided.                                                             | ✔️      |
 | H022 | Use HTTPS for external links.                                                                | ✔️      |
-| H023 | Do not use entity references.                                                                | ✔️      |
+| H023 | Do not use entity references.                                                                | -       |
 | H024 | Omit type on scripts and styles.                                                             | ✔️      |
 | H025 | Tag seems to be an orphan.                                                                   | ✔️      |
 | H026 | Empty id and class tags can be removed.                                                      | ✔️      |
@@ -609,6 +609,8 @@ Do:
 #### H023
 
 `Do not use entity references.`
+
+Off by default; enable with `--include=H023`.
 
 HTML5 documents are UTF-8, so the literal character works everywhere and is what reviewers actually read; a typo in an entity reference (e.g. `&mdsah;`) is not caught by the browser and renders verbatim as broken text. djLint allows only the entities that carry syntactic meaning or are invisible on screen, such as `&lt;`, `&gt;`, `&amp;`, `&quot;`, `&nbsp;` and `&shy;`.
 

@@ -13,6 +13,7 @@
 
 ### Changed
 
+- `H023` is off by default. Writing `&copy;`, `&mdash;` or `&times;` rather than the literal character is a house style people hold on purpose: the characters are hard to type, indistinguishable from their neighbours in a diff, and some projects keep their templates ascii on purpose. The rule also flagged `&zwnj;` and `&#8203;`, invisible characters its own rationale says it exempts, and `&zwnj;` is not optional in persian and arabic text. It stays available with `--include=H023`.
 - `T028` is off by default. The whitespace its advice strips is whitespace that renders: `alt="{%- if brand -%}Acme{%- endif -%} logo"` renders as `Acmelogo`, and an svg `d="M12 {%- if big -%}20{%- endif -%} 4Z"` becomes a different path. It stays available with `--include=T028`.
 - `H014` counts blank lines the way the formatter does. It reported a run of two whatever the settings said, so `--max-blank-lines 2` and `--preserve-blank-lines` both produced files the linter then rejected. A run has to be longer than the configuration keeps now, a line holding only whitespace counts as blank, and the report points at the first blank line rather than at the content line above it.
 - `H020` leaves an element whose empty form carries meaning: a blank `<option>` holding a select open, a `<tbody>` a script fills in, a `<canvas>`, `<template>` or `<noscript>`. Its exempt names are anchored too, so `<theadx>` is no longer read as `<thead>`.

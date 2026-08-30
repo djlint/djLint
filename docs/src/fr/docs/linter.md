@@ -58,7 +58,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H020 | Couple de balises vide trouvé. Envisagez de le supprimer.                                                                 | ✔️     |
 | H021 | Les styles en ligne doivent être évités.                                                                                  | ✔️     |
 | H022 | Utilisez HTTPS pour les liens externes.                                                                                   | ✔️     |
-| H023 | N'utilisez pas de références d'entités.                                                                                   | ✔️     |
+| H023 | N'utilisez pas de références d'entités.                                                                                   | -      |
 | H024 | Omettre le type sur les scripts et les styles.                                                                            | ✔️     |
 | H025 | La balise semble être orpheline.                                                                                          | ✔️     |
 | H026 | Les balises id et class vides peuvent être supprimées.                                                                    | ✔️     |
@@ -609,6 +609,8 @@ Les sous-ressources en simple http:// sur une page servie en HTTPS constituent d
 #### H023
 
 `N'utilisez pas de références d'entités.`
+
+Désactivée par défaut ; à activer avec `--include=H023`.
 
 Les documents HTML5 sont en UTF-8, donc le caractère littéral fonctionne partout et c'est ce que les relecteurs lisent réellement ; une faute de frappe dans une référence d'entité (par exemple `&mdsah;`) n'est pas détectée par le navigateur et s'affiche telle quelle comme du texte cassé. djLint n'autorise que les entités qui portent une signification syntaxique ou sont invisibles à l'écran, comme `&lt;`, `&gt;`, `&amp;`, `&quot;`, `&nbsp;` et `&shy;`.
 

@@ -378,49 +378,54 @@ def test_H022(
 def test_H023(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
+    # opt in: an entity reference is a house style, not a defect
     write_to_file(tmp_file.name, b"&mdash;")
     result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H023" not in result.output
+
+    write_to_file(tmp_file.name, b"&mdash;")
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 1
     assert "H023 1:" in result.output
 
     write_to_file(tmp_file.name, b"&aacute;")
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 1
     assert "H023 1:" in result.output
 
     write_to_file(tmp_file.name, b"&gt;")
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 0
 
     write_to_file(tmp_file.name, b'<a href=" &gt; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 0
 
     write_to_file(tmp_file.name, b'<a href=" &shy; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 0
 
     write_to_file(tmp_file.name, b'<a href=" foo & bar; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 0
 
     write_to_file(tmp_file.name, b'<a href=" &aacute; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 1
     assert "H023 1:" in result.output
 
     write_to_file(tmp_file.name, b"&#63;")
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 1
     assert "H023 1:" in result.output
 
     write_to_file(tmp_file.name, b"&#x3F;")
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 1
     assert "H023 1:" in result.output
 
     write_to_file(tmp_file.name, b'<a href=" &#63; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name,))
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
     assert result.exit_code == 1
     assert "H023 1:" in result.output
 

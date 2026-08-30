@@ -189,6 +189,7 @@
 - rule:
     name: H023
     message: Do not use entity references.
+    default: false
     flags: re.I
     patterns:
       - "&(?!(lt|gt|amp|quot|nbsp|ensp|emsp|thinsp|shy))[#0-9a-z]{,30};"
