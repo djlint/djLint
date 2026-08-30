@@ -41,7 +41,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                    | ✔️     |
 | D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                              | ✔️     |
 | H005 | La balise Html doit avoir l'attribut `lang`.                                                                              | ✔️     |
-| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | ✔️     |
+| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | -      |
 | H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                       | ✔️     |
 | H008 | Les attributs doivent être entre guillemets.                                                                              | ✔️     |
 | H009 | Les noms de balises doivent être en minuscules.                                                                           | ✔️     |
@@ -238,6 +238,8 @@ Sans attribut lang sur `<html>`, les lecteurs d'écran devinent les règles de p
 #### H006
 
 `La balise img doit avoir les attributs height et width.`
+
+Désactivée par défaut ; à activer avec `--include=H006`.
 
 Lorsqu'une `<img>` n'a ni width ni height, le navigateur ne peut pas réserver l'espace avant le téléchargement de l'image, donc le contenu environnant saute pendant le chargement des images. Ce décalage de mise en page dégrade le Cumulative Layout Shift (une métrique Core Web Vitals) et peut amener les utilisateurs à cliquer au mauvais endroit pendant que la page se stabilise.
 

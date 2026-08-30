@@ -41,7 +41,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | D004 | (Django) Static urls should follow {% raw %}`{% static path/to/file %}`{% endraw %} pattern. | ✔️      |
 | D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         | ✔️      |
 | H005 | Html tag should have `lang` attribute.                                                       | ✔️      |
-| H006 | `img` tag should have `height` and `width` attributes.                                       | ✔️      |
+| H006 | `img` tag should have `height` and `width` attributes.                                       | -       |
 | H007 | `<!DOCTYPE ... >` should be present before the html tag.                                     | ✔️      |
 | H008 | Attributes should be double quoted.                                                          | ✔️      |
 | H009 | Tag names should be lowercase.                                                               | ✔️      |
@@ -238,6 +238,8 @@ Do:
 #### H006
 
 `Img tag should have height and width attributes.`
+
+Off by default; enable with `--include=H006`.
 
 When an `<img>` has no width and height, the browser cannot reserve space before the image downloads, so surrounding content jumps as images load. This layout shift degrades Cumulative Layout Shift (a Core Web Vitals metric) and can make users mis-click while the page settles.
 

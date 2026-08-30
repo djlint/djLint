@@ -290,8 +290,8 @@ golang_test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_base(source: str, expected: list[LintError]) -> None:
-    # H006 and H043 are not what these fixtures are about
-    config = config_builder({"ignore": "H006,H043"})
+    # H043 is not what these fixtures are about
+    config = config_builder({"ignore": "H043"})
     filename = "test.html"
     output = linter(config, source, filename, filename)
 

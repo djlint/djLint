@@ -41,7 +41,7 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 | D004 | （Django） 静态 URL 应遵循 {% raw %}`{% static path/to/file %}`{% endraw %} 形式。 | ✔️       |
 | D018 | （Django） 内部链接应使用 {% raw %}`{% url ... %}`{% endraw %} 形式。              | ✔️       |
 | H005 | HTML 标签应包含 `lang` 属性。                                                      | ✔️       |
-| H006 | `img` 标签应包含 `height` 和 `width` 属性。                                        | ✔️       |
+| H006 | `img` 标签应包含 `height` 和 `width` 属性。                                        | -        |
 | H007 | `<!DOCTYPE ... >` 应在 HTML 标签之前。                                             | ✔️       |
 | H008 | 属性应使用双引号。                                                                 | ✔️       |
 | H009 | 标签名应小写。                                                                     | ✔️       |
@@ -238,6 +238,8 @@ HTML 属性值内部的单引号（例如 `<span title="{% trans 'x' %}">`）不
 #### H006
 
 `img 标签应包含 height 和 width 属性。`
+
+默认禁用；使用 `--include=H006` 启用。
 
 当 `<img>` 没有 width 和 height 时，浏览器无法在图片下载前预留空间，图片加载过程中周围内容会随之跳动。这种布局偏移会恶化 Cumulative Layout Shift（Core Web Vitals 指标之一），还可能让用户在页面稳定前误点。
 

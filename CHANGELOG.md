@@ -13,7 +13,6 @@
 
 ### Changed
 
-- `H006` is on by default. An `<img>` written without `height` and `width` lets the page reflow as the image loads, the layout shift Lighthouse reports and the browser can avoid when the attributes are there.
 - `T028` is off by default. The whitespace its advice strips is whitespace that renders: `alt="{%- if brand -%}Acme{%- endif -%} logo"` renders as `Acmelogo`, and an svg `d="M12 {%- if big -%}20{%- endif -%} 4Z"` becomes a different path. It stays available with `--include=T028`.
 - `H014` counts blank lines the way the formatter does. It reported a run of two whatever the settings said, so `--max-blank-lines 2` and `--preserve-blank-lines` both produced files the linter then rejected. A run has to be longer than the configuration keeps now, a line holding only whitespace counts as blank, and the report points at the first blank line rather than at the content line above it.
 - `H020` leaves an element whose empty form carries meaning: a blank `<option>` holding a select open, a `<tbody>` a script fills in, a `<canvas>`, `<template>` or `<noscript>`. Its exempt names are anchored too, so `<theadx>` is no longer read as `<thead>`.
@@ -32,6 +31,7 @@
 - `D018` and `J018` no longer report a link that already does what they ask. `<a href="{% url 'profile' %}" data-src="lazy">` was reported because a `data-src` holding any single word counted as a hardcoded path, and `<form action=" {% url 'search' %}">` because the padding was read as part of the value. A value has to look like a path now, and a `/static/` or `/media/` asset is left to `{% static %}` rather than reported as a route.
 - `H033` sees a form whose earlier attribute holds a `>`, as in `<form x-show="count > 0" action=" /x/">`. The scan could not step over a quoted value, so it stopped at the first bracket.
 - `H043` steps over a template block, so `<button {% if n > 5 %}type="button"{% endif %}>` is no longer reported as having no type.
+- `H030` stays quiet for a base layout that fills its description in per page. It looked for a literal `<meta name="description">` and nothing else, so a head using `{% block meta %}` or `{% include "_seo.html" %}` was reported, and the only way to satisfy it was to hardcode one description for the whole site.
 - `H005` and `H007` no longer report a custom element whose name merely starts with `html`, such as `<html-midi-player>`.
 - `djlint - --reformat --lint` no longer writes its report into the file. The findings and `Linted 1 file, found 1 error.` went to stdout after the formatted code, and an editor piping a buffer through djLint writes stdout back to the file. The lint report, the `--statistics` block and the `--github-output` annotations now go to stderr when stdout is carrying the file. A lint-only run is unchanged.
 - `--github-output` defaults to `$GITHUB_ACTIONS`, so this reached CI with no flag typed: `cat f.html | djlint - --reformat > f.html` wrote `::warning` lines into `f.html`.

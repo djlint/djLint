@@ -44,6 +44,7 @@
 - rule:
     name: H006
     message: Img tag should have height and width attributes.
+    default: false
     flags: re.DOTALL|re.I
     patterns:
       - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])height\s*=)[^'">])*/?>
@@ -232,7 +233,10 @@
     message: Consider adding a meta description.
     flags: re.DOTALL|re.I
     patterns:
-      - <html[^>]*?>(?:(?!<meta[^>]*?(?<![-.:\w])name\s*=([\"|'])description\b).)*</html>
+      # a template tag in the head can render a description djLint cannot
+      # see, and a base layout that fills one in per page is the right way
+      # to write it, so the rule stays quiet for that file
+      - <html(?![\w-])[^>]*?>(?!(?:(?!</head>)[\s\S])*?\{[{%](?:(?!</head>)[\s\S])*?</head>)(?:(?!<meta[^>]*?(?<![-.:\w])name\s*=([\"'])description\b).)*</html>
 - rule:
     name: H031
     message: Consider adding meta keywords.

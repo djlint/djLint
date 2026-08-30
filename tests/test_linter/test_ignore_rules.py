@@ -67,8 +67,7 @@ test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_base(source: str, expected: list[LintError]) -> None:
-    # H006 is not what these fixtures are about
-    config = config_builder({"ignore": "H006"})
+    config = config_builder({})
     filename = "test.html"
     output = linter(config, source, filename, filename)
 
