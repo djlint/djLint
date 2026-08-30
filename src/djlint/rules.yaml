@@ -293,3 +293,8 @@
       # a quoted value is stepped over whole, and the name must start on a
       # name boundary, so neither title="type=x" nor data-type counts as type
       - <button\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])type\s*=)[^'">])*/?>
+- rule:
+    name: H044
+    message: Thead should not mix th and td cells.
+    default: false
+    python_module: djlint.rules.H044

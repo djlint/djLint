@@ -84,6 +84,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                   | ✔️     |
 | H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | ✔️     |
 | H043 | La balise button devrait avoir un attribut `type`.                                                                        | -      |
+| H044 | Un thead ne devrait pas mélanger des cellules `th` et `td`.                                                               | -      |
 
 ### Modèles de code
 
@@ -1046,6 +1047,36 @@ Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer
 <form>
   <button type="button" onclick="preview()">Aperçu</button>
 </form>
+```
+
+#### H044
+
+`Un thead ne devrait pas mélanger des cellules th et td.`
+
+Désactivée par défaut ; activez-la avec --include=H044.
+
+Un `th` et un `td` n'ont pas le même sens pour un lecteur d'écran et reçoivent en général un css différent : une cellule isolée dans une ligne d'en-tête se lit donc comme une donnée et s'affiche autrement que les colonnes voisines. Le mélange est du html valide, ce qui le rend difficile à repérer.
+
+À éviter :
+
+```html
+<thead>
+  <tr>
+    <th>Nom</th>
+    <td>Taille</td>
+  </tr>
+</thead>
+```
+
+À faire :
+
+```html
+<thead>
+  <tr>
+    <th>Nom</th>
+    <th>Taille</th>
+  </tr>
+</thead>
 ```
 
 {% endraw %}

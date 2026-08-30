@@ -9,6 +9,7 @@
 - New option `--quote-style` / `quote_style` chooses the quotes djLint writes around strings inside template tags, `double` (the default, and what it has always written) or `single`. `T002` asks for whichever is configured, so `{% include 'a.html' %}` is no longer reported in a project that writes single quotes. Quoting of html attributes is unchanged and stays with `H008`.
 - Formatting lowercases an attribute name written in another case, the same eleven names `H010` reports, so `<div CLASS="a">` is fixed rather than only complained about. A name the rule does not know, such as an svg `viewBox` or an angular input, keeps the case it carries, and `--ignore-case` turns the whole thing off as it already does for tag names.
 - New rule `H043` reports a `<button>` written without a `type`. A button with no type submits the form around it, so one meant to run a script reloads the page instead. Off by default; enable it with `--include=H043`.
+- New rule `H044` reports a `<thead>` holding both `th` and `td` cells. The mixture is legal html, so a single stray cell in a header row goes unnoticed while a screen reader reads it as data and the css styles it unlike the columns beside it. Off by default; enable it with `--include=H044`.
 
 ### Fix
 

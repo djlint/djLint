@@ -84,6 +84,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
 | H042 | Label for attribute has no matching element id in this file.                                 | ✔️      |
 | H043 | Button tag should have a `type` attribute.                                                   | -       |
+| H044 | Thead should not mix `th` and `td` cells.                                                    | -       |
 
 ### Code Patterns
 
@@ -1046,6 +1047,36 @@ Do:
 <form>
   <button type="button" onclick="preview()">Preview</button>
 </form>
+```
+
+#### H044
+
+`Thead should not mix th and td cells.`
+
+Off by default; enable with --include=H044.
+
+A `th` and a `td` carry different meaning to a screen reader and usually different css, so one stray cell in a header row reads as data and is styled unlike the columns beside it. The mixture is legal html, which is what makes it hard to spot.
+
+Don't:
+
+```html
+<thead>
+  <tr>
+    <th>Name</th>
+    <td>Size</td>
+  </tr>
+</thead>
+```
+
+Do:
+
+```html
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Size</th>
+  </tr>
+</thead>
 ```
 
 {% endraw %}

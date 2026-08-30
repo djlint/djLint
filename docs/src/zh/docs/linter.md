@@ -84,6 +84,7 @@ djlint . --lint --include=H017,H035 --ignore=H013,H015
 | H041 | 标签在与打开它不同的模板块中关闭。                                                 | ✔️       |
 | H042 | label 的 for 属性在此文件中没有匹配的元素 id。                                     | ✔️       |
 | H043 | button 标签应有 `type` 属性。                                             | -        |
+| H044 | thead 中不应混用 `th` 和 `td` 单元格。                                       | -        |
 
 ### 编码规则
 
@@ -1046,6 +1047,36 @@ HTML 规范将表单 method 的关键字定义为小写（get、post）；浏览
 <form>
   <button type="button" onclick="preview()">预览</button>
 </form>
+```
+
+#### H044
+
+`thead 中不应混用 th 和 td 单元格。`
+
+默认禁用；使用 --include=H044 启用。
+
+`th` 与 `td` 对屏幕阅读器含义不同，通常样式也不一样，因此表头行里混进的一个单元格会被读作数据，并与相邻列显示得不一致。这种混用在 html 中是合法的，也正因如此难以发现。
+
+错误示例：
+
+```html
+<thead>
+  <tr>
+    <th>名称</th>
+    <td>大小</td>
+  </tr>
+</thead>
+```
+
+正确示例：
+
+```html
+<thead>
+  <tr>
+    <th>名称</th>
+    <th>大小</th>
+  </tr>
+</thead>
 ```
 
 {% endraw %}
