@@ -4,45 +4,41 @@
 
 ## [Unreleased]
 
-### Fix
-
-- Jinja's `+` whitespace control marker is now read wherever `-` is. `{%+ if x %}` was not recognised as a block tag and `{%+ endif %}` not as an end tag, so `T038` reported a balanced block as unmatched and let an unbalanced one through, `{% endblock body +%}` was read as naming a block `body +`, and the formatter left these blocks unindented.
-- `T038` no longer reports a balanced `{% if %}` or `{% for %}` in a file that opens with `---` and has another `---` line inside the block. The second `---` was read as the end of yaml front matter, putting the opening tag in a region the linter skips while its end tag stayed outside. Front matter is now only the block a file opens with, closed by a `---` alone on its line, and holding no `{% %}` tag.
-- `H025` no longer calls a tag an orphan when a `{% for %}...{% else %}...{% endfor %}` is written inside the `{% else %}` of an `{% if %}`. The loop's else was taken for a branch of the enclosing conditional.
-- A template block opened and closed on one line, such as `{% language 'de' %}text{% endlanguage %}`, no longer indents everything after it. Only `if`, `for`, `unless`, `block`, `with` and the two nunjucks async tags were recognised as balanced on a single line.
-- A filter written straight after a function call keeps its place: `{{ _("test")|upper }}` is no longer respaced to `{{ _("test") |upper }}`.
-- Arguments spread over their own lines inside `{{ }}` stay where they are. The first was pulled up against the opening bracket while the rest kept their lines.
-- `--blank-line-before-tag` no longer splits a line to place its blank line. A tag written after other content on the same line, such as the `{% block %}` inside a one line `{% set %}...{% endset %}`, was moved to a line of its own, which broke up a block whose body is captured verbatim and left the file formatting differently on the next run.
-- With `--preserve-leading-space`, the contents of a `{{ if }}` or `{{ range }}` block lost an indent level when an already formatted go template was formatted again. The block tag keeps its own indent under that option, and the patterns that recognise it are anchored to the start of the line.
-- `--single-attribute-per-line` no longer flips a tag between one line and many on alternate runs. Spreading a tag rewrites `href = "..."` as `href="..."`, which measured short enough to be put back on one line, and long enough to be spread again on the run after that.
-- Formatting repeatedly with `--preserve-leading-space` no longer walks a line further right on every run. A line the formatter indented kept its own leading space too, so a multi-line `{# ... #}` comment, the closing brace of a multi-line `{% set ... %}` and every other line inside an indented block gained one indent level per run, without bound.
-- `--blank-line-before-tag` no longer inserts a blank line into an attribute value, which added one more line on every run. `--blank-line-after-tag` already left attributes alone.
-- `--format-css` and `--format-js` no longer add a blank line before the closing `</style>` or `</script>` tag on every run.
-- `djlint - --reformat --lint` no longer writes its report into the file. The findings and `Linted 1 file, found 1 error.` went to stdout after the formatted code, and an editor piping a buffer through djLint writes stdout back to the file. The lint report, the `--statistics` block and the `--github-output` annotations now go to stderr when stdout is carrying the file. A lint-only run is unchanged.
-- `--github-output` defaults to `$GITHUB_ACTIONS`, so this reached CI with no flag typed: `cat f.html | djlint - --reformat > f.html` wrote `::warning` lines into `f.html`.
-- Line endings survive `djlint -`. A CRLF buffer piped to `--reformat` came back LF throughout, while the same file reformatted in place kept it, so formatting on save rewrote every line. Input that `--require-pragma` skips is now handed back byte for byte, line endings included.
-- Console output is utf-8 on stderr as well as on stdout. A warning could reach a Windows console as `\U0001f622` rather than an emoji, and a template's own text quoted in a lint message came out in the console codepage.
-- A `.gitignore` is read only when `--use-gitignore` or `use_gitignore` asks for it. pathspec rejects patterns git accepts and ignores, such as one ending in a backslash, so a single line in it aborted every run in that project with a traceback and an invitation to report a bug.
-- Input on stdin that is not valid utf-8 is reported as bad input rather than as a djLint failure.
-- A closed pipe, as in `djlint . | head -1`, is no longer a djLint failure. It printed a traceback and exited `120`.
-- Text inside `<pre>` and `<textarea>` that looks like a djLint marker no longer ends the verbatim block. `&lt;!-- x -->`, `-->` and `{# djlint:on #}` shown as sample code let the formatter indent the rest of the block, adding a level on every run, so repeated runs walked the contents further and further right.
-- `{{#if}}` and other handlebars sections are no longer read as the start of a Jinja `{#` comment, which made everything up to the next `#}` count as a comment and left it unformatted.
-- Line endings are no longer guessed with `str.splitlines()`, which also breaks on U+2028, U+2029, U+0085, form feed and vertical tab. One of those inside a `<script>` string was rewritten as a newline, breaking the script.
-- A `djlint:off` block written between the attributes of a tag no longer crashes the formatter when it contains a backslash, and its text is put back as written instead of being read as a regex replacement.
-- A file reached through more than one of the given paths, such as `djlint . templates/`, is now checked once instead of once per path. It was reported twice, counted twice, and with `--reformat` written by two workers at the same time.
-- A trailing or empty entry in `custom_blocks`, `ignore_blocks`, `custom_html`, `blank_line_after_tag` or `blank_line_before_tag`, as in `ignore_blocks = "raw,"`, is now dropped. It used to build a pattern that matched everywhere: `ignore_blocks` silently turned off all template indentation, and the `blank_line_*` options padded every template tag in the file.
-- On free-threaded Python, `--format-css` and `--format-js` no longer share the beautifier indent level between the threads formatting different files, which could indent a `<style>` or `<script>` body by the wrong amount.
-- `--statistics` now prints its summary alongside GitHub annotations. It was silently dropped whenever the GitHub output was on, which happens by itself inside a workflow.
-- A `wrap_line_length` in the `css` or `js` settings no longer drops the tail of a `<style>` or `<script>` body. The block is laid out at two indent levels to find the lines the beautifier owns, and a width that wraps differently at the two left the extra lines with nothing to pair against.
-
 ### Feature
 
 - New option `--quote-style` / `quote_style` chooses the quotes djLint writes around strings inside template tags, `double` (the default, and what it has always written) or `single`. `T002` asks for whichever is configured, so `{% include 'a.html' %}` is no longer reported in a project that writes single quotes. Quoting of html attributes is unchanged and stays with `H008`.
 - New rule `H043` reports a `<button>` written without a `type`. A button with no type submits the form around it, so one meant to run a script reloads the page instead. Off by default; enable it with `--include=H043`.
 
-### Tests
+### Fix
 
-- Formatting a file twice now has to give the same result as formatting it once, checked across the option combinations that reach the whitespace passes.
+- `djlint - --reformat --lint` no longer writes its report into the file. The findings and `Linted 1 file, found 1 error.` went to stdout after the formatted code, and an editor piping a buffer through djLint writes stdout back to the file. The lint report, the `--statistics` block and the `--github-output` annotations now go to stderr when stdout is carrying the file. A lint-only run is unchanged.
+- `--github-output` defaults to `$GITHUB_ACTIONS`, so this reached CI with no flag typed: `cat f.html | djlint - --reformat > f.html` wrote `::warning` lines into `f.html`.
+- Line endings survive `djlint -`. A CRLF buffer piped to `--reformat` came back LF throughout, while the same file reformatted in place kept it, so formatting on save rewrote every line. Input that `--require-pragma` skips is now handed back byte for byte, line endings included.
+- Line endings are no longer guessed with `str.splitlines()`, which also breaks on U+2028, U+2029, U+0085, form feed and vertical tab. One of those inside a `<script>` string was rewritten as a newline, breaking the script.
+- A `djlint:off` block written between the attributes of a tag no longer crashes the formatter when it contains a backslash, and its text is put back as written instead of being read as a regex replacement.
+- A `wrap_line_length` in the `css` or `js` settings no longer drops the tail of a `<style>` or `<script>` body. The block is laid out at two indent levels to find the lines the beautifier owns, and a width that wraps differently at the two left the extra lines with nothing to pair against.
+- A file reached through more than one of the given paths, such as `djlint . templates/`, is now checked once instead of once per path. It was reported twice, counted twice, and with `--reformat` written by two workers at the same time.
+- A trailing or empty entry in `custom_blocks`, `ignore_blocks`, `custom_html`, `blank_line_after_tag` or `blank_line_before_tag`, as in `ignore_blocks = "raw,"`, is now dropped. It used to build a pattern that matched everywhere: `ignore_blocks` silently turned off all template indentation, and the `blank_line_*` options padded every template tag in the file.
+- A `.gitignore` is read only when `--use-gitignore` or `use_gitignore` asks for it. pathspec rejects patterns git accepts and ignores, such as one ending in a backslash, so a single line in it aborted every run in that project with a traceback and an invitation to report a bug.
+- Text inside `<pre>` and `<textarea>` that looks like a djLint marker no longer ends the verbatim block. `&lt;!-- x -->`, `-->` and `{# djlint:on #}` shown as sample code let the formatter indent the rest of the block, adding a level on every run, so repeated runs walked the contents further and further right.
+- Formatting repeatedly with `--preserve-leading-space` no longer walks a line further right on every run. A line the formatter indented kept its own leading space too, so a multi-line `{# ... #}` comment, the closing brace of a multi-line `{% set ... %}` and every other line inside an indented block gained one indent level per run, without bound.
+- With `--preserve-leading-space`, the contents of a `{{ if }}` or `{{ range }}` block lost an indent level when an already formatted go template was formatted again. The block tag keeps its own indent under that option, and the patterns that recognise it are anchored to the start of the line.
+- `--single-attribute-per-line` no longer flips a tag between one line and many on alternate runs. Spreading a tag rewrites `href = "..."` as `href="..."`, which measured short enough to be put back on one line, and long enough to be spread again on the run after that.
+- `--blank-line-before-tag` no longer splits a line to place its blank line. A tag written after other content on the same line, such as the `{% block %}` inside a one line `{% set %}...{% endset %}`, was moved to a line of its own, which broke up a block whose body is captured verbatim and left the file formatting differently on the next run.
+- `--blank-line-before-tag` no longer inserts a blank line into an attribute value, which added one more line on every run. `--blank-line-after-tag` already left attributes alone.
+- `--format-css` and `--format-js` no longer add a blank line before the closing `</style>` or `</script>` tag on every run.
+- A template block opened and closed on one line, such as `{% language 'de' %}text{% endlanguage %}`, no longer indents everything after it. Only `if`, `for`, `unless`, `block`, `with` and the two nunjucks async tags were recognised as balanced on a single line.
+- Arguments spread over their own lines inside `{{ }}` stay where they are. The first was pulled up against the opening bracket while the rest kept their lines.
+- A filter written straight after a function call keeps its place: `{{ _("test")|upper }}` is no longer respaced to `{{ _("test") |upper }}`.
+- `{{#if}}` and other handlebars sections are no longer read as the start of a Jinja `{#` comment, which made everything up to the next `#}` count as a comment and left it unformatted.
+- Jinja's `+` whitespace control marker is now read wherever `-` is. `{%+ if x %}` was not recognised as a block tag and `{%+ endif %}` not as an end tag, so `T038` reported a balanced block as unmatched and let an unbalanced one through, `{% endblock body +%}` was read as naming a block `body +`, and the formatter left these blocks unindented.
+- `T038` no longer reports a balanced `{% if %}` or `{% for %}` in a file that opens with `---` and has another `---` line inside the block. The second `---` was read as the end of yaml front matter, putting the opening tag in a region the linter skips while its end tag stayed outside. Front matter is now only the block a file opens with, closed by a `---` alone on its line, and holding no `{% %}` tag.
+- `H025` no longer calls a tag an orphan when a `{% for %}...{% else %}...{% endfor %}` is written inside the `{% else %}` of an `{% if %}`. The loop's else was taken for a branch of the enclosing conditional.
+- On free-threaded Python, `--format-css` and `--format-js` no longer share the beautifier indent level between the threads formatting different files, which could indent a `<style>` or `<script>` body by the wrong amount.
+- Console output is utf-8 on stderr as well as on stdout. A warning could reach a Windows console as `\U0001f622` rather than an emoji, and a template's own text quoted in a lint message came out in the console codepage.
+- Input on stdin that is not valid utf-8 is reported as bad input rather than as a djLint failure.
+- A closed pipe, as in `djlint . | head -1`, is no longer a djLint failure. It printed a traceback and exited `120`.
+- `--statistics` now prints its summary alongside GitHub annotations. It was silently dropped whenever the GitHub output was on, which happens by itself inside a workflow.
 
 ### Performance
 
@@ -54,6 +50,10 @@
 - The GitHub Actions integration is documented: djLint reports findings as annotations on a pull request's diff by itself, and `--github-output` / `--no-github-output` override that.
 - The command line reference lists `--allow-empty-input`, which it had been missing, and a test now keeps it in step with `djlint --help`.
 - `H042` is no longer described as off by default, which it stopped being in 1.42.1.
+
+### Tests
+
+- Formatting a file twice now has to give the same result as formatting it once, checked across the option combinations that reach the whitespace passes.
 
 ## [1.44.2] - 2026-08-08
 
