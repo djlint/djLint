@@ -59,6 +59,7 @@ ignore = [
   "TD002",
   "TD003",
   "TRY400",
+  "pytest-fixture-autouse",
 ]
 select = ["ALL"]
 unfixable = ["RUF027", "T"]
