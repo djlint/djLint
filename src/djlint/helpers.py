@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import itertools
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
@@ -34,6 +34,7 @@ RE_FLAGS_ISX: Final = re.I | re.S | re.X
 RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 
 _SPAN_CACHE_SIZE: Final = 1
+_AFTER_EVERY_SPAN: Final = float("inf")
 _LINE_CACHE_SIZE: Final = 64
 
 YAML_FRONT_MATTER: Final = r"""
@@ -466,6 +467,36 @@ def child_of_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     return False
 
 
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
+def _merged_ignored_blocks(
+    html: str,
+    /,
+    *,
+    ignored_blocks: re.Pattern[str],
+    ignored_inline_blocks: re.Pattern[str],
+) -> tuple[tuple[int, int], ...]:
+    """The ignored spans, sorted and merged so a lookup can bisect them.
+
+    Merging preserves which points are covered, and the two patterns are
+    searched separately, so the raw spans arrive as two sorted runs that
+    can overlap each other.
+    """
+    merged: list[tuple[int, int]] = []
+    for start, end in sorted(
+        _inside_ignored_block(
+            html,
+            ignored_blocks=ignored_blocks,
+            ignored_inline_blocks=ignored_inline_blocks,
+        )
+    ):
+        if merged and start <= merged[-1][1]:
+            if end > merged[-1][1]:
+                merged[-1] = (merged[-1][0], end)
+        else:
+            merged.append((start, end))
+    return tuple(merged)
+
+
 def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Check if a match is in a block the linter skips.
 
@@ -477,16 +508,23 @@ def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     open, so a match that only touches an ignored block, as in
     `{% if x %}{# comment #}`, starts and ends outside of it.
     """
-    match_start, match_end = match.span()
-    return any(
-        (ignored_start <= match_start < ignored_end)
-        or (ignored_start < match_end <= ignored_end)
-        for ignored_start, ignored_end in _inside_ignored_block(
-            html,
-            ignored_blocks=config.lint_ignored_blocks_pattern,
-            ignored_inline_blocks=config.lint_ignored_inline_blocks_ix_pattern,
-        )
+    spans = _merged_ignored_blocks(
+        html,
+        ignored_blocks=config.lint_ignored_blocks_pattern,
+        ignored_inline_blocks=config.lint_ignored_inline_blocks_ix_pattern,
     )
+    if not spans:
+        return False
+
+    match_start, match_end = match.span()
+    index = bisect_right(spans, (match_start, _AFTER_EVERY_SPAN)) - 1
+    if index >= 0:
+        start, end = spans[index]
+        if start <= match_start < end:
+            return True
+
+    index = bisect_left(spans, (match_end,)) - 1
+    return index >= 0 and match_end <= spans[index][1]
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)

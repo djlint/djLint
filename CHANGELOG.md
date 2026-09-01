@@ -96,6 +96,8 @@
 
 ### Performance
 
+- Linting a large file is many times faster. The pattern that finds `djlint:off` blocks opened with a bare `|`, so its first alternative was empty and it matched at every offset in the file: a 120KB page produced 129,326 spans, and every tag the linter looked at was checked against all of them. That page went from 13 seconds to 0.15, and a 1.7MB run of 60 files from 28 seconds to 1.6.
+- Deciding whether a finding sits in an ignored block no longer walks every ignored span. The spans are merged and sorted once per file and looked up by bisection, which cut the linter's own time on a 25KB template by close to half.
 - Linting a file with many findings is several times faster: locating a match's line no longer scans the file, and de-duplicating findings no longer compares every pair.
 - Reformatting is around 15% faster: patterns built from the configuration are compiled once instead of on every tag, and each line is tokenized once instead of up to three times.
 

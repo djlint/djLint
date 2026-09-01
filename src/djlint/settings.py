@@ -1006,7 +1006,7 @@ _UNFORMATTED_BLOCKS_COARSE_PATTERN: Final = re.compile(
 _UNFORMATTED_BLOCKS_PATTERN: Final = re.compile(
     r"""
     # html comment
-    | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
+      <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
     # django/jinja/nunjucks
     | (?<!{){\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
     | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
