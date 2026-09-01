@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
+    inside_html_attribute,
     inside_ignored_linter_block,
     inside_ignored_rule,
     inside_template_block,
@@ -21,7 +22,7 @@ from djlint.helpers import (
 if TYPE_CHECKING:
     from collections.abc import Mapping
     from pathlib import Path
-    from typing import Final
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError
@@ -83,13 +84,20 @@ def _is_html_inside_template_tag(
 
 
 def _is_reported(
-    config: Config, html: str, match: re.Match[str], rule_name: str
+    config: Config, html: str, match: re.Match[str], rule: Mapping[str, Any]
 ) -> bool:
-    """Whether a pattern match is a finding rather than ignored content."""
+    """Whether a pattern match is a finding rather than ignored content.
+
+    A rule looking for a tag sets `skip_in_attributes`, because markup
+    written inside an attribute value, as in `<p title="a<br>b">`, is text
+    rather than a tag of its own.
+    """
+    if rule.get("skip_in_attributes") and inside_html_attribute(html, match):
+        return False
     return (
         not overlaps_ignored_block(config, html, match)
         and not _is_html_inside_template_tag(config, html, match)
-        and not inside_ignored_rule(config, html, match, rule_name)
+        and not inside_ignored_rule(config, html, match, rule["name"])
         and not inside_ignored_linter_block(config, html, match)
     )
 
@@ -144,7 +152,7 @@ def linter(
                         "message": rule["message"],
                     }
                     for match in re.finditer(pattern, html, flags=flags)
-                    if _is_reported(config, html, match, rule["name"])
+                    if _is_reported(config, html, match, rule)
                 )
 
     seen: set[tuple[str, ...]] = set()

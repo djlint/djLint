@@ -993,3 +993,31 @@ def test_H043_steps_over_a_template_block(
     )
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H043" not in result.output
+
+
+def test_tag_rules_skip_markup_inside_an_attribute_value(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    for quiet in (
+        b'<div title="<button>x</button>">y</div>',
+        b'<p title="a<br><br>b">x</p>',
+        b"<p title=\"an <img src='a.png'>\">y</p>",
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
+        for code in ("H043", "H036", "H013", "H017"):
+            assert code not in result.output, (quiet, code)
+
+
+def test_H029_needs_a_name_boundary(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(
+        tmp_file.name, b'<form data-method="POST" method="post"></form>'
+    )
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H029" not in result.output
+
+    write_to_file(tmp_file.name, b'<form method="POST"></form>')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H029 1:" in result.output

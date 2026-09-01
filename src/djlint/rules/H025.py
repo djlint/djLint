@@ -5,14 +5,15 @@ from __future__ import annotations
 from itertools import chain
 from typing import TYPE_CHECKING
 
-import regex as re
-
 from djlint.const import HTML_VOID_ELEMENTS
 from djlint.helpers import (
+    branch_context,
+    branched_blocks,
     child_of_unformatted_block,
     inside_ignored_linter_block,
     inside_ignored_rule,
     inside_template_block,
+    mutually_exclusive,
     overlaps_ignored_block,
     tokenize_markup,
 )
@@ -30,98 +31,6 @@ if TYPE_CHECKING:
 
 P_LIST_CHILD_MESSAGE: Final = "List tags should not be nested inside p tags."
 P_LIST_CHILD_TAGS: Final = frozenset(("ol", "ul"))
-
-_BRANCHED_BLOCK_PATTERN: Final = re.compile(
-    r"""
-      \{%[-+]?\s*(?P<statement>endif|endfor|elseif|elif|else|empty|if|for)\b
-    | \{\{-?\s*(?P<section>[#^/])?(?P<name>if|unless|each|with|range|block|else|end)\b
-    """,
-    re.X,
-    cache_pattern=False,
-)
-_BLOCK_OPENINGS: Final = frozenset(("if", "for"))
-_BLOCK_ENDINGS: Final = frozenset(("endif", "endfor"))
-_MUSTACHE_OPENINGS: Final = frozenset(("if", "range", "with", "block"))
-
-
-def _block_role(match: re.Match[str]) -> str:
-    """Whether the tag opens a block, closes one, or starts a branch.
-
-    Handlebars marks a section with `#` and its close with `/`; go writes
-    neither and closes with `end`. A `{{ end }}` with nothing open is not
-    a close, and the caller drops it.
-    """
-    statement = match.group("statement")
-    if statement:
-        if statement in _BLOCK_OPENINGS:
-            return "open"
-        return "close" if statement in _BLOCK_ENDINGS else "branch"
-
-    section, name = match.group("section"), match.group("name")
-    if section == "/":
-        return "close"
-    if section:
-        return "branch" if section == "^" and name == "else" else "open"
-    if name == "else":
-        return "branch"
-    if name == "end":
-        return "close"
-    return "open" if name in _MUSTACHE_OPENINGS else "branch"
-
-
-def _branched_blocks(html: str) -> tuple[tuple[tuple[int, int], ...], ...]:
-    """Branch spans of every complete conditional or loop block.
-
-    A for block takes branches of its own, since jinja spells its empty
-    case {% else %} and django spells it {% empty %}. Without that, the
-    else of a for nested in an if would end the if's own branch.
-
-    Handlebars `{{#if}}...{{else}}...{{/if}}` and go
-    `{{if}}...{{else}}...{{end}}` are read the same way, so a wrapper
-    opened in one branch and closed in another is not an orphan there
-    either.
-    """
-    complete: list[tuple[tuple[int, int], ...]] = []
-    open_blocks: list[tuple[list[tuple[int, int]], int]] = []
-    for match in _BRANCHED_BLOCK_PATTERN.finditer(html):
-        role = _block_role(match)
-        if role == "open":
-            open_blocks.append(([], match.end()))
-        elif not open_blocks:
-            continue
-        elif role == "close":
-            branches, start = open_blocks.pop()
-            branches.append((start, match.start()))
-            complete.append(tuple(branches))
-        else:
-            branches, start = open_blocks[-1]
-            branches.append((start, match.start()))
-            open_blocks[-1] = (branches, match.end())
-    return tuple(complete)
-
-
-def _branch_context(
-    blocks: tuple[tuple[tuple[int, int], ...], ...], pos: int
-) -> dict[int, int]:
-    """Map each block containing pos to the branch pos is in.
-
-    Branches run in order and do not overlap, so a block that does not
-    span pos at all is skipped without looking at its branches.
-    """
-    context: dict[int, int] = {}
-    for index, branches in enumerate(blocks):
-        if not branches[0][0] <= pos < branches[-1][1]:
-            continue
-        for branch, (start, end) in enumerate(branches):
-            if start <= pos < end:
-                context[index] = branch
-                break
-    return context
-
-
-def _mutually_exclusive(a: dict[int, int], b: dict[int, int]) -> bool:
-    """Whether two positions are in sibling branches of a block."""
-    return any(b.get(block, branch) != branch for block, branch in a.items())
 
 
 def run(
@@ -146,13 +55,13 @@ def run(
     orphan_tags: list[TagToken] = []
     p_child_tags: list[TagToken] = []
     matched_closes: list[TagToken] = []
-    blocks = _branched_blocks(html)
+    blocks = branched_blocks(html)
     branch_contexts: dict[int, dict[int, int]] = {}
 
     def context(token: TagToken) -> dict[int, int]:
         cached = branch_contexts.get(token.start)
         if cached is None:
-            cached = branch_contexts[token.start] = _branch_context(
+            cached = branch_contexts[token.start] = branch_context(
                 blocks, token.start
             )
         return cached
@@ -188,7 +97,7 @@ def run(
                         break
             if any(
                 tag.name.lower() == tag_name
-                and _mutually_exclusive(context(tag), context(token))
+                and mutually_exclusive(context(tag), context(token))
                 for tag in open_tags
             ):
                 continue
@@ -210,7 +119,7 @@ def run(
             else:
                 close_context = context(token)
                 for j, matched in enumerate(matched_closes):
-                    if matched.name.lower() == tag_name and _mutually_exclusive(
+                    if matched.name.lower() == tag_name and mutually_exclusive(
                         context(matched), close_context
                     ):
                         matched_closes[j] = token

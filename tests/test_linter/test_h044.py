@@ -98,3 +98,19 @@ def test_base(source: str, expected: list[LintError]) -> None:
 
     lint_printer(source, expected, output[filename])
     assert output[filename] == expected
+
+
+def test_mutually_exclusive_branches_are_not_a_mixture(
+    django_config: Config,
+) -> None:
+    source = (
+        "<table><thead><tr>"
+        "{% if numeric %}<th>Total</th>{% else %}<td>Total</td>{% endif %}"
+        "</tr></thead></table>\n"
+    )
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]

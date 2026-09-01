@@ -5,8 +5,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from djlint.helpers import (
+    branch_context,
+    branched_blocks,
     inside_ignored_linter_block,
     inside_ignored_rule,
+    mutually_exclusive,
     overlaps_ignored_block,
     tokenize_markup,
 )
@@ -32,23 +35,36 @@ def _odd_cells(html: str) -> Iterator[TagToken]:
     a mixture. An empty `td` opening the row is the corner cell of a table
     with headers down its first column, which is the markup the W3C
     accessibility tutorial asks for, so it sets nothing and is skipped.
+
+    Cells in sibling branches of a template block are not a mixture
+    either: only one of them is ever rendered.
     """
+    blocks = branched_blocks(html)
+    contexts: dict[int, dict[int, int]] = {}
+
+    def context(token: TagToken) -> dict[int, int]:
+        cached = contexts.get(token.start)
+        if cached is None:
+            cached = contexts[token.start] = branch_context(blocks, token.start)
+        return cached
+
     depth = 0
     row_cell = ""
+    row_token: TagToken | None = None
     open_cell: TagToken | None = None
     for token in tokenize_markup(html):
         name = token.name.lower()
 
         if name == "thead":
             depth = max(depth - 1, 0) if token.closing else depth + 1
-            row_cell = ""
+            row_cell, row_token = "", None
             continue
 
         if not depth:
             continue
 
         if name == "tr":
-            row_cell = ""
+            row_cell, row_token = "", None
             continue
 
         if name not in _CELL_TAGS:
@@ -65,8 +81,13 @@ def _odd_cells(html: str) -> Iterator[TagToken]:
                 continue
             if open_cell is not None:
                 if not row_cell:
-                    row_cell = open_cell.name.lower()
-                elif open_cell.name.lower() != row_cell:
+                    row_cell, row_token = open_cell.name.lower(), open_cell
+                elif open_cell.name.lower() != row_cell and not (
+                    row_token is not None
+                    and mutually_exclusive(
+                        context(row_token), context(open_cell)
+                    )
+                ):
                     yield open_cell
                 open_cell = None
             continue

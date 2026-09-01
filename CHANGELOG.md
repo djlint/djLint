@@ -29,6 +29,9 @@
 
 ### Fix
 
+- A rule that looks for a tag no longer reads markup written inside an attribute value as a tag of its own. `<p title="a<br>b">` was reported by `H036` and `H017`, `<div title="<button>x</button>">` by `H043`, and `<p title="an <img src=x>">` by `H013`. Affects `H006`, `H013`, `H017`, `H018`, `H020`, `H036` and `H043`.
+- `H029` no longer reads a name that merely ends in `method` as the form's own, so `<form data-method="POST">` is not reported. The formatter's rewrite already had that boundary, so the rule was asking for something `--reformat` would not do.
+- `H044` no longer reports a header row whose cells sit in sibling branches of a template block. Only one of `{% if x %}<th>A</th>{% else %}<td>A</td>{% endif %}` is ever rendered, so there is no mixture.
 - The linter reads the opening tag of a `<script>`, `<style>`, `<pre>` or `<textarea>` again. It was skipping the whole element, so no rule could see those tags: `H024` could never report the `type="text/javascript"` it exists for, `D004` was blind to the `<script src>` its own pattern names, and `H008`, `H010`, `H011`, `H012` and `H037` ignored the attributes on all four. Only the body is skipped now, and a body is no longer read as markup at all, so an apostrophe in a `//` comment or a `<div>` in a javascript string cannot derail the rules that pair tags.
 - `H025` no longer calls a tag an orphan in a handlebars or go template. It read `{% %}` branches only, so a wrapper opened in one branch of `{{#if}}...{{else}}...{{/if}}` or `{{if}}...{{else}}...{{end}}` and closed in the other was reported, the same shape it has always accepted in django and jinja.
 - `T039` no longer reports a valid block tag that holds a nested mapping. Braces are counted now, so the `}}` closing `{% set a = {"x": {"y": 1}} %}` ends the literal rather than the tag. `--reformat` writes exactly that shape by dropping the space, so formatting a file could turn a clean run into a failing one.

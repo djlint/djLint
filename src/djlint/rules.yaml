@@ -42,6 +42,7 @@
       - <html(?![\w-])(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])lang\s*=)[^'">])*>
 - rule:
     name: H006
+    skip_in_attributes: true
     message: Img tag should have height and width attributes.
     default: false
     flags: re.DOTALL|re.I
@@ -94,6 +95,7 @@
       - <\w+?(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*=\s
 - rule:
     name: H013
+    skip_in_attributes: true
     message: Img tag should have an alt attribute.
     flags: re.DOTALL|re.I
     patterns:
@@ -122,6 +124,7 @@
       - <html(?![\w-])[^>]*?>(?:(?!<title(?:\s(?:\"[^\"]*\"|'[^']*'|[^>\"'])*)?>).)*</html>
 - rule:
     name: H017
+    skip_in_attributes: true
     message: Void tags should be self closing.
     flags: re.DOTALL|re.I
     default: false
@@ -129,6 +132,7 @@
       - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|path)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
 - rule:
     name: H018
+    skip_in_attributes: true
     message: Void tags are self closing by nature and must end with ">", not "/>"
     flags: re.DOTALL|re.I
     default: false
@@ -163,6 +167,7 @@
       - '<form\s[^>]*?action\s*=["'']javascript:'
 - rule:
     name: H020
+    skip_in_attributes: true
     message: Empty tag pair found. Consider removing.
     flags: re.DOTALL|re.I
     patterns:
@@ -237,7 +242,8 @@
     name: H029
     message: Consider using lowercase form method values.
     patterns:
-      - <[fF][oO][rR][mM]\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}/])*([mM][eE][tT][hH][oO][dD])=(([\"'])[a-zA-Z]*?[A-Z][a-zA-Z]*?\3)
+      # the name must start on a name boundary, so data-method is not method
+      - <[fF][oO][rR][mM]\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}/])*(?<![-.:\w])([mM][eE][tT][hH][oO][dD])=(([\"'])[a-zA-Z]*?[A-Z][a-zA-Z]*?\3)
 - rule:
     name: H030
     message: Consider adding a meta description.
@@ -267,6 +273,7 @@
       - "{%(?:(?!%}).)*}%"
 - rule:
     name: H036
+    skip_in_attributes: true
     message: Do not use br tags for spacing.
     flags: re.I|re.X
     patterns:
@@ -310,6 +317,7 @@
     python_module: djlint.rules.H042
 - rule:
     name: H043
+    skip_in_attributes: true
     message: Button tag should have a type attribute.
     flags: re.DOTALL|re.I
     patterns:
