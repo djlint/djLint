@@ -38,10 +38,10 @@ test_data = [
     ),
     pytest.param(
         (
-            "<p>&lbrace;&lbrace; name &rbrace;&rbrace; &#123;% if a %&#125; &#x7B;# note #&#x7D;</p>\n"
+            "<p>&lbrace;&lbrace; name &rbrace;&rbrace; &#123;% if a %&#125; &#x7B;# note #&#x7D; {&percnt; for x in y &#37;} {&num; c &#x23;} &dollar;{ m }</p>\n"
         ),
         (
-            "<p>&lbrace;&lbrace; name &rbrace;&rbrace; &#123;% if a %&#125; &#x7B;# note #&#x7D;</p>\n"
+            "<p>&lbrace;&lbrace; name &rbrace;&rbrace; &#123;% if a %&#125; &#x7B;# note #&#x7D; {&percnt; for x in y &#37;} {&num; c &#x23;} &dollar;{ m }</p>\n"
         ),
         id="template_delimiters_are_kept",
     ),

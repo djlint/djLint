@@ -612,7 +612,7 @@ Do:
 
 `Do not use entity references.`
 
-HTML5 documents are UTF-8, so the literal character works everywhere and is what reviewers actually read; a typo in an entity reference (e.g. `&mdsah;`) is not caught by the browser and renders verbatim as broken text. djLint allows the entities that carry syntax (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, and the braces `&lbrace;` and `&rbrace;`, which written out would open a template tag) and those naming a character that is invisible, and so cannot be reviewed as a literal: the spaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), the joiners and marks (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) and `&shy;`, in named, decimal and hex form alike.
+HTML5 documents are UTF-8, so the literal character works everywhere and is what reviewers actually read; a typo in an entity reference (e.g. `&mdsah;`) is not caught by the browser and renders verbatim as broken text. djLint allows the entities that carry syntax (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, and the braces `&lbrace;` and `&rbrace;` together with `&percnt;`, `&num;` and `&dollar;`, which written out would complete a template delimiter) and those naming a character that is invisible, and so cannot be reviewed as a literal: the spaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), the joiners and marks (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) and `&shy;`, in named, decimal and hex form alike.
 
 `--reformat` rewrites the entity as the character for you, so a finding is never hand work.
 

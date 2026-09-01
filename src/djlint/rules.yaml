@@ -194,12 +194,12 @@
     patterns:
       - |-
         &(?!(?:
-             lt|gt|amp|quot|apos|lbrace|rbrace|lcub|rcub
+             lt|gt|amp|quot|apos|lbrace|rbrace|lcub|rcub|percnt|num|dollar
            | nbsp|ensp|emsp|thinsp|hairsp|numsp|puncsp|shy
            | zwnj|zwj|lrm|rlm|zwnbsp
-           | \#(?:34|38|39|60|62|123|125|160|173|8194|8195|8201|8202|8203|8204
+           | \#(?:34|35|36|37|38|39|60|62|123|125|160|173|8194|8195|8201|8202|8203|8204
                  |8205|8206|8207|8232|8233|8239|8287|8288|65279)
-           | \#x(?:22|26|27|3c|3e|7b|7d|a0|ad|2002|2003|2009|200a|200b|200c
+           | \#x(?:22|23|24|25|26|27|3c|3e|7b|7d|a0|ad|2002|2003|2009|200a|200b|200c
                   |200d|200e|200f|2028|2029|202f|205f|2060|feff)
           );)[\#0-9a-z]{,30};
 - rule:
