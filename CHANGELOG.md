@@ -102,6 +102,7 @@
 - An element opened on the same line as a `<script>`, `<style>` or `<pre>` keeps its indent. Everything before the block's opening tag went uncounted, so the children of `<a class="x">text<style>` sat outside it, and a closing tag written after such a block's end tag now gives back the level it took.
 - `--preserve-leading-space` no longer moves a line back and forth on every run. A line opening with text and holding a short element, such as `&amp;<small> text </small>`, was recognised as one only while it sat at the left margin, so each run indented it and the next pulled it back, and `--check` never came out clean.
 - `--keep-br-inline` works on the command line. The option existed in the config file and in the documentation, but the flag itself was never added, so passing it was an error.
+- A `<pre>`, `<textarea>`, `<script>` or `<style>` opened and closed on one line no longer counts as closing a block opened earlier. `<pre>x</pre><script>` cancelled the block the `<script>` had just opened, so its body was indented as markup, and markup written after `</style>` on the closing line, as in `</style>z</b>`, went uncounted, so the element it closed kept its indent for the rest of the file. Both took a second run to settle, and the configuration page of djLint's own docs was one of the files affected under `--format-js`.
 
 ### Performance
 

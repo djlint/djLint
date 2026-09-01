@@ -804,9 +804,10 @@ _IGNORED_INLINE_BLOCKS_TAIL: Final = r"""
 def _build_ignored_inline_blocks(*, for_linting: bool) -> str:
     """Build the alternation of one-line blocks djLint leaves alone.
 
-    Linting leaves a script or style element out, so a rule can still
-    see the attributes on the opening tag. Their bodies are skipped by
-    the multi-line spans either way.
+    A block closed on the line that opens it leaves nothing open, so each
+    span runs through the closing tag. Linting leaves the raw text
+    elements out, so a rule can still see the attributes on the opening
+    tag; their bodies are skipped by the multi-line spans either way.
     """
     if for_linting:
         return _IGNORED_INLINE_BLOCKS_TAIL
@@ -815,6 +816,8 @@ def _build_ignored_inline_blocks(*, for_linting: bool) -> str:
         r"""
       <script.*?\</script>
     | <style.*?\</style>
+    | <pre.*?\</pre>
+    | <textarea.*?\</textarea>
     |"""
         + _IGNORED_INLINE_BLOCKS_TAIL
     )
@@ -894,7 +897,7 @@ _IGNORED_BLOCKS: Final = _build_ignored_blocks(for_linting=False)
 _LINT_IGNORED_BLOCKS: Final = _build_ignored_blocks(for_linting=True)
 
 _RAW_TEXT_INLINE: Final = r"""
-    <(script|style|pre|textarea).*?(?=(\</(?:\1)>))
+    <(script|style|pre|textarea).*?</(?:\1)>
 """
 _RAW_TEXT_OPENING_PATTERN: Final = re.compile(
     r"""

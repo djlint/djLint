@@ -74,8 +74,8 @@ def _inside_non_overlapping_span(
 
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
-def is_ignored_block_opening(config: Config, item: str) -> bool:
-    """Whether the line opens an ignored block it does not close.
+def ignored_block_opening_start(config: Config, item: str) -> int:
+    """Where the line opens an ignored block it does not close, or -1.
 
     An opening that is not part of a block closed on this line leaves a
     block open, even when a self-contained one follows it, as in
@@ -87,13 +87,17 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
         match.span()
         for match in config.ignored_blocks_inline_pattern.finditer(item)
     )
-    if not inline:
-        return bool(config.ignored_block_opening_pattern.search(item))
+    for match in config.ignored_block_opening_pattern.finditer(item):
+        if not inline or not _inside_non_overlapping_span(
+            inline, match.end() - 1, match.end()
+        ):
+            return match.start()
+    return -1
 
-    return any(
-        not _inside_non_overlapping_span(inline, match.end() - 1, match.end())
-        for match in config.ignored_block_opening_pattern.finditer(item)
-    )
+
+def is_ignored_block_opening(config: Config, item: str) -> bool:
+    """Whether the line opens an ignored block it does not close."""
+    return ignored_block_opening_start(config, item) >= 0
 
 
 def _marker_past_inline_blocks(

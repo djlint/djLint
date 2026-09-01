@@ -26,11 +26,11 @@ from djlint.helpers import (
     RE_FLAGS_IMX,
     RE_FLAGS_IS,
     RE_FLAGS_IX,
+    ignored_block_opening_start,
     inside_html_attribute,
     inside_ignored_block,
     inside_ignored_linter_block,
     is_ignored_block_closing,
-    is_ignored_block_opening,
     is_raw_text_block_closing,
     is_raw_text_block_opening,
     is_safe_closing_tag,
@@ -511,7 +511,9 @@ def indent_html(rawcode: str, config: Config) -> str:
 
     for item in rawcode_flat_list:
         is_safe_closing_tag_ = is_safe_closing_tag(config, item)
-        is_ignored_block_opening_ = is_ignored_block_opening(config, item)
+        ignored_block_opening_start_ = ignored_block_opening_start(config, item)
+        is_ignored_block_opening_ = ignored_block_opening_start_ >= 0
+        was_block_raw = is_block_raw
         dedent_after = 0
         indent_level_before = indent_level
         opened_html = 0
@@ -829,10 +831,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             is_block_raw = True
             is_raw_first_line = False
             if "<" in item:
-                opening = config.ignored_block_opening_pattern.search(item)
-                opened, _ = scan_html_tags(
-                    item[: opening.start()] if opening else item
-                )
+                opened, _ = scan_html_tags(item[:ignored_block_opening_start_])
                 if opened:
                     indent_level += 1
                     open_html_indents.append(True)
@@ -848,7 +847,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             if not is_safe_closing_tag_:
                 ignored_level = max(ignored_level - 1, 0)
             if ignored_level == 0:
-                was_block_raw, is_block_raw = is_block_raw, False
+                is_block_raw = False
                 if was_block_raw and "<" in item:
                     tail = ""
                     for close in config.ignored_block_closing_pattern.finditer(
@@ -857,7 +856,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                         tail = item[close.end() :]
                     opened, closed = scan_html_tags(tail)
                     if closed:
-                        kept = len(open_html_indents) - closed
+                        kept = max(len(open_html_indents) - closed, 0)
                         indent_level = max(
                             indent_level - sum(open_html_indents[kept:]), 0
                         )

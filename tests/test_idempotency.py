@@ -124,6 +124,14 @@ templates = [
         '<figure>&amp;<small class="a b"> text </small></figure>\n',
         id="text opening a line before an inline element",
     ),
+    pytest.param(
+        "<div><b>y<style>a{color:red}</style>z</b></div>\n",
+        id="markup after a style closer on the same line",
+    ),
+    pytest.param(
+        "<div hidden><pre>  keep  </pre><script>var a = 1</script><br></div>\n",
+        id="inline pre before a script on one line",
+    ),
 ]
 
 option_sets = [
