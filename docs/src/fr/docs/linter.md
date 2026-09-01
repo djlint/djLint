@@ -671,7 +671,7 @@ Une balise sans sa balise d'ouverture ou de fermeture correspondante force la r�
 
 `Les balises id et class vides peuvent être supprimées.`
 
-Un attribut id ou class vide ne fait rien (aucun style ni script ne peut le cibler) et un id vide est du HTML invalide (la valeur de l'id ne doit pas être la chaîne vide). Cela signale généralement un bug de modèle où une variable devait être interpolée : le supprimer ou le remplir empêche ce bug de se cacher au grand jour.
+Aucun sélecteur de classe ou d'id ne correspond à un attribut vide, et un id vide est du HTML invalide (la valeur de l'id ne doit pas être la chaîne vide). Un sélecteur de présence comme `div[class]` le sélectionne malgré tout : le retirer est donc visible pour une feuille de style écrite ainsi. Cela signale généralement un bug de modèle où une variable devait être interpolée : le supprimer ou le remplir empêche ce bug de se cacher au grand jour.
 
 À éviter :
 

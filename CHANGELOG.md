@@ -96,6 +96,7 @@
 
 ### Docs
 
+- The `H026` page no longer claims nothing can target an empty `class` or `id`. A class or id selector does not match one, but an attribute presence selector such as `div[class]` does, so removing the attribute is visible to a stylesheet written that way.
 - The GitHub Actions integration is documented: djLint reports findings as annotations on a pull request's diff by itself, and `--github-output` / `--no-github-output` override that.
 - The command line reference lists `--allow-empty-input`, which it had been missing, and a test now keeps it in step with `djlint --help`.
 - `H042` is no longer described as off by default, which it stopped being in 1.42.1.

@@ -671,7 +671,7 @@ Do:
 
 `Empty id and class tags can be removed.`
 
-An empty id or class attribute does nothing (no styles or scripts can target it), and an empty id is invalid HTML (the id value must not be the empty string). It usually signals a template bug where a variable was meant to be interpolated, so removing or filling it keeps that bug from hiding in plain sight.
+No class or id selector matches an empty attribute, and an empty id is invalid HTML (the id value must not be the empty string). An attribute presence selector such as `div[class]` does still match it, so removing one is visible to a stylesheet written that way. It usually signals a template bug where a variable was meant to be interpolated, so removing or filling it keeps that bug from hiding in plain sight.
 
 Don't:
 
