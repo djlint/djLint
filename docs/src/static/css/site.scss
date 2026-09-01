@@ -139,6 +139,12 @@ html.has-navbar-fixed-top {
   align-items: center;
   margin-bottom: 0.75rem;
 }
+.footer .image.logo {
+  max-width: 100px;
+}
+.image.badge {
+  max-width: 120px;
+}
 .install-chip {
   display: inline-block;
   font-size: 1.25rem;
