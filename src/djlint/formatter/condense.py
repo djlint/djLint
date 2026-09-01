@@ -117,7 +117,10 @@ def clean_whitespace(html: str, config: Config) -> str:
             blank_lines = "\n" * max(config.max_blank_lines, 0)
         return leading + match.group(1) + blank_lines
 
-    func = partial(strip_space, config, html)
+    def strip_spaces(pattern: str, html: str) -> str:
+        return re.sub(
+            pattern, partial(strip_space, config, html), html, flags=re.M
+        )
 
     line_contents = r"(.*?)"
     trailing_contents = r"\n \t"
@@ -127,27 +130,16 @@ def clean_whitespace(html: str, config: Config) -> str:
         trailing_contents = r" \t"
 
     if not config.preserve_leading_space:
-        html = re.sub(
-            rf"^[ \t]*{line_contents}([{trailing_contents}]*)$",
-            func,
-            html,
-            flags=re.M,
+        html = strip_spaces(
+            rf"^[ \t]*{line_contents}([{trailing_contents}]*)$", html
         )
 
     else:
         leading_tag = r"(?:<|{%)"
-        html = re.sub(
-            rf"^[ \t]*({leading_tag}.*?)([{trailing_contents}]*)$",
-            func,
-            html,
-            flags=re.M,
+        html = strip_spaces(
+            rf"^[ \t]*({leading_tag}.*?)([{trailing_contents}]*)$", html
         )
-        html = re.sub(
-            rf"^{line_contents}([{trailing_contents}]*)$",
-            func,
-            html,
-            flags=re.M,
-        )
+        html = strip_spaces(rf"^{line_contents}([{trailing_contents}]*)$", html)
 
     def add_blank_line_after(
         config: Config, html: str, match: re.Match[str]
@@ -169,13 +161,11 @@ def clean_whitespace(html: str, config: Config) -> str:
 
         return match.group() + "\n"
 
-    func = partial(add_blank_line_after, config, html)
-
     if config.blank_line_after_tag:
         for tag in split_option_list(config.blank_line_after_tag):
             html = re.sub(
                 rf"((?:{{%[-+]?\s*?{tag}\b[^}}]+?[-+]?%}}\n?)+)",
-                func,
+                partial(add_blank_line_after, config, html),
                 html,
                 flags=RE_FLAGS_IMS,
             )

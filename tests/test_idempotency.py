@@ -108,6 +108,10 @@ templates = [
         '<td>{% x }%?</td>\n<h2 id="a" tabindex="-1" class="title is-2">x</h2>\n<p><code>{% tag %}</code></p>\n',
         id="unclosed template tag before a heading",
     ),
+    pytest.param(
+        "    <pre><code>a\n      b</code></pre>\n\n<p>x</p>\n",
+        id="indented verbatim block above a blank line",
+    ),
 ]
 
 option_sets = [

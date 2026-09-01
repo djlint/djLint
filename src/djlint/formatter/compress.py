@@ -13,7 +13,12 @@ from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 from djlint.formatter.attributes import normalize_attributes
 from djlint.formatter.class_attributes import encode_attribute_newlines
 from djlint.formatter.tokenizer import tokenize_tags
-from djlint.helpers import RE_FLAGS_IS, RE_FLAGS_ISX, child_of_unformatted_block
+from djlint.helpers import (
+    RE_FLAGS_IS,
+    RE_FLAGS_ISX,
+    child_of_unformatted_block,
+    mask_raw_text_bodies,
+)
 
 if TYPE_CHECKING:
     from typing import Final
@@ -37,17 +42,6 @@ _TEMPLATE_COMMENT_PROFILES: Final = frozenset((
     "tera",
 ))
 
-
-_RAW_TEXT_ELEMENT_PATTERN: Final = re.compile(
-    r"""
-    (<(script|style|textarea)\b
-      (?:\"[^\"]*\"|'[^']*'|\{[^}]*\}|[^'\">{}])*>)
-    (.*?)
-    (?=</\2)
-    """,
-    RE_FLAGS_ISX,
-    cache_pattern=False,
-)
 
 _LOOSE_ATTRIBUTE_SPACING_PATTERN: Final = re.compile(
     r"\"[^\"]*\"|'[^']*'|\{\{.*?\}\}|\{%.*?%\}|\{\#.*?\#\}|[ \t]+=[ \t]*|=[ \t]+"
@@ -82,10 +76,6 @@ def _same_length_blank(match: re.Match[str]) -> str:
     return " " * len(match.group())
 
 
-def _blank_raw_text(match: re.Match[str]) -> str:
-    return match.group(1) + " " * len(match.group(3))
-
-
 def _tokenizer_source(html: str, config: Config) -> str:
     """Blank out what the tag tokenizer should not read as markup.
 
@@ -95,7 +85,7 @@ def _tokenizer_source(html: str, config: Config) -> str:
     replaced by a blank of the same length, so a token's offsets still
     index the original html.
     """
-    html = _RAW_TEXT_ELEMENT_PATTERN.sub(_blank_raw_text, html)
+    html = mask_raw_text_bodies(html)
 
     if config.profile not in _TEMPLATE_COMMENT_PROFILES:
         return html
