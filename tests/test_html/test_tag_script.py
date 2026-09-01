@@ -524,7 +524,8 @@ test_data = [
             "</script>\n"
             '<script async=""\n'
             '        id=""\n'
-            '        src="/_next/static/development/pages/_app.js?ts=1565732195968"></script><script></script>\n'
+            '        src="/_next/static/development/pages/_app.js?ts=1565732195968"></script>\n'
+            "<script></script>\n"
             "<!-- #8147 -->\n"
             '<script lang="vbscript">\n'
             "Function hello()\n"

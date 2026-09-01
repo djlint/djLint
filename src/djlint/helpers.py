@@ -332,17 +332,21 @@ _RAW_TEXT_ELEMENT_PATTERN: Final = re.compile(
 )
 
 
+_NON_NEWLINE_PATTERN: Final = re.compile(r"[^\n]", cache_pattern=False)
+
+
 def _blank_raw_text(match: re.Match[str]) -> str:
-    return match.group(1) + " " * len(match.group(3))
+    return match.group(1) + _NON_NEWLINE_PATTERN.sub(" ", match.group(3))
 
 
 def mask_raw_text_bodies(html: str) -> str:
     """Blank out what the tag tokenizer should not read as markup.
 
     A raw text element holds text, so the "<" of `var s = "<div>"` opens no
-    tag and the apostrophe in a comment starts no attribute value. Each
-    body is replaced by a blank of the same length, so a token's offsets
-    still index the html that was passed in.
+    tag, the apostrophe in `// don't` starts no attribute value, and a
+    `{% %}` pair is javascript rather than a template tag. Each body is
+    blanked to the same length, keeping offsets and line numbers, so
+    positions still index the html that was passed in.
     """
     return _RAW_TEXT_ELEMENT_PATTERN.sub(_blank_raw_text, html)
 
@@ -419,6 +423,23 @@ def inside_ignored_block_span(
         if ignored_match_start <= start and end <= ignored_match_end:
             return True
     return False
+
+
+def breaks_an_ignored_block(config: Config, html: str, position: int) -> bool:
+    """Whether a line break written here would land inside an ignored block.
+
+    The point is tested rather than the tag, so a break placed against the
+    outside edge of a block is allowed: the closing tag of a `<script>` is
+    part of the element, but the position after it is not.
+    """
+    return any(
+        ignored_start < position < ignored_end
+        for ignored_start, ignored_end in _inside_ignored_block(
+            html,
+            ignored_blocks=config.ignored_blocks_pattern,
+            ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
+        )
+    )
 
 
 def inside_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:

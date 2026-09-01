@@ -24,9 +24,11 @@ from djlint.helpers import (
     RE_FLAGS_IMX,
     RE_FLAGS_IX,
     RE_FLAGS_MX,
+    breaks_an_ignored_block,
     inside_html_attribute,
     inside_ignored_block,
     inside_template_block,
+    mask_raw_text_bodies,
 )
 
 if TYPE_CHECKING:
@@ -43,6 +45,8 @@ _TRANSPARENT_ELEMENTS: Final = (
     - HTML_ATOMIC_INLINE_ELEMENTS
     - {"br", "hr"}
 )
+_BREAK_BEFORE_TAG: Final = "\n%s"
+_BREAK_AFTER_TAG: Final = "%s\n"
 _TEMPLATE_TAG_NAME_PATTERN: Final = re.compile(
     r"^\{%[-+]?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
 )
@@ -132,6 +136,38 @@ def _is_closing_template_tag(tag: str) -> bool:
     )
 
 
+_ELEMENTS_THAT_RENDER_NOTHING: Final = frozenset(("script", "style"))
+
+
+def _past_raw_text_element(
+    html: str, index: int, name: str, *, back: bool
+) -> int:
+    """The position on the far side of a script or style element.
+
+    Its body renders nothing and is not markup, so text on either side of
+    the element is adjacent and the body itself never counts as content.
+    """
+    if back:
+        opening = f"<{name}"
+        while index > 0:
+            index = html.rfind("<", 0, index)
+            if index < 0:
+                return -1
+            if html[index : index + len(opening)].lower() == opening:
+                return index
+        return -1
+
+    closing = f"</{name}"
+    while True:
+        found = html.find("<", index)
+        if found < 0:
+            return -1
+        if html[found : found + len(closing)].lower() == closing:
+            end = html.find(">", found)
+            return len(html) if end < 0 else end + 1
+        index = found + 1
+
+
 def expand_html(html: str, config: Config) -> str:
     """Split single line html into many lines based on tags."""
 
@@ -181,22 +217,24 @@ def expand_html(html: str, config: Config) -> str:
 
         return inside_trimmed_translation or bool(open_match)
 
-    def protect_line(line: str, *, inside_trimmed_translation: bool) -> str:
-        stripped = line.strip()
+    def protect_line(
+        line: str, scanned: str, *, inside_trimmed_translation: bool
+    ) -> str:
+        stripped = scanned.strip()
         if (
-            not has_template_block_tag(line)
+            not has_template_block_tag(scanned)
             or (
                 stripped.startswith("<")
                 and stripped.endswith(">")
                 and "</" not in stripped
-                and not has_rendered_text(line)
+                and not has_rendered_text(scanned)
             )
             or is_trimmed_translation_content(
-                line, inside_trimmed_translation=inside_trimmed_translation
+                scanned, inside_trimmed_translation=inside_trimmed_translation
             )
             or not (
-                has_rendered_text(line)
-                or _VERBATIM_SET_BLOCK_PATTERN.search(line)
+                has_rendered_text(scanned)
+                or _VERBATIM_SET_BLOCK_PATTERN.search(scanned)
             )
         ):
             return line
@@ -207,17 +245,21 @@ def expand_html(html: str, config: Config) -> str:
 
     lines: list[str] = []
     inside_trimmed_translation = False
-    for line in html.split("\n"):
+    for line, scanned in zip(
+        html.split("\n"), mask_raw_text_bodies(html).split("\n"), strict=True
+    ):
         lines.append(
             protect_line(
-                line, inside_trimmed_translation=inside_trimmed_translation
+                line,
+                scanned,
+                inside_trimmed_translation=inside_trimmed_translation,
             )
         )
         if _TRIMMED_TRANSLATION_OPEN_PATTERN.search(
-            line
-        ) and not _TRIMMED_TRANSLATION_CLOSE_PATTERN.search(line):
+            scanned
+        ) and not _TRIMMED_TRANSLATION_CLOSE_PATTERN.search(scanned):
             inside_trimmed_translation = True
-        if _TRIMMED_TRANSLATION_CLOSE_PATTERN.search(line):
+        if _TRIMMED_TRANSLATION_CLOSE_PATTERN.search(scanned):
             inside_trimmed_translation = False
     html = "\n".join(lines)
 
@@ -262,7 +304,7 @@ def expand_html(html: str, config: Config) -> str:
         line_tokens = html_tokens(line)
 
         if tag_token.closing:
-            if out_format != "\n%s":
+            if out_format != _BREAK_BEFORE_TAG:
                 return False
             opening_tokens = tuple(
                 token
@@ -279,7 +321,7 @@ def expand_html(html: str, config: Config) -> str:
                 return False
             body = line[opening_token.end : match_start]
         else:
-            if out_format != "%s\n":
+            if out_format != _BREAK_AFTER_TAG:
                 return False
             closing_token = next(
                 (
@@ -332,14 +374,14 @@ def expand_html(html: str, config: Config) -> str:
         )
 
         if _is_closing_template_tag(tag):
-            if out_format != "\n%s":
+            if out_format != _BREAK_BEFORE_TAG:
                 return False
             open_matches = tuple(open_tag_pattern.finditer(line[:match_start]))
             if not open_matches:
                 return False
             body = line[open_matches[-1].end() : match_start]
         else:
-            if out_format != "%s\n":
+            if out_format != _BREAK_AFTER_TAG:
                 return False
             close_match = close_tag_pattern.search(line, match_end)
             if not close_match:
@@ -404,6 +446,12 @@ def expand_html(html: str, config: Config) -> str:
             if tag.startswith("<!--"):
                 continue
             name = _tag_name(tag)
+            if name in _ELEMENTS_THAT_RENDER_NOTHING:
+                beyond = _past_raw_text_element(html, index, name, back=back)
+                if beyond < 0:
+                    return False
+                index = beyond
+                continue
             if name in HTML_ATOMIC_INLINE_ELEMENTS:
                 at_outside_edge = back == tag.startswith("</")
                 return name in HTML_VOID_ELEMENTS or at_outside_edge
@@ -432,7 +480,10 @@ def expand_html(html: str, config: Config) -> str:
 
         Do not add whitespace if the tag is in an html attribute string.
         """
-        if inside_ignored_block(config, html, match):
+        if out_format == _BREAK_AFTER_TAG:
+            if breaks_an_ignored_block(config, html, match.end(1)):
+                return match.group(1)
+        elif inside_ignored_block(config, html, match):
             return match.group(1)
 
         if inside_template_block(config, html, match):

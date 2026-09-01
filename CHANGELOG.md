@@ -93,6 +93,9 @@
 - Input on stdin that is not valid utf-8 is reported as bad input rather than as a djLint failure.
 - A closed pipe, as in `djlint . | head -1`, is no longer a djLint failure. It printed a traceback and exited `120`.
 - `--statistics` now prints its summary alongside GitHub annotations. It was silently dropped whenever the GitHub output was on, which happens by itself inside a workflow.
+- Formatting a file twice gives the same file when a `<script>` or `<style>` is followed by text. The closing tag was left glued to whatever came next on the first run and broken onto its own line on the second. Text that really does sit against the element, as in `a<script>x</script>b`, is still left alone, because a line break there renders as a space.
+- A `{%` written inside javascript is no longer read as a template tag. A `<script>` holding `'{%'` and `'%}'` in its code stopped the whole line it was on from being formatted, so the markup around it kept whatever layout it arrived with.
+- A tag is measured as it will be written when deciding whether to spread its attributes over several lines. Extra spaces between attributes counted towards the length, so `<input id="a"  type="checkbox">` was spread, measured short enough to be joined again, and spread once more on the next run.
 
 ### Performance
 

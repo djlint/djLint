@@ -90,6 +90,16 @@ templates = [
         "<p>\n    {% language 'de' %}text{% endlanguage %}\n    <span>x</span>\n</p>\n",
         id="single line template block among siblings",
     ),
+    pytest.param(
+        "<script>-</script>v\n", id="text right after a script element"
+    ),
+    pytest.param(
+        '<div><p>a</p><script>var a = "{% x %}"</script><p>b</p></div>\n',
+        id="template delimiters inside javascript",
+    ),
+    pytest.param(
+        '<input id="ab"  type="cdef">\n', id="extra space between attributes"
+    ),
 ]
 
 option_sets = [

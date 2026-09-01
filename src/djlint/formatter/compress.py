@@ -49,30 +49,33 @@ _RAW_TEXT_ELEMENT_PATTERN: Final = re.compile(
     cache_pattern=False,
 )
 
-_PADDED_EQUALS_PATTERN: Final = re.compile(
-    r"\"[^\"]*\"|'[^']*'|\{\{.*?\}\}|\{%.*?%\}|\{\#.*?\#\}|[ \t]+=[ \t]*|=[ \t]+",
+_LOOSE_ATTRIBUTE_SPACING_PATTERN: Final = re.compile(
+    r"\"[^\"]*\"|'[^']*'|\{\{.*?\}\}|\{%.*?%\}|\{\#.*?\#\}|[ \t]+=[ \t]*|=[ \t]+"
+    r"|[ \t]{2,}",
     RE_FLAGS_IS,
     cache_pattern=False,
 )
 
 
-def _tighten_equals(match: re.Match[str]) -> str:
+def _tighten_spacing(match: re.Match[str]) -> str:
     text = match.group()
+    if not text.strip():
+        return " "
     return "=" if text.strip() == "=" else text
 
 
-def _normalize_equals(attributes: str, config: Config) -> str:
-    """Drop the padding around "=" in a tag that will be spread.
+def _normalize_spacing(attributes: str, config: Config) -> str:
+    """Drop the slack around "=" and between the attributes of a tag.
 
     Rebuilding the attributes drops it, so a tag measured with the
-    padding is spread and then measures short enough to be put back on
+    slack is spread and then measures short enough to be put back on
     one line, spreading again on the next run. A tag that stays as
-    written keeps its padding: quoted values and template tags are
+    written keeps its spacing: quoted values and template tags are
     matched first, so their own whitespace is left alone either way.
     """
     if len(attributes.strip()) < config.max_attribute_length:
         return attributes
-    return _PADDED_EQUALS_PATTERN.sub(_tighten_equals, attributes)
+    return _LOOSE_ATTRIBUTE_SPACING_PATTERN.sub(_tighten_spacing, attributes)
 
 
 def _same_length_blank(match: re.Match[str]) -> str:
@@ -138,7 +141,7 @@ def compress_html(html: str, config: Config) -> str:
                 .strip()
                 .splitlines()
             )
-            attributes = leading + _normalize_equals(
+            attributes = leading + _normalize_spacing(
                 normalize_attributes(config, flattened), config
             )
         if config.close_void_tags and tag.lower() in HTML_VOID_ELEMENTS:
