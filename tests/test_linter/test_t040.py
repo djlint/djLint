@@ -34,11 +34,17 @@ test_data = [
         ("{% include '' %}\n"),
         ([
             {
+                "code": "T002",
+                "line": "1:0",
+                "match": "{% include '' %}",
+                "message": "Double quotes should be used in tags.",
+            },
+            {
                 "code": "T040",
                 "line": "1:0",
                 "match": "{% include ''",
                 "message": "Missing or empty template name in extends or include tag.",
-            }
+            },
         ]),
         id="empty_include_single_quotes",
     ),

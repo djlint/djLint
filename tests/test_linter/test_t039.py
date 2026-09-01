@@ -89,7 +89,14 @@ django_test_data = [
     ),
     pytest.param(
         ("{% include 'x' with {'attr': {'class': 'y'}} %}\n"),
-        ([]),
+        ([
+            {
+                "code": "T002",
+                "line": "1:0",
+                "match": "{% include 'x' with ",
+                "message": "Double quotes should be used in tags.",
+            }
+        ]),
         id="nested_mapping_in_include",
     ),
     pytest.param(

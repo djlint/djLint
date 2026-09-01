@@ -94,7 +94,7 @@ test_data = [
             "        },\n"
             "    },\n"
             "} %}\n"
-            "    {% include 'footer.html.twig' with {\n"
+            '    {% include "footer.html.twig" with {\n'
             "        page: page,\n"
             "        has_footer: true,\n"
             "    } %}\n"

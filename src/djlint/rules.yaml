@@ -13,7 +13,6 @@
 - rule:
     name: T002
     message: Double quotes should be used in tags.
-    default: false
     python_module: djlint.rules.T002
 - rule:
     name: T003
@@ -189,10 +188,20 @@
 - rule:
     name: H023
     message: Do not use entity references.
-    default: false
-    flags: re.I
+    flags: re.I|re.X
     patterns:
-      - "&(?!(lt|gt|amp|quot|nbsp|ensp|emsp|thinsp|shy))[#0-9a-z]{,30};"
+      # an entity is allowed when it carries syntax, or when the character it
+      # names is invisible and so cannot be reviewed as a literal
+      - |-
+        &(?!(?:
+             lt|gt|amp|quot|apos
+           | nbsp|ensp|emsp|thinsp|hairsp|numsp|puncsp|shy
+           | zwnj|zwj|lrm|rlm|zwnbsp
+           | \#(?:34|38|39|60|62|160|173|8194|8195|8201|8202|8203|8204
+                 |8205|8206|8207|8232|8233|8239|8287|8288|65279)
+           | \#x(?:22|26|27|3c|3e|a0|ad|2002|2003|2009|200a|200b|200c
+                  |200d|200e|200f|2028|2029|202f|205f|2060|feff)
+          );)[\#0-9a-z]{,30};
 - rule:
     name: H024
     message: Omit type on scripts and styles.
@@ -264,20 +273,22 @@
     patterns:
       - "{%(?:(?!%}).)*}%"
 - rule:
-    name: H035
-    message: Meta tags should be self closing.
-    flags: re.DOTALL|re.I
-    default: false
-    patterns:
-      - <(meta)(\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
-      - <(meta)>
-- rule:
     name: H036
-    message: Avoid use of <br> tags.
-    flags: re.I
-    default: false
+    message: Do not use br tags for spacing.
+    flags: re.I|re.X
     patterns:
-      - <br\s*?\/?>
+      # a run of breaks is vertical space rather than a break in the content
+      - <br\s*/?>(?:\s|&nbsp;|&\#160;)*<br\s*/?>
+      # a break against the inside edge of a block box renders nothing that the
+      # box's own margin does not
+      - |-
+        <(?:p|div|li|dd|dt|td|th|section|article|aside|header|footer|main
+          |nav|blockquote|figcaption|h[1-6])\b(?:"[^"]*"|'[^']*'|[^>"'])*>
+        \s*<br\s*/?>
+      - |-
+        <br\s*/?>\s*
+        </(?:p|div|li|dd|dt|td|th|section|article|aside|header|footer|main
+           |nav|blockquote|figcaption|h[1-6])\s*>
 - rule:
     name: H037
     message: Duplicate attribute found.
@@ -315,5 +326,4 @@
 - rule:
     name: H044
     message: Thead should not mix th and td cells.
-    default: false
     python_module: djlint.rules.H044

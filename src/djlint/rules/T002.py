@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.const import TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS
 from djlint.helpers import (
     inside_html_attribute,
     inside_ignored_linter_block,
@@ -25,15 +26,20 @@ if TYPE_CHECKING:
 
 SINGLE_QUOTE_MESSAGE: Final = "Single quotes should be used in tags."
 
+# a string is only reported when the formatter can rewrite it, so one already
+# holding the quote it would be rewritten to is left alone
 _QUOTED_TAG_TEMPLATE: Final = (
-    r"{%[ \t]*?(?:trans(?:late)?|with|extends|include|now)[\s]+?"
-    r"(?:(?:(?!%}|QUOTE).)+?=)?QUOTE(?:(?!%}|QUOTE).)*?QUOTE(?:(?!%}).)*?%}"
+    rf"{{%[-+]?[ \t]*?(?:{TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS})[\s]+?"
+    r"(?:(?:(?!%}|QUOTE).)+?=)?QUOTE(?:(?!%}|QUOTE|WANTED).)*?QUOTE"
+    r"(?:(?!%}).)*?%}"
 )
 _WRONGLY_QUOTED_TAG_PATTERNS: Final = {
     style: re.compile(
-        _QUOTED_TAG_TEMPLATE.replace("QUOTE", quote), re.S, cache_pattern=False
+        _QUOTED_TAG_TEMPLATE.replace("QUOTE", quote).replace("WANTED", wanted),
+        re.S,
+        cache_pattern=False,
     )
-    for style, quote in (("double", "'"), ("single", '"'))
+    for style, quote, wanted in (("double", "'", '"'), ("single", '"', "'"))
 }
 
 

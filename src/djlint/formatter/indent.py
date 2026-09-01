@@ -17,13 +17,16 @@ from djlint.const import (
     HTML_RAW_TEXT_ELEMENTS,
     HTML_TAG_NAMES,
     HTML_VOID_ELEMENTS,
+    TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS,
 )
 from djlint.formatter.attributes import format_attributes
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
+    RE_FLAGS_IS,
     RE_FLAGS_IX,
+    inside_html_attribute,
     inside_ignored_block,
     inside_ignored_linter_block,
     is_ignored_block_closing,
@@ -43,6 +46,17 @@ _QUOTE_STYLES: Final = {
     "double": QuoteStyle.ALWAYS_DOUBLE,
     "single": QuoteStyle.ALWAYS_SINGLE,
 }
+_QUOTE_CHARACTERS: Final = {"double": '"', "single": "'"}
+
+_QUOTED_ARGUMENT_TAG_PATTERN: Final = re.compile(
+    rf"\{{%[-+]?[ \t]*(?:{TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS})\b"
+    r"(?:(?!%\}).)*?[-+]?%\}",
+    RE_FLAGS_IS,
+    cache_pattern=False,
+)
+_TAG_STRING_PATTERN: Final = re.compile(
+    r"\"[^\"]*\"|'[^']*'", cache_pattern=False
+)
 
 _TAG_SPACING_PATTERN: Final = re.compile(
     r"({%[-+]?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?([-+]?%})", cache_pattern=False
@@ -257,6 +271,33 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         rawcode = _INTERPOLATION_SPACING_PATTERN.sub(
             partial(fix_tag_spacing, rawcode), rawcode
+        )
+
+        def fix_tag_quotes(html: str, match: re.Match[str]) -> str:
+            """Rewrite a tag's quoted arguments to the configured quote.
+
+            This is what T002 asks for, so the rule stays fixable by
+            running the formatter. A string is left alone when it holds the
+            quote it would be rewritten to, and so is a tag written inside
+            an html attribute, where the attribute's own quotes decide.
+            """
+            if inside_ignored_block(config, html, match) or (
+                inside_html_attribute(html, match)
+            ):
+                return match.group()
+
+            wanted = _QUOTE_CHARACTERS[config.quote_style]
+
+            def requote(string: re.Match[str]) -> str:
+                text = string.group()
+                if text.startswith(wanted) or wanted in text[1:-1]:
+                    return text
+                return f"{wanted}{text[1:-1]}{wanted}"
+
+            return _TAG_STRING_PATTERN.sub(requote, match.group())
+
+        rawcode = _QUOTED_ARGUMENT_TAG_PATTERN.sub(
+            partial(fix_tag_quotes, rawcode), rawcode
         )
 
     elif config.profile == "handlebars":

@@ -29,7 +29,7 @@ La plupart des règles sont activées par défaut. Les règles peuvent être dé
 Par exemple :
 
 ```bash
-djlint . --lint --include=H017,H035 --ignore=H013,H015
+djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
 Cela peut également se faire par l'intermédiaire de l'option [{{ "configuration" | i18n }}]({{ "lang_code_url" | i18n }}/docs/configuration) fichier.
@@ -58,7 +58,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H020 | Couple de balises vide trouvé. Envisagez de le supprimer.                                                                 | ✔️     |
 | H021 | Les styles en ligne doivent être évités.                                                                                  | ✔️     |
 | H022 | Utilisez HTTPS pour les liens externes.                                                                                   | ✔️     |
-| H023 | N'utilisez pas de références d'entités.                                                                                   | -      |
+| H023 | N'utilisez pas de références d'entités.                                                                                   | ✔️     |
 | H024 | Omettre le type sur les scripts et les styles.                                                                            | ✔️     |
 | H025 | La balise semble être orpheline.                                                                                          | ✔️     |
 | H026 | Les balises id et class vides peuvent être supprimées.                                                                    | ✔️     |
@@ -69,14 +69,13 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                      | ✔️     |
 | J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                               | ✔️     |
 | T001 | Les variables doivent être entourées d'un espace. Ex : {% raw %}`{{ this }}`{% endraw %}                                  | ✔️     |
-| T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         | -      |
+| T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         | ✔️     |
 | T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                        | -      |
 | T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      | ✔️     |
 | T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} | -      |
 | T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            | ✔️     |
 | T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  | ✔️     |
-| H035 | Meta doivent se fermer d'elles-mêmes.                                                                                     | -      |
-| H036 | Évitez d'utiliser les balises `br`.                                                                                       | -      |
+| H036 | Évitez d'utiliser les balises `br`.                                                                                       | ✔️     |
 | H037 | Attribut en double trouvé.                                                                                                | ✔️     |
 | T038 | La balise de bloc n'a pas de balise de fin correspondante.                                                                | ✔️     |
 | T039 | Balise de template non fermée trouvée.                                                                                    | ✔️     |
@@ -84,7 +83,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                   | ✔️     |
 | H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | ✔️     |
 | H043 | La balise button devrait avoir un attribut `type`.                                                                        | ✔️     |
-| H044 | Un thead ne devrait pas mélanger des cellules `th` et `td`.                                                               | -      |
+| H044 | Un thead ne devrait pas mélanger des cellules `th` et `td`.                                                               | ✔️     |
 
 ### Modèles de code
 
@@ -131,13 +130,13 @@ Non appliquée aux profils handlebars et golang.
 
 `Les doubles quotes doivent être utilisées dans les balises. Ex : {% extends "this.html" %}`
 
-Désactivée par défaut ; à activer avec `--include=T002`.
-
 Mélanger guillemets simples et doubles dans les balises de modèle (`{% extends %}`, `{% include %}`, `{% with %}`, `{% trans %}`, `{% now %}`) fait apparaître le même nom de modèle sous deux orthographes : les recherches et les renommages en masse manquent alors la moitié des occurrences. Standardiser sur les guillemets doubles garde les arguments des balises cohérents avec les guillemets des attributs HTML dans le reste du fichier.
 
 Les guillemets simples à l'intérieur des valeurs d'attributs HTML (par exemple `<span title="{% trans 'x' %}">`) ne sont pas signalés, puisque les guillemets doubles de l'attribut y imposent des guillemets simples.
 
 Avec `quote_style = "single"`, la règle s'inverse et réclame des guillemets simples, que le formateur écrit également.
+
+`--reformat` réécrit ces guillemets pour vous : un signalement ne demande jamais de travail manuel.
 
 À éviter :
 
@@ -610,9 +609,7 @@ Les sous-ressources en simple http:// sur une page servie en HTTPS constituent d
 
 `N'utilisez pas de références d'entités.`
 
-Désactivée par défaut ; à activer avec `--include=H023`.
-
-Les documents HTML5 sont en UTF-8, donc le caractère littéral fonctionne partout et c'est ce que les relecteurs lisent réellement ; une faute de frappe dans une référence d'entité (par exemple `&mdsah;`) n'est pas détectée par le navigateur et s'affiche telle quelle comme du texte cassé. djLint n'autorise que les entités qui portent une signification syntaxique ou sont invisibles à l'écran, comme `&lt;`, `&gt;`, `&amp;`, `&quot;`, `&nbsp;` et `&shy;`.
+Les documents HTML5 sont en UTF-8, donc le caractère littéral fonctionne partout et c'est ce que les relecteurs lisent réellement ; une faute de frappe dans une référence d'entité (par exemple `&mdsah;`) n'est pas détectée par le navigateur et s'affiche telle quelle comme du texte cassé. djLint autorise les entités qui portent de la syntaxe (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`) et celles qui nomment un caractère invisible, donc impossible à relire sous forme littérale : les espaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), les liants et marques (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) et `&shy;`, sous forme nommée, décimale ou hexadécimale.
 
 À éviter :
 
@@ -865,38 +862,16 @@ Les espaces en début ou en fin de la valeur action d'un formulaire deviennent p
 {% include "footer.html" %}
 ```
 
-#### H035
-
-`Meta doivent se fermer d'elles-mêmes.`
-
-En HTML5 pur, la barre oblique finale sur `<meta>` est facultative, mais les modèles qui passent aussi par des outils XML/XHTML (validateurs XML, pipelines d'e-mails, XSLT) échouent à l'analyse quand les éléments vides ne sont pas auto-fermés. Activer cette règle maintient les balises `<meta>` sous la forme compatible XHTML `<meta ... />` afin que le même balisage survive aux deux analyseurs.
-
-Désactivée par défaut ; à activer avec `--include=H035`. Sous-ensemble de H017 (qui impose la barre oblique finale sur toutes les balises vides, meta comprise) ; n'activez H035 seule que si vous voulez la forme XHTML uniquement pour meta. Mutuellement exclusive avec H018 ; n'activez pas les deux.
-
-À éviter :
-
-```html
-<meta name="viewport" content="width=device-width">
-```
-
-À faire :
-
-```html
-<meta name="viewport" content="width=device-width" />
-```
-
 #### H036
 
-`Évitez d'utiliser les balises br.`
+`N'utilisez pas les balises br pour l'espacement.`
 
-`<br>` encode de la présentation dans le balisage : l'utiliser pour l'espacement ou pour simuler des paragraphes casse le renvoi à la ligne du texte aux largeurs étroites et dégrade l'accessibilité, puisque les lecteurs d'écran annoncent des sauts forcés au lieu d'une pause naturelle entre les blocs. Les idées distinctes relèvent d'éléments de bloc distincts, et l'espacement vertical relève des marges CSS. Notez que `<br>` est légitime lorsque le saut de ligne fait partie du contenu lui-même (adresses postales, poèmes, paroles de chansons) et cette règle ne peut pas distinguer ces cas de l'usage purement présentationnel : elle signale chaque `<br>`. Laissez-la désactivée si vos modèles rendent ce type de contenu.
-
-Désactivée par défaut ; à activer avec `--include=H036`.
+La spécification html n'autorise `<br>` que pour un saut de ligne faisant partie du contenu lui-même, comme dans une adresse postale ou un poème, et cet usage n'est pas touché. Ce qui est signalé est l'usage présentationnel que la spécification écarte : une suite d'au moins deux sauts, qui est de l'espace vertical, et un saut collé au bord intérieur d'un élément de bloc, qui ne rend rien que sa propre marge ne rendrait. Les deux cassent le renvoi à la ligne aux largeurs étroites, et un lecteur d'écran annonce un saut forcé là où il n'y a rien à annoncer.
 
 À éviter :
 
 ```html
-<p>Shipping is free.<br>Delivery takes 3 days.</p>
+<p>Shipping is free.<br><br>Delivery takes 3 days.</p>
 ```
 
 À faire :
@@ -1056,8 +1031,6 @@ Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer
 #### H044
 
 `Un thead ne devrait pas mélanger des cellules th et td.`
-
-Désactivée par défaut ; activez-la avec --include=H044.
 
 Chaque ligne est jugée séparément : la ligne d'explication en `td` que la spécification html place dans un `thead` à côté de la ligne d'en-têtes n'est donc pas un mélange. Un `td` vide en tête de ligne est la cellule d'angle d'un tableau dont la première colonne porte des en-têtes, le balisage que recommande le tutoriel d'accessibilité du W3C ; il est ignoré.
 

@@ -29,7 +29,7 @@ Most rules are enabled by default. Rules can be disabled in the command line wit
 For example:
 
 ```bash
-djlint . --lint --include=H017,H035 --ignore=H013,H015
+djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
 This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_url" | i18n }}/docs/configuration) file.
@@ -58,7 +58,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H020 | Empty tag pair found. Consider removing.                                                     | ✔️      |
 | H021 | Inline styles should be avoided.                                                             | ✔️      |
 | H022 | Use HTTPS for external links.                                                                | ✔️      |
-| H023 | Do not use entity references.                                                                | -       |
+| H023 | Do not use entity references.                                                                | ✔️      |
 | H024 | Omit type on scripts and styles.                                                             | ✔️      |
 | H025 | Tag seems to be an orphan.                                                                   | ✔️      |
 | H026 | Empty id and class tags can be removed.                                                      | ✔️      |
@@ -69,14 +69,13 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | J004 | (Jinja) Static urls should follow {% raw %}`{{ url_for('static'..) }}`{% endraw %} pattern.  | ✔️      |
 | J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          | ✔️      |
 | T001 | Variables should be wrapped in whitespace. Ex: {% raw %}`{{ this }}`{% endraw %}             | ✔️      |
-| T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    | -       |
+| T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    | ✔️      |
 | T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   | -       |
 | T027 | Unclosed string found in template syntax.                                                    | ✔️      |
 | T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} | -       |
 | T032 | Extra whitespace found in template tags.                                                     | ✔️      |
 | T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  | ✔️      |
-| H035 | Meta tags should be self closing.                                                            | -       |
-| H036 | Avoid use of `br` tags.                                                                      | -       |
+| H036 | Avoid use of `br` tags.                                                                      | ✔️      |
 | H037 | Duplicate attribute found.                                                                   | ✔️      |
 | T038 | Block tag has no matching end tag.                                                           | ✔️      |
 | T039 | Unclosed template tag found.                                                                 | ✔️      |
@@ -84,7 +83,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
 | H042 | Label for attribute has no matching element id in this file.                                 | ✔️      |
 | H043 | Button tag should have a `type` attribute.                                                   | ✔️      |
-| H044 | Thead should not mix `th` and `td` cells.                                                    | -       |
+| H044 | Thead should not mix `th` and `td` cells.                                                    | ✔️      |
 
 ### Code Patterns
 
@@ -131,13 +130,13 @@ Do:
 
 `Double quotes should be used in tags.`
 
-Off by default; enable with `--include=T002`.
-
 Mixing single and double quotes in template tags (`{% extends %}`, `{% include %}`, `{% with %}`, `{% trans %}`, `{% now %}`) makes the same template name appear in two spellings, so searches and bulk renames miss half the occurrences. Standardizing on double quotes keeps tag arguments consistent with HTML attribute quoting in the rest of the file.
 
 Single quotes inside HTML attribute values (e.g. `<span title="{% trans 'x' %}">`) are not flagged, since the attribute's double quotes force single quotes there.
 
 With `quote_style = "single"` the rule asks for single quotes instead, and the formatter writes them.
+
+`--reformat` rewrites these quotes for you, so a finding is never hand work.
 
 Don't:
 
@@ -610,9 +609,7 @@ Do:
 
 `Do not use entity references.`
 
-Off by default; enable with `--include=H023`.
-
-HTML5 documents are UTF-8, so the literal character works everywhere and is what reviewers actually read; a typo in an entity reference (e.g. `&mdsah;`) is not caught by the browser and renders verbatim as broken text. djLint allows only the entities that carry syntactic meaning or are invisible on screen, such as `&lt;`, `&gt;`, `&amp;`, `&quot;`, `&nbsp;` and `&shy;`.
+HTML5 documents are UTF-8, so the literal character works everywhere and is what reviewers actually read; a typo in an entity reference (e.g. `&mdsah;`) is not caught by the browser and renders verbatim as broken text. djLint allows the entities that carry syntax (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`) and those naming a character that is invisible, and so cannot be reviewed as a literal: the spaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), the joiners and marks (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) and `&shy;`, in named, decimal and hex form alike.
 
 Don't:
 
@@ -865,38 +862,16 @@ Do:
 {% include "footer.html" %}
 ```
 
-#### H035
-
-`Meta tags should be self closing.`
-
-In plain HTML5 the trailing slash on `<meta>` is optional, but templates that are also fed through XML/XHTML tooling (XML validators, email pipelines, XSLT) fail to parse when void elements are not self-closed. Enabling this rule keeps `<meta>` tags in the XHTML-compatible `<meta ... />` form so the same markup survives both parsers.
-
-Off by default; enable with `--include=H035`. A subset of H017 (which enforces the trailing slash on all void tags, meta included); enable H035 alone only if you want the XHTML form just for meta. Mutually exclusive with H018; do not enable both.
-
-Don't:
-
-```html
-<meta name="viewport" content="width=device-width">
-```
-
-Do:
-
-```html
-<meta name="viewport" content="width=device-width" />
-```
-
 #### H036
 
-`Avoid use of <br> tags.`
+`Do not use br tags for spacing.`
 
-`<br>` encodes presentation in markup: using it for spacing or to fake paragraphs breaks text reflow at narrow widths and degrades accessibility, since screen readers announce forced breaks instead of a natural pause between blocks. Use separate block elements for separate thoughts, and CSS margins for the spacing between them. `<br>` is legitimate where the line break is part of the content itself (postal addresses, poems, lyrics), but this rule cannot tell those apart from presentational use and flags every `<br>`, so leave it disabled if your templates render such content.
-
-Off by default; enable with `--include=H036`.
+The html specification allows `<br>` only for a line break that is part of the content itself, as in a postal address or a poem, and that use is left alone. What is reported is the presentational use the specification rules out: a run of two or more breaks, which is vertical space, and a break against the inside edge of a block element, which renders nothing its own margin would not. Both break text reflow at narrow widths, and a screen reader announces a forced break where there is nothing to announce.
 
 Don't:
 
 ```html
-<p>Shipping is free.<br>Delivery takes 3 days.</p>
+<p>Shipping is free.<br><br>Delivery takes 3 days.</p>
 ```
 
 Do:
@@ -1056,8 +1031,6 @@ Do:
 #### H044
 
 `Thead should not mix th and td cells.`
-
-Off by default; enable with --include=H044.
 
 A row is judged on its own, so the explanation row of `td` that the html specification places in a `thead` beside the row of headers is not a mixture. An empty `td` opening the row is the corner cell of a table with headers down its first column, which is the markup the W3C accessibility tutorial asks for, so it is skipped.
 

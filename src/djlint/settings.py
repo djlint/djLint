@@ -1508,14 +1508,11 @@ class Config:
         )
         if self.lint:
             enabled_rules = {x["rule"]["name"] for x in self.linter_rules}
-            conflicting = {"H017", "H035"} & enabled_rules
-            if "H018" in enabled_rules and conflicting:
+            if {"H017", "H018"} <= enabled_rules:
                 echo(
                     style(
-                        "Warning: H018 conflicts with"
-                        f" {' and '.join(sorted(conflicting))} because they"
-                        " enforce opposite void tag styles. Enable only one"
-                        " convention. 😢",
+                        "Warning: H017 and H018 enforce opposite void tag"
+                        " styles. Enable only one convention. 😢",
                         fg="yellow",
                     ),
                     err=True,

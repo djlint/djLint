@@ -205,7 +205,7 @@ def test_H017(
 
     # H017 and H018 enforce opposite conventions
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H017,H018"))
-    assert "H018 conflicts with H017" in result.output
+    assert "H017 and H018 enforce opposite void tag styles" in result.output
 
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
     assert "conflicts" not in result.output
@@ -378,55 +378,35 @@ def test_H022(
 def test_H023(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
-    # opt in: an entity reference is a house style, not a defect
-    write_to_file(tmp_file.name, b"&mdash;")
-    result = runner.invoke(djlint, (tmp_file.name,))
-    assert "H023" not in result.output
+    for reported in (b"&mdash;", b"&aacute;", b"&#63;", b"&#x3F;", b"&copy;"):
+        write_to_file(tmp_file.name, reported)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert result.exit_code == 1
+        assert "H023 1:" in result.output
 
-    write_to_file(tmp_file.name, b"&mdash;")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 1
-    assert "H023 1:" in result.output
-
-    write_to_file(tmp_file.name, b"&aacute;")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 1
-    assert "H023 1:" in result.output
-
-    write_to_file(tmp_file.name, b"&gt;")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 0
-
-    write_to_file(tmp_file.name, b'<a href=" &gt; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 0
-
-    write_to_file(tmp_file.name, b'<a href=" &shy; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 0
-
-    write_to_file(tmp_file.name, b'<a href=" foo & bar; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 0
-
-    write_to_file(tmp_file.name, b'<a href=" &aacute; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 1
-    assert "H023 1:" in result.output
-
-    write_to_file(tmp_file.name, b"&#63;")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 1
-    assert "H023 1:" in result.output
-
-    write_to_file(tmp_file.name, b"&#x3F;")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 1
-    assert "H023 1:" in result.output
+    # syntax, and characters that cannot be reviewed as a literal, are allowed
+    for quiet in (
+        b"&gt;",
+        b"&amp;",
+        b"&apos;",
+        b"&shy;",
+        b"&nbsp;",
+        b"&zwnj;",
+        b"&zwj;",
+        b"&lrm;",
+        b"&hairsp;",
+        b"&#8203;",
+        b"&#x200c;",
+        b"&#160;",
+        b"&#xfeff;",
+        b'<a href=" foo & bar; "></a>',
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H023" not in result.output
 
     write_to_file(tmp_file.name, b'<a href=" &#63; "></a>')
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H023"))
-    assert result.exit_code == 1
+    result = runner.invoke(djlint, (tmp_file.name,))
     assert "H023 1:" in result.output
 
 
@@ -758,51 +738,30 @@ def test_H031(
     assert "H031" not in result.output
 
 
-def test_H035(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    write_to_file(tmp_file.name, b"<meta this >")
-    result = runner.invoke(djlint, (tmp_file.name,))
-    assert result.exit_code == 0
-    assert "H035 1:" not in result.output
-
-    write_to_file(tmp_file.name, b"<meta this >")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H035"))
-    assert result.exit_code == 1
-    assert "H035 1:" in result.output
-
-    write_to_file(tmp_file.name, b"<meta>")
-    result = runner.invoke(djlint, (tmp_file.name,))
-    assert result.exit_code == 0
-    assert "H035 1:" not in result.output
-
-    write_to_file(tmp_file.name, b"<meta>")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H035"))
-    assert result.exit_code == 1
-    assert "H035 1:" in result.output
-
-
 def test_H036(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
-    write_to_file(tmp_file.name, b"<br><br ><br />")
-    result = runner.invoke(djlint, (tmp_file.name,))
-    assert "H036" not in result.output
+    for reported in (
+        b"<p>a<br><br>b</p>",
+        b"<p>a<br />\n<br />b</p>",
+        b"<p><br>a</p>",
+        b"<div>a<br></div>",
+        b"<li>a<br/></li>",
+    ):
+        write_to_file(tmp_file.name, reported)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert result.exit_code == 1, reported
+        assert "H036 1:" in result.output
 
-    write_to_file(tmp_file.name, b"<br>")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H036"))
-    assert result.exit_code == 1
-    assert "H036" in result.output
-
-    write_to_file(tmp_file.name, b"<br />")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H036"))
-    assert result.exit_code == 1
-    assert "H036" in result.output
-
-    write_to_file(tmp_file.name, b"<br/>")
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H036"))
-    assert result.exit_code == 1
-    assert "H036" in result.output
+    # a break that is part of the content, as the html specification puts it
+    for quiet in (
+        b"<p>Acme Ltd<br>1 High St<br>Springfield</p>",
+        b"<address>a<br>b</address>",
+        b"<br>",
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H036" not in result.output, quiet
 
 
 def test_rules_not_matched_in_ignored_block(
