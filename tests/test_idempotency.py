@@ -100,6 +100,14 @@ templates = [
     pytest.param(
         '<input id="ab"  type="cdef">\n', id="extra space between attributes"
     ),
+    pytest.param(
+        '<li><code>{%-</code></li>\n<h2 id="a" tabindex="-1" class="title is-2">x</h2>\n<li><code>-%}</code></li>\n',
+        id="template delimiter written as prose",
+    ),
+    pytest.param(
+        '<td>{% x }%?</td>\n<h2 id="a" tabindex="-1" class="title is-2">x</h2>\n<p><code>{% tag %}</code></p>\n',
+        id="unclosed template tag before a heading",
+    ),
 ]
 
 option_sets = [

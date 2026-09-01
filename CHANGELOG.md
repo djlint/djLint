@@ -96,6 +96,7 @@
 - Formatting a file twice gives the same file when a `<script>` or `<style>` is followed by text. The closing tag was left glued to whatever came next on the first run and broken onto its own line on the second. Text that really does sit against the element, as in `a<script>x</script>b`, is still left alone, because a line break there renders as a space.
 - A `{%` written inside javascript is no longer read as a template tag. A `<script>` holding `'{%'` and `'%}'` in its code stopped the whole line it was on from being formatted, so the markup around it kept whatever layout it arrived with.
 - A tag is measured as it will be written when deciding whether to spread its attributes over several lines. Extra spaces between attributes counted towards the length, so `<input id="a"  type="checkbox">` was spread, measured short enough to be joined again, and spread once more on the next run.
+- A `{%` that opens nothing no longer hides the markup after it. A page quoting template syntax in prose, as in `<code>{%-</code>`, or holding a typo such as `{% x }%`, went unformatted from there to the next `%}` anywhere below, because everything between was read as one template tag. An opener written directly against a `<` or `>`, and one followed by a second opener before any closing delimiter, are text now.
 
 ### Performance
 

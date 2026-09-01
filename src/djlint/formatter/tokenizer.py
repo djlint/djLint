@@ -82,9 +82,40 @@ def _after_brace_run_expression(source: str, start: int) -> int | None:
     open_length = 2
     while source[start + open_length : start + open_length + 1] == "{":
         open_length += 1
-    closing = "}" * open_length
-    end = source.find(closing, start + open_length)
-    return end + open_length if end >= 0 else None
+    if _starts_markup(source, start + open_length):
+        return None
+    return _after_delimited(
+        source, start, source[start : start + open_length], "}" * open_length
+    )
+
+
+def _after_delimited(
+    source: str, start: int, opening: str, closing: str
+) -> int | None:
+    """Return the end of an expression closed by the mirror of opening.
+
+    A second opener before the closing delimiter means the first one was
+    never closed: no template language nests these, and reading an
+    unclosed `{%` as an expression hides every tag between it and the
+    next `%}` anywhere on the page.
+    """
+    end = source.find(closing, start + len(opening))
+    if end < 0:
+        return None
+    nested = source.find(opening, start + len(opening))
+    if 0 <= nested < end:
+        return None
+    return end + len(closing)
+
+
+def _starts_markup(source: str, index: int) -> bool:
+    """Whether a template expression would open on a tag bracket.
+
+    No template names a tag as its first token, so `{%-` written as prose,
+    as in `<code>{%-</code>`, opens nothing. Reading it as an expression
+    would hide every tag up to the next closing delimiter on the page.
+    """
+    return source[index : index + 1] in {"<", ">"}
 
 
 def _after_template(source: str, start: int) -> int | None:
@@ -97,8 +128,12 @@ def _after_template(source: str, start: int) -> int | None:
     closing = _TEMPLATE_DELIMITERS.get(source[start : start + 2])
     if not closing:
         return None
-    end = source.find(closing, start + 2)
-    return end + len(closing) if end >= 0 else None
+    if closing == "%}" and _starts_markup(
+        source,
+        start + 3 if source[start + 2 : start + 3] in {"-", "+"} else start + 2,
+    ):
+        return None
+    return _after_delimited(source, start, source[start : start + 2], closing)
 
 
 def _next_template_opener(source: str, start: int, stop: int) -> int:
