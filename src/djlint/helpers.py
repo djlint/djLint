@@ -65,7 +65,7 @@ def _last_item(iterable: Iterable[T], /) -> T | None:
 def _inside_non_overlapping_span(
     spans: tuple[tuple[int, int], ...], match_start: int, match_end: int, /
 ) -> bool:
-    index = bisect_right(spans, (match_start, float("inf"))) - 1
+    index = bisect_right(spans, (match_start, _AFTER_EVERY_SPAN)) - 1
     if index < 0:
         return False
 

@@ -52,7 +52,8 @@ def _after_mako_expression(source: str, start: int) -> int | None:
     depth = 1
     quote: str | None = None
     cursor = start + 2
-    while cursor < len(source):
+    length = len(source)
+    while cursor < length:
         char = source[cursor]
         if quote is not None:
             if char == "\\":
@@ -136,9 +137,13 @@ def _after_template(source: str, start: int) -> int | None:
     return _after_delimited(source, start, source[start : start + 2], closing)
 
 
-def _next_template_opener(source: str, start: int, stop: int) -> int:
+def _next_template_opener(
+    source: str, start: int, stop: int, *, mako: bool
+) -> int:
     """Return the next "{" or "$" position in [start, stop), or -1."""
     brace = source.find("{", start, stop)
+    if not mako:
+        return brace
     dollar = source.find("$", start, stop)
     if brace < 0:
         return dollar
@@ -147,7 +152,9 @@ def _next_template_opener(source: str, start: int, stop: int) -> int:
     return min(brace, dollar)
 
 
-def _enclosing_template_end(source: str, start: int, lt: int) -> int | None:
+def _enclosing_template_end(
+    source: str, start: int, lt: int, *, mako: bool
+) -> int | None:
     """End of a template expression opening in [start, lt) that spans lt.
 
     A "<" used as a less-than operator inside a template expression
@@ -155,7 +162,7 @@ def _enclosing_template_end(source: str, start: int, lt: int) -> int | None:
     """
     cursor = start
     while cursor < lt:
-        opener = _next_template_opener(source, cursor, lt)
+        opener = _next_template_opener(source, cursor, lt, mako=mako)
         if opener < 0:
             return None
         after = _after_template(source, opener)
@@ -178,11 +185,15 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
     quoted literal like a="{{" has no closing of its own, so the "}}" a
     plain search settles on lies past the end of the tag.
     """
-    has_templates = "{" in source or "$" in source
+    mako = "$" in source
+    has_templates = mako or "{" in source
+    length = len(source)
     search_from = 0
     while (start := source.find("<", search_from)) >= 0:
         if has_templates:
-            enclosing_end = _enclosing_template_end(source, search_from, start)
+            enclosing_end = _enclosing_template_end(
+                source, search_from, start, mako=mako
+            )
             if enclosing_end is not None:
                 search_from = enclosing_end
                 continue
@@ -206,13 +217,13 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
         declaration = source[name_start : name_start + 1] == "!"
         if closing or declaration:
             name_start += 1
-        if name_start >= len(source) or not source[name_start].isalpha():
+        if name_start >= length or not source[name_start].isalpha():
             search_from = start + 1
             continue
 
         name_end = name_start
         while (
-            name_end < len(source)
+            name_end < length
             and not source[name_end].isspace()
             and source[name_end] not in "/>{"
         ):
@@ -220,7 +231,7 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
 
         quote: str | None = None
         cursor = name_end
-        while cursor < len(source):
+        while cursor < length:
             char = source[cursor]
             if char in {"$", "{"}:
                 template_end = _after_template(source, cursor)
