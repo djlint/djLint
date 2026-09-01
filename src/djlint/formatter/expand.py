@@ -466,7 +466,9 @@ def expand_html(html: str, config: Config) -> str:
         Against a block edge, or whitespace already there, css drops it
         either way, and there the break is only this formatter's layout.
         """
-        index = match.start(1) if out_format == "\n%s" else match.end(1)
+        index = (
+            match.start(1) if out_format == _BREAK_BEFORE_TAG else match.end(1)
+        )
         return touches_rendered_content(
             index, back=True
         ) and touches_rendered_content(index, back=False)
@@ -501,13 +503,13 @@ def expand_html(html: str, config: Config) -> str:
         if splits_inline_boxes(out_format, match):
             return match.group(1)
 
-        if out_format == "\n%s" and match.start() == 0:
+        if out_format == _BREAK_BEFORE_TAG and match.start() == 0:
             return match.group(1)
 
         return out_format % match.group(1)
 
-    break_before_html_tag = partial(add_html_line, "\n%s")
-    break_after_html_tag = partial(add_html_line, "%s\n")
+    break_before_html_tag = partial(add_html_line, _BREAK_BEFORE_TAG)
+    break_after_html_tag = partial(add_html_line, _BREAK_AFTER_TAG)
 
     break_char = config.break_before
 
@@ -554,14 +556,18 @@ def expand_html(html: str, config: Config) -> str:
             html[:match_end],
             flags=RE_FLAGS_MX,
         ):
-            if out_format == "\n%s" and match_start == 0:
+            if out_format == _BREAK_BEFORE_TAG and match_start == 0:
                 return match.group(1)
             return out_format % match.group(1)
 
         return match.group(1)
 
-    break_before_template_tag = partial(should_i_move_template_tag, "\n%s")
-    break_after_template_tag = partial(should_i_move_template_tag, "%s\n")
+    break_before_template_tag = partial(
+        should_i_move_template_tag, _BREAK_BEFORE_TAG
+    )
+    break_after_template_tag = partial(
+        should_i_move_template_tag, _BREAK_AFTER_TAG
+    )
 
     html = re.sub(
         break_char

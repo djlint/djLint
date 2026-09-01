@@ -112,6 +112,10 @@ templates = [
         "    <pre><code>a\n      b</code></pre>\n\n<p>x</p>\n",
         id="indented verbatim block above a blank line",
     ),
+    pytest.param(
+        "{% if a %}y{% endif %}<p>\ntext\n</p>\nz\n",
+        id="template block closed on the line it opens",
+    ),
 ]
 
 option_sets = [

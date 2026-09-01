@@ -764,7 +764,9 @@ def indent_html(rawcode: str, config: Config) -> str:
             )
         ):
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
-            if template_indent_pattern.match(item.lstrip()):
+            if template_indent_pattern.match(item.lstrip()) and len(
+                template_indent_pattern.findall(item)
+            ) > len(template_unindent_pattern.findall(item)):
                 template_block_stack.append((indent_level, None, True))
             indent_level += 1
 
