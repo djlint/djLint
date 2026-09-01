@@ -103,6 +103,7 @@
 - `--preserve-leading-space` no longer moves a line back and forth on every run. A line opening with text and holding a short element, such as `&amp;<small> text </small>`, was recognised as one only while it sat at the left margin, so each run indented it and the next pulled it back, and `--check` never came out clean.
 - `--keep-br-inline` works on the command line. The option existed in the config file and in the documentation, but the flag itself was never added, so passing it was an error.
 - A `<pre>`, `<textarea>`, `<script>` or `<style>` opened and closed on one line no longer counts as closing a block opened earlier. `<pre>x</pre><script>` cancelled the block the `<script>` had just opened, so its body was indented as markup, and markup written after `</style>` on the closing line, as in `</style>z</b>`, went uncounted, so the element it closed kept its indent for the rest of the file. Both took a second run to settle, and the configuration page of djLint's own docs was one of the files affected under `--format-js`.
+- Formatting leaves an escaped brace alone, and `H023` no longer reports one. `&#123;&#123; name &#125;&#125;` was rewritten to `{{ name }}`, turning text a template deliberately displays into an expression it now evaluates, and `&lbrace;% if %&rbrace;` into a live tag. A brace carries syntax in a template the way `<` does in html, so `&lbrace;`, `&rbrace;`, `&lcub;`, `&rcub;` and their decimal and hex forms join the entities that are kept as written.
 
 ### Performance
 
@@ -121,6 +122,8 @@
 - The configuration page no longer wraps each option's description in a second paragraph. The markdown already produced one, so the page carried forty-four `<p><p>` nestings that a browser has to repair and that djLint's own linter reported as orphan tags.
 - The docs no longer write `class=""` on every inactive tab and navigation link. The class attribute is only written when it has a value, which is what `H026` asks for, so djLint's own site now passes its own rule.
 - The two figures the docs sized with an inline `style` take their width from the stylesheet instead, which is what `H021` asks for.
+- The front page's opening paragraph was never closed and one closing `</div>` too many followed the contributing section, so every browser was repairing the markup. Both are fixed, and djLint's own `H025` no longer reports the page.
+- The mustache page links to the mustache manual over https.
 
 ### Tests
 

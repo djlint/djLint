@@ -9,7 +9,7 @@ tool: handlebars
 
 {{ description }}
 
-**[C'est quoi Mustache?](http://mustache.github.io/mustache.5.html)**
+**[C'est quoi Mustache?](https://mustache.github.io/mustache.5.html)**
 
 #### Utilisation de la ligne de commande
 
