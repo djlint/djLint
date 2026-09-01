@@ -78,6 +78,7 @@ Options:
                                   matter.
   --no-function-formatting        Do not attempt to format function contents.
   --no-set-formatting             Do not attempt to format set contents.
+  --keep-br-inline                Keep <br> on the line of the text it breaks.
   --no-entity-formatting          Do not rewrite entity references as
                                   characters.
   --quote-style [double|single]   Quotes to use for strings inside template

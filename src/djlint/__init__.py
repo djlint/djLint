@@ -404,6 +404,11 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     help="Do not attempt to format set contents.",
 )
 @click.option(
+    "--keep-br-inline",
+    is_flag=True,
+    help="Keep <br> on the line of the text it breaks.",
+)
+@click.option(
     "--no-entity-formatting",
     is_flag=True,
     help="Do not rewrite entity references as characters.",
@@ -478,6 +483,7 @@ def main(
     no_function_formatting: bool,
     no_set_formatting: bool,
     no_entity_formatting: bool,
+    keep_br_inline: bool,
     quote_style: str | None,
     max_blank_lines: int | None,
     github_output: bool | None = None,
@@ -548,6 +554,7 @@ def main(
         no_function_formatting=no_function_formatting,
         no_set_formatting=no_set_formatting,
         no_entity_formatting=no_entity_formatting,
+        keep_br_inline=keep_br_inline,
         quote_style=quote_style,
         max_blank_lines=max_blank_lines,
         github_output=github_output,

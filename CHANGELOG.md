@@ -101,6 +101,7 @@
 - A template block opened and closed on one line no longer indents everything after it. `{% if a %}y{% endif %}<p>` left the `{% if %}` counted as open, so the first closing tag below it restored the indent to that phantom block's level and the rest of the file sat one level too deep until the next run pulled it back.
 - An element opened on the same line as a `<script>`, `<style>` or `<pre>` keeps its indent. Everything before the block's opening tag went uncounted, so the children of `<a class="x">text<style>` sat outside it, and a closing tag written after such a block's end tag now gives back the level it took.
 - `--preserve-leading-space` no longer moves a line back and forth on every run. A line opening with text and holding a short element, such as `&amp;<small> text </small>`, was recognised as one only while it sat at the left margin, so each run indented it and the next pulled it back, and `--check` never came out clean.
+- `--keep-br-inline` works on the command line. The option existed in the config file and in the documentation, but the flag itself was never added, so passing it was an error.
 
 ### Performance
 
@@ -123,6 +124,7 @@
 - The readme's before-and-after example is checked against the formatter, so it cannot drift from what djLint actually writes.
 - Every rule's documented do and don't example is run through the linter, so a rule cannot quietly stop matching what its page shows.
 - The formatter page's example is formatted and compared with the output it shows, in each of the four languages the docs are written in.
+- Every command line flag the configuration page shows has to exist, so a documented option cannot be missing from the command line.
 
 ## [1.44.2] - 2026-08-08
 

@@ -5,9 +5,12 @@ uv run pytest tests/test_cli.py
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+import click
 
 from djlint import main as djlint
 
@@ -15,6 +18,7 @@ if TYPE_CHECKING:
     from click.testing import CliRunner
 
 _CLI_DOCS = Path("docs/src/_includes/cli.md")
+_CONFIGURATION_DOCS = Path("docs/src/_data/configuration.json")
 _HELP_WIDTH = 80
 
 
@@ -102,3 +106,26 @@ def test_cli(runner: CliRunner) -> None:
     print(result.output)
 
     assert result.exit_code == 0
+
+
+def test_documented_options_exist() -> None:
+    """Every flag the configuration page shows has to be a real one."""
+    flags = {
+        option
+        for param in djlint.params
+        if isinstance(param, click.Option)
+        for option in param.opts
+    }
+    documented = {
+        word
+        for entry in json.loads(_CONFIGURATION_DOCS.read_text(encoding="utf-8"))
+        for usage in entry["usage"]
+        if usage["name"] == "cli"
+        for word in usage["value"].split()
+        if word.startswith("--")
+    }
+
+    assert documented <= flags, (
+        f"{_CONFIGURATION_DOCS} documents flags djLint does not have: "
+        f"{sorted(documented - flags)}"
+    )
