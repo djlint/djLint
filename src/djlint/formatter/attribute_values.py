@@ -6,7 +6,11 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.helpers import RE_FLAGS_IX, overlaps_ignored_block
+from djlint.helpers import (
+    RE_FLAGS_IX,
+    inside_template_block,
+    overlaps_ignored_block,
+)
 
 if TYPE_CHECKING:
     from typing import Final
@@ -45,16 +49,23 @@ def format_attribute_values(html: str, config: Config) -> str:
     The spans checked are the ones linting uses, which cover a verbatim
     block's contents but not its opening tag: a `<script>` is a real tag
     whose attributes can be rewritten, while the same text written inside
-    a `<pre>` is content and is left alone.
+    a `<pre>` is content and is left alone. So is a tag written inside a
+    template tag, as in `{% set s = '<form method="POST">' %}`, which
+    is a string the template holds rather than an element of the page.
     """
 
+    def is_left_alone(match: re.Match[str]) -> bool:
+        return overlaps_ignored_block(
+            config, html, match
+        ) or inside_template_block(config, html, match)
+
     def drop_default_type(match: re.Match[str]) -> str:
-        if overlaps_ignored_block(config, html, match):
+        if is_left_alone(match):
             return match.group()
         return match.group(1)
 
     def lowercase_method(match: re.Match[str]) -> str:
-        if overlaps_ignored_block(config, html, match):
+        if is_left_alone(match):
             return match.group()
         return f"{match.group(1)}{match.group(2).lower()}{match.group(3)}"
 
