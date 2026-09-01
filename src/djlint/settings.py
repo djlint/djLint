@@ -23,6 +23,7 @@ from djlint.helpers import (
     YAML_FRONT_MATTER,
     split_option_list,
 )
+from djlint.lint import build_flags
 
 try:
     from pathspec.patterns.gitignore import GitIgnorePatternError
@@ -1123,6 +1124,7 @@ class Config:
         "css_config",
         "custom_blocks",
         "custom_html",
+        "entity_pattern",
         "exclude",
         "exclude_pattern",
         "extension",
@@ -1166,6 +1168,7 @@ class Config:
         "max_attribute_length",
         "max_blank_lines",
         "max_line_length",
+        "no_entity_formatting",
         "no_function_formatting",
         "no_line_after_yaml",
         "no_set_formatting",
@@ -1262,6 +1265,7 @@ class Config:
         indent_js: int | None = None,
         close_void_tags: bool = False,
         no_line_after_yaml: bool = False,
+        no_entity_formatting: bool = False,
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
         quote_style: str | None = None,
@@ -1344,6 +1348,9 @@ class Config:
             no_function_formatting
             or djlint_settings.get("no_function_formatting", False)
             or expressions_are_rust
+        )
+        self.no_entity_formatting = no_entity_formatting or djlint_settings.get(
+            "no_entity_formatting", False
         )
         self.quote_style = str(
             quote_style or djlint_settings.get("quote_style", "double")
@@ -1471,12 +1478,14 @@ class Config:
         )
         with (Path(__file__).parent / "rules.yaml").open("rb") as f:
             default_rules = yaml.safe_load(f)
-        rule_set = validate_rules(
-            chain(
-                default_rules,
-                load_custom_rules(
-                    rules or find_djlint_rules(self.project_root)
-                ),
+        rule_set = tuple(
+            validate_rules(
+                chain(
+                    default_rules,
+                    load_custom_rules(
+                        rules or find_djlint_rules(self.project_root)
+                    ),
+                )
             )
         )
         # "all" is every template language at once, so a rule excluded for
@@ -1496,6 +1505,17 @@ class Config:
                 rule["name"].startswith(code) for code in profile_codes
             )
 
+        self.entity_pattern = next(
+            (
+                re.compile(
+                    x["rule"]["patterns"][0],
+                    build_flags(x["rule"].get("flags", "re.S")),
+                )
+                for x in rule_set
+                if x["rule"]["name"] == "H023" and "patterns" in x["rule"]
+            ),
+            None,
+        )
         self.linter_rules = tuple(
             x
             for x in rule_set

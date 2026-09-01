@@ -93,6 +93,21 @@
     "tags": ["formatter", "linter"]
   },
   {
+    "name": "no_entity_formatting",
+    "description": {
+      "en": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `©`. The entities that carry syntax, and the invisible ones, are never rewritten either way.",
+      "ru": "Не переписывать ссылку на сущность в именуемый ею символ: `&copy;` останется как есть, а не станет `©`. Сущности, несущие синтаксис, и невидимые не переписываются в любом случае.",
+      "fr": "Ne pas réécrire une référence d'entité en le caractère qu'elle nomme : `&copy;` reste tel quel au lieu de devenir `©`. Les entités qui portent de la syntaxe et les invisibles ne sont de toute façon jamais réécrites.",
+      "zh": "不把实体引用改写成它所指代的字符，`&copy;` 保持原样而不会变成 `©`。承载语法的实体和不可见实体在任何情况下都不会被改写。"
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "no_entity_formatting=true" },
+      { "name": ".djlintrc", "value": "\"no_entity_formatting\": true" },
+      { "name": "cli", "value": "--no-entity-formatting" }
+    ],
+    "tags": ["formatter"]
+  },
+  {
     "name": "no_line_after_yaml",
     "description": {
       "en": "Do not add a blank line after yaml front matter.",

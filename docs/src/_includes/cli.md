@@ -78,6 +78,8 @@ Options:
                                   matter.
   --no-function-formatting        Do not attempt to format function contents.
   --no-set-formatting             Do not attempt to format set contents.
+  --no-entity-formatting          Do not rewrite entity references as
+                                  characters.
   --quote-style [double|single]   Quotes to use for strings inside template
                                   tags. [default: double]
   --max-blank-lines INTEGER       Consolidate blank lines down to x lines.

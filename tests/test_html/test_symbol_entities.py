@@ -57,8 +57,8 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
     assert expected == output
 
 
-def test_entities_are_kept_when_the_rule_is_off() -> None:
+def test_no_entity_formatting_keeps_them() -> None:
     source = "<p>I will display &euro;</p>\n"
-    config = config_builder({"ignore": "H023"})
+    config = config_builder({"no_entity_formatting": True})
 
     assert formatter(config, source) == source

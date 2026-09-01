@@ -10,13 +10,13 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.formatter.autofix import apply_autofixes
 from djlint.formatter.class_attributes import (
     restore_class_attribute_newlines,
     restore_verbatim_attribute_newlines,
 )
 from djlint.formatter.compress import compress_html
 from djlint.formatter.condense import clean_whitespace, condense_html
+from djlint.formatter.entities import format_entities
 from djlint.formatter.expand import expand_html
 from djlint.formatter.indent import indent_html
 from djlint.helpers import mask_unformatted_blocks, restore_unformatted_blocks
@@ -51,7 +51,7 @@ def formatter(config: Config, rawcode: str) -> str:
         normalized_code
     )
 
-    normalized_code = apply_autofixes(normalized_code, config)
+    normalized_code = format_entities(normalized_code, config)
 
     compressed = compress_html(normalized_code, config)
 

@@ -404,6 +404,11 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     help="Do not attempt to format set contents.",
 )
 @click.option(
+    "--no-entity-formatting",
+    is_flag=True,
+    help="Do not rewrite entity references as characters.",
+)
+@click.option(
     "--quote-style",
     type=click.Choice(("double", "single")),
     help="Quotes to use for strings inside template tags. [default: double]",
@@ -472,6 +477,7 @@ def main(
     no_line_after_yaml: bool,
     no_function_formatting: bool,
     no_set_formatting: bool,
+    no_entity_formatting: bool,
     quote_style: str | None,
     max_blank_lines: int | None,
     github_output: bool | None = None,
@@ -541,6 +547,7 @@ def main(
         no_line_after_yaml=no_line_after_yaml,
         no_function_formatting=no_function_formatting,
         no_set_formatting=no_set_formatting,
+        no_entity_formatting=no_entity_formatting,
         quote_style=quote_style,
         max_blank_lines=max_blank_lines,
         github_output=github_output,
