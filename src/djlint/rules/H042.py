@@ -23,6 +23,7 @@ from djlint.helpers import (
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from typing import Final
 
     from typing_extensions import Any
@@ -85,6 +86,17 @@ _TAGS_THAT_CANNOT_RENDER_AN_ID: Final = frozenset({
 _TAG_NAME: Final = re.compile(r"\{%[-+]?\s*(\w+)", cache_pattern=False)
 
 
+_LABELABLE_ELEMENTS: Final = frozenset((
+    "button",
+    "input",
+    "meter",
+    "output",
+    "progress",
+    "select",
+    "textarea",
+))
+
+
 def _can_check(masked: str) -> bool:
     """Whether every template construct is unable to emit an id."""
     if "{{" in masked:
@@ -92,6 +104,21 @@ def _can_check(masked: str) -> bool:
     return all(
         m.group(1) in _TAGS_THAT_CANNOT_RENDER_AN_ID
         for m in _TAG_NAME.finditer(masked)
+    )
+
+
+def _holds_the_labelled_control(tokens: Iterable[TagToken]) -> bool:
+    """Whether a control a label could be for is written in this file.
+
+    A partial holding only the label leaves its control to the template
+    that includes it, so there is nothing here to match against. The raw
+    source is read, so a control that is commented out still says the
+    file is about a form and its label is checked.
+    """
+    return any(
+        token.name.lower() in _LABELABLE_ELEMENTS
+        for token in tokens
+        if not token.closing
     )
 
 
@@ -159,6 +186,9 @@ def run(
     labels: list[tuple[TagToken, str]] = []
     masked = _masked(config, html)
     if not _can_check(masked):
+        return ()
+
+    if not _holds_the_labelled_control(tokenize_tags(html)):
         return ()
 
     for token in tokenize_tags(masked):

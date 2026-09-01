@@ -30,6 +30,11 @@
 
 ### Fix
 
+- `T038` no longer calls a project's own paired tag an orphan. `{% mytag %}...{% endmytag %}` was reported because the closing side is recognised generically while the opening side is known only from a list, so every custom block looked unmatched. An end tag nothing opened is still reported.
+- `T027` no longer reads a closing delimiter written inside a string as the end of the tag, so `{{ x|default('}}') }}` is no longer reported as holding an unclosed string. A string that really does run past the tag is still reported.
+- `H037` counts an attribute written without a value, so `<input required required>` is reported as the duplicate it is.
+- `H012` sees an attribute written after a `{{ ... }}` in the same tag. The scan stopped on the second brace, so `<div {{ attrs }} class = "x">` hid the spaced `=`.
+- `H042` leaves a partial that holds a label but no form control alone. The control belongs to the template that includes it, so there was nothing in the file to match against. A control that is commented out still counts, so the label above it is checked.
 - `H009` reports exactly the elements the formatter lowercases, so `--reformat` always clears it. It named `G`, `PATH`, `NAME` and `CACHE`, which the formatter does not know, so those were reported and never fixed, while `<IMG>`, `<INPUT>` and `<NAV>` were fixed and never reported. An uppercase name written inside an attribute value, as in `<p title="x <DIV y">`, is no longer read as a tag.
 - `H005` reports `<html lang="">`, which names no language and is the case the rule exists for. Its message now says a non-empty `lang`, which is what it has always meant.
 - `H013` accepts a valueless `alt`. `<img src="a.png" alt>` is the same as `alt=""`, the decorative image the rule already allowed.

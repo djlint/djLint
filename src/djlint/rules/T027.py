@@ -60,6 +60,32 @@ def _is_comment_tag(html: str, start: int) -> bool:
     return html.startswith(("!", "/*"), pos)
 
 
+def _close_past_strings(html: str, start: int, close: str) -> int:
+    """Index of the closing delimiter, skipping over quoted strings.
+
+    Returns -1 when a string runs to the end of the file, which is the
+    unterminated string this rule is looking for; the caller then falls
+    back to the first delimiter so the tag still has an end to report.
+    """
+    quote = ""
+    pos = start + 2
+    length = len(html)
+    while pos < length:
+        char = html[pos]
+        if quote:
+            if char == "\\":
+                pos += 2
+                continue
+            if char == quote:
+                quote = ""
+        elif char in {"'", '"'}:
+            quote = char
+        elif html.startswith(close, pos):
+            return pos
+        pos += 1
+    return -1
+
+
 def _iter_template_tags(html: str) -> Iterator[_TemplateTagMatch]:
     pos = 0
     while True:
@@ -74,7 +100,9 @@ def _iter_template_tags(html: str) -> Iterator[_TemplateTagMatch]:
         else:
             start, close = block_start, "%}"
 
-        end = html.find(close, start + 2)
+        end = _close_past_strings(html, start, close)
+        if end == -1:
+            end = html.find(close, start + 2)
         if end == -1:
             pos = start + 2
             continue

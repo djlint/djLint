@@ -198,3 +198,15 @@ def test_base(source: str, expected: list[LintError]) -> None:
         *(x for x in expected if x not in output[filename]),
     )
     assert not mismatch
+
+
+def test_a_partial_without_a_control_is_not_checked(
+    django_config: Config,
+) -> None:
+    source = '<label for="email">Email</label>\n'
+    filename = "test.html"
+
+    output = linter(django_config, source, filename, filename)
+
+    lint_printer(source, [], output[filename])
+    assert not output[filename]

@@ -1066,3 +1066,48 @@ def test_T034_ignores_a_brace_inside_a_string(
     write_to_file(tmp_file.name, b"<div>{% if a }%</div>")
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "T034 1:" in result.output
+
+
+def test_T038_leaves_a_custom_paired_tag_alone(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b"{% mytag %}x{% endmytag %}")
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T038" not in result.output
+
+    # nothing opened it, so this one really is an orphan
+    write_to_file(tmp_file.name, b"{% endmytag %}")
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T038 1:" in result.output
+
+
+def test_T027_ignores_a_delimiter_inside_a_string(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b"{{ x|default('}}') }}")
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "jinja"))
+    assert "T027" not in result.output
+
+    write_to_file(tmp_file.name, b'{% trans "oops %}')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T027 1:" in result.output
+
+
+def test_H037_counts_a_valueless_attribute(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b"<input required required>")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H037 1:" in result.output
+
+    write_to_file(tmp_file.name, b'<input required type="a">')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H037" not in result.output
+
+
+def test_H012_sees_past_a_template_tag(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b'<div {{ attrs }} class = "x">y</div>')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "H012 1:" in result.output

@@ -84,9 +84,15 @@ def run(
     Handlebars raw blocks and comments are matched whole, so the tags
     nested inside them are never scanned as real tags and nothing in them
     needs pairing.
+
+    An end tag whose name was opened earlier by a tag djLint does not
+    model, as a project's own `{% mytag %}...{% endmytag %}`, is left
+    alone: the closer is recognised generically while the opener is not,
+    so reporting it would call every custom block an orphan.
     """
     errors: list[LintError] = []
     open_tags: list[tuple[str, re.Match[str]]] = []
+    opened_names: set[str] = set()
 
     for match in _TEMPLATE_TAG_PATTERN.finditer(html):
         tag = match.group()
@@ -133,9 +139,10 @@ def run(
                             )
                     break
             else:
-                errors.append(
-                    _error(rule, match, line_ends, ORPHAN_END_MESSAGE)
-                )
+                if name not in opened_names:
+                    errors.append(
+                        _error(rule, match, line_ends, ORPHAN_END_MESSAGE)
+                    )
 
         elif config.template_indent_ix_pattern.match(tag) or tag.startswith((
             "{{#",
@@ -145,6 +152,12 @@ def run(
             if open_name is None or _ignored(rule, config, html, match):
                 continue
             open_tags.append((open_name.group(1), match))
+            opened_names.add(open_name.group(1))
+
+        else:
+            open_name = _OPEN_NAME_PATTERN.match(tag)
+            if open_name is not None:
+                opened_names.add(open_name.group(1))
 
     errors.extend(
         _error(rule, open_match, line_ends, rule["message"])
