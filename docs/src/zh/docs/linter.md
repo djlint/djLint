@@ -64,7 +64,6 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H026 | 空的 id 和 class 标签应被移除。                                                    | ✔️       |
 | H029 | 建议使用小写表单方法值。                                                           | ✔️       |
 | H030 | 建议添加 meta 描述。                                                               | ✔️       |
-| H031 | 建议添加 meta 关键字。                                                             | -        |
 | H033 | 表单 action 发现多余空格。                                                         | ✔️       |
 | J004 | (Jinja) 静态 URL 应遵循 {% raw %}`{{ url_for('static'..) }}`{% endraw %} 形式。    | ✔️       |
 | J018 | (Jinja) 内部链接应使用 {% raw %}`{% url ... %}`{% endraw %} 形式。                 | ✔️       |
@@ -766,41 +765,6 @@ HTML 规范将表单 method 的关键字定义为小写（get、post）；浏览
     <meta name="description" content="A short summary of this page.">
   </head>
   <body>Welcome</body>
-</html>
-```
-
-#### H031
-
-`建议添加 meta 关键字。`
-
-默认禁用；使用 `--include=H031` 启用。
-
-关键字元数据仍被一些站内搜索工具、内网索引器和较老的爬虫使用，因此从不声明 `<meta name="keywords">` 的页面对这些系统可能是不可见的。不过主流公共搜索引擎会忽略它，所以不依赖此类工具的团队通常会禁用此规则。
-
-只对包含完整 `<html>...</html>` 文档的文件生效。
-
-错误示例：
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Home</title>
-<meta name="description" content="A short summary.">
-</head>
-</html>
-```
-
-正确示例：
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Home</title>
-<meta name="description" content="A short summary.">
-<meta name="keywords" content="django, templates">
-</head>
 </html>
 ```
 

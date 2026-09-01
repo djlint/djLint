@@ -719,25 +719,6 @@ def test_H030(
     assert "H030 1:" in result.output
 
 
-def test_H031(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    write_to_file(tmp_file.name, b"<html>\nstuff\n</html>")
-    result = runner.invoke(djlint, (tmp_file.name,))
-    assert "H031" not in result.output
-
-    result = runner.invoke(djlint, (tmp_file.name, "--include", "H031"))
-    assert result.exit_code == 1
-    assert "H031 1:" in result.output
-
-    write_to_file(
-        tmp_file.name,
-        b'<html>\n<meta name="keywords" content="nice"/>\n</html>',
-    )
-    result = runner.invoke(djlint, (tmp_file.name,))
-    assert "H031" not in result.output
-
-
 def test_H036(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:

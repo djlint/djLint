@@ -64,7 +64,6 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H026 | Les balises id et class vides peuvent être supprimées.                                                                    | ✔️     |
 | H029 | Pensez à utiliser des valeurs de méthode de formulaire en minuscules.                                                     | ✔️     |
 | H030 | Pensez à ajouter une méta-description.                                                                                    | ✔️     |
-| H031 | Pensez à ajouter des méta keywords.                                                                                       | -      |
 | H033 | Espace supplémentaire dans l'action du formulaire.                                                                        | ✔️     |
 | J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                      | ✔️     |
 | J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                               | ✔️     |
@@ -766,41 +765,6 @@ Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>`
     <meta name="description" content="A short summary of this page.">
   </head>
   <body>Welcome</body>
-</html>
-```
-
-#### H031
-
-`Pensez à ajouter des méta keywords.`
-
-Désactivée par défaut ; à activer avec `--include=H031`.
-
-Les métadonnées de mots-clés sont encore consommées par certains outils de recherche de site, indexeurs d'intranet et robots plus anciens : une page qui ne déclare jamais `<meta name="keywords">` peut être invisible pour ces systèmes. Les grands moteurs de recherche publics l'ignorent toutefois, si bien que les équipes qui ne dépendent pas de tels outils désactivent couramment cette règle.
-
-Ne se déclenche que sur les fichiers contenant un document `<html>...</html>` complet.
-
-À éviter :
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Home</title>
-<meta name="description" content="A short summary.">
-</head>
-</html>
-```
-
-À faire :
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Home</title>
-<meta name="description" content="A short summary.">
-<meta name="keywords" content="django, templates">
-</head>
 </html>
 ```
 

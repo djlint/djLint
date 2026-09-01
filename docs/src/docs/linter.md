@@ -64,7 +64,6 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H026 | Empty id and class tags can be removed.                                                      | ✔️      |
 | H029 | Consider using lowercase form method values.                                                 | ✔️      |
 | H030 | Consider adding a meta description.                                                          | ✔️      |
-| H031 | Consider adding meta keywords.                                                               | -       |
 | H033 | Extra whitespace found in form action.                                                       | ✔️      |
 | J004 | (Jinja) Static urls should follow {% raw %}`{{ url_for('static'..) }}`{% endraw %} pattern.  | ✔️      |
 | J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          | ✔️      |
@@ -766,41 +765,6 @@ Do:
     <meta name="description" content="A short summary of this page.">
   </head>
   <body>Welcome</body>
-</html>
-```
-
-#### H031
-
-`Consider adding meta keywords.`
-
-Off by default; enable with `--include=H031`.
-
-Keyword metadata is still consumed by some site-search tools, intranet indexers, and older crawlers, so a page that never declares `<meta name="keywords">` can be invisible to those systems. Major public search engines ignore it, though, so teams that don't rely on such tooling commonly disable this rule.
-
-Only fires on files containing a complete `<html>...</html>` document.
-
-Don't:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Home</title>
-<meta name="description" content="A short summary.">
-</head>
-</html>
-```
-
-Do:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Home</title>
-<meta name="description" content="A short summary.">
-<meta name="keywords" content="django, templates">
-</head>
 </html>
 ```
 

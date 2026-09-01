@@ -100,7 +100,7 @@ test_data = [
             '         style="float: left" /><strong>We are a cooperative</strong>, one of the few seed companies so organized\n'
             "    in the United States. Because we do not have an individual owner or beneficiary,\n"
             "    profit is not our primary goal. Consumers own 60% of the cooperative and worker\n"
-            "    members 40%. Consumer and worker members share proportionately in the cooperative&#8217;s\n"
+            "    members 40%. Consumer and worker members share proportionately in the cooperative’s\n"
             "    profits through our annual patronage dividends.\n"
             "</p>\n"
         ),

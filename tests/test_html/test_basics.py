@@ -190,7 +190,7 @@ test_data = [
             '                       id="optionsRadios1"\n'
             '                       value="option1"\n'
             "                       checked>\n"
-            "                Option one is this and that&mdash;be sure to include why it's great\n"
+            "                Option one is this and that—be sure to include why it's great\n"
             "            </label>\n"
             "        </div>\n"
             '        <div class="form-check">\n'

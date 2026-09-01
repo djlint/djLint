@@ -248,13 +248,6 @@
       # to write it, so the rule stays quiet for that file
       - <html(?![\w-])[^>]*?>(?!(?:(?!</head>)[\s\S])*?\{[{%](?:(?!</head>)[\s\S])*?</head>)(?:(?!<meta[^>]*?(?<![-.:\w])name\s*=([\"'])description\b).)*</html>
 - rule:
-    name: H031
-    message: Consider adding meta keywords.
-    default: false
-    flags: re.DOTALL|re.I
-    patterns:
-      - <html[^>]*?>(?:(?!<meta[^>]*?(?<![-.:\w])name\s*=([\"|'])keywords\b).)*</html>
-- rule:
     name: T032
     message: Extra whitespace found in template tags.
     patterns:
