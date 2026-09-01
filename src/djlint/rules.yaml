@@ -1,15 +1,10 @@
 - rule:
     name: T001
     message: Variables should be wrapped in a whitespace.
-    flags: re.DOTALL
     exclude:
       - handlebars
       - golang
-    patterns:
-      # double curly
-      - '{{[-+]?(?:[^\s\-\+](?:(?!}}|{{).)*?|(?:(?!}}|{{).)*?[^\s\-\+])[-+]?}}'
-      # curly percent
-      - '{%(?:[-+]?[^\s\-\+](?:(?!%}|{%).)*?|(?:(?!%}|{%).)*?[^\s\-\+])[-+]?%}'
+    python_module: djlint.rules.T001
 - rule:
     name: T002
     message: Double quotes should be used in tags.
@@ -21,18 +16,20 @@
     python_module: djlint.rules.T003
 - rule:
     name: D004
+    skip_in_attributes: true
     message: (Django) Static urls should follow {% static path/to/file %} pattern.
     flags: re.DOTALL
     # this should be using the static path from django settings
     patterns:
-      - <(?:link|img|script|source)\s[^\>]*?(?:href|src|srcset)=[\"\']/?static/?
+      - <(?:link|img|script|source)\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])(?:href|src|srcset)=[\"\']/?static/?
 - rule:
     name: J004
+    skip_in_attributes: true
     message: (Jinja) Static urls should follow {{ url_for('static'..) }} pattern.
     flags: re.DOTALL
     # this should be using the static path from django settings
     patterns:
-      - <(?:link|img|script|source)\s[^\>]*?(?:href|src|srcset)=[\"\']/?static/?
+      - <(?:link|img|script|source)\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])(?:href|src|srcset)=[\"\']/?static/?
 - rule:
     name: H005
     message: Html tag should have a non-empty lang attribute.
@@ -82,6 +79,7 @@
       - <\w+(?:"[^"]*"|'[^']*'|[^'">])+?(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE|MEDIA|SRCSET)=
 - rule:
     name: H011
+    skip_in_attributes: true
     message: Attribute values should be quoted.
     flags: re.DOTALL|re.I|re.M|re.X
     patterns:
@@ -162,11 +160,12 @@
       - <form\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\saction\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
 - rule:
     name: H019
+    skip_in_attributes: true
     message: Replace 'javascript:abc()' with on_ event and real url.
     flags: re.DOTALL|re.I
     patterns:
-      - '<(?:a|div|span|input)\s[^>]*?(?:href|data-url)\s*=["'']javascript:'
-      - '<form\s[^>]*?action\s*=["'']javascript:'
+      - '<(?:a|div|span|input)\s(?:\"[^\"]*\"|''[^'']*''|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^''\">{}])*?(?<![-.:\w])(?:href|data-url)\s*=["'']javascript:'
+      - '<form\s(?:\"[^\"]*\"|''[^'']*''|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^''\">{}])*?(?<![-.:\w])action\s*=["'']javascript:'
 - rule:
     name: H020
     skip_in_attributes: true
@@ -180,12 +179,14 @@
       - <((?!(?:td|th|tr|li|dt|dd|slot|option|optgroup|tbody|thead|tfoot|colgroup|canvas|noscript|template|iframe|textarea|script|style|svg|g|defs|mask|marker|symbol|pattern|clippath|video|audio|object|picture|body|head)\b)\w+)\s*?>\s*?<\/\1>
 - rule:
     name: H021
+    skip_in_attributes: true
     message: Inline styles should be avoided.
     flags: re.I|re.DOTALL
     patterns:
-      - <\w+\s(?:[^>]*\s)?style=(?=((?!>|{{|{%).)*>)
+      - <\w+\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])style\s*=
 - rule:
     name: H022
+    skip_in_attributes: true
     message: Use HTTPS for external links.
     flags: re.I
     patterns:

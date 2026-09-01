@@ -31,6 +31,10 @@
 
 ### Fix
 
+- `T001` no longer reads a delimiter written inside a string as the end of the tag, so `{{ x|default('}}') }}` is no longer reported as needing padding.
+- `D004`, `J004`, `H011`, `H019`, `H021` and `H022` no longer read markup written inside an attribute value as a tag of its own, so `<p title="<a href='javascript:x()'>">` is left alone.
+- `D004`, `H019` and `H021` see an attribute written after a template tag that holds a `>`. The scan stopped at the first bracket, so `<div {% if n > 5 %}id="a"{% endif %} style="color:red">` hid the inline style.
+- `H019` and `H021` no longer read a name that merely ends in a known one as that attribute, so `data-href` and `data-style` are left alone.
 - `H007` reports a document whose first construct it does not recognise instead of going quiet. An `<?xml ... ?>` declaration, a go or handlebars `{{ ... }}`, or a malformed `<!doctypehtml>` at the top of the file made the whole check fail rather than match, so the documents most likely to be missing a doctype were the ones never looked at.
 - `T032` sees a tag that holds a filter, a call or a colon. Its pattern read the regex grouping in its own character class as literal characters, so any tag containing `|`, `(`, `)`, `:`, `?` or `%` before the extra whitespace was skipped, which is most of them. A run of spaces inside a string is still content and is left alone.
 - `T040` allows an empty literal that only feeds a filter, since `{% extends ""|default:"base.html" %}` resolves to a name and renders.

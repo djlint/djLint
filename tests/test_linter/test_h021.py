@@ -45,6 +45,18 @@ test_data = [
         ('<div style="test {%"><div style="test {{">'),
         ([
             {
+                "code": "H021",
+                "line": "1:0",
+                "match": "<div style=",
+                "message": "Inline styles should be avoided.",
+            },
+            {
+                "code": "H021",
+                "line": "1:21",
+                "match": "<div style=",
+                "message": "Inline styles should be avoided.",
+            },
+            {
                 "code": "H025",
                 "line": "1:21",
                 "match": '<div style="test {{"',

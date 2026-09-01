@@ -1142,3 +1142,61 @@ def test_T040_allows_an_empty_literal_feeding_a_filter(
     write_to_file(tmp_file.name, b'{% extends "" %}')
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "T040 1:" in result.output
+
+
+def test_tag_rules_ignore_markup_written_in_an_attribute_value(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    for quiet, profile in (
+        (b"<p title=\"<img src='/static/a.png'>\">x</p>", "django"),
+        (b"<p title=\"<a href='javascript:x()'>\">x</p>", "html"),
+        (b"<p title=\"<div style='a'>\">y</p>", "html"),
+        (b"<p title=\"<a href='http://x.com'>\">x</p>", "html"),
+        (b'<p title="<div class=x>">y</p>', "html"),
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name, "--profile", profile))
+        for code in ("D004", "H019", "H021", "H022", "H011"):
+            assert code not in result.output, (quiet, code)
+
+
+def test_rules_see_past_a_template_tag_holding_a_bracket(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(
+        tmp_file.name,
+        b'<div {% if n > 5 %}id="a"{% endif %} style="color:red">y</div>',
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "H021 1:" in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b'<a {% if n > 5 %}id="a"{% endif %} href="javascript:x()">y</a>',
+    )
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "H019 1:" in result.output
+
+
+def test_a_name_ending_in_a_known_one_is_not_it(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    for quiet, code in (
+        (b'<a data-href="javascript:x()">y</a>', "H019"),
+        (b'<div data-style="color:red">y</div>', "H021"),
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert code not in result.output, quiet
+
+
+def test_T001_ignores_a_delimiter_inside_a_string(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b"{{ x|default('}}') }}")
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "jinja"))
+    assert "T001" not in result.output
+
+    write_to_file(tmp_file.name, b"{{x}}")
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "jinja"))
+    assert "T001 1:" in result.output
