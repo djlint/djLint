@@ -257,8 +257,10 @@
     name: T032
     message: Extra whitespace found in template tags.
     patterns:
-      - "{%(([\"|'](?:(?!'|\"|%}).)*?[\"|'])|[^(?:%}|'|\"|\n)])*?[ \t]{2,}"
-      - "{{(([\"|'](?:(?!'|\"|}}).)*?[\"|'])|[^(?:}}|'|\"|\n)])*?[ \t]{2,}"
+      # a string is stepped over whole, so a run of spaces inside one is
+      # content rather than padding
+      - '{%(?:"[^"]*"|''[^'']*''|(?!%})[^''"\n])*?[ \t]{2,}'
+      - '{{(?:"[^"]*"|''[^'']*''|(?!}})[^''"\n])*?[ \t]{2,}'
 - rule:
     name: H033
     message: Extra whitespace found in form action.
@@ -306,7 +308,7 @@
     name: T040
     message: Missing or empty template name in extends or include tag.
     patterns:
-      - "{%[-+]?[ \\t]*?(?:extends|include)[ \\t]*?(?:'[ \\t]*'|\"[ \\t]*\")"
+      - "{%[-+]?[ \\t]*?(?:extends|include)[ \\t]*?(?:'[ \\t]*'|\"[ \\t]*\")(?![ \\t]*\\|)"
       - "{%[-+]?[ \\t]*?(?:extends|include)[ \\t]*?[-+]?%}"
 - rule:
     name: H041

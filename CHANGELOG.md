@@ -30,6 +30,8 @@
 
 ### Fix
 
+- `T032` sees a tag that holds a filter, a call or a colon. Its pattern read the regex grouping in its own character class as literal characters, so any tag containing `|`, `(`, `)`, `:`, `?` or `%` before the extra whitespace was skipped, which is most of them. A run of spaces inside a string is still content and is left alone.
+- `T040` allows an empty literal that only feeds a filter, since `{% extends ""|default:"base.html" %}` resolves to a name and renders.
 - `T038` no longer calls a project's own paired tag an orphan. `{% mytag %}...{% endmytag %}` was reported because the closing side is recognised generically while the opening side is known only from a list, so every custom block looked unmatched. An end tag nothing opened is still reported.
 - `T027` no longer reads a closing delimiter written inside a string as the end of the tag, so `{{ x|default('}}') }}` is no longer reported as holding an unclosed string. A string that really does run past the tag is still reported.
 - `H037` counts an attribute written without a value, so `<input required required>` is reported as the duplicate it is.

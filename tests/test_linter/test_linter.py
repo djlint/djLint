@@ -1111,3 +1111,34 @@ def test_H012_sees_past_a_template_tag(
     write_to_file(tmp_file.name, b'<div {{ attrs }} class = "x">y</div>')
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "H012 1:" in result.output
+
+
+def test_T032_sees_a_tag_holding_a_filter_or_call(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    for reported in (
+        b"{% if a|d  b %}{% endif %}",
+        b"{% if a(b)  c %}{% endif %}",
+        b"{% if a:b  c %}{% endif %}",
+        b"{{ a|d  b }}",
+    ):
+        write_to_file(tmp_file.name, reported)
+        result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+        assert "T032 1:" in result.output, reported
+
+    # a run of spaces inside a string is content
+    write_to_file(tmp_file.name, b'{% trans "a  b" %}')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T032" not in result.output
+
+
+def test_T040_allows_an_empty_literal_feeding_a_filter(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b'{% extends ""|default:"base.html" %}')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T040" not in result.output
+
+    write_to_file(tmp_file.name, b'{% extends "" %}')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T040 1:" in result.output
