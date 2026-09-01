@@ -31,6 +31,7 @@
 
 ### Fix
 
+- `H007` reports a document whose first construct it does not recognise instead of going quiet. An `<?xml ... ?>` declaration, a go or handlebars `{{ ... }}`, or a malformed `<!doctypehtml>` at the top of the file made the whole check fail rather than match, so the documents most likely to be missing a doctype were the ones never looked at.
 - `T032` sees a tag that holds a filter, a call or a colon. Its pattern read the regex grouping in its own character class as literal characters, so any tag containing `|`, `(`, `)`, `:`, `?` or `%` before the extra whitespace was skipped, which is most of them. A run of spaces inside a string is still content and is left alone.
 - `T040` allows an empty literal that only feeds a filter, since `{% extends ""|default:"base.html" %}` resolves to a name and renders.
 - `T038` no longer calls a project's own paired tag an orphan. `{% mytag %}...{% endmytag %}` was reported because the closing side is recognised generically while the opening side is known only from a list, so every custom block looked unmatched. An end tag nothing opened is still reported.
