@@ -374,9 +374,6 @@ def indent_html(rawcode: str, config: Config) -> str:
     inline_slt_no_attrs_end_pattern = re.compile(
         rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)", flags=RE_FLAGS_IMX
     )
-    inline_slt_attrs_end_pattern = re.compile(
-        rf"(<({slt_html})\\b[^>]+?>)(.*?)(</(\2)>[^<]*?$)", flags=RE_FLAGS_IMX
-    )
     inline_slt_no_attrs_pattern = re.compile(
         rf"(^<({slt_html})>)(.*?)(</(\2)>)", flags=RE_FLAGS_IMX
     )
@@ -651,10 +648,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             and tag_unindent_pattern.search(item.lstrip())
             and (
                 unclosed_closes > opened_html
-                or not (
-                    inline_slt_no_attrs_end_pattern.search(item)
-                    or inline_slt_attrs_end_pattern.search(item)
-                )
+                or not inline_slt_no_attrs_end_pattern.search(item)
             )
             and not starts_unclosed_html_tag(item)
             and not tag_unindent_line_pattern.match(item.lstrip())
