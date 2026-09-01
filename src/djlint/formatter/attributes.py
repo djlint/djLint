@@ -66,7 +66,8 @@ def normalize_attributes(config: Config, attribute_group: str) -> str:
     """
     quotable = _UNQUOTED_VALUE_PATTERN.search(attribute_group) is not None
     lowerable = not config.ignore_case and not attribute_group.islower()
-    if not (quotable or lowerable):
+    requotable = "'" in attribute_group
+    if not (quotable or lowerable or requotable):
         return attribute_group
 
     matches = list(config.attribute_pattern.finditer(attribute_group))
@@ -101,6 +102,16 @@ def normalize_attributes(config: Config, attribute_group: str) -> str:
             in {"", " ", "\t"}
         ):
             rewrite(match.span(2), f'"{value}"')
+
+        elif (
+            requotable
+            and value
+            and value.startswith("'")
+            and value.endswith("'")
+            and '"' not in value
+            and name.lower() in HTML_LOWERCASE_ATTRIBUTE_NAMES
+        ):
+            rewrite(match.span(2), f'"{value[1:-1]}"')
 
     output.append(attribute_group[previous_end:])
     return "".join(output)

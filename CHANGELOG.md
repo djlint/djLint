@@ -6,6 +6,7 @@
 
 ### Feature
 
+- Formatting rewrites a single quoted attribute value to double quotes, which is what `H008` asks for, so `<div class='a'>` becomes `<div class="a">`. Only the names the rule reports are touched, so `data-x='b'` is left as written, and a value holding a double quote of its own keeps the single quotes it needs.
 - New option `--keep-br-inline` / `keep_br_inline` keeps `<br>` on the line of the text it breaks instead of giving it a line of its own, which reads better in a long block of prose. `<hr>` is unaffected, and the default is unchanged.
 - Formatting drops the `type` that html5 already assumes, so `<script type="text/javascript">` becomes `<script>` and the same for `<style>` and a stylesheet `<link>`. A type that means something, such as `type="module"` or `type="application/json"`, is kept. This is what `H024` asks for.
 - Formatting lowercases a form's `method`, so `method="POST"` becomes `method="post"`. `method` is an enumerated attribute, so the page submits the same either way, and this is what `H029` asks for.

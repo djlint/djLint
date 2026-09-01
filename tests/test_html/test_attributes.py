@@ -1109,3 +1109,20 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
 
 
 # was disabled
+
+
+def test_single_quotes_become_double_on_the_names_h008_reports(
+    basic_config: Config,
+) -> None:
+    output = formatter(basic_config, "<div class='a' data-x='b'>t</div>\n")
+
+    # data-x is not one of the names H008 reports, so it is left as written
+    assert output == "<div class=\"a\" data-x='b'>t</div>\n"
+
+
+def test_a_value_holding_a_double_quote_keeps_its_single_ones(
+    basic_config: Config,
+) -> None:
+    source = "<div title='he said \"hi\"'>t</div>\n"
+
+    assert formatter(basic_config, source) == source
