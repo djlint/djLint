@@ -35,11 +35,13 @@
       - <(?:link|img|script|source)\s[^\>]*?(?:href|src|srcset)=[\"\']/?static/?
 - rule:
     name: H005
-    message: Html tag should have lang attribute.
+    message: Html tag should have a non-empty lang attribute.
     flags: re.DOTALL|re.I
     patterns:
       # "(?![\w-])" keeps a custom element such as <html-midi-player> out
       - <html(?![\w-])(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])lang\s*=)[^'">])*>
+      # lang="" names no language
+      - <html(?![\w-])(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])lang\s*=\s*(?:""|'')(?:"[^"]*"|'[^']*'|[^'">])*>
 - rule:
     name: H006
     skip_in_attributes: true
@@ -66,9 +68,7 @@
 - rule:
     name: H009
     message: Tag names should be lowercase.
-    flags: re.DOTALL
-    patterns:
-      - (?<=<)/?(?:HTML|BODY|DIV|P|SPAN|TABLE|TR|TD|TH|THEAD|TBODY|CODE|UL|OL|LI|H1|H2|H3|H4|H5|H6|A|DD|DT|BLOCKQUOTE|SELECT|FORM|FIELDSET|OPTGROUP|LEGEND|LABEL|HEADER|CACHE|MAIN|ASIDE|FOOTER|SECTION|NAME|FIGURE|FIGCAPTION|VIDEO|G|SVG|BUTTON|PATH|PICTURE|SCRIPT|STYLE|DETAILS|SUMMARY)\b
+    python_module: djlint.rules.H009
 - rule:
     name: H010
     message: Attribute names should be lowercase.
@@ -101,7 +101,7 @@
     patterns:
       # a quoted value is stepped over whole, and the name must start on a
       # name boundary, so neither title="alt=x" nor data-alt counts as alt
-      - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])alt\s*=)[^'">])*/?>
+      - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])alt\b)[^'">])*/?>
 - rule:
     name: H014
     message: Found extra blank lines.
@@ -270,7 +270,8 @@
     message: Did you intend to use {% ... %} instead of {% ... }%?
     flags: re.DOTALL
     patterns:
-      - "{%(?:(?!%}).)*}%"
+      # a string is stepped over whole, so a brace inside one is text
+      - '{%(?:"[^"]*"|''[^'']*''|(?!%}|}%)[^"''])*}%'
 - rule:
     name: H036
     skip_in_attributes: true

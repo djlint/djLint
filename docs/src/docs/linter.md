@@ -40,7 +40,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | ---- | -------------------------------------------------------------------------------------------- | ------- |
 | D004 | (Django) Static urls should follow {% raw %}`{% static path/to/file %}`{% endraw %} pattern. | ✔️      |
 | D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         | ✔️      |
-| H005 | Html tag should have `lang` attribute.                                                       | ✔️      |
+| H005 | Html tag should have a non-empty `lang` attribute.                                           | ✔️      |
 | H006 | `img` tag should have `height` and `width` attributes.                                       | -       |
 | H007 | `<!DOCTYPE ... >` should be present before the html tag.                                     | ✔️      |
 | H008 | Attributes should be double quoted.                                                          | ✔️      |
@@ -213,9 +213,11 @@ Do:
 
 #### H005
 
-`Html tag should have lang attribute.`
+`Html tag should have a non-empty lang attribute.`
 
 Without a lang attribute on `<html>`, screen readers guess the pronunciation rules and may read the page in the wrong language, and browsers cannot correctly offer translation, hyphenation, or locale-aware quotation marks. Declaring the page language is WCAG 2.1 success criterion 3.1.1 (Level A).
+
+`lang=""` and a valueless `lang` both say the language is unknown, so they are reported the same as a missing attribute.
 
 Don't:
 
@@ -369,6 +371,8 @@ Do:
 `Img tag should have an alt attribute.`
 
 Without an alt attribute, screen readers announce the image's file name or nothing at all, failing WCAG 1.1.1 (Non-text Content). The alt text is also what users see when the image fails to load. Decorative images should carry an explicit empty alt="" so assistive technology knows to skip them; that also satisfies this rule.
+
+A valueless `alt` is the same as `alt=""`, the decorative image case, so it is accepted.
 
 Don't:
 

@@ -24,7 +24,7 @@ test_data = [
                 "code": "H005",
                 "line": "2:0",
                 "match": "<html>",
-                "message": "Html tag should have lang attribute.",
+                "message": "Html tag should have a non-empty lang attribute.",
             },
             {
                 "code": "H025",
@@ -54,7 +54,7 @@ test_data = [
                 "code": "H005",
                 "line": "2:0",
                 "match": '<html data-lang="en"',
-                "message": "Html tag should have lang attribute.",
+                "message": "Html tag should have a non-empty lang attribute.",
             },
             {
                 "code": "H025",
@@ -72,7 +72,7 @@ test_data = [
                 "code": "H005",
                 "line": "2:0",
                 "match": '<html class="languag',
-                "message": "Html tag should have lang attribute.",
+                "message": "Html tag should have a non-empty lang attribute.",
             },
             {
                 "code": "H025",
@@ -123,3 +123,16 @@ def test_base(
         *(x for x in expected if x not in output[filename]),
     )
     assert not mismatch
+
+
+def test_empty_lang_names_no_language(basic_config: Config) -> None:
+    for source in ('<html lang="">a</html>', "<html lang=''>a</html>"):
+        output = linter(basic_config, source, "t.html", "t.html")["t.html"]
+        assert any(error["code"] == "H005" for error in output), source
+
+    for source in (
+        '<html lang="en">a</html>',
+        '<html lang="{{ code }}">a</html>',
+    ):
+        output = linter(basic_config, source, "t.html", "t.html")["t.html"]
+        assert not any(error["code"] == "H005" for error in output), source

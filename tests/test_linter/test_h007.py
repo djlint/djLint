@@ -64,7 +64,7 @@ def test_django_load_before_html_reports_missing_doctype(
             "code": "H005",
             "line": "2:0",
             "match": "<html>",
-            "message": "Html tag should have lang attribute.",
+            "message": "Html tag should have a non-empty lang attribute.",
         },
         {
             "code": "H007",

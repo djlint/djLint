@@ -1021,3 +1021,48 @@ def test_H029_needs_a_name_boundary(
     write_to_file(tmp_file.name, b'<form method="POST"></form>')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H029 1:" in result.output
+
+
+def test_H009_matches_what_the_formatter_fixes(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    # the formatter does not know these, so the rule must not ask for them
+    for quiet in (
+        b"<svg><G><PATH d='M0 0'/></G></svg>",
+        b"<NAME>n</NAME>",
+        b"<CACHE>c</CACHE>",
+        b"<svg><clipPath id='a'/></svg>",
+        b'<p title="x <DIV y">t</p>',
+    ):
+        write_to_file(tmp_file.name, quiet)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H009" not in result.output, quiet
+
+    for reported in (b"<DIV>d</DIV>", b"<NAV>n</NAV>", b"<Div>x</Div>"):
+        write_to_file(tmp_file.name, reported)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H009 1:" in result.output, reported
+
+
+def test_H013_accepts_a_valueless_alt(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b'<img src="a.png" alt>')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H013" not in result.output
+
+    write_to_file(tmp_file.name, b'<img src="a.png">')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H013 1:" in result.output
+
+
+def test_T034_ignores_a_brace_inside_a_string(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b'<div>{% trans "Save 50}% today" %}</div>')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T034" not in result.output
+
+    write_to_file(tmp_file.name, b"<div>{% if a }%</div>")
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T034 1:" in result.output

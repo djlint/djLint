@@ -30,6 +30,10 @@
 
 ### Fix
 
+- `H009` reports exactly the elements the formatter lowercases, so `--reformat` always clears it. It named `G`, `PATH`, `NAME` and `CACHE`, which the formatter does not know, so those were reported and never fixed, while `<IMG>`, `<INPUT>` and `<NAV>` were fixed and never reported. An uppercase name written inside an attribute value, as in `<p title="x <DIV y">`, is no longer read as a tag.
+- `H005` reports `<html lang="">`, which names no language and is the case the rule exists for. Its message now says a non-empty `lang`, which is what it has always meant.
+- `H013` accepts a valueless `alt`. `<img src="a.png" alt>` is the same as `alt=""`, the decorative image the rule already allowed.
+- `T034` no longer reads a `}%` written inside a string as the typo it looks for, so `{% trans "Save 50}% today" %}` is left alone.
 - A rule that looks for a tag no longer reads markup written inside an attribute value as a tag of its own. `<p title="a<br>b">` was reported by `H036` and `H017`, `<div title="<button>x</button>">` by `H043`, and `<p title="an <img src=x>">` by `H013`. Affects `H006`, `H013`, `H017`, `H018`, `H020`, `H036` and `H043`.
 - `H029` no longer reads a name that merely ends in `method` as the form's own, so `<form data-method="POST">` is not reported. The formatter's rewrite already had that boundary, so the rule was asking for something `--reformat` would not do.
 - `H044` no longer reports a header row whose cells sit in sibling branches of a template block. Only one of `{% if x %}<th>A</th>{% else %}<td>A</td>{% endif %}` is ever rendered, so there is no mixture.

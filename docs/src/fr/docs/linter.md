@@ -40,7 +40,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | ---- | ------------------------------------------------------------------------------------------------------------------------- | ------ |
 | D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                    | ✔️     |
 | D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                              | ✔️     |
-| H005 | La balise Html doit avoir l'attribut `lang`.                                                                              | ✔️     |
+| H005 | La balise Html doit avoir un attribut `lang` non vide.                                                                    | ✔️     |
 | H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | -      |
 | H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                       | ✔️     |
 | H008 | Les attributs doivent être entre guillemets.                                                                              | ✔️     |
@@ -213,9 +213,11 @@ Coder en dur les chemins /static/ contourne url_for('static', ...) de Flask/Jinj
 
 #### H005
 
-`La balise Html doit avoir l'attribut lang.`
+`La balise Html doit avoir un attribut lang non vide.`
 
 Sans attribut lang sur `<html>`, les lecteurs d'écran devinent les règles de prononciation et peuvent lire la page dans la mauvaise langue, et les navigateurs ne peuvent pas proposer correctement la traduction, la césure ou les guillemets adaptés à la locale. Déclarer la langue de la page correspond au critère de succès 3.1.1 de WCAG 2.1 (niveau A).
+
+`lang=""` et un `lang` sans valeur signifient tous deux que la langue est inconnue : ils sont signalés comme un attribut manquant.
 
 À éviter :
 
@@ -369,6 +371,8 @@ Avec des espaces autour de "=", la balise se lit comme trois éléments séparé
 `La balise img doit avoir des attributs alt.`
 
 Sans attribut alt, les lecteurs d'écran annoncent le nom de fichier de l'image, ou rien du tout, ce qui enfreint WCAG 1.1.1 (Contenu non textuel). Le texte alternatif est aussi ce que voient les utilisateurs lorsque l'image ne se charge pas. Les images décoratives doivent porter un alt="" explicitement vide pour que les technologies d'assistance sachent les ignorer ; cela satisfait également cette règle.
+
+Un `alt` sans valeur équivaut à `alt=""`, le cas de l'image décorative : il est accepté.
 
 À éviter :
 
