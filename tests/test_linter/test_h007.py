@@ -75,7 +75,7 @@ def test_django_load_before_html_reports_missing_doctype(
         {
             "code": "H016",
             "line": "2:0",
-            "match": "<html></html>",
+            "match": "<html>",
             "message": "Missing title tag in html.",
         },
         {

@@ -31,6 +31,7 @@
 
 ### Fix
 
+- `H016` no longer takes an svg `<title>` for the document's own. An svg title names the graphic, so a page whose only title is inside one was treated as having a title. The report now points at the `<html>` tag rather than at the first twenty characters of the document.
 - `T001` no longer reads a delimiter written inside a string as the end of the tag, so `{{ x|default('}}') }}` is no longer reported as needing padding.
 - `D004`, `J004`, `H011`, `H019`, `H021` and `H022` no longer read markup written inside an attribute value as a tag of its own, so `<p title="<a href='javascript:x()'>">` is left alone.
 - `D004`, `H019` and `H021` see an attribute written after a template tag that holds a `>`. The scan stopped at the first bracket, so `<div {% if n > 5 %}id="a"{% endif %} style="color:red">` hid the inline style.

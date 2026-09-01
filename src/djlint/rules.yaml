@@ -115,13 +115,7 @@
 - rule:
     name: H016
     message: Missing title tag in html.
-    flags: re.DOTALL|re.I
-    patterns:
-      # Title allow a list of global attributes.
-      # https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes#list_of_global_attributes
-      # any attributes at all, so a <title id='x'> or a <title hx-swap-oob>
-      # is still a title
-      - <html(?![\w-])[^>]*?>(?:(?!<title(?:\s(?:\"[^\"]*\"|'[^']*'|[^>\"'])*)?>).)*</html>
+    python_module: djlint.rules.H016
 - rule:
     name: H017
     skip_in_attributes: true

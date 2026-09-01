@@ -1200,3 +1200,20 @@ def test_T001_ignores_a_delimiter_inside_a_string(
     write_to_file(tmp_file.name, b"{{x}}")
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "jinja"))
     assert "T001 1:" in result.output
+
+
+def test_H016_does_not_take_an_svg_title_for_the_document_title(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(
+        tmp_file.name, b"<html><body><svg><title>t</title></svg></body></html>"
+    )
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H016 1:" in result.output
+
+    write_to_file(
+        tmp_file.name,
+        b"<html><head><title>t</title></head><body>x</body></html>",
+    )
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H016" not in result.output
