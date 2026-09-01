@@ -828,6 +828,15 @@ def indent_html(rawcode: str, config: Config) -> str:
         if is_ignored_block_opening_:
             is_block_raw = True
             is_raw_first_line = False
+            if "<" in item:
+                opening = config.ignored_block_opening_pattern.search(item)
+                opened, _ = scan_html_tags(
+                    item[: opening.start()] if opening else item
+                )
+                if opened:
+                    indent_level += 1
+                    open_html_indents.append(True)
+                    open_html_indents.extend([False] * (opened - 1))
 
         elif not is_block_raw:
             tmp = format_html_attributes(tmp)
@@ -847,7 +856,12 @@ def indent_html(rawcode: str, config: Config) -> str:
                     ):
                         tail = item[close.end() :]
                     opened, closed = scan_html_tags(tail)
-                    del open_html_indents[len(open_html_indents) - closed :]
+                    if closed:
+                        kept = len(open_html_indents) - closed
+                        indent_level = max(
+                            indent_level - sum(open_html_indents[kept:]), 0
+                        )
+                        del open_html_indents[kept:]
                     open_html_indents.extend([False] * opened)
 
         beautified_lines.append(tmp)

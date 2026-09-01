@@ -116,6 +116,10 @@ templates = [
         "{% if a %}y{% endif %}<p>\ntext\n</p>\nz\n",
         id="template block closed on the line it opens",
     ),
+    pytest.param(
+        '<a class="a b">text<style>a{color:red}</style><hr></a>\n',
+        id="element opened before a style block",
+    ),
 ]
 
 option_sets = [
