@@ -441,6 +441,9 @@ def expand_html(html: str, config: Config) -> str:
         if inside_html_attribute(html, match):
             return match.group(1)
 
+        if config.keep_br_inline and _tag_name(match.group(1)) == "br":
+            return match.group(1)
+
         if should_preserve_inline_body(out_format, match):
             return match.group(1)
 

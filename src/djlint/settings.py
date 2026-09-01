@@ -1159,6 +1159,7 @@ class Config:
         "indent_html_tags",
         "indent_size",
         "js_config",
+        "keep_br_inline",
         "line_break_after_multiline_tag",
         "lint",
         "lint_ignored_blocks_pattern",
@@ -1265,6 +1266,7 @@ class Config:
         indent_js: int | None = None,
         close_void_tags: bool = False,
         no_line_after_yaml: bool = False,
+        keep_br_inline: bool = False,
         no_entity_formatting: bool = False,
         no_function_formatting: bool = False,
         no_set_formatting: bool = False,
@@ -1351,6 +1353,9 @@ class Config:
         )
         self.no_entity_formatting = no_entity_formatting or djlint_settings.get(
             "no_entity_formatting", False
+        )
+        self.keep_br_inline = keep_br_inline or djlint_settings.get(
+            "keep_br_inline", False
         )
         self.quote_style = str(
             quote_style or djlint_settings.get("quote_style", "double")

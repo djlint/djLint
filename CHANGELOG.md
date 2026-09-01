@@ -6,6 +6,7 @@
 
 ### Feature
 
+- New option `--keep-br-inline` / `keep_br_inline` keeps `<br>` on the line of the text it breaks instead of giving it a line of its own, which reads better in a long block of prose. `<hr>` is unaffected, and the default is unchanged.
 - Formatting drops the `type` that html5 already assumes, so `<script type="text/javascript">` becomes `<script>` and the same for `<style>` and a stylesheet `<link>`. A type that means something, such as `type="module"` or `type="application/json"`, is kept. This is what `H024` asks for.
 - Formatting lowercases a form's `method`, so `method="POST"` becomes `method="post"`. `method` is an enumerated attribute, so the page submits the same either way, and this is what `H029` asks for.
 - Formatting writes an entity reference as the character it names, so `&copy;` becomes `©` and `&#8364;` becomes `€`, which is what `H023` asks for. The entities that have to survive are untouched: `&lt;`, `&amp;` and the rest carry syntax, and an invisible one such as `&zwnj;` cannot be reviewed as a literal. An entity naming nothing, such as the misspelled `&mdsah;`, is left as written for the rule to go on reporting, and a `<pre>`, `<textarea>`, `<script>` or `<style>` body is left alone. `--no-entity-formatting` turns it off.

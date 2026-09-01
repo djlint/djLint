@@ -93,6 +93,21 @@
     "tags": ["formatter", "linter"]
   },
   {
+    "name": "keep_br_inline",
+    "description": {
+      "en": "Keep `<br>` on the line of the text it breaks, rather than giving it a line of its own. `<hr>`, which renders as a rule below the preceding content, is unaffected.",
+      "ru": "Оставлять `<br>` на строке того текста, который он разрывает, а не выносить на отдельную строку. `<hr>`, который рисуется линией под предыдущим содержимым, не затрагивается.",
+      "fr": "Garder `<br>` sur la ligne du texte qu'il coupe plutôt que de lui donner sa propre ligne. `<hr>`, qui s'affiche en filet sous le contenu précédent, n'est pas concerné.",
+      "zh": "让 `<br>` 留在它所断开的那行文本上，而不是单独占一行。`<hr>` 会在前面内容下方渲染成一条横线，不受影响。"
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "keep_br_inline=true" },
+      { "name": ".djlintrc", "value": "\"keep_br_inline\": true" },
+      { "name": "cli", "value": "--keep-br-inline" }
+    ],
+    "tags": ["formatter"]
+  },
+  {
     "name": "no_entity_formatting",
     "description": {
       "en": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `©`. The entities that carry syntax, and the invisible ones, are never rewritten either way.",
