@@ -1,4 +1,4 @@
-"""Test that the linter docs show what the rules actually report.
+"""Test that the docs show what djLint actually does.
 
 uv run pytest tests/test_docs.py
 """
@@ -13,16 +13,22 @@ import pytest
 import yaml
 
 from djlint.lint import linter
+from djlint.reformat import formatter
 from djlint.settings import Config
+from tests.conftest import printer
 
 if TYPE_CHECKING:
     from typing_extensions import Any
 
 _LINTER_DOCS = Path("docs/src/docs/linter.md")
+_FORMATTER_DOCS = tuple(sorted(Path("docs/src").rglob("formatter.md")))
 _RULES_FILE = Path("src/djlint/rules.yaml")
 _RULE_SECTION_PATTERN = re.compile(r"^#### ([A-Z]\d{3})\s*$", re.MULTILINE)
 _EXAMPLE_LABEL_PATTERN = re.compile(r"^(Don't|Do):\s*$", re.MULTILINE)
 _CODE_BLOCK_PATTERN = re.compile(r"```\w*\n(.*?)```", re.DOTALL)
+_SHOWN_OUTPUT_PATTERN = re.compile(
+    r"<!-- prettier-ignore -->\n```html\n(.*?)```", re.DOTALL
+)
 _PROFILE_BY_LETTER = {
     "D": "django",
     "J": "jinja",
@@ -40,6 +46,13 @@ _PROFILES = (
 )
 
 
+def _rules() -> dict[str, Any]:
+    return {
+        entry["rule"]["name"]: entry["rule"]
+        for entry in yaml.safe_load(_RULES_FILE.read_text(encoding="utf-8"))
+    }
+
+
 def _rule_profile(rule: dict[str, Any]) -> str:
     """A profile the rule runs under, preferring the one it is named for."""
     excluded = set(rule.get("exclude") or ())
@@ -47,13 +60,6 @@ def _rule_profile(rule: dict[str, Any]) -> str:
     if named and named not in excluded:
         return named
     return next(profile for profile in _PROFILES if profile not in excluded)
-
-
-def _rules() -> dict[str, Any]:
-    return {
-        entry["rule"]["name"]: entry["rule"]
-        for entry in yaml.safe_load(_RULES_FILE.read_text(encoding="utf-8"))
-    }
 
 
 def _documented_examples() -> list[tuple[str, str, str, str]]:
@@ -99,3 +105,26 @@ def test_documented_example(
     assert reported == (label == "Don't"), (
         f"{_LINTER_DOCS} shows this under {label!r} for {code}:\n{sample}"
     )
+
+
+@pytest.mark.parametrize(
+    "path",
+    _FORMATTER_DOCS,
+    ids=[path.parent.as_posix() for path in _FORMATTER_DOCS],
+)
+def test_formatter_example(path: Path) -> None:
+    """The page's first block, formatted, has to give each block below it."""
+    source, *outputs = _SHOWN_OUTPUT_PATTERN.findall(
+        path.read_text(encoding="utf-8")
+    )
+
+    for expected, one_per_line in zip(outputs, (False, True), strict=True):
+        config = Config(
+            "dummy/source.html",
+            profile="django",
+            single_attribute_per_line=one_per_line,
+        )
+        output = formatter(config, source)
+
+        printer(expected, source, output)
+        assert output == expected

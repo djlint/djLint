@@ -115,12 +115,14 @@
 - The GitHub Actions integration is documented: djLint reports findings as annotations on a pull request's diff by itself, and `--github-output` / `--no-github-output` override that.
 - The command line reference lists `--allow-empty-input`, which it had been missing, and a test now keeps it in step with `djlint --help`.
 - `H042` is no longer described as off by default, which it stopped being in 1.42.1.
+- The formatter's before-and-after example on the formatter page showed a template tag still written with single quotes. `T002` is on by default now and the formatter rewrites those, so the page showed output djLint would not produce.
 
 ### Tests
 
 - Formatting a file twice now has to give the same result as formatting it once, checked across the option combinations that reach the whitespace passes.
 - The readme's before-and-after example is checked against the formatter, so it cannot drift from what djLint actually writes.
 - Every rule's documented do and don't example is run through the linter, so a rule cannot quietly stop matching what its page shows.
+- The formatter page's example is formatted and compared with the output it shows, in each of the four languages the docs are written in.
 
 ## [1.44.2] - 2026-08-08
 

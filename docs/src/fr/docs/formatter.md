@@ -99,7 +99,7 @@ C'est un peu mieux maintenant... on peut le lire :)
         {{ cl.opts.verbose_name_plural }}
     {% endif %}
     {% if show_all_url %}
-        <a href="{{ show_all_url }}" class="showall">{% translate 'Show all' %}</a>
+        <a href="{{ show_all_url }}" class="showall">{% translate "Show all" %}</a>
     {% endif %}
     {% if cl.formset and cl.result_count %}
         <input type="submit"
@@ -135,7 +135,7 @@ Vous préférez les attributs à la manière de Prettier ? Activez l'option `sin
         {{ cl.opts.verbose_name_plural }}
     {% endif %}
     {% if show_all_url %}
-        <a href="{{ show_all_url }}" class="showall">{% translate 'Show all' %}</a>
+        <a href="{{ show_all_url }}" class="showall">{% translate "Show all" %}</a>
     {% endif %}
     {% if cl.formset and cl.result_count %}
         <input
