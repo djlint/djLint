@@ -14,8 +14,6 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-# the default type of a script, a style and a stylesheet link, which html5
-# assumes and which H024 reports
 _DEFAULT_TYPE_PATTERN: Final = re.compile(
     r"""
     (<(?:script|style|link)\b(?:"[^"]*"|'[^']*'|[^'">])*?)
@@ -25,7 +23,6 @@ _DEFAULT_TYPE_PATTERN: Final = re.compile(
     cache_pattern=False,
 )
 
-# method is an enumerated attribute, so its value is ascii case-insensitive
 _FORM_METHOD_PATTERN: Final = re.compile(
     r"""
     (<form\b(?:"[^"]*"|'[^']*'|\{[^}]*\}|[^'">{}/])*?

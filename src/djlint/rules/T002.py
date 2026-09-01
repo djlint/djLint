@@ -26,8 +26,6 @@ if TYPE_CHECKING:
 
 SINGLE_QUOTE_MESSAGE: Final = "Single quotes should be used in tags."
 
-# a string is only reported when the formatter can rewrite it, so one already
-# holding the quote it would be rewritten to is left alone
 _QUOTED_TAG_TEMPLATE: Final = (
     rf"{{%[-+]?[ \t]*?(?:{TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS})[\s]+?"
     r"(?:(?:(?!%}|QUOTE).)+?=)?QUOTE(?:(?!%}|QUOTE|WANTED).)*?QUOTE"
@@ -52,7 +50,11 @@ def run(
     *args: Any,
     **kwargs: Any,
 ) -> tuple[LintError, ...]:
-    """Check for wrongly quoted strings outside HTML attributes."""
+    """Check for wrongly quoted strings outside HTML attributes.
+
+    A string is reported only when the formatter can rewrite it, so one
+    already holding the quote it would be rewritten to is left alone.
+    """
     message = (
         SINGLE_QUOTE_MESSAGE
         if config.quote_style == "single"

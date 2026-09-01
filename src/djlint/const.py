@@ -265,8 +265,6 @@ HTML_LOWERCASE_ATTRIBUTE_NAMES: Final = frozenset((
     "width",
 ))
 
-# tags whose arguments are quoted strings, which T002 checks and the formatter
-# rewrites to the configured quote style
 TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS: Final = (
     r"trans(?:late)?|with|extends|include|now"
 )
