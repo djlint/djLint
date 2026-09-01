@@ -119,6 +119,7 @@
 ### Tests
 
 - Formatting a file twice now has to give the same result as formatting it once, checked across the option combinations that reach the whitespace passes.
+- The readme's before-and-after example is checked against the formatter, so it cannot drift from what djLint actually writes.
 
 ## [1.44.2] - 2026-08-08
 
