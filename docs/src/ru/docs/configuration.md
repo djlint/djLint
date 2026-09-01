@@ -86,7 +86,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
         <a class="link bn" href="#{{ option.name | slugify }}">∞</a> {{ option.name }}</h3>
     <div class="tags is-inline-block">{% for tag in option.tags %}<span class="tag is-family-sans-serif is-link has-text-weight-medium">{{ tag }}</span>{% endfor %}</div></div>
 
-<p>{{ option.description[locale or "en"] | markdown | safe }}</p>
+{{ option.description[locale or "en"] | markdown | safe }}
 
 <div class="tabs">
 <ul>

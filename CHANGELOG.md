@@ -118,6 +118,7 @@
 - The command line reference lists `--allow-empty-input`, which it had been missing, and a test now keeps it in step with `djlint --help`.
 - `H042` is no longer described as off by default, which it stopped being in 1.42.1.
 - The formatter's before-and-after example on the formatter page showed a template tag still written with single quotes. `T002` is on by default now and the formatter rewrites those, so the page showed output djLint would not produce.
+- The configuration page no longer wraps each option's description in a second paragraph. The markdown already produced one, so the page carried forty-four `<p><p>` nestings that a browser has to repair and that djLint's own linter reported as orphan tags.
 
 ### Tests
 
