@@ -93,7 +93,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 
 {% for flag in option.usage %}
 
-<li class="{% if loop.index == 1 %}is-active{% endif %}"><a tab="{{- flag.name | slugify -}}-tab">{{ flag.name }}</a></li>
+<li{% if loop.index == 1 %} class="is-active"{% endif %}><a tab="{{- flag.name | slugify -}}-tab">{{ flag.name }}</a></li>
 {% if flag.name == "pyproject.toml" %}
 <li><a tab="djlint-toml-tab">djlint.toml / .djlint.toml</a></li>
 {% endif %}

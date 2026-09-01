@@ -119,6 +119,7 @@
 - `H042` is no longer described as off by default, which it stopped being in 1.42.1.
 - The formatter's before-and-after example on the formatter page showed a template tag still written with single quotes. `T002` is on by default now and the formatter rewrites those, so the page showed output djLint would not produce.
 - The configuration page no longer wraps each option's description in a second paragraph. The markdown already produced one, so the page carried forty-four `<p><p>` nestings that a browser has to repair and that djLint's own linter reported as orphan tags.
+- The docs no longer write `class=""` on every inactive tab and navigation link. The class attribute is only written when it has a value, which is what `H026` asks for, so djLint's own site now passes its own rule.
 
 ### Tests
 
