@@ -37,6 +37,15 @@ test_data = [
         id="syntax_and_invisible_entities_are_kept",
     ),
     pytest.param(
+        (
+            "<p>&lbrace;&lbrace; name &rbrace;&rbrace; &#123;% if a %&#125; &#x7B;# note #&#x7D;</p>\n"
+        ),
+        (
+            "<p>&lbrace;&lbrace; name &rbrace;&rbrace; &#123;% if a %&#125; &#x7B;# note #&#x7D;</p>\n"
+        ),
+        id="template_delimiters_are_kept",
+    ),
+    pytest.param(
         ("<p>&mdsah; names nothing</p>\n"),
         ("<p>&mdsah; names nothing</p>\n"),
         id="a_misspelled_entity_is_left_for_the_rule_to_report",

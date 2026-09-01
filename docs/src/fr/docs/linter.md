@@ -612,7 +612,7 @@ Les sous-ressources en simple http:// sur une page servie en HTTPS constituent d
 
 `N'utilisez pas de références d'entités.`
 
-Les documents HTML5 sont en UTF-8, donc le caractère littéral fonctionne partout et c'est ce que les relecteurs lisent réellement ; une faute de frappe dans une référence d'entité (par exemple `&mdsah;`) n'est pas détectée par le navigateur et s'affiche telle quelle comme du texte cassé. djLint autorise les entités qui portent de la syntaxe (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`) et celles qui nomment un caractère invisible, donc impossible à relire sous forme littérale : les espaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), les liants et marques (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) et `&shy;`, sous forme nommée, décimale ou hexadécimale.
+Les documents HTML5 sont en UTF-8, donc le caractère littéral fonctionne partout et c'est ce que les relecteurs lisent réellement ; une faute de frappe dans une référence d'entité (par exemple `&mdsah;`) n'est pas détectée par le navigateur et s'affiche telle quelle comme du texte cassé. djLint autorise les entités qui portent de la syntaxe (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, ainsi que les accolades `&lbrace;` et `&rbrace;`, qui écrites en clair ouvriraient une balise de template) et celles qui nomment un caractère invisible, donc impossible à relire sous forme littérale : les espaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), les liants et marques (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) et `&shy;`, sous forme nommée, décimale ou hexadécimale.
 
 `--reformat` réécrit l'entité en caractère pour vous : un signalement ne demande jamais de travail manuel.
 

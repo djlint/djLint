@@ -384,7 +384,6 @@ def test_H023(
         assert result.exit_code == 1
         assert "H023 1:" in result.output
 
-    # syntax, and characters that cannot be reviewed as a literal, are allowed
     for quiet in (
         b"&gt;",
         b"&amp;",
@@ -395,6 +394,11 @@ def test_H023(
         b"&zwj;",
         b"&lrm;",
         b"&hairsp;",
+        b"&lbrace;",
+        b"&rbrace;",
+        b"&lcub;",
+        b"&#123;",
+        b"&#x7D;",
         b"&#8203;",
         b"&#x200c;",
         b"&#160;",
