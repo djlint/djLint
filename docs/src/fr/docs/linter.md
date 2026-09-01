@@ -614,7 +614,7 @@ Les sous-ressources en simple http:// sur une page servie en HTTPS constituent d
 
 Les documents HTML5 sont en UTF-8, donc le caractère littéral fonctionne partout et c'est ce que les relecteurs lisent réellement ; une faute de frappe dans une référence d'entité (par exemple `&mdsah;`) n'est pas détectée par le navigateur et s'affiche telle quelle comme du texte cassé. djLint autorise les entités qui portent de la syntaxe (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, ainsi que les accolades `&lbrace;` et `&rbrace;` avec `&percnt;`, `&num;` et `&dollar;`, qui écrits en clair formeraient un délimiteur de template) et celles qui nomment un caractère invisible, donc impossible à relire sous forme littérale : les espaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), les liants et marques (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) et `&shy;`, sous forme nommée, décimale ou hexadécimale.
 
-`--reformat` réécrit l'entité en caractère pour vous : un signalement ne demande jamais de travail manuel.
+`--reformat` réécrit l'entité en caractère pour vous : un signalement ne demande jamais de travail manuel. Une entité écrite à l'intérieur d'une balise de template fait partie de la balise et non de la page : ni la règle ni le formateur n'y touchent.
 
 À éviter :
 

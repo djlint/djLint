@@ -46,6 +46,11 @@ test_data = [
         id="template_delimiters_are_kept",
     ),
     pytest.param(
+        ('<p>{% trans "a &mdash; b" %} {{ x|default:"&copy;" }} &mdash;</p>\n'),
+        ('<p>{% trans "a &mdash; b" %} {{ x|default:"&copy;" }} —</p>\n'),
+        id="entities_inside_template_tags_are_kept",
+    ),
+    pytest.param(
         ("<p>&mdsah; names nothing</p>\n"),
         ("<p>&mdsah; names nothing</p>\n"),
         id="a_misspelled_entity_is_left_for_the_rule_to_report",
