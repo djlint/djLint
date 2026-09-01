@@ -28,6 +28,7 @@
 - `H020` leaves an element whose empty form carries meaning: a blank `<option>` holding a select open, a `<tbody>` a script fills in, a `<canvas>`, `<template>` or `<noscript>`. Its exempt names are anchored too, so `<theadx>` is no longer read as `<thead>`.
 - `--ignore-case` reaches the linter. It turned off the formatter's case fixing while `H009` and `H010` went on reporting the case the user had just asked djLint to leave alone.
 - `--profile=all` honours every `exclude` list. It is every template language at once, so a rule switched off for one of them was running under it: `T028` fired on django markup and recommended `{%- if -%}`, which django rejects.
+- A string inside a `{% set %}` or a function call keeps its quotes when it holds the other kind. `{% set s = 'say "hi"' %}` was rewritten to `"say \"hi\""` to satisfy `--quote-style`, trading two readable quotes for two escapes. The formatter now leaves such a string as written, which is the rule `T002` already applied to a tag's arguments.
 
 ### Fix
 
@@ -105,6 +106,7 @@
 - A `<pre>`, `<textarea>`, `<script>` or `<style>` opened and closed on one line no longer counts as closing a block opened earlier. `<pre>x</pre><script>` cancelled the block the `<script>` had just opened, so its body was indented as markup, and markup written after `</style>` on the closing line, as in `</style>z</b>`, went uncounted, so the element it closed kept its indent for the rest of the file. Both took a second run to settle, and the configuration page of djLint's own docs was one of the files affected under `--format-js`.
 - Formatting leaves an escaped brace alone, and `H023` no longer reports one. `&#123;&#123; name &#125;&#125;` was rewritten to `{{ name }}`, turning text a template deliberately displays into an expression it now evaluates, and `&lbrace;% if %&rbrace;` into a live tag. A brace carries syntax in a template the way `<` does in html, and so do the `%`, `#` and `$` that complete `{%`, `{#` and `${`, so `&lbrace;`, `&rbrace;`, `&lcub;`, `&rcub;`, `&percnt;`, `&num;`, `&dollar;` and their decimal and hex forms join the entities that are kept as written.
 - Formatting leaves an entity written inside a template tag alone. `{% trans "a &mdash; b" %}` was rewritten to `{% trans "a — b" %}`, which changes the key the translation is looked up by, and a string in an expression such as `{{ x|default:"&copy;" }}` is escaped by the engine, so the rewrite changed what the page showed. `H023` already left those alone; the formatter now agrees with it.
+- Formatting leaves a tag written inside a template tag alone when dropping a default `type` or lowercasing a form `method`. `{% set s = '<form method="POST">' %}` is a string the template holds, not an element of the page, and its text was being rewritten.
 
 ### Performance
 

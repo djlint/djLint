@@ -43,8 +43,8 @@ if TYPE_CHECKING:
 
 
 _QUOTE_STYLES: Final = {
-    "double": QuoteStyle.ALWAYS_DOUBLE,
-    "single": QuoteStyle.ALWAYS_SINGLE,
+    "double": QuoteStyle.PREFER_DOUBLE,
+    "single": QuoteStyle.PREFER_SINGLE,
 }
 _QUOTE_CHARACTERS: Final = {"double": '"', "single": "'"}
 
