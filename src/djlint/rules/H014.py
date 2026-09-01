@@ -21,8 +21,6 @@ if TYPE_CHECKING:
     from djlint.settings import Config
     from djlint.types import LintError
 
-# a run of lines holding nothing but whitespace, anchored so the report
-# points at the first of them rather than at the content line above
 _BLANK_LINES_PATTERN: Final = re.compile(
     r"(?:(?<=\n)|\A)(?:[ \t]*\n)+", cache_pattern=False
 )
@@ -45,6 +43,9 @@ def run(
     the linter never rejects the formatter's own output. One blank line is
     a paragraph break rather than an extra, so it is left alone even where
     the formatter would drop it.
+
+    A run is matched from the start of a line, so the report points at
+    the first blank line rather than at the content line above it.
     """
     if config.preserve_blank_lines:
         return ()

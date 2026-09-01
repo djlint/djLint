@@ -800,16 +800,30 @@ _IGNORED_INLINE_BLOCKS_TAIL: Final = r"""
     | {%[ ]*blocktrans(?:late)?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans(?:late)?[ ]*%}
 """
 
-# the linter skips a script or style body but not the tags around it, so a
-# rule can still see the attributes on the opening tag
-_IGNORED_INLINE_BLOCKS: Final = (
-    r"""
+
+def _build_ignored_inline_blocks(*, for_linting: bool) -> str:
+    """Build the alternation of one-line blocks djLint leaves alone.
+
+    Linting leaves a script or style element out, so a rule can still
+    see the attributes on the opening tag. Their bodies are skipped by
+    the multi-line spans either way.
+    """
+    if for_linting:
+        return _IGNORED_INLINE_BLOCKS_TAIL
+
+    return (
+        r"""
       <script.*?\</script>
     | <style.*?\</style>
     |"""
-    + _IGNORED_INLINE_BLOCKS_TAIL
+        + _IGNORED_INLINE_BLOCKS_TAIL
+    )
+
+
+_IGNORED_INLINE_BLOCKS: Final = _build_ignored_inline_blocks(for_linting=False)
+_LINT_IGNORED_INLINE_BLOCKS: Final = _build_ignored_inline_blocks(
+    for_linting=True
 )
-_LINT_IGNORED_INLINE_BLOCKS: Final = _IGNORED_INLINE_BLOCKS_TAIL
 
 _IGNORED_BLOCKS_TAIL: Final = (
     r"""
@@ -1493,14 +1507,17 @@ class Config:
                 )
             )
         )
-        # "all" is every template language at once, so a rule excluded for
-        # any one of them cannot be trusted here either
         ignored_codes = set(self.ignore.split(","))
         included_codes = set(self.include.split(","))
         if self.ignore_case:
             ignored_codes.update(("H009", "H010"))
 
         def rule_applies(rule: Mapping[str, Any]) -> bool:
+            """Whether the rule runs under the profile in force.
+
+            "all" is every template language at once, so a rule excluded
+            for any one of them cannot be trusted under it either.
+            """
             excluded_profiles = rule.get("exclude", ())
             if excluded_profiles and (
                 self.profile == "all" or self.profile in excluded_profiles
