@@ -568,7 +568,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         if (not is_block_raw and ignored_inline_start_pattern.search(item)) or (
             not is_block_raw
-            and single_line_tag_pattern.search(item)
+            and single_line_tag_pattern.search(item.lstrip())
             and not starts_unclosed_html_tag(item)
             and not template_unindent_pattern.match(item.lstrip())
             and not tag_unindent_line_pattern.match(item.lstrip())

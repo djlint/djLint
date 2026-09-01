@@ -100,6 +100,7 @@
 - `--preserve-leading-space` no longer keeps a blank line on one run and drops it on the next. Whitespace is trimmed in two passes under that option, and the second pass was still deciding what counts as a verbatim block from the positions the first pass had shifted, so a `<pre>` or `<textarea>` written with leading indentation moved every decision after it out of place. `--blank-line-after-tag` had the same drift from the second tag in its list onwards.
 - A template block opened and closed on one line no longer indents everything after it. `{% if a %}y{% endif %}<p>` left the `{% if %}` counted as open, so the first closing tag below it restored the indent to that phantom block's level and the rest of the file sat one level too deep until the next run pulled it back.
 - An element opened on the same line as a `<script>`, `<style>` or `<pre>` keeps its indent. Everything before the block's opening tag went uncounted, so the children of `<a class="x">text<style>` sat outside it, and a closing tag written after such a block's end tag now gives back the level it took.
+- `--preserve-leading-space` no longer moves a line back and forth on every run. A line opening with text and holding a short element, such as `&amp;<small> text </small>`, was recognised as one only while it sat at the left margin, so each run indented it and the next pulled it back, and `--check` never came out clean.
 
 ### Performance
 

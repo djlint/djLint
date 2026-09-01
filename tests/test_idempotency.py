@@ -120,6 +120,10 @@ templates = [
         '<a class="a b">text<style>a{color:red}</style><hr></a>\n',
         id="element opened before a style block",
     ),
+    pytest.param(
+        '<figure>&amp;<small class="a b"> text </small></figure>\n',
+        id="text opening a line before an inline element",
+    ),
 ]
 
 option_sets = [
