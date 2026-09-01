@@ -23,7 +23,7 @@ test_data = [
         (
             "{% block css %}\n"
             '    {% assets "css_error" %}\n'
-            '        <link type="text/css" rel="stylesheet" href="{{ ASSET_URL }}" />\n'
+            '        <link rel="stylesheet" href="{{ ASSET_URL }}" />\n'
             "    {% endassets %}\n"
             "{% endblock css %}\n"
         ),

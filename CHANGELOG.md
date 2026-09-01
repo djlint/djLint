@@ -6,6 +6,8 @@
 
 ### Feature
 
+- Formatting drops the `type` that html5 already assumes, so `<script type="text/javascript">` becomes `<script>` and the same for `<style>` and a stylesheet `<link>`. A type that means something, such as `type="module"` or `type="application/json"`, is kept. This is what `H024` asks for.
+- Formatting lowercases a form's `method`, so `method="POST"` becomes `method="post"`. `method` is an enumerated attribute, so the page submits the same either way, and this is what `H029` asks for.
 - Formatting writes an entity reference as the character it names, so `&copy;` becomes `©` and `&#8364;` becomes `€`, which is what `H023` asks for. The entities that have to survive are untouched: `&lt;`, `&amp;` and the rest carry syntax, and an invisible one such as `&zwnj;` cannot be reviewed as a literal. An entity naming nothing, such as the misspelled `&mdsah;`, is left as written for the rule to go on reporting, and a `<pre>`, `<textarea>`, `<script>` or `<style>` body is left alone. `--no-entity-formatting` turns it off.
 - New option `--quote-style` / `quote_style` chooses the quotes djLint writes around strings inside template tags, `double` (the default, and what it has always written) or `single`. `T002` asks for whichever is configured, so `{% include 'a.html' %}` is no longer reported in a project that writes single quotes. Quoting of html attributes is unchanged and stays with `H008`.
 - Formatting lowercases an attribute name written in another case, the same eleven names `H010` reports, so `<div CLASS="a">` is fixed rather than only complained about. A name the rule does not know, such as an svg `viewBox` or an angular input, keeps the case it carries, and `--ignore-case` turns the whole thing off as it already does for tag names.

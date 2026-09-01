@@ -66,7 +66,7 @@ test_data = [
             "      {% if a %}checked{% endif %}></span>\n"
             "{% block body %}\n"
             '    <form action="{% if gpg -%}asdf something pretty long. can\'t beat this length{%- endif %}"\n'
-            '          method="POST">\n'
+            '          method="post">\n'
             "    </form>\n"
             "{% endblock body %}\n"
             '<ul class="menu-list\n'
@@ -129,7 +129,7 @@ test_data = [
             "      {% if a %}checked{% endif %}></span>\n"
             "{% block body %}\n"
             '    <form action="{% if gpg -%}asdf something pretty long. can\'t beat this length{%- endif %}"\n'
-            '          method="POST">\n'
+            '          method="post">\n'
             "    </form>\n"
             "{% endblock body %}\n"
             '<ul class="menu-list\n'
@@ -249,7 +249,7 @@ test_data = [
         (
             "{% block body %}\n"
             '    <form action="{% if gpg -%}asdf something pretty long. can\'t beat this length{%- endif %}"\n'
-            '          method="POST">\n'
+            '          method="post">\n'
             "    </form>\n"
             "{% endblock body %}\n"
         ),

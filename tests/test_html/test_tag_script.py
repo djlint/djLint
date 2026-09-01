@@ -111,7 +111,7 @@ test_data = [
             "  </script>\n"
         ),
         (
-            '<script type="text/javascript">\n'
+            "<script>\n"
             '  var message = "Alert!";\n'
             "  alert(message);\n"
             "</script>\n"

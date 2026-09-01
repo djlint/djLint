@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.formatter.attribute_values import format_attribute_values
 from djlint.formatter.class_attributes import (
     restore_class_attribute_newlines,
     restore_verbatim_attribute_newlines,
@@ -52,6 +53,7 @@ def formatter(config: Config, rawcode: str) -> str:
     )
 
     normalized_code = format_entities(normalized_code, config)
+    normalized_code = format_attribute_values(normalized_code, config)
 
     compressed = compress_html(normalized_code, config)
 

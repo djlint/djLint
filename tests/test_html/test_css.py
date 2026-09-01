@@ -62,7 +62,7 @@ test_data = [
             "</style>\n"
         ),
         (
-            '<style type="text/css">body { background: navy; color: yellow; }</style>\n'
+            "<style>body { background: navy; color: yellow; }</style>\n"
             '<style lang="postcss">body { background: navy; color: yellow; }</style>\n'
         ),
         id="postcss",
