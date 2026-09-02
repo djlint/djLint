@@ -13,9 +13,12 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint.reformat import formatter
+from djlint.settings import Config
 from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from typing_extensions import Any
 
 test_data = [
@@ -277,3 +280,16 @@ def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
     printer(expected, source, output)
     assert expected == output
     assert expected == formatter(config, output)
+
+
+def test_indent_js_keeps_the_other_js_settings(tmp_path: Path) -> None:
+    """The option overrides the indent alone, not the whole js block."""
+    (tmp_path / ".djlintrc").write_text(
+        '{"js": {"wrap_line_length": 80}}', encoding="utf-8"
+    )
+    template = tmp_path / "a.html"
+    template.write_text("<div></div>", encoding="utf-8")
+
+    config = Config(str(template), indent_js=2)
+
+    assert config.js_config == {"wrap_line_length": 80, "indent_size": 2}

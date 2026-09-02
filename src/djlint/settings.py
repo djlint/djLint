@@ -379,6 +379,20 @@ def build_custom_html(custom_html: str | None) -> str | None:
     return "|" + "|".join(tags)
 
 
+def _beautifier_config(
+    configured: Mapping[str, Any] | None, *, indent_size: int | None
+) -> dict[str, Any]:
+    """The css or js settings, with an indent given on the command line.
+
+    The option overrides the one key it names, so a `wrap_line_length` or
+    any other setting in the config file stays in force beside it.
+    """
+    settings = dict(configured or {})
+    if indent_size:
+        settings["indent_size"] = indent_size
+    return settings
+
+
 def build_exclude(exclude: str) -> str:
     """Build regex string for exclude paths."""
     if "," not in exclude:
@@ -1421,16 +1435,12 @@ class Config:
             line_break_after_multiline_tag
             or djlint_settings.get("line_break_after_multiline_tag", False)
         )
-        self.js_config = (
-            {"indent_size": indent_js}
-            if indent_js
-            else djlint_settings.get("js")
-        ) or {}
-        self.css_config = (
-            {"indent_size": indent_css}
-            if indent_css
-            else djlint_settings.get("css")
-        ) or {}
+        self.js_config = _beautifier_config(
+            djlint_settings.get("js"), indent_size=indent_js
+        )
+        self.css_config = _beautifier_config(
+            djlint_settings.get("css"), indent_size=indent_css
+        )
 
         editorconfig = load_editorconfig(self.project_root, self.extension)
         indent = indent or setting_int(
