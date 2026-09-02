@@ -334,3 +334,28 @@
       # a template tag between the attributes is stepped over, and the name
       # boundary keeps data-title from counting as title
       - <iframe\b(?:"[^"]*"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|(?!(?<![-.:\w])(?:title|aria-label|aria-labelledby)\s*=)[^'">{}])*/?>
+- rule:
+    name: H046
+    message: Tabindex should not be positive.
+    flags: re.DOTALL|re.I
+    patterns:
+      # a value written by a template tag is unknowable, so only a literal
+      # 1 or more is reported; the name boundary keeps data-tabindex out
+      - (?<=\s)tabindex\s*=\s*(?:"\s*\+?[1-9]|'\s*\+?[1-9]|\+?[1-9])
+- rule:
+    name: H047
+    message: Aria-hidden should not be set on a focusable element.
+    python_module: djlint.rules.H047
+- rule:
+    name: H048
+    message: Aria attribute is not one the specification defines.
+    python_module: djlint.rules.H048
+- rule:
+    name: H049
+    skip_in_attributes: true
+    message: Viewport should not stop the page being zoomed.
+    flags: re.DOTALL|re.I
+    patterns:
+      # the viewport name is looked for without being consumed, so the two
+      # attributes are found whichever order they are written in
+      - <meta\b(?=(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])name\s*=\s*["']?\s*viewport\b)(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])content\s*=\s*["'][^"']*?(?:user-scalable\s*=\s*(?:no|0)\b|maximum-scale\s*=\s*(?:0[.,]\d+|1(?:[.,]\d+)?)(?![.,\d]))

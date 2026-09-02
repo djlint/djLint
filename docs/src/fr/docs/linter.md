@@ -84,6 +84,10 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H043 | La balise button devrait avoir un attribut `type`.                                                                        | ✔️     |
 | H044 | Un thead ne devrait pas mélanger des cellules `th` et `td`.                                                               | ✔️     |
 | H045 | La balise iframe devrait avoir un attribut `title`.                                                                       | ✔️     |
+| H046 | La valeur de tabindex ne devrait pas être positive.                                                                       | ✔️     |
+| H047 | aria-hidden ne devrait pas être posé sur un élément focusable.                                                            | ✔️     |
+| H048 | Cet attribut aria n'est pas défini par la spécification.                                                                  | ✔️     |
+| H049 | Le viewport ne devrait pas empêcher le zoom de la page.                                                                   | ✔️     |
 
 ### Modèles de code
 
@@ -1046,6 +1050,86 @@ Le nom peut venir de `title`, `aria-label` ou `aria-labelledby` ; l'un des trois
 
 ```html
 <iframe src="/report/" title="Rapport trimestriel"></iframe>
+```
+
+#### H046
+
+`La valeur de tabindex ne devrait pas être positive.`
+
+Un `tabindex` positif place l'élément en tête de l'ordre de tabulation, devant tout ce qui n'en a pas. Un seul suffit à réorganiser la page entière pour qui navigue au clavier, et l'ordre doit ensuite être tenu à la main dans chaque gabarit qui ajoute un contrôle. La WCAG traite ce point sous 2.4.3 Ordre de focus.
+
+`0` place l'élément dans l'ordre de tabulation là où le document le met, et `-1` l'en retire tout en le laissant focusable par script : ni l'un ni l'autre n'est signalé, pas plus qu'une valeur écrite par une balise de template, dont le nombre n'est pas connu ici.
+
+À éviter :
+
+```html
+<input tabindex="1">
+```
+
+À faire :
+
+```html
+<input tabindex="0">
+```
+
+#### H047
+
+`aria-hidden ne devrait pas être posé sur un élément focusable.`
+
+`aria-hidden="true"` retire l'élément de l'arbre d'accessibilité mais le laisse dans l'ordre de tabulation : la navigation au clavier s'y arrête encore et rien n'est annoncé. Masquer une icône décorative est l'usage courant de l'attribut et n'est pas signalé ; seul un élément qui prend le focus de lui-même l'est.
+
+Un élément est considéré comme focusable s'il s'agit d'un `button`, `select`, `textarea`, `iframe` ou `summary`, d'un `a` ou `area` avec `href`, d'un `input` non caché, d'un `audio` ou `video` avec `controls`, ou de tout élément portant `contenteditable` ou un `tabindex` supérieur ou égal à `0`. Un contrôle `disabled`, ou muni de `tabindex="-1"`, est déjà hors de l'ordre de tabulation et reste intact.
+
+À éviter :
+
+```html
+<button aria-hidden="true">Close</button>
+```
+
+À faire :
+
+```html
+<button type="button" aria-label="Close"><span aria-hidden="true">x</span></button>
+```
+
+#### H048
+
+`Cet attribut aria n'est pas défini par la spécification.`
+
+Un attribut aria mal orthographié ne fait rien du tout. Aucun navigateur n'avertit, aucun lecteur d'écran ne le signale, et le balisage garde l'apparence d'avoir été rendu accessible : `aria-lable` peut ainsi rester des années dans un gabarit pendant que le contrôle qu'il devait nommer reste sans nom.
+
+Les noms connus de la règle sont ceux que définit ARIA. Une liaison écrite par un framework n'est pas un nom aria simple : `:aria-label`, `v-bind:aria-label` et `[attr.aria-label]` sont donc ignorés.
+
+À éviter :
+
+```html
+<button type="button" aria-lable="Close">x</button>
+```
+
+À faire :
+
+```html
+<button type="button" aria-label="Close">x</button>
+```
+
+#### H049
+
+`Le viewport ne devrait pas empêcher le zoom de la page.`
+
+`user-scalable=no`, ainsi qu'un `maximum-scale` inférieur à 2, empêchent d'agrandir la page sur un téléphone, ce qui est pour beaucoup le seul moyen de la lire. La WCAG demande 200 % sous 1.4.4 Redimensionnement du texte. Les navigateurs ignorent de plus en plus cette restriction, mais la balise coupe encore le zoom partout où elle est respectée.
+
+Le nom et le contenu sont trouvés quel que soit l'ordre dans lequel les deux sont écrits.
+
+À éviter :
+
+```html
+<meta name="viewport" content="width=device-width, user-scalable=no">
+```
+
+À faire :
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1">
 ```
 
 {% endraw %}

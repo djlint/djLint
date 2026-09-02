@@ -84,6 +84,10 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H043 | button 标签应有 `type` 属性。                                                      | ✔️       |
 | H044 | thead 中不应混用 `th` 和 `td` 单元格。                                             | ✔️       |
 | H045 | iframe 标签应有 `title` 属性。                                                     | ✔️       |
+| H046 | tabindex 不应为正数。                                                              | ✔️       |
+| H047 | 不应在可获得焦点的元素上设置 aria-hidden。                                         | ✔️       |
+| H048 | 该 aria 属性不是规范定义的属性。                                                   | ✔️       |
+| H049 | viewport 不应禁止页面缩放。                                                        | ✔️       |
 
 ### 编码规则
 
@@ -1046,6 +1050,86 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
 
 ```html
 <iframe src="/report/" title="季度报告"></iframe>
+```
+
+#### H046
+
+`tabindex 不应为正数。`
+
+正的 `tabindex` 会把元素提到 Tab 顺序最前面，排在所有没有该属性的元素之前。只要有一个，键盘用户看到的整页顺序就被重排，此后每个新增控件的模板都得手工维护这个顺序。WCAG 在 2.4.3「焦点顺序」中讨论了这一点。
+
+`0` 让元素按文档中的位置进入 Tab 顺序，`-1` 把它移出顺序但仍可由脚本聚焦，两者都不会被报告；由模板标签写入的值也不会，因为这里并不知道它的数值。
+
+错误示例：
+
+```html
+<input tabindex="1">
+```
+
+正确示例：
+
+```html
+<input tabindex="0">
+```
+
+#### H047
+
+`不应在可获得焦点的元素上设置 aria-hidden。`
+
+`aria-hidden="true"` 把元素移出可访问性树，却仍留在 Tab 顺序里，于是键盘用户依旧会停在它上面，而屏幕阅读器什么也不播报。隐藏装饰性图标是该属性的常规用法，不会被报告；只有本身可获得焦点的元素才会。
+
+以下元素被视为可获得焦点：`button`、`select`、`textarea`、`iframe`、`summary`，带 `href` 的 `a` 或 `area`，非隐藏的 `input`，带 `controls` 的 `audio` 或 `video`，以及任何带 `contenteditable` 或 `tabindex` 大于等于 `0` 的元素。带 `disabled` 或 `tabindex="-1"` 的控件已在 Tab 顺序之外，会被跳过。
+
+错误示例：
+
+```html
+<button aria-hidden="true">Close</button>
+```
+
+正确示例：
+
+```html
+<button type="button" aria-label="Close"><span aria-hidden="true">x</span></button>
+```
+
+#### H048
+
+`该 aria 属性不是规范定义的属性。`
+
+拼错的 aria 属性什么也不会做。浏览器不会警告，屏幕阅读器不会报告，标记看上去仍像是做过无障碍处理，于是 `aria-lable` 可以在模板里躺上数年，而它本该命名的控件始终没有名称。
+
+规则认识的是 ARIA 定义的属性名。框架写出的绑定不是普通的 aria 名称，因此 `:aria-label`、`v-bind:aria-label` 和 `[attr.aria-label]` 都会被跳过。
+
+错误示例：
+
+```html
+<button type="button" aria-lable="Close">x</button>
+```
+
+正确示例：
+
+```html
+<button type="button" aria-label="Close">x</button>
+```
+
+#### H049
+
+`viewport 不应禁止页面缩放。`
+
+`user-scalable=no` 以及小于 2 的 `maximum-scale` 会让页面在手机上无法放大，而放大往往是许多人能够阅读它的唯一方式。WCAG 在 1.4.4「调整文本大小」中要求支持 200%。浏览器越来越倾向于忽略该限制，但在仍然遵守它的地方，这个标签依旧关闭了缩放。
+
+无论这两个属性以何种顺序书写，名称与内容都会被找到。
+
+错误示例：
+
+```html
+<meta name="viewport" content="width=device-width, user-scalable=no">
+```
+
+正确示例：
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1">
 ```
 
 {% endraw %}

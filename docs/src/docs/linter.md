@@ -84,6 +84,10 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H043 | Button tag should have a `type` attribute.                                                   | ✔️      |
 | H044 | Thead should not mix `th` and `td` cells.                                                    | ✔️      |
 | H045 | Iframe tag should have a `title` attribute.                                                  | ✔️      |
+| H046 | Tabindex should not be positive.                                                             | ✔️      |
+| H047 | Aria-hidden should not be set on a focusable element.                                        | ✔️      |
+| H048 | Aria attribute is not one the specification defines.                                         | ✔️      |
+| H049 | Viewport should not stop the page being zoomed.                                              | ✔️      |
 
 ### Code Patterns
 
@@ -1046,6 +1050,86 @@ Do:
 
 ```html
 <iframe src="/report/" title="Quarterly report"></iframe>
+```
+
+#### H046
+
+`Tabindex should not be positive.`
+
+A positive `tabindex` pulls an element to the front of the tab order, ahead of everything that has none. One of them rearranges the whole page for a keyboard user, and the order then has to be kept by hand in every template that adds a control. WCAG covers this under 2.4.3 Focus Order.
+
+`0` puts an element in the tab order at the place the document gives it, and `-1` takes it out while leaving it focusable from script. Neither is reported, and neither is a value written by a template tag, whose number is not known here.
+
+Don't:
+
+```html
+<input tabindex="1">
+```
+
+Do:
+
+```html
+<input tabindex="0">
+```
+
+#### H047
+
+`Aria-hidden should not be set on a focusable element.`
+
+`aria-hidden="true"` takes an element out of the accessibility tree but leaves it in the tab order, so a keyboard user still lands on it and hears nothing announced. Hiding a decorative icon is the ordinary use of the attribute and is not reported; only an element that takes focus by itself is.
+
+An element counts as focusable when it is a `button`, `select`, `textarea`, `iframe` or `summary`, an `a` or `area` with an `href`, an `input` that is not hidden, an `audio` or `video` with `controls`, or anything carrying `contenteditable` or a `tabindex` of `0` or more. A `disabled` control, or one with `tabindex="-1"`, is already out of the tab order and is left alone.
+
+Don't:
+
+```html
+<button aria-hidden="true">Close</button>
+```
+
+Do:
+
+```html
+<button type="button" aria-label="Close"><span aria-hidden="true">x</span></button>
+```
+
+#### H048
+
+`Aria attribute is not one the specification defines.`
+
+A misspelled aria attribute does nothing at all. No browser warns, no screen reader reports it, and the markup keeps the appearance of having been made accessible, so `aria-lable` can sit in a template for years while the control it was meant to name stays unnamed.
+
+The names the rule knows are the ones ARIA defines. A binding written by a framework is not a plain aria name, so `:aria-label`, `v-bind:aria-label` and `[attr.aria-label]` are left alone.
+
+Don't:
+
+```html
+<button type="button" aria-lable="Close">x</button>
+```
+
+Do:
+
+```html
+<button type="button" aria-label="Close">x</button>
+```
+
+#### H049
+
+`Viewport should not stop the page being zoomed.`
+
+`user-scalable=no`, and a `maximum-scale` below 2, stop a page being enlarged on a phone, which for many people is the only way to read it. WCAG asks for 200% under 1.4.4 Resize Text. Browsers increasingly ignore the restriction, but the tag still turns zoom off wherever it is honoured.
+
+The name and the content are found whichever order the two are written in.
+
+Don't:
+
+```html
+<meta name="viewport" content="width=device-width, user-scalable=no">
+```
+
+Do:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1">
 ```
 
 {% endraw %}
