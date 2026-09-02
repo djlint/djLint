@@ -204,19 +204,13 @@ def count_format_errors(errors: Mapping[str, Sequence[str]]) -> int:
 
 
 def build_quantity(size: int) -> str:
-    """Count files in a list."""
-    return str(size) + " file" + ("s" if size > 1 or size == 0 else "")
+    """Count files, as in "1 file" or "3 files"."""
+    return f"{size} file" + ("" if size == 1 else "s")
 
 
 def build_quantity_tense(size: int) -> str:
-    """Count files in a list."""
-    return (
-        str(size)
-        + " file"
-        + ("s" if size > 1 or size == 0 else "")
-        + " "
-        + ("were" if size > 1 or size == 0 else "was")
-    )
+    """Count files with a verb, as in "1 file was" or "3 files were"."""
+    return build_quantity(size) + (" was" if size == 1 else " were")
 
 
 def build_stats_output(
