@@ -316,27 +316,13 @@ def condense_html(
     if config.preserve_leading_space:
         return html
 
-    blank_line_after_patterns = (
-        tuple(
-            re.compile(
-                rf"((?:{{%[-+]?\s*?{tag.strip()}[^}}]+?[-+]?%}}\n?)+)",
-                RE_FLAGS_IMS,
-            )
-            for tag in config.blank_line_after_tag.split(",")
-        )
-        if config.blank_line_after_tag
-        else ()
+    blank_line_after_patterns = tuple(
+        re.compile(rf"((?:{{%[-+]?\s*?{tag}[^}}]+?[-+]?%}}\n?)+)", RE_FLAGS_IMS)
+        for tag in split_option_list(config.blank_line_after_tag)
     )
-    blank_line_before_patterns = (
-        tuple(
-            re.compile(
-                rf"((?:{{%[-+]?\s*?{tag.strip()}[^}}]+?[-+]?%}}\n?)+)",
-                RE_FLAGS_IMS,
-            )
-            for tag in config.blank_line_before_tag.split(",")
-        )
-        if config.blank_line_before_tag
-        else ()
+    blank_line_before_patterns = tuple(
+        re.compile(rf"((?:{{%[-+]?\s*?{tag}[^}}]+?[-+]?%}}\n?)+)", RE_FLAGS_IMS)
+        for tag in split_option_list(config.blank_line_before_tag)
     )
 
     def condense_line(
