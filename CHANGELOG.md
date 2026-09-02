@@ -81,7 +81,7 @@
 - `{{#if}}` and other handlebars sections are no longer read as the start of a Jinja `{#` comment, which made everything up to the next `#}` count as a comment and left it unformatted.
 - Jinja's `+` whitespace control marker is now read wherever `-` is. `{%+ if x %}` was not recognised as a block tag and `{%+ endif %}` not as an end tag, so `T038` reported a balanced block as unmatched and let an unbalanced one through, `{% endblock body +%}` was read as naming a block `body +`, and the formatter left these blocks unindented.
 - On free-threaded Python, `--format-css` and `--format-js` no longer share the beautifier indent level between the threads formatting different files, which could indent a `<style>` or `<script>` body by the wrong amount.
-- Console output is utf-8 on stderr as well as on stdout. A warning could reach a Windows console as `\U0001f622` rather than an emoji, and a template's own text quoted in a lint message came out in the console codepage.
+- Console output is utf-8 on stdout and stderr alike. A warning could reach a Windows console as `\U0001f622` rather than an emoji, and a template's own text quoted in a lint message came out in the console codepage.
 - Input on stdin that is not valid utf-8 is reported as bad input rather than as a djLint failure.
 - A closed pipe, as in `djlint . | head -1`, is no longer a djLint failure. It printed a traceback and exited `120`.
 - `--statistics` now prints its summary alongside GitHub annotations. It was silently dropped whenever the GitHub output was on, which happens by itself inside a workflow.
