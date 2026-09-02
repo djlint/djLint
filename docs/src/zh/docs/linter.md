@@ -83,6 +83,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H042 | label 的 for 属性在此文件中没有匹配的元素 id。                                     | ✔️       |
 | H043 | button 标签应有 `type` 属性。                                                      | ✔️       |
 | H044 | thead 中不应混用 `th` 和 `td` 单元格。                                             | ✔️       |
+| H045 | iframe 标签应有 `title` 属性。                                                     | ✔️       |
 
 ### 编码规则
 
@@ -1025,6 +1026,26 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
     <th>大小</th>
   </tr>
 </thead>
+```
+
+#### H045
+
+`iframe 标签应有 title 属性。`
+
+屏幕阅读器通过可访问名称播报 iframe。没有名称时，它会读出框架的 url，或者什么都不读，用户在进入之前无从判断嵌入的是哪个页面。WCAG 将其归入 4.1.2「名称、角色、值」，axe 与 html-validate 也默认包含这项检查。
+
+名称可以来自 `title`、`aria-label` 或 `aria-labelledby`，三者有其一即可。由模板标签写入的名称同样算数，因此逐页命名的框架不会被报告。
+
+错误示例：
+
+```html
+<iframe src="/report/"></iframe>
+```
+
+正确示例：
+
+```html
+<iframe src="/report/" title="季度报告"></iframe>
 ```
 
 {% endraw %}

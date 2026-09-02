@@ -324,3 +324,13 @@
     name: H044
     message: Thead should not mix th and td cells.
     python_module: djlint.rules.H044
+- rule:
+    name: H045
+    skip_in_attributes: true
+    message: Iframe tag should have a title attribute.
+    flags: re.DOTALL|re.I
+    patterns:
+      # an accessible name may come from title, aria-label or aria-labelledby;
+      # a template tag between the attributes is stepped over, and the name
+      # boundary keeps data-title from counting as title
+      - <iframe\b(?:"[^"]*"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|(?!(?<![-.:\w])(?:title|aria-label|aria-labelledby)\s*=)[^'">{}])*/?>

@@ -83,6 +83,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | ✔️     |
 | H043 | La balise button devrait avoir un attribut `type`.                                                                        | ✔️     |
 | H044 | Un thead ne devrait pas mélanger des cellules `th` et `td`.                                                               | ✔️     |
+| H045 | La balise iframe devrait avoir un attribut `title`.                                                                       | ✔️     |
 
 ### Modèles de code
 
@@ -1025,6 +1026,26 @@ Un `th` et un `td` n'ont pas le même sens pour un lecteur d'écran et reçoiven
     <th>Taille</th>
   </tr>
 </thead>
+```
+
+#### H045
+
+`La balise iframe devrait avoir un attribut title.`
+
+Un lecteur d'écran annonce une iframe par son nom accessible. Sans ce nom, il lit l'url du cadre, ou ne dit rien, et rien n'indique ce que contient la page intégrée avant d'y entrer. La WCAG classe ce point sous 4.1.2 Nom, rôle et valeur, et axe comme html-validate activent la vérification par défaut.
+
+Le nom peut venir de `title`, `aria-label` ou `aria-labelledby` ; l'un des trois suffit. Un nom écrit par une balise de template compte aussi, si bien qu'un cadre titré page par page n'est pas signalé.
+
+À éviter :
+
+```html
+<iframe src="/report/"></iframe>
+```
+
+À faire :
+
+```html
+<iframe src="/report/" title="Rapport trimestriel"></iframe>
 ```
 
 {% endraw %}

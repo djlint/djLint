@@ -41,6 +41,8 @@ Options:
                                   attribute content as JS/JSON.
   --configuration FILE            Path to global configuration file in
                                   djlint.toml, .djlint.toml, or .djlintrc format
+  --prefer-configuration          Let --configuration override the project's own
+                                  config file, rather than the other way round.
   --rules FILE                    Path to custom rules file in
                                   .djlint_rules.yaml format
   --statistics                    Count the number of occurrences of each

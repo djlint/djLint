@@ -241,21 +241,23 @@ def load_config_file(filepath: Path) -> Any:
     return load_djlintrc_config(filepath)
 
 
-def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
-    """Load djlint config."""
-    djlint_content: dict[str, Any] = {}
+def _named_settings(config: Path | None) -> dict[str, Any]:
+    """Settings from the file `--configuration` names."""
+    if not config:
+        return {}
 
-    if config:
-        try:
-            djlint_content.update(load_config_file(config))
-        except Exception as error:
-            echo(
-                style(
-                    f"Failed to load config file {config}. {error}", fg="red"
-                ),
-                err=True,
-            )
+    try:
+        return dict(load_config_file(config))
+    except Exception as error:
+        echo(
+            style(f"Failed to load config file {config}. {error}", fg="red"),
+            err=True,
+        )
+        return {}
 
+
+def _project_settings(src: Path) -> dict[str, Any]:
+    """Settings from the project's own file, the first one that holds any."""
     if pyproject_file := find_pyproject(src):
         try:
             content = load_pyproject_config(pyproject_file)
@@ -266,12 +268,11 @@ def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
             )
         else:
             if content:
-                djlint_content.update(content)
-                return djlint_content
+                return dict(content)
 
     if djlint_toml_file := find_djlint_toml(src):
         try:
-            djlint_content.update(load_djlint_toml_config(djlint_toml_file))
+            return dict(load_djlint_toml_config(djlint_toml_file))
         except Exception as error:
             echo(
                 style(
@@ -283,14 +284,31 @@ def load_project_settings(src: Path, config: Path | None) -> dict[str, Any]:
 
     elif djlintrc_file := find_djlintrc(src):
         try:
-            djlint_content.update(load_djlintrc_config(djlintrc_file))
+            return dict(load_djlintrc_config(djlintrc_file))
         except Exception as error:
             echo(
                 style(f"Failed to load .djlintrc file. {error}", fg="red"),
                 err=True,
             )
 
-    return djlint_content
+    return {}
+
+
+def load_project_settings(
+    src: Path, config: Path | None, *, prefer_configuration: bool = False
+) -> dict[str, Any]:
+    """Load djlint config.
+
+    `--configuration` names a global file, so the project's own file wins
+    where the two set the same thing. `--prefer-configuration` turns that
+    around, which is what naming a file on the command line usually means.
+    """
+    named = _named_settings(config)
+    project = _project_settings(src)
+
+    if prefer_configuration:
+        return {**project, **named}
+    return {**named, **project}
 
 
 def validate_rules(
@@ -1275,6 +1293,7 @@ class Config:
         format_css: bool = False,
         format_js: bool = False,
         configuration: Path | None = None,
+        prefer_configuration: bool = False,
         rules: Path | None = None,
         statistics: bool = False,
         include: str = "",
@@ -1317,7 +1336,9 @@ class Config:
             Path.cwd() if src == "-" else Path(src).resolve()
         )
         djlint_settings = load_project_settings(
-            self.project_root, configuration
+            self.project_root,
+            configuration,
+            prefer_configuration=prefer_configuration,
         )
 
         def setting_int(key: str, default: int) -> int:

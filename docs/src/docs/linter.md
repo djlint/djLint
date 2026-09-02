@@ -83,6 +83,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H042 | Label for attribute has no matching element id in this file.                                 | ✔️      |
 | H043 | Button tag should have a `type` attribute.                                                   | ✔️      |
 | H044 | Thead should not mix `th` and `td` cells.                                                    | ✔️      |
+| H045 | Iframe tag should have a `title` attribute.                                                  | ✔️      |
 
 ### Code Patterns
 
@@ -1025,6 +1026,26 @@ Do:
     <th>Size</th>
   </tr>
 </thead>
+```
+
+#### H045
+
+`Iframe tag should have a title attribute.`
+
+A screen reader announces an iframe by its accessible name. Without one it reads out the frame's url, or nothing at all, and there is no way to tell what the embedded page is before entering it. WCAG puts this under 4.1.2 Name, Role, Value, and axe and html-validate both ship the check by default.
+
+The name can come from `title`, `aria-label` or `aria-labelledby`, and any one of the three satisfies the rule. A name written by a template tag counts, so a frame titled per page is not reported.
+
+Don't:
+
+```html
+<iframe src="/report/"></iframe>
+```
+
+Do:
+
+```html
+<iframe src="/report/" title="Quarterly report"></iframe>
 ```
 
 {% endraw %}

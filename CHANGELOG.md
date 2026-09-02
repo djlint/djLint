@@ -18,6 +18,8 @@
 - New option `--no-indent-inner-html` / `no_indent_inner_html` leaves `<head>` and `<body>` at the same indent as the `<html>` that holds them, which is how the default VS Code html formatter lays a document out.
 - New option `--sort-attributes` / `sort_attributes` orders a tag's attributes by name, with `id` first and `class` second. A tag whose attributes are guarded by a template tag, as in `<div {% if x %}a="1"{% endif %} b="2">`, keeps the order it was written in: moving an attribute out of its branch would change the page. A name written twice keeps the occurrence a browser reads.
 - New option `--name-endblocks` / `name_endblocks` writes the block's name into the `{% endblock %}` that closes it, where the block is written across lines. This is what `T003` asks for, so the rule is fixable by running the formatter; a block opened and closed on one line says which block it closes by itself and is left alone.
+- New option `--prefer-configuration` lets the file named by `--configuration` override the project's own config file. `--configuration` names a global file, so a `pyproject.toml` or `.djlintrc` beside the templates has always won where the two set the same thing, which is not what naming a file on the command line usually means. The default is unchanged; the flag opts into the other order.
+- New rule `H045` reports an `<iframe>` with no accessible name. A screen reader announces a frame by its name, and without one it reads out the url or says nothing, so there is no way to tell what is embedded before entering it. `title`, `aria-label` and `aria-labelledby` all count, and a name written by a template tag counts too.
 
 ### Changed
 

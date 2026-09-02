@@ -788,5 +788,16 @@
       { "name": "cli", "value": "--name-endblocks" }
     ],
     "tags": ["formatter"]
+  },
+  {
+    "name": "prefer_configuration",
+    "description": {
+      "en": "Let the file named by `configuration` override the project's own config file. `configuration` names a global file, so by default a `pyproject.toml` or `.djlintrc` beside the templates wins where the two set the same thing. Command line only, since it decides how the config files themselves are read.",
+      "ru": "Позволяет файлу из `configuration` переопределять собственный конфиг проекта. `configuration` задаёт глобальный файл, поэтому по умолчанию `pyproject.toml` или `.djlintrc` рядом с шаблонами побеждает там, где оба задают одно и то же. Только из командной строки, так как этот флаг решает, как читаются сами файлы конфигурации.",
+      "fr": "Laisse le fichier désigné par `configuration` primer sur le fichier de configuration du projet. `configuration` désigne un fichier global : par défaut, un `pyproject.toml` ou un `.djlintrc` placé près des gabarits l'emporte là où les deux règlent la même chose. En ligne de commande uniquement, puisque l'option décide de la lecture des fichiers de configuration eux-mêmes.",
+      "zh": "让 `configuration` 指定的文件覆盖项目自身的配置文件。`configuration` 指的是全局文件，因此默认情况下，模板旁边的 `pyproject.toml` 或 `.djlintrc` 在两者设置相同项时胜出。仅限命令行，因为该选项决定配置文件本身如何被读取。"
+    },
+    "usage": [{ "name": "cli", "value": "--prefer-configuration" }],
+    "tags": ["formatter", "linter"]
   }
 ]

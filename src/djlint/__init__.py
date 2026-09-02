@@ -270,6 +270,14 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     help="Path to global configuration file in djlint.toml, .djlint.toml, or .djlintrc format",
 )
 @click.option(
+    "--prefer-configuration",
+    is_flag=True,
+    help=(
+        "Let --configuration override the project's own config file,"
+        " rather than the other way round."
+    ),
+)
+@click.option(
     "--rules",
     type=click.Path(
         exists=True,
@@ -470,6 +478,7 @@ def main(
     format_css: bool,
     format_js: bool,
     configuration: Path | None,
+    prefer_configuration: bool,
     rules: Path | None,
     statistics: bool,
     include: str,
@@ -544,6 +553,7 @@ def main(
         format_css=format_css,
         format_js=format_js,
         configuration=configuration,
+        prefer_configuration=prefer_configuration,
         rules=rules,
         statistics=statistics,
         include=include,
