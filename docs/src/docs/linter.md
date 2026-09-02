@@ -88,6 +88,9 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H047 | Aria-hidden should not be set on a focusable element.                                        | ✔️      |
 | H048 | Aria attribute is not one the specification defines.                                         | ✔️      |
 | H049 | Viewport should not stop the page being zoomed.                                              | ✔️      |
+| H050 | Element is obsolete and should be replaced.                                                  | ✔️      |
+| H051 | Role is not one ARIA defines for markup.                                                     | ✔️      |
+| H052 | Meta refresh should not reload or redirect the page on a timer.                              | ✔️      |
 
 ### Code Patterns
 
@@ -1130,6 +1133,68 @@ Do:
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+#### H050
+
+`Element is obsolete and should be replaced.`
+
+`<center>`, `<font>`, `<big>`, `<strike>` and `<tt>` were dropped when css took over presentation, and `<marquee>`, `<blink>`, `<nobr>` and `<spacer>` were never standard at all. Html no longer defines any of them, so nothing guarantees how a browser lays them out, and a stylesheet cannot target them the way it targets a class.
+
+The elements the rule knows are `acronym`, `applet`, `basefont`, `bgsound`, `big`, `blink`, `center`, `dir`, `font`, `frame`, `frameset`, `isindex`, `keygen`, `marquee`, `menuitem`, `nobr`, `noembed`, `noframes`, `plaintext`, `spacer`, `strike`, `tt` and `xmp`. Only the opening tag is reported, so each element is named once, and a custom element whose name merely starts with one, such as `<font-picker>`, is left alone.
+
+Don't:
+
+```html
+<center><font color="red">Warning</font></center>
+```
+
+Do:
+
+```html
+<p class="warning">Warning</p>
+```
+
+#### H051
+
+`Role is not one ARIA defines for markup.`
+
+A role no specification names is dropped outright and the element keeps whatever meaning it already had, so `role="buton"` leaves a `<div>` a `<div>`: nothing to a screen reader, while the markup looks as though it had been given a purpose. Nothing warns about it, which is what makes the typo worth catching.
+
+The names the rule knows are the roles ARIA defines for authors, together with those DPUB-ARIA (`doc-chapter` and the rest) and GRAPHICS-ARIA (`graphics-symbol` and the rest) add. ARIA's abstract roles, such as `landmark` and `sectionhead`, are reported: the specification says they exist to build its ontology and must not be written in markup.
+
+A `role` may hold several names, as a fallback list, and each is checked. A value holding template syntax is unknowable and is left alone, and so is a binding written by a framework, as in `:role` or `[attr.role]`.
+
+Don't:
+
+```html
+<div role="buton">Save</div>
+```
+
+Do:
+
+```html
+<button type="button">Save</button>
+```
+
+#### H052
+
+`Meta refresh should not reload or redirect the page on a timer.`
+
+A timed refresh moves the page out from under whoever is reading it. Someone who reads slowly, is using a screen reader, or has simply been interrupted loses their place with no warning and no way to stop it, which is a failure of WCAG 2.2.1 Timing Adjustable, and a refresh that reloads the same page throws away whatever was typed into it.
+
+A delay of zero is an immediate redirect rather than a timer, which WCAG allows where a server redirect cannot be used, so it is not reported. The two attributes are found whichever order they are written in.
+
+Don't:
+
+```html
+<meta http-equiv="refresh" content="30">
+```
+
+Do:
+
+```html
+<meta http-equiv="refresh" content="0; url=/next-page">
 ```
 
 {% endraw %}

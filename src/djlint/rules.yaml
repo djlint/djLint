@@ -359,3 +359,26 @@
       # the viewport name is looked for without being consumed, so the two
       # attributes are found whichever order they are written in
       - <meta\b(?=(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])name\s*=\s*["']?\s*viewport\b)(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])content\s*=\s*["'][^"']*?(?:user-scalable\s*=\s*(?:no|0)\b|maximum-scale\s*=\s*(?:0[.,]\d+|1(?:[.,]\d+)?)(?![.,\d]))
+- rule:
+    name: H050
+    skip_in_attributes: true
+    message: Element is obsolete and should be replaced.
+    flags: re.DOTALL|re.I
+    patterns:
+      # only the opening tag is reported, so an element is named once, and
+      # the boundary keeps a custom element such as <font-picker> out
+      - <(?:acronym|applet|basefont|bgsound|big|blink|center|dir|font|frame|frameset|isindex|keygen|marquee|menuitem|nobr|noembed|noframes|plaintext|spacer|strike|tt|xmp)(?![\w-])
+- rule:
+    name: H051
+    message: Role is not one ARIA defines for markup.
+    python_module: djlint.rules.H051
+- rule:
+    name: H052
+    skip_in_attributes: true
+    message: Meta refresh should not reload or redirect the page on a timer.
+    flags: re.DOTALL|re.I
+    patterns:
+      # http-equiv is looked for without being consumed, so the two
+      # attributes are found whichever order they are written in; a delay
+      # of zero is an immediate redirect, which WCAG allows
+      - <meta\b(?=(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])http-equiv\s*=\s*["']?\s*refresh\b)(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])content\s*=\s*["']?\s*0*[1-9]

@@ -88,6 +88,9 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H047 | aria-hidden ne devrait pas être posé sur un élément focusable.                                                            | ✔️     |
 | H048 | Cet attribut aria n'est pas défini par la spécification.                                                                  | ✔️     |
 | H049 | Le viewport ne devrait pas empêcher le zoom de la page.                                                                   | ✔️     |
+| H050 | Élément obsolète, à remplacer.                                                                                            | ✔️     |
+| H051 | Le rôle n'est pas un de ceux qu'ARIA définit pour le balisage.                                                            | ✔️     |
+| H052 | Meta refresh ne doit pas recharger ni rediriger la page après un délai.                                                   | ✔️     |
 
 ### Modèles de code
 
@@ -1130,6 +1133,68 @@ Le nom et le contenu sont trouvés quel que soit l'ordre dans lequel les deux so
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+#### H050
+
+`Élément obsolète, à remplacer.`
+
+`<center>`, `<font>`, `<big>`, `<strike>` et `<tt>` ont disparu lorsque css a pris en charge la présentation, et `<marquee>`, `<blink>`, `<nobr>` et `<spacer>` n'ont jamais été standard. Html n'en définit plus aucun, donc rien ne garantit la manière dont un navigateur les dispose, et une feuille de style ne peut pas les cibler comme elle cible une classe.
+
+Les éléments que la règle connaît sont `acronym`, `applet`, `basefont`, `bgsound`, `big`, `blink`, `center`, `dir`, `font`, `frame`, `frameset`, `isindex`, `keygen`, `marquee`, `menuitem`, `nobr`, `noembed`, `noframes`, `plaintext`, `spacer`, `strike`, `tt` et `xmp`. Seule la balise ouvrante est signalée, de sorte que chaque élément n'est nommé qu'une fois, et un élément personnalisé dont le nom ne fait que commencer par l'un d'eux, comme `<font-picker>`, est laissé tel quel.
+
+À éviter :
+
+```html
+<center><font color="red">Warning</font></center>
+```
+
+À faire :
+
+```html
+<p class="warning">Warning</p>
+```
+
+#### H051
+
+`Le rôle n'est pas un de ceux qu'ARIA définit pour le balisage.`
+
+Un rôle qu'aucune spécification ne nomme est purement et simplement ignoré, et l'élément conserve le sens qu'il avait déjà : `role="buton"` laisse une `<div>` être une `<div>`, c'est-à-dire rien pour un lecteur d'écran, alors que le balisage donne l'impression d'avoir reçu une intention. Rien ne le signale, et c'est ce qui rend la faute de frappe intéressante à détecter.
+
+Les noms que la règle connaît sont les rôles qu'ARIA définit pour les auteurs, auxquels s'ajoutent ceux de DPUB-ARIA (`doc-chapter` et les autres) et de GRAPHICS-ARIA (`graphics-symbol` et les autres). Les rôles abstraits d'ARIA, comme `landmark` et `sectionhead`, sont signalés : la spécification indique qu'ils servent à construire son ontologie et ne doivent pas être écrits dans le balisage.
+
+Un `role` peut contenir plusieurs noms, sous forme de liste de repli, et chacun est vérifié. Une valeur contenant de la syntaxe de gabarit est indéterminable et est laissée telle quelle, tout comme une liaison écrite par un framework, comme `:role` ou `[attr.role]`.
+
+À éviter :
+
+```html
+<div role="buton">Save</div>
+```
+
+À faire :
+
+```html
+<button type="button">Save</button>
+```
+
+#### H052
+
+`Meta refresh ne doit pas recharger ni rediriger la page après un délai.`
+
+Un rafraîchissement minuté déplace la page sous les yeux de qui la lit. Une personne qui lit lentement, qui utilise un lecteur d'écran ou qui a simplement été interrompue perd sa place sans avertissement et sans pouvoir l'empêcher, ce qui constitue un échec du critère WCAG 2.2.1 « Réglage du délai », et un rafraîchissement qui recharge la même page jette ce qui y avait été saisi.
+
+Un délai de zéro est une redirection immédiate plutôt qu'un minuteur, ce que WCAG autorise là où une redirection serveur n'est pas possible : il n'est donc pas signalé. Les deux attributs sont trouvés quel que soit l'ordre dans lequel ils sont écrits.
+
+À éviter :
+
+```html
+<meta http-equiv="refresh" content="30">
+```
+
+À faire :
+
+```html
+<meta http-equiv="refresh" content="0; url=/next-page">
 ```
 
 {% endraw %}

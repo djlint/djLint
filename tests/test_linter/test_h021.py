@@ -37,7 +37,7 @@ test_data = [
         id="missing",
     ),
     pytest.param(
-        ('<acronym title="Cascading Style Sheets">CSS</acronym>'),
+        ('<abbr title="Cascading Style Sheets">CSS</abbr>'),
         ([]),
         id="outside tag",
     ),
@@ -70,11 +70,6 @@ test_data = [
             },
         ]),
         id="template syntax in style",
-    ),
-    pytest.param(
-        ('<acronym title="Cascading Style Sheets">CSS</acronym>'),
-        ([]),
-        id="outside tag",
     ),
     pytest.param(
         ('<div style="color:green"\n     class="foo">\n</div>'),

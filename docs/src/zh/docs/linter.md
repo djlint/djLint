@@ -88,6 +88,9 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H047 | 不应在可获得焦点的元素上设置 aria-hidden。                                         | ✔️       |
 | H048 | 该 aria 属性不是规范定义的属性。                                                   | ✔️       |
 | H049 | viewport 不应禁止页面缩放。                                                        | ✔️       |
+| H050 | 元素已废弃，应予替换。                                                             | ✔️       |
+| H051 | 该 role 不在 ARIA 为标记定义的角色之列。                                           | ✔️       |
+| H052 | meta refresh 不应按计时重新加载或跳转页面。                                        | ✔️       |
 
 ### 编码规则
 
@@ -1130,6 +1133,68 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+#### H050
+
+`元素已废弃，应予替换。`
+
+`<center>`、`<font>`、`<big>`、`<strike>` 和 `<tt>` 在样式交由 css 处理后就被移除了，而 `<marquee>`、`<blink>`、`<nobr>` 和 `<spacer>` 从来就不是标准。html 已不再定义它们中的任何一个，因此浏览器如何排布它们没有任何保证，样式表也无法像针对类那样针对它们。
+
+规则认识的元素有 `acronym`、`applet`、`basefont`、`bgsound`、`big`、`blink`、`center`、`dir`、`font`、`frame`、`frameset`、`isindex`、`keygen`、`marquee`、`menuitem`、`nobr`、`noembed`、`noframes`、`plaintext`、`spacer`、`strike`、`tt` 和 `xmp`。只报告开始标签，因此每个元素只被指出一次；名称仅以其中之一开头的自定义元素，例如 `<font-picker>`，不受影响。
+
+错误示例：
+
+```html
+<center><font color="red">Warning</font></center>
+```
+
+正确示例：
+
+```html
+<p class="warning">Warning</p>
+```
+
+#### H051
+
+`该 role 不在 ARIA 为标记定义的角色之列。`
+
+任何规范都未命名的角色会被直接丢弃，元素仍保持它原有的含义：`role="buton"` 让 `<div>` 仍然只是 `<div>`，对屏幕阅读器而言什么都不是，而标记看上去却像是已被赋予了用途。没有任何东西会就此发出警告，这正是值得捕捉这类拼写错误的原因。
+
+规则认识的名称是 ARIA 为作者定义的角色，以及 DPUB-ARIA（`doc-chapter` 等）和 GRAPHICS-ARIA（`graphics-symbol` 等）新增的角色。ARIA 的抽象角色，例如 `landmark` 和 `sectionhead`，会被报告：规范指出它们用于构建其本体，不得写入标记。
+
+一个 `role` 可以包含多个名称，作为回退列表，每一个都会被检查。含有模板语法的值无从得知，会被放过；框架写出的绑定，例如 `:role` 或 `[attr.role]`，同样如此。
+
+错误示例：
+
+```html
+<div role="buton">Save</div>
+```
+
+正确示例：
+
+```html
+<button type="button">Save</button>
+```
+
+#### H052
+
+`meta refresh 不应按计时重新加载或跳转页面。`
+
+定时刷新会在读者眼前把页面换掉。阅读较慢的人、使用屏幕阅读器的人，或者只是被打断了的人，都会毫无预警地失去自己的位置，也无法阻止，这不符合 WCAG 2.2.1「可调节时间」；而刷新同一页面还会丢弃已经填入其中的内容。
+
+延时为零是即时跳转而非计时器，在无法使用服务器跳转之处 WCAG 允许这样做，因此不会被报告。无论这两个属性以何种顺序书写，都能被找到。
+
+错误示例：
+
+```html
+<meta http-equiv="refresh" content="30">
+```
+
+正确示例：
+
+```html
+<meta http-equiv="refresh" content="0; url=/next-page">
 ```
 
 {% endraw %}
