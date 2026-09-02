@@ -83,12 +83,14 @@ def ignored_block_opening_start(config: Config, item: str) -> int:
     containment: some alternatives start one character early, so `[^{]{#`
     matches the quote in `class="{# x #}"`.
     """
-    inline = tuple(
-        match.span()
-        for match in config.ignored_blocks_inline_pattern.finditer(item)
-    )
+    inline = None
     for match in config.ignored_block_opening_pattern.finditer(item):
-        if not inline or not _inside_non_overlapping_span(
+        if inline is None:
+            inline = tuple(
+                block.span()
+                for block in config.ignored_blocks_inline_pattern.finditer(item)
+            )
+        if not _inside_non_overlapping_span(
             inline, match.end() - 1, match.end()
         ):
             return match.start()
@@ -100,15 +102,20 @@ def is_ignored_block_opening(config: Config, item: str) -> bool:
     return ignored_block_opening_start(config, item) >= 0
 
 
+def _past_inline_blocks(item: str, inline_blocks: re.Pattern[str], /) -> str:
+    """What is left of the line beyond every block it opens and closes.
+
+    A marker inside such a block belongs to it, so it leaves nothing open.
+    """
+    last_inline = _last_item(inline_blocks.finditer(item))
+    return item[last_inline.end() :] if last_inline else item
+
+
 def _marker_past_inline_blocks(
     item: str, inline_blocks: re.Pattern[str], marker: re.Pattern[str], /
 ) -> bool:
-    """Whether a marker sits past every block the line opens and closes.
-
-    One inside such a block belongs to it, so it leaves nothing open.
-    """
-    last_inline = _last_item(inline_blocks.finditer(item))
-    return bool(marker.search(item[last_inline.end() if last_inline else 0 :]))
+    """Whether a marker sits past every block the line opens and closes."""
+    return bool(marker.search(_past_inline_blocks(item, inline_blocks)))
 
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
@@ -157,11 +164,19 @@ def inside_protected_trans_block(
 
 @lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_ignored_block_closing(config: Config, item: str) -> bool:
-    """Whether the line closes an ignored block opened on an earlier one."""
-    return _marker_past_inline_blocks(
-        item,
-        config.ignored_inline_blocks_ix_pattern,
-        config.ignored_block_closing_pattern,
+    """Whether the line closes an ignored block opened on an earlier one.
+
+    The markers that only reach a match from where the rest of the line
+    starts are looked for on their own: alongside the others they cost the
+    whole search its literal prefilter, for a tenfold slowdown. Each of
+    them needs a `-->` or a `#}`, which is far cheaper to rule out than to
+    match.
+    """
+    rest = _past_inline_blocks(item, config.ignored_inline_blocks_ix_pattern)
+    if config.ignored_block_closing_anywhere_pattern.search(rest):
+        return True
+    return ("-->" in rest or "#}" in rest) and bool(
+        config.ignored_block_closing_at_start_pattern.match(rest)
     )
 
 

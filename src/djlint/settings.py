@@ -979,17 +979,20 @@ _IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
     RE_FLAGS_IX,
     cache_pattern=False,
 )
-_IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
-    r"""
+_IGNORED_BLOCK_CLOSING_BEFORE: Final = r"""
       </style
     | \*}
     | \?>
     | </script
-    # a "-->" reachable without crossing the start of a raw text element.
-    # Past one, markup is text: "<pre>&lt;!-- x -->" closes no comment.
-    | ^(?:(?!<pre\b|<textarea\b).)*?-->
-    | ^(?:(?!{\#).)*\#} # lines that have a #}, but not a {#
-    | </pre
+"""
+# a "-->" reachable without crossing the start of a raw text element.
+# Past one, markup is text: "<pre>&lt;!-- x -->" closes no comment.
+_IGNORED_BLOCK_CLOSING_AT_START: Final = r"""
+      (?:(?!<pre\b|<textarea\b).)*?-->
+    | (?:(?!{\#).)*\#} # lines that have a #}, but not a {#
+"""
+_IGNORED_BLOCK_CLOSING_AFTER: Final = r"""
+      </pre
     | </textarea
     | {%[ ]*endfilter(?:(?!%}).)*?%}
     | {\#\s*djlint\:\s*on\s*\#}
@@ -998,7 +1001,19 @@ _IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
     | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
     | {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
     | {%[-+]?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
-    """,
+"""
+_IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
+    _IGNORED_BLOCK_CLOSING_BEFORE
+    + rf"| ^(?:{_IGNORED_BLOCK_CLOSING_AT_START})|"
+    + _IGNORED_BLOCK_CLOSING_AFTER,
+    RE_FLAGS_IX,
+    cache_pattern=False,
+)
+_IGNORED_BLOCK_CLOSING_AT_START_PATTERN: Final = re.compile(
+    _IGNORED_BLOCK_CLOSING_AT_START, RE_FLAGS_IX, cache_pattern=False
+)
+_IGNORED_BLOCK_CLOSING_ANYWHERE_PATTERN: Final = re.compile(
+    _IGNORED_BLOCK_CLOSING_BEFORE + "|" + _IGNORED_BLOCK_CLOSING_AFTER,
     RE_FLAGS_IX,
     cache_pattern=False,
 )
@@ -1193,6 +1208,8 @@ class Config:
         "ignore_blocks",
         "ignore_case",
         "ignored_attributes",
+        "ignored_block_closing_anywhere_pattern",
+        "ignored_block_closing_at_start_pattern",
         "ignored_block_closing_pattern",
         "ignored_block_opening_pattern",
         "ignored_blocks_inline_pattern",
@@ -1824,6 +1841,12 @@ class Config:
         self.raw_text_inline_ix_pattern = _RAW_TEXT_INLINE_IX_PATTERN
         self.ignored_block_opening_pattern = _IGNORED_BLOCK_OPENING_PATTERN
         self.ignored_block_closing_pattern = _IGNORED_BLOCK_CLOSING_PATTERN
+        self.ignored_block_closing_at_start_pattern = (
+            _IGNORED_BLOCK_CLOSING_AT_START_PATTERN
+        )
+        self.ignored_block_closing_anywhere_pattern = (
+            _IGNORED_BLOCK_CLOSING_ANYWHERE_PATTERN
+        )
         self.ignored_blocks_pattern = _IGNORED_BLOCKS_PATTERN
         self.lint_ignored_blocks_pattern = _LINT_IGNORED_BLOCKS_PATTERN
         self.ignored_blocks_inline_pattern = _IGNORED_BLOCKS_INLINE_PATTERN
