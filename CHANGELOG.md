@@ -28,6 +28,7 @@
 - `H020` leaves an element whose empty form carries meaning: a blank `<option>` holding a select open, a `<tbody>` a script fills in, a `<canvas>`, `<template>` or `<noscript>`. Its exempt names are anchored too, so `<theadx>` is no longer read as `<thead>`.
 - `--ignore-case` reaches the linter. It turned off the formatter's case fixing while `H009` and `H010` went on reporting the case the user had just asked djLint to leave alone.
 - `--profile=all` honours every `exclude` list. It is every template language at once, so a rule switched off for one of them was running under it: `T028` fired on django markup and recommended `{%- if -%}`, which django rejects.
+- A GitHub annotation names the column as well as the line, so it lands on the tag it is about rather than at the start of the line.
 
 ### Fix
 

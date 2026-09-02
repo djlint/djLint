@@ -10,6 +10,8 @@ from djlint.output import (
     build_relative_path,
     build_stats_output,
     count_format_errors,
+    finding_position,
+    first_filename,
     report_on_stderr,
 )
 
@@ -44,10 +46,7 @@ def print_github_output(
     lint_error_count = 0
     format_error_count = 0
 
-    for error in sorted(
-        file_errors,
-        key=lambda x: next(iter(next(iter(x.values())))),  # type: ignore[call-overload]
-    ):
+    for error in sorted(file_errors, key=first_filename):
         if error.get("format_message"):
             if config.stdin and config.check:
                 format_error_count += count_format_errors(
@@ -71,11 +70,12 @@ def print_github_output(
 def print_lint_errors(
     error: Mapping[str, Iterable[LintError]], config: Config
 ) -> int:
-    """Print lint errors in GitHub format."""
-    errors = sorted(
-        next(iter(error.values())),
-        key=lambda x: tuple(int(i) for i in x["line"].split(":")),
-    )
+    """Print lint errors in GitHub format.
+
+    djLint counts columns from zero and GitHub from one, so the column
+    is shifted to land the annotation on the finding itself.
+    """
+    errors = sorted(next(iter(error.values())), key=finding_position)
     if not errors:
         return 0
 
@@ -90,12 +90,15 @@ def print_lint_errors(
     err = report_on_stderr(config)
 
     for message_dict in errors:
-        line = escape_property(message_dict["line"].split(":")[0])
+        line, column = finding_position(message_dict)
         level = "error" if message_dict["code"].startswith("E") else "warning"
         message = escape_data(
             f"{message_dict['code']} {message_dict['message']}"
         )
-        echo(f"::{level} {file_property}line={line}::{message}", err=err)
+        echo(
+            f"::{level} {file_property}line={line},col={column + 1}::{message}",
+            err=err,
+        )
 
     return len(errors)
 

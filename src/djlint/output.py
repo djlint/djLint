@@ -34,6 +34,18 @@ def report_on_stderr(config: Config, /) -> bool:
     return config.stdin and (config.reformat or config.check)
 
 
+def first_filename(result: ProcessResult) -> str:
+    """The file a worker's result is about, for ordering the report."""
+    messages = result.get("lint_message") or result.get("format_message") or {}
+    return next(iter(messages), "")
+
+
+def finding_position(finding: LintError) -> tuple[int, int]:
+    """Line and column of a finding, for ordering a file's report."""
+    line, column = finding["line"].split(":")
+    return int(line), int(column)
+
+
 def print_output(
     config: Config, file_errors: Sequence[ProcessResult], file_count: int
 ) -> int:
@@ -46,10 +58,7 @@ def print_output(
     if print_blanks:
         echo()
 
-    for error in sorted(
-        file_errors,
-        key=lambda x: next(iter(next(iter(x.values())))),  # type: ignore[call-overload]
-    ):
+    for error in sorted(file_errors, key=first_filename):
         if error.get("format_message"):
             if config.stdin and config.check:
                 format_error_count += count_format_errors(
@@ -125,10 +134,7 @@ def build_output(
     error: Mapping[str, Iterable[LintError]], config: Config
 ) -> int:
     """Build output for file errors."""
-    errors = sorted(
-        next(iter(error.values())),
-        key=lambda x: tuple(int(i) for i in x["line"].split(":")),
-    )
+    errors = sorted(next(iter(error.values())), key=finding_position)
 
     if not errors:
         return 0
