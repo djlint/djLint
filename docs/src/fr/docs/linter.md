@@ -179,7 +179,7 @@ Un nom n'est pas requis lorsque le bloc s'ouvre et se ferme sur la même ligne, 
 
 `(Django) Les urls statiques doivent suivre le modèle {% static path/to/file %}.`
 
-Coder en dur les chemins /static/ contourne la balise `{% static %}` de Django : les modèles cassent dès que STATIC_URL change (par exemple lors du déplacement des ressources vers un CDN ou d'un déploiement sous un sous-chemin) et ne récupèrent jamais les noms de fichiers hachés de ManifestStaticFilesStorage, ce qui provoque des erreurs 404 ou des ressources obsolètes en cache en production.
+Coder en dur les chemins /static/ contourne la balise `{% static %}` de Django : les modèles cassent dès que STATIC_URL change (par exemple lors du déplacement des ressources vers un CDN ou d'un déploiement sous un sous-chemin) et ne récupèrent jamais les noms de fichiers hachés de ManifestStaticFilesStorage, ce qui provoque des erreurs 404 ou des ressources obsolètes en cache en production. La règle cherche le préfixe littéral `/static/` : un projet qui sert ses fichiers statiques depuis un autre chemin n'est pas couvert.
 
 À éviter :
 
@@ -197,7 +197,7 @@ Coder en dur les chemins /static/ contourne la balise `{% static %}` de Django :
 
 `(Jinja) Les urls statiques doivent suivre le modèle { url_for('static'..) }}.`
 
-Coder en dur les chemins /static/ contourne url_for('static', ...) de Flask/Jinja : les ressources renvoient des 404 lorsque l'application est montée sous un préfixe d'URL ou que le dossier ou l'hôte statique change, et les chaînes de requête anti-cache ajoutées par le framework sont perdues.
+Coder en dur les chemins /static/ contourne url_for('static', ...) de Flask/Jinja : les ressources renvoient des 404 lorsque l'application est montée sous un préfixe d'URL ou que le dossier ou l'hôte statique change, et les chaînes de requête anti-cache ajoutées par le framework sont perdues. La règle cherche le préfixe littéral `/static/` : un projet qui sert ses fichiers statiques depuis un autre chemin n'est pas couvert.
 
 À éviter :
 

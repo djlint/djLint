@@ -19,7 +19,6 @@
     skip_in_attributes: true
     message: (Django) Static urls should follow {% static path/to/file %} pattern.
     flags: re.DOTALL
-    # this should be using the static path from django settings
     patterns:
       - <(?:link|img|script|source)\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])(?:href|src|srcset)=[\"\']/?static/?
 - rule:
@@ -27,7 +26,6 @@
     skip_in_attributes: true
     message: (Jinja) Static urls should follow {{ url_for('static'..) }} pattern.
     flags: re.DOTALL
-    # this should be using the static path from django settings
     patterns:
       - <(?:link|img|script|source)\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])(?:href|src|srcset)=[\"\']/?static/?
 - rule:

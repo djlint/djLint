@@ -179,7 +179,7 @@ Do:
 
 `(Django) Static urls should follow {% static path/to/file %} pattern.`
 
-Hardcoding /static/ paths bypasses Django's `{% static %}` tag, so templates break when STATIC_URL changes (e.g. moving assets to a CDN or a subpath deployment) and never pick up hashed filenames from ManifestStaticFilesStorage, causing 404s or stale cached assets in production.
+Hardcoding /static/ paths bypasses Django's `{% static %}` tag, so templates break when STATIC_URL changes (e.g. moving assets to a CDN or a subpath deployment) and never pick up hashed filenames from ManifestStaticFilesStorage, causing 404s or stale cached assets in production. The rule looks for the literal `/static/` prefix, so a project serving its static files from another path is not covered.
 
 Don't:
 
@@ -197,7 +197,7 @@ Do:
 
 `(Jinja) Static urls should follow {{ url_for('static'..) }} pattern.`
 
-Hardcoding /static/ paths bypasses Flask/Jinja's url_for('static', ...), so assets 404 when the app is mounted under a URL prefix or the static folder/host is changed, and cache-busting query strings added by the framework are lost.
+Hardcoding /static/ paths bypasses Flask/Jinja's url_for('static', ...), so assets 404 when the app is mounted under a URL prefix or the static folder/host is changed, and cache-busting query strings added by the framework are lost. The rule looks for the literal `/static/` prefix, so a project serving its static files from another path is not covered.
 
 Don't:
 

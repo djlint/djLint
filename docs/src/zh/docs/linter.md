@@ -179,7 +179,7 @@ HTML 属性值内部的单引号（例如 `<span title="{% trans 'x' %}">`）不
 
 `（Django） 静态 URL 应遵循 {% static path/to/file %} 形式。`
 
-硬编码 /static/ 路径会绕过 Django 的 `{% static %}` 标签，一旦 STATIC_URL 发生变化（例如把静态资源迁移到 CDN 或部署在子路径下），模板就会失效，也永远无法获取 ManifestStaticFilesStorage 生成的带哈希的文件名，从而在生产环境中导致 404 或加载到过期的缓存资源。
+硬编码 /static/ 路径会绕过 Django 的 `{% static %}` 标签，一旦 STATIC_URL 发生变化（例如把静态资源迁移到 CDN 或部署在子路径下），模板就会失效，也永远无法获取 ManifestStaticFilesStorage 生成的带哈希的文件名，从而在生产环境中导致 404 或加载到过期的缓存资源。该规则只查找字面上的 `/static/` 前缀，从其他路径提供静态文件的项目不在其覆盖范围内。
 
 错误示例：
 
@@ -197,7 +197,7 @@ HTML 属性值内部的单引号（例如 `<span title="{% trans 'x' %}">`）不
 
 `(Jinja) 静态 URL 应遵循 {{ url_for('static'..) }} 形式。`
 
-硬编码 /static/ 路径会绕过 Flask/Jinja 的 url_for('static', ...)，当应用挂载在某个 URL 前缀下、或静态目录/主机发生变化时，资源就会 404，框架附加的缓存清除（cache-busting）查询串也会丢失。
+硬编码 /static/ 路径会绕过 Flask/Jinja 的 url_for('static', ...)，当应用挂载在某个 URL 前缀下、或静态目录/主机发生变化时，资源就会 404，框架附加的缓存清除（cache-busting）查询串也会丢失。该规则只查找字面上的 `/static/` 前缀，从其他路径提供静态文件的项目不在其覆盖范围内。
 
 错误示例：
 
