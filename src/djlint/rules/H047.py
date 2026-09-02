@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import regex as re
+
 from djlint.helpers import (
     inside_ignored_linter_block,
     inside_ignored_rule,
@@ -36,6 +38,9 @@ _ALWAYS_FOCUSABLE: Final = frozenset((
 ))
 _FOCUSABLE_WITH_HREF: Final = frozenset(("a", "area"))
 _FOCUSABLE_WITH_CONTROLS: Final = frozenset(("audio", "video"))
+_ARIA_HIDDEN_PATTERN = re.compile(
+    r"(?<![-.:\w])aria-hidden\s*=", re.I, cache_pattern=False
+)
 
 
 def _attributes(config: Config, html: str, token: TagToken) -> dict[str, str]:
@@ -92,6 +97,11 @@ def run(
 
     for token in tokenize_markup(html):
         if token.closing or token.declaration:
+            continue
+
+        if not _ARIA_HIDDEN_PATTERN.search(
+            html, token.name_end, token.attributes_end
+        ):
             continue
 
         attributes = _attributes(config, html, token)

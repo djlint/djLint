@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import regex as re
+
 from djlint.const import HTML_ARIA_ATTRIBUTE_NAMES
 from djlint.helpers import (
     inside_ignored_linter_block,
@@ -24,6 +26,8 @@ if TYPE_CHECKING:
 
     from djlint.settings import Config
     from djlint.types import LintError
+
+_ARIA_NAME_PATTERN = re.compile(r"(?<![-.:\w])aria-", re.I, cache_pattern=False)
 
 
 def run(
@@ -42,10 +46,12 @@ def run(
         if token.closing or token.declaration:
             continue
 
-        group = html[token.name_end : token.attributes_end]
-        if "aria-" not in group.lower():
+        if not _ARIA_NAME_PATTERN.search(
+            html, token.name_end, token.attributes_end
+        ):
             continue
 
+        group = html[token.name_end : token.attributes_end]
         ignored = None
         for match in config.attribute_pattern.finditer(group):
             name = match.group(1)
