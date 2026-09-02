@@ -35,7 +35,7 @@ RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 
 _SPAN_CACHE_SIZE: Final = 1
 _AFTER_EVERY_SPAN: Final = float("inf")
-_LINE_CACHE_SIZE: Final = 64
+_LINE_CACHE_SIZE: Final = 256
 
 YAML_FRONT_MATTER: Final = r"""
     # front matter opens the file and holds the site generator's own data,

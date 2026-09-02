@@ -1597,6 +1597,15 @@ class Config:
                 or x["rule"]["name"] in included_codes
             )
         )
+        for entry in self.linter_rules:
+            linter_rule = entry["rule"]
+            if "patterns" in linter_rule:
+                rule_flags = build_flags(linter_rule.get("flags", "re.S"))
+                linter_rule["compiled_patterns"] = tuple(
+                    re.compile(pattern, rule_flags, cache_pattern=False)
+                    for pattern in linter_rule["patterns"]
+                )
+
         if self.lint:
             enabled_rules = {x["rule"]["name"] for x in self.linter_rules}
             if {"H017", "H018"} <= enabled_rules:

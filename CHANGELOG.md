@@ -113,6 +113,8 @@
 - Deciding whether a finding sits in an ignored block no longer walks every ignored span. The spans are merged and sorted once per file and looked up by bisection, which cut the linter's own time on a 25KB template by close to half.
 - Linting a file with many findings is several times faster: locating a match's line no longer scans the file, and de-duplicating findings no longer compares every pair.
 - Reformatting is around 15% faster: patterns built from the configuration are compiled once instead of on every tag, and each line is tokenized once instead of up to three times.
+- A rule's patterns are compiled once when the configuration is read, rather than looked up again for every file. Matching a project's templates against the rule set went from 531 to 469 ms of processor time over 575 templates, and the regex flags are worked out once instead of once per pattern per file.
+- The cache that answers what a line opens or closes holds 256 entries rather than 64. Lines repeat within a template and between them, so the larger cache lifted the hit rate of those lookups by about ten points for a tenth of a megabyte.
 
 ### Docs
 

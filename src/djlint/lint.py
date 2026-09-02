@@ -142,8 +142,7 @@ def linter(
             file_errors.extend(module_errors)
 
         else:
-            flags = build_flags(rule.get("flags", "re.S"))
-            for pattern in rule["patterns"]:
+            for pattern in rule["compiled_patterns"]:
                 file_errors.extend(
                     {
                         "code": rule["name"],
@@ -151,7 +150,7 @@ def linter(
                         "match": match.group().strip()[:20],
                         "message": rule["message"],
                     }
-                    for match in re.finditer(pattern, html, flags=flags)
+                    for match in pattern.finditer(html)
                     if _is_reported(config, html, match, rule)
                 )
 
