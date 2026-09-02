@@ -127,30 +127,27 @@ def run(
                 else:
                     orphan_tags.append(token)
 
+    def reportable(token: TagToken) -> bool:
+        return (
+            not overlaps_ignored_block(config, html, token)
+            and not inside_ignored_rule(config, html, token, rule["name"])
+            and not inside_ignored_linter_block(config, html, token)
+        )
+
+    def error(token: TagToken, message: str) -> LintError:
+        return {
+            "code": rule["name"],
+            "line": get_line(token.start, line_ends),
+            "match": html[token.start : token.end].strip()[:20],
+            "message": message,
+        }
+
     return tuple(
-        {
-            "code": rule["name"],
-            "line": get_line(token.start, line_ends),
-            "match": html[token.start : token.end].strip()[:20],
-            "message": rule["message"],
-        }
+        error(token, rule["message"])
         for token in chain(open_tags, orphan_tags)
-        if (
-            not overlaps_ignored_block(config, html, token)
-            and not inside_ignored_rule(config, html, token, rule["name"])
-            and not inside_ignored_linter_block(config, html, token)
-        )
+        if reportable(token)
     ) + tuple(
-        {
-            "code": rule["name"],
-            "line": get_line(token.start, line_ends),
-            "match": html[token.start : token.end].strip()[:20],
-            "message": P_LIST_CHILD_MESSAGE,
-        }
+        error(token, P_LIST_CHILD_MESSAGE)
         for token in p_child_tags
-        if (
-            not overlaps_ignored_block(config, html, token)
-            and not inside_ignored_rule(config, html, token, rule["name"])
-            and not inside_ignored_linter_block(config, html, token)
-        )
+        if reportable(token)
     )
