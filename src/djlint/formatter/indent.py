@@ -5,8 +5,8 @@ from __future__ import annotations
 import ast
 import io
 import tokenize
-from functools import cache, partial
-from typing import TYPE_CHECKING, cast
+from functools import cache, lru_cache, partial
+from typing import TYPE_CHECKING, NamedTuple, cast
 
 import json5 as json
 import regex as re
@@ -223,6 +223,112 @@ def _format_string_tokens(contents: str, quote_style: QuoteStyle) -> str:
     return "".join(formatted)
 
 
+class _IndentPatterns(NamedTuple):
+    """The patterns indenting builds out of the configuration."""
+
+    ignored_inline_start: re.Pattern[str]
+    single_line_tag: re.Pattern[str]
+    tag_unindent: re.Pattern[str]
+    inline_slt_no_attrs_end: re.Pattern[str]
+    inline_slt_no_attrs: re.Pattern[str]
+    inline_slt_attrs: re.Pattern[str]
+    tag_unindent_line: re.Pattern[str]
+    tag_indent: re.Pattern[str]
+    custom_html: re.Pattern[str] | None
+    template_start: re.Pattern[str]
+    prefixed_template_tag_indent: re.Pattern[str]
+
+
+@lru_cache(maxsize=4)
+def _indent_patterns(config: Config) -> _IndentPatterns:
+    """Build the indenting patterns a configuration calls for.
+
+    Every one of them is settled by the configuration alone, so building
+    and looking them up once per file only asked the regex cache the same
+    long questions over again.
+    """
+    slt_html = config.indent_html_tags
+    always_self_closing_html = config.always_self_closing_html_tags
+    slt_template = config.single_line_template_tags
+    ignored_inline_start_pattern = re.compile(
+        rf"^\s*?(?:{config.ignored_inline_blocks})", flags=RE_FLAGS_IMX
+    )
+    golang_slt = (
+        r"(?:\{\{-?[ ]*?(?:if|range|with|block|define)\b(?:(?!\}\}).)*?\}\})"
+        r"(?:.*?)(?:\{\{-?[ ]*?end[ ]*?-?\}\})"
+        if config.profile == "golang"
+        else r"(?!x)x"
+    )
+    single_line_tag_pattern = re.compile(
+        rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
+                    (?:
+                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
+                        |(?:<(?:{always_self_closing_html})\b(?:[^>"']|"[^"]*"|'[^']*')*?/?>) # <img stuff />
+                        |(?:{{%[-+]?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%[-+]?[ ]*?end(?:\2)\b(?:(?!%}}).)*?%}}) # >>> match 2
+                        |{golang_slt}
+                        |{config.ignored_inline_blocks}
+                    )[ \t]*?
+                    (?:
+                    .*? # anything
+                    (?: # followed by another slt
+                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\3)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 3
+                       |(?:<(?:{always_self_closing_html})\b(?:[^>"']|"[^"]*"|'[^']*')*?/?>) # <img stuff />
+                       |(?:{{%[-+]?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%[-+]?[ ]*?end(?:\4)\b(?:(?!%}}).)*?%}}) # >>> match 4
+                       |{golang_slt}
+                       |{config.ignored_inline_blocks}
+                    )[ \t]*?
+                    )*? # optional of course
+                    [^<]*?$ # with no other tags following until end of line
+                """,
+        flags=RE_FLAGS_IMX,
+    )
+    tag_unindent_pattern = re.compile(config.tag_unindent, RE_FLAGS_IMX)
+    inline_slt_no_attrs_end_pattern = re.compile(
+        rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)", flags=RE_FLAGS_IMX
+    )
+    inline_slt_no_attrs_pattern = re.compile(
+        rf"(^<({slt_html})>)(.*?)(</(\2)>)", flags=RE_FLAGS_IMX
+    )
+    inline_slt_attrs_pattern = re.compile(
+        rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)", flags=RE_FLAGS_IMX
+    )
+    tag_unindent_line_pattern = re.compile(
+        r"^" + str(config.tag_unindent_line), flags=RE_FLAGS_IMX
+    )
+    tag_indent_pattern = re.compile(
+        r"^(?:" + str(config.tag_indent) + r")", flags=RE_FLAGS_IMX
+    )
+    custom_html_pattern = (
+        re.compile(rf"^(?:{config.custom_html})$", flags=RE_FLAGS_IX)
+        if config.custom_html
+        else None
+    )
+    template_start_pattern = re.compile(
+        r"(?:\{\{\#|\{%[-+]?)[ ]*?" + str(config.start_template_tags),
+        flags=RE_FLAGS_IMX,
+    )
+    prefixed_template_tag_indent_pattern = re.compile(
+        r"^[^\S\n]*[\(\[](?:(?:\{\{\#|\{%[-+]?)[ ]*?"
+        + str(config.start_template_tags)
+        + r")",
+        flags=RE_FLAGS_IMX,
+    )
+
+    return _IndentPatterns(
+        ignored_inline_start=ignored_inline_start_pattern,
+        single_line_tag=single_line_tag_pattern,
+        tag_unindent=tag_unindent_pattern,
+        inline_slt_no_attrs_end=inline_slt_no_attrs_end_pattern,
+        inline_slt_no_attrs=inline_slt_no_attrs_pattern,
+        inline_slt_attrs=inline_slt_attrs_pattern,
+        tag_unindent_line=tag_unindent_line_pattern,
+        tag_indent=tag_indent_pattern,
+        custom_html=custom_html_pattern,
+        template_start=template_start_pattern,
+        prefixed_template_tag_indent=prefixed_template_tag_indent_pattern,
+    )
+
+
 def indent_html(rawcode: str, config: Config) -> str:
     """Indent raw code.
 
@@ -343,81 +449,26 @@ def indent_html(rawcode: str, config: Config) -> str:
     in_raw_text_tag = False
     is_block_raw = False
 
-    slt_html = config.indent_html_tags
-    always_self_closing_html = config.always_self_closing_html_tags
-    slt_template = config.single_line_template_tags
-
     ignored_level = 0
 
     template_block_stack: list[tuple[int, int | None, bool]] = []
 
     open_html_indents: list[bool] = []
 
-    ignored_inline_start_pattern = re.compile(
-        rf"^\s*?(?:{config.ignored_inline_blocks})", flags=RE_FLAGS_IMX
-    )
-    golang_slt = (
-        r"(?:\{\{-?[ ]*?(?:if|range|with|block|define)\b(?:(?!\}\}).)*?\}\})"
-        r"(?:.*?)(?:\{\{-?[ ]*?end[ ]*?-?\}\})"
-        if config.profile == "golang"
-        else r"(?!x)x"
-    )
-    single_line_tag_pattern = re.compile(
-        rf"""^(?:[^<\s].*?)? # start of a line, optionally with some text
-                    (?:
-                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
-                        |(?:<(?:{always_self_closing_html})\b(?:[^>"']|"[^"]*"|'[^']*')*?/?>) # <img stuff />
-                        |(?:{{%[-+]?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%[-+]?[ ]*?end(?:\2)\b(?:(?!%}}).)*?%}}) # >>> match 2
-                        |{golang_slt}
-                        |{config.ignored_inline_blocks}
-                    )[ \t]*?
-                    (?:
-                    .*? # anything
-                    (?: # followed by another slt
-                        <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\3)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 3
-                       |(?:<(?:{always_self_closing_html})\b(?:[^>"']|"[^"]*"|'[^']*')*?/?>) # <img stuff />
-                       |(?:{{%[-+]?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%[-+]?[ ]*?end(?:\4)\b(?:(?!%}}).)*?%}}) # >>> match 4
-                       |{golang_slt}
-                       |{config.ignored_inline_blocks}
-                    )[ \t]*?
-                    )*? # optional of course
-                    [^<]*?$ # with no other tags following until end of line
-                """,
-        flags=RE_FLAGS_IMX,
-    )
-    tag_unindent_pattern = re.compile(config.tag_unindent, RE_FLAGS_IMX)
-    inline_slt_no_attrs_end_pattern = re.compile(
-        rf"(<({slt_html})>)(.*?)(</(\2)>[^<]*?$)", flags=RE_FLAGS_IMX
-    )
-    inline_slt_no_attrs_pattern = re.compile(
-        rf"(^<({slt_html})>)(.*?)(</(\2)>)", flags=RE_FLAGS_IMX
-    )
-    inline_slt_attrs_pattern = re.compile(
-        rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)", flags=RE_FLAGS_IMX
-    )
-    tag_unindent_line_pattern = re.compile(
-        r"^" + str(config.tag_unindent_line), flags=RE_FLAGS_IMX
-    )
-    tag_indent_pattern = re.compile(
-        r"^(?:" + str(config.tag_indent) + r")", flags=RE_FLAGS_IMX
-    )
-    custom_html_pattern = (
-        re.compile(rf"^(?:{config.custom_html})$", flags=RE_FLAGS_IX)
-        if config.custom_html
-        else None
-    )
-    template_start_pattern = re.compile(
-        r"(?:\{\{\#|\{%[-+]?)[ ]*?" + str(config.start_template_tags),
-        flags=RE_FLAGS_IMX,
-    )
+    patterns = _indent_patterns(config)
+    ignored_inline_start_pattern = patterns.ignored_inline_start
+    single_line_tag_pattern = patterns.single_line_tag
+    tag_unindent_pattern = patterns.tag_unindent
+    inline_slt_no_attrs_end_pattern = patterns.inline_slt_no_attrs_end
+    inline_slt_no_attrs_pattern = patterns.inline_slt_no_attrs
+    inline_slt_attrs_pattern = patterns.inline_slt_attrs
+    tag_unindent_line_pattern = patterns.tag_unindent_line
+    tag_indent_pattern = patterns.tag_indent
+    custom_html_pattern = patterns.custom_html
+    template_start_pattern = patterns.template_start
+    prefixed_template_tag_indent_pattern = patterns.prefixed_template_tag_indent
     template_indent_pattern = config.template_indent_imx_pattern
     template_unindent_pattern = config.template_unindent_imx_pattern
-    prefixed_template_tag_indent_pattern = re.compile(
-        r"^[^\S\n]*[\(\[](?:(?:\{\{\#|\{%[-+]?)[ ]*?"
-        + str(config.start_template_tags)
-        + r")",
-        flags=RE_FLAGS_IMX,
-    )
 
     def is_html_tag(name: str) -> bool:
         return name.lower() in HTML_TAG_NAMES or bool(
