@@ -100,7 +100,8 @@ def test_unreadable_file_does_not_look_like_a_finding(
 ) -> None:
     """A file djLint cannot decode is a failure, not a lint error.
 
-    Exiting 1 here would be indistinguishable from "found 1 problem".
+    Exiting 1 here would be indistinguishable from "found 1 problem". The
+    traceback is kept, so a bug report still has something to go on.
     """
     _project(tmp_path)
     (tmp_path / "latin.html").write_bytes(
@@ -111,8 +112,30 @@ def test_unreadable_file_does_not_look_like_a_finding(
 
     assert result.exit_code == 2
     assert "djLint failed and did not finish checking" in result.output
-    # the traceback is kept, so a bug report still has something to go on
     assert "UnicodeDecodeError" in result.output
+
+
+def test_undecodable_first_line_has_no_pragma(
+    runner: CliRunner, tmp_path: Path
+) -> None:
+    """A file --require-pragma cannot read the first line of is skipped.
+
+    The pragma is ascii, so a byte that does not decode is not it. The
+    run used to abort on the read, before any file was checked.
+    """
+    _project(tmp_path)
+    (tmp_path / "binary.html").write_bytes(b"\xff\xfe<div></div>")
+    (tmp_path / "real.html").write_text(
+        "{# djlint:on #}" + chr(10) + DIRTY, encoding="utf-8"
+    )
+
+    result = runner.invoke(
+        djlint, (str(tmp_path), "--check", "--require-pragma")
+    )
+
+    assert result.exit_code == 1
+    assert "1 file would be updated." in result.output
+    assert "UnicodeDecodeError" not in result.output
 
 
 def test_directory_matching_the_extension_is_skipped(

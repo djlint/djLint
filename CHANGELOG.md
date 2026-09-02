@@ -93,6 +93,7 @@
 - An element opened on the same line as a `<script>`, `<style>` or `<pre>` keeps its indent. Everything before the block's opening tag went uncounted, so the children of `<a class="x">text<style>` sat outside it, and a closing tag written after such a block's end tag now gives back the level it took.
 - A `<pre>`, `<textarea>`, `<script>` or `<style>` opened and closed on one line no longer counts as closing a block opened earlier. `<pre>x</pre><script>` cancelled the block the `<script>` had just opened, so its body was indented as markup, and markup written after `</style>` on the closing line, as in `</style>z</b>`, went uncounted, so the element it closed kept its indent for the rest of the file. Both took a second run to settle, and the configuration page of djLint's own docs was one of the files affected under `--format-js`.
 - A string inside a `{% set %}` or a function call keeps its quotes when it holds the other kind. `{% set s = 'say "hi"' %}` was rewritten to `"say \"hi\""`, trading two readable quotes for two escapes; it is now left as written.
+- `--require-pragma` skips a file whose first line it cannot decode instead of aborting the whole run. The pragma is ascii, so a byte that does not decode is not it; a file that is checked and turns out undecodable is still reported as a failure.
 
 ### Performance
 
