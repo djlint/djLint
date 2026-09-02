@@ -425,7 +425,7 @@ def condense_html(
     func = partial(condense_html_line, config, html)
 
     html = re.sub(
-        rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{{{[^}}]*}}}}|{{[^}}]*}}|[^'\">{{}}])*>)\s*([^<\n]*?)\s*?(</(\2)>)",
+        rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{{{[^}}]*}}}}|{{[^}}]*}}|[^'\">{{}}])*>)\s*+([^<\n]*?)\s*?(</(\2)>)",
         func,
         html,
         flags=RE_FLAGS_IMSX,
@@ -454,7 +454,7 @@ def condense_html(
 
     func = partial(condense_template_line, config, html)
     return re.sub(
-        rf"((?:\s|^){{%[-+]?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*([^%\n]*?)\s*?({{%[-+]?[ ]+?end(\2)[ ]*?%}})",
+        rf"((?:\s|^){{%[-+]?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*+([^%\n]*?)\s*?({{%[-+]?[ ]+?end(\2)[ ]*?%}})",
         func,
         html,
         flags=RE_FLAGS_IMX,
