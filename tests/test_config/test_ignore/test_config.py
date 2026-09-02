@@ -36,3 +36,23 @@ def test_ignored_rule_does_not_disable_formatting(runner: CliRunner) -> None:
  {# djlint:on #}"""
         in result.output
     )
+
+
+def test_ignore_list_may_hold_spaces(runner: CliRunner) -> None:
+    """A code written after a comma and a space is still ignored."""
+    result = runner.invoke(
+        djlint, ("-", "--lint", "--ignore", "H011, H013"), input="<img src=x>\n"
+    )
+
+    assert "found 0 errors" in result.output
+
+
+def test_include_list_may_hold_spaces(runner: CliRunner) -> None:
+    """A code written after a comma and a space is still included."""
+    result = runner.invoke(
+        djlint,
+        ("-", "--lint", "--profile", "django", "--include", "H006, T003"),
+        input="{% block a %}\n<p>x</p>\n{% endblock %}\n",
+    )
+
+    assert "T003" in result.output

@@ -96,6 +96,7 @@
 - A string inside a `{% set %}` or a function call keeps its quotes when it holds the other kind. `{% set s = 'say "hi"' %}` was rewritten to `"say \"hi\""`, trading two readable quotes for two escapes; it is now left as written.
 - `--require-pragma` skips a file whose first line it cannot decode instead of aborting the whole run. The pragma is ascii, so a byte that does not decode is not it; a file that is checked and turns out undecodable is still reported as a failure.
 - `--indent-js` and `--indent-css` override the indent alone. Passing one replaced the whole `js` or `css` block of the config file, so a `wrap_line_length` or any other beautifier setting written there was silently dropped for that run.
+- `--ignore` and `--include` accept a space after the comma. `--ignore "H011, H013"` kept reporting `H013`, because the space became part of the code it was looking for, and `--include` lost its second code the same way.
 
 ### Performance
 

@@ -1520,8 +1520,8 @@ class Config:
                 )
             )
         )
-        ignored_codes = set(self.ignore.split(","))
-        included_codes = set(self.include.split(","))
+        ignored_codes = set(split_option_list(self.ignore))
+        included_codes = set(split_option_list(self.include))
         if self.ignore_case:
             ignored_codes.update(("H009", "H010"))
 
