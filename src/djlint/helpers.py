@@ -82,7 +82,14 @@ def ignored_block_opening_start(config: Config, item: str) -> int:
     `<pre>a<!--b-->`. Only the marker's last character is probed for
     containment: some alternatives start one character early, so `[^{]{#`
     matches the quote in `class="{# x #}"`.
+
+    A line holding neither a `<` nor a `{` carries no markup and no
+    template syntax, so it opens nothing, and ruling it out that way costs
+    far less than asking the pattern.
     """
+    if "<" not in item and "{" not in item:
+        return -1
+
     inline = None
     for match in config.ignored_block_opening_pattern.finditer(item):
         if inline is None:
