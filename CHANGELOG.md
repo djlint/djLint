@@ -112,6 +112,7 @@
 - The command line reference lists `--allow-empty-input`, which it had been missing, and a test now keeps it in step with `djlint --help`.
 - `H042` is no longer described as off by default, which it stopped being in 1.42.1.
 - The playground tells a browser without web workers that it needs one, instead of failing on the way to saying so.
+- Code samples on the site are highlighted in full again. The stylesheet purge kept a syntax colour only when its class name happened to appear somewhere in the site's sources, so attribute names, punctuation and several other tokens had lost theirs.
 - The formatter's before-and-after example on the formatter page showed a template tag still written with single quotes. `T002` is on by default now and the formatter rewrites those, so the page showed output djLint would not produce.
 
 ## [1.44.2] - 2026-08-08

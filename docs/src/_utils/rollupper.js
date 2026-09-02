@@ -11,6 +11,22 @@ module.exports = (eleventyConfig, options) => {
   new Rollupper(eleventyConfig, options);
 };
 
+const contentHash = (file) =>
+  new Promise(function (resolve, reject) {
+    const hash = crypto.createHash("sha256");
+    const input = fs.createReadStream(file);
+
+    input.on("error", reject);
+
+    input.on("data", function (chunk) {
+      hash.update(chunk);
+    });
+
+    input.on("close", function () {
+      resolve(hash.digest("hex"));
+    });
+  });
+
 class Rollupper {
   inputFiles = {};
   rollupOptions = {};
@@ -20,10 +36,9 @@ class Rollupper {
     eleventyConfig.on("beforeBuild", () => this.beforeBuild());
     eleventyConfig.on("afterBuild", () => this.afterBuild());
 
-    // We want to use "this" in the callback function, so we save the class instance beforehand
-    const thisRollupper = this;
+    const plugin = this;
     eleventyConfig.addAsyncShortcode(shortcode, function (...args) {
-      return thisRollupper.rollupperShortcode(this, ...args);
+      return plugin.rollupperShortcode(this, ...args);
     });
   }
 
@@ -32,47 +47,25 @@ class Rollupper {
   }
 
   async rollupperShortcode(eleventyInstance, src, fileRelative = false) {
-    // Resolve to the correct relative location
     if (fileRelative) {
       src = path.join(path.dirname(eleventyInstance.page.inputPath), src);
     }
 
-    // resolve to absolute, since rollup uses absolute paths
-    src = path.resolve(src);
+    const absoluteSource = path.resolve(src);
+    const scriptSrc = (await contentHash(absoluteSource)).substr(0, 6) + ".js";
+    this.inputFiles[absoluteSource] = scriptSrc;
 
-    // generate a unique name for the file.
-    // we take the first 6 chars of the sha256 of the absolute paths.
-    const fileHash = await new Promise(function (resolve, reject) {
-      const hash = crypto.createHash("sha256");
-      const input = fs.createReadStream(src);
-
-      input.on("error", reject);
-
-      input.on("data", function (chunk) {
-        hash.update(chunk);
-      });
-
-      input.on("close", function () {
-        resolve(hash.digest("hex"));
-      });
-    });
-    const scriptSrc = fileHash.substr(0, 6) + ".js";
-
-    // register for rollup bundling
-    this.inputFiles[src] = scriptSrc;
-
-    // calculate script src after bundling
-    const relativePath = path.relative(
+    const bundledPath = path.relative(
       eleventyInstance.page.outputPath,
       path.join(this.rollupOptions.output.dir, scriptSrc),
     );
 
-    return `<script src="${relativePath}" type="module"></script>`;
+    return `<script src="${bundledPath}" type="module"></script>`;
   }
 
   async afterBuild() {
-    // Return early if no JS was used, since rollup throws on empty inputs
-    if (!Object.keys(this.inputFiles).length) {
+    const nothingToBundle = !Object.keys(this.inputFiles).length;
+    if (nothingToBundle) {
       return;
     }
     const bundle = await rollup.rollup({

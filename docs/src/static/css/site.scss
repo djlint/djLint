@@ -161,10 +161,10 @@ html.has-navbar-fixed-top {
   max-width: 100%;
   object-fit: contain;
 }
+$logos-drawn-for-light-backgrounds: ".djlint-nav .navbar-brand img, .footer .image img";
+
 @media (prefers-color-scheme: dark) {
-  /* the nav/footer logo and the language logos are drawn for light backgrounds */
-  .djlint-nav .navbar-brand img,
-  .footer .image img {
+  #{$logos-drawn-for-light-backgrounds} {
     filter: invert(1) hue-rotate(180deg);
   }
   .image.brand {
@@ -202,7 +202,6 @@ h2 {
   font-size: 1.6em;
 }
 
-/* fix for prism in bulma */
 pre .number {
   background-color: inherit;
   font: inherit;
@@ -241,8 +240,6 @@ pre .number {
   margin-right: auto;
 }
 
-// tabs
-
 .tab-container {
   @extend %block;
 }
@@ -254,7 +251,6 @@ pre .number {
   display: initial;
 }
 
-// admonitions
 .message-header .icon svg {
   height: $size-6;
   padding-right: 10px;
@@ -331,8 +327,6 @@ pre .number {
   height: 35px;
   width: 35px;
 }
-/* menu collapse */
-
 .is-collapsible,
 .is-collapsible.is-active {
   transition: max-height 0.2s ease-out;
