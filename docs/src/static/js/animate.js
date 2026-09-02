@@ -23,7 +23,6 @@
         d.querySelectorAll(".animated[data-animate]"),
         function (el) {
           if (isInViewport(el)) {
-            // set image to nothing to clear, then load new
             el.classList.add(el.getAttribute("data-animate"));
             el.removeAttribute("data-animate");
           }

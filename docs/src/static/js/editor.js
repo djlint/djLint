@@ -188,7 +188,6 @@ if (typeof Worker !== "undefined") {
     parent: document.getElementById("djlint-output"),
   });
 
-  // add pyodide returned value to the output
   function setOutput(stdout) {
     const currentValue = output.state.doc.toString();
     const endPosition = currentValue.length;
@@ -205,14 +204,6 @@ if (typeof Worker !== "undefined") {
     runPython(editor.state.doc.toString());
   });
 } else {
-  // Sorry! No Web Worker support..
-  document
-    .getElementById("djlint-status")
-    .innerText(
-      "Sorry, a browser that supports web workers is required to use this online tool.",
-    );
+  document.getElementById("djlint-status").innerText =
+    "Sorry, a browser that supports web workers is required to use this online tool.";
 }
-
-// pass the editor value to the pyodide.runPython function and show the result in the output section
-
-// document.getElementById("djlint-settings").addEventListener("change", () => {evaluatePython()})

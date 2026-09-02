@@ -1,5 +1,3 @@
-// Modals
-
 var rootEl = document.documentElement;
 var $modals = getAll(".modal");
 var $modalButtons = getAll(".modal-button");
@@ -39,8 +37,6 @@ function closeModals() {
     $el.classList.remove("is-active");
   });
 }
-
-// Functions
 
 function getAll(selector) {
   return Array.prototype.slice.call(document.querySelectorAll(selector), 0);

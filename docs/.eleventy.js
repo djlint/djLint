@@ -1,6 +1,5 @@
-// eleventy-img is ESM only since v7; require() of it yields the module
-// namespace, and the callable Image is its default export.
-const Image = require("@11ty/eleventy-img").default;
+const esmDefault = (module) => module.default ?? module;
+const Image = esmDefault(require("@11ty/eleventy-img"));
 const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 const slugify = require("slugify");
 const metagen = require("eleventy-plugin-metagen");
@@ -52,9 +51,7 @@ async function imageShortcode(
       `</div></div>`
     );
   }
-  // using custom code so that we can return the highest src in img as old browsers don't auto upscale.
-  let lowsrc = metadata.png[0];
-  let highsrc = metadata.png[metadata.png.length - 1];
+  const largest = metadata.png[metadata.png.length - 1];
   return `<picture>
     ${Object.values(metadata)
       .map((imageFormat) => {
@@ -66,22 +63,24 @@ async function imageShortcode(
       })
       .join("\n")}
       <img
-        src="${highsrc.url}"
-        width="${highsrc.width}"
-        height="${highsrc.height}"
+        src="${largest.url}"
+        width="${largest.width}"
+        height="${largest.height}"
         alt="${alt}"
         loading="lazy"
         decoding="async">
     </picture>`;
 }
 
-// from https://github.com/pusher/docs/blob/main/.eleventy.js
-// widont is a function that takes a string and replaces the space between the last two words with a non breaking space. This stops typographic widows forming
-const widont = (string) => {
-  return string.split(" ").length > 2
-    ? string.replace(/\s([^\s<]+)\s*$/, "\u00A0$1")
-    : string;
+const joinLastTwoWords = (text) => {
+  const words = text.split(" ");
+  if (words.length < 3) return text;
+  const last = words[words.length - 1].trimEnd();
+  if (last === "" || last.includes("<")) return text;
+  return `${words.slice(0, -1).join(" ")}\u00A0${last}`;
 };
+
+const emittedAtBuildTime = ["picture"];
 
 const djlintTomlConfig = (value) =>
   value
@@ -95,7 +94,7 @@ module.exports = function (eleventyConfig) {
     require("../package.json").version,
   );
   eleventyConfig.setUseGitIgnore(false);
-  eleventyConfig.addFilter("widont", widont);
+  eleventyConfig.addFilter("widont", joinLastTwoWords);
   eleventyConfig.addFilter("djlintTomlConfig", djlintTomlConfig);
   eleventyConfig.addWatchTarget("./src/static/");
   eleventyConfig.addNunjucksAsyncShortcode("image", imageShortcode);
@@ -128,10 +127,8 @@ module.exports = function (eleventyConfig) {
     },
   });
   eleventyConfig.addPlugin(editOnGithub, {
-    // required
     github_edit_repo: "https://github.com/djlint/djLint",
-    // optional: defaults
-    github_edit_path: "/docs/", // non-root location in git url. root is assumed
+    github_edit_path: "/docs/",
     github_edit_branch: "master",
     github_edit_text: (page) => {
       i18n_options = Object.assign(
@@ -150,10 +147,9 @@ module.exports = function (eleventyConfig) {
     github_edit_class: "edit-on-github",
     github_edit_tag: "a",
     github_edit_attributes: 'target="_blank" rel="noopener"',
-    github_edit_wrapper: undefined, //ex: "<div stuff>${edit_on_github}</div>"
+    github_edit_wrapper: undefined,
   });
 
-  /* Markdown Plugins */
   const markdownItAnchor = require("markdown-it-anchor");
   const markdownIt = require("markdown-it")({
     html: true,
@@ -191,7 +187,6 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.setLibrary("md", markdownIt);
 
-  // copy font
   eleventyConfig.addPassthroughCopy({
     "./node_modules/@fontsource/inter/files": "static/font/inter/files",
   });
@@ -203,21 +198,16 @@ module.exports = function (eleventyConfig) {
       "static/font/crimson-pro/files",
   });
 
-  // copy images
   eleventyConfig.addPassthroughCopy({ "src/static/img": "static/img" });
 
-  // copy robots
   eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
 
-  // copy favicon
   eleventyConfig.addPassthroughCopy({
     "src/static/img/favicon.ico": "favicon.ico",
   });
 
-  // copy wheels
   eleventyConfig.addPassthroughCopy({ "src/static/py": "static/py" });
 
-  // copy python
   eleventyConfig.addPassthroughCopy({
     "src/static/js/worker.js": "static/js/worker.js",
   });
@@ -263,16 +253,13 @@ module.exports = function (eleventyConfig) {
     {
       rev: true,
       postcss: postcss([
-        // postcss-nested is ESM only since v8; require() of it yields the
-        // module namespace, and the plugin is its default export.
-        require("postcss-nested").default,
+        esmDefault(require("postcss-nested")),
         purgecss({
           content: ["./src/**/*.njk", "./src/**/*.md", "./src/**/*.js"],
           safelist: {
-            // <picture> is emitted by the image shortcode at build time,
-            // so it never appears in the scanned source files
-            standard: ["picture"],
+            standard: emittedAtBuildTime,
             deep: [
+              /token/,
               /headShake/,
               /zoomIn/,
               /fadeInUp/,
@@ -355,7 +342,6 @@ module.exports = function (eleventyConfig) {
 
     var split_url = page.split("/").length > 1 ? page.split("/")[1] : "";
 
-    // find the current locale
     var active_local = "";
 
     locale_urls.forEach((locale) => {
@@ -366,7 +352,6 @@ module.exports = function (eleventyConfig) {
       return false;
     });
 
-    // get remaining locales
     var remaining_locals = locales
       .map((x) => {
         return x.url;
