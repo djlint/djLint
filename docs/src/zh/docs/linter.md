@@ -101,7 +101,6 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 ### 规则详情
 
 <!-- prettier-ignore-start -->
-<!-- the examples below are verified against djlint itself; prettier's html style would change what they demonstrate -->
 
 {% raw %}
 

@@ -10,8 +10,6 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 Changelog is now included in the [release](https://github.com/djlint/djLint/releases).
 
-<!--## {{ "next_release" | i18n }}-->
-
 ## 1.0.2
 
 ::: content

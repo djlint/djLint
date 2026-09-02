@@ -101,7 +101,6 @@ La première lettre d'un code suit le modèle :
 ### Détails des règles
 
 <!-- prettier-ignore-start -->
-<!-- the examples below are verified against djlint itself; prettier's html style would change what they demonstrate -->
 
 {% raw %}
 
