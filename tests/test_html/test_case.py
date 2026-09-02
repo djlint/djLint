@@ -65,10 +65,9 @@ test_data_attributes = [
         id="known_attribute_names",
     ),
     pytest.param(
-        # a name H010 does not know keeps the case it carries
         ('<path D="M0" [ngModel]="x" Charset="y" />\n'),
         ('<path D="M0" [ngModel]="x" Charset="y" />\n'),
-        id="unknown_attribute_names",
+        id="a name H010 does not know keeps the case it carries",
     ),
 ]
 

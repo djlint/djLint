@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 django_test_data = [
     pytest.param(
-        # https://github.com/djlint/djLint/issues/705
         ("{% url 'journal:user_tag_list\" user.url }}\n"),
         ([
             {
@@ -28,7 +27,7 @@ django_test_data = [
                 "message": "Unclosed template tag found.",
             }
         ]),
-        id="issue_705_unclosed_quote_and_wrong_delimiter",
+        id="issue 705 unclosed quote and wrong delimiter (issue 705)",
     ),
     pytest.param(
         ('{% url "home" }}\n'),
@@ -63,8 +62,6 @@ django_test_data = [
                 "match": "{% if x %\n{%",
                 "message": "Unclosed template tag found.",
             },
-            # T038 sees one garbled tag spanning to the endif's %} and
-            # reports the if block as unclosed too
             {
                 "code": "T038",
                 "line": "1:0",
@@ -72,7 +69,7 @@ django_test_data = [
                 "message": "Block tag has no matching end tag.",
             },
         ]),
-        id="tag_open_before_close",
+        id="T038 sees one garbled tag spanning to the endif's %} and reports the if block as unclosed too",
     ),
     pytest.param(
         ('{% url "home" %}\n{{ user.name }}\n'), ([]), id="closed_tags"

@@ -101,8 +101,7 @@ test_data = [
             "{% endstory %}\n"
         ),
         ({"custom_blocks": "story", "profile": "nunjucks"}),
-        # https://github.com/djlint/djLint/issues/1040
-        id="issue_1040_multiline_tag_params_keep_indent",
+        id="issue 1040 multiline tag params keep indent (issue 1040)",
     ),
     pytest.param(
         (
@@ -118,8 +117,7 @@ test_data = [
             "</div>\n"
         ),
         ({"custom_blocks": "component,slot,fill"}),
-        # https://github.com/djlint/djLint/issues/1113
-        id="issue_1113_self_closing_tag_does_not_indent",
+        id="issue 1113 self closing tag does not indent (issue 1113)",
     ),
     pytest.param(
         (
@@ -135,8 +133,7 @@ test_data = [
             "{% endcomponent %}\n"
         ),
         ({"custom_blocks": "component,slot,fill"}),
-        # https://github.com/djlint/djLint/issues/1113
-        id="issue_1113_self_closing_tag_inside_block",
+        id="issue 1113 self closing tag inside block (issue 1113)",
     ),
     pytest.param(
         (

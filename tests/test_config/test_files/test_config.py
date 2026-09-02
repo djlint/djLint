@@ -1,12 +1,6 @@
 """Djlint tests specific to custom file path.
 
-run::
-
-   pytest tests/test_config/test_files/test_config.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_config/test_files/test_config.py::test_global_override
-
+uv run pytest tests/test_config/test_files/test_config.py
 """
 
 from __future__ import annotations
@@ -106,10 +100,8 @@ def test_global_override(
             f"tests/test_config/test_files/{config_path_global}",
         ),
     )
-    # fails
     assert result.exit_code == 1
 
-    # check cli override
     result = runner.invoke(
         djlint,
         (
@@ -121,13 +113,8 @@ def test_global_override(
             "H025,H020",
         ),
     )
-    # passes
     assert result.exit_code == 0
 
-    # check project settings override
-
-    # create project settings folder
-    # add a gitignore file
     djlintrc_path = Path(
         "tests", "test_config", "test_files", config_path_local
     )
@@ -158,6 +145,5 @@ def test_global_override(
         print("cleanup failed")
         print(e)
 
-    # H025 should be ignored, but H022 not
     assert "H025" not in result.output
     assert "H020" in result_two.output

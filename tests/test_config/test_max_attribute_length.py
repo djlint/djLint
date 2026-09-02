@@ -115,7 +115,6 @@ test_data = [
         id="with_html_tag_in_attribute_escaped_and_template_tag",
     ),
     pytest.param(
-        # https://github.com/djlint/djLint/issues/2266
         (
             '<input :name="`x[${i}]`" placeholder="some long placeholder text to exceed the attribute length limit" />\n'
         ),
@@ -124,7 +123,7 @@ test_data = [
             '       placeholder="some long placeholder text to exceed the attribute length limit" />\n'
         ),
         ({"profile": "jinja"}),
-        id="quoted_js_template_literal",
+        id="quoted js template literal (issue 2266)",
     ),
     pytest.param(
         (
@@ -137,8 +136,6 @@ test_data = [
         id="unquoted_mako_expression_untouched",
     ),
     pytest.param(
-        # malformed attributes must not be silently corrupted: the stray
-        # "=<" cannot be parsed, so the tag is left untouched.
         (
             '<div data-x=< class="some long value that exceeds the attribute length limit">x</div>\n'
         ),
@@ -146,10 +143,9 @@ test_data = [
             '<div data-x=< class="some long value that exceeds the attribute length limit">x</div>\n'
         ),
         ({"max_attribute_length": 20}),
-        id="malformed_attribute_not_dropped",
+        id='malformed attributes must not be silently corrupted: the stray "=<" cannot be parsed, so the tag is left untouched',
     ),
     pytest.param(
-        # a nameless ="value" attribute must not become None="value"
         (
             '<div ="some long value that exceeds the attribute length limit here">z</div>\n'
         ),
@@ -157,11 +153,9 @@ test_data = [
             '<div ="some long value that exceeds the attribute length limit here">z</div>\n'
         ),
         ({"max_attribute_length": 20}),
-        id="nameless_attribute_not_renamed_none",
+        id='a nameless ="value" attribute must not become None="value"',
     ),
     pytest.param(
-        # an unquoted URL/path value must not be split at ":" or "/" into a
-        # bogus standalone attribute; it stays one value (quoted when spread).
         (
             "<a href=https://example.com/some/long/path/that/exceeds/limit>x</a>\n"
         ),
@@ -169,45 +163,36 @@ test_data = [
             '<a href="https://example.com/some/long/path/that/exceeds/limit">x</a>\n'
         ),
         ({"max_attribute_length": 20}),
-        id="unquoted_url_value_not_split",
+        id='an unquoted URL/path value must not be split at ":" or "/" into a bogus standalone attribute; it stays one value (quoted when spread)',
     ),
     pytest.param(
-        # punctuation is legal in an unquoted value; it must not truncate the
-        # value and leave the rest as a bogus standalone attribute.
         ("<a href=/help/faq#billing-and-refunds target=_blank>x</a>\n"),
         ('<a href="/help/faq#billing-and-refunds"\n   target="_blank">x</a>\n'),
         ({"max_attribute_length": 20}),
-        id="unquoted_punctuation_value_not_split",
+        id="punctuation is legal in an unquoted value; it must not truncate the value and leave the rest as a bogus standalone attribute",
     ),
     pytest.param(
-        # a template tag glued to the rest of an unquoted value is part of
-        # that value, not the start of a second attribute.
         ("<img src={{ MEDIA_URL }}/logo/some-long-name.png alt=logo>\n"),
         (
             '<img src="{{ MEDIA_URL }}/logo/some-long-name.png"\n'
             '     alt="logo">\n'
         ),
         ({"max_attribute_length": 20, "profile": "django"}),
-        id="unquoted_template_value_not_split",
+        id="a template tag glued to the rest of an unquoted value is part of that value, not the start of a second attribute",
     ),
     pytest.param(
-        # ... including when the value is several template tags joined by
-        # punctuation, as in a golang permalink + anchor.
         ("<a href={{ .Permalink }}#{{ .Anchor }} rel=noopener>x</a>\n"),
         ('<a href="{{ .Permalink }}#{{ .Anchor }}"\n   rel="noopener">x</a>\n'),
         ({"max_attribute_length": 20, "profile": "golang"}),
-        id="unquoted_golang_template_value_not_split",
+        id="including when the value is several template tags joined by punctuation, as in a golang permalink + anchor",
     ),
     pytest.param(
-        # a template variable may prefix an attribute name whose remainder
-        # starts with punctuation.
         ('<div {{ prefix }}?suffix="1" class="one two three">z</div>\n'),
         ('<div {{ prefix }}?suffix="1"\n     class="one two three">z</div>\n'),
         ({"max_attribute_length": 20, "profile": "django"}),
-        id="template_var_attribute_name_prefix",
+        id="a template variable may prefix an attribute name whose remainder starts with punctuation",
     ),
     pytest.param(
-        # ... and so may a complete template block.
         (
             '<div {% if a %}data{% endif %}?y="1" class="one two three">z</div>\n'
         ),
@@ -216,7 +201,7 @@ test_data = [
             '     class="one two three">z</div>\n'
         ),
         ({"max_attribute_length": 20, "profile": "django"}),
-        id="template_block_attribute_name_prefix",
+        id="and so may a complete template block",
     ),
 ]
 

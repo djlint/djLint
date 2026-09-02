@@ -163,7 +163,6 @@ test_data = [
         ),
         id="conditional",
     ),
-    # opened https://github.com/djlint/djLint/issues/247
     pytest.param(
         (
             "<!DOCTYPE html>\n"
@@ -197,7 +196,7 @@ test_data = [
             "    </body>\n"
             "</html>\n"
         ),
-        id="debugging",
+        id="debugging (issue 247)",
     ),
     pytest.param(
         (

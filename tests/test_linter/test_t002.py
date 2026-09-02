@@ -171,10 +171,9 @@ single_quote_test_data = [
         id="double_quotes_reported",
     ),
     pytest.param(
-        # the single quotes are load-bearing, so H008 leaves them alone too
         ("<span title='{% translate \"this\" %}'></span>"),
         ([]),
-        id="double_quotes_in_attribute",
+        id="the single quotes are load-bearing, so H008 leaves them alone too",
     ),
 ]
 

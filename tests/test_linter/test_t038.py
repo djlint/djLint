@@ -99,10 +99,9 @@ django_test_data = [
         ('{% url "home" %}\n{% include "a.html" %}\n'), ([]), id="single_tags"
     ),
     pytest.param(
-        # https://github.com/djlint/djLint/issues/2297
         ("{% if x %}{# comment #}\ntext\n{% endif %}\n"),
         ([]),
-        id="comment_after_block_tag",
+        id="comment after block tag (issue 2297)",
     ),
     pytest.param(
         ("{# comment #}{% if x %}\ntext\n{% endif %}\n"),
@@ -169,16 +168,14 @@ jinja_test_data = [
         id="unclosed_macro",
     ),
     pytest.param(
-        # https://github.com/djlint/djLint/issues/2297
         ("{% if my_variable %}{# Comment is here #}\ntext\n{% endif %}\n"),
         ([]),
-        id="issue_2297_comment_after_block_tag",
+        id="issue 2297 comment after block tag (issue 2297)",
     ),
     pytest.param(
-        # https://github.com/djlint/djLint/issues/2396
         ("{%+ for item in seq +%}\n{{ item }}\n{%+ endfor +%}\n"),
         ([]),
-        id="issue_2396_whitespace_control_plus",
+        id="issue 2396 whitespace control plus (issue 2396)",
     ),
     pytest.param(
         ("{%+ if x +%}\ntext\n"),
@@ -198,7 +195,6 @@ jinja_test_data = [
         id="issue_2396_named_endblock_with_plus",
     ),
     pytest.param(
-        # https://github.com/djlint/djLint/issues/2429
         (
             "---\n"
             "key: value\n"
@@ -210,7 +206,7 @@ jinja_test_data = [
             "{% endfor %}\n"
         ),
         ([]),
-        id="issue_2429_yaml_document_separator",
+        id="issue 2429 yaml document separator (issue 2429)",
     ),
 ]
 
@@ -233,7 +229,6 @@ def test_jinja(
 
 handlebars_test_data = [
     pytest.param(
-        # https://github.com/djlint/djLint/issues/202
         ("{{#if asdf}}\n    {{ jkl }}\n"),
         ([
             {
@@ -243,7 +238,7 @@ handlebars_test_data = [
                 "message": "Block tag has no matching end tag.",
             }
         ]),
-        id="issue_202_unclosed_if",
+        id="issue 202 unclosed if (issue 202)",
     ),
     pytest.param(
         ("{{#if asdf}}\n    {{ jkl }}\n{{/if}}\n"), ([]), id="closed_if"

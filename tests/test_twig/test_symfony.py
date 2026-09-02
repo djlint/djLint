@@ -78,8 +78,7 @@ test_data = [
             "    }\n"
             "}) }}\n"
         ),
-        # https://github.com/djlint/djLint/issues/842
-        id="github issue 842",
+        id="github issue 842 (issue 842)",
     ),
 ]
 

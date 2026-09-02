@@ -28,19 +28,15 @@ test_data = [
         id="all_td",
     ),
     pytest.param(
-        # https://www.w3.org/WAI/tutorials/tables/two-headers/ opens the
-        # header row with an empty corner cell
         (
             "<table><thead><tr><td></td>"
             "<th scope='col'>Mon</th><th scope='col'>Tue</th>"
             "</tr></thead></table>"
         ),
         ([]),
-        id="w3c_wai_corner_cell",
+        id="https://www.w3.org/WAI/tutorials/tables/two-headers/ opens the header row with an empty corner cell",
     ),
     pytest.param(
-        # the html specification puts a row of th and a row of td in one
-        # thead, the second explaining how to fill the table in
         (
             "<table><thead>"
             "<tr><th>a</th><th>b</th></tr>"
@@ -48,7 +44,7 @@ test_data = [
             "</thead></table>"
         ),
         ([]),
-        id="explanation_row",
+        id="the html specification puts a row of th and a row of td in one thead, the second explaining how to fill the table in",
     ),
     pytest.param(
         ("<table><thead><tr><th>a</th><td>b</td></tr></thead></table>"),

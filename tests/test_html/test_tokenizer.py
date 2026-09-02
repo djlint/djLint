@@ -51,9 +51,7 @@ def test_template_comment_text_does_not_change_tokenization() -> None:
 def test_unterminated_comment_in_template_comment_keeps_following_tags() -> (
     None
 ):
-    # https://github.com/djlint/djLint/issues/2266 neighborhood: a stray
-    # "<!--" inside a {# #} template comment must not swallow the rest of
-    # the document.
+    """A stray "<!--" inside a {# #} template comment must not swallow the rest of the document (issue 2266)."""
     source = "<div>\n{# <!-- #}\n</div>"
 
     assert [
@@ -104,8 +102,7 @@ def test_template_expression_between_tags_does_not_hide_real_tags() -> None:
 
 
 def test_quoted_literal_braces_do_not_escape_attribute() -> None:
-    # A quoted literal "{{" must not make the scanner hunt for a "}}" in
-    # later content and swallow the tag boundary.
+    """A quoted literal "{{" must not make the scanner hunt for a "}}" in later content and swallow the tag boundary."""
     source = '<div a="{{">x</div>\n<pre>\n  keep }}  me\n</pre>'
 
     assert [
@@ -114,8 +111,7 @@ def test_quoted_literal_braces_do_not_escape_attribute() -> None:
 
 
 def test_quote_inside_template_tag_does_not_end_attribute() -> None:
-    # a template tag nested in an attribute value carries its own quotes;
-    # an apostrophe in the translated text must not open a value either.
+    """A template tag nested in an attribute value carries its own quotes; an apostrophe in the translated text must not open a value either."""
     source = (
         '<a href="#" title="{% translate "You don\'t have permission" %}">/</a>'
     )

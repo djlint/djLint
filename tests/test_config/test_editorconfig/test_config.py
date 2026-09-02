@@ -32,7 +32,5 @@ def test_cli_overrides_editorconfig() -> None:
 def test_config_file_overrides_editorconfig() -> None:
     config = Config("tests/test_config/test_editorconfig_precedence/html.html")
 
-    # pyproject.toml indent=3 beats .editorconfig indent_size=2
     assert config.indent_size == 3
-    # not set anywhere else: built-in default
     assert config.max_line_length == 120

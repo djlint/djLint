@@ -33,7 +33,6 @@ test_data = [
         id="messy stuff",
     ),
     pytest.param(
-        # https://github.com/djlint/djLint/issues/262
         ("{% if   abc == 101 %}\n<p>x</p>\n{% endif %}\n{{ name |  upper }}\n"),
         (
             "{% if abc == 101 %}\n"
@@ -42,7 +41,7 @@ test_data = [
             "{{ name | upper }}\n"
         ),
         ({}),
-        id="issue_262_extra_whitespace_condensed",
+        id="issue 262 extra whitespace condensed (issue 262)",
     ),
     pytest.param(
         ("{% if x == \"a  b\"   and y == 'c\td' %}\n<p>x</p>\n{% endif %}\n"),

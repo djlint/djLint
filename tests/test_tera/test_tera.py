@@ -13,21 +13,18 @@ from tests.conftest import config_builder, printer
 
 test_data = [
     pytest.param(
-        # https://github.com/djlint/djLint/issues/1322 follow-up: tera v2
-        # components are block tags
         ('{% component card(title="x") %}\n<p>body</p>\n{% endcomponent %}\n'),
         (
             '{% component card(title="x") %}\n'
             "    <p>body</p>\n"
             "{% endcomponent %}\n"
         ),
-        id="component_block_indents",
+        id="follow-up: tera v2 components are block tags (issue 1322)",
     ),
     pytest.param(
-        # django-components style self-closing component must not indent
         ('{% component "calendar" / %}\n<p>after</p>\n'),
         ('{% component "calendar" / %}\n<p>after</p>\n'),
-        id="self_closing_component_does_not_indent",
+        id="django-components style self-closing component must not indent",
     ),
     pytest.param(
         ("{% set_global counter = 1 %}\n<p>x</p>\n"),
@@ -51,10 +48,9 @@ test_data = [
         id="jinja_style_blocks_and_comments",
     ),
     pytest.param(
-        # raw blocks indent (as under jinja) but content is not reformatted
         ("{% raw %}\n{{ not  parsed }}\n{% endraw %}\n"),
         ("{% raw %}\n    {{ not  parsed }}\n{% endraw %}\n"),
-        id="raw_content_not_reformatted",
+        id="raw blocks indent (as under jinja) but content is not reformatted",
     ),
 ]
 
@@ -68,9 +64,9 @@ def test_formatter(source: str, expected: str) -> None:
 
 
 def test_profile_defaults() -> None:
+    """Tera expressions are jinja-like, not rust: formatting stays enabled."""
     config = Config("dummy/source.html", profile="tera")
 
-    # tera expressions are jinja-like, not rust: formatting stays enabled
     assert not config.no_function_formatting
     assert not config.no_set_formatting
 

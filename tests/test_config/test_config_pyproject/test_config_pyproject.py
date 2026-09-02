@@ -1,12 +1,6 @@
 """Djlint tests specific to custom file path.
 
-run::
-
-   pytest tests/test_config/test_config_pyproject/test.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_config/test_config_pyproject/test.py::test_check_pyproject_as_config
-
+uv run pytest tests/test_config/test_config_pyproject/test_config_pyproject.py
 """
 
 from __future__ import annotations

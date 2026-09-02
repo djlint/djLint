@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        # https://github.com/djlint/djLint/issues/820
         ('<label for="wine">Wine</label>\n<input id="cheese">\n'),
         ([
             {
@@ -28,7 +27,7 @@ test_data = [
                 "message": "Label for attribute has no matching element id in this file.",
             }
         ]),
-        id="issue_820_no_matching_id",
+        id="issue 820 no matching id (issue 820)",
     ),
     pytest.param(
         (

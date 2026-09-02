@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        # https://github.com/djlint/djLint/issues/722
         ('{% extends "" %}\n'),
         ([
             {
@@ -28,7 +27,7 @@ test_data = [
                 "message": "Missing or empty template name in extends or include tag.",
             }
         ]),
-        id="empty_extends",
+        id="empty extends (issue 722)",
     ),
     pytest.param(
         ("{% include '' %}\n"),

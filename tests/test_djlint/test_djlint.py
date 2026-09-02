@@ -1,15 +1,6 @@
 """Djlint base tests.
 
-run::
-
-    pytest tests/test_djlint/test_djlint.py --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
-    pytest tests/test_djlint/test_djlint.py::test_hyphen_file
-
-or::
-
-    tox
-
+uv run pytest tests/test_djlint/test_djlint.py
 """
 
 from __future__ import annotations
@@ -117,10 +108,10 @@ def test_good_path_with_extension(runner: CliRunner) -> None:
 
 
 def test_good_path_with_bad_ext(runner: CliRunner) -> None:
+    """Nothing matched at all, so the run checked nothing it was asked to."""
     result = runner.invoke(
         djlint, ("tests/test_djlint/", "-e", "html.alphabet")
     )
-    # nothing matched at all, so the run checked nothing it was asked to
     assert result.exit_code == 2
     assert "No files to check!" in result.stderr
     assert not result.stdout
@@ -149,19 +140,16 @@ def test_stdin(runner: CliRunner) -> None:
     assert "Linted 1 file" in result.output
     assert "1/1 files" not in result.stderr
 
-    # check with multiple inputs
     result = runner.invoke(
         djlint, ("-", "-"), input='<div><p id="a"></p></div>'
     )
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
 
-    # check with reformat
     result = runner.invoke(djlint, ("-", "--reformat"), input="<div></div>")
     assert result.exit_code == 0
     assert result.output == "<div></div>\n"
 
-    # check with check
     result = runner.invoke(djlint, ("-", "--check"), input="<div></div>")
     assert result.exit_code == 0
     assert result.output == "<div></div>\n"
@@ -175,7 +163,6 @@ def test_stdin(runner: CliRunner) -> None:
     assert not result.stdout
 
     # input skipped by require-pragma must come back byte for byte, and the
-    # diagnostic must never land on stdout next to it
     result = runner.invoke(
         djlint,
         ("-", "--reformat", "--require-pragma"),
@@ -230,18 +217,15 @@ def test_stdin_lint_output_stream(runner: CliRunner) -> None:
     """Lint output moves to stderr only when stdout is carrying the file."""
     src = '<div style="color:red"></div>'
 
-    # lint only: stdout is free, and editor integrations read the report there
     result = runner.invoke(djlint, ("-",), input=src)
     assert "H021" in result.stdout
     assert "Linted 1 file" in result.stdout
 
-    # --reformat hands the file back on stdout, so the report must not join it
     result = runner.invoke(djlint, ("-", "--reformat", "--lint"), input=src)
     assert result.stdout == src + "\n"
     assert "H021" in result.stderr
     assert "Linted 1 file" in result.stderr
 
-    # same for --check, statistics block included
     result = runner.invoke(
         djlint, ("-", "--check", "--lint", "--statistics"), input=src
     )
@@ -263,7 +247,10 @@ def test_stdin_invalid_utf8(runner: CliRunner) -> None:
 
 
 def test_stdin_preserves_line_endings(runner: CliRunner) -> None:
-    """A CRLF buffer comes back CRLF, exactly as it does through a file."""
+    """A CRLF buffer comes back CRLF, exactly as it does through a file.
+
+    An LF buffer is left alone.
+    """
     crlf = b"<div>\r\n<p>hi</p>\r\n</div>\r\n"
 
     result = runner.invoke(djlint, ("-", "--reformat"), input=crlf)
@@ -275,7 +262,6 @@ def test_stdin_preserves_line_endings(runner: CliRunner) -> None:
     )
     assert result.stdout_bytes == crlf
 
-    # and an LF buffer is left alone
     result = runner.invoke(
         djlint, ("-", "--reformat"), input=b"<div>\n<p>hi</p>\n</div>\n"
     )
@@ -285,7 +271,10 @@ def test_stdin_preserves_line_endings(runner: CliRunner) -> None:
 def test_closed_pipe_is_not_a_crash(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """`djlint . | head` is the consumer's choice, not a djLint failure."""
+    """`djlint . | head` is the consumer's choice, not a djLint failure.
+
+    No traceback, and no invitation to file a bug against djLint.
+    """
 
     def hang_up(*_args: object, **_kwargs: object) -> int:
         raise BrokenPipeError(errno.EPIPE, "broken pipe")
@@ -295,7 +284,6 @@ def test_closed_pipe_is_not_a_crash(
     result = runner.invoke(djlint, ("-", "--lint"), input="<div></div>")
 
     assert result.exit_code == 2
-    # no traceback, and no invitation to file a bug against djLint
     assert "Traceback" not in result.stderr
     assert "report unexpected failures" not in result.stderr
 
@@ -419,7 +407,6 @@ def test_version(runner: CliRunner) -> None:
 
 
 def test_python_call() -> None:
-    # give up fighting windows lol
     if sys.platform != "win32":
         py_sub = subprocess.run(
             ("python", "-m", "djlint", "-h"),  # noqa: S607
@@ -445,14 +432,11 @@ def test_python_call() -> None:
 def test_line_ending(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
-    # write a windows line ending to file
     text_in = "<div></div>\r\n"
     Path(tmp_file.name).write_text(text_in, encoding="utf-8", newline="")
 
-    # make sure line ending was still there
     assert Path(tmp_file.name).read_bytes().decode("utf-8") == text_in
 
-    # check formatting
     result = runner.invoke(djlint, (tmp_file.name, "--check", "--quiet"))
 
     assert result.exit_code == 0

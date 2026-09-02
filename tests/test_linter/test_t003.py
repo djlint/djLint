@@ -26,7 +26,6 @@ test_data = [
                 "match": "{% endblock %}",
                 "message": "Endblock should have name. Ex: {% endblock body %}.",
             },
-            # pairing correctness lives in T038
             {
                 "code": "T038",
                 "line": "1:0",
@@ -34,7 +33,7 @@ test_data = [
                 "message": "End tag has no matching block tag.",
             },
         ]),
-        id="orphan_endblock",
+        id="pairing correctness lives in T038",
     ),
     pytest.param(
         ("{% block foo %}\n{% endblock bar %}"),

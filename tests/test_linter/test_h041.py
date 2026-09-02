@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        # https://github.com/djlint/djLint/issues/88
         (
             "{% block content %}\n"
             '<div class="pt-5 mt-3">\n'
@@ -37,7 +36,7 @@ test_data = [
                 "message": "Tag is closed in a different template block than it was opened.",
             }
         ]),
-        id="issue_88_closed_in_other_block",
+        id="issue 88 closed in other block (issue 88)",
     ),
     pytest.param(
         (

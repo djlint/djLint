@@ -25,7 +25,6 @@ test_data = [
         ),
         id="icon",
     ),
-    # issue #171, span is an inline tag
     pytest.param(
         (
             '<div class="hi">\n'
@@ -47,7 +46,7 @@ test_data = [
             "    </div>\n"
             "</div>\n"
         ),
-        id="inline",
+        id="span is an inline tag (issue 171)",
     ),
     pytest.param(
         ("<p><p><span><strong>asdf</strong><br></span></p></p>\n"),

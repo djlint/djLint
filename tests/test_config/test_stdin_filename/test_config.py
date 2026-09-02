@@ -1,15 +1,6 @@
 """Djlint tests specific to --stdin-filename.
 
-run::
-
-   pytest tests/test_config/test_stdin_filename/test_config.py --cov=src/djlint \
-          --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
-for a single test, run::
-
-   pytest tests/test_config/test_stdin_filename/test_config.py::test_stdin_filename_matches_per_file_ignores \
-     --cov=src/djlint --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+uv run pytest tests/test_config/test_stdin_filename/test_config.py
 """
 
 from __future__ import annotations
@@ -22,11 +13,6 @@ from djlint import main as djlint
 if TYPE_CHECKING:
     from click.testing import CliRunner
 
-# the pyproject.toml in this directory has:
-#   "myfile.html"          = "H025"
-#   "templates/index.html" = "H025"
-#   "^-$"                  = "H020"
-# and the html below triggers both H025 and H020 when neither is ignored.
 _HTML = "<div>\n    <div></div>"
 _CONFIG = "tests/test_config/test_stdin_filename/pyproject.toml"
 

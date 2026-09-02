@@ -1,10 +1,6 @@
 """Djlint tests specific to pyproject.toml configuration.
 
-run::
-
-   pytest tests/test_linter/test_python_module_rules/test_linter.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
+uv run pytest tests/test_linter/test_python_module_rules/test_linter.py
 """
 
 from __future__ import annotations

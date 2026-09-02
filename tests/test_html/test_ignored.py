@@ -29,7 +29,6 @@ test_data = [
         ),
         id="ignored_1",
     ),
-    # check custom ignore tag {# djlint:off #} {# djlint:on #}
     pytest.param(
         (
             "<!-- djlint:off -->\n"
@@ -65,7 +64,7 @@ test_data = [
             "<div><p><span></span></p></div>\n"
             "{{!-- djlint:on --}}\n"
         ),
-        id="ignored_2",
+        id="custom ignore tag {# djlint:off #} {# djlint:on #}",
     ),
     pytest.param(
         (

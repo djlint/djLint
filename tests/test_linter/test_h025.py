@@ -18,8 +18,7 @@ if TYPE_CHECKING:
 def test_stray_html_comment_in_template_comment_is_not_an_orphan(
     django_config: Config,
 ) -> None:
-    # A stray "<!--" inside a {# #} template comment must not swallow the
-    # closing tag and turn a balanced element into a false H025 orphan.
+    """A stray "<!--" inside a {# #} template comment must not swallow the closing tag and turn a balanced element into a false H025 orphan."""
     source = "<div>\n{# <!-- #}\n</div>"
     filename = "test.html"
 
@@ -76,9 +75,7 @@ def test_triple_stache_attribute_is_not_an_orphan(
 def test_apostrophe_in_translated_attribute_is_not_an_orphan(
     django_config: Config,
 ) -> None:
-    # The quotes of a template tag nested in an attribute value must not be
-    # read as ending the attribute, or the apostrophe in the translated text
-    # opens a value that never closes and swallows the rest of the document.
+    """The quotes of a template tag nested in an attribute value must not be read as ending the attribute, or the apostrophe in the translated text opens a value that never closes and swallows the rest of the document."""
     source = (
         "<div>\n"
         "<p>\n"
@@ -96,9 +93,7 @@ def test_apostrophe_in_translated_attribute_is_not_an_orphan(
 
 
 def test_multiline_script_is_not_an_orphan(django_config: Config) -> None:
-    # https://github.com/djlint/djLint/issues/2302
-    # The ignored block covering a <script> body stops at the "<" of its
-    # closing tag, so the closer must still pair with the opener.
+    """The ignored block covering a <script> body stops at the "<" of its closing tag, so the closer must still pair with the opener (issue 2302)."""
     source = "<div>\n  <script>\n  var x = 1;\n  </script>\n</div>\n"
     filename = "test.html"
 
@@ -177,8 +172,7 @@ def test_genuinely_orphan_script_close_is_still_reported(
 def test_html_inside_multiline_script_is_still_ignored(
     django_config: Config,
 ) -> None:
-    # The <div> in the JS string is not markup and must not pair with, or
-    # orphan against, the real tags around it.
+    """The <div> in the JS string is not markup and must not pair with, or orphan against, the real tags around it."""
     source = '<div>\n  <script>\n  var s = "<div>";\n  </script>\n</div>\n'
     filename = "test.html"
 
@@ -189,7 +183,6 @@ def test_html_inside_multiline_script_is_still_ignored(
 
 
 def test_nested_jinja_for_else_is_not_an_orphan(jinja_config: Config) -> None:
-    # https://github.com/djlint/djLint/issues/2412
     source = (
         "<div>\n"
         "  {% if not thing %}\n"

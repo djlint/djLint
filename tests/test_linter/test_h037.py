@@ -77,10 +77,9 @@ test_data = [
         id="mismatch hyphen names",
     ),
     pytest.param(
-        # https://github.com/djlint/djLint/issues/2352
         ('<a data-a.checked="1" data-b.checked="2">x</a>'),
         ([]),
-        id="issue_2352_mismatch_dot_names",
+        id="issue 2352 mismatch dot names (issue 2352)",
     ),
     pytest.param(
         ('<a data-a.checked="1" data-a.checked="2">x</a>'),
@@ -263,10 +262,9 @@ test_data = [
 
 golang_test_data = [
     pytest.param(
-        # https://github.com/djlint/djLint/issues/2299
         ('<a {{if .A}}href="a"{{else}}{{/* c */}}href="b"{{end}}>x</a>'),
         ([]),
-        id="issue_2299_comment_keeps_branch_tracking",
+        id="issue 2299 comment keeps branch tracking (issue 2299)",
     ),
     pytest.param(
         ('<a {{if .A}}href="a"{{else}}{{- /* c */ -}}href="b"{{end}}>x</a>'),
@@ -290,7 +288,7 @@ golang_test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_base(source: str, expected: list[LintError]) -> None:
-    # H043 is not what these fixtures are about
+    """The buttons in the fixtures carry no type, so H043 is ignored to keep the output to H037."""
     config = config_builder({"ignore": "H043"})
     filename = "test.html"
     output = linter(config, source, filename, filename)

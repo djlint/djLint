@@ -227,7 +227,6 @@ test_data = [
         id="js_getter_function_nested_indent",
     ),
     pytest.param(
-        # Test default indent_js behavior (no indent_js specified)
         ('<div onclick=\'{"foo": "bar", "baz": "qux"}\'></div>'),
         (
             "<div onclick='{\n"
@@ -235,16 +234,10 @@ test_data = [
             '                  "baz": "qux"\n'
             "              }'></div>\n"
         ),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            # Note: no indent_js specified, should use default
-        }),
-        id="js_object_default_indent",
+        ({"format_attribute_js_json": True, "max_attribute_length": 0}),
+        id="default indent_js behavior (no indent_js specified). Note: no indent_js specified, should use default",
     ),
     pytest.param(
-        # angular bindings are in the default js/json pattern; they only
-        # reach it once "(" and ")" are accepted in an attribute name.
         (
             '<div (click)="{ alpha: 1, beta: 2, gamma: 3 }" '
             'class="aaa bbb ccc ddd eee fff ggg">x</div>'
@@ -258,7 +251,7 @@ test_data = [
             '     class="aaa bbb ccc ddd eee fff ggg">x</div>\n'
         ),
         ({"format_attribute_js_json": True}),
-        id="angular_click_binding_js_object",
+        id='angular bindings are in the default js/json pattern; they only reach it once "(" and ")" are accepted in an attribute name',
     ),
 ]
 

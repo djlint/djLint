@@ -12,7 +12,6 @@ from tests.conftest import config_builder, printer
 
 test_data = [
     pytest.param(
-        # https://github.com/djlint/djLint/issues/734
         (
             '{{ define "main" }}\n'
             "{{ if .Page }}\n"
@@ -27,7 +26,7 @@ test_data = [
             "    {{ end }}\n"
             "{{ end }}\n"
         ),
-        id="issue_734_define_if_blocks_indent",
+        id="issue 734 define if blocks indent (issue 734)",
     ),
     pytest.param(
         ("{{ range .Items }}\n<li>{{ .Name }}</li>\n{{ end }}\n<p>after</p>\n"),
@@ -93,10 +92,9 @@ test_data = [
         id="glued_end_and_opener_keep_stack_in_sync",
     ),
     pytest.param(
-        # a comment is not a block close, despite starting with "{{/"
         ("{{ if .A }}\n{{/* note */}}\n<p>a</p>\n{{ end }}\n"),
         ("{{ if .A }}\n    {{/* note */}}\n    <p>a</p>\n{{ end }}\n"),
-        id="comment_does_not_close_block",
+        id='a comment is not a block close, despite starting with "{{/"',
     ),
 ]
 

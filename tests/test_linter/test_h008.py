@@ -76,7 +76,6 @@ test_data = [
         id="issue_2247_template_tag_string_argument",
     ),
     pytest.param(
-        # the single quotes are load-bearing here
         ("""<div style='font-family: "Fira Code", monospace'>c</div>"""),
         ([
             {
@@ -86,7 +85,7 @@ test_data = [
                 "message": "Inline styles should be avoided.",
             }
         ]),
-        id="value_holds_a_double_quote",
+        id="the single quotes are load-bearing here",
     ),
     pytest.param(
         ("<div data-title='x'>c</div>"),

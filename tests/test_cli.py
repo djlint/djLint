@@ -38,7 +38,6 @@ def test_help_snapshot_matches_docs(runner: CliRunner) -> None:
 
 
 def test_cli(runner: CliRunner) -> None:
-    # missing options:
     result = runner.invoke(
         djlint,
         (

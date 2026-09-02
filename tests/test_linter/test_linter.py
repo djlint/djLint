@@ -1,20 +1,7 @@
 # ruff: noqa: N802
 """Djlint linter rule tests.
 
-run::
-
-   pytest tests/test_linter.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   # for a single test
-
-   pytest tests/test_linter/test_linter.py::test_random
-
-Test setup
-
-(html, (list of codes that should file, plus optional line number))
-
-
+uv run pytest tests/test_linter/test_linter.py
 """
 
 from __future__ import annotations
@@ -43,13 +30,11 @@ def test_H011(
     assert result.exit_code == 1
     assert "H011 1:" in result.output
 
-    # check for no matches inside template tags
     write_to_file(tmp_file.name, b" {{ func( id=html_id,) }}")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 0
     assert "H011 1:" not in result.output
 
-    # check meta tag
     write_to_file(
         tmp_file.name,
         b'<meta name="viewport" content="width=device-width, initial-scale=1">',
@@ -57,7 +42,6 @@ def test_H011(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H011 1:" not in result.output
 
-    # check keywords inside template syntax
     write_to_file(
         tmp_file.name,
         b"<a href=\"{{ url_for('connection_bp.one_connection', connection_id=connection.id) }}\">{{ connection }}</a>",
@@ -74,13 +58,11 @@ def test_H012(
     assert result.exit_code == 1
     assert "H012 1:" in result.output
 
-    # test for not matching random "=" in text
     write_to_file(tmp_file.name, b"<h3>#= title #</h3>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 0
     assert "H012 1:" not in result.output
 
-    # test for not matching "=" in template condition
     write_to_file(
         tmp_file.name,
         b"<p>{% if activity.reporting_groups|length <= 0 %}<h3>{% trans 'General' %}</h3>{% endif %}</p>",
@@ -90,7 +72,6 @@ def test_H012(
     assert result.exit_code == 0
     assert "H012 1:" not in result.output
 
-    # space allowed inside attributes.
     write_to_file(
         tmp_file.name,
         b"""<button x-on:click="myVariable = {{ myObj.id }}" class="text-red-600 hover:text-red-800">
@@ -111,12 +92,10 @@ def test_H013(
     print(result.output)
     assert "found 1 error" in result.output
 
-    # a name that merely ends in "alt" is a different attribute
     write_to_file(tmp_file.name, b'<img src="a" data-alt="b"/>')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H013 1:" in result.output
 
-    # and an "alt=" written inside a value is not an attribute at all
     write_to_file(tmp_file.name, b'<img src="a" title="alt=x"/>')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H013 1:" in result.output
@@ -133,24 +112,19 @@ def test_H013(
 def test_H014(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
-    # the report points at the first blank line, not the content line above
     write_to_file(tmp_file.name, b"</div>\n\n\n<p>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 1
     assert "H014 2:" in result.output
 
-    # a line holding only whitespace is a blank line too
     write_to_file(tmp_file.name, b"</div>\n\n   \n<p>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H014 2:" in result.output
 
-    # one blank line is a paragraph break rather than an extra
     write_to_file(tmp_file.name, b"</div>\n\n<p>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H014" not in result.output
 
-    # the threshold follows the options, so the formatter's own output is
-    # never rejected
     write_to_file(tmp_file.name, b"</div>\n\n\n<p>")
     result = runner.invoke(djlint, (tmp_file.name, "--max-blank-lines", "2"))
     assert "H014" not in result.output
@@ -203,14 +177,12 @@ def test_H017(
     assert result.exit_code == 1
     assert "H017 1:" in result.output
 
-    # H017 and H018 enforce opposite conventions
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H017,H018"))
     assert "H017 and H018 enforce opposite void tag styles" in result.output
 
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
     assert "conflicts" not in result.output
 
-    # obsolete elements are no longer styled
     write_to_file(tmp_file.name, b"<keygen><command><menuitem>")
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
     assert "H017" not in result.output
@@ -242,7 +214,6 @@ def test_H017(
     assert result.exit_code == 1
     assert "H017 1:" in result.output
 
-    # test colgroup tag
     write_to_file(
         tmp_file.name, b"<colgroup><colgroup asdf></colgroup></colgroup>"
     )
@@ -250,7 +221,6 @@ def test_H017(
     print(result.output)
     assert "H017 1:" not in result.output
 
-    # test template tags inside html
     write_to_file(tmp_file.name, b"<image {{ > }} />")
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
     assert "H017" not in result.output
@@ -291,12 +261,10 @@ def test_H018(
     assert result.exit_code == 1
     assert "H018 1:" in result.output
 
-    # test svg path tag
     write_to_file(tmp_file.name, b'<svg><path d="M0 0" /></svg>')
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
     assert "H018" not in result.output
 
-    # test colgroup tag
     write_to_file(
         tmp_file.name, b"<colgroup><colgroup asdf></colgroup></colgroup>"
     )
@@ -304,7 +272,6 @@ def test_H018(
     print(result.output)
     assert "H018 1:" not in result.output
 
-    # test template tags inside html
     write_to_file(tmp_file.name, b"<image {{ /> }} >")
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
     assert "H018" not in result.output
@@ -318,7 +285,6 @@ def test_DJ018(
         b'<a href="/Collections?handler=RemoveAgreement&id=@a.Id">\n<form action="/Collections"></form></a>',
     )
 
-    # test hash urls
     write_to_file(
         tmp_file.name,
         b'<a href="#">\n<form action="#"><a href="#tab">\n<form action="#go"></form></a></form></a>',
@@ -359,7 +325,6 @@ def test_H020(
     assert result.exit_code == 0
     assert "H020" not in result.output
 
-    # https://github.com/djlint/djLint/issues/866
     write_to_file(tmp_file.name, b"<slot></slot>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 0
@@ -515,12 +480,10 @@ def test_H025(
         in result.output
     )
 
-    # test tags inside attributes
     write_to_file(tmp_file.name, b'<span title="<p>Bar</p>">Foo</span>')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
 
-    # issue #364
     write_to_file(
         tmp_file.name,
         b'{% if tag|startswith:"<del>" %}\n{% if tag|startswith:"<ins>" %}\n{% endif %}\n{% endif %}',
@@ -575,7 +538,6 @@ def test_H025(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
 
-    # fix issue #164
     write_to_file(
         tmp_file.name,
         b"""<th {{ attrs }}>
@@ -585,7 +547,6 @@ def test_H025(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
 
-    # fix issue #169
     write_to_file(
         tmp_file.name,
         b"""<li{% if is_active %} class="active" {% endif %}>
@@ -595,12 +556,10 @@ def test_H025(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
 
-    # test {# #} inside tag
     write_to_file(tmp_file.name, b'<div id="example" {# for #}></div>')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
 
-    # check closing tag inside a comment
     write_to_file(
         tmp_file.name,
         b'<input {# value="{{ driverId|default(\' asdf \') }}" /> #} value="this">',
@@ -608,7 +567,6 @@ def test_H025(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
 
-    # issue #447
     write_to_file(
         tmp_file.name,
         b"""<button title="{% trans "text with ONE single ' quote" %}">
@@ -628,8 +586,6 @@ def test_H025(
     assert "H025 1:0" in result.output
     assert "H025 1:11" in result.output
 
-    # issue #483: the same tag opened in both branches of a conditional
-    # shares one close tag.
     write_to_file(
         tmp_file.name,
         b"""{% if foo.bar %}
@@ -644,7 +600,6 @@ def test_H025(
     assert result.exit_code == 0
     assert "H025" not in result.output
 
-    # a close tag in each branch of a conditional shares one open tag
     write_to_file(
         tmp_file.name,
         b"""<div>
@@ -658,7 +613,6 @@ def test_H025(
     assert result.exit_code == 0
     assert "H025" not in result.output
 
-    # issue #787: mis-nested tags
     write_to_file(
         tmp_file.name, b"<h1>blah <b>bold</h1>\n<p>blah</b> blah blah</p>"
     )
@@ -667,8 +621,6 @@ def test_H025(
     assert "H025 1:9" in result.output
     assert "H025 2:7" in result.output
 
-    # tags conditionally opened and closed in separate conditionals are
-    # not mis-nesting
     write_to_file(
         tmp_file.name,
         b"{% if a %}<b>{% else %}<i>{% endif %}text"
@@ -707,6 +659,7 @@ def test_H029(
 def test_H030(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
+    """A name that merely ends in "name" does not carry the description."""
     write_to_file(tmp_file.name, b"<html>\nstuff\n</html>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 1
@@ -719,7 +672,6 @@ def test_H030(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H030" not in result.output
 
-    # a name that merely ends in "name" does not carry the description
     write_to_file(
         tmp_file.name,
         b'<html>\n<meta data-name="description" content="nice"/>\n</html>',
@@ -731,6 +683,7 @@ def test_H030(
 def test_H036(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
+    """A break that is part of the content, as the html specification puts it."""
     for reported in (
         b"<p>a<br><br>b</p>",
         b"<p>a<br />\n<br />b</p>",
@@ -743,7 +696,6 @@ def test_H036(
         assert result.exit_code == 1, reported
         assert "H036 1:" in result.output
 
-    # a break that is part of the content, as the html specification puts it
     for quiet in (
         b"<p>Acme Ltd<br>1 High St<br>Springfield</p>",
         b"<address>a<br>b</address>",
@@ -825,9 +777,8 @@ def test_ignoring_rules(
     )
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H025" not in result.output
-    assert "H021" in result.output  # other codes should still show
+    assert "H021" in result.output
 
-    # using tabs
     write_to_file(
         tmp_file.name,
         b"""<div>
@@ -895,12 +846,10 @@ def test_H043(
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H043" not in result.output
 
-    # a name that merely ends in "type" is a different attribute
     write_to_file(tmp_file.name, b'<button data-type="a">Save</button>')
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H043"))
     assert "H043 1:" in result.output
 
-    # a type given by a template tag counts
     write_to_file(
         tmp_file.name,
         b'<button {% if x %}type="button"{% endif %}>Save</button>',
@@ -1035,7 +984,7 @@ def test_H029_needs_a_name_boundary(
 def test_H009_matches_what_the_formatter_fixes(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
-    # the formatter does not know these, so the rule must not ask for them
+    """The formatter does not know these, so the rule must not ask for them."""
     for quiet in (
         b"<svg><G><PATH d='M0 0'/></G></svg>",
         b"<NAME>n</NAME>",
@@ -1080,11 +1029,11 @@ def test_T034_ignores_a_brace_inside_a_string(
 def test_T038_leaves_a_custom_paired_tag_alone(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
+    """Nothing opened it, so this one really is an orphan."""
     write_to_file(tmp_file.name, b"{% mytag %}x{% endmytag %}")
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "T038" not in result.output
 
-    # nothing opened it, so this one really is an orphan
     write_to_file(tmp_file.name, b"{% endmytag %}")
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "T038 1:" in result.output
@@ -1125,6 +1074,7 @@ def test_H012_sees_past_a_template_tag(
 def test_T032_sees_a_tag_holding_a_filter_or_call(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
+    """A run of spaces inside a string is content."""
     for reported in (
         b"{% if a|d  b %}{% endif %}",
         b"{% if a(b)  c %}{% endif %}",
@@ -1135,7 +1085,6 @@ def test_T032_sees_a_tag_holding_a_filter_or_call(
         result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
         assert "T032 1:" in result.output, reported
 
-    # a run of spaces inside a string is content
     write_to_file(tmp_file.name, b'{% trans "a  b" %}')
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "T032" not in result.output

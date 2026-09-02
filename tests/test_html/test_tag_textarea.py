@@ -61,7 +61,6 @@ test_data = [
         ('<p>\n    some nice text <a href="this">asdf</a>, ok\n</p>\n'),
         id="a_tag",
     ),
-    # test added for https://github.com/djlint/djLint/issues/189
     pytest.param(
         (
             "<a>\n"
@@ -77,21 +76,17 @@ test_data = [
             '    <h4>{{ _("Options") }}</h4>\n'
             "</div>\n"
         ),
-        id="a_with_nesting",
+        id="a with nesting (issue 189)",
     ),
-    # a stray "<!--" in raw text must not swallow the closing tag and
-    # over-indent the following siblings.
     pytest.param(
         ("<textarea><!--</textarea>\n<p>a</p>\n"),
         ("<textarea><!--</textarea>\n<p>a</p>\n"),
-        id="unterminated_comment_in_textarea",
+        id='a stray "<!--" in raw text must not swallow the closing tag and over-indent the following siblings',
     ),
-    # trailing whitespace inside an indented textarea is verbatim content and
-    # must be preserved, not collapsed by clean_whitespace.
     pytest.param(
         ("<div>\n    <textarea>Hello   \nWorld</textarea>\n</div>\n"),
         ("<div>\n    <textarea>Hello   \nWorld</textarea>\n</div>\n"),
-        id="indented_textarea_trailing_whitespace_preserved",
+        id="trailing whitespace inside an indented textarea is verbatim content and must be preserved, not collapsed by clean_whitespace",
     ),
 ]
 

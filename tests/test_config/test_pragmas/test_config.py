@@ -1,12 +1,6 @@
 """Djlint tests specific to pyproject.toml configuration.
 
-run::
-
-   pytest tests/test_config/test_pragmas/test_config.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-   pytest tests/test_config/test_pragmas/test_config.py::test_require_pragma
-
+uv run pytest tests/test_config/test_pragmas/test_config.py
 """
 
 from __future__ import annotations
@@ -20,6 +14,7 @@ if TYPE_CHECKING:
 
 
 def test_require_pragma(runner: CliRunner) -> None:
+    """That is a successful no-op, not a failure."""
     result = runner.invoke(
         djlint,
         (
@@ -32,7 +27,6 @@ def test_require_pragma(runner: CliRunner) -> None:
     )
 
     # the file has no pragma, so require_pragma skipped it on purpose;
-    # that is a successful no-op, not a failure
     assert """No files to check!""" in result.stderr
     assert result.exit_code == 0
 

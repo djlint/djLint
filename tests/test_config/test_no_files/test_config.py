@@ -1,15 +1,6 @@
 """Djlint tests for runs that end up with no files to check.
 
-An empty file list has two very different causes, and they get different
-exit codes: the configuration deliberately skipping every candidate is a
-success, while matching nothing at all means the run checked nothing it
-was asked to check.
-
-run::
-
-   pytest tests/test_config/test_no_files/test_config.py --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+uv run pytest tests/test_config/test_no_files/test_config.py
 """
 
 from __future__ import annotations
@@ -24,8 +15,6 @@ if TYPE_CHECKING:
     from click.testing import CliRunner
 
 
-# content that --check would report on, so a passing run proves the file
-# was skipped rather than that there was nothing to report
 UNFORMATTED = "<div><p>x</p>   </div>"
 
 
@@ -77,6 +66,8 @@ def test_no_matching_files_exits_two(runner: CliRunner, tmp_path: Path) -> None:
 
     Exit 2 rather than 1 so that a wrapper can tell "your templates have
     problems" apart from "I checked nothing". See issue #1112.
+
+    Nothing was excluded, so the message must not blame the configuration.
     """
     _project(tmp_path)
     (tmp_path / "notes.txt").write_text("not a template", encoding="utf-8")
@@ -85,14 +76,16 @@ def test_no_matching_files_exits_two(runner: CliRunner, tmp_path: Path) -> None:
 
     assert result.exit_code == 2
     assert "No files to check!" in result.stderr
-    # nothing was excluded, so the message must not blame the configuration
     assert "skipped by the configuration" not in result.stderr
 
 
 def test_no_matching_files_with_allow_empty_input(
     runner: CliRunner, tmp_path: Path
 ) -> None:
-    """--allow-empty-input opts back into the pre-1.39.5 exit code."""
+    """--allow-empty-input opts back into the pre-1.39.5 exit code.
+
+    The run is still explained, it just does not fail.
+    """
     _project(tmp_path)
 
     result = runner.invoke(djlint, (str(tmp_path), "--check"))
@@ -102,7 +95,6 @@ def test_no_matching_files_with_allow_empty_input(
         djlint, (str(tmp_path), "--check", "--allow-empty-input")
     )
     assert result.exit_code == 0
-    # the run is still explained, it just does not fail
     assert "No files to check!" in result.stderr
 
 

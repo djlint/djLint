@@ -243,7 +243,7 @@ test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_base(source: str, expected: list[LintError]) -> None:
-    # T028 is opt in, and these fixtures cover it
+    """T028 is opt in, so it is included here; the buttons in the fixtures carry no type, so H043 is ignored."""
     config = config_builder({
         "profile": "jinja",
         "include": "T028",

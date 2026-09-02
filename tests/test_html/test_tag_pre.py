@@ -1,6 +1,8 @@
 """Test html pre tag.
 
 uv run pytest tests/test_html/test_tag_pre.py
+
+(issue 187).
 """
 
 from __future__ import annotations
@@ -15,7 +17,6 @@ from tests.conftest import printer
 if TYPE_CHECKING:
     from djlint.settings import Config
 
-# added for https://github.com/djlint/djLint/issues/187
 test_data = [
     pytest.param(
         (

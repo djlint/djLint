@@ -159,7 +159,7 @@ def test_profile_defaults() -> None:
 
 
 def test_liquid_tags_do_not_leak_into_other_profiles() -> None:
-    # the djangosnippets switch/case idiom uses {% case %} as a single tag
+    """The djangosnippets switch/case idiom uses {% case %} as a single tag."""
     source = "<div>\n    {% case foo %}\n    <span>a</span>\n</div>\n"
     django = config_builder({"profile": "django"})
 

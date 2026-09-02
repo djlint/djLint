@@ -1,15 +1,6 @@
 """Djlint tests specific to gitignore configuration.
 
-run::
-
-   pytest tests/test_config_gitignore.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-for a single test, run::
-
-   pytest tests/test_config_gitignore.py::test_ignored_path --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+uv run pytest tests/test_config/test_gitignore/test_config.py
 """
 
 from __future__ import annotations
@@ -41,9 +32,7 @@ def test_cli(runner: CliRunner) -> None:
         "tests", "test_config", "test_gitignore", ".gitignore"
     )
 
-    # create .git folder to make root
     git_path.mkdir(parents=True, exist_ok=True)
-    # add a gitignore file
     gitignore_path.write_text("html_two.html", encoding="utf-8")
 
     result = runner.invoke(
@@ -55,14 +44,12 @@ def test_cli(runner: CliRunner) -> None:
         ),
     )
 
-    # the file is gitignored, so it is skipped on purpose - a success
     assert result.exit_code == 0
     assert "No files to check!" in result.stderr
 
     result = runner.invoke(
         djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
     )
-    # without --use-gitignore the file is checked, and it needs reformatting
     assert result.exit_code == 1
 
     try:
@@ -72,16 +59,12 @@ def test_cli(runner: CliRunner) -> None:
         print("cleanup failed")
         print(e)
 
-    # @pytest.mark.xdist_group(name="group1")
-    # def test_pyproject(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
     )
     assert result.exit_code == 1
 
-    # make a root
     git_path.mkdir(parents=True, exist_ok=True)
-    # add a gitignore file
     gitignore_path.write_text("html_two.html", encoding="utf-8")
     pyproject_path = Path(
         "tests", "test_config", "test_gitignore", "pyproject.toml"
@@ -106,7 +89,6 @@ def test_cli(runner: CliRunner) -> None:
     )
     assert result.exit_code == 1
 
-    # verify cli overrides pyproject
     result = runner.invoke(
         djlint,
         (
@@ -127,12 +109,7 @@ def test_cli(runner: CliRunner) -> None:
         print("cleanup failed")
         print(e)
 
-    # @pytest.mark.xdist_group(name="group1")
-    # def test_ignored_path(runner: CliRunner) -> None:
-    # test for https://github.com/djlint/djLint/issues/224
-    # create .git folder to make root
     git_path.mkdir(parents=True, exist_ok=True)
-    # add a gitignore file
     gitignore_path.write_text("var", encoding="utf-8")
 
     result = runner.invoke(
@@ -154,27 +131,22 @@ def test_unread_gitignore_cannot_stop_the_run(tmp_path: Path) -> None:
     """A .gitignore nobody asked djLint to read must not abort the run."""
     (tmp_path / ".git").mkdir()
     (tmp_path / "index.html").write_text("<div></div>", encoding="utf-8")
-    # git accepts a trailing backslash and simply drops the line; pathspec
-    # rejects the whole file over it
     (tmp_path / ".gitignore").write_text("build\\\n", encoding="utf-8")
 
     assert get_src([tmp_path], Config(str(tmp_path))).paths
 
-    # asking for it is another matter: that has to fail, but as bad input
     with pytest.raises(UsageError):
         Config(str(tmp_path), use_gitignore=True)
 
 
 def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
     """Exclude patterns should not match parent dirs outside the project."""
-    # Simulate a worktree path that contains ".git" in a parent directory
     worktree = tmp_path / ".git-worktrees" / "feature"
     templates = worktree / "templates"
     templates.mkdir(parents=True)
 
     (templates / "index.html").write_text("<div>hello</div>", encoding="utf-8")
 
-    # Also create a real .git exclude target inside the project
     git_dir = worktree / "sub" / ".git" / "objects"
     git_dir.mkdir(parents=True)
     (git_dir / "stale.html").write_text("<div>bad</div>", encoding="utf-8")
@@ -184,12 +156,8 @@ def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
 
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
-    # File under templates/ must be found even though the absolute path
-    # contains ".git-worktrees"
     assert "templates/index.html" in resolved_paths
 
-    # File under sub/.git/objects/ must still be excluded by the default
-    # exclude pattern
     assert "sub/.git/objects/stale.html" not in resolved_paths
 
     (worktree / ".git").touch()
@@ -201,14 +169,15 @@ def test_exclude_does_not_match_parent_path(tmp_path: Path) -> None:
     paths = get_src([templates], config).paths
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
-    # Exclude patterns relative to project root must still work when
-    # searching only a subdirectory.
     assert "templates/index.html" in resolved_paths
     assert "templates/generated/bad.html" not in resolved_paths
 
 
 def test_extend_exclude_matches_explicit_file(tmp_path: Path) -> None:
-    """Explicit files should still respect configured excludes."""
+    """Explicit files should still respect configured excludes.
+
+    The skip is recorded, which is what keeps the exit code at 0.
+    """
     template = tmp_path / "generated.html"
     template.write_text("<div>generated</div>", encoding="utf-8")
 
@@ -217,7 +186,6 @@ def test_extend_exclude_matches_explicit_file(tmp_path: Path) -> None:
     found = get_src([template], config)
 
     assert found.paths == []
-    # and the skip is recorded, which is what keeps the exit code at 0
     assert found.excluded
 
 
@@ -364,24 +332,18 @@ def test_gitignore_does_not_match_parent_path(tmp_path: Path) -> None:
 
     (templates / "index.html").write_text("<div>hello</div>", encoding="utf-8")
 
-    # Create .git dir so find_project_root finds this as root
     (worktree / ".git").mkdir()
 
-    # Gitignore with a pattern that matches a parent directory name
     (worktree / ".gitignore").write_text("worktrees\n", encoding="utf-8")
 
     config = Config(str(templates / "index.html"), use_gitignore=True)
-    # Test single file path (the xargs codepath)
     paths = get_src([templates / "index.html"], config).paths
     assert len(paths) == 1
 
-    # Test directory path
     paths = get_src([worktree], config).paths
     resolved = {p.relative_to(worktree).as_posix() for p in paths}
     assert "templates/index.html" in resolved
 
-    # A file that IS inside a worktrees/ dir within the project should
-    # still be correctly ignored
     ignored_dir = worktree / "worktrees" / "nested"
     ignored_dir.mkdir(parents=True)
     (ignored_dir / "bad.html").write_text("<div>bad</div>", encoding="utf-8")

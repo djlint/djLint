@@ -122,9 +122,6 @@ test_data = [
         ),
         id="style_before_others",
     ),
-    # attributes with space around = are not broken
-    # https://github.com/djlint/djLint/issues/317
-    # https://github.com/djlint/djLint/issues/330
     pytest.param(
         (
             '<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'
@@ -132,7 +129,7 @@ test_data = [
         (
             '<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'
         ),
-        id="space_around_equals",
+        id="attributes with space around = are not broken (issues 317, 330)",
     ),
     pytest.param(
         (
@@ -935,11 +932,9 @@ test_data = [
         id="without_quotes_around_a_template_tag",
     ),
     pytest.param(
-        # a browser reads this as the single value a'b, so quoting the a
-        # would turn the rest into an attribute of its own
         ("<p title=a'b>String</p>"),
         ("<p title=a'b>String\n</p>\n"),
-        id="without_quotes_around_a_single_quote",
+        id="a browser reads this as the single value a'b, so quoting the a would turn the rest into an attribute of its own",
     ),
     pytest.param(
         ('<select data-html="<div></div>" data-normal="hello"></select>'),
@@ -1108,15 +1103,12 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
     assert expected == output
 
 
-# was disabled
-
-
 def test_single_quotes_become_double_on_the_names_h008_reports(
     basic_config: Config,
 ) -> None:
+    """A data-x attribute is not one of the names H008 reports, so it is left as written."""
     output = formatter(basic_config, "<div class='a' data-x='b'>t</div>\n")
 
-    # data-x is not one of the names H008 reports, so it is left as written
     assert output == "<div class=\"a\" data-x='b'>t</div>\n"
 
 

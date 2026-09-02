@@ -1,15 +1,6 @@
 """Djlint tests specific to linter output format.
 
-run::
-
-   pytest tests/test_config_linter_output_format.py --cov=src/djlint --cov-branch \
-          --cov-report xml:coverage.xml --cov-report term-missing
-
-for a single test, run::
-
-   pytest tests/test_config_linter_output_format.py::test_with_config --cov=src/djlint \
-     --cov-branch --cov-report xml:coverage.xml --cov-report term-missing
-
+uv run pytest tests/test_config/test_linter_output_format/test_config.py
 """
 
 from __future__ import annotations

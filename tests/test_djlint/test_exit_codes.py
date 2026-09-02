@@ -1,15 +1,6 @@
 """Djlint tests for exit codes.
 
-djLint follows the convention its neighbours use: 0 clean, 1 findings,
-2 everything else. The value of that split is that a caller can tell
-"your templates have problems" from "djLint never got as far as looking
-at them", so these tests pin the cases where the two used to collide.
-
-run::
-
-   pytest tests/test_djlint/test_exit_codes.py --cov=src/djlint --cov-branch \
-     --cov-report xml:coverage.xml --cov-report term-missing
-
+uv run pytest tests/test_djlint/test_exit_codes.py
 """
 
 from __future__ import annotations
@@ -19,9 +10,6 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint import main as djlint
-
-# the two profile tables are internal, and keeping them in step is exactly
-# what test_profile_sets_agree exists to check
 from djlint.settings import _PROFILES  # noqa: PLC2701
 from djlint.src import _PRAGMA_PATTERNS  # noqa: PLC2701
 
@@ -141,14 +129,16 @@ def test_undecodable_first_line_has_no_pragma(
 def test_directory_matching_the_extension_is_skipped(
     runner: CliRunner, tmp_path: Path
 ) -> None:
-    """A directory named *.html is not a template, and must not crash."""
+    """A directory named *.html is not a template, and must not crash.
+
+    The real template is still checked, and it needs reformatting.
+    """
     _project(tmp_path)
     (tmp_path / "build.html").mkdir()
     (tmp_path / "real.html").write_text(DIRTY, encoding="utf-8")
 
     result = runner.invoke(djlint, (str(tmp_path), "--check"))
 
-    # the real template is still checked, and it needs reformatting
     assert result.exit_code == 1
     assert "1 file would be updated." in result.output
 
@@ -156,12 +146,14 @@ def test_directory_matching_the_extension_is_skipped(
 def test_directory_matching_the_extension_alone_is_not_a_candidate(
     runner: CliRunner, tmp_path: Path
 ) -> None:
-    """A directory must not be counted as a file that got excluded."""
+    """A directory must not be counted as a file that got excluded.
+
+    Nothing was found, and nothing was skipped by configuration either.
+    """
     _project(tmp_path)
     (tmp_path / "build.html").mkdir()
 
     result = runner.invoke(djlint, (str(tmp_path), "--check"))
 
-    # nothing was found, and nothing was skipped by configuration either
     assert result.exit_code == 2
     assert "skipped by the configuration" not in result.stderr
