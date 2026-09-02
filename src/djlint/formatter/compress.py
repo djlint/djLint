@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
-from djlint.formatter.attributes import normalize_attributes
+from djlint.formatter.attributes import normalize_attributes, sort_attributes
 from djlint.formatter.class_attributes import encode_attribute_newlines
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
@@ -131,8 +131,9 @@ def compress_html(html: str, config: Config) -> str:
                 .strip()
                 .splitlines()
             )
+            normalized = normalize_attributes(config, flattened)
             attributes = leading + _normalize_spacing(
-                normalize_attributes(config, flattened), config
+                sort_attributes(config, normalized), config
             )
         if config.close_void_tags and tag.lower() in HTML_VOID_ELEMENTS:
             close_bracket = " />"

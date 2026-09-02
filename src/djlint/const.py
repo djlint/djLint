@@ -268,3 +268,5 @@ HTML_LOWERCASE_ATTRIBUTE_NAMES: Final = frozenset((
 TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS: Final = (
     r"trans(?:late)?|with|extends|include|now"
 )
+
+TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS: Final = r"if|elif|elsif|unless"

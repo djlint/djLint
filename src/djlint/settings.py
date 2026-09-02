@@ -1200,8 +1200,10 @@ class Config:
         "max_attribute_length",
         "max_blank_lines",
         "max_line_length",
+        "name_endblocks",
         "no_entity_formatting",
         "no_function_formatting",
+        "no_indent_inner_html",
         "no_line_after_yaml",
         "no_set_formatting",
         "optional_single_line_html_pattern",
@@ -1226,6 +1228,7 @@ class Config:
         "safe_closing_tag_pattern",
         "single_attribute_per_line",
         "single_line_template_tags",
+        "sort_attributes",
         "start_template_tags",
         "statistics",
         "stdin",
@@ -1297,6 +1300,9 @@ class Config:
         indent_js: int | None = None,
         close_void_tags: bool = False,
         no_line_after_yaml: bool = False,
+        no_indent_inner_html: bool = False,
+        sort_attributes: bool = False,
+        name_endblocks: bool = False,
         keep_br_inline: bool = False,
         no_entity_formatting: bool = False,
         no_function_formatting: bool = False,
@@ -1367,6 +1373,15 @@ class Config:
         )
         self.no_line_after_yaml = no_line_after_yaml or djlint_settings.get(
             "no_line_after_yaml", False
+        )
+        self.no_indent_inner_html = no_indent_inner_html or djlint_settings.get(
+            "no_indent_inner_html", False
+        )
+        self.sort_attributes = sort_attributes or djlint_settings.get(
+            "sort_attributes", False
+        )
+        self.name_endblocks = name_endblocks or djlint_settings.get(
+            "name_endblocks", False
         )
         selected_profile = str(
             profile or djlint_settings.get("profile", "")
@@ -1619,7 +1634,12 @@ class Config:
             cache_pattern=False,
         )
 
-        self.indent_html_tags = "|".join(HTML_TAG_NAMES) + self.custom_html
+        indenting_html_tags = (
+            HTML_TAG_NAMES - {"html"}
+            if self.no_indent_inner_html
+            else HTML_TAG_NAMES
+        )
+        self.indent_html_tags = "|".join(indenting_html_tags) + self.custom_html
         self.always_self_closing_html_tags = _ALWAYS_SELF_CLOSING_HTML_TAGS
 
         not_self_closed = r"\b(?!(?:(?!%\}).)*/\s*-?%\})"

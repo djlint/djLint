@@ -17,6 +17,7 @@ from djlint.formatter.class_attributes import (
 )
 from djlint.formatter.compress import compress_html
 from djlint.formatter.condense import clean_whitespace, condense_html
+from djlint.formatter.endblocks import name_endblocks
 from djlint.formatter.entities import format_entities
 from djlint.formatter.expand import expand_html
 from djlint.formatter.indent import indent_html
@@ -66,6 +67,8 @@ def formatter(config: Config, rawcode: str) -> str:
     beautified_code = condense_html(
         indented_code, config, authored_html=compressed
     )
+
+    beautified_code = name_endblocks(beautified_code, config)
 
     if config.format_css:
         from djlint.formatter.css import format_css  # noqa: PLC0415

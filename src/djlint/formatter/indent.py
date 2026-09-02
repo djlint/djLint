@@ -18,6 +18,7 @@ from djlint.const import (
     HTML_TAG_NAMES,
     HTML_VOID_ELEMENTS,
     TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS,
+    TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS,
 )
 from djlint.formatter.attributes import format_attributes
 from djlint.formatter.tokenizer import tokenize_tags
@@ -47,15 +48,17 @@ _QUOTE_STYLES: Final = {
     "single": QuoteStyle.PREFER_SINGLE,
 }
 _QUOTE_CHARACTERS: Final = {"double": '"', "single": "'"}
+_ESCAPE: Final = "\\"
 
 _QUOTED_ARGUMENT_TAG_PATTERN: Final = re.compile(
-    rf"\{{%[-+]?[ \t]*(?:{TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS})\b"
+    rf"\{{%[-+]?[ \t]*(?:{TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS}"
+    rf"|{TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS})\b"
     r"(?:(?!%\}).)*?[-+]?%\}",
     RE_FLAGS_IS,
     cache_pattern=False,
 )
 _TAG_STRING_PATTERN: Final = re.compile(
-    r"\"[^\"]*\"|'[^']*'", cache_pattern=False
+    r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", cache_pattern=False
 )
 
 _TAG_SPACING_PATTERN: Final = re.compile(
@@ -277,12 +280,22 @@ def indent_html(rawcode: str, config: Config) -> str:
             """Rewrite a tag's quoted arguments to the configured quote.
 
             This is what T002 asks for, so the rule stays fixable by
-            running the formatter. A string is left alone when it holds the
-            quote it would be rewritten to, and so is a tag written inside
-            an html attribute, where the attribute's own quotes decide.
+            running the formatter, and a condition is covered too, so one
+            file does not spell the same string both ways. A string is
+            left alone when it holds the quote it would be rewritten to,
+            and so is a tag written inside an html attribute, where the
+            attribute's own quotes decide. A quote escaped inside the
+            string loses its backslash, the delimiter it hid from having
+            gone.
+
+            The contents of `{% verbatim %}` and `{% raw %}` are shown as
+            they are written, so a tag quoted inside one is text on the
+            page rather than a tag to normalize.
             """
-            if inside_ignored_block(config, html, match) or (
-                inside_html_attribute(html, match)
+            if (
+                inside_ignored_block(config, html, match)
+                or inside_ignored_linter_block(config, html, match)
+                or inside_html_attribute(html, match)
             ):
                 return match.group()
 
@@ -290,9 +303,11 @@ def indent_html(rawcode: str, config: Config) -> str:
 
             def requote(string: re.Match[str]) -> str:
                 text = string.group()
-                if text.startswith(wanted) or wanted in text[1:-1]:
+                quote, body = text[0], text[1:-1]
+                if quote == wanted or wanted in body:
                     return text
-                return f"{wanted}{text[1:-1]}{wanted}"
+                unescaped = body.replace(_ESCAPE + quote, quote)
+                return f"{wanted}{unescaped}{wanted}"
 
             return _TAG_STRING_PATTERN.sub(requote, match.group())
 

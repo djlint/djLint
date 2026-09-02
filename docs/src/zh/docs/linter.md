@@ -154,7 +154,7 @@ HTML 属性值内部的单引号（例如 `<span title="{% trans 'x' %}">`）不
 
 当 `{% block %}` 跨越多行或存在嵌套时，不带名称的 `{% endblock %}` 无法说明它闭合的是哪个块，编辑时很容易结束错误的块，子模板随之覆盖错误的内容。为 endblock 命名可以标明配对关系，让 djLint 和 Django（endblock 名称不匹配时会抛出 TemplateSyntaxError）都能发现闭合位置错误的块。配对错误（未闭合的块、孤立的 endblock 以及名称不匹配）属于正确性检查，由 T038 负责。
 
-默认禁用；使用 `--include=T003` 启用。
+默认禁用；使用 `--include=T003` 启用。`--name-endblocks` 会替你写入名称，因此报告从不需要手工修改。
 
 当块在同一行内开始并结束时不要求命名，例如 `{% block title %}``{% endblock %}`。
 

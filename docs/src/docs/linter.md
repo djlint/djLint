@@ -154,7 +154,7 @@ Do:
 
 When a `{% block %}` spans many lines or blocks are nested, a bare `{% endblock %}` gives no clue which block it closes, so it is easy to end the wrong one while editing; child templates then override the wrong content. Naming the endblock documents the pairing and lets both djLint and Django (which raises TemplateSyntaxError on a mismatched endblock name) catch a block closed in the wrong place. Pairing errors (unclosed blocks, orphan endblocks and mismatched names) are correctness checks handled by T038.
 
-Off by default; enable with `--include=T003`.
+Off by default; enable with `--include=T003`. `--name-endblocks` writes the name for you, so a finding is never hand work.
 
 A name is not required when the block opens and closes on the same line, e.g. `{% block title %}``{% endblock %}`.
 

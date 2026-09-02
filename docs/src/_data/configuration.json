@@ -80,10 +80,10 @@
   {
     "name": "quote_style",
     "description": {
-      "en": "Quotes to use for strings inside template tags, either `double` (the default) or `single`. `T002` requires the same quotes. HTML attribute quoting is left to `H008`.",
-      "ru": "Кавычки для строк внутри тегов шаблона: `double` (по умолчанию) или `single`. `T002` требует тех же кавычек. Кавычки HTML-атрибутов остаются за `H008`.",
-      "fr": "Guillemets à utiliser pour les chaînes dans les balises de modèle : `double` (par défaut) ou `single`. `T002` exige les mêmes. Les guillemets des attributs HTML restent du ressort de `H008`.",
-      "zh": "模板标签内字符串使用的引号，可选 `double`（默认）或 `single`。`T002` 要求同样的引号。HTML 属性的引号由 `H008` 管理。"
+      "en": "Quotes to use for strings inside template tags, either `double` (the default) or `single`. `T002` requires the same quotes. The formatter uses them in a condition too, such as `{% if x == \"a\" %}`, so one file does not spell the same string both ways. HTML attribute quoting is left to `H008`.",
+      "ru": "Кавычки для строк внутри тегов шаблона: `double` (по умолчанию) или `single`. `T002` требует тех же кавычек. Форматтер ставит их и в условии, например `{% if x == \"a\" %}`, чтобы один файл не писал одну и ту же строку двумя способами. Кавычки HTML-атрибутов остаются за `H008`.",
+      "fr": "Guillemets à utiliser pour les chaînes dans les balises de modèle : `double` (par défaut) ou `single`. `T002` exige les mêmes. Le formateur les emploie aussi dans une condition, comme `{% if x == \"a\" %}`, pour qu'un fichier n'écrive pas la même chaîne de deux façons. Les guillemets des attributs HTML restent du ressort de `H008`.",
+      "zh": "模板标签内字符串使用的引号，可选 `double`（默认）或 `single`。`T002` 要求同样的引号。格式化器在条件中也使用它们，例如 `{% if x == \"a\" %}`，使同一文件不会把同一字符串写成两种形式。HTML 属性的引号由 `H008` 管理。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "quote_style=\"single\"" },
@@ -743,5 +743,50 @@
       { "name": ".djlintrc", "value": "\"allow_empty_input\": true" },
       { "name": "cli", "value": "--allow-empty-input" }
     ]
+  },
+  {
+    "name": "no_indent_inner_html",
+    "description": {
+      "en": "Do not indent `<head>` and `<body>` below `<html>`, which is how the default VS Code html formatter lays a document out.",
+      "ru": "Не отступать `<head>` и `<body>` внутри `<html>` — так документ размечает стандартный форматтер html в VS Code.",
+      "fr": "Ne pas indenter `<head>` ni `<body>` sous `<html>`, comme le fait le formateur html par défaut de VS Code.",
+      "zh": "不缩进 `<html>` 下的 `<head>` 与 `<body>`，与 VS Code 默认 html 格式化器的排版一致。"
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "no_indent_inner_html=true" },
+      { "name": ".djlintrc", "value": "\"no_indent_inner_html\": true" },
+      { "name": "cli", "value": "--no-indent-inner-html" }
+    ],
+    "tags": ["formatter"]
+  },
+  {
+    "name": "sort_attributes",
+    "description": {
+      "en": "Sort attributes by name, with `id` first and `class` second. A tag whose attributes are guarded by a template tag keeps the order it was written in, since moving one out of its branch would change the page.",
+      "ru": "Сортировать атрибуты по имени, ставя `id` первым и `class` вторым. Тег, атрибуты которого стоят внутри тега шаблона, сохраняет исходный порядок: вынести атрибут из его ветки значило бы изменить страницу.",
+      "fr": "Trie les attributs par nom, `id` en premier et `class` en second. Une balise dont les attributs sont gardés par une balise de template conserve l'ordre écrit : sortir un attribut de sa branche changerait la page.",
+      "zh": "按名称排序属性，`id` 在前、`class` 次之。属性被模板标签包裹的标签保持原有顺序，因为把属性移出其分支会改变页面。"
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "sort_attributes=true" },
+      { "name": ".djlintrc", "value": "\"sort_attributes\": true" },
+      { "name": "cli", "value": "--sort-attributes" }
+    ],
+    "tags": ["formatter"]
+  },
+  {
+    "name": "name_endblocks",
+    "description": {
+      "en": "Write the block's name into the `{% endblock %}` that closes it, where the block is written across lines. This is what `T003` asks for.",
+      "ru": "Записывать имя блока в закрывающий его `{% endblock %}`, если блок занимает несколько строк. Этого и требует `T003`.",
+      "fr": "Écrit le nom du bloc dans le `{% endblock %}` qui le ferme, lorsque le bloc s'étend sur plusieurs lignes. C'est ce que demande `T003`.",
+      "zh": "当块跨越多行时，把块名写入关闭它的 `{% endblock %}`。这正是 `T003` 的要求。"
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "name_endblocks=true" },
+      { "name": ".djlintrc", "value": "\"name_endblocks\": true" },
+      { "name": "cli", "value": "--name-endblocks" }
+    ],
+    "tags": ["formatter"]
   }
 ]

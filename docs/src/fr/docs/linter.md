@@ -154,7 +154,7 @@ Avec `quote_style = "single"`, la règle s'inverse et réclame des guillemets si
 
 Lorsqu'un `{% block %}` s'étend sur de nombreuses lignes ou que des blocs sont imbriqués, un simple `{% endblock %}` ne donne aucun indice sur le bloc qu'il ferme : il est alors facile de fermer le mauvais bloc en éditant ; les modèles enfants remplacent alors le mauvais contenu. Nommer le endblock documente l'appariement et permet à djLint comme à Django (qui lève une TemplateSyntaxError en cas de nom de endblock non concordant) de détecter un bloc fermé au mauvais endroit. Les erreurs d'appariement (blocs non fermés, endblock orphelins et noms non concordants) sont des vérifications de justesse assurées par T038.
 
-Désactivée par défaut ; à activer avec `--include=T003`.
+Désactivée par défaut ; à activer avec `--include=T003`. `--name-endblocks` écrit le nom pour vous : un signalement ne demande jamais de travail manuel.
 
 Un nom n'est pas requis lorsque le bloc s'ouvre et se ferme sur la même ligne, par exemple `{% block title %}``{% endblock %}`.
 

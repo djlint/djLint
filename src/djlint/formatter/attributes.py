@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 import regex as re
@@ -17,6 +18,8 @@ from djlint.formatter.class_attributes import (
 from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IS, child_of_ignored_block
 
 if TYPE_CHECKING:
+    from typing import Final
+
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
@@ -115,6 +118,62 @@ def normalize_attributes(config: Config, attribute_group: str) -> str:
 
     output.append(attribute_group[previous_end:])
     return "".join(output)
+
+
+_ATTRIBUTE_SORT_PRIORITY: Final = MappingProxyType({"id": 0, "class": 1})
+_TEMPLATE_TAG_MARKERS: Final = ("{%", "{{", "{#")
+
+
+def _guards_its_neighbours(attribute_group: str) -> bool:
+    """Whether a template tag stands between the attributes themselves.
+
+    One inside a value, as in `href="{% url x %}"`, belongs to that
+    attribute and moves with it. One written beside them can decide
+    whether the attribute next to it is there at all, so the order has
+    to stand.
+    """
+    bare = _QUOTED_VALUE_PATTERN.sub("", attribute_group)
+    return any(marker in bare for marker in _TEMPLATE_TAG_MARKERS)
+
+
+def sort_attributes(config: Config, attribute_group: str) -> str:
+    """Order attributes by name, with `id` first and `class` second.
+
+    Only a group djLint can account for in full is reordered: anything
+    its pattern does not match could be part of a construct that gives
+    the order meaning. Sorting is stable, so a name written twice keeps
+    the occurrence a browser reads first.
+    """
+    if not config.sort_attributes:
+        return attribute_group
+
+    if _guards_its_neighbours(attribute_group):
+        return attribute_group
+
+    matches = [
+        match
+        for match in config.attribute_pattern.finditer(attribute_group)
+        if match.start() != match.end()
+    ]
+    if not matches or not _is_fully_matched(attribute_group, matches):
+        return attribute_group
+
+    named = [(match.group(1) or "").lower() for match in matches]
+    if not all(named):
+        return attribute_group
+
+    return " ".join(
+        match.group().strip()
+        for _, match in sorted(
+            zip(named, matches, strict=True),
+            key=lambda pair: (
+                _ATTRIBUTE_SORT_PRIORITY.get(
+                    pair[0], len(_ATTRIBUTE_SORT_PRIORITY)
+                ),
+                pair[0],
+            ),
+        )
+    )
 
 
 def has_unquoted_template_expression(attribute_group: str) -> bool:

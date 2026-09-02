@@ -45,7 +45,7 @@ test_data = [
     ),
     pytest.param(
         ("{% if x == \"a  b\"   and y == 'c\td' %}\n<p>x</p>\n{% endif %}\n"),
-        ("{% if x == \"a  b\" and y == 'c\td' %}\n    <p>x</p>\n{% endif %}\n"),
+        ('{% if x == "a  b" and y == "c\td" %}\n    <p>x</p>\n{% endif %}\n'),
         ({}),
         id="string_literals_keep_whitespace",
     ),

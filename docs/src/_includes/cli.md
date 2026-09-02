@@ -76,6 +76,11 @@ Options:
                                   becomes <img />
   --no-line-after-yaml            Do not add a blank line after yaml front
                                   matter.
+  --name-endblocks                Name the endblock of a block written across
+                                  lines.
+  --sort-attributes               Sort attributes by name, with id first and
+                                  class second.
+  --no-indent-inner-html          Do not indent <head> and <body> below <html>.
   --no-function-formatting        Do not attempt to format function contents.
   --no-set-formatting             Do not attempt to format set contents.
   --keep-br-inline                Keep <br> on the line of the text it breaks.

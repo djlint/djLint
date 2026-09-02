@@ -394,6 +394,21 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     help="Do not add a blank line after yaml front matter.",
 )
 @click.option(
+    "--name-endblocks",
+    is_flag=True,
+    help="Name the endblock of a block written across lines.",
+)
+@click.option(
+    "--sort-attributes",
+    is_flag=True,
+    help="Sort attributes by name, with id first and class second.",
+)
+@click.option(
+    "--no-indent-inner-html",
+    is_flag=True,
+    help="Do not indent <head> and <body> below <html>.",
+)
+@click.option(
     "--no-function-formatting",
     is_flag=True,
     help="Do not attempt to format function contents.",
@@ -480,6 +495,9 @@ def main(
     indent_js: int | None,
     close_void_tags: bool,
     no_line_after_yaml: bool,
+    no_indent_inner_html: bool,
+    sort_attributes: bool,
+    name_endblocks: bool,
     no_function_formatting: bool,
     no_set_formatting: bool,
     no_entity_formatting: bool,
@@ -551,6 +569,9 @@ def main(
         indent_js=indent_js,
         close_void_tags=close_void_tags,
         no_line_after_yaml=no_line_after_yaml,
+        no_indent_inner_html=no_indent_inner_html,
+        sort_attributes=sort_attributes,
+        name_endblocks=name_endblocks,
         no_function_formatting=no_function_formatting,
         no_set_formatting=no_set_formatting,
         no_entity_formatting=no_entity_formatting,
