@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- `H037` no longer reads a quoted string inside a `{{ }}`, `{% %}`, `{# #}`, handlebars `{{{ }}}` or `{{! }}`, or mako `${ }` tag in an attribute value as an attribute, so `href="{{ url "/a/b" "/a/c" }}"` is not reported as a duplicate `a`.
+
 ## [1.45.0] - 2026-09-03
 
 ### Feature

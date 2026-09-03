@@ -29,9 +29,11 @@ if TYPE_CHECKING:
 
 
 _NAME_CHAR = r"[-.:\w]"
+_TEMPLATE_TAG = r"{{.*?}}|{%.*?%}|{#.*?#}|\${[^{}]*}"
 _EVENT_PATTERN = re.compile(
-    r""""[^"]*"|'[^']*'|"""
-    r"(?P<template>{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|{\#(?:(?!\#}).)*\#})|"
+    rf""""(?:[^"{{$]++|{_TEMPLATE_TAG}|[^"])*+"|"""
+    rf"""'(?:[^'{{$]++|{_TEMPLATE_TAG}|[^'])*+'|"""
+    rf"(?P<template>{_TEMPLATE_TAG})|"
     rf"(?P<attribute>(?<!{_NAME_CHAR}){_NAME_CHAR}+)"
     r"(?=\s*=(?:\s*)(?:\"|'|{{|{%|{\#|[\w-])|[\s/>]|$)",
     re.I | re.S,
