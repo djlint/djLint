@@ -37,7 +37,7 @@
     "bulma": "1.0.4",
     "cssnano": "9.0.1",
     "eleventy-plugin-edit-on-github": "1.1.0",
-    "eleventy-plugin-metagen": "1.8.4",
+    "eleventy-plugin-metagen": "1.8.5",
     "esbuild": "0.28.2",
     "fontawesome-subset": "4.6.0",
     "html-minifier": "4.0.0",
