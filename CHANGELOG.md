@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.45.0] - 2026-09-03
+
 ### Feature
 
 - New rule `H043` reports a `<button>` written without a `type`. A type written inside a template block, as in `<button {% if a %}type="button"{% endif %}>`, counts.
