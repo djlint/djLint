@@ -342,6 +342,32 @@ def _is_fully_matched(
     return not attribute_group[covered:].strip()
 
 
+def _spreading_would_shorten_the_line(
+    config: Config, html: str, token: TagToken, attribute_group: str
+) -> bool:
+    """Whether the tag's line is too long and its attributes could fix it.
+
+    Content is left where it is, since breaking it would change what
+    renders, so a line only long because of its text stays long. Two or
+    more attributes can each take a line without changing the page, so
+    where they are what overruns the limit they are spread.
+    """
+    start = html.rfind("\n", 0, token.start) + 1
+    end = html.find("\n", token.end)
+    if end == -1:
+        end = len(html)
+    line = len(html[start:end].rstrip())
+    if line <= config.max_line_length:
+        return False
+
+    # Taking the attributes off the line is all spreading can win back, so
+    # a line still too long without them is too long because of its text.
+    if line - len(attribute_group) > config.max_line_length:
+        return False
+
+    return len(config.attribute_pattern.findall(attribute_group)) > 1
+
+
 def format_attributes(config: Config, html: str, token: TagToken) -> str:
     """Spread long attributes over multiple lines."""
     attribute_group = html[token.name_end : token.attributes_end].strip()
@@ -350,6 +376,9 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
         or (
             _rendered_length(config, attribute_group)
             < config.max_attribute_length
+            and not _spreading_would_shorten_the_line(
+                config, html, token, attribute_group
+            )
             and CLASS_ATTRIBUTE_NEWLINE not in attribute_group
             and VERBATIM_ATTRIBUTE_NEWLINE not in attribute_group
         )
