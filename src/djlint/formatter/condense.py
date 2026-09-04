@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from enum import Enum, auto
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -44,9 +45,27 @@ _COLLAPSIBLE_WHITESPACE_CHARS: Final = frozenset(COLLAPSIBLE_WHITESPACE)
 # "+" marker asks for it to be kept, so only "-" counts here.
 _STRIPS_WHITESPACE_BEFORE: Final = re.compile(r"\{[{%#]-", cache_pattern=False)
 _STRIPS_WHITESPACE_AFTER: Final = ("-%}", "-}}", "-#}")
-# Stands in for a neighbour that renders nothing collapsible, so the space
-# beside it is the only one there and is kept.
-_KEPT_BY_THE_TEMPLATE: Final = "\x00"
+
+
+class _Neighbour(Enum):
+    """Whether what stands beside a block renders the space beside it.
+
+    Css collapses a run of whitespace to one space, so a whitespace
+    neighbour, or the edge of the page, already renders that space and the
+    block need not carry one of its own. Anything else does not, and a
+    neighbour djLint cannot see is counted as anything else.
+    """
+
+    COLLAPSES = auto()
+    RENDERS = auto()
+
+
+def _neighbour(character: str) -> _Neighbour:
+    if not character or character in _COLLAPSIBLE_WHITESPACE_CHARS:
+        return _Neighbour.COLLAPSES
+    return _Neighbour.RENDERS
+
+
 _COLLAPSIBLE_WHITESPACE_PATTERN: Final = re.compile(
     f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+", cache_pattern=False
 )
@@ -292,8 +311,8 @@ def _multiline_template_blocks(
     )
 
 
-def _neighbour_after(text: str, position: int) -> str:
-    """The character standing beside the block, once the template has run.
+def _neighbour_after(text: str, position: int) -> _Neighbour:
+    """What stands beside the block once the template has run.
 
     A run of whitespace is normally what renders the space beside it, but
     a tag written with jinja's "-" marker strips the run before it, so the
@@ -304,21 +323,21 @@ def _neighbour_after(text: str, position: int) -> str:
     while end < len(text) and text[end] in _COLLAPSIBLE_WHITESPACE_CHARS:
         end += 1
     if end > position and _STRIPS_WHITESPACE_BEFORE.match(text, end):
-        return _KEPT_BY_THE_TEMPLATE
-    return text[position : position + 1]
+        return _Neighbour.RENDERS
+    return _neighbour(text[position : position + 1])
 
 
-def _neighbour_before(text: str, position: int) -> str:
-    """The character standing before the block, once the template has run."""
+def _neighbour_before(text: str, position: int) -> _Neighbour:
+    """What stands before the block once the template has run."""
     start = position
     while start > 0 and text[start - 1] in _COLLAPSIBLE_WHITESPACE_CHARS:
         start -= 1
     if start < position and text[:start].endswith(_STRIPS_WHITESPACE_AFTER):
-        return _KEPT_BY_THE_TEMPLATE
-    return text[position - 1 : position]
+        return _Neighbour.RENDERS
+    return _neighbour(text[position - 1 : position])
 
 
-def _rendered_whitespace(text: str, left: str, right: str) -> str:
+def _rendered_whitespace(text: str, left: _Neighbour, right: _Neighbour) -> str:
     """Whitespace at the edge of an element's content, as it renders.
 
     Css collapses each run of space, tab and line break to one space, then
@@ -327,17 +346,13 @@ def _rendered_whitespace(text: str, left: str, right: str) -> str:
     is left over is layout this formatter owns rather than content, so it
     goes. Other whitespace (e.g. u+2005) is never collapsed or dropped.
 
-    `left` and `right` are the single characters the whitespace sits
-    between, each empty at the edge of the document.
+    `left` and `right` say whether the neighbour on each side renders
+    that space itself.
     """
     text = _COLLAPSIBLE_WHITESPACE_PATTERN.sub(" ", text)
-    if text.startswith(" ") and (
-        not left or left in _COLLAPSIBLE_WHITESPACE_CHARS
-    ):
+    if text.startswith(" ") and left is _Neighbour.COLLAPSES:
         text = text[1:]
-    if text.endswith(" ") and (
-        not right or right in _COLLAPSIBLE_WHITESPACE_CHARS
-    ):
+    if text.endswith(" ") and right is _Neighbour.COLLAPSES:
         text = text[:-1]
     return text
 
@@ -379,19 +394,23 @@ def condense_html(
             before = (
                 _neighbour_before(match.string, opening_tag_start)
                 if inline and opening_tag_start
-                else ""
+                else _Neighbour.COLLAPSES
             )
-            after = _neighbour_after(match.string, end) if inline else ""
+            after = (
+                _neighbour_after(match.string, end)
+                if inline
+                else _Neighbour.COLLAPSES
+            )
             content = match.group(3)
             if content:
                 leading = _rendered_whitespace(
                     match.string[match.end(1) : match.start(3)],
                     before,
-                    content[0],
+                    _neighbour(content[0]),
                 )
                 trailing = _rendered_whitespace(
                     match.string[match.end(3) : match.start(4)],
-                    content[-1],
+                    _neighbour(content[-1]),
                     after,
                 )
             else:
