@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.45.2] - 2026-09-04
+
 ### Fix
 
 - A space beside a template block is kept where the line break next to it is one a `{%-` or `-%}` marker strips. The break normally renders the space itself, so djLint drops the space as redundant, but a stripped break renders nothing: `{%- if args -%}, {% endif %}` followed by `{%- for %}` lost the space between a macro's arguments.
