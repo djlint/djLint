@@ -21,6 +21,7 @@ from djlint.const import (
     TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS,
 )
 from djlint.formatter.attributes import format_attributes
+from djlint.formatter.class_attributes import VERBATIM_ATTRIBUTE_NEWLINE
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IMSX,
@@ -67,8 +68,12 @@ _TAG_SPACING_PATTERN: Final = re.compile(
 _INTERPOLATION_SPACING_PATTERN: Final = re.compile(
     r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", cache_pattern=False
 )
+# Indentation after a preserved attribute line break is the author's layout,
+# not padding inside the tag, so it is held whole rather than collapsed.
 _EXTRA_TAG_WHITESPACE_PATTERN: Final = re.compile(
-    r"(\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*')|[ \t]{2,}", cache_pattern=False
+    r"(\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'"
+    rf"|{re.escape(VERBATIM_ATTRIBUTE_NEWLINE)}[ \t]*)|[ \t]{{2,}}",
+    cache_pattern=False,
 )
 _HANDLEBARS_BLOCK_END_PATTERN: Final = re.compile(
     r"({{#(?:each|if)(?:(?!}}).)+?[^ ])(}})", cache_pattern=False
