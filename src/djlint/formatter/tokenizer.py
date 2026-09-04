@@ -217,17 +217,31 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
         declaration = source[name_start : name_start + 1] == "!"
         if closing or declaration:
             name_start += 1
-        if name_start >= length or not source[name_start].isalpha():
+        if name_start >= length:
             search_from = start + 1
             continue
 
-        name_end = name_start
-        while (
-            name_end < length
-            and not source[name_end].isspace()
-            and source[name_end] not in "/>{"
-        ):
-            name_end += 1
+        if source[name_start].isalpha():
+            name_end = name_start
+            while (
+                name_end < length
+                and not source[name_end].isspace()
+                and source[name_end] not in "/>{"
+            ):
+                name_end += 1
+        else:
+            # A tag whose name a template writes, as in "<{{ tag }}". The
+            # name is not markup, but what follows it up to the ">" is the
+            # tag's attribute area like any other.
+            named_by_template = (
+                _after_template(source, name_start)
+                if has_templates and source[name_start] in {"{", "$"}
+                else None
+            )
+            if named_by_template is None:
+                search_from = start + 1
+                continue
+            name_end = named_by_template
 
         quote: str | None = None
         cursor = name_end

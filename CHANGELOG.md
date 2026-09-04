@@ -13,6 +13,7 @@
 - A template tag written over several lines inside an attribute keeps the indentation the author gave it, so the body of `data-x='{{ f({ ... }) }}'` no longer loses a space from every line.
 - `--single-attribute-per-line` reaches attributes guarded by a template tag, so `{% if x %} a="1" b="2" {% endif %}` inside a tag no longer keeps them on one line past `--max-line-length`.
 - A tag whose attributes push its line past `--max-line-length` is spread over several lines, where before only `--max-attribute-length` decided. A line long because of its text is left alone, since breaking text would change what renders.
+- A tag whose name a template writes, as in `<{{ tag }}>`, is read as a tag. It was not recognised at all, so a template block among its attributes was pulled out of the tag and re-indented to the start of the line, and its attributes went unformatted and unchecked.
 
 ## [1.45.0] - 2026-09-03
 
