@@ -283,7 +283,22 @@ def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
         return f"\n{match.group()}"
 
     def add_break_after(match: re.Match[str]) -> str:
-        return f"{match.group(1)}\n{match.group(2).strip()}"
+        """Break after a template tag, and split what it guards.
+
+        Attributes a template tag guards are still attributes, so one per
+        line means one per line inside the block too. The run is only
+        split where the attribute pattern accounts for all of it, since
+        anything it missed would be dropped.
+        """
+        body = match.group(2).strip()
+
+        if config.single_attribute_per_line:
+            found = list(config.attribute_pattern.finditer(body))
+            parts = [x.group().strip() for x in found if x.group().strip()]
+            if len(parts) > 1 and _is_fully_matched(body, found):
+                body = "\n".join(parts)
+
+        return f"{match.group(1)}\n{body}"
 
     attributes = re.sub(
         config.break_before

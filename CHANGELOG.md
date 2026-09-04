@@ -11,6 +11,7 @@
 - Arguments nested inside a jinja call written over several lines keep their depth, so the inner argument of `{{ function([nested(...)]) }}` is no longer dedented by one level.
 - An element after a line that closes both a template block and an html tag, as in `{%- endif %}:</b>`, keeps its own level instead of being indented one further.
 - A template tag written over several lines inside an attribute keeps the indentation the author gave it, so the body of `data-x='{{ f({ ... }) }}'` no longer loses a space from every line.
+- `--single-attribute-per-line` reaches attributes guarded by a template tag, so `{% if x %} a="1" b="2" {% endif %}` inside a tag no longer keeps them on one line past `--max-line-length`.
 
 ## [1.45.0] - 2026-09-03
 
