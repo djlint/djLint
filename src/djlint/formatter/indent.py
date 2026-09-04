@@ -590,6 +590,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         html_dedent = 0
         indented_closes = 0
         closes_nothing_indented = False
+        closed_a_template_block = False
 
         if not is_block_raw and is_ignored_block_opening_:
             is_raw_first_line = True
@@ -742,6 +743,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 saved_level, branch_delta, consistent = (
                     template_block_stack.pop()
                 )
+                closed_a_template_block = True
                 delta = indent_level - saved_level - 1
                 target = (
                     saved_level + delta
@@ -880,7 +882,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                     and not stripped_item.startswith("</")
                 )
             )
-            if already_given_back:
+            if already_given_back and not closed_a_template_block:
                 html_dedent = 0
             elif took_no_level_of_its_own:
                 html_dedent = min(html_dedent, indented_closes)
