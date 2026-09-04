@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.45.1] - 2026-09-04
+
 ### Fix
 
 - `H037` no longer reads a quoted string inside a template tag as an attribute name, so `href="{{ url "/a/b" "/a/c" }}"` is not reported as a duplicate `a`. This started in 1.45.0.
