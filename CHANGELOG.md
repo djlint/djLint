@@ -6,7 +6,9 @@
 
 ### Fix
 
-- `H037` no longer reads a quoted string inside a `{{ }}`, `{% %}`, `{# #}`, handlebars `{{{ }}}` or `{{! }}`, or mako `${ }` tag in an attribute value as an attribute, so `href="{{ url "/a/b" "/a/c" }}"` is not reported as a duplicate `a`.
+- `H037` no longer reads a quoted string inside a template tag as an attribute name, so `href="{{ url "/a/b" "/a/c" }}"` is not reported as a duplicate `a`. This started in 1.45.0.
+- A jinja call written over several lines keeps its closing bracket at the indent of the tag holding it, rather than pulling `) }}` to the start of the line.
+- Arguments nested inside a jinja call written over several lines keep their depth, so the inner argument of `{{ function([nested(...)]) }}` is no longer dedented by one level.
 
 ## [1.45.0] - 2026-09-03
 

@@ -102,6 +102,12 @@ _MULTILINE_TAG_CLOSE_PATTERN: Final = re.compile(
 _LEADING_CLOSE_BRACKET_PATTERN: Final = re.compile(
     r"[ ]*[)\]}]", cache_pattern=False
 )
+_MULTILINE_TAG_OPEN_PAREN_PATTERN: Final = re.compile(
+    r"\((?=[^()]*$)", cache_pattern=False
+)
+_MULTILINE_TAG_CLOSE_PAREN_PATTERN: Final = re.compile(
+    r"^[ ]*\)", cache_pattern=False
+)
 _TEXTAREA_CLOSE_PATTERN: Final = re.compile(
     r"^\s*</textarea\b", RE_FLAGS_IX, cache_pattern=False
 )
@@ -695,7 +701,10 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif (
             not is_block_raw
             and in_multiline_tag
-            and _SET_CLOSING_BRACE_PATTERN.search(item)
+            and (
+                _SET_CLOSING_BRACE_PATTERN.search(item)
+                or _MULTILINE_TAG_CLOSE_PAREN_PATTERN.search(item)
+            )
         ):
             indent_level = max(indent_level - 1, 0)
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
@@ -703,7 +712,10 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif (
             not is_block_raw
             and in_multiline_tag
-            and _SET_OPENING_BRACE_PATTERN.search(item)
+            and (
+                _SET_OPENING_BRACE_PATTERN.search(item)
+                or _MULTILINE_TAG_OPEN_PAREN_PATTERN.search(item)
+            )
         ):
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
             indent_level += 1
@@ -1043,7 +1055,11 @@ def indent_html(rawcode: str, config: Config) -> str:
         separator = (
             " " if close_bracket.lstrip("-+").startswith("}}") else match["gap"]
         )
-        return f"{leading_space}{open_bracket} {tag}({contents}){index}{separator}{close_bracket}"
+        closing_space = leading_space if contents.endswith("\n") else ""
+        return (
+            f"{leading_space}{open_bracket} {tag}({contents}{closing_space})"
+            f"{index}{separator}{close_bracket}"
+        )
 
     if not config.no_set_formatting:
         beautified_code = _SET_CONTENT_PATTERN.sub(
