@@ -257,6 +257,41 @@ test_data = [
         ]),
         id="apline tags match",
     ),
+    pytest.param(
+        ('<a x="{% trans "a a b" %}"/>'),
+        ([]),
+        id="quoted_string_inside_block_tag_in_value",
+    ),
+    pytest.param(
+        (
+            '<a a="{{ "x x y" }}" b="{{{ "p p q" }}}" '
+            'c="{{! "m m n" }}" d="{{!-- "v v w" --}}"/>'
+        ),
+        ([]),
+        id="quoted_string_inside_expression_in_value",
+    ),
+    pytest.param(
+        ('<a x="{# "a a b" #}"/>'),
+        ([]),
+        id="quoted_string_inside_comment_in_value",
+    ),
+    pytest.param(
+        ('<a x="${"a a b"}"/>'),
+        ([]),
+        id="quoted_string_inside_mako_expression_in_value",
+    ),
+    pytest.param(
+        ('<a title="{% trans "a b" %}" title/>'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:3",
+                "match": "title",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="duplicate_after_quoted_string_inside_block_tag_in_value",
+    ),
 ]
 
 
@@ -282,6 +317,11 @@ golang_test_data = [
             }
         ]),
         id="comment_does_not_hide_duplicate",
+    ),
+    pytest.param(
+        ('<a x="{{Iif .X "/a/b" "/a/c"}}"/>'),
+        ([]),
+        id="quoted_paths_inside_expression_in_value",
     ),
 ]
 
