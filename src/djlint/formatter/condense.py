@@ -40,6 +40,13 @@ _YAML_FRONT_MATTER_PATTERN: Final = re.compile(
 )
 
 _COLLAPSIBLE_WHITESPACE_CHARS: Final = frozenset(COLLAPSIBLE_WHITESPACE)
+# Jinja and nunjucks strip the whitespace on the marked side of a tag. The
+# "+" marker asks for it to be kept, so only "-" counts here.
+_STRIPS_WHITESPACE_BEFORE: Final = re.compile(r"\{[{%#]-", cache_pattern=False)
+_STRIPS_WHITESPACE_AFTER: Final = ("-%}", "-}}", "-#}")
+# Stands in for a neighbour that renders nothing collapsible, so the space
+# beside it is the only one there and is kept.
+_KEPT_BY_THE_TEMPLATE: Final = "\x00"
 _COLLAPSIBLE_WHITESPACE_PATTERN: Final = re.compile(
     f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+", cache_pattern=False
 )
@@ -285,6 +292,32 @@ def _multiline_template_blocks(
     )
 
 
+def _neighbour_after(text: str, position: int) -> str:
+    """The character standing beside the block, once the template has run.
+
+    A run of whitespace is normally what renders the space beside it, but
+    a tag written with jinja's "-" marker strips the run before it, so the
+    run is not there at render time and cannot stand in for anything. The
+    "+" marker asks for the opposite and is left alone.
+    """
+    end = position
+    while end < len(text) and text[end] in _COLLAPSIBLE_WHITESPACE_CHARS:
+        end += 1
+    if end > position and _STRIPS_WHITESPACE_BEFORE.match(text, end):
+        return _KEPT_BY_THE_TEMPLATE
+    return text[position : position + 1]
+
+
+def _neighbour_before(text: str, position: int) -> str:
+    """The character standing before the block, once the template has run."""
+    start = position
+    while start > 0 and text[start - 1] in _COLLAPSIBLE_WHITESPACE_CHARS:
+        start -= 1
+    if start < position and text[:start].endswith(_STRIPS_WHITESPACE_AFTER):
+        return _KEPT_BY_THE_TEMPLATE
+    return text[position - 1 : position]
+
+
 def _rendered_whitespace(text: str, left: str, right: str) -> str:
     """Whitespace at the edge of an element's content, as it renders.
 
@@ -344,11 +377,11 @@ def condense_html(
             opening_tag_start = match.end(1) - len(match.group(1).lstrip())
             end = match.end()
             before = (
-                match.string[opening_tag_start - 1 : opening_tag_start]
+                _neighbour_before(match.string, opening_tag_start)
                 if inline and opening_tag_start
                 else ""
             )
-            after = match.string[end : end + 1] if inline else ""
+            after = _neighbour_after(match.string, end) if inline else ""
             content = match.group(3)
             if content:
                 leading = _rendered_whitespace(
