@@ -33,6 +33,7 @@ _TEMPLATE_TAG = r"{{.*?}}|{%.*?%}|{#.*?#}|\${[^{}]*}"
 _EVENT_PATTERN = re.compile(
     rf""""(?:[^"{{$]++|{_TEMPLATE_TAG}|[^"])*+"|"""
     rf"""'(?:[^'{{$]++|{_TEMPLATE_TAG}|[^'])*+'|"""
+    r"""=\s*[\w-][^\s"'=<>`{$]*+|"""
     rf"(?P<template>{_TEMPLATE_TAG})|"
     rf"(?P<attribute>(?<!{_NAME_CHAR}){_NAME_CHAR}+)"
     r"(?=\s*=(?:\s*)(?:\"|'|{{|{%|{\#|[\w-])|[\s/>]|$)",
