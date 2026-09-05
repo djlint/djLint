@@ -38,8 +38,11 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 | 编码 | 含义                                                                               | 默认行为 |
 | ---- | ---------------------------------------------------------------------------------- | -------- |
+| T001 | 变量外包含空格。示例：{% raw %}`{{ this }}`{% endraw %}                            | ✔️       |
+| T002 | 标签中应使用双引号。示例：{% raw %}`{% extends "this.html" %}`{% endraw %}         | ✔️       |
+| T003 | `Endblock` 应包含名称。示例：{% raw %}`{% endblock body %}`{% endraw %}.           | -        |
 | D004 | （Django） 静态 URL 应遵循 {% raw %}`{% static path/to/file %}`{% endraw %} 形式。 | ✔️       |
-| D018 | （Django） 内部链接应使用 {% raw %}`{% url ... %}`{% endraw %} 形式。              | ✔️       |
+| J004 | (Jinja) 静态 URL 应遵循 {% raw %}`{{ url_for('static'..) }}`{% endraw %} 形式。    | ✔️       |
 | H005 | HTML 标签应包含非空的 `lang` 属性。                                                | ✔️       |
 | H006 | `img` 标签应包含 `height` 和 `width` 属性。                                        | -        |
 | H007 | `<!DOCTYPE ... >` 应在 HTML 标签之前。                                             | ✔️       |
@@ -53,7 +56,9 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H015 | `h` 标签后换行。                                                                   | ✔️       |
 | H016 | HTML 中可缺少 `title` 标签。                                                       | ✔️       |
 | H017 | 空标签应为自闭合标签（与 H018 冲突）。                                             | -        |
+| D018 | （Django） 内部链接应使用 {% raw %}`{% url ... %}`{% endraw %} 形式。              | ✔️       |
 | H018 | 空标签本质上是自闭合的，必须以“>”结尾，而非“/>”（与 H017 冲突）。                  | -        |
+| J018 | (Jinja) 内部链接应使用 {% raw %}`{% url ... %}`{% endraw %} 形式。                 | ✔️       |
 | H019 | 将 `javascript:abc()` 替换为 `on_` 事件和实际 URL。                                | ✔️       |
 | H020 | 发现空标签对时考虑移除。                                                           | ✔️       |
 | H021 | 应避免使用内联样式。                                                               | ✔️       |
@@ -62,17 +67,12 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H024 | 脚本和样式标签中可省略 `type` 属性。                                               | ✔️       |
 | H025 | 标签可孤立存在。                                                                   | ✔️       |
 | H026 | 空的 id 和 class 标签应被移除。                                                    | ✔️       |
-| H029 | 建议使用小写表单方法值。                                                           | ✔️       |
-| H030 | 建议添加 meta 描述。                                                               | ✔️       |
-| H033 | 表单 action 发现多余空格。                                                         | ✔️       |
-| J004 | (Jinja) 静态 URL 应遵循 {% raw %}`{{ url_for('static'..) }}`{% endraw %} 形式。    | ✔️       |
-| J018 | (Jinja) 内部链接应使用 {% raw %}`{% url ... %}`{% endraw %} 形式。                 | ✔️       |
-| T001 | 变量外包含空格。示例：{% raw %}`{{ this }}`{% endraw %}                            | ✔️       |
-| T002 | 标签中应使用双引号。示例：{% raw %}`{% extends "this.html" %}`{% endraw %}         | ✔️       |
-| T003 | `Endblock` 应包含名称。示例：{% raw %}`{% endblock body %}`{% endraw %}.           | -        |
 | T027 | 模板语法中发现未闭合的字符串。.                                                    | ✔️       |
 | T028 | 建议在属性值中使用无空格标签，例如：{% raw %}`{%- if/for -%}`{% endraw %}          | -        |
+| H029 | 建议使用小写表单方法值。                                                           | ✔️       |
+| H030 | 建议添加 meta 描述。                                                               | ✔️       |
 | T032 | 模板标签中发现多余空格。                                                           | ✔️       |
+| H033 | 表单 action 发现多余空格。                                                         | ✔️       |
 | T034 | 使用 {% raw %}{% ... %} 代替 {% ... }%? {% endraw %}。                             | ✔️       |
 | H036 | 避免使用 `<br>` 标签。                                                             | ✔️       |
 | H037 | 发现重复属性。                                                                     | ✔️       |
@@ -80,10 +80,15 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | T039 | 发现未闭合的模板标签。                                                             | ✔️       |
 | T040 | extends 或 include 标签中缺少模板名或模板名为空。                                  | ✔️       |
 | H041 | 标签在与打开它不同的模板块中关闭。                                                 | ✔️       |
+| T041 | extends 标签应是模板中的第一个标签。                                               | ✔️       |
 | H042 | label 的 for 属性在此文件中没有匹配的元素 id。                                     | ✔️       |
+| T042 | 继承其他模板的模板中，块外的内容不会被渲染。                                       | ✔️       |
 | H043 | button 标签应有 `type` 属性。                                                      | ✔️       |
+| T043 | 块名在模板中被使用了不止一次。                                                     | ✔️       |
 | H044 | thead 中不应混用 `th` 和 `td` 单元格。                                             | ✔️       |
+| T044 | 输出标签中含有语句关键字；应改用块标签。                                           | ✔️       |
 | H045 | iframe 标签应有 `title` 属性。                                                     | ✔️       |
+| T045 | html 注释中的模板标签仍会执行；应使用模板注释来禁用它。                            | ✔️       |
 | H046 | tabindex 不应为正数。                                                              | ✔️       |
 | H047 | 不应在可获得焦点的元素上设置 aria-hidden。                                         | ✔️       |
 | H048 | 该 aria 属性不是规范定义的属性。                                                   | ✔️       |
@@ -91,6 +96,11 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H050 | 元素已废弃，应予替换。                                                             | ✔️       |
 | H051 | 该 role 不在 ARIA 为标记定义的角色之列。                                           | ✔️       |
 | H052 | meta refresh 不应按计时重新加载或跳转页面。                                        | ✔️       |
+| H053 | id 在文件中被使用了不止一次。                                                      | ✔️       |
+| H054 | 交互元素不应嵌套在另一个交互元素之内。                                             | ✔️       |
+| H055 | lang 属性应是语言标签，例如 en 或 pt-BR。                                          | ✔️       |
+| H056 | src 不应为空。                                                                     | ✔️       |
+| H057 | video 应有字幕轨道。                                                               | ✔️       |
 
 ### 编码规则
 
@@ -963,6 +973,30 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
 {% endblock footer %}
 ```
 
+#### T041
+
+`extends 标签应是模板中的第一个标签。`
+
+Django 拒绝编译 `{% extends %}` 之前还有其他标签的模板，而写在它之前的文本会被渲染，于是这些文本会先于父模板产出的一切泄漏到页面中。Jinja 同样会渲染这段文本，nunjucks 则会将其丢弃，因此无论在哪种引擎中，模板的行为都与它看上去的不一样。
+
+`{# #}` 注释不渲染任何内容，不算在内；djLint 不检查的块内的任何内容同样不算，例如 `{% comment %}`、`{% raw %}` 或 `{% verbatim %}` 块，或 `{# djlint:off #}` 区域。只检查第一个 `{% extends %}`；第二个则是另一个独立的错误。 它之前的分支标签同样不算在内，因为 jinja 将 `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` 记载为选择父模板的方式。
+
+不适用于 handlebars、golang、liquid 和 angular 配置文件。
+
+错误示例：
+
+```html
+{% load static %}
+{% extends "base.html" %}
+```
+
+正确示例：
+
+```html
+{% extends "base.html" %}
+{% load static %}
+```
+
 #### H042
 
 `label 的 for 属性在此文件中没有匹配的元素 id。`
@@ -981,6 +1015,36 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
 ```html
 <label for="email">Email</label>
 <input id="email">
+```
+
+#### T042
+
+`继承其他模板的模板中，块外的内容不会被渲染。`
+
+模板一旦继承了另一个模板，输出什么就由父模板决定，子模板只负责填充父模板的块。写在 `{% extends %}` 之后、又不在任何 `{% block %}` 之内的文本或 html 会在渲染时被悄悄丢弃，因此源码中看起来没问题的一个段落永远不会出现在页面上。
+
+放在那里的模板标签仍会执行，因此 `{% load %}`、`{% set %}` 以及包在块外面的 `{% if %}` 会被跳过；`{# #}` 和 `{% comment %}` 注释、`{% raw %}` 和 `{% verbatim %}` 块，以及 `{% macro %}` 或块形式 `{% set %}` 的主体也一样，后者的内容是被捕获而非输出的。html 注释会像其他文本一样被输出，因此块外的 html 注释会被报告；`{% blocktrans %}` 中的文本也会，因为它并不是 `{% block %}`。只考虑 extends 标签之后的内容，每一段连续的这类内容只在其起始处报告一次。
+
+不适用于 handlebars、golang、liquid 和 angular 配置文件。
+
+错误示例：
+
+```html
+{% extends "base.html" %}
+<p>This paragraph is never shown.</p>
+{% block content %}
+<h1>Welcome</h1>
+{% endblock %}
+```
+
+正确示例：
+
+```html
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome</h1>
+<p>This paragraph is shown.</p>
+{% endblock %}
 ```
 
 #### H043
@@ -1003,6 +1067,30 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
 <form>
   <button type="button" onclick="preview()">预览</button>
 </form>
+```
+
+#### T043
+
+`块名在模板中被使用了不止一次。`
+
+Django、Jinja 和 Nunjucks 都拒绝解析两个块同名的模板，因此页面根本无法加载。这些引擎并不在乎两个块是否位于 `{% if %}` 的不同分支中，因此每个块名在整个文件中都必须唯一，无论这些块是并列的还是一个嵌套在另一个之中。
+
+只有 `{% block %}` 算数：`{% blocktrans %}` 不是块，`{% endblock name %}` 只是指明它所关闭的块，而写在注释中的块永远到不了解析器。名称按原样比较，因为这些引擎把 `Content` 和 `content` 视为两个块。
+
+不适用于 handlebars、golang、liquid 和 angular 配置文件。
+
+错误示例：
+
+```html
+{% block content %}{% endblock %}
+{% block content %}{% endblock %}
+```
+
+正确示例：
+
+```html
+{% block content %}{% endblock %}
+{% block sidebar %}{% endblock %}
 ```
 
 #### H044
@@ -1035,6 +1123,28 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
 </thead>
 ```
 
+#### T044
+
+`输出标签中含有语句关键字；应改用块标签。`
+
+不适用于 golang、handlebars 和 angular 配置文件。
+
+输出标签用于打印一个值，而 `if`、`for`、`url`、`include` 等都是语句，属于块标签。Django、Jinja 和 Nunjucks 都会以语法错误拒绝 `{{ if x }}`；单独出现的结束关键字，例如 `{{ endif }}`，会被读作一个什么都不渲染的变量，而它本应关闭的块仍然开着，于是页面要么无法加载，要么显示出条件本应隐藏的内容。
+
+单独的关键字是普通的变量名，因此 `{{ url }}`、`{{ url|default:"/" }}` 和 `{{ set.name }}` 不会被报告。只有后面跟着参数的关键字才会，以及单独出现的结束或分支关键字，例如 `{{ endif }}` 或 `{{ else }}`。碰巧以这些名称开头的 jinja 表达式，例如 `{{ url ~ "/x" }}` 或 `{{ url if url else "#" }}`，会被跳过。
+
+错误示例：
+
+```html
+{{ if user.is_active }}
+```
+
+正确示例：
+
+```html
+{% if user.is_active %}
+```
+
 #### H045
 
 `iframe 标签应有 title 属性。`
@@ -1053,6 +1163,26 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
 
 ```html
 <iframe src="/report/" title="季度报告"></iframe>
+```
+
+#### T045
+
+`html 注释中的模板标签仍会执行；应使用模板注释来禁用它。`
+
+html 注释只对浏览器隐藏标记，对模板引擎则不然。在 Django、Jinja、Nunjucks、Handlebars 和 Go 中都一样，`<!-- {% include "debug.html" %} -->` 仍会渲染该文件，`<!-- {% if debug %}...{% endif %} -->` 仍会求值，因此以这种方式注释掉的标签会继续执行，它写出的任何内容都会落在注释之内，或者，如果其中含有 `-->`，就会冲出注释。只有模板注释，即 Django 和 Jinja 中的 `{# #}`、Handlebars 中的 `{{! }}` 或 Go 中的 `{{/* */}}`，才能阻止标签执行。
+
+只有语句标签会被报告：`{% %}`、handlebars 的区块、闭合或局部标签，以及 Go 的关键字，例如 `{{if}}` 或 `{{end}}`。打印进注释中的值，例如 `<!-- built {{ version }} -->`，是有意为之的用法，会被跳过；模板注释或 `{% comment %}` 块中的标签同样如此，面向 Internet Explorer 的条件注释 `<!--[if IE]> ... <![endif]-->` 也一样，其主体是写给它所指名的浏览器的标记。
+
+错误示例：
+
+```html
+<!-- {% include "banner.html" %} -->
+```
+
+正确示例：
+
+```html
+{# {% include "banner.html" %} #}
 ```
 
 #### H046
@@ -1195,6 +1325,110 @@ html 规范只允许把 `<br>` 用于内容本身自带的换行，例如邮政�
 
 ```html
 <meta http-equiv="refresh" content="0; url=/next-page">
+```
+
+#### H053
+
+`id 在文件中被使用了不止一次。`
+
+一个 id 指名一个元素。带有相同 id 的第二个元素会破坏 `getElementById`、`<label for>`、片段链接和 `aria-labelledby`：浏览器取第一个并悄悄忽略其余的，于是 label、链接或脚本会毫无警告地落在错误的元素上。
+
+同一个 `{% if %}...{% else %}...{% endif %}` 的互斥分支中的两个 id 永远不会同时渲染，因此不会被报告。`{% for %}` 循环或 `{% block %}` 不是分支：其中的一个 id 与其外面的同一个 id 都会渲染，靠后的那个会被报告。由模板标签写入的值无从得知，会被跳过；空值也一样。id 按原样精确比较，与浏览器一致，因此 `save` 和 `Save` 是两个 id。
+
+错误示例：
+
+```html
+<button type="submit" id="submit">Save</button>
+<button type="submit" id="submit">Save and continue</button>
+```
+
+正确示例：
+
+```html
+<button type="submit" id="submit">Save</button>
+<button type="button" id="cancel">Cancel</button>
+```
+
+#### H054
+
+`交互元素不应嵌套在另一个交互元素之内。`
+
+html 禁止在 `<a>` 和 `<button>` 内放置交互内容。链接里的按钮或按钮里的链接都是无效标记，各个浏览器会以各自的方式修复它，而屏幕阅读器或键盘用户拿到的是一个表现得像两个的控件。axe 以“nested-interactive”报告同样的问题。
+
+所监视的容器是带 `href` 的 `<a>` 和 `<button>`，在其中会被报告的控件是带 `href` 的链接、`button`、`input`、`select` 和 `textarea`。不带 `href` 的 `<a>` 不是交互元素，无论作为哪一方都会被跳过；隐藏的 input 或类型由模板标签写入的 input 同样如此。未闭合的链接或按钮会随包围它的元素一起结束，与浏览器中的行为一致，因此一处笔误不会让文件的其余部分都被报告。
+
+错误示例：
+
+```html
+<a href="/cart"><button>Add</button></a>
+```
+
+正确示例：
+
+```html
+<a href="/cart" class="button">Add</a>
+```
+
+#### H055
+
+`lang 属性应是语言标签，例如 en 或 pt-BR。`
+
+H005 要求 `<html>` 上有 `lang`，但像 `lang="english"` 或 `lang="en_US"` 这样的值虽能满足它，却没有指出任何浏览器认识的语言。屏幕阅读器于是退回到默认语音，翻译和断字则会选错规则或者根本不选。该值必须是 BCP 47 标签：两个或三个字母，之后是任意数量、各由一到八个字母或数字组成的子标签，每个子标签前有一个连字符，例如 `en`、`pt-BR` 或 `zh-Hant-TW`。
+
+只检查 `<html>` 标签，与 H005 一致，空值交由该规则处理。由模板标签写入的值，例如 `lang="{{ LANGUAGE_CODE }}"`，无从得知，会被跳过；`xml:lang` 或 `data-lang` 不会被当作 `lang` 读取。
+
+错误示例：
+
+```html
+<html lang="english">
+```
+
+正确示例：
+
+```html
+<html lang="en">
+```
+
+#### H056
+
+`src 不应为空。`
+
+html 规范指出空的 `src` 是无效的，并警告浏览器会以文档自身的 url 来解析它，因此 `<img src="">` 会把页面再当作图片取一次，`<script src=""></script>` 会把它当作脚本取一次。它通常是一个本该由脚本填入的占位符，修复方法是去掉该属性，或者把值放在 data 属性中，直到有真正的值为止。完全不带值的 `src`，例如 `<img src>`，同样是空的，会被报告。
+
+只检查 `img`、`script`、`iframe`、`embed`、`source`、`track`、`audio` 和 `video`，因为只有这些元素会去获取 `src` 所指的资源。由模板标签写入的值会被跳过，只含空白的值也一样；`srcset` 和 `data-src` 是不同的属性，该规则不作判断。
+
+错误示例：
+
+```html
+<img src="" alt="Logo">
+```
+
+正确示例：
+
+```html
+<img src="{% static 'logo.png' %}" alt="Logo">
+```
+
+#### H057
+
+`video 应有字幕轨道。`
+
+有声视频的语音只存在于音频中，因此没有字幕时，失聪或听力障碍的观众从中什么也得不到，而 WCAG 1.2.2「字幕（预录）」要求提供字幕。`<video>` 内 `kind` 为 `captions` 或 `subtitles` 的 `<track>` 满足该规则，完全不带 `kind` 的 `<track>` 也满足，因为 `subtitles` 是默认值。
+
+`muted` 的视频没有可加字幕的音频，不会被报告。开始标签或主体中含有模板标签的视频也不会，因为轨道或 `muted` 属性可能由模板在 djLint 看不到的地方写入。
+
+错误示例：
+
+```html
+<video controls src="talk.mp4"></video>
+```
+
+正确示例：
+
+```html
+<video controls src="talk.mp4">
+  <track kind="captions" src="talk.vtt" srclang="en">
+</video>
 ```
 
 {% endraw %}

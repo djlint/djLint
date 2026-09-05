@@ -103,7 +103,7 @@ test_data = [
     ),
     pytest.param(
         (
-            '{% extends "layout.h" %}\n'
+            '{% include "layout.h" %}\n'
             '<div class="card" data-list=\'{"name": "blah"}\'>\n'
             '{% include "template.html" %}\n'
             "<div {% for %} data-{{ name }}='{{ value }}'{% endfor %}/>"

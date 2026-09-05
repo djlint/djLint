@@ -38,8 +38,11 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 
 | Code | Meaning                                                                                      | Default |
 | ---- | -------------------------------------------------------------------------------------------- | ------- |
+| T001 | Variables should be wrapped in whitespace. Ex: {% raw %}`{{ this }}`{% endraw %}             | ✔️      |
+| T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    | ✔️      |
+| T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   | -       |
 | D004 | (Django) Static urls should follow {% raw %}`{% static path/to/file %}`{% endraw %} pattern. | ✔️      |
-| D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         | ✔️      |
+| J004 | (Jinja) Static urls should follow {% raw %}`{{ url_for('static'..) }}`{% endraw %} pattern.  | ✔️      |
 | H005 | Html tag should have a non-empty `lang` attribute.                                           | ✔️      |
 | H006 | `img` tag should have `height` and `width` attributes.                                       | -       |
 | H007 | `<!DOCTYPE ... >` should be present before the html tag.                                     | ✔️      |
@@ -53,7 +56,9 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H015 | Follow `h` tags with a line break.                                                           | ✔️      |
 | H016 | Missing `title` tag in html.                                                                 | ✔️      |
 | H017 | Void tags should be self closing (conflicts with: H018).                                     | -       |
+| D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         | ✔️      |
 | H018 | Void tags are self closing by nature and must end with ">", not "/>" (conflicts with: H017). | -       |
+| J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          | ✔️      |
 | H019 | Replace `javascript:abc()` with `on_` event and real url.                                    | ✔️      |
 | H020 | Empty tag pair found. Consider removing.                                                     | ✔️      |
 | H021 | Inline styles should be avoided.                                                             | ✔️      |
@@ -62,17 +67,12 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H024 | Omit type on scripts and styles.                                                             | ✔️      |
 | H025 | Tag seems to be an orphan.                                                                   | ✔️      |
 | H026 | Empty id and class tags can be removed.                                                      | ✔️      |
-| H029 | Consider using lowercase form method values.                                                 | ✔️      |
-| H030 | Consider adding a meta description.                                                          | ✔️      |
-| H033 | Extra whitespace found in form action.                                                       | ✔️      |
-| J004 | (Jinja) Static urls should follow {% raw %}`{{ url_for('static'..) }}`{% endraw %} pattern.  | ✔️      |
-| J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          | ✔️      |
-| T001 | Variables should be wrapped in whitespace. Ex: {% raw %}`{{ this }}`{% endraw %}             | ✔️      |
-| T002 | Double quotes should be used in tags. Ex {% raw %}`{% extends "this.html" %}`{% endraw %}    | ✔️      |
-| T003 | Endblock should have name. Ex: {% raw %}`{% endblock body %}`{% endraw %}.                   | -       |
 | T027 | Unclosed string found in template syntax.                                                    | ✔️      |
 | T028 | Consider using spaceless tags inside attribute values. {% raw %}`{%- if/for -%}`{% endraw %} | -       |
+| H029 | Consider using lowercase form method values.                                                 | ✔️      |
+| H030 | Consider adding a meta description.                                                          | ✔️      |
 | T032 | Extra whitespace found in template tags.                                                     | ✔️      |
+| H033 | Extra whitespace found in form action.                                                       | ✔️      |
 | T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  | ✔️      |
 | H036 | Avoid use of `br` tags.                                                                      | ✔️      |
 | H037 | Duplicate attribute found.                                                                   | ✔️      |
@@ -80,10 +80,15 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | T039 | Unclosed template tag found.                                                                 | ✔️      |
 | T040 | Missing or empty template name in extends or include tag.                                    | ✔️      |
 | H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
+| T041 | Extends tag should be the first tag in the template.                                         | ✔️      |
 | H042 | Label for attribute has no matching element id in this file.                                 | ✔️      |
+| T042 | Content outside a block is not rendered in a template that extends another.                  | ✔️      |
 | H043 | Button tag should have a `type` attribute.                                                   | ✔️      |
+| T043 | Block name is used more than once in the template.                                           | ✔️      |
 | H044 | Thead should not mix `th` and `td` cells.                                                    | ✔️      |
+| T044 | Output tag holds a statement keyword; use a block tag.                                       | ✔️      |
 | H045 | Iframe tag should have a `title` attribute.                                                  | ✔️      |
+| T045 | Template tag inside an html comment still runs; use a template comment to disable it.        | ✔️      |
 | H046 | Tabindex should not be positive.                                                             | ✔️      |
 | H047 | Aria-hidden should not be set on a focusable element.                                        | ✔️      |
 | H048 | Aria attribute is not one the specification defines.                                         | ✔️      |
@@ -91,6 +96,11 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H050 | Element is obsolete and should be replaced.                                                  | ✔️      |
 | H051 | Role is not one ARIA defines for markup.                                                     | ✔️      |
 | H052 | Meta refresh should not reload or redirect the page on a timer.                              | ✔️      |
+| H053 | Id is used more than once in the file.                                                       | ✔️      |
+| H054 | Interactive element should not be nested inside another.                                     | ✔️      |
+| H055 | Lang attribute should be a language tag such as en or pt-BR.                                 | ✔️      |
+| H056 | Src should not be empty.                                                                     | ✔️      |
+| H057 | Video should have a captions track.                                                          | ✔️      |
 
 ### Code Patterns
 
@@ -963,6 +973,30 @@ Do:
 {% endblock footer %}
 ```
 
+#### T041
+
+`Extends tag should be the first tag in the template.`
+
+Django refuses to compile a template in which another tag comes before `{% extends %}`, and text written before it is rendered, so it leaks into the page ahead of everything the parent template produces. Jinja renders that text too, and nunjucks drops it, so in every engine the template does not do what it looks like it does.
+
+A `{# #}` comment renders nothing and does not count, and neither does anything inside a block djLint does not lint, such as a `{% comment %}`, `{% raw %}` or `{% verbatim %}` block or a `{# djlint:off #}` region. Only the first `{% extends %}` is checked; a second one is an error of its own. A branch tag before it does not count either, since jinja documents `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` as the way to choose a parent.
+
+Not applied to the handlebars, golang, liquid and angular profiles.
+
+Don't:
+
+```html
+{% load static %}
+{% extends "base.html" %}
+```
+
+Do:
+
+```html
+{% extends "base.html" %}
+{% load static %}
+```
+
 #### H042
 
 `Label for attribute has no matching element id in this file.`
@@ -981,6 +1015,36 @@ Do:
 ```html
 <label for="email">Email</label>
 <input id="email">
+```
+
+#### T042
+
+`Content outside a block is not rendered in a template that extends another.`
+
+Once a template extends another, the parent decides what is output and the child only fills the parent's blocks. Text or html written after `{% extends %}` and outside every `{% block %}` is silently discarded at render time, so a paragraph that looks fine in the source never reaches the page.
+
+A template tag there still runs, so `{% load %}`, `{% set %}` and an `{% if %}` wrapped around a block are left alone, as are `{# #}` and `{% comment %}` comments, `{% raw %}` and `{% verbatim %}` blocks, and the body of a `{% macro %}` or a block form `{% set %}`, which is captured rather than output. An html comment is output like any other text, so one outside a block is reported, and so is the text of a `{% blocktrans %}`, which is not a `{% block %}`. Only content after the extends tag is considered, and each run of it is reported once, at its start.
+
+Not applied to the handlebars, golang, liquid and angular profiles.
+
+Don't:
+
+```html
+{% extends "base.html" %}
+<p>This paragraph is never shown.</p>
+{% block content %}
+<h1>Welcome</h1>
+{% endblock %}
+```
+
+Do:
+
+```html
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome</h1>
+<p>This paragraph is shown.</p>
+{% endblock %}
 ```
 
 #### H043
@@ -1003,6 +1067,30 @@ Do:
 <form>
   <button type="button" onclick="preview()">Preview</button>
 </form>
+```
+
+#### T043
+
+`Block name is used more than once in the template.`
+
+Django, Jinja and Nunjucks all refuse to parse a template that names two blocks the same, so the page fails to load at all. The engines do not care that the two blocks sit in different branches of an `{% if %}`, so each block name has to be unique across the whole file, whether the blocks are side by side or one is nested in another.
+
+Only `{% block %}` counts: a `{% blocktrans %}` is not a block, a `{% endblock name %}` merely names the block it closes, and a block written inside a comment never reaches the parser. Names are compared as written, since the engines treat `Content` and `content` as two blocks.
+
+Not applied to the handlebars, golang, liquid and angular profiles.
+
+Don't:
+
+```html
+{% block content %}{% endblock %}
+{% block content %}{% endblock %}
+```
+
+Do:
+
+```html
+{% block content %}{% endblock %}
+{% block sidebar %}{% endblock %}
 ```
 
 #### H044
@@ -1035,6 +1123,28 @@ Do:
 </thead>
 ```
 
+#### T044
+
+`Output tag holds a statement keyword; use a block tag.`
+
+Not applied to the golang, handlebars and angular profiles.
+
+An output tag prints a value, and `if`, `for`, `url`, `include` and the rest are statements that belong in a block tag. Django, Jinja and Nunjucks all reject `{{ if x }}` with a syntax error, and a closing keyword on its own, such as `{{ endif }}`, is read as a variable that renders nothing while the block it was meant to close stays open, so the page either fails to load or shows what the condition should have hidden.
+
+A bare keyword is an ordinary variable name, so `{{ url }}`, `{{ url|default:"/" }}` and `{{ set.name }}` are not reported. Only a keyword followed by an argument is, along with a closing or branch keyword on its own such as `{{ endif }}` or `{{ else }}`. A jinja expression that happens to start with one of these names, such as `{{ url ~ "/x" }}` or `{{ url if url else "#" }}`, is left alone.
+
+Don't:
+
+```html
+{{ if user.is_active }}
+```
+
+Do:
+
+```html
+{% if user.is_active %}
+```
+
 #### H045
 
 `Iframe tag should have a title attribute.`
@@ -1053,6 +1163,26 @@ Do:
 
 ```html
 <iframe src="/report/" title="Quarterly report"></iframe>
+```
+
+#### T045
+
+`Template tag inside an html comment still runs; use a template comment to disable it.`
+
+An html comment hides markup from the browser, not from the template engine. `<!-- {% include "debug.html" %} -->` still renders the file, and `<!-- {% if debug %}...{% endif %} -->` still evaluates, in Django, Jinja, Nunjucks, Handlebars and Go alike, so a tag commented out this way keeps running, and whatever it writes lands inside the comment or, if it holds `-->`, breaks out of it. Only a template comment, `{# #}` in Django and Jinja, `{{! }}` in Handlebars or `{{/* */}}` in Go, stops a tag from running.
+
+Only a statement tag is reported: `{% %}`, a handlebars section, close or partial, and a Go keyword such as `{{if}}` or `{{end}}`. A value printed into a comment, as in `<!-- built {{ version }} -->`, is a deliberate use and is left alone, as is a tag inside a template comment or `{% comment %}` block, and a conditional comment for Internet Explorer, `<!--[if IE]> ... <![endif]-->`, whose body is markup for the browser it names.
+
+Don't:
+
+```html
+<!-- {% include "banner.html" %} -->
+```
+
+Do:
+
+```html
+{# {% include "banner.html" %} #}
 ```
 
 #### H046
@@ -1195,6 +1325,110 @@ Do:
 
 ```html
 <meta http-equiv="refresh" content="0; url=/next-page">
+```
+
+#### H053
+
+`Id is used more than once in the file.`
+
+An id names one element. A second element carrying the same id breaks `getElementById`, `<label for>`, fragment links and `aria-labelledby`: the browser takes the first and silently ignores the rest, so a label, a link or a script lands on the wrong element without any warning.
+
+Two ids in exclusive branches of one `{% if %}...{% else %}...{% endif %}` are never both rendered, so they are not reported. A `{% for %}` loop or a `{% block %}` is not a branch: an id inside one and the same id outside it both render, and the later one is reported. A value written by a template tag is unknowable and is left alone, and so is an empty value. Ids are compared exactly, as the browser does, so `save` and `Save` are two ids.
+
+Don't:
+
+```html
+<button type="submit" id="submit">Save</button>
+<button type="submit" id="submit">Save and continue</button>
+```
+
+Do:
+
+```html
+<button type="submit" id="submit">Save</button>
+<button type="button" id="cancel">Cancel</button>
+```
+
+#### H054
+
+`Interactive element should not be nested inside another.`
+
+Html forbids interactive content inside `<a>` and `<button>`. A button inside a link, or a link inside a button, is invalid markup that browsers repair each in their own way, and a screen reader or keyboard user is handed one control that behaves like two. axe reports the same thing as "nested-interactive".
+
+The containers watched are an `<a>` with an `href` and a `<button>`, and the controls reported inside them are a link with an `href`, `button`, `input`, `select` and `textarea`. An `<a>` without an `href` is not interactive and is left alone on either side, as is a hidden input or one whose type a template tag writes. A link or button left open ends with the element around it, as it would in a browser, so one typo does not report the rest of the file.
+
+Don't:
+
+```html
+<a href="/cart"><button>Add</button></a>
+```
+
+Do:
+
+```html
+<a href="/cart" class="button">Add</a>
+```
+
+#### H055
+
+`Lang attribute should be a language tag such as en or pt-BR.`
+
+H005 asks for a `lang` on `<html>`, but a value such as `lang="english"` or `lang="en_US"` satisfies it while naming no language a browser knows. A screen reader then falls back to its default voice, and translation and hyphenation pick the wrong rules or none. The value has to be a BCP 47 tag: two or three letters, then any number of subtags of one to eight letters or digits, each after a hyphen, as in `en`, `pt-BR` or `zh-Hant-TW`.
+
+Only the `<html>` tag is checked, matching H005, and an empty value is left to that rule. A value written by a template tag, as in `lang="{{ LANGUAGE_CODE }}"`, is unknowable and is left alone, and `xml:lang` or `data-lang` is not read as `lang`.
+
+Don't:
+
+```html
+<html lang="english">
+```
+
+Do:
+
+```html
+<html lang="en">
+```
+
+#### H056
+
+`Src should not be empty.`
+
+The html specification says an empty `src` is invalid, and warns that a browser resolves it against the document's own url, so `<img src="">` fetches the page again as an image and `<script src=""></script>` fetches it as a script. It is usually a placeholder a script was meant to fill in, and the fix is to drop the attribute, or hold the value in a data attribute, until there is a real one. A `src` written with no value at all, as in `<img src>`, is empty too and is reported.
+
+Only `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` and `video` are checked, since those are the elements that fetch what `src` names. A value written by a template tag is left alone, as is a value that is only whitespace, and `srcset` and `data-src` are different attributes that the rule does not judge.
+
+Don't:
+
+```html
+<img src="" alt="Logo">
+```
+
+Do:
+
+```html
+<img src="{% static 'logo.png' %}" alt="Logo">
+```
+
+#### H057
+
+`Video should have a captions track.`
+
+A video with sound carries its speech only in the audio, so a deaf or hard-of-hearing viewer gets nothing from it without captions, which WCAG 1.2.2 Captions (Prerecorded) requires. A `<track>` with a `kind` of `captions` or `subtitles` inside the `<video>` satisfies the rule, and so does a `<track>` with no `kind` at all, since `subtitles` is the default.
+
+A `muted` video has no audio to caption and is not reported. Nor is a video whose opening tag or body holds a template tag, since the tracks, or the `muted` attribute, may be written by the template where djLint cannot see them.
+
+Don't:
+
+```html
+<video controls src="talk.mp4"></video>
+```
+
+Do:
+
+```html
+<video controls src="talk.mp4">
+  <track kind="captions" src="talk.vtt" srclang="en">
+</video>
 ```
 
 {% endraw %}

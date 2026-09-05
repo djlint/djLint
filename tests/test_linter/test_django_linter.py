@@ -101,7 +101,14 @@ test_data = [
             '<a href="#">\n<form action="#"><a href="#tab">\n'
             '<form action="#go"></form></a></form></a>'
         ),
-        ([]),
+        ([
+            {
+                "code": "H054",
+                "line": "2:17",
+                "match": '<a href="#tab">',
+                "message": "Interactive element should not be nested inside another.",
+            }
+        ]),
         id="DJ018_has_urls",
     ),
     pytest.param(

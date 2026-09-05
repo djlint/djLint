@@ -41,7 +41,13 @@ test_data = [
                 "line": "1:0",
                 "match": '<label for="wine">',
                 "message": "Label for attribute has no matching element id in this file.",
-            }
+            },
+            {
+                "code": "H053",
+                "line": "3:7",
+                "match": 'id="cheese"',
+                "message": "Id is used more than once in the file.",
+            },
         ]),
         id="issue_820_duplicate_other_ids",
     ),

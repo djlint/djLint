@@ -6,6 +6,16 @@
 
 ### Feature
 
+- New rule `T041` reports an `{% extends %}` that is not the first tag in the template, which django refuses to compile and which leaks whatever text comes before it into the page. A `{# #}` comment before it is left alone, as is anything inside a `{% comment %}`, `{% raw %}` or `{% verbatim %}` block.
+- New rule `T042` reports text or html written after `{% extends %}` and outside every `{% block %}`, which the engine silently discards. A template tag there still runs and is left alone, as are comments and the body of a `{% macro %}`.
+- New rule `T043` reports a block name used more than once in a template, which Django, Jinja and Nunjucks all refuse to parse, even where the two blocks sit in different branches of an `{% if %}`. A `{% blocktrans %}`, a named `{% endblock %}` and a block inside a comment are left alone.
+- New rule `T044` reports a statement keyword inside an output tag, such as `{{ if x }}`, `{{ url 'home' }}` or `{{ endif }}`, where a `{% %}` block tag was meant. A bare keyword such as `{{ url }}` is an ordinary variable and is left alone, as is a jinja expression such as `{{ url ~ "/x" }}`.
+- New rule `T045` reports a statement tag, such as `{% include %}` or `{% if %}`, written inside an html comment, where it still runs. A value printed into a comment, as in `<!-- built {{ version }} -->`, is left alone, as is a tag inside a template comment or an Internet Explorer conditional comment.
+- New rule `H053` reports an `id` used more than once in the file, which breaks `getElementById`, `<label for>` and fragment links. Two ids in exclusive branches of one `{% if %}` are never both rendered and are not reported, and a value written by a template tag is left alone.
+- New rule `H054` reports an interactive element nested inside another, such as a `<button>` inside an `<a href>` or a link inside a button. An `<a>` without an `href` is not interactive and is left alone, as is a hidden input or one whose type a template tag writes.
+- New rule `H055` reports a `lang` on `<html>` that is not a language tag, such as `lang="english"` or `lang="en_US"`. An empty value is left to `H005`, and a value written by a template tag is left alone.
+- New rule `H056` reports an empty `src` on an element that fetches what it names, such as `<img src="">` or `<script src=""></script>`, which a browser resolves to the page itself. A `src` with no value at all counts too, while a value written by a template tag, a value that is only whitespace, and the separate `srcset` and `data-src` attributes are left alone.
+- New rule `H057` reports a `<video>` with no captions track, which WCAG 1.2.2 requires for prerecorded video with sound. A `<track>` of kind `captions` or `subtitles` counts, as does one with no `kind`, since subtitles is the default; a `muted` video is left alone, as is one whose tracks or attributes a template tag may write.
 - New option `--sarif` writes the findings as a SARIF 2.1.0 document, which GitHub code scanning, Azure DevOps and most editors read, so a run can be uploaded and kept in the Security tab with history rather than shown only as annotations on one pull request. With `--check`, a file that would be reformatted is reported under a `formatting` rule.
 
 ### Fix

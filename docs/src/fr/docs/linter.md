@@ -36,61 +36,71 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 
 ## Rules
 
-| Code | Signification                                                                                                             | Défaut |
-| ---- | ------------------------------------------------------------------------------------------------------------------------- | ------ |
-| D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                    | ✔️     |
-| D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                              | ✔️     |
-| H005 | La balise Html doit avoir un attribut `lang` non vide.                                                                    | ✔️     |
-| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                             | -      |
-| H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                       | ✔️     |
-| H008 | Les attributs doivent être entre guillemets.                                                                              | ✔️     |
-| H009 | Les noms de balises doivent être en minuscules.                                                                           | ✔️     |
-| H010 | Les noms d'attributs doivent être en minuscules.                                                                          | ✔️     |
-| H011 | Les valeurs des attributs doivent être citées.                                                                            | ✔️     |
-| H012 | Il ne doit pas y avoir d'espace autour de l'attribut `=`.                                                                 | ✔️     |
-| H013 | La balise `img` doit avoir des attributs alt.                                                                             | ✔️     |
-| H014 | Plus de lignes vides que la configuration n'en garde.                                                                     | ✔️     |
-| H015 | Les balises "h" doivent être suivies d'un retour à la ligne.                                                              | ✔️     |
-| H016 | Balise `title` manquante dans le html.                                                                                    | ✔️     |
-| H017 | Les balises vides doivent être auto-fermantes (incompatible avec : H018).                                                 | -      |
-| H018 | Les balises vides sont auto-fermantes par nature et doivent se terminer par ">", et non "/>" (incompatible avec : H017).  | -      |
-| H019 | Remplacez `javascript:abc()` par l'événement `on_` et l'url réelle.                                                       | ✔️     |
-| H020 | Couple de balises vide trouvé. Envisagez de le supprimer.                                                                 | ✔️     |
-| H021 | Les styles en ligne doivent être évités.                                                                                  | ✔️     |
-| H022 | Utilisez HTTPS pour les liens externes.                                                                                   | ✔️     |
-| H023 | N'utilisez pas de références d'entités.                                                                                   | ✔️     |
-| H024 | Omettre le type sur les scripts et les styles.                                                                            | ✔️     |
-| H025 | La balise semble être orpheline.                                                                                          | ✔️     |
-| H026 | Les balises id et class vides peuvent être supprimées.                                                                    | ✔️     |
-| H029 | Pensez à utiliser des valeurs de méthode de formulaire en minuscules.                                                     | ✔️     |
-| H030 | Pensez à ajouter une méta-description.                                                                                    | ✔️     |
-| H033 | Espace supplémentaire dans l'action du formulaire.                                                                        | ✔️     |
-| J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                      | ✔️     |
-| J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                               | ✔️     |
-| T001 | Les variables doivent être entourées d'un espace. Ex : {% raw %}`{{ this }}`{% endraw %}                                  | ✔️     |
-| T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}         | ✔️     |
-| T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                        | -      |
-| T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                      | ✔️     |
-| T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %} | -      |
-| T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                            | ✔️     |
-| T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                  | ✔️     |
-| H036 | Évitez d'utiliser les balises `br`.                                                                                       | ✔️     |
-| H037 | Attribut en double trouvé.                                                                                                | ✔️     |
-| T038 | La balise de bloc n'a pas de balise de fin correspondante.                                                                | ✔️     |
-| T039 | Balise de template non fermée trouvée.                                                                                    | ✔️     |
-| T040 | Nom de template manquant ou vide dans une balise extends ou include.                                                      | ✔️     |
-| H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                   | ✔️     |
-| H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                     | ✔️     |
-| H043 | La balise button devrait avoir un attribut `type`.                                                                        | ✔️     |
-| H044 | Un thead ne devrait pas mélanger des cellules `th` et `td`.                                                               | ✔️     |
-| H045 | La balise iframe devrait avoir un attribut `title`.                                                                       | ✔️     |
-| H046 | La valeur de tabindex ne devrait pas être positive.                                                                       | ✔️     |
-| H047 | aria-hidden ne devrait pas être posé sur un élément focusable.                                                            | ✔️     |
-| H048 | Cet attribut aria n'est pas défini par la spécification.                                                                  | ✔️     |
-| H049 | Le viewport ne devrait pas empêcher le zoom de la page.                                                                   | ✔️     |
-| H050 | Élément obsolète, à remplacer.                                                                                            | ✔️     |
-| H051 | Le rôle n'est pas un de ceux qu'ARIA définit pour le balisage.                                                            | ✔️     |
-| H052 | Meta refresh ne doit pas recharger ni rediriger la page après un délai.                                                   | ✔️     |
+| Code | Signification                                                                                                                  | Défaut |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| T001 | Les variables doivent être entourées d'un espace. Ex : {% raw %}`{{ this }}`{% endraw %}                                       | ✔️     |
+| T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}              | ✔️     |
+| T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                             | -      |
+| D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                         | ✔️     |
+| J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                           | ✔️     |
+| H005 | La balise Html doit avoir un attribut `lang` non vide.                                                                         | ✔️     |
+| H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                                  | -      |
+| H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                            | ✔️     |
+| H008 | Les attributs doivent être entre guillemets.                                                                                   | ✔️     |
+| H009 | Les noms de balises doivent être en minuscules.                                                                                | ✔️     |
+| H010 | Les noms d'attributs doivent être en minuscules.                                                                               | ✔️     |
+| H011 | Les valeurs des attributs doivent être citées.                                                                                 | ✔️     |
+| H012 | Il ne doit pas y avoir d'espace autour de l'attribut `=`.                                                                      | ✔️     |
+| H013 | La balise `img` doit avoir des attributs alt.                                                                                  | ✔️     |
+| H014 | Plus de lignes vides que la configuration n'en garde.                                                                          | ✔️     |
+| H015 | Les balises "h" doivent être suivies d'un retour à la ligne.                                                                   | ✔️     |
+| H016 | Balise `title` manquante dans le html.                                                                                         | ✔️     |
+| H017 | Les balises vides doivent être auto-fermantes (incompatible avec : H018).                                                      | -      |
+| D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                                   | ✔️     |
+| H018 | Les balises vides sont auto-fermantes par nature et doivent se terminer par ">", et non "/>" (incompatible avec : H017).       | -      |
+| J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                                    | ✔️     |
+| H019 | Remplacez `javascript:abc()` par l'événement `on_` et l'url réelle.                                                            | ✔️     |
+| H020 | Couple de balises vide trouvé. Envisagez de le supprimer.                                                                      | ✔️     |
+| H021 | Les styles en ligne doivent être évités.                                                                                       | ✔️     |
+| H022 | Utilisez HTTPS pour les liens externes.                                                                                        | ✔️     |
+| H023 | N'utilisez pas de références d'entités.                                                                                        | ✔️     |
+| H024 | Omettre le type sur les scripts et les styles.                                                                                 | ✔️     |
+| H025 | La balise semble être orpheline.                                                                                               | ✔️     |
+| H026 | Les balises id et class vides peuvent être supprimées.                                                                         | ✔️     |
+| T027 | Chaîne non fermée trouvée dans la syntaxe du modèle.                                                                           | ✔️     |
+| T028 | Envisagez d'utiliser des balises sans espace à l'intérieur des valeurs d'attributs. {% raw %}`{%- if/for -%}`{% endraw %}      | -      |
+| H029 | Pensez à utiliser des valeurs de méthode de formulaire en minuscules.                                                          | ✔️     |
+| H030 | Pensez à ajouter une méta-description.                                                                                         | ✔️     |
+| T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                                 | ✔️     |
+| H033 | Espace supplémentaire dans l'action du formulaire.                                                                             | ✔️     |
+| T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                       | ✔️     |
+| H036 | Évitez d'utiliser les balises `br`.                                                                                            | ✔️     |
+| H037 | Attribut en double trouvé.                                                                                                     | ✔️     |
+| T038 | La balise de bloc n'a pas de balise de fin correspondante.                                                                     | ✔️     |
+| T039 | Balise de template non fermée trouvée.                                                                                         | ✔️     |
+| T040 | Nom de template manquant ou vide dans une balise extends ou include.                                                           | ✔️     |
+| H041 | La balise est fermée dans un bloc de template différent de celui où elle a été ouverte.                                        | ✔️     |
+| T041 | La balise extends devrait être la première balise du template.                                                                 | ✔️     |
+| H042 | L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.                                                          | ✔️     |
+| T042 | Le contenu hors d'un bloc n'est pas rendu dans un template qui en étend un autre.                                              | ✔️     |
+| H043 | La balise button devrait avoir un attribut `type`.                                                                             | ✔️     |
+| T043 | Le nom de bloc est utilisé plus d'une fois dans le template.                                                                   | ✔️     |
+| H044 | Un thead ne devrait pas mélanger des cellules `th` et `td`.                                                                    | ✔️     |
+| T044 | La balise de sortie contient un mot-clé d'instruction ; utilisez une balise de bloc.                                           | ✔️     |
+| H045 | La balise iframe devrait avoir un attribut `title`.                                                                            | ✔️     |
+| T045 | Une balise de template dans un commentaire html s'exécute quand même ; utilisez un commentaire de template pour la désactiver. | ✔️     |
+| H046 | La valeur de tabindex ne devrait pas être positive.                                                                            | ✔️     |
+| H047 | aria-hidden ne devrait pas être posé sur un élément focusable.                                                                 | ✔️     |
+| H048 | Cet attribut aria n'est pas défini par la spécification.                                                                       | ✔️     |
+| H049 | Le viewport ne devrait pas empêcher le zoom de la page.                                                                        | ✔️     |
+| H050 | Élément obsolète, à remplacer.                                                                                                 | ✔️     |
+| H051 | Le rôle n'est pas un de ceux qu'ARIA définit pour le balisage.                                                                 | ✔️     |
+| H052 | Meta refresh ne doit pas recharger ni rediriger la page après un délai.                                                        | ✔️     |
+| H053 | L'id est utilisé plus d'une fois dans le fichier.                                                                              | ✔️     |
+| H054 | Un élément interactif ne devrait pas être imbriqué dans un autre.                                                              | ✔️     |
+| H055 | L'attribut lang devrait être une étiquette de langue comme en ou pt-BR.                                                        | ✔️     |
+| H056 | Src ne devrait pas être vide.                                                                                                  | ✔️     |
+| H057 | La vidéo devrait avoir une piste de sous-titres.                                                                               | ✔️     |
 
 ### Modèles de code
 
@@ -963,6 +973,30 @@ Lorsqu'une balise HTML est ouverte dans un `{% block %}` mais fermée dans un au
 {% endblock footer %}
 ```
 
+#### T041
+
+`La balise extends devrait être la première balise du template.`
+
+Django refuse de compiler un modèle dans lequel une autre balise précède `{% extends %}`, et le texte écrit avant elle est rendu, si bien qu'il fuit dans la page avant tout ce que produit le modèle parent. Jinja rend aussi ce texte, et nunjucks le supprime, de sorte que dans chaque moteur le modèle ne fait pas ce qu'il semble faire.
+
+Un commentaire `{# #}` ne rend rien et ne compte pas, pas plus que ce qui se trouve dans un bloc que djLint n'analyse pas, comme un bloc `{% comment %}`, `{% raw %}` ou `{% verbatim %}` ou une région `{# djlint:off #}`. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Une balise de branche placée avant ne compte pas non plus, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent.
+
+Non appliquée aux profils handlebars, golang, liquid et angular.
+
+À éviter :
+
+```html
+{% load static %}
+{% extends "base.html" %}
+```
+
+À faire :
+
+```html
+{% extends "base.html" %}
+{% load static %}
+```
+
 #### H042
 
 `L'attribut for d'un label n'a pas d'id correspondant dans ce fichier.`
@@ -981,6 +1015,36 @@ La vérification ne s'exécute que sur les fichiers analysables de façon fiable
 ```html
 <label for="email">Email</label>
 <input id="email">
+```
+
+#### T042
+
+`Le contenu hors d'un bloc n'est pas rendu dans un template qui en étend un autre.`
+
+Dès qu'un modèle en étend un autre, le parent décide de ce qui est produit et l'enfant ne fait que remplir les blocs du parent. Le texte ou le html écrit après `{% extends %}` et hors de tout `{% block %}` est silencieusement écarté au rendu, si bien qu'un paragraphe qui paraît correct dans la source n'atteint jamais la page.
+
+Une balise de template placée là s'exécute quand même, si bien que `{% load %}`, `{% set %}` et un `{% if %}` enveloppant un bloc sont laissés tels quels, de même que les commentaires `{# #}` et `{% comment %}`, les blocs `{% raw %}` et `{% verbatim %}`, et le corps d'un `{% macro %}` ou d'un `{% set %}` sous forme de bloc, qui est capturé plutôt que produit. Un commentaire html est produit comme n'importe quel autre texte, si bien qu'un commentaire hors d'un bloc est signalé, tout comme le texte d'un `{% blocktrans %}`, qui n'est pas un `{% block %}`. Seul le contenu après la balise extends est considéré, et chaque suite ininterrompue de contenu est signalée une fois, à son début.
+
+Non appliquée aux profils handlebars, golang, liquid et angular.
+
+À éviter :
+
+```html
+{% extends "base.html" %}
+<p>This paragraph is never shown.</p>
+{% block content %}
+<h1>Welcome</h1>
+{% endblock %}
+```
+
+À faire :
+
+```html
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome</h1>
+<p>This paragraph is shown.</p>
+{% endblock %}
 ```
 
 #### H043
@@ -1003,6 +1067,30 @@ Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer
 <form>
   <button type="button" onclick="preview()">Aperçu</button>
 </form>
+```
+
+#### T043
+
+`Le nom de bloc est utilisé plus d'une fois dans le template.`
+
+Django, Jinja et Nunjucks refusent tous d'analyser un modèle qui donne le même nom à deux blocs, si bien que la page ne se charge pas du tout. Les moteurs ne se soucient pas que les deux blocs se trouvent dans des branches différentes d'un `{% if %}`, si bien que chaque nom de bloc doit être unique dans tout le fichier, que les blocs soient côte à côte ou que l'un soit imbriqué dans l'autre.
+
+Seul `{% block %}` compte : un `{% blocktrans %}` n'est pas un bloc, un `{% endblock name %}` ne fait que nommer le bloc qu'il ferme, et un bloc écrit dans un commentaire n'atteint jamais l'analyseur. Les noms sont comparés tels qu'ils sont écrits, puisque les moteurs traitent `Content` et `content` comme deux blocs.
+
+Non appliquée aux profils handlebars, golang, liquid et angular.
+
+À éviter :
+
+```html
+{% block content %}{% endblock %}
+{% block content %}{% endblock %}
+```
+
+À faire :
+
+```html
+{% block content %}{% endblock %}
+{% block sidebar %}{% endblock %}
 ```
 
 #### H044
@@ -1035,6 +1123,28 @@ Un `th` et un `td` n'ont pas le même sens pour un lecteur d'écran et reçoiven
 </thead>
 ```
 
+#### T044
+
+`La balise de sortie contient un mot-clé d'instruction ; utilisez une balise de bloc.`
+
+Non appliquée aux profils golang, handlebars et angular.
+
+Une balise de sortie affiche une valeur, et `if`, `for`, `url`, `include` et les autres sont des instructions qui ont leur place dans une balise de bloc. Django, Jinja et Nunjucks rejettent tous `{{ if x }}` par une erreur de syntaxe, et un mot-clé de fermeture seul, comme `{{ endif }}`, est lu comme une variable qui ne rend rien tandis que le bloc qu'il devait fermer reste ouvert, si bien que la page soit ne se charge pas, soit affiche ce que la condition aurait dû masquer.
+
+Un mot-clé nu est un nom de variable ordinaire, si bien que `{{ url }}`, `{{ url|default:"/" }}` et `{{ set.name }}` ne sont pas signalés. Seul un mot-clé suivi d'un argument l'est, ainsi qu'un mot-clé de fermeture ou de branche seul comme `{{ endif }}` ou `{{ else }}`. Une expression jinja qui se trouve commencer par l'un de ces noms, comme `{{ url ~ "/x" }}` ou `{{ url if url else "#" }}`, est laissée telle quelle.
+
+À éviter :
+
+```html
+{{ if user.is_active }}
+```
+
+À faire :
+
+```html
+{% if user.is_active %}
+```
+
 #### H045
 
 `La balise iframe devrait avoir un attribut title.`
@@ -1053,6 +1163,26 @@ Le nom peut venir de `title`, `aria-label` ou `aria-labelledby` ; l'un des trois
 
 ```html
 <iframe src="/report/" title="Rapport trimestriel"></iframe>
+```
+
+#### T045
+
+`Une balise de template dans un commentaire html s'exécute quand même ; utilisez un commentaire de template pour la désactiver.`
+
+Un commentaire html cache le balisage au navigateur, pas au moteur de modèles. `<!-- {% include "debug.html" %} -->` rend toujours le fichier, et `<!-- {% if debug %}...{% endif %} -->` est toujours évalué, dans Django, Jinja, Nunjucks, Handlebars et Go sans distinction, si bien qu'une balise mise en commentaire de cette façon continue de s'exécuter, et ce qu'elle écrit atterrit dans le commentaire ou, si cela contient `-->`, en sort. Seul un commentaire de template, `{# #}` dans Django et Jinja, `{{! }}` dans Handlebars ou `{{/* */}}` dans Go, empêche une balise de s'exécuter.
+
+Seule une balise d'instruction est signalée : `{% %}`, une section, une fermeture ou un partiel handlebars, et un mot-clé Go comme `{{if}}` ou `{{end}}`. Une valeur affichée dans un commentaire, comme dans `<!-- built {{ version }} -->`, est un usage délibéré et est laissée telle quelle, de même qu'une balise dans un commentaire de template ou un bloc `{% comment %}`, et un commentaire conditionnel pour Internet Explorer, `<!--[if IE]> ... <![endif]-->`, dont le corps est du balisage destiné au navigateur qu'il nomme.
+
+À éviter :
+
+```html
+<!-- {% include "banner.html" %} -->
+```
+
+À faire :
+
+```html
+{# {% include "banner.html" %} #}
 ```
 
 #### H046
@@ -1195,6 +1325,110 @@ Un délai de zéro est une redirection immédiate plutôt qu'un minuteur, ce que
 
 ```html
 <meta http-equiv="refresh" content="0; url=/next-page">
+```
+
+#### H053
+
+`L'id est utilisé plus d'une fois dans le fichier.`
+
+Un id nomme un seul élément. Un second élément portant le même id casse `getElementById`, `<label for>`, les liens de fragment et `aria-labelledby` : le navigateur prend le premier et ignore silencieusement les autres, si bien qu'un label, un lien ou un script atterrit sur le mauvais élément sans aucun avertissement.
+
+Deux ids dans des branches exclusives d'un même `{% if %}...{% else %}...{% endif %}` ne sont jamais rendus tous les deux, si bien qu'ils ne sont pas signalés. Une boucle `{% for %}` ou un `{% block %}` n'est pas une branche : un id à l'intérieur et le même id à l'extérieur sont tous deux rendus, et le second est signalé. Une valeur écrite par une balise de template est indéterminable et est laissée telle quelle, tout comme une valeur vide. Les ids sont comparés à l'identique, comme le fait le navigateur, si bien que `save` et `Save` sont deux ids.
+
+À éviter :
+
+```html
+<button type="submit" id="submit">Save</button>
+<button type="submit" id="submit">Save and continue</button>
+```
+
+À faire :
+
+```html
+<button type="submit" id="submit">Save</button>
+<button type="button" id="cancel">Cancel</button>
+```
+
+#### H054
+
+`Un élément interactif ne devrait pas être imbriqué dans un autre.`
+
+Html interdit le contenu interactif dans `<a>` et `<button>`. Un bouton dans un lien, ou un lien dans un bouton, est un balisage invalide que les navigateurs réparent chacun à leur manière, et un utilisateur de lecteur d'écran ou de clavier se retrouve avec un contrôle qui se comporte comme deux. axe signale la même chose sous le nom « nested-interactive ».
+
+Les conteneurs surveillés sont un `<a>` avec un `href` et un `<button>`, et les contrôles signalés à l'intérieur sont un lien avec un `href`, `button`, `input`, `select` et `textarea`. Un `<a>` sans `href` n'est pas interactif et est laissé tel quel d'un côté comme de l'autre, de même qu'un input caché ou un input dont le type est écrit par une balise de template. Un lien ou un bouton laissé ouvert se termine avec l'élément qui l'entoure, comme dans un navigateur, si bien qu'une faute de frappe ne signale pas le reste du fichier.
+
+À éviter :
+
+```html
+<a href="/cart"><button>Add</button></a>
+```
+
+À faire :
+
+```html
+<a href="/cart" class="button">Add</a>
+```
+
+#### H055
+
+`L'attribut lang devrait être une étiquette de langue comme en ou pt-BR.`
+
+H005 demande un `lang` sur `<html>`, mais une valeur comme `lang="english"` ou `lang="en_US"` la satisfait sans nommer aucune langue connue d'un navigateur. Un lecteur d'écran se rabat alors sur sa voix par défaut, et la traduction et la césure choisissent les mauvaises règles ou aucune. La valeur doit être une étiquette BCP 47 : deux ou trois lettres, puis un nombre quelconque de sous-étiquettes d'une à huit lettres ou chiffres, chacune après un trait d'union, comme dans `en`, `pt-BR` ou `zh-Hant-TW`.
+
+Seule la balise `<html>` est vérifiée, comme pour H005, et une valeur vide est laissée à cette règle. Une valeur écrite par une balise de template, comme dans `lang="{{ LANGUAGE_CODE }}"`, est indéterminable et est laissée telle quelle, et `xml:lang` ou `data-lang` n'est pas lu comme `lang`.
+
+À éviter :
+
+```html
+<html lang="english">
+```
+
+À faire :
+
+```html
+<html lang="en">
+```
+
+#### H056
+
+`Src ne devrait pas être vide.`
+
+La spécification html indique qu'un `src` vide est invalide, et avertit qu'un navigateur le résout par rapport à l'url du document lui-même, si bien que `<img src="">` récupère à nouveau la page comme image et `<script src=""></script>` la récupère comme script. Il s'agit généralement d'un espace réservé qu'un script devait remplir, et la correction consiste à retirer l'attribut, ou à garder la valeur dans un attribut data, jusqu'à en avoir une vraie. Un `src` écrit sans aucune valeur, comme dans `<img src>`, est vide lui aussi et est signalé.
+
+Seuls `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` et `video` sont vérifiés, puisque ce sont les éléments qui récupèrent ce que `src` nomme. Une valeur écrite par une balise de template est laissée telle quelle, tout comme une valeur composée uniquement d'espaces, et `srcset` et `data-src` sont des attributs différents que la règle ne juge pas.
+
+À éviter :
+
+```html
+<img src="" alt="Logo">
+```
+
+À faire :
+
+```html
+<img src="{% static 'logo.png' %}" alt="Logo">
+```
+
+#### H057
+
+`La vidéo devrait avoir une piste de sous-titres.`
+
+Une vidéo sonore ne porte ses paroles que dans l'audio, si bien qu'un spectateur sourd ou malentendant n'en tire rien sans sous-titres, ce qu'exige le critère WCAG 1.2.2 Sous-titres (pré-enregistrés). Un `<track>` dont le `kind` vaut `captions` ou `subtitles` à l'intérieur du `<video>` satisfait la règle, tout comme un `<track>` sans `kind` du tout, puisque `subtitles` est la valeur par défaut.
+
+Une vidéo `muted` n'a pas d'audio à sous-titrer et n'est pas signalée. Pas plus qu'une vidéo dont la balise ouvrante ou le corps contient une balise de template, puisque les pistes, ou l'attribut `muted`, peuvent être écrits par le modèle là où djLint ne peut pas les voir.
+
+À éviter :
+
+```html
+<video controls src="talk.mp4"></video>
+```
+
+À faire :
+
+```html
+<video controls src="talk.mp4">
+  <track kind="captions" src="talk.vtt" srclang="en">
+</video>
 ```
 
 {% endraw %}

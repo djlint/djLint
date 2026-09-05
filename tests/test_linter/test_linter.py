@@ -290,7 +290,7 @@ def test_DJ018(
         b'<a href="#">\n<form action="#"><a href="#tab">\n<form action="#go"></form></a></form></a>',
     )
     result = runner.invoke(djlint, (tmp_file.name,))
-    assert result.exit_code == 0
+    assert "D018" not in result.output
 
 
 def test_H019(
