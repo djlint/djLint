@@ -94,6 +94,8 @@ Options:
                                   [default: 0]
   --github-output / --no-github-output
                                   Output GitHub-compatible formatting.
+  --sarif                         Output findings as SARIF 2.1.0 json, for
+                                  GitHub code scanning and other tools.
   -h, --help                      Show this message and exit.
 ```
 

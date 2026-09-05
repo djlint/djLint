@@ -1261,6 +1261,7 @@ class Config:
         "require_pragma",
         "safe_closing_block_pattern",
         "safe_closing_tag_pattern",
+        "sarif",
         "single_attribute_per_line",
         "single_line_template_tags",
         "sort_attributes",
@@ -1346,6 +1347,7 @@ class Config:
         quote_style: str | None = None,
         max_blank_lines: int | None = None,
         github_output: bool = False,
+        sarif: bool = False,
         stdin: bool | None = None,
         stdin_filename: str | None = None,
     ) -> None:
@@ -1378,6 +1380,7 @@ class Config:
         self.lint = lint
         self.warn = warn
         self.github_output = github_output
+        self.sarif = sarif
         self.statistics = statistics
         self.stdin_filename = stdin_filename
 

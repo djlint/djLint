@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Feature
+
+- New option `--sarif` writes the findings as a SARIF 2.1.0 document, which GitHub code scanning, Azure DevOps and most editors read, so a run can be uploaded and kept in the Security tab with history rather than shown only as annotations on one pull request. With `--check`, a file that would be reformatted is reported under a `formatting` rule.
+
 ### Fix
 
 - `H037` no longer reads an unquoted attribute value as an attribute name, so `<img width=1 height=1>` is not reported as a duplicate `1`. This started in 1.45.0, and a real duplicate whose values are unquoted and start with `/`, `.` or `#`, as in `href=/a href=/b`, is now caught too.

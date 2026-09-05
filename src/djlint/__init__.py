@@ -454,6 +454,11 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     default=None,
     help="Output GitHub-compatible formatting.",
 )
+@click.option(
+    "--sarif",
+    is_flag=True,
+    help="Output findings as SARIF 2.1.0 json, for GitHub code scanning and other tools.",
+)
 @_keep_mypyc_wheels_from_crashing
 @_fail_with_usage_code
 def main(
@@ -514,6 +519,7 @@ def main(
     quote_style: str | None,
     max_blank_lines: int | None,
     github_output: bool | None = None,
+    sarif: bool = False,
 ) -> None:
     """djLint · HTML template linter and formatter."""
     _use_utf8(sys.stdout)
@@ -589,6 +595,7 @@ def main(
         quote_style=quote_style,
         max_blank_lines=max_blank_lines,
         github_output=github_output,
+        sarif=sarif,
         stdin="-" in src,
     )
 
@@ -629,7 +636,7 @@ def main(
                 message += " and "
             message += "Linting"
 
-        if not config.quiet and not config.github_output:
+        if not config.quiet and not config.github_output and not config.sarif:
             echo()
 
         files_count = len(file_list)
@@ -652,7 +659,7 @@ def main(
             show_pos=True,
             bar_template=progress_template,
             file=sys.stderr,
-            hidden=config.github_output or config.quiet,
+            hidden=config.github_output or config.sarif or config.quiet,
         ) as bar:
             if max_workers == 1:
                 for this_file in file_list:
@@ -677,7 +684,15 @@ def main(
                         file_errors.append(future.result())
                         bar.update(1)
 
-    if config.github_output:
+    if config.sarif:
+        from djlint.sarif_output import print_sarif_output  # noqa: PLC0415
+
+        if (
+            print_sarif_output(config, file_errors, files_count)
+            and not config.warn
+        ):
+            sys.exit(1)
+    elif config.github_output:
         from djlint.github_output import print_github_output  # noqa: PLC0415
 
         if (

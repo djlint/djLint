@@ -19,6 +19,18 @@ In a GitHub Actions workflow djLint reports each finding as an annotation, so it
 
 Use `--no-github-output` to get the plain console output instead, or `--github-output` to force annotations outside of Actions.
 
+Annotations belong to one pull request. To keep findings in the repository's Security tab, with history across runs, write them as SARIF and upload the file:
+
+```yaml
+- run: djlint . --lint --sarif > djlint.sarif
+  continue-on-error: true
+- uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: djlint.sarif
+```
+
+`--sarif` writes a SARIF 2.1.0 document to stdout and nothing else, so it can be redirected as above. Every enabled rule is listed with a link to its documentation, each finding carries its line and column, and with `--check` a file that would be reformatted is reported under a `formatting` rule. Azure DevOps, GitLab and most editors read the same format.
+
 ## Pre-Commit
 
 djLint can be used as a [pre-commit](https://pre-commit.com) hook as both a linter and a formatter.
