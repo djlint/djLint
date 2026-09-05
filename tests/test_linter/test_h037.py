@@ -292,6 +292,39 @@ test_data = [
         ]),
         id="duplicate_after_quoted_string_inside_block_tag_in_value",
     ),
+    pytest.param(
+        ('<img width=1 height=1 alt="" />'), ([]), id="unquoted_values_same"
+    ),
+    pytest.param(
+        ('<img width=1 width=1 alt="" />'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:5",
+                "match": "width",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="unquoted_attributes_same",
+    ),
+    pytest.param(
+        ("<a x=.foo y=.foo />"), ([]), id="punctuation_led_unquoted_values_same"
+    ),
+    pytest.param(
+        ("<a x=a$b y=a$b />"), ([]), id="literal_dollar_in_unquoted_values"
+    ),
+    pytest.param(
+        ("<a href=/a href=/b />"),
+        ([
+            {
+                "code": "H037",
+                "line": "1:3",
+                "match": "href",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="duplicate_with_punctuation_led_unquoted_values",
+    ),
 ]
 
 
