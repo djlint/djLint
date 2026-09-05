@@ -307,6 +307,24 @@ test_data = [
         ]),
         id="unquoted_attributes_same",
     ),
+    pytest.param(
+        ("<a x=.foo y=.foo />"), ([]), id="punctuation_led_unquoted_values_same"
+    ),
+    pytest.param(
+        ("<a x=a$b y=a$b />"), ([]), id="literal_dollar_in_unquoted_values"
+    ),
+    pytest.param(
+        ("<a href=/a href=/b />"),
+        ([
+            {
+                "code": "H037",
+                "line": "1:3",
+                "match": "href",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="duplicate_with_punctuation_led_unquoted_values",
+    ),
 ]
 
 
