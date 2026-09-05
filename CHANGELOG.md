@@ -6,7 +6,7 @@
 
 ### Fix
 
-- `H037` no longer reads an unquoted attribute value as an attribute name, so `<img width=1 height=1>` is not reported as a duplicate `1`. This started in 1.45.0. An attribute whose unquoted value starts with a `/`, `.` or `#`, as in `href=/a`, now counts towards a duplicate.
+- `H037` no longer reads an unquoted attribute value as an attribute name, so `<img width=1 height=1>` is not reported as a duplicate `1`. This started in 1.45.0, and a real duplicate whose values are unquoted and start with `/`, `.` or `#`, as in `href=/a href=/b`, is now caught too.
 
 ## [1.45.2] - 2026-09-04
 
