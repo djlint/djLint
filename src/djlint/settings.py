@@ -823,6 +823,7 @@ _IGNORED_INLINE_BLOCKS_TAIL: Final = r"""
     | {\*.*?\*}
     | (?<!\{){\#(?!.*djlint:[ ]*(?:off|on)\b).*\#}
     | <\?php.*?\?>
+    | <%(?!\w).*?%>
     | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*endcomment[ ]*%}
     | {%[ ]*filter\b(?:(?!%}).)*?%}.*?{%[ ]*endfilter[ ]*%}
     # liquid/shopify blocks whose bodies are json, css or js
@@ -877,6 +878,7 @@ _IGNORED_BLOCKS_TAIL: Final = (
     | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
     | <!--.*?-->
     | <\?php.*?\?>
+    | <%(?!\w).*?%>
     | {%[ ]*filter\b(?:(?!%}).)*?%}.*?{%[ ]*endfilter[ ]*%}
     # liquid/shopify blocks whose bodies are json, css or js
     | {%[-+]?[ ]*(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
@@ -962,6 +964,7 @@ _IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
       <style
     | {\*
     | <\?php
+    | <%(?!\w)
     | <script
     | <!--
     | [^\{]{\#(?!\s*djlint\:\s*(?:on|off))
@@ -983,6 +986,7 @@ _IGNORED_BLOCK_CLOSING_BEFORE: Final = r"""
       </style
     | \*}
     | \?>
+    | %>
     | </script
 """
 # a "-->" reachable without crossing the start of a raw text element.
@@ -1042,6 +1046,7 @@ _IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
     | {{-?\s*/\*(?!\s*djlint\:\s*(?:off|on)).*?\*/\s*-?}}
     | <!--.*?-->
     | <\?php.*?\?>
+    | <%(?!\w).*?%>
     | {%[ ]*filter\b(?:(?!%}).)*?%}.*?{%[ ]*endfilter[ ]*%}
     | {%[ ]*blocktranslate\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktranslate[ ]*%}
     | {%[ ]*blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
