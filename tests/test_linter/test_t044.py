@@ -78,6 +78,63 @@ test_data = [
     ),
     pytest.param(("{{{ if x }}}"), (False), id="a handlebars triple stash"),
     pytest.param(("{# {{ if x }} #}"), (False), id="inside a template comment"),
+    pytest.param(
+        ("{% verbatim %}{{ if x }}{% endverbatim %}"),
+        (False),
+        id="inside a verbatim block",
+    ),
+    pytest.param(
+        ("{% verbatim myblock %}{{ if x }}{% endverbatim myblock %}"),
+        (False),
+        id="inside a named verbatim block",
+    ),
+    pytest.param(
+        (
+            "{% verbatim vueapp %}\n"
+            '<div id="app">\n'
+            "  <a :href=\"{{ url ? url : '#' }}\">go</a>\n"
+            "</div>\n"
+            "{% endverbatim vueapp %}"
+        ),
+        (False),
+        id="a vue template inside a named verbatim block",
+    ),
+    pytest.param(
+        ("{% verbatim hbs %}\n<div>{{ else }}</div>\n{% endverbatim hbs %}"),
+        (False),
+        id="a handlebars branch inside a named verbatim block",
+    ),
+    pytest.param(
+        ("{%- verbatim tpl -%}{{ endif }}{%- endverbatim tpl -%}"),
+        (False),
+        id="a named verbatim block with whitespace control",
+    ),
+    pytest.param(
+        ("{% verbatim a %}{{ if x }}{% endverbatim a %}{{ if y }}"),
+        (True),
+        id="a statement after a named verbatim block is still reported",
+    ),
+    pytest.param(
+        ('{% trans "Write {{ if x }} instead" %}'),
+        (False),
+        id="quoted inside a block tag",
+    ),
+    pytest.param(
+        ('{% trans "Write {{ if x }} instead" %}{{ if y }}'),
+        (True),
+        id="a statement after a quoted argument is still reported",
+    ),
+    pytest.param(("{{ url , name }}"), (False), id="a comma after a name"),
+    pytest.param(
+        ('{{ from "x" import y }}'),
+        (True),
+        id="an import written as an output tag",
+    ),
+    pytest.param(
+        ("{{ from - 1 }}"),
+        (False),
+        id="an expression starting with a variable named from",
+    ),
 ]
 
 
@@ -85,6 +142,118 @@ test_data = [
 def test_t044(source: str, reported: bool) -> None:
     filename = "test.html"
     config = Config(filename, profile="django")
+
+    findings = linter(config, source, filename, filename)[filename]
+    codes = [error["code"] for error in findings]
+
+    assert ("T044" in codes) is reported
+
+
+expression_data = [
+    pytest.param(
+        ("{{ url ? url : '#' }}"), ("jinja"), (False), id="a twig ternary"
+    ),
+    pytest.param(
+        ("{{ url ?? '/' }}"), ("jinja"), (False), id="a twig null coalesce"
+    ),
+    pytest.param(("{{ url ?: '/' }}"), ("jinja"), (False), id="a twig elvis"),
+    pytest.param(
+        ("<img src=\"{{ url ?? '/static/x.png' }}\">"),
+        ("jinja"),
+        (False),
+        id="a twig null coalesce in an attribute",
+    ),
+    pytest.param(
+        ("{{ url\n   ? url\n   : '#' }}"),
+        ("jinja"),
+        (False),
+        id="a twig ternary across lines",
+    ),
+    pytest.param(
+        ("{{ include ('sidebar.html') }}"),
+        ("jinja"),
+        (False),
+        id="a space before a call's arguments",
+    ),
+    pytest.param(
+        ("{{ block ('title') }}"),
+        ("jinja"),
+        (False),
+        id="a space before the block function's arguments",
+    ),
+    pytest.param(
+        ("{{ url ('home') }}"),
+        ("jinja"),
+        (False),
+        id="a space before the url function's arguments",
+    ),
+    pytest.param(
+        ("{{ now ('%Y') }}"),
+        ("jinja"),
+        (False),
+        id="a space before the now function's arguments",
+    ),
+    pytest.param(
+        ("{{ filter [0] }}"),
+        ("jinja"),
+        (False),
+        id="a space before a subscript",
+    ),
+    pytest.param(
+        ("{{ url , name }}"), ("jinja"), (False), id="a space before a comma"
+    ),
+    pytest.param(
+        ("{{ block .super }}"),
+        ("jinja"),
+        (False),
+        id="a space before an attribute",
+    ),
+    pytest.param(
+        ("{{ set : 1 }}"), ("jinja"), (False), id="a space before a colon"
+    ),
+    pytest.param(
+        ("{{+ if x }}"),
+        ("jinja"),
+        (True),
+        id="an if with plus whitespace control",
+    ),
+    pytest.param(
+        ("{{+ endif }}"),
+        ("jinja"),
+        (True),
+        id="a closing keyword with plus whitespace control",
+    ),
+    pytest.param(
+        ("{{+ endif }}"),
+        ("nunjucks"),
+        (True),
+        id="nunjucks reads plus whitespace control too",
+    ),
+    pytest.param(
+        ("{{ if -1 > count }}"),
+        ("jinja"),
+        (True),
+        id="an if whose argument starts with a minus",
+    ),
+    pytest.param(
+        ("{{ if !user }}"),
+        ("nunjucks"),
+        (True),
+        id="an if whose argument starts with a bang",
+    ),
+    pytest.param(
+        ("{{ if +x }}"),
+        ("jinja"),
+        (True),
+        id="an if whose argument starts with a plus",
+    ),
+]
+
+
+@pytest.mark.parametrize(("source", "profile", "reported"), expression_data)
+def test_t044_expressions(source: str, profile: str, reported: bool) -> None:
+    filename = "test.html"
+    config = Config(filename, profile=profile)
 
     findings = linter(config, source, filename, filename)[filename]
     codes = [error["code"] for error in findings]

@@ -416,16 +416,7 @@
       - golang
       - handlebars
       - angular
-    flags: re.DOTALL
-    patterns:
-      # a bare keyword such as {{ url }} is an ordinary variable lookup, so
-      # only a keyword followed by an argument is reported; an operator or
-      # expression word after it, as in {{ url ~ "/x" }}, is a jinja
-      # expression rather than a statement
-      - (?<!\{)\{\{-?\s*(?:if|elif|for|block|extends|include|set|with|macro|load|url|trans|blocktrans|import|from|call|filter|autoescape|cycle|firstof|now|regroup|widthratio)\s+(?![-~+*/%=!<>]|(?:is|in|if|and|or|not\s+in)(?![\w.]))[^\s}|]
-      # a closing or branch keyword on its own is never a variable name in
-      # practice; the lookbehind keeps a handlebars triple stash out
-      - (?<!\{)\{\{-?\s*(?:end(?:if|for|block|with|set|macro|call|filter|autoescape|comment|raw|verbatim|spaceless|blocktrans|translate|trans)|else|elif)\s*-?\}\}
+    python_module: djlint.rules.T044
 - rule:
     name: T045
     message: Template tag inside an html comment still runs; use a template comment to disable it.
@@ -454,11 +445,13 @@
     message: Src should not be empty.
     flags: re.DOTALL|re.I
     patterns:
-      # a src with no value at all is empty too; the name boundary keeps
-      # data-src out and the lookahead after the name keeps srcset out, and
-      # only a value the browser reads as empty is reported, so a value that
-      # is only whitespace or one written by a template tag is left alone
-      - <(?:img|script|iframe|embed|source|track|audio|video)(?![\w-])(?:"[^"]*"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'">{}])*?(?<![-.:\w])src(?:\s*=\s*(?:""|''|(?=[/>]))|(?=[\s/>])(?!\s*=))
+      # a src with no value at all is empty too; the name has to start where
+      # an attribute name can start, which keeps data-src, :src and an
+      # unquoted value that merely ends in src out, and the lookahead after
+      # the name keeps srcset out; only a value the browser reads as empty is
+      # reported, so an unquoted value, a whitespace one and one written by a
+      # template tag are all left alone
+      - <(?:img|script|iframe|embed|source|track|audio|video)(?![\w-])(?:"[^"]*"|'[^']*'|{{{(?:[^{}]|}(?!}}))*}}}|{{(?:[^{}]|}(?!}))*}}|{%(?:[^{%]|%(?!}))*%}|{#(?:[^{#]|#(?!}))*#}|[^'"<>])*?(?<=[\s/"'}])src(?:\s*=\s*(?:""|''|(?=/?>))|(?=[\s/>])(?!\s*=))
 - rule:
     name: H057
     skip_in_attributes: true

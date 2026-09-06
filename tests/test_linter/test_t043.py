@@ -5,9 +5,12 @@ uv run pytest tests/test_linter/test_t043.py
 
 from __future__ import annotations
 
+import time
+
 import pytest
 
 from djlint.lint import linter
+from djlint.rules.T043 import run
 from djlint.settings import Config
 
 test_data = [
@@ -116,6 +119,70 @@ test_data = [
         (False),
         id="nor one inside raw",
     ),
+    pytest.param(
+        (
+            "{% block a %}{% endblock %}"
+            "{% verbatim myblock %}{% block a %}{% endblock %}"
+            "{% endverbatim myblock %}"
+        ),
+        (False),
+        id="nor one inside a named verbatim",
+    ),
+    pytest.param(
+        (
+            "<script>window.C = {% block js_conf %}{}{% endblock %};</script>\n"
+            "<script>window.D = {% block js_conf %}{}{% endblock %};</script>"
+        ),
+        (True),
+        id="a script body is text to the engine",
+    ),
+    pytest.param(
+        ("{% block a %}1{% endblock %}<pre>{% block a %}2{% endblock %}</pre>"),
+        (True),
+        id="so is a pre body",
+    ),
+    pytest.param(
+        ("{% block a %}1{% endblock %}\n<!-- {% block a %}2{% endblock %} -->"),
+        (True),
+        id="an html comment hides the block from the browser only",
+    ),
+    pytest.param(
+        (
+            "{% block a %}1{% endblock %}"
+            "{% filter upper %}{% block a %}2{% endblock %}{% endfilter %}"
+        ),
+        (True),
+        id="a filter body is parsed like any other",
+    ),
+    pytest.param(
+        (
+            '{% embed "card.twig" %}{% block body %}one{% endblock %}'
+            "{% endembed %}\n"
+            '{% embed "card.twig" %}{% block body %}two{% endblock %}'
+            "{% endembed %}"
+        ),
+        (False),
+        id="two embeds of one partial fill the same block",
+    ),
+    pytest.param(
+        (
+            '{% embed "card.twig" %}'
+            "{% block body %}one{% endblock %}"
+            "{% block body %}two{% endblock %}"
+            "{% endembed %}"
+        ),
+        (True),
+        id="but a name repeated inside one embed still collides",
+    ),
+    pytest.param(
+        (
+            '{% embed "https://youtu.be/x" %}\n'
+            "{% block a %}1{% endblock %}\n"
+            "{% block a %}2{% endblock %}"
+        ),
+        (True),
+        id="an embed with no closing tag scopes nothing",
+    ),
 ]
 
 
@@ -148,6 +215,63 @@ def test_each_later_occurrence_is_reported_at_its_tag() -> None:
     ]
 
     assert findings == [("3:0", "{% block a %}"), ("5:0", "{% block a %}")]
+
+
+@pytest.mark.parametrize(
+    "profile",
+    [
+        pytest.param("django", id="django"),
+        pytest.param("jinja", id="jinja"),
+        pytest.param("nunjucks", id="nunjucks"),
+    ],
+)
+@pytest.mark.parametrize(
+    "source",
+    [
+        pytest.param(
+            '{% embed "card.twig" %}{% block body %}one{% endblock %}'
+            "{% endembed %}\n"
+            '{% embed "card.twig" %}{% block body %}two{% endblock %}'
+            "{% endembed %}",
+            id="two embeds of the same partial",
+        ),
+        pytest.param(
+            "{% block content %}{% endblock %}\n"
+            '{% embed "card.twig" %}\n'
+            "  {% block content %}hi{% endblock %}\n"
+            "{% endembed %}",
+            id="an embed beside a block of the same name",
+        ),
+    ],
+)
+def test_an_embed_fills_another_template(profile: str, source: str) -> None:
+    filename = "test.html"
+    config = Config(filename, profile=profile)
+
+    findings = linter(config, source, filename, filename)[filename]
+    codes = [error["code"] for error in findings]
+
+    assert "T043" not in codes
+
+
+def test_a_block_tag_with_no_closing_marker_is_scanned_once() -> None:
+    """A file of unterminated tags used to be walked once per tag."""
+    filename = "test.html"
+    config = Config(filename, profile="django")
+    rule = next(
+        entry["rule"]
+        for entry in config.linter_rules
+        if entry["rule"]["name"] == "T043"
+    )
+    source = "{% block a " * 4000
+
+    start = time.perf_counter()
+    errors = run(
+        rule=rule, config=config, html=source, filepath=filename, line_ends=[]
+    )
+
+    assert errors == ()
+    assert time.perf_counter() - start < 2
 
 
 @pytest.mark.parametrize(

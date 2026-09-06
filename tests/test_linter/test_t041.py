@@ -5,6 +5,8 @@ uv run pytest tests/test_linter/test_t041.py
 
 from __future__ import annotations
 
+import time
+
 import pytest
 
 from djlint.lint import linter
@@ -15,13 +17,28 @@ test_data = [
         (
             '{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}'
         ),
-        (False),
-        id="a parent chosen inside a branch, as jinja documents",
+        (True),
+        id="django rejects a parent chosen inside a branch",
     ),
     pytest.param(
         ('{% if x %}{% extends "a.html" %}{% endif %}'),
-        (False),
-        id="an extends guarded by an if",
+        (True),
+        id="django rejects an extends guarded by an if",
+    ),
+    pytest.param(
+        ('{% if a %}\n  {% extends "base.html" %}\n{% endif %}\n'),
+        (True),
+        id="django rejects an extends guarded by an if over three lines",
+    ),
+    pytest.param(
+        ('{% elif a %}{% extends "base.html" %}'),
+        (True),
+        id="django rejects an extends guarded by an elif",
+    ),
+    pytest.param(
+        ('{% if a %}{% if b %}{% extends "base.html" %}{% endif %}{% endif %}'),
+        (True),
+        id="django rejects an extends guarded by nested ifs",
     ),
     pytest.param(
         ('{% load static %}{% extends "base.html" %}'),
@@ -131,8 +148,169 @@ test_data = [
     ),
     pytest.param(
         ('<!-- x -->{% extends "base.html" %}'),
+        (True),
+        id="an html comment before it",
+    ),
+    pytest.param(
+        ('<!-- Copyright 2026 Acme Corp. -->\n{% extends "base.html" %}'),
+        (True),
+        id="a licence html comment before it",
+    ),
+    pytest.param(
+        (
+            '<!--\n  SPDX-License-Identifier: MIT\n-->\n{% extends "base.html" %}'
+        ),
+        (True),
+        id="an html comment over three lines before it",
+    ),
+    pytest.param(
+        ('<!-- <!DOCTYPE html> -->{% extends "base.html" %}'),
+        (True),
+        id="a doctype inside an html comment before it",
+    ),
+    pytest.param(
+        ('<!--[if IE]><p>x</p><![endif]-->{% extends "base.html" %}'),
+        (True),
+        id="a conditional comment before it",
+    ),
+    pytest.param(
+        (
+            "{% comment %}\nA note about this template.\n{% endcomment %}\n"
+            '{% extends "base.html" %}'
+        ),
         (False),
-        id="an html comment is not linted",
+        id="a comment block over three lines before it",
+    ),
+    pytest.param(
+        (
+            "{% comment %}\n  templates/app/page.html\n"
+            "  Renders the profile page.\n{% endcomment %}\n"
+            '{% extends "base.html" %}\n{% block content %}{% endblock %}\n'
+        ),
+        (False),
+        id="a comment block header before it",
+    ),
+    pytest.param(
+        (
+            "{% comment %}\n<p>old markup</p>\n{% endcomment %}\n"
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="markup commented out over lines before it",
+    ),
+    pytest.param(
+        (
+            '{% comment "translators: note" %}\nhi\n{% endcomment %}\n'
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="a comment block with a note before it",
+    ),
+    pytest.param(
+        ('{%comment%}\nnote\n{%endcomment%}\n{% extends "base.html" %}'),
+        (False),
+        id="a comment block written without spaces before it",
+    ),
+    pytest.param(
+        ('{% comment %}note\n{% endcomment %}{% extends "base.html" %}'),
+        (False),
+        id="a comment block closed on the next line before it",
+    ),
+    pytest.param(
+        (
+            "{% comment %}\n"
+            '{% extends "old.html" %}\n'
+            "{% endcomment %}\n"
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="an extends inside a comment block over lines is not the first",
+    ),
+    pytest.param(
+        (
+            "{% verbatim myblock %}{% load x %}{% endverbatim myblock %}"
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="a load inside a named verbatim block",
+    ),
+    pytest.param(
+        (
+            "{% verbatim myblock %}\n{{ vue }}\n{% endverbatim myblock %}\n"
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="a named verbatim block over lines before it",
+    ),
+    pytest.param(
+        (
+            "{% comment %}djlint:off{% endcomment %}{% load x %}"
+            "{% comment %}djlint:on{% endcomment %}"
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="a load inside a comment block djlint:off region",
+    ),
+    pytest.param(
+        (
+            "{% comment %}djlint:off{% endcomment %}\n{% load x %}\n"
+            "{% comment %}djlint:on{% endcomment %}\n"
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="a comment block djlint:off region over lines",
+    ),
+    pytest.param(
+        (
+            "<!-- djlint:off -->\n{% load x %}\n<!-- djlint:on -->\n"
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="a load inside an html comment djlint:off region",
+    ),
+    pytest.param(
+        (
+            "<!-- djlint:off T041 -->{% load x %}<!-- djlint:on -->"
+            '{% extends "base.html" %}'
+        ),
+        (False),
+        id="a load inside an html djlint:off region naming the rule",
+    ),
+    pytest.param(
+        (
+            "{# djlint:off H025 #}{% load x %}{# djlint:on #}"
+            '{% extends "base.html" %}'
+        ),
+        (True),
+        id="a load inside a djlint:off region naming another rule",
+    ),
+    pytest.param(
+        ('{% blocktrans %}Hi{% endblocktrans %}{% extends "base.html" %}'),
+        (True),
+        id="a blocktrans block before it",
+    ),
+    pytest.param(
+        (
+            "{% blocktrans %}\nHello\n{% endblocktrans %}\n"
+            '{% extends "base.html" %}'
+        ),
+        (True),
+        id="a blocktrans block over lines before it",
+    ),
+    pytest.param(
+        ('{% filter upper %}hi{% endfilter %}{% extends "base.html" %}'),
+        (True),
+        id="a filter block before it",
+    ),
+    pytest.param(
+        ('<?php echo 1; ?>{% extends "base.html" %}'),
+        (True),
+        id="a php block before it",
+    ),
+    pytest.param(
+        ('\ufeff---\ntitle: x\n---\n{% extends "base.html" %}'),
+        (False),
+        id="front matter behind a byte order mark",
     ),
 ]
 
@@ -154,6 +332,26 @@ profile_data = [
         ("jinja"),
         (False),
         id="a load inside a raw block",
+    ),
+    pytest.param(
+        (
+            '{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}'
+        ),
+        ("jinja"),
+        (False),
+        id="a parent chosen inside a branch, as jinja documents",
+    ),
+    pytest.param(
+        ('{% if x %}{% extends "a.html" %}{% endif %}'),
+        ("jinja"),
+        (False),
+        id="an extends guarded by an if",
+    ),
+    pytest.param(
+        ('{% if x %}{% extends "a.html" %}{% endif %}'),
+        ("nunjucks"),
+        (False),
+        id="nunjucks takes an extends guarded by an if",
     ),
     pytest.param(
         ('{% load x %}{% extends "base.html" %}'),
@@ -203,6 +401,24 @@ def test_t041_profiles(source: str, profile: str, reported: bool) -> None:
     codes = [error["code"] for error in findings]
 
     assert ("T041" in codes) is reported
+
+
+def test_t041_reads_an_unclosed_prefix_once() -> None:
+    """A prefix of openings that never close costs one pass, not one each.
+
+    Sixteen thousand unclosed `{#` inside an html comment took thirteen
+    seconds when each of them was scanned to the end of the file.
+    """
+    filename = "test.html"
+    config = Config(filename, profile="django")
+    source = "<!--" + ("{#" * 16000) + "-->" + '{% extends "base.html" %}'
+
+    started = time.perf_counter()
+    findings = linter(config, source, filename, filename)[filename]
+    elapsed = time.perf_counter() - started
+
+    assert "T041" in [error["code"] for error in findings]
+    assert elapsed < 5
 
 
 def test_t041_reports_the_extends_tag() -> None:

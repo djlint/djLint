@@ -979,7 +979,7 @@ Do:
 
 Django refuses to compile a template in which another tag comes before `{% extends %}`, and text written before it is rendered, so it leaks into the page ahead of everything the parent template produces. Jinja renders that text too, and nunjucks drops it, so in every engine the template does not do what it looks like it does.
 
-A `{# #}` comment renders nothing and does not count, and neither does anything inside a block djLint does not lint, such as a `{% comment %}`, `{% raw %}` or `{% verbatim %}` block or a `{# djlint:off #}` region. Only the first `{% extends %}` is checked; a second one is an error of its own. A branch tag before it does not count either, since jinja documents `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` as the way to choose a parent.
+A `{# #}` comment renders nothing and does not count, and neither does anything inside a `{% comment %}`, `{% raw %}` or `{% verbatim %}` block, named or not, a `{# djlint:off #}` region in any of its three spellings, or yaml front matter. An html comment does count: the engine writes it into the page ahead of the parent template's doctype, which is the leak this rule is about. So do a `{% blocktrans %}` block, a `{% filter %}` block and a `<?php ?>` block, each of which renders. Only the first `{% extends %}` is checked; a second one is an error of its own. On the jinja and nunjucks profiles a branch tag before it does not count, since jinja documents `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` as the way to choose a parent; django reads the rest of the template into the `{% extends %}` and then rejects the `{% endif %}`, so on that profile a branch tag counts.
 
 Not applied to the handlebars, golang, liquid and angular profiles.
 
@@ -1073,9 +1073,13 @@ Do:
 
 `Block name is used more than once in the template.`
 
-Django, Jinja and Nunjucks all refuse to parse a template that names two blocks the same, so the page fails to load at all. The engines do not care that the two blocks sit in different branches of an `{% if %}`, so each block name has to be unique across the whole file, whether the blocks are side by side or one is nested in another.
+Django, Jinja and Nunjucks all refuse to parse a template that names two blocks the same, so the page fails to load at all. The engines do not care that the two blocks sit in different branches of an `{% if %}`, so each block name has to be unique across the whole template, whether the blocks are side by side or one is nested in another.
 
-Only `{% block %}` counts: a `{% blocktrans %}` is not a block, a `{% endblock name %}` merely names the block it closes, and a block written inside a comment never reaches the parser. Names are compared as written, since the engines treat `Content` and `content` as two blocks.
+Only `{% block %}` counts: a `{% blocktrans %}` is not a block and a `{% endblock name %}` merely names the block it closes. Names are compared as written, since the engines treat `Content` and `content` as two blocks.
+
+Only what the engine itself never parses is skipped: a template comment, a `{% comment %}` block, a `{% raw %}` or `{% verbatim %}` body, and a `djlint:off` region. A block written inside an html comment, a `<script>`, `<style>`, `<pre>` or `<textarea>` body, or a `{% filter %}` body is still counted, since the engine reads all of those and raises on the duplicate name all the same.
+
+An `{% embed %}` opens a scope of its own: the blocks in it fill the embedded template rather than this one, so two embeds of the same partial may each write `{% block body %}`. A name repeated inside a single embed is still reported.
 
 Not applied to the handlebars, golang, liquid and angular profiles.
 
@@ -1131,7 +1135,9 @@ Not applied to the golang, handlebars and angular profiles.
 
 An output tag prints a value, and `if`, `for`, `url`, `include` and the rest are statements that belong in a block tag. Django, Jinja and Nunjucks all reject `{{ if x }}` with a syntax error, and a closing keyword on its own, such as `{{ endif }}`, is read as a variable that renders nothing while the block it was meant to close stays open, so the page either fails to load or shows what the condition should have hidden.
 
-A bare keyword is an ordinary variable name, so `{{ url }}`, `{{ url|default:"/" }}` and `{{ set.name }}` are not reported. Only a keyword followed by an argument is, along with a closing or branch keyword on its own such as `{{ endif }}` or `{{ else }}`. A jinja expression that happens to start with one of these names, such as `{{ url ~ "/x" }}` or `{{ url if url else "#" }}`, is left alone.
+A bare keyword is an ordinary variable name, so `{{ url }}`, `{{ url|default:"/" }}` and `{{ set.name }}` are not reported. Only a keyword given an argument is, along with a closing or branch keyword on its own such as `{{ endif }}` or `{{ else }}`. A control keyword such as `if` or `for` cannot begin an expression, so whatever comes after one is an argument, an operator included, and `{{ if -1 > count }}` is reported. The rest of the names double as variables and functions, and there only a quoted string or a word counts as an argument, so an expression that happens to start with one of them is left alone: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` and `{{ filter [0] }}` are all quiet.
+
+The body of a `{% raw %}` or `{% verbatim %}` block is text rather than template syntax and is skipped, the named form `{% verbatim vueapp %}...{% endverbatim vueapp %}` included, so a Vue or Handlebars `{{ }}` protected that way is not reported. A `{{ }}` written inside a quoted argument of a block tag, as in `{% trans "Write {{ if x }} instead" %}`, is text the engine prints and is left alone too.
 
 Don't:
 
@@ -1335,6 +1341,8 @@ An id names one element. A second element carrying the same id breaks `getElemen
 
 Two ids in exclusive branches of one `{% if %}...{% else %}...{% endif %}` are never both rendered, so they are not reported. A `{% for %}` loop or a `{% block %}` is not a branch: an id inside one and the same id outside it both render, and the later one is reported. A value written by a template tag is unknowable and is left alone, and so is an empty value. Ids are compared exactly, as the browser does, so `save` and `Save` are two ids.
 
+Branches are read in whichever language the file is written in, and in any whitespace the language allows between the delimiters and the tag name: `{% elif %}` and `{% else %}`, liquid's `{% elsif %}` and `{% when %}`, go's `{{ else }}`, a mako `% else:` line statement, and handlebars' `{{else}}`, its chained `{{else if x}}` and the inverse section of any `{{#helper}}` block, custom helpers included. The contents of a `<template>` are a document fragment of their own that `getElementById` never reaches, so an id there is compared only with the ids of that same `<template>`: two templates may each hold a row of the same id, while two of them inside one template are still reported. An id inside a comment, a `{% raw %}` or `{% verbatim %}` body, or a `djlint:off` region is not read at all.
+
 Don't:
 
 ```html
@@ -1355,7 +1363,9 @@ Do:
 
 Html forbids interactive content inside `<a>` and `<button>`. A button inside a link, or a link inside a button, is invalid markup that browsers repair each in their own way, and a screen reader or keyboard user is handed one control that behaves like two. axe reports the same thing as "nested-interactive".
 
-The containers watched are an `<a>` with an `href` and a `<button>`, and the controls reported inside them are a link with an `href`, `button`, `input`, `select` and `textarea`. An `<a>` without an `href` is not interactive and is left alone on either side, as is a hidden input or one whose type a template tag writes. A link or button left open ends with the element around it, as it would in a browser, so one typo does not report the rest of the file.
+The containers watched are an `<a>` with an `href` and a `<button>`, and the controls reported inside them are a link with an `href`, `button`, `input`, `select` and `textarea`. An `<a>` without an `href` is not interactive and is left alone on either side, as is a hidden input or one whose type a template tag writes. The content of a `<template>` is not rendered where it is written, so a control inside one is not nested in the link around it, though nesting written inside the template is still reported.
+
+An attribute is read where a tag writes one and nowhere else: the `href` of `{% if not href %}` names a variable, the one in `{# href="{{ url }}" #}` is commented out and the one in `data-attr=href` belongs to another attribute, while the `href` an `{% if %}` writes between its own tags is an attribute like any other. A link or button left open ends with the element around it, as it would in a browser, so one typo does not report the rest of the file; one left open at the top level has nothing around it to end it and does run to the end of the file, where H025 reports the orphan as well.
 
 Don't:
 
@@ -1395,7 +1405,7 @@ Do:
 
 The html specification says an empty `src` is invalid, and warns that a browser resolves it against the document's own url, so `<img src="">` fetches the page again as an image and `<script src=""></script>` fetches it as a script. It is usually a placeholder a script was meant to fill in, and the fix is to drop the attribute, or hold the value in a data attribute, until there is a real one. A `src` written with no value at all, as in `<img src>`, is empty too and is reported.
 
-Only `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` and `video` are checked, since those are the elements that fetch what `src` names. A value written by a template tag is left alone, as is a value that is only whitespace, and `srcset` and `data-src` are different attributes that the rule does not judge.
+Only `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` and `video` are checked, since those are the elements that fetch what `src` names. Only a value a browser reads as empty is reported, so an unquoted value such as `<img src=/static/logo.png>` is left alone, as is a value that is only whitespace and a value written by a template tag, and `srcset` and `data-src` are different attributes that the rule does not judge.
 
 Don't:
 
