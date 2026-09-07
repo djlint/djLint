@@ -53,9 +53,59 @@ test_data = [
         id="a block tag inside a comment opens nothing",
     ),
     pytest.param(
-        ('{% extends "b.html" %}<!-- note -->{% block a %}x{% endblock %}'),
+        ('<pre>{% extends "base.html" %}</pre>\n<p>lost</p>\n'),
         (True),
-        id="an html comment is output like any other text",
+        id="an extends tag inside a pre still runs",
+    ),
+    pytest.param(
+        (
+            "<script>\nvar t = \"{% extends 'base.html' %}\";\n</script>\n"
+            "<p>lost</p>\n"
+        ),
+        (True),
+        id="an extends tag inside a script still runs",
+    ),
+    pytest.param(
+        ('<!-- {% extends "b.html" %} -->\n<div>free</div>'),
+        (True),
+        id="an extends tag inside an html comment still runs",
+    ),
+    pytest.param(
+        ('{% extends "b.html" %}<!-- note -->{% block a %}x{% endblock %}'),
+        (False),
+        id="an html comment reaches no reader either way",
+    ),
+    pytest.param(
+        (
+            '{% extends "base.html" %}\n{% load static %}\n\n'
+            "<!-- Home page -->\n\n{% block content %}\n<h1>Hi</h1>\n"
+            "{% endblock %}\n"
+        ),
+        (False),
+        id="a section divider comment between the extends and the block",
+    ),
+    pytest.param(
+        ('{% extends "b.html" %}<!-- <p>x</p> -->{% block a %}x{% endblock %}'),
+        (False),
+        id="markup inside an html comment",
+    ),
+    pytest.param(
+        (
+            '{% extends "b.html" %}{% block a %}<!-- {% endblock %} -->'
+            "<p>lost</p>"
+        ),
+        (True),
+        id="a tag inside an html comment is still read",
+    ),
+    pytest.param(
+        ('{% extends "b.html" %}<!-- oops<p>lost</p>'),
+        (True),
+        id="an html comment that is never closed opens none",
+    ),
+    pytest.param(
+        ('{% extends "b.html" %}<p>a --> b</p>{% block a %}x{% endblock %}'),
+        (True),
+        id="an arrow in text closes no html comment",
     ),
     pytest.param(
         ('{% extends "b.html" %}{% block a %}<div>kept</div>{% endblock %}'),
@@ -186,6 +236,116 @@ test_data = [
         (False),
         id="an extends tag inside a comment does not run",
     ),
+    pytest.param(
+        (
+            '{% extends "base.html" %}\n{% block content %}\n'
+            "  {% set body | indent(width=2) %}<p>x</p>{% endset %}\n"
+            "  <p>y</p>\n{% endblock %}\n"
+        ),
+        (False),
+        id="a block form set whose filter takes a keyword argument",
+    ),
+    pytest.param(
+        (
+            '{% extends "base.html" %}\n{% block content %}\n'
+            '{% set cfg | tojson(indent=2) %}{"a": 1}{% endset %}\n'
+            '<div data-cfg="{{ cfg }}">kept</div>\n{% endblock %}\n'
+        ),
+        (False),
+        id="a keyword argument in a set does not close the block around it",
+    ),
+    pytest.param(
+        (
+            '{% extends "b.html" %}{% set x = "a=b" %}'
+            "{% block a %}{{ x }}{% endblock %}<p>lost</p>"
+        ),
+        (True),
+        id="an assigning set with an equals sign in a string",
+    ),
+    pytest.param(
+        (
+            '{% extends "base.html" %}\n{% partialdef card %}\n'
+            '<div class="card">hi</div>\n{% endpartialdef %}\n'
+            "{% block content %}x{% endblock %}\n"
+        ),
+        (False),
+        id="a partialdef captures its body",
+    ),
+    pytest.param(
+        (
+            '{% extends "base.html" %}\n{% partialdef card inline %}\n'
+            '<div class="card">hi</div>\n{% endpartialdef %}\n'
+            "{% block content %}x{% endblock %}\n"
+        ),
+        (False),
+        id="an inline partialdef captures its body",
+    ),
+    pytest.param(
+        (
+            '{% extends "base.html" %}\n{% load sekizai_tags %}\n'
+            '{% addtoblock "css" %}<link rel="stylesheet" href="/a.css">'
+            "{% endaddtoblock %}\n{% block content %}x{% endblock %}\n"
+        ),
+        (False),
+        id="an addtoblock captures its body",
+    ),
+    pytest.param(
+        (
+            '{% extends "base.html" %}\n{% load sekizai_tags %}\n'
+            '{% addtoblock "js" %}<script src="/a.js"></script>'
+            "{% endaddtoblock %}\n{% block content %}x{% endblock %}\n"
+        ),
+        (False),
+        id="an addtoblock holding a script captures its body",
+    ),
+    pytest.param(
+        (
+            '{% extends "b.html" %}<!-- djlint:off --><p>x</p>'
+            "<!-- djlint:on -->{% block a %}x{% endblock %}"
+        ),
+        (False),
+        id="an html comment switches every rule off",
+    ),
+    pytest.param(
+        (
+            '{% extends "b.html" %}\n<!-- djlint:off -->\n<p>x</p>\n'
+            "<!-- djlint:on -->\n{% block a %}x{% endblock %}\n"
+        ),
+        (False),
+        id="an html comment switches every rule off over lines",
+    ),
+    pytest.param(
+        (
+            '{% extends "b.html" %}<!-- djlint:off T042 -->'
+            "{% load static %}<p>x</p>{% load i18n %}<!-- djlint:on -->"
+            "{% block a %}x{% endblock %}"
+        ),
+        (False),
+        id="an html comment switches the rule off around a tag",
+    ),
+    pytest.param(
+        (
+            '{% extends "b.html" %}{{ {"a": {"b": 1}} }}{% block a %}x{% endblock %}'
+        ),
+        (False),
+        id="an output tag holding nested braces",
+    ),
+    pytest.param(
+        (
+            '{% extends "b.html" %}{% include "x.html" with s="%}" %}'
+            "{% block a %}x{% endblock %}"
+        ),
+        (False),
+        id="a tag holding its own closing delimiter in a string",
+    ),
+    pytest.param(
+        (
+            '{% extends "b.html" %}{% if a == \' %}<div>kept</div>'
+            "{% block a %}x{% endblock %}"
+        ),
+        (True),
+        id="a tag with an unclosed quote does not swallow the tags after it",
+    ),
 ]
 
 
@@ -250,6 +410,42 @@ def test_t042_reports_a_run_at_its_start() -> None:
             "match": "<div>\n<p>lost</p>\n</",
             "message": MESSAGE,
         }
+    ]
+
+
+def test_t042_an_arrow_in_text_does_not_split_a_run() -> None:
+    source = '{% extends "b.html" %}<p>a --> b</p>{% block a %}x{% endblock %}'
+    filename = "test.html"
+    config = Config(filename, profile="django")
+
+    findings = linter(config, source, filename, filename)[filename]
+
+    assert [x for x in findings if x["code"] == "T042"] == [
+        {
+            "code": "T042",
+            "line": "1:22",
+            "match": "<p>a --> b</p>",
+            "message": MESSAGE,
+        }
+    ]
+
+
+def test_t042_an_html_comment_pragma_covers_only_its_own_region() -> None:
+    source = (
+        '{% extends "b.html" %}\n'
+        "<p>a</p>\n"
+        "<!-- djlint:off T042 -->\n"
+        "<p>b</p>\n"
+        "<!-- djlint:on -->\n"
+        "{% block x %}{% endblock %}\n"
+    )
+    filename = "test.html"
+    config = Config(filename, profile="django")
+
+    findings = linter(config, source, filename, filename)[filename]
+
+    assert [x for x in findings if x["code"] == "T042"] == [
+        {"code": "T042", "line": "2:0", "match": "<p>a</p>", "message": MESSAGE}
     ]
 
 

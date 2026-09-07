@@ -435,10 +435,16 @@
     message: Lang attribute should be a language tag such as en or pt-BR.
     flags: re.DOTALL|re.I
     patterns:
-      # a value written by a template tag is unknowable and an empty one is
-      # H005's, so only a literal value that is not a tag is reported; the
-      # name boundary keeps xml:lang and data-lang out
-      - <html(?![\w-])(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])lang\s*=\s*(["'])?\s*(?!(?(1)[^"'>]*|[^"'\s>]*)(?:{[{%\#]|\${))(?![a-z]{2,3}(?:-[a-z0-9]{1,8})*\s*(?(1)\1|[\s/>]))[^"'\s/>{$][^"'\s/>]*
+      # a value written by a template tag is unknowable, and a php short echo
+      # is one too, since only the "<?php" spelling is an ignored block; an
+      # empty value is H005's, but a value that is only whitespace is not, so
+      # it is reported here; the name boundary keeps xml:lang and data-lang
+      # out, and end of file counts as the end of the value, so a truncated
+      # "<html lang=en" is not read as a bad tag; the attribute skip steps over
+      # a template tag whole, so a ">" written inside one, as in
+      # "{% if a > b %}", does not hide the lang, and it stops at the next "<",
+      # which keeps the scan linear on a document of unterminated tags
+      - <html(?![\w-])(?:"[^"]*"|'[^']*'|{{(?:[^{}]|}(?!}))*}}|{%(?:[^{%]|%(?!}))*%}|{\#(?:[^{\#]|\#(?!}))*\#}|[^'"<>])*?(?<![-.:\w])lang\s*=\s*(["'])?(?!(?(1)[^"'>]*|[^"'\s>]*)(?:{[{%\#]|\${|<\?))(?!\s*[a-z]{2,3}(?:-[a-z0-9]{1,8})*\s*(?:(?(1)\1|[\s/>])|$))(?(1)[^"'>]+|[^"'\s/>]+)
 - rule:
     name: H056
     skip_in_attributes: true

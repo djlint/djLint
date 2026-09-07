@@ -163,6 +163,138 @@ test_data = [
     pytest.param(
         ("<!-- plain comment -->"), ("django"), (False), id="a plain comment"
     ),
+    pytest.param(
+        ("<!-- Template: {{ template }} -->"),
+        ("liquid"),
+        (False),
+        id="a liquid object whose name is also a go keyword",
+    ),
+    pytest.param(
+        ("<!-- period {{ start }} to {{ end }} -->"),
+        ("django"),
+        (False),
+        id="a date range whose end is also a go keyword",
+    ),
+    pytest.param(
+        ("<!-- {{ block }} -->"),
+        ("django"),
+        (False),
+        id="a value the docs promise is left alone",
+    ),
+    pytest.param(
+        ("<!-- fallback {{ else }} -->"),
+        ("jinja"),
+        (False),
+        id="a jinja value whose name is also a go keyword",
+    ),
+    pytest.param(
+        ("<!-- {{if .X}}y{{end}} -->"),
+        ("all"),
+        (True),
+        id="a go block carrying an operand under no profile",
+    ),
+    pytest.param(
+        ("<!-- {{ end }} -->"),
+        ("golang"),
+        (True),
+        id="a bare go keyword under the go profile",
+    ),
+    pytest.param(
+        ("<!--" * 8000),
+        ("django"),
+        (False),
+        id="a file of openings nothing closes",
+    ),
+    pytest.param(
+        ("<!--[If IE]><p>{% if x %}a{% endif %}</p><![endif]-->"),
+        ("django"),
+        (False),
+        id="a conditional comment written in caps",
+    ),
+    pytest.param(
+        ("{%- comment -%}\n<!-- {% if x %}{% endif %} -->\n{%- endcomment -%}"),
+        ("liquid"),
+        (False),
+        id="a comment block written with whitespace control",
+    ),
+    pytest.param(
+        ("{%\tcomment\t%}<!-- {% if x %}{% endif %} -->{%\tendcomment\t%}"),
+        ("django"),
+        (False),
+        id="a comment block written with tabs",
+    ),
+    pytest.param(
+        (
+            "{% verbatim myblock %}<!-- {% if x %}{% endif %} -->"
+            "{% endverbatim myblock %}"
+        ),
+        ("django"),
+        (False),
+        id="the html comment is inside a named verbatim block",
+    ),
+    pytest.param(
+        ("{{{{raw}}}}<!-- {{#if x}}y{{/if}} -->{{{{/raw}}}}"),
+        ("handlebars"),
+        (False),
+        id="the html comment is inside a handlebars raw block",
+    ),
+    pytest.param(
+        ("<!-- {{{{raw}}}}{{#if x}}{{/if}}{{{{/raw}}}} -->"),
+        ("handlebars"),
+        (False),
+        id="a handlebars raw block inside the html comment",
+    ),
+    pytest.param(
+        ("<!-- {% # just a note %} -->"),
+        ("liquid"),
+        (False),
+        id="a liquid inline comment inside the html comment",
+    ),
+    pytest.param(
+        ("<!-- battery at 50{% charge -->"),
+        ("handlebars"),
+        (False),
+        id="an opening no closing brace follows",
+    ),
+    pytest.param(
+        ("<!-- log format is {%s} on error -->"),
+        ("django"),
+        (False),
+        id="prose that reads like an opening",
+    ),
+    pytest.param(
+        ('<!-- {% if x|default:"50%" %} -->'),
+        ("django"),
+        (True),
+        id="a tag carrying a percent sign",
+    ),
+    pytest.param(
+        ('<!-- [if in doubt] {% include "x.html" %} -->'),
+        ("django"),
+        (True),
+        id="prose in brackets is not a conditional comment",
+    ),
+    pytest.param(
+        ('<!-- [if-modified-since] {% include "x.html" %} -->'),
+        ("django"),
+        (True),
+        id="a hyphenated word is not a conditional comment",
+    ),
+    pytest.param(
+        (
+            '<!--[if lt IE 9]><script src="shiv.js"></script>\n'
+            '<!-- {% include "debug.html" %} -->'
+        ),
+        ("django"),
+        (True),
+        id="a conditional comment left unclosed is an ordinary comment",
+    ),
+    pytest.param(
+        ('<!-- {% include "debug.html" %} --!>'),
+        ("django"),
+        (True),
+        id="a comment closed by the bang html accepts",
+    ),
 ]
 
 

@@ -7,11 +7,13 @@ every `{% block %}`, so a paragraph that looks fine in the source never
 reaches the page.
 
 A template tag there still runs, so `{% load %}`, `{% set %}` and an
-`{% if %}` wrapped around a block are left alone. The body of a
-`{% macro %}` or of a block form `{% set %}` is captured rather than
-output, so it is left alone too, as is anything inside `{% comment %}`,
-`{% raw %}` or `{% verbatim %}`. A `{% blocktrans %}` is not a
-`{% block %}`: its text is output like any other and is reported.
+`{% if %}` wrapped around a block are left alone. A tag that holds a
+captured body, as `{% macro %}`, a block form `{% set %}`,
+`{% partialdef %}` or `{% addtoblock %}`, keeps its body rather than
+writing it out where it stands, so that body is left alone too, as is
+anything inside `{% comment %}`, `{% raw %}`, `{% verbatim %}`, `{# #}`
+or an html comment. A `{% blocktrans %}` is not a `{% block %}`: its text
+is output like any other and is reported.
 """
 
 from __future__ import annotations
@@ -20,11 +22,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.helpers import (
-    inside_ignored_linter_block,
-    inside_ignored_rule,
-    overlaps_ignored_block,
-)
+from djlint.helpers import inside_ignored_rule
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
@@ -36,44 +34,111 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-_EXTENDS_PATTERN: Final = re.compile(
-    r"{%[-+]?\s*extends\b(?:(?!%}).)*%}", re.S, cache_pattern=False
-)
 _HIDDEN_REGION: Final = (
-    r"{%[-+]?\s*(comment|raw|verbatim)\b(?:(?!%}).)*%}"
-    r".*?{%[-+]?\s*end\1\b(?:(?!%}).)*%}"
+    r"{%[-+]?\s*(?P<hidden>comment|raw|verbatim)\b(?:(?!%}).)*%}"
+    r".*?{%[-+]?\s*end(?P=hidden)\b(?:(?!%}).)*%}"
 )
-_TOKEN_PATTERN: Final = re.compile(
-    rf"{_HIDDEN_REGION}|{{#.*?#}}|{{%.*?%}}|{{{{.*?}}}}",
+_TAGS: Final = rf"{_HIDDEN_REGION}|{{#.*?#}}|{{%.*?%}}|{{{{.*?}}}}"
+_TOKEN_PATTERN: Final = re.compile(rf"{_TAGS}|<!--", re.S, cache_pattern=False)
+_COMMENTED_TOKEN_PATTERN: Final = re.compile(
+    rf"{_TAGS}|-->", re.S, cache_pattern=False
+)
+_EXTENDS_PATTERN: Final = re.compile(
+    r"{%[-+]?\s*extends\b", cache_pattern=False
+)
+_CAPTURING_PATTERN: Final = re.compile(
+    r"{%[-+]?\s*(?P<end>end)?"
+    r"(?P<name>block(?!trans)|macro|set|partialdef|addtoblock)\b"
+    r"(?P<rest>(?:(?!%}).)*)",
     re.S,
     cache_pattern=False,
-)
-_CAPTURING_OPENING_PATTERN: Final = re.compile(
-    r"{%[-+]?\s*(?:block(?!trans)|macro|set(?!(?:(?!%}).)*=))\b",
-    re.S,
-    cache_pattern=False,
-)
-_CAPTURING_CLOSING_PATTERN: Final = re.compile(
-    r"{%[-+]?\s*end(?:block(?!trans)|macro|set)\b", cache_pattern=False
 )
 _CONTENT_PATTERN: Final = re.compile(r"\S(?:.*\S)?", re.S, cache_pattern=False)
 
 
-def _first_extends(config: Config, html: str) -> re.Match[str] | None:
-    """The first `{% extends %}` tag that executes, or None.
+def _tag_end(html: str, start: int, /, *, braces: bool) -> int | None:
+    """The end of the tag at `start`, or None if it never closes.
 
-    An extends tag written inside a comment or a raw block never runs,
-    so it does not turn the template into a child.
+    The lazy scan that finds a tag stops at the first closing delimiter,
+    which is the wrong one when the tag writes that delimiter inside a
+    string, as `{% include "x" with s="%}" %}` does, or nests braces, as
+    `{{ {"a": {"b": 1}} }}` does. Reading the tag again, skipping quoted
+    text and counting braces, finds the delimiter that really closes it.
+
+    A tag that opens a quote it never closes, which no engine would parse
+    either, has no end here rather than an end past the next tag along.
     """
-    return next(
-        (
-            match
-            for match in _EXTENDS_PATTERN.finditer(html)
-            if not overlaps_ignored_block(config, html, match)
-            and not inside_ignored_linter_block(config, html, match)
-        ),
-        None,
-    )
+    closing = "}}" if braces else "%}"
+    quote = ""
+    depth = 0
+    index = start + 2
+    while index < len(html):
+        char = html[index]
+        if quote:
+            if char == "\\":
+                index += 1
+            elif char == quote:
+                quote = ""
+        elif char in {'"', "'"}:
+            quote = char
+        elif braces and char == "{":
+            depth += 1
+        elif braces and char == "}" and depth:
+            depth -= 1
+        elif not depth and html.startswith(closing, index):
+            return index + 2
+        index += 1
+    return None
+
+
+def _assigns(rest: str) -> bool:
+    """Whether a `{% set %}` tag assigns a value instead of opening a body.
+
+    `{% set x = 1 %}` assigns and holds nothing, while `{% set nav %}`
+    opens a body that `{% endset %}` closes. Only a bare top level `=`
+    assigns: a filter writes its keyword arguments inside brackets, as in
+    `{% set body | indent(width=2) %}`, and a comparison writes `==`.
+    """
+    quote = ""
+    depth = 0
+    previous = ""
+    for index, char in enumerate(rest):
+        if quote:
+            if char == quote and previous != "\\":
+                quote = ""
+        elif char in {'"', "'"}:
+            quote = char
+        elif char in {"(", "[", "{"}:
+            depth += 1
+        elif char in {")", "]", "}"}:
+            depth -= 1
+        elif (
+            char == "="
+            and depth <= 0
+            and previous not in {"=", "!", "<", ">"}
+            and not rest.startswith("=", index + 1)
+        ):
+            return True
+        previous = char
+    return False
+
+
+def _captured_body(tag: str) -> tuple[str, bool] | None:
+    """The name of the captured body a tag opens or closes, or None.
+
+    The engine holds on to the body of a `{% block %}`, `{% macro %}`,
+    block form `{% set %}`, `{% partialdef %}` or `{% addtoblock %}` and
+    writes it out elsewhere, so markup inside one is not lost even when
+    the tag stands outside every block.
+    """
+    match = _CAPTURING_PATTERN.match(tag)
+    if match is None:
+        return None
+    name = match.group("name")
+    closing = match.group("end") is not None
+    if name == "set" and not closing and _assigns(match.group("rest")):
+        return None
+    return name, closing
 
 
 def run(
@@ -87,24 +152,32 @@ def run(
 ) -> tuple[LintError, ...]:
     """Check for content outside a block in a template that extends another.
 
-    The template after the extends tag is read as a stream of tags with
-    text between them. A tag that captures its body, as `{% block %}`,
-    `{% macro %}` or a block form `{% set %}`, is counted on a depth, and
-    each run of text found at depth zero is reported once, at its start.
-    A tag between two runs splits them, so each is reported on its own.
-    """
-    extends = _first_extends(config, html)
-    if extends is None:
-        return ()
+    The template is read as a stream of tags with text between them. A
+    tag whose body the engine captures is counted on a stack, and once
+    the `{% extends %}` tag has gone by, each run of text found with that
+    stack empty is reported once, at its start. A tag between two runs
+    splits them, so each is reported on its own.
 
+    The engine reads tags before html, so an `{% extends %}` inside an
+    html comment or a `<pre>` still runs; only `{% comment %}`,
+    `{% raw %}`, `{% verbatim %}` and `{# #}` really hide one. Text
+    inside an html comment reaches no reader either way and is not
+    reported, but the tags written there are still read. A `<!--` with
+    no `-->` left to close it opens no comment, so a stray one cannot
+    quietly switch the rest of the file off.
+    """
     errors: list[LintError] = []
-    depth = 0
-    position = extends.end()
+    stack: list[str] = []
+    commented = False
+    extended = False
+    position = 0
+    last_comment_close = html.rfind("-->")
 
     while True:
-        token = _TOKEN_PATTERN.search(html, position)
+        pattern = _COMMENTED_TOKEN_PATTERN if commented else _TOKEN_PATTERN
+        token = pattern.search(html, position)
         text_end = token.start() if token else len(html)
-        if depth == 0:
+        if extended and not stack and not commented:
             content = _CONTENT_PATTERN.search(html, position, text_end)
             if content and not inside_ignored_rule(
                 config, html, content, rule["name"]
@@ -118,10 +191,37 @@ def run(
         if token is None:
             break
 
+        tag = token.group()
         position = token.end()
-        if _CAPTURING_OPENING_PATTERN.match(token.group()):
-            depth += 1
-        elif _CAPTURING_CLOSING_PATTERN.match(token.group()) and depth:
-            depth -= 1
+        if tag == "<!--":
+            commented = token.start() < last_comment_close
+            continue
+        if tag == "-->":
+            commented = False
+            continue
+
+        if token.group("hidden") is None and tag[:2] in {"{%", "{{"}:
+            end = _tag_end(html, token.start(), braces=tag[1] == "{")
+            if end is not None and end > position:
+                longer = html[token.start() : end]
+                # A tag reaching over another one has read a quote wrong.
+                if "{%" not in longer[2:] and "{{" not in longer[2:]:
+                    position = end
+                    tag = longer
+
+        if not extended:
+            extended = _EXTENDS_PATTERN.match(tag) is not None
+            if extended:
+                continue
+
+        captured = _captured_body(tag)
+        if captured is None:
+            continue
+        name, closing = captured
+        if not closing:
+            stack.append(name)
+        elif name in stack:
+            while stack.pop() != name:
+                pass
 
     return tuple(errors)

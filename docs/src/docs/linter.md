@@ -1023,7 +1023,9 @@ Do:
 
 Once a template extends another, the parent decides what is output and the child only fills the parent's blocks. Text or html written after `{% extends %}` and outside every `{% block %}` is silently discarded at render time, so a paragraph that looks fine in the source never reaches the page.
 
-A template tag there still runs, so `{% load %}`, `{% set %}` and an `{% if %}` wrapped around a block are left alone, as are `{# #}` and `{% comment %}` comments, `{% raw %}` and `{% verbatim %}` blocks, and the body of a `{% macro %}` or a block form `{% set %}`, which is captured rather than output. An html comment is output like any other text, so one outside a block is reported, and so is the text of a `{% blocktrans %}`, which is not a `{% block %}`. Only content after the extends tag is considered, and each run of it is reported once, at its start.
+A template tag there still runs, so `{% load %}`, `{% set %}` and an `{% if %}` wrapped around a block are left alone, as are `{# #}` and `{% comment %}` comments, html comments, `{% raw %}` and `{% verbatim %}` blocks, and the body of a `{% macro %}`, a block form `{% set %}`, a `{% partialdef %}` or an `{% addtoblock %}`, which is captured rather than output. The text of a `{% blocktrans %}` is reported, since a `{% blocktrans %}` is not a `{% block %}`. Only content after the extends tag is considered, and each run of it is reported once, at its start.
+
+The engine reads template tags before html, so an `{% extends %}` written inside an html comment or a `<pre>` still runs and still makes the file a child; only `{# #}`, `{% comment %}`, `{% raw %}` and `{% verbatim %}` really hide one. Text inside an html comment reaches no reader either way and is not reported, but the tags written there are still read.
 
 Not applied to the handlebars, golang, liquid and angular profiles.
 
@@ -1177,7 +1179,9 @@ Do:
 
 An html comment hides markup from the browser, not from the template engine. `<!-- {% include "debug.html" %} -->` still renders the file, and `<!-- {% if debug %}...{% endif %} -->` still evaluates, in Django, Jinja, Nunjucks, Handlebars and Go alike, so a tag commented out this way keeps running, and whatever it writes lands inside the comment or, if it holds `-->`, breaks out of it. Only a template comment, `{# #}` in Django and Jinja, `{{! }}` in Handlebars or `{{/* */}}` in Go, stops a tag from running.
 
-Only a statement tag is reported: `{% %}`, a handlebars section, close or partial, and a Go keyword such as `{{if}}` or `{{end}}`. A value printed into a comment, as in `<!-- built {{ version }} -->`, is a deliberate use and is left alone, as is a tag inside a template comment or `{% comment %}` block, and a conditional comment for Internet Explorer, `<!--[if IE]> ... <![endif]-->`, whose body is markup for the browser it names.
+Only a statement tag is reported: `{% %}` under the profiles that have it, a handlebars section, close or partial, and a Go keyword such as `{{if}}` or `{{end}}`. A value printed into a comment, as in `<!-- built {{ version }} -->`, is a deliberate use and is left alone, as is a tag inside a template comment, a `{% comment %}` block or a raw block, and a conditional comment for Internet Explorer, `<!--[if IE]> ... <![endif]-->`, whose body is markup for the browser it names.
+
+A bare Go keyword is an ordinary variable name in every other engine, so `<!-- period {{ start }} to {{ end }} -->` and `<!-- Template: {{ template }} -->` are values under Django, Jinja, Nunjucks, Handlebars and Liquid, and read as statements only under `--profile golang`. One carrying a Go operand, as `{{ if .X }}` and `{{ template "footer" . }}` do, is a statement no other engine prints and is reported under any profile. `{%` is likewise read only where the engine has it, so it is text under `--profile handlebars` and `--profile golang`, and an opening no closing brace follows, as in `<!-- battery at 50{% charge -->`, is the prose it looks like. A conditional comment is one written as such, opening on `<!--[if` and closed by its `<![endif]-->` in any case; one left unclosed is the ordinary comment a browser reads it as, and the tags in it are reported.
 
 Don't:
 
@@ -1385,7 +1389,7 @@ Do:
 
 H005 asks for a `lang` on `<html>`, but a value such as `lang="english"` or `lang="en_US"` satisfies it while naming no language a browser knows. A screen reader then falls back to its default voice, and translation and hyphenation pick the wrong rules or none. The value has to be a BCP 47 tag: two or three letters, then any number of subtags of one to eight letters or digits, each after a hyphen, as in `en`, `pt-BR` or `zh-Hant-TW`.
 
-Only the `<html>` tag is checked, matching H005, and an empty value is left to that rule. A value written by a template tag, as in `lang="{{ LANGUAGE_CODE }}"`, is unknowable and is left alone, and `xml:lang` or `data-lang` is not read as `lang`.
+Only the `<html>` tag is checked, matching H005. An empty value is left to that rule, while a value that is only whitespace is reported here, since H005 reads it as a value. A value written by a template tag, as in `lang="{{ LANGUAGE_CODE }}"`, or by a php short echo, as in `lang="<?= $lang ?>"`, is unknowable and is left alone, but a value that merely starts with `$` or `{`, as in `lang="$LANG"`, is read as written. `xml:lang` or `data-lang` is not read as `lang`, and a `>` written inside a template tag ahead of the attribute, as in `{% if a > b %}`, does not hide it.
 
 Don't:
 

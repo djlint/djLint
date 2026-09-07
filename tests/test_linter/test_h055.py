@@ -5,6 +5,8 @@ uv run pytest tests/test_linter/test_h055.py
 
 from __future__ import annotations
 
+import time
+
 import pytest
 
 from djlint.lint import linter
@@ -38,6 +40,30 @@ test_data = [
         (True),
         id="an empty subtag after another attribute",
     ),
+    pytest.param(
+        ('<html lang="  ">'), (True), id="a value that is only whitespace"
+    ),
+    pytest.param(('<html lang="\n">'), (True), id="a value that is a newline"),
+    pytest.param(
+        ('<html lang="$LANG">'),
+        (True),
+        id="a value starting with a bare dollar sign",
+    ),
+    pytest.param(
+        ('<html lang="{english}">'),
+        (True),
+        id="a value starting with a bare brace",
+    ),
+    pytest.param(
+        ('<html {% if a > b %}dir="rtl"{% endif %} lang="english">'),
+        (True),
+        id="a greater than sign inside a template tag before the value",
+    ),
+    pytest.param(
+        ('<html {{ "rtl" if a > b }} lang="en_US">'),
+        (True),
+        id="a greater than sign inside an output tag before the value",
+    ),
     pytest.param(('<html lang="en">'), (False), id="a two letter tag"),
     pytest.param(
         ('<html lang="EN">'), (False), id="the tag is read whatever its case"
@@ -57,6 +83,37 @@ test_data = [
         ('<html lang="{% get_current_language as l %}{{ l }}">'),
         (False),
         id="a value written by a template tag",
+    ),
+    pytest.param(
+        ('<html lang="${LANG}">'),
+        (False),
+        id="a value written by a shell style substitution",
+    ),
+    pytest.param(
+        ('<html lang="<?= $lang ?>">'),
+        (False),
+        id="a value written by a php short echo tag",
+    ),
+    pytest.param(
+        ('<html lang="<? echo $l; ?>">'),
+        (False),
+        id="a value written by a php short open tag",
+    ),
+    pytest.param(
+        ('<html lang=" en ">'),
+        (False),
+        id="whitespace around a tag is not part of it",
+    ),
+    pytest.param(
+        ('<html lang="en'), (False), id="a tag whose closing quote is missing"
+    ),
+    pytest.param(
+        ("<html lang=en"), (False), id="an unquoted tag at the end of the file"
+    ),
+    pytest.param(
+        ('<html {% if a > b %}dir="rtl"{% endif %} lang="pt-BR">'),
+        (False),
+        id="a tag read past a template tag holding a greater than sign",
     ),
     pytest.param(
         ('<html lang="">'), (False), id="an empty value is left to H005"
@@ -87,3 +144,20 @@ def test_h055(source: str, reported: bool) -> None:
     codes = [error["code"] for error in findings]
 
     assert ("H055" in codes) is reported
+
+
+def test_h055_walks_unclosed_tags_once() -> None:
+    """A tag left open must not send the scan over the rest of the file."""
+    config = Config("test.html", profile="django")
+    pattern = next(
+        entry["rule"]["compiled_patterns"][0]
+        for entry in config.linter_rules
+        if entry["rule"]["name"] == "H055"
+    )
+    source = '<html a="b" ' * 3000
+
+    start = time.perf_counter()
+    match = pattern.search(source)
+
+    assert match is None
+    assert time.perf_counter() - start < 2
