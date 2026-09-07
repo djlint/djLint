@@ -23,6 +23,7 @@
 ### Fix
 
 - A mako `<% %>` or `<%! %>` code block is left as written, since its body is python rather than markup. Formatting re-indented it, flattening a `return "unit"` inside an `if` to the start of the line and leaving python that no longer parses, and a tag written in a python string was read as markup, so `H025`, `H054` and `T001` reported findings inside these blocks. A `<%def>` body is markup and is still formatted and linted.
+- A second `{# #}` comment on a line no longer swallows everything back to the first one, so a tag written between two comments is formatted and linted like any other. Before, it kept lines past `--max-line-length` and hid findings from the rules. A comment now ends at its first `#}`, which is where django, jinja and nunjucks end it.
 - `H037` no longer reads an unquoted attribute value as an attribute name, so `<img width=1 height=1>` is not reported as a duplicate `1`. This started in 1.45.0, and a real duplicate whose values are unquoted and start with `/`, `.` or `#`, as in `href=/a href=/b`, is now caught too.
 
 ## [1.45.2] - 2026-09-04

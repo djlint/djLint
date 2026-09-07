@@ -821,7 +821,7 @@ _OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS: Final = r"""
 _IGNORED_INLINE_BLOCKS_TAIL: Final = r"""
       <!--.*?-->
     | {\*.*?\*}
-    | (?<!\{){\#(?!.*djlint:[ ]*(?:off|on)\b).*\#}
+    | (?<!\{){\#(?!.*djlint:[ ]*(?:off|on)\b).*?\#}
     | <\?php.*?\?>
     | <%(?!\w).*?%>
     | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?{%[ ]*endcomment[ ]*%}

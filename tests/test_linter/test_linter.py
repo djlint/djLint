@@ -1175,3 +1175,15 @@ def test_H016_does_not_take_an_svg_title_for_the_document_title(
     )
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H016" not in result.output
+
+
+def test_a_rule_still_sees_what_two_inline_comments_surround(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b'{# a #}<img src="x.png">{# b #}')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H013 1:" in result.output
+
+    write_to_file(tmp_file.name, b'{# a <img src="x.png"> b #}')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H013" not in result.output
