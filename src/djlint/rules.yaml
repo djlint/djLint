@@ -460,12 +460,5 @@
       - <(?:img|script|iframe|embed|source|track|audio|video)(?![\w-])(?:"[^"]*"|'[^']*'|{{{(?:[^{}]|}(?!}}))*}}}|{{(?:[^{}]|}(?!}))*}}|{%(?:[^{%]|%(?!}))*%}|{#(?:[^{#]|#(?!}))*#}|[^'"<>])*?(?<=[\s/"'}])src(?:\s*=\s*(?:""|''|(?=/?>))|(?=[\s/>])(?!\s*=))
 - rule:
     name: H057
-    skip_in_attributes: true
     message: Video should have a captions track.
-    flags: re.DOTALL|re.I
-    patterns:
-      # a track with no kind is subtitles by default, so the body has to hold
-      # no track at all, or only tracks of some other kind; a muted video has
-      # no audio to caption, and a template tag in the tag or the body may
-      # write the tracks, so both are left alone
-      - <video(?![\w-])(?!(?:"[^"]*"|'[^']*'|[^'">])*(?<![-.:\w])muted(?=[\s/>=]))(?![^>]*[{$])(?:"[^"]*"|'[^']*'|[^'">])*>(?!(?:(?!</video>).)*(?:[{$]|<track(?![\w-])(?!(?:"[^"]*"|'[^']*'|[^'">])*(?<![-.:\w])kind\s*=\s*["']?(?!captions|subtitles)[a-z])))(?:(?!</video>).)*</video>
+    python_module: djlint.rules.H057

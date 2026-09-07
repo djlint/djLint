@@ -1429,7 +1429,9 @@ Do:
 
 A video with sound carries its speech only in the audio, so a deaf or hard-of-hearing viewer gets nothing from it without captions, which WCAG 1.2.2 Captions (Prerecorded) requires. A `<track>` with a `kind` of `captions` or `subtitles` inside the `<video>` satisfies the rule, and so does a `<track>` with no `kind` at all, since `subtitles` is the default.
 
-A `muted` video has no audio to caption and is not reported. Nor is a video whose opening tag or body holds a template tag, since the tracks, or the `muted` attribute, may be written by the template where djLint cannot see them.
+A `muted` video has no audio to caption and is not reported. Nor is a video whose opening tag or body holds a template tag, since the tracks, or the `muted` attribute, may be written by the template where djLint cannot see them. A template tag means one a template language opens, `{{`, `{%`, `{#` or `${`, so a jQuery handler such as `onclick="$(this).play()"`, an Alpine `$refs`, a css brace and a price written in the fallback text are the ordinary text they look like and the video is still read.
+
+Only markup counts as markup. `muted` has to be the attribute, so `<video class=muted>` is a class named muted and is reported, and a `<track>` that is commented out or written inside an attribute value is text rather than a track. A `</video>` inside a value ends nothing, and the element is judged where its real end tag closes it, so a `<video>` left open is left to `H025`.
 
 Don't:
 
