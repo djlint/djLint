@@ -392,7 +392,7 @@ def _html_attribute_spans(html: str, /) -> tuple[tuple[int, int], ...]:
     )
 
 
-def inside_html_attribute(html: str, match: re.Match[str]) -> bool:
+def inside_html_attribute(html: str, match: SpanMatch) -> bool:
     """Check if a re.Match is inside of an html attribute."""
     match_start, match_end = match.span()
     return _inside_non_overlapping_span(

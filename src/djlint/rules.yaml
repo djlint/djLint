@@ -175,13 +175,8 @@
       - <\w+\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])style\s*=
 - rule:
     name: H022
-    skip_in_attributes: true
     message: Use HTTPS for external links.
-    flags: re.I
-    patterns:
-      # a quoted value is stepped over whole, so an "http://" written inside
-      # one is not read as a link; a loopback or private host is not external
-      - <\w+\s(?:\"[^\"]*\"|'[^']*'|[^'\">])*?(?<![-.:\w])(?:href|data-url|action|src|url|srcset)\s*=[\"']http://(?!localhost[:/\"']|127\.0\.0\.1|0\.0\.0\.0|\[::1\]|10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.|[^\"'/]*\.(?:local|test|localhost)[:/\"'])
+    python_module: djlint.rules.H022
 - rule:
     name: H023
     message: Do not use entity references.
@@ -266,22 +261,8 @@
       - '{%(?:"[^"]*"|''[^'']*''|(?!%}|}%)[^"''])*}%'
 - rule:
     name: H036
-    skip_in_attributes: true
     message: Do not use br tags for spacing.
-    flags: re.I|re.X
-    patterns:
-      # a run of breaks is vertical space rather than a break in the content
-      - <br\s*/?>(?:\s|&nbsp;|&\#160;)*<br\s*/?>
-      # a break against the inside edge of a block box renders nothing that the
-      # box's own margin does not
-      - |-
-        <(?:p|div|li|dd|dt|td|th|section|article|aside|header|footer|main
-          |nav|blockquote|figcaption|h[1-6])\b(?:"[^"]*"|'[^']*'|[^>"'])*>
-        \s*<br\s*/?>
-      - |-
-        <br\s*/?>\s*
-        </(?:p|div|li|dd|dt|td|th|section|article|aside|header|footer|main
-           |nav|blockquote|figcaption|h[1-6])\s*>
+    python_module: djlint.rules.H036
 - rule:
     name: H037
     message: Duplicate attribute found.
