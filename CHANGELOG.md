@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.46.0] - 2026-09-07
+
 ### Feature
 
 - New rule `T041` reports an `{% extends %}` that is not the first tag in the template, which django refuses to compile and which leaks whatever text comes before it into the page. A `{# #}` comment before it is left alone, as is anything inside a `{% comment %}`, `{% raw %}` or `{% verbatim %}` block, named or not, a `{# djlint:off #}` region or yaml front matter. An html comment is reported, since it is written into the page ahead of the parent template's doctype, and so is a branch tag on the django profile, where `{% if x %}{% extends "a.html" %}{% endif %}` does not compile; jinja documents that form and keeps it.
