@@ -526,11 +526,7 @@ def main(
     _use_utf8(sys.stderr)
 
     from djlint.settings import Config  # noqa: PLC0415
-    from djlint.src import (  # noqa: PLC0415
-        get_src,
-        has_pragma,
-        print_no_files_to_check,
-    )
+    from djlint.src import get_src, has_pragma, print_no_files_to_check  # noqa: PLC0415
 
     if os.getenv("NO_COLOR") is not None:
         click.get_current_context().color = False
