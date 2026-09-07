@@ -17,6 +17,7 @@ from djlint.const import (
     HTML_RAW_TEXT_ELEMENTS,
     HTML_TAG_NAMES,
     HTML_VOID_ELEMENTS,
+    TEMPLATE_TAG_NAME,
     TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS,
     TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS,
 )
@@ -275,6 +276,7 @@ def _indent_patterns(config: Config) -> _IndentPatterns:
                     (?:
                         <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\1)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 1
                         |(?:<(?:{always_self_closing_html})\b(?:[^>"']|"[^"]*"|'[^']*')*?/?>) # <img stuff />
+                        |(?:<(?:{TEMPLATE_TAG_NAME})(?:>|(?:[^>"']|"[^"]*"|'[^']*')*?>)(?:.*?)</(?:{TEMPLATE_TAG_NAME})>) # <{{ tag }}>stuff</{{ tag }}>
                         |(?:{{%[-+]?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%[-+]?[ ]*?end(?:\2)\b(?:(?!%}}).)*?%}}) # >>> match 2
                         |{golang_slt}
                         |{config.ignored_inline_blocks}

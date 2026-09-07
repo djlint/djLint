@@ -14,7 +14,7 @@ import yaml
 from click import BadParameter, UsageError, echo, style
 from pathspec import PathSpec
 
-from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS, TEMPLATE_TAG_NAME
 from djlint.helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
@@ -891,6 +891,12 @@ _IGNORED_BLOCKS_TAIL: Final = (
     + YAML_FRONT_MATTER
 )
 
+
+# A self closed tag opens nothing, and the quoted values are stepped over
+# so that a "/" written inside one is not read as the close.
+_TEMPLATE_NAMED_OPENING_TAG: Final = (
+    rf"<(?:{TEMPLATE_TAG_NAME})(?!(?:[^>\"']|\"[^\"]*\"|'[^']*')*?/>)"
+)
 
 _RAW_TEXT_OPENING_TAG: Final = r"""(?:\"[^\"]*\"|'[^']*'|[^>\"'])*>"""
 
@@ -1780,6 +1786,9 @@ class Config:
             + """
                 )\\b
               )
+            | (?:"""
+            + _TEMPLATE_NAMED_OPENING_TAG
+            + """)
         """
         )
         self.tag_unindent = (
@@ -1795,6 +1804,9 @@ class Config:
             + """
                 )\\b
               )
+            | (?:^</(?:"""
+            + TEMPLATE_TAG_NAME
+            + """))
             | (?:</
                 (?:
                     """
@@ -1802,6 +1814,9 @@ class Config:
             + """
                 )>$
               )
+            | (?:</(?:"""
+            + TEMPLATE_TAG_NAME
+            + """)>$)
         """
         )
 

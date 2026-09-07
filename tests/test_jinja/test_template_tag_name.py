@@ -29,6 +29,30 @@ test_data = [
         "<div>\n  <{{ tag }}>Text</{{ tag }}>\n</div>\n",
         id="the_element_indents_like_any_other",
     ),
+    pytest.param(
+        "<{{ tag }}{% if attrs %}{% include 'a.html' %}{% endif %}>\n"
+        "  {{- label -}}\n"
+        "</{{ tag }}>\n",
+        "<{{ tag }}{% if attrs %}{% include 'a.html' %}{% endif %}>\n"
+        "  {{- label -}}\n"
+        "</{{ tag }}>\n",
+        id="its_contents_are_indented_inside_it",
+    ),
+    pytest.param(
+        "<{{ a }}>\n  <{{ b }}>\n    x\n  </{{ b }}>\n</{{ a }}>\n",
+        "<{{ a }}>\n  <{{ b }}>\n    x\n  </{{ b }}>\n</{{ a }}>\n",
+        id="and_they_nest",
+    ),
+    pytest.param(
+        "<{{ tag }} />\n<p>x</p>\n",
+        "<{{ tag }} />\n<p>x</p>\n",
+        id="a_self_closed_one_opens_nothing",
+    ),
+    pytest.param(
+        "<${tag}>\n  x\n</${tag}>\n",
+        "<${tag}>\n  x\n</${tag}>\n",
+        id="a_mako_expression_names_a_tag_too",
+    ),
 ]
 
 

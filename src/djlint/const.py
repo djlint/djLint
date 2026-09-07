@@ -460,6 +460,11 @@ HTML_ARIA_ROLE_NAMES: Final = frozenset((
     "treeitem",
 ))
 
+# A tag whose name a template expression writes, as in "<{{ tag }}>". The
+# tokenizer reads one as a tag, so the indenter has to know it too, or the
+# element's contents are left at the level of the tag that holds them.
+TEMPLATE_TAG_NAME: Final = r"\{\{(?:(?!\}\}).)*\}\}|\$\{[^{}]*\}"
+
 TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS: Final = (
     r"trans(?:late)?|with|extends|include|now"
 )
