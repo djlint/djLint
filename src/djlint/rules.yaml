@@ -87,10 +87,7 @@
 - rule:
     name: H012
     message: There should be no spaces around attribute =.
-    flags: re.DOTALL
-    patterns:
-      - <\w+?(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|{[^}]*}|[^'\">{}])*\s+=
-      - <\w+?(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|{[^}]*}|[^'\">{}])*=\s
+    python_module: djlint.rules.H012
 - rule:
     name: H013
     skip_in_attributes: true
