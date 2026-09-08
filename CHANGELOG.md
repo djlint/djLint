@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.46.1] - 2026-09-08
+
 ### Fix
 
 - A second `{# #}` comment on a line no longer swallows everything back to the first one, so a tag written between two comments is formatted and linted like any other. Before, it kept lines past `--max-line-length` and hid findings from the rules. A comment now ends at its first `#}`, which is where django, jinja and nunjucks end it.
