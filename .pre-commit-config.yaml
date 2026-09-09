@@ -50,7 +50,7 @@ repos:
           - pathspec
           - pytest
           - tomli
-          - types-pyyaml==6.0.12.20260815
+          - types-pyyaml==6.0.12.20260906
           - types-regex==2026.9.3.20260903
           - typing-extensions==4.16.0
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
