@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.helpers import compile_pattern
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
@@ -40,27 +41,25 @@ if TYPE_CHECKING:
 
 _AFTER_EVERY_SPAN: Final = float("inf")
 
-_EXTENDS_PATTERN: Final = re.compile(
-    r"{%[-+]?\s*extends\b(?:(?!%}).)*%}", re.S, cache_pattern=False
+_EXTENDS_PATTERN: Final = compile_pattern(
+    r"{%[-+]?\s*extends\b(?:(?!%}).)*%}", re.S
 )
 
 # whitespace and a byte order mark are all django lets a template hold
 # ahead of its `{% extends %}`; jinja and nunjucks also take a branch
 # tag, which opens nothing of its own.
-_BLANK_PATTERN: Final = re.compile(r"[\s\ufeff]+", cache_pattern=False)
-_BLANK_OR_BRANCH_PATTERN: Final = re.compile(
-    r"(?:[\s\ufeff]+|{%[-+]?\s*(?:if|elif|else)\b(?:(?!%}).)*%})+",
-    re.I | re.S,
-    cache_pattern=False,
+_BLANK_PATTERN: Final = compile_pattern(r"[\s\ufeff]+")
+_BLANK_OR_BRANCH_PATTERN: Final = compile_pattern(
+    r"(?:[\s\ufeff]+|{%[-+]?\s*(?:if|elif|else)\b(?:(?!%}).)*%})+", re.I | re.S
 )
 _PROFILES_REJECTING_A_BRANCHED_EXTENDS: Final = frozenset({"django"})
 
 # a byte order mark ahead of the "---" still opens front matter
-_FRONT_MATTER_PATTERN: Final = re.compile(
-    r"\A\ufeff?---(?:(?!{%)[\s\S])*?^---[^\S\n]*$", re.M, cache_pattern=False
+_FRONT_MATTER_PATTERN: Final = compile_pattern(
+    r"\A\ufeff?---(?:(?!{%)[\s\S])*?^---[^\S\n]*$", re.M
 )
 
-_OPENING_PATTERN: Final = re.compile(
+_OPENING_PATTERN: Final = compile_pattern(
     r"""
       (?P<off_html><!--\s*djlint:off(?P<off_html_rules>[^>]*?)-->)
     | (?P<on_html><!--\s*djlint:on\b[^>]*?-->)
@@ -78,36 +77,31 @@ _OPENING_PATTERN: Final = re.compile(
     | (?P<raw_text><(?P<raw_text_name>script|style|pre|textarea)\b)
     """,
     re.I | re.S | re.X,
-    cache_pattern=False,
 )
 
-_ON_HTML_PATTERN: Final = re.compile(
-    r"<!--\s*djlint:on\s*-->", re.I | re.S, cache_pattern=False
+_ON_HTML_PATTERN: Final = compile_pattern(
+    r"<!--\s*djlint:on\s*-->", re.I | re.S
 )
-_ON_HASH_PATTERN: Final = re.compile(
-    r"{\#\s*djlint:\s*on\s*\#}", re.I | re.S, cache_pattern=False
+_ON_HASH_PATTERN: Final = compile_pattern(
+    r"{\#\s*djlint:\s*on\s*\#}", re.I | re.S
 )
-_ON_COMMENT_PATTERN: Final = re.compile(
-    r"{%\s*comment\s*%}\s*djlint:on\s*{%\s*endcomment\s*%}",
-    re.I | re.S,
-    cache_pattern=False,
+_ON_COMMENT_PATTERN: Final = compile_pattern(
+    r"{%\s*comment\s*%}\s*djlint:on\s*{%\s*endcomment\s*%}", re.I | re.S
 )
-_END_COMMENT_PATTERN: Final = re.compile(
-    r"{%[-+]?\s*endcomment\b(?:(?!%}).)*%}", re.I | re.S, cache_pattern=False
+_END_COMMENT_PATTERN: Final = compile_pattern(
+    r"{%[-+]?\s*endcomment\b(?:(?!%}).)*%}", re.I | re.S
 )
 _END_LITERAL_PATTERNS: Final = {
-    name: re.compile(
-        rf"{{%[-+]?\s*end{name}\b(?:(?!%}}).)*%}}",
-        re.I | re.S,
-        cache_pattern=False,
+    name: compile_pattern(
+        rf"{{%[-+]?\s*end{name}\b(?:(?!%}}).)*%}}", re.I | re.S
     )
     for name in ("raw", "verbatim")
 }
 _CLOSING_RAW_TEXT_PATTERNS: Final = {
-    name: re.compile(rf"</{name}\b", re.I, cache_pattern=False)
+    name: compile_pattern(rf"</{name}\b", re.I)
     for name in ("script", "style", "pre", "textarea")
 }
-_RULE_SEPARATOR_PATTERN: Final = re.compile(r"[\s,]+", cache_pattern=False)
+_RULE_SEPARATOR_PATTERN: Final = compile_pattern(r"[\s,]+")
 
 
 def _region_end(html: str, start: int, closing: re.Pattern[str]) -> int:

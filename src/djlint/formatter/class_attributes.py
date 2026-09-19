@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import COLLAPSIBLE_WHITESPACE
+from djlint.helpers import compile_pattern
 
 if TYPE_CHECKING:
     from typing import Final
@@ -21,20 +22,19 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-_COLLAPSIBLE_RUN_PATTERN: Final = re.compile(
-    f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+", cache_pattern=False
+_COLLAPSIBLE_RUN_PATTERN: Final = compile_pattern(
+    f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+"
 )
-_LINE_BREAK_RUN_PATTERN: Final = re.compile(
+_LINE_BREAK_RUN_PATTERN: Final = compile_pattern(
     rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*\n"
-    rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*",
-    cache_pattern=False,
+    rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*"
 )
 
 CLASS_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_CLASS_NEWLINE\x00"
 VERBATIM_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_ATTR_NEWLINE\x00"
 MIN_MULTILINE_CLASS_LINES: Final = 2
-_CLASS_ATTRIBUTE_PATTERN: Final = re.compile(
-    r"(?<![\w:.-])class(?![\w:.-])\s*=\s*(['\"])", re.I, cache_pattern=False
+_CLASS_ATTRIBUTE_PATTERN: Final = compile_pattern(
+    r"(?<![\w:.-])class(?![\w:.-])\s*=\s*(['\"])", re.I
 )
 
 _JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({

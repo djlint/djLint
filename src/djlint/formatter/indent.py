@@ -29,6 +29,7 @@ from djlint.helpers import (
     RE_FLAGS_IMX,
     RE_FLAGS_IS,
     RE_FLAGS_IX,
+    compile_pattern,
     ignored_block_opening_start,
     inside_html_attribute,
     inside_ignored_block,
@@ -52,72 +53,62 @@ _QUOTE_STYLES: Final = {
 _QUOTE_CHARACTERS: Final = {"double": '"', "single": "'"}
 _ESCAPE: Final = "\\"
 
-_QUOTED_ARGUMENT_TAG_PATTERN: Final = re.compile(
+_QUOTED_ARGUMENT_TAG_PATTERN: Final = compile_pattern(
     rf"\{{%[-+]?[ \t]*(?:{TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS}"
     rf"|{TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS})\b"
     r"(?:(?!%\}).)*?[-+]?%\}",
     RE_FLAGS_IS,
-    cache_pattern=False,
 )
-_TAG_STRING_PATTERN: Final = re.compile(
-    r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", cache_pattern=False
+_TAG_STRING_PATTERN: Final = compile_pattern(
+    r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'"
 )
 
-_TAG_SPACING_PATTERN: Final = re.compile(
-    r"({%[-+]?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?([-+]?%})", cache_pattern=False
+_TAG_SPACING_PATTERN: Final = compile_pattern(
+    r"({%[-+]?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?([-+]?%})"
 )
-_INTERPOLATION_SPACING_PATTERN: Final = re.compile(
-    r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})", cache_pattern=False
+_INTERPOLATION_SPACING_PATTERN: Final = compile_pattern(
+    r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})"
 )
 # Indentation after a preserved attribute line break is the author's layout,
 # not padding inside the tag, so it is held whole rather than collapsed.
-_EXTRA_TAG_WHITESPACE_PATTERN: Final = re.compile(
+_EXTRA_TAG_WHITESPACE_PATTERN: Final = compile_pattern(
     r"(\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'"
-    rf"|{re.escape(VERBATIM_ATTRIBUTE_NEWLINE)}[ \t]*)|[ \t]{{2,}}",
-    cache_pattern=False,
+    rf"|{re.escape(VERBATIM_ATTRIBUTE_NEWLINE)}[ \t]*)|[ \t]{{2,}}"
 )
-_HANDLEBARS_BLOCK_END_PATTERN: Final = re.compile(
-    r"({{#(?:each|if)(?:(?!}}).)+?[^ ])(}})", cache_pattern=False
+_HANDLEBARS_BLOCK_END_PATTERN: Final = compile_pattern(
+    r"({{#(?:each|if)(?:(?!}}).)+?[^ ])(}})"
 )
-_SET_CLOSE_PATTERN: Final = re.compile(
-    r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX, cache_pattern=False
+_SET_CLOSE_PATTERN: Final = compile_pattern(
+    r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX
 )
-_SET_CLOSING_BRACE_PATTERN: Final = re.compile(
-    r"^[ ]*}|^[ ]*]", RE_FLAGS_IMX, cache_pattern=False
+_SET_CLOSING_BRACE_PATTERN: Final = compile_pattern(
+    r"^[ ]*}|^[ ]*]", RE_FLAGS_IMX
 )
-_SINGLE_LINE_TEMPLATE_TAG_PATTERN: Final = re.compile(
-    r"^\s*\{%[-+]?(?:(?!%}).)*%}\s*$", RE_FLAGS_IMSX, cache_pattern=False
+_SINGLE_LINE_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
+    r"^\s*\{%[-+]?(?:(?!%}).)*%}\s*$", RE_FLAGS_IMSX
 )
-_SET_OPEN_PATTERN: Final = re.compile(
-    r"^([ ]*{%[ ]*?set)(?!.*%}).*$", RE_FLAGS_IMX, cache_pattern=False
+_SET_OPEN_PATTERN: Final = compile_pattern(
+    r"^([ ]*{%[ ]*?set)(?!.*%}).*$", RE_FLAGS_IMX
 )
-_SET_OPENING_BRACE_PATTERN: Final = re.compile(
-    r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))",
-    RE_FLAGS_IMX,
-    cache_pattern=False,
+_SET_OPENING_BRACE_PATTERN: Final = compile_pattern(
+    r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))", RE_FLAGS_IMX
 )
-_TEMPLATE_TAG_CLOSE_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*end|\{\{/", RE_FLAGS_IMX, cache_pattern=False
+_TEMPLATE_TAG_CLOSE_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*end|\{\{/", RE_FLAGS_IMX
 )
-_MULTILINE_TAG_OPEN_PATTERN: Final = re.compile(
-    r"(?:\{\{|\{%)(?:(?!\}\}|%\}).)*$", cache_pattern=False
+_MULTILINE_TAG_OPEN_PATTERN: Final = compile_pattern(
+    r"(?:\{\{|\{%)(?:(?!\}\}|%\}).)*$"
 )
-_MULTILINE_TAG_CLOSE_PATTERN: Final = re.compile(
-    r"^(?:(?!\{\{|\{%).)*?(?:\}\}|%\})", cache_pattern=False
+_MULTILINE_TAG_CLOSE_PATTERN: Final = compile_pattern(
+    r"^(?:(?!\{\{|\{%).)*?(?:\}\}|%\})"
 )
-_LEADING_CLOSE_BRACKET_PATTERN: Final = re.compile(
-    r"[ ]*[)\]}]", cache_pattern=False
+_LEADING_CLOSE_BRACKET_PATTERN: Final = compile_pattern(r"[ ]*[)\]}]")
+_MULTILINE_TAG_OPEN_PAREN_PATTERN: Final = compile_pattern(r"\((?=[^()]*$)")
+_MULTILINE_TAG_CLOSE_PAREN_PATTERN: Final = compile_pattern(r"^[ ]*\)")
+_TEXTAREA_CLOSE_PATTERN: Final = compile_pattern(
+    r"^\s*</textarea\b", RE_FLAGS_IX
 )
-_MULTILINE_TAG_OPEN_PAREN_PATTERN: Final = re.compile(
-    r"\((?=[^()]*$)", cache_pattern=False
-)
-_MULTILINE_TAG_CLOSE_PAREN_PATTERN: Final = re.compile(
-    r"^[ ]*\)", cache_pattern=False
-)
-_TEXTAREA_CLOSE_PATTERN: Final = re.compile(
-    r"^\s*</textarea\b", RE_FLAGS_IX, cache_pattern=False
-)
-_SET_CONTENT_PATTERN: Final = re.compile(
+_SET_CONTENT_PATTERN: Final = compile_pattern(
     r"""
     ([ ]*)                # 1: leading indentation
     ({%[-+]?)                # 2: tag open
@@ -126,9 +117,8 @@ _SET_CONTENT_PATTERN: Final = re.compile(
     ([-+]?%})                # 5: tag close
     """,
     RE_FLAGS_IMSX,
-    cache_pattern=False,
 )
-_FUNCTION_CONTENT_PATTERN: Final = re.compile(
+_FUNCTION_CONTENT_PATTERN: Final = compile_pattern(
     r"""
     (?P<indent>[ ]*)
     (?P<open>{{-?\+?)
@@ -144,7 +134,6 @@ _FUNCTION_CONTENT_PATTERN: Final = re.compile(
     (?P<close>(?:(?!}}).)*?-?\+?}})
     """,
     RE_FLAGS_IMSX,
-    cache_pattern=False,
 )
 
 

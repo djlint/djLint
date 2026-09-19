@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.helpers import inside_ignored_rule
+from djlint.helpers import compile_pattern, inside_ignored_rule
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-_TOKEN_PATTERN: Final = re.compile(
+_TOKEN_PATTERN: Final = compile_pattern(
     r"""
     # a template comment hides all it holds from the engine, so it is
     # consumed whole rather than searched for tags; "{{#" opens a
@@ -52,7 +52,6 @@ _TOKEN_PATTERN: Final = re.compile(
       (?:(?!%\}|\{%)[\s\S])*?[-+]?%\}
     """,
     re.X,
-    cache_pattern=False,
 )
 _LITERAL_BLOCKS: Final = {
     "comment": "endcomment",

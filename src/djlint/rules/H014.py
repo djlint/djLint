@@ -4,9 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import regex as re
-
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -21,9 +20,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
     from djlint.types import LintError
 
-_BLANK_LINES_PATTERN: Final = re.compile(
-    r"(?:(?<=\n)|\A)(?:[ \t]*\n)+", cache_pattern=False
-)
+_BLANK_LINES_PATTERN: Final = compile_pattern(r"(?:(?<=\n)|\A)(?:[ \t]*\n)+")
 
 
 def run(

@@ -26,6 +26,7 @@ from typing import TYPE_CHECKING, NamedTuple
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     inside_template_block,
@@ -45,12 +46,12 @@ if TYPE_CHECKING:
 # A tag opens on a name, and the walk over its attributes starts on the
 # name's second character, the rest of the name being ordinary text to
 # the walk.
-_TAG_START_PATTERN: Final = re.compile(r"<\w", cache_pattern=False)
+_TAG_START_PATTERN: Final = compile_pattern(r"<\w")
 
 # The two spellings reported: a space before the equals and a space after
 # it. A tag spaced on both sides is reported once for each.
-_SPACE_BEFORE_PATTERN: Final = re.compile(r"\s+=", re.S, cache_pattern=False)
-_SPACE_AFTER_PATTERN: Final = re.compile(r"=\s", re.S, cache_pattern=False)
+_SPACE_BEFORE_PATTERN: Final = compile_pattern(r"\s+=", re.S)
+_SPACE_AFTER_PATTERN: Final = compile_pattern(r"=\s", re.S)
 
 _UNVISITED: Final = -2
 _NOTHING: Final = -1

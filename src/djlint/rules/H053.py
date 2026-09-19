@@ -26,6 +26,7 @@ from typing import TYPE_CHECKING, NamedTuple
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     mutually_exclusive,
@@ -47,59 +48,49 @@ if TYPE_CHECKING:
 
 _NAME_CHAR: Final = r"[-.:\w]"
 _TEMPLATE_TAG: Final = r"{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|{#(?:(?!#}).)*#}"
-_ATTRIBUTE_PATTERN: Final = re.compile(
+_ATTRIBUTE_PATTERN: Final = compile_pattern(
     rf"(?P<attribute>(?<!{_NAME_CHAR})id\s*=\s*"
     r"(?:\"(?P<dq>[^\"]*)\"|'(?P<sq>[^']*)'|(?P<uq>[^\s\"'<>`=]+)))"
     rf"|{_TEMPLATE_TAG}"
     rf"|{_NAME_CHAR}+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s\"'<>`=]+)"
     r"|\"[^\"]*\"|'[^']*'",
     re.I | re.S,
-    cache_pattern=False,
 )
-_TAG_START_PATTERN: Final = re.compile(
+_TAG_START_PATTERN: Final = compile_pattern(
     r"\{\{|\{%|\{#"
     r"|^[ \t]*%[ \t]*(?P<statement>if|elif|else|endif|for|endfor)\b[^\n]*",
     re.M,
-    cache_pattern=False,
 )
 _CLOSING_DELIMITERS: Final = {"{{": "}}", "{%": "%}", "{#": "#}"}
-_OPEN_NAME_PATTERN: Final = re.compile(
-    r"(?:\{%[-+]?|\{\{[#^][*>]?)\s*([\w.-]+)", cache_pattern=False
+_OPEN_NAME_PATTERN: Final = compile_pattern(
+    r"(?:\{%[-+]?|\{\{[#^][*>]?)\s*([\w.-]+)"
 )
-_END_NAME_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)", cache_pattern=False
+_END_NAME_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)"
 )
 # whitespace written between a delimiter and the tag name, which every
 # template language allows and the shared patterns spell as a space
-_LEADING_SPACE_PATTERN: Final = re.compile(
-    r"^(\{[{%#][-+~]?)\s+", cache_pattern=False
+_LEADING_SPACE_PATTERN: Final = compile_pattern(r"^(\{[{%#][-+~]?)\s+")
+_ELSE_BRANCH_PATTERN: Final = compile_pattern(
+    r"\{\{[-+~]?\s*(?:else\b|\^\s*[-+~]?\}\})"
 )
-_ELSE_BRANCH_PATTERN: Final = re.compile(
-    r"\{\{[-+~]?\s*(?:else\b|\^\s*[-+~]?\}\})", cache_pattern=False
+_SECTION_OPEN_PATTERN: Final = compile_pattern(
+    r"\{\{[-+~]?\s*[#^][*>]?\s*([\w.\-/]+)"
 )
-_SECTION_OPEN_PATTERN: Final = re.compile(
-    r"\{\{[-+~]?\s*[#^][*>]?\s*([\w.\-/]+)", cache_pattern=False
-)
-_SECTION_CLOSE_PATTERN: Final = re.compile(
-    r"\{\{[-+~]?\s*/(?!\*)\s*([\w.\-/]*)", cache_pattern=False
+_SECTION_CLOSE_PATTERN: Final = compile_pattern(
+    r"\{\{[-+~]?\s*/(?!\*)\s*([\w.\-/]*)"
 )
 # go writes an argument after the keyword, so the keyword is followed by
 # whitespace; the jinja `{{ range(3) }}` and `{{ block.super }}` that a
 # profile of "all" also has to read open nothing
-_GOLANG_OPEN_PATTERN: Final = re.compile(
-    r"\{\{[-+~]?\s*(if|range|with|block|define)(?=[\s}])", cache_pattern=False
+_GOLANG_OPEN_PATTERN: Final = compile_pattern(
+    r"\{\{[-+~]?\s*(if|range|with|block|define)(?=[\s}])"
 )
-_GOLANG_CLOSE_PATTERN: Final = re.compile(
-    r"\{\{[-+~]?\s*end(?=[\s}])", cache_pattern=False
-)
-_LIQUID_BRANCH_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*(?:elsif|when)\b", cache_pattern=False
-)
-_LIQUID_OPEN_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*(case)\b", cache_pattern=False
-)
-_DJANGO_OPEN_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*(ifequal|ifnotequal)\b", cache_pattern=False
+_GOLANG_CLOSE_PATTERN: Final = compile_pattern(r"\{\{[-+~]?\s*end(?=[\s}])")
+_LIQUID_BRANCH_PATTERN: Final = compile_pattern(r"\{%[-+]?\s*(?:elsif|when)\b")
+_LIQUID_OPEN_PATTERN: Final = compile_pattern(r"\{%[-+]?\s*(case)\b")
+_DJANGO_OPEN_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*(ifequal|ifnotequal)\b"
 )
 _BRANCH_STATEMENTS: Final = frozenset(("elif", "else"))
 _GOLANG_PROFILES: Final = frozenset(("all", "golang"))

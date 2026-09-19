@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING, NamedTuple
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_html_attribute,
     inside_ignored_linter_block,
     inside_ignored_rule,
@@ -39,11 +40,11 @@ if TYPE_CHECKING:
     from djlint.settings import Config
     from djlint.types import LintError
 
-_TAG_START_PATTERN: Final = re.compile(r"<\w+\s", cache_pattern=False)
+_TAG_START_PATTERN: Final = compile_pattern(r"<\w+\s")
 
 # a loopback or a private host is not external, and a dotted name ending
 # in .local, .test or .localhost names a development machine
-_LINK_PATTERN: Final = re.compile(
+_LINK_PATTERN: Final = compile_pattern(
     r"""
     (?<![-.:\w])
     (?:href|data-url|action|src|url|srcset)
@@ -60,7 +61,6 @@ _LINK_PATTERN: Final = re.compile(
     )
     """,
     re.I | re.X,
-    cache_pattern=False,
 )
 
 _UNVISITED: Final = -2

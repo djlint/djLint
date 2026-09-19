@@ -6,8 +6,9 @@ import sys
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-import regex as re
 from click import echo, style
+
+from djlint.helpers import compile_pattern
 
 if sys.version_info >= (3, 13):
     from typing import NamedTuple
@@ -120,27 +121,22 @@ def print_no_files_to_check(*, excluded: bool) -> None:
     echo(style(message, fg="blue"), err=True)
 
 
-_HTML_PRAGMA_PATTERNS: Final = (
-    re.compile(r"<!--\s*djlint\:on\s*-->", cache_pattern=False),
-)
-_TEMPLATE_COMMENT_PRAGMA_PATTERN: Final = re.compile(
-    r"\{#\s*djlint\:on\s*#\}", cache_pattern=False
+_HTML_PRAGMA_PATTERNS: Final = (compile_pattern(r"<!--\s*djlint\:on\s*-->"),)
+_TEMPLATE_COMMENT_PRAGMA_PATTERN: Final = compile_pattern(
+    r"\{#\s*djlint\:on\s*#\}"
 )
 _DJANGO_JINJA_PRAGMA_PATTERNS: Final = (
     _TEMPLATE_COMMENT_PRAGMA_PATTERN,
-    re.compile(
-        r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}",
-        cache_pattern=False,
+    compile_pattern(
+        r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}"
     ),
 )
 _NUNJUCKS_PRAGMA_PATTERNS: Final = (_TEMPLATE_COMMENT_PRAGMA_PATTERN,)
 _HANDLEBARS_PRAGMA_PATTERNS: Final = (
-    re.compile(r"\{\{!--\s*djlint\:on\s*--\}\}", cache_pattern=False),
+    compile_pattern(r"\{\{!--\s*djlint\:on\s*--\}\}"),
 )
 _GOLANG_PRAGMA_PATTERNS: Final = (
-    re.compile(
-        r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}", cache_pattern=False
-    ),
+    compile_pattern(r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}"),
 )
 _PRAGMA_PATTERNS: Final = MappingProxyType({
     "html": _HTML_PRAGMA_PATTERNS,

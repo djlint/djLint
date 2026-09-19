@@ -9,6 +9,7 @@ import regex as re
 from djlint.helpers import (
     RE_FLAGS_IS,
     child_of_unformatted_block,
+    compile_pattern,
     mask_template_tags,
     restore_template_tags,
 )
@@ -22,10 +23,9 @@ if TYPE_CHECKING:
 
 def raw_text_block_pattern(tag: str) -> re.Pattern[str]:
     """Match a tag's leading indent, its opening tag and its contents."""
-    return re.compile(
+    return compile_pattern(
         rf"([ ]*?)(<{tag}\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(.*?)(?=</{tag}>)",
         RE_FLAGS_IS,
-        cache_pattern=False,
     )
 
 

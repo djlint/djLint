@@ -27,6 +27,7 @@ import regex as re
 
 from djlint.helpers import (
     child_of_ignored_block,
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
 )
@@ -60,13 +61,9 @@ _PROFILES_WITHOUT_STATEMENT_TAGS: Final = frozenset(("golang", "handlebars"))
 # is read as a statement only where go templates are what is being linted
 _GOLANG_PROFILES: Final = frozenset(("all", "golang"))
 
-_CONDITIONAL_OPENING_PATTERN: Final = re.compile(
-    r"\[if(?=[\s(!])", re.I, cache_pattern=False
-)
-_CONDITIONAL_CLOSING_PATTERN: Final = re.compile(
-    r"<!\[endif\]\s*$", re.I, cache_pattern=False
-)
-_BODY_PATTERN: Final = re.compile(
+_CONDITIONAL_OPENING_PATTERN: Final = compile_pattern(r"\[if(?=[\s(!])", re.I)
+_CONDITIONAL_CLOSING_PATTERN: Final = compile_pattern(r"<!\[endif\]\s*$", re.I)
+_BODY_PATTERN: Final = compile_pattern(
     r"""
       (?<!\{)\{\#.*?\#\}
     | \{\{!--.*?--\}\}
@@ -90,9 +87,8 @@ _BODY_PATTERN: Final = re.compile(
       )
     """,
     re.S | re.I | re.X,
-    cache_pattern=False,
 )
-_IGNORED_BLOCK_PATTERN: Final = re.compile(
+_IGNORED_BLOCK_PATTERN: Final = compile_pattern(
     r"""
     # the shared ignored block patterns spell these with plain spaces and
     # an unnamed closing tag, so the forms below reach this rule
@@ -104,7 +100,6 @@ _IGNORED_BLOCK_PATTERN: Final = re.compile(
       \{\{\{\{\s*/\s*raw\s*\}\}\}\}
     """,
     re.S | re.I | re.X,
-    cache_pattern=False,
 )
 
 

@@ -8,8 +8,6 @@ from __future__ import annotations
 import difflib
 from typing import TYPE_CHECKING
 
-import regex as re
-
 from djlint.formatter.attribute_values import format_attribute_values
 from djlint.formatter.class_attributes import (
     restore_class_attribute_newlines,
@@ -21,7 +19,11 @@ from djlint.formatter.endblocks import name_endblocks
 from djlint.formatter.entities import format_entities
 from djlint.formatter.expand import expand_html
 from djlint.formatter.indent import indent_html
-from djlint.helpers import mask_unformatted_blocks, restore_unformatted_blocks
+from djlint.helpers import (
+    compile_pattern,
+    mask_unformatted_blocks,
+    restore_unformatted_blocks,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -30,9 +32,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-_CARRIAGE_RETURN_LINE_ENDING_PATTERN: Final = re.compile(
-    r"\r\n?", cache_pattern=False
-)
+_CARRIAGE_RETURN_LINE_ENDING_PATTERN: Final = compile_pattern(r"\r\n?")
 
 
 def formatter(config: Config, rawcode: str) -> str:

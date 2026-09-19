@@ -7,8 +7,9 @@ from collections import Counter
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import regex as re
 from click import echo, style
+
+from djlint.helpers import compile_pattern
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
@@ -20,9 +21,7 @@ if TYPE_CHECKING:
     from djlint.types import LintError, ProcessResult
 
 
-_OUTPUT_WHITESPACE_PATTERN: Final = re.compile(
-    r"\s{2,}|\n", cache_pattern=False
-)
+_OUTPUT_WHITESPACE_PATTERN: Final = compile_pattern(r"\s{2,}|\n")
 
 
 def report_on_stderr(config: Config, /) -> bool:

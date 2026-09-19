@@ -17,6 +17,7 @@ import regex as re
 
 from djlint.const import HTML_ARIA_ROLE_NAMES
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -30,12 +31,10 @@ if TYPE_CHECKING:
     from djlint.settings import Config
     from djlint.types import LintError
 
-_ROLE_PATTERN = re.compile(
-    r"(?<![-.:\w])role\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|([^\s\"'>]+))",
-    re.I,
-    cache_pattern=False,
+_ROLE_PATTERN = compile_pattern(
+    r"(?<![-.:\w])role\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|([^\s\"'>]+))", re.I
 )
-_TEMPLATE_PATTERN = re.compile(r"{[{%#]", cache_pattern=False)
+_TEMPLATE_PATTERN = compile_pattern(r"{[{%#]")
 
 
 def run(

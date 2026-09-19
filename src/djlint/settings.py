@@ -21,6 +21,7 @@ from djlint.helpers import (
     RE_FLAGS_ISX,
     RE_FLAGS_IX,
     YAML_FRONT_MATTER,
+    compile_pattern,
     split_option_list,
 )
 from djlint.lint import build_flags
@@ -58,13 +59,13 @@ if TYPE_CHECKING:
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
 
 
-_JS_JSON_OBJECT_PATTERN: Final = re.compile(
-    r"^\s*\{(?![{%]).*\}\s*$", RE_FLAGS_IX, cache_pattern=False
+_JS_JSON_OBJECT_PATTERN: Final = compile_pattern(
+    r"^\s*\{(?![{%]).*\}\s*$", RE_FLAGS_IX
 )
-_JS_JSON_STRING_PATTERN: Final = re.compile(
-    r'["\']([^"\']*)["\']', RE_FLAGS_IX, cache_pattern=False
+_JS_JSON_STRING_PATTERN: Final = compile_pattern(
+    r'["\']([^"\']*)["\']', RE_FLAGS_IX
 )
-_JS_JSON_PROPERTY_PATTERN: Final = re.compile(
+_JS_JSON_PROPERTY_PATTERN: Final = compile_pattern(
     r"""
     (?:^|[,{]\s*)
     (?:
@@ -74,7 +75,6 @@ _JS_JSON_PROPERTY_PATTERN: Final = re.compile(
     )
     """,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
 
 DJLINT_TOML_CONFIG_FILES: Final = ("djlint.toml", ".djlint.toml")
@@ -538,15 +538,13 @@ _ATTRIBUTE_PATTERN: Final = (
     """
 )
 
-_ATTRIBUTE_X_PATTERN: Final = re.compile(
-    _ATTRIBUTE_PATTERN, re.X, cache_pattern=False
-)
+_ATTRIBUTE_X_PATTERN: Final = compile_pattern(_ATTRIBUTE_PATTERN, re.X)
 
 _TEMPLATE_TAGS: Final = r"""
     {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
 """
-_TEMPLATE_TAGS_IMX_PATTERN: Final = re.compile(
-    _TEMPLATE_TAGS, RE_FLAGS_IMX, cache_pattern=False
+_TEMPLATE_TAGS_IMX_PATTERN: Final = compile_pattern(
+    _TEMPLATE_TAGS, RE_FLAGS_IMX
 )
 
 _TAG_UNINDENT_LINE_TEMPLATE: Final = r"""
@@ -939,7 +937,7 @@ _LINT_IGNORED_BLOCKS: Final = _build_ignored_blocks(for_linting=True)
 _RAW_TEXT_INLINE: Final = r"""
     <(script|style|pre|textarea).*?</(?:\1)>
 """
-_RAW_TEXT_OPENING_PATTERN: Final = re.compile(
+_RAW_TEXT_OPENING_PATTERN: Final = compile_pattern(
     r"""
       <style
     | <script
@@ -947,9 +945,8 @@ _RAW_TEXT_OPENING_PATTERN: Final = re.compile(
     | <textarea
     """,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
-_RAW_TEXT_CLOSING_PATTERN: Final = re.compile(
+_RAW_TEXT_CLOSING_PATTERN: Final = compile_pattern(
     r"""
       </style
     | </script
@@ -957,15 +954,14 @@ _RAW_TEXT_CLOSING_PATTERN: Final = re.compile(
     | </textarea
     """,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
-_RAW_TEXT_INLINE_IMSX_PATTERN: Final = re.compile(
-    _RAW_TEXT_INLINE, RE_FLAGS_IMSX, cache_pattern=False
+_RAW_TEXT_INLINE_IMSX_PATTERN: Final = compile_pattern(
+    _RAW_TEXT_INLINE, RE_FLAGS_IMSX
 )
-_RAW_TEXT_INLINE_IX_PATTERN: Final = re.compile(
-    _RAW_TEXT_INLINE, RE_FLAGS_IX, cache_pattern=False
+_RAW_TEXT_INLINE_IX_PATTERN: Final = compile_pattern(
+    _RAW_TEXT_INLINE, RE_FLAGS_IX
 )
-_IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
+_IGNORED_BLOCK_OPENING_PATTERN: Final = compile_pattern(
     r"""
       <style
     | {\*
@@ -986,7 +982,6 @@ _IGNORED_BLOCK_OPENING_PATTERN: Final = re.compile(
     | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
     """,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
 _IGNORED_BLOCK_CLOSING_BEFORE: Final = r"""
       </style
@@ -1012,28 +1007,24 @@ _IGNORED_BLOCK_CLOSING_AFTER: Final = r"""
     | {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
     | {%[-+]?[ ]*end(?:schema|javascript|stylesheet|style)[ ]*[-+]?%}
 """
-_IGNORED_BLOCK_CLOSING_PATTERN: Final = re.compile(
+_IGNORED_BLOCK_CLOSING_PATTERN: Final = compile_pattern(
     _IGNORED_BLOCK_CLOSING_BEFORE
     + rf"| ^(?:{_IGNORED_BLOCK_CLOSING_AT_START})|"
     + _IGNORED_BLOCK_CLOSING_AFTER,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
-_IGNORED_BLOCK_CLOSING_AT_START_PATTERN: Final = re.compile(
-    _IGNORED_BLOCK_CLOSING_AT_START, RE_FLAGS_IX, cache_pattern=False
+_IGNORED_BLOCK_CLOSING_AT_START_PATTERN: Final = compile_pattern(
+    _IGNORED_BLOCK_CLOSING_AT_START, RE_FLAGS_IX
 )
-_IGNORED_BLOCK_CLOSING_ANYWHERE_PATTERN: Final = re.compile(
+_IGNORED_BLOCK_CLOSING_ANYWHERE_PATTERN: Final = compile_pattern(
     _IGNORED_BLOCK_CLOSING_BEFORE + "|" + _IGNORED_BLOCK_CLOSING_AFTER,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
-_IGNORED_BLOCKS_PATTERN: Final = re.compile(
-    _IGNORED_BLOCKS, RE_FLAGS_IMSX, cache_pattern=False
+_IGNORED_BLOCKS_PATTERN: Final = compile_pattern(_IGNORED_BLOCKS, RE_FLAGS_IMSX)
+_LINT_IGNORED_BLOCKS_PATTERN: Final = compile_pattern(
+    _LINT_IGNORED_BLOCKS, RE_FLAGS_IMSX
 )
-_LINT_IGNORED_BLOCKS_PATTERN: Final = re.compile(
-    _LINT_IGNORED_BLOCKS, RE_FLAGS_IMSX, cache_pattern=False
-)
-_IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
+_IGNORED_BLOCKS_INLINE_PATTERN: Final = compile_pattern(
     r"""
       <(pre|textarea).*?</(\1)>
     | <(script|style).*?(?=(\</(?:\3)>))
@@ -1060,25 +1051,23 @@ _IGNORED_BLOCKS_INLINE_PATTERN: Final = re.compile(
     |"""
     + YAML_FRONT_MATTER,
     RE_FLAGS_IMSX,
-    cache_pattern=False,
 )
-_IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = re.compile(
-    _IGNORED_INLINE_BLOCKS, RE_FLAGS_IX, cache_pattern=False
+_IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = compile_pattern(
+    _IGNORED_INLINE_BLOCKS, RE_FLAGS_IX
 )
-_LINT_IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = re.compile(
-    _LINT_IGNORED_INLINE_BLOCKS, RE_FLAGS_IX, cache_pattern=False
+_LINT_IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = compile_pattern(
+    _LINT_IGNORED_INLINE_BLOCKS, RE_FLAGS_IX
 )
-_IGNORED_LINTER_BLOCKS_PATTERN: Final = re.compile(
+_IGNORED_LINTER_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
     {%[-+]?[ ]*(raw|verbatim)\b(?:(?!%}).)*?[-+]?%}.*?{%[-+]?[ ]*end\1[ ]*[-+]?%}
     """,
     RE_FLAGS_IMSX,
-    cache_pattern=False,
 )
-_UNFORMATTED_BLOCKS_COARSE_PATTERN: Final = re.compile(
-    r"djlint\:\s*off", RE_FLAGS_IMSX, cache_pattern=False
+_UNFORMATTED_BLOCKS_COARSE_PATTERN: Final = compile_pattern(
+    r"djlint\:\s*off", RE_FLAGS_IMSX
 )
-_UNFORMATTED_BLOCKS_PATTERN: Final = re.compile(
+_UNFORMATTED_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
     # html comment
       <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
@@ -1094,10 +1083,9 @@ _UNFORMATTED_BLOCKS_PATTERN: Final = re.compile(
     |"""
     + YAML_FRONT_MATTER,
     RE_FLAGS_IMSX,
-    cache_pattern=False,
 )
 _IGNORED_RULE_PATTERNS: Final = tuple(
-    re.compile(pattern, RE_FLAGS_ISX, cache_pattern=False)
+    compile_pattern(pattern, RE_FLAGS_ISX)
     for pattern in (
         r"""
         # html comment
@@ -1122,30 +1110,27 @@ _IGNORED_RULE_PATTERNS: Final = tuple(
         """,
     )
 )
-_IGNORED_TRANS_BLOCKS_PATTERN: Final = re.compile(
+_IGNORED_TRANS_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
       {%[ ]*blocktranslate?\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktranslate?[ ]*%}
     | {%[ ]*blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
     """,
     RE_FLAGS_ISX,
-    cache_pattern=False,
 )
-_TRANS_TRIMMED_BLOCKS_PATTERN: Final = re.compile(
+_TRANS_TRIMMED_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
       {%[ ]*blocktranslate\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*endblocktranslate[ ]*%}
     | {%[ ]*blocktrans\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
     """,
     RE_FLAGS_ISX,
-    cache_pattern=False,
 )
-_IGNORED_TRANS_BLOCKS_CLOSING_PATTERN: Final = re.compile(
+_IGNORED_TRANS_BLOCKS_CLOSING_PATTERN: Final = compile_pattern(
     r"""
     {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
     """,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
-_SAFE_CLOSING_TAG_PATTERN: Final = re.compile(
+_SAFE_CLOSING_TAG_PATTERN: Final = compile_pattern(
     r"""
       </script
     | </style
@@ -1155,29 +1140,21 @@ _SAFE_CLOSING_TAG_PATTERN: Final = re.compile(
     | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
     """,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
-_SAFE_CLOSING_BLOCK_PATTERN: Final = re.compile(
-    _IGNORED_INLINE_BLOCKS + r" | " + _IGNORED_BLOCKS,
-    RE_FLAGS_IMSX,
-    cache_pattern=False,
+_SAFE_CLOSING_BLOCK_PATTERN: Final = compile_pattern(
+    _IGNORED_INLINE_BLOCKS + r" | " + _IGNORED_BLOCKS, RE_FLAGS_IMSX
 )
-_TEMPLATE_BLOCKS_PATTERN: Final = re.compile(
+_TEMPLATE_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
     {%((?!%}).)+%}|{{((?!}}).)+}}
     """,
     RE_FLAGS_IMSX,
-    cache_pattern=False,
 )
-_OPTIONAL_SINGLE_LINE_HTML_PATTERN: Final = re.compile(
-    rf"^(?:{_OPTIONAL_SINGLE_LINE_HTML_TAGS})$",
-    RE_FLAGS_IX,
-    cache_pattern=False,
+_OPTIONAL_SINGLE_LINE_HTML_PATTERN: Final = compile_pattern(
+    rf"^(?:{_OPTIONAL_SINGLE_LINE_HTML_TAGS})$", RE_FLAGS_IX
 )
-_OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN: Final = re.compile(
-    rf"^(?:{_OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS})$",
-    RE_FLAGS_IX,
-    cache_pattern=False,
+_OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN: Final = compile_pattern(
+    rf"^(?:{_OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS})$", RE_FLAGS_IX
 )
 
 
@@ -1541,8 +1518,8 @@ class Config:
         if extend_exclude:
             exclude += r" | " + build_exclude(extend_exclude)
         self.exclude = exclude
-        self.exclude_pattern = re.compile(
-            rf"(?:^|/)(?:{exclude})(?=$|/|(?<=/))", re.X, cache_pattern=False
+        self.exclude_pattern = compile_pattern(
+            rf"(?:^|/)(?:{exclude})(?=$|/|(?<=/))", re.X
         )
 
         self.files = djlint_settings.get("files", None)
@@ -1633,7 +1610,7 @@ class Config:
             if "patterns" in linter_rule:
                 rule_flags = build_flags(linter_rule.get("flags", "re.S"))
                 linter_rule["compiled_patterns"] = tuple(
-                    re.compile(pattern, rule_flags, cache_pattern=False)
+                    compile_pattern(pattern, rule_flags)
                     for pattern in linter_rule["patterns"]
                 )
 
@@ -1686,13 +1663,12 @@ class Config:
         ignore_blocks_guard = (
             rf"(?!{self.ignore_blocks})" if self.ignore_blocks else ""
         )
-        self.format_attribute_js_json_pattern = re.compile(
+        self.format_attribute_js_json_pattern = compile_pattern(
             format_attribute_js_json_pattern
             or djlint_settings.get(
                 "format_attribute_js_json_pattern", _DEFAULT_JS_JSON_PATTERN
             ),
             RE_FLAGS_IX,
-            cache_pattern=False,
         )
 
         indenting_html_tags = (
@@ -1820,17 +1796,17 @@ class Config:
         """
         )
 
-        self.template_indent_ix_pattern = re.compile(
-            self.template_indent, RE_FLAGS_IX, cache_pattern=False
+        self.template_indent_ix_pattern = compile_pattern(
+            self.template_indent, RE_FLAGS_IX
         )
-        self.template_indent_imx_pattern = re.compile(
-            self.template_indent, RE_FLAGS_IMX, cache_pattern=False
+        self.template_indent_imx_pattern = compile_pattern(
+            self.template_indent, RE_FLAGS_IMX
         )
-        self.template_unindent_ix_pattern = re.compile(
-            self.template_unindent, RE_FLAGS_IX, cache_pattern=False
+        self.template_unindent_ix_pattern = compile_pattern(
+            self.template_unindent, RE_FLAGS_IX
         )
-        self.template_unindent_imx_pattern = re.compile(
-            self.template_unindent, RE_FLAGS_IMX, cache_pattern=False
+        self.template_unindent_imx_pattern = compile_pattern(
+            self.template_unindent, RE_FLAGS_IMX
         )
 
         self.attribute_pattern = _ATTRIBUTE_X_PATTERN
@@ -1843,8 +1819,8 @@ class Config:
         )
         if is_golang:
             self.tag_unindent_line += _GOLANG_BRANCH
-        self.tag_unindent_line_ix_pattern = re.compile(
-            self.tag_unindent_line, RE_FLAGS_IX, cache_pattern=False
+        self.tag_unindent_line_ix_pattern = compile_pattern(
+            self.tag_unindent_line, RE_FLAGS_IX
         )
         self.break_before = _BREAK_BEFORE
         self.ignored_attributes = _IGNORED_ATTRIBUTES
@@ -1903,8 +1879,6 @@ class Config:
             self.optional_single_line_template_tags += "|" + "|".join(
                 split_option_list(profile_blocks)
             )
-            self.optional_single_line_template_pattern = re.compile(
-                rf"^(?:{self.optional_single_line_template_tags})$",
-                RE_FLAGS_IX,
-                cache_pattern=False,
+            self.optional_single_line_template_pattern = compile_pattern(
+                rf"^(?:{self.optional_single_line_template_tags})$", RE_FLAGS_IX
             )

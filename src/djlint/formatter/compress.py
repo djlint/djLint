@@ -7,8 +7,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import regex as re
-
 from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
 from djlint.formatter.attributes import normalize_attributes, sort_attributes
 from djlint.formatter.class_attributes import encode_attribute_newlines
@@ -17,19 +15,21 @@ from djlint.helpers import (
     RE_FLAGS_IS,
     RE_FLAGS_ISX,
     child_of_unformatted_block,
+    compile_pattern,
     mask_raw_text_bodies,
 )
 
 if TYPE_CHECKING:
     from typing import Final
 
+    import regex as re
+
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
-_TEMPLATE_COMMENT_BLOCK_PATTERN: Final = re.compile(
+_TEMPLATE_COMMENT_BLOCK_PATTERN: Final = compile_pattern(
     r"{%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*endcomment[ ]*%})",
     RE_FLAGS_ISX,
-    cache_pattern=False,
 )
 
 
@@ -43,11 +43,10 @@ _TEMPLATE_COMMENT_PROFILES: Final = frozenset((
 ))
 
 
-_LOOSE_ATTRIBUTE_SPACING_PATTERN: Final = re.compile(
+_LOOSE_ATTRIBUTE_SPACING_PATTERN: Final = compile_pattern(
     r"\"[^\"]*\"|'[^']*'|\{\{.*?\}\}|\{%.*?%\}|\{\#.*?\#\}|[ \t]+=[ \t]*|=[ \t]+"
     r"|[ \t]{2,}",
     RE_FLAGS_IS,
-    cache_pattern=False,
 )
 
 

@@ -33,6 +33,38 @@ RE_FLAGS_IMX: Final = re.I | re.M | re.X
 RE_FLAGS_ISX: Final = re.I | re.S | re.X
 RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
 
+
+def _supports_cache_pattern() -> bool:
+    r"""Whether the installed ``regex`` accepts ``compile(cache_pattern=...)``.
+
+    The parameter landed in regex 2022.6.2. Before that, ``compile`` read an
+    unrecognized keyword as a named list for ``\L<name>`` and raised
+    ``ValueError`` for the ones no pattern asked for.
+    """
+    try:
+        re.compile(r"", cache_pattern=False)
+    except (TypeError, ValueError):
+        return False
+    return True
+
+
+_CACHE_PATTERN_SUPPORTED: Final = _supports_cache_pattern()
+
+
+def compile_pattern(pattern: str, flags: int = 0, /) -> re.Pattern[str]:
+    """Compile a pattern without filing it in regex's pattern cache.
+
+    Everything compiled through here is already held by the name it is bound
+    to, so a second reference in the cache buys nothing and costs a slot that
+    a pattern assembled per run, out of a config, would otherwise get. On a
+    regex too old for ``cache_pattern`` the pattern is cached as usual; only
+    the tuning is lost, never the behavior.
+    """
+    if _CACHE_PATTERN_SUPPORTED:
+        return re.compile(pattern, flags, cache_pattern=False)
+    return re.compile(pattern, flags)
+
+
 _SPAN_CACHE_SIZE: Final = 1
 _AFTER_EVERY_SPAN: Final = float("inf")
 _LINE_CACHE_SIZE: Final = 256
@@ -267,7 +299,7 @@ def restore_template_tags(
     return html
 
 
-_UNFORMATTED_BLOCK_PATTERN: Final = re.compile(
+_UNFORMATTED_BLOCK_PATTERN: Final = compile_pattern(
     r"""
           <!--\s*djlint\:off\s*-->.*?(?:<!--\s*djlint\:on\s*-->|\Z)
         | {\#\s*djlint\:\s*off\s*\#}.*?(?:{\#\s*djlint\:\s*on\s*\#}|\Z)
@@ -276,10 +308,9 @@ _UNFORMATTED_BLOCK_PATTERN: Final = re.compile(
         | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}.*?(?:{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}|\Z)
     """,
     RE_FLAGS_IMSX,
-    cache_pattern=False,
 )
-_OPENING_HTML_TAG_PATTERN: Final = re.compile(r"</?\w", cache_pattern=False)
-_RULE_SEPARATOR_PATTERN: Final = re.compile(r"\s|,", cache_pattern=False)
+_OPENING_HTML_TAG_PATTERN: Final = compile_pattern(r"</?\w")
+_RULE_SEPARATOR_PATTERN: Final = compile_pattern(r"\s|,")
 
 
 def mask_unformatted_blocks(html: str) -> tuple[str, list[tuple[str, str]]]:
@@ -346,7 +377,7 @@ def restore_unformatted_blocks(
     return html
 
 
-_RAW_TEXT_ELEMENT_PATTERN: Final = re.compile(
+_RAW_TEXT_ELEMENT_PATTERN: Final = compile_pattern(
     r"""
     (<(script|style|textarea)\b
       (?:\"[^\"]*\"|'[^']*'|\{[^}]*\}|[^'\">{}])*>)
@@ -354,11 +385,10 @@ _RAW_TEXT_ELEMENT_PATTERN: Final = re.compile(
     (?=</\2)
     """,
     RE_FLAGS_ISX,
-    cache_pattern=False,
 )
 
 
-_NON_NEWLINE_PATTERN: Final = re.compile(r"[^\n]", cache_pattern=False)
+_NON_NEWLINE_PATTERN: Final = compile_pattern(r"[^\n]")
 
 
 def _blank_raw_text(match: re.Match[str]) -> str:
@@ -624,13 +654,12 @@ def inside_ignored_rule(
     )
 
 
-_BRANCHED_BLOCK_PATTERN: Final = re.compile(
+_BRANCHED_BLOCK_PATTERN: Final = compile_pattern(
     r"""
       \{%[-+]?\s*(?P<statement>endif|endfor|elseif|elif|else|empty|if|for)\b
     | \{\{-?\s*(?P<section>[#^/])?(?P<name>if|unless|each|with|range|block|else|end)\b
     """,
     re.X,
-    cache_pattern=False,
 )
 _BLOCK_OPENINGS: Final = frozenset(("if", "for"))
 _BLOCK_ENDINGS: Final = frozenset(("endif", "endfor"))

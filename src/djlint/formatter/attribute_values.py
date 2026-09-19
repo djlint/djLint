@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import regex as re
-
 from djlint.helpers import (
     RE_FLAGS_IX,
+    compile_pattern,
     inside_template_block,
     overlaps_ignored_block,
 )
@@ -15,19 +14,20 @@ from djlint.helpers import (
 if TYPE_CHECKING:
     from typing import Final
 
+    import regex as re
+
     from djlint.settings import Config
 
 
-_DEFAULT_TYPE_PATTERN: Final = re.compile(
+_DEFAULT_TYPE_PATTERN: Final = compile_pattern(
     r"""
     (<(?:script|style|link)\b(?:"[^"]*"|'[^']*'|[^'">])*?)
     \s+(?<![-.:\w])type\s*=["'](?:text/css|text/javascript)["']
     """,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
 
-_FORM_METHOD_PATTERN: Final = re.compile(
+_FORM_METHOD_PATTERN: Final = compile_pattern(
     r"""
     (<form\b(?:"[^"]*"|'[^']*'|\{[^}]*\}|[^'">{}/])*?
      (?<![-.:\w])method\s*=\s*["'])
@@ -35,7 +35,6 @@ _FORM_METHOD_PATTERN: Final = re.compile(
     (["'])
     """,
     RE_FLAGS_IX,
-    cache_pattern=False,
 )
 
 

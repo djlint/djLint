@@ -21,6 +21,7 @@ from djlint.helpers import (
     RE_FLAGS_IX,
     RE_FLAGS_MSX,
     YAML_FRONT_MATTER,
+    compile_pattern,
     inside_html_attribute,
     inside_ignored_block,
     inside_ignored_block_span,
@@ -36,14 +37,14 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-_YAML_FRONT_MATTER_PATTERN: Final = re.compile(
-    YAML_FRONT_MATTER, RE_FLAGS_MSX, cache_pattern=False
+_YAML_FRONT_MATTER_PATTERN: Final = compile_pattern(
+    YAML_FRONT_MATTER, RE_FLAGS_MSX
 )
 
 _COLLAPSIBLE_WHITESPACE_CHARS: Final = frozenset(COLLAPSIBLE_WHITESPACE)
 # Jinja and nunjucks strip the whitespace on the marked side of a tag. The
 # "+" marker asks for it to be kept, so only "-" counts here.
-_STRIPS_WHITESPACE_BEFORE: Final = re.compile(r"\{[{%#]-", cache_pattern=False)
+_STRIPS_WHITESPACE_BEFORE: Final = compile_pattern(r"\{[{%#]-")
 _STRIPS_WHITESPACE_AFTER: Final = ("-%}", "-}}", "-#}")
 
 
@@ -66,16 +67,16 @@ def _neighbour(character: str) -> _Neighbour:
     return _Neighbour.RENDERS
 
 
-_COLLAPSIBLE_WHITESPACE_PATTERN: Final = re.compile(
-    f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+", cache_pattern=False
+_COLLAPSIBLE_WHITESPACE_PATTERN: Final = compile_pattern(
+    f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+"
 )
 
-_CLOSING_LINE_PATTERN: Final = re.compile(
-    r"[ \t]*(?:</|\{%[-+]?\s*end|\{\{/)", cache_pattern=False
+_CLOSING_LINE_PATTERN: Final = compile_pattern(
+    r"[ \t]*(?:</|\{%[-+]?\s*end|\{\{/)"
 )
 
-_COMMENT_LINE_PATTERN: Final = re.compile(
-    r"[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*", cache_pattern=False
+_COMMENT_LINE_PATTERN: Final = compile_pattern(
+    r"[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*"
 )
 
 

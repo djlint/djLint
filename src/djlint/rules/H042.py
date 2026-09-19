@@ -16,6 +16,7 @@ import regex as re
 
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -34,13 +35,12 @@ if TYPE_CHECKING:
 
 
 _NAME_CHAR: Final = r"[-.:\w]"
-_ATTR_PATTERN: Final = re.compile(
+_ATTR_PATTERN: Final = compile_pattern(
     rf"(?<!{_NAME_CHAR})(?P<name>id|for)(?!{_NAME_CHAR})"
     r"(?:\s*=\s*(?:\"(?P<dq>[^\"]*)\"|'(?P<sq>[^']*)'|(?P<uq>[^\s\"'<>`=]+)))?"
     rf"|{_NAME_CHAR}+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s\"'<>`=]+)"
     r"|\"[^\"]*\"|'[^']*'",
     re.I,
-    cache_pattern=False,
 )
 _TEMPLATE_SYNTAX: Final = ("{{", "{%", "{#")
 
@@ -83,7 +83,7 @@ _TAGS_THAT_CANNOT_RENDER_AN_ID: Final = frozenset({
     "macro",
     "endmacro",
 })
-_TAG_NAME: Final = re.compile(r"\{%[-+]?\s*(\w+)", cache_pattern=False)
+_TAG_NAME: Final = compile_pattern(r"\{%[-+]?\s*(\w+)")
 
 
 _LABELABLE_ELEMENTS: Final = frozenset((

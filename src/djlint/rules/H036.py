@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, NamedTuple
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_html_attribute,
     inside_ignored_linter_block,
     inside_ignored_rule,
@@ -48,19 +49,17 @@ _BLOCKS: Final = r"""
 _BREAK: Final = r"<br\s*/?>"
 
 # A run of breaks is vertical space rather than a break in the content.
-_RUN_PATTERN: Final = re.compile(
-    rf"{_BREAK}(?:\s|&nbsp;|&\#160;)*{_BREAK}", re.I | re.X, cache_pattern=False
+_RUN_PATTERN: Final = compile_pattern(
+    rf"{_BREAK}(?:\s|&nbsp;|&\#160;)*{_BREAK}", re.I | re.X
 )
-_BEFORE_A_CLOSING_PATTERN: Final = re.compile(
-    rf"{_BREAK}\s*</(?:{_BLOCKS})\s*>", re.I | re.X, cache_pattern=False
+_BEFORE_A_CLOSING_PATTERN: Final = compile_pattern(
+    rf"{_BREAK}\s*</(?:{_BLOCKS})\s*>", re.I | re.X
 )
-_OPENING_BLOCK_PATTERN: Final = re.compile(
-    rf"<(?:{_BLOCKS})\b", re.I | re.X, cache_pattern=False
+_OPENING_BLOCK_PATTERN: Final = compile_pattern(
+    rf"<(?:{_BLOCKS})\b", re.I | re.X
 )
-_AFTER_AN_OPENING_PATTERN: Final = re.compile(
-    rf"\s*{_BREAK}", re.I | re.X, cache_pattern=False
-)
-_MARK_PATTERN: Final = re.compile(r"[\"'>]", cache_pattern=False)
+_AFTER_AN_OPENING_PATTERN: Final = compile_pattern(rf"\s*{_BREAK}", re.I | re.X)
+_MARK_PATTERN: Final = compile_pattern(r"[\"'>]")
 
 
 class _Break(NamedTuple):

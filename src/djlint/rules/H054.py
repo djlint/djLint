@@ -25,6 +25,7 @@ import regex as re
 
 from djlint.const import HTML_VOID_ELEMENTS
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -49,23 +50,15 @@ _INERT: Final = frozenset(("template",))
 
 _AFTER_EVERY_SPAN: Final = float("inf")
 
-_HREF_PATTERN = re.compile(
-    r"(?<![-.:\w])href(?![-.:\w])", re.I, cache_pattern=False
-)
-_TYPE_PATTERN = re.compile(
-    r"(?<![-.:\w])type(?![-.:\w])", re.I, cache_pattern=False
-)
-_TEMPLATE_PATTERN = re.compile(r"{[{%#]", cache_pattern=False)
-_TEMPLATE_STATEMENT_PATTERN = re.compile(
-    r"{%(?:(?!%}).)*%}", re.S, cache_pattern=False
-)
+_HREF_PATTERN = compile_pattern(r"(?<![-.:\w])href(?![-.:\w])", re.I)
+_TYPE_PATTERN = compile_pattern(r"(?<![-.:\w])type(?![-.:\w])", re.I)
+_TEMPLATE_PATTERN = compile_pattern(r"{[{%#]")
+_TEMPLATE_STATEMENT_PATTERN = compile_pattern(r"{%(?:(?!%}).)*%}", re.S)
 # djLint's shared skip reads "{% comment %}" but not the "{%- comment -%}"
 # a liquid theme is written in, so the rule finds those bodies itself.
-_COMMENT_OPENING_PATTERN = re.compile(
-    r"{%[-+]?[ \t]*comment\b", re.I, cache_pattern=False
-)
-_COMMENT_CLOSING_PATTERN = re.compile(
-    r"{%[-+]?[ \t]*endcomment[ \t]*[-+]?%}", re.I, cache_pattern=False
+_COMMENT_OPENING_PATTERN = compile_pattern(r"{%[-+]?[ \t]*comment\b", re.I)
+_COMMENT_CLOSING_PATTERN = compile_pattern(
+    r"{%[-+]?[ \t]*endcomment[ \t]*[-+]?%}", re.I
 )
 
 

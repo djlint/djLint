@@ -8,6 +8,7 @@ import regex as re
 
 from djlint.const import TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS
 from djlint.helpers import (
+    compile_pattern,
     inside_html_attribute,
     inside_ignored_linter_block,
     inside_ignored_rule,
@@ -32,10 +33,9 @@ _QUOTED_TAG_TEMPLATE: Final = (
     r"(?:(?!%}).)*?%}"
 )
 _WRONGLY_QUOTED_TAG_PATTERNS: Final = {
-    style: re.compile(
+    style: compile_pattern(
         _QUOTED_TAG_TEMPLATE.replace("QUOTE", quote).replace("WANTED", wanted),
         re.S,
-        cache_pattern=False,
     )
     for style, quote, wanted in (("double", "'", '"'), ("single", '"', "'"))
 }

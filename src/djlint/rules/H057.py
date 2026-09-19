@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     mask_raw_text_bodies,
@@ -55,20 +56,17 @@ _position: Final = itemgetter(0)
 
 # the openers a template language writes, so that a lone "{" or "$" -- a
 # css brace, a jQuery call, a price -- is not read as one
-_TEMPLATE_OPENING_PATTERN: Final = re.compile(
-    r"\{[{%#]|\$\{", cache_pattern=False
-)
+_TEMPLATE_OPENING_PATTERN: Final = compile_pattern(r"\{[{%#]|\$\{")
 
 # one attribute of a tag's attribute area: a name, and the value written
 # after an "=" in double quotes, single quotes or none at all. The name
 # stops where a name has to stop, so an unquoted value is a value rather
 # than a second attribute and `class=muted` is not the muted attribute.
-_ATTRIBUTE_PATTERN: Final = re.compile(
+_ATTRIBUTE_PATTERN: Final = compile_pattern(
     r"""(?P<name>[^\s/>="'<]+)"""
     r"""(?:\s*=\s*(?:"(?P<double>[^"]*)"|'(?P<single>[^']*)'"""
     r"""|(?P<bare>[^\s"'=<>`]*)))?""",
     re.S,
-    cache_pattern=False,
 )
 
 

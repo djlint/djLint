@@ -25,6 +25,7 @@ from djlint.helpers import (
     RE_FLAGS_IX,
     RE_FLAGS_MX,
     breaks_an_ignored_block,
+    compile_pattern,
     inside_html_attribute,
     inside_ignored_block,
     inside_template_block,
@@ -37,9 +38,7 @@ if TYPE_CHECKING:
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
-_HTML_TAG_NAME_PATTERN: Final = re.compile(
-    r"^</?\s*([a-zA-Z][-\w:.]*)", cache_pattern=False
-)
+_HTML_TAG_NAME_PATTERN: Final = compile_pattern(r"^</?\s*([a-zA-Z][-\w:.]*)")
 _TRANSPARENT_ELEMENTS: Final = (
     (HTML_INLINE_LEVEL_ELEMENTS | HTML_VOID_ELEMENTS)
     - HTML_ATOMIC_INLINE_ELEMENTS
@@ -47,45 +46,37 @@ _TRANSPARENT_ELEMENTS: Final = (
 )
 _BREAK_BEFORE_TAG: Final = "\n%s"
 _BREAK_AFTER_TAG: Final = "%s\n"
-_TEMPLATE_TAG_NAME_PATTERN: Final = re.compile(
-    r"^\{%[-+]?\s*([^\s%]+)", flags=RE_FLAGS_IX, cache_pattern=False
+_TEMPLATE_TAG_NAME_PATTERN: Final = compile_pattern(
+    r"^\{%[-+]?\s*([^\s%]+)", RE_FLAGS_IX
 )
-_BODY_TEMPLATE_TAG_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*[^\s%]+(?:(?!%}).)*?%}", flags=RE_FLAGS_IX, cache_pattern=False
+_BODY_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*[^\s%]+(?:(?!%}).)*?%}", RE_FLAGS_IX
 )
-_COMMENT_TEMPLATE_BLOCK_PATTERN: Final = re.compile(
+_COMMENT_TEMPLATE_BLOCK_PATTERN: Final = compile_pattern(
     r"\{%[-+]?\s*comment\b(?:(?!%}).)*?%\}.*?\{%[-+]?\s*endcomment\s*[-+]?%}",
-    flags=RE_FLAGS_IX,
-    cache_pattern=False,
+    RE_FLAGS_IX,
 )
-_NON_RENDERING_TEMPLATE_TAG_PATTERN: Final = re.compile(
-    r"\{\#.*?\#\}|\{%[-+]?.*?%\}|\{\{\s*(?:\#|/|else\b).*?\}\}",
-    flags=RE_FLAGS_IX,
-    cache_pattern=False,
+_NON_RENDERING_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
+    r"\{\#.*?\#\}|\{%[-+]?.*?%\}|\{\{\s*(?:\#|/|else\b).*?\}\}", RE_FLAGS_IX
 )
-_TRIMMED_TRANSLATION_BLOCK_PATTERN: Final = re.compile(
+_TRIMMED_TRANSLATION_BLOCK_PATTERN: Final = compile_pattern(
     r"\{%[-+]?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}"
     r".*?"
     r"\{%[-+]?\s*endblocktrans(?:late)?\s*[-+]?%}",
-    flags=RE_FLAGS_IX,
-    cache_pattern=False,
+    RE_FLAGS_IX,
 )
-_TRIMMED_TRANSLATION_OPEN_PATTERN: Final = re.compile(
+_TRIMMED_TRANSLATION_OPEN_PATTERN: Final = compile_pattern(
     r"\{%[-+]?\s*blocktrans(?:late)?\b(?:(?!%}).)*?\btrimmed\b(?:(?!%}).)*?%\}",
-    flags=RE_FLAGS_IX,
-    cache_pattern=False,
+    RE_FLAGS_IX,
 )
-_TRIMMED_TRANSLATION_CLOSE_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*endblocktrans(?:late)?\s*[-+]?%}",
-    flags=RE_FLAGS_IX,
-    cache_pattern=False,
+_TRIMMED_TRANSLATION_CLOSE_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*endblocktrans(?:late)?\s*[-+]?%}", RE_FLAGS_IX
 )
-_VERBATIM_SET_BLOCK_PATTERN: Final = re.compile(
+_VERBATIM_SET_BLOCK_PATTERN: Final = compile_pattern(
     r"\{%[-+]?\s*set\b(?!(?:(?!%\}).)*=)(?:(?!%\}).)*?%\}"
     r".*?"
     r"\{%[-+]?\s*endset\s*[-+]?%}",
-    flags=RE_FLAGS_IX,
-    cache_pattern=False,
+    RE_FLAGS_IX,
 )
 _TEMPLATE_END_TAG_NAMES: Final = MappingProxyType({
     "endall": "asyncall",

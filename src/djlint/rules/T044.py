@@ -34,6 +34,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -52,7 +53,7 @@ if TYPE_CHECKING:
 
 _AFTER_EVERY_SPAN: Final = float("inf")
 
-_STATEMENT_PATTERN: Final = re.compile(
+_STATEMENT_PATTERN: Final = compile_pattern(
     r"""
     (?<!\{)\{\{[-+]?\s*
     (?:
@@ -72,9 +73,8 @@ _STATEMENT_PATTERN: Final = re.compile(
     )
     """,
     re.S | re.X,
-    cache_pattern=False,
 )
-_KEYWORD_ONLY_PATTERN: Final = re.compile(
+_KEYWORD_ONLY_PATTERN: Final = compile_pattern(
     r"""
     # a closing or branch keyword on its own is never a variable name in
     # practice; the lookbehind keeps a handlebars triple stash out
@@ -88,9 +88,8 @@ _KEYWORD_ONLY_PATTERN: Final = re.compile(
     \s*[-+]?\}\}
     """,
     re.S | re.X,
-    cache_pattern=False,
 )
-_RAW_TAG_PATTERN: Final = re.compile(
+_RAW_TAG_PATTERN: Final = compile_pattern(
     r"""
     # the body stops at the next tag opening so that an unclosed `{%`
     # costs the scan the distance to its neighbour rather than the rest
@@ -98,14 +97,9 @@ _RAW_TAG_PATTERN: Final = re.compile(
     \{%[-+]?\s*(end)?(raw|verbatim)\b(?:(?!%\}|\{%).)*?%\}
     """,
     re.I | re.S | re.X,
-    cache_pattern=False,
 )
-_BLOCK_TAG_PATTERN: Final = re.compile(
-    r"\{%(?:(?!%\}|\{%).)*?%\}", re.S, cache_pattern=False
-)
-_QUOTED_PATTERN: Final = re.compile(
-    r"\"[^\"]*\"|'[^']*'", re.S, cache_pattern=False
-)
+_BLOCK_TAG_PATTERN: Final = compile_pattern(r"\{%(?:(?!%\}|\{%).)*?%\}", re.S)
+_QUOTED_PATTERN: Final = compile_pattern(r"\"[^\"]*\"|'[^']*'", re.S)
 
 
 def _raw_block_spans(html: str) -> tuple[tuple[int, int], ...]:

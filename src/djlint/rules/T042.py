@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.helpers import inside_ignored_rule
+from djlint.helpers import compile_pattern, inside_ignored_rule
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
@@ -39,21 +39,16 @@ _HIDDEN_REGION: Final = (
     r".*?{%[-+]?\s*end(?P=hidden)\b(?:(?!%}).)*%}"
 )
 _TAGS: Final = rf"{_HIDDEN_REGION}|{{#.*?#}}|{{%.*?%}}|{{{{.*?}}}}"
-_TOKEN_PATTERN: Final = re.compile(rf"{_TAGS}|<!--", re.S, cache_pattern=False)
-_COMMENTED_TOKEN_PATTERN: Final = re.compile(
-    rf"{_TAGS}|-->", re.S, cache_pattern=False
-)
-_EXTENDS_PATTERN: Final = re.compile(
-    r"{%[-+]?\s*extends\b", cache_pattern=False
-)
-_CAPTURING_PATTERN: Final = re.compile(
+_TOKEN_PATTERN: Final = compile_pattern(rf"{_TAGS}|<!--", re.S)
+_COMMENTED_TOKEN_PATTERN: Final = compile_pattern(rf"{_TAGS}|-->", re.S)
+_EXTENDS_PATTERN: Final = compile_pattern(r"{%[-+]?\s*extends\b")
+_CAPTURING_PATTERN: Final = compile_pattern(
     r"{%[-+]?\s*(?P<end>end)?"
     r"(?P<name>block(?!trans)|macro|set|partialdef|addtoblock)\b"
     r"(?P<rest>(?:(?!%}).)*)",
     re.S,
-    cache_pattern=False,
 )
-_CONTENT_PATTERN: Final = re.compile(r"\S(?:.*\S)?", re.S, cache_pattern=False)
+_CONTENT_PATTERN: Final = compile_pattern(r"\S(?:.*\S)?", re.S)
 
 
 def _tag_end(html: str, start: int, /, *, braces: bool) -> int | None:

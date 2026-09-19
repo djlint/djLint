@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -38,9 +39,7 @@ _ALWAYS_FOCUSABLE: Final = frozenset((
 ))
 _FOCUSABLE_WITH_HREF: Final = frozenset(("a", "area"))
 _FOCUSABLE_WITH_CONTROLS: Final = frozenset(("audio", "video"))
-_ARIA_HIDDEN_PATTERN = re.compile(
-    r"(?<![-.:\w])aria-hidden\s*=", re.I, cache_pattern=False
-)
+_ARIA_HIDDEN_PATTERN = compile_pattern(r"(?<![-.:\w])aria-hidden\s*=", re.I)
 
 
 def _attributes(config: Config, html: str, token: TagToken) -> dict[str, str]:

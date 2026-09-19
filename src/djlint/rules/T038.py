@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -29,20 +30,17 @@ _HANDLEBARS_RAW_BLOCK = r"\{\{\{\{#?\s*([\w.-]+)(?:(?!\}\}\}\}).)*\}\}\}\}(?:(?!
 _HANDLEBARS_COMMENT = r"\{\{!--(?:(?!--\}\}).)*--\}\}|\{\{!(?:(?!\}\}).)*\}\}"
 _BLOCK_TAG = r"\{%(?:(?!%\}).)*%\}|\{\{[#^/](?:(?!\}\}).)*\}\}"
 
-_TEMPLATE_TAG_PATTERN: Final = re.compile(
-    f"{_HANDLEBARS_RAW_BLOCK}|{_HANDLEBARS_COMMENT}|{_BLOCK_TAG}",
-    re.S,
-    cache_pattern=False,
+_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
+    f"{_HANDLEBARS_RAW_BLOCK}|{_HANDLEBARS_COMMENT}|{_BLOCK_TAG}", re.S
 )
-_OPEN_NAME_PATTERN: Final = re.compile(
-    r"(?:\{%[-+]?|\{\{[#^][*>]?)\s*([\w.-]+)", cache_pattern=False
+_OPEN_NAME_PATTERN: Final = compile_pattern(
+    r"(?:\{%[-+]?|\{\{[#^][*>]?)\s*([\w.-]+)"
 )
-_END_NAME_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)", cache_pattern=False
+_END_NAME_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)"
 )
-_BLOCK_LABEL_PATTERN: Final = re.compile(
-    r"\{%[-+]?\s*(?:end)?block\s+([^\s%+-](?:[^\s%]*[^\s%+-])?)",
-    cache_pattern=False,
+_BLOCK_LABEL_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*(?:end)?block\s+([^\s%+-](?:[^\s%]*[^\s%+-])?)"
 )
 
 

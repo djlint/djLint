@@ -15,7 +15,12 @@ from djlint.formatter.class_attributes import (
     decode_class_attribute_newlines,
     restore_verbatim_attribute_newlines,
 )
-from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IS, child_of_ignored_block
+from djlint.helpers import (
+    RE_FLAGS_IMX,
+    RE_FLAGS_IS,
+    child_of_ignored_block,
+    compile_pattern,
+)
 
 if TYPE_CHECKING:
     from typing import Final
@@ -23,16 +28,15 @@ if TYPE_CHECKING:
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
 
-_QUOTED_VALUE_PATTERN = re.compile(r"\"[^\"]*\"|'[^']*'", cache_pattern=False)
-_UNQUOTED_VALUE_PATTERN = re.compile(r"=[ \t]*[^\s\"'=<>]", cache_pattern=False)
+_QUOTED_VALUE_PATTERN = compile_pattern(r"\"[^\"]*\"|'[^']*'")
+_UNQUOTED_VALUE_PATTERN = compile_pattern(r"=[ \t]*[^\s\"'=<>]")
 
 _SRCSET_ATTRIBUTE_NAMES = frozenset(("srcset", "data-srcset", "sizes"))
 _COLLAPSIBLE_VALUE_ATTRIBUTE_NAMES = frozenset(("class", "style"))
 
-_REWRITTEN_FROM_STRIPPED_PARTS_PATTERN = re.compile(
+_REWRITTEN_FROM_STRIPPED_PARTS_PATTERN = compile_pattern(
     r"\b(?:style|srcset|data-srcset|sizes)[ \t]*=[ \t]*([\"'])(.*?)\1",
     RE_FLAGS_IS,
-    cache_pattern=False,
 )
 
 

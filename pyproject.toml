@@ -58,7 +58,7 @@ dependencies = [
   "json5>=0.10.0",
   "pathspec>=0.9.0",
   "pyyaml>=5.1",
-  "regex>=2022.6.2",
+  "regex>=2021.8.21",
   "tomli>=0.2.0; python_version<'3.11'",
   "typing-extensions>=4.3.0; python_version<'3.13'",
 ]

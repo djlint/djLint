@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_html_attribute,
     inside_ignored_linter_block,
     inside_ignored_rule,
@@ -42,7 +43,7 @@ flags: Final = MappingProxyType({
     "re.L": re.L,
     "re.LOCALE": re.LOCALE,
 })
-_LINE_PATTERN: Final = re.compile(r"(?:.*\n)|(?:[^\n]+$)", cache_pattern=False)
+_LINE_PATTERN: Final = compile_pattern(r"(?:.*\n)|(?:[^\n]+$)")
 _line_end: Final = itemgetter("end")
 
 

@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import regex as re
-
 from djlint.helpers import (
     RE_FLAGS_IS,
+    compile_pattern,
     inside_ignored_linter_block,
     overlaps_ignored_block,
 )
@@ -18,12 +17,11 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-_BLOCK_PATTERN: Final = re.compile(
+_BLOCK_PATTERN: Final = compile_pattern(
     r"(?P<keyword>{%[-+]?\s*(?P<closing>end)?block(?!trans)\b)"
     r"(?:\s+(?P<name>[^\s%+-](?:[^\s%]*[^\s%+-])?))?"
     r"(?:(?!%}).)*?[-+]?%}",
     RE_FLAGS_IS,
-    cache_pattern=False,
 )
 
 

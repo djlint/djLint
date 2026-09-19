@@ -5,11 +5,10 @@ from __future__ import annotations
 from bisect import bisect_right
 from typing import TYPE_CHECKING
 
-import regex as re
-
 from djlint.const import HTML_VOID_ELEMENTS
 from djlint.helpers import (
     RE_FLAGS_IS,
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     inside_template_block,
@@ -27,10 +26,9 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-_BLOCK_PATTERN: Final = re.compile(
+_BLOCK_PATTERN: Final = compile_pattern(
     r"{%[-+]?\s*(?P<closing>end)?block(?!trans)\b(?:(?!%}).)*?[-+]?%}",
     RE_FLAGS_IS,
-    cache_pattern=False,
 )
 
 

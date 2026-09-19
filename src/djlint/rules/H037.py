@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.helpers import (
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -30,7 +31,7 @@ if TYPE_CHECKING:
 
 _NAME_CHAR = r"[-.:\w]"
 _TEMPLATE_TAG = r"{{.*?}}|{%.*?%}|{#.*?#}|\${[^{}]*}"
-_EVENT_PATTERN = re.compile(
+_EVENT_PATTERN = compile_pattern(
     rf""""(?:[^"{{$]++|{_TEMPLATE_TAG}|[^"])*+"|"""
     rf"""'(?:[^'{{$]++|{_TEMPLATE_TAG}|[^'])*+'|"""
     rf"""=\s*(?:[^\s"'=<>`{{$]++|(?!{_TEMPLATE_TAG})[{{$])++|"""
@@ -38,12 +39,9 @@ _EVENT_PATTERN = re.compile(
     rf"(?P<attribute>(?<!{_NAME_CHAR}){_NAME_CHAR}+)"
     r"(?=\s*=\s*[^\s=<>`]|[\s/>]|$)",
     re.I | re.S,
-    cache_pattern=False,
 )
-_NAME_CHAR_PATTERN = re.compile(_NAME_CHAR, cache_pattern=False)
-_HANDLEBARS_OR_GOLANG_COMMENT_PATTERN = re.compile(
-    r"\{\{-?\s*(?:!|/\*)", cache_pattern=False
-)
+_NAME_CHAR_PATTERN = compile_pattern(_NAME_CHAR)
+_HANDLEBARS_OR_GOLANG_COMMENT_PATTERN = compile_pattern(r"\{\{-?\s*(?:!|/\*)")
 
 
 def _exclusive(

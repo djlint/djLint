@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Packaging
+
+- The minimum required regex version is lowered from 2022.6.2 back to 2021.8.21, the first release that ships wheels for Python 3.10, which is djLint's own minimum. 2022.6.2 was only ever required for `compile(cache_pattern=False)`, which keeps djLint's own patterns out of regex's cache; djLint now asks the installed regex whether it takes that argument and goes without the tuning on the versions that don't. An environment held to an older regex can take the current djLint again.
+
 ## [1.46.1] - 2026-09-08
 
 ### Fix
