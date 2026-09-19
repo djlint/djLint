@@ -7,6 +7,8 @@
 ### Docs
 
 - Each option on the configuration page now carries the release that brought it, so a reader held to an older djLint can tell at a glance what is there to reach for. The page's filter searches the versions too.
+- djLint publishes its own json schema at <https://djlint.com/schema/djlint.json>, covering every option a configuration file can set, and a test keeps it in step with the options djLint actually reads. The copy on schemastore.org had fallen behind by thirteen options and four profiles; pointing its catalog at this url keeps that from happening again.
+- The `.djlintrc` example for `indent` shows a number rather than a quoted one, matching the `pyproject.toml` example beside it.
 
 ### Packaging
 

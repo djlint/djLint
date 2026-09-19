@@ -209,6 +209,10 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/static/py": "static/py" });
 
   eleventyConfig.addPassthroughCopy({
+    "src/static/schema/djlint.json": "schema/djlint.json",
+  });
+
+  eleventyConfig.addPassthroughCopy({
     "src/static/js/worker.js": "static/js/worker.js",
   });
 

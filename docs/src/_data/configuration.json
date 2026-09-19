@@ -283,7 +283,7 @@
     },
     "usage": [
       { "name": "pyproject.toml", "value": "indent=3" },
-      { "name": ".djlintrc", "value": "\"indent\": \"3\"" },
+      { "name": ".djlintrc", "value": "\"indent\": 3" },
       { "name": "cli", "value": "--indent 3" }
     ]
   },
