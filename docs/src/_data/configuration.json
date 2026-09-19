@@ -1,6 +1,7 @@
 [
   {
     "name": "warn",
+    "since": "0.7.6",
     "description": {
       "en": "Return errors as warnings.",
       "ru": "Возвращать ошибки в виде предупреждений.",
@@ -12,6 +13,7 @@
   },
   {
     "name": "version",
+    "since": "0.3.9",
     "description": {
       "en": "Show the version and exit.",
       "ru": "Покажите версию и выйдите.",
@@ -23,6 +25,7 @@
   },
   {
     "name": "quiet",
+    "since": "0.0.9",
     "description": {
       "en": "Do not print diff when reformatting.",
       "ru": "Не печатайте diff при переформатировании.",
@@ -34,6 +37,7 @@
   },
   {
     "name": "max_blank_lines",
+    "since": "1.31.0",
     "description": {
       "en": "Consolidate blank lines down to x lines. Default is 0 meaning blank lines will be removed.",
       "ru": "Объедините пустые строки до х строк. По умолчанию 0, что означает, что пустые строки будут удалены.",
@@ -49,6 +53,7 @@
   },
   {
     "name": "no_set_formatting",
+    "since": "1.30.2",
     "description": {
       "en": "Do not attempt to format the contents of `{% set %}` tags.",
       "ru": "Не форматировать содержимое тегов `{% set %}`.",
@@ -64,6 +69,7 @@
   },
   {
     "name": "no_function_formatting",
+    "since": "1.30.2",
     "description": {
       "en": "Do not attempt to format the arguments of function calls inside `{{ }}` expressions.",
       "ru": "Не форматировать аргументы вызовов функций внутри выражений `{{ }}`.",
@@ -79,6 +85,7 @@
   },
   {
     "name": "quote_style",
+    "since": "1.45.0",
     "description": {
       "en": "Quotes to use for strings inside template tags, either `double` (the default) or `single`. `T002` requires the same quotes. The formatter uses them in a condition too, such as `{% if x == \"a\" %}`, so one file does not spell the same string both ways. HTML attribute quoting is left to `H008`.",
       "ru": "Кавычки для строк внутри тегов шаблона: `double` (по умолчанию) или `single`. `T002` требует тех же кавычек. Форматтер ставит их и в условии, например `{% if x == \"a\" %}`, чтобы один файл не писал одну и ту же строку двумя способами. Кавычки HTML-атрибутов остаются за `H008`.",
@@ -94,6 +101,7 @@
   },
   {
     "name": "keep_br_inline",
+    "since": "1.45.0",
     "description": {
       "en": "Keep `<br>` on the line of the text it breaks, rather than giving it a line of its own. `<hr>`, which renders as a rule below the preceding content, is unaffected.",
       "ru": "Оставлять `<br>` на строке того текста, который он разрывает, а не выносить на отдельную строку. `<hr>`, который рисуется линией под предыдущим содержимым, не затрагивается.",
@@ -109,6 +117,7 @@
   },
   {
     "name": "no_entity_formatting",
+    "since": "1.45.0",
     "description": {
       "en": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `©`. The entities that carry syntax, and the invisible ones, are never rewritten either way.",
       "ru": "Не переписывать ссылку на сущность в именуемый ею символ: `&copy;` останется как есть, а не станет `©`. Сущности, несущие синтаксис, и невидимые не переписываются в любом случае.",
@@ -124,6 +133,7 @@
   },
   {
     "name": "no_line_after_yaml",
+    "since": "1.29.0",
     "description": {
       "en": "Do not add a blank line after yaml front matter.",
       "ru": "Не добавляйте пустую строку после лицевой части yaml.",
@@ -139,6 +149,7 @@
   },
   {
     "name": "close_void_tags",
+    "since": "1.26.0",
     "description": {
       "en": "Add a closing mark to known void tags, so that `<img>` becomes `<img />`.",
       "ru": "Добавлять закрывающую косую черту к известным пустым тегам: `<img>` становится `<img />`.",
@@ -154,6 +165,7 @@
   },
   {
     "name": "ignore",
+    "since": "0.1.5",
     "description": {
       "en": "Ignore linter codes.",
       "ru": "Игнорируйте коды линтера.",
@@ -169,6 +181,7 @@
   },
   {
     "name": "include",
+    "since": "1.20.0",
     "description": {
       "en": "Include linter codes.",
       "ru": "Включите коды линтера.",
@@ -184,6 +197,7 @@
   },
   {
     "name": "extension",
+    "since": "0.0.5",
     "description": {
       "en": "Use to only find files with a specific extension.",
       "ru": "Используется для поиска файлов только с определенным расширением.",
@@ -202,6 +216,7 @@
   },
   {
     "name": "custom_blocks",
+    "since": "0.3.5",
     "description": {
       "en": "Use to indent custom code blocks. For example `{% toc %}...{% endtoc %}`.",
       "ru": "Используется для отступов в пользовательских блоках кода. Например, `{% toc %}...{% endtoc %}`.",
@@ -217,6 +232,7 @@
   },
   {
     "name": "ignore_blocks",
+    "since": "1.24.0",
     "description": {
       "en": "Used to skip indentation on children of template tags. Children will be treated as siblings and indented accordingly.",
       "ru": "Используется для пропуска отступов для дочерних тегов шаблона. Дочерние теги будут рассматриваться как родные братья и сестры и будут иметь соответствующий отступ.",
@@ -232,6 +248,7 @@
   },
   {
     "name": "custom_html",
+    "since": "0.7.0",
     "description": {
       "en": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\\\w+>`",
       "ru": "Используется для отступа пользовательских HTML-тегов. Например, `<mjml>` или `<simple-greeting>` или `<mj-\\\\w+>`.",
@@ -256,6 +273,7 @@
   },
   {
     "name": "indent",
+    "since": "0.3.5",
     "tags": ["formatter"],
     "description": {
       "en": "Use to change the code indentation. Default is 4 (four spaces).",
@@ -271,6 +289,7 @@
   },
   {
     "name": "exclude",
+    "since": "0.4.0",
     "tags": ["linter", "formatter"],
     "description": {
       "en": "Override the default exclude paths.",
@@ -292,6 +311,7 @@
   },
   {
     "name": "extend_exclude",
+    "since": "0.4.0",
     "tags": ["linter", "formatter"],
     "description": {
       "en": "Add additional paths to the default exclude.",
@@ -307,6 +327,7 @@
   },
   {
     "name": "blank_line_after_tag",
+    "since": "0.4.2",
     "tags": ["formatter"],
     "description": {
       "en": "Add an additional blank line after `{% <tag> ... %}` tag groups. Blank lines will never be added to end of block.",
@@ -331,6 +352,7 @@
   },
   {
     "name": "blank_line_before_tag",
+    "since": "1.8.0",
     "tags": ["formatter"],
     "description": {
       "en": "Add an additional blank line before `{% <tag> ... %}` tag groups. Blank lines will never be added to start of file or block, or between similar tags.",
@@ -355,6 +377,7 @@
   },
   {
     "name": "line_break_after_multiline_tag",
+    "since": "1.27.0",
     "tags": ["formatter"],
     "description": {
       "en": "Do not condense the content of multi-line tags into the line of the last attribute.",
@@ -376,6 +399,7 @@
   },
   {
     "name": "profile",
+    "since": "0.4.5",
     "tags": ["linter", "formatter"],
     "description": {
       "en": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n  :::",
@@ -391,6 +415,7 @@
   },
   {
     "name": "require_pragma",
+    "since": "0.5.8",
     "tags": ["formatter"],
     "description": {
       "en": "Only format or lint files that starts with a comment with only the text 'djlint:on'. The comment can be a HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
@@ -406,6 +431,7 @@
   },
   {
     "name": "max_line_length",
+    "since": "0.5.7",
     "tags": ["formatter"],
     "description": {
       "en": "Formatter will attempt to put some html and template tags on a single line instead of wrapping them if the line length will not exceed this value.",
@@ -421,6 +447,7 @@
   },
   {
     "name": "max_attribute_length",
+    "since": "0.5.8",
     "tags": ["formatter"],
     "description": {
       "en": "Formatter will attempt to wrap tag attributes if the attribute length exceeds this value.",
@@ -436,6 +463,7 @@
   },
   {
     "name": "use_gitignore",
+    "since": "0.5.9",
     "tags": ["linter", "formatter"],
     "description": {
       "en": "Add .gitignore excludes to the default exclude. Disabled by default.",
@@ -451,6 +479,7 @@
   },
   {
     "name": "format_attribute_template_tags",
+    "since": "0.6.7",
     "tags": ["formatter"],
     "description": {
       "en": "Formatter will attempt to format template syntax inside of tag attributes. Disabled by default.",
@@ -472,6 +501,7 @@
   },
   {
     "name": "single_attribute_per_line",
+    "since": "1.40.0",
     "tags": ["formatter"],
     "description": {
       "en": "When an opening tag wraps, put the tag name, each attribute, and the closing bracket on separate lines. Disabled by default.",
@@ -487,6 +517,7 @@
   },
   {
     "name": "linter_output_format",
+    "since": "0.6.7",
     "tags": ["linter"],
     "description": {
       "en": "Customize order of output message. Default=\"{code} {line} {message} {match}\". If `{filename}` is not included in message, then the output will be grouped by file and a header will automatically be added to each group.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
@@ -511,6 +542,7 @@
   },
   {
     "name": "preserve_leading_space",
+    "since": "1.2.0",
     "tags": ["formatter"],
     "description": {
       "en": "Preserve leading space on text, where possible. Ideal for non-html template files where text indent is intentional.",
@@ -526,6 +558,7 @@
   },
   {
     "name": "preserve_blank_lines",
+    "since": "1.3.0",
     "tags": ["formatter"],
     "description": {
       "en": "Preserve blank lines where possible. Ideal for non-html template files where blank lines are intentional.",
@@ -541,6 +574,7 @@
   },
   {
     "name": "preserve_class_newlines",
+    "since": "1.39.0",
     "tags": ["formatter"],
     "description": {
       "en": "Preserve line breaks inside multiline class attributes.",
@@ -556,6 +590,7 @@
   },
   {
     "name": "per_file_ignores",
+    "since": "1.7.0",
     "tags": ["linter"],
     "description": {
       "en": "Ignore linter rules on a per-file basis.",
@@ -580,6 +615,7 @@
   },
   {
     "name": "format_js",
+    "since": "1.9.0",
     "tags": ["formatter"],
     "description": {
       "en": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues).",
@@ -601,6 +637,7 @@
   },
   {
     "name": "format_css",
+    "since": "1.9.0",
     "tags": ["formatter"],
     "description": {
       "en": "Format contents of `style` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues).",
@@ -622,6 +659,7 @@
   },
   {
     "name": "files",
+    "since": "1.14.0",
     "tags": ["linter", "formatter"],
     "description": {
       "en": "A list of paths to use as djlint's source. When this option is specified, the command line source must be `-` as if using stdin.",
@@ -640,6 +678,7 @@
   },
   {
     "name": "ignore_case",
+    "since": "1.23.0",
     "tags": ["formatter"],
     "description": {
       "en": "Do not attempt to fix the case of known html tags.",
@@ -658,6 +697,7 @@
   },
   {
     "name": "format_attribute_js_json",
+    "since": "1.37.0",
     "tags": ["formatter"],
     "description": {
       "en": "Format JavaScript and JSON code inside HTML attributes. This will format object literals and JavaScript code in attributes like `onclick`, `x-*`, and other JavaScript-related attributes. Objects with fewer properties than `format_attribute_js_json_min_props` will not be formatted.",
@@ -673,6 +713,7 @@
   },
   {
     "name": "format_attribute_js_json_pattern",
+    "since": "1.37.0",
     "tags": ["formatter"],
     "description": {
       "en": "Custom regex pattern to match JavaScript attributes for formatting. Default pattern matches common JavaScript attributes like `onclick`, `x-*`, Vue.js directives, Alpine.js directives, Angular directives, and more.",
@@ -697,6 +738,7 @@
   },
   {
     "name": "format_attribute_js_json_min_props",
+    "since": "1.37.0",
     "tags": ["formatter"],
     "description": {
       "en": "Minimum number of properties required in a JavaScript/JSON object for it to be formatted. Default is 2. Objects with fewer properties will remain on a single line.",
@@ -718,6 +760,7 @@
   },
   {
     "name": "stdin_filename",
+    "since": "1.43.0",
     "tags": ["formatter", "linter"],
     "description": {
       "en": "Filename to use for per-file-ignores and messages when reading from stdin. Defaults to \"-\".",
@@ -731,6 +774,7 @@
   },
   {
     "name": "allow_empty_input",
+    "since": "1.44.0",
     "tags": ["formatter", "linter"],
     "description": {
       "en": "Exit with 0 instead of 2 when the given paths match no files at all. Files that were found and then skipped by exclude, extend_exclude, use_gitignore or require_pragma already exit with 0. Disabled by default.",
@@ -746,6 +790,7 @@
   },
   {
     "name": "no_indent_inner_html",
+    "since": "1.45.0",
     "description": {
       "en": "Do not indent `<head>` and `<body>` below `<html>`, which is how the default VS Code html formatter lays a document out.",
       "ru": "Не отступать `<head>` и `<body>` внутри `<html>` — так документ размечает стандартный форматтер html в VS Code.",
@@ -761,6 +806,7 @@
   },
   {
     "name": "sort_attributes",
+    "since": "1.45.0",
     "description": {
       "en": "Sort attributes by name, with `id` first and `class` second. A tag whose attributes are guarded by a template tag keeps the order it was written in, since moving one out of its branch would change the page.",
       "ru": "Сортировать атрибуты по имени, ставя `id` первым и `class` вторым. Тег, атрибуты которого стоят внутри тега шаблона, сохраняет исходный порядок: вынести атрибут из его ветки значило бы изменить страницу.",
@@ -776,6 +822,7 @@
   },
   {
     "name": "name_endblocks",
+    "since": "1.45.0",
     "description": {
       "en": "Write the block's name into the `{% endblock %}` that closes it, where the block is written across lines. This is what `T003` asks for.",
       "ru": "Записывать имя блока в закрывающий его `{% endblock %}`, если блок занимает несколько строк. Этого и требует `T003`.",
@@ -791,6 +838,7 @@
   },
   {
     "name": "prefer_configuration",
+    "since": "1.45.0",
     "description": {
       "en": "Let the file named by `configuration` override the project's own config file. `configuration` names a global file, so by default a `pyproject.toml` or `.djlintrc` beside the templates wins where the two set the same thing. Command line only, since it decides how the config files themselves are read.",
       "ru": "Позволяет файлу из `configuration` переопределять собственный конфиг проекта. `configuration` задаёт глобальный файл, поэтому по умолчанию `pyproject.toml` или `.djlintrc` рядом с шаблонами побеждает там, где оба задают одно и то же. Только из командной строки, так как этот флаг решает, как читаются сами файлы конфигурации.",

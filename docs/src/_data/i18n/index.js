@@ -15,6 +15,7 @@ module.exports = {
   //   ru: "ru"
   // },
   lang_code_url: { "en-US": "", ru: "/ru", fr: "/fr", zh: "/zh" },
+  since: { "en-US": "since", ru: "начиная с", fr: "depuis", zh: "自" },
   next_release: {
     "en-US": "Next Release",
     ru: "Следующий релиз",

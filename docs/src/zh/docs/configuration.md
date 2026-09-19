@@ -84,7 +84,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 <div class="is-flex is-justify-content-space-between">
     <h3 class="title is-3">
         <a class="link bn" href="#{{ option.name | slugify }}">∞</a> {{ option.name }}</h3>
-    <div class="tags is-inline-block">{% for tag in option.tags %}<span class="tag is-family-sans-serif is-link has-text-weight-medium">{{ tag }}</span>{% endfor %}</div></div>
+    <div class="tags is-inline-block"><span class="tag is-family-sans-serif has-text-weight-medium">{{ "since" | i18n }} {{ option.since }}</span>{% for tag in option.tags %}<span class="tag is-family-sans-serif is-link has-text-weight-medium">{{ tag }}</span>{% endfor %}</div></div>
 
 {{ option.description[locale or "en"] | markdown | safe }}
 

@@ -5,6 +5,7 @@ uv run pytest tests/test_docs.py
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -23,7 +24,9 @@ if TYPE_CHECKING:
 _LINTER_DOCS = Path("docs/src/docs/linter.md")
 _FORMATTER_DOCS = tuple(sorted(Path("docs/src").rglob("formatter.md")))
 _RULES_FILE = Path("src/djlint/rules.yaml")
+_CONFIGURATION_DATA = Path("docs/src/_data/configuration.json")
 _RULE_SECTION_PATTERN = re.compile(r"^#### ([A-Z]\d{3})\s*$", re.MULTILINE)
+_VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 _EXAMPLE_LABEL_PATTERN = re.compile(r"^(Don't|Do):\s*$", re.MULTILINE)
 _CODE_BLOCK_PATTERN = re.compile(r"```\w*\n(.*?)```", re.DOTALL)
 _SHOWN_OUTPUT_PATTERN = re.compile(
@@ -79,6 +82,18 @@ def _documented_examples() -> list[tuple[str, str, str, str]]:
 
 
 examples = _documented_examples()
+
+
+def test_every_option_says_which_release_brought_it() -> None:
+    """So a reader pinned to an older djLint knows what they can reach for."""
+    options = json.loads(_CONFIGURATION_DATA.read_text(encoding="utf-8"))
+
+    assert options
+    assert [
+        option["name"]
+        for option in options
+        if not _VERSION_PATTERN.fullmatch(option.get("since", ""))
+    ] == []
 
 
 def test_every_rule_is_documented() -> None:
