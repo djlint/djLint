@@ -152,7 +152,8 @@ def _template_spans_tag_end(
     if cursor < template_end and source[cursor] == html_quote:
         next_quote = source.find(html_quote, cursor + 1, template_end)
         quote_end = next_quote if next_quote >= 0 else template_end
-        if source.find(">", cursor + 1, quote_end) >= 0:
+        tag_end = source.find(">", cursor + 1, quote_end)
+        if tag_end >= 0 and not source[cursor + 1 : tag_end].strip():
             return True
 
     quote: str | None = None

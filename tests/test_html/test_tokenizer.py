@@ -148,6 +148,14 @@ def test_template_expression_with_gt_in_quoted_attribute() -> None:
     ] == ['<div data-value="{{ value > limit }}" title="a > b">', "</div>"]
 
 
+def test_gt_inside_balanced_template_string_does_not_end_tag() -> None:
+    source = '<div a="{{ "x > y" }}" a="2">x</div>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ['<div a="{{ "x > y" }}" a="2">', "</div>"]
+
+
 def test_gt_inside_nested_template_string_does_not_end_tag() -> None:
     source = '<div class="{{ classes|default:"[&>a]:flex" }} block" class="other">x</div>'
 
