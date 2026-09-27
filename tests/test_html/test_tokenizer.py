@@ -156,6 +156,14 @@ def test_gt_after_leading_space_inside_template_string_does_not_end_tag() -> Non
     ] == ['<div a="{{ " > y" }}" a="2">', "</div>"]
 
 
+def test_lt_in_later_quoted_attribute_does_not_end_tag() -> None:
+    source = '<div a="{{ " > y" }}" data-x="a < b" a="2">x</div>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ['<div a="{{ " > y" }}" data-x="a < b" a="2">', "</div>"]
+
+
 def test_gt_inside_balanced_template_string_does_not_end_tag() -> None:
     source = '<div a="{{ "x > y" }}" a="2">x</div>'
 

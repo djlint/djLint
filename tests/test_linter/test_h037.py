@@ -293,6 +293,18 @@ test_data = [
         id="duplicate_after_gt_inside_balanced_template_string",
     ),
     pytest.param(
+        ('<div a="{{ " > y" }}" data-x="a < b" a="2">x</div>'),
+        ([
+            {
+                "code": "H037",
+                "line": "1:5",
+                "match": "a",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="duplicate_after_lt_inside_later_quoted_attribute",
+    ),
+    pytest.param(
         ('<div class="{{ classes|default:"[&>a]:flex" }} block" class="other">x</div>'),
         ([
             {
