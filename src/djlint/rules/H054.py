@@ -53,7 +53,9 @@ _AFTER_EVERY_SPAN: Final = float("inf")
 _HREF_PATTERN = compile_pattern(r"(?<![-.:\w])href(?![-.:\w])", re.I)
 _TYPE_PATTERN = compile_pattern(r"(?<![-.:\w])type(?![-.:\w])", re.I)
 _TEMPLATE_PATTERN = compile_pattern(r"{[{%#]")
-_TEMPLATE_STATEMENT_PATTERN = compile_pattern(r"{%(?:(?!%}).)*%}", re.S)
+_TEMPLATE_OR_QUOTE_PATTERN = compile_pattern(
+    r"""{\#.*?\#}|{%.*?%}|{{.*?}}|["']""", re.S
+)
 # djLint's shared skip reads "{% comment %}" but not the "{%- comment -%}"
 # a liquid theme is written in, so the rule finds those bodies itself.
 _COMMENT_OPENING_PATTERN = compile_pattern(r"{%[-+]?[ \t]*comment\b", re.I)
@@ -62,24 +64,44 @@ _COMMENT_CLOSING_PATTERN = compile_pattern(
 )
 
 
+def _written(area: str) -> str:
+    """The attribute area without its comments and statement tags.
+
+    A statement tag is dropped only between attributes, so what an
+    `{% if %}` writes between its tags is read like any other attribute,
+    while one inside a quoted value stays and marks the value as written
+    by a template. Each template tag is stepped over whole, so a quote
+    inside one does not open or close a value.
+    """
+    parts: list[str] = []
+    position = 0
+    quote: str | None = None
+    for match in _TEMPLATE_OR_QUOTE_PATTERN.finditer(area):
+        token = match[0]
+        if token in {'"', "'"}:
+            if quote is None:
+                quote = token
+            elif token == quote:
+                quote = None
+        elif token.startswith("{#") or (
+            quote is None and token.startswith("{%")
+        ):
+            parts.append(area[position : match.start()])
+            position = match.end()
+    parts.append(area[position:])
+    return "".join(parts)
+
+
 def _attributes(config: Config, area: str) -> Iterator[tuple[str, str | None]]:
     """Yield the attribute names the tag writes, with their raw values.
 
     Only a name in attribute position is one: a word inside a comment, in
-    a template tag's own code or in another attribute's value is not. An
-    `{% if %}` block is opened up, because what it writes between its
-    tags is an attribute like any other.
+    a template tag's own code or in another attribute's value is not.
     """
-    for match in config.attribute_pattern.finditer(area):
-        name, value, template = match.group(1, 2, 3)
+    for match in config.attribute_pattern.finditer(_written(area)):
+        name, value = match.group(1, 2)
         if name:
             yield name, value
-        elif template and template.startswith("{%"):
-            written = _TEMPLATE_STATEMENT_PATTERN.sub("", template)
-            for inner in config.attribute_pattern.finditer(written):
-                inner_name, inner_value = inner.group(1, 2)
-                if inner_name:
-                    yield inner_name, inner_value
 
 
 def _unquote(value: str) -> str:

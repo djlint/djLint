@@ -192,6 +192,27 @@ test_data = [
         (False),
         id="a closing tag in a pre body closes the element it names",
     ),
+    pytest.param(
+        ('<a title="{# " href #}"><button type="button">Go</button></a>'),
+        (False),
+        id="a quote in a comment in a value does not end the value",
+    ),
+    pytest.param(
+        (
+            '<a href="/x"><input {% if shown %}type="{% if hidden %}hidden'
+            '{% else %}text{% endif %}"{% endif %}></a>'
+        ),
+        (False),
+        id="a type an if writes with a value its own if writes",
+    ),
+    pytest.param(
+        (
+            '<a href="/x"><input {% if shown %}type="text"{% endif %}'
+            ' name="q"></a>'
+        ),
+        (True),
+        id="a plain type an if writes is read",
+    ),
 ]
 
 
