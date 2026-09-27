@@ -281,6 +281,20 @@ test_data = [
         id="quoted_string_inside_mako_expression_in_value",
     ),
     pytest.param(
+        (
+            '<div class="{{ c|default:"[&>a]:flex" }} block" class="other"></div>'
+        ),
+        ([
+            {
+                "code": "H037",
+                "line": "1:5",
+                "match": "class",
+                "message": "Duplicate attribute found.",
+            }
+        ]),
+        id="gt_in_template_string_in_value",
+    ),
+    pytest.param(
         ('<a title="{% trans "a b" %}" title/>'),
         ([
             {

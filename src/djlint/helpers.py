@@ -430,6 +430,19 @@ def inside_html_attribute(html: str, match: SpanMatch) -> bool:
     )
 
 
+def ends_inside_html_attribute(html: str, match: SpanMatch) -> bool:
+    """Check if the last character of a re.Match is inside an html attribute.
+
+    A pattern that reads a tag up to its first ">" stops early at one in a
+    template string, as in `class="{{ x|default:"a>b" }}"`, and what it
+    matched is then only the start of the tag.
+    """
+    match_end = match.span()[1]
+    return _inside_non_overlapping_span(
+        _html_attribute_spans(html), match_end - 1, match_end
+    )
+
+
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _inside_ignored_linter_block(
     html: str, /, *, ignored_linter_blocks: re.Pattern[str]

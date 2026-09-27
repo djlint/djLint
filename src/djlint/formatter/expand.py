@@ -26,6 +26,7 @@ from djlint.helpers import (
     RE_FLAGS_MX,
     breaks_an_ignored_block,
     compile_pattern,
+    ends_inside_html_attribute,
     inside_html_attribute,
     inside_ignored_block,
     inside_template_block,
@@ -471,7 +472,8 @@ def expand_html(html: str, config: Config) -> str:
 
         Do not add whitespace if the tag is a in a template block.
 
-        Do not add whitespace if the tag is in an html attribute string.
+        Do not add whitespace if the tag is in an html attribute string,
+        or if its ">" is: the pattern stopped at one in a template string.
         """
         if out_format == _BREAK_AFTER_TAG:
             if breaks_an_ignored_block(config, html, match.end(1)):
@@ -482,7 +484,7 @@ def expand_html(html: str, config: Config) -> str:
         if inside_template_block(config, html, match):
             return match.group(1)
 
-        if inside_html_attribute(html, match):
+        if ends_inside_html_attribute(html, match):
             return match.group(1)
 
         if config.keep_br_inline and _tag_name(match.group(1)) == "br":

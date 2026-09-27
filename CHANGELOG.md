@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- A `>` inside a string of a template tag no longer ends the html tag around it when the string reuses the attribute's quote, as in `class="{{ classes|default:"[&>a]:flex" }}"`. Before, the linter lost the rest of the tag, so `H037` missed a repeated attribute after it, and the formatter put a line break inside the string.
+
 ## [1.46.2]
 
 ### Docs

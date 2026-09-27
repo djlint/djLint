@@ -137,6 +137,33 @@ def _after_template(source: str, start: int) -> int | None:
     return _after_delimited(source, start, source[start : start + 2], closing)
 
 
+def _has_bare_gt(source: str, start: int, end: int) -> bool:
+    """Whether a ">" in source[start:end] is outside a closed string.
+
+    A string that never closes is not a string: its quote belongs to the
+    HTML around the expression, as in a="{{">, where the ">" ends the tag.
+    """
+    quote: str | None = None
+    gt_in_quote = False
+    cursor = start
+    while cursor < end:
+        char = source[cursor]
+        if quote is not None:
+            if char == "\\":
+                cursor += 1
+            elif char == quote:
+                quote = None
+                gt_in_quote = False
+            elif char == ">":
+                gt_in_quote = True
+        elif char in "\"'":
+            quote = char
+        elif char == ">":
+            return True
+        cursor += 1
+    return gt_in_quote
+
+
 def _next_template_opener(
     source: str, start: int, stop: int, *, mako: bool
 ) -> int:
@@ -183,7 +210,9 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
     {% translate "You don't have permission" %} would otherwise be read as
     closing the attribute. One spanning the tag's own ">" is left alone: a
     quoted literal like a="{{" has no closing of its own, so the "}}" a
-    plain search settles on lies past the end of the tag.
+    plain search settles on lies past the end of the tag. A ">" inside one
+    of the expression's own strings, as in "{{ x|default:"a>b" }}", is not
+    the tag's.
     """
     mako = "$" in source
     has_templates = mako or "{" in source
@@ -254,6 +283,7 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
                     and quote is not None
                     and char != "$"
                     and source.find(">", cursor, template_end) >= 0
+                    and _has_bare_gt(source, cursor, template_end)
                 )
                 if template_end is not None and not spans_tag_end:
                     cursor = template_end

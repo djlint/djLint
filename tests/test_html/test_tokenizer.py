@@ -110,6 +110,27 @@ def test_quoted_literal_braces_do_not_escape_attribute() -> None:
     ] == ['<div a="{{">', "</div>", "<pre>", "</pre>"]
 
 
+def test_later_quote_does_not_close_quoted_literal_braces() -> None:
+    source = '<div a="{{">text }} "> <SPAN>next</SPAN></div>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ['<div a="{{">', "<SPAN>", "</SPAN>", "</div>"]
+
+
+def test_gt_in_template_string_in_quoted_attribute() -> None:
+    """The template string reuses the attribute's quote, so its ">" is data."""
+    tag = (
+        '<div class="{{ classes|default:" [&>a]:flex" }} block" '
+        "class='{% firstof a '>' %}'>"
+    )
+    source = f"{tag}x</div>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == [tag, "</div>"]
+
+
 def test_quote_inside_template_tag_does_not_end_attribute() -> None:
     """A template tag nested in an attribute value carries its own quotes; an apostrophe in the translated text must not open a value either."""
     source = (

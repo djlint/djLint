@@ -60,6 +60,20 @@ test_data = [
         ),
         id="issue #443",
     ),
+    pytest.param(
+        (
+            '<div><div class="{{ c|default:"[&>a]:flex" }} block">'
+            "<p>x</p></div></div>"
+        ),
+        (
+            "<div>\n"
+            '    <div class="{{ c|default:"[&>a]:flex" }} block">\n'
+            "        <p>x</p>\n"
+            "    </div>\n"
+            "</div>\n"
+        ),
+        id="gt_in_template_string_in_attribute",
+    ),
 ]
 
 
