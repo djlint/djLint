@@ -110,6 +110,14 @@ def test_quoted_literal_braces_do_not_escape_attribute() -> None:
     ] == ['<div a="{{">', "</div>", "<pre>", "</pre>"]
 
 
+def test_quoted_literal_braces_with_gt_do_not_escape_attribute() -> None:
+    source = '<div a="{{">x</div>\n<pre>\n  keep }}  me\n</pre>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ['<div a="{{">', "</div>", "<pre>", "</pre>"]
+
+
 def test_quote_inside_template_tag_does_not_end_attribute() -> None:
     """A template tag nested in an attribute value carries its own quotes; an apostrophe in the translated text must not open a value either."""
     source = (
@@ -130,6 +138,17 @@ def test_template_expression_with_gt_in_quoted_attribute() -> None:
     assert [
         source[token.start : token.end] for token in tokenize_tags(source)
     ] == ['<div data-value="{{ value > limit }}" title="a > b">', "</div>"]
+
+
+def test_gt_inside_nested_template_string_does_not_end_tag() -> None:
+    source = '<div class="{{ classes|default:"[&>a]:flex" }} block" class="other">x</div>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == [
+        '<div class="{{ classes|default:"[&>a]:flex" }} block" class="other">',
+        "</div>",
+    ]
 
 
 def test_triple_stache_attribute_is_one_tag() -> None:
