@@ -154,7 +154,11 @@ def _template_spans_tag_end(
         quote_end = next_quote if next_quote >= 0 else template_end
         tag_end = source.find(">", cursor + 1, quote_end)
         if tag_end >= 0 and not source[cursor + 1 : tag_end].strip():
-            return True
+            continuation_end = source.find(">", template_end)
+            if continuation_end < 0:
+                return True
+            continuation_tag = source.find("<", template_end, continuation_end)
+            return continuation_tag >= 0
 
     quote: str | None = None
     saw_gt_in_quote = False
