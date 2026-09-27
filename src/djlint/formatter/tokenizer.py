@@ -137,13 +137,24 @@ def _after_template(source: str, start: int) -> int | None:
     return _after_delimited(source, start, source[start : start + 2], closing)
 
 
-def _template_spans_tag_end(source: str, start: int, template_end: int) -> bool:
+def _template_spans_tag_end(
+    source: str, start: int, template_end: int, html_quote: str
+) -> bool:
     """Whether a template expression can contain the real end of an HTML tag.
 
     A ``>`` inside a balanced template string is data, not markup. An
     unterminated string is treated conservatively because a quote from the
     surrounding HTML attribute may have been mistaken for a template quote.
     """
+    cursor = start + 2
+    while cursor < template_end and source[cursor].isspace():
+        cursor += 1
+    if cursor < template_end and source[cursor] == html_quote:
+        next_quote = source.find(html_quote, cursor + 1, template_end)
+        quote_end = next_quote if next_quote >= 0 else template_end
+        if source.find(">", cursor + 1, quote_end) >= 0:
+            return True
+
     quote: str | None = None
     saw_gt_in_quote = False
     cursor = start + 2
@@ -281,7 +292,7 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
                     template_end is not None
                     and quote is not None
                     and char != "$"
-                    and _template_spans_tag_end(source, cursor, template_end)
+                    and _template_spans_tag_end(source, cursor, template_end, quote)
                 )
                 if template_end is not None and not spans_tag_end:
                     cursor = template_end

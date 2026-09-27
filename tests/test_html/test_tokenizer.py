@@ -118,6 +118,14 @@ def test_quoted_literal_braces_with_gt_do_not_escape_attribute() -> None:
     ] == ['<div a="{{">', "</div>", "<pre>", "</pre>"]
 
 
+def test_literal_template_delimiter_does_not_swallow_later_tags() -> None:
+    source = '<div a="{{">x "}}" <p>y</p>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ['<div a="{{">', "<p>", "</p>"]
+
+
 def test_quote_inside_template_tag_does_not_end_attribute() -> None:
     """A template tag nested in an attribute value carries its own quotes; an apostrophe in the translated text must not open a value either."""
     source = (
