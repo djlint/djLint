@@ -45,6 +45,9 @@ class TagToken:
 
 
 _TEMPLATE_DELIMITERS: Final = MappingProxyType({"{%": "%}", "{#": "#}"})
+# handlebars raw blocks open with "{{{{", the longest brace run of any
+# template language
+_LONGEST_BRACE_RUN: Final = 4
 
 
 def _after_mako_expression(source: str, start: int) -> int | None:
@@ -78,10 +81,15 @@ def _after_brace_run_expression(source: str, start: int) -> int | None:
 
     Handlebars allows a variable-length brace run, so the opening run is
     matched with a closing run of the same length; a leftover brace would
-    otherwise abort the surrounding tag scan.
+    otherwise abort the surrounding tag scan. Counting past the longest
+    run a template language opens with would read a long run of braces
+    again from each one of them.
     """
     open_length = 2
-    while source[start + open_length : start + open_length + 1] == "{":
+    while (
+        open_length < _LONGEST_BRACE_RUN
+        and source[start + open_length : start + open_length + 1] == "{"
+    ):
         open_length += 1
     if _starts_markup(source, start + open_length):
         return None
@@ -98,15 +106,14 @@ def _after_delimited(
     A second opener before the closing delimiter means the first one was
     never closed: no template language nests these, and reading an
     unclosed `{%` as an expression hides every tag between it and the
-    next `%}` anywhere on the page.
+    next `%}` anywhere on the page. The closing delimiter is only looked
+    for up to that second opener, so a run of unclosed ones is read once.
     """
-    end = source.find(closing, start + len(opening))
-    if end < 0:
-        return None
-    nested = source.find(opening, start + len(opening))
-    if 0 <= nested < end:
-        return None
-    return end + len(closing)
+    after_opening = start + len(opening)
+    nested = source.find(opening, after_opening)
+    stop = len(source) if nested < 0 else nested + len(closing) - 1
+    end = source.find(closing, after_opening, stop)
+    return None if end < 0 else end + len(closing)
 
 
 def _starts_markup(source: str, index: int) -> bool:

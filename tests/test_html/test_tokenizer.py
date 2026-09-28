@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from typing import TYPE_CHECKING
 
 from djlint.formatter.compress import compress_html
@@ -129,6 +130,23 @@ def test_gt_in_template_string_in_quoted_attribute() -> None:
     assert [
         source[token.start : token.end] for token in tokenize_tags(source)
     ] == [tag, "</div>"]
+
+
+def test_a_run_of_unclosed_braces_is_read_once() -> None:
+    """Twenty thousand "{{" in a value took forty seconds.
+
+    Each brace counted the rest of the run and searched the rest of the
+    file for a closing one.
+    """
+    source = '<a title="' + "{{" * 20000 + '">x</a>'
+
+    started = time.perf_counter()
+    tokens = [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ]
+
+    assert tokens == [source[: source.index(">") + 1], "</a>"]
+    assert time.perf_counter() - started < 1
 
 
 def test_quote_inside_template_tag_does_not_end_attribute() -> None:

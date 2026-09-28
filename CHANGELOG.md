@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Performance
+
+- A long run of unclosed `{{` in an html tag no longer makes tokenizing it quadratic: an attribute value holding twenty thousand of them took `H054` 80 seconds and takes under two now, and the tokenizer alone went from 40 seconds to a few milliseconds.
+
 ### Fix
 
 - A `>` inside a string of a template tag no longer ends the html tag around it when the string reuses the attribute's quote, as in `class="{{ classes|default:"[&>a]:flex" }}"`. Before, the linter lost the rest of the tag, so `H037` missed a repeated attribute after it, and the formatter put a line break inside the string.

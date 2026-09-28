@@ -53,8 +53,16 @@ _AFTER_EVERY_SPAN: Final = float("inf")
 _HREF_PATTERN = compile_pattern(r"(?<![-.:\w])href(?![-.:\w])", re.I)
 _TYPE_PATTERN = compile_pattern(r"(?<![-.:\w])type(?![-.:\w])", re.I)
 _TEMPLATE_PATTERN = compile_pattern(r"{[{%#]")
+# A second opener before the close means the first one never closed, as
+# the tokenizer reads it, so a run of unclosed tags is read once.
 _TEMPLATE_OR_QUOTE_PATTERN = compile_pattern(
-    r"""{\#.*?\#}|{%.*?%}|{{.*?}}|["']""", re.S
+    r"""
+      {\#(?:(?!\#}|{\#).)*\#}
+    | {%(?:(?!%}|{%).)*%}
+    | {{(?:(?!}}|{{).)*}}
+    | ["']
+    """,
+    re.S | re.X,
 )
 # djLint's shared skip reads "{% comment %}" but not the "{%- comment -%}"
 # a liquid theme is written in, so the rule finds those bodies itself.
