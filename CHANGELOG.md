@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.46.3] - 2026-09-28
+
 ### Performance
 
 - A long run of unclosed `{{` or `{%` no longer makes linting and formatting quadratic. Each was read again from every opener to the end of the line or the file, so eight thousand `{{` on one line took over half a minute to lint and as long again to format, and twenty thousand in one attribute value took `H054` alone 80 seconds; each now takes well under a second. A second opener is taken to mean the first one never closed, which is how the tokenizer already read them. `T038` still reads an unclosed `{%` up to the next `%}`, as django does, so a run of those stays slow there.
@@ -14,7 +16,7 @@
 - `H054` no longer reads an attribute out of a `{# #}` comment in another attribute's value, as in `<a title="{# " href #}">`, and leaves an input alone when an `{% if %}` writes its type and another tag writes the value, as in `{% if shown %}type="{% if hidden %}hidden{% else %}text{% endif %}"{% endif %}`.
 - A `{#` inside a `{{ }}` or `{% %}` tag, as in `{{ "{# x" }}` or an ICU message such as `{n, plural, one {# item} other {# items}}`, no longer opens a comment that runs to the next `#}` in the file. Before, the linter skipped everything in between, so `T038` reported the `{% if %}` before it as unclosed and `T041` missed an `{% extends %}` after it, and the formatter left the lines in between unformatted. A tag ends at its first closing delimiter, which is where django ends it.
 
-## [1.46.2]
+## [1.46.2] - 2026-09-19
 
 ### Docs
 
