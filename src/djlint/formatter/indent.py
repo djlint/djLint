@@ -96,8 +96,10 @@ _SET_OPENING_BRACE_PATTERN: Final = compile_pattern(
 _TEMPLATE_TAG_CLOSE_PATTERN: Final = compile_pattern(
     r"\{%[-+]?\s*end|\{\{/", RE_FLAGS_IMX
 )
+# Some opener is left unclosed exactly when the last one is, so each is only
+# read up to the next, which keeps a line of unclosed ones to one pass.
 _MULTILINE_TAG_OPEN_PATTERN: Final = compile_pattern(
-    r"(?:\{\{|\{%)(?:(?!\}\}|%\}).)*$"
+    r"(?:\{\{|\{%)(?:(?!\}\}|%\}|\{\{|\{%).)*$"
 )
 _MULTILINE_TAG_CLOSE_PATTERN: Final = compile_pattern(
     r"^(?:(?!\{\{|\{%).)*?(?:\}\}|%\})"
@@ -123,7 +125,7 @@ _FUNCTION_CONTENT_PATTERN: Final = compile_pattern(
     (?P<indent>[ ]*)
     (?P<open>{{-?\+?)
     [ ]*?
-    (?P<name>(?:(?!}}).)*?\w)
+    (?P<name>(?:(?!}}|{{).)*?\w)
     (?P<paren>
       \(
       (?:\"[^\"]*+\"|'[^']*+'|[^()]++|(?&paren))*+
@@ -131,7 +133,7 @@ _FUNCTION_CONTENT_PATTERN: Final = compile_pattern(
     )
     (?P<index>(?:\[[^\]]*?\]|\.[^\s]+))?
     (?P<gap>[ ]*)
-    (?P<close>(?:(?!}}).)*?-?\+?}})
+    (?P<close>(?:(?!}}|{{).)*?-?\+?}})
     """,
     RE_FLAGS_IMSX,
 )

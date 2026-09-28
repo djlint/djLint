@@ -243,9 +243,10 @@
     message: Extra whitespace found in template tags.
     patterns:
       # a string is stepped over whole, so a run of spaces inside one is
-      # content rather than padding
-      - '{%(?:"[^"]*"|''[^'']*''|(?!%})[^''"\n])*?[ \t]{2,}'
-      - '{{(?:"[^"]*"|''[^'']*''|(?!}})[^''"\n])*?[ \t]{2,}'
+      # content rather than padding. A second opener means the first never
+      # closed, so a run of unclosed ones is read once.
+      - '{%(?:"[^"]*"|''[^'']*''|(?!%}|{%)[^''"\n])*?[ \t]{2,}'
+      - '{{(?:"[^"]*"|''[^'']*''|(?!}}|{{)[^''"\n])*?[ \t]{2,}'
 - rule:
     name: H033
     message: Extra whitespace found in form action.
@@ -257,8 +258,9 @@
     message: Did you intend to use {% ... %} instead of {% ... }%?
     flags: re.DOTALL
     patterns:
-      # a string is stepped over whole, so a brace inside one is text
-      - '{%(?:"[^"]*"|''[^'']*''|(?!%}|}%)[^"''])*}%'
+      # a string is stepped over whole, so a brace inside one is text, and
+      # a second opener means the first never closed
+      - '{%(?:"[^"]*"|''[^'']*''|(?!%}|}%|{%)[^"''])*}%'
 - rule:
     name: H036
     message: Do not use br tags for spacing.

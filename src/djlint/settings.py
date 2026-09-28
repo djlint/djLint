@@ -545,8 +545,10 @@ _ATTRIBUTE_PATTERN: Final = (
 
 _ATTRIBUTE_X_PATTERN: Final = compile_pattern(_ATTRIBUTE_PATTERN, re.X)
 
+# A second opener means the first never closed, as the tokenizer reads it,
+# so a run of unclosed tags is read once.
 _TEMPLATE_TAGS: Final = r"""
-    {{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}
+    {{(?:(?!}}|{{).)*}}|{%(?:(?!%}|{%).)*%}
 """
 _TEMPLATE_TAGS_IMX_PATTERN: Final = compile_pattern(
     _TEMPLATE_TAGS, RE_FLAGS_IMX
@@ -1158,7 +1160,7 @@ _SAFE_CLOSING_BLOCK_PATTERN: Final = compile_pattern(
 )
 _TEMPLATE_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
-    {%((?!%}).)+%}|{{((?!}}).)+}}
+    {%((?!%}|{%).)+%}|{{((?!}}|{{).)+}}
     """,
     RE_FLAGS_IMSX,
 )

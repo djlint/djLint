@@ -10,7 +10,7 @@ from djlint.helpers import (
     overlaps_ignored_block,
 )
 from djlint.lint import get_line
-from djlint.rules.T027 import _TemplateTagMatch
+from djlint.rules.T027 import _close_past_strings, _TemplateTagMatch
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -43,29 +43,12 @@ def _iter_tags(html: str) -> Iterator[tuple[int, int, str]]:
             return
         start, close = min(starts)
 
-        quote = ""
-        scan = start + 2
-        end = -1
-        while scan < length:
-            char = html[scan]
-            if quote:
-                if char == "\\":
-                    scan += 2
-                    continue
-                if char == quote:
-                    quote = ""
-            elif char in {"'", '"'}:
-                quote = char
-            elif html.startswith(close, scan):
-                end = scan + 2
-                break
-            scan += 1
-
-        if end == -1:
+        close_start = _close_past_strings(html, start, close)
+        if close_start is None or close_start == -1:
             pos = start + 2
             continue
-        yield start, end, close
-        pos = end
+        yield start, close_start + 2, close
+        pos = close_start + 2
 
 
 def _is_padded(html: str, start: int, end: int) -> bool:

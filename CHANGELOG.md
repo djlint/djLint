@@ -6,7 +6,7 @@
 
 ### Performance
 
-- A long run of unclosed `{{` in an html tag no longer makes tokenizing it quadratic: an attribute value holding twenty thousand of them took `H054` 80 seconds and takes under two now, and the tokenizer alone went from 40 seconds to a few milliseconds.
+- A long run of unclosed `{{` or `{%` no longer makes linting and formatting quadratic. Each was read again from every opener to the end of the line or the file, so eight thousand `{{` on one line took over half a minute to lint and as long again to format, and twenty thousand in one attribute value took `H054` alone 80 seconds; each now takes well under a second. A second opener is taken to mean the first one never closed, which is how the tokenizer already read them. `T038` still reads an unclosed `{%` up to the next `%}`, as django does, so a run of those stays slow there.
 
 ### Fix
 

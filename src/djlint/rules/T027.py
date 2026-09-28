@@ -20,6 +20,7 @@ else:
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    from typing import Final
 
     from typing_extensions import Any
 
@@ -51,6 +52,12 @@ class _TemplateTagMatch:
         return self._html[self._start : self._end]
 
 
+_OPENERS: Final = ("{{", "{%")
+# handlebars raw blocks open with "{{{{", the longest brace run of any
+# template language
+_LONGEST_BRACE_RUN: Final = 4
+
+
 def _is_comment_tag(html: str, start: int) -> bool:
     pos = start + 2
     if pos < len(html) and html[pos] == "-":
@@ -60,15 +67,22 @@ def _is_comment_tag(html: str, start: int) -> bool:
     return html.startswith(("!", "/*"), pos)
 
 
-def _close_past_strings(html: str, start: int, close: str) -> int:
+def _close_past_strings(html: str, start: int, close: str) -> int | None:
     """Index of the closing delimiter, skipping over quoted strings.
 
     Returns -1 when a string runs to the end of the file, which is the
     unterminated string this rule is looking for; the caller then falls
     back to the first delimiter so the tag still has an end to report.
+
+    Returns None when another tag opens first. No template language nests
+    tags, so this one was never closed, and scanning on would read the
+    rest of the file again for each tag in a run of unclosed ones.
     """
     quote = ""
     pos = start + 2
+    # a run of braces, as in "{{{{", opens one tag
+    while pos < start + _LONGEST_BRACE_RUN and html.startswith("{", pos):
+        pos += 1
     length = len(html)
     while pos < length:
         char = html[pos]
@@ -82,6 +96,8 @@ def _close_past_strings(html: str, start: int, close: str) -> int:
             quote = char
         elif html.startswith(close, pos):
             return pos
+        elif html.startswith(_OPENERS, pos):
+            return None
         pos += 1
     return -1
 
@@ -103,7 +119,7 @@ def _iter_template_tags(html: str) -> Iterator[_TemplateTagMatch]:
         end = _close_past_strings(html, start, close)
         if end == -1:
             end = html.find(close, start + 2)
-        if end == -1:
+        if end is None or end == -1:
             pos = start + 2
             continue
         end += 2
