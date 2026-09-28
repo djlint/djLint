@@ -8,6 +8,7 @@
 
 - A `>` inside a string of a template tag no longer ends the html tag around it when the string reuses the attribute's quote, as in `class="{{ classes|default:"[&>a]:flex" }}"`. Before, the linter lost the rest of the tag, so `H037` missed a repeated attribute after it, and the formatter put a line break inside the string.
 - `H054` no longer reads an attribute out of a `{# #}` comment in another attribute's value, as in `<a title="{# " href #}">`, and leaves an input alone when an `{% if %}` writes its type and another tag writes the value, as in `{% if shown %}type="{% if hidden %}hidden{% else %}text{% endif %}"{% endif %}`.
+- A `{#` inside a `{{ }}` or `{% %}` tag, as in `{{ "{# x" }}` or an ICU message such as `{n, plural, one {# item} other {# items}}`, no longer opens a comment that runs to the next `#}` in the file. Before, the linter skipped everything in between, so `T038` reported the `{% if %}` before it as unclosed and `T041` missed an `{% extends %}` after it, and the formatter left the lines in between unformatted. A tag ends at its first closing delimiter, which is where django ends it.
 
 ## [1.46.2]
 

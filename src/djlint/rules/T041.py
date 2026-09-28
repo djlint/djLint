@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.const import SKIP_TEMPLATE_TAG
 from djlint.helpers import compile_pattern
 from djlint.lint import get_line
 
@@ -75,7 +76,8 @@ _OPENING_PATTERN: Final = compile_pattern(
     | (?P<comment>{%[-+]?\s*comment\b)
     | (?P<literal>{%[-+]?\s*(?P<literal_name>raw|verbatim)\b)
     | (?P<raw_text><(?P<raw_text_name>script|style|pre|textarea)\b)
-    """,
+    |"""
+    + SKIP_TEMPLATE_TAG,
     re.I | re.S | re.X,
 )
 

@@ -14,7 +14,12 @@ import yaml
 from click import BadParameter, UsageError, echo, style
 from pathspec import PathSpec
 
-from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS, TEMPLATE_TAG_NAME
+from djlint.const import (
+    HTML_TAG_NAMES,
+    HTML_VOID_ELEMENTS,
+    SKIP_TEMPLATE_TAG,
+    TEMPLATE_TAG_NAME,
+)
 from djlint.helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
@@ -980,7 +985,8 @@ _IGNORED_BLOCK_OPENING_PATTERN: Final = compile_pattern(
     | {%[ ]+?comment[ ]+?(?:(?!%}).)*?%}
     | {{!--\s*djlint\:off\s*--}}
     | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}
-    """,
+    |"""
+    + SKIP_TEMPLATE_TAG,
     RE_FLAGS_IX,
 )
 _IGNORED_BLOCK_CLOSING_BEFORE: Final = r"""
@@ -1020,9 +1026,11 @@ _IGNORED_BLOCK_CLOSING_ANYWHERE_PATTERN: Final = compile_pattern(
     _IGNORED_BLOCK_CLOSING_BEFORE + "|" + _IGNORED_BLOCK_CLOSING_AFTER,
     RE_FLAGS_IX,
 )
-_IGNORED_BLOCKS_PATTERN: Final = compile_pattern(_IGNORED_BLOCKS, RE_FLAGS_IMSX)
+_IGNORED_BLOCKS_PATTERN: Final = compile_pattern(
+    _IGNORED_BLOCKS + "|" + SKIP_TEMPLATE_TAG, RE_FLAGS_IMSX
+)
 _LINT_IGNORED_BLOCKS_PATTERN: Final = compile_pattern(
-    _LINT_IGNORED_BLOCKS, RE_FLAGS_IMSX
+    _LINT_IGNORED_BLOCKS + "|" + SKIP_TEMPLATE_TAG, RE_FLAGS_IMSX
 )
 _IGNORED_BLOCKS_INLINE_PATTERN: Final = compile_pattern(
     r"""
@@ -1049,14 +1057,16 @@ _IGNORED_BLOCKS_INLINE_PATTERN: Final = compile_pattern(
     | {%[ ]*blocktrans\b(?:(?!%}|\btrimmed\b).)*?%}.*?{%[ ]*endblocktrans[ ]*%}
     | {%[ ]*comment\b(?:(?!%}).)*?%}(?:(?!djlint:(?:off|on)).)*?(?={%[ ]*endcomment[ ]*%})
     |"""
-    + YAML_FRONT_MATTER,
+    + YAML_FRONT_MATTER
+    + "|"
+    + SKIP_TEMPLATE_TAG,
     RE_FLAGS_IMSX,
 )
 _IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = compile_pattern(
-    _IGNORED_INLINE_BLOCKS, RE_FLAGS_IX
+    _IGNORED_INLINE_BLOCKS + "|" + SKIP_TEMPLATE_TAG, RE_FLAGS_IX
 )
 _LINT_IGNORED_INLINE_BLOCKS_IX_PATTERN: Final = compile_pattern(
-    _LINT_IGNORED_INLINE_BLOCKS, RE_FLAGS_IX
+    _LINT_IGNORED_INLINE_BLOCKS + "|" + SKIP_TEMPLATE_TAG, RE_FLAGS_IX
 )
 _IGNORED_LINTER_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
@@ -1081,7 +1091,9 @@ _UNFORMATTED_BLOCKS_PATTERN: Final = compile_pattern(
     # golang
     | {{-?\s*/\*\s*djlint\:off\s*\*/\s*-?}}(?:(?!{{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}).)*
     |"""
-    + YAML_FRONT_MATTER,
+    + YAML_FRONT_MATTER
+    + "|"
+    + SKIP_TEMPLATE_TAG,
     RE_FLAGS_IMSX,
 )
 _IGNORED_RULE_PATTERNS: Final = tuple(

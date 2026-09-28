@@ -95,6 +95,26 @@ test_data = [
         ({"profile": "nunjucks"}),
         id="nunjucks reads the pair the same way",
     ),
+    pytest.param(
+        (
+            "{% if show %}\n"
+            '{{ "{# x" }}\n'
+            "<div><p>x</p></div>\n"
+            "{% endif %}\n"
+            "{# c #}\n"
+        ),
+        (
+            "{% if show %}\n"
+            '    {{ "{# x" }}\n'
+            "    <div>\n"
+            "        <p>x</p>\n"
+            "    </div>\n"
+            "{% endif %}\n"
+            "{# c #}\n"
+        ),
+        ({"profile": "jinja"}),
+        id="a comment opener inside a string opens no comment",
+    ),
 ]
 
 

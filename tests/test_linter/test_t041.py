@@ -49,6 +49,11 @@ test_data = [
         ('{{ x }}{% extends "base.html" %}'), (True), id="a variable before it"
     ),
     pytest.param(
+        ('{{ "{# x" }}\n{% extends "base.html" %}\n{# c #}'),
+        (True),
+        id="a comment opener inside a string before it opens no comment",
+    ),
+    pytest.param(
         ('<!DOCTYPE html>{% extends "base.html" %}'),
         (True),
         id="a doctype before it",

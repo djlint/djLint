@@ -208,6 +208,20 @@ jinja_test_data = [
         ([]),
         id="issue 2429 yaml document separator (issue 2429)",
     ),
+    pytest.param(
+        ('{% if show %}\n    {{ "{# x" }}\n{% endif %}\n{# comment #}\n'),
+        ([]),
+        id="comment opener inside a string (issue 2579)",
+    ),
+    pytest.param(
+        (
+            "{% if show %}\n"
+            "{% set msg = '{n, plural, one {# item} other {# items}}' %}\n"
+            "{{ msg }}\n{% endif %}\n{# comment #}\n"
+        ),
+        ([]),
+        id="icu plural inside a set tag (issue 2579)",
+    ),
 ]
 
 

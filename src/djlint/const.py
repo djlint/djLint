@@ -465,6 +465,17 @@ HTML_ARIA_ROLE_NAMES: Final = frozenset((
 # element's contents are left at the level of the tag that holds them.
 TEMPLATE_TAG_NAME: Final = r"\{\{(?:(?!\}\}).)*\}\}|\$\{[^{}]*\}"
 
+# The last alternative of a search for template comments: it steps over a
+# "{{ }}" or "{% %}" tag whole without matching it, so a "{#" written in
+# one, as in {{ "{# x" }}, opens no comment. A tag ends at its first
+# closing delimiter, as django's does, and gives up at the next opening
+# one, so an unclosed tag costs a short look ahead, not the rest of the
+# file.
+SKIP_TEMPLATE_TAG: Final = (
+    r"\{\{(?:(?!\}\}|\{[{%]).)*\}\}(*SKIP)(*FAIL)"
+    r"|\{%(?:(?!%\}|\{[{%]).)*%\}(*SKIP)(*FAIL)"
+)
+
 TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS: Final = (
     r"trans(?:late)?|with|extends|include|now"
 )
