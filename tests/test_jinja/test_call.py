@@ -31,6 +31,23 @@ test_data = [
         ("{% call (a, b) render_form(form, '<hr>'>) %}\n"),
         id="call_tag_with_nested_html",
     ),
+    pytest.param(
+        (
+            "{% if a %}\n"
+            '{% call modal("<strong>" ~ n ~ "</strong> added") %}\n'
+            "<button>Cancel</button>\n"
+            "{% endcall %}\n"
+            "{% endif %}"
+        ),
+        (
+            "{% if a %}\n"
+            '    {% call modal("<strong>" ~ n ~ "</strong> added") %}\n'
+            "        <button>Cancel</button>\n"
+            "    {% endcall %}\n"
+            "{% endif %}\n"
+        ),
+        id="issue_2584_call_argument_with_inline_html",
+    ),
 ]
 
 

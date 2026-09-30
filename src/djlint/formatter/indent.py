@@ -354,6 +354,10 @@ def indent_html(rawcode: str, config: Config) -> str:
     such as `{% else %}` or `{% elif %}` instead aligns with its block,
     whatever html the rest of its line closes.
 
+    A line starting with a template block it leaves open indents what
+    follows, even when the rest of it looks like a single-line tag, as in
+    `{% call modal("<b>" ~ n ~ "</b>") %}` or `{% if a %}<b>x</b>`.
+
     Markup written after the end of a verbatim block, as in
     "</pre> <span>x", is real markup: the line was skipped as raw, so what
     it leaves open is tracked once the block ends, or the tags closing it
@@ -642,6 +646,10 @@ def indent_html(rawcode: str, config: Config) -> str:
             and not starts_unclosed_html_tag(item)
             and not template_unindent_pattern.match(item.lstrip())
             and not tag_unindent_line_pattern.match(item.lstrip())
+            and not (
+                template_indent_pattern.match(item.lstrip())
+                and not template_unindent_pattern.search(item)
+            )
         ):
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
 

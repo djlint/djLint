@@ -69,6 +69,16 @@ test_data = [
         ("{%+ if x +%}\n    <p>hello</p>\n{%+ endif +%}\n"),
         id="issue 2396 whitespace control plus (issue 2396)",
     ),
+    pytest.param(
+        '{% if m("<b>x</b>") %}\n<p>y</p>\n{% endif %}',
+        '{% if m("<b>x</b>") %}\n    <p>y</p>\n{% endif %}\n',
+        id="issue_2584_condition_with_inline_html",
+    ),
+    pytest.param(
+        "{% if a %}<b>x</b>\n<p>y</p>\n{% endif %}",
+        "{% if a %}<b>x</b>\n    <p>y</p>\n{% endif %}\n",
+        id="issue_2584_inline_html_after_opening_tag",
+    ),
 ]
 
 

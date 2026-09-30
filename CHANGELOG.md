@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- A line that opens a template block now indents the lines inside it when the rest of the line looks like a single-line html tag. Before, html in a string argument, as in `{% call modal("<strong>" ~ n ~ "</strong>") %}`, or inline html right after the opening tag, as in `{% if a %}<b>x</b>`, left the block's contents at its own level, and its closing tag ended up one level too far out.
+
 ## [1.46.3] - 2026-09-28
 
 ### Performance
