@@ -108,6 +108,15 @@ body.has-navbar-fixed-top,
 html.has-navbar-fixed-top {
   padding-top: 118px;
 }
+// Land a linked heading below the fixed navbar instead of under it.
+html.has-navbar-fixed-top {
+  scroll-padding-top: calc(52px + 1rem);
+}
+@media screen and (min-width: $desktop) {
+  html.has-navbar-fixed-top {
+    scroll-padding-top: calc(88px + 1rem);
+  }
+}
 .djlint-nav .navbar-brand img {
   width: auto;
   height: 40px !important;
@@ -121,6 +130,10 @@ html.has-navbar-fixed-top {
 @media screen and (min-width: $widescreen) {
   .djlint-nav {
     padding: 15px 0;
+  }
+
+  html.has-navbar-fixed-top {
+    scroll-padding-top: calc(118px + 1rem);
   }
 
   .djlint-nav .navbar-brand img {
