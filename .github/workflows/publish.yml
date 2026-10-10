@@ -30,7 +30,7 @@ jobs:
           python-version: "3.14"
           enable-cache: false
       - run: uvx --exclude-newer '3 days' --no-cache cibuildwheel --output-dir dist
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: wheels-${{ matrix.os }}
           path: dist
@@ -45,7 +45,7 @@ jobs:
           python-version: "3.14"
           enable-cache: false
       - run: uv build --no-cache
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: wheels-any
           path: dist
