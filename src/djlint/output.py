@@ -13,9 +13,7 @@ from djlint.helpers import compile_pattern
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Mapping, Sequence
-    from typing import Final
-
-    from typing_extensions import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError, ProcessResult

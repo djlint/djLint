@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import ast
 import io
+import sys
 import tokenize
 from functools import cache, lru_cache, partial
-from typing import TYPE_CHECKING, NamedTuple, cast
+from typing import TYPE_CHECKING, cast
 
 import json5 as json
 import regex as re
@@ -39,6 +40,11 @@ from djlint.helpers import (
     is_raw_text_block_opening,
     is_safe_closing_tag,
 )
+
+if sys.version_info >= (3, 13):
+    from typing import NamedTuple
+else:
+    from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
     from typing import Final

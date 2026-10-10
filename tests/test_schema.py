@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from djlint.settings import _PROFILES, _QUOTE_STYLES  # noqa: PLC2701
 
 if TYPE_CHECKING:
-    from typing_extensions import Any
+    from typing import Any
 
 _SCHEMA = Path("docs/src/static/schema/djlint.json")
 _SETTINGS = Path("src/djlint/settings.py")

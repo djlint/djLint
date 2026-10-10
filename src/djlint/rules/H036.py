@@ -14,9 +14,10 @@ neighbours rather than a tag and walk nowhere, so they stay patterns.
 
 from __future__ import annotations
 
+import sys
 from bisect import bisect_left
 from itertools import chain
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING
 
 import regex as re
 
@@ -30,11 +31,14 @@ from djlint.helpers import (
 )
 from djlint.lint import get_line
 
+if sys.version_info >= (3, 13):
+    from typing import NamedTuple
+else:
+    from typing_extensions import NamedTuple
+
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from typing import Final
-
-    from typing_extensions import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError

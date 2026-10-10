@@ -19,7 +19,7 @@ from djlint.settings import Config
 from tests.conftest import printer
 
 if TYPE_CHECKING:
-    from typing_extensions import Any
+    from typing import Any
 
 _LINTER_DOCS = Path("docs/src/docs/linter.md")
 _FORMATTER_DOCS = tuple(sorted(Path("docs/src").rglob("formatter.md")))

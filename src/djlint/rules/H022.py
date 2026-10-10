@@ -18,7 +18,8 @@ good, so tokenizing here would drop findings the rule used to report.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, NamedTuple
+import sys
+from typing import TYPE_CHECKING
 
 import regex as re
 
@@ -32,10 +33,14 @@ from djlint.helpers import (
 )
 from djlint.lint import get_line
 
-if TYPE_CHECKING:
-    from typing import Final
+if sys.version_info >= (3, 13):
+    from typing import NamedTuple
+else:
+    from typing_extensions import NamedTuple
 
-    from typing_extensions import Any
+
+if TYPE_CHECKING:
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError

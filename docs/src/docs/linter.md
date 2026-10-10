@@ -1521,32 +1521,43 @@ It must return a list of dict, one for each errors, with the following keys:
   :::
 
 ```python
-from typing import Any, Dict, List
-from djlint.settings import Config
-from djlint.lint import get_line
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
+
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
+from djlint.lint import get_line
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from djlint.settings import Config
 
 
 def run(
-    rule: Dict[str, Any],
+    rule: dict[str, Any],
     config: Config,
     html: str,
     filepath: str,
-    line_ends: List[Dict[str, int]],
+    line_ends: list[dict[str, int]],
     *args: Any,
     **kwargs: Any,
-) -> List[Dict[str, str]]:
+) -> list[dict[str, str]]:
+    """Rule that fails if the html file contains 'bad'.
+
+    This is just an example, in reality it's much simpler to do that with a
+    "pattern rule".
     """
-    Rule that fails if if the html file contains 'bad'. This is just an example, in
-    reality it's much simpler to do that with "pattern rule".
-    """
-    errors: List[Dict[str, str]] = []
-    for match in re.finditer(r"bad", html):
-        errors.append({
+    return [
+        {
             "code": rule["name"],
             "line": get_line(match.start(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
-        })
-    return errors
+        }
+        for match in re.finditer(r"bad", html)
+        if not inside_ignored_rule(config, html, match, rule["name"])
+        and not inside_ignored_linter_block(config, html, match)
+    ]
 ```

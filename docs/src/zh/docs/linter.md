@@ -1507,32 +1507,42 @@ html 规范指出空的 `src` 是无效的，并警告浏览器会以文档自�
   :::
 
 ```python
-from typing import Any, Dict, List
-from djlint.settings import Config
-from djlint.lint import get_line
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
+
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
+from djlint.lint import get_line
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from djlint.settings import Config
 
 
 def run(
-    rule: Dict[str, Any],
+    rule: dict[str, Any],
     config: Config,
     html: str,
     filepath: str,
-    line_ends: List[Dict[str, int]],
+    line_ends: list[dict[str, int]],
     *args: Any,
     **kwargs: Any,
-) -> List[Dict[str, str]]:
+) -> list[dict[str, str]]:
+    """如果 HTML 文件中包含 'bad'，则规则判定为失败。
+
+    这只是一个示例，实际上，使用 `形式规则` 来实现会更简单。
     """
-    如果 HTML 文件中包含 'bad'，则规则判定为失败。这只是一个示例，
-    实际上，使用 `形式规则` 来实现会更简单。
-    """
-    errors: List[Dict[str, str]] = []
-    for match in re.finditer(r"bad", html):
-        errors.append({
+    return [
+        {
             "code": rule["name"],
             "line": get_line(match.start(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
-        })
-    return errors
+        }
+        for match in re.finditer(r"bad", html)
+        if not inside_ignored_rule(config, html, match, rule["name"])
+        and not inside_ignored_linter_block(config, html, match)
+    ]
 ```

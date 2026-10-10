@@ -19,9 +19,7 @@ from djlint.settings import Config
 if TYPE_CHECKING:
     import os
     from collections.abc import Iterator, Mapping
-    from typing import TextIO
-
-    from typing_extensions import Any
+    from typing import Any, TextIO
 
     from djlint.types import LintError
 

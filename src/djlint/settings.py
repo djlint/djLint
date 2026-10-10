@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import json
-import sys
+import tomllib
 from fnmatch import fnmatch
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import regex as re
 import yaml
@@ -42,24 +42,13 @@ except ImportError:
 else:
     _GITIGNORE_PATTERN = "gitignore"
 
-if sys.version_info >= (3, 11):
-    from typing import final
-
-    try:
-        import tomllib
-    except ImportError:
-        if not TYPE_CHECKING:
-            import tomli as tomllib
-else:
-    import tomli as tomllib
-    from typing_extensions import final
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
-    from typing import Final
+    from typing import Any, Final
 
     from pathspec import Pattern
-    from typing_extensions import Any, TypeVar
+    from typing_extensions import TypeVar
 
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
 

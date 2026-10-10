@@ -17,8 +17,7 @@ from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-
-    from typing_extensions import Any
+    from typing import Any
 
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config

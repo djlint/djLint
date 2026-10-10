@@ -18,8 +18,7 @@ from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-    from typing_extensions import Any
+    from typing import Any
 
 test_data = [
     pytest.param(

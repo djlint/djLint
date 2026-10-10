@@ -3,7 +3,7 @@ name = "djlint"
 version = "1.46.4"
 description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates)"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 authors = [{ name = "Christopher Pickering" }]
@@ -38,7 +38,6 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -59,7 +58,6 @@ dependencies = [
   "pathspec>=0.9.0",
   "pyyaml>=5.1",
   "regex>=2021.8.21",
-  "tomli>=0.2.0; python_version<'3.11'",
   "typing-extensions>=4.3.0; python_version<'3.13'",
 ]
 
@@ -72,7 +70,6 @@ dev = [
   "pytest-github-actions-annotate-failures==0.4.2",
   "pytest-xdist==3.8",
   "ruff==0.16.10",
-  "tomli==2.5.0",
   "types-pyyaml==6.0.12.20260906",
   "types-regex==2026.9.29.20261005",
   "typing-extensions==4.16.0",

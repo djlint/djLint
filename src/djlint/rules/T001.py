@@ -14,9 +14,7 @@ from djlint.rules.T027 import _close_past_strings, _TemplateTagMatch
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from typing import Final
-
-    from typing_extensions import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError

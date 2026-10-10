@@ -18,10 +18,9 @@ whose body is markup for the browser it names rather than a comment.
 
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import regex as re
 
@@ -33,16 +32,9 @@ from djlint.helpers import (
 )
 from djlint.lint import get_line
 
-if sys.version_info >= (3, 11):
-    from typing import final
-else:
-    from typing_extensions import final
-
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from typing import Final
-
-    from typing_extensions import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError

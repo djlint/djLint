@@ -15,9 +15,7 @@ from djlint.helpers import (
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
-    from typing import Final
-
-    from typing_extensions import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError
