@@ -43,15 +43,14 @@ repos:
         args:
           - --scripts-are-modules
         additional_dependencies:
-          - click
-          - cssbeautifier
-          - jsbeautifier
-          - json5
-          - pathspec
-          - pytest
+          - click==8.5.0
+          - cssbeautifier==2.0.3
+          - jsbeautifier==2.0.3
+          - json5==0.16.0
+          - pathspec==1.1.1
+          - pytest==9.1.1
           - types-pyyaml==6.0.12.20260906
           - types-regex==2026.9.29.20261005
-          - typing-extensions==4.16.0
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: v1.30.1
     hooks:
