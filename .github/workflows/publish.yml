@@ -18,7 +18,6 @@ jobs:
           - macos-26-intel
           - ubuntu-26.04
           - ubuntu-26.04-arm
-          - windows-11-vs2026-arm
           - windows-2025
       fail-fast: false
     steps:

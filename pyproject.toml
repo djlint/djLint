@@ -80,8 +80,12 @@ build-backend = "hatchling.build"
 
 [tool.cibuildwheel]
 build = "cp*"
+# Free-threaded CPython and 32-bit and ARM64 Windows get the pure-Python wheel:
+# almost nobody runs djlint there, so compiling for them is not worth it.
+skip = "cp*t-*"
 build-frontend = "build[uv]"
 environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
+windows.archs = ["AMD64"]
 
 [tool.hatch.build.targets.sdist]
 include = ["djlint", "mypy.ini"]
