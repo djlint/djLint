@@ -7,6 +7,12 @@
   "type": "object",
   "additionalProperties": false,
   "definitions": {
+    "comma-separated-list": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
     "css-beautify": { "type": "object" },
     "js-beautify": { "type": "object" }
   },
@@ -21,11 +27,11 @@
     },
     "blank_line_after_tag": {
       "description": "Add an additional blank line after `{% <tag> ... %}` tag groups. Blank lines will never be added to end of block.",
-      "type": "string"
+      "$ref": "#/definitions/comma-separated-list"
     },
     "blank_line_before_tag": {
       "description": "Add an additional blank line before `{% <tag> ... %}` tag groups. Blank lines will never be added to start of file or block, or between similar tags.",
-      "type": "string"
+      "$ref": "#/definitions/comma-separated-list"
     },
     "close_void_tags": {
       "description": "Add a closing mark to known void tags, so that `<img>` becomes `<img />`.",
@@ -37,19 +43,19 @@
     },
     "custom_blocks": {
       "description": "Use to indent custom code blocks. For example `{% toc %}...{% endtoc %}`.",
-      "type": "string"
+      "$ref": "#/definitions/comma-separated-list"
     },
     "custom_html": {
       "description": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\\\w+>`",
-      "type": "string"
+      "$ref": "#/definitions/comma-separated-list"
     },
     "exclude": {
       "description": "Override the default exclude paths.",
-      "type": "string"
+      "$ref": "#/definitions/comma-separated-list"
     },
     "extend_exclude": {
       "description": "Add additional paths to the default exclude.",
-      "type": "string"
+      "$ref": "#/definitions/comma-separated-list"
     },
     "extension": {
       "description": "Use to only find files with a specific extension.",
@@ -85,16 +91,22 @@
       "description": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues).",
       "type": "boolean"
     },
-    "ignore": { "description": "Ignore linter codes.", "type": "string" },
+    "ignore": {
+      "description": "Ignore linter codes.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
     "ignore_blocks": {
       "description": "Used to skip indentation on children of template tags. Children will be treated as siblings and indented accordingly.",
-      "type": "string"
+      "$ref": "#/definitions/comma-separated-list"
     },
     "ignore_case": {
       "description": "Do not attempt to fix the case of known html tags.",
       "type": "boolean"
     },
-    "include": { "description": "Include linter codes.", "type": "string" },
+    "include": {
+      "description": "Include linter codes.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
     "indent": {
       "description": "Use to change the code indentation. Default is 4 (four spaces).",
       "type": "integer",

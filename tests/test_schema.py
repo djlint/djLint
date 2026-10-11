@@ -64,3 +64,21 @@ def test_the_schema_offers_the_values_djlint_accepts() -> None:
 
     assert properties["profile"]["enum"] == sorted(_PROFILES)
     assert properties["quote_style"]["enum"] == sorted(_QUOTE_STYLES)
+
+
+def test_the_schema_accepts_lists_where_djlint_does() -> None:
+    """An option djLint joins from a list may be written as one."""
+    keys = set(
+        re.findall(
+            r"""_as_comma_separated\(\s*djlint_settings\.get\(\s*["']([\w-]+)["']""",
+            _SETTINGS.read_text(encoding="utf-8"),
+        )
+    )
+    list_ref = "#/definitions/comma-separated-list"
+
+    assert keys
+    assert {
+        name
+        for name, entry in _schema()["properties"].items()
+        if entry.get("$ref") == list_ref
+    } == keys
