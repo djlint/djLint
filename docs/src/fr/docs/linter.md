@@ -1531,6 +1531,7 @@ if TYPE_CHECKING:
     from typing import Any
 
     from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def run(
@@ -1541,7 +1542,7 @@ def run(
     line_ends: list[dict[str, int]],
     *args: Any,
     **kwargs: Any,
-) -> list[dict[str, str]]:
+) -> list[LintError]:
     """Rule that fails if the html file contains 'bad'.
 
     This is just an example, in reality it's much simpler to do that with a

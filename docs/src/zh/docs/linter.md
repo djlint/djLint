@@ -1519,6 +1519,7 @@ if TYPE_CHECKING:
     from typing import Any
 
     from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def run(
@@ -1529,7 +1530,7 @@ def run(
     line_ends: list[dict[str, int]],
     *args: Any,
     **kwargs: Any,
-) -> list[dict[str, str]]:
+) -> list[LintError]:
     """如果 HTML 文件中包含 'bad'，则规则判定为失败。
 
     这只是一个示例，实际上，使用 `形式规则` 来实现会更简单。
