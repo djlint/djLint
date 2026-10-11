@@ -72,7 +72,6 @@ dev = [
   "ruff==0.16.10",
   "types-pyyaml==6.0.12.20260906",
   "types-regex==2026.9.29.20261005",
-  "typing-extensions==4.16.0",
 ]
 
 [build-system]
@@ -96,7 +95,6 @@ dependencies = [
   "json5",
   "types-pyyaml",
   "types-regex",
-  "typing-extensions",
 ]
 enable-by-default = false
 exclude = ["src/djlint/__main__.py"]

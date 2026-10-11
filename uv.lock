@@ -262,7 +262,6 @@ dev = [
     { name = "ruff" },
     { name = "types-pyyaml" },
     { name = "types-regex" },
-    { name = "typing-extensions" },
 ]
 
 [package.metadata]
@@ -288,7 +287,6 @@ dev = [
     { name = "ruff", specifier = "==0.16.10" },
     { name = "types-pyyaml", specifier = "==6.0.12.20260906" },
     { name = "types-regex", specifier = "==2026.9.29.20261005" },
-    { name = "typing-extensions", specifier = "==4.16.0" },
 ]
 
 [[package]]
