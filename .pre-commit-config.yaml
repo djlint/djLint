@@ -46,7 +46,7 @@ repos:
           - click==8.5.0
           - cssbeautifier==2.0.3
           - jsbeautifier==2.0.3
-          - json5==0.16.0
+          - json5==0.17.3
           - pathspec==1.1.1
           - pytest==9.1.1
           - types-pyyaml==6.0.12.20260906
