@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [1.46.5] - 2026-10-14
+
+### Packaging
+
+- Drop support for EoL Python 3.10.
+
 ## [1.46.4] - 2026-10-01
 
 ### Fix
