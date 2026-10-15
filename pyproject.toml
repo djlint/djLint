@@ -5,7 +5,7 @@ description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks
 readme = "README.md"
 requires-python = ">=3.11"
 license = "GPL-3.0-or-later"
-license-files = ["LICENSE"]
+license-files = ["LICENSE", "LICENSE-THIRD-PARTY"]
 authors = [{ name = "Christopher Pickering" }]
 maintainers = [
   { name = "Christopher Pickering" },

@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Packaging
+
+- Ship the license of the mypyc runtime, which the binary wheels include, in `LICENSE-THIRD-PARTY`.
+
 ## [1.46.5] - 2026-10-14
 
 ### Packaging
