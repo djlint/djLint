@@ -32,7 +32,7 @@ Le format de `.djlintrc` est `json`.
 <div class="field">
   <label class="label">Options de filtrage</label>
   <div class="control">
-    <input id="filter" class="input" type="text" placeholder="pour filtrer les options..." />
+    <input id="filter" class="input" type="text" placeholder="tapez pour filtrer les options..." />
 
   </div>
 </div>

@@ -6,9 +6,9 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 # {{ "getting_started" | i18n }}
 
-## Installation de [Pypi](https://pypi.org/project/djlint/)
+## Installation
 
-djLint est construit avec [Python](https://python.org), il peut être installé en exécutant simplement:
+djLint est construit avec [Python](https://python.org), il peut être installé depuis [PyPI](https://pypi.org/project/djlint/) en exécutant simplement :
 
 ```bash
 pip install djlint
@@ -82,4 +82,30 @@ Sortie -
 
 ```html
 <div></div>
+```
+
+Lors de la lecture depuis stdin, djLint n'a pas de vrai chemin à comparer avec `per-file-ignores` ni à afficher dans les messages, il utilise donc `-` par défaut. Passez `--stdin-filename` pour indiquer à djLint le vrai chemin du contenu reçu, par exemple quand une intégration d'éditeur lui envoie le contenu d'un fichier à l'enregistrement.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## Codes de sortie
+
+| Code | Signification                                                                                                                                                              |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | Tout ce que djLint devait vérifier est correct, ou chaque fichier trouvé a été ignoré par votre configuration.                                                             |
+| `1`  | djLint a trouvé des erreurs de linting ou des fichiers à reformater. Avec `--warn`, elles sont signalées comme avertissements et le code de sortie est `0`.                |
+| `2`  | djLint n'a pas vérifié ce que vous avez demandé : les chemins ne correspondent à aucun fichier, la ligne de commande ou la configuration est invalide, ou djLint a échoué. |
+
+Seul le code `1` signifie que djLint a examiné vos modèles et y a trouvé des problèmes. Le code `2` signifie toujours que l'exécution elle-même n'a pas abouti : un pipeline peut donc traiter les deux cas différemment sans avoir à deviner.
+
+Le code `2` détecte une exécution qui n'a rien vérifié du tout : un mauvais chemin, une `--extension` qui ne correspond plus, ou des modèles qui ont été déplacés. Sans lui, une telle exécution réussit en silence sans avoir examiné un seul de vos modèles.
+
+Les fichiers que djLint _a_ trouvés puis ignorés volontairement, via `exclude`, `extend_exclude`, `use_gitignore` ou `require_pragma`, ne sont pas une erreur. L'exécution se termine avec le code `0`, car la configuration a fait exactement ce qu'on lui demandait. C'est aussi ce qui permet à `exclude` de fonctionner avec pre-commit, qui transmet les noms de vos fichiers indexés, que vous vouliez ou non que djLint les examine.
+
+Si un chemin sans aucun modèle est normal dans votre pipeline, désactivez le code `2` avec `allow_empty_input` :
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
 ```
