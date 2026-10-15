@@ -1,7 +1,7 @@
 ---
 title: Askama 模板检查与格式化
 keywords: askama, rust, djlint, askama 模板检查, askama 模板格式化
-description: djLint是一个 Askama 模板的代码检查与格式化工具！使用与构建的配置文件，充分利用djLint来检查并格式化你的模板。
+description: djLint是一个 Askama 模板的代码检查与格式化工具！使用内置的预设配置（profile），充分利用djLint来检查并格式化你的模板。
 tool: askama
 ---
 

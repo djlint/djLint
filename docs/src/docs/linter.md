@@ -58,7 +58,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | H017 | Void tags should be self closing (conflicts with: H018).                                     | -       |
 | D018 | (Django) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.         | ✔️      |
 | H018 | Void tags are self closing by nature and must end with ">", not "/>" (conflicts with: H017). | -       |
-| J018 | (Jinja) Internal links should use the {% raw %}`{% url ... %}`{% endraw %} pattern.          | ✔️      |
+| J018 | (Jinja) Internal links should use the {% raw %}`{{ url_for() ... }}`{% endraw %} pattern.    | ✔️      |
 | H019 | Replace `javascript:abc()` with `on_` event and real url.                                    | ✔️      |
 | H020 | Empty tag pair found. Consider removing.                                                     | ✔️      |
 | H021 | Inline styles should be avoided.                                                             | ✔️      |
@@ -74,7 +74,7 @@ This can also be done through the [{{ "configuration" | i18n }}]({{ "lang_code_u
 | T032 | Extra whitespace found in template tags.                                                     | ✔️      |
 | H033 | Extra whitespace found in form action.                                                       | ✔️      |
 | T034 | Did you intend to use {% raw %}{% ... %} instead of {% ... }%? {% endraw %}                  | ✔️      |
-| H036 | Avoid use of `br` tags.                                                                      | ✔️      |
+| H036 | Do not use `br` tags for spacing.                                                            | ✔️      |
 | H037 | Duplicate attribute found.                                                                   | ✔️      |
 | T038 | Block tag has no matching end tag.                                                           | ✔️      |
 | T039 | Unclosed template tag found.                                                                 | ✔️      |
@@ -979,7 +979,7 @@ Do:
 
 Django refuses to compile a template in which another tag comes before `{% extends %}`, and text written before it is rendered, so it leaks into the page ahead of everything the parent template produces. Jinja renders that text too, and nunjucks drops it, so in every engine the template does not do what it looks like it does.
 
-A `{# #}` comment renders nothing and does not count, and neither does anything inside a `{% comment %}`, `{% raw %}` or `{% verbatim %}` block, named or not, a `{# djlint:off #}` region in any of its three spellings, or yaml front matter. An html comment does count: the engine writes it into the page ahead of the parent template's doctype, which is the leak this rule is about. So do a `{% blocktrans %}` block, a `{% filter %}` block and a `<?php ?>` block, each of which renders. Only the first `{% extends %}` is checked; a second one is an error of its own. On the jinja and nunjucks profiles a branch tag before it does not count, since jinja documents `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` as the way to choose a parent; django reads the rest of the template into the `{% extends %}` and then rejects the `{% endif %}`, so on that profile a branch tag counts.
+A `{# #}` comment renders nothing and does not count, and neither does anything inside a `{% comment %}`, <code>{&#37; raw %}</code> or `{% verbatim %}` block, named or not, a `{# djlint:off #}` region in any of its three spellings, or yaml front matter. An html comment does count: the engine writes it into the page ahead of the parent template's doctype, which is the leak this rule is about. So do a `{% blocktrans %}` block, a `{% filter %}` block and a `<?php ?>` block, each of which renders. Only the first `{% extends %}` is checked; a second one is an error of its own. On the jinja and nunjucks profiles a branch tag before it does not count, since jinja documents `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` as the way to choose a parent; django reads the rest of the template into the `{% extends %}` and then rejects the `{% endif %}`, so on that profile a branch tag counts.
 
 Not applied to the handlebars, golang, liquid and angular profiles.
 
@@ -1023,9 +1023,9 @@ Do:
 
 Once a template extends another, the parent decides what is output and the child only fills the parent's blocks. Text or html written after `{% extends %}` and outside every `{% block %}` is silently discarded at render time, so a paragraph that looks fine in the source never reaches the page.
 
-A template tag there still runs, so `{% load %}`, `{% set %}` and an `{% if %}` wrapped around a block are left alone, as are `{# #}` and `{% comment %}` comments, html comments, `{% raw %}` and `{% verbatim %}` blocks, and the body of a `{% macro %}`, a block form `{% set %}`, a `{% partialdef %}` or an `{% addtoblock %}`, which is captured rather than output. The text of a `{% blocktrans %}` is reported, since a `{% blocktrans %}` is not a `{% block %}`. Only content after the extends tag is considered, and each run of it is reported once, at its start.
+A template tag there still runs, so `{% load %}`, `{% set %}` and an `{% if %}` wrapped around a block are left alone, as are `{# #}` and `{% comment %}` comments, html comments, <code>{&#37; raw %}</code> and `{% verbatim %}` blocks, and the body of a `{% macro %}`, a block form `{% set %}`, a `{% partialdef %}` or an `{% addtoblock %}`, which is captured rather than output. The text of a `{% blocktrans %}` is reported, since a `{% blocktrans %}` is not a `{% block %}`. Only content after the extends tag is considered, and each run of it is reported once, at its start.
 
-The engine reads template tags before html, so an `{% extends %}` written inside an html comment or a `<pre>` still runs and still makes the file a child; only `{# #}`, `{% comment %}`, `{% raw %}` and `{% verbatim %}` really hide one. Text inside an html comment reaches no reader either way and is not reported, but the tags written there are still read.
+The engine reads template tags before html, so an `{% extends %}` written inside an html comment or a `<pre>` still runs and still makes the file a child; only `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> and `{% verbatim %}` really hide one. Text inside an html comment reaches no reader either way and is not reported, but the tags written there are still read.
 
 Not applied to the handlebars, golang, liquid and angular profiles.
 
@@ -1079,7 +1079,7 @@ Django, Jinja and Nunjucks all refuse to parse a template that names two blocks 
 
 Only `{% block %}` counts: a `{% blocktrans %}` is not a block and a `{% endblock name %}` merely names the block it closes. Names are compared as written, since the engines treat `Content` and `content` as two blocks.
 
-Only what the engine itself never parses is skipped: a template comment, a `{% comment %}` block, a `{% raw %}` or `{% verbatim %}` body, and a `djlint:off` region. A block written inside an html comment, a `<script>`, `<style>`, `<pre>` or `<textarea>` body, or a `{% filter %}` body is still counted, since the engine reads all of those and raises on the duplicate name all the same.
+Only what the engine itself never parses is skipped: a template comment, a `{% comment %}` block, a <code>{&#37; raw %}</code> or `{% verbatim %}` body, and a `djlint:off` region. A block written inside an html comment, a `<script>`, `<style>`, `<pre>` or `<textarea>` body, or a `{% filter %}` body is still counted, since the engine reads all of those and raises on the duplicate name all the same.
 
 An `{% embed %}` opens a scope of its own: the blocks in it fill the embedded template rather than this one, so two embeds of the same partial may each write `{% block body %}`. A name repeated inside a single embed is still reported.
 
@@ -1139,7 +1139,7 @@ An output tag prints a value, and `if`, `for`, `url`, `include` and the rest are
 
 A bare keyword is an ordinary variable name, so `{{ url }}`, `{{ url|default:"/" }}` and `{{ set.name }}` are not reported. Only a keyword given an argument is, along with a closing or branch keyword on its own such as `{{ endif }}` or `{{ else }}`. A control keyword such as `if` or `for` cannot begin an expression, so whatever comes after one is an argument, an operator included, and `{{ if -1 > count }}` is reported. The rest of the names double as variables and functions, and there only a quoted string or a word counts as an argument, so an expression that happens to start with one of them is left alone: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` and `{{ filter [0] }}` are all quiet.
 
-The body of a `{% raw %}` or `{% verbatim %}` block is text rather than template syntax and is skipped, the named form `{% verbatim vueapp %}...{% endverbatim vueapp %}` included, so a Vue or Handlebars `{{ }}` protected that way is not reported. A `{{ }}` written inside a quoted argument of a block tag, as in `{% trans "Write {{ if x }} instead" %}`, is text the engine prints and is left alone too.
+The body of a <code>{&#37; raw %}</code> or `{% verbatim %}` block is text rather than template syntax and is skipped, the named form `{% verbatim vueapp %}...{% endverbatim vueapp %}` included, so a Vue or Handlebars `{{ }}` protected that way is not reported. A `{{ }}` written inside a quoted argument of a block tag, as in `{% trans "Write {{ if x }} instead" %}`, is text the engine prints and is left alone too.
 
 Don't:
 
@@ -1345,7 +1345,7 @@ An id names one element. A second element carrying the same id breaks `getElemen
 
 Two ids in exclusive branches of one `{% if %}...{% else %}...{% endif %}` are never both rendered, so they are not reported. A `{% for %}` loop or a `{% block %}` is not a branch: an id inside one and the same id outside it both render, and the later one is reported. A value written by a template tag is unknowable and is left alone, and so is an empty value. Ids are compared exactly, as the browser does, so `save` and `Save` are two ids.
 
-Branches are read in whichever language the file is written in, and in any whitespace the language allows between the delimiters and the tag name: `{% elif %}` and `{% else %}`, liquid's `{% elsif %}` and `{% when %}`, go's `{{ else }}`, a mako `% else:` line statement, and handlebars' `{{else}}`, its chained `{{else if x}}` and the inverse section of any `{{#helper}}` block, custom helpers included. The contents of a `<template>` are a document fragment of their own that `getElementById` never reaches, so an id there is compared only with the ids of that same `<template>`: two templates may each hold a row of the same id, while two of them inside one template are still reported. An id inside a comment, a `{% raw %}` or `{% verbatim %}` body, or a `djlint:off` region is not read at all.
+Branches are read in whichever language the file is written in, and in any whitespace the language allows between the delimiters and the tag name: `{% elif %}` and `{% else %}`, liquid's `{% elsif %}` and `{% when %}`, go's `{{ else }}`, a mako `% else:` line statement, and handlebars' `{{else}}`, its chained `{{else if x}}` and the inverse section of any `{{#helper}}` block, custom helpers included. The contents of a `<template>` are a document fragment of their own that `getElementById` never reaches, so an id there is compared only with the ids of that same `<template>`: two templates may each hold a row of the same id, while two of them inside one template are still reported. An id inside a comment, a <code>{&#37; raw %}</code> or `{% verbatim %}` body, or a `djlint:off` region is not read at all.
 
 Don't:
 

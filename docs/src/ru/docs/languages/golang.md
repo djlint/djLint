@@ -1,7 +1,7 @@
 ---
 title: Go Template Linter and Formatter
 keywords: go templates, golang, djlint, go template linter, go template formatter, golang template linter, golang template formatter, format go templates, hugo template linter, helm template linter
-description: djLint - это линтер шаблонов Go и форматер шаблонов Go! Используйте преимущества профиля предварительной сборки при линтинге и форматировании ваших шаблонов с помощью djLint.
+description: djLint - это линтер шаблонов Go и форматер шаблонов Go! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
 tool: golang
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: Handlebars Template Linter and Formatter
 keywords: handlebars, djlint, handlebars template linter, handlebars template formatter, format handlebars templates
-description: djLint est un linter de modèle de guidon et un formateur de modèle de guidon ! Profitez du profil pré-construit lorsque vous limez et formatez vos modèles avec djLint.
+description: djLint est un linter de modèles Handlebars et un formateur de modèles Handlebars ! Profitez du profil pré-construit lorsque vous lintez et formatez vos modèles avec djLint.
 tool: handlebars
 ---
 

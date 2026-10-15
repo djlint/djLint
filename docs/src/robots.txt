@@ -1,4 +1,4 @@
-Sitemap: https://www.atlas.bi/sitemap.xml
+Sitemap: https://djlint.com/sitemap.xml
 
 User-agent: *
 Disallow: /cdn-cgi/

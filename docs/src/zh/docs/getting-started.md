@@ -40,7 +40,7 @@ npm i djlint
 
 ## 命令行使用方法
 
-djLint 是一个命令行程序。详情请参考 `配置` 章节。
+djLint 是一个命令行程序。详情请参考[配置]({{ "lang_code_url" | i18n }}/docs/configuration/)章节。
 
 {% include 'src/_includes/cli.md' %}
 

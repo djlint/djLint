@@ -40,21 +40,21 @@ npm i djlint
 
 ## Utilisation de l'interface CLI
 
-djLint est une application en ligne de commande. Voir `configuration` pour une configuration avancée.
+djLint est une application en ligne de commande. Voir la page [configuration]({{ "lang_code_url" | i18n }}/docs/configuration/) pour une configuration avancée.
 
 {% include 'src/_includes/cli.md' %}
 
 {% admonition
    "note",
    "Note",
-   "Si la commande `djlint` n'est pas trouvée, assurez-vous que Python est [dans votre path].(https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)."
+   "Si la commande `djlint` n'est pas trouvée, assurez-vous que Python est [dans votre path](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)."
 %}
 
 ## Utilisation de Path vs Stdin
 
 djLint fonctionne avec un path ou stdin.
 
-Courir avec un path -
+Exécution avec un path -
 
 ```bash
 djlint /path/to/templates --lint

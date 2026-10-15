@@ -1,7 +1,7 @@
 ---
 title: Handlebars Template Linter and Formatter
 keywords: handlebars, djlint, handlebars template linter, handlebars template formatter, format handlebars templates
-description: djLint - это линтеры и форматоры шаблонов для ручек! Используйте преимущества профиля предварительной сборки при линтинге и форматировании ваших шаблонов с помощью djLint.
+description: djLint - это линтер шаблонов handlebars и форматер шаблонов handlebars! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
 tool: handlebars
 ---
 

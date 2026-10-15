@@ -325,8 +325,14 @@ module.exports = function (eleventyConfig) {
     fallbackLocales: { "*": "en-US" },
   });
 
+  const localePrefix = new RegExp(
+    `^/(?:${locales
+      .map((x) => x.url)
+      .filter(Boolean)
+      .join("|")})/`,
+  );
   eleventyConfig.addFilter("baseUrl", (text) => {
-    return text.replace(/(?:ru)\//g, "");
+    return text.replace(localePrefix, "/");
   });
 
   eleventyConfig.addFilter("i18n_locale", (current_locale, locale_list) => {

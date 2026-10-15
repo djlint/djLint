@@ -1,7 +1,7 @@
 ---
 title: Twig Template Linter and Formatter
 keywords: twig, djlint, twig template linter, twig template formatter, format twig templates, pebble, pebble template linter
-description: djLint - это линтер шаблонов twig и форматировщик шаблонов twig! Используйте преимущества профиля предварительной сборки при линтинге и форматировании ваших шаблонов с помощью djLint.
+description: djLint - это линтер шаблонов twig и форматировщик шаблонов twig! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
 tool: nunjucks
 ---
 

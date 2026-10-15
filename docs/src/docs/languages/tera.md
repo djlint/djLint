@@ -1,7 +1,7 @@
 ---
 title: Tera Template Linter and Formatter
 keywords: tera, rust, zola, djlint, tera template linter, tera template formatter, format tera templates
-description: djLint is a Tera template linter and a Tera template formatter! Take advantage of the pre-build profile when linting and formatting your templates with djLint.
+description: djLint is a Tera template linter and a Tera template formatter! Take advantage of the pre-built profile when linting and formatting your templates with djLint.
 tool: tera
 ---
 

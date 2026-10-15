@@ -58,7 +58,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | H017 | Les balises vides doivent être auto-fermantes (incompatible avec : H018).                                                      | -      |
 | D018 | (Django) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                                   | ✔️     |
 | H018 | Les balises vides sont auto-fermantes par nature et doivent se terminer par ">", et non "/>" (incompatible avec : H017).       | -      |
-| J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{% url ... %}`{% endraw %}.                                    | ✔️     |
+| J018 | (Jinja) Les liens internes doivent utiliser le modèle {% raw %}`{{ url_for() ... }}`{% endraw %}.                              | ✔️     |
 | H019 | Remplacez `javascript:abc()` par l'événement `on_` et l'url réelle.                                                            | ✔️     |
 | H020 | Couple de balises vide trouvé. Envisagez de le supprimer.                                                                      | ✔️     |
 | H021 | Les styles en ligne doivent être évités.                                                                                       | ✔️     |
@@ -74,7 +74,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T032 | Espace blanc supplémentaire trouvé dans les balises du modèle.                                                                 | ✔️     |
 | H033 | Espace supplémentaire dans l'action du formulaire.                                                                             | ✔️     |
 | T034 | Aviez-vous l'intention d'utiliser {% raw %}{% ... %} au lieu de {% ... }% ? {% endraw %}                                       | ✔️     |
-| H036 | Évitez d'utiliser les balises `br`.                                                                                            | ✔️     |
+| H036 | N'utilisez pas les balises `br` pour l'espacement.                                                                             | ✔️     |
 | H037 | Attribut en double trouvé.                                                                                                     | ✔️     |
 | T038 | La balise de bloc n'a pas de balise de fin correspondante.                                                                     | ✔️     |
 | T039 | Balise de template non fermée trouvée.                                                                                         | ✔️     |
@@ -536,7 +536,7 @@ Désactivée par défaut ; à activer avec `--include=H018`. Mutuellement exclus
 
 #### J018
 
-`(Jinja) Les liens internes doivent utiliser le modèle {% url ... %}.`
+`(Jinja) Les liens internes doivent utiliser le modèle {{ url_for() ... }}.`
 
 Les URLs internes codées en dur cassent silencieusement lorsque le chemin d'une route change ou que l'application est montée sous un préfixe, laissant des liens morts et des actions de formulaire qui envoient vers des 404. url_for() construit l'URL à partir du nom de l'endpoint, donc les changements de routes se propagent automatiquement à tous les modèles.
 
@@ -979,7 +979,7 @@ Lorsqu'une balise HTML est ouverte dans un `{% block %}` mais fermée dans un au
 
 Django refuse de compiler un modèle dans lequel une autre balise précède `{% extends %}`, et le texte écrit avant elle est rendu, si bien qu'il fuit dans la page avant tout ce que produit le modèle parent. Jinja rend aussi ce texte, et nunjucks le supprime, de sorte que dans chaque moteur le modèle ne fait pas ce qu'il semble faire.
 
-Un commentaire `{# #}` ne rend rien et ne compte pas, pas plus que ce qui se trouve dans un bloc que djLint n'analyse pas, comme un bloc `{% comment %}`, `{% raw %}` ou `{% verbatim %}` ou une région `{# djlint:off #}`. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Une balise de branche placée avant ne compte pas non plus, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent.
+Un commentaire `{# #}` ne rend rien et ne compte pas, pas plus que ce qui se trouve dans un bloc que djLint n'analyse pas, comme un bloc `{% comment %}`, <code>{&#37; raw %}</code> ou `{% verbatim %}` ou une région `{# djlint:off #}`. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Une balise de branche placée avant ne compte pas non plus, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent.
 
 Non appliquée aux profils handlebars, golang, liquid et angular.
 
@@ -1023,7 +1023,7 @@ La vérification ne s'exécute que sur les fichiers analysables de façon fiable
 
 Dès qu'un modèle en étend un autre, le parent décide de ce qui est produit et l'enfant ne fait que remplir les blocs du parent. Le texte ou le html écrit après `{% extends %}` et hors de tout `{% block %}` est silencieusement écarté au rendu, si bien qu'un paragraphe qui paraît correct dans la source n'atteint jamais la page.
 
-Une balise de template placée là s'exécute quand même, si bien que `{% load %}`, `{% set %}` et un `{% if %}` enveloppant un bloc sont laissés tels quels, de même que les commentaires `{# #}` et `{% comment %}`, les blocs `{% raw %}` et `{% verbatim %}`, et le corps d'un `{% macro %}` ou d'un `{% set %}` sous forme de bloc, qui est capturé plutôt que produit. Un commentaire html est produit comme n'importe quel autre texte, si bien qu'un commentaire hors d'un bloc est signalé, tout comme le texte d'un `{% blocktrans %}`, qui n'est pas un `{% block %}`. Seul le contenu après la balise extends est considéré, et chaque suite ininterrompue de contenu est signalée une fois, à son début.
+Une balise de template placée là s'exécute quand même, si bien que `{% load %}`, `{% set %}` et un `{% if %}` enveloppant un bloc sont laissés tels quels, de même que les commentaires `{# #}` et `{% comment %}`, les blocs <code>{&#37; raw %}</code> et `{% verbatim %}`, et le corps d'un `{% macro %}` ou d'un `{% set %}` sous forme de bloc, qui est capturé plutôt que produit. Un commentaire html est produit comme n'importe quel autre texte, si bien qu'un commentaire hors d'un bloc est signalé, tout comme le texte d'un `{% blocktrans %}`, qui n'est pas un `{% block %}`. Seul le contenu après la balise extends est considéré, et chaque suite ininterrompue de contenu est signalée une fois, à son début.
 
 Non appliquée aux profils handlebars, golang, liquid et angular.
 

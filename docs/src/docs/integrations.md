@@ -24,7 +24,7 @@ Annotations belong to one pull request. To keep findings in the repository's Sec
 ```yaml
 - run: djlint . --lint --sarif > djlint.sarif
   continue-on-error: true
-- uses: github/codeql-action/upload-sarif@v3
+- uses: github/codeql-action/upload-sarif@v4
   with:
     sarif_file: djlint.sarif
 ```
@@ -52,7 +52,7 @@ The repo provides multiple pre-configured hooks for specific djLint profiles (it
 - `djlint-liquid` and `djlint-reformat-liquid`
   This will look for files matching `*.html` and set `--profile=liquid`.
 - `djlint-golang` and `djlint-reformat-golang`
-  This will look for files matching `*.tmpl` and set `--profile=golang`.
+  This will look for files matching `*.gotmpl` and set `--profile=golang`.
 - `djlint-tera` and `djlint-reformat-tera`
   This will look for files matching `*.html` and set `--profile=tera`.
 - `djlint-askama` and `djlint-reformat-askama`

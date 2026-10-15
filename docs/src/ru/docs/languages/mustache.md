@@ -1,7 +1,7 @@
 ---
 title: Mustache Template Linter and Formatter
 keywords: mustache, djlint, mustache template linter, mustache template formatter, format mustache templates
-description: djLint - это линтер шаблонов mustache и форматировщик шаблонов mustache! Используйте преимущества профиля предварительной сборки при линтинге и форматировании ваших шаблонов с помощью djLint.
+description: djLint - это линтер шаблонов mustache и форматировщик шаблонов mustache! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
 tool: handlebars
 ---
 

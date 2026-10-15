@@ -40,14 +40,14 @@ npm i djlint
 
 ## CLI Usage
 
-djLint is a command line application. See `configuration` for advanced configuration.
+djLint is a command line application. See the [configuration]({{ "lang_code_url" | i18n }}/docs/configuration/) page for advanced configuration.
 
 {% include 'src/_includes/cli.md' %}
 
 {% admonition
    "note",
    "Note",
-   "If the command `djlint` is not found, ensure sure that Python is [in your path](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)."
+   "If the command `djlint` is not found, make sure that Python is [in your path](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)."
 %}
 
 ## Using Path vs Stdin
