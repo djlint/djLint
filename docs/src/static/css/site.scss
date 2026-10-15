@@ -121,6 +121,7 @@ html.has-navbar-fixed-top {
   width: auto;
   height: 40px !important;
   margin-top: 6px;
+  margin-right: 1rem;
   margin-bottom: -2px;
 }
 
@@ -174,12 +175,7 @@ html.has-navbar-fixed-top {
   max-width: 100%;
   object-fit: contain;
 }
-$logos-drawn-for-light-backgrounds: ".djlint-nav .navbar-brand img, .footer .image img";
-
 @media (prefers-color-scheme: dark) {
-  #{$logos-drawn-for-light-backgrounds} {
-    filter: invert(1) hue-rotate(180deg);
-  }
   .image.brand {
     background-color: hsl(221, 14%, 96%);
     border-radius: $radius;

@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://djlint.com"><img src="https://raw.githubusercontent.com/djlint/djLint/master/docs/src/static/img/icon.png" alt="djLint Logo" width="270"></a>
+  <a href="https://djlint.com"><img src="https://raw.githubusercontent.com/djlint/djLint/master/docs/src/static/img/logo-wide.svg" alt="djLint Logo" width="320"></a>
   <br>
 </h1>
 <h4 align="center">The missing formatter and linter for HTML templates.</h4>
