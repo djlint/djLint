@@ -29,6 +29,8 @@ Les annotations sont liées à une seule pull request. Pour conserver les résul
     sarif_file: djlint.sarif
 ```
 
+L'étape de téléversement nécessite la permission `security-events: write` sur le job ou le workflow.
+
 `--sarif` écrit sur stdout un document SARIF 2.1.0 et rien d'autre, la sortie peut donc être redirigée comme ci-dessus. Chaque règle activée y figure avec un lien vers sa documentation, chaque résultat indique sa ligne et sa colonne, et avec `--check` un fichier qui serait reformaté est signalé sous une règle `formatting`. Azure DevOps, GitLab et la plupart des éditeurs lisent le même format.
 
 ## Pre-Commit

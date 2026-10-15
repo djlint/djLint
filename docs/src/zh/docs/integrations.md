@@ -29,6 +29,8 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
     sarif_file: djlint.sarif
 ```
 
+上传步骤需要在 job 或 workflow 上授予 `security-events: write` 权限。
+
 `--sarif` 只向 stdout 输出一个 SARIF 2.1.0 文档，不输出其他内容，因此可以像上面那样重定向到文件。文档列出所有已启用的规则及其文档链接，每条结果都带有行号和列号；配合 `--check` 使用时，需要重新格式化的文件会归入 `formatting` 规则下报告。Azure DevOps、GitLab 和大多数编辑器都能读取这种格式。
 
 ## Pre-Commit
