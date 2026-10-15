@@ -92,8 +92,14 @@ body {
 .title {
   font-family: "Rasa", Georgia, "Times New Roman", Times, serif;
 }
-.huge {
-  font-size: 100px;
+.hero-logo img {
+  height: 112px;
+  width: auto;
+}
+@media screen and (max-width: $tablet) {
+  .hero-logo img {
+    height: 80px;
+  }
 }
 
 .djlint-nav {
