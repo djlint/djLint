@@ -4,9 +4,12 @@
 
 ## [Unreleased]
 
+## [1.46.6] - 2026-10-15
+
 ### Packaging
 
 - Ship the license of the mypyc runtime, which the binary wheels include, in `LICENSE-THIRD-PARTY`.
+- Upload [PEP 740](https://peps.python.org/pep-0740/) attestations to PyPI, so you can verify that the distributions were published from the GitHub Actions workflow of this repository.
 
 ## [1.46.5] - 2026-10-14
 
