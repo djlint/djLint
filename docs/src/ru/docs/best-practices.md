@@ -16,7 +16,7 @@ keywords: линтер шаблонов, форматер шаблонов, djLi
 
 ```html
 <div class="class1 {% if condition -%}class2{%- endif %}">содержание</div>
-                  ^ место здесь
+                  ^ здесь пробел
 ```
 
 {% endraw %}
@@ -27,7 +27,7 @@ keywords: линтер шаблонов, форматер шаблонов, djLi
 
 ```html
 <div class="class1{% if condition -%} class2{%- endif %}">содержание</div>
-                                     ^ место здесь
+                                     ^ здесь пробел
 ```
 
 {% endraw %}

@@ -32,7 +32,7 @@ keywords: линтер шаблонов, форматер шаблонов, djLi
 <div class="field">
   <label class="label">Фильтр опций</label>
   <div class="control">
-    <input id="filter" class="input" type="text" placeholder="тип для фильтрации опций..." />
+    <input id="filter" class="input" type="text" placeholder="начните вводить, чтобы отфильтровать опции..." />
 
   </div>
 </div>
