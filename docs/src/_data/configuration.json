@@ -92,7 +92,7 @@
     "since": "1.45.0",
     "description": {
       "en": "Quotes to use for strings inside template tags, either `double` (the default) or `single`. `T002` requires the same quotes. The formatter uses them in a condition too, such as `{% if x == \"a\" %}`, so one file does not spell the same string both ways. HTML attribute quoting is left to `H008`.",
-      "ru": "Кавычки для строк внутри тегов шаблона: `double` (по умолчанию) или `single`. `T002` требует тех же кавычек. Форматтер ставит их и в условии, например `{% if x == \"a\" %}`, чтобы один файл не писал одну и ту же строку двумя способами. Кавычки HTML-атрибутов остаются за `H008`.",
+      "ru": "Кавычки для строк внутри тегов шаблона: `double` (по умолчанию) или `single`. `T002` требует тех же кавычек. Форматер ставит их и в условии, например `{% if x == \"a\" %}`, чтобы один файл не писал одну и ту же строку двумя способами. Кавычки HTML-атрибутов остаются за `H008`.",
       "fr": "Guillemets à utiliser pour les chaînes dans les balises de modèle : `double` (par défaut) ou `single`. `T002` exige les mêmes. Le formateur les emploie aussi dans une condition, comme `{% if x == \"a\" %}`, pour qu'un fichier n'écrive pas la même chaîne de deux façons. Les guillemets des attributs HTML restent du ressort de `H008`.",
       "zh": "模板标签内字符串使用的引号，可选 `double`（默认）或 `single`。`T002` 要求同样的引号。格式化器在条件中也使用它们，例如 `{% if x == \"a\" %}`，使同一文件不会把同一字符串写成两种形式。HTML 属性的引号由 `H008` 管理。"
     },
@@ -797,7 +797,7 @@
     "since": "1.45.0",
     "description": {
       "en": "Do not indent `<head>` and `<body>` below `<html>`, which is how the default VS Code html formatter lays a document out.",
-      "ru": "Не отступать `<head>` и `<body>` внутри `<html>` — так документ размечает стандартный форматтер html в VS Code.",
+      "ru": "Не отступать `<head>` и `<body>` внутри `<html>` — так документ размечает стандартный форматер html в VS Code.",
       "fr": "Ne pas indenter `<head>` ni `<body>` sous `<html>`, comme le fait le formateur html par défaut de VS Code.",
       "zh": "不缩进 `<html>` 下的 `<head>` 与 `<body>`，与 VS Code 默认 html 格式化器的排版一致。"
     },
