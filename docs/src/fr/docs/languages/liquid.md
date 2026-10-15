@@ -1,7 +1,7 @@
 ---
 title: Liquid Template Linter and Formatter
 keywords: liquid, shopify, jekyll, eleventy, djlint, liquid template linter, liquid template formatter, format liquid templates, shopify, jekyll, eleventy, liquidjs, fluid, shopify theme linter, jekyll linter
-description: djLint est un linter de modèle Liquid et un formateur de modèle Liquid ! Profitez du profil pré-construit lorsque vous limez et formatez vos modèles avec djLint.
+description: djLint est un linter de modèle Liquid et un formateur de modèle Liquid ! Profitez du profil pré-construit lorsque vous lintez et formatez vos modèles avec djLint.
 tool: liquid
 ---
 

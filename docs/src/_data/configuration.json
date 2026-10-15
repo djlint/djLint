@@ -32,7 +32,11 @@
       "fr": "N'imprimez pas de différences lors du reformatage.",
       "zh": "格式化时不展示差异。"
     },
-    "usage": [{ "name": "cli", "value": "--quiet" }],
+    "usage": [
+      { "name": "pyproject.toml", "value": "quiet=true" },
+      { "name": ".djlintrc", "value": "\"quiet\": true" },
+      { "name": "cli", "value": "--quiet" }
+    ],
     "tags": ["formatter", "linter"]
   },
   {
@@ -136,8 +140,8 @@
     "since": "1.29.0",
     "description": {
       "en": "Do not add a blank line after yaml front matter.",
-      "ru": "Не добавляйте пустую строку после лицевой части yaml.",
-      "fr": "N'ajoutez pas de ligne vierge après la matière première yaml.",
+      "ru": "Не добавляйте пустую строку после YAML front matter.",
+      "fr": "N'ajoutez pas de ligne vierge après le front matter YAML.",
       "zh": "在YAML front matter后不添加空行。"
     },
     "usage": [
@@ -185,8 +189,8 @@
     "description": {
       "en": "Include linter codes.",
       "ru": "Включите коды линтера.",
-      "fr": "Inclure les codes des liners.",
-      "zh": "进行制定规则的代码检查。"
+      "fr": "Inclure les codes du linter.",
+      "zh": "进行指定规则的代码检查。"
     },
     "tags": ["linter"],
     "usage": [
@@ -235,7 +239,7 @@
     "since": "1.24.0",
     "description": {
       "en": "Used to skip indentation on children of template tags. Children will be treated as siblings and indented accordingly.",
-      "ru": "Используется для пропуска отступов для дочерних тегов шаблона. Дочерние теги будут рассматриваться как родные братья и сестры и будут иметь соответствующий отступ.",
+      "ru": "Используется для пропуска отступов для дочерних тегов шаблона. Дочерние теги будут рассматриваться как соседние элементы и будут иметь соответствующий отступ.",
       "fr": "Permet d'ignorer l'indentation des enfants des balises de modèle. Les enfants seront traités comme des frères et sœurs et indentés en conséquence.",
       "zh": "跳过模板标签子元素上的缩进。子元素将被视为同级元素，并相应地进行缩进处理。"
     },
@@ -250,10 +254,10 @@
     "name": "custom_html",
     "since": "0.7.0",
     "description": {
-      "en": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\\\w+>`",
-      "ru": "Используется для отступа пользовательских HTML-тегов. Например, `<mjml>` или `<simple-greeting>` или `<mj-\\\\w+>`.",
-      "fr": "Permet d'indenter les balises HTML personnalisées. Par exemple, `<mjml>` ou `<simple-greeting>` ou `<mj-\\\\w+>`.",
-      "zh": "设置自定义HTML标签的缩进，例如 `<mjml>`、`<simple-greeting>`和`<mj-\\\\w+>`。"
+      "en": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\w+>`",
+      "ru": "Используется для отступа пользовательских HTML-тегов. Например, `<mjml>` или `<simple-greeting>` или `<mj-\\w+>`.",
+      "fr": "Permet d'indenter les balises HTML personnalisées. Par exemple, `<mjml>` ou `<simple-greeting>` ou `<mj-\\w+>`.",
+      "zh": "设置自定义HTML标签的缩进，例如 `<mjml>`、`<simple-greeting>`和`<mj-\\w+>`。"
     },
     "tags": ["formatter"],
     "usage": [
@@ -276,10 +280,10 @@
     "since": "0.3.5",
     "tags": ["formatter"],
     "description": {
-      "en": "Use to change the code indentation. Default is 4 (four spaces).",
-      "ru": "Используется для изменения отступа кода. По умолчанию - 4 (четыре пробела).",
-      "fr": "Permet de modifier l'indentation du code. La valeur par défaut est 4 (quatre espaces).",
-      "zh": "代码缩进。默认4空格。"
+      "en": "Use to change the code indentation. Default is 4 (four spaces), or the `indent_size` of a `.editorconfig` at the project root.",
+      "ru": "Используется для изменения отступа кода. По умолчанию 4 (четыре пробела) или `indent_size` из `.editorconfig` в корне проекта.",
+      "fr": "Permet de modifier l'indentation du code. La valeur par défaut est 4 (quatre espaces), ou l'`indent_size` d'un `.editorconfig` à la racine du projet.",
+      "zh": "代码缩进。默认 4 个空格，或项目根目录 `.editorconfig` 中的 `indent_size`。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "indent=3" },
@@ -392,7 +396,7 @@
       },
       {
         "name": ".djlintrc",
-        "value": "\"line_break_after_multiline_tag\": \"true\""
+        "value": "\"line_break_after_multiline_tag\": true"
       },
       { "name": "cli", "value": "--line-break-after-multiline-tag" }
     ]
@@ -405,7 +409,7 @@
       "en": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n  :::",
       "ru": "Установите профиль для языка шаблона. Профиль будет включать правила линтера, применимые к языку шаблонов, а также может изменять переформатирование. Например, в `handlebars` нет пробелов внутри тегов `{{#if}}`.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n  :::",
       "fr": "Définissez un profil pour la langue du modèle. Le profil activera les règles de linter qui s'appliquent à votre langage de modèle, et peut également changer le reformatage. Par exemple, dans `handlebars`, il n'y a pas d'espaces dans les balises `{{#if}}`.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n  :::",
-      "zh": "为模板语言设置一个预设配置（profile）。该预设会应用于所有文件的代码检查与格式化中。例如，启用 `handlebars` 配置，则 `{{#if}}` 标签内部不包含空格。\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n  :::"
+      "zh": "为模板语言设置一个预设配置（profile）。该预设会启用适用于你的模板语言的检查规则，也可能改变格式化方式。例如，启用 `handlebars` 配置，则 `{{#if}}` 标签内部不包含空格。\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n  :::"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "profile=\"django\"" },
@@ -421,7 +425,7 @@
       "en": "Only format or lint files that starts with a comment with only the text 'djlint:on'. The comment can be a HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
       "ru": "Форматировать или линтовать только те файлы, которые начинаются с комментария, содержащего только текст 'djlint:on'. Комментарий может быть HTML-комментарием или комментарием на языке шаблонов, определенном настройкой профиля. Если профиль не указан, принимается комментарий на любом из языков шаблонов.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
       "fr": "Ne formatez ou ne limez que les fichiers qui commencent par un commentaire contenant uniquement le texte 'djlint:on'. Le commentaire peut être un commentaire HTML ou un commentaire dans le langage de modèle défini par le paramètre de profil. Si aucun profil n'est spécifié, un commentaire dans l'un des langages de modèle est accepté.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
-      "zh": "只检查并格式化以 'djlint:on' 注释开头的文件。该注释可为 HTML 注释或模板文件定义的注释，若无特殊模板文件，则使用模板语言的注释。\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n"
+      "zh": "只检查并格式化以 'djlint:on' 注释开头的文件。该注释可以是 HTML 注释，也可以是 profile 设置所指定模板语言的注释。若未指定 profile，则接受任一模板语言的注释。\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "require_pragma=true" },
@@ -434,14 +438,14 @@
     "since": "0.5.7",
     "tags": ["formatter"],
     "description": {
-      "en": "Formatter will attempt to put some html and template tags on a single line instead of wrapping them if the line length will not exceed this value.",
-      "ru": "Форматировщик попытается разместить некоторые html и шаблонные теги на одной строке вместо того, чтобы обернуть их, если длина строки не превышает этого значения.",
-      "fr": "Le formateur essaiera de mettre certaines balises html et template sur une seule ligne au lieu de les envelopper si la longueur de la ligne ne dépasse pas cette valeur.",
-      "zh": "设置单行最大长度。"
+      "en": "Formatter will attempt to put some html and template tags on a single line instead of wrapping them if the line length will not exceed this value. Default is 120, or the `max_line_length` of a `.editorconfig` at the project root.",
+      "ru": "Форматировщик попытается разместить некоторые html и шаблонные теги на одной строке вместо того, чтобы обернуть их, если длина строки не превышает этого значения. По умолчанию 120 или `max_line_length` из `.editorconfig` в корне проекта.",
+      "fr": "Le formateur essaiera de mettre certaines balises html et template sur une seule ligne au lieu de les envelopper si la longueur de la ligne ne dépasse pas cette valeur. La valeur par défaut est 120, ou le `max_line_length` d'un `.editorconfig` à la racine du projet.",
+      "zh": "设置单行最大长度。默认值为 120，或项目根目录 `.editorconfig` 中的 `max_line_length`。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "max_line_length=120" },
-      { "name": ".djlintrc", "value": "\"max_line_length\": \"120\"" },
+      { "name": ".djlintrc", "value": "\"max_line_length\": 120" },
       { "name": "cli", "value": "--max-line-length 120" }
     ]
   },
@@ -450,14 +454,14 @@
     "since": "0.5.8",
     "tags": ["formatter"],
     "description": {
-      "en": "Formatter will attempt to wrap tag attributes if the attribute length exceeds this value.",
-      "ru": "Форматировщик попытается обернуть атрибуты тега, если длина атрибута превышает это значение.",
-      "fr": "Le formateur tentera d'envelopper les attributs de la balise si la longueur de l'attribut dépasse cette valeur.",
-      "zh": "设置标签参数最大长度。"
+      "en": "Formatter will attempt to wrap tag attributes if the attribute length exceeds this value. Default is 70.",
+      "ru": "Форматировщик попытается обернуть атрибуты тега, если длина атрибута превышает это значение. По умолчанию 70.",
+      "fr": "Le formateur tentera d'envelopper les attributs de la balise si la longueur de l'attribut dépasse cette valeur. La valeur par défaut est 70.",
+      "zh": "设置标签参数最大长度。默认值为 70。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "max_attribute_length=10" },
-      { "name": ".djlintrc", "value": "\"max_attribute_length\": \"10\"" },
+      { "name": ".djlintrc", "value": "\"max_attribute_length\": 10" },
       { "name": "cli", "value": "--max-attribute-length 10" }
     ]
   },
@@ -485,7 +489,7 @@
       "en": "Formatter will attempt to format template syntax inside of tag attributes. Disabled by default.",
       "ru": "Форматировщик будет пытаться форматировать синтаксис шаблона внутри атрибутов тега. По умолчанию отключен.",
       "fr": "Le formateur tentera de formater la syntaxe des modèles à l'intérieur des attributs des balises. Désactivé par défaut.",
-      "zh": "格式化标签参数的语法错误。（默认关闭）"
+      "zh": "尝试格式化标签属性中的模板语法。（默认关闭）"
     },
     "usage": [
       {
@@ -522,7 +526,7 @@
     "description": {
       "en": "Customize order of output message. Default=\"{code} {line} {message} {match}\". If `{filename}` is not included in message, then the output will be grouped by file and a header will automatically be added to each group.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
       "ru": "Настройка порядка вывода сообщения. По умолчанию=\"{code} {line} {message} {match}\". Если `{filename}` не включено в сообщение, то вывод будет сгруппирован по файлам и к каждой группе будет автоматически добавлен заголовок.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
-      "fr": "Personnalise l'ordre du message de sortie. Défaut=\"{code} {ligne} {message} {match}\". Si `{filename}` n'est pas inclus dans le message, alors la sortie sera groupée par fichier et un en-tête sera automatiquement ajouté à chaque groupe.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "fr": "Personnalise l'ordre du message de sortie. Défaut=\"{code} {line} {message} {match}\". Si `{filename}` n'est pas inclus dans le message, alors la sortie sera groupée par fichier et un en-tête sera automatiquement ajouté à chaque groupe.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
       "zh": "自定义输出文本顺序。默认=\"{code} {line} {message} {match}\"。如果消息中不包含{filename}，则输出将按文件进行分组，并且每个分组会自动添加一个标题。\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::"
     },
     "usage": [
@@ -630,7 +634,7 @@
       },
       {
         "name": ".djlintrc",
-        "value": "\"format_js\": true\n\"js\": {\n        \"indent_size\": 5\n    }"
+        "value": "\"format_js\": true,\n\"js\": {\n        \"indent_size\": 5\n    }"
       },
       { "name": "cli", "value": "--format-js --indent-js 5" }
     ]
@@ -652,7 +656,7 @@
       },
       {
         "name": ".djlintrc",
-        "value": "\"format_css\": true\n\"css\": {\n        \"indent_size\": 5\n    }"
+        "value": "\"format_css\": true,\n\"css\": {\n        \"indent_size\": 5\n    }"
       },
       { "name": "cli", "value": "--format-css --indent-css 5" }
     ]
@@ -684,7 +688,7 @@
       "en": "Do not attempt to fix the case of known html tags.",
       "ru": "Не пытайтесь исправить регистр известных html-тегов.",
       "fr": "N'essayez pas de corriger la casse des balises html connues.",
-      "zh": "不修正已知 HtMl 标签的大小写。"
+      "zh": "不修正已知 HTML 标签的大小写。"
     },
     "usage": [
       {

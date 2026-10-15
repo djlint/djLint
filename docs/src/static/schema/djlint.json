@@ -46,7 +46,7 @@
       "$ref": "#/definitions/comma-separated-list"
     },
     "custom_html": {
-      "description": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\\\w+>`",
+      "description": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\w+>`",
       "$ref": "#/definitions/comma-separated-list"
     },
     "exclude": {
@@ -108,7 +108,7 @@
       "$ref": "#/definitions/comma-separated-list"
     },
     "indent": {
-      "description": "Use to change the code indentation. Default is 4 (four spaces).",
+      "description": "Use to change the code indentation. Default is 4 (four spaces), or the `indent_size` of a `.editorconfig` at the project root.",
       "type": "integer",
       "minimum": 0
     },
@@ -130,7 +130,7 @@
       "examples": ["{filename}:{line}: {code} {message} {match}"]
     },
     "max_attribute_length": {
-      "description": "Formatter will attempt to wrap tag attributes if the attribute length exceeds this value.",
+      "description": "Formatter will attempt to wrap tag attributes if the attribute length exceeds this value. Default is 70.",
       "type": "integer",
       "minimum": 0
     },
@@ -140,7 +140,7 @@
       "minimum": 0
     },
     "max_line_length": {
-      "description": "Formatter will attempt to put some html and template tags on a single line instead of wrapping them if the line length will not exceed this value.",
+      "description": "Formatter will attempt to put some html and template tags on a single line instead of wrapping them if the line length will not exceed this value. Default is 120, or the `max_line_length` of a `.editorconfig` at the project root.",
       "type": "integer",
       "minimum": 0
     },

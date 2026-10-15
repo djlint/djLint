@@ -1,7 +1,7 @@
 ---
 title: Nunjucks Template Linter and Formatter
 keywords: nunjucks, djlint, nunjucks template linter, nunjucks template formatter, format nunjucks templates, pebble, pebble template linter
-description: djLint - это линтер шаблонов nunjucks и форматер шаблонов nunjucks! Используйте преимущества профиля предварительной сборки при линтинге и форматировании ваших шаблонов с помощью djLint.
+description: djLint - это линтер шаблонов nunjucks и форматер шаблонов nunjucks! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
 tool: nunjucks
 ---
 

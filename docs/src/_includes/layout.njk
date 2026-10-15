@@ -33,8 +33,9 @@
         <meta name="apple-mobile-web-app-status-bar-style"
               content="black-translucent">
 
-        <link rel="alternate" hreflang="en-US" href="{{site.url}}{{ page.url | baseUrl }}" />
-        <link rel="alternate" hreflang="ru" href="{{site.url}}/ru{{ page.url | baseUrl }}" />
+        {% for alternate in locales %}
+        <link rel="alternate" hreflang="{{ alternate.code }}" href="{{site.url}}{% if alternate.url %}/{{ alternate.url }}{% endif %}{{ page.url | baseUrl }}" />
+        {% endfor %}
         <link rel="stylesheet"
               href="{{ "/static/css/site.css" | rev }}"/>
          <link rel="preload"

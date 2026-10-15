@@ -1,7 +1,7 @@
 ---
-title: Django Template Linter и Formatter
+title: Django Template Linter and Formatter
 keywords: django, djlint, django template linter, django template formatter, format django templates
-description: djLint - это линтер шаблонов django и форматер шаблонов django! Используйте преимущества профиля предварительной сборки при линтинге и форматировании ваших шаблонов с помощью djLint.
+description: djLint - это линтер шаблонов django и форматер шаблонов django! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
 tool: django
 ---
 

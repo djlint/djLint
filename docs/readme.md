@@ -12,6 +12,6 @@ Docs are made with [11ty](https://www.11ty.dev).
 
 The demo is running python as a webworker in web assembly from [pyodide](https://pyodide.org/en/stable/index.html).
 
-When the page is access a webworker starts, downloads python, installs djLint and deps (notice the wheels in `/src/static/py` that are updated when a new release is created.).
+When the page is opened, a web worker starts, loads Pyodide and installs the latest djLint and its dependencies from PyPI with `micropip` (see `src/static/js/worker.js`).
 
 Once the worker responds "ready" the web UI is shown.

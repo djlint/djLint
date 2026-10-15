@@ -1,7 +1,7 @@
 ---
 title: Jinja Template Linter and Formatter
 keywords: jinja, djlint, jinja template linter, jinja template formatter, format jinja templates, minijinja, jinjava, minijinja template linter, jinjava template linter
-description: djLint - это линтер шаблонов jinja и форматер шаблонов jinja! Используйте преимущества профиля предварительной сборки при линтинге и форматировании ваших шаблонов с помощью djLint.
+description: djLint - это линтер шаблонов jinja и форматер шаблонов jinja! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
 tool: jinja
 ---
 
@@ -9,7 +9,7 @@ tool: jinja
 
 {{ description }}
 
-**[Что такое Jinja?](https://jinja2docs.readthedocs.io/en/stable/)**
+**[Что такое Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
 Шаблоны MiniJinja полностью совместимы с Jinja2, поэтому используйте этот же профиль `jinja`.
 

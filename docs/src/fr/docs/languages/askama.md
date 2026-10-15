@@ -1,7 +1,7 @@
 ---
 title: Askama Template Linter and Formatter
 keywords: askama, rust, djlint, askama template linter, askama template formatter, format askama templates
-description: djLint est un linter de modèle Askama et un formateur de modèle Askama ! Profitez du profil pré-construit lorsque vous limez et formatez vos modèles avec djLint.
+description: djLint est un linter de modèle Askama et un formateur de modèle Askama ! Profitez du profil pré-construit lorsque vous lintez et formatez vos modèles avec djLint.
 tool: askama
 ---
 

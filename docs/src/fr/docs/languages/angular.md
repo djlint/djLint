@@ -1,7 +1,7 @@
 ---
 title: Angular Template Linter
 keywords: angular, djlint, angular template linter, lint angular templates
-description: djLint est un linter de template angulaire ! Profitez du profil pré-build lorsque vous linting et formatez vos templates avec djLint.
+description: djLint est un linter de templates Angular ! Profitez du profil pré-construit lorsque vous lintez et formatez vos templates avec djLint.
 tool: angular
 ---
 

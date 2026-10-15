@@ -1,7 +1,7 @@
 ---
 description: Интегрируйте djLint с вашим любимым редактором. Автоматическое форматирование ваших шаблонов с помощью Pre-Commit или Visual Studio Code. Lint с SublimeText.
 title: Интеграции
-keywords: облицовка шаблонов, форматер шаблонов, djLint, HTML, шаблоны, форматер, линтер, использование, integrations
+keywords: линтер шаблонов, форматер шаблонов, djLint, HTML, шаблоны, форматер, линтер, использование, integrations
 ---
 
 # {{ "integrations" | i18n }}
@@ -40,7 +40,7 @@ djLint можно использовать как [pre-commit](https://pre-commi
 - `djlint-liquid` и `djlint-reformat-liquid`
   Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=liquid`.
 - `djlint-golang` и `djlint-reformat-golang`
-  Будет искать файлы, соответствующие `*.tmpl`, и устанавливать `--profile=golang`.
+  Будет искать файлы, соответствующие `*.gotmpl`, и устанавливать `--profile=golang`.
 - `djlint-tera` и `djlint-reformat-tera`
   Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=tera`.
 - `djlint-askama` и `djlint-reformat-askama`
@@ -83,7 +83,7 @@ djLint можно использовать в качестве плагина Su
 
 ::: content
 
-1. `cmd + shft + p`
+1. `cmd + shift + p`
 2. Install SublimeLinter
 3. Install SublimeLinter-contrib-djlint
    :::
@@ -101,12 +101,13 @@ djLint можно использовать в качестве плагина Su
 
 ## neovim
 
-djLint можно использовать в качестве форматера в neovim с помощью плагина `null-ls`.
+djLint можно использовать как линтер и форматер в neovim с помощью плагина `none-ls`.
 
 ::: content
 
-- [GitHub репозиторий](https://github.com/jose-elias-alvarez/null-ls.nvim/)
-- [Пример конфигурации](https://github.com/shaeinst/roshnivim/blob/5d991fcfa1b8f865f9653a98c6d97a829d4a2add/lua/plugins/null-ls_nvim.lua#L84-L91)
+- [GitHub репозиторий](https://github.com/nvimtools/none-ls.nvim)
+- [Линтинг](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
+- [Форматирование](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
   :::
 
 ## coc.nvim

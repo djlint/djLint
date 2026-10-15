@@ -7,7 +7,7 @@ date: Last Modified
 
 # Configuration
 
-Configuration is done either through your project's `pyproject.toml` file, a `djlint.toml` or `.djlint.toml` file, or a `.djlintrc` file. Command line args will always override any settings in configuration files. Local project settings will always override global configuration files.
+Configuration is done either through your project's `pyproject.toml` file, a `djlint.toml` or `.djlint.toml` file, or a `.djlintrc` file. Command line args will always override any settings in configuration files. Local project settings override a global configuration file given with `--configuration`, unless `--prefer-configuration` is set.
 
 The format for `pyproject.toml` is `toml`.
 

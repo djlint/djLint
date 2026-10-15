@@ -1,7 +1,7 @@
 ---
 title: Handlebars Template Linter and Formatter
 keywords: handlebars, djlint, handlebars template linter, handlebars template formatter, format handlebars templates
-description: djLint is a handlebars template linter and a handlebars template formatter! Take advantage of the pre-build profile when linting and formatting your templates with djLint.
+description: djLint is a handlebars template linter and a handlebars template formatter! Take advantage of the pre-built profile when linting and formatting your templates with djLint.
 tool: handlebars
 ---
 

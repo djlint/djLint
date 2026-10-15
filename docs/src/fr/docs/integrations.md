@@ -25,7 +25,7 @@ djLint peut être utilisé comme un hook [pre-commit](https://pre-commit.com) en
 
 Le repo fournit de multiples hooks pré-configurés pour des profils djLint spécifiques (il suffit de prédéfinir l'argument `--profile` et d'indiquer à pre-commit les extensions de fichiers à rechercher) :
 
-:: : content
+::: content
 
 - `djlint` pour le linting et `djlint-reformat` pour le formatage
   Ceci recherchera les fichiers correspondant à `*.html` sans définir `--profile`.
@@ -40,12 +40,12 @@ Le repo fournit de multiples hooks pré-configurés pour des profils djLint spé
 - `djlint-liquid` et `djlint-reformat-liquid`
   Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=liquid`.
 - `djlint-golang` et `djlint-reformat-golang`
-  Ceci recherchera les fichiers correspondant à `*.tmpl` et définira `--profile=golang`.
+  Ceci recherchera les fichiers correspondant à `*.gotmpl` et définira `--profile=golang`.
 - `djlint-tera` et `djlint-reformat-tera`
   Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=tera`.
 - `djlint-askama` et `djlint-reformat-askama`
   Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=askama`.
-  :: :
+  :::
 
 Notez que ces hooks prédéfinis sont parfois trop conservateurs dans les entrées qu'ils acceptent (vos templates peuvent utiliser une extension différente) donc pre-commit vous permet explicitement de remplacer n'importe laquelle de ces options prédéfinies. Consultez la [docs pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) pour une configuration supplémentaire.
 
@@ -81,12 +81,12 @@ Vous pouvez utiliser les paramètres `files` ou `exclude` pour contraindre chaqu
 
 djLint peut être utilisé comme un plugin SublimeText Linter. Il peut être installé via [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint).
 
-:: : contenu
+::: content
 
-1. `cmd + shft + p`
+1. `cmd + shift + p`
 2. Installer SublimeLinter
 3. Installer SublimeLinter-contrib-djlint
-   :: :
+   :::
 
 Assurez-vous que djLint est installé dans votre python global, ou sur votre `PATH`.
 
@@ -101,12 +101,13 @@ Assurez-vous que djLint est installé dans votre python global, ou sur votre `PA
 
 ## neovim
 
-djLint peut être utilisé comme formateur dans neovim en utilisant le plugin `null-ls`.
+djLint peut être utilisé comme linter et formateur dans neovim avec le plugin `none-ls`.
 
 ::: content
 
-- [GitHub dépôt](https://github.com/jose-elias-alvarez/null-ls.nvim/)
-- [Exemple de configuration](https://github.com/shaeinst/roshnivim/blob/5d991fcfa1b8f865f9653a98c6d97a829d4a2add/lua/plugins/null-ls_nvim.lua#L84-L91)
+- [GitHub dépôt](https://github.com/nvimtools/none-ls.nvim)
+- [Linting](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
+- [Formatage](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
   :::
 
 ## coc.nvim

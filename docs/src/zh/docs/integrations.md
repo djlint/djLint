@@ -40,7 +40,7 @@ djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检
 - 使用 `djlint-liquid` 和 `djlint-reformat-liquid`。
   这时会查找 `*.html` 并设置 `--profile=liquid`。
 - 使用 `djlint-golang` 和 `djlint-reformat-golang`。
-  这时会查找 `*.tmpl` 并设置 `--profile=golang`。
+  这时会查找 `*.gotmpl` 并设置 `--profile=golang`。
 - 使用 `djlint-tera` 和 `djlint-reformat-tera`。
   这时会查找 `*.html` 并设置 `--profile=tera`。
 - 使用 `djlint-askama` 和 `djlint-reformat-askama`。
