@@ -21,7 +21,7 @@ djlint . --check
 ```bash
 djlint . --reformat --single-attribute-per-line
 
-# как насчет скриптов и стилей форматирования?
+# а заодно отформатировать скрипты и стили?
 djlint . --reformat --single-attribute-per-line --format-css --format-js
 ```
 

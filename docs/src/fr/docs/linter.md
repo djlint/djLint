@@ -42,7 +42,7 @@ Cela peut également se faire par l'intermédiaire de l'option [{{ "configuratio
 | T002 | Les doubles quotes doivent être utilisées dans les balises. Ex : {% raw %}`{% extends "this.html" %}`{% endraw %}              | ✔️     |
 | T003 | Le bloc de fin doit avoir un nom. Ex : {% raw %}`{% endblock body %}`{% endraw %}.                                             | -      |
 | D004 | (Django) Les urls statiques doivent suivre le modèle {% raw %}`{% static path/to/file %}`{% endraw %}.                         | ✔️     |
-| J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{ url_for('static'..) }}`{% endraw %}.                           | ✔️     |
+| J004 | (Jinja) Les urls statiques doivent suivre le modèle {% raw %}`{{ url_for('static'..) }}`{% endraw %}.                          | ✔️     |
 | H005 | La balise Html doit avoir un attribut `lang` non vide.                                                                         | ✔️     |
 | H006 | La balise `img` doit avoir les attributs `height` et `width`.                                                                  | -      |
 | H007 | LA BALISE `<!DOCTYPE ... >` doit être présent avant la balise html.                                                            | ✔️     |
@@ -212,7 +212,7 @@ Coder en dur les chemins /static/ contourne la balise `{% static %}` de Django :
 
 #### J004
 
-`(Jinja) Les urls statiques doivent suivre le modèle { url_for('static'..) }}.`
+`(Jinja) Les urls statiques doivent suivre le modèle {{ url_for('static'..) }}.`
 
 Coder en dur les chemins /static/ contourne url_for('static', ...) de Flask/Jinja : les ressources renvoient des 404 lorsque l'application est montée sous un préfixe d'URL ou que le dossier ou l'hôte statique change, et les chaînes de requête anti-cache ajoutées par le framework sont perdues. La règle cherche le préfixe littéral `/static/` : un projet qui sert ses fichiers statiques depuis un autre chemin n'est pas couvert.
 
@@ -979,7 +979,7 @@ Lorsqu'une balise HTML est ouverte dans un `{% block %}` mais fermée dans un au
 
 Django refuse de compiler un modèle dans lequel une autre balise précède `{% extends %}`, et le texte écrit avant elle est rendu, si bien qu'il fuit dans la page avant tout ce que produit le modèle parent. Jinja rend aussi ce texte, et nunjucks le supprime, de sorte que dans chaque moteur le modèle ne fait pas ce qu'il semble faire.
 
-Un commentaire `{# #}` ne rend rien et ne compte pas, pas plus que ce qui se trouve dans un bloc que djLint n'analyse pas, comme un bloc `{% comment %}`, <code>{&#37; raw %}</code> ou `{% verbatim %}` ou une région `{# djlint:off #}`. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Une balise de branche placée avant ne compte pas non plus, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent.
+Un commentaire `{# #}` ne rend rien et ne compte pas, pas plus que ce qui se trouve dans un bloc `{% comment %}`, <code>{&#37; raw %}</code> ou `{% verbatim %}`, nommé ou non, dans une région `{# djlint:off #}` sous l'une de ses trois graphies, ou dans un front matter yaml. Un commentaire html compte : le moteur l'écrit dans la page avant le doctype du modèle parent, et c'est précisément la fuite que vise cette règle. Il en va de même pour un bloc `{% blocktrans %}`, un bloc `{% filter %}` et un bloc `<?php ?>`, qui sont tous rendus. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Avec les profils jinja et nunjucks, une balise de branche placée avant ne compte pas, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent ; django lit le reste du modèle comme faisant partie du `{% extends %}` puis rejette le `{% endif %}`, donc avec ce profil une balise de branche compte.
 
 Non appliquée aux profils handlebars, golang, liquid et angular.
 
@@ -1023,7 +1023,9 @@ La vérification ne s'exécute que sur les fichiers analysables de façon fiable
 
 Dès qu'un modèle en étend un autre, le parent décide de ce qui est produit et l'enfant ne fait que remplir les blocs du parent. Le texte ou le html écrit après `{% extends %}` et hors de tout `{% block %}` est silencieusement écarté au rendu, si bien qu'un paragraphe qui paraît correct dans la source n'atteint jamais la page.
 
-Une balise de template placée là s'exécute quand même, si bien que `{% load %}`, `{% set %}` et un `{% if %}` enveloppant un bloc sont laissés tels quels, de même que les commentaires `{# #}` et `{% comment %}`, les blocs <code>{&#37; raw %}</code> et `{% verbatim %}`, et le corps d'un `{% macro %}` ou d'un `{% set %}` sous forme de bloc, qui est capturé plutôt que produit. Un commentaire html est produit comme n'importe quel autre texte, si bien qu'un commentaire hors d'un bloc est signalé, tout comme le texte d'un `{% blocktrans %}`, qui n'est pas un `{% block %}`. Seul le contenu après la balise extends est considéré, et chaque suite ininterrompue de contenu est signalée une fois, à son début.
+Une balise de template placée là s'exécute quand même, si bien que `{% load %}`, `{% set %}` et un `{% if %}` enveloppant un bloc sont laissés tels quels, de même que les commentaires `{# #}` et `{% comment %}`, les commentaires html, les blocs <code>{&#37; raw %}</code> et `{% verbatim %}`, et le corps d'un `{% macro %}`, d'un `{% set %}` sous forme de bloc, d'un `{% partialdef %}` ou d'un `{% addtoblock %}`, qui est capturé plutôt que produit. Le texte d'un `{% blocktrans %}` est signalé, puisqu'un `{% blocktrans %}` n'est pas un `{% block %}`. Seul le contenu après la balise extends est considéré, et chaque suite ininterrompue de contenu est signalée une fois, à son début.
+
+Le moteur lit les balises de template avant le html, si bien qu'un `{% extends %}` écrit dans un commentaire html ou un `<pre>` s'exécute quand même et fait toujours du fichier un enfant ; seuls `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> et `{% verbatim %}` le masquent réellement. Le texte d'un commentaire html n'atteint de toute façon aucun lecteur et n'est pas signalé, mais les balises qui s'y trouvent sont quand même lues.
 
 Non appliquée aux profils handlebars, golang, liquid et angular.
 
@@ -1073,9 +1075,13 @@ Un `<button>` sans `type` vaut `submit`, si bien qu'un bouton écrit pour lancer
 
 `Le nom de bloc est utilisé plus d'une fois dans le template.`
 
-Django, Jinja et Nunjucks refusent tous d'analyser un modèle qui donne le même nom à deux blocs, si bien que la page ne se charge pas du tout. Les moteurs ne se soucient pas que les deux blocs se trouvent dans des branches différentes d'un `{% if %}`, si bien que chaque nom de bloc doit être unique dans tout le fichier, que les blocs soient côte à côte ou que l'un soit imbriqué dans l'autre.
+Django, Jinja et Nunjucks refusent tous d'analyser un modèle qui donne le même nom à deux blocs, si bien que la page ne se charge pas du tout. Les moteurs ne se soucient pas que les deux blocs se trouvent dans des branches différentes d'un `{% if %}`, si bien que chaque nom de bloc doit être unique dans tout le modèle, que les blocs soient côte à côte ou que l'un soit imbriqué dans l'autre.
 
-Seul `{% block %}` compte : un `{% blocktrans %}` n'est pas un bloc, un `{% endblock name %}` ne fait que nommer le bloc qu'il ferme, et un bloc écrit dans un commentaire n'atteint jamais l'analyseur. Les noms sont comparés tels qu'ils sont écrits, puisque les moteurs traitent `Content` et `content` comme deux blocs.
+Seul `{% block %}` compte : un `{% blocktrans %}` n'est pas un bloc et un `{% endblock name %}` ne fait que nommer le bloc qu'il ferme. Les noms sont comparés tels qu'ils sont écrits, puisque les moteurs traitent `Content` et `content` comme deux blocs.
+
+Seul ce que le moteur lui-même n'analyse jamais est ignoré : un commentaire de template, un bloc `{% comment %}`, le corps d'un <code>{&#37; raw %}</code> ou d'un `{% verbatim %}`, et une région `djlint:off`. Un bloc écrit dans un commentaire html, dans le corps d'un `<script>`, `<style>`, `<pre>` ou `<textarea>`, ou dans le corps d'un `{% filter %}` est quand même compté, puisque le moteur lit tout cela et lève tout autant une erreur sur le nom en double.
+
+Un `{% embed %}` ouvre sa propre portée : les blocs qu'il contient remplissent le modèle intégré et non celui-ci, si bien que deux embeds du même partiel peuvent chacun contenir `{% block body %}`. Un nom répété dans un même embed est quand même signalé.
 
 Non appliquée aux profils handlebars, golang, liquid et angular.
 
@@ -1131,7 +1137,9 @@ Non appliquée aux profils golang, handlebars et angular.
 
 Une balise de sortie affiche une valeur, et `if`, `for`, `url`, `include` et les autres sont des instructions qui ont leur place dans une balise de bloc. Django, Jinja et Nunjucks rejettent tous `{{ if x }}` par une erreur de syntaxe, et un mot-clé de fermeture seul, comme `{{ endif }}`, est lu comme une variable qui ne rend rien tandis que le bloc qu'il devait fermer reste ouvert, si bien que la page soit ne se charge pas, soit affiche ce que la condition aurait dû masquer.
 
-Un mot-clé nu est un nom de variable ordinaire, si bien que `{{ url }}`, `{{ url|default:"/" }}` et `{{ set.name }}` ne sont pas signalés. Seul un mot-clé suivi d'un argument l'est, ainsi qu'un mot-clé de fermeture ou de branche seul comme `{{ endif }}` ou `{{ else }}`. Une expression jinja qui se trouve commencer par l'un de ces noms, comme `{{ url ~ "/x" }}` ou `{{ url if url else "#" }}`, est laissée telle quelle.
+Un mot-clé nu est un nom de variable ordinaire, si bien que `{{ url }}`, `{{ url|default:"/" }}` et `{{ set.name }}` ne sont pas signalés. Seul un mot-clé accompagné d'un argument l'est, ainsi qu'un mot-clé de fermeture ou de branche seul comme `{{ endif }}` ou `{{ else }}`. Un mot-clé de contrôle comme `if` ou `for` ne peut pas commencer une expression : tout ce qui le suit est donc un argument, opérateur compris, et `{{ if -1 > count }}` est signalé. Les autres noms servent aussi de variables et de fonctions, et pour eux seule une chaîne entre guillemets ou un mot compte comme argument. Une expression qui se trouve commencer par l'un d'eux est donc laissée telle quelle : `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` et `{{ filter [0] }}` ne sont pas signalés.
+
+Le corps d'un bloc <code>{&#37; raw %}</code> ou `{% verbatim %}` est du texte et non de la syntaxe de template, il est donc ignoré, y compris sous la forme nommée `{% verbatim vueapp %}...{% endverbatim vueapp %}`, si bien qu'un `{{ }}` de Vue ou de Handlebars protégé de cette façon n'est pas signalé. Un `{{ }}` écrit dans un argument entre guillemets d'une balise de bloc, comme dans `{% trans "Write {{ if x }} instead" %}`, est du texte que le moteur affiche et est lui aussi laissé tel quel.
 
 À éviter :
 
@@ -1171,7 +1179,9 @@ Le nom peut venir de `title`, `aria-label` ou `aria-labelledby` ; l'un des trois
 
 Un commentaire html cache le balisage au navigateur, pas au moteur de modèles. `<!-- {% include "debug.html" %} -->` rend toujours le fichier, et `<!-- {% if debug %}...{% endif %} -->` est toujours évalué, dans Django, Jinja, Nunjucks, Handlebars et Go sans distinction, si bien qu'une balise mise en commentaire de cette façon continue de s'exécuter, et ce qu'elle écrit atterrit dans le commentaire ou, si cela contient `-->`, en sort. Seul un commentaire de template, `{# #}` dans Django et Jinja, `{{! }}` dans Handlebars ou `{{/* */}}` dans Go, empêche une balise de s'exécuter.
 
-Seule une balise d'instruction est signalée : `{% %}`, une section, une fermeture ou un partiel handlebars, et un mot-clé Go comme `{{if}}` ou `{{end}}`. Une valeur affichée dans un commentaire, comme dans `<!-- built {{ version }} -->`, est un usage délibéré et est laissée telle quelle, de même qu'une balise dans un commentaire de template ou un bloc `{% comment %}`, et un commentaire conditionnel pour Internet Explorer, `<!--[if IE]> ... <![endif]-->`, dont le corps est du balisage destiné au navigateur qu'il nomme.
+Seule une balise d'instruction est signalée : `{% %}` avec les profils qui l'ont, une section, une fermeture ou un partiel handlebars, et un mot-clé Go comme `{{if}}` ou `{{end}}`. Une valeur affichée dans un commentaire, comme dans `<!-- built {{ version }} -->`, est un usage délibéré et est laissée telle quelle, de même qu'une balise dans un commentaire de template, un bloc `{% comment %}` ou un bloc raw, et un commentaire conditionnel pour Internet Explorer, `<!--[if IE]> ... <![endif]-->`, dont le corps est du balisage destiné au navigateur qu'il nomme.
+
+Un mot-clé Go nu est un nom de variable ordinaire dans tous les autres moteurs : `<!-- period {{ start }} to {{ end }} -->` et `<!-- Template: {{ template }} -->` sont donc des valeurs avec Django, Jinja, Nunjucks, Handlebars et Liquid, et ne sont lus comme des instructions qu'avec `--profile golang`. Un mot-clé accompagné d'un opérande Go, comme dans `{{ if .X }}` et `{{ template "footer" . }}`, est une instruction qu'aucun autre moteur n'affiche, et il est signalé avec n'importe quel profil. De même, `{%` n'est lu que là où le moteur le connaît : c'est du texte avec `--profile handlebars` et `--profile golang`, et une accolade ouvrante que ne suit aucune accolade fermante, comme dans `<!-- battery at 50{% charge -->`, est le texte ordinaire qu'elle semble être. Un commentaire conditionnel est un commentaire écrit comme tel, qui commence par `<!--[if` et se ferme par son `<![endif]-->`, quelle que soit la casse ; s'il reste ouvert, c'est le commentaire ordinaire que lit le navigateur, et les balises qu'il contient sont signalées.
 
 À éviter :
 
@@ -1335,6 +1345,8 @@ Un id nomme un seul élément. Un second élément portant le même id casse `ge
 
 Deux ids dans des branches exclusives d'un même `{% if %}...{% else %}...{% endif %}` ne sont jamais rendus tous les deux, si bien qu'ils ne sont pas signalés. Une boucle `{% for %}` ou un `{% block %}` n'est pas une branche : un id à l'intérieur et le même id à l'extérieur sont tous deux rendus, et le second est signalé. Une valeur écrite par une balise de template est indéterminable et est laissée telle quelle, tout comme une valeur vide. Les ids sont comparés à l'identique, comme le fait le navigateur, si bien que `save` et `Save` sont deux ids.
 
+Les branches sont lues dans le langage du fichier, avec tous les espaces que ce langage autorise entre les délimiteurs et le nom de la balise : `{% elif %}` et `{% else %}`, `{% elsif %}` et `{% when %}` de liquid, `{{ else }}` de go, une instruction de ligne mako `% else:`, ainsi que `{{else}}` de handlebars, son enchaînement `{{else if x}}` et la section inverse de tout bloc `{{#helper}}`, helpers personnalisés compris. Le contenu d'un `<template>` est un fragment de document à part que `getElementById` n'atteint jamais, donc un id qui s'y trouve n'est comparé qu'aux ids de ce même élément : deux `<template>` peuvent contenir chacun une ligne avec le même id, alors que deux ids identiques dans un même élément sont quand même signalés. Un id dans un commentaire, dans le corps d'un <code>{&#37; raw %}</code> ou d'un `{% verbatim %}`, ou dans une région `djlint:off` n'est pas lu du tout.
+
 À éviter :
 
 ```html
@@ -1355,7 +1367,9 @@ Deux ids dans des branches exclusives d'un même `{% if %}...{% else %}...{% end
 
 Html interdit le contenu interactif dans `<a>` et `<button>`. Un bouton dans un lien, ou un lien dans un bouton, est un balisage invalide que les navigateurs réparent chacun à leur manière, et un utilisateur de lecteur d'écran ou de clavier se retrouve avec un contrôle qui se comporte comme deux. axe signale la même chose sous le nom « nested-interactive ».
 
-Les conteneurs surveillés sont un `<a>` avec un `href` et un `<button>`, et les contrôles signalés à l'intérieur sont un lien avec un `href`, `button`, `input`, `select` et `textarea`. Un `<a>` sans `href` n'est pas interactif et est laissé tel quel d'un côté comme de l'autre, de même qu'un input caché ou un input dont le type est écrit par une balise de template. Un lien ou un bouton laissé ouvert se termine avec l'élément qui l'entoure, comme dans un navigateur, si bien qu'une faute de frappe ne signale pas le reste du fichier.
+Les conteneurs surveillés sont un `<a>` avec un `href` et un `<button>`, et les contrôles signalés à l'intérieur sont un lien avec un `href`, `button`, `input`, `select` et `textarea`. Un `<a>` sans `href` n'est pas interactif et est laissé tel quel d'un côté comme de l'autre, de même qu'un input caché ou un input dont le type est écrit par une balise de template. Le contenu d'un `<template>` n'est pas rendu là où il est écrit : un contrôle qui s'y trouve n'est donc pas imbriqué dans le lien qui l'entoure, mais une imbrication écrite à l'intérieur même de cet élément est quand même signalée.
+
+Un attribut n'est lu que là où une balise en écrit un : le `href` de `{% if not href %}` nomme une variable, celui de `{# href="{{ url }}" #}` est mis en commentaire et celui de `data-attr=href` appartient à un autre attribut, tandis que le `href` qu'un `{% if %}` écrit entre ses propres balises est un attribut comme les autres. Un lien ou un bouton laissé ouvert se termine avec l'élément qui l'entoure, comme dans un navigateur, si bien qu'une faute de frappe ne signale pas le reste du fichier. Au niveau supérieur, rien ne l'entoure pour le terminer : il court alors jusqu'à la fin du fichier, où H025 signale aussi la balise orpheline.
 
 À éviter :
 
@@ -1375,7 +1389,7 @@ Les conteneurs surveillés sont un `<a>` avec un `href` et un `<button>`, et les
 
 H005 demande un `lang` sur `<html>`, mais une valeur comme `lang="english"` ou `lang="en_US"` la satisfait sans nommer aucune langue connue d'un navigateur. Un lecteur d'écran se rabat alors sur sa voix par défaut, et la traduction et la césure choisissent les mauvaises règles ou aucune. La valeur doit être une étiquette BCP 47 : deux ou trois lettres, puis un nombre quelconque de sous-étiquettes d'une à huit lettres ou chiffres, chacune après un trait d'union, comme dans `en`, `pt-BR` ou `zh-Hant-TW`.
 
-Seule la balise `<html>` est vérifiée, comme pour H005, et une valeur vide est laissée à cette règle. Une valeur écrite par une balise de template, comme dans `lang="{{ LANGUAGE_CODE }}"`, est indéterminable et est laissée telle quelle, et `xml:lang` ou `data-lang` n'est pas lu comme `lang`.
+Seule la balise `<html>` est vérifiée, comme pour H005. Une valeur vide est laissée à cette règle, alors qu'une valeur composée uniquement d'espaces est signalée ici, puisque H005 la considère comme une valeur. Une valeur écrite par une balise de template, comme dans `lang="{{ LANGUAGE_CODE }}"`, ou par un echo court php, comme dans `lang="<?= $lang ?>"`, est indéterminable et est laissée telle quelle, mais une valeur qui commence simplement par `$` ou `{`, comme dans `lang="$LANG"`, est lue telle qu'elle est écrite. `xml:lang` ou `data-lang` n'est pas lu comme `lang`, et un `>` écrit dans une balise de template avant l'attribut, comme dans `{% if a > b %}`, ne le masque pas.
 
 À éviter :
 
@@ -1395,7 +1409,7 @@ Seule la balise `<html>` est vérifiée, comme pour H005, et une valeur vide est
 
 La spécification html indique qu'un `src` vide est invalide, et avertit qu'un navigateur le résout par rapport à l'url du document lui-même, si bien que `<img src="">` récupère à nouveau la page comme image et `<script src=""></script>` la récupère comme script. Il s'agit généralement d'un espace réservé qu'un script devait remplir, et la correction consiste à retirer l'attribut, ou à garder la valeur dans un attribut data, jusqu'à en avoir une vraie. Un `src` écrit sans aucune valeur, comme dans `<img src>`, est vide lui aussi et est signalé.
 
-Seuls `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` et `video` sont vérifiés, puisque ce sont les éléments qui récupèrent ce que `src` nomme. Une valeur écrite par une balise de template est laissée telle quelle, tout comme une valeur composée uniquement d'espaces, et `srcset` et `data-src` sont des attributs différents que la règle ne juge pas.
+Seuls `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` et `video` sont vérifiés, puisque ce sont les éléments qui récupèrent ce que `src` nomme. Seule une valeur qu'un navigateur lit comme vide est signalée : une valeur sans guillemets comme `<img src=/static/logo.png>` est laissée telle quelle, tout comme une valeur composée uniquement d'espaces et une valeur écrite par une balise de template, et `srcset` et `data-src` sont des attributs différents que la règle ne juge pas.
 
 À éviter :
 
@@ -1415,7 +1429,9 @@ Seuls `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` et `video` 
 
 Une vidéo sonore ne porte ses paroles que dans l'audio, si bien qu'un spectateur sourd ou malentendant n'en tire rien sans sous-titres, ce qu'exige le critère WCAG 1.2.2 Sous-titres (pré-enregistrés). Un `<track>` dont le `kind` vaut `captions` ou `subtitles` à l'intérieur du `<video>` satisfait la règle, tout comme un `<track>` sans `kind` du tout, puisque `subtitles` est la valeur par défaut.
 
-Une vidéo `muted` n'a pas d'audio à sous-titrer et n'est pas signalée. Pas plus qu'une vidéo dont la balise ouvrante ou le corps contient une balise de template, puisque les pistes, ou l'attribut `muted`, peuvent être écrits par le modèle là où djLint ne peut pas les voir.
+Une vidéo `muted` n'a pas d'audio à sous-titrer et n'est pas signalée. Pas plus qu'une vidéo dont la balise ouvrante ou le corps contient une balise de template, puisque les pistes, ou l'attribut `muted`, peuvent être écrits par le modèle là où djLint ne peut pas les voir. Une balise de template est une balise qu'ouvre un langage de template, `{{`, `{%`, `{#` ou `${` : un gestionnaire jQuery comme `onclick="$(this).play()"`, un `$refs` d'Alpine, une accolade css ou un prix écrit dans le texte de repli restent du texte ordinaire, et la vidéo est quand même analysée.
+
+Seul le vrai balisage compte. `muted` doit être l'attribut : `<video class=muted>` est une classe nommée muted et la vidéo est signalée, et un `<track>` mis en commentaire ou écrit dans une valeur d'attribut est du texte et non une piste. Un `</video>` dans une valeur ne ferme rien, et l'élément est jugé là où sa vraie balise de fin le ferme : un `<video>` laissé ouvert est donc laissé à `H025`.
 
 À éviter :
 
@@ -1470,7 +1486,7 @@ est trouvé dans le code html.
     name: T001
     message: Trouver la Trichotillomanie
     flags: re.DOTALL|re.I
-    pattern:
+    patterns:
       - Trichotillomanie
 ```
 

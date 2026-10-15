@@ -19,11 +19,25 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 
 使用 `--no-github-output` 可恢复普通的控制台输出，使用 `--github-output` 可在 Actions 之外强制输出注解。
 
+注解只属于某一个拉取请求。若要把结果保存在仓库的 Security 标签页中，并保留多次运行的历史记录，可以将其输出为 SARIF 并上传该文件：
+
+```yaml
+- run: djlint . --lint --sarif > djlint.sarif
+  continue-on-error: true
+- uses: github/codeql-action/upload-sarif@v4
+  with:
+    sarif_file: djlint.sarif
+```
+
+上传步骤需要在 job 或 workflow 上授予 `security-events: write` 权限。
+
+`--sarif` 只向 stdout 输出一个 SARIF 2.1.0 文档，不输出其他内容，因此可以像上面那样重定向到文件。文档列出所有已启用的规则及其文档链接，每条结果都带有行号和列号；配合 `--check` 使用时，需要重新格式化的文件会归入 `formatting` 规则下报告。Azure DevOps、GitLab 和大多数编辑器都能读取这种格式。
+
 ## Pre-Commit
 
 djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检查工具和格式化工具。
 
-该代码仓库为特定的 djLint 配置文件（profile）提供了多个预先配置好的 hook（这些 hook 只是预先设置了 --profile 参数，并告知 pre-commit 需要查找哪些文件扩展名）：
+该代码仓库为特定的 djLint 配置文件（profile）提供了多个预先配置好的 hook（这些 hook 只是预先设置了 `--profile` 参数，并告知 pre-commit 需要查找哪些文件扩展名）：
 
 ::: content
 
@@ -47,7 +61,7 @@ djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检
   这时会查找 `*.html` 并设置 `--profile=askama`。
   :::
 
-请注意，这些预定义的 hook 在它们接受的输入方面有时会过于保守（您的模板可能使用了不同的扩展名），因此 pre-commit 明确允许您覆盖这些预定义的选项。有关额外的配置信息，请参阅 pre-commit 的文档。
+请注意，这些预定义的 hook 在它们接受的输入方面有时会过于保守（您的模板可能使用了不同的扩展名），因此 pre-commit 明确允许您覆盖这些预定义的选项。有关额外的配置信息，请参阅 [pre-commit 的文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。
 
 ### 默认 Django 示例
 
@@ -75,7 +89,7 @@ repos:
         types_or: ["html"]
 ```
 
-您可以使用 files 或 exclude 参数将每个 hook 限制在其自身的目录范围内，从而允许您在同一个代码仓库中支持多种模板语言。
+您可以使用 `files` 或 `exclude` 参数将每个 hook 限制在其自身的目录范围内，从而允许您在同一个代码仓库中支持多种模板语言。
 
 ## SublimeText 代码检查
 

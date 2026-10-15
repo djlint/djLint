@@ -29,6 +29,8 @@ Annotations belong to one pull request. To keep findings in the repository's Sec
     sarif_file: djlint.sarif
 ```
 
+The upload step needs the `security-events: write` permission on the job or the workflow.
+
 `--sarif` writes a SARIF 2.1.0 document to stdout and nothing else, so it can be redirected as above. Every enabled rule is listed with a link to its documentation, each finding carries its line and column, and with `--check` a file that would be reformatted is reported under a `formatting` rule. Azure DevOps, GitLab and most editors read the same format.
 
 ## Pre-Commit

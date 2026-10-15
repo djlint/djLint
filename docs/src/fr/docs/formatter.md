@@ -21,7 +21,7 @@ Pour formater le code et exécuter les fichiers de mise à jour :
 ```bash
 djlint . --reformat --single-attribute-per-line
 
-# qu'en est-il des scripts et des styles de mise en forme ?
+# et si on formatait aussi les scripts et les styles ?
 djlint . --reformat --single-attribute-per-line --format-css --format-js
 ```
 

@@ -19,6 +19,20 @@ Dans un workflow GitHub Actions, djLint signale chaque résultat sous forme d'an
 
 Utilisez `--no-github-output` pour obtenir la sortie console habituelle, ou `--github-output` pour forcer les annotations en dehors d'Actions.
 
+Les annotations sont liées à une seule pull request. Pour conserver les résultats dans l'onglet Security du dépôt, avec leur historique d'une exécution à l'autre, écrivez-les au format SARIF et téléversez le fichier :
+
+```yaml
+- run: djlint . --lint --sarif > djlint.sarif
+  continue-on-error: true
+- uses: github/codeql-action/upload-sarif@v4
+  with:
+    sarif_file: djlint.sarif
+```
+
+L'étape de téléversement nécessite la permission `security-events: write` sur le job ou le workflow.
+
+`--sarif` écrit sur stdout un document SARIF 2.1.0 et rien d'autre, la sortie peut donc être redirigée comme ci-dessus. Chaque règle activée y figure avec un lien vers sa documentation, chaque résultat indique sa ligne et sa colonne, et avec `--check` un fichier qui serait reformaté est signalé sous une règle `formatting`. Azure DevOps, GitLab et la plupart des éditeurs lisent le même format.
+
 ## Pre-Commit
 
 djLint peut être utilisé comme un hook [pre-commit](https://pre-commit.com) en tant que linter et formatter.
@@ -101,7 +115,9 @@ Assurez-vous que djLint est installé dans votre python global, ou sur votre `PA
 
 ## neovim
 
-djLint peut être utilisé comme linter et formateur dans neovim avec le plugin `none-ls`.
+djLint peut être utilisé comme linter et formateur dans neovim.
+
+Avec le plugin `none-ls`.
 
 ::: content
 
@@ -110,16 +126,14 @@ djLint peut être utilisé comme linter et formateur dans neovim avec le plugin 
 - [Formatage](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
   :::
 
-## coc.nvim
+Avec `coc.nvim`.
 
 ::: content
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
   :::
 
-## efm-langserver
-
-djLint peut être utilisé comme formateur dans neovim avec `efm-langserver`.
+Avec `efm-langserver`.
 
 ::: content
 
@@ -159,3 +173,15 @@ require("lspconfig").efm.setup({
 ```
 
 :::
+
+## MegaLinter
+
+djLint est intégré nativement parmi les plus de 100 linters de [MegaLinter](https://megalinter.io).
+
+Pour l'installer, lancez `npx mega-linter-runner --install` et suivez les instructions.
+
+::: content
+
+- [GitHub dépôt](https://github.com/oxsecurity/megalinter)
+- [djlint dans la documentation de MegaLinter](https://megalinter.io/latest/descriptors/html_djlint/)
+  :::

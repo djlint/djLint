@@ -19,6 +19,20 @@ keywords: линтер шаблонов, форматер шаблонов, djLi
 
 `--no-github-output` возвращает обычный консольный вывод, а `--github-output` включает аннотации за пределами Actions.
 
+Аннотации привязаны к одному пул-реквесту. Чтобы хранить находки во вкладке Security репозитория вместе с историей по запускам, запишите их в формате SARIF и загрузите файл:
+
+```yaml
+- run: djlint . --lint --sarif > djlint.sarif
+  continue-on-error: true
+- uses: github/codeql-action/upload-sarif@v4
+  with:
+    sarif_file: djlint.sarif
+```
+
+Для загрузки у задачи или всего workflow должно быть разрешение `security-events: write`.
+
+`--sarif` выводит в stdout документ SARIF 2.1.0 и больше ничего, поэтому вывод можно перенаправить в файл, как выше. В нём перечислены все включённые правила со ссылками на их документацию, у каждой находки указаны строка и столбец, а с `--check` файл, который был бы переформатирован, попадает в отчёт под правилом `formatting`. Тот же формат читают Azure DevOps, GitLab и большинство редакторов.
+
 ## Pre-Commit
 
 djLint можно использовать как [pre-commit](https://pre-commit.com) хук в качестве как линтера, так и форматировщика.
@@ -101,7 +115,9 @@ djLint можно использовать в качестве плагина Su
 
 ## neovim
 
-djLint можно использовать как линтер и форматер в neovim с помощью плагина `none-ls`.
+djLint можно использовать как линтер и форматер в neovim.
+
+С помощью плагина `none-ls`.
 
 ::: content
 
@@ -110,16 +126,14 @@ djLint можно использовать как линтер и формате
 - [Форматирование](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
   :::
 
-## coc.nvim
+С помощью `coc.nvim`.
 
 ::: content
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
   :::
 
-## efm-langserver
-
-djLint можно использовать как форматировщик в neovim с `efm-langserver`.
+С помощью `efm-langserver`.
 
 ::: content
 
@@ -159,3 +173,15 @@ require("lspconfig").efm.setup({
 ```
 
 :::
+
+## MegaLinter
+
+djLint встроен в [MegaLinter](https://megalinter.io) вместе с более чем сотней других линтеров.
+
+Чтобы установить его, запустите `npx mega-linter-runner --install` и следуйте инструкциям.
+
+::: content
+
+- [GitHub репозиторий](https://github.com/oxsecurity/megalinter)
+- [djlint в документации MegaLinter](https://megalinter.io/latest/descriptors/html_djlint/)
+  :::
