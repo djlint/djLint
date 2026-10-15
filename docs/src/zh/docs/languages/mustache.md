@@ -1,7 +1,7 @@
 ---
 title: Mustache 模板检查与格式化
 keywords: mustache, djlint, mustache 模板检查, mustache 模板格式化
-description: djLint是一个 mustache 模板的代码检查与格式化工具！使用预构建的配置文件，充分利用djLint来检查并格式化你的模板。
+description: djLint是一个 mustache 模板的代码检查与格式化工具！使用内置的预设配置（profile），充分利用djLint来检查并格式化你的模板。
 tool: handlebars
 ---
 
