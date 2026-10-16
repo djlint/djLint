@@ -3,7 +3,7 @@
         <div class="columns">
             <div class="column is-one-third">
                 <figure class="image logo">
-                    {% image "./src/static/img/icon.png", "djlint icon", "(min-width:100px) 50vw, 100vw" %}
+                    <picture><source srcset="/static/img/logo-wide-dark.svg" media="(prefers-color-scheme: dark)"><img src="/static/img/logo-wide-light.svg" alt="djLint" width="443" height="168"></picture>
                 </figure>
                 <p class="my-4">
                     {{ "description" | i18n }}
