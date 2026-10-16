@@ -8,16 +8,22 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 ## Installation
 
-djLint est construit avec [Python](https://python.org), il peut être installé depuis [PyPI](https://pypi.org/project/djlint/) en exécutant simplement :
+djLint est construit avec [Python](https://python.org) et publié sur [PyPI](https://pypi.org/project/djlint/). Avec [uv](https://docs.astral.sh/uv/), ajoutez-le à votre projet comme dépendance de développement :
 
 ```bash
-pip install djlint
+uv add --dev djlint
 ```
 
-Ou en tant qu'outil autonome avec [uv](https://docs.astral.sh/uv/):
+Ou installez-le en tant qu'outil autonome :
 
 ```bash
 uv tool install djlint
+```
+
+Ou avec pip :
+
+```bash
+pip install djlint
 ```
 
 Ou avec [pipx](https://pipx.pypa.io/):
@@ -37,6 +43,8 @@ _Ou avec npm - **attention** : le paquet npm n'est qu'une enveloppe, son script 
 ```bash
 npm i djlint
 ```
+
+Pour lancer djLint à chaque commit, voir [pre-commit]({{ "lang_code_url" | i18n }}/docs/integrations/#pre-commit).
 
 ## Utilisation de l'interface CLI
 

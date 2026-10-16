@@ -8,16 +8,22 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 
 ## 安装
 
-djLint 基于 [Python](https://python.org) 开发，可以直接从 [PyPI](https://pypi.org/project/djlint/) 安装：
+djLint 基于 [Python](https://python.org) 开发，发布在 [PyPI](https://pypi.org/project/djlint/) 上。使用 [uv](https://docs.astral.sh/uv/) 将其添加为项目的开发依赖：
 
 ```bash
-pip install djlint
+uv add --dev djlint
 ```
 
-或者使用 [uv](https://docs.astral.sh/uv/) 将其作为独立工具安装：
+或者将其作为独立工具安装：
 
 ```bash
 uv tool install djlint
+```
+
+或者使用 pip 安装：
+
+```bash
+pip install djlint
 ```
 
 或者使用 [pipx](https://pipx.pypa.io/) 安装：
@@ -37,6 +43,8 @@ _或者使用 npm 安装 - **注意**：npm 包只是一个包装器，其安装
 ```bash
 npm i djlint
 ```
+
+如需在每次提交时运行 djLint，请参阅 [pre-commit]({{ "lang_code_url" | i18n }}/docs/integrations/#pre-commit)。
 
 ## 命令行使用方法
 

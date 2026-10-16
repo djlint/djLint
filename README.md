@@ -84,16 +84,22 @@ You can [try it on your own templates in the online playground](https://djlint.c
 
 ## ✨ How?
 
-Grab it from PyPI with `pip`
+Add it to your project as a development dependency with [uv](https://docs.astral.sh/uv/)
 
 ```bash
-pip install djlint
+uv add --dev djlint
 ```
 
-Or as a standalone tool with [uv](https://docs.astral.sh/uv/)
+Or install it as a standalone tool
 
 ```bash
 uv tool install djlint
+```
+
+Or with `pip`
+
+```bash
+pip install djlint
 ```
 
 Or with [pipx](https://pipx.pypa.io/)
@@ -113,6 +119,8 @@ _Or with npm - **warning**: the npm package is only a wrapper, its install scrip
 ```bash
 npm i djlint
 ```
+
+To run djLint on every commit, see [pre-commit](https://djlint.com/docs/integrations/#pre-commit).
 
 Lint your project
 

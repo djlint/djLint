@@ -8,16 +8,22 @@ keywords: линтер шаблонов, форматер шаблонов, djLi
 
 ## Установка
 
-djLint написан на [Python](https://python.org), его можно установить из [PyPI](https://pypi.org/project/djlint/) простым запуском:
+djLint написан на [Python](https://python.org) и опубликован на [PyPI](https://pypi.org/project/djlint/). С помощью [uv](https://docs.astral.sh/uv/) добавьте его в проект как зависимость для разработки:
 
 ```bash
-pip install djlint
+uv add --dev djlint
 ```
 
-Или как отдельный инструмент с помощью [uv](https://docs.astral.sh/uv/):
+Или установите как отдельный инструмент:
 
 ```bash
 uv tool install djlint
+```
+
+Или с помощью pip:
+
+```bash
+pip install djlint
 ```
 
 Или с помощью [pipx](https://pipx.pypa.io/):
@@ -37,6 +43,8 @@ _Или с помощью npm - **внимание**: npm-пакет - это л
 ```bash
 npm i djlint
 ```
+
+Чтобы запускать djLint при каждом коммите, см. [pre-commit]({{ "lang_code_url" | i18n }}/docs/integrations/#pre-commit).
 
 ## Использование CLI
 
