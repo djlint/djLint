@@ -72,7 +72,7 @@ dev = [
   "pytest-xdist==3.8",
   "ruff==0.17.1",
   "types-pyyaml==6.0.12.20260906",
-  "types-regex==2026.9.29.20261005",
+  "types-regex==2026.9.29.20261017",
 ]
 
 [build-system]
