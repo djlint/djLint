@@ -309,6 +309,7 @@ module.exports = function (eleventyConfig) {
       regular: ["envelope", "copy"],
       solid: [
         "check",
+        "xmark",
         "globe",
         "circle-arrow-right",
         "pencil",

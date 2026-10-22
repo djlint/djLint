@@ -140,6 +140,12 @@ module.exports = {
     fr: "Modifier cette page",
     zh: "编辑此页",
   },
+  on_this_page: {
+    "en-US": "On this page",
+    ru: "На этой странице",
+    fr: "Sur cette page",
+    zh: "本页内容",
+  },
   ignoring_code: {
     "en-US": "Ignoring Code",
     ru: "Игнорирование кода",

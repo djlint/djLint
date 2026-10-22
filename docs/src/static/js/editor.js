@@ -163,6 +163,9 @@ if (typeof Worker !== "undefined") {
         basicSetup,
         html(),
         djlintEditorTheme,
+        EditorView.contentAttributes.of({
+          "aria-labelledby": "djlint-input-label",
+        }),
         EditorView.updateListener.of((v) => {
           if (v.docChanged) {
             if (timer) clearTimeout(timer);
@@ -184,6 +187,9 @@ if (typeof Worker !== "undefined") {
         basicSetup,
         html(),
         djlintEditorTheme,
+        EditorView.contentAttributes.of({
+          "aria-labelledby": "djlint-output-label",
+        }),
         EditorState.readOnly.of(true),
       ],
       doc: ``,

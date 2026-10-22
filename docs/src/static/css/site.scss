@@ -435,6 +435,9 @@ body.has-navbar-fixed-top {
   &.is-copied {
     color: hsl(var(--bulma-success-h), var(--bulma-success-s), 45%);
   }
+  &.is-failed {
+    color: hsl(var(--bulma-danger-h), var(--bulma-danger-s), 55%);
+  }
 }
 
 // Bordered panels for the smaller sections at the end of the home page.
