@@ -291,6 +291,14 @@ def test_H018(
     result = runner.invoke(djlint, (tmp_file.name, "--include", "H018"))
     assert "H018" not in result.output
 
+    # --close-void-tags writes the slash, so the formatter's own output is
+    # never rejected
+    write_to_file(tmp_file.name, b"<br />")
+    result = runner.invoke(
+        djlint, (tmp_file.name, "--include", "H018", "--close-void-tags")
+    )
+    assert "H018" not in result.output
+
 
 def test_DJ018(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]

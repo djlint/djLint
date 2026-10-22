@@ -13,6 +13,10 @@
 
 - `H010` reports the names the formatter lowercases, in any mix of case, so `Width="3"` is now reported. A framework binding such as `:itemID` or `@ID` and a longer name such as `data-ID` no longer are, since the formatter leaves their case alone.
 
+### Changed
+
+- `H018` is not reported under `--close-void-tags`, since the formatter then writes the `/>` ending the rule reports. `--ignore-case` already worked this way for `H009` and `H010`.
+
 ### Fix
 
 - `H020` reports an empty pair whose end tag has whitespace before its `>`, such as `<div></div\n>`.
