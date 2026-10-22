@@ -129,32 +129,4 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 
 <div id="no-matches" class="is-hidden mb-5">未找到匹配结果，请尝试其他搜索。</div>
 
-<script>
-document.addEventListener('click', function (e) {
-  if (
-    e.target.closest('.tabs li a') &&
-    e.target.closest('.tabs li a').hasAttribute('tab')
-  ) {
-    var tabLinks = document.querySelectorAll('.tabs li.is-active');
-    for (var l = 0; l < tabLinks.length; l++) {
-      tabLinks[l].classList.remove('is-active');
-    }
-
-    var tabs = document.querySelectorAll('.tab.is-active');
-
-    for (var i = 0; i < tabs.length; i++) {
-      tabs[i].classList.remove('is-active');
-    }
-
-    var activeBox = document.querySelectorAll('.tab#' + e.target.getAttribute('tab'))
-    for(var y= 0; y < activeBox.length; y++){
-      activeBox[y].classList.add('is-active');
-    }
-
-    var activeTab = document.querySelectorAll('a[tab="' + e.target.getAttribute('tab') + '"]')
-    for(var y= 0; y < activeTab.length; y++){
-      activeTab[y].parentElement.classList.add('is-active');
-    }
-  }
-});
-</script>
+{% include 'src/_includes/tabs_script.njk' %}

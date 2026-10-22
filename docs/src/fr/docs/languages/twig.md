@@ -21,12 +21,9 @@ djlint /path/to/templates --profile={{ tool }}
 
 #### Ou, utiliser un fichier de configuration
 
-Configurez djLint dans votre projet `pyproject.toml`.
+Configurez djLint dans le fichier `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` de votre projet.
 
-```toml
-[tool.djlint]
-profile="{{ tool }}"
-```
+{% include 'src/_includes/profile_config.md' %}
 
 <div class="box notification is-info is-light">
     <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
