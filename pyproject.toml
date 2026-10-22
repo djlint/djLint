@@ -84,12 +84,6 @@ build = "cp*"
 build-frontend = "build[uv]"
 environment.HATCH_BUILD_HOOK_ENABLE_MYPYC = "1"
 
-# Docker's seccomp profile on ubuntu-26.04 rejects socket syscalls in 32-bit x86
-# containers, and uv aborts there with "failed to create UnixStream".
-[[tool.cibuildwheel.overrides]]
-select = "*linux_i686"
-container-engine = "docker; create_args: --security-opt seccomp=unconfined"
-
 [tool.hatch.build.targets.sdist]
 include = ["djlint", "mypy.ini"]
 
