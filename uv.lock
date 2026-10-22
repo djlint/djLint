@@ -238,7 +238,7 @@ wheels = [
 
 [[package]]
 name = "djlint"
-version = "1.46.6"
+version = "1.47.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
