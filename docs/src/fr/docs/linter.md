@@ -174,7 +174,7 @@ Lorsqu'un `{% block %}` s'étend sur de nombreuses lignes ou que des blocs sont 
 
 Désactivée par défaut ; à activer avec `--include=T003`. `--name-endblocks` écrit le nom pour vous : un signalement ne demande jamais de travail manuel.
 
-Un nom n'est pas requis lorsque le bloc s'ouvre et se ferme sur la même ligne, par exemple `{% block title %}``{% endblock %}`.
+Un nom n'est pas requis lorsque le bloc s'ouvre et se ferme sur la même ligne, par exemple `{% block title %}``{% endblock %}`. Le formateur place sur leurs propres lignes le contenu d'un bloc qui contient d'autres balises : un bloc écrit sur une ligne peut donc demander un nom une fois formaté, et avec `--name-endblocks` le formateur écrit aussi ce nom.
 
 À éviter :
 
@@ -317,6 +317,8 @@ Des styles de guillemets mélangés rendent les valeurs d'attributs plus diffici
 
 Les analyseurs HTML acceptent les noms de balises en majuscules, mais les sérialisations XHTML et XML sont sensibles à la casse et les rejettent, et une casse mélangée rend la recherche de texte et la relecture des diffs peu fiables (un grep sur `<h1>` manque `<H1>`). Des noms de balises en minuscules gardent les modèles portables et cohérents.
 
+Non signalée avec `--ignore-case`, qui demande au formateur de laisser la casse telle quelle.
+
 À éviter :
 
 ```html
@@ -334,6 +336,8 @@ Les analyseurs HTML acceptent les noms de balises en majuscules, mais les séria
 `Les noms d'attributs doivent être en minuscules.`
 
 Les noms d'attributs en majuscules sont invalides dans les sérialisations XHTML/XML et mettent en échec la recherche de texte dans les modèles (un grep sur src= manque SRC=). Le DOM normalise de toute façon les noms d'attributs HTML en minuscules, donc les orthographes en majuscules ajoutent de l'incohérence sans aucun bénéfice. Seuls les noms que le formateur met en minuscules sont signalés : `class`, `id`, `src`, `width`, `height`, `alt`, `style`, `lang`, `title`, `media` et `srcset`. `--reformat` les corrige pour vous, et une liaison de framework comme `:itemID` ou un nom plus long comme `data-ID` garde sa casse.
+
+Non signalée avec `--ignore-case`, qui demande au formateur de laisser la casse telle quelle.
 
 À éviter :
 
@@ -478,7 +482,7 @@ Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>`
 
 Les modèles qui doivent aussi être analysés comme du XML/XHTML (ou alimenter des outils basés sur XML) rejettent les éléments vides écrits sans barre oblique de fermeture, et mélanger `<br>` et `<br />` à travers une base de code produit des diffs incohérents. Cette règle impose la convention de style XHTML afin que chaque élément vide soit fermé de la même manière.
 
-Désactivée par défaut ; à activer avec `--include=H017`. Mutuellement exclusive avec H018 : n'activez qu'une seule des deux conventions.
+Désactivée par défaut ; à activer avec `--include=H017`. Mutuellement exclusive avec H018 : n'activez qu'une seule des deux conventions. `--close-void-tags` ajoute la barre oblique aux balises vides html pour vous. Un `<path>` svg reste tel quel : fermez-le à la main.
 
 À éviter :
 
@@ -518,7 +522,7 @@ Les URLs internes codées en dur deviennent silencieusement obsolètes lorsque l
 
 Dans le standard vivant HTML, la barre oblique finale d'un élément vide n'a aucune signification (l'analyseur l'ignore), donc écrire `<br />` suggère un comportement d'auto-fermeture à la XML que le HTML n'a pas, et peut inciter les lecteurs à ajouter des barres obliques à des balises non vides, où un / parasite est silencieusement ignoré et masque des bugs de balises non fermées. Cette règle impose des fins simples en > sur les éléments vides.
 
-Désactivée par défaut ; à activer avec `--include=H018`. Mutuellement exclusive avec H017 : n'activez qu'une seule des deux conventions. Le `<path />` SVG est exempté, car SVG est du XML et exige la barre oblique.
+Désactivée par défaut ; à activer avec `--include=H018`. Mutuellement exclusive avec H017 : n'activez qu'une seule des deux conventions. Le `<path />` SVG est exempté, car SVG est du XML et exige la barre oblique. Non signalée avec `--close-void-tags`, puisque le formateur écrit alors la barre oblique que cette règle signale.
 
 À éviter :
 
@@ -631,7 +635,7 @@ Les sous-ressources en simple http:// sur une page servie en HTTPS constituent d
 
 Les documents HTML5 sont en UTF-8, donc le caractère littéral fonctionne partout et c'est ce que les relecteurs lisent réellement ; une faute de frappe dans une référence d'entité (par exemple `&mdsah;`) n'est pas détectée par le navigateur et s'affiche telle quelle comme du texte cassé. djLint autorise les entités qui portent de la syntaxe (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, ainsi que les accolades `&lbrace;` et `&rbrace;` avec `&percnt;`, `&num;` et `&dollar;`, qui écrits en clair formeraient un délimiteur de template) et celles qui nomment un caractère invisible, donc impossible à relire sous forme littérale : les espaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), les liants et marques (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) et `&shy;`, sous forme nommée, décimale ou hexadécimale.
 
-`--reformat` réécrit l'entité en caractère pour vous : un signalement ne demande jamais de travail manuel. Une entité écrite à l'intérieur d'une balise de template fait partie de la balise et non de la page : ni la règle ni le formateur n'y touchent.
+`--reformat` réécrit l'entité en caractère pour vous : un signalement ne demande jamais de travail manuel. Une entité écrite à l'intérieur d'une balise de template fait partie de la balise et non de la page : ni la règle ni le formateur n'y touchent. `--no-entity-formatting` désactive cette réécriture mais pas la règle : une entité reste signalée. Ajoutez `H023` à `ignore` pour garder les entités.
 
 À éviter :
 

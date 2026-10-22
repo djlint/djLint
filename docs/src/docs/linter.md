@@ -174,7 +174,7 @@ When a `{% block %}` spans many lines or blocks are nested, a bare `{% endblock 
 
 Off by default; enable with `--include=T003`. `--name-endblocks` writes the name for you, so a finding is never hand work.
 
-A name is not required when the block opens and closes on the same line, e.g. `{% block title %}``{% endblock %}`.
+A name is not required when the block opens and closes on the same line, e.g. `{% block title %}``{% endblock %}`. The formatter moves the contents of a block holding other tags onto lines of their own, so a block written on one line can need a name once formatted; with `--name-endblocks` the formatter writes that name too.
 
 Don't:
 
@@ -317,6 +317,8 @@ Do:
 
 HTML parsers accept uppercase tag names, but XHTML and XML serializations are case-sensitive and reject them, and mixed casing makes text search and diff review unreliable (grepping for `<h1>` misses `<H1>`). Lowercase tag names keep templates portable and consistent.
 
+Not reported under `--ignore-case`, which tells the formatter to leave the case alone.
+
 Don't:
 
 ```html
@@ -334,6 +336,8 @@ Do:
 `Attribute names should be lowercase.`
 
 Uppercase attribute names are invalid in XHTML/XML serializations and defeat text search across templates (grepping for src= misses SRC=). The DOM normalizes HTML attribute names to lowercase anyway, so uppercase spellings add inconsistency with no benefit. Only the names the formatter lowercases are reported: `class`, `id`, `src`, `width`, `height`, `alt`, `style`, `lang`, `title`, `media` and `srcset`. `--reformat` fixes them for you, and a framework binding such as `:itemID` or a longer name such as `data-ID` keeps its case.
+
+Not reported under `--ignore-case`, which tells the formatter to leave the case alone.
 
 Don't:
 
@@ -478,7 +482,7 @@ Do:
 
 Templates that must also parse as XML/XHTML (or feed XML-based tooling) reject void elements written without a closing slash, and mixing `<br>` with `<br />` across a codebase produces inconsistent diffs. This rule enforces the XHTML-style convention so every void element is closed the same way.
 
-Off by default; enable with `--include=H017`. Mutually exclusive with H018; enable only one of the two conventions.
+Off by default; enable with `--include=H017`. Mutually exclusive with H018; enable only one of the two conventions. `--close-void-tags` adds the slash to html void tags for you. An svg `<path>` is left as written, so close it by hand.
 
 Don't:
 
@@ -518,7 +522,7 @@ Do:
 
 In the HTML living standard the trailing slash on a void element has no meaning (the parser ignores it), so writing `<br />` implies XML-style self-closing behavior HTML does not have and can mislead readers into adding slashes to non-void tags, where a stray / is silently dropped and masks unclosed-tag bugs. This rule enforces plain > endings on void elements.
 
-Off by default; enable with `--include=H018`. Mutually exclusive with H017; enable only one of the two conventions. SVG `<path />` is exempt, since SVG is XML and requires the slash.
+Off by default; enable with `--include=H018`. Mutually exclusive with H017; enable only one of the two conventions. SVG `<path />` is exempt, since SVG is XML and requires the slash. Not reported under `--close-void-tags`, since the formatter then writes the slash this rule reports.
 
 Don't:
 
@@ -631,7 +635,7 @@ Do:
 
 HTML5 documents are UTF-8, so the literal character works everywhere and is what reviewers actually read; a typo in an entity reference (e.g. `&mdsah;`) is not caught by the browser and renders verbatim as broken text. djLint allows the entities that carry syntax (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, and the braces `&lbrace;` and `&rbrace;` together with `&percnt;`, `&num;` and `&dollar;`, which written out would complete a template delimiter) and those naming a character that is invisible, and so cannot be reviewed as a literal: the spaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), the joiners and marks (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) and `&shy;`, in named, decimal and hex form alike.
 
-`--reformat` rewrites the entity as the character for you, so a finding is never hand work. An entity written inside a template tag is part of the tag rather than of the page, so neither the rule nor the formatter touches it.
+`--reformat` rewrites the entity as the character for you, so a finding is never hand work. An entity written inside a template tag is part of the tag rather than of the page, so neither the rule nor the formatter touches it. `--no-entity-formatting` turns the rewrite off but leaves the rule on, so an entity is still reported. Add `H023` to `ignore` to keep entities.
 
 Don't:
 

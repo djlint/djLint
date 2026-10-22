@@ -34,7 +34,7 @@
       "$ref": "#/definitions/comma-separated-list"
     },
     "close_void_tags": {
-      "description": "Add a closing mark to known void tags, so that `<img>` becomes `<img />`.",
+      "description": "Add a closing mark to known void tags, so that `<img>` becomes `<img />`. `H018`, which asks for the opposite, is not reported under it.",
       "type": "boolean"
     },
     "css": {
@@ -100,7 +100,7 @@
       "$ref": "#/definitions/comma-separated-list"
     },
     "ignore_case": {
-      "description": "Do not attempt to fix the case of known html tags.",
+      "description": "Do not attempt to fix the case of known html tags. `H009` and `H010` are not reported under it.",
       "type": "boolean"
     },
     "include": {
@@ -149,7 +149,7 @@
       "type": "boolean"
     },
     "no_entity_formatting": {
-      "description": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `\u00a9`. The entities that carry syntax, and the invisible ones, are never rewritten either way.",
+      "description": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `\u00a9`. The entities that carry syntax, and the invisible ones, are never rewritten either way. `H023` still reports an entity under it; add `H023` to `ignore` to keep entities.",
       "type": "boolean"
     },
     "no_function_formatting": {

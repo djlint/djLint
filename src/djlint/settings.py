@@ -1576,6 +1576,9 @@ class Config:
         included_codes = set(split_option_list(self.include))
         if self.ignore_case:
             ignored_codes.update(("H009", "H010"))
+        # the formatter writes `<img />` under it, which H018 rejects
+        if self.close_void_tags:
+            ignored_codes.add("H018")
 
         def rule_applies(rule: Mapping[str, Any]) -> bool:
             """Whether the rule runs under the profile in force.

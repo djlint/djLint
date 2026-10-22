@@ -123,10 +123,10 @@
     "name": "no_entity_formatting",
     "since": "1.45.0",
     "description": {
-      "en": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `©`. The entities that carry syntax, and the invisible ones, are never rewritten either way.",
-      "ru": "Не переписывать ссылку на сущность в именуемый ею символ: `&copy;` останется как есть, а не станет `©`. Сущности, несущие синтаксис, и невидимые не переписываются в любом случае.",
-      "fr": "Ne pas réécrire une référence d'entité en le caractère qu'elle nomme : `&copy;` reste tel quel au lieu de devenir `©`. Les entités qui portent de la syntaxe et les invisibles ne sont de toute façon jamais réécrites.",
-      "zh": "不把实体引用改写成它所指代的字符，`&copy;` 保持原样而不会变成 `©`。承载语法的实体和不可见实体在任何情况下都不会被改写。"
+      "en": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `©`. The entities that carry syntax, and the invisible ones, are never rewritten either way. `H023` still reports an entity under it; add `H023` to `ignore` to keep entities.",
+      "ru": "Не переписывать ссылку на сущность в именуемый ею символ: `&copy;` останется как есть, а не станет `©`. Сущности, несущие синтаксис, и невидимые не переписываются в любом случае. `H023` при этом по-прежнему сообщает о сущности; чтобы оставить сущности, добавьте `H023` в `ignore`.",
+      "fr": "Ne pas réécrire une référence d'entité en le caractère qu'elle nomme : `&copy;` reste tel quel au lieu de devenir `©`. Les entités qui portent de la syntaxe et les invisibles ne sont de toute façon jamais réécrites. `H023` signale toujours l'entité ; ajoutez `H023` à `ignore` pour garder les entités.",
+      "zh": "不把实体引用改写成它所指代的字符，`&copy;` 保持原样而不会变成 `©`。承载语法的实体和不可见实体在任何情况下都不会被改写。`H023` 仍会报告实体；若要保留实体，请把 `H023` 加入 `ignore`。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_entity_formatting=true" },
@@ -155,17 +155,17 @@
     "name": "close_void_tags",
     "since": "1.26.0",
     "description": {
-      "en": "Add a closing mark to known void tags, so that `<img>` becomes `<img />`.",
-      "ru": "Добавлять закрывающую косую черту к известным пустым тегам: `<img>` становится `<img />`.",
-      "fr": "Ajoute une marque de fermeture aux balises vides connues : `<img>` devient `<img />`.",
-      "zh": "为已知的空元素标签添加自闭合标记，即 `<img>` 变为 `<img />`。"
+      "en": "Add a closing mark to known void tags, so that `<img>` becomes `<img />`. `H018`, which asks for the opposite, is not reported under it.",
+      "ru": "Добавлять закрывающую косую черту к известным пустым тегам: `<img>` становится `<img />`. `H018`, который требует обратного, при этом не сообщается.",
+      "fr": "Ajoute une marque de fermeture aux balises vides connues : `<img>` devient `<img />`. `H018`, qui demande l'inverse, n'est alors pas signalée.",
+      "zh": "为已知的空元素标签添加自闭合标记，即 `<img>` 变为 `<img />`。启用后不报告要求相反写法的 `H018`。"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "close_void_tags=true" },
       { "name": ".djlintrc", "value": "\"close_void_tags\": true" },
       { "name": "cli", "value": "--close-void-tags" }
     ],
-    "tags": ["formatter"]
+    "tags": ["formatter", "linter"]
   },
   {
     "name": "ignore",
@@ -683,12 +683,12 @@
   {
     "name": "ignore_case",
     "since": "1.23.0",
-    "tags": ["formatter"],
+    "tags": ["formatter", "linter"],
     "description": {
-      "en": "Do not attempt to fix the case of known html tags.",
-      "ru": "Не пытайтесь исправить регистр известных html-тегов.",
-      "fr": "N'essayez pas de corriger la casse des balises html connues.",
-      "zh": "不修正已知 HTML 标签的大小写。"
+      "en": "Do not attempt to fix the case of known html tags. `H009` and `H010` are not reported under it.",
+      "ru": "Не пытайтесь исправить регистр известных html-тегов. `H009` и `H010` при этом не сообщаются.",
+      "fr": "N'essayez pas de corriger la casse des balises html connues. `H009` et `H010` ne sont alors pas signalées.",
+      "zh": "不修正已知 HTML 标签的大小写。启用后不报告 `H009` 和 `H010`。"
     },
     "usage": [
       {
