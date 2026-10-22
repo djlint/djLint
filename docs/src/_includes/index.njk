@@ -4,23 +4,29 @@ date: Last Modified
 
 ---
 {% block body %}
-<div class="section">
-     <div class="container has-text-centered">
-                 <h1 class="hero-logo mt-5 mb-6"><picture><source srcset="/static/img/logo-wide-dark.svg" media="(prefers-color-scheme: dark)"><img src="/static/img/logo-wide-light.svg" alt="djLint" width="443" height="168"></picture></h1>
+<section class="home-hero">
+  <div class="container">
+    <h1 class="hero-mark">{% include "src/_includes/hero-logo.svg" %}</h1>
+    <p class="hero-title">{{ "index_title" | i18n }}</p>
+    <p class="story">{{ "index_description" | i18n | safe }}</p>
+    <div class="install">
+      {% for cmd in ["uv tool install djlint", "pip install djlint"] %}
+      <div class="install-cmd">
+        <code><span class="install-prompt" aria-hidden="true">$</span>{{ cmd }}</code>
+        <button class="copy-button" type="button" data-copy="{{ cmd }}" aria-label="Copy “{{ cmd }}”"><i class="fa-regular fa-copy"></i></button>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="buttons is-centered">
+      <a class="button is-brand is-medium" href="{{ "lang_code_url" | i18n }}/docs/getting-started/">{{ "getting_started" | i18n }}</a>
+      <a class="button is-medium" href="{{ "lang_code_url" | i18n }}/demo/">{{ "try_online" | i18n }}</a>
+    </div>
+  </div>
+</section>
 
-                 <h2 class="title is-2">
-                     {{ "index_title" |i18n }}</h2>
-
-<p class="story my-5 has-text-left">{{ "index_description" | i18n | safe }}</p>
-
-<div class="mb-4"><code class="install-chip">uv tool install djlint</code> <code class="install-chip">pip install djlint</code></div>
-
-<div class="buttons is-centered mb-6">
-   <a class="button is-info is-medium" href="{{ "lang_code_url" | i18n }}/docs/getting-started/">{{ "getting_started" | i18n }}</a>
-   <a class="button is-medium" href="{{ "lang_code_url" | i18n }}/demo/">{{ "try_online" | i18n }}</a>
-</div>
-
-<h2 class="title is-2 has-text-centered mb-5">{{ "index_fav_lang" | i18n }}</h2>
+<section class="home-section">
+  <div class="container">
+<h2 class="title is-2 home-heading">{{ "index_fav_lang" | i18n }}</h2>
 <ul class="lang-grid">
 {% for lang in templateLanguages %}
    <li>
@@ -41,18 +47,15 @@ document.querySelector('.lang-grid').addEventListener('pointermove', function (e
   tile.style.setProperty('--y', e.clientY - box.top + 'px');
 });
 </script>
+  </div>
+</section>
 
-                  </div>
- </div>
-
-<div class="container has-text-centered">
-<h2 class="title is-2">{{ "index_before_after" | i18n }}</h2>
-</div>
-
-<div class="container">
-   <div class="columns">
-      <div class="column is-half">
-         <h3 class="title is-5"><code>messy.html</code></h3>
+<section class="home-section">
+  <div class="container">
+<h2 class="title is-2 home-heading">{{ "index_before_after" | i18n }}</h2>
+   <div class="compare">
+      <div class="compare-pane">
+         <div class="compare-head">messy.html</div>
 
 {% highlight "html" %}{% raw %}
 {% block content %}
@@ -76,8 +79,8 @@ document.querySelector('.lang-grid').addEventListener('pointermove', function (e
 {% endraw %}{% endhighlight %}
 
       </div>
-      <div class="column is-half">
-         <h3 class="title is-5"><code>djlint messy.html --reformat --single-attribute-per-line</code></h3>
+      <div class="compare-pane">
+         <div class="compare-head"><span class="compare-prompt">$</span> djlint messy.html --reformat --single-attribute-per-line</div>
 
 {% highlight "html" %}{% raw %}
 {% block content %}
@@ -105,47 +108,57 @@ document.querySelector('.lang-grid').addEventListener('pointermove', function (e
 
       </div>
    </div>
-   <div class="has-text-centered mt-4">
-      <a class="button is-info is-medium" href="{{ "lang_code_url" | i18n }}/demo/">{{ "try_online" | i18n }}</a>
-   </div>
-</div>
+    <div class="has-text-centered mt-5">
+      <a class="button is-brand is-medium" href="{{ "lang_code_url" | i18n }}/demo/">{{ "try_online" | i18n }}</a>
+    </div>
+  </div>
+</section>
 
-<div class="container has-text-centered">
-<h2 class="title is-2 mt-5">{{ "index_show_format" | i18n }}</h2>
-</div>
-<div class="container">
-
-
-{{ "index_add_badge" | i18n }} <code>readme.md</code>:
-
+<section class="home-section">
+  <div class="container">
+    <div class="home-card badge-card">
+      <div>
+        <h2 class="title is-3">{{ "index_show_format" | i18n }}</h2>
+        <p class="mb-3">{{ "index_looks_like" | i18n }}</p>
+        <img class="badge-preview" width="120" height="20" src="https://img.shields.io/badge/html%20style-djLint-blue.svg" alt="html style: djLint" />
+      </div>
+      <div class="badge-code">
+        <p class="mb-2">{{ "index_add_badge" | i18n }}:</p>
+        <div class="tabs is-small mb-0">
+          <ul>
+            <li class="is-active"><a tab="badge-md-tab">readme.md</a></li>
+            <li><a tab="badge-rst-tab">readme.rst</a></li>
+          </ul>
+        </div>
+        <div class="tab-container mb-0">
+          <div class="tab is-active" id="badge-md-tab">
 {% highlight "md" %}
 [![Code style: djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://github.com/djlint/djlint)
 {% endhighlight %}
-
-{{ "index_add_badge" | i18n }} <code>readme.rst</code>:
-
+          </div>
+          <div class="tab" id="badge-rst-tab">
 {% highlight "md" %}
-
-   .. image:: https://img.shields.io/badge/html%20style-djLint-blue.svg
-      :target: https://github.com/djlint/djlint
+.. image:: https://img.shields.io/badge/html%20style-djLint-blue.svg
+   :target: https://github.com/djlint/djlint
 {% endhighlight %}
-
-<p>{{ "index_looks_like" | i18n }}</p>
-
-<figure class="image badge"><img width="120" height="22.64" src="https://img.shields.io/badge/html%20style-djLint-blue.svg" alt="https://github.com/djlint/djlint" /></figure>
-
-</div>
-<div class="container has-text-centered mb-5">
-<h2 class="title is-2 mt-5">{{ "contributing" | i18n }}</h2>
-<p class="has-text-left">
-{{ "contributing_message" | i18n | safe }}</p>
-</div>
-
-<div class="container">
-  <div class="is-flex is-justify-content-space-between mb-3">
-    <span>{% gh_edit page %}</span>
-    <em><small>{{ "updated" | i18n }} <strong>{{ page.date | niceDate }}</strong></small></em>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+</section>
+
+<section class="home-section">
+  <div class="container">
+    <div class="home-card contribute-card">
+      <div>
+        <h2 class="title is-3">{{ "contributing" | i18n }}</h2>
+        <p>{{ "contributing_message" | i18n | safe }}</p>
+      </div>
+      <a class="button is-medium" href="https://github.com/djlint/djlint" target="_blank" rel="noopener"><span class="icon"><i class="fab fa-github"></i></span><span>GitHub</span></a>
+    </div>
+  </div>
+</section>
+{% include 'src/_includes/tabs_script.njk' %}
 
 {% endblock body %}

@@ -1,6 +1,7 @@
 import { html } from "@codemirror/lang-html";
 import { Compartment, EditorState } from "@codemirror/state";
 import { basicSetup, EditorView } from "codemirror";
+import { djlintEditorTheme } from "./editor-theme.js";
 
 let session_id = 0;
 if (typeof Worker !== "undefined") {
@@ -139,10 +140,7 @@ if (typeof Worker !== "undefined") {
 
       if (message === "ready") {
         document.getElementById("djlint-status").classList.add("is-hidden");
-        document
-          .getElementById("djlint-settings")
-          .closest(".columns.is-hidden")
-          .classList.remove("is-hidden");
+        document.querySelector(".demo-workspace").classList.remove("is-hidden");
         runPython(editor.state.doc.toString());
       }
     }
@@ -164,6 +162,7 @@ if (typeof Worker !== "undefined") {
       extensions: [
         basicSetup,
         html(),
+        djlintEditorTheme,
         EditorView.updateListener.of((v) => {
           if (v.docChanged) {
             if (timer) clearTimeout(timer);
@@ -181,9 +180,13 @@ if (typeof Worker !== "undefined") {
 
   let output = new EditorView({
     state: EditorState.create({
-      extensions: [basicSetup, html()],
+      extensions: [
+        basicSetup,
+        html(),
+        djlintEditorTheme,
+        EditorState.readOnly.of(true),
+      ],
       doc: ``,
-      readonly: true,
     }),
     parent: document.getElementById("djlint-output"),
   });
