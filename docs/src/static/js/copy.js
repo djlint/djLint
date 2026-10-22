@@ -13,6 +13,18 @@ if (document.body) mountStatus();
 else document.addEventListener("DOMContentLoaded", mountStatus);
 
 var statusTimer;
+var announceTimer;
+
+// Empty the region, then write the message a moment later, so a repeat of
+// the same message is still announced.
+function announce(message) {
+  clearTimeout(announceTimer);
+  status.textContent = "";
+  if (!message) return;
+  announceTimer = setTimeout(function () {
+    status.textContent = message;
+  }, 50);
+}
 
 function flash(button, state, iconClass, message) {
   var icon = button.querySelector("i");
@@ -23,13 +35,13 @@ function flash(button, state, iconClass, message) {
   button.classList.remove("is-copied", "is-failed");
   button.classList.add(state);
   icon.className = iconClass;
-  status.textContent = message || "";
+  announce(message);
   button.copyTimer = setTimeout(function () {
     button.classList.remove(state);
     icon.className = "fa-regular fa-copy";
   }, 1500);
   statusTimer = setTimeout(function () {
-    status.textContent = "";
+    announce("");
   }, 1500);
 }
 
