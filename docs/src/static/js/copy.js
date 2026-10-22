@@ -45,26 +45,24 @@ function flash(button, state, iconClass, message) {
   }, 1500);
 }
 
+// Clipboard writes can settle out of order; only the latest click's result
+// is shown.
+var latestCopy = 0;
+
 document.addEventListener("click", function (e) {
   var button = e.target.closest("[data-copy]");
   if (!button) return;
+  var copy = ++latestCopy;
+  var show = function (state, iconClass, message) {
+    if (copy === latestCopy) flash(button, state, iconClass, message);
+  };
   var failed = function () {
-    flash(
-      button,
-      "is-failed",
-      "fas fa-xmark",
-      button.getAttribute("data-copy-failed"),
-    );
+    show("is-failed", "fas fa-xmark", button.getAttribute("data-copy-failed"));
   };
   if (!navigator.clipboard) return failed();
   navigator.clipboard
     .writeText(button.getAttribute("data-copy"))
     .then(function () {
-      flash(
-        button,
-        "is-copied",
-        "fas fa-check",
-        button.getAttribute("data-copied"),
-      );
+      show("is-copied", "fas fa-check", button.getAttribute("data-copied"));
     }, failed);
 });
