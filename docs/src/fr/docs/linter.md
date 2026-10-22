@@ -482,7 +482,7 @@ Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>`
 
 Les modèles qui doivent aussi être analysés comme du XML/XHTML (ou alimenter des outils basés sur XML) rejettent les éléments vides écrits sans barre oblique de fermeture, et mélanger `<br>` et `<br />` à travers une base de code produit des diffs incohérents. Cette règle impose la convention de style XHTML afin que chaque élément vide soit fermé de la même manière.
 
-Désactivée par défaut ; à activer avec `--include=H017`. Mutuellement exclusive avec H018 : n'activez qu'une seule des deux conventions. `--close-void-tags` ajoute la barre oblique pour vous.
+Désactivée par défaut ; à activer avec `--include=H017`. Mutuellement exclusive avec H018 : n'activez qu'une seule des deux conventions. `--close-void-tags` ajoute la barre oblique aux balises vides html pour vous. Un `<path>` svg reste tel quel : fermez-le à la main.
 
 À éviter :
 

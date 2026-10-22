@@ -482,7 +482,7 @@ Do:
 
 Templates that must also parse as XML/XHTML (or feed XML-based tooling) reject void elements written without a closing slash, and mixing `<br>` with `<br />` across a codebase produces inconsistent diffs. This rule enforces the XHTML-style convention so every void element is closed the same way.
 
-Off by default; enable with `--include=H017`. Mutually exclusive with H018; enable only one of the two conventions. `--close-void-tags` adds the slash for you.
+Off by default; enable with `--include=H017`. Mutually exclusive with H018; enable only one of the two conventions. `--close-void-tags` adds the slash to html void tags for you. An svg `<path>` is left as written, so close it by hand.
 
 Don't:
 
