@@ -140,6 +140,14 @@ module.exports = {
     fr: "Modifier cette page",
     zh: "编辑此页",
   },
+  copy: { "en-US": "Copy", ru: "Копировать", fr: "Copier", zh: "复制" },
+  copied: { "en-US": "Copied", ru: "Скопировано", fr: "Copié", zh: "已复制" },
+  copy_failed: {
+    "en-US": "Could not copy. Select the text and copy it instead.",
+    ru: "Не удалось скопировать. Выделите текст и скопируйте его вручную.",
+    fr: "Copie impossible. Sélectionnez le texte et copiez-le.",
+    zh: "无法复制。请选中文字后手动复制。",
+  },
   on_this_page: {
     "en-US": "On this page",
     ru: "На этой странице",

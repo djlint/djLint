@@ -788,11 +788,20 @@ pre .number {
   }
 }
 
+// An option's name and its tags share a row and wrap when it is too narrow.
+.option > .is-flex {
+  flex-wrap: wrap-reverse;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+
+  .title {
+    margin: 0 !important;
+  }
+}
 .option-tags {
-  flex-shrink: 0;
-  flex-wrap: nowrap;
   gap: 0.375rem;
-  align-self: flex-start;
+  margin: 0 !important;
 
   .tag {
     margin: 0 !important;
@@ -1066,8 +1075,7 @@ pre .number {
     display: none;
   }
 }
-.title:hover > a.link,
-.title > a.link:focus-visible {
+.title:hover > a.link {
   opacity: 1;
 }
 

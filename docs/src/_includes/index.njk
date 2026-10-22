@@ -13,7 +13,7 @@ date: Last Modified
       {% for cmd in ["uv tool install djlint", "pip install djlint"] %}
       <div class="install-cmd">
         <code><span class="install-prompt" aria-hidden="true">$</span>{{ cmd }}</code>
-        <button class="copy-button" type="button" data-copy="{{ cmd }}" aria-label="Copy “{{ cmd }}”"><i class="fa-regular fa-copy"></i></button>
+        <button class="copy-button" type="button" data-copy="{{ cmd }}" data-copied="{{ "copied" | i18n }}" data-copy-failed="{{ "copy_failed" | i18n }}" aria-label="{{ "copy" | i18n }}: {{ cmd }}"><i class="fa-regular fa-copy"></i></button>
       </div>
       {% endfor %}
     </div>

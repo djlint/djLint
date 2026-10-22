@@ -164,7 +164,10 @@ module.exports = function (eleventyConfig) {
       class: "link bn",
       symbol: "#",
       placement: "before",
+      // A mouse shortcut only: hidden from screen readers and skipped by Tab,
+      // since the heading itself is already the link target.
       ariaHidden: true,
+      renderAttrs: () => ({ tabindex: "-1" }),
     }),
     slugify: slugifyCustom,
   };
