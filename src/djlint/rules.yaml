@@ -261,9 +261,10 @@
     patterns:
       # a string is stepped over whole, escaped quotes and all, so a run of
       # spaces inside one is content rather than padding. A second opener
-      # means the first never closed, so a run of unclosed ones is read once.
-      - '{%(?:"(?:\\.|[^"\\])*"|''(?:\\.|[^''\\])*''|(?!%}|{%)[^''"\n])*?[ \t]{2,}'
-      - '{{(?:"(?:\\.|[^"\\])*"|''(?:\\.|[^''\\])*''|(?!}}|{{)[^''"\n])*?[ \t]{2,}'
+      # means the first never closed, so a run of unclosed ones is read once,
+      # and a string is read no further than the line or the next opener.
+      - '{%(?:"(?:\\.|(?!{%)[^"\\\n])*"|''(?:\\.|(?!{%)[^''\\\n])*''|(?!%}|{%)[^''"\n])*?[ \t]{2,}'
+      - '{{(?:"(?:\\.|(?!{{)[^"\\\n])*"|''(?:\\.|(?!{{)[^''\\\n])*''|(?!}}|{{)[^''"\n])*?[ \t]{2,}'
 - rule:
     name: H033
     skip_in_attributes: true
