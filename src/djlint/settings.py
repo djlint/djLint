@@ -1256,6 +1256,7 @@ class Config:
         "single_attribute_per_line",
         "single_line_template_tags",
         "sort_attributes",
+        "sort_load_tags",
         "start_template_tags",
         "statistics",
         "stdin",
@@ -1330,6 +1331,7 @@ class Config:
         no_line_after_yaml: bool = False,
         no_indent_inner_html: bool = False,
         sort_attributes: bool = False,
+        sort_load_tags: bool = False,
         name_endblocks: bool = False,
         keep_br_inline: bool = False,
         no_entity_formatting: bool = False,
@@ -1411,6 +1413,9 @@ class Config:
         )
         self.sort_attributes = sort_attributes or djlint_settings.get(
             "sort_attributes", False
+        )
+        self.sort_load_tags = sort_load_tags or djlint_settings.get(
+            "sort_load_tags", False
         )
         self.name_endblocks = name_endblocks or djlint_settings.get(
             "name_endblocks", False

@@ -19,6 +19,7 @@ from djlint.formatter.endblocks import name_endblocks
 from djlint.formatter.entities import format_entities
 from djlint.formatter.expand import expand_html
 from djlint.formatter.indent import indent_html
+from djlint.formatter.load_tags import sort_load_tags
 from djlint.helpers import (
     compile_pattern,
     mask_unformatted_blocks,
@@ -54,6 +55,7 @@ def formatter(config: Config, rawcode: str) -> str:
     )
 
     normalized_code = format_entities(normalized_code, config)
+    normalized_code = sort_load_tags(normalized_code, config)
     normalized_code = format_attribute_values(normalized_code, config)
 
     compressed = compress_html(normalized_code, config)

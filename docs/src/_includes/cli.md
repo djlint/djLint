@@ -82,6 +82,7 @@ Options:
                                   lines.
   --sort-attributes               Sort attributes by name, with id first and
                                   class second.
+  --sort-load-tags                Sort the libraries in {% load %} tags.
   --no-indent-inner-html          Do not indent <head> and <body> below <html>.
   --no-function-formatting        Do not attempt to format function contents.
   --no-set-formatting             Do not attempt to format set contents.

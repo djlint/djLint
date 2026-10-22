@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Feature
+
+- New option `--sort-load-tags` / `sort_load_tags` sorts the libraries in a `{% load %}` tag and drops the ones written twice, so `{% load static i18n %}` becomes `{% load i18n static %}`. In `{% load a b from library %}` the names before `from` are sorted. It is off by default: where two libraries define a tag or filter of the same name, the one loaded last wins, so sorting can change which one a template uses.
+
 ## [1.46.6] - 2026-10-15
 
 ### Packaging

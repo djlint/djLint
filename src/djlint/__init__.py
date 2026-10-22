@@ -412,6 +412,11 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     help="Sort attributes by name, with id first and class second.",
 )
 @click.option(
+    "--sort-load-tags",
+    is_flag=True,
+    help="Sort the libraries in {% load %} tags.",
+)
+@click.option(
     "--no-indent-inner-html",
     is_flag=True,
     help="Do not indent <head> and <body> below <html>.",
@@ -511,6 +516,7 @@ def main(
     no_line_after_yaml: bool,
     no_indent_inner_html: bool,
     sort_attributes: bool,
+    sort_load_tags: bool,
     name_endblocks: bool,
     no_function_formatting: bool,
     no_set_formatting: bool,
@@ -583,6 +589,7 @@ def main(
         no_line_after_yaml=no_line_after_yaml,
         no_indent_inner_html=no_indent_inner_html,
         sort_attributes=sort_attributes,
+        sort_load_tags=sort_load_tags,
         name_endblocks=name_endblocks,
         no_function_formatting=no_function_formatting,
         no_set_formatting=no_set_formatting,

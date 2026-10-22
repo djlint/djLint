@@ -825,6 +825,22 @@
     "tags": ["formatter"]
   },
   {
+    "name": "sort_load_tags",
+    "since": "1.47.0",
+    "description": {
+      "en": "Sort the libraries in a django `{% load %}` tag and drop the ones written twice, so `{% load static i18n %}` becomes `{% load i18n static %}`. In `{% load a b from library %}` the names before `from` are sorted. Where two libraries define a tag or filter of the same name, the one loaded last wins, so sorting can change which one the template uses.",
+      "ru": "Сортировать библиотеки в теге django `{% load %}` и убирать повторы, так что `{% load static i18n %}` становится `{% load i18n static %}`. В `{% load a b from library %}` сортируются имена перед `from`. Если две библиотеки определяют тег или фильтр с одним именем, побеждает загруженная последней, поэтому сортировка может изменить, какой из них использует шаблон.",
+      "fr": "Trie les bibliothèques d'une balise django `{% load %}` et retire celles écrites deux fois : `{% load static i18n %}` devient `{% load i18n static %}`. Dans `{% load a b from library %}`, ce sont les noms avant `from` qui sont triés. Quand deux bibliothèques définissent une balise ou un filtre du même nom, la dernière chargée l'emporte : le tri peut donc changer celle qu'utilise le template.",
+      "zh": "对 django `{% load %}` 标签中的库排序并去掉重复项，例如 `{% load static i18n %}` 变为 `{% load i18n static %}`。在 `{% load a b from library %}` 中排序的是 `from` 之前的名称。若两个库定义了同名的标签或过滤器，最后加载的生效，因此排序可能改变模板使用的是哪一个。"
+    },
+    "usage": [
+      { "name": "pyproject.toml", "value": "sort_load_tags=true" },
+      { "name": ".djlintrc", "value": "\"sort_load_tags\": true" },
+      { "name": "cli", "value": "--sort-load-tags" }
+    ],
+    "tags": ["formatter"]
+  },
+  {
     "name": "name_endblocks",
     "since": "1.45.0",
     "description": {

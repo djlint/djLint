@@ -221,6 +221,10 @@
       "description": "Sort attributes by name, with `id` first and `class` second. A tag whose attributes are guarded by a template tag keeps the order it was written in, since moving one out of its branch would change the page.",
       "type": "boolean"
     },
+    "sort_load_tags": {
+      "description": "Sort the libraries in a django `{% load %}` tag and drop the ones written twice, so `{% load static i18n %}` becomes `{% load i18n static %}`. In `{% load a b from library %}` the names before `from` are sorted. Where two libraries define a tag or filter of the same name, the one loaded last wins, so sorting can change which one the template uses.",
+      "type": "boolean"
+    },
     "use_gitignore": {
       "description": "Add .gitignore excludes to the default exclude. Disabled by default.",
       "type": "boolean"
