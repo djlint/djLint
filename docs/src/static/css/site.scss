@@ -788,6 +788,16 @@ pre .number {
   }
 }
 
+.option-tags {
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  gap: 0.375rem;
+  align-self: flex-start;
+
+  .tag {
+    margin: 0 !important;
+  }
+}
 .option {
   background-color: var(--bulma-scheme-main-ter);
 }
@@ -816,8 +826,11 @@ pre .number {
   }
 }
 .demo-status {
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   min-height: var(--demo-h);
   border: 1px dashed var(--bulma-border-weak);
   border-radius: 12px;

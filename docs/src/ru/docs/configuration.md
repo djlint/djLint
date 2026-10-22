@@ -83,8 +83,8 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 <div class="option p-3 my-3 is-rounded" data-name="{{option.name}}">
 <div class="is-flex is-justify-content-space-between">
     <h3 class="title is-3" id="{{ option.name | slugify }}">
-        <a class="link bn" href="#{{ option.name | slugify }}">∞</a> {{ option.name }}</h3>
-    <div class="tags is-inline-block"><span class="tag is-family-sans-serif has-text-weight-medium">{{ "since" | i18n }} {{ option.since }}</span>{% for tag in option.tags %}<span class="tag is-family-sans-serif is-link has-text-weight-medium">{{ tag }}</span>{% endfor %}</div></div>
+        <a class="link bn" href="#{{ option.name | slugify }}" aria-hidden="true">#</a> {{ option.name }}</h3>
+    <div class="tags option-tags"><span class="tag is-family-sans-serif has-text-weight-medium">{{ "since" | i18n }} {{ option.since }}</span>{% for tag in option.tags %}<span class="tag is-family-sans-serif is-link has-text-weight-medium">{{ tag }}</span>{% endfor %}</div></div>
 
 {{ option.description[locale or "en"] | markdown | safe }}
 
