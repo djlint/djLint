@@ -297,6 +297,7 @@ def test_H018(
     result = runner.invoke(
         djlint, (tmp_file.name, "--include", "H018", "--close-void-tags")
     )
+    assert result.exit_code == 0
     assert "H018" not in result.output
 
 
