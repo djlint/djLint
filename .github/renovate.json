@@ -1,6 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "configMigration": true,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The mypyc build hook's pins, which pep621 does not read. An update shares its branch with the pep621 one of the same package, so a pin moves with its uv.lock entry.",
+      "managerFilePatterns": ["/^pyproject\\.toml$/"],
+      "matchStrings": [
+        "\\[tool\\.hatch\\.build\\.targets\\.wheel\\.hooks\\.mypyc\\]\\ndependencies = \\[[^\\]]*\\]",
+        "\"(?<depName>[^\"=]+)==(?<currentValue>[^\"]+)\""
+      ],
+      "matchStringsStrategy": "recursive",
+      "datasourceTemplate": "pypi"
+    }
+  ],
   "dependencyDashboard": false,
   "docker-compose": { "enabled": true },
   "extends": [
@@ -25,6 +38,12 @@
       "matchDepTypes": ["dependency-groups"],
       "matchManagers": ["pep621"],
       "automerge": true
+    },
+    {
+      "description": "Update a locked dependency in its own branch, which the mypyc build hook's pin of it joins, rather than only in lock file maintenance",
+      "matchDepTypes": ["project.dependencies"],
+      "matchManagers": ["pep621"],
+      "rangeStrategy": "update-lockfile"
     },
     {
       "matchDepTypes": ["devDependencies"],

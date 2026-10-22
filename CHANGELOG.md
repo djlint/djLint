@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Packaging
+
+- The binary wheels are compiled against the dependency versions djLint is tested with, including the mypy whose license `LICENSE-THIRD-PARTY` carries. They used to take the latest ones.
+
 ## [1.47.0] - 2026-10-22
 
 ### Feature

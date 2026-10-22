@@ -93,15 +93,20 @@ container-engine = "docker; create_args: --security-opt seccomp=unconfined"
 [tool.hatch.build.targets.sdist]
 include = ["djlint", "mypy.ini"]
 
+# The wheels are compiled against the versions in uv.lock, which the tests run
+# with. That includes the mypy whose license LICENSE-THIRD-PARTY carries, since
+# mypyc builds its runtime into them. Renovate updates a pin together with the
+# lock entry.
 [tool.hatch.build.targets.wheel.hooks.mypyc]
 dependencies = [
-  "hatch-mypyc",
-  "click",
-  "cssbeautifier",
-  "jsbeautifier",
-  "json5",
-  "types-pyyaml",
-  "types-regex",
+  "hatch-mypyc==0.16.0",
+  "click==8.5.0",
+  "cssbeautifier==2.0.3",
+  "jsbeautifier==2.0.3",
+  "json5==0.17.3",
+  "mypy==2.4.0",
+  "types-pyyaml==6.0.12.20260906",
+  "types-regex==2026.9.29.20261017",
 ]
 enable-by-default = false
 exclude = ["src/djlint/__main__.py"]
