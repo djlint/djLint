@@ -24,14 +24,23 @@ date: Last Modified
 <ul class="lang-grid">
 {% for lang in templateLanguages %}
    <li>
-      <a class="lang-tile" style="--brand: {{ lang.brand }}; --logo-scale: {{ lang.logoScale or 1 }}" href="{{ "lang_code_url" | i18n }}/docs/languages/{{ lang.slug }}/">
-         <span class="lang-logo"><span class="lang-mark" style="--mark: url(/static/img/logos/{{ lang.logo }})"></span></span>
+      <a class="lang-tile" style="--brand: {{ lang.brand }}; --mark: url(/static/img/logos/{{ lang.logo }}); --logo-scale: {{ lang.logoScale or 1 }}" href="{{ "lang_code_url" | i18n }}/docs/languages/{{ lang.slug }}/">
+         <span class="lang-mark"></span>
          <span class="lang-name">{{ lang.name }}</span>
-         <code class="lang-snippet"><span class="lang-delim">{{ lang.snippet[0] }}</span>{{ lang.snippet[1] }}<span class="lang-delim">{{ lang.snippet[2] }}</span></code>
       </a>
    </li>
 {% endfor %}
 </ul>
+<script>
+// Let the hover light follow the pointer across a tile.
+document.querySelector('.lang-grid').addEventListener('pointermove', function (e) {
+  var tile = e.target.closest('.lang-tile');
+  if (!tile) return;
+  var box = tile.getBoundingClientRect();
+  tile.style.setProperty('--x', e.clientX - box.left + 'px');
+  tile.style.setProperty('--y', e.clientY - box.top + 'px');
+});
+</script>
 
                   </div>
  </div>

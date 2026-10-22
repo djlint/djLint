@@ -191,26 +191,29 @@ html.has-navbar-fixed-top {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 1rem;
   height: 100%;
-  padding: 0.625rem 0.625rem 0.875rem;
-  border: 1px solid var(--bulma-border-weak);
-  border-radius: 14px;
-  background-color: var(--bulma-scheme-main);
+  padding: 1.75rem 0.75rem 1.25rem;
+  border: 1px solid
+    color-mix(in srgb, var(--brand) 22%, var(--bulma-border-weak));
+  border-radius: 16px;
+  background-color: color-mix(in srgb, var(--brand) 7%, transparent);
   overflow: hidden;
   isolation: isolate;
   transition:
     border-color 0.2s ease,
     transform 0.2s ease;
 
-  // Brand-colored light that rises under the name on hover.
+  // Brand-colored light under the pointer; the script in index.njk moves it.
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: -1;
     background: radial-gradient(
-      120% 80% at 50% 100%,
-      color-mix(in srgb, var(--brand) 32%, transparent),
+      12rem circle at var(--x, 50%) var(--y, 35%),
+      color-mix(in srgb, var(--brand) 30%, transparent),
       transparent 70%
     );
     opacity: 0;
@@ -225,11 +228,8 @@ html.has-navbar-fixed-top {
     &::before {
       opacity: 1;
     }
-    .lang-logo {
-      background-color: color-mix(in srgb, var(--brand) 18%, transparent);
-    }
     .lang-mark {
-      transform: scale(calc(var(--logo-scale) * 1.08));
+      transform: scale(calc(var(--logo-scale) * 1.1));
     }
   }
   &:focus-visible {
@@ -238,22 +238,11 @@ html.has-navbar-fixed-top {
   }
 }
 
-.lang-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 5.5rem;
-  margin-bottom: 0.75rem;
-  border-radius: 9px;
-  background-color: color-mix(in srgb, var(--brand) 9%, transparent);
-  transition: background-color 0.25s ease;
-}
 // The logo files are single-color shapes used as a mask, so every logo
 // takes its language's color in either color scheme.
 .lang-mark {
-  width: 5.5rem;
-  height: 2.75rem;
+  width: 6rem;
+  height: 3rem;
   background-color: var(--lang-accent);
   mask: var(--mark) center / contain no-repeat;
   transform: scale(var(--logo-scale));
@@ -267,33 +256,15 @@ html.has-navbar-fixed-top {
   line-height: 1.3;
 }
 
-.lang-snippet {
-  max-width: 100%;
-  margin-top: 0.25rem;
-  padding: 0;
-  overflow: hidden;
-  background: none;
-  color: var(--bulma-text-weak);
-  font-size: 0.78rem;
-  white-space: pre;
-  text-overflow: ellipsis;
-
-  @media screen and (max-width: $tablet) {
-    font-size: 0.72rem;
-  }
-}
-.lang-delim {
-  color: var(--lang-accent);
-  font-weight: 600;
-}
-
 @media (prefers-color-scheme: dark) {
   .lang-tile {
     --lang-accent: color-mix(in srgb, var(--brand) 70%, white);
+    background-color: color-mix(in srgb, var(--brand) 9%, transparent);
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .lang-tile,
+  .lang-tile::before,
   .lang-mark {
     transition: none;
   }
