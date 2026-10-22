@@ -42,6 +42,10 @@ pre .tag {
 pre .section {
   padding: unset;
 }
+pre .table {
+  background-color: unset;
+  margin-bottom: unset;
+}
 
 @import "../../../node_modules/prismjs/themes/prism-tomorrow";
 
@@ -78,6 +82,29 @@ pre .section {
   $directory: "/static/font/crimson-pro/files/"
 );
 
+// Brand: the amber of the logo's lint squiggle is the one accent color.
+// Bulma derives link text, link buttons and focus rings from these.
+:root {
+  --squiggle: #bf8803;
+  --nav-h: 3.75rem;
+  --bulma-link-h: 41deg;
+  --bulma-link-s: 97%;
+  --bulma-link-l: 45%;
+  --bulma-link-on-scheme-l: 30%;
+  --bulma-link-invert-l: 8%;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --squiggle: #e8b400;
+    --bulma-link-on-scheme-l: 58%;
+  }
+}
+@media screen and (min-width: $desktop) {
+  :root {
+    --nav-h: 4.5rem;
+  }
+}
+
 html {
   height: 100%;
 }
@@ -89,106 +116,548 @@ body {
   min-height: 100%;
 }
 
+::selection {
+  background-color: color-mix(in srgb, var(--squiggle) 35%, transparent);
+}
+
 .title {
   font-family: "Rasa", Georgia, "Times New Roman", Times, serif;
 }
-.hero-logo img {
-  height: 112px;
-  width: auto;
+
+// Prose links get the logo's squiggle as their hover underline.
+.main :is(p, li, td, .message-body) a:not(.button):hover {
+  text-decoration: underline wavy var(--squiggle);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
-@media screen and (max-width: $tablet) {
-  .hero-logo img {
-    height: 80px;
+
+:focus-visible {
+  outline: 2px solid var(--squiggle);
+  outline-offset: 2px;
+}
+
+// Primary call to action, in the squiggle's amber with dark ink.
+.button.is-brand {
+  border-color: transparent;
+  background-color: #f2bd1d;
+  color: #1d1600;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #f7c93c;
+    color: #1d1600;
   }
 }
 
+// Navigation: one compact bar that frosts the page scrolling under it.
+html.has-navbar-fixed-top,
+body.has-navbar-fixed-top {
+  padding-top: var(--nav-h);
+  scroll-padding-top: calc(var(--nav-h) + 1rem);
+}
 .djlint-nav {
-  padding-left: 15px;
-}
-.djlint-nav .navbar-brand a {
-  margin-top: auto;
-  margin-bottom: auto;
-}
+  min-height: var(--nav-h);
+  background-color: color-mix(
+    in srgb,
+    var(--bulma-scheme-main) 94%,
+    transparent
+  );
+  backdrop-filter: blur(12px) saturate(1.4);
+  border-bottom: 1px solid var(--bulma-border-weak);
 
-body.has-navbar-fixed-top,
-html.has-navbar-fixed-top {
-  padding-top: 118px;
-}
-// Land a linked heading below the fixed navbar instead of under it.
-html.has-navbar-fixed-top {
-  scroll-padding-top: calc(52px + 1rem);
+  > .container {
+    min-height: var(--nav-h);
+  }
+  .navbar-brand {
+    min-height: var(--nav-h);
+  }
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    padding-inline: 0.75rem 1rem;
+
+    img {
+      width: auto;
+      height: 34px;
+    }
+  }
+  .navbar-burger {
+    height: var(--nav-h);
+  }
+  .navbar-item,
+  .navbar-link {
+    color: var(--bulma-text);
+    font-size: 0.9375rem;
+  }
+  .navbar-start .navbar-item {
+    text-decoration: underline wavy transparent;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 7px;
+    transition:
+      color 0.15s ease,
+      text-decoration-color 0.15s ease;
+
+    &:hover {
+      color: var(--bulma-text-strong);
+    }
+    &[aria-current="page"] {
+      color: var(--bulma-text-strong);
+      text-decoration-color: var(--squiggle);
+    }
+  }
+  .nav-icon {
+    color: var(--bulma-text-weak);
+
+    &:hover {
+      color: var(--bulma-text-strong);
+    }
+  }
 }
 @media screen and (min-width: $desktop) {
-  html.has-navbar-fixed-top {
-    scroll-padding-top: calc(88px + 1rem);
+  .djlint-nav .navbar-logo img {
+    height: 40px;
   }
 }
-.djlint-nav .navbar-brand img {
-  width: auto;
-  height: 40px !important;
-  margin-top: 6px;
-  margin-right: 1rem;
-  margin-bottom: -2px;
-}
-
-.is-flex-widescreen {
-  display: none !important;
-}
-@media screen and (min-width: $widescreen) {
+// Between desktop and widescreen the page links need the whole bar: the
+// icon links move to the footer and the language menu shows only its globe.
+@media screen and (min-width: $desktop) and (max-width: $widescreen - 1px) {
   .djlint-nav {
-    padding: 15px 0;
-  }
-
-  html.has-navbar-fixed-top {
-    scroll-padding-top: calc(118px + 1rem);
-  }
-
-  .djlint-nav .navbar-brand img {
-    height: 56px !important;
-  }
-
-  .is-flex-widescreen {
-    display: flex !important;
+    .navbar-start .navbar-item {
+      padding-inline: 0.5rem;
+      font-size: 0.875rem;
+    }
+    .nav-icon,
+    .nav-lang-label {
+      display: none;
+    }
   }
 }
+@media screen and (max-width: $desktop - 1px) {
+  .djlint-nav .navbar-menu {
+    background-color: var(--bulma-scheme-main);
+    border-bottom: 1px solid var(--bulma-border-weak);
+    box-shadow: none;
+  }
+  // Keep the icon links on one row under the page links.
+  .djlint-nav .navbar-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    border-top: 1px solid var(--bulma-border-weak);
 
-.image.brand {
-  height: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-.footer .image.logo {
-  max-width: 100px;
-}
-.image.badge {
-  max-width: 120px;
-}
-.install-chip {
-  display: inline-block;
-  font-size: 1.25rem;
-  padding: 0.5em 1em;
-  border-radius: 6px;
+    .has-dropdown {
+      flex-basis: 100%;
+    }
+  }
 }
 
-.image.brand picture {
-  display: contents;
+.site-footer {
+  margin-top: 4rem;
+  padding: 3rem 1.5rem 2rem;
+  border-top: 1px solid var(--bulma-border-weak);
+  background-color: var(--bulma-scheme-main-bis);
+  color: var(--bulma-text-weak);
+  font-size: 0.9375rem;
+
+  a {
+    color: var(--bulma-text);
+
+    &:hover {
+      color: var(--bulma-text-strong);
+    }
+  }
 }
-.image.brand img {
-  height: 100px;
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+
+  @media screen and (max-width: $tablet - 1px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .footer-about {
+      grid-column: 1 / -1;
+    }
+  }
+}
+.footer-about p {
+  max-width: 24rem;
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+.footer-logo img {
+  display: block;
   width: auto;
-  max-width: 100%;
-  object-fit: contain;
+  height: 36px;
 }
+.footer-heading {
+  margin-bottom: 0.75rem;
+  color: var(--bulma-text-strong);
+  font-weight: 600;
+}
+.footer-links li + li {
+  margin-top: 0.5rem;
+}
+.footer-links .icon {
+  margin-right: 0.375rem;
+}
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--bulma-border-weak);
+  font-size: 0.8125rem;
+
+  a {
+    color: var(--bulma-text-weak);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+// Home page sections share one vertical rhythm.
+.home-hero {
+  padding: 4.5rem 1.5rem 3rem;
+  text-align: center;
+
+  @media screen and (max-width: $tablet - 1px) {
+    padding: 2.5rem 0 1.5rem;
+  }
+}
+.home-section {
+  padding: 2rem 1.5rem;
+
+  @media screen and (max-width: $tablet - 1px) {
+    padding: 2rem 0;
+  }
+}
+.home-heading {
+  margin-bottom: 2rem !important;
+  text-align: center;
+}
+
+.hero-mark {
+  margin-bottom: 1.5rem;
+  color: var(--bulma-text-strong);
+  line-height: 0;
+}
+.hero-logo {
+  width: auto;
+  height: 7rem;
+
+  @media screen and (max-width: $tablet - 1px) {
+    height: 5rem;
+  }
+}
+// The lint squiggle draws itself once when the page opens.
+.hero-squiggle {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: squiggle-draw 1.1s 0.25s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+@keyframes squiggle-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-squiggle {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+.hero-title {
+  color: var(--bulma-text-strong);
+  font-family: "Rasa", Georgia, serif;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+.story {
+  max-width: 40rem;
+  margin: 1.5rem auto 2rem;
+  color: var(--bulma-text);
+  font-family: "Crimson Pro", Georgia, serif;
+  font-size: 1.3125rem;
+  line-height: 1.6;
+  text-align: left;
+
+  code {
+    font-size: 0.8em;
+    white-space: nowrap;
+  }
+}
+
+.install {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.install-cmd {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--bulma-border-weak);
+  border-radius: 10px;
+  background-color: var(--bulma-scheme-main-bis);
+
+  code {
+    padding: 0.625rem 0.25rem 0.625rem 1rem;
+    background: none;
+    color: var(--bulma-text-strong);
+    font-size: 0.9375rem;
+  }
+}
+.install-prompt {
+  margin-right: 0.625rem;
+  color: var(--squiggle);
+  user-select: none;
+}
+.copy-button {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: 0.25rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--bulma-text-weak);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--bulma-scheme-main-ter);
+    color: var(--bulma-text-strong);
+  }
+  &.is-copied {
+    color: hsl(var(--bulma-success-h), var(--bulma-success-s), 45%);
+  }
+  &.is-failed {
+    color: hsl(var(--bulma-danger-h), var(--bulma-danger-s), 55%);
+  }
+}
+
+// Bordered panels for the smaller sections at the end of the home page.
+.home-card {
+  display: grid;
+  gap: 1.5rem 3rem;
+  align-items: center;
+  padding: 2rem;
+  border: 1px solid var(--bulma-border-weak);
+  border-radius: 16px;
+  background-color: var(--bulma-scheme-main-bis);
+
+  .title {
+    margin-bottom: 0.75rem;
+  }
+  @media screen and (max-width: $tablet - 1px) {
+    padding: 1.5rem 1.25rem;
+  }
+}
+.badge-card {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+
+  @media screen and (max-width: $desktop - 1px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  pre[class*="language-"] {
+    margin: 0 !important;
+    border-top-left-radius: 0;
+  }
+  .tabs a {
+    border-bottom-width: 0;
+    border-radius: 6px 6px 0 0;
+  }
+  .tabs li.is-active a {
+    background-color: #2d2d2d;
+    color: #ccc;
+  }
+  .tabs ul {
+    border-bottom: 0;
+  }
+}
+.badge-preview {
+  display: block;
+  height: 20px;
+  width: auto;
+}
+.contribute-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+
+  @media screen and (max-width: $tablet - 1px) {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+}
+
+// Home page language tiles. Flex rather than grid so a short last row
+// stays centered under the rows above it.
+.lang-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  > li {
+    width: 11.5rem;
+  }
+}
+@media screen and (max-width: $tablet) {
+  .lang-grid {
+    gap: 0.75rem;
+
+    > li {
+      width: calc((100% - 0.75rem) / 2);
+    }
+  }
+}
+
+.lang-tile {
+  --lang-accent: color-mix(in srgb, var(--brand) 88%, black);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  height: 100%;
+  padding: 1.75rem 0.75rem 1.25rem;
+  border: 1px solid
+    color-mix(in srgb, var(--brand) 22%, var(--bulma-border-weak));
+  border-radius: 16px;
+  background-color: color-mix(in srgb, var(--brand) 7%, transparent);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  // Brand-colored light under the pointer; the script in index.njk moves it.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      12rem circle at var(--x, 50%) var(--y, 35%),
+      color-mix(in srgb, var(--brand) 30%, transparent),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--brand);
+    transform: translateY(-3px);
+
+    &::before {
+      opacity: 1;
+    }
+    .lang-mark {
+      transform: scale(calc(var(--logo-scale) * 1.1));
+    }
+  }
+  &:focus-visible {
+    outline: 2px solid var(--lang-accent);
+    outline-offset: 3px;
+  }
+}
+
+// The logo files are single-color shapes used as a mask, so every logo
+// takes its language's color in either color scheme.
+.lang-mark {
+  width: 6rem;
+  height: 3rem;
+  background-color: var(--lang-accent);
+  mask: var(--mark) center / contain no-repeat;
+  transform: scale(var(--logo-scale));
+  transition: transform 0.25s ease;
+}
+
+.lang-name {
+  color: var(--bulma-text-strong);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
 @media (prefers-color-scheme: dark) {
-  .image.brand {
-    background-color: hsl(221, 14%, 96%);
-    border-radius: $radius;
+  .lang-tile {
+    --lang-accent: color-mix(in srgb, var(--brand) 70%, white);
+    background-color: color-mix(in srgb, var(--brand) 9%, transparent);
   }
-  .image.brand img {
-    height: 88px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lang-tile,
+  .lang-tile::before,
+  .lang-mark {
+    transition: none;
   }
+  .lang-tile:hover,
+  .lang-tile:focus-visible {
+    transform: none;
+
+    .lang-mark {
+      transform: scale(var(--logo-scale));
+    }
+  }
+}
+
+// Home page before/after: one dark frame split in two, so both panes share
+// a height. The formatted side gets more room because its lines are longer.
+.compare {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #2d2d2d;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  @media screen and (max-width: $widescreen - 1px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.compare-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  + .compare-pane {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+
+    @media screen and (max-width: $widescreen - 1px) {
+      border-left: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  pre[class*="language-"] {
+    flex: 1;
+    margin: 0 !important;
+    border-radius: 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.8125rem;
+  }
+}
+.compare-head {
+  padding: 0.625rem 1.25rem;
+  overflow: hidden;
+  background-color: #252525;
+  color: #a8a8a8;
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.compare-prompt {
+  color: #6dd2a0;
+  user-select: none;
 }
 
 a.navbar-item:hover,
@@ -197,24 +666,12 @@ a.navbar-link:hover,
   background: transparent;
 }
 
-.hero-body {
-  background-color: rgba(167, 200, 204, 0.7);
-}
-
-.hero-two {
-  background-color: rgba(0, 68, 106, 0.08);
-}
-
 h1 {
   font-size: 50px;
 }
 
 h2 {
   font-size: 25px;
-}
-
-.is-nav-icon .fa-2x {
-  font-size: 1.6em;
 }
 
 pre .number {
@@ -226,33 +683,6 @@ pre .number {
   min-width: inherit;
   text-align: inherit;
   vertical-align: inherit;
-}
-
-.navbar-item.button {
-  margin: 13px;
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
-.mail-icon > img {
-  margin-top: 3px;
-}
-.icon.is-huge {
-  height: 2.5em;
-  width: 2.5em;
-}
-
-.story {
-  font-family:
-    Crimson Pro,
-    Georgia,
-    serif;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 1.6666666667;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .tab-container {
@@ -271,132 +701,394 @@ pre .number {
   padding-right: 10px;
 }
 
-.message.note {
-  border-width: $message-body-border-width;
-  border-style: solid;
-  border-color: $info;
-  background-color: var(--bulma-scheme-main);
+// Admonitions ({% admonition %}): a tinted panel with a colored edge.
+.message.note,
+.message.hint,
+.message.alert {
   padding: 0;
+  border: 1px solid
+    color-mix(in srgb, var(--callout) 30%, var(--bulma-border-weak));
+  border-left: 3px solid var(--callout);
+  border-radius: 10px;
+  background-color: color-mix(
+    in srgb,
+    var(--callout) 6%,
+    var(--bulma-scheme-main)
+  );
+  box-shadow: none;
+
+  .message-header {
+    padding: 0.875rem 1.25rem 0;
+    background: none;
+    color: var(--bulma-text-strong);
+    font-weight: 600;
+  }
+  .message-header .icon {
+    color: var(--callout) !important;
+  }
+  .message-body {
+    padding: 0.5rem 1.25rem 1rem;
+    border: 0;
+    background: none;
+    color: var(--bulma-text);
+
+    code {
+      background-color: var(--bulma-code-background);
+      color: var(--bulma-code);
+    }
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+.message.note {
+  --callout: hsl(var(--bulma-info-h), var(--bulma-info-s), 45%);
 }
 .message.hint {
-  border-width: $message-body-border-width;
-  border-style: solid;
-  border-color: $success;
-  background-color: var(--bulma-scheme-main);
-  padding: 0;
+  --callout: hsl(var(--bulma-success-h), var(--bulma-success-s), 40%);
 }
 .message.alert {
-  border-width: $message-body-border-width;
-  border-style: solid;
-  border-color: $danger;
-  background-color: var(--bulma-scheme-main);
-  padding: 0;
+  --callout: hsl(var(--bulma-danger-h), var(--bulma-danger-s), 55%);
 }
-.message.note .message-header {
-  color: var(--bulma-text);
-  background-color: hsl(
-    var(--bulma-info-h),
-    var(--bulma-info-s),
-    var(--bulma-soft-l)
+
+// The "see also" link boxes at the end of many docs pages.
+.box.notification.is-info.is-light {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid
+    color-mix(in srgb, var(--squiggle) 35%, var(--bulma-border-weak));
+  border-radius: 12px;
+  background-color: color-mix(
+    in srgb,
+    var(--squiggle) 7%,
+    var(--bulma-scheme-main)
   );
-}
-
-.message.hint .message-header {
+  box-shadow: none;
   color: var(--bulma-text);
-  background-color: hsl(
-    var(--bulma-success-h),
-    var(--bulma-success-s),
-    var(--bulma-soft-l)
-  );
+
+  .icon {
+    color: var(--squiggle);
+
+    .fa-2x {
+      font-size: 1.5em;
+    }
+  }
+  a {
+    color: var(--bulma-text-strong);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline wavy var(--squiggle);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+  }
 }
 
-.message.alert .message-header {
-  color: var(--bulma-text);
-  background-color: hsl(
-    var(--bulma-danger-h),
-    var(--bulma-danger-s),
-    var(--bulma-soft-l)
-  );
-}
+// An option's name and its tags share a row and wrap when it is too narrow.
+.option > .is-flex {
+  flex-wrap: wrap-reverse;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
 
-.message.note .message-body,
-.message.hint .message-body,
-.message.alert .message-body {
-  color: var(--bulma-text);
+  .title {
+    margin: 0 !important;
+  }
 }
+.option-tags {
+  gap: 0.375rem;
+  margin: 0 !important;
 
+  .tag {
+    margin: 0 !important;
+  }
+}
 .option {
   background-color: var(--bulma-scheme-main-ter);
 }
 
-.notification.is-info.is-light {
-  background-color: hsl(
-    var(--bulma-info-h),
-    var(--bulma-info-s),
-    var(--bulma-soft-l)
-  );
-  color: var(--bulma-text);
-}
+// Online demo: settings on the left, input and output filling the screen.
+.demo-page {
+  --demo-h: calc(100vh - var(--nav-h) - 5.5rem);
+  padding-top: 1.25rem;
 
-.image.is-35x35 {
-  height: 35px;
-  width: 35px;
+  @media screen and (max-width: $tablet - 1px) {
+    padding-inline: 0;
+  }
 }
-.is-collapsible,
-.is-collapsible.is-active {
-  transition: max-height 0.2s ease-out;
-}
+.demo-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1rem;
 
-.is-collapsible {
-  max-height: 0;
+  .title {
+    margin: 0;
+  }
+  small {
+    color: var(--bulma-text-weak);
+  }
+}
+.demo-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--demo-h);
+  border: 1px dashed var(--bulma-border-weak);
+  border-radius: 12px;
+  color: var(--bulma-text-weak);
+}
+.demo-workspace {
+  display: grid;
+  grid-template-columns: 17rem minmax(0, 1fr);
+  gap: 1rem;
+  height: var(--demo-h);
+  min-height: 28rem;
+
+  &.is-hidden {
+    display: none !important;
+  }
+}
+.demo-settings {
+  overflow-y: auto;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--bulma-border-weak);
+  border-radius: 12px;
+  background-color: var(--bulma-scheme-main-bis);
+  font-size: 0.875rem;
+
+  .field:not(:last-child) {
+    margin-bottom: 0.875rem;
+  }
+  .label {
+    margin-bottom: 0.25rem !important;
+    font-size: 0.8125rem;
+  }
+  .input,
+  .select select {
+    height: 2.25em;
+    font-size: 0.875rem;
+  }
+  .select,
+  .select select {
+    width: 100%;
+  }
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .icon {
+    width: 1.25em;
+    height: 1.25em;
+  }
+}
+.demo-editors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-radius: 12px;
   overflow: hidden;
-  margin-top: 0;
-  margin-bottom: 0;
+  background-color: #2d2d2d;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.demo-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+
+  + .demo-pane {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+.demo-editor {
+  flex: 1;
+  min-height: 0;
+
+  .cm-editor {
+    height: 100%;
+  }
+}
+@media screen and (max-width: $desktop - 1px) {
+  .demo-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+  }
+  .demo-editors {
+    order: -1;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .demo-editor {
+    height: 22rem;
+  }
+  .demo-pane + .demo-pane {
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
 }
 
-.is-collapsible-menu {
-  height: 0;
-  overflow: hidden;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.is-collapsible-menu.is-active {
-  height: auto;
-}
+// Docs: sidebar, a readable column of prose, and an "on this page" list.
+.docs-layout {
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr);
+  gap: 3rem;
+  padding: 2.5rem 0 1rem;
 
-.is-collapsible-menu:not(.is-active) {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  @media screen and (min-width: $widescreen) {
+    grid-template-columns: 13rem minmax(0, 1fr) 13rem;
+  }
+  @media screen and (max-width: $tablet - 1px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+  }
 }
-
-.is-collapsible-menu .is-collapsible-menu {
-  margin-bottom: 0 !important;
+.docs-sidebar-inner,
+.docs-toc-inner {
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+  max-height: calc(100vh - var(--nav-h) - 3rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
-
-.menu .menu-label {
+.docs-sidebar-label {
+  margin-bottom: 0.75rem;
+  color: var(--bulma-text-strong);
   font-weight: 600;
-  font-size: unset;
-  color: var(--bulma-text);
+}
+.docs-sidebar ul,
+.docs-toc ul {
+  border-left: 1px solid var(--bulma-border-weak);
+}
+.docs-sidebar a,
+.docs-toc a {
+  display: block;
+  margin-left: -1px;
+  padding: 0.3125rem 0 0.3125rem 1rem;
+  border-left: 2px solid transparent;
+  color: var(--bulma-text-weak);
+  line-height: 1.35;
+
+  &:hover {
+    color: var(--bulma-text-strong);
+  }
+  &[aria-current] {
+    border-left-color: var(--squiggle);
+    color: var(--bulma-text-strong);
+    font-weight: 600;
+  }
+}
+.docs-toc {
+  display: none;
+  font-size: 0.875rem;
+
+  @media screen and (min-width: $widescreen) {
+    display: block;
+  }
+}
+// On phones the sidebar becomes a row of links above the page.
+@media screen and (max-width: $tablet - 1px) {
+  .docs-sidebar-inner {
+    position: static;
+    max-height: none;
+  }
+  .docs-sidebar-label {
+    display: none;
+  }
+  .docs-sidebar ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-left: 0;
+  }
+  .docs-sidebar a {
+    margin: 0;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--bulma-border-weak);
+    border-radius: 999px;
+    font-size: 0.875rem;
+
+    &[aria-current] {
+      border-color: var(--squiggle);
+    }
+  }
 }
 
-.menu li a.is-active {
-  background: unset;
-  color: unset;
-  font-weight: 700;
+.docs-content {
+  max-width: 50rem;
+  line-height: 1.7;
+
+  &.is-standalone {
+    margin-inline: auto;
+    padding: 2.5rem 0 1rem;
+  }
+  > .title.is-1,
+  > h1 {
+    margin-bottom: 1.5rem;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1.15;
+  }
+  .title.is-2 {
+    margin-top: 3rem;
+    font-size: 1.875rem;
+  }
+  .title.is-3 {
+    margin-top: 2.25rem;
+    font-size: 1.4375rem;
+  }
+  .title.is-4,
+  .title.is-5 {
+    margin-top: 1.75rem;
+    font-size: 1.1875rem;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+  pre[class*="language-"] {
+    font-size: 0.875rem;
+  }
+}
+// Heading anchors: a quiet "#" in the gutter that shows on hover.
+.title:has(> a.link) {
+  position: relative;
+}
+.title > a.link {
+  position: absolute;
+  right: 100%;
+  padding-right: 0.3em;
+  color: var(--bulma-text-weak);
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    color: var(--squiggle);
+  }
+  @media screen and (max-width: $desktop - 1px) {
+    display: none;
+  }
+}
+.title:hover > a.link {
+  opacity: 1;
 }
 
-.menu li.head > a {
-  font-weight: 600;
-}
-
-.menu-list li.head ul {
-  margin-left: 3px;
-  padding-left: 20px;
-}
-
-.menu-list a:hover,
-.menu li a:hover {
-  background-color: unset;
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--bulma-border-weak);
+  color: var(--bulma-text-weak);
+  font-size: 0.875rem;
 }
 
 pre:not(.CodeMirror-line) {
@@ -411,104 +1103,14 @@ pre:not(.CodeMirror-line) {
   display: inline-block !important;
 }
 
-.is-radius > img {
-  border-radius: $radius;
-}
-
-.is-framed {
-  max-width: 800px;
-  border: 8px solid $grey-lightest;
-  border-radius: 4px;
-  border-top: 24px solid $grey-lightest;
-  box-shadow:
-    0 0.5em 1em -0.125em #0a0a0a1a,
-    0 0 0 1px #0a0a0a05;
-  position: relative;
-}
-
-.is-framed::before {
-  border-radius: 10px;
-  content: "";
-  height: 15px;
-  left: 0px;
-  position: absolute;
-  top: -19px;
-  width: 15px;
-  background: $grey-light;
-}
-
-.is-framed::after {
-  border-radius: 10px;
-  content: "";
-  height: 15px;
-  left: 20px;
-  position: absolute;
-  top: -19px;
-  width: 15px;
-  background: $grey-light;
-}
-
-.hero.is-white .hero-body {
-  background-color: $white;
-}
-
-.hero {
-  position: relative;
-}
-
-a.card:hover {
-  box-shadow:
-    0 0.5em 2em -0.125em #0a0a0a1a,
-    0 0 0 1px #0a0a0a05;
-}
-
 .title {
   color: var(--bulma-text-strong);
-}
-@media screen and (min-width: $tablet) {
-  .is-sticky {
-    position: sticky;
-    top: 118px;
-    bottom: 0;
-    max-height: calc(100vh - 118px);
-    overflow-y: scroll;
-  }
-}
-@media screen and (min-width: $desktop) {
-  .navbar.is-transparent a.is-info.navbar-item:hover {
-    background-color: $info-dark !important;
-  }
-}
-.navbar-item.button.is-white {
-  --bulma-button-background-color: transparent;
-  --bulma-button-border-color: transparent;
-  --bulma-button-color: var(--bulma-text);
-}
-.navbar-item.button.is-white:hover {
-  background: transparent !important;
-}
-.is-256x256 {
-  max-height: 256px;
-  max-width: 256px;
 }
 @media screen and (max-width: $tablet) {
   .main {
     padding: 0 15px;
   }
 }
-.animated[data-animate] {
-  visibility: hidden;
-}
-
-.navbar-item .media img {
-  max-height: unset !important;
-}
-
-.icon.is-5x {
-  height: 6rem;
-  width: 6rem;
-}
-
 .is-transparent,
 .is-transparent:hover {
   background-color: transparent !important;
@@ -521,12 +1123,3 @@ pre[class*="language"] {
   border-radius: $radius;
 }
 /* purgecss end ignore */
-
-.navbar-item.is-mega {
-  position: static;
-
-  .is-mega-menu-title {
-    margin-bottom: 0;
-    padding: 0.375rem 1rem;
-  }
-}

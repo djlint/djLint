@@ -1,23 +1,33 @@
-<footer class="footer">
+<footer class="footer site-footer">
     <div class="container">
-        <div class="columns">
-            <div class="column is-one-third">
-                <figure class="image logo">
-                    <picture><source srcset="/static/img/logo-wide-dark.svg" media="(prefers-color-scheme: dark)"><img src="/static/img/logo-wide-light.svg" alt="djLint" width="443" height="168"></picture>
-                </figure>
-                <p class="my-4">
-                    {{ "description" | i18n }}
-                </p>
+        <div class="footer-grid">
+            <div class="footer-about">
+                <a class="footer-logo" href="{{ "lang_code_url" | i18n }}/"><picture><source srcset="/static/img/logo-wide-dark.svg" media="(prefers-color-scheme: dark)"><img src="/static/img/logo-wide-light.svg" alt="djLint" width="443" height="168"></picture></a>
+                <p>{{ "description" | i18n }}</p>
             </div>
-            <div class="column"></div>
-            <div class="column">
-                <p class="copyright has-text-right">
-                    djLint | ©{{ page.date | year }}
-                </p>
-                <p class="has-text-grey-dark has-text-right mt-2">
-                    <small>{{ "footer_credits" | i18n | safe }}</small>
-                </p>
-            </div>
+            <nav class="footer-links" aria-label="{{ "documentation" | i18n }}">
+                <p class="footer-heading">{{ "documentation" | i18n }}</p>
+                <ul>
+                    <li><a href="{{ "lang_code_url" | i18n }}/docs/getting-started/">{{ "getting_started" | i18n }}</a></li>
+                    <li><a href="{{ "lang_code_url" | i18n }}/docs/formatter/">{{ "formatter" | i18n }}</a></li>
+                    <li><a href="{{ "lang_code_url" | i18n }}/docs/linter/">{{ "linter" | i18n }}</a></li>
+                    <li><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">{{ "configuration" | i18n }}</a></li>
+                    <li><a href="{{ "lang_code_url" | i18n }}/docs/changelog/">{{ "changelog" | i18n }}</a></li>
+                </ul>
+            </nav>
+            <nav class="footer-links" aria-label="djLint">
+                <p class="footer-heading">djLint</p>
+                <ul>
+                    <li><a href="https://github.com/djlint/djlint" target="_blank" rel="noopener"><span class="icon"><i class="fab fa-github"></i></span>GitHub</a></li>
+                    <li><a href="https://discord.gg/taghAqebzU" target="_blank" rel="noopener"><span class="icon"><i class="fab fa-discord"></i></span>Discord</a></li>
+                    <li><a href="https://pypi.org/project/djlint/" target="_blank" rel="noopener"><span class="icon"><i class="fas fa-download"></i></span>PyPI</a></li>
+                    <li><a href="{{ "lang_code_url" | i18n }}/demo/">{{ "try_online" | i18n }}</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="footer-bottom">
+            <span>© {{ page.date | year }} djLint</span>
+            <span class="footer-credits">{{ "footer_credits" | i18n | safe }}</span>
         </div>
     </div>
 </footer>

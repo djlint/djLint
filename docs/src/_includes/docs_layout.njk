@@ -1,34 +1,79 @@
 ---
 layout: layout.njk
 ---
-
+{% set docsNav = [
+  ["/docs/getting-started/", "getting_started"],
+  ["/docs/formatter/", "formatter"],
+  ["/docs/linter/", "linter"],
+  ["/docs/ignoring-code/", "ignoring_code"],
+  ["/docs/configuration/", "configuration"],
+  ["/docs/integrations/", "integrations"],
+  ["/docs/best-practices/", "best_practices"],
+  ["/docs/changelog/", "changelog"]
+] %}
 <div class="container">
-  <div class="columns">
-    <div class="column is-narrow mr-5">
-      <aside class="menu is-sticky">
-        <p class="menu-label">
-          {{ "documentation" | i18n }}
-        </p>
-        <ul class="menu-list">
-          <li>
-
-          <a{% if page.url == "lang_code_url" | i18n + "/docs/getting-started/" %} class="is-active"{% endif %} href="{{ "lang_code_url" | i18n }}/docs/getting-started/"><span class="icon mr-1"><i class="fa-solid fa-code-commit"></i></span>{{ "getting_started" | i18n }}</a></li>
-          <li><a{% if page.url == "lang_code_url" | i18n + "/docs/formatter/" %} class="is-active"{% endif %} href="{{ "lang_code_url" | i18n }}/docs/formatter/"><span class="icon mr-1"><i class="fa-solid fa-code-commit"></i></span>{{ "formatter" | i18n }}</a></li>
-          <li><a{% if page.url == "lang_code_url" | i18n + "/docs/linter/" %} class="is-active"{% endif %} href="{{ "lang_code_url" | i18n }}/docs/linter"><span class="icon mr-1"><i class="fa-solid fa-code-commit"></i></span>{{ "linter" | i18n }}</a></li>
-          <li><a{% if page.url == "lang_code_url" | i18n + "/docs/ignoring-code/" %} class="is-active"{% endif %} href="{{ "lang_code_url" | i18n }}/docs/ignoring-code/"><span class="icon mr-1"><i class="fa-solid fa-code-commit"></i></span>{{ "ignoring_code" | i18n }}</a></li>
-          <li><a{% if page.url == "lang_code_url" | i18n + "/docs/configuration/" %} class="is-active"{% endif %} href="{{ "lang_code_url" | i18n }}/docs/configuration/"><span class="icon mr-1"><i class="fa-solid fa-code-commit"></i></span>{{ "configuration" | i18n }}</a></li>
-          <li><a{% if page.url == "lang_code_url" | i18n + "/docs/integrations/" %} class="is-active"{% endif %} href="{{ "lang_code_url" | i18n }}/docs/integrations"><span class="icon mr-1"><i class="fa-solid fa-code-commit"></i></span>{{ "integrations" | i18n }}</a></li>
-          <li><a{% if page.url == "lang_code_url" | i18n + "/docs/best-practices/" %} class="is-active"{% endif %} href="{{ "lang_code_url" | i18n }}/docs/best-practices/"><span class="icon mr-1"><i class="fa-solid fa-code-commit"></i></span>{{ "best_practices" | i18n }}</a></li>
-          <li><a{% if page.url == "lang_code_url" | i18n + "/docs/changelog/" %} class="is-active"{% endif %} href="{{ "lang_code_url" | i18n }}/docs/changelog"><span class="icon mr-1"><i class="fa-solid fa-code-commit"></i></span>{{ "changelog" | i18n }}</a></li>
-          </ul>
-      </aside>
-    </div>
-    <div class="column mb-5">
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <nav class="docs-sidebar-inner" aria-label="{{ "documentation" | i18n }}">
+        <p class="docs-sidebar-label">{{ "documentation" | i18n }}</p>
+        <ul>
+          {% for item in docsNav %}
+          <li><a{% if (page.url | baseUrl) == item[0] %} aria-current="page"{% endif %} href="{{ "lang_code_url" | i18n }}{{ item[0] }}">{{ item[1] | i18n }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </aside>
+    <article class="docs-content">
       {{ content | safe }}
-      <div class="is-flex is-justify-content-space-between">
-        <span>{% gh_edit page %}</span>
-        <em><small>{{ "updated" | i18n }} <strong>{{ page.date | niceDate }}</strong></small></em>
-      </div>
-    </div>
+      {% include "src/_includes/page_meta.njk" %}
+    </article>
+    <aside class="docs-toc" hidden>
+      <nav class="docs-toc-inner" aria-label="{{ "on_this_page" | i18n }}">
+        <ul></ul>
+      </nav>
+    </aside>
   </div>
 </div>
+<script>
+// Build the "on this page" list from the article's second-level headings
+// and mark the section the reader has scrolled to.
+(function () {
+  var toc = document.querySelector('.docs-toc');
+  var headings = document.querySelectorAll('.docs-content h2[id]');
+  if (headings.length < 2) return;
+  var list = toc.querySelector('ul');
+  var links = {};
+  headings.forEach(function (h) {
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.replace(/^\s*#\s*/, '');
+    var li = document.createElement('li');
+    li.appendChild(a);
+    list.appendChild(li);
+    links[h.id] = a;
+  });
+  toc.hidden = false;
+  var current;
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var line = document.querySelector('.djlint-nav').offsetHeight + 24;
+    var active = headings[0];
+    headings.forEach(function (h) {
+      if (h.getBoundingClientRect().top <= line) active = h;
+    });
+    var link = links[active.id];
+    if (link === current) return;
+    if (current) current.removeAttribute('aria-current');
+    link.setAttribute('aria-current', 'true');
+    current = link;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }, { passive: true });
+  update();
+})();
+</script>

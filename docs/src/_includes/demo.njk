@@ -8,23 +8,21 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 
 
 
-  <div class="container is-fluid pb-5">
-  <hr class="mt-0" />
-    <h1 class="title is-3 mb-0">{{ "demo_description" | i18n | safe }}</h1>
-    <small class="mb-4  is-italic is-block" id="djlint-version"></small>
+<div class="container demo-page">
+  <header class="demo-header">
+    <h1 class="title is-4">{{ "demo_description" | i18n | safe }}</h1>
+    <small id="djlint-version"></small>
+  </header>
 
-    <div class="block" id="djlint-status">
+  <div class="demo-status" id="djlint-status">
     <span class="icon-text">
-      <span class="icon">
-        <i class="fas fa-spinner fa-spin"></i>
-      </span>
+      <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
       <span><strong>{{ "demo_loading" | i18n }}</strong></span>
-      </span>
-    </div>
-    <div class="columns is-hidden">
+    </span>
+  </div>
 
-      <div class="column is-narrow">
-
+  <div class="demo-workspace is-hidden">
+    <aside class="demo-settings">
 <form id="djlint-settings">
   <div class="field">
   <label class="label">Custom Blocks <a href="{{ "lang_code_url" | i18n }}/docs/configuration/#custom-blocks" target="_blank"><span class="icon has-text-grey-light">
@@ -271,12 +269,18 @@ keywords: online template formatter, djLint, HTML, templates, formatter, linter,
 
 
 </form>
-      </div>
-      <div class="column" id="djlint-input">
-      </div>
-      <div class="column" id="djlint-output">
-      </div>
+    </aside>
+    <div class="demo-editors">
+      <section class="demo-pane">
+        <div class="compare-head" id="djlint-input-label">input.html</div>
+        <div class="demo-editor" id="djlint-input"></div>
+      </section>
+      <section class="demo-pane">
+        <div class="compare-head" id="djlint-output-label"><span class="compare-prompt">$</span> djlint input.html --reformat</div>
+        <div class="demo-editor" id="djlint-output"></div>
+      </section>
     </div>
   </div>
+</div>
 
 {% rollup "src/static/js/editor.js" | url %}

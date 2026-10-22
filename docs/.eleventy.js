@@ -162,8 +162,12 @@ module.exports = function (eleventyConfig) {
     level: [2, 3, 4, 5],
     permalink: markdownItAnchor.permalink.linkInsideHeader({
       class: "link bn",
-      symbol: "∞",
+      symbol: "#",
       placement: "before",
+      // A mouse shortcut only: hidden from screen readers and skipped by Tab,
+      // since the heading itself is already the link target.
+      ariaHidden: true,
+      renderAttrs: () => ({ tabindex: "-1" }),
     }),
     slugify: slugifyCustom,
   };
@@ -305,8 +309,10 @@ module.exports = function (eleventyConfig) {
   fontawesomeSubset(
     {
       brands: ["discord", "github"],
-      regular: ["envelope"],
+      regular: ["envelope", "copy"],
       solid: [
+        "check",
+        "xmark",
         "globe",
         "circle-arrow-right",
         "pencil",

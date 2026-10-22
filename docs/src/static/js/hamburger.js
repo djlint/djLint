@@ -9,8 +9,9 @@ if ($navbarBurgers.length > 0) {
       var target = el.dataset.target;
       var $target = document.getElementById(target);
 
-      el.classList.toggle("is-active");
-      $target.classList.toggle("is-active");
+      var open = el.classList.toggle("is-active");
+      $target.classList.toggle("is-active", open);
+      el.setAttribute("aria-expanded", open ? "true" : "false");
     });
   });
 }

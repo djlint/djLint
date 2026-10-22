@@ -72,6 +72,9 @@ $icons: (
   code-commit: $var-code-commit,
   spinner: $var-spinner,
   circle-question: $var-circle-question,
+  copy: $var-copy,
+  check: $var-check,
+  xmark: $var-xmark,
 );
 
 @each $key, $value in $icons {

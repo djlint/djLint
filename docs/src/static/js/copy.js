@@ -1,0 +1,68 @@
+// Buttons with data-copy put that text on the clipboard, then show a check,
+// or a cross when the browser refused, for a moment. A polite live region
+// says the same to screen readers; it is mounted empty up front because
+// screen readers ignore a region that appears together with its message.
+var status = document.createElement("span");
+status.className = "is-sr-only";
+status.setAttribute("role", "status");
+
+function mountStatus() {
+  document.body.appendChild(status);
+}
+if (document.body) mountStatus();
+else document.addEventListener("DOMContentLoaded", mountStatus);
+
+var statusTimer;
+var announceTimer;
+
+// Empty the region, then write the message a moment later, so a repeat of
+// the same message is still announced.
+function announce(message) {
+  clearTimeout(announceTimer);
+  status.textContent = "";
+  if (!message) return;
+  announceTimer = setTimeout(function () {
+    status.textContent = message;
+  }, 50);
+}
+
+function flash(button, state, iconClass, message) {
+  var icon = button.querySelector("i");
+  // A new click replaces the previous result instead of being cut short
+  // by its timer.
+  clearTimeout(button.copyTimer);
+  clearTimeout(statusTimer);
+  button.classList.remove("is-copied", "is-failed");
+  button.classList.add(state);
+  icon.className = iconClass;
+  announce(message);
+  button.copyTimer = setTimeout(function () {
+    button.classList.remove(state);
+    icon.className = "fa-regular fa-copy";
+  }, 1500);
+  statusTimer = setTimeout(function () {
+    announce("");
+  }, 1500);
+}
+
+// Clipboard writes can settle out of order; only the latest click's result
+// is shown.
+var latestCopy = 0;
+
+document.addEventListener("click", function (e) {
+  var button = e.target.closest("[data-copy]");
+  if (!button) return;
+  var copy = ++latestCopy;
+  var show = function (state, iconClass, message) {
+    if (copy === latestCopy) flash(button, state, iconClass, message);
+  };
+  var failed = function () {
+    show("is-failed", "fas fa-xmark", button.getAttribute("data-copy-failed"));
+  };
+  if (!navigator.clipboard) return failed();
+  navigator.clipboard
+    .writeText(button.getAttribute("data-copy"))
+    .then(function () {
+      show("is-copied", "fas fa-check", button.getAttribute("data-copied"));
+    }, failed);
+});

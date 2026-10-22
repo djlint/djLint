@@ -13,9 +13,11 @@
   "browserslist": "> 2%, not dead",
   "dependencies": {
     "@codemirror/lang-html": "^6.4.3",
+    "@codemirror/language": "^6.13.1",
     "@codemirror/state": "^6.2.0",
     "@fontsource/crimson-pro": "^5.0.0",
     "@fontsource/rasa": "^5.0.0",
+    "@lezer/highlight": "^1.2.5",
     "@quasibit/eleventy-plugin-schema": "1.14.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "animate-sass": "^0.8.2",
