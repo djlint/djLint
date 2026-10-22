@@ -42,6 +42,10 @@ pre .tag {
 pre .section {
   padding: unset;
 }
+pre .table {
+  background-color: unset;
+  margin-bottom: unset;
+}
 
 @import "../../../node_modules/prismjs/themes/prism-tomorrow";
 
