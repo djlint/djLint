@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "branchTopic": "{{{depNameSanitized}}}-{{{newMajor}}}{{#if separateMinorPatch}}{{#if isPatch}}.{{{newMinor}}}{{/if}}{{/if}}{{#if separateMultipleMinor}}{{#if isMinor}}.{{{newMinor}}}{{/if}}{{/if}}.x",
   "configMigration": true,
   "customManagers": [
     {
@@ -25,6 +26,18 @@
   "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
   "minimumReleaseAge": "3 days",
   "packageRules": [
+    {
+      "matchPackageNames": ["mypy", "pre-commit/mirrors-mypy"],
+      "groupName": "mypy"
+    },
+    {
+      "matchPackageNames": ["ruff", "charliermarsh/ruff-pre-commit"],
+      "groupName": "ruff"
+    },
+    {
+      "matchPackageNames": ["prettier", "rbubley/mirrors-prettier"],
+      "groupName": "prettier"
+    },
     {
       "matchCurrentVersion": "!/^0/",
       "matchUpdateTypes": ["minor"],
