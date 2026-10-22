@@ -25,13 +25,7 @@ test_data = [
                 "line": "1:0",
                 "match": '<form action="',
                 "message": "Extra whitespace found in form action.",
-            },
-            {
-                "code": "H033",
-                "line": "1:0",
-                "match": '<form action=" {% ur',
-                "message": "Extra whitespace found in form action.",
-            },
+            }
         ]),
         id="one",
     ),
@@ -48,13 +42,7 @@ test_data = [
                 "line": "1:0",
                 "match": '<form action="',
                 "message": "Extra whitespace found in form action.",
-            },
-            {
-                "code": "H033",
-                "line": "1:0",
-                "match": '<form action=" {% ur',
-                "message": "Extra whitespace found in form action.",
-            },
+            }
         ]),
         id="two",
     ),
@@ -71,13 +59,7 @@ test_data = [
                 "line": "1:0",
                 "match": '<form action="',
                 "message": "Extra whitespace found in form action.",
-            },
-            {
-                "code": "H033",
-                "line": "1:0",
-                "match": '<form action=" {% ur',
-                "message": "Extra whitespace found in form action.",
-            },
+            }
         ]),
         id="three",
     ),
@@ -89,13 +71,7 @@ test_data = [
                 "line": "1:0",
                 "match": '<form action="',
                 "message": "Extra whitespace found in form action.",
-            },
-            {
-                "code": "H033",
-                "line": "1:0",
-                "match": '<form action=" {{ as',
-                "message": "Extra whitespace found in form action.",
-            },
+            }
         ]),
         id="four",
     ),
@@ -139,6 +115,18 @@ test_data = [
         ),
         ([]),
         id="gh pr #743",
+    ),
+    pytest.param(
+        ('<form action=" /x " method="post"></form>'),
+        ([
+            {
+                "code": "H033",
+                "line": "1:0",
+                "match": '<form action="',
+                "message": "Extra whitespace found in form action.",
+            }
+        ]),
+        id="padded on both sides is one finding",
     ),
 ]
 

@@ -320,6 +320,12 @@ def test_H020(
     assert result.exit_code == 1
     assert "H020 1:" in result.output
 
+    # whitespace before the closing bracket of the end tag
+    write_to_file(tmp_file.name, b"<div></div\n>")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert result.exit_code == 1
+    assert "H020 1:" in result.output
+
     write_to_file(tmp_file.name, b"<td></td>")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 0

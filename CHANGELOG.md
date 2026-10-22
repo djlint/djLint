@@ -8,6 +8,12 @@
 
 - New option `--sort-load-tags` / `sort_load_tags` sorts the libraries in a `{% load %}` tag and drops the ones written twice, so `{% load static i18n %}` becomes `{% load i18n static %}`. In `{% load a b from library %}` the names before `from` are sorted. It is off by default: where two libraries define a tag or filter of the same name, the one loaded last wins, so sorting can change which one a template uses.
 
+### Fix
+
+- `H020` reports an empty pair whose end tag has whitespace before its `>`, such as `<div></div\n>`.
+- `H026` reports a `class` or `id` holding only whitespace, such as `class="  "`, and one written with spaces around the `=`.
+- `H033` reports an action padded at both ends once. It used to report it twice, unless an attribute before `action` happened to make the two reports look the same.
+
 ## [1.46.6] - 2026-10-15
 
 ### Packaging

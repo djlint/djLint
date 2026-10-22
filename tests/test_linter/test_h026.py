@@ -103,6 +103,36 @@ test_data = [
         ]),
         id="id value after spaced equals",
     ),
+    pytest.param(
+        ('<div class="  "></div>'),
+        ([
+            {
+                "code": "H026",
+                "line": "1:0",
+                "match": '<div class="  "',
+                "message": "Empty id and class tags can be removed.",
+            }
+        ]),
+        id="whitespace only",
+    ),
+    pytest.param(
+        ('<div id = ""></div>'),
+        ([
+            {
+                "code": "H012",
+                "line": "1:0",
+                "match": "<div id =",
+                "message": "There should be no spaces around attribute =.",
+            },
+            {
+                "code": "H026",
+                "line": "1:0",
+                "match": '<div id = ""',
+                "message": "Empty id and class tags can be removed.",
+            },
+        ]),
+        id="empty value after spaced equals",
+    ),
 ]
 
 

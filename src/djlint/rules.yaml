@@ -165,7 +165,7 @@
       # <option> holds a select open, a <tbody> is a script's target, and a
       # <canvas> or <template> is filled in at runtime. The names are
       # anchored, so <theadx> is not read as <thead>.
-      - <((?!(?:td|th|tr|li|dt|dd|slot|option|optgroup|tbody|thead|tfoot|colgroup|canvas|noscript|template|iframe|textarea|script|style|svg|g|defs|mask|marker|symbol|pattern|clippath|video|audio|object|picture|body|head)\b)\w+)\s*?>\s*?<\/\1>
+      - <((?!(?:td|th|tr|li|dt|dd|slot|option|optgroup|tbody|thead|tfoot|colgroup|canvas|noscript|template|iframe|textarea|script|style|svg|g|defs|mask|marker|symbol|pattern|clippath|video|audio|object|picture|body|head)\b)\w+)\s*?>\s*?<\/\1\s*>
 - rule:
     name: H021
     skip_in_attributes: true
@@ -207,7 +207,8 @@
     message: Empty id and class tags can be removed.
     flags: re.I
     patterns:
-      - <\w+\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*?\s(class|id)\b=(\"\"|'')
+      # a value of only whitespace names no class or id either
+      - <\w+\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*?\s(class|id)\b\s*=\s*(\"\s*\"|'\s*')
       - <\w+\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*?\s(class|id)\b(?!\s*=)(?=\s|/?>)
 - rule:
     name: T027
@@ -251,8 +252,9 @@
     name: H033
     message: Extra whitespace found in form action.
     patterns:
-      - <form\b(\"[^\"]*\"|'[^']*'|[^'\">])*?\saction\s*=(["'])\s
-      - <form\b(?:\"[^\"]*\"|'[^']*'|[^'\">])*?\saction\s*=([\"'])({{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|([^\"'{]))*\s+?\1
+      # one pattern for both ends, so an action padded on both sides is one
+      # finding
+      - <form\b(?:\"[^\"]*\"|'[^']*'|[^'\">])*?\saction\s*=([\"'])(?:\s|(?:{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^\"'{])*\s\1)
 - rule:
     name: T034
     message: Did you intend to use {% ... %} instead of {% ... }%?
