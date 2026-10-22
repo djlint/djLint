@@ -152,43 +152,162 @@ html.has-navbar-fixed-top {
   }
 }
 
-.image.brand {
-  height: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
 .footer .image.logo {
   max-width: 100px;
 }
 .image.badge {
   max-width: 120px;
 }
+// Home page language tiles. Flex rather than grid so a short last row
+// stays centered under the rows above it.
+.lang-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  > li {
+    width: 11.5rem;
+  }
+}
+@media screen and (max-width: $tablet) {
+  .lang-grid {
+    gap: 0.75rem;
+
+    > li {
+      width: calc((100% - 0.75rem) / 2);
+    }
+  }
+}
+
+.lang-tile {
+  --lang-accent: color-mix(in srgb, var(--brand) 88%, black);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 0.625rem 0.625rem 0.875rem;
+  border: 1px solid var(--bulma-border-weak);
+  border-radius: 14px;
+  background-color: var(--bulma-scheme-main);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  // Brand-colored light that rises under the name on hover.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      120% 80% at 50% 100%,
+      color-mix(in srgb, var(--brand) 32%, transparent),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--brand);
+    transform: translateY(-3px);
+
+    &::before {
+      opacity: 1;
+    }
+    .lang-logo {
+      background-color: color-mix(in srgb, var(--brand) 18%, transparent);
+    }
+    .lang-mark {
+      transform: scale(calc(var(--logo-scale) * 1.08));
+    }
+  }
+  &:focus-visible {
+    outline: 2px solid var(--lang-accent);
+    outline-offset: 3px;
+  }
+}
+
+.lang-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 5.5rem;
+  margin-bottom: 0.75rem;
+  border-radius: 9px;
+  background-color: color-mix(in srgb, var(--brand) 9%, transparent);
+  transition: background-color 0.25s ease;
+}
+// The logo files are single-color shapes used as a mask, so every logo
+// takes its language's color in either color scheme.
+.lang-mark {
+  width: 5.5rem;
+  height: 2.75rem;
+  background-color: var(--lang-accent);
+  mask: var(--mark) center / contain no-repeat;
+  transform: scale(var(--logo-scale));
+  transition: transform 0.25s ease;
+}
+
+.lang-name {
+  color: var(--bulma-text-strong);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.lang-snippet {
+  max-width: 100%;
+  margin-top: 0.25rem;
+  padding: 0;
+  overflow: hidden;
+  background: none;
+  color: var(--bulma-text-weak);
+  font-size: 0.78rem;
+  white-space: pre;
+  text-overflow: ellipsis;
+
+  @media screen and (max-width: $tablet) {
+    font-size: 0.72rem;
+  }
+}
+.lang-delim {
+  color: var(--lang-accent);
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .lang-tile {
+    --lang-accent: color-mix(in srgb, var(--brand) 70%, white);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lang-tile,
+  .lang-mark {
+    transition: none;
+  }
+  .lang-tile:hover,
+  .lang-tile:focus-visible {
+    transform: none;
+
+    .lang-mark {
+      transform: scale(var(--logo-scale));
+    }
+  }
+}
+
 .install-chip {
   display: inline-block;
   font-size: 1.25rem;
   padding: 0.5em 1em;
   border-radius: 6px;
-}
-
-.image.brand picture {
-  display: contents;
-}
-.image.brand img {
-  height: 100px;
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-}
-@media (prefers-color-scheme: dark) {
-  .image.brand {
-    background-color: hsl(221, 14%, 96%);
-    border-radius: $radius;
-  }
-  .image.brand img {
-    height: 88px;
-  }
 }
 
 a.navbar-item:hover,
@@ -454,12 +573,6 @@ pre:not(.CodeMirror-line) {
 
 .hero {
   position: relative;
-}
-
-a.card:hover {
-  box-shadow:
-    0 0.5em 2em -0.125em #0a0a0a1a,
-    0 0 0 1px #0a0a0a05;
 }
 
 .title {

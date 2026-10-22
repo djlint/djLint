@@ -21,148 +21,18 @@ date: Last Modified
 </div>
 
 <h2 class="title is-2 has-text-centered mb-5">{{ "index_fav_lang" | i18n }}</h2>
-<div class="columns is-multiline">
-   <div class="column is-one-quarter">
-      <a class="is-block card animated fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/django/">
-         <div class="card-content" >
-            <div class="content">
-            <figure class="image brand">
-                        {% image "./src/static/img/logos/django.png", "django logo", "(min-width:300px) 50vw, 100vw" %}
-                    </figure>
-                     <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">Django</h3>
-            </div>
-         </div>
+<ul class="lang-grid">
+{% for lang in templateLanguages %}
+   <li>
+      <a class="lang-tile" style="--brand: {{ lang.brand }}; --logo-scale: {{ lang.logoScale or 1 }}" href="{{ "lang_code_url" | i18n }}/docs/languages/{{ lang.slug }}/">
+         <span class="lang-logo"><span class="lang-mark" style="--mark: url(/static/img/logos/{{ lang.logo }})"></span></span>
+         <span class="lang-name">{{ lang.name }}</span>
+         <code class="lang-snippet"><span class="lang-delim">{{ lang.snippet[0] }}</span>{{ lang.snippet[1] }}<span class="lang-delim">{{ lang.snippet[2] }}</span></code>
       </a>
-   </div>
+   </li>
+{% endfor %}
+</ul>
 
-   <div class="column is-one-quarter">
-      <a class="is-block card animated fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/jinja/">
-         <div class="card-content">
-            <div class="content">
-             <figure class="image brand">
-                        {% image "./src/static/img/logos/jinja.png", "jinja logo", "(min-width:300px) 50vw, 100vw" %}
-                    </figure>
-                    <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">jinja</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-
-   <div class="column is-one-quarter">
-      <a class="is-block card animated fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/twig/">
-         <div class="card-content">
-            <div class="content">
-            <figure class="image brand">
-            {% image "./src/static/img/logos/twig.png", "twig logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">twig</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-
-   <div class="column is-one-quarter">
-      <a class="is-block card animated fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/nunjucks/">
-         <div class="card-content">
-            <div class="content">
-            <figure class="image brand">
-            {% image "./src/static/img/logos/nunjucks.png", "nunjucks logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">nunjucks</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-
-   <div class="column is-one-quarter">
-      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/handlebars/">
-         <div class="card-content">
-            <div class="content">
-             <figure class="image brand">
-            {% image "./src/static/img/logos/handlebars.png", "handlebars logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">handlebars</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-
-   <div class="column is-one-quarter">
-      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/liquid/">
-         <div class="card-content">
-            <div class="content">
-             <figure class="image brand">
-            {% image "./src/static/img/logos/liquid.png", "liquid logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">liquid</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-
-   <div class="column is-one-quarter">
-      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/golang/">
-         <div class="card-content">
-            <div class="content">
-             <figure class="image brand">
-            {% image "./src/static/img/logos/golang.png", "go templates logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">go templates</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-   <div class="column is-one-quarter">
-      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/angular/">
-         <div class="card-content">
-            <div class="content">
-             <figure class="image brand">
-            {% image "./src/static/img/logos/angular.png", "angular logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">angular</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-   <div class="column is-one-quarter">
-      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/mustache/">
-         <div class="card-content">
-            <div class="content">
-             <figure class="image brand">
-            {% image "./src/static/img/logos/mustache.png", "mustache logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">mustache</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-   <div class="column is-one-quarter">
-      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/tera/">
-         <div class="card-content">
-            <div class="content">
-             <figure class="image brand">
-            {% image "./src/static/img/logos/tera.png", "tera logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">tera</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-   <div class="column is-one-quarter">
-      <a class="is-block card animated" data-animate="fadeInUp" href="{{ "lang_code_url" | i18n }}/docs/languages/askama/">
-         <div class="card-content">
-            <div class="content">
-             <figure class="image brand">
-            {% image "./src/static/img/logos/askama.png", "askama logo", "(min-width:300px) 50vw, 100vw" %}
-            </figure>
-               <h3 class="title is-4 my-0 is-uppercase has-text-weight-light is-family-sans-serif has-text-grey">askama</h3>
-            </div>
-         </div>
-      </a>
-   </div>
-
-</div>
                   </div>
  </div>
 
