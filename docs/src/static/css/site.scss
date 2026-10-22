@@ -788,12 +788,17 @@ pre .number {
   }
 }
 
-// An option's name and its tags share a row and wrap when it is too narrow.
+// An option's name and its tags share a row; on phones the tags always go
+// on their own line under the name, so every option reads the same.
 .option > .is-flex {
-  flex-wrap: wrap-reverse;
   align-items: center;
   gap: 0.5rem 1rem;
   margin-bottom: 0.75rem;
+
+  @media screen and (max-width: $tablet - 1px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
   .title {
     margin: 0 !important;
