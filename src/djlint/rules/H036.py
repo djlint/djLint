@@ -62,7 +62,11 @@ _BEFORE_A_CLOSING_PATTERN: Final = compile_pattern(
 _OPENING_BLOCK_PATTERN: Final = compile_pattern(
     rf"<(?:{_BLOCKS})\b", re.I | re.X
 )
-_AFTER_AN_OPENING_PATTERN: Final = compile_pattern(rf"\s*{_BREAK}", re.I | re.X)
+# Matched in two steps: regex looks ahead for the `<br` a pattern opening
+# on `\s*` requires before it tries the match, and that look reads to the
+# end of the document from every opening.
+_SPACE_PATTERN: Final = compile_pattern(r"\s*")
+_BREAK_PATTERN: Final = compile_pattern(_BREAK, re.I)
 _MARK_PATTERN: Final = compile_pattern(r"[\"'>]")
 
 
@@ -136,7 +140,8 @@ def _against_a_block_opening(html: str) -> Iterator[_Break]:
         tag_end = ends.after(opening.end())
         if tag_end < 0:
             continue
-        following = _AFTER_AN_OPENING_PATTERN.match(html, tag_end + 1)
+        space = _SPACE_PATTERN.match(html, tag_end + 1)
+        following = space and _BREAK_PATTERN.match(html, space.end())
         if following is not None:
             yield _Break(opening.start(), following.end())
             reported_to = following.end()

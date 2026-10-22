@@ -31,8 +31,20 @@ if TYPE_CHECKING:
     from djlint.settings import Config
     from djlint.types import LintError
 
-_ROLE_PATTERN = compile_pattern(
-    r"(?<![-.:\w])role\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|([^\s\"'>]+))", re.I
+_ROLE_PATTERN = compile_pattern(r"(?<![-.:\w])role\s*=", re.I)
+# The attribute is read from the tag's own attributes. A quoted value and
+# a template tag are each stepped over whole, so `role=` written inside
+# another attribute's value is left alone, while one written inside an
+# `{% if %}` is still read.
+_ROLE_ATTRIBUTE_PATTERN = compile_pattern(
+    r"(?:\"[^\"]*\"|'[^']*'"
+    r"|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+"
+    r"|{%(?:[^%{]|{(?!%)|%(?!}))*%}"
+    r"|{#(?:[^#{]|{(?!#)|#(?!}))*#}"
+    r"|{(?![{%#])[^{}]*}"
+    r"|[^'\"{}])*?"
+    r"(?<![-.:\w])(role)\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|([^\s\"'>]+))",
+    re.I | re.S,
 )
 _TEMPLATE_PATTERN = compile_pattern(r"{[{%#]")
 
@@ -53,11 +65,18 @@ def run(
         if token.closing or token.declaration:
             continue
 
-        match = _ROLE_PATTERN.search(html, token.name_end, token.attributes_end)
-        if not match:
+        if not _ROLE_PATTERN.search(html, token.name_end, token.attributes_end):
             continue
 
-        value = next(group for group in match.groups() if group is not None)
+        match = _ROLE_ATTRIBUTE_PATTERN.match(
+            html, token.name_end, token.attributes_end
+        )
+        if match is None:
+            continue
+
+        value = next(
+            group for group in match.group(2, 3, 4) if group is not None
+        )
         if _TEMPLATE_PATTERN.search(value):
             continue
 
@@ -78,7 +97,7 @@ def run(
 
         errors.append({
             "code": rule["name"],
-            "line": get_line(match.start(), line_ends),
+            "line": get_line(match.start(1), line_ends),
             "match": unknown[0][:20],
             "message": rule["message"],
         })

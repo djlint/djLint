@@ -317,11 +317,11 @@ test_data = [
             '<div attribute="">String</div>\n'
             "<div attribute=''>String</div>\n"
             "<div attribute>String</div>\n"
-            '<div attribute = "">String</div>\n'
-            "<div attribute = ''>String</div>\n"
+            '<div attribute="">String</div>\n'
+            "<div attribute=''>String</div>\n"
             "<div attribute>String</div>\n"
-            '<div attribute  =  "">String</div>\n'
-            "<div attribute  =  ''>String</div>\n"
+            '<div attribute="">String</div>\n'
+            "<div attribute=''>String</div>\n"
             '<div attribute="attribute = attribute"></div>\n'
             "<div ATTRIBUTE>String</div>\n"
             '<div ATTRIBUTE="">String</div>\n'

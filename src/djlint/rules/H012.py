@@ -28,6 +28,7 @@ import regex as re
 
 from djlint.helpers import (
     compile_pattern,
+    inside_html_attribute,
     inside_ignored_linter_block,
     inside_ignored_rule,
     inside_template_block,
@@ -254,9 +255,11 @@ def run(
             _spans(html, marks, _space_after(html)),
         )
         # markup written inside a template tag is a string argument
-        # rather than part of the document
+        # rather than part of the document, and markup inside an attribute
+        # value, as in `<p title="<b id = 1>">`, is text
         if not overlaps_ignored_block(config, html, span)
         and not inside_template_block(config, html, span)
+        and not inside_html_attribute(html, span)
         and not inside_ignored_rule(config, html, span, rule["name"])
         and not inside_ignored_linter_block(config, html, span)
     )

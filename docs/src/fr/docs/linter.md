@@ -333,7 +333,7 @@ Les analyseurs HTML acceptent les noms de balises en majuscules, mais les séria
 
 `Les noms d'attributs doivent être en minuscules.`
 
-Les noms d'attributs en majuscules sont invalides dans les sérialisations XHTML/XML et mettent en échec la recherche de texte dans les modèles (un grep sur src= manque SRC=). Le DOM normalise de toute façon les noms d'attributs HTML en minuscules, donc les orthographes en majuscules ajoutent de l'incohérence sans aucun bénéfice.
+Les noms d'attributs en majuscules sont invalides dans les sérialisations XHTML/XML et mettent en échec la recherche de texte dans les modèles (un grep sur src= manque SRC=). Le DOM normalise de toute façon les noms d'attributs HTML en minuscules, donc les orthographes en majuscules ajoutent de l'incohérence sans aucun bénéfice. Seuls les noms que le formateur met en minuscules sont signalés : `class`, `id`, `src`, `width`, `height`, `alt`, `style`, `lang`, `title`, `media` et `srcset`. `--reformat` les corrige pour vous, et une liaison de framework comme `:itemID` ou un nom plus long comme `data-ID` garde sa casse.
 
 À éviter :
 
@@ -369,7 +369,7 @@ Les valeurs d'attributs sans guillemets s'arrêtent au premier espace : une vale
 
 `Il ne doit pas y avoir d'espace autour de l'attribut =.`
 
-Avec des espaces autour de "=", la balise se lit comme trois éléments séparés, et elle est à une modification près de se disloquer : un retour à la ligne ou une troncature au milieu laisse un attribut booléen nu plus du texte parasite. Garder name="value" d'un seul tenant est aussi ce que supposent les outils texte simples (grep, rechercher-remplacer) : un espacement hétérogène rend les attributs difficiles à trouver et à refactoriser de manière fiable.
+Avec des espaces autour de "=", la balise se lit comme trois éléments séparés, et elle est à une modification près de se disloquer : un retour à la ligne ou une troncature au milieu laisse un attribut booléen nu plus du texte parasite. Garder name="value" d'un seul tenant est aussi ce que supposent les outils texte simples (grep, rechercher-remplacer) : un espacement hétérogène rend les attributs difficiles à trouver et à refactoriser de manière fiable. `--reformat` supprime ces espaces pour vous.
 
 À éviter :
 

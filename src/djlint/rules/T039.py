@@ -36,9 +36,15 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
     """
     pos = 0
     length = len(html)
+    # each opener is looked for again only once the read has passed it, so
+    # one the document never holds is not searched for to its end per tag
+    block_start = html.find("{%")
+    variable_start = html.find("{{")
     while True:
-        block_start = html.find("{%", pos)
-        variable_start = html.find("{{", pos)
+        if 0 <= block_start < pos:
+            block_start = html.find("{%", pos)
+        if 0 <= variable_start < pos:
+            variable_start = html.find("{{", pos)
         if block_start == -1 and variable_start == -1:
             return
         if variable_start != -1 and (

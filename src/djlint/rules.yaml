@@ -20,23 +20,24 @@
     message: (Django) Static urls should follow {% static path/to/file %} pattern.
     flags: re.DOTALL
     patterns:
-      - <(?:link|img|script|source)\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])(?:href|src|srcset)=[\"\']/?static/?
+      - <(?:link|img|script|source)\s(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?(?<![-.:\w])(?:href|src|srcset)=[\"\']/?static/?
 - rule:
     name: J004
     skip_in_attributes: true
     message: (Jinja) Static urls should follow {{ url_for('static'..) }} pattern.
     flags: re.DOTALL
     patterns:
-      - <(?:link|img|script|source)\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])(?:href|src|srcset)=[\"\']/?static/?
+      - <(?:link|img|script|source)\s(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?(?<![-.:\w])(?:href|src|srcset)=[\"\']/?static/?
 - rule:
     name: H005
+    skip_in_attributes: true
     message: Html tag should have a non-empty lang attribute.
     flags: re.DOTALL|re.I
     patterns:
       # "(?![\w-])" keeps a custom element such as <html-midi-player> out
-      - <html(?![\w-])(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])lang\s*=)[^'">])*>
+      - <html(?![\w-])(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|(?!(?<![-.:\w])lang\s*=)[^'"<>{}])*>
       # lang="" names no language
-      - <html(?![\w-])(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])lang\s*=\s*(?:""|'')(?:"[^"]*"|'[^']*'|[^'">])*>
+      - <html(?![\w-])(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'"<>{}])*?(?<![-.:\w])lang\s*=\s*(?:""|'')(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'"<>{}])*>
 - rule:
     name: H006
     skip_in_attributes: true
@@ -44,8 +45,8 @@
     default: false
     flags: re.DOTALL|re.I
     patterns:
-      - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])height\s*=)[^'">])*/?>
-      - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])width\s*=)[^'">])*/?>
+      - <img\b(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|(?!(?<![-.:\w])height\s*=)[^'"<>{}])*/?>
+      - <img\b(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|(?!(?<![-.:\w])width\s*=)[^'"<>{}])*/?>
 - rule:
     name: H007
     message: <!DOCTYPE ... > should be present before the html tag.
@@ -56,25 +57,29 @@
       - '^(?!(?:\s+|<!--.*?-->|{\#.*?\#}|{%.*?%}|{{.*?}}|<\?.*?\?>|<!(?!doctype\b)[^>]*>)*<!doctype\b)(?:\s+|<!--.*?-->|{\#.*?\#}|{%.*?%}|{{.*?}}|<\?.*?\?>|<!(?!doctype\b)[^>]*>)*\K<html(?![\w-])'
 - rule:
     name: H008
+    skip_in_attributes: true
     message: Attributes should be double quoted.
     flags: re.DOTALL|re.I
     patterns:
       # a value holding a double quote has to keep its single quotes, and
       # the name must start on a name boundary so data-title is not title
-      - <(?:\w+)\b(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*(?<![-.:\w])(?:class|id|src|width|height|alt|style|lang|title|srcset|media)\s*='[^'\"]*'
+      - <(?:\w+)\b(\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*(?<![-.:\w])(?:class|id|src|width|height|alt|style|lang|title|srcset|media)\s*='[^'\"]*'
 - rule:
     name: H009
     message: Tag names should be lowercase.
     python_module: djlint.rules.H009
 - rule:
     name: H010
+    skip_in_attributes: true
     message: Attribute names should be lowercase.
-    flags: re.DOTALL
+    flags: re.DOTALL|re.I
     patterns:
       # a quoted value is stepped over whole, so an uppercase name written
-      # inside one (title="the ID=5") is not read as an attribute name. No
-      # name boundary here: data-ID is an uppercase name and does count.
-      - <\w+(?:"[^"]*"|'[^']*'|[^'">])+?(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE|MEDIA|SRCSET)=
+      # inside one (title="the ID=5") is not read as an attribute name. The
+      # names are the ones the formatter lowercases, on a name boundary, so
+      # every report is one --reformat fixes, and a framework binding such
+      # as :itemID or @ID, or a longer name such as data-ID, keeps its case.
+      - <\w+(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'"<>{}])+?(?<![-.:@?#*\w])(?-i:(?![a-z]+\s*=))(?:CLASS|ID|SRC|WIDTH|HEIGHT|ALT|STYLE|LANG|TITLE|MEDIA|SRCSET)\s*=
 - rule:
     name: H011
     skip_in_attributes: true
@@ -82,8 +87,8 @@
     flags: re.DOTALL|re.I|re.M|re.X
     patterns:
       - |
-        <(?:(?!meta)\w+)\b(\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*(?:class|id|src|width|height|alt|style|lang|title|href|action|method|checked|required|srcset)=[a-zA-Z_-]+
-      - <(?:meta)\s+?[^>]*?(?:class|id|src|alt|style|lang|title|href|action|method|name)=[a-zA-Z_-]+
+        <(?:(?!meta)\w+)\b(\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*(?:class|id|src|width|height|alt|style|lang|title|href|action|method|checked|required|srcset)=[a-zA-Z_-]+
+      - <(?:meta)\s+?[^<>]*?(?:class|id|src|alt|style|lang|title|href|action|method|name)=[a-zA-Z_-]+
 - rule:
     name: H012
     message: There should be no spaces around attribute =.
@@ -96,17 +101,21 @@
     patterns:
       # a quoted value is stepped over whole, and the name must start on a
       # name boundary, so neither title="alt=x" nor data-alt counts as alt
-      - <img\b(?:"[^"]*"|'[^']*'|(?!(?<![-.:\w])alt\b)[^'">])*/?>
+      - <img\b(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|(?!(?<![-.:\w])alt\b)[^'"<>{}])*/?>
 - rule:
     name: H014
     message: Found extra blank lines.
     python_module: djlint.rules.H014
 - rule:
     name: H015
+    skip_in_attributes: true
     message: Follow h tags with a line break.
-    flags: re.DOTALL
+    flags: re.I
     patterns:
-      - </h\d?>(?:(?!(.+\r?\n){1,}).)*<[a-zA-Z]+\d?
+      # the next tag after the heading opens on the same line. The scan
+      # stops at the first `<`, so a heading followed by a closing tag, as
+      # in `</h1></div><p>`, is not reported, and each heading is read once.
+      - </h[1-6]>[^<\n]*<[a-zA-Z]+\d?
 - rule:
     name: H016
     message: Missing title tag in html.
@@ -118,7 +127,7 @@
     flags: re.DOTALL|re.I
     default: false
     patterns:
-      - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|path)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)(?<!/)>
+      - <(img|input|area|base|br|col|embed|hr|link|meta|param|source|track|wbr|path)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*)(?<!/)>
 - rule:
     name: H018
     skip_in_attributes: true
@@ -126,35 +135,37 @@
     flags: re.DOTALL|re.I
     default: false
     patterns:
-      - <(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*)/>
+      - <(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)((?!\w|-)(\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*)/>
 - rule:
     name: D018
+    skip_in_attributes: true
     message: (Django) Internal links should use the {% url ... %} pattern.
     flags: re.DOTALL|re.I
     patterns:
       # the value has to look like a path, so a data-src holding a word such
       # as "lazy" is not read as a link, and padding is stepped over so a
       # spaced {% url %} is not reported as a hardcoded one
-      - <(?:a|div|span|input)\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\s(?:href|data-url|data-src|action)\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
-      - <form\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\saction\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
+      - <(?:a|div|span|input)\b(\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?\s(?:href|data-url|data-src|action)\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
+      - <form\b(\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?\saction\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
 - rule:
     name: J018
+    skip_in_attributes: true
     message: (Jinja) Internal links should use the {{ url_for() ... }} pattern.
     flags: re.DOTALL|re.I
     patterns:
       # the value has to look like a path, so a data-src holding a word such
       # as "lazy" is not read as a link, and padding is stepped over so a
       # spaced {% url %} is not reported as a hardcoded one
-      - <(?:a|div|span|input)\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\s(?:href|data-url|data-src|action)\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
-      - <form\b(\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|[^'\">{}])*?\saction\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
+      - <(?:a|div|span|input)\b(\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?\s(?:href|data-url|data-src|action)\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
+      - <form\b(\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?\saction\s*=["']\s*(?!(?:[a-z][a-z0-9+.-]*:|//|/?(?:static|media)/|/["']))(?:/[\w/.-]*|[\w.-]+/[\w/.-]*)
 - rule:
     name: H019
     skip_in_attributes: true
     message: Replace 'javascript:abc()' with on_ event and real url.
     flags: re.DOTALL|re.I
     patterns:
-      - '<(?:a|div|span|input)\s(?:\"[^\"]*\"|''[^'']*''|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^''\">{}])*?(?<![-.:\w])(?:href|data-url)\s*=["'']javascript:'
-      - '<form\s(?:\"[^\"]*\"|''[^'']*''|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^''\">{}])*?(?<![-.:\w])action\s*=["'']javascript:'
+      - '<(?:a|div|span|input)\s(?:\"[^\"]*\"|''[^'']*''|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^''\"<>{}])*?(?<![-.:\w])(?:href|data-url)\s*=["'']javascript:'
+      - '<form\s(?:\"[^\"]*\"|''[^'']*''|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^''\"<>{}])*?(?<![-.:\w])action\s*=["'']javascript:'
 - rule:
     name: H020
     skip_in_attributes: true
@@ -172,7 +183,7 @@
     message: Inline styles should be avoided.
     flags: re.I|re.DOTALL
     patterns:
-      - <\w+\s(?:\"[^\"]*\"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{\#[^\#]*\#}|[^'\">{}])*?(?<![-.:\w])style\s*=
+      - <\w+\s(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?(?<![-.:\w])style\s*=
 - rule:
     name: H022
     message: Use HTTPS for external links.
@@ -194,22 +205,24 @@
           );)[\#0-9a-z]{,30};
 - rule:
     name: H024
+    skip_in_attributes: true
     message: Omit type on scripts and styles.
     flags: re.I
     patterns:
-      - <(?:script|style|link)\b(?:\"[^\"]*\"|'[^']*'|[^'\">])*?(?<![-.:\w])type\s*=[\"'](?:text/css|text/javascript)[\"']
+      - <(?:script|style|link)\b(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?(?<![-.:\w])type\s*=[\"'](?:text/css|text/javascript)[\"']
 - rule:
     name: H025
     message: Tag seems to be an orphan.
     python_module: djlint.rules.H025
 - rule:
     name: H026
+    skip_in_attributes: true
     message: Empty id and class tags can be removed.
     flags: re.I
     patterns:
       # a value of only whitespace names no class or id either
-      - <\w+\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*?\s(class|id)\b\s*=\s*(\"\s*\"|'\s*')
-      - <\w+\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}])*?\s(class|id)\b(?!\s*=)(?=\s|/?>)
+      - <\w+\b(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?\s(class|id)\b\s*=\s*(\"\s*\"|'\s*')
+      - <\w+\b(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?\s(class|id)\b(?!\s*=)(?=\s|/?>)
 - rule:
     name: T027
     message: Unclosed string found in template syntax.
@@ -222,14 +235,15 @@
     exclude:
       - django
     patterns:
-      - <(?:/?(?:\w+)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}/])*(?<!\bclass)=([\"'])(?:(?!\1).)*?({%)[^-])\s*?(?:if|for|else|end)
-      - <(?:/?(?:\w+)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}/])*(?<!\bclass)=([\"'])(?:(?!\1).)*?{%(?:(?!%}).)*(?:if|else|for|end)(?:(?!%}).)*[^-](%}))
+      - <(?:/?(?:\w+)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\"<>{}/])*(?<!\bclass)=([\"'])(?:(?!\1).)*?({%)[^-])\s*?(?:if|for|else|end)
+      - <(?:/?(?:\w+)\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\"<>{}/])*(?<!\bclass)=([\"'])(?:(?!\1).)*?{%(?:(?!%}).)*(?:if|else|for|end)(?:(?!%}).)*[^-](%}))
 - rule:
     name: H029
+    skip_in_attributes: true
     message: Consider using lowercase form method values.
     patterns:
       # the name must start on a name boundary, so data-method is not method
-      - <[fF][oO][rR][mM]\b(?:\"[^\"]*\"|'[^']*'|{[^}]*}|[^'\">{}/])*(?<![-.:\w])([mM][eE][tT][hH][oO][dD])=(([\"'])[a-zA-Z]*?[A-Z][a-zA-Z]*?\3)
+      - <[fF][oO][rR][mM]\b(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}/])*(?<![-.:\w])([mM][eE][tT][hH][oO][dD])=(([\"'])[a-zA-Z]*?[A-Z][a-zA-Z]*?\3)
 - rule:
     name: H030
     message: Consider adding a meta description.
@@ -237,24 +251,27 @@
     patterns:
       # a template tag in the head can render a description djLint cannot
       # see, and a base layout that fills one in per page is the right way
-      # to write it, so the rule stays quiet for that file
-      - <html(?![\w-])[^>]*?>(?!(?:(?!</head>)[\s\S])*?\{[{%](?:(?!</head>)[\s\S])*?</head>)(?:(?!<meta[^>]*?(?<![-.:\w])name\s*=([\"'])description\b).)*</html>
+      # to write it, so the rule stays quiet for that file. The head is read
+      # possessively, once up to its first template tag and once on to its
+      # end, so a document is not read again from every character.
+      - <html(?![\w-])[^<>]*>(?!(?:(?!</head>)[^{]|\{(?![{%]))*+\{[{%](?:(?!</head>).)*+</head>)(?:(?!<meta[^<>]*?(?<![-.:\w])name\s*=([\"'])description\b).)*</html>
 - rule:
     name: T032
     message: Extra whitespace found in template tags.
     patterns:
-      # a string is stepped over whole, so a run of spaces inside one is
-      # content rather than padding. A second opener means the first never
-      # closed, so a run of unclosed ones is read once.
-      - '{%(?:"[^"]*"|''[^'']*''|(?!%}|{%)[^''"\n])*?[ \t]{2,}'
-      - '{{(?:"[^"]*"|''[^'']*''|(?!}}|{{)[^''"\n])*?[ \t]{2,}'
+      # a string is stepped over whole, escaped quotes and all, so a run of
+      # spaces inside one is content rather than padding. A second opener
+      # means the first never closed, so a run of unclosed ones is read once.
+      - '{%(?:"(?:\\.|[^"\\])*"|''(?:\\.|[^''\\])*''|(?!%}|{%)[^''"\n])*?[ \t]{2,}'
+      - '{{(?:"(?:\\.|[^"\\])*"|''(?:\\.|[^''\\])*''|(?!}}|{{)[^''"\n])*?[ \t]{2,}'
 - rule:
     name: H033
+    skip_in_attributes: true
     message: Extra whitespace found in form action.
     patterns:
       # one pattern for both ends, so an action padded on both sides is one
       # finding
-      - <form\b(?:\"[^\"]*\"|'[^']*'|[^'\">])*?\saction\s*=([\"'])(?:\s|(?:{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^\"'{])*\s\1)
+      - <form\b(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?\saction\s*=([\"'])(?:\s|(?:{{(?:(?!}}).)*}}|{%(?:(?!%}).)*%}|[^\"'{])*\s\1)
 - rule:
     name: T034
     message: Did you intend to use {% ... %} instead of {% ... }%?
@@ -301,7 +318,7 @@
     patterns:
       # a quoted value is stepped over whole, and the name must start on a
       # name boundary, so neither title="type=x" nor data-type counts as type
-      - <button\b(?:"[^"]*"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|(?!(?<![-.:\w])type\s*=)[^'">{}])*/?>
+      - <button\b(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|(?!(?<![-.:\w])type\s*=)[^'"<>{}])*/?>
 - rule:
     name: H044
     message: Thead should not mix th and td cells.
@@ -315,15 +332,18 @@
       # an accessible name may come from title, aria-label or aria-labelledby;
       # a template tag between the attributes is stepped over, and the name
       # boundary keeps data-title from counting as title
-      - <iframe\b(?:"[^"]*"|'[^']*'|{{[^}]*}}|{%[^%]*%}|{#[^#]*#}|(?!(?<![-.:\w])(?:title|aria-label|aria-labelledby)\s*=)[^'">{}])*/?>
+      - <iframe\b(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|(?!(?<![-.:\w])(?:title|aria-label|aria-labelledby)\s*=)[^'"<>{}])*/?>
 - rule:
     name: H046
+    skip_in_attributes: true
     message: Tabindex should not be positive.
     flags: re.DOTALL|re.I
     patterns:
-      # a value written by a template tag is unknowable, so only a literal
-      # 1 or more is reported; the name boundary keeps data-tabindex out
-      - (?<=\s)tabindex\s*=\s*(?:"\s*\+?[1-9]|'\s*\+?[1-9]|\+?[1-9])
+      # read from the tag's own attributes, so tabindex=1 written in another
+      # attribute's value or in the page text is left alone. A value written
+      # by a template tag is unknowable, so only a literal 1 or more is
+      # reported; the name boundary keeps data-tabindex out
+      - <\w(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'"<>{}])*?(?<![-.:\w])tabindex\s*=\s*(?:"\s*\+?[1-9]|'\s*\+?[1-9]|\+?[1-9])
 - rule:
     name: H047
     message: Aria-hidden should not be set on a focusable element.
@@ -340,7 +360,7 @@
     patterns:
       # the viewport name is looked for without being consumed, so the two
       # attributes are found whichever order they are written in
-      - <meta\b(?=(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])name\s*=\s*["']?\s*viewport\b)(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])content\s*=\s*["'][^"']*?(?:user-scalable\s*=\s*(?:no|0)\b|maximum-scale\s*=\s*(?:0[.,]\d+|1(?:[.,]\d+)?)(?![.,\d]))
+      - <meta\b(?=(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'"<>{}])*?(?<![-.:\w])name\s*=\s*["']?\s*viewport\b)(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'"<>{}])*?(?<![-.:\w])content\s*=\s*["'][^"']*?(?:user-scalable\s*=\s*(?:no|0)\b|maximum-scale\s*=\s*(?:0[.,]\d+|1(?:[.,]\d+)?)(?![.,\d]))
 - rule:
     name: H050
     skip_in_attributes: true
@@ -363,7 +383,7 @@
       # http-equiv is looked for without being consumed, so the two
       # attributes are found whichever order they are written in; a delay
       # of zero is an immediate redirect, which WCAG allows
-      - <meta\b(?=(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])http-equiv\s*=\s*["']?\s*refresh\b)(?:"[^"]*"|'[^']*'|[^'">])*?(?<![-.:\w])content\s*=\s*["']?\s*0*[1-9]
+      - <meta\b(?=(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'"<>{}])*?(?<![-.:\w])http-equiv\s*=\s*["']?\s*refresh\b)(?:"[^"]*"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'"<>{}])*?(?<![-.:\w])content\s*=\s*["']?\s*0*[1-9]
 - rule:
     name: T041
     message: Extends tag should be the first tag in the template.

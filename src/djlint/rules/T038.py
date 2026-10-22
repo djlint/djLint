@@ -26,7 +26,15 @@ MISMATCH_MESSAGE: Final = "Endblock name should match opening block name."
 
 _HANDLEBARS_RAW_BLOCK = r"\{\{\{\{#?\s*([\w.-]+)(?:(?!\}\}\}\}).)*\}\}\}\}(?:(?!\{\{\{\{/).)*?\{\{\{\{/\s*\1\s*\}\}\}\}"
 _HANDLEBARS_COMMENT = r"\{\{!--(?:(?!--\}\}).)*--\}\}|\{\{!(?:(?!\}\}).)*\}\}"
-_BLOCK_TAG = r"\{%(?:(?!%\}).)*%\}|\{\{[#^/](?:(?!\}\}).)*\}\}"
+# A second opener means the first tag never closed, as no template
+# language nests them, so a run of unclosed tags is read once. A string is
+# stepped over whole, so an opener written inside one, as in
+# `{% with a="{%" %}`, is text; a string left open is read as plain text.
+_BLOCK_TAG = (
+    r"\{%(?>\"(?:(?!%\})[^\"])*\"|'(?:(?!%\})[^'])*'|(?!%\}|\{%).)*%\}"
+    r"|\{\{[#^/](?>\"(?:(?!\}\})[^\"])*\"|'(?:(?!\}\})[^'])*'"
+    r"|(?!\}\}|\{\{).)*\}\}"
+)
 
 _TEMPLATE_TAG_PATTERN: Final = compile_pattern(
     f"{_HANDLEBARS_RAW_BLOCK}|{_HANDLEBARS_COMMENT}|{_BLOCK_TAG}", re.S

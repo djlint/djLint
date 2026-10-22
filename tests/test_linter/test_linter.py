@@ -141,6 +141,21 @@ def test_H015(
     assert result.exit_code == 1
     assert "H015 1:" in result.output
 
+    # any line counts, not only the last one
+    write_to_file(tmp_file.name, b"<h1>a</h1> <p>b</p>\n<p>c</p>\n")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H015 1:" in result.output
+
+    # the next tag is on a line of its own
+    write_to_file(tmp_file.name, b"<h1>a</h1>\n<p>b</p>")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H015" not in result.output
+
+    # a closing tag is not the next element
+    write_to_file(tmp_file.name, b"<div><h1>a</h1></div><p>b</p>\n")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H015" not in result.output
+
 
 def test_H016(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
@@ -730,11 +745,11 @@ def test_output_for_no_linebreaks(
     assert result.exit_code == 1
     assert "<a\n" not in result.output
 
-    write_to_file(tmp_file.name, b"<h1>asdf</h1>\n    <h2>asdf</h2>")
+    write_to_file(tmp_file.name, b'<img\n    src="a.png">')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 1
 
-    assert "</h1>\n" not in result.output
+    assert "<img\n" not in result.output
 
 
 def test_output_order(
@@ -746,7 +761,6 @@ def test_output_order(
 
     assert (
         """H025 1:0 Tag seems to be an orphan. <h1>
-H015 1:8 Follow h tags with a line break. </h2> <h3
 H025 1:8 Tag seems to be an orphan. </h2>
 H025 2:4 Tag seems to be an orphan. <h3>
 H025 2:12 Tag seems to be an orphan. </h4>"""
@@ -1095,6 +1109,11 @@ def test_T032_sees_a_tag_holding_a_filter_or_call(
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "T032" not in result.output
 
+    # an escaped quote does not end the string
+    write_to_file(tmp_file.name, b'{{ x|default:"a \\"b  c\\" d" }}')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T032" not in result.output
+
 
 def test_T040_allows_an_empty_literal_feeding_a_filter(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
@@ -1117,10 +1136,38 @@ def test_tag_rules_ignore_markup_written_in_an_attribute_value(
         (b"<p title=\"<div style='a'>\">y</p>", "html"),
         (b"<p title=\"<a href='http://x.com'>\">x</p>", "html"),
         (b'<p title="<div class=x>">y</p>', "html"),
+        (b'<p title="<html>">y</p>', "html"),
+        (b"<p title=\"<img SRC='a'>\">y</p>", "html"),
+        (b"<p title=\"<div id = 'a'>\">y</p>", "html"),
+        (b"<p title=\"<a href='/x'>\">y</p>", "django"),
+        (b"<p title=\"<a href='/x'>\">y</p>", "jinja"),
+        (b"<p title=\"<script type='text/javascript'>\">y</p>", "html"),
+        (b"<p title=\"<div class=''>\">y</p>", "html"),
+        (b"<p title=\"<form method='POST' action=' x'>\">y</p>", "html"),
+        (b'<p title="press tabindex=2 now">y</p>', "html"),
+        (b"<p title=\"<div role='buton'>\">y</p>", "html"),
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name, "--profile", profile))
-        for code in ("D004", "H019", "H021", "H022", "H011"):
+        for code in (
+            "D004",
+            "H019",
+            "H021",
+            "H022",
+            "H011",
+            "H005",
+            "H008",
+            "H010",
+            "H012",
+            "D018",
+            "J018",
+            "H024",
+            "H026",
+            "H029",
+            "H033",
+            "H046",
+            "H051",
+        ):
             assert code not in result.output, (quiet, code)
 
 
@@ -1140,6 +1187,24 @@ def test_rules_see_past_a_template_tag_holding_a_bracket(
     )
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "H019 1:" in result.output
+
+
+def test_rules_see_past_a_template_tag_holding_braces(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    for source, profile, code in (
+        (
+            b'<script {{{attrs}}} type="text/javascript"></script>',
+            "handlebars",
+            "H024",
+        ),
+        (b"<img src=\"a.png\" {{ {'class': 'x'}|xmlattr }}>", "jinja", "H013"),
+        (b"<div {{ attrs }} class=''>y</div>", "django", "H008"),
+        (b"<div x-data={a:1} class='a'>y</div>", "html", "H008"),
+    ):
+        write_to_file(tmp_file.name, source)
+        result = runner.invoke(djlint, (tmp_file.name, "--profile", profile))
+        assert f"{code} 1:" in result.output, source
 
 
 def test_a_name_ending_in_a_known_one_is_not_it(
@@ -1164,6 +1229,25 @@ def test_T001_ignores_a_delimiter_inside_a_string(
     write_to_file(tmp_file.name, b"{{x}}")
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "jinja"))
     assert "T001 1:" in result.output
+
+
+def test_T001_reads_a_tag_to_the_brace_that_balances_it(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    write_to_file(tmp_file.name, b'{{ f({"a": {"b": 1}}) }}')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "nunjucks"))
+    assert "T001" not in result.output
+
+    # the dict closes against the tag, which is then not padded
+    write_to_file(tmp_file.name, b'{{ {"a": 1}}}')
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "nunjucks"))
+    assert "T001 1:" in result.output
+
+    # a brace left open does not swallow the tag
+    write_to_file(tmp_file.name, b"{{ a { }}<p>{{x}}</p>")
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "nunjucks"))
+    assert "T001 1:" in result.output
+    assert "T027" not in result.output
 
 
 def test_H016_does_not_take_an_svg_title_for_the_document_title(

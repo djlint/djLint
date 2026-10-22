@@ -31,6 +31,16 @@ test_data = [
         ('<div role="button">x</div>'), (False), id="a role ARIA defines"
     ),
     pytest.param(
+        ('<div title="its role=buton">x</div>'),
+        (False),
+        id="text inside another attribute's value",
+    ),
+    pytest.param(
+        ('<div {% if a %}role="buton"{% endif %}>x</div>'),
+        (True),
+        id="an attribute written by a template branch",
+    ),
+    pytest.param(
         ('<div role="BUTTON">x</div>'),
         (False),
         id="the name is read whatever its case",

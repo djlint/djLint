@@ -64,12 +64,12 @@ django_test_data = [
             },
             {
                 "code": "T038",
-                "line": "1:0",
-                "match": "{% if x %\n{% endif %",
-                "message": "Block tag has no matching end tag.",
+                "line": "2:0",
+                "match": "{% endif %}",
+                "message": "End tag has no matching block tag.",
             },
         ]),
-        id="T038 sees one garbled tag spanning to the endif's %} and reports the if block as unclosed too",
+        id="the garbled tag ends at the next opener, so the endif closes nothing",
     ),
     pytest.param(
         ('{% url "home" %}\n{{ user.name }}\n'), ([]), id="closed_tags"

@@ -7,12 +7,27 @@
 ### Feature
 
 - New option `--sort-load-tags` / `sort_load_tags` sorts the libraries in a `{% load %}` tag and drops the ones written twice, so `{% load static i18n %}` becomes `{% load i18n static %}`. In `{% load a b from library %}` the names before `from` are sorted. It is off by default: where two libraries define a tag or filter of the same name, the one loaded last wins, so sorting can change which one a template uses.
+- The formatter drops the spaces `H012` reports around an attribute's `=`, so `<div class = "a">` becomes `<div class="a">`.
+
+### Changed
+
+- `H010` reports the names the formatter lowercases, in any mix of case, so `Width="3"` is now reported. A framework binding such as `:itemID` or `@ID` and a longer name such as `data-ID` no longer are, since the formatter leaves their case alone.
 
 ### Fix
 
 - `H020` reports an empty pair whose end tag has whitespace before its `>`, such as `<div></div\n>`.
 - `H026` reports a `class` or `id` holding only whitespace, such as `class="  "`, and one written with spaces around the `=`.
 - `H033` reports an action padded at both ends once. It used to report it twice, unless an attribute before `action` happened to make the two reports look the same.
+- Markup written inside an attribute value, as in `<p title="<img src='a'>">`, is text, and `H005`, `H008`, `H010`, `H012`, `D018`, `J018`, `H024`, `H026`, `H029` and `H033` no longer report it. `H046` and `H051` read `tabindex` and `role` from the tag's own attributes, so `tabindex=1` written in a value or in the page text is not reported either.
+- `T001` and `T027` read a tag holding a dict, such as `{{ f({"a": {"b": 1}}) }}`, up to the `}}` that closes it rather than the first `}}` inside it.
+- `T032` steps over an escaped quote in a string, so the spaces in `{{ x|default:"a \"b  c\"" }}` are not reported.
+- `H015` reports a heading followed by a tag on the same line anywhere in the file. It used to look only at the last line.
+- The rules that read a tag's attributes step over a template tag written in it, including a handlebars `{{{attrs}}}` and a dict as in `{{ {'class': 'x'}|xmlattr }}`, so `<img {{ attrs }} src='a'>` is reported by `H008`, which used to stop reading at the `{{`.
+- `T038` steps over a string in a block tag, so the `{%` in `{% with a="{%" %}` does not cut the tag short.
+
+### Performance
+
+- The rules that read a tag's attributes stop at a stray `<`, and `H015`, `H030`, `H036`, `T001`, `T027`, `T038` and `T039` no longer read the rest of the document again for each tag. A file holding thousands of unclosed tags or headings on one line is linted in a fraction of a second, where it used to take minutes.
 
 ## [1.46.6] - 2026-10-15
 

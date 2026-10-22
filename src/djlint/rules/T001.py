@@ -31,11 +31,17 @@ def _iter_tags(html: str) -> Iterator[tuple[int, int, str]]:
     """
     pos = 0
     length = len(html)
+    # each opener is looked for again only once the read has passed it, so
+    # one the document never holds is not searched for to its end per tag
+    found = [html.find(open_delimiter) for open_delimiter, _ in _DELIMITERS]
     while pos < length:
+        for index, (open_delimiter, _) in enumerate(_DELIMITERS):
+            if 0 <= found[index] < pos:
+                found[index] = html.find(open_delimiter, pos)
         starts = [
-            (found, close)
-            for open_delimiter, close in _DELIMITERS
-            if (found := html.find(open_delimiter, pos)) != -1
+            (start, close)
+            for start, (_, close) in zip(found, _DELIMITERS, strict=True)
+            if start != -1
         ]
         if not starts:
             return

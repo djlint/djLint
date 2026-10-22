@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 
 _QUOTED_VALUE_PATTERN = compile_pattern(r"\"[^\"]*\"|'[^']*'")
 _UNQUOTED_VALUE_PATTERN = compile_pattern(r"=[ \t]*[^\s\"'=<>]")
+_SPACED_EQUALS_PATTERN = compile_pattern(r"[ ]=|=[ ]")
 
 _SRCSET_ATTRIBUTE_NAMES = frozenset(("srcset", "data-srcset", "sizes"))
 _COLLAPSIBLE_VALUE_ATTRIBUTE_NAMES = frozenset(("class", "style"))
@@ -61,10 +62,11 @@ def _rendered_length(config: Config, attribute_group: str) -> int:
 
 
 def normalize_attributes(config: Config, attribute_group: str) -> str:
-    """Lowercase a known attribute name and quote a bare value.
+    """Lowercase a known attribute name, quote a bare value, close up `=`.
 
     Only the names `H010` knows are lowercased, so a framework binding
-    such as `viewBox` or an angular input keeps the case it carries.
+    such as `viewBox` or an angular input keeps the case it carries. The
+    spaces `H012` reports around an attribute's equals sign are dropped.
 
     A value holding a quote of its own is left as written. It is not valid
     html to begin with, and a browser reads `a=b'c` as the single value
@@ -74,7 +76,8 @@ def normalize_attributes(config: Config, attribute_group: str) -> str:
     quotable = _UNQUOTED_VALUE_PATTERN.search(attribute_group) is not None
     lowerable = not config.ignore_case and not attribute_group.islower()
     requotable = "'" in attribute_group
-    if not (quotable or lowerable or requotable):
+    spaced = _SPACED_EQUALS_PATTERN.search(attribute_group) is not None
+    if not (quotable or lowerable or requotable or spaced):
         return attribute_group
 
     matches = list(config.attribute_pattern.finditer(attribute_group))
@@ -100,6 +103,9 @@ def normalize_attributes(config: Config, attribute_group: str) -> str:
             and name.lower() in HTML_LOWERCASE_ATTRIBUTE_NAMES
         ):
             rewrite(match.span(1), name.lower())
+
+        if spaced and value and match.start(2) - match.end(1) > 1:
+            rewrite((match.end(1), match.start(2)), "=")
 
         if (
             quotable

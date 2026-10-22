@@ -39,15 +39,28 @@ test_data = [
     ),
     pytest.param(
         ('<div data-ID="5">y</div>'),
+        ([]),
+        id="a longer name is not one the formatter lowercases",
+    ),
+    pytest.param(
+        ('<my-item :itemID="x"></my-item>'),
+        ([]),
+        id="a framework binding keeps its case",
+    ),
+    pytest.param(
+        ('<img Width="3" alt="x">'),
         ([
             {
                 "code": "H010",
                 "line": "1:0",
-                "match": "<div data-ID=",
+                "match": "<img Width=",
                 "message": "Attribute names should be lowercase.",
             }
         ]),
-        id="uppercase inside a longer name",
+        id="mixed case",
+    ),
+    pytest.param(
+        ('<p title="<img ID=x>">y</p>'), ([]), id="a tag inside a value"
     ),
 ]
 

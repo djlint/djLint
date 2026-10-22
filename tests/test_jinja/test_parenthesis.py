@@ -41,7 +41,7 @@ test_data = [
     ),
     pytest.param(
         "<a href = \"{{ url_for('test_reminders') }}\">Test reminders</a>",
-        "<a href = \"{{ url_for('test_reminders') }}\">Test reminders</a>\n",
+        "<a href=\"{{ url_for('test_reminders') }}\">Test reminders</a>\n",
         id="single_url_for_spaced_attribute_equals",
     ),
     pytest.param(

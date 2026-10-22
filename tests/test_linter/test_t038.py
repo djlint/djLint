@@ -33,6 +33,11 @@ django_test_data = [
         ("{% if x %}\n<p>hello</p>\n{% endif %}\n"), ([]), id="closed_if"
     ),
     pytest.param(
+        ('{% with a="{%" %}x{% endwith %}\n'),
+        ([]),
+        id="an opener inside a string is text",
+    ),
+    pytest.param(
         ("<p>hello</p>\n{% endfor %}\n"),
         ([
             {

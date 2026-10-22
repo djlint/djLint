@@ -333,7 +333,7 @@ Do:
 
 `Attribute names should be lowercase.`
 
-Uppercase attribute names are invalid in XHTML/XML serializations and defeat text search across templates (grepping for src= misses SRC=). The DOM normalizes HTML attribute names to lowercase anyway, so uppercase spellings add inconsistency with no benefit.
+Uppercase attribute names are invalid in XHTML/XML serializations and defeat text search across templates (grepping for src= misses SRC=). The DOM normalizes HTML attribute names to lowercase anyway, so uppercase spellings add inconsistency with no benefit. Only the names the formatter lowercases are reported: `class`, `id`, `src`, `width`, `height`, `alt`, `style`, `lang`, `title`, `media` and `srcset`. `--reformat` fixes them for you, and a framework binding such as `:itemID` or a longer name such as `data-ID` keeps its case.
 
 Don't:
 
@@ -369,7 +369,7 @@ Do:
 
 `There should be no spaces around attribute =.`
 
-With spaces around "=", the tag reads as three separate tokens, and it is one edit away from breaking apart: a line wrap or truncation in the middle leaves a bare boolean attribute plus stray text. Keeping name="value" contiguous is also what simple text tooling (grep, search-and-replace) assumes, so mixed spacing makes attributes hard to find and refactor reliably.
+With spaces around "=", the tag reads as three separate tokens, and it is one edit away from breaking apart: a line wrap or truncation in the middle leaves a bare boolean attribute plus stray text. Keeping name="value" contiguous is also what simple text tooling (grep, search-and-replace) assumes, so mixed spacing makes attributes hard to find and refactor reliably. `--reformat` drops the spaces for you.
 
 Don't:
 
