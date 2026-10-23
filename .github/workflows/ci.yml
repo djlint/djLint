@@ -49,9 +49,13 @@ jobs:
         with:
           python-version: "3.14"
           enable-cache: false
+      # uvx and the hook environments prek installs read neither pyproject.toml
+      # nor .npmrc, so their dependency cooldown is set here.
       - run: uvx --no-cache prek run --all-files --show-diff-on-failure
         env:
+          NPM_CONFIG_MIN_RELEASE_AGE: "3" # days
           RUFF_OUTPUT_FORMAT: github
+          UV_EXCLUDE_NEWER: 3 days
   pytest:
     runs-on: ubuntu-26.04
     strategy:

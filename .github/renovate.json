@@ -16,7 +16,6 @@
     }
   ],
   "dependencyDashboard": false,
-  "docker-compose": { "enabled": true },
   "extends": [
     "config:recommended",
     ":disableRateLimiting",
@@ -67,6 +66,5 @@
   ],
   "pre-commit": { "enabled": true },
   "rollbackPrs": true,
-  "semanticCommits": "enabled",
-  "schedule": ["at any time"]
+  "semanticCommits": "enabled"
 }
