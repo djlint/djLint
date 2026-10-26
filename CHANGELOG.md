@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- A tag whose attributes are spread over several lines, but that doesn't start its line, as in `<li><a …>` or `Read the <a …>`, is laid out from that line. The attributes line up under the first one, or with `--single-attribute-per-line` sit one indent in from the line with the closing `>` at the line's indent. They used to be indented as if the tag started the line, so they landed left of the tag, or a single space in after text.
+
 ## [1.47.1] - 2026-10-26
 
 ### Fix

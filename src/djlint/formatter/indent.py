@@ -502,7 +502,10 @@ def indent_html(rawcode: str, config: Config) -> str:
             leading_start = token.start
             while leading_start and value[leading_start - 1] in " \t":
                 leading_start -= 1
-            replacement = format_attributes(config, value, token)
+            written = "".join(output) + value[previous_end : token.start]
+            replacement = format_attributes(
+                config, value, token, written[written.rfind("\n") + 1 :]
+            )
             replacement_start = (
                 token.start
                 if replacement == value[token.start : token.end]

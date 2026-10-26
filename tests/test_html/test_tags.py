@@ -245,10 +245,10 @@ test_data = [
             "<p>Want to write us a letter? Use our<a><b><a>mailing address</a></b></a>.</p>\n"
             '<p>Want to write us a letter? Use our<a href="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.</p>\n'
             '<p>Want to write us a letter? Use our<a href="contacts.html#Mailing_address"\n'
-            '   href1="contacts.html#Mailing_address"\n'
-            '   href2="contacts.html#Mailing_address"\n'
-            '   href3="contacts.html#Mailing_address"\n'
-            '   href4="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.</p>\n'
+            '                                        href1="contacts.html#Mailing_address"\n'
+            '                                        href2="contacts.html#Mailing_address"\n'
+            '                                        href3="contacts.html#Mailing_address"\n'
+            '                                        href4="contacts.html#Mailing_address"><b><a>mailing address</a></b></a>.</p>\n'
         ),
         id="opening_at_end",
     ),

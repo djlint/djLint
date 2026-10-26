@@ -373,8 +373,15 @@ def _spreading_would_shorten_the_line(
     return len(config.attribute_pattern.findall(attribute_group)) > 1
 
 
-def format_attributes(config: Config, html: str, token: TagToken) -> str:
-    """Spread long attributes over multiple lines."""
+def format_attributes(
+    config: Config, html: str, token: TagToken, before_tag: str
+) -> str:
+    """Spread long attributes over multiple lines.
+
+    `before_tag` is what the output line holds before the tag, which differs
+    from the text before it in `html` once an earlier tag on the line has
+    been spread.
+    """
     attribute_group = html[token.name_end : token.attributes_end].strip()
     if (
         has_unquoted_template_expression(attribute_group)
@@ -407,12 +414,20 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
         leading_start -= 1
     leading_space = html[leading_start : token.start]
 
+    # A tag that doesn't start its line (`<li><a`, `text <a`) still wraps
+    # relative to that line: its indent for one attribute per line, or the
+    # tag's own column so the attributes line up under the first one.
+    line_indent = before_tag[: len(before_tag) - len(before_tag.lstrip(" \t"))]
+    tag_column = line_indent + "".join(
+        "\t" if char == "\t" else " " for char in before_tag[len(line_indent) :]
+    )
+
     tag = f"<{token.name} "
 
     spacing = (
-        leading_space + config.indent
+        line_indent + config.indent
         if config.single_attribute_per_line
-        else leading_space + len(tag) * " "
+        else tag_column + len(tag) * " "
     )
 
     attributes = []
@@ -534,7 +549,7 @@ def format_attributes(config: Config, html: str, token: TagToken) -> str:
         attribute_string = (
             f"{leading_space}<{token.name}"
             f"\n{spacing}{attribute_string}"
-            f"\n{leading_space}{close.strip()}"
+            f"\n{line_indent}{close.strip()}"
         )
     else:
         attribute_string = f"{leading_space}{tag}{attribute_string}{close}"
