@@ -36,9 +36,15 @@ jobs:
         working-directory: docs
       - run: npm run build
         working-directory: docs
-      - uses: untitaker/hyperlink@9375bc4063712ad490d5eb3d54df0b6aade15e54 # 0.3.2
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
-          args: docs/_site/
+          args: >-
+            --no-progress
+            --offline
+            --include-fragments
+            --index-files index.html
+            --root-dir ${{ github.workspace }}/docs/_site
+            docs/_site
   pre-commit:
     runs-on: ubuntu-26.04
     steps:
