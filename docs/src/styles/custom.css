@@ -1,0 +1,190 @@
+@import "@fontsource-variable/geologica/shrp.css";
+@import "@fontsource-variable/jetbrains-mono/index.css";
+
+/*
+ * djLint's one loud element is the yellow squiggle from its logo: the mark a
+ * linter draws under a problem. It shows up where something is being pointed
+ * at (the current page, a lint finding) and nowhere else. Everything around it
+ * stays quiet: an ink-blue dark theme, a cool white light theme, one sans and
+ * one mono, both with Cyrillic for the Russian docs.
+ */
+
+:root {
+  --sl-font: "Geologica Variable", system-ui, sans-serif;
+  --sl-font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+  --dj-squiggle: #f5c542;
+  --dj-ok: #73daca;
+  --dj-code-bg: #1a1b26;
+  --dj-code-line: #2a2c3d;
+
+  --sl-color-accent-low: #3a3216;
+  --sl-color-accent: #f5c542;
+  --sl-color-accent-high: #fbe3a0;
+
+  --sl-color-white: #f0f1f7;
+  --sl-color-gray-1: #e4e6f0;
+  --sl-color-gray-2: #c5c8d8;
+  --sl-color-gray-3: #9aa0b8;
+  --sl-color-gray-4: #6b7090;
+  --sl-color-gray-5: #34374c;
+  --sl-color-gray-6: #1d1e29;
+  --sl-color-black: #15161f;
+
+  --sl-color-bg-nav: var(--sl-color-black);
+  --sl-color-bg-sidebar: var(--sl-color-black);
+  --sl-color-hairline-shade: var(--sl-color-gray-6);
+  --sl-color-text-accent: var(--sl-color-accent-high);
+
+  --sl-text-h1: 2.4rem;
+  --sl-text-h2: 1.75rem;
+  --sl-text-h3: 1.3rem;
+  --sl-line-height: 1.7;
+  --sl-content-width: 46rem;
+}
+
+:root[data-theme="light"] {
+  --dj-squiggle: #e3a600;
+
+  --sl-color-accent-low: #fcefc4;
+  --sl-color-accent: #8f5f00;
+  --sl-color-accent-high: #4a3200;
+
+  --sl-color-white: #15161f;
+  --sl-color-gray-1: #23252f;
+  --sl-color-gray-2: #3d4058;
+  --sl-color-gray-3: #5a5f73;
+  --sl-color-gray-4: #8a8fa6;
+  --sl-color-gray-5: #d5d8e2;
+  --sl-color-gray-6: #eef0f4;
+  --sl-color-gray-7: #f6f7fa;
+  --sl-color-black: #ffffff;
+  --sl-color-text-accent: var(--sl-color-accent);
+}
+
+/*
+ * On wide screens the whole page (header, sidebar, content, table of contents)
+ * stays in one centred column instead of pinning the navigation to the left
+ * edge of a 32:9 monitor. Starlight positions the header, sidebar and table of
+ * contents with `position: fixed`, so each gets the side gutter explicitly.
+ */
+:root {
+  --dj-page-max: 90rem;
+  --dj-gutter: max(0px, (100vw - var(--dj-page-max)) / 2);
+}
+@media (min-width: 50rem) {
+  header.header {
+    padding-inline: calc(var(--sl-nav-pad-x) + var(--dj-gutter));
+  }
+  .sidebar-pane {
+    inset-inline-start: var(--dj-gutter);
+  }
+  .main-frame {
+    padding-inline: calc(
+        var(--sl-content-inline-start, 0rem) + var(--dj-gutter)
+      )
+      var(--dj-gutter);
+  }
+}
+@media (min-width: 90rem) {
+  .right-sidebar {
+    width: calc(
+      var(--sl-sidebar-width) +
+        (
+          var(--dj-page-max) - 2 * var(--sl-sidebar-width) -
+            var(--sl-content-width)
+        ) /
+        2
+    );
+  }
+}
+
+/* The squiggle itself. */
+.dj-squiggle,
+.sidebar-content a[aria-current="page"],
+.top-nav a[aria-current="page"] {
+  text-decoration: underline wavy var(--dj-squiggle);
+  text-decoration-thickness: 1.5px;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.35em;
+}
+
+/* Headings: sharpened terminals at heavy weights read as djLint's own voice. */
+h1,
+h2,
+h3,
+h4,
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
+  font-variation-settings: "SHRP" 100;
+  letter-spacing: -0.015em;
+}
+h1 {
+  font-weight: 800;
+}
+.sl-markdown-content :is(h2, h3) {
+  font-weight: 700;
+}
+
+/* Header */
+header.header {
+  border-bottom: 1px solid var(--sl-color-gray-6);
+}
+
+/* Sidebar: the current page is squiggled, not filled. */
+.sidebar-content a {
+  border-radius: 0.375rem;
+  color: var(--sl-color-gray-2);
+}
+.sidebar-content a:hover {
+  color: var(--sl-color-white);
+}
+.sidebar-content a[aria-current="page"],
+.sidebar-content a[aria-current="page"]:hover {
+  background: transparent;
+  color: var(--sl-color-white);
+  font-weight: 600;
+}
+.sidebar-content .group-label .large {
+  font-size: var(--sl-text-sm);
+  color: var(--sl-color-gray-3);
+  font-weight: 600;
+}
+
+/* Content */
+.sl-markdown-content a {
+  text-underline-offset: 0.2em;
+}
+.sl-markdown-content :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.3rem;
+  background: var(--sl-color-gray-6);
+  font-size: 0.875em;
+}
+
+/* Tips point somewhere, so they take the squiggle colour too. */
+.starlight-aside--tip {
+  --sl-color-asides-text-accent: var(--sl-color-accent-high);
+  --sl-color-asides-border: var(--dj-squiggle);
+  background-color: var(--sl-color-accent-low);
+}
+
+/* Primary buttons are squiggle yellow with ink text in both themes. */
+.sl-link-button.primary {
+  border-color: var(--dj-squiggle);
+  background: var(--dj-squiggle);
+  color: #15161f;
+}
+
+:focus-visible {
+  outline: 2px solid var(--dj-squiggle);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

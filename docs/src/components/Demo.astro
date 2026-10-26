@@ -1,0 +1,251 @@
+---
+const { t } = Astro.locals;
+const prefix = Astro.locals.starlightRoute.locale ? `/${Astro.locals.starlightRoute.locale}` : "";
+
+// Form fields named after the worker's config keys. A field with a
+// placeholder is a text box, one without is a checkbox. `anchor` points at the
+// option on the configuration page when its name differs.
+const fields = [
+  { name: "customBlocks", label: "Custom Blocks", placeholder: "toc,example" },
+  { name: "ignoreBlocks", label: "Ignore Blocks", placeholder: "toc,example" },
+  { name: "customHtml", label: "Custom HTML", placeholder: "mjml,simple-greeting,mj-\\w+" },
+  { name: "indent", label: "Indent", placeholder: "4" },
+  { name: "blankLineAfterTag", label: "Blank Line after Tag", placeholder: "load,extends,include" },
+  { name: "blankLineBeforeTag", label: "Blank Line before Tag", placeholder: "load,extends,include" },
+  { name: "maxLineLength", label: "Max Line Length", placeholder: "80" },
+  { name: "maxAttributeLength", label: "Max Attribute Length", placeholder: "0" },
+  { name: "maxBlankLines", label: "Max Blank Lines", placeholder: "0" },
+  { name: "formatAttributeTemplateTags", label: "Format Attribute Template Tags" },
+  { name: "singleAttributePerLine", label: "Single Attribute Per Line" },
+  { name: "formatAttributeJsJson", label: "Format Attribute JS/JSON" },
+  { name: "formatAttributeJsJsonPattern", label: "Attribute JS/JSON Pattern", placeholder: "^(on[a-z]+|x-[a-z-]+)$" },
+  { name: "formatAttributeJsJsonMinProps", label: "Attribute JS/JSON Min Props", placeholder: "2" },
+  { name: "preserveLeadingSpace", label: "Preserve Leading Space" },
+  { name: "preserveBlankSpace", label: "Preserve Blank Space", anchor: "preserve-blank-lines" },
+  { name: "preserveClassNewlines", label: "Preserve Class Newlines" },
+  { name: "formatJs", label: "Format JS" },
+  { name: "indentJs", label: "JS Indent", placeholder: "4", anchor: "format-js" },
+  { name: "formatCss", label: "Format CSS" },
+  { name: "indentCss", label: "CSS Indent", placeholder: "4", anchor: "format-css" },
+  { name: "closeVoidTags", label: "Close Void Tags" },
+  { name: "ignoreCase", label: "Ignore Case" },
+  { name: "lineBreakAfterMultilineTag", label: "Line Break After Multiline Tag" },
+  { name: "noLineAfterYaml", label: "No Line After YAML" },
+  { name: "noFunctionFormatting", label: "No Function Formatting" },
+  { name: "noSetFormatting", label: "No Set Formatting" },
+];
+
+const profiles = [
+  ["html", "html (default)"],
+  ["django", "django"],
+  ["jinja", "jinja"],
+  ["nunjucks", "nunjucks (nunjucks and twig)"],
+  ["handlebars", "handlebars (handlebars and mustache)"],
+  ["liquid", "liquid"],
+  ["golang", "golang (go templates)"],
+  ["angular", "angular"],
+  ["tera", "tera"],
+  ["askama", "askama"],
+];
+
+const help = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
+const kebab = (name: string) => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+---
+
+<div class="demo not-content">
+  <p>{t("djlint.demo_description")} <small id="djlint-version"></small></p>
+  <p id="djlint-status">{t("djlint.demo_loading")}</p>
+
+  <div class="demo-workspace" hidden>
+    <form id="djlint-settings">
+      <label>
+        <span>Profile <a href={help("profile")} target="_blank">?</a></span>
+        <select name="profile">
+          {profiles.map(([value, text]) => <option value={value}>{text}</option>)}
+        </select>
+      </label>
+      {
+        fields.map(({ name, label, placeholder, anchor }) => (
+          <label class={placeholder ? undefined : "checkbox"}>
+            {placeholder ? null : <input name={name} type="checkbox" />}
+            <span>
+              {label} <a href={help(anchor ?? kebab(name))} target="_blank">?</a>
+            </span>
+            {placeholder ? <input name={name} type="text" placeholder={placeholder} /> : null}
+          </label>
+        ))
+      }
+    </form>
+    <div class="demo-editors">
+      <section>
+        <p class="demo-head" id="djlint-input-label">input.html</p>
+        <div class="demo-editor" id="djlint-input"></div>
+      </section>
+      <section>
+        <p class="demo-head" id="djlint-output-label"><span class="prompt" aria-hidden="true">$</span> djlint input.html --reformat</p>
+        <div class="demo-editor" id="djlint-output"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { html } from "@codemirror/lang-html";
+  import { EditorState } from "@codemirror/state";
+  import { basicSetup, EditorView } from "codemirror";
+  import { djlintEditorTheme } from "../scripts/editor-theme.js";
+
+  const status = document.getElementById("djlint-status")!;
+  const form = document.querySelector<HTMLFormElement>("#djlint-settings")!;
+  const worker = new Worker("/static/js/worker.js", { type: "module" });
+  let sessionId = 0;
+
+  const editorState = (label: string, extensions: object[], doc = "") =>
+    EditorState.create({
+      doc,
+      extensions: [
+        basicSetup,
+        html(),
+        djlintEditorTheme,
+        EditorView.contentAttributes.of({ "aria-labelledby": label }),
+        ...extensions,
+      ],
+    });
+
+  function getConfig() {
+    const config: Record<string, string | boolean> = {};
+    for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
+      const value = field.type === "checkbox" ? field.checked : field.value;
+      if (value) config[field.name] = value;
+    }
+    return config;
+  }
+
+  function format() {
+    sessionId += 1;
+    worker.postMessage({ config: getConfig(), html: input.state.doc.toString(), id: sessionId });
+  }
+
+  let timer: ReturnType<typeof setTimeout>;
+  const input = new EditorView({
+    parent: document.getElementById("djlint-input")!,
+    state: editorState(
+      "djlint-input-label",
+      [
+        EditorView.updateListener.of((update) => {
+          if (!update.docChanged) return;
+          clearTimeout(timer);
+          timer = setTimeout(format, 100);
+        }),
+      ],
+      "<div>\n    <p>Welcome to djLint online!</p>\n</div>",
+    ),
+  });
+  const output = new EditorView({
+    parent: document.getElementById("djlint-output")!,
+    state: editorState("djlint-output-label", [EditorState.readOnly.of(true)]),
+  });
+
+  worker.onmessage = ({ data: { id, type, message } }) => {
+    if (type === "status" && message === "ready") {
+      status.hidden = true;
+      document.querySelector<HTMLElement>(".demo-workspace")!.hidden = false;
+      format();
+    } else if (type === "status") {
+      status.textContent = message;
+    } else if (type === "version") {
+      document.getElementById("djlint-version")!.textContent = message;
+    } else if ((type === "html" || type === "error") && id === sessionId) {
+      output.dispatch({ changes: { from: 0, to: output.state.doc.length, insert: message } });
+    }
+  };
+
+  form.addEventListener("change", format);
+</script>
+
+<style>
+  /* The splash template caps content at reading width; the editors need the
+     whole page column, which custom.css already caps for wide screens. */
+  :global(main:has(.demo) .sl-container) {
+    max-width: none;
+  }
+  .demo-workspace:not([hidden]) {
+    display: grid;
+    grid-template-columns: 16rem 1fr;
+    gap: 1.5rem;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-height: 75vh;
+    overflow-y: auto;
+    font-size: var(--sl-text-sm);
+  }
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin: 0;
+  }
+  label.checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  form a {
+    text-decoration: none;
+  }
+  input[type="text"],
+  select {
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.375rem;
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font: inherit;
+  }
+  .demo-editors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 0;
+  }
+  .demo-editors section {
+    margin: 0;
+    border: 1px solid var(--dj-code-line);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--dj-code-bg);
+  }
+  .demo-head {
+    margin: 0;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--dj-code-line);
+    color: #a9b1d6;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+  }
+  .demo-head .prompt {
+    color: var(--dj-squiggle);
+  }
+  #djlint-status {
+    color: var(--sl-color-gray-3);
+  }
+  .demo-editor {
+    height: 70vh;
+    margin: 0;
+  }
+  @media (max-width: 60rem) {
+    .demo-workspace:not([hidden]),
+    .demo-editors {
+      grid-template-columns: 1fr;
+    }
+    form {
+      max-height: none;
+    }
+    .demo-editor {
+      height: 40vh;
+    }
+  }
+</style>

@@ -1,0 +1,119 @@
+---
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import { Badge, Code, TabItem, Tabs } from "@astrojs/starlight/components";
+import options from "../data/configuration.json";
+
+interface Props {
+  label: string;
+  placeholder: string;
+  empty: string;
+}
+
+const { label, placeholder, empty } = Astro.props;
+const lang = Astro.locals.starlightRoute.locale ?? "en";
+const markdown = await createMarkdownProcessor();
+
+// djlint.toml takes the pyproject.toml settings without the [tool.djlint] table.
+const djlintToml = (value: string) =>
+  value
+    .replace(/\[tool\.djlint\.([^\]]+)\]/g, "[$1]")
+    .replace(/\[tool\.djlint\]\n?/g, "")
+    .trim();
+
+const usageTabs = (usage: (typeof options)[number]["usage"]) =>
+  usage.flatMap(({ name, value }) => {
+    if (name === "cli") return [{ label: name, lang: "bash", code: value }];
+    if (name === ".djlintrc") return [{ label: name, lang: "json", code: value }];
+    return [
+      { label: name, lang: "toml", code: value },
+      { label: "djlint.toml / .djlint.toml", lang: "toml", code: djlintToml(value) },
+    ];
+  });
+
+const rendered = await Promise.all(
+  options
+    .toSorted((a, b) => a.name.localeCompare(b.name))
+    .map(async (option) => ({
+      ...option,
+      id: option.name.replaceAll("_", "-"),
+      html: (await markdown.render(option.description[lang] ?? option.description.en)).code,
+      tabs: usageTabs(option.usage),
+    })),
+);
+---
+
+<label class="config-filter">
+  <span>{label}</span>
+  <input id="config-filter" type="search" placeholder={placeholder} />
+</label>
+<p id="config-empty" hidden>{empty}</p>
+
+{
+  rendered.map((option) => (
+    <section class="config-option" data-name={option.name}>
+      <h3 id={option.id}>
+        <a href={`#${option.id}`}>{option.name}</a>
+      </h3>
+      <p class="config-tags">
+        <Badge text={`${Astro.locals.t("djlint.since")} ${option.since}`} variant="default" />
+        {option.tags.map((tag) => <Badge text={tag} variant="note" />)}
+      </p>
+      <Fragment set:html={option.html} />
+      <Tabs syncKey="config-file">
+        {option.tabs.map((tab) => (
+          <TabItem label={tab.label}>
+            <Code code={tab.code} lang={tab.lang} />
+          </TabItem>
+        ))}
+      </Tabs>
+    </section>
+  ))
+}
+
+<script>
+  const filter = document.querySelector<HTMLInputElement>("#config-filter")!;
+  const empty = document.querySelector<HTMLElement>("#config-empty")!;
+  const sections = document.querySelectorAll<HTMLElement>(".config-option");
+
+  filter.addEventListener("input", () => {
+    const words = filter.value.toLowerCase().split(/[\s_-]+/).filter(Boolean);
+    let shown = 0;
+    for (const section of sections) {
+      const text = section.textContent!.toLowerCase();
+      section.hidden = !words.every((word) => text.includes(word));
+      if (!section.hidden) shown++;
+    }
+    empty.hidden = shown > 0;
+  });
+</script>
+
+<style>
+  .config-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-weight: 600;
+  }
+  .config-filter input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font: inherit;
+    font-weight: normal;
+  }
+  .config-option {
+    padding-top: 1rem;
+    border-top: 1px solid var(--sl-color-hairline);
+  }
+  .config-option h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .config-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+</style>
