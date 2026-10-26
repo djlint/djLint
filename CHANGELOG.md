@@ -4,14 +4,12 @@
 
 ## [Unreleased]
 
+## [1.47.1] - 2026-10-26
+
 ### Fix
 
-- The json schema allows any option under `css` and `js`, so a strict validator such as Tombi no longer reports `indent_size` there.
 - `preserve-inline` in the `js` setting `brace_style` takes effect, so `{ bubbles: true }` stays on one line in a `<script>` or in an attribute formatted with `--format-attribute-js-json`. It used to be dropped before the code was formatted.
-
-### Packaging
-
-- The binary wheels are compiled against the dependency versions djLint is tested with, including the mypy whose license `LICENSE-THIRD-PARTY` carries. They used to take the latest ones.
+- The json schema allows any option under `css` and `js`, so a strict validator such as Tombi no longer reports `indent_size` there.
 
 ## [1.47.0] - 2026-10-22
 
