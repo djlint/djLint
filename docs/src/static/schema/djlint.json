@@ -13,8 +13,8 @@
         { "type": "array", "items": { "type": "string" } }
       ]
     },
-    "css-beautify": { "type": "object" },
-    "js-beautify": { "type": "object" }
+    "css-beautify": { "type": "object", "additionalProperties": true },
+    "js-beautify": { "type": "object", "additionalProperties": true }
   },
   "properties": {
     "$schema": {

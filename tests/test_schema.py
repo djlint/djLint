@@ -54,6 +54,14 @@ def test_the_schema_turns_away_what_djlint_would() -> None:
     assert _schema()["additionalProperties"] is False
 
 
+def test_the_schema_passes_any_option_to_the_beautifiers() -> None:
+    """Strict validators, such as tombi's, read a missing one as false."""
+    definitions = _schema()["definitions"]
+
+    assert definitions["css-beautify"]["additionalProperties"] is True
+    assert definitions["js-beautify"]["additionalProperties"] is True
+
+
 def test_the_schema_offers_the_values_djlint_accepts() -> None:
     """The schema and djLint agree on what a value may be.
 

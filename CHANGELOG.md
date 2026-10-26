@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fix
+
+- The json schema allows any option under `css` and `js`, so a strict validator such as Tombi no longer reports `indent_size` there.
+
 ### Packaging
 
 - The binary wheels are compiled against the dependency versions djLint is tested with, including the mypy whose license `LICENSE-THIRD-PARTY` carries. They used to take the latest ones.
