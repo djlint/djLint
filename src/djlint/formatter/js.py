@@ -18,14 +18,11 @@ _SCRIPT_BLOCK_PATTERN: Final = raw_text_block_pattern("script")
 def format_js(html: str, config: Config) -> str:
     """Format javascript inside <script> tags."""
     import jsbeautifier  # noqa: PLC0415
-    from jsbeautifier.javascript.options import BeautifierOptions  # noqa: PLC0415
 
     return format_blocks(
         html,
         config,
         pattern=_SCRIPT_BLOCK_PATTERN,
-        beautify=lambda source, options: jsbeautifier.beautify(
-            source, BeautifierOptions(options)
-        ),
+        beautify=jsbeautifier.beautify,
         beautifier_config=config.js_config,
     )

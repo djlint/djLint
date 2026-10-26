@@ -18,14 +18,11 @@ _STYLE_BLOCK_PATTERN: Final = raw_text_block_pattern("style")
 def format_css(html: str, config: Config) -> str:
     """Format css inside <style> tags."""
     import cssbeautifier  # noqa: PLC0415
-    from cssbeautifier.css.options import BeautifierOptions  # noqa: PLC0415
 
     return format_blocks(
         html,
         config,
         pattern=_STYLE_BLOCK_PATTERN,
-        beautify=lambda source, options: cssbeautifier.beautify(
-            source, BeautifierOptions(options)
-        ),
+        beautify=cssbeautifier.beautify,
         beautifier_config=config.css_config,
     )

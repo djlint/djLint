@@ -238,15 +238,12 @@ def format_json_with_indent(
 def format_js_with_indent(config: Config, value: str, base_indent: str) -> str:
     """Format JavaScript code/object with proper HTML-relative indentation."""
     import jsbeautifier  # noqa: PLC0415
-    from jsbeautifier.javascript.options import BeautifierOptions  # noqa: PLC0415
 
     js_config = dict(config.js_config)
     js_config["indent_level"] = 0
 
     try:
-        formatted: str = jsbeautifier.beautify(
-            value, BeautifierOptions(js_config)
-        )
+        formatted: str = jsbeautifier.beautify(value, js_config)
     except ValueError:
         return value
 

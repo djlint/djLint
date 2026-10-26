@@ -292,3 +292,22 @@ def test_indent_js_keeps_the_other_js_settings(tmp_path: Path) -> None:
     config = Config(str(template), indent_js=2)
 
     assert config.js_config == {"wrap_line_length": 80, "indent_size": 2}
+
+
+def test_brace_style_preserve_inline(tmp_path: Path) -> None:
+    """A short object stays on its line under `preserve-inline`."""
+    (tmp_path / ".djlintrc").write_text(
+        '{"js": {"brace_style": "collapse,preserve-inline"}}', encoding="utf-8"
+    )
+    template = tmp_path / "a.html"
+    template.write_text("<div></div>", encoding="utf-8")
+    source = (
+        "<script>\n"
+        '    el.dispatchEvent(new Event("change", { bubbles: true }));\n'
+        "</script>\n"
+    )
+
+    output = formatter(Config(str(template), format_js=True), source)
+
+    printer(source, source, output)
+    assert source == output

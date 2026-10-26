@@ -14,9 +14,11 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint.reformat import formatter
+from djlint.settings import Config
 from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
+    from pathlib import Path
     from typing import Any
 
 test_data = [
@@ -259,5 +261,24 @@ test_data = [
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
 def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
     output = formatter(config_builder(args), source)
+    printer(expected, source, output)
+    assert expected == output
+
+
+def test_brace_style_preserve_inline(tmp_path: Path) -> None:
+    """A short object stays on its line under `preserve-inline`."""
+    (tmp_path / ".djlintrc").write_text(
+        '{"js": {"brace_style": "collapse,preserve-inline"}}', encoding="utf-8"
+    )
+    template = tmp_path / "a.html"
+    template.write_text("<div></div>", encoding="utf-8")
+    source = "<div onclick='foo({ a: 1 }); bar();'></div>"
+    expected = "<div onclick='foo({ a: 1 });\n              bar();'></div>\n"
+    config = Config(
+        str(template), format_attribute_js_json=True, max_attribute_length=0
+    )
+
+    output = formatter(config, source)
+
     printer(expected, source, output)
     assert expected == output

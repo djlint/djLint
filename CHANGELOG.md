@@ -7,6 +7,7 @@
 ### Fix
 
 - The json schema allows any option under `css` and `js`, so a strict validator such as Tombi no longer reports `indent_size` there.
+- `preserve-inline` in the `js` setting `brace_style` takes effect, so `{ bubbles: true }` stays on one line in a `<script>` or in an attribute formatted with `--format-attribute-js-json`. It used to be dropped before the code was formatted.
 
 ### Packaging
 
