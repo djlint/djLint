@@ -80,4 +80,4 @@ jobs:
           enable-cache: true
           prune-cache: true
           save-cache: ${{ github.ref == 'refs/heads/master' }}
-      - run: uv run --group test --no-group dev --locked pytest
+      - run: uv run --group test-ci --no-group dev --locked pytest
