@@ -178,6 +178,7 @@ def run(
                 errors.append({
                     "code": rule["name"],
                     "line": get_line(content.start(), line_ends),
+                    "end": get_line(content.end(), line_ends),
                     "match": content.group()[:20],
                     "message": rule["message"],
                 })

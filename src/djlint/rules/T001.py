@@ -100,6 +100,7 @@ def run(
         errors.append({
             "code": rule["name"],
             "line": get_line(start, line_ends),
+            "end": get_line(match.end(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         })

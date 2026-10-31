@@ -9,9 +9,9 @@ import time
 
 import pytest
 
-from djlint.lint import linter
 from djlint.rules.T043 import run
 from djlint.settings import Config
+from tests.conftest import linter
 
 test_data = [
     pytest.param(

@@ -330,6 +330,7 @@ def run(
         {
             "code": rule["name"],
             "line": get_line(extends.start(), line_ends),
+            "end": get_line(extends.end(), line_ends),
             "match": extends.group().strip()[:20],
             "message": rule["message"],
         },

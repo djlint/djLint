@@ -228,6 +228,7 @@ def run(
             {
                 "code": rule["name"],
                 "line": get_line(opening.start, line_ends),
+                "end": get_line(token.end, line_ends),
                 "match": html[opening.start : token.end].strip()[:20],
                 "message": rule["message"],
             },

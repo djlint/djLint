@@ -1255,6 +1255,7 @@ class Config:
         "sarif",
         "single_attribute_per_line",
         "single_line_template_tags",
+        "skipped_rules",
         "sort_attributes",
         "sort_load_tags",
         "start_template_tags",
@@ -1343,6 +1344,7 @@ class Config:
         sarif: bool = False,
         stdin: bool | None = None,
         stdin_filename: str | None = None,
+        python_rules: bool = True,
     ) -> None:
         self.project_root = find_project_root(
             Path.cwd() if src == "-" else Path(src).resolve()
@@ -1562,16 +1564,20 @@ class Config:
         )
         with (Path(__file__).parent / "rules.yaml").open("rb") as f:
             default_rules = yaml.safe_load(f)
-        rule_set = tuple(
-            validate_rules(
-                chain(
-                    default_rules,
-                    load_custom_rules(
-                        rules or find_djlint_rules(self.project_root)
-                    ),
-                )
-            )
+        custom_rules = load_custom_rules(
+            rules or find_djlint_rules(self.project_root)
         )
+        self.skipped_rules: tuple[str, ...] = ()
+        if not python_rules:
+            self.skipped_rules = tuple(
+                str(x["rule"].get("name", "undefined"))
+                for x in custom_rules
+                if "python_module" in x["rule"]
+            )
+            custom_rules = tuple(
+                x for x in custom_rules if "python_module" not in x["rule"]
+            )
+        rule_set = tuple(validate_rules(chain(default_rules, custom_rules)))
         ignored_codes = set(split_option_list(self.ignore))
         included_codes = set(split_option_list(self.include))
         if self.ignore_case:

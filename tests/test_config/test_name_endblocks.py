@@ -7,9 +7,8 @@ from __future__ import annotations
 
 import pytest
 
-from djlint.lint import linter
 from djlint.reformat import formatter
-from tests.conftest import config_builder, printer
+from tests.conftest import config_builder, linter, printer
 
 test_data = [
     pytest.param(

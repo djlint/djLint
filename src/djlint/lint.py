@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib
+import sys
 from bisect import bisect_right
 from collections.abc import Sequence
 from operator import itemgetter
@@ -44,6 +45,7 @@ flags: Final = MappingProxyType({
     "re.LOCALE": re.LOCALE,
 })
 _LINE_PATTERN: Final = compile_pattern(r"(?:.*\n)|(?:[^\n]+$)")
+_POSITION_PATTERN: Final = compile_pattern(r"\d+:\d+")
 _line_end: Final = itemgetter("end")
 
 
@@ -68,6 +70,93 @@ def get_line(start: int, line_ends: Sequence[Mapping[str, int]]) -> str:
     line = line_ends[index]
 
     return f"{index + 1}:{start - line['start']}"
+
+
+def _is_position(position: object) -> bool:
+    """Whether a value reads as the `line:column` of a finding."""
+    return isinstance(position, str) and bool(
+        _POSITION_PATTERN.fullmatch(position)
+    )
+
+
+def _as_tuple(position: str) -> tuple[int, int]:
+    line, column = position.split(":")
+    return int(line), int(column)
+
+
+def _offset(
+    position: str, line_ends: Sequence[Mapping[str, int]]
+) -> int | None:
+    """Where a position is in the text, if its line exists."""
+    line, column = _as_tuple(position)
+    if not 1 <= line <= len(line_ends):
+        return None
+    return line_ends[line - 1]["start"] + column
+
+
+def _end_of_match(
+    error: LintError, line_ends: Sequence[Mapping[str, int]]
+) -> str:
+    """Where the text of a finding ends, for a rule that doesn't say."""
+    start = _offset(error["line"], line_ends)
+    if start is None:
+        return error["line"]
+    return get_line(start + len(error["match"]), line_ends)
+
+
+def _without_trailing_space(
+    html: str, error: LintError, line_ends: Sequence[Mapping[str, int]]
+) -> LintError:
+    """End a finding at its last visible character."""
+    start = _offset(error["line"], line_ends)
+    end = _offset(error["end"], line_ends)
+    if start is None or end is None or end <= start:
+        return error
+    trimmed = len(html[start:end].rstrip())
+    if not trimmed:
+        return error
+    return {**error, "end": get_line(start + trimmed, line_ends)}
+
+
+def _module_error(
+    rule: Mapping[str, Any],
+    error: LintError,
+    line_ends: Sequence[Mapping[str, int]],
+) -> LintError:
+    """Give a rule module's finding an end, once its positions are valid."""
+    # Whatever a rule returned, which compiled code would reject as it reads it.
+    found: Mapping[str, object] = error
+    positions = {"line": found.get("line"), "end": found.get("end", "1:0")}
+    for key, position in positions.items():
+        if not _is_position(position):
+            msg = (
+                f"Error: {rule['name']} python_module run() returned {key}"
+                f" {position!r}. It should be a string of a line and a column,"
+                " such as '2:3'."
+            )
+            raise AssertionError(msg)
+    end = error.get("end") or _end_of_match(error, line_ends)
+    if _as_tuple(end) < _as_tuple(error["line"]):
+        msg = (
+            f"Error: {rule['name']} python_module run() returned end {end!r},"
+            f" which is before line {error['line']!r}."
+        )
+        raise AssertionError(msg)
+    return {**error, "end": end}
+
+
+def _import_rule_module(config: Config, name: str) -> Any:
+    """Import a rule's module, which can be in the project.
+
+    The project goes last on the path, so that its html.py doesn't stand in
+    for the standard library's, and it stays there for what a rule imports
+    while it runs. Only a custom rule puts it there: without one, nothing of
+    the project can be imported.
+    """
+    root = str(config.project_root)
+    if not name.startswith("djlint.") and root not in sys.path:
+        sys.path.append(root)
+    return importlib.import_module(name)
 
 
 def _is_html_inside_template_tag(
@@ -126,7 +215,7 @@ def linter(
             continue
 
         if "python_module" in rule:
-            rule_module = importlib.import_module(rule["python_module"])
+            rule_module = _import_rule_module(config, rule["python_module"])
             module_errors = rule_module.run(
                 rule=rule,
                 config=config,
@@ -140,7 +229,9 @@ def linter(
                     " a sequence of dict with keys: code, line, match, message."
                 )
                 raise AssertionError(msg)
-            file_errors.extend(module_errors)
+            file_errors.extend(
+                _module_error(rule, error, line_ends) for error in module_errors
+            )
 
         else:
             for pattern in rule["compiled_patterns"]:
@@ -148,6 +239,7 @@ def linter(
                     {
                         "code": rule["name"],
                         "line": get_line(match.start(), line_ends),
+                        "end": get_line(match.end(), line_ends),
                         "match": match.group().strip()[:20],
                         "message": rule["message"],
                     }
@@ -161,7 +253,9 @@ def linter(
         key = (error["code"], error["line"], error["match"], error["message"])
         if key not in seen:
             seen.add(key)
-            unique_errors.append(error)
+            unique_errors.append(
+                _without_trailing_space(html, error, line_ends)
+            )
     return {filename: unique_errors}
 
 

@@ -40,7 +40,12 @@ def test_lint_finding_is_a_result(runner: CliRunner) -> None:
     assert finding["message"]["text"]
     location = finding["locations"][0]["physicalLocation"]
     assert location["artifactLocation"] == {"uri": "stdin"}
-    assert location["region"] == {"startLine": 1, "startColumn": 1}
+    assert location["region"] == {
+        "startLine": 1,
+        "startColumn": 1,
+        "endLine": 1,
+        "endColumn": 12,
+    }
 
     rule = run["tool"]["driver"]["rules"][finding["ruleIndex"]]
     assert rule["id"] == "H020"
