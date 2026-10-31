@@ -13,6 +13,16 @@
       ],
       "matchStringsStrategy": "recursive",
       "datasourceTemplate": "pypi"
+    },
+    {
+      "customType": "regex",
+      "description": "The Pyodide the demo on the website loads from the CDN.",
+      "managerFilePatterns": ["/(^|/)static/js/worker\\.js$/"],
+      "matchStrings": [
+        "cdn\\.jsdelivr\\.net/pyodide/v(?<currentValue>[^/]+)/full/"
+      ],
+      "depNameTemplate": "pyodide",
+      "datasourceTemplate": "npm"
     }
   ],
   "dependencyDashboard": false,
