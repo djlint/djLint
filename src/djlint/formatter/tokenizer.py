@@ -165,24 +165,18 @@ def _has_bare_gt(source: str, start: int, end: int) -> bool:
     return gt_in_quote
 
 
-def _next_template_opener(
-    source: str, start: int, stop: int, *, mako: bool
-) -> int:
-    """Return the next "{" or "$" position in [start, stop), or -1."""
+def _next_template_opener(source: str, start: int, stop: int) -> int:
+    """Return the next "{" or "${" position in [start, stop), or -1.
+
+    A "$" opens nothing without its brace, so only braces are searched for:
+    looking for "$" as well would read past every one of them to the next
+    brace, again from each.
+    """
     brace = source.find("{", start, stop)
-    if not mako:
-        return brace
-    dollar = source.find("$", start, stop)
-    if brace < 0:
-        return dollar
-    if dollar < 0:
-        return brace
-    return min(brace, dollar)
+    return brace - 1 if brace > start and source[brace - 1] == "$" else brace
 
 
-def _enclosing_template_end(
-    source: str, start: int, lt: int, *, mako: bool
-) -> int | None:
+def _enclosing_template_end(source: str, start: int, lt: int) -> int | None:
     """End of a template expression opening in [start, lt) that spans lt.
 
     A "<" used as a less-than operator inside a template expression
@@ -190,7 +184,7 @@ def _enclosing_template_end(
     """
     cursor = start
     while cursor < lt:
-        opener = _next_template_opener(source, cursor, lt, mako=mako)
+        opener = _next_template_opener(source, cursor, lt)
         if opener < 0:
             return None
         after = _after_template(source, opener)
@@ -215,36 +209,36 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
     of the expression's own strings, as in "{{ x|default:"a>b" }}", is not
     the tag's.
     """
-    mako = "$" in source
-    has_templates = mako or "{" in source
+    has_templates = "{" in source
     length = len(source)
     search_from = 0
     while (start := source.find("<", search_from)) >= 0:
         if has_templates:
-            enclosing_end = _enclosing_template_end(
-                source, search_from, start, mako=mako
-            )
+            enclosing_end = _enclosing_template_end(source, search_from, start)
             if enclosing_end is not None:
                 search_from = enclosing_end
                 continue
-        if source.startswith("<!--", start):
-            comment_end = source.find("-->", start + 4)
-            if comment_end < 0:
-                search_from = start + 4
+        # Comments and CDATA sections are declarations too.
+        marker = source[start + 1 : start + 2]
+        closing = marker == "/"
+        declaration = marker == "!"
+        if declaration:
+            if source.startswith("<!--", start):
+                comment_end = source.find("-->", start + 4)
+                if comment_end < 0:
+                    search_from = start + 4
+                    continue
+                search_from = comment_end + 3
                 continue
-            search_from = comment_end + 3
-            continue
-        if source.startswith("<![CDATA[", start):
-            cdata_end = source.find("]]>", start + 9)
-            if cdata_end < 0:
-                search_from = start + 9
+            if source.startswith("<![CDATA[", start):
+                cdata_end = source.find("]]>", start + 9)
+                if cdata_end < 0:
+                    search_from = start + 9
+                    continue
+                search_from = cdata_end + 3
                 continue
-            search_from = cdata_end + 3
-            continue
 
         name_start = start + 1
-        closing = source[name_start : name_start + 1] == "/"
-        declaration = source[name_start : name_start + 1] == "!"
         if closing or declaration:
             name_start += 1
         if name_start >= length:
@@ -252,12 +246,12 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
             continue
 
         if source[name_start].isalpha():
-            name_end = name_start
-            while (
-                name_end < length
-                and not source[name_end].isspace()
-                and source[name_end] not in "/>{"
-            ):
+            # The first character is a letter, so the name runs past it.
+            name_end = name_start + 1
+            while name_end < length:
+                char = source[name_end]
+                if char in "/>{" or char.isspace():
+                    break
                 name_end += 1
         else:
             # A tag whose name a template writes, as in "<{{ tag }}". The
@@ -274,30 +268,24 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
             name_end = named_by_template
 
         quote: str | None = None
+        quote_end = -1
         cursor = name_end
         while cursor < length:
-            char = source[cursor]
-            if char in {"$", "{"}:
-                template_end = _after_template(source, cursor)
-                spans_tag_end = (
-                    template_end is not None
-                    and quote is not None
-                    and char != "$"
-                    and source.find(">", cursor, template_end) >= 0
-                    and _has_bare_gt(source, cursor, template_end)
-                )
-                if template_end is not None and not spans_tag_end:
-                    cursor = template_end
-                    continue
+            if quote is not None:
+                # Inside a value only its closing quote and a template can
+                # change the scan. The quote is searched for again only when
+                # a template took the cursor past it, and each search stops
+                # at it, so no stretch of the value is read twice. A value
+                # that never closes has no ">" left to end its tag.
+                if quote_end < cursor:
+                    quote_end = source.find(quote, cursor)
+                    if quote_end < 0:
+                        return
+                opener = _next_template_opener(source, cursor, quote_end)
+                cursor = quote_end if opener < 0 else opener
 
-            if char in "\"'":
-                quote = (
-                    None if quote == char else char if quote is None else quote
-                )
-            elif char in "{}" and quote is None:
-                search_from = start + 1
-                break
-            elif char == ">" and quote is None:
+            char = source[cursor]
+            if char == ">":
                 attributes_end = cursor
                 while (
                     attributes_end > name_end
@@ -326,6 +314,25 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
                     self_closing=self_closing,
                 )
                 search_from = cursor + 1
+                break
+
+            if char in {"$", "{"}:
+                template_end = _after_template(source, cursor)
+                spans_tag_end = (
+                    template_end is not None
+                    and quote is not None
+                    and char != "$"
+                    and source.find(">", cursor, template_end) >= 0
+                    and _has_bare_gt(source, cursor, template_end)
+                )
+                if template_end is not None and not spans_tag_end:
+                    cursor = template_end
+                    continue
+
+            if char in "\"'":
+                quote = char if quote is None else None
+            elif char in "{}" and quote is None:
+                search_from = start + 1
                 break
             cursor += 1
         else:

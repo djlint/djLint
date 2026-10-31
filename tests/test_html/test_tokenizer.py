@@ -5,12 +5,17 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING
 
+import pytest
+
 from djlint.formatter.compress import compress_html
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.reformat import formatter
 
 if TYPE_CHECKING:
     from djlint.settings import Config
+
+
+FAR = " " * 2000000
 
 
 def test_tokenize_tags_preserves_source_positions() -> None:
@@ -146,6 +151,64 @@ def test_a_run_of_unclosed_braces_is_read_once() -> None:
     ]
 
     assert tokens == [source[: source.index(">") + 1], "</a>"]
+    assert time.perf_counter() - started < 1
+
+
+def test_a_value_that_never_closes_ends_the_scan() -> None:
+    source = '<p>x</p><a b="c>y</a><i>'
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == ["<p>", "</p>"]
+
+
+def test_a_template_past_the_closing_quote_keeps_the_value_open() -> None:
+    """The first '"' after the opening one lies inside the template."""
+    tag = """<a b="{{ c|default:"d" }}e" f='{% g 'h' %}' i="$" j="${k["l"]}">"""
+    source = f"{tag}x</a>"
+
+    assert [
+        source[token.start : token.end] for token in tokenize_tags(source)
+    ] == [tag, "</a>"]
+
+
+def test_a_tag_quoted_in_an_abandoned_tag_is_read() -> None:
+    """A brace abandons the outer tag, so the scan goes back to the next "<"."""
+    source = '<a "<b c>" }'
+
+    assert [token.name for token in tokenize_tags(source)] == ["b"]
+
+
+@pytest.mark.parametrize(
+    ("source", "names"),
+    [
+        pytest.param("<div {x}> " * 20000 + FAR, [], id="brace-in-tag"),
+        pytest.param("<b }" * 20000 + FAR, [], id="closing-brace"),
+        pytest.param("$ " * 400000 + "{<a>", ["a"], id="dollars-in-text"),
+        pytest.param(
+            '<a b="' + "$" * 40000 + '">' + FAR + "{",
+            ["a"],
+            id="dollars-in-value",
+        ),
+        pytest.param(
+            '<p>$5</p><a b="' + "{ " * 40000 + '">' + FAR,
+            ["p", "p", "a"],
+            id="braces-in-value",
+        ),
+    ],
+)
+def test_a_stop_in_a_tag_reads_no_further_than_the_next(
+    source: str, names: list[str]
+) -> None:
+    """Each stop must cost its own distance, not a search of the whole file.
+
+    The run of spaces is what a search for a character the page doesn't
+    use would read from every stop.
+    """
+    started = time.perf_counter()
+    tokens = [token.name for token in tokenize_tags(source)]
+
+    assert tokens == names
     assert time.perf_counter() - started < 1
 
 
