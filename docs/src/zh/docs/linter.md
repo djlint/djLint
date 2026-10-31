@@ -1516,12 +1516,15 @@ html 规范指出空的 `src` 是无效的，并警告浏览器会以文档自�
 - `*args, **kwargs`: 未来可能会添加其他参数，因此应包含这两个参数以减少升级 djLint 时的失败风险。
   :::
 
+模块从项目根目录导入。如果它返回的 `line` 或 `end` 不是有效位置，djLint 会报错并指出对应的规则。
+
 该函数将返回一个字典列表，每个字典对应一个错误，并包含以下键：
 
 ::: content
 
 - `code`: 报告错误的规则的代码名称（通常为 `rule['name']`）。
 - `line`: 行号和该行的字符号，以字符串形式表示，中间用冒号 : 分隔。例如 `"2:3"` 表示错误出现在第 2 行第 3 个字符处。
+- `end`: 可选。错误结束的位置，写法与 `line` 相同，指向其最后一个字符之后。省略时，错误在 `match` 结束处结束。
 - `match`: 包含错误的内容部分。
 - `message`: 用于提示错误的消息（通常为 `rule['message']`）。
   :::
@@ -1559,6 +1562,7 @@ def run(
         {
             "code": rule["name"],
             "line": get_line(match.start(), line_ends),
+            "end": get_line(match.end(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         }

@@ -17,6 +17,7 @@ from click import echo
 from djlint.output import (
     build_relative_path,
     count_format_errors,
+    finding_end,
     finding_position,
     first_filename,
     report_on_stderr,
@@ -51,6 +52,7 @@ def _lint_results(
     results = []
     for finding in sorted(next(iter(error.values())), key=finding_position):
         line, column = finding_position(finding)
+        end_line, end_column = finding_end(finding)
         code = finding["code"]
         results.append({
             "ruleId": code,
@@ -64,6 +66,8 @@ def _lint_results(
                         "region": {
                             "startLine": line,
                             "startColumn": column + 1,
+                            "endLine": end_line,
+                            "endColumn": end_column + 1,
                         },
                     }
                 }

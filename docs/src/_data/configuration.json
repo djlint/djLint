@@ -524,10 +524,10 @@
     "since": "0.6.7",
     "tags": ["linter"],
     "description": {
-      "en": "Customize order of output message. Default=\"{code} {line} {message} {match}\". If `{filename}` is not included in message, then the output will be grouped by file and a header will automatically be added to each group.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
-      "ru": "Настройка порядка вывода сообщения. По умолчанию=\"{code} {line} {message} {match}\". Если `{filename}` не включено в сообщение, то вывод будет сгруппирован по файлам и к каждой группе будет автоматически добавлен заголовок.\n\nДоступные переменные:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
-      "fr": "Personnalise l'ordre du message de sortie. Défaut=\"{code} {line} {message} {match}\". Si `{filename}` n'est pas inclus dans le message, alors la sortie sera groupée par fichier et un en-tête sera automatiquement ajouté à chaque groupe.\n\nVariables disponibles :\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
-      "zh": "自定义输出文本顺序。默认=\"{code} {line} {message} {match}\"。如果消息中不包含 `{filename}`，则输出将按文件进行分组，并且每个分组会自动添加一个标题。\n\n可用变量：\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::"
+      "en": "Customize order of output message. Default=\"{code} {line} {message} {match}\". If `{filename}` is not included in message, then the output will be grouped by file and a header will automatically be added to each group.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "ru": "Настройка порядка вывода сообщения. По умолчанию=\"{code} {line} {message} {match}\". Если `{filename}` не включено в сообщение, то вывод будет сгруппирован по файлам и к каждой группе будет автоматически добавлен заголовок.\n\nДоступные переменные:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "fr": "Personnalise l'ordre du message de sortie. Défaut=\"{code} {line} {message} {match}\". Si `{filename}` n'est pas inclus dans le message, alors la sortie sera groupée par fichier et un en-tête sera automatiquement ajouté à chaque groupe.\n\nVariables disponibles :\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "zh": "自定义输出文本顺序。默认=\"{code} {line} {message} {match}\"。如果消息中不包含 `{filename}`，则输出将按文件进行分组，并且每个分组会自动添加一个标题。\n\n可用变量：\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::"
     },
     "usage": [
       {

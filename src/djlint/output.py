@@ -43,6 +43,12 @@ def finding_position(finding: LintError) -> tuple[int, int]:
     return int(line), int(column)
 
 
+def finding_end(finding: LintError) -> tuple[int, int]:
+    """Line and column just past a finding."""
+    line, column = finding.get("end", finding["line"]).split(":")
+    return int(line), int(column)
+
+
 def print_output(
     config: Config, file_errors: Sequence[ProcessResult], file_count: int
 ) -> int:
@@ -162,6 +168,7 @@ def build_output(
             config.linter_output_format.format(
                 filename=filename,
                 line=line,
+                end=style(message_dict.get("end", ""), fg="blue"),
                 code=code,
                 message=message,
                 match=match,

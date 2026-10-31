@@ -47,6 +47,12 @@ module.exports = {
     fr: "Intégrations",
     zh: "集成支持",
   },
+  python_api: {
+    "en-US": "Python API",
+    ru: "Python API",
+    fr: "API Python",
+    zh: "Python API",
+  },
   best_practices: {
     "en-US": "Best Practices",
     ru: "Лучшие Практики",
