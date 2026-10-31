@@ -1,4 +1,5 @@
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.mjs";
+const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
+const { loadPyodide } = await import(`${PYODIDE_URL}pyodide.mjs`);
 
 const CONFIG_ARGS = [
   { kwarg: "profile", key: "profile", kind: "string" },
@@ -81,9 +82,7 @@ let pyodide;
 let formatHtml;
 
 async function loadPyodideAndPackages() {
-  pyodide = await loadPyodide({
-    indexURL: "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/",
-  });
+  pyodide = await loadPyodide({ indexURL: PYODIDE_URL });
   self.postMessage({ type: "status", message: "Loading micropip" });
   await pyodide.loadPackage("micropip");
   self.postMessage({ type: "status", message: "Installing djLint" });
