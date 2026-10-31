@@ -184,7 +184,7 @@ def test_a_tag_quoted_in_an_abandoned_tag_is_read() -> None:
     [
         pytest.param("<div {x}> " * 20000 + FAR, [], id="brace-in-tag"),
         pytest.param("<b }" * 20000 + FAR, [], id="closing-brace"),
-        pytest.param("$ " * 400000 + "<a>", ["a"], id="dollars-in-text"),
+        pytest.param("$ " * 400000 + "{<a>", ["a"], id="dollars-in-text"),
         pytest.param(
             '<a b="' + "$" * 40000 + '">' + FAR + "{",
             ["a"],
