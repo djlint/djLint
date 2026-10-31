@@ -187,6 +187,7 @@ def run(
         {
             "code": rule["name"],
             "line": get_line(found.start, line_ends),
+            "end": get_line(found.end, line_ends),
             "match": html[found.start : found.end].strip()[:20],
             "message": rule["message"],
         }

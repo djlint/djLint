@@ -1513,6 +1513,8 @@ The specified `python_module` must contain a `run()` function that will be execu
 - `*args, **kwargs`: We might add other arguments in the future, so you should include those two arguments to reduce the risk of failure on djLint upgrade.
   :::
 
+The module can be in the project root. If it returns a `line` or an `end` that isn't a position, djLint stops with an error that names the rule.
+
 It must return a list of dict, one for each errors, with the following keys:
 
 ::: content
@@ -1520,6 +1522,7 @@ It must return a list of dict, one for each errors, with the following keys:
 - `code`: Code name of the rule that report the error (typically `rule['name']`)
 - `line`: Line number and character number on this line, separated by a ':' as a string.
   For example `"2:3"` means that the error has been found on line 2, character 3
+- `end`: Optional. Where the error ends, written like `line`, just past its last character. Without it, the error ends where `match` does.
 - `match`: The part of the content that contains the error
 - `message`: The message that will be printed to signal the error (typically `rule['message']`)
   :::
@@ -1558,6 +1561,7 @@ def run(
         {
             "code": rule["name"],
             "line": get_line(match.start(), line_ends),
+            "end": get_line(match.end(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         }

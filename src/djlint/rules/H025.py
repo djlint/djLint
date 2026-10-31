@@ -136,6 +136,7 @@ def run(
         return {
             "code": rule["name"],
             "line": get_line(token.start, line_ends),
+            "end": get_line(token.end, line_ends),
             "match": html[token.start : token.end].strip()[:20],
             "message": message,
         }

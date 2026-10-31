@@ -10,8 +10,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
-from tests.conftest import config_builder, lint_printer
+from tests.conftest import config_builder, lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.types import LintError

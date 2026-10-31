@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Feature
+
+- Add `djlint.api`, a supported way to format and lint text from Python: `load_config()`, `format_text()` and `lint_text()`, which returns findings with numeric positions. See [Python API](https://djlint.com/docs/python-api/).
+- A finding now knows where it ends. `--linter-output-format` takes `{end}`, SARIF reports `endLine` and `endColumn`, and GitHub annotations cover the whole finding. A custom rule's `python_module` can return `end`, and otherwise ends where its `match` does.
+- A custom rule's `python_module` is also looked for in the project root, after everything else on the path, so it works with the `djlint` command as well as with `python -m djlint`.
+
+### Changed
+
+- A `python_module` rule that returns a `line` that isn't a position now stops djLint with an error naming the rule, instead of a traceback from the report.
+
 ### Fix
 
 - A tag whose attributes are spread over several lines, but that doesn't start its line, as in `<li><a …>` or `Read the <a …>`, is laid out from that line. The attributes line up under the first one, or with `--single-attribute-per-line` sit one indent in from the line with the closing `>` at the line's indent. They used to be indented as if the tag started the line, so they landed left of the tag, or a single space in after text.

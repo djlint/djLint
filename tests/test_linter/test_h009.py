@@ -9,8 +9,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.settings import Config
