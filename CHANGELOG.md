@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.48.0] - 2026-10-31
+
 ### Feature
 
 - Add `djlint.api`, a supported way to format and lint text from Python: `load_config()`, `format_text()` and `lint_text()`, which returns findings with numeric positions. See [Python API](https://djlint.com/docs/python-api/).
