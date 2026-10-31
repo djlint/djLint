@@ -31,7 +31,12 @@ def linter(
     """Lint without the end of each finding, which test_ranges.py covers."""
     return {
         name: [
-            {key: value for key, value in error.items() if key != "end"}
+            {
+                "code": error["code"],
+                "line": error["line"],
+                "match": error["match"],
+                "message": error["message"],
+            }
             for error in errors
         ]
         for name, errors in djlint_linter(
