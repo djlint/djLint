@@ -50,7 +50,7 @@
     "postcss": "8.5.32",
     "postcss-nested": "9.0.1",
     "prismjs": "1.30.0",
-    "sass": "1.106.1",
+    "sass": "1.107.0",
     "slugify": "1.6.9"
   }
 }
