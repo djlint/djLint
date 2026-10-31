@@ -52,4 +52,4 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## 规则模块
 
-自定义规则的 `python_module` 在每个进程中只导入一次，从配置所属的项目根目录导入。长期运行并处理多个项目的程序，需要从 `sys.modules` 中移除该模块及其父包，并移除保留在 `sys.path` 末尾的项目根目录，才能读取另一个项目的模块。
+自定义规则的 `python_module` 在每个进程中只导入一次，从配置所属的项目根目录导入。长期运行并处理多个项目的程序，需要从 `sys.modules` 中移除所有从项目导入的内容，并移除保留在 `sys.path` 末尾的项目根目录，才能读取另一个项目的模块。

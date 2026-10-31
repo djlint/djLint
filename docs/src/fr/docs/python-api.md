@@ -52,4 +52,4 @@ Les colonnes comptent des caractères, pas des octets ni des unités UTF-16.
 
 ## Modules de règles
 
-Le `python_module` d'une règle personnalisée est importé une fois par processus, depuis la racine du projet de la configuration. Un programme qui reste lancé et travaille sur plusieurs projets doit retirer ce module et ses paquets parents de `sys.modules`, ainsi que la racine du projet, qui reste à la fin de `sys.path`, pour lire celui d'un autre projet.
+Le `python_module` d'une règle personnalisée est importé une fois par processus, depuis la racine du projet de la configuration. Un programme qui reste lancé et travaille sur plusieurs projets doit retirer de `sys.modules` tout ce qui a été importé du projet, ainsi que la racine du projet, qui reste à la fin de `sys.path`, pour lire celui d'un autre projet.

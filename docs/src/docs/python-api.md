@@ -52,4 +52,4 @@ Columns count characters, not bytes or UTF-16 code units.
 
 ## Rule modules
 
-A custom rule's `python_module` is imported once per process, from the project root of the configuration. A program that stays running and works with several projects has to remove such a module and its parent packages from `sys.modules`, and the project root, which stays at the end of `sys.path`, to read another project's.
+A custom rule's `python_module` is imported once per process, from the project root of the configuration. A program that stays running and works with several projects has to remove everything imported from the project from `sys.modules`, and the project root, which stays at the end of `sys.path`, to read another project's.
