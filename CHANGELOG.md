@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.48.1] - 2026-10-31
+
 ### Performance
 
 - A long run of `$` no longer makes reading a page's tags quadratic: linting a line of two hundred thousand of them before a tag went from 2.2 seconds to 0.15. Formatting such a line is still slow, for other reasons.
