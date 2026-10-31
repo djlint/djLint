@@ -75,7 +75,7 @@ test = [
   # test_third_party_licenses.py reads the license of the mypy that mypyc
   # builds its runtime from.
   "mypy==2.4.0",
-  "pytest==9.1.1",
+  "pytest==9.2.0",
   "pytest-xdist==3.8",
 ]
 test-ci = [
