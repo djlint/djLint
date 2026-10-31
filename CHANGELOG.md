@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Performance
+
+- A long run of `$` no longer makes reading a page's tags quadratic: linting a line of two hundred thousand of them before a tag went from 2.2 seconds to 0.15. Formatting such a line is still slow, for other reasons.
+- A tag's quoted attribute values are jumped over instead of read one character at a time. That makes reading tags about a tenth faster on its own, but a whole format or lint run takes about as long as before.
+
 ## [1.48.0] - 2026-10-31
 
 ### Feature
@@ -19,10 +24,6 @@
 ### Fix
 
 - A tag whose attributes are spread over several lines, but that doesn't start its line, as in `<li><a …>` or `Read the <a …>`, is laid out from that line. The attributes line up under the first one, or with `--single-attribute-per-line` sit one indent in from the line with the closing `>` at the line's indent. They used to be indented as if the tag started the line, so they landed left of the tag, or a single space in after text.
-
-### Performance
-
-- Tags are read about a tenth faster, which formatting and linting spend much of their time on. A quoted attribute value is jumped over instead of read one character at a time, and a `$` without a `{` after it is no longer looked at. A long run of such `$`, which took time quadratic in its length, now takes none: four hundred thousand before a tag took four seconds to tokenize.
 
 ## [1.47.1] - 2026-10-26
 
