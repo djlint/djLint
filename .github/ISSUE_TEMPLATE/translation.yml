@@ -1,0 +1,47 @@
+name: 🌐 Translation Issue
+description: Request a translation or fix an existing one.
+title: "[Translation] "
+labels: [":globe_with_meridians: translation"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        If you are familiar with the language, please submit a pull request
+        🙏
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: >-
+            I searched the [existing
+            issues](https://github.com/djlint/djLint/issues?q=is%3Aissue)
+            and found nothing about this.
+          required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - Russian
+        - French
+        - Chinese (Simplified)
+        - New language
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The URL of the page, if the issue is about one.
+      placeholder: https://djlint.com/ru/docs/configuration/
+  - type: textarea
+    id: problem
+    attributes:
+      label: "What is wrong or missing?"
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested translation

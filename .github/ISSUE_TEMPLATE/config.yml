@@ -2,5 +2,15 @@ blank_issues_enabled: false
 contact_links:
   - name: 💬 Discord Server
     url: https://discord.gg/taghAqebzU
-    about: |
+    about: >-
       Chat with the community, ask questions and learn about best practices.
+  - name: 📖 Documentation
+    url: https://djlint.com
+    about: Installation, configuration, linter rules and integrations.
+  - name: 🧩 VS Code extension
+    url: https://github.com/djlint/djlint-vscode/issues/new/choose
+    about: >-
+      Problems specific to the editor extension belong in its own tracker.
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/djlint/djLint/security/advisories/new
+    about: Report it privately instead of opening a public issue.
