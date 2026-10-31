@@ -1512,12 +1512,15 @@ executé sur chacun des fichiers testés. La fonction doit accepter les argument
   il est donc fortement conseillé d'ajouter ces deux arguments pour diminuer les risques
   de bugs en cas de mise à jour de djLint.
 
+Le module peut se trouver à la racine du projet. S'il renvoie un `line` ou un `end` qui n'est pas une position, djLint s'arrête avec une erreur qui nomme la règle.
+
 La fonction doit retourner une liste de dictionnaire, un pour chacune des erreurs
 trouvées. Le dictionnaire doit contenir les clées suivantes :
 
 - `code`: Code de la règle qui rapporte l'erreur (généralement `rule['name']`)
 - `line`: Numéro de ligne et numéro de caractère dans cette ligne, séparées par un `:`.
   Par exemple, `"2:3"` veut dire que l'erreur a été trouvée sur la ligne 2, au caractère 3.
+- `end`: Facultatif. L'endroit où l'erreur se termine, écrit comme `line`, juste après son dernier caractère. Sans lui, l'erreur se termine là où se termine `match`.
 - `match`: La partie du contenu qui contient l'erreur
 - `message`: Le message qui serra affiché pour signaler l'erreur (généralement `rule['message']`)
 
@@ -1555,6 +1558,7 @@ def run(
         {
             "code": rule["name"],
             "line": get_line(match.start(), line_ends),
+            "end": get_line(match.end(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         }

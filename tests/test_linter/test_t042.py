@@ -7,8 +7,8 @@ from __future__ import annotations
 
 import pytest
 
-from djlint.lint import linter
 from djlint.settings import Config
+from tests.conftest import linter
 
 MESSAGE = "Content outside a block is not rendered in a template that extends another."
 

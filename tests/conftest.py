@@ -14,6 +14,7 @@ from click import style
 from click.testing import CliRunner
 
 from djlint import main as djlint
+from djlint.lint import linter as djlint_linter
 from djlint.settings import Config
 
 if TYPE_CHECKING:
@@ -22,6 +23,26 @@ if TYPE_CHECKING:
     from typing import Any, TextIO
 
     from djlint.types import LintError
+
+
+def linter(
+    config: Config, html: str, filename: str, filepath: str
+) -> dict[str, list[LintError]]:
+    """Lint without the end of each finding, which test_ranges.py covers."""
+    return {
+        name: [
+            {
+                "code": error["code"],
+                "line": error["line"],
+                "match": error["match"],
+                "message": error["message"],
+            }
+            for error in errors
+        ]
+        for name, errors in djlint_linter(
+            config, html, filename, filepath
+        ).items()
+    }
 
 
 @pytest.fixture

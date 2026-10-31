@@ -79,6 +79,17 @@ def test_no_github_output_flag(runner: CliRunner) -> None:
     assert "Linted 1 file" in result.output
 
 
+def test_an_annotation_over_several_lines_has_no_end_column(
+    runner: CliRunner,
+) -> None:
+    result = runner.invoke(
+        djlint,
+        ("-", "--lint", "--profile", "django", "--github-output"),
+        input='<img\n  src="x">',
+    )
+    assert "::warning line=1,col=1,endLine=2::H013" in result.output
+
+
 def test_escaping(runner: CliRunner) -> None:
     """Test character escaping in GitHub output."""
     result = runner.invoke(
@@ -87,7 +98,9 @@ def test_escaping(runner: CliRunner) -> None:
         input="<div></div>",
         env={"GITHUB_ACTIONS": ""},
     )
-    assert "::warning line=1,col=1::H020" in result.output
+    assert (
+        "::warning line=1,col=1,endLine=1,endColumn=11::H020" in result.output
+    )
     assert "file=" not in result.output
 
 

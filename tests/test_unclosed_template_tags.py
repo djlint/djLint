@@ -9,9 +9,9 @@ import time
 
 import pytest
 
-from djlint.lint import linter
 from djlint.reformat import formatter
 from djlint.settings import Config
+from tests.conftest import linter
 
 # Each of these was read again from every opener in it, to the end of the
 # line or the file: linting or formatting the first or the last took over

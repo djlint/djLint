@@ -10,6 +10,7 @@ from djlint.output import (
     build_relative_path,
     build_stats_output,
     count_format_errors,
+    finding_end,
     finding_position,
     first_filename,
     report_on_stderr,
@@ -73,7 +74,9 @@ def print_lint_errors(
     """Print lint errors in GitHub format.
 
     djLint counts columns from zero and GitHub from one, so the column
-    is shifted to land the annotation on the finding itself.
+    is shifted to land the annotation on the finding itself. Its end
+    column is the finding's last, and it takes one only for an annotation
+    on a single line.
     """
     errors = sorted(next(iter(error.values())), key=finding_position)
     if not errors:
@@ -91,12 +94,17 @@ def print_lint_errors(
 
     for message_dict in errors:
         line, column = finding_position(message_dict)
+        end_line, end_column = finding_end(message_dict)
+        end_property = f",endLine={end_line}"
+        if end_line == line:
+            end_property += f",endColumn={max(end_column, column + 1)}"
         level = "error" if message_dict["code"].startswith("E") else "warning"
         message = escape_data(
             f"{message_dict['code']} {message_dict['message']}"
         )
         echo(
-            f"::{level} {file_property}line={line},col={column + 1}::{message}",
+            f"::{level} {file_property}line={line},col={column + 1}"
+            f"{end_property}::{message}",
             err=err,
         )
 

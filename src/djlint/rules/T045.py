@@ -118,6 +118,9 @@ class _HtmlComment:
     def start(self) -> int:
         return self._start
 
+    def end(self) -> int:
+        return self._end
+
     def group(self) -> str:
         return self._html[self._start : self._end]
 
@@ -280,6 +283,7 @@ def run(
         errors.append({
             "code": rule["name"],
             "line": get_line(comment.start(), line_ends),
+            "end": get_line(comment.end(), line_ends),
             "match": comment.group().strip()[:20],
             "message": rule["message"],
         })
