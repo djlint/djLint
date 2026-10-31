@@ -23,6 +23,30 @@
       ],
       "depNameTemplate": "pyodide",
       "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "description": "Keep CI on the newest Python: the version the tools run on and the last one the tests run on. The first test version is the oldest supported one, so it stays",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
+      "matchStrings": [
+        "python-version: \"(?<currentValue>\\d+\\.\\d+)\"",
+        "python-version:\\n +- \"\\d+\\.\\d+\"\\n +- \"(?<currentValue>\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "docker.io/python",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "description": "Add a classifier after the last one for each new Python version. The first match stops at the last classifier, the second takes the version out of it",
+      "managerFilePatterns": ["/^pyproject\\.toml$/"],
+      "matchStrings": [
+        "classifiers = \\[[^\\]]*\"Programming Language :: Python :: \\d+\\.\\d+\",",
+        "\"Programming Language :: Python :: (?<currentValue>\\d+\\.\\d+)\",$"
+      ],
+      "matchStringsStrategy": "recursive",
+      "depNameTemplate": "docker.io/python",
+      "datasourceTemplate": "docker",
+      "autoReplaceStringTemplate": "\"Programming Language :: Python :: {{{currentValue}}}\",\n  \"Programming Language :: Python :: {{{newValue}}}\","
     }
   ],
   "dependencyDashboard": false,
@@ -72,7 +96,15 @@
       "matchManagers": ["npm"],
       "automerge": true
     },
-    { "matchManagers": ["github-actions", "pre-commit"], "automerge": true }
+    { "matchManagers": ["github-actions", "pre-commit"], "automerge": true },
+    {
+      "description": "A new Python is reviewed by hand. A cooldown would count from the last rebuild of an image tag, which keeps part of the update out of the PR. A classifier can name a Python that is not out yet, which is not a reason to roll it back",
+      "matchPackageNames": ["python", "docker.io/python"],
+      "groupName": "python",
+      "automerge": false,
+      "minimumReleaseAge": null,
+      "rollbackPrs": false
+    }
   ],
   "pre-commit": { "enabled": true },
   "rollbackPrs": true,
