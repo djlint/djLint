@@ -98,11 +98,10 @@ f"Running with Python {platform.python_version()}; djLint {metadata.version('djl
 `),
   });
   formatHtml = await pyodide.runPythonAsync(`
-from djlint.reformat import formatter
-from djlint.settings import Config
+from djlint.api import format_text, load_config
 
 def _djlint_format(html, options):
-    return formatter(Config("-", **options), html).rstrip()
+    return format_text(load_config(**options), html).rstrip()
 
 _djlint_format
 `);
