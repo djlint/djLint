@@ -99,7 +99,7 @@ def test_escaping(runner: CliRunner) -> None:
         env={"GITHUB_ACTIONS": ""},
     )
     assert (
-        "::warning line=1,col=1,endLine=1,endColumn=12::H020" in result.output
+        "::warning line=1,col=1,endLine=1,endColumn=11::H020" in result.output
     )
     assert "file=" not in result.output
 

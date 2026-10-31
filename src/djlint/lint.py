@@ -7,7 +7,6 @@ import sys
 from bisect import bisect_right
 from collections.abc import Sequence
 from operator import itemgetter
-from threading import Lock
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
@@ -46,9 +45,8 @@ flags: Final = MappingProxyType({
     "re.LOCALE": re.LOCALE,
 })
 _LINE_PATTERN: Final = compile_pattern(r"(?:.*\n)|(?:[^\n]+$)")
-_POSITION_PATTERN: Final = compile_pattern(r"[1-9]\d*:\d+")
+_POSITION_PATTERN: Final = compile_pattern(r"\d+:\d+")
 _line_end: Final = itemgetter("end")
-_rule_import_lock: Final = Lock()
 
 
 def build_flags(flag_list: str | int) -> int:
@@ -86,18 +84,39 @@ def _as_tuple(position: str) -> tuple[int, int]:
     return int(line), int(column)
 
 
+def _offset(
+    position: str, line_ends: Sequence[Mapping[str, int]]
+) -> int | None:
+    """Where a position is in the text, if its line exists."""
+    line, column = _as_tuple(position)
+    if not 1 <= line <= len(line_ends):
+        return None
+    return line_ends[line - 1]["start"] + column
+
+
 def _end_of_match(
     error: LintError, line_ends: Sequence[Mapping[str, int]]
 ) -> str:
     """Where the text of a finding ends, for a rule that doesn't say."""
-    line, column = _as_tuple(error["line"])
-    if line > len(line_ends):
+    start = _offset(error["line"], line_ends)
+    if start is None:
         return error["line"]
-    start = line_ends[line - 1]["start"] + column
     return get_line(start + len(error["match"]), line_ends)
 
 
-def _checked_module_error(
+def _without_trailing_space(
+    html: str, error: LintError, line_ends: Sequence[Mapping[str, int]]
+) -> LintError:
+    """End a finding at its last visible character."""
+    start = _offset(error["line"], line_ends)
+    end = _offset(error["end"], line_ends)
+    if start is None or end is None or end <= start:
+        return error
+    trimmed = len(html[start:end].rstrip())
+    return {**error, "end": get_line(start + trimmed, line_ends)}
+
+
+def _module_error(
     rule: Mapping[str, Any],
     error: LintError,
     line_ends: Sequence[Mapping[str, int]],
@@ -108,8 +127,8 @@ def _checked_module_error(
         if not _is_position(position):
             msg = (
                 f"Error: {rule['name']} python_module run() returned {key}"
-                f" {position!r}. It should be a string of a line, counted from"
-                " 1, and a column, counted from 0, such as '2:3'."
+                f" {position!r}. It should be a string of a line and a column,"
+                " such as '2:3'."
             )
             raise AssertionError(msg)
     end = error.get("end") or _end_of_match(error, line_ends)
@@ -123,20 +142,16 @@ def _checked_module_error(
 
 
 def _import_rule_module(config: Config, name: str) -> Any:
-    """Import a rule's module, which is found from the project root.
+    """Import a rule's module, which can be in the project.
 
-    Only for this import, so that a project's html.py doesn't stand in for
-    the standard library's in what djLint itself imports later.
+    The project goes last on the path, so that its html.py doesn't stand in
+    for the standard library's, and it stays there for what a rule imports
+    while it runs.
     """
-    if name.startswith("djlint.") or name in sys.modules:
-        return importlib.import_module(name)
     root = str(config.project_root)
-    with _rule_import_lock:
-        sys.path.insert(0, root)
-        try:
-            return importlib.import_module(name)
-        finally:
-            sys.path.remove(root)
+    if root not in sys.path:
+        sys.path.append(root)
+    return importlib.import_module(name)
 
 
 def _is_html_inside_template_tag(
@@ -210,8 +225,7 @@ def linter(
                 )
                 raise AssertionError(msg)
             file_errors.extend(
-                _checked_module_error(rule, error, line_ends)
-                for error in module_errors
+                _module_error(rule, error, line_ends) for error in module_errors
             )
 
         else:
@@ -220,10 +234,7 @@ def linter(
                     {
                         "code": rule["name"],
                         "line": get_line(match.start(), line_ends),
-                        "end": get_line(
-                            match.start() + len(match.group().rstrip()),
-                            line_ends,
-                        ),
+                        "end": get_line(match.end(), line_ends),
                         "match": match.group().strip()[:20],
                         "message": rule["message"],
                     }
@@ -237,7 +248,9 @@ def linter(
         key = (error["code"], error["line"], error["match"], error["message"])
         if key not in seen:
             seen.add(key)
-            unique_errors.append(error)
+            unique_errors.append(
+                _without_trailing_space(html, error, line_ends)
+            )
     return {filename: unique_errors}
 
 

@@ -6,14 +6,20 @@ else in the package can change in any release.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING
 
 from djlint.lint import linter
 from djlint.output import finding_end, finding_position
 from djlint.reformat import formatter
 from djlint.settings import Config
 from djlint.src import has_pragma
+
+if sys.version_info >= (3, 13):
+    from typing import NamedTuple
+else:
+    from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
     import os
@@ -46,8 +52,10 @@ def load_config(
 ) -> Config:
     """Read the configuration that applies to the files of a folder.
 
-    Options take the names of the command line, with underscores. With
-    `python_rules=False`, custom rules with a `python_module` aren't loaded,
+    Options take the names of the command line, with underscores, and work
+    as they do there: a value counts if it is set, so `False` doesn't turn off
+    what the configuration turns on. With `python_rules=False`, custom rules
+    with a `python_module` aren't loaded,
     which keeps the project's code from running. Their names are then in
     `config.skipped_rules`.
     """

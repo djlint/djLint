@@ -8,7 +8,7 @@
 
 - Add `djlint.api`, a supported way to format and lint text from Python: `load_config()`, `format_text()` and `lint_text()`, which returns findings with numeric positions. See [Python API](https://djlint.com/docs/python-api/).
 - A finding now knows where it ends. `--linter-output-format` takes `{end}`, SARIF reports `endLine` and `endColumn`, and GitHub annotations cover the whole finding. A custom rule's `python_module` can return `end`, and otherwise ends where its `match` does.
-- A custom rule's `python_module` is imported from the project root, so it works with the `djlint` command as well as with `python -m djlint`.
+- A custom rule's `python_module` is also looked for in the project root, after everything else on the path, so it works with the `djlint` command as well as with `python -m djlint`.
 
 ### Changed
 

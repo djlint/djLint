@@ -1526,7 +1526,7 @@ executé sur chacun des fichiers testés. La fonction doit accepter les argument
   de bugs en cas de mise à jour de djLint.
   :::
 
-Le module est importé depuis la racine du projet. S'il renvoie un `line` ou un `end` qui n'est pas une position, djLint s'arrête avec une erreur qui nomme la règle.
+Le module peut se trouver à la racine du projet. S'il renvoie un `line` ou un `end` qui n'est pas une position, djLint s'arrête avec une erreur qui nomme la règle.
 
 La fonction doit retourner une liste de dictionnaire, un pour chacune des erreurs
 trouvées. Le dictionnaire doit contenir les clées suivantes :

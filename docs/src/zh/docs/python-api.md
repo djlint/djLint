@@ -23,7 +23,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 `load_config(folder=".", *, python_rules=True, **options)` 读取适用于某个文件夹中文件的配置。它从该文件夹向上查找，就像命令行从当前目录查找一样，并且不会改变当前目录。
 
-选项名称与命令行选项相同，使用下划线，并优先于配置文件。路径以 `pathlib.Path` 传入。
+选项名称与命令行选项相同，使用下划线，行为也相同：已设置的值优先于配置文件，而 `False`、`0` 或空字符串视为未设置。路径以 `pathlib.Path` 传入。
 
 读取配置需要一些时间，因此只要被读取的文件没有变化，就请保留结果。它可以用于任意数量的文本。
 
@@ -31,7 +31,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## format_text
 
-`format_text(config, text)` 返回格式化后的文本。换行符保持不变。使用 `require_pragma` 时，没有 pragma 的文本会原样返回。
+`format_text(config, text)` 返回格式化后的文本。第一行以 CRLF 结尾的文本会以 CRLF 返回，其他文本以 LF 返回。使用 `require_pragma` 时，没有 pragma 的文本会原样返回。
 
 ## lint_text
 
@@ -52,4 +52,4 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## 规则模块
 
-自定义规则的 `python_module` 在每个进程中只导入一次，从配置所属的项目根目录导入。长期运行并处理多个项目的程序，需要从 `sys.modules` 中移除该模块才能重新读取它。
+自定义规则的 `python_module` 在每个进程中只导入一次，从配置所属的项目根目录导入。长期运行并处理多个项目的程序，需要从 `sys.modules` 中移除该模块及其父包才能重新读取它。项目根目录会保留在 `sys.path` 的末尾。

@@ -23,7 +23,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 `load_config(folder=".", *, python_rules=True, **options)` lit la configuration qui s'applique aux fichiers d'un dossier. La recherche remonte depuis ce dossier, comme la ligne de commande depuis le répertoire courant, et le répertoire courant ne change pas.
 
-Les options portent le nom de celles de la ligne de commande, avec des tirets bas, et l'emportent sur le fichier de configuration. Les chemins sont donnés en `pathlib.Path`.
+Les options portent le nom de celles de la ligne de commande, avec des tirets bas, et fonctionnent de la même façon : une valeur définie l'emporte sur le fichier de configuration, tandis que `False`, `0` ou une chaîne vide comptent comme non définis. Les chemins sont donnés en `pathlib.Path`.
 
 La lecture de la configuration prend du temps : gardez le résultat tant que les fichiers lus ne changent pas. Il sert pour autant de textes que nécessaire.
 
@@ -31,7 +31,7 @@ Avec `python_rules=False`, les règles personnalisées avec un `python_module` n
 
 ## format_text
 
-`format_text(config, text)` renvoie le texte formaté. Les fins de ligne sont conservées. Avec `require_pragma`, un texte sans le pragma revient inchangé.
+`format_text(config, text)` renvoie le texte formaté. Un texte dont la première ligne se termine par CRLF revient en CRLF, tout autre en LF. Avec `require_pragma`, un texte sans le pragma revient inchangé.
 
 ## lint_text
 
@@ -52,4 +52,4 @@ Les colonnes comptent des caractères, pas des octets ni des unités UTF-16.
 
 ## Modules de règles
 
-Le `python_module` d'une règle personnalisée est importé une fois par processus, depuis la racine du projet de la configuration. Un programme qui reste lancé et travaille sur plusieurs projets doit retirer ce module de `sys.modules` pour le relire.
+Le `python_module` d'une règle personnalisée est importé une fois par processus, depuis la racine du projet de la configuration. Un programme qui reste lancé et travaille sur plusieurs projets doit retirer ce module et ses paquets parents de `sys.modules` pour le relire. La racine du projet reste à la fin de `sys.path`.

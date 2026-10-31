@@ -1513,7 +1513,7 @@ The specified `python_module` must contain a `run()` function that will be execu
 - `*args, **kwargs`: We might add other arguments in the future, so you should include those two arguments to reduce the risk of failure on djLint upgrade.
   :::
 
-The module is imported from the project root. If it returns a `line` or an `end` that isn't a position, djLint stops with an error that names the rule.
+The module can be in the project root. If it returns a `line` or an `end` that isn't a position, djLint stops with an error that names the rule.
 
 It must return a list of dict, one for each errors, with the following keys:
 

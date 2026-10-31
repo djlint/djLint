@@ -74,6 +74,19 @@ def test_a_finding_can_end_on_a_later_line() -> None:
     assert (finding["line"], finding["end"]) == ("1:0", "2:10")
 
 
+def test_a_finding_in_a_long_attribute_covers_all_of_it() -> None:
+    name = f"aria-{'x' * 40}"
+    source = f'<div {name}="y"></div>'
+    (finding,) = [x for x in _findings(source) if x["code"] == "H048"]
+    assert _spanned(source, finding) == name
+
+
+def test_a_rule_module_leaves_trailing_whitespace_out() -> None:
+    source = "<div style=\n"
+    for finding in _findings(source):
+        assert not _spanned(source, finding).endswith((" ", "\n"))
+
+
 def test_trailing_whitespace_is_left_out() -> None:
     source = '<img src="x">   \n<p>text</p>'
     (finding,) = [x for x in _findings(source) if x["code"] == "H013"]

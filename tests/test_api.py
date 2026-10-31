@@ -44,8 +44,9 @@ def _project(tmp_path: Path, line: object = "1:1") -> Path:
 
 
 @pytest.fixture(autouse=True)
-def _forget_rule_module() -> None:
+def _forget_rule_module(monkeypatch: pytest.MonkeyPatch) -> None:
     sys.modules.pop("project_rule", None)
+    monkeypatch.setattr(sys, "path", list(sys.path))
 
 
 def test_format_text_reads_the_configuration_of_the_folder(
@@ -125,10 +126,9 @@ def test_require_pragma(tmp_path: Path, pragma: str) -> None:
 
 def test_a_rule_module_is_found_from_the_project_root(tmp_path: Path) -> None:
     config = load_config(_project(tmp_path), profile="django")
-    sys_path = list(sys.path)
     codes = {x.code for x in lint_text(config, "<div>text</div>")}
     assert "T9001" in codes
-    assert sys.path == sys_path
+    assert sys.path[-1] == str(config.project_root)
 
 
 def test_python_rules_can_be_left_out(tmp_path: Path) -> None:
@@ -167,9 +167,58 @@ def test_a_module_of_a_project_does_not_replace_the_standard_library(
     assert done.stdout.strip() == "<div>©</div>"
 
 
-@pytest.mark.parametrize(
-    "line", ["0:0", "-1:0", "1", "x", "1:x", ":1", "", 1, None]
-)
+def test_a_rule_that_counts_lines_from_zero_still_reports(
+    tmp_path: Path,
+) -> None:
+    config = load_config(_project(tmp_path, "0:0"), profile="django")
+    (finding,) = [
+        x for x in lint_text(config, "<div>text</div>") if x.code == "T9001"
+    ]
+    assert (finding.line, finding.end_line) == (0, 0)
+
+
+def test_a_rule_can_import_a_sibling_while_it_runs(tmp_path: Path) -> None:
+    project = _project(tmp_path)
+    (project / "project_sibling.py").write_text(
+        "LINE = '1:2'\n", encoding="utf-8"
+    )
+    (project / "project_rule.py").write_text(
+        """\
+def run(rule, config, html, filepath, line_ends, *args, **kwargs):
+    from project_sibling import LINE
+
+    return [{
+        "code": rule["name"],
+        "line": LINE,
+        "match": "",
+        "message": rule["message"],
+    }]
+""",
+        encoding="utf-8",
+    )
+    config = load_config(project, profile="django")
+    sys.modules.pop("project_sibling", None)
+    (finding,) = [
+        x for x in lint_text(config, "<div>text</div>") if x.code == "T9001"
+    ]
+    assert finding.column == 2
+
+
+def test_an_installed_rule_keeps_the_standard_library(tmp_path: Path) -> None:
+    """A project's calendar.py doesn't reach an installed rule's import."""
+    project = _project(tmp_path)
+    (project / "calendar.py").write_text(
+        "raise RuntimeError\n", encoding="utf-8"
+    )
+    (project / "project_rule.py").write_text(
+        "import calendar\n\n" + _MODULE.format(line="1:1"), encoding="utf-8"
+    )
+    sys.modules.pop("calendar", None)
+    config = load_config(project, profile="django")
+    assert "T9001" in {x.code for x in lint_text(config, "<div>text</div>")}
+
+
+@pytest.mark.parametrize("line", ["-1:0", "1", "x", "1:x", ":1", "", 1, None])
 def test_a_made_up_position_names_the_rule(
     tmp_path: Path, line: object
 ) -> None:

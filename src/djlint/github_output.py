@@ -74,8 +74,9 @@ def print_lint_errors(
     """Print lint errors in GitHub format.
 
     djLint counts columns from zero and GitHub from one, so the column
-    is shifted to land the annotation on the finding itself. GitHub takes
-    an end column only for an annotation on a single line.
+    is shifted to land the annotation on the finding itself. Its end
+    column is the finding's last, and it takes one only for an annotation
+    on a single line.
     """
     errors = sorted(next(iter(error.values())), key=finding_position)
     if not errors:
@@ -96,7 +97,7 @@ def print_lint_errors(
         end_line, end_column = finding_end(message_dict)
         end_property = f",endLine={end_line}"
         if end_line == line:
-            end_property += f",endColumn={end_column + 1}"
+            end_property += f",endColumn={max(end_column, column + 1)}"
         level = "error" if message_dict["code"].startswith("E") else "warning"
         message = escape_data(
             f"{message_dict['code']} {message_dict['message']}"
