@@ -131,6 +131,14 @@ def test_a_rule_module_is_found_from_the_project_root(tmp_path: Path) -> None:
     assert sys.path[-1] == str(config.project_root)
 
 
+def test_the_project_stays_off_the_path_without_a_custom_rule(
+    tmp_path: Path,
+) -> None:
+    config = load_config(_project(tmp_path), python_rules=False)
+    lint_text(config, "<div>")
+    assert str(config.project_root) not in sys.path
+
+
 def test_python_rules_can_be_left_out(tmp_path: Path) -> None:
     config = load_config(
         _project(tmp_path), profile="django", python_rules=False

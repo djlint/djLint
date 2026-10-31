@@ -87,6 +87,12 @@ def test_a_rule_module_leaves_trailing_whitespace_out() -> None:
         assert not _spanned(source, finding).endswith((" ", "\n"))
 
 
+def test_a_finding_of_only_whitespace_keeps_its_range() -> None:
+    source = "<p>a</p>\n\n\n\n<p>b</p>"
+    (finding,) = [x for x in _findings(source) if x["code"] == "H014"]
+    assert finding["end"] != finding["line"]
+
+
 def test_trailing_whitespace_is_left_out() -> None:
     source = '<img src="x">   \n<p>text</p>'
     (finding,) = [x for x in _findings(source) if x["code"] == "H013"]

@@ -23,7 +23,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 `load_config(folder=".", *, python_rules=True, **options)` reads the configuration that applies to the files of a folder. It looks for it upward from the folder, as the command line does from the current directory, and it doesn't change the current directory.
 
-Options take the names of the command line options, with underscores, and work as they do there: a value that is set wins over the configuration file, while `False`, `0` or an empty string counts as not given. Paths are given as `pathlib.Path`.
+Options take the names of the command line options, with underscores, and work as they do there: a value that is set wins over the configuration file, while `False`, an empty string and, for most options, `0` count as not given. Paths are given as `pathlib.Path`.
 
 Reading the configuration takes some time, so keep the result for as long as the files it was read from don't change. It can be used for any number of texts.
 
@@ -52,4 +52,4 @@ Columns count characters, not bytes or UTF-16 code units.
 
 ## Rule modules
 
-A custom rule's `python_module` is imported once per process, from the project root of the configuration. A program that stays running and works with several projects has to remove such a module and its parent packages from `sys.modules` to read it again. The project root stays at the end of `sys.path`.
+A custom rule's `python_module` is imported once per process, from the project root of the configuration. A program that stays running and works with several projects has to remove such a module and its parent packages from `sys.modules`, and the project root, which stays at the end of `sys.path`, to read another project's.

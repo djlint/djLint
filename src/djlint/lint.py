@@ -113,6 +113,8 @@ def _without_trailing_space(
     if start is None or end is None or end <= start:
         return error
     trimmed = len(html[start:end].rstrip())
+    if not trimmed:
+        return error
     return {**error, "end": get_line(start + trimmed, line_ends)}
 
 
@@ -146,10 +148,11 @@ def _import_rule_module(config: Config, name: str) -> Any:
 
     The project goes last on the path, so that its html.py doesn't stand in
     for the standard library's, and it stays there for what a rule imports
-    while it runs.
+    while it runs. Only a custom rule puts it there: without one, nothing of
+    the project can be imported.
     """
     root = str(config.project_root)
-    if root not in sys.path:
+    if not name.startswith("djlint.") and root not in sys.path:
         sys.path.append(root)
     return importlib.import_module(name)
 
