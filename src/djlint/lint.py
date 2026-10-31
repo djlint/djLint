@@ -124,7 +124,9 @@ def _module_error(
     line_ends: Sequence[Mapping[str, int]],
 ) -> LintError:
     """Give a rule module's finding an end, once its positions are valid."""
-    positions = {"line": error.get("line"), "end": error.get("end", "1:0")}
+    # Whatever a rule returned, which compiled code would reject as it reads it.
+    found: Mapping[str, object] = error
+    positions = {"line": found.get("line"), "end": found.get("end", "1:0")}
     for key, position in positions.items():
         if not _is_position(position):
             msg = (
