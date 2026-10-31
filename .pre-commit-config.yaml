@@ -49,7 +49,7 @@ repos:
           - jsbeautifier==2.0.3
           - json5==0.17.3
           - pathspec==1.1.1
-          - pytest==9.1.1
+          - pytest==9.2.0
           - types-pyyaml==6.0.12.20260906
           - types-regex==2026.9.29.20261017
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
