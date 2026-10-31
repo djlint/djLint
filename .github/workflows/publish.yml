@@ -49,7 +49,10 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
+      - run: git merge-base --is-ancestor "$GITHUB_SHA" origin/master
+      - run: test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           python-version: "3.14"
@@ -66,7 +69,7 @@ jobs:
       - build-compiled
       - build-pure
     permissions:
-      id-token: write
+      id-token: write # to publish to PyPI with trusted publishing
     steps:
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
@@ -83,7 +86,7 @@ jobs:
     needs:
       - publish-pypi
     permissions:
-      id-token: write
+      id-token: write # to publish to npm with provenance
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
