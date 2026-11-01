@@ -699,6 +699,21 @@ def test_lives_through_a_uri_that_makes_no_sense(
     assert client.stop() == 0
 
 
+def test_exits_on_an_exit_with_an_id(client: Client) -> None:
+    client.request("initialize", {"capabilities": {}})
+    client.request("shutdown", {})
+    client.send("exit", {})
+    assert client.process.wait(TIMEOUT_SECONDS) == 0
+
+
+def test_answers_a_request_with_a_method_that_is_no_method(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(tmp_path)
+    client.write({"id": 7, "method": 1})
+    assert client.response(7)["error"]["code"] == -32600
+
+
 def test_rejects_a_second_initialize(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     response = client.response(client.send("initialize", {}))

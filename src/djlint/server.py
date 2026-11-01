@@ -306,6 +306,7 @@ class Server:
         "_rule_path",
         "_rule_root",
         "_settings",
+        "_shutdown_requested",
         "_shutting_down",
         "_stale",
         "_write_lock",
@@ -324,6 +325,7 @@ class Server:
         self._asks_settings = False
         self._initialized = False
         self._shutting_down = False
+        self._shutdown_requested = False
         self._exit_code: int | None = None
         self._folders: list[Path] = []
         self._documents: dict[str, _Document] = {}
@@ -388,11 +390,12 @@ class Server:
             self._exit_soon()
 
     def _exit_soon(self) -> None:
-        timer = threading.Timer(
-            _EXIT_GRACE_SECONDS, os._exit, (0 if self._shutting_down else 1,)
-        )
+        timer = threading.Timer(_EXIT_GRACE_SECONDS, self._exit_now)
         timer.daemon = True
         timer.start()
+
+    def _exit_now(self) -> None:
+        os._exit(0 if self._shutdown_requested else 1)
 
     def _read_messages(self) -> None:
         while (body := self._read_message()) is not None:
@@ -414,6 +417,8 @@ class Server:
             else:
                 if message.get("method") == "exit":
                     self._exit_soon()
+                elif message.get("method") == "shutdown":
+                    self._shutdown_requested = True
                 self._inbox.put(message)
 
     def _take_cancel(self, params: object) -> None:
@@ -469,10 +474,18 @@ class Server:
     def _handle(self, message: Json) -> None:
         method = message.get("method")
         if not isinstance(method, str):
+            if "id" in message:
+                self._write({
+                    "id": message["id"] if _is_id(message["id"]) else None,
+                    "error": {
+                        "code": _INVALID_REQUEST,
+                        "message": "Invalid method",
+                    },
+                })
             return
         raw_params = message.get("params")
         params: Json = raw_params if isinstance(raw_params, dict) else {}
-        if "id" not in message:
+        if "id" not in message or method == "exit":
             self._handle_notification(method, params)
             return
         request_id = message["id"]
@@ -738,13 +751,16 @@ class Server:
         if root not in path and root in sys.path:
             self._rule_path = root
         for name in sys.modules.keys() - modules:
-            filename = getattr(sys.modules[name], "__file__", None)
-            if (
-                filename
-                and "site-packages" not in filename
-                and Path(filename).is_relative_to(root)
-            ):
-                self._rule_modules.add(name)
+            # From the module's own dict: an attribute can run code.
+            filename = getattr(sys.modules[name], "__dict__", {}).get(
+                "__file__"
+            )
+            if isinstance(filename, str):
+                path = Path(filename)
+                if path.is_relative_to(root) and (
+                    "site-packages" not in path.parts
+                ):
+                    self._rule_modules.add(name)
 
     def _settings_for(self, uri: str) -> Json:
         """Ask the client for the settings of a document, once."""
@@ -939,6 +955,9 @@ def _path(uri: object) -> Path | None:
 def serve() -> NoReturn:
     """Run the server on stdio, until the client ends it."""
     sys.stdout.flush()
+    # `python -m` puts the folder it starts in on the path, where a rule module
+    # of that project would stand in for another project's.
+    sys.path[:] = [path for path in sys.path if path not in {"", os.getcwd()}]
     reader = os.fdopen(os.dup(sys.stdin.fileno()), "rb")
     writer = os.fdopen(os.dup(sys.stdout.fileno()), "wb")
     # Whatever prints or starts a process on the way, such as a custom rule,
