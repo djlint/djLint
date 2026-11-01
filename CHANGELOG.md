@@ -4,11 +4,15 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- The language server asks an editor for its settings again once a late answer arrives. An editor that took over five seconds to answer once lost its settings until it restarted the server or changed them.
+
 ## [1.49.0] - 2026-11-01
 
 ### Features
 
-- `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/language-server/).
+- `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/integrations/#language-server).
 - `djlint.api.is_excluded()` tells whether the configuration leaves out a file.
 
 ### Bug fixes

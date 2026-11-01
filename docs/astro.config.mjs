@@ -92,7 +92,6 @@ export default defineConfig({
             "docs/ignoring-code",
             "docs/configuration",
             "docs/integrations",
-            "docs/language-server",
             "docs/python-api",
             "docs/best-practices",
             // English only: it shows the repository's CHANGELOG.md.

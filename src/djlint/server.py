@@ -309,6 +309,7 @@ class Server:
         "_shutdown_requested",
         "_shutting_down",
         "_stale",
+        "_unanswered",
         "_write_lock",
         "_writer",
     )
@@ -332,6 +333,7 @@ class Server:
         self._stale: set[str] = set()
         self._init_settings: Json = {}
         self._settings: dict[str, Json] = {}
+        self._unanswered: _Pending | None = None
         self._configs: dict[tuple[str, str, str], Config] = {}
         self._reported: set[str] = set()
         self._rule_modules: set[str] = set()
@@ -762,8 +764,17 @@ class Server:
                 ):
                     self._rule_modules.add(name)
 
+    def _take_late_settings(self) -> None:
+        """Ask again, if an editor that took too long has answered."""
+        if self._unanswered is not None and self._unanswered.answered.is_set():
+            self._unanswered = None
+            self._asks_settings = True
+            self._settings.clear()
+            self._generation += 1
+
     def _settings_for(self, uri: str) -> Json:
         """Ask the client for the settings of a document, once."""
+        self._take_late_settings()
         settings = self._settings.get(uri)
         if settings is not None:
             return settings
@@ -783,6 +794,7 @@ class Server:
                     settings.update(answer[0])
             else:
                 self._asks_settings = False
+                self._unanswered = pending
                 self._log(
                     _LOG_WARNING,
                     "The editor didn't answer workspace/configuration.",
@@ -903,6 +915,7 @@ class Server:
         document = self._documents.get(uri)
         if document is None:
             return {"kind": "full", "items": []}
+        self._take_late_settings()
         digest = hashlib.sha256(document.text.encode("utf-8", "replace"))
         result_id = f"{self._generation}-{digest.hexdigest()}"
         if params.get("previousResultId") == result_id:
