@@ -799,8 +799,12 @@ def process_stdin(
     if config.lint:
         from djlint.lint import linter  # noqa: PLC0415
 
+        # As reading a file does, or a rule on blank lines misses `\r\n`.
         output["lint_message"] = linter(
-            config, html, stdin_filename, Path(stdin_filename).as_posix()
+            config,
+            html.replace("\r\n", "\n"),
+            stdin_filename,
+            Path(stdin_filename).as_posix(),
         )
 
     return output, formatted_code

@@ -248,6 +248,21 @@ def test_an_installed_rule_keeps_the_standard_library(tmp_path: Path) -> None:
     assert "T9001" in {x.code for x in lint_text(config, "<div>text</div>")}
 
 
+@pytest.mark.parametrize("key", ["code", "match", "message"])
+def test_a_finding_that_is_no_text_names_the_rule(
+    tmp_path: Path, key: str
+) -> None:
+    project = _project(tmp_path)
+    module = project / "project_rule.py"
+    module.write_text(
+        module.read_text("utf-8").replace("    }]", f'    "{key}": 1\n    }}]'),
+        encoding="utf-8",
+    )
+    config = load_config(project, profile="django")
+    with pytest.raises(AssertionError, match="T9001"):
+        lint_text(config, "<div>text</div>")
+
+
 @pytest.mark.parametrize("line", ["-1:0", "1", "x", "1:x", ":1", "", 1, None])
 def test_a_made_up_position_names_the_rule(
     tmp_path: Path, line: object

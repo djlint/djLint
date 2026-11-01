@@ -6,7 +6,14 @@
 
 ### Bug fixes
 
-- The language server asks an editor for its settings again once a late answer arrives. An editor that took over five seconds to answer once lost its settings until it restarted the server or changed them.
+- The language server asks an editor for its settings again once a late answer arrives. An editor that took over five seconds to answer once lost its settings until it restarted the server or changed them. The findings of open documents update as soon as the answer arrives.
+- The language server keeps its settings on a `workspace/didChangeConfiguration` that holds nothing for djLint, which editors send for other servers.
+- The language server registers for `workspace/didChangeConfiguration` with editors that need it, which never sent it before, and asks for settings again when a workspace folder is added or removed.
+- `exclude` also applies to the language server from the workspace folder, as it does for `djlint <folder>`. A document in `vendor/` of a folder with no `pyproject.toml` wasn't left out.
+- The language server reads the configuration again on open and save if the editor refused to watch files, or if the settings name a `configuration` or `rules` file, which nothing watches. Without a watcher, a save updates the findings of every open document.
+- The language server survives a huge `Content-Length`, ignores a document with a URI that isn't a string, instead of losing the findings of the others, and ends the edit for a text with lone CRs on its last line.
+- Linting stdin finds what rules on blank lines report in a CRLF text, as linting a file does.
+- A `python_module` rule that returns a `code`, `match` or `message` that isn't a string gets a clear error.
 
 ## [1.49.0] - 2026-11-01
 

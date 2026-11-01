@@ -126,6 +126,13 @@ def _module_error(
     """Give a rule module's finding an end, once its positions are valid."""
     # Whatever a rule returned, which compiled code would reject as it reads it.
     found: Mapping[str, object] = error
+    for key in ("code", "match", "message"):
+        if not isinstance(found.get(key), str):
+            msg = (
+                f"Error: {rule['name']} python_module run() returned {key}"
+                f" {found.get(key)!r}. It should be a string."
+            )
+            raise AssertionError(msg)  # noqa: TRY004
     positions = {"line": found.get("line"), "end": found.get("end", "1:0")}
     for key, position in positions.items():
         if not _is_position(position):
