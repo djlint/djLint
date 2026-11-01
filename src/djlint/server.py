@@ -957,7 +957,9 @@ def serve() -> NoReturn:
     sys.stdout.flush()
     # `python -m` puts the folder it starts in on the path, where a rule module
     # of that project would stand in for another project's.
-    sys.path[:] = [path for path in sys.path if path not in {"", os.getcwd()}]
+    sys.path[:] = [
+        path for path in sys.path if path not in {"", str(Path.cwd())}
+    ]
     reader = os.fdopen(os.dup(sys.stdin.fileno()), "rb")
     writer = os.fdopen(os.dup(sys.stdout.fileno()), "wb")
     # Whatever prints or starts a process on the way, such as a custom rule,
