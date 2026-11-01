@@ -53,6 +53,10 @@ _DEBOUNCE_SECONDS: Final = 0.2
 _CLIENT_TIMEOUT_SECONDS: Final = 5
 # Cancels of requests that have finished have nothing to clear them.
 _MAX_CANCELLED: Final = 1000
+# How long what's still queued gets once the client has said to exit or left,
+# since a lint that doesn't end must not keep the process around.
+_EXIT_GRACE_SECONDS: Final = 5
+_LINT_STALE: Final[Json] = {}
 
 _CONFIG_FILES: Final = (
     "pyproject.toml",
@@ -297,6 +301,8 @@ class Server:
         "_pending",
         "_reader",
         "_reported",
+        "_rule_modules",
+        "_rule_path",
         "_rule_root",
         "_settings",
         "_shutting_down",
@@ -309,7 +315,7 @@ class Server:
         self._reader = reader
         self._writer = writer
         self._write_lock = threading.Lock()
-        self._inbox: queue.Queue[Json] = queue.Queue()
+        self._inbox: queue.Queue[Json | None] = queue.Queue()
         self._cancelled: set[int | str | None] = set()
         self._pending: dict[int, _Pending] = {}
         self._next_id = 0
@@ -325,6 +331,8 @@ class Server:
         self._settings: dict[str, Json] = {}
         self._configs: dict[tuple[str, str, str], Config] = {}
         self._reported: set[str] = set()
+        self._rule_modules: set[str] = set()
+        self._rule_path: str | None = None
         self._rule_root: str | None = None
         # Goes up with every change that can change a finding of an unchanged
         # document, to tell a client that asks if it has the latest.
@@ -339,10 +347,15 @@ class Server:
             try:
                 message = self._inbox.get(timeout=timeout)
             except queue.Empty:
-                self._lint_stale()
-                continue
+                message = _LINT_STALE
+            if message is None:
+                # The client is gone.
+                return 0 if self._shutting_down else 1
             try:
-                self._handle(message)
+                if message is _LINT_STALE:
+                    self._lint_stale()
+                else:
+                    self._handle(message)
             except Exception as error:
                 self._log(_LOG_ERROR, f"Dropped a message: {error!r}")
         return self._exit_code
@@ -367,6 +380,20 @@ class Server:
 
     def _read_forever(self) -> None:
         """Take messages in as they come, so one can cancel what's waiting."""
+        try:
+            self._read_messages()
+        finally:
+            self._inbox.put(None)
+            self._exit_soon()
+
+    def _exit_soon(self) -> None:
+        timer = threading.Timer(
+            _EXIT_GRACE_SECONDS, os._exit, (0 if self._shutting_down else 1,)
+        )
+        timer.daemon = True
+        timer.start()
+
+    def _read_messages(self) -> None:
         while (body := self._read_message()) is not None:
             try:
                 message = json.loads(body)
@@ -381,15 +408,12 @@ class Server:
                 self._log(_LOG_ERROR, "Dropped a message that isn't an object.")
             elif message.get("method") == "$/cancelRequest":
                 self._take_cancel(message.get("params"))
-            elif message.get("method") == "exit":
-                # Directly, for a lint that doesn't end to keep nothing running.
-                os._exit(0 if self._shutting_down else 1)
             elif "method" not in message:
                 self._take_answer(message)
             else:
+                if message.get("method") == "exit":
+                    self._exit_soon()
                 self._inbox.put(message)
-        # The client is gone, and so is whoever would wait for a lint to end.
-        os._exit(0 if self._shutting_down else 1)
 
     def _take_cancel(self, params: object) -> None:
         if isinstance(params, dict):
@@ -410,8 +434,14 @@ class Server:
         message["jsonrpc"] = "2.0"
         body = json.dumps(message, separators=(",", ":")).encode("utf-8")
         with self._write_lock:
-            self._writer.write(b"Content-Length: %d\r\n\r\n" % len(body) + body)
-            self._writer.flush()
+            try:
+                self._writer.write(
+                    b"Content-Length: %d\r\n\r\n" % len(body) + body
+                )
+                self._writer.flush()
+            except OSError:
+                # The client is gone, with nobody left to tell.
+                os._exit(1)
 
     def _notify(self, method: str, params: Json) -> None:
         self._write({"method": method, "params": params})
@@ -516,7 +546,9 @@ class Server:
         elif method == "textDocument/didOpen":
             document = params["textDocument"]
             self._documents[document["uri"]] = _Document(
-                document["text"], document["languageId"], document["version"]
+                document["text"],
+                document.get("languageId", ""),
+                document["version"],
             )
             self._stale.add(document["uri"])
             self._forget_unwatched_configuration()
@@ -681,16 +713,14 @@ class Server:
 
     def _forget_rule_modules(self) -> None:
         """Let the next lint import the modules of custom rules anew."""
-        root = self._rule_root
+        for name in self._rule_modules:
+            sys.modules.pop(name, None)
+        self._rule_modules.clear()
+        if self._rule_path is not None:
+            with contextlib.suppress(ValueError):
+                sys.path.remove(self._rule_path)
+            self._rule_path = None
         self._rule_root = None
-        if root is None:
-            return
-        with contextlib.suppress(ValueError):
-            sys.path.remove(root)
-        for name, module in tuple(sys.modules.items()):
-            filename = getattr(module, "__file__", None)
-            if filename and Path(filename).is_relative_to(root):
-                del sys.modules[name]
 
     def _use_rule_modules_of(self, config: Config) -> None:
         """Keep the same-named rule modules of two projects apart."""
@@ -698,6 +728,22 @@ class Server:
         if root != self._rule_root:
             self._forget_rule_modules()
             self._rule_root = root
+
+    def _note_rule_modules(
+        self, config: Config, modules: set[str], path: set[str]
+    ) -> None:
+        """Remember what a lint added, of all it imported from the project."""
+        root = str(config.project_root)
+        if root not in path and root in sys.path:
+            self._rule_path = root
+        for name in sys.modules.keys() - modules:
+            filename = getattr(sys.modules[name], "__file__", None)
+            if (
+                filename
+                and "site-packages" not in filename
+                and Path(filename).is_relative_to(root)
+            ):
+                self._rule_modules.add(name)
 
     def _settings_for(self, uri: str) -> Json:
         """Ask the client for the settings of a document, once."""
@@ -728,7 +774,7 @@ class Server:
         self._settings[uri] = settings
         return settings
 
-    def _options(self, settings: Json) -> Json:
+    def _options(self, settings: Json, path: Path | None) -> Json:
         from djlint import main  # noqa: PLC0415
 
         known = {parameter.name for parameter in main.params} - _NOT_SETTINGS
@@ -742,27 +788,37 @@ class Server:
                 self._log(_LOG_WARNING, f"Ignoring the setting {name}.")
             elif option in _PATH_SETTINGS:
                 if value:
-                    options[option] = self._resolve(str(value))
+                    options[option] = self._resolve(str(value), path)
             elif option == "python_rules":
                 options[option] = value is not False
             elif value is not None and value not in ("", []):
                 options[option] = _option_value(value)
         return options
 
-    def _resolve(self, value: str) -> Path:
+    def _resolve(self, value: str, document: Path | None) -> Path:
         path = Path(value).expanduser()
-        return path if path.is_absolute() else self._default_folder() / path
+        return path if path.is_absolute() else self._folder_of(document) / path
+
+    def _folder_of(self, document: Path | None) -> Path:
+        """Return the workspace folder of a document, the nearest if nested."""
+        if document is not None:
+            parents = [
+                folder
+                for folder in self._folders
+                if document.is_relative_to(folder)
+            ]
+            if parents:
+                return max(parents, key=lambda folder: len(folder.parts))
+        return self._folders[0] if self._folders else Path.cwd()
 
     def _config(
         self, uri: str, document: _Document, indent: int | None = None
     ) -> Config:
-        options = self._options(self._settings_for(uri))
+        path = _path(uri)
+        options = self._options(self._settings_for(uri), path)
         if indent is not None:
             options["indent"] = indent
-        path = _path(uri)
-        folder = str(
-            path.parent if path is not None else self._default_folder()
-        )
+        folder = str(self._folder_of(None) if path is None else path.parent)
         key = (
             folder,
             json.dumps(options, sort_keys=True, default=str),
@@ -781,18 +837,20 @@ class Server:
             self._configs[key] = config
         return config
 
-    def _default_folder(self) -> Path:
-        return self._folders[0] if self._folders else Path.cwd()
-
     def _lint(self, uri: str, document: _Document) -> list[Json]:
         config = self._config(uri, document)
         path = _path(uri)
         if path is not None and is_excluded(config, path):
             return []
         self._use_rule_modules_of(config)
-        findings = lint_text(
-            config, document.text, "-" if path is None else path.as_posix()
-        )
+        modules = set(sys.modules)
+        search_path = set(sys.path)
+        try:
+            findings = lint_text(
+                config, document.text, "-" if path is None else path.as_posix()
+            )
+        finally:
+            self._note_rule_modules(config, modules, search_path)
         return [_diagnostic(document, finding) for finding in findings]
 
     def _safe_lint(self, uri: str, document: _Document) -> list[Json]:
@@ -863,13 +921,16 @@ def _path(uri: object) -> Path | None:
     """Return the path of a file: URI, and None for anything else."""
     if not isinstance(uri, str):
         return None
-    parsed = urlparse(uri)
+    try:
+        parsed = urlparse(uri)
+    except ValueError:
+        return None
     if parsed.scheme != "file":
         return None
     path = unquote(parsed.path)
     if parsed.netloc not in {"", "localhost"}:
-        return Path(f"//{parsed.netloc}{path}")
-    if _WINDOWS_DRIVE.match(path):
+        return Path(f"//{unquote(parsed.netloc)}{path}")
+    if sys.platform == "win32" and _WINDOWS_DRIVE.match(path):
         path = path[1:]
     return Path(path)
 

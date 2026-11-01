@@ -567,6 +567,116 @@ def test_keeps_the_protocol_from_a_rule_that_prints(
     assert client.stop() == 0
 
 
+def test_answers_what_was_sent_before_exit(tmp_path: Path) -> None:
+    uri = (tmp_path / "a.html").as_uri()
+    messages: list[dict[str, Any]] = [
+        {"id": 1, "method": "initialize", "params": {"capabilities": {}}},
+        {"method": "initialized", "params": {}},
+        {
+            "method": "textDocument/didOpen",
+            "params": {
+                "textDocument": {
+                    "uri": uri,
+                    "languageId": "html",
+                    "version": 1,
+                    "text": UNFORMATTED,
+                }
+            },
+        },
+        {
+            "id": 2,
+            "method": "textDocument/formatting",
+            "params": {
+                "textDocument": {"uri": uri},
+                "options": {"tabSize": 4, "insertSpaces": True},
+            },
+        },
+        {"id": 3, "method": "shutdown"},
+        {"method": "exit"},
+    ]
+    bodies = [json.dumps({"jsonrpc": "2.0", **m}).encode() for m in messages]
+    done = subprocess.run(
+        [sys.executable, "-m", "djlint", "--lsp"],
+        input=b"".join(
+            b"Content-Length: %d\r\n\r\n%s" % (len(body), body)
+            for body in bodies
+        ),
+        capture_output=True,
+        timeout=TIMEOUT_SECONDS,
+        check=False,
+    )
+    assert done.returncode == 0
+    assert b'"id":2,"result":[' in done.stdout
+    assert b'"id":3,"result":null' in done.stdout
+
+
+def test_leaves_installed_packages_imported(
+    client: Client, tmp_path: Path
+) -> None:
+    (tmp_path / "pyproject.toml").write_text("", encoding="utf-8")
+    other = tmp_path / "other"
+    other.mkdir()
+    (other / "pyproject.toml").write_text("", encoding="utf-8")
+    client.start(tmp_path)
+    first = (tmp_path / "a.html").as_uri()
+    second = (other / "a.html").as_uri()
+    client.open(first, FINDING)
+    assert client.diagnostics(first)
+    client.open(second, FINDING)
+    assert client.diagnostics(second)
+    client.notify("workspace/didChangeConfiguration", {"settings": None})
+    assert client.diagnostics(first)
+
+
+def test_takes_relative_settings_from_the_folder_of_the_document(
+    client: Client, tmp_path: Path
+) -> None:
+    folders = [tmp_path / "one", tmp_path / "two"]
+    for folder in folders:
+        folder.mkdir()
+    (folders[1] / "rules.yaml").write_text(
+        "- rule:\n"
+        "    name: X001\n"
+        "    message: found\n"
+        "    patterns:\n"
+        "      - needle\n",
+        encoding="utf-8",
+    )
+    client.request(
+        "initialize",
+        {
+            "capabilities": {},
+            "initializationOptions": {"rules": "rules.yaml"},
+            "workspaceFolders": [
+                {"uri": folder.as_uri(), "name": folder.name}
+                for folder in folders
+            ],
+        },
+    )
+    uri = (folders[1] / "a.html").as_uri()
+    client.open(uri, "<p>needle</p>\n")
+    assert "X001" in [item["code"] for item in client.diagnostics(uri)]
+
+
+def test_lives_through_a_uri_that_makes_no_sense(
+    client: Client, tmp_path: Path
+) -> None:
+    client.request("initialize", {"capabilities": {}, "rootUri": "file://[bad"})
+    client.notify(
+        "textDocument/didOpen",
+        {
+            "textDocument": {
+                "uri": 1,
+                "languageId": "html",
+                "version": 1,
+                "text": "",
+            }
+        },
+    )
+    assert tmp_path.is_dir()
+    assert client.stop() == 0
+
+
 def test_rejects_a_second_initialize(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     response = client.response(client.send("initialize", {}))
