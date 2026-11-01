@@ -10,6 +10,12 @@ keywords: template linter, template formatter, djLint, HTML, templates, formatte
 
 It reports findings, and formats whole documents. It needs no extra packages.
 
+Whichever editor you use, install djLint where the editor can find it, ideally in the project's virtual environment, and start the editor from there or point it at the `djlint` of that environment. That way the editor runs the version your project pins, with the same results as your pre-commit hook or CI.
+
+## Visual Studio Code
+
+Install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint), or [the one on Open VSX](https://open-vsx.org/extension/monosans/djlint) for VSCodium. It finds djLint in your environment, falls back to a bundled one, and uses the language server when your djLint has it.
+
 ## Neovim
 
 With Neovim 0.11 or newer:
@@ -24,6 +30,17 @@ vim.lsp.enable("djlint")
 ```
 
 To format on command, call `vim.lsp.buf.format()`.
+
+To format on save, add this to the same configuration:
+
+```lua
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.html", "*.jinja", "*.jinja2", "*.j2" },
+  callback = function(args)
+    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+  end,
+})
+```
 
 ## Zed
 
@@ -41,8 +58,45 @@ args = ["--lsp"]
 [[language]]
 name = "html"
 language-servers = ["vscode-html-language-server", "djlint"]
-formatter = { command = "djlint", args = ["--reformat", "--quiet", "-"] }
 ```
+
+## JetBrains IDEs
+
+In PyCharm and the other IntelliJ-based IDEs, use the free [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) plugin:
+
+1. Install LSP4IJ from the Marketplace.
+1. Open the LSP Consoles tool window and add a new language server.
+1. On the **Server** tab, set the name to `djLint` and the command to `djlint --lsp`, with the full path of the `djlint` in the project's virtual environment if it isn't on PATH.
+1. On the **Mappings** tab, add a file name pattern for your templates, such as `*.html`. Set the language ID to `htmldjango` for a Django project, so the right [profile](/docs/configuration/#profile) is picked.
+1. On the **Configuration** tab, you can set [settings](#settings) as JSON, under a `djlint` key.
+
+Findings appear in the editor, and **Reformat Code** can use the server for the mapped files.
+
+## Sublime Text
+
+With the [LSP](https://packagecontrol.io/packages/LSP) package, run **Preferences: LSP Server Configurations** and add:
+
+```json
+{
+  "djlint": {
+    "enabled": true,
+    "command": ["djlint", "--lsp"],
+    "selector": "text.html"
+  }
+}
+```
+
+## Emacs
+
+Eglot, which comes with Emacs 29 and newer:
+
+```elisp
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((html-mode web-mode) . ("djlint" "--lsp"))))
+```
+
+Then run `M-x eglot` in a template. `eglot-format-buffer` formats it.
 
 ## Settings
 

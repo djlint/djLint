@@ -10,6 +10,12 @@ keywords: линтер шаблонов, форматер шаблонов, djLi
 
 Сервер сообщает о находках и форматирует документы целиком. Дополнительные пакеты ему не нужны.
 
+В любом редакторе установите djLint туда, где редактор его найдёт, лучше всего в виртуальное окружение проекта, и запускайте редактор из него или укажите ему путь к `djlint` этого окружения. Тогда редактор будет использовать версию, закреплённую в проекте, и результаты совпадут с хуком pre-commit и CI.
+
+## Visual Studio Code
+
+Установите [расширение djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) или [его версию из Open VSX](https://open-vsx.org/extension/monosans/djlint) для VSCodium. Оно находит djLint в вашем окружении, использует встроенный, если djLint не установлен, и работает через языковой сервер, когда ваш djLint его поддерживает.
+
 ## Neovim
 
 В Neovim 0.11 и новее:
@@ -24,6 +30,17 @@ vim.lsp.enable("djlint")
 ```
 
 Чтобы отформатировать документ, вызовите `vim.lsp.buf.format()`.
+
+Чтобы форматировать при сохранении, добавьте в ту же конфигурацию:
+
+```lua
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.html", "*.jinja", "*.jinja2", "*.j2" },
+  callback = function(args)
+    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+  end,
+})
+```
 
 ## Zed
 
@@ -41,8 +58,45 @@ args = ["--lsp"]
 [[language]]
 name = "html"
 language-servers = ["vscode-html-language-server", "djlint"]
-formatter = { command = "djlint", args = ["--reformat", "--quiet", "-"] }
 ```
+
+## IDE от JetBrains
+
+В PyCharm и других IDE на базе IntelliJ используйте бесплатный плагин [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij):
+
+1. Установите LSP4IJ из Marketplace.
+1. Откройте панель LSP Consoles и добавьте новый языковой сервер.
+1. На вкладке **Server** укажите имя `djLint` и команду `djlint --lsp`, с полным путём к `djlint` из виртуального окружения проекта, если его нет в PATH.
+1. На вкладке **Mappings** добавьте шаблон имён файлов, например `*.html`. Для проекта на Django укажите идентификатор языка `htmldjango`, чтобы выбрался нужный [профиль](/ru/docs/configuration/#profile).
+1. На вкладке **Configuration** можно задать [настройки](#nastrojki) в JSON, в ключе `djlint`.
+
+Находки появятся в редакторе, а **Reformat Code** сможет использовать сервер для этих файлов.
+
+## Sublime Text
+
+С пакетом [LSP](https://packagecontrol.io/packages/LSP) выполните **Preferences: LSP Server Configurations** и добавьте:
+
+```json
+{
+  "djlint": {
+    "enabled": true,
+    "command": ["djlint", "--lsp"],
+    "selector": "text.html"
+  }
+}
+```
+
+## Emacs
+
+Eglot, входящий в Emacs 29 и новее:
+
+```elisp
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((html-mode web-mode) . ("djlint" "--lsp"))))
+```
+
+Затем выполните `M-x eglot` в шаблоне. `eglot-format-buffer` отформатирует его.
 
 ## Настройки
 

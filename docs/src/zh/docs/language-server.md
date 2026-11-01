@@ -10,6 +10,12 @@ keywords: 模板 linter, 模板格式化工具, djLint, HTML, 模板, 格式化�
 
 它报告检查结果并格式化整个文档，不需要额外的软件包。
 
+无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，并从该环境启动编辑器，或让编辑器指向该环境中的 `djlint`。这样编辑器运行的就是项目固定的版本，结果与 pre-commit 钩子或 CI 一致。
+
+## Visual Studio Code
+
+安装 [djLint 扩展](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)，或者在 VSCodium 中使用 [Open VSX 上的版本](https://open-vsx.org/extension/monosans/djlint)。它会在你的环境中查找 djLint，找不到时使用内置版本，并在你的 djLint 支持时使用语言服务器。
+
 ## Neovim
 
 在 Neovim 0.11 或更高版本中：
@@ -24,6 +30,17 @@ vim.lsp.enable("djlint")
 ```
 
 要格式化文档，请调用 `vim.lsp.buf.format()`。
+
+要在保存时格式化，请在同一配置中添加：
+
+```lua
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.html", "*.jinja", "*.jinja2", "*.j2" },
+  callback = function(args)
+    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+  end,
+})
+```
 
 ## Zed
 
@@ -41,8 +58,45 @@ args = ["--lsp"]
 [[language]]
 name = "html"
 language-servers = ["vscode-html-language-server", "djlint"]
-formatter = { command = "djlint", args = ["--reformat", "--quiet", "-"] }
 ```
+
+## JetBrains IDE
+
+在 PyCharm 和其他基于 IntelliJ 的 IDE 中，使用免费的 [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) 插件：
+
+1. 从 Marketplace 安装 LSP4IJ。
+1. 打开 LSP Consoles 工具窗口，添加新的语言服务器。
+1. 在 **Server** 选项卡中，将名称设为 `djLint`，命令设为 `djlint --lsp`；如果 `djlint` 不在 PATH 中，请使用项目虚拟环境中的完整路径。
+1. 在 **Mappings** 选项卡中，为模板添加文件名模式，例如 `*.html`。对于 Django 项目，将语言 ID 设为 `htmldjango`，以便选择正确的[配置](/zh/docs/configuration/#profile)。
+1. 在 **Configuration** 选项卡中，可以用 JSON 在 `djlint` 键下填写[设置](#设置)。
+
+检查结果会显示在编辑器中，**Reformat Code** 也可以对这些文件使用服务器。
+
+## Sublime Text
+
+安装 [LSP](https://packagecontrol.io/packages/LSP) 包后，运行 **Preferences: LSP Server Configurations** 并添加：
+
+```json
+{
+  "djlint": {
+    "enabled": true,
+    "command": ["djlint", "--lsp"],
+    "selector": "text.html"
+  }
+}
+```
+
+## Emacs
+
+使用 Emacs 29 及更高版本自带的 Eglot：
+
+```elisp
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((html-mode web-mode) . ("djlint" "--lsp"))))
+```
+
+然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 用于格式化。
 
 ## 设置
 

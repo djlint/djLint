@@ -205,6 +205,10 @@ name = "html"
 language-servers = ["vscode-html-language-server", "djlint"]
 ```
 
+## JetBrains IDEs, Sublime Text and Emacs
+
+These run the [language server](/docs/language-server/) too. See how to set up [JetBrains IDEs](/docs/language-server/#jetbrains-ides), [Sublime Text](/docs/language-server/#sublime-text) and [Emacs](/docs/language-server/#emacs).
+
 ## MegaLinter
 
 djlint is natively embedded within the 100+ linters of [MegaLinter](https://megalinter.io)

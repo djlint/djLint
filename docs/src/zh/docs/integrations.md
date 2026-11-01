@@ -205,6 +205,10 @@ name = "html"
 language-servers = ["vscode-html-language-server", "djlint"]
 ```
 
+## JetBrains IDE、Sublime Text 和 Emacs
+
+它们同样通过[语言服务器](/zh/docs/language-server/)工作。请参阅如何设置 [JetBrains IDE](/zh/docs/language-server/#jetbrains-ide)、[Sublime Text](/zh/docs/language-server/#sublime-text) 和 [Emacs](/zh/docs/language-server/#emacs)。
+
 ## MegaLinter
 
 djLint 已集成到 [MegaLinter](https://megalinter.io) 的百余个代码检查工具中。

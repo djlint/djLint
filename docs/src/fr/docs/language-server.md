@@ -10,6 +10,12 @@ keywords: linter de modèles, formateur de modèles, djLint, HTML, modèles, for
 
 Il signale les erreurs et formate des documents entiers. Il ne demande aucun paquet supplémentaire.
 
+Quel que soit l'éditeur, installez djLint là où il peut le trouver, idéalement dans l'environnement virtuel du projet, et lancez l'éditeur depuis celui-ci ou indiquez-lui le `djlint` de cet environnement. L'éditeur utilise alors la version fixée par le projet, avec les mêmes résultats que votre hook pre-commit ou votre CI.
+
+## Visual Studio Code
+
+Installez l'[extension djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint), ou [sa version sur Open VSX](https://open-vsx.org/extension/monosans/djlint) pour VSCodium. Elle trouve djLint dans votre environnement, utilise celui qu'elle embarque sinon, et passe par le serveur de langage quand votre djLint le propose.
+
 ## Neovim
 
 Avec Neovim 0.11 ou plus récent :
@@ -24,6 +30,17 @@ vim.lsp.enable("djlint")
 ```
 
 Pour formater, appelez `vim.lsp.buf.format()`.
+
+Pour formater à l'enregistrement, ajoutez à la même configuration :
+
+```lua
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.html", "*.jinja", "*.jinja2", "*.j2" },
+  callback = function(args)
+    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+  end,
+})
+```
 
 ## Zed
 
@@ -41,8 +58,45 @@ args = ["--lsp"]
 [[language]]
 name = "html"
 language-servers = ["vscode-html-language-server", "djlint"]
-formatter = { command = "djlint", args = ["--reformat", "--quiet", "-"] }
 ```
+
+## IDE JetBrains
+
+Dans PyCharm et les autres IDE basés sur IntelliJ, utilisez le plugin gratuit [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) :
+
+1. Installez LSP4IJ depuis le Marketplace.
+1. Ouvrez la fenêtre LSP Consoles et ajoutez un nouveau serveur de langage.
+1. Dans l'onglet **Server**, indiquez le nom `djLint` et la commande `djlint --lsp`, avec le chemin complet du `djlint` de l'environnement virtuel du projet s'il n'est pas dans le PATH.
+1. Dans l'onglet **Mappings**, ajoutez un motif de nom de fichier pour vos modèles, comme `*.html`. Pour un projet Django, donnez l'identifiant de langage `htmldjango`, afin de choisir le bon [profil](/fr/docs/configuration/#profile).
+1. Dans l'onglet **Configuration**, vous pouvez donner les [réglages](#reglages) en JSON, sous une clé `djlint`.
+
+Les erreurs apparaissent dans l'éditeur, et **Reformat Code** peut utiliser le serveur pour ces fichiers.
+
+## Sublime Text
+
+Avec le paquet [LSP](https://packagecontrol.io/packages/LSP), lancez **Preferences: LSP Server Configurations** et ajoutez :
+
+```json
+{
+  "djlint": {
+    "enabled": true,
+    "command": ["djlint", "--lsp"],
+    "selector": "text.html"
+  }
+}
+```
+
+## Emacs
+
+Eglot, fourni avec Emacs 29 et plus récent :
+
+```elisp
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((html-mode web-mode) . ("djlint" "--lsp"))))
+```
+
+Lancez ensuite `M-x eglot` dans un modèle. `eglot-format-buffer` le formate.
 
 ## Réglages
 
