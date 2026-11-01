@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.49.2] - 2026-11-01
+
 ### Performance
 
 - Checking or linting a folder of many templates takes about half the time, most of all on Windows. A small run no longer starts worker processes, which cost more than they saved.
