@@ -91,7 +91,15 @@ repos:
 
 Vous pouvez utiliser les paramètres `files` ou `exclude` pour contraindre chaque hook à son propre répertoire, ce qui vous permet de supporter plusieurs langages de template dans le même repo.
 
-## Linter SublimeText
+## Sublime Text
+
+Les options ci-dessous vont de la meilleure à la moins bonne.
+
+### LSP (recommandé)
+
+Le paquet [LSP](https://packagecontrol.io/packages/LSP) lance le [serveur de langage](/fr/docs/language-server/#sublime-text), qui signale les erreurs pendant la saisie et formate.
+
+### SublimeLinter
 
 djLint peut être utilisé comme un plugin SublimeText Linter. Il peut être installé via [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint).
 
@@ -115,7 +123,9 @@ Assurez-vous que djLint est installé dans votre python global, ou sur votre `PA
 
 ## neovim
 
-djLint peut être utilisé comme linter et formateur dans neovim.
+djLint peut être utilisé comme linter et formateur dans neovim. Les options ci-dessous vont de la meilleure à la moins bonne.
+
+### Client LSP intégré (recommandé)
 
 Neovim 0.11 ou plus récent peut parler directement au [serveur de langage](/fr/docs/language-server/) de djLint, sans plugin. Vous obtenez les erreurs pendant la saisie, avec leur étendue soulignée, et le formatage avec `vim.lsp.buf.format()` :
 
@@ -128,9 +138,18 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Voir [Serveur de langage](/fr/docs/language-server/#reglages) pour les réglages. Les plugins ci-dessous lancent djLint comme une commande.
+Voir [Serveur de langage](/fr/docs/language-server/#reglages) pour les réglages.
 
-Avec le plugin `none-ls`.
+### conform.nvim et nvim-lint
+
+[conform.nvim](https://github.com/stevearc/conform.nvim) formate et [nvim-lint](https://github.com/mfussenegger/nvim-lint) analyse, en lançant djLint comme une commande. Les erreurs n'ont pas d'étendue soulignée et n'arrivent que lorsque vous demandez à nvim-lint d'analyser.
+
+```lua
+require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
+require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+```
+
+### none-ls
 
 ::: content
 
@@ -139,14 +158,7 @@ Avec le plugin `none-ls`.
 - [Formatage](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
   :::
 
-Avec `coc.nvim`.
-
-::: content
-
-- [npm package](https://www.npmjs.com/package/coc-htmldjango)
-  :::
-
-Avec `efm-langserver`.
+### efm-langserver
 
 ::: content
 
@@ -187,6 +199,13 @@ require("lspconfig").efm.setup({
 
 :::
 
+### coc.nvim
+
+::: content
+
+- [npm package](https://www.npmjs.com/package/coc-htmldjango)
+  :::
+
 ## Zed
 
 Installez l'[extension djLint](https://github.com/djlint/zed-djlint), qui lance le [serveur de langage](/fr/docs/language-server/).
@@ -205,9 +224,9 @@ name = "html"
 language-servers = ["vscode-html-language-server", "djlint"]
 ```
 
-## IDE JetBrains, Sublime Text et Emacs
+## IDE JetBrains et Emacs
 
-Ils passent aussi par le [serveur de langage](/fr/docs/language-server/). Voir comment configurer les [IDE JetBrains](/fr/docs/language-server/#ide-jetbrains), [Sublime Text](/fr/docs/language-server/#sublime-text) et [Emacs](/fr/docs/language-server/#emacs).
+Ils passent aussi par le [serveur de langage](/fr/docs/language-server/). Voir comment configurer les [IDE JetBrains](/fr/docs/language-server/#ide-jetbrains) et [Emacs](/fr/docs/language-server/#emacs).
 
 ## MegaLinter
 

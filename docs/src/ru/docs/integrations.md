@@ -91,7 +91,15 @@ repos:
 
 Вы можете использовать параметры `files` или `exclude`, чтобы ограничить каждый хук своим каталогом, что позволит вам поддерживать несколько языков шаблонов в одном репозитории.
 
-## SublimeText Linter
+## Sublime Text
+
+Варианты ниже расположены от лучшего к худшему.
+
+### LSP (рекомендуется)
+
+Пакет [LSP](https://packagecontrol.io/packages/LSP) запускает [языковой сервер](/ru/docs/language-server/#sublime-text), который даёт находки при вводе и форматирование.
+
+### SublimeLinter
 
 djLint можно использовать в качестве плагина SublimeText Linter. Его можно установить через [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint).
 
@@ -115,7 +123,9 @@ djLint можно использовать в качестве плагина Su
 
 ## neovim
 
-djLint можно использовать как линтер и форматер в neovim.
+djLint можно использовать как линтер и форматер в neovim. Варианты ниже расположены от лучшего к худшему.
+
+### Встроенный клиент LSP (рекомендуется)
 
 Neovim 0.11 и новее умеет работать с [языковым сервером](/ru/docs/language-server/) djLint напрямую, без плагинов. Это даёт находки при вводе с подчёркнутыми диапазонами и форматирование через `vim.lsp.buf.format()`:
 
@@ -128,9 +138,18 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Настройки описаны на странице [Языковой сервер](/ru/docs/language-server/#nastrojki). Плагины ниже запускают djLint как обычную команду.
+Настройки описаны на странице [Языковой сервер](/ru/docs/language-server/#nastrojki).
 
-С помощью плагина `none-ls`.
+### conform.nvim и nvim-lint
+
+[conform.nvim](https://github.com/stevearc/conform.nvim) форматирует, а [nvim-lint](https://github.com/mfussenegger/nvim-lint) проверяет, запуская djLint как команду. Находки приходят без подчёркнутых диапазонов и только тогда, когда вы просите nvim-lint проверить файл.
+
+```lua
+require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
+require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+```
+
+### none-ls
 
 ::: content
 
@@ -139,14 +158,7 @@ vim.lsp.enable("djlint")
 - [Форматирование](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
   :::
 
-С помощью `coc.nvim`.
-
-::: content
-
-- [npm package](https://www.npmjs.com/package/coc-htmldjango)
-  :::
-
-С помощью `efm-langserver`.
+### efm-langserver
 
 ::: content
 
@@ -187,6 +199,13 @@ require("lspconfig").efm.setup({
 
 :::
 
+### coc.nvim
+
+::: content
+
+- [npm package](https://www.npmjs.com/package/coc-htmldjango)
+  :::
+
 ## Zed
 
 Установите [расширение djLint](https://github.com/djlint/zed-djlint), которое запускает [языковой сервер](/ru/docs/language-server/).
@@ -205,9 +224,9 @@ name = "html"
 language-servers = ["vscode-html-language-server", "djlint"]
 ```
 
-## IDE от JetBrains, Sublime Text и Emacs
+## IDE от JetBrains и Emacs
 
-Они тоже работают через [языковой сервер](/ru/docs/language-server/). Как настроить [IDE от JetBrains](/ru/docs/language-server/#ide-ot-jetbrains), [Sublime Text](/ru/docs/language-server/#sublime-text) и [Emacs](/ru/docs/language-server/#emacs).
+Они тоже работают через [языковой сервер](/ru/docs/language-server/). Как настроить [IDE от JetBrains](/ru/docs/language-server/#ide-ot-jetbrains) и [Emacs](/ru/docs/language-server/#emacs).
 
 ## MegaLinter
 
