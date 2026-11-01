@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "printWidth": 80,
+  "printWidth": 100,
   "objectWrap": "collapse",
   "sortImports": { "newlinesBetween": false },
   "sortPackageJson": { "sortScripts": true },

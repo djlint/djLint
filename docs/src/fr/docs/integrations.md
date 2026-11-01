@@ -136,13 +136,7 @@ Le paquet [LSP](https://packagecontrol.io/packages/LSP) lance le [serveur de lan
 Lancez **Preferences: LSP Server Configurations** et ajoutez :
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

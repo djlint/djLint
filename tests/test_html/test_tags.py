@@ -986,9 +986,7 @@ test_data = [
         ),
         id="textarea",
     ),
-    pytest.param(
-        ("<center></center>\n"), ("<center></center>\n"), id="unsupported"
-    ),
+    pytest.param(("<center></center>\n"), ("<center></center>\n"), id="unsupported"),
     pytest.param(
         ("<div>\n<b>\n</b><i>\nx\n</i>\n</div>\n"),
         ("<div>\n    <b>\n    </b><i>\n        x\n    </i>\n</div>\n"),

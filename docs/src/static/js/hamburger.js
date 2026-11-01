@@ -1,7 +1,4 @@
-var $navbarBurgers = Array.prototype.slice.call(
-  document.querySelectorAll(".navbar-burger"),
-  0,
-);
+var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll(".navbar-burger"), 0);
 
 if ($navbarBurgers.length > 0) {
   $navbarBurgers.forEach(function (el) {

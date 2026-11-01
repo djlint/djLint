@@ -12,11 +12,8 @@ from tests.conftest import config_builder, printer
 
 test_data = [
     pytest.param(
-        "<{{ tag }}\n"
-        "  {%- if attrs %}{% include 'attrs.html' %}{% endif -%}\n"
-        ">Text</{{ tag }}>\n",
-        "<{{ tag }} {%- if attrs %}{% include 'attrs.html' %}{% endif -%}"
-        ">Text</{{ tag }}>\n",
+        "<{{ tag }}\n  {%- if attrs %}{% include 'attrs.html' %}{% endif -%}\n>Text</{{ tag }}>\n",
+        "<{{ tag }} {%- if attrs %}{% include 'attrs.html' %}{% endif -%}>Text</{{ tag }}>\n",
         id="a_guarded_block_stays_in_the_attribute_area",
     ),
     pytest.param(
@@ -58,11 +55,7 @@ test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_template_tag_name(source: str, expected: str) -> None:
-    config = config_builder({
-        "profile": "jinja",
-        "indent": 2,
-        "quote_style": "single",
-    })
+    config = config_builder({"profile": "jinja", "indent": 2, "quote_style": "single"})
 
     output = formatter(config, source)
 

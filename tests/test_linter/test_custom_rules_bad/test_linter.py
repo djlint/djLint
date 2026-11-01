@@ -15,8 +15,7 @@ if TYPE_CHECKING:
 
 def test_custom_rules_bad_config(runner: CliRunner) -> None:
     result = runner.invoke(
-        djlint,
-        ("tests/test_linter/test_custom_rules_bad", "--profile", "django"),
+        djlint, ("tests/test_linter/test_custom_rules_bad", "--profile", "django")
     )
     assert """Linting""" in result.output
     assert """1/1""" in result.output

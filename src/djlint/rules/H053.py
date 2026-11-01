@@ -66,36 +66,22 @@ _TAG_START_PATTERN: Final = compile_pattern(
     re.M,
 )
 _CLOSING_DELIMITERS: Final = {"{{": "}}", "{%": "%}", "{#": "#}"}
-_OPEN_NAME_PATTERN: Final = compile_pattern(
-    r"(?:\{%[-+]?|\{\{[#^][*>]?)\s*([\w.-]+)"
-)
-_END_NAME_PATTERN: Final = compile_pattern(
-    r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)"
-)
+_OPEN_NAME_PATTERN: Final = compile_pattern(r"(?:\{%[-+]?|\{\{[#^][*>]?)\s*([\w.-]+)")
+_END_NAME_PATTERN: Final = compile_pattern(r"\{%[-+]?\s*end([\w.-]*)|\{\{/\s*([\w.-]+)")
 # whitespace written between a delimiter and the tag name, which every
 # template language allows and the shared patterns spell as a space
 _LEADING_SPACE_PATTERN: Final = compile_pattern(r"^(\{[{%#][-+~]?)\s+")
-_ELSE_BRANCH_PATTERN: Final = compile_pattern(
-    r"\{\{[-+~]?\s*(?:else\b|\^\s*[-+~]?\}\})"
-)
-_SECTION_OPEN_PATTERN: Final = compile_pattern(
-    r"\{\{[-+~]?\s*[#^][*>]?\s*([\w.\-/]+)"
-)
-_SECTION_CLOSE_PATTERN: Final = compile_pattern(
-    r"\{\{[-+~]?\s*/(?!\*)\s*([\w.\-/]*)"
-)
+_ELSE_BRANCH_PATTERN: Final = compile_pattern(r"\{\{[-+~]?\s*(?:else\b|\^\s*[-+~]?\}\})")
+_SECTION_OPEN_PATTERN: Final = compile_pattern(r"\{\{[-+~]?\s*[#^][*>]?\s*([\w.\-/]+)")
+_SECTION_CLOSE_PATTERN: Final = compile_pattern(r"\{\{[-+~]?\s*/(?!\*)\s*([\w.\-/]*)")
 # go writes an argument after the keyword, so the keyword is followed by
 # whitespace; the jinja `{{ range(3) }}` and `{{ block.super }}` that a
 # profile of "all" also has to read open nothing
-_GOLANG_OPEN_PATTERN: Final = compile_pattern(
-    r"\{\{[-+~]?\s*(if|range|with|block|define)(?=[\s}])"
-)
+_GOLANG_OPEN_PATTERN: Final = compile_pattern(r"\{\{[-+~]?\s*(if|range|with|block|define)(?=[\s}])")
 _GOLANG_CLOSE_PATTERN: Final = compile_pattern(r"\{\{[-+~]?\s*end(?=[\s}])")
 _LIQUID_BRANCH_PATTERN: Final = compile_pattern(r"\{%[-+]?\s*(?:elsif|when)\b")
 _LIQUID_OPEN_PATTERN: Final = compile_pattern(r"\{%[-+]?\s*(case)\b")
-_DJANGO_OPEN_PATTERN: Final = compile_pattern(
-    r"\{%[-+]?\s*(ifequal|ifnotequal)\b"
-)
+_DJANGO_OPEN_PATTERN: Final = compile_pattern(r"\{%[-+]?\s*(ifequal|ifnotequal)\b")
 _BRANCH_STATEMENTS: Final = frozenset(("elif", "else"))
 _GOLANG_PROFILES: Final = frozenset(("all", "golang"))
 _LIQUID_PROFILES: Final = frozenset(("all", "liquid"))
@@ -255,9 +241,7 @@ def _closed_depth(stack: list[tuple[str, int, int]], name: str) -> int:
     return 0
 
 
-def _branch_paths(
-    config: Config, html: str
-) -> tuple[tuple[int, ...], tuple[dict[int, int], ...]]:
+def _branch_paths(config: Config, html: str) -> tuple[tuple[int, ...], tuple[dict[int, int], ...]]:
     """Map document offsets to the branch of each block around them.
 
     A path maps every open block to the branch in force, so two offsets
@@ -271,9 +255,9 @@ def _branch_paths(
     next_block = 0
 
     for tag in _template_tags(html):
-        if overlaps_ignored_block(
+        if overlaps_ignored_block(config, html, tag) or inside_ignored_linter_block(
             config, html, tag
-        ) or inside_ignored_linter_block(config, html, tag):
+        ):
             continue
         role = _role(config, tag)
         if role is None:
@@ -298,9 +282,7 @@ def _branch_paths(
     return tuple(boundaries), tuple(paths)
 
 
-def _ids(
-    html: str, name_end: int, attributes_end: int
-) -> list[tuple[re.Match[str], str]]:
+def _ids(html: str, name_end: int, attributes_end: int) -> list[tuple[re.Match[str], str]]:
     """The literal, non-empty id values written between two offsets.
 
     Other attributes, stray quoted strings and template tags are consumed
@@ -311,9 +293,7 @@ def _ids(
         (match, value)
         for match in _ATTRIBUTE_PATTERN.finditer(html, name_end, attributes_end)
         if match.group("attribute")
-        for value in (
-            match.group("dq") or match.group("sq") or match.group("uq") or "",
-        )
+        for value in (match.group("dq") or match.group("sq") or match.group("uq") or "",)
         if value and not any(marker in value for marker in _TEMPLATE_SYNTAX)
     ]
 
@@ -364,10 +344,7 @@ def run(
             for match, value in ids:
                 path = paths[bisect_right(boundaries, match.start()) - 1]
                 earlier = seen.setdefault((fragments[-1], value), [])
-                if any(
-                    not mutually_exclusive(previous, path)
-                    for previous in earlier
-                ):
+                if any(not mutually_exclusive(previous, path) for previous in earlier):
                     errors.append({
                         "code": rule["name"],
                         "line": get_line(match.start(), line_ends),

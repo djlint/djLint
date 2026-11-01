@@ -33,18 +33,12 @@ test_data = [
         id="opening",
     ),
     pytest.param(("<li>ID=username</li>"), ([]), id="opening"),
+    pytest.param(('<div title="the ID=5">y</div>'), ([]), id="name inside a value"),
     pytest.param(
-        ('<div title="the ID=5">y</div>'), ([]), id="name inside a value"
+        ('<div data-ID="5">y</div>'), ([]), id="a longer name is not one the formatter lowercases"
     ),
     pytest.param(
-        ('<div data-ID="5">y</div>'),
-        ([]),
-        id="a longer name is not one the formatter lowercases",
-    ),
-    pytest.param(
-        ('<my-item :itemID="x"></my-item>'),
-        ([]),
-        id="a framework binding keeps its case",
+        ('<my-item :itemID="x"></my-item>'), ([]), id="a framework binding keeps its case"
     ),
     pytest.param(
         ('<img Width="3" alt="x">'),
@@ -58,16 +52,12 @@ test_data = [
         ]),
         id="mixed case",
     ),
-    pytest.param(
-        ('<p title="<img ID=x>">y</p>'), ([]), id="a tag inside a value"
-    ),
+    pytest.param(('<p title="<img ID=x>">y</p>'), ([]), id="a tag inside a value"),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
@@ -90,11 +80,7 @@ def test_lowercased_names_agree_with_the_rule() -> None:
     with (Path(djlint.__file__).parent / "rules.yaml").open("rb") as f:
         rules = yaml.safe_load(f)
 
-    pattern = next(
-        rule["rule"]["patterns"][0]
-        for rule in rules
-        if rule["rule"]["name"] == "H010"
-    )
+    pattern = next(rule["rule"]["patterns"][0] for rule in rules if rule["rule"]["name"] == "H010")
     names = pattern.rpartition("(?:")[2].partition(")")[0].split("|")
 
     assert {name.lower() for name in names} == HTML_LOWERCASE_ATTRIBUTE_NAMES

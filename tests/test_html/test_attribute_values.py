@@ -27,11 +27,7 @@ test_data = [
             '<style type="text/css"></style>\n'
             '<link type="text/css" rel="stylesheet" href="a.css">\n'
         ),
-        (
-            "<script></script>\n"
-            "<style></style>\n"
-            '<link rel="stylesheet" href="a.css">\n'
-        ),
+        ('<script></script>\n<style></style>\n<link rel="stylesheet" href="a.css">\n'),
         id="default types are dropped",
     ),
     pytest.param(

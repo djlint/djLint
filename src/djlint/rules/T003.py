@@ -30,9 +30,7 @@ _BLOCK_PATTERN: Final = compile_pattern(
 )
 
 
-def _ignored(
-    rule: dict[str, Any], config: Config, html: str, match: re.Match[str]
-) -> bool:
+def _ignored(rule: dict[str, Any], config: Config, html: str, match: re.Match[str]) -> bool:
     return (
         overlaps_ignored_block(config, html, match)
         or inside_ignored_rule(config, html, match, rule["name"])
@@ -41,10 +39,7 @@ def _ignored(
 
 
 def _error(
-    rule: dict[str, Any],
-    match: re.Match[str],
-    line_ends: list[dict[str, int]],
-    message: str,
+    rule: dict[str, Any], match: re.Match[str], line_ends: list[dict[str, int]], message: str
 ) -> LintError:
     return {
         "code": rule["name"],

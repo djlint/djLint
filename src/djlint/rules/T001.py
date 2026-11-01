@@ -4,11 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint.helpers import (
-    inside_ignored_linter_block,
-    inside_ignored_rule,
-    overlaps_ignored_block,
-)
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
 from djlint.lint import get_line
 from djlint.rules.T027 import _close_past_strings, _TemplateTagMatch
 

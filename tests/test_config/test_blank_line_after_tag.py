@@ -151,19 +151,11 @@ test_data = [
     pytest.param(
         ("{% extends nothing %}\n\n<div></div>\n"),
         ("{% extends nothing %}\n\n<div></div>\n"),
-        ({
-            "blank_line_after_tag": "load, extends",
-            "preserve_blank_lines": True,
-        }),
+        ({"blank_line_after_tag": "load, extends", "preserve_blank_lines": True}),
         id="option should work with preserve blank lines",
     ),
     pytest.param(
-        (
-            "{% block %}stuff{% endblock %}\n"
-            "\n"
-            "{% block %}stuff{% endblock %}\n"
-            "\n"
-        ),
+        ("{% block %}stuff{% endblock %}\n\n{% block %}stuff{% endblock %}\n\n"),
         ("{% block %}stuff{% endblock %}\n\n{% block %}stuff{% endblock %}\n"),
         ({"blank_line_after_tag": "load, extends,     include     ,endblock "}),
         id="double block",
@@ -185,19 +177,8 @@ test_data = [
         id="test multiple",
     ),
     pytest.param(
-        (
-            "{%- macro Foo() -%}\n"
-            "  <div>foo</div>\n"
-            "{%- endmacro -%}\n"
-            "<p>after macro</p>\n"
-        ),
-        (
-            "{%- macro Foo() -%}\n"
-            "    <div>foo</div>\n"
-            "{%- endmacro -%}\n"
-            "\n"
-            "<p>after macro</p>\n"
-        ),
+        ("{%- macro Foo() -%}\n  <div>foo</div>\n{%- endmacro -%}\n<p>after macro</p>\n"),
+        ("{%- macro Foo() -%}\n    <div>foo</div>\n{%- endmacro -%}\n\n<p>after macro</p>\n"),
         ({"blank_line_after_tag": "endmacro"}),
         id="nunjucks whitespace control dash - after",
     ),

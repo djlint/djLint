@@ -16,8 +16,7 @@ const pluginRev = require("eleventy-plugin-rev");
 const purgecss = require("@fullhuman/postcss-purgecss");
 const postcss = require("postcss");
 
-const slugifyCustom = (s) =>
-  slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g });
+const slugifyCustom = (s) => slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g });
 
 const schemaShortcodes = {};
 const schemaReady = schema({
@@ -55,9 +54,7 @@ async function imageShortcode(
   return `<picture>
     ${Object.values(metadata)
       .map((imageFormat) => {
-        return `  <source type="${
-          imageFormat[0].sourceType
-        }" srcset="${imageFormat
+        return `  <source type="${imageFormat[0].sourceType}" srcset="${imageFormat
           .map((entry) => entry.srcset)
           .join(", ")}" sizes="${sizes}">`;
       })
@@ -89,52 +86,34 @@ const djlintTomlConfig = (value) =>
     .trim();
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addGlobalData(
-    "djlint_version",
-    require("../package.json").version,
-  );
+  eleventyConfig.addGlobalData("djlint_version", require("../package.json").version);
   eleventyConfig.setUseGitIgnore(false);
   eleventyConfig.addFilter("widont", joinLastTwoWords);
   eleventyConfig.addFilter("djlintTomlConfig", djlintTomlConfig);
   eleventyConfig.addWatchTarget("./src/static/");
   eleventyConfig.addNunjucksAsyncShortcode("image", imageShortcode);
   if (process.env.ELEVENTY_PRODUCTION == true) {
-    eleventyConfig.addTransform(
-      "htmlmin",
-      require("./src/_utils/minify-html.js"),
-    );
+    eleventyConfig.addTransform("htmlmin", require("./src/_utils/minify-html.js"));
   }
   eleventyConfig.addPlugin(syntaxHighlight);
   eleventyConfig.addPlugin(metagen);
-  eleventyConfig.addNunjucksAsyncShortcode(
-    "jsonLdScript",
-    async (meta, type, tags) => {
-      await schemaReady;
-      return schemaShortcodes.jsonLdScript(meta, type, tags);
-    },
-  );
-  eleventyConfig.addNunjucksAsyncShortcode(
-    "jsonLd",
-    async (meta, type, tags) => {
-      await schemaReady;
-      return schemaShortcodes.jsonLd(meta, type, tags);
-    },
-  );
+  eleventyConfig.addNunjucksAsyncShortcode("jsonLdScript", async (meta, type, tags) => {
+    await schemaReady;
+    return schemaShortcodes.jsonLdScript(meta, type, tags);
+  });
+  eleventyConfig.addNunjucksAsyncShortcode("jsonLd", async (meta, type, tags) => {
+    await schemaReady;
+    return schemaShortcodes.jsonLd(meta, type, tags);
+  });
   eleventyConfig.addPlugin(rollupper, {
-    rollup: {
-      output: { format: "umd", dir: "_site/static/js" },
-      plugins: [nodeResolve()],
-    },
+    rollup: { output: { format: "umd", dir: "_site/static/js" }, plugins: [nodeResolve()] },
   });
   eleventyConfig.addPlugin(editOnGithub, {
     github_edit_repo: "https://github.com/djlint/djLint",
     github_edit_path: "/docs/",
     github_edit_branch: "master",
     github_edit_text: (page) => {
-      i18n_options = Object.assign(
-        {},
-        { translations, fallbackLocales: { "*": "en-US" } },
-      );
+      i18n_options = Object.assign({}, { translations, fallbackLocales: { "*": "en-US" } });
 
       return `<span class="icon-text"><span class="icon mr-1"><i class="fas fa-pencil"></i></span><span>${i18n_func(
         "edit_page",
@@ -198,8 +177,7 @@ module.exports = function (eleventyConfig) {
     "./node_modules/@fontsource/rasa/files": "static/font/rasa/files",
   });
   eleventyConfig.addPassthroughCopy({
-    "./node_modules/@fontsource/crimson-pro/files":
-      "static/font/crimson-pro/files",
+    "./node_modules/@fontsource/crimson-pro/files": "static/font/crimson-pro/files",
   });
 
   eleventyConfig.addPassthroughCopy({ "src/static/img": "static/img" });
@@ -208,19 +186,13 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addPassthroughCopy({ "src/_redirects": "_redirects" });
 
-  eleventyConfig.addPassthroughCopy({
-    "src/static/img/favicon.ico": "favicon.ico",
-  });
+  eleventyConfig.addPassthroughCopy({ "src/static/img/favicon.ico": "favicon.ico" });
 
   eleventyConfig.addPassthroughCopy({ "src/static/py": "static/py" });
 
-  eleventyConfig.addPassthroughCopy({
-    "src/static/schema/djlint.json": "schema/djlint.json",
-  });
+  eleventyConfig.addPassthroughCopy({ "src/static/schema/djlint.json": "schema/djlint.json" });
 
-  eleventyConfig.addPassthroughCopy({
-    "src/static/js/worker.js": "static/js/worker.js",
-  });
+  eleventyConfig.addPassthroughCopy({ "src/static/js/worker.js": "static/js/worker.js" });
 
   eleventyConfig.addFilter("niceDate", (value) => {
     try {
@@ -328,10 +300,7 @@ module.exports = function (eleventyConfig) {
     "_site/static/font/fontawesome/webfonts",
   );
 
-  eleventyConfig.addPlugin(i18n, {
-    translations,
-    fallbackLocales: { "*": "en-US" },
-  });
+  eleventyConfig.addPlugin(i18n, { translations, fallbackLocales: { "*": "en-US" } });
 
   const localePrefix = new RegExp(
     `^/(?:${locales
@@ -385,10 +354,7 @@ module.exports = function (eleventyConfig) {
     });
 
     remaining_locals.forEach((x) => {
-      var new_url = ("/" + page.replace(active_local, x)).replace(
-        /\/{2,}/,
-        "/",
-      );
+      var new_url = ("/" + page.replace(active_local, x)).replace(/\/{2,}/, "/");
       if (valid_urls.indexOf(new_url) !== -1) {
         i18n_pages.push({
           url: new_url,
@@ -403,13 +369,7 @@ module.exports = function (eleventyConfig) {
   });
 
   return {
-    dir: {
-      input: "src",
-      formats: "njk",
-      includes: "_includes",
-      data: "_data",
-      output: "_site",
-    },
+    dir: { input: "src", formats: "njk", includes: "_includes", data: "_data", output: "_site" },
     templateFormats: ["md", "html", "njk", "11ty.js"],
     htmlTemplateEngine: "njk",
     markdownTemplateEngine: "njk",

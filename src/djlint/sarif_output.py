@@ -43,9 +43,7 @@ def _artifact(filename: str, config: Config) -> dict[str, Any]:
 
 
 def _lint_results(
-    error: Mapping[str, Sequence[LintError]],
-    config: Config,
-    rule_index: Mapping[str, int],
+    error: Mapping[str, Sequence[LintError]], config: Config, rule_index: Mapping[str, int]
 ) -> list[dict[str, Any]]:
     filename = next(iter(error))
     artifact = _artifact(filename, config)
@@ -85,18 +83,12 @@ def _format_result(
         "level": "error",
         "message": {"text": "Formatting changes required."},
         "locations": [
-            {
-                "physicalLocation": {
-                    "artifactLocation": _artifact(next(iter(errors)), config)
-                }
-            }
+            {"physicalLocation": {"artifactLocation": _artifact(next(iter(errors)), config)}}
         ],
     }
 
 
-def build_sarif(
-    config: Config, file_errors: Sequence[ProcessResult]
-) -> tuple[dict[str, Any], int]:
+def build_sarif(config: Config, file_errors: Sequence[ProcessResult]) -> tuple[dict[str, Any], int]:
     """Build the SARIF document and count the findings it holds."""
     rules: list[dict[str, Any]] = []
     rule_index: dict[str, int] = {}
@@ -116,9 +108,7 @@ def build_sarif(
             found = _lint_results(lint, config, rule_index)
             results.extend(found)
             count += len(found)
-        if (formatting := error.get("format_message")) and next(
-            iter(formatting.values())
-        ):
+        if (formatting := error.get("format_message")) and next(iter(formatting.values())):
             if _FORMATTING_RULE not in rule_index:
                 rule_index[_FORMATTING_RULE] = len(rules)
                 rules.append({
@@ -126,9 +116,7 @@ def build_sarif(
                     "shortDescription": {"text": "File would be reformatted."},
                     "helpUri": "https://djlint.com/docs/formatter/",
                 })
-            results.append(
-                _format_result(formatting, config, rule_index[_FORMATTING_RULE])
-            )
+            results.append(_format_result(formatting, config, rule_index[_FORMATTING_RULE]))
             count += count_format_errors(formatting)
 
     document = {

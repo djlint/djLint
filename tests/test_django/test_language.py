@@ -17,18 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "<p>\n"
-            "    {% language 'de' %}Something{% endlanguage %}\n"
-            "    <span>Test</span>\n"
-            "</p>\n"
-        ),
-        (
-            "<p>\n"
-            "    {% language 'de' %}Something{% endlanguage %}\n"
-            "    <span>Test</span>\n"
-            "</p>\n"
-        ),
+        ("<p>\n    {% language 'de' %}Something{% endlanguage %}\n    <span>Test</span>\n</p>\n"),
+        ("<p>\n    {% language 'de' %}Something{% endlanguage %}\n    <span>Test</span>\n</p>\n"),
         id="issue_2411_siblings_keep_their_level",
     ),
     pytest.param(

@@ -123,12 +123,8 @@ test_data = [
         id="style_before_others",
     ),
     pytest.param(
-        (
-            '<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'
-        ),
-        (
-            '<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'
-        ),
+        ('<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'),
+        ('<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'),
         id="attributes with space around = are not broken (issues 317, 330)",
     ),
     pytest.param(
@@ -159,9 +155,7 @@ test_data = [
             '  title="">\n'
             "</select>\n"
         ),
-        (
-            '<select multiple class="selectpicker show-tick" id="device-select" title=""></select>\n'
-        ),
+        ('<select multiple class="selectpicker show-tick" id="device-select" title=""></select>\n'),
         id="boolean_attribute",
     ),
     pytest.param(
@@ -410,15 +404,7 @@ test_data = [
             "<div CaseSensitive></div>\n"
             '        """\n'
         ),
-        (
-            "<div CaseSensitive></div>\n"
-            '"""\n'
-            ")\n"
-            "html_out = (\n"
-            '"""\n'
-            "<div CaseSensitive></div>\n"
-            '"""\n'
-        ),
+        ('<div CaseSensitive></div>\n"""\n)\nhtml_out = (\n"""\n<div CaseSensitive></div>\n"""\n'),
         id="CaseSensitive",
     ),
     pytest.param(
@@ -635,9 +621,7 @@ test_data = [
         id="double_quotes",
     ),
     pytest.param(
-        ('<a href="1" href="2">123</a>'),
-        ('<a href="1" href="2">123</a>\n'),
-        id="duplicate",
+        ('<a href="1" href="2">123</a>'), ('<a href="1" href="2">123</a>\n'), id="duplicate"
     ),
     pytest.param(
         ('<img src="test.png" alt=\'John "ShotGun" Nelson\'>'),
@@ -922,9 +906,7 @@ test_data = [
         id="style",
     ),
     pytest.param(
-        ("<p title=Title>String</p>"),
-        ('<p title="Title">String</p>\n'),
-        id="without_quotes",
+        ("<p title=Title>String</p>"), ('<p title="Title">String</p>\n'), id="without_quotes"
     ),
     pytest.param(
         ("<img src={{ url }}>"),
@@ -942,12 +924,8 @@ test_data = [
         id="with_html_tag_in_attribute",
     ),
     pytest.param(
-        (
-            '<select data-json=\'{"html": "<div></div>"}\' data-normal="hello"></select>'
-        ),
-        (
-            '<select data-json=\'{"html": "<div></div>"}\' data-normal="hello"></select>\n'
-        ),
+        ('<select data-json=\'{"html": "<div></div>"}\' data-normal="hello"></select>'),
+        ('<select data-json=\'{"html": "<div></div>"}\' data-normal="hello"></select>\n'),
         id="with_json_html_tag_in_attribute",
     ),
     pytest.param(
@@ -1103,18 +1081,14 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
     assert expected == output
 
 
-def test_single_quotes_become_double_on_the_names_h008_reports(
-    basic_config: Config,
-) -> None:
+def test_single_quotes_become_double_on_the_names_h008_reports(basic_config: Config) -> None:
     """A data-x attribute is not one of the names H008 reports, so it is left as written."""
     output = formatter(basic_config, "<div class='a' data-x='b'>t</div>\n")
 
     assert output == "<div class=\"a\" data-x='b'>t</div>\n"
 
 
-def test_a_value_holding_a_double_quote_keeps_its_single_ones(
-    basic_config: Config,
-) -> None:
+def test_a_value_holding_a_double_quote_keeps_its_single_ones(basic_config: Config) -> None:
     source = "<div title='he said \"hi\"'>t</div>\n"
 
     assert formatter(basic_config, source) == source

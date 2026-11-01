@@ -193,9 +193,7 @@ def run(
         name = token.name.casefold()
 
         if name == "track":
-            if not token.closing and not overlaps_ignored_block(
-                config, html, token
-            ):
+            if not token.closing and not overlaps_ignored_block(config, html, token):
                 area = html[token.name_end : token.attributes_end]
                 caption_tracks += _is_caption_track(area)
             continue
@@ -213,9 +211,7 @@ def run(
         if (
             caption_tracks > captions_before
             or _is_muted(html[opening.name_end : opening.attributes_end])
-            or _TEMPLATE_OPENING_PATTERN.search(
-                html, opening.start, opening.end
-            )
+            or _TEMPLATE_OPENING_PATTERN.search(html, opening.start, opening.end)
             or _holds_template(template_positions, opening.end, token.start)
             or overlaps_ignored_block(config, html, opening)
             or inside_ignored_rule(config, html, opening, rule["name"])

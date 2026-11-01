@@ -17,9 +17,7 @@ if TYPE_CHECKING:
 
 _SCHEMA = Path("docs/src/static/schema/djlint.json")
 _SETTINGS = Path("src/djlint/settings.py")
-_CONFIG_KEY_PATTERN = re.compile(
-    r"""(?:djlint_settings\.get|setting_int)\(\s*["']([\w-]+)["']"""
-)
+_CONFIG_KEY_PATTERN = re.compile(r"""(?:djlint_settings\.get|setting_int)\(\s*["']([\w-]+)["']""")
 
 
 def _schema() -> dict[str, Any]:
@@ -29,9 +27,7 @@ def _schema() -> dict[str, Any]:
 
 def _configured_keys() -> set[str]:
     """Every key djLint reads out of a configuration file."""
-    return set(
-        _CONFIG_KEY_PATTERN.findall(_SETTINGS.read_text(encoding="utf-8"))
-    )
+    return set(_CONFIG_KEY_PATTERN.findall(_SETTINGS.read_text(encoding="utf-8")))
 
 
 def test_the_schema_covers_every_configuration_option() -> None:
@@ -44,9 +40,7 @@ def test_the_schema_covers_every_configuration_option() -> None:
 
 def test_every_schema_property_says_what_it_does() -> None:
     assert [
-        name
-        for name, entry in _schema()["properties"].items()
-        if not entry.get("description")
+        name for name, entry in _schema()["properties"].items() if not entry.get("description")
     ] == []
 
 
@@ -86,7 +80,5 @@ def test_the_schema_accepts_lists_where_djlint_does() -> None:
 
     assert keys
     assert {
-        name
-        for name, entry in _schema()["properties"].items()
-        if entry.get("$ref") == list_ref
+        name for name, entry in _schema()["properties"].items() if entry.get("$ref") == list_ref
     } == keys

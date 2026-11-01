@@ -14,22 +14,15 @@ from pathlib import Path
 
 
 def test_mypyc_dependencies_match_the_lock() -> None:
-    pyproject = tomllib.loads(
-        Path("pyproject.toml").read_text(encoding="utf-8")
-    )
-    hook = pyproject["tool"]["hatch"]["build"]["targets"]["wheel"]["hooks"][
-        "mypyc"
-    ]
+    pyproject = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+    hook = pyproject["tool"]["hatch"]["build"]["targets"]["wheel"]["hooks"]["mypyc"]
     lock = tomllib.loads(Path("uv.lock").read_text(encoding="utf-8"))
-    locked = {
-        package["name"]: package["version"] for package in lock["package"]
-    }
+    locked = {package["name"]: package["version"] for package in lock["package"]}
 
     for requirement in hook["dependencies"]:
         name, sep, version = requirement.partition("==")
         assert sep, f"pin {requirement} in the mypyc build hook"
         if name in locked:
             assert version == locked[name], (
-                f"the mypyc build hook pins {requirement}, uv.lock has"
-                f" {locked[name]}"
+                f"the mypyc build hook pins {requirement}, uv.lock has {locked[name]}"
             )

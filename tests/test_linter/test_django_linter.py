@@ -75,10 +75,7 @@ test_data = [
         id="DJ018",
     ),
     pytest.param(
-        (
-            '<a href="javascript:abc()">\n'
-            '<form action="javascript:abc()"></form></a>'
-        ),
+        ('<a href="javascript:abc()">\n<form action="javascript:abc()"></form></a>'),
         ([
             {
                 "code": "H019",
@@ -116,9 +113,7 @@ test_data = [
         id="DJ018_url_action_parameter",
     ),
     pytest.param(
-        (
-            '<div class="em-ajaxLogs" data-src="/table/task/{{ t.id }}/log"></div>'
-        ),
+        ('<div class="em-ajaxLogs" data-src="/table/task/{{ t.id }}/log"></div>'),
         ([
             {
                 "code": "D018",
@@ -129,11 +124,7 @@ test_data = [
         ]),
         id="DJ018_data_src",
     ),
-    pytest.param(
-        ('<a href="mailto:joe"></a><a href="tel:joe"></a>'),
-        ([]),
-        id="DJ018_mailto",
-    ),
+    pytest.param(('<a href="mailto:joe"></a><a href="tel:joe"></a>'), ([]), id="DJ018_mailto"),
     pytest.param(
         (
             '<a href="maps://?ll={{ obj.address.position.coords.1 }},'
@@ -143,29 +134,16 @@ test_data = [
         ([]),
         id="issue_831_uri_scheme",
     ),
+    pytest.param(('<a href="/">Home</a>\n<form action="/"></form>'), ([]), id="DJ018_root"),
     pytest.param(
-        ('<a href="/">Home</a>\n<form action="/"></form>'),
-        ([]),
-        id="DJ018_root",
-    ),
-    pytest.param(
-        (
-            '<a href="//cdn.example.com/path"></a>\n'
-            '<form action="//cdn.example.com/path"></form>'
-        ),
+        ('<a href="//cdn.example.com/path"></a>\n<form action="//cdn.example.com/path"></form>'),
         ([]),
         id="DJ018_protocol_relative",
     ),
+    pytest.param(('<a href="data:,Hello%2C%20World%21"></a>'), ([]), id="DJ018_data"),
+    pytest.param(('<a href="sms:?body=This%20is%20an%20sms"></a>'), ([]), id="DJ018_data"),
     pytest.param(
-        ('<a href="data:,Hello%2C%20World%21"></a>'), ([]), id="DJ018_data"
-    ),
-    pytest.param(
-        ('<a href="sms:?body=This%20is%20an%20sms"></a>'), ([]), id="DJ018_data"
-    ),
-    pytest.param(
-        ('<div data-row-selection-action="highlight"></div>'),
-        ([]),
-        id="DJ018_attribute_names",
+        ('<div data-row-selection-action="highlight"></div>'), ([]), id="DJ018_attribute_names"
     ),
     pytest.param(
         ('<form action="{% url \'something\' %}" data-action="xxx"></form>'),
@@ -203,9 +181,7 @@ test_data = [
         id="T027_long_name",
     ),
     pytest.param(
-        ('{% trans "Check box if you\'re interested in this location." %}'),
-        ([]),
-        id="T027_trans",
+        ('{% trans "Check box if you\'re interested in this location." %}'), ([]), id="T027_trans"
     ),
     pytest.param(
         ("{% trans \"Click 'submit' if you know what you're doing.\" %}"),
@@ -213,9 +189,7 @@ test_data = [
         id="T027_trans_odd_apostrophes",
     ),
     pytest.param(("{% '', \"'\" %}"), ([]), id="T027_quoted_apostrophe"),
-    pytest.param(
-        ("{% 'foo', \"can't\" %}"), ([]), id="T027_mixed_quote_strings"
-    ),
+    pytest.param(("{% 'foo', \"can't\" %}"), ([]), id="T027_mixed_quote_strings"),
     pytest.param(("{{/* can't */}}"), ([]), id="T027_mixed_quotes"),
     pytest.param(
         ("<a href=\"{{ blah 'asdf' -}}\">"),
@@ -266,17 +240,9 @@ test_data = [
         ]),
         id="T028_no_6",
     ),
+    pytest.param(('<input class="{% if %}{% endif %}" />'), ([]), id="T028_no_7"),
     pytest.param(
-        ('<input class="{% if %}{% endif %}" />'), ([]), id="T028_no_7"
-    ),
-    pytest.param(
-        (
-            "{# djlint:off #}\n"
-            '<div class="wrapper">\n'
-            "{# djlint:on #}\n"
-            "  <p>hello</p>\n"
-            "</div>\n"
-        ),
+        ('{# djlint:off #}\n<div class="wrapper">\n{# djlint:on #}\n  <p>hello</p>\n</div>\n'),
         ([]),
         id="issue_2182_off_block_open_tag_matches_close_tag",
     ),
@@ -304,9 +270,7 @@ test_data = [
         ]),
         id="T032_2",
     ),
-    pytest.param(
-        ("{% static '' \"     \" 'foo/bar.min.css' %}"), ([]), id="T032_no"
-    ),
+    pytest.param(("{% static '' \"     \" 'foo/bar.min.css' %}"), ([]), id="T032_no"),
     pytest.param(
         ("{{ static ''  \"  \"  'foo/bar.min.css' }}"),
         ([
@@ -331,16 +295,12 @@ test_data = [
         ]),
         id="T032_4",
     ),
-    pytest.param(
-        ("{{ static '' \"     \" 'foo/bar.min.css' }}"), ([]), id="T032_no_2"
-    ),
+    pytest.param(("{{ static '' \"     \" 'foo/bar.min.css' }}"), ([]), id="T032_no_2"),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], django_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], django_config: Config) -> None:
     filename = "test.html"
     output = linter(django_config, source, filename, filename)
 

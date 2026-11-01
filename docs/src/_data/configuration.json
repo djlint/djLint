@@ -212,10 +212,7 @@
     "usage": [
       { "name": "pyproject.toml", "value": "extension=\"html.dj\"" },
       { "name": ".djlintrc", "value": "\"extension\": \"html.dj\"" },
-      {
-        "name": "cli",
-        "value": "--extension \"html.dj\"\n# or\n-e \"html.dj\""
-      }
+      { "name": "cli", "value": "--extension \"html.dj\"\n# or\n-e \"html.dj\"" }
     ]
   },
   {
@@ -261,18 +258,9 @@
     },
     "tags": ["formatter"],
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "custom_html=\"mjml,simple-greeting,mj-\\\\w+\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"custom_html\": \"mjml,simple-greeting,mj-\\\\w+\""
-      },
-      {
-        "name": "cli",
-        "value": "--custom-html \"mjml,simple-greeting,mj-\\\\w+\""
-      }
+      { "name": "pyproject.toml", "value": "custom_html=\"mjml,simple-greeting,mj-\\\\w+\"" },
+      { "name": ".djlintrc", "value": "\"custom_html\": \"mjml,simple-greeting,mj-\\\\w+\"" },
+      { "name": "cli", "value": "--custom-html \"mjml,simple-greeting,mj-\\\\w+\"" }
     ]
   },
   {
@@ -302,14 +290,8 @@
       "zh": "覆盖默认排除路径。"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "exclude=\".venv,venv,.tox,.eggs,...\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"exclude\": \".venv,venv,.tox,.eggs,...\""
-      },
+      { "name": "pyproject.toml", "value": "exclude=\".venv,venv,.tox,.eggs,...\"" },
+      { "name": ".djlintrc", "value": "\"exclude\": \".venv,venv,.tox,.eggs,...\"" },
       { "name": "cli", "value": "--exclude \".venv,venv,.tox,.eggs,...\"" }
     ]
   },
@@ -340,18 +322,9 @@
       "zh": "在 `{% <tag> ... %}` 标签组后添加空行。（空行不会添加到块的末尾）"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "blank_line_after_tag=\"load,extends,include\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"blank_line_after_tag\": \"load,extends,include\""
-      },
-      {
-        "name": "cli",
-        "value": "--blank-line-after-tag \"load,extends,include\""
-      }
+      { "name": "pyproject.toml", "value": "blank_line_after_tag=\"load,extends,include\"" },
+      { "name": ".djlintrc", "value": "\"blank_line_after_tag\": \"load,extends,include\"" },
+      { "name": "cli", "value": "--blank-line-after-tag \"load,extends,include\"" }
     ]
   },
   {
@@ -365,18 +338,9 @@
       "zh": "在 `{% <tag> ... %}` 标签组前添加空行。（空行不会添加到文件或块的开头，也不会添加到同一个标签之间）"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "blank_line_before_tag=\"load,extends,include\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"blank_line_before_tag\": \"load,extends,include\""
-      },
-      {
-        "name": "cli",
-        "value": "--blank-line-before-tag \"load,extends,include\""
-      }
+      { "name": "pyproject.toml", "value": "blank_line_before_tag=\"load,extends,include\"" },
+      { "name": ".djlintrc", "value": "\"blank_line_before_tag\": \"load,extends,include\"" },
+      { "name": "cli", "value": "--blank-line-before-tag \"load,extends,include\"" }
     ]
   },
   {
@@ -390,14 +354,8 @@
       "zh": "不将多行标签的内容压缩到最后一个属性的行中。"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "line_break_after_multiline_tag=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"line_break_after_multiline_tag\": true"
-      },
+      { "name": "pyproject.toml", "value": "line_break_after_multiline_tag=true" },
+      { "name": ".djlintrc", "value": "\"line_break_after_multiline_tag\": true" },
       { "name": "cli", "value": "--line-break-after-multiline-tag" }
     ]
   },
@@ -492,14 +450,8 @@
       "zh": "尝试格式化标签属性中的模板语法。（默认关闭）"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "format_attribute_template_tags=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"format_attribute_template_tags\": true"
-      },
+      { "name": "pyproject.toml", "value": "format_attribute_template_tags=true" },
+      { "name": ".djlintrc", "value": "\"format_attribute_template_tags\": true" },
       { "name": "cli", "value": "--format-attribute-template-tags" }
     ]
   },
@@ -672,10 +624,7 @@
       "zh": "定义一个作为 djlint 源的路径列表。当指定该选项时，命令行中的源必须设置为 `-`，就如同使用标准输入（stdin）一样。"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "[tool.djlint]\nfiles=[\"index.html\"]\n"
-      },
+      { "name": "pyproject.toml", "value": "[tool.djlint]\nfiles=[\"index.html\"]\n" },
       { "name": ".djlintrc", "value": "\"files\": [\n    \"index.html\"\n]" },
       { "name": "cli", "value": "index.html" }
     ]
@@ -691,10 +640,7 @@
       "zh": "不修正已知 HTML 标签的大小写。启用后不报告 `H009` 和 `H010`。"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "[tool.djlint]\nignore_case=true\n"
-      },
+      { "name": "pyproject.toml", "value": "[tool.djlint]\nignore_case=true\n" },
       { "name": ".djlintrc", "value": "\"ignore_case\": true" },
       { "name": "cli", "value": "--ignore-case" }
     ]
@@ -751,14 +697,8 @@
       "zh": "JavaScript/JSON 对象需要被格式化的最少属性数量。默认值为 2。属性数量更少的对象会保持在单行。"
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "format_attribute_js_json_min_props=3"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"format_attribute_js_json_min_props\": 3"
-      },
+      { "name": "pyproject.toml", "value": "format_attribute_js_json_min_props=3" },
+      { "name": ".djlintrc", "value": "\"format_attribute_js_json_min_props\": 3" },
       { "name": "cli", "value": "--format-attribute-js-json-min-props 3" }
     ]
   },
@@ -772,9 +712,7 @@
       "fr": "Nom de fichier à utiliser pour per-file-ignores et les messages lors de la lecture depuis stdin. La valeur par défaut est \"-\".",
       "zh": "从标准输入（stdin）读取时，用于 per-file-ignores 及消息中的文件名。默认值为 \"-\"。"
     },
-    "usage": [
-      { "name": "cli", "value": "--stdin-filename templates/index.html" }
-    ]
+    "usage": [{ "name": "cli", "value": "--stdin-filename templates/index.html" }]
   },
   {
     "name": "allow_empty_input",

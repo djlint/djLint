@@ -22,34 +22,23 @@ if TYPE_CHECKING:
 
 @pytest.mark.xdist_group(name="group1")
 def test_cli(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_gitignore/html_two.html", "--lint")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_gitignore/html_two.html", "--lint"))
     assert result.exit_code == 1
 
     git_path = Path("tests", "test_config", "test_gitignore", ".git")
-    gitignore_path = Path(
-        "tests", "test_config", "test_gitignore", ".gitignore"
-    )
+    gitignore_path = Path("tests", "test_config", "test_gitignore", ".gitignore")
 
     git_path.mkdir(parents=True, exist_ok=True)
     gitignore_path.write_text("html_two.html", encoding="utf-8")
 
     result = runner.invoke(
-        djlint,
-        (
-            "tests/test_config/test_gitignore/html_two.html",
-            "--check",
-            "--use-gitignore",
-        ),
+        djlint, ("tests/test_config/test_gitignore/html_two.html", "--check", "--use-gitignore")
     )
 
     assert result.exit_code == 0
     assert "No files to check!" in result.stderr
 
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_gitignore/html_two.html", "--check"))
     assert result.exit_code == 1
 
     try:
@@ -59,43 +48,26 @@ def test_cli(runner: CliRunner) -> None:
         print("cleanup failed")
         print(e)
 
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_gitignore/html_two.html", "--check"))
     assert result.exit_code == 1
 
     git_path.mkdir(parents=True, exist_ok=True)
     gitignore_path.write_text("html_two.html", encoding="utf-8")
-    pyproject_path = Path(
-        "tests", "test_config", "test_gitignore", "pyproject.toml"
-    )
-    pyproject_path.write_text(
-        "[tool]\n[tool.djlint]\nuse_gitignore=true", encoding="utf-8"
-    )
+    pyproject_path = Path("tests", "test_config", "test_gitignore", "pyproject.toml")
+    pyproject_path.write_text("[tool]\n[tool.djlint]\nuse_gitignore=true", encoding="utf-8")
 
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_gitignore/html_two.html", "--check"))
 
     assert result.exit_code == 0
     assert "No files to check!" in result.stderr
 
-    pyproject_path.write_text(
-        "[tool]\n[tool.djlint]\nuse_gitignore=false", encoding="utf-8"
-    )
+    pyproject_path.write_text("[tool]\n[tool.djlint]\nuse_gitignore=false", encoding="utf-8")
 
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_gitignore/html_two.html", "--check")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_gitignore/html_two.html", "--check"))
     assert result.exit_code == 1
 
     result = runner.invoke(
-        djlint,
-        (
-            "tests/test_config/test_gitignore/html_two.html",
-            "--check",
-            "--use-gitignore",
-        ),
+        djlint, ("tests/test_config/test_gitignore/html_two.html", "--check", "--use-gitignore")
     )
     print(result.output)
     assert result.exit_code == 0
@@ -112,9 +84,7 @@ def test_cli(runner: CliRunner) -> None:
     git_path.mkdir(parents=True, exist_ok=True)
     gitignore_path.write_text("var", encoding="utf-8")
 
-    result = runner.invoke(
-        djlint, ("-", "--use-gitignore"), input='<div><p id="a"></p></div>'
-    )
+    result = runner.invoke(djlint, ("-", "--use-gitignore"), input='<div><p id="a"></p></div>')
     print(result.output)
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
@@ -195,9 +165,7 @@ def test_exclude_matches_path_segments_not_substrings(tmp_path: Path) -> None:
     for directory in ("build", "builds", "build-my-template"):
         path = worktree / directory
         path.mkdir(parents=True)
-        (path / "template.html").write_text(
-            "<div>hello</div>", encoding="utf-8"
-        )
+        (path / "template.html").write_text("<div>hello</div>", encoding="utf-8")
 
     config = Config(str(worktree), exclude="build")
     paths = get_src([worktree], config).paths
@@ -215,9 +183,7 @@ def test_exclude_supports_comma_separated_paths(tmp_path: Path) -> None:
     for directory in ("build", "dist", "builds"):
         path = worktree / directory
         path.mkdir(parents=True)
-        (path / "template.html").write_text(
-            "<div>hello</div>", encoding="utf-8"
-        )
+        (path / "template.html").write_text("<div>hello</div>", encoding="utf-8")
 
     config = Config(str(worktree), exclude="build,dist")
     paths = get_src([worktree], config).paths
@@ -239,9 +205,7 @@ def test_exclude_matches_slash_separated_path_segments(tmp_path: Path) -> None:
     ):
         path = worktree / directory
         path.mkdir(parents=True)
-        (path / "template.html").write_text(
-            "<div>hello</div>", encoding="utf-8"
-        )
+        (path / "template.html").write_text("<div>hello</div>", encoding="utf-8")
 
     for exclude in ("templates/generated", "templates/generated/"):
         config = Config(str(worktree), exclude=exclude)
@@ -254,9 +218,7 @@ def test_exclude_matches_slash_separated_path_segments(tmp_path: Path) -> None:
         assert "my-templates/generated/template.html" in resolved_paths
 
 
-def test_exclude_trailing_slash_matches_nested_path_segment(
-    tmp_path: Path,
-) -> None:
+def test_exclude_trailing_slash_matches_nested_path_segment(tmp_path: Path) -> None:
     """Exclude paths should still match nested path segments."""
     worktree = tmp_path / "project"
     templates = worktree / "apps" / "account" / "templates" / "user"
@@ -274,14 +236,10 @@ def test_exclude_trailing_slash_matches_nested_path_segment(
     resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
     assert "apps/account/templates/user/emails/test.html" not in resolved_paths
-    assert (
-        "apps/account/templates/user/email-assets/test.html" in resolved_paths
-    )
+    assert "apps/account/templates/user/email-assets/test.html" in resolved_paths
 
 
-def test_exclude_leading_slash_matches_project_root_only(
-    tmp_path: Path,
-) -> None:
+def test_exclude_leading_slash_matches_project_root_only(tmp_path: Path) -> None:
     """Exclude paths with leading slashes should match from the project root."""
     worktree = tmp_path / "project"
     for directory in ("emails", "apps/emails"):
@@ -298,18 +256,14 @@ def test_exclude_leading_slash_matches_project_root_only(
     assert "apps/emails/test.html" in resolved_paths
 
 
-def test_exclude_leading_slash_does_not_match_source_root(
-    tmp_path: Path,
-) -> None:
+def test_exclude_leading_slash_does_not_match_source_root(tmp_path: Path) -> None:
     """Leading slash excludes should not anchor to the searched directory."""
     worktree = tmp_path / "project"
     (worktree / ".git").mkdir(parents=True)
     templates = worktree / "templates"
     for directory in (worktree / "generated", templates / "generated"):
         directory.mkdir(parents=True)
-        (directory / "test.html").write_text(
-            "<div>hello</div>", encoding="utf-8"
-        )
+        (directory / "test.html").write_text("<div>hello</div>", encoding="utf-8")
 
     config = Config(str(templates), exclude="/generated/")
     paths = get_src([templates], config).paths

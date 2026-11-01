@@ -213,9 +213,7 @@ HTML_ATOMIC_INLINE_ELEMENTS: Final = frozenset((
 HTML_TRANSPARENT_BOX_ELEMENTS: Final = frozenset(("label", "output", "picture"))
 
 HTML_INLINE_LEVEL_ELEMENTS: Final = (
-    HTML_INLINE_ELEMENTS
-    | HTML_ATOMIC_INLINE_ELEMENTS
-    | HTML_TRANSPARENT_BOX_ELEMENTS
+    HTML_INLINE_ELEMENTS | HTML_ATOMIC_INLINE_ELEMENTS | HTML_TRANSPARENT_BOX_ELEMENTS
 )
 
 HTML_VOID_ELEMENTS: Final = frozenset((
@@ -244,12 +242,7 @@ HTML_VOID_ELEMENTS: Final = frozenset((
     "wbr",
 ))
 
-HTML_RAW_TEXT_ELEMENTS: Final = frozenset((
-    "script",
-    "style",
-    "textarea",
-    "title",
-))
+HTML_RAW_TEXT_ELEMENTS: Final = frozenset(("script", "style", "textarea", "title"))
 
 HTML_LOWERCASE_ATTRIBUTE_NAMES: Final = frozenset((
     "alt",
@@ -476,8 +469,6 @@ SKIP_TEMPLATE_TAG: Final = (
     r"|\{%(?:(?!%\}|\{[{%]).)*%\}(*SKIP)(*FAIL)"
 )
 
-TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS: Final = (
-    r"trans(?:late)?|with|extends|include|now"
-)
+TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS: Final = r"trans(?:late)?|with|extends|include|now"
 
 TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS: Final = r"if|elif|elsif|unless"

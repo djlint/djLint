@@ -25,14 +25,11 @@ if TYPE_CHECKING:
 
 
 _BLOCK_PATTERN: Final = compile_pattern(
-    r"{%[-+]?\s*(?P<closing>end)?block(?!trans)\b(?:(?!%}).)*?[-+]?%}",
-    RE_FLAGS_IS,
+    r"{%[-+]?\s*(?P<closing>end)?block(?!trans)\b(?:(?!%}).)*?[-+]?%}", RE_FLAGS_IS
 )
 
 
-def _block_paths(
-    config: Config, html: str
-) -> tuple[tuple[int, ...], tuple[tuple[int, ...], ...]]:
+def _block_paths(config: Config, html: str) -> tuple[tuple[int, ...], tuple[tuple[int, ...], ...]]:
     """Map document offsets to the stack of {% block %} tags around them.
 
     A block tag inside `{# #}`, `{% comment %}`, `{% verbatim %}` or
@@ -45,9 +42,9 @@ def _block_paths(
     counter = 0
 
     for match in _BLOCK_PATTERN.finditer(html):
-        if overlaps_ignored_block(
+        if overlaps_ignored_block(config, html, match) or inside_ignored_linter_block(
             config, html, match
-        ) or inside_ignored_linter_block(config, html, match):
+        ):
             continue
         if match.group("closing"):
             if stack:
