@@ -764,13 +764,17 @@ class Server:
                 ):
                     self._rule_modules.add(name)
 
-    def _settings_for(self, uri: str) -> Json:
-        """Ask the client for the settings of a document, once."""
+    def _take_late_settings(self) -> None:
+        """Ask again, if an editor that took too long has answered."""
         if self._unanswered is not None and self._unanswered.answered.is_set():
-            # The editor was only slow.
             self._unanswered = None
             self._asks_settings = True
             self._settings.clear()
+            self._generation += 1
+
+    def _settings_for(self, uri: str) -> Json:
+        """Ask the client for the settings of a document, once."""
+        self._take_late_settings()
         settings = self._settings.get(uri)
         if settings is not None:
             return settings
@@ -911,6 +915,7 @@ class Server:
         document = self._documents.get(uri)
         if document is None:
             return {"kind": "full", "items": []}
+        self._take_late_settings()
         digest = hashlib.sha256(document.text.encode("utf-8", "replace"))
         result_id = f"{self._generation}-{digest.hexdigest()}"
         if params.get("previousResultId") == result_id:

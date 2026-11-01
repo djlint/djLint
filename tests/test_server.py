@@ -726,6 +726,35 @@ def test_asks_for_settings_again_after_a_late_answer(
     assert "\n       <p>" in edit["newText"]
 
 
+def test_a_late_answer_changes_what_a_pull_finds(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(
+        tmp_path, {**PULL_CAPABILITIES, "workspace": {"configuration": True}}
+    )
+    uri = (tmp_path / "a.html").as_uri()
+    client.settings = {"ignore": "H013"}
+    client.open(uri, FINDING)
+    params = {"textDocument": {"uri": uri}}
+    request_id = client.send("textDocument/diagnostic", params)
+    while True:
+        asked = client.messages.get(timeout=TIMEOUT_SECONDS)
+        assert asked is not None
+        if asked.get("method") == "workspace/configuration":
+            break
+    report = client.response(request_id)["result"]
+    assert [item["code"] for item in report["items"]] == ["H013"]
+
+    client.write({"id": asked["id"], "result": [client.settings]})
+    assert (
+        client.request(
+            "textDocument/diagnostic",
+            {**params, "previousResultId": report["resultId"]},
+        )["items"]
+        == []
+    )
+
+
 def test_exits_on_an_exit_with_an_id(client: Client) -> None:
     client.request("initialize", {"capabilities": {}})
     client.request("shutdown", {})
