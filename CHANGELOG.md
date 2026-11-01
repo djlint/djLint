@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.49.0] - 2026-11-01
+
 ### Features
 
 - `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/language-server/).
