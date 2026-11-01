@@ -47,12 +47,6 @@ module.exports = {
     fr: "Intégrations",
     zh: "集成支持",
   },
-  language_server: {
-    "en-US": "Language server",
-    ru: "Языковой сервер",
-    fr: "Serveur de langage",
-    zh: "语言服务器",
-  },
   python_api: {
     "en-US": "Python API",
     ru: "Python API",
