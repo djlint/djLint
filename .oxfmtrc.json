@@ -2,5 +2,6 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "objectWrap": "collapse",
   "sortImports": true,
+  "sortPackageJson": { "sortScripts": true },
   "ignorePatterns": ["*.toml", "tests/**/*.html"]
 }
