@@ -12,7 +12,6 @@ from typing import TYPE_CHECKING, final
 import regex as re
 import yaml
 from click import BadParameter, UsageError, echo, style
-from pathspec import PathSpec
 
 from djlint.const import (
     HTML_TAG_NAMES,
@@ -31,23 +30,11 @@ from djlint.helpers import (
 )
 from djlint.lint import build_flags
 
-try:
-    from pathspec.patterns.gitignore import GitIgnorePatternError
-except ImportError:
-    from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
-        GitWildMatchPatternError as GitIgnorePatternError,
-    )
-
-    _GITIGNORE_PATTERN = "gitwildmatch"
-else:
-    _GITIGNORE_PATTERN = "gitignore"
-
-
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
     from typing import Any, Final
 
-    from pathspec import Pattern
+    from pathspec import PathSpec, Pattern
     from typing_extensions import TypeVar
 
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
@@ -99,7 +86,24 @@ def find_project_root(src: Path) -> Path:
 
 
 def load_gitignore(root: Path) -> PathSpec[Pattern]:
-    """Search upstream for a .gitignore file."""
+    """Search upstream for a .gitignore file.
+
+    pathspec is imported here, as most runs don't read a gitignore and it
+    takes as long to import as building a Config.
+    """
+    from pathspec import PathSpec  # noqa: PLC0415
+
+    try:
+        from pathspec.patterns.gitignore import GitIgnorePatternError  # noqa: PLC0415
+    except ImportError:
+        from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined] # noqa: PLC0415
+            GitWildMatchPatternError as GitIgnorePatternError,
+        )
+
+        pattern = "gitwildmatch"
+    else:
+        pattern = "gitignore"
+
     gitignore = root / ".gitignore"
     if gitignore.is_file():
         with gitignore.open(encoding="utf-8") as this_file:
@@ -108,7 +112,7 @@ def load_gitignore(root: Path) -> PathSpec[Pattern]:
         git_lines = []
 
     try:
-        return PathSpec.from_lines(_GITIGNORE_PATTERN, git_lines)
+        return PathSpec.from_lines(pattern, git_lines)
 
     except GitIgnorePatternError as e:
         msg = f"Could not parse {gitignore}: {e}"
@@ -1552,10 +1556,8 @@ class Config:
         self.use_gitignore = (
             use_gitignore or bool(djlint_settings.get("use_gitignore", False))
         ) and (not self.stdin or stdin_filename is not None)
-        self.gitignore = (
-            load_gitignore(self.project_root)
-            if self.use_gitignore
-            else PathSpec([])
+        self.gitignore: PathSpec[Pattern] | None = (
+            load_gitignore(self.project_root) if self.use_gitignore else None
         )
         self.allow_empty_input = allow_empty_input or bool(
             djlint_settings.get("allow_empty_input", False)
