@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- The language server asks an editor for its settings again once a late answer arrives. An editor that took over five seconds to answer once lost its settings until it restarted the server or changed them.
+
 ## [1.49.0] - 2026-11-01
 
 ### Features
