@@ -480,18 +480,47 @@ def _inside_ignored_block(
     )
 
 
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
+def _ignored_block_reach(
+    html: str,
+    /,
+    *,
+    ignored_blocks: re.Pattern[str],
+    ignored_inline_blocks: re.Pattern[str],
+) -> tuple[tuple[int, ...], tuple[int, ...]]:
+    """Where the ignored blocks start, and how far those up to each reach.
+
+    Blocks can nest and overlap, so a span lies inside one when a block
+    starting at or before it reaches past its end, which a bisection finds
+    instead of a look at every block, once for each tag of the document.
+    """
+    starts: list[int] = []
+    reach: list[int] = []
+    furthest = -1
+    for start, end in sorted(
+        _inside_ignored_block(
+            html,
+            ignored_blocks=ignored_blocks,
+            ignored_inline_blocks=ignored_inline_blocks,
+        )
+    ):
+        furthest = max(furthest, end)
+        starts.append(start)
+        reach.append(furthest)
+    return tuple(starts), tuple(reach)
+
+
 def inside_ignored_block_span(
     config: Config, html: str, start: int, end: int
 ) -> bool:
     """Whether a span of the html lies inside an ignored block."""
-    for ignored_match_start, ignored_match_end in _inside_ignored_block(
+    starts, reach = _ignored_block_reach(
         html,
         ignored_blocks=config.ignored_blocks_pattern,
         ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
-    ):
-        if ignored_match_start <= start and end <= ignored_match_end:
-            return True
-    return False
+    )
+    index = bisect_right(starts, start)
+    return index > 0 and reach[index - 1] >= end
 
 
 def breaks_an_ignored_block(config: Config, html: str, position: int) -> bool:
@@ -501,14 +530,13 @@ def breaks_an_ignored_block(config: Config, html: str, position: int) -> bool:
     outside edge of a block is allowed: the closing tag of a `<script>` is
     part of the element, but the position after it is not.
     """
-    return any(
-        ignored_start < position < ignored_end
-        for ignored_start, ignored_end in _inside_ignored_block(
-            html,
-            ignored_blocks=config.ignored_blocks_pattern,
-            ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
-        )
+    starts, reach = _ignored_block_reach(
+        html,
+        ignored_blocks=config.ignored_blocks_pattern,
+        ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
     )
+    index = bisect_left(starts, position)
+    return index > 0 and reach[index - 1] > position
 
 
 def inside_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
