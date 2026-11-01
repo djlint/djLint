@@ -1059,6 +1059,16 @@ pre .number {
   pre[class*="language-"] {
     font-size: 0.875rem;
   }
+  > :is(ol, ul) {
+    margin-bottom: 1em;
+    margin-inline-start: 2em;
+  }
+  > ol {
+    list-style: decimal outside;
+  }
+  > ul {
+    list-style: disc outside;
+  }
 }
 // Heading anchors: a quiet "#" in the gutter that shows on hover.
 .title:has(> a.link) {

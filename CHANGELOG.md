@@ -12,7 +12,7 @@
 
 ### Features
 
-- `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/language-server/).
+- `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/integrations/#language-server).
 - `djlint.api.is_excluded()` tells whether the configuration leaves out a file.
 
 ### Bug fixes

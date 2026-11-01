@@ -206,6 +206,8 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
 
+  eleventyConfig.addPassthroughCopy({ "src/_redirects": "_redirects" });
+
   eleventyConfig.addPassthroughCopy({
     "src/static/img/favicon.ico": "favicon.ico",
   });
