@@ -114,7 +114,7 @@ La première lettre d'un code suit le modèle :
 - M : s'applique spécifiquement à Handlebars
 - N : s'applique spécifiquement à Nunjucks
 - T : s'applique généralement aux modèles
-  :::
+:::
 
 ### Détails des règles
 
@@ -1469,7 +1469,7 @@ Une bonne règle consiste en
 - Flags - Drapeaux de regex. La valeur par défaut est re.DOTALL. ex : re.I|re.M
 - Patterns - Expressions regex qui trouveront l'erreur.
 - Exclude - Liste facultative de profils dont la règle doit être exclue.
-  :::
+:::
 
 Veuillez inclure un test pour valider la règle.
 
@@ -1524,7 +1524,7 @@ executé sur chacun des fichiers testés. La fonction doit accepter les argument
 - `*args, **kwargs`: Il est possible que nous ajoutions d'autres arguments à l'avenir,
   il est donc fortement conseillé d'ajouter ces deux arguments pour diminuer les risques
   de bugs en cas de mise à jour de djLint.
-  :::
+:::
 
 Le module peut se trouver à la racine du projet. S'il renvoie un `line` ou un `end` qui n'est pas une position, djLint s'arrête avec une erreur qui nomme la règle.
 
@@ -1539,7 +1539,7 @@ trouvées. Le dictionnaire doit contenir les clées suivantes :
 - `end`: Facultatif. L'endroit où l'erreur se termine, écrit comme `line`, juste après son dernier caractère. Sans lui, l'erreur se termine là où se termine `match`.
 - `match`: La partie du contenu qui contient l'erreur
 - `message`: Le message qui serra affiché pour signaler l'erreur (généralement `rule['message']`)
-  :::
+:::
 
 ```python
 from __future__ import annotations

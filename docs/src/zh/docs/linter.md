@@ -114,7 +114,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 - M: Handlebars 专用
 - N: Nunjucks 专用
 - T: 各模板语言通用
-  :::
+:::
 
 ### 规则详情
 
@@ -1469,7 +1469,7 @@ html 规范指出空的 `src` 是无效的，并警告浏览器会以文档自�
 - Flags - 正则表达式。默认为 re.DOTALL。 例如：re.I|re.M
 - Patterns - 正则表达式将匹配的问题。
 - Exclude - 可选的配置文件列表，用于排除特定规则。
-  :::
+:::
 
 请包含一个测试样例以验证该规则。
 
@@ -1514,7 +1514,7 @@ html 规范指出空的 `src` 是无效的，并警告浏览器会以文档自�
 - `filepath`: 当前正在检查的文件的路径。
 - `line_ends`: 行 `start` 和 `end` 字符位置的列表，可以与 `djlint.lint.get_line()` 结合使用，以从字符位置获取行号。请参考示例。
 - `*args, **kwargs`: 未来可能会添加其他参数，因此应包含这两个参数以减少升级 djLint 时的失败风险。
-  :::
+:::
 
 模块可以位于项目根目录。如果它返回的 `line` 或 `end` 不是有效位置，djLint 会报错并指出对应的规则。
 
@@ -1527,7 +1527,7 @@ html 规范指出空的 `src` 是无效的，并警告浏览器会以文档自�
 - `end`: 可选。错误结束的位置，写法与 `line` 相同，指向其最后一个字符之后。省略时，错误在 `match` 结束处结束。
 - `match`: 包含错误的内容部分。
 - `message`: 用于提示错误的消息（通常为 `rule['message']`）。
-  :::
+:::
 
 ```python
 from __future__ import annotations
