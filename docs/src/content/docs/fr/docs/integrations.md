@@ -111,7 +111,7 @@ Dans PyCharm et les autres IDE basés sur IntelliJ, utilisez le plugin gratuit [
 1. Installez LSP4IJ depuis le Marketplace.
 1. Ouvrez la fenêtre LSP Consoles et ajoutez un nouveau serveur de langage.
 1. Dans l'onglet **Server**, indiquez le nom `djLint` et la commande `djlint --lsp`, avec le chemin complet du `djlint` de l'environnement virtuel du projet s'il n'est pas dans le PATH.
-1. Dans l'onglet **Mappings**, ajoutez un motif de nom de fichier pour vos modèles, comme `*.html`. Pour un projet Django, donnez l'identifiant de langage `htmldjango`, afin de choisir le bon [profil](/fr/docs/configuration/#profile).
+1. Dans l'onglet **Mappings**, ajoutez un motif de nom de fichier pour vos modèles, comme `*.html`. Si la configuration du projet n'a pas de [profil](/fr/docs/configuration/#profile), donnez l'identifiant de langage `htmldjango` pour un projet Django, afin de choisir le bon.
 1. Dans l'onglet **Configuration**, vous pouvez donner les [réglages](#réglages) en JSON, sous une clé `djlint`.
 
 Les erreurs apparaissent dans l'éditeur, et **Reformat Code** peut utiliser le serveur pour ces fichiers.
@@ -193,7 +193,13 @@ Deux réglages n'ont pas d'option de ligne de commande :
 - `use_editor_indentation` : formater avec la taille de tabulation de l'éditeur, au lieu de `indent`.
 - `python_rules` : la valeur `false` ignore les règles personnalisées avec un `python_module`, ce qui évite d'exécuter le code du projet.
 
-Sans `profile` défini à l'un de ces endroits, la langue du document en choisit un : `htmldjango` utilise le profil `django`, par exemple.
+djLint prend le `profile` de la première de ces sources qui en a un :
+
+1. Les réglages de l'éditeur.
+1. La configuration du projet.
+1. La langue du document : `htmldjango` utilise le profil `django`, par exemple.
+
+Sinon, il fonctionne sans profil, comme en ligne de commande. Le plus simple est de définir `profile` dans la configuration du projet : cela marche dans tous les éditeurs, sans identifiant de langage à configurer.
 
 ### Fonctionnement
 

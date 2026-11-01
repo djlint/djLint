@@ -109,7 +109,7 @@ require("lspconfig").efm.setup({
 1. 从 Marketplace 安装 LSP4IJ。
 1. 打开 LSP Consoles 工具窗口，添加新的语言服务器。
 1. 在 **Server** 选项卡中，将名称设为 `djLint`，命令设为 `djlint --lsp`；如果 `djlint` 不在 PATH 中，请使用项目虚拟环境中的完整路径。
-1. 在 **Mappings** 选项卡中，为模板添加文件名模式，例如 `*.html`。对于 Django 项目，将语言 ID 设为 `htmldjango`，以便选择正确的[配置](/zh/docs/configuration/#profile)。
+1. 在 **Mappings** 选项卡中，为模板添加文件名模式，例如 `*.html`。如果项目配置未设置 [profile](/zh/docs/configuration/#profile)，对于 Django 项目，请将语言 ID 设为 `htmldjango`，以便选择正确的配置。
 1. 在 **Configuration** 选项卡中，可以用 JSON 在 `djlint` 键下填写[设置](#设置)。
 
 检查结果会显示在编辑器中，**Reformat Code** 也可以对这些文件使用服务器。
@@ -191,7 +191,13 @@ vim.lsp.config("djlint", {
 - `use_editor_indentation`：使用编辑器的制表符大小而不是 `indent` 进行格式化。
 - `python_rules`：设为 `false` 时跳过带有 `python_module` 的自定义规则，这样不会运行项目中的代码。
 
-如果两处都没有设置 `profile`，则由文档的语言决定：例如 `htmldjango` 使用 `django` 配置。
+djLint 按以下顺序取第一个设置了 `profile` 的来源：
+
+1. 编辑器的设置。
+1. 项目的配置。
+1. 文档的语言：例如 `htmldjango` 使用 `django` 配置。
+
+如果都没有设置，djLint 将不使用任何配置运行，与命令行相同。最简单的做法是在项目配置中设置 `profile`：它适用于所有编辑器，无需设置语言 ID。
 
 ### 工作方式
 

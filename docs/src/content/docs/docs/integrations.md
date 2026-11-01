@@ -111,7 +111,7 @@ In PyCharm and the other IntelliJ-based IDEs, use the free [LSP4IJ](https://plug
 1. Install LSP4IJ from the Marketplace.
 1. Open the LSP Consoles tool window and add a new language server.
 1. On the **Server** tab, set the name to `djLint` and the command to `djlint --lsp`, with the full path of the `djlint` in the project's virtual environment if it isn't on PATH.
-1. On the **Mappings** tab, add a file name pattern for your templates, such as `*.html`. Set the language ID to `htmldjango` for a Django project, so the right [profile](/docs/configuration/#profile) is picked.
+1. On the **Mappings** tab, add a file name pattern for your templates, such as `*.html`. If the project's configuration has no [profile](/docs/configuration/#profile), set the language ID to `htmldjango` for a Django project, so the right one is picked.
 1. On the **Configuration** tab, you can set [settings](#settings) as JSON, under a `djlint` key.
 
 Findings appear in the editor, and **Reformat Code** can use the server for the mapped files.
@@ -193,7 +193,13 @@ Two settings have no command line option:
 - `use_editor_indentation`: Format with the tab size of the editor, instead of `indent`.
 - `python_rules`: Set it to `false` to skip custom rules with a `python_module`, which keeps the project's code from running.
 
-Without a `profile` from either place, the language of the document picks one: `htmldjango` runs the `django` profile, for example.
+djLint takes the `profile` from the first of these that has one:
+
+1. The settings of the editor.
+1. The project's configuration.
+1. The language of the document: `htmldjango` runs the `django` profile, for example.
+
+With none of them, it runs with no profile, as on the command line. A `profile` in the project's configuration is the simplest choice: it works in every editor, with no language ID to set up.
 
 ### What it does
 
