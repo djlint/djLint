@@ -67,7 +67,7 @@ def compile_pattern(pattern: str, flags: int = 0, /) -> re.Pattern[str]:
 
 _SPAN_CACHE_SIZE: Final = 1
 _AFTER_EVERY_SPAN: Final = float("inf")
-_LINE_CACHE_SIZE: Final = 4096
+_LINE_CACHE_SIZE: Final = 2048
 
 YAML_FRONT_MATTER: Final = r"""
     # front matter opens the file and holds the site generator's own data,
@@ -105,8 +105,23 @@ def _inside_non_overlapping_span(
     return span_start <= match_start and match_end <= span_end
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def ignored_block_opening_start(config: Config, item: str) -> int:
+    """Where the line opens an ignored block it does not close, or -1."""
+    return _ignored_block_opening_start(
+        item,
+        config.ignored_block_opening_pattern,
+        config.ignored_blocks_inline_pattern,
+    )
+
+
+# The line caches are keyed on the patterns rather than on the Config: those
+# are the same objects for every Config, so the next one, which the language
+# server builds on every change, finds the lines of the last, and an old
+# Config isn't held alive by them.
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
+def _ignored_block_opening_start(
+    item: str, opening: re.Pattern[str], inline_blocks: re.Pattern[str], /
+) -> int:
     """Where the line opens an ignored block it does not close, or -1.
 
     An opening that is not part of a block closed on this line leaves a
@@ -123,11 +138,10 @@ def ignored_block_opening_start(config: Config, item: str) -> int:
         return -1
 
     inline = None
-    for match in config.ignored_block_opening_pattern.finditer(item):
+    for match in opening.finditer(item):
         if inline is None:
             inline = tuple(
-                block.span()
-                for block in config.ignored_blocks_inline_pattern.finditer(item)
+                block.span() for block in inline_blocks.finditer(item)
             )
         if not _inside_non_overlapping_span(
             inline, match.end() - 1, match.end()
@@ -150,6 +164,7 @@ def _past_inline_blocks(item: str, inline_blocks: re.Pattern[str], /) -> str:
     return item[last_inline.end() :] if last_inline else item
 
 
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def _marker_past_inline_blocks(
     item: str, inline_blocks: re.Pattern[str], marker: re.Pattern[str], /
 ) -> bool:
@@ -157,7 +172,6 @@ def _marker_past_inline_blocks(
     return bool(marker.search(_past_inline_blocks(item, inline_blocks)))
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_raw_text_block_opening(config: Config, item: str) -> bool:
     """Whether the line opens a raw text element it does not close."""
     return _marker_past_inline_blocks(
@@ -205,8 +219,24 @@ def inside_protected_trans_block(
     return False
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_ignored_block_closing(config: Config, item: str) -> bool:
+    """Whether the line closes an ignored block opened on an earlier one."""
+    return _is_ignored_block_closing(
+        item,
+        config.ignored_inline_blocks_ix_pattern,
+        config.ignored_block_closing_anywhere_pattern,
+        config.ignored_block_closing_at_start_pattern,
+    )
+
+
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
+def _is_ignored_block_closing(
+    item: str,
+    inline_blocks: re.Pattern[str],
+    anywhere: re.Pattern[str],
+    at_start: re.Pattern[str],
+    /,
+) -> bool:
     """Whether the line closes an ignored block opened on an earlier one.
 
     The markers that only reach a match from where the rest of the line
@@ -215,15 +245,12 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
     them needs a `-->` or a `#}`, which is far cheaper to rule out than to
     match.
     """
-    rest = _past_inline_blocks(item, config.ignored_inline_blocks_ix_pattern)
-    if config.ignored_block_closing_anywhere_pattern.search(rest):
+    rest = _past_inline_blocks(item, inline_blocks)
+    if anywhere.search(rest):
         return True
-    return ("-->" in rest or "#}" in rest) and bool(
-        config.ignored_block_closing_at_start_pattern.match(rest)
-    )
+    return ("-->" in rest or "#}" in rest) and bool(at_start.match(rest))
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_raw_text_block_closing(config: Config, item: str) -> bool:
     """Whether the line closes a raw text element opened on an earlier one."""
     return _marker_past_inline_blocks(
@@ -231,7 +258,6 @@ def is_raw_text_block_closing(config: Config, item: str) -> bool:
     )
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_safe_closing_tag(config: Config, item: str) -> bool:
     """Whether the line closes an ignored block and can still be indented."""
     return _marker_past_inline_blocks(

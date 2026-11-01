@@ -347,19 +347,17 @@ def validate_rules(
             yield rule
 
 
-# libyaml reads the rules six times as fast, and comes with most wheels.
+# libyaml reads the bundled rules six times as fast, and comes with most
+# wheels. A project's rules keep the Python loader: libyaml refuses a tab at
+# the start of a block scalar, which a rules file loaded with before.
 _YAML_LOADER: Final = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
-
-
-def _load_yaml(path: Path) -> Any:
-    with path.open("rb") as f:
-        return yaml.load(f, Loader=_YAML_LOADER)  # noqa: S506
 
 
 def load_custom_rules(rules_file: Path | None) -> Any:
     """Load custom linter rules from a .djlint_rules.yaml file."""
     if rules_file:
-        return _load_yaml(rules_file)
+        with rules_file.open("rb") as f:
+            return yaml.safe_load(f)
 
     return ()
 
@@ -1580,7 +1578,8 @@ class Config:
         self.include = str(
             include or _as_comma_separated(djlint_settings.get("include", ""))
         )
-        default_rules = _load_yaml(Path(__file__).parent / "rules.yaml")
+        with (Path(__file__).parent / "rules.yaml").open("rb") as f:
+            default_rules = yaml.load(f, Loader=_YAML_LOADER)  # noqa: S506
         custom_rules = load_custom_rules(
             rules or find_djlint_rules(self.project_root)
         )
