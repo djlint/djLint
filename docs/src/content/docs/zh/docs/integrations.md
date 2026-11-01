@@ -15,6 +15,22 @@ sidebar:
 
 它的代码位于 [GitHub](https://github.com/djlint/djlint-vscode)。
 
+## Zed
+
+安装 [djLint 扩展](https://github.com/djlint/djlint-zed)，它会运行[语言服务器](#语言服务器)。安装后，HTML 以及各模板扩展的语言中就会显示检查结果。
+
+要使用 djLint 进行格式化，请将其设为某种语言的格式化工具：
+
+```json
+{
+  "languages": {
+    "HTML": { "formatter": { "language_server": { "name": "djlint" } } }
+  }
+}
+```
+
+[设置](#设置)位于 `lsp.djlint.settings` 下。
+
 ## Neovim
 
 djLint 可以在 Neovim 中用作代码检查和格式化工具。### 内置 LSP 客户端（推荐）
