@@ -1195,6 +1195,7 @@ class Config:
         "format_js",
         "github_output",
         "gitignore",
+        "has_profile",
         "ignore",
         "ignore_blocks",
         "ignore_case",
@@ -1346,9 +1347,13 @@ class Config:
         stdin_filename: str | None = None,
         python_rules: bool = True,
     ) -> None:
-        self.project_root = find_project_root(
-            Path.cwd() if src == "-" else Path(src).resolve()
-        )
+        if src != "-":
+            start = Path(src).resolve()
+        elif stdin_filename is None:
+            start = Path.cwd()
+        else:
+            start = Path(stdin_filename).resolve().parent
+        self.project_root = find_project_root(start)
         djlint_settings = load_project_settings(
             self.project_root,
             configuration,
@@ -1533,10 +1538,12 @@ class Config:
         )
 
         self.files = djlint_settings.get("files", None)
-        self.stdin = (src == "-" if stdin is None else stdin) and not self.files
+        self.stdin = (src == "-" if stdin is None else stdin) and (
+            not self.files or stdin_filename is not None
+        )
         self.use_gitignore = (
             use_gitignore or bool(djlint_settings.get("use_gitignore", False))
-        ) and not self.stdin
+        ) and (not self.stdin or stdin_filename is not None)
         self.gitignore = (
             load_gitignore(self.project_root)
             if self.use_gitignore
@@ -1546,6 +1553,7 @@ class Config:
             djlint_settings.get("allow_empty_input", False)
         )
 
+        self.has_profile = bool(selected_profile)
         self.profile = selected_profile or "all"
         if self.profile not in _PROFILES:
             msg = (

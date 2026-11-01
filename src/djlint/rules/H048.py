@@ -23,12 +23,12 @@ from djlint.helpers import (
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError
 
-_ARIA_NAME_PATTERN = compile_pattern(r"(?<![-.:\w])aria-", re.I)
+_ARIA_NAME_PATTERN: Final = compile_pattern(r"(?<![-.:\w])aria-", re.I)
 
 
 def run(

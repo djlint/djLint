@@ -7,7 +7,7 @@ import io
 import sys
 import tokenize
 from functools import cache, lru_cache, partial
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, cast, final
 
 import json5 as json
 import regex as re
@@ -232,6 +232,7 @@ def _format_string_tokens(contents: str, quote_style: QuoteStyle) -> str:
     return "".join(formatted)
 
 
+@final
 class _IndentPatterns(NamedTuple):
     """The patterns indenting builds out of the configuration."""
 

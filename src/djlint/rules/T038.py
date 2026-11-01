@@ -24,13 +24,15 @@ if TYPE_CHECKING:
 ORPHAN_END_MESSAGE: Final = "End tag has no matching block tag."
 MISMATCH_MESSAGE: Final = "Endblock name should match opening block name."
 
-_HANDLEBARS_RAW_BLOCK = r"\{\{\{\{#?\s*([\w.-]+)(?:(?!\}\}\}\}).)*\}\}\}\}(?:(?!\{\{\{\{/).)*?\{\{\{\{/\s*\1\s*\}\}\}\}"
-_HANDLEBARS_COMMENT = r"\{\{!--(?:(?!--\}\}).)*--\}\}|\{\{!(?:(?!\}\}).)*\}\}"
+_HANDLEBARS_RAW_BLOCK: Final = r"\{\{\{\{#?\s*([\w.-]+)(?:(?!\}\}\}\}).)*\}\}\}\}(?:(?!\{\{\{\{/).)*?\{\{\{\{/\s*\1\s*\}\}\}\}"
+_HANDLEBARS_COMMENT: Final = (
+    r"\{\{!--(?:(?!--\}\}).)*--\}\}|\{\{!(?:(?!\}\}).)*\}\}"
+)
 # A second opener means the first tag never closed, as no template
 # language nests them, so a run of unclosed tags is read once. A string is
 # stepped over whole, so an opener written inside one, as in
 # `{% with a="{%" %}`, is text; a string left open is read as plain text.
-_BLOCK_TAG = (
+_BLOCK_TAG: Final = (
     r"\{%(?>\"(?:(?!%\})[^\"])*\"|'(?:(?!%\})[^'])*'|(?!%\}|\{%).)*%\}"
     r"|\{\{[#^/](?>\"(?:(?!\}\})[^\"])*\"|'(?:(?!\}\})[^'])*'"
     r"|(?!\}\}|\{\{).)*\}\}"

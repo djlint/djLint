@@ -1,0 +1,128 @@
+---
+description: 将 djLint 作为语言服务器运行，在任何支持 LSP 的编辑器中边输入边检查并格式化。
+title: 语言服务器
+keywords: 模板 linter, 模板格式化工具, djLint, HTML, 模板, 格式化工具, linter, 语言服务器, lsp, neovim, zed, helix
+---
+
+# 语言服务器
+
+`djlint --lsp` 通过 stdio 将 djLint 作为语言服务器运行。它会持续运行，因此编辑器可以在输入时获得检查结果，并且格式化文档时无需每次启动新进程。
+
+它报告检查结果并格式化整个文档，不需要额外的软件包。
+
+无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，并从该环境启动编辑器，或让编辑器指向该环境中的 `djlint`。这样编辑器运行的就是项目固定的版本，结果与 pre-commit 钩子或 CI 一致。
+
+## Visual Studio Code
+
+安装 [djLint 扩展](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)，或者在 VSCodium 中使用 [Open VSX 上的版本](https://open-vsx.org/extension/monosans/djlint)。它会在你的环境中查找 djLint，找不到时使用内置版本，并在你的 djLint 支持时使用语言服务器。
+
+## Neovim
+
+在 Neovim 0.11 或更高版本中：
+
+```lua
+vim.lsp.config("djlint", {
+  cmd = { "djlint", "--lsp" },
+  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
+})
+vim.lsp.enable("djlint")
+```
+
+要格式化文档，请调用 `vim.lsp.buf.format()`。
+
+要在保存时格式化，请在同一配置中添加：
+
+```lua
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = {
+    "*.html", "*.jinja", "*.jinja2", "*.j2",
+    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
+  },
+  callback = function(args)
+    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+  end,
+})
+```
+
+## Zed
+
+安装 [djLint 扩展](https://github.com/djlint/zed-djlint)。
+
+## Helix
+
+在 `languages.toml` 中：
+
+```toml
+[language-server.djlint]
+command = "djlint"
+args = ["--lsp"]
+
+[[language]]
+name = "html"
+language-servers = ["djlint", "vscode-html-language-server"]
+```
+
+## JetBrains IDE
+
+在 PyCharm 和其他基于 IntelliJ 的 IDE 中，使用免费的 [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) 插件：
+
+1. 从 Marketplace 安装 LSP4IJ。
+1. 打开 LSP Consoles 工具窗口，添加新的语言服务器。
+1. 在 **Server** 选项卡中，将名称设为 `djLint`，命令设为 `djlint --lsp`；如果 `djlint` 不在 PATH 中，请使用项目虚拟环境中的完整路径。
+1. 在 **Mappings** 选项卡中，为模板添加文件名模式，例如 `*.html`。对于 Django 项目，将语言 ID 设为 `htmldjango`，以便选择正确的[配置](/zh/docs/configuration/#profile)。
+1. 在 **Configuration** 选项卡中，可以用 JSON 在 `djlint` 键下填写[设置](#设置)。
+
+检查结果会显示在编辑器中，**Reformat Code** 也可以对这些文件使用服务器。
+
+## Sublime Text
+
+安装 [LSP](https://packagecontrol.io/packages/LSP) 包后，运行 **Preferences: LSP Server Configurations** 并添加：
+
+```json
+{
+  "djlint": {
+    "enabled": true,
+    "command": ["djlint", "--lsp"],
+    "selector": "text.html"
+  }
+}
+```
+
+## Emacs
+
+使用 Emacs 29 及更高版本自带的 Eglot：
+
+```elisp
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((html-mode web-mode) . ("djlint" "--lsp"))))
+```
+
+然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 用于格式化。
+
+## 设置
+
+服务器像命令行一样读取项目的[配置](/zh/docs/configuration/)，从每个文件所在的文件夹向上查找。编辑器的设置优先于它，但与命令行一样，只能开启选项或设置值：`false` 不会关闭项目已开启的选项。设置名称与[命令行选项](/zh/docs/configuration/)相同，可使用下划线或 camelCase，逗号分隔的值可以写成列表：
+
+```lua
+vim.lsp.config("djlint", {
+  settings = { djlint = { profile = "django", ignore = { "H013", "H016" } } },
+})
+```
+
+服务器通过 `workspace/configuration` 请求 `djlint` 部分。无法响应的编辑器可以在 `initializationOptions` 中发送相同的键。
+
+有两个设置没有对应的命令行选项：
+
+- `use_editor_indentation`：使用编辑器的制表符大小而不是 `indent` 进行格式化。
+- `python_rules`：设为 `false` 时跳过带有 `python_module` 的自定义规则，这样不会运行项目中的代码。
+
+如果两处都没有设置 `profile`，则由文档的语言决定：例如 `htmldjango` 使用 `django` 配置。
+
+## 工作方式
+
+- 检查结果会在输入短暂停顿后到达。支持拉取诊断的编辑器会主动请求，其他编辑器则由服务器推送。
+- `exclude`、`extend_exclude` 和 `use_gitignore` 对打开的文档生效。被排除的文档没有检查结果，也不会被格式化。
+- 如果编辑器支持监视文件，服务器会在 `pyproject.toml`、`djlint.toml`、`.djlint.toml`、`.djlintrc`、`.djlint_rules.yaml`、`.editorconfig` 或 `.gitignore` 变化时重新加载配置；否则在打开或保存文档时重新加载。修改自定义规则的 `python_module` 代码后需要重启。
+- 服务器一次只做一件事，因此较慢的规则会延迟后续操作。

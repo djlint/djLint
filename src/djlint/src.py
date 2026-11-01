@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import os
 import sys
+from pathlib import Path
 from types import MappingProxyType
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 from click import echo, style
 
@@ -17,12 +19,12 @@ else:
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-    from pathlib import Path
     from typing import Final
 
     from djlint.settings import Config
 
 
+@final
 class SrcFiles(NamedTuple):
     """Files to process, and why the list may be empty.
 
@@ -71,6 +73,19 @@ def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
         ):
             return True
     return False
+
+
+def is_excluded(config: Config, filepath: Path) -> bool:
+    """Check whether the configuration leaves a file out, by its path alone."""
+    # Both, for a symlink in an excluded folder and for a root behind a symlink.
+    return any(
+        _exclude_match(config, path, config.project_root)
+        or (config.use_gitignore and _gitignore_match(config, path))
+        for path in (
+            Path(os.path.normpath(filepath.absolute())),
+            filepath.resolve(),
+        )
+    )
 
 
 def _included(config: Config, filepath: Path) -> bool:
