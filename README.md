@@ -160,6 +160,7 @@ repos:
 ## 🧩 Editors
 
 - **VS Code**: install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) (also on [Open VSX](https://open-vsx.org/extension/monosans/djlint)).
+- **Zed**: install the [djLint extension](https://github.com/djlint/djlint-zed).
 - **Neovim, JetBrains IDEs, Sublime Text, Helix and Emacs**: run the language server, `djlint --lsp`. See the [setup for each](https://djlint.com/docs/integrations/).
 - **CI**: [GitHub Actions](https://djlint.com/docs/integrations/#github-actions) and [MegaLinter](https://djlint.com/docs/integrations/#megalinter).
 
