@@ -117,6 +117,19 @@ djLint 也可用作 SublimeText 的代码检查插件。你可以通过 [package
 
 djLint 可以在 neovim 中检查或格式化代码。
 
+Neovim 0.11 或更高版本无需插件即可直接使用 djLint 的[语言服务器](/zh/docs/language-server/)。这样可以在输入时看到带下划线范围的检查结果，并通过 `vim.lsp.buf.format()` 进行格式化：
+
+```lua
+vim.lsp.config("djlint", {
+  cmd = { "djlint", "--lsp" },
+  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
+})
+vim.lsp.enable("djlint")
+```
+
+设置请参阅[语言服务器](/zh/docs/language-server/#设置)。下面的插件则是把 djLint 作为命令运行。
+
 使用 `none-ls` 插件。
 
 ::: content
@@ -173,6 +186,24 @@ require("lspconfig").efm.setup({
 ```
 
 :::
+
+## Zed
+
+安装 [djLint 扩展](https://github.com/djlint/zed-djlint)，它会运行[语言服务器](/zh/docs/language-server/)。
+
+## Helix
+
+Helix 可以通过 `languages.toml` 运行[语言服务器](/zh/docs/language-server/)：
+
+```toml
+[language-server.djlint]
+command = "djlint"
+args = ["--lsp"]
+
+[[language]]
+name = "html"
+language-servers = ["vscode-html-language-server", "djlint"]
+```
 
 ## MegaLinter
 

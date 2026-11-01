@@ -117,6 +117,19 @@ djLint можно использовать в качестве плагина Su
 
 djLint можно использовать как линтер и форматер в neovim.
 
+Neovim 0.11 и новее умеет работать с [языковым сервером](/ru/docs/language-server/) djLint напрямую, без плагинов. Это даёт находки при вводе с подчёркнутыми диапазонами и форматирование через `vim.lsp.buf.format()`:
+
+```lua
+vim.lsp.config("djlint", {
+  cmd = { "djlint", "--lsp" },
+  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
+})
+vim.lsp.enable("djlint")
+```
+
+Настройки описаны на странице [Языковой сервер](/ru/docs/language-server/#nastrojki). Плагины ниже запускают djLint как обычную команду.
+
 С помощью плагина `none-ls`.
 
 ::: content
@@ -173,6 +186,24 @@ require("lspconfig").efm.setup({
 ```
 
 :::
+
+## Zed
+
+Установите [расширение djLint](https://github.com/djlint/zed-djlint), которое запускает [языковой сервер](/ru/docs/language-server/).
+
+## Helix
+
+Helix запускает [языковой сервер](/ru/docs/language-server/) из `languages.toml`:
+
+```toml
+[language-server.djlint]
+command = "djlint"
+args = ["--lsp"]
+
+[[language]]
+name = "html"
+language-servers = ["vscode-html-language-server", "djlint"]
+```
 
 ## MegaLinter
 

@@ -117,6 +117,19 @@ Assurez-vous que djLint est installé dans votre python global, ou sur votre `PA
 
 djLint peut être utilisé comme linter et formateur dans neovim.
 
+Neovim 0.11 ou plus récent peut parler directement au [serveur de langage](/fr/docs/language-server/) de djLint, sans plugin. Vous obtenez les erreurs pendant la saisie, avec leur étendue soulignée, et le formatage avec `vim.lsp.buf.format()` :
+
+```lua
+vim.lsp.config("djlint", {
+  cmd = { "djlint", "--lsp" },
+  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
+})
+vim.lsp.enable("djlint")
+```
+
+Voir [Serveur de langage](/fr/docs/language-server/#reglages) pour les réglages. Les plugins ci-dessous lancent djLint comme une commande.
+
 Avec le plugin `none-ls`.
 
 ::: content
@@ -173,6 +186,24 @@ require("lspconfig").efm.setup({
 ```
 
 :::
+
+## Zed
+
+Installez l'[extension djLint](https://github.com/djlint/zed-djlint), qui lance le [serveur de langage](/fr/docs/language-server/).
+
+## Helix
+
+Helix lance le [serveur de langage](/fr/docs/language-server/) depuis `languages.toml` :
+
+```toml
+[language-server.djlint]
+command = "djlint"
+args = ["--lsp"]
+
+[[language]]
+name = "html"
+language-servers = ["vscode-html-language-server", "djlint"]
+```
 
 ## MegaLinter
 
