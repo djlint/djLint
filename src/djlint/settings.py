@@ -343,11 +343,19 @@ def validate_rules(
             yield rule
 
 
+# libyaml reads the rules six times as fast, and comes with most wheels.
+_YAML_LOADER: Final = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+
+
+def _load_yaml(path: Path) -> Any:
+    with path.open("rb") as f:
+        return yaml.load(f, Loader=_YAML_LOADER)  # noqa: S506
+
+
 def load_custom_rules(rules_file: Path | None) -> Any:
     """Load custom linter rules from a .djlint_rules.yaml file."""
     if rules_file:
-        with rules_file.open("rb") as f:
-            return yaml.safe_load(f)
+        return _load_yaml(rules_file)
 
     return ()
 
@@ -1570,8 +1578,7 @@ class Config:
         self.include = str(
             include or _as_comma_separated(djlint_settings.get("include", ""))
         )
-        with (Path(__file__).parent / "rules.yaml").open("rb") as f:
-            default_rules = yaml.safe_load(f)
+        default_rules = _load_yaml(Path(__file__).parent / "rules.yaml")
         custom_rules = load_custom_rules(
             rules or find_djlint_rules(self.project_root)
         )
@@ -1634,8 +1641,10 @@ class Config:
             linter_rule = entry["rule"]
             if "patterns" in linter_rule:
                 rule_flags = build_flags(linter_rule.get("flags", "re.S"))
+                # Through regex's cache, which a Config built again, as the
+                # language server does on every change, then finds them in.
                 linter_rule["compiled_patterns"] = tuple(
-                    compile_pattern(pattern, rule_flags)
+                    re.compile(pattern, rule_flags)
                     for pattern in linter_rule["patterns"]
                 )
 
