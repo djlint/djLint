@@ -46,7 +46,7 @@ formatter = { command = "djlint", args = ["--reformat", "--quiet", "-"] }
 
 ## Réglages
 
-Le serveur lit la [configuration](/fr/docs/configuration/) du projet comme la ligne de commande, depuis le dossier de chaque fichier vers le haut. Les réglages de l'éditeur ont la priorité. Ils portent les noms des [options de la ligne de commande](/fr/docs/configuration/), avec des tirets bas ou en camelCase, et des listes peuvent remplacer les valeurs séparées par des virgules :
+Le serveur lit la [configuration](/fr/docs/configuration/) du projet comme la ligne de commande, depuis le dossier de chaque fichier vers le haut. Les réglages de l'éditeur ont la priorité mais, comme en ligne de commande, ils peuvent seulement activer une option ou donner une valeur : `false` ne désactive pas ce que le projet active. Ils portent les noms des [options de la ligne de commande](/fr/docs/configuration/), avec des tirets bas ou en camelCase, et des listes peuvent remplacer les valeurs séparées par des virgules :
 
 ```lua
 vim.lsp.config("djlint", {

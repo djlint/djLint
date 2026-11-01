@@ -46,7 +46,7 @@ formatter = { command = "djlint", args = ["--reformat", "--quiet", "-"] }
 
 ## 设置
 
-服务器像命令行一样读取项目的[配置](/zh/docs/configuration/)，从每个文件所在的文件夹向上查找。编辑器的设置优先于它。设置名称与[命令行选项](/zh/docs/configuration/)相同，可使用下划线或 camelCase，逗号分隔的值可以写成列表：
+服务器像命令行一样读取项目的[配置](/zh/docs/configuration/)，从每个文件所在的文件夹向上查找。编辑器的设置优先于它，但与命令行一样，只能开启选项或设置值：`false` 不会关闭项目已开启的选项。设置名称与[命令行选项](/zh/docs/configuration/)相同，可使用下划线或 camelCase，逗号分隔的值可以写成列表：
 
 ```lua
 vim.lsp.config("djlint", {

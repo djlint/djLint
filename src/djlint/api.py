@@ -88,6 +88,8 @@ def lint_text(config: Config, text: str, filename: str = "-") -> list[Finding]:
     """
     if _is_turned_off(config, text):
         return []
+    # As reading a file does, or a rule on blank lines misses `\r\n`.
+    text = text.replace("\r\n", "\n")
     errors = linter(config, text, filename, Path(filename).as_posix())[filename]
     return [
         Finding(

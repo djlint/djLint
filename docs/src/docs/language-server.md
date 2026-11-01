@@ -46,7 +46,7 @@ formatter = { command = "djlint", args = ["--reformat", "--quiet", "-"] }
 
 ## Settings
 
-The server reads the project's [configuration](/docs/configuration/) as the command line does, from the folder of each file upward. Settings from the editor win over it. They take the names of the [command line options](/docs/configuration/), with underscores or in camelCase, and lists can be used for comma-separated values:
+The server reads the project's [configuration](/docs/configuration/) as the command line does, from the folder of each file upward. Settings from the editor win over it, but as on the command line, they can only turn an option on or set a value: `false` doesn't turn off what the project turns on. They take the names of the [command line options](/docs/configuration/), with underscores or in camelCase, and lists can be used for comma-separated values:
 
 ```lua
 vim.lsp.config("djlint", {
@@ -67,4 +67,5 @@ Without a `profile` from either place, the language of the document picks one: `
 
 - Findings arrive after a short pause in typing. An editor with pull diagnostics asks for them, and any other gets them pushed.
 - `exclude`, `extend_exclude` and `use_gitignore` apply to open documents. An excluded document has no findings and isn't formatted.
-- It reloads the configuration when `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc` or `.gitignore` change, if the editor can watch files.
+- It reloads the configuration when `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc` or `.gitignore` change, if the editor can watch files, and otherwise when a document is opened or saved. A change to the code of a custom rule's `python_module` needs a restart.
+- A slow rule holds up what comes after it, because the server does one thing at a time.

@@ -1347,9 +1347,13 @@ class Config:
         stdin_filename: str | None = None,
         python_rules: bool = True,
     ) -> None:
-        self.project_root = find_project_root(
-            Path.cwd() if src == "-" else Path(src).resolve()
-        )
+        if src != "-":
+            start = Path(src).resolve()
+        elif stdin_filename is None:
+            start = Path.cwd()
+        else:
+            start = Path(stdin_filename).resolve().parent
+        self.project_root = find_project_root(start)
         djlint_settings = load_project_settings(
             self.project_root,
             configuration,

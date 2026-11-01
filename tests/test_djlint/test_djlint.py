@@ -226,6 +226,20 @@ def test_stdin_filename_not_excluded(
     assert "H013" in result.output
 
 
+def test_stdin_filename_finds_its_own_configuration(
+    runner: CliRunner, tmp_path: Path
+) -> None:
+    (tmp_path / ".djlintrc").write_text(
+        '{"exclude": "vendor"}', encoding="utf-8"
+    )
+    result = runner.invoke(
+        djlint,
+        ("-", "--stdin-filename", str(tmp_path / "vendor" / "a.html")),
+        input='<img src="x">',
+    )
+    assert "H013" not in result.output
+
+
 def test_stdin_reformat_without_temp_file(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch
 ) -> None:

@@ -15,11 +15,11 @@ import queue
 import re
 import sys
 import threading
+from bisect import bisect_right
 from importlib.metadata import version
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, final
-from urllib.parse import urlparse
-from urllib.request import url2pathname
+from urllib.parse import unquote, urlparse
 
 from djlint.api import format_text, is_excluded, lint_text, load_config
 
@@ -42,7 +42,7 @@ _REQUEST_CANCELLED: Final = -32800
 _LOG_ERROR: Final = 1
 _LOG_WARNING: Final = 2
 
-_SYNC_INCREMENTAL: Final = 2
+_SYNC_FULL: Final = 1
 _SEVERITY_WARNING: Final = 2
 
 # Above this, a character takes two UTF-16 units.
@@ -51,12 +51,15 @@ _LAST_BMP: Final = 0xFFFF
 # How long typing has to pause before an open document is linted.
 _DEBOUNCE_SECONDS: Final = 0.2
 _CLIENT_TIMEOUT_SECONDS: Final = 5
+# Cancels of requests that have finished have nothing to clear them.
+_MAX_CANCELLED: Final = 1000
 
 _CONFIG_FILES: Final = (
     "pyproject.toml",
     "djlint.toml",
     ".djlint.toml",
     ".djlintrc",
+    ".djlint_rules.yaml",
     ".gitignore",
 )
 
@@ -67,14 +70,18 @@ _NOT_SETTINGS: Final = frozenset({
     "github_output",
     "lint",
     "lsp",
+    "prefer_configuration",
     "quiet",
     "reformat",
     "sarif",
     "src",
     "statistics",
     "stdin_filename",
+    "version",
     "warn",
 })
+
+_PATH_SETTINGS: Final = frozenset({"configuration", "rules"})
 
 _PROFILES: Final = {
     "angular": "angular",
@@ -97,6 +104,7 @@ _PROFILES: Final = {
     "jekyll": "liquid",
     "jinja": "jinja",
     "jinja-html": "jinja",
+    "jinja.html": "jinja",
     "jinja2": "jinja",
     "liquid": "liquid",
     "mustache": "handlebars",
@@ -107,6 +115,9 @@ _PROFILES: Final = {
 }
 
 _LINE_END: Final = re.compile(r"\r\n|\r|\n")
+_FINDING_LINE_END: Final = re.compile(r"\r?\n")
+_LONE_CR: Final = re.compile(r"\r(?!\n)")
+_WINDOWS_DRIVE: Final = re.compile(r"/[A-Za-z]:")
 _RULE_CODE: Final = re.compile(r"[A-Z]\d{3}")
 _CAMEL_HUMP: Final = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 
@@ -127,12 +138,16 @@ def _option_value(value: Any) -> Any:
     if isinstance(value, list):
         return ",".join(str(item) for item in value)
     if isinstance(value, dict):
-        return tuple(value.items())
+        return tuple((key, _option_value(item)) for key, item in value.items())
     return value
 
 
 def _line_starts(text: str) -> list[int]:
     return [0, *(match.end() for match in _LINE_END.finditer(text))]
+
+
+def _finding_starts(text: str) -> list[int]:
+    return [0, *(match.end() for match in _FINDING_LINE_END.finditer(text))]
 
 
 def _line_text(text: str, starts: list[int], line: int) -> str:
@@ -147,41 +162,28 @@ def _utf16_length(text: str) -> int:
     return len(text) + sum(ord(char) > _LAST_BMP for char in text)
 
 
-def _offset(text: str, starts: list[int], position: Json) -> int:
-    """Turn a position of the protocol, in UTF-16 units, into an index."""
-    line: int = position["line"]
-    if line >= len(starts):
-        return len(text)
-    content = _line_text(text, starts, line)
-    units: int = position["character"]
-    if content.isascii():
-        return starts[line] + min(units, len(content))
-    seen = 0
-    for index, char in enumerate(content):
-        if seen >= units:
-            return starts[line] + index
-        seen += 2 if ord(char) > _LAST_BMP else 1
-    return starts[line] + len(content)
+def _position(document: _Document, line: int, column: int) -> Json:
+    """Turn a line of djLint and a column in characters into a position.
 
-
-def _position(text: str, starts: list[int], line: int, column: int) -> Json:
-    """Turn a line from 1 and a column in characters into a position."""
-    index = min(line, len(starts)) - 1
-    index = max(index, 0)
-    content = _line_text(text, starts, index)
+    djLint counts lines by line feeds, and the protocol by a lone CR as well.
+    """
+    finding_starts = document.finding_starts
+    index = max(min(line, len(finding_starts)) - 1, 0)
+    offset = min(finding_starts[index] + max(column, 0), len(document.text))
+    line_index = bisect_right(document.starts, offset) - 1
+    content = _line_text(document.text, document.starts, line_index)
+    start = document.starts[line_index]
     return {
-        "line": index,
-        "character": _utf16_length(content[: max(column, 0)]),
+        "line": line_index,
+        "character": _utf16_length(content[: offset - start]),
     }
 
 
-def _diagnostic(text: str, starts: list[int], finding: Finding) -> Json:
+def _diagnostic(document: _Document, finding: Finding) -> Json:
     diagnostic: Json = {
         "range": {
-            "start": _position(text, starts, finding.line, finding.column),
-            "end": _position(
-                text, starts, finding.end_line, finding.end_column
-            ),
+            "start": _position(document, finding.line, finding.column),
+            "end": _position(document, finding.end_line, finding.end_column),
         },
         "severity": _SEVERITY_WARNING,
         "code": finding.code,
@@ -200,6 +202,16 @@ def _edits(old: str, new: str) -> list[Json]:
     if old == new:
         return []
     old_starts = _line_starts(old)
+    if _LONE_CR.search(old):
+        return [
+            {
+                "range": {
+                    "start": {"line": 0, "character": 0},
+                    "end": {"line": len(old_starts), "character": 0},
+                },
+                "newText": new,
+            }
+        ]
     new_starts = _line_starts(new)
     old_lines = [
         old[start:end]
@@ -239,26 +251,22 @@ def _edits(old: str, new: str) -> list[Json]:
 
 @final
 class _Document:
-    __slots__ = ("language", "starts", "text", "version")
+    __slots__ = ("finding_starts", "language", "starts", "text", "version")
 
     def __init__(self, text: str, language: str, doc_version: int) -> None:
         self.text = text
         self.language = language
         self.version = doc_version
         self.starts = _line_starts(text)
+        self.finding_starts = _finding_starts(text)
 
-    def apply(self, change: Json) -> None:
-        change_range = change.get("range")
-        if change_range is None:
-            self.text = change["text"]
-        else:
-            start = _offset(self.text, self.starts, change_range["start"])
-            end = _offset(self.text, self.starts, change_range["end"])
-            self.text = self.text[:start] + change["text"] + self.text[end:]
-        self.starts = _line_starts(self.text)
+    def replace(self, text: str, doc_version: int) -> None:
+        self.text = text
+        self.version = doc_version
+        self.starts = _line_starts(text)
+        self.finding_starts = _finding_starts(text)
 
 
-@final
 class _Pending:
     """A request of the server that the client has yet to answer."""
 
@@ -274,6 +282,7 @@ class Server:
     """A language server on two binary streams."""
 
     __slots__ = (
+        "_asks_settings",
         "_cancelled",
         "_capabilities",
         "_configs",
@@ -288,6 +297,7 @@ class Server:
         "_pending",
         "_reader",
         "_reported",
+        "_rule_root",
         "_settings",
         "_shutting_down",
         "_stale",
@@ -299,11 +309,12 @@ class Server:
         self._reader = reader
         self._writer = writer
         self._write_lock = threading.Lock()
-        self._inbox: queue.Queue[Json | None] = queue.Queue()
+        self._inbox: queue.Queue[Json] = queue.Queue()
         self._cancelled: set[int | str | None] = set()
         self._pending: dict[int, _Pending] = {}
         self._next_id = 0
         self._capabilities: Json = {}
+        self._asks_settings = False
         self._initialized = False
         self._shutting_down = False
         self._exit_code: int | None = None
@@ -314,6 +325,7 @@ class Server:
         self._settings: dict[str, Json] = {}
         self._configs: dict[tuple[str, str, str], Config] = {}
         self._reported: set[str] = set()
+        self._rule_root: str | None = None
         # Goes up with every change that can change a finding of an unchanged
         # document, to tell a client that asks if it has the latest.
         self._generation = 0
@@ -329,10 +341,10 @@ class Server:
             except queue.Empty:
                 self._lint_stale()
                 continue
-            if message is None:
-                # The client is gone.
-                return 0 if self._shutting_down else 1
-            self._handle(message)
+            try:
+                self._handle(message)
+            except Exception as error:
+                self._log(_LOG_ERROR, f"Dropped a message: {error!r}")
         return self._exit_code
 
     def _read_message(self) -> bytes | None:
@@ -348,7 +360,7 @@ class Server:
             if name.strip().lower() == b"content-length":
                 with contextlib.suppress(ValueError):
                     length = int(value)
-        if length is None:
+        if length is None or length < 0:
             return b""
         body = self._reader.read(length)
         return body if len(body) == length else None
@@ -358,7 +370,7 @@ class Server:
         while (body := self._read_message()) is not None:
             try:
                 message = json.loads(body)
-            except ValueError:
+            except (RecursionError, ValueError):
                 self._log(_LOG_ERROR, "Dropped a message that isn't JSON.")
                 self._write({
                     "id": None,
@@ -369,11 +381,15 @@ class Server:
                 self._log(_LOG_ERROR, "Dropped a message that isn't an object.")
             elif message.get("method") == "$/cancelRequest":
                 self._take_cancel(message.get("params"))
+            elif message.get("method") == "exit":
+                # Directly, for a lint that doesn't end to keep nothing running.
+                os._exit(0 if self._shutting_down else 1)
             elif "method" not in message:
                 self._take_answer(message)
             else:
                 self._inbox.put(message)
-        self._inbox.put(None)
+        # The client is gone, and so is whoever would wait for a lint to end.
+        os._exit(0 if self._shutting_down else 1)
 
     def _take_cancel(self, params: object) -> None:
         if isinstance(params, dict):
@@ -423,13 +439,14 @@ class Server:
         method = message.get("method")
         if not isinstance(method, str):
             return
+        raw_params = message.get("params")
+        params: Json = raw_params if isinstance(raw_params, dict) else {}
         if "id" not in message:
-            try:
-                self._handle_notification(method, message.get("params") or {})
-            except (KeyError, TypeError) as error:
-                self._log(_LOG_ERROR, f"Malformed {method}: {error!r}")
+            self._handle_notification(method, params)
             return
         request_id = message["id"]
+        if len(self._cancelled) > _MAX_CANCELLED:
+            self._cancelled.clear()
         if not _is_id(request_id):
             self._write({
                 "id": None,
@@ -442,19 +459,18 @@ class Server:
                 request_id, _REQUEST_CANCELLED, "Request cancelled"
             )
             return
-        if method == "initialize":
-            self._write({
-                "id": request_id,
-                "result": self._initialize(message.get("params") or {}),
-            })
+        if method == "initialize" and not self._initialized:
+            self._write({"id": request_id, "result": self._initialize(params)})
             return
         if not self._initialized:
             self._respond_error(
                 request_id, _SERVER_NOT_INITIALIZED, "Not initialized"
             )
             return
-        if self._shutting_down:
-            self._respond_error(request_id, _INVALID_REQUEST, "Shutting down")
+        if self._shutting_down or method == "initialize":
+            self._respond_error(
+                request_id, _INVALID_REQUEST, "Not at this point"
+            )
             return
         handler = self._request_handler(method)
         if handler is None:
@@ -463,7 +479,7 @@ class Server:
             )
             return
         try:
-            result = handler(message.get("params") or {})
+            result = handler(params)
         except Exception as error:
             self._respond_error(request_id, _REQUEST_FAILED, str(error))
         except SystemExit:
@@ -503,14 +519,23 @@ class Server:
                 document["text"], document["languageId"], document["version"]
             )
             self._stale.add(document["uri"])
+            self._forget_unwatched_configuration()
         elif method == "textDocument/didChange":
             self._did_change(params)
         elif method == "textDocument/didSave":
             self._stale.add(params["textDocument"]["uri"])
+            self._forget_unwatched_configuration()
         elif method == "textDocument/didClose":
             self._did_close(params["textDocument"]["uri"])
         elif method == "workspace/didChangeConfiguration":
+            pushed = params.get("settings")
+            if isinstance(pushed, dict):
+                section = pushed.get("djlint", pushed)
+                self._init_settings = (
+                    section if isinstance(section, dict) else {}
+                )
             self._settings.clear()
+            self._asks_settings = self._workspace_capability("configuration")
             self._configuration_changed()
         elif method == "workspace/didChangeWatchedFiles":
             self._configuration_changed()
@@ -518,8 +543,13 @@ class Server:
             self._did_change_folders(params["event"])
 
     def _initialize(self, params: Json) -> Json:
-        self._capabilities = params.get("capabilities") or {}
-        self._init_settings = params.get("initializationOptions") or {}
+        capabilities = params.get("capabilities")
+        self._capabilities = (
+            capabilities if isinstance(capabilities, dict) else {}
+        )
+        options = params.get("initializationOptions")
+        self._init_settings = options if isinstance(options, dict) else {}
+        self._asks_settings = self._workspace_capability("configuration")
         folders = params.get("workspaceFolders")
         self._folders = [
             path
@@ -530,15 +560,15 @@ class Server:
             )
             if path is not None
         ]
-        if not self._folders and (root := params.get("rootUri")):
-            path = _path(root)
-            self._folders = [] if path is None else [path]
+        root = _path(params.get("rootUri"))
+        if not self._folders and root is not None:
+            self._folders = [root]
         self._initialized = True
-        capabilities: Json = {
+        offered: Json = {
             "positionEncoding": "utf-16",
             "textDocumentSync": {
                 "openClose": True,
-                "change": _SYNC_INCREMENTAL,
+                "change": _SYNC_FULL,
                 "save": {"includeText": False},
             },
             "documentFormattingProvider": True,
@@ -550,19 +580,20 @@ class Server:
             },
         }
         if self._pulls_diagnostics:
-            capabilities["diagnosticProvider"] = {
+            offered["diagnosticProvider"] = {
                 "identifier": "djlint",
                 "interFileDependencies": False,
                 "workspaceDiagnostics": False,
             }
         return {
-            "capabilities": capabilities,
+            "capabilities": offered,
             "serverInfo": {"name": "djLint", "version": version("djlint")},
         }
 
     @property
     def _pulls_diagnostics(self) -> bool:
-        return "diagnostic" in (self._capabilities.get("textDocument") or {})
+        text_document = self._capabilities.get("textDocument")
+        return isinstance(text_document, dict) and "diagnostic" in text_document
 
     def _workspace_capability(self, *keys: str) -> bool:
         capability: Any = self._capabilities.get("workspace") or {}
@@ -602,9 +633,10 @@ class Server:
         document = self._documents.get(params["textDocument"]["uri"])
         if document is None:
             return
-        for change in params["contentChanges"]:
-            document.apply(change)
-        document.version = params["textDocument"]["version"]
+        document.replace(
+            params["contentChanges"][-1]["text"],
+            params["textDocument"]["version"],
+        )
         self._stale.add(params["textDocument"]["uri"])
 
     def _did_close(self, uri: str) -> None:
@@ -628,9 +660,18 @@ class Server:
                 self._folders.append(path)
         self._configuration_changed()
 
+    def _forget_unwatched_configuration(self) -> None:
+        """Read the configuration again, if nothing would say it changed."""
+        if not self._workspace_capability(
+            "didChangeWatchedFiles", "dynamicRegistration"
+        ):
+            self._generation += 1
+            self._configs.clear()
+
     def _configuration_changed(self) -> None:
         self._generation += 1
         self._configs.clear()
+        self._forget_rule_modules()
         self._reported.clear()
         if self._pulls_diagnostics:
             if self._workspace_capability("diagnostics", "refreshSupport"):
@@ -638,13 +679,33 @@ class Server:
         else:
             self._stale.update(self._documents)
 
+    def _forget_rule_modules(self) -> None:
+        """Let the next lint import the modules of custom rules anew."""
+        root = self._rule_root
+        self._rule_root = None
+        if root is None:
+            return
+        with contextlib.suppress(ValueError):
+            sys.path.remove(root)
+        for name, module in tuple(sys.modules.items()):
+            filename = getattr(module, "__file__", None)
+            if filename and Path(filename).is_relative_to(root):
+                del sys.modules[name]
+
+    def _use_rule_modules_of(self, config: Config) -> None:
+        """Keep the same-named rule modules of two projects apart."""
+        root = str(config.project_root)
+        if root != self._rule_root:
+            self._forget_rule_modules()
+            self._rule_root = root
+
     def _settings_for(self, uri: str) -> Json:
         """Ask the client for the settings of a document, once."""
         settings = self._settings.get(uri)
         if settings is not None:
             return settings
         settings = dict(self._init_settings)
-        if self._workspace_capability("configuration"):
+        if self._asks_settings:
             pending = self._send_request(
                 "workspace/configuration",
                 {"items": [{"scopeUri": uri, "section": "djlint"}]},
@@ -657,6 +718,13 @@ class Server:
                     and isinstance(answer[0], dict)
                 ):
                     settings.update(answer[0])
+            else:
+                self._asks_settings = False
+                self._log(
+                    _LOG_WARNING,
+                    "The editor didn't answer workspace/configuration.",
+                )
+                return settings
         self._settings[uri] = settings
         return settings
 
@@ -672,9 +740,18 @@ class Server:
                 continue
             if option not in known:
                 self._log(_LOG_WARNING, f"Ignoring the setting {name}.")
+            elif option in _PATH_SETTINGS:
+                if value:
+                    options[option] = self._resolve(str(value))
+            elif option == "python_rules":
+                options[option] = value is not False
             elif value is not None and value not in ("", []):
                 options[option] = _option_value(value)
         return options
+
+    def _resolve(self, value: str) -> Path:
+        path = Path(value).expanduser()
+        return path if path.is_absolute() else self._default_folder() / path
 
     def _config(
         self, uri: str, document: _Document, indent: int | None = None
@@ -686,7 +763,11 @@ class Server:
         folder = str(
             path.parent if path is not None else self._default_folder()
         )
-        key = (folder, json.dumps(options, sort_keys=True), document.language)
+        key = (
+            folder,
+            json.dumps(options, sort_keys=True, default=str),
+            document.language,
+        )
         config = self._configs.get(key)
         if config is None:
             config = load_config(folder, **options)
@@ -708,13 +789,11 @@ class Server:
         path = _path(uri)
         if path is not None and is_excluded(config, path):
             return []
+        self._use_rule_modules_of(config)
         findings = lint_text(
             config, document.text, "-" if path is None else path.as_posix()
         )
-        return [
-            _diagnostic(document.text, document.starts, finding)
-            for finding in findings
-        ]
+        return [_diagnostic(document, finding) for finding in findings]
 
     def _safe_lint(self, uri: str, document: _Document) -> list[Json]:
         """Lint, reporting what stops djLint instead of ending the server."""
@@ -787,17 +866,24 @@ def _path(uri: object) -> Path | None:
     parsed = urlparse(uri)
     if parsed.scheme != "file":
         return None
+    path = unquote(parsed.path)
     if parsed.netloc not in {"", "localhost"}:
-        return Path(url2pathname(f"//{parsed.netloc}{parsed.path}"))
-    return Path(url2pathname(parsed.path))
+        return Path(f"//{parsed.netloc}{path}")
+    if _WINDOWS_DRIVE.match(path):
+        path = path[1:]
+    return Path(path)
 
 
 def serve() -> NoReturn:
     """Run the server on stdio, until the client ends it."""
-    reader = sys.stdin.buffer
-    writer = sys.stdout.buffer
-    # Anything printed on the way must not end up in the protocol's stream.
-    sys.stdout = sys.stderr
+    sys.stdout.flush()
+    reader = os.fdopen(os.dup(sys.stdin.fileno()), "rb")
+    writer = os.fdopen(os.dup(sys.stdout.fileno()), "wb")
+    # Whatever prints or starts a process on the way, such as a custom rule,
+    # gets stderr and no input instead of the protocol's streams.
+    os.dup2(sys.stderr.fileno(), sys.stdout.fileno())
+    with Path(os.devnull).open("rb") as null:
+        os.dup2(null.fileno(), sys.stdin.fileno())
     code = Server(reader, writer).serve()
     writer.flush()
     sys.stderr.flush()
