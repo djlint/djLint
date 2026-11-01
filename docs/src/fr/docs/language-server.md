@@ -35,7 +35,10 @@ Pour formater à l'enregistrement, ajoutez à la même configuration :
 
 ```lua
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.html", "*.jinja", "*.jinja2", "*.j2" },
+  pattern = {
+    "*.html", "*.jinja", "*.jinja2", "*.j2",
+    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
+  },
   callback = function(args)
     vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
   end,
@@ -57,7 +60,7 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["vscode-html-language-server", "djlint"]
+language-servers = ["djlint", "vscode-html-language-server"]
 ```
 
 ## IDE JetBrains
@@ -121,4 +124,4 @@ Sans `profile` défini à l'un de ces endroits, la langue du document en choisit
 
 - Les erreurs arrivent après une courte pause dans la saisie. Un éditeur avec les diagnostics en pull les demande, les autres les reçoivent.
 - `exclude`, `extend_exclude` et `use_gitignore` s'appliquent aux documents ouverts. Un document exclu n'a pas d'erreurs et n'est pas formaté.
-- Il recharge la configuration quand `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc` ou `.gitignore` changent, si l'éditeur sait surveiller les fichiers.
+- Il recharge la configuration quand `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` ou `.gitignore` changent, si l'éditeur sait surveiller les fichiers.

@@ -10,18 +10,21 @@ import queue
 import subprocess
 import sys
 import threading
+import time
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
 
 from djlint.api import format_text, load_config
+from djlint.server import _path  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from pathlib import Path
     from typing import Any
 
 TIMEOUT_SECONDS = 30
+DEBOUNCE_SECONDS = 0.5
 
 UNFORMATTED = "<div><p>hi</p>\n</div>\n"
 FORMATTED = "<div>\n    <p>hi</p>\n</div>\n"
@@ -295,6 +298,7 @@ def test_does_not_push_to_a_client_that_pulls(
     client.start(tmp_path, PULL_CAPABILITIES)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
+    time.sleep(DEBOUNCE_SECONDS)
     client.format(uri)
     assert not any(
         message.get("method") == "textDocument/publishDiagnostics"
@@ -441,18 +445,26 @@ def test_finds_blank_lines_with_crlf(client: Client, tmp_path: Path) -> None:
     assert "H014" in [item["code"] for item in client.diagnostics(uri)]
 
 
-def test_reads_an_encoded_drive_letter(client: Client, tmp_path: Path) -> None:
-    (tmp_path / ".djlintrc").write_text('{"indent": 2}', encoding="utf-8")
-    client.start(tmp_path)
-    uri = (
-        (tmp_path / "a.html")
-        .as_uri()
-        .replace(":/", "%3A/", 2)
-        .replace("file%3A", "file:")
-    )
-    client.open(uri, UNFORMATTED)
-    [edit] = client.format(uri)
-    assert "\n  <p>hi</p>\n" in edit["newText"]
+@pytest.mark.skipif(sys.platform != "win32", reason="a Windows path")
+def test_reads_an_encoded_drive_letter() -> None:
+    assert _path("file:///c%3A/x/a.html") == Path("c:/x/a.html")
+
+
+@pytest.mark.parametrize(
+    ("uri", "expected"),
+    [
+        ("file:///x/a%20b.html", "/x/a b.html"),
+        ("file://localhost/x/a.html", "/x/a.html"),
+        ("file://wsl%24/x/a.html", "//wsl$/x/a.html"),
+    ],
+)
+def test_reads_a_uri(uri: str, expected: str) -> None:
+    assert _path(uri) == Path(expected)
+
+
+@pytest.mark.parametrize("uri", ["untitled:a", "file://[bad", None, 1])
+def test_has_no_path_for_what_is_no_file(uri: object) -> None:
+    assert _path(uri) is None
 
 
 def test_takes_a_relative_rules_file(client: Client, tmp_path: Path) -> None:
@@ -530,8 +542,14 @@ def test_exits_during_a_rule_that_never_ends(
     client: Client, tmp_path: Path
 ) -> None:
     (tmp_path / "pyproject.toml").write_text("", encoding="utf-8")
+    marker = tmp_path / "started"
     (tmp_path / "endless.py").write_text(
-        "def run(**_):\n    while True:\n        pass\n", encoding="utf-8"
+        "from pathlib import Path\n"
+        "def run(**_):\n"
+        f"    Path({str(marker)!r}).touch()\n"
+        "    while True:\n"
+        "        pass\n",
+        encoding="utf-8",
     )
     (tmp_path / ".djlint_rules.yaml").write_text(
         "- rule:\n    name: X001\n    message: x\n    python_module: endless\n",
@@ -539,6 +557,10 @@ def test_exits_during_a_rule_that_never_ends(
     )
     client.start(tmp_path)
     client.open((tmp_path / "a.html").as_uri(), "<p>x</p>\n")
+    deadline = time.monotonic() + TIMEOUT_SECONDS
+    while not marker.exists() and time.monotonic() < deadline:
+        time.sleep(0.05)
+    assert marker.exists()
     client.notify("exit", {})
     assert client.process.wait(TIMEOUT_SECONDS) == 1
 

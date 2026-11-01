@@ -49,6 +49,19 @@ def _forget_rule_module(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "path", list(sys.path))
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="needs symlinks")
+def test_is_excluded_by_the_path_of_a_symlink(tmp_path: Path) -> None:
+    (tmp_path / ".djlintrc").write_text(
+        '{"exclude": "vendor"}', encoding="utf-8"
+    )
+    (tmp_path / "vendor").mkdir()
+    (tmp_path / "templates").mkdir()
+    (tmp_path / "templates" / "a.html").touch()
+    link = tmp_path / "vendor" / "a.html"
+    link.symlink_to(tmp_path / "templates" / "a.html")
+    assert is_excluded(load_config(tmp_path), link)
+
+
 def test_is_excluded(tmp_path: Path) -> None:
     (tmp_path / ".djlintrc").write_text(
         '{"exclude": "vendor"}', encoding="utf-8"

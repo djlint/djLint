@@ -64,6 +64,7 @@ _CONFIG_FILES: Final = (
     ".djlint.toml",
     ".djlintrc",
     ".djlint_rules.yaml",
+    ".editorconfig",
     ".gitignore",
 )
 

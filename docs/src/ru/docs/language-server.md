@@ -35,7 +35,10 @@ vim.lsp.enable("djlint")
 
 ```lua
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.html", "*.jinja", "*.jinja2", "*.j2" },
+  pattern = {
+    "*.html", "*.jinja", "*.jinja2", "*.j2",
+    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
+  },
   callback = function(args)
     vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
   end,
@@ -57,7 +60,7 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["vscode-html-language-server", "djlint"]
+language-servers = ["djlint", "vscode-html-language-server"]
 ```
 
 ## IDE от JetBrains
@@ -121,4 +124,4 @@ vim.lsp.config("djlint", {
 
 - Находки приходят после короткой паузы в наборе. Редактор с pull-диагностикой запрашивает их сам, остальным сервер отправляет их сам.
 - `exclude`, `extend_exclude` и `use_gitignore` действуют на открытые документы. У исключённого документа нет находок, и он не форматируется.
-- Сервер перечитывает конфигурацию при изменении `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc` или `.gitignore`, если редактор умеет следить за файлами.
+- Сервер перечитывает конфигурацию при изменении `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` или `.gitignore`, если редактор умеет следить за файлами.

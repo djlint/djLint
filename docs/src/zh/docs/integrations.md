@@ -221,7 +221,7 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["vscode-html-language-server", "djlint"]
+language-servers = ["djlint", "vscode-html-language-server"]
 ```
 
 ## JetBrains IDE 和 Emacs

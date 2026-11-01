@@ -35,7 +35,10 @@ To format on save, add this to the same configuration:
 
 ```lua
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.html", "*.jinja", "*.jinja2", "*.j2" },
+  pattern = {
+    "*.html", "*.jinja", "*.jinja2", "*.j2",
+    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
+  },
   callback = function(args)
     vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
   end,
@@ -57,7 +60,7 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["vscode-html-language-server", "djlint"]
+language-servers = ["djlint", "vscode-html-language-server"]
 ```
 
 ## JetBrains IDEs
@@ -121,5 +124,5 @@ Without a `profile` from either place, the language of the document picks one: `
 
 - Findings arrive after a short pause in typing. An editor with pull diagnostics asks for them, and any other gets them pushed.
 - `exclude`, `extend_exclude` and `use_gitignore` apply to open documents. An excluded document has no findings and isn't formatted.
-- It reloads the configuration when `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc` or `.gitignore` change, if the editor can watch files, and otherwise when a document is opened or saved. A change to the code of a custom rule's `python_module` needs a restart.
+- It reloads the configuration when `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` or `.gitignore` change, if the editor can watch files, and otherwise when a document is opened or saved. A change to the code of a custom rule's `python_module` needs a restart.
 - A slow rule holds up what comes after it, because the server does one thing at a time.

@@ -76,9 +76,11 @@ def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
 
 def is_excluded(config: Config, filepath: Path) -> bool:
     """Check whether the configuration leaves a file out, by its path alone."""
-    resolved = filepath.resolve()
-    return _exclude_match(config, resolved, config.project_root) or (
-        config.use_gitignore and _gitignore_match(config, resolved)
+    # Both, for a symlink in an excluded folder and for a root behind a symlink.
+    return any(
+        _exclude_match(config, path, config.project_root)
+        or (config.use_gitignore and _gitignore_match(config, path))
+        for path in (filepath.absolute(), filepath.resolve())
     )
 
 

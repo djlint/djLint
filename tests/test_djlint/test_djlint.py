@@ -208,6 +208,7 @@ def test_stdin_filename_gitignored(
     monkeypatch.chdir(tmp_path)
     args = ("-", "--use-gitignore", "--stdin-filename", "generated/a.html")
     result = runner.invoke(djlint, args, input='<img src="x">')
+    assert result.exit_code == 0
     assert "H013" not in result.output
 
 
@@ -237,6 +238,7 @@ def test_stdin_filename_finds_its_own_configuration(
         ("-", "--stdin-filename", str(tmp_path / "vendor" / "a.html")),
         input='<img src="x">',
     )
+    assert result.exit_code == 0
     assert "H013" not in result.output
 
 

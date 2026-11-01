@@ -35,7 +35,10 @@ vim.lsp.enable("djlint")
 
 ```lua
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.html", "*.jinja", "*.jinja2", "*.j2" },
+  pattern = {
+    "*.html", "*.jinja", "*.jinja2", "*.j2",
+    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
+  },
   callback = function(args)
     vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
   end,
@@ -57,7 +60,7 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["vscode-html-language-server", "djlint"]
+language-servers = ["djlint", "vscode-html-language-server"]
 ```
 
 ## JetBrains IDE
@@ -121,4 +124,4 @@ vim.lsp.config("djlint", {
 
 - 检查结果会在输入短暂停顿后到达。支持拉取诊断的编辑器会主动请求，其他编辑器则由服务器推送。
 - `exclude`、`extend_exclude` 和 `use_gitignore` 对打开的文档生效。被排除的文档没有检查结果，也不会被格式化。
-- 如果编辑器支持监视文件，服务器会在 `pyproject.toml`、`djlint.toml`、`.djlint.toml`、`.djlintrc` 或 `.gitignore` 变化时重新加载配置。
+- 如果编辑器支持监视文件，服务器会在 `pyproject.toml`、`djlint.toml`、`.djlint.toml`、`.djlintrc`、`.djlint_rules.yaml`、`.editorconfig` 或 `.gitignore` 变化时重新加载配置。
