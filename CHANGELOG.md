@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.49.1] - 2026-11-01
+
 ### Bug fixes
 
 - The language server asks an editor for its settings again once a late answer arrives. An editor that took over five seconds to answer once lost its settings until it restarted the server or changed them. The findings of open documents update as soon as the answer arrives.
