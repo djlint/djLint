@@ -755,6 +755,264 @@ def test_a_late_answer_changes_what_a_pull_finds(
     )
 
 
+def test_refreshes_findings_once_a_late_answer_arrives(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(tmp_path, {"workspace": {"configuration": True}})
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, FINDING)
+    while True:
+        asked = client.messages.get(timeout=TIMEOUT_SECONDS)
+        assert asked is not None
+        if asked.get("method") == "workspace/configuration":
+            break
+    found = client.notification("textDocument/publishDiagnostics")
+    assert [item["code"] for item in found["diagnostics"]] == ["H013"]
+
+    client.settings = {"ignore": "H013"}
+    client.write({"id": asked["id"], "result": [client.settings]})
+    assert client.notification("textDocument/publishDiagnostics") == {
+        "uri": uri,
+        "version": 1,
+        "diagnostics": [],
+    }
+
+
+def test_registers_for_changes_of_settings(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(
+        tmp_path,
+        {
+            "workspace": {
+                "didChangeConfiguration": {"dynamicRegistration": True}
+            }
+        },
+    )
+    params = client.notification("client/registerCapability")
+    assert params["registrations"] == [
+        {"id": "djlint-settings", "method": "workspace/didChangeConfiguration"}
+    ]
+
+
+@pytest.mark.parametrize(
+    "pushed", [{}, {"html": {"format": True}}], ids=["empty", "other server"]
+)
+def test_keeps_settings_on_a_push_for_nothing_of_djlint(
+    client: Client, tmp_path: Path, pushed: dict[str, Any]
+) -> None:
+    client.start(tmp_path, PUSH_CAPABILITIES, {"ignore": "H013"})
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, FINDING)
+    assert not client.notification("textDocument/publishDiagnostics")[
+        "diagnostics"
+    ]
+    client.notify("workspace/didChangeConfiguration", {"settings": pushed})
+    assert not client.notification("textDocument/publishDiagnostics")[
+        "diagnostics"
+    ]
+
+
+def test_takes_flat_settings_of_a_push(client: Client, tmp_path: Path) -> None:
+    client.start(tmp_path, PUSH_CAPABILITIES)
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, FINDING)
+    assert client.notification("textDocument/publishDiagnostics")["diagnostics"]
+    client.notify(
+        "workspace/didChangeConfiguration", {"settings": {"ignore": "H013"}}
+    )
+    assert not client.notification("textDocument/publishDiagnostics")[
+        "diagnostics"
+    ]
+
+
+def test_excludes_from_the_workspace_folder(
+    client: Client, tmp_path: Path
+) -> None:
+    (tmp_path / "vendor").mkdir()
+    client.start(tmp_path, PUSH_CAPABILITIES, {"exclude": "vendor"})
+    uri = (tmp_path / "vendor" / "a.html").as_uri()
+    client.open(uri, FINDING)
+    assert not client.notification("textDocument/publishDiagnostics")[
+        "diagnostics"
+    ]
+    assert (
+        client.request(
+            "textDocument/formatting",
+            {
+                "textDocument": {"uri": uri},
+                "options": {"tabSize": 4, "insertSpaces": True},
+            },
+        )
+        is None
+    )
+
+
+def test_excludes_past_a_nested_project(client: Client, tmp_path: Path) -> None:
+    (tmp_path / ".djlintrc").write_text('{"exclude": "vendor"}', "utf-8")
+    nested = tmp_path / "vendor" / "lib"
+    nested.mkdir(parents=True)
+    (nested / "pyproject.toml").write_text("", "utf-8")
+    client.start(tmp_path, PUSH_CAPABILITIES, {"exclude": "vendor"})
+    client.open((nested / "a.html").as_uri(), FINDING)
+    assert not client.notification("textDocument/publishDiagnostics")[
+        "diagnostics"
+    ]
+
+
+def test_reads_a_named_configuration_again_with_a_watcher(
+    client: Client, tmp_path: Path
+) -> None:
+    named = tmp_path / "my.json"
+    named.write_text("{}", "utf-8")
+    client.settings = {"configuration": str(named)}
+    client.start(
+        tmp_path,
+        {
+            "workspace": {
+                "configuration": True,
+                "didChangeWatchedFiles": {"dynamicRegistration": True},
+            }
+        },
+    )
+    client.notification("client/registerCapability")
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, FINDING)
+    assert client.notification("textDocument/publishDiagnostics")["diagnostics"]
+    named.write_text('{"ignore": "H013"}', "utf-8")
+    client.notify("textDocument/didSave", {"textDocument": {"uri": uri}})
+    assert not client.notification("textDocument/publishDiagnostics")[
+        "diagnostics"
+    ]
+
+
+def test_reads_the_configuration_again_after_a_rejected_watch(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(
+        tmp_path,
+        {"workspace": {"didChangeWatchedFiles": {"dynamicRegistration": True}}},
+    )
+    while True:
+        asked = client.messages.get(timeout=TIMEOUT_SECONDS)
+        assert asked is not None
+        if asked.get("method") == "client/registerCapability":
+            break
+    client.write({
+        "id": asked["id"],
+        "error": {"code": -32601, "message": "No"},
+    })
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, FINDING)
+    assert client.notification("textDocument/publishDiagnostics")["diagnostics"]
+    (tmp_path / ".djlintrc").write_text('{"ignore": "H013"}', "utf-8")
+    client.notify("textDocument/didSave", {"textDocument": {"uri": uri}})
+    assert not client.notification("textDocument/publishDiagnostics")[
+        "diagnostics"
+    ]
+
+
+def test_a_save_without_a_watcher_updates_every_document(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(tmp_path, PUSH_CAPABILITIES)
+    first = (tmp_path / "a.html").as_uri()
+    second = (tmp_path / "b.html").as_uri()
+    client.open(first, FINDING)
+    client.open(second, FINDING)
+    client.notification("textDocument/publishDiagnostics")
+    client.notification("textDocument/publishDiagnostics")
+    (tmp_path / ".djlintrc").write_text('{"ignore": "H013"}', "utf-8")
+    client.notify("textDocument/didSave", {"textDocument": {"uri": first}})
+    published = [
+        client.notification("textDocument/publishDiagnostics") for _ in range(2)
+    ]
+    assert {item["uri"] for item in published} == {first, second}
+    assert not any(item["diagnostics"] for item in published)
+
+
+def test_a_save_without_a_watcher_refreshes_a_pulling_editor(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(
+        tmp_path,
+        {
+            **PULL_CAPABILITIES,
+            "workspace": {"diagnostics": {"refreshSupport": True}},
+        },
+    )
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, FINDING)
+    client.notify("textDocument/didSave", {"textDocument": {"uri": uri}})
+    assert client.notification("workspace/diagnostic/refresh") == {}
+
+
+def test_asks_for_settings_again_when_folders_change(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(tmp_path, {"workspace": {"configuration": True}})
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, FINDING)
+    assert client.notification("textDocument/publishDiagnostics")["diagnostics"]
+    client.settings = {"ignore": "H013"}
+    client.notify(
+        "workspace/didChangeWorkspaceFolders",
+        {"event": {"added": [], "removed": []}},
+    )
+    assert not client.notification("textDocument/publishDiagnostics")[
+        "diagnostics"
+    ]
+
+
+@pytest.mark.parametrize(
+    "length", [99999999999999999999999, 1099511627776000], ids=["big", "huge"]
+)
+def test_lives_through_a_length_it_cannot_read(
+    client: Client, length: int
+) -> None:
+    stdin = client.process.stdin
+    assert stdin is not None
+    stdin.write(b"Content-Length: %d\r\n\r\n" % length)
+    stdin.flush()
+    client.start()
+
+
+def test_a_uri_that_is_no_string_leaves_other_documents(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(tmp_path, PUSH_CAPABILITIES)
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, FINDING)
+    client.notify(
+        "textDocument/didOpen",
+        {
+            "textDocument": {
+                "uri": 1,
+                "languageId": "html",
+                "version": 1,
+                "text": FINDING,
+            }
+        },
+    )
+    assert client.notification("textDocument/publishDiagnostics")["uri"] == uri
+
+
+def test_a_text_with_lone_cr_is_replaced_up_to_its_last_line(
+    client: Client, tmp_path: Path
+) -> None:
+    client.start(tmp_path)
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, "<div>\r<p>x</p>")
+    edits = client.request(
+        "textDocument/formatting",
+        {
+            "textDocument": {"uri": uri},
+            "options": {"tabSize": 4, "insertSpaces": True},
+        },
+    )
+    assert edits[0]["range"]["end"] == {"line": 1, "character": 8}
+
+
 def test_exits_on_an_exit_with_an_id(client: Client) -> None:
     client.request("initialize", {"capabilities": {}})
     client.request("shutdown", {})

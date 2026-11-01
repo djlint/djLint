@@ -173,6 +173,15 @@ def test_stdin(runner: CliRunner) -> None:
     assert "No files to check!" in result.stderr
 
 
+def test_stdin_lints_crlf_as_a_file_would(runner: CliRunner) -> None:
+    text = "<div></div>\n\n\n\n\n<div></div>\n"
+    args = ("-", "--lint", "--profile", "html")
+    found = runner.invoke(djlint, args, input=text).output
+    crlf = text.replace("\n", "\r\n").encode()
+    assert "H014" in found
+    assert runner.invoke(djlint, args, input=crlf).output == found
+
+
 def test_stdin_filename_option(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint,
