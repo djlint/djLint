@@ -124,4 +124,5 @@ Sans `profile` défini à l'un de ces endroits, la langue du document en choisit
 
 - Les erreurs arrivent après une courte pause dans la saisie. Un éditeur avec les diagnostics en pull les demande, les autres les reçoivent.
 - `exclude`, `extend_exclude` et `use_gitignore` s'appliquent aux documents ouverts. Un document exclu n'a pas d'erreurs et n'est pas formaté.
-- Il recharge la configuration quand `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` ou `.gitignore` changent, si l'éditeur sait surveiller les fichiers.
+- Il recharge la configuration quand `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` ou `.gitignore` changent, si l'éditeur sait surveiller les fichiers, et sinon à l'ouverture ou à l'enregistrement d'un document. Une modification du code du `python_module` d'une règle personnalisée demande un redémarrage.
+- Une règle lente retarde ce qui la suit, car le serveur traite une chose à la fois.

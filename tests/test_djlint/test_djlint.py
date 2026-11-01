@@ -499,3 +499,17 @@ def test_line_ending(
     result = runner.invoke(djlint, (tmp_file.name, "--check", "--quiet"))
 
     assert result.exit_code == 0
+
+
+def test_stdin_filename_with_parent_steps_leaves_an_excluded_folder(
+    runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / "pyproject.toml").touch()
+    (tmp_path / "build").mkdir()
+    monkeypatch.chdir(tmp_path / "build")
+    result = runner.invoke(
+        djlint,
+        ("-", "--stdin-filename", "../templates/a.html"),
+        input='<img src="x">',
+    )
+    assert "H013" in result.output

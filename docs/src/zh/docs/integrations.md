@@ -138,7 +138,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-设置请参阅[语言服务器](/zh/docs/language-server/#设置)。下面的插件则是把 djLint 作为命令运行。.
+设置请参阅[语言服务器](/zh/docs/language-server/#设置)。下面的插件则是把 djLint 作为命令运行。
 
 ### conform.nvim 和 nvim-lint
 
