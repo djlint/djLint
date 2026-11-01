@@ -67,7 +67,7 @@ def compile_pattern(pattern: str, flags: int = 0, /) -> re.Pattern[str]:
 
 _SPAN_CACHE_SIZE: Final = 1
 _AFTER_EVERY_SPAN: Final = float("inf")
-_LINE_CACHE_SIZE: Final = 256
+_LINE_CACHE_SIZE: Final = 4096
 
 YAML_FRONT_MATTER: Final = r"""
     # front matter opens the file and holds the site generator's own data,
@@ -464,7 +464,6 @@ def inside_ignored_linter_block(
     )
 
 
-@lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _inside_ignored_block(
     html: str,
     /,
@@ -575,14 +574,13 @@ def child_of_unformatted_block(
 def child_of_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
-    for ignored_match_start, ignored_match_end in _inside_ignored_block(
+    starts, reach = _ignored_block_reach(
         html,
         ignored_blocks=config.ignored_blocks_pattern,
         ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
-    ):
-        if ignored_match_start < match_start and match_end <= ignored_match_end:
-            return True
-    return False
+    )
+    index = bisect_left(starts, match_start)
+    return index > 0 and reach[index - 1] >= match_end
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
