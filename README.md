@@ -151,7 +151,7 @@ Or use `pre-commit` to reformat, then lint!
 ```yaml
 repos:
   - repo: https://github.com/djlint/djLint
-    rev: v1.49.1 # use the latest version instead
+    rev: v1.49.2 # use the latest version instead
     hooks:
       - id: djlint-reformat
       - id: djlint
@@ -160,7 +160,8 @@ repos:
 ## 🧩 Editors
 
 - **VS Code**: install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) (also on [Open VSX](https://open-vsx.org/extension/monosans/djlint)).
-- **neovim, Sublime Text, MegaLinter and more**: see the [integrations docs](https://djlint.com/docs/integrations/).
+- **Neovim, JetBrains IDEs, Sublime Text, Helix and Emacs**: run the language server, `djlint --lsp`. See the [setup for each](https://djlint.com/docs/integrations/).
+- **CI**: [GitHub Actions](https://djlint.com/docs/integrations/#github-actions) and [MegaLinter](https://djlint.com/docs/integrations/#megalinter).
 
 ## 💙 Like it?
 

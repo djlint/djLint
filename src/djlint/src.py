@@ -45,6 +45,8 @@ def _gitignore_match(config: Config, filepath: Path) -> bool:
     an absolute path causes false positives when parent directories
     (outside the project) match a gitignore pattern.
     """
+    if config.gitignore is None:
+        return False
     try:
         rel = filepath.relative_to(config.project_root)
     except ValueError:

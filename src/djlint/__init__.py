@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import errno
 import io
 import os
@@ -21,12 +22,16 @@ else:
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-    from typing import Final, TextIO
+    from typing import Any, Final, TextIO
 
     from djlint.settings import Config
     from djlint.types import ProcessResult
 
 _WINDOWS_MAX_PROCESSES: Final = 61
+# A worker process takes about as long to start as formatting and linting
+# this many bytes of templates, 25 files of the openedx ones, so less work
+# than that is done in the main process.
+_BYTES_PER_WORKER: Final = 64 * 1024
 
 
 _keep_mypyc_wheels_from_crashing = partial
@@ -564,67 +569,67 @@ def main(
     if github_output is None:
         github_output = bool(os.getenv("GITHUB_ACTIONS"))
 
-    config = Config(
-        src[0],
-        extension=extension,
-        ignore=ignore,
-        indent=indent,
-        quiet=quiet,
-        profile=profile,
-        require_pragma=require_pragma,
-        lint=lint or not (reformat or check),
-        reformat=reformat,
-        check=check,
-        stdin_filename=stdin_filename,
-        use_gitignore=use_gitignore,
-        allow_empty_input=allow_empty_input,
-        warn=warn,
-        preserve_leading_space=preserve_leading_space,
-        preserve_blank_lines=preserve_blank_lines,
-        preserve_class_newlines=preserve_class_newlines,
-        format_css=format_css,
-        format_js=format_js,
-        configuration=configuration,
-        prefer_configuration=prefer_configuration,
-        rules=rules,
-        statistics=statistics,
-        include=include,
-        ignore_case=ignore_case,
-        ignore_blocks=ignore_blocks,
-        blank_line_after_tag=blank_line_after_tag,
-        blank_line_before_tag=blank_line_before_tag,
-        line_break_after_multiline_tag=line_break_after_multiline_tag,
-        custom_blocks=custom_blocks,
-        custom_html=custom_html,
-        exclude=exclude,
-        extend_exclude=extend_exclude,
-        linter_output_format=linter_output_format,
-        max_line_length=max_line_length,
-        max_attribute_length=max_attribute_length,
-        format_attribute_template_tags=format_attribute_template_tags,
-        single_attribute_per_line=single_attribute_per_line,
-        format_attribute_js_json=format_attribute_js_json,
-        format_attribute_js_json_pattern=format_attribute_js_json_pattern,
-        format_attribute_js_json_min_props=format_attribute_js_json_min_props,
-        per_file_ignores=per_file_ignores,
-        indent_css=indent_css,
-        indent_js=indent_js,
-        close_void_tags=close_void_tags,
-        no_line_after_yaml=no_line_after_yaml,
-        no_indent_inner_html=no_indent_inner_html,
-        sort_attributes=sort_attributes,
-        sort_load_tags=sort_load_tags,
-        name_endblocks=name_endblocks,
-        no_function_formatting=no_function_formatting,
-        no_set_formatting=no_set_formatting,
-        no_entity_formatting=no_entity_formatting,
-        keep_br_inline=keep_br_inline,
-        quote_style=quote_style,
-        max_blank_lines=max_blank_lines,
-        github_output=github_output,
-        sarif=sarif,
-        stdin="-" in src,
-    )
+    options: dict[str, Any] = {
+        "extension": extension,
+        "ignore": ignore,
+        "indent": indent,
+        "quiet": quiet,
+        "profile": profile,
+        "require_pragma": require_pragma,
+        "lint": lint or not (reformat or check),
+        "reformat": reformat,
+        "check": check,
+        "stdin_filename": stdin_filename,
+        "use_gitignore": use_gitignore,
+        "allow_empty_input": allow_empty_input,
+        "warn": warn,
+        "preserve_leading_space": preserve_leading_space,
+        "preserve_blank_lines": preserve_blank_lines,
+        "preserve_class_newlines": preserve_class_newlines,
+        "format_css": format_css,
+        "format_js": format_js,
+        "configuration": configuration,
+        "prefer_configuration": prefer_configuration,
+        "rules": rules,
+        "statistics": statistics,
+        "include": include,
+        "ignore_case": ignore_case,
+        "ignore_blocks": ignore_blocks,
+        "blank_line_after_tag": blank_line_after_tag,
+        "blank_line_before_tag": blank_line_before_tag,
+        "line_break_after_multiline_tag": line_break_after_multiline_tag,
+        "custom_blocks": custom_blocks,
+        "custom_html": custom_html,
+        "exclude": exclude,
+        "extend_exclude": extend_exclude,
+        "linter_output_format": linter_output_format,
+        "max_line_length": max_line_length,
+        "max_attribute_length": max_attribute_length,
+        "format_attribute_template_tags": format_attribute_template_tags,
+        "single_attribute_per_line": single_attribute_per_line,
+        "format_attribute_js_json": format_attribute_js_json,
+        "format_attribute_js_json_pattern": format_attribute_js_json_pattern,
+        "format_attribute_js_json_min_props": format_attribute_js_json_min_props,
+        "per_file_ignores": per_file_ignores,
+        "indent_css": indent_css,
+        "indent_js": indent_js,
+        "close_void_tags": close_void_tags,
+        "no_line_after_yaml": no_line_after_yaml,
+        "no_indent_inner_html": no_indent_inner_html,
+        "sort_attributes": sort_attributes,
+        "sort_load_tags": sort_load_tags,
+        "name_endblocks": name_endblocks,
+        "no_function_formatting": no_function_formatting,
+        "no_set_formatting": no_set_formatting,
+        "no_entity_formatting": no_entity_formatting,
+        "keep_br_inline": keep_br_inline,
+        "quote_style": quote_style,
+        "max_blank_lines": max_blank_lines,
+        "github_output": github_output,
+        "sarif": sarif,
+        "stdin": "-" in src,
+    }
+    config = Config(src[0], **options)
 
     if "-" in src and (not config.files or stdin_filename is not None):
         stdin_text = _read_stdin_as_utf8_keeping_line_endings()
@@ -671,7 +676,14 @@ def main(
             echo()
 
         files_count = len(file_list)
-        max_workers = min(process_cpu_count() or 1, files_count)
+        max_workers = max(
+            1,
+            min(
+                process_cpu_count() or 1,
+                files_count,
+                sum(map(_file_size, file_list)) // _BYTES_PER_WORKER,
+            ),
+        )
 
         file_errors = []
         progress_label = click.style(
@@ -700,19 +712,26 @@ def main(
                 import concurrent.futures  # noqa: PLC0415
 
                 if _is_free_threaded_python():
-                    executor_cls = concurrent.futures.ThreadPoolExecutor
+                    exe: concurrent.futures.Executor = (
+                        concurrent.futures.ThreadPoolExecutor(max_workers)
+                    )
+                    results = exe.map(partial(process, config), file_list)
                 else:
-                    executor_cls = concurrent.futures.ProcessPoolExecutor
                     if sys.platform == "win32":
                         max_workers = min(max_workers, _WINDOWS_MAX_PROCESSES)
-
-                with executor_cls(max_workers=max_workers) as exe:
-                    futures = {
-                        exe.submit(process, config, this_file): this_file
-                        for this_file in file_list
-                    }
-                    for future in concurrent.futures.as_completed(futures):
-                        file_errors.append(future.result())
+                    exe = concurrent.futures.ProcessPoolExecutor(
+                        max_workers,
+                        initializer=_start_worker,
+                        initargs=(src[0], options),
+                    )
+                    results = exe.map(
+                        _process_in_worker,
+                        file_list,
+                        chunksize=max(1, files_count // (max_workers * 4)),
+                    )
+                with exe:
+                    for result in results:
+                        file_errors.append(result)
                         bar.update(1)
 
     if config.sarif:
@@ -753,11 +772,43 @@ def _echo_unchanged_stdin(config: Config, stdin_text: str) -> None:
         echo(stdin_text.encode("utf-8"), nl=False)
 
 
+def _file_size(path: Path) -> int:
+    try:
+        return path.stat().st_size
+    except OSError:
+        return 0
+
+
 def _is_free_threaded_python() -> bool:
     is_gil_enabled = getattr(sys, "_is_gil_enabled", None)
     if not callable(is_gil_enabled):
         return False
     return not bool(is_gil_enabled())
+
+
+_worker_config: Config | None = None
+
+
+def _start_worker(src: str, options: dict[str, Any]) -> None:
+    """Build the configuration of the run in a worker process.
+
+    A spawned worker reads its arguments only once it is running, so handing
+    it the parent's Config would hold up the start of each worker until the
+    one before had read it, and unpickling one compiles its patterns again
+    anyway. Its warnings were shown by the parent already.
+    """
+    from djlint.settings import Config  # noqa: PLC0415
+
+    global _worker_config  # noqa: PLW0603
+    with contextlib.redirect_stderr(io.StringIO()):
+        _worker_config = Config(src, **options)
+
+
+def _process_in_worker(this_file: Path) -> ProcessResult:
+    if _worker_config is None:
+        msg = "The worker was started without a configuration."
+        raise RuntimeError(msg)
+    return process(_worker_config, this_file)
 
 
 def process(config: Config, this_file: Path) -> ProcessResult:

@@ -4,37 +4,46 @@
 
 ## [Unreleased]
 
+## [1.49.2] - 2026-11-01
+
+### Performance
+
+- Checking or linting a folder of many templates takes about half the time, most of all on Windows. A small run no longer starts worker processes, which cost more than they saved.
+- The language server answers in about a third of the time when the editor sends its settings with every request, as the VS Code extension does, and its memory no longer grows over a long session.
+- Every run starts a little faster, unless it uses `--use-gitignore`.
+- A line of many inline tags before a block tag, which a stray quote such as `"=""` can leave in a template, no longer takes minutes to format.
+- A very large template no longer formats disproportionately slower than a small one: a 1.1 MB template formats in a third of the time.
+
 ## [1.49.1] - 2026-11-01
 
 ### Bug fixes
 
-- The language server asks an editor for its settings again once a late answer arrives. An editor that took over five seconds to answer once lost its settings until it restarted the server or changed them. The findings of open documents update as soon as the answer arrives.
-- The language server keeps its settings on a `workspace/didChangeConfiguration` that holds nothing for djLint, which editors send for other servers.
-- The language server registers for `workspace/didChangeConfiguration` with editors that need it, which never sent it before, and asks for settings again when a workspace folder is added or removed.
-- `exclude` also applies to the language server from the workspace folder, as it does for `djlint <folder>`. A document in `vendor/` of a folder with no `pyproject.toml` wasn't left out.
-- The language server reads the configuration again on open and save if the editor refused to watch files, or if the settings name a `configuration` or `rules` file, which nothing watches. Without a watcher, a save updates the findings of every open document.
-- The language server survives a huge `Content-Length`, ignores a document with a URI that isn't a string, instead of losing the findings of the others, and ends the edit for a text with lone CRs on its last line.
-- Linting stdin finds what rules on blank lines report in a CRLF text, as linting a file does.
+- The language server no longer loses the settings of an editor that took over five seconds to answer, and updates the findings of open documents once the answer arrives.
+- The language server keeps its settings when the editor sends a change of settings meant for other servers.
+- The language server sees changes of settings in editors that report them only to servers that ask, and reads the settings again when a workspace folder is added or removed.
+- `exclude` applies in the language server as it does to `djlint <folder>`: a document in `vendor/` of a folder with no `pyproject.toml` was not left out.
+- The language server picks up a change of the configuration, or of a file named by `configuration` or `rules`, when a document is opened or saved, also in editors that don't watch files, and updates every open document then.
+- The language server no longer stops on some malformed messages, and formats a document with old Mac line endings (CR only) without sending an edit past its end.
+- Linting a template with Windows line endings from stdin reports what the rules on blank lines find, as linting the file does.
 - A `python_module` rule that returns a `code`, `match` or `message` that isn't a string gets a clear error.
 
 ## [1.49.0] - 2026-11-01
 
 ### Features
 
-- `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/integrations/#language-server).
+- `djlint --lsp` runs a language server, for findings as you type and formatting in any editor that supports LSP. See [Language server](https://djlint.com/docs/integrations/#language-server).
 - `djlint.api.is_excluded()` tells whether the configuration leaves out a file.
 
 ### Bug fixes
 
-- With `--stdin-filename`, djLint now reads stdin even if the configuration has `files`. It worked on those files instead, so an editor formatting a template rewrote them and left the template as it was.
-- `--stdin-filename` now honors `exclude`, `extend-exclude` and `--use-gitignore`: such text comes back unchanged, with no findings, as an excluded file is left out. They had no effect on stdin.
+- With `--stdin-filename`, djLint formats the text it is given even if the configuration sets `files`. It formatted those files instead, so an editor formatting a template rewrote them and left the template as it was.
+- `--stdin-filename` honors `exclude`, `extend-exclude` and `--use-gitignore`: the text of an excluded file comes back unchanged, with no findings.
 
 ## [1.48.1] - 2026-10-31
 
 ### Performance
 
-- A long run of `$` no longer makes reading a page's tags quadratic: linting a line of two hundred thousand of them before a tag went from 2.2 seconds to 0.15. Formatting such a line is still slow, for other reasons.
-- A tag's quoted attribute values are jumped over instead of read one character at a time. That makes reading tags about a tenth faster on its own, but a whole format or lint run takes about as long as before.
+- A long run of `$` before a tag no longer makes linting slow: a line of two hundred thousand of them went from 2.2 seconds to 0.15. Formatting such a line is still slow.
 
 ## [1.48.0] - 2026-10-31
 
