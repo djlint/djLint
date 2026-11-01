@@ -1,0 +1,446 @@
+---
+// The home page hero: the pitch, and under it a messy template with djLint's
+// real findings squiggled under it. Running the command reformats it in place,
+// each line sliding to where djLint puts it.
+import { LinkButton } from "@astrojs/starlight/components";
+
+const { t } = Astro.locals;
+const { title, tagline, actions = [] } = Astro.locals.starlightRoute.entry.data.hero!;
+
+const installs = ["uv tool install djlint", "pip install djlint"];
+
+// `djlint messy.html --lint --profile=django`, one finding per mark.
+const marks: Record<number, [string, string, string][]> = {
+  2: [
+    ["<SECTION", "H009", "Tag names should be lowercase."],
+    ["class='posts'", "H008", "Attributes should be double quoted."],
+  ],
+  3: [["", "H014", "Found extra blank lines."]],
+  6: [["{%if posts%}", "T001", "Variables should be wrapped in a whitespace."]],
+  10: [
+    ["class='post-link'", "H008", "Attributes should be double quoted."],
+    ['"Read {{post.title}}"', "T001", "Variables should be wrapped in a whitespace."],
+    ["{{post.title}}", "T001", "Variables should be wrapped in a whitespace."],
+  ],
+  14: [["{%else%}", "T001", "Variables should be wrapped in a whitespace."]],
+  16: [["{%endif%}", "T001", "Variables should be wrapped in a whitespace."]],
+  17: [["</SECTION", "H009", "Tag names should be lowercase."]],
+};
+
+const messy = `{% block content %}
+<SECTION class='posts'>
+
+
+<h2>Latest posts</h2>
+{%if posts%}
+<ul>
+{% for post in posts %}
+<li>
+<a href="{% url 'post' post.slug %}" class='post-link' aria-label="Read {{post.title}}">{{post.title}}</a>
+</li>
+{% endfor %}
+</ul>
+{%else%}
+<p>No posts yet.</p>
+{%endif%}
+</SECTION>
+{% endblock %}`.split("\n");
+
+// `djlint messy.html --reformat --single-attribute-per-line --profile=django`
+const clean = `{% block content %}
+    <section class="posts">
+        <h2>Latest posts</h2>
+        {% if posts %}
+            <ul>
+                {% for post in posts %}
+                    <li>
+                        <a
+                            href="{% url 'post' post.slug %}"
+                            class="post-link"
+                            aria-label="Read {{ post.title }}"
+                        >{{ post.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No posts yet.</p>
+        {% endif %}
+    </section>
+{% endblock %}`.split("\n");
+
+// Which clean line each messy line becomes. The blank lines go away, and the
+// attributes of the <a> fan out onto lines of their own.
+const lineMap = [1, 2, 0, 0, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20];
+const problemCount = Object.values(marks).flat().length;
+
+const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+const span = (cls: string, text: string) => `<span class="${cls}">${escape(text)}</span>`;
+const templateTags = (text: string) =>
+  text.replace(/(\{%.*?%\}|\{\{.*?\}\})|([^{]+|\{)/g, (_, tag, rest) =>
+    tag ? span("tk-tpl", tag) : escape(rest),
+  );
+
+function highlight(text: string) {
+  const token = /(\{%.*?%\}|\{\{.*?\}\})|("[^"]*"|'[^']*')|(<\/?)([\w-]+)|([\w-]+)(?==)|(\/?>)/g;
+  let html = "";
+  let last = 0;
+  for (const m of text.matchAll(token)) {
+    html += escape(text.slice(last, m.index));
+    const [whole, tpl, str, open, tag, attr, close] = m;
+    if (tpl) html += span("tk-tpl", tpl);
+    else if (str) html += `<span class="tk-str">${templateTags(str)}</span>`;
+    else if (open) html += span("tk-punct", open) + span("tk-tag", tag);
+    else if (attr) html += span("tk-attr", attr);
+    else if (close) html += span("tk-punct", close);
+    else html += escape(whole);
+    last = m.index + whole.length;
+  }
+  return html + escape(text.slice(last));
+}
+
+function markLine(text: string, lineMarks: [string, string, string][] = []) {
+  if (text === "" && lineMarks.length) {
+    const [, code, message] = lineMarks[0];
+    return `<mark class="lint lint-blank" tabindex="0" data-tip="${code} ${message}"></mark>`;
+  }
+  let html = "";
+  let rest = text;
+  for (const [needle, code, message] of lineMarks) {
+    const at = rest.indexOf(needle);
+    html += highlight(rest.slice(0, at));
+    html += `<mark class="lint" tabindex="0" data-tip="${code} ${message}">${highlight(needle)}</mark>`;
+    rest = rest.slice(at + needle.length);
+  }
+  return html + highlight(rest);
+}
+
+const problems = t("djlint.hero_problems").replace("{count}", String(problemCount));
+---
+
+<div class="dj-hero">
+  <div class="pitch">
+    <h1 id="_top" data-page-title set:html={title} />
+    <div class="intro">
+      {tagline && <p class="tagline" set:html={tagline} />}
+      <div class="installs">
+        {
+          installs.map((command) => (
+            <div class="install">
+              <code>
+                <span aria-hidden="true">$ </span>
+                {command}
+              </code>
+              <button
+                type="button"
+                data-copy={command}
+                data-label={`${t("djlint.copy")}: ${command}`}
+                data-done={t("djlint.copied")}
+                aria-label={`${t("djlint.copy")}: ${command}`}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                  <rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2" />
+                  <path d="M5 15V5a2 2 0 0 1 2-2h8" fill="none" stroke="currentColor" stroke-width="2" />
+                </svg>
+              </button>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div class="actions">
+      {
+        actions.map(({ link, text, variant }) => (
+          <LinkButton href={link} variant={variant}>
+            {text}
+          </LinkButton>
+        ))
+      }
+    </div>
+  </div>
+
+  <figure class="editor" data-state="messy">
+    <figcaption>
+      <span class="file">messy.html</span>
+      <span class="status" aria-live="polite">
+        <span class="when-messy">{problems}</span>
+        <span class="when-clean">{t("djlint.hero_clean")}</span>
+      </span>
+    </figcaption>
+    <pre class="code when-messy"><code>{
+      messy.map((text, i) => (
+        <span
+          class="line"
+          style={lineMap[i] ? `view-transition-name: dj-line-${lineMap[i]}` : undefined}
+          set:html={markLine(text, marks[i + 1])}
+        />
+      ))
+    }</code></pre>
+    <pre class="code when-clean" hidden><code>{
+      clean.map((text, i) => (
+        <span class="line" style={`view-transition-name: dj-line-${i + 1}`} set:html={highlight(text)} />
+      ))
+    }</code></pre>
+    <button type="button" class="run">
+      <span class="when-messy"
+        ><span class="prompt" aria-hidden="true">$</span> djlint messy.html --reformat --single-attribute-per-line</span
+      >
+      <span class="when-clean">{t("djlint.hero_undo")}</span>
+    </button>
+  </figure>
+</div>
+
+<script>
+  const editor = document.querySelector<HTMLElement>(".dj-hero .editor")!;
+  const [messy, clean] = editor.querySelectorAll<HTMLElement>("pre.code");
+
+  editor.querySelector(".run")!.addEventListener("click", () => {
+    const formatted = editor.dataset.state === "messy";
+    const swap = () => {
+      editor.dataset.state = formatted ? "clean" : "messy";
+      messy.hidden = formatted;
+      clean.hidden = !formatted;
+    };
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (document.startViewTransition && !reduceMotion) document.startViewTransition(swap);
+    else swap();
+  });
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>(".dj-hero [data-copy]")) {
+    button.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(button.dataset.copy!);
+      button.ariaLabel = button.dataset.done!;
+      button.classList.add("done");
+      setTimeout(() => {
+        button.ariaLabel = button.dataset.label!;
+        button.classList.remove("done");
+      }, 1500);
+    });
+  }
+</script>
+
+<style>
+  .dj-hero {
+    display: grid;
+    gap: 3rem;
+    padding-block: 2rem 3rem;
+  }
+  .pitch {
+    display: grid;
+    gap: 1.5rem 4rem;
+  }
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 1.6rem + 3vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--sl-color-white);
+    text-wrap: balance;
+    /* Russian and French titles carry words too long for the column. */
+    hyphens: auto;
+  }
+  .tagline {
+    margin: 0;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-base);
+    line-height: 1.7;
+  }
+  .tagline :global(code) {
+    font-family: var(--sl-font-mono);
+    font-size: 0.9em;
+    color: var(--sl-color-white);
+  }
+  .installs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .install {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 0.4rem 0.4rem 0.9rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-white);
+  }
+  .install code span {
+    color: var(--dj-squiggle);
+  }
+  .install button {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+  }
+  .install button:hover,
+  .install button.done {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .actions :global(.sl-link-button) {
+    margin: 0;
+  }
+
+  /* The editor is always dark: it is a picture of a terminal, not of the page. */
+  .editor {
+    --fg: #c0caf5;
+    margin: 0;
+    min-width: 0;
+    border: 1px solid var(--dj-code-line);
+    border-radius: 0.75rem;
+    background: var(--dj-code-bg);
+    color: var(--fg);
+    box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.5);
+    overflow: hidden;
+  }
+  figcaption {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--dj-code-line);
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    color: #a9b1d6;
+  }
+  .status {
+    color: var(--dj-squiggle);
+  }
+  .editor[data-state="clean"] .status {
+    color: var(--dj-ok);
+  }
+  .editor[data-state="messy"] .when-clean,
+  .editor[data-state="clean"] .when-messy {
+    display: none;
+  }
+  pre.code {
+    /* Room for the 20 formatted lines, so the editor keeps its height. */
+    min-height: calc(20 * 1.75em + 2rem);
+    margin: 0;
+    padding: 1rem 0;
+    overflow-x: auto;
+    font-family: var(--sl-font-mono);
+    font-size: 0.8rem;
+    line-height: 1.75;
+    counter-reset: line;
+  }
+  pre.code[hidden] {
+    display: none;
+  }
+  .line {
+    display: block;
+    min-height: 1.75em;
+    padding-inline-end: 1rem;
+    white-space: pre;
+  }
+  .line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 2ch;
+    margin-inline: 0.75rem 1.25rem;
+    text-align: end;
+    color: #3b4061;
+  }
+  .line :global(.tk-tag) { color: #f7768e; }
+  .line :global(.tk-attr) { color: #bb9af7; }
+  .line :global(.tk-str) { color: #9ece6a; }
+  .line :global(.tk-tpl) { color: #7dcfff; }
+  .line :global(.tk-punct) { color: #89ddff; }
+
+  .line :global(mark.lint) {
+    position: relative;
+    background: none;
+    color: inherit;
+    text-decoration: underline wavy var(--dj-squiggle);
+    text-decoration-thickness: 1.5px;
+    text-decoration-skip-ink: none;
+    text-underline-offset: 0.3em;
+    cursor: help;
+  }
+  /* Browsers draw no underline under an empty line, so paint the squiggle. */
+  .line :global(mark.lint-blank) {
+    display: inline-block;
+    width: 4ch;
+    height: 1.2em;
+    vertical-align: top;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath d='M0 1.5 Q1.5 0 3 1.5 T6 1.5' fill='none' stroke='%23f5c542' stroke-width='1.2'/%3E%3C/svg%3E")
+      repeat-x 0 100% / 6px 3px;
+  }
+  .line :global(mark.lint:is(:hover, :focus-visible)::after) {
+    content: attr(data-tip);
+    position: absolute;
+    z-index: 1;
+    top: 1.9em;
+    left: 0;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--dj-code-line);
+    border-radius: 0.375rem;
+    background: #24283b;
+    color: #e4e6f0;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  .line :global(mark.lint:focus-visible) {
+    outline: 1px solid var(--dj-squiggle);
+  }
+
+  .run {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-top: 1px solid var(--dj-code-line);
+    background: #16161e;
+    color: var(--fg);
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-sm);
+    text-align: start;
+    cursor: pointer;
+  }
+  .run:hover {
+    background: #1f2030;
+  }
+  .run .prompt {
+    color: var(--dj-squiggle);
+  }
+
+  /* Title and calls to action on the left, the explanation and install
+     commands on the right; on narrow screens they stack in reading order. */
+  @media (min-width: 64rem) {
+    .dj-hero {
+      padding-block: 3rem 4rem;
+    }
+    .pitch {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas: "title intro" "actions intro";
+      grid-template-rows: auto 1fr;
+    }
+    h1 {
+      grid-area: title;
+    }
+    .intro {
+      grid-area: intro;
+    }
+    .actions {
+      grid-area: actions;
+      align-self: start;
+    }
+  }
+</style>

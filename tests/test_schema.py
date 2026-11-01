@@ -15,7 +15,7 @@ from djlint.settings import _PROFILES, _QUOTE_STYLES  # noqa: PLC2701
 if TYPE_CHECKING:
     from typing import Any
 
-_SCHEMA = Path("docs/src/static/schema/djlint.json")
+_SCHEMA = Path("docs/public/schema/djlint.json")
 _SETTINGS = Path("src/djlint/settings.py")
 _CONFIG_KEY_PATTERN = re.compile(
     r"""(?:djlint_settings\.get|setting_int)\(\s*["']([\w-]+)["']"""

@@ -1,0 +1,59 @@
+---
+title: "最佳实践"
+description: "使用 djLint 格式化 HTML 模板的最佳实践。"
+sidebar:
+  label: "最佳实践"
+---
+
+## 条件属性周围的空格
+
+有时，条件语句会被用来向标签添加类（class）。djLint 会移除条件语句内部的空格。
+
+推荐使用以下模式：
+
+```html
+<div class="class1 {% if condition -%}class2{%- endif %}">content</div>
+                  ^ 注意这里的空格
+```
+
+不推荐使用以下模式：
+
+```html
+<div class="class1{% if condition -%} class2{%- endif %}">content</div>
+                                     ^ 注意这里的空格
+```
+
+## `format_attribute_template_tags` 与无空格条件属性
+
+若启用了 `format_attribute_template_tags`，条件属性应使用无空格标签，例如 nunjucks 和 jinja 的 `{% if a -%}`，应移除内部的空格。
+
+djLint 会将长属性格式化为多行，而属性内部节省的空格可能会破坏您的代码。
+
+推荐使用以下模式：
+
+```html
+<input
+  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
+/>
+                        ^                       ^      ^        ^
+```
+
+每个标记的位置都是无空格标签。
+
+不推荐使用以下模式：
+
+```html
+<input value="{% if database %}{{ database.name }}{% else %}blah{% endif %}" />
+```
+
+格式化之后代码如下：
+
+```html
+<input
+  value="{% if database %}
+                  {{ database.name }}
+              {% else %}
+                  blah
+              {% endif %}"
+/>
+```

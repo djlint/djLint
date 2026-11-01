@@ -819,3 +819,921 @@ Formatting <https://github.com/openedx/edx-platform> took 87 seconds in the prev
 - Fix: not detecting tabs as a valid seperation between tags (#813)
 - Fix: Add ignore for sms links (#815)
 - Fix: Allow attributes on <title> (#830)
+
+## [1.34.2] - 2024-08-28
+
+### Fix
+
+- max attribute length with longer regex custom html tags ([#884](https://github.com/djlint/djLint/issues/884))
+
+## [1.34.1] - 2023-12-20
+
+### Fix
+
+- **formatter:** Avoid rewriting the file if it has not been changed
+- **linter:** fix missed H025 for double closing, closes [#786](https://github.com/djlint/djLint/issues/786)
+
+## [1.34.0] - 2023-09-20
+
+### Fix
+
+- **configuration:** Fix formatting, unused import and forgotten print
+
+### Feature
+
+- **configuration:** Accept pyproject.toml as a --configuration argument
+
+## [1.33.0] - 2023-09-18
+
+### Fix
+
+- **formatter:** fixed extra breaks added around html tags inside template tags, closes [#742](https://github.com/djlint/djLint/issues/742)
+- **formatter:** fixed extra indend in script tags, closes [#733](https://github.com/djlint/djLint/issues/733)
+- **formatter:** fixed formatting on functions that used python keywords as the param name, closes [#756](https://github.com/djlint/djLint/issues/756)
+- **h033:** fix rull to not match data-action
+- **linter:** fixed false positive on DJ018, closes [#755](https://github.com/djlint/djLint/issues/755)
+
+### Feature
+
+- **formatter:** added support for nunjucks async loop tags
+
+## [1.32.1] - 2023-07-20
+
+### Fix
+
+- **formatter:** reverted chained function formatting, closes [#720](https://github.com/djlint/djLint/issues/720) [#704](https://github.com/djlint/djLint/issues/704)
+
+## [1.32.0] - 2023-07-19
+
+### Fix
+
+- **formatter:** fixed formatting on chained function, closes [#704](https://github.com/djlint/djLint/issues/704)
+- **linter:** fixed false positive on h026 data-id, closes [#711](https://github.com/djlint/djLint/issues/711)
+- **linter:** fixed golang false positive on T027, closes [#712](https://github.com/djlint/djLint/issues/712)
+
+### Feature
+
+- **formatter:** added support for jazzband's sorl-thumbnail tags, closes [#714](https://github.com/djlint/djLint/issues/714)
+
+## [1.31.1] - 2023-06-26
+
+### Fix
+
+- **formatter:** fixed formatter formatting ignored code, closes [#655](https://github.com/djlint/djLint/issues/655)
+- **formatter:** fixed function formatting with nested quoted parenthesis, closes [#698](https://github.com/djlint/djLint/issues/698)
+- **formatter:** fixed overgrabbing on template tag condensing, closes [#686](https://github.com/djlint/djLint/issues/686)
+- **formatter:** function index was not formatted correctly, closes [#693](https://github.com/djlint/djLint/issues/693)
+
+## [1.31.0] - 2023-06-12
+
+### Fix
+
+- **formatter:** fixed `line_break_after_multiline_tag` to force break in all cases, closes [#680](https://github.com/djlint/djLint/issues/680)
+- **formatter:** fixed isolated quotes being deleted from attributes, closes [#652](https://github.com/djlint/djLint/issues/652)
+- **formatter:** fixed wild match on template tags, closes [#686](https://github.com/djlint/djLint/issues/686)
+- **linter:** fixed false positive on t001, closes [#606](https://github.com/djlint/djLint/issues/606)
+
+### Feature
+
+- **formatter:** added `max-blank-lines` flag to consolidate blank lines, closes [#675](https://github.com/djlint/djLint/issues/675)
+- **formatter:** added support for symphony forms, closes [#476](https://github.com/djlint/djLint/issues/476)
+
+## [1.30.2] - 2023-06-02
+
+### Fix
+
+- **formatter:** added quotes to json keys, added option to disable set/function formatting, closes [#682](https://github.com/djlint/djLint/issues/682)
+
+## [1.30.1] - 2023-06-02
+
+### Fix
+
+- **linter:** added missing positive on H021, closes [#678](https://github.com/djlint/djLint/issues/678)
+- **linter:** fixed false positive on H037, closes [#679](https://github.com/djlint/djLint/issues/679)
+
+## [1.30.0] - 2023-05-30
+
+### Fix
+
+- **formatter:** fixed endset indent level, closes [#670](https://github.com/djlint/djLint/issues/670)
+- **formatter:** fixed issue with spaceless macro tags having spacess added before -, closes [#667](https://github.com/djlint/djLint/issues/667)
+- **npm:** install exact version of djlint
+
+### Feature
+
+- **npm:** add script to update djlint version in postinstall using semantic-release/exec
+
+## [1.29.0] - 2023-05-22
+
+### Fix
+
+- **formatter:** fix cases where ignore was still formatting set and function code, closes [#659](https://github.com/djlint/djLint/issues/659)
+- **formatter:** fix extra parenth being added in a function call, closes [#660](https://github.com/djlint/djLint/issues/660)
+- **linter:** fixed missing positive on a few <img rules
+
+### Feature
+
+- **formatter:** added option to disable newlines after yaml front matter, closes [#662](https://github.com/djlint/djLint/issues/662)
+- **linter:** allow codes to be ignored for remainder of file, closes [#655](https://github.com/djlint/djLint/issues/655)
+
+## [1.28.0] - 2023-05-18
+
+### Fix
+
+- **formatter:** allow djlint:off to exluce the rest of a file, closes [#649](https://github.com/djlint/djLint/issues/649)
+- **formatter:** don't add blank line to empty files, closes [#635](https://github.com/djlint/djLint/issues/635)
+
+### Feature
+
+- **formatter:** added ability to format objects/arrays in function tags, closes [#370](https://github.com/djlint/djLint/issues/370)
+- **formatter:** format set blocks, closes [#646](https://github.com/djlint/djLint/issues/646)
+
+## [1.27.2] - 2023-05-11
+
+### Fix
+
+- **formatter:** fixed an edge case wild regex grab, closes [#640](https://github.com/djlint/djLint/issues/640)
+- **formatter:** fixed formatting of plural tag in blocktrans, closes [#641](https://github.com/djlint/djLint/issues/641)
+- **formatter:** fixed js/css being formatted even inside ignored blocks, closes [#613](https://github.com/djlint/djLint/issues/613)
+- **linter:** fixed a few false positives/missing positives, added tests, closes [#643](https://github.com/djlint/djLint/issues/643) [#642](https://github.com/djlint/djLint/issues/642)
+- **linter:** fixed false postive in alpinejs tags for H037, closes [#639](https://github.com/djlint/djLint/issues/639)
+
+## [1.27.1] - 2023-05-10
+
+### Fix
+
+- **formatter:** fixed set_ tags being broken, closes [#634](https://github.com/djlint/djLint/issues/634)
+- **linter:** fixed false positive on H037, closes [#633](https://github.com/djlint/djLint/issues/633)
+
+## [1.27.0] - 2023-05-09
+
+### Fix
+
+- **linter:** fixed overly greedy H037, improved linter tests, closes [#631](https://github.com/djlint/djLint/issues/631)
+
+### Feature
+
+- **formatter:** Add option to not condense multi-line-tags
+
+## [1.26.0] - 2023-05-08
+
+### Fix
+
+- **blocktrans:** fixes whitespace issues on blocktrans, allows indenting on blocktrans trimmed, closes [#623](https://github.com/djlint/djLint/issues/623)
+
+### Feature
+
+- **formatter:** added white space cleanup for template tags, closes [#485](https://github.com/djlint/djLint/issues/485)
+- **linter:** added rule H037
+- **void tags:** added option to auto close void tags (linter rule H017), closes [#252](https://github.com/djlint/djLint/issues/252)
+
+## [1.25.1] - 2023-05-08
+
+### Fix
+
+- **js indent:** fixed an issue where literal strings were double indented, closes [#614](https://github.com/djlint/djLint/issues/614)
+- **set:** added formatting of json/list style set contents, closes [#287](https://github.com/djlint/djLint/issues/287) [#518](https://github.com/djlint/djLint/issues/518) [#370](https://github.com/djlint/djLint/issues/370)
+
+## [1.25.0] - 2023-04-25
+
+### Fix
+
+- **formatter:** fixed extra indent on endblocktrans tags, closes [#611](https://github.com/djlint/djLint/issues/611)
+
+### Feature
+
+- **cli:** added all args to cli, closes [#595](https://github.com/djlint/djLint/issues/595)
+
+## [1.24.0] - 2023-04-24
+
+### Feature
+
+- **formatter:** added option to prevent contents of some template tags from indenting
+
+## [1.23.3] - 2023-04-19
+
+### Fix
+
+- **formatter:** fixed speed on formatter, closes [#601](https://github.com/djlint/djLint/issues/601)
+
+## [1.23.2] - 2023-04-19
+
+### Fix
+
+- **blocktrans:** fix issue with back to back blocktrans formatting, closes [#600](https://github.com/djlint/djLint/issues/600)
+
+## [1.23.1] - 2023-04-18
+
+### Fix
+
+- **yaml:** fixed conflict with yaml and preserve_blank_lines option, closes [#596](https://github.com/djlint/djLint/issues/596)
+
+## [1.23.0] - 2023-04-13
+
+### Feature
+
+- **formatter:** will now attempt to fix case on known html tags by default, can be disabled, closes [#589](https://github.com/djlint/djLint/issues/589)
+
+## [1.22.0] - 2023-04-12
+
+### Feature
+
+- **whitespace:** improved whitespace handling on tag closing bracket, closes [#582](https://github.com/djlint/djLint/issues/582)
+
+## [1.21.0] - 2023-04-12
+
+### Feature
+
+- **linter:** added rule H036. Avoid use of <br> tags. Disabled by default, closes [#571](https://github.com/djlint/djLint/issues/571)
+
+## [1.20.0] - 2023-04-12
+
+### Feature
+
+- **linter:** added option to disable rules by default. Split H017 and disabled by default, closes [#372](https://github.com/djlint/djLint/issues/372)
+- **yaml:** added line break after yaml front matter, closes [#584](https://github.com/djlint/djLint/issues/584)
+
+## [1.19.17] - 2023-04-05
+
+### Fix
+
+- **blocktrans:** allowed closing transblocks to be indented if they have a leading space
+- **custom tags:** fixed issue where end tag for custom block was not de-indented, closes [#572](https://github.com/djlint/djLint/issues/572)
+- **ignored code:** fixed formatting of ignore code inside django comment blocks, closes [#569](https://github.com/djlint/djLint/issues/569)
+- **linter:** linter will now ignore {% raw %} {% endraw %} blocks, closes [#539](https://github.com/djlint/djLint/issues/539)
+- **max line length:** fixes issues around max line length not fully respected on indented lines, closes [#580](https://github.com/djlint/djLint/issues/580)
+- **preserving space:** misc improvements for the preserve leading space option, closes [#566](https://github.com/djlint/djLint/issues/566)
+
+## [1.19.16] - 2023-02-27
+
+### Fix
+
+- **ignored rules:** prevent ignoring a single rule from ignoring multiple, closes [#560](https://github.com/djlint/djLint/issues/560)
+
+## [1.19.15] - 2023-02-20
+
+### Fix
+
+- **formatter:** fixed template tag formatting with trailing parenthesis, closes [#554](https://github.com/djlint/djLint/issues/554)
+
+## [1.19.14] - 2023-02-07
+
+### Fix
+
+- **config:** added error message print when config loading fails, closes [#531](https://github.com/djlint/djLint/issues/531)
+
+## [1.19.13] - 2023-01-23
+
+### Fix
+
+- **handlebars each:** fixed bug in handlebars tags w/ trailing pipe, closes [#529](https://github.com/djlint/djLint/issues/529)
+
+## [1.19.12] - 2023-01-19
+
+### Fix
+
+- **docs:** fixed doc build
+- **formatter:** preserve windows line endings, closes [#502](https://github.com/djlint/djLint/issues/502)
+
+## [1.19.11] - 2023-01-04
+
+### Fix
+
+- **linter:** fixes false positive on D018, closes [#501](https://github.com/djlint/djLint/issues/501)
+
+## [1.19.10] - 2022-12-26
+
+### Fix
+
+- **check:** fixed issue where check was reformatting files that contained a hyphen in the name, closes [#494](https://github.com/djlint/djLint/issues/494)
+
+## [1.19.9] - 2022-12-16
+
+### Fix
+
+- **stdin --check:** stdin with the --check flag should return a formatted output, closes [#486](https://github.com/djlint/djLint/issues/486)
+
+## [1.19.8] - 2022-12-15
+
+### Fix
+
+- **attributes:** fixed outer quotes being stripped from attribute values, closes [#471](https://github.com/djlint/djLint/issues/471)
+- **settings:** fixed pyproject loader, closes [#469](https://github.com/djlint/djLint/issues/469)
+- **textarea:** fixed textarea attribute formatting, closes [#486](https://github.com/djlint/djLint/issues/486)
+
+## [1.19.7] - 2022-11-09
+
+### Fix
+
+- **formatter:** fixed a few broken alpinejs attributes, closes [#448](https://github.com/djlint/djLint/issues/448)
+
+## [1.19.6] - 2022-11-08
+
+### Fix
+
+- **css/js:** fixed extra blank lines being appended to blank lines in css/js formatter, closes [#451](https://github.com/djlint/djLint/issues/451)
+
+## [1.19.5] - 2022-11-07
+
+### Fix
+
+- **linter:** make attribute pattern on H025 more accepting. Prevent false positive, closes [#447](https://github.com/djlint/djLint/issues/447)
+
+## [1.19.4] - 2022-11-03
+
+### Fix
+
+- **attributes:** fixed poor django attribute parsing, closes [#427](https://github.com/djlint/djLint/issues/427) [#438](https://github.com/djlint/djLint/issues/438)
+- **attributes:** prevented attribute indentation for url type attributes, closes [#320](https://github.com/djlint/djLint/issues/320) [#86](https://github.com/djlint/djLint/issues/86) [#195](https://github.com/djlint/djLint/issues/195)
+- **image tag:** added image tag to template break tag list. srcset formatting, closes [#444](https://github.com/djlint/djLint/issues/444)
+
+## [1.19.3] - 2022-10-25
+
+### Fix
+
+- **formatter:** fixed poor formatting on long inline blocks, closes [#432](https://github.com/djlint/djLint/issues/432)
+
+## [1.19.2] - 2022-10-21
+
+### Fix
+
+- **windows+py3.9:** fixed an issue on windows with py3.9 and stdin
+
+## [1.19.1] - 2022-10-13
+
+### Fix
+
+- **formatter:** fixed indent on inline block followed by inline template block, closes [#425](https://github.com/djlint/djLint/issues/425)
+
+## [1.19.0] - 2022-10-12
+
+### Fix
+
+- **formatter:** fixed formatting on nested inline comments, closes [#423](https://github.com/djlint/djLint/issues/423)
+
+### Feature
+
+- **configuration:** allow local configuration to override global config, closes [#422](https://github.com/djlint/djLint/issues/422)
+
+## [1.18.0] - 2022-09-26
+
+### Feature
+
+- **quiet:** updated output of the --quiet flag to reduce unneeded verbose stuff
+
+## [1.17.3] - 2022-09-26
+
+### Fix
+
+- **linter:** fixed false positive on H017. Added test, closes [#406](https://github.com/djlint/djLint/issues/406)
+- **linter:** fixed false positive on T002. Added tests, closes [#405](https://github.com/djlint/djLint/issues/405)
+
+## [1.17.2] - 2022-09-22
+
+### Fix
+
+- **formatter:** fixed issue with blank links added between blocks, closes [#402](https://github.com/djlint/djLint/issues/402)
+
+## [1.17.1] - 2022-09-21
+
+### Fix
+
+- **formatter:** fixed poor indentation on span tags with leading text, closes [#398](https://github.com/djlint/djLint/issues/398)
+- **t002:** fixed false positive in t002. Added test, closes [#399](https://github.com/djlint/djLint/issues/399)
+
+## [1.17.0] - 2022-09-20
+
+### Feature
+
+- **stats:** moved linter stats to be appended to lint output, closes [#396](https://github.com/djlint/djLint/issues/396)
+
+## [1.16.0] - 2022-09-19
+
+### Fix
+
+- **linter:** t002
+
+### Feature
+
+- **linter:** added --statistics flag to print summary of linter findings, closes [#389](https://github.com/djlint/djLint/issues/389)
+
+## [1.15.0] - 2022-09-16
+
+### Fix
+
+- **formatter:** fixed formatting of repeating inline tags, closes [#387](https://github.com/djlint/djLint/issues/387)
+
+### Feature
+
+- **linter t034:** added linter T034 to check for {% ... }% typo, closes [#385](https://github.com/djlint/djLint/issues/385)
+- **linter:** t002 added a few more tags to the check, closes [#386](https://github.com/djlint/djLint/issues/386)
+
+## [1.14.2] - 2022-09-15
+
+### Fix
+
+- **span:** fixed indent on nested inline tags on a span, closes [#383](https://github.com/djlint/djLint/issues/383)
+
+## [1.14.1] - 2022-09-14
+
+### Fix
+
+- **alpine js:** fix incorrect indent on alpinejs attribs w/ nested HTML, closes [#381](https://github.com/djlint/djLint/issues/381)
+
+## [1.14.0] - 2022-09-12
+
+### Feature
+
+- **config:** allow source files to be specified in the config file, closes [#371](https://github.com/djlint/djLint/issues/371)
+
+## [1.13.0] - 2022-09-12
+
+### Feature
+
+- **config:** added option for custom configuration file path, closes [#170](https://github.com/djlint/djLint/issues/170)
+- **windows:** added a better progress bar char for windows, closes [#286](https://github.com/djlint/djLint/issues/286)
+
+## [1.12.3] - 2022-09-07
+
+### Fix
+
+- **cssbeautify:** added support for ignore in cssbeautifier
+- **js formatting:** added support for jsbeautify ignore blocks, closes [#367](https://github.com/djlint/djLint/issues/367)
+
+## [1.12.2] - 2022-09-07
+
+### Fix
+
+- **release:** trigger a release to remove the print statment
+
+## [1.12.1] - 2022-08-30
+
+### Fix
+
+- **macro:** allow html tags inside macro functions to skip formatting, closes [#353](https://github.com/djlint/djLint/issues/353)
+- **t001:** fixed false positive on T001 with Jinja {{- and {{+ tags, closes [#354](https://github.com/djlint/djLint/issues/354)
+
+## [1.12.0] - 2022-08-24
+
+### Fix
+
+- **h006:** prevented false positives on H006, closes [#344](https://github.com/djlint/djLint/issues/344) [#333](https://github.com/djlint/djLint/issues/333)
+- **h012:** prevent H012 from matching the contents of tags or attributes, closes [#348](https://github.com/djlint/djLint/issues/348)
+- **t001:** fixed false positive on multiline template tags, closes [#350](https://github.com/djlint/djLint/issues/350)
+
+### Feature
+
+- **h021:** allow inline styles that contain template syntax, closes [#351](https://github.com/djlint/djLint/issues/351)
+- **t002:** allow variables names to be used in the {% extends tag, closes [#349](https://github.com/djlint/djLint/issues/349)
+
+## [1.11.1] - 2022-08-22
+
+### Fix
+
+- **formatter:** fixed runaway regex on templates with many template attriutes inside html tags, closes [#340](https://github.com/djlint/djLint/issues/340)
+- **linter:** fixed false positive on T032 with jinja multi line set, closes [#342](https://github.com/djlint/djLint/issues/342)
+- **linter:** fixed false postive on rule H008, closes [#339](https://github.com/djlint/djLint/issues/339)
+- **linter:** prevent linter matches that overlap ignored blocks of code such as comments, closes [#343](https://github.com/djlint/djLint/issues/343)
+
+## [1.11.0] - 2022-08-18
+
+### Feature
+
+- **jinja call:** added support for jinja call blocks, closes [#337](https://github.com/djlint/djLint/issues/337)
+
+## [1.10.0] - 2022-08-17
+
+### Feature
+
+- **linter:** updated rule 18 to allow "tel:", closes [#334](https://github.com/djlint/djLint/issues/334)
+
+## [1.9.5] - 2022-08-16
+
+### Fix
+
+- **formatter:** fix IndexError while adding indentation to attributes, closes [#290](https://github.com/djlint/djLint/issues/290)
+
+## [1.9.4] - 2022-08-02
+
+### Fix
+
+- **requirements:** removed optional deps from requirements section. Cleaned up tox, closes [#322](https://github.com/djlint/djLint/issues/322)
+
+## [1.9.3] - 2022-08-01
+
+### Fix
+
+- **formatter:** fix to prevent formatter from breaking malformed attribute tags, closes [#317](https://github.com/djlint/djLint/issues/317)
+- **linter:** disabling linter rules should not disable formatting, closes [#316](https://github.com/djlint/djLint/issues/316)
+
+## [1.9.2] - 2022-07-29
+
+### Fix
+
+- **t027:** fixed test and regression in T027, closes [#141](https://github.com/djlint/djLint/issues/141)
+
+## [1.9.1] - 2022-07-28
+
+### Fix
+
+- **formatter:** fixed greedy regex issue when finding script and style tags
+
+## [1.9.0] - 2022-07-28
+
+### Feature
+
+- **formatter:** added options to format css and js using jsbeautifier
+
+## [1.8.1] - 2022-07-28
+
+### Fix
+
+- **indent:** fixed bad indent on short blocks, closes [#309](https://github.com/djlint/djLint/issues/309)
+
+## [1.8.0] - 2022-07-28
+
+### Feature
+
+- **formatter:** added option to add blank line before tags, closes [#307](https://github.com/djlint/djLint/issues/307)
+
+## [1.7.4] - 2022-07-26
+
+### Fix
+
+- **linter:** fixed false positive on T027, closes [#301](https://github.com/djlint/djLint/issues/301)
+
+## [1.7.3] - 2022-07-26
+
+### Fix
+
+- **preserve blank lines:** fixed duplicate blank lines being inserted after h-space,, closes [#300](https://github.com/djlint/djLint/issues/300)
+
+## [1.7.2] - 2022-07-25
+
+### Fix
+
+- **white space:** prevent duplicate blank lines from being added, closes [#297](https://github.com/djlint/djLint/issues/297)
+
+## [1.7.1] - 2022-07-22
+
+### Fix
+
+- **linter:** fix false positive on rule T001, closes [#292](https://github.com/djlint/djLint/issues/292)
+- **twig:** fixed indent issue with comments. Added test, closes [#290](https://github.com/djlint/djLint/issues/290)
+
+## [1.7.0] - 2022-07-08
+
+### Fix
+
+- **git bash:** fixes char encoding on windows git bash, closes [#275](https://github.com/djlint/djLint/issues/275)
+
+### Feature
+
+- **linter:** added per-file-ignores as a config option for linter rules, closes [#107](https://github.com/djlint/djLint/issues/107)
+
+## [1.6.0] - 2022-07-06
+
+### Feature
+
+- **npm:** added npm publish
+
+## [1.5.0] - 2022-07-06
+
+### Fix
+
+- **h026:** fixes rule H026 for cases where id/class are part of another string, closes [#281](https://github.com/djlint/djLint/issues/281)
+
+### Feature
+
+- **npm:** updated npm installer, closes [#192](https://github.com/djlint/djLint/issues/192)
+
+## [1.4.0] - 2022-07-05
+
+### Feature
+
+- **ignore rules:** added option to ignore linter rules with inline comments, closes [#113](https://github.com/djlint/djLint/issues/113)
+
+## [1.3.0] - 2022-06-30
+
+### Fix
+
+- **h025:** fixes rule H025 where tags have curly hash, closes [#270](https://github.com/djlint/djLint/issues/270)
+
+### Feature
+
+- **new option:** added option to attempt to keep blank lines in templates, closes [#261](https://github.com/djlint/djLint/issues/261)
+
+## [1.2.1] - 2022-06-21
+
+### Fix
+
+- **curly hash comment:** fix formatting on curly hash comment blocks, closes [#265](https://github.com/djlint/djLint/issues/265)
+
+## [1.2.0] - 2022-06-16
+
+### Feature
+
+- **whitespace:** add option to preserver some whitespace before text, closes [#260](https://github.com/djlint/djLint/issues/260)
+
+## [1.1.1] - 2022-05-18
+
+### Fix
+
+- **windows:** fixed windows output. colorama was converting to cp1252
+
+## [1.1.0] - 2022-05-18
+
+### Fix
+
+- **dj018:** fix rule DJ018 for special attrib names, closes [#248](https://github.com/djlint/djLint/issues/248)
+- **stdin encoding:** added encoding to stdin text, closes [#243](https://github.com/djlint/djLint/issues/243)
+
+### Feature
+
+- **breaks:** allowed p, head, and body tags that are short/empty to be on a single line
+
+## [1.0.3] - 2022-05-13
+
+### Fix
+
+- **code tags:** fixed indentation on code tags w/ trailing text, closes [#244](https://github.com/djlint/djLint/issues/244)
+
+## [1.0.2] - 2022-05-09
+
+- Bug fixes [#240](https://github.com/djlint/djLint/issues/240)
+
+## [1.0.1] - 2022-05-02
+
+- Bug fixes [#236](https://github.com/djlint/djLint/issues/236)
+
+## [1.0.0] - 2022-04-25
+
+- Bug fixes [#224](https://github.com/djlint/djLint/issues/224)
+
+## [0.7.6] - 2022-03-14
+
+- Bug fixes [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
+- Added `--warn` flag to return return errors as warnings.
+
+## [0.7.5] - 2022-02-21
+
+- Bug fixes [#187](https://github.com/djlint/djLint/issues/187)
+- Added better support for `yaml` front matter in template files
+- Added rule T032 for [#123](https://github.com/djlint/djLint/issues/123)
+- Added rule H033 for [#124](https://github.com/djlint/djLint/issues/124)
+- Changed linter profiles to be inclusive vs exclusive for [#178](https://github.com/djlint/djLint/issues/178)
+- Added alternate config file option `.djlintrc` for [#188](https://github.com/djlint/djLint/issues/188)
+
+## [0.7.4] - 2022-01-31
+
+- Bug fixes [#177](https://github.com/djlint/djLint/issues/177)
+
+## [0.7.3] - 2022-01-24
+
+- Bug fixes [#173](https://github.com/djlint/djLint/issues/173), [#174](https://github.com/djlint/djLint/issues/174)
+- Dropped Py3.6 from `pyproject.toml`.
+
+## [0.7.2] - 2022-01-14
+
+- Bug fixes [#167](https://github.com/djlint/djLint/issues/167), [#166](https://github.com/djlint/djLint/issues/166), [#171](https://github.com/djlint/djLint/issues/171), [#169](https://github.com/djlint/djLint/issues/169)
+
+## [0.7.1] - 2022-01-05
+
+- Bug fixes [#166](https://github.com/djlint/djLint/issues/166)
+
+## [0.7.0] - 2022-01-03
+
+- Added config for custom HTML tags
+- Bug fixes
+
+## [0.6.9] - 2021-12-14
+
+- Added HTML and Angular profiles
+- Allowed some entities in rule #H023
+- Bug fixes
+
+## [0.6.8] - 2021-12-02
+
+- Bug fixes
+- Updated docs
+
+## [0.6.7] - 2021-11-29
+
+- Added config option `format_attribute_template_tags` as opt-in for template tag formatting inside of attributes
+- Added config option `linter_output_format` to customize linter message variable order
+- Added rules H030 and H031 to check meta tags
+
+## [0.6.6] - 2021-11-29
+
+- Big fixes
+
+## [0.6.5] - 2021-11-26
+
+- Updated output paths to be relative to the project root
+- Bug fixes
+
+## [0.6.4] - 2021-11-26
+
+- Bug fixes
+
+## [0.6.3] - 2021-11-26
+
+- Added support for django `blocktrans` tag
+- Bug fixes
+
+## [0.6.2] - 2021-11-23
+
+- Bug fixes
+
+## [0.6.1] - 2021-11-19
+
+- Bug fixes
+- Made rule T028 stricter with clearer message
+
+## [0.6.0] - 2021-11-16
+
+- Added rule T027 to check for unclosed in template syntax
+- Added rule T028 to check for missing spaceless tags in attributes
+- Added rule H029 to check for lowercase form method
+- Ignored django blocktranslate tags that do not have "trimmed" from formatter
+- Bug fixes
+
+## [0.5.9a] - 2021-11-15
+
+- Added test support for python 3.10
+- Added pre-commit hook
+
+## [0.5.9] - 2021-10-29
+
+- Added option `--use-gitignore` to extend the excludes
+- Changed default exclude matching
+- Fixed windows exclude paths
+- Fixed formatting of `{%...%}` tags in attributes
+- Fixed formatting for for loops and nested conditions in attributes
+
+## [0.5.8] - 2021-10-15
+
+- Added require_pragma option
+- Updated DJ018 to catch `data-src` and `action` on inputs
+- Fixed inline ignore syntax
+- Added `--lint` option as placeholder for default usage
+- Bug fixes
+
+## [0.5.7] - 2021-10-11
+
+- Bug fixes
+
+## [0.5.6] - 2021-10-07
+
+- Added rule H026 to find empty id and class tags
+- Bug fixes
+
+## [0.5.5] - 2021-10-07
+
+- Consolidated settings and slimmed code
+- Bug fixes
+
+## [0.5.4] - 2021-10-06
+
+- Added rule H020 to find empty tag pairs
+- Added rule H021 to find inline styles
+- Added rule H022 to find http links
+- Added rule H023 to find entity references
+- Added rule H024 to find type on scripts and styles
+- Added rule H025 to check for orphan tags. Thanks to https://stackoverflow.com/a/1736801/10265880
+- Improved attribute formatting
+- Updated `blank_line_after_tag` option to add newline regardless of location
+- Fixed django `trans` tag formatting
+- Added formatting for inline styles
+- Added formatting for template conditions inside attributes
+- Added srcset as possible url location in linter rules
+- Speed up formatting
+- Special thanks to [jayvdb](https://github.com/jayvdb)
+
+## [0.5.3] - 2021-10-05
+
+- Change stdout for `--reformat/check` options to only print new html when using stdin as the input
+
+## [0.5.2] - 2021-10-05
+
+- Split `alt` requirement from H006 to H013
+- Added optional custom rules file
+- Added `golang` as profile option
+- Fixed formatting of ignored blocks containing inline comments
+- Added default text to `--indent` and `-e` options
+- Update url rules to accept #
+- Fixed file encoding on Windows OS
+- Fix single line template tag regex
+- Fix `blank_line_after_tag` for tags with leading space
+
+## [0.5.1] - 2021-10-04
+
+- Added rule H019
+- Fixed bugs in DJ018 and H012
+
+## [0.5.0] - 2021-10-04
+
+- Fixed several regex matching bugs in linter rules
+- Stopped linter from returning errors in ignored blocks
+- Added option to ignore code block from linter/formatter with `{% djlint:off %}...{% djlint:on %}` tags
+
+## [0.4.9] - 2021-10-01
+
+- Fixed bug [#35](https://github.com/djlint/djLint/issues/35)
+
+## [0.4.8] - 2021-10-01
+
+- Fixed bug [#34](https://github.com/djlint/djLint/issues/34)
+
+## [0.4.7] - 2021-09-30
+
+- Moved `source` tag to single line tags
+
+## [0.4.6] - 2021-09-30
+
+- Fixed bug [#31](https://github.com/djlint/djLint/issues/31)
+
+## [0.4.5] - 2021-09-30
+
+- Added best practices to docs
+- Add `--profile` option to set default linter/formatter rules
+- Added linter rules for jinja url patterns
+
+## [0.4.4] - 2021-09-28
+
+- Change indent config from string to int. `--indent 3`
+
+## [0.4.3] - 2021-09-28
+
+- Added cli option for indent spacing. `--indent=" "`
+
+## [0.4.2] - 2021-09-23
+
+- Added support for additional whitespace after tags with `blank_line_after_tag` option
+
+## [0.4.1] - 2021-09-22
+
+- Added support for processing several files or folders at once
+
+## [0.4.0] - 2021-09-21
+
+- Fixed formatting of django `{# ... #}` tags
+- Added indent support for figcaption, details and summary tags
+- Added support for overriding or extending the list of excluded paths in `pyproject.toml`
+
+## [0.3.9] - 2021-09-20
+
+- Updated attribute handling
+
+## [0.3.8] - 2021-09-16
+
+- Added support for stdin
+
+## [0.3.7] - 2021-09-16
+
+- Fixed formatting on `small`, `dt`, and `dd` tags
+
+## [0.3.6] - 2021-09-08
+
+- Added formatter support for Nunjucks `{%-` opening blocks
+
+## [0.3.5] - 2021-09-08
+
+- Added support for more Django blocks
+- Added support for custom blocks
+- Added support for config in `pyproject.toml`
+
+## [0.3.4] - 2021-09-01
+
+- Fixed Nunjucks spaceless tag `-%}` format
+
+## [0.3.3] - 2021-08-31
+
+- Allowed short `div` tags to be single line
+
+## [0.3.2] - 2021-08-30
+
+- Fixed Django comment formatting
+- Ignored textarea from formatting
+
+## [0.3.1] - 2021-08-30
+
+- Updated attribute formatting regex
+- Updated lint rule W010
+
+## [0.3.0] - 2021-08-30
+
+- Changed exit code to 1 if there were any formatting changes
+- Added support for Jinja `asset` tags
+
+## [0.2.9] - 2021-08-19
+
+- Updated W018 regex
+- Removed duplicate lint messages
+- Updated E001 for Handlebars
+
+## [0.2.8] - 2021-08-19
+
+- Fixed progress bar error for old Click version
+
+Releases from 0.0.5 (2021-07-12) to 0.2.7 were published without release notes.

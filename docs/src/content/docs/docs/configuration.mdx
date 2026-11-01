@@ -1,0 +1,37 @@
+---
+title: "Configuration"
+description: "djLint configuration for HTML Template Linting and Formatting. Take advantage of the many formatter options."
+sidebar:
+  label: "Configuration"
+---
+
+import ConfigOptions from "../../../components/ConfigOptions.astro";
+
+Configuration is done either through your project's `pyproject.toml` file, a `djlint.toml` or `.djlint.toml` file, or a `.djlintrc` file. Command line args will always override any settings in configuration files. Local project settings override a global configuration file given with `--configuration`, unless `--prefer-configuration` is set.
+
+The format for `pyproject.toml` is `toml`.
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+The format for `djlint.toml` and `.djlint.toml` is `toml`.
+
+```toml
+<config options>
+```
+
+The format for `.djlintrc` is `json`.
+
+```json
+{ "option": "value" }
+```
+
+## Options
+
+<ConfigOptions
+  label="Filter Options"
+  placeholder="type to filter options..."
+  empty="Nothing found. Try another search."
+/>
