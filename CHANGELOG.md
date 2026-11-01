@@ -4,6 +4,25 @@
 
 ## [Unreleased]
 
+## [1.49.0] - 2026-11-01
+
+### Features
+
+- `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/language-server/).
+- `djlint.api.is_excluded()` tells whether the configuration leaves out a file.
+
+### Bug fixes
+
+- With `--stdin-filename`, djLint now reads stdin even if the configuration has `files`. It worked on those files instead, so an editor formatting a template rewrote them and left the template as it was.
+- `--stdin-filename` now honors `exclude`, `extend-exclude` and `--use-gitignore`: such text comes back unchanged, with no findings, as an excluded file is left out. They had no effect on stdin.
+
+## [1.48.1] - 2026-10-31
+
+### Performance
+
+- A long run of `$` no longer makes reading a page's tags quadratic: linting a line of two hundred thousand of them before a tag went from 2.2 seconds to 0.15. Formatting such a line is still slow, for other reasons.
+- A tag's quoted attribute values are jumped over instead of read one character at a time. That makes reading tags about a tenth faster on its own, but a whole format or lint run takes about as long as before.
+
 ## [1.48.0] - 2026-10-31
 
 ### Feature

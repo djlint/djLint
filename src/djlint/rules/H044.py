@@ -17,13 +17,13 @@ from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from typing import Any
+    from typing import Any, Final
 
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config
     from djlint.types import LintError
 
-_CELL_TAGS = frozenset(("th", "td"))
+_CELL_TAGS: Final = frozenset(("th", "td"))
 
 
 def _odd_cells(html: str) -> Iterator[TagToken]:

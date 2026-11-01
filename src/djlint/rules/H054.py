@@ -48,12 +48,12 @@ _INERT: Final = frozenset(("template",))
 
 _AFTER_EVERY_SPAN: Final = float("inf")
 
-_HREF_PATTERN = compile_pattern(r"(?<![-.:\w])href(?![-.:\w])", re.I)
-_TYPE_PATTERN = compile_pattern(r"(?<![-.:\w])type(?![-.:\w])", re.I)
-_TEMPLATE_PATTERN = compile_pattern(r"{[{%#]")
+_HREF_PATTERN: Final = compile_pattern(r"(?<![-.:\w])href(?![-.:\w])", re.I)
+_TYPE_PATTERN: Final = compile_pattern(r"(?<![-.:\w])type(?![-.:\w])", re.I)
+_TEMPLATE_PATTERN: Final = compile_pattern(r"{[{%#]")
 # A second opener before the close means the first one never closed, as
 # the tokenizer reads it, so a run of unclosed tags is read once.
-_TEMPLATE_OR_QUOTE_PATTERN = compile_pattern(
+_TEMPLATE_OR_QUOTE_PATTERN: Final = compile_pattern(
     r"""
       {\#(?:(?!\#}|{\#).)*\#}
     | {%(?:(?!%}|{%).)*%}
@@ -64,8 +64,10 @@ _TEMPLATE_OR_QUOTE_PATTERN = compile_pattern(
 )
 # djLint's shared skip reads "{% comment %}" but not the "{%- comment -%}"
 # a liquid theme is written in, so the rule finds those bodies itself.
-_COMMENT_OPENING_PATTERN = compile_pattern(r"{%[-+]?[ \t]*comment\b", re.I)
-_COMMENT_CLOSING_PATTERN = compile_pattern(
+_COMMENT_OPENING_PATTERN: Final = compile_pattern(
+    r"{%[-+]?[ \t]*comment\b", re.I
+)
+_COMMENT_CLOSING_PATTERN: Final = compile_pattern(
     r"{%[-+]?[ \t]*endcomment[ \t]*[-+]?%}", re.I
 )
 

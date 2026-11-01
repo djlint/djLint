@@ -87,7 +87,15 @@ repos:
 
 您可以使用 `files` 或 `exclude` 参数将每个 hook 限制在其自身的目录范围内，从而允许您在同一个代码仓库中支持多种模板语言。
 
-## SublimeText 代码检查
+## Sublime Text
+
+以下选项按从好到差的顺序排列。
+
+### LSP（推荐）
+
+[LSP](https://packagecontrol.io/packages/LSP) 包运行[语言服务器](/zh/docs/language-server/#sublime-text)，可在输入时显示检查结果并进行格式化。
+
+### SublimeLinter
 
 djLint 也可用作 SublimeText 的代码检查插件。你可以通过 [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) 安装。
 
@@ -105,19 +113,39 @@ djLint 也可用作 SublimeText 的代码检查插件。你可以通过 [package
 
 ## neovim
 
-djLint 可以在 neovim 中检查或格式化代码。
+djLint 可以在 neovim 中用作代码检查和格式化工具。以下选项按从好到差的顺序排列。
 
-使用 `none-ls` 插件。
+### 内置 LSP 客户端（推荐）
+
+Neovim 0.11 或更高版本无需插件即可直接使用 djLint 的[语言服务器](/zh/docs/language-server/)。这样可以在输入时看到带下划线范围的检查结果，并通过 `vim.lsp.buf.format()` 进行格式化：
+
+```lua
+vim.lsp.config("djlint", {
+  cmd = { "djlint", "--lsp" },
+  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
+})
+vim.lsp.enable("djlint")
+```
+
+设置请参阅[语言服务器](/zh/docs/language-server/#设置)。下面的插件则是把 djLint 作为命令运行。
+
+### conform.nvim 和 nvim-lint
+
+[conform.nvim](https://github.com/stevearc/conform.nvim) 负责格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 负责检查，它们都把 djLint 作为命令运行。检查结果没有下划线范围，并且只有在你让 nvim-lint 检查时才会出现。
+
+```lua
+require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
+require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+```
+
+### none-ls
 
 - [GitHub 仓库](https://github.com/nvimtools/none-ls.nvim)
 - [代码检查](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [代码格式化](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
 
-使用 `coc.nvim`。
-
-- [npm package](https://www.npmjs.com/package/coc-htmldjango)
-
-使用 `efm-langserver`。
+### efm-langserver
 
 - [GitHub 仓库](https://github.com/mattn/efm-langserver)
 
@@ -153,6 +181,32 @@ require("lspconfig").efm.setup({
     },
 })
 ```
+
+### coc.nvim
+
+- [npm package](https://www.npmjs.com/package/coc-htmldjango)
+
+## Zed
+
+安装 [djLint 扩展](https://github.com/djlint/zed-djlint)，它会运行[语言服务器](/zh/docs/language-server/)。
+
+## Helix
+
+Helix 可以通过 `languages.toml` 运行[语言服务器](/zh/docs/language-server/)：
+
+```toml
+[language-server.djlint]
+command = "djlint"
+args = ["--lsp"]
+
+[[language]]
+name = "html"
+language-servers = ["djlint", "vscode-html-language-server"]
+```
+
+## JetBrains IDE 和 Emacs
+
+它们同样通过[语言服务器](/zh/docs/language-server/)工作。请参阅如何设置 [JetBrains IDE](/zh/docs/language-server/#jetbrains-ide) 和 [Emacs](/zh/docs/language-server/#emacs)。
 
 ## MegaLinter
 

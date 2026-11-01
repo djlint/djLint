@@ -44,6 +44,10 @@ Avec `python_rules=False`, les règles personnalisées avec un `python_module` n
 
 Les colonnes comptent des caractères, pas des octets ni des unités UTF-16.
 
+## is_excluded
+
+`is_excluded(config, path)` indique si `exclude`, `extend_exclude` ou le gitignore excluent un fichier, comme la ligne de commande. `format_text` et `lint_text` ne le vérifient pas eux-mêmes.
+
 ## Modules de règles
 
 Le `python_module` d'une règle personnalisée est importé une fois par processus, depuis la racine du projet de la configuration. Un programme qui reste lancé et travaille sur plusieurs projets doit retirer de `sys.modules` tout ce qui a été importé du projet, ainsi que la racine du projet, qui reste à la fin de `sys.path`, pour lire celui d'un autre projet.

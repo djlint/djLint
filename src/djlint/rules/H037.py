@@ -23,15 +23,15 @@ from djlint.helpers import (
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError
 
 
-_NAME_CHAR = r"[-.:\w]"
-_TEMPLATE_TAG = r"{{.*?}}|{%.*?%}|{#.*?#}|\${[^{}]*}"
-_EVENT_PATTERN = compile_pattern(
+_NAME_CHAR: Final = r"[-.:\w]"
+_TEMPLATE_TAG: Final = r"{{.*?}}|{%.*?%}|{#.*?#}|\${[^{}]*}"
+_EVENT_PATTERN: Final = compile_pattern(
     rf""""(?:[^"{{$]++|{_TEMPLATE_TAG}|[^"])*+"|"""
     rf"""'(?:[^'{{$]++|{_TEMPLATE_TAG}|[^'])*+'|"""
     rf"""=\s*(?:[^\s"'=<>`{{$]++|(?!{_TEMPLATE_TAG})[{{$])++|"""
@@ -40,8 +40,10 @@ _EVENT_PATTERN = compile_pattern(
     r"(?=\s*=\s*[^\s=<>`]|[\s/>]|$)",
     re.I | re.S,
 )
-_NAME_CHAR_PATTERN = compile_pattern(_NAME_CHAR)
-_HANDLEBARS_OR_GOLANG_COMMENT_PATTERN = compile_pattern(r"\{\{-?\s*(?:!|/\*)")
+_NAME_CHAR_PATTERN: Final = compile_pattern(_NAME_CHAR)
+_HANDLEBARS_OR_GOLANG_COMMENT_PATTERN: Final = compile_pattern(
+    r"\{\{-?\s*(?:!|/\*)"
+)
 
 
 def _exclusive(

@@ -26,17 +26,17 @@ from djlint.helpers import (
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
     from djlint.types import LintError
 
-_ROLE_PATTERN = compile_pattern(r"(?<![-.:\w])role\s*=", re.I)
+_ROLE_PATTERN: Final = compile_pattern(r"(?<![-.:\w])role\s*=", re.I)
 # The attribute is read from the tag's own attributes. A quoted value and
 # a template tag are each stepped over whole, so `role=` written inside
 # another attribute's value is left alone, while one written inside an
 # `{% if %}` is still read.
-_ROLE_ATTRIBUTE_PATTERN = compile_pattern(
+_ROLE_ATTRIBUTE_PATTERN: Final = compile_pattern(
     r"(?:\"[^\"]*\"|'[^']*'"
     r"|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+"
     r"|{%(?:[^%{]|{(?!%)|%(?!}))*%}"
@@ -46,7 +46,7 @@ _ROLE_ATTRIBUTE_PATTERN = compile_pattern(
     r"(?<![-.:\w])(role)\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|([^\s\"'>]+))",
     re.I | re.S,
 )
-_TEMPLATE_PATTERN = compile_pattern(r"{[{%#]")
+_TEMPLATE_PATTERN: Final = compile_pattern(r"{[{%#]")
 
 
 def run(

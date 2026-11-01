@@ -137,6 +137,17 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     return wrapper
 
 
+def _run_language_server(
+    _ctx: click.Context,
+    _param: click.Parameter,
+    value: bool,  # noqa: FBT001
+) -> None:
+    if value:
+        from djlint.server import serve  # noqa: PLC0415
+
+        serve()
+
+
 @click.command(
     "main",
     context_settings={"help_option_names": ["-h", "--help"]},
@@ -156,6 +167,14 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     metavar="SRC ...",
 )
 @click.version_option(package_name="djlint")
+@click.option(
+    "--lsp",
+    is_flag=True,
+    is_eager=True,
+    expose_value=False,
+    callback=_run_language_server,
+    help="Run as a language server over stdio, for editors.",
+)
 @click.option(
     "-e",
     "--extension",
@@ -532,7 +551,12 @@ def main(
     _use_utf8(sys.stderr)
 
     from djlint.settings import Config  # noqa: PLC0415
-    from djlint.src import get_src, has_pragma, print_no_files_to_check  # noqa: PLC0415
+    from djlint.src import (  # noqa: PLC0415
+        get_src,
+        has_pragma,
+        is_excluded,
+        print_no_files_to_check,
+    )
 
     if os.getenv("NO_COLOR") is not None:
         click.get_current_context().color = False
@@ -602,11 +626,15 @@ def main(
         stdin="-" in src,
     )
 
-    if "-" in src and not config.files:
+    if "-" in src and (not config.files or stdin_filename is not None):
         stdin_text = _read_stdin_as_utf8_keeping_line_endings()
 
-        if config.require_pragma and not has_pragma(
-            config, stdin_text.split("\n", 1)[0]
+        if (
+            stdin_filename is not None
+            and is_excluded(config, Path(stdin_filename))
+        ) or (
+            config.require_pragma
+            and not has_pragma(config, stdin_text.split("\n", 1)[0])
         ):
             _echo_unchanged_stdin(config, stdin_text)
             return

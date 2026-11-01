@@ -1,0 +1,58 @@
+name: 🚂 Feature Request
+description: "Do you have an idea for a new feature or improvement?"
+title: "[FEATURE] "
+labels: [":steam_locomotive: enhancement"]
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: >-
+            I searched the [existing
+            issues](https://github.com/djlint/djLint/issues?q=is%3Aissue)
+            and found nothing about this.
+          required: true
+        - label: "I read the [docs](https://djlint.com/docs/getting-started/)."
+          required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Formatter
+        - Linter (new or changed rule)
+        - Template language support
+        - Command line
+        - Configuration
+        - Python API
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: "What are you trying to do, and what gets in the way?"
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: >-
+        What should change? Be specific about the behavior you expect.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: >-
+        A template before and after, or the configuration you have in mind.
+      render: html
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Workarounds or other tools you considered.

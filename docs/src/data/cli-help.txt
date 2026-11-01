@@ -4,6 +4,8 @@ Usage: djlint [OPTIONS] SRC ...
 
 Options:
   --version                       Show the version and exit.
+  --lsp                           Run as a language server over stdio, for
+                                  editors.
   -e, --extension TEXT            File extension to check [default: html]
   -i, --ignore TEXT               Codes to ignore. ex: "H014,H017"
   --reformat                      Reformat the file(s).

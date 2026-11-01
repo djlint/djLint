@@ -17,7 +17,7 @@ from __future__ import annotations
 import sys
 from bisect import bisect_left
 from itertools import chain
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import regex as re
 
@@ -70,6 +70,7 @@ _BREAK_PATTERN: Final = compile_pattern(_BREAK, re.I)
 _MARK_PATTERN: Final = compile_pattern(r"[\"'>]")
 
 
+@final
 class _Break(NamedTuple):
     """One use of a break, spanning what is reported with it."""
 
@@ -81,6 +82,7 @@ class _Break(NamedTuple):
         return self.start, self.end
 
 
+@final
 class _TagEnds(NamedTuple):
     """Where a tag running into each quote or bracket of the document ends."""
 

@@ -44,6 +44,10 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 列按字符计数，而不是按字节或 UTF-16 代码单元计数。
 
+## is_excluded
+
+`is_excluded(config, path)` 判断 `exclude`、`extend_exclude` 或 gitignore 是否排除了某个文件，与命令行一致。`format_text` 和 `lint_text` 本身不做此检查。
+
 ## 规则模块
 
 自定义规则的 `python_module` 在每个进程中只导入一次，从配置所属的项目根目录导入。长期运行并处理多个项目的程序，需要从 `sys.modules` 中移除所有从项目导入的内容，并移除保留在 `sys.path` 末尾的项目根目录，才能读取另一个项目的模块。

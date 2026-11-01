@@ -1,0 +1,132 @@
+name: 🦠 Formatter Bug Report
+description: djlint --reformat produced wrong or unstable output.
+title: "[BUG] [Formatter] "
+labels: [":microbe: bug", ":sponge: formatter"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        You can check a template in the [online
+        playground](https://djlint.com/demo/) first. Using the VS Code
+        extension? If `djlint` on the command line behaves correctly, report
+        it in the [extension's
+        tracker](https://github.com/djlint/djlint-vscode/issues/new/choose).
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: >-
+            I searched the [existing
+            issues](https://github.com/djlint/djLint/issues?q=is%3Aissue)
+            and found nothing about this.
+          required: true
+        - label: >-
+            I can reproduce this on the [latest
+            release](https://pypi.org/project/djlint/) of djLint.
+          required: true
+        - label: "I read the [docs](https://djlint.com/docs/getting-started/)."
+          required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue
+      description: A clear and concise description of what is wrong.
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Template language
+      options:
+        - Django
+        - Jinja
+        - Twig
+        - Nunjucks
+        - Handlebars
+        - Mustache
+        - Liquid
+        - Go templates
+        - Angular
+        - Tera
+        - Askama
+        - Plain HTML
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: The exact command, with its options.
+      placeholder: "djlint templates/ --reformat --profile=django"
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Template before formatting
+      description: The smallest template that shows the problem.
+      render: html
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Output of djLint
+      render: html
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected output
+      render: html
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: >-
+        Your `djlint.toml`, `.djlintrc` or `[tool.djlint]` section of
+        `pyproject.toml`.
+      render: text
+  - type: dropdown
+    id: runner
+    attributes:
+      label: "How do you run djLint?"
+      options:
+        - Command line
+        - pre-commit
+        - Python API
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: djLint version
+      description: "`djlint --version`"
+    validations:
+      required: true
+  - type: input
+    id: python_version
+    attributes:
+      label: Python version
+      description: "`python --version`"
+      placeholder: 3.14.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
