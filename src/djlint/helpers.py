@@ -65,9 +65,20 @@ def compile_pattern(pattern: str, flags: int = 0, /) -> re.Pattern[str]:
     return re.compile(pattern, flags)
 
 
+@lru_cache(maxsize=256)
+def compile_rule_pattern(pattern: str, flags: int, /) -> re.Pattern[str]:
+    """Compile a pattern of a linter rule once per process.
+
+    Every Config compiles the rules again, and the language server builds
+    one on every change. Their own cache keeps them out of regex's, where
+    the patterns assembled per document would push them out.
+    """
+    return compile_pattern(pattern, flags)
+
+
 _SPAN_CACHE_SIZE: Final = 1
 _AFTER_EVERY_SPAN: Final = float("inf")
-_LINE_CACHE_SIZE: Final = 256
+_LINE_CACHE_SIZE: Final = 2048
 
 YAML_FRONT_MATTER: Final = r"""
     # front matter opens the file and holds the site generator's own data,
@@ -105,8 +116,23 @@ def _inside_non_overlapping_span(
     return span_start <= match_start and match_end <= span_end
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def ignored_block_opening_start(config: Config, item: str) -> int:
+    """Where the line opens an ignored block it does not close, or -1."""
+    return _ignored_block_opening_start(
+        item,
+        config.ignored_block_opening_pattern,
+        config.ignored_blocks_inline_pattern,
+    )
+
+
+# The line caches are keyed on the patterns rather than on the Config: those
+# are the same objects for every Config, so the next one, which the language
+# server builds on every change, finds the lines of the last, and an old
+# Config isn't held alive by them.
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
+def _ignored_block_opening_start(
+    item: str, opening: re.Pattern[str], inline_blocks: re.Pattern[str], /
+) -> int:
     """Where the line opens an ignored block it does not close, or -1.
 
     An opening that is not part of a block closed on this line leaves a
@@ -123,11 +149,10 @@ def ignored_block_opening_start(config: Config, item: str) -> int:
         return -1
 
     inline = None
-    for match in config.ignored_block_opening_pattern.finditer(item):
+    for match in opening.finditer(item):
         if inline is None:
             inline = tuple(
-                block.span()
-                for block in config.ignored_blocks_inline_pattern.finditer(item)
+                block.span() for block in inline_blocks.finditer(item)
             )
         if not _inside_non_overlapping_span(
             inline, match.end() - 1, match.end()
@@ -150,6 +175,7 @@ def _past_inline_blocks(item: str, inline_blocks: re.Pattern[str], /) -> str:
     return item[last_inline.end() :] if last_inline else item
 
 
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def _marker_past_inline_blocks(
     item: str, inline_blocks: re.Pattern[str], marker: re.Pattern[str], /
 ) -> bool:
@@ -157,7 +183,6 @@ def _marker_past_inline_blocks(
     return bool(marker.search(_past_inline_blocks(item, inline_blocks)))
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_raw_text_block_opening(config: Config, item: str) -> bool:
     """Whether the line opens a raw text element it does not close."""
     return _marker_past_inline_blocks(
@@ -174,7 +199,9 @@ def inside_protected_trans_block(
 
     True means the match sits inside a non trimmed trans block, which is
     not indentable. False means it is indentable: either inside a trimmed
-    trans block, or nowhere near one.
+    trans block, or nowhere near one. Only the html up to the end of the
+    match is read, and it is cut only for a match that closes a block: doing
+    it for every line of a document grows with its square.
     """
     close_block = config.ignored_trans_blocks_closing_pattern.search(
         match.group()
@@ -182,6 +209,8 @@ def inside_protected_trans_block(
 
     if not close_block:
         return False
+
+    html = html[: match.end()]
 
     non_trimmed = _last_item(config.ignored_trans_blocks_pattern.finditer(html))
     trimmed = _last_item(config.trans_trimmed_blocks_pattern.finditer(html))
@@ -201,8 +230,24 @@ def inside_protected_trans_block(
     return False
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_ignored_block_closing(config: Config, item: str) -> bool:
+    """Whether the line closes an ignored block opened on an earlier one."""
+    return _is_ignored_block_closing(
+        item,
+        config.ignored_inline_blocks_ix_pattern,
+        config.ignored_block_closing_anywhere_pattern,
+        config.ignored_block_closing_at_start_pattern,
+    )
+
+
+@lru_cache(maxsize=_LINE_CACHE_SIZE)
+def _is_ignored_block_closing(
+    item: str,
+    inline_blocks: re.Pattern[str],
+    anywhere: re.Pattern[str],
+    at_start: re.Pattern[str],
+    /,
+) -> bool:
     """Whether the line closes an ignored block opened on an earlier one.
 
     The markers that only reach a match from where the rest of the line
@@ -211,15 +256,12 @@ def is_ignored_block_closing(config: Config, item: str) -> bool:
     them needs a `-->` or a `#}`, which is far cheaper to rule out than to
     match.
     """
-    rest = _past_inline_blocks(item, config.ignored_inline_blocks_ix_pattern)
-    if config.ignored_block_closing_anywhere_pattern.search(rest):
+    rest = _past_inline_blocks(item, inline_blocks)
+    if anywhere.search(rest):
         return True
-    return ("-->" in rest or "#}" in rest) and bool(
-        config.ignored_block_closing_at_start_pattern.match(rest)
-    )
+    return ("-->" in rest or "#}" in rest) and bool(at_start.match(rest))
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_raw_text_block_closing(config: Config, item: str) -> bool:
     """Whether the line closes a raw text element opened on an earlier one."""
     return _marker_past_inline_blocks(
@@ -227,7 +269,6 @@ def is_raw_text_block_closing(config: Config, item: str) -> bool:
     )
 
 
-@lru_cache(maxsize=_LINE_CACHE_SIZE)
 def is_safe_closing_tag(config: Config, item: str) -> bool:
     """Whether the line closes an ignored block and can still be indented."""
     return _marker_past_inline_blocks(
@@ -464,7 +505,6 @@ def inside_ignored_linter_block(
     )
 
 
-@lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _inside_ignored_block(
     html: str,
     /,
@@ -480,18 +520,47 @@ def _inside_ignored_block(
     )
 
 
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
+def _ignored_block_reach(
+    html: str,
+    /,
+    *,
+    ignored_blocks: re.Pattern[str],
+    ignored_inline_blocks: re.Pattern[str],
+) -> tuple[tuple[int, ...], tuple[int, ...]]:
+    """Where the ignored blocks start, and how far those up to each reach.
+
+    Blocks can nest and overlap, so a span lies inside one when a block
+    starting at or before it reaches past its end, which a bisection finds
+    instead of a look at every block, once for each tag of the document.
+    """
+    starts: list[int] = []
+    reach: list[int] = []
+    furthest = -1
+    for start, end in sorted(
+        _inside_ignored_block(
+            html,
+            ignored_blocks=ignored_blocks,
+            ignored_inline_blocks=ignored_inline_blocks,
+        )
+    ):
+        furthest = max(furthest, end)
+        starts.append(start)
+        reach.append(furthest)
+    return tuple(starts), tuple(reach)
+
+
 def inside_ignored_block_span(
     config: Config, html: str, start: int, end: int
 ) -> bool:
     """Whether a span of the html lies inside an ignored block."""
-    for ignored_match_start, ignored_match_end in _inside_ignored_block(
+    starts, reach = _ignored_block_reach(
         html,
         ignored_blocks=config.ignored_blocks_pattern,
         ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
-    ):
-        if ignored_match_start <= start and end <= ignored_match_end:
-            return True
-    return False
+    )
+    index = bisect_right(starts, start)
+    return index > 0 and reach[index - 1] >= end
 
 
 def breaks_an_ignored_block(config: Config, html: str, position: int) -> bool:
@@ -501,14 +570,13 @@ def breaks_an_ignored_block(config: Config, html: str, position: int) -> bool:
     outside edge of a block is allowed: the closing tag of a `<script>` is
     part of the element, but the position after it is not.
     """
-    return any(
-        ignored_start < position < ignored_end
-        for ignored_start, ignored_end in _inside_ignored_block(
-            html,
-            ignored_blocks=config.ignored_blocks_pattern,
-            ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
-        )
+    starts, reach = _ignored_block_reach(
+        html,
+        ignored_blocks=config.ignored_blocks_pattern,
+        ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
     )
+    index = bisect_left(starts, position)
+    return index > 0 and reach[index - 1] > position
 
 
 def inside_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
@@ -547,14 +615,13 @@ def child_of_unformatted_block(
 def child_of_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
-    for ignored_match_start, ignored_match_end in _inside_ignored_block(
+    starts, reach = _ignored_block_reach(
         html,
         ignored_blocks=config.ignored_blocks_pattern,
         ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
-    ):
-        if ignored_match_start < match_start and match_end <= ignored_match_end:
-            return True
-    return False
+    )
+    index = bisect_left(starts, match_start)
+    return index > 0 and reach[index - 1] >= match_end
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)

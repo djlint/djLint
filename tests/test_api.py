@@ -270,3 +270,21 @@ def test_a_made_up_position_names_the_rule(
     config = load_config(_project(tmp_path, line), profile="django")
     with pytest.raises(AssertionError, match="T9001"):
         lint_text(config, "<div>text</div>")
+
+
+def test_custom_rules_load_with_a_tab_in_a_block_scalar(tmp_path: Path) -> None:
+    """libyaml refuses such a file, which the Python loader reads."""
+    (tmp_path / "djlint.toml").write_text("", encoding="utf-8")
+    (tmp_path / ".djlint_rules.yaml").write_text(
+        "- rule:\n"
+        "    name: X901\n"
+        "    message: Tab first\n"
+        "    flags: re.X\n"
+        "    patterns:\n"
+        "      - |\n"
+        "        \t<foo\\s+bar\n",
+        encoding="utf-8",
+    )
+    config = load_config(tmp_path)
+
+    assert [x.code for x in lint_text(config, "<foo  bar>")] == ["H025", "X901"]
