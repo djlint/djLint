@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.api import Finding, format_text, lint_text, load_config
+from djlint.api import Finding, format_text, is_excluded, lint_text, load_config
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -47,6 +47,15 @@ def _project(tmp_path: Path, line: object = "1:1") -> Path:
 def _forget_rule_module(monkeypatch: pytest.MonkeyPatch) -> None:
     sys.modules.pop("project_rule", None)
     monkeypatch.setattr(sys, "path", list(sys.path))
+
+
+def test_is_excluded(tmp_path: Path) -> None:
+    (tmp_path / ".djlintrc").write_text(
+        '{"exclude": "vendor"}', encoding="utf-8"
+    )
+    config = load_config(tmp_path)
+    assert is_excluded(config, tmp_path / "vendor" / "a.html")
+    assert not is_excluded(config, tmp_path / "templates" / "a.html")
 
 
 def test_format_text_reads_the_configuration_of_the_folder(

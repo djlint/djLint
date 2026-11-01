@@ -183,6 +183,49 @@ def test_stdin_filename_option(runner: CliRunner) -> None:
     assert "Linted 1 file" in result.output
 
 
+def test_stdin_filename_excluded(
+    runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / ".djlintrc").write_text(
+        '{"exclude": "vendor"}', encoding="utf-8"
+    )
+    monkeypatch.chdir(tmp_path)
+    text = "<div><p>x</p></div>"
+    args = ("-", "--stdin-filename", "vendor/a.html")
+    linted = runner.invoke(djlint, args, input='<img src="x">')
+    assert linted.exit_code == 0
+    assert "H013" not in linted.output
+    formatted = runner.invoke(djlint, (*args, "--reformat"), input=text)
+    assert formatted.exit_code == 0
+    assert formatted.stdout == text
+
+
+def test_stdin_filename_gitignored(
+    runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / ".git").mkdir()
+    (tmp_path / ".gitignore").write_text("generated/\n", encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    args = ("-", "--use-gitignore", "--stdin-filename", "generated/a.html")
+    result = runner.invoke(djlint, args, input='<img src="x">')
+    assert "H013" not in result.output
+
+
+def test_stdin_filename_not_excluded(
+    runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / ".djlintrc").write_text(
+        '{"exclude": "vendor"}', encoding="utf-8"
+    )
+    monkeypatch.chdir(tmp_path)
+    result = runner.invoke(
+        djlint,
+        ("-", "--stdin-filename", "templates/a.html"),
+        input='<img src="x">',
+    )
+    assert "H013" in result.output
+
+
 def test_stdin_reformat_without_temp_file(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch
 ) -> None:

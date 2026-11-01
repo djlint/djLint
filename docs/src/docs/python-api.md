@@ -50,6 +50,10 @@ With `python_rules=False`, custom rules with a `python_module` aren't loaded, wh
 
 Columns count characters, not bytes or UTF-16 code units.
 
+## is_excluded
+
+`is_excluded(config, path)` tells whether `exclude`, `extend_exclude` or the gitignore leave out a file, as the command line does. `format_text` and `lint_text` don't check this themselves.
+
 ## Rule modules
 
 A custom rule's `python_module` is imported once per process, from the project root of the configuration. A program that stays running and works with several projects has to remove everything imported from the project from `sys.modules`, and the project root, which stays at the end of `sys.path`, to read another project's.

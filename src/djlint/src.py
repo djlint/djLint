@@ -73,6 +73,14 @@ def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
     return False
 
 
+def is_excluded(config: Config, filepath: Path) -> bool:
+    """Check whether the configuration leaves a file out, by its path alone."""
+    resolved = filepath.resolve()
+    return _exclude_match(config, resolved, config.project_root) or (
+        config.use_gitignore and _gitignore_match(config, resolved)
+    )
+
+
 def _included(config: Config, filepath: Path) -> bool:
     """Check a file against the filters that need it to exist on disk."""
     return _has_required_pragma(config, filepath) and (

@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Features
+
+- `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/language-server/).
+- `djlint.api.is_excluded()` tells whether the configuration leaves out a file.
+
+### Bug fixes
+
+- With `--stdin-filename`, djLint now reads stdin even if the configuration has `files`. It worked on those files instead, so an editor formatting a template rewrote them and left the template as it was.
+- `--stdin-filename` now honors `exclude`, `extend-exclude` and `--use-gitignore`: such text comes back unchanged, with no findings, as an excluded file is left out. They had no effect on stdin.
+
 ## [1.48.1] - 2026-10-31
 
 ### Performance

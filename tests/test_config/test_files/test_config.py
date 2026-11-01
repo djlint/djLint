@@ -32,6 +32,23 @@ def test_check_custom_file_src(runner: CliRunner, config_path: str) -> None:
     assert """Checking 2/2 files""" in result.output
 
 
+def test_stdin_filename_wins_over_files(runner: CliRunner) -> None:
+    result = runner.invoke(
+        djlint,
+        (
+            "-",
+            "--check",
+            "--stdin-filename",
+            "editor.html",
+            "--configuration",
+            "tests/test_config/test_files/.djlintrc_global",
+        ),
+        input="<div><p>editor</p></div>",
+    )
+    assert "Checking 2/2 files" not in result.output
+    assert "editor" in result.output
+
+
 def test_check_custom_file_src_quiet(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint,

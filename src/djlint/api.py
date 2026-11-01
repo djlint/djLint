@@ -14,7 +14,7 @@ from djlint.lint import linter
 from djlint.output import finding_end, finding_position
 from djlint.reformat import formatter
 from djlint.settings import Config
-from djlint.src import has_pragma
+from djlint.src import has_pragma, is_excluded as _is_excluded
 
 if sys.version_info >= (3, 13):
     from typing import NamedTuple
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     import os
     from typing import Any
 
-__all__ = ("Finding", "format_text", "lint_text", "load_config")
+__all__ = ("Finding", "format_text", "is_excluded", "lint_text", "load_config")
 
 
 class Finding(NamedTuple):
@@ -60,6 +60,11 @@ def load_config(
     `config.skipped_rules`.
     """
     return Config(str(folder), python_rules=python_rules, **options)
+
+
+def is_excluded(config: Config, path: str | os.PathLike[str]) -> bool:
+    """Tell whether `exclude`, `extend_exclude` or the gitignore leave out a file."""
+    return _is_excluded(config, Path(path))
 
 
 def _is_turned_off(config: Config, text: str) -> bool:
