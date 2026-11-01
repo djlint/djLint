@@ -65,6 +65,17 @@ def compile_pattern(pattern: str, flags: int = 0, /) -> re.Pattern[str]:
     return re.compile(pattern, flags)
 
 
+@lru_cache(maxsize=256)
+def compile_rule_pattern(pattern: str, flags: int, /) -> re.Pattern[str]:
+    """Compile a pattern of a linter rule once per process.
+
+    Every Config compiles the rules again, and the language server builds
+    one on every change. Their own cache keeps them out of regex's, where
+    the patterns assembled per document would push them out.
+    """
+    return compile_pattern(pattern, flags)
+
+
 _SPAN_CACHE_SIZE: Final = 1
 _AFTER_EVERY_SPAN: Final = float("inf")
 _LINE_CACHE_SIZE: Final = 2048

@@ -29,8 +29,9 @@ if TYPE_CHECKING:
 
 _WINDOWS_MAX_PROCESSES: Final = 61
 # A worker process takes about as long to start as formatting and linting
-# this many files, so fewer of them are run in the main process.
-_FILES_PER_WORKER: Final = 25
+# this many bytes of templates, 25 files of the openedx ones, so less work
+# than that is done in the main process.
+_BYTES_PER_WORKER: Final = 64 * 1024
 
 
 _keep_mypyc_wheels_from_crashing = partial
@@ -676,7 +677,12 @@ def main(
 
         files_count = len(file_list)
         max_workers = max(
-            1, min(process_cpu_count() or 1, files_count // _FILES_PER_WORKER)
+            1,
+            min(
+                process_cpu_count() or 1,
+                files_count,
+                sum(map(_file_size, file_list)) // _BYTES_PER_WORKER,
+            ),
         )
 
         file_errors = []
@@ -764,6 +770,13 @@ def _echo_unchanged_stdin(config: Config, stdin_text: str) -> None:
     print_no_files_to_check(excluded=True)
     if config.reformat or config.check:
         echo(stdin_text.encode("utf-8"), nl=False)
+
+
+def _file_size(path: Path) -> int:
+    try:
+        return path.stat().st_size
+    except OSError:
+        return 0
 
 
 def _is_free_threaded_python() -> bool:

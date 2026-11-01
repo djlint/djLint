@@ -26,6 +26,7 @@ from djlint.helpers import (
     RE_FLAGS_IX,
     YAML_FRONT_MATTER,
     compile_pattern,
+    compile_rule_pattern,
     split_option_list,
 )
 from djlint.lint import build_flags
@@ -1642,10 +1643,8 @@ class Config:
             linter_rule = entry["rule"]
             if "patterns" in linter_rule:
                 rule_flags = build_flags(linter_rule.get("flags", "re.S"))
-                # Through regex's cache, which a Config built again, as the
-                # language server does on every change, then finds them in.
                 linter_rule["compiled_patterns"] = tuple(
-                    re.compile(pattern, rule_flags)
+                    compile_rule_pattern(pattern, rule_flags)
                     for pattern in linter_rule["patterns"]
                 )
 
