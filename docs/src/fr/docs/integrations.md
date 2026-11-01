@@ -1,7 +1,7 @@
 ---
 description: Intégrez djLint avec votre éditeur préféré. Formatez automatiquement vos modèles avec Pre-Commit. Lint avec SublimeText.
 title: Intégrations
-keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, intégrations, serveur de langage, lsp, neovim, zed, helix
+keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, intégrations, serveur de langage, lsp, neovim, helix
 ---
 
 # {{ "integrations" | i18n }}
@@ -15,22 +15,6 @@ Quel que soit l'éditeur, installez djLint là où il peut le trouver, idéaleme
 Installez l'[extension djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint), ou [sa version sur Open VSX](https://open-vsx.org/extension/monosans/djlint) pour VSCodium. Elle trouve djLint dans votre environnement, utilise celui qu'elle embarque sinon, et passe par le serveur de langage quand votre djLint le propose.
 
 Son code se trouve sur [GitHub](https://github.com/djlint/djlint-vscode).
-
-## Zed
-
-Installez l'[extension djLint](https://github.com/djlint/djlint-zed), qui lance le [serveur de langage](#serveur-de-langage). Les erreurs s'affichent dans le HTML et dans les langages des extensions de modèles dès l'installation.
-
-Pour formater avec djLint, faites-en le formateur d'un langage :
-
-```json
-{
-  "languages": {
-    "HTML": { "formatter": { "language_server": { "name": "djlint" } } }
-  }
-}
-```
-
-Les [réglages](#reglages) se placent dans `lsp.djlint.settings`.
 
 ## Neovim
 
