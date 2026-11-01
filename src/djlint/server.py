@@ -111,6 +111,13 @@ _RULE_CODE: Final = re.compile(r"[A-Z]\d{3}")
 _CAMEL_HUMP: Final = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 
 
+def _is_id(value: object) -> bool:
+    """Tell an id of a request, which only a number or a string can be."""
+    return isinstance(value, str) or (
+        isinstance(value, int) and not isinstance(value, bool)
+    )
+
+
 def _setting_name(name: str) -> str:
     return _CAMEL_HUMP.sub("_", name).replace("-", "_").lower()
 
@@ -263,6 +270,28 @@ class _Pending:
 class Server:
     """A language server on two binary streams."""
 
+    __slots__ = (
+        "_cancelled",
+        "_capabilities",
+        "_configs",
+        "_documents",
+        "_exit_code",
+        "_folders",
+        "_generation",
+        "_inbox",
+        "_init_settings",
+        "_initialized",
+        "_next_id",
+        "_pending",
+        "_reader",
+        "_reported",
+        "_settings",
+        "_shutting_down",
+        "_stale",
+        "_write_lock",
+        "_writer",
+    )
+
     def __init__(self, reader: BinaryIO, writer: BinaryIO) -> None:
         self._reader = reader
         self._writer = writer
@@ -334,17 +363,26 @@ class Server:
                 })
                 continue
             if not isinstance(message, dict):
-                continue
-            if message.get("method") == "$/cancelRequest":
-                self._cancelled.add((message.get("params") or {}).get("id"))
-            elif "method" not in message and "id" in message:
+                self._log(_LOG_ERROR, "Dropped a message that isn't an object.")
+            elif message.get("method") == "$/cancelRequest":
+                self._take_cancel(message.get("params"))
+            elif "method" not in message:
                 self._take_answer(message)
             else:
                 self._inbox.put(message)
         self._inbox.put(None)
 
+    def _take_cancel(self, params: object) -> None:
+        if isinstance(params, dict):
+            request_id = params.get("id")
+            if _is_id(request_id):
+                self._cancelled.add(request_id)
+
     def _take_answer(self, message: Json) -> None:
-        pending = self._pending.pop(message["id"], None)
+        request_id = message.get("id")
+        if not isinstance(request_id, int):
+            return
+        pending = self._pending.pop(request_id, None)
         if pending is not None:
             pending.result = message.get("result")
             pending.answered.set()
@@ -389,6 +427,12 @@ class Server:
                 self._log(_LOG_ERROR, f"Malformed {method}: {error!r}")
             return
         request_id = message["id"]
+        if not _is_id(request_id):
+            self._write({
+                "id": None,
+                "error": {"code": _INVALID_REQUEST, "message": "Invalid id"},
+            })
+            return
         if request_id in self._cancelled:
             self._cancelled.discard(request_id)
             self._respond_error(
@@ -473,10 +517,14 @@ class Server:
     def _initialize(self, params: Json) -> Json:
         self._capabilities = params.get("capabilities") or {}
         self._init_settings = params.get("initializationOptions") or {}
-        folders = params.get("workspaceFolders") or []
+        folders = params.get("workspaceFolders")
         self._folders = [
             path
-            for path in (_path(folder["uri"]) for folder in folders)
+            for path in (
+                _path(folder.get("uri"))
+                for folder in (folders if isinstance(folders, list) else ())
+                if isinstance(folder, dict)
+            )
             if path is not None
         ]
         if not self._folders and (root := params.get("rootUri")):
@@ -729,8 +777,10 @@ class Server:
         return _edits(document.text, format_text(config, document.text))
 
 
-def _path(uri: str) -> Path | None:
-    """Return the path of a file: URI, and None for any other scheme."""
+def _path(uri: object) -> Path | None:
+    """Return the path of a file: URI, and None for anything else."""
+    if not isinstance(uri, str):
+        return None
     parsed = urlparse(uri)
     if parsed.scheme != "file":
         return None

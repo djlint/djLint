@@ -37,6 +37,8 @@ PULL_CAPABILITIES: dict[str, Any] = {"textDocument": {"diagnostic": {}}}
 class Client:
     """What an editor does, and nothing of the server's code."""
 
+    __slots__ = ("ignored", "messages", "next_id", "process", "settings")
+
     def __init__(self) -> None:
         self.process = subprocess.Popen(
             [sys.executable, "-m", "djlint", "--lsp"],
@@ -584,6 +586,35 @@ def test_lives_through_a_rule_that_fails(
 def test_rejects_a_request_before_initialize(client: Client) -> None:
     response = client.response(client.send("textDocument/formatting", {}))
     assert response["error"]["code"] == -32002
+
+
+@pytest.mark.parametrize("request_id", [None, 1.5, [1], {"a": 1}, True])
+def test_rejects_an_id_that_is_no_id(
+    client: Client, tmp_path: Path, request_id: object
+) -> None:
+    client.start(tmp_path)
+    client.write({"id": request_id, "method": "shutdown"})
+    while (message := client.next_message()).get("id") is not None:
+        pass
+    assert message["error"]["code"] == -32600
+    assert client.stop() == 0
+
+
+@pytest.mark.parametrize("request_id", [None, [1], {"a": 1}])
+def test_passes_over_a_cancel_of_nothing(
+    client: Client, tmp_path: Path, request_id: object
+) -> None:
+    client.start(tmp_path)
+    client.notify("$/cancelRequest", {"id": request_id})
+    assert client.stop() == 0
+
+
+def test_starts_with_folders_that_make_no_sense(client: Client) -> None:
+    client.request(
+        "initialize",
+        {"capabilities": {}, "workspaceFolders": [{"uri": None}, None]},
+    )
+    assert client.stop() == 0
 
 
 def test_rejects_an_unknown_method(client: Client, tmp_path: Path) -> None:
