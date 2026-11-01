@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Performance
+
+- Checking a folder of many files starts its worker processes at once. Each used to wait for the one before to read the configuration: on Windows, with the compiled wheel, the 573 templates of openedx took 6.1 seconds to check, and now take 3.2. A run of fewer than 50 files stays in one process, where starting more cost more than they saved.
+- The language server takes a third of the time or less per run when the editor sends its settings each time, as the VS Code extension does: a configuration built before is built in 8 ms instead of 50, with the rules read by libyaml and their patterns compiled once per process.
+- pathspec is imported only with `--use-gitignore`, for a faster start of every other run.
+- A line of many inline tags before a block tag, which a stray quote such as `"=""` can leave in a template, no longer takes minutes to format: twelve spans before a `<div>` never finished.
+- Formatting no longer slows down with the square of the document's size: finding the ignored block around a tag, and trimming a line's whitespace, copied or read the document again for every tag or line. Sixteen copies of an openedx template, 1.1 MB, format in a third of the time.
+
 ## [1.49.1] - 2026-11-01
 
 ### Bug fixes
