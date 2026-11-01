@@ -280,15 +280,16 @@ def _indent_patterns(config: Config) -> _IndentPatterns:
                         |{config.ignored_inline_blocks}
                     )[ \t]*?
                     (?:
-                    .*? # anything
-                    (?: # followed by another slt
+                    .* # anything, holding any number of tags
+                    (?: # followed by another slt, the last of the line
                         <({slt_html})(?:(?:>|\b[^>]+?>)(?:.*?)(?:</(?:\3)>)|\b(?:[^>"']|"[^"]*"|'[^']*')*?\/>) # <span stuff-or-not>stuff</span> or <img stuff /> >>> match 3
                        |(?:<(?:{always_self_closing_html})\b(?:[^>"']|"[^"]*"|'[^']*')*?/?>) # <img stuff />
                        |(?:{{%[-+]?[ ]*?({slt_template})\b(?:(?!%}}).)*?%}})(?:.*?)(?:{{%[-+]?[ ]*?end(?:\4)\b(?:(?!%}}).)*?%}}) # >>> match 4
                        |{golang_slt}
                        |{config.ignored_inline_blocks}
                     )[ \t]*?
-                    )*? # optional of course
+                    )? # optional of course. Repeated, it would match no more lines,
+                    # but try every way to split one that fails.
                     [^<]*?$ # with no other tags following until end of line
                 """,
         flags=RE_FLAGS_IMX,
