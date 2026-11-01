@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 from djlint.lint import linter
 from djlint.output import finding_end, finding_position
@@ -28,6 +28,7 @@ if TYPE_CHECKING:
 __all__ = ("Finding", "format_text", "is_excluded", "lint_text", "load_config")
 
 
+@final
 class Finding(NamedTuple):
     """Something the linter reports, from `line:column` to `end_line:end_column`.
 

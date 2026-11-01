@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import sys
 from bisect import bisect_right
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import regex as re
 
@@ -103,6 +103,7 @@ _TEMPLATE_SYNTAX: Final = ("{{", "{%", "{#", "${")
 _TEMPLATE_ELEMENT: Final = "template"
 
 
+@final
 class _TemplateTag(NamedTuple):
     """One template tag of the document."""
 

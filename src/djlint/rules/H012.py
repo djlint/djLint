@@ -22,7 +22,7 @@ from __future__ import annotations
 import sys
 from bisect import bisect_left
 from itertools import chain
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import regex as re
 
@@ -62,6 +62,7 @@ _UNVISITED: Final = -2
 _NOTHING: Final = -1
 
 
+@final
 class _Span(NamedTuple):
     """Where a finding sits, standing in for the pattern match."""
 
@@ -73,6 +74,7 @@ class _Span(NamedTuple):
         return self.start, self.end
 
 
+@final
 class _Marks:
     """Where each character of interest sits, read once per document."""
 

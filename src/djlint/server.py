@@ -17,7 +17,7 @@ import sys
 import threading
 from importlib.metadata import version
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, final
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
@@ -237,6 +237,7 @@ def _edits(old: str, new: str) -> list[Json]:
     ]
 
 
+@final
 class _Document:
     __slots__ = ("language", "starts", "text", "version")
 
@@ -257,6 +258,7 @@ class _Document:
         self.starts = _line_starts(self.text)
 
 
+@final
 class _Pending:
     """A request of the server that the client has yet to answer."""
 
@@ -267,6 +269,7 @@ class _Pending:
         self.result: Any = None
 
 
+@final
 class Server:
     """A language server on two binary streams."""
 

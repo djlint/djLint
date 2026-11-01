@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections import Counter
 from enum import Enum, auto
 from functools import partial
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import regex as re
 
@@ -48,6 +48,7 @@ _STRIPS_WHITESPACE_BEFORE: Final = compile_pattern(r"\{[{%#]-")
 _STRIPS_WHITESPACE_AFTER: Final = ("-%}", "-}}", "-#}")
 
 
+@final
 class _Neighbour(Enum):
     """Whether what stands beside a block renders the space beside it.
 

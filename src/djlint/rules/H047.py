@@ -37,7 +37,9 @@ _ALWAYS_FOCUSABLE: Final = frozenset((
 ))
 _FOCUSABLE_WITH_HREF: Final = frozenset(("a", "area"))
 _FOCUSABLE_WITH_CONTROLS: Final = frozenset(("audio", "video"))
-_ARIA_HIDDEN_PATTERN = compile_pattern(r"(?<![-.:\w])aria-hidden\s*=", re.I)
+_ARIA_HIDDEN_PATTERN: Final = compile_pattern(
+    r"(?<![-.:\w])aria-hidden\s*=", re.I
+)
 
 
 def _attributes(config: Config, html: str, token: TagToken) -> dict[str, str]:

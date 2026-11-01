@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 from types import MappingProxyType
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 from click import echo, style
 
@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
+@final
 class SrcFiles(NamedTuple):
     """Files to process, and why the list may be empty.
 
