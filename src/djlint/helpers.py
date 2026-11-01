@@ -174,7 +174,9 @@ def inside_protected_trans_block(
 
     True means the match sits inside a non trimmed trans block, which is
     not indentable. False means it is indentable: either inside a trimmed
-    trans block, or nowhere near one.
+    trans block, or nowhere near one. Only the html up to the end of the
+    match is read, and it is cut only for a match that closes a block: doing
+    it for every line of a document grows with its square.
     """
     close_block = config.ignored_trans_blocks_closing_pattern.search(
         match.group()
@@ -182,6 +184,8 @@ def inside_protected_trans_block(
 
     if not close_block:
         return False
+
+    html = html[: match.end()]
 
     non_trimmed = _last_item(config.ignored_trans_blocks_pattern.finditer(html))
     trimmed = _last_item(config.trans_trimmed_blocks_pattern.finditer(html))

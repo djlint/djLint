@@ -136,7 +136,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         if is_ignored_block_opening(config, match.group()):
             return leading + match.group(1) + match.group(2)
 
-        if inside_protected_trans_block(config, html[: match.end()], match):
+        if inside_protected_trans_block(config, html, match):
             return match.group().rstrip()
 
         lines = match.group(2).count("\n")
