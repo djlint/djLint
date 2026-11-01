@@ -21,7 +21,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, final
 from urllib.parse import unquote, urlparse
 
-from djlint.api import format_text, is_excluded, lint_text, load_config
+from djlint.api import format_text, lint_text, load_config
+from djlint.src import is_excluded
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -57,6 +58,7 @@ _MAX_CANCELLED: Final = 1000
 # since a lint that doesn't end must not keep the process around.
 _EXIT_GRACE_SECONDS: Final = 5
 _LINT_STALE: Final[Json] = {}
+_LATE_ANSWER: Final[Json] = {}
 
 _CONFIG_FILES: Final = (
     "pyproject.toml",
@@ -212,7 +214,10 @@ def _edits(old: str, new: str) -> list[Json]:
             {
                 "range": {
                     "start": {"line": 0, "character": 0},
-                    "end": {"line": len(old_starts), "character": 0},
+                    "end": {
+                        "line": len(old_starts) - 1,
+                        "character": _utf16_length(old[old_starts[-1] :]),
+                    },
                 },
                 "newText": new,
             }
@@ -275,10 +280,11 @@ class _Document:
 class _Pending:
     """A request of the server that the client has yet to answer."""
 
-    __slots__ = ("answered", "result")
+    __slots__ = ("answered", "failed", "result")
 
     def __init__(self) -> None:
         self.answered = threading.Event()
+        self.failed = False
         self.result: Any = None
 
 
@@ -310,6 +316,7 @@ class Server:
         "_shutting_down",
         "_stale",
         "_unanswered",
+        "_watching",
         "_write_lock",
         "_writer",
     )
@@ -334,6 +341,7 @@ class Server:
         self._init_settings: Json = {}
         self._settings: dict[str, Json] = {}
         self._unanswered: _Pending | None = None
+        self._watching: _Pending | None = None
         self._configs: dict[tuple[str, str, str], Config] = {}
         self._reported: set[str] = set()
         self._rule_modules: set[str] = set()
@@ -359,6 +367,8 @@ class Server:
             try:
                 if message is _LINT_STALE:
                     self._lint_stale()
+                elif message is _LATE_ANSWER:
+                    self._take_late_settings()
                 else:
                     self._handle(message)
             except Exception as error:
@@ -380,7 +390,10 @@ class Server:
                     length = int(value)
         if length is None or length < 0:
             return b""
-        body = self._reader.read(length)
+        try:
+            body = self._reader.read(length)
+        except (MemoryError, OverflowError):
+            return b""
         return body if len(body) == length else None
 
     def _read_forever(self) -> None:
@@ -436,7 +449,10 @@ class Server:
         pending = self._pending.pop(request_id, None)
         if pending is not None:
             pending.result = message.get("result")
+            pending.failed = "error" in message
             pending.answered.set()
+            if pending is self._unanswered:
+                self._inbox.put(_LATE_ANSWER)
 
     def _write(self, message: Json) -> None:
         message["jsonrpc"] = "2.0"
@@ -560,28 +576,15 @@ class Server:
         elif method == "initialized":
             self._watch_configuration()
         elif method == "textDocument/didOpen":
-            document = params["textDocument"]
-            self._documents[document["uri"]] = _Document(
-                document["text"],
-                document.get("languageId", ""),
-                document["version"],
-            )
-            self._stale.add(document["uri"])
-            self._forget_unwatched_configuration()
+            self._did_open(params["textDocument"])
         elif method == "textDocument/didChange":
             self._did_change(params)
         elif method == "textDocument/didSave":
-            self._stale.add(params["textDocument"]["uri"])
-            self._forget_unwatched_configuration()
+            self._did_save(params["textDocument"]["uri"])
         elif method == "textDocument/didClose":
             self._did_close(params["textDocument"]["uri"])
         elif method == "workspace/didChangeConfiguration":
-            pushed = params.get("settings")
-            if isinstance(pushed, dict):
-                section = pushed.get("djlint", pushed)
-                self._init_settings = (
-                    section if isinstance(section, dict) else {}
-                )
+            self._take_pushed_settings(params.get("settings"))
             self._settings.clear()
             self._asks_settings = self._workspace_capability("configuration")
             self._configuration_changed()
@@ -652,11 +655,25 @@ class Server:
         return bool(capability)
 
     def _watch_configuration(self) -> None:
+        if self._workspace_capability(
+            "didChangeConfiguration", "dynamicRegistration"
+        ):
+            self._send_request(
+                "client/registerCapability",
+                {
+                    "registrations": [
+                        {
+                            "id": "djlint-settings",
+                            "method": "workspace/didChangeConfiguration",
+                        }
+                    ]
+                },
+            )
         if not self._workspace_capability(
             "didChangeWatchedFiles", "dynamicRegistration"
         ):
             return
-        self._send_request(
+        self._watching = self._send_request(
             "client/registerCapability",
             {
                 "registrations": [
@@ -676,6 +693,26 @@ class Server:
 
     def _shutdown(self, _params: Json) -> None:
         self._shutting_down = True
+
+    def _did_open(self, document: Json) -> None:
+        uri = document["uri"]
+        if not isinstance(uri, str):
+            return
+        self._documents[uri] = _Document(
+            document["text"],
+            document.get("languageId", ""),
+            document["version"],
+        )
+        self._stale.add(uri)
+        if self._reads_configuration_again:
+            self._forget_configuration()
+
+    def _did_save(self, uri: str) -> None:
+        if uri in self._documents:
+            self._stale.add(uri)
+        if self._reads_configuration_again:
+            self._forget_configuration()
+            self._refresh_diagnostics()
 
     def _did_change(self, params: Json) -> None:
         document = self._documents.get(params["textDocument"]["uri"])
@@ -706,21 +743,36 @@ class Server:
             path = _path(folder["uri"])
             if path is not None:
                 self._folders.append(path)
+        self._settings.clear()
         self._configuration_changed()
 
-    def _forget_unwatched_configuration(self) -> None:
-        """Read the configuration again, if nothing would say it changed."""
-        if not self._workspace_capability(
-            "didChangeWatchedFiles", "dynamicRegistration"
-        ):
-            self._generation += 1
-            self._configs.clear()
+    @property
+    def _reads_configuration_again(self) -> bool:
+        """Tell if nothing would say that the configuration changed."""
+        watching = self._watching
+        return (
+            watching is None
+            or not watching.answered.is_set()
+            or watching.failed
+            or any(
+                _setting_name(name) in _PATH_SETTINGS
+                for settings in self._settings.values()
+                for name in settings
+            )
+        )
+
+    def _forget_configuration(self) -> None:
+        self._generation += 1
+        self._configs.clear()
 
     def _configuration_changed(self) -> None:
         self._generation += 1
         self._configs.clear()
         self._forget_rule_modules()
         self._reported.clear()
+        self._refresh_diagnostics()
+
+    def _refresh_diagnostics(self) -> None:
         if self._pulls_diagnostics:
             if self._workspace_capability("diagnostics", "refreshSupport"):
                 self._send_request("workspace/diagnostic/refresh", {})
@@ -770,7 +822,19 @@ class Server:
             self._unanswered = None
             self._asks_settings = True
             self._settings.clear()
-            self._generation += 1
+            self._configuration_changed()
+
+    def _take_pushed_settings(self, pushed: object) -> None:
+        """Keep the settings of a push, which may be for other servers."""
+        if not isinstance(pushed, dict):
+            return
+        section = pushed.get("djlint")
+        if isinstance(section, dict):
+            self._init_settings = section
+        elif "djlint" in pushed:
+            self._init_settings = {}
+        elif any(_setting_name(name) in _known_settings() for name in pushed):
+            self._init_settings = pushed
 
     def _settings_for(self, uri: str) -> Json:
         """Ask the client for the settings of a document, once."""
@@ -795,6 +859,8 @@ class Server:
             else:
                 self._asks_settings = False
                 self._unanswered = pending
+                if pending.answered.is_set():
+                    self._inbox.put(_LATE_ANSWER)
                 self._log(
                     _LOG_WARNING,
                     "The editor didn't answer workspace/configuration.",
@@ -804,10 +870,7 @@ class Server:
         return settings
 
     def _options(self, settings: Json, path: Path | None) -> Json:
-        from djlint import main  # noqa: PLC0415
-
-        known = {parameter.name for parameter in main.params} - _NOT_SETTINGS
-        known.add("python_rules")
+        known = _known_settings()
         options: Json = {}
         for name, value in settings.items():
             option = _setting_name(name)
@@ -840,6 +903,10 @@ class Server:
                 return max(parents, key=lambda folder: len(folder.parts))
         return self._folders[0] if self._folders else Path.cwd()
 
+    def _is_excluded(self, config: Config, path: Path) -> bool:
+        """Check from the workspace folder too, as a run on it would."""
+        return is_excluded(config, path, self._folder_of(path))
+
     def _config(
         self, uri: str, document: _Document, indent: int | None = None
     ) -> Config:
@@ -869,7 +936,7 @@ class Server:
     def _lint(self, uri: str, document: _Document) -> list[Json]:
         config = self._config(uri, document)
         path = _path(uri)
-        if path is not None and is_excluded(config, path):
+        if path is not None and self._is_excluded(config, path):
             return []
         self._use_rule_modules_of(config)
         modules = set(sys.modules)
@@ -942,9 +1009,17 @@ class Server:
             params["options"]["tabSize"] if uses_editor_indent else None,
         )
         path = _path(uri)
-        if path is not None and is_excluded(config, path):
+        if path is not None and self._is_excluded(config, path):
             return None
         return _edits(document.text, format_text(config, document.text))
+
+
+def _known_settings() -> set[str]:
+    from djlint import main  # noqa: PLC0415
+
+    known = {parameter.name for parameter in main.params} - _NOT_SETTINGS
+    known.update(("python_rules", "use_editor_indentation"))
+    return known
 
 
 def _path(uri: object) -> Path | None:
