@@ -1,0 +1,119 @@
+---
+description: HTML 템플릿 린트와 포맷을 위한 djLint 시작하기. 사용하기 쉬운 CLI와 다양한 포맷터 옵션을 활용하세요.
+title: 시작하기
+keywords: 템플릿 린터, 템플릿 포맷터, djLint, HTML, 템플릿, 포맷터, 린터, 사용법
+---
+
+# 시작하기
+
+## 설치
+
+djLint는 [Python](https://python.org)으로 만들어졌으며 [PyPI](https://pypi.org/project/djlint/)에 게시되어 있습니다. [uv](https://docs.astral.sh/uv/)를 사용한다면 프로젝트에 개발 의존성으로 추가합니다.
+
+```bash
+uv add --dev djlint
+```
+
+또는 독립 실행형 도구로 설치합니다.
+
+```bash
+uv tool install djlint
+```
+
+또는 pip으로 설치합니다.
+
+```bash
+pip install djlint
+```
+
+또는 [pipx](https://pipx.pypa.io/)로 설치합니다.
+
+```bash
+pipx install djlint
+```
+
+또는 macOS나 Linux에서는 커뮤니티가 관리하는 [Homebrew 포뮬러](https://formulae.brew.sh/formula/djlint)로 설치합니다.
+
+```bash
+brew install djlint
+```
+
+_또는 npm으로 설치합니다. **경고**: npm 패키지는 래퍼일 뿐이며, 설치 스크립트는 시스템 경로에 있는 `python3`이 무엇이든 그것으로 `pip install --upgrade djlint`를 실행합니다. npm은 실제 패키지를 관리하거나 제거하지 않으므로, 가능하면 pip을 직접 사용하세요._
+
+```bash
+npm i djlint
+```
+
+커밋할 때마다 djLint를 실행하려면 [pre-commit]({{ "lang_code_url" | i18n }}/docs/integrations/#pre-commit)을 참고하세요.
+
+## CLI 사용법
+
+djLint는 명령줄 애플리케이션입니다. 고급 구성은 [구성]({{ "lang_code_url" | i18n }}/docs/configuration/) 페이지를 참고하세요.
+
+{% include 'src/_includes/cli.md' %}
+
+{% admonition
+   "note",
+   "참고",
+   "`djlint` 명령을 찾을 수 없다면 Python이 [PATH에 있는지](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/) 확인하세요."
+%}
+
+## 경로와 stdin 사용
+
+djLint는 경로나 stdin으로 입력을 받습니다.
+
+경로를 지정해 실행하는 경우:
+
+```bash
+djlint /path/to/templates --lint
+```
+
+특정 파일을 지정하는 경우:
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+stdin을 사용하는 경우:
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+stdin으로 코드를 다시 포맷할 수도 있습니다. 이때는 메시지 없이 포맷된 코드만 출력합니다.
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+출력:
+
+```html
+<div></div>
+```
+
+stdin에서 읽을 때는 `per-file-ignores`와 대조하거나 메시지에 표시할 실제 경로가 없으므로, djLint는 기본값으로 `-`를 사용합니다. 예를 들어 에디터 통합이 저장할 때 파일 내용을 파이프로 넘기는 경우처럼, 파이프로 넘긴 내용의 실제 경로를 djLint에 알려 주려면 `--stdin-filename`을 전달하세요.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## 종료 코드
+
+| 코드 | 의미                                                                                                                              |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | djLint에 검사를 요청한 모든 대상에 문제가 없거나, 찾은 파일이 모두 구성에 따라 건너뛰어졌습니다.                                  |
+| `1`  | djLint가 린트 오류나 다시 포맷해야 하는 파일을 찾았습니다. `--warn`을 쓰면 이를 경고로 보고하고 대신 `0`으로 종료합니다.          |
+| `2`  | djLint가 요청한 대상을 검사하지 못했습니다. 경로에 일치하는 파일이 없거나, 명령줄이나 구성이 잘못되었거나, djLint가 실패했습니다. |
+
+코드 `1`만이 djLint가 템플릿을 살펴보고 마음에 들지 않는 점을 발견했다는 뜻입니다. 코드 `2`는 언제나 실행 자체가 제 역할을 하지 못했다는 뜻이므로, 파이프라인에서 추측하지 않고 두 경우를 다르게 처리할 수 있습니다.
+
+코드 `2`는 아무것도 검사하지 않은 실행을 잡아냅니다. 경로가 잘못되었거나, `--extension`이 더 이상 일치하지 않거나, 템플릿이 다른 곳으로 옮겨진 경우입니다. 이 코드가 없다면 그런 실행은 템플릿을 하나도 살펴보지 않고도 조용히 통과합니다.
+
+djLint가 _찾기는 했지만_ `exclude`, `extend_exclude`, `use_gitignore`, `require_pragma`에 따라 의도적으로 건너뛴 파일은 오류가 아닙니다. 구성이 지시받은 대로 정확히 동작했으므로 그 실행은 `0`으로 종료합니다. 덕분에 pre-commit에서도 `exclude`가 동작합니다. pre-commit은 djLint가 살펴보기를 원하든 원하지 않든 스테이징된 파일의 이름을 넘기기 때문입니다.
+
+템플릿이 없는 것이 정상인 경로를 파이프라인에서 다룬다면 `allow_empty_input`으로 코드 `2`를 끄세요.
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```

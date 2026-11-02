@@ -1,38 +1,39 @@
 ---
-description: Configuration de djLint pour le linting et le formatage des modèles HTML. Profitez des nombreuses options de formatage.
+description: Configuration de djLint pour le linting et le formatage de templates HTML. Tirez parti des nombreuses options du formateur.
 title: Configuration
-keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, configuration
+keywords: linter de templates, formateur de templates, djLint, HTML, templates, formateur, linter, configuration
+date: Last Modified
 ---
 
-# {{ "configuration" | i18n }}
+# Configuration
 
-La configuration se fait soit dans le fichier `pyproject.toml` de votre projet, soit dans le fichier `djlint.toml` ou `.djlint.toml`, soit dans le fichier `.djlintrc`. Les arguments de la ligne de commande auront toujours la priorité sur les réglages des fichiers de configuration. Les paramètres locaux du projet ont la priorité sur un fichier de configuration global passé avec `--configuration`, sauf si `--prefer-configuration` est indiqué.
+La configuration se fait dans le fichier `pyproject.toml` de votre projet, dans un fichier `djlint.toml` ou `.djlint.toml`, ou dans un fichier `.djlintrc`. Les arguments de la ligne de commande ont toujours priorité sur les réglages des fichiers de configuration. Les réglages locaux du projet ont priorité sur un fichier de configuration global passé avec `--configuration`, sauf si `--prefer-configuration` est indiqué.
 
 Le format de `pyproject.toml` est `toml`.
 
 ```toml
 [tool.djlint]
-<options de configuration>
+<config options>
 ```
 
 Le format de `djlint.toml` et `.djlint.toml` est `toml`.
 
 ```toml
-<options de configuration>
+<config options>
 ```
 
 Le format de `.djlintrc` est `json`.
 
 ```json
-{ "option": "valeur" }
+{ "option": "value" }
 ```
 
 ## Options
 
 <div class="field">
-  <label class="label">Options de filtrage</label>
+  <label class="label">Filtrer les options</label>
   <div class="control">
-    <input id="filter" class="input" type="text" placeholder="tapez pour filtrer les options..." />
+    <input id="filter" class="input" type="text" placeholder="saisissez du texte pour filtrer les options..." />
 
   </div>
 </div>
@@ -60,7 +61,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
             matches.push(obj.name)
         }
         if(matches.length > 0){
-            document.querySelector('#no-matches').classList.add('is-hidden');
+             document.querySelector('#no-matches').classList.add('is-hidden');
         (document.querySelectorAll('.option') || []).forEach((x) => {
             if (matches.includes(x.getAttribute('data-name'))){
                 x.classList.remove('is-hidden')
@@ -127,6 +128,6 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 
 {% endfor %}
 
-<div id="no-matches" class="is-hidden mb-5">Rien n'a été trouvé. Essayez une autre recherche.</div>
+<div id="no-matches" class="is-hidden mb-5">Aucun résultat. Essayez une autre recherche.</div>
 
 {% include 'src/_includes/tabs_script.njk' %}

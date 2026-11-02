@@ -1,7 +1,7 @@
 ---
-title: Angular Template Linter
-keywords: angular, djlint, angular template linter, lint angular templates
-description: djLint - это линтер шаблонов Angular! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
+title: Линтер шаблонов Angular
+keywords: angular, djlint, линтер шаблонов angular, проверка шаблонов angular
+description: djLint — линтер шаблонов Angular! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
 tool: angular
 ---
 
@@ -11,18 +11,18 @@ tool: angular
 
 **[Что такое Angular?](https://angular.io/guide/template-syntax)**
 
-#### Использование командной строки
+#### Через командную строку
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Или используйте файл конфигурации
+#### Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
 {% include 'src/_includes/profile_config.md' %}
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Ознакомьтесь с руководством по настройке, чтобы узнать обо всех возможностях!</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Обо всех параметрах читайте в руководстве по конфигурации!</a></div>
 </div>

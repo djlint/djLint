@@ -1,0 +1,119 @@
+---
+description: Erste Schritte mit djLint für das Linting und Formatieren von HTML-Templates. Nutzen Sie die einfache Befehlszeile und die vielen Optionen des Formatters.
+title: Erste Schritte
+keywords: Template-Linter, Template-Formatter, djLint, HTML, Templates, Formatter, Linter, Verwendung
+---
+
+# Erste Schritte
+
+## Installation
+
+djLint ist in [Python](https://python.org) geschrieben und auf [PyPI](https://pypi.org/project/djlint/) veröffentlicht. Mit [uv](https://docs.astral.sh/uv/) fügen Sie es Ihrem Projekt als Entwicklungsabhängigkeit hinzu:
+
+```bash
+uv add --dev djlint
+```
+
+Oder installieren Sie es als eigenständiges Tool:
+
+```bash
+uv tool install djlint
+```
+
+Oder mit pip:
+
+```bash
+pip install djlint
+```
+
+Oder mit [pipx](https://pipx.pypa.io/):
+
+```bash
+pipx install djlint
+```
+
+Oder unter macOS oder Linux mit der von der Community gepflegten [Homebrew-Formel](https://formulae.brew.sh/formula/djlint):
+
+```bash
+brew install djlint
+```
+
+_Oder mit npm – **Achtung**: Das npm-Paket ist nur ein Wrapper. Sein Installationsskript führt `pip install --upgrade djlint` mit dem `python3` aus, das gerade in Ihrem Systempfad liegt. npm verwaltet das eigentliche Paket nicht und deinstalliert es auch nicht – verwenden Sie nach Möglichkeit direkt pip._
+
+```bash
+npm i djlint
+```
+
+Wie Sie djLint bei jedem Commit ausführen, lesen Sie unter [pre-commit]({{ "lang_code_url" | i18n }}/docs/integrations/#pre-commit).
+
+## Verwendung auf der Befehlszeile
+
+djLint ist ein Befehlszeilenprogramm. Für die erweiterte Konfiguration siehe die Seite [Konfiguration]({{ "lang_code_url" | i18n }}/docs/configuration/).
+
+{% include 'src/_includes/cli.md' %}
+
+{% admonition
+   "note",
+   "Hinweis",
+   "Wird der Befehl `djlint` nicht gefunden, prüfen Sie, ob Python [in Ihrem PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/) liegt."
+%}
+
+## Pfad oder stdin
+
+djLint arbeitet mit einem Pfad oder mit stdin.
+
+Mit einem Pfad:
+
+```bash
+djlint /path/to/templates --lint
+```
+
+Oder mit einer bestimmten Datei:
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+Oder mit stdin:
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+Über stdin lässt sich Code auch neu formatieren. Ausgegeben wird dann nur der formatierte Code, ohne Meldungen.
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+Ausgabe:
+
+```html
+<div></div>
+```
+
+Beim Lesen von stdin hat djLint keinen echten Pfad, mit dem es `per-file-ignores` abgleichen oder den es in Meldungen anzeigen könnte, und verwendet deshalb standardmäßig `-`. Mit `--stdin-filename` teilen Sie djLint den echten Pfad des übergebenen Inhalts mit, zum Beispiel wenn eine Editor-Integration beim Speichern den Inhalt einer Datei per Pipe übergibt.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## Exit-Codes
+
+| Code | Bedeutung                                                                                                                                                                  |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | Alles, was djLint prüfen sollte, ist fehlerfrei, oder jede gefundene Datei wurde durch Ihre Konfiguration übersprungen.                                                    |
+| `1`  | djLint hat Linting-Fehler gefunden oder Dateien, die neu formatiert werden müssen. Mit `--warn` werden diese als Warnungen gemeldet und der Exit-Code ist `0`.             |
+| `2`  | djLint hat nicht geprüft, was Sie verlangt haben: Die Pfade passten auf keine Datei, die Befehlszeile oder die Konfiguration war ungültig, oder djLint ist fehlgeschlagen. |
+
+Nur Code `1` bedeutet, dass djLint sich Ihre Templates angesehen hat und mit dem Ergebnis nicht zufrieden ist. Code `2` bedeutet immer, dass der Lauf selbst nicht geliefert hat. So kann eine Pipeline die beiden Fälle unterschiedlich behandeln, statt raten zu müssen.
+
+Code `2` fängt einen Lauf ab, der überhaupt nichts geprüft hat: ein falscher Pfad, eine `--extension`, die nicht mehr passt, oder Templates, die verschoben wurden. Ohne ihn geht ein solcher Lauf stillschweigend durch, ohne sich auch nur eines Ihrer Templates angesehen zu haben.
+
+Dateien, die djLint _durchaus_ gefunden und dann absichtlich übersprungen hat, über `exclude`, `extend_exclude`, `use_gitignore` oder `require_pragma`, sind kein Fehler. Ein solcher Lauf endet mit `0`, denn die Konfiguration hat genau das getan, was sie sollte. Dadurch funktioniert auch `exclude` unter pre-commit, das die Namen der Dateien in Ihrer Staging-Area übergibt, ob djLint sie sich ansehen soll oder nicht.
+
+Ist ein Pfad, der berechtigterweise keine Templates enthält, in Ihrer Pipeline normal, schalten Sie Code `2` mit `allow_empty_input` ab:
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```

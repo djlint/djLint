@@ -1,6 +1,16 @@
 module.exports = [
   { label: "English", code: "en-US", url: "" },
-  { label: "Русский", code: "ru", url: "ru" },
-  { label: "Français", code: "fr", url: "fr" },
   { label: "简体中文", code: "zh", url: "zh" },
+  { label: "日本語", code: "ja", url: "ja" },
+  { label: "Español", code: "es", url: "es" },
+  { label: "Português (Brasil)", code: "pt-br", url: "pt-br" },
+  { label: "Русский", code: "ru", url: "ru" },
+  { label: "한국어", code: "ko", url: "ko" },
+  { label: "Français", code: "fr", url: "fr" },
+  { label: "Deutsch", code: "de", url: "de" },
+  { label: "繁體中文", code: "zh-tw", url: "zh-tw" },
+  { label: "Italiano", code: "it", url: "it" },
+  { label: "Polski", code: "pl", url: "pl" },
+  { label: "Čeština", code: "cs", url: "cs" },
+  { label: "Türkçe", code: "tr", url: "tr" },
 ];
