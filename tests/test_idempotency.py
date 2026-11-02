@@ -159,6 +159,11 @@ templates = [
     pytest.param(
         '<div>\n{% trans "a %}\n   b" %}\n</div>\n', id="string across lines holding a closer"
     ),
+    pytest.param(
+        '<div class="aaaaaaaaaaaaaaaaaaaa" id="bbbbbbbbbbbbbbbbbbbb" {# note #}>t</div>\n'
+        "<p {# note #}>t</p>\n",
+        id="template comment ending the attributes",
+    ),
 ]
 
 option_sets = [

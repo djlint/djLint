@@ -98,6 +98,7 @@ def _tokenizer_source(html: str, config: Config) -> str:
 
 def compress_html(html: str, config: Config) -> str:
     """Compress html."""
+    source = _tokenizer_source(html, config)
 
     def _fix_case(tag: str) -> str:
         if not config.ignore_case and tag.lower() in HTML_TAG_NAMES:
@@ -120,7 +121,15 @@ def compress_html(html: str, config: Config) -> str:
         open_bracket = html[token.start : token.name_start]
         tag = _fix_case(token.name)
 
-        raw_attributes = html[token.name_end : token.attributes_end]
+        # A template comment after the last attribute was blanked for the
+        # tokenizer, which ends the attributes before it; it is still part
+        # of the tag and is kept where it was written.
+        attributes_end = token.attributes_end
+        close = source.rfind("/" if token.self_closing else ">", attributes_end, token.end)
+        if close > attributes_end:
+            attributes_end += len(html[attributes_end:close].rstrip())
+
+        raw_attributes = html[token.name_end : attributes_end]
         attributes = ""
         if raw_attributes:
             leading = " " if raw_attributes[0].isspace() else ""
@@ -139,7 +148,7 @@ def compress_html(html: str, config: Config) -> str:
 
     output: list[str] = []
     previous_end = 0
-    for token in tokenize_tags(_tokenizer_source(html, config)):
+    for token in tokenize_tags(source):
         output.extend((html[previous_end : token.start], _clean_tag(token)))
         previous_end = token.end
     output.append(html[previous_end:])
