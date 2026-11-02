@@ -74,6 +74,55 @@ test_data = [
         ),
         id="single_line_set_block_nested_in_html",
     ),
+    pytest.param(
+        (
+            "{% set menu = menu_item(\n"
+            "    title='title',\n"
+            "    submenu=[\n"
+            "        menu_item(\n"
+            "            title='title',\n"
+            "            submenu=[],\n"
+            "        )\n"
+            "    ],\n"
+            ") %}"
+        ),
+        (
+            "{% set menu = menu_item(\n"
+            "    title='title',\n"
+            "    submenu=[\n"
+            "        menu_item(\n"
+            "            title='title',\n"
+            "            submenu=[],\n"
+            "        )\n"
+            "    ],\n"
+            ") %}\n"
+        ),
+        id="nested_call_in_multiline_set_is_indented",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {% set items = pick(\n"
+            "        [1,\n"
+            "            2]) %}\n"
+            "    <p>after</p>\n"
+            "</div>"
+        ),
+        (
+            "<div>\n"
+            "    {% set items = pick(\n"
+            "        [1,\n"
+            "            2]) %}\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="multiline_set_closing_after_an_opener_restores_the_level",
+    ),
+    pytest.param(
+        ('{% set style = style ~\n    "url(\'data:image/svg+xml," ~\n    icon ~\n    "\');" %}'),
+        ('{% set style = style ~\n    "url(\'data:image/svg+xml," ~\n    icon ~\n    "\');" %}\n'),
+        id="bracket_inside_a_string_in_multiline_set_opens_nothing",
+    ),
 ]
 
 
