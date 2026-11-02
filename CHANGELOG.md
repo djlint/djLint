@@ -1472,7 +1472,7 @@ Formatting <https://github.com/openedx/edx-platform> took 87 seconds in the prev
 
 ## [0.7.6] - 2022-03-14
 
-- Bug fixes [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
+- Bug fixes [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/197)
 - Added `--warn` flag to return return errors as warnings.
 
 ## [0.7.5] - 2022-02-21
