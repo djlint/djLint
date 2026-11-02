@@ -91,6 +91,11 @@ test_data = [
         '<div>\n    {% trans "a %}\n   b" %}\n    {{ "c }}\n   d" }}\n</div>\n',
         id="a_string_across_lines_holding_a_closer_keeps_its_whitespace",
     ),
+    pytest.param(
+        '<div>\n{% trans "a {%\n   b" %}\n{{ "c {{\n   d" }}\n</div>\n',
+        '<div>\n    {% trans "a {%\n   b" %}\n    {{ "c {{\n   d" }}\n</div>\n',
+        id="a_string_across_lines_holding_an_opener_keeps_its_whitespace",
+    ),
 ]
 
 

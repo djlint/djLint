@@ -101,6 +101,34 @@ test_data = [
     ),
     pytest.param(
         (
+            '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
+            '<link rel=\'{% if x %} stylesheet {% else %} icon {% endif %}\' type="text/css" href="b">\n'
+        ),
+        (
+            '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
+            "<link rel='{% if x %} stylesheet {% else %} icon {% endif %}'\n"
+            '      type="text/css"\n'
+            '      href="b">\n'
+        ),
+        id="a rel a template tag writes may not be a stylesheet",
+    ),
+    pytest.param(
+        (
+            '<form {% if a %}data-{% endif -%} method="POST"></form>\n'
+            '<form @method="POST" x-on:method="POST"></form>\n'
+            '<script @type="text/javascript" :type="text/javascript"></script>\n'
+            '<form {% if a %}method="POST"{% endif %}></form>\n'
+        ),
+        (
+            '<form {% if a %}data-{% endif -%} method="POST">\n</form>\n'
+            '<form @method="POST" x-on:method="POST">\n</form>\n'
+            '<script @type="text/javascript" :type="text/javascript"></script>\n'
+            '<form {% if a %}method="post"{% endif %}>\n</form>\n'
+        ),
+        id="only an attribute of its own is rewritten",
+    ),
+    pytest.param(
+        (
             "<script type=text/javascript {{- s }}></script>\n"
             '<script type="text/javascript" {%- if a %} async{% endif %}></script>\n'
             '<script {{ a -}} type="text/javascript"></script>\n'

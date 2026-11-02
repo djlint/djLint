@@ -49,8 +49,14 @@ def test_format(source: str) -> None:
 
 # A quote left open in a tag must not send each later one to the end of the
 # file looking for its partner. An escaped quote is the one that would: each
-# of `\"\"\"` read as opening a string ran to the end of the tag.
+# of `\"\"\"` read as opening a string ran to the end of the tag. A string may
+# hold an opener, so the ones that hide each next tag are here too.
 open_quotes = [
+    pytest.param('{% "{%\n' * 20000 + "%}", id="strings each holding the next opener"),
+    pytest.param("{% '\n" + "{% x\n" * 40000 + "'%}", id="one string holding many tags"),
+    pytest.param(("{% '\n" + '{% "" \n' * 50) * 400 + "%}", id="odd and even runs of quotes"),
+    pytest.param("".join("{% '\n" if i % 2 else '{% "\n' for i in range(20000)), id="kinds"),
+    pytest.param('\\{% "\n' * 20000 + "%}", id="escapes before openers"),
     pytest.param("<p>\n" + '{% "\n' * 20000 + "%}", id="block tags each opening a string"),
     pytest.param("<p>\n" + "{{ 'a\n" * 20000 + "}}", id="variables each opening a string"),
     pytest.param("{% x " + '\\"\n' * 40000 + "%}", id="escaped quotes in one tag"),

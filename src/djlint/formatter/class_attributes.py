@@ -42,16 +42,18 @@ _JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({"class", "data-srcset", "sizes", "
 _TRIMMED_ATTRIBUTE_NAMES: Final = frozenset({"class", "style"})
 
 TEMPLATE_STRING_NEWLINE: Final = "\x00DJLINT_STRING_NEWLINE\x00"
-# A tag runs to its first closer outside a string, so `{% trans "a %}" %}` is
-# one tag. A string that does not close before the next opener is taken for a
-# stray quote, and an unclosed tag never closes past that opener: each stretch
-# up to an opener is read a bounded number of times, however many quotes are
-# left open in it. An escape outside a string is skipped as one, or each
-# quote of `\"\"\"` would start a string read to the opener.
+# A tag runs to its first closer outside a string, so `{% trans "a %}" %}` and
+# `{% set s = "{%" %}` are each one tag, and an unclosed one ends at the next
+# opener outside a string. An escape outside a string is skipped as one, or
+# each quote of `\"\"\"` would start a string read to the end. Read from each
+# opener, the quotes after it pair up the same way, so a read only runs past
+# the next opener inside a string, which ends at the next quote of its kind:
+# the reads from successive openers overlap by about a string, and the scan
+# stays linear however many quotes are left open.
 _TEMPLATE_TAG_PATTERN: Final = compile_pattern(
     r"""
-    \{\{(?:\\.|"(?:\\.|(?!\{\{)[^"\\])*+"|'(?:\\.|(?!\{\{)[^'\\])*+'|(?!\}\}|\{\{).)*+\}\}
-  | \{%(?:\\.|"(?:\\.|(?!\{%)[^"\\])*+"|'(?:\\.|(?!\{%)[^'\\])*+'|(?!%\}|\{%).)*+%\}
+    \{\{(?:\\.|"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!\}\}|\{\{).)*+\}\}
+  | \{%(?:\\.|"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!%\}|\{%).)*+%\}
     """,
     re.S | re.X,
 )

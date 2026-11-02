@@ -30,12 +30,19 @@ _TRIMS_BEFORE: Final = r"\s*\{[{%\#]-"
 _TRIMMED_AFTER: Final = r"-[}%\#]\}\s*"
 # The type written out is the default only on the element it is the default
 # for: `text/css` on a `<script>` is not javascript, and on a `<link>` it is
-# only implied for a stylesheet.
+# only implied for a stylesheet. A rel a template tag helps write may render
+# as anything.
 _STYLESHEET_REL: Final = rf"""
     (?={_ATTRIBUTES}\srel\s*=\s*
-        (?:"[^"]*?(?<![^\s"])stylesheet(?![^\s"])[^"]*"
-          |'[^']*?(?<![^\s'])stylesheet(?![^\s'])[^']*'
+        (?:"[^"{{]*?(?<![^\s"])stylesheet(?![^\s"])[^"{{]*"
+          |'[^'{{]*?(?<![^\s'])stylesheet(?![^\s'])[^'{{]*'
           |stylesheet(?=\s|/?>)))
+"""
+# An attribute of its own starts after whitespace that renders, or after a
+# statement tag written there, as in `{% if a %}method="post"`. Anything else
+# makes it part of a longer name, as `@method` or `data-{% endif %}method`.
+_ATTRIBUTE_START: Final = rf"""
+    (?:(?<=\s)|(?<=\s\{{%[^{{}}]*[^-{{}}]%\}}))(?<!{_TRIMMED_AFTER})
 """
 
 
@@ -60,7 +67,7 @@ _DEFAULT_TYPE_PATTERN: Final = compile_pattern(
 _FORM_METHOD_PATTERN: Final = compile_pattern(
     rf"""
     (<form(?![-.:\w])(?:"[^"]*"|'[^']*'|\{{[^}}]*\}}|[^'">{{}}])*?
-     (?<![-.:\w])method\s*=\s*(["'])?)
+     {_ATTRIBUTE_START}method\s*=\s*(["'])?)
     ([a-z]+)
     ((?(2)\2|(?=\s|/?>)))
     (?!{_TRIMS_BEFORE})
