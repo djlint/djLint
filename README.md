@@ -14,7 +14,7 @@
    </a>
 </p>
 
-<h4 align="center"><a href="https://djlint.com">How to use</a> • <a href="https://djlint.com/ru/">Как пользоваться</a> • <a href="https://djlint.com/fr/">Utilisation</a> • <a href="https://djlint.com/zh/">如何使用</a></h4>
+<h4 align="center">How to use: <a href="https://djlint.com/">English</a> • <a href="https://djlint.com/zh/">简体中文</a> • <a href="https://djlint.com/ja/">日本語</a> • <a href="https://djlint.com/es/">Español</a> • <a href="https://djlint.com/pt-br/">Português (Brasil)</a> • <a href="https://djlint.com/ru/">Русский</a> • <a href="https://djlint.com/ko/">한국어</a> • <a href="https://djlint.com/fr/">Français</a> • <a href="https://djlint.com/de/">Deutsch</a> • <a href="https://djlint.com/zh-tw/">繁體中文</a> • <a href="https://djlint.com/it/">Italiano</a> • <a href="https://djlint.com/pl/">Polski</a> • <a href="https://djlint.com/cs/">Čeština</a> • <a href="https://djlint.com/tr/">Türkçe</a></h4>
 <h4 align="center">What lang are you using?</h4>
 
 <p align="center">
@@ -23,7 +23,7 @@
 
 ## 🤔 For What?
 
-Every language in your stack has a formatter and a linter. HTML templates are the exception. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
+Every language in your stack has a formatter and a linter, except HTML templates. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
 
 djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more.
 
@@ -114,7 +114,7 @@ Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/for
 brew install djlint
 ```
 
-_Or with npm - **warning**: the npm package is only a wrapper, its install script runs `pip install --upgrade djlint` on whatever `python3` is on your system path. npm will not manage or uninstall the actual package - prefer pip directly when possible._
+_Or with npm. **Warning**: the npm package is only a wrapper. Its install script runs pip on whatever `python3` is on your system path and installs the djLint version of that npm release, which can replace a newer djLint with an older one. npm will not manage or uninstall the actual package, so prefer pip when you can._
 
 ```bash
 npm i djlint

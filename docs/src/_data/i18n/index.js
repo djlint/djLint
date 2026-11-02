@@ -11,6 +11,9 @@ module.exports = {
     de: "Hallo",
     "zh-tw": "你好",
     it: "Ciao",
+    pl: "Cześć",
+    cs: "Ahoj",
+    tr: "Merhaba",
   },
   title: {
     "en-US": "HTML Template Linter and Formatter",
@@ -24,6 +27,9 @@ module.exports = {
     de: "Linter und Formatter für HTML-Templates",
     "zh-tw": "HTML 範本 Linter 與格式化工具",
     it: "Linter e formattatore per template HTML",
+    pl: "Linter i formater szablonów HTML",
+    cs: "Linter a formátovač HTML šablon",
+    tr: "HTML Şablonları için Linter ve Biçimlendirici",
   },
   lang_code_url: {
     "en-US": "",
@@ -37,6 +43,9 @@ module.exports = {
     de: "/de",
     "zh-tw": "/zh-tw",
     it: "/it",
+    pl: "/pl",
+    cs: "/cs",
+    tr: "/tr",
   },
   since: {
     "en-US": "since",
@@ -50,6 +59,9 @@ module.exports = {
     de: "seit",
     "zh-tw": "始於",
     it: "dalla",
+    pl: "od wersji",
+    cs: "od verze",
+    tr: "eklendiği sürüm:",
   },
   next_release: {
     "en-US": "Next Release",
@@ -63,6 +75,9 @@ module.exports = {
     de: "Nächstes Release",
     "zh-tw": "下一個版本",
     it: "Prossima release",
+    pl: "Następne wydanie",
+    cs: "Příští verze",
+    tr: "Sonraki Sürüm",
   },
   getting_started: {
     "en-US": "Getting Started",
@@ -76,6 +91,9 @@ module.exports = {
     de: "Erste Schritte",
     "zh-tw": "開始使用",
     it: "Per iniziare",
+    pl: "Pierwsze kroki",
+    cs: "Začínáme",
+    tr: "Başlarken",
   },
   formatter: {
     "en-US": "Formatter",
@@ -89,6 +107,9 @@ module.exports = {
     de: "Formatter",
     "zh-tw": "格式化工具",
     it: "Formattatore",
+    pl: "Formater",
+    cs: "Formátovač",
+    tr: "Biçimlendirici",
   },
   linter: {
     "en-US": "Linter",
@@ -102,6 +123,9 @@ module.exports = {
     de: "Linter",
     "zh-tw": "Linter",
     it: "Linter",
+    pl: "Linter",
+    cs: "Linter",
+    tr: "Linter",
   },
   configuration: {
     "en-US": "Configuration",
@@ -115,6 +139,9 @@ module.exports = {
     de: "Konfiguration",
     "zh-tw": "設定",
     it: "Configurazione",
+    pl: "Konfiguracja",
+    cs: "Konfigurace",
+    tr: "Yapılandırma",
   },
   integrations: {
     "en-US": "Integrations",
@@ -128,6 +155,9 @@ module.exports = {
     de: "Integrationen",
     "zh-tw": "整合",
     it: "Integrazioni",
+    pl: "Integracje",
+    cs: "Integrace",
+    tr: "Entegrasyonlar",
   },
   python_api: {
     "en-US": "Python API",
@@ -141,6 +171,9 @@ module.exports = {
     de: "Python-API",
     "zh-tw": "Python API",
     it: "API Python",
+    pl: "API Pythona",
+    cs: "Python API",
+    tr: "Python API",
   },
   best_practices: {
     "en-US": "Best Practices",
@@ -154,6 +187,9 @@ module.exports = {
     de: "Best Practices",
     "zh-tw": "最佳做法",
     it: "Buone pratiche",
+    pl: "Dobre praktyki",
+    cs: "Osvědčené postupy",
+    tr: "En İyi Uygulamalar",
   },
   description: {
     "en-US":
@@ -170,6 +206,9 @@ module.exports = {
     "zh-tw":
       "找出 HTML 範本中的常見錯誤並重新格式化。支援 Django、Jinja、Twig、Nunjucks、Handlebars、Liquid、Go 範本、Mustache、Tera、Askama 等。",
     it: "Trova gli errori più comuni nei template HTML e riformattali. Supporta Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, template Go, Mustache, Tera, Askama e altri.",
+    pl: "Znajduje typowe błędy w szablonach HTML i formatuje je. Obsługuje Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, szablony Go, Mustache, Tera, Askama i inne.",
+    cs: "Najděte v HTML šablonách běžné chyby a šablony přeformátujte. Podporuje Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, šablony Go, Mustache, Tera, Askama a další.",
+    tr: "HTML şablonlarındaki yaygın hataları bulun ve şablonları yeniden biçimlendirin. Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go şablonları, Mustache, Tera, Askama ve daha fazlasını destekler.",
   },
   updated: {
     "en-US": "Updated",
@@ -183,6 +222,9 @@ module.exports = {
     de: "Aktualisiert",
     "zh-tw": "更新於",
     it: "Aggiornato",
+    pl: "Zaktualizowano",
+    cs: "Aktualizováno",
+    tr: "Son güncelleme:",
   },
   changelog: {
     "en-US": "Changelog",
@@ -196,6 +238,9 @@ module.exports = {
     de: "Changelog",
     "zh-tw": "變更記錄",
     it: "Registro delle modifiche",
+    pl: "Lista zmian",
+    cs: "Seznam změn",
+    tr: "Değişiklik Günlüğü",
   },
   documentation: {
     "en-US": "Documentation",
@@ -209,6 +254,9 @@ module.exports = {
     de: "Dokumentation",
     "zh-tw": "說明文件",
     it: "Documentazione",
+    pl: "Dokumentacja",
+    cs: "Dokumentace",
+    tr: "Belgeler",
   },
   index_title: {
     "en-US": "Lint & Format HTML Templates",
@@ -222,6 +270,9 @@ module.exports = {
     de: "HTML-Templates linten und formatieren",
     "zh-tw": "Lint 與格式化 HTML 範本",
     it: "Analizza e formatta i template HTML",
+    pl: "Lintowanie i formatowanie szablonów HTML",
+    cs: "Lintování a formátování HTML šablon",
+    tr: "HTML Şablonlarını Denetleyin ve Biçimlendirin",
   },
   index_description: {
     "en-US":
@@ -238,6 +289,9 @@ module.exports = {
     "zh-tw":
       "除了 HTML 範本以外，你技術堆疊裡的每種語言都有格式化工具和 linter。一般的 HTML 工具無法解析 <code>{% %}</code> 和 <code>&#123;&#123; &#125;&#125;</code>，而範本引擎也不在乎周圍的標記長什麼樣子。djLint 會重新格式化充滿範本語法的 HTML、透過 lint 找出常見錯誤，並提供 Django、Jinja、Twig、Nunjucks、Handlebars、Liquid、Go 範本等語言的 profile。",
     it: "Ogni linguaggio del tuo stack ha un formattatore e un linter, tranne i template HTML. Gli strumenti HTML generici non sanno interpretare <code>{% %}</code> e <code>&#123;&#123; &#125;&#125;</code>, e ai motori di template non importa che aspetto abbia il markup che li circonda. djLint riformatta l'HTML ricco di sintassi di template e lo analizza alla ricerca degli errori più comuni, con profili per Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, template Go e altri ancora.",
+    pl: "Każdy język w twoim stosie technologicznym ma formater i linter, poza szablonami HTML. Zwykłe narzędzia do HTML-a nie potrafią przetworzyć <code>{% %}</code> ani <code>&#123;&#123; &#125;&#125;</code>, a silnikom szablonów jest obojętne, jak wyglądają otaczające je znaczniki. djLint formatuje HTML pełen składni szablonów i wyszukuje w nim typowe błędy. Ma profile dla Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, szablonów Go i innych.",
+    cs: "Každý jazyk ve vašem stacku má svůj formátovač a linter, kromě HTML šablon. Obecné nástroje pro HTML neumí zpracovat <code>{% %}</code> a <code>&#123;&#123; &#125;&#125;</code> a šablonovacím systémům je jedno, jak vypadá značkování kolem nich. djLint přeformátuje HTML plné šablonové syntaxe a zkontroluje v něm běžné chyby, s profily pro Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, šablony Go a další.",
+    tr: "HTML şablonları dışında, kullandığınız teknoloji yığınındaki her dilin bir biçimlendiricisi ve bir linter'ı var. Genel HTML araçları <code>{% %}</code> ve <code>&#123;&#123; &#125;&#125;</code> yapılarını ayrıştıramaz, şablon motorları da çevrelerindeki işaretlemenin nasıl göründüğüyle ilgilenmez. djLint, şablon sözdizimiyle dolu HTML'i yeniden biçimlendirir ve yaygın hatalara karşı denetler. Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go şablonları ve daha fazlası için profiller sunar.",
   },
   index_fav_lang: {
     "en-US": "find your favorite template language!",
@@ -251,6 +305,9 @@ module.exports = {
     de: "finden Sie Ihre Lieblings-Template-Sprache!",
     "zh-tw": "找到你最愛的範本語言！",
     it: "trova il tuo linguaggio di template preferito!",
+    pl: "znajdź swój ulubiony język szablonów!",
+    cs: "najděte svůj oblíbený šablonovací jazyk!",
+    tr: "en sevdiğiniz şablon dilini bulun!",
   },
   index_show_format: {
     "en-US": "Show your format!",
@@ -264,6 +321,9 @@ module.exports = {
     de: "Zeigen Sie Ihr Format!",
     "zh-tw": "秀出你的格式！",
     it: "Mostra il tuo formato!",
+    pl: "Pochwal się formatowaniem!",
+    cs: "Pochlubte se formátováním!",
+    tr: "Biçiminizi gösterin!",
   },
   index_before_after: {
     "en-US": "Before and after",
@@ -277,6 +337,9 @@ module.exports = {
     de: "Vorher und nachher",
     "zh-tw": "格式化前後",
     it: "Prima e dopo",
+    pl: "Przed i po",
+    cs: "Před a po",
+    tr: "Önce ve sonra",
   },
   index_add_badge: {
     "en-US": "Add a badge to your projects",
@@ -290,6 +353,9 @@ module.exports = {
     de: "Fügen Sie Ihren Projekten ein Badge hinzu",
     "zh-tw": "為你的專案加上徽章",
     it: "Aggiungi un badge ai tuoi progetti",
+    pl: "Dodaj odznakę do swoich projektów",
+    cs: "Přidejte do svých projektů odznak",
+    tr: "Projelerinize bir rozet ekleyin",
   },
   index_looks_like: {
     "en-US": "Looks like this:",
@@ -303,6 +369,9 @@ module.exports = {
     de: "So sieht es aus:",
     "zh-tw": "看起來像這樣：",
     it: "Ecco come appare:",
+    pl: "Wygląda to tak:",
+    cs: "Vypadá takto:",
+    tr: "Şöyle görünür:",
   },
   contributing: {
     "en-US": "Contributing",
@@ -316,6 +385,9 @@ module.exports = {
     de: "Mitwirken",
     "zh-tw": "參與貢獻",
     it: "Contribuire",
+    pl: "Współtworzenie",
+    cs: "Přispívání",
+    tr: "Katkıda Bulunma",
   },
   contributing_message: {
     "en-US":
@@ -332,6 +404,9 @@ module.exports = {
     "zh-tw":
       '歡迎參與貢獻。你可以提交帶有新功能的 pr，或查看 <a href="https://github.com/djlint/djlint/issues">issue</a> 清單，在力所能及的地方幫忙。',
     it: 'I contributi sono benvenuti. Invia una pr con una nuova funzionalità, oppure consulta l\'elenco delle <a href="https://github.com/djlint/djlint/issues">issue</a> e dai una mano dove puoi.',
+    pl: 'Wkład w projekt jest mile widziany. Wyślij pull request z nową funkcją albo przejrzyj listę <a href="https://github.com/djlint/djlint/issues">zgłoszeń</a> i pomóż, gdzie możesz.',
+    cs: 'Příspěvky jsou vítány. Pošlete pull request s novou funkcí nebo si projděte seznam <a href="https://github.com/djlint/djlint/issues">issues</a> a pomozte, kde můžete.',
+    tr: 'Katkılara açığız. Yeni bir özellik içeren bir pr gönderin ya da <a href="https://github.com/djlint/djlint/issues">issue</a> listesine göz atıp elinizden geldiğince yardım edin.',
   },
   edit_page: {
     "en-US": "Edit this page",
@@ -345,6 +420,9 @@ module.exports = {
     de: "Diese Seite bearbeiten",
     "zh-tw": "編輯此頁面",
     it: "Modifica questa pagina",
+    pl: "Edytuj tę stronę",
+    cs: "Upravit tuto stránku",
+    tr: "Bu sayfayı düzenle",
   },
   copy: {
     "en-US": "Copy",
@@ -358,6 +436,9 @@ module.exports = {
     de: "Kopieren",
     "zh-tw": "複製",
     it: "Copia",
+    pl: "Kopiuj",
+    cs: "Kopírovat",
+    tr: "Kopyala",
   },
   copied: {
     "en-US": "Copied",
@@ -371,6 +452,9 @@ module.exports = {
     de: "Kopiert",
     "zh-tw": "已複製",
     it: "Copiato",
+    pl: "Skopiowano",
+    cs: "Zkopírováno",
+    tr: "Kopyalandı",
   },
   copy_failed: {
     "en-US": "Could not copy. Select the text and copy it instead.",
@@ -384,6 +468,9 @@ module.exports = {
     de: "Kopieren nicht möglich. Markieren Sie den Text und kopieren Sie ihn selbst.",
     "zh-tw": "無法複製。請改為選取文字後再複製。",
     it: "Impossibile copiare. Seleziona il testo e copialo manualmente.",
+    pl: "Nie udało się skopiować. Zaznacz tekst i skopiuj go ręcznie.",
+    cs: "Kopírování se nezdařilo. Vyberte text a zkopírujte ho ručně.",
+    tr: "Kopyalanamadı. Bunun yerine metni seçip kopyalayın.",
   },
   on_this_page: {
     "en-US": "On this page",
@@ -397,6 +484,9 @@ module.exports = {
     de: "Auf dieser Seite",
     "zh-tw": "本頁內容",
     it: "In questa pagina",
+    pl: "Na tej stronie",
+    cs: "Na této stránce",
+    tr: "Bu sayfada",
   },
   ignoring_code: {
     "en-US": "Ignoring Code",
@@ -410,6 +500,9 @@ module.exports = {
     de: "Code ignorieren",
     "zh-tw": "忽略程式碼",
     it: "Ignorare il codice",
+    pl: "Ignorowanie kodu",
+    cs: "Ignorování kódu",
+    tr: "Kodu Yok Sayma",
   },
   try_online: {
     "en-US": "🤩 Try Online",
@@ -423,6 +516,9 @@ module.exports = {
     de: "🤩 Online ausprobieren",
     "zh-tw": "🤩 線上試用",
     it: "🤩 Provalo online",
+    pl: "🤩 Wypróbuj online",
+    cs: "🤩 Vyzkoušet online",
+    tr: "🤩 Çevrimiçi Deneyin",
   },
   demo_description: {
     "en-US": "Format HTML templates in your browser with djLint.",
@@ -436,6 +532,9 @@ module.exports = {
     de: "Formatieren Sie HTML-Templates im Browser mit djLint.",
     "zh-tw": "使用 djLint 在瀏覽器中格式化 HTML 範本。",
     it: "Formatta i template HTML nel browser con djLint.",
+    pl: "Formatuj szablony HTML w przeglądarce za pomocą djLint.",
+    cs: "Formátujte HTML šablony v prohlížeči pomocí djLint.",
+    tr: "djLint ile HTML şablonlarını tarayıcınızda biçimlendirin.",
   },
   demo_loading: {
     "en-US": "Loading djLint ..",
@@ -449,6 +548,9 @@ module.exports = {
     de: "djLint wird geladen …",
     "zh-tw": "正在載入 djLint…",
     it: "Caricamento di djLint ..",
+    pl: "Wczytywanie djLint…",
+    cs: "Načítání djLint…",
+    tr: "djLint yükleniyor ..",
   },
   footer_credits: {
     "en-US":
@@ -465,6 +567,9 @@ module.exports = {
     "zh-tw":
       'djLint 最初是由 <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a> 團隊為 <a href="https://atlas.bi" target="_blank">Atlas</a> 專案所打造。',
     it: 'djLint è stato creato originariamente per i progetti <a href="https://atlas.bi" target="_blank">Atlas</a> dal team <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a>.',
+    pl: 'djLint został pierwotnie stworzony przez zespół <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a> na potrzeby projektów <a href="https://atlas.bi" target="_blank">Atlas</a>.',
+    cs: 'djLint byl původně vytvořen pro projekty <a href="https://atlas.bi" target="_blank">Atlas</a> týmem <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a>.',
+    tr: 'djLint ilk olarak <a href="https://github.com/djlint/" target="_blank">Riverside Healthcare Analytics</a> ekibi tarafından <a href="https://atlas.bi" target="_blank">Atlas</a> projelerinde kullanılmak üzere geliştirildi.',
   },
   site_analytics: {
     "en-US": "Site Analytics",
@@ -478,5 +583,8 @@ module.exports = {
     de: "Website-Analyse",
     "zh-tw": "網站分析",
     it: "Statistiche del sito",
+    pl: "Statystyki witryny",
+    cs: "Analytika webu",
+    tr: "Site Analitiği",
   },
 };

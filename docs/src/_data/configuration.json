@@ -13,7 +13,10 @@
       "fr": "Renvoyer les erreurs sous forme d'avertissements.",
       "de": "Gibt Fehler als Warnungen zurück.",
       "zh-tw": "將錯誤以警告的形式傳回。",
-      "it": "Restituisce gli errori come avvisi."
+      "it": "Restituisce gli errori come avvisi.",
+      "pl": "Zgłasza błędy jako ostrzeżenia.",
+      "cs": "Vracet chyby jako varování.",
+      "tr": "Hataları uyarı olarak döndürür."
     },
     "usage": [{ "name": "cli", "value": "--warn" }],
     "tags": ["formatter", "linter"]
@@ -32,7 +35,10 @@
       "fr": "Afficher la version et quitter.",
       "de": "Zeigt die Version an und beendet das Programm.",
       "zh-tw": "顯示版本並結束。",
-      "it": "Mostra la versione ed esce."
+      "it": "Mostra la versione ed esce.",
+      "pl": "Wyświetla wersję i kończy działanie.",
+      "cs": "Zobrazit verzi a skončit.",
+      "tr": "Sürümü gösterir ve çıkar."
     },
     "usage": [{ "name": "cli", "value": "--version" }],
     "tags": ["formatter", "linter"]
@@ -51,7 +57,10 @@
       "fr": "Ne pas afficher le diff lors du reformatage.",
       "de": "Gibt beim Neuformatieren keinen Diff aus.",
       "zh-tw": "重新格式化時不要印出 diff。",
-      "it": "Non stampa il diff durante la riformattazione."
+      "it": "Non stampa il diff durante la riformattazione.",
+      "pl": "Nie wypisuje diffu podczas przeformatowywania.",
+      "cs": "Při přeformátování nevypisovat diff.",
+      "tr": "Yeniden biçimlendirirken diff yazdırmaz."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "quiet=true" },
@@ -74,7 +83,10 @@
       "fr": "Réduire les lignes vides consécutives à x lignes au plus. La valeur par défaut est 0, ce qui signifie que les lignes vides sont supprimées.",
       "de": "Fasst Leerzeilen auf höchstens x Zeilen zusammen. Standard ist 0, das heißt, Leerzeilen werden entfernt.",
       "zh-tw": "將連續的空白行合併為最多 x 行。預設值為 0，表示會移除空白行。",
-      "it": "Riduce le righe vuote consecutive a x righe. Il valore predefinito è 0, il che significa che le righe vuote vengono rimosse."
+      "it": "Riduce le righe vuote consecutive a x righe. Il valore predefinito è 0, il che significa che le righe vuote vengono rimosse.",
+      "pl": "Ogranicza ciągi pustych wierszy do x wierszy. Domyślnie 0, co oznacza, że puste wiersze są usuwane.",
+      "cs": "Sloučit prázdné řádky na nejvýše x řádků. Výchozí hodnota je 0, což znamená, že se prázdné řádky odstraní.",
+      "tr": "Boş satırları en fazla x satıra indirir. Varsayılan değer 0'dır; bu, boş satırların kaldırılacağı anlamına gelir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "max_blank_lines=5" },
@@ -97,7 +109,10 @@
       "fr": "Ne pas tenter de formater le contenu des balises `{% set %}`.",
       "de": "Versucht nicht, den Inhalt von `{% set %}`-Tags zu formatieren.",
       "zh-tw": "不要嘗試格式化 `{% set %}` 標籤的內容。",
-      "it": "Non tenta di formattare il contenuto dei tag `{% set %}`."
+      "it": "Non tenta di formattare il contenuto dei tag `{% set %}`.",
+      "pl": "Nie próbuje formatować zawartości tagów `{% set %}`.",
+      "cs": "Nepokoušet se formátovat obsah značek `{% set %}`.",
+      "tr": "`{% set %}` etiketlerinin içeriğini biçimlendirmeye çalışmaz."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_set_formatting=true" },
@@ -120,7 +135,10 @@
       "fr": "Ne pas tenter de formater les arguments des appels de fonction à l'intérieur des expressions `{{ }}`.",
       "de": "Versucht nicht, die Argumente von Funktionsaufrufen in `{{ }}`-Ausdrücken zu formatieren.",
       "zh-tw": "不要嘗試格式化 `{{ }}` 運算式內函式呼叫的引數。",
-      "it": "Non tenta di formattare gli argomenti delle chiamate di funzione all'interno delle espressioni `{{ }}`."
+      "it": "Non tenta di formattare gli argomenti delle chiamate di funzione all'interno delle espressioni `{{ }}`.",
+      "pl": "Nie próbuje formatować argumentów wywołań funkcji wewnątrz wyrażeń `{{ }}`.",
+      "cs": "Nepokoušet se formátovat argumenty volání funkcí uvnitř výrazů `{{ }}`.",
+      "tr": "`{{ }}` ifadelerinin içindeki işlev çağrılarının argümanlarını biçimlendirmeye çalışmaz."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_function_formatting=true" },
@@ -143,7 +161,10 @@
       "fr": "Guillemets à utiliser pour les chaînes à l'intérieur des balises de template : `double` (par défaut) ou `single`. `T002` exige les mêmes guillemets. Le formateur les utilise aussi dans une condition, comme `{% if x == \"a\" %}`, pour qu'un même fichier n'écrive pas la même chaîne des deux façons. Les guillemets des attributs HTML relèvent de `H008`.",
       "de": "Anführungszeichen für Strings innerhalb von Template-Tags, entweder `double` (Standard) oder `single`. `T002` verlangt dieselben Anführungszeichen. Der Formatter verwendet sie auch in einer Bedingung wie `{% if x == \"a\" %}`, damit eine Datei denselben String nicht auf beide Arten schreibt. Die Anführungszeichen von HTML-Attributen sind Sache von `H008`.",
       "zh-tw": "範本標籤內字串所使用的引號，可以是 `double`（預設值）或 `single`。`T002` 會要求使用相同的引號。格式化工具在條件判斷中也會使用它們，例如 `{% if x == \"a\" %}`，因此同一個檔案不會以兩種寫法拼寫同一個字串。HTML 屬性的引號則交由 `H008` 處理。",
-      "it": "Virgolette da usare per le stringhe all'interno dei tag di template: `double` (il valore predefinito) o `single`. `T002` richiede le stesse virgolette. Il formattatore le usa anche in una condizione, come `{% if x == \"a\" %}`, così in uno stesso file la stessa stringa non viene scritta in due modi. Le virgolette degli attributi HTML sono lasciate a `H008`."
+      "it": "Virgolette da usare per le stringhe all'interno dei tag di template: `double` (il valore predefinito) o `single`. `T002` richiede le stesse virgolette. Il formattatore le usa anche in una condizione, come `{% if x == \"a\" %}`, così in uno stesso file la stessa stringa non viene scritta in due modi. Le virgolette degli attributi HTML sono lasciate a `H008`.",
+      "pl": "Cudzysłowy używane dla ciągów znaków wewnątrz tagów szablonu: `double` (domyślnie) lub `single`. `T002` wymaga tych samych cudzysłowów. Formater stosuje je również w warunkach, takich jak `{% if x == \"a\" %}`, aby w jednym pliku ten sam ciąg znaków nie był zapisywany na dwa sposoby. Cudzysłowy atrybutów HTML pozostawia się regule `H008`.",
+      "cs": "Uvozovky pro řetězce uvnitř šablonových značek, buď `double` (výchozí), nebo `single`. `T002` vyžaduje tytéž uvozovky. Formátovač je používá i v podmínce, například `{% if x == \"a\" %}`, aby jeden soubor nezapisoval stejný řetězec oběma způsoby. Uvozovky HTML atributů má na starosti `H008`.",
+      "tr": "Şablon etiketlerinin içindeki dizeler için kullanılacak tırnaklar: `double` (varsayılan) ya da `single`. `T002` aynı tırnakları ister. Biçimlendirici bunları `{% if x == \"a\" %}` gibi bir koşulda da kullanır; böylece bir dosyada aynı dize iki farklı şekilde yazılmaz. HTML öznitelik tırnakları `H008` kuralına bırakılır."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "quote_style=\"single\"" },
@@ -166,7 +187,10 @@
       "fr": "Garder `<br>` sur la ligne du texte qu'il coupe, plutôt que de lui donner une ligne à part. `<hr>`, qui s'affiche comme un filet sous le contenu qui le précède, n'est pas concerné.",
       "de": "Belässt `<br>` in der Zeile des Textes, den es umbricht, statt ihm eine eigene Zeile zu geben. `<hr>`, das als Linie unter dem vorangehenden Inhalt gerendert wird, ist davon nicht betroffen.",
       "zh-tw": "讓 `<br>` 留在它所斷開的文字那一行，而不是讓它獨佔一行。渲染為前面內容下方一條橫線的 `<hr>` 不受影響。",
-      "it": "Mantiene `<br>` sulla riga del testo che interrompe, invece di metterlo su una riga a sé. `<hr>`, che viene reso come una linea sotto il contenuto che lo precede, non è interessato."
+      "it": "Mantiene `<br>` sulla riga del testo che interrompe, invece di metterlo su una riga a sé. `<hr>`, che viene reso come una linea sotto il contenuto che lo precede, non è interessato.",
+      "pl": "Zostawia `<br>` w wierszu tekstu, który dzieli, zamiast przenosić go do osobnego wiersza. Nie dotyczy to `<hr>`, który renderuje się jako linia pod poprzedzającą treścią.",
+      "cs": "Ponechat `<br>` na řádku textu, který zalamuje, a nedávat mu vlastní řádek. Na `<hr>`, které se vykresluje jako čára pod předchozím obsahem, to nemá vliv.",
+      "tr": "`<br>` etiketine kendi satırını vermek yerine onu böldüğü metnin satırında tutar. Önceki içeriğin altında bir çizgi olarak görüntülenen `<hr>` bundan etkilenmez."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "keep_br_inline=true" },
@@ -189,7 +213,10 @@
       "fr": "Ne pas réécrire une référence d'entité sous la forme du caractère qu'elle désigne : `&copy;` reste tel qu'il est écrit au lieu de devenir `©`. Les entités porteuses de syntaxe, et les entités invisibles, ne sont de toute façon jamais réécrites. `H023` signale tout de même une entité avec cette option ; ajoutez `H023` à `ignore` pour conserver les entités.",
       "de": "Ersetzt eine Entity-Referenz nicht durch das Zeichen, das sie bezeichnet, sodass `&copy;` so bleibt, wie es geschrieben ist, statt zu `©` zu werden. Die Entities, die Syntax tragen, und die unsichtbaren werden ohnehin nie ersetzt. `H023` meldet eine Entity auch mit dieser Option; fügen Sie `H023` zu `ignore` hinzu, um Entities zu behalten.",
       "zh-tw": "不要將字元實體參照改寫為它所代表的字元，因此 `&copy;` 會保持原樣，而不會變成 `©`。帶有語法作用的實體以及不可見字元的實體，無論如何都不會被改寫。在此選項下 `H023` 仍會回報實體；若要保留實體，請將 `H023` 加入 `ignore`。",
-      "it": "Non riscrive un riferimento a entità come il carattere che indica, quindi `&copy;` resta com'è scritto invece di diventare `©`. Le entità con un ruolo sintattico e quelle invisibili non vengono mai riscritte in nessun caso. Con questa opzione `H023` continua a segnalare le entità; aggiungi `H023` a `ignore` per mantenere le entità."
+      "it": "Non riscrive un riferimento a entità come il carattere che indica, quindi `&copy;` resta com'è scritto invece di diventare `©`. Le entità con un ruolo sintattico e quelle invisibili non vengono mai riscritte in nessun caso. Con questa opzione `H023` continua a segnalare le entità; aggiungi `H023` a `ignore` per mantenere le entità.",
+      "pl": "Nie zamienia odwołania do encji na znak, który ono oznacza, więc `&copy;` pozostaje w zapisanej postaci, zamiast stać się `©`. Encje niosące składnię oraz encje niewidoczne i tak nigdy nie są zamieniane. `H023` nadal zgłasza encje przy tej opcji; aby zachować encje, dodaj `H023` do `ignore`.",
+      "cs": "Nepřepisovat znakovou entitu na znak, který označuje, takže `&copy;` zůstane tak, jak je zapsané, a nezmění se na `©`. Entity, které nesou syntaxi, a neviditelné entity se nepřepisují v žádném případě. `H023` entitu i s touto možností stále hlásí; chcete-li entity zachovat, přidejte `H023` do `ignore`.",
+      "tr": "Bir varlık başvurusunu adlandırdığı karakter olarak yeniden yazmaz; böylece `&copy;`, `©` olmak yerine yazıldığı gibi bırakılır. Sözdizimi taşıyan varlıklar ve görünmez olanlar her iki durumda da hiçbir zaman yeniden yazılmaz. Bu seçenekle `H023` bir varlığı yine de bildirir; varlıkları korumak için `ignore` listesine `H023` ekleyin."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_entity_formatting=true" },
@@ -212,7 +239,10 @@
       "fr": "Ne pas ajouter de ligne vide après le front matter yaml.",
       "de": "Fügt nach YAML-Front-Matter keine Leerzeile ein.",
       "zh-tw": "不要在 yaml front matter 之後加上空白行。",
-      "it": "Non aggiunge una riga vuota dopo il front matter yaml."
+      "it": "Non aggiunge una riga vuota dopo il front matter yaml.",
+      "pl": "Nie dodaje pustego wiersza po front matter w yaml.",
+      "cs": "Nepřidávat za yaml front matter prázdný řádek.",
+      "tr": "yaml ön bilgisinden (front matter) sonra boş satır eklemez."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_line_after_yaml=true" },
@@ -235,7 +265,10 @@
       "fr": "Ajouter une marque de fermeture aux balises vides connues, si bien que `<img>` devient `<img />`. `H018`, qui demande l'inverse, n'est pas signalée avec cette option.",
       "de": "Versieht bekannte Void-Tags mit einem schließenden Zeichen, sodass aus `<img>` `<img />` wird. `H018`, das das Gegenteil verlangt, wird mit dieser Option nicht gemeldet.",
       "zh-tw": "為已知的空元素標籤加上結尾標記，讓 `<img>` 變成 `<img />`。在此選項下，要求相反寫法的 `H018` 不會被回報。",
-      "it": "Aggiunge un segno di chiusura ai tag void noti, così `<img>` diventa `<img />`. Con questa opzione non viene segnalata `H018`, che chiede il contrario."
+      "it": "Aggiunge un segno di chiusura ai tag void noti, così `<img>` diventa `<img />`. Con questa opzione non viene segnalata `H018`, che chiede il contrario.",
+      "pl": "Dodaje znak zamykający do znanych tagów void, dzięki czemu `<img>` staje się `<img />`. Przy tej opcji nie jest zgłaszana reguła `H018`, która wymaga czegoś odwrotnego.",
+      "cs": "Přidat ke známým nepárovým značkám uzavírací znak, takže z `<img>` se stane `<img />`. `H018`, které požaduje opak, se s touto možností nehlásí.",
+      "tr": "Bilinen void etiketlere bir kapanış işareti ekler; böylece `<img>`, `<img />` olur. Bunun tersini isteyen `H018` bu seçenekle bildirilmez."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "close_void_tags=true" },
@@ -258,7 +291,10 @@
       "fr": "Codes du linter à ignorer.",
       "de": "Ignoriert Linter-Codes.",
       "zh-tw": "忽略 linter 代碼。",
-      "it": "Ignora i codici del linter."
+      "it": "Ignora i codici del linter.",
+      "pl": "Ignoruje kody lintera.",
+      "cs": "Ignorovat kódy linteru.",
+      "tr": "Linter kodlarını yok sayar."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "ignore=\"H014,H015\"" },
@@ -281,7 +317,10 @@
       "fr": "Codes du linter à inclure.",
       "de": "Schließt Linter-Codes ein.",
       "zh-tw": "納入 linter 代碼。",
-      "it": "Include i codici del linter."
+      "it": "Include i codici del linter.",
+      "pl": "Dołącza kody lintera.",
+      "cs": "Zahrnout kódy linteru.",
+      "tr": "Linter kodlarını dahil eder."
     },
     "tags": ["linter"],
     "usage": [
@@ -304,7 +343,10 @@
       "fr": "Permet de ne rechercher que les fichiers ayant une extension donnée.",
       "de": "Sucht nur nach Dateien mit einer bestimmten Endung.",
       "zh-tw": "用來只尋找具有特定副檔名的檔案。",
-      "it": "Serve a cercare solo i file con una specifica estensione."
+      "it": "Serve a cercare solo i file con una specifica estensione.",
+      "pl": "Pozwala wyszukiwać tylko pliki z określonym rozszerzeniem.",
+      "cs": "Slouží k vyhledání jen souborů s konkrétní příponou.",
+      "tr": "Yalnızca belirli bir uzantıya sahip dosyaları bulmak için kullanılır."
     },
     "tags": ["linter", "formatter"],
     "usage": [
@@ -327,7 +369,10 @@
       "fr": "Permet d'indenter des blocs de code personnalisés. Par exemple `{% toc %}...{% endtoc %}`.",
       "de": "Rückt eigene Codeblöcke ein. Zum Beispiel `{% toc %}...{% endtoc %}`.",
       "zh-tw": "用來縮排自訂的程式碼區塊。例如 `{% toc %}...{% endtoc %}`。",
-      "it": "Serve a indentare blocchi di codice personalizzati. Ad esempio `{% toc %}...{% endtoc %}`."
+      "it": "Serve a indentare blocchi di codice personalizzati. Ad esempio `{% toc %}...{% endtoc %}`.",
+      "pl": "Pozwala wcinać własne bloki kodu. Na przykład `{% toc %}...{% endtoc %}`.",
+      "cs": "Slouží k odsazení vlastních bloků kódu. Například `{% toc %}...{% endtoc %}`.",
+      "tr": "Özel kod bloklarını girintilemek için kullanılır. Örneğin `{% toc %}...{% endtoc %}`."
     },
     "tags": ["formatter"],
     "usage": [
@@ -350,7 +395,10 @@
       "fr": "Permet de ne pas indenter les enfants de certaines balises de template. Les enfants sont traités comme des frères et indentés en conséquence.",
       "de": "Überspringt die Einrückung der Kinder von Template-Tags. Die Kinder werden als Geschwister behandelt und entsprechend eingerückt.",
       "zh-tw": "用來略過範本標籤子元素的縮排。子元素會被當成同層元素，並依此縮排。",
-      "it": "Serve a saltare l'indentazione dei figli dei tag di template. I figli vengono trattati come fratelli e indentati di conseguenza."
+      "it": "Serve a saltare l'indentazione dei figli dei tag di template. I figli vengono trattati come fratelli e indentati di conseguenza.",
+      "pl": "Pomija wcinanie elementów potomnych tagów szablonu. Elementy potomne są traktowane jak elementy równorzędne i odpowiednio do tego wcinane.",
+      "cs": "Slouží k vynechání odsazení potomků šablonových značek. Potomci se budou považovat za sourozence a podle toho se odsadí.",
+      "tr": "Şablon etiketlerinin alt öğelerinde girintilemeyi atlamak için kullanılır. Alt öğeler kardeş öğe olarak ele alınır ve buna göre girintilenir."
     },
     "tags": ["formatter"],
     "usage": [
@@ -373,7 +421,10 @@
       "fr": "Permet d'indenter des balises HTML personnalisées. Par exemple `<mjml>`, `<simple-greeting>` ou `<mj-\\w+>`",
       "de": "Rückt eigene HTML-Tags ein. Zum Beispiel `<mjml>` oder `<simple-greeting>` oder `<mj-\\w+>`",
       "zh-tw": "用來縮排自訂的 HTML 標籤。例如 `<mjml>`、`<simple-greeting>` 或 `<mj-\\w+>`",
-      "it": "Serve a indentare tag HTML personalizzati. Ad esempio `<mjml>` o `<simple-greeting>` o `<mj-\\w+>`"
+      "it": "Serve a indentare tag HTML personalizzati. Ad esempio `<mjml>` o `<simple-greeting>` o `<mj-\\w+>`",
+      "pl": "Pozwala wcinać własne tagi HTML. Na przykład `<mjml>`, `<simple-greeting>` lub `<mj-\\w+>`",
+      "cs": "Slouží k odsazení vlastních HTML značek. Například `<mjml>` nebo `<simple-greeting>` nebo `<mj-\\w+>`",
+      "tr": "Özel HTML etiketlerini girintilemek için kullanılır. Örneğin `<mjml>`, `<simple-greeting>` ya da `<mj-\\w+>`"
     },
     "tags": ["formatter"],
     "usage": [
@@ -397,7 +448,10 @@
       "fr": "Permet de modifier l'indentation du code. La valeur par défaut est 4 (quatre espaces), ou l'`indent_size` d'un `.editorconfig` situé à la racine du projet.",
       "de": "Ändert die Einrückung des Codes. Standard ist 4 (vier Leerzeichen) oder die `indent_size` einer `.editorconfig` im Projektstamm.",
       "zh-tw": "用來變更程式碼的縮排。預設值為 4（四個空格），或專案根目錄中 `.editorconfig` 的 `indent_size`。",
-      "it": "Serve a cambiare l'indentazione del codice. Il valore predefinito è 4 (quattro spazi), oppure l'`indent_size` di un `.editorconfig` nella radice del progetto."
+      "it": "Serve a cambiare l'indentazione del codice. Il valore predefinito è 4 (quattro spazi), oppure l'`indent_size` di un `.editorconfig` nella radice del progetto.",
+      "pl": "Zmienia wcięcia kodu. Domyślnie 4 (cztery spacje) albo `indent_size` z pliku `.editorconfig` w katalogu głównym projektu.",
+      "cs": "Slouží ke změně odsazení kódu. Výchozí hodnota je 4 (čtyři mezery), nebo `indent_size` ze souboru `.editorconfig` v kořeni projektu.",
+      "tr": "Kod girintisini değiştirmek için kullanılır. Varsayılan değer 4'tür (dört boşluk) ya da proje kökündeki bir `.editorconfig` dosyasının `indent_size` değeridir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "indent=3" },
@@ -420,7 +474,10 @@
       "fr": "Remplacer les chemins exclus par défaut.",
       "de": "Überschreibt die standardmäßig ausgeschlossenen Pfade.",
       "zh-tw": "覆寫預設的排除路徑。",
-      "it": "Sovrascrive i percorsi esclusi predefiniti."
+      "it": "Sovrascrive i percorsi esclusi predefiniti.",
+      "pl": "Nadpisuje domyślne wykluczone ścieżki.",
+      "cs": "Přepsat výchozí vyloučené cesty.",
+      "tr": "Varsayılan hariç tutma yollarını geçersiz kılar."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "exclude=\".venv,venv,.tox,.eggs,...\"" },
@@ -443,7 +500,10 @@
       "fr": "Ajouter des chemins supplémentaires aux exclusions par défaut.",
       "de": "Fügt den standardmäßig ausgeschlossenen Pfaden weitere hinzu.",
       "zh-tw": "在預設的排除路徑之外新增其他路徑。",
-      "it": "Aggiunge altri percorsi a quelli esclusi per impostazione predefinita."
+      "it": "Aggiunge altri percorsi a quelli esclusi per impostazione predefinita.",
+      "pl": "Dodaje kolejne ścieżki do domyślnie wykluczonych.",
+      "cs": "Přidat další cesty k výchozím vyloučeným cestám.",
+      "tr": "Varsayılan hariç tutma listesine ek yollar ekler."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "extend_exclude=\".custom\"" },
@@ -466,7 +526,10 @@
       "fr": "Ajouter une ligne vide supplémentaire après les groupes de balises `{% <tag> ... %}`. Aucune ligne vide n'est jamais ajoutée à la fin d'un bloc.",
       "de": "Fügt nach Gruppen von `{% <tag> ... %}`-Tags eine zusätzliche Leerzeile ein. Am Ende eines Blocks werden nie Leerzeilen eingefügt.",
       "zh-tw": "在 `{% <tag> ... %}` 標籤群組之後額外加上一個空白行。空白行永遠不會被加在區塊的結尾。",
-      "it": "Aggiunge una riga vuota dopo i gruppi di tag `{% <tag> ... %}`. Le righe vuote non vengono mai aggiunte alla fine di un blocco."
+      "it": "Aggiunge una riga vuota dopo i gruppi di tag `{% <tag> ... %}`. Le righe vuote non vengono mai aggiunte alla fine di un blocco.",
+      "pl": "Dodaje dodatkowy pusty wiersz po grupach tagów `{% <tag> ... %}`. Puste wiersze nigdy nie są dodawane na końcu bloku.",
+      "cs": "Přidat další prázdný řádek za skupiny značek `{% <tag> ... %}`. Na konec bloku se prázdné řádky nikdy nepřidají.",
+      "tr": "`{% <tag> ... %}` etiket gruplarından sonra fazladan bir boş satır ekler. Bir bloğun sonuna hiçbir zaman boş satır eklenmez."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "blank_line_after_tag=\"load,extends,include\"" },
@@ -489,7 +552,10 @@
       "fr": "Ajouter une ligne vide supplémentaire avant les groupes de balises `{% <tag> ... %}`. Aucune ligne vide n'est jamais ajoutée au début d'un fichier ou d'un bloc, ni entre des balises similaires.",
       "de": "Fügt vor Gruppen von `{% <tag> ... %}`-Tags eine zusätzliche Leerzeile ein. Am Anfang einer Datei oder eines Blocks und zwischen gleichartigen Tags werden nie Leerzeilen eingefügt.",
       "zh-tw": "在 `{% <tag> ... %}` 標籤群組之前額外加上一個空白行。空白行永遠不會被加在檔案或區塊的開頭，也不會加在相似的標籤之間。",
-      "it": "Aggiunge una riga vuota prima dei gruppi di tag `{% <tag> ... %}`. Le righe vuote non vengono mai aggiunte all'inizio di un file o di un blocco, né tra tag simili."
+      "it": "Aggiunge una riga vuota prima dei gruppi di tag `{% <tag> ... %}`. Le righe vuote non vengono mai aggiunte all'inizio di un file o di un blocco, né tra tag simili.",
+      "pl": "Dodaje dodatkowy pusty wiersz przed grupami tagów `{% <tag> ... %}`. Puste wiersze nigdy nie są dodawane na początku pliku lub bloku ani między podobnymi tagami.",
+      "cs": "Přidat další prázdný řádek před skupiny značek `{% <tag> ... %}`. Na začátek souboru nebo bloku ani mezi podobné značky se prázdné řádky nikdy nepřidají.",
+      "tr": "`{% <tag> ... %}` etiket gruplarından önce fazladan bir boş satır ekler. Dosyanın ya da bir bloğun başına veya benzer etiketlerin arasına hiçbir zaman boş satır eklenmez."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "blank_line_before_tag=\"load,extends,include\"" },
@@ -512,7 +578,10 @@
       "fr": "Ne pas condenser le contenu des balises multilignes sur la ligne du dernier attribut.",
       "de": "Zieht den Inhalt mehrzeiliger Tags nicht in die Zeile des letzten Attributs zusammen.",
       "zh-tw": "不要將多行標籤的內容壓縮到最後一個屬性所在的那一行。",
-      "it": "Non condensa il contenuto dei tag su più righe nella riga dell'ultimo attributo."
+      "it": "Non condensa il contenuto dei tag su più righe nella riga dell'ultimo attributo.",
+      "pl": "Nie zbija zawartości wielowierszowych tagów do wiersza ostatniego atrybutu.",
+      "cs": "Nestahovat obsah víceřádkových značek na řádek posledního atributu.",
+      "tr": "Çok satırlı etiketlerin içeriğini son özniteliğin satırına sıkıştırmaz."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "line_break_after_multiline_tag=true" },
@@ -535,7 +604,10 @@
       "fr": "Définit un profil pour le langage de templates. Le profil active les règles du linter qui s'appliquent à votre langage de templates, et peut aussi modifier le reformatage. Par exemple, en `handlebars`, il n'y a pas d'espaces à l'intérieur des balises `{{#if}}`.\n\nOptions :\n\n:::content\n\n- html (par défaut)\n- django\n- jinja\n- nunjucks (pour nunjucks et twig)\n- handlebars (pour handlebars et mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (templates go ; hugo, helm)\n- angular\n- tera (aussi pour zola ; utilisez jinja pour minijinja)\n- askama (templates de style jinja en rust ; les expressions rust ne sont jamais reformatées)\n  :::",
       "de": "Legt ein Profil für die Template-Sprache fest. Das Profil aktiviert die Linter-Regeln, die für Ihre Template-Sprache gelten, und kann auch das Neuformatieren verändern. In `handlebars` zum Beispiel stehen innerhalb von `{{#if}}`-Tags keine Leerzeichen.\n\nOptionen:\n\n:::content\n\n- html (Standard)\n- django\n- jinja\n- nunjucks (für nunjucks und twig)\n- handlebars (für handlebars und mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (Go-Templates; hugo, helm)\n- angular\n- tera (auch für zola; für minijinja verwenden Sie jinja)\n- askama (Templates im Jinja-Stil in Rust; Rust-Ausdrücke werden nie neu formatiert)\n  :::",
       "zh-tw": "為範本語言設定 profile。profile 會啟用適用於你的範本語言的 linter 規則，也可能改變重新格式化的方式。例如在 `handlebars` 中，`{{#if}}` 標籤內不會有空格。\n\n選項：\n\n:::content\n\n- html（預設值）\n- django\n- jinja\n- nunjucks（用於 nunjucks 和 twig）\n- handlebars（用於 handlebars 和 mustache）\n- liquid（shopify、jekyll、eleventy）\n- golang（go 範本；hugo、helm）\n- angular\n- tera（也適用於 zola；minijinja 請使用 jinja）\n- askama（rust 中的 jinja 風格範本；rust 運算式永遠不會被重新格式化）\n  :::",
-      "it": "Imposta un profilo per il linguaggio di template. Il profilo attiva le regole del linter che si applicano al tuo linguaggio di template e può anche modificare la riformattazione. Ad esempio, in `handlebars` non ci sono spazi all'interno dei tag `{{#if}}`.\n\nOpzioni:\n\n:::content\n\n- html (predefinito)\n- django\n- jinja\n- nunjucks (per nunjucks e twig)\n- handlebars (per handlebars e mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (template go; hugo, helm)\n- angular\n- tera (anche per zola; usa jinja per minijinja)\n- askama (template in stile jinja in rust; le espressioni rust non vengono mai riformattate)\n  :::"
+      "it": "Imposta un profilo per il linguaggio di template. Il profilo attiva le regole del linter che si applicano al tuo linguaggio di template e può anche modificare la riformattazione. Ad esempio, in `handlebars` non ci sono spazi all'interno dei tag `{{#if}}`.\n\nOpzioni:\n\n:::content\n\n- html (predefinito)\n- django\n- jinja\n- nunjucks (per nunjucks e twig)\n- handlebars (per handlebars e mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (template go; hugo, helm)\n- angular\n- tera (anche per zola; usa jinja per minijinja)\n- askama (template in stile jinja in rust; le espressioni rust non vengono mai riformattate)\n  :::",
+      "pl": "Ustawia profil języka szablonów. Profil włącza reguły lintera, które dotyczą twojego języka szablonów, i może też zmienić sposób formatowania. Na przykład w `handlebars` wewnątrz tagów `{{#if}}` nie ma spacji.\n\nOpcje:\n\n:::content\n\n- html (domyślnie)\n- django\n- jinja\n- nunjucks (dla nunjucks i twig)\n- handlebars (dla handlebars i mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (szablony go; hugo, helm)\n- angular\n- tera (także dla zola; dla minijinja użyj jinja)\n- askama (szablony w stylu jinja w rust; wyrażenia rust nigdy nie są formatowane)\n  :::",
+      "cs": "Nastavit profil pro šablonovací jazyk. Profil zapne pravidla linteru, která se vztahují k vašemu šablonovacímu jazyku, a může změnit i přeformátování. Například v `handlebars` nejsou uvnitř značek `{{#if}}` mezery.\n\nMožnosti:\n\n:::content\n\n- html (výchozí)\n- django\n- jinja\n- nunjucks (pro nunjucks a twig)\n- handlebars (pro handlebars a mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (šablony go; hugo, helm)\n- angular\n- tera (také pro zola; pro minijinja použijte jinja)\n- askama (šablony ve stylu jinja v rustu; výrazy v rustu se nikdy nepřeformátovávají)\n  :::",
+      "tr": "Şablon dili için bir profil ayarlar. Profil, şablon dilinize uygulanan linter kurallarını etkinleştirir ve yeniden biçimlendirmeyi de değiştirebilir. Örneğin `handlebars` profilinde `{{#if}}` etiketlerinin içinde boşluk bulunmaz.\n\nSeçenekler:\n\n:::content\n\n- html (varsayılan)\n- django\n- jinja\n- nunjucks (nunjucks ve twig için)\n- handlebars (handlebars ve mustache için)\n- liquid (shopify, jekyll, eleventy)\n- golang (go şablonları; hugo, helm)\n- angular\n- tera (zola için de; minijinja için jinja kullanın)\n- askama (rust'ta jinja tarzı şablonlar; rust ifadeleri hiçbir zaman yeniden biçimlendirilmez)\n  :::"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "profile=\"django\"" },
@@ -558,7 +630,10 @@
       "fr": "Ne formater ou linter que les fichiers qui commencent par un commentaire contenant uniquement le texte 'djlint:on'. Le commentaire peut être un commentaire HTML ou un commentaire dans le langage de templates défini par le réglage profile. Si aucun profil n'est indiqué, un commentaire dans n'importe lequel des langages de templates est accepté.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
       "de": "Formatiert oder lintet nur Dateien, die mit einem Kommentar beginnen, der ausschließlich den Text „djlint:on“ enthält. Das kann ein HTML-Kommentar sein oder ein Kommentar in der Template-Sprache, die in der Einstellung profile festgelegt ist. Ist kein Profil angegeben, wird ein Kommentar in jeder der Template-Sprachen akzeptiert.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
       "zh-tw": "只格式化或 lint 以一個僅含 'djlint:on' 文字的註解開頭的檔案。這個註解可以是 HTML 註解，或是 profile 設定所定義之範本語言的註解。如果沒有指定 profile，則接受任何一種範本語言的註解。\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
-      "it": "Formatta o analizza solo i file che iniziano con un commento contenente soltanto il testo 'djlint:on'. Il commento può essere un commento HTML o un commento nel linguaggio di template definito dall'impostazione del profilo. Se non è specificato alcun profilo, è accettato un commento in uno qualsiasi dei linguaggi di template.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n"
+      "it": "Formatta o analizza solo i file che iniziano con un commento contenente soltanto il testo 'djlint:on'. Il commento può essere un commento HTML o un commento nel linguaggio di template definito dall'impostazione del profilo. Se non è specificato alcun profilo, è accettato un commento in uno qualsiasi dei linguaggi di template.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
+      "pl": "Formatuje lub lintuje tylko pliki, które zaczynają się od komentarza zawierającego wyłącznie tekst „djlint:on”. Może to być komentarz HTML lub komentarz w języku szablonów określonym przez ustawienie profile. Jeśli profil nie jest określony, akceptowany jest komentarz w dowolnym z języków szablonów.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
+      "cs": "Formátovat nebo lintovat jen soubory, které začínají komentářem obsahujícím pouze text 'djlint:on'. Komentář může být HTML komentář nebo komentář v šablonovacím jazyce určeném nastavením profile. Pokud není zadán žádný profil, přijme se komentář v kterémkoli ze šablonovacích jazyků.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
+      "tr": "Yalnızca, içinde sadece 'djlint:on' metni bulunan bir yorumla başlayan dosyaları biçimlendirir ya da denetler. Yorum, bir HTML yorumu ya da profile ayarıyla tanımlanan şablon dilindeki bir yorum olabilir. Profil belirtilmemişse şablon dillerinden herhangi birindeki bir yorum kabul edilir.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n"
     },
     "usage": [
       { "name": "pyproject.toml", "value": "require_pragma=true" },
@@ -581,7 +656,10 @@
       "fr": "Le formateur tente de placer certaines balises html et de template sur une seule ligne au lieu de les répartir sur plusieurs, si la longueur de la ligne ne dépasse pas cette valeur. La valeur par défaut est 120, ou le `max_line_length` d'un `.editorconfig` situé à la racine du projet.",
       "de": "Der Formatter versucht, manche HTML- und Template-Tags in eine einzige Zeile zu setzen, statt sie umzubrechen, sofern die Zeilenlänge diesen Wert nicht überschreitet. Standard ist 120 oder die `max_line_length` einer `.editorconfig` im Projektstamm.",
       "zh-tw": "如果行長度不會超過這個值，格式化工具會嘗試將部分 html 和範本標籤放在同一行，而不是換行。預設值為 120，或專案根目錄中 `.editorconfig` 的 `max_line_length`。",
-      "it": "Il formattatore cerca di mettere alcuni tag html e di template su una sola riga invece di mandarli a capo, se la lunghezza della riga non supera questo valore. Il valore predefinito è 120, oppure il `max_line_length` di un `.editorconfig` nella radice del progetto."
+      "it": "Il formattatore cerca di mettere alcuni tag html e di template su una sola riga invece di mandarli a capo, se la lunghezza della riga non supera questo valore. Il valore predefinito è 120, oppure il `max_line_length` di un `.editorconfig` nella radice del progetto.",
+      "pl": "Formater próbuje umieszczać niektóre tagi HTML i tagi szablonu w jednym wierszu zamiast je zawijać, jeśli długość wiersza nie przekroczy tej wartości. Domyślnie 120 albo `max_line_length` z pliku `.editorconfig` w katalogu głównym projektu.",
+      "cs": "Formátovač se pokusí umístit některé html a šablonové značky na jeden řádek, místo aby je zalomil, pokud délka řádku nepřekročí tuto hodnotu. Výchozí hodnota je 120, nebo `max_line_length` ze souboru `.editorconfig` v kořeni projektu.",
+      "tr": "Satır uzunluğu bu değeri aşmayacaksa biçimlendirici bazı html ve şablon etiketlerini sarmak yerine tek satıra yerleştirmeye çalışır. Varsayılan değer 120'dir ya da proje kökündeki bir `.editorconfig` dosyasının `max_line_length` değeridir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "max_line_length=120" },
@@ -604,7 +682,10 @@
       "fr": "Le formateur tente de répartir les attributs d'une balise sur plusieurs lignes si leur longueur dépasse cette valeur. La valeur par défaut est 70.",
       "de": "Der Formatter versucht, die Attribute eines Tags umzubrechen, wenn deren Länge diesen Wert überschreitet. Standard ist 70.",
       "zh-tw": "如果屬性長度超過這個值，格式化工具會嘗試將標籤屬性換行。預設值為 70。",
-      "it": "Il formattatore cerca di mandare a capo gli attributi dei tag se la loro lunghezza supera questo valore. Il valore predefinito è 70."
+      "it": "Il formattatore cerca di mandare a capo gli attributi dei tag se la loro lunghezza supera questo valore. Il valore predefinito è 70.",
+      "pl": "Formater próbuje zawijać atrybuty tagu, jeśli ich długość przekracza tę wartość. Domyślnie 70.",
+      "cs": "Formátovač se pokusí zalomit atributy značky, pokud jejich délka překročí tuto hodnotu. Výchozí hodnota je 70.",
+      "tr": "Öznitelik uzunluğu bu değeri aşarsa biçimlendirici etiket özniteliklerini sarmaya çalışır. Varsayılan değer 70'tir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "max_attribute_length=10" },
@@ -627,7 +708,10 @@
       "fr": "Ajouter les exclusions de .gitignore aux exclusions par défaut. Désactivé par défaut.",
       "de": "Fügt die Ausschlüsse aus .gitignore den standardmäßigen Ausschlüssen hinzu. Standardmäßig deaktiviert.",
       "zh-tw": "將 .gitignore 的排除項目加入預設的排除路徑。預設為停用。",
-      "it": "Aggiunge le esclusioni di .gitignore a quelle predefinite. Disattivata per impostazione predefinita."
+      "it": "Aggiunge le esclusioni di .gitignore a quelle predefinite. Disattivata per impostazione predefinita.",
+      "pl": "Dodaje wykluczenia z .gitignore do domyślnych wykluczeń. Domyślnie wyłączone.",
+      "cs": "Přidat vyloučení ze souboru .gitignore k výchozím vyloučeným cestám. Ve výchozím nastavení vypnuto.",
+      "tr": ".gitignore'daki hariç tutmaları varsayılan hariç tutma listesine ekler. Varsayılan olarak devre dışıdır."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "use_gitignore=true" },
@@ -650,7 +734,10 @@
       "fr": "Le formateur tente de formater la syntaxe de template à l'intérieur des attributs des balises. Désactivé par défaut.",
       "de": "Der Formatter versucht, Template-Syntax innerhalb von Tag-Attributen zu formatieren. Standardmäßig deaktiviert.",
       "zh-tw": "格式化工具會嘗試格式化標籤屬性內的範本語法。預設為停用。",
-      "it": "Il formattatore cerca di formattare la sintassi di template all'interno degli attributi dei tag. Disattivata per impostazione predefinita."
+      "it": "Il formattatore cerca di formattare la sintassi di template all'interno degli attributi dei tag. Disattivata per impostazione predefinita.",
+      "pl": "Formater próbuje formatować składnię szablonu wewnątrz atrybutów tagów. Domyślnie wyłączone.",
+      "cs": "Formátovač se pokusí formátovat šablonovou syntaxi uvnitř atributů značek. Ve výchozím nastavení vypnuto.",
+      "tr": "Biçimlendirici, etiket özniteliklerinin içindeki şablon sözdizimini biçimlendirmeye çalışır. Varsayılan olarak devre dışıdır."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "format_attribute_template_tags=true" },
@@ -673,7 +760,10 @@
       "fr": "Quand une balise ouvrante est répartie sur plusieurs lignes, placer le nom de la balise, chaque attribut et le chevron fermant sur des lignes séparées. Désactivé par défaut.",
       "de": "Wird ein öffnendes Tag umgebrochen, kommen der Tag-Name, jedes Attribut und die schließende Klammer in eigene Zeilen. Standardmäßig deaktiviert.",
       "zh-tw": "開始標籤需要換行時，將標籤名稱、每個屬性和結尾的角括號分別放在各自的行上。預設為停用。",
-      "it": "Quando un tag di apertura va a capo, mette il nome del tag, ogni attributo e la parentesi di chiusura su righe separate. Disattivata per impostazione predefinita."
+      "it": "Quando un tag di apertura va a capo, mette il nome del tag, ogni attributo e la parentesi di chiusura su righe separate. Disattivata per impostazione predefinita.",
+      "pl": "Gdy tag otwierający jest zawijany, umieszcza nazwę tagu, każdy atrybut i nawias zamykający w osobnych wierszach. Domyślnie wyłączone.",
+      "cs": "Když se otevírací značka zalamuje, umístit název značky, každý atribut i uzavírací závorku na samostatné řádky. Ve výchozím nastavení vypnuto.",
+      "tr": "Bir açılış etiketi sarıldığında etiket adını, her özniteliği ve kapanış ayracını ayrı satırlara yerleştirir. Varsayılan olarak devre dışıdır."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "single_attribute_per_line=true" },
@@ -696,7 +786,10 @@
       "fr": "Personnalise l'ordre du message de sortie. Par défaut : \"{code} {line} {message} {match}\". Si `{filename}` ne figure pas dans le message, la sortie est regroupée par fichier et un en-tête est automatiquement ajouté à chaque groupe.\n\nVariables disponibles :\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
       "de": "Passt die Reihenfolge der Ausgabemeldung an. Standard: \"{code} {line} {message} {match}\". Ist `{filename}` nicht in der Meldung enthalten, wird die Ausgabe nach Dateien gruppiert, und jede Gruppe erhält automatisch eine Überschrift.\n\nOptionale Variablen:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
       "zh-tw": "自訂輸出訊息的順序。預設值=\"{code} {line} {message} {match}\"。如果訊息中不包含 `{filename}`，輸出就會依檔案分組，並自動為每個群組加上標頭。\n\n可用的變數：\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
-      "it": "Personalizza l'ordine del messaggio di output. Predefinito=\"{code} {line} {message} {match}\". Se `{filename}` non è incluso nel messaggio, l'output viene raggruppato per file e a ogni gruppo viene aggiunta automaticamente un'intestazione.\n\nVariabili opzionali:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::"
+      "it": "Personalizza l'ordine del messaggio di output. Predefinito=\"{code} {line} {message} {match}\". Se `{filename}` non è incluso nel messaggio, l'output viene raggruppato per file e a ogni gruppo viene aggiunta automaticamente un'intestazione.\n\nVariabili opzionali:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "pl": "Dostosowuje kolejność elementów komunikatu na wyjściu. Domyślnie \"{code} {line} {message} {match}\". Jeśli komunikat nie zawiera `{filename}`, wyniki są grupowane według plików, a do każdej grupy automatycznie dodawany jest nagłówek.\n\nZmienne opcjonalne:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "cs": "Přizpůsobit pořadí ve výstupní zprávě. Výchozí hodnota je \"{code} {line} {message} {match}\". Pokud zpráva neobsahuje `{filename}`, výstup se seskupí podle souborů a ke každé skupině se automaticky přidá záhlaví.\n\nVolitelné proměnné:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "tr": "Çıktı mesajının sırasını özelleştirir. Varsayılan=\"{code} {line} {message} {match}\". Mesajda `{filename}` yoksa çıktı dosyaya göre gruplanır ve her gruba otomatik olarak bir başlık eklenir.\n\nİsteğe bağlı değişkenler:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::"
     },
     "usage": [
       {
@@ -728,7 +821,10 @@
       "fr": "Préserver les espaces en début de texte, quand c'est possible. Idéal pour les fichiers de templates non html dont l'indentation du texte est intentionnelle.",
       "de": "Behält führende Leerzeichen vor Text nach Möglichkeit bei. Ideal für Template-Dateien ohne HTML, in denen die Einrückung des Textes beabsichtigt ist.",
       "zh-tw": "盡可能保留文字開頭的空白。適合文字縮排是刻意為之的非 html 範本檔案。",
-      "it": "Conserva, dove possibile, gli spazi iniziali del testo. Ideale per file di template non html in cui l'indentazione del testo è intenzionale."
+      "it": "Conserva, dove possibile, gli spazi iniziali del testo. Ideale per file di template non html in cui l'indentazione del testo è intenzionale.",
+      "pl": "Tam, gdzie to możliwe, zachowuje spacje na początku tekstu. Idealne dla plików szablonów innych niż HTML, w których wcięcia tekstu są celowe.",
+      "cs": "Zachovat úvodní mezery v textu, kde je to možné. Ideální pro šablony mimo html, kde je odsazení textu záměrné.",
+      "tr": "Mümkün olduğunda metnin başındaki boşluğu korur. Metin girintisinin bilinçli olduğu, html olmayan şablon dosyaları için idealdir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_leading_space=true" },
@@ -751,7 +847,10 @@
       "fr": "Préserver les lignes vides quand c'est possible. Idéal pour les fichiers de templates non html dont les lignes vides sont intentionnelles.",
       "de": "Behält Leerzeilen nach Möglichkeit bei. Ideal für Template-Dateien ohne HTML, in denen Leerzeilen beabsichtigt sind.",
       "zh-tw": "盡可能保留空白行。適合空白行是刻意為之的非 html 範本檔案。",
-      "it": "Conserva, dove possibile, le righe vuote. Ideale per file di template non html in cui le righe vuote sono intenzionali."
+      "it": "Conserva, dove possibile, le righe vuote. Ideale per file di template non html in cui le righe vuote sono intenzionali.",
+      "pl": "Tam, gdzie to możliwe, zachowuje puste wiersze. Idealne dla plików szablonów innych niż HTML, w których puste wiersze są celowe.",
+      "cs": "Zachovat prázdné řádky, kde je to možné. Ideální pro šablony mimo html, kde jsou prázdné řádky záměrné.",
+      "tr": "Mümkün olduğunda boş satırları korur. Boş satırların bilinçli olduğu, html olmayan şablon dosyaları için idealdir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_blank_lines=true" },
@@ -774,7 +873,10 @@
       "fr": "Préserver les sauts de ligne à l'intérieur des attributs class multilignes.",
       "de": "Behält Zeilenumbrüche innerhalb mehrzeiliger class-Attribute bei.",
       "zh-tw": "保留多行 class 屬性內的換行。",
-      "it": "Conserva gli a capo all'interno degli attributi class su più righe."
+      "it": "Conserva gli a capo all'interno degli attributi class su più righe.",
+      "pl": "Zachowuje podziały wierszy wewnątrz wielowierszowych atrybutów class.",
+      "cs": "Zachovat zalomení řádků uvnitř víceřádkových atributů class.",
+      "tr": "Çok satırlı class özniteliklerinin içindeki satır sonlarını korur."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "preserve_class_newlines=true" },
@@ -797,7 +899,10 @@
       "fr": "Ignorer des règles du linter fichier par fichier.",
       "de": "Ignoriert Linter-Regeln pro Datei.",
       "zh-tw": "針對個別檔案忽略 linter 規則。",
-      "it": "Ignora le regole del linter file per file."
+      "it": "Ignora le regole del linter file per file.",
+      "pl": "Ignoruje reguły lintera osobno dla poszczególnych plików.",
+      "cs": "Ignorovat pravidla linteru pro jednotlivé soubory.",
+      "tr": "Linter kurallarını dosya bazında yok sayar."
     },
     "usage": [
       {
@@ -829,7 +934,10 @@
       "fr": "Formater le contenu des balises `script` avec `js-beautify`. Consultez [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) pour toutes les options de configuration. La syntaxe de template n'est pas [entièrement prise en charge](https://github.com/beautify-web/js-beautify/issues).",
       "de": "Formatiert den Inhalt von `script`-Tags mit `js-beautify`. Alle Konfigurationsoptionen finden Sie unter [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py). Template-Syntax wird nicht [vollständig unterstützt](https://github.com/beautify-web/js-beautify/issues).",
       "zh-tw": "使用 `js-beautify` 格式化 `script` 標籤的內容。所有設定選項請參閱 [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py)。範本語法並未[完全支援](https://github.com/beautify-web/js-beautify/issues)。",
-      "it": "Formatta il contenuto dei tag `script` con `js-beautify`. Consulta [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) per tutte le opzioni di configurazione. La sintassi di template non è [pienamente supportata](https://github.com/beautify-web/js-beautify/issues)."
+      "it": "Formatta il contenuto dei tag `script` con `js-beautify`. Consulta [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) per tutte le opzioni di configurazione. La sintassi di template non è [pienamente supportata](https://github.com/beautify-web/js-beautify/issues).",
+      "pl": "Formatuje zawartość tagów `script` za pomocą `js-beautify`. Wszystkie opcje konfiguracji opisuje [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py). Składnia szablonów nie jest [w pełni obsługiwana](https://github.com/beautify-web/js-beautify/issues).",
+      "cs": "Formátovat obsah značek `script` pomocí `js-beautify`. Všechny možnosti konfigurace najdete v [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py). Šablonová syntaxe není [plně podporována](https://github.com/beautify-web/js-beautify/issues).",
+      "tr": "`script` etiketlerinin içeriğini `js-beautify` ile biçimlendirir. Tüm yapılandırma seçenekleri için [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) sayfasına bakın. Şablon sözdizimi [tam olarak desteklenmez](https://github.com/beautify-web/js-beautify/issues)."
     },
     "usage": [
       {
@@ -858,7 +966,10 @@
       "fr": "Formater le contenu des balises `style` avec `css-beautify`. Consultez [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) pour toutes les options de configuration. La syntaxe de template n'est pas [entièrement prise en charge](https://github.com/beautify-web/js-beautify/issues).",
       "de": "Formatiert den Inhalt von `style`-Tags mit `css-beautify`. Alle Konfigurationsoptionen finden Sie unter [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Template-Syntax wird nicht [vollständig unterstützt](https://github.com/beautify-web/js-beautify/issues).",
       "zh-tw": "使用 `css-beautify` 格式化 `style` 標籤的內容。所有設定選項請參閱 [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py)。範本語法並未[完全支援](https://github.com/beautify-web/js-beautify/issues)。",
-      "it": "Formatta il contenuto dei tag `style` con `css-beautify`. Consulta [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) per tutte le opzioni di configurazione. La sintassi di template non è [pienamente supportata](https://github.com/beautify-web/js-beautify/issues)."
+      "it": "Formatta il contenuto dei tag `style` con `css-beautify`. Consulta [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) per tutte le opzioni di configurazione. La sintassi di template non è [pienamente supportata](https://github.com/beautify-web/js-beautify/issues).",
+      "pl": "Formatuje zawartość tagów `style` za pomocą `css-beautify`. Wszystkie opcje konfiguracji opisuje [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Składnia szablonów nie jest [w pełni obsługiwana](https://github.com/beautify-web/js-beautify/issues).",
+      "cs": "Formátovat obsah značek `style` pomocí `css-beautify`. Všechny možnosti konfigurace najdete v [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py). Šablonová syntaxe není [plně podporována](https://github.com/beautify-web/js-beautify/issues).",
+      "tr": "`style` etiketlerinin içeriğini `css-beautify` ile biçimlendirir. Tüm yapılandırma seçenekleri için [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) sayfasına bakın. Şablon sözdizimi [tam olarak desteklenmez](https://github.com/beautify-web/js-beautify/issues)."
     },
     "usage": [
       {
@@ -887,7 +998,10 @@
       "fr": "Une liste de chemins à utiliser comme source pour djlint. Quand cette option est indiquée, la source passée en ligne de commande doit être `-`, comme pour stdin. Avec `--stdin-filename`, `-` désigne stdin dans tous les cas.",
       "de": "Eine Liste von Pfaden, die djlint als Quelle verwendet. Ist diese Option angegeben, muss die Quelle auf der Befehlszeile `-` sein, als würde stdin verwendet. Mit `--stdin-filename` steht `-` in jedem Fall für stdin.",
       "zh-tw": "作為 djlint 來源的路徑清單。指定此選項時，命令列的來源必須是 `-`，就像使用 stdin 一樣。`--stdin-filename` 會讓 `-` 無論如何都代表 stdin。",
-      "it": "Una lista di percorsi da usare come sorgente di djlint. Quando questa opzione è specificata, la sorgente sulla riga di comando deve essere `-`, come quando si usa stdin. `--stdin-filename` fa sì che `-` indichi comunque stdin."
+      "it": "Una lista di percorsi da usare come sorgente di djlint. Quando questa opzione è specificata, la sorgente sulla riga di comando deve essere `-`, come quando si usa stdin. `--stdin-filename` fa sì che `-` indichi comunque stdin.",
+      "pl": "Lista ścieżek, których djlint ma użyć jako źródła. Gdy ta opcja jest podana, źródłem w wierszu poleceń musi być `-`, tak jak przy używaniu stdin. `--stdin-filename` sprawia, że `-` mimo to oznacza stdin.",
+      "cs": "Seznam cest, které djlint použije jako zdroj. Pokud je tato možnost zadána, musí být zdrojem na příkazovém řádku `-`, jako při použití stdin. S `--stdin-filename` znamená `-` v každém případě stdin.",
+      "tr": "djlint'in kaynağı olarak kullanılacak yolların listesi. Bu seçenek belirtildiğinde komut satırındaki kaynak, stdin kullanılıyormuş gibi `-` olmalıdır. `--stdin-filename` ile `-` her durumda stdin anlamına gelir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "[tool.djlint]\nfiles=[\"index.html\"]\n" },
@@ -910,7 +1024,10 @@
       "fr": "Ne pas tenter de corriger la casse des balises html connues. `H009` et `H010` ne sont pas signalées avec cette option.",
       "de": "Versucht nicht, die Groß-/Kleinschreibung bekannter HTML-Tags zu korrigieren. `H009` und `H010` werden mit dieser Option nicht gemeldet.",
       "zh-tw": "不要嘗試修正已知 html 標籤的大小寫。在此選項下，`H009` 和 `H010` 不會被回報。",
-      "it": "Non tenta di correggere maiuscole e minuscole dei tag html noti. Con questa opzione `H009` e `H010` non vengono segnalate."
+      "it": "Non tenta di correggere maiuscole e minuscole dei tag html noti. Con questa opzione `H009` e `H010` non vengono segnalate.",
+      "pl": "Nie próbuje poprawiać wielkości liter w znanych tagach HTML. Przy tej opcji nie są zgłaszane `H009` i `H010`.",
+      "cs": "Nepokoušet se opravovat velikost písmen známých html značek. `H009` a `H010` se s touto možností nehlásí.",
+      "tr": "Bilinen html etiketlerinin büyük/küçük harf yazımını düzeltmeye çalışmaz. Bu seçenekle `H009` ve `H010` bildirilmez."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "[tool.djlint]\nignore_case=true\n" },
@@ -933,7 +1050,10 @@
       "fr": "Formater le code JavaScript et JSON à l'intérieur des attributs HTML. Cela formate les littéraux d'objet et le code JavaScript dans des attributs comme `onclick`, `x-*` et d'autres attributs liés à JavaScript. Les objets ayant moins de propriétés que `format_attribute_js_json_min_props` ne sont pas formatés.",
       "de": "Formatiert JavaScript- und JSON-Code in HTML-Attributen. Formatiert werden Objektliterale und JavaScript-Code in Attributen wie `onclick`, `x-*` und anderen JavaScript-bezogenen Attributen. Objekte mit weniger Eigenschaften als `format_attribute_js_json_min_props` werden nicht formatiert.",
       "zh-tw": "格式化 HTML 屬性內的 JavaScript 和 JSON 程式碼。這會格式化 `onclick`、`x-*` 及其他與 JavaScript 相關的屬性中的物件常值和 JavaScript 程式碼。屬性數量少於 `format_attribute_js_json_min_props` 的物件不會被格式化。",
-      "it": "Formatta il codice JavaScript e JSON all'interno degli attributi HTML. Vengono formattati gli oggetti letterali e il codice JavaScript in attributi come `onclick`, `x-*` e altri attributi legati a JavaScript. Gli oggetti con meno proprietà di `format_attribute_js_json_min_props` non vengono formattati."
+      "it": "Formatta il codice JavaScript e JSON all'interno degli attributi HTML. Vengono formattati gli oggetti letterali e il codice JavaScript in attributi come `onclick`, `x-*` e altri attributi legati a JavaScript. Gli oggetti con meno proprietà di `format_attribute_js_json_min_props` non vengono formattati.",
+      "pl": "Formatuje kod JavaScript i JSON wewnątrz atrybutów HTML. Formatowane są literały obiektów i kod JavaScript w atrybutach takich jak `onclick`, `x-*` i w innych atrybutach związanych z JavaScriptem. Obiekty, które mają mniej właściwości niż `format_attribute_js_json_min_props`, nie są formatowane.",
+      "cs": "Formátovat kód JavaScriptu a JSON uvnitř HTML atributů. Naformátují se objektové literály a kód JavaScriptu v atributech jako `onclick`, `x-*` a v dalších atributech souvisejících s JavaScriptem. Objekty s menším počtem vlastností, než určuje `format_attribute_js_json_min_props`, se formátovat nebudou.",
+      "tr": "HTML özniteliklerinin içindeki JavaScript ve JSON kodunu biçimlendirir. `onclick`, `x-*` gibi özniteliklerdeki ve JavaScript ile ilgili diğer özniteliklerdeki nesne değişmezleri ve JavaScript kodu biçimlendirilir. `format_attribute_js_json_min_props` değerinden daha az özelliğe sahip nesneler biçimlendirilmez."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "format_attribute_js_json=true" },
@@ -956,7 +1076,10 @@
       "fr": "Expression régulière personnalisée pour repérer les attributs JavaScript à formater. Le motif par défaut reconnaît les attributs JavaScript courants comme `onclick`, `x-*`, les directives Vue.js, Alpine.js et Angular, et d'autres encore.",
       "de": "Eigenes Regex-Muster für die JavaScript-Attribute, die formatiert werden sollen. Das Standardmuster trifft auf gängige JavaScript-Attribute wie `onclick`, `x-*`, Direktiven von Vue.js, Alpine.js und Angular und weitere zu.",
       "zh-tw": "用來比對要格式化之 JavaScript 屬性的自訂 regex 模式。預設模式會比對常見的 JavaScript 屬性，例如 `onclick`、`x-*`、Vue.js 指令、Alpine.js 指令、Angular 指令等。",
-      "it": "Pattern regex personalizzato per individuare gli attributi JavaScript da formattare. Il pattern predefinito corrisponde agli attributi JavaScript più comuni, come `onclick`, `x-*`, le direttive di Vue.js, di Alpine.js, di Angular e altro ancora."
+      "it": "Pattern regex personalizzato per individuare gli attributi JavaScript da formattare. Il pattern predefinito corrisponde agli attributi JavaScript più comuni, come `onclick`, `x-*`, le direttive di Vue.js, di Alpine.js, di Angular e altro ancora.",
+      "pl": "Własny wzorzec wyrażenia regularnego, który dopasowuje atrybuty JavaScript do formatowania. Domyślny wzorzec dopasowuje popularne atrybuty JavaScript, takie jak `onclick`, `x-*`, dyrektywy Vue.js, Alpine.js i Angulara, i nie tylko.",
+      "cs": "Vlastní regulární výraz pro výběr atributů s JavaScriptem, které se mají formátovat. Výchozí vzor zachytí běžné atributy s JavaScriptem jako `onclick`, `x-*`, direktivy Vue.js, Alpine.js a Angularu a další.",
+      "tr": "Biçimlendirilecek JavaScript özniteliklerini eşleştirmek için özel regex kalıbı. Varsayılan kalıp `onclick`, `x-*`, Vue.js yönergeleri, Alpine.js yönergeleri, Angular yönergeleri ve daha fazlası gibi yaygın JavaScript öznitelikleriyle eşleşir."
     },
     "usage": [
       {
@@ -988,7 +1111,10 @@
       "fr": "Nombre minimal de propriétés qu'un objet JavaScript/JSON doit avoir pour être formaté. La valeur par défaut est 2. Les objets qui en ont moins restent sur une seule ligne.",
       "de": "Mindestanzahl an Eigenschaften, die ein JavaScript-/JSON-Objekt haben muss, damit es formatiert wird. Standard ist 2. Objekte mit weniger Eigenschaften bleiben in einer einzigen Zeile.",
       "zh-tw": "JavaScript/JSON 物件要被格式化所需的最少屬性數量。預設值為 2。屬性數量較少的物件會保持在同一行。",
-      "it": "Numero minimo di proprietà che un oggetto JavaScript/JSON deve avere per essere formattato. Il valore predefinito è 2. Gli oggetti con meno proprietà restano su una sola riga."
+      "it": "Numero minimo di proprietà che un oggetto JavaScript/JSON deve avere per essere formattato. Il valore predefinito è 2. Gli oggetti con meno proprietà restano su una sola riga.",
+      "pl": "Minimalna liczba właściwości, jaką musi mieć obiekt JavaScript/JSON, aby został sformatowany. Domyślnie 2. Obiekty z mniejszą liczbą właściwości pozostają w jednym wierszu.",
+      "cs": "Minimální počet vlastností, který musí objekt JavaScriptu/JSON mít, aby se naformátoval. Výchozí hodnota je 2. Objekty s menším počtem vlastností zůstanou na jednom řádku.",
+      "tr": "Bir JavaScript/JSON nesnesinin biçimlendirilmesi için gereken en az özellik sayısı. Varsayılan değer 2'dir. Daha az özelliğe sahip nesneler tek satırda kalır."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "format_attribute_js_json_min_props=3" },
@@ -1011,7 +1137,10 @@
       "fr": "Nom de fichier à utiliser pour per-file-ignores et dans les messages lors de la lecture depuis stdin. Par défaut \"-\".",
       "de": "Dateiname, der beim Lesen von stdin für per-file-ignores und Meldungen verwendet wird. Standard ist „-“.",
       "zh-tw": "從 stdin 讀取時，用於 per-file-ignores 和訊息的檔案名稱。預設為 \"-\"。",
-      "it": "Nome di file da usare per per-file-ignores e per i messaggi quando si legge da stdin. Il valore predefinito è \"-\"."
+      "it": "Nome di file da usare per per-file-ignores e per i messaggi quando si legge da stdin. Il valore predefinito è \"-\".",
+      "pl": "Nazwa pliku używana dla per-file-ignores i w komunikatach przy czytaniu ze stdin. Domyślnie „-”.",
+      "cs": "Název souboru, který se při čtení ze stdin použije pro per-file-ignores a ve zprávách. Výchozí hodnota je \"-\".",
+      "tr": "stdin'den okurken per-file-ignores ve mesajlar için kullanılacak dosya adı. Varsayılan değer: \"-\"."
     },
     "usage": [{ "name": "cli", "value": "--stdin-filename templates/index.html" }]
   },
@@ -1030,7 +1159,10 @@
       "fr": "Quitter avec 0 au lieu de 2 quand les chemins indiqués ne correspondent à aucun fichier. Les fichiers trouvés puis ignorés par exclude, extend_exclude, use_gitignore ou require_pragma quittent déjà avec 0. Désactivé par défaut.",
       "de": "Beendet mit 0 statt 2, wenn die angegebenen Pfade auf überhaupt keine Datei passen. Dateien, die gefunden und dann durch exclude, extend_exclude, use_gitignore oder require_pragma übersprungen wurden, enden ohnehin mit 0. Standardmäßig deaktiviert.",
       "zh-tw": "當指定的路徑完全沒有比對到任何檔案時，以 0 而不是 2 結束。已找到、但隨後被 exclude、extend_exclude、use_gitignore 或 require_pragma 略過的檔案，本來就會以 0 結束。預設為停用。",
-      "it": "Esce con 0 invece di 2 quando i percorsi indicati non corrispondono ad alcun file. I file trovati e poi esclusi da exclude, extend_exclude, use_gitignore o require_pragma escono già con 0. Disattivata per impostazione predefinita."
+      "it": "Esce con 0 invece di 2 quando i percorsi indicati non corrispondono ad alcun file. I file trovati e poi esclusi da exclude, extend_exclude, use_gitignore o require_pragma escono già con 0. Disattivata per impostazione predefinita.",
+      "pl": "Kończy działanie z kodem 0 zamiast 2, gdy podane ścieżki nie pasują do żadnego pliku. Pliki, które zostały znalezione, a następnie pominięte przez exclude, extend_exclude, use_gitignore lub require_pragma, i tak kończą działanie z kodem 0. Domyślnie wyłączone.",
+      "cs": "Skončit s kódem 0 místo 2, když zadaným cestám neodpovídají vůbec žádné soubory. Soubory, které byly nalezeny a pak přeskočeny kvůli exclude, extend_exclude, use_gitignore nebo require_pragma, končí s kódem 0 už teď. Ve výchozím nastavení vypnuto.",
+      "tr": "Verilen yollar hiçbir dosyayla eşleşmediğinde 2 yerine 0 ile çıkar. Dosyalar bulunup ardından exclude, extend_exclude, use_gitignore ya da require_pragma ile atlandıysa çıkış kodu zaten 0 olur. Varsayılan olarak devre dışıdır."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "allow_empty_input=true" },
@@ -1052,7 +1184,10 @@
       "fr": "Ne pas indenter `<head>` et `<body>` sous `<html>`, comme le fait le formateur html par défaut de VS Code pour mettre en page un document.",
       "de": "Rückt `<head>` und `<body>` unter `<html>` nicht ein, so wie der Standard-HTML-Formatter von VS Code ein Dokument anordnet.",
       "zh-tw": "不要將 `<head>` 和 `<body>` 縮排在 `<html>` 之下，這是 VS Code 預設的 html 格式化工具排版文件的方式。",
-      "it": "Non indenta `<head>` e `<body>` sotto `<html>`, che è il modo in cui il formattatore html predefinito di VS Code dispone un documento."
+      "it": "Non indenta `<head>` e `<body>` sotto `<html>`, che è il modo in cui il formattatore html predefinito di VS Code dispone un documento.",
+      "pl": "Nie wcina `<head>` i `<body>` pod `<html>`, czyli układa dokument tak jak domyślny formater HTML w VS Code.",
+      "cs": "Neodsazovat `<head>` a `<body>` pod `<html>`, což odpovídá tomu, jak dokument rozvrhne výchozí html formátovač ve VS Code.",
+      "tr": "`<head>` ve `<body>` öğelerini `<html>` altında girintilemez; varsayılan VS Code html biçimlendiricisi de bir belgeyi bu şekilde düzenler."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "no_indent_inner_html=true" },
@@ -1075,7 +1210,10 @@
       "fr": "Trier les attributs par nom, avec `id` en premier et `class` en second. Une balise dont les attributs sont soumis à une balise de template garde l'ordre dans lequel elle a été écrite, puisque sortir un attribut de sa branche modifierait la page.",
       "de": "Sortiert Attribute nach Namen, mit `id` an erster und `class` an zweiter Stelle. Ein Tag, dessen Attribute von einem Template-Tag umschlossen sind, behält die geschriebene Reihenfolge, da das Verschieben eines Attributs aus seinem Zweig die Seite verändern würde.",
       "zh-tw": "依名稱排序屬性，`id` 排第一，`class` 排第二。若標籤的屬性受範本標籤控制，則會保留原本的撰寫順序，因為將屬性移出它所在的分支會改變頁面。",
-      "it": "Ordina gli attributi per nome, con `id` per primo e `class` per secondo. Un tag i cui attributi sono condizionati da un tag di template mantiene l'ordine in cui è stato scritto, perché spostarne uno fuori dal suo ramo cambierebbe la pagina."
+      "it": "Ordina gli attributi per nome, con `id` per primo e `class` per secondo. Un tag i cui attributi sono condizionati da un tag di template mantiene l'ordine in cui è stato scritto, perché spostarne uno fuori dal suo ramo cambierebbe la pagina.",
+      "pl": "Sortuje atrybuty według nazwy, z `id` na pierwszym i `class` na drugim miejscu. Tag, którego atrybuty są objęte tagiem szablonu, zachowuje kolejność, w jakiej go zapisano, ponieważ przeniesienie atrybutu poza jego gałąź zmieniłoby stronę.",
+      "cs": "Seřadit atributy podle názvu, s `id` na prvním a `class` na druhém místě. Značka, jejíž atributy jsou podmíněné šablonovou značkou, si ponechá pořadí, ve kterém byla zapsána, protože přesunutí atributu z jeho větve by změnilo stránku.",
+      "tr": "Öznitelikleri ada göre sıralar; `id` birinci, `class` ikinci sıraya gelir. Öznitelikleri bir şablon etiketiyle koşula bağlanmış bir etiket yazıldığı sırada kalır, çünkü bir özniteliği dalının dışına taşımak sayfayı değiştirir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "sort_attributes=true" },
@@ -1098,7 +1236,10 @@
       "fr": "Trier les bibliothèques d'une balise django `{% load %}` et supprimer celles qui sont écrites deux fois : `{% load static i18n %}` devient ainsi `{% load i18n static %}`. Dans `{% load a b from library %}`, ce sont les noms placés avant `from` qui sont triés. Quand deux bibliothèques définissent une balise ou un filtre du même nom, c'est la dernière chargée qui l'emporte : le tri peut donc changer celle qu'utilise le template.",
       "de": "Sortiert die Bibliotheken in einem Django-`{% load %}`-Tag und entfernt doppelt aufgeführte, sodass aus `{% load static i18n %}` `{% load i18n static %}` wird. In `{% load a b from library %}` werden die Namen vor `from` sortiert. Definieren zwei Bibliotheken ein Tag oder einen Filter mit demselben Namen, gewinnt die zuletzt geladene, sodass das Sortieren ändern kann, welche das Template verwendet.",
       "zh-tw": "排序 django `{% load %}` 標籤中的函式庫，並移除重複寫了兩次的函式庫，因此 `{% load static i18n %}` 會變成 `{% load i18n static %}`。在 `{% load a b from library %}` 中，會排序 `from` 之前的名稱。當兩個函式庫定義了同名的標籤或篩選器時，以最後載入的為準，因此排序可能會改變範本所使用的是哪一個。",
-      "it": "Ordina le librerie in un tag `{% load %}` di django ed elimina quelle scritte due volte, così `{% load static i18n %}` diventa `{% load i18n static %}`. In `{% load a b from library %}` vengono ordinati i nomi prima di `from`. Quando due librerie definiscono un tag o un filtro con lo stesso nome, prevale quella caricata per ultima, quindi l'ordinamento può cambiare quale dei due usa il template."
+      "it": "Ordina le librerie in un tag `{% load %}` di django ed elimina quelle scritte due volte, così `{% load static i18n %}` diventa `{% load i18n static %}`. In `{% load a b from library %}` vengono ordinati i nomi prima di `from`. Quando due librerie definiscono un tag o un filtro con lo stesso nome, prevale quella caricata per ultima, quindi l'ordinamento può cambiare quale dei due usa il template.",
+      "pl": "Sortuje biblioteki w tagu django `{% load %}` i usuwa te zapisane dwukrotnie, więc `{% load static i18n %}` staje się `{% load i18n static %}`. W `{% load a b from library %}` sortowane są nazwy przed `from`. Gdy dwie biblioteki definiują tag lub filtr o tej samej nazwie, wygrywa ta wczytana jako ostatnia, więc sortowanie może zmienić to, którego z nich używa szablon.",
+      "cs": "Seřadit knihovny ve značce django `{% load %}` a vypustit ty, které jsou zapsané dvakrát, takže z `{% load static i18n %}` se stane `{% load i18n static %}`. V `{% load a b from library %}` se seřadí názvy před `from`. Pokud dvě knihovny definují značku nebo filtr se stejným názvem, vyhrává ta načtená jako poslední, takže řazení může změnit, kterou z nich šablona použije.",
+      "tr": "Bir django `{% load %}` etiketindeki kütüphaneleri sıralar ve iki kez yazılanları kaldırır; böylece `{% load static i18n %}`, `{% load i18n static %}` olur. `{% load a b from library %}` içinde `from` öncesindeki adlar sıralanır. İki kütüphane aynı adla bir etiket ya da filtre tanımladığında son yüklenen kazanır; bu yüzden sıralama, şablonun hangisini kullandığını değiştirebilir."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "sort_load_tags=true" },
@@ -1121,7 +1262,10 @@
       "fr": "Écrire le nom du bloc dans le `{% endblock %}` qui le ferme, quand le bloc est écrit sur plusieurs lignes. C'est ce que demande `T003`.",
       "de": "Schreibt den Namen des Blocks in das `{% endblock %}`, das ihn schließt, sofern der Block über mehrere Zeilen geschrieben ist. Genau das verlangt `T003`.",
       "zh-tw": "對於跨越多行撰寫的區塊，將區塊的名稱寫入關閉它的 `{% endblock %}`。這正是 `T003` 所要求的。",
-      "it": "Scrive il nome del blocco nell'`{% endblock %}` che lo chiude, quando il blocco è scritto su più righe. È ciò che richiede `T003`."
+      "it": "Scrive il nome del blocco nell'`{% endblock %}` che lo chiude, quando il blocco è scritto su più righe. È ciò che richiede `T003`.",
+      "pl": "Wpisuje nazwę bloku do zamykającego go `{% endblock %}`, jeśli blok zajmuje kilka wierszy. Tego właśnie wymaga `T003`.",
+      "cs": "Zapsat název bloku do `{% endblock %}`, který ho uzavírá, pokud je blok zapsaný přes více řádků. Právě to vyžaduje `T003`.",
+      "tr": "Blok birden çok satıra yayılarak yazılmışsa bloğun adını onu kapatan `{% endblock %}` etiketine yazar. `T003` kuralının istediği de budur."
     },
     "usage": [
       { "name": "pyproject.toml", "value": "name_endblocks=true" },
@@ -1144,7 +1288,10 @@
       "fr": "Laisser le fichier désigné par `configuration` l'emporter sur le fichier de configuration du projet lui-même. `configuration` désigne un fichier global : par défaut, un `pyproject.toml` ou un `.djlintrc` situé à côté des templates l'emporte quand les deux définissent la même chose. Uniquement en ligne de commande, puisque cette option détermine la façon dont les fichiers de configuration eux-mêmes sont lus.",
       "de": "Lässt die mit `configuration` angegebene Datei die eigene Konfigurationsdatei des Projekts überschreiben. `configuration` bezeichnet eine globale Datei, daher gewinnt standardmäßig eine `pyproject.toml` oder `.djlintrc` neben den Templates, wo beide dasselbe festlegen. Nur auf der Befehlszeile verfügbar, da die Option bestimmt, wie die Konfigurationsdateien selbst gelesen werden.",
       "zh-tw": "讓 `configuration` 所指定的檔案覆寫專案本身的設定檔。`configuration` 指定的是全域檔案，因此預設情況下，當兩者設定了相同的項目時，以範本旁的 `pyproject.toml` 或 `.djlintrc` 為準。僅限命令列使用，因為它決定的是設定檔本身如何被讀取。",
-      "it": "Fa sì che il file indicato da `configuration` abbia la precedenza sul file di configurazione del progetto. `configuration` indica un file globale, quindi per impostazione predefinita, quando i due impostano la stessa cosa, prevale un `pyproject.toml` o un `.djlintrc` accanto ai template. Solo da riga di comando, perché decide come vengono letti i file di configurazione stessi."
+      "it": "Fa sì che il file indicato da `configuration` abbia la precedenza sul file di configurazione del progetto. `configuration` indica un file globale, quindi per impostazione predefinita, quando i due impostano la stessa cosa, prevale un `pyproject.toml` o un `.djlintrc` accanto ai template. Solo da riga di comando, perché decide come vengono letti i file di configurazione stessi.",
+      "pl": "Pozwala, by plik wskazany przez `configuration` miał pierwszeństwo przed własnym plikiem konfiguracyjnym projektu. `configuration` wskazuje plik globalny, więc domyślnie `pyproject.toml` lub `.djlintrc` obok szablonów wygrywa tam, gdzie oba ustawiają to samo. Tylko w wierszu poleceń, ponieważ decyduje o tym, jak wczytywane są same pliki konfiguracyjne.",
+      "cs": "Umožnit souboru zadanému v `configuration` přepsat vlastní konfigurační soubor projektu. `configuration` určuje globální soubor, takže ve výchozím nastavení vyhrává `pyproject.toml` nebo `.djlintrc` vedle šablon tam, kde oba nastavují totéž. Jen pro příkazový řádek, protože rozhoduje o tom, jak se čtou samotné konfigurační soubory.",
+      "tr": "`configuration` ile belirtilen dosyanın projenin kendi yapılandırma dosyasını geçersiz kılmasını sağlar. `configuration` genel bir dosyayı belirtir; bu yüzden varsayılan olarak, ikisi aynı şeyi ayarladığında şablonların yanındaki bir `pyproject.toml` ya da `.djlintrc` kazanır. Yapılandırma dosyalarının nasıl okunacağını belirlediği için yalnızca komut satırında kullanılabilir."
     },
     "usage": [{ "name": "cli", "value": "--prefer-configuration" }],
     "tags": ["formatter", "linter"]

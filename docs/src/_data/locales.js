@@ -10,4 +10,7 @@ module.exports = [
   { label: "Deutsch", code: "de", url: "de" },
   { label: "繁體中文", code: "zh-tw", url: "zh-tw" },
   { label: "Italiano", code: "it", url: "it" },
+  { label: "Polski", code: "pl", url: "pl" },
+  { label: "Čeština", code: "cs", url: "cs" },
+  { label: "Türkçe", code: "tr", url: "tr" },
 ];
