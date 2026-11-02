@@ -118,7 +118,7 @@ La première lettre d'un code suit le modèle :
 
 ### Détails des règles
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 {% raw %}
 
@@ -1453,7 +1453,7 @@ Seul le vrai balisage compte. `muted` doit être l'attribut : `<video class=mute
 
 {% endraw %}
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Ajout de règles
 

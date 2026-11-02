@@ -118,7 +118,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 ### 规则详情
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 {% raw %}
 
@@ -1453,7 +1453,7 @@ html 规范指出空的 `src` 是无效的，并警告浏览器会以文档自�
 
 {% endraw %}
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### 添加规则
 

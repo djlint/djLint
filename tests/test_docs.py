@@ -28,7 +28,7 @@ _RULE_SECTION_PATTERN = re.compile(r"^#### ([A-Z]\d{3})\s*$", re.MULTILINE)
 _VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 _EXAMPLE_LABEL_PATTERN = re.compile(r"^(Don't|Do):\s*$", re.MULTILINE)
 _CODE_BLOCK_PATTERN = re.compile(r"```\w*\n(.*?)```", re.DOTALL)
-_SHOWN_OUTPUT_PATTERN = re.compile(r"<!-- prettier-ignore -->\n```html\n(.*?)```", re.DOTALL)
+_SHOWN_OUTPUT_PATTERN = re.compile(r"<!-- oxfmt-ignore -->\n```html\n(.*?)```", re.DOTALL)
 _PROFILE_BY_LETTER = {"D": "django", "J": "jinja", "M": "handlebars", "N": "nunjucks"}
 _PROFILES = ("django", "jinja", "nunjucks", "handlebars", "golang", "liquid", "html")
 

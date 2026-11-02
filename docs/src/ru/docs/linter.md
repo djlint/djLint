@@ -118,7 +118,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 ### Подробное описание правил
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 {% raw %}
 
@@ -1453,7 +1453,7 @@ H005 требует `lang` у `<html>`, но значение вроде `lang="
 
 {% endraw %}
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Добавление правил
 

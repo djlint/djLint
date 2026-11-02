@@ -118,7 +118,7 @@ The first letter of a code follows the pattern:
 
 ### Rule Details
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 {% raw %}
 
@@ -1453,7 +1453,7 @@ Do:
 
 {% endraw %}
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Adding Rules
 
