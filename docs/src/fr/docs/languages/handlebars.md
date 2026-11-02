@@ -1,7 +1,7 @@
 ---
-title: Handlebars Template Linter and Formatter
-keywords: handlebars, djlint, handlebars template linter, handlebars template formatter, format handlebars templates
-description: djLint est un linter de modèles Handlebars et un formateur de modèles Handlebars ! Profitez du profil pré-construit lorsque vous lintez et formatez vos modèles avec djLint.
+title: Linter et formateur de templates Handlebars
+keywords: handlebars, djlint, linter de templates handlebars, formateur de templates handlebars, formater des templates handlebars
+description: djLint linte et formate les templates Handlebars. Utilisez le profil handlebars pour adapter les règles et le formatage à ces templates.
 tool: handlebars
 ---
 
@@ -9,20 +9,20 @@ tool: handlebars
 
 {{ description }}
 
-**[C'est quoi Handlebars?](https://handlebarsjs.com/)**
+**[Qu'est-ce que Handlebars ?](https://handlebarsjs.com/)**
 
-#### Utilisation de la ligne de commande
+## En ligne de commande
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Ou, utiliser un fichier de configuration
+## Ou avec un fichier de configuration
 
 Configurez djLint dans le fichier `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` de votre projet.
 
 {% include 'src/_includes/profile_config.md' %}
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Consultez le guide de configuration pour découvrir toutes les options !</a></div>
 </div>
