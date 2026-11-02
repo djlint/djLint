@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ locale or "en" }}" dir="{{ dir or "ltr" }}" class="has-navbar-fixed-top">
+<html lang="{% for entry in locales %}{% if entry.code == (locale or "en-US") %}{{ entry.lang }}{% endif %}{% endfor %}" dir="{{ dir or "ltr" }}" class="has-navbar-fixed-top">
     <head>
         {% block meta %}
             {% metagen
@@ -35,8 +35,9 @@
               content="black-translucent">
 
         {% for alternate in locales %}
-        <link rel="alternate" hreflang="{{ alternate.code }}" href="{{site.url}}{% if alternate.url %}/{{ alternate.url }}{% endif %}{{ page.url | baseUrl }}" />
+        <link rel="alternate" hreflang="{{ alternate.lang }}" href="{{site.url}}{% if alternate.url %}/{{ alternate.url }}{% endif %}{{ page.url | baseUrl }}" />
         {% endfor %}
+        <link rel="alternate" hreflang="x-default" href="{{site.url}}{{ page.url | baseUrl }}" />
         <link rel="stylesheet"
               href="{{ "/static/css/site.css" | rev }}"/>
          <link rel="preload"

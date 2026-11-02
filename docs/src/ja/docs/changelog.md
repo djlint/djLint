@@ -35,7 +35,7 @@ keywords: テンプレート リンター, テンプレート フォーマッタ
 
 ::: content
 
-- バグ修正 [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
+- バグ修正 [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/197)
 - エラーを警告として返す `--warn` フラグを追加
 :::
 

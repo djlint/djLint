@@ -54,7 +54,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
       if (event.target.value === ''){
         showAll()
       } else {
-        var regex = new RegExp(event.target.value.replaceAll(' ', '.*[ _-].*'), 'gmi'),
+        var regex = new RegExp(event.target.value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll(' ', '.*[ _-].*'), 'gmi'),
         matches=[]
         search_data.forEach((obj) => {
         if (JSON.stringify(obj).match(regex)) {

@@ -35,7 +35,7 @@ keywords: 模板代码检查工具, 模板格式化工具, djLint, HTML, 模板,
 
 ::: content
 
-- 修复问题 [#189](https://github.com/djlint/djLint/issues/189)、[#197](https://github.com/djlint/djLint/issues/189)
+- 修复问题 [#189](https://github.com/djlint/djLint/issues/189)、[#197](https://github.com/djlint/djLint/issues/197)
 - 新增 `--warn` 参数，以警告形式返回错误。
 :::
 

@@ -35,7 +35,7 @@ keywords: линтер шаблонов, форматер шаблонов, djLi
 
 ::: content
 
-- Исправления ошибок [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
+- Исправления ошибок [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/197)
 - Добавлен флаг `--warn`, чтобы выводить ошибки как предупреждения.
 :::
 

@@ -35,7 +35,7 @@ El registro de cambios ahora se incluye en cada [versión](https://github.com/dj
 
 ::: content
 
-- Corrección de errores [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
+- Corrección de errores [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/197)
 - Se añadió la opción `--warn` para devolver los errores como advertencias.
 :::
 

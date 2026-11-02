@@ -35,7 +35,7 @@ O registro de alterações agora está incluído nas [releases](https://github.c
 
 ::: content
 
-- Correções de bugs [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
+- Correções de bugs [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/197)
 - Adicionada a flag `--warn` para retornar os erros como avisos.
 :::
 
