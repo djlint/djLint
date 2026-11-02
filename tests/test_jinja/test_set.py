@@ -143,6 +143,11 @@ test_data = [
         ("{% set value = outer(inner(\n        1\n    ),\n    2\n) %}\n<p>after</p>\n"),
         id="two_calls_opened_on_the_set_line",
     ),
+    pytest.param(
+        ('<div>\n    {% set x = "((\ntext" %}\n    <p>after</p>\n</div>'),
+        ('<div>\n    {% set x = "((\ntext" %}\n    <p>after</p>\n</div>\n'),
+        id="string_across_lines_in_set_gets_no_indentation",
+    ),
 ]
 
 

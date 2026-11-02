@@ -75,7 +75,6 @@ _EXTRA_TAG_WHITESPACE_PATTERN: Final = compile_pattern(
 _HANDLEBARS_BLOCK_END_PATTERN: Final = compile_pattern(r"({{#(?:each|if)(?:(?!}}).)+?[^ ])(}})")
 _SET_CLOSE_PATTERN: Final = compile_pattern(r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX)
 _SET_CLOSING_BRACE_PATTERN: Final = compile_pattern(r"^[ ]*}|^[ ]*]", RE_FLAGS_IMX)
-_SET_LEADING_CLOSERS_PATTERN: Final = compile_pattern(r"[ \t]*(?:[)\]}][ \t]*)*")
 _TAG_CLOSE_START_PATTERN: Final = compile_pattern(r"[ \t]*[-+]?%}")
 _SINGLE_LINE_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
     r"^\s*\{%[-+]?(?:(?!%}).)*%}\s*$", RE_FLAGS_IMSX
@@ -157,6 +156,40 @@ def _attribute_quote_at(html: str, start: int) -> str | None:
 def _offset(line_offsets: list[int], position: tuple[int, int]) -> int:
     row, column = position
     return line_offsets[row - 1] + column
+
+
+def _set_line_brackets(line: str, quote: str) -> tuple[int, int, str]:
+    """Read the brackets of one line of a set tag's value.
+
+    Returns how many closing brackets the line starts with, how much it changes
+    the bracket depth, and the quote still open at its end. A bracket inside a
+    quoted string counts for nothing, also when the string began on an earlier
+    line, whose open quote is passed in.
+    """
+    leading = depth = 0
+    at_start = not quote
+    escaped = False
+    for char in line:
+        if quote:
+            if escaped:
+                escaped = False
+            elif char == _ESCAPE:
+                escaped = True
+            elif char == quote:
+                quote = ""
+        elif char in "\"'":
+            quote = char
+            at_start = False
+        elif char in "([{":
+            depth += 1
+            at_start = False
+        elif char in ")]}":
+            depth -= 1
+            if at_start:
+                leading += 1
+        elif not char.isspace():
+            at_start = False
+    return leading, depth, quote
 
 
 def _format_string_token(token_value: str, quote_style: QuoteStyle) -> str:
@@ -421,6 +454,8 @@ def indent_html(rawcode: str, config: Config) -> str:
     # The level of the line that opened the set tag, which its closing line returns to
     # however many brackets the lines between left open.
     set_tag_level = 0
+    # The quote of a string in the set tag's value that a line left open.
+    set_quote = ""
     in_multiline_tag = False
     multiline_tag_level = 0
     multiline_tag_is_block = False
@@ -599,14 +634,11 @@ def indent_html(rawcode: str, config: Config) -> str:
             if is_block_raw and ignored_level == 0:
                 is_block_raw = False
 
-        set_code = item
         set_leading_closes = set_depth_change = 0
+        starts_in_set_string = False
         if in_set_tag:
-            # A bracket inside a quoted string, as in "url('data:...", opens nothing.
-            set_code = _TAG_STRING_PATTERN.sub('""', item)
-            leading = _SET_LEADING_CLOSERS_PATTERN.match(set_code)
-            set_leading_closes = sum(map(leading[0].count, ")]}")) if leading else 0
-            set_depth_change = sum(map(set_code.count, "([{")) - sum(map(set_code.count, ")]}"))
+            starts_in_set_string = bool(set_quote)
+            set_leading_closes, set_depth_change, set_quote = _set_line_brackets(item, set_quote)
 
         if (not is_block_raw and ignored_inline_start_pattern.search(item)) or (
             not is_block_raw
@@ -630,25 +662,31 @@ def indent_html(rawcode: str, config: Config) -> str:
             in_set_tag = False
             # A line that starts with a closing bracket lines up with what that bracket
             # closes, the bare tag close with the tag; anything else is one more line of
-            # the value.
-            if set_leading_closes:
+            # the value. A line that goes on with a string gets no indentation, which
+            # would become part of the string.
+            if starts_in_set_string:
+                line_level = 0
+            elif set_leading_closes:
                 line_level = max(indent_level - 1, set_tag_level)
-            elif _TAG_CLOSE_START_PATTERN.match(set_code):
+            elif _TAG_CLOSE_START_PATTERN.match(item):
                 line_level = set_tag_level
             else:
                 line_level = indent_level
             tmp = (indent * line_level) + formatted_item(item) + "\n"
             indent_level = set_tag_level
+            set_quote = ""
 
         elif (
             not config.no_set_formatting
             and not is_block_raw
             and in_set_tag
-            and (set_leading_closes or set_depth_change)
+            and (set_leading_closes or set_depth_change or starts_in_set_string)
         ):
             # A line that starts with a closing bracket lines up with what that bracket
             # closes; the next line follows every bracket this one opens or closes.
             line_level = max(indent_level - (1 if set_leading_closes else 0), set_tag_level)
+            if starts_in_set_string:
+                line_level = 0
             tmp = (indent * line_level) + formatted_item(item) + "\n"
             indent_level = max(indent_level + set_depth_change, set_tag_level)
 
@@ -759,8 +797,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             set_tag_level = indent_level
             # The value starts a level in, or one per bracket it leaves open, as in
             # `outer(inner(`.
-            value = _TAG_STRING_PATTERN.sub('""', item[set_open.end(1) :])
-            opened = sum(map(value.count, "([{")) - sum(map(value.count, ")]}"))
+            _, opened, set_quote = _set_line_brackets(item[set_open.end(1) :], "")
             indent_level += max(opened, 1)
             in_set_tag = True
 

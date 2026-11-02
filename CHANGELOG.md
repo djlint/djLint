@@ -6,7 +6,7 @@
 
 ### Bug fixes
 
-- A `{% set %}` written across lines indents the arguments of a function call inside it, as it already did for the items of a list or dict ([#2819](https://github.com/djlint/djLint/issues/2819)). Its last line stays at the level of the value when it holds part of the value, the lines after the tag are no longer one level too shallow when a bracket opened inside it closes on its last line, and a bracket inside a quoted string no longer changes the indentation.
+- A `{% set %}` written across lines indents the arguments of a function call inside it, as it already did for the items of a list or dict ([#2819](https://github.com/djlint/djLint/issues/2819)). Its last line stays at the level of the value when it holds part of the value, the lines after the tag are no longer one level too shallow when a bracket opened inside it closes on its last line, a bracket inside a quoted string no longer changes the indentation, and a line that goes on with a string started on the line before is no longer indented, which put spaces into the string.
 
 ## [1.49.2] - 2026-11-01
 
