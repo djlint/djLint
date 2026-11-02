@@ -1,7 +1,7 @@
 ---
 description: Интегрируйте djLint с вашим любимым редактором. Автоматическое форматирование ваших шаблонов с помощью Pre-Commit или Visual Studio Code. Lint с SublimeText.
 title: Интеграции
-keywords: линтер шаблонов, форматер шаблонов, djLint, HTML, шаблоны, форматер, линтер, использование, integrations, языковой сервер, lsp, neovim, helix
+keywords: линтер шаблонов, форматер шаблонов, djLint, HTML, шаблоны, форматер, линтер, использование, integrations, языковой сервер, lsp, neovim, zed, helix
 ---
 
 # {{ "integrations" | i18n }}
@@ -15,6 +15,22 @@ keywords: линтер шаблонов, форматер шаблонов, djLi
 Установите [расширение djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) или [его версию из Open VSX](https://open-vsx.org/extension/monosans/djlint) для VSCodium. Оно находит djLint в вашем окружении, использует встроенный, если djLint не установлен, и работает через языковой сервер, когда ваш djLint его поддерживает.
 
 Его код находится на [GitHub](https://github.com/djlint/djlint-vscode).
+
+## Zed
+
+Установите [расширение djLint](https://github.com/djlint/djlint-zed), которое запускает [языковой сервер](#yazykovoj-server). Находки появляются в HTML и в языках расширений для шаблонов сразу после установки.
+
+Чтобы форматировать с помощью djLint, сделайте его форматером языка:
+
+```json
+{
+  "languages": {
+    "HTML": { "formatter": { "language_server": { "name": "djlint" } } }
+  }
+}
+```
+
+[Настройки](#nastrojki) задаются в `lsp.djlint.settings`.
 
 ## Neovim
 

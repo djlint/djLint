@@ -1,7 +1,7 @@
 ---
 description: 将 djLint 与您喜爱的编辑器集成。使用 Pre-Commit 自动格式化您的模板。在 SublimeText 中进行代码检查（Lint）。
 title: 集成支持
-keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 检查, 集成支持, 语言服务器, lsp, neovim, helix
+keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 检查, 集成支持, 语言服务器, lsp, neovim, zed, helix
 ---
 
 # 集成支持
@@ -15,6 +15,22 @@ keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 
 安装 [djLint 扩展](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)，或者在 VSCodium 中使用 [Open VSX 上的版本](https://open-vsx.org/extension/monosans/djlint)。它会在你的环境中查找 djLint，找不到时使用内置版本，并在你的 djLint 支持时使用语言服务器。
 
 它的代码位于 [GitHub](https://github.com/djlint/djlint-vscode)。
+
+## Zed
+
+安装 [djLint 扩展](https://github.com/djlint/djlint-zed)，它会运行[语言服务器](#语言服务器)。安装后，HTML 以及各模板扩展的语言中就会显示检查结果。
+
+要使用 djLint 进行格式化，请将其设为某种语言的格式化工具：
+
+```json
+{
+  "languages": {
+    "HTML": { "formatter": { "language_server": { "name": "djlint" } } }
+  }
+}
+```
+
+[设置](#设置)位于 `lsp.djlint.settings` 下。
 
 ## Neovim
 
