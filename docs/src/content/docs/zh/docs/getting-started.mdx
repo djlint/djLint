@@ -39,7 +39,7 @@ pipx install djlint
 brew install djlint
 ```
 
-_或者使用 npm。**警告**：npm 包只是一个包装器。它的安装脚本会用系统路径中碰巧存在的那个 `python3` 运行 `pip install --upgrade djlint`，而且 npm 不会管理或卸载实际安装的包，因此请尽量使用 pip。_
+_或者使用 npm。**警告**：npm 包只是一个包装器。它的安装脚本会用系统路径中碰巧存在的那个 `python3` 运行 pip，安装与该 npm 版本对应的 djLint 版本，这可能会用较旧的 djLint 替换较新的 djLint。npm 不会管理或卸载实际安装的包，因此请尽量使用 pip。_
 
 ```bash
 npm i djlint

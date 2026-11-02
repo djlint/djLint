@@ -39,7 +39,7 @@ pipx install djlint
 brew install djlint
 ```
 
-_或者使用 npm。**警告**：npm 套件只是一層包裝，它的安裝指令碼會對你系統路徑上剛好找到的 `python3` 執行 `pip install --upgrade djlint`。npm 不會管理或解除安裝實際的套件，可以的話，請直接使用 pip。_
+_或者使用 npm。**警告**：npm 套件只是一層包裝，它的安裝指令碼會用你系統路徑上剛好找到的 `python3` 執行 pip，安裝與該 npm 版本對應的 djLint 版本，這可能會把較新的 djLint 換成較舊的版本。npm 不會管理或解除安裝實際的套件，可以的話，請直接使用 pip。_
 
 ```bash
 npm i djlint

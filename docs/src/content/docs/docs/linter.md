@@ -367,7 +367,7 @@ Do:
 
 `There should be no spaces around attribute =.`
 
-With spaces around "=", the tag reads as three separate tokens, and it is one edit away from breaking apart: a line wrap or truncation in the middle leaves a bare boolean attribute plus stray text. Keeping name="value" contiguous is also what simple text tooling (grep, search-and-replace) assumes, so mixed spacing makes attributes hard to find and refactor reliably. `--reformat` drops the spaces for you.
+HTML allows whitespace around "=", so this is a style rule. Writing name="value" without spaces is the usual style, and it is what simple text tooling such as grep or search-and-replace assumes, so mixed spacing makes attributes harder to find and refactor. `--reformat` drops the spaces for you.
 
 Don't:
 

@@ -39,7 +39,7 @@ Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/for
 brew install djlint
 ```
 
-_Or with npm. **Warning**: the npm package is only a wrapper. Its install script runs `pip install --upgrade djlint` on whatever `python3` is on your system path, and npm will not manage or uninstall the actual package, so prefer pip when you can._
+_Or with npm. **Warning**: the npm package is only a wrapper. Its install script runs pip on whatever `python3` is on your system path and installs the djLint version of that npm release, which can replace a newer djLint with an older one. npm will not manage or uninstall the actual package, so prefer pip when you can._
 
 ```bash
 npm i djlint

@@ -367,7 +367,7 @@ Sondern so:
 
 `There should be no spaces around attribute =.`
 
-Mit Leerzeichen um das „=“ liest sich das Tag als drei getrennte Token und fällt bei der nächsten Bearbeitung leicht auseinander: Ein Zeilenumbruch oder eine Kürzung in der Mitte hinterlässt ein bloßes boolesches Attribut plus verirrten Text. Einfache Textwerkzeuge (grep, Suchen und Ersetzen) gehen außerdem von einem zusammenhängenden name="value" aus, sodass gemischte Abstände es erschweren, Attribute zuverlässig zu finden und zu refaktorieren. `--reformat` entfernt die Leerzeichen für Sie.
+HTML erlaubt Leerraum um das „=“, es handelt sich also um eine Stilregel. Üblich ist name="value" ohne Leerzeichen, und davon gehen auch einfache Textwerkzeuge wie grep oder Suchen und Ersetzen aus, sodass gemischte Abstände es erschweren, Attribute zu finden und zu refaktorieren. `--reformat` entfernt die Leerzeichen für Sie.
 
 Nicht so:
 

@@ -39,7 +39,7 @@ Oder unter macOS oder Linux mit der von der Community gepflegten [Homebrew-Forme
 brew install djlint
 ```
 
-_Oder mit npm. **Achtung**: Das npm-Paket ist nur ein Wrapper. Sein Installationsskript führt `pip install --upgrade djlint` mit dem `python3` aus, das gerade in Ihrem Systempfad liegt, und npm verwaltet das eigentliche Paket nicht und deinstalliert es auch nicht. Verwenden Sie daher nach Möglichkeit pip._
+_Oder mit npm. **Achtung**: Das npm-Paket ist nur ein Wrapper. Sein Installationsskript führt pip mit dem `python3` aus, das gerade in Ihrem Systempfad liegt, und installiert die djLint-Version dieses npm-Releases, die ein neueres djLint durch ein älteres ersetzen kann. npm verwaltet das eigentliche Paket nicht und deinstalliert es auch nicht, verwenden Sie daher nach Möglichkeit pip._
 
 ```bash
 npm i djlint

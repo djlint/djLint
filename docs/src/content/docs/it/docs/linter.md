@@ -367,7 +367,7 @@ Da preferire:
 
 `There should be no spaces around attribute =.`
 
-Con gli spazi attorno a "=", il tag si legge come tre token separati, e basta una modifica per spezzarlo: un a capo o un troncamento nel mezzo lasciano un attributo booleano isolato più del testo vagante. Tenere name="value" tutto attaccato è anche ciò che presuppongono i semplici strumenti testuali (grep, cerca e sostituisci), quindi una spaziatura mista rende gli attributi difficili da trovare e da rifattorizzare in modo affidabile. `--reformat` rimuove gli spazi al posto tuo.
+L'HTML ammette spazi attorno a "=", quindi questa è una regola di stile. Scrivere name="value" senza spazi è lo stile abituale, ed è ciò che presuppongono i semplici strumenti testuali come grep o cerca e sostituisci, quindi una spaziatura mista rende gli attributi più difficili da trovare e da rifattorizzare. `--reformat` rimuove gli spazi al posto tuo.
 
 Da evitare:
 

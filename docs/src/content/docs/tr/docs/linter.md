@@ -367,7 +367,7 @@ Yapın:
 
 `There should be no spaces around attribute =.`
 
-"=" çevresinde boşluk olduğunda etiket üç ayrı parça gibi okunur ve dağılmaya tek bir düzenleme uzaklıktadır: ortadan yapılan bir satır kaydırma ya da kesme, geride yalın bir boolean öznitelik ve başıboş bir metin bırakır. name="value" yazımını bitişik tutmak, basit metin araçlarının (grep, bul ve değiştir) da varsaydığı şeydir; bu yüzden karışık boşluk kullanımı öznitelikleri güvenilir şekilde bulmayı ve yeniden düzenlemeyi zorlaştırır. `--reformat` bu boşlukları sizin yerinize kaldırır.
+HTML, "=" çevresinde boşluğa izin verdiği için bu bir stil kuralıdır. Yaygın stil name="value" biçiminde boşluksuz yazmaktır; grep ya da bul ve değiştir gibi basit metin araçları da bunu varsayar. Bu yüzden karışık boşluk kullanımı öznitelikleri bulmayı ve yeniden düzenlemeyi zorlaştırır. `--reformat` bu boşlukları sizin yerinize kaldırır.
 
 Yapmayın:
 

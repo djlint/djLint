@@ -367,7 +367,7 @@ Une valeur d'attribut sans guillemets s'arrête au premier espace : une valeur 
 
 `There should be no spaces around attribute =.`
 
-Avec des espaces autour de « = », la balise se lit comme trois éléments distincts, et il suffit d'une modification pour qu'elle se disloque : un retour à la ligne ou une troncature au milieu laisse un attribut booléen isolé suivi de texte parasite. Garder nom="valeur" d'un seul tenant est aussi ce que supposent les outils textuels simples (grep, rechercher-remplacer) : un espacement mélangé rend les attributs difficiles à trouver et à refactoriser de manière fiable. `--reformat` supprime les espaces pour vous.
+HTML autorise les espaces autour de « = » : il s'agit donc d'une règle de style. Écrire nom="valeur" sans espaces est le style habituel, et c'est ce que supposent les outils textuels simples comme grep ou le rechercher-remplacer : un espacement mélangé rend les attributs plus difficiles à trouver et à refactoriser. `--reformat` supprime les espaces pour vous.
 
 À éviter :
 

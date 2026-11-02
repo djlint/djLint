@@ -367,7 +367,7 @@ Haz esto:
 
 `There should be no spaces around attribute =.`
 
-Con espacios alrededor del "=", la etiqueta se lee como tres elementos separados, y basta una edición para partirla: un salto de línea o un recorte en medio deja un atributo booleano suelto más texto perdido. Mantener nombre="valor" junto es además lo que dan por hecho las herramientas de texto sencillas (grep, buscar y reemplazar), así que un espaciado mezclado hace difícil encontrar los atributos y refactorizarlos de forma fiable. `--reformat` quita los espacios por ti.
+HTML admite espacios en blanco alrededor del "=", así que esta es una regla de estilo. Escribir nombre="valor" sin espacios es el estilo habitual, y es lo que dan por hecho las herramientas de texto sencillas, como grep o buscar y reemplazar, así que un espaciado mezclado hace más difícil encontrar los atributos y refactorizarlos. `--reformat` quita los espacios por ti.
 
 No hagas esto:
 

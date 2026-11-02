@@ -367,7 +367,7 @@ Správně:
 
 `There should be no spaces around attribute =.`
 
-S mezerami kolem „=“ se značka čte jako tři samostatné tokeny a od rozpadnutí ji dělí jediná úprava: zalomení nebo zkrácení řádku uprostřed zanechá holý logický atribut a k tomu zatoulaný text. Souvislý zápis name="value" také předpokládají jednoduché textové nástroje (grep, hledání a nahrazování), takže nejednotné mezery ztěžují spolehlivé hledání a refaktoring atributů. `--reformat` mezery odstraní za vás.
+HTML kolem „=“ prázdné znaky povoluje, takže jde o stylové pravidlo. Obvyklý styl je zápis name="value" bez mezer a právě ten předpokládají jednoduché textové nástroje jako grep nebo hledání a nahrazování, takže nejednotné mezery ztěžují hledání a refaktoring atributů. `--reformat` mezery odstraní za vás.
 
 Špatně:
 

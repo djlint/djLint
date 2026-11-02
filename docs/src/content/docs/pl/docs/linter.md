@@ -367,7 +367,7 @@ Dobrze:
 
 `There should be no spaces around attribute =.`
 
-Ze spacjami wokół „=” tag czyta się jak trzy osobne tokeny i wystarczy jedna edycja, by się rozpadł: zawinięcie wiersza lub obcięcie w środku zostawia samotny atrybut logiczny i zbłąkany tekst. Proste narzędzia tekstowe (grep, wyszukiwanie i zamiana) też zakładają ciągły zapis name="value", więc mieszane odstępy utrudniają niezawodne odnajdywanie i refaktoryzację atrybutów. `--reformat` sam usuwa te spacje.
+HTML dopuszcza białe znaki wokół „=”, więc to reguła stylu. Zwykle zapisuje się name="value" bez spacji i tego właśnie oczekują proste narzędzia tekstowe, takie jak grep czy wyszukiwanie i zamiana, więc mieszane odstępy utrudniają odnajdywanie i refaktoryzację atrybutów. `--reformat` sam usuwa te spacje.
 
 Źle:
 
