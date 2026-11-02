@@ -13,7 +13,7 @@ Code can be ignored by wrapping it in `djlint` tags:
 
 For plain old html -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
@@ -22,7 +22,7 @@ For plain old html -
 
 or as a comment -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
@@ -31,7 +31,7 @@ or as a comment -
 
 or as a long comment -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
@@ -40,7 +40,7 @@ or as a long comment -
 
 or as a golang style comment -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
@@ -49,7 +49,7 @@ or as a golang style comment -
 
 or as a handlebars style comment -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -64,7 +64,7 @@ Specific linter rules can also be ignored by adding the rule name into the ignor
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

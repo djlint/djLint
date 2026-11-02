@@ -46,7 +46,7 @@ Avec `python_rules=False`, les règles personnalisées avec un `python_module` n
 - `match` : Le début du texte trouvé, jusqu'à 20 caractères.
 - `line`, `column` : Le début du résultat. Les lignes comptent à partir de 1, les colonnes à partir de 0.
 - `end_line`, `end_column` : La position juste après sa fin, qui peut être sur une ligne suivante.
-  :::
+:::
 
 Les colonnes comptent des caractères, pas des octets ni des unités UTF-16.
 

@@ -114,11 +114,11 @@ The first letter of a code follows the pattern:
 - M: applies specifically to Handlebars
 - N: applies specifically to Nunjucks
 - T: applies generally to templates
-  :::
+:::
 
 ### Rule Details
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 {% raw %}
 
@@ -1453,7 +1453,7 @@ Do:
 
 {% endraw %}
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Adding Rules
 
@@ -1469,7 +1469,7 @@ A good rule consists of
 - Flags - Regex flags. Defaults to re.DOTALL. ex: re.I|re.M
 - Patterns - regex expressions that will find the error.
 - Exclude - Optional list of profiles to exclude rule from.
-  :::
+:::
 
 Please include a test to validate the rule.
 
@@ -1511,7 +1511,7 @@ The specified `python_module` must contain a `run()` function that will be execu
 - `filepath`: Path to the file that we are currently checking.
 - `line_ends`: List of line `start` and `end` character position that you can use with `djlint.lint.get_line()` to get line numbers from a character position. See the example.
 - `*args, **kwargs`: We might add other arguments in the future, so you should include those two arguments to reduce the risk of failure on djLint upgrade.
-  :::
+:::
 
 The module can be in the project root. If it returns a `line` or an `end` that isn't a position, djLint stops with an error that names the rule.
 
@@ -1525,7 +1525,7 @@ It must return a list of dict, one for each errors, with the following keys:
 - `end`: Optional. Where the error ends, written like `line`, just past its last character. Without it, the error ends where `match` does.
 - `match`: The part of the content that contains the error
 - `message`: The message that will be printed to signal the error (typically `rule['message']`)
-  :::
+:::
 
 ```python
 from __future__ import annotations
