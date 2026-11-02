@@ -16,6 +16,7 @@
 - The formatter drops a `type` only where it is the element's default: `text/javascript` on a `<script>`, and `text/css` on a `<style>` or a `<link rel="stylesheet">`. A `<script type="text/css">`, a `<style type="text/javascript">`, a `<link>` that is not a stylesheet and a custom element such as `<script-x>` keep theirs. A `type` or `method` next to a template tag written with `-`, as in `{{- x }}`, is left as written, since dropping the type would join what the `-` trims. `H024` reports the same cases, also when the value is written without quotes or with spaces around `=`.
 - A template comment written after the last attribute of a tag, as in `<div class="x" {# note #}>`, is kept. With a profile that has `{# #}` comments, the formatter deleted it.
 - An unquoted attribute value next to a template tag written with `-`, as in `class=x {{- suffix }}` or `class={{ c -}} x`, stays unquoted. The `-` joins the text beyond it onto the value, and quoting the value left that text outside, which changed the attribute.
+- A template tag written against an attribute or against the tag name, as in `<option value="x"{% if a %} selected{% endif %}>` or `<li{{ attrs }}>`, stays there when the attributes are spread over several lines. A line break or space was put between them, which the page then rendered.
 
 ## [1.49.3] - 2026-11-02
 

@@ -1057,6 +1057,39 @@ test_data = [
         id="a_call_on_its_own_line_inside_a_template_tag_in_a_value_stays_there",
     ),
     pytest.param(
+        (
+            '<a class="x"{{ s }} href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n'
+            '<a class="x"{% if a %} data-a{% endif %} href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n'
+            '<a href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"{{ s }}>t</a>\n'
+        ),
+        (
+            '<a class="x"{{ s }}\n'
+            '   href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '   id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n'
+            '<a class="x"{% if a %} data-a{% endif %}\n'
+            '   href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '   id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n'
+            '<a href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '   id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"{{ s }}>t</a>\n'
+        ),
+        id="a_template_tag_written_against_an_attribute_stays_on_its_line",
+    ),
+    pytest.param(
+        (
+            '<div{% if a %} hidden{% endif %} class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</div>\n'
+        ),
+        (
+            "<div{% if a %} hidden{% endif %}\n"
+            '     class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '     id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</div>\n'
+        ),
+        id="a_template_tag_written_against_the_tag_name_stays_against_it",
+    ),
+    pytest.param(
         ('<div class="a\nb" style="c: 1;\nd: 2">x</div>\n'),
         ('<div class="a b" style="c: 1; d: 2">x</div>\n'),
         id="a_line_break_in_a_token_list_or_css_value_is_only_layout",

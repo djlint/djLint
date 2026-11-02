@@ -95,6 +95,16 @@ test_data = [
         {},
         id="tag after text indents from the line",
     ),
+    pytest.param(
+        '<div{% if a %} hidden{% endif %} class="aaaaaaaaaaaaaaaaaaaa"{{ s }}'
+        ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</div>\n',
+        "<div{% if a %} hidden{% endif %}\n"
+        '    class="aaaaaaaaaaaaaaaaaaaa"{{ s }}\n'
+        '    id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"\n'
+        ">t</div>\n",
+        {},
+        id="template tags written against the name or an attribute stay there",
+    ),
 ]
 
 

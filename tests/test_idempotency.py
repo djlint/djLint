@@ -169,6 +169,11 @@ templates = [
         "t</a>\n<a class={{ c -}} x>t</a>\n<a class=x {#- c #}y>t</a>\n",
         id="bare value beside a trimming template tag",
     ),
+    pytest.param(
+        '<div{% if a %} hidden{% endif %} class="aaaaaaaaaaaaaaaaaaaaaaaaaaaa"{{ s }}'
+        ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"{# c #}>t</div>\n',
+        id="template tags written against the tag name or an attribute",
+    ),
 ]
 
 option_sets = [

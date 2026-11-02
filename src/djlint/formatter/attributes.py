@@ -134,6 +134,7 @@ def normalize_attributes(config: Config, attribute_group: str) -> str:
 
 _ATTRIBUTE_SORT_PRIORITY: Final = MappingProxyType({"id": 0, "class": 1})
 _TEMPLATE_TAG_MARKERS: Final = ("{%", "{{", "{#")
+_TEMPLATE_TAG_CLOSERS: Final = ("%}", "}}", "#}")
 
 
 def _guards_its_neighbours(attribute_group: str) -> bool:
@@ -507,17 +508,45 @@ def format_attributes(config: Config, html: str, token: TagToken, before_tag: st
             attributes.append(f"{attrib_name}={quote}{attrib_value}{quote}")
         else:
             attributes.append((attrib_name or "") + (attrib_value or "") + (standalone or ""))
-    attribute_string = f"\n{spacing}".join(x for x in attributes if x)
+
+    # A template tag written against an attribute, as in `class="x"{{ s }}`,
+    # renders against it, so a break there would put whitespace into what
+    # the page gets. The two stay together on their line, and so does one
+    # written against the tag name, as in `<div{% if a %}`. Two plain
+    # attributes written together are read as two either way and are spread.
+    lines: list[str] = []
+    previous_end = -1
+    for text, match in zip(attributes, attribute_matches, strict=True):
+        if not text:
+            continue
+        if (
+            lines
+            and match.start() == previous_end
+            and (
+                attribute_group.startswith(_TEMPLATE_TAG_MARKERS, match.start())
+                or attribute_group.endswith(_TEMPLATE_TAG_CLOSERS, 0, match.start())
+            )
+        ):
+            lines[-1] += text
+        else:
+            lines.append(text)
+        previous_end = match.end()
+    glued_to_name = (
+        attribute_group.startswith(_TEMPLATE_TAG_MARKERS)
+        and not html[token.name_end : token.name_end + 1].isspace()
+    )
+    attribute_string = f"\n{spacing}".join(lines)
 
     close = " />" if token.self_closing else ">"
 
     if config.single_attribute_per_line:
+        first_break = "" if glued_to_name else f"\n{spacing}"
         attribute_string = (
-            f"{leading_space}<{token.name}"
-            f"\n{spacing}{attribute_string}"
+            f"{leading_space}<{token.name}{first_break}{attribute_string}"
             f"\n{line_indent}{close.strip()}"
         )
     else:
-        attribute_string = f"{leading_space}{tag}{attribute_string}{close}"
+        opening = f"<{token.name}" if glued_to_name else tag
+        attribute_string = f"{leading_space}{opening}{attribute_string}{close}"
 
     return "\n".join(x.rstrip() for x in attribute_string.splitlines())
