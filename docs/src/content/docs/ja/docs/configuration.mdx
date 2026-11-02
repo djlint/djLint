@@ -1,0 +1,37 @@
+---
+title: "設定"
+description: "HTML テンプレートのリントとフォーマットのための djLint の設定。豊富なフォーマッターのオプションを活用しましょう。"
+sidebar:
+  label: "設定"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+設定は、プロジェクトの `pyproject.toml` ファイル、`djlint.toml` または `.djlint.toml` ファイル、あるいは `.djlintrc` ファイルで行います。コマンドライン引数は、設定ファイルのどの設定よりも常に優先されます。`--prefer-configuration` を指定しない限り、プロジェクトのローカル設定は `--configuration` で指定したグローバル設定ファイルよりも優先されます。
+
+`pyproject.toml` の形式は `toml` です。
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+`djlint.toml` と `.djlint.toml` の形式は `toml` です。
+
+```toml
+<config options>
+```
+
+`.djlintrc` の形式は `json` です。
+
+```json
+{ "option": "value" }
+```
+
+## オプション
+
+<ConfigOptions
+  label="オプションを絞り込む"
+  placeholder="入力してオプションを絞り込み..."
+  empty="見つかりませんでした。別のキーワードで検索してください。"
+/>

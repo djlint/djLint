@@ -1,21 +1,21 @@
 ---
 title: "Utilisation du formateur"
-description: "Formatez vos modèles HTML avec djLint. Rapide et précis, le résultat fera briller vos modèles."
+description: "Formatez vos templates HTML avec djLint. Rapide et précis, il rendra vos templates impeccables."
 sidebar:
   label: "Formateur"
 ---
 
-Le formateur de djLint prendra des modèles html bâclés et rendra le formatage cohérent et facile à suivre !
+Le formateur de djLint prend des templates HTML négligés et leur donne une mise en forme cohérente et facile à suivre !
 
-Vérifiez la sortie avec `--check` avant d'appliquer les changements.
+Vérifiez le résultat avec `--check` avant d'appliquer les modifications.
 
-Pour revoir ce qui peut changer dans le formatage, lancez :
+Pour voir ce que le formatage pourrait modifier, exécutez :
 
 ```bash
 djlint . --check
 ```
 
-Pour formater le code et exécuter les fichiers de mise à jour :
+Pour formater le code et mettre à jour les fichiers, exécutez :
 
 ```bash
 djlint . --reformat --single-attribute-per-line
@@ -25,22 +25,22 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 ```
 
 :::tip
-[Consultez le guide de configuration pour connaître toutes les options !](/fr/docs/configuration/)
+[Consultez le guide de configuration pour découvrir toutes les options !](/fr/docs/configuration/)
 :::
 
-:::note[Note]
-Le JSON et le JavaScript écrits dans un attribut sont laissés tels quels, sauf si `--format-attribute-js-json` est activé. Le HTML dans un attribut n'est jamais touché.
+:::note[Remarque]
+Le JSON et le JavaScript écrits dans un attribut sont laissés tels quels, sauf si `--format-attribute-js-json` est activé. Le HTML à l'intérieur d'un attribut n'est jamais modifié.
 :::
 
-:::note[Note]
-djLint n'est pas un analyseur html ou un validateur de syntaxe.
+:::note[Remarque]
+djLint n'est ni un parseur HTML ni un validateur de syntaxe.
 :::
 
-## Voici un exemple !
+## Un exemple !
 
 ### Avant
 
-Voilà un pâté de HTML qui a désespérément besoin d’attention...
+Voici un bloc de HTML qui a désespérément besoin d'attention :
 
 <!-- prettier-ignore -->
 ```html
@@ -69,7 +69,7 @@ Voilà un pâté de HTML qui a désespérément besoin d’attention...
 
 ### Après
 
-C'est un peu mieux maintenant... on peut le lire :)
+C'est un peu mieux maintenant… on arrive à le lire :)
 
 <!-- prettier-ignore -->
 ```html
@@ -99,9 +99,9 @@ C'est un peu mieux maintenant... on peut le lire :)
 </p>
 ```
 
-### Après avec `single_attribute_per_line`
+### Après, avec `single_attribute_per_line`
 
-Vous préférez les attributs à la manière de Prettier ? Activez l'option `single_attribute_per_line` :
+Vous préférez les attributs à la Prettier ? Activez l'option `single_attribute_per_line` :
 
 <!-- prettier-ignore -->
 ```html

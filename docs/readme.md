@@ -12,7 +12,7 @@ The docs are built with [Astro Starlight](https://starlight.astro.build).
 
 ## Where things are
 
-- `src/content/docs/` holds the pages as Markdown, English at the root and a folder per translation (`ru/`, `fr/`, `zh/`). A page missing from a translation falls back to the English one.
+- `src/content/docs/` holds the pages as Markdown, English at the root and a folder per translation (`zh/`, `ja/`, `es/`, `pt-br/`, `ru/`, `ko/`, `fr/`, `de/`, `zh-tw/`, `it/`, `pl/`, `cs/`, `tr/`). A page missing from a translation falls back to the English one.
 - `src/content/i18n/` holds the strings the custom components use; Starlight translates its own interface.
 - `src/data/configuration.json` lists every option shown on the configuration page, and `src/data/cli-help.txt` is the `djlint --help` output the getting started page shows. Both are checked against djLint by the tests.
 - The changelog page shows the repository's `CHANGELOG.md`.

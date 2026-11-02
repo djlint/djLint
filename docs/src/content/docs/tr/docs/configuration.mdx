@@ -1,0 +1,37 @@
+---
+title: "Yapılandırma"
+description: "HTML şablonlarının lint denetimi ve biçimlendirilmesi için djLint yapılandırması. Birçok biçimlendirici seçeneğinden yararlanın."
+sidebar:
+  label: "Yapılandırma"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+Yapılandırma, projenizin `pyproject.toml` dosyası, bir `djlint.toml` ya da `.djlint.toml` dosyası veya bir `.djlintrc` dosyası üzerinden yapılır. Komut satırı argümanları, yapılandırma dosyalarındaki ayarları her zaman geçersiz kılar. `--prefer-configuration` ayarlanmadıkça yerel proje ayarları, `--configuration` ile verilen genel bir yapılandırma dosyasını geçersiz kılar.
+
+`pyproject.toml` dosyası `toml` biçimindedir.
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+`djlint.toml` ve `.djlint.toml` dosyaları `toml` biçimindedir.
+
+```toml
+<config options>
+```
+
+`.djlintrc` dosyası `json` biçimindedir.
+
+```json
+{ "option": "value" }
+```
+
+## Seçenekler
+
+<ConfigOptions
+  label="Seçenekleri filtrele"
+  placeholder="seçenekleri filtrelemek için yazın..."
+  empty="Hiçbir şey bulunamadı. Başka bir arama deneyin."
+/>

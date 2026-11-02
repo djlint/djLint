@@ -1,0 +1,37 @@
+---
+title: "設定"
+description: "djLint 的 HTML 範本 lint 與格式化設定。善用格式化工具的眾多選項。"
+sidebar:
+  label: "設定"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+設定可以透過專案的 `pyproject.toml` 檔案、`djlint.toml` 或 `.djlint.toml` 檔案，或是 `.djlintrc` 檔案進行。命令列引數一律會覆寫設定檔中的任何設定。除非設定了 `--prefer-configuration`，否則專案層級的設定會覆寫以 `--configuration` 指定的全域設定檔。
+
+`pyproject.toml` 的格式為 `toml`。
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+`djlint.toml` 和 `.djlint.toml` 的格式為 `toml`。
+
+```toml
+<config options>
+```
+
+`.djlintrc` 的格式為 `json`。
+
+```json
+{ "option": "value" }
+```
+
+## 選項
+
+<ConfigOptions
+  label="篩選選項"
+  placeholder="輸入文字以篩選選項…"
+  empty="找不到任何結果，請試試其他搜尋。"
+/>

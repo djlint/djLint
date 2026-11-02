@@ -1,46 +1,46 @@
 ---
-title: "代码格式化"
-description: "使用 djLint 格式化你的 HTML 模板。又快又准的使你的模板焕发光彩。"
+title: "格式化工具用法"
+description: "用 djLint 格式化你的 HTML 模板。快速、准确，输出结果让你的模板焕然一新。"
 sidebar:
-  label: "代码格式化"
+  label: "格式化工具"
 ---
 
-djLint 的格式化工具可以处理混乱的HTML模板，使之变得格式统一且易于模仿！
+djLint 的格式化工具能把杂乱的 HTML 模板整理成一致、易读的格式！
 
-在确认修改之前使用 `--check` 查看输出。
+在应用更改之前，先用 `--check` 检查输出。
 
-预览格式化修改内容：
+要查看格式化可能带来的更改，请运行：
 
 ```bash
 djlint . --check
 ```
 
-直接格式化：
+要格式化代码并更新文件，请运行：
 
 ```bash
 djlint . --reformat --single-attribute-per-line
 
-# 顺带格式化一下脚本和样式？
+# 想同时格式化脚本和样式？
 djlint . --reformat --single-attribute-per-line --format-css --format-js
 ```
 
 :::tip
-详情请参考 [配置](/zh/docs/configuration/) 章节
+[查看配置指南，了解所有选项！](/zh/docs/configuration/)
 :::
 
 :::note[注意]
-写在属性里的 JSON 和 JavaScript 保持原样，除非开启 `--format-attribute-js-json`。属性中的 HTML 始终不作改动。
+写在属性中的 JSON 和 JavaScript 会保持原样，除非开启了 `--format-attribute-js-json`。属性中的 HTML 始终不会被改动。
 :::
 
 :::note[注意]
-djLint 并非 HTML 解析器或语法验证器。
+djLint 不是 HTML 解析器，也不是语法验证器。
 :::
 
-## 示例
+## 来看个示例！
 
-### 处理前
+### 格式化之前
 
-下面是一段急需处理的 HTML 代码块 -
+下面是一段急需整理的 HTML：
 
 <!-- prettier-ignore -->
 ```html
@@ -67,9 +67,9 @@ djLint 并非 HTML 解析器或语法验证器。
 </p>
 ```
 
-### 处理后
+### 格式化之后
 
-看起来好多了…… 至少我们能读得下去了：
+现在看起来好一些了……至少能读懂了 :)
 
 <!-- prettier-ignore -->
 ```html
@@ -99,9 +99,9 @@ djLint 并非 HTML 解析器或语法验证器。
 </p>
 ```
 
-### 使用 `single_attribute_per_line` 的处理结果
+### 启用 `single_attribute_per_line` 之后
 
-如果你更喜欢 Prettier 风格的属性排版，可以启用 `single_attribute_per_line` 选项：
+更喜欢 Prettier 风格的属性？启用 `single_attribute_per_line` 选项：
 
 <!-- prettier-ignore -->
 ```html

@@ -1,15 +1,15 @@
 ---
-title: "Go 模板检查与格式化"
-description: "djLint是一个 Go 模板的代码检查与格式化工具！使用内置的预设配置（profile），充分利用djLint来检查并格式化你的模板。"
+title: "Go 模板代码检查与格式化工具"
+description: "djLint 是一款 Go 模板代码检查工具，也是一款 Go 模板格式化工具！使用 djLint 检查和格式化模板时，可以直接使用内置的预设。"
 sidebar:
-  label: "Go templates"
+  label: "Go 模板"
 ---
 
-djLint是一个 Go 模板的代码检查与格式化工具！使用内置的预设配置（profile），充分利用djLint来检查并格式化你的模板。
+djLint 是一款 Go 模板代码检查工具，也是一款 Go 模板格式化工具！使用 djLint 检查和格式化模板时，可以直接使用内置的预设。
 
-**[Go 模板简介](https://pkg.go.dev/text/template)**
+**[什么是 Go 模板？](https://pkg.go.dev/text/template)**
 
-Hugo 主题和 Helm chart 使用的正是 Go 模板（`text/template`、`html/template`），请为它们使用同一个配置。
+Hugo 主题和 Helm chart 同样基于 Go 模板（`text/template`、`html/template`），因此也请为它们使用这个预设。
 
 #### 使用命令行
 
@@ -17,9 +17,9 @@ Hugo 主题和 Helm chart 使用的正是 Go 模板（`text/template`、`html/te
 djlint /path/to/templates --profile=golang
 ```
 
-#### 使用配置文件
+#### 或者，使用配置文件
 
-在你项目中的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 文件中配置 djLint。
+在项目的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 文件中配置 djLint。
 
 ```toml title="pyproject.toml"
 [tool.djlint]
@@ -35,5 +35,5 @@ profile="golang"
 ```
 
 :::tip
-详情请参考 [配置](/zh/docs/configuration/) 章节
+[查看配置指南，了解所有选项！](/zh/docs/configuration/)
 :::

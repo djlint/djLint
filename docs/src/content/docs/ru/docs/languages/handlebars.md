@@ -1,21 +1,21 @@
 ---
-title: "Handlebars Template Linter and Formatter"
-description: "djLint - это линтер шаблонов handlebars и форматер шаблонов handlebars! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint."
+title: "Линтер и форматер шаблонов Handlebars"
+description: "djLint — линтер и форматер шаблонов Handlebars! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint."
 sidebar:
   label: "Handlebars"
 ---
 
-djLint - это линтер шаблонов handlebars и форматер шаблонов handlebars! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
+djLint — линтер и форматер шаблонов Handlebars! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
 
 **[Что такое Handlebars?](https://handlebarsjs.com/)**
 
-#### Использование командной строки
+#### Через командную строку
 
 ```bash
 djlint /path/to/templates --profile=handlebars
 ```
 
-#### Или используйте файл конфигурации
+#### Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
@@ -33,5 +33,5 @@ profile="handlebars"
 ```
 
 :::tip
-[Ознакомьтесь с руководством по настройке, чтобы узнать обо всех возможностях!](/ru/docs/configuration/)
+[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
 :::

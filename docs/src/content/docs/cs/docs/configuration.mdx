@@ -1,0 +1,37 @@
+---
+title: "Konfigurace"
+description: "Konfigurace djLint pro lintování a formátování HTML šablon. Využijte řadu možností formátovače."
+sidebar:
+  label: "Konfigurace"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+Konfigurace se zapisuje buď do souboru `pyproject.toml` vašeho projektu, do souboru `djlint.toml` nebo `.djlint.toml`, nebo do souboru `.djlintrc`. Argumenty příkazového řádku vždy přepíší jakékoli nastavení z konfiguračních souborů. Lokální nastavení projektu má přednost před globálním konfiguračním souborem zadaným pomocí `--configuration`, pokud není nastaveno `--prefer-configuration`.
+
+Soubor `pyproject.toml` je ve formátu `toml`.
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+Soubory `djlint.toml` a `.djlint.toml` jsou ve formátu `toml`.
+
+```toml
+<config options>
+```
+
+Soubor `.djlintrc` je ve formátu `json`.
+
+```json
+{ "option": "value" }
+```
+
+## Možnosti
+
+<ConfigOptions
+  label="Filtrovat možnosti"
+  placeholder="zadejte text pro filtrování možností…"
+  empty="Nic nenalezeno. Zkuste hledat jinak."
+/>

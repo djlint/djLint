@@ -1,23 +1,23 @@
 ---
-title: "Liquid Template Linter and Formatter"
-description: "djLint - это линтер шаблонов Liquid и форматер шаблонов Liquid! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint."
+title: "Линтер и форматер шаблонов Liquid"
+description: "djLint — линтер и форматер шаблонов Liquid! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint."
 sidebar:
   label: "Liquid"
 ---
 
-djLint - это линтер шаблонов Liquid и форматер шаблонов Liquid! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
+djLint — линтер и форматер шаблонов Liquid! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
 
 **[Что такое Liquid?](https://shopify.github.io/liquid/)**
 
-Один профиль покрывает все диалекты Liquid: темы Shopify, Jekyll, LiquidJS (Eleventy) и Fluid (Orchard Core).
+Один профиль охватывает все диалекты Liquid: темы Shopify, Jekyll, LiquidJS (Eleventy) и Fluid (Orchard Core).
 
-#### Использование командной строки
+#### Через командную строку
 
 ```bash
 djlint /path/to/templates --profile=liquid
 ```
 
-#### Или используйте файл конфигурации
+#### Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
@@ -35,5 +35,5 @@ profile="liquid"
 ```
 
 :::tip
-[Ознакомьтесь с руководством по настройке, чтобы узнать обо всех возможностях!](/ru/docs/configuration/)
+[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
 :::

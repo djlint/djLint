@@ -1,0 +1,118 @@
+---
+title: "Başlarken"
+description: "HTML şablonlarının lint denetimi ve biçimlendirilmesi için djLint'e başlangıç. Kolay komut satırı arayüzünden ve birçok biçimlendirici seçeneğinden yararlanın."
+sidebar:
+  label: "Başlarken"
+---
+
+import CliHelp from "../../../../components/CliHelp.astro";
+
+## Kurulum
+
+djLint [Python](https://python.org) ile yazılmıştır ve [PyPI](https://pypi.org/project/djlint/) üzerinde yayımlanır. [uv](https://docs.astral.sh/uv/) ile projenize geliştirme bağımlılığı olarak ekleyin:
+
+```bash
+uv add --dev djlint
+```
+
+Ya da bağımsız bir araç olarak kurun:
+
+```bash
+uv tool install djlint
+```
+
+Ya da pip ile:
+
+```bash
+pip install djlint
+```
+
+Ya da [pipx](https://pipx.pypa.io/) ile:
+
+```bash
+pipx install djlint
+```
+
+Ya da macOS veya Linux'ta topluluk tarafından sürdürülen [Homebrew formülüyle](https://formulae.brew.sh/formula/djlint):
+
+```bash
+brew install djlint
+```
+
+_Ya da npm ile - **uyarı**: npm paketi yalnızca bir sarmalayıcıdır; kurulum betiği, sistem yolunuzda hangi `python3` varsa onunla `pip install --upgrade djlint` komutunu çalıştırır. npm asıl paketi yönetmez ve kaldırmaz - mümkünse doğrudan pip'i tercih edin._
+
+```bash
+npm i djlint
+```
+
+djLint'i her commit'te çalıştırmak için [pre-commit](/tr/docs/integrations/#pre-commit) bölümüne bakın.
+
+## Komut satırı kullanımı
+
+djLint bir komut satırı uygulamasıdır. Gelişmiş yapılandırma için [yapılandırma](/tr/docs/configuration/) sayfasına bakın.
+
+<CliHelp />
+
+:::note[Not]
+`djlint` komutu bulunamıyorsa Python'un [PATH'inizde](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/) olduğundan emin olun.
+:::
+
+## Yol ya da stdin kullanımı
+
+djLint bir yolla ya da stdin ile çalışır.
+
+Bir yolla çalıştırma -
+
+```bash
+djlint /path/to/templates --lint
+```
+
+Ya da belirli bir dosyayla -
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+Ya da stdin ile -
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+Stdin kodu yeniden biçimlendirmek için de kullanılabilir. Çıktı, mesajlar olmadan yalnızca biçimlendirilmiş koddan oluşur.
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+Çıktı -
+
+```html
+<div></div>
+```
+
+stdin'den okurken djLint'in `per-file-ignores` ile eşleştireceği ya da mesajlarda göstereceği gerçek bir yol yoktur; bu yüzden varsayılan olarak `-` kullanır. Aktarılan içeriğin gerçek yolunu djLint'e bildirmek için `--stdin-filename` verin; örneğin bir editör entegrasyonu kaydetme sırasında bir dosyanın içeriğini aktardığında.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## Çıkış kodları
+
+| Kod | Anlamı                                                                                                                                             |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0` | djLint'ten denetlemesi istenen her şey temiz ya da bulduğu her dosya yapılandırmanız tarafından atlandı.                                           |
+| `1` | djLint lint hataları ya da yeniden biçimlendirilmesi gereken dosyalar buldu. `--warn` bunları uyarı olarak bildirir ve bunun yerine `0` ile çıkar. |
+| `2` | djLint istediğiniz şeyi denetlemedi: yollar hiçbir dosyayla eşleşmedi, komut satırı ya da yapılandırma geçersizdi veya djLint başarısız oldu.      |
+
+Yalnızca `1` kodu, djLint'in şablonlarınıza baktığı ve bulduklarını beğenmediği anlamına gelir. `2` kodu her zaman çalıştırmanın kendisinin işini yapmadığı anlamına gelir; böylece bir işlem hattı tahmin yürütmek yerine ikisini farklı ele alabilir.
+
+`2` kodu, hiçbir şeyi denetlemeyen bir çalıştırmayı yakalar: yanlış bir yol, artık eşleşmeyen bir `--extension` ya da yeri değişmiş şablonlar. Bu kod olmasaydı böyle bir çalıştırma, şablonlarınızın hiçbirine bakmadan sessizce başarılı olurdu.
+
+djLint'in _bulduğu_ ve ardından `exclude`, `extend_exclude`, `use_gitignore` ya da `require_pragma` aracılığıyla bilerek atladığı dosyalar hata sayılmaz. Böyle bir çalıştırma `0` ile çıkar, çünkü yapılandırma tam olarak kendisine söyleneni yapmıştır. `exclude` seçeneğinin pre-commit altında çalışmasını sağlayan da budur; pre-commit, djLint'in bakmasını isteseniz de istemeseniz de hazırlanmış (staged) dosyalarınızın adlarını iletir.
+
+İşlem hattınızda gerçekten hiç şablon içermeyen bir yol olağansa `2` kodunu `allow_empty_input` ile kapatın:
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```
