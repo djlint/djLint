@@ -10,7 +10,6 @@
     "build": "ELEVENTY_PRODUCTION=true eleventy",
     "start": "eleventy --serve --watch"
   },
-  "browserslist": "> 2%, not dead",
   "dependencies": {
     "@codemirror/lang-html": "^6.4.3",
     "@codemirror/language": "^6.13.1",
@@ -52,5 +51,6 @@
     "prismjs": "1.30.0",
     "sass": "1.107.0",
     "slugify": "1.6.9"
-  }
+  },
+  "browserslist": "> 2%, not dead"
 }

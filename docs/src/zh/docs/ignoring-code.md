@@ -13,7 +13,7 @@ date: Last Modified
 
 对于传统 HTML -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
@@ -22,7 +22,7 @@ date: Last Modified
 
 或使用注释 -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
@@ -31,7 +31,7 @@ date: Last Modified
 
 或使用长注释 -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
@@ -40,7 +40,7 @@ date: Last Modified
 
 亦或是 golang 风格注释 -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
@@ -49,7 +49,7 @@ date: Last Modified
 
 以及 handlebars 风格注释 -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -64,7 +64,7 @@ date: Last Modified
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

@@ -46,7 +46,7 @@ With `python_rules=False`, custom rules with a `python_module` aren't loaded, wh
 - `match`: The start of the text it found, up to 20 characters.
 - `line`, `column`: Where the finding starts. Lines count from 1, and columns from 0.
 - `end_line`, `end_column`: Just past where it ends, which can be on a later line.
-  :::
+:::
 
 Columns count characters, not bytes or UTF-16 code units.
 

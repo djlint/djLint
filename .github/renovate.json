@@ -68,8 +68,8 @@
       "groupName": "ruff"
     },
     {
-      "matchPackageNames": ["prettier", "rbubley/mirrors-prettier"],
-      "groupName": "prettier"
+      "matchPackageNames": ["oxfmt", "oxc-project/mirrors-oxfmt"],
+      "groupName": "oxfmt"
     },
     {
       "matchCurrentVersion": "!/^0/",

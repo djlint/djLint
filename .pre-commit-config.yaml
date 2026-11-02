@@ -22,13 +22,16 @@ repos:
     hooks:
       - id: tombi-format
         exclude: ^uv.lock$
-  - repo: https://github.com/rbubley/mirrors-prettier
-    rev: 331f33fa4dfbcbca7c3da3620c137fde0faab273 # frozen: v3.9.10
+  - repo: https://github.com/oxc-project/mirrors-oxfmt
+    rev: 1fb54d06ff80b555a6a428d9b12ff0796e67d923 # frozen: v0.74.0
     hooks:
-      - id: prettier
+      - id: oxfmt
+        types_or:
+          - text
         args:
-          - --object-wrap=collapse
-          - --no-config
+          - --no-error-on-unmatched-pattern
+        additional_dependencies:
+          - oxfmt@0.75.0
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: 25bcf95026b96e2dd3c0aec3090c3d6ef6ca2e6c # frozen: v0.17.3
     hooks:
