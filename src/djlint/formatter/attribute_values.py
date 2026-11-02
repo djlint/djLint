@@ -31,11 +31,12 @@ _TRIMMED_AFTER: Final = r"-[}%\#]\}\s*"
 # The type written out is the default only on the element it is the default
 # for: `text/css` on a `<script>` is not javascript, and on a `<link>` it is
 # only implied for a stylesheet. A rel a template tag helps write may render
-# as anything.
-_STYLESHEET_REL: Final = rf"""
-    (?={_ATTRIBUTES}\srel\s*=\s*
-        (?:"[^"{{]*?(?<![^\s"])stylesheet(?![^\s"])[^"{{]*"
-          |'[^'{{]*?(?<![^\s'])stylesheet(?![^\s'])[^'{{]*'
+# as anything, and so may one after a template tag outside a value: it can
+# write a rel of its own, which a browser reads first, or leave this one out.
+_STYLESHEET_REL: Final = r"""
+    (?=(?:"[^"]*"|'[^']*'|(?!\{[{%])[^'">])*?\srel\s*=\s*
+        (?:"[^"{]*?(?<![^\s"])stylesheet(?![^\s"])[^"{]*"
+          |'[^'{]*?(?<![^\s'])stylesheet(?![^\s'])[^'{]*'
           |stylesheet(?=\s|/?>)))
 """
 # An attribute of its own starts after whitespace that renders, or after a

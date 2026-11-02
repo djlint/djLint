@@ -899,6 +899,8 @@ def test_H024_covers_link_and_anchors_the_name(
         b'<link rel="stylesheet" @type="text/css">',
         b"<link rel=\"{{ 'icon' if x else 'stylesheet' }}\" type=\"text/css\">",
         b"<link rel='{% if x %} stylesheet {% else %} icon {% endif %}' type=\"text/css\">",
+        b'<link {% if x %} rel="stylesheet"{% endif %} type="text/css">',
+        b'<link {{ attrs }} rel="stylesheet" type="text/css">',
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))

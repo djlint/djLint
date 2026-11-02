@@ -101,6 +101,21 @@ test_data = [
     ),
     pytest.param(
         (
+            '<link {% if x %} rel="stylesheet"{% endif %} type="text/css">\n'
+            '<link {{ attrs }} rel="stylesheet" type="text/css">\n'
+            '<link rel="stylesheet" {% if x %}rel="icon"{% endif %} type="text/css">\n'
+            '<link rel="stylesheet" type="text/css" href="{{ a }}">\n'
+        ),
+        (
+            '<link {% if x %} rel="stylesheet"{% endif %} type="text/css">\n'
+            '<link {{ attrs }} rel="stylesheet" type="text/css">\n'
+            '<link rel="stylesheet" {% if x %}rel="icon"{% endif %}>\n'
+            '<link rel="stylesheet" href="{{ a }}">\n'
+        ),
+        id="a template tag before the rel may write another one first",
+    ),
+    pytest.param(
+        (
             '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
             '<link rel=\'{% if x %} stylesheet {% else %} icon {% endif %}\' type="text/css" href="b">\n'
         ),
