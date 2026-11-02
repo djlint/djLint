@@ -891,6 +891,8 @@ def test_H024_covers_link_and_anchors_the_name(
         b"<script type=text/javascript {{- s }}></script>",
         b'<script type="text/javascript" {%- if a %} async{% endif %}></script>',
         b'<script {{ a -}} type="text/javascript"></script>',
+        b'<script type="text/javascript" {#- c #}></script>',
+        b'<script {# c -#} type="text/javascript"></script>',
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))

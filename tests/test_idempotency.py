@@ -164,6 +164,11 @@ templates = [
         "<p {# note #}>t</p>\n",
         id="template comment ending the attributes",
     ),
+    pytest.param(
+        "<a class=x {{- s }} href=/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa id=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb>"
+        "t</a>\n<a class={{ c -}} x>t</a>\n<a class=x {#- c #}y>t</a>\n",
+        id="bare value beside a trimming template tag",
+    ),
 ]
 
 option_sets = [

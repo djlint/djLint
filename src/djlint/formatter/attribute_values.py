@@ -25,10 +25,9 @@ if TYPE_CHECKING:
 # it, so `type=text/css{{ x }}` is one value of its own.
 _ATTRIBUTES: Final = r"""(?:"[^"]*"|'[^']*'|[^'">])*?"""
 # A template tag written with jinja's "-" marker strips the whitespace on that
-# side, which would glue a neighbour onto the value or onto the tag name. A
-# comment is not counted: compressing drops one written inside a tag.
-_TRIMS_BEFORE: Final = r"\s*\{[{%]-"
-_TRIMMED_AFTER: Final = r"-[}%]\}\s*"
+# side, which would glue a neighbour onto the value or onto the tag name.
+_TRIMS_BEFORE: Final = r"\s*\{[{%\#]-"
+_TRIMMED_AFTER: Final = r"-[}%\#]\}\s*"
 # The type written out is the default only on the element it is the default
 # for: `text/css` on a `<script>` is not javascript, and on a `<link>` it is
 # only implied for a stylesheet.

@@ -106,13 +106,17 @@ test_data = [
             '<script {{ a -}} type="text/javascript"></script>\n'
             "<form method=POST {{- s }}></form>\n"
             '<form method="POST"{%- if a %} x{% endif %}></form>\n'
+            '<script type="text/javascript" {#- c #}></script>\n'
+            '<script {# c -#} type="text/javascript"></script>\n'
         ),
         (
-            '<script type="text/javascript" {{- s }}></script>\n'
+            "<script type=text/javascript {{- s }}></script>\n"
             '<script type="text/javascript" {%- if a %} async{% endif %}></script>\n'
             '<script {{ a -}} type="text/javascript"></script>\n'
-            '<form method="POST" {{- s }}>\n</form>\n'
+            "<form method=POST {{- s }}>\n</form>\n"
             '<form method="POST"{%- if a %} x{% endif %}>\n</form>\n'
+            '<script type="text/javascript" {#- c #}></script>\n'
+            '<script {# c -#} type="text/javascript"></script>\n'
         ),
         id="a value whose space a template tag trims is left alone",
     ),

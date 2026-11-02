@@ -30,6 +30,20 @@ _SPACED_EQUALS_PATTERN: Final = compile_pattern(r"[ ]=|=[ ]")
 _SRCSET_ATTRIBUTE_NAMES: Final = frozenset(("srcset", "data-srcset", "sizes"))
 _COLLAPSIBLE_VALUE_ATTRIBUTE_NAMES: Final = frozenset(("class", "style"))
 
+# Jinja's "-" strips the whitespace on that side of a tag, which glues what
+# lies beyond it onto a bare value beside it: the value runs on past where
+# quotes would end it.
+_TRIMS_BEFORE_PATTERN: Final = compile_pattern(r"\s*\{[{%\#]-")
+_TRIMS_AFTER: Final = ("-}}", "-%}", "-#}")
+
+
+def _glued_to_bare_value(attribute_group: str, value: str, value_end: int) -> bool:
+    """Whether a template tag beside a bare value strips the space ending it."""
+    return bool(_TRIMS_BEFORE_PATTERN.match(attribute_group, value_end)) or (
+        value.endswith(_TRIMS_AFTER) and attribute_group[value_end : value_end + 1].isspace()
+    )
+
+
 _REWRITTEN_FROM_STRIPPED_PARTS_PATTERN: Final = compile_pattern(
     r"\b(?:style|srcset|data-srcset|sizes)[ \t]*=[ \t]*([\"'])(.*?)\1", RE_FLAGS_IS
 )
@@ -100,6 +114,7 @@ def normalize_attributes(config: Config, attribute_group: str) -> str:
             and value
             and not {'"', "'"} & set(value)
             and attribute_group[match.end(2) : match.end(2) + 1] in {"", " ", "\t"}
+            and not _glued_to_bare_value(attribute_group, value, match.end(2))
         ):
             rewrite(match.span(2), f'"{value}"')
 
@@ -405,6 +420,15 @@ def format_attributes(config: Config, html: str, token: TagToken, before_tag: st
         first_char = raw_value[0] if raw_value else ""
         is_quoted = first_char in {"'", '"'}
         quote = first_char if is_quoted else '"'
+
+        if (
+            attrib_name
+            and raw_value
+            and not is_quoted
+            and _glued_to_bare_value(attribute_group, raw_value, attr_grp.end(2))
+        ):
+            attributes.append(f"{attrib_name}={raw_value}")
+            continue
 
         if is_quoted and first_char == raw_value[-1]:
             attrib_value = raw_value.strip(first_char)
