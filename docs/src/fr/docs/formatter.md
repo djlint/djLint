@@ -1,22 +1,22 @@
 ---
-description: Formatez vos modèles HTML avec djLint. Rapide et précis, le résultat fera briller vos modèles.
+description: Comment djLint formate les templates HTML, et comment vérifier les modifications avant de les appliquer.
 title: Utilisation du formateur
-keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, formatter usage
+keywords: linter de templates, formateur de templates, djLint, HTML, templates, formateur, linter, utilisation du formateur
 ---
 
 # Utilisation du formateur
 
-Le formateur de djLint prendra des modèles html bâclés et rendra le formatage cohérent et facile à suivre !
+Le formateur de djLint prend des templates HTML négligés et leur donne une mise en forme cohérente et facile à suivre !
 
-Vérifiez la sortie avec `--check` avant d'appliquer les changements.
+Vérifiez le résultat avec `--check` avant d'appliquer les modifications.
 
-Pour revoir ce qui peut changer dans le formatage, lancez :
+Pour voir ce que le formatage pourrait modifier, exécutez :
 
 ```bash
 djlint . --check
 ```
 
-Pour formater le code et exécuter les fichiers de mise à jour :
+Pour formater le code et mettre à jour les fichiers, exécutez :
 
 ```bash
 djlint . --reformat --single-attribute-per-line
@@ -26,26 +26,26 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 ```
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Consultez le guide de configuration pour découvrir toutes les options !</a></div>
 </div>
 
 {% admonition
    "note",
-   "Note",
-   "Le JSON et le JavaScript écrits dans un attribut sont laissés tels quels, sauf si `--format-attribute-js-json` est activé. Le HTML dans un attribut n'est jamais touché."
+   "Remarque",
+   "Le JSON et le JavaScript écrits dans un attribut sont laissés tels quels, sauf si `--format-attribute-js-json` est activé. Le HTML à l'intérieur d'un attribut n'est jamais modifié."
 %}
 
 {% admonition
    "note",
-   "Note",
-   "djLint n'est pas un analyseur html ou un validateur de syntaxe."
+   "Remarque",
+   "djLint n'est ni un parseur HTML ni un validateur de syntaxe."
 %}
 
-## Voici un exemple !
+## Un exemple !
 
 ### Avant
 
-Voilà un pâté de HTML qui a désespérément besoin d’attention...
+Voici un bloc de HTML qui a désespérément besoin d'attention :
 
 {% raw %}
 
@@ -78,7 +78,7 @@ Voilà un pâté de HTML qui a désespérément besoin d’attention...
 
 ### Après
 
-C'est un peu mieux maintenant... on peut le lire :)
+C'est un peu mieux maintenant… on arrive à le lire :)
 
 {% raw %}
 
@@ -112,9 +112,9 @@ C'est un peu mieux maintenant... on peut le lire :)
 
 {% endraw %}
 
-### Après avec `single_attribute_per_line`
+### Après, avec `single_attribute_per_line`
 
-Vous préférez les attributs à la manière de Prettier ? Activez l'option `single_attribute_per_line` :
+Vous préférez les attributs à la Prettier ? Activez l'option `single_attribute_per_line` :
 
 {% raw %}
 

@@ -1,66 +1,66 @@
 ---
-description: Comment empêcher djLint de formater un bloc de code. Comment ignorer les règles de djLint en ligne.
-title: Ignorer le code
-keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, formatter usage, ignorer le code, ignorer les règles
+description: Comment empêcher djLint de formater un bloc de code, et comment ignorer des règles du linter directement dans le code.
+title: Ignorer du code
+keywords: linter de templates, formateur de templates, djLint, HTML, templates, formateur, linter, utilisation du formateur, ignorer du code, ignorer des règles
 date: Last Modified
 ---
 
-# Ignorer le code
+# Ignorer du code
 
-Le code peut être ignoré en l'entourant de balises `djlint` :
+Pour ignorer du code, entourez-le de balises `djlint` :
 
 {% raw %}
 
-Pour le simple html -
+En HTML classique :
 
 <!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
-   <mauvais html à ignorer>
+   <bad html to ignore>
 <!-- djlint:on -->
 ```
 
-ou comme un commentaire -
+ou sous forme de commentaire :
 
 <!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
-   <mauvais html à ignorer>
+   <bad html to ignore>
 {# djlint:on #}
 ```
 
-ou comme un long commentaire -
+ou sous forme de commentaire long :
 
 <!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
-   <mauvais html à ignorer>
+   <bad html to ignore>
 {% comment %} djlint:on {% endcomment %}
 ```
 
-ou comme un commentaire de style golang -
+ou sous forme de commentaire de style golang :
 
 <!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
-   <mauvais html à ignorer>
+   <bad html to ignore>
 {{ /* djlint:on */ }}
 ```
 
-ou comme un commentaire de style handlebars -
+ou sous forme de commentaire de style handlebars :
 
 <!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
-   <mauvais html à ignorer>
+   <bad html to ignore>
 {{!-- djlint:on --}}
 ```
 
 {% endraw %}
 
-## Ignorer les règles
+## Ignorer des règles
 
-Des règles spécifiques de linter peuvent également être ignorées en ajoutant le nom de la règle dans la balise d'ouverture du bloc ignoré.
+Vous pouvez aussi ignorer des règles précises du linter en ajoutant leur nom dans la balise d'ouverture du bloc ignoré.
 
 {% raw %}
 

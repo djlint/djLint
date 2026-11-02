@@ -5,5 +5,9 @@ module.exports = [
   { label: "Español", code: "es", url: "es" },
   { label: "Português (Brasil)", code: "pt-br", url: "pt-br" },
   { label: "Русский", code: "ru", url: "ru" },
+  { label: "한국어", code: "ko", url: "ko" },
   { label: "Français", code: "fr", url: "fr" },
+  { label: "Deutsch", code: "de", url: "de" },
+  { label: "繁體中文", code: "zh-tw", url: "zh-tw" },
+  { label: "Italiano", code: "it", url: "it" },
 ];

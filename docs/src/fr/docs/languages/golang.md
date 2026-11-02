@@ -1,7 +1,7 @@
 ---
-title: Go Template Linter and Formatter
-keywords: go templates, golang, djlint, go template linter, go template formatter, golang template linter, golang template formatter, format go templates, hugo template linter, helm template linter
-description: djLint est un linter de modèles Go et un formateur de modèles Go ! Profitez du profil pré-construit lorsque vous lintez et formatez vos modèles avec djLint.
+title: Linter et formateur de templates Go
+keywords: templates go, golang, djlint, linter de templates go, formateur de templates go, linter de templates golang, formateur de templates golang, formater des templates go, linter de templates hugo, linter de templates helm
+description: djLint linte et formate les templates Go. Utilisez le profil golang pour adapter les règles et le formatage à ces templates.
 tool: golang
 ---
 
@@ -9,22 +9,22 @@ tool: golang
 
 {{ description }}
 
-**[C'est quoi les modèles Go ?](https://pkg.go.dev/text/template)**
+**[Que sont les templates Go ?](https://pkg.go.dev/text/template)**
 
-Les modèles Go (`text/template`, `html/template`) sont aussi utilisés par les thèmes Hugo et les charts Helm, utilisez donc ce même profil pour eux.
+Les templates Go (`text/template`, `html/template`) servent aussi aux thèmes Hugo et aux charts Helm : utilisez ce même profil pour eux.
 
-#### Utilisation de la ligne de commande
+## En ligne de commande
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Ou, utiliser un fichier de configuration
+## Ou avec un fichier de configuration
 
 Configurez djLint dans le fichier `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` de votre projet.
 
 {% include 'src/_includes/profile_config.md' %}
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Consultez le guide de configuration pour connaître toutes les options !</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Consultez le guide de configuration pour découvrir toutes les options !</a></div>
 </div>
