@@ -131,9 +131,7 @@ _CAMEL_HUMP: Final = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 
 def _is_id(value: object) -> bool:
     """Tell an id of a request, which only a number or a string can be."""
-    return isinstance(value, str) or (
-        isinstance(value, int) and not isinstance(value, bool)
-    )
+    return isinstance(value, str) or (isinstance(value, int) and not isinstance(value, bool))
 
 
 def _setting_name(name: str) -> str:
@@ -180,10 +178,7 @@ def _position(document: _Document, line: int, column: int) -> Json:
     line_index = bisect_right(document.starts, offset) - 1
     content = _line_text(document.text, document.starts, line_index)
     start = document.starts[line_index]
-    return {
-        "line": line_index,
-        "character": _utf16_length(content[: offset - start]),
-    }
+    return {"line": line_index, "character": _utf16_length(content[: offset - start])}
 
 
 def _diagnostic(document: _Document, finding: Finding) -> Json:
@@ -224,16 +219,10 @@ def _edits(old: str, new: str) -> list[Json]:
         ]
     new_starts = _line_starts(new)
     old_lines = [
-        old[start:end]
-        for start, end in zip(
-            old_starts, [*old_starts[1:], len(old)], strict=True
-        )
+        old[start:end] for start, end in zip(old_starts, [*old_starts[1:], len(old)], strict=True)
     ]
     new_lines = [
-        new[start:end]
-        for start, end in zip(
-            new_starts, [*new_starts[1:], len(new)], strict=True
-        )
+        new[start:end] for start, end in zip(new_starts, [*new_starts[1:], len(new)], strict=True)
     ]
     limit = min(len(old_lines), len(new_lines))
     first = 0
@@ -245,10 +234,7 @@ def _edits(old: str, new: str) -> list[Json]:
     end_line = len(old_lines) - last
     if last == 0:
         end_line -= 1
-        end = {
-            "line": end_line,
-            "character": _utf16_length(old_lines[end_line]),
-        }
+        end = {"line": end_line, "character": _utf16_length(old_lines[end_line])}
     else:
         end = {"line": end_line, "character": 0}
     return [
@@ -418,10 +404,7 @@ class Server:
                 message = json.loads(body)
             except (RecursionError, ValueError):
                 self._log(_LOG_ERROR, "Dropped a message that isn't JSON.")
-                self._write({
-                    "id": None,
-                    "error": {"code": _PARSE_ERROR, "message": "Parse error"},
-                })
+                self._write({"id": None, "error": {"code": _PARSE_ERROR, "message": "Parse error"}})
                 continue
             if not isinstance(message, dict):
                 self._log(_LOG_ERROR, "Dropped a message that isn't an object.")
@@ -459,9 +442,7 @@ class Server:
         body = json.dumps(message, separators=(",", ":")).encode("utf-8")
         with self._write_lock:
             try:
-                self._writer.write(
-                    b"Content-Length: %d\r\n\r\n" % len(body) + body
-                )
+                self._writer.write(b"Content-Length: %d\r\n\r\n" % len(body) + body)
                 self._writer.flush()
             except OSError:
                 # The client is gone, with nobody left to tell.
@@ -485,9 +466,7 @@ class Server:
         self._log(_LOG_ERROR, message)
         if message not in self._reported:
             self._reported.add(message)
-            self._notify(
-                "window/showMessage", {"type": _LOG_ERROR, "message": message}
-            )
+            self._notify("window/showMessage", {"type": _LOG_ERROR, "message": message})
 
     def _handle(self, message: Json) -> None:
         method = message.get("method")
@@ -495,10 +474,7 @@ class Server:
             if "id" in message:
                 self._write({
                     "id": message["id"] if _is_id(message["id"]) else None,
-                    "error": {
-                        "code": _INVALID_REQUEST,
-                        "message": "Invalid method",
-                    },
+                    "error": {"code": _INVALID_REQUEST, "message": "Invalid method"},
                 })
             return
         raw_params = message.get("params")
@@ -510,44 +486,31 @@ class Server:
         if len(self._cancelled) > _MAX_CANCELLED:
             self._cancelled.clear()
         if not _is_id(request_id):
-            self._write({
-                "id": None,
-                "error": {"code": _INVALID_REQUEST, "message": "Invalid id"},
-            })
+            self._write({"id": None, "error": {"code": _INVALID_REQUEST, "message": "Invalid id"}})
             return
         if request_id in self._cancelled:
             self._cancelled.discard(request_id)
-            self._respond_error(
-                request_id, _REQUEST_CANCELLED, "Request cancelled"
-            )
+            self._respond_error(request_id, _REQUEST_CANCELLED, "Request cancelled")
             return
         if method == "initialize" and not self._initialized:
             self._write({"id": request_id, "result": self._initialize(params)})
             return
         if not self._initialized:
-            self._respond_error(
-                request_id, _SERVER_NOT_INITIALIZED, "Not initialized"
-            )
+            self._respond_error(request_id, _SERVER_NOT_INITIALIZED, "Not initialized")
             return
         if self._shutting_down or method == "initialize":
-            self._respond_error(
-                request_id, _INVALID_REQUEST, "Not at this point"
-            )
+            self._respond_error(request_id, _INVALID_REQUEST, "Not at this point")
             return
         handler = self._request_handler(method)
         if handler is None:
-            self._respond_error(
-                request_id, _METHOD_NOT_FOUND, f"Unknown method {method}"
-            )
+            self._respond_error(request_id, _METHOD_NOT_FOUND, f"Unknown method {method}")
             return
         try:
             result = handler(params)
         except Exception as error:
             self._respond_error(request_id, _REQUEST_FAILED, str(error))
         except SystemExit:
-            self._respond_error(
-                request_id, _REQUEST_FAILED, "djLint could not go on."
-            )
+            self._respond_error(request_id, _REQUEST_FAILED, "djLint could not go on.")
         else:
             self._write({"id": request_id, "result": result})
 
@@ -560,13 +523,8 @@ class Server:
             return self._pull_diagnostics
         return None
 
-    def _respond_error(
-        self, request_id: int | str, code: int, message: str
-    ) -> None:
-        self._write({
-            "id": request_id,
-            "error": {"code": code, "message": message},
-        })
+    def _respond_error(self, request_id: int | str, code: int, message: str) -> None:
+        self._write({"id": request_id, "error": {"code": code, "message": message}})
 
     def _handle_notification(self, method: str, params: Json) -> None:
         if method == "exit":
@@ -595,9 +553,7 @@ class Server:
 
     def _initialize(self, params: Json) -> Json:
         capabilities = params.get("capabilities")
-        self._capabilities = (
-            capabilities if isinstance(capabilities, dict) else {}
-        )
+        self._capabilities = capabilities if isinstance(capabilities, dict) else {}
         options = params.get("initializationOptions")
         self._init_settings = options if isinstance(options, dict) else {}
         self._asks_settings = self._workspace_capability("configuration")
@@ -623,12 +579,7 @@ class Server:
                 "save": {"includeText": False},
             },
             "documentFormattingProvider": True,
-            "workspace": {
-                "workspaceFolders": {
-                    "supported": True,
-                    "changeNotifications": True,
-                }
-            },
+            "workspace": {"workspaceFolders": {"supported": True, "changeNotifications": True}},
         }
         if self._pulls_diagnostics:
             offered["diagnosticProvider"] = {
@@ -655,23 +606,16 @@ class Server:
         return bool(capability)
 
     def _watch_configuration(self) -> None:
-        if self._workspace_capability(
-            "didChangeConfiguration", "dynamicRegistration"
-        ):
+        if self._workspace_capability("didChangeConfiguration", "dynamicRegistration"):
             self._send_request(
                 "client/registerCapability",
                 {
                     "registrations": [
-                        {
-                            "id": "djlint-settings",
-                            "method": "workspace/didChangeConfiguration",
-                        }
+                        {"id": "djlint-settings", "method": "workspace/didChangeConfiguration"}
                     ]
                 },
             )
-        if not self._workspace_capability(
-            "didChangeWatchedFiles", "dynamicRegistration"
-        ):
+        if not self._workspace_capability("didChangeWatchedFiles", "dynamicRegistration"):
             return
         self._watching = self._send_request(
             "client/registerCapability",
@@ -681,10 +625,7 @@ class Server:
                         "id": "djlint-configuration",
                         "method": "workspace/didChangeWatchedFiles",
                         "registerOptions": {
-                            "watchers": [
-                                {"globPattern": f"**/{name}"}
-                                for name in _CONFIG_FILES
-                            ]
+                            "watchers": [{"globPattern": f"**/{name}"} for name in _CONFIG_FILES]
                         },
                     }
                 ]
@@ -699,9 +640,7 @@ class Server:
         if not isinstance(uri, str):
             return
         self._documents[uri] = _Document(
-            document["text"],
-            document.get("languageId", ""),
-            document["version"],
+            document["text"], document.get("languageId", ""), document["version"]
         )
         self._stale.add(uri)
         if self._reads_configuration_again:
@@ -718,10 +657,7 @@ class Server:
         document = self._documents.get(params["textDocument"]["uri"])
         if document is None:
             return
-        document.replace(
-            params["contentChanges"][-1]["text"],
-            params["textDocument"]["version"],
-        )
+        document.replace(params["contentChanges"][-1]["text"], params["textDocument"]["version"])
         self._stale.add(params["textDocument"]["uri"])
 
     def _did_close(self, uri: str) -> None:
@@ -729,16 +665,11 @@ class Server:
         self._stale.discard(uri)
         self._settings.pop(uri, None)
         if not self._pulls_diagnostics:
-            self._notify(
-                "textDocument/publishDiagnostics",
-                {"uri": uri, "diagnostics": []},
-            )
+            self._notify("textDocument/publishDiagnostics", {"uri": uri, "diagnostics": []})
 
     def _did_change_folders(self, event: Json) -> None:
         removed = {_path(folder["uri"]) for folder in event["removed"]}
-        self._folders = [
-            folder for folder in self._folders if folder not in removed
-        ]
+        self._folders = [folder for folder in self._folders if folder not in removed]
         for folder in event["added"]:
             path = _path(folder["uri"])
             if path is not None:
@@ -797,23 +728,17 @@ class Server:
             self._forget_rule_modules()
             self._rule_root = root
 
-    def _note_rule_modules(
-        self, config: Config, modules: set[str], path: set[str]
-    ) -> None:
+    def _note_rule_modules(self, config: Config, modules: set[str], path: set[str]) -> None:
         """Remember what a lint added, of all it imported from the project."""
         root = str(config.project_root)
         if root not in path and root in sys.path:
             self._rule_path = root
         for name in sys.modules.keys() - modules:
             # From the module's own dict: an attribute can run code.
-            filename = getattr(sys.modules[name], "__dict__", {}).get(
-                "__file__"
-            )
+            filename = getattr(sys.modules[name], "__dict__", {}).get("__file__")
             if isinstance(filename, str):
                 path = Path(filename)
-                if path.is_relative_to(root) and (
-                    "site-packages" not in path.parts
-                ):
+                if path.is_relative_to(root) and ("site-packages" not in path.parts):
                     self._rule_modules.add(name)
 
     def _take_late_settings(self) -> None:
@@ -845,26 +770,18 @@ class Server:
         settings = dict(self._init_settings)
         if self._asks_settings:
             pending = self._send_request(
-                "workspace/configuration",
-                {"items": [{"scopeUri": uri, "section": "djlint"}]},
+                "workspace/configuration", {"items": [{"scopeUri": uri, "section": "djlint"}]}
             )
             if pending.answered.wait(_CLIENT_TIMEOUT_SECONDS):
                 answer = pending.result
-                if (
-                    isinstance(answer, list)
-                    and answer
-                    and isinstance(answer[0], dict)
-                ):
+                if isinstance(answer, list) and answer and isinstance(answer[0], dict):
                     settings.update(answer[0])
             else:
                 self._asks_settings = False
                 self._unanswered = pending
                 if pending.answered.is_set():
                     self._inbox.put(_LATE_ANSWER)
-                self._log(
-                    _LOG_WARNING,
-                    "The editor didn't answer workspace/configuration.",
-                )
+                self._log(_LOG_WARNING, "The editor didn't answer workspace/configuration.")
                 return settings
         self._settings[uri] = settings
         return settings
@@ -894,11 +811,7 @@ class Server:
     def _folder_of(self, document: Path | None) -> Path:
         """Return the workspace folder of a document, the nearest if nested."""
         if document is not None:
-            parents = [
-                folder
-                for folder in self._folders
-                if document.is_relative_to(folder)
-            ]
+            parents = [folder for folder in self._folders if document.is_relative_to(folder)]
             if parents:
                 return max(parents, key=lambda folder: len(folder.parts))
         return self._folders[0] if self._folders else Path.cwd()
@@ -907,28 +820,18 @@ class Server:
         """Check from the workspace folder too, as a run on it would."""
         return is_excluded(config, path, self._folder_of(path))
 
-    def _config(
-        self, uri: str, document: _Document, indent: int | None = None
-    ) -> Config:
+    def _config(self, uri: str, document: _Document, indent: int | None = None) -> Config:
         path = _path(uri)
         options = self._options(self._settings_for(uri), path)
         if indent is not None:
             options["indent"] = indent
         folder = str(self._folder_of(None) if path is None else path.parent)
-        key = (
-            folder,
-            json.dumps(options, sort_keys=True, default=str),
-            document.language,
-        )
+        key = (folder, json.dumps(options, sort_keys=True, default=str), document.language)
         config = self._configs.get(key)
         if config is None:
             config = load_config(folder, **options)
             profile = _PROFILES.get(document.language)
-            if (
-                profile is not None
-                and "profile" not in options
-                and not config.has_profile
-            ):
+            if profile is not None and "profile" not in options and not config.has_profile:
                 config = load_config(folder, **options, profile=profile)
             self._configs[key] = config
         return config
@@ -942,9 +845,7 @@ class Server:
         modules = set(sys.modules)
         search_path = set(sys.path)
         try:
-            findings = lint_text(
-                config, document.text, "-" if path is None else path.as_posix()
-            )
+            findings = lint_text(config, document.text, "-" if path is None else path.as_posix())
         finally:
             self._note_rule_modules(config, modules, search_path)
         return [_diagnostic(document, finding) for finding in findings]
@@ -956,9 +857,7 @@ class Server:
         except Exception as error:
             self._report_once(f"djLint failed: {error}")
         except SystemExit:
-            self._report_once(
-                "djLint could not go on, usually because of its configuration."
-            )
+            self._report_once("djLint could not go on, usually because of its configuration.")
         return []
 
     def _lint_stale(self) -> None:
@@ -987,11 +886,7 @@ class Server:
         result_id = f"{self._generation}-{digest.hexdigest()}"
         if params.get("previousResultId") == result_id:
             return {"kind": "unchanged", "resultId": result_id}
-        return {
-            "kind": "full",
-            "resultId": result_id,
-            "items": self._safe_lint(uri, document),
-        }
+        return {"kind": "full", "resultId": result_id, "items": self._safe_lint(uri, document)}
 
     def _format(self, params: Json) -> list[Json] | None:
         uri = params["textDocument"]["uri"]
@@ -1004,9 +899,7 @@ class Server:
             for name, value in settings.items()
         )
         config = self._config(
-            uri,
-            document,
-            params["options"]["tabSize"] if uses_editor_indent else None,
+            uri, document, params["options"]["tabSize"] if uses_editor_indent else None
         )
         path = _path(uri)
         if path is not None and self._is_excluded(config, path):
@@ -1045,9 +938,7 @@ def serve() -> NoReturn:
     sys.stdout.flush()
     # `python -m` puts the folder it starts in on the path, where a rule module
     # of that project would stand in for another project's.
-    sys.path[:] = [
-        path for path in sys.path if path not in {"", str(Path.cwd())}
-    ]
+    sys.path[:] = [path for path in sys.path if path not in {"", str(Path.cwd())}]
     reader = os.fdopen(os.dup(sys.stdin.fileno()), "rb")
     writer = os.fdopen(os.dup(sys.stdout.fileno()), "wb")
     # Whatever prints or starts a process on the way, such as a custom rule,

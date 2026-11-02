@@ -119,54 +119,26 @@ test_data = [
         id="nestedindent multiilne",
     ),
     pytest.param(
-        (
-            '{% set schema=[{"name": "id",\n'
-            '"type": "integer",\n'
-            '"primary": true\n'
-            "},] %}"
-        ),
-        (
-            '{% set schema = [{"name": "id", "type": "integer", "primary": true}] %}\n'
-        ),
+        ('{% set schema=[{"name": "id",\n"type": "integer",\n"primary": true\n},] %}'),
+        ('{% set schema = [{"name": "id", "type": "integer", "primary": true}] %}\n'),
         ({}),
         id="indent invalid json",
     ),
     pytest.param(
-        (
-            '{% set schema=[{"name": "id",\n'
-            '"type": "integer",\n'
-            '"primary": true\n'
-            "},] %}"
-        ),
-        (
-            '{% set schema=[{"name": "id",\n'
-            '    "type": "integer",\n'
-            '    "primary": true\n'
-            "},] %}\n"
-        ),
+        ('{% set schema=[{"name": "id",\n"type": "integer",\n"primary": true\n},] %}'),
+        ('{% set schema=[{"name": "id",\n    "type": "integer",\n    "primary": true\n},] %}\n'),
         ({"no_set_formatting": True}),
         id="disabled",
     ),
     pytest.param(
-        (
-            '{% set schema=[{name: "id",\n'
-            "'type': \"1\",\n"
-            '"primary+1": true\n'
-            "}] %}"
-        ),
-        (
-            '{% set schema = [{"name": "id", "type": "1", "primary+1": true}] %}\n'
-        ),
+        ('{% set schema=[{name: "id",\n\'type\': "1",\n"primary+1": true\n}] %}'),
+        ('{% set schema = [{"name": "id", "type": "1", "primary+1": true}] %}\n'),
         ({}),
         id="indent valid json",
     ),
     pytest.param(
-        (
-            '{% set table_keys = [ ( "date_started", "Start date"), ( "name", "Name" )] %}'
-        ),
-        (
-            "{% set table_keys = [('date_started', 'Start date'), ('name', 'Name')] %}\n"
-        ),
+        ('{% set table_keys = [ ( "date_started", "Start date"), ( "name", "Name" )] %}'),
+        ("{% set table_keys = [('date_started', 'Start date'), ('name', 'Name')] %}\n"),
         ({}),
         id="indent py style list",
     ),
@@ -185,29 +157,13 @@ test_data = [
         id="set block",
     ),
     pytest.param(
-        (
-            "{% set cta %}\n"
-            '{% include "partials/cta.njk" %}\n'
-            "<div></div>\n"
-            "{% endset %}"
-        ),
-        (
-            "{% set cta %}\n"
-            '    {% include "partials/cta.njk" %}\n'
-            "    <div></div>\n"
-            "{% endset %}\n"
-        ),
+        ('{% set cta %}\n{% include "partials/cta.njk" %}\n<div></div>\n{% endset %}'),
+        ('{% set cta %}\n    {% include "partials/cta.njk" %}\n    <div></div>\n{% endset %}\n'),
         ({}),
         id="multiline set block is indented",
     ),
     pytest.param(
-        (
-            "<ul>\n"
-            "  {# djlint:off #}\n"
-            "  <li>{%set a=[{'x':1}]%}</li>\n"
-            "  {# djlint:on #}\n"
-            "</ul>"
-        ),
+        ("<ul>\n  {# djlint:off #}\n  <li>{%set a=[{'x':1}]%}</li>\n  {# djlint:on #}\n</ul>"),
         (
             "<ul>\n"
             "    {# djlint:off #}\n"
@@ -231,10 +187,7 @@ test_data = [
         id="don't add parenth to lists",
     ),
     pytest.param(
-        ('{{- foo("bar") -}}'),
-        ('{{- foo("bar") -}}\n'),
-        ({}),
-        id="don't break spaceless tags #667",
+        ('{{- foo("bar") -}}'), ('{{- foo("bar") -}}\n'), ({}), id="don't break spaceless tags #667"
     ),
     pytest.param(
         (

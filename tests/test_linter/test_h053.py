@@ -15,9 +15,7 @@ from tests.conftest import linter
 
 test_data = [
     pytest.param(
-        ('<div id="a"></div><span id="a"></span>'),
-        (True),
-        id="the same id on two elements",
+        ('<div id="a"></div><span id="a"></span>'), (True), id="the same id on two elements"
     ),
     pytest.param(
         ('<div id="a"></div><div>{% if x %}<b id="a"></b>{% endif %}</div>'),
@@ -29,11 +27,7 @@ test_data = [
         (True),
         id="the quote style differs but the value is the same",
     ),
-    pytest.param(
-        ("<div id=a></div><div id=a></div>"),
-        (True),
-        id="written without quotes",
-    ),
+    pytest.param(("<div id=a></div><div id=a></div>"), (True), id="written without quotes"),
     pytest.param(
         ('{% for i in xs %}<b id="row"></b>{% endfor %}<i id="row"></i>'),
         (True),
@@ -45,43 +39,28 @@ test_data = [
         id="a block is not a branch",
     ),
     pytest.param(
-        (
-            '{% if x %}<div id="a"></div>{% endif %}'
-            '{% if y %}<div id="a"></div>{% endif %}'
-        ),
+        ('{% if x %}<div id="a"></div>{% endif %}{% if y %}<div id="a"></div>{% endif %}'),
         (True),
         id="two separate conditions can both be true",
     ),
     pytest.param(
-        (
-            '{% if x %}<div id="a"></div>'
-            '{% if y %}<div id="a"></div>{% endif %}{% endif %}'
-        ),
+        ('{% if x %}<div id="a"></div>{% if y %}<div id="a"></div>{% endif %}{% endif %}'),
         (True),
         id="a nested condition inside the same branch",
     ),
-    pytest.param(
-        ('<div id="a"></div><div id="b"></div>'),
-        (False),
-        id="two different ids",
-    ),
+    pytest.param(('<div id="a"></div><div id="b"></div>'), (False), id="two different ids"),
     pytest.param(
         ('{% if x %}<div id="a"></div>{% else %}<div id="a"></div>{% endif %}'),
         (False),
         id="the if and else branches are exclusive",
     ),
     pytest.param(
-        (
-            '{% if x %}<div id="a"></div>{% elif y %}<div id="a"></div>{% endif %}'
-        ),
+        ('{% if x %}<div id="a"></div>{% elif y %}<div id="a"></div>{% endif %}'),
         (False),
         id="the if and elif branches are exclusive",
     ),
     pytest.param(
-        (
-            '{% for i in xs %}<div id="a"></div>'
-            '{% empty %}<div id="a"></div>{% endfor %}'
-        ),
+        ('{% for i in xs %}<div id="a"></div>{% empty %}<div id="a"></div>{% endfor %}'),
         (False),
         id="the loop body and its empty clause are exclusive",
     ),
@@ -103,11 +82,7 @@ test_data = [
         (True),
         id="one inside a mako if, one outside",
     ),
-    pytest.param(
-        ('<div id="a"></div><div id="A"></div>'),
-        (False),
-        id="ids are case sensitive",
-    ),
+    pytest.param(('<div id="a"></div><div id="A"></div>'), (False), id="ids are case sensitive"),
     pytest.param(
         ('<div id="{{ n }}"></div><div id="{{ n }}"></div>'),
         (False),
@@ -119,9 +94,7 @@ test_data = [
         id="a value partly written by a template tag",
     ),
     pytest.param(
-        ('<div data-id="a"></div><div id="a"></div>'),
-        (False),
-        id="a name that merely ends in id",
+        ('<div data-id="a"></div><div id="a"></div>'), (False), id="a name that merely ends in id"
     ),
     pytest.param(
         ('<div id="a"></div>{% comment %}<div id="a"></div>{% endcomment %}'),
@@ -134,10 +107,7 @@ test_data = [
         id="text inside an attribute value is not a tag",
     ),
     pytest.param(
-        (
-            '<div id="a"></div><!-- djlint:off -->'
-            '<div id="a"></div><!-- djlint:on -->'
-        ),
+        ('<div id="a"></div><!-- djlint:off --><div id="a"></div><!-- djlint:on -->'),
         (False),
         id="inside a djlint:off region",
     ),
@@ -147,47 +117,30 @@ test_data = [
         id="text inside a script is not a tag",
     ),
     pytest.param(
-        ('<div id=""></div><div id=""></div>'),
-        (False),
-        id="an empty value names nothing",
+        ('<div id=""></div><div id=""></div>'), (False), id="an empty value names nothing"
     ),
     pytest.param(
-        (
-            '{% if x %}<div id="p"></div>{%\nelse\n%}'
-            '<div id="p"></div>{% endif %}'
-        ),
+        ('{% if x %}<div id="p"></div>{%\nelse\n%}<div id="p"></div>{% endif %}'),
         (False),
         id="a newline between the delimiters and the tag name",
     ),
     pytest.param(
-        (
-            '{%\tif x\t%}<div id="p"></div>{%\telse\t%}'
-            '<div id="p"></div>{%\tendif\t%}'
-        ),
+        ('{%\tif x\t%}<div id="p"></div>{%\telse\t%}<div id="p"></div>{%\tendif\t%}'),
         (False),
         id="a tab between the delimiters and the tag name",
     ),
     pytest.param(
-        (
-            '{%\n  if x\n%}<div id="p"></div>{%\n  else\n%}'
-            '<div id="p"></div>{%\n  endif\n%}'
-        ),
+        ('{%\n  if x\n%}<div id="p"></div>{%\n  else\n%}<div id="p"></div>{%\n  endif\n%}'),
         (False),
         id="a tag broken over lines",
     ),
     pytest.param(
-        (
-            '{% ifequal a b %}<div id="x"></div>{% else %}'
-            '<div id="x"></div>{% endifequal %}'
-        ),
+        ('{% ifequal a b %}<div id="x"></div>{% else %}<div id="x"></div>{% endifequal %}'),
         (False),
         id="the branches of an ifequal are exclusive",
     ),
     pytest.param(
-        (
-            '{% ifnotequal a b %}<div id="x"></div>{% else %}'
-            '<div id="x"></div>{% endifnotequal %}'
-        ),
+        ('{% ifnotequal a b %}<div id="x"></div>{% else %}<div id="x"></div>{% endifnotequal %}'),
         (False),
         id="the branches of an ifnotequal are exclusive",
     ),
@@ -219,10 +172,7 @@ test_data = [
         id="a template carries its own id in the document",
     ),
     pytest.param(
-        (
-            '{% ifequal a b %}<div id="x"></div>{% endifequal %}'
-            '<div id="x"></div>'
-        ),
+        ('{% ifequal a b %}<div id="x"></div>{% endifequal %}<div id="x"></div>'),
         (True),
         id="the body of an ifequal and the document after it",
     ),
@@ -243,10 +193,7 @@ def test_h053(source: str, reported: bool) -> None:
 def test_h053_reports_the_later_id() -> None:
     filename = "test.html"
     config = Config(filename, profile="django")
-    source = (
-        '{% if x %}<a id="a"></a>{% else %}<b id="a"></b>{% endif %}\n'
-        '<i id="a"></i>\n'
-    )
+    source = '{% if x %}<a id="a"></a>{% else %}<b id="a"></b>{% endif %}\n<i id="a"></i>\n'
 
     findings = [
         error
@@ -273,9 +220,7 @@ def test_h053_reports_the_later_id() -> None:
             id="handlebars",
         ),
         pytest.param(
-            "golang",
-            '{{if .X}}<div id="a"></div>{{else}}<div id="a"></div>{{end}}',
-            id="golang",
+            "golang", '{{if .X}}<div id="a"></div>{{else}}<div id="a"></div>{{end}}', id="golang"
         ),
         pytest.param(
             "jinja",
@@ -289,26 +234,22 @@ def test_h053_reports_the_later_id() -> None:
         ),
         pytest.param(
             "handlebars",
-            '{{#if a}}<div id="p"></div>{{else unless b}}'
-            '<div id="p"></div>{{/if}}',
+            '{{#if a}}<div id="p"></div>{{else unless b}}<div id="p"></div>{{/if}}',
             id="a handlebars chained unless",
         ),
         pytest.param(
             "handlebars",
-            '{{#if a}}<div id="p"></div>{{ else if b }}'
-            '<div id="p"></div>{{/if}}',
+            '{{#if a}}<div id="p"></div>{{ else if b }}<div id="p"></div>{{/if}}',
             id="a spaced handlebars chained condition",
         ),
         pytest.param(
             "handlebars",
-            '{{#myHelper x}}<div id="p"></div>{{else}}'
-            '<div id="p"></div>{{/myHelper}}',
+            '{{#myHelper x}}<div id="p"></div>{{else}}<div id="p"></div>{{/myHelper}}',
             id="the inverse section of a custom block helper",
         ),
         pytest.param(
             "handlebars",
-            '{{#link-to "a"}}<div id="p"></div>{{else}}'
-            '<div id="p"></div>{{/link-to}}',
+            '{{#link-to "a"}}<div id="p"></div>{{else}}<div id="p"></div>{{/link-to}}',
             id="the inverse section of a named block helper",
         ),
         pytest.param(
@@ -318,8 +259,7 @@ def test_h053_reports_the_later_id() -> None:
         ),
         pytest.param(
             "golang",
-            '{{\tif .A\t}}<div id="p"></div>{{\telse\t}}'
-            '<div id="p"></div>{{\tend\t}}',
+            '{{\tif .A\t}}<div id="p"></div>{{\telse\t}}<div id="p"></div>{{\tend\t}}',
             id="a tab between the golang delimiters and the tag name",
         ),
         pytest.param(
@@ -334,8 +274,7 @@ def test_h053_reports_the_later_id() -> None:
         ),
         pytest.param(
             "all",
-            '{% if x %}<div id="x"></div>{% elsif y %}'
-            '<div id="x"></div>{% endif %}',
+            '{% if x %}<div id="x"></div>{% elsif y %}<div id="x"></div>{% endif %}',
             id="a liquid elsif with no profile",
         ),
         pytest.param(
@@ -372,10 +311,7 @@ def test_h053_a_block_helper_body_is_not_a_branch() -> None:
         pytest.param("{" * 20000, id="a run of braces"),
         pytest.param("{{" * 10000, id="a run of output delimiters"),
         pytest.param("{%" * 10000, id="a run of statement delimiters"),
-        pytest.param(
-            "<script>" + "{" * 20000 + "</script>",
-            id="a run of braces in a script",
-        ),
+        pytest.param("<script>" + "{" * 20000 + "</script>", id="a run of braces in a script"),
     ],
 )
 def test_h053_reads_a_run_of_delimiters_in_one_pass(source: str) -> None:

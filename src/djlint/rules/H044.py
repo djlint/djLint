@@ -83,9 +83,7 @@ def _odd_cells(html: str) -> Iterator[TagToken]:
                     row_cell, row_token = open_cell.name.lower(), open_cell
                 elif open_cell.name.lower() != row_cell and not (
                     row_token is not None
-                    and mutually_exclusive(
-                        context(row_token), context(open_cell)
-                    )
+                    and mutually_exclusive(context(row_token), context(open_cell))
                 ):
                     yield open_cell
                 open_cell = None

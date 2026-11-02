@@ -72,11 +72,7 @@ def test_default_leaves_the_endblock_bare() -> None:
 
 
 def test_the_formatter_clears_t003() -> None:
-    config = config_builder({
-        "name_endblocks": True,
-        "profile": "django",
-        "include": "T003",
-    })
+    config = config_builder({"name_endblocks": True, "profile": "django", "include": "T003"})
     output = formatter(config, "{% block a %}\nx\n{% endblock %}\n")
     findings = linter(config, output, "a.html", "a.html")
 

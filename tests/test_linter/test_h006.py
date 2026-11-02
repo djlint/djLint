@@ -28,9 +28,7 @@ test_data = [
         ]),
         id="one",
     ),
-    pytest.param(
-        ('<img \n alt="test" width="10" height="10"/>'), ([]), id="line break"
-    ),
+    pytest.param(('<img \n alt="test" width="10" height="10"/>'), ([]), id="line break"),
     pytest.param(
         (
             '{# [INFO][JINJA] I use syntax "{% if <img alt=""\n'

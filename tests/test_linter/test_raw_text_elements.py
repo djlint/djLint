@@ -17,22 +17,12 @@ if TYPE_CHECKING:
 
 reported_test_data = [
     pytest.param(
-        ('<script type="text/javascript" src="app.js"></script>'),
-        (["H024"]),
-        id="script_type",
+        ('<script type="text/javascript" src="app.js"></script>'), (["H024"]), id="script_type"
     ),
-    pytest.param(
-        ('<style type="text/css">a{color:red}</style>'),
-        (["H024"]),
-        id="style_type",
-    ),
-    pytest.param(
-        ('<script SRC="app.js"></script>'), (["H010"]), id="script_case"
-    ),
+    pytest.param(('<style type="text/css">a{color:red}</style>'), (["H024"]), id="style_type"),
+    pytest.param(('<script SRC="app.js"></script>'), (["H010"]), id="script_case"),
     pytest.param(('<pre CLASS="a">text</pre>'), (["H010"]), id="pre_case"),
-    pytest.param(
-        ('<textarea CLASS="a">text</textarea>'), (["H010"]), id="textarea_case"
-    ),
+    pytest.param(('<textarea CLASS="a">text</textarea>'), (["H010"]), id="textarea_case"),
 ]
 
 
@@ -47,20 +37,17 @@ def test_opening_tag_is_checked(source: str, expected: list[str]) -> None:
 
 ignored_test_data = [
     pytest.param(
-        ('<div><script>var s = "<DIV CLASS=x>";</script></div>'),
-        id="markup_in_a_script_string",
+        ('<div><script>var s = "<DIV CLASS=x>";</script></div>'), id="markup_in_a_script_string"
     ),
     pytest.param(
         ("<div><script>// don't warn about <DIV CLASS=x>\n</script></div>"),
         id="apostrophe_in_a_script_comment",
     ),
     pytest.param(
-        ('<div><style>a[title="<b>"]{color:red}</style></div>'),
-        id="markup_in_a_style_selector",
+        ('<div><style>a[title="<b>"]{color:red}</style></div>'), id="markup_in_a_style_selector"
     ),
     pytest.param(
-        ("<div><textarea>&lt;DIV CLASS=x&gt;</textarea></div>"),
-        id="markup_shown_in_a_textarea",
+        ("<div><textarea>&lt;DIV CLASS=x&gt;</textarea></div>"), id="markup_shown_in_a_textarea"
     ),
     pytest.param(
         ("<div>\n  <script>\n  var x = 1;\n  </script>\n</div>\n"),
@@ -72,9 +59,7 @@ ignored_test_data = [
 @pytest.mark.parametrize("source", ignored_test_data)
 def test_body_is_not_markup(source: str) -> None:
     config = Config("dummy/source.html")
-    output: list[LintError] = linter(config, source, "t.html", "t.html")[
-        "t.html"
-    ]
+    output: list[LintError] = linter(config, source, "t.html", "t.html")["t.html"]
 
     lint_printer(source, [], output)
     assert not output

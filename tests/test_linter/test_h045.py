@@ -28,11 +28,7 @@ test_data = [
         ]),
         id="no accessible name",
     ),
-    pytest.param(
-        ('<iframe src="/report/" title="Quarterly report"></iframe>'),
-        ([]),
-        id="title",
-    ),
+    pytest.param(('<iframe src="/report/" title="Quarterly report"></iframe>'), ([]), id="title"),
     pytest.param(
         ('<iframe src="/report/" aria-label="Quarterly report"></iframe>'),
         ([]),
@@ -80,8 +76,8 @@ def test_h045(source: str, expected: list[LintError]) -> None:
 
     lint_printer(source, expected, output[filename])
 
-    mismatch = list(
-        filter(lambda x: x not in expected, output[filename])
-    ) + list(filter(lambda x: x not in output[filename], expected))
+    mismatch = list(filter(lambda x: x not in expected, output[filename])) + list(
+        filter(lambda x: x not in output[filename], expected)
+    )
 
     assert not mismatch

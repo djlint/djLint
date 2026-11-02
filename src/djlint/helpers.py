@@ -119,9 +119,7 @@ def _inside_non_overlapping_span(
 def ignored_block_opening_start(config: Config, item: str) -> int:
     """Where the line opens an ignored block it does not close, or -1."""
     return _ignored_block_opening_start(
-        item,
-        config.ignored_block_opening_pattern,
-        config.ignored_blocks_inline_pattern,
+        item, config.ignored_block_opening_pattern, config.ignored_blocks_inline_pattern
     )
 
 
@@ -151,12 +149,8 @@ def _ignored_block_opening_start(
     inline = None
     for match in opening.finditer(item):
         if inline is None:
-            inline = tuple(
-                block.span() for block in inline_blocks.finditer(item)
-            )
-        if not _inside_non_overlapping_span(
-            inline, match.end() - 1, match.end()
-        ):
+            inline = tuple(block.span() for block in inline_blocks.finditer(item))
+        if not _inside_non_overlapping_span(inline, match.end() - 1, match.end()):
             return match.start()
     return -1
 
@@ -186,15 +180,11 @@ def _marker_past_inline_blocks(
 def is_raw_text_block_opening(config: Config, item: str) -> bool:
     """Whether the line opens a raw text element it does not close."""
     return _marker_past_inline_blocks(
-        item,
-        config.raw_text_inline_imsx_pattern,
-        config.raw_text_opening_pattern,
+        item, config.raw_text_inline_imsx_pattern, config.raw_text_opening_pattern
     )
 
 
-def inside_protected_trans_block(
-    config: Config, html: str, match: re.Match[str]
-) -> bool:
+def inside_protected_trans_block(config: Config, html: str, match: re.Match[str]) -> bool:
     """Whether the match closes a trans block whose contents keep their form.
 
     True means the match sits inside a non trimmed trans block, which is
@@ -203,9 +193,7 @@ def inside_protected_trans_block(
     match is read, and it is cut only for a match that closes a block: doing
     it for every line of a document grows with its square.
     """
-    close_block = config.ignored_trans_blocks_closing_pattern.search(
-        match.group()
-    )
+    close_block = config.ignored_trans_blocks_closing_pattern.search(match.group())
 
     if not close_block:
         return False
@@ -218,9 +206,7 @@ def inside_protected_trans_block(
     if non_trimmed and (not trimmed or non_trimmed.end() > trimmed.end()):
         if config.ignored_trans_blocks_pattern.search(match.group()):
             return bool(
-                config.ignored_trans_blocks_closing_pattern.search(
-                    html[non_trimmed.end() :]
-                )
+                config.ignored_trans_blocks_closing_pattern.search(html[non_trimmed.end() :])
             )
 
         return close_block.end() <= non_trimmed.end()
@@ -287,17 +273,13 @@ def inside_template_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Check if a re.Match is inside of a template block."""
     match_start, match_end = match.span()
     return _inside_non_overlapping_span(
-        _inside_template_block(
-            html, template_blocks=config.template_blocks_pattern
-        ),
+        _inside_template_block(html, template_blocks=config.template_blocks_pattern),
         match_start,
         match_end,
     )
 
 
-def mask_template_tags(
-    config: Config, html: str
-) -> tuple[str, list[tuple[str, str]]]:
+def mask_template_tags(config: Config, html: str) -> tuple[str, list[tuple[str, str]]]:
     """Hide template tags from formatters that parse JS or CSS."""
     if "{%" not in html and "{{" not in html and "{#" not in html:
         return html, []
@@ -323,20 +305,13 @@ def mask_template_tags(
 
     template_tags = rf"(?:{config.template_tags})|\{{\#(?:(?!\#\}}).)*\#\}}"
 
-    return (
-        re.sub(template_tags, replace, html, flags=RE_FLAGS_ISX),
-        replacements,
-    )
+    return (re.sub(template_tags, replace, html, flags=RE_FLAGS_ISX), replacements)
 
 
-def restore_template_tags(
-    html: str, replacements: list[tuple[str, str]]
-) -> str:
+def restore_template_tags(html: str, replacements: list[tuple[str, str]]) -> str:
     """Put masked template tags back after JS or CSS formatting."""
     for marker, replacement in replacements:
-        html = html.replace(f"/*{marker}*/", replacement).replace(
-            marker, replacement
-        )
+        html = html.replace(f"/*{marker}*/", replacement).replace(marker, replacement)
     return html
 
 
@@ -396,22 +371,13 @@ def _restore_unformatted_block(html: str, marker: str, replacement: str) -> str:
         return "\n".join(lines)
 
     escaped = re.escape(marker)
-    html = re.sub(
-        rf"^([ \t]*){escaped}[ \t]*$", reindent, html, flags=RE_FLAGS_MX
-    )
+    html = re.sub(rf"^([ \t]*){escaped}[ \t]*$", reindent, html, flags=RE_FLAGS_MX)
     if replacement.startswith("\n"):
-        html = re.sub(
-            rf"[ \t]*{escaped}",
-            lambda _match: replacement,
-            html,
-            flags=RE_FLAGS_MX,
-        )
+        html = re.sub(rf"[ \t]*{escaped}", lambda _match: replacement, html, flags=RE_FLAGS_MX)
     return html.replace(marker, replacement)
 
 
-def restore_unformatted_blocks(
-    html: str, replacements: list[tuple[str, str]]
-) -> str:
+def restore_unformatted_blocks(html: str, replacements: list[tuple[str, str]]) -> str:
     """Put masked djlint:off blocks back after formatting."""
     for marker, replacement in replacements:
         html = _restore_unformatted_block(html, marker, replacement)
@@ -466,9 +432,7 @@ def _html_attribute_spans(html: str, /) -> tuple[tuple[int, int], ...]:
 def inside_html_attribute(html: str, match: SpanMatch) -> bool:
     """Check if a re.Match is inside of an html attribute."""
     match_start, match_end = match.span()
-    return _inside_non_overlapping_span(
-        _html_attribute_spans(html), match_start, match_end
-    )
+    return _inside_non_overlapping_span(_html_attribute_spans(html), match_start, match_end)
 
 
 def ends_inside_html_attribute(html: str, match: SpanMatch) -> bool:
@@ -479,9 +443,7 @@ def ends_inside_html_attribute(html: str, match: SpanMatch) -> bool:
     matched is then only the start of the tag.
     """
     match_end = match.span()[1]
-    return _inside_non_overlapping_span(
-        _html_attribute_spans(html), match_end - 1, match_end
-    )
+    return _inside_non_overlapping_span(_html_attribute_spans(html), match_end - 1, match_end)
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
@@ -491,9 +453,7 @@ def _inside_ignored_linter_block(
     return tuple(x.span() for x in ignored_linter_blocks.finditer(html))
 
 
-def inside_ignored_linter_block(
-    config: Config, html: str, match: SpanMatch
-) -> bool:
+def inside_ignored_linter_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Check if a re.Match is inside of a ignored linter block."""
     match_start, match_end = match.span()
     return _inside_non_overlapping_span(
@@ -506,11 +466,7 @@ def inside_ignored_linter_block(
 
 
 def _inside_ignored_block(
-    html: str,
-    /,
-    *,
-    ignored_blocks: re.Pattern[str],
-    ignored_inline_blocks: re.Pattern[str],
+    html: str, /, *, ignored_blocks: re.Pattern[str], ignored_inline_blocks: re.Pattern[str]
 ) -> tuple[tuple[int, int], ...]:
     return tuple(
         x.span()
@@ -522,11 +478,7 @@ def _inside_ignored_block(
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _ignored_block_reach(
-    html: str,
-    /,
-    *,
-    ignored_blocks: re.Pattern[str],
-    ignored_inline_blocks: re.Pattern[str],
+    html: str, /, *, ignored_blocks: re.Pattern[str], ignored_inline_blocks: re.Pattern[str]
 ) -> tuple[tuple[int, ...], tuple[int, ...]]:
     """Where the ignored blocks start, and how far those up to each reach.
 
@@ -539,9 +491,7 @@ def _ignored_block_reach(
     furthest = -1
     for start, end in sorted(
         _inside_ignored_block(
-            html,
-            ignored_blocks=ignored_blocks,
-            ignored_inline_blocks=ignored_inline_blocks,
+            html, ignored_blocks=ignored_blocks, ignored_inline_blocks=ignored_inline_blocks
         )
     ):
         furthest = max(furthest, end)
@@ -550,9 +500,7 @@ def _ignored_block_reach(
     return tuple(starts), tuple(reach)
 
 
-def inside_ignored_block_span(
-    config: Config, html: str, start: int, end: int
-) -> bool:
+def inside_ignored_block_span(config: Config, html: str, start: int, end: int) -> bool:
     """Whether a span of the html lies inside an ignored block."""
     starts, reach = _ignored_block_reach(
         html,
@@ -586,20 +534,14 @@ def inside_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _child_of_unformatted_block(
-    html: str,
-    /,
-    *,
-    unformatted_blocks: re.Pattern[str],
-    unformatted_blocks_coarse: re.Pattern[str],
+    html: str, /, *, unformatted_blocks: re.Pattern[str], unformatted_blocks_coarse: re.Pattern[str]
 ) -> tuple[tuple[int, int], ...]:
     if not unformatted_blocks_coarse.search(html):
         return ()
     return tuple(x.span() for x in unformatted_blocks.finditer(html))
 
 
-def child_of_unformatted_block(
-    config: Config, html: str, match: SpanMatch
-) -> bool:
+def child_of_unformatted_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Do not add whitespace if the tag is in a non indent block."""
     match_start, match_end = match.span()
     for ignored_match_start, ignored_match_end in _child_of_unformatted_block(
@@ -626,11 +568,7 @@ def child_of_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
 def _merged_ignored_blocks(
-    html: str,
-    /,
-    *,
-    ignored_blocks: re.Pattern[str],
-    ignored_inline_blocks: re.Pattern[str],
+    html: str, /, *, ignored_blocks: re.Pattern[str], ignored_inline_blocks: re.Pattern[str]
 ) -> tuple[tuple[int, int], ...]:
     """The ignored spans, sorted and merged so a lookup can bisect them.
 
@@ -641,9 +579,7 @@ def _merged_ignored_blocks(
     merged: list[tuple[int, int]] = []
     for start, end in sorted(
         _inside_ignored_block(
-            html,
-            ignored_blocks=ignored_blocks,
-            ignored_inline_blocks=ignored_inline_blocks,
+            html, ignored_blocks=ignored_blocks, ignored_inline_blocks=ignored_inline_blocks
         )
     ):
         if merged and start <= merged[-1][1]:
@@ -696,17 +632,13 @@ def _inside_ignored_rule(
             rule_spans.append((
                 ignored_match_start,
                 ignored_match_end,
-                frozenset(
-                    x for x in _RULE_SEPARATOR_PATTERN.split(rule_names) if x
-                ),
+                frozenset(x for x in _RULE_SEPARATOR_PATTERN.split(rule_names) if x),
                 not rule_names,
             ))
     return tuple(rule_spans)
 
 
-def inside_ignored_rule(
-    config: Config, html: str, match: SpanMatch, rule: str
-) -> bool:
+def inside_ignored_rule(config: Config, html: str, match: SpanMatch, rule: str) -> bool:
     """Check if match is inside an ignored pattern.
 
     Spans are half open, so a match ending exactly where a pragma starts is
@@ -717,20 +649,14 @@ def inside_ignored_rule(
     """
     match_start, match_end = match.span()
     return any(
-        (
-            ignored_start < match_end
-            and match_start < ignored_end
-            and rule in ignored_rule_names
-        )
+        (ignored_start < match_end and match_start < ignored_end and rule in ignored_rule_names)
         or (ignore_all_rules and ignored_start < match_end <= ignored_end)
         for (
             ignored_start,
             ignored_end,
             ignored_rule_names,
             ignore_all_rules,
-        ) in _inside_ignored_rule(
-            html, ignored_rules=config.ignored_rule_patterns
-        )
+        ) in _inside_ignored_rule(html, ignored_rules=config.ignored_rule_patterns)
     )
 
 
@@ -802,9 +728,7 @@ def branched_blocks(html: str) -> tuple[tuple[tuple[int, int], ...], ...]:
     return tuple(complete)
 
 
-def branch_context(
-    blocks: tuple[tuple[tuple[int, int], ...], ...], pos: int
-) -> dict[int, int]:
+def branch_context(blocks: tuple[tuple[tuple[int, int], ...], ...], pos: int) -> dict[int, int]:
     """Map each block containing pos to the branch pos is in.
 
     Branches run in order and do not overlap, so a block that does not

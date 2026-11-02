@@ -43,9 +43,7 @@ djLint будет форматировать длинные атрибуты н�
 {% raw %}
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}бла{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}бла{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

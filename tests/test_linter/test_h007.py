@@ -38,9 +38,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
@@ -53,9 +51,7 @@ def test_base(
     assert not mismatch
 
 
-def test_django_load_before_html_reports_missing_doctype(
-    django_config: Config,
-) -> None:
+def test_django_load_before_html_reports_missing_doctype(django_config: Config) -> None:
     source = "{% load static %}\n<html></html>"
     filename = "test.html"
     expected: list[LintError] = [
@@ -71,12 +67,7 @@ def test_django_load_before_html_reports_missing_doctype(
             "match": "<html",
             "message": "<!DOCTYPE ... > should be present before the html tag.",
         },
-        {
-            "code": "H016",
-            "line": "2:0",
-            "match": "<html>",
-            "message": "Missing title tag in html.",
-        },
+        {"code": "H016", "line": "2:0", "match": "<html>", "message": "Missing title tag in html."},
         {
             "code": "H020",
             "line": "2:0",
@@ -131,9 +122,7 @@ def test_custom_element_is_not_the_document_root(django_config: Config) -> None:
     assert not output[filename]
 
 
-def test_junk_before_the_html_tag_does_not_silence_the_rule(
-    basic_config: Config,
-) -> None:
+def test_junk_before_the_html_tag_does_not_silence_the_rule(basic_config: Config) -> None:
     for source in (
         '<?xml version="1.0"?>\n<html lang="en"><body>x</body></html>',
         '{{ define "main" }}\n<html lang="en"><body>x</body></html>',

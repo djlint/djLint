@@ -49,9 +49,7 @@ def finding_end(finding: LintError) -> tuple[int, int]:
     return int(line), int(column)
 
 
-def print_output(
-    config: Config, file_errors: Sequence[ProcessResult], file_count: int
-) -> int:
+def print_output(config: Config, file_errors: Sequence[ProcessResult], file_count: int) -> int:
     """Print results to console."""
     file_quantity = build_quantity(file_count)
     lint_error_count = 0
@@ -64,21 +62,15 @@ def print_output(
     for error in sorted(file_errors, key=first_filename):
         if error.get("format_message"):
             if config.stdin and config.check:
-                format_error_count += count_format_errors(
-                    error["format_message"]
-                )
+                format_error_count += count_format_errors(error["format_message"])
             elif not config.stdin:
-                format_error_count += build_check_output(
-                    error["format_message"], config
-                )
+                format_error_count += build_check_output(error["format_message"], config)
 
         if error.get("lint_message"):
             lint_error_count += build_output(error["lint_message"], config)
 
     if config.statistics and config.lint:
-        build_stats_output(
-            tuple(x.get("lint_message") for x in file_errors), config
-        )
+        build_stats_output(tuple(x.get("lint_message") for x in file_errors), config)
 
     tense_message = (
         build_quantity(format_error_count) + " would be"
@@ -88,18 +80,12 @@ def print_output(
     reformat_success_message = f"{tense_message} updated."
 
     error_case = "error" if lint_error_count == 1 else "errors"
-    lint_success_message = (
-        f"Linted {file_quantity}, found {lint_error_count} {error_case}."
-    )
+    lint_success_message = f"Linted {file_quantity}, found {lint_error_count} {error_case}."
 
     if print_blanks:
         echo()
 
-    if (
-        not config.quiet
-        and not config.stdin
-        and (config.reformat or config.check)
-    ):
+    if not config.quiet and not config.stdin and (config.reformat or config.check):
         echo(
             style(
                 reformat_success_message,
@@ -133,9 +119,7 @@ def build_relative_path(url: str, project_root: Path) -> str:
     return url
 
 
-def build_output(
-    error: Mapping[str, Iterable[LintError]], config: Config
-) -> int:
+def build_output(error: Mapping[str, Iterable[LintError]], config: Config) -> int:
     """Build output for file errors."""
     errors = sorted(next(iter(error.values())), key=finding_position)
 
@@ -147,22 +131,15 @@ def build_output(
 
     if "{filename}" not in config.linter_output_format and not config.stdin:  # noqa: RUF027
         width, _ = shutil.get_terminal_size()
-        echo(
-            style(f"\n{filename}\n", fg="green", bold=True)
-            + style("─" * (width - 1), dim=True)
-        )
+        echo(style(f"\n{filename}\n", fg="green", bold=True) + style("─" * (width - 1), dim=True))
 
     for message_dict in errors:
         line = style(message_dict["line"], fg="blue")
         code = style(
-            message_dict["code"],
-            fg="red" if message_dict["code"][:1] == "E" else "yellow",
+            message_dict["code"], fg="red" if message_dict["code"][:1] == "E" else "yellow"
         )
         message = message_dict["message"]
-        match = style(
-            _OUTPUT_WHITESPACE_PATTERN.sub(" ", message_dict["match"]),
-            fg="blue",
-        )
+        match = style(_OUTPUT_WHITESPACE_PATTERN.sub(" ", message_dict["match"]), fg="blue")
 
         echo(
             config.linter_output_format.format(
@@ -179,9 +156,7 @@ def build_output(
     return len(errors)
 
 
-def build_check_output(
-    errors: Mapping[str, Sequence[str]], config: Config
-) -> int:
+def build_check_output(errors: Mapping[str, Sequence[str]], config: Config) -> int:
     """Build output for reformat check."""
     if not errors:
         return 0
@@ -230,27 +205,14 @@ def build_stats_output(
     if not errors:
         return 0
 
-    codes = tuple(
-        code["code"]
-        for error in errors
-        if error
-        for code in next(iter(error.values()))
-    )
+    codes = tuple(code["code"] for error in errors if error for code in next(iter(error.values())))
 
-    messages = {
-        rule["rule"]["name"]: rule["rule"]["message"]
-        for rule in config.linter_rules
-    }
+    messages = {rule["rule"]["name"]: rule["rule"]["message"] for rule in config.linter_rules}
 
     err = report_on_stderr(config)
     echo(err=err)
     width, _ = shutil.get_terminal_size()
-    echo(
-        style("Statistics", fg="green", bold=True)
-        + "\n"
-        + style("─" * width, dim=True),
-        err=err,
-    )
+    echo(style("Statistics", fg="green", bold=True) + "\n" + style("─" * width, dim=True), err=err)
 
     counts = Counter(codes)
 

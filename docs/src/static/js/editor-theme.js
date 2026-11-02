@@ -8,39 +8,22 @@ const mono = "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace";
 
 const theme = EditorView.theme(
   {
-    "&": {
-      height: "100%",
-      backgroundColor: "#2d2d2d",
-      color: "#cccccc",
-      fontSize: "0.875rem",
-    },
+    "&": { height: "100%", backgroundColor: "#2d2d2d", color: "#cccccc", fontSize: "0.875rem" },
     "&.cm-focused": { outline: "none" },
     ".cm-scroller": { fontFamily: mono, lineHeight: "1.6" },
     ".cm-content": { caretColor: "#f2bd1d", padding: "0.75rem 0" },
     ".cm-cursor, .cm-dropCursor": { borderLeftColor: "#f2bd1d" },
     "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection":
       { backgroundColor: "#515151" },
-    ".cm-gutters": {
-      backgroundColor: "#2d2d2d",
-      color: "#6f6f6f",
-      border: "none",
-    },
+    ".cm-gutters": { backgroundColor: "#2d2d2d", color: "#6f6f6f", border: "none" },
     ".cm-activeLine": { backgroundColor: "#ffffff0a" },
     ".cm-activeLineGutter": { backgroundColor: "#ffffff0a", color: "#cccccc" },
     ".cm-matchingBracket, .cm-nonmatchingBracket": {
       backgroundColor: "#ffffff1a",
       outline: "none",
     },
-    ".cm-foldPlaceholder": {
-      backgroundColor: "#3a3a3a",
-      border: "none",
-      color: "#cccccc",
-    },
-    ".cm-tooltip": {
-      backgroundColor: "#252525",
-      border: "1px solid #3a3a3a",
-      color: "#cccccc",
-    },
+    ".cm-foldPlaceholder": { backgroundColor: "#3a3a3a", border: "none", color: "#cccccc" },
+    ".cm-tooltip": { backgroundColor: "#252525", border: "1px solid #3a3a3a", color: "#cccccc" },
     ".cm-tooltip-autocomplete > ul > li[aria-selected]": {
       backgroundColor: "#3a3a3a",
       color: "#ffffff",

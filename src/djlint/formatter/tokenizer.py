@@ -12,14 +12,7 @@ if TYPE_CHECKING:
 
 
 @final
-@dataclass(
-    repr=False,
-    eq=False,
-    frozen=True,
-    match_args=False,
-    kw_only=True,
-    slots=True,
-)
+@dataclass(repr=False, eq=False, frozen=True, match_args=False, kw_only=True, slots=True)
 class TagToken:
     """Source positions for one HTML tag."""
 
@@ -87,14 +80,10 @@ def _after_brace_run_expression(source: str, start: int) -> int | None:
         open_length += 1
     if _starts_markup(source, start + open_length):
         return None
-    return _after_delimited(
-        source, start, source[start : start + open_length], "}" * open_length
-    )
+    return _after_delimited(source, start, source[start : start + open_length], "}" * open_length)
 
 
-def _after_delimited(
-    source: str, start: int, opening: str, closing: str
-) -> int | None:
+def _after_delimited(source: str, start: int, opening: str, closing: str) -> int | None:
     """Return the end of an expression closed by the mirror of opening.
 
     A second opener before the closing delimiter means the first one was
@@ -131,8 +120,7 @@ def _after_template(source: str, start: int) -> int | None:
     if not closing:
         return None
     if closing == "%}" and _starts_markup(
-        source,
-        start + 3 if source[start + 2 : start + 3] in {"-", "+"} else start + 2,
+        source, start + 3 if source[start + 2 : start + 3] in {"-", "+"} else start + 2
     ):
         return None
     return _after_delimited(source, start, source[start : start + 2], closing)
@@ -287,20 +275,12 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
             char = source[cursor]
             if char == ">":
                 attributes_end = cursor
-                while (
-                    attributes_end > name_end
-                    and source[attributes_end - 1].isspace()
-                ):
+                while attributes_end > name_end and source[attributes_end - 1].isspace():
                     attributes_end -= 1
-                self_closing = (
-                    source[attributes_end - 1 : attributes_end] == "/"
-                )
+                self_closing = source[attributes_end - 1 : attributes_end] == "/"
                 if self_closing:
                     attributes_end -= 1
-                    while (
-                        attributes_end > name_end
-                        and source[attributes_end - 1].isspace()
-                    ):
+                    while attributes_end > name_end and source[attributes_end - 1].isspace():
                         attributes_end -= 1
                 yield TagToken(
                     start=start,

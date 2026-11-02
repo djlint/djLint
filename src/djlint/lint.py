@@ -64,9 +64,7 @@ def get_line(start: int, line_ends: Sequence[Mapping[str, int]]) -> str:
     """Get the line number and index of match."""
     if not line_ends:
         return f"1:{start}"
-    index = min(
-        bisect_right(line_ends, start, key=_line_end), len(line_ends) - 1
-    )
+    index = min(bisect_right(line_ends, start, key=_line_end), len(line_ends) - 1)
     line = line_ends[index]
 
     return f"{index + 1}:{start - line['start']}"
@@ -74,9 +72,7 @@ def get_line(start: int, line_ends: Sequence[Mapping[str, int]]) -> str:
 
 def _is_position(position: object) -> bool:
     """Whether a value reads as the `line:column` of a finding."""
-    return isinstance(position, str) and bool(
-        _POSITION_PATTERN.fullmatch(position)
-    )
+    return isinstance(position, str) and bool(_POSITION_PATTERN.fullmatch(position))
 
 
 def _as_tuple(position: str) -> tuple[int, int]:
@@ -84,9 +80,7 @@ def _as_tuple(position: str) -> tuple[int, int]:
     return int(line), int(column)
 
 
-def _offset(
-    position: str, line_ends: Sequence[Mapping[str, int]]
-) -> int | None:
+def _offset(position: str, line_ends: Sequence[Mapping[str, int]]) -> int | None:
     """Where a position is in the text, if its line exists."""
     line, column = _as_tuple(position)
     if not 1 <= line <= len(line_ends):
@@ -94,9 +88,7 @@ def _offset(
     return line_ends[line - 1]["start"] + column
 
 
-def _end_of_match(
-    error: LintError, line_ends: Sequence[Mapping[str, int]]
-) -> str:
+def _end_of_match(error: LintError, line_ends: Sequence[Mapping[str, int]]) -> str:
     """Where the text of a finding ends, for a rule that doesn't say."""
     start = _offset(error["line"], line_ends)
     if start is None:
@@ -119,9 +111,7 @@ def _without_trailing_space(
 
 
 def _module_error(
-    rule: Mapping[str, Any],
-    error: LintError,
-    line_ends: Sequence[Mapping[str, int]],
+    rule: Mapping[str, Any], error: LintError, line_ends: Sequence[Mapping[str, int]]
 ) -> LintError:
     """Give a rule module's finding an end, once its positions are valid."""
     # Whatever a rule returned, which compiled code would reject as it reads it.
@@ -166,23 +156,17 @@ def _import_rule_module(config: Config, name: str) -> Any:
     return importlib.import_module(name)
 
 
-def _is_html_inside_template_tag(
-    config: Config, html: str, match: re.Match[str]
-) -> bool:
+def _is_html_inside_template_tag(config: Config, html: str, match: re.Match[str]) -> bool:
     """Whether the match is markup written inside a template tag.
 
     Html-like content in a template tag, such as a string argument, is not
     part of the document. Rules that target template syntax itself match
     starting at the tag delimiters, so they still apply.
     """
-    return not match.group().startswith(("{%", "{{")) and inside_template_block(
-        config, html, match
-    )
+    return not match.group().startswith(("{%", "{{")) and inside_template_block(config, html, match)
 
 
-def _is_reported(
-    config: Config, html: str, match: re.Match[str], rule: Mapping[str, Any]
-) -> bool:
+def _is_reported(config: Config, html: str, match: re.Match[str], rule: Mapping[str, Any]) -> bool:
     """Whether a pattern match is a finding rather than ignored content.
 
     A rule looking for a tag sets `skip_in_attributes`, because markup
@@ -199,15 +183,10 @@ def _is_reported(
     )
 
 
-def linter(
-    config: Config, html: str, filename: str, filepath: str
-) -> dict[str, list[LintError]]:
+def linter(config: Config, html: str, filename: str, filepath: str) -> dict[str, list[LintError]]:
     """Lint a html string."""
     file_errors: list[LintError] = []
-    line_ends = [
-        {"start": m.start(), "end": m.end()}
-        for m in _LINE_PATTERN.finditer(html)
-    ]
+    line_ends = [{"start": m.start(), "end": m.end()} for m in _LINE_PATTERN.finditer(html)]
 
     ignored_rules: set[str] = set()
 
@@ -224,11 +203,7 @@ def linter(
         if "python_module" in rule:
             rule_module = _import_rule_module(config, rule["python_module"])
             module_errors = rule_module.run(
-                rule=rule,
-                config=config,
-                html=html,
-                filepath=filepath,
-                line_ends=line_ends,
+                rule=rule, config=config, html=html, filepath=filepath, line_ends=line_ends
             )
             if not isinstance(module_errors, Sequence):
                 msg = (
@@ -236,9 +211,7 @@ def linter(
                     " a sequence of dict with keys: code, line, match, message."
                 )
                 raise AssertionError(msg)
-            file_errors.extend(
-                _module_error(rule, error, line_ends) for error in module_errors
-            )
+            file_errors.extend(_module_error(rule, error, line_ends) for error in module_errors)
 
         else:
             for pattern in rule["compiled_patterns"]:
@@ -260,9 +233,7 @@ def linter(
         key = (error["code"], error["line"], error["match"], error["message"])
         if key not in seen:
             seen.add(key)
-            unique_errors.append(
-                _without_trailing_space(html, error, line_ends)
-            )
+            unique_errors.append(_without_trailing_space(html, error, line_ends))
     return {filename: unique_errors}
 
 

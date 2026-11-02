@@ -28,31 +28,11 @@ module.exports = {
     fr: "Commencer",
     zh: "入门指南",
   },
-  formatter: {
-    "en-US": "Formatter",
-    ru: "Форматер",
-    fr: "Formateur",
-    zh: "代码格式化",
-  },
+  formatter: { "en-US": "Formatter", ru: "Форматер", fr: "Formateur", zh: "代码格式化" },
   linter: { "en-US": "Linter", ru: "Линтер", fr: "Linter", zh: "代码检查" },
-  configuration: {
-    "en-US": "Configuration",
-    ru: "Конфигурация",
-    fr: "Configuration",
-    zh: "配置",
-  },
-  integrations: {
-    "en-US": "Integrations",
-    ru: "Интеграции",
-    fr: "Intégrations",
-    zh: "集成支持",
-  },
-  python_api: {
-    "en-US": "Python API",
-    ru: "Python API",
-    fr: "API Python",
-    zh: "Python API",
-  },
+  configuration: { "en-US": "Configuration", ru: "Конфигурация", fr: "Configuration", zh: "配置" },
+  integrations: { "en-US": "Integrations", ru: "Интеграции", fr: "Intégrations", zh: "集成支持" },
+  python_api: { "en-US": "Python API", ru: "Python API", fr: "API Python", zh: "Python API" },
   best_practices: {
     "en-US": "Best Practices",
     ru: "Лучшие Практики",
@@ -66,24 +46,9 @@ module.exports = {
     fr: "Trouvez les erreurs de syntaxe courantes, reformatez pour faire briller vos modèles HTML ! Supporte django, jinja, twig, nunjucks, handlebars, liquid, go templates, mustache, tera, askama, et plus encore !",
     zh: "发现常见的语法错误，重新格式化以让你的 HTML 模板焕发光彩！支持 Django、Jinja、Twig、Nunjucks、Handlebars、Liquid、Go 模板、Mustache、Tera、Askama 等更多模板引擎！",
   },
-  updated: {
-    "en-US": "Updated",
-    ru: "Обновлен",
-    fr: "Actualisé",
-    zh: "最后更新",
-  },
-  changelog: {
-    "en-US": "Changelog",
-    ru: "Изменения",
-    fr: "Changelog",
-    zh: "更新日志",
-  },
-  documentation: {
-    "en-US": "Documentation",
-    ru: "Документация",
-    fr: "Documentation",
-    zh: "文档",
-  },
+  updated: { "en-US": "Updated", ru: "Обновлен", fr: "Actualisé", zh: "最后更新" },
+  changelog: { "en-US": "Changelog", ru: "Изменения", fr: "Changelog", zh: "更新日志" },
+  documentation: { "en-US": "Documentation", ru: "Документация", fr: "Documentation", zh: "文档" },
   index_title: {
     "en-US": "Lint & Format HTML Templates",
     ru: "Проверка и форматирование html-шаблонов",
@@ -127,12 +92,7 @@ module.exports = {
     fr: "Ça ressemble à ça:",
     zh: "实际效果:",
   },
-  contributing: {
-    "en-US": "Contributing",
-    ru: "Вклад",
-    fr: "Contribuer",
-    zh: "参与贡献",
-  },
+  contributing: { "en-US": "Contributing", ru: "Вклад", fr: "Contribuer", zh: "参与贡献" },
   contributing_message: {
     "en-US":
       'Contributions are welcome. Send a pr with a new feature, or checkout the <a href="https://github.com/djlint/djlint/issues">issue</a> list and help where you can.',

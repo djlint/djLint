@@ -46,10 +46,7 @@ class Finding(NamedTuple):
 
 
 def load_config(
-    folder: str | os.PathLike[str] = ".",
-    *,
-    python_rules: bool = True,
-    **options: Any,
+    folder: str | os.PathLike[str] = ".", *, python_rules: bool = True, **options: Any
 ) -> Config:
     """Read the configuration that applies to the files of a folder.
 

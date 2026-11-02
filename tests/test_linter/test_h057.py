@@ -14,18 +14,14 @@ from djlint.settings import Config
 from tests.conftest import linter
 
 test_data = [
-    pytest.param(
-        ('<video src="a.mp4"></video>'), (True), id="a video with no track"
-    ),
+    pytest.param(('<video src="a.mp4"></video>'), (True), id="a video with no track"),
     pytest.param(
         ('<video controls><source src="a.mp4" type="video/mp4"></video>'),
         (True),
         id="a source is not a track",
     ),
     pytest.param(
-        (
-            '<video controls><source src="a.mp4"><track kind="chapters" src="c.vtt"></video>'
-        ),
+        ('<video controls><source src="a.mp4"><track kind="chapters" src="c.vtt"></video>'),
         (True),
         id="chapters are not captions",
     ),
@@ -57,9 +53,7 @@ test_data = [
         id="muted written inside a value",
     ),
     pytest.param(
-        ('<video class=muted src="a.mp4"></video>'),
-        (True),
-        id="muted written as an unquoted value",
+        ('<video class=muted src="a.mp4"></video>'), (True), id="muted written as an unquoted value"
     ),
     pytest.param(
         ('<video data-state=muted src="a.mp4"></video>'),
@@ -67,16 +61,12 @@ test_data = [
         id="and as an unquoted value of a data attribute",
     ),
     pytest.param(
-        (
-            '<video controls src="talk.mp4">\n  <source src="talk.webm">\n</video>'
-        ),
+        ('<video controls src="talk.mp4">\n  <source src="talk.webm">\n</video>'),
         (True),
         id="written over several lines",
     ),
     pytest.param(
-        ('<video src="a.mp4"></video >'),
-        (True),
-        id="an end tag with a space before its bracket",
+        ('<video src="a.mp4"></video >'), (True), id="an end tag with a space before its bracket"
     ),
     pytest.param(
         ('<video src="a.mp4"></video\n>'),
@@ -84,9 +74,7 @@ test_data = [
         id="an end tag with a line break before its bracket",
     ),
     pytest.param(
-        ('<video src="a.mp4"></video\t>'),
-        (True),
-        id="an end tag with a tab before its bracket",
+        ('<video src="a.mp4"></video\t>'), (True), id="an end tag with a tab before its bracket"
     ),
     pytest.param(
         ('<video src="a.mp4" onclick="$(this).play()"></video>'),
@@ -99,14 +87,10 @@ test_data = [
         id="nor is an alpine magic",
     ),
     pytest.param(
-        ('<video @click="$emit(\'play\')" src="a.mp4"></video>'),
-        (True),
-        id="nor is a vue handler",
+        ('<video @click="$emit(\'play\')" src="a.mp4"></video>'), (True), id="nor is a vue handler"
     ),
     pytest.param(
-        ('<video :style="{width: w}" src="a.mp4"></video>'),
-        (True),
-        id="nor is a vue binding",
+        ('<video :style="{width: w}" src="a.mp4"></video>'), (True), id="nor is a vue binding"
     ),
     pytest.param(
         ('<video src="a.mp4" style="--ratio:{16/9}"></video>'),
@@ -114,9 +98,7 @@ test_data = [
         id="nor is a brace in a css value",
     ),
     pytest.param(
-        ('<video src="a.mp4" data-cost="$5"></video>'),
-        (True),
-        id="nor is a price in a value",
+        ('<video src="a.mp4" data-cost="$5"></video>'), (True), id="nor is a price in a value"
     ),
     pytest.param(
         ('<video src="a.mp4">Only $5 a month</video>'),
@@ -149,16 +131,12 @@ test_data = [
         id="a track that is commented out is not a track",
     ),
     pytest.param(
-        (
-            '<video controls><source src="a.mp4" data-note="<track kind=captions>"></video>'
-        ),
+        ('<video controls><source src="a.mp4" data-note="<track kind=captions>"></video>'),
         (True),
         id="nor is one written inside a value",
     ),
     pytest.param(
-        (
-            '<video controls><source src="a.mp4"><track kind="captions" src="c.vtt"></video>'
-        ),
+        ('<video controls><source src="a.mp4"><track kind="captions" src="c.vtt"></video>'),
         (False),
         id="a captions track",
     ),
@@ -202,9 +180,7 @@ test_data = [
         id="a muted video has no audio to caption",
     ),
     pytest.param(
-        ('<video muted="muted" src="bg.mp4"></video>'),
-        (False),
-        id="muted written with a value",
+        ('<video muted="muted" src="bg.mp4"></video>'), (False), id="muted written with a value"
     ),
     pytest.param(
         (
@@ -224,16 +200,12 @@ test_data = [
         id="a template tag among the attributes",
     ),
     pytest.param(
-        (
-            '<video title="a>b" {% if v.silent %}muted{% endif %} src="{{ v.url }}"></video>'
-        ),
+        ('<video title="a>b" {% if v.silent %}muted{% endif %} src="{{ v.url }}"></video>'),
         (False),
         id="a bracket in a value hides no template tag",
     ),
     pytest.param(
-        (
-            '<video controls aria-label="Home > Videos" poster="{{ v.poster }}"></video>'
-        ),
+        ('<video controls aria-label="Home > Videos" poster="{{ v.poster }}"></video>'),
         (False),
         id="nor does one written in a label",
     ),
@@ -243,9 +215,7 @@ test_data = [
         id="a custom element whose name starts with video",
     ),
     pytest.param(
-        ('<p title="<video></video>">x</p>'),
-        (False),
-        id="markup written inside an attribute value",
+        ('<p title="<video></video>">x</p>'), (False), id="markup written inside an attribute value"
     ),
 ]
 
@@ -269,10 +239,7 @@ def test_h057_reads_unclosed_videos_in_one_pass() -> None:
     """
     filename = "test.html"
     config = Config(filename, profile="django")
-    source = (
-        '<video controls preload="none" src="/media/clip.mp4"'
-        ' poster="/img/p.jpg">\n'
-    ) * 1000
+    source = ('<video controls preload="none" src="/media/clip.mp4" poster="/img/p.jpg">\n') * 1000
     rule = {"name": "H057", "message": "Video should have a captions track."}
 
     start = time.perf_counter()

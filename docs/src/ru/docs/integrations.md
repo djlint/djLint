@@ -136,13 +136,7 @@ require("lspconfig").efm.setup({
 Выполните **Preferences: LSP Server Configurations** и добавьте:
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

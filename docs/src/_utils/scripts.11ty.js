@@ -4,9 +4,7 @@ const generateContentHash = require("../lib/generate-content-hash.js");
 module.exports = class {
   data() {
     return {
-      permalink: `/static/js/${generateContentHash(
-        "src/static/js/**/*.js",
-      )}.js`,
+      permalink: `/static/js/${generateContentHash("src/static/js/**/*.js")}.js`,
       eleventyExcludeFromCollections: true,
     };
   }
@@ -14,16 +12,10 @@ module.exports = class {
   async render() {
     await esbuild.build({
       entryPoints: ["src/static/js/hamburger.js"],
-      inject: [
-        "./src/static/js/animate.js",
-        "./src/static/js/modal.js",
-        "./src/static/js/copy.js",
-      ],
+      inject: ["./src/static/js/animate.js", "./src/static/js/modal.js", "./src/static/js/copy.js"],
       bundle: true,
       minify: true,
-      outfile: `_site/static/js/${generateContentHash(
-        "src/static/js/**/*.js",
-      )}.js`,
+      outfile: `_site/static/js/${generateContentHash("src/static/js/**/*.js")}.js`,
       sourcemap: false,
       target: "es5",
     });

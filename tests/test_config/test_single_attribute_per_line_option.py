@@ -52,14 +52,8 @@ test_data = [
         id="issue_1877",
     ),
     pytest.param(
-        (
-            '<a href = "http://test.test:3000/'
-            'testtesttesttesttesttesttesttesttesttest">Test</a>\n'
-        ),
-        (
-            '<a href="http://test.test:3000/'
-            'testtesttesttesttesttesttesttesttesttest">Test</a>\n'
-        ),
+        ('<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'),
+        ('<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'),
         ({"single_attribute_per_line": True}),
         id="space around equals does not oscillate",
     ),
@@ -120,9 +114,7 @@ def test_default_keeps_hanging_indent() -> None:
         '<input type="text" name="firstName" id="first-name" '
         'autocomplete="given-name" class="form-input mt-1" />\n'
     )
-    output = formatter(
-        config_builder({"indent": 2, "max_line_length": 1}), source
-    )
+    output = formatter(config_builder({"indent": 2, "max_line_length": 1}), source)
 
     assert output.startswith('<input type="text"\n       name=')
 

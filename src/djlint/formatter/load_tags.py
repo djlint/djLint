@@ -4,11 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint.helpers import (
-    compile_pattern,
-    inside_ignored_block,
-    inside_ignored_linter_block,
-)
+from djlint.helpers import compile_pattern, inside_ignored_block, inside_ignored_linter_block
 
 if TYPE_CHECKING:
     from typing import Final
@@ -20,9 +16,7 @@ if TYPE_CHECKING:
 
 # The names stop at a brace or a percent sign, so a tag left unclosed is
 # read only up to the next one rather than to the end of the file.
-_LOAD_TAG_PATTERN: Final = compile_pattern(
-    r"{%[-+]?\s*load\s+(?P<names>[^{}%]+?)\s*[-+]?%}"
-)
+_LOAD_TAG_PATTERN: Final = compile_pattern(r"{%[-+]?\s*load\s+(?P<names>[^{}%]+?)\s*[-+]?%}")
 
 
 def _sorted_names(names: list[str]) -> list[str]:
@@ -61,10 +55,6 @@ def sort_load_tags(html: str, config: Config) -> str:
             return match.group()
 
         start, end = match.span("names")
-        return (
-            html[match.start() : start]
-            + " ".join(ordered)
-            + html[end : match.end()]
-        )
+        return html[match.start() : start] + " ".join(ordered) + html[end : match.end()]
 
     return _LOAD_TAG_PATTERN.sub(replace, html)

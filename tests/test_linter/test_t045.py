@@ -35,27 +35,15 @@ test_data = [
         (True),
         id="a comment touching the one before it",
     ),
-    pytest.param(
-        ("<!-- {{#if x}}y{{/if}} -->"),
-        ("handlebars"),
-        (True),
-        id="a handlebars section",
-    ),
+    pytest.param(("<!-- {{#if x}}y{{/if}} -->"), ("handlebars"), (True), id="a handlebars section"),
     pytest.param(
         ("<!-- {{~#if x}}y{{~/if}} -->"),
         ("handlebars"),
         (True),
         id="a handlebars section with whitespace control",
     ),
-    pytest.param(
-        ("<!-- {{> partial}} -->"),
-        ("handlebars"),
-        (True),
-        id="a handlebars partial",
-    ),
-    pytest.param(
-        ("<!-- {{if .X}}y{{end}} -->"), ("golang"), (True), id="a go block"
-    ),
+    pytest.param(("<!-- {{> partial}} -->"), ("handlebars"), (True), id="a handlebars partial"),
+    pytest.param(("<!-- {{if .X}}y{{end}} -->"), ("golang"), (True), id="a go block"),
     pytest.param(
         ('<!-- {{- template "footer" . -}} -->'),
         ("golang"),
@@ -63,10 +51,7 @@ test_data = [
         id="a go template call with whitespace control",
     ),
     pytest.param(
-        ("<!-- built {{ version }} -->"),
-        ("django"),
-        (False),
-        id="a value printed into a comment",
+        ("<!-- built {{ version }} -->"), ("django"), (False), id="a value printed into a comment"
     ),
     pytest.param(
         ("<!-- {{ block.super }} -->"),
@@ -123,9 +108,7 @@ test_data = [
         id="the rule is switched off",
     ),
     pytest.param(
-        (
-            '<!--[if lt IE 9]><script src="{% static "shiv.js" %}"></script><![endif]-->'
-        ),
+        ('<!--[if lt IE 9]><script src="{% static "shiv.js" %}"></script><![endif]-->'),
         ("django"),
         (False),
         id="a conditional comment is markup for the browser it names",
@@ -160,9 +143,7 @@ test_data = [
         (False),
         id="a go comment inside the html comment",
     ),
-    pytest.param(
-        ("<!-- plain comment -->"), ("django"), (False), id="a plain comment"
-    ),
+    pytest.param(("<!-- plain comment -->"), ("django"), (False), id="a plain comment"),
     pytest.param(
         ("<!-- Template: {{ template }} -->"),
         ("liquid"),
@@ -176,10 +157,7 @@ test_data = [
         id="a date range whose end is also a go keyword",
     ),
     pytest.param(
-        ("<!-- {{ block }} -->"),
-        ("django"),
-        (False),
-        id="a value the docs promise is left alone",
+        ("<!-- {{ block }} -->"), ("django"), (False), id="a value the docs promise is left alone"
     ),
     pytest.param(
         ("<!-- fallback {{ else }} -->"),
@@ -194,17 +172,9 @@ test_data = [
         id="a go block carrying an operand under no profile",
     ),
     pytest.param(
-        ("<!-- {{ end }} -->"),
-        ("golang"),
-        (True),
-        id="a bare go keyword under the go profile",
+        ("<!-- {{ end }} -->"), ("golang"), (True), id="a bare go keyword under the go profile"
     ),
-    pytest.param(
-        ("<!--" * 8000),
-        ("django"),
-        (False),
-        id="a file of openings nothing closes",
-    ),
+    pytest.param(("<!--" * 8000), ("django"), (False), id="a file of openings nothing closes"),
     pytest.param(
         ("<!--[If IE]><p>{% if x %}a{% endif %}</p><![endif]-->"),
         ("django"),
@@ -224,10 +194,7 @@ test_data = [
         id="a comment block written with tabs",
     ),
     pytest.param(
-        (
-            "{% verbatim myblock %}<!-- {% if x %}{% endif %} -->"
-            "{% endverbatim myblock %}"
-        ),
+        ("{% verbatim myblock %}<!-- {% if x %}{% endif %} -->{% endverbatim myblock %}"),
         ("django"),
         (False),
         id="the html comment is inside a named verbatim block",
@@ -281,10 +248,7 @@ test_data = [
         id="a hyphenated word is not a conditional comment",
     ),
     pytest.param(
-        (
-            '<!--[if lt IE 9]><script src="shiv.js"></script>\n'
-            '<!-- {% include "debug.html" %} -->'
-        ),
+        ('<!--[if lt IE 9]><script src="shiv.js"></script>\n<!-- {% include "debug.html" %} -->'),
         ("django"),
         (True),
         id="a conditional comment left unclosed is an ordinary comment",

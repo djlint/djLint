@@ -31,13 +31,9 @@ test_data = [
     pytest.param(("{#-test -#}"), ([]), id="T001"),
     pytest.param(("{#- test -#}"), ([]), id="T001_2"),
     pytest.param(
-        ('<div>\n     {%\n         ("something", "1"),\n     %}\n </div>'),
-        ([]),
-        id="T001_3",
+        ('<div>\n     {%\n         ("something", "1"),\n     %}\n </div>'), ([]), id="T001_3"
     ),
-    pytest.param(
-        ("{{- foo }}{{+ bar }}{{ biz -}}{{ baz +}}"), ([]), id="T001_4"
-    ),
+    pytest.param(("{{- foo }}{{+ bar }}{{ biz -}}{{ baz +}}"), ([]), id="T001_4"),
     pytest.param(
         ('<link src="/static/there">'),
         ([
@@ -71,9 +67,7 @@ test_data = [
         id="J018",
     ),
     pytest.param(
-        (
-            '<a href="javascript:abc()">\n<form action="javascript:abc()"></form></a>'
-        ),
+        ('<a href="javascript:abc()">\n<form action="javascript:abc()"></form></a>'),
         ([
             {
                 "code": "H019",
@@ -96,9 +90,7 @@ test_data = [
         id="J018_on_events",
     ),
     pytest.param(
-        (
-            '<div class="em-ajaxLogs" data-src="/table/task/{{ t.id }}/log"></div>'
-        ),
+        ('<div class="em-ajaxLogs" data-src="/table/task/{{ t.id }}/log"></div>'),
         ([
             {
                 "code": "J018",
@@ -109,38 +101,20 @@ test_data = [
         ]),
         id="J018_data_src",
     ),
+    pytest.param(('<a href="mailto:joe"></a><a href="tel:joe"></a>'), ([]), id="J018_mailto"),
     pytest.param(
-        ('<a href="mailto:joe"></a><a href="tel:joe"></a>'),
-        ([]),
-        id="J018_mailto",
-    ),
-    pytest.param(
-        (
-            '<a href="maps://example.com"></a>\n'
-            '<form action="web+demo.example:submit"></form>'
-        ),
+        ('<a href="maps://example.com"></a>\n<form action="web+demo.example:submit"></form>'),
         ([]),
         id="J018_uri_scheme",
     ),
+    pytest.param(('<a href="/">Home</a>\n<form action="/"></form>'), ([]), id="J018_root"),
     pytest.param(
-        ('<a href="/">Home</a>\n<form action="/"></form>'), ([]), id="J018_root"
-    ),
-    pytest.param(
-        (
-            '<a href="//cdn.example.com/path"></a>\n'
-            '<form action="//cdn.example.com/path"></form>'
-        ),
+        ('<a href="//cdn.example.com/path"></a>\n<form action="//cdn.example.com/path"></form>'),
         ([]),
         id="J018_protocol_relative",
     ),
-    pytest.param(
-        ('<a href="data:,Hello%2C%20World%21"></a>'), ([]), id="J018_data"
-    ),
-    pytest.param(
-        ('<div data-row-selection-action="highlight"></div>'),
-        ([]),
-        id="J018_attributes",
-    ),
+    pytest.param(('<a href="data:,Hello%2C%20World%21"></a>'), ([]), id="J018_data"),
+    pytest.param(('<div data-row-selection-action="highlight"></div>'), ([]), id="J018_attributes"),
     pytest.param(
         ('<form action="{{ url_for(\'something\', action="xxx") }}"></form>'),
         ([]),
@@ -243,11 +217,7 @@ test_data = [
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_base(source: str, expected: list[LintError]) -> None:
     """T028 is opt in, so it is included here; the buttons in the fixtures carry no type, so H043 is ignored."""
-    config = config_builder({
-        "profile": "jinja",
-        "include": "T028",
-        "ignore": "H043",
-    })
+    config = config_builder({"profile": "jinja", "include": "T028", "ignore": "H043"})
     filename = "test.html"
     output = linter(config, source, filename, filename)
 

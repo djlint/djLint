@@ -157,11 +157,7 @@ body.has-navbar-fixed-top {
 }
 .djlint-nav {
   min-height: var(--nav-h);
-  background-color: color-mix(
-    in srgb,
-    var(--bulma-scheme-main) 94%,
-    transparent
-  );
+  background-color: color-mix(in srgb, var(--bulma-scheme-main) 94%, transparent);
   backdrop-filter: blur(12px) saturate(1.4);
   border-bottom: 1px solid var(--bulma-border-weak);
 
@@ -526,8 +522,7 @@ body.has-navbar-fixed-top {
   gap: 1rem;
   height: 100%;
   padding: 1.75rem 0.75rem 1.25rem;
-  border: 1px solid
-    color-mix(in srgb, var(--brand) 22%, var(--bulma-border-weak));
+  border: 1px solid color-mix(in srgb, var(--brand) 22%, var(--bulma-border-weak));
   border-radius: 16px;
   background-color: color-mix(in srgb, var(--brand) 7%, transparent);
   overflow: hidden;
@@ -706,15 +701,10 @@ pre .number {
 .message.hint,
 .message.alert {
   padding: 0;
-  border: 1px solid
-    color-mix(in srgb, var(--callout) 30%, var(--bulma-border-weak));
+  border: 1px solid color-mix(in srgb, var(--callout) 30%, var(--bulma-border-weak));
   border-left: 3px solid var(--callout);
   border-radius: 10px;
-  background-color: color-mix(
-    in srgb,
-    var(--callout) 6%,
-    var(--bulma-scheme-main)
-  );
+  background-color: color-mix(in srgb, var(--callout) 6%, var(--bulma-scheme-main));
   box-shadow: none;
 
   .message-header {
@@ -757,14 +747,9 @@ pre .number {
   align-items: center;
   gap: 0.25rem;
   padding: 1rem 1.25rem;
-  border: 1px solid
-    color-mix(in srgb, var(--squiggle) 35%, var(--bulma-border-weak));
+  border: 1px solid color-mix(in srgb, var(--squiggle) 35%, var(--bulma-border-weak));
   border-radius: 12px;
-  background-color: color-mix(
-    in srgb,
-    var(--squiggle) 7%,
-    var(--bulma-scheme-main)
-  );
+  background-color: color-mix(in srgb, var(--squiggle) 7%, var(--bulma-scheme-main));
   box-shadow: none;
   color: var(--bulma-text);
 

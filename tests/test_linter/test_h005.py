@@ -83,9 +83,7 @@ test_data = [
         id="lang inside a value is not lang",
     ),
     pytest.param(
-        ("<!DOCTYPE html>\n<htmlx>y</htmlx>"),
-        ([]),
-        id="tag whose name only starts with html",
+        ("<!DOCTYPE html>\n<htmlx>y</htmlx>"), ([]), id="tag whose name only starts with html"
     ),
     pytest.param(
         ('<!DOCTYPE html>\n<html lang="en">'),
@@ -108,9 +106,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
@@ -128,9 +124,6 @@ def test_empty_lang_names_no_language(basic_config: Config) -> None:
         output = linter(basic_config, source, "t.html", "t.html")["t.html"]
         assert any(error["code"] == "H005" for error in output), source
 
-    for source in (
-        '<html lang="en">a</html>',
-        '<html lang="{{ code }}">a</html>',
-    ):
+    for source in ('<html lang="en">a</html>', '<html lang="{{ code }}">a</html>'):
         output = linter(basic_config, source, "t.html", "t.html")["t.html"]
         assert not any(error["code"] == "H005" for error in output), source

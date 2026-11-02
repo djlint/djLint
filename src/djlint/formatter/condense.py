@@ -37,9 +37,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-_YAML_FRONT_MATTER_PATTERN: Final = compile_pattern(
-    YAML_FRONT_MATTER, RE_FLAGS_MSX
-)
+_YAML_FRONT_MATTER_PATTERN: Final = compile_pattern(YAML_FRONT_MATTER, RE_FLAGS_MSX)
 
 _COLLAPSIBLE_WHITESPACE_CHARS: Final = frozenset(COLLAPSIBLE_WHITESPACE)
 # Jinja and nunjucks strip the whitespace on the marked side of a tag. The
@@ -68,17 +66,11 @@ def _neighbour(character: str) -> _Neighbour:
     return _Neighbour.RENDERS
 
 
-_COLLAPSIBLE_WHITESPACE_PATTERN: Final = compile_pattern(
-    f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+"
-)
+_COLLAPSIBLE_WHITESPACE_PATTERN: Final = compile_pattern(f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+")
 
-_CLOSING_LINE_PATTERN: Final = compile_pattern(
-    r"[ \t]*(?:</|\{%[-+]?\s*end|\{\{/)"
-)
+_CLOSING_LINE_PATTERN: Final = compile_pattern(r"[ \t]*(?:</|\{%[-+]?\s*end|\{\{/)")
 
-_COMMENT_LINE_PATTERN: Final = compile_pattern(
-    r"[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*"
-)
+_COMMENT_LINE_PATTERN: Final = compile_pattern(r"[ \t]*(?:\{#[^\n]*?#\}|<!--[^\n]*?-->)[ \t]*")
 
 
 def _opening_line_pattern(config: Config) -> re.Pattern[str]:
@@ -120,15 +112,13 @@ def clean_whitespace(html: str, config: Config) -> str:
         opening tag, so only its leading indentation goes and the line can
         still be re-indented.
         """
-        if inside_ignored_block(
-            config, html, match
-        ) and not is_safe_closing_tag(config, match.group()):
+        if inside_ignored_block(config, html, match) and not is_safe_closing_tag(
+            config, match.group()
+        ):
             return match.group()
 
         leading = ""
-        if not is_safe_closing_tag(
-            config, match.group()
-        ) and inside_ignored_block_span(
+        if not is_safe_closing_tag(config, match.group()) and inside_ignored_block_span(
             config, html, match.start(), match.start(1)
         ):
             leading = match.string[match.start() : match.start(1)]
@@ -146,9 +136,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         return leading + match.group(1) + blank_lines
 
     def strip_spaces(pattern: str, html: str) -> str:
-        return re.sub(
-            pattern, partial(strip_space, config, html), html, flags=re.M
-        )
+        return re.sub(pattern, partial(strip_space, config, html), html, flags=re.M)
 
     line_contents = r"(.*?)"
     trailing_contents = r"\n \t"
@@ -158,20 +146,14 @@ def clean_whitespace(html: str, config: Config) -> str:
         trailing_contents = r" \t"
 
     if not config.preserve_leading_space:
-        html = strip_spaces(
-            rf"^[ \t]*{line_contents}([{trailing_contents}]*)$", html
-        )
+        html = strip_spaces(rf"^[ \t]*{line_contents}([{trailing_contents}]*)$", html)
 
     else:
         leading_tag = r"(?:<|{%)"
-        html = strip_spaces(
-            rf"^[ \t]*({leading_tag}.*?)([{trailing_contents}]*)$", html
-        )
+        html = strip_spaces(rf"^[ \t]*({leading_tag}.*?)([{trailing_contents}]*)$", html)
         html = strip_spaces(rf"^{line_contents}([{trailing_contents}]*)$", html)
 
-    def add_blank_line_after(
-        config: Config, html: str, match: re.Match[str]
-    ) -> str:
+    def add_blank_line_after(config: Config, html: str, match: re.Match[str]) -> str:
         """Add break after if not in ignored block."""
         match_end = match.end()
         if html[match_end : match_end + 1] == "\n":
@@ -242,13 +224,7 @@ def clean_whitespace(html: str, config: Config) -> str:
         opening_line = _opening_line_pattern(config)
         for tag in split_option_list(config.blank_line_before_tag):
             attach_comments = not tag.startswith("end")
-            func = partial(
-                add_blank_line_before,
-                config,
-                html,
-                opening_line,
-                attach_comments,
-            )
+            func = partial(add_blank_line_before, config, html, opening_line, attach_comments)
             html = re.sub(
                 rf"(?<!^\n)({comment_lines if attach_comments else ''}(?:{{%[-+]?\s*?{tag}\b[^}}]+?[-+]?%}}\n?)+)",
                 func,
@@ -359,9 +335,7 @@ def _rendered_whitespace(text: str, left: _Neighbour, right: _Neighbour) -> str:
     return text
 
 
-def condense_html(
-    html: str, config: Config, authored_html: str | None = None
-) -> str:
+def condense_html(html: str, config: Config, authored_html: str | None = None) -> str:
     """Put short tags back on a single line."""
     if config.preserve_leading_space:
         return html
@@ -375,9 +349,7 @@ def condense_html(
         for tag in split_option_list(config.blank_line_before_tag)
     )
 
-    def condense_line(
-        config: Config, html: str, match: re.Match[str], *, inline: bool
-    ) -> str:
+    def condense_line(config: Config, html: str, match: re.Match[str], *, inline: bool) -> str:
         """Put contents on a single line if below max line length.
 
         `inline` says whether the element shares a line box with what sits
@@ -398,22 +370,14 @@ def condense_html(
                 if inline and opening_tag_start
                 else _Neighbour.COLLAPSES
             )
-            after = (
-                _neighbour_after(match.string, end)
-                if inline
-                else _Neighbour.COLLAPSES
-            )
+            after = _neighbour_after(match.string, end) if inline else _Neighbour.COLLAPSES
             content = match.group(3)
             if content:
                 leading = _rendered_whitespace(
-                    match.string[match.end(1) : match.start(3)],
-                    before,
-                    _neighbour(content[0]),
+                    match.string[match.end(1) : match.start(3)], before, _neighbour(content[0])
                 )
                 trailing = _rendered_whitespace(
-                    match.string[match.end(3) : match.start(4)],
-                    _neighbour(content[-1]),
-                    after,
+                    match.string[match.end(3) : match.start(4)], _neighbour(content[-1]), after
                 )
             else:
                 leading = _rendered_whitespace(
@@ -442,13 +406,7 @@ def condense_html(
             and if_blank_line_after_match(match.group(3))
             and if_blank_line_before_match(match.group(3))
         ):
-            return (
-                match.group(1)
-                + leading
-                + match.group(3)
-                + trailing
-                + match.group(4)
-            )
+            return match.group(1) + leading + match.group(3) + trailing + match.group(4)
 
         return match.group()
 
@@ -466,14 +424,9 @@ def condense_html(
                 return False
         return True
 
-    def condense_html_line(
-        config: Config, html: str, match: re.Match[str]
-    ) -> str:
+    def condense_html_line(config: Config, html: str, match: re.Match[str]) -> str:
         return condense_line(
-            config,
-            html,
-            match,
-            inline=match.group(2).lower() in HTML_INLINE_ELEMENTS,
+            config, html, match, inline=match.group(2).lower() in HTML_INLINE_ELEMENTS
         )
 
     func = partial(condense_html_line, config, html)
@@ -487,9 +440,7 @@ def condense_html(
 
     multiline_blocks = _multiline_template_blocks(authored_html, config)
 
-    def condense_template_line(
-        config: Config, html: str, match: re.Match[str]
-    ) -> str:
+    def condense_template_line(config: Config, html: str, match: re.Match[str]) -> str:
         """Put a short template block back on one line.
 
         One block of a kind stays spread for each one the author wrote that

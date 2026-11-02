@@ -43,9 +43,7 @@ djLint 会将长属性格式化为多行，而属性内部节省的空格可能�
 {% raw %}
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

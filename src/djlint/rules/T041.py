@@ -40,9 +40,7 @@ if TYPE_CHECKING:
 
 _AFTER_EVERY_SPAN: Final = float("inf")
 
-_EXTENDS_PATTERN: Final = compile_pattern(
-    r"{%[-+]?\s*extends\b(?:(?!%}).)*%}", re.S
-)
+_EXTENDS_PATTERN: Final = compile_pattern(r"{%[-+]?\s*extends\b(?:(?!%}).)*%}", re.S)
 
 # whitespace and a byte order mark are all django lets a template hold
 # ahead of its `{% extends %}`; jinja and nunjucks also take a branch
@@ -54,9 +52,7 @@ _BLANK_OR_BRANCH_PATTERN: Final = compile_pattern(
 _PROFILES_REJECTING_A_BRANCHED_EXTENDS: Final = frozenset({"django"})
 
 # a byte order mark ahead of the "---" still opens front matter
-_FRONT_MATTER_PATTERN: Final = compile_pattern(
-    r"\A\ufeff?---(?:(?!{%)[\s\S])*?^---[^\S\n]*$", re.M
-)
+_FRONT_MATTER_PATTERN: Final = compile_pattern(r"\A\ufeff?---(?:(?!{%)[\s\S])*?^---[^\S\n]*$", re.M)
 
 _OPENING_PATTERN: Final = compile_pattern(
     r"""
@@ -79,27 +75,18 @@ _OPENING_PATTERN: Final = compile_pattern(
     re.I | re.S | re.X,
 )
 
-_ON_HTML_PATTERN: Final = compile_pattern(
-    r"<!--\s*djlint:on\s*-->", re.I | re.S
-)
-_ON_HASH_PATTERN: Final = compile_pattern(
-    r"{\#\s*djlint:\s*on\s*\#}", re.I | re.S
-)
+_ON_HTML_PATTERN: Final = compile_pattern(r"<!--\s*djlint:on\s*-->", re.I | re.S)
+_ON_HASH_PATTERN: Final = compile_pattern(r"{\#\s*djlint:\s*on\s*\#}", re.I | re.S)
 _ON_COMMENT_PATTERN: Final = compile_pattern(
     r"{%\s*comment\s*%}\s*djlint:on\s*{%\s*endcomment\s*%}", re.I | re.S
 )
-_END_COMMENT_PATTERN: Final = compile_pattern(
-    r"{%[-+]?\s*endcomment\b(?:(?!%}).)*%}", re.I | re.S
-)
+_END_COMMENT_PATTERN: Final = compile_pattern(r"{%[-+]?\s*endcomment\b(?:(?!%}).)*%}", re.I | re.S)
 _END_LITERAL_PATTERNS: Final = {
-    name: compile_pattern(
-        rf"{{%[-+]?\s*end{name}\b(?:(?!%}}).)*%}}", re.I | re.S
-    )
+    name: compile_pattern(rf"{{%[-+]?\s*end{name}\b(?:(?!%}}).)*%}}", re.I | re.S)
     for name in ("raw", "verbatim")
 }
 _CLOSING_RAW_TEXT_PATTERNS: Final = {
-    name: compile_pattern(rf"</{name}\b", re.I)
-    for name in ("script", "style", "pre", "textarea")
+    name: compile_pattern(rf"</{name}\b", re.I) for name in ("script", "style", "pre", "textarea")
 }
 _RULE_SEPARATOR_PATTERN: Final = compile_pattern(r"[\s,]+")
 
@@ -164,13 +151,9 @@ def _span(
         return _block_span(html, start, after, "comment", exhausted)
 
     if opening.group("literal"):
-        return _block_span(
-            html, start, after, opening.group("literal_name").lower(), exhausted
-        )
+        return _block_span(html, start, after, opening.group("literal_name").lower(), exhausted)
 
-    return _raw_text_span(
-        html, after, opening.group("raw_text_name").lower(), exhausted
-    )
+    return _raw_text_span(html, after, opening.group("raw_text_name").lower(), exhausted)
 
 
 def _block_span(
@@ -188,20 +171,16 @@ def _block_span(
     if opening_end < 0:
         exhausted.add(name)
         return None
-    closing = (
-        _END_COMMENT_PATTERN
-        if name == "comment"
-        else _END_LITERAL_PATTERNS[name]
-    ).search(html, opening_end + 2)
+    closing = (_END_COMMENT_PATTERN if name == "comment" else _END_LITERAL_PATTERNS[name]).search(
+        html, opening_end + 2
+    )
     if closing is None:
         exhausted.add(name)
         return None
     return (start, closing.end())
 
 
-def _raw_text_span(
-    html: str, after: int, name: str, exhausted: set[str]
-) -> tuple[int, int] | None:
+def _raw_text_span(html: str, after: int, name: str, exhausted: set[str]) -> tuple[int, int] | None:
     """The body of a script, style, pre or textarea element.
 
     The opening tag is left out, as it is in the shared lint patterns: it
@@ -248,9 +227,7 @@ def _skipped(spans: tuple[tuple[int, int], ...], start: int, end: int) -> bool:
     return index >= 0 and spans[index][0] <= start and end <= spans[index][1]
 
 
-def _first_extends(
-    html: str, spans: tuple[tuple[int, int], ...]
-) -> re.Match[str] | None:
+def _first_extends(html: str, spans: tuple[tuple[int, int], ...]) -> re.Match[str] | None:
     """Find the first `{% extends %}` that runs.
 
     One inside a `{% comment %}`, `{% raw %}` or `{% verbatim %}` block,
@@ -263,9 +240,7 @@ def _first_extends(
     return None
 
 
-def _holds_content(
-    html: str, start: int, end: int, skippable: re.Pattern[str]
-) -> bool:
+def _holds_content(html: str, start: int, end: int, skippable: re.Pattern[str]) -> bool:
     """Whether the slice holds anything the page will show."""
     position = start
     while position < end:
@@ -277,10 +252,7 @@ def _holds_content(
 
 
 def _something_precedes(
-    html: str,
-    spans: tuple[tuple[int, int], ...],
-    end: int,
-    skippable: re.Pattern[str],
+    html: str, spans: tuple[tuple[int, int], ...], end: int, skippable: re.Pattern[str]
 ) -> bool:
     """Whether anything the page will show comes before the extends.
 
@@ -321,9 +293,7 @@ def run(
     )
     spans = _skipped_spans(html, rule["name"])
     extends = _first_extends(html, spans)
-    if extends is None or not _something_precedes(
-        html, spans, extends.start(), skippable
-    ):
+    if extends is None or not _something_precedes(html, spans, extends.start(), skippable):
         return ()
 
     return (

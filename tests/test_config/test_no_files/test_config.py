@@ -19,14 +19,10 @@ UNFORMATTED = "<div><p>x</p>   </div>"
 
 
 def _project(tmp_path: Path, config: str = "") -> None:
-    (tmp_path / "pyproject.toml").write_text(
-        f"[tool]\n[tool.djlint]\n{config}", encoding="utf-8"
-    )
+    (tmp_path / "pyproject.toml").write_text(f"[tool]\n[tool.djlint]\n{config}", encoding="utf-8")
 
 
-def test_explicit_file_excluded_by_config(
-    runner: CliRunner, tmp_path: Path
-) -> None:
+def test_explicit_file_excluded_by_config(runner: CliRunner, tmp_path: Path) -> None:
     """A named file that the config excludes is skipped, not failed.
 
     This is how pre-commit calls djLint: it passes the staged file names,
@@ -46,9 +42,7 @@ def test_explicit_file_excluded_by_config(
     assert template.read_text(encoding="utf-8") == UNFORMATTED
 
 
-def test_directory_with_every_file_excluded(
-    runner: CliRunner, tmp_path: Path
-) -> None:
+def test_directory_with_every_file_excluded(runner: CliRunner, tmp_path: Path) -> None:
     """Excluding every file found under a directory is still a success."""
     _project(tmp_path, 'extend_exclude = "excluded"\n')
     excluded = tmp_path / "excluded"
@@ -79,9 +73,7 @@ def test_no_matching_files_exits_two(runner: CliRunner, tmp_path: Path) -> None:
     assert "skipped by the configuration" not in result.stderr
 
 
-def test_no_matching_files_with_allow_empty_input(
-    runner: CliRunner, tmp_path: Path
-) -> None:
+def test_no_matching_files_with_allow_empty_input(runner: CliRunner, tmp_path: Path) -> None:
     """--allow-empty-input opts back into the pre-1.39.5 exit code.
 
     The run is still explained, it just does not fail.
@@ -91,16 +83,12 @@ def test_no_matching_files_with_allow_empty_input(
     result = runner.invoke(djlint, (str(tmp_path), "--check"))
     assert result.exit_code == 2
 
-    result = runner.invoke(
-        djlint, (str(tmp_path), "--check", "--allow-empty-input")
-    )
+    result = runner.invoke(djlint, (str(tmp_path), "--check", "--allow-empty-input"))
     assert result.exit_code == 0
     assert "No files to check!" in result.stderr
 
 
-def test_allow_empty_input_from_pyproject(
-    runner: CliRunner, tmp_path: Path
-) -> None:
+def test_allow_empty_input_from_pyproject(runner: CliRunner, tmp_path: Path) -> None:
     """The flag is settable in config, for pipelines that cannot pass args."""
     _project(tmp_path, "allow_empty_input = true\n")
 
@@ -109,9 +97,7 @@ def test_allow_empty_input_from_pyproject(
     assert result.exit_code == 0
 
 
-def test_warn_does_not_cover_an_empty_run(
-    runner: CliRunner, tmp_path: Path
-) -> None:
+def test_warn_does_not_cover_an_empty_run(runner: CliRunner, tmp_path: Path) -> None:
     """--warn downgrades findings, not "nothing was checked".
 
     Folding the two together would put every --warn user back in the
@@ -124,9 +110,7 @@ def test_warn_does_not_cover_an_empty_run(
     assert result.exit_code == 2
 
 
-def test_no_files_message_stays_off_stdout(
-    runner: CliRunner, tmp_path: Path
-) -> None:
+def test_no_files_message_stays_off_stdout(runner: CliRunner, tmp_path: Path) -> None:
     """stdout carries formatted code, so diagnostics may not go there."""
     _project(tmp_path)
 

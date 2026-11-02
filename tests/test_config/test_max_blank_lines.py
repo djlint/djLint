@@ -16,12 +16,7 @@ if TYPE_CHECKING:
     from typing import Any
 
 test_data = [
-    pytest.param(
-        ("<img>\n\n\n\n\n\n\n\n\n\n<meta>"),
-        ("<img>\n<meta>\n"),
-        ({}),
-        id="default",
-    ),
+    pytest.param(("<img>\n\n\n\n\n\n\n\n\n\n<meta>"), ("<img>\n<meta>\n"), ({}), id="default"),
     pytest.param(
         ("<img>\n\n\n\n\n\n\n\n\n\n<meta>"),
         ("<img>\n\n\n\n\n\n<meta>\n"),
@@ -29,16 +24,10 @@ test_data = [
         id="5",
     ),
     pytest.param(
-        ("<img>\n\n\n\n\n\n\n\n\n\n<meta>"),
-        ("<img>\n\n<meta>\n"),
-        ({"max_blank_lines": 1}),
-        id="1",
+        ("<img>\n\n\n\n\n\n\n\n\n\n<meta>"), ("<img>\n\n<meta>\n"), ({"max_blank_lines": 1}), id="1"
     ),
     pytest.param(
-        ("<img>\n\n\n\n\n\n\n\n\n\n<meta>"),
-        ("<img>\n<meta>\n"),
-        ({"max_blank_lines": -1}),
-        id="-1",
+        ("<img>\n\n\n\n\n\n\n\n\n\n<meta>"), ("<img>\n<meta>\n"), ({"max_blank_lines": -1}), id="-1"
     ),
     pytest.param(
         ("<img>\n\n\n\n\n\n\n\n\n\n<meta>"),

@@ -120,9 +120,7 @@ def _steps(html: str, marks: _Marks, position: int) -> tuple[int, ...]:
         if opener in {"{", "%", "#"}:
             # `{{ }}`, `{% %}` and `{# #}` each close on their own mark
             # written against the brace
-            closing = marks.after(
-                "}" if opener == "{" else opener, position + 2
-            )
+            closing = marks.after("}" if opener == "{" else opener, position + 2)
             if closing >= 0 and html[closing + 1 : closing + 2] == "}":
                 steps.append(closing + 2)
         # a lone `{ }` is stepped over the same way, and stands in where
@@ -139,12 +137,7 @@ def _steps(html: str, marks: _Marks, position: int) -> tuple[int, ...]:
 
 
 def _walk(
-    html: str,
-    marks: _Marks,
-    exits: dict[int, int],
-    walked: dict[int, int],
-    limit: int,
-    start: int,
+    html: str, marks: _Marks, exits: dict[int, int], walked: dict[int, int], limit: int, start: int
 ) -> int:
     """Where the walk starting here ends, or -1 if it reaches no equals.
 
@@ -228,10 +221,7 @@ def _space_before(html: str) -> dict[int, int]:
 
 def _space_after(html: str) -> dict[int, int]:
     """Where a walk landing on the position reaches a space after `=`."""
-    return {
-        match.start(): match.end()
-        for match in _SPACE_AFTER_PATTERN.finditer(html)
-    }
+    return {match.start(): match.end() for match in _SPACE_AFTER_PATTERN.finditer(html)}
 
 
 def run(
@@ -254,8 +244,7 @@ def run(
             "message": rule["message"],
         }
         for span in chain(
-            _spans(html, marks, _space_before(html)),
-            _spans(html, marks, _space_after(html)),
+            _spans(html, marks, _space_before(html)), _spans(html, marks, _space_after(html))
         )
         # markup written inside a template tag is a string argument
         # rather than part of the document, and markup inside an attribute

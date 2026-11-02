@@ -39,21 +39,10 @@ test_data = [
         ]),
         id="two",
     ),
+    pytest.param(('<div data-class="a" data=asdf class="b"></div>'), ([]), id="mismatch names"),
+    pytest.param(('<input class="foo" placeholder="class=bar"/>'), ([]), id="name in quoted value"),
     pytest.param(
-        ('<div data-class="a" data=asdf class="b"></div>'),
-        ([]),
-        id="mismatch names",
-    ),
-    pytest.param(
-        ('<input class="foo" placeholder="class=bar"/>'),
-        ([]),
-        id="name in quoted value",
-    ),
-    pytest.param(
-        (
-            '<c-recipe-card url="{{ recipe.url }}" '
-            'thumbnail_url="{{ recipe.thumbnail_url }}" />'
-        ),
+        ('<c-recipe-card url="{{ recipe.url }}" thumbnail_url="{{ recipe.thumbnail_url }}" />'),
         ([]),
         id="substring in underscore name",
     ),
@@ -70,11 +59,7 @@ test_data = [
         ]),
         id="leading hyphen names",
     ),
-    pytest.param(
-        ('<svg width="16" stroke-width="2"></svg>'),
-        ([]),
-        id="mismatch hyphen names",
-    ),
+    pytest.param(('<svg width="16" stroke-width="2"></svg>'), ([]), id="mismatch hyphen names"),
     pytest.param(
         ('<a data-a.checked="1" data-b.checked="2">x</a>'),
         ([]),
@@ -110,19 +95,10 @@ test_data = [
         id="modifier names",
     ),
     pytest.param(('<input .value="1" value="2">'), ([]), id="leading dot name"),
-    pytest.param(
-        ('<div 1a="x" 2a="y"></div>'), ([]), id="mismatch digit names"
-    ),
+    pytest.param(('<div 1a="x" 2a="y"></div>'), ([]), id="mismatch digit names"),
     pytest.param(
         ('<div 1a="x" 1a="y"></div>'),
-        ([
-            {
-                "code": "H037",
-                "line": "1:5",
-                "match": "1a",
-                "message": "Duplicate attribute found.",
-            }
-        ]),
+        ([{"code": "H037", "line": "1:5", "match": "1a", "message": "Duplicate attribute found."}]),
         id="digit names",
     ),
     pytest.param(
@@ -257,32 +233,17 @@ test_data = [
         id="apline tags match",
     ),
     pytest.param(
-        ('<a x="{% trans "a a b" %}"/>'),
-        ([]),
-        id="quoted_string_inside_block_tag_in_value",
+        ('<a x="{% trans "a a b" %}"/>'), ([]), id="quoted_string_inside_block_tag_in_value"
     ),
     pytest.param(
-        (
-            '<a a="{{ "x x y" }}" b="{{{ "p p q" }}}" '
-            'c="{{! "m m n" }}" d="{{!-- "v v w" --}}"/>'
-        ),
+        ('<a a="{{ "x x y" }}" b="{{{ "p p q" }}}" c="{{! "m m n" }}" d="{{!-- "v v w" --}}"/>'),
         ([]),
         id="quoted_string_inside_expression_in_value",
     ),
+    pytest.param(('<a x="{# "a a b" #}"/>'), ([]), id="quoted_string_inside_comment_in_value"),
+    pytest.param(('<a x="${"a a b"}"/>'), ([]), id="quoted_string_inside_mako_expression_in_value"),
     pytest.param(
-        ('<a x="{# "a a b" #}"/>'),
-        ([]),
-        id="quoted_string_inside_comment_in_value",
-    ),
-    pytest.param(
-        ('<a x="${"a a b"}"/>'),
-        ([]),
-        id="quoted_string_inside_mako_expression_in_value",
-    ),
-    pytest.param(
-        (
-            '<div class="{{ c|default:"[&>a]:flex" }} block" class="other"></div>'
-        ),
+        ('<div class="{{ c|default:"[&>a]:flex" }} block" class="other"></div>'),
         ([
             {
                 "code": "H037",
@@ -305,9 +266,7 @@ test_data = [
         ]),
         id="duplicate_after_quoted_string_inside_block_tag_in_value",
     ),
-    pytest.param(
-        ('<img width=1 height=1 alt="" />'), ([]), id="unquoted_values_same"
-    ),
+    pytest.param(('<img width=1 height=1 alt="" />'), ([]), id="unquoted_values_same"),
     pytest.param(
         ('<img width=1 width=1 alt="" />'),
         ([
@@ -320,12 +279,8 @@ test_data = [
         ]),
         id="unquoted_attributes_same",
     ),
-    pytest.param(
-        ("<a x=.foo y=.foo />"), ([]), id="punctuation_led_unquoted_values_same"
-    ),
-    pytest.param(
-        ("<a x=a$b y=a$b />"), ([]), id="literal_dollar_in_unquoted_values"
-    ),
+    pytest.param(("<a x=.foo y=.foo />"), ([]), id="punctuation_led_unquoted_values_same"),
+    pytest.param(("<a x=a$b y=a$b />"), ([]), id="literal_dollar_in_unquoted_values"),
     pytest.param(
         ("<a href=/a href=/b />"),
         ([
@@ -365,9 +320,7 @@ golang_test_data = [
         id="comment_does_not_hide_duplicate",
     ),
     pytest.param(
-        ('<a x="{{Iif .X "/a/b" "/a/c"}}"/>'),
-        ([]),
-        id="quoted_paths_inside_expression_in_value",
+        ('<a x="{{Iif .X "/a/b" "/a/c"}}"/>'), ([]), id="quoted_paths_inside_expression_in_value"
     ),
 ]
 
