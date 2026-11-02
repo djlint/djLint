@@ -1,5 +1,5 @@
 ---
-description: 用 djLint 格式化你的 HTML 模板。快速、准确，输出结果让你的模板焕然一新。
+description: djLint 如何格式化 HTML 模板，以及如何在应用更改之前检查这些更改。
 title: 格式化工具用法
 keywords: 模板代码检查工具, 模板格式化工具, djLint, HTML, 模板, 格式化工具, 代码检查工具, 格式化工具用法
 ---

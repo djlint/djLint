@@ -1,5 +1,5 @@
 ---
-description: Primeros pasos con djLint para analizar y formatear plantillas HTML. Aprovecha su sencilla interfaz de línea de comandos y las numerosas opciones del formateador.
+description: Instala djLint y analiza o formatea plantillas HTML desde la línea de comandos.
 title: Primeros pasos
 keywords: linter de plantillas, formateador de plantillas, djLint, HTML, plantillas, formateador, linter, uso
 ---
@@ -38,7 +38,7 @@ O con la [fórmula de Homebrew](https://formulae.brew.sh/formula/djlint) que man
 brew install djlint
 ```
 
-_O con npm. **Advertencia**: el paquete de npm es solo un envoltorio; su script de instalación ejecuta `pip install --upgrade djlint` con el `python3` que haya en la ruta de tu sistema. npm no gestionará ni desinstalará el paquete real, así que, si puedes, usa directamente pip._
+_O con npm. **Advertencia**: el paquete de npm es solo un envoltorio. Su script de instalación ejecuta `pip install --upgrade djlint` con el `python3` que haya en la ruta de tu sistema, y npm no gestionará ni desinstalará el paquete real, así que, si puedes, usa pip._
 
 ```bash
 npm i djlint
@@ -106,9 +106,9 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1`    | djLint encontró errores del linter, o archivos que hay que reformatear. `--warn` los muestra como advertencias y sale con `0` en su lugar.                 |
 | `2`    | djLint no revisó lo que le pediste: las rutas no coincidieron con ningún archivo, la línea de comandos o la configuración no eran válidas, o djLint falló. |
 
-Solo el código `1` significa que djLint examinó tus plantillas y no le gustó lo que encontró. El código `2` siempre significa que la propia ejecución no cumplió su cometido, así que un pipeline puede tratar ambos casos de forma distinta en lugar de adivinar.
+Solo el código `1` significa que djLint examinó tus plantillas y no le gustó lo que encontró. El código `2` siempre significa que la propia ejecución no cumplió su cometido, así que un pipeline puede tratar ambos casos de forma distinta.
 
-El código `2` es el que detecta una ejecución que no revisó nada en absoluto: una ruta incorrecta, una `--extension` que ya no coincide o plantillas que se han movido. Sin él, una ejecución así pasa sin avisar, sin haber examinado ninguna de tus plantillas.
+El código `2` es el que detecta una ejecución que no revisó nada en absoluto: una ruta incorrecta, una `--extension` que ya no coincide o plantillas que se han movido. Sin él, una ejecución así pasa sin avisar.
 
 Los archivos que djLint _sí_ encontró y luego omitió a propósito, mediante `exclude`, `extend_exclude`, `use_gitignore` o `require_pragma`, no son un error. Esa ejecución sale con `0`, porque la configuración hizo exactamente lo que se le indicó. Es también lo que permite que `exclude` funcione con pre-commit, que pasa los nombres de tus archivos preparados para el commit tanto si quieres que djLint los examine como si no.
 

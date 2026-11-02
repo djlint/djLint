@@ -1,7 +1,7 @@
 ---
 title: Askama テンプレートのリンターとフォーマッター
 keywords: askama, rust, djlint, askama テンプレート リンター, askama テンプレート フォーマッター, askama テンプレートのフォーマット
-description: djLint は Askama テンプレートのリンターであり、Askama テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。
+description: djLint で Askama テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、askama プロファイルを設定してください。
 tool: askama
 ---
 
@@ -11,13 +11,13 @@ tool: askama
 
 **[Askama とは？](https://askama.readthedocs.io/)**
 
-#### コマンドラインを使う
+## コマンドラインを使う
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### または、設定ファイルを使う
+## または、設定ファイルを使う
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 

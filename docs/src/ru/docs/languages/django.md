@@ -1,7 +1,7 @@
 ---
 title: Линтер и форматер шаблонов Django
 keywords: django, djlint, линтер шаблонов django, форматер шаблонов django, форматирование шаблонов django
-description: djLint — линтер и форматер шаблонов Django! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
+description: djLint проверяет и форматирует шаблоны Django. Задайте профиль django, чтобы правила и форматирование подходили для них.
 tool: django
 ---
 
@@ -11,13 +11,13 @@ tool: django
 
 **[Что такое Django?](https://django.readthedocs.io/en/stable/ref/templates/language.html)**
 
-#### Через командную строку
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Или через файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 

@@ -1,7 +1,7 @@
 ---
 title: Go テンプレートのリンターとフォーマッター
 keywords: go テンプレート, golang, djlint, go テンプレート リンター, go テンプレート フォーマッター, golang テンプレート リンター, golang テンプレート フォーマッター, go テンプレートのフォーマット, hugo テンプレート リンター, helm テンプレート リンター
-description: djLint は Go テンプレートのリンターであり、Go テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。
+description: djLint で Go テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、golang プロファイルを設定してください。
 tool: golang
 ---
 
@@ -13,13 +13,13 @@ tool: golang
 
 Go テンプレート（`text/template`、`html/template`）は Hugo のテーマや Helm チャートでも使われているので、それらにも同じプロファイルを使ってください。
 
-#### コマンドラインを使う
+## コマンドラインを使う
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### または、設定ファイルを使う
+## または、設定ファイルを使う
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 

@@ -1,7 +1,7 @@
 ---
 title: Линтер и форматер шаблонов Tera
 keywords: tera, rust, zola, djlint, линтер шаблонов tera, форматер шаблонов tera, форматирование шаблонов tera
-description: djLint — линтер и форматер шаблонов Tera! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
+description: djLint проверяет и форматирует шаблоны Tera. Задайте профиль tera, чтобы правила и форматирование подходили для них.
 tool: tera
 ---
 
@@ -11,13 +11,13 @@ tool: tera
 
 **[Что такое Tera?](https://keats.github.io/tera/)**
 
-#### Через командную строку
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Или через файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 

@@ -1,5 +1,5 @@
 ---
-description: 如何阻止 djLint 格式化某个代码块。如何以内联方式忽略 djLint 规则。
+description: 如何阻止 djLint 格式化某个代码块，以及如何以内联方式忽略代码检查规则。
 title: 忽略代码
 keywords: 模板代码检查工具, 模板格式化工具, djLint, HTML, 模板, 格式化工具, 代码检查工具, 格式化工具用法, 忽略代码, 忽略规则
 date: Last Modified

@@ -1,7 +1,7 @@
 ---
 title: Linter e formatador de templates Liquid
 keywords: liquid, shopify, jekyll, eleventy, djlint, linter de templates liquid, formatador de templates liquid, formatar templates liquid, shopify, jekyll, eleventy, liquidjs, fluid, linter de temas shopify, linter jekyll
-description: O djLint é um linter e formatador de templates Liquid! Aproveite o perfil pronto ao fazer o lint e a formatação dos seus templates com o djLint.
+description: O djLint faz o lint e formata templates Liquid. Defina o perfil liquid para que as regras e a formatação se ajustem a eles.
 tool: liquid
 ---
 
@@ -13,13 +13,13 @@ tool: liquid
 
 Um único perfil cobre todos os dialetos do Liquid: temas da Shopify, Jekyll, LiquidJS (Eleventy) e Fluid (Orchard Core).
 
-#### Usando a linha de comando
+## Usando a linha de comando
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Ou use um arquivo de configuração
+## Ou use um arquivo de configuração
 
 Configure o djLint no arquivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` do seu projeto.
 

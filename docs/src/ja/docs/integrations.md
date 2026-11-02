@@ -1,5 +1,5 @@
 ---
-description: djLint をお気に入りのエディターと連携させましょう。pre-commit でテンプレートを自動フォーマットし、SublimeText でリントします。
+description: エディターで djLint を使い、pre-commit で実行します。
 title: 連携
 keywords: テンプレート リンター, テンプレート フォーマッター, djLint, HTML, テンプレート, フォーマッター, リンター, 連携, 言語サーバー, lsp, neovim, helix
 ---

@@ -6,7 +6,7 @@ keywords: linter de templates, formatador de templates, djLint, HTML, templates,
 
 # API Python
 
-`djlint.api` formata e faz o lint de texto a partir de um programa Python, com os mesmos resultados da linha de comando. Ele é destinado a editores, ferramentas de build e qualquer outra coisa que mantenha um template em memória. Todo o restante do pacote pode mudar em qualquer versão, então use este módulo em vez de `djlint.settings` ou `djlint.lint`.
+`djlint.api` formata e faz o lint de texto a partir de um programa Python, com os mesmos resultados da linha de comando. Ele foi feito para editores, ferramentas de build e qualquer outra coisa que mantenha um template em memória. Todo o restante do pacote pode mudar em qualquer versão, então use este módulo em vez de `djlint.settings` ou `djlint.lint`.
 
 ```python
 from djlint.api import format_text, lint_text, load_config

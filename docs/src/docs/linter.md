@@ -1,5 +1,5 @@
 ---
-description: djLint HTML Template linter includes over 30 rules! Find the definitions here. Easily expand with include custom rules!
+description: The rules of the djLint HTML template linter, and how to add your own.
 title: Linter Rules
 keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, rules
 ---
@@ -152,7 +152,7 @@ Single quotes inside HTML attribute values (e.g. `<span title="{% trans 'x' %}">
 
 With `quote_style = "single"` the rule asks for single quotes instead, and the formatter writes them.
 
-`--reformat` rewrites these quotes for you, so a finding is never hand work.
+`--reformat` rewrites these quotes for you.
 
 Don't:
 
@@ -172,7 +172,7 @@ Do:
 
 When a `{% block %}` spans many lines or blocks are nested, a bare `{% endblock %}` gives no clue which block it closes, so it is easy to end the wrong one while editing; child templates then override the wrong content. Naming the endblock documents the pairing and lets both djLint and Django (which raises TemplateSyntaxError on a mismatched endblock name) catch a block closed in the wrong place. Pairing errors (unclosed blocks, orphan endblocks and mismatched names) are correctness checks handled by T038.
 
-Off by default; enable with `--include=T003`. `--name-endblocks` writes the name for you, so a finding is never hand work.
+Off by default; enable with `--include=T003`. `--name-endblocks` writes the name for you.
 
 A name is not required when the block opens and closes on the same line, e.g. `{% block title %}``{% endblock %}`. The formatter moves the contents of a block holding other tags onto lines of their own, so a block written on one line can need a name once formatted; with `--name-endblocks` the formatter writes that name too.
 
@@ -635,7 +635,7 @@ Do:
 
 HTML5 documents are UTF-8, so the literal character works everywhere and is what reviewers actually read; a typo in an entity reference (e.g. `&mdsah;`) is not caught by the browser and renders verbatim as broken text. djLint allows the entities that carry syntax (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, and the braces `&lbrace;` and `&rbrace;` together with `&percnt;`, `&num;` and `&dollar;`, which written out would complete a template delimiter) and those naming a character that is invisible, and so cannot be reviewed as a literal: the spaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), the joiners and marks (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) and `&shy;`, in named, decimal and hex form alike.
 
-`--reformat` rewrites the entity as the character for you, so a finding is never hand work. An entity written inside a template tag is part of the tag rather than of the page, so neither the rule nor the formatter touches it. `--no-entity-formatting` turns the rewrite off but leaves the rule on, so an entity is still reported. Add `H023` to `ignore` to keep entities.
+`--reformat` rewrites the entity as the character for you. An entity written inside a template tag is part of the tag rather than of the page, so neither the rule nor the formatter touches it. `--no-entity-formatting` turns the rewrite off but leaves the rule on, so an entity is still reported. Add `H023` to `ignore` to keep entities.
 
 Don't:
 
@@ -1435,7 +1435,7 @@ A video with sound carries its speech only in the audio, so a deaf or hard-of-he
 
 A `muted` video has no audio to caption and is not reported. Nor is a video whose opening tag or body holds a template tag, since the tracks, or the `muted` attribute, may be written by the template where djLint cannot see them. A template tag means one a template language opens, `{{`, `{%`, `{#` or `${`, so a jQuery handler such as `onclick="$(this).play()"`, an Alpine `$refs`, a css brace and a price written in the fallback text are the ordinary text they look like and the video is still read.
 
-Only markup counts as markup. `muted` has to be the attribute, so `<video class=muted>` is a class named muted and is reported, and a `<track>` that is commented out or written inside an attribute value is text rather than a track. A `</video>` inside a value ends nothing, and the element is judged where its real end tag closes it, so a `<video>` left open is left to `H025`.
+`muted` has to be the attribute, so `<video class=muted>` is a class named muted and is reported, and a `<track>` that is commented out or written inside an attribute value is text rather than a track. A `</video>` inside a value ends nothing, and the element is judged where its real end tag closes it, so a `<video>` left open is left to `H025`.
 
 Don't:
 
@@ -1465,10 +1465,10 @@ A good rule consists of
 
 - Name
 - Code
-- Message - Message to display when error is found.
-- Flags - Regex flags. Defaults to re.DOTALL. ex: re.I|re.M
-- Patterns - regex expressions that will find the error.
-- Exclude - Optional list of profiles to exclude rule from.
+- Message: message to display when the error is found.
+- Flags: regex flags, for example re.I|re.M. Defaults to re.DOTALL.
+- Patterns: regular expressions that find the error.
+- Exclude: optional list of profiles the rule does not apply to.
 :::
 
 Please include a test to validate the rule.

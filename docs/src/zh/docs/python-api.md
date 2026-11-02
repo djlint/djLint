@@ -35,7 +35,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## lint_text
 
-`lint_text(config, text, filename="-")` 返回一个 `Finding` 列表，按其在文档中出现的顺序排列。`per-file-ignores` 会与 `filename` 进行匹配。设置了 `require_pragma` 时，不含 pragma 的文本不会有任何检查结果。
+`lint_text(config, text, filename="-")` 返回一个 `Finding` 列表，按其在文档中出现的顺序排列。`per-file-ignores` 匹配的是 `filename`。设置了 `require_pragma` 时，不含 pragma 的文本不会有任何检查结果。
 
 `Finding` 是一个具名元组，包含以下字段：
 

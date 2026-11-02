@@ -1,5 +1,5 @@
 ---
-description: HTML テンプレートのリントとフォーマットのための djLint の設定。豊富なフォーマッターのオプションを活用しましょう。
+description: djLint による HTML テンプレートのリントとフォーマットを設定するオプション。
 title: 設定
 keywords: テンプレート リンター, テンプレート フォーマッター, djLint, HTML, テンプレート, フォーマッター, リンター, 設定
 date: Last Modified
@@ -49,6 +49,8 @@ const showAll=() => {
         })
 }
 var search_data = {{ configuration | dump | safe }};
+// The text of every value, so a quote typed in the search matches a quote in an option.
+var searchText = (value) => typeof value === 'string' ? value : Object.values(value ?? {}).map(searchText).join(' ');
 document.querySelector('#filter').addEventListener('input', (event) => {
     document.querySelector('#no-matches').classList.add('is-hidden');
       if (event.target.value === ''){
@@ -57,7 +59,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
         var regex = new RegExp(event.target.value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll(' ', '.*[ _-].*'), 'gmi'),
         matches=[]
         search_data.forEach((obj) => {
-        if (JSON.stringify(obj).match(regex)) {
+        if (searchText(obj).match(regex)) {
             matches.push(obj.name)
         }
         if(matches.length > 0){

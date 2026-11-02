@@ -190,7 +190,7 @@
       "ja": "既知の空要素のタグに閉じ記号を追加し、`<img>` を `<img />` にします。このオプションを指定すると、逆を求める `H018` は報告されません。",
       "es": "Añade una marca de cierre a las etiquetas vacías conocidas, de modo que `<img>` se convierte en `<img />`. `H018`, que pide lo contrario, no se notifica con esta opción.",
       "pt-br": "Adiciona uma marca de fechamento às tags vazias conhecidas, de modo que `<img>` vira `<img />`. A `H018`, que pede o contrário, não é relatada com essa opção.",
-      "ru": "Добавлять закрывающую косую черту к известным пустым тегам, чтобы `<img>` превращался в `<img />`. О нарушениях `H018`, которое требует обратного, при этом не сообщается.",
+      "ru": "Добавлять закрывающую косую черту к известным пустым тегам, чтобы `<img>` превращался в `<img />`. Правило `H018`, которое требует обратного, при этом не срабатывает.",
       "fr": "Ajoute une marque de fermeture aux balises vides connues : `<img>` devient `<img />`. `H018`, qui demande l'inverse, n'est alors pas signalée."
     },
     "usage": [
@@ -599,7 +599,7 @@
       "ja": "可能な場合、テキストの先頭のスペースを保持します。テキストのインデントが意図的な、html 以外のテンプレートファイルに最適です。",
       "es": "Conserva el espacio inicial del texto, cuando es posible. Ideal para archivos de plantilla que no son html, donde la sangría del texto es intencionada.",
       "pt-br": "Preserva o espaço no início do texto, quando possível. Ideal para arquivos de template que não são html, em que a indentação do texto é intencional.",
-      "ru": "По возможности сохранять пробелы в начале текста. Идеально для шаблонов, не являющихся html, где отступы текста сделаны намеренно.",
+      "ru": "По возможности сохранять пробелы в начале текста. Полезно для шаблонов не в формате html, где отступы текста сделаны намеренно.",
       "fr": "Préserve l'espace de tête du texte, dans la mesure du possible. Idéal pour les fichiers de modèles non-html où l'indentation du texte est intentionnelle."
     },
     "usage": [
@@ -618,7 +618,7 @@
       "ja": "可能な場合、空行を保持します。空行が意図的な、html 以外のテンプレートファイルに最適です。",
       "es": "Conserva las líneas en blanco cuando es posible. Ideal para archivos de plantilla que no son html, donde las líneas en blanco son intencionadas.",
       "pt-br": "Preserva as linhas em branco, quando possível. Ideal para arquivos de template que não são html, em que as linhas em branco são intencionais.",
-      "ru": "По возможности сохранять пустые строки. Идеально для шаблонов, не являющихся html, где пустые строки оставлены намеренно.",
+      "ru": "По возможности сохранять пустые строки. Полезно для шаблонов не в формате html, где пустые строки оставлены намеренно.",
       "fr": "Préserve les lignes vides lorsque cela est possible. Idéal pour les fichiers de modèles non-html où les lignes vides sont intentionnelles."
     },
     "usage": [
@@ -730,7 +730,7 @@
     "tags": ["linter", "formatter"],
     "description": {
       "en": "A list of paths to use as djlint's source. When this option is specified, the command line source must be `-` as if using stdin. `--stdin-filename` makes `-` mean stdin regardless.",
-      "zh": "用作 djlint 源的路径列表。指定此选项时，命令行中的源必须是 `-`，就像使用 stdin 时一样。`--stdin-filename` 会让 `-` 无论如何都表示 stdin。",
+      "zh": "用作 djlint 源的路径列表。指定此选项时，命令行中的源必须是 `-`，就像使用 stdin 时一样。如果给出了 `--stdin-filename`，即使设置了此选项，`-` 也会读取 stdin。",
       "ja": "djlint のソースとして使うパスのリスト。このオプションを指定した場合、コマンドラインのソースは、標準入力を使う場合と同じく `-` にする必要があります。`--stdin-filename` を指定すると、`-` はどの場合でも標準入力を意味します。",
       "es": "Una lista de rutas que djlint usa como origen. Cuando se indica esta opción, el origen en la línea de comandos debe ser `-`, como si se usara stdin. `--stdin-filename` hace que `-` signifique stdin en cualquier caso.",
       "pt-br": "Uma lista de caminhos a usar como fonte do djlint. Quando esta opção é especificada, a fonte na linha de comando deve ser `-`, como ao usar o stdin. Com `--stdin-filename`, `-` significa stdin de qualquer forma.",
@@ -753,7 +753,7 @@
       "ja": "既知の html タグの大文字・小文字を修正しません。このオプションを指定すると、`H009` と `H010` は報告されません。",
       "es": "No intenta corregir las mayúsculas y minúsculas de las etiquetas html conocidas. `H009` y `H010` no se notifican con esta opción.",
       "pt-br": "Não tenta corrigir maiúsculas e minúsculas de tags html conhecidas. A `H009` e a `H010` não são relatadas com essa opção.",
-      "ru": "Не пытаться исправлять регистр известных html-тегов. О нарушениях `H009` и `H010` при этом не сообщается.",
+      "ru": "Не пытаться исправлять регистр известных html-тегов. Правила `H009` и `H010` при этом не срабатывают.",
       "fr": "N'essayez pas de corriger la casse des balises html connues. `H009` et `H010` ne sont alors pas signalées."
     },
     "usage": [
@@ -871,7 +871,7 @@
       "ja": "`<head>` と `<body>` を `<html>` の下でインデントしません。VS Code のデフォルトの html フォーマッターは、文書をこのようにレイアウトします。",
       "es": "No indenta `<head>` ni `<body>` bajo `<html>`, que es como el formateador html por defecto de VS Code organiza un documento.",
       "pt-br": "Não indenta `<head>` e `<body>` abaixo de `<html>`, que é como o formatador html padrão do VS Code organiza um documento.",
-      "ru": "Не добавлять отступ для `<head>` и `<body>` внутри `<html>` — так оформляет документ стандартный html-форматер VS Code.",
+      "ru": "Не добавлять отступ для `<head>` и `<body>` внутри `<html>`: так документ оформляет стандартный html-форматер VS Code.",
       "fr": "Ne pas indenter `<head>` ni `<body>` sous `<html>`, comme le fait le formateur html par défaut de VS Code."
     },
     "usage": [

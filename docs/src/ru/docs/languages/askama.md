@@ -1,7 +1,7 @@
 ---
 title: Линтер и форматер шаблонов Askama
 keywords: askama, rust, djlint, линтер шаблонов askama, форматер шаблонов askama, форматирование шаблонов askama
-description: djLint — линтер и форматер шаблонов Askama! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
+description: djLint проверяет и форматирует шаблоны Askama. Задайте профиль askama, чтобы правила и форматирование подходили для них.
 tool: askama
 ---
 
@@ -11,13 +11,13 @@ tool: askama
 
 **[Что такое Askama?](https://askama.readthedocs.io/)**
 
-#### Через командную строку
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Или через файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 

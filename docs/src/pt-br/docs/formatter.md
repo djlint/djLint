@@ -1,5 +1,5 @@
 ---
-description: Formate seus templates HTML com o djLint. Rápido e preciso, o resultado vai deixar seus templates impecáveis.
+description: Como o djLint formata templates HTML e como conferir as alterações antes de aplicá-las.
 title: Uso do formatador
 keywords: linter de templates, formatador de templates, djLint, HTML, templates, formatador, linter, uso do formatador
 ---

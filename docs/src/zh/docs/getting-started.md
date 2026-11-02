@@ -1,5 +1,5 @@
 ---
-description: 开始使用 djLint 进行 HTML 模板代码检查与格式化。充分利用简单易用的命令行界面和丰富的格式化选项。
+description: 安装 djLint，并在命令行中检查或格式化 HTML 模板。
 title: 快速入门
 keywords: 模板代码检查工具, 模板格式化工具, djLint, HTML, 模板, 格式化工具, 代码检查工具, 用法
 ---
@@ -38,7 +38,7 @@ pipx install djlint
 brew install djlint
 ```
 
-_或者使用 npm。**警告**：npm 包只是一个包装器，它的安装脚本会用系统路径中碰巧存在的那个 `python3` 运行 `pip install --upgrade djlint`。npm 不会管理或卸载实际安装的包，因此请尽量直接使用 pip。_
+_或者使用 npm。**警告**：npm 包只是一个包装器。它的安装脚本会用系统路径中碰巧存在的那个 `python3` 运行 `pip install --upgrade djlint`，而且 npm 不会管理或卸载实际安装的包，因此请尽量使用 pip。_
 
 ```bash
 npm i djlint
@@ -106,9 +106,9 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1`  | djLint 发现了代码检查错误，或者有需要重新格式化的文件。使用 `--warn` 时，这些会作为警告报告，并以 `0` 退出。 |
 | `2`  | djLint 没有检查你要求它检查的内容：路径没有匹配到任何文件、命令行或配置无效，或者 djLint 运行失败。          |
 
-只有代码 `1` 表示 djLint 检查了你的模板，并且对发现的内容不满意。代码 `2` 始终表示这次运行本身没有完成任务，因此流水线可以区别对待这两种情况，而不必去猜。
+只有代码 `1` 表示 djLint 检查了你的模板，并且对发现的内容不满意。代码 `2` 始终表示这次运行本身没有完成任务，因此流水线可以区别对待这两种情况。
 
-代码 `2` 能捕获根本什么都没检查的运行：路径写错了、`--extension` 不再匹配，或者模板已经移走了。没有它，这样的运行会悄无声息地通过，而实际上一个模板都没看过。
+代码 `2` 能捕获根本什么都没检查的运行：路径写错了、`--extension` 不再匹配，或者模板已经移走了。没有它，这样的运行会静默通过。
 
 djLint *确实*找到、但随后因 `exclude`、`extend_exclude`、`use_gitignore` 或 `require_pragma` 而有意跳过的文件，不算错误。这样的运行以 `0` 退出，因为配置完全按照指示执行了。也正因如此，`exclude` 才能在 pre-commit 下正常工作：无论你是否希望 djLint 检查，pre-commit 都会传入所有已暂存文件的名称。
 

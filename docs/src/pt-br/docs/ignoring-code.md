@@ -1,5 +1,5 @@
 ---
-description: Como impedir que o djLint formate um bloco de código. Como ignorar regras do djLint diretamente no código.
+description: Como impedir que o djLint formate um bloco de código e como ignorar regras do linter diretamente no código.
 title: Ignorando código
 keywords: linter de templates, formatador de templates, djLint, HTML, templates, formatador, linter, uso do formatador, ignorar código, ignorar regras
 date: Last Modified

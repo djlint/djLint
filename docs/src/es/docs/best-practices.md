@@ -16,7 +16,7 @@ Se recomienda este patrón:
 
 ```html
 <div class="class1 {% if condition -%}class2{%- endif %}">content</div>
-                  ^ space here
+                  ^ espacio aquí
 ```
 
 {% endraw %}
@@ -27,7 +27,7 @@ No se recomienda este patrón:
 
 ```html
 <div class="class1{% if condition -%} class2{%- endif %}">content</div>
-                                     ^ space here
+                                     ^ espacio aquí
 ```
 
 {% endraw %}

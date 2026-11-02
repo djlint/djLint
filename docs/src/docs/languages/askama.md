@@ -1,7 +1,7 @@
 ---
 title: Askama Template Linter and Formatter
 keywords: askama, rust, djlint, askama template linter, askama template formatter, format askama templates
-description: djLint is an Askama template linter and an Askama template formatter! Take advantage of the pre-built profile when linting and formatting your templates with djLint.
+description: djLint lints and formats Askama templates. Set the askama profile so the rules and the formatting fit them.
 tool: askama
 ---
 
@@ -11,13 +11,13 @@ tool: askama
 
 **[What is Askama?](https://askama.readthedocs.io/)**
 
-#### Using the Command Line
+## Using the command line
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Or, Use a Config File
+## Or, use a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 

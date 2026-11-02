@@ -1,5 +1,5 @@
 ---
-description: Formatea tus plantillas HTML con djLint. Rápido y preciso, el resultado hará que tus plantillas brillen.
+description: Cómo formatea djLint las plantillas HTML y cómo revisar los cambios antes de aplicarlos.
 title: Uso del formateador
 keywords: linter de plantillas, formateador de plantillas, djLint, HTML, plantillas, formateador, linter, uso del formateador
 ---

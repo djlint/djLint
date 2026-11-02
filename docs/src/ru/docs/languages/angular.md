@@ -1,7 +1,7 @@
 ---
 title: Линтер шаблонов Angular
 keywords: angular, djlint, линтер шаблонов angular, проверка шаблонов angular
-description: djLint — линтер шаблонов Angular! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
+description: djLint проверяет шаблоны Angular. Задайте профиль angular, чтобы правила подходили для них.
 tool: angular
 ---
 
@@ -11,13 +11,13 @@ tool: angular
 
 **[Что такое Angular?](https://angular.io/guide/template-syntax)**
 
-#### Через командную строку
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Или через файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 

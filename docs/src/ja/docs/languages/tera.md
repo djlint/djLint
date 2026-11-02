@@ -1,7 +1,7 @@
 ---
 title: Tera テンプレートのリンターとフォーマッター
 keywords: tera, rust, zola, djlint, tera テンプレート リンター, tera テンプレート フォーマッター, tera テンプレートのフォーマット
-description: djLint は Tera テンプレートのリンターであり、Tera テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。
+description: djLint で Tera テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、tera プロファイルを設定してください。
 tool: tera
 ---
 
@@ -11,13 +11,13 @@ tool: tera
 
 **[Tera とは？](https://keats.github.io/tera/)**
 
-#### コマンドラインを使う
+## コマンドラインを使う
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### または、設定ファイルを使う
+## または、設定ファイルを使う
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 

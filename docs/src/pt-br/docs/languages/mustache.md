@@ -1,7 +1,7 @@
 ---
 title: Linter e formatador de templates Mustache
 keywords: mustache, djlint, linter de templates mustache, formatador de templates mustache, formatar templates mustache
-description: O djLint é um linter e formatador de templates mustache! Aproveite o perfil pronto ao fazer o lint e a formatação dos seus templates com o djLint.
+description: O djLint faz o lint e formata templates Mustache. Defina o perfil handlebars para que as regras e a formatação se ajustem a eles.
 tool: handlebars
 ---
 
@@ -11,13 +11,13 @@ tool: handlebars
 
 **[O que é Mustache?](https://mustache.github.io/mustache.5.html)**
 
-#### Usando a linha de comando
+## Usando a linha de comando
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Ou use um arquivo de configuração
+## Ou use um arquivo de configuração
 
 Configure o djLint no arquivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` do seu projeto.
 

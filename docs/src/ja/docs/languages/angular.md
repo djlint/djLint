@@ -1,7 +1,7 @@
 ---
 title: Angular テンプレートのリンター
 keywords: angular, djlint, angular テンプレート リンター, angular テンプレートのリント
-description: djLint は Angular テンプレートのリンターです！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。
+description: djLint で Angular テンプレートをリントできます。ルールがテンプレートに合うよう、angular プロファイルを設定してください。
 tool: angular
 ---
 
@@ -11,13 +11,13 @@ tool: angular
 
 **[Angular とは？](https://angular.io/guide/template-syntax)**
 
-#### コマンドラインを使う
+## コマンドラインを使う
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### または、設定ファイルを使う
+## または、設定ファイルを使う
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 

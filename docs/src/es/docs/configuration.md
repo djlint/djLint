@@ -1,5 +1,5 @@
 ---
-description: Configuración de djLint para analizar y formatear plantillas HTML. Aprovecha las numerosas opciones del formateador.
+description: Las opciones que configuran cómo djLint analiza y formatea las plantillas HTML.
 title: Configuración
 keywords: linter de plantillas, formateador de plantillas, djLint, HTML, plantillas, formateador, linter, configuración
 date: Last Modified
@@ -49,6 +49,8 @@ const showAll=() => {
         })
 }
 var search_data = {{ configuration | dump | safe }};
+// The text of every value, so a quote typed in the search matches a quote in an option.
+var searchText = (value) => typeof value === 'string' ? value : Object.values(value ?? {}).map(searchText).join(' ');
 document.querySelector('#filter').addEventListener('input', (event) => {
     document.querySelector('#no-matches').classList.add('is-hidden');
       if (event.target.value === ''){
@@ -57,7 +59,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
         var regex = new RegExp(event.target.value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll(' ', '.*[ _-].*'), 'gmi'),
         matches=[]
         search_data.forEach((obj) => {
-        if (JSON.stringify(obj).match(regex)) {
+        if (searchText(obj).match(regex)) {
             matches.push(obj.name)
         }
         if(matches.length > 0){

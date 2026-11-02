@@ -1,7 +1,7 @@
 ---
 title: Linter y formateador de plantillas de Handlebars
 keywords: handlebars, djlint, linter de plantillas handlebars, formateador de plantillas handlebars, formatear plantillas handlebars
-description: ¡djLint es un linter y un formateador de plantillas de handlebars! Aprovecha el perfil predefinido al analizar y formatear tus plantillas con djLint.
+description: djLint analiza y formatea plantillas de Handlebars. Usa el perfil handlebars para que las reglas y el formato se ajusten a ellas.
 tool: handlebars
 ---
 
@@ -11,13 +11,13 @@ tool: handlebars
 
 **[¿Qué es Handlebars?](https://handlebarsjs.com/)**
 
-#### Desde la línea de comandos
+## Desde la línea de comandos
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### O bien, con un archivo de configuración
+## O bien, con un archivo de configuración
 
 Configura djLint en el archivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` de tu proyecto.
 

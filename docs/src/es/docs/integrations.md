@@ -1,5 +1,5 @@
 ---
-description: Integra djLint con tu editor favorito. Formatea automáticamente tus plantillas con Pre-Commit. Analiza tu código con SublimeText.
+description: Usa djLint en tu editor y ejecútalo con pre-commit.
 title: Integraciones
 keywords: linter de plantillas, formateador de plantillas, djLint, HTML, plantillas, formateador, linter, integraciones, servidor de lenguaje, lsp, neovim, helix
 ---

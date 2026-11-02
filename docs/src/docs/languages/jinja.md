@@ -1,7 +1,7 @@
 ---
 title: Jinja Template Linter and Formatter
 keywords: jinja, djlint, jinja template linter, jinja template formatter, format jinja templates, minijinja, jinjava, minijinja template linter, jinjava template linter
-description: djLint is a jinja template linter and a jinja template formatter! Take advantage of the pre-built profile when linting and formatting your templates with djLint.
+description: djLint lints and formats Jinja templates. Set the jinja profile so the rules and the formatting fit them.
 tool: jinja
 ---
 
@@ -15,13 +15,13 @@ MiniJinja templates are fully Jinja2-compatible, so use this same `jinja` profil
 
 HubSpot's Jinjava templates are also jinja-style, so use this profile for them too.
 
-#### Using the Command Line
+## Using the command line
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Or, Use a Config File
+## Or, use a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 

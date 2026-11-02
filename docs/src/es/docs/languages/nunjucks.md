@@ -1,7 +1,7 @@
 ---
 title: Linter y formateador de plantillas de Nunjucks
 keywords: nunjucks, djlint, linter de plantillas nunjucks, formateador de plantillas nunjucks, formatear plantillas nunjucks, pebble, linter de plantillas pebble
-description: ¡djLint es un linter y un formateador de plantillas de nunjucks! Aprovecha el perfil predefinido al analizar y formatear tus plantillas con djLint.
+description: djLint analiza y formatea plantillas de Nunjucks. Usa el perfil nunjucks para que las reglas y el formato se ajusten a ellas.
 tool: nunjucks
 ---
 
@@ -13,13 +13,13 @@ tool: nunjucks
 
 Las plantillas de Pebble (Java) son compatibles con Twig, así que usa este mismo perfil para ellas.
 
-#### Desde la línea de comandos
+## Desde la línea de comandos
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### O bien, con un archivo de configuración
+## O bien, con un archivo de configuración
 
 Configura djLint en el archivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` de tu proyecto.
 

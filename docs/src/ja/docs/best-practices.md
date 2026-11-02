@@ -16,7 +16,7 @@ keywords: テンプレート リンター, テンプレート フォーマッタ
 
 ```html
 <div class="class1 {% if condition -%}class2{%- endif %}">content</div>
-                  ^ space here
+                  ^ ここにスペース
 ```
 
 {% endraw %}
@@ -27,7 +27,7 @@ keywords: テンプレート リンター, テンプレート フォーマッタ
 
 ```html
 <div class="class1{% if condition -%} class2{%- endif %}">content</div>
-                                     ^ space here
+                                     ^ ここにスペース
 ```
 
 {% endraw %}

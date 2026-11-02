@@ -1,7 +1,7 @@
 ---
 title: Линтер и форматер шаблонов Nunjucks
 keywords: nunjucks, djlint, линтер шаблонов nunjucks, форматер шаблонов nunjucks, форматирование шаблонов nunjucks, pebble, линтер шаблонов pebble
-description: djLint — линтер и форматер шаблонов Nunjucks! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
+description: djLint проверяет и форматирует шаблоны Nunjucks. Задайте профиль nunjucks, чтобы правила и форматирование подходили для них.
 tool: nunjucks
 ---
 
@@ -13,13 +13,13 @@ tool: nunjucks
 
 Шаблоны Pebble (Java) совместимы с Twig, поэтому используйте для них этот же профиль.
 
-#### Через командную строку
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Или через файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 

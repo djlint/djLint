@@ -1,5 +1,5 @@
 ---
-description: Cómo evitar que djLint formatee un bloque de código. Cómo ignorar reglas de djLint en línea.
+description: Cómo evitar que djLint formatee un bloque de código y cómo ignorar reglas del linter en línea.
 title: Ignorar código
 keywords: linter de plantillas, formateador de plantillas, djLint, HTML, plantillas, formateador, linter, uso del formateador, ignorar código, ignorar reglas
 date: Last Modified

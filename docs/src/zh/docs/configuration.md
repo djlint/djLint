@@ -1,5 +1,5 @@
 ---
-description: 用于 HTML 模板代码检查与格式化的 djLint 配置。充分利用丰富的格式化选项。
+description: 用于配置 djLint 如何检查和格式化 HTML 模板的选项。
 title: 配置
 keywords: 模板代码检查工具, 模板格式化工具, djLint, HTML, 模板, 格式化工具, 代码检查工具, 配置
 date: Last Modified
@@ -49,6 +49,8 @@ const showAll=() => {
         })
 }
 var search_data = {{ configuration | dump | safe }};
+// The text of every value, so a quote typed in the search matches a quote in an option.
+var searchText = (value) => typeof value === 'string' ? value : Object.values(value ?? {}).map(searchText).join(' ');
 document.querySelector('#filter').addEventListener('input', (event) => {
     document.querySelector('#no-matches').classList.add('is-hidden');
       if (event.target.value === ''){
@@ -57,7 +59,7 @@ document.querySelector('#filter').addEventListener('input', (event) => {
         var regex = new RegExp(event.target.value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll(' ', '.*[ _-].*'), 'gmi'),
         matches=[]
         search_data.forEach((obj) => {
-        if (JSON.stringify(obj).match(regex)) {
+        if (searchText(obj).match(regex)) {
             matches.push(obj.name)
         }
         if(matches.length > 0){

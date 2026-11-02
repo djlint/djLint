@@ -1,7 +1,7 @@
 ---
 title: Линтер и форматер шаблонов Jinja
 keywords: jinja, djlint, линтер шаблонов jinja, форматер шаблонов jinja, форматирование шаблонов jinja, minijinja, jinjava, линтер шаблонов minijinja, линтер шаблонов jinjava
-description: djLint — линтер и форматер шаблонов Jinja! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
+description: djLint проверяет и форматирует шаблоны Jinja. Задайте профиль jinja, чтобы правила и форматирование подходили для них.
 tool: jinja
 ---
 
@@ -15,13 +15,13 @@ tool: jinja
 
 Шаблоны Jinjava от HubSpot тоже написаны в стиле jinja, поэтому используйте этот профиль и для них.
 
-#### Через командную строку
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Или через файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
