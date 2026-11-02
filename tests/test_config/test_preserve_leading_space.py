@@ -154,7 +154,7 @@ test_data = [
             "{% endif %}\n"
         ),
         ({"preserve_blank_lines": True, "preserve_leading_space": True}),
-        id="network stuff",
+        id="network stuff with indented tags",
     ),
     pytest.param(
         ('{% if condition %}\n   {# aaa #}\n   {%- set varx = "aaa" %}\n   aaa\n{% endif %}\n'),

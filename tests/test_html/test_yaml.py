@@ -84,7 +84,7 @@ test_data = [
         ("---\n---\n\n\n\n{{ this }}\n"),
         ("---\n---\n{{ this }}\n"),
         ({"no_line_after_yaml": True}),
-        id="blank_lines_2",
+        id="blank_lines_2_no_line_after_yaml",
     ),
     pytest.param(
         ("<div></div>\n---\nlayout: foo\n---\n"),

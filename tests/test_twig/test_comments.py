@@ -46,7 +46,7 @@ test_data = [
             "    <p></p>\n"
             "</div>\n"
         ),
-        id="comments",
+        id="multiline comment in a div",
     ),
 ]
 

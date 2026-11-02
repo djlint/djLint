@@ -28,7 +28,7 @@ test_data = [
         ("{% raw%} <div><img/></div>  {%endraw %}"),
         ("{% raw %}\n<div>\n    <img />\n</div>\n{% endraw %}\n"),
         ({"ignore_blocks": "raw"}),
-        id="ignore_raw",
+        id="ignore_raw_with_html_inside",
     ),
     pytest.param(
         ("{% raw%}<div></div>{%endraw %}"),
