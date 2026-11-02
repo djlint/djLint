@@ -753,11 +753,15 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and not in_set_tag
-            and _SET_OPEN_PATTERN.search(item)
+            and (set_open := _SET_OPEN_PATTERN.search(item))
         ):
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
             set_tag_level = indent_level
-            indent_level += 1
+            # The value starts a level in, or one per bracket it leaves open, as in
+            # `outer(inner(`.
+            value = _TAG_STRING_PATTERN.sub('""', item[set_open.end(1) :])
+            opened = sum(map(value.count, "([{")) - sum(map(value.count, ")]}"))
+            indent_level += max(opened, 1)
             in_set_tag = True
 
         elif (

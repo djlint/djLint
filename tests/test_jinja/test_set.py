@@ -138,6 +138,11 @@ test_data = [
         ("{% set x = outer(\n    inner(\n        deep(\n            1\n        )),\n    2\n) %}\n"),
         id="line_closing_two_calls_in_multiline_set",
     ),
+    pytest.param(
+        ("{% set value = outer(inner(\n        1\n    ),\n    2\n) %}\n<p>after</p>"),
+        ("{% set value = outer(inner(\n        1\n    ),\n    2\n) %}\n<p>after</p>\n"),
+        id="two_calls_opened_on_the_set_line",
+    ),
 ]
 
 
