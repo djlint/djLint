@@ -18,9 +18,7 @@
       "customType": "regex",
       "description": "The Pyodide the demo on the website loads from the CDN.",
       "managerFilePatterns": ["/(^|/)static/js/worker\\.js$/"],
-      "matchStrings": [
-        "cdn\\.jsdelivr\\.net/pyodide/v(?<currentValue>[^/]+)/full/"
-      ],
+      "matchStrings": ["cdn\\.jsdelivr\\.net/pyodide/v(?<currentValue>[^/]+)/full/"],
       "depNameTemplate": "pyodide",
       "datasourceTemplate": "npm"
     },
@@ -59,43 +57,19 @@
   "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
   "minimumReleaseAge": "3 days",
   "packageRules": [
-    {
-      "matchPackageNames": ["mypy", "pre-commit/mirrors-mypy"],
-      "groupName": "mypy"
-    },
-    {
-      "matchPackageNames": ["ruff", "charliermarsh/ruff-pre-commit"],
-      "groupName": "ruff"
-    },
-    {
-      "matchPackageNames": ["oxfmt", "oxc-project/mirrors-oxfmt"],
-      "groupName": "oxfmt"
-    },
-    {
-      "matchCurrentVersion": "!/^0/",
-      "matchUpdateTypes": ["minor"],
-      "automerge": true
-    },
-    {
-      "matchUpdateTypes": ["lockFileMaintenance", "patch", "replacement"],
-      "automerge": true
-    },
-    {
-      "matchDepTypes": ["dependency-groups"],
-      "matchManagers": ["pep621"],
-      "automerge": true
-    },
+    { "matchPackageNames": ["mypy", "pre-commit/mirrors-mypy"], "groupName": "mypy" },
+    { "matchPackageNames": ["ruff", "charliermarsh/ruff-pre-commit"], "groupName": "ruff" },
+    { "matchPackageNames": ["oxfmt", "oxc-project/mirrors-oxfmt"], "groupName": "oxfmt" },
+    { "matchCurrentVersion": "!/^0/", "matchUpdateTypes": ["minor"], "automerge": true },
+    { "matchUpdateTypes": ["lockFileMaintenance", "patch", "replacement"], "automerge": true },
+    { "matchDepTypes": ["dependency-groups"], "matchManagers": ["pep621"], "automerge": true },
     {
       "description": "Update a locked dependency in its own branch, which the mypyc build hook's pin of it joins, rather than only in lock file maintenance",
       "matchDepTypes": ["project.dependencies"],
       "matchManagers": ["pep621"],
       "rangeStrategy": "update-lockfile"
     },
-    {
-      "matchDepTypes": ["devDependencies"],
-      "matchManagers": ["npm"],
-      "automerge": true
-    },
+    { "matchDepTypes": ["devDependencies"], "matchManagers": ["npm"], "automerge": true },
     { "matchManagers": ["github-actions", "pre-commit"], "automerge": true },
     {
       "description": "A new Python is reviewed by hand. A cooldown would count from the last rebuild of an image tag, which keeps part of the update out of the PR. A classifier can name a Python that is not out yet, which is not a reason to roll it back",

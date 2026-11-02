@@ -32,8 +32,7 @@ _QUOTED_TAG_TEMPLATE: Final = (
 )
 _WRONGLY_QUOTED_TAG_PATTERNS: Final = {
     style: compile_pattern(
-        _QUOTED_TAG_TEMPLATE.replace("QUOTE", quote).replace("WANTED", wanted),
-        re.S,
+        _QUOTED_TAG_TEMPLATE.replace("QUOTE", quote).replace("WANTED", wanted), re.S
     )
     for style, quote, wanted in (("double", "'", '"'), ("single", '"', "'"))
 }
@@ -53,15 +52,9 @@ def run(
     A string is reported only when the formatter can rewrite it, so one
     already holding the quote it would be rewritten to is left alone.
     """
-    message = (
-        SINGLE_QUOTE_MESSAGE
-        if config.quote_style == "single"
-        else rule["message"]
-    )
+    message = SINGLE_QUOTE_MESSAGE if config.quote_style == "single" else rule["message"]
     errors: list[LintError] = []
-    for match in _WRONGLY_QUOTED_TAG_PATTERNS[config.quote_style].finditer(
-        html
-    ):
+    for match in _WRONGLY_QUOTED_TAG_PATTERNS[config.quote_style].finditer(html):
         if (
             inside_html_attribute(html, match)
             or overlaps_ignored_block(config, html, match)

@@ -25,9 +25,7 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-def linter(
-    config: Config, html: str, filename: str, filepath: str
-) -> dict[str, list[LintError]]:
+def linter(config: Config, html: str, filename: str, filepath: str) -> dict[str, list[LintError]]:
     """Lint without the end of each finding, which test_ranges.py covers."""
     return {
         name: [
@@ -39,9 +37,7 @@ def linter(
             }
             for error in errors
         ]
-        for name, errors in djlint_linter(
-            config, html, filename, filepath
-        ).items()
+        for name, errors in djlint_linter(config, html, filename, filepath).items()
     }
 
 
@@ -84,53 +80,29 @@ def printer(expected: str, source: str, actual: str) -> None:
     }
 
     print()
-    print(
-        style(
-            f"{'─' * source_width} {source_text} {'─' * source_width}",
-            fg="blue",
-            bold=True,
-        )
-    )
+    print(style(f"{'─' * source_width} {source_text} {'─' * source_width}", fg="blue", bold=True))
     print()
     print(source)
     print()
     print(
         style(
-            f"{'─' * expected_width} {expected_text} {'─' * expected_width}",
-            fg="blue",
-            bold=True,
+            f"{'─' * expected_width} {expected_text} {'─' * expected_width}", fg="blue", bold=True
         )
     )
     print()
     print(expected)
     print()
-    print(
-        style(
-            f"{'─' * actual_width} {actual_text} {'─' * actual_width}",
-            fg="blue",
-            bold=True,
-        )
-    )
+    print(style(f"{'─' * actual_width} {actual_text} {'─' * actual_width}", fg="blue", bold=True))
     print()
     print(actual)
     print()
-    print(
-        style(
-            f"{'─' * diff_width} {diff_text} {'─' * diff_width}",
-            fg="blue",
-            bold=True,
-        )
-    )
+    print(style(f"{'─' * diff_width} {diff_text} {'─' * diff_width}", fg="blue", bold=True))
     print()
-    for diff in tuple(
-        difflib.unified_diff(expected.split("\n"), actual.split("\n"))
-    )[2:]:
+    for diff in tuple(difflib.unified_diff(expected.split("\n"), actual.split("\n")))[2:]:
         print(style(diff, **colors.get(diff[:1], {})))
 
 
-def lint_printer(
-    source: str, expected: list[LintError], actual: list[LintError]
-) -> None:
+def lint_printer(source: str, expected: list[LintError], actual: list[LintError]) -> None:
     width, _ = shutil.get_terminal_size()
 
     expected_text = "Expected Rules"
@@ -142,45 +114,27 @@ def lint_printer(
     source_width = (width - len(source_text) - 2) // 2
 
     print()
-    print(
-        style(
-            f"{'─' * source_width} {source_text} {'─' * source_width}",
-            fg="blue",
-            bold=True,
-        )
-    )
+    print(style(f"{'─' * source_width} {source_text} {'─' * source_width}", fg="blue", bold=True))
     print()
     print(source)
     print()
 
     print(
         style(
-            f"{'─' * expected_width} {expected_text} {'─' * expected_width}",
-            fg="blue",
-            bold=True,
+            f"{'─' * expected_width} {expected_text} {'─' * expected_width}", fg="blue", bold=True
         )
     )
     print()
     for x in expected:
-        print(
-            f"{style(x['code'], fg='red', bold=True)} {x['line']} {x['match']}"
-        )
+        print(f"{style(x['code'], fg='red', bold=True)} {x['line']} {x['match']}")
         print(f"     {x['message']}")
         print()
 
-    print(
-        style(
-            f"{'─' * actual_width} {actual_text} {'─' * actual_width}",
-            fg="blue",
-            bold=True,
-        )
-    )
+    print(style(f"{'─' * actual_width} {actual_text} {'─' * actual_width}", fg="blue", bold=True))
     print()
 
     for x in actual:
-        print(
-            f"{style(x['code'], fg='red', bold=True)} {x['line']} {x['match']}"
-        )
+        print(f"{style(x['code'], fg='red', bold=True)} {x['line']} {x['match']}")
         print(f"     {x['message']}")
         print()
     if not actual:
@@ -201,12 +155,9 @@ def reformat(
     the_file: TextIO, runner: CliRunner, the_text: bytes, profile: str = "html"
 ) -> SimpleNamespace:
     write_to_file(the_file.name, the_text)
-    result = runner.invoke(
-        djlint, (the_file.name, "--profile", profile, "--reformat")
-    )
+    result = runner.invoke(djlint, (the_file.name, "--profile", profile, "--reformat"))
     return SimpleNamespace(
-        text=Path(the_file.name).read_text(encoding="utf-8"),
-        exit_code=result.exit_code,
+        text=Path(the_file.name).read_text(encoding="utf-8"), exit_code=result.exit_code
     )
 
 

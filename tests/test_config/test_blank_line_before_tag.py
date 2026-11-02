@@ -79,33 +79,14 @@ test_data = [
         id="test inside comment",
     ),
     pytest.param(
-        (
-            "{% set first = 1 %}\n"
-            "{# comment about second #}\n"
-            "{% set second = 2 %}"
-        ),
-        (
-            "{% set first = 1 %}\n"
-            "\n"
-            "{# comment about second #}\n"
-            "{% set second = 2 %}\n"
-        ),
+        ("{% set first = 1 %}\n{# comment about second #}\n{% set second = 2 %}"),
+        ("{% set first = 1 %}\n\n{# comment about second #}\n{% set second = 2 %}\n"),
         ({"blank_line_before_tag": "set"}),
         id="issue_744_blank_line_above_comment",
     ),
     pytest.param(
-        (
-            "{% set first = 1 %}\n"
-            "\n"
-            "{# comment about second #}\n"
-            "{% set second = 2 %}"
-        ),
-        (
-            "{% set first = 1 %}\n"
-            "\n"
-            "{# comment about second #}\n"
-            "{% set second = 2 %}\n"
-        ),
+        ("{% set first = 1 %}\n\n{# comment about second #}\n{% set second = 2 %}"),
+        ("{% set first = 1 %}\n\n{# comment about second #}\n{% set second = 2 %}\n"),
         ({"blank_line_before_tag": "set"}),
         id="issue_744_comment_stays_attached_roundtrip",
     ),
@@ -132,23 +113,13 @@ test_data = [
     pytest.param(
         ("{% extends nothing %}\n\n<div></div>\n"),
         ("{% extends nothing %}\n\n<div></div>\n"),
-        ({
-            "blank_line_before_tag": "load, extends",
-            "preserve_blank_lines": True,
-        }),
+        ({"blank_line_before_tag": "load, extends", "preserve_blank_lines": True}),
         id="option should work with preserve blank lines",
     ),
     pytest.param(
-        (
-            "{% block %}stuff{% endblock %}\n"
-            "\n"
-            "{% block %}stuff{% endblock %}\n"
-            "\n"
-        ),
+        ("{% block %}stuff{% endblock %}\n\n{% block %}stuff{% endblock %}\n\n"),
         ("{% block %}stuff{% endblock %}\n{% block %}stuff{% endblock %}\n"),
-        ({
-            "blank_line_before_tag": "load, extends,     include     ,endblock "
-        }),
+        ({"blank_line_before_tag": "load, extends,     include     ,endblock "}),
         id="double block",
     ),
     pytest.param(
@@ -193,10 +164,7 @@ test_data = [
             "    {% endblock workflow_css %}\n"
             "{% endblock extra_css %}\n"
         ),
-        ({
-            "blank_line_before_tag": "block",
-            "blank_line_after_tag": "endblock",
-        }),
+        ({"blank_line_before_tag": "block", "blank_line_after_tag": "endblock"}),
         id="issue_2317_no_blank_line_after_increased_indent",
     ),
     pytest.param(
@@ -223,31 +191,14 @@ test_data = [
         id="a line that opens nothing is a sibling",
     ),
     pytest.param(
-        (
-            "<p>before macro</p>\n"
-            "{%- macro Foo() -%}\n"
-            "  <div>foo</div>\n"
-            "{%- endmacro -%}\n"
-        ),
-        (
-            "<p>before macro</p>\n"
-            "\n"
-            "{%- macro Foo() -%}\n"
-            "    <div>foo</div>\n"
-            "{%- endmacro -%}\n"
-        ),
+        ("<p>before macro</p>\n{%- macro Foo() -%}\n  <div>foo</div>\n{%- endmacro -%}\n"),
+        ("<p>before macro</p>\n\n{%- macro Foo() -%}\n    <div>foo</div>\n{%- endmacro -%}\n"),
         ({"blank_line_before_tag": "macro"}),
         id="nunjucks whitespace control dash - before",
     ),
     pytest.param(
         ("<p>before</p>\n{% macro Foo() %}\n<div>foo</div>\n{% endmacro %}\n"),
-        (
-            "<p>before</p>\n"
-            "\n"
-            "{% macro Foo() %}\n"
-            "    <div>foo</div>\n"
-            "{% endmacro %}\n"
-        ),
+        ("<p>before</p>\n\n{% macro Foo() %}\n    <div>foo</div>\n{% endmacro %}\n"),
         ({"blank_line_before_tag": "macro, ,"}),
         id="blank entries are dropped",
     ),

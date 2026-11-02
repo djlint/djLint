@@ -31,9 +31,7 @@ def project(tmp_path: Path) -> Path:
 
 def test_the_project_file_wins_by_default(project: Path) -> None:
     """The named file is a global one, so the project's own file wins."""
-    config = Config(
-        str(project / "page.html"), configuration=project / "global.djlintrc"
-    )
+    config = Config(str(project / "page.html"), configuration=project / "global.djlintrc")
 
     assert config.indent_size == 2
 
@@ -48,9 +46,7 @@ def test_the_named_file_wins_when_asked(project: Path) -> None:
     assert config.indent_size == 8
 
 
-def test_a_setting_only_the_project_file_has_still_applies(
-    project: Path,
-) -> None:
+def test_a_setting_only_the_project_file_has_still_applies(project: Path) -> None:
     """Preferring the named file layers it over the project's, not past it."""
     config = Config(
         str(project / "page.html"),
@@ -62,9 +58,7 @@ def test_a_setting_only_the_project_file_has_still_applies(
 
 
 def test_a_setting_only_the_named_file_has_still_applies(project: Path) -> None:
-    config = Config(
-        str(project / "page.html"), configuration=project / "global.djlintrc"
-    )
+    config = Config(str(project / "page.html"), configuration=project / "global.djlintrc")
 
     assert "sub" in config.exclude
 

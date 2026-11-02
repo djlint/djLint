@@ -45,11 +45,7 @@ test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_trimmed_inline_block(source: str, expected: str) -> None:
-    config = config_builder({
-        "profile": "jinja",
-        "indent": 2,
-        "quote_style": "single",
-    })
+    config = config_builder({"profile": "jinja", "indent": 2, "quote_style": "single"})
 
     output = formatter(config, source)
 

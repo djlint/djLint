@@ -24,7 +24,4 @@ def test_list_settings() -> None:
     assert config.ignore == "H014,H015"
     assert config.ignore_blocks == r"endexample\b|endraw\b|example\b|raw\b"
     assert config.include == "H014,H015"
-    assert all(
-        rule["rule"]["name"] not in {"H014", "H015"}
-        for rule in config.linter_rules
-    )
+    assert all(rule["rule"]["name"] not in {"H014", "H015"} for rule in config.linter_rules)

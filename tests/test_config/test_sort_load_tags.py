@@ -38,14 +38,10 @@ test_data = [
         id="a tag already in order is only spaced",
     ),
     pytest.param(
-        "{% load static\n  i18n %}\n",
-        "{% load i18n static %}\n",
-        id="a tag written across lines",
+        "{% load static\n  i18n %}\n", "{% load i18n static %}\n", id="a tag written across lines"
     ),
     pytest.param(
-        "{%- load b a -%}\n",
-        "{%- load a b -%}\n",
-        id="whitespace control is left as written",
+        "{%- load b a -%}\n", "{%- load a b -%}\n", id="whitespace control is left as written"
     ),
     pytest.param(
         "{% block a %}{% load b a %}{% endblock %}\n",
@@ -62,20 +58,14 @@ test_data = [
         "{% verbatim %}\n    {% load b a %}\n{% endverbatim %}\n",
         id="a load shown as text",
     ),
-    pytest.param(
-        "<pre>{% load b a %}</pre>\n",
-        "<pre>{% load b a %}</pre>\n",
-        id="a load in pre",
-    ),
+    pytest.param("<pre>{% load b a %}</pre>\n", "<pre>{% load b a %}</pre>\n", id="a load in pre"),
     pytest.param(
         "{# djlint:off #}\n{% load b a %}\n{# djlint:on #}\n",
         "{# djlint:off #}\n{% load b a %}\n{# djlint:on #}\n",
         id="djlint off",
     ),
     pytest.param(
-        "{% loaded b a %}\n",
-        "{% loaded b a %}\n",
-        id="a tag whose name starts with load",
+        "{% loaded b a %}\n", "{% loaded b a %}\n", id="a tag whose name starts with load"
     ),
 ]
 

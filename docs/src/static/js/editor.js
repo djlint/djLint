@@ -15,39 +15,25 @@ if (typeof Worker !== "undefined") {
 
   function getConfig() {
     let config = {};
-    const customBlocks = document.getElementById(
-      "settings-custom-blocks",
-    ).value;
+    const customBlocks = document.getElementById("settings-custom-blocks").value;
     if (customBlocks) config["customBlocks"] = customBlocks;
-    const ignoreBlocks = document.getElementById(
-      "settings-ignore-blocks",
-    ).value;
+    const ignoreBlocks = document.getElementById("settings-ignore-blocks").value;
     if (ignoreBlocks) config["ignoreBlocks"] = ignoreBlocks;
     const customHtml = document.getElementById("settings-custom-html").value;
     if (customHtml) config["customHtml"] = customHtml;
     const indent = document.getElementById("settings-indent").value;
     if (indent) config["indent"] = indent;
-    const blankLineAfterTag = document.getElementById(
-      "settings-blank-line-after-tag",
-    ).value;
+    const blankLineAfterTag = document.getElementById("settings-blank-line-after-tag").value;
     if (blankLineAfterTag) config["blankLineAfterTag"] = blankLineAfterTag;
-    const blankLineBeforeTag = document.getElementById(
-      "settings-blank-line-before-tag",
-    ).value;
+    const blankLineBeforeTag = document.getElementById("settings-blank-line-before-tag").value;
     if (blankLineBeforeTag) config["blankLineBeforeTag"] = blankLineBeforeTag;
     const profile = document.getElementById("settings-profile").value;
     if (profile) config["profile"] = profile;
-    const maxLineLength = document.getElementById(
-      "settings-max-line-length",
-    ).value;
+    const maxLineLength = document.getElementById("settings-max-line-length").value;
     if (maxLineLength) config["maxLineLength"] = maxLineLength;
-    const maxAttributeLength = document.getElementById(
-      "settings-max-attribute-length",
-    ).value;
+    const maxAttributeLength = document.getElementById("settings-max-attribute-length").value;
     if (maxAttributeLength) config["maxAttributeLength"] = maxAttributeLength;
-    const maxBlankLines = document.getElementById(
-      "settings-max-blank-lines",
-    ).value;
+    const maxBlankLines = document.getElementById("settings-max-blank-lines").value;
     if (maxBlankLines) config["maxBlankLines"] = maxBlankLines;
     const formatAttributeTemplateTags = document.getElementById(
       "settings-format-attribute-template-tags",
@@ -57,13 +43,11 @@ if (typeof Worker !== "undefined") {
     const singleAttributePerLine = document.getElementById(
       "settings-single-attribute-per-line",
     ).checked;
-    if (singleAttributePerLine)
-      config["singleAttributePerLine"] = singleAttributePerLine;
+    if (singleAttributePerLine) config["singleAttributePerLine"] = singleAttributePerLine;
     const formatAttributeJsJson = document.getElementById(
       "settings-format-attribute-js-json",
     ).checked;
-    if (formatAttributeJsJson)
-      config["formatAttributeJsJson"] = formatAttributeJsJson;
+    if (formatAttributeJsJson) config["formatAttributeJsJson"] = formatAttributeJsJson;
     const formatAttributeJsJsonPattern = document.getElementById(
       "settings-format-attribute-js-json-pattern",
     ).value;
@@ -74,20 +58,14 @@ if (typeof Worker !== "undefined") {
     ).value;
     if (formatAttributeJsJsonMinProps)
       config["formatAttributeJsJsonMinProps"] = formatAttributeJsJsonMinProps;
-    const preserveLeadingSpace = document.getElementById(
-      "settings-preserve-leading-space",
-    ).checked;
-    if (preserveLeadingSpace)
-      config["preserveLeadingSpace"] = preserveLeadingSpace;
-    const preserveBlankSpace = document.getElementById(
-      "settings-preserve-blank-space",
-    ).checked;
+    const preserveLeadingSpace = document.getElementById("settings-preserve-leading-space").checked;
+    if (preserveLeadingSpace) config["preserveLeadingSpace"] = preserveLeadingSpace;
+    const preserveBlankSpace = document.getElementById("settings-preserve-blank-space").checked;
     if (preserveBlankSpace) config["preserveBlankSpace"] = preserveBlankSpace;
     const preserveClassNewlines = document.getElementById(
       "settings-preserve-class-newlines",
     ).checked;
-    if (preserveClassNewlines)
-      config["preserveClassNewlines"] = preserveClassNewlines;
+    if (preserveClassNewlines) config["preserveClassNewlines"] = preserveClassNewlines;
     const formatJs = document.getElementById("settings-format-js").checked;
     if (formatJs) config["formatJs"] = formatJs;
     const indentJs = document.getElementById("settings-indent-js").value;
@@ -97,9 +75,7 @@ if (typeof Worker !== "undefined") {
     const indentCss = document.getElementById("settings-indent-css").value;
     if (indentCss) config["indentCss"] = indentCss;
 
-    const closeVoidTags = document.getElementById(
-      "settings-close-void-tags",
-    ).checked;
+    const closeVoidTags = document.getElementById("settings-close-void-tags").checked;
     if (closeVoidTags) config["closeVoidTags"] = closeVoidTags;
     const ignoreCase = document.getElementById("settings-ignore-case").checked;
     if (ignoreCase) config["ignoreCase"] = ignoreCase;
@@ -108,19 +84,12 @@ if (typeof Worker !== "undefined") {
     ).checked;
     if (lineBreakAfterMultilineTag)
       config["lineBreakAfterMultilineTag"] = lineBreakAfterMultilineTag;
-    const noLineAfterYaml = document.getElementById(
-      "settings-no-line-after-yaml",
-    ).checked;
+    const noLineAfterYaml = document.getElementById("settings-no-line-after-yaml").checked;
     if (noLineAfterYaml) config["noLineAfterYaml"] = noLineAfterYaml;
 
-    const noFunctionFormatting = document.getElementById(
-      "settings-no-function-formatting",
-    ).checked;
-    if (noFunctionFormatting)
-      config["noFunctionFormatting"] = noFunctionFormatting;
-    const noSetFormatting = document.getElementById(
-      "settings-no-set-formatting",
-    ).checked;
+    const noFunctionFormatting = document.getElementById("settings-no-function-formatting").checked;
+    if (noFunctionFormatting) config["noFunctionFormatting"] = noFunctionFormatting;
+    const noSetFormatting = document.getElementById("settings-no-set-formatting").checked;
     if (noSetFormatting) config["noSetFormatting"] = noSetFormatting;
 
     return config;
@@ -164,9 +133,7 @@ if (typeof Worker !== "undefined") {
         basicSetup,
         html(),
         djlintEditorTheme,
-        EditorView.contentAttributes.of({
-          "aria-labelledby": "djlint-input-label",
-        }),
+        EditorView.contentAttributes.of({ "aria-labelledby": "djlint-input-label" }),
         EditorView.updateListener.of((v) => {
           if (v.docChanged) {
             if (timer) clearTimeout(timer);
@@ -188,9 +155,7 @@ if (typeof Worker !== "undefined") {
         basicSetup,
         html(),
         djlintEditorTheme,
-        EditorView.contentAttributes.of({
-          "aria-labelledby": "djlint-output-label",
-        }),
+        EditorView.contentAttributes.of({ "aria-labelledby": "djlint-output-label" }),
         EditorState.readOnly.of(true),
       ],
       doc: ``,

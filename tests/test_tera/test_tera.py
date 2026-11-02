@@ -14,11 +14,7 @@ from tests.conftest import config_builder, printer
 test_data = [
     pytest.param(
         ('{% component card(title="x") %}\n<p>body</p>\n{% endcomponent %}\n'),
-        (
-            '{% component card(title="x") %}\n'
-            "    <p>body</p>\n"
-            "{% endcomponent %}\n"
-        ),
+        ('{% component card(title="x") %}\n    <p>body</p>\n{% endcomponent %}\n'),
         id="follow-up: tera v2 components are block tags (issue 1322)",
     ),
     pytest.param(
@@ -37,14 +33,8 @@ test_data = [
         id="single_line_component_does_not_leak_indent",
     ),
     pytest.param(
-        (
-            "{% if x %}\n<p>y</p>\n{% elif z %}\n<p>w</p>\n{% endif %}\n"
-            "{# note #}\n"
-        ),
-        (
-            "{% if x %}\n    <p>y</p>\n{% elif z %}\n    <p>w</p>\n"
-            "{% endif %}\n{# note #}\n"
-        ),
+        ("{% if x %}\n<p>y</p>\n{% elif z %}\n<p>w</p>\n{% endif %}\n{# note #}\n"),
+        ("{% if x %}\n    <p>y</p>\n{% elif z %}\n    <p>w</p>\n{% endif %}\n{# note #}\n"),
         id="jinja_style_blocks_and_comments",
     ),
     pytest.param(

@@ -60,9 +60,7 @@ document.addEventListener("click", function (e) {
     show("is-failed", "fas fa-xmark", button.getAttribute("data-copy-failed"));
   };
   if (!navigator.clipboard) return failed();
-  navigator.clipboard
-    .writeText(button.getAttribute("data-copy"))
-    .then(function () {
-      show("is-copied", "fas fa-check", button.getAttribute("data-copied"));
-    }, failed);
+  navigator.clipboard.writeText(button.getAttribute("data-copy")).then(function () {
+    show("is-copied", "fas fa-check", button.getAttribute("data-copied"));
+  }, failed);
 });

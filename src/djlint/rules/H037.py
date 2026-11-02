@@ -41,14 +41,10 @@ _EVENT_PATTERN: Final = compile_pattern(
     re.I | re.S,
 )
 _NAME_CHAR_PATTERN: Final = compile_pattern(_NAME_CHAR)
-_HANDLEBARS_OR_GOLANG_COMMENT_PATTERN: Final = compile_pattern(
-    r"\{\{-?\s*(?:!|/\*)"
-)
+_HANDLEBARS_OR_GOLANG_COMMENT_PATTERN: Final = compile_pattern(r"\{\{-?\s*(?:!|/\*)")
 
 
-def _exclusive(
-    left: tuple[tuple[int, int], ...], right: tuple[tuple[int, int], ...]
-) -> bool:
+def _exclusive(left: tuple[tuple[int, int], ...], right: tuple[tuple[int, int], ...]) -> bool:
     """Return whether two attributes are in different conditional branches."""
     right_branches = dict(right)
     for block, branch in left:
@@ -89,9 +85,7 @@ def run(
 
         attributes = html[token.name_end : token.attributes_end]
         blocks: list[list[int]] = []
-        occurrences: dict[
-            str, list[tuple[int, str, tuple[tuple[int, int], ...]]]
-        ] = {}
+        occurrences: dict[str, list[tuple[int, str, tuple[tuple[int, int], ...]]]] = {}
         next_block = 0
 
         prefixed_from = -1
@@ -117,16 +111,14 @@ def run(
             elif config.template_unindent_ix_pattern.match(template_tag):
                 if blocks:
                     blocks.pop()
-                if match.start() and _NAME_CHAR_PATTERN.match(
-                    attributes[match.start() - 1]
-                ):
+                if match.start() and _NAME_CHAR_PATTERN.match(attributes[match.start() - 1]):
                     prefixed_from = match.end()
             elif config.template_indent_ix_pattern.match(template_tag):
                 blocks.append([next_block, 0])
                 next_block += 1
-            elif template_tag.startswith(
-                "{{"
-            ) and not _HANDLEBARS_OR_GOLANG_COMMENT_PATTERN.match(template_tag):
+            elif template_tag.startswith("{{") and not _HANDLEBARS_OR_GOLANG_COMMENT_PATTERN.match(
+                template_tag
+            ):
                 prefixed_from = match.end()
 
         for repeated in occurrences.values():

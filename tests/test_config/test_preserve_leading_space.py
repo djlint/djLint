@@ -157,20 +157,8 @@ test_data = [
         id="network stuff",
     ),
     pytest.param(
-        (
-            "{% if condition %}\n"
-            "   {# aaa #}\n"
-            '   {%- set varx = "aaa" %}\n'
-            "   aaa\n"
-            "{% endif %}\n"
-        ),
-        (
-            "{% if condition %}\n"
-            "    {# aaa #}\n"
-            '    {%- set varx = "aaa" %}\n'
-            "   aaa\n"
-            "{% endif %}\n"
-        ),
+        ('{% if condition %}\n   {# aaa #}\n   {%- set varx = "aaa" %}\n   aaa\n{% endif %}\n'),
+        ('{% if condition %}\n    {# aaa #}\n    {%- set varx = "aaa" %}\n   aaa\n{% endif %}\n'),
         ({"preserve_leading_space": True, "profile": "jinja"}),
         id="jinja template lines",
     ),
@@ -181,14 +169,7 @@ test_data = [
         id="multiline comment keeps its indent",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            "    {% set p = {\n"
-            "        a: 1,\n"
-            "        b: 2\n"
-            "    } %}\n"
-            "</div>\n"
-        ),
+        ("<div>\n    {% set p = {\n        a: 1,\n        b: 2\n    } %}\n</div>\n"),
         ('<div>\n    {% set p = {"a": 1, "b": 2} %}\n</div>\n'),
         ({"preserve_leading_space": True, "profile": "jinja"}),
         id="multiline set keeps its indent",

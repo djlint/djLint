@@ -52,10 +52,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-_QUOTE_STYLES: Final = {
-    "double": QuoteStyle.PREFER_DOUBLE,
-    "single": QuoteStyle.PREFER_SINGLE,
-}
+_QUOTE_STYLES: Final = {"double": QuoteStyle.PREFER_DOUBLE, "single": QuoteStyle.PREFER_SINGLE}
 _QUOTE_CHARACTERS: Final = {"double": '"', "single": "'"}
 _ESCAPE: Final = "\\"
 
@@ -65,57 +62,35 @@ _QUOTED_ARGUMENT_TAG_PATTERN: Final = compile_pattern(
     r"(?:(?!%\}).)*?[-+]?%\}",
     RE_FLAGS_IS,
 )
-_TAG_STRING_PATTERN: Final = compile_pattern(
-    r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'"
-)
+_TAG_STRING_PATTERN: Final = compile_pattern(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'")
 
-_TAG_SPACING_PATTERN: Final = compile_pattern(
-    r"({%[-+]?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?([-+]?%})"
-)
-_INTERPOLATION_SPACING_PATTERN: Final = compile_pattern(
-    r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})"
-)
+_TAG_SPACING_PATTERN: Final = compile_pattern(r"({%[-+]?)[ ]*?(\w(?:(?!%}).)*?)[ ]*?([-+]?%})")
+_INTERPOLATION_SPACING_PATTERN: Final = compile_pattern(r"({{)[ ]*?(\w(?:(?!}}).)*?)[ ]*?(\+?-?}})")
 # Indentation after a preserved attribute line break is the author's layout,
 # not padding inside the tag, so it is held whole rather than collapsed.
 _EXTRA_TAG_WHITESPACE_PATTERN: Final = compile_pattern(
     r"(\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'"
     rf"|{re.escape(VERBATIM_ATTRIBUTE_NEWLINE)}[ \t]*)|[ \t]{{2,}}"
 )
-_HANDLEBARS_BLOCK_END_PATTERN: Final = compile_pattern(
-    r"({{#(?:each|if)(?:(?!}}).)+?[^ ])(}})"
-)
-_SET_CLOSE_PATTERN: Final = compile_pattern(
-    r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX
-)
-_SET_CLOSING_BRACE_PATTERN: Final = compile_pattern(
-    r"^[ ]*}|^[ ]*]", RE_FLAGS_IMX
-)
+_HANDLEBARS_BLOCK_END_PATTERN: Final = compile_pattern(r"({{#(?:each|if)(?:(?!}}).)+?[^ ])(}})")
+_SET_CLOSE_PATTERN: Final = compile_pattern(r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX)
+_SET_CLOSING_BRACE_PATTERN: Final = compile_pattern(r"^[ ]*}|^[ ]*]", RE_FLAGS_IMX)
 _SINGLE_LINE_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
     r"^\s*\{%[-+]?(?:(?!%}).)*%}\s*$", RE_FLAGS_IMSX
 )
-_SET_OPEN_PATTERN: Final = compile_pattern(
-    r"^([ ]*{%[ ]*?set)(?!.*%}).*$", RE_FLAGS_IMX
-)
+_SET_OPEN_PATTERN: Final = compile_pattern(r"^([ ]*{%[ ]*?set)(?!.*%}).*$", RE_FLAGS_IMX)
 _SET_OPENING_BRACE_PATTERN: Final = compile_pattern(
     r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))", RE_FLAGS_IMX
 )
-_TEMPLATE_TAG_CLOSE_PATTERN: Final = compile_pattern(
-    r"\{%[-+]?\s*end|\{\{/", RE_FLAGS_IMX
-)
+_TEMPLATE_TAG_CLOSE_PATTERN: Final = compile_pattern(r"\{%[-+]?\s*end|\{\{/", RE_FLAGS_IMX)
 # Some opener is left unclosed exactly when the last one is, so each is only
 # read up to the next, which keeps a line of unclosed ones to one pass.
-_MULTILINE_TAG_OPEN_PATTERN: Final = compile_pattern(
-    r"(?:\{\{|\{%)(?:(?!\}\}|%\}|\{\{|\{%).)*$"
-)
-_MULTILINE_TAG_CLOSE_PATTERN: Final = compile_pattern(
-    r"^(?:(?!\{\{|\{%).)*?(?:\}\}|%\})"
-)
+_MULTILINE_TAG_OPEN_PATTERN: Final = compile_pattern(r"(?:\{\{|\{%)(?:(?!\}\}|%\}|\{\{|\{%).)*$")
+_MULTILINE_TAG_CLOSE_PATTERN: Final = compile_pattern(r"^(?:(?!\{\{|\{%).)*?(?:\}\}|%\})")
 _LEADING_CLOSE_BRACKET_PATTERN: Final = compile_pattern(r"[ ]*[)\]}]")
 _MULTILINE_TAG_OPEN_PAREN_PATTERN: Final = compile_pattern(r"\((?=[^()]*$)")
 _MULTILINE_TAG_CLOSE_PAREN_PATTERN: Final = compile_pattern(r"^[ ]*\)")
-_TEXTAREA_CLOSE_PATTERN: Final = compile_pattern(
-    r"^\s*</textarea\b", RE_FLAGS_IX
-)
+_TEXTAREA_CLOSE_PATTERN: Final = compile_pattern(r"^\s*</textarea\b", RE_FLAGS_IX)
 _SET_CONTENT_PATTERN: Final = compile_pattern(
     r"""
     ([ ]*)                # 1: leading indentation
@@ -191,9 +166,7 @@ def _format_string_token(token_value: str, quote_style: QuoteStyle) -> str:
     if not isinstance(value, str):
         return token_value
 
-    return cast(
-        "str", json.dumps(value, ensure_ascii=False, quote_style=quote_style)
-    )
+    return cast("str", json.dumps(value, ensure_ascii=False, quote_style=quote_style))
 
 
 def _format_string_tokens(contents: str, quote_style: QuoteStyle) -> str:
@@ -304,25 +277,18 @@ def _indent_patterns(config: Config) -> _IndentPatterns:
     inline_slt_attrs_pattern = re.compile(
         rf"(^<({slt_html})\b[^>]+?>)(.*?)(</(\2)>)", flags=RE_FLAGS_IMX
     )
-    tag_unindent_line_pattern = re.compile(
-        r"^" + str(config.tag_unindent_line), flags=RE_FLAGS_IMX
-    )
-    tag_indent_pattern = re.compile(
-        r"^(?:" + str(config.tag_indent) + r")", flags=RE_FLAGS_IMX
-    )
+    tag_unindent_line_pattern = re.compile(r"^" + str(config.tag_unindent_line), flags=RE_FLAGS_IMX)
+    tag_indent_pattern = re.compile(r"^(?:" + str(config.tag_indent) + r")", flags=RE_FLAGS_IMX)
     custom_html_pattern = (
         re.compile(rf"^(?:{config.custom_html})$", flags=RE_FLAGS_IX)
         if config.custom_html
         else None
     )
     template_start_pattern = re.compile(
-        r"(?:\{\{\#|\{%[-+]?)[ ]*?" + str(config.start_template_tags),
-        flags=RE_FLAGS_IMX,
+        r"(?:\{\{\#|\{%[-+]?)[ ]*?" + str(config.start_template_tags), flags=RE_FLAGS_IMX
     )
     prefixed_template_tag_indent_pattern = re.compile(
-        r"^[^\S\n]*[\(\[](?:(?:\{\{\#|\{%[-+]?)[ ]*?"
-        + str(config.start_template_tags)
-        + r")",
+        r"^[^\S\n]*[\(\[](?:(?:\{\{\#|\{%[-+]?)[ ]*?" + str(config.start_template_tags) + r")",
         flags=RE_FLAGS_IMX,
     )
 
@@ -390,13 +356,9 @@ def indent_html(rawcode: str, config: Config) -> str:
                 ).strip()
             return f"{match.group(1)} {content} {match.group(3)}"
 
-        rawcode = _TAG_SPACING_PATTERN.sub(
-            partial(fix_tag_spacing, rawcode), rawcode
-        )
+        rawcode = _TAG_SPACING_PATTERN.sub(partial(fix_tag_spacing, rawcode), rawcode)
 
-        rawcode = _INTERPOLATION_SPACING_PATTERN.sub(
-            partial(fix_tag_spacing, rawcode), rawcode
-        )
+        rawcode = _INTERPOLATION_SPACING_PATTERN.sub(partial(fix_tag_spacing, rawcode), rawcode)
 
         def fix_tag_quotes(html: str, match: re.Match[str]) -> str:
             """Rewrite a tag's quoted arguments to the configured quote.
@@ -433,15 +395,11 @@ def indent_html(rawcode: str, config: Config) -> str:
 
             return _TAG_STRING_PATTERN.sub(requote, match.group())
 
-        rawcode = _QUOTED_ARGUMENT_TAG_PATTERN.sub(
-            partial(fix_tag_quotes, rawcode), rawcode
-        )
+        rawcode = _QUOTED_ARGUMENT_TAG_PATTERN.sub(partial(fix_tag_quotes, rawcode), rawcode)
 
     elif config.profile == "handlebars":
 
-        def fix_handlebars_template_tags(
-            html: str, match: re.Match[str]
-        ) -> str:
+        def fix_handlebars_template_tags(html: str, match: re.Match[str]) -> str:
             if inside_ignored_block(config, html, match):
                 return match.group()
 
@@ -495,11 +453,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         output: list[str] = []
         previous_end = 0
         for token in tokenize_tags(value):
-            if (
-                token.closing
-                or token.declaration
-                or not is_html_tag(token.name)
-            ):
+            if token.closing or token.declaration or not is_html_tag(token.name):
                 continue
             leading_start = token.start
             while leading_start and value[leading_start - 1] in " \t":
@@ -509,9 +463,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 config, value, token, written[written.rfind("\n") + 1 :]
             )
             replacement_start = (
-                token.start
-                if replacement == value[token.start : token.end]
-                else leading_start
+                token.start if replacement == value[token.start : token.end] else leading_start
             )
             output.extend((value[previous_end:replacement_start], replacement))
             previous_end = token.end
@@ -540,10 +492,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 continue
             if token.closing:
                 depth -= 1
-            elif (
-                not token.self_closing
-                and token.name.lower() not in HTML_VOID_ELEMENTS
-            ):
+            elif not token.self_closing and token.name.lower() not in HTML_VOID_ELEMENTS:
                 depth += 1
 
         return depth > 0
@@ -573,11 +522,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 if not (token.closing and name == raw_text_element):
                     continue
                 raw_text_element = ""
-            elif (
-                not token.closing
-                and not token.self_closing
-                and name in HTML_RAW_TEXT_ELEMENTS
-            ):
+            elif not token.closing and not token.self_closing and name in HTML_RAW_TEXT_ELEMENTS:
                 raw_text_element = name
             if token.self_closing:
                 continue
@@ -616,9 +561,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             in_raw_text_tag = True
 
         marker_is_shown_as_text = (
-            is_safe_closing_tag_
-            and in_raw_text_tag
-            and not is_raw_text_block_closing(config, item)
+            is_safe_closing_tag_ and in_raw_text_tag and not is_raw_text_block_closing(config, item)
         )
         if marker_is_shown_as_text:
             is_safe_closing_tag_ = False
@@ -683,35 +626,25 @@ def indent_html(rawcode: str, config: Config) -> str:
             indent_level = max(indent_level - 1, 0)
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
 
-        elif (
-            not is_block_raw
-            and in_multiline_tag
-            and _MULTILINE_TAG_CLOSE_PATTERN.search(item)
-        ):
+        elif not is_block_raw and in_multiline_tag and _MULTILINE_TAG_CLOSE_PATTERN.search(item):
             tmp_level = (
                 multiline_tag_level
                 if _LEADING_CLOSE_BRACKET_PATTERN.match(item)
                 else multiline_tag_level + 1
             )
             tmp = (indent * tmp_level) + formatted_item(item) + "\n"
-            indent_level = multiline_tag_level + (
-                1 if multiline_tag_is_block else 0
-            )
+            indent_level = multiline_tag_level + (1 if multiline_tag_is_block else 0)
             if multiline_tag_is_block:
                 template_block_stack.append((multiline_tag_level, None, True))
-            closes_an_html_tag_too = bool(
-                tag_unindent_pattern.search(item.lstrip())
-            )
+            closes_an_html_tag_too = bool(tag_unindent_pattern.search(item.lstrip()))
             if closes_an_html_tag_too:
                 indent_level = max(indent_level - 1, 0)
-            opens_another_multiline_tag = bool(
-                _MULTILINE_TAG_OPEN_PATTERN.search(item)
-            )
+            opens_another_multiline_tag = bool(_MULTILINE_TAG_OPEN_PATTERN.search(item))
             if opens_another_multiline_tag:
                 multiline_tag_level = indent_level
-                multiline_tag_is_block = len(
-                    template_start_pattern.findall(item)
-                ) > len(template_unindent_pattern.findall(item))
+                multiline_tag_is_block = len(template_start_pattern.findall(item)) > len(
+                    template_unindent_pattern.findall(item)
+                )
                 indent_level += 1
             else:
                 in_multiline_tag = False
@@ -742,41 +675,26 @@ def indent_html(rawcode: str, config: Config) -> str:
             not is_block_raw
             and not is_safe_closing_tag_
             and tag_unindent_pattern.search(item.lstrip())
-            and (
-                unclosed_closes > opened_html
-                or not inline_slt_no_attrs_end_pattern.search(item)
-            )
+            and (unclosed_closes > opened_html or not inline_slt_no_attrs_end_pattern.search(item))
             and not starts_unclosed_html_tag(item)
             and not tag_unindent_line_pattern.match(item.lstrip())
         ):
-            if inline_slt_no_attrs_pattern.search(
-                item
-            ) or inline_slt_attrs_pattern.search(item):
+            if inline_slt_no_attrs_pattern.search(item) or inline_slt_attrs_pattern.search(item):
                 tmp = (indent * indent_level) + formatted_item(item) + "\n"
                 indent_level = max(indent_level - 1, 0)
-            elif template_block_stack and template_unindent_pattern.match(
-                item.lstrip()
-            ):
-                saved_level, branch_delta, consistent = (
-                    template_block_stack.pop()
-                )
+            elif template_block_stack and template_unindent_pattern.match(item.lstrip()):
+                saved_level, branch_delta, consistent = template_block_stack.pop()
                 closed_a_template_block = True
                 delta = indent_level - saved_level - 1
                 target = (
-                    saved_level + delta
-                    if consistent and branch_delta == delta
-                    else saved_level
+                    saved_level + delta if consistent and branch_delta == delta else saved_level
                 )
                 indent_level = min(max(indent_level - 1, 0), max(target, 0))
-                tmp = (
-                    (indent * min(indent_level, saved_level))
-                    + formatted_item(item)
-                    + "\n"
-                )
+                tmp = (indent * min(indent_level, saved_level)) + formatted_item(item) + "\n"
                 if config.profile == "golang":
-                    glued_openers = len(
-                        template_start_pattern.findall(item)
-                    ) - (len(template_unindent_pattern.findall(item)) - 1)
+                    glued_openers = len(template_start_pattern.findall(item)) - (
+                        len(template_unindent_pattern.findall(item)) - 1
+                    )
                     for _ in range(max(glued_openers, 0)):
                         template_block_stack.append((indent_level, None, True))
                         indent_level += 1
@@ -784,11 +702,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 tmp = (indent * indent_level) + formatted_item(item) + "\n"
 
             else:
-                floor = (
-                    template_block_stack[-1][0] + 1
-                    if template_block_stack
-                    else 0
-                )
+                floor = template_block_stack[-1][0] + 1 if template_block_stack else 0
                 floor_held = indent_level - 1 < floor
                 if floor_held:
                     html_dedent = 0
@@ -803,17 +717,11 @@ def indent_html(rawcode: str, config: Config) -> str:
                     branch_delta = delta
                 elif branch_delta != delta:
                     consistent = False
-                template_block_stack[-1] = (
-                    saved_level,
-                    branch_delta,
-                    consistent,
-                )
+                template_block_stack[-1] = (saved_level, branch_delta, consistent)
                 tmp = (indent * saved_level) + formatted_item(item) + "\n"
                 indent_level = saved_level + 1
             else:
-                tmp = (
-                    (indent * (indent_level - 1)) + formatted_item(item) + "\n"
-                )
+                tmp = (indent * (indent_level - 1)) + formatted_item(item) + "\n"
 
         elif (
             not config.no_set_formatting
@@ -836,9 +744,9 @@ def indent_html(rawcode: str, config: Config) -> str:
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
             in_multiline_tag = True
             multiline_tag_level = indent_level
-            multiline_tag_is_block = len(
-                template_start_pattern.findall(item)
-            ) > len(template_unindent_pattern.findall(item))
+            multiline_tag_is_block = len(template_start_pattern.findall(item)) > len(
+                template_unindent_pattern.findall(item)
+            )
             indent_level += 1
 
         elif (
@@ -868,8 +776,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         elif is_block_raw or not item.strip():
             if (
-                config.profile
-                in {"jinja", "askama", "tera", "liquid", "nunjucks"}
+                config.profile in {"jinja", "askama", "tera", "liquid", "nunjucks"}
                 and is_block_raw
                 and _TEXTAREA_CLOSE_PATTERN.search(item)
                 and output_ends_with(("-}}", "-%}"))
@@ -878,10 +785,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             else:
                 tmp = item + "\n"
 
-        elif (
-            config.preserve_leading_space
-            and _SINGLE_LINE_TEMPLATE_TAG_PATTERN.search(item)
-        ):
+        elif config.preserve_leading_space and _SINGLE_LINE_TEMPLATE_TAG_PATTERN.search(item):
             tmp = (indent * indent_level) + item.lstrip() + "\n"
 
         elif not config.preserve_leading_space:
@@ -892,12 +796,8 @@ def indent_html(rawcode: str, config: Config) -> str:
         if html_dedent:
             stripped_item = item.lstrip()
             already_given_back = indent_level < indent_level_before
-            took_no_level_of_its_own = (
-                indent_level == indent_level_before
-                or not (
-                    stripped_item.startswith("<")
-                    and not stripped_item.startswith("</")
-                )
+            took_no_level_of_its_own = indent_level == indent_level_before or not (
+                stripped_item.startswith("<") and not stripped_item.startswith("</")
             )
             if already_given_back and not closed_a_template_block:
                 html_dedent = 0
@@ -941,16 +841,12 @@ def indent_html(rawcode: str, config: Config) -> str:
                 is_block_raw = False
                 if was_block_raw and "<" in item:
                     tail = ""
-                    for close in config.ignored_block_closing_pattern.finditer(
-                        item
-                    ):
+                    for close in config.ignored_block_closing_pattern.finditer(item):
                         tail = item[close.end() :]
                     opened, closed = scan_html_tags(tail)
                     if closed:
                         kept = max(len(open_html_indents) - closed, 0)
-                        indent_level = max(
-                            indent_level - sum(open_html_indents[kept:]), 0
-                        )
+                        indent_level = max(indent_level - sum(open_html_indents[kept:]), 0)
                         del open_html_indents[kept:]
                     open_html_indents.extend([False] * opened)
 
@@ -1071,9 +967,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             normalize_string_quotes=normalize_string_quotes,
         )
 
-        separator = (
-            " " if close_bracket.lstrip("-+").startswith("}}") else match["gap"]
-        )
+        separator = " " if close_bracket.lstrip("-+").startswith("}}") else match["gap"]
         closing_space = leading_space if contents.endswith("\n") else ""
         return (
             f"{leading_space}{open_bracket} {tag}({contents}{closing_space})"

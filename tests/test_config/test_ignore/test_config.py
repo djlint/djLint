@@ -21,9 +21,7 @@ def test_ignores(runner: CliRunner) -> None:
 
 
 def test_ignored_rule_does_not_disable_formatting(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_ignore/html_two.html", "--check")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_ignore/html_two.html", "--check"))
     print(result.output)
     assert (
         """ {# djlint:off H021 #}
@@ -40,9 +38,7 @@ def test_ignored_rule_does_not_disable_formatting(runner: CliRunner) -> None:
 
 def test_ignore_list_may_hold_spaces(runner: CliRunner) -> None:
     """A code written after a comma and a space is still ignored."""
-    result = runner.invoke(
-        djlint, ("-", "--lint", "--ignore", "H011, H013"), input="<img src=x>\n"
-    )
+    result = runner.invoke(djlint, ("-", "--lint", "--ignore", "H011, H013"), input="<img src=x>\n")
 
     assert "found 0 errors" in result.output
 

@@ -46,12 +46,8 @@ test_data = [
         ]),
         id="mismatched_block_name_is_T038s_job",
     ),
-    pytest.param(
-        ("{% block foo %}\n{% endblock foo %}"), ([]), id="matching_block_name"
-    ),
-    pytest.param(
-        ("{% block foo %}{% endblock %}"), ([]), id="single_line_block"
-    ),
+    pytest.param(("{% block foo %}\n{% endblock foo %}"), ([]), id="matching_block_name"),
+    pytest.param(("{% block foo %}{% endblock %}"), ([]), id="single_line_block"),
     pytest.param(
         ("{% block foo %}\n{% endblock %}"),
         ([

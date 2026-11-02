@@ -20,8 +20,7 @@ sources = [
     pytest.param("<div>" + "{{ " * 8000 + "</div>{# c #}", id="variables"),
     pytest.param("<div>" + "{% " * 4000 + "</div>{# c #}", id="blocks"),
     pytest.param(
-        '<a href="/x"><input type="' + "{{" * 8000 + '" name="q"></a>',
-        id="a brace run in a value",
+        '<a href="/x"><input type="' + "{{" * 8000 + '" name="q"></a>', id="a brace run in a value"
     ),
 ]
 

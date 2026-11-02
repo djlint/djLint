@@ -18,11 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{% a %}\n{%b       %}{%+c%}{%-d+%}\n{#a}{{g {%a%}}}{%l{{q}}+%}"),
-        (
-            "{% a %}\n"
-            "{% b %}{%+ c %}{%- d +%}\n"
-            "{#a}{{ g {% a % }}}{% l{{ q }} +%}\n"
-        ),
+        ("{% a %}\n{% b %}{%+ c %}{%- d +%}\n{#a}{{ g {% a % }}}{% l{{ q }} +%}\n"),
         ({}),
         id="messy stuff",
     ),
@@ -34,12 +30,7 @@ test_data = [
     ),
     pytest.param(
         ("{% if   abc == 101 %}\n<p>x</p>\n{% endif %}\n{{ name |  upper }}\n"),
-        (
-            "{% if abc == 101 %}\n"
-            "    <p>x</p>\n"
-            "{% endif %}\n"
-            "{{ name | upper }}\n"
-        ),
+        ("{% if abc == 101 %}\n    <p>x</p>\n{% endif %}\n{{ name | upper }}\n"),
         ({}),
         id="issue 262 extra whitespace condensed (issue 262)",
     ),
@@ -50,18 +41,8 @@ test_data = [
         id="string_literals_keep_whitespace",
     ),
     pytest.param(
-        (
-            "{% verbatim %}\n"
-            "{% foo   bar %}\n"
-            "{{ baz   qux }}\n"
-            "{% endverbatim %}\n"
-        ),
-        (
-            "{% verbatim %}\n"
-            "    {% foo   bar %}\n"
-            "    {{ baz   qux }}\n"
-            "{% endverbatim %}\n"
-        ),
+        ("{% verbatim %}\n{% foo   bar %}\n{{ baz   qux }}\n{% endverbatim %}\n"),
+        ("{% verbatim %}\n    {% foo   bar %}\n    {{ baz   qux }}\n{% endverbatim %}\n"),
         ({}),
         id="verbatim_content_not_condensed",
     ),
@@ -77,11 +58,7 @@ test_data = [
             "{% comment %}{{ x  |  y }}{% endcomment %}\n"
             "{% endif %}\n"
         ),
-        (
-            "{% if aaa == bbb %}\n"
-            "    {% comment %}{{ x  |  y }}{% endcomment %}\n"
-            "{% endif %}\n"
-        ),
+        ("{% if aaa == bbb %}\n    {% comment %}{{ x  |  y }}{% endcomment %}\n{% endif %}\n"),
         ({}),
         id="condensing_does_not_shift_ignored_block_offsets",
     ),

@@ -136,32 +136,20 @@ test_data = [
         id="unquoted_mako_expression_untouched",
     ),
     pytest.param(
-        (
-            '<div data-x=< class="some long value that exceeds the attribute length limit">x</div>\n'
-        ),
-        (
-            '<div data-x=< class="some long value that exceeds the attribute length limit">x</div>\n'
-        ),
+        ('<div data-x=< class="some long value that exceeds the attribute length limit">x</div>\n'),
+        ('<div data-x=< class="some long value that exceeds the attribute length limit">x</div>\n'),
         ({"max_attribute_length": 20}),
         id='malformed attributes must not be silently corrupted: the stray "=<" cannot be parsed, so the tag is left untouched',
     ),
     pytest.param(
-        (
-            '<div ="some long value that exceeds the attribute length limit here">z</div>\n'
-        ),
-        (
-            '<div ="some long value that exceeds the attribute length limit here">z</div>\n'
-        ),
+        ('<div ="some long value that exceeds the attribute length limit here">z</div>\n'),
+        ('<div ="some long value that exceeds the attribute length limit here">z</div>\n'),
         ({"max_attribute_length": 20}),
         id='a nameless ="value" attribute must not become None="value"',
     ),
     pytest.param(
-        (
-            "<a href=https://example.com/some/long/path/that/exceeds/limit>x</a>\n"
-        ),
-        (
-            '<a href="https://example.com/some/long/path/that/exceeds/limit">x</a>\n'
-        ),
+        ("<a href=https://example.com/some/long/path/that/exceeds/limit>x</a>\n"),
+        ('<a href="https://example.com/some/long/path/that/exceeds/limit">x</a>\n'),
         ({"max_attribute_length": 20}),
         id='an unquoted URL/path value must not be split at ":" or "/" into a bogus standalone attribute; it stays one value (quoted when spread)',
     ),
@@ -173,10 +161,7 @@ test_data = [
     ),
     pytest.param(
         ("<img src={{ MEDIA_URL }}/logo/some-long-name.png alt=logo>\n"),
-        (
-            '<img src="{{ MEDIA_URL }}/logo/some-long-name.png"\n'
-            '     alt="logo">\n'
-        ),
+        ('<img src="{{ MEDIA_URL }}/logo/some-long-name.png"\n     alt="logo">\n'),
         ({"max_attribute_length": 20, "profile": "django"}),
         id="a template tag glued to the rest of an unquoted value is part of that value, not the start of a second attribute",
     ),
@@ -193,13 +178,8 @@ test_data = [
         id="a template variable may prefix an attribute name whose remainder starts with punctuation",
     ),
     pytest.param(
-        (
-            '<div {% if a %}data{% endif %}?y="1" class="one two three">z</div>\n'
-        ),
-        (
-            '<div {% if a %}data{% endif %}?y="1"\n'
-            '     class="one two three">z</div>\n'
-        ),
+        ('<div {% if a %}data{% endif %}?y="1" class="one two three">z</div>\n'),
+        ('<div {% if a %}data{% endif %}?y="1"\n     class="one two three">z</div>\n'),
         ({"max_attribute_length": 20, "profile": "django"}),
         id="and so may a complete template block",
     ),

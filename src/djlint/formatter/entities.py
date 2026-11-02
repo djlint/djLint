@@ -31,9 +31,7 @@ def format_entities(html: str, config: Config) -> str:
         return html
 
     def replace(match: re.Match[str]) -> str:
-        if inside_ignored_block(config, html, match) or inside_template_block(
-            config, html, match
-        ):
+        if inside_ignored_block(config, html, match) or inside_template_block(config, html, match):
             return match.group()
         character = unescape(match.group())
         return match.group() if character == match.group() else character

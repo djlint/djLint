@@ -17,20 +17,8 @@ test_data = [
         id="closing_bracket_keeps_the_indent_of_its_tag",
     ),
     pytest.param(
-        "<div>\n"
-        "  {{ function([\n"
-        "    nested(\n"
-        "      argument='value',\n"
-        "    ),\n"
-        "  ]) }}\n"
-        "</div>\n",
-        "<div>\n"
-        "  {{ function([\n"
-        "    nested(\n"
-        "      argument='value',\n"
-        "    ),\n"
-        "  ]) }}\n"
-        "</div>\n",
+        "<div>\n  {{ function([\n    nested(\n      argument='value',\n    ),\n  ]) }}\n</div>\n",
+        "<div>\n  {{ function([\n    nested(\n      argument='value',\n    ),\n  ]) }}\n</div>\n",
         id="nested_arguments_keep_their_depth",
     ),
     pytest.param(
@@ -53,11 +41,7 @@ test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_multiline_call(source: str, expected: str) -> None:
-    config = config_builder({
-        "profile": "jinja",
-        "indent": 2,
-        "quote_style": "single",
-    })
+    config = config_builder({"profile": "jinja", "indent": 2, "quote_style": "single"})
 
     output = formatter(config, source)
 
