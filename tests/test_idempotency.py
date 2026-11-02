@@ -150,6 +150,15 @@ templates = [
         " srcset='{{ \"e\n f\" }} 1x, b 2x' class='{{ \"g\n h\" }}'>x</div>\n",
         id="string across lines in a template tag in attribute values",
     ),
+    pytest.param(
+        "<script type=text/javascript {{- s }}></script>\n<form method=POST {{- s }}></form>\n"
+        "<style type=text/javascript></style>\n<link type=text/css rel=icon>\n"
+        "<script type=text/javascript/></script>\n",
+        id="types and methods left alone or dropped",
+    ),
+    pytest.param(
+        '<div>\n{% trans "a %}\n   b" %}\n</div>\n', id="string across lines holding a closer"
+    ),
 ]
 
 option_sets = [

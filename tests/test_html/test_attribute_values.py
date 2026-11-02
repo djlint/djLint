@@ -55,6 +55,68 @@ test_data = [
         id="a type that means something is kept",
     ),
     pytest.param(
+        '<script-x type="text/javascript"></script-x>\n',
+        '<script-x type="text/javascript">\n</script-x>\n',
+        id="a custom element named like script keeps its type",
+    ),
+    pytest.param(
+        '<style-x type="text/css"></style-x>\n',
+        '<style-x type="text/css">\n</style-x>\n',
+        id="a custom element named like style keeps its type",
+    ),
+    pytest.param(
+        '<link-x type="text/css" rel="stylesheet">\n',
+        '<link-x type="text/css" rel="stylesheet">\n',
+        id="a custom element named like link keeps its type",
+    ),
+    pytest.param(
+        '<form-x method="POST"></form-x>\n',
+        '<form-x method="POST">\n</form-x>\n',
+        id="a custom element named like form keeps its method",
+    ),
+    pytest.param(
+        (
+            '<style type="text/javascript"></style>\n'
+            "<script type=text/css></script>\n"
+            '<link type="text/javascript" rel="stylesheet" href="a.js">\n'
+            '<link type="text/css" rel="icon" href="a.css">\n'
+            '<link type="text/css" rel="stylesheets" href="a.css">\n'
+        ),
+        (
+            '<style type="text/javascript"></style>\n'
+            '<script type="text/css"></script>\n'
+            '<link type="text/javascript" rel="stylesheet" href="a.js">\n'
+            '<link type="text/css" rel="icon" href="a.css">\n'
+            '<link type="text/css" rel="stylesheets" href="a.css">\n'
+        ),
+        id="a type is dropped only where it is the element's default",
+    ),
+    pytest.param(
+        (
+            '<link rel="alternate stylesheet" type="text/css" href="a.css">\n'
+            "<link type=text/css href=b.css rel=stylesheet>\n"
+        ),
+        ('<link rel="alternate stylesheet" href="a.css">\n<link href="b.css" rel="stylesheet">\n'),
+        id="a stylesheet link drops text/css wherever its rel is written",
+    ),
+    pytest.param(
+        (
+            "<script type=text/javascript {{- s }}></script>\n"
+            '<script type="text/javascript" {%- if a %} async{% endif %}></script>\n'
+            '<script {{ a -}} type="text/javascript"></script>\n'
+            "<form method=POST {{- s }}></form>\n"
+            '<form method="POST"{%- if a %} x{% endif %}></form>\n'
+        ),
+        (
+            '<script type="text/javascript" {{- s }}></script>\n'
+            '<script type="text/javascript" {%- if a %} async{% endif %}></script>\n'
+            '<script {{ a -}} type="text/javascript"></script>\n'
+            '<form method="POST" {{- s }}>\n</form>\n'
+            '<form method="POST"{%- if a %} x{% endif %}>\n</form>\n'
+        ),
+        id="a value whose space a template tag trims is left alone",
+    ),
+    pytest.param(
         '<pre><form method="POST"><script type="text/javascript"></pre>\n',
         '<pre><form method="POST"><script type="text/javascript"></pre>\n',
         id="verbatim content is left alone",

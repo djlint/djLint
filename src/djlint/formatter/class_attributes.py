@@ -42,13 +42,24 @@ _JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({"class", "data-srcset", "sizes", "
 _TRIMMED_ATTRIBUTE_NAMES: Final = frozenset({"class", "style"})
 
 TEMPLATE_STRING_NEWLINE: Final = "\x00DJLINT_STRING_NEWLINE\x00"
-# A tag is read up to its first closer, or taken never to close at the next
-# opener, as the indenting pass reads it. Possessive, so an unclosed one is
-# read once.
+# A tag runs to its first closer outside a string, so `{% trans "a %}" %}` is
+# one tag. A string that does not close before the next opener is taken for a
+# stray quote, and an unclosed tag never closes past that opener: each stretch
+# up to an opener is read a bounded number of times, however many quotes are
+# left open in it. An escape outside a string is skipped as one, or each
+# quote of `\"\"\"` would start a string read to the opener.
 _TEMPLATE_TAG_PATTERN: Final = compile_pattern(
-    r"\{\{(?:(?!\}\}|\{\{).)*+\}\}|\{%(?:(?!%\}|\{%).)*+%\}", re.S
+    r"""
+    \{\{(?:\\.|"(?:\\.|(?!\{\{)[^"\\])*+"|'(?:\\.|(?!\{\{)[^'\\])*+'|(?!\}\}|\{\{).)*+\}\}
+  | \{%(?:\\.|"(?:\\.|(?!\{%)[^"\\])*+"|'(?:\\.|(?!\{%)[^'\\])*+'|(?!%\}|\{%).)*+%\}
+    """,
+    re.S | re.X,
 )
-_TEMPLATE_STRING_PATTERN: Final = compile_pattern(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", re.S)
+# Read inside one tag as the tag was read: an escape outside a string is
+# skipped as one, and only a string (group 1) is encoded.
+_TEMPLATE_STRING_PATTERN: Final = compile_pattern(
+    r"""\\.|("(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+')""", re.S
+)
 
 
 def encode_attribute_newlines(attributes: str, config: Config) -> str:
@@ -121,6 +132,8 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
 
 
 def _encode_string_newlines(match: re.Match[str]) -> str:
+    if match.group(1) is None:
+        return match.group()
     return match.group().replace("\n", TEMPLATE_STRING_NEWLINE)
 
 

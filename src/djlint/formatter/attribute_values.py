@@ -23,21 +23,48 @@ if TYPE_CHECKING:
 # not, and spaced from its "=" or not. Matching only the quoted form left an
 # unquoted one for the next run. An unquoted value ends where compressing ends
 # it, so `type=text/css{{ x }}` is one value of its own.
+_ATTRIBUTES: Final = r"""(?:"[^"]*"|'[^']*'|[^'">])*?"""
+# A template tag written with jinja's "-" marker strips the whitespace on that
+# side, which would glue a neighbour onto the value or onto the tag name. A
+# comment is not counted: compressing drops one written inside a tag.
+_TRIMS_BEFORE: Final = r"\s*\{[{%]-"
+_TRIMMED_AFTER: Final = r"-[}%]\}\s*"
+# The type written out is the default only on the element it is the default
+# for: `text/css` on a `<script>` is not javascript, and on a `<link>` it is
+# only implied for a stylesheet.
+_STYLESHEET_REL: Final = rf"""
+    (?={_ATTRIBUTES}\srel\s*=\s*
+        (?:"[^"]*?(?<![^\s"])stylesheet(?![^\s"])[^"]*"
+          |'[^']*?(?<![^\s'])stylesheet(?![^\s'])[^']*'
+          |stylesheet(?=\s|/?>)))
+"""
+
+
+def _default_type(element: str, value: str, condition: str = "") -> str:
+    return rf"""
+    (<{element}(?![-.:\w]){condition}{_ATTRIBUTES})
+    \s+(?<![-.:\w])(?<!{_TRIMMED_AFTER})type\s*=\s*
+    (?:(["']){value}\2|{value}(?=\s|/?>))
+    (?!{_TRIMS_BEFORE})
+    """
+
+
 _DEFAULT_TYPE_PATTERN: Final = compile_pattern(
-    r"""
-    (<(?:script|style|link)\b(?:"[^"]*"|'[^']*'|[^'">])*?)
-    \s+(?<![-.:\w])type\s*=\s*
-    (?:(["'])(?:text/css|text/javascript)\2|(?:text/css|text/javascript)(?=\s|/?>))
-    """,
+    rf"""(?|
+    {_default_type("script", "text/javascript")}
+    |{_default_type("style", "text/css")}
+    |{_default_type("link", "text/css", _STYLESHEET_REL)}
+    )""",
     RE_FLAGS_IX,
 )
 
 _FORM_METHOD_PATTERN: Final = compile_pattern(
-    r"""
-    (<form\b(?:"[^"]*"|'[^']*'|\{[^}]*\}|[^'">{}])*?
+    rf"""
+    (<form(?![-.:\w])(?:"[^"]*"|'[^']*'|\{{[^}}]*\}}|[^'">{{}}])*?
      (?<![-.:\w])method\s*=\s*(["'])?)
     ([a-z]+)
     ((?(2)\2|(?=\s|/?>)))
+    (?!{_TRIMS_BEFORE})
     """,
     RE_FLAGS_IX,
 )

@@ -11,9 +11,9 @@
 - A `type="text/javascript"` or `type="text/css"` is dropped, and a form's `method` lowercased, also when the value is written without quotes or with spaces around `=`. It used to take a second run.
 - A call written on the line after `{{`, with `}}` on a line of its own, stays where it was written. It used to be pulled up onto the `{{` line with its arguments a level too deep, which the next run corrected.
 - A template tag written across lines inside an attribute value keeps its layout, including the indentation of the line it closes on.
-- Whitespace inside a quoted string that spans lines in a template tag, as in `{% set %}` or `{% trans %}`, is kept. It was stripped or replaced with indentation, which changed the string.
+- Whitespace inside a quoted string that spans lines in a template tag, as in `{% set %}` or `{% trans %}`, is kept, also when the string holds a `%}` or `}}`. It was stripped or replaced with indentation, which changed the string.
 - A short template block written across lines stays that way also when it holds a string whose quotes the formatter rewrites, as in `{% if x %}` followed by `{{ _('Deleted') }}` on its own line. It used to be put on one line.
-- `H024` also reports a `type=text/javascript` or `type=text/css` written without quotes or with spaces around `=`, which the formatter drops.
+- The formatter drops a `type` only where it is the element's default: `text/javascript` on a `<script>`, and `text/css` on a `<style>` or a `<link rel="stylesheet">`. A `<script type="text/css">`, a `<style type="text/javascript">`, a `<link>` that is not a stylesheet and a custom element such as `<script-x>` keep theirs. A `type` or `method` next to a template tag written with `-`, as in `{{- x }}`, is left as written, since dropping the type would join what the `-` trims. `H024` reports the same cases, also when the value is written without quotes or with spaces around `=`.
 
 ## [1.49.3] - 2026-11-02
 

@@ -392,7 +392,7 @@ def test_H024(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None
     assert result.exit_code == 1
     assert "H024" in result.output
 
-    write_to_file(tmp_file.name, b'<script type="text/css">')
+    write_to_file(tmp_file.name, b'<style type="text/css">')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 1
     assert "H024" in result.output
@@ -867,6 +867,7 @@ def test_H024_covers_link_and_anchors_the_name(
         b"<script type=text/javascript></script>",
         b'<style type = "text/css">a{color:red}</style>',
         b"<link rel=stylesheet type=TEXT/CSS href=a.css>",
+        b'<link type="text/css" href="a.css" rel="alternate stylesheet">',
         b"<script type=text/javascript/></script>",
     ):
         write_to_file(tmp_file.name, reported)
@@ -879,6 +880,17 @@ def test_H024_covers_link_and_anchors_the_name(
         b"<script type=text/javascript-x></script>",
         b"<script type=text/javascript{{ v }}></script>",
         b"<script type=\"text/javascript'></script>",
+        # A type is only the default on the element it is the default for.
+        b'<script type="text/css"></script>',
+        b'<style type="text/javascript"></style>',
+        b'<link type="text/javascript" rel="stylesheet" href="a.js">',
+        b'<link type="text/css" rel="icon" href="a.css">',
+        b'<script-x type="text/javascript"></script-x>',
+        b'<link-x type="text/css" rel="stylesheet">',
+        # Jinja's "-" would glue what is left onto the value or the tag name.
+        b"<script type=text/javascript {{- s }}></script>",
+        b'<script type="text/javascript" {%- if a %} async{% endif %}></script>',
+        b'<script {{ a -}} type="text/javascript"></script>',
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))
