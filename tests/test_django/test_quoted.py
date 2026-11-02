@@ -96,6 +96,16 @@ test_data = [
         '<div>\n    {% trans "a {%\n   b" %}\n    {{ "c {{\n   d" }}\n</div>\n',
         id="a_string_across_lines_holding_an_opener_keeps_its_whitespace",
     ),
+    pytest.param(
+        '<div>\n{# {% " #}\n{% trans "a\n   b" %}\n</div>\n',
+        '<div>\n    {# {% " #}\n    {% trans "a\n   b" %}\n</div>\n',
+        id="a_quote_in_a_comment_does_not_pair_with_one_after_it",
+    ),
+    pytest.param(
+        '<div>\n{% comment %}{% " {% endcomment %}\n{% trans "c\n   d" %}\n</div>\n',
+        '<div>\n    {% comment %}{% " {% endcomment %}\n    {% trans "c\n   d" %}\n</div>\n',
+        id="a_quote_in_a_comment_block_does_not_pair_with_one_after_it",
+    ),
 ]
 
 

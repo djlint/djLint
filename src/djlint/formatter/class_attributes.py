@@ -49,10 +49,18 @@ TEMPLATE_STRING_NEWLINE: Final = "\x00DJLINT_STRING_NEWLINE\x00"
 # opener, the quotes after it pair up the same way, so a read only runs past
 # the next opener inside a string, which ends at the next quote of its kind:
 # the reads from successive openers overlap by about a string, and the scan
-# stays linear however many quotes are left open.
+# stays linear however many quotes are left open. A comment is read whole
+# first, so a quote in it pairs with nothing after it; one left open, or a
+# comment block never ended, is read only to the next opener of its kind.
 _TEMPLATE_TAG_PATTERN: Final = compile_pattern(
     r"""
-    \{\{(?:\\.|"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!\}\}|\{\{).)*+\}\}
+    (?P<comment>
+        \{\#(?:(?!\#\}|\{\#).)*+\#\}
+      | \{%[-+]?[ \t]*comment\b(?:(?!%\}|\{%).)*+%\}
+        (?:(?!\{%[-+]?[ \t]*(?:end)?comment\b).)*+
+        \{%[-+]?[ \t]*endcomment[ \t]*[-+]?%\}
+    )
+  | \{\{(?:\\.|"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!\}\}|\{\{).)*+\}\}
   | \{%(?:\\.|"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!%\}|\{%).)*+%\}
     """,
     re.S | re.X,
@@ -156,7 +164,11 @@ def encode_template_string_newlines(html: str) -> str:
     parts: list[str] = []
     last_end = 0
     for tag in _TEMPLATE_TAG_PATTERN.finditer(mask_raw_text_bodies(html)):
-        if "\n" not in tag.group() or ('"' not in tag.group() and "'" not in tag.group()):
+        if (
+            tag.group("comment") is not None
+            or "\n" not in tag.group()
+            or ('"' not in tag.group() and "'" not in tag.group())
+        ):
             continue
         start, end = tag.span()
         parts.extend((
