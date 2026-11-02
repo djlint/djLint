@@ -23,6 +23,14 @@ sources = [
     pytest.param(
         '<a href="/x"><input type="' + "{{" * 8000 + '" name="q"></a>', id="a brace run in a value"
     ),
+    # Each line opens a tag left open, so each is indented one level deeper
+    # than the last; reading every run of that indentation from each of its
+    # spaces, or each tag to the end of the file, took 45 seconds for the
+    # first and nearly seven minutes for the second.
+    pytest.param("<p>\n" + "{{ 'a\n" * 400 + "</p>", id="lines each opening a variable"),
+    pytest.param("<p>\n" + "{% set a = 'a\n" * 400 + "</p>", id="lines each opening a set"),
+    pytest.param("<p>\n" + "{{ f('a\n" * 400 + "</p>", id="lines each opening a call"),
+    pytest.param("<p>\n" + "{% include 'a\n" * 2000 + "</p>", id="lines each opening an include"),
 ]
 
 

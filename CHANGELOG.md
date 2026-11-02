@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Performance
+
+- A template with hundreds of lines that each open a `{{`, `{% set %}` or `{% include %}` left unclosed, as in `{{ 'a` on every line, formats in well under a second. Four hundred such lines took from 45 seconds to seven minutes. Linting such lines with `T002` no longer slows down the same way.
+
 ### Bug fixes
 
 - Formatting a template a second time no longer changes it in the cases below, so `djlint --check` passes right after `djlint --reformat`.

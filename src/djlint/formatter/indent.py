@@ -59,10 +59,14 @@ _QUOTE_STYLES: Final = {"double": QuoteStyle.PREFER_DOUBLE, "single": QuoteStyle
 _QUOTE_CHARACTERS: Final = {"double": '"', "single": "'"}
 _ESCAPE: Final = "\\"
 
+# A tag left open ends at the next opener, as for the multiline patterns below,
+# so a run of unclosed ones is read once rather than each to the end of the
+# file; a pattern starting with indentation reads each run of it from its
+# start only.
 _QUOTED_ARGUMENT_TAG_PATTERN: Final = compile_pattern(
     rf"\{{%[-+]?[ \t]*(?:{TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS}"
     rf"|{TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS})\b"
-    r"(?:(?!%\}).)*?[-+]?%\}",
+    r"(?:(?![-+]?%\}|\{%).)*+[-+]?%\}",
     RE_FLAGS_IS,
 )
 _TAG_STRING_PATTERN: Final = compile_pattern(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'")
@@ -97,23 +101,23 @@ _MULTILINE_TAG_CLOSE_PAREN_PATTERN: Final = compile_pattern(r"^[ ]*\)")
 _TEXTAREA_CLOSE_PATTERN: Final = compile_pattern(r"^\s*</textarea\b", RE_FLAGS_IX)
 _SET_CONTENT_PATTERN: Final = compile_pattern(
     r"""
-    ([ ]*)                # 1: leading indentation
+    (?<![ ])([ ]*+)       # 1: leading indentation, read from its start
     ({%[-+]?)                # 2: tag open
     [ ]*(set)[ ]+?        # 3: the set keyword
-    ((?:(?!%}).)*?)       # 4: assignment contents
+    ((?:(?![-+]?%}|{%).)*+)  # 4: assignment contents
     ([-+]?%})                # 5: tag close
     """,
     RE_FLAGS_IMSX,
 )
 _FUNCTION_CONTENT_PATTERN: Final = compile_pattern(
     r"""
-    (?P<indent>[ ]*)
+    (?<![ ])(?P<indent>[ ]*+)
     (?P<open>{{-?\+?)
     [ ]*?
     (?P<name>(?:(?!}}|{{).)*?\w)
     (?P<paren>
       \(
-      (?:\"[^\"]*+\"|'[^']*+'|[^()]++|(?&paren))*+
+      (?:\"(?:(?!{{)[^\"])*+\"|'(?:(?!{{)[^'])*+'|(?:(?!{{)[^()])++|(?&paren))*+
       \)
     )
     (?P<index>(?:\[[^\]]*?\]|\.[^\s]+))?

@@ -504,15 +504,20 @@ def expand_html(html: str, config: Config) -> str:
     break_before_template_tag = partial(should_i_move_template_tag, _BREAK_BEFORE_TAG)
     break_after_template_tag = partial(should_i_move_template_tag, _BREAK_AFTER_TAG)
 
+    # A tag left open ends at the next opener, or each of a run of unclosed
+    # ones is read to the end of the file.
     html = re.sub(
-        break_char + r"\K((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%}]})",
+        break_char
+        + r"\K((?:{%|{{\#)[ ]*?(?:"
+        + config.break_template_tags
+        + r")(?:(?!\{[{%])[^}])+?[%}]})",
         break_before_template_tag,
         html,
         flags=RE_FLAGS_IMX,
     )
 
     html = re.sub(
-        rf"((?:{{%|{{{{\#)[ ]*?(?:{config.break_template_tags})(?>{config.template_tags}|[^}}])+?[%}}]}})(?=[^\n])",
+        rf"((?:{{%|{{{{\#)[ ]*?(?:{config.break_template_tags})(?>{config.template_tags}|(?!\{{[{{%])[^}}])+?[%}}]}})(?=[^\n])",
         break_after_template_tag,
         html,
         flags=RE_FLAGS_IMX,
