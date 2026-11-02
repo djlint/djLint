@@ -32,6 +32,21 @@ test_data = [
         id="closing_bracket_on_the_argument_line",
     ),
     pytest.param(
+        "<div>\n  {{\n    function('a',\n      b=1)\n  }}\n</div>\n",
+        "<div>\n  {{\n    function('a',\n      b=1)\n  }}\n</div>\n",
+        id="a_call_on_the_line_after_its_opening_braces_stays_there",
+    ),
+    pytest.param(
+        "<nav>\n{{\npagination({\n'a': x,\n'b': y\n})\n}}\n</nav>\n",
+        "<nav>\n  {{\n    pagination({\n      'a': x,\n      'b': y\n    })\n  }}\n</nav>\n",
+        id="a_dict_passed_to_a_call_on_its_own_line_keeps_its_depth",
+    ),
+    pytest.param(
+        "<div>\n{{\nfunction({'a': [1, 2]})\n}}\n</div>\n",
+        "<div>\n  {{\n    function({'a': [1, 2]})\n  }}\n</div>\n",
+        id="data_passed_to_a_call_on_its_own_line_is_still_formatted",
+    ),
+    pytest.param(
         "<div>{{ function(a, b) }}</div>\n",
         "<div>{{ function(a, b) }}</div>\n",
         id="a_call_on_one_line_is_left_alone",

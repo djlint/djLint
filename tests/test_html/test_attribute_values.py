@@ -31,6 +31,25 @@ test_data = [
         id="default types are dropped",
     ),
     pytest.param(
+        (
+            "<script type=text/javascript></script>\n"
+            '<style type = "text/css"></style>\n'
+            "<link TYPE=TEXT/CSS rel=stylesheet href=a.css>\n"
+        ),
+        ('<script></script>\n<style></style>\n<link rel="stylesheet" href="a.css">\n'),
+        id="default types are dropped unquoted or spaced",
+    ),
+    pytest.param(
+        "<form method=POST></form>\n<form action=/a method = 'GET'></form>\n",
+        '<form method="post">\n</form>\n<form action="/a" method=\'get\'>\n</form>\n',
+        id="form method is lowercased unquoted or spaced",
+    ),
+    pytest.param(
+        "<script type=text/javascript{{ v }}></script>\n<form method=POST{{ v }}></form>\n",
+        '<script type="text/javascript{{ v }}"></script>\n<form method="POST{{ v }}">\n</form>\n',
+        id="an unquoted value glued to a template tag is left alone",
+    ),
+    pytest.param(
         '<script type="module"></script>\n',
         '<script type="module"></script>\n',
         id="a type that means something is kept",

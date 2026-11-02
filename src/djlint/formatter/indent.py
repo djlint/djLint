@@ -23,7 +23,10 @@ from djlint.const import (
     TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS,
 )
 from djlint.formatter.attributes import format_attributes
-from djlint.formatter.class_attributes import VERBATIM_ATTRIBUTE_NEWLINE
+from djlint.formatter.class_attributes import (
+    VERBATIM_ATTRIBUTE_NEWLINE,
+    restore_template_string_newlines,
+)
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IMSX,
@@ -389,7 +392,12 @@ def indent_html(rawcode: str, config: Config) -> str:
                 content = _EXTRA_TAG_WHITESPACE_PATTERN.sub(
                     lambda m: m.group(1) or " ", content
                 ).strip()
-            return f"{match.group(1)} {content} {match.group(3)}"
+            # The indentation of a line the tag closes on, after a preserved
+            # line break, is held whole like that of any other such line.
+            closing_gap = " "
+            if content.endswith(VERBATIM_ATTRIBUTE_NEWLINE):
+                closing_gap = html[match.end(2) : match.start(3)]
+            return f"{match.group(1)} {content}{closing_gap}{match.group(3)}"
 
         rawcode = _TAG_SPACING_PATTERN.sub(partial(fix_tag_spacing, rawcode), rawcode)
 
@@ -913,7 +921,9 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         beautified_lines.append(tmp)
 
-    beautified_code = "".join(beautified_lines)
+    # The strings are whole again before sets and calls are laid out, which
+    # read their values as data.
+    beautified_code = restore_template_string_newlines("".join(beautified_lines))
 
     def format_data(
         config: Config,
@@ -999,9 +1009,19 @@ def indent_html(rawcode: str, config: Config) -> str:
         if inside_ignored_block(config, html, match):
             return match.group()
 
-        leading_space = match["indent"]
+        indent = leading_space = match["indent"]
         open_bracket = match["open"]
-        tag = match["name"].strip()
+        name = match["name"]
+        tag = name.strip()
+        # A call written on a line of its own after the "{{" stays there, as
+        # the closing "}}" does: its lines were indented for that layout, and
+        # lifting the call onto the "{{" line left them a level too deep
+        # until the next run. They are laid out from the call's own line.
+        opening_gap = " "
+        name_gap = name[: len(name) - len(name.lstrip())]
+        if "\n" in name_gap:
+            opening_gap = name_gap[name_gap.find("\n") :]
+            leading_space = opening_gap[opening_gap.rfind("\n") + 1 :]
         index = match["index"] or ""
         close_bracket = match["close"]
         quote_style = _QUOTE_STYLES[config.quote_style]
@@ -1031,7 +1051,7 @@ def indent_html(rawcode: str, config: Config) -> str:
         separator = " " if close_bracket.lstrip("-+").startswith("}}") else match["gap"]
         closing_space = leading_space if contents.endswith("\n") else ""
         return (
-            f"{leading_space}{open_bracket} {tag}({contents}{closing_space})"
+            f"{indent}{open_bracket}{opening_gap}{tag}({contents}{closing_space})"
             f"{index}{separator}{close_bracket}"
         )
 

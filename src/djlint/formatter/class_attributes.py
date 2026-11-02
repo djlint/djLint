@@ -5,6 +5,9 @@ changes the document: a `title` tooltip loses a line, hyperscript (`_`)
 loses a command separator, and a `data-` value read by script comes back
 different. Only values holding a token list or css are joined; every other
 value keeps its breaks behind an internal marker until formatting is done.
+
+A string written across lines inside a template tag is held the same way:
+the whitespace after its line breaks is part of its value.
 """
 
 from __future__ import annotations
@@ -14,7 +17,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import COLLAPSIBLE_WHITESPACE
-from djlint.helpers import compile_pattern
+from djlint.helpers import compile_pattern, mask_raw_text_bodies
 
 if TYPE_CHECKING:
     from typing import Final
@@ -37,6 +40,15 @@ _CLASS_ATTRIBUTE_PATTERN: Final = compile_pattern(
 
 _JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({"class", "data-srcset", "sizes", "srcset", "style"})
 _TRIMMED_ATTRIBUTE_NAMES: Final = frozenset({"class", "style"})
+
+TEMPLATE_STRING_NEWLINE: Final = "\x00DJLINT_STRING_NEWLINE\x00"
+# A tag is read up to its first closer, or taken never to close at the next
+# opener, as the indenting pass reads it. Possessive, so an unclosed one is
+# read once.
+_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
+    r"\{\{(?:(?!\}\}|\{\{).)*+\}\}|\{%(?:(?!%\}|\{%).)*+%\}", re.S
+)
+_TEMPLATE_STRING_PATTERN: Final = compile_pattern(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", re.S)
 
 
 def encode_attribute_newlines(attributes: str, config: Config) -> str:
@@ -106,6 +118,49 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
 
     parts.append(attributes[last_end:])
     return "".join(parts)
+
+
+def _encode_string_newlines(match: re.Match[str]) -> str:
+    return match.group().replace("\n", TEMPLATE_STRING_NEWLINE)
+
+
+def encode_template_string_newlines(html: str) -> str:
+    """Hold the line breaks of a string inside a template tag behind a marker.
+
+    The whitespace after such a break is part of the string, but every pass
+    that lays out lines would strip or indent it as layout. Behind the
+    marker the string stays on one line until indenting is done. A raw text
+    body is javascript or css rather than template, and an attribute value
+    already holds its breaks behind its own marker.
+    """
+    if "\n" not in html or ("{{" not in html and "{%" not in html):
+        return html
+
+    parts: list[str] = []
+    last_end = 0
+    for tag in _TEMPLATE_TAG_PATTERN.finditer(mask_raw_text_bodies(html)):
+        if "\n" not in tag.group() or ('"' not in tag.group() and "'" not in tag.group()):
+            continue
+        start, end = tag.span()
+        parts.extend((
+            html[last_end:start],
+            _TEMPLATE_STRING_PATTERN.sub(_encode_string_newlines, html[start:end]),
+        ))
+        last_end = end
+
+    if not parts:
+        return html
+
+    parts.append(html[last_end:])
+    return "".join(parts)
+
+
+def restore_template_string_newlines(html: str) -> str:
+    """Restore the line breaks held inside template tag strings."""
+    if TEMPLATE_STRING_NEWLINE not in html:
+        return html
+
+    return html.replace(TEMPLATE_STRING_NEWLINE, "\n")
 
 
 def restore_verbatim_attribute_newlines(html: str) -> str:

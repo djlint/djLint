@@ -862,9 +862,23 @@ def test_H024_covers_link_and_anchors_the_name(
         result = runner.invoke(djlint, (tmp_file.name,))
         assert "H024 1:" in result.output
 
+    # The formatter drops these too, quoted or not.
+    for reported in (
+        b"<script type=text/javascript></script>",
+        b'<style type = "text/css">a{color:red}</style>',
+        b"<link rel=stylesheet type=TEXT/CSS href=a.css>",
+        b"<script type=text/javascript/></script>",
+    ):
+        write_to_file(tmp_file.name, reported)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H024 1:" in result.output
+
     for quiet in (
         b'<script type="module" src="a.js"></script>',
         b'<script data-type="text/css" src="a.js"></script>',
+        b"<script type=text/javascript-x></script>",
+        b"<script type=text/javascript{{ v }}></script>",
+        b"<script type=\"text/javascript'></script>",
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))

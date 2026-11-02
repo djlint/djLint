@@ -117,6 +117,39 @@ templates = [
         "<div hidden><pre>  keep  </pre><script>var a = 1</script><br></div>\n",
         id="inline pre before a script on one line",
     ),
+    pytest.param(
+        "<div>\n<div>\n<div>\n"
+        '<a class="btn btn-primary" href="{{ url_for(\'org.new\') }}">\n'
+        "{{ _('Create a new organization now, then add data') }}\n</a>\n</div>\n</div>\n</div>\n",
+        id="element whose content fits on its line only without the indentation",
+    ),
+    pytest.param(
+        "<script type=text/javascript>\nvar a = 1\n</script>\n", id="unquoted default type"
+    ),
+    pytest.param(
+        "<nav>\n  {{\n    pagination({\n      'a': { 'c': 'x' },\n      'b': y\n    })\n  }}\n</nav>\n",
+        id="call on the line after its opening braces",
+    ),
+    pytest.param(
+        "<link rel=\"a\"\n      href=\"/c?f={{\n        t | r(' ', '+') +\n        c\n"
+        '      }}&d=f" />\n',
+        id="template tag across lines in an attribute value",
+    ),
+    pytest.param(
+        '<div>\n{% set x = "a\n   b" %}\n{{ f("c\n  d") }}\n</div>\n',
+        id="string across lines in a template tag",
+    ),
+    pytest.param(
+        '{% raw %}{{ "a\n   b" }}{% endraw %}\n<pre>{{ "c\n  d" }}</pre>\n'
+        '<!-- djlint:off -->\n{% set x = "e\n f" %}\n<!-- djlint:on -->\n'
+        '<script>var a = {{ "g\n  h" }};</script>\n',
+        id="string across lines in a template tag left as written",
+    ),
+    pytest.param(
+        '<div title=\'{{ "a\n   b" }}\' x-data="{ a: \'{{ "c\n  d" }}\', b: 1, c: 2 }"'
+        " srcset='{{ \"e\n f\" }} 1x, b 2x' class='{{ \"g\n h\" }}'>x</div>\n",
+        id="string across lines in a template tag in attribute values",
+    ),
 ]
 
 option_sets = [
@@ -133,6 +166,10 @@ option_sets = [
     pytest.param(
         {"profile": "golang", "preserve_leading_space": True}, id="golang-preserve-leading-space"
     ),
+    pytest.param(
+        {"profile": "jinja", "format_attribute_js_json": True, "preserve_class_newlines": True},
+        id="jinja-format-attribute-js-json",
+    ),
 ]
 
 
@@ -145,3 +182,5 @@ def test_formatting_is_a_fixed_point(source: str, args: dict[str, Any]) -> None:
 
     printer(once, source, twice)
     assert once == twice
+    # The markers holding line breaks during formatting never reach the output.
+    assert "\x00" not in once

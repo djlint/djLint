@@ -19,20 +19,25 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
+# Both read a value as compressing will write it, which runs later: quoted or
+# not, and spaced from its "=" or not. Matching only the quoted form left an
+# unquoted one for the next run. An unquoted value ends where compressing ends
+# it, so `type=text/css{{ x }}` is one value of its own.
 _DEFAULT_TYPE_PATTERN: Final = compile_pattern(
     r"""
     (<(?:script|style|link)\b(?:"[^"]*"|'[^']*'|[^'">])*?)
-    \s+(?<![-.:\w])type\s*=["'](?:text/css|text/javascript)["']
+    \s+(?<![-.:\w])type\s*=\s*
+    (?:(["'])(?:text/css|text/javascript)\2|(?:text/css|text/javascript)(?=\s|/?>))
     """,
     RE_FLAGS_IX,
 )
 
 _FORM_METHOD_PATTERN: Final = compile_pattern(
     r"""
-    (<form\b(?:"[^"]*"|'[^']*'|\{[^}]*\}|[^'">{}/])*?
-     (?<![-.:\w])method\s*=\s*["'])
+    (<form\b(?:"[^"]*"|'[^']*'|\{[^}]*\}|[^'">{}])*?
+     (?<![-.:\w])method\s*=\s*(["'])?)
     ([a-z]+)
-    (["'])
+    ((?(2)\2|(?=\s|/?>)))
     """,
     RE_FLAGS_IX,
 )
@@ -66,7 +71,7 @@ def format_attribute_values(html: str, config: Config) -> str:
     def lowercase_method(match: re.Match[str]) -> str:
         if is_left_alone(match):
             return match.group()
-        return f"{match.group(1)}{match.group(2).lower()}{match.group(3)}"
+        return f"{match.group(1)}{match.group(3).lower()}{match.group(4)}"
 
     html = _DEFAULT_TYPE_PATTERN.sub(drop_default_type, html)
     return _FORM_METHOD_PATTERN.sub(lowercase_method, html)

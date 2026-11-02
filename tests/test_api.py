@@ -79,6 +79,13 @@ def test_options_win_over_the_configuration(tmp_path: Path) -> None:
     assert format_text(config, "<div><p>hi</p></div>") == ("<div>\n  <p>hi</p>\n</div>\n")
 
 
+def test_format_text_keeps_a_string_across_lines_in_a_template_tag(tmp_path: Path) -> None:
+    """The language server formats through here too."""
+    config = load_config(tmp_path, profile="jinja")
+    source = '<div>\n    {% trans "a\n   b" %}\n</div>\n'
+    assert format_text(config, source) == source
+
+
 def test_lint_text_gives_positions_as_numbers_in_document_order(tmp_path: Path) -> None:
     config = load_config(tmp_path, profile="django")
     source = '<p>text</p>\n<img src="x">\n<img src="y">'

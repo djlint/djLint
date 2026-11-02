@@ -251,9 +251,10 @@ def _template_block_key(tag: str, contents: str) -> tuple[str, str]:
 
     All whitespace is dropped: the two sides being compared differ in line
     breaks and indentation, and indenting also respaces template tags
-    ("{{x}}" -> "{{ x }}").
+    ("{{x}}" -> "{{ x }}"). Quotes are read as one kind, since indenting
+    also rewrites the quotes of a tag's strings ("_('x')" -> '_("x")').
     """
-    return tag.lower(), "".join(contents.split())
+    return tag.lower(), "".join(contents.split()).replace("'", '"')
 
 
 def _multiline_template_blocks(
@@ -313,6 +314,24 @@ def _neighbour_before(text: str, position: int) -> _Neighbour:
     if start < position and text[:start].endswith(_STRIPS_WHITESPACE_AFTER):
         return _Neighbour.RENDERS
     return _neighbour(text[position - 1 : position])
+
+
+def _line_around(text: str, start: int, end: int, limit: int) -> int:
+    """How much of the line holding text[start:end] lies outside it.
+
+    The text before it is the line's indentation and whatever shares the
+    line, and counts as much as the text after it: the limit is on the
+    line, and a line put together past it has its attributes spread on the
+    next run. Neither side is read further than `limit`, which already
+    rules the line out, so a long line of short tags stays linear.
+    """
+    window = max(start - limit, 0)
+    line_start = text.rfind("\n", window, start)
+    before = start - (line_start + 1 if line_start >= 0 else window)
+
+    line_end = text.find("\n", end, end + limit)
+    after = (line_end if line_end >= 0 else min(len(text), end + limit)) - end
+    return before + after
 
 
 def _rendered_whitespace(text: str, left: _Neighbour, right: _Neighbour) -> str:
@@ -392,12 +411,13 @@ def condense_html(html: str, config: Config, authored_html: str | None = None) -
         if holds_back_multiline_content:
             combined_length = config.max_line_length + 1
         else:
-            combined_length = len(
-                match.group(1).splitlines()[-1]
-                + leading
-                + match.group(3)
-                + trailing
-                + match.group(4)
+            # Measured from the last line of an opening tag spread over lines.
+            start = match.start(1) + match.group(1).rfind("\n") + 1
+            combined_length = (
+                match.end(1)
+                - start
+                + len(leading + match.group(3) + trailing + match.group(4))
+                + _line_around(match.string, start, match.end(), config.max_line_length)
             )
 
         if (

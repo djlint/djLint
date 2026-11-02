@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- Formatting a template a second time no longer changes it in the cases below, so `djlint --check` passes right after `djlint --reformat`.
+- An element or a template block is put on one line only when the whole line fits within `--max-line-length`, its indentation and any text beside it included. A line that fit only without its indentation was joined, and the next run spread its attributes.
+- A `type="text/javascript"` or `type="text/css"` is dropped, and a form's `method` lowercased, also when the value is written without quotes or with spaces around `=`. It used to take a second run.
+- A call written on the line after `{{`, with `}}` on a line of its own, stays where it was written. It used to be pulled up onto the `{{` line with its arguments a level too deep, which the next run corrected.
+- A template tag written across lines inside an attribute value keeps its layout, including the indentation of the line it closes on.
+- Whitespace inside a quoted string that spans lines in a template tag, as in `{% set %}` or `{% trans %}`, is kept. It was stripped or replaced with indentation, which changed the string.
+- A short template block written across lines stays that way also when it holds a string whose quotes the formatter rewrites, as in `{% if x %}` followed by `{{ _('Deleted') }}` on its own line. It used to be put on one line.
+- `H024` also reports a `type=text/javascript` or `type=text/css` written without quotes or with spaces around `=`, which the formatter drops.
+
 ## [1.49.3] - 2026-11-02
 
 ### Bug fixes

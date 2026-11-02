@@ -209,7 +209,7 @@
     message: Omit type on scripts and styles.
     flags: re.I
     patterns:
-      - <(?:script|style|link)\b(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?(?<![-.:\w])type\s*=[\"'](?:text/css|text/javascript)[\"']
+      - <(?:script|style|link)\b(?:\"[^\"]*\"|'[^']*'|{{(?:[^{}]|{(?!{)[^{}]*}|}(?!}))*}}+|{%(?:[^%{]|{(?!%)|%(?!}))*%}|{\#(?:[^\#{]|{(?!\#)|\#(?!}))*\#}|{(?![{%\#])[^{}<>]*}|[^'\"<>{}])*?(?<![-.:\w])type\s*=\s*(?:([\"'])(?:text/css|text/javascript)\1|(?:text/css|text/javascript)(?=\s|/?>))
 - rule:
     name: H025
     message: Tag seems to be an orphan.

@@ -149,6 +149,21 @@ test_data = [
         id="string_across_lines_in_set_gets_no_indentation",
     ),
     pytest.param(
+        ('<div>\n{% set x = "a\n   b" %}\n</div>'),
+        ('<div>\n    {% set x = "a\n   b" %}\n</div>\n'),
+        id="string_across_lines_in_set_keeps_its_whitespace",
+    ),
+    pytest.param(
+        ('<div>\n{% set x = {\n"k": "a\n   b",\n"j": 1\n} %}\n</div>'),
+        ('<div>\n    {% set x = {\n        "k": "a\n   b",\n        "j": 1\n    } %}\n</div>\n'),
+        id="string_across_lines_in_a_set_dict_keeps_its_whitespace",
+    ),
+    pytest.param(
+        ('<div>\n{{ f("a\n   b") }}\n</div>'),
+        ('<div>\n    {{ f("a\n   b") }}\n</div>\n'),
+        id="string_across_lines_in_a_call_keeps_its_whitespace",
+    ),
+    pytest.param(
         "{% set x = foo(\n) ~\n    bar %}",
         "{% set x = foo(\n) ~\n    bar %}\n",
         id="value_after_a_closed_call_stays_inside_the_set",

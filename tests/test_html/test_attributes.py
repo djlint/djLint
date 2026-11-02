@@ -1045,6 +1045,18 @@ test_data = [
         id="a_line_break_inside_an_attribute_value_is_kept",
     ),
     pytest.param(
+        ('<div title="{{ a +\n      b\n    }}">x</div>\n'),
+        ('<div title="{{ a +\n      b\n    }}">x</div>\n'),
+        id="a_template_tag_closing_after_a_kept_line_break_keeps_its_indentation",
+    ),
+    pytest.param(
+        ('<div>\n<div title="x"\n     id="{{\n      a(1) +\n      b\n    }}">x</div>\n</div>\n'),
+        (
+            '<div>\n    <div title="x"\n         id="{{\n      a(1) +\n      b\n    }}">x</div>\n</div>\n'
+        ),
+        id="a_call_on_its_own_line_inside_a_template_tag_in_a_value_stays_there",
+    ),
+    pytest.param(
         ('<div class="a\nb" style="c: 1;\nd: 2">x</div>\n'),
         ('<div class="a b" style="c: 1; d: 2">x</div>\n'),
         id="a_line_break_in_a_token_list_or_css_value_is_only_layout",

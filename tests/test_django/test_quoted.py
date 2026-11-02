@@ -71,6 +71,21 @@ test_data = [
         ),
         id="gt_in_template_string_in_attribute",
     ),
+    pytest.param(
+        '<div>\n{% trans "a\n   b" %}\n</div>\n',
+        '<div>\n    {% trans "a\n   b" %}\n</div>\n',
+        id="a_string_across_lines_keeps_its_whitespace",
+    ),
+    pytest.param(
+        "<div>\n{% if x == 'a\n   b' %}\n<p>y</p>\n{% endif %}\n</div>\n",
+        '<div>\n    {% if x == "a\n   b" %}\n        <p>y</p>\n    {% endif %}\n</div>\n',
+        id="a_string_across_lines_in_a_condition_keeps_its_whitespace",
+    ),
+    pytest.param(
+        "<div>\n{% include 'a.html' with s='x\n   y' %}\n</div>\n",
+        '<div>\n    {% include "a.html" with s="x\n   y" %}\n</div>\n',
+        id="a_string_across_lines_in_an_argument_keeps_its_whitespace",
+    ),
 ]
 
 
