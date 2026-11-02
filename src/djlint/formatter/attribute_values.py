@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from djlint.helpers import (
+    RE_FLAGS_ISX,
     RE_FLAGS_IX,
     compile_pattern,
     inside_template_block,
@@ -23,8 +24,8 @@ if TYPE_CHECKING:
 # not, and spaced from its "=" or not. Matching only the quoted form left an
 # unquoted one for the next run. An unquoted value ends where compressing ends
 # it, so `type=text/css{{ x }}` is one value of its own. A template tag or
-# comment is read whole, so what is written inside one, as in
-# `{# rel=stylesheet #}`, is not taken for markup.
+# comment is read whole, even across lines, so what is written inside one, as
+# in `{# rel=stylesheet #}`, is not taken for markup.
 _TEMPLATE_TAG: Final = r"\{\{(?:(?!\}\}|\{\{).)*\}\}|\{%(?:(?!%\}|\{%).)*%\}|\{\#(?:(?!\#\}).)*\#\}"
 _ATTRIBUTES: Final = rf"""(?:"[^"]*"|'[^']*'|{_TEMPLATE_TAG}|(?!\{{[{{%\#])[^'">])*?"""
 # A template tag written with jinja's "-" marker strips the whitespace on that
@@ -65,7 +66,7 @@ _DEFAULT_TYPE_PATTERN: Final = compile_pattern(
     |{_default_type("style", "text/css")}
     |{_default_type("link", "text/css", _STYLESHEET_REL)}
     )""",
-    RE_FLAGS_IX,
+    RE_FLAGS_ISX,
 )
 
 _FORM_METHOD_PATTERN: Final = compile_pattern(

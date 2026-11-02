@@ -129,6 +129,17 @@ test_data = [
     ),
     pytest.param(
         (
+            "<link {# note\ncontinued #} rel=stylesheet type=text/css href=a.css>\n"
+            '<script {% if a\n%}async{% endif %} type="text/javascript"></script>\n'
+        ),
+        (
+            '<link {# note continued #} rel="stylesheet" href="a.css">\n'
+            "<script {% if a %}async{% endif %}></script>\n"
+        ),
+        id="template tags and comments across lines are read whole",
+    ),
+    pytest.param(
+        (
             '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
             '<link rel=\'{% if x %} stylesheet {% else %} icon {% endif %}\' type="text/css" href="b">\n'
         ),
