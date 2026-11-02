@@ -74,14 +74,15 @@ _EXTRA_TAG_WHITESPACE_PATTERN: Final = compile_pattern(
 )
 _HANDLEBARS_BLOCK_END_PATTERN: Final = compile_pattern(r"({{#(?:each|if)(?:(?!}}).)+?[^ ])(}})")
 _SET_CLOSE_PATTERN: Final = compile_pattern(r"^(?!.*\{\%).*%\}.*$", RE_FLAGS_IMX)
-_SET_CLOSING_BRACE_PATTERN: Final = compile_pattern(r"^[ ]*[}\])]", RE_FLAGS_IMX)
-_SET_CLOSE_LINE_START_PATTERN: Final = compile_pattern(r"[ ]*(?:[}\])]|[-+]?%})")
+_SET_CLOSING_BRACE_PATTERN: Final = compile_pattern(r"^[ ]*}|^[ ]*]", RE_FLAGS_IMX)
+_SET_LEADING_CLOSERS_PATTERN: Final = compile_pattern(r"[ \t]*(?:[)\]}][ \t]*)*")
+_TAG_CLOSE_START_PATTERN: Final = compile_pattern(r"[ \t]*[-+]?%}")
 _SINGLE_LINE_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
     r"^\s*\{%[-+]?(?:(?!%}).)*%}\s*$", RE_FLAGS_IMSX
 )
 _SET_OPEN_PATTERN: Final = compile_pattern(r"^([ ]*{%[ ]*?set)(?!.*%}).*$", RE_FLAGS_IMX)
 _SET_OPENING_BRACE_PATTERN: Final = compile_pattern(
-    r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$)|\((?=[^()]*$))", RE_FLAGS_IMX
+    r"(\{(?![^{}]*%[}\s])(?=[^{}]*$)|\[(?=[^\]]*$))", RE_FLAGS_IMX
 )
 _TEMPLATE_TAG_CLOSE_PATTERN: Final = compile_pattern(r"\{%[-+]?\s*end|\{\{/", RE_FLAGS_IMX)
 # Some opener is left unclosed exactly when the last one is, so each is only
@@ -598,8 +599,14 @@ def indent_html(rawcode: str, config: Config) -> str:
             if is_block_raw and ignored_level == 0:
                 is_block_raw = False
 
-        # A bracket inside a quoted string, as in "url('data:...", opens nothing.
-        set_code = _TAG_STRING_PATTERN.sub('""', item) if in_set_tag else item
+        set_code = item
+        set_leading_closes = set_depth_change = 0
+        if in_set_tag:
+            # A bracket inside a quoted string, as in "url('data:...", opens nothing.
+            set_code = _TAG_STRING_PATTERN.sub('""', item)
+            leading = _SET_LEADING_CLOSERS_PATTERN.match(set_code)
+            set_leading_closes = sum(map(leading[0].count, ")]}")) if leading else 0
+            set_depth_change = sum(map(set_code.count, "([{")) - sum(map(set_code.count, ")]}"))
 
         if (not is_block_raw and ignored_inline_start_pattern.search(item)) or (
             not is_block_raw
@@ -621,10 +628,15 @@ def indent_html(rawcode: str, config: Config) -> str:
             and _SET_CLOSE_PATTERN.search(item)
         ):
             in_set_tag = False
-            # A closing bracket or the bare tag close goes back a level; anything else is
-            # one more line of the value.
-            closes = _SET_CLOSE_LINE_START_PATTERN.match(set_code)
-            line_level = max(indent_level - 1, set_tag_level) if closes else indent_level
+            # A line that starts with a closing bracket lines up with what that bracket
+            # closes, the bare tag close with the tag; anything else is one more line of
+            # the value.
+            if set_leading_closes:
+                line_level = max(indent_level - 1, set_tag_level)
+            elif _TAG_CLOSE_START_PATTERN.match(set_code):
+                line_level = set_tag_level
+            else:
+                line_level = indent_level
             tmp = (indent * line_level) + formatted_item(item) + "\n"
             indent_level = set_tag_level
 
@@ -632,10 +644,13 @@ def indent_html(rawcode: str, config: Config) -> str:
             not config.no_set_formatting
             and not is_block_raw
             and in_set_tag
-            and _SET_CLOSING_BRACE_PATTERN.search(set_code)
+            and (set_leading_closes or set_depth_change)
         ):
-            indent_level = max(indent_level - 1, 0)
-            tmp = (indent * indent_level) + formatted_item(item) + "\n"
+            # A line that starts with a closing bracket lines up with what that bracket
+            # closes; the next line follows every bracket this one opens or closes.
+            line_level = max(indent_level - (1 if set_leading_closes else 0), set_tag_level)
+            tmp = (indent * line_level) + formatted_item(item) + "\n"
+            indent_level = max(indent_level + set_depth_change, set_tag_level)
 
         elif not is_block_raw and in_multiline_tag and _MULTILINE_TAG_CLOSE_PATTERN.search(item):
             tmp_level = (
@@ -761,19 +776,11 @@ def indent_html(rawcode: str, config: Config) -> str:
             )
             indent_level += 1
 
-        elif (
-            not config.no_set_formatting
-            and not is_block_raw
-            and in_set_tag
-            and _SET_OPENING_BRACE_PATTERN.search(set_code)
-        ) or (
-            not is_block_raw
-            and (
-                tag_indent_pattern.search(item.lstrip())
-                or (
-                    prefixed_template_tag_indent_pattern.search(item.lstrip())
-                    and not _TEMPLATE_TAG_CLOSE_PATTERN.search(item)
-                )
+        elif not is_block_raw and (
+            tag_indent_pattern.search(item.lstrip())
+            or (
+                prefixed_template_tag_indent_pattern.search(item.lstrip())
+                and not _TEMPLATE_TAG_CLOSE_PATTERN.search(item)
             )
         ):
             tmp = (indent * indent_level) + formatted_item(item) + "\n"

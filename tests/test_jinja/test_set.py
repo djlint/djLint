@@ -123,6 +123,21 @@ test_data = [
         ('{% set style = style ~\n    "url(\'data:image/svg+xml," ~\n    icon ~\n    "\');" %}\n'),
         id="bracket_inside_a_string_in_multiline_set_opens_nothing",
     ),
+    pytest.param(
+        ("{% set x = outer(\n    build(inner(),\n        1),\n    2,\n) %}"),
+        ("{% set x = outer(\n    build(inner(),\n        1),\n    2,\n) %}\n"),
+        id="call_left_open_after_a_closed_one_in_multiline_set",
+    ),
+    pytest.param(
+        ("{% set x = pair(\n    first(\n        1\n    ), second(\n        2\n    )\n) %}"),
+        ("{% set x = pair(\n    first(\n        1\n    ), second(\n        2\n    )\n) %}\n"),
+        id="line_closing_one_call_and_opening_another_in_multiline_set",
+    ),
+    pytest.param(
+        ("{% set x = outer(\n    inner(\n        deep(\n            1\n        )),\n    2\n) %}"),
+        ("{% set x = outer(\n    inner(\n        deep(\n            1\n        )),\n    2\n) %}\n"),
+        id="line_closing_two_calls_in_multiline_set",
+    ),
 ]
 
 
