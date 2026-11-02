@@ -1,17 +1,17 @@
 ---
-description: 如何防止 djLint 格式化代码块以及如何在行内忽略 djLint 规则。
+description: 如何阻止 djLint 格式化某个代码块，以及如何以内联方式忽略代码检查规则。
 title: 忽略代码
-keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 检查, 代码格式化, 忽略规则, 忽略代码
+keywords: 模板代码检查工具, 模板格式化工具, djLint, HTML, 模板, 格式化工具, 代码检查工具, 格式化工具用法, 忽略代码, 忽略规则
 date: Last Modified
 ---
 
 # 忽略代码
 
-可以通过用 djLint 标签包裹代码来跳过代码检查或格式化：
+把代码包裹在 `djlint` 标签中即可忽略它：
 
 {% raw %}
 
-对于传统 HTML -
+普通 HTML：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -20,7 +20,7 @@ date: Last Modified
 <!-- djlint:on -->
 ```
 
-或使用注释 -
+或者写成注释：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -29,7 +29,7 @@ date: Last Modified
 {# djlint:on #}
 ```
 
-或使用长注释 -
+或者写成长注释：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -38,7 +38,7 @@ date: Last Modified
 {% comment %} djlint:on {% endcomment %}
 ```
 
-亦或是 golang 风格注释 -
+或者写成 Go 风格的注释：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -47,7 +47,7 @@ date: Last Modified
 {{ /* djlint:on */ }}
 ```
 
-以及 handlebars 风格注释 -
+或者写成 Handlebars 风格的注释：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -60,7 +60,7 @@ date: Last Modified
 
 ## 忽略规则
 
-通过在忽略块的开始标签中添加规则名，可以忽略特定的代码检查规则。
+也可以在忽略块的起始标签中写上规则名称，从而只忽略特定的代码检查规则。
 
 {% raw %}
 

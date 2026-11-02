@@ -1,5 +1,5 @@
 ---
-description: Integrate djLint with your favorite editor. Auto format your templates with Pre-Commit. Lint with SublimeText.
+description: Use djLint in your editor and run it with pre-commit.
 title: Integrations
 keywords: template linter, template formatter, djLint, HTML, templates, formatter, linter, integrations, language server, lsp, neovim, helix
 ---

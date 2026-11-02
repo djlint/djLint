@@ -1,38 +1,39 @@
 ---
-description: djLint配置
+description: 用于配置 djLint 如何检查和格式化 HTML 模板的选项。
 title: 配置
-keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 检查, 规则, 配置
+keywords: 模板代码检查工具, 模板格式化工具, djLint, HTML, 模板, 格式化工具, 代码检查工具, 配置
+date: Last Modified
 ---
 
 # 配置
 
-配置可通过项目的 `pyproject.toml` 文件、`djlint.toml` 或 `.djlint.toml` 文件，或 `.djlintrc` 文件来完成。命令行参数优先级大于配置文件的任何配置，本地项目设置优先级大于通过 `--configuration` 指定的全局配置文件，除非设置了 `--prefer-configuration`。
+可以通过项目的 `pyproject.toml` 文件、`djlint.toml` 或 `.djlint.toml` 文件，或者 `.djlintrc` 文件进行配置。命令行参数始终会覆盖配置文件中的任何设置。本地项目设置会覆盖通过 `--configuration` 指定的全局配置文件，除非设置了 `--prefer-configuration`。
 
-这是 `pyproject.toml` 的格式，遵循 `toml` 文件格式。
+`pyproject.toml` 的格式为 `toml`。
 
 ```toml
 [tool.djlint]
 <config options>
 ```
 
-这是 `djlint.toml` 和 `.djlint.toml` 的格式，遵循 `toml` 文件格式。
+`djlint.toml` 和 `.djlint.toml` 的格式为 `toml`。
 
 ```toml
 <config options>
 ```
 
-这是 `.djlintrc` 的格式，遵循 `json` 文件格式。
+`.djlintrc` 的格式为 `json`。
 
 ```json
 { "option": "value" }
 ```
 
-## 参数
+## 选项
 
 <div class="field">
-  <label class="label">筛选参数</label>
+  <label class="label">筛选选项</label>
   <div class="control">
-    <input id="filter" class="input" type="text" placeholder="输入筛选参数..." />
+    <input id="filter" class="input" type="text" placeholder="输入关键字筛选选项..." />
 
   </div>
 </div>
@@ -48,15 +49,17 @@ const showAll=() => {
         })
 }
 var search_data = {{ configuration | dump | safe }};
+// The text of every value, so a quote typed in the search matches a quote in an option.
+var searchText = (value) => typeof value === 'string' ? value : Object.values(value ?? {}).map(searchText).join(' ');
 document.querySelector('#filter').addEventListener('input', (event) => {
     document.querySelector('#no-matches').classList.add('is-hidden');
       if (event.target.value === ''){
         showAll()
       } else {
-        var regex = new RegExp(event.target.value.replaceAll(' ', '.*[ _-].*'), 'gmi'),
+        var regex = new RegExp(event.target.value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll(' ', '.*[ _-].*'), 'gmi'),
         matches=[]
         search_data.forEach((obj) => {
-        if (JSON.stringify(obj).match(regex)) {
+        if (searchText(obj).match(regex)) {
             matches.push(obj.name)
         }
         if(matches.length > 0){
@@ -127,6 +130,6 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 
 {% endfor %}
 
-<div id="no-matches" class="is-hidden mb-5">未找到匹配结果，请尝试其他搜索。</div>
+<div id="no-matches" class="is-hidden mb-5">未找到结果，请换个关键字再试。</div>
 
 {% include 'src/_includes/tabs_script.njk' %}

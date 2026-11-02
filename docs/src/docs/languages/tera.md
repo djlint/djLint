@@ -1,7 +1,7 @@
 ---
 title: Tera Template Linter and Formatter
 keywords: tera, rust, zola, djlint, tera template linter, tera template formatter, format tera templates
-description: djLint is a Tera template linter and a Tera template formatter! Take advantage of the pre-built profile when linting and formatting your templates with djLint.
+description: djLint lints and formats Tera templates. Set the tera profile so the rules and the formatting fit them.
 tool: tera
 ---
 
@@ -11,13 +11,13 @@ tool: tera
 
 **[What is Tera?](https://keats.github.io/tera/)**
 
-#### Using the Command Line
+## Using the command line
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Or, Use a Config File
+## Or, use a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 

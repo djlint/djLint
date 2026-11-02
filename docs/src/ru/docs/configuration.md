@@ -1,38 +1,39 @@
 ---
-description: Конфигурация djLint для линтинга и форматирования HTML-шаблонов. Воспользуйтесь многочисленными возможностями форматирования.
+description: Параметры, которые определяют, как djLint проверяет и форматирует HTML-шаблоны.
 title: Конфигурация
-keywords: линтер шаблонов, форматер шаблонов, djLint, HTML, шаблоны, форматер, линтер, использование, configuration
+keywords: линтер шаблонов, форматер шаблонов, djLint, HTML, шаблоны, форматер, линтер, конфигурация
+date: Last Modified
 ---
 
-# {{ "configuration" | i18n }}
+# Конфигурация
 
-Конфигурация выполняется либо через файл `pyproject.toml`, либо через файл `djlint.toml` или `.djlint.toml`, либо через файл `.djlintrc`. Параметры командной строки всегда будут переопределять любые настройки в конфигурационных файлах. Локальные настройки проекта преобладают над глобальным файлом, переданным через `--configuration`, если не указан `--prefer-configuration`.
+Настройка выполняется через файл `pyproject.toml` вашего проекта, файл `djlint.toml` или `.djlint.toml` либо файл `.djlintrc`. Аргументы командной строки всегда переопределяют настройки из файлов конфигурации. Локальные настройки проекта переопределяют глобальный файл конфигурации, заданный через `--configuration`, если не указан `--prefer-configuration`.
 
-Формат файла `pyproject.toml` - `toml`.
+Файл `pyproject.toml` записывается в формате `toml`.
 
 ```toml
 [tool.djlint]
-<опции конфигурации>
+<config options>
 ```
 
-Формат файлов `djlint.toml` и `.djlint.toml` - `toml`.
+Файлы `djlint.toml` и `.djlint.toml` записываются в формате `toml`.
 
 ```toml
-<опции конфигурации>
+<config options>
 ```
 
-Формат файла `.djlintrc` - `json`.
+Файл `.djlintrc` записывается в формате `json`.
 
 ```json
-{ "ключ": "значение" }
+{ "option": "value" }
 ```
 
-## Опции
+## Параметры
 
 <div class="field">
-  <label class="label">Фильтр опций</label>
+  <label class="label">Фильтр параметров</label>
   <div class="control">
-    <input id="filter" class="input" type="text" placeholder="начните вводить, чтобы отфильтровать опции..." />
+    <input id="filter" class="input" type="text" placeholder="введите текст для фильтрации параметров..." />
 
   </div>
 </div>
@@ -48,15 +49,17 @@ const showAll=() => {
         })
 }
 var search_data = {{ configuration | dump | safe }};
+// The text of every value, so a quote typed in the search matches a quote in an option.
+var searchText = (value) => typeof value === 'string' ? value : Object.values(value ?? {}).map(searchText).join(' ');
 document.querySelector('#filter').addEventListener('input', (event) => {
     document.querySelector('#no-matches').classList.add('is-hidden');
       if (event.target.value === ''){
         showAll()
       } else {
-        var regex = new RegExp(event.target.value.replaceAll(' ', '.*[ _-].*'), 'gmi'),
+        var regex = new RegExp(event.target.value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll(' ', '.*[ _-].*'), 'gmi'),
         matches=[]
         search_data.forEach((obj) => {
-        if (JSON.stringify(obj).match(regex)) {
+        if (searchText(obj).match(regex)) {
             matches.push(obj.name)
         }
         if(matches.length > 0){
@@ -127,6 +130,6 @@ document.querySelector('#filter').addEventListener('input', (event) => {
 
 {% endfor %}
 
-<div id="no-matches" class="is-hidden mb-5">Ничего не найдено. Попробуйте другой поиск.</div>
+<div id="no-matches" class="is-hidden mb-5">Ничего не найдено. Попробуйте другой запрос.</div>
 
 {% include 'src/_includes/tabs_script.njk' %}

@@ -1,26 +1,28 @@
 ---
-description: 将 djLint 与您喜爱的编辑器集成。使用 Pre-Commit 自动格式化您的模板。在 SublimeText 中进行代码检查（Lint）。
-title: 集成支持
-keywords: 模板检查, 模板格式化, djLint, HTML, 模板语言, 格式化, 检查, 集成支持, 语言服务器, lsp, neovim, helix
+description: 在编辑器中使用 djLint，并通过 pre-commit 运行它。
+title: 集成
+keywords: 模板代码检查工具, 模板格式化工具, djLint, HTML, 模板, 格式化工具, 代码检查工具, 集成, 语言服务器, lsp, neovim, helix
 ---
 
-# 集成支持
+# 集成
 
-有多个为 djLint 开发的编辑器集成方案。
+djLint 已有多种编辑器集成。
 
-无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，并从该环境启动编辑器，或让编辑器指向该环境中的 `djlint`。这样编辑器运行的就是项目固定的版本，结果与 pre-commit 钩子或 CI 一致。
+无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，然后从该环境启动编辑器，或者让编辑器指向该环境中的 `djlint`。这样，编辑器运行的就是项目锁定的版本，结果与 pre-commit 钩子或 CI 中的一致。
 
 ## Visual Studio Code
 
-安装 [djLint 扩展](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)，或者在 VSCodium 中使用 [Open VSX 上的版本](https://open-vsx.org/extension/monosans/djlint)。它会在你的环境中查找 djLint，找不到时使用内置版本，并在你的 djLint 支持时使用语言服务器。
+安装 [djLint 扩展](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)；如果使用 VSCodium，则安装 [Open VSX 上的版本](https://open-vsx.org/extension/monosans/djlint)。它会在你的环境中查找 djLint，找不到时回退到内置的 djLint；如果你的 djLint 支持语言服务器，它就会使用语言服务器。
 
-它的代码位于 [GitHub](https://github.com/djlint/djlint-vscode)。
+其代码托管在 [GitHub](https://github.com/djlint/djlint-vscode) 上。
 
 ## Neovim
 
-djLint 可以在 Neovim 中用作代码检查和格式化工具。### 内置 LSP 客户端（推荐）
+在 Neovim 中，djLint 既可以用作代码检查工具，也可以用作格式化工具。
 
-Neovim 0.11 或更高版本无需插件即可直接使用 djLint 的[语言服务器](#语言服务器)。这样可以在输入时看到带下划线范围的检查结果，并通过 `vim.lsp.buf.format()` 进行格式化：
+### 内置 LSP 客户端（推荐）
+
+Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言服务器)通信，无需任何插件。这样可以在输入时得到检查结果，并带有下划线标出的范围，还能用 `vim.lsp.buf.format()` 格式化：
 
 ```lua
 vim.lsp.config("djlint", {
@@ -31,7 +33,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-要在保存时格式化，请在同一配置中添加：
+要在保存时格式化，请在同一配置中添加以下内容：
 
 ```lua
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -45,11 +47,11 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 ```
 
-请参阅[设置](#设置)。下面的插件则是把 djLint 作为命令运行。
+请参阅[设置](#设置)。
 
 ### conform.nvim 和 nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) 负责格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 负责检查，它们都把 djLint 作为命令运行。检查结果没有下划线范围，并且只有在你让 nvim-lint 检查时才会出现。
+[conform.nvim](https://github.com/stevearc/conform.nvim) 负责格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 负责代码检查，两者都以命令的形式运行 djLint。检查结果没有下划线标出的范围，并且只有在你让 nvim-lint 执行检查时才会出现。
 
 ```lua
 require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
@@ -62,7 +64,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub 仓库](https://github.com/nvimtools/none-ls.nvim)
 - [代码检查](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
-- [代码格式化](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
+- [格式化](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
 :::
 
 ### efm-langserver
@@ -71,8 +73,8 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub 仓库](https://github.com/mattn/efm-langserver)
 
-1. 通过 Mason 安装 efm-langserver 和 djLint：`:MasonInstall efm djlint`
-1. 将 `htmldjango` 添加到 `filetypes`。
+1. 通过 Mason 使用 `:MasonInstall efm djlint` 安装 efm-langserver 和 djLint
+1. 将 `htmldjango` 添加到 `filetypes` 中。
 1. 创建格式化配置：
 
 ```lua
@@ -82,9 +84,9 @@ local djlint = {
 }
 ```
 
-1. 使用 `htmldjango = { djlint }` 将语言连接到格式化工具。
+1. 通过 `htmldjango = { djlint }` 将语言与格式化工具关联起来。
 
-示例配置：
+配置示例：
 
 ```lua
 local djlint = {
@@ -110,26 +112,26 @@ require("lspconfig").efm.setup({
 
 ::: content
 
-- [npm package](https://www.npmjs.com/package/coc-htmldjango)
+- [npm 包](https://www.npmjs.com/package/coc-htmldjango)
 :::
 
 ## JetBrains IDE
 
-在 PyCharm 和其他基于 IntelliJ 的 IDE 中，使用免费的 [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) 插件：
+在 PyCharm 以及其他基于 IntelliJ 的 IDE 中，请使用免费的 [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) 插件：
 
 1. 从 Marketplace 安装 LSP4IJ。
-1. 打开 LSP Consoles 工具窗口，添加新的语言服务器。
-1. 在 **Server** 选项卡中，将名称设为 `djLint`，命令设为 `djlint --lsp`；如果 `djlint` 不在 PATH 中，请使用项目虚拟环境中的完整路径。
-1. 在 **Mappings** 选项卡中，为模板添加文件名模式，例如 `*.html`。如果项目配置未设置 [profile](/zh/docs/configuration/#profile)，对于 Django 项目，请将语言 ID 设为 `htmldjango`，以便选择正确的配置。
-1. 在 **Configuration** 选项卡中，可以用 JSON 在 `djlint` 键下填写[设置](#设置)。
+1. 打开 LSP Consoles 工具窗口，添加一个新的语言服务器。
+1. 在 **Server** 选项卡中，将名称设为 `djLint`，将命令设为 `djlint --lsp`；如果它不在 PATH 中，请使用项目虚拟环境中 `djlint` 的完整路径。
+1. 在 **Mappings** 选项卡中，为你的模板添加文件名模式，例如 `*.html`。如果项目的配置中没有设置[预设](/zh/docs/configuration/#profile)，对于 Django 项目，请将语言 ID 设为 `htmldjango`，以便选中正确的预设。
+1. 在 **Configuration** 选项卡中，可以以 JSON 格式在 `djlint` 键下填写[设置](#设置)。
 
-检查结果会显示在编辑器中，**Reformat Code** 也可以对这些文件使用服务器。
+检查结果会显示在编辑器中，并且 **Reformat Code** 可以对已映射的文件使用该服务器。
 
 ## Sublime Text
 
 ### LSP（推荐）
 
-[LSP](https://packagecontrol.io/packages/LSP) 包运行[语言服务器](#语言服务器)，可在输入时显示检查结果并进行格式化。
+[LSP](https://packagecontrol.io/packages/LSP) 包会运行[语言服务器](#语言服务器)，从而在输入时提供检查结果，并支持格式化。
 
 运行 **Preferences: LSP Server Configurations** 并添加：
 
@@ -139,7 +141,7 @@ require("lspconfig").efm.setup({
 
 ### SublimeLinter
 
-djLint 也可用作 SublimeText 的代码检查插件。你可以通过 [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) 安装。
+djLint 可以用作 Sublime Text 的 Linter 插件，可通过 [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) 安装。
 
 ::: content
 
@@ -148,7 +150,7 @@ djLint 也可用作 SublimeText 的代码检查插件。你可以通过 [package
 3. 安装 SublimeLinter-contrib-djlint
 :::
 
-确保 djLint 安装在你的全局 python 中，或你的 `PATH` 变量中。
+请确保 djLint 安装在全局 Python 中，或者位于 `PATH` 上。
 
 ## Helix
 
@@ -174,17 +176,17 @@ language-servers = ["djlint", "vscode-html-language-server"]
                '((html-mode web-mode) . ("djlint" "--lsp"))))
 ```
 
-然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 用于格式化。
+然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 可以格式化该模板。
 
 ## 语言服务器
 
-`djlint --lsp` 通过 stdio 将 djLint 作为语言服务器运行。它会持续运行，因此编辑器可以在输入时获得检查结果，并且格式化文档时无需每次启动新进程。
+`djlint --lsp` 会通过 stdio 将 djLint 作为语言服务器运行。它会持续运行，因此编辑器可以在你输入时获得检查结果，格式化文档时也无需每次都启动一个进程。
 
-它报告检查结果并格式化整个文档，不需要额外的软件包。 其他支持 LSP 的编辑器都可以用同一命令运行它。
+它会报告检查结果，并能格式化整个文档。它不需要额外的包。任何支持 LSP 的编辑器都可以用同一条命令运行它。
 
 ### 设置
 
-服务器像命令行一样读取项目的[配置](/zh/docs/configuration/)，从每个文件所在的文件夹向上查找。编辑器的设置优先于它，但与命令行一样，只能开启选项或设置值：`false` 不会关闭项目已开启的选项。设置名称与[命令行选项](/zh/docs/configuration/)相同，可使用下划线或 camelCase，逗号分隔的值可以写成列表：
+服务器读取项目[配置](/zh/docs/configuration/)的方式与命令行相同：从每个文件所在的文件夹开始向上查找。编辑器中的设置优先于项目配置，但与命令行一样，它们只能开启某个选项或设置某个值：`false` 无法关闭项目中开启的选项。设置使用[命令行选项](/zh/docs/configuration/)的名称，可以写成下划线形式或 camelCase 形式；以逗号分隔的值可以写成列表：
 
 ```lua
 vim.lsp.config("djlint", {
@@ -192,40 +194,40 @@ vim.lsp.config("djlint", {
 })
 ```
 
-服务器通过 `workspace/configuration` 请求 `djlint` 部分。无法响应的编辑器可以在 `initializationOptions` 中发送相同的键。
+服务器通过 `workspace/configuration` 请求 `djlint` 部分。无法响应该请求的编辑器，可以在 `initializationOptions` 中发送相同的键。
 
-有两个设置没有对应的命令行选项：
+有两项设置没有对应的命令行选项：
 
-- `use_editor_indentation`：使用编辑器的制表符大小而不是 `indent` 进行格式化。
-- `python_rules`：设为 `false` 时跳过带有 `python_module` 的自定义规则，这样不会运行项目中的代码。
+- `use_editor_indentation`：使用编辑器的制表符大小进行格式化，而不是使用 `indent`。
+- `python_rules`：设为 `false` 可跳过带有 `python_module` 的自定义规则，从而避免运行项目中的代码。
 
-djLint 按以下顺序取第一个设置了 `profile` 的来源：
+djLint 会从以下来源中第一个设置了 `profile` 的来源获取它：
 
 1. 编辑器的设置。
 1. 项目的配置。
-1. 文档的语言：例如 `htmldjango` 使用 `django` 配置。
+1. 文档的语言：例如，`htmldjango` 会使用 `django` 预设。
 
-如果都没有设置，djLint 将不使用任何配置运行，与命令行相同。最简单的做法是在项目配置中设置 `profile`：它适用于所有编辑器，无需设置语言 ID。
+如果以上都没有设置，它会像在命令行中一样，不使用任何预设运行。在项目配置中设置 `profile` 是最简单的做法：它在所有编辑器中都有效，也无需设置语言 ID。
 
 ### 工作方式
 
-- 检查结果会在输入短暂停顿后到达。支持拉取诊断的编辑器会主动请求，其他编辑器则由服务器推送。
-- `exclude`、`extend_exclude` 和 `use_gitignore` 对打开的文档生效。被排除的文档没有检查结果，也不会被格式化。
-- 如果编辑器支持监视文件，服务器会在 `pyproject.toml`、`djlint.toml`、`.djlint.toml`、`.djlintrc`、`.djlint_rules.yaml`、`.editorconfig` 或 `.gitignore` 变化时重新加载配置；否则在打开或保存文档时重新加载。`configuration` 或 `rules` 指定的文件会在打开或保存文档时重新读取。修改自定义规则的 `python_module` 代码后需要重启。
-- 服务器一次只做一件事，因此较慢的规则会延迟后续操作。
+- 检查结果会在你停止输入片刻后出现。支持拉取诊断（pull diagnostics）的编辑器会主动请求结果，其他编辑器则由服务器推送。
+- `exclude`、`extend_exclude` 和 `use_gitignore` 对已打开的文档同样生效。被排除的文档不会有检查结果，也不会被格式化。
+- 当 `pyproject.toml`、`djlint.toml`、`.djlint.toml`、`.djlintrc`、`.djlint_rules.yaml`、`.editorconfig` 或 `.gitignore` 发生变化时，如果编辑器能够监视文件，服务器就会重新加载配置；否则会在打开或保存文档时重新加载。`configuration` 或 `rules` 指定的文件会在打开或保存文档时重新读取。修改自定义规则的 `python_module` 代码后，需要重启服务器。
+- 运行缓慢的规则会拖慢其后的处理，因为服务器一次只做一件事。
 
 ## GitHub Actions
 
-在 GitHub Actions 工作流中，djLint 会将每条结果输出为注解（annotation），直接显示在拉取请求的差异视图中。无需任何配置：djLint 会自动识别工作流并切换输出格式。
+在 GitHub Actions 工作流中，djLint 会把每条检查结果报告为一个注解（annotation），使其以内联方式显示在拉取请求的差异中。无需任何配置：djLint 会检测到工作流并自动切换输出方式。
 
 ```yaml
 - run: pip install djlint
 - run: djlint . --lint --profile django
 ```
 
-使用 `--no-github-output` 可恢复普通的控制台输出，使用 `--github-output` 可在 Actions 之外强制输出注解。
+使用 `--no-github-output` 可以改为输出普通的控制台格式，使用 `--github-output` 则可以在 Actions 之外强制输出注解。
 
-注解只属于某一个拉取请求。若要把结果保存在仓库的 Security 标签页中，并保留多次运行的历史记录，可以将其输出为 SARIF 并上传该文件：
+注解只属于某一个拉取请求。如果想把检查结果保留在仓库的 Security 选项卡中，并保留各次运行的历史记录，请将其写成 SARIF 格式并上传该文件：
 
 ```yaml
 - run: djlint . --lint --sarif > djlint.sarif
@@ -235,39 +237,39 @@ djLint 按以下顺序取第一个设置了 `profile` 的来源：
     sarif_file: djlint.sarif
 ```
 
-上传步骤需要在 job 或 workflow 上授予 `security-events: write` 权限。
+上传步骤需要在作业或工作流上授予 `security-events: write` 权限。
 
-`--sarif` 只向 stdout 输出一个 SARIF 2.1.0 文档，不输出其他内容，因此可以像上面那样重定向到文件。文档列出所有已启用的规则及其文档链接，每条结果都带有行号和列号；配合 `--check` 使用时，需要重新格式化的文件会归入 `formatting` 规则下报告。Azure DevOps、GitLab 和大多数编辑器都能读取这种格式。
+`--sarif` 只会向 stdout 写入一个 SARIF 2.1.0 文档，不输出其他任何内容，因此可以像上面那样重定向。其中会列出每条已启用的规则及其文档链接，每条检查结果都带有行号和列号；配合 `--check` 使用时，需要重新格式化的文件会在 `formatting` 规则下报告。Azure DevOps、GitLab 以及大多数编辑器都能读取这种格式。
 
 ## Pre-Commit
 
-djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检查工具和格式化工具。
+djLint 可以用作 [pre-commit](https://pre-commit.com) 钩子，既能做代码检查，也能做格式化。
 
-该代码仓库为特定的 djLint 配置文件（profile）提供了多个预先配置好的 hook（这些 hook 只是预先设置了 `--profile` 参数，并告知 pre-commit 需要查找哪些文件扩展名）：
+该仓库为特定的 djLint 预设提供了多个预先配置好的钩子（它们只是预先设置了 `--profile` 参数，并告诉 pre-commit 要查找哪些文件扩展名）：
 
 ::: content
 
-- 使用 `djlint` 进行代码检查并使用 `djlint-reformat` 进行代码格式化。
-  在未设置 `--profile` 时会查找 `*.html`。
-- 使用 `djlint-django` 和 `djlint-reformat-django`。
-  这时会查找 `*.html` 并设置 `--profile=django`。
-- 使用 `djlint-jinja` 和 `djlint-reformat-jinja`。
-  这时会查找 `*.j2` 、 `*.jinja` 或 `*.jinja2` 并设置 `--profile=jinja`。
-- 使用 `djlint-nunjucks` 和 `djlint-reformat-nunjucks`。
-  这时会查找 `*.njk` 并设置 `--profile=nunjucks`。
-- 使用 `djlint-handlebars` 和 `djlint-reformat-handlebars`。
-  这时会查找 `*.hbs` 并设置 `--profile=handlebars`。
-- 使用 `djlint-liquid` 和 `djlint-reformat-liquid`。
-  这时会查找 `*.html` 并设置 `--profile=liquid`。
-- 使用 `djlint-golang` 和 `djlint-reformat-golang`。
-  这时会查找 `*.gotmpl` 并设置 `--profile=golang`。
-- 使用 `djlint-tera` 和 `djlint-reformat-tera`。
-  这时会查找 `*.html` 并设置 `--profile=tera`。
-- 使用 `djlint-askama` 和 `djlint-reformat-askama`。
-  这时会查找 `*.html` 并设置 `--profile=askama`。
+- `djlint` 用于代码检查，`djlint-reformat` 用于格式化
+  查找匹配 `*.html` 的文件，不设置 `--profile`。
+- `djlint-django` 和 `djlint-reformat-django`
+  查找匹配 `*.html` 的文件，并设置 `--profile=django`。
+- `djlint-jinja` 和 `djlint-reformat-jinja`
+  查找匹配 `*.j2`、`*.jinja` 或 `*.jinja2` 的文件，并设置 `--profile=jinja`。
+- `djlint-nunjucks` 和 `djlint-reformat-nunjucks`
+  查找匹配 `*.njk` 的文件，并设置 `--profile=nunjucks`。
+- `djlint-handlebars` 和 `djlint-reformat-handlebars`
+  查找匹配 `*.hbs` 的文件，并设置 `--profile=handlebars`。
+- `djlint-liquid` 和 `djlint-reformat-liquid`
+  查找匹配 `*.html` 的文件，并设置 `--profile=liquid`。
+- `djlint-golang` 和 `djlint-reformat-golang`
+  查找匹配 `*.gotmpl` 的文件，并设置 `--profile=golang`。
+- `djlint-tera` 和 `djlint-reformat-tera`
+  查找匹配 `*.html` 的文件，并设置 `--profile=tera`。
+- `djlint-askama` 和 `djlint-reformat-askama`
+  查找匹配 `*.html` 的文件，并设置 `--profile=askama`。
 :::
 
-请注意，这些预定义的 hook 在它们接受的输入方面有时会过于保守（您的模板可能使用了不同的扩展名），因此 pre-commit 明确允许您覆盖这些预定义的选项。有关额外的配置信息，请参阅 [pre-commit 的文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。
+请注意，这些预定义钩子接受的输入有时过于保守（你的模板可能使用了不同的扩展名），因此 pre-commit 明确允许你覆盖其中任何预定义选项。更多配置请参阅 [pre-commit 文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。
 
 ### 默认 Django 示例
 
@@ -280,7 +282,7 @@ repos:
       - id: djlint-django
 ```
 
-### 使用 .html 后缀而非 .hbs 后缀的 Handlebars
+### 使用 .html 而非 .hbs 扩展名的 Handlebars
 
 ```yaml
 repos:
@@ -295,16 +297,16 @@ repos:
         types_or: ["html"]
 ```
 
-您可以使用 `files` 或 `exclude` 参数将每个 hook 限制在其自身的目录范围内，从而允许您在同一个代码仓库中支持多种模板语言。
+可以使用 `files` 或 `exclude` 参数把每个钩子限定在各自的目录中，从而在同一个仓库中支持多种模板语言。
 
 ## MegaLinter
 
-djLint 已集成到 [MegaLinter](https://megalinter.io) 的百余个代码检查工具中。
+djlint 已原生内置于 [MegaLinter](https://megalinter.io) 的 100 多个代码检查工具之中
 
-运行 `npx mega-linter-runner --install` 并根据提示来安装它。
+要安装它，只需运行 `npx mega-linter-runner --install` 并按照说明操作
 
 ::: content
 
 - [GitHub 仓库](https://github.com/oxsecurity/megalinter)
-- [djlint - MegaLinter 文档](https://megalinter.io/latest/descriptors/html_djlint/)
+- [MegaLinter 文档中的 djlint](https://megalinter.io/latest/descriptors/html_djlint/)
 :::

@@ -1,7 +1,7 @@
 ---
-title: Twig Template Linter and Formatter
-keywords: twig, djlint, twig template linter, twig template formatter, format twig templates, pebble, pebble template linter
-description: djLint - это линтер шаблонов twig и форматировщик шаблонов twig! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
+title: Линтер и форматер шаблонов Twig
+keywords: twig, djlint, линтер шаблонов twig, форматер шаблонов twig, форматирование шаблонов twig, pebble, линтер шаблонов pebble
+description: djLint проверяет и форматирует шаблоны Twig. Задайте профиль nunjucks, чтобы правила и форматирование подходили для них.
 tool: nunjucks
 ---
 
@@ -13,18 +13,18 @@ tool: nunjucks
 
 Шаблоны Pebble (Java) совместимы с Twig, поэтому используйте для них этот же профиль.
 
-#### Использование командной строки
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile={{ tool }}
 ```
 
-#### Или используйте файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
 {% include 'src/_includes/profile_config.md' %}
 
 <div class="box notification is-info is-light">
-    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Ознакомьтесь с руководством по настройке, чтобы узнать обо всех возможностях!</a></div>
+    <span class="icon is-large"><i class="fas fa-2x fa-circle-arrow-right"></i></span><div class="my-auto ml-3 is-inline-block"><a href="{{ "lang_code_url" | i18n }}/docs/configuration/">Обо всех параметрах читайте в руководстве по конфигурации!</a></div>
 </div>

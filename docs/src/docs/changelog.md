@@ -35,7 +35,7 @@ Changelog is now included in the [release](https://github.com/djlint/djLint/rele
 
 ::: content
 
-- Bug fixes [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
+- Bug fixes [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/197)
 - Added `--warn` flag to return return errors as warnings.
 :::
 
