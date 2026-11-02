@@ -114,7 +114,7 @@ První písmeno kódu má tento význam:
 
 ### Podrobnosti pravidel
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ Správně:
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Přidávání pravidel
 

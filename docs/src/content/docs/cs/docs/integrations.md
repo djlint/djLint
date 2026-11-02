@@ -125,13 +125,7 @@ Balíček [LSP](https://packagecontrol.io/packages/LSP) spouští [jazykový ser
 Spusťte **Preferences: LSP Server Configurations** a přidejte:
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

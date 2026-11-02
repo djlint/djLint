@@ -9,7 +9,7 @@ sidebar:
 
 Для обычного HTML:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
@@ -18,7 +18,7 @@ sidebar:
 
 или в виде комментария:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
@@ -27,7 +27,7 @@ sidebar:
 
 или в виде длинного комментария:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
@@ -36,7 +36,7 @@ sidebar:
 
 или в виде комментария в стиле golang:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
@@ -45,7 +45,7 @@ sidebar:
 
 или в виде комментария в стиле handlebars:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -56,7 +56,7 @@ sidebar:
 
 Можно игнорировать и отдельные правила линтера: для этого укажите имя правила в открывающем теге игнорируемого блока.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

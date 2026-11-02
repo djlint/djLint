@@ -42,7 +42,7 @@ djLint is not an html parser or syntax validator.
 
 Here's a blob of HTML that's in desperate need of attention -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ Here's a blob of HTML that's in desperate need of attention -
 
 It looks a bit better now... we can read it :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ It looks a bit better now... we can read it :)
 
 Prefer Prettier-style attributes? Enable the `single_attribute_per_line` option:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

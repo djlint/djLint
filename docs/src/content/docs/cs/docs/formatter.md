@@ -42,7 +42,7 @@ djLint není parser HTML ani validátor syntaxe.
 
 Tady je kus HTML, který zoufale potřebuje péči:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ Tady je kus HTML, který zoufale potřebuje péči:
 
 Teď to vypadá o něco lépe… dá se to přečíst :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ Teď to vypadá o něco lépe… dá se to přečíst :)
 
 Dáváte přednost atributům ve stylu Prettier? Zapněte možnost `single_attribute_per_line`:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

@@ -114,7 +114,7 @@ Pierwsza litera kodu oznacza:
 
 ### Szczegóły reguł
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ Dobrze:
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Dodawanie reguł
 

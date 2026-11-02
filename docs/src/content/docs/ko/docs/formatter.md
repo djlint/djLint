@@ -42,7 +42,7 @@ djLint는 HTML 파서나 구문 검사기가 아닙니다.
 
 손질이 절실하게 필요한 HTML 덩어리입니다.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ djLint는 HTML 파서나 구문 검사기가 아닙니다.
 
 이제 조금 나아 보입니다... 읽을 수는 있겠네요 :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ djLint는 HTML 파서나 구문 검사기가 아닙니다.
 
 Prettier 스타일의 속성 배치를 선호하나요? `single_attribute_per_line` 옵션을 켜세요.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

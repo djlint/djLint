@@ -9,7 +9,7 @@ Kód lze ignorovat tak, že ho obalíte značkami `djlint`:
 
 Pro obyčejné HTML:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
@@ -18,7 +18,7 @@ Pro obyčejné HTML:
 
 nebo jako komentář:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
@@ -27,7 +27,7 @@ nebo jako komentář:
 
 nebo jako dlouhý komentář:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
@@ -36,7 +36,7 @@ nebo jako dlouhý komentář:
 
 nebo jako komentář ve stylu golang:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
@@ -45,7 +45,7 @@ nebo jako komentář ve stylu golang:
 
 nebo jako komentář ve stylu handlebars:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -56,7 +56,7 @@ nebo jako komentář ve stylu handlebars:
 
 Konkrétní pravidla linteru lze ignorovat také tak, že název pravidla přidáte do otevírací značky ignorovaného bloku.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

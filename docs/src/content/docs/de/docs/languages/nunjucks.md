@@ -23,11 +23,11 @@ Konfigurieren Sie djLint in der Datei `pyproject.toml`, `djlint.toml` / `.djlint
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="nunjucks"
+profile = "nunjucks"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="nunjucks"
+profile = "nunjucks"
 ```
 
 ```json title=".djlintrc"

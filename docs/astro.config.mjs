@@ -1,16 +1,14 @@
 import { unified } from "@astrojs/markdown-remark";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+
 import djlint from "../package.json" with { type: "json" };
 
 // Pre-commit snippets pin the release the docs were built from.
 function remarkDjlintVersion() {
   const walk = (node) => {
     if (typeof node.value === "string") {
-      node.value = node.value.replaceAll(
-        "{{ djlint_version }}",
-        djlint.version,
-      );
+      node.value = node.value.replaceAll("{{ djlint_version }}", djlint.version);
     }
     node.children?.forEach(walk);
   };
@@ -34,10 +32,7 @@ export default defineConfig({
       head: [
         {
           tag: "link",
-          attrs: {
-            rel: "apple-touch-icon",
-            href: "/static/img/apple-touch-icon.png",
-          },
+          attrs: { rel: "apple-touch-icon", href: "/static/img/apple-touch-icon.png" },
         },
       ],
       defaultLocale: "root",
@@ -58,26 +53,13 @@ export default defineConfig({
         tr: { label: "Türkçe" },
       },
       social: [
-        {
-          icon: "github",
-          label: "GitHub",
-          href: "https://github.com/djlint/djlint",
-        },
-        {
-          icon: "discord",
-          label: "Discord",
-          href: "https://discord.gg/taghAqebzU",
-        },
+        { icon: "github", label: "GitHub", href: "https://github.com/djlint/djlint" },
+        { icon: "discord", label: "Discord", href: "https://discord.gg/taghAqebzU" },
       ],
-      editLink: {
-        baseUrl: "https://github.com/djlint/djLint/edit/master/docs/",
-      },
+      editLink: { baseUrl: "https://github.com/djlint/djLint/edit/master/docs/" },
       lastUpdated: true,
       customCss: ["./src/styles/custom.css"],
-      components: {
-        Header: "./src/components/Header.astro",
-        Hero: "./src/components/Hero.astro",
-      },
+      components: { Header: "./src/components/Header.astro", Hero: "./src/components/Hero.astro" },
       expressiveCode: {
         themes: ["tokyo-night", "github-light"],
         styleOverrides: {

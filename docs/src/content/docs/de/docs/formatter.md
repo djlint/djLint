@@ -42,7 +42,7 @@ djLint ist weder ein HTML-Parser noch ein Syntaxvalidator.
 
 Hier ist ein Haufen HTML, der dringend etwas Zuwendung braucht:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ Hier ist ein Haufen HTML, der dringend etwas Zuwendung braucht:
 
 Jetzt sieht es schon etwas besser aus … man kann es lesen :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ Jetzt sieht es schon etwas besser aus … man kann es lesen :)
 
 Sie bevorzugen Attribute im Stil von Prettier? Aktivieren Sie die Option `single_attribute_per_line`:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

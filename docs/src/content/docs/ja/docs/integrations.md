@@ -125,13 +125,7 @@ PyCharm やその他の IntelliJ ベースの IDE では、無料の [LSP4IJ](ht
 **Preferences: LSP Server Configurations** を実行し、次を追加します：
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

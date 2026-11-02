@@ -30,10 +30,7 @@ def test_profile() -> None:
     assert config.ignore_case is True
     assert config.include == "H014,H015"
     assert config.indent == 3 * " "
-    assert (
-        config.linter_output_format
-        == "{code} {message} {match} {filename}:{line}"
-    )
+    assert config.linter_output_format == "{code} {message} {match} {filename}:{line}"
     assert config.max_attribute_length == 10
     assert config.max_blank_lines == 5
     assert config.max_line_length == 120
@@ -47,10 +44,7 @@ def test_profile() -> None:
     assert config.js_config == {"indent_size": 5}
     assert config.css_config == {"indent_size": 5}
 
-    assert config.per_file_ignores == {
-        "file.html": "H026,H025",
-        "file_two.html": "H001",
-    }
+    assert config.per_file_ignores == {"file.html": "H026,H025", "file_two.html": "H001"}
 
 
 def test_cli_takes_precedence() -> None:

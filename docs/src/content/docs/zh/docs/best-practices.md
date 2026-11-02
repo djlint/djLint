@@ -32,9 +32,7 @@ djLint 会把较长的属性格式化为多行，属性中保留下来的空白�
 推荐这种写法：
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

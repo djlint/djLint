@@ -45,14 +45,8 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected", "limit"), test_data)
-def test_max_line_length_attributes(
-    source: str, expected: str, limit: int
-) -> None:
-    config = config_builder({
-        "profile": "jinja",
-        "indent": 2,
-        "max_line_length": limit,
-    })
+def test_max_line_length_attributes(source: str, expected: str, limit: int) -> None:
+    config = config_builder({"profile": "jinja", "indent": 2, "max_line_length": limit})
 
     output = formatter(config, source)
 

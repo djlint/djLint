@@ -25,11 +25,11 @@ djlint /path/to/templates --profile=jinja
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="jinja"
+profile = "jinja"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="jinja"
+profile = "jinja"
 ```
 
 ```json title=".djlintrc"

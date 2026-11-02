@@ -114,7 +114,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 ### Описание правил
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ H005 требует `lang` у `<html>`, но значение вроде `lang="
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Добавление правил
 

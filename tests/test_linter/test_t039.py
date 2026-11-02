@@ -70,19 +70,11 @@ django_test_data = [
         ]),
         id="the garbled tag ends at the next opener, so the endif closes nothing",
     ),
-    pytest.param(
-        ('{% url "home" %}\n{{ user.name }}\n'), ([]), id="closed_tags"
-    ),
+    pytest.param(('{% url "home" %}\n{{ user.name }}\n'), ([]), id="closed_tags"),
     pytest.param(('{% trans "a}b" %}\n'), ([]), id="brace_inside_string"),
-    pytest.param(
-        ("{% verbatim %}\n{% broken\n{% endverbatim %}\n"),
-        ([]),
-        id="inside_verbatim",
-    ),
+    pytest.param(("{% verbatim %}\n{% broken\n{% endverbatim %}\n"), ([]), id="inside_verbatim"),
     pytest.param(("<p>plain</p>\n"), ([]), id="no_template_syntax"),
-    pytest.param(
-        ('{% set a = {"x": {"y": 1}} %}\n'), ([]), id="nested_mapping"
-    ),
+    pytest.param(('{% set a = {"x": {"y": 1}} %}\n'), ([]), id="nested_mapping"),
     pytest.param(
         ("{% include 'x' with {'attr': {'class': 'y'}} %}\n"),
         ([
@@ -95,11 +87,7 @@ django_test_data = [
         ]),
         id="nested_mapping_in_include",
     ),
-    pytest.param(
-        ('{% set a = {"a": {"b": {"c": 1}}} %}\n'),
-        ([]),
-        id="deeply_nested_mapping",
-    ),
+    pytest.param(('{% set a = {"a": {"b": {"c": 1}}} %}\n'), ([]), id="deeply_nested_mapping"),
     pytest.param(
         ("{% if x }}\n"),
         ([
@@ -116,9 +104,7 @@ django_test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), django_test_data)
-def test_django(
-    source: str, expected: list[LintError], django_config: Config
-) -> None:
+def test_django(source: str, expected: list[LintError], django_config: Config) -> None:
     filename = "test.html"
     output = linter(django_config, source, filename, filename)
 
@@ -132,16 +118,10 @@ def test_django(
 
 
 handlebars_test_data = [
-    pytest.param(
-        ("{{!-- {{ note --}}\n{{ name }}\n"), ([]), id="comment_tags_skipped"
-    ),
+    pytest.param(("{{!-- {{ note --}}\n{{ name }}\n"), ([]), id="comment_tags_skipped"),
     pytest.param(("{{#if a}}\n{{ b }}\n{{/if}}\n"), ([]), id="closed_tags"),
     pytest.param(("{{{{raw}}}}{{{{/raw}}}}\n"), ([]), id="raw_block"),
-    pytest.param(
-        ("{{{{raw}}}}{{#if x}}{{/if}}{{{{/raw}}}}\n"),
-        ([]),
-        id="raw_block_with_content",
-    ),
+    pytest.param(("{{{{raw}}}}{{#if x}}{{/if}}{{{{/raw}}}}\n"), ([]), id="raw_block_with_content"),
     pytest.param(
         ("{{#if a}\n"),
         ([
@@ -158,9 +138,7 @@ handlebars_test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), handlebars_test_data)
-def test_handlebars(
-    source: str, expected: list[LintError], handlebars_config: Config
-) -> None:
+def test_handlebars(source: str, expected: list[LintError], handlebars_config: Config) -> None:
     filename = "test.html"
     output = linter(handlebars_config, source, filename, filename)
 

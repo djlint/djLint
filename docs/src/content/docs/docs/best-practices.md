@@ -32,9 +32,7 @@ djLint will format long attributes onto multiple lines, and the whitespace saved
 This pattern is recommended:
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

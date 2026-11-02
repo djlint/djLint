@@ -125,13 +125,7 @@ Bulgular editörde görünür ve **Reformat Code**, eşlenen dosyalar için sunu
 **Preferences: LSP Server Configurations** komutunu çalıştırın ve şunu ekleyin:
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

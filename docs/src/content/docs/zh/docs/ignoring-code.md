@@ -9,7 +9,7 @@ sidebar:
 
 普通 HTML：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
@@ -18,7 +18,7 @@ sidebar:
 
 或者写成注释：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
@@ -27,7 +27,7 @@ sidebar:
 
 或者写成长注释：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
@@ -36,7 +36,7 @@ sidebar:
 
 或者写成 Go 风格的注释：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
@@ -45,7 +45,7 @@ sidebar:
 
 或者写成 Handlebars 风格的注释：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -56,7 +56,7 @@ sidebar:
 
 也可以在忽略块的起始标签中写上规则名称，从而只忽略特定的代码检查规则。
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

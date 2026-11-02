@@ -352,10 +352,7 @@
     "usage": [
       { "name": "pyproject.toml", "value": "extension=\"html.dj\"" },
       { "name": ".djlintrc", "value": "\"extension\": \"html.dj\"" },
-      {
-        "name": "cli",
-        "value": "--extension \"html.dj\"\n# or\n-e \"html.dj\""
-      }
+      { "name": "cli", "value": "--extension \"html.dj\"\n# or\n-e \"html.dj\"" }
     ]
   },
   {
@@ -431,18 +428,9 @@
     },
     "tags": ["formatter"],
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "custom_html=\"mjml,simple-greeting,mj-\\\\w+\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"custom_html\": \"mjml,simple-greeting,mj-\\\\w+\""
-      },
-      {
-        "name": "cli",
-        "value": "--custom-html \"mjml,simple-greeting,mj-\\\\w+\""
-      }
+      { "name": "pyproject.toml", "value": "custom_html=\"mjml,simple-greeting,mj-\\\\w+\"" },
+      { "name": ".djlintrc", "value": "\"custom_html\": \"mjml,simple-greeting,mj-\\\\w+\"" },
+      { "name": "cli", "value": "--custom-html \"mjml,simple-greeting,mj-\\\\w+\"" }
     ]
   },
   {
@@ -492,14 +480,8 @@
       "tr": "Varsayılan hariç tutma yollarını geçersiz kılar."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "exclude=\".venv,venv,.tox,.eggs,...\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"exclude\": \".venv,venv,.tox,.eggs,...\""
-      },
+      { "name": "pyproject.toml", "value": "exclude=\".venv,venv,.tox,.eggs,...\"" },
+      { "name": ".djlintrc", "value": "\"exclude\": \".venv,venv,.tox,.eggs,...\"" },
       { "name": "cli", "value": "--exclude \".venv,venv,.tox,.eggs,...\"" }
     ]
   },
@@ -550,18 +532,9 @@
       "tr": "`{% <tag> ... %}` etiket gruplarından sonra fazladan bir boş satır ekler. Bir bloğun sonuna hiçbir zaman boş satır eklenmez."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "blank_line_after_tag=\"load,extends,include\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"blank_line_after_tag\": \"load,extends,include\""
-      },
-      {
-        "name": "cli",
-        "value": "--blank-line-after-tag \"load,extends,include\""
-      }
+      { "name": "pyproject.toml", "value": "blank_line_after_tag=\"load,extends,include\"" },
+      { "name": ".djlintrc", "value": "\"blank_line_after_tag\": \"load,extends,include\"" },
+      { "name": "cli", "value": "--blank-line-after-tag \"load,extends,include\"" }
     ]
   },
   {
@@ -585,18 +558,9 @@
       "tr": "`{% <tag> ... %}` etiket gruplarından önce fazladan bir boş satır ekler. Dosyanın ya da bir bloğun başına veya benzer etiketlerin arasına hiçbir zaman boş satır eklenmez."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "blank_line_before_tag=\"load,extends,include\""
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"blank_line_before_tag\": \"load,extends,include\""
-      },
-      {
-        "name": "cli",
-        "value": "--blank-line-before-tag \"load,extends,include\""
-      }
+      { "name": "pyproject.toml", "value": "blank_line_before_tag=\"load,extends,include\"" },
+      { "name": ".djlintrc", "value": "\"blank_line_before_tag\": \"load,extends,include\"" },
+      { "name": "cli", "value": "--blank-line-before-tag \"load,extends,include\"" }
     ]
   },
   {
@@ -620,14 +584,8 @@
       "tr": "Çok satırlı etiketlerin içeriğini son özniteliğin satırına sıkıştırmaz."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "line_break_after_multiline_tag=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"line_break_after_multiline_tag\": true"
-      },
+      { "name": "pyproject.toml", "value": "line_break_after_multiline_tag=true" },
+      { "name": ".djlintrc", "value": "\"line_break_after_multiline_tag\": true" },
       { "name": "cli", "value": "--line-break-after-multiline-tag" }
     ]
   },
@@ -782,14 +740,8 @@
       "tr": "Biçimlendirici, etiket özniteliklerinin içindeki şablon sözdizimini biçimlendirmeye çalışır. Varsayılan olarak devre dışıdır."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "format_attribute_template_tags=true"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"format_attribute_template_tags\": true"
-      },
+      { "name": "pyproject.toml", "value": "format_attribute_template_tags=true" },
+      { "name": ".djlintrc", "value": "\"format_attribute_template_tags\": true" },
       { "name": "cli", "value": "--format-attribute-template-tags" }
     ]
   },
@@ -1052,10 +1004,7 @@
       "tr": "djlint'in kaynağı olarak kullanılacak yolların listesi. Bu seçenek belirtildiğinde komut satırındaki kaynak, stdin kullanılıyormuş gibi `-` olmalıdır. `--stdin-filename` ile `-` her durumda stdin anlamına gelir."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "[tool.djlint]\nfiles=[\"index.html\"]\n"
-      },
+      { "name": "pyproject.toml", "value": "[tool.djlint]\nfiles=[\"index.html\"]\n" },
       { "name": ".djlintrc", "value": "\"files\": [\n    \"index.html\"\n]" },
       { "name": "cli", "value": "index.html" }
     ]
@@ -1081,10 +1030,7 @@
       "tr": "Bilinen html etiketlerinin büyük/küçük harf yazımını düzeltmeye çalışmaz. Bu seçenekle `H009` ve `H010` bildirilmez."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "[tool.djlint]\nignore_case=true\n"
-      },
+      { "name": "pyproject.toml", "value": "[tool.djlint]\nignore_case=true\n" },
       { "name": ".djlintrc", "value": "\"ignore_case\": true" },
       { "name": "cli", "value": "--ignore-case" }
     ]
@@ -1171,14 +1117,8 @@
       "tr": "Bir JavaScript/JSON nesnesinin biçimlendirilmesi için gereken en az özellik sayısı. Varsayılan değer 2'dir. Daha az özelliğe sahip nesneler tek satırda kalır."
     },
     "usage": [
-      {
-        "name": "pyproject.toml",
-        "value": "format_attribute_js_json_min_props=3"
-      },
-      {
-        "name": ".djlintrc",
-        "value": "\"format_attribute_js_json_min_props\": 3"
-      },
+      { "name": "pyproject.toml", "value": "format_attribute_js_json_min_props=3" },
+      { "name": ".djlintrc", "value": "\"format_attribute_js_json_min_props\": 3" },
       { "name": "cli", "value": "--format-attribute-js-json-min-props 3" }
     ]
   },
@@ -1202,9 +1142,7 @@
       "cs": "Název souboru, který se při čtení ze stdin použije pro per-file-ignores a ve zprávách. Výchozí hodnota je \"-\".",
       "tr": "stdin'den okurken per-file-ignores ve mesajlar için kullanılacak dosya adı. Varsayılan değer: \"-\"."
     },
-    "usage": [
-      { "name": "cli", "value": "--stdin-filename templates/index.html" }
-    ]
+    "usage": [{ "name": "cli", "value": "--stdin-filename templates/index.html" }]
   },
   {
     "name": "allow_empty_input",

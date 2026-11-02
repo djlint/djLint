@@ -114,7 +114,7 @@ La prima lettera di un codice segue questo schema:
 
 ### Dettagli delle regole
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ Da preferire:
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Aggiungere regole
 

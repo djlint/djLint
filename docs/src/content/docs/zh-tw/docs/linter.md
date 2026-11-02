@@ -114,7 +114,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 ### 規則詳細說明
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ html 規格表示空的 `src` 是無效的，並警告瀏覽器會以文件本�
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### 新增規則
 

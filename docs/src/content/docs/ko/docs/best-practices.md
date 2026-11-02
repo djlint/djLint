@@ -32,9 +32,7 @@ djLint는 긴 속성을 여러 줄로 나누어 포맷하므로, 속성 안에 �
 다음 패턴을 권장합니다.
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

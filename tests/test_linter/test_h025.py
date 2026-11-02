@@ -14,9 +14,7 @@ if TYPE_CHECKING:
     from djlint.types import LintError
 
 
-def test_stray_html_comment_in_template_comment_is_not_an_orphan(
-    django_config: Config,
-) -> None:
+def test_stray_html_comment_in_template_comment_is_not_an_orphan(django_config: Config) -> None:
     """A stray "<!--" inside a {# #} template comment must not swallow the closing tag and turn a balanced element into a false H025 orphan."""
     source = "<div>\n{# <!-- #}\n</div>"
     filename = "test.html"
@@ -27,18 +25,11 @@ def test_stray_html_comment_in_template_comment_is_not_an_orphan(
     assert not output[filename]
 
 
-def test_genuine_orphan_after_template_comment_is_still_reported(
-    django_config: Config,
-) -> None:
+def test_genuine_orphan_after_template_comment_is_still_reported(django_config: Config) -> None:
     source = "{# <!-- #}\n<div>"
     filename = "test.html"
     expected: list[LintError] = [
-        {
-            "code": "H025",
-            "line": "2:0",
-            "match": "<div>",
-            "message": "Tag seems to be an orphan.",
-        }
+        {"code": "H025", "line": "2:0", "match": "<div>", "message": "Tag seems to be an orphan."}
     ]
 
     output = linter(django_config, source, filename, filename)
@@ -47,9 +38,7 @@ def test_genuine_orphan_after_template_comment_is_still_reported(
     assert output[filename] == expected
 
 
-def test_stray_html_comment_in_raw_text_element_is_not_an_orphan(
-    basic_config: Config,
-) -> None:
+def test_stray_html_comment_in_raw_text_element_is_not_an_orphan(basic_config: Config) -> None:
     source = "<div>\n<textarea><!--</textarea>\n</div>"
     filename = "test.html"
 
@@ -59,9 +48,7 @@ def test_stray_html_comment_in_raw_text_element_is_not_an_orphan(
     assert not output[filename]
 
 
-def test_triple_stache_attribute_is_not_an_orphan(
-    handlebars_config: Config,
-) -> None:
+def test_triple_stache_attribute_is_not_an_orphan(handlebars_config: Config) -> None:
     source = "<a {{{u}}}></a>"
     filename = "test.html"
 
@@ -71,9 +58,7 @@ def test_triple_stache_attribute_is_not_an_orphan(
     assert not output[filename]
 
 
-def test_apostrophe_in_translated_attribute_is_not_an_orphan(
-    django_config: Config,
-) -> None:
+def test_apostrophe_in_translated_attribute_is_not_an_orphan(django_config: Config) -> None:
     """The quotes of a template tag nested in an attribute value must not be read as ending the attribute, or the apostrophe in the translated text opens a value that never closes and swallows the rest of the document."""
     source = (
         "<div>\n"
@@ -112,9 +97,7 @@ def test_multiline_style_is_not_an_orphan(django_config: Config) -> None:
     assert not output[filename]
 
 
-def test_multiline_script_opening_tag_is_not_an_orphan(
-    django_config: Config,
-) -> None:
+def test_multiline_script_opening_tag_is_not_an_orphan(django_config: Config) -> None:
     source = (
         "<div>\n"
         '  <script src="a.js"\n'
@@ -130,16 +113,8 @@ def test_multiline_script_opening_tag_is_not_an_orphan(
     assert not output[filename]
 
 
-def test_multiline_ld_json_script_is_not_an_orphan(
-    django_config: Config,
-) -> None:
-    source = (
-        "<div>\n"
-        '  <script type="application/ld+json">\n'
-        '  {"a": 1}\n'
-        "  </script>\n"
-        "</div>\n"
-    )
+def test_multiline_ld_json_script_is_not_an_orphan(django_config: Config) -> None:
+    source = '<div>\n  <script type="application/ld+json">\n  {"a": 1}\n  </script>\n</div>\n'
     filename = "test.html"
 
     output = linter(django_config, source, filename, filename)
@@ -148,9 +123,7 @@ def test_multiline_ld_json_script_is_not_an_orphan(
     assert not output[filename]
 
 
-def test_genuinely_orphan_script_close_is_still_reported(
-    django_config: Config,
-) -> None:
+def test_genuinely_orphan_script_close_is_still_reported(django_config: Config) -> None:
     source = "<div>\n  </script>\n</div>\n"
     filename = "test.html"
     expected: list[LintError] = [
@@ -168,9 +141,7 @@ def test_genuinely_orphan_script_close_is_still_reported(
     assert output[filename] == expected
 
 
-def test_html_inside_multiline_script_is_still_ignored(
-    django_config: Config,
-) -> None:
+def test_html_inside_multiline_script_is_still_ignored(django_config: Config) -> None:
     """The <div> in the JS string is not markup and must not pair with, or orphan against, the real tags around it."""
     source = '<div>\n  <script>\n  var s = "<div>";\n  </script>\n</div>\n'
     filename = "test.html"
@@ -205,13 +176,9 @@ def test_nested_jinja_for_else_is_not_an_orphan(jinja_config: Config) -> None:
     assert not output[filename]
 
 
-def test_handlebars_conditional_wrapper_is_not_an_orphan(
-    handlebars_config: Config,
-) -> None:
+def test_handlebars_conditional_wrapper_is_not_an_orphan(handlebars_config: Config) -> None:
     source = (
-        '{{#if wide}}<div class="wide">{{else}}<div class="narrow">{{/if}}\n'
-        "  <p>Body</p>\n"
-        "</div>\n"
+        '{{#if wide}}<div class="wide">{{else}}<div class="narrow">{{/if}}\n  <p>Body</p>\n</div>\n'
     )
     filename = "test.html"
 
@@ -224,9 +191,7 @@ def test_handlebars_conditional_wrapper_is_not_an_orphan(
 def test_golang_conditional_wrapper_is_not_an_orphan() -> None:
     config = config_builder({"profile": "golang"})
     source = (
-        '{{if .Wide}}<div class="wide">{{else}}<div class="narrow">{{end}}\n'
-        "  <p>Body</p>\n"
-        "</div>\n"
+        '{{if .Wide}}<div class="wide">{{else}}<div class="narrow">{{end}}\n  <p>Body</p>\n</div>\n'
     )
     filename = "test.html"
 

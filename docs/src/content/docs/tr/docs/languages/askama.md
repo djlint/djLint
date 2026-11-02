@@ -21,11 +21,11 @@ djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djl
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="askama"
+profile = "askama"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="askama"
+profile = "askama"
 ```
 
 ```json title=".djlintrc"

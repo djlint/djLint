@@ -11,20 +11,12 @@ from djlint.settings import Config
 from tests.conftest import linter
 
 test_data = [
+    pytest.param(('<button aria-hidden="true">x</button>'), (True), id="a button takes focus"),
     pytest.param(
-        ('<button aria-hidden="true">x</button>'),
-        (True),
-        id="a button takes focus",
+        ('<a href="/x" aria-hidden="true">x</a>'), (True), id="a link with an href takes focus"
     ),
     pytest.param(
-        ('<a href="/x" aria-hidden="true">x</a>'),
-        (True),
-        id="a link with an href takes focus",
-    ),
-    pytest.param(
-        ('<div tabindex="0" aria-hidden="true">x</div>'),
-        (True),
-        id="so does a tabindex of zero",
+        ('<div tabindex="0" aria-hidden="true">x</div>'), (True), id="so does a tabindex of zero"
     ),
     pytest.param(
         ('<div contenteditable aria-hidden="true">x</div>'),
@@ -37,14 +29,10 @@ test_data = [
         id="hiding a decorative icon is the ordinary use",
     ),
     pytest.param(
-        ('<i class="fa" aria-hidden="true"></i>'),
-        (False),
-        id="the same icon written as an i",
+        ('<i class="fa" aria-hidden="true"></i>'), (False), id="the same icon written as an i"
     ),
     pytest.param(
-        ('<a aria-hidden="true">x</a>'),
-        (False),
-        id="a link with no href is not focusable",
+        ('<a aria-hidden="true">x</a>'), (False), id="a link with no href is not focusable"
     ),
     pytest.param(
         ('<button disabled aria-hidden="true">x</button>'),
@@ -57,14 +45,10 @@ test_data = [
         id="and so is one taken out by hand",
     ),
     pytest.param(
-        ('<input type="hidden" aria-hidden="true">'),
-        (False),
-        id="a hidden input is not focusable",
+        ('<input type="hidden" aria-hidden="true">'), (False), id="a hidden input is not focusable"
     ),
     pytest.param(
-        ('<button aria-hidden="false">x</button>'),
-        (False),
-        id="only true hides the element",
+        ('<button aria-hidden="false">x</button>'), (False), id="only true hides the element"
     ),
 ]
 

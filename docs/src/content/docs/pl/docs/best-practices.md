@@ -32,9 +32,7 @@ djLint rozbija długie atrybuty na kilka wierszy, a białe znaki zachowane wewn�
 Zalecany jest ten wzorzec:
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

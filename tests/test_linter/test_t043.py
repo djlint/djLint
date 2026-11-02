@@ -20,18 +20,12 @@ test_data = [
         id="the same name twice",
     ),
     pytest.param(
-        (
-            "{% block a %}{% block b %}{% endblock %}{% endblock %}"
-            "{% block b %}{% endblock %}"
-        ),
+        ("{% block a %}{% block b %}{% endblock %}{% endblock %}{% block b %}{% endblock %}"),
         (True),
         id="a nested block's name reused after it",
     ),
     pytest.param(
-        (
-            "{% if x %}{% block a %}1{% endblock %}"
-            "{% else %}{% block a %}2{% endblock %}{% endif %}"
-        ),
+        ("{% if x %}{% block a %}1{% endblock %}{% else %}{% block a %}2{% endblock %}{% endif %}"),
         (True),
         id="exclusive branches are no defence",
     ),
@@ -41,9 +35,7 @@ test_data = [
         id="whitespace control markers",
     ),
     pytest.param(
-        ("{% block a.b %}{% endblock %}{% block a.b %}{% endblock %}"),
-        (True),
-        id="a dotted name",
+        ("{% block a.b %}{% endblock %}{% block a.b %}{% endblock %}"), (True), id="a dotted name"
     ),
     pytest.param(
         ("{% block a %}{% endblock %}{%block a%}{% endblock %}"),
@@ -66,10 +58,7 @@ test_data = [
         id="a named endblock is not a second occurrence",
     ),
     pytest.param(
-        (
-            "{% block a %}1{% endblock %}"
-            "{% comment %}{% block a %}2{% endblock %}{% endcomment %}"
-        ),
+        ("{% block a %}1{% endblock %}{% comment %}{% block a %}2{% endblock %}{% endcomment %}"),
         (False),
         id="a block inside a comment does not count",
     ),
@@ -79,18 +68,12 @@ test_data = [
         id="nor one inside a template comment",
     ),
     pytest.param(
-        (
-            "{% block a %}{% endblock %}"
-            "{% verbatim %}{% block a %}{% endblock %}{% endverbatim %}"
-        ),
+        ("{% block a %}{% endblock %}{% verbatim %}{% block a %}{% endblock %}{% endverbatim %}"),
         (False),
         id="nor one inside verbatim",
     ),
     pytest.param(
-        (
-            "{% block a %}{% endblock %}"
-            "{# djlint:off #}{% block a %}{% endblock %}{# djlint:on #}"
-        ),
+        ("{% block a %}{% endblock %}{# djlint:off #}{% block a %}{% endblock %}{# djlint:on #}"),
         (False),
         id="nor one inside a djlint:off region",
     ),
@@ -100,9 +83,7 @@ test_data = [
         id="names that differ in case",
     ),
     pytest.param(
-        (
-            "{% blocktrans %}x{% endblocktrans %}{% blocktrans %}y{% endblocktrans %}"
-        ),
+        ("{% blocktrans %}x{% endblocktrans %}{% blocktrans %}y{% endblocktrans %}"),
         (False),
         id="blocktrans is not a block",
     ),
@@ -112,10 +93,7 @@ test_data = [
         id="a name that merely starts the same",
     ),
     pytest.param(
-        (
-            "{% block a %}{% endblock %}"
-            "{% raw %}{% block a %}{% endblock %}{% endraw %}"
-        ),
+        ("{% block a %}{% endblock %}{% raw %}{% block a %}{% endblock %}{% endraw %}"),
         (False),
         id="nor one inside raw",
     ),
@@ -258,17 +236,11 @@ def test_a_block_tag_with_no_closing_marker_is_scanned_once() -> None:
     """A file of unterminated tags used to be walked once per tag."""
     filename = "test.html"
     config = Config(filename, profile="django")
-    rule = next(
-        entry["rule"]
-        for entry in config.linter_rules
-        if entry["rule"]["name"] == "T043"
-    )
+    rule = next(entry["rule"] for entry in config.linter_rules if entry["rule"]["name"] == "T043")
     source = "{% block a " * 4000
 
     start = time.perf_counter()
-    errors = run(
-        rule=rule, config=config, html=source, filepath=filename, line_ends=[]
-    )
+    errors = run(rule=rule, config=config, html=source, filepath=filename, line_ends=[])
 
     assert errors == ()
     assert time.perf_counter() - start < 2

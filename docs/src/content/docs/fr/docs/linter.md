@@ -114,7 +114,7 @@ La première lettre d'un code suit ce schéma :
 
 ### Détail des règles
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ Seul le balisage compte comme balisage. `muted` doit être l'attribut : `<video
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Ajouter des règles
 

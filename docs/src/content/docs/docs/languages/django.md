@@ -21,11 +21,11 @@ Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.to
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="django"
+profile = "django"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="django"
+profile = "django"
 ```
 
 ```json title=".djlintrc"

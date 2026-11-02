@@ -20,18 +20,13 @@ if TYPE_CHECKING:
 
 
 def _context(markup: str, marker: str) -> dict[int, int]:
-    return helpers.branch_context(
-        helpers.branched_blocks(markup), markup.index(marker)
-    )
+    return helpers.branch_context(helpers.branched_blocks(markup), markup.index(marker))
 
 
 # Blocks are numbered in the order they close, so an inner block comes
 # before the one wrapping it.
 _CONTEXTS: Final[tuple[tuple[str, dict[str, dict[int, int]]], ...]] = (
-    (
-        "{% if a %}A{% elif b %}B{% else %}C{% endif %}",
-        {"A": {0: 0}, "B": {0: 1}, "C": {0: 2}},
-    ),
+    ("{% if a %}A{% elif b %}B{% else %}C{% endif %}", {"A": {0: 0}, "B": {0: 1}, "C": {0: 2}}),
     ("{% if a %}A{% elseif b %}B{% endif %}", {"A": {0: 0}, "B": {0: 1}}),
     ("{%- if a -%}A{%- else -%}B{%- endif -%}", {"A": {0: 0}, "B": {0: 1}}),
     ("{% for i in a %}A{% empty %}B{% endfor %}", {"A": {0: 0}, "B": {0: 1}}),
@@ -39,10 +34,7 @@ _CONTEXTS: Final[tuple[tuple[str, dict[str, dict[int, int]]], ...]] = (
         "{% if a %}{% for i in a %}A{% else %}B{% endfor %}{% else %}C{% endif %}",
         {"A": {0: 0, 1: 0}, "B": {0: 1, 1: 0}, "C": {1: 1}},
     ),
-    (
-        "{{#if a}}A{{else if b}}B{{else}}C{{/if}}",
-        {"A": {0: 0}, "B": {0: 1}, "C": {0: 2}},
-    ),
+    ("{{#if a}}A{{else if b}}B{{else}}C{{/if}}", {"A": {0: 0}, "B": {0: 1}, "C": {0: 2}}),
     ("{{#unless a}}A{{else}}B{{/unless}}", {"A": {0: 0}, "B": {0: 1}}),
     ("{{if a}}A{{else}}B{{end}}", {"A": {0: 0}, "B": {0: 1}}),
     ("{{- range .items }}A{{- else }}B{{- end }}", {"A": {0: 0}, "B": {0: 1}}),
@@ -56,15 +48,11 @@ _CONTEXTS: Final[tuple[tuple[str, dict[str, dict[int, int]]], ...]] = (
 
 
 @pytest.mark.parametrize(("markup", "expected"), _CONTEXTS)
-def test_branch_context(
-    markup: str, expected: dict[str, dict[int, int]]
-) -> None:
+def test_branch_context(markup: str, expected: dict[str, dict[int, int]]) -> None:
     assert {marker: _context(markup, marker) for marker in expected} == expected
 
 
-_NESTED: Final = (
-    "{% if a %}{% if b %}A{% else %}B{% endif %}D{% else %}C{% endif %}E"
-)
+_NESTED: Final = "{% if a %}{% if b %}A{% else %}B{% endif %}D{% else %}C{% endif %}E"
 
 
 @pytest.mark.parametrize(
@@ -79,9 +67,7 @@ _NESTED: Final = (
         (_NESTED, "A", "E", False),
     ],
 )
-def test_mutually_exclusive(
-    markup: str, first: str, second: str, expected: bool
-) -> None:
+def test_mutually_exclusive(markup: str, first: str, second: str, expected: bool) -> None:
     first_context = _context(markup, first)
     second_context = _context(markup, second)
 

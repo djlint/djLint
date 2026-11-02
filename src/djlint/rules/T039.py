@@ -4,11 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint.helpers import (
-    inside_ignored_linter_block,
-    inside_ignored_rule,
-    overlaps_ignored_block,
-)
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
 from djlint.lint import get_line
 from djlint.rules.T027 import _TemplateTagMatch
 
@@ -47,9 +43,7 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
             variable_start = html.find("{{", pos)
         if block_start == -1 and variable_start == -1:
             return
-        if variable_start != -1 and (
-            block_start == -1 or variable_start < block_start
-        ):
+        if variable_start != -1 and (block_start == -1 or variable_start < block_start):
             start, close = variable_start, "}}"
         else:
             start, close = block_start, "%}"
@@ -93,11 +87,7 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
             elif close == "%}" and html.startswith("}%", scan):
                 typo_end = scan + 2
                 break
-            elif (
-                close == "%}"
-                and char == "{"
-                and not html.startswith(("{%", "{{"), scan)
-            ):
+            elif close == "%}" and char == "{" and not html.startswith(("{%", "{{"), scan):
                 depth += 1
             elif close == "%}" and char == "}" and depth:
                 depth -= 1

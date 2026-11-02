@@ -21,11 +21,11 @@ Konfigurieren Sie djLint in der Datei `pyproject.toml`, `djlint.toml` / `.djlint
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="askama"
+profile = "askama"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="askama"
+profile = "askama"
 ```
 
 ```json title=".djlintrc"

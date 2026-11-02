@@ -32,9 +32,7 @@ djLint переносит длинные атрибуты на нескольк�
 Рекомендуется такой вариант:
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

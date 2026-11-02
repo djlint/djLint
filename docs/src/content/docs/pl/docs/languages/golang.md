@@ -23,11 +23,11 @@ Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub 
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="golang"
+profile = "golang"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="golang"
+profile = "golang"
 ```
 
 ```json title=".djlintrc"

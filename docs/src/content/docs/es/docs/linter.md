@@ -114,7 +114,7 @@ La primera letra de un código sigue este patrón:
 
 ### Detalles de las reglas
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ Haz esto:
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Añadir reglas
 

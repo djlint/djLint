@@ -1,7 +1,8 @@
 import { docsLoader, i18nLoader } from "@astrojs/starlight/loaders";
 import { docsSchema, i18nSchema } from "@astrojs/starlight/schema";
-import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
+import { defineCollection } from "astro:content";
+
 import en from "./content/i18n/en.json";
 
 // Every djlint.* string the English dictionary defines may be translated.

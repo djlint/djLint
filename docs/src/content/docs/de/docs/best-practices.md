@@ -32,9 +32,7 @@ djLint verteilt lange Attribute auf mehrere Zeilen, und Leerraum, der innerhalb 
 Dieses Muster wird empfohlen:
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

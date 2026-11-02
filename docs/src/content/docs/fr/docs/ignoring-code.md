@@ -9,7 +9,7 @@ Pour ignorer du code, entourez-le de balises `djlint` :
 
 En HTML classique :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
@@ -18,7 +18,7 @@ En HTML classique :
 
 ou sous forme de commentaire :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
@@ -27,7 +27,7 @@ ou sous forme de commentaire :
 
 ou sous forme de commentaire long :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
@@ -36,7 +36,7 @@ ou sous forme de commentaire long :
 
 ou sous forme de commentaire de style golang :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
@@ -45,7 +45,7 @@ ou sous forme de commentaire de style golang :
 
 ou sous forme de commentaire de style handlebars :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -56,7 +56,7 @@ ou sous forme de commentaire de style handlebars :
 
 Vous pouvez aussi ignorer des règles précises du linter en ajoutant leur nom dans la balise d'ouverture du bloc ignoré.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

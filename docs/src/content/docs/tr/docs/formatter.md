@@ -42,7 +42,7 @@ djLint bir HTML ayrıştırıcısı ya da sözdizimi doğrulayıcısı değildir
 
 Acilen ilgi bekleyen bir yığın HTML -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ Acilen ilgi bekleyen bir yığın HTML -
 
 Şimdi biraz daha iyi görünüyor... artık okuyabiliyoruz :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ Acilen ilgi bekleyen bir yığın HTML -
 
 Prettier tarzı öznitelikleri mi tercih ediyorsunuz? `single_attribute_per_line` seçeneğini etkinleştirin:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

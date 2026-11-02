@@ -23,11 +23,11 @@ Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub 
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="liquid"
+profile = "liquid"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="liquid"
+profile = "liquid"
 ```
 
 ```json title=".djlintrc"

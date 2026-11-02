@@ -53,15 +53,9 @@ _BLOCKS: Final = r"""
 _BREAK: Final = r"<br\s*/?>"
 
 # A run of breaks is vertical space rather than a break in the content.
-_RUN_PATTERN: Final = compile_pattern(
-    rf"{_BREAK}(?:\s|&nbsp;|&\#160;)*{_BREAK}", re.I | re.X
-)
-_BEFORE_A_CLOSING_PATTERN: Final = compile_pattern(
-    rf"{_BREAK}\s*</(?:{_BLOCKS})\s*>", re.I | re.X
-)
-_OPENING_BLOCK_PATTERN: Final = compile_pattern(
-    rf"<(?:{_BLOCKS})\b", re.I | re.X
-)
+_RUN_PATTERN: Final = compile_pattern(rf"{_BREAK}(?:\s|&nbsp;|&\#160;)*{_BREAK}", re.I | re.X)
+_BEFORE_A_CLOSING_PATTERN: Final = compile_pattern(rf"{_BREAK}\s*</(?:{_BLOCKS})\s*>", re.I | re.X)
+_OPENING_BLOCK_PATTERN: Final = compile_pattern(rf"<(?:{_BLOCKS})\b", re.I | re.X)
 # Matched in two steps: regex looks ahead for the `<br` a pattern opening
 # on `\s*` requires before it tries the match, and that look reads to the
 # end of the document from every opening.
@@ -149,9 +143,7 @@ def _against_a_block_opening(html: str) -> Iterator[_Break]:
             reported_to = following.end()
 
 
-def _reported(
-    config: Config, html: str, rule: dict[str, Any], found: _Break
-) -> bool:
+def _reported(config: Config, html: str, rule: dict[str, Any], found: _Break) -> bool:
     """Whether the use is a finding rather than ignored content.
 
     The rule looks for a tag, so markup written inside an attribute

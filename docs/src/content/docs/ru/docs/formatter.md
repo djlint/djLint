@@ -42,7 +42,7 @@ djLint не является HTML-парсером или валидатором
 
 Вот фрагмент HTML, которому срочно требуется внимание:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ djLint не является HTML-парсером или валидатором
 
 Стало немного лучше... теперь это хотя бы можно читать :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ djLint не является HTML-парсером или валидатором
 
 Предпочитаете атрибуты в стиле Prettier? Включите параметр `single_attribute_per_line`:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

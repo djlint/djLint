@@ -21,11 +21,11 @@ djlint /path/to/templates --profile=django
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="django"
+profile = "django"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="django"
+profile = "django"
 ```
 
 ```json title=".djlintrc"

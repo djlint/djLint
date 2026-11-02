@@ -42,7 +42,7 @@ djLint n'est ni un parseur HTML ni un validateur de syntaxe.
 
 Voici un bloc de HTML qui a désespérément besoin d'attention :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ Voici un bloc de HTML qui a désespérément besoin d'attention :
 
 C'est un peu mieux maintenant… on arrive à le lire :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ C'est un peu mieux maintenant… on arrive à le lire :)
 
 Vous préférez les attributs à la Prettier ? Activez l'option `single_attribute_per_line` :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

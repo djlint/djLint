@@ -42,7 +42,7 @@ djLint 不是 HTML 解析器，也不是语法验证器。
 
 下面是一段急需整理的 HTML：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ djLint 不是 HTML 解析器，也不是语法验证器。
 
 现在看起来好一些了……至少能读懂了 :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ djLint 不是 HTML 解析器，也不是语法验证器。
 
 更喜欢 Prettier 风格的属性？启用 `single_attribute_per_line` 选项：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

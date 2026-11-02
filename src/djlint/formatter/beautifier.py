@@ -56,9 +56,7 @@ def _beautify_indented(
     comparable = len(lines) == len(shifted)
 
     return "".join(
-        f"\n{line}"
-        if comparable and line == shifted[index]
-        else f"\n{indent}{line}"
+        f"\n{line}" if comparable and line == shifted[index] else f"\n{indent}{line}"
         for index, line in enumerate(lines)
     )
 
@@ -76,22 +74,16 @@ def format_blocks(
     def format_block(match: re.Match[str]) -> str:
         leading, opening_tag, source = match.group(1, 2, 3)
 
-        if not source.strip() or child_of_unformatted_block(
-            config, html, match
-        ):
+        if not source.strip() or child_of_unformatted_block(config, html, match):
             return match.group()
 
         indent = " " * len(leading)
         masked, replacements = mask_template_tags(config, source)
-        beautified = _beautify_indented(
-            masked, beautify, beautifier_config, indent
-        )
+        beautified = _beautify_indented(masked, beautify, beautifier_config, indent)
 
         for marker, _ in replacements:
             beautified = re.sub(
-                rf"\n[ \t]*\n([ \t]*/\*{re.escape(marker)}\*/[ \t]*(?=\n|$))",
-                r"\n\1",
-                beautified,
+                rf"\n[ \t]*\n([ \t]*/\*{re.escape(marker)}\*/[ \t]*(?=\n|$))", r"\n\1", beautified
             )
 
         return (

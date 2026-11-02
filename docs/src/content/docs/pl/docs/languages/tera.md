@@ -21,11 +21,11 @@ Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub 
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="tera"
+profile = "tera"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="tera"
+profile = "tera"
 ```
 
 ```json title=".djlintrc"

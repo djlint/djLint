@@ -17,9 +17,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{{ range .Items }} {{ end }}"),
-        ("{{ range .Items }} {{ end }}\n"),
-        id="range_tag",
+        ("{{ range .Items }} {{ end }}"), ("{{ range .Items }} {{ end }}\n"), id="range_tag"
     )
 ]
 

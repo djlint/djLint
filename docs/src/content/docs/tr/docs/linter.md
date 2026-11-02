@@ -114,7 +114,7 @@ Bir kodun ilk harfi şu kalıbı izler:
 
 ### Kural ayrıntıları
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ Yapın:
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Kural ekleme
 

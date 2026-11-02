@@ -25,11 +25,11 @@ Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.to
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="jinja"
+profile = "jinja"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="jinja"
+profile = "jinja"
 ```
 
 ```json title=".djlintrc"

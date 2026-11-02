@@ -25,11 +25,11 @@ djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djl
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="jinja"
+profile = "jinja"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="jinja"
+profile = "jinja"
 ```
 
 ```json title=".djlintrc"

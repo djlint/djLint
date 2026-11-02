@@ -125,13 +125,7 @@ Das Paket [LSP](https://packagecontrol.io/packages/LSP) führt den [Sprachserver
 Führen Sie **Preferences: LSP Server Configurations** aus und fügen Sie Folgendes hinzu:
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

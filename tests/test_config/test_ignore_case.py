@@ -30,12 +30,7 @@ test_data = [
         ({"ignore_case": False}),
         id="specify keep",
     ),
-    pytest.param(
-        ("<Div></dIV><CaTs></CaTs>"),
-        ("<div></div>\n<CaTs></CaTs>\n"),
-        (),
-        id="keep",
-    ),
+    pytest.param(("<Div></dIV><CaTs></CaTs>"), ("<div></div>\n<CaTs></CaTs>\n"), (), id="keep"),
 ]
 
 

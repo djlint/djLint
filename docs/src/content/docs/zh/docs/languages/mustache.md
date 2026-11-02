@@ -21,11 +21,11 @@ djlint /path/to/templates --profile=handlebars
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="handlebars"
+profile = "handlebars"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="handlebars"
+profile = "handlebars"
 ```
 
 ```json title=".djlintrc"

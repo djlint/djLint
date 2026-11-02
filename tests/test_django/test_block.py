@@ -18,11 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ("{% block content %}{% block scripts %}{% endblock %}{% endblock %}"),
-        (
-            "{% block content %}\n"
-            "    {% block scripts %}{% endblock %}\n"
-            "{% endblock %}\n"
-        ),
+        ("{% block content %}\n    {% block scripts %}{% endblock %}\n{% endblock %}\n"),
         id="nested_block_tag",
     ),
     pytest.param(
@@ -57,11 +53,7 @@ def test_base(source: str, expected: str, django_config: Config) -> None:
 def test_named_block_with_text_ignores_multiline_tag_break() -> None:
     source = "{% block title %}Prijava{% endblock title %}\n"
     output = formatter(
-        config_builder({
-            "profile": "django",
-            "line_break_after_multiline_tag": True,
-        }),
-        source,
+        config_builder({"profile": "django", "line_break_after_multiline_tag": True}), source
     )
 
     printer(source, source, output)
@@ -70,9 +62,7 @@ def test_named_block_with_text_ignores_multiline_tag_break() -> None:
 
 def test_named_block_with_text_ignores_max_line_length() -> None:
     source = "{% block title %}Prijava{% endblock title %}\n"
-    output = formatter(
-        config_builder({"profile": "django", "max_line_length": 1}), source
-    )
+    output = formatter(config_builder({"profile": "django", "max_line_length": 1}), source)
 
     printer(source, source, output)
     assert source == output

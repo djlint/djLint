@@ -28,13 +28,9 @@ django_test_data = [
         ]),
         id="unclosed_if",
     ),
+    pytest.param(("{% if x %}\n<p>hello</p>\n{% endif %}\n"), ([]), id="closed_if"),
     pytest.param(
-        ("{% if x %}\n<p>hello</p>\n{% endif %}\n"), ([]), id="closed_if"
-    ),
-    pytest.param(
-        ('{% with a="{%" %}x{% endwith %}\n'),
-        ([]),
-        id="an opener inside a string is text",
+        ('{% with a="{%" %}x{% endwith %}\n'), ([]), id="an opener inside a string is text"
     ),
     pytest.param(
         ("<p>hello</p>\n{% endfor %}\n"),
@@ -85,32 +81,18 @@ django_test_data = [
         id="mismatched_endblock_name",
     ),
     pytest.param(
-        ("{% block a %}\n<p>hello</p>\n{% endblock a %}\n"),
-        ([]),
-        id="named_endblock_matches",
+        ("{% block a %}\n<p>hello</p>\n{% endblock a %}\n"), ([]), id="named_endblock_matches"
     ),
-    pytest.param(
-        ("{% verbatim %}\n{% if x %}\n{% endverbatim %}\n"),
-        ([]),
-        id="inside_verbatim",
-    ),
-    pytest.param(
-        ("{% if a %}\n{% if b %}\n{% endif %}\n{% endif %}\n"),
-        ([]),
-        id="nested_closed",
-    ),
-    pytest.param(
-        ('{% url "home" %}\n{% include "a.html" %}\n'), ([]), id="single_tags"
-    ),
+    pytest.param(("{% verbatim %}\n{% if x %}\n{% endverbatim %}\n"), ([]), id="inside_verbatim"),
+    pytest.param(("{% if a %}\n{% if b %}\n{% endif %}\n{% endif %}\n"), ([]), id="nested_closed"),
+    pytest.param(('{% url "home" %}\n{% include "a.html" %}\n'), ([]), id="single_tags"),
     pytest.param(
         ("{% if x %}{# comment #}\ntext\n{% endif %}\n"),
         ([]),
         id="comment after block tag (issue 2297)",
     ),
     pytest.param(
-        ("{# comment #}{% if x %}\ntext\n{% endif %}\n"),
-        ([]),
-        id="comment_before_block_tag",
+        ("{# comment #}{% if x %}\ntext\n{% endif %}\n"), ([]), id="comment_before_block_tag"
     ),
     pytest.param(
         ("{% if x %}{# comment #}\ntext\n"),
@@ -134,9 +116,7 @@ django_test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), django_test_data)
-def test_django(
-    source: str, expected: list[LintError], django_config: Config
-) -> None:
+def test_django(source: str, expected: list[LintError], django_config: Config) -> None:
     filename = "test.html"
     output = linter(django_config, source, filename, filename)
 
@@ -150,15 +130,9 @@ def test_django(
 
 
 jinja_test_data = [
-    pytest.param(
-        ("{% set x = 1 %}\n"), ([]), id="set_assignment_is_not_a_block"
-    ),
-    pytest.param(
-        ("{% raw %}\n{% if x %}\n{% endraw %}\n"), ([]), id="inside_raw"
-    ),
-    pytest.param(
-        ("{% set x %}\ncontent\n{% endset %}\n"), ([]), id="set_block_closed"
-    ),
+    pytest.param(("{% set x = 1 %}\n"), ([]), id="set_assignment_is_not_a_block"),
+    pytest.param(("{% raw %}\n{% if x %}\n{% endraw %}\n"), ([]), id="inside_raw"),
+    pytest.param(("{% set x %}\ncontent\n{% endset %}\n"), ([]), id="set_block_closed"),
     pytest.param(
         ('{% macro input(name) %}\n<input name="{{ name }}">\n'),
         ([
@@ -194,9 +168,7 @@ jinja_test_data = [
         id="issue_2396_unclosed_if_with_plus",
     ),
     pytest.param(
-        ("{% block a %}\ntext\n{% endblock a +%}\n"),
-        ([]),
-        id="issue_2396_named_endblock_with_plus",
+        ("{% block a %}\ntext\n{% endblock a +%}\n"), ([]), id="issue_2396_named_endblock_with_plus"
     ),
     pytest.param(
         (
@@ -230,9 +202,7 @@ jinja_test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), jinja_test_data)
-def test_jinja(
-    source: str, expected: list[LintError], jinja_config: Config
-) -> None:
+def test_jinja(source: str, expected: list[LintError], jinja_config: Config) -> None:
     filename = "test.html"
     output = linter(jinja_config, source, filename, filename)
 
@@ -258,20 +228,10 @@ handlebars_test_data = [
         ]),
         id="issue 202 unclosed if (issue 202)",
     ),
-    pytest.param(
-        ("{{#if asdf}}\n    {{ jkl }}\n{{/if}}\n"), ([]), id="closed_if"
-    ),
-    pytest.param(
-        ("{{#each items}}\n    {{ this }}\n{{/each}}\n"), ([]), id="each"
-    ),
-    pytest.param(
-        ("{{^person}}\n    none\n{{/person}}\n"), ([]), id="inverted_section"
-    ),
-    pytest.param(
-        ("{{#custom}}\n    {{ this }}\n{{/custom}}\n"),
-        ([]),
-        id="custom_section",
-    ),
+    pytest.param(("{{#if asdf}}\n    {{ jkl }}\n{{/if}}\n"), ([]), id="closed_if"),
+    pytest.param(("{{#each items}}\n    {{ this }}\n{{/each}}\n"), ([]), id="each"),
+    pytest.param(("{{^person}}\n    none\n{{/person}}\n"), ([]), id="inverted_section"),
+    pytest.param(("{{#custom}}\n    {{ this }}\n{{/custom}}\n"), ([]), id="custom_section"),
     pytest.param(
         ("{{ jkl }}\n{{/if}}\n"),
         ([
@@ -284,25 +244,15 @@ handlebars_test_data = [
         ]),
         id="orphan_close",
     ),
-    pytest.param(
-        ("{{!-- {{#if x}} --}}\n"), ([]), id="block_tag_inside_comment"
-    ),
-    pytest.param(
-        ("{{! {{#if x}} }}\n"), ([]), id="block_tag_inside_inline_comment"
-    ),
+    pytest.param(("{{!-- {{#if x}} --}}\n"), ([]), id="block_tag_inside_comment"),
+    pytest.param(("{{! {{#if x}} }}\n"), ([]), id="block_tag_inside_inline_comment"),
     pytest.param(("{{{{raw}}}}{{{{/raw}}}}\n"), ([]), id="raw_block"),
-    pytest.param(
-        ("{{{{raw}}}}{{#if x}}{{{{/raw}}}}\n"),
-        ([]),
-        id="raw_block_with_content",
-    ),
+    pytest.param(("{{{{raw}}}}{{#if x}}{{{{/raw}}}}\n"), ([]), id="raw_block_with_content"),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), handlebars_test_data)
-def test_handlebars(
-    source: str, expected: list[LintError], handlebars_config: Config
-) -> None:
+def test_handlebars(source: str, expected: list[LintError], handlebars_config: Config) -> None:
     filename = "test.html"
     output = linter(handlebars_config, source, filename, filename)
 
@@ -343,9 +293,7 @@ custom_blocks_test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), custom_blocks_test_data)
 def test_custom_blocks(source: str, expected: list[LintError]) -> None:
-    config = Config(
-        "dummy/source.html", profile="django", custom_blocks="component"
-    )
+    config = Config("dummy/source.html", profile="django", custom_blocks="component")
     filename = "test.html"
     output = linter(config, source, filename, filename)
 

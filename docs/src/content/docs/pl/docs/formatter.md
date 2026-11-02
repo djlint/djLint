@@ -42,7 +42,7 @@ djLint nie jest parserem HTML ani walidatorem składni.
 
 Oto kawałek HTML-a, który rozpaczliwie potrzebuje uwagi:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ Oto kawałek HTML-a, który rozpaczliwie potrzebuje uwagi:
 
 Teraz wygląda trochę lepiej… da się to czytać :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ Teraz wygląda trochę lepiej… da się to czytać :)
 
 Wolisz atrybuty w stylu Prettiera? Włącz opcję `single_attribute_per_line`:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

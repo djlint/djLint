@@ -114,7 +114,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 ### 규칙 상세
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ HTML 명세는 빈 `src`가 유효하지 않다고 정하고, 브라우저가 �
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### 규칙 추가하기
 

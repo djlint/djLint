@@ -125,13 +125,7 @@ El paquete [LSP](https://packagecontrol.io/packages/LSP) ejecuta el [servidor de
 Ejecuta **Preferences: LSP Server Configurations** y añade:
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

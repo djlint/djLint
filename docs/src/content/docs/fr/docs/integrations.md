@@ -125,13 +125,7 @@ Le paquet [LSP](https://packagecontrol.io/packages/LSP) exécute le [serveur de 
 Exécutez **Preferences: LSP Server Configurations** et ajoutez :
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

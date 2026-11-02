@@ -95,10 +95,7 @@ def _consumer_hung_up(error: Exception) -> bool:
     """
     if isinstance(error, BrokenPipeError):
         return True
-    return isinstance(error, OSError) and error.errno in {
-        errno.EINVAL,
-        errno.EPIPE,
-    }
+    return isinstance(error, OSError) and error.errno in {errno.EINVAL, errno.EPIPE}
 
 
 def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
@@ -160,13 +157,7 @@ def _run_language_server(
 )
 @click.argument(
     "src",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=True,
-        readable=True,
-        allow_dash=True,
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, allow_dash=True),
     nargs=-1,
     required=True,
     metavar="SRC ...",
@@ -203,20 +194,12 @@ def _run_language_server(
     type=str,
     default=None,
     help=(
-        "Filename to use for per-file-ignores and messages when reading"
-        " from stdin. [default: -]"
+        "Filename to use for per-file-ignores and messages when reading from stdin. [default: -]"
     ),
     show_default=False,
 )
-@click.option(
-    "--indent",
-    type=int,
-    help="Indent spacing. [default: 4]",
-    show_default=False,
-)
-@click.option(
-    "--quiet", is_flag=True, help="Do not print diff when reformatting."
-)
+@click.option("--indent", type=int, help="Indent spacing. [default: 4]", show_default=False)
+@click.option("--quiet", is_flag=True, help="Do not print diff when reformatting.")
 @click.option(
     "--profile",
     type=str,
@@ -227,14 +210,8 @@ def _run_language_server(
     is_flag=True,
     help="Only format or lint files that starts with a comment with the text 'djlint:on'",
 )
-@click.option(
-    "--lint", is_flag=True, help="Lint for common issues. [default option]"
-)
-@click.option(
-    "--use-gitignore",
-    is_flag=True,
-    help="Use .gitignore file to extend excludes.",
-)
+@click.option("--lint", is_flag=True, help="Lint for common issues. [default option]")
+@click.option("--use-gitignore", is_flag=True, help="Use .gitignore file to extend excludes.")
 @click.option(
     "--allow-empty-input",
     is_flag=True,
@@ -242,26 +219,16 @@ def _run_language_server(
 )
 @click.option("--warn", is_flag=True, help="Return errors as warnings.")
 @click.option(
-    "--preserve-leading-space",
-    is_flag=True,
-    help="Attempt to preserve leading space on text.",
+    "--preserve-leading-space", is_flag=True, help="Attempt to preserve leading space on text."
 )
-@click.option(
-    "--preserve-blank-lines",
-    is_flag=True,
-    help="Attempt to preserve blank lines.",
-)
+@click.option("--preserve-blank-lines", is_flag=True, help="Attempt to preserve blank lines.")
 @click.option(
     "--preserve-class-newlines",
     is_flag=True,
     help="Preserve line breaks inside multiline class attributes.",
 )
-@click.option(
-    "--format-css", is_flag=True, help="Also format contents of <style> tags."
-)
-@click.option(
-    "--format-js", is_flag=True, help="Also format contents of <script> tags."
-)
+@click.option("--format-css", is_flag=True, help="Also format contents of <style> tags.")
+@click.option("--format-js", is_flag=True, help="Also format contents of <script> tags.")
 @click.option(
     "--format-attribute-js-json",
     is_flag=True,
@@ -314,25 +281,14 @@ def _run_language_server(
     help="Path to custom rules file in .djlint_rules.yaml format",
 )
 @click.option(
-    "--statistics",
-    is_flag=True,
-    help="Count the number of occurrences of each error/warning code.",
+    "--statistics", is_flag=True, help="Count the number of occurrences of each error/warning code."
 )
 @click.option(
-    "--include",
-    type=str,
-    default="",
-    help='Codes to include. ex: "H014,H017"',
-    show_default=False,
+    "--include", type=str, default="", help='Codes to include. ex: "H014,H017"', show_default=False
 )
+@click.option("--ignore-case", is_flag=True, help="Do not fix case on known html tags.")
 @click.option(
-    "--ignore-case", is_flag=True, help="Do not fix case on known html tags."
-)
-@click.option(
-    "--ignore-blocks",
-    type=str,
-    default="",
-    help="Comma list of template blocks to not indent.",
+    "--ignore-blocks", type=str, default="", help="Comma list of template blocks to not indent."
 )
 @click.option(
     "--blank-line-after-tag",
@@ -358,34 +314,17 @@ def _run_language_server(
     help="Indent custom template blocks. For example {% toc %}...{% endtoc %}",
 )
 @click.option(
-    "--custom-html",
-    type=str,
-    default="",
-    help="Indent custom HTML tags. For example <mjml>",
+    "--custom-html", type=str, default="", help="Indent custom HTML tags. For example <mjml>"
+)
+@click.option("--exclude", type=str, default="", help="Override the default exclude paths.")
+@click.option(
+    "--extend-exclude", type=str, default="", help="Add additional paths to the default exclude."
 )
 @click.option(
-    "--exclude",
-    type=str,
-    default="",
-    help="Override the default exclude paths.",
+    "--linter-output-format", type=str, default="", help="Customize order of linter output message."
 )
 @click.option(
-    "--extend-exclude",
-    type=str,
-    default="",
-    help="Add additional paths to the default exclude.",
-)
-@click.option(
-    "--linter-output-format",
-    type=str,
-    default="",
-    help="Customize order of linter output message.",
-)
-@click.option(
-    "--max-line-length",
-    type=int,
-    help="Max line length. [default: 120]",
-    show_default=False,
+    "--max-line-length", type=int, help="Max line length. [default: 120]", show_default=False
 )
 @click.option(
     "--max-attribute-length",
@@ -409,61 +348,35 @@ def _run_language_server(
     multiple=True,
     help="Ignore linter rules on a per-file basis.",
 )
-@click.option(
-    "--indent-css", type=int, help="Set CSS indent level.", show_default=False
-)
-@click.option(
-    "--indent-js", type=int, help="Set JS indent level.", show_default=False
-)
+@click.option("--indent-css", type=int, help="Set CSS indent level.", show_default=False)
+@click.option("--indent-js", type=int, help="Set JS indent level.", show_default=False)
 @click.option(
     "--close-void-tags",
     is_flag=True,
     help="Add closing mark on known void tags. Ex: <img> becomes <img />",
 )
 @click.option(
-    "--no-line-after-yaml",
-    is_flag=True,
-    help="Do not add a blank line after yaml front matter.",
+    "--no-line-after-yaml", is_flag=True, help="Do not add a blank line after yaml front matter."
 )
 @click.option(
-    "--name-endblocks",
-    is_flag=True,
-    help="Name the endblock of a block written across lines.",
+    "--name-endblocks", is_flag=True, help="Name the endblock of a block written across lines."
 )
 @click.option(
     "--sort-attributes",
     is_flag=True,
     help="Sort attributes by name, with id first and class second.",
 )
+@click.option("--sort-load-tags", is_flag=True, help="Sort the libraries in {% load %} tags.")
 @click.option(
-    "--sort-load-tags",
-    is_flag=True,
-    help="Sort the libraries in {% load %} tags.",
+    "--no-indent-inner-html", is_flag=True, help="Do not indent <head> and <body> below <html>."
 )
 @click.option(
-    "--no-indent-inner-html",
-    is_flag=True,
-    help="Do not indent <head> and <body> below <html>.",
+    "--no-function-formatting", is_flag=True, help="Do not attempt to format function contents."
 )
+@click.option("--no-set-formatting", is_flag=True, help="Do not attempt to format set contents.")
+@click.option("--keep-br-inline", is_flag=True, help="Keep <br> on the line of the text it breaks.")
 @click.option(
-    "--no-function-formatting",
-    is_flag=True,
-    help="Do not attempt to format function contents.",
-)
-@click.option(
-    "--no-set-formatting",
-    is_flag=True,
-    help="Do not attempt to format set contents.",
-)
-@click.option(
-    "--keep-br-inline",
-    is_flag=True,
-    help="Keep <br> on the line of the text it breaks.",
-)
-@click.option(
-    "--no-entity-formatting",
-    is_flag=True,
-    help="Do not rewrite entity references as characters.",
+    "--no-entity-formatting", is_flag=True, help="Do not rewrite entity references as characters."
 )
 @click.option(
     "--quote-style",
@@ -556,12 +469,7 @@ def main(
     _use_utf8(sys.stderr)
 
     from djlint.settings import Config  # noqa: PLC0415
-    from djlint.src import (  # noqa: PLC0415
-        get_src,
-        has_pragma,
-        is_excluded,
-        print_no_files_to_check,
-    )
+    from djlint.src import get_src, has_pragma, is_excluded, print_no_files_to_check  # noqa: PLC0415
 
     if os.getenv("NO_COLOR") is not None:
         click.get_current_context().color = False
@@ -634,12 +542,8 @@ def main(
     if "-" in src and (not config.files or stdin_filename is not None):
         stdin_text = _read_stdin_as_utf8_keeping_line_endings()
 
-        if (
-            stdin_filename is not None
-            and is_excluded(config, Path(stdin_filename))
-        ) or (
-            config.require_pragma
-            and not has_pragma(config, stdin_text.split("\n", 1)[0])
+        if (stdin_filename is not None and is_excluded(config, Path(stdin_filename))) or (
+            config.require_pragma and not has_pragma(config, stdin_text.split("\n", 1)[0])
         ):
             _echo_unchanged_stdin(config, stdin_text)
             return
@@ -712,17 +616,15 @@ def main(
                 import concurrent.futures  # noqa: PLC0415
 
                 if _is_free_threaded_python():
-                    exe: concurrent.futures.Executor = (
-                        concurrent.futures.ThreadPoolExecutor(max_workers)
+                    exe: concurrent.futures.Executor = concurrent.futures.ThreadPoolExecutor(
+                        max_workers
                     )
                     results = exe.map(partial(process, config), file_list)
                 else:
                     if sys.platform == "win32":
                         max_workers = min(max_workers, _WINDOWS_MAX_PROCESSES)
                     exe = concurrent.futures.ProcessPoolExecutor(
-                        max_workers,
-                        initializer=_start_worker,
-                        initargs=(src[0], options),
+                        max_workers, initializer=_start_worker, initargs=(src[0], options)
                     )
                     results = exe.map(
                         _process_in_worker,
@@ -737,18 +639,12 @@ def main(
     if config.sarif:
         from djlint.sarif_output import print_sarif_output  # noqa: PLC0415
 
-        if (
-            print_sarif_output(config, file_errors, files_count)
-            and not config.warn
-        ):
+        if print_sarif_output(config, file_errors, files_count) and not config.warn:
             sys.exit(1)
     elif config.github_output:
         from djlint.github_output import print_github_output  # noqa: PLC0415
 
-        if (
-            print_github_output(config, file_errors, files_count)
-            and not config.warn
-        ):
+        if print_github_output(config, file_errors, files_count) and not config.warn:
             sys.exit(1)
 
     else:
@@ -827,9 +723,7 @@ def process(config: Config, this_file: Path) -> ProcessResult:
     return output
 
 
-def process_stdin(
-    config: Config, stdin_text: str
-) -> tuple[ProcessResult, str | None]:
+def process_stdin(config: Config, stdin_text: str) -> tuple[ProcessResult, str | None]:
     """Run linter or formatter on stdin.
 
     As lint_file() does, per_file_ignores is matched against a posix path.
@@ -852,10 +746,7 @@ def process_stdin(
 
         # As reading a file does, or a rule on blank lines misses `\r\n`.
         output["lint_message"] = linter(
-            config,
-            html.replace("\r\n", "\n"),
-            stdin_filename,
-            Path(stdin_filename).as_posix(),
+            config, html.replace("\r\n", "\n"), stdin_filename, Path(stdin_filename).as_posix()
         )
 
     return output, formatted_code

@@ -21,11 +21,11 @@ djlint /path/to/templates --profile=angular
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="angular"
+profile = "angular"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="angular"
+profile = "angular"
 ```
 
 ```json title=".djlintrc"

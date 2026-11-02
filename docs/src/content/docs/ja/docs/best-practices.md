@@ -32,9 +32,7 @@ djLint は長い属性を複数行にフォーマットするため、属性内�
 次のパターンを推奨します：
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

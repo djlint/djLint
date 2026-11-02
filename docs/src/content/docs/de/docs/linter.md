@@ -114,7 +114,7 @@ Der erste Buchstabe eines Codes folgt diesem Muster:
 
 ### Regeln im Detail
 
-<!-- prettier-ignore-start -->
+<!-- oxfmt-ignore-start -->
 
 #### T001
 
@@ -1445,7 +1445,7 @@ Sondern so:
 </video>
 ```
 
-<!-- prettier-ignore-end -->
+<!-- oxfmt-ignore-end -->
 
 ### Regeln hinzufügen
 

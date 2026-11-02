@@ -32,9 +32,7 @@ djLint reparte los atributos largos en varias líneas, y los espacios en blanco 
 Se recomienda este patrón:
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

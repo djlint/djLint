@@ -45,21 +45,11 @@ def _spanned(text: str, finding: LintError) -> str:
     [
         pytest.param('<img src="x">', "H013", '<img src="x">', id="a pattern"),
         pytest.param(
-            '<p>text</p>\n<img src="x">',
-            "H013",
-            '<img src="x">',
-            id="a pattern on line 2",
+            '<p>text</p>\n<img src="x">', "H013", '<img src="x">', id="a pattern on line 2"
         ),
-        pytest.param(
-            "<div>\n</section>",
-            "H025",
-            "<div>",
-            id="a rule module with a token",
-        ),
+        pytest.param("<div>\n</section>", "H025", "<div>", id="a rule module with a token"),
         pytest.param("<IMG>", "H009", "IMG", id="the match of a rule module"),
-        pytest.param(
-            "<div>{{a}}</div>", "T001", "{{a}}", id="a rule module with a match"
-        ),
+        pytest.param("<div>{{a}}</div>", "T001", "{{a}}", id="a rule module with a match"),
     ],
 )
 def test_finding_covers(source: str, code: str, expected: str) -> None:

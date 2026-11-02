@@ -23,11 +23,11 @@ djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djl
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="golang"
+profile = "golang"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="golang"
+profile = "golang"
 ```
 
 ```json title=".djlintrc"

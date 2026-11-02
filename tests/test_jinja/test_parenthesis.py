@@ -16,22 +16,16 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 test_data = [
-    pytest.param(
-        "{{ url('foo') }}", '{{ url("foo") }}\n', id="single_parenthesis_tag"
-    ),
-    pytest.param(
-        "{{_(error)}}", "{{ _(error) }}\n", id="function_arg_named_error"
-    ),
+    pytest.param("{{ url('foo') }}", '{{ url("foo") }}\n', id="single_parenthesis_tag"),
+    pytest.param("{{_(error)}}", "{{ _(error) }}\n", id="function_arg_named_error"),
     pytest.param(
         "{{ content | addID(id) | toc(tags=['h2']) | safe }}",
         "{{ content | addID(id) | toc(tags=['h2']) | safe }}\n",
         id="function_arg_named_id",
     ),
     pytest.param(
-        '<a href="{{ url("fo\'o") }}">Test</a>\n'
-        "<a href='{{ url('fo\"o') }}'>Test</a>",
-        "<a href=\"{{ url('fo\\'o') }}\">Test</a>\n"
-        '<a href=\'{{ url("fo\\"o") }}\'>Test</a>\n',
+        "<a href=\"{{ url(\"fo'o\") }}\">Test</a>\n<a href='{{ url('fo\"o') }}'>Test</a>",
+        "<a href=\"{{ url('fo\\'o') }}\">Test</a>\n<a href='{{ url(\"fo\\\"o\") }}'>Test</a>\n",
         id="attribute_quote_escaping",
     ),
     pytest.param(
@@ -49,9 +43,7 @@ test_data = [
         "<a href=\"/{{ url_for('test_reminders') }}/\">Test reminders</a>\n",
         id="single_url_for_partial_attribute_value",
     ),
-    pytest.param(
-        '{{ url("foo") }}', '{{ url("foo") }}\n', id="double_parenthesis_tag"
-    ),
+    pytest.param('{{ url("foo") }}', '{{ url("foo") }}\n', id="double_parenthesis_tag"),
     pytest.param(
         (
             "<div>\n"
@@ -117,9 +109,7 @@ test_data = [
         id="single_quoted_attribute_url_for",
     ),
     pytest.param(
-        '{{ _("test")|upper }}',
-        '{{ _("test")|upper }}\n',
-        id="issue_2409_filter_against_call",
+        '{{ _("test")|upper }}', '{{ _("test")|upper }}\n', id="issue_2409_filter_against_call"
     ),
     pytest.param(
         '{{ _("test") | upper }}',

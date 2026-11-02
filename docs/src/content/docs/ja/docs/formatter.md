@@ -42,7 +42,7 @@ djLint は HTML パーサーでも構文バリデーターでもありません�
 
 手入れがどうしても必要な HTML の塊です：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ djLint は HTML パーサーでも構文バリデーターでもありません�
 
 少し良くなりました……これなら読めますね :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ djLint は HTML パーサーでも構文バリデーターでもありません�
 
 Prettier 形式の属性のほうが好みですか？`single_attribute_per_line` オプションを有効にしてください：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

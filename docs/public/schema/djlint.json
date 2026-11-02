@@ -8,10 +8,7 @@
   "additionalProperties": false,
   "definitions": {
     "comma-separated-list": {
-      "anyOf": [
-        { "type": "string" },
-        { "type": "array", "items": { "type": "string" } }
-      ]
+      "anyOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
     },
     "css-beautify": { "type": "object", "additionalProperties": true },
     "js-beautify": { "type": "object", "additionalProperties": true }
@@ -201,10 +198,7 @@
         "tera"
       ]
     },
-    "quiet": {
-      "description": "Do not print diff when reformatting.",
-      "type": "boolean"
-    },
+    "quiet": { "description": "Do not print diff when reformatting.", "type": "boolean" },
     "quote_style": {
       "description": "Quotes to use for strings inside template tags, either `double` (the default) or `single`. `T002` requires the same quotes. The formatter uses them in a condition too, such as `{% if x == \"a\" %}`, so one file does not spell the same string both ways. HTML attribute quoting is left to `H008`.",
       "enum": ["double", "single"]

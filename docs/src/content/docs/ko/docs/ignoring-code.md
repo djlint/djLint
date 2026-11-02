@@ -9,7 +9,7 @@ sidebar:
 
 일반 HTML에서는 다음과 같이 씁니다.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
@@ -18,7 +18,7 @@ sidebar:
 
 주석으로 쓸 수도 있습니다.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
@@ -27,7 +27,7 @@ sidebar:
 
 긴 주석으로 쓸 수도 있습니다.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
@@ -36,7 +36,7 @@ sidebar:
 
 golang 스타일 주석으로 쓸 수도 있습니다.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
@@ -45,7 +45,7 @@ golang 스타일 주석으로 쓸 수도 있습니다.
 
 handlebars 스타일 주석으로 쓸 수도 있습니다.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -56,7 +56,7 @@ handlebars 스타일 주석으로 쓸 수도 있습니다.
 
 무시 블록의 여는 태그에 규칙 이름을 넣으면 특정 린터 규칙만 무시할 수도 있습니다.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

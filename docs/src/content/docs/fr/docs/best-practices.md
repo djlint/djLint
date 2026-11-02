@@ -32,9 +32,7 @@ djLint répartit les attributs longs sur plusieurs lignes, et les espaces ainsi 
 Cette forme est recommandée :
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

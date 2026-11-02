@@ -21,11 +21,11 @@ Configurez djLint dans le fichier `pyproject.toml`, `djlint.toml` / `.djlint.tom
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="handlebars"
+profile = "handlebars"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="handlebars"
+profile = "handlebars"
 ```
 
 ```json title=".djlintrc"

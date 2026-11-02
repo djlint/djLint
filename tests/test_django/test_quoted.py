@@ -61,10 +61,7 @@ test_data = [
         id="issue #443",
     ),
     pytest.param(
-        (
-            '<div><div class="{{ c|default:"[&>a]:flex" }} block">'
-            "<p>x</p></div></div>"
-        ),
+        ('<div><div class="{{ c|default:"[&>a]:flex" }} block"><p>x</p></div></div>'),
         (
             "<div>\n"
             '    <div class="{{ c|default:"[&>a]:flex" }} block">\n'

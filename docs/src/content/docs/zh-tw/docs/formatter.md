@@ -42,7 +42,7 @@ djLint 不是 HTML 剖析器，也不是語法驗證器。
 
 這是一團急需整理的 HTML：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ djLint 不是 HTML 剖析器，也不是語法驗證器。
 
 現在看起來好一點了……至少讀得懂了 :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ djLint 不是 HTML 剖析器，也不是語法驗證器。
 
 偏好 Prettier 風格的屬性排列嗎？請啟用 `single_attribute_per_line` 選項：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

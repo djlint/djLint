@@ -21,11 +21,11 @@ Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="angular"
+profile = "angular"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="angular"
+profile = "angular"
 ```
 
 ```json title=".djlintrc"

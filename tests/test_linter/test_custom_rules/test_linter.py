@@ -17,18 +17,14 @@ if TYPE_CHECKING:
 
 
 def test_custom_rules(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_linter/test_custom_rules/", "--profile", "django")
-    )
+    result = runner.invoke(djlint, ("tests/test_linter/test_custom_rules/", "--profile", "django"))
     assert """Linting""" in result.output
     assert """1/1""" in result.output
     assert """T001 1:""" in result.output
     assert result.exit_code == 1
 
 
-def test_rules_option(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
+def test_rules_option(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
     """A rules file outside the project root can be given with --rules."""
     write_to_file(tmp_file.name, b"This is trichotillomania.")
     result = runner.invoke(

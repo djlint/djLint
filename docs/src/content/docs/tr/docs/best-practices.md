@@ -32,9 +32,7 @@ djLint uzun öznitelikleri birden çok satıra böler ve özniteliklerin içinde
 Önerilen kalıp:
 
 ```html
-<input
-  value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}"
-/>
+<input value="{% if database -%}{{ database.name }}{%- else -%}blah{%- endif %}" />
                         ^                       ^      ^        ^
 ```
 

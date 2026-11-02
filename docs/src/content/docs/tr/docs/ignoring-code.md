@@ -9,7 +9,7 @@ Kod, `djlint` etiketleri arasına alınarak yok sayılabilir:
 
 Düz HTML için -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
@@ -18,7 +18,7 @@ Düz HTML için -
 
 ya da bir yorum olarak -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
@@ -27,7 +27,7 @@ ya da bir yorum olarak -
 
 ya da uzun bir yorum olarak -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
@@ -36,7 +36,7 @@ ya da uzun bir yorum olarak -
 
 ya da golang tarzı bir yorum olarak -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
@@ -45,7 +45,7 @@ ya da golang tarzı bir yorum olarak -
 
 ya da handlebars tarzı bir yorum olarak -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -56,7 +56,7 @@ ya da handlebars tarzı bir yorum olarak -
 
 Belirli linter kuralları da kural adı, yok sayılan bloğun açılış etiketine eklenerek yok sayılabilir.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>
