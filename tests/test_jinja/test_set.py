@@ -148,6 +148,11 @@ test_data = [
         ('<div>\n    {% set x = "((\ntext" %}\n    <p>after</p>\n</div>\n'),
         id="string_across_lines_in_set_gets_no_indentation",
     ),
+    pytest.param(
+        "{% set x = foo(\n) ~\n    bar %}",
+        "{% set x = foo(\n) ~\n    bar %}\n",
+        id="value_after_a_closed_call_stays_inside_the_set",
+    ),
 ]
 
 

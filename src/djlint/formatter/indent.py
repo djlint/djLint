@@ -683,12 +683,13 @@ def indent_html(rawcode: str, config: Config) -> str:
             and (set_leading_closes or set_depth_change or starts_in_set_string)
         ):
             # A line that starts with a closing bracket lines up with what that bracket
-            # closes; the next line follows every bracket this one opens or closes.
+            # closes; the next line follows every bracket this one opens or closes, and
+            # stays a level inside the tag, as the rest of the value.
             line_level = max(indent_level - (1 if set_leading_closes else 0), set_tag_level)
             if starts_in_set_string:
                 line_level = 0
             tmp = (indent * line_level) + formatted_item(item) + "\n"
-            indent_level = max(indent_level + set_depth_change, set_tag_level)
+            indent_level = max(indent_level + set_depth_change, set_tag_level + 1)
 
         elif not is_block_raw and in_multiline_tag and _MULTILINE_TAG_CLOSE_PATTERN.search(item):
             tmp_level = (
