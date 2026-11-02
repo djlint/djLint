@@ -373,7 +373,7 @@ Faça:
 
 `There should be no spaces around attribute =.`
 
-Com espaços em torno do "=", a tag é lida como três tokens separados e basta uma edição para que ela se desfaça: uma quebra de linha ou um corte no meio deixa um atributo booleano solto mais um texto avulso. Manter name="value" contíguo também é o que ferramentas simples de texto (grep, buscar e substituir) pressupõem, então um espaçamento misto torna os atributos difíceis de encontrar e refatorar com confiança. O `--reformat` remove os espaços para você.
+O HTML permite espaços em torno do "=", então esta é uma regra de estilo. Escrever name="value" sem espaços é o estilo usual, e é o que ferramentas simples de texto, como grep ou buscar e substituir, pressupõem, então um espaçamento misto torna os atributos mais difíceis de encontrar e refatorar. O `--reformat` remove os espaços para você.
 
 Não faça:
 
