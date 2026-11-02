@@ -263,7 +263,19 @@ def test_a_finding_that_is_no_text_names_the_rule(
         lint_text(config, "<div>text</div>")
 
 
-@pytest.mark.parametrize("line", ["-1:0", "1", "x", "1:x", ":1", "", 1, None])
+@pytest.mark.parametrize(
+    "line",
+    [
+        "-1:0",
+        "1",
+        "x",
+        "1:x",
+        ":1",
+        "",
+        pytest.param(1, id="1 as a number"),
+        None,
+    ],
+)
 def test_a_made_up_position_names_the_rule(
     tmp_path: Path, line: object
 ) -> None:

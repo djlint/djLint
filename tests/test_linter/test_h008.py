@@ -58,14 +58,14 @@ test_data = [
             "/>"
         ),
         ([]),
-        id="one",
+        id="attribute without a value",
     ),
     pytest.param(
         (
             '<link rel="stylesheet" href="styles.css" media="print" onload="this.media=\'all\'"/>'
         ),
         ([]),
-        id="one",
+        id="single quotes inside a double-quoted value",
     ),
     pytest.param(
         (

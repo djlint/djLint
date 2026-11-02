@@ -32,7 +32,9 @@ test_data = [
         ]),
         id="opening",
     ),
-    pytest.param(("<li>ID=username</li>"), ([]), id="opening"),
+    pytest.param(
+        ("<li>ID=username</li>"), ([]), id="text that looks like an attribute"
+    ),
     pytest.param(
         ('<div title="the ID=5">y</div>'), ([]), id="name inside a value"
     ),
