@@ -143,8 +143,10 @@ def encode_template_string_newlines(html: str) -> str:
     The whitespace after such a break is part of the string, but every pass
     that lays out lines would strip or indent it as layout. Behind the
     marker the string stays on one line until indenting is done. A raw text
-    body is javascript or css rather than template, and an attribute value
-    already holds its breaks behind its own marker.
+    body is javascript or css rather than template and is left alone. Most
+    attribute values already hold their breaks behind their own marker; one
+    whose lines are joined or laid out anyway (`class`, `style`, `srcset`, a
+    value formatted as javascript) still has its template strings held.
     """
     if "\n" not in html or ("{{" not in html and "{%" not in html):
         return html
