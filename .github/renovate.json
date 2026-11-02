@@ -98,6 +98,13 @@
     },
     { "matchManagers": ["github-actions", "pre-commit"], "automerge": true },
     {
+      "description": "A new Node is reviewed by hand. Node versioning holds it back until the major version reaches LTS",
+      "matchPackageNames": ["node"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "node",
+      "automerge": false
+    },
+    {
       "description": "A new Python is reviewed by hand. A cooldown would count from the last rebuild of an image tag, which keeps part of the update out of the PR. A classifier can name a Python that is not out yet, which is not a reason to roll it back",
       "matchPackageNames": ["python", "docker.io/python"],
       "groupName": "python",
