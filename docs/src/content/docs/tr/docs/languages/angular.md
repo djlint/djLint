@@ -1,21 +1,21 @@
 ---
 title: "Angular Şablonları için Linter"
-description: "djLint bir Angular şablon linter'ıdır! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın."
+description: "djLint, Angular şablonlarını denetler. Kuralların bu şablonlara uyması için angular profilini ayarlayın."
 sidebar:
   label: "Angular"
 ---
 
-djLint bir Angular şablon linter'ıdır! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın.
+djLint, Angular şablonlarını denetler. Kuralların bu şablonlara uyması için `angular` profilini ayarlayın.
 
 **[Angular nedir?](https://angular.io/guide/template-syntax)**
 
-#### Komut satırını kullanma
+## Komut satırını kullanma
 
 ```bash
 djlint /path/to/templates --profile=angular
 ```
 
-#### Ya da bir yapılandırma dosyası kullanın
+## Ya da bir yapılandırma dosyası kullanın
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 

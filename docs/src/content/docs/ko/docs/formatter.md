@@ -1,6 +1,6 @@
 ---
 title: "포맷터 사용법"
-description: "djLint로 HTML 템플릿을 포맷하세요. 빠르고 정확하며, 결과물은 템플릿을 깔끔하게 다듬어 줍니다."
+description: "djLint가 HTML 템플릿을 포맷하는 방식과, 변경 사항을 적용하기 전에 확인하는 방법입니다."
 sidebar:
   label: "포맷터"
 ---

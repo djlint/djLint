@@ -1,21 +1,21 @@
 ---
 title: "Askama Şablonları için Linter ve Biçimlendirici"
-description: "djLint hem bir Askama şablon linter'ı hem de bir Askama şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın."
+description: "djLint, Askama şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için askama profilini ayarlayın."
 sidebar:
   label: "Askama"
 ---
 
-djLint hem bir Askama şablon linter'ı hem de bir Askama şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın.
+djLint, Askama şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için `askama` profilini ayarlayın.
 
 **[Askama nedir?](https://askama.readthedocs.io/)**
 
-#### Komut satırını kullanma
+## Komut satırını kullanma
 
 ```bash
 djlint /path/to/templates --profile=askama
 ```
 
-#### Ya da bir yapılandırma dosyası kullanın
+## Ya da bir yapılandırma dosyası kullanın
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 

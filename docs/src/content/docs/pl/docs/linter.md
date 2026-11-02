@@ -1,6 +1,6 @@
 ---
 title: "Reguły lintera"
-description: "Linter szablonów HTML djLint ma ponad 30 reguł! Tutaj znajdziesz ich opisy. Łatwo go rozszerzyć o własne reguły!"
+description: "Reguły lintera szablonów HTML djLint oraz sposób dodawania własnych reguł."
 sidebar:
   label: "Linter"
 ---
@@ -31,7 +31,7 @@ Na przykład:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Można to też zrobić w pliku konfiguracyjnym – zobacz [Konfiguracja](/pl/docs/configuration).
+Można to też zrobić w pliku konfiguracyjnym (zobacz [Konfiguracja](/pl/docs/configuration)).
 
 ## Reguły
 
@@ -146,7 +146,7 @@ Pojedyncze cudzysłowy wewnątrz wartości atrybutów HTML (np. `<span title="{%
 
 Przy `quote_style = "single"` reguła wymaga zamiast tego pojedynczych cudzysłowów, a formater je wstawia.
 
-`--reformat` sam poprawia te cudzysłowy, więc żadnego zgłoszenia nie trzeba poprawiać ręcznie.
+`--reformat` sam poprawia te cudzysłowy.
 
 Źle:
 
@@ -166,7 +166,7 @@ Dobrze:
 
 Gdy `{% block %}` obejmuje wiele wierszy lub bloki są zagnieżdżone, samo `{% endblock %}` nie mówi, który blok zamyka, więc podczas edycji łatwo zakończyć niewłaściwy; szablony potomne nadpisują wtedy niewłaściwą treść. Nazwa w endblock dokumentuje, co z czym tworzy parę, i pozwala zarówno djLint, jak i Django (które zgłasza TemplateSyntaxError przy niezgodnej nazwie w endblock) wychwycić blok zamknięty w złym miejscu. Błędy parowania (niezamknięte bloki, osierocone endblocki i niezgodne nazwy) to kontrole poprawności, którymi zajmuje się T038.
 
-Domyślnie wyłączona; włącz ją za pomocą `--include=T003`. `--name-endblocks` sam wpisuje nazwę, więc żadnego zgłoszenia nie trzeba poprawiać ręcznie.
+Domyślnie wyłączona; włącz ją za pomocą `--include=T003`. `--name-endblocks` sam wpisuje nazwę.
 
 Nazwa nie jest wymagana, gdy blok otwiera się i zamyka w tym samym wierszu, np. `{% block title %}``{% endblock %}`. Formater przenosi zawartość bloku zawierającego inne tagi do osobnych wierszy, więc blok zapisany w jednym wierszu może po sformatowaniu wymagać nazwy; z `--name-endblocks` formater wpisze także tę nazwę.
 
@@ -367,7 +367,7 @@ Dobrze:
 
 `There should be no spaces around attribute =.`
 
-Ze spacjami wokół „=” tag czyta się jak trzy osobne tokeny i wystarczy jedna edycja, by się rozpadł: zawinięcie wiersza lub obcięcie w środku zostawia samotny atrybut logiczny i zbłąkany tekst. Ciągły zapis name="value" to też to, czego oczekują proste narzędzia tekstowe (grep, wyszukiwanie i zamiana), więc mieszane odstępy utrudniają niezawodne odnajdywanie i refaktoryzację atrybutów. `--reformat` sam usuwa te spacje.
+Ze spacjami wokół „=” tag czyta się jak trzy osobne tokeny i wystarczy jedna edycja, by się rozpadł: zawinięcie wiersza lub obcięcie w środku zostawia samotny atrybut logiczny i zbłąkany tekst. Proste narzędzia tekstowe (grep, wyszukiwanie i zamiana) też zakładają ciągły zapis name="value", więc mieszane odstępy utrudniają niezawodne odnajdywanie i refaktoryzację atrybutów. `--reformat` sam usuwa te spacje.
 
 Źle:
 
@@ -627,9 +627,9 @@ Dobrze:
 
 `Do not use entity references.`
 
-Dokumenty HTML5 są zapisane w UTF-8, więc dosłowny znak działa wszędzie i to właśnie on jest tym, co recenzenci faktycznie czytają; przeglądarka nie wychwyci literówki w odwołaniu do encji (np. `&mdsah;`) i wyrenderuje je dosłownie jako zepsuty tekst. djLint dopuszcza encje, które niosą składnię (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;` oraz nawiasy klamrowe `&lbrace;` i `&rbrace;` razem z `&percnt;`, `&num;` i `&dollar;`, które zapisane dosłownie dopełniłyby ogranicznik szablonu), a także encje oznaczające znaki niewidoczne, których nie da się sprawdzić w postaci dosłownej: spacje (`&nbsp;`, `&thinsp;`, `&hairsp;`), znaki łączące i znaczniki kierunku (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) oraz `&shy;`, zarówno w postaci nazwanej, jak i dziesiętnej czy szesnastkowej.
+Dokumenty HTML5 są zapisane w UTF-8, więc dosłowny znak działa wszędzie i to go faktycznie czytają recenzenci; przeglądarka nie wychwyci literówki w odwołaniu do encji (np. `&mdsah;`) i wyrenderuje je dosłownie jako zepsuty tekst. djLint dopuszcza encje, które niosą składnię (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;` oraz nawiasy klamrowe `&lbrace;` i `&rbrace;` razem z `&percnt;`, `&num;` i `&dollar;`, które zapisane dosłownie dopełniłyby ogranicznik szablonu), a także encje oznaczające znaki niewidoczne, których nie da się sprawdzić w postaci dosłownej: spacje (`&nbsp;`, `&thinsp;`, `&hairsp;`), znaki łączące i znaczniki kierunku (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) oraz `&shy;`, zarówno w postaci nazwanej, jak i dziesiętnej czy szesnastkowej.
 
-`--reformat` sam zamienia encję na znak, więc żadnego zgłoszenia nie trzeba poprawiać ręcznie. Encja zapisana wewnątrz tagu szablonu jest częścią tagu, a nie strony, więc nie ruszają jej ani reguła, ani formater. `--no-entity-formatting` wyłącza zamianę, ale zostawia regułę włączoną, więc encja nadal jest zgłaszana. Aby zachować encje, dodaj `H023` do `ignore`.
+`--reformat` sam zamienia encję na znak. Encja zapisana wewnątrz tagu szablonu jest częścią tagu, a nie strony, więc nie ruszają jej ani reguła, ani formater. `--no-entity-formatting` wyłącza zamianę, ale zostawia regułę włączoną, więc encja nadal jest zgłaszana. Aby zachować encje, dodaj `H023` do `ignore`.
 
 Źle:
 
@@ -724,7 +724,7 @@ Dobrze:
 
 Domyślnie wyłączona; włącz ją za pomocą `--include=T028`.
 
-Białe znaki usuwane przez tag usuwający białe znaki to białe znaki, które się renderują, więc stosuj to tylko tam, gdzie atrybut nie ma czego stracić. `alt="{%- if brand -%}Acme{%- endif -%} logo"` renderuje się jako `Acmelogo`, a w svg `d="M12 {%- if big -%}20{%- endif -%} 4Z"` staje się inną ścieżką. Dlatego regułę trzeba włączyć samodzielnie.
+Tag usuwający białe znaki usuwa białe znaki, które się renderują, więc stosuj to tylko tam, gdzie atrybut nie ma czego stracić. `alt="{%- if brand -%}Acme{%- endif -%} logo"` renderuje się jako `Acmelogo`, a w svg `d="M12 {%- if big -%}20{%- endif -%} 4Z"` staje się inną ścieżką. Dlatego regułę trzeba włączyć samodzielnie.
 
 Tagi szablonu wewnątrz wartości atrybutu wstawiają do wyrenderowanego atrybutu otaczające je białe znaki i znaki nowego wiersza, więc href lub src zbudowany za pomocą zwykłych tagów `{% if %}`/`{% for %}` może zawierać zbłąkane spacje i dawać niedziałające adresy URL. Tagi kontroli białych znaków z Jinja/Nunjucks (`{%- ... -%}`) usuwają te otaczające białe znaki, dzięki czemu atrybut renderuje się jako jedna czysta wartość. Atrybut class jest wyłączony z reguły, ponieważ dodatkowe białe znaki między nazwami klas są nieszkodliwe.
 
@@ -1175,7 +1175,7 @@ Dobrze:
 
 `Template tag inside an html comment still runs; use a template comment to disable it.`
 
-Komentarz HTML ukrywa znaczniki przed przeglądarką, ale nie przed silnikiem szablonów. `<!-- {% include "debug.html" %} -->` nadal renderuje plik, a `<!-- {% if debug %}...{% endif %} -->` nadal jest obliczane – w Django, Jinja, Nunjucks, Handlebars i Go tak samo – więc tag zakomentowany w ten sposób nadal się wykonuje, a to, co zapisuje, trafia do komentarza albo, jeśli zawiera `-->`, wydostaje się z niego. Wykonanie tagu powstrzymuje tylko komentarz szablonu: `{# #}` w Django i Jinja, `{{! }}` w Handlebars lub `{{/* */}}` w Go.
+Komentarz HTML ukrywa znaczniki przed przeglądarką, ale nie przed silnikiem szablonów. `<!-- {% include "debug.html" %} -->` nadal renderuje plik, a `<!-- {% if debug %}...{% endif %} -->` nadal jest obliczane, tak samo w Django, Jinja, Nunjucks, Handlebars i Go, więc tag zakomentowany w ten sposób nadal się wykonuje, a to, co zapisuje, trafia do komentarza albo, jeśli zawiera `-->`, wydostaje się z niego. Wykonanie tagu powstrzymuje tylko komentarz szablonu: `{# #}` w Django i Jinja, `{{! }}` w Handlebars lub `{{/* */}}` w Go.
 
 Zgłaszany jest tylko tag instrukcji: `{% %}` w profilach, które go mają, sekcja, tag zamykający lub partial w handlebars oraz słowo kluczowe Go, takie jak `{{if}}` lub `{{end}}`. Wartość wypisana w komentarzu, jak w `<!-- built {{ version }} -->`, to celowe użycie i pozostaje bez zgłoszenia, podobnie jak tag wewnątrz komentarza szablonu, bloku `{% comment %}` lub bloku raw oraz komentarz warunkowy dla Internet Explorera, `<!--[if IE]> ... <![endif]-->`, którego treść to znaczniki dla wskazanej w nim przeglądarki.
 
@@ -1319,7 +1319,7 @@ Dobrze:
 
 `Meta refresh should not reload or redirect the page on a timer.`
 
-Odświeżenie po określonym czasie zabiera stronę sprzed oczu osobie, która ją czyta. Ktoś, kto czyta powoli, korzysta z czytnika ekranu albo po prostu mu przerwano, traci miejsce, w którym był, bez ostrzeżenia i bez możliwości zatrzymania odświeżenia, co narusza WCAG 2.2.1 Dostosowanie czasu, a odświeżenie, które przeładowuje tę samą stronę, wyrzuca wszystko, co w niej wpisano.
+Odświeżenie po upływie czasu podmienia stronę w trakcie czytania. Ktoś, kto czyta powoli, korzysta z czytnika ekranu albo po prostu mu przerwano, traci miejsce, w którym był, bez ostrzeżenia i bez możliwości zatrzymania odświeżenia, co narusza WCAG 2.2.1 Dostosowanie czasu, a odświeżenie, które przeładowuje tę samą stronę, wyrzuca wszystko, co w niej wpisano.
 
 Opóźnienie równe zero to natychmiastowe przekierowanie, a nie odliczanie czasu, i WCAG zezwala na nie tam, gdzie nie można użyć przekierowania po stronie serwera, więc nie jest zgłaszane. Oba atrybuty są wykrywane niezależnie od kolejności, w jakiej je zapisano.
 
@@ -1405,7 +1405,7 @@ Dobrze:
 
 `Src should not be empty.`
 
-Specyfikacja HTML mówi, że pusty `src` jest nieprawidłowy, i ostrzega, że przeglądarka rozwiązuje go względem adresu URL samego dokumentu, więc `<img src="">` ponownie pobiera stronę jako obraz, a `<script src=""></script>` pobiera ją jako skrypt. Zwykle jest to symbol zastępczy, który miał wypełnić skrypt, a rozwiązaniem jest usunięcie atrybutu albo przechowanie wartości w atrybucie data, dopóki nie pojawi się prawdziwa. `src` zapisany w ogóle bez wartości, jak w `<img src>`, również jest pusty i jest zgłaszany.
+Specyfikacja HTML mówi, że pusty `src` jest nieprawidłowy, i ostrzega, że przeglądarka interpretuje go względem adresu URL samego dokumentu, więc `<img src="">` ponownie pobiera stronę jako obraz, a `<script src=""></script>` pobiera ją jako skrypt. Zwykle jest to symbol zastępczy, który miał wypełnić skrypt, a rozwiązaniem jest usunięcie atrybutu albo przechowanie wartości w atrybucie data, dopóki nie pojawi się prawdziwa. `src` zapisany w ogóle bez wartości, jak w `<img src>`, również jest pusty i jest zgłaszany.
 
 Sprawdzane są tylko `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` i `video`, ponieważ to te elementy pobierają to, co wskazuje `src`. Zgłaszana jest tylko wartość, którą przeglądarka odczytuje jako pustą, więc wartość bez cudzysłowów, taka jak `<img src=/static/logo.png>`, pozostaje bez zgłoszenia, podobnie jak wartość złożona wyłącznie z białych znaków i wartość zapisana przez tag szablonu, a `srcset` i `data-src` to inne atrybuty, których reguła nie ocenia.
 
@@ -1429,7 +1429,7 @@ Wideo z dźwiękiem przekazuje mowę wyłącznie w ścieżce dźwiękowej, więc
 
 Wideo z atrybutem `muted` nie ma dźwięku, który wymagałby napisów, i nie jest zgłaszane. Nie jest też zgłaszane wideo, którego tag otwierający lub treść zawiera tag szablonu, ponieważ ścieżki lub atrybut `muted` mogą być zapisywane przez szablon tam, gdzie djLint ich nie widzi. Tag szablonu oznacza tu tag otwierany przez język szablonów: `{{`, `{%`, `{#` lub `${`, więc procedura obsługi z jQuery, taka jak `onclick="$(this).play()"`, `$refs` z Alpine, nawias klamrowy z CSS i cena zapisana w tekście zastępczym są zwykłym tekstem, na jaki wyglądają, a wideo nadal jest odczytywane.
 
-Za znaczniki uznaje się tylko znaczniki. `muted` musi być atrybutem, więc `<video class=muted>` to klasa o nazwie muted i jest zgłaszane, a zakomentowany `<track>` lub zapisany wewnątrz wartości atrybutu jest tekstem, a nie ścieżką. `</video>` wewnątrz wartości niczego nie kończy, a element jest oceniany tam, gdzie zamyka go jego prawdziwy tag końcowy, więc pozostawiony otwarty `<video>` obsługuje reguła `H025`.
+`muted` musi być atrybutem, więc `<video class=muted>` to klasa o nazwie muted i jest zgłaszane, a zakomentowany `<track>` lub zapisany wewnątrz wartości atrybutu jest tekstem, a nie ścieżką. `</video>` wewnątrz wartości niczego nie kończy, a element jest oceniany tam, gdzie zamyka go jego prawdziwy tag końcowy, więc pozostawiony otwarty `<video>` obsługuje reguła `H025`.
 
 Źle:
 
@@ -1455,10 +1455,10 @@ Dobra reguła składa się z następujących elementów:
 
 - Nazwa
 - Kod
-- Komunikat – komunikat wyświetlany po znalezieniu błędu.
-- Flagi – flagi wyrażeń regularnych. Domyślnie re.DOTALL. Np.: re.I|re.M
-- Wzorce – wyrażenia regularne, które znajdą błąd.
-- Wykluczenia – opcjonalna lista profili, które reguła ma pomijać.
+- Komunikat: komunikat wyświetlany po znalezieniu błędu.
+- Flagi: flagi wyrażeń regularnych, na przykład re.I|re.M. Domyślnie re.DOTALL.
+- Wzorce: wyrażenia regularne, które znajdują błąd.
+- Wykluczenia: opcjonalna lista profili, do których reguła się nie stosuje.
 
 Dołącz test, który sprawdza regułę.
 

@@ -1,6 +1,6 @@
 ---
 title: "Ignorer du code"
-description: "Comment empêcher djLint de formater un bloc de code. Comment ignorer des règles de djLint directement dans le code."
+description: "Comment empêcher djLint de formater un bloc de code, et comment ignorer des règles du linter directement dans le code."
 sidebar:
   label: "Ignorer du code"
 ---

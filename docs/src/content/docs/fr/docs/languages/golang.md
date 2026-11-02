@@ -1,23 +1,23 @@
 ---
 title: "Linter et formateur de templates Go"
-description: "djLint est un linter de templates Go et un formateur de templates Go ! Profitez du profil prédéfini pour linter et formater vos templates avec djLint."
+description: "djLint linte et formate les templates Go. Utilisez le profil golang pour adapter les règles et le formatage à ces templates."
 sidebar:
   label: "Templates Go"
 ---
 
-djLint est un linter de templates Go et un formateur de templates Go ! Profitez du profil prédéfini pour linter et formater vos templates avec djLint.
+djLint linte et formate les templates Go. Utilisez le profil `golang` pour adapter les règles et le formatage à ces templates.
 
 **[Que sont les templates Go ?](https://pkg.go.dev/text/template)**
 
 Les templates Go (`text/template`, `html/template`) servent aussi aux thèmes Hugo et aux charts Helm : utilisez ce même profil pour eux.
 
-#### En ligne de commande
+## En ligne de commande
 
 ```bash
 djlint /path/to/templates --profile=golang
 ```
 
-#### Ou avec un fichier de configuration
+## Ou avec un fichier de configuration
 
 Configurez djLint dans le fichier `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` de votre projet.
 

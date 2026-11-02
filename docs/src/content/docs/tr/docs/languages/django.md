@@ -1,21 +1,21 @@
 ---
 title: "Django Şablonları için Linter ve Biçimlendirici"
-description: "djLint hem bir django şablon linter'ı hem de bir django şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın."
+description: "djLint, Django şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için django profilini ayarlayın."
 sidebar:
   label: "Django"
 ---
 
-djLint hem bir django şablon linter'ı hem de bir django şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın.
+djLint, Django şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için `django` profilini ayarlayın.
 
 **[Django nedir?](https://django.readthedocs.io/en/stable/ref/templates/language.html)**
 
-#### Komut satırını kullanma
+## Komut satırını kullanma
 
 ```bash
 djlint /path/to/templates --profile=django
 ```
 
-#### Ya da bir yapılandırma dosyası kullanın
+## Ya da bir yapılandırma dosyası kullanın
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 

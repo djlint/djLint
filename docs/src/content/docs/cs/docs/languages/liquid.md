@@ -1,23 +1,23 @@
 ---
 title: "Linter a formátovač šablon Liquid"
-description: "djLint je linter a formátovač šablon Liquid! Při lintování a formátování šablon pomocí djLint využijte připravený profil."
+description: "djLint lintuje a formátuje šablony Liquid. Nastavte profil liquid, aby jim pravidla i formátování odpovídaly."
 sidebar:
   label: "Liquid"
 ---
 
-djLint je linter a formátovač šablon Liquid! Při lintování a formátování šablon pomocí djLint využijte připravený profil.
+djLint lintuje a formátuje šablony Liquid. Nastavte profil `liquid`, aby jim pravidla i formátování odpovídaly.
 
 **[Co je Liquid?](https://shopify.github.io/liquid/)**
 
 Jeden profil pokrývá všechny dialekty Liquid: motivy Shopify, Jekyll, LiquidJS (Eleventy) a Fluid (Orchard Core).
 
-#### Z příkazového řádku
+## Z příkazového řádku
 
 ```bash
 djlint /path/to/templates --profile=liquid
 ```
 
-#### Nebo v konfiguračním souboru
+## Nebo v konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 

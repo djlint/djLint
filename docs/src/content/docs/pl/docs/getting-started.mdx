@@ -1,6 +1,6 @@
 ---
 title: "Pierwsze kroki"
-description: "Pierwsze kroki z djLint – lintowanie i formatowanie szablonów HTML. Korzystaj z prostego interfejsu wiersza poleceń i wielu opcji formatera."
+description: "Zainstaluj djLint i lintuj lub formatuj szablony HTML z wiersza poleceń."
 sidebar:
   label: "Pierwsze kroki"
 ---
@@ -39,7 +39,7 @@ Albo, w systemie macOS lub Linux, za pomocą rozwijanej przez społeczność [fo
 brew install djlint
 ```
 
-_Albo za pomocą npm – **uwaga**: pakiet npm jest tylko nakładką, a jego skrypt instalacyjny uruchamia `pip install --upgrade djlint` dla tego `python3`, który akurat znajduje się w ścieżce systemowej. npm nie zarządza właściwym pakietem ani go nie odinstalowuje – jeśli to możliwe, używaj bezpośrednio pip._
+_Albo za pomocą npm. **Uwaga**: pakiet npm jest tylko nakładką. Jego skrypt instalacyjny uruchamia `pip install --upgrade djlint` dla tego `python3`, który akurat znajduje się w ścieżce systemowej, a npm nie zarządza właściwym pakietem ani go nie odinstalowuje, więc jeśli możesz, używaj pip._
 
 ```bash
 npm i djlint
@@ -105,9 +105,9 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1` | djLint znalazł błędy lintowania lub pliki wymagające przeformatowania. Przy `--warn` są one zgłaszane jako ostrzeżenia, a djLint kończy działanie z kodem `0`. |
 | `2` | djLint nie sprawdził tego, o co go poproszono: ścieżki nie pasowały do żadnych plików, wiersz poleceń lub konfiguracja były nieprawidłowe albo djLint zawiódł. |
 
-Tylko kod `1` oznacza, że djLint przejrzał twoje szablony i nie spodobało mu się to, co znalazł. Kod `2` zawsze oznacza, że samo uruchomienie nie spełniło swojego zadania, więc potok CI może traktować te dwa przypadki różnie, zamiast zgadywać.
+Tylko kod `1` oznacza, że djLint przejrzał twoje szablony i nie spodobało mu się to, co znalazł. Kod `2` zawsze oznacza, że samo uruchomienie nie spełniło swojego zadania, więc potok CI może traktować te dwa przypadki różnie.
 
-To właśnie kod `2` wychwytuje uruchomienie, które niczego nie sprawdziło: błędną ścieżkę, `--extension`, które już do niczego nie pasuje, albo szablony, które zostały przeniesione. Bez niego takie uruchomienie po cichu kończy się sukcesem, choć nie zajrzało do żadnego z twoich szablonów.
+To właśnie kod `2` wychwytuje uruchomienie, które niczego nie sprawdziło: błędną ścieżkę, `--extension`, które już do niczego nie pasuje, albo szablony, które zostały przeniesione. Bez niego takie uruchomienie po cichu kończy się sukcesem.
 
 Pliki, które djLint _znalazł_, a potem celowo pominął z powodu `exclude`, `extend_exclude`, `use_gitignore` lub `require_pragma`, nie są błędem. Takie uruchomienie kończy się kodem `0`, ponieważ konfiguracja zrobiła dokładnie to, co jej kazano. Dzięki temu `exclude` działa też w pre-commit, który przekazuje nazwy plików dodanych do indeksu (staged) niezależnie od tego, czy chcesz, żeby djLint je sprawdzał.
 

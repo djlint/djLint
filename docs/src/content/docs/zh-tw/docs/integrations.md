@@ -1,6 +1,6 @@
 ---
 title: "整合"
-description: "將 djLint 整合到你喜愛的編輯器。使用 Pre-Commit 自動格式化範本。在 SublimeText 中進行 lint。"
+description: "在編輯器中使用 djLint，並透過 pre-commit 執行它。"
 sidebar:
   label: "整合"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Ignorování kódu"
-description: "Jak zabránit djLint ve formátování bloku kódu. Jak ignorovat pravidla djLint přímo v kódu."
+description: "Jak zabránit djLint ve formátování bloku kódu a jak ignorovat pravidla linteru přímo v kódu."
 sidebar:
   label: "Ignorování kódu"
 ---

@@ -1,23 +1,23 @@
 ---
 title: "Liquid テンプレートのリンターとフォーマッター"
-description: "djLint は Liquid テンプレートのリンターであり、Liquid テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。"
+description: "djLint で Liquid テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、liquid プロファイルを設定してください。"
 sidebar:
   label: "Liquid"
 ---
 
-djLint は Liquid テンプレートのリンターであり、Liquid テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。
+djLint で Liquid テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、`liquid` プロファイルを設定してください。
 
 **[Liquid とは？](https://shopify.github.io/liquid/)**
 
 Shopify テーマ、Jekyll、LiquidJS（Eleventy）、Fluid（Orchard Core）と、すべての Liquid の方言に 1 つのプロファイルで対応します。
 
-#### コマンドラインを使う
+## コマンドラインを使う
 
 ```bash
 djlint /path/to/templates --profile=liquid
 ```
 
-#### または、設定ファイルを使う
+## または、設定ファイルを使う
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 

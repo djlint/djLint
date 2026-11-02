@@ -1,6 +1,6 @@
 ---
 title: "Biçimlendirici Kullanımı"
-description: "HTML şablonlarınızı djLint ile biçimlendirin. Hızlı ve doğru; çıktısı şablonlarınızı parlatır."
+description: "djLint'in HTML şablonlarını nasıl biçimlendirdiği ve değişiklikleri uygulamadan önce nasıl gözden geçireceğiniz."
 sidebar:
   label: "Biçimlendirici"
 ---

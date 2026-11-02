@@ -1,6 +1,6 @@
 ---
 title: "Formatter Usage"
-description: "Format your HTML Templates with djLint. Fast, accurate, output will make your templates shine."
+description: "How djLint formats HTML templates, and how to check the changes before applying them."
 sidebar:
   label: "Formatter"
 ---

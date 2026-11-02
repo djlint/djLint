@@ -1,6 +1,6 @@
 ---
 title: "Linter-Regeln"
-description: "Der HTML-Template-Linter von djLint enthält über 30 Regeln! Hier finden Sie ihre Definitionen. Mit eigenen Regeln einfach erweiterbar!"
+description: "Die Regeln des HTML-Template-Linters von djLint und wie Sie eigene hinzufügen."
 sidebar:
   label: "Linter"
 ---
@@ -85,7 +85,7 @@ Das geht auch in der Konfigurationsdatei (siehe [Konfiguration](/de/docs/configu
 | H043 | Das button-Tag sollte ein `type`-Attribut haben.                                                             | ✔️       |
 | T043 | Ein Blockname wird im Template mehr als einmal verwendet.                                                    | ✔️       |
 | H044 | Ein thead sollte `th`- und `td`-Zellen nicht mischen.                                                        | ✔️       |
-| T044 | Das Ausgabe-Tag enthält ein Anweisungsschlüsselwort; verwenden Sie ein Block-Tag.                            | ✔️       |
+| T044 | Das Ausgabe-Tag enthält das Schlüsselwort einer Anweisung; verwenden Sie ein Block-Tag.                      | ✔️       |
 | H045 | Das iframe-Tag sollte ein `title`-Attribut haben.                                                            | ✔️       |
 | T045 | Ein Template-Tag in einem HTML-Kommentar läuft trotzdem; deaktivieren Sie es mit einem Template-Kommentar.   | ✔️       |
 | H046 | Tabindex sollte nicht positiv sein.                                                                          | ✔️       |
@@ -146,7 +146,7 @@ Einfache Anführungszeichen in HTML-Attributwerten (z. B. `<span title="{% trans
 
 Mit `quote_style = "single"` verlangt die Regel stattdessen einfache Anführungszeichen, und der Formatter schreibt diese.
 
-`--reformat` schreibt diese Anführungszeichen für Sie um, ein Befund bedeutet also nie Handarbeit.
+`--reformat` schreibt diese Anführungszeichen für Sie um.
 
 Nicht so:
 
@@ -166,7 +166,7 @@ Sondern so:
 
 Erstreckt sich ein `{% block %}` über viele Zeilen oder sind Blöcke verschachtelt, verrät ein bloßes `{% endblock %}` nicht, welchen Block es schließt. Beim Bearbeiten beendet man so leicht den falschen, und Kind-Templates überschreiben dann den falschen Inhalt. Ein benannter Endblock dokumentiert die Zuordnung und lässt sowohl djLint als auch Django (das bei einem nicht passenden Endblock-Namen einen TemplateSyntaxError auslöst) einen an der falschen Stelle geschlossenen Block erkennen. Zuordnungsfehler (nicht geschlossene Blöcke, verwaiste Endblocks und nicht passende Namen) sind Korrektheitsprüfungen, die T038 übernimmt.
 
-Standardmäßig deaktiviert; aktivieren Sie die Regel mit `--include=T003`. `--name-endblocks` schreibt den Namen für Sie, ein Befund bedeutet also nie Handarbeit.
+Standardmäßig deaktiviert; aktivieren Sie die Regel mit `--include=T003`. `--name-endblocks` schreibt den Namen für Sie.
 
 Ein Name ist nicht erforderlich, wenn der Block in derselben Zeile geöffnet und geschlossen wird, z. B. `{% block title %}``{% endblock %}`. Der Formatter verschiebt den Inhalt eines Blocks, der andere Tags enthält, in eigene Zeilen, sodass ein in einer Zeile geschriebener Block nach dem Formatieren einen Namen benötigen kann; mit `--name-endblocks` schreibt der Formatter auch diesen Namen.
 
@@ -367,7 +367,7 @@ Sondern so:
 
 `There should be no spaces around attribute =.`
 
-Mit Leerzeichen um das „=“ liest sich das Tag als drei getrennte Token und ist nur eine Bearbeitung davon entfernt, auseinanderzufallen: Ein Zeilenumbruch oder eine Kürzung in der Mitte hinterlässt ein bloßes boolesches Attribut plus verirrten Text. Einfache Textwerkzeuge (grep, Suchen und Ersetzen) gehen außerdem von einem zusammenhängenden name="value" aus, sodass gemischte Abstände es erschweren, Attribute zuverlässig zu finden und zu refaktorieren. `--reformat` entfernt die Leerzeichen für Sie.
+Mit Leerzeichen um das „=“ liest sich das Tag als drei getrennte Token und fällt bei der nächsten Bearbeitung leicht auseinander: Ein Zeilenumbruch oder eine Kürzung in der Mitte hinterlässt ein bloßes boolesches Attribut plus verirrten Text. Einfache Textwerkzeuge (grep, Suchen und Ersetzen) gehen außerdem von einem zusammenhängenden name="value" aus, sodass gemischte Abstände es erschweren, Attribute zuverlässig zu finden und zu refaktorieren. `--reformat` entfernt die Leerzeichen für Sie.
 
 Nicht so:
 
@@ -629,7 +629,7 @@ Sondern so:
 
 HTML5-Dokumente sind UTF-8, das Zeichen selbst funktioniert also überall und ist das, was Reviewer tatsächlich lesen; ein Tippfehler in einer Entity-Referenz (z. B. `&mdsah;`) wird vom Browser nicht erkannt und erscheint unverändert als kaputter Text. djLint erlaubt die Entities, die Syntax tragen (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;` sowie die geschweiften Klammern `&lbrace;` und `&rbrace;` zusammen mit `&percnt;`, `&num;` und `&dollar;`, die ausgeschrieben einen Template-Begrenzer vervollständigen würden), und jene, die ein unsichtbares Zeichen bezeichnen, das sich daher nicht als Zeichen selbst prüfen lässt: die Leerzeichen (`&nbsp;`, `&thinsp;`, `&hairsp;`), die Verbinder und Richtungsmarken (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) und `&shy;`, jeweils in benannter, dezimaler und hexadezimaler Form.
 
-`--reformat` ersetzt die Entity für Sie durch das Zeichen, ein Befund bedeutet also nie Handarbeit. Eine Entity innerhalb eines Template-Tags gehört zum Tag und nicht zur Seite, daher fassen weder die Regel noch der Formatter sie an. `--no-entity-formatting` schaltet das Ersetzen ab, lässt die Regel aber aktiv, sodass eine Entity weiterhin gemeldet wird. Fügen Sie `H023` zu `ignore` hinzu, um Entities zu behalten.
+`--reformat` ersetzt die Entity für Sie durch das Zeichen. Eine Entity innerhalb eines Template-Tags gehört zum Tag und nicht zur Seite, daher fassen weder die Regel noch der Formatter sie an. `--no-entity-formatting` schaltet das Ersetzen ab, lässt die Regel aber aktiv, sodass eine Entity weiterhin gemeldet wird. Fügen Sie `H023` zu `ignore` hinzu, um Entities zu behalten.
 
 Nicht so:
 
@@ -686,7 +686,7 @@ Sondern so:
 
 `Empty id and class tags can be removed.`
 
-Kein Klassen- oder id-Selektor trifft auf ein leeres Attribut zu, und eine leere id ist ungültiges HTML (der id-Wert darf nicht der leere String sein). Ein Selektor auf das bloße Vorhandensein des Attributs wie `div[class]` trifft es dagegen schon, sodass das Entfernen für ein so geschriebenes Stylesheet sichtbar ist. Meist weist es auf einen Template-Fehler hin, bei dem eigentlich eine Variable eingesetzt werden sollte; wer es entfernt oder füllt, verhindert, dass sich dieser Fehler vor aller Augen versteckt.
+Kein Klassen- oder id-Selektor trifft auf ein leeres Attribut zu, und eine leere id ist ungültiges HTML (der id-Wert darf nicht der leere String sein). Ein Selektor auf das bloße Vorhandensein des Attributs wie `div[class]` trifft es dagegen schon, sodass das Entfernen für ein so geschriebenes Stylesheet sichtbar ist. Meist weist es auf einen Template-Fehler hin, bei dem eigentlich eine Variable eingesetzt werden sollte; wer es entfernt oder füllt, sorgt dafür, dass dieser Fehler nicht unbemerkt bleibt.
 
 Nicht so:
 
@@ -1319,7 +1319,7 @@ Sondern so:
 
 `Meta refresh should not reload or redirect the page on a timer.`
 
-Ein zeitgesteuerter Refresh zieht die Seite unter dem Lesenden weg. Wer langsam liest, einen Screenreader nutzt oder einfach unterbrochen wurde, verliert ohne Vorwarnung und ohne Möglichkeit, es zu verhindern, die Stelle, an der er war, was gegen WCAG 2.2.1 Zeiteinteilung anpassbar verstößt, und ein Refresh, der dieselbe Seite neu lädt, verwirft alles, was darin eingegeben wurde.
+Ein zeitgesteuerter Refresh verändert die Seite, während jemand sie noch liest. Wer langsam liest, einen Screenreader nutzt oder einfach unterbrochen wurde, verliert ohne Vorwarnung und ohne Möglichkeit, es zu verhindern, die Stelle, an der er war, was gegen WCAG 2.2.1 Zeiteinteilung anpassbar verstößt, und ein Refresh, der dieselbe Seite neu lädt, verwirft alles, was darin eingegeben wurde.
 
 Eine Verzögerung von null ist eine sofortige Weiterleitung und kein Timer, was WCAG dort erlaubt, wo keine serverseitige Weiterleitung möglich ist; sie wird daher nicht gemeldet. Die beiden Attribute werden gefunden, egal in welcher Reihenfolge sie geschrieben sind.
 
@@ -1429,7 +1429,7 @@ Ein Video mit Ton transportiert seine Sprache nur über die Tonspur, sodass geh�
 
 Ein `muted`-Video hat keinen Ton, der untertitelt werden müsste, und wird nicht gemeldet. Ebenso wenig ein Video, dessen öffnendes Tag oder Rumpf ein Template-Tag enthält, da die Spuren oder das `muted`-Attribut vom Template geschrieben werden könnten, wo djLint sie nicht sieht. Als Template-Tag gilt eines, das eine Template-Sprache öffnet, `{{`, `{%`, `{#` oder `${`, daher sind ein jQuery-Handler wie `onclick="$(this).play()"`, ein `$refs` von Alpine, eine CSS-Klammer und ein Preis im Fallback-Text der gewöhnliche Text, nach dem sie aussehen, und das Video wird trotzdem gelesen.
 
-Nur Markup zählt als Markup. `muted` muss das Attribut sein, daher ist `<video class=muted>` eine Klasse namens muted und wird gemeldet, und ein auskommentiertes oder in einen Attributwert geschriebenes `<track>` ist Text und keine Spur. Ein `</video>` in einem Wert beendet nichts, und das Element wird dort beurteilt, wo sein echtes End-Tag es schließt; ein offen gelassenes `<video>` bleibt also `H025` überlassen.
+`muted` muss das Attribut sein, daher ist `<video class=muted>` eine Klasse namens muted und wird gemeldet, und ein auskommentiertes oder in einen Attributwert geschriebenes `<track>` ist Text und keine Spur. Ein `</video>` in einem Wert beendet nichts, und das Element wird dort beurteilt, wo sein echtes End-Tag es schließt; ein offen gelassenes `<video>` bleibt also `H025` überlassen.
 
 Nicht so:
 
@@ -1455,10 +1455,10 @@ Eine gute Regel besteht aus
 
 - Name
 - Code
-- Meldung – die Meldung, die angezeigt wird, wenn ein Fehler gefunden wird.
-- Flags – Regex-Flags. Standard ist re.DOTALL. Bsp.: re.I|re.M
-- Muster – reguläre Ausdrücke, die den Fehler finden.
-- Ausschluss – optionale Liste von Profilen, für die die Regel nicht gelten soll.
+- Meldung: die Meldung, die angezeigt wird, wenn der Fehler gefunden wird.
+- Flags: Regex-Flags, zum Beispiel re.I|re.M. Standard ist re.DOTALL.
+- Muster: reguläre Ausdrücke, die den Fehler finden.
+- Ausschluss: optionale Liste von Profilen, für die die Regel nicht gilt.
 
 Bitte fügen Sie einen Test hinzu, der die Regel überprüft.
 

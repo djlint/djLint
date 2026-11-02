@@ -1,6 +1,6 @@
 ---
 title: "Integrações"
-description: "Integre o djLint ao seu editor favorito. Formate seus templates automaticamente com o pre-commit. Faça o lint com o SublimeText."
+description: "Use o djLint no seu editor e execute-o com o pre-commit."
 sidebar:
   label: "Integrações"
 ---
@@ -168,7 +168,7 @@ Em seguida, execute `M-x eglot` em um template. `eglot-format-buffer` o formata.
 
 `djlint --lsp` executa o djLint como um servidor de linguagem via stdio. Ele continua em execução, então o editor recebe as ocorrências enquanto você digita e formata um documento sem iniciar um processo a cada vez.
 
-Ele relata ocorrências e formata documentos inteiros. Não precisa de pacotes extras. Qualquer outro editor que fale LSP pode executá-lo com o mesmo comando.
+Ele relata ocorrências e formata documentos inteiros. Não precisa de pacotes extras. Qualquer outro editor que suporte LSP pode executá-lo com o mesmo comando.
 
 ### Configurações
 

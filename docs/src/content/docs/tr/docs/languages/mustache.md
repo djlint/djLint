@@ -1,21 +1,21 @@
 ---
 title: "Mustache Şablonları için Linter ve Biçimlendirici"
-description: "djLint hem bir mustache şablon linter'ı hem de bir mustache şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın."
+description: "djLint, Mustache şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için handlebars profilini ayarlayın."
 sidebar:
   label: "Mustache"
 ---
 
-djLint hem bir mustache şablon linter'ı hem de bir mustache şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın.
+djLint, Mustache şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için `handlebars` profilini ayarlayın.
 
 **[Mustache nedir?](https://mustache.github.io/mustache.5.html)**
 
-#### Komut satırını kullanma
+## Komut satırını kullanma
 
 ```bash
 djlint /path/to/templates --profile=handlebars
 ```
 
-#### Ya da bir yapılandırma dosyası kullanın
+## Ya da bir yapılandırma dosyası kullanın
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 

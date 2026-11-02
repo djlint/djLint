@@ -1,11 +1,11 @@
 ---
 title: "Reglas del linter"
-description: "¡El linter de plantillas HTML de djLint incluye más de 30 reglas! Consulta aquí sus definiciones. ¡Amplíalo fácilmente con reglas personalizadas!"
+description: "Las reglas del linter de plantillas HTML de djLint y cómo añadir las tuyas."
 sidebar:
   label: "Linter"
 ---
 
-djLint incluye muchas reglas para comprobar el estilo y la validez de tus plantillas. Saca el máximo partido al linter configurándolo para usar un perfil predefinido para el lenguaje de plantillas que elijas.
+djLint incluye muchas reglas para comprobar el estilo y la validez de tus plantillas. Saca el máximo partido al linter configurándolo con un perfil predefinido para el lenguaje de plantillas que elijas.
 
 ```bash
 djlint /path/to/templates --lint
@@ -146,7 +146,7 @@ Las comillas simples dentro de los valores de atributos HTML (p. ej., `<span tit
 
 Con `quote_style = "single"`, la regla pide comillas simples en su lugar, y el formateador las escribe.
 
-`--reformat` reescribe estas comillas por ti, así que un problema nunca supone trabajo manual.
+`--reformat` reescribe estas comillas por ti.
 
 No hagas esto:
 
@@ -166,7 +166,7 @@ Haz esto:
 
 Cuando un `{% block %}` abarca muchas líneas o hay bloques anidados, un `{% endblock %}` sin nombre no da ninguna pista de qué bloque cierra, así que es fácil cerrar el que no es al editar; las plantillas hijas acaban entonces sobrescribiendo el contenido equivocado. Ponerle nombre al endblock documenta la pareja y permite que tanto djLint como Django (que lanza TemplateSyntaxError cuando el nombre del endblock no coincide) detecten un bloque cerrado en el sitio equivocado. Los errores de emparejamiento (bloques sin cerrar, endblocks huérfanos y nombres que no coinciden) son comprobaciones de corrección de las que se encarga T038.
 
-Desactivada por defecto; actívala con `--include=T003`. `--name-endblocks` escribe el nombre por ti, así que un problema nunca supone trabajo manual.
+Desactivada por defecto; actívala con `--include=T003`. `--name-endblocks` escribe el nombre por ti.
 
 No hace falta un nombre cuando el bloque se abre y se cierra en la misma línea, p. ej., `{% block title %}``{% endblock %}`. El formateador pasa a líneas propias el contenido de un bloque que contiene otras etiquetas, así que un bloque escrito en una sola línea puede necesitar un nombre una vez formateado; con `--name-endblocks`, el formateador también escribe ese nombre.
 
@@ -367,7 +367,7 @@ Haz esto:
 
 `There should be no spaces around attribute =.`
 
-Con espacios alrededor del "=", la etiqueta se lee como tres elementos separados, y está a una edición de partirse: un salto de línea o un recorte en medio deja un atributo booleano suelto más texto perdido. Mantener nombre="valor" junto es además lo que dan por hecho las herramientas de texto sencillas (grep, buscar y reemplazar), así que un espaciado mezclado hace difícil encontrar los atributos y refactorizarlos de forma fiable. `--reformat` quita los espacios por ti.
+Con espacios alrededor del "=", la etiqueta se lee como tres elementos separados, y basta una edición para partirla: un salto de línea o un recorte en medio deja un atributo booleano suelto más texto perdido. Mantener nombre="valor" junto es además lo que dan por hecho las herramientas de texto sencillas (grep, buscar y reemplazar), así que un espaciado mezclado hace difícil encontrar los atributos y refactorizarlos de forma fiable. `--reformat` quita los espacios por ti.
 
 No hagas esto:
 
@@ -405,7 +405,7 @@ Haz esto:
 
 `Found extra blank lines.`
 
-Las series de líneas en blanco no tienen ningún efecto en la página renderizada (HTML colapsa los espacios en blanco), pero inflan las plantillas y generan diffs ruidosos cuando cambian las líneas vecinas. El formateador de djLint las elimina por completo por defecto (conserva como mucho `max_blank_lines` líneas en blanco, que por defecto es 0), así que las series que quedan indican código sin formatear.
+Las líneas en blanco seguidas no tienen ningún efecto en la página renderizada (HTML colapsa los espacios en blanco), pero inflan las plantillas y generan diffs ruidosos cuando cambian las líneas vecinas. El formateador de djLint las elimina por completo por defecto (conserva como mucho `max_blank_lines` líneas en blanco, que por defecto es 0), así que las que quedan indican código sin formatear.
 
 No hagas esto:
 
@@ -629,7 +629,7 @@ Haz esto:
 
 Los documentos HTML5 son UTF-8, así que el carácter literal funciona en todas partes y es lo que de verdad leen los revisores; una errata en una referencia de entidad (p. ej., `&mdsah;`) no la detecta el navegador y se renderiza tal cual como texto roto. djLint permite las entidades que tienen función sintáctica (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, y las llaves `&lbrace;` y `&rbrace;` junto con `&percnt;`, `&num;` y `&dollar;`, que escritas literalmente completarían un delimitador de plantilla) y las que nombran un carácter invisible, que por tanto no se puede revisar como literal: los espacios (`&nbsp;`, `&thinsp;`, `&hairsp;`), los caracteres de unión y las marcas (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) y `&shy;`, tanto en forma con nombre como decimal o hexadecimal.
 
-`--reformat` reescribe la entidad como el carácter por ti, así que un problema nunca supone trabajo manual. Una entidad escrita dentro de una etiqueta de plantilla forma parte de la etiqueta y no de la página, así que ni la regla ni el formateador la tocan. `--no-entity-formatting` desactiva la reescritura pero deja la regla activa, así que la entidad se sigue notificando. Añade `H023` a `ignore` para conservar las entidades.
+`--reformat` reescribe la entidad como el carácter por ti. Una entidad escrita dentro de una etiqueta de plantilla forma parte de la etiqueta y no de la página, así que ni la regla ni el formateador la tocan. `--no-entity-formatting` desactiva la reescritura pero deja la regla activa, así que la entidad se sigue notificando. Añade `H023` a `ignore` para conservar las entidades.
 
 No hagas esto:
 
@@ -686,7 +686,7 @@ Haz esto:
 
 `Empty id and class tags can be removed.`
 
-Ningún selector de clase o de id coincide con un atributo vacío, y un id vacío es HTML no válido (el valor del id no puede ser la cadena vacía). Un selector de presencia de atributo como `div[class]` sí coincide con él, así que eliminarlo se nota en una hoja de estilo escrita de esa forma. Suele indicar un error en la plantilla, donde se pretendía interpolar una variable, así que eliminarlo o rellenarlo evita que ese error quede oculto a plena vista.
+Ningún selector de clase o de id coincide con un atributo vacío, y un id vacío es HTML no válido (el valor del id no puede ser la cadena vacía). Un selector de presencia de atributo como `div[class]` sí coincide con él, así que eliminarlo se nota en una hoja de estilo escrita de esa forma. Suele indicar un error en la plantilla, donde se pretendía interpolar una variable, así que eliminarlo o rellenarlo evita que ese error pase desapercibido.
 
 No hagas esto:
 
@@ -793,7 +793,7 @@ Haz esto:
 
 `Extra whitespace found in template tags.`
 
-Las series de espacios o tabulaciones entre los argumentos de una etiqueta de plantilla son ruido invisible: ocultan diferencias reales en los diffs, pueden dificultar ver que falta un argumento y se alejan del estilo de un solo espacio que produce el formateador de djLint, lo que provoca cambios de formato innecesarios. Los espacios dentro de las cadenas entre comillas se conservan y no se notifican.
+Los espacios o tabulaciones seguidos entre los argumentos de una etiqueta de plantilla son ruido invisible: ocultan diferencias reales en los diffs, pueden dificultar ver que falta un argumento y se alejan del estilo de un solo espacio que produce el formateador de djLint, lo que provoca cambios de formato innecesarios. Los espacios dentro de las cadenas entre comillas se conservan y no se notifican.
 
 No hagas esto:
 
@@ -1429,7 +1429,7 @@ Un vídeo con sonido transmite el habla solo a través del audio, así que una p
 
 Un vídeo `muted` no tiene audio que subtitular y no se notifica. Tampoco un vídeo cuya etiqueta de apertura o cuyo cuerpo contiene una etiqueta de plantilla, ya que las pistas, o el atributo `muted`, pueden estar escritos por la plantilla donde djLint no los ve. Una etiqueta de plantilla es una que abre un lenguaje de plantillas, `{{`, `{%`, `{#` o `${`, así que un manejador de jQuery como `onclick="$(this).play()"`, un `$refs` de Alpine, una llave de css y un precio escrito en el texto alternativo son el texto normal que parecen, y el vídeo se sigue leyendo.
 
-Solo el marcado cuenta como marcado. `muted` tiene que ser el atributo, así que `<video class=muted>` es una clase llamada muted y se notifica, y un `<track>` comentado o escrito dentro de un valor de atributo es texto y no una pista. Un `</video>` dentro de un valor no cierra nada, y el elemento se evalúa donde lo cierra su verdadera etiqueta de cierre, así que un `<video>` que se deja abierto se deja a `H025`.
+`muted` tiene que ser el atributo, así que `<video class=muted>` es una clase llamada muted y se notifica, y un `<track>` comentado o escrito dentro de un valor de atributo es texto y no una pista. Un `</video>` dentro de un valor no cierra nada, y el elemento se evalúa donde lo cierra su verdadera etiqueta de cierre, así que un `<video>` que se deja abierto se deja a `H025`.
 
 No hagas esto:
 
@@ -1456,9 +1456,9 @@ Una buena regla consta de
 - Nombre
 - Código
 - Mensaje: el mensaje que se muestra cuando se encuentra el error.
-- Flags: flags de la expresión regular. Por defecto, re.DOTALL. Ej.: re.I|re.M
-- Patrones: expresiones regulares que encontrarán el error.
-- Exclusiones: lista opcional de perfiles de los que excluir la regla.
+- Flags: flags de la expresión regular, por ejemplo re.I|re.M. Por defecto, re.DOTALL.
+- Patrones: expresiones regulares que encuentran el error.
+- Exclusiones: lista opcional de perfiles a los que no se aplica la regla.
 
 Incluye una prueba que valide la regla.
 

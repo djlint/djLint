@@ -1,21 +1,21 @@
 ---
 title: "Handlebars テンプレートのリンターとフォーマッター"
-description: "djLint は handlebars テンプレートのリンターであり、handlebars テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。"
+description: "djLint で Handlebars テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、handlebars プロファイルを設定してください。"
 sidebar:
   label: "Handlebars"
 ---
 
-djLint は handlebars テンプレートのリンターであり、handlebars テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。
+djLint で Handlebars テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、`handlebars` プロファイルを設定してください。
 
 **[Handlebars とは？](https://handlebarsjs.com/)**
 
-#### コマンドラインを使う
+## コマンドラインを使う
 
 ```bash
 djlint /path/to/templates --profile=handlebars
 ```
 
-#### または、設定ファイルを使う
+## または、設定ファイルを使う
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 

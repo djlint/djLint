@@ -1,21 +1,21 @@
 ---
 title: "Linter šablon Angular"
-description: "djLint je linter šablon Angular! Při lintování a formátování šablon pomocí djLint využijte připravený profil."
+description: "djLint lintuje šablony Angular. Nastavte profil angular, aby jim pravidla odpovídala."
 sidebar:
   label: "Angular"
 ---
 
-djLint je linter šablon Angular! Při lintování a formátování šablon pomocí djLint využijte připravený profil.
+djLint lintuje šablony Angular. Nastavte profil `angular`, aby jim pravidla odpovídala.
 
 **[Co je Angular?](https://angular.io/guide/template-syntax)**
 
-#### Z příkazového řádku
+## Z příkazového řádku
 
 ```bash
 djlint /path/to/templates --profile=angular
 ```
 
-#### Nebo v konfiguračním souboru
+## Nebo v konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 

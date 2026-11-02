@@ -1,6 +1,6 @@
 ---
 title: "Erste Schritte"
-description: "Erste Schritte mit djLint für das Linting und Formatieren von HTML-Templates. Nutzen Sie die einfache Befehlszeile und die vielen Optionen des Formatters."
+description: "djLint installieren und HTML-Templates auf der Befehlszeile linten oder formatieren."
 sidebar:
   label: "Erste Schritte"
 ---
@@ -39,7 +39,7 @@ Oder unter macOS oder Linux mit der von der Community gepflegten [Homebrew-Forme
 brew install djlint
 ```
 
-_Oder mit npm – **Achtung**: Das npm-Paket ist nur ein Wrapper. Sein Installationsskript führt `pip install --upgrade djlint` mit dem `python3` aus, das gerade in Ihrem Systempfad liegt. npm verwaltet das eigentliche Paket nicht und deinstalliert es auch nicht – verwenden Sie nach Möglichkeit direkt pip._
+_Oder mit npm. **Achtung**: Das npm-Paket ist nur ein Wrapper. Sein Installationsskript führt `pip install --upgrade djlint` mit dem `python3` aus, das gerade in Ihrem Systempfad liegt, und npm verwaltet das eigentliche Paket nicht und deinstalliert es auch nicht. Verwenden Sie daher nach Möglichkeit pip._
 
 ```bash
 npm i djlint
@@ -105,9 +105,9 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1`  | djLint hat Linting-Fehler gefunden oder Dateien, die neu formatiert werden müssen. Mit `--warn` werden diese als Warnungen gemeldet und der Exit-Code ist `0`.             |
 | `2`  | djLint hat nicht geprüft, was Sie verlangt haben: Die Pfade passten auf keine Datei, die Befehlszeile oder die Konfiguration war ungültig, oder djLint ist fehlgeschlagen. |
 
-Nur Code `1` bedeutet, dass djLint sich Ihre Templates angesehen hat und mit dem Ergebnis nicht zufrieden ist. Code `2` bedeutet immer, dass der Lauf selbst nicht geliefert hat. So kann eine Pipeline die beiden Fälle unterschiedlich behandeln, statt raten zu müssen.
+Nur Code `1` bedeutet, dass djLint sich Ihre Templates angesehen hat und mit dem Ergebnis nicht zufrieden ist. Code `2` bedeutet immer, dass der Lauf selbst nicht getan hat, was er sollte. So kann eine Pipeline die beiden Fälle unterschiedlich behandeln.
 
-Code `2` fängt einen Lauf ab, der überhaupt nichts geprüft hat: ein falscher Pfad, eine `--extension`, die nicht mehr passt, oder Templates, die verschoben wurden. Ohne ihn geht ein solcher Lauf stillschweigend durch, ohne sich auch nur eines Ihrer Templates angesehen zu haben.
+Code `2` fängt einen Lauf ab, der überhaupt nichts geprüft hat: ein falscher Pfad, eine `--extension`, die nicht mehr passt, oder Templates, die verschoben wurden. Ohne ihn geht ein solcher Lauf stillschweigend durch.
 
 Dateien, die djLint _durchaus_ gefunden und dann absichtlich übersprungen hat, über `exclude`, `extend_exclude`, `use_gitignore` oder `require_pragma`, sind kein Fehler. Ein solcher Lauf endet mit `0`, denn die Konfiguration hat genau das getan, was sie sollte. Dadurch funktioniert auch `exclude` unter pre-commit, das die Namen der Dateien in Ihrer Staging-Area übergibt, ob djLint sie sich ansehen soll oder nicht.
 

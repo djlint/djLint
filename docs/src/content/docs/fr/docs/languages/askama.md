@@ -1,21 +1,21 @@
 ---
 title: "Linter et formateur de templates Askama"
-description: "djLint est un linter de templates Askama et un formateur de templates Askama ! Profitez du profil prédéfini pour linter et formater vos templates avec djLint."
+description: "djLint linte et formate les templates Askama. Utilisez le profil askama pour adapter les règles et le formatage à ces templates."
 sidebar:
   label: "Askama"
 ---
 
-djLint est un linter de templates Askama et un formateur de templates Askama ! Profitez du profil prédéfini pour linter et formater vos templates avec djLint.
+djLint linte et formate les templates Askama. Utilisez le profil `askama` pour adapter les règles et le formatage à ces templates.
 
 **[Qu'est-ce qu'Askama ?](https://askama.readthedocs.io/)**
 
-#### En ligne de commande
+## En ligne de commande
 
 ```bash
 djlint /path/to/templates --profile=askama
 ```
 
-#### Ou avec un fichier de configuration
+## Ou avec un fichier de configuration
 
 Configurez djLint dans le fichier `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` de votre projet.
 

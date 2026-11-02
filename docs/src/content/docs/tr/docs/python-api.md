@@ -3,7 +3,7 @@ title: "Python API"
 description: "djLint API'si ile şablonları kendi Python kodunuzdan biçimlendirin ve denetleyin."
 ---
 
-`djlint.api`, bir Python programının içinden metni komut satırıyla aynı sonuçları vererek biçimlendirir ve denetler. Editörler, derleme araçları ve bellekte bir şablon tutan diğer her şey için tasarlanmıştır. Paketteki diğer her şey herhangi bir sürümde değişebilir; bu yüzden `djlint.settings` ya da `djlint.lint` yerine bu modülü kullanın.
+`djlint.api`, bir Python programının içinden metni komut satırıyla aynı sonuçları vererek biçimlendirir ve denetler. Düzenleyiciler, derleme araçları ve bellekte bir şablon tutan diğer her şey için tasarlanmıştır. Paketteki diğer her şey herhangi bir sürümde değişebilir; bu yüzden `djlint.settings` ya da `djlint.lint` yerine bu modülü kullanın.
 
 ```python
 from djlint.api import format_text, lint_text, load_config

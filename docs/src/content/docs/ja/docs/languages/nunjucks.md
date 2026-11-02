@@ -1,23 +1,23 @@
 ---
 title: "Nunjucks テンプレートのリンターとフォーマッター"
-description: "djLint は nunjucks テンプレートのリンターであり、nunjucks テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。"
+description: "djLint で Nunjucks テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、nunjucks プロファイルを設定してください。"
 sidebar:
   label: "Nunjucks"
 ---
 
-djLint は nunjucks テンプレートのリンターであり、nunjucks テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。
+djLint で Nunjucks テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、`nunjucks` プロファイルを設定してください。
 
 **[Nunjucks とは？](https://mozilla.github.io/nunjucks/)**
 
 Pebble（Java）のテンプレートは Twig と互換性があるので、同じプロファイルを使ってください。
 
-#### コマンドラインを使う
+## コマンドラインを使う
 
 ```bash
 djlint /path/to/templates --profile=nunjucks
 ```
 
-#### または、設定ファイルを使う
+## または、設定ファイルを使う
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 

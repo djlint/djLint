@@ -1,6 +1,6 @@
 ---
 title: "Uso del formateador"
-description: "Formatea tus plantillas HTML con djLint. Rápido y preciso: el resultado hará que tus plantillas brillen."
+description: "Cómo formatea djLint las plantillas HTML y cómo revisar los cambios antes de aplicarlos."
 sidebar:
   label: "Formateador"
 ---

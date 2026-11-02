@@ -1,6 +1,6 @@
 ---
 title: "Regole del linter"
-description: "Il linter di template HTML di djLint include oltre 30 regole! Qui trovi le loro definizioni. Puoi estenderlo facilmente con regole personalizzate!"
+description: "Le regole del linter di template HTML di djLint e come aggiungerne di tue."
 sidebar:
   label: "Linter"
 ---
@@ -146,7 +146,7 @@ Le virgolette singole all'interno dei valori degli attributi HTML (ad es. `<span
 
 Con `quote_style = "single"` la regola richiede invece le virgolette singole, e il formattatore scrive quelle.
 
-`--reformat` riscrive queste virgolette al posto tuo, quindi una segnalazione non richiede mai un intervento manuale.
+`--reformat` riscrive queste virgolette al posto tuo.
 
 Da evitare:
 
@@ -166,7 +166,7 @@ Da preferire:
 
 Quando un `{% block %}` si estende su molte righe o i blocchi sono annidati, un `{% endblock %}` senza nome non dà alcun indizio su quale blocco chiuda, quindi durante la modifica è facile chiudere quello sbagliato; i template figli finiscono poi per sovrascrivere il contenuto sbagliato. Dare un nome all'endblock documenta l'abbinamento e permette sia a djLint sia a Django (che solleva TemplateSyntaxError quando il nome dell'endblock non corrisponde) di intercettare un blocco chiuso nel punto sbagliato. Gli errori di abbinamento (blocchi non chiusi, endblock orfani e nomi non corrispondenti) sono controlli di correttezza gestiti da T038.
 
-Disattivata per impostazione predefinita; attivala con `--include=T003`. `--name-endblocks` scrive il nome al posto tuo, quindi una segnalazione non richiede mai un intervento manuale.
+Disattivata per impostazione predefinita; attivala con `--include=T003`. `--name-endblocks` scrive il nome al posto tuo.
 
 Il nome non è richiesto quando il blocco si apre e si chiude sulla stessa riga, ad es. `{% block title %}``{% endblock %}`. Il formattatore sposta su righe proprie il contenuto di un blocco che contiene altri tag, quindi un blocco scritto su una riga può aver bisogno di un nome una volta formattato; con `--name-endblocks` il formattatore scrive anche quel nome.
 
@@ -629,7 +629,7 @@ Da preferire:
 
 I documenti HTML5 sono in UTF-8, quindi il carattere letterale funziona ovunque ed è ciò che chi revisiona legge davvero; un refuso in un riferimento a entità (ad es. `&mdsah;`) non viene rilevato dal browser e compare così com'è come testo rotto. djLint ammette le entità che hanno un ruolo sintattico (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, e le parentesi graffe `&lbrace;` e `&rbrace;` insieme a `&percnt;`, `&num;` e `&dollar;`, che scritte per esteso completerebbero un delimitatore di template) e quelle che indicano un carattere invisibile, che quindi non si può revisionare come letterale: gli spazi (`&nbsp;`, `&thinsp;`, `&hairsp;`), i joiner e i marcatori (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) e `&shy;`, in forma nominale, decimale ed esadecimale allo stesso modo.
 
-`--reformat` riscrive l'entità come carattere al posto tuo, quindi una segnalazione non richiede mai un intervento manuale. Un'entità scritta all'interno di un tag di template fa parte del tag e non della pagina, quindi né la regola né il formattatore la toccano. `--no-entity-formatting` disattiva la riscrittura ma lascia attiva la regola, quindi un'entità viene comunque segnalata. Aggiungi `H023` a `ignore` per mantenere le entità.
+`--reformat` riscrive l'entità come carattere al posto tuo. Un'entità scritta all'interno di un tag di template fa parte del tag e non della pagina, quindi né la regola né il formattatore la toccano. `--no-entity-formatting` disattiva la riscrittura ma lascia attiva la regola, quindi un'entità viene comunque segnalata. Aggiungi `H023` a `ignore` per mantenere le entità.
 
 Da evitare:
 
@@ -1179,7 +1179,7 @@ Un commento html nasconde il markup al browser, non al motore di template. `<!--
 
 Viene segnalato solo un tag di istruzione: `{% %}` nei profili che lo prevedono, una sezione, una chiusura o un partial di handlebars, e una parola chiave di Go come `{{if}}` o `{{end}}`. Un valore stampato in un commento, come in `<!-- built {{ version }} -->`, è un uso intenzionale e non viene toccato, così come un tag dentro un commento di template, un blocco `{% comment %}` o un blocco raw, e un commento condizionale per Internet Explorer, `<!--[if IE]> ... <![endif]-->`, il cui corpo è markup per il browser che nomina.
 
-Una parola chiave di Go da sola è un normale nome di variabile in ogni altro motore, quindi `<!-- period {{ start }} to {{ end }} -->` e `<!-- Template: {{ template }} -->` sono valori in Django, Jinja, Nunjucks, Handlebars e Liquid, e vengono letti come istruzioni solo con `--profile golang`. Una parola chiave con un operando Go, come in `{{ if .X }}` e `{{ template "footer" . }}`, è un'istruzione che nessun altro motore stampa e viene segnalata con qualsiasi profilo. Allo stesso modo `{%` viene letto solo dove il motore lo prevede, quindi è testo con `--profile handlebars` e `--profile golang`, e un'apertura non seguita da alcuna parentesi di chiusura, come in `<!-- battery at 50{% charge -->`, è la semplice prosa che sembra. Un commento condizionale è tale solo se è scritto come tale, cioè se si apre con `<!--[if` ed è chiuso dal suo `<![endif]-->`, in maiuscolo o in minuscolo; uno lasciato aperto è il normale commento che il browser vi legge, e i tag al suo interno vengono segnalati.
+Una parola chiave di Go da sola è un normale nome di variabile in ogni altro motore, quindi `<!-- period {{ start }} to {{ end }} -->` e `<!-- Template: {{ template }} -->` sono valori in Django, Jinja, Nunjucks, Handlebars e Liquid, e vengono letti come istruzioni solo con `--profile golang`. Una parola chiave con un operando Go, come in `{{ if .X }}` e `{{ template "footer" . }}`, è un'istruzione che nessun altro motore stampa e viene segnalata con qualsiasi profilo. Allo stesso modo `{%` viene letto solo dove il motore lo prevede, quindi è testo con `--profile handlebars` e `--profile golang`, e un'apertura non seguita da alcuna parentesi di chiusura, come in `<!-- battery at 50{% charge -->`, è semplice prosa, come appare. Un commento condizionale è tale solo se è scritto come tale, cioè se si apre con `<!--[if` ed è chiuso dal suo `<![endif]-->`, in maiuscolo o in minuscolo; uno lasciato aperto è il normale commento che il browser vi legge, e i tag al suo interno vengono segnalati.
 
 Da evitare:
 
@@ -1427,9 +1427,9 @@ Da preferire:
 
 Un video con audio trasmette il parlato solo attraverso l'audio, quindi una persona sorda o con problemi di udito non ne ricava nulla senza sottotitoli, richiesti dal criterio WCAG 1.2.2 Sottotitoli (preregistrati). Un `<track>` con un `kind` pari a `captions` o `subtitles` all'interno del `<video>` soddisfa la regola, e lo stesso vale per un `<track>` senza alcun `kind`, perché `subtitles` è il valore predefinito.
 
-Un video `muted` non ha audio da sottotitolare e non viene segnalato. Né lo è un video il cui tag di apertura o il cui corpo contiene un tag di template, perché le tracce, o l'attributo `muted`, potrebbero essere scritte dal template dove djLint non può vederle. Per tag di template si intende uno che un linguaggio di template apre, `{{`, `{%`, `{#` o `${`, quindi un gestore jQuery come `onclick="$(this).play()"`, un `$refs` di Alpine, una parentesi graffa css e un prezzo scritto nel testo di ripiego sono il normale testo che sembrano, e il video viene comunque letto.
+Un video `muted` non ha audio da sottotitolare e non viene segnalato. Né lo è un video il cui tag di apertura o il cui corpo contiene un tag di template, perché le tracce, o l'attributo `muted`, potrebbero essere scritte dal template dove djLint non può vederle. Per tag di template si intende uno che un linguaggio di template apre, `{{`, `{%`, `{#` o `${`, quindi un gestore jQuery come `onclick="$(this).play()"`, un `$refs` di Alpine, una parentesi graffa css e un prezzo scritto nel testo di ripiego sono normale testo, come appaiono, e il video viene comunque letto.
 
-Conta come markup solo il markup. `muted` deve essere l'attributo, quindi `<video class=muted>` è una classe chiamata muted e viene segnalato, e un `<track>` commentato o scritto all'interno del valore di un attributo è testo e non una traccia. Un `</video>` dentro un valore non chiude nulla, e l'elemento viene valutato dove lo chiude il suo vero tag di chiusura, quindi un `<video>` lasciato aperto è lasciato a `H025`.
+`muted` deve essere l'attributo, quindi `<video class=muted>` è una classe chiamata muted e viene segnalato, e un `<track>` commentato o scritto all'interno del valore di un attributo è testo e non una traccia. Un `</video>` dentro un valore non chiude nulla, e l'elemento viene valutato dove lo chiude il suo vero tag di chiusura, quindi un `<video>` lasciato aperto è lasciato a `H025`.
 
 Da evitare:
 
@@ -1455,10 +1455,10 @@ Una buona regola è composta da
 
 - Nome
 - Codice
-- Messaggio - Messaggio da mostrare quando viene trovato l'errore.
-- Flag - Flag delle regex. Il valore predefinito è re.DOTALL. Es.: re.I|re.M
-- Pattern - espressioni regolari che trovano l'errore.
-- Esclusioni - Lista opzionale di profili da cui escludere la regola.
+- Messaggio: messaggio da mostrare quando viene trovato l'errore.
+- Flag: flag delle regex, ad esempio re.I|re.M. Il valore predefinito è re.DOTALL.
+- Pattern: espressioni regolari che trovano l'errore.
+- Esclusioni: lista opzionale dei profili a cui la regola non si applica.
 
 Includi un test che verifichi la regola.
 

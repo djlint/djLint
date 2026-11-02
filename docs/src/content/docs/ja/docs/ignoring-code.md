@@ -1,6 +1,6 @@
 ---
 title: "コードの無視"
-description: "djLint にコードブロックをフォーマットさせない方法と、djLint のルールをインラインで無視する方法。"
+description: "djLint にコードブロックをフォーマットさせない方法と、リンターのルールをインラインで無視する方法。"
 sidebar:
   label: "コードの無視"
 ---

@@ -1,21 +1,21 @@
 ---
 title: "Linter a formátovač šablon Askama"
-description: "djLint je linter a formátovač šablon Askama! Při lintování a formátování šablon pomocí djLint využijte připravený profil."
+description: "djLint lintuje a formátuje šablony Askama. Nastavte profil askama, aby jim pravidla i formátování odpovídaly."
 sidebar:
   label: "Askama"
 ---
 
-djLint je linter a formátovač šablon Askama! Při lintování a formátování šablon pomocí djLint využijte připravený profil.
+djLint lintuje a formátuje šablony Askama. Nastavte profil `askama`, aby jim pravidla i formátování odpovídaly.
 
 **[Co je Askama?](https://askama.readthedocs.io/)**
 
-#### Z příkazového řádku
+## Z příkazového řádku
 
 ```bash
 djlint /path/to/templates --profile=askama
 ```
 
-#### Nebo v konfiguračním souboru
+## Nebo v konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 

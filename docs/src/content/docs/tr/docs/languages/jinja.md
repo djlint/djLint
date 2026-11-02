@@ -1,11 +1,11 @@
 ---
 title: "Jinja Şablonları için Linter ve Biçimlendirici"
-description: "djLint hem bir jinja şablon linter'ı hem de bir jinja şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın."
+description: "djLint, Jinja şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için jinja profilini ayarlayın."
 sidebar:
   label: "Jinja"
 ---
 
-djLint hem bir jinja şablon linter'ı hem de bir jinja şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın.
+djLint, Jinja şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için `jinja` profilini ayarlayın.
 
 **[Jinja nedir?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
@@ -13,13 +13,13 @@ MiniJinja şablonları Jinja2 ile tamamen uyumludur; bu yüzden aynı `jinja` pr
 
 HubSpot'un Jinjava şablonları da jinja tarzındadır; bu yüzden onlar için de bu profili kullanın.
 
-#### Komut satırını kullanma
+## Komut satırını kullanma
 
 ```bash
 djlint /path/to/templates --profile=jinja
 ```
 
-#### Ya da bir yapılandırma dosyası kullanın
+## Ya da bir yapılandırma dosyası kullanın
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 

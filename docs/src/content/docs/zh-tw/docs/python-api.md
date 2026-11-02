@@ -32,7 +32,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## lint_text
 
-`lint_text(config, text, filename="-")` 會依文件順序傳回 `Finding` 的清單。`filename` 是用來比對 `per-file-ignores` 的對象。使用 `require_pragma` 時，沒有 pragma 的文字不會有任何檢查結果。
+`lint_text(config, text, filename="-")` 會依文件順序傳回 `Finding` 的清單。`per-file-ignores` 會以 `filename` 進行比對。使用 `require_pragma` 時，沒有 pragma 的文字不會有任何檢查結果。
 
 `Finding` 是具有下列欄位的具名元組：
 

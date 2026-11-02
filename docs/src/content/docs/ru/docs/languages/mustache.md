@@ -1,21 +1,21 @@
 ---
 title: "Линтер и форматер шаблонов Mustache"
-description: "djLint — линтер и форматер шаблонов Mustache! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint."
+description: "djLint проверяет и форматирует шаблоны Mustache. Задайте профиль handlebars, чтобы правила и форматирование подходили для них."
 sidebar:
   label: "Mustache"
 ---
 
-djLint — линтер и форматер шаблонов Mustache! Используйте готовый профиль для проверки и форматирования ваших шаблонов с помощью djLint.
+djLint проверяет и форматирует шаблоны Mustache. Задайте профиль `handlebars`, чтобы правила и форматирование подходили для них.
 
 **[Что такое Mustache?](https://mustache.github.io/mustache.5.html)**
 
-#### Через командную строку
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile=handlebars
 ```
 
-#### Или через файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 

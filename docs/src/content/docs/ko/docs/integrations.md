@@ -1,6 +1,6 @@
 ---
 title: "통합"
-description: "자주 쓰는 에디터와 djLint를 통합하세요. Pre-Commit으로 템플릿을 자동 포맷하고, SublimeText에서 린트하세요."
+description: "에디터에서 djLint를 사용하고 pre-commit으로 실행하는 방법입니다."
 sidebar:
   label: "통합"
 ---

@@ -1,21 +1,21 @@
 ---
 title: "Angular 範本 Linter"
-description: "djLint 是 Angular 範本 linter！使用 djLint lint 與格式化範本時，善用預先建置好的 profile。"
+description: "djLint 可以 lint Angular 範本。設定 angular profile，讓規則符合這類範本。"
 sidebar:
   label: "Angular"
 ---
 
-djLint 是 Angular 範本 linter！使用 djLint lint 與格式化範本時，善用預先建置好的 profile。
+djLint 可以 lint Angular 範本。設定 `angular` profile，讓規則符合這類範本。
 
 **[什麼是 Angular？](https://angular.io/guide/template-syntax)**
 
-#### 使用命令列
+## 使用命令列
 
 ```bash
 djlint /path/to/templates --profile=angular
 ```
 
-#### 或者，使用設定檔
+## 或者，使用設定檔
 
 在專案的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 檔案中設定 djLint。
 

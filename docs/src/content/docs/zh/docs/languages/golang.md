@@ -1,23 +1,23 @@
 ---
 title: "Go 模板代码检查与格式化工具"
-description: "djLint 是一款 Go 模板代码检查工具，也是一款 Go 模板格式化工具！使用 djLint 检查和格式化模板时，可以直接使用内置的预设。"
+description: "djLint 可以检查和格式化 Go 模板。设置 golang 预设，让规则和格式化方式适合这类模板。"
 sidebar:
   label: "Go 模板"
 ---
 
-djLint 是一款 Go 模板代码检查工具，也是一款 Go 模板格式化工具！使用 djLint 检查和格式化模板时，可以直接使用内置的预设。
+djLint 可以检查和格式化 Go 模板。设置 `golang` 预设，让规则和格式化方式适合这类模板。
 
 **[什么是 Go 模板？](https://pkg.go.dev/text/template)**
 
 Hugo 主题和 Helm chart 同样基于 Go 模板（`text/template`、`html/template`），因此也请为它们使用这个预设。
 
-#### 使用命令行
+## 使用命令行
 
 ```bash
 djlint /path/to/templates --profile=golang
 ```
 
-#### 或者，使用配置文件
+## 或者，使用配置文件
 
 在项目的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 文件中配置 djLint。
 

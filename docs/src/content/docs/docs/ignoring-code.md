@@ -1,6 +1,6 @@
 ---
 title: "Ignoring Code"
-description: "How to prevent djLint from formatting a block of code. How ignore djLint rules inline."
+description: "How to keep djLint from formatting a block of code, and how to ignore linter rules inline."
 sidebar:
   label: "Ignoring code"
 ---

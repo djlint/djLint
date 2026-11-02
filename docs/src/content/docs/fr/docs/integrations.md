@@ -1,6 +1,6 @@
 ---
 title: "Intégrations"
-description: "Intégrez djLint à votre éditeur préféré. Formatez automatiquement vos templates avec pre-commit. Lintez avec Sublime Text."
+description: "Utilisez djLint dans votre éditeur et exécutez-le avec pre-commit."
 sidebar:
   label: "Intégrations"
 ---

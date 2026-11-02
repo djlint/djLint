@@ -1,6 +1,6 @@
 ---
 title: "Integrazioni"
-description: "Integra djLint con il tuo editor preferito. Formatta automaticamente i template con pre-commit. Esegui il lint con SublimeText."
+description: "Usa djLint nel tuo editor ed eseguilo con pre-commit."
 sidebar:
   label: "Integrazioni"
 ---
@@ -213,7 +213,7 @@ In un workflow di GitHub Actions djLint riporta ogni segnalazione come annotazio
 
 Usa `--no-github-output` per ottenere invece il normale output della console, oppure `--github-output` per forzare le annotazioni al di fuori di Actions.
 
-Le annotazioni appartengono a una singola pull request. Per conservare le segnalazioni nella scheda Security del repository, con la cronologia tra un'esecuzione e l'altra, scrivile in formato SARIF e carica il file:
+Le annotazioni restano legate a una singola pull request. Per conservare le segnalazioni nella scheda Security del repository, con la cronologia tra un'esecuzione e l'altra, scrivile in formato SARIF e carica il file:
 
 ```yaml
 - run: djlint . --lint --sarif > djlint.sarif

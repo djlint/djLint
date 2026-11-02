@@ -1,21 +1,21 @@
 ---
 title: "Linter a formátovač šablon Mustache"
-description: "djLint je linter a formátovač šablon Mustache! Při lintování a formátování šablon pomocí djLint využijte připravený profil."
+description: "djLint lintuje a formátuje šablony Mustache. Nastavte profil handlebars, aby jim pravidla i formátování odpovídaly."
 sidebar:
   label: "Mustache"
 ---
 
-djLint je linter a formátovač šablon Mustache! Při lintování a formátování šablon pomocí djLint využijte připravený profil.
+djLint lintuje a formátuje šablony Mustache. Nastavte profil `handlebars`, aby jim pravidla i formátování odpovídaly.
 
 **[Co je Mustache?](https://mustache.github.io/mustache.5.html)**
 
-#### Z příkazového řádku
+## Z příkazového řádku
 
 ```bash
 djlint /path/to/templates --profile=handlebars
 ```
 
-#### Nebo v konfiguračním souboru
+## Nebo v konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 

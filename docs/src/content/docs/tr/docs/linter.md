@@ -1,6 +1,6 @@
 ---
 title: "Linter Kuralları"
-description: "djLint HTML şablon linter'ı 30'dan fazla kural içerir! Tanımlarını burada bulabilirsiniz. Özel kurallar ekleyerek kolayca genişletin!"
+description: "djLint HTML şablon linter'ının kuralları ve kendi kurallarınızı nasıl ekleyeceğiniz."
 sidebar:
   label: "Linter"
 ---
@@ -146,7 +146,7 @@ HTML öznitelik değerlerinin içindeki tek tırnaklar (örn. `<span title="{% t
 
 `quote_style = "single"` ile kural bunun yerine tek tırnak ister ve biçimlendirici de tek tırnak yazar.
 
-`--reformat` bu tırnakları sizin yerinize yeniden yazar; bu yüzden bir bulgu hiçbir zaman elle yapılacak bir iş değildir.
+`--reformat` bu tırnakları sizin yerinize yeniden yazar.
 
 Yapmayın:
 
@@ -166,7 +166,7 @@ Yapın:
 
 Bir `{% block %}` çok sayıda satıra yayıldığında ya da bloklar iç içe olduğunda, yalın bir `{% endblock %}` hangi bloğu kapattığına dair hiçbir ipucu vermez; bu yüzden düzenleme sırasında yanlış bloğu kapatmak kolaydır ve alt şablonlar da yanlış içeriği geçersiz kılar. Endblock'u adlandırmak eşleşmeyi belgeler ve hem djLint'in hem de Django'nun (eşleşmeyen bir endblock adında TemplateSyntaxError fırlatır) yanlış yerde kapatılmış bir bloğu yakalamasını sağlar. Eşleştirme hataları (kapatılmamış bloklar, eşi olmayan endblock'lar ve eşleşmeyen adlar) T038'in ele aldığı doğruluk denetimleridir.
 
-Varsayılan olarak kapalıdır; `--include=T003` ile etkinleştirin. `--name-endblocks` adı sizin yerinize yazar; bu yüzden bir bulgu hiçbir zaman elle yapılacak bir iş değildir.
+Varsayılan olarak kapalıdır; `--include=T003` ile etkinleştirin. `--name-endblocks` adı sizin yerinize yazar.
 
 Blok aynı satırda açılıp kapanıyorsa ad gerekmez, örn. `{% block title %}``{% endblock %}`. Biçimlendirici, başka etiketler içeren bir bloğun içeriğini ayrı satırlara taşır; bu yüzden tek satırda yazılmış bir blok biçimlendirildikten sonra bir ad gerektirebilir. `--name-endblocks` ile biçimlendirici bu adı da yazar.
 
@@ -228,7 +228,7 @@ Yapın:
 
 `<html>` üzerinde bir lang özniteliği olmadığında ekran okuyucular telaffuz kurallarını tahmin eder ve sayfayı yanlış dilde okuyabilir; tarayıcılar da çeviriyi, heceleme ile satır sonu bölmeyi ya da yerel ayara uygun tırnak işaretlerini doğru şekilde sunamaz. Sayfa dilini bildirmek WCAG 2.1'in 3.1.1 başarı ölçütüdür (Düzey A).
 
-`lang=""` ve değersiz bir `lang` ikisi de dilin bilinmediğini söyler; bu yüzden eksik bir öznitelikle aynı şekilde bildirilir.
+`lang=""` ve değersiz bir `lang` ikisi de dilin bilinmediğini söylediği için eksik bir öznitelikle aynı şekilde bildirilir.
 
 Yapmayın:
 
@@ -252,7 +252,7 @@ Yapın:
 
 Varsayılan olarak kapalıdır; `--include=H006` ile etkinleştirin.
 
-Bir `<img>` öğesinin genişliği ve yüksekliği olmadığında tarayıcı, görsel inmeden önce ona yer ayıramaz; bu yüzden görseller yüklendikçe çevredeki içerik kayar. Bu düzen kayması Cumulative Layout Shift (bir Core Web Vitals metriği) değerini kötüleştirir ve sayfa yerine oturana kadar kullanıcıların yanlış yere tıklamasına neden olabilir.
+Bir `<img>` öğesinin genişliği ve yüksekliği olmadığında tarayıcı, görsel inmeden önce ona yer ayıramaz ve görseller yüklendikçe çevredeki içerik kayar. Bu düzen kayması Cumulative Layout Shift (bir Core Web Vitals metriği) değerini kötüleştirir ve sayfa yerine oturana kadar kullanıcıların yanlış yere tıklamasına neden olabilir.
 
 Yapmayın:
 
@@ -270,7 +270,7 @@ Yapın:
 
 `<!DOCTYPE ... > should be present before the html tag.`
 
-`<html>` etiketinden önce bir `<!DOCTYPE>` olmadığında tarayıcılar sayfayı eski kutu modeli ve yerleşim davranışını taklit eden quirks modunda çizer; bu yüzden CSS tarayıcılar arasında tutarsız görüntülenir. Doctype'tan önce gelen şablon etiketleri ve yorumlar sorun değildir; yalnızca `<html>` etiketinin kendisinden önce doctype gelmelidir.
+`<html>` etiketinden önce bir `<!DOCTYPE>` olmadığında tarayıcılar sayfayı eski kutu modeli ve yerleşim davranışını taklit eden quirks modunda çizer ve CSS tarayıcılar arasında tutarsız görüntülenir. Doctype'tan önce gelen şablon etiketleri ve yorumlar sorun değildir; yalnızca `<html>` etiketinin kendisinden önce doctype gelmelidir.
 
 Yapmayın:
 
@@ -387,7 +387,7 @@ Yapın:
 
 Bir alt özniteliği olmadığında ekran okuyucular görselin dosya adını okur ya da hiçbir şey söylemez; bu da WCAG 1.1.1'i (Metin Dışı İçerik) karşılamaz. Alt metni, görsel yüklenemediğinde kullanıcıların gördüğü şeydir de. Dekoratif görseller, yardımcı teknolojilerin onları atlaması gerektiğini bilmesi için açıkça boş bir alt="" taşımalıdır; bu da bu kuralı karşılar.
 
-Değersiz bir `alt`, dekoratif görsel durumu olan `alt=""` ile aynıdır; bu yüzden kabul edilir.
+Değersiz bir `alt`, dekoratif görsel durumu olan `alt=""` ile aynı olduğundan kabul edilir.
 
 Yapmayın:
 
@@ -428,7 +428,7 @@ Yapın:
 
 `Follow h tags with a line break.`
 
-Başlıklar, belge ana hatlarını tanımlayan blok düzeyinde yer işaretleridir; bir sonraki öğeyi kapanan h etiketiyle aynı satıra sıkıştırmak bu yapıyı kaynakta gizler ve iki öğeden birinde yapılan düzenlemelerin diff'lerde ikisinde birden değişiklik gibi görünmesine yol açar. Her başlıktan sonra bir satır sonu, şablonun görsel yapısını işlenen ana hatlarla uyumlu tutar.
+Başlıklar, belge ana hatlarını belirleyen blok düzeyi öğelerdir; bir sonraki öğeyi kapanan h etiketiyle aynı satıra sıkıştırmak bu yapıyı kaynakta gizler ve iki öğeden birinde yapılan düzenlemelerin diff'lerde ikisinde birden değişiklik gibi görünmesine yol açar. Her başlıktan sonra bir satır sonu, şablonun görsel yapısını işlenen ana hatlarla uyumlu tutar.
 
 Yapmayın:
 
@@ -476,7 +476,7 @@ Yapın:
 
 XML/XHTML olarak da ayrıştırılması gereken (ya da XML tabanlı araçlara verilen) şablonlar, kapanış eğik çizgisi olmadan yazılmış void öğeleri reddeder; kod tabanı genelinde `<br>` ile `<br />` yazımını karıştırmak da tutarsız diff'ler üretir. Bu kural, her void öğenin aynı şekilde kapatılması için XHTML tarzı kuralı zorunlu kılar.
 
-Varsayılan olarak kapalıdır; `--include=H017` ile etkinleştirin. H018 ile birbirini dışlar; iki kuraldan yalnızca birini etkinleştirin. `--close-void-tags`, html void etiketlerine eğik çizgiyi sizin yerinize ekler. Bir svg `<path>` yazıldığı gibi bırakılır; bu yüzden onu elle kapatın.
+Varsayılan olarak kapalıdır; `--include=H017` ile etkinleştirin. H018 ile birbirini dışlar; iki kuraldan yalnızca birini etkinleştirin. `--close-void-tags`, html void etiketlerine eğik çizgiyi sizin yerinize ekler. Bir svg `<path>` yazıldığı gibi bırakılır, onu elle kapatın.
 
 Yapmayın:
 
@@ -629,7 +629,7 @@ Yapın:
 
 HTML5 belgeleri UTF-8'dir; bu yüzden karakterin kendisi her yerde çalışır ve inceleyenlerin gerçekte okuduğu da odur. Bir varlık başvurusundaki yazım hatası (örn. `&mdsah;`) tarayıcı tarafından yakalanmaz ve olduğu gibi bozuk metin olarak görüntülenir. djLint, sözdizimi taşıyan varlıklara (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;` ve açık yazıldığında bir şablon sınırlayıcısını tamamlayacak olan `&percnt;`, `&num;` ve `&dollar;` ile birlikte `&lbrace;` ve `&rbrace;` küme parantezleri) ve görünmez olduğu için karakterin kendisi olarak incelenemeyecek bir karakteri adlandıran varlıklara izin verir: boşluklar (`&nbsp;`, `&thinsp;`, `&hairsp;`), birleştiriciler ve işaretler (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) ve `&shy;`; adlandırılmış, ondalık ve onaltılık biçimlerin hepsinde.
 
-`--reformat`, varlığı sizin yerinize karakter olarak yeniden yazar; bu yüzden bir bulgu hiçbir zaman elle yapılacak bir iş değildir. Bir şablon etiketinin içine yazılmış bir varlık, sayfanın değil etiketin parçasıdır; bu yüzden ne kural ne de biçimlendirici ona dokunur. `--no-entity-formatting` yeniden yazmayı kapatır ama kuralı açık bırakır; böylece varlık yine de bildirilir. Varlıkları korumak için `ignore` listesine `H023` ekleyin.
+`--reformat`, varlığı sizin yerinize karakter olarak yeniden yazar. Bir şablon etiketinin içine yazılmış bir varlık, sayfanın değil etiketin parçası olduğundan ne kural ne de biçimlendirici ona dokunur. `--no-entity-formatting` yeniden yazmayı kapatır ama kuralı açık bırakır; böylece varlık yine de bildirilir. Varlıkları korumak için `ignore` listesine `H023` ekleyin.
 
 Yapmayın:
 
@@ -1051,7 +1051,7 @@ Yapın:
 
 `Button tag should have a type attribute.`
 
-`type` özniteliği olmayan bir `<button>` varsayılan olarak `submit` olur; bu yüzden bir betik çalıştırmak için yazılmış bir düğme, çevresindeki formu da gönderir ve sayfa yeniden yüklenir. Türü açıkça yazmak bunu önler.
+`type` özniteliği olmayan bir `<button>` varsayılan olarak `submit` olur. Bir betik çalıştırmak için yazılmış böyle bir düğme, çevresindeki formu da gönderir ve sayfa yeniden yüklenir. Türü açıkça yazmak bunu önler.
 
 Yapmayın:
 
@@ -1073,7 +1073,7 @@ Yapın:
 
 `Block name is used more than once in the template.`
 
-Django, Jinja ve Nunjucks'ın üçü de iki bloğa aynı adı veren bir şablonu ayrıştırmayı reddeder; bu yüzden sayfa hiç yüklenmez. Motorlar iki bloğun bir `{% if %}` etiketinin farklı dallarında bulunmasını önemsemez; bu yüzden her blok adı, bloklar yan yana da olsa biri diğerinin içine yerleştirilmiş de olsa, şablonun tamamında benzersiz olmalıdır.
+Django, Jinja ve Nunjucks'ın üçü de iki bloğa aynı adı veren bir şablonu ayrıştırmayı reddeder ve sayfa hiç yüklenmez. Motorlar iki bloğun bir `{% if %}` etiketinin farklı dallarında bulunmasını önemsemez; bu yüzden her blok adı, bloklar yan yana da olsa biri diğerinin içine yerleştirilmiş de olsa, şablonun tamamında benzersiz olmalıdır.
 
 Yalnızca `{% block %}` sayılır: bir `{% blocktrans %}` blok değildir ve bir `{% endblock name %}` yalnızca kapattığı bloğun adını verir. Motorlar `Content` ve `content` adlarını iki ayrı blok olarak ele aldığından adlar yazıldığı gibi karşılaştırılır.
 
@@ -1101,7 +1101,7 @@ Yapın:
 
 `Thead should not mix th and td cells.`
 
-Her satır kendi başına değerlendirilir; bu yüzden html belirtiminin bir `thead` içinde başlık satırının yanına yerleştirdiği `td` hücrelerinden oluşan açıklama satırı bir karışım sayılmaz. Satırı açan boş bir `td`, ilk sütunu boyunca başlıklar bulunan bir tablonun köşe hücresidir; W3C erişilebilirlik eğitiminin istediği işaretleme de budur; bu yüzden atlanır.
+Her satır kendi başına değerlendirilir; bu yüzden html belirtiminin bir `thead` içinde başlık satırının yanına yerleştirdiği `td` hücrelerinden oluşan açıklama satırı bir karışım sayılmaz. Satırı açan boş bir `td`, ilk sütunu boyunca başlıklar bulunan bir tablonun köşe hücresidir; W3C erişilebilirlik eğitiminin istediği işaretleme de bu olduğundan atlanır.
 
 Bir `th` ile bir `td` ekran okuyucu için farklı anlamlar taşır ve genellikle farklı css'e sahiptir; bu yüzden bir başlık satırındaki tek bir başıboş hücre veri olarak okunur ve yanındaki sütunlardan farklı biçimlenir. Bu karışım geçerli html'dir; fark edilmesini zorlaştıran da budur.
 
@@ -1157,7 +1157,7 @@ Yapın:
 
 Ekran okuyucu bir iframe'i erişilebilir adıyla duyurur. Ad yoksa çerçevenin url'sini okur ya da hiçbir şey söylemez ve gömülü sayfaya girmeden önce onun ne olduğunu anlamanın bir yolu kalmaz. WCAG bunu 4.1.2 Ad, Rol, Değer başlığı altında ele alır; axe ve html-validate de bu denetimi varsayılan olarak sunar.
 
-Ad `title`, `aria-label` ya da `aria-labelledby` özniteliğinden gelebilir ve üçünden herhangi biri kuralı karşılar. Bir şablon etiketinin yazdığı ad da sayılır; bu yüzden sayfaya göre başlık alan bir çerçeve bildirilmez.
+Ad `title`, `aria-label` ya da `aria-labelledby` özniteliğinden gelebilir ve üçünden herhangi biri kuralı karşılar. Bir şablon etiketinin yazdığı ad da sayılır, yani sayfaya göre başlık alan bir çerçeve bildirilmez.
 
 Yapmayın:
 
@@ -1217,7 +1217,7 @@ Yapın:
 
 `Aria-hidden should not be set on a focusable element.`
 
-`aria-hidden="true"` bir öğeyi erişilebilirlik ağacından çıkarır ama sekme sırasında bırakır; bu yüzden klavye kullanıcısı yine o öğeye gelir ve hiçbir şey duyurulmaz. Dekoratif bir simgeyi gizlemek bu özniteliğin olağan kullanımıdır ve bildirilmez; yalnızca kendi başına odak alan bir öğe bildirilir.
+`aria-hidden="true"` bir öğeyi erişilebilirlik ağacından çıkarır ama sekme sırasında bırakır. Klavye kullanıcısı yine o öğeye gelir ve hiçbir şey duyurulmaz. Dekoratif bir simgeyi gizlemek bu özniteliğin olağan kullanımıdır ve bildirilmez; yalnızca kendi başına odak alan bir öğe bildirilir.
 
 Bir öğe şu durumlarda odaklanılabilir sayılır: bir `button`, `select`, `textarea`, `iframe` ya da `summary` ise, `href` içeren bir `a` ya da `area` ise, gizli olmayan bir `input` ise, `controls` içeren bir `audio` ya da `video` ise veya `contenteditable` ya da `0` veya daha büyük bir `tabindex` taşıyorsa. `disabled` bir denetim ya da `tabindex="-1"` taşıyan bir denetim zaten sekme sırasının dışındadır ve olduğu gibi bırakılır.
 
@@ -1321,7 +1321,7 @@ Yapın:
 
 Zamanlanmış bir yenileme, sayfayı okuyan kişinin elinden çekip alır. Yavaş okuyan, ekran okuyucu kullanan ya da sadece sözü kesilen biri, hiçbir uyarı ve durdurma yolu olmadan kaldığı yeri kaybeder; bu, WCAG 2.2.1 Ayarlanabilir Zamanlama ölçütünün karşılanmaması demektir. Aynı sayfayı yeniden yükleyen bir yenileme de sayfaya yazılan her şeyi çöpe atar.
 
-Sıfır gecikme bir zamanlayıcı değil, anında bir yönlendirmedir; WCAG buna sunucu yönlendirmesinin kullanılamadığı yerlerde izin verir, bu yüzden bildirilmez. İki öznitelik, hangi sırayla yazılmış olursa olsun bulunur.
+Sıfır gecikme bir zamanlayıcı değil, anında bir yönlendirmedir; WCAG buna sunucu yönlendirmesinin kullanılamadığı yerlerde izin verdiği için bildirilmez. İki öznitelik, hangi sırayla yazılmış olursa olsun bulunur.
 
 Yapmayın:
 
@@ -1341,7 +1341,7 @@ Yapın:
 
 Bir id tek bir öğeyi adlandırır. Aynı id'yi taşıyan ikinci bir öğe `getElementById`, `<label for>`, parça bağlantıları ve `aria-labelledby` yapılarını bozar: tarayıcı ilkini alır ve gerisini sessizce yok sayar; böylece bir etiket, bir bağlantı ya da bir betik hiçbir uyarı olmadan yanlış öğeye denk gelir.
 
-Tek bir `{% if %}...{% else %}...{% endif %}` yapısının birbirini dışlayan dallarındaki iki id hiçbir zaman birlikte işlenmez; bu yüzden bildirilmez. Bir `{% for %}` döngüsü ya da bir `{% block %}` dal değildir: bunlardan birinin içindeki bir id ile dışındaki aynı id ikisi de işlenir ve sonraki bildirilir. Bir şablon etiketinin yazdığı bir değer bilinemez ve olduğu gibi bırakılır; boş bir değer de öyle. Id'ler, tarayıcının yaptığı gibi birebir karşılaştırılır; bu yüzden `save` ve `Save` iki ayrı id'dir.
+Tek bir `{% if %}...{% else %}...{% endif %}` yapısının birbirini dışlayan dallarındaki iki id hiçbir zaman birlikte işlenmediğinden bildirilmez. Bir `{% for %}` döngüsü ya da bir `{% block %}` dal değildir: bunlardan birinin içindeki bir id ile dışındaki aynı id ikisi de işlenir ve sonraki bildirilir. Bir şablon etiketinin yazdığı bir değer bilinemez ve olduğu gibi bırakılır; boş bir değer de öyle. Id'ler, tarayıcının yaptığı gibi birebir karşılaştırılır; bu yüzden `save` ve `Save` iki ayrı id'dir.
 
 Dallar, dosyanın yazıldığı dilde ve o dilin sınırlayıcılar ile etiket adı arasında izin verdiği her türlü boşlukla okunur: `{% elif %}` ve `{% else %}`, liquid'in `{% elsif %}` ve `{% when %}` etiketleri, go'nun `{{ else }}` etiketi, bir mako `% else:` satır deyimi ve handlebars'ın `{{else}}` etiketi, zincirleme `{{else if x}}` biçimi ve özel yardımcılar dahil herhangi bir `{{#helper}}` bloğunun ters (inverse) bölümü. Bir `<template>` öğesinin içeriği, `getElementById` ile hiçbir zaman erişilemeyen kendine ait bir belge parçasıdır; bu yüzden oradaki bir id yalnızca aynı `<template>` içindeki id'lerle karşılaştırılır: iki şablonun her biri aynı id'ye sahip bir satır içerebilir, ancak tek bir şablonun içindeki iki aynı id yine de bildirilir. Bir yorumun, bir <code>{&#37; raw %}</code> ya da `{% verbatim %}` gövdesinin veya bir `djlint:off` bölgesinin içindeki bir id hiç okunmaz.
 
@@ -1429,7 +1429,7 @@ Sesli bir video konuşmayı yalnızca ses kanalında taşır; bu yüzden işitme
 
 `muted` bir videonun altyazılanacak sesi yoktur ve bildirilmez. Açılış etiketi ya da gövdesi bir şablon etiketi içeren bir video da bildirilmez, çünkü izler ya da `muted` özniteliği djLint'in göremediği yerde şablon tarafından yazılıyor olabilir. Şablon etiketi, bir şablon dilinin açtığı `{{`, `{%`, `{#` ya da `${` yapılarından biri demektir; bu yüzden `onclick="$(this).play()"` gibi bir jQuery işleyicisi, bir Alpine `$refs` ifadesi, bir css süslü parantezi ve yedek metinde yazılmış bir fiyat, göründükleri gibi sıradan metinlerdir ve video yine de okunur.
 
-Yalnızca işaretleme, işaretleme sayılır. `muted` öznitelik olmalıdır; bu yüzden `<video class=muted>` muted adlı bir sınıftır ve bildirilir; yorum satırına alınmış ya da bir öznitelik değerinin içine yazılmış bir `<track>` da iz değil metindir. Bir değerin içindeki `</video>` hiçbir şeyi sonlandırmaz ve öğe, gerçek bitiş etiketinin onu kapattığı yerde değerlendirilir; bu yüzden açık bırakılan bir `<video>` `H025` kuralına bırakılır.
+`muted` öznitelik olmalıdır: `<video class=muted>` muted adlı bir sınıftır ve bildirilir; yorum satırına alınmış ya da bir öznitelik değerinin içine yazılmış bir `<track>` da iz değil metindir. Bir değerin içindeki `</video>` hiçbir şeyi sonlandırmaz ve öğe, gerçek bitiş etiketinin onu kapattığı yerde değerlendirilir. Açık bırakılan bir `<video>` ise `H025` kuralına kalır.
 
 Yapmayın:
 
@@ -1455,10 +1455,10 @@ Yeni kurallar içeren pull request'leri memnuniyetle karşılıyoruz!
 
 - Ad
 - Kod
-- Mesaj - Hata bulunduğunda gösterilecek mesaj.
-- Bayraklar - Regex bayrakları. Varsayılan değer re.DOTALL'dur. örn: re.I|re.M
-- Kalıplar - hatayı bulacak regex ifadeleri.
-- Hariç tutma - Kuralın dışarıda bırakılacağı profillerin isteğe bağlı listesi.
+- Mesaj: hata bulunduğunda gösterilecek mesaj.
+- Bayraklar: regex bayrakları, örneğin re.I|re.M. Varsayılan değer re.DOTALL'dur.
+- Kalıplar: hatayı bulan düzenli ifadeler.
+- Hariç tutma: kuralın uygulanmadığı profillerin isteğe bağlı listesi.
 
 Lütfen kuralı doğrulayan bir test de ekleyin.
 

@@ -1,21 +1,21 @@
 ---
 title: "Linter a formátovač šablon Tera"
-description: "djLint je linter a formátovač šablon Tera! Při lintování a formátování šablon pomocí djLint využijte připravený profil."
+description: "djLint lintuje a formátuje šablony Tera. Nastavte profil tera, aby jim pravidla i formátování odpovídaly."
 sidebar:
   label: "Tera"
 ---
 
-djLint je linter a formátovač šablon Tera! Při lintování a formátování šablon pomocí djLint využijte připravený profil.
+djLint lintuje a formátuje šablony Tera. Nastavte profil `tera`, aby jim pravidla i formátování odpovídaly.
 
 **[Co je Tera?](https://keats.github.io/tera/)**
 
-#### Z příkazového řádku
+## Z příkazového řádku
 
 ```bash
 djlint /path/to/templates --profile=tera
 ```
 
-#### Nebo v konfiguračním souboru
+## Nebo v konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 

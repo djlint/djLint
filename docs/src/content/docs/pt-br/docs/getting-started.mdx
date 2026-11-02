@@ -1,6 +1,6 @@
 ---
 title: "Primeiros passos"
-description: "Primeiros passos com o djLint para lint e formatação de templates HTML. Aproveite a interface de linha de comando simples e as diversas opções do formatador."
+description: "Instale o djLint e faça o lint ou formate templates HTML pela linha de comando."
 sidebar:
   label: "Primeiros passos"
 ---
@@ -39,7 +39,7 @@ Ou com a [fórmula do Homebrew](https://formulae.brew.sh/formula/djlint) mantida
 brew install djlint
 ```
 
-_Ou com o npm - **atenção**: o pacote npm é apenas um wrapper; o script de instalação dele executa `pip install --upgrade djlint` com o `python3` que estiver no PATH do seu sistema. O npm não vai gerenciar nem desinstalar o pacote de fato - prefira usar o pip diretamente sempre que possível._
+_Ou com o npm. **Atenção**: o pacote npm é apenas um wrapper. O script de instalação dele executa `pip install --upgrade djlint` com o `python3` que estiver no PATH do seu sistema, e o npm não vai gerenciar nem desinstalar o pacote de fato, então prefira o pip sempre que puder._
 
 ```bash
 npm i djlint
@@ -101,13 +101,13 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 | Código | Significado                                                                                                                                                      |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `0`    | Tudo o que o djLint foi solicitado a verificar está limpo, ou todos os arquivos encontrados foram ignorados pela sua configuração.                               |
+| `0`    | Tudo o que você pediu para o djLint verificar está limpo, ou todos os arquivos encontrados foram ignorados pela sua configuração.                                |
 | `1`    | O djLint encontrou erros de lint ou arquivos que precisam ser reformatados. `--warn` relata esses casos como avisos e, em vez disso, sai com `0`.                |
 | `2`    | O djLint não verificou o que você pediu: os caminhos não corresponderam a nenhum arquivo, a linha de comando ou a configuração era inválida, ou o djLint falhou. |
 
-Somente o código `1` significa que o djLint analisou seus templates e não gostou do que encontrou. O código `2` sempre significa que a própria execução não cumpriu seu papel, então um pipeline pode tratar os dois de forma diferente em vez de tentar adivinhar.
+Somente o código `1` significa que o djLint analisou seus templates e não gostou do que encontrou. O código `2` sempre significa que a própria execução não cumpriu seu papel, então um pipeline pode tratar os dois de forma diferente.
 
-O código `2` é o que detecta uma execução que não verificou absolutamente nada: um caminho errado, uma `--extension` que não corresponde mais a nada, ou templates que foram movidos. Sem ele, uma execução assim passa silenciosamente, sem ter analisado nenhum dos seus templates.
+O código `2` é o que detecta uma execução que não verificou absolutamente nada: um caminho errado, uma `--extension` que não corresponde mais a nada, ou templates que foram movidos. Sem ele, uma execução assim passa silenciosamente.
 
 Arquivos que o djLint _encontrou_ e depois ignorou de propósito, por meio de `exclude`, `extend_exclude`, `use_gitignore` ou `require_pragma`, não são um erro. Essa execução sai com `0`, porque a configuração fez exatamente o que lhe foi pedido. É também isso que permite que `exclude` funcione com o pre-commit, que passa os nomes dos seus arquivos preparados para commit, quer você queira ou não que o djLint os analise.
 

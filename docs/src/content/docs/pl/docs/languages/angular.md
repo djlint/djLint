@@ -1,21 +1,21 @@
 ---
 title: "Linter szablonów Angular"
-description: "djLint to linter szablonów Angular! Korzystaj z gotowego profilu podczas lintowania i formatowania szablonów za pomocą djLint."
+description: "djLint lintuje szablony Angular. Ustaw profil angular, aby reguły były do nich dopasowane."
 sidebar:
   label: "Angular"
 ---
 
-djLint to linter szablonów Angular! Korzystaj z gotowego profilu podczas lintowania i formatowania szablonów za pomocą djLint.
+djLint lintuje szablony Angular. Ustaw profil `angular`, aby reguły były do nich dopasowane.
 
 **[Czym jest Angular?](https://angular.io/guide/template-syntax)**
 
-#### Z wiersza poleceń
+## Z wiersza poleceń
 
 ```bash
 djlint /path/to/templates --profile=angular
 ```
 
-#### Lub w pliku konfiguracyjnym
+## Lub w pliku konfiguracyjnym
 
 Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub `.djlintrc` swojego projektu.
 

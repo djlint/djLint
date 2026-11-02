@@ -1,6 +1,6 @@
 ---
 title: "Integrace"
-description: "Propojte djLint se svým oblíbeným editorem. Automaticky formátujte šablony pomocí pre-commit. Lintujte v Sublime Textu."
+description: "Používejte djLint ve svém editoru a spouštějte ho pomocí pre-commit."
 sidebar:
   label: "Integrace"
 ---

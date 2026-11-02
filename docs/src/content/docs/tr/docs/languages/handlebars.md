@@ -1,21 +1,21 @@
 ---
 title: "Handlebars Şablonları için Linter ve Biçimlendirici"
-description: "djLint hem bir handlebars şablon linter'ı hem de bir handlebars şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın."
+description: "djLint, Handlebars şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için handlebars profilini ayarlayın."
 sidebar:
   label: "Handlebars"
 ---
 
-djLint hem bir handlebars şablon linter'ı hem de bir handlebars şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın.
+djLint, Handlebars şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için `handlebars` profilini ayarlayın.
 
 **[Handlebars nedir?](https://handlebarsjs.com/)**
 
-#### Komut satırını kullanma
+## Komut satırını kullanma
 
 ```bash
 djlint /path/to/templates --profile=handlebars
 ```
 
-#### Ya da bir yapılandırma dosyası kullanın
+## Ya da bir yapılandırma dosyası kullanın
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 

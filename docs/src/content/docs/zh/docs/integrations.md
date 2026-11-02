@@ -1,6 +1,6 @@
 ---
 title: "集成"
-description: "将 djLint 集成到你喜爱的编辑器中。使用 pre-commit 自动格式化模板。在 Sublime Text 中进行代码检查。"
+description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 sidebar:
   label: "集成"
 ---
@@ -21,7 +21,7 @@ djLint 已有多种编辑器集成。
 
 ### 内置 LSP 客户端（推荐）
 
-Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言服务器)通信，无需任何插件。这样可以在输入时得到检查结果，并带有下划线标出的范围，还能使用 `vim.lsp.buf.format()` 进行格式化：
+Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言服务器)通信，无需任何插件。这样可以在输入时得到检查结果，并带有下划线标出的范围，还能用 `vim.lsp.buf.format()` 格式化：
 
 ```lua
 vim.lsp.config("djlint", {

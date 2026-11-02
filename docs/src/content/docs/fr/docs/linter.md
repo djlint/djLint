@@ -1,6 +1,6 @@
 ---
 title: "Règles du linter"
-description: "Le linter de templates HTML de djLint comprend plus de 30 règles ! Retrouvez leurs définitions ici. Ajoutez facilement vos propres règles personnalisées !"
+description: "Les règles du linter de templates HTML de djLint, et comment ajouter les vôtres."
 sidebar:
   label: "Linter"
 ---
@@ -146,7 +146,7 @@ Les guillemets simples dans les valeurs d'attributs HTML (par ex. `<span title="
 
 Avec `quote_style = "single"`, la règle demande au contraire des guillemets simples, et le formateur les écrit.
 
-`--reformat` réécrit ces guillemets pour vous : un signalement n'exige donc jamais de travail manuel.
+`--reformat` réécrit ces guillemets pour vous.
 
 À éviter :
 
@@ -166,7 +166,7 @@ Avec `quote_style = "single"`, la règle demande au contraire des guillemets sim
 
 Quand un `{% block %}` s'étend sur de nombreuses lignes ou que des blocs sont imbriqués, un `{% endblock %}` nu ne dit pas quel bloc il ferme : il est alors facile de fermer le mauvais en cours d'édition, et les templates enfants remplacent le mauvais contenu. Nommer l'endblock documente l'appariement et permet à djLint comme à Django (qui lève TemplateSyntaxError sur un nom d'endblock qui ne correspond pas) de repérer un bloc fermé au mauvais endroit. Les erreurs d'appariement (blocs non fermés, endblocks orphelins et noms qui ne correspondent pas) sont des vérifications de validité prises en charge par T038.
 
-Désactivée par défaut ; activez-la avec `--include=T003`. `--name-endblocks` écrit le nom pour vous : un signalement n'exige donc jamais de travail manuel.
+Désactivée par défaut ; activez-la avec `--include=T003`. `--name-endblocks` écrit le nom pour vous.
 
 Aucun nom n'est requis quand le bloc s'ouvre et se ferme sur la même ligne, par ex. `{% block title %}``{% endblock %}`. Le formateur place le contenu d'un bloc qui contient d'autres balises sur des lignes séparées : un bloc écrit sur une seule ligne peut donc avoir besoin d'un nom une fois formaté ; avec `--name-endblocks`, le formateur écrit aussi ce nom.
 
@@ -629,7 +629,7 @@ Des sous-ressources en http:// simple sur une page servie en HTTPS constituent d
 
 Les documents HTML5 sont en UTF-8 : le caractère littéral fonctionne donc partout et c'est ce que les relecteurs lisent réellement ; une faute de frappe dans une référence d'entité (par ex. `&mdsah;`) n'est pas détectée par le navigateur et s'affiche telle quelle sous forme de texte cassé. djLint autorise les entités porteuses de syntaxe (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;`, ainsi que les accolades `&lbrace;` et `&rbrace;` avec `&percnt;`, `&num;` et `&dollar;`, qui, écrites en clair, compléteraient un délimiteur de template) et celles qui désignent un caractère invisible, donc impossible à relire sous forme littérale : les espaces (`&nbsp;`, `&thinsp;`, `&hairsp;`), les liants et marques (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) et `&shy;`, sous forme nommée, décimale comme hexadécimale.
 
-`--reformat` réécrit l'entité sous forme de caractère pour vous : un signalement n'exige donc jamais de travail manuel. Une entité écrite à l'intérieur d'une balise de template fait partie de la balise plutôt que de la page : ni la règle ni le formateur n'y touchent. `--no-entity-formatting` désactive la réécriture mais laisse la règle active : une entité est donc toujours signalée. Ajoutez `H023` à `ignore` pour conserver les entités.
+`--reformat` réécrit l'entité sous forme de caractère pour vous. Une entité écrite à l'intérieur d'une balise de template fait partie de la balise plutôt que de la page : ni la règle ni le formateur n'y touchent. `--no-entity-formatting` désactive la réécriture mais laisse la règle active : une entité est donc toujours signalée. Ajoutez `H023` à `ignore` pour conserver les entités.
 
 À éviter :
 
@@ -686,7 +686,7 @@ Une balise sans sa balise ouvrante ou fermante correspondante oblige la récupé
 
 `Empty id and class tags can be removed.`
 
-Aucun sélecteur de classe ou d'id ne correspond à un attribut vide, et un id vide est du HTML invalide (la valeur d'un id ne doit pas être la chaîne vide). Un sélecteur de présence d'attribut comme `div[class]` y correspond tout de même : en supprimer un est donc visible pour une feuille de style écrite de cette façon. Cela signale généralement un bug de template où une variable devait être interpolée : le supprimer ou le remplir évite que ce bug passe inaperçu sous vos yeux.
+Aucun sélecteur de classe ou d'id ne correspond à un attribut vide, et un id vide est du HTML invalide (la valeur d'un id ne doit pas être la chaîne vide). Un sélecteur de présence d'attribut comme `div[class]` y correspond tout de même : en supprimer un est donc visible pour une feuille de style écrite de cette façon. Cela signale généralement un bug de template où une variable devait être interpolée : le supprimer ou le remplir évite que ce bug passe inaperçu.
 
 À éviter :
 
@@ -704,7 +704,7 @@ Aucun sélecteur de classe ou d'id ne correspond à un attribut vide, et un id v
 
 `Unclosed string found in template syntax.`
 
-Un guillemet ouvert mais jamais fermé dans `{% ... %}` ou `{{ ... }}` fait que le moteur de templates analyse mal la balise : Django et Jinja lèvent une TemplateSyntaxError au rendu, ou absorbent silencieusement le reste des arguments de la balise comme contenu de la chaîne, si bien que la page renvoie une erreur 500 ou s'affiche avec des arguments manquants.
+Un guillemet ouvert mais jamais fermé dans `{% ... %}` ou `{{ ... }}` empêche le moteur de templates d'analyser correctement la balise : Django et Jinja lèvent une TemplateSyntaxError au rendu, ou absorbent silencieusement le reste des arguments de la balise comme contenu de la chaîne, si bien que la page renvoie une erreur 500 ou s'affiche avec des arguments manquants.
 
 À éviter :
 
@@ -977,7 +977,7 @@ Quand une balise HTML est ouverte dans un `{% block %}` mais fermée dans un aut
 
 Django refuse de compiler un template dans lequel une autre balise précède `{% extends %}`, et le texte écrit avant est rendu : il s'échappe donc dans la page avant tout ce que produit le template parent. Jinja rend aussi ce texte, et nunjucks le supprime : quel que soit le moteur, le template ne fait pas ce qu'il semble faire.
 
-Un commentaire `{# #}` n'affiche rien et ne compte pas, pas plus que le contenu d'un bloc `{% comment %}`, <code>{&#37; raw %}</code> ou `{% verbatim %}`, nommé ou non, une région `{# djlint:off #}` sous l'une de ses trois graphies, ou un front matter yaml. Un commentaire html compte, lui : le moteur l'écrit dans la page avant le doctype du template parent, ce qui est précisément la fuite dont traite cette règle. Comptent aussi un bloc `{% blocktrans %}`, un bloc `{% filter %}` et un bloc `<?php ?>`, qui produisent chacun un rendu. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Avec les profils jinja et nunjucks, une balise de branche placée avant ne compte pas, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent ; django lit le reste du template dans le `{% extends %}` puis rejette le `{% endif %}` : avec ce profil, une balise de branche compte donc.
+Un commentaire `{# #}` n'affiche rien et ne compte pas, pas plus que le contenu d'un bloc `{% comment %}`, <code>{&#37; raw %}</code> ou `{% verbatim %}`, nommé ou non, une région `{# djlint:off #}` sous l'une de ses trois graphies, ou un front matter yaml. Un commentaire html compte, lui : le moteur l'écrit dans la page avant le doctype du template parent, ce qui est la fuite que vise cette règle. Comptent aussi un bloc `{% blocktrans %}`, un bloc `{% filter %}` et un bloc `<?php ?>`, qui produisent chacun un rendu. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Avec les profils jinja et nunjucks, une balise de branche placée avant ne compte pas, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent ; django lit le reste du template dans le `{% extends %}` puis rejette le `{% endif %}` : avec ce profil, une balise de branche compte donc.
 
 Ne s'applique pas aux profils handlebars, golang, liquid et angular.
 
@@ -1103,7 +1103,7 @@ Ne s'applique pas aux profils handlebars, golang, liquid et angular.
 
 Chaque ligne est jugée isolément : la ligne d'explication en `td` que la spécification html place dans un `thead` à côté de la ligne d'en-têtes n'est donc pas un mélange. Un `td` vide en début de ligne est la cellule d'angle d'un tableau dont les en-têtes descendent le long de la première colonne, ce qui est le balisage que demande le tutoriel d'accessibilité du W3C : il est donc ignoré.
 
-Un `th` et un `td` n'ont pas la même signification pour un lecteur d'écran, et généralement pas le même css : une seule cellule égarée dans une ligne d'en-tête se lit comme une donnée et n'a pas le style des colonnes voisines. Ce mélange est du html valide, et c'est justement ce qui le rend difficile à repérer.
+Un `th` et un `td` n'ont pas la même signification pour un lecteur d'écran, et généralement pas le même css : une seule cellule égarée dans une ligne d'en-tête se lit comme une donnée et n'a pas le style des colonnes voisines. Ce mélange est du html valide, ce qui le rend difficile à repérer.
 
 À éviter :
 
@@ -1297,7 +1297,7 @@ Les éléments que connaît la règle sont `acronym`, `applet`, `basefont`, `bgs
 
 `Role is not one ARIA defines for markup.`
 
-Un rôle qu'aucune spécification ne nomme est purement et simplement ignoré, et l'élément garde la signification qu'il avait déjà : `role="buton"` laisse donc un `<div>` être un `<div>`, c'est-à-dire rien pour un lecteur d'écran, alors que le balisage donne l'impression de lui avoir attribué une fonction. Rien ne prévient de l'erreur, et c'est ce qui rend cette faute de frappe digne d'être repérée.
+Un rôle qu'aucune spécification ne nomme est purement et simplement ignoré, et l'élément garde la signification qu'il avait déjà : `role="buton"` laisse donc un `<div>` être un `<div>`, c'est-à-dire rien pour un lecteur d'écran, alors que le balisage donne l'impression de lui avoir attribué une fonction. Rien ne signale l'erreur, d'où l'intérêt de repérer cette faute de frappe.
 
 Les noms que connaît la règle sont les rôles que définit ARIA pour les auteurs, ainsi que ceux qu'ajoutent DPUB-ARIA (`doc-chapter` et les autres) et GRAPHICS-ARIA (`graphics-symbol` et les autres). Les rôles abstraits d'ARIA, comme `landmark` et `sectionhead`, sont signalés : la spécification indique qu'ils servent à construire son ontologie et ne doivent pas être écrits dans le balisage.
 
@@ -1429,7 +1429,7 @@ Dans une vidéo avec du son, la parole ne passe que par l'audio : une personne 
 
 Une vidéo `muted` n'a pas d'audio à sous-titrer et n'est pas signalée. Une vidéo dont la balise ouvrante ou le corps contient une balise de template ne l'est pas non plus, puisque les pistes, ou l'attribut `muted`, peuvent être écrits par le template là où djLint ne peut pas les voir. Une balise de template s'entend d'une balise qu'ouvre un langage de templates, `{{`, `{%`, `{#` ou `${` : un gestionnaire jQuery comme `onclick="$(this).play()"`, un `$refs` Alpine, une accolade css et un prix écrit dans le texte de repli sont donc le texte ordinaire qu'ils semblent être, et la vidéo est tout de même lue.
 
-Seul le balisage compte comme balisage. `muted` doit être l'attribut : `<video class=muted>` est donc une classe nommée muted et il est signalé, et un `<track>` commenté ou écrit dans une valeur d'attribut est du texte plutôt qu'une piste. Un `</video>` dans une valeur ne termine rien, et l'élément est jugé là où sa vraie balise de fin le ferme : une `<video>` laissée ouverte est donc laissée à `H025`.
+`muted` doit être l'attribut : `<video class=muted>` est donc une classe nommée muted et il est signalé, et un `<track>` commenté ou écrit dans une valeur d'attribut est du texte plutôt qu'une piste. Un `</video>` dans une valeur ne termine rien, et l'élément est jugé là où sa vraie balise de fin le ferme : une `<video>` laissée ouverte est donc laissée à `H025`.
 
 À éviter :
 
@@ -1455,10 +1455,10 @@ Une bonne règle se compose de
 
 - Nom
 - Code
-- Message – message à afficher quand l'erreur est trouvée.
-- Drapeaux – drapeaux d'expression régulière. Par défaut re.DOTALL. Ex. : re.I|re.M
-- Motifs – expressions régulières qui trouveront l'erreur.
-- Exclusions – liste facultative des profils dont exclure la règle.
+- Message : message à afficher quand l'erreur est trouvée.
+- Drapeaux : drapeaux d'expression régulière, par exemple re.I|re.M. Par défaut re.DOTALL.
+- Motifs : expressions régulières qui trouvent l'erreur.
+- Exclusions : liste facultative des profils auxquels la règle ne s'applique pas.
 
 Merci d'inclure un test qui valide la règle.
 

@@ -1,21 +1,21 @@
 ---
 title: "Linter i formater szablonów Django"
-description: "djLint to linter i formater szablonów django! Korzystaj z gotowego profilu podczas lintowania i formatowania szablonów za pomocą djLint."
+description: "djLint lintuje i formatuje szablony Django. Ustaw profil django, aby reguły i formatowanie były do nich dopasowane."
 sidebar:
   label: "Django"
 ---
 
-djLint to linter i formater szablonów django! Korzystaj z gotowego profilu podczas lintowania i formatowania szablonów za pomocą djLint.
+djLint lintuje i formatuje szablony Django. Ustaw profil `django`, aby reguły i formatowanie były do nich dopasowane.
 
 **[Czym jest Django?](https://django.readthedocs.io/en/stable/ref/templates/language.html)**
 
-#### Z wiersza poleceń
+## Z wiersza poleceń
 
 ```bash
 djlint /path/to/templates --profile=django
 ```
 
-#### Lub w pliku konfiguracyjnym
+## Lub w pliku konfiguracyjnym
 
 Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub `.djlintrc` swojego projektu.
 

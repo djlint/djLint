@@ -1,6 +1,6 @@
 ---
 title: "Použití formátovače"
-description: "Formátujte HTML šablony pomocí djLint. Rychle, přesně a s výsledkem, díky kterému budou vaše šablony zářit."
+description: "Jak djLint formátuje HTML šablony a jak si změny před použitím zkontrolovat."
 sidebar:
   label: "Formátovač"
 ---

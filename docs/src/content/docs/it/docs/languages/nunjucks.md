@@ -1,23 +1,23 @@
 ---
 title: "Linter e formattatore per template Nunjucks"
-description: "djLint è un linter e un formattatore per template nunjucks! Sfrutta il profilo già pronto per il lint e la formattazione dei tuoi template con djLint."
+description: "djLint analizza e formatta i template Nunjucks. Imposta il profilo nunjucks per adattare le regole e la formattazione a questi template."
 sidebar:
   label: "Nunjucks"
 ---
 
-djLint è un linter e un formattatore per template nunjucks! Sfrutta il profilo già pronto per il lint e la formattazione dei tuoi template con djLint.
+djLint analizza e formatta i template Nunjucks. Imposta il profilo `nunjucks` per adattare le regole e la formattazione a questi template.
 
 **[Che cos'è Nunjucks?](https://mozilla.github.io/nunjucks/)**
 
 I template Pebble (Java) sono compatibili con Twig, quindi usa questo stesso profilo anche per loro.
 
-#### Uso dalla riga di comando
+## Uso dalla riga di comando
 
 ```bash
 djlint /path/to/templates --profile=nunjucks
 ```
 
-#### Oppure usa un file di configurazione
+## Oppure usa un file di configurazione
 
 Configura djLint nel file `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` del tuo progetto.
 

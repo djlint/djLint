@@ -1,21 +1,21 @@
 ---
 title: "Linter i formater szablonów Tera"
-description: "djLint to linter i formater szablonów Tera! Korzystaj z gotowego profilu podczas lintowania i formatowania szablonów za pomocą djLint."
+description: "djLint lintuje i formatuje szablony Tera. Ustaw profil tera, aby reguły i formatowanie były do nich dopasowane."
 sidebar:
   label: "Tera"
 ---
 
-djLint to linter i formater szablonów Tera! Korzystaj z gotowego profilu podczas lintowania i formatowania szablonów za pomocą djLint.
+djLint lintuje i formatuje szablony Tera. Ustaw profil `tera`, aby reguły i formatowanie były do nich dopasowane.
 
 **[Czym jest Tera?](https://keats.github.io/tera/)**
 
-#### Z wiersza poleceń
+## Z wiersza poleceń
 
 ```bash
 djlint /path/to/templates --profile=tera
 ```
 
-#### Lub w pliku konfiguracyjnym
+## Lub w pliku konfiguracyjnym
 
 Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub `.djlintrc` swojego projektu.
 

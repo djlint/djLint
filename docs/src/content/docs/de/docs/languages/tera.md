@@ -1,21 +1,21 @@
 ---
 title: "Linter und Formatter für Tera-Templates"
-description: "djLint ist ein Linter und ein Formatter für Tera-Templates! Nutzen Sie das vorgefertigte Profil, wenn Sie Ihre Templates mit djLint linten und formatieren."
+description: "djLint lintet und formatiert Tera-Templates. Setzen Sie das Profil tera, damit Regeln und Formatierung zu ihnen passen."
 sidebar:
   label: "Tera"
 ---
 
-djLint ist ein Linter und ein Formatter für Tera-Templates! Nutzen Sie das vorgefertigte Profil, wenn Sie Ihre Templates mit djLint linten und formatieren.
+djLint lintet und formatiert Tera-Templates. Setzen Sie das Profil `tera`, damit Regeln und Formatierung zu ihnen passen.
 
 **[Was ist Tera?](https://keats.github.io/tera/)**
 
-#### Über die Befehlszeile
+## Über die Befehlszeile
 
 ```bash
 djlint /path/to/templates --profile=tera
 ```
 
-#### Oder über eine Konfigurationsdatei
+## Oder über eine Konfigurationsdatei
 
 Konfigurieren Sie djLint in der Datei `pyproject.toml`, `djlint.toml` / `.djlint.toml` oder `.djlintrc` Ihres Projekts.
 

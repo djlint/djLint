@@ -1,6 +1,6 @@
 ---
 title: "코드 무시하기"
-description: "djLint가 코드 블록을 포맷하지 않게 하는 방법과 djLint 규칙을 인라인으로 무시하는 방법입니다."
+description: "djLint가 코드 블록을 포맷하지 않게 하는 방법과 린터 규칙을 인라인으로 무시하는 방법입니다."
 sidebar:
   label: "코드 무시하기"
 ---

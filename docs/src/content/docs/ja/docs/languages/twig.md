@@ -1,23 +1,23 @@
 ---
 title: "Twig テンプレートのリンターとフォーマッター"
-description: "djLint は twig テンプレートのリンターであり、twig テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。"
+description: "djLint で Twig テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、nunjucks プロファイルを設定してください。"
 sidebar:
   label: "Twig"
 ---
 
-djLint は twig テンプレートのリンターであり、twig テンプレートのフォーマッターでもあります！djLint でテンプレートをリント・フォーマットするときは、用意済みのプロファイルを活用してください。
+djLint で Twig テンプレートをリント・フォーマットできます。ルールとフォーマットがテンプレートに合うよう、`nunjucks` プロファイルを設定してください。
 
 **[Twig とは？](https://twig.symfony.com/)**
 
 Pebble（Java）のテンプレートは Twig と互換性があるので、同じプロファイルを使ってください。
 
-#### コマンドラインを使う
+## コマンドラインを使う
 
 ```bash
 djlint /path/to/templates --profile=nunjucks
 ```
 
-#### または、設定ファイルを使う
+## または、設定ファイルを使う
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 

@@ -1,6 +1,6 @@
 ---
 title: "Regras do linter"
-description: "O linter de templates HTML do djLint inclui mais de 30 regras! Veja as definições aqui. Amplie facilmente com regras personalizadas!"
+description: "As regras do linter de templates HTML do djLint e como adicionar as suas próprias."
 sidebar:
   label: "Linter"
 ---
@@ -146,7 +146,7 @@ Aspas simples dentro de valores de atributos HTML (por exemplo, `<span title="{%
 
 Com `quote_style = "single"`, a regra exige aspas simples, e o formatador as escreve.
 
-O `--reformat` reescreve essas aspas para você, então uma ocorrência nunca exige trabalho manual.
+O `--reformat` reescreve essas aspas para você.
 
 Não faça:
 
@@ -166,7 +166,7 @@ Faça:
 
 Quando um `{% block %}` se estende por muitas linhas ou há blocos aninhados, um `{% endblock %}` sem nome não dá nenhuma pista de qual bloco ele fecha, então é fácil fechar o bloco errado durante a edição; os templates filhos passam então a sobrescrever o conteúdo errado. Dar nome ao endblock documenta o pareamento e permite que tanto o djLint quanto o Django (que lança TemplateSyntaxError quando o nome do endblock não corresponde) detectem um bloco fechado no lugar errado. Os erros de pareamento (blocos não fechados, endblocks órfãos e nomes que não correspondem) são verificações de correção tratadas pela T038.
 
-Desativada por padrão; ative com `--include=T003`. O `--name-endblocks` escreve o nome para você, então uma ocorrência nunca exige trabalho manual.
+Desativada por padrão; ative com `--include=T003`. O `--name-endblocks` escreve o nome para você.
 
 O nome não é exigido quando o bloco abre e fecha na mesma linha, por exemplo `{% block title %}``{% endblock %}`. O formatador move o conteúdo de um bloco que contém outras tags para linhas próprias, então um bloco escrito em uma única linha pode precisar de um nome depois de formatado; com `--name-endblocks`, o formatador também escreve esse nome.
 
@@ -367,7 +367,7 @@ Faça:
 
 `There should be no spaces around attribute =.`
 
-Com espaços em torno do "=", a tag é lida como três tokens separados e fica a uma edição de se desfazer: uma quebra de linha ou um corte no meio deixa um atributo booleano solto mais um texto avulso. Manter name="value" contíguo também é o que ferramentas simples de texto (grep, buscar e substituir) pressupõem, então um espaçamento misto torna os atributos difíceis de encontrar e refatorar com confiança. O `--reformat` remove os espaços para você.
+Com espaços em torno do "=", a tag é lida como três tokens separados e basta uma edição para que ela se desfaça: uma quebra de linha ou um corte no meio deixa um atributo booleano solto mais um texto avulso. Manter name="value" contíguo também é o que ferramentas simples de texto (grep, buscar e substituir) pressupõem, então um espaçamento misto torna os atributos difíceis de encontrar e refatorar com confiança. O `--reformat` remove os espaços para você.
 
 Não faça:
 
@@ -629,7 +629,7 @@ Faça:
 
 Documentos HTML5 são UTF-8, então o caractere literal funciona em qualquer lugar e é o que os revisores realmente leem; um erro de digitação em uma referência de entidade (por exemplo, `&mdsah;`) não é detectado pelo navegador e é renderizado literalmente como texto quebrado. O djLint permite as entidades que carregam sintaxe (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;` e as chaves `&lbrace;` e `&rbrace;`, junto com `&percnt;`, `&num;` e `&dollar;`, que, escritas por extenso, completariam um delimitador de template) e as que nomeiam um caractere invisível, que por isso não pode ser revisado como literal: os espaços (`&nbsp;`, `&thinsp;`, `&hairsp;`), os joiners e marcas (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) e `&shy;`, tanto na forma nomeada quanto na decimal e na hexadecimal.
 
-O `--reformat` reescreve a entidade como o caractere para você, então uma ocorrência nunca exige trabalho manual. Uma entidade escrita dentro de uma tag de template faz parte da tag, e não da página, então nem a regra nem o formatador mexem nela. O `--no-entity-formatting` desativa a reescrita, mas mantém a regra ativa, então uma entidade continua sendo relatada. Adicione `H023` a `ignore` para manter as entidades.
+O `--reformat` reescreve a entidade como o caractere para você. Uma entidade escrita dentro de uma tag de template faz parte da tag, e não da página, então nem a regra nem o formatador mexem nela. O `--no-entity-formatting` desativa a reescrita, mas mantém a regra ativa, então uma entidade continua sendo relatada. Adicione `H023` a `ignore` para manter as entidades.
 
 Não faça:
 
@@ -686,7 +686,7 @@ Faça:
 
 `Empty id and class tags can be removed.`
 
-Nenhum seletor de classe ou de id corresponde a um atributo vazio, e um id vazio é HTML inválido (o valor do id não pode ser a string vazia). Um seletor de presença de atributo como `div[class]` ainda corresponde a ele, então removê-lo é perceptível para uma folha de estilo escrita dessa forma. Geralmente ele indica um bug de template em que uma variável deveria ter sido interpolada, então removê-lo ou preenchê-lo evita que esse bug fique escondido à vista de todos.
+Nenhum seletor de classe ou de id corresponde a um atributo vazio, e um id vazio é HTML inválido (o valor do id não pode ser a string vazia). Um seletor de presença de atributo como `div[class]` ainda corresponde a ele, então removê-lo é perceptível para uma folha de estilo escrita dessa forma. Geralmente ele indica um bug de template em que uma variável deveria ter sido interpolada, então removê-lo ou preenchê-lo evita que esse bug passe despercebido.
 
 Não faça:
 
@@ -999,7 +999,7 @@ Faça:
 
 `Label for attribute has no matching element id in this file.`
 
-A verificação só é executada em arquivos que ela consegue analisar com segurança: se o arquivo contém qualquer coisa que possa renderizar um id que este arquivo nunca mostra (uma saída `{{ ... }}`, como um widget de formulário, um `{% include %}` ou `{% extends %}`, ou uma tag de template não reconhecida), a regra fica em silêncio para esse arquivo. Onde ela é executada, um relato é uma associação realmente quebrada.
+A verificação só é executada em arquivos que ela consegue analisar com segurança: se o arquivo contém qualquer coisa que possa renderizar um id que este arquivo nunca mostra (uma saída `{{ ... }}`, como um widget de formulário, um `{% include %}` ou `{% extends %}`, ou uma tag de template não reconhecida), a regra fica em silêncio para esse arquivo. Onde ela é executada, cada ocorrência relatada é uma associação de fato quebrada.
 
 Não faça:
 
@@ -1237,7 +1237,7 @@ Faça:
 
 `Aria attribute is not one the specification defines.`
 
-Um atributo aria com erro de digitação não faz absolutamente nada. Nenhum navegador avisa, nenhum leitor de tela o relata, e a marcação continua com a aparência de ter sido tornada acessível, então um `aria-lable` pode ficar anos em um template enquanto o controle que ele deveria nomear continua sem nome.
+Um atributo aria com erro de digitação não faz absolutamente nada. Nenhum navegador avisa, nenhum leitor de tela o relata, e a marcação continua parecendo acessível, então um `aria-lable` pode ficar anos em um template enquanto o controle que ele deveria nomear continua sem nome.
 
 Os nomes que a regra conhece são os que o ARIA define. Um binding escrito por um framework não é um nome aria simples, então `:aria-label`, `v-bind:aria-label` e `[attr.aria-label]` são ignorados.
 
@@ -1319,7 +1319,7 @@ Faça:
 
 `Meta refresh should not reload or redirect the page on a timer.`
 
-Uma atualização temporizada tira a página de quem a está lendo. Quem lê devagar, usa um leitor de tela ou simplesmente foi interrompido perde o ponto em que estava, sem aviso e sem como impedir, o que viola o critério 2.2.1 Tempo ajustável das WCAG, e uma atualização que recarrega a mesma página descarta tudo o que foi digitado nela.
+Uma atualização temporizada troca a página enquanto alguém ainda a está lendo. Quem lê devagar, usa um leitor de tela ou simplesmente foi interrompido perde o ponto em que estava, sem aviso e sem como impedir, o que viola o critério 2.2.1 Tempo ajustável das WCAG, e uma atualização que recarrega a mesma página descarta tudo o que foi digitado nela.
 
 Um atraso de zero é um redirecionamento imediato, e não um temporizador, o que as WCAG permitem quando não é possível usar um redirecionamento no servidor, então ele não é relatado. Os dois atributos são encontrados em qualquer ordem em que sejam escritos.
 
@@ -1429,7 +1429,7 @@ Um vídeo com som transmite a fala apenas no áudio, então um espectador surdo 
 
 Um vídeo `muted` não tem áudio para legendar e não é relatado. Também não é relatado um vídeo cuja tag de abertura ou cujo corpo contenha uma tag de template, já que as faixas, ou o atributo `muted`, podem ser escritos pelo template onde o djLint não consegue vê-los. Uma tag de template é uma que uma linguagem de template abre, `{{`, `{%`, `{#` ou `${`, então um handler do jQuery como `onclick="$(this).play()"`, um `$refs` do Alpine, uma chave de css e um preço escrito no texto alternativo são o texto comum que parecem ser, e o vídeo continua sendo lido.
 
-Só marcação conta como marcação. `muted` precisa ser o atributo, então `<video class=muted>` é uma classe chamada muted e é relatado, e um `<track>` comentado ou escrito dentro de um valor de atributo é texto, e não uma faixa. Um `</video>` dentro de um valor não encerra nada, e o elemento é avaliado onde a sua tag de fechamento real o fecha, então um `<video>` deixado aberto fica a cargo da `H025`.
+`muted` precisa ser o atributo, então `<video class=muted>` é uma classe chamada muted e é relatado, e um `<track>` comentado ou escrito dentro de um valor de atributo é texto, e não uma faixa. Um `</video>` dentro de um valor não encerra nada, e o elemento é avaliado onde a sua tag de fechamento real o fecha, então um `<video>` deixado aberto fica a cargo da `H025`.
 
 Não faça:
 
@@ -1455,10 +1455,10 @@ Uma boa regra é composta de
 
 - Nome
 - Código
-- Mensagem - Mensagem a ser exibida quando o erro é encontrado.
-- Flags - Flags de regex. O padrão é re.DOTALL. Ex.: re.I|re.M
-- Padrões - expressões regulares que vão encontrar o erro.
-- Exclusão - Lista opcional de perfis dos quais a regra deve ser excluída.
+- Mensagem: mensagem a ser exibida quando o erro é encontrado.
+- Flags: flags de regex, por exemplo re.I|re.M. O padrão é re.DOTALL.
+- Padrões: expressões regulares que encontram o erro.
+- Exclusão: lista opcional de perfis aos quais a regra não se aplica.
 
 Inclua um teste para validar a regra.
 

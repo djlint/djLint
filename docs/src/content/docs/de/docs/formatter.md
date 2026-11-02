@@ -1,6 +1,6 @@
 ---
 title: "Formatter verwenden"
-description: "Formatieren Sie Ihre HTML-Templates mit djLint. Schnell und präzise – das Ergebnis lässt Ihre Templates glänzen."
+description: "Wie djLint HTML-Templates formatiert und wie Sie die Änderungen prüfen, bevor Sie sie übernehmen."
 sidebar:
   label: "Formatter"
 ---

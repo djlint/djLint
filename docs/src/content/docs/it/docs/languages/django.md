@@ -1,21 +1,21 @@
 ---
 title: "Linter e formattatore per template Django"
-description: "djLint è un linter e un formattatore per template django! Sfrutta il profilo già pronto per il lint e la formattazione dei tuoi template con djLint."
+description: "djLint analizza e formatta i template Django. Imposta il profilo django per adattare le regole e la formattazione a questi template."
 sidebar:
   label: "Django"
 ---
 
-djLint è un linter e un formattatore per template django! Sfrutta il profilo già pronto per il lint e la formattazione dei tuoi template con djLint.
+djLint analizza e formatta i template Django. Imposta il profilo `django` per adattare le regole e la formattazione a questi template.
 
 **[Che cos'è Django?](https://django.readthedocs.io/en/stable/ref/templates/language.html)**
 
-#### Uso dalla riga di comando
+## Uso dalla riga di comando
 
 ```bash
 djlint /path/to/templates --profile=django
 ```
 
-#### Oppure usa un file di configurazione
+## Oppure usa un file di configurazione
 
 Configura djLint nel file `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` del tuo progetto.
 

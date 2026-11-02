@@ -1,13 +1,13 @@
 ---
 title: "Entegrasyonlar"
-description: "djLint'i en sevdiğiniz editörle entegre edin. Şablonlarınızı pre-commit ile otomatik biçimlendirin. SublimeText ile lint denetimi yapın."
+description: "djLint'i düzenleyicinizde kullanın ve pre-commit ile çalıştırın."
 sidebar:
   label: "Entegrasyonlar"
 ---
 
-djLint için geliştirilmiş birkaç editör entegrasyonu vardır.
+djLint için geliştirilmiş birkaç düzenleyici entegrasyonu vardır.
 
-Hangi editörü kullanırsanız kullanın, djLint'i editörün bulabileceği bir yere, tercihen projenin sanal ortamına kurun ve editörü oradan başlatın ya da editörü o ortamdaki `djlint` komutuna yönlendirin. Böylece editör, projenizin sabitlediği sürümü çalıştırır ve pre-commit kancanızla ya da CI ile aynı sonuçları verir.
+Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabileceği bir yere, tercihen projenin sanal ortamına kurun ve düzenleyiciyi oradan başlatın ya da düzenleyiciyi o ortamdaki `djlint` komutuna yönlendirin. Böylece düzenleyici, projenizin sabitlediği sürümü çalıştırır ve pre-commit kancanızla ya da CI ile aynı sonuçları verir.
 
 ## Visual Studio Code
 
@@ -114,7 +114,7 @@ PyCharm'da ve IntelliJ tabanlı diğer IDE'lerde ücretsiz [LSP4IJ](https://plug
 1. **Mappings** sekmesinde şablonlarınız için `*.html` gibi bir dosya adı kalıbı ekleyin. Projenin yapılandırmasında bir [profil](/tr/docs/configuration/#profile) yoksa doğru profilin seçilmesi için Django projelerinde dil kimliğini `htmldjango` olarak ayarlayın.
 1. **Configuration** sekmesinde [ayarları](#ayarlar) JSON olarak, bir `djlint` anahtarı altında belirleyebilirsiniz.
 
-Bulgular editörde görünür ve **Reformat Code**, eşlenen dosyalar için sunucuyu kullanabilir.
+Bulgular düzenleyicide görünür ve **Reformat Code**, eşlenen dosyalar için sunucuyu kullanabilir.
 
 ## Sublime Text
 
@@ -166,13 +166,13 @@ Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şabl
 
 ## Dil sunucusu
 
-`djlint --lsp`, djLint'i stdio üzerinden bir dil sunucusu olarak çalıştırır. Sunucu çalışmaya devam eder; böylece editör, siz yazarken bulguları alır ve her seferinde yeni bir süreç başlatmadan belgeyi biçimlendirir.
+`djlint --lsp`, djLint'i stdio üzerinden bir dil sunucusu olarak çalıştırır. Sunucu çalışmaya devam eder; böylece düzenleyici, siz yazarken bulguları alır ve her seferinde yeni bir süreç başlatmadan belgeyi biçimlendirir.
 
-Bulguları bildirir ve belgelerin tamamını biçimlendirir. Ek paket gerektirmez. LSP konuşan başka herhangi bir editör de aynı komutla çalıştırabilir.
+Bulguları bildirir ve belgelerin tamamını biçimlendirir. Ek paket gerektirmez. LSP konuşan başka herhangi bir düzenleyici de aynı komutla çalıştırabilir.
 
 ### Ayarlar
 
-Sunucu, projenin [yapılandırmasını](/tr/docs/configuration/) komut satırının yaptığı gibi her dosyanın klasöründen yukarı doğru okur. Editörden gelen ayarlar bunun önüne geçer, ancak komut satırında olduğu gibi yalnızca bir seçeneği açabilir ya da bir değer belirleyebilir: `false`, projenin açtığı bir şeyi kapatmaz. Ayarlar [komut satırı seçeneklerinin](/tr/docs/configuration/) adlarını, alt çizgili ya da camelCase biçiminde alır; virgülle ayrılmış değerler için listeler kullanılabilir:
+Sunucu, projenin [yapılandırmasını](/tr/docs/configuration/) komut satırının yaptığı gibi her dosyanın klasöründen yukarı doğru okur. Düzenleyiciden gelen ayarlar bunun önüne geçer, ancak komut satırında olduğu gibi yalnızca bir seçeneği açabilir ya da bir değer belirleyebilir: `false`, projenin açtığı bir şeyi kapatmaz. Ayarlar [komut satırı seçeneklerinin](/tr/docs/configuration/) adlarını, alt çizgili ya da camelCase biçiminde alır; virgülle ayrılmış değerler için listeler kullanılabilir:
 
 ```lua
 vim.lsp.config("djlint", {
@@ -180,26 +180,26 @@ vim.lsp.config("djlint", {
 })
 ```
 
-Sunucu `djlint` bölümünü `workspace/configuration` ile ister. Buna yanıt veremeyen bir editör aynı anahtarları `initializationOptions` içinde gönderebilir.
+Sunucu `djlint` bölümünü `workspace/configuration` ile ister. Buna yanıt veremeyen bir düzenleyici aynı anahtarları `initializationOptions` içinde gönderebilir.
 
 İki ayarın komut satırı seçeneği yoktur:
 
-- `use_editor_indentation`: `indent` yerine editörün sekme boyutuyla biçimlendirir.
+- `use_editor_indentation`: `indent` yerine düzenleyicinin sekme boyutuyla biçimlendirir.
 - `python_rules`: `python_module` içeren özel kuralları atlamak için `false` yapın; bu, projenin kodunun çalışmasını önler.
 
 djLint `profile` değerini, aşağıdakilerden bir profil içeren ilkinden alır:
 
-1. Editörün ayarları.
+1. Düzenleyicinin ayarları.
 1. Projenin yapılandırması.
 1. Belgenin dili: örneğin `htmldjango`, `django` profilini çalıştırır.
 
-Hiçbiri yoksa komut satırında olduğu gibi profilsiz çalışır. Projenin yapılandırmasındaki bir `profile` en basit seçimdir: her editörde çalışır ve ayarlanacak bir dil kimliği gerektirmez.
+Hiçbiri yoksa komut satırında olduğu gibi profilsiz çalışır. Projenin yapılandırmasındaki bir `profile` en basit seçimdir: her düzenleyicide çalışır ve ayarlanacak bir dil kimliği gerektirmez.
 
 ### Neler yapar
 
-- Bulgular, yazmaya kısa bir ara verdikten sonra gelir. Pull diagnostics destekleyen bir editör bulguları kendisi ister, diğerlerine ise bulgular gönderilir.
+- Bulgular, yazmaya kısa bir ara verdikten sonra gelir. Pull diagnostics destekleyen bir düzenleyici bulguları kendisi ister, diğerlerine ise bulgular gönderilir.
 - `exclude`, `extend_exclude` ve `use_gitignore` açık belgelere uygulanır. Hariç tutulan bir belgenin bulgusu olmaz ve biçimlendirilmez.
-- `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` ya da `.gitignore` değiştiğinde, editör dosyaları izleyebiliyorsa yapılandırmayı yeniden yükler; izleyemiyorsa bir belge açıldığında ya da kaydedildiğinde yükler. `configuration` ya da `rules` ile belirtilen dosyalar, bir belge açıldığında ya da kaydedildiğinde yeniden okunur. Özel bir kuralın `python_module` kodundaki bir değişiklik yeniden başlatma gerektirir.
+- `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` ya da `.gitignore` değiştiğinde, düzenleyici dosyaları izleyebiliyorsa yapılandırmayı yeniden yükler; izleyemiyorsa bir belge açıldığında ya da kaydedildiğinde yükler. `configuration` ya da `rules` ile belirtilen dosyalar, bir belge açıldığında ya da kaydedildiğinde yeniden okunur. Özel bir kuralın `python_module` kodundaki bir değişiklik yeniden başlatma gerektirir.
 - Sunucu her seferinde tek bir iş yaptığından, yavaş bir kural kendisinden sonra gelenleri bekletir.
 
 ## GitHub Actions
@@ -225,7 +225,7 @@ Ek açıklamalar tek bir pull request'e aittir. Bulguları, çalıştırmalar ar
 
 Yükleme adımı, job'da ya da iş akışında `security-events: write` iznine ihtiyaç duyar.
 
-`--sarif`, stdout'a bir SARIF 2.1.0 belgesi yazar ve başka hiçbir şey yazmaz; bu yüzden yukarıdaki gibi yönlendirilebilir. Etkin her kural, belgelerine giden bir bağlantıyla listelenir, her bulgu satırını ve sütununu taşır ve `--check` ile yeniden biçimlendirilecek bir dosya `formatting` kuralı altında bildirilir. Azure DevOps, GitLab ve çoğu editör aynı biçimi okur.
+`--sarif`, stdout'a bir SARIF 2.1.0 belgesi yazar ve başka hiçbir şey yazmaz; bu yüzden yukarıdaki gibi yönlendirilebilir. Etkin her kural, belgelerine giden bir bağlantıyla listelenir, her bulgu satırını ve sütununu taşır ve `--check` ile yeniden biçimlendirilecek bir dosya `formatting` kuralı altında bildirilir. Azure DevOps, GitLab ve çoğu düzenleyici aynı biçimi okur.
 
 ## Pre-Commit
 

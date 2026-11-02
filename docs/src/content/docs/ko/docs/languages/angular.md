@@ -1,21 +1,21 @@
 ---
 title: "Angular 템플릿 린터"
-description: "djLint는 Angular 템플릿 린터입니다! djLint로 템플릿을 린트하고 포맷할 때 미리 만들어진 프로필을 활용하세요."
+description: "djLint는 Angular 템플릿을 린트합니다. 규칙이 템플릿에 맞도록 angular 프로필을 설정하세요."
 sidebar:
   label: "Angular"
 ---
 
-djLint는 Angular 템플릿 린터입니다! djLint로 템플릿을 린트하고 포맷할 때 미리 만들어진 프로필을 활용하세요.
+djLint는 Angular 템플릿을 린트합니다. 규칙이 템플릿에 맞도록 `angular` 프로필을 설정하세요.
 
 **[Angular란?](https://angular.io/guide/template-syntax)**
 
-#### 명령줄 사용
+## 명령줄 사용
 
 ```bash
 djlint /path/to/templates --profile=angular
 ```
 
-#### 또는 구성 파일 사용
+## 또는 구성 파일 사용
 
 프로젝트의 `pyproject.toml`, `djlint.toml` / `.djlint.toml`, `.djlintrc` 파일 중 하나에서 djLint를 구성합니다.
 

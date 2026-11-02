@@ -1,6 +1,6 @@
 ---
 title: "開始使用"
-description: "開始使用 djLint 進行 HTML 範本的 lint 與格式化。善用簡單易用的 CLI 介面與眾多格式化選項。"
+description: "安裝 djLint，並從命令列 lint 或格式化 HTML 範本。"
 sidebar:
   label: "開始使用"
 ---
@@ -39,7 +39,7 @@ pipx install djlint
 brew install djlint
 ```
 
-_或者使用 npm——**警告**：npm 套件只是一層包裝，它的安裝指令碼會對你系統路徑上的 `python3` 執行 `pip install --upgrade djlint`，不論那是哪一個。npm 不會管理或解除安裝實際的套件——可以的話，請優先直接使用 pip。_
+_或者使用 npm。**警告**：npm 套件只是一層包裝，它的安裝指令碼會對你系統路徑上剛好找到的 `python3` 執行 `pip install --upgrade djlint`。npm 不會管理或解除安裝實際的套件，可以的話，請直接使用 pip。_
 
 ```bash
 npm i djlint
@@ -105,9 +105,9 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1`  | djLint 發現了 lint 錯誤，或有需要重新格式化的檔案。`--warn` 會將這些回報為警告，改以 `0` 結束。 |
 | `2`  | djLint 沒有檢查你要求的內容：路徑沒有比對到任何檔案、命令列或設定無效，或是 djLint 執行失敗。   |
 
-只有代碼 `1` 表示 djLint 檢查了你的範本，而且不滿意它找到的內容。代碼 `2` 一律表示這次執行本身沒有完成任務，因此管線可以分別處理這兩種情況，而不必猜測。
+只有代碼 `1` 表示 djLint 檢查了你的範本，而且不滿意它找到的內容。代碼 `2` 一律表示這次執行本身沒有完成任務，因此管線可以分別處理這兩種情況。
 
-代碼 `2` 能抓出完全沒有檢查任何東西的執行：路徑錯誤、`--extension` 已不再相符，或範本已經移動。若沒有它，這樣的執行會在完全沒看過任何範本的情況下默默通過。
+代碼 `2` 能抓出完全沒有檢查任何東西的執行：路徑錯誤、`--extension` 已不再相符，或範本已經移動。若沒有它，這樣的執行會默默通過。
 
 djLint *確實*找到、但隨後透過 `exclude`、`extend_exclude`、`use_gitignore` 或 `require_pragma` 刻意略過的檔案，不算是錯誤。這種執行會以 `0` 結束，因為設定完全照著指示運作。這也讓 `exclude` 能在 pre-commit 底下正常運作，因為 pre-commit 會傳入你暫存檔案的名稱，不論你是否希望 djLint 檢查它們。
 

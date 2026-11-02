@@ -1,6 +1,6 @@
 ---
 title: "格式化工具用法"
-description: "使用 djLint 格式化你的 HTML 範本。快速、精確，輸出結果讓你的範本煥然一新。"
+description: "djLint 如何格式化 HTML 範本，以及如何在套用前檢查變更。"
 sidebar:
   label: "格式化工具"
 ---

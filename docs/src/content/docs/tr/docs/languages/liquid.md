@@ -1,23 +1,23 @@
 ---
 title: "Liquid Şablonları için Linter ve Biçimlendirici"
-description: "djLint hem bir Liquid şablon linter'ı hem de bir Liquid şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın."
+description: "djLint, Liquid şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için liquid profilini ayarlayın."
 sidebar:
   label: "Liquid"
 ---
 
-djLint hem bir Liquid şablon linter'ı hem de bir Liquid şablon biçimlendiricisidir! Şablonlarınızı djLint ile denetlerken ve biçimlendirirken hazır profilden yararlanın.
+djLint, Liquid şablonlarını denetler ve biçimlendirir. Kuralların ve biçimlendirmenin bu şablonlara uyması için `liquid` profilini ayarlayın.
 
 **[Liquid nedir?](https://shopify.github.io/liquid/)**
 
 Tek bir profil tüm Liquid lehçelerini kapsar: Shopify temaları, Jekyll, LiquidJS (Eleventy) ve Fluid (Orchard Core).
 
-#### Komut satırını kullanma
+## Komut satırını kullanma
 
 ```bash
 djlint /path/to/templates --profile=liquid
 ```
 
-#### Ya da bir yapılandırma dosyası kullanın
+## Ya da bir yapılandırma dosyası kullanın
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 

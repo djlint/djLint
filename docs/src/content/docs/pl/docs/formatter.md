@@ -1,6 +1,6 @@
 ---
 title: "Używanie formatera"
-description: "Formatuj szablony HTML za pomocą djLint. Szybko i dokładnie – twoje szablony będą lśnić."
+description: "Jak djLint formatuje szablony HTML i jak sprawdzić zmiany przed ich zastosowaniem."
 sidebar:
   label: "Formater"
 ---

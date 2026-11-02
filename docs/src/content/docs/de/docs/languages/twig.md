@@ -1,23 +1,23 @@
 ---
 title: "Linter und Formatter für Twig-Templates"
-description: "djLint ist ein Linter und ein Formatter für Twig-Templates! Nutzen Sie das vorgefertigte Profil, wenn Sie Ihre Templates mit djLint linten und formatieren."
+description: "djLint lintet und formatiert Twig-Templates. Setzen Sie das Profil nunjucks, damit Regeln und Formatierung zu ihnen passen."
 sidebar:
   label: "Twig"
 ---
 
-djLint ist ein Linter und ein Formatter für Twig-Templates! Nutzen Sie das vorgefertigte Profil, wenn Sie Ihre Templates mit djLint linten und formatieren.
+djLint lintet und formatiert Twig-Templates. Setzen Sie das Profil `nunjucks`, damit Regeln und Formatierung zu ihnen passen.
 
 **[Was ist Twig?](https://twig.symfony.com/)**
 
 Pebble-Templates (Java) sind Twig-kompatibel. Verwenden Sie für sie daher dasselbe Profil.
 
-#### Über die Befehlszeile
+## Über die Befehlszeile
 
 ```bash
 djlint /path/to/templates --profile=nunjucks
 ```
 
-#### Oder über eine Konfigurationsdatei
+## Oder über eine Konfigurationsdatei
 
 Konfigurieren Sie djLint in der Datei `pyproject.toml`, `djlint.toml` / `.djlint.toml` oder `.djlintrc` Ihres Projekts.
 

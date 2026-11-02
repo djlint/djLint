@@ -1,6 +1,6 @@
 ---
 title: "Integraciones"
-description: "Integra djLint con tu editor favorito. Formatea automáticamente tus plantillas con Pre-Commit. Analiza tu código con SublimeText."
+description: "Usa djLint en tu editor y ejecútalo con pre-commit."
 sidebar:
   label: "Integraciones"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Code ignorieren"
-description: "So verhindern Sie, dass djLint einen Codeblock formatiert. So ignorieren Sie djLint-Regeln inline."
+description: "Wie Sie verhindern, dass djLint einen Codeblock formatiert, und wie Sie Linter-Regeln inline ignorieren."
 sidebar:
   label: "Code ignorieren"
 ---

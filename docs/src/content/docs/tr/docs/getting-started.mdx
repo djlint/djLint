@@ -1,6 +1,6 @@
 ---
 title: "Başlarken"
-description: "HTML şablonlarının lint denetimi ve biçimlendirilmesi için djLint'e başlangıç. Kolay komut satırı arayüzünden ve birçok biçimlendirici seçeneğinden yararlanın."
+description: "djLint'i kurun ve HTML şablonlarını komut satırından denetleyin ya da biçimlendirin."
 sidebar:
   label: "Başlarken"
 ---
@@ -39,7 +39,7 @@ Ya da macOS veya Linux'ta topluluk tarafından sürdürülen [Homebrew formülü
 brew install djlint
 ```
 
-_Ya da npm ile - **uyarı**: npm paketi yalnızca bir sarmalayıcıdır; kurulum betiği, sistem yolunuzda hangi `python3` varsa onunla `pip install --upgrade djlint` komutunu çalıştırır. npm asıl paketi yönetmez ve kaldırmaz - mümkünse doğrudan pip'i tercih edin._
+_Ya da npm ile. **Uyarı**: npm paketi yalnızca bir sarmalayıcıdır. Kurulum betiği, sistem yolunuzda hangi `python3` varsa onunla `pip install --upgrade djlint` komutunu çalıştırır ve npm asıl paketi yönetmez ya da kaldırmaz; bu yüzden mümkünse pip'i tercih edin._
 
 ```bash
 npm i djlint
@@ -91,7 +91,7 @@ echo "<div></div>" | djlint - --reformat
 <div></div>
 ```
 
-stdin'den okurken djLint'in `per-file-ignores` ile eşleştireceği ya da mesajlarda göstereceği gerçek bir yol yoktur; bu yüzden varsayılan olarak `-` kullanır. Aktarılan içeriğin gerçek yolunu djLint'e bildirmek için `--stdin-filename` verin; örneğin bir editör entegrasyonu kaydetme sırasında bir dosyanın içeriğini aktardığında.
+stdin'den okurken djLint'in `per-file-ignores` ile eşleştireceği ya da mesajlarda göstereceği gerçek bir yol yoktur; bu yüzden varsayılan olarak `-` kullanır. Aktarılan içeriğin gerçek yolunu djLint'e bildirmek için `--stdin-filename` verin; örneğin bir düzenleyici entegrasyonu kaydetme sırasında bir dosyanın içeriğini aktardığında.
 
 ```bash
 echo "<div></div>" | djlint - --stdin-filename templates/index.html
@@ -105,9 +105,9 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1` | djLint lint hataları ya da yeniden biçimlendirilmesi gereken dosyalar buldu. `--warn` bunları uyarı olarak bildirir ve bunun yerine `0` ile çıkar. |
 | `2` | djLint istediğiniz şeyi denetlemedi: yollar hiçbir dosyayla eşleşmedi, komut satırı ya da yapılandırma geçersizdi veya djLint başarısız oldu.      |
 
-Yalnızca `1` kodu, djLint'in şablonlarınıza baktığı ve bulduklarını beğenmediği anlamına gelir. `2` kodu her zaman çalıştırmanın kendisinin işini yapmadığı anlamına gelir; böylece bir işlem hattı tahmin yürütmek yerine ikisini farklı ele alabilir.
+Yalnızca `1` kodu, djLint'in şablonlarınıza baktığı ve bulduklarını beğenmediği anlamına gelir. `2` kodu ise her zaman çalıştırmanın kendisinin sonuç vermediği anlamına gelir; böylece bir işlem hattı bu ikisini ayrı ele alabilir.
 
-`2` kodu, hiçbir şeyi denetlemeyen bir çalıştırmayı yakalar: yanlış bir yol, artık eşleşmeyen bir `--extension` ya da yeri değişmiş şablonlar. Bu kod olmasaydı böyle bir çalıştırma, şablonlarınızın hiçbirine bakmadan sessizce başarılı olurdu.
+`2` kodu, hiçbir şeyi denetlemeyen bir çalıştırmayı yakalar: yanlış bir yol, artık eşleşmeyen bir `--extension` ya da yeri değişmiş şablonlar. Bu kod olmasaydı böyle bir çalıştırma sessizce başarılı olurdu.
 
 djLint'in _bulduğu_ ve ardından `exclude`, `extend_exclude`, `use_gitignore` ya da `require_pragma` aracılığıyla bilerek atladığı dosyalar hata sayılmaz. Böyle bir çalıştırma `0` ile çıkar, çünkü yapılandırma tam olarak kendisine söyleneni yapmıştır. `exclude` seçeneğinin pre-commit altında çalışmasını sağlayan da budur; pre-commit, djLint'in bakmasını isteseniz de istemeseniz de hazırlanmış (staged) dosyalarınızın adlarını iletir.
 

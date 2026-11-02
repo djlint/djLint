@@ -1,6 +1,6 @@
 ---
 title: "Začínáme"
-description: "Začněte s djLint pro lintování a formátování HTML šablon. Využijte jednoduché rozhraní příkazového řádku a řadu možností formátovače."
+description: "Nainstalujte djLint a lintujte nebo formátujte HTML šablony z příkazového řádku."
 sidebar:
   label: "Začínáme"
 ---
@@ -39,7 +39,7 @@ Nebo v systémech macOS a Linux pomocí [formule Homebrew](https://formulae.br
 brew install djlint
 ```
 
-_Nebo pomocí npm – **upozornění**: balíček npm je jen obálka, jeho instalační skript spustí `pip install --upgrade djlint` pro ten `python3`, který je zrovna v systémové cestě. npm skutečný balíček nespravuje ani neodinstaluje – pokud je to možné, použijte raději přímo pip._
+_Nebo pomocí npm. **Upozornění**: balíček npm je jen obálka. Jeho instalační skript spustí `pip install --upgrade djlint` pro ten `python3`, který je zrovna v systémové cestě, a npm skutečný balíček nespravuje ani neodinstaluje, takže pokud můžete, použijte raději pip._
 
 ```bash
 npm i djlint
@@ -105,9 +105,9 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1` | djLint našel chyby lintování nebo soubory, které je potřeba přeformátovat. `--warn` je místo toho nahlásí jako varování a skončí s kódem `0`.    |
 | `2` | djLint nezkontroloval to, co jste chtěli: cestám neodpovídaly žádné soubory, příkazový řádek nebo konfigurace byly neplatné, nebo djLint selhal. |
 
-Jen kód `1` znamená, že se djLint na vaše šablony podíval a nelíbilo se mu, co našel. Kód `2` vždy znamená, že samotné spuštění nesplnilo svůj účel, takže pipeline může s oběma případy zacházet různě a nemusí hádat.
+Jen kód `1` znamená, že se djLint na vaše šablony podíval a nelíbilo se mu, co našel. Kód `2` vždy znamená, že samotné spuštění nesplnilo svůj účel, takže pipeline může s oběma případy zacházet různě.
 
-Právě kód `2` zachytí spuštění, které nezkontrolovalo vůbec nic: chybnou cestu, `--extension`, které už neodpovídá, nebo šablony, které se přesunuly. Bez něj by takové spuštění tiše prošlo, aniž by se podívalo na jedinou z vašich šablon.
+Právě kód `2` zachytí spuštění, které nezkontrolovalo vůbec nic: chybnou cestu, `--extension`, které už neodpovídá, nebo šablony, které se přesunuly. Bez něj by takové spuštění tiše prošlo.
 
 Soubory, které djLint _našel_ a pak záměrně přeskočil kvůli `exclude`, `extend_exclude`, `use_gitignore` nebo `require_pragma`, nejsou chybou. Takové spuštění skončí s kódem `0`, protože konfigurace udělala přesně to, co jí bylo řečeno. Díky tomu také `exclude` funguje v pre-commit, který předává názvy vašich připravených (staged) souborů bez ohledu na to, zda chcete, aby se na ně djLint díval.
 

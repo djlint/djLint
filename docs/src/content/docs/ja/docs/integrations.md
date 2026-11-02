@@ -1,6 +1,6 @@
 ---
 title: "連携"
-description: "djLint をお気に入りのエディターと連携させましょう。pre-commit でテンプレートを自動フォーマットし、SublimeText でリントします。"
+description: "エディターで djLint を使い、pre-commit で実行します。"
 sidebar:
   label: "連携"
 ---

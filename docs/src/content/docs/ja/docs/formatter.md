@@ -1,6 +1,6 @@
 ---
 title: "フォーマッターの使い方"
-description: "djLint で HTML テンプレートをフォーマットしましょう。高速かつ正確で、出力はテンプレートを美しく整えます。"
+description: "djLint による HTML テンプレートのフォーマットと、変更を適用する前に確認する方法。"
 sidebar:
   label: "フォーマッター"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "忽略代码"
-description: "如何阻止 djLint 格式化某个代码块。如何以内联方式忽略 djLint 规则。"
+description: "如何阻止 djLint 格式化某个代码块，以及如何以内联方式忽略代码检查规则。"
 sidebar:
   label: "忽略代码"
 ---

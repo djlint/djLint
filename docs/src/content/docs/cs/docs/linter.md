@@ -1,6 +1,6 @@
 ---
 title: "Pravidla linteru"
-description: "Linter HTML šablon djLint obsahuje přes 30 pravidel! Najdete tu jejich popis. Snadno je rozšíříte o vlastní pravidla!"
+description: "Pravidla linteru HTML šablon djLint a postup, jak přidat vlastní."
 sidebar:
   label: "Linter"
 ---
@@ -146,7 +146,7 @@ Jednoduché uvozovky uvnitř hodnot HTML atributů (např. `<span title="{% tran
 
 S `quote_style = "single"` pravidlo naopak vyžaduje jednoduché uvozovky a formátovač je také zapisuje.
 
-`--reformat` tyto uvozovky přepíše za vás, takže nález nikdy nevyžaduje ruční práci.
+`--reformat` tyto uvozovky přepíše za vás.
 
 Špatně:
 
@@ -166,7 +166,7 @@ Správně:
 
 Když `{% block %}` zabírá mnoho řádků nebo jsou bloky vnořené, holý `{% endblock %}` nijak nenaznačuje, který blok uzavírá, takže se při úpravách snadno ukončí nesprávný blok; podřízené šablony pak přepisují nesprávný obsah. Pojmenovaný endblock dokumentuje párování a umožňuje djLint i Djangu (které při nesouhlasném názvu v endblock vyvolá TemplateSyntaxError) zachytit blok uzavřený na nesprávném místě. Chyby párování (neuzavřené bloky, osiřelé endblocky a nesouhlasné názvy) jsou kontroly správnosti, které řeší T038.
 
-Ve výchozím nastavení vypnuto; zapněte ho pomocí `--include=T003`. `--name-endblocks` název zapíše za vás, takže nález nikdy nevyžaduje ruční práci.
+Ve výchozím nastavení vypnuto; zapněte ho pomocí `--include=T003`. `--name-endblocks` název zapíše za vás.
 
 Název není nutný, když se blok otevírá i zavírá na stejném řádku, např. `{% block title %}``{% endblock %}`. Formátovač přesouvá obsah bloku, který obsahuje další značky, na samostatné řádky, takže blok zapsaný na jednom řádku může po naformátování název potřebovat; s `--name-endblocks` formátovač zapíše i tento název.
 
@@ -629,7 +629,7 @@ Správně:
 
 Dokumenty HTML5 jsou v UTF-8, takže doslovný znak funguje všude a právě ten recenzenti skutečně čtou; překlep ve znakové entitě (např. `&mdsah;`) prohlížeč nezachytí a vykreslí ho doslova jako rozbitý text. djLint povoluje entity, které nesou syntaxi (`&lt;`, `&gt;`, `&amp;`, `&quot;`, `&apos;` a složené závorky `&lbrace;` a `&rbrace;` spolu s `&percnt;`, `&num;` a `&dollar;`, které by po vypsání dokončily oddělovač šablony), a ty, které označují neviditelný znak, a proto ho nelze zkontrolovat jako doslovný znak: mezery (`&nbsp;`, `&thinsp;`, `&hairsp;`), spojovače a značky (`&zwnj;`, `&zwj;`, `&lrm;`, `&rlm;`) a `&shy;`, a to v pojmenované, desítkové i šestnáctkové podobě.
 
-`--reformat` entitu přepíše na znak za vás, takže nález nikdy nevyžaduje ruční práci. Entita zapsaná uvnitř šablonové značky je součástí značky, a ne stránky, takže se jí nedotkne pravidlo ani formátovač. `--no-entity-formatting` přepisování vypne, ale pravidlo nechá zapnuté, takže se entita stále hlásí. Chcete-li entity zachovat, přidejte `H023` do `ignore`.
+`--reformat` entitu přepíše na znak za vás. Entita zapsaná uvnitř šablonové značky je součástí značky, a ne stránky, takže se jí nedotkne pravidlo ani formátovač. `--no-entity-formatting` přepisování vypne, ale pravidlo nechá zapnuté, takže se entita stále hlásí. Chcete-li entity zachovat, přidejte `H023` do `ignore`.
 
 Špatně:
 
@@ -851,7 +851,7 @@ Správně:
 
 `Do not use br tags for spacing.`
 
-Specifikace html povoluje `<br>` jen pro zalomení řádku, které je součástí samotného obsahu, jako v poštovní adrese nebo v básni, a takové použití zůstává bez povšimnutí. Hlásí se prezentační použití, které specifikace vylučuje: řada dvou a více zalomení, která vytváří svislou mezeru, a zalomení u vnitřního okraje blokového elementu, které nevykreslí nic, co by nevykreslil jeho vlastní okraj. Obojí rozbíjí přelévání textu při malé šířce a čtečka obrazovky ohlásí vynucené zalomení tam, kde není co ohlašovat.
+Specifikace html povoluje `<br>` jen pro zalomení řádku, které je součástí samotného obsahu, jako v poštovní adrese nebo v básni, a takové použití se nehlásí. Hlásí se prezentační použití, které specifikace vylučuje: řada dvou a více zalomení, která vytváří svislou mezeru, a zalomení u vnitřního okraje blokového elementu, které nevykreslí nic, co by nevykreslil jeho vlastní okraj. Obojí rozbíjí přelévání textu při malé šířce a čtečka obrazovky ohlásí vynucené zalomení tam, kde není co ohlašovat.
 
 Špatně:
 
@@ -1021,7 +1021,7 @@ Správně:
 
 Jakmile šablona rozšiřuje jinou, o výstupu rozhoduje rodič a potomek jen vyplňuje bloky rodiče. Text nebo html zapsané za `{% extends %}` a mimo všechny `{% block %}` se při vykreslování tiše zahodí, takže odstavec, který ve zdrojovém kódu vypadá v pořádku, se na stránku nikdy nedostane.
 
-Šablonová značka se tam stále provede, takže `{% load %}`, `{% set %}` a `{% if %}` obalující blok zůstávají bez povšimnutí, stejně jako komentáře `{# #}` a `{% comment %}`, html komentáře, bloky <code>{&#37; raw %}</code> a `{% verbatim %}` a tělo `{% macro %}`, blokové podoby `{% set %}`, `{% partialdef %}` nebo `{% addtoblock %}`, které se zachytí, místo aby se vypsalo. Text `{% blocktrans %}` se hlásí, protože `{% blocktrans %}` není `{% block %}`. Zohledňuje se jen obsah za značkou extends a každý jeho souvislý úsek se hlásí jednou, na svém začátku.
+Šablonová značka se tam stále provede, takže `{% load %}`, `{% set %}` a `{% if %}` obalující blok se nehlásí, stejně jako komentáře `{# #}` a `{% comment %}`, html komentáře, bloky <code>{&#37; raw %}</code> a `{% verbatim %}` a tělo `{% macro %}`, blokové podoby `{% set %}`, `{% partialdef %}` nebo `{% addtoblock %}`, které se zachytí, místo aby se vypsalo. Text `{% blocktrans %}` se hlásí, protože `{% blocktrans %}` není `{% block %}`. Zohledňuje se jen obsah za značkou extends a každý jeho souvislý úsek se hlásí jednou, na svém začátku.
 
 Šablonovací systém čte šablonové značky dřív než html, takže `{% extends %}` zapsané uvnitř html komentáře nebo `<pre>` se stále provede a ze souboru stále udělá potomka; skutečně ho skryjí jen `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> a `{% verbatim %}`. Text uvnitř html komentáře se tak či tak k žádnému čtenáři nedostane a nehlásí se, ale značky v něm zapsané se stále čtou.
 
@@ -1135,9 +1135,9 @@ Neuplatňuje se v profilech golang, handlebars a angular.
 
 Výstupní značka vypisuje hodnotu, kdežto `if`, `for`, `url`, `include` a ostatní jsou příkazy, které patří do blokové značky. Django, Jinja i Nunjucks odmítnou `{{ if x }}` s chybou syntaxe a samotné uzavírací klíčové slovo, například `{{ endif }}`, se čte jako proměnná, která nic nevykreslí, zatímco blok, který měla uzavřít, zůstává otevřený, takže se stránka buď nenačte, nebo ukáže to, co měla podmínka skrýt.
 
-Samotné klíčové slovo je obyčejný název proměnné, takže `{{ url }}`, `{{ url|default:"/" }}` a `{{ set.name }}` se nehlásí. Hlásí se jen klíčové slovo s argumentem a vedle toho samotné uzavírací nebo větvicí klíčové slovo jako `{{ endif }}` nebo `{{ else }}`. Řídicím klíčovým slovem jako `if` nebo `for` výraz začínat nemůže, takže cokoli za ním je argument, včetně operátoru, a `{{ if -1 > count }}` se hlásí. Ostatní názvy slouží zároveň jako proměnné a funkce a u nich se za argument považuje jen řetězec v uvozovkách nebo slovo, takže výraz, který jedním z nich náhodou začíná, zůstává bez povšimnutí: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` i `{{ filter [0] }}` se nehlásí.
+Samotné klíčové slovo je obyčejný název proměnné, takže `{{ url }}`, `{{ url|default:"/" }}` a `{{ set.name }}` se nehlásí. Hlásí se jen klíčové slovo s argumentem a vedle toho samotné uzavírací nebo větvicí klíčové slovo jako `{{ endif }}` nebo `{{ else }}`. Řídicím klíčovým slovem jako `if` nebo `for` výraz začínat nemůže, takže cokoli za ním je argument, včetně operátoru, a `{{ if -1 > count }}` se hlásí. Ostatní názvy slouží zároveň jako proměnné a funkce a u nich se za argument považuje jen řetězec v uvozovkách nebo slovo, takže výraz, který jedním z nich náhodou začíná, se nehlásí: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` i `{{ filter [0] }}` se nehlásí.
 
-Tělo bloku <code>{&#37; raw %}</code> nebo `{% verbatim %}` je text, nikoli šablonová syntaxe, a přeskakuje se, včetně pojmenované podoby `{% verbatim vueapp %}...{% endverbatim vueapp %}`, takže `{{ }}` z Vue nebo Handlebars chráněné tímto způsobem se nehlásí. `{{ }}` zapsané uvnitř argumentu blokové značky v uvozovkách, jako v `{% trans "Write {{ if x }} instead" %}`, je text, který systém vypíše, a také zůstává bez povšimnutí.
+Tělo bloku <code>{&#37; raw %}</code> nebo `{% verbatim %}` je text, nikoli šablonová syntaxe, a přeskakuje se, včetně pojmenované podoby `{% verbatim vueapp %}...{% endverbatim vueapp %}`, takže `{{ }}` z Vue nebo Handlebars chráněné tímto způsobem se nehlásí. `{{ }}` zapsané uvnitř argumentu blokové značky v uvozovkách, jako v `{% trans "Write {{ if x }} instead" %}`, je text, který systém vypíše, a také se nehlásí.
 
 Špatně:
 
@@ -1177,9 +1177,9 @@ Správně:
 
 Html komentář skrývá značkování před prohlížečem, ne před šablonovacím systémem. `<!-- {% include "debug.html" %} -->` soubor stále vykreslí a `<!-- {% if debug %}...{% endif %} -->` se stále vyhodnotí, v Djangu, Jinja, Nunjucks, Handlebars i Go, takže takto zakomentovaná značka dál běží a cokoli vypíše, skončí uvnitř komentáře, nebo pokud obsahuje `-->`, z něj vyskočí. Spuštění značky zabrání jen šablonový komentář, `{# #}` v Djangu a Jinja, `{{! }}` v Handlebars nebo `{{/* */}}` v Go.
 
-Hlásí se jen příkazová značka: `{% %}` v profilech, které ji mají, sekce, uzavření nebo partial v handlebars a klíčové slovo Go jako `{{if}}` nebo `{{end}}`. Hodnota vypsaná do komentáře, jako v `<!-- built {{ version }} -->`, je záměrné použití a zůstává bez povšimnutí, stejně jako značka uvnitř šablonového komentáře, bloku `{% comment %}` nebo raw bloku a podmíněný komentář pro Internet Explorer, `<!--[if IE]> ... <![endif]-->`, jehož tělo je značkování pro prohlížeč, který jmenuje.
+Hlásí se jen příkazová značka: `{% %}` v profilech, které ji mají, sekce, uzavření nebo partial v handlebars a klíčové slovo Go jako `{{if}}` nebo `{{end}}`. Hodnota vypsaná do komentáře, jako v `<!-- built {{ version }} -->`, je záměrné použití a nehlásí se, stejně jako značka uvnitř šablonového komentáře, bloku `{% comment %}` nebo raw bloku a podmíněný komentář pro Internet Explorer, `<!--[if IE]> ... <![endif]-->`, jehož tělo je značkování pro prohlížeč, který jmenuje.
 
-Samotné klíčové slovo Go je v každém jiném šablonovacím systému obyčejný název proměnné, takže `<!-- period {{ start }} to {{ end }} -->` a `<!-- Template: {{ template }} -->` jsou v Djangu, Jinja, Nunjucks, Handlebars a Liquid hodnoty a jako příkazy se čtou jen s `--profile golang`. Klíčové slovo s operandem Go, jako v `{{ if .X }}` a `{{ template "footer" . }}`, je příkaz, který žádný jiný systém nevypíše, a hlásí se v libovolném profilu. `{%` se obdobně čte jen tam, kde ho systém má, takže s `--profile handlebars` a `--profile golang` je to text, a otevření, za kterým nenásleduje žádná uzavírací závorka, jako v `<!-- battery at 50{% charge -->`, je běžný text, jak se zdá. Podmíněný komentář je jen ten, který je jako takový zapsaný, tedy začíná `<!--[if` a uzavírá ho jeho `<![endif]-->` v libovolné velikosti písmen; neuzavřený je obyčejný komentář, za jaký ho prohlížeč považuje, a značky v něm se hlásí.
+Samotné klíčové slovo Go je v každém jiném šablonovacím systému obyčejný název proměnné, takže `<!-- period {{ start }} to {{ end }} -->` a `<!-- Template: {{ template }} -->` jsou v Djangu, Jinja, Nunjucks, Handlebars a Liquid hodnoty a jako příkazy se čtou jen s `--profile golang`. Klíčové slovo s operandem Go, jako v `{{ if .X }}` a `{{ template "footer" . }}`, je příkaz, který žádný jiný systém nevypíše, a hlásí se v libovolném profilu. `{%` se obdobně čte jen tam, kde ho systém má, takže s `--profile handlebars` a `--profile golang` je to text, a otevření, za kterým nenásleduje žádná uzavírací závorka, jako v `<!-- battery at 50{% charge -->`, je opravdu jen text. Podmíněný komentář je jen ten, který je jako takový zapsaný, tedy začíná `<!--[if` a uzavírá ho jeho `<![endif]-->` v libovolné velikosti písmen; neuzavřený je obyčejný komentář, za jaký ho prohlížeč považuje, a značky v něm se hlásí.
 
 Špatně:
 
@@ -1219,7 +1219,7 @@ Správně:
 
 `aria-hidden="true"` vyjme element ze stromu přístupnosti, ale ponechá ho v pořadí tabulátoru, takže uživatel klávesnice na něj stále narazí a neuslyší žádné ohlášení. Skrytí dekorativní ikony je běžné použití tohoto atributu a nehlásí se; hlásí se jen element, který sám získává fokus.
 
-Element se považuje za fokusovatelný, pokud je to `button`, `select`, `textarea`, `iframe` nebo `summary`, `a` nebo `area` s `href`, `input`, který není skrytý, `audio` nebo `video` s `controls`, nebo cokoli s `contenteditable` nebo `tabindex` s hodnotou `0` či vyšší. Ovládací prvek s `disabled` nebo s `tabindex="-1"` už v pořadí tabulátoru není a zůstává bez povšimnutí.
+Element se považuje za fokusovatelný, pokud je to `button`, `select`, `textarea`, `iframe` nebo `summary`, `a` nebo `area` s `href`, `input`, který není skrytý, `audio` nebo `video` s `controls`, nebo cokoli s `contenteditable` nebo `tabindex` s hodnotou `0` či vyšší. Ovládací prvek s `disabled` nebo s `tabindex="-1"` už v pořadí tabulátoru není a nehlásí se.
 
 Špatně:
 
@@ -1239,7 +1239,7 @@ Správně:
 
 Atribut aria s překlepem nedělá vůbec nic. Žádný prohlížeč nevaruje, žádná čtečka obrazovky ho nenahlásí a značkování dál vypadá, jako by bylo přístupné, takže `aria-lable` může v šabloně zůstat celé roky, zatímco ovládací prvek, který měl pojmenovat, zůstává bez názvu.
 
-Pravidlo zná názvy, které definuje ARIA. Vazba zapsaná frameworkem není prostý název aria, takže `:aria-label`, `v-bind:aria-label` a `[attr.aria-label]` zůstávají bez povšimnutí.
+Pravidlo zná názvy, které definuje ARIA. Vazba zapsaná frameworkem není prostý název aria, takže `:aria-label`, `v-bind:aria-label` a `[attr.aria-label]` se nehlásí.
 
 Špatně:
 
@@ -1279,7 +1279,7 @@ Správně:
 
 `<center>`, `<font>`, `<big>`, `<strike>` a `<tt>` byly vypuštěny, když vzhled převzalo css, a `<marquee>`, `<blink>`, `<nobr>` a `<spacer>` nikdy standardní nebyly. Html už žádný z nich nedefinuje, takže nic nezaručuje, jak je prohlížeč rozvrhne, a stylopis na ně nemůže cílit tak, jako cílí na třídu.
 
-Pravidlo zná elementy `acronym`, `applet`, `basefont`, `bgsound`, `big`, `blink`, `center`, `dir`, `font`, `frame`, `frameset`, `isindex`, `keygen`, `marquee`, `menuitem`, `nobr`, `noembed`, `noframes`, `plaintext`, `spacer`, `strike`, `tt` a `xmp`. Hlásí se jen otevírací značka, takže každý element je zmíněn jednou, a vlastní element, jehož název jedním z nich jen začíná, například `<font-picker>`, zůstává bez povšimnutí.
+Pravidlo zná elementy `acronym`, `applet`, `basefont`, `bgsound`, `big`, `blink`, `center`, `dir`, `font`, `frame`, `frameset`, `isindex`, `keygen`, `marquee`, `menuitem`, `nobr`, `noembed`, `noframes`, `plaintext`, `spacer`, `strike`, `tt` a `xmp`. Hlásí se jen otevírací značka, takže každý element je zmíněn jednou, a vlastní element, jehož název jedním z nich jen začíná, například `<font-picker>`, se nehlásí.
 
 Špatně:
 
@@ -1301,7 +1301,7 @@ Role, kterou žádná specifikace nezná, se rovnou zahodí a element si ponech
 
 Pravidlo zná role, které ARIA definuje pro autory, spolu s těmi, které přidávají DPUB-ARIA (`doc-chapter` a další) a GRAPHICS-ARIA (`graphics-symbol` a další). Abstraktní role ARIA, jako `landmark` a `sectionhead`, se hlásí: specifikace říká, že existují pro sestavení její ontologie a nesmí se v značkování používat.
 
-`role` může obsahovat několik názvů jako záložní seznam a kontroluje se každý z nich. Hodnota se šablonovou syntaxí je nepoznatelná a zůstává bez povšimnutí, stejně jako vazba zapsaná frameworkem, jako v `:role` nebo `[attr.role]`.
+`role` může obsahovat několik názvů jako záložní seznam a kontroluje se každý z nich. Hodnota se šablonovou syntaxí je nepoznatelná a nehlásí se, stejně jako vazba zapsaná frameworkem, jako v `:role` nebo `[attr.role]`.
 
 Špatně:
 
@@ -1341,7 +1341,7 @@ Správně:
 
 Id pojmenovává jeden element. Druhý element se stejným id rozbije `getElementById`, `<label for>`, odkazy na fragmenty i `aria-labelledby`: prohlížeč vezme první a ostatní tiše ignoruje, takže popisek, odkaz nebo skript skončí u nesprávného elementu bez jakéhokoli varování.
 
-Dvě id ve vzájemně se vylučujících větvích jednoho `{% if %}...{% else %}...{% endif %}` se nikdy nevykreslí obě, a proto se nehlásí. Cyklus `{% for %}` ani `{% block %}` větví není: id uvnitř něj i stejné id mimo něj se vykreslí obě a hlásí se to pozdější. Hodnota zapsaná šablonovou značkou je nepoznatelná a zůstává bez povšimnutí, stejně jako prázdná hodnota. Id se porovnávají přesně, stejně jako to dělá prohlížeč, takže `save` a `Save` jsou dvě různá id.
+Dvě id ve vzájemně se vylučujících větvích jednoho `{% if %}...{% else %}...{% endif %}` se nikdy nevykreslí obě, a proto se nehlásí. Cyklus `{% for %}` ani `{% block %}` větví není: id uvnitř něj i stejné id mimo něj se vykreslí obě a hlásí se to pozdější. Hodnota zapsaná šablonovou značkou je nepoznatelná a nehlásí se, stejně jako prázdná hodnota. Id se porovnávají přesně, stejně jako to dělá prohlížeč, takže `save` a `Save` jsou dvě různá id.
 
 Větve se čtou v jazyce, ve kterém je soubor napsaný, a s jakýmikoli prázdnými znaky, které jazyk mezi oddělovači a názvem značky dovoluje: `{% elif %}` a `{% else %}`, `{% elsif %}` a `{% when %}` z liquid, `{{ else }}` z go, řádkový příkaz `% else:` z mako a `{{else}}` z handlebars, jeho řetězené `{{else if x}}` a inverzní sekce libovolného bloku `{{#helper}}`, včetně vlastních helperů. Obsah `<template>` je samostatný fragment dokumentu, ke kterému `getElementById` nikdy nedosáhne, takže id v něm se porovnává jen s id téhož `<template>`: dvě šablony mohou každá obsahovat řádek se stejným id, ale dvě taková id uvnitř jedné šablony se stále hlásí. Id uvnitř komentáře, těla <code>{&#37; raw %}</code> nebo `{% verbatim %}` nebo oblasti `djlint:off` se vůbec nečte.
 
@@ -1365,7 +1365,7 @@ Správně:
 
 Html zakazuje interaktivní obsah uvnitř `<a>` a `<button>`. Tlačítko uvnitř odkazu nebo odkaz uvnitř tlačítka je neplatné značkování, které každý prohlížeč opraví po svém, a uživatel čtečky obrazovky nebo klávesnice dostane jeden ovládací prvek, který se chová jako dva. axe hlásí totéž jako „nested-interactive“.
 
-Sledovanými kontejnery jsou `<a>` s `href` a `<button>` a ovládací prvky, které se v nich hlásí, jsou odkaz s `href`, `button`, `input`, `select` a `textarea`. `<a>` bez `href` není interaktivní a zůstává bez povšimnutí na obou stranách, stejně jako skrytý input nebo input, jehož typ zapisuje šablonová značka. Obsah `<template>` se nevykresluje tam, kde je zapsaný, takže ovládací prvek uvnitř něj není vnořený do odkazu kolem něj, ale vnoření zapsané uvnitř šablony se stále hlásí.
+Sledovanými kontejnery jsou `<a>` s `href` a `<button>` a ovládací prvky, které se v nich hlásí, jsou odkaz s `href`, `button`, `input`, `select` a `textarea`. `<a>` bez `href` není interaktivní a ignoruje se jako kontejner i jako vnořený prvek, stejně jako skrytý input nebo input, jehož typ zapisuje šablonová značka. Obsah `<template>` se nevykresluje tam, kde je zapsaný, takže ovládací prvek uvnitř něj není vnořený do odkazu kolem něj, ale vnoření zapsané uvnitř šablony se stále hlásí.
 
 Atribut se čte tam, kde ho značka zapisuje, a nikde jinde: `href` v `{% if not href %}` je název proměnné, ten v `{# href="{{ url }}" #}` je zakomentovaný a ten v `data-attr=href` patří k jinému atributu, zatímco `href`, které `{% if %}` zapisuje mezi svými značkami, je atribut jako každý jiný. Odkaz nebo tlačítko, které zůstanou otevřené, končí s elementem kolem nich, stejně jako v prohlížeči, takže jeden překlep nezpůsobí hlášení ve zbytku souboru; ty, které zůstanou otevřené na nejvyšší úrovni, nemají kolem sebe nic, co by je ukončilo, a sahají až na konec souboru, kde H025 navíc nahlásí osiřelou značku.
 
@@ -1387,7 +1387,7 @@ Správně:
 
 H005 vyžaduje `lang` na `<html>`, ale hodnota jako `lang="english"` nebo `lang="en_US"` ho splní, přestože neoznačuje žádný jazyk, který by prohlížeč znal. Čtečka obrazovky se pak vrátí ke svému výchozímu hlasu a překlad i dělení slov použijí nesprávná pravidla, nebo žádná. Hodnota musí být jazyková značka BCP 47: dvě nebo tři písmena a za nimi libovolný počet podznaček o jednom až osmi písmenech nebo číslicích, každá za spojovníkem, jako v `en`, `pt-BR` nebo `zh-Hant-TW`.
 
-Kontroluje se jen značka `<html>`, stejně jako u H005. Prázdná hodnota se ponechává tomuto pravidlu, kdežto hodnota složená jen z prázdných znaků se hlásí zde, protože H005 ji čte jako hodnotu. Hodnota zapsaná šablonovou značkou, jako v `lang="{{ LANGUAGE_CODE }}"`, nebo zkráceným echem php, jako v `lang="<?= $lang ?>"`, je nepoznatelná a zůstává bez povšimnutí, ale hodnota, která jen začíná znakem `$` nebo `{`, jako v `lang="$LANG"`, se čte tak, jak je zapsaná. `xml:lang` ani `data-lang` se nečte jako `lang` a `>` zapsané uvnitř šablonové značky před atributem, jako v `{% if a > b %}`, ho neskryje.
+Kontroluje se jen značka `<html>`, stejně jako u H005. Prázdná hodnota se ponechává tomuto pravidlu, kdežto hodnota složená jen z prázdných znaků se hlásí zde, protože H005 ji čte jako hodnotu. Hodnota zapsaná šablonovou značkou, jako v `lang="{{ LANGUAGE_CODE }}"`, nebo zkráceným echem php, jako v `lang="<?= $lang ?>"`, je nepoznatelná a nehlásí se, ale hodnota, která jen začíná znakem `$` nebo `{`, jako v `lang="$LANG"`, se čte tak, jak je zapsaná. `xml:lang` ani `data-lang` se nečte jako `lang` a `>` zapsané uvnitř šablonové značky před atributem, jako v `{% if a > b %}`, ho neskryje.
 
 Špatně:
 
@@ -1407,7 +1407,7 @@ Správně:
 
 Specifikace html říká, že prázdný `src` je neplatný, a varuje, že ho prohlížeč vyhodnotí vůči vlastní URL dokumentu, takže `<img src="">` stáhne stránku znovu jako obrázek a `<script src=""></script>` ji stáhne jako skript. Obvykle jde o zástupnou hodnotu, kterou měl doplnit skript, a řešením je atribut vynechat, nebo hodnotu uchovávat v datovém atributu, dokud nebude skutečná. `src` zapsaný úplně bez hodnoty, jako v `<img src>`, je také prázdný a hlásí se.
 
-Kontrolují se jen `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` a `video`, protože to jsou elementy, které stahují to, co `src` uvádí. Hlásí se jen hodnota, kterou prohlížeč čte jako prázdnou, takže hodnota bez uvozovek jako `<img src=/static/logo.png>` zůstává bez povšimnutí, stejně jako hodnota složená jen z prázdných znaků a hodnota zapsaná šablonovou značkou, a `srcset` a `data-src` jsou jiné atributy, které pravidlo neposuzuje.
+Kontrolují se jen `img`, `script`, `iframe`, `embed`, `source`, `track`, `audio` a `video`, protože to jsou elementy, které stahují to, co `src` uvádí. Hlásí se jen hodnota, kterou prohlížeč čte jako prázdnou, takže hodnota bez uvozovek jako `<img src=/static/logo.png>` se nehlásí, stejně jako hodnota složená jen z prázdných znaků a hodnota zapsaná šablonovou značkou, a `srcset` a `data-src` jsou jiné atributy, které pravidlo neposuzuje.
 
 Špatně:
 
@@ -1427,9 +1427,9 @@ Správně:
 
 Video se zvukem nese řeč jen ve zvukové stopě, takže neslyšící nebo nedoslýchavý divák z něj bez titulků nic nemá, a titulky proto vyžaduje WCAG 1.2.2 Titulky (záznam). Pravidlo splňuje `<track>` s `kind` nastaveným na `captions` nebo `subtitles` uvnitř `<video>`, stejně jako `<track>` úplně bez `kind`, protože výchozí hodnotou je `subtitles`.
 
-Video s `muted` nemá žádný zvuk, ke kterému by bylo třeba titulky, a nehlásí se. Nehlásí se ani video, jehož otevírací značka nebo tělo obsahuje šablonovou značku, protože stopy nebo atribut `muted` může zapisovat šablona tam, kde je djLint nevidí. Šablonovou značkou se rozumí značka, kterou otevírá šablonovací jazyk, tedy `{{`, `{%`, `{#` nebo `${`, takže obslužná rutina jQuery jako `onclick="$(this).play()"`, `$refs` z Alpine, složená závorka css a cena uvedená v záložním textu jsou obyčejný text, jak se zdají, a video se stále čte.
+Video s `muted` nemá žádný zvuk, ke kterému by bylo třeba titulky, a nehlásí se. Nehlásí se ani video, jehož otevírací značka nebo tělo obsahuje šablonovou značku, protože stopy nebo atribut `muted` může zapisovat šablona tam, kde je djLint nevidí. Šablonovou značkou se rozumí značka, kterou otevírá šablonovací jazyk, tedy `{{`, `{%`, `{#` nebo `${`, takže obslužná rutina jQuery jako `onclick="$(this).play()"`, `$refs` z Alpine, složená závorka css a cena uvedená v záložním textu jsou opravdu jen obyčejný text a video se stále čte.
 
-Za značkování se považuje jen značkování. `muted` musí být atribut, takže `<video class=muted>` je třída pojmenovaná muted a hlásí se, a `<track>`, který je zakomentovaný nebo zapsaný uvnitř hodnoty atributu, je text, nikoli stopa. `</video>` uvnitř hodnoty nic neukončuje a element se posuzuje tam, kde ho uzavírá jeho skutečná koncová značka, takže `<video>` ponechaný otevřený se nechává na `H025`.
+`muted` musí být atribut, takže `<video class=muted>` je třída pojmenovaná muted a hlásí se, a `<track>`, který je zakomentovaný nebo zapsaný uvnitř hodnoty atributu, je text, nikoli stopa. `</video>` uvnitř hodnoty nic neukončuje a element se posuzuje tam, kde ho uzavírá jeho skutečná koncová značka, takže `<video>` ponechaný otevřený se nechává na `H025`.
 
 Špatně:
 
@@ -1455,10 +1455,10 @@ Dobré pravidlo se skládá z těchto částí:
 
 - Název
 - Kód
-- Zpráva – zpráva, která se zobrazí při nalezení chyby.
-- Příznaky – příznaky regulárního výrazu. Výchozí je re.DOTALL. Např.: re.I|re.M
-- Vzory – regulární výrazy, které chybu najdou.
-- Vyloučení – volitelný seznam profilů, ze kterých se má pravidlo vyloučit.
+- Zpráva: zpráva, která se zobrazí při nalezení chyby.
+- Příznaky: příznaky regulárního výrazu, například re.I|re.M. Výchozí je re.DOTALL.
+- Vzory: regulární výrazy, které chybu najdou.
+- Vyloučení: volitelný seznam profilů, pro které pravidlo neplatí.
 
 K pravidlu prosím přidejte test, který ho ověří.
 

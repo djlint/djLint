@@ -1,21 +1,21 @@
 ---
 title: "Linter de plantillas de Angular"
-description: "¡djLint es un linter de plantillas de Angular! Aprovecha el perfil predefinido al analizar y formatear tus plantillas con djLint."
+description: "djLint analiza plantillas de Angular. Usa el perfil angular para que las reglas se ajusten a ellas."
 sidebar:
   label: "Angular"
 ---
 
-¡djLint es un linter de plantillas de Angular! Aprovecha el perfil predefinido al analizar y formatear tus plantillas con djLint.
+djLint analiza plantillas de Angular. Usa el perfil `angular` para que las reglas se ajusten a ellas.
 
 **[¿Qué es Angular?](https://angular.io/guide/template-syntax)**
 
-#### Desde la línea de comandos
+## Desde la línea de comandos
 
 ```bash
 djlint /path/to/templates --profile=angular
 ```
 
-#### O bien, con un archivo de configuración
+## O bien, con un archivo de configuración
 
 Configura djLint en el archivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` de tu proyecto.
 

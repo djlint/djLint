@@ -1,23 +1,23 @@
 ---
 title: "Linter a formátovač šablon Twig"
-description: "djLint je linter a formátovač šablon Twig! Při lintování a formátování šablon pomocí djLint využijte připravený profil."
+description: "djLint lintuje a formátuje šablony Twig. Nastavte profil nunjucks, aby jim pravidla i formátování odpovídaly."
 sidebar:
   label: "Twig"
 ---
 
-djLint je linter a formátovač šablon Twig! Při lintování a formátování šablon pomocí djLint využijte připravený profil.
+djLint lintuje a formátuje šablony Twig. Nastavte profil `nunjucks`, aby jim pravidla i formátování odpovídaly.
 
 **[Co je Twig?](https://twig.symfony.com/)**
 
 Šablony Pebble (Java) jsou kompatibilní s Twigem, takže pro ně použijte stejný profil.
 
-#### Z příkazového řádku
+## Z příkazového řádku
 
 ```bash
 djlint /path/to/templates --profile=nunjucks
 ```
 
-#### Nebo v konfiguračním souboru
+## Nebo v konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 

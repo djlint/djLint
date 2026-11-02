@@ -1,6 +1,6 @@
 ---
 title: "Per iniziare"
-description: "Primi passi con djLint per il lint e la formattazione dei template HTML. Sfrutta la semplice interfaccia a riga di comando e le numerose opzioni del formattatore."
+description: "Installa djLint e analizza o formatta i template HTML dalla riga di comando."
 sidebar:
   label: "Per iniziare"
 ---
@@ -39,7 +39,7 @@ Oppure con la [formula Homebrew](https://formulae.brew.sh/formula/djlint) manten
 brew install djlint
 ```
 
-_Oppure con npm - **attenzione**: il pacchetto npm è solo un wrapper, il cui script di installazione esegue `pip install --upgrade djlint` con il `python3` che si trova nel PATH di sistema. npm non gestisce né disinstalla il pacchetto vero e proprio: quando possibile, usa direttamente pip._
+_Oppure con npm. **Attenzione**: il pacchetto npm è solo un wrapper. Il suo script di installazione esegue `pip install --upgrade djlint` con il `python3` che si trova nel PATH di sistema, e npm non gestisce né disinstalla il pacchetto vero e proprio, quindi, se puoi, preferisci pip._
 
 ```bash
 npm i djlint
@@ -105,11 +105,11 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1`    | djLint ha trovato errori di lint o file da riformattare. Con `--warn` vengono segnalati come avvisi e il codice di uscita è invece `0`.                                                                |
 | `2`    | djLint non ha controllato ciò che gli hai chiesto: i percorsi non corrispondevano a nessun file, la riga di comando o la configurazione non erano valide, oppure djLint si è interrotto con un errore. |
 
-Solo il codice `1` significa che djLint ha esaminato i tuoi template e ciò che ha trovato non gli è piaciuto. Il codice `2` significa sempre che l'esecuzione stessa non ha fatto il suo lavoro, così una pipeline può trattare i due casi in modo diverso invece di tirare a indovinare.
+Solo il codice `1` significa che djLint ha esaminato i tuoi template e ciò che ha trovato non gli è piaciuto. Il codice `2` significa sempre che l'esecuzione stessa non ha fatto il suo lavoro, così una pipeline può trattare i due casi in modo diverso.
 
-Il codice `2` è ciò che intercetta un'esecuzione che non ha controllato proprio nulla: un percorso sbagliato, un `--extension` che non corrisponde più, oppure template che sono stati spostati. Senza di esso un'esecuzione del genere passa in silenzio, senza aver esaminato nessuno dei tuoi template.
+Il codice `2` intercetta un'esecuzione che non ha controllato proprio nulla: un percorso sbagliato, un `--extension` che non corrisponde più, oppure template che sono stati spostati. Senza di esso un'esecuzione del genere passa in silenzio.
 
-I file che djLint _ha_ trovato e poi escluso di proposito, tramite `exclude`, `extend_exclude`, `use_gitignore` o `require_pragma`, non sono un errore. In quel caso il codice di uscita è `0`, perché la configurazione ha fatto esattamente ciò che le era stato chiesto. È anche ciò che permette a `exclude` di funzionare con pre-commit, che passa i nomi dei file in stage indipendentemente dal fatto che tu voglia o meno che djLint li esamini.
+I file che djLint _ha_ trovato e poi escluso di proposito, tramite `exclude`, `extend_exclude`, `use_gitignore` o `require_pragma`, non sono un errore. In quel caso il codice di uscita è `0`, perché la configurazione ha fatto esattamente ciò che le era stato chiesto. Così `exclude` funziona anche con pre-commit, che passa i nomi dei file in stage indipendentemente dal fatto che tu voglia o meno che djLint li esamini.
 
 Se per la tua pipeline è normale un percorso che legittimamente non contiene template, disattiva il codice `2` con `allow_empty_input`:
 

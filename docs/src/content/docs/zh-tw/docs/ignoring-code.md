@@ -1,6 +1,6 @@
 ---
 title: "忽略程式碼"
-description: "如何避免 djLint 格式化某個程式碼區塊，以及如何在行內忽略 djLint 規則。"
+description: "如何避免 djLint 格式化某個程式碼區塊，以及如何在行內忽略 linter 規則。"
 sidebar:
   label: "忽略程式碼"
 ---
