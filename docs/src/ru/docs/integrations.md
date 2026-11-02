@@ -65,7 +65,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 - [GitHub репозиторий](https://github.com/nvimtools/none-ls.nvim)
 - [Линтинг](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [Форматирование](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
-  :::
+:::
 
 ### efm-langserver
 
@@ -113,7 +113,7 @@ require("lspconfig").efm.setup({
 ::: content
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
-  :::
+:::
 
 ## IDE от JetBrains
 
@@ -154,7 +154,7 @@ djLint можно использовать в качестве плагина Su
 1. `cmd + shift + p`
 2. Install SublimeLinter
 3. Install SublimeLinter-contrib-djlint
-   :::
+:::
 
 Убедитесь, что djLint установлен в вашем глобальном python или в вашем `PATH`.
 
@@ -273,7 +273,7 @@ djLint можно использовать как [pre-commit](https://pre-commi
   Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=tera`.
 - `djlint-askama` и `djlint-reformat-askama`
   Будет искать файлы, соответствующие `*.html`, и устанавливать `--profile=askama`.
-  :::
+:::
 
 Обратите внимание, что эти предопределенные хуки иногда слишком консервативны в принимаемых ими входных данных (ваши шаблоны могут использовать другое расширение), поэтому pre-commit явно позволяет вам переопределять любые из этих предопределенных опций. См. [pre-commit документы](https://pre-commit.com/#pre-commit-configyaml---hooks) для дополнительной настройки.
 
@@ -315,4 +315,4 @@ djLint встроен в [MegaLinter](https://megalinter.io) вместе с б�
 
 - [GitHub репозиторий](https://github.com/oxsecurity/megalinter)
 - [djlint в документации MegaLinter](https://megalinter.io/latest/descriptors/html_djlint/)
-  :::
+:::

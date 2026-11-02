@@ -49,7 +49,7 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -82,7 +82,7 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -118,7 +118,7 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

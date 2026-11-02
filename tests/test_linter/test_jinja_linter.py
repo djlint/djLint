@@ -227,7 +227,7 @@ test_data = [
         ]),
         id="T034",
     ),
-    pytest.param(("{% not ok \n%}"), ([]), id="T034"),
+    pytest.param(("{% not ok \n%}"), ([]), id="T034_line_break_before_closing"),
     pytest.param(
         (
             "{% raw %}\n"

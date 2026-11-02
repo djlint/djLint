@@ -160,7 +160,7 @@ test_data = [
         ('<a href="data:,Hello%2C%20World%21"></a>'), ([]), id="DJ018_data"
     ),
     pytest.param(
-        ('<a href="sms:?body=This%20is%20an%20sms"></a>'), ([]), id="DJ018_data"
+        ('<a href="sms:?body=This%20is%20an%20sms"></a>'), ([]), id="DJ018_sms"
     ),
     pytest.param(
         ('<div data-row-selection-action="highlight"></div>'),

@@ -49,7 +49,7 @@ Here's a blob of HTML that's in desperate need of attention -
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -82,7 +82,7 @@ It looks a bit better now... we can read it :)
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -118,7 +118,7 @@ Prefer Prettier-style attributes? Enable the `single_attribute_per_line` option:
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

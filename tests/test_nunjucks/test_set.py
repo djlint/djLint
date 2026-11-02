@@ -222,7 +222,7 @@ test_data = [
         ('{%- set posts = "¿Spécial çhärs 👻?" -%}'),
         ('{%- set posts = "¿Spécial çhärs 👻?" -%}\n'),
         ({}),
-        id="set",
+        id="set with special characters",
     ),
     pytest.param(
         ("<li>{{ foo(1,2) }}</li>"),

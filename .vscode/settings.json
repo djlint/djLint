@@ -1,0 +1,8 @@
+{
+  "[python]": { "editor.defaultFormatter": "charliermarsh.ruff" },
+  "[toml]": { "editor.defaultFormatter": "tombi-toml.tombi" },
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "python.testing.pytestEnabled": true,
+  "ruff.importStrategy": "fromEnvironment"
+}

@@ -11,14 +11,14 @@
 
 ```toml
 [tool.djlint]
-profile="{{ tool }}"
+profile = "{{ tool }}"
 ```
 
 </div>
 <div class="tab" id="djlint-toml-tab">
 
 ```toml
-profile="{{ tool }}"
+profile = "{{ tool }}"
 ```
 
 </div>

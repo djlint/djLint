@@ -65,7 +65,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 - [GitHub repository](https://github.com/nvimtools/none-ls.nvim)
 - [Lint](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [Format](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
-  :::
+:::
 
 ### efm-langserver
 
@@ -113,7 +113,7 @@ require("lspconfig").efm.setup({
 ::: content
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
-  :::
+:::
 
 ## JetBrains IDEs
 
@@ -154,7 +154,7 @@ djLint can be used as a SublimeText Linter plugin. It can be installed via [pack
 1. `cmd + shift + p`
 2. Install SublimeLinter
 3. Install SublimeLinter-contrib-djlint
-   :::
+:::
 
 Ensure djLint is installed in your global python, or on your `PATH`.
 
@@ -273,7 +273,7 @@ The repo provides multiple pre-configured hooks for specific djLint profiles (it
   This will look for files matching `*.html` and set `--profile=tera`.
 - `djlint-askama` and `djlint-reformat-askama`
   This will look for files matching `*.html` and set `--profile=askama`.
-  :::
+:::
 
 Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) for additional configuration.
 
@@ -315,4 +315,4 @@ To install it, just run `npx mega-linter-runner --install` and follow instructio
 
 - [GitHub repository](https://github.com/oxsecurity/megalinter)
 - [djlint in MegaLinter documentation](https://megalinter.io/latest/descriptors/html_djlint/)
-  :::
+:::

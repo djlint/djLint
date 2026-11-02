@@ -356,7 +356,7 @@ test_data = [
             "</X>\n"
             '<p class="foo bar baz"></p>\n'
         ),
-        id="long_attributes",
+        id="assorted_attributes",
     ),
     pytest.param(
         (

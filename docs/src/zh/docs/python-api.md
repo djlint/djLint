@@ -46,7 +46,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 - `match`: 找到的文本开头，最多 20 个字符。
 - `line`, `column`: 结果开始的位置。行从 1 开始计数，列从 0 开始计数。
 - `end_line`, `end_column`: 紧接结束处之后的位置，可能在后面的行。
-  :::
+:::
 
 列按字符计数，而不是按字节或 UTF-16 代码单元计数。
 

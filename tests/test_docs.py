@@ -29,7 +29,7 @@ _VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 _EXAMPLE_LABEL_PATTERN = re.compile(r"^(Don't|Do):\s*$", re.MULTILINE)
 _CODE_BLOCK_PATTERN = re.compile(r"```\w*\n(.*?)```", re.DOTALL)
 _SHOWN_OUTPUT_PATTERN = re.compile(
-    r"<!-- prettier-ignore -->\n```html\n(.*?)```", re.DOTALL
+    r"<!-- oxfmt-ignore -->\n```html\n(.*?)```", re.DOTALL
 )
 _PROFILE_BY_LETTER = {
     "D": "django",

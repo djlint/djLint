@@ -63,7 +63,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 - [GitHub 仓库](https://github.com/nvimtools/none-ls.nvim)
 - [代码检查](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [代码格式化](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
-  :::
+:::
 
 ### efm-langserver
 
@@ -111,7 +111,7 @@ require("lspconfig").efm.setup({
 ::: content
 
 - [npm package](https://www.npmjs.com/package/coc-htmldjango)
-  :::
+:::
 
 ## JetBrains IDE
 
@@ -152,7 +152,7 @@ djLint 也可用作 SublimeText 的代码检查插件。你可以通过 [package
 1. `cmd + shift + p`
 2. 安装 SublimeLinter
 3. 安装 SublimeLinter-contrib-djlint
-   :::
+:::
 
 确保 djLint 安装在你的全局 python 中，或你的 `PATH` 变量中。
 
@@ -271,7 +271,7 @@ djLint 可以集成到 [pre-commit](https://pre-commit.com) hook 作为代码检
   这时会查找 `*.html` 并设置 `--profile=tera`。
 - 使用 `djlint-askama` 和 `djlint-reformat-askama`。
   这时会查找 `*.html` 并设置 `--profile=askama`。
-  :::
+:::
 
 请注意，这些预定义的 hook 在它们接受的输入方面有时会过于保守（您的模板可能使用了不同的扩展名），因此 pre-commit 明确允许您覆盖这些预定义的选项。有关额外的配置信息，请参阅 [pre-commit 的文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。
 
@@ -313,4 +313,4 @@ djLint 已集成到 [MegaLinter](https://megalinter.io) 的百余个代码检查
 
 - [GitHub 仓库](https://github.com/oxsecurity/megalinter)
 - [djlint - MegaLinter 文档](https://megalinter.io/latest/descriptors/html_djlint/)
-  :::
+:::

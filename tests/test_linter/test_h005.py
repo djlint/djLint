@@ -44,7 +44,7 @@ test_data = [
                 "message": "Tag seems to be an orphan.",
             }
         ]),
-        id="one",
+        id="not an html tag",
     ),
     pytest.param(
         ('<!DOCTYPE html>\n<html data-lang="en">'),

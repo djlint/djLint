@@ -104,7 +104,7 @@ test_data = [
         ("<div>"),
         ("<div>\n"),
         ({"preserve_blank_lines": True}),
-        id="whitespace test",
+        id="unclosed tag",
     ),
     pytest.param(
         ("<div>\n\t\n\t<div>\n\t\n\t</div>\n\t\n</div>"),

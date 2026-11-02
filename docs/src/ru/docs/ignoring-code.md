@@ -13,7 +13,7 @@ date: Last Modified
 
 Для простого старого html -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <плохой html, который следует игнорировать>
@@ -22,7 +22,7 @@ date: Last Modified
 
 или как комментарий -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <плохой html, который следует игнорировать>
@@ -31,7 +31,7 @@ date: Last Modified
 
 или в виде длинного комментария -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <плохой html, который следует игнорировать>
@@ -40,7 +40,7 @@ date: Last Modified
 
 или как комментарий в стиле golang -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <плохой html, который следует игнорировать>
@@ -49,7 +49,7 @@ date: Last Modified
 
 или как комментарий в стиле handlebars -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <плохой html, который следует игнорировать>
@@ -64,7 +64,7 @@ date: Last Modified
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

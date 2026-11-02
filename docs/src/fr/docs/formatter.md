@@ -49,7 +49,7 @@ Voilà un pâté de HTML qui a désespérément besoin d’attention...
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -82,7 +82,7 @@ C'est un peu mieux maintenant... on peut le lire :)
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -118,7 +118,7 @@ Vous préférez les attributs à la manière de Prettier ? Activez l'option `sin
 
 {% raw %}
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
