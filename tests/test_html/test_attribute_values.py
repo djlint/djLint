@@ -116,6 +116,19 @@ test_data = [
     ),
     pytest.param(
         (
+            "<link {# rel=stylesheet #} rel=preload type=text/css>\n"
+            '<script {# type="text/javascript" #}></script>\n'
+            '<script {# note #} type="text/javascript"></script>\n'
+        ),
+        (
+            '<link {# rel=stylesheet #} rel="preload" type="text/css">\n'
+            '<script {# type="text/javascript" #}></script>\n'
+            "<script {# note #}></script>\n"
+        ),
+        id="template tags and comments are read whole",
+    ),
+    pytest.param(
+        (
             '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
             '<link rel=\'{% if x %} stylesheet {% else %} icon {% endif %}\' type="text/css" href="b">\n'
         ),

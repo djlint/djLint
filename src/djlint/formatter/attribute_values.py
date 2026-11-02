@@ -22,8 +22,11 @@ if TYPE_CHECKING:
 # Both read a value as compressing will write it, which runs later: quoted or
 # not, and spaced from its "=" or not. Matching only the quoted form left an
 # unquoted one for the next run. An unquoted value ends where compressing ends
-# it, so `type=text/css{{ x }}` is one value of its own.
-_ATTRIBUTES: Final = r"""(?:"[^"]*"|'[^']*'|[^'">])*?"""
+# it, so `type=text/css{{ x }}` is one value of its own. A template tag or
+# comment is read whole, so what is written inside one, as in
+# `{# rel=stylesheet #}`, is not taken for markup.
+_TEMPLATE_TAG: Final = r"\{\{(?:(?!\}\}|\{\{).)*\}\}|\{%(?:(?!%\}|\{%).)*%\}|\{\#(?:(?!\#\}).)*\#\}"
+_ATTRIBUTES: Final = rf"""(?:"[^"]*"|'[^']*'|{_TEMPLATE_TAG}|(?!\{{[{{%\#])[^'">])*?"""
 # A template tag written with jinja's "-" marker strips the whitespace on that
 # side, which would glue a neighbour onto the value or onto the tag name.
 _TRIMS_BEFORE: Final = r"\s*\{[{%\#]-"
@@ -34,7 +37,7 @@ _TRIMMED_AFTER: Final = r"-[}%\#]\}\s*"
 # as anything, and so may one after a template tag outside a value: it can
 # write a rel of its own, which a browser reads first, or leave this one out.
 _STYLESHEET_REL: Final = r"""
-    (?=(?:"[^"]*"|'[^']*'|(?!\{[{%])[^'">])*?\srel\s*=\s*
+    (?=(?:"[^"]*"|'[^']*'|\{\#(?:(?!\#\}).)*\#\}|(?!\{[{%\#])[^'">])*?\srel\s*=\s*
         (?:"[^"{]*?(?<![^\s"])stylesheet(?![^\s"])[^"{]*"
           |'[^'{]*?(?<![^\s'])stylesheet(?![^\s'])[^'{]*'
           |stylesheet(?=\s|/?>)))
