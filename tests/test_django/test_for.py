@@ -26,16 +26,8 @@ test_data = [
         id="for_tag",
     ),
     pytest.param(
-        (
-            "{% for i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endfor %}"
-        ),
-        (
-            "{% for i in items %}\n"
-            "    <div>{% formfield i %}</div>\n"
-            "{% endfor %}\n"
-        ),
+        ("{% for i in items %}\n    <div>{% formfield i %}</div>\n{% endfor %}"),
+        ("{% for i in items %}\n    <div>{% formfield i %}</div>\n{% endfor %}\n"),
         id="test nested formfield",
     ),
     pytest.param(
@@ -84,9 +76,7 @@ def test_base(source: str, expected: str, django_config: Config) -> None:
     assert expected == output
 
 
-def test_issue_2098_child_template_inline_for_idempotent(
-    django_config: Config,
-) -> None:
+def test_issue_2098_child_template_inline_for_idempotent(django_config: Config) -> None:
     source = (
         '    <form id="my-form"\n'
         "          action=\"{% url 'some-view-name' object.identifier %}{% if request.GET.show_extra == 'true' %}?show_extra=true{% endif %}\"\n"

@@ -126,14 +126,10 @@ def compress_html(html: str, config: Config) -> str:
             leading = " " if raw_attributes[0].isspace() else ""
             flattened = " ".join(
                 x.strip()
-                for x in encode_attribute_newlines(raw_attributes, config)
-                .strip()
-                .splitlines()
+                for x in encode_attribute_newlines(raw_attributes, config).strip().splitlines()
             )
             normalized = normalize_attributes(config, flattened)
-            attributes = leading + _normalize_spacing(
-                sort_attributes(config, normalized), config
-            )
+            attributes = leading + _normalize_spacing(sort_attributes(config, normalized), config)
         if config.close_void_tags and tag.lower() in HTML_VOID_ELEMENTS:
             close_bracket = " />"
         else:

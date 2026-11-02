@@ -12,20 +12,14 @@ from tests.conftest import linter
 
 test_data = [
     pytest.param(
-        ('<meta http-equiv="refresh" content="30">'),
-        (True),
-        id="a page that reloads itself",
+        ('<meta http-equiv="refresh" content="30">'), (True), id="a page that reloads itself"
     ),
     pytest.param(
         ('<meta content="5; url=/next" http-equiv="refresh">'),
         (True),
         id="the attributes are found in either order",
     ),
-    pytest.param(
-        ("<meta http-equiv=refresh content=10>"),
-        (True),
-        id="written without quotes",
-    ),
+    pytest.param(("<meta http-equiv=refresh content=10>"), (True), id="written without quotes"),
     pytest.param(
         ('<meta http-equiv="REFRESH" content="30">'),
         (True),
@@ -36,15 +30,9 @@ test_data = [
         (False),
         id="a delay of zero is an immediate redirect",
     ),
+    pytest.param(('<meta http-equiv="refresh" content="0">'), (False), id="and so is a bare zero"),
     pytest.param(
-        ('<meta http-equiv="refresh" content="0">'),
-        (False),
-        id="and so is a bare zero",
-    ),
-    pytest.param(
-        ('<meta name="refresh" content="30">'),
-        (False),
-        id="a name that is not http-equiv",
+        ('<meta name="refresh" content="30">'), (False), id="a name that is not http-equiv"
     ),
     pytest.param(
         ('<meta data-http-equiv="refresh" content="30">'),

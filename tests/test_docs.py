@@ -28,24 +28,9 @@ _RULE_SECTION_PATTERN = re.compile(r"^#### ([A-Z]\d{3})\s*$", re.MULTILINE)
 _VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 _EXAMPLE_LABEL_PATTERN = re.compile(r"^(Don't|Do):\s*$", re.MULTILINE)
 _CODE_BLOCK_PATTERN = re.compile(r"```\w*\n(.*?)```", re.DOTALL)
-_SHOWN_OUTPUT_PATTERN = re.compile(
-    r"<!-- oxfmt-ignore -->\n```html\n(.*?)```", re.DOTALL
-)
-_PROFILE_BY_LETTER = {
-    "D": "django",
-    "J": "jinja",
-    "M": "handlebars",
-    "N": "nunjucks",
-}
-_PROFILES = (
-    "django",
-    "jinja",
-    "nunjucks",
-    "handlebars",
-    "golang",
-    "liquid",
-    "html",
-)
+_SHOWN_OUTPUT_PATTERN = re.compile(r"<!-- oxfmt-ignore -->\n```html\n(.*?)```", re.DOTALL)
+_PROFILE_BY_LETTER = {"D": "django", "J": "jinja", "M": "handlebars", "N": "nunjucks"}
+_PROFILES = ("django", "jinja", "nunjucks", "handlebars", "golang", "liquid", "html")
 
 
 def _rules() -> dict[str, Any]:
@@ -66,9 +51,7 @@ def _rule_profile(rule: dict[str, Any]) -> str:
 
 def _documented_examples() -> list[tuple[str, str, str, str]]:
     rules = _rules()
-    sections = _RULE_SECTION_PATTERN.split(
-        _LINTER_DOCS.read_text(encoding="utf-8")
-    )[1:]
+    sections = _RULE_SECTION_PATTERN.split(_LINTER_DOCS.read_text(encoding="utf-8"))[1:]
     examples = []
     for code, body in zip(sections[::2], sections[1::2], strict=True):
         profile = _rule_profile(rules[code])
@@ -104,15 +87,11 @@ def test_every_rule_is_documented() -> None:
     examples,
     ids=[f"{code}-{label}" for code, _, label, _ in examples],
 )
-def test_documented_example(
-    code: str, profile: str, label: str, sample: str
-) -> None:
+def test_documented_example(code: str, profile: str, label: str, sample: str) -> None:
     config = Config("dummy/source.html", profile=profile, include=code)
     reported = any(
         finding["code"] == code
-        for findings in linter(
-            config, sample, "dummy/source.html", "source.html"
-        ).values()
+        for findings in linter(config, sample, "dummy/source.html", "source.html").values()
         for finding in findings
     )
 
@@ -122,21 +101,15 @@ def test_documented_example(
 
 
 @pytest.mark.parametrize(
-    "path",
-    _FORMATTER_DOCS,
-    ids=[path.parent.as_posix() for path in _FORMATTER_DOCS],
+    "path", _FORMATTER_DOCS, ids=[path.parent.as_posix() for path in _FORMATTER_DOCS]
 )
 def test_formatter_example(path: Path) -> None:
     """The page's first block, formatted, has to give each block below it."""
-    source, *outputs = _SHOWN_OUTPUT_PATTERN.findall(
-        path.read_text(encoding="utf-8")
-    )
+    source, *outputs = _SHOWN_OUTPUT_PATTERN.findall(path.read_text(encoding="utf-8"))
 
     for expected, one_per_line in zip(outputs, (False, True), strict=True):
         config = Config(
-            "dummy/source.html",
-            profile="django",
-            single_attribute_per_line=one_per_line,
+            "dummy/source.html", profile="django", single_attribute_per_line=one_per_line
         )
         output = formatter(config, source)
 

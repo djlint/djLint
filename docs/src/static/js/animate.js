@@ -19,15 +19,12 @@
 
   var d = document,
     load = function () {
-      [].forEach.call(
-        d.querySelectorAll(".animated[data-animate]"),
-        function (el) {
-          if (isInViewport(el)) {
-            el.classList.add(el.getAttribute("data-animate"));
-            el.removeAttribute("data-animate");
-          }
-        },
-      );
+      [].forEach.call(d.querySelectorAll(".animated[data-animate]"), function (el) {
+        if (isInViewport(el)) {
+          el.classList.add(el.getAttribute("data-animate"));
+          el.removeAttribute("data-animate");
+        }
+      });
     };
 
   var isInViewport = function isInViewport(elem) {
@@ -37,8 +34,7 @@
       bounding.top >= 0 &&
       bounding.left >= 0 &&
       bounding.bottom - elem.clientHeight - padding <=
-        (document.documentElement.clientHeight ||
-          d.documentElement.clientHeight) &&
+        (document.documentElement.clientHeight || d.documentElement.clientHeight) &&
       bounding.right - padding - elem.clientWidth <=
         (document.documentElement.clientWidth || d.documentElement.clientWidth)
     );
@@ -53,11 +49,7 @@
 
   var resetHash = function () {
     if (window.location.hash != "") {
-      history.pushState(
-        "",
-        document.title,
-        window.location.pathname + window.location.search,
-      );
+      history.pushState("", document.title, window.location.pathname + window.location.search);
     }
   };
   d.addEventListener("scroll", function () {

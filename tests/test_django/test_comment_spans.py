@@ -18,38 +18,19 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         '{# start #}<div class="card-body" id="main-panel">Hi</div>{# end #}\n',
-        (
-            "{# start #}\n"
-            '<div class="card-body"\n'
-            '     id="main-panel">Hi</div>\n'
-            "{# end #}\n"
-        ),
+        ('{# start #}\n<div class="card-body"\n     id="main-panel">Hi</div>\n{# end #}\n'),
         ({"profile": "django", "max_line_length": 40}),
         id="a comment on either side of a tag does not put the tag out of reach",
     ),
     pytest.param(
         '{# start #}<div class="card-body" id="main-panel">Hi</div>{# end #}\n',
-        (
-            "{# start #}\n"
-            '<div class="card-body" id="main-panel">Hi</div>\n'
-            "{# end #}\n"
-        ),
+        ('{# start #}\n<div class="card-body" id="main-panel">Hi</div>\n{# end #}\n'),
         ({"profile": "django"}),
         id="and a limit the tag already fits leaves its attributes joined",
     ),
     pytest.param(
         "{# a #}<div><p>x</p></div>{# b #}<div><p>y</p></div>{# c #}\n",
-        (
-            "{# a #}\n"
-            "<div>\n"
-            "    <p>x</p>\n"
-            "</div>\n"
-            "{# b #}\n"
-            "<div>\n"
-            "    <p>y</p>\n"
-            "</div>\n"
-            "{# c #}\n"
-        ),
+        ("{# a #}\n<div>\n    <p>x</p>\n</div>\n{# b #}\n<div>\n    <p>y</p>\n</div>\n{# c #}\n"),
         ({"profile": "django"}),
         id="three comments on one line leave both stretches between them to format",
     ),
@@ -72,11 +53,7 @@ test_data = [
         id="text between two comments is still text and is left where it is",
     ),
     pytest.param(
-        (
-            "{# a #}<div><p>x</p></div>{# djlint:off #}\n"
-            "<div><p>  y  </p></div>\n"
-            "{# djlint:on #}\n"
-        ),
+        ("{# a #}<div><p>x</p></div>{# djlint:off #}\n<div><p>  y  </p></div>\n{# djlint:on #}\n"),
         (
             "{# a #}\n"
             "<div>\n"
@@ -96,13 +73,7 @@ test_data = [
         id="nunjucks reads the pair the same way",
     ),
     pytest.param(
-        (
-            "{% if show %}\n"
-            '{{ "{# x" }}\n'
-            "<div><p>x</p></div>\n"
-            "{% endif %}\n"
-            "{# c #}\n"
-        ),
+        ('{% if show %}\n{{ "{# x" }}\n<div><p>x</p></div>\n{% endif %}\n{# c #}\n'),
         (
             "{% if show %}\n"
             '    {{ "{# x" }}\n'

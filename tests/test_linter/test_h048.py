@@ -11,41 +11,17 @@ from djlint.settings import Config
 from tests.conftest import linter
 
 test_data = [
+    pytest.param(('<div aria-lable="x">y</div>'), (True), id="a misspelled name does nothing"),
     pytest.param(
-        ('<div aria-lable="x">y</div>'),
-        (True),
-        id="a misspelled name does nothing",
+        ('<div aria-hidden-thing="x">y</div>'), (True), id="and neither does an invented one"
     ),
+    pytest.param(('<div aria-label="x">y</div>'), (False), id="a name the specification defines"),
+    pytest.param(('<div aria-description="x">y</div>'), (False), id="including the newer ones"),
     pytest.param(
-        ('<div aria-hidden-thing="x">y</div>'),
-        (True),
-        id="and neither does an invented one",
+        ('<div :aria-label="x">y</div>'), (False), id="a vue binding is not a plain aria name"
     ),
-    pytest.param(
-        ('<div aria-label="x">y</div>'),
-        (False),
-        id="a name the specification defines",
-    ),
-    pytest.param(
-        ('<div aria-description="x">y</div>'),
-        (False),
-        id="including the newer ones",
-    ),
-    pytest.param(
-        ('<div :aria-label="x">y</div>'),
-        (False),
-        id="a vue binding is not a plain aria name",
-    ),
-    pytest.param(
-        ('<div [attr.aria-label]="x">y</div>'),
-        (False),
-        id="nor is an angular one",
-    ),
-    pytest.param(
-        ('<div data-aria-lable="x">y</div>'),
-        (False),
-        id="nor is a data attribute",
-    ),
+    pytest.param(('<div [attr.aria-label]="x">y</div>'), (False), id="nor is an angular one"),
+    pytest.param(('<div data-aria-lable="x">y</div>'), (False), id="nor is a data attribute"),
 ]
 
 

@@ -38,22 +38,8 @@ test_data = [
         id="github issue 733",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            "    <script>console.log();\n"
-            "    console.log();\n"
-            "\n"
-            "    </script>\n"
-            "    </div>\n"
-        ),
-        (
-            "<div>\n"
-            "    <script>console.log();\n"
-            "    console.log();\n"
-            "\n"
-            "    </script>\n"
-            "</div>\n"
-        ),
+        ("<div>\n    <script>console.log();\n    console.log();\n\n    </script>\n    </div>\n"),
+        ("<div>\n    <script>console.log();\n    console.log();\n\n    </script>\n</div>\n"),
         id="script",
     ),
     pytest.param(
@@ -405,30 +391,8 @@ test_data = [
         id="babel",
     ),
     pytest.param(
-        (
-            "<script>\n"
-            "<!--\n"
-            "alert(1)\n"
-            "-->\n"
-            "</script>\n"
-            "<script>\n"
-            "<!--\n"
-            "alert(2)\n"
-            "//-->\n"
-            "</script>\n"
-        ),
-        (
-            "<script>\n"
-            "<!--\n"
-            "alert(1)\n"
-            "-->\n"
-            "</script>\n"
-            "<script>\n"
-            "<!--\n"
-            "alert(2)\n"
-            "//-->\n"
-            "</script>\n"
-        ),
+        ("<script>\n<!--\nalert(1)\n-->\n</script>\n<script>\n<!--\nalert(2)\n//-->\n</script>\n"),
+        ("<script>\n<!--\nalert(1)\n-->\n</script>\n<script>\n<!--\nalert(2)\n//-->\n</script>\n"),
         id="legacy",
     ),
     pytest.param(
@@ -469,12 +433,8 @@ test_data = [
         id="module",
     ),
     pytest.param(
-        (
-            '<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'
-        ),
-        (
-            '<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'
-        ),
+        ('<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'),
+        ('<script src="foo.wasm" type="module" withtype="webassembly"></script>\n'),
         id="module_attributes",
     ),
     pytest.param(

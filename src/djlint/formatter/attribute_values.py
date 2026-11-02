@@ -54,9 +54,9 @@ def format_attribute_values(html: str, config: Config) -> str:
     """
 
     def is_left_alone(match: re.Match[str]) -> bool:
-        return overlaps_ignored_block(
+        return overlaps_ignored_block(config, html, match) or inside_template_block(
             config, html, match
-        ) or inside_template_block(config, html, match)
+        )
 
     def drop_default_type(match: re.Match[str]) -> str:
         if is_left_alone(match):

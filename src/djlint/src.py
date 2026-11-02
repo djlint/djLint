@@ -57,9 +57,7 @@ def _gitignore_match(config: Config, filepath: Path) -> bool:
 def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
     """Check if a file matches exclude patterns using relative paths."""
     relative_roots = (
-        (config.project_root,)
-        if config.project_root == root
-        else (config.project_root, root)
+        (config.project_root,) if config.project_root == root else (config.project_root, root)
     )
     for relative_root in relative_roots:
         try:
@@ -69,26 +67,18 @@ def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
         rel_path = rel.as_posix()
         if config.exclude_pattern.search(rel_path):
             return True
-        if (
-            relative_root == config.project_root
-            and config.exclude_pattern.search(f"/{rel_path}")
-        ):
+        if relative_root == config.project_root and config.exclude_pattern.search(f"/{rel_path}"):
             return True
     return False
 
 
-def is_excluded(
-    config: Config, filepath: Path, root: Path | None = None
-) -> bool:
+def is_excluded(config: Config, filepath: Path, root: Path | None = None) -> bool:
     """Check whether the configuration leaves a file out, by its path alone."""
     # Both, for a symlink in an excluded folder and for a root behind a symlink.
     return any(
         _exclude_match(config, path, root or config.project_root)
         or (config.use_gitignore and _gitignore_match(config, path))
-        for path in (
-            Path(os.path.normpath(filepath.absolute())),
-            filepath.resolve(),
-        )
+        for path in (Path(os.path.normpath(filepath.absolute())), filepath.resolve())
     )
 
 
@@ -141,22 +131,14 @@ def print_no_files_to_check(*, excluded: bool) -> None:
 
 
 _HTML_PRAGMA_PATTERNS: Final = (compile_pattern(r"<!--\s*djlint\:on\s*-->"),)
-_TEMPLATE_COMMENT_PRAGMA_PATTERN: Final = compile_pattern(
-    r"\{#\s*djlint\:on\s*#\}"
-)
+_TEMPLATE_COMMENT_PRAGMA_PATTERN: Final = compile_pattern(r"\{#\s*djlint\:on\s*#\}")
 _DJANGO_JINJA_PRAGMA_PATTERNS: Final = (
     _TEMPLATE_COMMENT_PRAGMA_PATTERN,
-    compile_pattern(
-        r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}"
-    ),
+    compile_pattern(r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}"),
 )
 _NUNJUCKS_PRAGMA_PATTERNS: Final = (_TEMPLATE_COMMENT_PRAGMA_PATTERN,)
-_HANDLEBARS_PRAGMA_PATTERNS: Final = (
-    compile_pattern(r"\{\{!--\s*djlint\:on\s*--\}\}"),
-)
-_GOLANG_PRAGMA_PATTERNS: Final = (
-    compile_pattern(r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}"),
-)
+_HANDLEBARS_PRAGMA_PATTERNS: Final = (compile_pattern(r"\{\{!--\s*djlint\:on\s*--\}\}"),)
+_GOLANG_PRAGMA_PATTERNS: Final = (compile_pattern(r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}"),)
 _PRAGMA_PATTERNS: Final = MappingProxyType({
     "html": _HTML_PRAGMA_PATTERNS,
     "django": _DJANGO_JINJA_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,

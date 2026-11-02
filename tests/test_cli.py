@@ -23,14 +23,10 @@ _HELP_WIDTH = 80
 
 
 def test_help_snapshot_matches_docs(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("--help",), prog_name="djlint", terminal_width=_HELP_WIDTH
-    )
+    result = runner.invoke(djlint, ("--help",), prog_name="djlint", terminal_width=_HELP_WIDTH)
     assert result.exit_code == 0
 
-    snapshot = re.search(
-        r"```bash\n(.*?)\n```", _CLI_DOCS.read_text(encoding="utf-8"), re.DOTALL
-    )
+    snapshot = re.search(r"```bash\n(.*?)\n```", _CLI_DOCS.read_text(encoding="utf-8"), re.DOTALL)
     assert snapshot is not None, f"no help block found in {_CLI_DOCS}"
     assert snapshot.group(1) == result.output.rstrip("\n"), (
         f"{_CLI_DOCS} is out of date; regenerate it from `djlint --help`"
@@ -125,6 +121,5 @@ def test_documented_options_exist() -> None:
     }
 
     assert documented <= flags, (
-        f"{_CONFIGURATION_DOCS} documents flags djLint does not have: "
-        f"{sorted(documented - flags)}"
+        f"{_CONFIGURATION_DOCS} documents flags djLint does not have: {sorted(documented - flags)}"
     )

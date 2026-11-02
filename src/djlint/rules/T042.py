@@ -172,9 +172,7 @@ def run(
         text_end = token.start() if token else len(html)
         if extended and not stack and not commented:
             content = _CONTENT_PATTERN.search(html, position, text_end)
-            if content and not inside_ignored_rule(
-                config, html, content, rule["name"]
-            ):
+            if content and not inside_ignored_rule(config, html, content, rule["name"]):
                 errors.append({
                     "code": rule["name"],
                     "line": get_line(content.start(), line_ends),

@@ -23,13 +23,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ('<div><script>console.log("hi");</script></div>'),
-        (
-            "<div>\n"
-            "    <script>\n"
-            '        console.log("hi");\n'
-            "    </script>\n"
-            "</div>\n"
-        ),
+        ('<div>\n    <script>\n        console.log("hi");\n    </script>\n</div>\n'),
         ({"format_js": True}),
         id="enabled",
     ),
@@ -250,21 +244,8 @@ test_data = [
         id="template tags",
     ),
     pytest.param(
-        (
-            "<script>\n"
-            "    function foo() {\n"
-            "        return 1;\n"
-            "    }\n"
-            "\n"
-            "</script>\n"
-        ),
-        (
-            "<script>\n"
-            "    function foo() {\n"
-            "        return 1;\n"
-            "    }\n"
-            "</script>\n"
-        ),
+        ("<script>\n    function foo() {\n        return 1;\n    }\n\n</script>\n"),
+        ("<script>\n    function foo() {\n        return 1;\n    }\n</script>\n"),
         ({"format_js": True}),
         id="no blank line added before the closing tag",
     ),
@@ -283,9 +264,7 @@ def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
 
 def test_indent_js_keeps_the_other_js_settings(tmp_path: Path) -> None:
     """The option overrides the indent alone, not the whole js block."""
-    (tmp_path / ".djlintrc").write_text(
-        '{"js": {"wrap_line_length": 80}}', encoding="utf-8"
-    )
+    (tmp_path / ".djlintrc").write_text('{"js": {"wrap_line_length": 80}}', encoding="utf-8")
     template = tmp_path / "a.html"
     template.write_text("<div></div>", encoding="utf-8")
 
@@ -301,11 +280,7 @@ def test_brace_style_preserve_inline(tmp_path: Path) -> None:
     )
     template = tmp_path / "a.html"
     template.write_text("<div></div>", encoding="utf-8")
-    source = (
-        "<script>\n"
-        '    el.dispatchEvent(new Event("change", { bubbles: true }));\n'
-        "</script>\n"
-    )
+    source = '<script>\n    el.dispatchEvent(new Event("change", { bubbles: true }));\n</script>\n'
 
     output = formatter(Config(str(template), format_js=True), source)
 

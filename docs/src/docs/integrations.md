@@ -136,13 +136,7 @@ The [LSP](https://packagecontrol.io/packages/LSP) package runs the [language ser
 Run **Preferences: LSP Server Configurations** and add:
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter

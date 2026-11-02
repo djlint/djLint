@@ -13,10 +13,7 @@ if TYPE_CHECKING:
 def test_github_output_flag(runner: CliRunner) -> None:
     """Test that --github-output flag produces ::error/warning:: output."""
     result = runner.invoke(
-        djlint,
-        ("-", "--lint", "--github-output"),
-        input="<div></div>",
-        env={"GITHUB_ACTIONS": ""},
+        djlint, ("-", "--lint", "--github-output"), input="<div></div>", env={"GITHUB_ACTIONS": ""}
     )
     assert "::warning" in result.output
     assert "H020" in result.output
@@ -28,10 +25,7 @@ def test_github_output_stdin_reformat_stream(runner: CliRunner) -> None:
     src = '<div style="color:red"></div>'
 
     result = runner.invoke(
-        djlint,
-        ("-", "--lint", "--github-output"),
-        input=src,
-        env={"GITHUB_ACTIONS": ""},
+        djlint, ("-", "--lint", "--github-output"), input=src, env={"GITHUB_ACTIONS": ""}
     )
     assert "::warning" in result.stdout
 
@@ -45,10 +39,7 @@ def test_github_output_stdin_reformat_stream(runner: CliRunner) -> None:
     assert "::warning" in result.stderr
 
     result = runner.invoke(
-        djlint,
-        ("-", "--reformat", "--lint"),
-        input=src,
-        env={"GITHUB_ACTIONS": "true"},
+        djlint, ("-", "--reformat", "--lint"), input=src, env={"GITHUB_ACTIONS": "true"}
     )
     assert result.stdout == src + "\n"
     assert "::warning" in result.stderr
@@ -57,10 +48,7 @@ def test_github_output_stdin_reformat_stream(runner: CliRunner) -> None:
 def test_github_output_env_var(runner: CliRunner) -> None:
     """Test that GITHUB_ACTIONS env var triggers github output."""
     result = runner.invoke(
-        djlint,
-        ("-", "--lint"),
-        input="<div></div>",
-        env={"GITHUB_ACTIONS": "true"},
+        djlint, ("-", "--lint"), input="<div></div>", env={"GITHUB_ACTIONS": "true"}
     )
     assert "::warning" in result.output
     assert "Statistics" not in result.output
@@ -79,13 +67,9 @@ def test_no_github_output_flag(runner: CliRunner) -> None:
     assert "Linted 1 file" in result.output
 
 
-def test_an_annotation_over_several_lines_has_no_end_column(
-    runner: CliRunner,
-) -> None:
+def test_an_annotation_over_several_lines_has_no_end_column(runner: CliRunner) -> None:
     result = runner.invoke(
-        djlint,
-        ("-", "--lint", "--profile", "django", "--github-output"),
-        input='<img\n  src="x">',
+        djlint, ("-", "--lint", "--profile", "django", "--github-output"), input='<img\n  src="x">'
     )
     assert "::warning line=1,col=1,endLine=2::H013" in result.output
 
@@ -93,14 +77,9 @@ def test_an_annotation_over_several_lines_has_no_end_column(
 def test_escaping(runner: CliRunner) -> None:
     """Test character escaping in GitHub output."""
     result = runner.invoke(
-        djlint,
-        ("-", "--lint", "--github-output"),
-        input="<div></div>",
-        env={"GITHUB_ACTIONS": ""},
+        djlint, ("-", "--lint", "--github-output"), input="<div></div>", env={"GITHUB_ACTIONS": ""}
     )
-    assert (
-        "::warning line=1,col=1,endLine=1,endColumn=11::H020" in result.output
-    )
+    assert "::warning line=1,col=1,endLine=1,endColumn=11::H020" in result.output
     assert "file=" not in result.output
 
 

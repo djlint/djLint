@@ -62,11 +62,7 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
             id="escaped_comment_close",
         ),
         pytest.param(
-            "<div>\n"
-            "    <pre>{# djlint:off H025 #}\n"
-            "{# djlint:on #}\n"
-            "<span></pre>\n"
-            "</div>\n",
+            "<div>\n    <pre>{# djlint:off H025 #}\n{# djlint:on #}\n<span></pre>\n</div>\n",
             id="djlint_pragmas_as_content",
         ),
         pytest.param(

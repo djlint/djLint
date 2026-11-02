@@ -14,21 +14,9 @@ from djlint.settings import Config
 from tests.conftest import linter
 
 test_data = [
-    pytest.param(
-        ('<a href="/x"><button>Go</button></a>'),
-        (True),
-        id="a button inside a link",
-    ),
-    pytest.param(
-        ('<button><a href="/x">Go</a></button>'),
-        (True),
-        id="a link inside a button",
-    ),
-    pytest.param(
-        ('<a href="/x"><input type="text"></a>'),
-        (True),
-        id="an input inside a link",
-    ),
+    pytest.param(('<a href="/x"><button>Go</button></a>'), (True), id="a button inside a link"),
+    pytest.param(('<button><a href="/x">Go</a></button>'), (True), id="a link inside a button"),
+    pytest.param(('<a href="/x"><input type="text"></a>'), (True), id="an input inside a link"),
     pytest.param(
         ("<button><select><option>a</option></select></button>"),
         (True),
@@ -45,15 +33,9 @@ test_data = [
         id="the control need not be a direct child",
     ),
     pytest.param(
-        ("<a href><button>x</button></a>"),
-        (True),
-        id="a valueless href still makes a link",
+        ("<a href><button>x</button></a>"), (True), id="a valueless href still makes a link"
     ),
-    pytest.param(
-        ('<a href="/x"><textarea></textarea></a>'),
-        (True),
-        id="a textarea inside a link",
-    ),
+    pytest.param(('<a href="/x"><textarea></textarea></a>'), (True), id="a textarea inside a link"),
     pytest.param(
         ('<button type="button"><input type="file"></button>'),
         (True),
@@ -64,24 +46,12 @@ test_data = [
         (True),
         id="closing a plain link does not end the one around it",
     ),
+    pytest.param(('<A HREF="/x"><BUTTON>x</BUTTON></A>'), (True), id="read whatever the case"),
+    pytest.param(('<a href="/x">text</a><button>x</button>'), (False), id="siblings"),
     pytest.param(
-        ('<A HREF="/x"><BUTTON>x</BUTTON></A>'),
-        (True),
-        id="read whatever the case",
+        ("<a><button>x</button></a>"), (False), id="a link with no href is not interactive"
     ),
-    pytest.param(
-        ('<a href="/x">text</a><button>x</button>'), (False), id="siblings"
-    ),
-    pytest.param(
-        ("<a><button>x</button></a>"),
-        (False),
-        id="a link with no href is not interactive",
-    ),
-    pytest.param(
-        ("<button><span>x</span></button>"),
-        (False),
-        id="plain content inside a button",
-    ),
+    pytest.param(("<button><span>x</span></button>"), (False), id="plain content inside a button"),
     pytest.param(
         ('<a href="/x"><input type="hidden" name="t"></a>'),
         (False),
@@ -92,21 +62,15 @@ test_data = [
         (False),
         id="a label is not a container the rule watches",
     ),
-    pytest.param(
-        ('<a href="/x">1</a><a href="/y">2</a>'), (False), id="sibling links"
-    ),
-    pytest.param(
-        ("<button>x</button><button>y</button>"), (False), id="sibling buttons"
-    ),
+    pytest.param(('<a href="/x">1</a><a href="/y">2</a>'), (False), id="sibling links"),
+    pytest.param(("<button>x</button><button>y</button>"), (False), id="sibling buttons"),
     pytest.param(
         ('<p title="<a href=/x><button>t</button></a>">x</p>'),
         (False),
         id="markup inside an attribute value is text",
     ),
     pytest.param(
-        ('<a data-href="/x"><button>x</button></a>'),
-        (False),
-        id="a name that merely ends in href",
+        ('<a data-href="/x"><button>x</button></a>'), (False), id="a name that merely ends in href"
     ),
     pytest.param(
         ('<a href="/x"><input type="{{ t }}"></a>'),
@@ -129,11 +93,7 @@ test_data = [
         id="an ignored region",
     ),
     pytest.param(
-        (
-            "{%- comment -%}"
-            '<a href="/x"><button>x</button></a>'
-            "{%- endcomment -%}"
-        ),
+        ('{%- comment -%}<a href="/x"><button>x</button></a>{%- endcomment -%}'),
         (False),
         id="a comment block written with whitespace control",
     ),
@@ -186,9 +146,7 @@ test_data = [
         id="nesting written inside a template is still nesting",
     ),
     pytest.param(
-        (
-            '<a href="/x">\n<pre>\n</a>\n</pre>\n<button type="button">y</button>'
-        ),
+        ('<a href="/x">\n<pre>\n</a>\n</pre>\n<button type="button">y</button>'),
         (False),
         id="a closing tag in a pre body closes the element it names",
     ),
@@ -206,10 +164,7 @@ test_data = [
         id="a type an if writes with a value its own if writes",
     ),
     pytest.param(
-        (
-            '<a href="/x"><input {% if shown %}type="text"{% endif %}'
-            ' name="q"></a>'
-        ),
+        ('<a href="/x"><input {% if shown %}type="text"{% endif %} name="q"></a>'),
         (True),
         id="a plain type an if writes is read",
     ),
@@ -233,11 +188,7 @@ def test_h054_reports_the_inner_tag() -> None:
     source = '<a href="/x">\n  <button>Go</button>\n</a>'
 
     findings = linter(config, source, filename, filename)[filename]
-    reported = [
-        (error["line"], error["match"])
-        for error in findings
-        if error["code"] == "H054"
-    ]
+    reported = [(error["line"], error["match"]) for error in findings if error["code"] == "H054"]
 
     assert reported == [("2:2", "<button>")]
 
@@ -245,11 +196,7 @@ def test_h054_reports_the_inner_tag() -> None:
 profile_test_data = [
     pytest.param(
         ("liquid"),
-        (
-            "{%- comment -%}"
-            '<a href="/x"><button>x</button></a>'
-            "{%- endcomment -%}"
-        ),
+        ('{%- comment -%}<a href="/x"><button>x</button></a>{%- endcomment -%}'),
         (False),
         id="a liquid comment block with whitespace control",
     ),
@@ -283,19 +230,13 @@ profile_test_data = [
     ),
     pytest.param(
         ("golang"),
-        (
-            '<a class="btn" {{/* href comes later */}}>'
-            '<button type="button">Go</button></a>'
-        ),
+        ('<a class="btn" {{/* href comes later */}}><button type="button">Go</button></a>'),
         (False),
         id="an href inside a golang comment",
     ),
     pytest.param(
         ("handlebars"),
-        (
-            '<a class="btn" {{!-- href --}}>'
-            '<button type="button">Go</button></a>'
-        ),
+        ('<a class="btn" {{!-- href --}}><button type="button">Go</button></a>'),
         (False),
         id="an href inside a handlebars comment",
     ),
@@ -315,9 +256,7 @@ profile_test_data = [
 
 
 @pytest.mark.parametrize(("profile", "source", "reported"), profile_test_data)
-def test_h054_in_other_profiles(
-    profile: str, source: str, reported: bool
-) -> None:
+def test_h054_in_other_profiles(profile: str, source: str, reported: bool) -> None:
     filename = "test.html"
     config = Config(filename, profile=profile)
 
@@ -337,10 +276,7 @@ def test_h054_reads_unmatched_closing_tags_in_one_pass() -> None:
     filename = "test.html"
     config = Config(filename, profile="django")
     source = "<li>" * 15000 + "</ul>" * 15000
-    rule = {
-        "name": "H054",
-        "message": "Interactive element should not be nested inside another.",
-    }
+    rule = {"name": "H054", "message": "Interactive element should not be nested inside another."}
 
     start = time.perf_counter()
     findings = H054.run(rule, config, source, filename, [])

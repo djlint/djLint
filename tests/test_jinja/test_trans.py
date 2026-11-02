@@ -17,20 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "<div>\n"
-            "    {% trans %}\n"
-            "    <p>content</p>\n"
-            "    {% endtrans %}\n"
-            "</div>"
-        ),
-        (
-            "<div>\n"
-            "    {% trans %}\n"
-            "    <p>content</p>\n"
-            "    {% endtrans %}\n"
-            "</div>\n"
-        ),
+        ("<div>\n    {% trans %}\n    <p>content</p>\n    {% endtrans %}\n</div>"),
+        ("<div>\n    {% trans %}\n    <p>content</p>\n    {% endtrans %}\n</div>\n"),
         id="endtrans_keeps_indent_level",
     ),
     pytest.param(

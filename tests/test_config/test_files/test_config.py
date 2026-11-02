@@ -16,18 +16,10 @@ if TYPE_CHECKING:
     from click.testing import CliRunner
 
 
-@pytest.mark.parametrize(
-    "config_path", [".djlintrc_global", "djlint_toml_global.toml"]
-)
+@pytest.mark.parametrize("config_path", [".djlintrc_global", "djlint_toml_global.toml"])
 def test_check_custom_file_src(runner: CliRunner, config_path: str) -> None:
     result = runner.invoke(
-        djlint,
-        (
-            "-",
-            "--check",
-            "--configuration",
-            f"tests/test_config/test_files/{config_path}",
-        ),
+        djlint, ("-", "--check", "--configuration", f"tests/test_config/test_files/{config_path}")
     )
     assert """Checking 2/2 files""" in result.output
 
@@ -63,34 +55,19 @@ def test_check_custom_file_src_quiet(runner: CliRunner) -> None:
     assert not result.output
 
 
-@pytest.mark.parametrize(
-    "config_path", [".djlintrc_global", "djlint_toml_global.toml"]
-)
+@pytest.mark.parametrize("config_path", [".djlintrc_global", "djlint_toml_global.toml"])
 def test_lint_custom_file_src(runner: CliRunner, config_path: str) -> None:
     result = runner.invoke(
-        djlint,
-        (
-            "-",
-            "--lint",
-            "--configuration",
-            f"tests/test_config/test_files/{config_path}",
-        ),
+        djlint, ("-", "--lint", "--configuration", f"tests/test_config/test_files/{config_path}")
     )
     assert """Linting 2/2 files""" in result.output
 
 
-@pytest.mark.parametrize(
-    "config_path", [".djlintrc_global", "djlint_toml_global.toml"]
-)
+@pytest.mark.parametrize("config_path", [".djlintrc_global", "djlint_toml_global.toml"])
 def test_reformat_custom_file_src(runner: CliRunner, config_path: str) -> None:
     result = runner.invoke(
         djlint,
-        (
-            "-",
-            "--reformat",
-            "--configuration",
-            f"tests/test_config/test_files/{config_path}",
-        ),
+        ("-", "--reformat", "--configuration", f"tests/test_config/test_files/{config_path}"),
     )
     assert """Reformatting 2/2 files""" in result.output
 
@@ -103,19 +80,11 @@ def test_reformat_custom_file_src(runner: CliRunner, config_path: str) -> None:
     ],
 )
 def test_global_override(
-    runner: CliRunner,
-    config_path_local: str,
-    config_path_global: str,
-    config_data: bytes,
+    runner: CliRunner, config_path_local: str, config_path_global: str, config_data: bytes
 ) -> None:
     result = runner.invoke(
         djlint,
-        (
-            "-",
-            "--lint",
-            "--configuration",
-            f"tests/test_config/test_files/{config_path_global}",
-        ),
+        ("-", "--lint", "--configuration", f"tests/test_config/test_files/{config_path_global}"),
     )
     assert result.exit_code == 1
 
@@ -132,9 +101,7 @@ def test_global_override(
     )
     assert result.exit_code == 0
 
-    djlintrc_path = Path(
-        "tests", "test_config", "test_files", config_path_local
-    )
+    djlintrc_path = Path("tests", "test_config", "test_files", config_path_local)
     djlintrc_path.write_bytes(config_data)
 
     result = runner.invoke(

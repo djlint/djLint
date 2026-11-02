@@ -29,10 +29,7 @@ DEBOUNCE_SECONDS = 0.5
 UNFORMATTED = "<div><p>hi</p>\n</div>\n"
 FORMATTED = "<div>\n    <p>hi</p>\n</div>\n"
 FINDING = '<img src="x">\n'
-ONE_FINDING_RANGE = {
-    "start": {"line": 0, "character": 0},
-    "end": {"line": 0, "character": 13},
-}
+ONE_FINDING_RANGE = {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 13}}
 PUSH_CAPABILITIES: dict[str, Any] = {}
 PULL_CAPABILITIES: dict[str, Any] = {"textDocument": {"diagnostic": {}}}
 
@@ -87,11 +84,7 @@ class Client:
         message = self.messages.get(timeout=TIMEOUT_SECONDS)
         assert message is not None, "the server is gone"
         if "method" in message and "id" in message:
-            result = (
-                [self.settings]
-                if message["method"] == "workspace/configuration"
-                else None
-            )
+            result = [self.settings] if message["method"] == "workspace/configuration" else None
             self.write({"id": message["id"], "result": result})
         return message
 
@@ -143,9 +136,7 @@ class Client:
         self.notify("initialized", {})
         return result
 
-    def open(
-        self, uri: str, text: str, language: str = "html", version: int = 1
-    ) -> None:
+    def open(self, uri: str, text: str, language: str = "html", version: int = 1) -> None:
         self.notify(
             "textDocument/didOpen",
             {
@@ -168,10 +159,7 @@ class Client:
     def format(self, uri: str, tab_size: int = 2) -> Any:
         return self.request(
             "textDocument/formatting",
-            {
-                "textDocument": {"uri": uri},
-                "options": {"tabSize": tab_size, "insertSpaces": True},
-            },
+            {"textDocument": {"uri": uri}, "options": {"tabSize": tab_size, "insertSpaces": True}},
         )
 
     def stop(self) -> int:
@@ -216,9 +204,7 @@ def test_says_what_it_can_do(client: Client, tmp_path: Path) -> None:
     assert "diagnosticProvider" not in result["capabilities"]
 
 
-def test_offers_pull_to_a_client_that_has_it(
-    client: Client, tmp_path: Path
-) -> None:
+def test_offers_pull_to_a_client_that_has_it(client: Client, tmp_path: Path) -> None:
     result = client.start(tmp_path, PULL_CAPABILITIES)
     assert result["capabilities"]["diagnosticProvider"] == {
         "identifier": "djlint",
@@ -252,19 +238,14 @@ def test_counts_columns_in_utf16(client: Client, tmp_path: Path) -> None:
     assert finding["range"]["end"] == {"line": 0, "character": 23}
 
 
-def test_takes_a_whole_document_as_a_change(
-    client: Client, tmp_path: Path
-) -> None:
+def test_takes_a_whole_document_as_a_change(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
     client.diagnostics(uri)
     client.notify(
         "textDocument/didChange",
-        {
-            "textDocument": {"uri": uri, "version": 2},
-            "contentChanges": [{"text": "<p>fine</p>\n"}],
-        },
+        {"textDocument": {"uri": uri, "version": 2}, "contentChanges": [{"text": "<p>fine</p>\n"}]},
     )
     assert client.diagnostics(uri) == []
 
@@ -287,22 +268,18 @@ def test_answers_a_pull(client: Client, tmp_path: Path) -> None:
     assert report["kind"] == "full"
     assert [item["code"] for item in report["items"]] == ["H013"]
     assert client.request(
-        "textDocument/diagnostic",
-        {**params, "previousResultId": report["resultId"]},
+        "textDocument/diagnostic", {**params, "previousResultId": report["resultId"]}
     ) == {"kind": "unchanged", "resultId": report["resultId"]}
 
 
-def test_does_not_push_to_a_client_that_pulls(
-    client: Client, tmp_path: Path
-) -> None:
+def test_does_not_push_to_a_client_that_pulls(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, PULL_CAPABILITIES)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
     time.sleep(DEBOUNCE_SECONDS)
     client.format(uri)
     assert not any(
-        message.get("method") == "textDocument/publishDiagnostics"
-        for message in client.ignored
+        message.get("method") == "textDocument/publishDiagnostics" for message in client.ignored
     )
 
 
@@ -315,20 +292,14 @@ def test_does_not_push_to_a_client_that_pulls(
         "😀<div><p>hi</p></div>",
     ],
 )
-def test_formats_as_the_api_does(
-    client: Client, tmp_path: Path, text: str
-) -> None:
+def test_formats_as_the_api_does(client: Client, tmp_path: Path, text: str) -> None:
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, text)
-    assert apply(text, client.format(uri)) == format_text(
-        load_config(tmp_path), text
-    )
+    assert apply(text, client.format(uri)) == format_text(load_config(tmp_path), text)
 
 
-def test_replaces_only_the_lines_that_differ(
-    client: Client, tmp_path: Path
-) -> None:
+def test_replaces_only_the_lines_that_differ(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, f"<p>same</p>\n{UNFORMATTED}<p>same</p>\n")
@@ -340,9 +311,7 @@ def test_replaces_only_the_lines_that_differ(
     assert edit["newText"] == "<div>\n    <p>hi</p>\n"
 
 
-def test_has_nothing_to_change_on_formatted_text(
-    client: Client, tmp_path: Path
-) -> None:
+def test_has_nothing_to_change_on_formatted_text(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FORMATTED)
@@ -360,9 +329,7 @@ def test_reads_the_project_of_each_file(client: Client, tmp_path: Path) -> None:
     assert "\n  <p>hi</p>\n" in edit["newText"]
 
 
-def test_ignores_the_tab_size_of_the_editor(
-    client: Client, tmp_path: Path
-) -> None:
+def test_ignores_the_tab_size_of_the_editor(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, UNFORMATTED)
@@ -370,9 +337,7 @@ def test_ignores_the_tab_size_of_the_editor(
     assert "\n    <p>hi</p>\n" in edit["newText"]
 
 
-def test_can_follow_the_tab_size_of_the_editor(
-    client: Client, tmp_path: Path
-) -> None:
+def test_can_follow_the_tab_size_of_the_editor(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, options={"useEditorIndentation": True})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, UNFORMATTED)
@@ -395,9 +360,7 @@ def test_asks_the_client_for_settings(client: Client, tmp_path: Path) -> None:
     assert client.diagnostics(uri) == []
 
 
-def test_asks_again_after_a_change_of_settings(
-    client: Client, tmp_path: Path
-) -> None:
+def test_asks_again_after_a_change_of_settings(client: Client, tmp_path: Path) -> None:
     client.settings = {"ignore": "H013"}
     client.start(tmp_path, {"workspace": {"configuration": True}})
     uri = (tmp_path / "a.html").as_uri()
@@ -408,18 +371,12 @@ def test_asks_again_after_a_change_of_settings(
     assert [item["code"] for item in client.diagnostics(uri)] == ["H013"]
 
 
-@pytest.mark.parametrize(
-    "text", ['a\r<img src="x">\rb\r', 'a\n\r\n<img src="x">\n']
-)
-def test_counts_lines_as_the_protocol_does(
-    client: Client, tmp_path: Path, text: str
-) -> None:
+@pytest.mark.parametrize("text", ['a\r<img src="x">\rb\r', 'a\n\r\n<img src="x">\n'])
+def test_counts_lines_as_the_protocol_does(client: Client, tmp_path: Path, text: str) -> None:
     client.start(tmp_path, options={"ignore": "H014,H025"})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, text)
-    [finding] = [
-        item for item in client.diagnostics(uri) if item["code"] == "H013"
-    ]
+    [finding] = [item for item in client.diagnostics(uri) if item["code"] == "H013"]
     line = 1 if "\r<" in text else 2
     assert finding["range"] == {
         "start": {"line": line, "character": 0},
@@ -427,9 +384,7 @@ def test_counts_lines_as_the_protocol_does(
     }
 
 
-def test_replaces_a_text_with_lone_cr_whole(
-    client: Client, tmp_path: Path
-) -> None:
+def test_replaces_a_text_with_lone_cr_whole(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, "<div>\r<p>x</p></div>\r<p>y</p>\n")
@@ -469,11 +424,7 @@ def test_has_no_path_for_what_is_no_file(uri: object) -> None:
 
 def test_takes_a_relative_rules_file(client: Client, tmp_path: Path) -> None:
     (tmp_path / "rules.yaml").write_text(
-        "- rule:\n"
-        "    name: X001\n"
-        "    message: found\n"
-        "    patterns:\n"
-        "      - needle\n",
+        "- rule:\n    name: X001\n    message: found\n    patterns:\n      - needle\n",
         encoding="utf-8",
     )
     client.start(tmp_path, options={"rules": "rules.yaml"})
@@ -482,9 +433,7 @@ def test_takes_a_relative_rules_file(client: Client, tmp_path: Path) -> None:
     assert "X001" in [item["code"] for item in client.diagnostics(uri)]
 
 
-def test_keeps_rule_modules_of_two_projects_apart(
-    client: Client, tmp_path: Path
-) -> None:
+def test_keeps_rule_modules_of_two_projects_apart(client: Client, tmp_path: Path) -> None:
     uris = []
     for name in ("one", "two"):
         project = tmp_path / name
@@ -497,10 +446,7 @@ def test_keeps_rule_modules_of_two_projects_apart(
             encoding="utf-8",
         )
         (project / ".djlint_rules.yaml").write_text(
-            "- rule:\n"
-            "    name: X001\n"
-            "    message: x\n"
-            "    python_module: same_name\n",
+            "- rule:\n    name: X001\n    message: x\n    python_module: same_name\n",
             encoding="utf-8",
         )
         uris.append((project / "a.html").as_uri())
@@ -510,9 +456,7 @@ def test_keeps_rule_modules_of_two_projects_apart(
         assert name in [item["code"] for item in client.diagnostics(uri)]
 
 
-def test_reads_an_edited_configuration_without_a_watcher(
-    client: Client, tmp_path: Path
-) -> None:
+def test_reads_an_edited_configuration_without_a_watcher(client: Client, tmp_path: Path) -> None:
     config = tmp_path / ".djlintrc"
     config.write_text("{}", encoding="utf-8")
     client.start(tmp_path)
@@ -524,23 +468,16 @@ def test_reads_an_edited_configuration_without_a_watcher(
     assert client.diagnostics(uri) == []
 
 
-def test_takes_settings_pushed_by_the_client(
-    client: Client, tmp_path: Path
-) -> None:
+def test_takes_settings_pushed_by_the_client(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
     assert client.diagnostics(uri)
-    client.notify(
-        "workspace/didChangeConfiguration",
-        {"settings": {"djlint": {"ignore": "H013"}}},
-    )
+    client.notify("workspace/didChangeConfiguration", {"settings": {"djlint": {"ignore": "H013"}}})
     assert client.diagnostics(uri) == []
 
 
-def test_exits_during_a_rule_that_never_ends(
-    client: Client, tmp_path: Path
-) -> None:
+def test_exits_during_a_rule_that_never_ends(client: Client, tmp_path: Path) -> None:
     (tmp_path / "pyproject.toml").write_text("", encoding="utf-8")
     marker = tmp_path / "started"
     (tmp_path / "endless.py").write_text(
@@ -552,8 +489,7 @@ def test_exits_during_a_rule_that_never_ends(
         encoding="utf-8",
     )
     (tmp_path / ".djlint_rules.yaml").write_text(
-        "- rule:\n    name: X001\n    message: x\n    python_module: endless\n",
-        encoding="utf-8",
+        "- rule:\n    name: X001\n    message: x\n    python_module: endless\n", encoding="utf-8"
     )
     client.start(tmp_path)
     client.open((tmp_path / "a.html").as_uri(), "<p>x</p>\n")
@@ -565,9 +501,7 @@ def test_exits_during_a_rule_that_never_ends(
     assert client.process.wait(TIMEOUT_SECONDS) == 1
 
 
-def test_keeps_the_protocol_from_a_rule_that_prints(
-    client: Client, tmp_path: Path
-) -> None:
+def test_keeps_the_protocol_from_a_rule_that_prints(client: Client, tmp_path: Path) -> None:
     (tmp_path / "pyproject.toml").write_text("", encoding="utf-8")
     (tmp_path / "noisy.py").write_text(
         "import os, subprocess, sys\n"
@@ -579,8 +513,7 @@ def test_keeps_the_protocol_from_a_rule_that_prints(
         encoding="utf-8",
     )
     (tmp_path / ".djlint_rules.yaml").write_text(
-        "- rule:\n    name: X001\n    message: x\n    python_module: noisy\n",
-        encoding="utf-8",
+        "- rule:\n    name: X001\n    message: x\n    python_module: noisy\n", encoding="utf-8"
     )
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
@@ -619,10 +552,7 @@ def test_answers_what_was_sent_before_exit(tmp_path: Path) -> None:
     bodies = [json.dumps({"jsonrpc": "2.0", **m}).encode() for m in messages]
     done = subprocess.run(
         [sys.executable, "-m", "djlint", "--lsp"],
-        input=b"".join(
-            b"Content-Length: %d\r\n\r\n%s" % (len(body), body)
-            for body in bodies
-        ),
+        input=b"".join(b"Content-Length: %d\r\n\r\n%s" % (len(body), body) for body in bodies),
         capture_output=True,
         timeout=TIMEOUT_SECONDS,
         check=False,
@@ -632,9 +562,7 @@ def test_answers_what_was_sent_before_exit(tmp_path: Path) -> None:
     assert b'"id":3,"result":null' in done.stdout
 
 
-def test_leaves_installed_packages_imported(
-    client: Client, tmp_path: Path
-) -> None:
+def test_leaves_installed_packages_imported(client: Client, tmp_path: Path) -> None:
     (tmp_path / "pyproject.toml").write_text("", encoding="utf-8")
     other = tmp_path / "other"
     other.mkdir()
@@ -657,11 +585,7 @@ def test_takes_relative_settings_from_the_folder_of_the_document(
     for folder in folders:
         folder.mkdir()
     (folders[1] / "rules.yaml").write_text(
-        "- rule:\n"
-        "    name: X001\n"
-        "    message: found\n"
-        "    patterns:\n"
-        "      - needle\n",
+        "- rule:\n    name: X001\n    message: found\n    patterns:\n      - needle\n",
         encoding="utf-8",
     )
     client.request(
@@ -670,8 +594,7 @@ def test_takes_relative_settings_from_the_folder_of_the_document(
             "capabilities": {},
             "initializationOptions": {"rules": "rules.yaml"},
             "workspaceFolders": [
-                {"uri": folder.as_uri(), "name": folder.name}
-                for folder in folders
+                {"uri": folder.as_uri(), "name": folder.name} for folder in folders
             ],
         },
     )
@@ -680,38 +603,24 @@ def test_takes_relative_settings_from_the_folder_of_the_document(
     assert "X001" in [item["code"] for item in client.diagnostics(uri)]
 
 
-def test_lives_through_a_uri_that_makes_no_sense(
-    client: Client, tmp_path: Path
-) -> None:
+def test_lives_through_a_uri_that_makes_no_sense(client: Client, tmp_path: Path) -> None:
     client.request("initialize", {"capabilities": {}, "rootUri": "file://[bad"})
     client.notify(
         "textDocument/didOpen",
-        {
-            "textDocument": {
-                "uri": 1,
-                "languageId": "html",
-                "version": 1,
-                "text": "",
-            }
-        },
+        {"textDocument": {"uri": 1, "languageId": "html", "version": 1, "text": ""}},
     )
     assert tmp_path.is_dir()
     assert client.stop() == 0
 
 
-def test_asks_for_settings_again_after_a_late_answer(
-    client: Client, tmp_path: Path
-) -> None:
+def test_asks_for_settings_again_after_a_late_answer(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, {"workspace": {"configuration": True}})
     uri = (tmp_path / "a.html").as_uri()
     client.settings = {"indent": 7}
     client.open(uri, UNFORMATTED)
     request_id = client.send(
         "textDocument/formatting",
-        {
-            "textDocument": {"uri": uri},
-            "options": {"tabSize": 2, "insertSpaces": True},
-        },
+        {"textDocument": {"uri": uri}, "options": {"tabSize": 2, "insertSpaces": True}},
     )
     while True:
         asked = client.messages.get(timeout=TIMEOUT_SECONDS)
@@ -726,12 +635,8 @@ def test_asks_for_settings_again_after_a_late_answer(
     assert "\n       <p>" in edit["newText"]
 
 
-def test_a_late_answer_changes_what_a_pull_finds(
-    client: Client, tmp_path: Path
-) -> None:
-    client.start(
-        tmp_path, {**PULL_CAPABILITIES, "workspace": {"configuration": True}}
-    )
+def test_a_late_answer_changes_what_a_pull_finds(client: Client, tmp_path: Path) -> None:
+    client.start(tmp_path, {**PULL_CAPABILITIES, "workspace": {"configuration": True}})
     uri = (tmp_path / "a.html").as_uri()
     client.settings = {"ignore": "H013"}
     client.open(uri, FINDING)
@@ -748,16 +653,13 @@ def test_a_late_answer_changes_what_a_pull_finds(
     client.write({"id": asked["id"], "result": [client.settings]})
     assert (
         client.request(
-            "textDocument/diagnostic",
-            {**params, "previousResultId": report["resultId"]},
+            "textDocument/diagnostic", {**params, "previousResultId": report["resultId"]}
         )["items"]
         == []
     )
 
 
-def test_refreshes_findings_once_a_late_answer_arrives(
-    client: Client, tmp_path: Path
-) -> None:
+def test_refreshes_findings_once_a_late_answer_arrives(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, {"workspace": {"configuration": True}})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
@@ -778,39 +680,24 @@ def test_refreshes_findings_once_a_late_answer_arrives(
     }
 
 
-def test_registers_for_changes_of_settings(
-    client: Client, tmp_path: Path
-) -> None:
-    client.start(
-        tmp_path,
-        {
-            "workspace": {
-                "didChangeConfiguration": {"dynamicRegistration": True}
-            }
-        },
-    )
+def test_registers_for_changes_of_settings(client: Client, tmp_path: Path) -> None:
+    client.start(tmp_path, {"workspace": {"didChangeConfiguration": {"dynamicRegistration": True}}})
     params = client.notification("client/registerCapability")
     assert params["registrations"] == [
         {"id": "djlint-settings", "method": "workspace/didChangeConfiguration"}
     ]
 
 
-@pytest.mark.parametrize(
-    "pushed", [{}, {"html": {"format": True}}], ids=["empty", "other server"]
-)
+@pytest.mark.parametrize("pushed", [{}, {"html": {"format": True}}], ids=["empty", "other server"])
 def test_keeps_settings_on_a_push_for_nothing_of_djlint(
     client: Client, tmp_path: Path, pushed: dict[str, Any]
 ) -> None:
     client.start(tmp_path, PUSH_CAPABILITIES, {"ignore": "H013"})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
-    assert not client.notification("textDocument/publishDiagnostics")[
-        "diagnostics"
-    ]
+    assert not client.notification("textDocument/publishDiagnostics")["diagnostics"]
     client.notify("workspace/didChangeConfiguration", {"settings": pushed})
-    assert not client.notification("textDocument/publishDiagnostics")[
-        "diagnostics"
-    ]
+    assert not client.notification("textDocument/publishDiagnostics")["diagnostics"]
 
 
 def test_takes_flat_settings_of_a_push(client: Client, tmp_path: Path) -> None:
@@ -818,31 +705,20 @@ def test_takes_flat_settings_of_a_push(client: Client, tmp_path: Path) -> None:
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
     assert client.notification("textDocument/publishDiagnostics")["diagnostics"]
-    client.notify(
-        "workspace/didChangeConfiguration", {"settings": {"ignore": "H013"}}
-    )
-    assert not client.notification("textDocument/publishDiagnostics")[
-        "diagnostics"
-    ]
+    client.notify("workspace/didChangeConfiguration", {"settings": {"ignore": "H013"}})
+    assert not client.notification("textDocument/publishDiagnostics")["diagnostics"]
 
 
-def test_excludes_from_the_workspace_folder(
-    client: Client, tmp_path: Path
-) -> None:
+def test_excludes_from_the_workspace_folder(client: Client, tmp_path: Path) -> None:
     (tmp_path / "vendor").mkdir()
     client.start(tmp_path, PUSH_CAPABILITIES, {"exclude": "vendor"})
     uri = (tmp_path / "vendor" / "a.html").as_uri()
     client.open(uri, FINDING)
-    assert not client.notification("textDocument/publishDiagnostics")[
-        "diagnostics"
-    ]
+    assert not client.notification("textDocument/publishDiagnostics")["diagnostics"]
     assert (
         client.request(
             "textDocument/formatting",
-            {
-                "textDocument": {"uri": uri},
-                "options": {"tabSize": 4, "insertSpaces": True},
-            },
+            {"textDocument": {"uri": uri}, "options": {"tabSize": 4, "insertSpaces": True}},
         )
         is None
     )
@@ -855,14 +731,10 @@ def test_excludes_past_a_nested_project(client: Client, tmp_path: Path) -> None:
     (nested / "pyproject.toml").write_text("", "utf-8")
     client.start(tmp_path, PUSH_CAPABILITIES, {"exclude": "vendor"})
     client.open((nested / "a.html").as_uri(), FINDING)
-    assert not client.notification("textDocument/publishDiagnostics")[
-        "diagnostics"
-    ]
+    assert not client.notification("textDocument/publishDiagnostics")["diagnostics"]
 
 
-def test_reads_a_named_configuration_again_with_a_watcher(
-    client: Client, tmp_path: Path
-) -> None:
+def test_reads_a_named_configuration_again_with_a_watcher(client: Client, tmp_path: Path) -> None:
     named = tmp_path / "my.json"
     named.write_text("{}", "utf-8")
     client.settings = {"configuration": str(named)}
@@ -881,40 +753,28 @@ def test_reads_a_named_configuration_again_with_a_watcher(
     assert client.notification("textDocument/publishDiagnostics")["diagnostics"]
     named.write_text('{"ignore": "H013"}', "utf-8")
     client.notify("textDocument/didSave", {"textDocument": {"uri": uri}})
-    assert not client.notification("textDocument/publishDiagnostics")[
-        "diagnostics"
-    ]
+    assert not client.notification("textDocument/publishDiagnostics")["diagnostics"]
 
 
 def test_reads_the_configuration_again_after_a_rejected_watch(
     client: Client, tmp_path: Path
 ) -> None:
-    client.start(
-        tmp_path,
-        {"workspace": {"didChangeWatchedFiles": {"dynamicRegistration": True}}},
-    )
+    client.start(tmp_path, {"workspace": {"didChangeWatchedFiles": {"dynamicRegistration": True}}})
     while True:
         asked = client.messages.get(timeout=TIMEOUT_SECONDS)
         assert asked is not None
         if asked.get("method") == "client/registerCapability":
             break
-    client.write({
-        "id": asked["id"],
-        "error": {"code": -32601, "message": "No"},
-    })
+    client.write({"id": asked["id"], "error": {"code": -32601, "message": "No"}})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
     assert client.notification("textDocument/publishDiagnostics")["diagnostics"]
     (tmp_path / ".djlintrc").write_text('{"ignore": "H013"}', "utf-8")
     client.notify("textDocument/didSave", {"textDocument": {"uri": uri}})
-    assert not client.notification("textDocument/publishDiagnostics")[
-        "diagnostics"
-    ]
+    assert not client.notification("textDocument/publishDiagnostics")["diagnostics"]
 
 
-def test_a_save_without_a_watcher_updates_every_document(
-    client: Client, tmp_path: Path
-) -> None:
+def test_a_save_without_a_watcher_updates_every_document(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, PUSH_CAPABILITIES)
     first = (tmp_path / "a.html").as_uri()
     second = (tmp_path / "b.html").as_uri()
@@ -924,9 +784,7 @@ def test_a_save_without_a_watcher_updates_every_document(
     client.notification("textDocument/publishDiagnostics")
     (tmp_path / ".djlintrc").write_text('{"ignore": "H013"}', "utf-8")
     client.notify("textDocument/didSave", {"textDocument": {"uri": first}})
-    published = [
-        client.notification("textDocument/publishDiagnostics") for _ in range(2)
-    ]
+    published = [client.notification("textDocument/publishDiagnostics") for _ in range(2)]
     assert {item["uri"] for item in published} == {first, second}
     assert not any(item["diagnostics"] for item in published)
 
@@ -935,11 +793,7 @@ def test_a_save_without_a_watcher_refreshes_a_pulling_editor(
     client: Client, tmp_path: Path
 ) -> None:
     client.start(
-        tmp_path,
-        {
-            **PULL_CAPABILITIES,
-            "workspace": {"diagnostics": {"refreshSupport": True}},
-        },
+        tmp_path, {**PULL_CAPABILITIES, "workspace": {"diagnostics": {"refreshSupport": True}}}
     )
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
@@ -947,29 +801,18 @@ def test_a_save_without_a_watcher_refreshes_a_pulling_editor(
     assert client.notification("workspace/diagnostic/refresh") == {}
 
 
-def test_asks_for_settings_again_when_folders_change(
-    client: Client, tmp_path: Path
-) -> None:
+def test_asks_for_settings_again_when_folders_change(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, {"workspace": {"configuration": True}})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
     assert client.notification("textDocument/publishDiagnostics")["diagnostics"]
     client.settings = {"ignore": "H013"}
-    client.notify(
-        "workspace/didChangeWorkspaceFolders",
-        {"event": {"added": [], "removed": []}},
-    )
-    assert not client.notification("textDocument/publishDiagnostics")[
-        "diagnostics"
-    ]
+    client.notify("workspace/didChangeWorkspaceFolders", {"event": {"added": [], "removed": []}})
+    assert not client.notification("textDocument/publishDiagnostics")["diagnostics"]
 
 
-@pytest.mark.parametrize(
-    "length", [99999999999999999999999, 1099511627776000], ids=["big", "huge"]
-)
-def test_lives_through_a_length_it_cannot_read(
-    client: Client, length: int
-) -> None:
+@pytest.mark.parametrize("length", [99999999999999999999999, 1099511627776000], ids=["big", "huge"])
+def test_lives_through_a_length_it_cannot_read(client: Client, length: int) -> None:
     stdin = client.process.stdin
     assert stdin is not None
     stdin.write(b"Content-Length: %d\r\n\r\n" % length)
@@ -977,22 +820,13 @@ def test_lives_through_a_length_it_cannot_read(
     client.start()
 
 
-def test_a_uri_that_is_no_string_leaves_other_documents(
-    client: Client, tmp_path: Path
-) -> None:
+def test_a_uri_that_is_no_string_leaves_other_documents(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, PUSH_CAPABILITIES)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
     client.notify(
         "textDocument/didOpen",
-        {
-            "textDocument": {
-                "uri": 1,
-                "languageId": "html",
-                "version": 1,
-                "text": FINDING,
-            }
-        },
+        {"textDocument": {"uri": 1, "languageId": "html", "version": 1, "text": FINDING}},
     )
     assert client.notification("textDocument/publishDiagnostics")["uri"] == uri
 
@@ -1005,10 +839,7 @@ def test_a_text_with_lone_cr_is_replaced_up_to_its_last_line(
     client.open(uri, "<div>\r<p>x</p>")
     edits = client.request(
         "textDocument/formatting",
-        {
-            "textDocument": {"uri": uri},
-            "options": {"tabSize": 4, "insertSpaces": True},
-        },
+        {"textDocument": {"uri": uri}, "options": {"tabSize": 4, "insertSpaces": True}},
     )
     assert edits[0]["range"]["end"] == {"line": 1, "character": 8}
 
@@ -1020,9 +851,7 @@ def test_exits_on_an_exit_with_an_id(client: Client) -> None:
     assert client.process.wait(TIMEOUT_SECONDS) == 0
 
 
-def test_answers_a_request_with_a_method_that_is_no_method(
-    client: Client, tmp_path: Path
-) -> None:
+def test_answers_a_request_with_a_method_that_is_no_method(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     client.write({"id": 7, "method": 1})
     assert client.response(7)["error"]["code"] == -32600
@@ -1052,10 +881,7 @@ def test_lives_through_malformed_params(
 
 @pytest.mark.parametrize(
     "params",
-    [
-        {"capabilities": [], "rootUri": 1},
-        {"capabilities": {"textDocument": 1, "workspace": 2}},
-    ],
+    [{"capabilities": [], "rootUri": 1}, {"capabilities": {"textDocument": 1, "workspace": 2}}],
 )
 def test_starts_with_nonsense(client: Client, params: dict[str, Any]) -> None:
     client.request("initialize", params)
@@ -1070,9 +896,7 @@ def test_passes_over_an_unknown_setting(client: Client, tmp_path: Path) -> None:
     assert "nonsense" in client.notification("window/logMessage")["message"]
 
 
-def test_picks_the_profile_from_the_language(
-    client: Client, tmp_path: Path
-) -> None:
+def test_picks_the_profile_from_the_language(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     text = '<a href="/about">x</a>\n'
@@ -1084,12 +908,8 @@ def test_picks_the_profile_from_the_language(
     assert [item["code"] for item in client.diagnostics(uri)] == ["D018"]
 
 
-def test_lets_the_project_choose_the_profile(
-    client: Client, tmp_path: Path
-) -> None:
-    (tmp_path / ".djlintrc").write_text(
-        '{"profile": "jinja"}', encoding="utf-8"
-    )
+def test_lets_the_project_choose_the_profile(client: Client, tmp_path: Path) -> None:
+    (tmp_path / ".djlintrc").write_text('{"profile": "jinja"}', encoding="utf-8")
     client.start(tmp_path)
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, '<a href="/about">x</a>\n', language="htmldjango")
@@ -1097,9 +917,7 @@ def test_lets_the_project_choose_the_profile(
 
 
 def test_leaves_out_an_excluded_file(client: Client, tmp_path: Path) -> None:
-    (tmp_path / ".djlintrc").write_text(
-        '{"exclude": "vendor"}', encoding="utf-8"
-    )
+    (tmp_path / ".djlintrc").write_text('{"exclude": "vendor"}', encoding="utf-8")
     vendor = tmp_path / "vendor"
     vendor.mkdir()
     client.start(tmp_path)
@@ -1109,9 +927,7 @@ def test_leaves_out_an_excluded_file(client: Client, tmp_path: Path) -> None:
     assert client.format(uri) is None
 
 
-def test_respects_the_pragma_requirement(
-    client: Client, tmp_path: Path
-) -> None:
+def test_respects_the_pragma_requirement(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, options={"requirePragma": True})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
@@ -1120,10 +936,7 @@ def test_respects_the_pragma_requirement(
 
 
 def test_watches_the_configuration(client: Client, tmp_path: Path) -> None:
-    client.start(
-        tmp_path,
-        {"workspace": {"didChangeWatchedFiles": {"dynamicRegistration": True}}},
-    )
+    client.start(tmp_path, {"workspace": {"didChangeWatchedFiles": {"dynamicRegistration": True}}})
     registration = client.notification_or_request("client/registerCapability")
     watchers = registration["registrations"][0]["registerOptions"]["watchers"]
     assert {"globPattern": "**/.djlintrc"} in watchers
@@ -1133,29 +946,20 @@ def test_watches_the_configuration(client: Client, tmp_path: Path) -> None:
     config = tmp_path / ".djlintrc"
     config.write_text('{"ignore": "H013"}', encoding="utf-8")
     client.notify(
-        "workspace/didChangeWatchedFiles",
-        {"changes": [{"uri": config.as_uri(), "type": 1}]},
+        "workspace/didChangeWatchedFiles", {"changes": [{"uri": config.as_uri(), "type": 1}]}
     )
     assert client.diagnostics(uri) == []
 
 
-def test_asks_a_pulling_client_to_refresh(
-    client: Client, tmp_path: Path
-) -> None:
+def test_asks_a_pulling_client_to_refresh(client: Client, tmp_path: Path) -> None:
     client.start(
-        tmp_path,
-        {
-            **PULL_CAPABILITIES,
-            "workspace": {"diagnostics": {"refreshSupport": True}},
-        },
+        tmp_path, {**PULL_CAPABILITIES, "workspace": {"diagnostics": {"refreshSupport": True}}}
     )
     client.notify("workspace/didChangeConfiguration", {"settings": None})
     client.notification_or_request("workspace/diagnostic/refresh")
 
 
-def test_handles_a_document_with_no_file(
-    client: Client, tmp_path: Path
-) -> None:
+def test_handles_a_document_with_no_file(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     uri = "untitled:Untitled-1"
     client.open(uri, FINDING)
@@ -1163,9 +967,7 @@ def test_handles_a_document_with_no_file(
     assert client.format(uri) == []
 
 
-def test_finds_a_path_with_spaces_and_escapes(
-    client: Client, tmp_path: Path
-) -> None:
+def test_finds_a_path_with_spaces_and_escapes(client: Client, tmp_path: Path) -> None:
     folder = tmp_path / "a b#c"
     folder.mkdir()
     (folder / ".djlintrc").write_text('{"indent": 2}', encoding="utf-8")
@@ -1176,9 +978,7 @@ def test_finds_a_path_with_spaces_and_escapes(
     assert "\n  <p>hi</p>\n" in edit["newText"]
 
 
-def test_lives_through_a_broken_configuration(
-    client: Client, tmp_path: Path
-) -> None:
+def test_lives_through_a_broken_configuration(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, options={"rules": str(tmp_path / "missing.yaml")})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)
@@ -1186,18 +986,13 @@ def test_lives_through_a_broken_configuration(
     assert client.stop() == 0
 
 
-def test_lives_through_a_rule_that_fails(
-    client: Client, tmp_path: Path
-) -> None:
+def test_lives_through_a_rule_that_fails(client: Client, tmp_path: Path) -> None:
     (tmp_path / "pyproject.toml").write_text("", encoding="utf-8")
     (tmp_path / "broken_rule.py").write_text(
         "def run(**_):\n    raise ValueError('nope')\n", encoding="utf-8"
     )
     (tmp_path / ".djlint_rules.yaml").write_text(
-        "- rule:\n"
-        "    name: X001\n"
-        "    message: x\n"
-        "    python_module: broken_rule\n",
+        "- rule:\n    name: X001\n    message: x\n    python_module: broken_rule\n",
         encoding="utf-8",
     )
     client.start(tmp_path)
@@ -1214,9 +1009,7 @@ def test_rejects_a_request_before_initialize(client: Client) -> None:
 
 
 @pytest.mark.parametrize("request_id", [None, 1.5, [1], {"a": 1}, True])
-def test_rejects_an_id_that_is_no_id(
-    client: Client, tmp_path: Path, request_id: object
-) -> None:
+def test_rejects_an_id_that_is_no_id(client: Client, tmp_path: Path, request_id: object) -> None:
     client.start(tmp_path)
     client.write({"id": request_id, "method": "shutdown"})
     while (message := client.next_message()).get("id") is not None:
@@ -1235,10 +1028,7 @@ def test_passes_over_a_cancel_of_nothing(
 
 
 def test_starts_with_folders_that_make_no_sense(client: Client) -> None:
-    client.request(
-        "initialize",
-        {"capabilities": {}, "workspaceFolders": [{"uri": None}, None]},
-    )
+    client.request("initialize", {"capabilities": {}, "workspaceFolders": [{"uri": None}, None]})
     assert client.stop() == 0
 
 
@@ -1248,9 +1038,7 @@ def test_rejects_an_unknown_method(client: Client, tmp_path: Path) -> None:
     assert response["error"]["code"] == -32601
 
 
-def test_ignores_an_unknown_notification(
-    client: Client, tmp_path: Path
-) -> None:
+def test_ignores_an_unknown_notification(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     client.notify("$/setTrace", {"value": "off"})
     assert client.stop() == 0
@@ -1260,17 +1048,11 @@ def test_cancels_a_waiting_request(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     client.next_id += 1
     client.notify("$/cancelRequest", {"id": client.next_id})
-    client.write({
-        "id": client.next_id,
-        "method": "textDocument/formatting",
-        "params": {},
-    })
+    client.write({"id": client.next_id, "method": "textDocument/formatting", "params": {}})
     assert client.response(client.next_id)["error"]["code"] == -32800
 
 
-def test_lives_through_a_message_that_is_not_json(
-    client: Client, tmp_path: Path
-) -> None:
+def test_lives_through_a_message_that_is_not_json(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     stdin = client.process.stdin
     assert stdin is not None
@@ -1279,9 +1061,7 @@ def test_lives_through_a_message_that_is_not_json(
     assert client.stop() == 0
 
 
-def test_rejects_requests_after_shutdown(
-    client: Client, tmp_path: Path
-) -> None:
+def test_rejects_requests_after_shutdown(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path)
     client.request("shutdown", {})
     response = client.response(client.send("textDocument/formatting", {}))
@@ -1295,9 +1075,7 @@ def test_exits_with_an_error_without_a_shutdown(client: Client) -> None:
     assert client.process.wait(TIMEOUT_SECONDS) == 1
 
 
-def test_takes_settings_that_are_not_template_options(
-    client: Client, tmp_path: Path
-) -> None:
+def test_takes_settings_that_are_not_template_options(client: Client, tmp_path: Path) -> None:
     client.start(tmp_path, options={"version": True})
     uri = (tmp_path / "a.html").as_uri()
     client.open(uri, FINDING)

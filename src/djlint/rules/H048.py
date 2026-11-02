@@ -47,9 +47,7 @@ def run(
         if token.closing or token.declaration:
             continue
 
-        if not _ARIA_NAME_PATTERN.search(
-            html, token.name_end, token.attributes_end
-        ):
+        if not _ARIA_NAME_PATTERN.search(html, token.name_end, token.attributes_end):
             continue
 
         group = html[token.name_end : token.attributes_end]

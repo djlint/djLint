@@ -50,13 +50,7 @@ test_data = [
     ),
     pytest.param(
         ("<section>\n{% example %}\n<p>test</p>\n{% endexample %}\n</section>"),
-        (
-            "<section>\n"
-            "    {% example %}\n"
-            "    <p>test</p>\n"
-            "    {% endexample %}\n"
-            "</section>\n"
-        ),
+        ("<section>\n    {% example %}\n    <p>test</p>\n    {% endexample %}\n</section>\n"),
         ({"ignore_blocks": "example"}),
         id="ignore_custom_block_indented",
     ),

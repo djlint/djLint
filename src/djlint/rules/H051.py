@@ -68,23 +68,15 @@ def run(
         if not _ROLE_PATTERN.search(html, token.name_end, token.attributes_end):
             continue
 
-        match = _ROLE_ATTRIBUTE_PATTERN.match(
-            html, token.name_end, token.attributes_end
-        )
+        match = _ROLE_ATTRIBUTE_PATTERN.match(html, token.name_end, token.attributes_end)
         if match is None:
             continue
 
-        value = next(
-            group for group in match.group(2, 3, 4) if group is not None
-        )
+        value = next(group for group in match.group(2, 3, 4) if group is not None)
         if _TEMPLATE_PATTERN.search(value):
             continue
 
-        unknown = [
-            word
-            for word in value.split()
-            if word.lower() not in HTML_ARIA_ROLE_NAMES
-        ]
+        unknown = [word for word in value.split() if word.lower() not in HTML_ARIA_ROLE_NAMES]
         if not unknown:
             continue
 

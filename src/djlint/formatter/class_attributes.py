@@ -22,9 +22,7 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 
-_COLLAPSIBLE_RUN_PATTERN: Final = compile_pattern(
-    f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+"
-)
+_COLLAPSIBLE_RUN_PATTERN: Final = compile_pattern(f"[{re.escape(COLLAPSIBLE_WHITESPACE)}]+")
 _LINE_BREAK_RUN_PATTERN: Final = compile_pattern(
     rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*\n"
     rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*"
@@ -37,13 +35,7 @@ _CLASS_ATTRIBUTE_PATTERN: Final = compile_pattern(
     r"(?<![\w:.-])class(?![\w:.-])\s*=\s*(['\"])", re.I
 )
 
-_JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({
-    "class",
-    "data-srcset",
-    "sizes",
-    "srcset",
-    "style",
-})
+_JOINABLE_ATTRIBUTE_NAMES: Final = frozenset({"class", "data-srcset", "sizes", "srcset", "style"})
 _TRIMMED_ATTRIBUTE_NAMES: Final = frozenset({"class", "style"})
 
 
@@ -53,9 +45,7 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
     A `class` value is normalized here too: it is a list of tokens, so the
     whitespace between them and at its edges says nothing.
     """
-    if "\n" not in attributes and not _CLASS_ATTRIBUTE_PATTERN.search(
-        attributes
-    ):
+    if "\n" not in attributes and not _CLASS_ATTRIBUTE_PATTERN.search(attributes):
         return attributes
 
     changed = False
@@ -79,8 +69,7 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
             continue
 
         laid_out_by_js_json_formatter = bool(
-            config.format_attribute_js_json
-            and config.format_attribute_js_json_pattern.match(name)
+            config.format_attribute_js_json and config.format_attribute_js_json_pattern.match(name)
         )
 
         if lowered == "class" and config.preserve_class_newlines:
@@ -93,9 +82,9 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
         elif laid_out_by_js_json_formatter:
             continue
         elif lowered == "class":
-            encoded_value = _COLLAPSIBLE_RUN_PATTERN.sub(
-                " ", value[1:-1]
-            ).strip(COLLAPSIBLE_WHITESPACE)
+            encoded_value = _COLLAPSIBLE_RUN_PATTERN.sub(" ", value[1:-1]).strip(
+                COLLAPSIBLE_WHITESPACE
+            )
         elif lowered in _TRIMMED_ATTRIBUTE_NAMES:
             encoded_value = _LINE_BREAK_RUN_PATTERN.sub(" ", value[1:-1]).strip(
                 COLLAPSIBLE_WHITESPACE
@@ -103,9 +92,7 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
         elif lowered in _JOINABLE_ATTRIBUTE_NAMES:
             continue
         else:
-            encoded_value = VERBATIM_ATTRIBUTE_NEWLINE.join(
-                value[1:-1].split("\n")
-            )
+            encoded_value = VERBATIM_ATTRIBUTE_NEWLINE.join(value[1:-1].split("\n"))
 
         parts.extend((
             attributes[last_end : match.start()],
@@ -156,10 +143,7 @@ def restore_class_attribute_newlines(html: str) -> str:
         line_start = html.rfind("\n", 0, marker_pos) + 1
         line = html[line_start:marker_pos]
         matches = tuple(_CLASS_ATTRIBUTE_PATTERN.finditer(line))
-        if matches:
-            indent_size = matches[-1].end()
-        else:
-            indent_size = max(line.rfind('"'), line.rfind("'"), 0) + 1
+        indent_size = matches[-1].end() if matches else max(line.rfind('"'), line.rfind("'"), 0) + 1
 
         out.append("\n" + (" " * indent_size))
         pos = marker_pos + len(CLASS_ATTRIBUTE_NEWLINE)

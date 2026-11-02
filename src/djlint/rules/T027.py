@@ -5,11 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, final
 
-from djlint.helpers import (
-    inside_ignored_linter_block,
-    inside_ignored_rule,
-    overlaps_ignored_block,
-)
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
@@ -21,14 +17,7 @@ if TYPE_CHECKING:
 
 
 @final
-@dataclass(
-    repr=False,
-    eq=False,
-    frozen=True,
-    match_args=False,
-    kw_only=False,
-    slots=True,
-)
+@dataclass(repr=False, eq=False, frozen=True, match_args=False, kw_only=False, slots=True)
 class _TemplateTagMatch:
     _html: str
     _start: int
@@ -126,9 +115,7 @@ def _iter_template_tags(html: str) -> Iterator[_TemplateTagMatch]:
             variable_start = html.find("{{", pos)
         if block_start == -1 and variable_start == -1:
             break
-        if variable_start != -1 and (
-            block_start == -1 or variable_start < block_start
-        ):
+        if variable_start != -1 and (block_start == -1 or variable_start < block_start):
             start, close = variable_start, "}}"
         else:
             start, close = block_start, "%}"

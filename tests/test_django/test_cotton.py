@@ -18,12 +18,7 @@ if TYPE_CHECKING:
 test_data = [
     pytest.param(
         ('<c-card size="large"><p>hi</p><c-vars color="blue" /></c-card>'),
-        (
-            '<c-card size="large">\n'
-            "    <p>hi</p>\n"
-            '    <c-vars color="blue" />\n'
-            "</c-card>\n"
-        ),
+        ('<c-card size="large">\n    <p>hi</p>\n    <c-vars color="blue" />\n</c-card>\n'),
         id="cotton_tag_expand",
     ),
     pytest.param(
