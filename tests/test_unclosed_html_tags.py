@@ -30,6 +30,9 @@ sources = [
     pytest.param("<style>\n" * 4000, id="styles never closed"),
     pytest.param("<textarea>\n" * 4000, id="textareas never closed"),
     pytest.param("<!-- a\n" * 20000, id="comments never closed"),
+    pytest.param("</p\n" * 20000, id="closing tags with no > after them"),
+    pytest.param('</p x="a\n' * 20000, id="closing tags each opening a value"),
+    pytest.param("</p {\n" * 20000 + "<div>", id="closing tags each opening a brace"),
 ]
 
 
@@ -52,3 +55,19 @@ def test_format(source: str) -> None:
     formatter(config, source)
 
     assert time.perf_counter() - started < 5
+
+
+def test_a_closing_tag_runs_to_its_gt() -> None:
+    """As browsers read it, the "<p" after `</p` is junk inside the closing tag.
+
+    Read as a tag of its own, each paragraph was nested in the one before, so
+    the output grew with the square of their count.
+    """
+    config = Config("test.html", profile="jinja")
+    source = '<p x="a">b</p\n' * 4
+
+    output = formatter(config, source)
+
+    assert output.startswith('<p x="a">b</p <p x="a">\n')
+    assert len(output) < 2 * len(source)
+    assert formatter(config, output) == output
