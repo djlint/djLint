@@ -133,3 +133,11 @@ def test_help_puts_every_option_in_a_section(runner: CliRunner) -> None:
     options = re.findall(r"^  (-[^\s,]+(?:, --\S+)?)", other, re.MULTILINE)
 
     assert options == ["--version", "-h, --help"]
+
+
+def test_a_usage_error_points_to_help(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, (), prog_name="djlint")
+
+    assert result.exit_code == 2
+    # Older versions of click name the first help option, newer ones the long one.
+    assert re.search(r"Try 'djlint (?:-h|--help)' for help\.", result.output)

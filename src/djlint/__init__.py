@@ -10,7 +10,7 @@ import os
 import sys
 from functools import partial, wraps
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import click
 from click import echo, style
@@ -19,6 +19,11 @@ if sys.version_info >= (3, 13):
     from os import process_cpu_count
 else:
     from os import cpu_count as process_cpu_count
+
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -226,49 +231,34 @@ _HELP_OTHER: Final = ("version", "help")
 _HELP_OPTION_WIDTH: Final = 30
 
 
-def _print_help(
-    ctx: click.Context,
-    _param: click.Parameter,
-    value: bool,  # noqa: FBT001
-) -> None:
-    """Print --help with the options in sections, rather than in one list."""
-    if not value or ctx.resilient_parsing:
-        return
+@final
+class _SectionedHelpCommand(click.Command):
+    """A command whose --help lists the options in sections, not one list."""
 
-    command = ctx.command
-    formatter = ctx.make_formatter()
-    command.format_usage(ctx, formatter)
-    command.format_help_text(ctx, formatter)
-
-    records = {
-        param.name: record
-        for param in command.get_params(ctx)
-        if param.name and (record := param.get_help_record(ctx))
-    }
-    listed = {*_HELP_OTHER, *(name for _, names in _HELP_SECTIONS for name in names)}
-    other = (*_HELP_OTHER, *(name for name in records if name not in listed))
-    for title, names in (*_HELP_SECTIONS, ("Other", other)):
-        rows = [
-            (option.ljust(_HELP_OPTION_WIDTH), text)
-            for option, text in (records[name] for name in names if name in records)
-        ]
-        if rows:
-            with formatter.section(title):
-                formatter.write_dl(rows, col_max=_HELP_OPTION_WIDTH)
-
-    echo(formatter.getvalue().rstrip("\n"), color=ctx.color)
-    ctx.exit()
+    @override
+    def format_options(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        records = {
+            param.name: record
+            for param in self.get_params(ctx)
+            if param.name and (record := param.get_help_record(ctx))
+        }
+        listed = {*_HELP_OTHER, *(name for _, names in _HELP_SECTIONS for name in names)}
+        other = (*_HELP_OTHER, *(name for name in records if name not in listed))
+        for title, names in (*_HELP_SECTIONS, ("Other", other)):
+            rows = [
+                (option.ljust(_HELP_OPTION_WIDTH), text)
+                for option, text in (records[name] for name in names if name in records)
+            ]
+            if rows:
+                with formatter.section(title):
+                    formatter.write_dl(rows, col_max=_HELP_OPTION_WIDTH)
 
 
-@click.command("main", add_help_option=False, help="djLint · HTML template linter and formatter.")
-@click.option(
-    "-h",
-    "--help",
-    is_flag=True,
-    is_eager=True,
-    expose_value=False,
-    callback=_print_help,
-    help="Show this message and exit.",
+@click.command(
+    "main",
+    cls=_SectionedHelpCommand,
+    context_settings={"help_option_names": ["-h", "--help"]},
+    help="djLint · HTML template linter and formatter.",
 )
 @click.argument(
     "src",
