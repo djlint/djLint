@@ -13,7 +13,7 @@ Než změny použijete, prohlédněte si výstup s `--check`.
 Chcete-li zjistit, co se při formátování může změnit, spusťte:
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 Chcete-li kód naformátovat a soubory aktualizovat, spusťte:

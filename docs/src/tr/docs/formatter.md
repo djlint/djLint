@@ -13,7 +13,7 @@ Değişiklikleri uygulamadan önce çıktıyı `--check` ile gözden geçirin.
 Biçimlendirmede nelerin değişebileceğini görmek için şunu çalıştırın:
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 Kodu biçimlendirip dosyaları güncellemek için şunu çalıştırın:

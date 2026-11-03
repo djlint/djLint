@@ -131,7 +131,7 @@ djlint . --lint
 Check your format
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 Fix my format!

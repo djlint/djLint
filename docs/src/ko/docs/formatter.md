@@ -13,7 +13,7 @@ djLint의 포맷터는 엉성한 HTML 템플릿을 받아 일관되고 읽기 �
 포맷하면 무엇이 바뀌는지 검토하려면 다음을 실행합니다.
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 코드를 포맷하고 파일을 업데이트하려면 다음을 실행합니다.
