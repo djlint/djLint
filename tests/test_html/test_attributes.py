@@ -1090,6 +1090,30 @@ test_data = [
         id="a_template_tag_written_against_the_tag_name_stays_against_it",
     ),
     pytest.param(
+        (
+            '<td valign="top" align="center" style="max-width:600px;" class="min_width">x</td>\n'
+            '<img alt="aaaaaaaaaa" srcset="a.png 1x,   b.png 2x" class="bbbbbbbbbbbbbbbb">\n'
+        ),
+        (
+            '<td valign="top" align="center" style="max-width:600px;" class="min_width">x</td>\n'
+            '<img alt="aaaaaaaaaa" srcset="a.png 1x,   b.png 2x" class="bbbbbbbbbbbbbbbb">\n'
+        ),
+        id="a_tag_short_enough_once_its_style_or_srcset_is_rewritten_stays_on_its_line",
+    ),
+    pytest.param(
+        (
+            '<div style srcset class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">x</div>\n'
+        ),
+        (
+            "<div style\n"
+            "     srcset\n"
+            '     class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '     id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">x</div>\n'
+        ),
+        id="a_style_or_srcset_with_no_value_is_spread_like_any_other",
+    ),
+    pytest.param(
         ('<div class="a\nb" style="c: 1;\nd: 2">x</div>\n'),
         ('<div class="a b" style="c: 1; d: 2">x</div>\n'),
         id="a_line_break_in_a_token_list_or_css_value_is_only_layout",

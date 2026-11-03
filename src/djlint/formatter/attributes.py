@@ -44,26 +44,50 @@ def _glued_to_bare_value(attribute_group: str, value: str, value_end: int) -> bo
     )
 
 
-_REWRITTEN_FROM_STRIPPED_PARTS_PATTERN: Final = compile_pattern(
-    r"\b(?:style|srcset|data-srcset|sizes)[ \t]*=[ \t]*([\"'])(.*?)\1", RE_FLAGS_IS
+_LAID_OUT_VALUE_PATTERN: Final = compile_pattern(
+    r"(?<![-.:\w])(style|srcset|data-srcset|sizes)[ \t]*=[ \t]*([\"'])(.*?)\2", RE_FLAGS_IS
 )
+
+
+def _laid_out_list_value(lowered_name: str, value: str, join_space: str) -> str:
+    """Write a style or srcset value one part per line, as spreading does.
+
+    Each part is stripped and the empty ones dropped, so `a: 1;` loses its
+    trailing ";" and `a 1x,   b 2x` its padding.
+    """
+    if lowered_name == "style":
+        return f";{join_space}".join(
+            stripped for part in value.split(";") if (stripped := part.strip())
+        )
+
+    if lowered_name in _SRCSET_ATTRIBUTE_NAMES:
+        for descriptor in ("w", "x"):
+            value = f"{descriptor},{join_space}".join(
+                stripped for part in value.split(f"{descriptor},") if (stripped := part.strip())
+            )
+    return value
 
 
 def _rendered_length(config: Config, attribute_group: str) -> int:
     """Length of the attribute group as it will be written out.
 
-    Values spread over several lines arrive flattened with a space at each
-    line break. Measuring padding that the rewrite drops spreads a tag whose
-    attributes then fit on one line again on the next run.
+    Spreading a tag rewrites its style and srcset values, which arrive on
+    the next run flattened with a space at each line break. A tag only
+    short enough in that form would be spread now and joined then, so it
+    is measured in whichever form is shorter: a tag too long in both is
+    spread either way, and one short in either is left as written.
     """
     length = len(attribute_group)
     if length < config.max_attribute_length:
         return length
 
-    return length - sum(
-        len(value) - len(value.strip())
-        for match in _REWRITTEN_FROM_STRIPPED_PARTS_PATTERN.finditer(attribute_group)
-        if (value := match.group(2))
+    return length - max(
+        0,
+        sum(
+            len(value) - len(_laid_out_list_value(match.group(1).lower(), value, " "))
+            for match in _LAID_OUT_VALUE_PATTERN.finditer(attribute_group)
+            if (value := match.group(3))
+        ),
     )
 
 
@@ -446,18 +470,8 @@ def format_attributes(config: Config, html: str, token: TagToken, before_tag: st
 
         lowered_name = attrib_name.lower() if attrib_name else ""
 
-        if lowered_name == "style":
-            attrib_value = f";{join_space}".join(
-                stripped for value in attrib_value.split(";") if (stripped := value.strip())
-            )
-
-        elif lowered_name in _SRCSET_ATTRIBUTE_NAMES:
-            for descriptor in ("w", "x"):
-                attrib_value = f"{descriptor},{join_space}".join(
-                    stripped
-                    for value in attrib_value.split(f"{descriptor},")
-                    if (stripped := value.strip())
-                )
+        if attrib_value:
+            attrib_value = _laid_out_list_value(lowered_name, attrib_value, join_space)
 
         if (
             config.format_attribute_js_json
