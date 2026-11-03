@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Docs
+
+- `djlint --help` describes each option more clearly. It now gives the defaults that come from `.editorconfig`, lists the `all` profile, and names what a value holds, such as `--ignore CODES`. `--warn` no longer claims to turn errors into warnings: it only changes the exit code. The configuration page uses the same wording.
+
 ## [1.49.4] - 2026-11-03
 
 ### Performance

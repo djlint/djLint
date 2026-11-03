@@ -176,7 +176,8 @@ def _run_language_server(
     "--extension",
     type=str,
     default="",
-    help="File extension to check [default: html]",
+    metavar="EXT",
+    help="Extension of the files to look for in folders. [default: html]",
     show_default=False,
 )
 @click.option(
@@ -184,67 +185,101 @@ def _run_language_server(
     "--ignore",
     type=str,
     default="",
-    help='Codes to ignore. ex: "H014,H017"',
+    metavar="CODES",
+    help="Linter codes to skip, comma-separated, for example H014,H017.",
     show_default=False,
 )
-@click.option("--reformat", is_flag=True, help="Reformat the file(s).")
-@click.option("--check", is_flag=True, help="Check formatting on the file(s).")
+@click.option("--reformat", is_flag=True, help="Format the files in place.")
+@click.option(
+    "--check", is_flag=True, help="Show what formatting would change, without changing the files."
+)
 @click.option(
     "--stdin-filename",
     type=str,
     default=None,
-    help=(
-        "Filename to use for per-file-ignores and messages when reading from stdin. [default: -]"
-    ),
+    metavar="PATH",
+    help="Path that stands for stdin in messages, excludes and per-file ignores. [default: -]",
     show_default=False,
 )
-@click.option("--indent", type=int, help="Indent spacing. [default: 4]", show_default=False)
-@click.option("--quiet", is_flag=True, help="Do not print diff when reformatting.")
+@click.option(
+    "--indent",
+    type=int,
+    metavar="N",
+    help="Spaces per indent level. [default: 4, or indent_size from .editorconfig]",
+    show_default=False,
+)
+@click.option("--quiet", is_flag=True, help="Do not print diffs, the progress bar or the summary.")
 @click.option(
     "--profile",
     type=str,
-    help="Enable defaults by template language. ops: django, jinja, nunjucks, handlebars, liquid, golang, angular, tera, askama, html [default: html]",
+    metavar="NAME",
+    help=(
+        "Template language: html, django, jinja, nunjucks, handlebars, liquid, golang,"
+        " angular, tera, askama or all. It decides which linter rules run and how"
+        " template syntax is formatted. [default: html]"
+    ),
 )
 @click.option(
     "--require-pragma",
     is_flag=True,
-    help="Only format or lint files that starts with a comment with the text 'djlint:on'",
+    help="Only format or lint files whose first line is a djlint:on comment.",
 )
-@click.option("--lint", is_flag=True, help="Lint for common issues. [default option]")
-@click.option("--use-gitignore", is_flag=True, help="Use .gitignore file to extend excludes.")
+@click.option(
+    "--lint",
+    is_flag=True,
+    help="Lint the files. This is the default when neither --reformat nor --check is given.",
+)
+@click.option("--use-gitignore", is_flag=True, help="Also skip the paths that .gitignore lists.")
 @click.option(
     "--allow-empty-input",
     is_flag=True,
     help="Exit with 0 instead of 2 when the given paths match no files.",
 )
-@click.option("--warn", is_flag=True, help="Return errors as warnings.")
 @click.option(
-    "--preserve-leading-space", is_flag=True, help="Attempt to preserve leading space on text."
+    "--warn",
+    is_flag=True,
+    help="Exit with 0 instead of 1 when there are lint errors or files to reformat.",
 )
-@click.option("--preserve-blank-lines", is_flag=True, help="Attempt to preserve blank lines.")
+@click.option(
+    "--preserve-leading-space",
+    is_flag=True,
+    help="Keep the leading spaces of text lines where possible.",
+)
+@click.option("--preserve-blank-lines", is_flag=True, help="Keep blank lines where possible.")
 @click.option(
     "--preserve-class-newlines",
     is_flag=True,
-    help="Preserve line breaks inside multiline class attributes.",
+    help="Keep the line breaks in class attributes written across lines.",
 )
-@click.option("--format-css", is_flag=True, help="Also format contents of <style> tags.")
-@click.option("--format-js", is_flag=True, help="Also format contents of <script> tags.")
+@click.option(
+    "--format-css",
+    is_flag=True,
+    help="Also format the contents of <style> tags, with css-beautify.",
+)
+@click.option(
+    "--format-js", is_flag=True, help="Also format the contents of <script> tags, with js-beautify."
+)
 @click.option(
     "--format-attribute-js-json",
     is_flag=True,
-    help="Also format JavaScript/JSON inside HTML attributes.",
+    help="Also format JavaScript and JSON in attributes such as onclick and x-data.",
 )
 @click.option(
     "--format-attribute-js-json-pattern",
     type=str,
     default="",
-    help="Regex pattern to match JavaScript attributes.",
+    metavar="REGEX",
+    help=(
+        "Regex for the names of the attributes to format as JavaScript or JSON. [default: on*"
+        " event handlers and Alpine, Vue, Angular and Aurelia bindings]"
+    ),
     show_default=False,
 )
 @click.option(
     "--format-attribute-js-json-min-props",
     type=int,
-    help="Minimum number of properties to treat attribute content as JS/JSON.",
+    metavar="N",
+    help="Format an object only when it has at least this many properties. [default: 2]",
     show_default=False,
 )
 @click.option(
@@ -258,15 +293,15 @@ def _run_language_server(
         allow_dash=True,
         path_type=Path,
     ),
-    help="Path to global configuration file in djlint.toml, .djlint.toml, or .djlintrc format",
+    help=(
+        "Global config file: a pyproject.toml, djlint.toml or .djlintrc. The project's own"
+        " config file wins where both set an option."
+    ),
 )
 @click.option(
     "--prefer-configuration",
     is_flag=True,
-    help=(
-        "Let --configuration override the project's own config file,"
-        " rather than the other way round."
-    ),
+    help="Let the --configuration file win over the project's own config file.",
 )
 @click.option(
     "--rules",
@@ -278,64 +313,105 @@ def _run_language_server(
         resolve_path=True,
         path_type=Path,
     ),
-    help="Path to custom rules file in .djlint_rules.yaml format",
+    help="Custom linter rules, in the .djlint_rules.yaml format.",
 )
 @click.option(
-    "--statistics", is_flag=True, help="Count the number of occurrences of each error/warning code."
+    "--statistics", is_flag=True, help="After linting, print how many times each code was found."
 )
 @click.option(
-    "--include", type=str, default="", help='Codes to include. ex: "H014,H017"', show_default=False
+    "--include",
+    type=str,
+    default="",
+    metavar="CODES",
+    help="Linter codes to turn on that are off by default, comma-separated, for example H017.",
+    show_default=False,
 )
-@click.option("--ignore-case", is_flag=True, help="Do not fix case on known html tags.")
+@click.option("--ignore-case", is_flag=True, help="Do not fix the case of known HTML tags.")
 @click.option(
-    "--ignore-blocks", type=str, default="", help="Comma list of template blocks to not indent."
+    "--ignore-blocks",
+    type=str,
+    default="",
+    metavar="TAGS",
+    help="Template blocks that do not indent their contents, comma-separated.",
 )
 @click.option(
     "--blank-line-after-tag",
     type=str,
     default="",
-    help="Add an additional blank line after {% <tag> ... %} tag groups.",
+    metavar="TAGS",
+    help="Template tags to follow with a blank line, comma-separated, for example load,extends.",
 )
 @click.option(
     "--blank-line-before-tag",
     type=str,
     default="",
-    help="Add an additional blank line before {% <tag> ... %} tag groups.",
+    metavar="TAGS",
+    help="Template tags to precede with a blank line, comma-separated, for example load,extends.",
 )
 @click.option(
     "--line-break-after-multiline-tag",
     is_flag=True,
-    help="Do not condense the content of multi-line tags into the line of the last attribute.",
+    help="When a tag's attributes are spread over lines, start its content on a new line.",
 )
 @click.option(
     "--custom-blocks",
     type=str,
     default="",
-    help="Indent custom template blocks. For example {% toc %}...{% endtoc %}",
+    metavar="TAGS",
+    help="Names of the custom template blocks to indent, comma-separated, for example toc.",
 )
 @click.option(
-    "--custom-html", type=str, default="", help="Indent custom HTML tags. For example <mjml>"
-)
-@click.option("--exclude", type=str, default="", help="Override the default exclude paths.")
-@click.option(
-    "--extend-exclude", type=str, default="", help="Add additional paths to the default exclude."
-)
-@click.option(
-    "--linter-output-format", type=str, default="", help="Customize order of linter output message."
+    "--custom-html",
+    type=str,
+    default="",
+    metavar="TAGS",
+    help="Names of the custom HTML tags to indent, comma-separated, for example mjml.",
 )
 @click.option(
-    "--max-line-length", type=int, help="Max line length. [default: 120]", show_default=False
+    "--exclude",
+    type=str,
+    default="",
+    metavar="PATHS",
+    help="Paths to skip, comma-separated, in place of the default list.",
+)
+@click.option(
+    "--extend-exclude",
+    type=str,
+    default="",
+    metavar="PATHS",
+    help="Paths to skip on top of the default list, comma-separated.",
+)
+@click.option(
+    "--linter-output-format",
+    type=str,
+    default="",
+    metavar="FORMAT",
+    help=(
+        "Layout of each lint message, from {filename}, {line}, {end}, {code}, {message}"
+        " and {match}. [default: {code} {line} {message} {match}]"
+    ),
+)
+@click.option(
+    "--max-line-length",
+    type=int,
+    metavar="N",
+    help=(
+        "Join tags onto one line only when the line fits within this length. [default:"
+        " 120, or max_line_length from .editorconfig]"
+    ),
+    show_default=False,
 )
 @click.option(
     "--max-attribute-length",
     type=int,
-    help="Max attribute length. [default: 70]",
+    metavar="N",
+    help="Spread a tag's attributes over lines once they are longer than this. [default: 70]",
     show_default=False,
 )
 @click.option(
     "--format-attribute-template-tags",
     is_flag=True,
-    help="Attempt to format template syntax inside of tag attributes.",
+    help="Format template syntax inside tag attributes.",
 )
 @click.option(
     "--single-attribute-per-line",
@@ -346,60 +422,86 @@ def _run_language_server(
     "--per-file-ignores",
     type=(str, str),
     multiple=True,
-    help="Ignore linter rules on a per-file basis.",
+    metavar="<PATTERN CODES>...",
+    help="Skip linter codes in the files whose path matches a regex. Can be repeated.",
 )
-@click.option("--indent-css", type=int, help="Set CSS indent level.", show_default=False)
-@click.option("--indent-js", type=int, help="Set JS indent level.", show_default=False)
+@click.option(
+    "--indent-css",
+    type=int,
+    metavar="N",
+    help="Indent width inside <style> tags, for --format-css. [default: 4]",
+    show_default=False,
+)
+@click.option(
+    "--indent-js",
+    type=int,
+    metavar="N",
+    help="Indent width inside <script> tags, for --format-js. [default: 4]",
+    show_default=False,
+)
 @click.option(
     "--close-void-tags",
     is_flag=True,
-    help="Add closing mark on known void tags. Ex: <img> becomes <img />",
+    help="Close void tags with a slash, so <img> becomes <img />.",
 )
 @click.option(
-    "--no-line-after-yaml", is_flag=True, help="Do not add a blank line after yaml front matter."
+    "--no-line-after-yaml", is_flag=True, help="Do not add a blank line after YAML front matter."
 )
 @click.option(
-    "--name-endblocks", is_flag=True, help="Name the endblock of a block written across lines."
+    "--name-endblocks",
+    is_flag=True,
+    help="Name the block in its {% endblock %} when the block spans lines.",
 )
 @click.option(
     "--sort-attributes",
     is_flag=True,
     help="Sort attributes by name, with id first and class second.",
 )
-@click.option("--sort-load-tags", is_flag=True, help="Sort the libraries in {% load %} tags.")
 @click.option(
-    "--no-indent-inner-html", is_flag=True, help="Do not indent <head> and <body> below <html>."
+    "--sort-load-tags",
+    is_flag=True,
+    help="Sort the libraries in {% load %} tags and drop repeated ones.",
 )
 @click.option(
-    "--no-function-formatting", is_flag=True, help="Do not attempt to format function contents."
+    "--no-indent-inner-html", is_flag=True, help="Do not indent <head> and <body> inside <html>."
 )
-@click.option("--no-set-formatting", is_flag=True, help="Do not attempt to format set contents.")
+@click.option(
+    "--no-function-formatting",
+    is_flag=True,
+    help="Do not format the arguments of function calls inside {{ }}.",
+)
+@click.option(
+    "--no-set-formatting", is_flag=True, help="Do not format the contents of {% set %} tags."
+)
 @click.option("--keep-br-inline", is_flag=True, help="Keep <br> on the line of the text it breaks.")
 @click.option(
-    "--no-entity-formatting", is_flag=True, help="Do not rewrite entity references as characters."
+    "--no-entity-formatting",
+    is_flag=True,
+    help="Do not rewrite entity references such as &copy; as the characters they name.",
 )
 @click.option(
     "--quote-style",
     type=click.Choice(("double", "single")),
-    help="Quotes to use for strings inside template tags. [default: double]",
+    help="Quotes for strings inside template tags. [default: double]",
     show_default=False,
 )
 @click.option(
     "--max-blank-lines",
     type=int,
-    help="Consolidate blank lines down to x lines. [default: 0]",
+    metavar="N",
+    help="Keep at most this many blank lines in a row. [default: 0]",
     show_default=False,
 )
 @click.option(
     "--github-output/--no-github-output",
     is_flag=True,
     default=None,
-    help="Output GitHub-compatible formatting.",
+    help="Print results as GitHub Actions annotations. On by default inside GitHub Actions.",
 )
 @click.option(
     "--sarif",
     is_flag=True,
-    help="Output findings as SARIF 2.1.0 json, for GitHub code scanning and other tools.",
+    help="Print findings as a SARIF 2.1.0 JSON document, for GitHub code scanning and other tools.",
 )
 @_keep_mypyc_wheels_from_crashing
 @_fail_with_usage_code
