@@ -915,7 +915,7 @@ test_data = [
     ),
     pytest.param(
         ("<p title=a'b>String</p>"),
-        ("<p title=a'b>String\n</p>\n"),
+        ("<p title=a'b>String</p>\n"),
         id="a browser reads this as the single value a'b, so quoting the a would turn the rest into an attribute of its own",
     ),
     pytest.param(
@@ -1043,6 +1043,140 @@ test_data = [
         ('<img alt="a\nb" title="c\n  d">\n'),
         ('<img alt="a\nb"\n     title="c\n  d">\n'),
         id="a_line_break_inside_an_attribute_value_is_kept",
+    ),
+    pytest.param(
+        ('<div title="{{ a +\n      b\n    }}">x</div>\n'),
+        ('<div title="{{ a +\n      b\n    }}">x</div>\n'),
+        id="a_template_tag_closing_after_a_kept_line_break_keeps_its_indentation",
+    ),
+    pytest.param(
+        ('<div>\n<div title="x"\n     id="{{\n      a(1) +\n      b\n    }}">x</div>\n</div>\n'),
+        (
+            '<div>\n    <div title="x"\n         id="{{\n      a(1) +\n      b\n    }}">x</div>\n</div>\n'
+        ),
+        id="a_call_on_its_own_line_inside_a_template_tag_in_a_value_stays_there",
+    ),
+    pytest.param(
+        (
+            '<a class="x"{{ s }} href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n'
+            '<a class="x"{% if a %} data-a{% endif %} href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n'
+            '<a href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"{{ s }}>t</a>\n'
+        ),
+        (
+            '<a class="x"{{ s }}\n'
+            '   href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '   id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n'
+            '<a class="x"{% if a %} data-a{% endif %}\n'
+            '   href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '   id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n'
+            '<a href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '   id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"{{ s }}>t</a>\n'
+        ),
+        id="a_template_tag_written_against_an_attribute_stays_on_its_line",
+    ),
+    pytest.param(
+        (
+            '<div{% if a %} hidden{% endif %} class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</div>\n'
+        ),
+        (
+            "<div{% if a %} hidden{% endif %}\n"
+            '     class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '     id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</div>\n'
+        ),
+        id="a_template_tag_written_against_the_tag_name_stays_against_it",
+    ),
+    pytest.param(
+        (
+            '<td valign="top" align="center" style="max-width:600px;" class="min_width">x</td>\n'
+            '<img alt="aaaaaaaaaa" srcset="a.png 1x,   b.png 2x" class="bbbbbbbbbbbbbbbb">\n'
+        ),
+        (
+            '<td valign="top" align="center" style="max-width:600px;" class="min_width">x</td>\n'
+            '<img alt="aaaaaaaaaa" srcset="a.png 1x,   b.png 2x" class="bbbbbbbbbbbbbbbb">\n'
+        ),
+        id="a_tag_short_enough_once_its_style_or_srcset_is_rewritten_stays_on_its_line",
+    ),
+    pytest.param(
+        (
+            '<div style srcset class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+            ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">x</div>\n'
+        ),
+        (
+            "<div style\n"
+            "     srcset\n"
+            '     class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+            '     id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">x</div>\n'
+        ),
+        id="a_style_or_srcset_with_no_value_is_spread_like_any_other",
+    ),
+    pytest.param(
+        (
+            '<div data-x="{{ "a > b" }}">x</div>\n'
+            '<a data-x="{{ "a > b" }}">x</a>\n'
+            '<script data-x="{{ "a > b" }}"></script>\n'
+            '<style data-x="{% if a > b %}c{% endif %}">a{color:red}</style>\n'
+            "<textarea data-x=\"{{ 'a > b' }}\">  t  </textarea>\n"
+        ),
+        (
+            '<div data-x="{{ "a > b" }}">x</div>\n'
+            '<a data-x="{{ "a > b" }}">x</a>\n'
+            '<script data-x="{{ "a > b" }}"></script>\n'
+            '<style data-x="{% if a > b %}c{% endif %}">a{color:red}</style>\n'
+            "<textarea data-x=\"{{ 'a > b' }}\">  t  </textarea>\n"
+        ),
+        id="a_gt_in_a_template_tag_in_a_value_is_not_the_end_of_the_tag",
+    ),
+    pytest.param(
+        (
+            '<div data-x="{{ "a  =  b" }}" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+            '<div class="x  {{ "a  b" }}  {% if a == "b  c" %}d{% endif %}">x</div>\n'
+            '<div style="a: 1;\n  b: {{ "c\n  d" }}">x</div>\n'
+            '<div style="color: red; content: {{ x|default("a;b") }}" class="aaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+            '<img srcset="{{ f("a 1x, b") }} 2x, c.png 3x" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">\n'
+        ),
+        (
+            '<div data-x="{{ "a  =  b" }}"\n'
+            '     class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+            '<div class="x {{ "a  b" }} {% if a == "b  c" %}d{% endif %}">x</div>\n'
+            '<div style="a: 1;\n            b: {{ "c\n  d" }}">x</div>\n'
+            '<div style="color: red;\n'
+            '            content: {{ x|default("a;b") }}"\n'
+            '     class="aaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+            '<img srcset="{{ f("a 1x, b") }} 2x,\n'
+            '             c.png 3x"\n'
+            '     class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">\n'
+        ),
+        id="text_inside_a_template_tag_in_a_value_is_kept_as_written",
+    ),
+    pytest.param(
+        ('<img srcset="a.png 1x,\n  {{ f("b\n  c") }} 2x">\n'),
+        ('<img srcset="a.png 1x,\n             {{ f("b\n  c") }} 2x">\n'),
+        id="a_line_break_in_a_template_string_in_a_srcset_is_kept",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            '<script type="text/plain" id="upgrade_user" data-link="aaaaaaaaaaa" data-price="bbb">\n'
+            "</script>\n"
+            '<style media="screen and (min-width: 900px)" title="aaaaaaaaaaaaaaaaaaaaaaaaa">\n'
+            "</style>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            '    <script type="text/plain"\n'
+            '            id="upgrade_user"\n'
+            '            data-link="aaaaaaaaaaa"\n'
+            '            data-price="bbb"></script>\n'
+            '    <style media="screen and (min-width: 900px)"\n'
+            '           title="aaaaaaaaaaaaaaaaaaaaaaaaa"></style>\n'
+            "</div>\n"
+        ),
+        id="an_empty_script_put_on_one_line_has_its_attributes_spread",
     ),
     pytest.param(
         ('<div class="a\nb" style="c: 1;\nd: 2">x</div>\n'),

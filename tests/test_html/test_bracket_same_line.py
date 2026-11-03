@@ -112,7 +112,9 @@ test_data = [
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>\n'
             '<span class="a">text</span>\n'
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
-            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"> text</span>\n'
+            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
+            "    text\n"
+            "</span>\n"
             '<span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span>\n'
         ),
         id="inline",
@@ -137,7 +139,9 @@ test_data = [
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>\n'
             '<span class="a">text</span>\n'
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
-            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"> text</span>\n'
+            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
+            "    text\n"
+            "</span>\n"
             '<span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span>\n'
         ),
         id="inline_bracket_same_line",

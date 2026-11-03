@@ -4,6 +4,36 @@
 
 ## [Unreleased]
 
+### Performance
+
+- A template with hundreds of lines that each open a `{{`, `{% set %}` or `{% include %}` left unclosed, as in `{{ 'a` on every line, formats in well under a second. Four hundred such lines took from 45 seconds to seven minutes. Linting such lines with `T002` no longer slows down the same way.
+- A tag holding thousands of template tags written without spaces, as in `<script {%a%}{%a%}…>`, formats and lints in well under a second. Each template tag was also tried a character at a time, which took tens of seconds.
+
+### Bug fixes
+
+- Formatting a template a second time no longer changes it in the cases below, so `djlint --check` passes right after `djlint --reformat`.
+- An element or a template block is put on one line only when the whole line fits within `--max-line-length`, its indentation and any text beside it included. A line that fit only without its indentation was joined, and the next run spread its attributes.
+- A tag whose attributes fit within `--max-attribute-length` once a `style` or `srcset` value loses its trailing `;` or extra spaces stays on one line. It was spread, and the next run joined it again.
+- A `{% blocktrans trimmed %}` inside a `{% filter %}` no longer ends the filter early. Everything after it lost its indentation, and the next run indented the `{% endfilter %}` again.
+- An empty `<script>` or `<style>` written across lines, whose attributes are longer than `--max-attribute-length`, has them spread when it is put on one line. It took a second run.
+- A tag written in a string inside a `{{ }}`, `{% %}` or mako `${ }` that spans lines, as in `HTML('<a class="x" href="y">')` on a line of its own, no longer has its attributes spread over several lines. That put line breaks into the string, which in mako is an error, and the next run moved them again.
+- A template tag in an attribute value that holds the value's own quote and an apostrophe, as in `value="{{ _("Students' list") }}"` or mako's `value="${_("Students' list")}"`, no longer upsets the layout of the lines that follow. The quote was read as the end of the value and the apostrophe as the start of another.
+- A stray quote in a tag, as in `<button "="" title="x">` or `id="a""`, no longer stops djLint from reading the tags after it. Only a quote after `=` opens a value, as browsers read it. Before, the rest of the file was skipped: the linter reported its elements as orphans (`H025`) and the formatter indented them differently on each run. A quote inside a bare value, as in `title=a'b`, is part of the value for the same reason.
+- A `>` in a string of a template tag inside an attribute value, as in `data-x="{{ "a > b" }}"`, no longer ends the tag. The formatter took out the space beside it, which changed the string.
+- Text inside a template tag in an attribute value is left as written. The formatter collapsed the spaces in `class="{{ "a  b" }}"`, closed up `"a  =  b"`, joined a line break in a string in a `style` or `srcset`, split a `style` at a `;` or a `srcset` at a `,` inside a template tag, and with `--format-js` or `--format-css` took a `>` in one for the end of the `<script>` or `<style>` tag.
+- A tag with a single attribute is no longer spread over several lines because its line is longer than `--max-line-length`, as the rule for long lines intends. A lone `style` was split at each `;`, and the next run could join it again.
+- A tag with a `style` or `srcset` attribute that has no value no longer stops the formatter with an error when its attributes are spread over several lines.
+- A `type="text/javascript"` or `type="text/css"` is dropped, and a form's `method` lowercased, also when the value is written without quotes or with spaces around `=`. It used to take a second run.
+- A call written on the line after `{{`, with `}}` on a line of its own, stays where it was written. It used to be pulled up onto the `{{` line with its arguments a level too deep, which the next run corrected.
+- A template tag written across lines inside an attribute value keeps its layout, including the indentation of the line it closes on.
+- Whitespace inside a quoted string that spans lines in a template tag, as in `{% set %}` or `{% trans %}`, is kept, also when the string holds a `%}`, `{%`, `}}` or `{{`, or a comment before it holds a quote. It was stripped or replaced with indentation, which changed the string.
+- A short template block written across lines stays that way also when it holds a string whose quotes the formatter rewrites, as in `{% if x %}` followed by `{{ _('Deleted') }}` on its own line. It used to be put on one line.
+- The formatter drops a `type` only where it is the element's default: `text/javascript` on a `<script>`, and `text/css` on a `<style>` or a `<link rel="stylesheet">`. A `<script type="text/css">`, a `<style type="text/javascript">`, a `<link>` that is not a stylesheet, or whose `rel` a template tag helps write or comes after one (a `rel` written inside a `{# #}` comment does not count), and a custom element such as `<script-x>` keep theirs. So does an attribute with a longer name, such as `@type` or `@method`. A default `type` followed by another `type` in the same tag, as in `<script type="text/javascript" type="module">`, is kept too: a browser reads the first one, so dropping it changed what the page ran. So is one followed by a template tag outside a value, as in `<script type="text/javascript" {{ attrs }}>`, since the tag may write a `type` of its own. A template tag that is part of a value, as in `src={{ url }}` or `data-x="{{ "a > b" }}"`, does not count, and `type=` written inside one is not taken for another type. A default `type` written twice, as in `type="text/javascript" type=text/javascript`, is dropped both times in one run. Text inside a string of a template tag in the tag, as in `{{ '}} type=text/javascript' }}`, is not taken for an attribute either. A `type` or `method` next to a template tag written with `-`, as in `{{- x }}`, is left as written, since dropping the type would join what the `-` trims. `H024` reports the same cases, also when the value is written without quotes or with spaces around `=`.
+- A template comment written after the last attribute of a tag, as in `<div class="x" {# note #}>`, is kept. With a profile that has `{# #}` comments, the formatter deleted it.
+- An unquoted attribute value next to a template tag written with `-`, as in `class=x {{- suffix }}` or `class={{ c -}} x`, stays unquoted. The `-` joins the text beyond it onto the value, and quoting the value left that text outside, which changed the attribute.
+- A template tag written against an attribute or against the tag name, as in `<option value="x"{% if a %} selected{% endif %}>` or `<li{{ attrs }}>`, stays there when the attributes are spread over several lines. A line break or space was put between them, which the page then rendered.
+- `H056` no longer reads a `src` written inside a template tag, as in `<img {% if src %}class="a"{% endif %} src="a.png">`, as an empty `src` of the tag.
+
 ## [1.49.3] - 2026-11-02
 
 ### Bug fixes

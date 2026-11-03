@@ -117,6 +117,81 @@ templates = [
         "<div hidden><pre>  keep  </pre><script>var a = 1</script><br></div>\n",
         id="inline pre before a script on one line",
     ),
+    pytest.param(
+        "<div>\n<div>\n<div>\n"
+        '<a class="btn btn-primary" href="{{ url_for(\'org.new\') }}">\n'
+        "{{ _('Create a new organization now, then add data') }}\n</a>\n</div>\n</div>\n</div>\n",
+        id="element whose content fits on its line only without the indentation",
+    ),
+    pytest.param(
+        "<script type=text/javascript>\nvar a = 1\n</script>\n", id="unquoted default type"
+    ),
+    pytest.param(
+        "<nav>\n  {{\n    pagination({\n      'a': { 'c': 'x' },\n      'b': y\n    })\n  }}\n</nav>\n",
+        id="call on the line after its opening braces",
+    ),
+    pytest.param(
+        "<link rel=\"a\"\n      href=\"/c?f={{\n        t | r(' ', '+') +\n        c\n"
+        '      }}&d=f" />\n',
+        id="template tag across lines in an attribute value",
+    ),
+    pytest.param(
+        '<div>\n{% set x = "a\n   b" %}\n{{ f("c\n  d") }}\n</div>\n',
+        id="string across lines in a template tag",
+    ),
+    pytest.param(
+        '{% raw %}{{ "a\n   b" }}{% endraw %}\n<pre>{{ "c\n  d" }}</pre>\n'
+        '<!-- djlint:off -->\n{% set x = "e\n f" %}\n<!-- djlint:on -->\n'
+        '<script>var a = {{ "g\n  h" }};</script>\n',
+        id="string across lines in a template tag left as written",
+    ),
+    pytest.param(
+        '<div title=\'{{ "a\n   b" }}\' x-data="{ a: \'{{ "c\n  d" }}\', b: 1, c: 2 }"'
+        " srcset='{{ \"e\n f\" }} 1x, b 2x' class='{{ \"g\n h\" }}'>x</div>\n",
+        id="string across lines in a template tag in attribute values",
+    ),
+    pytest.param(
+        "<script type=text/javascript {{- s }}></script>\n<form method=POST {{- s }}></form>\n"
+        "<style type=text/javascript></style>\n<link type=text/css rel=icon>\n"
+        "<script type=text/javascript/></script>\n",
+        id="types and methods left alone or dropped",
+    ),
+    pytest.param(
+        '<div>\n{% trans "a %}\n   b" %}\n</div>\n', id="string across lines holding a closer"
+    ),
+    pytest.param(
+        '<div class="aaaaaaaaaaaaaaaaaaaa" id="bbbbbbbbbbbbbbbbbbbb" {# note #}>t</div>\n'
+        "<p {# note #}>t</p>\n",
+        id="template comment ending the attributes",
+    ),
+    pytest.param(
+        "<a class=x {{- s }} href=/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa id=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb>"
+        "t</a>\n<a class={{ c -}} x>t</a>\n<a class=x {#- c #}y>t</a>\n",
+        id="bare value beside a trimming template tag",
+    ),
+    pytest.param(
+        '<div{% if a %} hidden{% endif %} class="aaaaaaaaaaaaaaaaaaaaaaaaaaaa"{{ s }}'
+        ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"{# c #}>t</div>\n',
+        id="template tags written against the tag name or an attribute",
+    ),
+    pytest.param(
+        '<p><input value="{{ _("a students\' b") }}"></p>\n<p>x</p>\n',
+        id="the attribute's own quote in a template string inside it",
+    ),
+    pytest.param(
+        '<button class="control" aria-disabled="false" "="" title="Adjust video volume">'
+        '<button class="control quality-control is-hidden" aria-disabled="false" title="HD">\n',
+        id="a stray quote in a tag",
+    ),
+    pytest.param(
+        '<div data-x="{{ "a  =  b" }}" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+        '<div class="x  {{ "a  b" }}">x</div>\n<div style="a: 1;\n  b: {{ "c\n  d" }}">x</div>\n'
+        '<div style="color: red; content: {{ x|default("a;b") }}" class="aaaaaaaaaaaaaaaaaaaaaa">'
+        "x</div>\n"
+        '<img srcset="{{ f("a 1x, b") }} 2x, c.png 3x" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">\n'
+        '<script type="text/javascript" src={{url}} data-x="{{ "a > b" }}"></script>\n',
+        id="template tags in attribute values",
+    ),
 ]
 
 option_sets = [
@@ -133,6 +208,10 @@ option_sets = [
     pytest.param(
         {"profile": "golang", "preserve_leading_space": True}, id="golang-preserve-leading-space"
     ),
+    pytest.param(
+        {"profile": "jinja", "format_attribute_js_json": True, "preserve_class_newlines": True},
+        id="jinja-format-attribute-js-json",
+    ),
 ]
 
 
@@ -145,3 +224,5 @@ def test_formatting_is_a_fixed_point(source: str, args: dict[str, Any]) -> None:
 
     printer(once, source, twice)
     assert once == twice
+    # The markers holding line breaks during formatting never reach the output.
+    assert "\x00" not in once

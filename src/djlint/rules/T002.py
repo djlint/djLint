@@ -25,10 +25,12 @@ if TYPE_CHECKING:
 
 SINGLE_QUOTE_MESSAGE: Final = "Single quotes should be used in tags."
 
+# A tag left open ends at the next opener, as the formatter reads it, so a run
+# of unclosed ones is read once rather than each to the end of the file.
 _QUOTED_TAG_TEMPLATE: Final = (
     rf"{{%[-+]?[ \t]*?(?:{TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS})[\s]+?"
-    r"(?:(?:(?!%}|QUOTE).)+?=)?QUOTE(?:(?!%}|QUOTE|WANTED).)*?QUOTE"
-    r"(?:(?!%}).)*?%}"
+    r"(?:(?:(?!%}|{%|QUOTE).)+?=)?QUOTE(?:(?!%}|{%|QUOTE|WANTED).)*?QUOTE"
+    r"(?:(?!%}|{%).)*?%}"
 )
 _WRONGLY_QUOTED_TAG_PATTERNS: Final = {
     style: compile_pattern(

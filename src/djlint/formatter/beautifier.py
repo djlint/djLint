@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
+from djlint.const import QUOTED_ATTRIBUTE_VALUE, TEMPLATE_TAG_WHOLE
 from djlint.helpers import (
     RE_FLAGS_IS,
     child_of_unformatted_block,
@@ -22,9 +23,14 @@ if TYPE_CHECKING:
 
 
 def raw_text_block_pattern(tag: str) -> re.Pattern[str]:
-    """Match a tag's leading indent, its opening tag and its contents."""
+    """Match a tag's leading indent, its opening tag and its contents.
+
+    A template tag in the opening tag is read whole, so a ">" in one, as in
+    data-x="{{ "a > b" }}", is not taken for the start of the contents.
+    """
     return compile_pattern(
-        rf"([ ]*?)(<{tag}\b(?:\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(.*?)(?=</{tag}>)",
+        rf"([ ]*?)(<{tag}\b(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}"
+        rf"|[^'\">{{}}])*+>)(.*?)(?=</{tag}>)",
         RE_FLAGS_IS,
     )
 

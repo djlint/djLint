@@ -43,6 +43,14 @@ _HTML_TAG_NAME_PATTERN: Final = compile_pattern(r"^</?\s*([a-zA-Z][-\w:.]*)")
 _TRANSPARENT_ELEMENTS: Final = (
     (HTML_INLINE_LEVEL_ELEMENTS | HTML_VOID_ELEMENTS) - HTML_ATOMIC_INLINE_ELEMENTS - {"br", "hr"}
 )
+# One piece of a tag's attributes. A template tag in a quoted value is read
+# whole, so a quote inside it, as in `value="${_("it's")}"`, neither ends the
+# value nor opens another that runs on past the end of the tag.
+_VALUE_TEMPLATE_TAG: Final = r"\$\{[^{}\n]*\}|\{\{(?:(?!\}\}|\{\{).)*+\}\}|\{%(?:(?!%\}|\{%).)*+%\}"
+_ATTRIBUTE_PART: Final = (
+    rf"\"(?:{_VALUE_TEMPLATE_TAG}|[^\"])*+\"|'(?:{_VALUE_TEMPLATE_TAG}|[^'])*+'"
+    r"|{[^}]*}|[^'\">{}]"
+)
 _BREAK_BEFORE_TAG: Final = "\n%s"
 _BREAK_AFTER_TAG: Final = "%s\n"
 _TEMPLATE_TAG_NAME_PATTERN: Final = compile_pattern(r"^\{%[-+]?\s*([^\s%]+)", RE_FLAGS_IX)
@@ -455,14 +463,14 @@ def expand_html(html: str, config: Config) -> str:
     break_char = config.break_before
 
     html = re.sub(
-        rf"{break_char}\K(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)",
+        rf"{break_char}\K(</?(?:{html_tags})\b({_ATTRIBUTE_PART})*>)",
         break_before_html_tag,
         html,
         flags=RE_FLAGS_IX,
     )
 
     html = re.sub(
-        rf"(</?(?:{html_tags})\b(\"[^\"]*\"|'[^']*'|{{[^}}]*}}|[^'\">{{}}])*>)(?!\s*?\n)(?=[^\n])",
+        rf"(</?(?:{html_tags})\b({_ATTRIBUTE_PART})*>)(?!\s*?\n)(?=[^\n])",
         break_after_html_tag,
         html,
         flags=RE_FLAGS_IX,
@@ -504,15 +512,20 @@ def expand_html(html: str, config: Config) -> str:
     break_before_template_tag = partial(should_i_move_template_tag, _BREAK_BEFORE_TAG)
     break_after_template_tag = partial(should_i_move_template_tag, _BREAK_AFTER_TAG)
 
+    # A tag left open ends at the next opener, or each of a run of unclosed
+    # ones is read to the end of the file.
     html = re.sub(
-        break_char + r"\K((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%}]})",
+        break_char
+        + r"\K((?:{%|{{\#)[ ]*?(?:"
+        + config.break_template_tags
+        + r")(?:(?!\{[{%])[^}])+?[%}]})",
         break_before_template_tag,
         html,
         flags=RE_FLAGS_IMX,
     )
 
     html = re.sub(
-        rf"((?:{{%|{{{{\#)[ ]*?(?:{config.break_template_tags})(?>{config.template_tags}|[^}}])+?[%}}]}})(?=[^\n])",
+        rf"((?:{{%|{{{{\#)[ ]*?(?:{config.break_template_tags})(?>{config.template_tags}|(?!\{{[{{%])[^}}])+?[%}}]}})(?=[^\n])",
         break_after_template_tag,
         html,
         flags=RE_FLAGS_IMX,

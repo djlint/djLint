@@ -59,3 +59,48 @@ def test_whitespace_control_spacing(source: str, expected: str) -> None:
     printer(expected, source, output)
     assert output == expected
     assert formatter(config, output) == output
+
+
+attribute_data = [
+    pytest.param(
+        "<script type=text/javascript {{- s }}></script>\n",
+        "<script type=text/javascript {{- s }}></script>\n",
+        id="a_value_the_next_tag_glues_onto_stays_unquoted",
+    ),
+    pytest.param(
+        "<a class=x {%- if a %}y{% endif %}>t</a>\n",
+        "<a class=x {%- if a %}y{% endif %}>t</a>\n",
+        id="also_before_a_block_tag",
+    ),
+    pytest.param(
+        "<a class={{ c -}} x>t</a>\n",
+        "<a class={{ c -}} x>t</a>\n",
+        id="a_value_whose_own_tag_glues_on_what_follows_stays_unquoted",
+    ),
+    pytest.param(
+        "<a class=x {{ s }}>t</a>\n",
+        '<a class="x" {{ s }}>t</a>\n',
+        id="a_tag_that_trims_nothing_lets_the_value_be_quoted",
+    ),
+    pytest.param(
+        "<a class=x {{- s }} href=/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n',
+        "<a class=x\n"
+        "   {{- s }}\n"
+        '   href="/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\n'
+        '   id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</a>\n',
+        id="spreading_the_attributes_leaves_it_unquoted_too",
+    ),
+]
+
+
+@pytest.mark.parametrize(("source", "expected"), attribute_data)
+def test_attribute_value_beside_a_trimming_tag(source: str, expected: str) -> None:
+    """Quoting the value would leave out what the "-" glues onto it."""
+    config = config_builder({"profile": "jinja", "indent": 2})
+
+    output = formatter(config, source)
+
+    printer(expected, source, output)
+    assert output == expected
+    assert formatter(config, output) == output
