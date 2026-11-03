@@ -1094,16 +1094,16 @@ def indent_html(rawcode: str, config: Config) -> str:
         except Exception:
             try:
                 literal = ast.literal_eval(contents)
+                # A string json cannot read, as `"a" "b"`, is left as written
+                # too: str() would drop its quotes and leave a name.
+                evaluated = None if isinstance(literal, str) else str(literal)
             except Exception:
-                literal = contents
-            # A string json cannot read, as `"a" "b"`, is left as written too:
-            # str() would drop its quotes and leave a name.
-            if isinstance(literal, str):
+                evaluated = None
+            if evaluated is None:
                 if "\n" in contents:
                     return contents.strip(" \t")
                 contents = contents.strip()
             else:
-                evaluated = str(literal)
                 added_parentheses = contents[:1] != "(" and evaluated[:1] == "("
                 contents = evaluated[1:-1] if added_parentheses else evaluated
 

@@ -129,6 +129,11 @@ test_data = [
     pytest.param(
         '{{ f("""a""") }}', '{{ f("""a""") }}\n', id="triple_quoted_string_stays_a_string"
     ),
+    pytest.param(
+        "{{ f(0x" + "f" * 4000 + ") }}",
+        "{{ f(0x" + "f" * 4000 + ") }}\n",
+        id="number_too_long_to_write_out_stays_as_written",
+    ),
 ]
 
 
