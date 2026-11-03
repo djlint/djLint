@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Performance
+
+- A tag whose quoted value runs over thousands of lines, as when its closing quote is missing, no longer slows formatting down. Forty thousand such lines took over seven seconds and now take about one.
+
 ## [1.49.7] - 2026-11-03
 
 ### Feature
