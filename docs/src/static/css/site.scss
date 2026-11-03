@@ -489,8 +489,9 @@ body.has-navbar-fixed-top {
   }
 }
 
-// Home page language tiles. Flex rather than grid so a short last row
-// stays centered under the rows above it.
+// Home page language tiles. Four to a row, six on a wide screen and two
+// on a phone, so the twelve tiles fill whole rows. Flex rather than grid
+// so a short last row stays centered under the rows above it.
 .lang-grid {
   display: flex;
   flex-wrap: wrap;
@@ -499,7 +500,12 @@ body.has-navbar-fixed-top {
   margin-bottom: 1.5rem;
 
   > li {
-    width: 11.5rem;
+    width: calc((100% - 3rem) / 4);
+  }
+}
+@media screen and (min-width: $widescreen) {
+  .lang-grid > li {
+    width: calc((100% - 5rem) / 6);
   }
 }
 @media screen and (max-width: $tablet) {
