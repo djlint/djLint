@@ -290,7 +290,7 @@ requires-dist = [
     { name = "pathspec", specifier = ">=0.9.0" },
     { name = "pyyaml", specifier = ">=5.1" },
     { name = "regex", specifier = ">=2021.8.21" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13'", specifier = ">=4.3.0" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'", specifier = ">=4.4.0" },
 ]
 
 [package.metadata.requires-dev]
