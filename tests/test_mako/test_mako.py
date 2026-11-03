@@ -222,10 +222,22 @@ test_data = [
         id="a string over lines is left as written",
     ),
     pytest.param(
-        ('<% x = "${_}" %>\n<p>${a}</p>\n'),
-        ('<% x = "${_}" %>\n<p>${a}</p>\n'),
+        ('<% x = "${0}" %>\n<p>${a == "&mdash;"}</p>\n'),
+        ('<% x = "${0}" %>\n<p>${a == "&mdash;"}</p>\n'),
         ({}),
         id="a python block holding what reads as a masked expression",
+    ),
+    pytest.param(
+        ('<input value="${x}" name="${y}" id="${z}">\n'),
+        ('<input id="${z}" name="${y}" value="${x}">\n'),
+        ({"sort_attributes": True}),
+        id="sorted attributes keep their expressions",
+    ),
+    pytest.param(
+        ("<p>${ a</p>\n<p>${b == c}</p>\n"),
+        ("<p>${ a</p>\n<p>${b == c}</p>\n"),
+        ({}),
+        id="an expression that never ends",
     ),
     pytest.param(
         ("<p>\n%% of the vote\n</p>\n"),

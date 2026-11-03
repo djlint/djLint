@@ -14,6 +14,7 @@ markup, so it is swapped for a marker as well.
 from __future__ import annotations
 
 from bisect import bisect_right
+from collections import defaultdict, deque
 from typing import TYPE_CHECKING, final
 
 import regex as re
@@ -70,8 +71,11 @@ _BRACKETS: Final = {"{": (0, 1), "}": (0, -1), "(": (1, 1), ")": (1, -1), "[": (
 # What a shift of an expression's lines would change: a string or a line
 # continuation that runs over lines.
 _SPANS_LINES_PATTERN: Final = compile_pattern(r"""'{3}|"{3}|\\\n""")
-# An expression's stand-in, whose lines the formatter may have joined.
-_EXPRESSION_STAND_IN_PATTERN: Final = compile_pattern(r"\$\{[_\s]*?\}")
+# An expression's stand-in: its identity and underscores, over lines the
+# formatter may have joined.
+_EXPRESSION_STAND_IN_PATTERN: Final = compile_pattern(r"\$\{\s*([0-9a-z]+)[_\s]*?\}")
+_IDENTITY_DIGITS: Final = "0123456789abcdefghijklmnopqrstuvwxyz"
+_UNDERSCORES_PATTERN: Final = compile_pattern(r"_+")
 _NOT_NEWLINE_PATTERN: Final = compile_pattern(r"[^\n]")
 
 
@@ -81,12 +85,13 @@ class MaskedMako:
 
     The kind says what the piece is: "expression", "attributes", "line",
     "verbatim", or "open" or "close" for a Mako tag. The indent is that of
-    the line an expression starts on.
+    the line an expression starts on, or None for one in a python block,
+    whose lines must not move.
     """
 
     __slots__ = ("indent", "kind", "marker", "text")
 
-    def __init__(self, marker: str, text: str, kind: str, indent: str = "") -> None:
+    def __init__(self, marker: str, text: str, kind: str, indent: str | None = "") -> None:
         self.marker = marker
         self.text = text
         self.kind = kind
@@ -123,14 +128,14 @@ def _covers(spans: list[tuple[int, int]]) -> Callable[[int, int], bool]:
     return covered
 
 
-def _expression_end(html: str, start: int) -> int:
-    """Where the expression that opens at start ends, or -1 if it does not.
+def _expression_end(html: str, start: int, stop: int) -> int:
+    """Where the expression that opens at start ends before stop, or -1.
 
     As in Mako, the expression ends at the first "}" outside a string or a
     comment where no bracket of any kind is open.
     """
     levels = [0, 0, 0]
-    for token in _EXPRESSION_TOKEN_PATTERN.finditer(html, start + 2):
+    for token in _EXPRESSION_TOKEN_PATTERN.finditer(html, start + 2, stop):
         bracket = _BRACKETS.get(token.group())
         if bracket is None:
             continue
@@ -140,23 +145,37 @@ def _expression_end(html: str, start: int) -> int:
     return -1
 
 
-def _expressions(html: str, covered: Callable[[int, int], bool]) -> list[tuple[int, int]]:
+def _expressions(
+    html: str, covered: Callable[[int, int], bool], python_blocks: list[tuple[int, int]]
+) -> list[tuple[int, int, bool]]:
     """The `${}` expressions outside the stretches covered.
 
-    One that never ends is a syntax error in Mako, and the search stops
-    there rather than read the rest of the template again for each one
-    after it.
+    Each comes with whether it is in a python block. There it is only text
+    in the code, which the formatter leaves alone, but text that reads as a
+    stand-in would be taken for one. So it is masked too if it ends inside
+    the block. One that holds nothing is a syntax error and left alone.
+
+    Outside a python block, one that never ends is a syntax error in Mako,
+    and the search stops there rather than read the rest of the template
+    again for each one after it.
     """
-    found: list[tuple[int, int]] = []
+    found: list[tuple[int, int, bool]] = []
+    block_starts = [block_start for block_start, _ in python_blocks]
     start = html.find("${")
     while start >= 0:
         if covered(start, start + 2):
             start = html.find("${", start + 2)
             continue
-        end = _expression_end(html, start)
-        if end < 0:
+        index = bisect_right(block_starts, start) - 1
+        block_end = python_blocks[index][1] if index >= 0 else -1
+        in_block = start < block_end
+        end = _expression_end(html, start, block_end if in_block else len(html))
+        if end < 0 and not in_block:
             break
-        found.append((start, end))
+        if end < 0 or not html[start + 2 : end - 1].strip():
+            start = html.find("${", start + 2)
+            continue
+        found.append((start, end, in_block))
         start = html.find("${", end)
     return found
 
@@ -206,19 +225,37 @@ def _block_tags(html: str, covered: Callable[[int, int], bool]) -> list[tuple[in
     return found
 
 
-def _expression_stand_in(text: str) -> str:
-    """An expression of underscores in the shape of the one it stands for.
+def _identity(index: int) -> str:
+    """The index in base 36."""
+    digits = ""
+    while True:
+        index, digit = divmod(index, 36)
+        digits = _IDENTITY_DIGITS[digit] + digits
+        if not index:
+            return digits
+
+
+def _expression_stand_in(text: str, index: int) -> tuple[str, str]:
+    """A stand-in in the shape of the expression, and the identity it holds.
 
     Each line keeps its indentation and length, so the formatter lays the
     lines out as it would have, and holds no space where the formatter
-    could break it or read an attribute. A marker would make a short
-    expression longer, so the stand-ins go back in the order they come in.
+    could break it or read an attribute. The first run of the expression
+    holds its index, or the last digits of it where the run is shorter,
+    and underscores fill the rest: a marker would make a short expression
+    longer. The stand-ins go back in the order they come in, the identity
+    telling apart ones the formatter swapped, as in sorting attributes.
     """
     lines: list[str] = []
     for line in text.split("\n"):
         content = line.lstrip(" \t")
         lines.append(line[: len(line) - len(content)] + "_" * len(content))
-    return "${" + "\n".join(lines)[2:-1] + "}"
+    shape = "${" + "\n".join(lines)[2:-1] + "}"
+    run = _UNDERSCORES_PATTERN.search(shape, 2)
+    if run is None:
+        return shape, ""
+    identity = _identity(index)[-len(run.group()) :]
+    return shape[: run.start()] + identity + shape[run.start() + len(identity) :], identity
 
 
 def _stand_in(kind: str, text: str, marker: str) -> str:
@@ -238,8 +275,6 @@ def _stand_in(kind: str, text: str, marker: str) -> str:
         return f"{{% endif {marker} %}}"
     if kind == "verbatim":
         return f"<!--{marker}-->"
-    if kind == "expression":
-        return _expression_stand_in(text)
     if _BRANCH_PATTERN.match(text):
         return f"{{% else {marker} %}}"
     if _END_PATTERN.match(text):
@@ -288,11 +323,22 @@ def mask_mako(html: str, *, expressions: bool) -> tuple[str, list[MaskedMako]]:
             lines.append((start, end))
     spans.extend((start, end, "line") for start, end in lines)
 
-    found = _expressions(html, _covers([*protected, *lines])) if expressions else []
-    spans.extend((start, end, "expression") for start, end in found)
-    covered = _covers([*protected, *found])
+    found = (
+        _expressions(html, _covers([(start, end) for start, end, _ in spans]), python_blocks)
+        if expressions
+        else []
+    )
+    in_python_blocks = {start for start, _, in_block in found if in_block}
+    spans.extend((start, end, "expression") for start, end, _ in found)
+    covered = _covers([*protected, *((start, end) for start, end, _ in found)])
 
-    blanked = _blank(html, [*(line.span() for line in _MAKO_LINE_PATTERN.finditer(html)), *found])
+    blanked = _blank(
+        html,
+        [
+            *(line.span() for line in _MAKO_LINE_PATTERN.finditer(html)),
+            *((start, end) for start, end, _ in found),
+        ],
+    )
     for token in tokenize_tags(blanked):
         if token.closing or token.declaration:
             continue
@@ -312,15 +358,21 @@ def mask_mako(html: str, *, expressions: bool) -> tuple[str, list[MaskedMako]]:
     for start, end, kind in spans:
         if start < previous_end:
             continue
-        marker = f"{prefix}{len(masked)}__"
         text = html[start:end]
-        indent = _line_indent(html, start) if kind == "expression" else ""
+        if kind == "expression":
+            stand_in, marker = _expression_stand_in(text, len(masked))
+            indent = None if start in in_python_blocks else _line_indent(html, start)
+        else:
+            marker = f"{prefix}{len(masked)}__"
+            stand_in = _stand_in(kind, text, marker)
+            indent = ""
         masked.append(MaskedMako(marker, text, kind, indent))
-        output.extend((html[previous_end:start], _stand_in(kind, text, marker)))
+        output.extend((html[previous_end:start], stand_in))
         previous_end = end
     output.append(html[previous_end:])
     masked_html = "".join(output)
-    # A python block, left in place, could hold what reads as a stand-in.
+    # Text after an expression that never ends, an error in Mako, could
+    # read as a stand-in.
     if found and len(_EXPRESSION_STAND_IN_PATTERN.findall(masked_html)) != sum(
         piece.kind == "expression" for piece in masked
     ):
@@ -362,17 +414,19 @@ def _restore_expressions(html: str, masked: list[MaskedMako]) -> str | None:
     same wherever they start. One that runs a string or a line continuation
     over lines goes back exactly as written.
     """
-    expressions = [piece for piece in masked if piece.kind == "expression"]
-    if not expressions:
+    waiting: defaultdict[str, deque[MaskedMako]] = defaultdict(deque)
+    for piece in masked:
+        if piece.kind == "expression":
+            waiting[piece.marker].append(piece)
+    if not waiting:
         return html
-    stand_ins = list(_EXPRESSION_STAND_IN_PATTERN.finditer(html))
-    if len(stand_ins) != len(expressions):
-        return None
 
     def replace(stand_in: re.Match[str], piece: MaskedMako) -> str:
         text = piece.text
+        if piece.indent is None or "\n" not in text or _SPANS_LINES_PATTERN.search(text):
+            return text
         indent = _line_indent(stand_in.string, stand_in.start())
-        if "\n" not in text or indent == piece.indent or _SPANS_LINES_PATTERN.search(text):
+        if indent == piece.indent:
             return text
         first, *rest = text.split("\n")
         return "\n".join([
@@ -387,9 +441,14 @@ def _restore_expressions(html: str, masked: list[MaskedMako]) -> str | None:
 
     output: list[str] = []
     previous_end = 0
-    for stand_in, piece in zip(stand_ins, expressions, strict=True):
-        output.extend((html[previous_end : stand_in.start()], replace(stand_in, piece)))
+    for stand_in in _EXPRESSION_STAND_IN_PATTERN.finditer(html):
+        pieces = waiting.get(stand_in.group(1))
+        if not pieces:
+            return None
+        output.extend((html[previous_end : stand_in.start()], replace(stand_in, pieces.popleft())))
         previous_end = stand_in.end()
+    if any(waiting.values()):
+        return None
     output.append(html[previous_end:])
     return "".join(output)
 
