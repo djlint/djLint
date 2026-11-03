@@ -249,6 +249,44 @@ test_data = [
         ({"format_js": True}),
         id="no blank line added before the closing tag",
     ),
+    pytest.param(
+        ('<script type="text/template"><div class="a"><%- x %></div></script>'),
+        ('<script type="text/template"><div class="a"><%- x %></div></script>\n'),
+        ({"format_js": True}),
+        id="a client side template left as written",
+    ),
+    pytest.param(
+        ('<script type="application/ld+json">{"a":1}</script>'),
+        ('<script type="application/ld+json">\n    {\n        "a": 1\n    }\n</script>\n'),
+        ({"format_js": True}),
+        id="json",
+    ),
+    pytest.param(
+        ("<div><span>a</span><script>var t = 1;if (a) {b();}</script></div>"),
+        (
+            "<div>\n"
+            "    <span>a</span><script>\n"
+            "        var t = 1;\n"
+            "        if (a) {\n"
+            "            b();\n"
+            "        }\n"
+            "    </script>\n"
+            "</div>\n"
+        ),
+        ({"format_js": True}),
+        id="indented below the line the tag is on",
+    ),
+    pytest.param(
+        ('<script>var re = new RegExp("<style(.*?)>");</script>\n<style>a{color:red}</style>'),
+        (
+            "<script>\n"
+            '    var re = new RegExp("<style(.*?)>");\n'
+            "</script>\n"
+            "<style>a{color:red}</style>\n"
+        ),
+        ({"format_js": True}),
+        id="a style tag in a string is javascript",
+    ),
 ]
 
 

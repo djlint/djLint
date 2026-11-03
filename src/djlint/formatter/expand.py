@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from bisect import bisect_left
 from functools import cache, partial
 from types import MappingProxyType
 from typing import TYPE_CHECKING
@@ -18,6 +19,7 @@ from djlint.const import (
     HTML_INLINE_ELEMENTS,
     HTML_INLINE_LEVEL_ELEMENTS,
     HTML_VOID_ELEMENTS,
+    TAG_START,
 )
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
@@ -45,11 +47,12 @@ _TRANSPARENT_ELEMENTS: Final = (
 )
 # One piece of a tag's attributes. A template tag in a quoted value is read
 # whole, so a quote inside it, as in `value="${_("it's")}"`, neither ends the
-# value nor opens another that runs on past the end of the tag.
+# value nor opens another that runs on past the end of the tag. Another tag's
+# start ends a tag that was never closed.
 _VALUE_TEMPLATE_TAG: Final = r"\$\{[^{}\n]*\}|\{\{(?:(?!\}\}|\{\{).)*+\}\}|\{%(?:(?!%\}|\{%).)*+%\}"
 _ATTRIBUTE_PART: Final = (
     rf"\"(?:{_VALUE_TEMPLATE_TAG}|[^\"])*+\"|'(?:{_VALUE_TEMPLATE_TAG}|[^'])*+'"
-    r"|{[^}]*}|[^'\">{}]"
+    rf"|{{(?:(?!{TAG_START})[^}}])*}}|(?!{TAG_START})[^'\">{{}}]"
 )
 _BREAK_BEFORE_TAG: Final = "\n%s"
 _BREAK_AFTER_TAG: Final = "%s\n"
@@ -158,6 +161,17 @@ def expand_html(html: str, config: Config) -> str:
     def html_tokens(value: str) -> tuple[TagToken, ...]:
         return tuple(tokenize_tags(value))
 
+    @cache
+    def tokens_by_name(line: str) -> dict[str, tuple[tuple[int, ...], tuple[TagToken, ...]]]:
+        """The line's tags by name, each with their starts for a bisection."""
+        grouped: dict[str, list[TagToken]] = {}
+        for token in html_tokens(line):
+            grouped.setdefault(token.name.lower(), []).append(token)
+        return {
+            name: (tuple(token.start for token in tokens), tuple(tokens))
+            for name, tokens in grouped.items()
+        }
+
     def without_html_tags(value: str) -> str:
         output: list[str] = []
         previous_end = 0
@@ -265,21 +279,19 @@ def expand_html(html: str, config: Config) -> str:
         match_start = match.start() - line_start
         match_end = match.end() - line_start
 
-        line_tokens = html_tokens(line)
+        # A body holding a tag of the same name is never kept inline, so only
+        # the nearest tag of that name on the side of the body can pair with
+        # this one. Looking it up rather than reading every tag of the line
+        # for each tag made a long line quadratic.
+        starts, same_name = tokens_by_name(line).get(tag_name, ((), ()))
 
         if tag_token.closing:
             if out_format != _BREAK_BEFORE_TAG:
                 return False
-            opening_tokens = tuple(
-                token
-                for token in line_tokens
-                if token.start < match_start
-                and not token.closing
-                and token.name.lower() == tag_name
-            )
-            if not opening_tokens:
+            index = bisect_left(starts, match_start) - 1
+            if index < 0 or same_name[index].closing:
                 return False
-            opening_token = opening_tokens[-1]
+            opening_token = same_name[index]
             opening_tag = line[opening_token.start : opening_token.end]
             if should_break_multiline_opening_tag(opening_tag):
                 return False
@@ -287,17 +299,10 @@ def expand_html(html: str, config: Config) -> str:
         else:
             if out_format != _BREAK_AFTER_TAG:
                 return False
-            closing_token = next(
-                (
-                    token
-                    for token in line_tokens
-                    if token.start >= match_end and token.closing and token.name.lower() == tag_name
-                ),
-                None,
-            )
-            if closing_token is None:
+            index = bisect_left(starts, match_end)
+            if index == len(same_name) or not same_name[index].closing:
                 return False
-            body = line[match_end : closing_token.start]
+            body = line[match_end : same_name[index].start]
 
         body_tags = [token.name.lower() for token in html_tokens(body)]
         if tag_name in body_tags:

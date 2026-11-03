@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.const import QUOTED_ATTRIBUTE_VALUE, TEMPLATE_TAG_WHOLE
+from djlint.const import TAG_ATTRIBUTES
 from djlint.formatter.tokenizer import tokenize_tags
 
 if TYPE_CHECKING:
@@ -386,13 +386,11 @@ def restore_unformatted_blocks(html: str, replacements: list[tuple[str, str]]) -
 
 
 # A template tag in the opening tag is read whole, so a ">" in one, as in
-# data-x="{{ "a > b" }}", does not end the tag and start the body. Each piece
-# is read once and never again in another way, since `{%a%}` is both a
-# template tag and a braced run: retrying those made a long tag quadratic.
+# data-x="{{ "a > b" }}", does not end the tag and start the body.
 _RAW_TEXT_ELEMENT_PATTERN: Final = compile_pattern(
     rf"""
     (<(script|style|textarea)\b
-      (?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'\">{{}}])*+>)
+      {TAG_ATTRIBUTES}>)
     (.*?)
     (?=</\2)
     """,
@@ -407,6 +405,47 @@ def _blank_raw_text(match: re.Match[str]) -> str:
     return match.group(1) + _NON_NEWLINE_PATTERN.sub(" ", match.group(3))
 
 
+_RAW_TEXT_TAG_PATTERN: Final = compile_pattern(r"<(/?)(script|style|pre|textarea)(>?)", re.I)
+
+
+def _disarm_unclosed_raw_text(html: str, *, closed_by_gt: bool) -> tuple[str, tuple[int, ...]]:
+    """Rename the raw text elements that no closing tag follows.
+
+    A pattern reading a body up to its closing tag reads the rest of the
+    file for one that has none, and again from each one after it, so a run
+    of them took quadratic time. None of them can match, so renaming them
+    changes nothing a pattern finds. Only the first letter of the name is
+    changed, to an "x", which keeps the length, and keeps the "<" starting
+    a tag for a pattern that stops at one. `closed_by_gt` says whether the
+    closing tag counts only with its ">" right after the name, as the
+    ignored block patterns want it.
+
+    Returns the html and where the renamed letters are, which a caller
+    writing out text of the copy puts back.
+    """
+    last_closing: dict[str, int] = {}
+    openings: list[tuple[int, str]] = []
+    for tag in _RAW_TEXT_TAG_PATTERN.finditer(html):
+        name = tag.group(2).lower()
+        if not tag.group(1):
+            openings.append((tag.start(), name))
+        elif tag.group(3) or not closed_by_gt:
+            last_closing[name] = tag.start()
+
+    # The body starts after the name at the earliest, so a closing tag
+    # starting there or later is the only kind that can end it.
+    renamed = tuple(
+        start + 1 for start, name in openings if last_closing.get(name, -1) < start + 1 + len(name)
+    )
+    if not renamed:
+        return html, renamed
+
+    characters = list(html)
+    for letter in renamed:
+        characters[letter] = "x"
+    return "".join(characters), renamed
+
+
 def mask_raw_text_bodies(html: str) -> str:
     """Blank out what the tag tokenizer should not read as markup.
 
@@ -416,7 +455,15 @@ def mask_raw_text_bodies(html: str) -> str:
     blanked to the same length, keeping offsets and line numbers, so
     positions still index the html that was passed in.
     """
-    return _RAW_TEXT_ELEMENT_PATTERN.sub(_blank_raw_text, html)
+    disarmed, renamed = _disarm_unclosed_raw_text(html, closed_by_gt=False)
+    masked = _RAW_TEXT_ELEMENT_PATTERN.sub(_blank_raw_text, disarmed)
+    if not renamed:
+        return masked
+
+    characters = list(masked)
+    for letter in renamed:
+        characters[letter] = html[letter]
+    return "".join(characters)
 
 
 @lru_cache(maxsize=_SPAN_CACHE_SIZE)
@@ -470,6 +517,15 @@ def inside_ignored_linter_block(config: Config, html: str, match: SpanMatch) -> 
     )
 
 
+def ignored_block_spans(config: Config, html: str) -> tuple[tuple[int, int], ...]:
+    """The spans of the blocks the formatter leaves alone, in no order."""
+    return _inside_ignored_block(
+        _disarm_unclosed_raw_text(html, closed_by_gt=True)[0],
+        ignored_blocks=config.ignored_blocks_pattern,
+        ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
+    )
+
+
 def _inside_ignored_block(
     html: str, /, *, ignored_blocks: re.Pattern[str], ignored_inline_blocks: re.Pattern[str]
 ) -> tuple[tuple[int, int], ...]:
@@ -496,7 +552,9 @@ def _ignored_block_reach(
     furthest = -1
     for start, end in sorted(
         _inside_ignored_block(
-            html, ignored_blocks=ignored_blocks, ignored_inline_blocks=ignored_inline_blocks
+            _disarm_unclosed_raw_text(html, closed_by_gt=True)[0],
+            ignored_blocks=ignored_blocks,
+            ignored_inline_blocks=ignored_inline_blocks,
         )
     ):
         furthest = max(furthest, end)

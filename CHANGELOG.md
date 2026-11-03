@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+### Performance
+
+- A file with many tags that are never closed formats in under a second. A thousand lines that each start with `<p data-x="a` took 40 seconds, 1,500 lines of `<p` took over a minute, and 2,000 ran out of memory. Thousands of `<script>`, `<style>` or `<textarea>` tags that are never closed no longer slow down formatting or linting either: linting 4,000 of them took up to 23 seconds.
+
+### Bug fixes
+
+- `--format-js` leaves a `<script>` alone when its `type` is neither JavaScript nor JSON, such as a client-side template in `<script type="text/template">`. It was formatted as JavaScript, which broke the template. Scripts without a `type`, modules, `text/babel` and JSON types such as `application/ld+json` are formatted as before.
+- A `<script>` or `<style>` tag with attributes too long for one line has them spread over lines also when its contents take several lines, as any other tag does. With `--format-js` or `--format-css`, one run spread them and the next joined them again.
+- With `--format-js` or `--format-css`, the contents of a script or style that follows other markup on its line, as in `<span>a</span><script>`, are indented below that line. After `</noscript><script>`, the next run indented the rest of the file one level deeper.
+- With `--format-js`, JavaScript that js-beautify lays out differently on each run, such as a ternary written over several lines, settles on one layout, so a second run leaves it alone.
+- `--format-css` no longer takes a `<style` inside a JavaScript string, as in `new RegExp("<style(.*?)>")`, for a style tag. It formatted the rest of the script as CSS.
+
 ### Docs
 
 - `djlint --help` describes each option more clearly. It now gives the defaults that come from `.editorconfig`, lists the `all` profile, and names what a value holds, such as `--ignore CODES`. `--warn` no longer claims to turn errors into warnings: it only changes the exit code. The configuration page uses the same wording.

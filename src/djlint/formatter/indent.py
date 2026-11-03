@@ -60,6 +60,8 @@ if TYPE_CHECKING:
 _QUOTE_STYLES: Final = {"double": QuoteStyle.PREFER_DOUBLE, "single": QuoteStyle.PREFER_SINGLE}
 _QUOTE_CHARACTERS: Final = {"double": '"', "single": "'"}
 _ESCAPE: Final = "\\"
+# The raw text elements whose bodies --format-js and --format-css lay out.
+_RAW_TEXT_OPENINGS_SPREAD: Final = frozenset(("script", "style"))
 
 # A tag left open ends at the next opener, as for the multiline patterns below,
 # so a run of unclosed ones is read once rather than each to the end of the
@@ -572,6 +574,27 @@ def indent_html(rawcode: str, config: Config) -> str:
         output.append(value[previous_end:])
         return "".join(output)
 
+    def format_raw_text_opening(line: str, start: int) -> str:
+        """Spread the attributes of a raw text element opening at start.
+
+        Its body is left as written, but its opening tag is markup like any
+        other. Left alone, a long one stayed on one line while its body was
+        written on lines of its own, and was spread once the body was
+        joined to it, so formatting the script a second time changed it.
+        """
+        for token in tokenize_tags(line):
+            if token.start >= start:
+                break
+        else:
+            return line
+        if (
+            token.start != start
+            or token.closing
+            or token.name.lower() not in _RAW_TEXT_OPENINGS_SPREAD
+        ):
+            return line
+        return format_html_attributes(line[: token.end]) + line[token.end :]
+
     @cache
     def starts_unclosed_html_tag(item: str) -> bool:
         stripped_item = item.lstrip()
@@ -896,6 +919,16 @@ def indent_html(rawcode: str, config: Config) -> str:
             indent_level += 1
 
         elif is_raw_first_line or (is_safe_closing_tag_ and not is_block_raw):
+            if is_raw_first_line and "<" in item:
+                # A tag closed before the block opens, as in
+                # `</noscript><script>`, closes what it closes as on any other
+                # line. Left open, it indented the rest of the file a level
+                # deeper once the script was written over several lines.
+                _, closes = scan_html_tags(item[:ignored_block_opening_start_])
+                popped = min(closes, len(open_html_indents))
+                indented_closes = sum(open_html_indents.pop() for _ in range(popped))
+                floor = template_block_stack[-1][0] + 1 if template_block_stack else 0
+                indent_level = max(indent_level - indented_closes, min(floor, indent_level))
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
 
         elif is_block_raw or not item.strip():
@@ -943,6 +976,9 @@ def indent_html(rawcode: str, config: Config) -> str:
             indent_level = max(indent_level - dedent_after, 0)
 
         if is_ignored_block_opening_:
+            opening_tail = item[ignored_block_opening_start_:] + "\n"
+            if is_raw_first_line and tmp.endswith(opening_tail):
+                tmp = format_raw_text_opening(tmp, len(tmp) - len(opening_tail))
             is_block_raw = True
             is_raw_first_line = False
             if "<" in item:
