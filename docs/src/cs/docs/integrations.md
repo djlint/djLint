@@ -267,6 +267,8 @@ Repozitář poskytuje několik předkonfigurovaných hooků pro konkrétní prof
   Hledá soubory odpovídající `*.html` a nastaví `--profile=tera`.
 - `djlint-askama` a `djlint-reformat-askama`
   Hledá soubory odpovídající `*.html` a nastaví `--profile=askama`.
+- `djlint-mako` a `djlint-reformat-mako`
+  Hledá soubory odpovídající `*.html` a nastaví `--profile=mako`.
 :::
 
 Tyto předdefinované hooky jsou někdy příliš konzervativní v tom, jaké vstupy přijímají (vaše šablony mohou používat jinou příponu), a proto vám pre-commit výslovně umožňuje kteroukoli z těchto předdefinovaných možností přepsat. Další konfiguraci popisuje [dokumentace pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

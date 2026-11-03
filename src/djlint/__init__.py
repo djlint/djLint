@@ -320,7 +320,7 @@ class _SectionedHelpCommand(click.Command):
     metavar="NAME",
     help=(
         "Template language: html, django, jinja, nunjucks, handlebars, liquid, golang,"
-        " angular, tera, askama or all. It decides which linter rules run and how"
+        " angular, tera, askama, mako or all. It decides which linter rules run and how"
         " template syntax is formatted. [default: html]"
     ),
 )

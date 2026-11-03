@@ -267,6 +267,8 @@ djLint는 [pre-commit](https://pre-commit.com) 훅으로 린터와 포맷터 모
   `*.html`과 일치하는 파일을 찾고 `--profile=tera`를 지정합니다.
 - `djlint-askama`와 `djlint-reformat-askama`
   `*.html`과 일치하는 파일을 찾고 `--profile=askama`를 지정합니다.
+- `djlint-mako`와 `djlint-reformat-mako`
+  `*.html`과 일치하는 파일을 찾고 `--profile=mako`를 지정합니다.
 :::
 
 이렇게 미리 정의된 훅은 받아들이는 입력이 지나치게 보수적일 때가 있으므로(템플릿에 다른 확장자를 쓰고 있을 수도 있습니다), pre-commit에서는 미리 정의된 옵션을 무엇이든 재정의할 수 있습니다. 추가 구성은 [pre-commit 문서](https://pre-commit.com/#pre-commit-configyaml---hooks)를 참고하세요.

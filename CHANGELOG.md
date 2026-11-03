@@ -6,6 +6,7 @@
 
 ### Feature
 
+- A `mako` profile for Mako templates. Mako needs a control line, such as `% if x:` or `% endfor`, and a `##` comment to start a line of their own, and other profiles joined them onto other lines, which broke the template. Under the `mako` profile they always keep their own lines. A tag whose attributes depend on control lines keeps them as written, and Python blocks, `<%doc>` and `<%text>` are left alone, as is a script or style holding Mako syntax under `--format-js` or `--format-css`. The linter runs the HTML rules. The `all` profile protects Mako's lines the same way. Control lines do not indent their contents yet.
 - Twig's `{% apply %}`, `{% sandbox %}` and `{% guard %}` blocks and Django's old `{% ifequal %}` and `{% ifnotequal %}` blocks indent their contents like other blocks.
 
 ### Bug fixes

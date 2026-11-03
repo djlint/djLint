@@ -267,6 +267,8 @@ djLint можно использовать как хук [pre-commit](https://pr
   Ищут файлы по маске `*.html` и задают `--profile=tera`.
 - `djlint-askama` и `djlint-reformat-askama`
   Ищут файлы по маске `*.html` и задают `--profile=askama`.
+- `djlint-mako` и `djlint-reformat-mako`
+  Ищут файлы по маске `*.html` и задают `--profile=mako`.
 :::
 
 Учтите, что эти готовые хуки иногда слишком строги к тому, какие файлы принимают (у ваших шаблонов может быть другое расширение), поэтому pre-commit явно позволяет переопределить любые из этих заранее заданных параметров. Подробнее о настройке см. в [документации pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

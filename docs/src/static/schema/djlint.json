@@ -183,7 +183,7 @@
       "type": "boolean"
     },
     "profile": {
-      "description": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n  :::",
+      "description": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n- mako (control lines and `##` comments are kept as written)\n  :::",
       "enum": [
         "all",
         "angular",
@@ -194,6 +194,7 @@
         "html",
         "jinja",
         "liquid",
+        "mako",
         "nunjucks",
         "tera"
       ]

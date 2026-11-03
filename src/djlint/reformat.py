@@ -21,16 +21,20 @@ from djlint.formatter.entities import format_entities
 from djlint.formatter.expand import expand_html
 from djlint.formatter.indent import indent_html
 from djlint.formatter.load_tags import sort_load_tags
+from djlint.formatter.mako import mask_mako, restore_mako
 from djlint.helpers import compile_pattern, mask_unformatted_blocks, restore_unformatted_blocks
 
 if TYPE_CHECKING:
     from pathlib import Path
     from typing import Final
 
+    from djlint.formatter.mako import MaskedMako
     from djlint.settings import Config
 
 
 _CARRIAGE_RETURN_LINE_ENDING_PATTERN: Final = compile_pattern(r"\r\n?")
+# The profiles whose templates may hold Mako's line syntax.
+_MAKO_PROFILES: Final = frozenset(("mako", "all"))
 
 
 def formatter(config: Config, rawcode: str) -> str:
@@ -45,6 +49,9 @@ def formatter(config: Config, rawcode: str) -> str:
         return rawcode
 
     normalized_code = _CARRIAGE_RETURN_LINE_ENDING_PATTERN.sub("\n", rawcode).removesuffix("\n")
+    mako_masked: list[MaskedMako] = []
+    if config.profile in _MAKO_PROFILES:
+        normalized_code, mako_masked = mask_mako(normalized_code)
     normalized_code, unformatted_blocks = mask_unformatted_blocks(normalized_code)
 
     normalized_code = format_entities(normalized_code, config)
@@ -79,6 +86,8 @@ def formatter(config: Config, rawcode: str) -> str:
     beautified_code = restore_verbatim_attribute_newlines(beautified_code)
 
     beautified_code = restore_unformatted_blocks(beautified_code, unformatted_blocks)
+
+    beautified_code = restore_mako(beautified_code, mako_masked)
 
     return _match_source_line_endings(beautified_code, rawcode)
 

@@ -401,6 +401,7 @@ _CODES_EXCLUDED_BY_PROFILE: Final[dict[str, tuple[str, ...]]] = {
     "askama": ("D", "J", "N", "M"),
     "tera": ("D", "J", "N", "M"),
     "liquid": ("D", "J", "N", "M"),
+    "mako": ("D", "J", "T", "N", "M"),
     "nunjucks": ("D", "J", "M"),
     "handlebars": ("D", "J", "N"),
     "golang": ("D", "J", "N", "M"),

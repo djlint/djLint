@@ -267,6 +267,8 @@ Das Repository stellt mehrere vorkonfigurierte Hooks für bestimmte djLint-Profi
   Sucht nach Dateien, die auf `*.html` passen, und setzt `--profile=tera`.
 - `djlint-askama` und `djlint-reformat-askama`
   Sucht nach Dateien, die auf `*.html` passen, und setzt `--profile=askama`.
+- `djlint-mako` und `djlint-reformat-mako`
+  Sucht nach Dateien, die auf `*.html` passen, und setzt `--profile=mako`.
 :::
 
 Beachten Sie, dass diese vordefinierten Hooks bei den akzeptierten Eingaben manchmal zu zurückhaltend sind (Ihre Templates verwenden vielleicht eine andere Dateiendung). Deshalb erlaubt pre-commit ausdrücklich, jede dieser vordefinierten Optionen zu überschreiben. Weitere Konfigurationsmöglichkeiten finden Sie in der [Dokumentation von pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

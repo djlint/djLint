@@ -18,7 +18,7 @@
 <h4 align="center">What lang are you using?</h4>
 
 <p align="center">
-   <a href="https://djlint.com/docs/languages/django/">Django</a> • <a href="https://djlint.com/docs/languages/jinja/">Jinja</a> • <a href="https://djlint.com/docs/languages/twig/">Twig</a> • <a href="https://djlint.com/docs/languages/nunjucks/">Nunjucks</a> • <a href="https://djlint.com/docs/languages/handlebars/">Handlebars</a> • <a href="https://djlint.com/docs/languages/liquid/">Liquid</a> • <a href="https://djlint.com/docs/languages/golang/">Go templates</a> • <a href="https://djlint.com/docs/languages/angular/">Angular</a> • <a href="https://djlint.com/docs/languages/mustache/">Mustache</a> • <a href="https://djlint.com/docs/languages/tera/">Tera</a> • <a href="https://djlint.com/docs/languages/askama/">Askama</a>
+   <a href="https://djlint.com/docs/languages/django/">Django</a> • <a href="https://djlint.com/docs/languages/jinja/">Jinja</a> • <a href="https://djlint.com/docs/languages/twig/">Twig</a> • <a href="https://djlint.com/docs/languages/nunjucks/">Nunjucks</a> • <a href="https://djlint.com/docs/languages/handlebars/">Handlebars</a> • <a href="https://djlint.com/docs/languages/liquid/">Liquid</a> • <a href="https://djlint.com/docs/languages/golang/">Go templates</a> • <a href="https://djlint.com/docs/languages/angular/">Angular</a> • <a href="https://djlint.com/docs/languages/mustache/">Mustache</a> • <a href="https://djlint.com/docs/languages/tera/">Tera</a> • <a href="https://djlint.com/docs/languages/askama/">Askama</a> • <a href="https://djlint.com/docs/languages/mako/">Mako</a>
 </p>
 
 ## 🤔 For What?
