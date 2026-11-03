@@ -566,6 +566,11 @@ _INDENT_TEMPLATE_TAGS: Final = r""" (?:if
     | asyncEach
     | asyncAll
     | embed
+    | apply
+    | sandbox
+    | guard
+    | ifequal
+    | ifnotequal
     | block(?!trans|translate)
     | spaceless
     | compress
@@ -596,6 +601,11 @@ _START_TEMPLATE_TAGS: Final = r"""
     | ifchanged
     | unless
     | embed
+    | apply
+    | sandbox
+    | guard
+    | ifequal
+    | ifnotequal
     | for
     | asyncEach
     | asyncAll
@@ -663,6 +673,16 @@ _BREAK_TEMPLATE_TAGS: Final = r"""
     | endwith
     | autoescape
     | endautoescape
+    | apply
+    | endapply
+    | sandbox
+    | endsandbox
+    | guard
+    | endguard
+    | ifequal
+    | endifequal
+    | ifnotequal
+    | endifnotequal
     | filter
     | endfilter
     | elif
