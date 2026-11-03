@@ -73,14 +73,17 @@ _ATTRIBUTE_START: Final = rf"""
 
 # Of two types a browser reads the first, so one written later in the tag
 # would take over once the default was dropped. So could one that a template
-# tag after it writes, as `{{ attrs }}` may; a comment writes nothing.
+# tag after it writes, as `{{ attrs }}` may; a comment writes nothing. A later
+# type that is the same default takes over as nothing new, and is dropped in
+# turn, so a run drops both rather than one now and one the next time.
 def _default_type(element: str, value: str, condition: str = "") -> str:
     return rf"""
     (<{element}(?![-.:\w]){condition}{_ATTRIBUTES})
     \s+(?<![-.:\w])(?<!{_TRIMMED_AFTER})type\s*=\s*
     (?:(["']){value}\2|{value}(?=\s|/?>))
     (?!{_TRIMS_BEFORE})
-    (?!{_REST_OF_TAG}(?:\{{[{{%]|type\s*=))
+    (?!{_REST_OF_TAG}
+        (?:\{{[{{%]|type\s*=\s*(?!"{value}"|'{value}'|{value}(?=\s|/?>))))
     """
 
 
@@ -125,9 +128,13 @@ def format_attribute_values(html: str, config: Config) -> str:
             config, html, match
         )
 
+    dropped = 0
+
     def drop_default_type(match: re.Match[str]) -> str:
+        nonlocal dropped
         if is_left_alone(match):
             return match.group()
+        dropped += 1
         return match.group(1)
 
     def lowercase_method(match: re.Match[str]) -> str:
@@ -135,5 +142,11 @@ def format_attribute_values(html: str, config: Config) -> str:
             return match.group()
         return f"{match.group(1)}{match.group(3).lower()}{match.group(4)}"
 
-    html = _DEFAULT_TYPE_PATTERN.sub(drop_default_type, html)
+    # A match runs from the tag's start, so a second default type in the
+    # same tag, dropped once the first has gone, is found on the next scan.
+    while True:
+        dropped = 0
+        html = _DEFAULT_TYPE_PATTERN.sub(drop_default_type, html)
+        if not dropped:
+            break
     return _FORM_METHOD_PATTERN.sub(lowercase_method, html)

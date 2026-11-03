@@ -213,6 +213,19 @@ test_data = [
     ),
     pytest.param(
         (
+            '<script type="text/javascript" type=text/javascript defer></script>\n'
+            "<style TYPE='text/css' type=\"text/css\"></style>\n"
+            '<script type="text/javascript" type="text/javascript" type="module"></script>\n'
+        ),
+        (
+            "<script defer></script>\n"
+            "<style></style>\n"
+            '<script type="text/javascript" type="module"></script>\n'
+        ),
+        id="a default type followed only by the same default is dropped with it",
+    ),
+    pytest.param(
+        (
             '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
             '<link rel=\'{% if x %} stylesheet {% else %} icon {% endif %}\' type="text/css" href="b">\n'
         ),

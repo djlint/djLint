@@ -879,6 +879,9 @@ def test_H024_covers_link_and_anchors_the_name(
         # A quoted value after the type is read with its template tags whole.
         b'<script type="text/javascript" data-x="{{ "a type=b" }}"></script>',
         b'<script type="text/javascript" data-type="x" data-x="type=x" @type="y"></script>',
+        # A later type that is the same default takes over as nothing new.
+        b'<script type="text/javascript" type=text/javascript defer></script>',
+        b"<style TYPE='text/css' type=\"text/css\"></style>",
     ):
         write_to_file(tmp_file.name, reported)
         result = runner.invoke(djlint, (tmp_file.name,))
