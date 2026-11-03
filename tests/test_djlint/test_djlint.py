@@ -26,6 +26,10 @@ if TYPE_CHECKING:
 
     from click.testing import CliRunner
 
+# A mypyc build calls between djLint's modules directly, past a patched
+# module attribute.
+_COMPILED = not str(djlint_module.__file__).endswith(".py")
+
 
 def test_help(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ("-h",))
@@ -300,6 +304,7 @@ def test_stdin_preserves_line_endings(runner: CliRunner) -> None:
     assert result.stdout_bytes == b"<div>\n    <p>hi</p>\n</div>\n"
 
 
+@pytest.mark.skipif(_COMPILED, reason="patches print_output")
 def test_closed_pipe_is_not_a_crash(runner: CliRunner, monkeypatch: pytest.MonkeyPatch) -> None:
     """`djlint . | head` is the consumer's choice, not a djLint failure.
 
