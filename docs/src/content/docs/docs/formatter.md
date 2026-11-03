@@ -12,7 +12,7 @@ Review the output with `--check` before applying changes.
 To review what may change in formatting run:
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 To format the code and update files run:

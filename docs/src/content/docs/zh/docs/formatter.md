@@ -12,7 +12,7 @@ djLint 的格式化工具能把杂乱的 HTML 模板整理成一致、易读的�
 要查看格式化可能带来的更改，请运行：
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 要格式化代码并更新文件，请运行：

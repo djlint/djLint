@@ -12,7 +12,7 @@ djLint のフォーマッターは、雑に書かれた HTML テンプレート�
 フォーマットで何が変わるかを確認するには、次のコマンドを実行します：
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 コードをフォーマットしてファイルを更新するには、次のコマンドを実行します：
