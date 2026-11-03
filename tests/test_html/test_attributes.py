@@ -1132,6 +1132,28 @@ test_data = [
     ),
     pytest.param(
         (
+            '<div data-x="{{ "a  =  b" }}" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+            '<div class="x  {{ "a  b" }}  {% if a == "b  c" %}d{% endif %}">x</div>\n'
+            '<div style="a: 1;\n  b: {{ "c\n  d" }}">x</div>\n'
+            '<div style="color: red; content: {{ x|default("a;b") }}" class="aaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+            '<img srcset="{{ f("a 1x, b") }} 2x, c.png 3x" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">\n'
+        ),
+        (
+            '<div data-x="{{ "a  =  b" }}"\n'
+            '     class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+            '<div class="x {{ "a  b" }} {% if a == "b  c" %}d{% endif %}">x</div>\n'
+            '<div style="a: 1;\n            b: {{ "c\n  d" }}">x</div>\n'
+            '<div style="color: red;\n'
+            '            content: {{ x|default("a;b") }}"\n'
+            '     class="aaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+            '<img srcset="{{ f("a 1x, b") }} 2x,\n'
+            '             c.png 3x"\n'
+            '     class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">\n'
+        ),
+        id="text_inside_a_template_tag_in_a_value_is_kept_as_written",
+    ),
+    pytest.param(
+        (
             "<div>\n"
             '<script type="text/plain" id="upgrade_user" data-link="aaaaaaaaaaa" data-price="bbb">\n'
             "</script>\n"

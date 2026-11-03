@@ -8,12 +8,13 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.const import HTML_LOWERCASE_ATTRIBUTE_NAMES
+from djlint.const import HTML_LOWERCASE_ATTRIBUTE_NAMES, QUOTED_ATTRIBUTE_VALUE
 from djlint.formatter.class_attributes import (
     CLASS_ATTRIBUTE_NEWLINE,
     VERBATIM_ATTRIBUTE_NEWLINE,
     decode_class_attribute_newlines,
     restore_verbatim_attribute_newlines,
+    split_outside_template_tags,
 )
 from djlint.helpers import RE_FLAGS_IMX, RE_FLAGS_IS, child_of_ignored_block, compile_pattern
 
@@ -45,7 +46,8 @@ def _glued_to_bare_value(attribute_group: str, value: str, value_end: int) -> bo
 
 
 _LAID_OUT_VALUE_PATTERN: Final = compile_pattern(
-    r"(?<![-.:\w])(style|srcset|data-srcset|sizes)[ \t]*=[ \t]*([\"'])(.*?)\2", RE_FLAGS_IS
+    rf"(?<![-.:\w])(style|srcset|data-srcset|sizes)[ \t]*=[ \t]*({QUOTED_ATTRIBUTE_VALUE})",
+    RE_FLAGS_IS,
 )
 
 
@@ -57,13 +59,17 @@ def _laid_out_list_value(lowered_name: str, value: str, join_space: str) -> str:
     """
     if lowered_name == "style":
         return f";{join_space}".join(
-            stripped for part in value.split(";") if (stripped := part.strip())
+            stripped
+            for part in split_outside_template_tags(value, ";")
+            if (stripped := part.strip())
         )
 
     if lowered_name in _SRCSET_ATTRIBUTE_NAMES:
         for descriptor in ("w", "x"):
             value = f"{descriptor},{join_space}".join(
-                stripped for part in value.split(f"{descriptor},") if (stripped := part.strip())
+                stripped
+                for part in split_outside_template_tags(value, f"{descriptor},")
+                if (stripped := part.strip())
             )
     return value
 
@@ -86,7 +92,7 @@ def _rendered_length(config: Config, attribute_group: str) -> int:
         sum(
             len(value) - len(_laid_out_list_value(match.group(1).lower(), value, " "))
             for match in _LAID_OUT_VALUE_PATTERN.finditer(attribute_group)
-            if (value := match.group(3))
+            if (value := match.group(2)[1:-1])
         ),
     )
 

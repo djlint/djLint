@@ -7,7 +7,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.const import (
+    HTML_TAG_NAMES,
+    HTML_VOID_ELEMENTS,
+    QUOTED_ATTRIBUTE_VALUE,
+    TEMPLATE_TAG_WHOLE,
+)
 from djlint.formatter.attributes import normalize_attributes, sort_attributes
 from djlint.formatter.class_attributes import encode_attribute_newlines
 from djlint.formatter.tokenizer import tokenize_tags
@@ -44,9 +49,7 @@ _TEMPLATE_COMMENT_PROFILES: Final = frozenset((
 
 
 _LOOSE_ATTRIBUTE_SPACING_PATTERN: Final = compile_pattern(
-    r"\"[^\"]*\"|'[^']*'|\{\{.*?\}\}|\{%.*?%\}|\{\#.*?\#\}|[ \t]+=[ \t]*|=[ \t]+"
-    r"|[ \t]{2,}",
-    RE_FLAGS_IS,
+    rf"{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|[ \t]+=[ \t]*|=[ \t]+|[ \t]{{2,}}", RE_FLAGS_IS
 )
 
 

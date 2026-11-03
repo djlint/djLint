@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.const import COLLAPSIBLE_WHITESPACE
+from djlint.const import COLLAPSIBLE_WHITESPACE, TEMPLATE_TAG_WHOLE
 from djlint.helpers import compile_pattern, mask_raw_text_bodies
 
 if TYPE_CHECKING:
@@ -30,6 +30,47 @@ _LINE_BREAK_RUN_PATTERN: Final = compile_pattern(
     rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*\n"
     rf"[{re.escape(COLLAPSIBLE_WHITESPACE)}]*"
 )
+
+_TEMPLATE_TAG_WHOLE_PATTERN: Final = compile_pattern(TEMPLATE_TAG_WHOLE, re.S)
+
+
+def _sub_outside_template_tags(pattern: re.Pattern[str], replacement: str, value: str) -> str:
+    """Rewrite a value's own text, leaving each template tag in it as written.
+
+    A template tag in a value is code, and its strings mean what they say:
+    collapsing the spaces of `class="x {{ "a  b" }}"` changed the string.
+    Its line breaks are held behind the marker, as the value's would be, so
+    that flattening the tag's attributes does not join them either.
+    """
+    if "{" not in value:
+        return pattern.sub(replacement, value)
+    parts: list[str] = []
+    last_end = 0
+    for tag in _TEMPLATE_TAG_WHOLE_PATTERN.finditer(value):
+        parts.extend((
+            pattern.sub(replacement, value[last_end : tag.start()]),
+            tag.group().replace("\n", VERBATIM_ATTRIBUTE_NEWLINE),
+        ))
+        last_end = tag.end()
+    parts.append(pattern.sub(replacement, value[last_end:]))
+    return "".join(parts)
+
+
+def split_outside_template_tags(value: str, separator: str) -> list[str]:
+    """Split a value at a separator written outside its template tags."""
+    if "{" not in value:
+        return value.split(separator)
+    masked = _TEMPLATE_TAG_WHOLE_PATTERN.sub(lambda tag: "_" * len(tag.group()), value)
+    parts: list[str] = []
+    start = 0
+    position = masked.find(separator)
+    while position >= 0:
+        parts.append(value[start:position])
+        start = position + len(separator)
+        position = masked.find(separator, start)
+    parts.append(value[start:])
+    return parts
+
 
 CLASS_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_CLASS_NEWLINE\x00"
 VERBATIM_ATTRIBUTE_NEWLINE: Final = "\x00DJLINT_ATTR_NEWLINE\x00"
@@ -126,13 +167,13 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
         elif laid_out_by_js_json_formatter:
             continue
         elif lowered == "class":
-            encoded_value = _COLLAPSIBLE_RUN_PATTERN.sub(" ", value[1:-1]).strip(
-                COLLAPSIBLE_WHITESPACE
-            )
+            encoded_value = _sub_outside_template_tags(
+                _COLLAPSIBLE_RUN_PATTERN, " ", value[1:-1]
+            ).strip(COLLAPSIBLE_WHITESPACE)
         elif lowered in _TRIMMED_ATTRIBUTE_NAMES:
-            encoded_value = _LINE_BREAK_RUN_PATTERN.sub(" ", value[1:-1]).strip(
-                COLLAPSIBLE_WHITESPACE
-            )
+            encoded_value = _sub_outside_template_tags(
+                _LINE_BREAK_RUN_PATTERN, " ", value[1:-1]
+            ).strip(COLLAPSIBLE_WHITESPACE)
         elif lowered in _JOINABLE_ATTRIBUTE_NAMES:
             continue
         else:

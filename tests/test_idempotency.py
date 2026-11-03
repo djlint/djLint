@@ -183,6 +183,15 @@ templates = [
         '<button class="control quality-control is-hidden" aria-disabled="false" title="HD">\n',
         id="a stray quote in a tag",
     ),
+    pytest.param(
+        '<div data-x="{{ "a  =  b" }}" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">x</div>\n'
+        '<div class="x  {{ "a  b" }}">x</div>\n<div style="a: 1;\n  b: {{ "c\n  d" }}">x</div>\n'
+        '<div style="color: red; content: {{ x|default("a;b") }}" class="aaaaaaaaaaaaaaaaaaaaaa">'
+        "x</div>\n"
+        '<img srcset="{{ f("a 1x, b") }} 2x, c.png 3x" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">\n'
+        '<script type="text/javascript" src={{url}} data-x="{{ "a > b" }}"></script>\n',
+        id="template tags in attribute values",
+    ),
 ]
 
 option_sets = [
