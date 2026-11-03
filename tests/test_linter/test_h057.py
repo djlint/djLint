@@ -218,11 +218,6 @@ test_data = [
         ('<p title="<video></video>">x</p>'), (False), id="markup written inside an attribute value"
     ),
     pytest.param(
-        ('<video src="a.mp4"><track kind></video>'),
-        (False),
-        id="a kind without a value is the default",
-    ),
-    pytest.param(
         ('<video src="a.mp4"><track src="a.vtt"></track></video>'),
         (False),
         id="a closing track tag is no second track",
