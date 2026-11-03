@@ -80,4 +80,10 @@ jobs:
           enable-cache: true
           prune-cache: true
           save-cache: ${{ github.ref == 'refs/heads/master' }}
-      - run: uv run --group test-ci --no-group dev --locked pytest
+      - run: uv run --group test-ci --no-group dev --locked pytest $COVERAGE
+        env:
+          # Every Python but the oldest, first in the list, measures coverage:
+          # their sys.monitoring core barely slows the tests, while 3.11's
+          # tracer slows them enough to fail the timing tests. The report is
+          # only shown: covdefaults would require 100%.
+          COVERAGE: ${{ strategy.job-index != 0 && '--cov --cov-fail-under=0' || '' }}
