@@ -121,6 +121,14 @@ test_data = [
         "{{ function(\n    a=1,\n    b=2,\n) }}\n",
         id="issue_2410_arguments_on_their_own_lines",
     ),
+    pytest.param(
+        '{{ _("Hello " "world") }}',
+        '{{ _("Hello " "world") }}\n',
+        id="adjacent_strings_stay_strings",
+    ),
+    pytest.param(
+        '{{ f("""a""") }}', '{{ f("""a""") }}\n', id="triple_quoted_string_stays_a_string"
+    ),
 ]
 
 

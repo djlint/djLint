@@ -168,6 +168,9 @@ test_data = [
         "{% set x = foo(\n) ~\n    bar %}\n",
         id="value_after_a_closed_call_stays_inside_the_set",
     ),
+    pytest.param(
+        '{% set x = "a" "b" %}', '{% set x = "a" "b" %}\n', id="adjacent_strings_stay_strings"
+    ),
 ]
 
 
