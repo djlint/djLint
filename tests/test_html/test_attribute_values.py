@@ -140,6 +140,32 @@ test_data = [
     ),
     pytest.param(
         (
+            "<script {{ 'data-note=\"' ~ '}} type=text/javascript x\"' }}></script>\n"
+            "<script {% set n = '%} type=text/javascript' %}></script>\n"
+        ),
+        (
+            "<script {{ 'data-note=\"' ~ '}} type=text/javascript x\"' }}></script>\n"
+            "<script {% set n = '%} type=text/javascript' %}></script>\n"
+        ),
+        id="a closer inside a string of a template tag does not end the tag",
+    ),
+    pytest.param(
+        (
+            '<script type="text/javascript" type="module"></script>\n'
+            '<script {% if a %}type="text/javascript"{% endif %} type="module"></script>\n'
+            '<style type="text/css" type="text/x"></style>\n'
+            '<link rel="stylesheet" type="text/css" type="text/x">\n'
+        ),
+        (
+            '<script type="text/javascript" type="module"></script>\n'
+            '<script {% if a %}type="text/javascript"{% endif %} type="module"></script>\n'
+            '<style type="text/css" type="text/x"></style>\n'
+            '<link rel="stylesheet" type="text/css" type="text/x">\n'
+        ),
+        id="a default type followed by another type is kept",
+    ),
+    pytest.param(
+        (
             '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
             '<link rel=\'{% if x %} stylesheet {% else %} icon {% endif %}\' type="text/css" href="b">\n'
         ),

@@ -25,8 +25,14 @@ if TYPE_CHECKING:
 # unquoted one for the next run. An unquoted value ends where compressing ends
 # it, so `type=text/css{{ x }}` is one value of its own. A template tag or
 # comment is read whole, even across lines, so what is written inside one, as
-# in `{# rel=stylesheet #}`, is not taken for markup.
-_TEMPLATE_TAG: Final = r"\{\{(?:(?!\}\}|\{\{).)*\}\}|\{%(?:(?!%\}|\{%).)*%\}|\{\#(?:(?!\#\}).)*\#\}"
+# in `{# rel=stylesheet #}`, is not taken for markup. A closer inside a string
+# of a tag, as in `{{ '}}' }}`, does not end it; a quote left open is read as
+# a character, as the scan for strings across lines reads it.
+_TEMPLATE_TAG: Final = r"""
+    \{\{(?:"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!\}\}|\{\{).)*+\}\}
+  | \{%(?:"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!%\}|\{%).)*+%\}
+  | \{\#(?:(?!\#\}).)*\#\}
+"""
 _ATTRIBUTES: Final = rf"""(?:"[^"]*"|'[^']*'|{_TEMPLATE_TAG}|(?!\{{[{{%\#])[^'">])*?"""
 # A template tag written with jinja's "-" marker strips the whitespace on that
 # side, which would glue a neighbour onto the value or onto the tag name.
@@ -51,12 +57,15 @@ _ATTRIBUTE_START: Final = rf"""
 """
 
 
+# Of two types a browser reads the first, so one written later in the tag,
+# also after a template tag, would take over once the default was dropped.
 def _default_type(element: str, value: str, condition: str = "") -> str:
     return rf"""
     (<{element}(?![-.:\w]){condition}{_ATTRIBUTES})
     \s+(?<![-.:\w])(?<!{_TRIMMED_AFTER})type\s*=\s*
     (?:(["']){value}\2|{value}(?=\s|/?>))
     (?!{_TRIMS_BEFORE})
+    (?!{_ATTRIBUTES}(?<![-.:@\w])type\s*=)
     """
 
 

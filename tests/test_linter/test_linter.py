@@ -903,6 +903,14 @@ def test_H024_covers_link_and_anchors_the_name(
         b'<link {{ attrs }} rel="stylesheet" type="text/css">',
         b"<link {# rel=stylesheet #} rel=preload as=style type=text/css href=a.css>",
         b'<script {# type="text/javascript" #}></script>',
+        # A closer inside a string of a template tag does not end the tag.
+        b"<script {{ 'data-note=\"' ~ '}} type=text/javascript x\"' }}></script>",
+        b"<script {% set n = '%} type=text/javascript' %}></script>",
+        # Of two types a browser reads the first, so dropping it changes the page.
+        b'<script type="text/javascript" type="module"></script>',
+        b'<script {% if a %}type="text/javascript"{% endif %} type="module"></script>',
+        b'<style type="text/css" type="text/x"></style>',
+        b'<link rel="stylesheet" type="text/css" type="text/x">',
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))
