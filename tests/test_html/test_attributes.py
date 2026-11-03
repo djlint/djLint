@@ -1153,6 +1153,11 @@ test_data = [
         id="text_inside_a_template_tag_in_a_value_is_kept_as_written",
     ),
     pytest.param(
+        ('<img srcset="a.png 1x,\n  {{ f("b\n  c") }} 2x">\n'),
+        ('<img srcset="a.png 1x,\n             {{ f("b\n  c") }} 2x">\n'),
+        id="a_line_break_in_a_template_string_in_a_srcset_is_kept",
+    ),
+    pytest.param(
         (
             "<div>\n"
             '<script type="text/plain" id="upgrade_user" data-link="aaaaaaaaaaa" data-price="bbb">\n'

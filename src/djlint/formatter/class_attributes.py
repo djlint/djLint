@@ -56,6 +56,10 @@ def _sub_outside_template_tags(pattern: re.Pattern[str], replacement: str, value
     return "".join(parts)
 
 
+def _hold_line_breaks(tag: re.Match[str]) -> str:
+    return tag.group().replace("\n", VERBATIM_ATTRIBUTE_NEWLINE)
+
+
 def split_outside_template_tags(value: str, separator: str) -> list[str]:
     """Split a value at a separator written outside its template tags."""
     if "{" not in value:
@@ -175,7 +179,12 @@ def encode_attribute_newlines(attributes: str, config: Config) -> str:
                 _LINE_BREAK_RUN_PATTERN, " ", value[1:-1]
             ).strip(COLLAPSIBLE_WHITESPACE)
         elif lowered in _JOINABLE_ATTRIBUTE_NAMES:
-            continue
+            # Its own line breaks are layout, but not those in a template
+            # string, as in srcset="{{ f("a
+            #   b") }} 2x".
+            encoded_value = _TEMPLATE_TAG_WHOLE_PATTERN.sub(_hold_line_breaks, value[1:-1])
+            if encoded_value == value[1:-1]:
+                continue
         else:
             encoded_value = VERBATIM_ATTRIBUTE_NEWLINE.join(value[1:-1].split("\n"))
 
