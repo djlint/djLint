@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-### Features
+### Feature
 
 - djLint warns about a setting that has no effect: `max_blank_lines` together with `preserve_blank_lines`, which keeps every blank line, and `--prefer-configuration` without `--configuration`. The warning goes to stderr once per run, so the language server does not repeat it on every change.
 
