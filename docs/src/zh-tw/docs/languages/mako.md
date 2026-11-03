@@ -11,7 +11,7 @@ tool: mako
 
 **[什麼是 Mako？](https://www.makotemplates.org/)**
 
-使用 mako profile 時，`% if x:` 這類控制行和 `##` 註解一定會單獨佔一行；屬性取決於控制行的標籤會保持原樣。Python 區塊以及 `<%doc>` 和 `<%text>` 的內容不會被更動；在 `--format-js` 或 `--format-css` 下，含有 Mako 語法的 script 或 style 也會保持原樣。控制行目前還不會縮排其中的內容。
+使用 mako profile 時，`% if x:` 這類控制行和 `##` 註解一定會單獨佔一行；屬性取決於控制行的標籤會保持原樣。Python 區塊以及 `<%doc>` 和 `<%text>` 的內容不會被更動；在 `--format-js` 或 `--format-css` 下，含有 Mako 語法的 script 或 style 也會保持原樣。`% if` 與 `% endif` 之間的行，以及各自單獨佔一行的 `<%block>` 或 `<%def>` 標籤與其結束標籤之間的行，會像其他區塊一樣縮排。`${}` 運算式中的程式碼保持原樣。
 
 ## 使用命令列
 

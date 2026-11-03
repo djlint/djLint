@@ -11,7 +11,7 @@ tool: mako
 
 **[Was ist Mako?](https://www.makotemplates.org/)**
 
-Mit dem Profil mako steht eine Steuerzeile wie `% if x:` und ein `##`-Kommentar immer in einer eigenen Zeile, und ein Tag, dessen Attribute von Steuerzeilen abhängen, behält sie so, wie sie geschrieben sind. Python-Blöcke und der Inhalt von `<%doc>` und `<%text>` bleiben unverändert, ebenso ein script oder style mit Mako-Syntax bei `--format-js` oder `--format-css`. Steuerzeilen rücken ihren Inhalt noch nicht ein.
+Mit dem Profil mako steht eine Steuerzeile wie `% if x:` und ein `##`-Kommentar immer in einer eigenen Zeile, und ein Tag, dessen Attribute von Steuerzeilen abhängen, behält sie so, wie sie geschrieben sind. Python-Blöcke und der Inhalt von `<%doc>` und `<%text>` bleiben unverändert, ebenso ein script oder style mit Mako-Syntax bei `--format-js` oder `--format-css`. Die Zeilen zwischen `% if` und `% endif` sowie zwischen einem `<%block>`- oder `<%def>`-Tag und seinem schließenden Tag, wenn beide in einer eigenen Zeile stehen, werden wie jeder andere Block eingerückt. Der Code in einem `${}`-Ausdruck bleibt so, wie er geschrieben ist.
 
 ## Über die Befehlszeile
 

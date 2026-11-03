@@ -11,7 +11,7 @@ tool: mako
 
 **[Mako nedir?](https://www.makotemplates.org/)**
 
-mako profilinde `% if x:` gibi bir kontrol satırı ve `##` yorumu her zaman kendi satırında kalır, öznitelikleri kontrol satırlarına bağlı olan bir etiket de onları yazıldığı gibi korur. Python blokları ile `<%doc>` ve `<%text>` içeriği değiştirilmez; `--format-js` veya `--format-css` ile Mako sözdizimi içeren bir script ya da style da olduğu gibi bırakılır. Kontrol satırları içeriklerini henüz girintilemez.
+mako profilinde `% if x:` gibi bir kontrol satırı ve `##` yorumu her zaman kendi satırında kalır, öznitelikleri kontrol satırlarına bağlı olan bir etiket de onları yazıldığı gibi korur. Python blokları ile `<%doc>` ve `<%text>` içeriği değiştirilmez; `--format-js` veya `--format-css` ile Mako sözdizimi içeren bir script ya da style da olduğu gibi bırakılır. `% if` ile `% endif` arasındaki satırlar ve her biri kendi satırında duran bir `<%block>` ya da `<%def>` etiketi ile kapanış etiketi arasındaki satırlar, diğer bloklar gibi girintilenir. Bir `${}` ifadesindeki kod yazıldığı gibi kalır.
 
 ## Komut satırını kullanma
 

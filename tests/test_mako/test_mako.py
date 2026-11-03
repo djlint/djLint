@@ -71,15 +71,93 @@ test_data = [
     ),
     pytest.param(
         ("<p>\n% if user:\nHello\n% endif\n</p>\n"),
-        ("<p>\n    % if user:\n    Hello\n    % endif\n</p>\n"),
+        ("<p>\n    % if user:\n        Hello\n    % endif\n</p>\n"),
         ({}),
         id="control lines keep a line each in a short element",
     ),
     pytest.param(
         ("<ul>\n% for item in items:\n<li>${item}</li>\n% endfor\n</ul>\n"),
-        ("<ul>\n    % for item in items:\n    <li>${item}</li>\n    % endfor\n</ul>\n"),
+        ("<ul>\n    % for item in items:\n        <li>${item}</li>\n    % endfor\n</ul>\n"),
         ({}),
-        id="a loop",
+        id="a loop indents its body",
+    ),
+    pytest.param(
+        ("<div>\n% if a:\n<p>a</p>\n% elif b:\n<p>b</p>\n% else:\n<p>c</p>\n% endif\n</div>\n"),
+        (
+            "<div>\n"
+            "    % if a:\n"
+            "        <p>a</p>\n"
+            "    % elif b:\n"
+            "        <p>b</p>\n"
+            "    % else:\n"
+            "        <p>c</p>\n"
+            "    % endif\n"
+            "</div>\n"
+        ),
+        ({}),
+        id="branches",
+    ),
+    pytest.param(
+        (
+            "<div>\n% try:\n<p>${x}</p>\n% except Exception:  # a comment\n<p>no</p>\n"
+            "% finally:\n<p>done</p>\n% endtry\n</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    % try:\n"
+            "        <p>${x}</p>\n"
+            "    % except Exception:  # a comment\n"
+            "        <p>no</p>\n"
+            "    % finally:\n"
+            "        <p>done</p>\n"
+            "    % endtry\n"
+            "</div>\n"
+        ),
+        ({}),
+        id="try and except",
+    ),
+    pytest.param(
+        (
+            "% for row in rows:\n<tr>\n% for cell in row:\n<td>${cell}</td>\n% endfor\n</tr>\n"
+            "% endfor\n"
+        ),
+        (
+            "% for row in rows:\n"
+            "    <tr>\n"
+            "        % for cell in row:\n"
+            "            <td>${cell}</td>\n"
+            "        % endfor\n"
+            "    </tr>\n"
+            "% endfor\n"
+        ),
+        ({}),
+        id="nested loops",
+    ),
+    pytest.param(
+        (
+            '<%block name="content">\n<div>\n% if a:\n<p>a</p>\n% endif\n</div>\n</%block>\n'
+            '<%def name="item(x)">\n<li>${x}</li>\n</%def>\n'
+        ),
+        (
+            '<%block name="content">\n'
+            "    <div>\n"
+            "        % if a:\n"
+            "            <p>a</p>\n"
+            "        % endif\n"
+            "    </div>\n"
+            "</%block>\n"
+            '<%def name="item(x)">\n'
+            "    <li>${x}</li>\n"
+            "</%def>\n"
+        ),
+        ({}),
+        id="a block or def on lines of its own indents its body",
+    ),
+    pytest.param(
+        ('<title><%block name="title">Home</%block></title>\n<%block name="a">x\n</%block>\n'),
+        ('<title><%block name="title">Home</%block></title>\n<%block name="a">x\n</%block>\n'),
+        ({}),
+        id="a block that shares a line with its contents is left on it",
     ),
     pytest.param(
         ("<div><span>a</span>\n## a comment <b>\n<span>b</span></div>\n"),
@@ -104,6 +182,50 @@ test_data = [
         ("## djlint:off\n<div><p>x</p>\n   </div>\n## djlint:on\n<div>\n    <p>y</p>\n</div>\n"),
         ({}),
         id="a djlint:off region",
+    ),
+    pytest.param(
+        (
+            "<select><option value=\"${a}\"${' selected' if a == b else ''}>${a}</option></select>\n"
+            '<p>${HTML("<sup>&reg;</sup>")}</p>\n'
+        ),
+        (
+            "<select>\n"
+            "    <option value=\"${a}\"${' selected' if a == b else ''}>${a}</option>\n"
+            "</select>\n"
+            '<p>${HTML("<sup>&reg;</sup>")}</p>\n'
+        ),
+        ({}),
+        id="an expression is python and is left as written",
+    ),
+    pytest.param(
+        ('<select><option ${"selected" if a > b else ""}>x</option></select>\n'),
+        ('<select>\n    <option ${"selected" if a > b else ""}>x</option>\n</select>\n'),
+        ({}),
+        id="a > in an expression does not end the tag",
+    ),
+    pytest.param(
+        ('<span title="${x | h}">${"}" + "{"}</span>\n'),
+        ('<span title="${x | h}">${"}" + "{"}</span>\n'),
+        ({}),
+        id="a brace in a string does not end an expression",
+    ),
+    pytest.param(
+        ('<div>\n        <p>${_(\n            "a"\n        )}</p>\n</div>\n'),
+        ('<div>\n    <p>\n        ${_(\n            "a"\n        )}\n    </p>\n</div>\n'),
+        ({}),
+        id="the lines of an expression move with its first",
+    ),
+    pytest.param(
+        ('<div>\n        <p>${"""a\n            b"""}</p>\n</div>\n'),
+        ('<div>\n    <p>\n        ${"""a\n            b"""}\n    </p>\n</div>\n'),
+        ({}),
+        id="a string over lines is left as written",
+    ),
+    pytest.param(
+        ('<% x = "${_}" %>\n<p>${a}</p>\n'),
+        ('<% x = "${_}" %>\n<p>${a}</p>\n'),
+        ({}),
+        id="a python block holding what reads as a masked expression",
     ),
     pytest.param(
         ("<p>\n%% of the vote\n</p>\n"),

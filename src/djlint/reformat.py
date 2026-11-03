@@ -51,7 +51,9 @@ def formatter(config: Config, rawcode: str) -> str:
     normalized_code = _CARRIAGE_RETURN_LINE_ENDING_PATTERN.sub("\n", rawcode).removesuffix("\n")
     mako_masked: list[MaskedMako] = []
     if config.profile in _MAKO_PROFILES:
-        normalized_code, mako_masked = mask_mako(normalized_code)
+        normalized_code, mako_masked = mask_mako(
+            normalized_code, expressions=config.profile == "mako"
+        )
     normalized_code, unformatted_blocks = mask_unformatted_blocks(normalized_code)
 
     normalized_code = format_entities(normalized_code, config)
@@ -87,9 +89,11 @@ def formatter(config: Config, rawcode: str) -> str:
 
     beautified_code = restore_unformatted_blocks(beautified_code, unformatted_blocks)
 
-    beautified_code = restore_mako(beautified_code, mako_masked)
+    restored = restore_mako(beautified_code, mako_masked)
+    if restored is None:
+        return rawcode
 
-    return _match_source_line_endings(beautified_code, rawcode)
+    return _match_source_line_endings(restored, rawcode)
 
 
 def _match_source_line_endings(formatted: str, rawcode: str) -> str:

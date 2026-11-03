@@ -11,7 +11,7 @@ tool: mako
 
 **[What is Mako?](https://www.makotemplates.org/)**
 
-With the mako profile, a control line such as `% if x:` and a `##` comment always keep a line of their own, and a tag whose attributes depend on control lines keeps them as written. Python blocks and the contents of `<%doc>` and `<%text>` are left alone, and so is a script or style that holds Mako syntax under `--format-js` or `--format-css`. Control lines do not indent their contents yet.
+With the mako profile, a control line such as `% if x:` and a `##` comment always keep a line of their own, and a tag whose attributes depend on control lines keeps them as written. Python blocks and the contents of `<%doc>` and `<%text>` are left alone, and so is a script or style that holds Mako syntax under `--format-js` or `--format-css`. The lines between `% if` and `% endif`, and between a `<%block>` or `<%def>` tag and its closing tag when each has a line of its own, are indented like any other block. The code in a `${}` expression is left as written.
 
 ## Using the command line
 
