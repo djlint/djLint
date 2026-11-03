@@ -5,6 +5,7 @@ uv run pytest tests/test_jinja/test_parenthesis.py
 
 from __future__ import annotations
 
+import sys
 from typing import TYPE_CHECKING
 
 import pytest
@@ -129,11 +130,6 @@ test_data = [
     pytest.param(
         '{{ f("""a""") }}', '{{ f("""a""") }}\n', id="triple_quoted_string_stays_a_string"
     ),
-    pytest.param(
-        "{{ f(0x" + "f" * 4000 + ") }}",
-        "{{ f(0x" + "f" * 4000 + ") }}\n",
-        id="number_too_long_to_write_out_stays_as_written",
-    ),
 ]
 
 
@@ -143,6 +139,17 @@ def test_base(source: str, expected: str, jinja_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+def test_a_number_too_long_to_write_out_stays_as_written(jinja_config: Config) -> None:
+    """str() refuses an integer past the conversion limit, so the call is left as written."""
+    source = "{{ f(0x" + "f" * 4000 + ") }}"
+    limit = sys.get_int_max_str_digits()
+    sys.set_int_max_str_digits(4300)
+    try:
+        assert formatter(jinja_config, source) == source + "\n"
+    finally:
+        sys.set_int_max_str_digits(limit)
 
 
 def test_issue_1428_no_trailing_whitespace(jinja_config: Config) -> None:
