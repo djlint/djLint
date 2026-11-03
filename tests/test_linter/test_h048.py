@@ -22,6 +22,11 @@ test_data = [
     ),
     pytest.param(('<div [attr.aria-label]="x">y</div>'), (False), id="nor is an angular one"),
     pytest.param(('<div data-aria-lable="x">y</div>'), (False), id="nor is a data attribute"),
+    pytest.param(
+        ('<!-- djlint:off --><div aria-lable="x">y</div><!-- djlint:on -->'),
+        (False),
+        id="inside a djlint:off region",
+    ),
 ]
 
 

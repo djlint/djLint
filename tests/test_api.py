@@ -238,3 +238,64 @@ def test_custom_rules_load_with_a_tab_in_a_block_scalar(tmp_path: Path) -> None:
     config = load_config(tmp_path)
 
     assert [x.code for x in lint_text(config, "<foo  bar>")] == ["H025", "X901"]
+
+
+def test_a_file_outside_the_project_is_not_excluded(tmp_path: Path) -> None:
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / ".git").mkdir()
+    (project / ".gitignore").write_text("build\n", encoding="utf-8")
+    (project / ".djlintrc").write_text(
+        '{"exclude": "vendor", "use_gitignore": true}', encoding="utf-8"
+    )
+    config = load_config(project)
+    assert is_excluded(config, project / "vendor" / "a.html")
+    assert is_excluded(config, project / "build" / "a.html")
+    assert not is_excluded(config, tmp_path / "vendor" / "a.html")
+    assert not is_excluded(config, tmp_path / "build" / "a.html")
+
+
+def test_a_rule_ending_before_its_start_names_the_rule(tmp_path: Path) -> None:
+    project = _project(tmp_path, "1:3")
+    module = project / "project_rule.py"
+    module.write_text(
+        module.read_text("utf-8").replace("    }]", '    "end": "1:1",\n    }]'), encoding="utf-8"
+    )
+    config = load_config(project, profile="django")
+    with pytest.raises(AssertionError, match=r"T9001 .* returned end '1:1', which is before line"):
+        lint_text(config, "<div>text</div>")
+
+
+def test_a_rule_returning_no_sequence_names_the_rule(tmp_path: Path) -> None:
+    project = _project(tmp_path)
+    (project / "project_rule.py").write_text(
+        "def run(rule, config, html, filepath, line_ends, *args, **kwargs):\n    return None\n",
+        encoding="utf-8",
+    )
+    config = load_config(project, profile="django")
+    with pytest.raises(
+        AssertionError, match=r"T9001 python_module run\(\) should return a sequence"
+    ):
+        lint_text(config, "<div>text</div>")
+
+
+def test_a_custom_rule_can_report_an_empty_file(tmp_path: Path) -> None:
+    (tmp_path / "djlint.toml").write_text("", encoding="utf-8")
+    (tmp_path / ".djlint_rules.yaml").write_text(
+        "- rule:\n    name: X902\n    message: Empty file\n    patterns:\n      - ^$\n",
+        encoding="utf-8",
+    )
+    config = load_config(tmp_path)
+
+    assert lint_text(config, "") == [Finding("X902", "Empty file", "", 1, 0, 1, 0)]
+
+
+def test_custom_rule_flags_can_be_a_number(tmp_path: Path) -> None:
+    (tmp_path / "djlint.toml").write_text("", encoding="utf-8")
+    (tmp_path / ".djlint_rules.yaml").write_text(
+        "- rule:\n    name: X903\n    message: No hello\n    flags: 2\n    patterns:\n      - hello\n",
+        encoding="utf-8",
+    )
+    config = load_config(tmp_path)
+
+    assert [x.code for x in lint_text(config, "HELLO")] == ["X903"]

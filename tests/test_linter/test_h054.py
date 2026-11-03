@@ -168,6 +168,19 @@ test_data = [
         (True),
         id="a plain type an if writes is read",
     ),
+    pytest.param(
+        ('<a href="/x"><input type></a>'), (True), id="a type without a value is not hidden"
+    ),
+    pytest.param(
+        ('<a href="/x">{%- comment <button></button></a>'),
+        (True),
+        id="a comment tag that never closes hides nothing",
+    ),
+    pytest.param(
+        ('<a href="/x">{%- comment %}<button></button></a>'),
+        (True),
+        id="a comment block that never ends hides nothing",
+    ),
 ]
 
 

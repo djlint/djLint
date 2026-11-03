@@ -78,6 +78,18 @@ test_data = [
         ([]),
         id="each_thead_decides_for_itself",
     ),
+    pytest.param(
+        ("<table><thead><tr><th>a</th><span>b</span><td>c</td></tr></thead></table>"),
+        ([
+            {
+                "code": "H044",
+                "line": "1:42",
+                "match": "<td>",
+                "message": "Thead should not mix th and td cells.",
+            }
+        ]),
+        id="a tag between the cells is no cell",
+    ),
 ]
 
 

@@ -50,6 +50,19 @@ test_data = [
     pytest.param(
         ('<button aria-hidden="false">x</button>'), (False), id="only true hides the element"
     ),
+    pytest.param(
+        ('<video controls aria-hidden="true"></video>'),
+        (True),
+        id="a video with controls takes focus",
+    ),
+    pytest.param(
+        ('<video aria-hidden="true"></video>'), (False), id="a video without controls does not"
+    ),
+    pytest.param(
+        ('<!-- djlint:off --><button aria-hidden="true">x</button><!-- djlint:on -->'),
+        (False),
+        id="inside a djlint:off region",
+    ),
 ]
 
 

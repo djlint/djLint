@@ -41,6 +41,16 @@ test_data = [
         '<div id="i" class="c"></div>\n',
         id="names are sorted after they are lowercased",
     ),
+    pytest.param(
+        '<div title="x" class="a" "stray" id="b"></div>\n',
+        '<div title="x" class="a" "stray" id="b"></div>\n',
+        id="a group with text no attribute accounts for keeps its order",
+    ),
+    pytest.param(
+        '<div title="x" ="a" id="b"></div>\n',
+        '<div title="x" ="a" id="b"></div>\n',
+        id="a value without a name keeps the order",
+    ),
 ]
 
 
