@@ -119,11 +119,13 @@ def test_base(source: str, expected: list[LintError], basic_config: Config) -> N
     assert not mismatch
 
 
-def test_empty_lang_names_no_language(basic_config: Config) -> None:
-    for source in ('<html lang="">a</html>', "<html lang=''>a</html>"):
-        output = linter(basic_config, source, "t.html", "t.html")["t.html"]
-        assert any(error["code"] == "H005" for error in output), source
+@pytest.mark.parametrize("source", ['<html lang="">a</html>', "<html lang=''>a</html>"])
+def test_empty_lang_names_no_language(source: str, basic_config: Config) -> None:
+    output = linter(basic_config, source, "t.html", "t.html")["t.html"]
+    assert any(error["code"] == "H005" for error in output)
 
-    for source in ('<html lang="en">a</html>', '<html lang="{{ code }}">a</html>'):
-        output = linter(basic_config, source, "t.html", "t.html")["t.html"]
-        assert not any(error["code"] == "H005" for error in output), source
+
+@pytest.mark.parametrize("source", ['<html lang="en">a</html>', '<html lang="{{ code }}">a</html>'])
+def test_a_lang_value_names_a_language(source: str, basic_config: Config) -> None:
+    output = linter(basic_config, source, "t.html", "t.html")["t.html"]
+    assert not any(error["code"] == "H005" for error in output)

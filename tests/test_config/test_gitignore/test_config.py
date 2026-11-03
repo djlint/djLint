@@ -195,7 +195,8 @@ def test_exclude_supports_comma_separated_paths(tmp_path: Path) -> None:
     assert "builds/template.html" in resolved_paths
 
 
-def test_exclude_matches_slash_separated_path_segments(tmp_path: Path) -> None:
+@pytest.mark.parametrize("exclude", ["templates/generated", "templates/generated/"])
+def test_exclude_matches_slash_separated_path_segments(tmp_path: Path, exclude: str) -> None:
     """Exclude paths with slashes should match exact path segments."""
     worktree = tmp_path / "project"
     for directory in (
@@ -207,15 +208,14 @@ def test_exclude_matches_slash_separated_path_segments(tmp_path: Path) -> None:
         path.mkdir(parents=True)
         (path / "template.html").write_text("<div>hello</div>", encoding="utf-8")
 
-    for exclude in ("templates/generated", "templates/generated/"):
-        config = Config(str(worktree), exclude=exclude)
-        paths = get_src([worktree], config).paths
+    config = Config(str(worktree), exclude=exclude)
+    paths = get_src([worktree], config).paths
 
-        resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
+    resolved_paths = {p.relative_to(worktree).as_posix() for p in paths}
 
-        assert "templates/generated/template.html" not in resolved_paths
-        assert "templates/generated-assets/template.html" in resolved_paths
-        assert "my-templates/generated/template.html" in resolved_paths
+    assert "templates/generated/template.html" not in resolved_paths
+    assert "templates/generated-assets/template.html" in resolved_paths
+    assert "my-templates/generated/template.html" in resolved_paths
 
 
 def test_exclude_trailing_slash_matches_nested_path_segment(tmp_path: Path) -> None:

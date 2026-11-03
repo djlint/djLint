@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pytest
+
 from djlint import main as djlint
 from djlint.output import build_stats_output
 from tests.conftest import write_to_file
@@ -15,7 +17,6 @@ from tests.conftest import write_to_file
 if TYPE_CHECKING:
     from tempfile import _TemporaryFileWrapper
 
-    import pytest
     from click.testing import CliRunner
 
     from djlint.settings import Config
@@ -343,14 +344,19 @@ def test_H022(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None
     assert "H022 1:" in result.output
 
 
-def test_H023(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
-    for reported in (b"&mdash;", b"&aacute;", b"&#63;", b"&#x3F;", b"&copy;"):
-        write_to_file(tmp_file.name, reported)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert result.exit_code == 1
-        assert "H023 1:" in result.output
+@pytest.mark.parametrize(
+    "reported", [b"&mdash;", b"&aacute;", b"&#63;", b"&#x3F;", b"&copy;", b'<a href=" &#63; "></a>']
+)
+def test_H023(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], reported: bytes) -> None:
+    write_to_file(tmp_file.name, reported)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert result.exit_code == 1
+    assert "H023 1:" in result.output
 
-    for quiet in (
+
+@pytest.mark.parametrize(
+    "quiet",
+    [
         b"&gt;",
         b"&amp;",
         b"&apos;",
@@ -375,14 +381,14 @@ def test_H023(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None
         b"&#160;",
         b"&#xfeff;",
         b'<a href=" foo & bar; "></a>',
-    ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H023" not in result.output
-
-    write_to_file(tmp_file.name, b'<a href=" &#63; "></a>')
+    ],
+)
+def test_H023_quiet(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes
+) -> None:
+    write_to_file(tmp_file.name, quiet)
     result = runner.invoke(djlint, (tmp_file.name,))
-    assert "H023 1:" in result.output
+    assert "H023" not in result.output
 
 
 def test_H024(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
@@ -658,28 +664,33 @@ def test_H030(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None
     assert "H030 1:" in result.output
 
 
-def test_H036(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
-    """A break that is part of the content, as the html specification puts it."""
-    for reported in (
+@pytest.mark.parametrize(
+    "reported",
+    [
         b"<p>a<br><br>b</p>",
         b"<p>a<br />\n<br />b</p>",
         b"<p><br>a</p>",
         b"<div>a<br></div>",
         b"<li>a<br/></li>",
-    ):
-        write_to_file(tmp_file.name, reported)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert result.exit_code == 1, reported
-        assert "H036 1:" in result.output
+    ],
+)
+def test_H036(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], reported: bytes) -> None:
+    write_to_file(tmp_file.name, reported)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert result.exit_code == 1
+    assert "H036 1:" in result.output
 
-    for quiet in (
-        b"<p>Acme Ltd<br>1 High St<br>Springfield</p>",
-        b"<address>a<br>b</address>",
-        b"<br>",
-    ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H036" not in result.output, quiet
+
+@pytest.mark.parametrize(
+    "quiet", [b"<p>Acme Ltd<br>1 High St<br>Springfield</p>", b"<address>a<br>b</address>", b"<br>"]
+)
+def test_H036_quiet(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes
+) -> None:
+    """A break that is part of the content, as the html specification puts it."""
+    write_to_file(tmp_file.name, quiet)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H036" not in result.output
 
 
 def test_rules_not_matched_in_ignored_block(
@@ -818,74 +829,84 @@ def test_H043(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None
     assert "H043" not in result.output
 
 
+@pytest.mark.parametrize(
+    "head",
+    [b"<title>P</title>", b"<title id='t'>P</title>", b'<title hx-swap-oob="true">P</title>'],
+)
 def test_H016_title_with_attributes(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], head: bytes
+) -> None:
+    document = b'<!DOCTYPE html><html lang="en"><head>%s</head><body>x</body></html>'
+    write_to_file(tmp_file.name, document % head)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H016" not in result.output
+
+
+def test_H016_head_without_a_title(
     runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
 ) -> None:
     document = b'<!DOCTYPE html><html lang="en"><head>%s</head><body>x</body></html>'
-
-    for head in (
-        b"<title>P</title>",
-        b"<title id='t'>P</title>",
-        b'<title hx-swap-oob="true">P</title>',
-    ):
-        write_to_file(tmp_file.name, document % head)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H016" not in result.output
-
     write_to_file(tmp_file.name, document % b'<meta charset="utf-8">')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H016 1:" in result.output
 
 
-def test_H022_loopback_and_prose(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+def test_H022_remote_link(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
     write_to_file(tmp_file.name, b'<a href="http://example.com">x</a>')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H022 1:" in result.output
 
-    for quiet in (
+
+@pytest.mark.parametrize(
+    "quiet",
+    [
         b'<a href="http://localhost:8000/admin/">x</a>',
         b'<a href="http://127.0.0.1:5432/health">x</a>',
         b'<a href="http://192.168.1.1/">x</a>',
         b'<a href="/docs" title="Set src=\'http://localhost\' in dev.ini">g</a>',
         b'<a data-href="http://example.com">x</a>',
-    ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H022" not in result.output
-
-
-def test_H022_is_reported_at_the_tag_holding_the_link(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+    ],
+)
+def test_H022_loopback_and_prose(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes
 ) -> None:
-    for source, position in (
+    write_to_file(tmp_file.name, quiet)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H022" not in result.output
+
+
+@pytest.mark.parametrize(
+    ("source", "position"),
+    [
         (b'<p class="x">see</p><a href="http://example.com">x</a>', "1:20"),
         (b'<div><a href="http://example.com">x</a></div>', "1:5"),
         (b'<a <b class="x"> <a href="http://example.com">x</a>', "1:17"),
-    ):
-        write_to_file(tmp_file.name, source)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert result.output.count("H022") == 1
-        assert f"H022 {position} " in result.output
+    ],
+)
+def test_H022_is_reported_at_the_tag_holding_the_link(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], source: bytes, position: str
+) -> None:
+    write_to_file(tmp_file.name, source)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert result.output.count("H022") == 1
+    assert f"H022 {position} " in result.output
 
+
+def test_H022_link_inside_an_unclosed_quote(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
     write_to_file(tmp_file.name, b'<a title=\'x href="http://example.com">')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert "H022" not in result.output
 
 
-def test_H024_covers_link_and_anchors_the_name(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    for reported in (
+@pytest.mark.parametrize(
+    "reported",
+    [
         b'<script type="text/javascript" src="app.js"></script>',
         b'<style type="text/css">a{color:red}</style>',
         b'<link rel="stylesheet" type="text/css" href="a.css">',
-    ):
-        write_to_file(tmp_file.name, reported)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H024 1:" in result.output
-
-    # The formatter drops these too, quoted or not.
-    for reported in (
+        # The formatter drops these too, quoted or not.
         b"<script type=text/javascript></script>",
         b'<style type = "text/css">a{color:red}</style>',
         b"<link rel=stylesheet type=TEXT/CSS href=a.css>",
@@ -904,12 +925,19 @@ def test_H024_covers_link_and_anchors_the_name(
         # A later type that is the same default takes over as nothing new.
         b'<script type="text/javascript" type=text/javascript defer></script>',
         b"<style TYPE='text/css' type=\"text/css\"></style>",
-    ):
-        write_to_file(tmp_file.name, reported)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H024 1:" in result.output
+    ],
+)
+def test_H024_covers_link_and_anchors_the_name(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], reported: bytes
+) -> None:
+    write_to_file(tmp_file.name, reported)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H024 1:" in result.output
 
-    for quiet in (
+
+@pytest.mark.parametrize(
+    "quiet",
+    [
         b'<script type="module" src="a.js"></script>',
         b'<script data-type="text/css" src="a.js"></script>',
         b"<script type=text/javascript-x></script>",
@@ -952,30 +980,43 @@ def test_H024_covers_link_and_anchors_the_name(
         b'<link rel="stylesheet" type="text/css" {{ attrs }}>',
         b'<script type="text/javascript" data-x="{{ "a > b" }}" {{ attrs|safe }}></script>',
         b'<script type="text/javascript" data-x=\'{{ "it\'s" }}\' {% attrs %}></script>',
-    ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H024" not in result.output
-
-
-def test_D018_only_reports_a_hardcoded_route(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+    ],
+)
+def test_H024_quiet(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes
 ) -> None:
-    for quiet in (
+    write_to_file(tmp_file.name, quiet)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H024" not in result.output
+
+
+@pytest.mark.parametrize(
+    "quiet",
+    [
         b'<a href="{% url \'profile\' %}" data-src="lazy">p</a>',
         b'<div class="card" data-src="avatar"></div>',
         b"<form action=\" {% url 'search' %}\">f</form>",
         b'<a href="/static/doc.pdf">d</a>',
         b'<a href="/media/uploads/1.png">m</a>',
-    ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
-        assert "D018" not in result.output
+    ],
+)
+def test_D018_only_reports_a_hardcoded_route(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes
+) -> None:
+    write_to_file(tmp_file.name, quiet)
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "D018" not in result.output
 
-    for reported in (b'<a href="/cart">c</a>', b'<div data-src="/table/1/log"></div>'):
-        write_to_file(tmp_file.name, reported)
-        result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
-        assert "D018 1:" in result.output
+
+@pytest.mark.parametrize(
+    "reported", [b'<a href="/cart">c</a>', b'<div data-src="/table/1/log"></div>']
+)
+def test_D018_reports_a_hardcoded_route(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], reported: bytes
+) -> None:
+    write_to_file(tmp_file.name, reported)
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "D018 1:" in result.output
 
 
 def test_H043_steps_over_a_template_block(
@@ -986,18 +1027,21 @@ def test_H043_steps_over_a_template_block(
     assert "H043" not in result.output
 
 
-def test_tag_rules_skip_markup_inside_an_attribute_value(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    for quiet in (
+@pytest.mark.parametrize(
+    "quiet",
+    [
         b'<div title="<button>x</button>">y</div>',
         b'<p title="a<br><br>b">x</p>',
         b"<p title=\"an <img src='a.png'>\">y</p>",
-    ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
-        for code in ("H043", "H036", "H013", "H017"):
-            assert code not in result.output, (quiet, code)
+    ],
+)
+def test_tag_rules_skip_markup_inside_an_attribute_value(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes
+) -> None:
+    write_to_file(tmp_file.name, quiet)
+    result = runner.invoke(djlint, (tmp_file.name, "--include", "H017"))
+    for code in ("H043", "H036", "H013", "H017"):
+        assert code not in result.output, code
 
 
 def test_H029_needs_a_name_boundary(
@@ -1012,25 +1056,32 @@ def test_H029_needs_a_name_boundary(
     assert "H029 1:" in result.output
 
 
-def test_H009_matches_what_the_formatter_fixes(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    """The formatter does not know these, so the rule must not ask for them."""
-    for quiet in (
+@pytest.mark.parametrize(
+    "quiet",
+    [
         b"<svg><G><PATH d='M0 0'/></G></svg>",
         b"<NAME>n</NAME>",
         b"<CACHE>c</CACHE>",
         b"<svg><clipPath id='a'/></svg>",
         b'<p title="x <DIV y">t</p>',
-    ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H009" not in result.output, quiet
+    ],
+)
+def test_H009_matches_what_the_formatter_fixes(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes
+) -> None:
+    """The formatter does not know these, so the rule must not ask for them."""
+    write_to_file(tmp_file.name, quiet)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H009" not in result.output
 
-    for reported in (b"<DIV>d</DIV>", b"<NAV>n</NAV>", b"<Div>x</Div>"):
-        write_to_file(tmp_file.name, reported)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert "H009 1:" in result.output, reported
+
+@pytest.mark.parametrize("reported", [b"<DIV>d</DIV>", b"<NAV>n</NAV>", b"<Div>x</Div>"])
+def test_H009_reports_an_uppercase_html_tag(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], reported: bytes
+) -> None:
+    write_to_file(tmp_file.name, reported)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H009 1:" in result.output
 
 
 def test_H013_accepts_a_valueless_alt(
@@ -1102,20 +1153,27 @@ def test_H012_sees_past_a_template_tag(
     assert "H012 1:" in result.output
 
 
-def test_T032_sees_a_tag_holding_a_filter_or_call(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    """A run of spaces inside a string is content."""
-    for reported in (
+@pytest.mark.parametrize(
+    "reported",
+    [
         b"{% if a|d  b %}{% endif %}",
         b"{% if a(b)  c %}{% endif %}",
         b"{% if a:b  c %}{% endif %}",
         b"{{ a|d  b }}",
-    ):
-        write_to_file(tmp_file.name, reported)
-        result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
-        assert "T032 1:" in result.output, reported
+    ],
+)
+def test_T032_sees_a_tag_holding_a_filter_or_call(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], reported: bytes
+) -> None:
+    write_to_file(tmp_file.name, reported)
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
+    assert "T032 1:" in result.output
 
+
+def test_T032_leaves_spaces_inside_a_string(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    """A run of spaces inside a string is content."""
     write_to_file(tmp_file.name, b'{% trans "a  b" %}')
     result = runner.invoke(djlint, (tmp_file.name, "--profile", "django"))
     assert "T032" not in result.output
@@ -1138,10 +1196,9 @@ def test_T040_allows_an_empty_literal_feeding_a_filter(
     assert "T040 1:" in result.output
 
 
-def test_tag_rules_ignore_markup_written_in_an_attribute_value(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    for quiet, profile in (
+@pytest.mark.parametrize(
+    ("quiet", "profile"),
+    [
         (b"<p title=\"<img src='/static/a.png'>\">x</p>", "django"),
         (b"<p title=\"<a href='javascript:x()'>\">x</p>", "html"),
         (b"<p title=\"<div style='a'>\">y</p>", "html"),
@@ -1157,29 +1214,33 @@ def test_tag_rules_ignore_markup_written_in_an_attribute_value(
         (b"<p title=\"<form method='POST' action=' x'>\">y</p>", "html"),
         (b'<p title="press tabindex=2 now">y</p>', "html"),
         (b"<p title=\"<div role='buton'>\">y</p>", "html"),
+    ],
+)
+def test_tag_rules_ignore_markup_written_in_an_attribute_value(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes, profile: str
+) -> None:
+    write_to_file(tmp_file.name, quiet)
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", profile))
+    for code in (
+        "D004",
+        "H019",
+        "H021",
+        "H022",
+        "H011",
+        "H005",
+        "H008",
+        "H010",
+        "H012",
+        "D018",
+        "J018",
+        "H024",
+        "H026",
+        "H029",
+        "H033",
+        "H046",
+        "H051",
     ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name, "--profile", profile))
-        for code in (
-            "D004",
-            "H019",
-            "H021",
-            "H022",
-            "H011",
-            "H005",
-            "H008",
-            "H010",
-            "H012",
-            "D018",
-            "J018",
-            "H024",
-            "H026",
-            "H029",
-            "H033",
-            "H046",
-            "H051",
-        ):
-            assert code not in result.output, (quiet, code)
+        assert code not in result.output, code
 
 
 def test_rules_see_past_a_template_tag_holding_a_bracket(
@@ -1194,30 +1255,40 @@ def test_rules_see_past_a_template_tag_holding_a_bracket(
     assert "H019 1:" in result.output
 
 
-def test_rules_see_past_a_template_tag_holding_braces(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    for source, profile, code in (
+@pytest.mark.parametrize(
+    ("source", "profile", "code"),
+    [
         (b'<script {{{attrs}}} type="text/javascript"></script>', "handlebars", "H024"),
         (b"<img src=\"a.png\" {{ {'class': 'x'}|xmlattr }}>", "jinja", "H013"),
         (b"<div {{ attrs }} class=''>y</div>", "django", "H008"),
         (b"<div x-data={a:1} class='a'>y</div>", "html", "H008"),
-    ):
-        write_to_file(tmp_file.name, source)
-        result = runner.invoke(djlint, (tmp_file.name, "--profile", profile))
-        assert f"{code} 1:" in result.output, source
-
-
-def test_a_name_ending_in_a_known_one_is_not_it(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+    ],
+)
+def test_rules_see_past_a_template_tag_holding_braces(
+    runner: CliRunner,
+    tmp_file: _TemporaryFileWrapper[bytes],
+    source: bytes,
+    profile: str,
+    code: str,
 ) -> None:
-    for quiet, code in (
+    write_to_file(tmp_file.name, source)
+    result = runner.invoke(djlint, (tmp_file.name, "--profile", profile))
+    assert f"{code} 1:" in result.output
+
+
+@pytest.mark.parametrize(
+    ("quiet", "code"),
+    [
         (b'<a data-href="javascript:x()">y</a>', "H019"),
         (b'<div data-style="color:red">y</div>', "H021"),
-    ):
-        write_to_file(tmp_file.name, quiet)
-        result = runner.invoke(djlint, (tmp_file.name,))
-        assert code not in result.output, quiet
+    ],
+)
+def test_a_name_ending_in_a_known_one_is_not_it(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], quiet: bytes, code: str
+) -> None:
+    write_to_file(tmp_file.name, quiet)
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert code not in result.output
 
 
 def test_T001_ignores_a_delimiter_inside_a_string(
