@@ -13,7 +13,7 @@ Prüfen Sie die Ausgabe mit `--check`, bevor Sie Änderungen übernehmen.
 Um zu sehen, was sich beim Formatieren ändern würde, führen Sie Folgendes aus:
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 Um den Code zu formatieren und die Dateien zu aktualisieren, führen Sie Folgendes aus:
