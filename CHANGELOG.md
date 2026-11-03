@@ -11,6 +11,7 @@
 
 ### Bug fixes
 
+- A number setting written in a config file as a list, a table or null, as `max_line_length = [100]` or `"indent": null`, is reported and falls back to its default, as a string that is no number already did. djLint failed instead.
 - An end tag that closes no open block, such as the end of a custom block djLint does not know, as in `{% endtoc %}`, or a stray `{% endif %}`, stays at the level of the markup around it. It moved one level to the left, and so did everything after it.
 - A string written as adjacent literals, as in `{{ _("Hello " "world") }}` or `{% set x = "a" "b" %}`, or in triple quotes, keeps its quotes. They were dropped, which left `{{ _(Hello world) }}`, a variable name rather than a string.
 
