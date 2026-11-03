@@ -358,7 +358,7 @@ def _run_language_server(
     type=str,
     default="",
     metavar="TAGS",
-    help="Names of custom template blocks to indent, for example toc for {% toc %}...{% endtoc %}.",
+    help="Names of custom template blocks to indent, comma-separated, for example toc.",
 )
 @click.option(
     "--custom-html",
