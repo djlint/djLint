@@ -7,6 +7,7 @@
 ### Performance
 
 - A template with hundreds of lines that each open a `{{`, `{% set %}` or `{% include %}` left unclosed, as in `{{ 'a` on every line, formats in well under a second. Four hundred such lines took from 45 seconds to seven minutes. Linting such lines with `T002` no longer slows down the same way.
+- A tag holding thousands of template tags written without spaces, as in `<script {%a%}{%a%}…>`, formats and lints in well under a second. Each template tag was also tried a character at a time, which took tens of seconds.
 
 ### Bug fixes
 
@@ -31,6 +32,7 @@
 - A template comment written after the last attribute of a tag, as in `<div class="x" {# note #}>`, is kept. With a profile that has `{# #}` comments, the formatter deleted it.
 - An unquoted attribute value next to a template tag written with `-`, as in `class=x {{- suffix }}` or `class={{ c -}} x`, stays unquoted. The `-` joins the text beyond it onto the value, and quoting the value left that text outside, which changed the attribute.
 - A template tag written against an attribute or against the tag name, as in `<option value="x"{% if a %} selected{% endif %}>` or `<li{{ attrs }}>`, stays there when the attributes are spread over several lines. A line break or space was put between them, which the page then rendered.
+- `H056` no longer reads a `src` written inside a template tag, as in `<img {% if src %}class="a"{% endif %} src="a.png">`, as an empty `src` of the tag.
 
 ## [1.49.3] - 2026-11-02
 

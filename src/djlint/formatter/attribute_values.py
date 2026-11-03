@@ -98,7 +98,7 @@ _DEFAULT_TYPE_PATTERN: Final = compile_pattern(
 
 _FORM_METHOD_PATTERN: Final = compile_pattern(
     rf"""
-    (<form(?![-.:\w])(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'">{{}}])*?
+    (<form(?![-.:\w])(?>{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'">{{}}])*?
      {_ATTRIBUTE_START}method\s*=\s*(["'])?)
     ([a-z]+)
     ((?(2)\2|(?=\s|/?>)))

@@ -34,6 +34,13 @@ sources = [
     pytest.param("<p>\n" + "{% set a = 'a\n" * 400 + "</p>", id="lines each opening a set"),
     pytest.param("<p>\n" + "{{ f('a\n" * 400 + "</p>", id="lines each opening a call"),
     pytest.param("<p>\n" + "{% include 'a\n" * 2000 + "</p>", id="lines each opening an include"),
+    # `{%a%}` reads both as a template tag and as a braced run, and trying
+    # the other reading of each made an opening tag never ended quadratic.
+    pytest.param("<script " + "{%a%}" * 8000 + ">x", id="a script tag of tags never closed"),
+    pytest.param("<form " + "{#a#}" * 8000 + " x>", id="a form tag of comments"),
+    pytest.param("<b " + "{%a%}" * 8000 + ">x", id="an inline tag of tags never closed"),
+    pytest.param("<img " + "{%a%}" * 8000 + ">x", id="an img tag of tags"),
+    pytest.param("<html " + "{%a%}" * 8000 + ">x", id="an html tag of tags"),
 ]
 
 

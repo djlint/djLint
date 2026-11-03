@@ -386,11 +386,13 @@ def restore_unformatted_blocks(html: str, replacements: list[tuple[str, str]]) -
 
 
 # A template tag in the opening tag is read whole, so a ">" in one, as in
-# data-x="{{ "a > b" }}", does not end the tag and start the body.
+# data-x="{{ "a > b" }}", does not end the tag and start the body. Each piece
+# is read once and never again in another way, since `{%a%}` is both a
+# template tag and a braced run: retrying those made a long tag quadratic.
 _RAW_TEXT_ELEMENT_PATTERN: Final = compile_pattern(
     rf"""
     (<(script|style|textarea)\b
-      (?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'\">{{}}])*>)
+      (?>{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'\">{{}}])*+>)
     (.*?)
     (?=</\2)
     """,
