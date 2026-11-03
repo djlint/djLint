@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Feature
+
+- Twig's `{% apply %}`, `{% sandbox %}` and `{% guard %}` blocks and Django's old `{% ifequal %}` and `{% ifnotequal %}` blocks indent their contents like other blocks.
+
+### Bug fixes
+
+- An end tag that closes no open block, such as the end of a custom block djLint does not know, as in `{% endtoc %}`, or a stray `{% endif %}`, stays at the level of the markup around it. It moved one level to the left, and so did everything after it.
+
 ### Performance
 
 - A tag whose quoted value runs over thousands of lines, as when its closing quote is missing, no longer slows formatting down. Forty thousand such lines took over seven seconds and now take about one.
