@@ -869,6 +869,16 @@ def test_H024_covers_link_and_anchors_the_name(
         b"<link rel=stylesheet type=TEXT/CSS href=a.css>",
         b'<link type="text/css" href="a.css" rel="alternate stylesheet">',
         b"<script type=text/javascript/></script>",
+        # A template tag in a bare value after the type is part of that value.
+        b'<script type="text/javascript" src={{url}}></script>',
+        b'<script type="text/javascript" src={{a}}{{b}}></script>',
+        b'<script type="text/javascript" class=a{{ b }}></script>',
+        b'<script type="text/javascript" src= {{ url }}></script>',
+        b'<style type="text/css" data-x={% if a %}x{% endif %}></style>',
+        b'<link rel="stylesheet" type="text/css" href={{ url }}>',
+        # A quoted value after the type is read with its template tags whole.
+        b'<script type="text/javascript" data-x="{{ "a type=b" }}"></script>',
+        b'<script type="text/javascript" data-type="x" data-x="type=x" @type="y"></script>',
     ):
         write_to_file(tmp_file.name, reported)
         result = runner.invoke(djlint, (tmp_file.name,))
@@ -915,6 +925,8 @@ def test_H024_covers_link_and_anchors_the_name(
         b"<script type=text/javascript {{ attrs|safe }}></script>",
         b'<style type="text/css" {% attrs %}></style>',
         b'<link rel="stylesheet" type="text/css" {{ attrs }}>',
+        b'<script type="text/javascript" data-x="{{ "a > b" }}" {{ attrs|safe }}></script>',
+        b'<script type="text/javascript" data-x=\'{{ "it\'s" }}\' {% attrs %}></script>',
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))

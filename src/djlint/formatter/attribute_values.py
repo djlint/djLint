@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from djlint.const import QUOTED_ATTRIBUTE_VALUE, TEMPLATE_TAG_WHOLE
 from djlint.helpers import (
     RE_FLAGS_ISX,
     RE_FLAGS_IX,
@@ -25,15 +26,28 @@ if TYPE_CHECKING:
 # unquoted one for the next run. An unquoted value ends where compressing ends
 # it, so `type=text/css{{ x }}` is one value of its own. A template tag or
 # comment is read whole, even across lines, so what is written inside one, as
-# in `{# rel=stylesheet #}`, is not taken for markup. A closer inside a string
-# of a tag, as in `{{ '}}' }}`, does not end it; a quote left open is read as
-# a character, as the scan for strings across lines reads it.
-_TEMPLATE_TAG: Final = r"""
-    \{\{(?:"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!\}\}|\{\{).)*+\}\}
-  | \{%(?:"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!%\}|\{%).)*+%\}
-  | \{\#(?:(?!\#\}).)*\#\}
+# in `{# rel=stylesheet #}`, is not taken for markup, and so is one in a
+# quoted value, where a quote or ">" of its own, as in `"{{ "a > b" }}"`, does
+# not end the value.
+_ATTRIBUTES: Final = (
+    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|(?!\{{[{{%\#])[^'">])*?"""
+)
+# A bare value as compressing reads it, template tags and all: the one in
+# `src={{ url }}` is part of the value, and compressing quotes it.
+_BARE_VALUE: Final = (
+    r"""(?:[^\s"'=<>/{}]|/(?!>)|\{\{(?:(?!\}\}|\{\{).)*+\}\}|\{%(?:(?!%\}|\{%).)*+%\})++"""
+)
+# What follows a value in a tag, read one whole piece at a time and never
+# back: a value with its "=", a comment, a name, or any other character. It
+# stops only at a template tag of its own, which may write any attribute, at
+# another `type=`, or at the end of the tag.
+_REST_OF_TAG: Final = rf"""
+    (?:=\s*(?:{QUOTED_ATTRIBUTE_VALUE}|{_BARE_VALUE})
+      |\{{\#(?:(?!\#\}}|\{{\#).)*+\#\}}
+      |(?!type\s*=)[-.:@\w]+
+      |(?!\{{[{{%]|type\s*=)[^<>]
+    )*+
 """
-_ATTRIBUTES: Final = rf"""(?:"[^"]*"|'[^']*'|{_TEMPLATE_TAG}|(?!\{{[{{%\#])[^'">])*?"""
 # A template tag written with jinja's "-" marker strips the whitespace on that
 # side, which would glue a neighbour onto the value or onto the tag name.
 _TRIMS_BEFORE: Final = r"\s*\{[{%\#]-"
@@ -43,10 +57,10 @@ _TRIMMED_AFTER: Final = r"-[}%\#]\}\s*"
 # only implied for a stylesheet. A rel a template tag helps write may render
 # as anything, and so may one after a template tag outside a value: it can
 # write a rel of its own, which a browser reads first, or leave this one out.
-_STYLESHEET_REL: Final = r"""
-    (?=(?:"[^"]*"|'[^']*'|\{\#(?:(?!\#\}).)*\#\}|(?!\{[{%\#])[^'">])*?\srel\s*=\s*
-        (?:"[^"{]*?(?<![^\s"])stylesheet(?![^\s"])[^"{]*"
-          |'[^'{]*?(?<![^\s'])stylesheet(?![^\s'])[^'{]*'
+_STYLESHEET_REL: Final = rf"""
+    (?=(?:{QUOTED_ATTRIBUTE_VALUE}|\{{\#(?:(?!\#\}}).)*\#\}}|(?!\{{[{{%\#])[^'">])*?\srel\s*=\s*
+        (?:"[^"{{]*?(?<![^\s"])stylesheet(?![^\s"])[^"{{]*"
+          |'[^'{{]*?(?<![^\s'])stylesheet(?![^\s'])[^'{{]*'
           |stylesheet(?=\s|/?>)))
 """
 # An attribute of its own starts after whitespace that renders, or after a
@@ -66,7 +80,7 @@ def _default_type(element: str, value: str, condition: str = "") -> str:
     \s+(?<![-.:\w])(?<!{_TRIMMED_AFTER})type\s*=\s*
     (?:(["']){value}\2|{value}(?=\s|/?>))
     (?!{_TRIMS_BEFORE})
-    (?!{_ATTRIBUTES}(?:(?<![-.:@\w])type\s*=|\{{[{{%]))
+    (?!{_REST_OF_TAG}(?:\{{[{{%]|type\s*=))
     """
 
 
@@ -81,7 +95,7 @@ _DEFAULT_TYPE_PATTERN: Final = compile_pattern(
 
 _FORM_METHOD_PATTERN: Final = compile_pattern(
     rf"""
-    (<form(?![-.:\w])(?:"[^"]*"|'[^']*'|\{{[^}}]*\}}|[^'">{{}}])*?
+    (<form(?![-.:\w])(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'">{{}}])*?
      {_ATTRIBUTE_START}method\s*=\s*(["'])?)
     ([a-z]+)
     ((?(2)\2|(?=\s|/?>)))

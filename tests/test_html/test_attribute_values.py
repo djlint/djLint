@@ -181,6 +181,38 @@ test_data = [
     ),
     pytest.param(
         (
+            '<script type="text/javascript" src={{url}}></script>\n'
+            '<script type="text/javascript" src={{a}}{{b}}></script>\n'
+            '<script type="text/javascript" class=a{{ b }}></script>\n'
+            '<script type="text/javascript" src= {{ url }}></script>\n'
+            '<script type="text/javascript" src={% if a %}x{% endif %}></script>\n'
+        ),
+        (
+            '<script src="{{url}}"></script>\n'
+            '<script src="{{a}}{{b}}"></script>\n'
+            '<script class="a{{ b }}"></script>\n'
+            '<script src="{{ url }}"></script>\n'
+            '<script src="{% if a %}x{% endif %}"></script>\n'
+        ),
+        id="a template tag in a bare value after the type is part of that value",
+    ),
+    pytest.param(
+        (
+            '<script type="text/javascript" data-x="{{ "a > b" }}" {{ attrs|safe }}></script>\n'
+            '<script type="text/javascript" data-x="{{ "a type=b" }}"></script>\n'
+            '<script type="text/javascript" data-x=\'{{ "it\'s" }}\' {% attrs %}></script>\n'
+            '<script type="text/javascript" data-type="x" data-x="type=x" @type="y"></script>\n'
+        ),
+        (
+            '<script type="text/javascript" data-x="{{ "a > b" }}" {{ attrs|safe }}></script>\n'
+            '<script data-x="{{ "a type=b" }}"></script>\n'
+            '<script type="text/javascript" data-x=\'{{ "it\'s" }}\' {% attrs %}></script>\n'
+            '<script data-type="x" data-x="type=x" @type="y"></script>\n'
+        ),
+        id="a quoted value after the type is read with its template tags whole",
+    ),
+    pytest.param(
+        (
             '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
             '<link rel=\'{% if x %} stylesheet {% else %} icon {% endif %}\' type="text/css" href="b">\n'
         ),
