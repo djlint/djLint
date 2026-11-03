@@ -421,15 +421,15 @@ def test_version(runner: CliRunner) -> None:
     assert metadata.version("djlint") in result.output
 
 
-def test_python_call() -> None:
-    for args in (("-h",), ("__init__", "-h")):
-        py_sub = subprocess.run(  # noqa: S603
-            (sys.executable, "-m", "djlint", *args), capture_output=True, check=False
-        )
-        print(py_sub.stdout)
-        print(py_sub.returncode)
-        assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
-        assert py_sub.returncode == 0
+@pytest.mark.parametrize("args", [("-h",), ("__init__", "-h")])
+def test_python_call(args: tuple[str, ...]) -> None:
+    py_sub = subprocess.run(  # noqa: S603
+        (sys.executable, "-m", "djlint", *args), capture_output=True, check=False
+    )
+    print(py_sub.stdout)
+    print(py_sub.returncode)
+    assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
+    assert py_sub.returncode == 0
 
 
 def test_line_ending(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
