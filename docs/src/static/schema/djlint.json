@@ -132,7 +132,7 @@
       "minimum": 0
     },
     "max_blank_lines": {
-      "description": "Keep at most this many blank lines in a row. Default is 0, which removes blank lines.",
+      "description": "Keep at most this many blank lines in a row. Default is 0, which removes blank lines. It has no effect with `preserve_blank_lines`, which keeps every blank line.",
       "type": "integer",
       "minimum": 0
     },
