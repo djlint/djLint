@@ -13,7 +13,14 @@ import regex as re
 import yaml
 from click import BadParameter, UsageError, echo, style
 
-from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS, SKIP_TEMPLATE_TAG, TEMPLATE_TAG_NAME
+from djlint.const import (
+    HTML_TAG_NAMES,
+    HTML_VOID_ELEMENTS,
+    QUOTED_ATTRIBUTE_VALUE,
+    SKIP_TEMPLATE_TAG,
+    TEMPLATE_TAG_NAME,
+    TEMPLATE_TAG_WHOLE,
+)
 from djlint.helpers import (
     RE_FLAGS_IMSX,
     RE_FLAGS_IMX,
@@ -849,7 +856,10 @@ _TEMPLATE_NAMED_OPENING_TAG: Final = (
     rf"<(?:{TEMPLATE_TAG_NAME})(?!(?:[^>\"']|\"[^\"]*\"|'[^']*')*?/>)"
 )
 
-_RAW_TEXT_OPENING_TAG: Final = r"""(?:\"[^\"]*\"|'[^']*'|[^>\"'])*>"""
+# A template tag is read whole, so a ">" in one is not the tag's end.
+_RAW_TEXT_OPENING_TAG: Final = (
+    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|[^>\"'{{]|\{{)*>"""
+)
 
 
 def _build_ignored_blocks(*, for_linting: bool) -> str:

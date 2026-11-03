@@ -1115,6 +1115,23 @@ test_data = [
     ),
     pytest.param(
         (
+            '<div data-x="{{ "a > b" }}">x</div>\n'
+            '<a data-x="{{ "a > b" }}">x</a>\n'
+            '<script data-x="{{ "a > b" }}"></script>\n'
+            '<style data-x="{% if a > b %}c{% endif %}">a{color:red}</style>\n'
+            "<textarea data-x=\"{{ 'a > b' }}\">  t  </textarea>\n"
+        ),
+        (
+            '<div data-x="{{ "a > b" }}">x</div>\n'
+            '<a data-x="{{ "a > b" }}">x</a>\n'
+            '<script data-x="{{ "a > b" }}"></script>\n'
+            '<style data-x="{% if a > b %}c{% endif %}">a{color:red}</style>\n'
+            "<textarea data-x=\"{{ 'a > b' }}\">  t  </textarea>\n"
+        ),
+        id="a_gt_in_a_template_tag_in_a_value_is_not_the_end_of_the_tag",
+    ),
+    pytest.param(
+        (
             "<div>\n"
             '<script type="text/plain" id="upgrade_user" data-link="aaaaaaaaaaa" data-price="bbb">\n'
             "</script>\n"

@@ -13,7 +13,12 @@ from typing import TYPE_CHECKING, final
 
 import regex as re
 
-from djlint.const import COLLAPSIBLE_WHITESPACE, HTML_INLINE_ELEMENTS
+from djlint.const import (
+    COLLAPSIBLE_WHITESPACE,
+    HTML_INLINE_ELEMENTS,
+    QUOTED_ATTRIBUTE_VALUE,
+    TEMPLATE_TAG_WHOLE,
+)
 from djlint.formatter.attributes import format_attributes
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
@@ -469,7 +474,7 @@ def condense_html(html: str, config: Config, authored_html: str | None = None) -
     func = partial(condense_html_line, config, html)
 
     html = re.sub(
-        rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{{{[^}}]*}}}}|{{[^}}]*}}|[^'\">{{}}])*>)\s*+([^<\n]*?)\s*?(</(\2)>)",
+        rf"(<({config.optional_single_line_html_tags})\b(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}|[^'\">{{}}])*>)\s*+([^<\n]*?)\s*?(</(\2)>)",
         func,
         html,
         flags=RE_FLAGS_IMSX,
