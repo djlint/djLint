@@ -32,6 +32,7 @@ sources = [
     pytest.param("<!-- a\n" * 20000, id="comments never closed"),
     pytest.param("</p\n" * 20000, id="closing tags with no > after them"),
     pytest.param('</p x="a\n' * 20000, id="closing tags each opening a value"),
+    pytest.param("</p {\n" * 20000 + "<div>", id="closing tags each opening a brace"),
 ]
 
 

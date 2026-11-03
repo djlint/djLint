@@ -57,8 +57,10 @@ _ATTRIBUTE_PART: Final = rf"{_QUOTED_PART}|{{(?:(?!{TAG_START})[^}}])*}}|(?!{TAG
 # A closing tag runs to its ">", as browsers read it: in `</p` followed by
 # `<p class="a">` on the next line, the "<p" is junk inside the closing tag.
 # Stopping there left the "</p" closing nothing, so each paragraph after it
-# was indented a level deeper.
-_CLOSING_TAG_PART: Final = rf"{_QUOTED_PART}|{{[^}}]*}}|[^'\">{{}}]"
+# was indented a level deeper. Only quotes count in the junk, so a "{" is a
+# character like any other: looking for its "}" from every closing tag after
+# an unclosed one took quadratic time.
+_CLOSING_TAG_PART: Final = rf"{_QUOTED_PART}|[^'\">]"
 _BREAK_BEFORE_TAG: Final = "\n%s"
 _BREAK_AFTER_TAG: Final = "%s\n"
 _TEMPLATE_TAG_NAME_PATTERN: Final = compile_pattern(r"^\{%[-+]?\s*([^\s%]+)", RE_FLAGS_IX)
@@ -492,19 +494,22 @@ def expand_html(html: str, config: Config) -> str:
     break_char = config.break_before
 
     html_tag = (
-        rf"</(?:{html_tags})\b(?:{_CLOSING_TAG_PART})*>|<(?:{html_tags})\b(?:{_ATTRIBUTE_PART})*>"
+        rf"</(?:{html_tags})\b(?:{_CLOSING_TAG_PART})*+>|<(?:{html_tags})\b(?:{_ATTRIBUTE_PART})*+>"
     )
 
-    # A tag that already starts its line is stepped over whole, so that a
-    # tag written inside it, as the "<p" in the closing tag `</p <p x="a">`,
-    # is not broken out of it.
+    # A tag read whole and not broken is stepped over whole, so that a tag
+    # written inside it, as the "<p" in the closing tag `</p <p x="a">`, is
+    # not broken out of it, nor read again up to the same ">" from each of
+    # the tag starts inside a long one.
     html = _sub_tags(
         rf"(?<=\n[ \t]*)(?:{html_tag})(*SKIP)(*FAIL)|{break_char}\K({html_tag})",
         break_before_html_tag,
         html,
     )
 
-    html = _sub_tags(rf"({html_tag})(?!\s*?\n)(?=[^\n])", break_after_html_tag, html)
+    html = _sub_tags(
+        rf"({html_tag})(?:(?!\s*?\n)(?=[^\n])|(*SKIP)(*FAIL))", break_after_html_tag, html
+    )
 
     def should_i_move_template_tag(out_format: str, match: re.Match[str]) -> str:
         """Break against a template tag unless it belongs where it is.
