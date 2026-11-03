@@ -311,6 +311,16 @@ test_data = [
         (True),
         id="a tag with an unclosed quote does not swallow the tags after it",
     ),
+    pytest.param(
+        ('{% extends "b.html" %}{% set x | replace(")", "=") %}<p>hi</p>{% endset %}'),
+        (False),
+        id="a bracket or equals sign in a string of a set filter assigns nothing",
+    ),
+    pytest.param(
+        ('{% extends "b.html" %}{% macro m() %}{% block a %}{% endmacro %}<p>x</p>'),
+        (True),
+        id="an end tag closes what was left open inside it",
+    ),
 ]
 
 

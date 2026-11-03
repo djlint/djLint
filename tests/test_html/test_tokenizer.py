@@ -326,3 +326,30 @@ def test_markup_inside_a_raw_text_element_is_text(basic_config: Config) -> None:
     )
 
     assert compress_html(source, basic_config) == source
+
+
+@pytest.mark.parametrize(
+    ("source", "tags"),
+    [
+        pytest.param(
+            r'<input value="${ "a\"}" }"><p>',
+            [r'<input value="${ "a\"}" }">', "<p>"],
+            id="an escaped quote in a mako string",
+        ),
+        pytest.param(
+            r'<a title={{ "x\">" }}><p>',
+            [r'<a title={{ "x\">" }}>', "<p>"],
+            id="an escaped quote in a template string",
+        ),
+        pytest.param(
+            r'<a title="{{ "x\">" }}"><p>',
+            [r'<a title="{{ "x\">" }}">', "<p>"],
+            id="an escaped quote in a template string in a quoted value",
+        ),
+        pytest.param("<p>${ x <b>", ["<p>", "<b>"], id="a mako expression that never closes"),
+        pytest.param("<p>{{<b>x</b>", ["<p>", "<b>", "</b>"], id="braces opening on a tag"),
+        pytest.param("<![CDATA[ <p>", ["<p>"], id="a cdata section that never closes"),
+    ],
+)
+def test_escaped_quotes_and_openers_left_open(source: str, tags: list[str]) -> None:
+    assert [source[token.start : token.end] for token in tokenize_tags(source)] == tags

@@ -210,6 +210,12 @@ test_data = [
         ({"blank_line_after_tag": "load, ,"}),
         id="blank entries are dropped",
     ),
+    pytest.param(
+        ("<pre>{% load a %}<p>x</p></pre>"),
+        ("<pre>{% load a %}<p>x</p></pre>\n"),
+        ({"blank_line_after_tag": "load"}),
+        id="a tag inside a pre is left where it is",
+    ),
 ]
 
 

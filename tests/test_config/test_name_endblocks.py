@@ -52,6 +52,11 @@ test_data = [
         "{% blocktrans %}\nx\n{% endblocktrans %}\n",
         id="blocktrans is not a block",
     ),
+    pytest.param(
+        "{% endblock %}\n{% block a %}\nx\n{% endblock %}\n",
+        "{% endblock %}\n{% block a %}\n    x\n{% endblock a %}\n",
+        id="an endblock closing nothing takes no name",
+    ),
 ]
 
 

@@ -130,6 +130,16 @@ test_data = [
     pytest.param(
         '{{ f("""a""") }}', '{{ f("""a""") }}\n', id="triple_quoted_string_stays_a_string"
     ),
+    pytest.param(
+        '<a href="{{ url_for(page, 2) }}">x</a>',
+        '<a href="{{ url_for(page, 2) }}">x</a>\n',
+        id="arguments in an attribute holding no string",
+    ),
+    pytest.param(
+        '<a href="{{ url_for(page, [) }}">x</a>',
+        '<a href="{{ url_for(page, [) }}">x</a>\n',
+        id="arguments in an attribute that python cannot read are left alone",
+    ),
 ]
 
 

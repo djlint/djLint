@@ -226,6 +226,26 @@ test_data = [
         (False),
         id="front matter behind a byte order mark",
     ),
+    pytest.param(
+        (
+            "{% comment %}djlint:off H025{% endcomment %}{% load x %}"
+            "{% comment %}djlint:on{% endcomment %}"
+            '{% extends "base.html" %}'
+        ),
+        (True),
+        id="a load inside a comment block djlint:off region naming another rule",
+    ),
+    pytest.param(
+        ('{% comment %}{% extends "base.html" %}'),
+        (True),
+        id="a comment block that never ends hides nothing",
+    ),
+    pytest.param(
+        ('{% comment %}a{% comment %}b{% extends "base.html" %}'), (True), id="nor do two of them"
+    ),
+    pytest.param(
+        ('{% extends "base.html" %}{% comment'), (False), id="a comment tag left open after it"
+    ),
 ]
 
 

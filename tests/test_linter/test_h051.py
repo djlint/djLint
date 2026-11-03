@@ -50,6 +50,11 @@ test_data = [
     pytest.param(('<div :role="r">x</div>'), (False), id="a framework binding is not a plain role"),
     pytest.param(('<div data-role="buton">x</div>'), (False), id="a name that merely ends in role"),
     pytest.param(("<div>x</div>"), (False), id="no role at all"),
+    pytest.param(
+        ('<!-- djlint:off --><div role="buton">x</div><!-- djlint:on -->'),
+        (False),
+        id="inside a djlint:off region",
+    ),
 ]
 
 

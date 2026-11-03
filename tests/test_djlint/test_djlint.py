@@ -13,6 +13,8 @@ from importlib import metadata
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import pytest
+
 import djlint as djlint_module
 from djlint import main as djlint, output as djlint_output
 from tests.conftest import write_to_file
@@ -20,7 +22,6 @@ from tests.conftest import write_to_file
 if TYPE_CHECKING:
     from tempfile import _TemporaryFileWrapper
 
-    import pytest
     from click.testing import CliRunner
 
 
@@ -462,3 +463,22 @@ def test_stdin_filename_with_parent_steps_leaves_an_excluded_folder(
         djlint, ("-", "--stdin-filename", "../templates/a.html"), input='<img src="x">'
     )
     assert "H013" in result.output
+
+
+# Under pytest-xdist the process runs more than one thread, which Python 3.12
+# and 3.13 warn about where the workers are forked.
+@pytest.mark.filterwarnings("ignore:This process .* is multi-threaded:DeprecationWarning")
+def test_large_files_are_shared_out_to_workers(runner: CliRunner, tmp_path: Path) -> None:
+    """Files too large for one worker are processed in parallel, to the same results."""
+    unformatted = "<div><p>hi</p>\n</div>\n" * 3000
+    for name in ("a.html", "b.html"):
+        (tmp_path / name).write_text(unformatted, encoding="utf-8")
+    (tmp_path / "c.html").write_text('<img src="x">\n', encoding="utf-8")
+
+    result = runner.invoke(djlint, (str(tmp_path), "--check", "--lint"))
+
+    assert result.exit_code == 1
+    assert "Checking and Linting 3/3 files" in result.stderr
+    assert "2 files would be updated." in result.output
+    assert "H013 1:0 Img tag should have an alt attribute." in result.output
+    assert "Linted 3 files, found 1 error." in result.output

@@ -191,6 +191,8 @@ test_data = [
     pytest.param(("{% '', \"'\" %}"), ([]), id="T027_quoted_apostrophe"),
     pytest.param(("{% 'foo', \"can't\" %}"), ([]), id="T027_mixed_quote_strings"),
     pytest.param(("{{/* can't */}}"), ([]), id="T027_mixed_quotes"),
+    pytest.param(('<!-- djlint:off -->{{ "a }}<!-- djlint:on -->'), ([]), id="T027_ignored"),
+    pytest.param(("{{}}"), ([]), id="T001_empty_tag"),
     pytest.param(
         ("<a href=\"{{ blah 'asdf' -}}\">"),
         ([

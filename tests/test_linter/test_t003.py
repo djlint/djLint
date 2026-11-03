@@ -60,6 +60,11 @@ test_data = [
         ]),
         id="multi_line_block_without_name",
     ),
+    pytest.param(
+        ("{# djlint:off #}{% block foo %}\n{% endblock %}{# djlint:on #}"),
+        ([]),
+        id="inside a djlint:off region",
+    ),
 ]
 
 
