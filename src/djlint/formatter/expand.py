@@ -36,6 +36,7 @@ from djlint.helpers import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from typing import Final
 
     from djlint.formatter.tokenizer import TagToken
@@ -47,13 +48,19 @@ _TRANSPARENT_ELEMENTS: Final = (
 )
 # One piece of a tag's attributes. A template tag in a quoted value is read
 # whole, so a quote inside it, as in `value="${_("it's")}"`, neither ends the
-# value nor opens another that runs on past the end of the tag. Another tag's
-# start ends a tag that was never closed.
+# value nor opens another that runs on past the end of the tag.
 _VALUE_TEMPLATE_TAG: Final = r"\$\{[^{}\n]*\}|\{\{(?:(?!\}\}|\{\{).)*+\}\}|\{%(?:(?!%\}|\{%).)*+%\}"
-_ATTRIBUTE_PART: Final = (
-    rf"\"(?:{_VALUE_TEMPLATE_TAG}|[^\"])*+\"|'(?:{_VALUE_TEMPLATE_TAG}|[^'])*+'"
-    rf"|{{(?:(?!{TAG_START})[^}}])*}}|(?!{TAG_START})[^'\">{{}}]"
-)
+_QUOTED_PART: Final = rf"\"(?:{_VALUE_TEMPLATE_TAG}|[^\"])*+\"|'(?:{_VALUE_TEMPLATE_TAG}|[^'])*+'"
+# Another tag's start ends an opening tag that was never closed, which would
+# otherwise be read to the end of the file again from every tag after it.
+_ATTRIBUTE_PART: Final = rf"{_QUOTED_PART}|{{(?:(?!{TAG_START})[^}}])*}}|(?!{TAG_START})[^'\">{{}}]"
+# A closing tag runs to its ">", as browsers read it: in `</p` followed by
+# `<p class="a">` on the next line, the "<p" is junk inside the closing tag.
+# Stopping there left the "</p" closing nothing, so each paragraph after it
+# was indented a level deeper. Only quotes count in the junk, so a "{" is a
+# character like any other: looking for its "}" from every closing tag after
+# an unclosed one took quadratic time.
+_CLOSING_TAG_PART: Final = rf"{_QUOTED_PART}|[^'\">]"
 _BREAK_BEFORE_TAG: Final = "\n%s"
 _BREAK_AFTER_TAG: Final = "%s\n"
 _TEMPLATE_TAG_NAME_PATTERN: Final = compile_pattern(r"^\{%[-+]?\s*([^\s%]+)", RE_FLAGS_IX)
@@ -152,6 +159,25 @@ def _past_raw_text_element(html: str, index: int, name: str, *, back: bool) -> i
             end = html.find(">", found)
             return len(html) if end < 0 else end + 1
         index = found + 1
+
+
+def _sub_tags(pattern: str, repl: Callable[[re.Match[str]], str], html: str) -> str:
+    """Substitute the html tags the pattern matches.
+
+    Every tag ends at a ">", so none can start after the last one. A tag
+    start there was still read to the end of the file looking for one, and
+    again from each tag start after it, which for a run of closing tags
+    left open, as in `</p` on line after line, took quadratic time. Those
+    starts are hidden from the pattern, which keeps the length of the html,
+    and the text after the last ">" is put back as it was.
+    """
+    end = html.rfind(">") + 1
+    tail = html[end:]
+    if "<" not in tail:
+        return re.sub(pattern, repl, html, flags=RE_FLAGS_IX)
+
+    substituted = re.sub(pattern, repl, html[:end] + tail.replace("<", "\x00"), flags=RE_FLAGS_IX)
+    return substituted[: len(substituted) - len(tail)] + tail
 
 
 def expand_html(html: str, config: Config) -> str:
@@ -467,18 +493,22 @@ def expand_html(html: str, config: Config) -> str:
 
     break_char = config.break_before
 
-    html = re.sub(
-        rf"{break_char}\K(</?(?:{html_tags})\b({_ATTRIBUTE_PART})*>)",
-        break_before_html_tag,
-        html,
-        flags=RE_FLAGS_IX,
+    html_tag = (
+        rf"</(?:{html_tags})\b(?:{_CLOSING_TAG_PART})*+>|<(?:{html_tags})\b(?:{_ATTRIBUTE_PART})*+>"
     )
 
-    html = re.sub(
-        rf"(</?(?:{html_tags})\b({_ATTRIBUTE_PART})*>)(?!\s*?\n)(?=[^\n])",
-        break_after_html_tag,
+    # A tag read whole and not broken is stepped over whole, so that a tag
+    # written inside it, as the "<p" in the closing tag `</p <p x="a">`, is
+    # not broken out of it, nor read again up to the same ">" from each of
+    # the tag starts inside a long one.
+    html = _sub_tags(
+        rf"(?<=\n[ \t]*)(?:{html_tag})(*SKIP)(*FAIL)|{break_char}\K({html_tag})",
+        break_before_html_tag,
         html,
-        flags=RE_FLAGS_IX,
+    )
+
+    html = _sub_tags(
+        rf"({html_tag})(?:(?!\s*?\n)(?=[^\n])|(*SKIP)(*FAIL))", break_after_html_tag, html
     )
 
     def should_i_move_template_tag(out_format: str, match: re.Match[str]) -> str:

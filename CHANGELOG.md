@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- A closing tag missing its `>`, as in `</p` at the end of a line, again runs to the next `>`, as browsers read it. Since 1.49.5, the tag on the next line was taken for an opening tag, so each paragraph after such a line was indented one level deeper than the one before.
+
 ## [1.49.6] - 2026-11-03
 
 ### Docs
