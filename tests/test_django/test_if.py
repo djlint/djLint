@@ -44,6 +44,11 @@ test_data = [
         id="preserve_multiline_if_opened_against_a_tag",
     ),
     pytest.param(
+        ("{% if x %}\n<span>{{ _('Deleted') }}</span>\n{% endif %}\n"),
+        ('{% if x %}\n    <span>{{ _("Deleted") }}</span>\n{% endif %}\n'),
+        id="preserve_multiline_if_whose_quotes_the_formatter_rewrites",
+    ),
+    pytest.param(
         ('{% if x %}\nx\n{% endif %} <td title="t">y\n  </td>\n'),
         ('{% if x %}\n    x\n{% endif %} <td title="t">y</td>\n'),
         id="end_tag_unindents_with_a_whole_tag_after_it",

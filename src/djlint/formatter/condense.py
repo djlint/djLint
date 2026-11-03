@@ -13,7 +13,14 @@ from typing import TYPE_CHECKING, final
 
 import regex as re
 
-from djlint.const import COLLAPSIBLE_WHITESPACE, HTML_INLINE_ELEMENTS
+from djlint.const import (
+    COLLAPSIBLE_WHITESPACE,
+    HTML_INLINE_ELEMENTS,
+    QUOTED_ATTRIBUTE_VALUE,
+    TEMPLATE_TAG_WHOLE,
+)
+from djlint.formatter.attributes import format_attributes
+from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IMS,
     RE_FLAGS_IMSX,
@@ -40,6 +47,7 @@ if TYPE_CHECKING:
 _YAML_FRONT_MATTER_PATTERN: Final = compile_pattern(YAML_FRONT_MATTER, RE_FLAGS_MSX)
 
 _COLLAPSIBLE_WHITESPACE_CHARS: Final = frozenset(COLLAPSIBLE_WHITESPACE)
+_RAW_TEXT_ELEMENTS: Final = frozenset(("script", "style"))
 # Jinja and nunjucks strip the whitespace on the marked side of a tag. The
 # "+" marker asks for it to be kept, so only "-" counts here.
 _STRIPS_WHITESPACE_BEFORE: Final = compile_pattern(r"\{[{%#]-")
@@ -251,9 +259,10 @@ def _template_block_key(tag: str, contents: str) -> tuple[str, str]:
 
     All whitespace is dropped: the two sides being compared differ in line
     breaks and indentation, and indenting also respaces template tags
-    ("{{x}}" -> "{{ x }}").
+    ("{{x}}" -> "{{ x }}"). Quotes are read as one kind, since indenting
+    also rewrites the quotes of a tag's strings ("_('x')" -> '_("x")').
     """
-    return tag.lower(), "".join(contents.split())
+    return tag.lower(), "".join(contents.split()).replace("'", '"')
 
 
 def _multiline_template_blocks(
@@ -313,6 +322,24 @@ def _neighbour_before(text: str, position: int) -> _Neighbour:
     if start < position and text[:start].endswith(_STRIPS_WHITESPACE_AFTER):
         return _Neighbour.RENDERS
     return _neighbour(text[position - 1 : position])
+
+
+def _line_around(text: str, start: int, end: int, limit: int) -> int:
+    """How much of the line holding text[start:end] lies outside it.
+
+    The text before it is the line's indentation and whatever shares the
+    line, and counts as much as the text after it: the limit is on the
+    line, and a line put together past it has its attributes spread on the
+    next run. Neither side is read further than `limit`, which already
+    rules the line out, so a long line of short tags stays linear.
+    """
+    window = max(start - limit, 0)
+    line_start = text.rfind("\n", window, start)
+    before = start - (line_start + 1 if line_start >= 0 else window)
+
+    line_end = text.find("\n", end, end + limit)
+    after = (line_end if line_end >= 0 else min(len(text), end + limit)) - end
+    return before + after
 
 
 def _rendered_whitespace(text: str, left: _Neighbour, right: _Neighbour) -> str:
@@ -392,12 +419,13 @@ def condense_html(html: str, config: Config, authored_html: str | None = None) -
         if holds_back_multiline_content:
             combined_length = config.max_line_length + 1
         else:
-            combined_length = len(
-                match.group(1).splitlines()[-1]
-                + leading
-                + match.group(3)
-                + trailing
-                + match.group(4)
+            # Measured from the last line of an opening tag spread over lines.
+            start = match.start(1) + match.group(1).rfind("\n") + 1
+            combined_length = (
+                match.end(1)
+                - start
+                + len(leading + match.group(3) + trailing + match.group(4))
+                + _line_around(match.string, start, match.end(), config.max_line_length)
             )
 
         if (
@@ -425,14 +453,28 @@ def condense_html(html: str, config: Config, authored_html: str | None = None) -
         return True
 
     def condense_html_line(config: Config, html: str, match: re.Match[str]) -> str:
-        return condense_line(
+        condensed = condense_line(
             config, html, match, inline=match.group(2).lower() in HTML_INLINE_ELEMENTS
         )
+        if condensed == match.group() or match.group(2).lower() not in _RAW_TEXT_ELEMENTS:
+            return condensed
+
+        # The opening tag of a script or style starts a block left as
+        # written, so indenting did not spread its attributes. Joined to its
+        # closing tag it no longer does, and the next run would spread them.
+        opening = match.group(1)
+        tokens = tokenize_tags(opening)
+        token = next(tokens, None)
+        if token is None or "\n" in opening:
+            return condensed
+        line_start = match.string.rfind("\n", 0, match.start()) + 1
+        spread = format_attributes(config, opening, token, match.string[line_start : match.start()])
+        return spread + condensed[len(opening) :]
 
     func = partial(condense_html_line, config, html)
 
     html = re.sub(
-        rf"(<({config.optional_single_line_html_tags})\b(?:\"[^\"]*\"|'[^']*'|{{{{[^}}]*}}}}|{{[^}}]*}}|[^'\">{{}}])*>)\s*+([^<\n]*?)\s*?(</(\2)>)",
+        rf"(<({config.optional_single_line_html_tags})\b(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}|[^'\">{{}}])*+>)\s*+([^<\n]*?)\s*?(</(\2)>)",
         func,
         html,
         flags=RE_FLAGS_IMSX,

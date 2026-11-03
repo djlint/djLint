@@ -392,7 +392,7 @@ def test_H024(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None
     assert result.exit_code == 1
     assert "H024" in result.output
 
-    write_to_file(tmp_file.name, b'<script type="text/css">')
+    write_to_file(tmp_file.name, b'<style type="text/css">')
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 1
     assert "H024" in result.output
@@ -862,9 +862,74 @@ def test_H024_covers_link_and_anchors_the_name(
         result = runner.invoke(djlint, (tmp_file.name,))
         assert "H024 1:" in result.output
 
+    # The formatter drops these too, quoted or not.
+    for reported in (
+        b"<script type=text/javascript></script>",
+        b'<style type = "text/css">a{color:red}</style>',
+        b"<link rel=stylesheet type=TEXT/CSS href=a.css>",
+        b'<link type="text/css" href="a.css" rel="alternate stylesheet">',
+        b"<script type=text/javascript/></script>",
+        # A template tag in a bare value after the type is part of that value.
+        b'<script type="text/javascript" src={{url}}></script>',
+        b'<script type="text/javascript" src={{a}}{{b}}></script>',
+        b'<script type="text/javascript" class=a{{ b }}></script>',
+        b'<script type="text/javascript" src= {{ url }}></script>',
+        b'<style type="text/css" data-x={% if a %}x{% endif %}></style>',
+        b'<link rel="stylesheet" type="text/css" href={{ url }}>',
+        # A quoted value after the type is read with its template tags whole.
+        b'<script type="text/javascript" data-x="{{ "a type=b" }}"></script>',
+        b'<script type="text/javascript" data-type="x" data-x="type=x" @type="y"></script>',
+        # A later type that is the same default takes over as nothing new.
+        b'<script type="text/javascript" type=text/javascript defer></script>',
+        b"<style TYPE='text/css' type=\"text/css\"></style>",
+    ):
+        write_to_file(tmp_file.name, reported)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert "H024 1:" in result.output
+
     for quiet in (
         b'<script type="module" src="a.js"></script>',
         b'<script data-type="text/css" src="a.js"></script>',
+        b"<script type=text/javascript-x></script>",
+        b"<script type=text/javascript{{ v }}></script>",
+        b"<script type=\"text/javascript'></script>",
+        # A type is only the default on the element it is the default for.
+        b'<script type="text/css"></script>',
+        b'<style type="text/javascript"></style>',
+        b'<link type="text/javascript" rel="stylesheet" href="a.js">',
+        b'<link type="text/css" rel="icon" href="a.css">',
+        b'<script-x type="text/javascript"></script-x>',
+        b'<link-x type="text/css" rel="stylesheet">',
+        # Jinja's "-" would glue what is left onto the value or the tag name.
+        b"<script type=text/javascript {{- s }}></script>",
+        b'<script type="text/javascript" {%- if a %} async{% endif %}></script>',
+        b'<script {{ a -}} type="text/javascript"></script>',
+        b'<script type="text/javascript" {#- c #}></script>',
+        b'<script {# c -#} type="text/javascript"></script>',
+        # Another attribute, or a rel a template tag writes.
+        b'<script @type="text/javascript"></script>',
+        b'<style @type="text/css"></style>',
+        b'<link rel="stylesheet" @type="text/css">',
+        b"<link rel=\"{{ 'icon' if x else 'stylesheet' }}\" type=\"text/css\">",
+        b"<link rel='{% if x %} stylesheet {% else %} icon {% endif %}' type=\"text/css\">",
+        b'<link {% if x %} rel="stylesheet"{% endif %} type="text/css">',
+        b'<link {{ attrs }} rel="stylesheet" type="text/css">',
+        b"<link {# rel=stylesheet #} rel=preload as=style type=text/css href=a.css>",
+        b'<script {# type="text/javascript" #}></script>',
+        # A closer inside a string of a template tag does not end the tag.
+        b"<script {{ 'data-note=\"' ~ '}} type=text/javascript x\"' }}></script>",
+        b"<script {% set n = '%} type=text/javascript' %}></script>",
+        # Of two types a browser reads the first, so dropping it changes the page.
+        b'<script type="text/javascript" type="module"></script>',
+        b'<script {% if a %}type="text/javascript"{% endif %} type="module"></script>',
+        b'<style type="text/css" type="text/x"></style>',
+        b'<link rel="stylesheet" type="text/css" type="text/x">',
+        # So may a template tag after it, which can write a type of its own.
+        b"<script type=text/javascript {{ attrs|safe }}></script>",
+        b'<style type="text/css" {% attrs %}></style>',
+        b'<link rel="stylesheet" type="text/css" {{ attrs }}>',
+        b'<script type="text/javascript" data-x="{{ "a > b" }}" {{ attrs|safe }}></script>',
+        b'<script type="text/javascript" data-x=\'{{ "it\'s" }}\' {% attrs %}></script>',
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))

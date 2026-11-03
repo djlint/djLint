@@ -68,6 +68,11 @@ test_data = [
     pytest.param(('<img src = "a.png">'), (False), id="spaces around the equals sign with a value"),
     pytest.param(('<img-lazy src="">'), (False), id="a custom element whose name starts with img"),
     pytest.param(('<img :src="" alt="x">'), (False), id="a framework binding"),
+    pytest.param(
+        ('<img {% if src %}class="a"{% endif %} src="a.png">'),
+        (False),
+        id="a src written inside a template tag",
+    ),
 ]
 
 

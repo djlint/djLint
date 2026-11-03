@@ -469,6 +469,24 @@ SKIP_TEMPLATE_TAG: Final = (
     r"|\{%(?:(?!%\}|\{[{%]).)*%\}(*SKIP)(*FAIL)"
 )
 
+# A template tag read whole, its strings included, so neither a quote nor a
+# ">" written in one, as in "{{ "a > b" }}", is read as the html around it.
+# A closer in a string does not end it; a quote left open is a character.
+# Each tag gives up at the next opener of its kind, which keeps a run of
+# unclosed ones linear. Free of spaces and "#", for verbose patterns.
+TEMPLATE_TAG_WHOLE: Final = (
+    r"""\{\{(?:"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!\}\}|\{\{).)*+\}\}"""
+    r"""|\{%(?:"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?!%\}|\{%).)*+%\}"""
+    r"""|\{\#(?:(?!\#\}|\{\#).)*+\#\}"""
+)
+
+# A quoted attribute value, with the template tags in it read whole, so a
+# quote or ">" inside one, as in value="{{ _("it's") }}", does not end it.
+QUOTED_ATTRIBUTE_VALUE: Final = (
+    rf"""\"(?:[^\"{{]++|{TEMPLATE_TAG_WHOLE}|\{{)*+\""""
+    rf"""|'(?:[^'{{]++|{TEMPLATE_TAG_WHOLE}|\{{)*+'"""
+)
+
 TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS: Final = r"trans(?:late)?|with|extends|include|now"
 
 TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS: Final = r"if|elif|elsif|unless"

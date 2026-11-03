@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 
 from djlint.formatter.attribute_values import format_attribute_values
 from djlint.formatter.class_attributes import (
+    encode_template_string_newlines,
     restore_class_attribute_newlines,
     restore_verbatim_attribute_newlines,
 )
@@ -52,7 +53,7 @@ def formatter(config: Config, rawcode: str) -> str:
 
     compressed = compress_html(normalized_code, config)
 
-    expanded = expand_html(compressed, config)
+    expanded = expand_html(encode_template_string_newlines(compressed), config)
 
     condensed = clean_whitespace(expanded, config)
 
