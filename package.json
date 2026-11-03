@@ -21,6 +21,8 @@
     "jinja template linter",
     "liquid template formatter",
     "liquid template linter",
+    "mako template formatter",
+    "mako template linter",
     "mustache template formatter",
     "mustache template linter",
     "nunjucks template formatter",
