@@ -1362,7 +1362,7 @@ class Config:
             """Read an integer option from the config file."""
             try:
                 return int(djlint_settings.get(key, default))
-            except ValueError:
+            except (TypeError, ValueError):
                 echo(
                     style(
                         f"Error: Invalid pyproject.toml {key} value {djlint_settings[key]}",
