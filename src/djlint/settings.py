@@ -401,6 +401,7 @@ _CODES_EXCLUDED_BY_PROFILE: Final[dict[str, tuple[str, ...]]] = {
     "askama": ("D", "J", "N", "M"),
     "tera": ("D", "J", "N", "M"),
     "liquid": ("D", "J", "N", "M"),
+    "mako": ("D", "J", "T", "N", "M"),
     "nunjucks": ("D", "J", "M"),
     "handlebars": ("D", "J", "N"),
     "golang": ("D", "J", "N", "M"),
@@ -566,6 +567,11 @@ _INDENT_TEMPLATE_TAGS: Final = r""" (?:if
     | asyncEach
     | asyncAll
     | embed
+    | apply
+    | sandbox
+    | guard
+    | ifequal
+    | ifnotequal
     | block(?!trans|translate)
     | spaceless
     | compress
@@ -596,6 +602,11 @@ _START_TEMPLATE_TAGS: Final = r"""
     | ifchanged
     | unless
     | embed
+    | apply
+    | sandbox
+    | guard
+    | ifequal
+    | ifnotequal
     | for
     | asyncEach
     | asyncAll
@@ -663,6 +674,16 @@ _BREAK_TEMPLATE_TAGS: Final = r"""
     | endwith
     | autoescape
     | endautoescape
+    | apply
+    | endapply
+    | sandbox
+    | endsandbox
+    | guard
+    | endguard
+    | ifequal
+    | endifequal
+    | ifnotequal
+    | endifnotequal
     | filter
     | endfilter
     | elif
@@ -969,12 +990,16 @@ _IGNORED_BLOCK_CLOSING_AT_START: Final = r"""
       (?:(?!<pre\b|<textarea\b).)*?-->
     | (?:(?!{\#).)*\#} # lines that have a #}, but not a {#
 """
+# An endcomment written right after "djlint:off" closes nothing. That is
+# looked for behind the tag once it is found: looked for first, a lookbehind
+# of no fixed length was tried from every position of the line, each time
+# back to its start, which took quadratic time on a long one.
 _IGNORED_BLOCK_CLOSING_AFTER: Final = r"""
       </pre
     | </textarea
     | {%[ ]*endfilter(?:(?!%}).)*?%}
     | {\#\s*djlint\:\s*on\s*\#}
-    | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
+    | {%[ ]+?endcomment[ ]+?%}(?<!djlint:off\s*?{%[ ]+endcomment[ ]+%})
     | {{!--\s*djlint\:on\s*--}}
     | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
     | {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
@@ -1756,6 +1781,11 @@ class Config:
         self.ignored_rule_patterns = _IGNORED_RULE_PATTERNS
         self.optional_single_line_html_pattern = _OPTIONAL_SINGLE_LINE_HTML_PATTERN
         self.optional_single_line_template_pattern = _OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN
+        if self.profile == "mako":
+            # The block tags under this profile stand for Mako's control lines,
+            # which a block put on one line would join.
+            self.optional_single_line_template_tags = "(?!)"
+            self.optional_single_line_template_pattern = compile_pattern("(?!)")
         if profile_blocks := _PROFILE_ONLY_BLOCKS.get(self.profile):
             self.optional_single_line_template_tags += "|" + "|".join(
                 split_option_list(profile_blocks)

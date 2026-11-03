@@ -251,6 +251,8 @@ djLint は [pre-commit](https://pre-commit.com) フックとして、リンタ�
   `*.html` に一致するファイルを対象とし、`--profile=tera` を設定します。
 - `djlint-askama` と `djlint-reformat-askama`
   `*.html` に一致するファイルを対象とし、`--profile=askama` を設定します。
+- `djlint-mako` と `djlint-reformat-mako`
+  `*.html` に一致するファイルを対象とし、`--profile=mako` を設定します。
 
 これらの定義済みフックは、受け付ける入力の点で保守的すぎることがあります（テンプレートで別の拡張子を使っている場合など）。そのため pre-commit では、定義済みのオプションをどれでも明示的に上書きできます。その他の設定については [pre-commit のドキュメント](https://pre-commit.com/#pre-commit-configyaml---hooks)を参照してください。
 

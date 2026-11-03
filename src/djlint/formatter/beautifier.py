@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import regex as re
 
 from djlint.const import TAG_ATTRIBUTES
+from djlint.formatter.mako import holds_mako
 from djlint.helpers import (
     RE_FLAGS_IS,
     child_of_unformatted_block,
@@ -109,6 +110,7 @@ def format_blocks(
 
         if (
             not source.strip()
+            or holds_mako(config.profile, source)
             or not holds_code(opening_tag)
             or child_of_unformatted_block(config, html, match)
         ):

@@ -114,6 +114,7 @@ _PROFILES: Final = {
     "jinja.html": "jinja",
     "jinja2": "jinja",
     "liquid": "liquid",
+    "mako": "mako",
     "mustache": "handlebars",
     "njk": "nunjucks",
     "nunjucks": "nunjucks",

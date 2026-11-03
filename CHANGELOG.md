@@ -4,6 +4,20 @@
 
 ## [Unreleased]
 
+### Feature
+
+- A `mako` profile for Mako templates. Mako needs a control line, such as `% if x:` or `% endfor`, and a `##` comment to start a line of their own, and other profiles joined them onto other lines, which broke the template. Under the `mako` profile they always keep their own lines, and the lines between `% if` and `% endif`, or between a `<%block>` or `<%def>` tag and its closing tag, are indented like any other block. The code in a `${}` expression is left as written, and so are the attributes of a tag that depend on control lines, Python blocks, `<%doc>` and `<%text>`, and a script or style holding Mako syntax under `--format-js` or `--format-css`. The linter runs the HTML rules. The `all` profile handles Mako's lines the same way.
+- Twig's `{% apply %}`, `{% sandbox %}` and `{% guard %}` blocks and Django's old `{% ifequal %}` and `{% ifnotequal %}` blocks indent their contents like other blocks.
+
+### Bug fixes
+
+- An end tag that closes no open block, such as the end of a custom block djLint does not know, as in `{% endtoc %}`, or a stray `{% endif %}`, stays at the level of the markup around it. It moved one level to the left, and so did everything after it.
+
+### Performance
+
+- A tag whose quoted value runs over thousands of lines, as when its closing quote is missing, no longer slows formatting down. Forty thousand such lines took over seven seconds and now take about one.
+- Text with many `${` that never close no longer slows formatting down. Three thousand of them in one paragraph took ten seconds and now take a tenth of one.
+
 ## [1.49.7] - 2026-11-03
 
 ### Feature

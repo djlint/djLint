@@ -29,8 +29,8 @@ Files:
 Configuration:
   --profile NAME                  Template language: html, django, jinja,
                                   nunjucks, handlebars, liquid, golang, angular,
-                                  tera, askama or all. It decides which linter
-                                  rules run and how template syntax is
+                                  tera, askama, mako or all. It decides which
+                                  linter rules run and how template syntax is
                                   formatted. [default: html]
   --configuration FILE            Global config file: a pyproject.toml,
                                   djlint.toml or .djlintrc. The project's own

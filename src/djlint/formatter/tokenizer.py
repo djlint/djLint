@@ -37,12 +37,25 @@ _TEMPLATE_DELIMITERS: Final = MappingProxyType({"{%": "%}", "{#": "#}"})
 _LONGEST_BRACE_RUN: Final = 4
 
 
-def _after_mako_expression(source: str, start: int) -> int | None:
-    """Return the end of a balanced Mako expression."""
+def _after_mako_expression(source: str, start: int, unclosed: set[int]) -> int | None:
+    """Return the end of a balanced Mako expression.
+
+    One that never closes is read to the end of the source, and so would
+    be each one that opens inside it, again from each. The first read
+    settles those too: one that opens inside at some depth closes only
+    where the depth falls back to it, so the ones where it never does are
+    remembered in unclosed.
+    """
+    if start in unclosed:
+        return None
     depth = 1
     quote: str | None = None
     cursor = start + 2
     length = len(source)
+    # Each expression opening inside: where, at what depth, and after how
+    # many closing braces. Then the depth each closing brace leaves.
+    inner: list[tuple[int, int, int]] = []
+    depths: list[int] = []
     while cursor < length:
         char = source[cursor]
         if quote is not None:
@@ -54,12 +67,21 @@ def _after_mako_expression(source: str, start: int) -> int | None:
         elif char in "\"'":
             quote = char
         elif char == "{":
+            if source[cursor - 1] == "$":
+                inner.append((cursor - 1, depth, len(depths)))
             depth += 1
         elif char == "}":
             depth -= 1
             if depth == 0:
                 return cursor + 1
+            depths.append(depth)
         cursor += 1
+
+    unclosed.add(start)
+    lowest = [length] * (len(depths) + 1)
+    for index in range(len(depths) - 1, -1, -1):
+        lowest[index] = min(depths[index], lowest[index + 1])
+    unclosed.update(opener for opener, at, seen in inner if lowest[seen] > at)
     return None
 
 
@@ -109,9 +131,9 @@ def _starts_markup(source: str, index: int) -> bool:
     return source[index : index + 1] in {"<", ">"}
 
 
-def _after_template(source: str, start: int) -> int | None:
+def _after_template(source: str, start: int, unclosed: set[int]) -> int | None:
     if source.startswith("${", start):
-        return _after_mako_expression(source, start)
+        return _after_mako_expression(source, start, unclosed)
 
     if source.startswith("{{", start):
         return _after_brace_run_expression(source, start)
@@ -164,7 +186,7 @@ def _next_template_opener(source: str, start: int, stop: int) -> int:
     return brace - 1 if brace > start and source[brace - 1] == "$" else brace
 
 
-def _enclosing_template_end(source: str, start: int, lt: int) -> int | None:
+def _enclosing_template_end(source: str, start: int, lt: int, unclosed: set[int]) -> int | None:
     """End of a template expression opening in [start, lt) that spans lt.
 
     A "<" used as a less-than operator inside a template expression
@@ -175,7 +197,7 @@ def _enclosing_template_end(source: str, start: int, lt: int) -> int | None:
         opener = _next_template_opener(source, cursor, lt)
         if opener < 0:
             return None
-        after = _after_template(source, opener)
+        after = _after_template(source, opener, unclosed)
         if after is None:
             cursor = opener + 1
         elif after > lt:
@@ -212,11 +234,12 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
     the tag's.
     """
     has_templates = "{" in source
+    unclosed: set[int] = set()
     length = len(source)
     search_from = 0
     while (start := source.find("<", search_from)) >= 0:
         if has_templates:
-            enclosing_end = _enclosing_template_end(source, search_from, start)
+            enclosing_end = _enclosing_template_end(source, search_from, start, unclosed)
             if enclosing_end is not None:
                 search_from = enclosing_end
                 continue
@@ -260,7 +283,7 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
             # name is not markup, but what follows it up to the ">" is the
             # tag's attribute area like any other.
             named_by_template = (
-                _after_template(source, name_start)
+                _after_template(source, name_start, unclosed)
                 if has_templates and source[name_start] in {"{", "$"}
                 else None
             )
@@ -311,7 +334,7 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
                 break
 
             if char in {"$", "{"}:
-                template_end = _after_template(source, cursor)
+                template_end = _after_template(source, cursor, unclosed)
                 spans_tag_end = (
                     template_end is not None
                     and quote is not None

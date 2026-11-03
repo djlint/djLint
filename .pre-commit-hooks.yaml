@@ -46,6 +46,12 @@
   types_or: [html]
   language: python
 
+- id: djlint-mako
+  name: djLint linting for Mako
+  entry: djlint --profile=mako
+  types_or: [html]
+  language: python
+
 - id: djlint-askama
   name: djLint linting for Askama
   entry: djlint --profile=askama
@@ -97,6 +103,12 @@
 - id: djlint-reformat-tera
   name: djLint formatting for Tera
   entry: djlint --reformat --profile=tera
+  types_or: [html]
+  language: python
+
+- id: djlint-reformat-mako
+  name: djLint formatting for Mako
+  entry: djlint --reformat --profile=mako
   types_or: [html]
   language: python
 

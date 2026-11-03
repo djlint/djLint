@@ -251,6 +251,8 @@ El repositorio ofrece varios hooks preconfigurados para perfiles concretos de dj
   Buscará archivos que coincidan con `*.html` y definirá `--profile=tera`.
 - `djlint-askama` y `djlint-reformat-askama`
   Buscará archivos que coincidan con `*.html` y definirá `--profile=askama`.
+- `djlint-mako` y `djlint-reformat-mako`
+  Buscará archivos que coincidan con `*.html` y definirá `--profile=mako`.
 
 Ten en cuenta que estos hooks predefinidos a veces son demasiado conservadores con las entradas que aceptan (puede que tus plantillas usen otra extensión), por lo que pre-commit te permite explícitamente sobrescribir cualquiera de estas opciones predefinidas. Consulta la [documentación de pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) para más opciones de configuración.
 

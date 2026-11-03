@@ -251,6 +251,8 @@ The repo provides multiple pre-configured hooks for specific djLint profiles (it
   This will look for files matching `*.html` and set `--profile=tera`.
 - `djlint-askama` and `djlint-reformat-askama`
   This will look for files matching `*.html` and set `--profile=askama`.
+- `djlint-mako` and `djlint-reformat-mako`
+  This will look for files matching `*.html` and set `--profile=mako`.
 
 Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) for additional configuration.
 
