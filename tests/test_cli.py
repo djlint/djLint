@@ -6,6 +6,7 @@ uv run pytest tests/test_cli.py
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -121,3 +122,21 @@ def test_documented_options_exist() -> None:
     assert documented <= flags, (
         f"{_CONFIGURATION_DOCS} documents flags djLint does not have: {sorted(documented - flags)}"
     )
+
+
+def test_help_puts_every_option_in_a_section(runner: CliRunner) -> None:
+    """An option missing from the sections is listed under "Other"."""
+    result = runner.invoke(djlint, ("--help",), prog_name="djlint", terminal_width=_HELP_WIDTH)
+
+    other = result.output.split("\nOther:\n", 1)[1]
+    options = re.findall(r"^  (-[^\s,]+(?:, --\S+)?)", other, re.MULTILINE)
+
+    assert options == ["--version", "-h, --help"]
+
+
+def test_a_usage_error_points_to_help(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, (), prog_name="djlint")
+
+    assert result.exit_code == 2
+    # Older versions of click name the first help option, newer ones the long one.
+    assert re.search(r"Try 'djlint (?:-h|--help)' for help\.", result.output)
