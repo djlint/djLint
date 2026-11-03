@@ -530,9 +530,9 @@ def indent_html(rawcode: str, config: Config) -> str:
     open_trimmed_trans = 0
 
     template_block_stack: list[tuple[int, int | None, bool]] = []
-    # How many template blocks may be open. Openers are counted on every
-    # line and closers only outside ignored blocks, so the count errs high:
-    # at zero an end tag surely closes nothing.
+    # How many template blocks are open. The tags inside an ignored block
+    # are not counted, but the ones that open and close it are, as a pair.
+    # At zero an end tag closes nothing.
     open_template_blocks = 0
 
     open_html_indents: list[bool] = []
@@ -668,12 +668,6 @@ def indent_html(rawcode: str, config: Config) -> str:
     for line_index, item in enumerate(rawcode_flat_list):
         markup_start = markup_starts.get(line_index, 0)
         no_template_block_open = open_template_blocks == 0
-        if "{" in item:
-            open_template_blocks += len(template_indent_pattern.findall(item))
-            if not is_block_raw:
-                open_template_blocks = max(
-                    open_template_blocks - len(template_unindent_pattern.findall(item)), 0
-                )
         is_safe_closing_tag_ = is_safe_closing_tag(config, item)
         ignored_block_opening_start_ = ignored_block_opening_start(config, item)
         is_ignored_block_opening_ = ignored_block_opening_start_ >= 0
@@ -1046,6 +1040,11 @@ def indent_html(rawcode: str, config: Config) -> str:
                         indent_level = max(indent_level - sum(open_html_indents[kept:]), 0)
                         del open_html_indents[kept:]
                     open_html_indents.extend([False] * opened)
+
+        if "{" in item and not (was_block_raw and is_block_raw):
+            opened = 0 if was_block_raw else len(template_indent_pattern.findall(item))
+            closed = len(template_unindent_pattern.findall(item))
+            open_template_blocks = max(open_template_blocks + opened - closed, 0)
 
         beautified_lines.append(tmp)
 

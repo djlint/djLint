@@ -44,6 +44,23 @@ test_data = [
         ("<div>\n    <p>a</p>\n    {% endif %}\n    <p>b</p>\n</div>\n"),
         id="a stray end tag stays at its level",
     ),
+    pytest.param(
+        (
+            "<div>\n{% filter upper %}\n<p>x</p>\n{% endfilter %}\n"
+            "<p>a</p>\n{% endif %}\n<p>b</p>\n</div>"
+        ),
+        (
+            "<div>\n"
+            "    {% filter upper %}\n"
+            "<p>x</p>\n"
+            "{% endfilter %}\n"
+            "    <p>a</p>\n"
+            "    {% endif %}\n"
+            "    <p>b</p>\n"
+            "</div>\n"
+        ),
+        id="a stray end tag after an ignored block stays at its level",
+    ),
 ]
 
 
