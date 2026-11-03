@@ -1,0 +1,37 @@
+---
+title: "Конфигурация"
+description: "Параметры, которые определяют, как djLint проверяет и форматирует HTML-шаблоны."
+sidebar:
+  label: "Конфигурация"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+Настройка выполняется через файл `pyproject.toml` вашего проекта, файл `djlint.toml` или `.djlint.toml` либо файл `.djlintrc`. Аргументы командной строки всегда переопределяют настройки из файлов конфигурации. Локальные настройки проекта переопределяют глобальный файл конфигурации, заданный через `--configuration`, если не указан `--prefer-configuration`.
+
+Файл `pyproject.toml` записывается в формате `toml`.
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+Файлы `djlint.toml` и `.djlint.toml` записываются в формате `toml`.
+
+```toml
+<config options>
+```
+
+Файл `.djlintrc` записывается в формате `json`.
+
+```json
+{ "option": "value" }
+```
+
+## Параметры
+
+<ConfigOptions
+  label="Фильтр параметров"
+  placeholder="введите текст для фильтрации параметров..."
+  empty="Ничего не найдено. Попробуйте другой запрос."
+/>

@@ -17,8 +17,8 @@ from djlint import main as djlint
 if TYPE_CHECKING:
     from click.testing import CliRunner
 
-_CLI_DOCS = Path("docs/src/_includes/cli.md")
-_CONFIGURATION_DOCS = Path("docs/src/_data/configuration.json")
+_CLI_DOCS = Path("docs/src/data/cli-help.txt")
+_CONFIGURATION_DOCS = Path("docs/src/data/configuration.json")
 _HELP_WIDTH = 80
 
 
@@ -26,9 +26,8 @@ def test_help_snapshot_matches_docs(runner: CliRunner) -> None:
     result = runner.invoke(djlint, ("--help",), prog_name="djlint", terminal_width=_HELP_WIDTH)
     assert result.exit_code == 0
 
-    snapshot = re.search(r"```bash\n(.*?)\n```", _CLI_DOCS.read_text(encoding="utf-8"), re.DOTALL)
-    assert snapshot is not None, f"no help block found in {_CLI_DOCS}"
-    assert snapshot.group(1) == result.output.rstrip("\n"), (
+    snapshot = _CLI_DOCS.read_text(encoding="utf-8").rstrip("\n")
+    assert snapshot == result.output.rstrip("\n"), (
         f"{_CLI_DOCS} is out of date; regenerate it from `djlint --help`"
     )
 

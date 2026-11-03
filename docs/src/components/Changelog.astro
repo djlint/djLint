@@ -1,0 +1,13 @@
+---
+// The changelog is kept in the repository's CHANGELOG.md, and this page shows
+// it as it is. Its own "# Changelog" heading is left out under the page title.
+import { Content } from "../../../CHANGELOG.md";
+---
+
+<div class="changelog"><Content /></div>
+
+<style>
+  .changelog > :global(h1:first-child) {
+    display: none;
+  }
+</style>

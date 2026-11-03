@@ -1,0 +1,37 @@
+---
+title: "구성"
+description: "djLint가 HTML 템플릿을 린트하고 포맷하는 방식을 정하는 옵션입니다."
+sidebar:
+  label: "구성"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+구성은 프로젝트의 `pyproject.toml` 파일, `djlint.toml` 또는 `.djlint.toml` 파일, `.djlintrc` 파일 중 하나로 합니다. 명령줄 인수는 언제나 구성 파일의 모든 설정보다 우선합니다. `--prefer-configuration`을 지정하지 않는 한, 로컬 프로젝트 설정은 `--configuration`으로 지정한 전역 구성 파일보다 우선합니다.
+
+`pyproject.toml`의 형식은 `toml`입니다.
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+`djlint.toml`과 `.djlint.toml`의 형식은 `toml`입니다.
+
+```toml
+<config options>
+```
+
+`.djlintrc`의 형식은 `json`입니다.
+
+```json
+{ "option": "value" }
+```
+
+## 옵션
+
+<ConfigOptions
+  label="옵션 필터"
+  placeholder="옵션을 필터링하려면 입력하세요..."
+  empty="찾은 항목이 없습니다. 다른 검색어를 입력해 보세요."
+/>

@@ -1,0 +1,118 @@
+---
+title: "Začínáme"
+description: "Nainstalujte djLint a lintujte nebo formátujte HTML šablony z příkazového řádku."
+sidebar:
+  label: "Začínáme"
+---
+
+import CliHelp from "../../../../components/CliHelp.astro";
+
+## Instalace
+
+djLint je napsaný v [Pythonu](https://python.org) a publikovaný na [PyPI](https://pypi.org/project/djlint/). S [uv](https://docs.astral.sh/uv/) ho přidejte do projektu jako vývojovou závislost:
+
+```bash
+uv add --dev djlint
+```
+
+Nebo ho nainstalujte jako samostatný nástroj:
+
+```bash
+uv tool install djlint
+```
+
+Nebo pomocí pip:
+
+```bash
+pip install djlint
+```
+
+Nebo pomocí [pipx](https://pipx.pypa.io/):
+
+```bash
+pipx install djlint
+```
+
+Nebo v systémech macOS a Linux pomocí [formule Homebrew](https://formulae.brew.sh/formula/djlint), kterou spravuje komunita:
+
+```bash
+brew install djlint
+```
+
+_Nebo pomocí npm. **Upozornění**: balíček npm je jen obálka. Jeho instalační skript spustí pip pro ten `python3`, který je zrovna v systémové cestě, a nainstaluje verzi djLint odpovídající danému vydání npm, což může novější djLint nahradit starším. npm skutečný balíček nespravuje ani neodinstaluje, takže pokud můžete, použijte raději pip._
+
+```bash
+npm i djlint
+```
+
+Chcete-li djLint spouštět při každém commitu, přečtěte si část [pre-commit](/cs/docs/integrations/#pre-commit).
+
+## Použití z příkazového řádku
+
+djLint je aplikace pro příkazový řádek. Pokročilou konfiguraci popisuje stránka [Konfigurace](/cs/docs/configuration/).
+
+<CliHelp />
+
+:::note[Poznámka]
+Pokud příkaz `djlint` není nalezen, ověřte, že je Python [v systémové cestě (PATH)](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
+:::
+
+## Cesta, nebo stdin
+
+djLint pracuje s cestou i se standardním vstupem (stdin).
+
+Spuštění s cestou:
+
+```bash
+djlint /path/to/templates --lint
+```
+
+Nebo s konkrétním souborem:
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+Nebo se stdin:
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+Stdin lze použít i k přeformátování kódu. Výstupem bude jen naformátovaný kód bez dalších zpráv.
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+Výstup:
+
+```html
+<div></div>
+```
+
+Při čtení ze stdin nemá djLint žádnou skutečnou cestu, se kterou by porovnal `per-file-ignores` nebo kterou by zobrazil ve zprávách, a proto ve výchozím nastavení používá `-`. Pomocí `--stdin-filename` sdělíte djLint skutečnou cestu obsahu předaného rourou, například když integrace v editoru při ukládání posílá obsah souboru rourou.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## Návratové kódy
+
+| Kód | Význam                                                                                                                                           |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `0` | Vše, co měl djLint zkontrolovat, je v pořádku, nebo vaše konfigurace přeskočila všechny soubory, které našel.                                    |
+| `1` | djLint našel chyby lintování nebo soubory, které je potřeba přeformátovat. `--warn` je místo toho nahlásí jako varování a skončí s kódem `0`.    |
+| `2` | djLint nezkontroloval to, co jste chtěli: cestám neodpovídaly žádné soubory, příkazový řádek nebo konfigurace byly neplatné, nebo djLint selhal. |
+
+Jen kód `1` znamená, že se djLint na vaše šablony podíval a nelíbilo se mu, co našel. Kód `2` vždy znamená, že samotné spuštění nesplnilo svůj účel, takže pipeline může s oběma případy zacházet různě.
+
+Právě kód `2` zachytí spuštění, které nezkontrolovalo vůbec nic: chybnou cestu, `--extension`, které už neodpovídá, nebo šablony, které se přesunuly. Bez něj by takové spuštění tiše prošlo.
+
+Soubory, které djLint _našel_ a pak záměrně přeskočil kvůli `exclude`, `extend_exclude`, `use_gitignore` nebo `require_pragma`, nejsou chybou. Takové spuštění skončí s kódem `0`, protože konfigurace udělala přesně to, co jí bylo řečeno. Díky tomu také `exclude` funguje v pre-commit, který předává názvy vašich připravených (staged) souborů bez ohledu na to, zda chcete, aby se na ně djLint díval.
+
+Pokud je pro vaši pipeline normální, že cesta oprávněně neobsahuje žádné šablony, vypněte kód `2` pomocí `allow_empty_input`:
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```

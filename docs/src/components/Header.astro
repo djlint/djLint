@@ -1,0 +1,100 @@
+---
+// Starlight's header with the main docs sections linked across the top.
+import LanguageSelect from "@astrojs/starlight/components/LanguageSelect.astro";
+import Search from "@astrojs/starlight/components/Search.astro";
+import SiteTitle from "@astrojs/starlight/components/SiteTitle.astro";
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
+
+const { t } = Astro.locals;
+const { locale, id } = Astro.locals.starlightRoute;
+const prefix = locale ? `${locale}/` : "";
+const page = locale ? id.slice(prefix.length) : id;
+
+const links = [
+  ["docs/getting-started", "djlint.getting_started"],
+  ["docs/formatter", "djlint.formatter"],
+  ["docs/linter", "djlint.linter"],
+  ["docs/configuration", "djlint.configuration"],
+  ["demo", "djlint.try_online"],
+] as const;
+---
+
+<div class="header">
+  <div class="title-wrapper sl-flex">
+    <SiteTitle />
+  </div>
+  <nav class="top-nav print:hidden" aria-label="Main">
+    {
+      links.map(([slug, key]) => (
+        <a href={`/${prefix}${slug}/`} aria-current={page === slug ? "page" : undefined}>
+          {t(key)}
+        </a>
+      ))
+    }
+  </nav>
+  <div class="sl-flex print:hidden">
+    <Search />
+  </div>
+  <div class="sl-hidden md:sl-flex print:hidden right-group">
+    <div class="sl-flex social-icons">
+      <SocialIcons />
+    </div>
+    <ThemeSelect />
+    <LanguageSelect />
+  </div>
+</div>
+
+<style>
+  .header {
+    display: flex;
+    gap: var(--sl-nav-gap);
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+  .title-wrapper {
+    overflow: clip;
+    padding: 0.25rem;
+    margin: -0.25rem;
+    min-width: 0;
+    flex-shrink: 0;
+  }
+  .top-nav {
+    display: none;
+    gap: 1.5rem;
+    margin-inline-end: auto;
+    padding-inline-start: 1.5rem;
+  }
+  .top-nav a {
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .top-nav a:hover,
+  .top-nav a[aria-current="page"] {
+    color: var(--sl-color-white);
+  }
+  .right-group,
+  .social-icons {
+    gap: 1rem;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  /* Starlight sizes these for its own font; "Светлая" and "Русский" need more. */
+  .right-group :global(label) {
+    --sl-select-width: 7.5em !important;
+  }
+  .social-icons::after {
+    content: "";
+    height: 2rem;
+    border-inline-end: 1px solid var(--sl-color-gray-5);
+  }
+  @media (min-width: 80rem) {
+    .top-nav {
+      display: flex;
+    }
+  }
+</style>

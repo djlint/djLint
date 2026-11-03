@@ -1,0 +1,118 @@
+---
+import { Code, LinkButton, TabItem, Tabs } from "@astrojs/starlight/components";
+import languages from "../data/templateLanguages.json";
+
+const { t } = Astro.locals;
+const prefix = Astro.locals.starlightRoute.locale ? `/${Astro.locals.starlightRoute.locale}` : "";
+const badge = "https://img.shields.io/badge/html%20style-djLint-blue.svg";
+---
+
+<section class="languages not-content">
+  <h2>{t("djlint.index_fav_lang")}</h2>
+  <ul>
+    {
+      languages.map((lang) => (
+        <li>
+          <a
+            href={`${prefix}/docs/languages/${lang.slug}/`}
+            style={`--brand: ${lang.brand}; --mark: url(/static/img/logos/${lang.logo}); --logo-scale: ${lang.logoScale ?? 1}`}
+          >
+            <span class="mark" aria-hidden="true" />
+            {lang.name}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<div class="closing">
+  <section>
+    <h2>{t("djlint.index_show_format")}</h2>
+    <p>
+      {t("djlint.index_looks_like")}
+      <img src={badge} alt="html style: djLint" width="120" height="20" />
+    </p>
+    <p>{t("djlint.index_add_badge")}:</p>
+    <Tabs syncKey="readme">
+      <TabItem label="readme.md">
+        <Code code={`[![Code style: djLint](${badge})](https://github.com/djlint/djlint)`} lang="md" wrap />
+      </TabItem>
+      <TabItem label="readme.rst">
+        <Code code={`.. image:: ${badge}\n   :target: https://github.com/djlint/djlint`} lang="rst" wrap />
+      </TabItem>
+    </Tabs>
+  </section>
+  <section>
+    <h2>{t("djlint.contributing")}</h2>
+    <p set:html={t("djlint.contributing_message")} />
+    <LinkButton href="https://github.com/djlint/djlint" icon="github" iconPlacement="start" variant="secondary">
+      GitHub
+    </LinkButton>
+  </section>
+</div>
+
+<style>
+  h2 {
+    font-size: var(--sl-text-h3);
+  }
+  .languages {
+    padding-block: 3rem;
+    border-block: 1px solid var(--sl-color-gray-6);
+  }
+  .languages h2 {
+    margin: 0 0 1.5rem;
+    color: var(--sl-color-white);
+  }
+  .languages ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .languages a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--sl-color-gray-2);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .languages a:hover {
+    background: color-mix(in srgb, var(--brand) 12%, transparent);
+    color: var(--sl-color-white);
+  }
+  /* Every logo gets the same box; logoScale only evens out how much of it the
+     drawing fills. */
+  .mark {
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    background: var(--brand);
+    mask: var(--mark) center / calc(70% * var(--logo-scale)) no-repeat;
+  }
+  .closing {
+    display: grid;
+    gap: 3rem;
+    padding-block: 3rem 1rem;
+  }
+  .closing > section {
+    margin: 0;
+  }
+  .closing section > :first-child {
+    margin-top: 0;
+  }
+  .closing img {
+    vertical-align: middle;
+    margin-inline-start: 0.5rem;
+  }
+  @media (min-width: 50rem) {
+    .closing {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+</style>
