@@ -29,7 +29,7 @@ def raw_text_block_pattern(tag: str) -> re.Pattern[str]:
     data-x="{{ "a > b" }}", is not taken for the start of the contents.
     """
     return compile_pattern(
-        rf"([ ]*?)(<{tag}\b(?>{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}"
+        rf"([ ]*?)(<{tag}\b(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}"
         rf"|[^'\">{{}}])*+>)(.*?)(?=</{tag}>)",
         RE_FLAGS_IS,
     )

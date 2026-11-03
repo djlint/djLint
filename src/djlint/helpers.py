@@ -392,7 +392,7 @@ def restore_unformatted_blocks(html: str, replacements: list[tuple[str, str]]) -
 _RAW_TEXT_ELEMENT_PATTERN: Final = compile_pattern(
     rf"""
     (<(script|style|textarea)\b
-      (?>{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'\">{{}}])*+>)
+      (?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'\">{{}}])*+>)
     (.*?)
     (?=</\2)
     """,

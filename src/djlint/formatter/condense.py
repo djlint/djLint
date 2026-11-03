@@ -474,7 +474,7 @@ def condense_html(html: str, config: Config, authored_html: str | None = None) -
     func = partial(condense_html_line, config, html)
 
     html = re.sub(
-        rf"(<({config.optional_single_line_html_tags})\b(?>{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}|[^'\">{{}}])*+>)\s*+([^<\n]*?)\s*?(</(\2)>)",
+        rf"(<({config.optional_single_line_html_tags})\b(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}|[^'\">{{}}])*+>)\s*+([^<\n]*?)\s*?(</(\2)>)",
         func,
         html,
         flags=RE_FLAGS_IMSX,

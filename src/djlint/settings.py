@@ -858,7 +858,7 @@ _TEMPLATE_NAMED_OPENING_TAG: Final = (
 
 # A template tag is read whole, so a ">" in one is not the tag's end.
 _RAW_TEXT_OPENING_TAG: Final = (
-    rf"""(?>{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|[^>\"'{{]|\{{)*+>"""
+    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|[^>\"'{{]|\{{)*+>"""
 )
 
 
