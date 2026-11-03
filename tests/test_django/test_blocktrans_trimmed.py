@@ -249,6 +249,36 @@ test_data = [
         ({}),
         id="plural formatted",
     ),
+    pytest.param(
+        (
+            "{% block p %}\n"
+            "{% if a %}\n"
+            "{% filter force_escape %}\n"
+            "{% blocktrans trimmed %}\n"
+            "x\n"
+            "{% endblocktrans %}\n"
+            "{% endfilter %}\n"
+            "{% else %}\n"
+            "y\n"
+            "{% endif %}\n"
+            "{% endblock %}\n"
+        ),
+        (
+            "{% block p %}\n"
+            "    {% if a %}\n"
+            "        {% filter force_escape %}\n"
+            "{% blocktrans trimmed %}\n"
+            "x\n"
+            "{% endblocktrans %}\n"
+            "{% endfilter %}\n"
+            "    {% else %}\n"
+            "        y\n"
+            "    {% endif %}\n"
+            "{% endblock %}\n"
+        ),
+        ({}),
+        id="a trimmed block inside a filter does not end the filter",
+    ),
 ]
 
 

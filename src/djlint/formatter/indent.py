@@ -99,6 +99,12 @@ _LEADING_CLOSE_BRACKET_PATTERN: Final = compile_pattern(r"[ ]*[)\]}]")
 _MULTILINE_TAG_OPEN_PAREN_PATTERN: Final = compile_pattern(r"\((?=[^()]*$)")
 _MULTILINE_TAG_CLOSE_PAREN_PATTERN: Final = compile_pattern(r"^[ ]*\)")
 _TEXTAREA_CLOSE_PATTERN: Final = compile_pattern(r"^\s*</textarea\b", RE_FLAGS_IX)
+_TRIMMED_TRANS_OPEN_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*blocktrans(?:late)?\b(?:(?!%\}).)*?\btrimmed\b(?:(?!%\}).)*?%\}", RE_FLAGS_IS
+)
+_TRANS_CLOSE_PATTERN: Final = compile_pattern(
+    r"\{%[-+]?\s*endblocktrans(?:late)?\b(?:(?!%\}).)*?%\}", RE_FLAGS_IS
+)
 _SET_CONTENT_PATTERN: Final = compile_pattern(
     r"""
     (?<![ ])([ ]*+)       # 1: leading indentation, read from its start
@@ -476,6 +482,8 @@ def indent_html(rawcode: str, config: Config) -> str:
     is_block_raw = False
 
     ignored_level = 0
+    # Trimmed blocktrans blocks opened inside the current ignored block.
+    open_trimmed_trans = 0
 
     template_block_stack: list[tuple[int, int | None, bool]] = []
 
@@ -904,14 +912,28 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif not is_block_raw:
             tmp = format_html_attributes(tmp)
 
+        # A trimmed blocktrans is formatted rather than left alone, so it
+        # opens no ignored block, but its endblocktrans looks like the close
+        # of one: inside a `{% filter %}` it ended the filter early. Each one
+        # opened in an ignored block claims the next endblocktrans there.
+        closing_item = item
+        if is_block_raw:
+            trimmed_trans_opens = len(_TRIMMED_TRANS_OPEN_PATTERN.findall(item))
+            trans_closes = len(_TRANS_CLOSE_PATTERN.findall(item))
+            claimed = min(trans_closes, open_trimmed_trans + trimmed_trans_opens)
+            open_trimmed_trans += trimmed_trans_opens - claimed
+            if claimed:
+                closing_item = _TRANS_CLOSE_PATTERN.sub("", item, count=claimed)
+
         if (
             not in_raw_text_tag or is_raw_text_block_closing(config, item)
-        ) and is_ignored_block_closing(config, item):
+        ) and is_ignored_block_closing(config, closing_item):
             in_raw_text_tag = False
             if not is_safe_closing_tag_:
                 ignored_level = max(ignored_level - 1, 0)
             if ignored_level == 0:
                 is_block_raw = False
+                open_trimmed_trans = 0
                 if was_block_raw and "<" in item:
                     tail = ""
                     for close in config.ignored_block_closing_pattern.finditer(item):

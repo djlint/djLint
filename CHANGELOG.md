@@ -13,6 +13,7 @@
 - Formatting a template a second time no longer changes it in the cases below, so `djlint --check` passes right after `djlint --reformat`.
 - An element or a template block is put on one line only when the whole line fits within `--max-line-length`, its indentation and any text beside it included. A line that fit only without its indentation was joined, and the next run spread its attributes.
 - A tag whose attributes fit within `--max-attribute-length` once a `style` or `srcset` value loses its trailing `;` or extra spaces stays on one line. It was spread, and the next run joined it again.
+- A `{% blocktrans trimmed %}` inside a `{% filter %}` no longer ends the filter early. Everything after it lost its indentation, and the next run indented the `{% endfilter %}` again.
 - A tag with a single attribute is no longer spread over several lines because its line is longer than `--max-line-length`, as the rule for long lines intends. A lone `style` was split at each `;`, and the next run could join it again.
 - A tag with a `style` or `srcset` attribute that has no value no longer stops the formatter with an error when its attributes are spread over several lines.
 - A `type="text/javascript"` or `type="text/css"` is dropped, and a form's `method` lowercased, also when the value is written without quotes or with spaces around `=`. It used to take a second run.
