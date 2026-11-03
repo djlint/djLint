@@ -123,3 +123,13 @@ def test_documented_options_exist() -> None:
     assert documented <= flags, (
         f"{_CONFIGURATION_DOCS} documents flags djLint does not have: {sorted(documented - flags)}"
     )
+
+
+def test_help_puts_every_option_in_a_section(runner: CliRunner) -> None:
+    """An option missing from the sections is listed under "Other"."""
+    result = runner.invoke(djlint, ("--help",), prog_name="djlint", terminal_width=_HELP_WIDTH)
+
+    other = result.output.split("\nOther:\n", 1)[1]
+    options = re.findall(r"^  (-[^\s,]+(?:, --\S+)?)", other, re.MULTILINE)
+
+    assert options == ["--version", "-h, --help"]

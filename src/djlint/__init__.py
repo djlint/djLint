@@ -150,10 +150,125 @@ def _run_language_server(
         serve()
 
 
-@click.command(
-    "main",
-    context_settings={"help_option_names": ["-h", "--help"]},
-    help="djLint · HTML template linter and formatter.",
+# The sections --help lists the options in, by what they are for.
+_HELP_SECTIONS: Final = (
+    ("Modes", ("lint", "reformat", "check", "lsp")),
+    (
+        "Files",
+        (
+            "extension",
+            "exclude",
+            "extend_exclude",
+            "use_gitignore",
+            "require_pragma",
+            "stdin_filename",
+            "allow_empty_input",
+        ),
+    ),
+    ("Configuration", ("profile", "configuration", "prefer_configuration")),
+    ("Linter", ("ignore", "include", "per_file_ignores", "rules")),
+    ("Output", ("quiet", "warn", "statistics", "linter_output_format", "github_output", "sarif")),
+    (
+        "Layout",
+        (
+            "indent",
+            "max_line_length",
+            "max_attribute_length",
+            "single_attribute_per_line",
+            "line_break_after_multiline_tag",
+            "no_indent_inner_html",
+            "keep_br_inline",
+            "custom_blocks",
+            "custom_html",
+            "ignore_blocks",
+            "blank_line_after_tag",
+            "blank_line_before_tag",
+            "max_blank_lines",
+            "preserve_blank_lines",
+            "preserve_leading_space",
+            "no_line_after_yaml",
+        ),
+    ),
+    (
+        "Rewrites",
+        (
+            "close_void_tags",
+            "ignore_case",
+            "sort_attributes",
+            "sort_load_tags",
+            "name_endblocks",
+            "quote_style",
+            "no_entity_formatting",
+            "no_function_formatting",
+            "no_set_formatting",
+            "preserve_class_newlines",
+            "format_attribute_template_tags",
+        ),
+    ),
+    (
+        "CSS and JavaScript",
+        (
+            "format_css",
+            "indent_css",
+            "format_js",
+            "indent_js",
+            "format_attribute_js_json",
+            "format_attribute_js_json_pattern",
+            "format_attribute_js_json_min_props",
+        ),
+    ),
+)
+# Listed last, with any option the sections above leave out.
+_HELP_OTHER: Final = ("version", "help")
+# click lines the help up after the longest option up to this width, and
+# puts a longer one on a line of its own. Padding each section's options to
+# it lines all of the sections up the same way.
+_HELP_OPTION_WIDTH: Final = 30
+
+
+def _print_help(
+    ctx: click.Context,
+    _param: click.Parameter,
+    value: bool,  # noqa: FBT001
+) -> None:
+    """Print --help with the options in sections, rather than in one list."""
+    if not value or ctx.resilient_parsing:
+        return
+
+    command = ctx.command
+    formatter = ctx.make_formatter()
+    command.format_usage(ctx, formatter)
+    command.format_help_text(ctx, formatter)
+
+    records = {
+        param.name: record
+        for param in command.get_params(ctx)
+        if param.name and (record := param.get_help_record(ctx))
+    }
+    listed = {*_HELP_OTHER, *(name for _, names in _HELP_SECTIONS for name in names)}
+    other = (*_HELP_OTHER, *(name for name in records if name not in listed))
+    for title, names in (*_HELP_SECTIONS, ("Other", other)):
+        rows = [
+            (option.ljust(_HELP_OPTION_WIDTH), text)
+            for option, text in (records[name] for name in names if name in records)
+        ]
+        if rows:
+            with formatter.section(title):
+                formatter.write_dl(rows, col_max=_HELP_OPTION_WIDTH)
+
+    echo(formatter.getvalue().rstrip("\n"), color=ctx.color)
+    ctx.exit()
+
+
+@click.command("main", add_help_option=False, help="djLint · HTML template linter and formatter.")
+@click.option(
+    "-h",
+    "--help",
+    is_flag=True,
+    is_eager=True,
+    expose_value=False,
+    callback=_print_help,
+    help="Show this message and exit.",
 )
 @click.argument(
     "src",
