@@ -12,6 +12,7 @@
 ### Bug fixes
 
 - An end tag that closes no open block, such as the end of a custom block djLint does not know, as in `{% endtoc %}`, or a stray `{% endif %}`, stays at the level of the markup around it. It moved one level to the left, and so did everything after it.
+- A string written as adjacent literals, as in `{{ _("Hello " "world") }}` or `{% set x = "a" "b" %}`, or in triple quotes, keeps its quotes. They were dropped, which left `{{ _(Hello world) }}`, a variable name rather than a string.
 
 ### Performance
 
