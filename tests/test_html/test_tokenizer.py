@@ -154,6 +154,36 @@ def test_a_run_of_unclosed_braces_is_read_once() -> None:
     assert time.perf_counter() - started < 1
 
 
+@pytest.mark.parametrize(
+    "run", [pytest.param("${ x ", id="side by side"), pytest.param("${ {", id="nested")]
+)
+def test_a_run_of_unclosed_mako_expressions_is_read_once(run: str) -> None:
+    """Six thousand "${ x " in a paragraph took three seconds to read.
+
+    The formatter reads a template some twenty times. Each expression was
+    read to the end of the file, and so was each one opening inside it,
+    again from each.
+    """
+    source = "<p>" + run * 6000 + "</p><a b='${x}}'>y</a>"
+
+    started = time.perf_counter()
+    tokens = [source[token.start : token.end] for token in tokenize_tags(source)]
+
+    assert tokens == ["<p>", "</p>", "<a b='${x}}'>", "</a>"]
+    assert time.perf_counter() - started < 1
+
+
+def test_an_expression_inside_an_unclosed_one_can_close() -> None:
+    source = "<p>${ a ${b<c} <i>x</i></p>"
+
+    assert [source[token.start : token.end] for token in tokenize_tags(source)] == [
+        "<p>",
+        "<i>",
+        "</i>",
+        "</p>",
+    ]
+
+
 def test_a_value_that_never_closes_ends_the_scan() -> None:
     source = '<p>x</p><a b="c>y</a><i>'
 

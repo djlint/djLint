@@ -15,6 +15,7 @@
 ### Performance
 
 - A tag whose quoted value runs over thousands of lines, as when its closing quote is missing, no longer slows formatting down. Forty thousand such lines took over seven seconds and now take about one.
+- Text with many `${` that never close no longer slows formatting down. Three thousand of them in one paragraph took ten seconds and now take a tenth of one.
 
 ## [1.49.7] - 2026-11-03
 
