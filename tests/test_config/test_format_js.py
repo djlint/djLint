@@ -287,6 +287,22 @@ test_data = [
         ({"format_js": True}),
         id="a style tag in a string is javascript",
     ),
+    pytest.param(
+        ("<!-- <script> -->\n<style>a{color:red}</style>\n<script>x()</script>\n"),
+        (
+            "<!-- <script> -->\n"
+            "<style>\n"
+            "    a {\n"
+            "        color: red\n"
+            "    }\n"
+            "</style>\n"
+            "<script>\n"
+            "    x()\n"
+            "</script>\n"
+        ),
+        ({"format_css": True, "format_js": True}),
+        id="a script tag in a comment opens nothing",
+    ),
 ]
 
 

@@ -37,6 +37,15 @@ def raw_text_block_pattern(tag: str) -> re.Pattern[str]:
     )
 
 
+# A comment outside a raw text element, whose bodies are blanked by then.
+_COMMENT_PATTERN: Final = compile_pattern(r"<!--.*?-->", RE_FLAGS_IS)
+_NON_NEWLINE_PATTERN: Final = compile_pattern(r"[^\n]")
+
+
+def _blank(match: re.Match[str]) -> str:
+    return _NON_NEWLINE_PATTERN.sub(" ", match.group())
+
+
 # How many more runs a beautifier gets to settle on a layout of its own.
 _MAX_SETTLING_RUNS: Final = 3
 
@@ -98,9 +107,10 @@ def format_blocks(
     `holds_code` says from the opening tag whether the beautifier can read
     the contents.
 
-    The blocks are looked for with the bodies of the raw text elements
-    blanked, so a `<style` written in a javascript string, as in
-    `new RegExp("<style(.*?)>")`, starts no block.
+    The blocks are looked for with the bodies of the raw text elements and
+    the comments blanked, so a `<style` written in a javascript string, as
+    in `new RegExp("<style(.*?)>")`, or a `<script>` in a comment starts no
+    block.
     """
 
     def format_block(match: re.Match[str]) -> str:
@@ -134,7 +144,8 @@ def format_blocks(
 
     output: list[str] = []
     previous_end = 0
-    for match in pattern.finditer(mask_raw_text_bodies(html)):
+    scanned = _COMMENT_PATTERN.sub(_blank, mask_raw_text_bodies(html))
+    for match in pattern.finditer(scanned):
         output.extend((html[previous_end : match.start()], format_block(match)))
         previous_end = match.end()
     output.append(html[previous_end:])

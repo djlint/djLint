@@ -386,13 +386,16 @@ def restore_unformatted_blocks(html: str, replacements: list[tuple[str, str]]) -
 
 
 # A template tag in the opening tag is read whole, so a ">" in one, as in
-# data-x="{{ "a > b" }}", does not end the tag and start the body.
+# data-x="{{ "a > b" }}", does not end the tag and start the body. A comment is
+# stepped over, so a tag written in one, as in `<!-- <script> -->`, opens no
+# element that would run on to the next closing tag.
 _RAW_TEXT_ELEMENT_PATTERN: Final = compile_pattern(
     rf"""
-    (<(script|style|textarea)\b
+      <!--.*?-->
+    | (<(script|style|textarea)\b
       {TAG_ATTRIBUTES}>)
-    (.*?)
-    (?=</\2)
+      (.*?)
+      (?=</\2)
     """,
     RE_FLAGS_ISX,
 )
@@ -402,6 +405,8 @@ _NON_NEWLINE_PATTERN: Final = compile_pattern(r"[^\n]")
 
 
 def _blank_raw_text(match: re.Match[str]) -> str:
+    if match.group(1) is None:
+        return match.group()
     return match.group(1) + _NON_NEWLINE_PATTERN.sub(" ", match.group(3))
 
 

@@ -112,3 +112,21 @@ def test_mako_code_block_linting(source: str, reported: bool) -> None:
     findings = linter(config, source, filename, filename)[filename]
 
     assert bool(findings) is reported
+
+
+def test_script_tag_in_a_string_across_lines_keeps_its_attributes() -> None:
+    """A long script tag in a string is text, so its attributes are not spread."""
+    config = config_builder({"profile": "django", "indent": 4})
+    opening = (
+        '    start=HTML(\'<script src="{}"'
+        ' integrity="sha384-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" crossorigin="anonymous">\'),\n'
+    )
+    source = (
+        "<p>\n    ${Text(_('Load {start}{end}')).format(\n"
+        + opening
+        + "    end=HTML('</script>'),\n    )}\n</p>\n"
+    )
+
+    output = formatter(config, source)
+
+    assert opening in output

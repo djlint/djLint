@@ -977,7 +977,10 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         if is_ignored_block_opening_:
             opening_tail = item[ignored_block_opening_start_:] + "\n"
-            if is_raw_first_line and tmp.endswith(opening_tail):
+            # As for any other tag, one inside a template tag written across
+            # lines is part of its text, and spreading it would change that.
+            in_template_text = markup_start < 0 or "<" in item[:markup_start]
+            if is_raw_first_line and not in_template_text and tmp.endswith(opening_tail):
                 tmp = format_raw_text_opening(tmp, len(tmp) - len(opening_tail))
             is_block_raw = True
             is_raw_first_line = False
