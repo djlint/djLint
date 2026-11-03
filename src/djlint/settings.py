@@ -969,12 +969,16 @@ _IGNORED_BLOCK_CLOSING_AT_START: Final = r"""
       (?:(?!<pre\b|<textarea\b).)*?-->
     | (?:(?!{\#).)*\#} # lines that have a #}, but not a {#
 """
+# An endcomment written right after "djlint:off" closes nothing. That is
+# looked for behind the tag once it is found: looked for first, a lookbehind
+# of no fixed length was tried from every position of the line, each time
+# back to its start, which took quadratic time on a long one.
 _IGNORED_BLOCK_CLOSING_AFTER: Final = r"""
       </pre
     | </textarea
     | {%[ ]*endfilter(?:(?!%}).)*?%}
     | {\#\s*djlint\:\s*on\s*\#}
-    | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
+    | {%[ ]+?endcomment[ ]+?%}(?<!djlint:off\s*?{%[ ]+endcomment[ ]+%})
     | {{!--\s*djlint\:on\s*--}}
     | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
     | {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
