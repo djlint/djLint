@@ -16,9 +16,9 @@ from djlint.reformat import formatter
 from djlint.settings import Config
 from djlint.src import has_pragma, is_excluded as _is_excluded
 
-if sys.version_info >= (3, 13):
+if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
     from typing import NamedTuple
-else:
+else:  # pragma: <3.13 cover
     from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:

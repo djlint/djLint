@@ -47,7 +47,7 @@ def _forget_rule_module(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "path", list(sys.path))
 
 
-@pytest.mark.skipif(sys.platform == "win32", reason="needs symlinks")
+@pytest.mark.skipif(sys.platform == "win32", reason="needs symlinks")  # pragma: win32 no cover
 def test_is_excluded_by_the_path_of_a_symlink(tmp_path: Path) -> None:
     (tmp_path / ".djlintrc").write_text('{"exclude": "vendor"}', encoding="utf-8")
     (tmp_path / "vendor").mkdir()

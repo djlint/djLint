@@ -2,4 +2,5 @@
 exclude_lines = ^\s*@(?:abc\.)?abstractmethod$
 
 [run]
+patch = subprocess
 plugins = covdefaults

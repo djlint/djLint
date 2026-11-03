@@ -929,7 +929,7 @@ def _path(uri: object) -> Path | None:
     path = unquote(parsed.path)
     if parsed.netloc not in {"", "localhost"}:
         return Path(f"//{unquote(parsed.netloc)}{path}")
-    if sys.platform == "win32" and _WINDOWS_DRIVE.match(path):
+    if sys.platform == "win32" and _WINDOWS_DRIVE.match(path):  # pragma: win32 cover
         path = path[1:]
     return Path(path)
 
