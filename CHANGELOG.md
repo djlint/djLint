@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.49.8] - 2026-11-03
+
 ### Feature
 
 - A `mako` profile for Mako templates. Mako needs a control line, such as `% if x:` or `% endfor`, and a `##` comment to start a line of their own, and other profiles joined them onto other lines, which broke the template. Under the `mako` profile they always keep their own lines, and the lines between `% if` and `% endif`, or between a `<%block>` or `<%def>` tag and its closing tag, are indented like any other block. The code in a `${}` expression is left as written, and so are the attributes of a tag that depend on control lines, Python blocks, `<%doc>` and `<%text>`, and a script or style holding Mako syntax under `--format-js` or `--format-css`. The linter runs the HTML rules. The `all` profile handles Mako's lines the same way.
