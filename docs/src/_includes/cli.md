@@ -43,8 +43,8 @@ Options:
                                   written across lines.
   --format-css                    Also format the contents of <style> tags, with
                                   css-beautify.
-  --format-js                     Also format the contents of <script> tags,
-                                  with js-beautify.
+  --format-js                     Also format JavaScript and JSON in <script>
+                                  tags, with js-beautify.
   --format-attribute-js-json      Also format JavaScript and JSON in attributes
                                   such as onclick and x-data.
   --format-attribute-js-json-pattern REGEX

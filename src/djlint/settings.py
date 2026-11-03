@@ -18,6 +18,7 @@ from djlint.const import (
     HTML_VOID_ELEMENTS,
     QUOTED_ATTRIBUTE_VALUE,
     SKIP_TEMPLATE_TAG,
+    TAG_START,
     TEMPLATE_TAG_NAME,
     TEMPLATE_TAG_WHOLE,
 )
@@ -856,9 +857,10 @@ _TEMPLATE_NAMED_OPENING_TAG: Final = (
     rf"<(?:{TEMPLATE_TAG_NAME})(?!(?:[^>\"']|\"[^\"]*\"|'[^']*')*?/>)"
 )
 
-# A template tag is read whole, so a ">" in one is not the tag's end.
+# A template tag is read whole, so a ">" in one is not the tag's end, and
+# another tag's start ends one that was never closed.
 _RAW_TEXT_OPENING_TAG: Final = (
-    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|[^>\"'{{]|\{{)*+>"""
+    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|(?!{TAG_START})[^>\"'{{]|\{{)*+>"""
 )
 
 

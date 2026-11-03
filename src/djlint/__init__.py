@@ -257,7 +257,9 @@ def _run_language_server(
     help="Also format the contents of <style> tags, with css-beautify.",
 )
 @click.option(
-    "--format-js", is_flag=True, help="Also format the contents of <script> tags, with js-beautify."
+    "--format-js",
+    is_flag=True,
+    help="Also format JavaScript and JSON in <script> tags, with js-beautify.",
 )
 @click.option(
     "--format-attribute-js-json",

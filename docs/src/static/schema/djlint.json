@@ -85,7 +85,7 @@
       "type": "boolean"
     },
     "format_js": {
-      "description": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues).",
+      "description": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues). A script whose `type` is neither JavaScript nor JSON, such as a client-side template in `text/template`, is left as written.",
       "type": "boolean"
     },
     "ignore": {

@@ -13,12 +13,7 @@ from typing import TYPE_CHECKING, final
 
 import regex as re
 
-from djlint.const import (
-    COLLAPSIBLE_WHITESPACE,
-    HTML_INLINE_ELEMENTS,
-    QUOTED_ATTRIBUTE_VALUE,
-    TEMPLATE_TAG_WHOLE,
-)
+from djlint.const import COLLAPSIBLE_WHITESPACE, HTML_INLINE_ELEMENTS, TAG_ATTRIBUTES
 from djlint.formatter.attributes import format_attributes
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
@@ -289,7 +284,7 @@ def _multiline_template_blocks(
             rf"""
             {{%[-+]?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}}
             ([^%]*?)
-            {{%[-+]?[ ]+?end\1[ ]*?%}}
+            {{%[-+]?[ ]++end\1[ ]*?%}}
             """,
             authored_html,
             flags=RE_FLAGS_IMX,
@@ -474,7 +469,7 @@ def condense_html(html: str, config: Config, authored_html: str | None = None) -
     func = partial(condense_html_line, config, html)
 
     html = re.sub(
-        rf"(<({config.optional_single_line_html_tags})\b(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}|[^'\">{{}}])*+>)\s*+([^<\n]*?)\s*?(</(\2)>)",
+        rf"(<({config.optional_single_line_html_tags})\b{TAG_ATTRIBUTES}>)\s*+([^<\n]*?)\s*+(</(\2)>)",
         func,
         html,
         flags=RE_FLAGS_IMSX,
@@ -501,7 +496,7 @@ def condense_html(html: str, config: Config, authored_html: str | None = None) -
 
     func = partial(condense_template_line, config, html)
     return re.sub(
-        rf"((?:\s|^){{%[-+]?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*+([^%\n]*?)\s*?({{%[-+]?[ ]+?end(\2)[ ]*?%}})",
+        rf"((?:\s|^){{%[-+]?[ ]*?({config.optional_single_line_template_tags})\b(?:(?!\n|%}}).)*?%}})\s*+([^%\n]*?)\s*+({{%[-+]?[ ]++end(\2)[ ]*?%}})",
         func,
         html,
         flags=RE_FLAGS_IMX,
