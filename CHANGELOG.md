@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.49.6] - 2026-11-03
+
 ### Docs
 
 - `djlint --help` groups the options by what they are for: modes, files, configuration, the linter, output, layout, rewrites, and CSS and JavaScript. They used to come in one long list in no particular order.
