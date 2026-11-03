@@ -422,7 +422,7 @@ def test_version(runner: CliRunner) -> None:
 
 
 def test_python_call() -> None:
-    if sys.platform != "win32":
+    if sys.platform != "win32":  # pragma: win32 no cover
         py_sub = subprocess.run(
             ("python", "-m", "djlint", "-h"),  # noqa: S607
             capture_output=True,

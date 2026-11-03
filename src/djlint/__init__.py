@@ -15,14 +15,14 @@ from typing import TYPE_CHECKING, final
 import click
 from click import echo, style
 
-if sys.version_info >= (3, 13):
+if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
     from os import process_cpu_count
-else:
+else:  # pragma: <3.13 cover
     from os import cpu_count as process_cpu_count
 
-if sys.version_info >= (3, 12):
+if sys.version_info >= (3, 12):  # pragma: >=3.12 cover
     from typing import override
-else:
+else:  # pragma: <3.12 cover
     from typing_extensions import override
 
 if TYPE_CHECKING:
@@ -833,7 +833,7 @@ def main(
                     )
                     results = exe.map(partial(process, config), file_list)
                 else:
-                    if sys.platform == "win32":
+                    if sys.platform == "win32":  # pragma: win32 cover
                         max_workers = min(max_workers, _WINDOWS_MAX_PROCESSES)
                     exe = concurrent.futures.ProcessPoolExecutor(
                         max_workers, initializer=_start_worker, initargs=(src[0], options)
@@ -889,9 +889,9 @@ def _file_size(path: Path) -> int:
 
 def _is_free_threaded_python() -> bool:
     is_gil_enabled = getattr(sys, "_is_gil_enabled", None)
-    if not callable(is_gil_enabled):
+    if not callable(is_gil_enabled):  # pragma: <3.13 cover
         return False
-    return not bool(is_gil_enabled())
+    return not bool(is_gil_enabled())  # pragma: >=3.13 cover
 
 
 _worker_config: Config | None = None

@@ -400,7 +400,7 @@ def test_finds_blank_lines_with_crlf(client: Client, tmp_path: Path) -> None:
     assert "H014" in [item["code"] for item in client.diagnostics(uri)]
 
 
-@pytest.mark.skipif(sys.platform != "win32", reason="a Windows path")
+@pytest.mark.skipif(sys.platform != "win32", reason="a Windows path")  # pragma: win32 cover
 def test_reads_an_encoded_drive_letter() -> None:
     assert _path("file:///c%3A/x/a.html") == Path("c:/x/a.html")
 
