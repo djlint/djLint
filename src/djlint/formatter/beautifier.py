@@ -37,15 +37,6 @@ def raw_text_block_pattern(tag: str) -> re.Pattern[str]:
     )
 
 
-# A comment outside a raw text element, whose bodies are blanked by then.
-_COMMENT_PATTERN: Final = compile_pattern(r"<!--.*?-->", RE_FLAGS_IS)
-_NON_NEWLINE_PATTERN: Final = compile_pattern(r"[^\n]")
-
-
-def _blank(match: re.Match[str]) -> str:
-    return _NON_NEWLINE_PATTERN.sub(" ", match.group())
-
-
 # How many more runs a beautifier gets to settle on a layout of its own.
 _MAX_SETTLING_RUNS: Final = 3
 
@@ -144,8 +135,7 @@ def format_blocks(
 
     output: list[str] = []
     previous_end = 0
-    scanned = _COMMENT_PATTERN.sub(_blank, mask_raw_text_bodies(html))
-    for match in pattern.finditer(scanned):
+    for match in pattern.finditer(mask_raw_text_bodies(html, comments=True)):
         output.extend((html[previous_end : match.start()], format_block(match)))
         previous_end = match.end()
     output.append(html[previous_end:])

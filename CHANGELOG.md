@@ -15,6 +15,7 @@
 - With `--format-js` or `--format-css`, the contents of a script or style that follows other markup on its line, as in `<span>a</span><script>`, are indented below that line. After `</noscript><script>`, the next run indented the rest of the file one level deeper.
 - With `--format-js`, JavaScript that js-beautify lays out differently on each run, such as a ternary written over several lines, settles on one layout, so a second run leaves it alone.
 - `--format-css` no longer takes a `<style` inside a JavaScript string, as in `new RegExp("<style(.*?)>")`, for a style tag. It formatted the rest of the script as CSS.
+- `--format-js` and `--format-css` no longer read a `<script>` or `<style>` written inside an HTML comment, as in `<!-- <script> -->`, as the start of a block. Everything from it to the next real closing tag was formatted as JavaScript or CSS.
 
 ### Docs
 

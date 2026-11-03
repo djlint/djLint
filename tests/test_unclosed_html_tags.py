@@ -29,6 +29,7 @@ sources = [
     pytest.param('<script data-x="a\n' * 4000, id="script tags each opening a value"),
     pytest.param("<style>\n" * 4000, id="styles never closed"),
     pytest.param("<textarea>\n" * 4000, id="textareas never closed"),
+    pytest.param("<!-- a\n" * 20000, id="comments never closed"),
 ]
 
 

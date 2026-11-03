@@ -303,6 +303,12 @@ test_data = [
         ({"format_css": True, "format_js": True}),
         id="a script tag in a comment opens nothing",
     ),
+    pytest.param(
+        ('<div title="<!--"></div><script>x()</script><!-- -->\n'),
+        ('<div title="<!--"></div><script>\n    x()\n</script><!-- -->\n'),
+        ({"format_js": True}),
+        id="a comment opener in an attribute value opens no comment",
+    ),
 ]
 
 

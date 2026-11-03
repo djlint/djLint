@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from bisect import bisect_left, bisect_right
-from functools import lru_cache
+from functools import lru_cache, partial
 from typing import TYPE_CHECKING
 
 import regex as re
@@ -386,16 +386,23 @@ def restore_unformatted_blocks(html: str, replacements: list[tuple[str, str]]) -
 
 
 # A template tag in the opening tag is read whole, so a ">" in one, as in
-# data-x="{{ "a > b" }}", does not end the tag and start the body. A comment is
-# stepped over, so a tag written in one, as in `<!-- <script> -->`, opens no
-# element that would run on to the next closing tag.
-_RAW_TEXT_ELEMENT_PATTERN: Final = compile_pattern(
+# data-x="{{ "a > b" }}", does not end the tag and start the body.
+_RAW_TEXT_ELEMENT: Final = rf"""
+    (?P<opening><(?P<name>script|style|textarea)\b{TAG_ATTRIBUTES}>)
+    (?P<body>.*?)
+    (?=</(?P=name))
+"""
+_RAW_TEXT_ELEMENT_PATTERN: Final = compile_pattern(_RAW_TEXT_ELEMENT, RE_FLAGS_ISX)
+# A comment is stepped over, so a tag written in one, as in
+# `<!-- <script> -->`, opens no element that would run on to the next closing
+# tag. So is every other opening tag, so a "<!--" in an attribute value, as in
+# `title="<!--"`, opens no comment. Reading the tags costs time, so this is
+# only used where a comment is.
+_RAW_TEXT_ELEMENT_OR_COMMENT_PATTERN: Final = compile_pattern(
     rf"""
-      <!--.*?-->
-    | (<(script|style|textarea)\b
-      {TAG_ATTRIBUTES}>)
-      (.*?)
-      (?=</\2)
+      (?P<comment><!--.*?-->)
+    | {_RAW_TEXT_ELEMENT}
+    | <[a-z][-.:\w]*+{TAG_ATTRIBUTES}>(*SKIP)(*FAIL)
     """,
     RE_FLAGS_ISX,
 )
@@ -404,28 +411,36 @@ _RAW_TEXT_ELEMENT_PATTERN: Final = compile_pattern(
 _NON_NEWLINE_PATTERN: Final = compile_pattern(r"[^\n]")
 
 
-def _blank_raw_text(match: re.Match[str]) -> str:
-    if match.group(1) is None:
-        return match.group()
-    return match.group(1) + _NON_NEWLINE_PATTERN.sub(" ", match.group(3))
+def _blank(text: str) -> str:
+    return _NON_NEWLINE_PATTERN.sub(" ", text)
+
+
+def _blank_raw_text(match: re.Match[str], *, comments: bool) -> str:
+    opening = match.group("opening")
+    if opening is not None:
+        return opening + _blank(match.group("body"))
+    if comments:
+        return _blank(match.group())
+    return match.group()
 
 
 _RAW_TEXT_TAG_PATTERN: Final = compile_pattern(r"<(/?)(script|style|pre|textarea)(>?)", re.I)
 
 
 def _disarm_unclosed_raw_text(html: str, *, closed_by_gt: bool) -> tuple[str, tuple[int, ...]]:
-    """Rename the raw text elements that no closing tag follows.
+    """Rename the raw text elements and comments that nothing closes.
 
     A pattern reading a body up to its closing tag reads the rest of the
     file for one that has none, and again from each one after it, so a run
     of them took quadratic time. None of them can match, so renaming them
-    changes nothing a pattern finds. Only the first letter of the name is
-    changed, to an "x", which keeps the length, and keeps the "<" starting
-    a tag for a pattern that stops at one. `closed_by_gt` says whether the
-    closing tag counts only with its ">" right after the name, as the
-    ignored block patterns want it.
+    changes nothing a pattern finds. Only one character is changed, to an
+    "x": the first letter of the name, or the first "-" of a "<!--". That
+    keeps the length, and keeps the "<" starting a tag for a pattern that
+    stops at one. `closed_by_gt` says whether the closing tag counts only
+    with its ">" right after the name, as the ignored block patterns want
+    it.
 
-    Returns the html and where the renamed letters are, which a caller
+    Returns the html and where the renamed characters are, which a caller
     writing out text of the copy puts back.
     """
     last_closing: dict[str, int] = {}
@@ -439,35 +454,48 @@ def _disarm_unclosed_raw_text(html: str, *, closed_by_gt: bool) -> tuple[str, tu
 
     # The body starts after the name at the earliest, so a closing tag
     # starting there or later is the only kind that can end it.
-    renamed = tuple(
+    renamed = [
         start + 1 for start, name in openings if last_closing.get(name, -1) < start + 1 + len(name)
-    )
+    ]
+
+    # A comment's "-->" can start right after its "<!--".
+    last_comment_end = html.rfind("-->")
+    comment = html.find("<!--", max(last_comment_end - 3, 0))
+    while comment >= 0:
+        if last_comment_end < comment + 4:
+            renamed.append(comment + 2)
+        comment = html.find("<!--", comment + 1)
+
     if not renamed:
-        return html, renamed
+        return html, ()
 
     characters = list(html)
-    for letter in renamed:
-        characters[letter] = "x"
-    return "".join(characters), renamed
+    for position in renamed:
+        characters[position] = "x"
+    return "".join(characters), tuple(renamed)
 
 
-def mask_raw_text_bodies(html: str) -> str:
+def mask_raw_text_bodies(html: str, *, comments: bool = False) -> str:
     """Blank out what the tag tokenizer should not read as markup.
 
     A raw text element holds text, so the "<" of `var s = "<div>"` opens no
     tag, the apostrophe in `// don't` starts no attribute value, and a
     `{% %}` pair is javascript rather than a template tag. Each body is
     blanked to the same length, keeping offsets and line numbers, so
-    positions still index the html that was passed in.
+    positions still index the html that was passed in. `comments` blanks
+    the comments as well.
     """
     disarmed, renamed = _disarm_unclosed_raw_text(html, closed_by_gt=False)
-    masked = _RAW_TEXT_ELEMENT_PATTERN.sub(_blank_raw_text, disarmed)
+    pattern = (
+        _RAW_TEXT_ELEMENT_OR_COMMENT_PATTERN if "<!--" in disarmed else _RAW_TEXT_ELEMENT_PATTERN
+    )
+    masked = pattern.sub(partial(_blank_raw_text, comments=comments), disarmed)
     if not renamed:
         return masked
 
     characters = list(masked)
-    for letter in renamed:
-        characters[letter] = html[letter]
+    for position in renamed:
+        characters[position] = html[position]
     return "".join(characters)
 
 
