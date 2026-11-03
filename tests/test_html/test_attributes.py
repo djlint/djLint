@@ -915,7 +915,7 @@ test_data = [
     ),
     pytest.param(
         ("<p title=a'b>String</p>"),
-        ("<p title=a'b>String\n</p>\n"),
+        ("<p title=a'b>String</p>\n"),
         id="a browser reads this as the single value a'b, so quoting the a would turn the rest into an attribute of its own",
     ),
     pytest.param(

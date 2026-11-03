@@ -168,9 +168,28 @@ def test_a_template_past_the_closing_quote_keeps_the_value_open() -> None:
     assert [source[token.start : token.end] for token in tokenize_tags(source)] == [tag, "</a>"]
 
 
+@pytest.mark.parametrize(
+    ("source", "tags"),
+    [
+        pytest.param(
+            '<b c="d" "="" e="f"><i title="h">',
+            ['<b c="d" "="" e="f">', '<i title="h">'],
+            id="a stray quote is part of an attribute name",
+        ),
+        pytest.param(
+            "<p title=a'b>x</p><i>",
+            ["<p title=a'b>", "</p>", "<i>"],
+            id="a quote in a bare value is part of the value",
+        ),
+    ],
+)
+def test_only_a_quote_after_equals_opens_a_value(source: str, tags: list[str]) -> None:
+    assert [source[token.start : token.end] for token in tokenize_tags(source)] == tags
+
+
 def test_a_tag_quoted_in_an_abandoned_tag_is_read() -> None:
     """A brace abandons the outer tag, so the scan goes back to the next "<"."""
-    source = '<a "<b c>" }'
+    source = '<a x="<b c>" }'
 
     assert [token.name for token in tokenize_tags(source)] == ["b"]
 

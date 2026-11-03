@@ -178,6 +178,11 @@ templates = [
         '<p><input value="{{ _("a students\' b") }}"></p>\n<p>x</p>\n',
         id="the attribute's own quote in a template string inside it",
     ),
+    pytest.param(
+        '<button class="control" aria-disabled="false" "="" title="Adjust video volume">'
+        '<button class="control quality-control is-hidden" aria-disabled="false" title="HD">\n',
+        id="a stray quote in a tag",
+    ),
 ]
 
 option_sets = [

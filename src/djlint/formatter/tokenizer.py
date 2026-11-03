@@ -185,6 +185,20 @@ def _enclosing_template_end(source: str, start: int, lt: int) -> int | None:
     return None
 
 
+def _opens_a_value(source: str, name_end: int, cursor: int) -> bool:
+    """Whether the quote at cursor opens an attribute value.
+
+    Only one written after "=" does, as html reads it: a stray quote, as in
+    `<b "="" c="d">`, is part of an attribute name, and one in a bare value,
+    as in `a=b'c`, part of the value. Read as an opening quote, the stray one
+    paired with the next and left the rest of the document unread.
+    """
+    back = cursor - 1
+    while back > name_end and source[back].isspace():
+        back -= 1
+    return source[back] == "="
+
+
 def tokenize_tags(source: str) -> Iterator[TagToken]:
     """Yield tags without normalizing or copying their contents.
 
@@ -310,7 +324,10 @@ def tokenize_tags(source: str) -> Iterator[TagToken]:
                     continue
 
             if char in "\"'":
-                quote = char if quote is None else None
+                if quote is not None:
+                    quote = None
+                elif _opens_a_value(source, name_end, cursor):
+                    quote = char
             elif char in "{}" and quote is None:
                 search_from = start + 1
                 break
