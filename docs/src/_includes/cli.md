@@ -67,8 +67,8 @@ Options:
   --include CODES                 Linter codes to turn on that are off by
                                   default, comma-separated, for example H017.
   --ignore-case                   Do not fix the case of known HTML tags.
-  --ignore-blocks TAGS            Template blocks whose contents are not
-                                  indented, comma-separated.
+  --ignore-blocks TAGS            Template blocks that do not indent their
+                                  contents, comma-separated.
   --blank-line-after-tag TAGS     Template tags to follow with a blank line,
                                   comma-separated, for example load,extends.
   --blank-line-before-tag TAGS    Template tags to precede with a blank line,
@@ -76,10 +76,10 @@ Options:
   --line-break-after-multiline-tag
                                   When a tag's attributes are spread over lines,
                                   start its content on a new line.
-  --custom-blocks TAGS            Custom template blocks to indent, for example
-                                  toc for {% toc %}...{% endtoc %}.
-  --custom-html TAGS              Custom HTML tags to indent, comma-separated,
-                                  for example mjml.
+  --custom-blocks TAGS            Names of custom template blocks to indent, for
+                                  example toc for {% toc %}...{% endtoc %}.
+  --custom-html TAGS              Names of custom HTML tags to indent, comma-
+                                  separated, for example mjml.
   --exclude PATHS                 Paths to skip, comma-separated, in place of
                                   the default list.
   --extend-exclude PATHS          Paths to skip on top of the default list,

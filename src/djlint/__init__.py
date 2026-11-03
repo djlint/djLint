@@ -332,7 +332,7 @@ def _run_language_server(
     type=str,
     default="",
     metavar="TAGS",
-    help="Template blocks whose contents are not indented, comma-separated.",
+    help="Template blocks that do not indent their contents, comma-separated.",
 )
 @click.option(
     "--blank-line-after-tag",
@@ -358,14 +358,14 @@ def _run_language_server(
     type=str,
     default="",
     metavar="TAGS",
-    help="Custom template blocks to indent, for example toc for {% toc %}...{% endtoc %}.",
+    help="Names of custom template blocks to indent, for example toc for {% toc %}...{% endtoc %}.",
 )
 @click.option(
     "--custom-html",
     type=str,
     default="",
     metavar="TAGS",
-    help="Custom HTML tags to indent, comma-separated, for example mjml.",
+    help="Names of custom HTML tags to indent, comma-separated, for example mjml.",
 )
 @click.option(
     "--exclude",

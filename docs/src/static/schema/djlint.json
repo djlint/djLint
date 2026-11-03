@@ -39,11 +39,11 @@
       "$ref": "#/definitions/css-beautify"
     },
     "custom_blocks": {
-      "description": "Custom template blocks to indent, for example `{% toc %}...{% endtoc %}`.",
+      "description": "Names of custom template blocks to indent, such as `toc` for `{% toc %}...{% endtoc %}`.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "custom_html": {
-      "description": "Custom HTML tags to indent, for example `<mjml>`, `<simple-greeting>` or `<mj-\\w+>`.",
+      "description": "Names of custom HTML tags to indent, such as `mjml` or `simple-greeting`. A name can be a regex, as in `mj-\\w+`.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "exclude": {
@@ -93,7 +93,7 @@
       "$ref": "#/definitions/comma-separated-list"
     },
     "ignore_blocks": {
-      "description": "Template blocks whose contents are not indented. Their children are treated as siblings of the block and indented accordingly.",
+      "description": "Template blocks that do not indent their contents. Their children are treated as siblings of the block and indented accordingly.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "ignore_case": {
@@ -198,7 +198,10 @@
         "tera"
       ]
     },
-    "quiet": { "description": "Do not print diffs, the progress bar or the summary.", "type": "boolean" },
+    "quiet": {
+      "description": "Do not print diffs, the progress bar or the summary.",
+      "type": "boolean"
+    },
     "quote_style": {
       "description": "Quotes to use for strings inside template tags, either `double` (the default) or `single`. `T002` requires the same quotes. The formatter uses them in a condition too, such as `{% if x == \"a\" %}`, so one file does not spell the same string both ways. HTML attribute quoting is left to `H008`.",
       "enum": ["double", "single"]
