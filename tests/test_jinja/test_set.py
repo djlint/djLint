@@ -168,6 +168,14 @@ test_data = [
         "{% set x = foo(\n) ~\n    bar %}\n",
         id="value_after_a_closed_call_stays_inside_the_set",
     ),
+    pytest.param(
+        '{% set x = "a" "b" %}', '{% set x = "a" "b" %}\n', id="adjacent_strings_stay_strings"
+    ),
+    pytest.param(
+        ('<div>\n{% set x = [\n"a\\"]",\ny\n] %}\n</div>'),
+        ('<div>\n    {% set x = [\n        "a\\"]",\n        y\n    ] %}\n</div>\n'),
+        id="a bracket after an escaped quote in a set string is still in the string",
+    ),
 ]
 
 

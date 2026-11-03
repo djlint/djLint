@@ -259,6 +259,12 @@ test_data = [
         (True),
         id="a comment closed by the bang html accepts",
     ),
+    pytest.param(
+        ('<!-- a --!> {% include "debug.html" %} -->'),
+        ("django"),
+        (False),
+        id="the bang closes the comment before a later plain closing",
+    ),
 ]
 
 

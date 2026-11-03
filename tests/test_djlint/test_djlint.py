@@ -5,6 +5,7 @@ uv run pytest tests/test_djlint/test_djlint.py
 
 from __future__ import annotations
 
+import concurrent.futures
 import errno
 import subprocess
 import sys
@@ -13,14 +14,16 @@ from importlib import metadata
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import pytest
+
 import djlint as djlint_module
 from djlint import main as djlint, output as djlint_output
 from tests.conftest import write_to_file
 
 if TYPE_CHECKING:
     from tempfile import _TemporaryFileWrapper
+    from typing import Any
 
-    import pytest
     from click.testing import CliRunner
 
 
@@ -462,3 +465,46 @@ def test_stdin_filename_with_parent_steps_leaves_an_excluded_folder(
         djlint, ("-", "--stdin-filename", "../templates/a.html"), input='<img src="x">'
     )
     assert "H013" in result.output
+
+
+# Under pytest-xdist the process runs more than one thread, which Python 3.12
+# and 3.13 warn about where the workers are forked.
+@pytest.mark.filterwarnings("ignore:This process .* is multi-threaded:DeprecationWarning")
+def test_large_files_are_shared_out_to_workers(
+    runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Files too large for one worker are processed in parallel, to the same results."""
+    unformatted = "<div><p>hi</p>\n</div>\n" * 3000
+    for name in ("a.html", "b.html"):
+        (tmp_path / name).write_text(unformatted, encoding="utf-8")
+    (tmp_path / "c.html").write_text('<img src="x">\n', encoding="utf-8")
+
+    executors: list[str] = []
+
+    class RecordedProcessPool(concurrent.futures.ProcessPoolExecutor):
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            executors.append("process")
+            super().__init__(*args, **kwargs)
+
+    class RecordedThreadPool(concurrent.futures.ThreadPoolExecutor):
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            executors.append("thread")
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setattr(concurrent.futures, "ProcessPoolExecutor", RecordedProcessPool)
+    monkeypatch.setattr(concurrent.futures, "ThreadPoolExecutor", RecordedThreadPool)
+
+    monkeypatch.setattr(djlint_module, "process_cpu_count", lambda: 1)
+    serial = runner.invoke(djlint, (str(tmp_path), "--check", "--lint"))
+    assert not executors
+
+    monkeypatch.setattr(djlint_module, "process_cpu_count", lambda: 2)
+    result = runner.invoke(djlint, (str(tmp_path), "--check", "--lint"))
+    assert len(executors) == 1
+
+    assert result.exit_code == 1
+    assert "Checking and Linting 3/3 files" in result.stderr
+    assert "2 files would be updated." in result.output
+    assert "H013 1:0 Img tag should have an alt attribute." in result.output
+    assert "Linted 3 files, found 1 error." in result.output
+    assert (result.exit_code, result.output) == (serial.exit_code, serial.output)

@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.49.8] - 2026-11-03
+
 ### Feature
 
 - A `mako` profile for Mako templates. Mako needs a control line, such as `% if x:` or `% endfor`, and a `##` comment to start a line of their own, and other profiles joined them onto other lines, which broke the template. Under the `mako` profile they always keep their own lines, and the lines between `% if` and `% endif`, or between a `<%block>` or `<%def>` tag and its closing tag, are indented like any other block. The code in a `${}` expression is left as written, and so are the attributes of a tag that depend on control lines, Python blocks, `<%doc>` and `<%text>`, and a script or style holding Mako syntax under `--format-js` or `--format-css`. The linter runs the HTML rules. The `all` profile handles Mako's lines the same way.
@@ -11,7 +13,9 @@
 
 ### Bug fixes
 
+- A number setting written in a config file as a list, a table or null, as `max_line_length = [100]` or `"indent": null`, is reported and falls back to its default, as a string that is no number already did. djLint failed instead.
 - An end tag that closes no open block, such as the end of a custom block djLint does not know, as in `{% endtoc %}`, or a stray `{% endif %}`, stays at the level of the markup around it. It moved one level to the left, and so did everything after it.
+- A string written as adjacent literals, as in `{{ _("Hello " "world") }}` or `{% set x = "a" "b" %}`, or in triple quotes, keeps its quotes. They were dropped, which left `{{ _(Hello world) }}`, a variable name rather than a string.
 
 ### Performance
 

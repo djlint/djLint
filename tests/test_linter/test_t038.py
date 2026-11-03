@@ -56,6 +56,19 @@ django_test_data = [
         ]),
         id="crossed_blocks",
     ),
+    pytest.param(("{% if x %}hello{% end %}\n"), ([]), id="a bare end closes the open block"),
+    pytest.param(
+        ("<p>hello</p>\n{% end %}\n"),
+        ([
+            {
+                "code": "T038",
+                "line": "2:0",
+                "match": "{% end %}",
+                "message": "End tag has no matching block tag.",
+            }
+        ]),
+        id="a bare end with nothing open",
+    ),
     pytest.param(
         ("{% block a %}\n<p>hello</p>\n"),
         ([

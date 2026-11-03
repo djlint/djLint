@@ -123,6 +123,10 @@ def test_H014(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None
     result = runner.invoke(djlint, (tmp_file.name, "--preserve-blank-lines"))
     assert "H014" not in result.output
 
+    write_to_file(tmp_file.name, b"<!-- djlint:off -->\n</div>\n\n\n<p>\n<!-- djlint:on -->")
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H014" not in result.output
+
 
 def test_H015(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
     write_to_file(tmp_file.name, b"</h1><p>")
@@ -848,6 +852,24 @@ def test_H022_loopback_and_prose(runner: CliRunner, tmp_file: _TemporaryFileWrap
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))
         assert "H022" not in result.output
+
+
+def test_H022_is_reported_at_the_tag_holding_the_link(
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+) -> None:
+    for source, position in (
+        (b'<p class="x">see</p><a href="http://example.com">x</a>', "1:20"),
+        (b'<div><a href="http://example.com">x</a></div>', "1:5"),
+        (b'<a <b class="x"> <a href="http://example.com">x</a>', "1:17"),
+    ):
+        write_to_file(tmp_file.name, source)
+        result = runner.invoke(djlint, (tmp_file.name,))
+        assert result.output.count("H022") == 1
+        assert f"H022 {position} " in result.output
+
+    write_to_file(tmp_file.name, b'<a title=\'x href="http://example.com">')
+    result = runner.invoke(djlint, (tmp_file.name,))
+    assert "H022" not in result.output
 
 
 def test_H024_covers_link_and_anchors_the_name(
