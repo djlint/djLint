@@ -270,17 +270,13 @@ dev = [
     { name = "types-regex" },
 ]
 test = [
-    { name = "covdefaults" },
     { name = "mypy" },
     { name = "pytest" },
-    { name = "pytest-cov" },
     { name = "pytest-xdist" },
 ]
 test-ci = [
-    { name = "covdefaults" },
     { name = "mypy" },
     { name = "pytest" },
-    { name = "pytest-cov" },
     { name = "pytest-github-actions-annotate-failures" },
     { name = "pytest-xdist" },
 ]
@@ -309,17 +305,13 @@ dev = [
     { name = "types-regex", specifier = "==2026.9.29.20261030" },
 ]
 test = [
-    { name = "covdefaults", specifier = "==2.3.0" },
     { name = "mypy", specifier = "==2.4.1" },
     { name = "pytest", specifier = "==9.2.0" },
-    { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-xdist", specifier = "==3.8" },
 ]
 test-ci = [
-    { name = "covdefaults", specifier = "==2.3.0" },
     { name = "mypy", specifier = "==2.4.1" },
     { name = "pytest", specifier = "==9.2.0" },
-    { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-github-actions-annotate-failures", specifier = "==0.4.2" },
     { name = "pytest-xdist", specifier = "==3.8" },
 ]
