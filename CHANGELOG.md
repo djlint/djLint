@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.49.7] - 2026-11-03
+
 ### Feature
 
 - djLint warns about a setting that has no effect: `max_blank_lines` together with `preserve_blank_lines`, which takes precedence, and `--prefer-configuration` without `--configuration`. The warning goes to stderr once per run, so the language server does not repeat it on every change.
