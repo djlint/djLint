@@ -1456,10 +1456,7 @@ class Config:
             max_blank_lines if max_blank_lines is not None else setting_int("max_blank_lines", 0)
         )
         if self.preserve_blank_lines and self.max_blank_lines > 0:
-            _warn_once(
-                "max_blank_lines has no effect with preserve_blank_lines,"
-                " which keeps every blank line."
-            )
+            _warn_once("max_blank_lines has no effect with preserve_blank_lines.")
 
         exclude = build_exclude(
             exclude or _as_comma_separated(djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
