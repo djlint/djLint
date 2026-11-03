@@ -267,6 +267,8 @@ djLint 可以用作 [pre-commit](https://pre-commit.com) 钩子，既能做代�
   查找匹配 `*.html` 的文件，并设置 `--profile=tera`。
 - `djlint-askama` 和 `djlint-reformat-askama`
   查找匹配 `*.html` 的文件，并设置 `--profile=askama`。
+- `djlint-mako` 和 `djlint-reformat-mako`
+  查找匹配 `*.html` 的文件，并设置 `--profile=mako`。
 :::
 
 请注意，这些预定义钩子接受的输入有时过于保守（你的模板可能使用了不同的扩展名），因此 pre-commit 明确允许你覆盖其中任何预定义选项。更多配置请参阅 [pre-commit 文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。

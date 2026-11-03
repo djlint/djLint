@@ -267,6 +267,8 @@ Il repository fornisce diversi hook preconfigurati per specifici profili di djLi
   Cerca i file che corrispondono a `*.html` e imposta `--profile=tera`.
 - `djlint-askama` e `djlint-reformat-askama`
   Cerca i file che corrispondono a `*.html` e imposta `--profile=askama`.
+- `djlint-mako` e `djlint-reformat-mako`
+  Cerca i file che corrispondono a `*.html` e imposta `--profile=mako`.
 :::
 
 Nota che a volte questi hook predefiniti sono troppo restrittivi negli input che accettano (i tuoi template potrebbero usare un'estensione diversa), per questo pre-commit permette esplicitamente di sovrascrivere qualsiasi opzione predefinita. Consulta la [documentazione di pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) per ulteriori opzioni di configurazione.

@@ -139,6 +139,10 @@ _DJANGO_JINJA_PRAGMA_PATTERNS: Final = (
 _NUNJUCKS_PRAGMA_PATTERNS: Final = (_TEMPLATE_COMMENT_PRAGMA_PATTERN,)
 _HANDLEBARS_PRAGMA_PATTERNS: Final = (compile_pattern(r"\{\{!--\s*djlint\:on\s*--\}\}"),)
 _GOLANG_PRAGMA_PATTERNS: Final = (compile_pattern(r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}"),)
+_MAKO_PRAGMA_PATTERNS: Final = (
+    compile_pattern(r"[ \t]*\#\#\s*djlint\:on\b"),
+    compile_pattern(r"<%doc>\s*djlint\:on\s*</%doc>"),
+)
 _PRAGMA_PATTERNS: Final = MappingProxyType({
     "html": _HTML_PRAGMA_PATTERNS,
     "django": _DJANGO_JINJA_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
@@ -150,10 +154,12 @@ _PRAGMA_PATTERNS: Final = MappingProxyType({
     "handlebars": _HANDLEBARS_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
     "golang": _GOLANG_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
     "angular": _HTML_PRAGMA_PATTERNS,
+    "mako": _MAKO_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
     "all": _DJANGO_JINJA_PRAGMA_PATTERNS
     + _NUNJUCKS_PRAGMA_PATTERNS
     + _HANDLEBARS_PRAGMA_PATTERNS
     + _GOLANG_PRAGMA_PATTERNS
+    + _MAKO_PRAGMA_PATTERNS
     + _HTML_PRAGMA_PATTERNS,
 })
 

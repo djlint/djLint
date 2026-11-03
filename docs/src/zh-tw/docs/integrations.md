@@ -267,6 +267,8 @@ djLint 可以作為 [pre-commit](https://pre-commit.com) hook 使用，同時擔
   這會尋找符合 `*.html` 的檔案，並設定 `--profile=tera`。
 - `djlint-askama` 和 `djlint-reformat-askama`
   這會尋找符合 `*.html` 的檔案，並設定 `--profile=askama`。
+- `djlint-mako` 和 `djlint-reformat-mako`
+  這會尋找符合 `*.html` 的檔案，並設定 `--profile=mako`。
 :::
 
 請注意，這些預先定義的 hook 對接受的輸入有時過於保守（你的範本可能使用不同的副檔名），因此 pre-commit 明確允許你覆寫任何預先定義的選項。其他設定方式請參閱 [pre-commit 說明文件](https://pre-commit.com/#pre-commit-configyaml---hooks)。

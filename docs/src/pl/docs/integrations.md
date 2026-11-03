@@ -267,6 +267,8 @@ Repozytorium udostępnia kilka wstępnie skonfigurowanych hooków dla konkretnyc
   Szukają plików pasujących do `*.html` i ustawiają `--profile=tera`.
 - `djlint-askama` i `djlint-reformat-askama`
   Szukają plików pasujących do `*.html` i ustawiają `--profile=askama`.
+- `djlint-mako` i `djlint-reformat-mako`
+  Szukają plików pasujących do `*.html` i ustawiają `--profile=mako`.
 :::
 
 Pamiętaj, że te predefiniowane hooki bywają zbyt zachowawcze w kwestii akceptowanych plików wejściowych (twoje szablony mogą mieć inne rozszerzenie), dlatego pre-commit wprost pozwala nadpisać każdą z tych predefiniowanych opcji. Więcej o konfiguracji przeczytasz w [dokumentacji pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

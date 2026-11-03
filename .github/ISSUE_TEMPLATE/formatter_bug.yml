@@ -50,6 +50,7 @@ body:
         - Angular
         - Tera
         - Askama
+        - Mako
         - Plain HTML
         - Other
     validations:

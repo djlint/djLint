@@ -267,6 +267,8 @@ Depo, belirli djLint profilleri için önceden yapılandırılmış birden çok 
   Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=tera` ayarlar.
 - `djlint-askama` ve `djlint-reformat-askama`
   Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=askama` ayarlar.
+- `djlint-mako` ve `djlint-reformat-mako`
+  Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=mako` ayarlar.
 :::
 
 Önceden tanımlanmış bu kancaların kabul ettikleri girdiler konusunda bazen fazla tutucu olduğunu unutmayın (şablonlarınız farklı bir uzantı kullanıyor olabilir); bu yüzden pre-commit, önceden tanımlanmış bu seçeneklerin herhangi birini geçersiz kılmanıza açıkça izin verir. Ek yapılandırma için [pre-commit belgelerine](https://pre-commit.com/#pre-commit-configyaml---hooks) bakın.

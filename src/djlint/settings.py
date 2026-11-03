@@ -401,6 +401,7 @@ _CODES_EXCLUDED_BY_PROFILE: Final[dict[str, tuple[str, ...]]] = {
     "askama": ("D", "J", "N", "M"),
     "tera": ("D", "J", "N", "M"),
     "liquid": ("D", "J", "N", "M"),
+    "mako": ("D", "J", "T", "N", "M"),
     "nunjucks": ("D", "J", "M"),
     "handlebars": ("D", "J", "N"),
     "golang": ("D", "J", "N", "M"),
@@ -1780,6 +1781,11 @@ class Config:
         self.ignored_rule_patterns = _IGNORED_RULE_PATTERNS
         self.optional_single_line_html_pattern = _OPTIONAL_SINGLE_LINE_HTML_PATTERN
         self.optional_single_line_template_pattern = _OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN
+        if self.profile == "mako":
+            # The block tags under this profile stand for Mako's control lines,
+            # which a block put on one line would join.
+            self.optional_single_line_template_tags = "(?!)"
+            self.optional_single_line_template_pattern = compile_pattern("(?!)")
         if profile_blocks := _PROFILE_ONLY_BLOCKS.get(self.profile):
             self.optional_single_line_template_tags += "|" + "|".join(
                 split_option_list(profile_blocks)
