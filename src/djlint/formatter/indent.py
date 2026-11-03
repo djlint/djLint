@@ -1110,7 +1110,9 @@ def indent_html(rawcode: str, config: Config) -> str:
             if normalize_string_quotes:
                 contents = _format_string_tokens(contents, quote_style)
 
-        return joiner.join(contents.splitlines())
+        # split on "\n" alone: str.splitlines() also breaks on U+2028, U+0085
+        # and form feed, which are content, as in a string argument
+        return joiner.join(contents.removesuffix("\n").split("\n"))
 
     def format_set(config: Config, html: str, match: re.Match[str]) -> str:
         if inside_ignored_block(config, html, match):

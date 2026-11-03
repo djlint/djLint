@@ -43,6 +43,16 @@ test_data = [
         id="nor one that merely starts with subtitles",
     ),
     pytest.param(
+        ('<video controls><track kind="" src="c.vtt"></video>'),
+        (True),
+        id="an empty kind is metadata, not subtitles",
+    ),
+    pytest.param(
+        ('<video controls><track kind src="c.vtt"></video>'),
+        (True),
+        id="and so is a kind written with no value",
+    ),
+    pytest.param(
         ('<video data-muted="true" src="a.mp4"></video>'),
         (True),
         id="a name that merely ends in muted",

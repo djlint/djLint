@@ -130,6 +130,18 @@ test_data = [
         ({}),
         id="function param named kwargs",
     ),
+    pytest.param(
+        ('{{ url("a\u2028b", x) }}'),
+        ('{{ url("a\u2028b", x) }}\n'),
+        ({}),
+        id="a line separator in an argument is content",
+    ),
+    pytest.param(
+        ('{{ url("a\u2029b", x) }}'),
+        ('{{ url("a\u2029b", x) }}\n'),
+        ({}),
+        id="and so is a paragraph separator",
+    ),
 ]
 
 

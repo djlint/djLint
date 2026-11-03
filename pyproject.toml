@@ -1,6 +1,6 @@
 [project]
 name = "djlint"
-version = "1.49.8"
+version = "1.49.9"
 description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates)"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -64,18 +64,18 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+  "covdefaults==2.3.0",
+  "pytest-cov==7.1.0",
   "ruff==0.17.3",
   "types-pyyaml==6.0.12.20261030",
   "types-regex==2026.9.29.20261030",
   { include-group = "test" },
 ]
 test = [
-  "covdefaults==2.3.0",
   # test_third_party_licenses.py reads the license of the mypy that mypyc
   # builds its runtime from.
   "mypy==2.4.1",
   "pytest==9.2.0",
-  "pytest-cov==7.1.0",
   "pytest-xdist==3.8",
 ]
 test-ci = [
