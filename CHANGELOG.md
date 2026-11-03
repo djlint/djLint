@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Features
+
+- djLint warns about a setting that has no effect: `max_blank_lines` together with `preserve_blank_lines`, which keeps every blank line, and `--prefer-configuration` without `--configuration`. The warning goes to stderr once per run, so the language server does not repeat it on every change.
+
 ### Bug fixes
 
 - A closing tag missing its `>`, as in `</p` at the end of a line, again runs to the next `>`, as browsers read it. Since 1.49.5, the tag on the next line was taken for an opening tag, so each paragraph after such a line was indented one level deeper than the one before.

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import tomllib
 from fnmatch import fnmatch
+from functools import cache
 from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, final
@@ -269,6 +270,16 @@ def _project_settings(src: Path) -> dict[str, Any]:
             echo(style(f"Failed to load .djlintrc file. {error}", fg="red"), err=True)
 
     return {}
+
+
+@cache
+def _warn_once(message: str) -> None:
+    """Warn about a setting once per run.
+
+    The language server builds a Config for every change to a file, and
+    repeating the same warning each time would only fill its log.
+    """
+    echo(style(f"Warning: {message}", fg="yellow"), err=True)
 
 
 def load_project_settings(
@@ -1319,6 +1330,8 @@ class Config:
         djlint_settings = load_project_settings(
             self.project_root, configuration, prefer_configuration=prefer_configuration
         )
+        if prefer_configuration and configuration is None:
+            _warn_once("--prefer-configuration has no effect without --configuration.")
 
         def setting_int(key: str, default: int) -> int:
             """Read an integer option from the config file."""
@@ -1442,6 +1455,11 @@ class Config:
         self.max_blank_lines = (
             max_blank_lines if max_blank_lines is not None else setting_int("max_blank_lines", 0)
         )
+        if self.preserve_blank_lines and self.max_blank_lines > 0:
+            _warn_once(
+                "max_blank_lines has no effect with preserve_blank_lines,"
+                " which keeps every blank line."
+            )
 
         exclude = build_exclude(
             exclude or _as_comma_separated(djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
