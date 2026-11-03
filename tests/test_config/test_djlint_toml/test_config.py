@@ -83,5 +83,5 @@ def test_a_number_setting_of_another_type_keeps_its_default(
 
     config = Config(str(tmp_path))
 
-    assert "Invalid pyproject.toml max_line_length value" in capsys.readouterr().err
+    assert "Invalid djlint.toml max_line_length value" in capsys.readouterr().err
     assert config.max_line_length == 120

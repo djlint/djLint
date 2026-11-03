@@ -71,15 +71,44 @@ def test_a_broken_named_configuration_falls_back_to_the_defaults(
     assert config.indent == 4 * " "
 
 
+@pytest.mark.parametrize(
+    ("name", "content"),
+    [
+        pytest.param(
+            "pyproject.toml", '[tool.djlint]\nmax_line_length = "wide"\n', id="pyproject.toml"
+        ),
+        pytest.param("djlint.toml", 'max_line_length = "wide"\n', id="djlint.toml"),
+        pytest.param(".djlint.toml", 'max_line_length = "wide"\n', id=".djlint.toml"),
+        pytest.param(".djlintrc", '{"max_line_length": "wide"}', id=".djlintrc"),
+    ],
+)
 def test_a_setting_that_is_no_number_keeps_its_default(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], name: str, content: str
 ) -> None:
-    (tmp_path / "djlint.toml").write_text('max_line_length = "wide"\n', encoding="utf-8")
+    (tmp_path / name).write_text(content, encoding="utf-8")
 
     config = Config(str(tmp_path))
 
-    assert "Error: Invalid pyproject.toml max_line_length value wide" in capsys.readouterr().err
+    assert f"Error: Invalid {name} max_line_length value wide" in capsys.readouterr().err
     assert config.max_line_length == 120
+
+
+@pytest.mark.parametrize("prefer_configuration", [False, True])
+def test_a_setting_that_is_no_number_names_the_file_it_came_from(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], *, prefer_configuration: bool
+) -> None:
+    (tmp_path / "djlint.toml").write_text('indent = "wide"\n', encoding="utf-8")
+    configuration = tmp_path / "settings.toml"
+    configuration.write_text('max_line_length = "long"\nindent = "deep"\n', encoding="utf-8")
+
+    Config(str(tmp_path), configuration=configuration, prefer_configuration=prefer_configuration)
+
+    err = capsys.readouterr().err
+    assert f"Error: Invalid {configuration} max_line_length value long" in err
+    if prefer_configuration:
+        assert f"Error: Invalid {configuration} indent value deep" in err
+    else:
+        assert "Error: Invalid djlint.toml indent value wide" in err
 
 
 def test_a_quote_style_from_a_file_is_checked(tmp_path: Path) -> None:
