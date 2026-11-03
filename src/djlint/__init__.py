@@ -257,7 +257,9 @@ def _run_language_server(
     help="Also format the contents of <style> tags, with css-beautify.",
 )
 @click.option(
-    "--format-js", is_flag=True, help="Also format the contents of <script> tags, with js-beautify."
+    "--format-js",
+    is_flag=True,
+    help="Also format JavaScript and JSON in <script> tags, with js-beautify.",
 )
 @click.option(
     "--format-attribute-js-json",
@@ -489,7 +491,10 @@ def _run_language_server(
     "--max-blank-lines",
     type=int,
     metavar="N",
-    help="Keep at most this many blank lines in a row. [default: 0]",
+    help=(
+        "Keep at most this many blank lines in a row. Has no effect with"
+        " --preserve-blank-lines. [default: 0]"
+    ),
     show_default=False,
 )
 @click.option(

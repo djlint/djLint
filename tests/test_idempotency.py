@@ -175,6 +175,32 @@ templates = [
         id="template tags written against the tag name or an attribute",
     ),
     pytest.param(
+        '<script src="https://cdn.example.com/some/long/path/to/a/library/file.min.js"'
+        ' integrity="sha384-abcdefghijklmnop" crossorigin="anonymous">var a = 1; b();</script>\n'
+        '<style media="screen and (min-width: 900px)" data-a="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"'
+        ' data-b="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">a{color:red}b{color:blue}</style>\n',
+        id="long script and style tags with a body",
+    ),
+    pytest.param(
+        '<html><head><noscript><meta a="b" /></noscript><script>var t = 1;if (a) {b();}</script>'
+        "</head></html>\n<div><span>a</span><script>var t = 1;if (a) {b();}</script></div>\n",
+        id="script on the line of other markup",
+    ),
+    pytest.param(
+        "<script>\nx({\n  a: search.get('hang')\n    ? { urlParams: { hang: '1' } }\n"
+        "    : undefined,\n});\n</script>\n",
+        id="ternary written over lines",
+    ),
+    pytest.param(
+        '<script>var re = new RegExp("<style(.*?)>(.*?)<\\/style>");</script>\n'
+        "<style>a{color:red}</style>\n",
+        id="style tag written in a javascript string",
+    ),
+    pytest.param(
+        '<script type="text/template"><div class="a"><%- x %></div></script>\n',
+        id="script holding a client side template",
+    ),
+    pytest.param(
         '<p><input value="{{ _("a students\' b") }}"></p>\n<p>x</p>\n',
         id="the attribute's own quote in a template string inside it",
     ),

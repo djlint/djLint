@@ -17,6 +17,7 @@ import regex as re
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     compile_pattern,
+    ignored_block_spans,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -136,11 +137,7 @@ def _masked(config: Config, html: str) -> str:
     characters inside them would poison the tag tokenizer for the rest of
     the file.
     """
-    spans = sorted(
-        match.span()
-        for pattern in (config.ignored_blocks_pattern, config.ignored_inline_blocks_ix_pattern)
-        for match in pattern.finditer(html)
-    )
+    spans = sorted(ignored_block_spans(config, html))
     if not spans:
         return html
 

@@ -6,18 +6,19 @@ from typing import TYPE_CHECKING
 
 import regex as re
 
-from djlint.const import QUOTED_ATTRIBUTE_VALUE, TEMPLATE_TAG_WHOLE
+from djlint.const import TAG_ATTRIBUTES
 from djlint.helpers import (
     RE_FLAGS_IS,
     child_of_unformatted_block,
     compile_pattern,
+    mask_raw_text_bodies,
     mask_template_tags,
     restore_template_tags,
 )
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Mapping
-    from typing import Any
+    from typing import Any, Final
 
     from djlint.settings import Config
 
@@ -26,13 +27,18 @@ def raw_text_block_pattern(tag: str) -> re.Pattern[str]:
     """Match a tag's leading indent, its opening tag and its contents.
 
     A template tag in the opening tag is read whole, so a ">" in one, as in
-    data-x="{{ "a > b" }}", is not taken for the start of the contents.
+    data-x="{{ "a > b" }}", is not taken for the start of the contents. A
+    tag that no closing tag follows has none for any tag after it either,
+    so the search ends there rather than reading the rest of the file again
+    from each.
     """
     return compile_pattern(
-        rf"([ ]*?)(<{tag}\b(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|{{[^}}]*}}"
-        rf"|[^'\">{{}}])*+>)(.*?)(?=</{tag}>)",
-        RE_FLAGS_IS,
+        rf"([ ]*?)(<{tag}\b{TAG_ATTRIBUTES}>)(?:(.*?)(?=</{tag}>)|.*+(*SKIP)(*FAIL))", RE_FLAGS_IS
     )
+
+
+# How many more runs a beautifier gets to settle on a layout of its own.
+_MAX_SETTLING_RUNS: Final = 3
 
 
 def _beautify_indented(
@@ -49,16 +55,27 @@ def _beautify_indented(
     `wrap_line_length` narrow enough to wrap differently at the two levels
     leaves the runs with nothing to compare, and there every line is taken
     as the beautifier's.
+
+    The beautifier does not always reach its own layout in one run: a
+    ternary written over lines comes out one way, and that way again comes
+    out another. It is run until it leaves its output alone, so formatting
+    the file a second time changes nothing.
     """
     options = dict(beautifier_config)
     options["indent_level"] = 1
-    lines = beautify(source, options).splitlines()
+    laid_out = beautify(source, options)
+    for _ in range(_MAX_SETTLING_RUNS):
+        again = beautify(laid_out, options)
+        if again == laid_out:
+            break
+        laid_out = again
+    lines = laid_out.splitlines()
 
     if not indent:
         return "".join(f"\n{line}" for line in lines)
 
     options["indent_level"] = 2
-    shifted = beautify(source, options).splitlines()
+    shifted = beautify(laid_out, options).splitlines()
     comparable = len(lines) == len(shifted)
 
     return "".join(
@@ -74,16 +91,34 @@ def format_blocks(
     pattern: re.Pattern[str],
     beautify: Callable[[str, dict[str, Any]], str],
     beautifier_config: Mapping[str, Any],
+    holds_code: Callable[[str], bool] = lambda _opening_tag: True,
 ) -> str:
-    """Beautify the contents of every block the pattern matches."""
+    """Beautify the contents of every block the pattern matches.
+
+    `holds_code` says from the opening tag whether the beautifier can read
+    the contents.
+
+    The blocks are looked for with the bodies of the raw text elements and
+    the comments blanked, so a `<style` written in a javascript string, as
+    in `new RegExp("<style(.*?)>")`, or a `<script>` in a comment starts no
+    block.
+    """
 
     def format_block(match: re.Match[str]) -> str:
-        leading, opening_tag, source = match.group(1, 2, 3)
+        leading, opening_tag, source = (html[slice(*match.span(group))] for group in (1, 2, 3))
 
-        if not source.strip() or child_of_unformatted_block(config, html, match):
-            return match.group()
+        if (
+            not source.strip()
+            or not holds_code(opening_tag)
+            or child_of_unformatted_block(config, html, match)
+        ):
+            return html[match.start() : match.end()]
 
-        indent = " " * len(leading)
+        # The contents go below the line the tag is on, also when the tag
+        # follows other markup there, as in `<span>a</span><script>`.
+        line_start = html.rfind("\n", 0, match.start(2)) + 1
+        before_tag = html[line_start : match.start(2)]
+        indent = " " * (len(before_tag) - len(before_tag.lstrip(" ")))
         masked, replacements = mask_template_tags(config, source)
         beautified = _beautify_indented(masked, beautify, beautifier_config, indent)
 
@@ -98,4 +133,10 @@ def format_blocks(
             f"\n{indent}"
         )
 
-    return pattern.sub(format_block, html)
+    output: list[str] = []
+    previous_end = 0
+    for match in pattern.finditer(mask_raw_text_bodies(html, comments=True)):
+        output.extend((html[previous_end : match.start()], format_block(match)))
+        previous_end = match.end()
+    output.append(html[previous_end:])
+    return "".join(output)

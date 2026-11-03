@@ -487,6 +487,20 @@ QUOTED_ATTRIBUTE_VALUE: Final = (
     rf"""|'(?:[^'{{]++|{TEMPLATE_TAG_WHOLE}|\{{)*+'"""
 )
 
+# A "<" that starts another tag, as the tokenizer reads one. Outside a quoted
+# value or a template tag it ends an opening tag that was never closed: read
+# on, that tag ran to the end of the file again from every tag after it.
+TAG_START: Final = r"<[a-zA-Z/!]"
+
+# An opening tag's attributes up to its ">", with each quoted value, template
+# tag and braced run, as in Vue's `:a="{b}"` or Svelte's `{() => a > b}`, read
+# whole and never again in another way. `{%a%}` is both a template tag and a
+# braced run, and retrying one as the other made a long tag quadratic.
+TAG_ATTRIBUTES: Final = (
+    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}"""
+    rf"""|\{{(?:(?!{TAG_START})[^}}])*+\}}|(?!{TAG_START})[^'">{{}}])*+"""
+)
+
 TEMPLATE_TAGS_WITH_QUOTED_ARGUMENTS: Final = r"trans(?:late)?|with|extends|include|now"
 
 TEMPLATE_TAGS_WITH_QUOTED_CONDITIONS: Final = r"if|elif|elsif|unless"

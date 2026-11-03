@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint.const import QUOTED_ATTRIBUTE_VALUE, TEMPLATE_TAG_WHOLE
+from djlint.const import QUOTED_ATTRIBUTE_VALUE, TAG_START, TEMPLATE_TAG_WHOLE
 from djlint.helpers import (
     RE_FLAGS_ISX,
     RE_FLAGS_IX,
@@ -28,9 +28,9 @@ if TYPE_CHECKING:
 # comment is read whole, even across lines, so what is written inside one, as
 # in `{# rel=stylesheet #}`, is not taken for markup, and so is one in a
 # quoted value, where a quote or ">" of its own, as in `"{{ "a > b" }}"`, does
-# not end the value.
+# not end the value. Another tag's start ends a tag that was never closed.
 _ATTRIBUTES: Final = (
-    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|(?!\{{[{{%\#])[^'">])*?"""
+    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|(?!\{{[{{%\#]|{TAG_START})[^'">])*?"""
 )
 # A bare value as compressing reads it, template tags and all: the one in
 # `src={{ url }}` is part of the value, and compressing quotes it.
@@ -58,7 +58,7 @@ _TRIMMED_AFTER: Final = r"-[}%\#]\}\s*"
 # as anything, and so may one after a template tag outside a value: it can
 # write a rel of its own, which a browser reads first, or leave this one out.
 _STYLESHEET_REL: Final = rf"""
-    (?=(?:{QUOTED_ATTRIBUTE_VALUE}|\{{\#(?:(?!\#\}}).)*\#\}}|(?!\{{[{{%\#])[^'">])*?\srel\s*=\s*
+    (?=(?:{QUOTED_ATTRIBUTE_VALUE}|\{{\#(?:(?!\#\}}).)*\#\}}|(?!\{{[{{%\#]|{TAG_START})[^'">])*?\srel\s*=\s*
         (?:"[^"{{]*?(?<![^\s"])stylesheet(?![^\s"])[^"{{]*"
           |'[^'{{]*?(?<![^\s'])stylesheet(?![^\s'])[^'{{]*'
           |stylesheet(?=\s|/?>)))
@@ -98,7 +98,7 @@ _DEFAULT_TYPE_PATTERN: Final = compile_pattern(
 
 _FORM_METHOD_PATTERN: Final = compile_pattern(
     rf"""
-    (<form(?![-.:\w])(?>{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{[^}}]*\}}|[^'">{{}}])*?
+    (<form(?![-.:\w])(?>{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|\{{(?:(?!{TAG_START})[^}}])*+\}}|(?!{TAG_START})[^'">{{}}])*?
      {_ATTRIBUTE_START}method\s*=\s*(["'])?)
     ([a-z]+)
     ((?(2)\2|(?=\s|/?>)))
