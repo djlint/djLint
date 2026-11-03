@@ -1,7 +1,7 @@
 [project]
 name = "djlint"
 version = "1.49.9"
-description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates)"
+description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Mustache, Liquid, Go templates, Angular, Tera, Askama, Mako)"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "GPL-3.0-or-later"
@@ -12,6 +12,7 @@ maintainers = [
   { name = "monosans", email = "hsyqixco@protonmail.com" },
 ]
 keywords = [
+  "angular",
   "askama",
   "django",
   "formatter",
@@ -24,6 +25,7 @@ keywords = [
   "jinja2",
   "linter",
   "liquid",
+  "mako",
   "mustache",
   "nunjucks",
   "templates",
