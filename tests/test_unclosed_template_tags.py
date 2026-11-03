@@ -9,7 +9,10 @@ import time
 
 import pytest
 
-from djlint.formatter.class_attributes import encode_template_string_newlines
+from djlint.formatter.class_attributes import (
+    encode_template_string_newlines,
+    multiline_template_tag_spans,
+)
 from djlint.reformat import formatter
 from djlint.settings import Config
 from tests.conftest import linter
@@ -80,5 +83,22 @@ open_quotes = [
 def test_strings_across_lines_are_found_in_linear_time(source: str) -> None:
     started = time.perf_counter()
     encode_template_string_newlines(source)
+
+    assert time.perf_counter() - started < 1
+
+
+# A mako expression is read up to the brace that balances its own, so one
+# left open must not send each later one to the end of the file either.
+open_expressions = [
+    pytest.param("<p>\n" + "${ f('a\n" * 20000, id="expressions each opening a string"),
+    pytest.param("${ " + "{\n" * 20000, id="braces never closed"),
+    pytest.param("${ {\n" * 2000 + "}", id="expressions nested in braces never closed"),
+]
+
+
+@pytest.mark.parametrize("source", open_expressions)
+def test_tags_across_lines_are_found_in_linear_time(source: str) -> None:
+    started = time.perf_counter()
+    multiline_template_tag_spans(source)
 
     assert time.perf_counter() - started < 1

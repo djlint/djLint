@@ -42,6 +42,25 @@ format_data = [
         '<%def name="f()">\n<div><span>x</span></div>\n</%def>\n',
         id="a def body is markup and is still put on its own line",
     ),
+    pytest.param(
+        (
+            "<p>\n"
+            "    ${Text(_('Read {start}the docs{end}')).format(\n"
+            '    start=HTML(\'<a id="resub_link" href="{}" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">\'),\n'
+            "    end=HTML('</a>'),\n"
+            "    )}\n"
+            "</p>\n"
+        ),
+        (
+            "<p>\n"
+            "    ${Text(_('Read {start}the docs{end}')).format(\n"
+            '    start=HTML(\'<a id="resub_link" href="{}" class="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">\'),\n'
+            "    end=HTML('</a>'),\n"
+            "    )}\n"
+            "</p>\n"
+        ),
+        id="a tag in a string of an expression across lines keeps its attributes",
+    ),
 ]
 
 

@@ -47,6 +47,13 @@ test_data = [
         id="data_passed_to_a_call_on_its_own_line_is_still_formatted",
     ),
     pytest.param(
+        "<p>\n  {{ function(\n    a=\"<a id='x' href='{}' class='cccccccccccccccccccccccccccccccccccccccccccccc'>x</a>\",\n"
+        "    b=1) }}\n</p>\n",
+        "<p>\n  {{ function(\n    a=\"<a id='x' href='{}' class='cccccccccccccccccccccccccccccccccccccccccccccc'>x</a>\",\n"
+        "    b=1) }}\n</p>\n",
+        id="markup_in_a_string_of_a_call_across_lines_keeps_its_attributes",
+    ),
+    pytest.param(
         "<div>{{ function(a, b) }}</div>\n",
         "<div>{{ function(a, b) }}</div>\n",
         id="a_call_on_one_line_is_left_alone",

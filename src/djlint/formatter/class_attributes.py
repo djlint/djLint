@@ -65,6 +65,17 @@ _TEMPLATE_TAG_PATTERN: Final = compile_pattern(
     """,
     re.S | re.X,
 )
+# Braces balance inside a mako expression, as in `${f({"a": 1})}`, outside
+# its strings. One left open ends at the next `${`, read the same way as an
+# unclosed tag above.
+_MAKO_EXPRESSION_PATTERN: Final = compile_pattern(
+    r"""
+    \$(?P<braces>\{
+        (?:\\.|"(?:\\.|[^"\\])*+"|'(?:\\.|[^'\\])*+'|(?&braces)|(?!\$\{)[^{}"'\\])*+
+    \})
+    """,
+    re.S | re.X,
+)
 # Read inside one tag as the tag was read: an escape outside a string is
 # skipped as one, and only a string (group 1) is encoded.
 _TEMPLATE_STRING_PATTERN: Final = compile_pattern(
@@ -145,6 +156,30 @@ def _encode_string_newlines(match: re.Match[str]) -> str:
     if match.group(1) is None:
         return match.group()
     return match.group().replace("\n", TEMPLATE_STRING_NEWLINE)
+
+
+def multiline_template_tag_spans(html: str) -> list[tuple[int, int]]:
+    """Where each template tag written across lines starts and ends.
+
+    Read as strings across lines are found, so a closer in a string does
+    not end the tag, and comments and raw text bodies are left out. A mako
+    `${...}` expression counts too, up to the brace that balances its own.
+    """
+    if "\n" not in html or ("{{" not in html and "{%" not in html and "${" not in html):
+        return []
+    scanned = mask_raw_text_bodies(html)
+    spans = [
+        tag.span()
+        for tag in _TEMPLATE_TAG_PATTERN.finditer(scanned)
+        if tag.group("comment") is None and "\n" in tag.group()
+    ]
+    if "${" in scanned:
+        spans.extend(
+            expression.span()
+            for expression in _MAKO_EXPRESSION_PATTERN.finditer(scanned)
+            if "\n" in expression.group()
+        )
+    return spans
 
 
 def encode_template_string_newlines(html: str) -> str:

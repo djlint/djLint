@@ -6,6 +6,7 @@ import ast
 import io
 import sys
 import tokenize
+from bisect import bisect_right
 from functools import cache, lru_cache, partial
 from typing import TYPE_CHECKING, cast, final
 
@@ -25,6 +26,7 @@ from djlint.const import (
 from djlint.formatter.attributes import format_attributes
 from djlint.formatter.class_attributes import (
     VERBATIM_ATTRIBUTE_NEWLINE,
+    multiline_template_tag_spans,
     restore_template_string_newlines,
 )
 from djlint.formatter.tokenizer import tokenize_tags
@@ -464,6 +466,25 @@ def indent_html(rawcode: str, config: Config) -> str:
 
     rawcode_flat_list = rawcode.split("\n")
 
+    # A line inside a template tag written across lines holds template code,
+    # where `"<a href='x'>"` is a string: spreading its attributes put line
+    # breaks into the string, a syntax error in mako. The markup may still
+    # render, as with `{{ "<b>"|safe }}` or mako's `HTML()`, so its tags are
+    # still counted for indentation. Each such line maps to where markup may
+    # start on it, -1 for none, as on a line the tag covers.
+    markup_starts: dict[int, int] = {}
+    tag_spans = multiline_template_tag_spans(rawcode)
+    if tag_spans:
+        line_starts = [0]
+        for line in rawcode_flat_list[:-1]:
+            line_starts.append(line_starts[-1] + len(line) + 1)
+        for span_start, span_end in tag_spans:
+            first = bisect_right(line_starts, span_start) - 1
+            last = bisect_right(line_starts, span_end - 1) - 1
+            for line_index in range(first + 1, last):
+                markup_starts[line_index] = -1
+            markup_starts[last] = span_end - line_starts[last]
+
     indent = config.indent
 
     beautified_lines: list[str] = []
@@ -596,7 +617,8 @@ def indent_html(rawcode: str, config: Config) -> str:
                 unclosed_closes += 1
         return opened, unclosed_closes
 
-    for item in rawcode_flat_list:
+    for line_index, item in enumerate(rawcode_flat_list):
+        markup_start = markup_starts.get(line_index, 0)
         is_safe_closing_tag_ = is_safe_closing_tag(config, item)
         ignored_block_opening_start_ = ignored_block_opening_start(config, item)
         is_ignored_block_opening_ = ignored_block_opening_start_ >= 0
@@ -909,7 +931,9 @@ def indent_html(rawcode: str, config: Config) -> str:
                     open_html_indents.append(True)
                     open_html_indents.extend([False] * (opened - 1))
 
-        elif not is_block_raw:
+        elif not is_block_raw and (
+            markup_start == 0 or (markup_start > 0 and "<" not in item[:markup_start])
+        ):
             tmp = format_html_attributes(tmp)
 
         # A trimmed blocktrans is formatted rather than left alone, so it
