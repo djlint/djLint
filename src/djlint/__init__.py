@@ -358,14 +358,14 @@ def _run_language_server(
     type=str,
     default="",
     metavar="TAGS",
-    help="Names of custom template blocks to indent, comma-separated, for example toc.",
+    help="Names of the custom template blocks to indent, comma-separated, for example toc.",
 )
 @click.option(
     "--custom-html",
     type=str,
     default="",
     metavar="TAGS",
-    help="Names of custom HTML tags to indent, comma-separated, for example mjml.",
+    help="Names of the custom HTML tags to indent, comma-separated, for example mjml.",
 )
 @click.option(
     "--exclude",

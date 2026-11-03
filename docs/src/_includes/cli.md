@@ -76,10 +76,10 @@ Options:
   --line-break-after-multiline-tag
                                   When a tag's attributes are spread over lines,
                                   start its content on a new line.
-  --custom-blocks TAGS            Names of custom template blocks to indent,
+  --custom-blocks TAGS            Names of the custom template blocks to indent,
                                   comma-separated, for example toc.
-  --custom-html TAGS              Names of custom HTML tags to indent, comma-
-                                  separated, for example mjml.
+  --custom-html TAGS              Names of the custom HTML tags to indent,
+                                  comma-separated, for example mjml.
   --exclude PATHS                 Paths to skip, comma-separated, in place of
                                   the default list.
   --extend-exclude PATHS          Paths to skip on top of the default list,
