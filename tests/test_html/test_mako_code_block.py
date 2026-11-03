@@ -61,6 +61,21 @@ format_data = [
         ),
         id="a tag in a string of an expression across lines keeps its attributes",
     ),
+    pytest.param(
+        (
+            '<p><input value="${_("a students\' b")}" data-e="${ s[\'u\'] }"></p>\n'
+            '${Text(_("c institution\'s d")).format(\n'
+            'e=HTML("</strong>"))}\n'
+        ),
+        (
+            "<p>\n"
+            '    <input value="${_("a students\' b")}" data-e="${ s[\'u\'] }">\n'
+            "</p>\n"
+            '${Text(_("c institution\'s d")).format(\n'
+            'e=HTML("</strong>"))}\n'
+        ),
+        id="an expression holding the quote of the attribute value it is in",
+    ),
 ]
 
 

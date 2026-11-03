@@ -72,6 +72,11 @@ test_data = [
         id="gt_in_template_string_in_attribute",
     ),
     pytest.param(
+        '<p><input value="{{ _("a students\' b") }}"></p>\n<p>x</p>\n',
+        '<p>\n    <input value="{{ _("a students\' b") }}">\n</p>\n<p>x</p>\n',
+        id="a_quote_in_a_template_string_in_an_attribute_is_not_the_attributes",
+    ),
+    pytest.param(
         '<div>\n{% trans "a\n   b" %}\n</div>\n',
         '<div>\n    {% trans "a\n   b" %}\n</div>\n',
         id="a_string_across_lines_keeps_its_whitespace",

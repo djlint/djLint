@@ -174,6 +174,10 @@ templates = [
         ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"{# c #}>t</div>\n',
         id="template tags written against the tag name or an attribute",
     ),
+    pytest.param(
+        '<p><input value="{{ _("a students\' b") }}"></p>\n<p>x</p>\n',
+        id="the attribute's own quote in a template string inside it",
+    ),
 ]
 
 option_sets = [

@@ -101,6 +101,9 @@ _LEADING_CLOSE_BRACKET_PATTERN: Final = compile_pattern(r"[ ]*[)\]}]")
 _MULTILINE_TAG_OPEN_PAREN_PATTERN: Final = compile_pattern(r"\((?=[^()]*$)")
 _MULTILINE_TAG_CLOSE_PAREN_PATTERN: Final = compile_pattern(r"^[ ]*\)")
 _TEXTAREA_CLOSE_PATTERN: Final = compile_pattern(r"^\s*</textarea\b", RE_FLAGS_IX)
+_LINE_TEMPLATE_TAG_PATTERN: Final = compile_pattern(
+    r"\{\{(?:(?!\}\}|\{\{).)*\}\}|\{%(?:(?!%\}|\{%).)*%\}|\$\{[^{}]*\}"
+)
 _TRIMMED_TRANS_OPEN_PATTERN: Final = compile_pattern(
     r"\{%[-+]?\s*blocktrans(?:late)?\b(?:(?!%\}).)*?\btrimmed\b(?:(?!%\}).)*?%\}", RE_FLAGS_IS
 )
@@ -134,6 +137,24 @@ _FUNCTION_CONTENT_PATTERN: Final = compile_pattern(
     """,
     RE_FLAGS_IMSX,
 )
+
+
+def _blank_quotes(match: re.Match[str]) -> str:
+    return match.group().replace('"', "_").replace("'", "_")
+
+
+def _without_template_quotes(line: str) -> str:
+    """The line with the quotes inside its template tags blanked out.
+
+    The pattern for a tag on one line reads an attribute value as quote to
+    quote, so the value of `value="{{ _("it's") }}"` ended at the quote
+    inside the tag, and the apostrophe opened another that never closed.
+    """
+    if ("{{" not in line and "{%" not in line and "${" not in line) or (
+        '"' not in line and "'" not in line
+    ):
+        return line
+    return _LINE_TEMPLATE_TAG_PATTERN.sub(_blank_quotes, line)
 
 
 def _attribute_quote_at(html: str, start: int) -> str | None:
@@ -684,7 +705,7 @@ def indent_html(rawcode: str, config: Config) -> str:
 
         if (not is_block_raw and ignored_inline_start_pattern.search(item)) or (
             not is_block_raw
-            and single_line_tag_pattern.search(item.lstrip())
+            and single_line_tag_pattern.search(_without_template_quotes(item.lstrip()))
             and not starts_unclosed_html_tag(item)
             and not template_unindent_pattern.match(item.lstrip())
             and not tag_unindent_line_pattern.match(item.lstrip())
