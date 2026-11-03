@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.49.5] - 2026-11-03
+
 ### Performance
 
 - A file with many tags that are never closed formats in under a second. A thousand lines that each start with `<p data-x="a` took 40 seconds, 1,500 lines of `<p` took over a minute, and 2,000 ran out of memory. Thousands of `<script>`, `<style>` or `<textarea>` tags that are never closed no longer slow down formatting or linting either: linting 4,000 of them took up to 23 seconds.
