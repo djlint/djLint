@@ -166,6 +166,21 @@ test_data = [
     ),
     pytest.param(
         (
+            "<script type=text/javascript {{ attrs|safe }}></script>\n"
+            '<style type="text/css" {% attrs %}></style>\n'
+            '<link rel="stylesheet" type="text/css" {{ attrs }}>\n'
+            '<script type="text/javascript" src="{{ url }}" {# note #}></script>\n'
+        ),
+        (
+            '<script type="text/javascript" {{ attrs|safe }}></script>\n'
+            '<style type="text/css" {% attrs %}></style>\n'
+            '<link rel="stylesheet" type="text/css" {{ attrs }}>\n'
+            '<script src="{{ url }}" {# note #}></script>\n'
+        ),
+        id="a default type followed by a template tag is kept",
+    ),
+    pytest.param(
+        (
             '<link rel="{{ \'icon\' if x else \'stylesheet\' }}" type="text/css" href="a">\n'
             '<link rel=\'{% if x %} stylesheet {% else %} icon {% endif %}\' type="text/css" href="b">\n'
         ),

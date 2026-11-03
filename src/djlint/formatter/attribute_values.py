@@ -57,15 +57,16 @@ _ATTRIBUTE_START: Final = rf"""
 """
 
 
-# Of two types a browser reads the first, so one written later in the tag,
-# also after a template tag, would take over once the default was dropped.
+# Of two types a browser reads the first, so one written later in the tag
+# would take over once the default was dropped. So could one that a template
+# tag after it writes, as `{{ attrs }}` may; a comment writes nothing.
 def _default_type(element: str, value: str, condition: str = "") -> str:
     return rf"""
     (<{element}(?![-.:\w]){condition}{_ATTRIBUTES})
     \s+(?<![-.:\w])(?<!{_TRIMMED_AFTER})type\s*=\s*
     (?:(["']){value}\2|{value}(?=\s|/?>))
     (?!{_TRIMS_BEFORE})
-    (?!{_ATTRIBUTES}(?<![-.:@\w])type\s*=)
+    (?!{_ATTRIBUTES}(?:(?<![-.:@\w])type\s*=|\{{[{{%]))
     """
 
 

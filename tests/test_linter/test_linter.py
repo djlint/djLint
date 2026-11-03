@@ -911,6 +911,10 @@ def test_H024_covers_link_and_anchors_the_name(
         b'<script {% if a %}type="text/javascript"{% endif %} type="module"></script>',
         b'<style type="text/css" type="text/x"></style>',
         b'<link rel="stylesheet" type="text/css" type="text/x">',
+        # So may a template tag after it, which can write a type of its own.
+        b"<script type=text/javascript {{ attrs|safe }}></script>",
+        b'<style type="text/css" {% attrs %}></style>',
+        b'<link rel="stylesheet" type="text/css" {{ attrs }}>',
     ):
         write_to_file(tmp_file.name, quiet)
         result = runner.invoke(djlint, (tmp_file.name,))
