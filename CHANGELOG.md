@@ -8,6 +8,7 @@
 
 - A U+2028, U+2029, U+0085 or form feed in the arguments of a call or the value of a `{% set %}` that is not JSON, as in a string passed to `{{ url("…", x) }}`, is kept as written. It was rewritten as a line break, which changed the string.
 - H057 reports a video whose only track has an empty `kind`, as in `<track kind="">` or `<track kind>`. Browsers read an empty `kind` as `metadata`, not subtitles, so such a track carries no captions. H057 took it for a subtitles track.
+- The error about a number setting that is not a number names the file the value was read from, such as `djlint.toml`, `.djlintrc` or the file `--configuration` names. It always said `pyproject.toml`.
 
 ## [1.49.8] - 2026-11-03
 

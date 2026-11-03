@@ -246,8 +246,12 @@ def _named_settings(config: Path | None) -> dict[str, Any]:
         return {}
 
 
-def _project_settings(src: Path) -> dict[str, Any]:
-    """Settings from the project's own file, the first one that holds any."""
+def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
+    """Settings from the project's own file, the first one that holds any.
+
+    The name of that file comes with them, for the messages about a value
+    it sets.
+    """
     if pyproject_file := find_pyproject(src):
         try:
             content = load_pyproject_config(pyproject_file)
@@ -255,21 +259,21 @@ def _project_settings(src: Path) -> dict[str, Any]:
             echo(style(f"Failed to load pyproject.toml file. {error}", fg="red"), err=True)
         else:
             if content:
-                return dict(content)
+                return dict(content), pyproject_file.name
 
     if djlint_toml_file := find_djlint_toml(src):
         try:
-            return dict(load_djlint_toml_config(djlint_toml_file))
+            return dict(load_djlint_toml_config(djlint_toml_file)), djlint_toml_file.name
         except Exception as error:
             echo(style(f"Failed to load {djlint_toml_file.name} file. {error}", fg="red"), err=True)
 
     elif djlintrc_file := find_djlintrc(src):
         try:
-            return dict(load_djlintrc_config(djlintrc_file))
+            return dict(load_djlintrc_config(djlintrc_file)), djlintrc_file.name
         except Exception as error:
             echo(style(f"Failed to load .djlintrc file. {error}", fg="red"), err=True)
 
-    return {}
+    return {}, ""
 
 
 @cache
@@ -284,19 +288,21 @@ def _warn_once(message: str) -> None:
 
 def load_project_settings(
     src: Path, config: Path | None, *, prefer_configuration: bool = False
-) -> dict[str, Any]:
-    """Load djlint config.
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """Load djlint config, and the file each setting was read from.
 
     `--configuration` names a global file, so the project's own file wins
     where the two set the same thing. `--prefer-configuration` turns that
     around, which is what naming a file on the command line usually means.
     """
     named = _named_settings(config)
-    project = _project_settings(src)
+    project, project_file = _project_settings(src)
+    named_sources = dict.fromkeys(named, str(config))
+    project_sources = dict.fromkeys(project, project_file)
 
     if prefer_configuration:
-        return {**project, **named}
-    return {**named, **project}
+        return {**project, **named}, {**project_sources, **named_sources}
+    return {**named, **project}, {**named_sources, **project_sources}
 
 
 def validate_rules(rules: Iterable[_TMappingStrAny]) -> Iterator[_TMappingStrAny]:
@@ -1352,7 +1358,7 @@ class Config:
         else:
             start = Path(stdin_filename).resolve().parent
         self.project_root = find_project_root(start)
-        djlint_settings = load_project_settings(
+        djlint_settings, setting_sources = load_project_settings(
             self.project_root, configuration, prefer_configuration=prefer_configuration
         )
         if prefer_configuration and configuration is None:
@@ -1365,7 +1371,7 @@ class Config:
             except (TypeError, ValueError):
                 echo(
                     style(
-                        f"Error: Invalid pyproject.toml {key} value {djlint_settings[key]}",
+                        f"Error: Invalid {setting_sources[key]} {key} value {djlint_settings[key]}",
                         fg="red",
                     ),
                     err=True,
