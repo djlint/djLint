@@ -61,6 +61,12 @@ test_data = [
         68,
         id="a_template_block_stays_open_where_its_indentation_would_overrun",
     ),
+    pytest.param(
+        '<div>\n<span style="a: 1; b: 2;">x</span>\n</div>\n',
+        '<div>\n  <span style="a: 1; b: 2;">x</span>\n</div>\n',
+        35,
+        id="a_single_style_attribute_is_not_spread_for_the_line",
+    ),
 ]
 
 

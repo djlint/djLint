@@ -381,7 +381,15 @@ def _spreading_would_shorten_the_line(
     if line - len(attribute_group) > config.max_line_length:
         return False
 
-    return len(config.attribute_pattern.findall(attribute_group)) > 1
+    # The pattern also matches the empty string at the end, which is no
+    # attribute: counting it spread a lone style over lines of its own.
+    attributes = 0
+    for match in config.attribute_pattern.finditer(attribute_group):
+        if match.start() != match.end():
+            attributes += 1
+            if attributes > 1:
+                return True
+    return False
 
 
 def format_attributes(config: Config, html: str, token: TagToken, before_tag: str) -> str:
