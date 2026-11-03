@@ -207,6 +207,12 @@ test_data = [
         ({}),
         id="check dedent on nested block",
     ),
+    pytest.param(
+        ('{% set x = foo("a\u2028b", y) %}'),
+        ('{% set x = foo("a\u2028b", y) %}\n'),
+        ({}),
+        id="a line separator in a set value is content",
+    ),
 ]
 
 
