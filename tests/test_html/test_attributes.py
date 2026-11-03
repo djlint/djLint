@@ -1114,6 +1114,27 @@ test_data = [
         id="a_style_or_srcset_with_no_value_is_spread_like_any_other",
     ),
     pytest.param(
+        (
+            "<div>\n"
+            '<script type="text/plain" id="upgrade_user" data-link="aaaaaaaaaaa" data-price="bbb">\n'
+            "</script>\n"
+            '<style media="screen and (min-width: 900px)" title="aaaaaaaaaaaaaaaaaaaaaaaaa">\n'
+            "</style>\n"
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            '    <script type="text/plain"\n'
+            '            id="upgrade_user"\n'
+            '            data-link="aaaaaaaaaaa"\n'
+            '            data-price="bbb"></script>\n'
+            '    <style media="screen and (min-width: 900px)"\n'
+            '           title="aaaaaaaaaaaaaaaaaaaaaaaaa"></style>\n'
+            "</div>\n"
+        ),
+        id="an_empty_script_put_on_one_line_has_its_attributes_spread",
+    ),
+    pytest.param(
         ('<div class="a\nb" style="c: 1;\nd: 2">x</div>\n'),
         ('<div class="a b" style="c: 1; d: 2">x</div>\n'),
         id="a_line_break_in_a_token_list_or_css_value_is_only_layout",

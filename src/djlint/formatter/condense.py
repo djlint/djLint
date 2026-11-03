@@ -14,6 +14,8 @@ from typing import TYPE_CHECKING, final
 import regex as re
 
 from djlint.const import COLLAPSIBLE_WHITESPACE, HTML_INLINE_ELEMENTS
+from djlint.formatter.attributes import format_attributes
+from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     RE_FLAGS_IMS,
     RE_FLAGS_IMSX,
@@ -40,6 +42,7 @@ if TYPE_CHECKING:
 _YAML_FRONT_MATTER_PATTERN: Final = compile_pattern(YAML_FRONT_MATTER, RE_FLAGS_MSX)
 
 _COLLAPSIBLE_WHITESPACE_CHARS: Final = frozenset(COLLAPSIBLE_WHITESPACE)
+_RAW_TEXT_ELEMENTS: Final = frozenset(("script", "style"))
 # Jinja and nunjucks strip the whitespace on the marked side of a tag. The
 # "+" marker asks for it to be kept, so only "-" counts here.
 _STRIPS_WHITESPACE_BEFORE: Final = compile_pattern(r"\{[{%#]-")
@@ -445,9 +448,23 @@ def condense_html(html: str, config: Config, authored_html: str | None = None) -
         return True
 
     def condense_html_line(config: Config, html: str, match: re.Match[str]) -> str:
-        return condense_line(
+        condensed = condense_line(
             config, html, match, inline=match.group(2).lower() in HTML_INLINE_ELEMENTS
         )
+        if condensed == match.group() or match.group(2).lower() not in _RAW_TEXT_ELEMENTS:
+            return condensed
+
+        # The opening tag of a script or style starts a block left as
+        # written, so indenting did not spread its attributes. Joined to its
+        # closing tag it no longer does, and the next run would spread them.
+        opening = match.group(1)
+        tokens = tokenize_tags(opening)
+        token = next(tokens, None)
+        if token is None or "\n" in opening:
+            return condensed
+        line_start = match.string.rfind("\n", 0, match.start()) + 1
+        spread = format_attributes(config, opening, token, match.string[line_start : match.start()])
+        return spread + condensed[len(opening) :]
 
     func = partial(condense_html_line, config, html)
 
