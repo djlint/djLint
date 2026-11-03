@@ -123,6 +123,7 @@ Options:
   --quote-style [double|single]   Quotes for strings inside template tags.
                                   [default: double]
   --max-blank-lines N             Keep at most this many blank lines in a row.
+                                  Has no effect with --preserve-blank-lines.
                                   [default: 0]
   --github-output / --no-github-output
                                   Print results as GitHub Actions annotations.

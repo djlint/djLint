@@ -489,7 +489,10 @@ def _run_language_server(
     "--max-blank-lines",
     type=int,
     metavar="N",
-    help="Keep at most this many blank lines in a row. [default: 0]",
+    help=(
+        "Keep at most this many blank lines in a row. Has no effect with"
+        " --preserve-blank-lines. [default: 0]"
+    ),
     show_default=False,
 )
 @click.option(

@@ -7,6 +7,7 @@
 ### Docs
 
 - `djlint --help` describes each option more clearly. It now gives the defaults that come from `.editorconfig`, lists the `all` profile, and names what a value holds, such as `--ignore CODES`. `--warn` no longer claims to turn errors into warnings: it only changes the exit code. The configuration page uses the same wording.
+- The help and the docs for `--max-blank-lines` say that it has no effect with `--preserve-blank-lines`, which keeps every blank line.
 
 ## [1.49.4] - 2026-11-03
 
