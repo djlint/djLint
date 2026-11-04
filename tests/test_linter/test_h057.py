@@ -9,8 +9,8 @@ import time
 
 import pytest
 
-from djlint.rules import H057
-from djlint.settings import Config
+from djlint._rules import H057
+from djlint._settings import Config
 from tests.conftest import linter
 
 test_data = [

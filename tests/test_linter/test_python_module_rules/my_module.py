@@ -12,8 +12,8 @@ from djlint.lint import get_line
 if TYPE_CHECKING:
     from typing import Any
 
-    from djlint.settings import Config
-    from djlint.types import LintError
+    from djlint._settings import Config
+    from djlint._types import LintError
 
 
 def run(

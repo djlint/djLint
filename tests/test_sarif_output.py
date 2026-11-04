@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from djlint import main as djlint
+from djlint._cli import main as djlint
 
 if TYPE_CHECKING:
     from pathlib import Path

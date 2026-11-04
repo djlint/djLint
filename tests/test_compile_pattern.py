@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 import pytest
 import regex as re
 
-from djlint import helpers
+from djlint import _helpers as helpers
 
 if TYPE_CHECKING:
     from typing import Final
@@ -26,7 +26,7 @@ def _regex_accepts_cache_pattern() -> bool:
 
 
 _SOURCE_ROOT: Final = Path("src/djlint")
-_SHIM_FILE: Final = _SOURCE_ROOT / "helpers.py"
+_SHIM_FILE: Final = _SOURCE_ROOT / "_helpers.py"
 _PATTERNS: Final = (
     (r"a(b)c", 0),
     (r"a(b)c", re.I),

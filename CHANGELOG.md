@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `djlint.api` is the public API of djLint. The rest moved to modules whose names start with an underscore, as in `djlint._lint`, so type checkers and linters treat it as internal, as the Python API docs already said it was. The imports a custom rule's `python_module` takes from the docs, from `djlint.lint`, `djlint.helpers`, `djlint.settings` and `djlint.types`, still work.
+
 ## [1.49.9] - 2026-11-04
 
 ### Bug fixes

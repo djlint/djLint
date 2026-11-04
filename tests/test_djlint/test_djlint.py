@@ -16,8 +16,9 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-import djlint as djlint_module
-from djlint import main as djlint, output as djlint_output
+import djlint._cli as djlint_module
+from djlint import _output as djlint_output
+from djlint._cli import main as djlint
 from tests.conftest import write_to_file
 
 if TYPE_CHECKING:
@@ -345,9 +346,9 @@ def test_import_skips_runtime_helpers() -> None:
     code = (
         "import sys; "
         f"sys.path.insert(0, {src_path!r}); "
-        "import djlint; "
+        "import djlint._cli; "
         "blocked = {'concurrent.futures', 'cssbeautifier', 'jsbeautifier', "
-        "'djlint.lint', 'djlint.reformat'}; "
+        "'djlint._lint', 'djlint._reformat'}; "
         "loaded = sorted(blocked & sys.modules.keys()); "
         "print('\\n'.join(loaded)); "
         "raise SystemExit(bool(loaded))"

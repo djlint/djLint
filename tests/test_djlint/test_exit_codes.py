@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint import main as djlint
-from djlint.settings import _PROFILES  # noqa: PLC2701
-from djlint.src import _PRAGMA_PATTERNS  # noqa: PLC2701
+from djlint._cli import main as djlint
+from djlint._settings import _PROFILES
+from djlint._src import _PRAGMA_PATTERNS
 
 if TYPE_CHECKING:
     from pathlib import Path

@@ -12,9 +12,9 @@ from typing import TYPE_CHECKING
 import pytest
 from click import UsageError
 
-from djlint import main as djlint
-from djlint.settings import Config
-from djlint.src import get_src
+from djlint._cli import main as djlint
+from djlint._settings import Config
+from djlint._src import get_src
 
 if TYPE_CHECKING:
     from click.testing import CliRunner

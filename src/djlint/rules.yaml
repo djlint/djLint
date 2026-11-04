@@ -4,16 +4,16 @@
     exclude:
       - handlebars
       - golang
-    python_module: djlint.rules.T001
+    python_module: djlint._rules.T001
 - rule:
     name: T002
     message: Double quotes should be used in tags.
-    python_module: djlint.rules.T002
+    python_module: djlint._rules.T002
 - rule:
     name: T003
     message: "Endblock should have name. Ex: {% endblock body %}."
     default: false
-    python_module: djlint.rules.T003
+    python_module: djlint._rules.T003
 - rule:
     name: D004
     skip_in_attributes: true
@@ -67,7 +67,7 @@
 - rule:
     name: H009
     message: Tag names should be lowercase.
-    python_module: djlint.rules.H009
+    python_module: djlint._rules.H009
 - rule:
     name: H010
     skip_in_attributes: true
@@ -92,7 +92,7 @@
 - rule:
     name: H012
     message: There should be no spaces around attribute =.
-    python_module: djlint.rules.H012
+    python_module: djlint._rules.H012
 - rule:
     name: H013
     skip_in_attributes: true
@@ -105,7 +105,7 @@
 - rule:
     name: H014
     message: Found extra blank lines.
-    python_module: djlint.rules.H014
+    python_module: djlint._rules.H014
 - rule:
     name: H015
     skip_in_attributes: true
@@ -119,7 +119,7 @@
 - rule:
     name: H016
     message: Missing title tag in html.
-    python_module: djlint.rules.H016
+    python_module: djlint._rules.H016
 - rule:
     name: H017
     skip_in_attributes: true
@@ -187,7 +187,7 @@
 - rule:
     name: H022
     message: Use HTTPS for external links.
-    python_module: djlint.rules.H022
+    python_module: djlint._rules.H022
 - rule:
     name: H023
     message: Do not use entity references.
@@ -215,7 +215,7 @@
 - rule:
     name: H025
     message: Tag seems to be an orphan.
-    python_module: djlint.rules.H025
+    python_module: djlint._rules.H025
 - rule:
     name: H026
     skip_in_attributes: true
@@ -228,7 +228,7 @@
 - rule:
     name: T027
     message: Unclosed string found in template syntax.
-    python_module: djlint.rules.T027
+    python_module: djlint._rules.T027
 
 - rule:
     name: T028
@@ -286,19 +286,19 @@
 - rule:
     name: H036
     message: Do not use br tags for spacing.
-    python_module: djlint.rules.H036
+    python_module: djlint._rules.H036
 - rule:
     name: H037
     message: Duplicate attribute found.
-    python_module: djlint.rules.H037
+    python_module: djlint._rules.H037
 - rule:
     name: T038
     message: Block tag has no matching end tag.
-    python_module: djlint.rules.T038
+    python_module: djlint._rules.T038
 - rule:
     name: T039
     message: Unclosed template tag found.
-    python_module: djlint.rules.T039
+    python_module: djlint._rules.T039
 - rule:
     name: T040
     message: Missing or empty template name in extends or include tag.
@@ -308,11 +308,11 @@
 - rule:
     name: H041
     message: Tag is closed in a different template block than it was opened.
-    python_module: djlint.rules.H041
+    python_module: djlint._rules.H041
 - rule:
     name: H042
     message: Label for attribute has no matching element id in this file.
-    python_module: djlint.rules.H042
+    python_module: djlint._rules.H042
 - rule:
     name: H043
     skip_in_attributes: true
@@ -325,7 +325,7 @@
 - rule:
     name: H044
     message: Thead should not mix th and td cells.
-    python_module: djlint.rules.H044
+    python_module: djlint._rules.H044
 - rule:
     name: H045
     skip_in_attributes: true
@@ -350,11 +350,11 @@
 - rule:
     name: H047
     message: Aria-hidden should not be set on a focusable element.
-    python_module: djlint.rules.H047
+    python_module: djlint._rules.H047
 - rule:
     name: H048
     message: Aria attribute is not one the specification defines.
-    python_module: djlint.rules.H048
+    python_module: djlint._rules.H048
 - rule:
     name: H049
     skip_in_attributes: true
@@ -376,7 +376,7 @@
 - rule:
     name: H051
     message: Role is not one ARIA defines for markup.
-    python_module: djlint.rules.H051
+    python_module: djlint._rules.H051
 - rule:
     name: H052
     skip_in_attributes: true
@@ -395,7 +395,7 @@
       - golang
       - liquid
       - angular
-    python_module: djlint.rules.T041
+    python_module: djlint._rules.T041
 - rule:
     name: T042
     message: Content outside a block is not rendered in a template that extends another.
@@ -404,7 +404,7 @@
       - golang
       - liquid
       - angular
-    python_module: djlint.rules.T042
+    python_module: djlint._rules.T042
 - rule:
     name: T043
     message: Block name is used more than once in the template.
@@ -413,7 +413,7 @@
       - golang
       - liquid
       - angular
-    python_module: djlint.rules.T043
+    python_module: djlint._rules.T043
 - rule:
     name: T044
     message: Output tag holds a statement keyword; use a block tag.
@@ -421,19 +421,19 @@
       - golang
       - handlebars
       - angular
-    python_module: djlint.rules.T044
+    python_module: djlint._rules.T044
 - rule:
     name: T045
     message: Template tag inside an html comment still runs; use a template comment to disable it.
-    python_module: djlint.rules.T045
+    python_module: djlint._rules.T045
 - rule:
     name: H053
     message: Id is used more than once in the file.
-    python_module: djlint.rules.H053
+    python_module: djlint._rules.H053
 - rule:
     name: H054
     message: Interactive element should not be nested inside another.
-    python_module: djlint.rules.H054
+    python_module: djlint._rules.H054
 - rule:
     name: H055
     skip_in_attributes: true
@@ -470,4 +470,4 @@
 - rule:
     name: H057
     message: Video should have a captions track.
-    python_module: djlint.rules.H057
+    python_module: djlint._rules.H057

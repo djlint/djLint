@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint import main as djlint
+from djlint._cli import main as djlint
 from tests.conftest import write_to_file
 
 if TYPE_CHECKING:
