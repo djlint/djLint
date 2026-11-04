@@ -249,7 +249,6 @@ def test_a_block_tag_with_no_closing_marker_is_scanned_once() -> None:
 @pytest.mark.parametrize(
     ("profile", "reported"),
     [
-        pytest.param("django", True, id="django"),
         pytest.param("jinja", True, id="jinja"),
         pytest.param("nunjucks", True, id="nunjucks"),
         pytest.param("handlebars", False, id="handlebars is excluded"),

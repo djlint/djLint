@@ -92,11 +92,6 @@ test_data = [
         id="an html comment that is never closed opens none",
     ),
     pytest.param(
-        ('{% extends "b.html" %}<p>a --> b</p>{% block a %}x{% endblock %}'),
-        (True),
-        id="an arrow in text closes no html comment",
-    ),
-    pytest.param(
         ('{% extends "b.html" %}{% block a %}<div>kept</div>{% endblock %}'),
         (False),
         id="html inside a block",

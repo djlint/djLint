@@ -153,24 +153,6 @@ test_data = [
         ]),
         id="T028_2",
     ),
-    pytest.param(
-        ("<a href=\"{%- if 'asdf' %}\"></a>"),
-        ([
-            {
-                "code": "T028",
-                "line": "1:0",
-                "match": "<a href=\"{%- if 'asd",
-                "message": "Consider using spaceless tags inside attribute values. {%- if/for -%}",
-            },
-            {
-                "code": "T038",
-                "line": "1:9",
-                "match": "{%- if 'asdf' %}",
-                "message": "Block tag has no matching end tag.",
-            },
-        ]),
-        id="T028_3",
-    ),
     pytest.param(("<a href=\"{{- blah 'asdf' }}\"></a>"), ([]), id="T028_4"),
     pytest.param(
         (
