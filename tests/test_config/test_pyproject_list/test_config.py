@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from djlint.settings import Config
+from djlint._settings import Config
 
 
 def test_list_settings() -> None:

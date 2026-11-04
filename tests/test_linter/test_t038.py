@@ -9,11 +9,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.settings import Config
+from djlint._settings import Config
 from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
-    from djlint.types import LintError
+    from djlint._types import LintError
 
 django_test_data = [
     pytest.param(

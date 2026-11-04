@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from djlint.settings import Config
+from djlint._settings import Config
 
 
 @pytest.mark.parametrize("config_path", ["djlint-cust.toml", ".djlint-cust"])
