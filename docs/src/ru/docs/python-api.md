@@ -15,13 +15,13 @@ config = load_config("templates", profile="django", indent=2)
 
 formatted = format_text(config, "<div><p>hi</p></div>")
 
-for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
+for finding in lint_text(config, '<img src="a.png">', filename="templates/home.html"):
     print(finding.line, finding.column, finding.code, finding.message)
 ```
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` читает конфигурацию, которая действует для файлов папки. Он ищет её вверх от этой папки, как командная строка ищет от текущего каталога, и не меняет текущий каталог.
+`load_config(folder=".", /, *, python_rules=True, **options)` читает конфигурацию, которая действует для файлов папки. Он ищет её вверх от этой папки, как командная строка ищет от текущего каталога, и не меняет текущий каталог.
 
 Параметры называются так же, как параметры командной строки, только с подчёркиваниями, и работают так же: заданное значение важнее файла конфигурации, а `False`, пустая строка и, для большинства параметров, `0` считаются не заданными. Пути передаются как `pathlib.Path`.
 
@@ -31,11 +31,11 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## format_text
 
-`format_text(config, text)` возвращает отформатированный текст. Текст, первая строка которого заканчивается на CRLF, возвращается с CRLF, любой другой — с LF. С `require_pragma` текст без прагмы возвращается без изменений.
+`format_text(config, text, /)` возвращает отформатированный текст. Текст, первая строка которого заканчивается на CRLF, возвращается с CRLF, любой другой — с LF. С `require_pragma` текст без прагмы возвращается без изменений.
 
 ## lint_text
 
-`lint_text(config, text, filename="-")` возвращает список `Finding` в том порядке, в каком они встречаются в документе. С `filename` сопоставляется `per-file-ignores`. С `require_pragma` у текста без прагмы замечаний нет.
+`lint_text(config, text, /, *, filename="-")` возвращает список `Finding` в том порядке, в каком они встречаются в документе. С `filename` сопоставляется `per-file-ignores`. С `require_pragma` у текста без прагмы замечаний нет.
 
 `Finding` — именованный кортеж со следующими полями:
 
@@ -52,7 +52,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## is_excluded
 
-`is_excluded(config, path)` сообщает, исключают ли файл `exclude`, `extend_exclude` или gitignore, так же как это делает командная строка. Сами `format_text` и `lint_text` этого не проверяют.
+`is_excluded(config, path, /)` сообщает, исключают ли файл `exclude`, `extend_exclude` или gitignore, так же как это делает командная строка. Сами `format_text` и `lint_text` этого не проверяют.
 
 ## Модули правил
 

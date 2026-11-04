@@ -119,7 +119,10 @@ dependencies = [
   "types-regex==2026.9.29.20261030",
 ]
 enable-by-default = false
-exclude = ["src/djlint/__main__.py"]
+# Compiled, the deprecated module whose __getattr__ hands out Config crashes
+# the interpreter as it is imported. A compiled function has no frame, so
+# api.py would warn about an old call at the line that called the caller.
+exclude = ["src/djlint/__main__.py", "src/djlint/api.py", "src/djlint/settings.py"]
 options = { opt_level = "3", debug_level = "0" }
 
 [tool.uv]

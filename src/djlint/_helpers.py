@@ -5,7 +5,7 @@ from __future__ import annotations
 import itertools
 from bisect import bisect_left, bisect_right
 from functools import lru_cache, partial
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import regex as re
 
@@ -13,8 +13,8 @@ from djlint._const import TAG_ATTRIBUTES
 from djlint._formatter.tokenizer import tokenize_tags
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
-    from typing import Final
+    from collections.abc import Callable, Iterable
+    from typing import Any, Final
 
     from typing_extensions import TypeVar
 
@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from djlint._types import SpanMatch
 
     T = TypeVar("T")
+    F = TypeVar("F", bound=Callable[..., Any])
 
 
 RE_FLAGS_IS: Final = re.I | re.S
@@ -33,6 +34,16 @@ RE_FLAGS_IMS: Final = re.I | re.M | re.S
 RE_FLAGS_IMX: Final = re.I | re.M | re.X
 RE_FLAGS_ISX: Final = re.I | re.S | re.X
 RE_FLAGS_IMSX: Final = re.I | re.M | re.S | re.X
+
+
+def keep_mypyc_wheels_from_crashing(func: F) -> F:
+    """Return a partial of the function, for a decorator that sets attributes.
+
+    A function mypyc compiled has no room for attributes, such as the
+    `__deprecated__` that `deprecated` sets, and a partial has. Type checkers
+    see the function itself, so they keep its name and signature.
+    """
+    return cast("F", partial(func))
 
 
 def _supports_cache_pattern() -> bool:
@@ -538,7 +549,7 @@ def _inside_ignored_linter_block(
     return tuple(x.span() for x in ignored_linter_blocks.finditer(html))
 
 
-def inside_ignored_linter_block(config: Config, html: str, match: SpanMatch) -> bool:
+def inside_ignored_linter_block(config: Config, html: str, match: SpanMatch, /) -> bool:
     """Check if a re.Match is inside of a ignored linter block."""
     match_start, match_end = match.span()
     return _inside_non_overlapping_span(
@@ -734,7 +745,7 @@ def _inside_ignored_rule(
     return tuple(rule_spans)
 
 
-def inside_ignored_rule(config: Config, html: str, match: SpanMatch, rule: str) -> bool:
+def inside_ignored_rule(config: Config, html: str, match: SpanMatch, rule: str, /) -> bool:
     """Check if match is inside an ignored pattern.
 
     Spans are half open, so a match ending exactly where a pragma starts is

@@ -15,13 +15,13 @@ config = load_config("templates", profile="django", indent=2)
 
 formatted = format_text(config, "<div><p>hi</p></div>")
 
-for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
+for finding in lint_text(config, '<img src="a.png">', filename="templates/home.html"):
     print(finding.line, finding.column, finding.code, finding.message)
 ```
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` legge la configurazione che si applica ai file di una cartella. La cerca risalendo a partire dalla cartella, come fa la riga di comando a partire dalla directory corrente, e non cambia la directory corrente.
+`load_config(folder=".", /, *, python_rules=True, **options)` legge la configurazione che si applica ai file di una cartella. La cerca risalendo a partire dalla cartella, come fa la riga di comando a partire dalla directory corrente, e non cambia la directory corrente.
 
 Le opzioni usano i nomi delle opzioni della riga di comando, con i trattini bassi, e funzionano allo stesso modo: un valore impostato ha la precedenza sul file di configurazione, mentre `False`, una stringa vuota e, per la maggior parte delle opzioni, `0` contano come non specificati. I percorsi si passano come `pathlib.Path`.
 
@@ -31,11 +31,11 @@ Con `python_rules=False`, le regole personalizzate con un `python_module` non ve
 
 ## format_text
 
-`format_text(config, text)` restituisce il testo formattato. Un testo la cui prima riga termina con CRLF viene restituito con CRLF, qualsiasi altro con LF. Con `require_pragma`, un testo senza il pragma viene restituito invariato.
+`format_text(config, text, /)` restituisce il testo formattato. Un testo la cui prima riga termina con CRLF viene restituito con CRLF, qualsiasi altro con LF. Con `require_pragma`, un testo senza il pragma viene restituito invariato.
 
 ## lint_text
 
-`lint_text(config, text, filename="-")` restituisce una lista di `Finding`, nell'ordine del documento. `filename` è ciò con cui viene confrontato `per-file-ignores`. Con `require_pragma`, un testo senza il pragma non ha segnalazioni.
+`lint_text(config, text, /, *, filename="-")` restituisce una lista di `Finding`, nell'ordine del documento. `filename` è ciò con cui viene confrontato `per-file-ignores`. Con `require_pragma`, un testo senza il pragma non ha segnalazioni.
 
 `Finding` è una named tuple con questi campi:
 
@@ -52,7 +52,7 @@ Le colonne contano i caratteri, non i byte né le unità di codice UTF-16.
 
 ## is_excluded
 
-`is_excluded(config, path)` indica se `exclude`, `extend_exclude` o il gitignore escludono un file, come fa la riga di comando. `format_text` e `lint_text` non effettuano questo controllo da sé.
+`is_excluded(config, path, /)` indica se `exclude`, `extend_exclude` o il gitignore escludono un file, come fa la riga di comando. `format_text` e `lint_text` non effettuano questo controllo da sé.
 
 ## Moduli delle regole
 
