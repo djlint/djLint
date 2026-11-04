@@ -9,12 +9,12 @@ import time
 
 import pytest
 
-from djlint.formatter.class_attributes import (
+from djlint._formatter.class_attributes import (
     encode_template_string_newlines,
     multiline_template_tag_spans,
 )
-from djlint.reformat import formatter
-from djlint.settings import Config
+from djlint._reformat import formatter
+from djlint._settings import Config
 from tests.conftest import linter
 
 # Each of these was read again from every opener in it, to the end of the

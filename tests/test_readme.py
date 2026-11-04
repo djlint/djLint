@@ -8,8 +8,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from djlint.reformat import formatter
-from djlint.settings import Config
+from djlint._reformat import formatter
+from djlint._settings import Config
 from tests.conftest import printer
 
 _README = Path("README.md")

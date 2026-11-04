@@ -7,8 +7,8 @@ from __future__ import annotations
 
 import pytest
 
-from djlint.formatter.load_tags import sort_load_tags
-from djlint.reformat import formatter
+from djlint._formatter.load_tags import sort_load_tags
+from djlint._reformat import formatter
 from tests.conftest import config_builder, printer
 
 test_data = [

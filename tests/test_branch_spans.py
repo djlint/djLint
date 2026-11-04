@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint import helpers
+from djlint import _helpers as helpers
 
 if TYPE_CHECKING:
     from typing import Final

@@ -1,0 +1,580 @@
+"""Format attributes."""
+
+from __future__ import annotations
+
+import json
+from types import MappingProxyType
+from typing import TYPE_CHECKING
+
+import regex as re
+
+from djlint._const import HTML_LOWERCASE_ATTRIBUTE_NAMES, QUOTED_ATTRIBUTE_VALUE
+from djlint._formatter.class_attributes import (
+    CLASS_ATTRIBUTE_NEWLINE,
+    VERBATIM_ATTRIBUTE_NEWLINE,
+    decode_class_attribute_newlines,
+    restore_verbatim_attribute_newlines,
+    split_outside_template_tags,
+)
+from djlint._helpers import RE_FLAGS_IMX, RE_FLAGS_IS, child_of_ignored_block, compile_pattern
+
+if TYPE_CHECKING:
+    from typing import Final
+
+    from djlint._formatter.tokenizer import TagToken
+    from djlint._settings import Config
+
+_QUOTED_VALUE_PATTERN: Final = compile_pattern(r"\"[^\"]*\"|'[^']*'")
+_UNQUOTED_VALUE_PATTERN: Final = compile_pattern(r"=[ \t]*[^\s\"'=<>]")
+_SPACED_EQUALS_PATTERN: Final = compile_pattern(r"[ ]=|=[ ]")
+
+_SRCSET_ATTRIBUTE_NAMES: Final = frozenset(("srcset", "data-srcset", "sizes"))
+_COLLAPSIBLE_VALUE_ATTRIBUTE_NAMES: Final = frozenset(("class", "style"))
+
+# Jinja's "-" strips the whitespace on that side of a tag, which glues what
+# lies beyond it onto a bare value beside it: the value runs on past where
+# quotes would end it.
+_TRIMS_BEFORE_PATTERN: Final = compile_pattern(r"\s*\{[{%\#]-")
+_TRIMS_AFTER: Final = ("-}}", "-%}", "-#}")
+
+
+def _glued_to_bare_value(attribute_group: str, value: str, value_end: int) -> bool:
+    """Whether a template tag beside a bare value strips the space ending it."""
+    return bool(_TRIMS_BEFORE_PATTERN.match(attribute_group, value_end)) or (
+        value.endswith(_TRIMS_AFTER) and attribute_group[value_end : value_end + 1].isspace()
+    )
+
+
+_LAID_OUT_VALUE_PATTERN: Final = compile_pattern(
+    rf"(?<![-.:\w])(style|srcset|data-srcset|sizes)[ \t]*=[ \t]*({QUOTED_ATTRIBUTE_VALUE})",
+    RE_FLAGS_IS,
+)
+
+
+def _laid_out_list_value(lowered_name: str, value: str, join_space: str) -> str:
+    """Write a style or srcset value one part per line, as spreading does.
+
+    Each part is stripped and the empty ones dropped, so `a: 1;` loses its
+    trailing ";" and `a 1x,   b 2x` its padding.
+    """
+    if lowered_name == "style":
+        return f";{join_space}".join(
+            stripped
+            for part in split_outside_template_tags(value, ";")
+            if (stripped := part.strip())
+        )
+
+    if lowered_name in _SRCSET_ATTRIBUTE_NAMES:
+        for descriptor in ("w", "x"):
+            value = f"{descriptor},{join_space}".join(
+                stripped
+                for part in split_outside_template_tags(value, f"{descriptor},")
+                if (stripped := part.strip())
+            )
+    return value
+
+
+def _rendered_length(config: Config, attribute_group: str) -> int:
+    """Length of the attribute group as it will be written out.
+
+    Spreading a tag rewrites its style and srcset values, which arrive on
+    the next run flattened with a space at each line break. A tag only
+    short enough in that form would be spread now and joined then, so it
+    is measured in whichever form is shorter: a tag too long in both is
+    spread either way, and one short in either is left as written.
+    """
+    length = len(attribute_group)
+    if length < config.max_attribute_length:
+        return length
+
+    return length - max(
+        0,
+        sum(
+            len(value) - len(_laid_out_list_value(match.group(1).lower(), value, " "))
+            for match in _LAID_OUT_VALUE_PATTERN.finditer(attribute_group)
+            if (value := match.group(2)[1:-1])
+        ),
+    )
+
+
+def normalize_attributes(config: Config, attribute_group: str) -> str:
+    """Lowercase a known attribute name, quote a bare value, close up `=`.
+
+    Only the names `H010` knows are lowercased, so a framework binding
+    such as `viewBox` or an angular input keeps the case it carries. The
+    spaces `H012` reports around an attribute's equals sign are dropped.
+
+    A value holding a quote of its own is left as written. It is not valid
+    html to begin with, and a browser reads `a=b'c` as the single value
+    `b'c`, where the match stops at the quote: writing `a="b"'c` would make
+    the rest an attribute of its own.
+    """
+    quotable = _UNQUOTED_VALUE_PATTERN.search(attribute_group) is not None
+    lowerable = not config.ignore_case and not attribute_group.islower()
+    requotable = "'" in attribute_group
+    spaced = _SPACED_EQUALS_PATTERN.search(attribute_group) is not None
+    if not (quotable or lowerable or requotable or spaced):
+        return attribute_group
+
+    matches = list(config.attribute_pattern.finditer(attribute_group))
+    if not _is_fully_matched(attribute_group, matches):
+        return attribute_group
+
+    output: list[str] = []
+    previous_end = 0
+
+    def rewrite(span: tuple[int, int], text: str) -> None:
+        nonlocal previous_end
+        output.extend((attribute_group[previous_end : span[0]], text))
+        previous_end = span[1]
+
+    for match in matches:
+        name, value = match.group(1, 2)
+        if not name:
+            continue
+
+        if lowerable and not name.islower() and name.lower() in HTML_LOWERCASE_ATTRIBUTE_NAMES:
+            rewrite(match.span(1), name.lower())
+
+        if spaced and value and match.start(2) - match.end(1) > 1:
+            rewrite((match.end(1), match.start(2)), "=")
+
+        if (
+            quotable
+            and value
+            and not {'"', "'"} & set(value)
+            and attribute_group[match.end(2) : match.end(2) + 1] in {"", " ", "\t"}
+            and not _glued_to_bare_value(attribute_group, value, match.end(2))
+        ):
+            rewrite(match.span(2), f'"{value}"')
+
+        elif (
+            requotable
+            and value
+            and value.startswith("'")
+            and value.endswith("'")
+            and '"' not in value
+            and name.lower() in HTML_LOWERCASE_ATTRIBUTE_NAMES
+        ):
+            rewrite(match.span(2), f'"{value[1:-1]}"')
+
+    output.append(attribute_group[previous_end:])
+    return "".join(output)
+
+
+_ATTRIBUTE_SORT_PRIORITY: Final = MappingProxyType({"id": 0, "class": 1})
+_TEMPLATE_TAG_MARKERS: Final = ("{%", "{{", "{#")
+_TEMPLATE_TAG_CLOSERS: Final = ("%}", "}}", "#}")
+
+
+def _guards_its_neighbours(attribute_group: str) -> bool:
+    """Whether a template tag stands between the attributes themselves.
+
+    One inside a value, as in `href="{% url x %}"`, belongs to that
+    attribute and moves with it. One written beside them can decide
+    whether the attribute next to it is there at all, so the order has
+    to stand.
+    """
+    bare = _QUOTED_VALUE_PATTERN.sub("", attribute_group)
+    return any(marker in bare for marker in _TEMPLATE_TAG_MARKERS)
+
+
+def sort_attributes(config: Config, attribute_group: str) -> str:
+    """Order attributes by name, with `id` first and `class` second.
+
+    Only a group djLint can account for in full is reordered: anything
+    its pattern does not match could be part of a construct that gives
+    the order meaning. Sorting is stable, so a name written twice keeps
+    the occurrence a browser reads first.
+    """
+    if not config.sort_attributes:
+        return attribute_group
+
+    if _guards_its_neighbours(attribute_group):
+        return attribute_group
+
+    matches = [
+        match
+        for match in config.attribute_pattern.finditer(attribute_group)
+        if match.start() != match.end()
+    ]
+    if not matches or not _is_fully_matched(attribute_group, matches):
+        return attribute_group
+
+    named = [(match.group(1) or "").lower() for match in matches]
+    if not all(named):
+        return attribute_group
+
+    return " ".join(
+        match.group().strip()
+        for _, match in sorted(
+            zip(named, matches, strict=True),
+            key=lambda pair: (
+                _ATTRIBUTE_SORT_PRIORITY.get(pair[0], len(_ATTRIBUTE_SORT_PRIORITY)),
+                pair[0],
+            ),
+        )
+    )
+
+
+def has_unquoted_template_expression(attribute_group: str) -> bool:
+    """Check for a ${...} template expression outside quoted values."""
+    return "${" in attribute_group and "${" in _QUOTED_VALUE_PATTERN.sub("", attribute_group)
+
+
+def count_object_properties(config: Config, value: str) -> int:
+    """Count the number of properties in a JSON/JS object."""
+    try:
+        return len(json.loads(value))
+    except json.JSONDecodeError:
+        without_strings = config.format_attribute_js_json_string_pattern.sub("", value)
+        return len(config.format_attribute_js_json_property_pattern.findall(without_strings))
+
+
+def _indent_below_first_line(formatted: str, base_indent: str) -> str:
+    """Add the attribute's own indentation to every line but the first.
+
+    The first line follows the opening quote, so it takes none.
+    """
+    first, *rest = formatted.split("\n")
+    if not rest:
+        return formatted
+    return "\n".join([
+        first.strip(),
+        *(base_indent + line if line.strip() else "" for line in rest),
+    ])
+
+
+def format_json_with_indent(config: Config, value: str, base_indent: str) -> str | None:
+    """Format JSON with HTML-relative indentation, or None if not JSON."""
+    try:
+        data = json.loads(value)
+    except json.JSONDecodeError:
+        return None
+
+    formatted = json.dumps(data, indent=config.js_config.get("indent_size", 4))
+    return _indent_below_first_line(formatted, base_indent)
+
+
+def format_js_with_indent(config: Config, value: str, base_indent: str) -> str:
+    """Format JavaScript code/object with proper HTML-relative indentation."""
+    import jsbeautifier  # noqa: PLC0415
+
+    js_config = dict(config.js_config)
+    js_config["indent_level"] = 0
+
+    try:
+        formatted: str = jsbeautifier.beautify(value, js_config)
+    except ValueError:
+        return value
+
+    return _indent_below_first_line(formatted, base_indent)
+
+
+def format_template_tags(config: Config, attributes: str, spacing: int) -> str:
+    """Format template tags in attributes."""
+
+    def add_indentation(config: Config, attributes: str, spacing: int) -> str:
+        """Indent template tags below the column the value starts at."""
+        template_unindent_pattern = config.template_unindent_ix_pattern
+        tag_unindent_line_pattern = config.tag_unindent_line_ix_pattern
+        template_indent_pattern = config.template_indent_ix_pattern
+
+        indent = 0
+        lines = []
+        base_indent = (spacing or 0) * " "
+
+        for line_number, raw_line in enumerate(attributes.splitlines()):
+            line = raw_line.strip()
+            if template_unindent_pattern.match(line):
+                indent -= 1
+                level = indent
+            elif tag_unindent_line_pattern.match(line):
+                level = max(indent - 1, 0)
+            else:
+                level = indent
+                if template_indent_pattern.search(line) and not template_unindent_pattern.search(
+                    line
+                ):
+                    indent += 1
+
+            if line_number == 0:
+                lines.append(line)
+            elif line:
+                lines.append(f"{level * config.indent}{base_indent}{line}")
+
+        return "\n".join(lines)
+
+    def add_break_before(match: re.Match[str]) -> str:
+        return f"\n{match.group()}"
+
+    def add_break_after(match: re.Match[str]) -> str:
+        """Break after a template tag, and split what it guards.
+
+        Attributes a template tag guards are still attributes, so one per
+        line means one per line inside the block too. The run is only
+        split where the attribute pattern accounts for all of it, since
+        anything it missed would be dropped.
+        """
+        body = match.group(2).strip()
+
+        if config.single_attribute_per_line:
+            found = list(config.attribute_pattern.finditer(body))
+            parts = [x.group().strip() for x in found if x.group().strip()]
+            if len(parts) > 1 and _is_fully_matched(body, found):
+                body = "\n".join(parts)
+
+        return f"{match.group(1)}\n{body}"
+
+    attributes = re.sub(
+        config.break_before
+        + r"[ \t]\K((?:{%|{{\#)[ ]*?(?:"
+        + config.break_template_tags
+        + ")[^}]+?[%|}]})",
+        add_break_before,
+        attributes,
+        flags=RE_FLAGS_IMX,
+    )
+
+    attributes = re.sub(
+        r"((?:{%|{{\#)[ ]*?(?:" + config.break_template_tags + ")[^}]+?[%|}]})(?=[ \t])([^\n]+)$",
+        add_break_after,
+        attributes,
+        flags=RE_FLAGS_IMX,
+    )
+    return add_indentation(config, attributes, spacing)
+
+
+def _is_fully_matched(attribute_group: str, attribute_matches: list[re.Match[str]]) -> bool:
+    """Whether the matches account for every non-space byte of the group.
+
+    The tag is rebuilt from the matched groups, so anything the pattern
+    misses would be dropped. A nameless "=value" attribute is malformed
+    the same way, and would be written back out as "None=value"; template
+    conditionals such as "{% if x %}sel{% endif %}" also have no name group
+    but must still be formatted.
+    """
+    covered = 0
+    for match in attribute_matches:
+        if attribute_group[covered : match.start()].strip():
+            return False
+        if match.group(1) is None and match.group().strip().startswith("="):
+            return False
+        covered = match.end()
+    return not attribute_group[covered:].strip()
+
+
+def _spreading_would_shorten_the_line(
+    config: Config, html: str, token: TagToken, attribute_group: str
+) -> bool:
+    """Whether the tag's line is too long and its attributes could fix it.
+
+    Content is left where it is, since breaking it would change what
+    renders, so a line only long because of its text stays long. Two or
+    more attributes can each take a line without changing the page, so
+    where they are what overruns the limit they are spread.
+    """
+    start = html.rfind("\n", 0, token.start) + 1
+    end = html.find("\n", token.end)
+    if end == -1:
+        end = len(html)
+    line = len(html[start:end].rstrip())
+    if line <= config.max_line_length:
+        return False
+
+    # Taking the attributes off the line is all spreading can win back, so
+    # a line still too long without them is too long because of its text.
+    if line - len(attribute_group) > config.max_line_length:
+        return False
+
+    # The pattern also matches the empty string at the end, which is no
+    # attribute: counting it spread a lone style over lines of its own.
+    attributes = 0
+    for match in config.attribute_pattern.finditer(attribute_group):
+        if match.start() != match.end():
+            attributes += 1
+            if attributes > 1:
+                return True
+    return False
+
+
+def format_attributes(config: Config, html: str, token: TagToken, before_tag: str) -> str:
+    """Spread long attributes over multiple lines.
+
+    `before_tag` is what the output line holds before the tag, which differs
+    from the text before it in `html` once an earlier tag on the line has
+    been spread.
+    """
+    attribute_group = html[token.name_end : token.attributes_end].strip()
+    if (
+        has_unquoted_template_expression(attribute_group)
+        or (
+            _rendered_length(config, attribute_group) < config.max_attribute_length
+            and not _spreading_would_shorten_the_line(config, html, token, attribute_group)
+            and CLASS_ATTRIBUTE_NEWLINE not in attribute_group
+            and VERBATIM_ATTRIBUTE_NEWLINE not in attribute_group
+        )
+    ) or child_of_ignored_block(config, html, token):
+        return html[token.start : token.end]
+
+    if not config.format_attribute_template_tags:
+        template_depth = 0
+        for template_tag in config.template_tags_imx_pattern.finditer(attribute_group):
+            if config.template_unindent_imx_pattern.match(template_tag.group()):
+                template_depth = max(template_depth - 1, 0)
+            elif config.template_indent_imx_pattern.match(template_tag.group()):
+                template_depth += 1
+                if template_depth > 1:
+                    return html[token.start : token.end]
+
+    leading_start = token.start
+    while leading_start and html[leading_start - 1] in " \t":
+        leading_start -= 1
+    leading_space = html[leading_start : token.start]
+
+    # A tag that doesn't start its line (`<li><a`, `text <a`) still wraps
+    # relative to that line: its indent for one attribute per line, or the
+    # tag's own column so the attributes line up under the first one.
+    line_indent = before_tag[: len(before_tag) - len(before_tag.lstrip(" \t"))]
+    tag_column = line_indent + "".join(
+        "\t" if char == "\t" else " " for char in before_tag[len(line_indent) :]
+    )
+
+    tag = f"<{token.name} "
+
+    spacing = (
+        line_indent + config.indent
+        if config.single_attribute_per_line
+        else tag_column + len(tag) * " "
+    )
+
+    attributes = []
+
+    attribute_matches = list(config.attribute_pattern.finditer(attribute_group))
+    if not _is_fully_matched(attribute_group, attribute_matches):
+        return html[token.start : token.end]
+
+    for attr_grp in attribute_matches:
+        attrib_name, raw_value, standalone = attr_grp.group(1, 2, 3)
+        first_char = raw_value[0] if raw_value else ""
+        is_quoted = first_char in {"'", '"'}
+        quote = first_char if is_quoted else '"'
+
+        if (
+            attrib_name
+            and raw_value
+            and not is_quoted
+            and _glued_to_bare_value(attribute_group, raw_value, attr_grp.end(2))
+        ):
+            attributes.append(f"{attrib_name}={raw_value}")
+            continue
+
+        if is_quoted and first_char == raw_value[-1]:
+            attrib_value = raw_value.strip(first_char)
+        else:
+            attrib_value = raw_value
+
+        value_offset = len('="') if attrib_name and attrib_value else len('"')
+
+        join_space = (
+            f"\n{spacing}"
+            if config.format_attribute_template_tags
+            else (f"\n{spacing}" + (value_offset + len(attrib_name or "")) * " ")
+        )
+
+        lowered_name = attrib_name.lower() if attrib_name else ""
+
+        if attrib_value:
+            attrib_value = _laid_out_list_value(lowered_name, attrib_value, join_space)
+
+        if (
+            config.format_attribute_js_json
+            and attrib_name
+            and attrib_value
+            and VERBATIM_ATTRIBUTE_NEWLINE not in attrib_value
+            and config.format_attribute_js_json_pattern.match(attrib_name)
+        ):
+            value_indent = spacing + (value_offset + len(attrib_name)) * " "
+
+            if not config.format_attribute_js_json_object_pattern.match(attrib_value):
+                attrib_value = format_js_with_indent(config, attrib_value, value_indent)
+            elif (
+                count_object_properties(config, attrib_value)
+                >= config.format_attribute_js_json_min_props
+            ):
+                as_json = format_json_with_indent(config, attrib_value, value_indent)
+                attrib_value = (
+                    as_json
+                    if as_json is not None
+                    else format_js_with_indent(config, attrib_value, value_indent)
+                )
+
+        if config.format_attribute_template_tags:
+            if (
+                attrib_value
+                and attrib_name
+                and lowered_name in _COLLAPSIBLE_VALUE_ATTRIBUTE_NAMES
+                and attrib_name not in config.ignored_attributes
+            ):
+                attrib_value = format_template_tags(
+                    config, attrib_value, len(spacing) + len(attrib_name) + value_offset
+                )
+
+            if standalone:
+                standalone = format_template_tags(
+                    config, standalone, len(spacing) + len(attrib_name or "")
+                )
+
+        if config.preserve_class_newlines and lowered_name == "class" and attrib_value:
+            attrib_value = decode_class_attribute_newlines(attrib_value, join_space)
+
+        if attrib_value:
+            attrib_value = restore_verbatim_attribute_newlines(attrib_value)
+
+        if (attrib_name and attrib_value) or is_quoted:
+            attrib_value = attrib_value or ""
+            attributes.append(f"{attrib_name}={quote}{attrib_value}{quote}")
+        else:
+            attributes.append((attrib_name or "") + (attrib_value or "") + (standalone or ""))
+
+    # A template tag written against an attribute, as in `class="x"{{ s }}`,
+    # renders against it, so a break there would put whitespace into what
+    # the page gets. The two stay together on their line, and so does one
+    # written against the tag name, as in `<div{% if a %}`. Two plain
+    # attributes written together are read as two either way and are spread.
+    lines: list[str] = []
+    previous_end = -1
+    for text, match in zip(attributes, attribute_matches, strict=True):
+        if not text:
+            continue
+        if (
+            lines
+            and match.start() == previous_end
+            and (
+                attribute_group.startswith(_TEMPLATE_TAG_MARKERS, match.start())
+                or attribute_group.endswith(_TEMPLATE_TAG_CLOSERS, 0, match.start())
+            )
+        ):
+            lines[-1] += text
+        else:
+            lines.append(text)
+        previous_end = match.end()
+    glued_to_name = (
+        attribute_group.startswith(_TEMPLATE_TAG_MARKERS)
+        and not html[token.name_end : token.name_end + 1].isspace()
+    )
+    attribute_string = f"\n{spacing}".join(lines)
+
+    close = " />" if token.self_closing else ">"
+
+    if config.single_attribute_per_line:
+        first_break = "" if glued_to_name else f"\n{spacing}"
+        attribute_string = (
+            f"{leading_space}<{token.name}{first_break}{attribute_string}"
+            f"\n{line_indent}{close.strip()}"
+        )
+    else:
+        opening = f"<{token.name}" if glued_to_name else tag
+        attribute_string = f"{leading_space}{opening}{attribute_string}{close}"
+
+    return "\n".join(x.rstrip() for x in attribute_string.splitlines())

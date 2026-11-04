@@ -15,13 +15,13 @@ config = load_config("templates", profile="django", indent=2)
 
 formatted = format_text(config, "<div><p>hi</p></div>")
 
-for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
+for finding in lint_text(config, '<img src="a.png">', filename="templates/home.html"):
     print(finding.line, finding.column, finding.code, finding.message)
 ```
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` wczytuje konfigurację obowiązującą dla plików danego folderu. Szuka jej, idąc w górę od tego folderu, tak jak wiersz poleceń robi to od bieżącego katalogu, i nie zmienia bieżącego katalogu.
+`load_config(folder=".", /, *, python_rules=True, **options)` wczytuje konfigurację obowiązującą dla plików danego folderu. Szuka jej, idąc w górę od tego folderu, tak jak wiersz poleceń robi to od bieżącego katalogu, i nie zmienia bieżącego katalogu.
 
 Opcje mają nazwy opcji wiersza poleceń, zapisane z podkreśleniami, i działają tak samo jak tam: ustawiona wartość ma pierwszeństwo przed plikiem konfiguracyjnym, a `False`, pusty ciąg znaków oraz, w przypadku większości opcji, `0` są traktowane jak niepodane. Ścieżki podaje się jako `pathlib.Path`.
 
@@ -31,11 +31,11 @@ Przy `python_rules=False` własne reguły z `python_module` nie są wczytywane, 
 
 ## format_text
 
-`format_text(config, text)` zwraca sformatowany tekst. Tekst, którego pierwszy wiersz kończy się znakami CRLF, jest zwracany z CRLF, a każdy inny z LF. Przy `require_pragma` tekst bez pragmy jest zwracany bez zmian.
+`format_text(config, text, /)` zwraca sformatowany tekst. Tekst, którego pierwszy wiersz kończy się znakami CRLF, jest zwracany z CRLF, a każdy inny z LF. Przy `require_pragma` tekst bez pragmy jest zwracany bez zmian.
 
 ## lint_text
 
-`lint_text(config, text, filename="-")` zwraca listę obiektów `Finding` w kolejności, w jakiej występują w dokumencie. Do `filename` dopasowywane jest `per-file-ignores`. Przy `require_pragma` tekst bez pragmy nie ma żadnych zgłoszeń.
+`lint_text(config, text, /, *, filename="-")` zwraca listę obiektów `Finding` w kolejności, w jakiej występują w dokumencie. Do `filename` dopasowywane jest `per-file-ignores`. Przy `require_pragma` tekst bez pragmy nie ma żadnych zgłoszeń.
 
 `Finding` to krotka nazwana (named tuple) z następującymi polami:
 
@@ -52,7 +52,7 @@ Kolumny liczą znaki, a nie bajty ani jednostki kodowe UTF-16.
 
 ## is_excluded
 
-`is_excluded(config, path)` informuje, czy `exclude`, `extend_exclude` lub gitignore wykluczają plik, tak jak robi to wiersz poleceń. `format_text` i `lint_text` same tego nie sprawdzają.
+`is_excluded(config, path, /)` informuje, czy `exclude`, `extend_exclude` lub gitignore wykluczają plik, tak jak robi to wiersz poleceń. `format_text` i `lint_text` same tego nie sprawdzają.
 
 ## Moduły reguł
 

@@ -1509,7 +1509,7 @@ html 规范规定空的 `src` 是无效的，并警告浏览器会根据文档�
 - `config`：djLint 的配置对象。
 - `html`：文件的完整 html 内容。
 - `filepath`：当前正在检查的文件的路径。
-- `line_ends`：各行 `start` 和 `end` 字符位置的列表，可以配合 `djlint.lint.get_line()` 使用，根据字符位置得到行号。请参阅示例。
+- `line_ends`：各行 `start` 和 `end` 字符位置的列表，可以配合 `djlint.api.get_line()` 使用，根据字符位置得到行号。请参阅示例。
 - `*args, **kwargs`：将来我们可能会添加其他参数，因此你应该包含这两个参数，以降低 djLint 升级时出错的风险。
 :::
 
@@ -1533,14 +1533,12 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
-from djlint.lint import get_line
+from djlint.api import get_line, inside_ignored_linter_block, inside_ignored_rule
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from djlint.settings import Config
-    from djlint.types import LintError
+    from djlint.api import Config, LintError
 
 
 def run(

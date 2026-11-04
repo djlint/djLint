@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `djlint.api` is the public API of djLint. The rest moved to modules whose names start with an underscore, as in `djlint._lint`, so type checkers and linters treat it as internal, as the Python API docs already said it was.
+- A custom rule's `python_module` imports `get_line`, `inside_ignored_rule`, `inside_ignored_linter_block`, `Config` and, for type checkers, `LintError` from `djlint.api`. The imports the docs gave before, from `djlint.lint`, `djlint.helpers`, `djlint.settings` and `djlint.types`, still work and are deprecated: they warn with a `FutureWarning`, which the `djlint` command shows, and type checkers report the functions as deprecated.
+- The functions of `djlint.api` take `folder`, `config`, `text`, `path` and the arguments of `get_line()`, `inside_ignored_rule()` and `inside_ignored_linter_block()` by position only, and `lint_text()` takes `filename` by keyword only, as in `lint_text(config, text, filename="a.html")`. A call to `load_config()`, `format_text()`, `lint_text()` or `is_excluded()` that passes them the other way still works and is deprecated: it warns with a `FutureWarning`, and type checkers report it as deprecated.
+
+### Packaging
+
+- Ship a `py.typed` marker, so type checkers read the annotations of `djlint.api`.
+
 ## [1.49.9] - 2026-11-04
 
 ### Bug fixes

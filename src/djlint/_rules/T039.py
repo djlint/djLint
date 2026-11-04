@@ -1,0 +1,137 @@
+"""Rule T039: Check for unclosed template tags."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from djlint._helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
+from djlint._lint import get_line
+from djlint._rules.T027 import _TemplateTagMatch
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from typing import Any
+
+    from djlint._settings import Config
+    from djlint._types import LintError
+
+
+def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
+    """Yield template tags that never reach their closing delimiter.
+
+    Handlebars raw block delimiters ({{{{name}}}}) and comment tags
+    ({{! }}, {{!-- --}}, golang {{/* */}}) close by their own rules and are
+    skipped whole. Two malformed shapes belong to other rules and are left
+    to them: `{% ... }%` is T034's typo, and a tag whose only closing
+    delimiter sits inside an unterminated string is T027's.
+
+    Braces inside a block tag are counted, so the "}}" ending a nested
+    mapping, as in `{% set a = {"x": {"y": 1}} %}`, closes the literal
+    rather than the tag. A "}}" with nothing open is still the stray
+    delimiter it looks like.
+    """
+    pos = 0
+    length = len(html)
+    # each opener is looked for again only once the read has passed it, so
+    # one the document never holds is not searched for to its end per tag
+    block_start = html.find("{%")
+    variable_start = html.find("{{")
+    while True:
+        if 0 <= block_start < pos:
+            block_start = html.find("{%", pos)
+        if 0 <= variable_start < pos:
+            variable_start = html.find("{{", pos)
+        if block_start == -1 and variable_start == -1:
+            return
+        if variable_start != -1 and (block_start == -1 or variable_start < block_start):
+            start, close = variable_start, "}}"
+        else:
+            start, close = block_start, "%}"
+
+        scan = start + 2
+        if close == "}}":
+            if html.startswith("{{{{", start):
+                raw_end = html.find("}}}}", start + 4)
+                pos = start + 4 if raw_end == -1 else raw_end + 4
+                continue
+            content_start = scan + 1 if html.startswith("-", scan) else scan
+            if html.startswith("!--", content_start):
+                comment_end = html.find("--}}", content_start + 3)
+                pos = start + 2 if comment_end == -1 else comment_end + 4
+                continue
+            if html.startswith(("!", "/*"), content_start):
+                comment_end = html.find("}}", content_start + 1)
+                pos = start + 2 if comment_end == -1 else comment_end + 2
+                continue
+
+        quote = ""
+        end = -1
+        quoted_end = -1
+        typo_end = -1
+        depth = 0
+        while scan < length:
+            char = html[scan]
+            if quote:
+                if char == "\\":
+                    scan += 2
+                    continue
+                if char == quote:
+                    quote = ""
+                elif quoted_end == -1 and html.startswith(close, scan):
+                    quoted_end = scan + 2
+            elif char in {"'", '"'}:
+                quote = char
+            elif html.startswith(close, scan):
+                end = scan + 2
+                break
+            elif close == "%}" and html.startswith("}%", scan):
+                typo_end = scan + 2
+                break
+            elif close == "%}" and char == "{" and not html.startswith(("{%", "{{"), scan):
+                depth += 1
+            elif close == "%}" and char == "}" and depth:
+                depth -= 1
+            elif html.startswith(("{%", "{{"), scan) or (
+                close == "%}" and html.startswith("}}", scan)
+            ):
+                break
+            scan += 1
+
+        if end != -1:
+            pos = end
+        elif typo_end != -1:
+            pos = typo_end
+        elif quoted_end != -1:
+            pos = quoted_end
+        else:
+            yield _TemplateTagMatch(html, start, min(scan + 2, length))
+            pos = start + 2
+
+
+def run(
+    rule: dict[str, Any],
+    config: Config,
+    html: str,
+    filepath: str,
+    line_ends: list[dict[str, int]],
+    *args: Any,
+    **kwargs: Any,
+) -> tuple[LintError, ...]:
+    """Check for unclosed template tags."""
+    errors: list[LintError] = []
+    for match in _iter_unclosed_tags(html):
+        if (
+            overlaps_ignored_block(config, html, match)
+            or inside_ignored_rule(config, html, match, rule["name"])
+            or inside_ignored_linter_block(config, html, match)
+        ):
+            continue
+
+        errors.append({
+            "code": rule["name"],
+            "line": get_line(match.start(), line_ends),
+            "end": get_line(match.end(), line_ends),
+            "match": match.group().strip()[:20],
+            "message": rule["message"],
+        })
+    return tuple(errors)
