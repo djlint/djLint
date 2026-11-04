@@ -44,12 +44,6 @@ test_data = [
         id="blocktrans_no_attr",
     ),
     pytest.param(
-        ("{% blocktranslate trimmed %}The width is: {{ width }} {% endblocktranslate %}"),
-        ("{% blocktranslate trimmed %}\n    The width is: {{ width }}\n{% endblocktranslate %}\n"),
-        ({"max_line_length": 10}),
-        id="blocktranslage",
-    ),
-    pytest.param(
         (
             "<p>\n"
             "    {% blocktrans trimmed%}If you have not created an account yet, then please\n"

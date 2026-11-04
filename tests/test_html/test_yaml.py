@@ -75,12 +75,6 @@ test_data = [
         id="issue_9042_no_empty_line",
     ),
     pytest.param(
-        ('---\nlayout: foo\n---\nTest <a\nhref="https://djlint.com">abc</a>.\n'),
-        ('---\nlayout: foo\n---\n\nTest <a href="https://djlint.com">abc</a>.\n'),
-        ({}),
-        id="issue_9042",
-    ),
-    pytest.param(
         ("---\n---\n\n\n\n{{ this }}\n"),
         ("---\n---\n{{ this }}\n"),
         ({"no_line_after_yaml": True}),

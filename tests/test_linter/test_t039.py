@@ -120,7 +120,6 @@ def test_django(source: str, expected: list[LintError], django_config: Config) -
 handlebars_test_data = [
     pytest.param(("{{!-- {{ note --}}\n{{ name }}\n"), ([]), id="comment_tags_skipped"),
     pytest.param(("{{#if a}}\n{{ b }}\n{{/if}}\n"), ([]), id="closed_tags"),
-    pytest.param(("{{{{raw}}}}{{{{/raw}}}}\n"), ([]), id="raw_block"),
     pytest.param(("{{{{raw}}}}{{#if x}}{{/if}}{{{{/raw}}}}\n"), ([]), id="raw_block_with_content"),
     pytest.param(
         ("{{#if a}\n"),

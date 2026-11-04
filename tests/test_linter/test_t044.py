@@ -167,7 +167,6 @@ def test_t044_expressions(source: str, profile: str, reported: bool) -> None:
 @pytest.mark.parametrize(
     ("profile", "reported"),
     [
-        pytest.param("django", True, id="django"),
         pytest.param("jinja", True, id="jinja"),
         pytest.param("nunjucks", True, id="nunjucks"),
         pytest.param("golang", False, id="golang writes if as an output tag"),

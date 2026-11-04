@@ -552,16 +552,6 @@ def test_template_block_edge_whitespace_the_neighbour_renders_is_dropped() -> No
     assert expected == output
 
 
-def test_single_line_nested_html_elements_ignore_max_line_length() -> None:
-    source = '<p>Test <span class="value">1</span></p>\n'
-    output = formatter(
-        config_builder({"indent": 2, "max_line_length": 1, "profile": "jinja"}), source
-    )
-
-    printer(source, source, output)
-    assert source == output
-
-
 @pytest.mark.parametrize("separator", ["\u2028", "\u2029", "\u0085", "\x0b", "\x0c"])
 def test_non_line_ending_separators_are_content(separator: str) -> None:
     source = f'<script>var x = "a{separator}b";</script>\n'

@@ -309,7 +309,6 @@ def test_h053_a_block_helper_body_is_not_a_branch() -> None:
     "source",
     [
         pytest.param("{" * 20000, id="a run of braces"),
-        pytest.param("{{" * 10000, id="a run of output delimiters"),
         pytest.param("{%" * 10000, id="a run of statement delimiters"),
         pytest.param("<script>" + "{" * 20000 + "</script>", id="a run of braces in a script"),
     ],

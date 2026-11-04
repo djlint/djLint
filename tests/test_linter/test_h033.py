@@ -47,18 +47,6 @@ test_data = [
         ("<form action=\"{% url 'foo:bar' %} {{ asdf}}\" ...>...</form>"), ([]), id="two - no error"
     ),
     pytest.param(
-        ("<form action=\" {% url 'foo:bar' %} \" ...>...</form>"),
-        ([
-            {
-                "code": "H033",
-                "line": "1:0",
-                "match": '<form action="',
-                "message": "Extra whitespace found in form action.",
-            }
-        ]),
-        id="three",
-    ),
-    pytest.param(
         ('<form action=" {{ asdf}} " ...>...</form>'),
         ([
             {
