@@ -60,7 +60,7 @@ def build_flags(flag_list: str | int) -> int:
     return combined_flags
 
 
-def get_line(start: int, line_ends: Sequence[Mapping[str, int]]) -> str:
+def get_line(start: int, line_ends: Sequence[Mapping[str, int]], /) -> str:
     """Get the line number and index of match."""
     if not line_ends:
         return f"1:{start}"

@@ -1509,7 +1509,7 @@ Belirtilen `python_module`, denetlenen her dosyada çalıştırılacak bir `run(
 - `config`: DJLint yapılandırma nesnesi.
 - `html`: Dosyanın tam html içeriği.
 - `filepath`: O anda denetlenen dosyanın yolu.
-- `line_ends`: Bir karakter konumundan satır numarası elde etmek için `djlint.lint.get_line()` ile kullanabileceğiniz satır `start` ve `end` karakter konumlarının listesi. Örneğe bakın.
+- `line_ends`: Bir karakter konumundan satır numarası elde etmek için `djlint.api.get_line()` ile kullanabileceğiniz satır `start` ve `end` karakter konumlarının listesi. Örneğe bakın.
 - `*args, **kwargs`: İleride başka argümanlar ekleyebiliriz; bu yüzden djLint yükseltmesinde hata riskini azaltmak için bu iki argümanı eklemelisiniz.
 :::
 
@@ -1533,14 +1533,12 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
-from djlint.lint import get_line
+from djlint.api import get_line, inside_ignored_linter_block, inside_ignored_rule
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from djlint.settings import Config
-    from djlint.types import LintError
+    from djlint.api import Config, LintError
 
 
 def run(

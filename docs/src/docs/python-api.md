@@ -15,13 +15,13 @@ config = load_config("templates", profile="django", indent=2)
 
 formatted = format_text(config, "<div><p>hi</p></div>")
 
-for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
+for finding in lint_text(config, '<img src="a.png">', filename="templates/home.html"):
     print(finding.line, finding.column, finding.code, finding.message)
 ```
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` reads the configuration that applies to the files of a folder. It looks for it upward from the folder, as the command line does from the current directory, and it doesn't change the current directory.
+`load_config(folder=".", /, *, python_rules=True, **options)` reads the configuration that applies to the files of a folder. It looks for it upward from the folder, as the command line does from the current directory, and it doesn't change the current directory.
 
 Options take the names of the command line options, with underscores, and work as they do there: a value that is set wins over the configuration file, while `False`, an empty string and, for most options, `0` count as not given. Paths are given as `pathlib.Path`.
 
@@ -31,11 +31,11 @@ With `python_rules=False`, custom rules with a `python_module` aren't loaded, wh
 
 ## format_text
 
-`format_text(config, text)` returns the formatted text. A text whose first line ends in CRLF comes back in CRLF, and any other in LF. With `require_pragma`, a text without the pragma comes back unchanged.
+`format_text(config, text, /)` returns the formatted text. A text whose first line ends in CRLF comes back in CRLF, and any other in LF. With `require_pragma`, a text without the pragma comes back unchanged.
 
 ## lint_text
 
-`lint_text(config, text, filename="-")` returns a list of `Finding`, in document order. `filename` is what `per-file-ignores` is matched against. With `require_pragma`, a text without the pragma has no findings.
+`lint_text(config, text, /, *, filename="-")` returns a list of `Finding`, in document order. `filename` is what `per-file-ignores` is matched against. With `require_pragma`, a text without the pragma has no findings.
 
 `Finding` is a named tuple with these fields:
 
@@ -52,7 +52,7 @@ Columns count characters, not bytes or UTF-16 code units.
 
 ## is_excluded
 
-`is_excluded(config, path)` tells whether `exclude`, `extend_exclude` or the gitignore leave out a file, as the command line does. `format_text` and `lint_text` don't check this themselves.
+`is_excluded(config, path, /)` tells whether `exclude`, `extend_exclude` or the gitignore leave out a file, as the command line does. `format_text` and `lint_text` don't check this themselves.
 
 ## Rule modules
 

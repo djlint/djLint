@@ -102,8 +102,8 @@ def test_lint_text_matches_per_file_ignores_against_the_filename(tmp_path: Path)
     )
     config = load_config(tmp_path)
     source = '<img src="x">'
-    assert "H013" in {x.code for x in lint_text(config, source, "a.html")}
-    assert "H013" not in {x.code for x in lint_text(config, source, "emails/a.html")}
+    assert "H013" in {x.code for x in lint_text(config, source, filename="a.html")}
+    assert "H013" not in {x.code for x in lint_text(config, source, filename="emails/a.html")}
 
 
 @pytest.mark.parametrize("pragma", ["{# djlint:on #}", "<!-- djlint:on -->"])

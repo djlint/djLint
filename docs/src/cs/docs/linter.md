@@ -1509,7 +1509,7 @@ Zadaný `python_module` musí obsahovat funkci `run()`, která se spustí pro ka
 - `config`: Objekt konfigurace djLint.
 - `html`: Celý html obsah souboru.
 - `filepath`: Cesta k právě kontrolovanému souboru.
-- `line_ends`: Seznam pozic znaků `start` a `end` jednotlivých řádků, který můžete použít s `djlint.lint.get_line()` k získání čísla řádku z pozice znaku. Viz příklad.
+- `line_ends`: Seznam pozic znaků `start` a `end` jednotlivých řádků, který můžete použít s `djlint.api.get_line()` k získání čísla řádku z pozice znaku. Viz příklad.
 - `*args, **kwargs`: V budoucnu můžeme přidat další argumenty, proto byste tyto dva argumenty měli uvést, abyste snížili riziko selhání po aktualizaci djLint.
 :::
 
@@ -1533,14 +1533,12 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
-from djlint.lint import get_line
+from djlint.api import get_line, inside_ignored_linter_block, inside_ignored_rule
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from djlint.settings import Config
-    from djlint.types import LintError
+    from djlint.api import Config, LintError
 
 
 def run(

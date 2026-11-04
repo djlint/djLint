@@ -1,2 +1,2 @@
-# Kept for the custom rules that the docs show importing LintError from here.
+# Deprecated: `LintError` is in `djlint.api`.
 from djlint._types import LintError as LintError
