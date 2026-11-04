@@ -16,8 +16,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from djlint._server import _path
 from djlint.api import format_text, load_config
-from djlint.server import _path  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

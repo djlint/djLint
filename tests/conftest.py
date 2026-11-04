@@ -13,16 +13,16 @@ import pytest
 from click import style
 from click.testing import CliRunner
 
-from djlint import main as djlint
-from djlint.lint import linter as djlint_linter
-from djlint.settings import Config
+from djlint._cli import main as djlint
+from djlint._lint import linter as djlint_linter
+from djlint._settings import Config
 
 if TYPE_CHECKING:
     import os
     from collections.abc import Iterator, Mapping
     from typing import Any, TextIO
 
-    from djlint.types import LintError
+    from djlint._types import LintError
 
 
 def linter(config: Config, html: str, filename: str, filepath: str) -> dict[str, list[LintError]]:

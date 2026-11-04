@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint import main as djlint
+from djlint._cli import main as djlint
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
