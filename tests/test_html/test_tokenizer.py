@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint._formatter.compress import compress_html
-from djlint._formatter.tokenizer import tokenize_tags
-from djlint._reformat import formatter
+from djlint.formatter.compress import compress_html
+from djlint.formatter.tokenizer import tokenize_tags
+from djlint.reformat import formatter
 
 if TYPE_CHECKING:
-    from djlint._settings import Config
+    from djlint.settings import Config
 
 
 FAR = " " * 2000000

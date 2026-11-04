@@ -52,7 +52,7 @@ classifiers = [
 ]
 urls.documentation = "https://djlint.com"
 urls.repository = "https://github.com/djlint/djLint"
-scripts.djlint = "djlint._cli:main"
+scripts.djlint = "djlint:main"
 dependencies = [
   "click>=8.2.0",
   "cssbeautifier>=1.13.0",

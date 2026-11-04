@@ -12,13 +12,13 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint._lint import linter as djlint_linter
-from djlint._settings import Config
+from djlint.lint import linter as djlint_linter
+from djlint.settings import Config
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from djlint._types import LintError
+    from djlint.types import LintError
 
 
 def _offset(text: str, position: str) -> int:

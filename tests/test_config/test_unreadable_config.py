@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import pytest
 from click import BadParameter
 
-from djlint._settings import Config, find_project_root
+from djlint.settings import Config, find_project_root
 
 if TYPE_CHECKING:
     from pathlib import Path

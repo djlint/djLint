@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint._cli import main as djlint
-from djlint._output import build_stats_output
+from djlint import main as djlint
+from djlint.output import build_stats_output
 from tests.conftest import write_to_file
 
 if TYPE_CHECKING:
@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 
     from click.testing import CliRunner
 
-    from djlint._settings import Config
-    from djlint._types import LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def test_H011(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:

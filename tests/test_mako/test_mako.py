@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint._reformat import formatter
-from djlint._src import has_pragma
+from djlint.reformat import formatter
+from djlint.src import has_pragma
 from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
