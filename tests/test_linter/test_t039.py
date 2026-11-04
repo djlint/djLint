@@ -12,8 +12,8 @@ import pytest
 from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
-    from djlint._settings import Config
-    from djlint._types import LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 django_test_data = [
     pytest.param(

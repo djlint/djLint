@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from djlint._settings import Config
+from djlint.settings import Config
 
 
 def test_default() -> None:

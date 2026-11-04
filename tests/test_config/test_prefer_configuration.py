@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint._settings import Config
+from djlint.settings import Config
 
 if TYPE_CHECKING:
     from pathlib import Path
