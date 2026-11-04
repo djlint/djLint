@@ -6,8 +6,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
-permissions:
-  contents: read
+permissions: {}
 jobs:
   build-compiled:
     runs-on: ${{ matrix.os }}
