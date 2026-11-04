@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import pytest
 
-from djlint._reformat import formatter
+from djlint.reformat import formatter
 from tests.conftest import config_builder, linter, printer
 
 format_data = [
