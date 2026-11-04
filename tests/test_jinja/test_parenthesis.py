@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.reformat import formatter
+from djlint._reformat import formatter
 from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
-    from djlint.settings import Config
+    from djlint._settings import Config
 
 test_data = [
     pytest.param("{{ url('foo') }}", '{{ url("foo") }}\n', id="single_parenthesis_tag"),
