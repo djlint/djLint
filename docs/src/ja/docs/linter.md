@@ -1509,7 +1509,7 @@ html の仕様では空の `src` は無効とされており、ブラウザー�
 - `config`：djLint の設定オブジェクト。
 - `html`：ファイルの html の内容全体。
 - `filepath`：現在チェックしているファイルのパス。
-- `line_ends`：各行の `start` と `end` の文字位置のリスト。`djlint.api.get_line()` と組み合わせて、文字位置から行番号を取得できます。例を参照してください。
+- `line_ends`：各行の `start` と `end` の文字位置のリスト。`djlint.lint.get_line()` と組み合わせて、文字位置から行番号を取得できます。例を参照してください。
 - `*args, **kwargs`：将来ほかの引数を追加する可能性があるため、djLint のアップグレード時に失敗するリスクを減らせるように、この 2 つの引数を含めてください。
 :::
 
@@ -1533,12 +1533,14 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from djlint.api import get_line, inside_ignored_linter_block, inside_ignored_rule
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
+from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from djlint.api import Config, LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def run(

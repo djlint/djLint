@@ -15,13 +15,13 @@ config = load_config("templates", profile="django", indent=2)
 
 formatted = format_text(config, "<div><p>hi</p></div>")
 
-for finding in lint_text(config, '<img src="a.png">', filename="templates/home.html"):
+for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
     print(finding.line, finding.column, finding.code, finding.message)
 ```
 
 ## load_config
 
-`load_config(folder=".", /, *, python_rules=True, **options)` 會讀取適用於某個資料夾內檔案的設定。它會從該資料夾往上層尋找設定，就像命令列從目前目錄往上找一樣，而且不會變更目前目錄。
+`load_config(folder=".", *, python_rules=True, **options)` 會讀取適用於某個資料夾內檔案的設定。它會從該資料夾往上層尋找設定，就像命令列從目前目錄往上找一樣，而且不會變更目前目錄。
 
 選項使用命令列選項的名稱（以底線連接），作用方式也與命令列相同：有設定的值會優先於設定檔，而 `False`、空字串，以及大多數選項的 `0`，都視為未指定。路徑以 `pathlib.Path` 指定。
 
@@ -31,11 +31,11 @@ for finding in lint_text(config, '<img src="a.png">', filename="templates/home.h
 
 ## format_text
 
-`format_text(config, text, /)` 會傳回格式化後的文字。第一行以 CRLF 結尾的文字，傳回時會使用 CRLF；其他文字則使用 LF。使用 `require_pragma` 時，沒有 pragma 的文字會原樣傳回。
+`format_text(config, text)` 會傳回格式化後的文字。第一行以 CRLF 結尾的文字，傳回時會使用 CRLF；其他文字則使用 LF。使用 `require_pragma` 時，沒有 pragma 的文字會原樣傳回。
 
 ## lint_text
 
-`lint_text(config, text, /, *, filename="-")` 會依文件順序傳回 `Finding` 的清單。`per-file-ignores` 會以 `filename` 進行比對。使用 `require_pragma` 時，沒有 pragma 的文字不會有任何檢查結果。
+`lint_text(config, text, filename="-")` 會依文件順序傳回 `Finding` 的清單。`per-file-ignores` 會以 `filename` 進行比對。使用 `require_pragma` 時，沒有 pragma 的文字不會有任何檢查結果。
 
 `Finding` 是具有下列欄位的具名元組：
 
@@ -52,7 +52,7 @@ for finding in lint_text(config, '<img src="a.png">', filename="templates/home.h
 
 ## is_excluded
 
-`is_excluded(config, path, /)` 會判斷 `exclude`、`extend_exclude` 或 gitignore 是否排除了某個檔案，與命令列的行為相同。`format_text` 和 `lint_text` 本身不會檢查這一點。
+`is_excluded(config, path)` 會判斷 `exclude`、`extend_exclude` 或 gitignore 是否排除了某個檔案，與命令列的行為相同。`format_text` 和 `lint_text` 本身不會檢查這一點。
 
 ## 規則模組
 
