@@ -13,6 +13,7 @@
 ### Packaging
 
 - Ship a `py.typed` marker, so type checkers read the annotations of `djlint.api`.
+- Require typing-extensions 4.5.0 or later before Python 3.13, the first with `deprecated`.
 
 ## [1.49.9] - 2026-11-04
 
