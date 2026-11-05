@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Packaging
+
+- Ship a `py.typed` marker, so type checkers read the annotations of `djlint.api`.
+
 ## [1.49.9] - 2026-11-04
 
 ### Bug fixes
