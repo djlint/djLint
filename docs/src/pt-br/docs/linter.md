@@ -1509,7 +1509,7 @@ O `python_module` especificado deve conter uma função `run()`, que será execu
 - `config`: O objeto de configuração do DJLint.
 - `html`: O conteúdo html completo do arquivo.
 - `filepath`: O caminho do arquivo que está sendo verificado.
-- `line_ends`: Lista das posições de caractere de `start` e `end` de cada linha, que você pode usar com `djlint.api.get_line()` para obter números de linha a partir de uma posição de caractere. Veja o exemplo.
+- `line_ends`: Lista das posições de caractere de `start` e `end` de cada linha, que você pode usar com `djlint.lint.get_line()` para obter números de linha a partir de uma posição de caractere. Veja o exemplo.
 - `*args, **kwargs`: Podemos adicionar outros argumentos no futuro, então você deve incluir esses dois argumentos para reduzir o risco de falha ao atualizar o djLint.
 :::
 
@@ -1533,12 +1533,14 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from djlint.api import get_line, inside_ignored_linter_block, inside_ignored_rule
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
+from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from djlint.api import Config, LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def run(

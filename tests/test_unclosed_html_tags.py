@@ -9,8 +9,8 @@ import time
 
 import pytest
 
-from djlint._reformat import formatter
-from djlint._settings import Config
+from djlint.reformat import formatter
+from djlint.settings import Config
 from tests.conftest import linter
 
 # Each tag, or each body of a raw text element, was read up to the end of

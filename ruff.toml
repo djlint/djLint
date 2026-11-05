@@ -65,8 +65,8 @@ select = ["ALL"]
 unfixable = ["RUF027", "T"]
 
 [lint.per-file-ignores]
-"src/djlint/_rules/*" = ["ARG001", "N999"]
-"tests/*" = ["FBT001", "PLC2701", "PLR2004", "S101", "T201"]
+"src/djlint/rules/*" = ["ARG001", "N999"]
+"tests/*" = ["FBT001", "S101", "T201", "PLR2004"]
 
 [lint.flake8-pytest-style]
 warns-require-match-for = ["*"]

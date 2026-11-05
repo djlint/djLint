@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint._cli import main as djlint
+from djlint import main as djlint
 
 if TYPE_CHECKING:
     from pathlib import Path

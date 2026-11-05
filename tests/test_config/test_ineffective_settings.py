@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint._settings import Config, _warn_once
+from djlint.settings import Config, _warn_once  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from pathlib import Path

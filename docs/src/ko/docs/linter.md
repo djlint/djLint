@@ -1509,7 +1509,7 @@ HTML 명세는 빈 `src`가 유효하지 않다고 정하고, 브라우저가 �
 - `config`: DJLint 구성 객체입니다.
 - `html`: 파일의 전체 HTML 내용입니다.
 - `filepath`: 현재 검사 중인 파일의 경로입니다.
-- `line_ends`: 각 줄의 `start`와 `end` 문자 위치 목록입니다. `djlint.api.get_line()`과 함께 사용하면 문자 위치에서 줄 번호를 얻을 수 있습니다. 예시를 참고하세요.
+- `line_ends`: 각 줄의 `start`와 `end` 문자 위치 목록입니다. `djlint.lint.get_line()`과 함께 사용하면 문자 위치에서 줄 번호를 얻을 수 있습니다. 예시를 참고하세요.
 - `*args, **kwargs`: 앞으로 다른 인수가 추가될 수 있으므로, djLint를 업그레이드할 때 실패할 위험을 줄이려면 이 두 인수를 포함해야 합니다.
 :::
 
@@ -1533,12 +1533,14 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from djlint.api import get_line, inside_ignored_linter_block, inside_ignored_rule
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
+from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from djlint.api import Config, LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def run(

@@ -15,13 +15,13 @@ config = load_config("templates", profile="django", indent=2)
 
 formatted = format_text(config, "<div><p>hi</p></div>")
 
-for finding in lint_text(config, '<img src="a.png">', filename="templates/home.html"):
+for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
     print(finding.line, finding.column, finding.code, finding.message)
 ```
 
 ## load_config
 
-`load_config(folder=".", /, *, python_rules=True, **options)`는 폴더 안의 파일에 적용되는 구성을 읽습니다. 명령줄이 현재 디렉터리에서 그러듯 폴더에서 위쪽으로 구성을 찾으며, 현재 디렉터리를 바꾸지는 않습니다.
+`load_config(folder=".", *, python_rules=True, **options)`는 폴더 안의 파일에 적용되는 구성을 읽습니다. 명령줄이 현재 디렉터리에서 그러듯 폴더에서 위쪽으로 구성을 찾으며, 현재 디렉터리를 바꾸지는 않습니다.
 
 옵션은 명령줄 옵션의 이름을 밑줄로 바꿔 쓰며, 동작도 명령줄과 같습니다. 지정한 값은 구성 파일보다 우선하고, `False`, 빈 문자열, 그리고 대부분의 옵션에서 `0`은 지정하지 않은 것으로 간주합니다. 경로는 `pathlib.Path`로 전달합니다.
 
@@ -31,11 +31,11 @@ for finding in lint_text(config, '<img src="a.png">', filename="templates/home.h
 
 ## format_text
 
-`format_text(config, text, /)`는 포맷된 텍스트를 반환합니다. 첫 줄이 CRLF로 끝나는 텍스트는 CRLF로, 그 밖의 텍스트는 LF로 돌려줍니다. `require_pragma`를 사용하면 프래그마가 없는 텍스트는 바뀌지 않은 채로 돌아옵니다.
+`format_text(config, text)`는 포맷된 텍스트를 반환합니다. 첫 줄이 CRLF로 끝나는 텍스트는 CRLF로, 그 밖의 텍스트는 LF로 돌려줍니다. `require_pragma`를 사용하면 프래그마가 없는 텍스트는 바뀌지 않은 채로 돌아옵니다.
 
 ## lint_text
 
-`lint_text(config, text, /, *, filename="-")`는 `Finding`의 리스트를 문서 순서대로 반환합니다. `per-file-ignores`는 `filename`과 대조합니다. `require_pragma`를 사용하면 프래그마가 없는 텍스트에는 검사 결과가 없습니다.
+`lint_text(config, text, filename="-")`는 `Finding`의 리스트를 문서 순서대로 반환합니다. `per-file-ignores`는 `filename`과 대조합니다. `require_pragma`를 사용하면 프래그마가 없는 텍스트에는 검사 결과가 없습니다.
 
 `Finding`은 다음 필드를 가진 네임드 튜플입니다.
 
@@ -52,7 +52,7 @@ for finding in lint_text(config, '<img src="a.png">', filename="templates/home.h
 
 ## is_excluded
 
-`is_excluded(config, path, /)`는 명령줄과 마찬가지로 `exclude`, `extend_exclude`, gitignore에 따라 파일이 제외되는지 알려 줍니다. `format_text`와 `lint_text`는 이를 직접 확인하지 않습니다.
+`is_excluded(config, path)`는 명령줄과 마찬가지로 `exclude`, `extend_exclude`, gitignore에 따라 파일이 제외되는지 알려 줍니다. `format_text`와 `lint_text`는 이를 직접 확인하지 않습니다.
 
 ## 규칙 모듈
 

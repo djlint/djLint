@@ -15,13 +15,13 @@ config = load_config("templates", profile="django", indent=2)
 
 formatted = format_text(config, "<div><p>hi</p></div>")
 
-for finding in lint_text(config, '<img src="a.png">', filename="templates/home.html"):
+for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
     print(finding.line, finding.column, finding.code, finding.message)
 ```
 
 ## load_config
 
-`load_config(folder=".", /, *, python_rules=True, **options)` は、フォルダー内のファイルに適用される設定を読み込みます。コマンドラインがカレントディレクトリから探すのと同じように、そのフォルダーから上に向かって設定を探します。カレントディレクトリは変更しません。
+`load_config(folder=".", *, python_rules=True, **options)` は、フォルダー内のファイルに適用される設定を読み込みます。コマンドラインがカレントディレクトリから探すのと同じように、そのフォルダーから上に向かって設定を探します。カレントディレクトリは変更しません。
 
 オプションにはコマンドラインオプションの名前をアンダースコア区切りで指定し、コマンドラインと同じように動作します。指定した値は設定ファイルよりも優先され、`False`、空文字列、そしてほとんどのオプションでは `0` も、指定なしとして扱われます。パスは `pathlib.Path` で指定します。
 
@@ -31,11 +31,11 @@ for finding in lint_text(config, '<img src="a.png">', filename="templates/home.h
 
 ## format_text
 
-`format_text(config, text, /)` はフォーマット済みのテキストを返します。最初の行が CRLF で終わるテキストは CRLF で、それ以外は LF で返されます。`require_pragma` が有効な場合、プラグマのないテキストは変更されずに返されます。
+`format_text(config, text)` はフォーマット済みのテキストを返します。最初の行が CRLF で終わるテキストは CRLF で、それ以外は LF で返されます。`require_pragma` が有効な場合、プラグマのないテキストは変更されずに返されます。
 
 ## lint_text
 
-`lint_text(config, text, /, *, filename="-")` は、`Finding` のリストをドキュメント内の順序で返します。`filename` は `per-file-ignores` との照合に使われます。`require_pragma` が有効な場合、プラグマのないテキストには検出結果がありません。
+`lint_text(config, text, filename="-")` は、`Finding` のリストをドキュメント内の順序で返します。`filename` は `per-file-ignores` との照合に使われます。`require_pragma` が有効な場合、プラグマのないテキストには検出結果がありません。
 
 `Finding` は次のフィールドを持つ名前付きタプルです：
 
@@ -52,7 +52,7 @@ for finding in lint_text(config, '<img src="a.png">', filename="templates/home.h
 
 ## is_excluded
 
-`is_excluded(config, path, /)` は、コマンドラインと同じように、`exclude`、`extend_exclude`、または gitignore によってファイルが除外されるかどうかを返します。`format_text` と `lint_text` は、これを自分ではチェックしません。
+`is_excluded(config, path)` は、コマンドラインと同じように、`exclude`、`extend_exclude`、または gitignore によってファイルが除外されるかどうかを返します。`format_text` と `lint_text` は、これを自分ではチェックしません。
 
 ## ルールモジュール
 

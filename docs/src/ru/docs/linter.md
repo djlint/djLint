@@ -1509,7 +1509,7 @@ H005 требует `lang` у `<html>`, но значение вроде `lang="
 - `config`: объект конфигурации DJLint.
 - `html`: всё html-содержимое файла.
 - `filepath`: путь к файлу, который проверяется в данный момент.
-- `line_ends`: список позиций символов `start` и `end` для каждой строки, которые можно передать в `djlint.api.get_line()`, чтобы получить номер строки по позиции символа. См. пример.
+- `line_ends`: список позиций символов `start` и `end` для каждой строки, которые можно передать в `djlint.lint.get_line()`, чтобы получить номер строки по позиции символа. См. пример.
 - `*args, **kwargs`: в будущем могут добавиться другие аргументы, поэтому укажите и эти два, чтобы снизить риск сбоя при обновлении djLint.
 :::
 
@@ -1533,12 +1533,14 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from djlint.api import get_line, inside_ignored_linter_block, inside_ignored_rule
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule
+from djlint.lint import get_line
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from djlint.api import Config, LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def run(

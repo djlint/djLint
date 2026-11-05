@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING
 from tests.conftest import config_builder, lint_printer, linter
 
 if TYPE_CHECKING:
-    from djlint._settings import Config
-    from djlint._types import LintError
+    from djlint.settings import Config
+    from djlint.types import LintError
 
 
 def test_stray_html_comment_in_template_comment_is_not_an_orphan(django_config: Config) -> None:

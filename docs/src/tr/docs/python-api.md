@@ -15,13 +15,13 @@ config = load_config("templates", profile="django", indent=2)
 
 formatted = format_text(config, "<div><p>hi</p></div>")
 
-for finding in lint_text(config, '<img src="a.png">', filename="templates/home.html"):
+for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
     print(finding.line, finding.column, finding.code, finding.message)
 ```
 
 ## load_config
 
-`load_config(folder=".", /, *, python_rules=True, **options)`, bir klasördeki dosyalara uygulanan yapılandırmayı okur. Komut satırının geçerli dizinden yaptığı gibi yapılandırmayı klasörden yukarı doğru arar ve geçerli dizini değiştirmez.
+`load_config(folder=".", *, python_rules=True, **options)`, bir klasördeki dosyalara uygulanan yapılandırmayı okur. Komut satırının geçerli dizinden yaptığı gibi yapılandırmayı klasörden yukarı doğru arar ve geçerli dizini değiştirmez.
 
 Seçenekler, komut satırı seçeneklerinin adlarını alt çizgili olarak alır ve orada olduğu gibi çalışır: ayarlanmış bir değer yapılandırma dosyasının önüne geçer; `False`, boş bir dize ve çoğu seçenek için `0` ise verilmemiş sayılır. Yollar `pathlib.Path` olarak verilir.
 
@@ -31,11 +31,11 @@ Yapılandırmayı okumak biraz zaman alır; bu yüzden sonucu, okunduğu dosyala
 
 ## format_text
 
-`format_text(config, text, /)` biçimlendirilmiş metni döndürür. İlk satırı CRLF ile biten bir metin CRLF ile, diğer her metin LF ile geri döner. `require_pragma` ile pragma içermeyen bir metin değiştirilmeden geri döner.
+`format_text(config, text)` biçimlendirilmiş metni döndürür. İlk satırı CRLF ile biten bir metin CRLF ile, diğer her metin LF ile geri döner. `require_pragma` ile pragma içermeyen bir metin değiştirilmeden geri döner.
 
 ## lint_text
 
-`lint_text(config, text, /, *, filename="-")`, belgedeki sırasıyla bir `Finding` listesi döndürür. `per-file-ignores`, `filename` ile eşleştirilir. `require_pragma` ile pragma içermeyen bir metnin hiç bulgusu olmaz.
+`lint_text(config, text, filename="-")`, belgedeki sırasıyla bir `Finding` listesi döndürür. `per-file-ignores`, `filename` ile eşleştirilir. `require_pragma` ile pragma içermeyen bir metnin hiç bulgusu olmaz.
 
 `Finding`, şu alanlara sahip bir adlandırılmış demettir (named tuple):
 
@@ -52,7 +52,7 @@ Sütunlar bayt ya da UTF-16 kod birimi değil, karakter sayar.
 
 ## is_excluded
 
-`is_excluded(config, path, /)`, bir dosyanın komut satırında olduğu gibi `exclude`, `extend_exclude` ya da gitignore tarafından dışarıda bırakılıp bırakılmadığını söyler. `format_text` ve `lint_text` bunu kendileri denetlemez.
+`is_excluded(config, path)`, bir dosyanın komut satırında olduğu gibi `exclude`, `extend_exclude` ya da gitignore tarafından dışarıda bırakılıp bırakılmadığını söyler. `format_text` ve `lint_text` bunu kendileri denetlemez.
 
 ## Kural modülleri
 

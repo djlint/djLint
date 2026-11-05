@@ -10,13 +10,13 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from djlint._settings import _PROFILES, _QUOTE_STYLES
+from djlint.settings import _PROFILES, _QUOTE_STYLES  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from typing import Any
 
 _SCHEMA = Path("docs/src/static/schema/djlint.json")
-_SETTINGS = Path("src/djlint/_settings.py")
+_SETTINGS = Path("src/djlint/settings.py")
 _CONFIG_KEY_PATTERN = re.compile(r"""(?:djlint_settings\.get|setting_int)\(\s*["']([\w-]+)["']""")
 
 

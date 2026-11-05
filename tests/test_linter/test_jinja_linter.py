@@ -13,7 +13,7 @@ import pytest
 from tests.conftest import config_builder, lint_printer, linter
 
 if TYPE_CHECKING:
-    from djlint._types import LintError
+    from djlint.types import LintError
 
 test_data = [
     pytest.param(
