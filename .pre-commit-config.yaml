@@ -32,7 +32,7 @@ repos:
         args:
           - --no-error-on-unmatched-pattern
         additional_dependencies:
-          - oxfmt@0.75.0
+          - oxfmt@0.76.0
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: 25bcf95026b96e2dd3c0aec3090c3d6ef6ca2e6c # frozen: v0.17.3
     hooks:
