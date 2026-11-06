@@ -50,6 +50,6 @@
     "postinstall": "python3 -m pip install --upgrade djlint==1.49.9"
   },
   "devDependencies": {
-    "oxfmt": "0.75.0"
+    "oxfmt": "0.76.0"
   }
 }
