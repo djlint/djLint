@@ -54,7 +54,7 @@ repos:
           - json5==0.17.3
           - pathspec==1.1.1
           - pytest==9.2.0
-          - types-pyyaml==6.0.12.20261030
+          - types-pyyaml==6.0.12.20261103
           - types-regex==2026.9.29.20261030
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: 06a39750ec31860bb44f2acf67182c40016cd1e7 # frozen: v1.32.0
