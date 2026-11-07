@@ -184,6 +184,7 @@ jspm_packages/
 
 # Eleventy output (docs)
 docs/_site/
+docs/src/static/py/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
