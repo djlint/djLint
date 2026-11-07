@@ -7,8 +7,8 @@
   "author": "Christopher Pickering",
   "main": "index.js",
   "scripts": {
-    "build": "node demo-lock.mjs && ELEVENTY_PRODUCTION=true eleventy",
-    "start": "node demo-lock.mjs && eleventy --serve --watch"
+    "build": "ELEVENTY_PRODUCTION=true eleventy",
+    "start": "eleventy --serve --watch"
   },
   "dependencies": {
     "@codemirror/lang-html": "^6.4.3",

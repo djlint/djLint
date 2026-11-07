@@ -86,6 +86,11 @@ const djlintTomlConfig = (value) =>
     .trim();
 
 module.exports = function (eleventyConfig) {
+  // Builds the djLint the demo runs, into src/static/py/. An ES module runs
+  // once per process, so a rebuild under --watch doesn't build it again.
+  eleventyConfig.on("eleventy.before", async () => {
+    await import("./demo-lock.mjs");
+  });
   eleventyConfig.addGlobalData("djlint_version", require("../package.json").version);
   eleventyConfig.setUseGitIgnore(false);
   eleventyConfig.addFilter("widont", joinLastTwoWords);
