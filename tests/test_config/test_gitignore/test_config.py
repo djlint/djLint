@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 import pytest
 from click import UsageError
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 from djlint.settings import Config
 from djlint.src import get_src
 

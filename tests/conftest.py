@@ -13,7 +13,7 @@ import pytest
 from click import style
 from click.testing import CliRunner
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 from djlint.lint import linter as djlint_linter
 from djlint.settings import Config
 

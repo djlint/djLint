@@ -909,7 +909,7 @@ class Server:
 
 
 def _known_settings() -> set[str]:
-    from djlint import main  # noqa: PLC0415
+    from djlint._cli import main  # noqa: PLC0415
 
     known = {parameter.name for parameter in main.params} - _NOT_SETTINGS
     known.update(("python_rules", "use_editor_indentation"))

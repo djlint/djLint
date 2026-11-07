@@ -52,7 +52,7 @@ classifiers = [
 ]
 urls.documentation = "https://djlint.com"
 urls.repository = "https://github.com/djlint/djLint"
-scripts.djlint = "djlint:main"
+scripts.djlint = "djlint._cli:main"
 dependencies = [
   "click>=8.2.0",
   "cssbeautifier>=1.13.0",
@@ -119,7 +119,7 @@ dependencies = [
   "types-regex==2026.9.29.20261030",
 ]
 enable-by-default = false
-exclude = ["src/djlint/__main__.py"]
+exclude = ["src/djlint/__init__.py", "src/djlint/__main__.py"]
 options = { opt_level = "3", debug_level = "0" }
 
 [tool.uv]
