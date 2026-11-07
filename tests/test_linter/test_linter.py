@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 from djlint.output import build_stats_output
 from tests.conftest import write_to_file
 

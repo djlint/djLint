@@ -7,6 +7,7 @@
 ### Packaging
 
 - Ship a `py.typed` marker, so type checkers read the annotations of `djlint.api`.
+- Importing `djlint.api` no longer builds the command line, which takes a little off the start of editors and other programs that use djLint from Python. The command line moved out of the `djlint` package itself, which still hands out `main`, `process` and `process_stdin` when they are asked for.
 
 ## [1.49.9] - 2026-11-04
 
