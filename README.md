@@ -151,7 +151,7 @@ Or use `pre-commit` to reformat, then lint!
 ```yaml
 repos:
   - repo: https://github.com/djlint/djLint
-    rev: v1.49.9 # use the latest version instead
+    rev: v1.49.10 # use the latest version instead
     hooks:
       - id: djlint-reformat
       - id: djlint
