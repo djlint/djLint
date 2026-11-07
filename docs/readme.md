@@ -12,6 +12,8 @@ Docs are made with [11ty](https://www.11ty.dev).
 
 The demo is running python as a webworker in web assembly from [pyodide](https://pyodide.org/en/stable/index.html).
 
-When the page is opened, a web worker starts, loads Pyodide and installs the latest djLint and its dependencies from PyPI with `micropip` (see `src/static/js/worker.js`).
+Before the site is built, `demo-lock.mjs` builds a wheel of djLint from this checkout, resolves its dependencies with `micropip` in Node and writes the wheel and a Pyodide lock file naming them all into `src/static/py/`. Eleventy runs it before it builds the site, from `.eleventy.js`, so `npm run build`, `npm start` and a plain `eleventy` all have it.
+
+When the page is opened, a web worker starts, loads Pyodide with that lock file and loads djLint, which loads all of its dependencies at once (see `src/static/js/worker.js`). The demo runs the djLint of the commit the site was built from, and shows that commit next to the version.
 
 Once the worker responds "ready" the web UI is shown.

@@ -54,12 +54,14 @@ let pyodide;
 let formatHtml;
 
 async function loadPyodideAndPackages() {
-  pyodide = await loadPyodide({ indexURL: PYODIDE_URL });
-  self.postMessage({ type: "status", message: "Loading micropip" });
-  await pyodide.loadPackage("micropip");
+  // demo-lock.mjs builds djLint from the checkout the site is built from, and
+  // the lock file names its dependencies, so they all load at once.
+  pyodide = await loadPyodide({
+    indexURL: PYODIDE_URL,
+    lockFileURL: new URL("/static/py/pyodide-lock.json", self.location).href,
+  });
   self.postMessage({ type: "status", message: "Installing djLint" });
-  const micropip = pyodide.pyimport("micropip");
-  await micropip.install("djlint");
+  await pyodide.loadPackage("djlint");
   self.postMessage({
     type: "version",
     message: await pyodide.runPythonAsync(`
