@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- With Click 8.5.1 or newer, `djlint --help` no longer lists a blank `SRC ...` row under "Other". The files to check are still shown in the usage line.
+
 ## [1.49.10] - 2026-11-07
 
 ### Packaging
