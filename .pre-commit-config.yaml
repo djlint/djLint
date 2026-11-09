@@ -48,7 +48,7 @@ repos:
         args:
           - --scripts-are-modules
         additional_dependencies:
-          - click==8.5.0
+          - click==8.5.1
           - cssbeautifier==2.0.3
           - jsbeautifier==2.0.3
           - json5==0.17.3
