@@ -73,6 +73,15 @@ dev = [
   "types-regex==2026.9.29.20261030",
   { include-group = "test" },
 ]
+# The mypyc build hook's pins of runtime dependencies. Pinned here, they hold
+# uv.lock at the same versions, so lock file maintenance cannot move a lock
+# entry away from its pin; only the update of the package moves both.
+mypyc = [
+  "click==8.5.1",
+  "cssbeautifier==2.0.3",
+  "jsbeautifier==2.0.3",
+  "json5==0.17.3",
+]
 test = [
   # test_third_party_licenses.py reads the license of the mypy that mypyc
   # builds its runtime from.
@@ -106,7 +115,7 @@ include = ["djlint", "mypy.ini"]
 # The wheels are compiled against the versions in uv.lock, which the tests run
 # with. That includes the mypy whose license LICENSE-THIRD-PARTY carries, since
 # mypyc builds its runtime into them. Renovate updates a pin together with the
-# lock entry.
+# lock entry, and a pin in a dependency group keeps the lock entry in place.
 [tool.hatch.build.targets.wheel.hooks.mypyc]
 dependencies = [
   "hatch-mypyc==0.16.0",

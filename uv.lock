@@ -269,6 +269,12 @@ dev = [
     { name = "types-pyyaml" },
     { name = "types-regex" },
 ]
+mypyc = [
+    { name = "click" },
+    { name = "cssbeautifier" },
+    { name = "jsbeautifier" },
+    { name = "json5" },
+]
 test = [
     { name = "mypy" },
     { name = "pytest" },
@@ -303,6 +309,12 @@ dev = [
     { name = "ruff", specifier = "==0.17.4" },
     { name = "types-pyyaml", specifier = "==6.0.12.20261103" },
     { name = "types-regex", specifier = "==2026.9.29.20261030" },
+]
+mypyc = [
+    { name = "click", specifier = "==8.5.1" },
+    { name = "cssbeautifier", specifier = "==2.0.3" },
+    { name = "jsbeautifier", specifier = "==2.0.3" },
+    { name = "json5", specifier = "==0.17.3" },
 ]
 test = [
     { name = "mypy", specifier = "==2.4.1" },
