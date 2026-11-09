@@ -123,4 +123,13 @@ exclude = ["src/djlint/__init__.py", "src/djlint/__main__.py"]
 options = { opt_level = "3", debug_level = "0" }
 
 [tool.uv]
+# The mypyc build hook's pins of runtime dependencies, which hold uv.lock at
+# them: lock file maintenance would otherwise move a lock entry and leave the
+# pin behind. The other pins it has are in dependency groups.
+constraint-dependencies = [
+  "click==8.5.1",
+  "cssbeautifier==2.0.3",
+  "jsbeautifier==2.0.3",
+  "json5==0.17.3",
+]
 exclude-newer = "3 days"

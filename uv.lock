@@ -10,6 +10,14 @@ resolution-markers = [
 exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for backwards compatibility when using relative exclude-newer values.
 exclude-newer-span = "P3D"
 
+[manifest]
+constraints = [
+    { name = "click", specifier = "==8.5.1" },
+    { name = "cssbeautifier", specifier = "==2.0.3" },
+    { name = "jsbeautifier", specifier = "==2.0.3" },
+    { name = "json5", specifier = "==0.17.3" },
+]
+
 [[package]]
 name = "ast-serialize"
 version = "0.13.1"
