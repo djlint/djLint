@@ -23,7 +23,7 @@ repos:
       - id: tombi-format
         exclude: ^uv.lock$
   - repo: https://github.com/oxc-project/mirrors-oxfmt
-    rev: 1fb54d06ff80b555a6a428d9b12ff0796e67d923 # frozen: v0.74.0
+    rev: 9d4396bc7213c9392d3ee75974bbf2bfa34bfe29 # frozen: v0.77.0
     hooks:
       - id: oxfmt
         language: node
@@ -32,7 +32,7 @@ repos:
         args:
           - --no-error-on-unmatched-pattern
         additional_dependencies:
-          - oxfmt@0.76.0
+          - oxfmt@0.77.0
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: c0f278f1254ccc8fb09676bcdb8d847e7db493e5 # frozen: v0.17.4
     hooks:
