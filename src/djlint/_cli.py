@@ -239,7 +239,9 @@ class _SectionedHelpCommand(click.Command):
         records = {
             param.name: record
             for param in self.get_params(ctx)
-            if param.name and (record := param.get_help_record(ctx))
+            if isinstance(param, click.Option)
+            and param.name
+            and (record := param.get_help_record(ctx))
         }
         listed = {*_HELP_OTHER, *(name for _, names in _HELP_SECTIONS for name in names)}
         other = (*_HELP_OTHER, *(name for name in records if name not in listed))
