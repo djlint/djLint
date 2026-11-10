@@ -923,15 +923,29 @@ def _process_in_worker(this_file: Path) -> ProcessResult:
 def process(config: Config, this_file: Path) -> ProcessResult:
     """Run linter or formatter."""
     output: ProcessResult = {}
-    if config.reformat or config.check:
-        from djlint.reformat import reformat_file  # noqa: PLC0415
+    try:
+        if config.reformat or config.check:
+            from djlint.reformat import reformat_file  # noqa: PLC0415
 
-        output["format_message"] = reformat_file(config, this_file)
+            output["format_message"] = reformat_file(config, this_file)
 
-    if config.lint:
-        from djlint.lint import lint_file  # noqa: PLC0415
+        if config.lint:
+            from djlint.lint import lint_file  # noqa: PLC0415
 
-        output["lint_message"] = lint_file(config, this_file)
+            output["lint_message"] = lint_file(config, this_file)
+    except UnicodeDecodeError as error:
+        # A file djLint cannot decode is a finding about that file, not a
+        # reason to abort the files listed after it.
+        output["lint_message"] = {
+            str(this_file): [
+                {
+                    "code": "E000",
+                    "line": "1:0",
+                    "match": "",
+                    "message": f"File is not valid UTF-8 and was skipped: {error}",
+                }
+            ]
+        }
 
     return output
 
