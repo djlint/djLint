@@ -108,21 +108,25 @@ def test_unreadable_file_does_not_look_like_a_finding(
 @pytest.mark.skipif(
     sys.platform == "win32" or os.geteuid() == 0, reason="needs a file the user cannot read"
 )
+@pytest.mark.parametrize("require_pragma", [False, True])
 def test_file_without_read_permission_does_not_look_like_a_finding(
-    runner: CliRunner, tmp_path: Path
+    runner: CliRunner, tmp_path: Path, *, require_pragma: bool
 ) -> None:
     """A file djLint may not open is named like an undecodable one.
 
     It is an issue with that file, not a djLint bug to report, and the
-    other files are still checked.
+    other files are still checked. --require-pragma cannot tell whether
+    the file holds the pragma, so it keeps the file for that report.
     """
     _project(tmp_path)
+    pragma = "{# djlint:on #}\n" if require_pragma else ""
     locked = tmp_path / "locked.html"
-    locked.write_text(DIRTY, encoding="utf-8")
+    locked.write_text(pragma + DIRTY, encoding="utf-8")
     locked.chmod(0)
-    (tmp_path / "real.html").write_text(DIRTY, encoding="utf-8")
+    (tmp_path / "real.html").write_text(pragma + DIRTY, encoding="utf-8")
+    args = ("--require-pragma",) if require_pragma else ()
 
-    result = runner.invoke(djlint, (str(tmp_path), "--check"))
+    result = runner.invoke(djlint, (str(tmp_path), "--check", *args))
 
     assert result.exit_code == 2
     assert "Error: locked.html: Permission denied" in result.stderr
