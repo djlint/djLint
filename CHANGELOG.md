@@ -7,8 +7,8 @@
 ### Bug fixes
 
 - With Click 8.5.1 or newer, `djlint --help` no longer lists a blank `SRC ...` row under "Other". The files to check are still shown in the usage line.
-- A configuration file djLint can't read, such as a `pyproject.toml`, `djlint.toml` or `.djlintrc` with a syntax error or a file named by `--configuration`, is now a usage error that exits `2`. djLint used to print a red line and check the templates against its defaults, so the run could pass. The same goes for a number setting with a value that isn't a number, such as `max_line_length = "wide"`, and for a `.djlint_rules.yaml` that isn't valid YAML, which crashed with a traceback. An empty `.djlint_rules.yaml` no longer crashes. In the Python API, `load_config` raises `click.UsageError` for these.
-- Ctrl+C exits `130`, as shells report an interrupted command, rather than `1`, which means djLint found something.
+- A configuration file djLint can't read, such as a `pyproject.toml`, `djlint.toml` or `.djlintrc` with a syntax error or a file named by `--configuration`, is now a usage error that exits `2`. djLint used to print a red line and check the templates against its defaults, so the run could pass. The same goes for a number setting with a value that isn't a number, such as `max_line_length = "wide"`, and for a `.djlint_rules.yaml` that isn't valid YAML or doesn't hold a list of rules, which crashed with a traceback. An empty `.djlint_rules.yaml` no longer crashes. In the Python API, `load_config` raises `click.UsageError` for these.
+- Ctrl+C exits `130`, as shells report an interrupted command, rather than `1`, which means djLint found something. The same goes for `djlint --lsp`.
 
 ## [1.49.10] - 2026-11-07
 
