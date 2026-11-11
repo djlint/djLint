@@ -8,6 +8,8 @@
 
 - With Click 8.5.1 or newer, `djlint --help` no longer lists a blank `SRC ...` row under "Other". The files to check are still shown in the usage line.
 - A template that is not valid UTF-8, or that djLint isn't allowed to read or write, no longer aborts the run with a traceback and a request to report a bug. djLint names the file and the reason, checks the rest and still exits `2`, because that file went unchecked. `--github-output` adds an error annotation on the file, and `--sarif` reports it as a notification on a run marked as not successful.
+- A configuration file djLint can't read, such as a `pyproject.toml`, `djlint.toml` or `.djlintrc` with a syntax error or a file named by `--configuration`, is now a usage error that exits `2`. djLint used to print a red line and check the templates against its defaults, so the run could pass. The same goes for a number setting with a value that isn't a number, such as `max_line_length = "wide"`, and for a `.djlint_rules.yaml` that isn't valid YAML or doesn't hold a list of rules, which crashed with a traceback. An empty `.djlint_rules.yaml` no longer crashes. In the Python API, `load_config` raises `click.UsageError` for these.
+- Ctrl+C exits `130`, as shells report an interrupted command, rather than `1`, which means djLint found something. The same goes for `djlint --lsp`.
 
 ## [1.49.10] - 2026-11-07
 

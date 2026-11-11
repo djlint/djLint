@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import queue
+import signal
 import subprocess
 import sys
 import threading
@@ -1087,3 +1088,11 @@ def test_exits_when_the_client_goes_away(client: Client) -> None:
     assert stdin is not None
     stdin.close()
     assert client.process.wait(TIMEOUT_SECONDS) == 1
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="sends SIGINT")
+def test_ctrl_c_exits_130(client: Client) -> None:
+    """As the command line does, rather than 1, which reads as findings."""
+    client.start()
+    client.process.send_signal(signal.SIGINT)
+    assert client.process.wait(TIMEOUT_SECONDS) == 130

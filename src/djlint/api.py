@@ -55,7 +55,8 @@ def load_config(
     what the configuration turns on. With `python_rules=False`, custom rules
     with a `python_module` aren't loaded,
     which keeps the project's code from running. Their names are then in
-    `config.skipped_rules`.
+    `config.skipped_rules`. A configuration file that can't be read, or a
+    value that isn't valid, raises `click.UsageError`.
     """
     return Config(str(folder), python_rules=python_rules, **options)
 

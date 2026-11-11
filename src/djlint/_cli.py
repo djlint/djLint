@@ -111,7 +111,7 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
     exactly like a template djLint disliked. So failures exit 2 instead,
     alongside the usage errors click already exits 2 for, while click's own
     control flow, including --help, is re-raised untouched. The traceback is
-    still printed, so bug reports lose nothing.
+    still printed, so bug reports lose nothing. Ctrl+C exits 130.
     """
 
     @wraps(func)
@@ -120,6 +120,11 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
             func(*args, **kwargs)
         except (click.ClickException, click.exceptions.Exit, click.Abort):
             raise
+        except KeyboardInterrupt:
+            # Click would exit 1, which reads as "found something". 130 is
+            # what a shell reports for a command stopped with Ctrl+C.
+            echo("Aborted!", err=True)
+            sys.exit(130)
         except Exception as error:
             if _consumer_hung_up(error):
                 _drop_stdout_so_the_exit_flush_cannot_fail()
