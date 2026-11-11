@@ -49,7 +49,12 @@ def finding_end(finding: LintError) -> tuple[int, int]:
     return int(line), int(column)
 
 
-def print_output(config: Config, file_errors: Sequence[ProcessResult], file_count: int) -> int:
+def print_output(
+    config: Config,
+    file_errors: Sequence[ProcessResult],
+    file_count: int,
+    unreadable: Sequence[tuple[str, str]] = (),
+) -> int:
     """Print results to console."""
     file_quantity = build_quantity(file_count)
     lint_error_count = 0
@@ -107,7 +112,19 @@ def print_output(config: Config, file_errors: Sequence[ProcessResult], file_coun
     if print_blanks:
         echo()
 
+    print_unreadable(config, unreadable)
+
     return lint_error_count + format_error_count
+
+
+def print_unreadable(config: Config, unreadable: Iterable[tuple[str, str]]) -> None:
+    """Name the files that could not be processed, and why, on stderr.
+
+    Last, so they are not scrolled away by the report.
+    """
+    for path, reason in unreadable:
+        filename = build_relative_path(path, config.project_root)
+        echo(style(f"Error: {filename}: {reason}", fg="red", bold=True), err=True)
 
 
 def build_relative_path(url: str, project_root: Path) -> str:

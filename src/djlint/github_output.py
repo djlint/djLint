@@ -41,7 +41,10 @@ def escape_property(data: str) -> str:
 
 
 def print_github_output(
-    config: Config, file_errors: Sequence[ProcessResult], _file_count: int
+    config: Config,
+    file_errors: Sequence[ProcessResult],
+    _file_count: int,
+    unreadable: Sequence[tuple[str, str]] = (),
 ) -> int:
     """Print results as GitHub workflow commands."""
     lint_error_count = 0
@@ -58,6 +61,10 @@ def print_github_output(
 
     if config.statistics and config.lint:
         build_stats_output(tuple(x.get("lint_message") for x in file_errors), config)
+
+    for path, reason in unreadable:
+        filename = escape_property(build_relative_path(path, config.project_root))
+        echo(f"::error file={filename}::{escape_data(reason)}")
 
     return lint_error_count + format_error_count
 
