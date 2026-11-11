@@ -238,9 +238,12 @@ def _unreadable_config(path: Path | str, error: Exception) -> UsageError:
     """The error for a configuration file that cannot be read.
 
     Running on with the defaults instead would check the templates against
-    rules nobody chose, and could pass a run that should fail.
+    rules nobody chose, and could pass a run that should fail. The reason is
+    kept on one line: a YAML error spans several, and an editor that shows
+    the last line of a failure would show only the position.
     """
-    return UsageError(f"Could not read {path}: {error}")
+    reason = " ".join(str(error).split())
+    return UsageError(f"Could not read {path}: {reason}")
 
 
 def _settings_table(content: Any, path: Path | str) -> dict[str, Any]:

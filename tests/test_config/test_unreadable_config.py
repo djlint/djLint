@@ -96,8 +96,9 @@ def test_a_broken_rules_file_is_a_usage_error(tmp_path: Path, content: str, reas
     rules = tmp_path / ".djlint_rules.yaml"
     rules.write_text(content, encoding="utf-8")
 
-    with pytest.raises(UsageError, match=re.escape(f"Could not read {rules}: {reason}")):
+    with pytest.raises(UsageError, match=re.escape(f"Could not read {rules}: {reason}")) as error:
         Config(str(tmp_path))
+    assert "\n" not in error.value.message
 
 
 def test_an_empty_rules_file_holds_no_rules(tmp_path: Path) -> None:
