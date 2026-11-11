@@ -7,7 +7,7 @@
 ### Bug fixes
 
 - With Click 8.5.1 or newer, `djlint --help` no longer lists a blank `SRC ...` row under "Other". The files to check are still shown in the usage line.
-- A template that is not valid UTF-8 no longer aborts the run with a traceback. djLint names the file, checks the rest and still exits `2`, because that file went unchecked.
+- A template that is not valid UTF-8, or that djLint isn't allowed to read or write, no longer aborts the run with a traceback and a request to report a bug. djLint names the file and the reason, checks the rest and still exits `2`, because that file went unchecked.
 
 ## [1.49.10] - 2026-11-07
 

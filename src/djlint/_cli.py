@@ -824,7 +824,7 @@ def main(
         ) as bar:
             if max_workers == 1:
                 for this_file in file_list:
-                    outcomes.append(_process_readable(config, this_file))
+                    outcomes.append(_process_or_report(config, this_file))
                     bar.update(1)
             else:
                 import concurrent.futures  # noqa: PLC0415
@@ -833,7 +833,7 @@ def main(
                     exe: concurrent.futures.Executor = concurrent.futures.ThreadPoolExecutor(
                         max_workers
                     )
-                    results = exe.map(partial(_process_readable, config), file_list)
+                    results = exe.map(partial(_process_or_report, config), file_list)
                 else:
                     if sys.platform == "win32":  # pragma: win32 cover
                         max_workers = min(max_workers, _WINDOWS_MAX_PROCESSES)
@@ -924,26 +924,33 @@ def _start_worker(src: str, options: dict[str, Any]) -> None:
 
 
 def _process_in_worker(this_file: Path) -> ProcessResult | str:
+    """Process a file with the configuration the worker was started with."""
     if _worker_config is None:
         msg = "The worker was started without a configuration."
         raise RuntimeError(msg)
-    return _process_readable(_worker_config, this_file)
+    return _process_or_report(_worker_config, this_file)
 
 
-def _process_readable(config: Config, this_file: Path) -> ProcessResult | str:
-    """Run linter or formatter, or say why the file cannot be read.
+def _process_or_report(config: Config, this_file: Path) -> ProcessResult | str:
+    """Run linter or formatter, or say why the file could not be processed.
 
-    A template that is not utf-8 is bad input, as it is on stdin, rather
-    than a djLint failure, so it is named and the files after it are still
-    checked. The file is read in full before anything is written to it.
+    A template that is not utf-8, or one the system will not let djLint
+    open or write, is a problem with that file rather than a djLint failure,
+    as bad input on stdin is. So it is named, without a traceback, and the
+    files after it are still checked. A file is read in full before anything
+    is written to it, so a failed read leaves it as it was.
     """
     try:
         return process(config, this_file)
-    except UnicodeDecodeError as e:
+    except (UnicodeDecodeError, OSError) as e:
         from djlint.output import build_relative_path  # noqa: PLC0415
 
         filename = build_relative_path(str(this_file), config.project_root)
-        return f"Error: {filename} is not valid UTF-8: {e}"
+        if isinstance(e, UnicodeDecodeError):
+            reason = f"not valid UTF-8: {e}"
+        else:
+            reason = e.strerror or str(e)
+        return f"Error: {filename}: {reason}"
 
 
 def process(config: Config, this_file: Path) -> ProcessResult:

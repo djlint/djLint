@@ -5,6 +5,8 @@ uv run pytest tests/test_djlint/test_exit_codes.py
 
 from __future__ import annotations
 
+import os
+import sys
 from typing import TYPE_CHECKING
 
 import pytest
@@ -96,11 +98,36 @@ def test_unreadable_file_does_not_look_like_a_finding(
     result = runner.invoke(djlint, (str(tmp_path), "--lint", "--warn"))
 
     assert result.exit_code == 2
-    assert "latin.html is not valid UTF-8: 'utf-8' codec can't decode" in result.stderr
+    assert "Error: latin.html: not valid UTF-8: 'utf-8' codec can't decode" in result.stderr
     assert "H013 1:0 Img tag should have an alt attribute." in result.output
     assert "Linted 1 file, found 1 error." in result.output
     assert "Traceback" not in result.output
     assert "djLint failed" not in result.output
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32" or os.geteuid() == 0, reason="needs a file the user cannot read"
+)
+def test_file_without_read_permission_does_not_look_like_a_finding(
+    runner: CliRunner, tmp_path: Path
+) -> None:
+    """A file djLint may not open is named like an undecodable one.
+
+    It is an issue with that file, not a djLint bug to report, and the
+    other files are still checked.
+    """
+    _project(tmp_path)
+    locked = tmp_path / "locked.html"
+    locked.write_text(DIRTY, encoding="utf-8")
+    locked.chmod(0)
+    (tmp_path / "real.html").write_text(DIRTY, encoding="utf-8")
+
+    result = runner.invoke(djlint, (str(tmp_path), "--check"))
+
+    assert result.exit_code == 2
+    assert "Error: locked.html: Permission denied" in result.stderr
+    assert "1 file would be updated." in result.output
+    assert "Traceback" not in result.output
 
 
 def test_undecodable_first_line_has_no_pragma(runner: CliRunner, tmp_path: Path) -> None:
