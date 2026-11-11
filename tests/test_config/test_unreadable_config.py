@@ -59,6 +59,12 @@ if TYPE_CHECKING:
             "Could not read pyproject.toml: its djLint settings are not a table",
             id="pyproject.toml holding no table",
         ),
+        pytest.param(
+            "pyproject.toml",
+            "[tool]\ndjlint = false\n",
+            "Could not read pyproject.toml: its djLint settings are not a table",
+            id="pyproject.toml holding false",
+        ),
     ],
 )
 def test_a_broken_project_file_is_a_usage_error(
