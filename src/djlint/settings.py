@@ -234,6 +234,15 @@ def load_config_file(filepath: Path) -> Any:
     return load_djlintrc_config(filepath)
 
 
+def _unreadable_config(path: Path | str, error: Exception) -> UsageError:
+    """The error for a configuration file that cannot be read.
+
+    Running on with the defaults instead would check the templates against
+    rules nobody chose, and could pass a run that should fail.
+    """
+    return UsageError(f"Could not read {path}: {error}")
+
+
 def _named_settings(config: Path | None) -> dict[str, Any]:
     """Settings from the file `--configuration` names."""
     if not config:
@@ -242,8 +251,7 @@ def _named_settings(config: Path | None) -> dict[str, Any]:
     try:
         return dict(load_config_file(config))
     except Exception as error:
-        echo(style(f"Failed to load config file {config}. {error}", fg="red"), err=True)
-        return {}
+        raise _unreadable_config(config, error) from None
 
 
 def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
@@ -256,22 +264,21 @@ def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
         try:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
-            echo(style(f"Failed to load pyproject.toml file. {error}", fg="red"), err=True)
-        else:
-            if content:
-                return dict(content), pyproject_file.name
+            raise _unreadable_config(pyproject_file.name, error) from None
+        if content:
+            return dict(content), pyproject_file.name
 
     if djlint_toml_file := find_djlint_toml(src):
         try:
             return dict(load_djlint_toml_config(djlint_toml_file)), djlint_toml_file.name
         except Exception as error:
-            echo(style(f"Failed to load {djlint_toml_file.name} file. {error}", fg="red"), err=True)
+            raise _unreadable_config(djlint_toml_file.name, error) from None
 
     elif djlintrc_file := find_djlintrc(src):
         try:
             return dict(load_djlintrc_config(djlintrc_file)), djlintrc_file.name
         except Exception as error:
-            echo(style(f"Failed to load .djlintrc file. {error}", fg="red"), err=True)
+            raise _unreadable_config(djlintrc_file.name, error) from None
 
     return {}, ""
 
@@ -336,10 +343,16 @@ _YAML_LOADER: Final = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 
 
 def load_custom_rules(rules_file: Path | None) -> Any:
-    """Load custom linter rules from a .djlint_rules.yaml file."""
+    """Load custom linter rules from a .djlint_rules.yaml file.
+
+    An empty file holds no rules.
+    """
     if rules_file:
-        with rules_file.open("rb") as f:
-            return yaml.safe_load(f)
+        try:
+            with rules_file.open("rb") as f:
+                return yaml.safe_load(f) or ()
+        except (OSError, yaml.YAMLError) as error:
+            raise _unreadable_config(rules_file, error) from None
 
     return ()
 
@@ -1369,14 +1382,11 @@ class Config:
             try:
                 return int(djlint_settings.get(key, default))
             except (TypeError, ValueError):
-                echo(
-                    style(
-                        f"Error: Invalid {setting_sources[key]} {key} value {djlint_settings[key]}",
-                        fg="red",
-                    ),
-                    err=True,
+                msg = (
+                    f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
+                    " It must be a whole number."
                 )
-                return default
+                raise UsageError(msg) from None
 
         self.reformat = reformat
         self.check = check

@@ -323,6 +323,23 @@ def test_closed_pipe_is_not_a_crash(runner: CliRunner, monkeypatch: pytest.Monke
     assert "report unexpected failures" not in result.stderr
 
 
+@pytest.mark.skipif(_COMPILED, reason="patches print_output")
+def test_ctrl_c_does_not_look_like_a_finding(
+    runner: CliRunner, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An interrupted run exits 130, as a shell reports it, rather than 1."""
+
+    def interrupt(*_args: object, **_kwargs: object) -> int:
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(djlint_output, "print_output", interrupt)
+
+    result = runner.invoke(djlint, ("-", "--lint"), input="<div></div>")
+
+    assert result.exit_code == 130
+    assert result.stderr == "Aborted!\n"
+
+
 def test_check(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
     write_to_file(tmp_file.name, b"<div></div>")
     result = runner.invoke(djlint, (tmp_file.name, "--check"))
