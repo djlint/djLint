@@ -243,15 +243,24 @@ def _unreadable_config(path: Path | str, error: Exception) -> UsageError:
     return UsageError(f"Could not read {path}: {error}")
 
 
+def _settings_table(content: Any, path: Path | str) -> dict[str, Any]:
+    """The settings a file holds, which have to map names to values."""
+    if not isinstance(content, dict):
+        msg = f"Could not read {path}: its djLint settings are not a table of names and values."
+        raise UsageError(msg)
+    return content
+
+
 def _named_settings(config: Path | None) -> dict[str, Any]:
     """Settings from the file `--configuration` names."""
     if not config:
         return {}
 
     try:
-        return dict(load_config_file(config))
+        content = load_config_file(config)
     except Exception as error:
         raise _unreadable_config(config, error) from None
+    return _settings_table(content, config)
 
 
 def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
@@ -266,19 +275,21 @@ def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
         except Exception as error:
             raise _unreadable_config(pyproject_file.name, error) from None
         if content:
-            return dict(content), pyproject_file.name
+            return _settings_table(content, pyproject_file.name), pyproject_file.name
 
     if djlint_toml_file := find_djlint_toml(src):
         try:
-            return dict(load_djlint_toml_config(djlint_toml_file)), djlint_toml_file.name
+            content = load_djlint_toml_config(djlint_toml_file)
         except Exception as error:
             raise _unreadable_config(djlint_toml_file.name, error) from None
+        return _settings_table(content, djlint_toml_file.name), djlint_toml_file.name
 
-    elif djlintrc_file := find_djlintrc(src):
+    if djlintrc_file := find_djlintrc(src):
         try:
-            return dict(load_djlintrc_config(djlintrc_file)), djlintrc_file.name
+            content = load_djlintrc_config(djlintrc_file)
         except Exception as error:
             raise _unreadable_config(djlintrc_file.name, error) from None
+        return _settings_table(content, djlintrc_file.name), djlintrc_file.name
 
     return {}, ""
 
@@ -347,14 +358,20 @@ def load_custom_rules(rules_file: Path | None) -> Any:
 
     An empty file holds no rules.
     """
-    if rules_file:
-        try:
-            with rules_file.open("rb") as f:
-                return yaml.safe_load(f) or ()
-        except (OSError, yaml.YAMLError) as error:
-            raise _unreadable_config(rules_file, error) from None
+    if not rules_file:
+        return ()
 
-    return ()
+    try:
+        with rules_file.open("rb") as f:
+            rules = yaml.safe_load(f)
+    except (OSError, yaml.YAMLError) as error:
+        raise _unreadable_config(rules_file, error) from None
+    if rules is None:
+        return ()
+    if not isinstance(rules, list):
+        msg = f"Could not read {rules_file}: it does not hold a list of rules."
+        raise UsageError(msg)
+    return rules
 
 
 def _as_comma_separated(value: Any) -> Any:

@@ -48,7 +48,16 @@ if TYPE_CHECKING:
             id=".djlintrc",
         ),
         pytest.param(
-            ".djlintrc", "[1]", "Could not read .djlintrc: ", id=".djlintrc holding no object"
+            ".djlintrc",
+            "[1]",
+            "Could not read .djlintrc: its djLint settings are not a table",
+            id=".djlintrc holding no object",
+        ),
+        pytest.param(
+            "pyproject.toml",
+            "[tool]\ndjlint = 1\n",
+            "Could not read pyproject.toml: its djLint settings are not a table",
+            id="pyproject.toml holding no table",
         ),
     ],
 )
@@ -70,11 +79,18 @@ def test_a_broken_named_configuration_is_a_usage_error(tmp_path: Path) -> None:
         Config(str(tmp_path), configuration=configuration)
 
 
-def test_a_broken_rules_file_is_a_usage_error(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    ("content", "reason"),
+    [
+        pytest.param("- rule: [\n", "while parsing", id="invalid YAML"),
+        pytest.param("false\n", "it does not hold a list of rules", id="a scalar"),
+    ],
+)
+def test_a_broken_rules_file_is_a_usage_error(tmp_path: Path, content: str, reason: str) -> None:
     rules = tmp_path / ".djlint_rules.yaml"
-    rules.write_text("- rule: [\n", encoding="utf-8")
+    rules.write_text(content, encoding="utf-8")
 
-    with pytest.raises(UsageError, match=re.escape(f"Could not read {rules}: ")):
+    with pytest.raises(UsageError, match=re.escape(f"Could not read {rules}: {reason}")):
         Config(str(tmp_path))
 
 
