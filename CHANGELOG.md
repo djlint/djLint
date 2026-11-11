@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- The error for a `.djlint_rules.yaml` that isn't valid YAML fits on one line. It ran over three, and editors that show the last line of a failure showed only where in the file the problem was.
+
 ## [1.50.0] - 2026-11-11
 
 ### Bug fixes
