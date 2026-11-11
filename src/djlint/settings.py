@@ -274,8 +274,8 @@ def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
             raise _unreadable_config(pyproject_file.name, error) from None
-        if content:
-            return _settings_table(content, pyproject_file.name), pyproject_file.name
+        if settings := _settings_table(content, pyproject_file.name):
+            return settings, pyproject_file.name
 
     if djlint_toml_file := find_djlint_toml(src):
         try:
