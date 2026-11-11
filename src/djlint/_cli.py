@@ -763,7 +763,7 @@ def main(
 
         file_error, formatted_code = process_stdin(config, stdin_text)
         file_errors = [file_error]
-        unreadable: list[str] = []
+        unreadable: list[tuple[str, str]] = []
         files_count = 1
 
         if config.reformat or config.check:
@@ -803,7 +803,7 @@ def main(
             ),
         )
 
-        outcomes: list[ProcessResult | str] = []
+        outcomes: list[ProcessResult | tuple[str, str]] = []
         progress_label = click.style(
             f"{message} {files_count}/{files_count} files", fg="blue", bold=True
         )
@@ -850,27 +850,24 @@ def main(
                         outcomes.append(result)
                         bar.update(1)
 
-        file_errors = [x for x in outcomes if not isinstance(x, str)]
-        unreadable = [x for x in outcomes if isinstance(x, str)]
+        file_errors = [x for x in outcomes if not isinstance(x, tuple)]
+        unreadable = [x for x in outcomes if isinstance(x, tuple)]
         files_count = len(file_errors)
 
     if config.sarif:
         from djlint.sarif_output import print_sarif_output  # noqa: PLC0415
 
-        found = print_sarif_output(config, file_errors, files_count)
+        found = print_sarif_output(config, file_errors, files_count, unreadable)
     elif config.github_output:
         from djlint.github_output import print_github_output  # noqa: PLC0415
 
-        found = print_github_output(config, file_errors, files_count)
+        found = print_github_output(config, file_errors, files_count, unreadable)
     else:
         from djlint.output import print_output  # noqa: PLC0415
 
-        found = print_output(config, file_errors, files_count)
+        found = print_output(config, file_errors, files_count, unreadable)
 
-    # After the report, so it is not scrolled away. These files went
-    # unchecked, which --warn does not make a pass.
-    for message in unreadable:
-        echo(style(message, fg="red", bold=True), err=True)
+    # These files went unchecked, which --warn does not make a pass.
     if unreadable:
         sys.exit(2)
     if found and not config.warn:
@@ -923,7 +920,7 @@ def _start_worker(src: str, options: dict[str, Any]) -> None:
         _worker_config = Config(src, **options)
 
 
-def _process_in_worker(this_file: Path) -> ProcessResult | str:
+def _process_in_worker(this_file: Path) -> ProcessResult | tuple[str, str]:
     """Process a file with the configuration the worker was started with."""
     if _worker_config is None:
         msg = "The worker was started without a configuration."
@@ -931,8 +928,8 @@ def _process_in_worker(this_file: Path) -> ProcessResult | str:
     return _process_or_report(_worker_config, this_file)
 
 
-def _process_or_report(config: Config, this_file: Path) -> ProcessResult | str:
-    """Run linter or formatter, or say why the file could not be processed.
+def _process_or_report(config: Config, this_file: Path) -> ProcessResult | tuple[str, str]:
+    """Run linter or formatter, or give the file and why it could not be processed.
 
     A template that is not utf-8, or one the system will not let djLint
     open or write, is a problem with that file rather than a djLint failure,
@@ -943,14 +940,9 @@ def _process_or_report(config: Config, this_file: Path) -> ProcessResult | str:
     try:
         return process(config, this_file)
     except (UnicodeDecodeError, OSError) as e:
-        from djlint.output import build_relative_path  # noqa: PLC0415
-
-        filename = build_relative_path(str(this_file), config.project_root)
         if isinstance(e, UnicodeDecodeError):
-            reason = f"not valid UTF-8: {e}"
-        else:
-            reason = e.strerror or str(e)
-        return f"Error: {filename}: {reason}"
+            return str(this_file), f"not valid UTF-8: {e}"
+        return str(this_file), e.strerror or str(e)
 
 
 def process(config: Config, this_file: Path) -> ProcessResult:

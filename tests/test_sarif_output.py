@@ -91,3 +91,30 @@ def test_document_keeps_off_stdout_while_it_carries_the_file(runner: CliRunner) 
     )
     assert result.stdout.startswith("<div>")
     _document(result.stderr)
+
+
+def test_unreadable_file_is_a_failed_run(runner: CliRunner, tmp_path: Path) -> None:
+    """A file that could not be read has no results, so it fails the run."""
+    (tmp_path / "pyproject.toml").write_text("[tool.djlint]\n", encoding="utf-8")
+    (tmp_path / "latin.html").write_bytes("<div>caf\xe9</div>\n".encode("latin-1"))
+    (tmp_path / "real.html").write_text('<img src="x">\n', encoding="utf-8")
+
+    result = runner.invoke(djlint, (str(tmp_path), "--lint", "--sarif"))
+
+    assert result.exit_code == 2
+    run = _document(result.stdout)["runs"][0]
+    assert [r["ruleId"] for r in run["results"]] == ["H013"]
+    (invocation,) = run["invocations"]
+    assert invocation["executionSuccessful"] is False
+    (notification,) = invocation["toolExecutionNotifications"]
+    assert notification["level"] == "error"
+    assert notification["message"]["text"].startswith("not valid UTF-8: ")
+    location = notification["locations"][0]["physicalLocation"]
+    assert location["artifactLocation"] == {"uri": "latin.html"}
+    assert "Error: latin.html: not valid UTF-8" in result.stderr
+
+
+def test_a_clean_run_succeeded(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ("-", "--lint", "--sarif"), input="<p>x</p>\n")
+
+    assert _document(result.output)["runs"][0]["invocations"] == [{"executionSuccessful": True}]

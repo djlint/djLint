@@ -124,3 +124,15 @@ def test_a_check_of_stdin_fails_without_an_annotation(runner: CliRunner) -> None
     assert result.exit_code == 1
     assert result.stdout == "<div>\n    <p>hi</p>\n</div>\n"
     assert not result.stderr
+
+
+def test_unreadable_file_is_annotated(runner: CliRunner, tmp_path: Path) -> None:
+    (tmp_path / "pyproject.toml").write_text("[tool.djlint]\n", encoding="utf-8")
+    (tmp_path / "latin.html").write_bytes("<div>caf\xe9</div>\n".encode("latin-1"))
+
+    result = runner.invoke(
+        djlint, (str(tmp_path), "--lint", "--github-output"), env={"GITHUB_ACTIONS": ""}
+    )
+
+    assert result.exit_code == 2
+    assert "::error file=latin.html::not valid UTF-8: 'utf-8' codec" in result.stdout

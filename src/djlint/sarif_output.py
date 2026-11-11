@@ -20,6 +20,7 @@ from djlint.output import (
     finding_end,
     finding_position,
     first_filename,
+    print_unreadable,
     report_on_stderr,
 )
 
@@ -88,8 +89,14 @@ def _format_result(
     }
 
 
-def build_sarif(config: Config, file_errors: Sequence[ProcessResult]) -> tuple[dict[str, Any], int]:
-    """Build the SARIF document and count the findings it holds."""
+def build_sarif(
+    config: Config, file_errors: Sequence[ProcessResult], unreadable: Sequence[tuple[str, str]] = ()
+) -> tuple[dict[str, Any], int]:
+    """Build the SARIF document and count the findings it holds.
+
+    A file that could not be processed has no results to give, so it is
+    reported as a notification about the run, which did not succeed.
+    """
     rules: list[dict[str, Any]] = []
     rule_index: dict[str, int] = {}
     for entry in config.linter_rules:
@@ -119,6 +126,17 @@ def build_sarif(config: Config, file_errors: Sequence[ProcessResult]) -> tuple[d
             results.append(_format_result(formatting, config, rule_index[_FORMATTING_RULE]))
             count += count_format_errors(formatting)
 
+    invocation: dict[str, Any] = {"executionSuccessful": not unreadable}
+    if unreadable:
+        invocation["toolExecutionNotifications"] = [
+            {
+                "level": "error",
+                "message": {"text": reason},
+                "locations": [{"physicalLocation": {"artifactLocation": _artifact(path, config)}}],
+            }
+            for path, reason in unreadable
+        ]
+
     document = {
         "$schema": _SCHEMA,
         "version": "2.1.0",
@@ -132,6 +150,7 @@ def build_sarif(config: Config, file_errors: Sequence[ProcessResult]) -> tuple[d
                         "rules": rules,
                     }
                 },
+                "invocations": [invocation],
                 "results": results,
             }
         ],
@@ -140,9 +159,13 @@ def build_sarif(config: Config, file_errors: Sequence[ProcessResult]) -> tuple[d
 
 
 def print_sarif_output(
-    config: Config, file_errors: Sequence[ProcessResult], _file_count: int
+    config: Config,
+    file_errors: Sequence[ProcessResult],
+    _file_count: int,
+    unreadable: Sequence[tuple[str, str]] = (),
 ) -> int:
     """Print the SARIF document and return how many findings it holds."""
-    document, count = build_sarif(config, file_errors)
+    document, count = build_sarif(config, file_errors, unreadable)
     echo(json.dumps(document, indent=2), err=report_on_stderr(config))
+    print_unreadable(config, unreadable)
     return count
