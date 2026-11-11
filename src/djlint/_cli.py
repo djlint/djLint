@@ -107,8 +107,8 @@ def _fail_with_usage_code(func: Callable[..., None]) -> Callable[..., None]:
 
     Left to reach the interpreter, an unhandled error exits 1, the same code
     as "found lint errors" or "would reformat", and a pipeline cannot tell a
-    crash from a normal failing run: a template djLint cannot read looks
-    exactly like a template it disliked. So failures exit 2 instead,
+    crash from a normal failing run: a template that trips a bug looks
+    exactly like a template djLint disliked. So failures exit 2 instead,
     alongside the usage errors click already exits 2 for, while click's own
     control flow, including --help, is re-raised untouched. The traceback is
     still printed, so bug reports lose nothing.
@@ -763,6 +763,7 @@ def main(
 
         file_error, formatted_code = process_stdin(config, stdin_text)
         file_errors = [file_error]
+        unreadable: list[str] = []
         files_count = 1
 
         if config.reformat or config.check:
@@ -802,7 +803,7 @@ def main(
             ),
         )
 
-        file_errors = []
+        outcomes: list[ProcessResult | str] = []
         progress_label = click.style(
             f"{message} {files_count}/{files_count} files", fg="blue", bold=True
         )
@@ -823,7 +824,7 @@ def main(
         ) as bar:
             if max_workers == 1:
                 for this_file in file_list:
-                    file_errors.append(process(config, this_file))
+                    outcomes.append(_process_readable(config, this_file))
                     bar.update(1)
             else:
                 import concurrent.futures  # noqa: PLC0415
@@ -832,7 +833,7 @@ def main(
                     exe: concurrent.futures.Executor = concurrent.futures.ThreadPoolExecutor(
                         max_workers
                     )
-                    results = exe.map(partial(process, config), file_list)
+                    results = exe.map(partial(_process_readable, config), file_list)
                 else:
                     if sys.platform == "win32":  # pragma: win32 cover
                         max_workers = min(max_workers, _WINDOWS_MAX_PROCESSES)
@@ -846,25 +847,34 @@ def main(
                     )
                 with exe:
                     for result in results:
-                        file_errors.append(result)
+                        outcomes.append(result)
                         bar.update(1)
+
+        file_errors = [x for x in outcomes if not isinstance(x, str)]
+        unreadable = [x for x in outcomes if isinstance(x, str)]
+        files_count = len(file_errors)
 
     if config.sarif:
         from djlint.sarif_output import print_sarif_output  # noqa: PLC0415
 
-        if print_sarif_output(config, file_errors, files_count) and not config.warn:
-            sys.exit(1)
+        found = print_sarif_output(config, file_errors, files_count)
     elif config.github_output:
         from djlint.github_output import print_github_output  # noqa: PLC0415
 
-        if print_github_output(config, file_errors, files_count) and not config.warn:
-            sys.exit(1)
-
+        found = print_github_output(config, file_errors, files_count)
     else:
         from djlint.output import print_output  # noqa: PLC0415
 
-        if print_output(config, file_errors, files_count) and not config.warn:
-            sys.exit(1)
+        found = print_output(config, file_errors, files_count)
+
+    # After the report, so it is not scrolled away. These files went
+    # unchecked, which --warn does not make a pass.
+    for message in unreadable:
+        echo(style(message, fg="red", bold=True), err=True)
+    if unreadable:
+        sys.exit(2)
+    if found and not config.warn:
+        sys.exit(1)
 
 
 def _echo_unchanged_stdin(config: Config, stdin_text: str) -> None:
@@ -913,11 +923,27 @@ def _start_worker(src: str, options: dict[str, Any]) -> None:
         _worker_config = Config(src, **options)
 
 
-def _process_in_worker(this_file: Path) -> ProcessResult:
+def _process_in_worker(this_file: Path) -> ProcessResult | str:
     if _worker_config is None:
         msg = "The worker was started without a configuration."
         raise RuntimeError(msg)
-    return process(_worker_config, this_file)
+    return _process_readable(_worker_config, this_file)
+
+
+def _process_readable(config: Config, this_file: Path) -> ProcessResult | str:
+    """Run linter or formatter, or say why the file cannot be read.
+
+    A template that is not utf-8 is bad input, as it is on stdin, rather
+    than a djLint failure, so it is named and the files after it are still
+    checked. The file is read in full before anything is written to it.
+    """
+    try:
+        return process(config, this_file)
+    except UnicodeDecodeError as e:
+        from djlint.output import build_relative_path  # noqa: PLC0415
+
+        filename = build_relative_path(str(this_file), config.project_root)
+        return f"Error: {filename} is not valid UTF-8: {e}"
 
 
 def process(config: Config, this_file: Path) -> ProcessResult:
