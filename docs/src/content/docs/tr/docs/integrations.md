@@ -15,6 +15,18 @@ Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabil
 
 Kodu [GitHub](https://github.com/djlint/djlint-vscode) üzerindedir.
 
+## Zed
+
+[Dil sunucusunu](#dil-sunucusu) çalıştıran [djLint uzantısını](https://github.com/djlint/djlint-zed) kurun. Bulgular, kurulumdan hemen sonra HTML'de ve şablon uzantılarının dillerinde görünür.
+
+djLint ile biçimlendirmek için onu bir dilin biçimlendiricisi yapın:
+
+```json
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[Ayarlar](#ayarlar) `lsp.djlint.settings` altına yazılır.
+
 ## Neovim
 
 djLint, Neovim'de linter ve biçimlendirici olarak kullanılabilir.

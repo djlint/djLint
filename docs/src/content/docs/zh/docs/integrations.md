@@ -22,11 +22,7 @@ djLint 已有多种编辑器集成。
 要使用 djLint 进行格式化，请将其设为某种语言的格式化工具：
 
 ```json
-{
-  "languages": {
-    "HTML": { "formatter": { "language_server": { "name": "djlint" } } }
-  }
-}
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
 
 [设置](#设置)位于 `lsp.djlint.settings` 下。

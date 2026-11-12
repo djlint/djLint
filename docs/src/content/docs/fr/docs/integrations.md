@@ -22,14 +22,10 @@ Installez l'[extension djLint](https://github.com/djlint/djlint-zed), qui lance 
 Pour formater avec djLint, faites-en le formateur d'un langage :
 
 ```json
-{
-  "languages": {
-    "HTML": { "formatter": { "language_server": { "name": "djlint" } } }
-  }
-}
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
 
-Les [réglages](#réglages) se placent dans `lsp.djlint.settings`.
+Les [réglages](#options) se placent dans `lsp.djlint.settings`.
 
 ## Neovim
 

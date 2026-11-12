@@ -15,6 +15,18 @@ djLint 向けに作られたエディター連携がいくつかあります。
 
 ソースコードは [GitHub](https://github.com/djlint/djlint-vscode) にあります。
 
+## Zed
+
+[djLint 拡張機能](https://github.com/djlint/djlint-zed)をインストールしてください。この拡張機能は[言語サーバー](#言語サーバー)を起動します。インストールするとすぐに、HTML とテンプレート拡張機能の言語で検出結果が表示されます。
+
+djLint でフォーマットするには、言語のフォーマッターに djLint を指定します。
+
+```json
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[設定](#設定)は `lsp.djlint.settings` に書きます。
+
 ## Neovim
 
 djLint は Neovim でリンターとフォーマッターとして使えます。

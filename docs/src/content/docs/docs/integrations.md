@@ -22,11 +22,7 @@ Install the [djLint extension](https://github.com/djlint/djlint-zed), which runs
 To format with djLint, make it the formatter of a language:
 
 ```json
-{
-  "languages": {
-    "HTML": { "formatter": { "language_server": { "name": "djlint" } } }
-  }
-}
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
 
 [Settings](#settings) go under `lsp.djlint.settings`.

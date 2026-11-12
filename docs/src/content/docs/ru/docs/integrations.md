@@ -22,11 +22,7 @@ sidebar:
 Чтобы форматировать с помощью djLint, сделайте его форматером языка:
 
 ```json
-{
-  "languages": {
-    "HTML": { "formatter": { "language_server": { "name": "djlint" } } }
-  }
-}
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
 
 [Настройки](#настройки) задаются в `lsp.djlint.settings`.

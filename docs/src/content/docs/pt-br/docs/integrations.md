@@ -15,6 +15,18 @@ Instale a [extensão do djLint](https://marketplace.visualstudio.com/items?itemN
 
 O código dela está no [GitHub](https://github.com/djlint/djlint-vscode).
 
+## Zed
+
+Instale a [extensão do djLint](https://github.com/djlint/djlint-zed), que executa o [servidor de linguagem](#servidor-de-linguagem). Os avisos aparecem no HTML e nas linguagens das extensões de templates assim que ela é instalada.
+
+Para formatar com o djLint, defina-o como o formatador de uma linguagem:
+
+```json
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+As [configurações](#configurações) ficam em `lsp.djlint.settings`.
+
 ## Neovim
 
 O djLint pode ser usado como linter e formatador no Neovim.
