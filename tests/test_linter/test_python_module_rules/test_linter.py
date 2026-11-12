@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
@@ -16,8 +16,7 @@ if TYPE_CHECKING:
 def test_custom_rules(runner: CliRunner) -> None:
     """Test that our python_module is properly loaded and run."""
     result = runner.invoke(
-        djlint,
-        ("tests/test_linter/test_python_module_rules/", "--profile", "django"),
+        djlint, ("tests/test_linter/test_python_module_rules/", "--profile", "django")
     )
     print(result.output)
     assert """Linting""" in result.output

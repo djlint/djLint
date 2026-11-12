@@ -33,9 +33,9 @@ from djlint.helpers import (
 )
 from djlint.lint import get_line
 
-if sys.version_info >= (3, 13):
+if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
     from typing import NamedTuple
-else:
+else:  # pragma: <3.13 cover
     from typing_extensions import NamedTuple
 
 
@@ -85,11 +85,7 @@ class _Span(NamedTuple):
 
 
 def _first_link(
-    html: str,
-    links: dict[int, int],
-    walked: dict[int, int],
-    start: int,
-    limit: int,
+    html: str, links: dict[int, int], walked: dict[int, int], start: int, limit: int
 ) -> int:
     """Where the first link the attribute walk reaches ends, or -1.
 
@@ -130,10 +126,7 @@ def _first_link(
 
 def _spans(html: str) -> tuple[_Span, ...]:
     """The tags reported, in the order the replaced pattern found them."""
-    links = {
-        match.start(): match.end()
-        for match in _LINK_PATTERN.finditer(html, overlapped=True)
-    }
+    links = {match.start(): match.end() for match in _LINK_PATTERN.finditer(html, overlapped=True)}
     if not links:
         return ()
 

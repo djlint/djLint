@@ -8,10 +8,7 @@
   "additionalProperties": false,
   "definitions": {
     "comma-separated-list": {
-      "anyOf": [
-        { "type": "string" },
-        { "type": "array", "items": { "type": "string" } }
-      ]
+      "anyOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
     },
     "css-beautify": { "type": "object", "additionalProperties": true },
     "js-beautify": { "type": "object", "additionalProperties": true }
@@ -42,11 +39,11 @@
       "$ref": "#/definitions/css-beautify"
     },
     "custom_blocks": {
-      "description": "Use to indent custom code blocks. For example `{% toc %}...{% endtoc %}`.",
+      "description": "Names of custom template blocks to indent, such as `toc` for `{% toc %}...{% endtoc %}`.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "custom_html": {
-      "description": "Use to indent custom HTML tags. For example `<mjml>` or `<simple-greeting>` or `<mj-\\w+>`",
+      "description": "Names of custom HTML tags to indent, such as `mjml` or `simple-greeting`. A name can be a regex, as in `mj-\\w+`.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "exclude": {
@@ -58,7 +55,7 @@
       "$ref": "#/definitions/comma-separated-list"
     },
     "extension": {
-      "description": "Use to only find files with a specific extension.",
+      "description": "Extension of the files to look for in folders. Default is `html`.",
       "type": "string"
     },
     "files": {
@@ -80,7 +77,7 @@
       "type": "string"
     },
     "format_attribute_template_tags": {
-      "description": "Formatter will attempt to format template syntax inside of tag attributes. Disabled by default.",
+      "description": "Format template syntax inside tag attributes. Disabled by default.",
       "type": "boolean"
     },
     "format_css": {
@@ -88,15 +85,15 @@
       "type": "boolean"
     },
     "format_js": {
-      "description": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues).",
+      "description": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues). A script whose `type` is neither JavaScript nor JSON, such as a client-side template in `text/template`, is left as written.",
       "type": "boolean"
     },
     "ignore": {
-      "description": "Ignore linter codes.",
+      "description": "Linter codes to skip.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "ignore_blocks": {
-      "description": "Used to skip indentation on children of template tags. Children will be treated as siblings and indented accordingly.",
+      "description": "Template blocks that do not indent their contents. Their children are treated as siblings of the block and indented accordingly.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "ignore_case": {
@@ -104,11 +101,11 @@
       "type": "boolean"
     },
     "include": {
-      "description": "Include linter codes.",
+      "description": "Linter codes to turn on that are off by default.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "indent": {
-      "description": "Use to change the code indentation. Default is 4 (four spaces), or the `indent_size` of a `.editorconfig` at the project root.",
+      "description": "Spaces per indent level. Default is 4, or the `indent_size` of a `.editorconfig` at the project root.",
       "type": "integer",
       "minimum": 0
     },
@@ -121,26 +118,26 @@
       "type": "boolean"
     },
     "line_break_after_multiline_tag": {
-      "description": "Do not condense the content of multi-line tags into the line of the last attribute.",
+      "description": "When a tag's attributes are spread over lines, start its content on a new line.",
       "type": "boolean"
     },
     "linter_output_format": {
-      "description": "Customize order of output message. Default=\"{code} {line} {message} {match}\". If `{filename}` is not included in message, then the output will be grouped by file and a header will automatically be added to each group.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "description": "Customize the order of the output message. Default is \"{code} {line} {message} {match}\". If `{filename}` is not in the message, the output is grouped by file and each group gets a header.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
       "type": "string",
       "examples": ["{filename}:{line}: {code} {message} {match}"]
     },
     "max_attribute_length": {
-      "description": "Formatter will attempt to wrap tag attributes if the attribute length exceeds this value. Default is 70.",
+      "description": "The formatter spreads a tag's attributes over lines once they are longer than this. Default is 70.",
       "type": "integer",
       "minimum": 0
     },
     "max_blank_lines": {
-      "description": "Consolidate blank lines down to x lines. Default is 0 meaning blank lines will be removed.",
+      "description": "Keep at most this many blank lines in a row. Default is 0, which removes blank lines. It has no effect with `preserve_blank_lines`.",
       "type": "integer",
       "minimum": 0
     },
     "max_line_length": {
-      "description": "Formatter will attempt to put some html and template tags on a single line instead of wrapping them if the line length will not exceed this value. Default is 120, or the `max_line_length` of a `.editorconfig` at the project root.",
+      "description": "The formatter joins some HTML and template tags onto one line only when the line fits within this length. Default is 120, or the `max_line_length` of a `.editorconfig` at the project root.",
       "type": "integer",
       "minimum": 0
     },
@@ -161,7 +158,7 @@
       "type": "boolean"
     },
     "no_line_after_yaml": {
-      "description": "Do not add a blank line after yaml front matter.",
+      "description": "Do not add a blank line after YAML front matter.",
       "type": "boolean"
     },
     "no_set_formatting": {
@@ -186,7 +183,7 @@
       "type": "boolean"
     },
     "profile": {
-      "description": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n  :::",
+      "description": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n- mako (control lines and `##` comments are kept as written)\n- all (every template language at once)\n  :::",
       "enum": [
         "all",
         "angular",
@@ -197,12 +194,13 @@
         "html",
         "jinja",
         "liquid",
+        "mako",
         "nunjucks",
         "tera"
       ]
     },
     "quiet": {
-      "description": "Do not print diff when reformatting.",
+      "description": "Do not print diffs, the progress bar or the summary.",
       "type": "boolean"
     },
     "quote_style": {
@@ -210,7 +208,7 @@
       "enum": ["double", "single"]
     },
     "require_pragma": {
-      "description": "Only format or lint files that starts with a comment with only the text 'djlint:on'. The comment can be a HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
+      "description": "Only format or lint files that start with a comment with only the text 'djlint:on'. The comment can be an HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
       "type": "boolean"
     },
     "single_attribute_per_line": {

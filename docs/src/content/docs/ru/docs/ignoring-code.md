@@ -1,62 +1,62 @@
 ---
 title: "Игнорирование кода"
-description: "Как запретить djLint форматировать блок кода. Как игнорировать правила djLint в строке."
+description: "Как запретить djLint форматировать блок кода и как отключать правила линтера прямо в коде."
 sidebar:
   label: "Игнорирование кода"
 ---
 
-Код можно игнорировать, обернув его в теги `djlint`:
+Чтобы djLint пропускал код, оберните его в теги `djlint`:
 
-Для простого старого html -
+Для обычного HTML:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
-   <плохой html, который следует игнорировать>
+   <bad html to ignore>
 <!-- djlint:on -->
 ```
 
-или как комментарий -
+или в виде комментария:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
-   <плохой html, который следует игнорировать>
+   <bad html to ignore>
 {# djlint:on #}
 ```
 
-или в виде длинного комментария -
+или в виде длинного комментария:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
-   <плохой html, который следует игнорировать>
+   <bad html to ignore>
 {% comment %} djlint:on {% endcomment %}
 ```
 
-или как комментарий в стиле golang -
+или в виде комментария в стиле golang:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
-   <плохой html, который следует игнорировать>
+   <bad html to ignore>
 {{ /* djlint:on */ }}
 ```
 
-или как комментарий в стиле handlebars -
+или в виде комментария в стиле handlebars:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
-   <плохой html, который следует игнорировать>
+   <bad html to ignore>
 {{!-- djlint:on --}}
 ```
 
 ## Игнорирование правил
 
-Определенные правила linter можно игнорировать, добавив имя правила в открывающий тег игнорируемого блока.
+Можно игнорировать и отдельные правила линтера: для этого укажите имя правила в открывающем теге игнорируемого блока.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

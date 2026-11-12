@@ -1,62 +1,62 @@
 ---
-title: "Ignorer le code"
-description: "Comment empêcher djLint de formater un bloc de code. Comment ignorer les règles de djLint en ligne."
+title: "Ignorer du code"
+description: "Comment empêcher djLint de formater un bloc de code, et comment ignorer des règles du linter directement dans le code."
 sidebar:
-  label: "Ignorer le code"
+  label: "Ignorer du code"
 ---
 
-Le code peut être ignoré en l'entourant de balises `djlint` :
+Pour ignorer du code, entourez-le de balises `djlint` :
 
-Pour le simple html -
+En HTML classique :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
-   <mauvais html à ignorer>
+   <bad html to ignore>
 <!-- djlint:on -->
 ```
 
-ou comme un commentaire -
+ou sous forme de commentaire :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
-   <mauvais html à ignorer>
+   <bad html to ignore>
 {# djlint:on #}
 ```
 
-ou comme un long commentaire -
+ou sous forme de commentaire long :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
-   <mauvais html à ignorer>
+   <bad html to ignore>
 {% comment %} djlint:on {% endcomment %}
 ```
 
-ou comme un commentaire de style golang -
+ou sous forme de commentaire de style golang :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
-   <mauvais html à ignorer>
+   <bad html to ignore>
 {{ /* djlint:on */ }}
 ```
 
-ou comme un commentaire de style handlebars -
+ou sous forme de commentaire de style handlebars :
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
-   <mauvais html à ignorer>
+   <bad html to ignore>
 {{!-- djlint:on --}}
 ```
 
-## Ignorer les règles
+## Ignorer des règles
 
-Des règles spécifiques de linter peuvent également être ignorées en ajoutant le nom de la règle dans la balise d'ouverture du bloc ignoré.
+Vous pouvez aussi ignorer des règles précises du linter en ajoutant leur nom dans la balise d'ouverture du bloc ignoré.
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

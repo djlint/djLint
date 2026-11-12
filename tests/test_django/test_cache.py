@@ -38,20 +38,8 @@ test_data = [
         id="cache_tag_indent",
     ),
     pytest.param(
-        (
-            "<body>\n"
-            "{% cache 600 sidebar %}\n"
-            "<p>hi</p>\n"
-            "{% endcache %}\n"
-            "</body>\n"
-        ),
-        (
-            "<body>\n"
-            "    {% cache 600 sidebar %}\n"
-            "        <p>hi</p>\n"
-            "    {% endcache %}\n"
-            "</body>\n"
-        ),
+        ("<body>\n{% cache 600 sidebar %}\n<p>hi</p>\n{% endcache %}\n</body>\n"),
+        ("<body>\n    {% cache 600 sidebar %}\n        <p>hi</p>\n    {% endcache %}\n</body>\n"),
         id="cache_tag_fixes_indent",
     ),
 ]

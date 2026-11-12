@@ -1,6 +1,6 @@
 ---
 title: "Getting Started"
-description: "Getting started with djLint for HTML Template Linting and Formatting. Take advantage of the easy cli interface and many formatter options."
+description: "Install djLint and lint or format HTML templates from the command line."
 sidebar:
   label: "Getting started"
 ---
@@ -39,7 +39,7 @@ Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/for
 brew install djlint
 ```
 
-_Or with npm - **warning**: the npm package is only a wrapper, its install script runs `pip install --upgrade djlint` on whatever `python3` is on your system path. npm will not manage or uninstall the actual package - prefer pip directly when possible._
+_Or with npm. **Warning**: the npm package is only a wrapper. Its install script runs pip on whatever `python3` is on your system path and installs the djLint version of that npm release, which can replace a newer djLint with an older one. npm will not manage or uninstall the actual package, so prefer pip when you can._
 
 ```bash
 npm i djlint
@@ -105,9 +105,9 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 | `1`  | djLint found linting errors, or files that need reformatting. `--warn` reports these as warnings and exits `0` instead.          |
 | `2`  | djLint did not check what you asked it to: the paths matched no files, the command line or config was invalid, or djLint failed. |
 
-Only code `1` means djLint looked at your templates and did not like what it found. Code `2` always means the run itself did not deliver, so a pipeline can treat the two differently instead of guessing.
+Only code `1` means djLint looked at your templates and did not like what it found. Code `2` always means the run itself did not deliver, so a pipeline can treat the two differently.
 
-Code `2` is what catches a run that checked nothing at all: a wrong path, an `--extension` that no longer matches, or templates that have moved. Without it such a run passes silently, having looked at none of your templates.
+Code `2` is what catches a run that checked nothing at all: a wrong path, an `--extension` that no longer matches, or templates that have moved. Without it such a run passes silently.
 
 Files that djLint _did_ find and then skipped on purpose, through `exclude`, `extend_exclude`, `use_gitignore` or `require_pragma`, are not an error. That run exits `0`, because the configuration did exactly what it was told to. It is also what lets `exclude` work under pre-commit, which passes the names of your staged files whether or not you want djLint to look at them.
 

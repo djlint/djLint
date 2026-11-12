@@ -12,21 +12,15 @@ from tests.conftest import linter
 
 test_data = [
     pytest.param(
-        (
-            '<meta name="viewport" content="width=device-width, user-scalable=no">'
-        ),
+        ('<meta name="viewport" content="width=device-width, user-scalable=no">'),
         (True),
         id="zoom turned off",
     ),
     pytest.param(
-        ('<meta name="viewport" content="maximum-scale=1.0">'),
-        (True),
-        id="a maximum below two",
+        ('<meta name="viewport" content="maximum-scale=1.0">'), (True), id="a maximum below two"
     ),
     pytest.param(
-        ('<meta name="viewport" content="maximum-scale=1.5">'),
-        (True),
-        id="still below two",
+        ('<meta name="viewport" content="maximum-scale=1.5">'), (True), id="still below two"
     ),
     pytest.param(
         ('<meta content="user-scalable=no" name="viewport">'),
@@ -34,9 +28,7 @@ test_data = [
         id="written the other way round",
     ),
     pytest.param(
-        (
-            '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        ),
+        ('<meta name="viewport" content="width=device-width, initial-scale=1">'),
         (False),
         id="an ordinary viewport",
     ),
@@ -46,9 +38,7 @@ test_data = [
         id="a maximum that allows zoom",
     ),
     pytest.param(
-        ('<meta name="viewport" content="user-scalable=yes">'),
-        (False),
-        id="zoom left on",
+        ('<meta name="viewport" content="user-scalable=yes">'), (False), id="zoom left on"
     ),
     pytest.param(
         ('<meta name="description" content="user-scalable=no">'),

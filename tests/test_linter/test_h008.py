@@ -58,14 +58,12 @@ test_data = [
             "/>"
         ),
         ([]),
-        id="one",
+        id="attribute without a value",
     ),
     pytest.param(
-        (
-            '<link rel="stylesheet" href="styles.css" media="print" onload="this.media=\'all\'"/>'
-        ),
+        ('<link rel="stylesheet" href="styles.css" media="print" onload="this.media=\'all\'"/>'),
         ([]),
-        id="one",
+        id="single quotes inside a double-quoted value",
     ),
     pytest.param(
         (
@@ -86,18 +84,12 @@ test_data = [
         ]),
         id="the single quotes are load-bearing here",
     ),
-    pytest.param(
-        ("<div data-title='x'>c</div>"),
-        ([]),
-        id="name_merely_ends_in_a_known_one",
-    ),
+    pytest.param(("<div data-title='x'>c</div>"), ([]), id="name_merely_ends_in_a_known_one"),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 

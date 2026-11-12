@@ -4,7 +4,7 @@ A video with sound carries its speech only in the audio, so a deaf or
 hard-of-hearing viewer gets nothing from it without captions, which WCAG
 1.2.2 requires. A `<track>` whose `kind` is `captions` or `subtitles`
 satisfies the rule, and so does one with no `kind` at all, since
-subtitles is the default.
+subtitles is the default. An empty `kind` is invalid and means metadata.
 
 Only what the markup says for certain is judged. A `muted` video has no
 audio to caption, and the tracks, or the `muted` attribute itself, may be
@@ -100,21 +100,20 @@ def _is_muted(area: str) -> bool:
 def _is_caption_track(area: str) -> bool:
     """Whether the track counts as the captions or subtitles of a video.
 
-    A track with no `kind`, with an empty one, or with one a template tag
-    writes is read as the default, subtitles. Only the first `kind` is
-    read, as a browser reads it, and it has to name the kind exactly:
-    `captionsxyz` is not `captions`.
+    A track with no `kind` is read as the default, subtitles, and so is
+    one whose `kind` a template tag writes. An empty `kind`, or one written
+    with no value, is an invalid one, which a browser reads as metadata.
+    Only the first `kind` is read, as a browser reads it, and it has to
+    name the kind exactly: `captionsxyz` is not `captions`.
     """
     for name, value in _attributes(area):
         if name != "kind":
             continue
         if value is None:
-            return True
+            return False
         kind = value.strip()
         return (
-            not kind
-            or _TEMPLATE_OPENING_PATTERN.search(kind) is not None
-            or kind.casefold() in _CAPTION_KINDS
+            _TEMPLATE_OPENING_PATTERN.search(kind) is not None or kind.casefold() in _CAPTION_KINDS
         )
     return True
 
@@ -193,9 +192,7 @@ def run(
         name = token.name.casefold()
 
         if name == "track":
-            if not token.closing and not overlaps_ignored_block(
-                config, html, token
-            ):
+            if not token.closing and not overlaps_ignored_block(config, html, token):
                 area = html[token.name_end : token.attributes_end]
                 caption_tracks += _is_caption_track(area)
             continue
@@ -213,9 +210,7 @@ def run(
         if (
             caption_tracks > captions_before
             or _is_muted(html[opening.name_end : opening.attributes_end])
-            or _TEMPLATE_OPENING_PATTERN.search(
-                html, opening.start, opening.end
-            )
+            or _TEMPLATE_OPENING_PATTERN.search(html, opening.start, opening.end)
             or _holds_template(template_positions, opening.end, token.start)
             or overlaps_ignored_block(config, html, opening)
             or inside_ignored_rule(config, html, opening, rule["name"])

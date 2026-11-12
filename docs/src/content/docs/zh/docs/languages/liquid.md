@@ -1,33 +1,33 @@
 ---
-title: "Liquid 模板检查与格式化"
-description: "djLint是一个 Liquid 模板的代码检查与格式化工具！使用内置的预设配置（profile），充分利用djLint来检查并格式化你的模板。"
+title: "Liquid 模板代码检查与格式化工具"
+description: "djLint 可以检查和格式化 Liquid 模板。设置 liquid 预设，让规则和格式化方式适合这类模板。"
 sidebar:
   label: "Liquid"
 ---
 
-djLint是一个 Liquid 模板的代码检查与格式化工具！使用内置的预设配置（profile），充分利用djLint来检查并格式化你的模板。
+djLint 可以检查和格式化 Liquid 模板。设置 `liquid` 预设，让规则和格式化方式适合这类模板。
 
-**[什么是 Liquid?](https://shopify.github.io/liquid/)**
+**[什么是 Liquid？](https://shopify.github.io/liquid/)**
 
-一个配置即可覆盖所有 Liquid 方言：Shopify 主题、Jekyll、LiquidJS（Eleventy）和 Fluid（Orchard Core）。
+一个预设即可涵盖所有 Liquid 方言：Shopify 主题、Jekyll、LiquidJS（Eleventy）和 Fluid（Orchard Core）。
 
-#### 使用命令行
+## 使用命令行
 
 ```bash
 djlint /path/to/templates --profile=liquid
 ```
 
-#### 使用配置文件
+## 或者，使用配置文件
 
-在你项目中的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 文件中配置 djLint。
+在项目的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 文件中配置 djLint。
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="liquid"
+profile = "liquid"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="liquid"
+profile = "liquid"
 ```
 
 ```json title=".djlintrc"
@@ -35,5 +35,5 @@ profile="liquid"
 ```
 
 :::tip
-详情请参考 [配置](/zh/docs/configuration/) 章节
+[查看配置指南，了解所有选项！](/zh/docs/configuration/)
 :::

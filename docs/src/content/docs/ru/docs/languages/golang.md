@@ -1,33 +1,33 @@
 ---
-title: "Go Template Linter and Formatter"
-description: "djLint - это линтер шаблонов Go и форматер шаблонов Go! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint."
+title: "Линтер и форматер шаблонов Go"
+description: "djLint проверяет и форматирует шаблоны Go. Задайте профиль golang, чтобы правила и форматирование подходили для них."
 sidebar:
-  label: "Go templates"
+  label: "Шаблоны Go"
 ---
 
-djLint - это линтер шаблонов Go и форматер шаблонов Go! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
+djLint проверяет и форматирует шаблоны Go. Задайте профиль `golang`, чтобы правила и форматирование подходили для них.
 
 **[Что такое шаблоны Go?](https://pkg.go.dev/text/template)**
 
-На шаблонах Go (`text/template`, `html/template`) также работают темы Hugo и чарты Helm, поэтому используйте для них этот же профиль.
+На шаблонах Go (`text/template`, `html/template`) построены также темы Hugo и чарты Helm, поэтому используйте для них этот же профиль.
 
-#### Использование командной строки
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile=golang
 ```
 
-#### Или используйте файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="golang"
+profile = "golang"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="golang"
+profile = "golang"
 ```
 
 ```json title=".djlintrc"
@@ -35,5 +35,5 @@ profile="golang"
 ```
 
 :::tip
-[Ознакомьтесь с руководством по настройке, чтобы узнать обо всех возможностях!](/ru/docs/configuration/)
+[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
 :::

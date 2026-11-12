@@ -80,21 +80,14 @@
     inset-inline-start: var(--dj-gutter);
   }
   .main-frame {
-    padding-inline: calc(
-        var(--sl-content-inline-start, 0rem) + var(--dj-gutter)
-      )
-      var(--dj-gutter);
+    padding-inline: calc(var(--sl-content-inline-start, 0rem) + var(--dj-gutter)) var(--dj-gutter);
   }
 }
 @media (min-width: 90rem) {
   .right-sidebar {
     width: calc(
       var(--sl-sidebar-width) +
-        (
-          var(--dj-page-max) - 2 * var(--sl-sidebar-width) -
-            var(--sl-content-width)
-        ) /
-        2
+        (var(--dj-page-max) - 2 * var(--sl-sidebar-width) - var(--sl-content-width)) / 2
     );
   }
 }

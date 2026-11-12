@@ -4,37 +4,167 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- The error for a `.djlint_rules.yaml` that isn't valid YAML fits on one line. It ran over three, and editors that show the last line of a failure showed only where in the file the problem was.
+
+## [1.50.0] - 2026-11-11
+
+### Bug fixes
+
+- With Click 8.5.1 or newer, `djlint --help` no longer lists a blank `SRC ...` row under "Other". The files to check are still shown in the usage line.
+- A template that is not valid UTF-8, or that djLint isn't allowed to read or write, no longer aborts the run with a traceback and a request to report a bug. djLint names the file and the reason, checks the rest and still exits `2`, because that file went unchecked. `--github-output` adds an error annotation on the file, and `--sarif` reports it as a notification on a run marked as not successful.
+- A configuration file djLint can't read, such as a `pyproject.toml`, `djlint.toml` or `.djlintrc` with a syntax error or a file named by `--configuration`, is now a usage error that exits `2`. djLint used to print a red line and check the templates against its defaults, so the run could pass. The same goes for a number setting with a value that isn't a number, such as `max_line_length = "wide"`, and for a `.djlint_rules.yaml` that isn't valid YAML or doesn't hold a list of rules, which crashed with a traceback. An empty `.djlint_rules.yaml` no longer crashes. In the Python API, `load_config` raises `click.UsageError` for these.
+- Ctrl+C exits `130`, as shells report an interrupted command, rather than `1`, which means djLint found something. The same goes for `djlint --lsp`.
+
+## [1.49.10] - 2026-11-07
+
+### Packaging
+
+- Ship a `py.typed` marker, so type checkers read the annotations of `djlint.api`.
+- Importing `djlint.api` no longer builds the command line, which takes a little off the start of editors and other programs that use djLint from Python. The command line moved out of the `djlint` package itself, which still hands out `main`, `process` and `process_stdin` when they are asked for.
+
+## [1.49.9] - 2026-11-04
+
+### Bug fixes
+
+- A U+2028, U+2029, U+0085 or form feed in the arguments of a call or the value of a `{% set %}` that is not JSON, as in a string passed to `{{ url("…", x) }}`, is kept as written. It was rewritten as a line break, which changed the string.
+- H057 reports a video whose only track has an empty `kind`, as in `<track kind="">` or `<track kind>`. Browsers read an empty `kind` as `metadata`, not subtitles, so such a track carries no captions. H057 took it for a subtitles track.
+- The error about a number setting that is not a number names the file the value was read from, such as `djlint.toml`, `.djlintrc` or the file `--configuration` names. It always said `pyproject.toml`.
+
+## [1.49.8] - 2026-11-03
+
+### Feature
+
+- A `mako` profile for Mako templates. Mako needs a control line, such as `% if x:` or `% endfor`, and a `##` comment to start a line of their own, and other profiles joined them onto other lines, which broke the template. Under the `mako` profile they always keep their own lines, and the lines between `% if` and `% endif`, or between a `<%block>` or `<%def>` tag and its closing tag, are indented like any other block. The code in a `${}` expression is left as written, and so are the attributes of a tag that depend on control lines, Python blocks, `<%doc>` and `<%text>`, and a script or style holding Mako syntax under `--format-js` or `--format-css`. The linter runs the HTML rules. The `all` profile handles Mako's lines the same way.
+- Twig's `{% apply %}`, `{% sandbox %}` and `{% guard %}` blocks and Django's old `{% ifequal %}` and `{% ifnotequal %}` blocks indent their contents like other blocks.
+
+### Bug fixes
+
+- A number setting written in a config file as a list, a table or null, as `max_line_length = [100]` or `"indent": null`, is reported and falls back to its default, as a string that is no number already did. djLint failed instead.
+- An end tag that closes no open block, such as the end of a custom block djLint does not know, as in `{% endtoc %}`, or a stray `{% endif %}`, stays at the level of the markup around it. It moved one level to the left, and so did everything after it.
+- A string written as adjacent literals, as in `{{ _("Hello " "world") }}` or `{% set x = "a" "b" %}`, or in triple quotes, keeps its quotes. They were dropped, which left `{{ _(Hello world) }}`, a variable name rather than a string.
+
+### Performance
+
+- A tag whose quoted value runs over thousands of lines, as when its closing quote is missing, no longer slows formatting down. Forty thousand such lines took over seven seconds and now take about one.
+- Text with many `${` that never close no longer slows formatting down. Three thousand of them in one paragraph took ten seconds and now take a tenth of one.
+
+## [1.49.7] - 2026-11-03
+
+### Feature
+
+- djLint warns about a setting that has no effect: `max_blank_lines` together with `preserve_blank_lines`, which takes precedence, and `--prefer-configuration` without `--configuration`. The warning goes to stderr once per run, so the language server does not repeat it on every change.
+
+### Bug fixes
+
+- A closing tag missing its `>`, as in `</p` at the end of a line, again runs to the next `>`, as browsers read it. Since 1.49.5, the tag on the next line was taken for an opening tag, so each paragraph after such a line was indented one level deeper than the one before.
+
+## [1.49.6] - 2026-11-03
+
+### Docs
+
+- `djlint --help` groups the options by what they are for: modes, files, configuration, the linter, output, layout, rewrites, and CSS and JavaScript. They used to come in one long list in no particular order.
+
+## [1.49.5] - 2026-11-03
+
+### Performance
+
+- A file with many tags that are never closed formats in under a second. A thousand lines that each start with `<p data-x="a` took 40 seconds, 1,500 lines of `<p` took over a minute, and 2,000 ran out of memory. Thousands of `<script>`, `<style>` or `<textarea>` tags that are never closed no longer slow down formatting or linting either: linting 4,000 of them took up to 23 seconds.
+
+### Bug fixes
+
+- `--format-js` leaves a `<script>` alone when its `type` is neither JavaScript nor JSON, such as a client-side template in `<script type="text/template">`. It was formatted as JavaScript, which broke the template. Scripts without a `type`, modules, `text/babel` and JSON types such as `application/ld+json` are formatted as before.
+- A `<script>` or `<style>` tag with attributes too long for one line has them spread over lines also when its contents take several lines, as any other tag does. With `--format-js` or `--format-css`, one run spread them and the next joined them again.
+- With `--format-js` or `--format-css`, the contents of a script or style that follows other markup on its line, as in `<span>a</span><script>`, are indented below that line. After `</noscript><script>`, the next run indented the rest of the file one level deeper.
+- With `--format-js`, JavaScript that js-beautify lays out differently on each run, such as a ternary written over several lines, settles on one layout, so a second run leaves it alone.
+- `--format-css` no longer takes a `<style` inside a JavaScript string, as in `new RegExp("<style(.*?)>")`, for a style tag. It formatted the rest of the script as CSS.
+- `--format-js` and `--format-css` no longer read a `<script>` or `<style>` written inside an HTML comment, as in `<!-- <script> -->`, as the start of a block. Everything from it to the next real closing tag was formatted as JavaScript or CSS.
+
+### Docs
+
+- `djlint --help` describes each option more clearly. It now gives the defaults that come from `.editorconfig`, lists the `all` profile, and names what a value holds, such as `--ignore CODES`. `--warn` no longer claims to turn errors into warnings: it only changes the exit code. The configuration page uses the same wording.
+- The help and the docs for `--max-blank-lines` say that it has no effect with `--preserve-blank-lines`, which keeps every blank line.
+
+## [1.49.4] - 2026-11-03
+
+### Performance
+
+- A template with hundreds of lines that each open a `{{`, `{% set %}` or `{% include %}` left unclosed, as in `{{ 'a` on every line, formats in well under a second. Four hundred such lines took from 45 seconds to seven minutes. Linting such lines with `T002` no longer slows down the same way.
+- A tag holding thousands of template tags written without spaces, as in `<script {%a%}{%a%}…>`, formats and lints in well under a second. It took tens of seconds.
+
+### Bug fixes
+
+- Formatting a template a second time no longer changes it in the cases below, so `djlint --check` passes right after `djlint --reformat`.
+- An element or a template block is put on one line only when the whole line fits within `--max-line-length`, its indentation and any text beside it included. A line that fit only without its indentation was joined, and the next run spread its attributes.
+- A tag whose attributes fit within `--max-attribute-length` once a `style` or `srcset` value loses its trailing `;` or extra spaces stays on one line. It was spread, and the next run joined it again.
+- A `{% blocktrans trimmed %}` inside a `{% filter %}` no longer ends the filter early. Everything after it lost its indentation, and the next run indented the `{% endfilter %}` again.
+- An empty `<script>` or `<style>` written across lines, whose attributes are longer than `--max-attribute-length`, has them spread when it is put on one line. It took a second run.
+- A tag written in a string inside a `{{ }}`, `{% %}` or mako `${ }` that spans lines, as in `HTML('<a class="x" href="y">')` on a line of its own, no longer has its attributes spread over several lines. That put line breaks into the string, which in mako is an error, and the next run moved them again.
+- A template tag in an attribute value that holds the value's own quote and an apostrophe, as in `value="{{ _("Students' list") }}"` or mako's `value="${_("Students' list")}"`, no longer upsets the layout of the lines that follow. The quote was read as the end of the value and the apostrophe as the start of another.
+- A stray quote in a tag, as in `<button "="" title="x">` or `id="a""`, no longer stops djLint from reading the tags after it. Only a quote after `=` opens a value, as browsers read it. Before, the rest of the file was skipped: the linter reported its elements as orphans (`H025`) and the formatter indented them differently on each run. A quote inside a bare value, as in `title=a'b`, is part of the value for the same reason.
+- A `>` in a string of a template tag inside an attribute value, as in `data-x="{{ "a > b" }}"`, no longer ends the tag. The formatter took out the space beside it, which changed the string.
+- Text inside a template tag in an attribute value is left as written. The formatter collapsed the spaces in `class="{{ "a  b" }}"`, closed up `"a  =  b"`, joined a line break in a string in a `style` or `srcset`, split a `style` at a `;` or a `srcset` at a `,` inside a template tag, and with `--format-js` or `--format-css` took a `>` in one for the end of the `<script>` or `<style>` tag.
+- A tag with a single attribute is no longer spread over several lines because its line is longer than `--max-line-length`, as the rule for long lines intends. A lone `style` was split at each `;`, and the next run could join it again.
+- A tag with a `style` or `srcset` attribute that has no value no longer stops the formatter with an error when its attributes are spread over several lines.
+- A `type="text/javascript"` or `type="text/css"` is dropped, and a form's `method` lowercased, also when the value is written without quotes or with spaces around `=`. It used to take a second run.
+- A call written on the line after `{{`, with `}}` on a line of its own, stays where it was written. It used to be pulled up onto the `{{` line with its arguments a level too deep, which the next run corrected.
+- A template tag written across lines inside an attribute value keeps its layout, including the indentation of the line it closes on.
+- Whitespace inside a quoted string that spans lines in a template tag, as in `{% set %}` or `{% trans %}`, is kept, also when the string holds a `%}`, `{%`, `}}` or `{{`, or a comment before it holds a quote. It was stripped or replaced with indentation, which changed the string.
+- A short template block written across lines stays that way also when it holds a string whose quotes the formatter rewrites, as in `{% if x %}` followed by `{{ _('Deleted') }}` on its own line. It used to be put on one line.
+- The formatter drops a `type` only where it is the element's default: `text/javascript` on a `<script>`, and `text/css` on a `<style>` or a `<link rel="stylesheet">`. A `<script type="text/css">`, a `<style type="text/javascript">`, a custom element such as `<script-x>`, and a `<link>` that is not a stylesheet keep theirs, as does a `<link>` whose `rel` a template tag helps write or comes after one (a `rel` inside a `{# #}` comment does not count). So does an attribute with a longer name, such as `@type` or `@method`. A `type` or `method` next to a template tag written with `-`, as in `{{- x }}`, is left as written, since dropping the type would join what the `-` trims. `H024` reports the same cases, also when the value is written without quotes or with spaces around `=`.
+- A default `type` is kept when the browser might not read it: when another `type` follows in the same tag, as in `<script type="text/javascript" type="module">`, since a browser reads the first one, and when a template tag that may write a `type` of its own follows, as in `<script type="text/javascript" {{ attrs }}>`. A template tag that is part of a value, as in `src={{ url }}` or `data-x="{{ "a > b" }}"`, does not count, and neither does text inside a string of a template tag, as in `{{ '}} type=text/javascript' }}`. A default `type` written twice, as in `type="text/javascript" type=text/javascript`, is dropped both times in one run.
+- A template comment written after the last attribute of a tag, as in `<div class="x" {# note #}>`, is kept. With a profile that has `{# #}` comments, the formatter deleted it.
+- An unquoted attribute value next to a template tag written with `-`, as in `class=x {{- suffix }}` or `class={{ c -}} x`, stays unquoted. The `-` joins the text beyond it onto the value, and quoting the value left that text outside, which changed the attribute.
+- A template tag written against an attribute or against the tag name, as in `<option value="x"{% if a %} selected{% endif %}>` or `<li{{ attrs }}>`, stays there when the attributes are spread over several lines. A line break or space was put between them, which the page then rendered.
+- `H056` no longer reads a `src` written inside a template tag, as in `<img {% if src %}class="a"{% endif %} src="a.png">`, as an empty `src` of the tag.
+
+## [1.49.3] - 2026-11-02
+
+### Bug fixes
+
+- A `{% set %}` written across lines indents the arguments of a function call inside it, as it already did for the items of a list or dict ([#2819](https://github.com/djlint/djLint/issues/2819)). Its last line stays at the level of the value when it holds part of the value, the lines after the tag are no longer one level too shallow when a bracket opened inside it closes on its last line, a bracket inside a quoted string no longer changes the indentation, and a line that goes on with a string started on the line before is no longer indented, which put spaces into the string.
+
+## [1.49.2] - 2026-11-01
+
+### Performance
+
+- Checking or linting a folder of many templates takes about half the time, most of all on Windows. A small run no longer starts worker processes, which cost more than they saved.
+- The language server answers in about a third of the time when the editor sends its settings with every request, as the VS Code extension does, and its memory no longer grows over a long session.
+- Every run starts a little faster, unless it uses `--use-gitignore`.
+- A line of many inline tags before a block tag, which a stray quote such as `"=""` can leave in a template, no longer takes minutes to format.
+- A very large template no longer formats disproportionately slower than a small one: a 1.1 MB template formats in a third of the time.
+
 ## [1.49.1] - 2026-11-01
 
 ### Bug fixes
 
-- The language server asks an editor for its settings again once a late answer arrives. An editor that took over five seconds to answer once lost its settings until it restarted the server or changed them. The findings of open documents update as soon as the answer arrives.
-- The language server keeps its settings on a `workspace/didChangeConfiguration` that holds nothing for djLint, which editors send for other servers.
-- The language server registers for `workspace/didChangeConfiguration` with editors that need it, which never sent it before, and asks for settings again when a workspace folder is added or removed.
-- `exclude` also applies to the language server from the workspace folder, as it does for `djlint <folder>`. A document in `vendor/` of a folder with no `pyproject.toml` wasn't left out.
-- The language server reads the configuration again on open and save if the editor refused to watch files, or if the settings name a `configuration` or `rules` file, which nothing watches. Without a watcher, a save updates the findings of every open document.
-- The language server survives a huge `Content-Length`, ignores a document with a URI that isn't a string, instead of losing the findings of the others, and ends the edit for a text with lone CRs on its last line.
-- Linting stdin finds what rules on blank lines report in a CRLF text, as linting a file does.
+- The language server no longer loses the settings of an editor that took over five seconds to answer, and updates the findings of open documents once the answer arrives.
+- The language server keeps its settings when the editor sends a change of settings meant for other servers.
+- The language server sees changes of settings in editors that report them only to servers that ask, and reads the settings again when a workspace folder is added or removed.
+- `exclude` applies in the language server as it does to `djlint <folder>`: a document in `vendor/` of a folder with no `pyproject.toml` was not left out.
+- The language server picks up a change of the configuration, or of a file named by `configuration` or `rules`, when a document is opened or saved, also in editors that don't watch files, and updates every open document then.
+- The language server no longer stops on some malformed messages, and formats a document with old Mac line endings (CR only) without sending an edit past its end.
+- Linting a template with Windows line endings from stdin reports what the rules on blank lines find, as linting the file does.
 - A `python_module` rule that returns a `code`, `match` or `message` that isn't a string gets a clear error.
 
 ## [1.49.0] - 2026-11-01
 
 ### Features
 
-- `djlint --lsp` runs a language server over stdio, which reports findings as you type and formats documents, with no process start for each. See [Language server](https://djlint.com/docs/integrations/#language-server).
+- `djlint --lsp` runs a language server, for findings as you type and formatting in any editor that supports LSP. See [Language server](https://djlint.com/docs/integrations/#language-server).
 - `djlint.api.is_excluded()` tells whether the configuration leaves out a file.
 
 ### Bug fixes
 
-- With `--stdin-filename`, djLint now reads stdin even if the configuration has `files`. It worked on those files instead, so an editor formatting a template rewrote them and left the template as it was.
-- `--stdin-filename` now honors `exclude`, `extend-exclude` and `--use-gitignore`: such text comes back unchanged, with no findings, as an excluded file is left out. They had no effect on stdin.
+- With `--stdin-filename`, djLint formats the text it is given even if the configuration sets `files`. It formatted those files instead, so an editor formatting a template rewrote them and left the template as it was.
+- `--stdin-filename` honors `exclude`, `extend-exclude` and `--use-gitignore`: the text of an excluded file comes back unchanged, with no findings.
 
 ## [1.48.1] - 2026-10-31
 
 ### Performance
 
-- A long run of `$` no longer makes reading a page's tags quadratic: linting a line of two hundred thousand of them before a tag went from 2.2 seconds to 0.15. Formatting such a line is still slow, for other reasons.
-- A tag's quoted attribute values are jumped over instead of read one character at a time. That makes reading tags about a tenth faster on its own, but a whole format or lint run takes about as long as before.
+- A long run of `$` before a tag no longer makes linting slow: a line of two hundred thousand of them went from 2.2 seconds to 0.15. Formatting such a line is still slow.
 
 ## [1.48.0] - 2026-10-31
 
@@ -1463,7 +1593,7 @@ Formatting <https://github.com/openedx/edx-platform> took 87 seconds in the prev
 
 ## [0.7.6] - 2022-03-14
 
-- Bug fixes [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/189)
+- Bug fixes [#189](https://github.com/djlint/djLint/issues/189), [#197](https://github.com/djlint/djLint/issues/197)
 - Added `--warn` flag to return return errors as warnings.
 
 ## [0.7.5] - 2022-02-21

@@ -1,31 +1,31 @@
 ---
 title: "Mustache Template Linter and Formatter"
-description: "djLint is a mustache template linter and a mustache template formatter! Take advantage of the pre-built profile when linting and formatting your templates with djLint."
+description: "djLint lints and formats Mustache templates. Set the handlebars profile so the rules and the formatting fit them."
 sidebar:
   label: "Mustache"
 ---
 
-djLint is a mustache template linter and a mustache template formatter! Take advantage of the pre-built profile when linting and formatting your templates with djLint.
+djLint lints and formats Mustache templates. Set the `handlebars` profile so the rules and the formatting fit them.
 
 **[What is Mustache?](https://mustache.github.io/mustache.5.html)**
 
-#### Using the Command Line
+## Using the command line
 
 ```bash
 djlint /path/to/templates --profile=handlebars
 ```
 
-#### Or, Use a Config File
+## Or, use a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="handlebars"
+profile = "handlebars"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="handlebars"
+profile = "handlebars"
 ```
 
 ```json title=".djlintrc"

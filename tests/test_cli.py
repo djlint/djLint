@@ -6,12 +6,16 @@ uv run pytest tests/test_cli.py
 from __future__ import annotations
 
 import json
+import re
+import subprocess
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import click
+import pytest
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
@@ -21,10 +25,26 @@ _CONFIGURATION_DOCS = Path("docs/src/data/configuration.json")
 _HELP_WIDTH = 80
 
 
-def test_help_snapshot_matches_docs(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("--help",), prog_name="djlint", terminal_width=_HELP_WIDTH
+def test_the_command_line_is_still_found_in_the_package() -> None:
+    import djlint  # noqa: PLC0415
+    from djlint import _cli, main, process, process_stdin  # noqa: PLC0415, PLC2701
+
+    assert (main, process, process_stdin) == (_cli.main, _cli.process, _cli.process_stdin)
+    with pytest.raises(AttributeError, match="no_such_name"):
+        _ = djlint.no_such_name
+
+
+def test_importing_the_package_leaves_the_command_line_out() -> None:
+    """Runs in a process of its own, as the tests import the command line."""
+    code = "import sys, djlint\nprint('djlint._cli' in sys.modules)\n"
+    done = subprocess.run(  # noqa: S603
+        (sys.executable, "-c", code), capture_output=True, check=True, encoding="utf-8"
     )
+    assert done.stdout.strip() == "False"
+
+
+def test_help_snapshot_matches_docs(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, ("--help",), prog_name="djlint", terminal_width=_HELP_WIDTH)
     assert result.exit_code == 0
 
     snapshot = _CLI_DOCS.read_text(encoding="utf-8").rstrip("\n")
@@ -121,6 +141,23 @@ def test_documented_options_exist() -> None:
     }
 
     assert documented <= flags, (
-        f"{_CONFIGURATION_DOCS} documents flags djLint does not have: "
-        f"{sorted(documented - flags)}"
+        f"{_CONFIGURATION_DOCS} documents flags djLint does not have: {sorted(documented - flags)}"
     )
+
+
+def test_help_puts_every_option_in_a_section(runner: CliRunner) -> None:
+    """An option missing from the sections is listed under "Other"."""
+    result = runner.invoke(djlint, ("--help",), prog_name="djlint", terminal_width=_HELP_WIDTH)
+
+    other = result.output.split("\nOther:\n", 1)[1]
+    options = re.findall(r"^  (-[^\s,]+(?:, --\S+)?)", other, re.MULTILINE)
+
+    assert options == ["--version", "-h, --help"]
+
+
+def test_a_usage_error_points_to_help(runner: CliRunner) -> None:
+    result = runner.invoke(djlint, (), prog_name="djlint")
+
+    assert result.exit_code == 2
+    # Older versions of click name the first help option, newer ones the long one.
+    assert re.search(r"Try 'djlint (?:-h|--help)' for help\.", result.output)

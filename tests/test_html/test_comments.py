@@ -21,14 +21,8 @@ test_data = [
         ("<div>\n    <!-- asdf--><!--\n multi\nline\ncomment-->\n</div>\n"),
         id="comments_tag",
     ),
-    pytest.param(
-        ("<!-- hello -->\n123\n"), ("<!-- hello -->\n123\n"), id="before_text"
-    ),
-    pytest.param(
-        ("<? hello ?>\n<!- world ->\n"),
-        ("<? hello ?>\n<!- world ->\n"),
-        id="bogus",
-    ),
+    pytest.param(("<!-- hello -->\n123\n"), ("<!-- hello -->\n123\n"), id="before_text"),
+    pytest.param(("<? hello ?>\n<!- world ->\n"), ("<? hello ?>\n<!- world ->\n"), id="bogus"),
     pytest.param(
         (
             "<!DOCTYPE html>\n"

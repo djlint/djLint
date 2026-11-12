@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
@@ -31,13 +31,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert result.exit_code == 0
 
     result = runner.invoke(
-        djlint,
-        (
-            "tests/test_config/test_pragmas/html_two.html",
-            "--check",
-            "--profile",
-            "django",
-        ),
+        djlint, ("tests/test_config/test_pragmas/html_two.html", "--check", "--profile", "django")
     )
     assert (
         """ {# djlint:on #}
@@ -54,12 +48,7 @@ def test_require_pragma(runner: CliRunner) -> None:
 
     result = runner.invoke(
         djlint,
-        (
-            "tests/test_config/test_pragmas/html_three.html",
-            "--check",
-            "--profile",
-            "handlebars",
-        ),
+        ("tests/test_config/test_pragmas/html_three.html", "--check", "--profile", "handlebars"),
     )
 
     assert (
@@ -75,13 +64,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert result.exit_code == 1
 
     result = runner.invoke(
-        djlint,
-        (
-            "tests/test_config/test_pragmas/html_four.html",
-            "--check",
-            "--profile",
-            "golang",
-        ),
+        djlint, ("tests/test_config/test_pragmas/html_four.html", "--check", "--profile", "golang")
     )
 
     assert (
@@ -102,9 +85,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert """1 file would be updated.""" in result.output
     assert result.exit_code == 1
 
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_pragmas/html_five.html", "--check")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_pragmas/html_five.html", "--check"))
     assert (
         """ <!-- djlint:on -->
 -{% extends "nothing.html" %}{% load stuff %}{% load stuff 2 %}{% include "html_two.html" %}<div></div>
@@ -119,13 +100,7 @@ def test_require_pragma(runner: CliRunner) -> None:
     assert result.exit_code == 1
 
     result = runner.invoke(
-        djlint,
-        (
-            "tests/test_config/test_pragmas/html_six.html",
-            "--check",
-            "--profile",
-            "django",
-        ),
+        djlint, ("tests/test_config/test_pragmas/html_six.html", "--check", "--profile", "django")
     )
     assert (
         """ {% comment %} djlint:on {% endcomment %}

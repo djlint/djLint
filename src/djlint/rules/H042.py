@@ -17,6 +17,7 @@ import regex as re
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     compile_pattern,
+    ignored_block_spans,
     inside_ignored_linter_block,
     inside_ignored_rule,
     overlaps_ignored_block,
@@ -99,10 +100,7 @@ def _can_check(masked: str) -> bool:
     """Whether every template construct is unable to emit an id."""
     if "{{" in masked:
         return False
-    return all(
-        m.group(1) in _TAGS_THAT_CANNOT_RENDER_AN_ID
-        for m in _TAG_NAME.finditer(masked)
-    )
+    return all(m.group(1) in _TAGS_THAT_CANNOT_RENDER_AN_ID for m in _TAG_NAME.finditer(masked))
 
 
 def _holds_the_labelled_control(tokens: Iterable[TagToken]) -> bool:
@@ -113,11 +111,7 @@ def _holds_the_labelled_control(tokens: Iterable[TagToken]) -> bool:
     source is read, so a control that is commented out still says the
     file is about a form and its label is checked.
     """
-    return any(
-        token.name.lower() in _LABELABLE_ELEMENTS
-        for token in tokens
-        if not token.closing
-    )
+    return any(token.name.lower() in _LABELABLE_ELEMENTS for token in tokens if not token.closing)
 
 
 def _attributes(html: str, token: TagToken) -> tuple[tuple[str, str], ...]:
@@ -130,13 +124,9 @@ def _attributes(html: str, token: TagToken) -> tuple[tuple[str, str], ...]:
     """
     return tuple(
         (match.group("name").lower(), unescape(value))
-        for match in _ATTR_PATTERN.finditer(
-            html[token.name_end : token.attributes_end]
-        )
+        for match in _ATTR_PATTERN.finditer(html[token.name_end : token.attributes_end])
         if match.group("name")
-        for value in (
-            match.group("dq") or match.group("sq") or match.group("uq") or "",
-        )
+        for value in (match.group("dq") or match.group("sq") or match.group("uq") or "",)
     )
 
 
@@ -147,14 +137,7 @@ def _masked(config: Config, html: str) -> str:
     characters inside them would poison the tag tokenizer for the rest of
     the file.
     """
-    spans = sorted(
-        match.span()
-        for pattern in (
-            config.ignored_blocks_pattern,
-            config.ignored_inline_blocks_ix_pattern,
-        )
-        for match in pattern.finditer(html)
-    )
+    spans = sorted(ignored_block_spans(config, html))
     if not spans:
         return html
 

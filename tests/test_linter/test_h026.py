@@ -72,21 +72,15 @@ test_data = [
     ),
     pytest.param(('<asdf {% class="" %}></asdf>'), ([]), id="class in tag"),
     pytest.param(
-        ("<div x-id-y></div><div id-y></div><div x-id></div>"),
-        ([]),
-        id="prefix and suffix",
+        ("<div x-id-y></div><div id-y></div><div x-id></div>"), ([]), id="prefix and suffix"
     ),
     pytest.param(
-        (
-            '<div x-id-y=""></div><div id-y=""></div><div x-id=""></div><div data-id=""></div>'
-        ),
+        ('<div x-id-y=""></div><div id-y=""></div><div x-id=""></div><div data-id=""></div>'),
         ([]),
         id="prefix and suffix quoted",
     ),
     pytest.param(
-        (
-            '<input type="number" name="account_id" placeholder="enter account ID here" />'
-        ),
+        ('<input type="number" name="account_id" placeholder="enter account ID here" />'),
         ([]),
         id="id text inside quoted attributes",
     ),
@@ -136,9 +130,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 

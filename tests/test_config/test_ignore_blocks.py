@@ -28,7 +28,7 @@ test_data = [
         ("{% raw%} <div><img/></div>  {%endraw %}"),
         ("{% raw %}\n<div>\n    <img />\n</div>\n{% endraw %}\n"),
         ({"ignore_blocks": "raw"}),
-        id="ignore_raw",
+        id="ignore_raw_with_html_inside",
     ),
     pytest.param(
         ("{% raw%}<div></div>{%endraw %}"),
@@ -50,13 +50,7 @@ test_data = [
     ),
     pytest.param(
         ("<section>\n{% example %}\n<p>test</p>\n{% endexample %}\n</section>"),
-        (
-            "<section>\n"
-            "    {% example %}\n"
-            "    <p>test</p>\n"
-            "    {% endexample %}\n"
-            "</section>\n"
-        ),
+        ("<section>\n    {% example %}\n    <p>test</p>\n    {% endexample %}\n</section>\n"),
         ({"ignore_blocks": "example"}),
         id="ignore_custom_block_indented",
     ),

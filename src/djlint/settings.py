@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import tomllib
 from fnmatch import fnmatch
+from functools import cache
 from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, final
@@ -12,13 +13,15 @@ from typing import TYPE_CHECKING, final
 import regex as re
 import yaml
 from click import BadParameter, UsageError, echo, style
-from pathspec import PathSpec
 
 from djlint.const import (
     HTML_TAG_NAMES,
     HTML_VOID_ELEMENTS,
+    QUOTED_ATTRIBUTE_VALUE,
     SKIP_TEMPLATE_TAG,
+    TAG_START,
     TEMPLATE_TAG_NAME,
+    TEMPLATE_TAG_WHOLE,
 )
 from djlint.helpers import (
     RE_FLAGS_IMSX,
@@ -27,38 +30,23 @@ from djlint.helpers import (
     RE_FLAGS_IX,
     YAML_FRONT_MATTER,
     compile_pattern,
+    compile_rule_pattern,
     split_option_list,
 )
 from djlint.lint import build_flags
-
-try:
-    from pathspec.patterns.gitignore import GitIgnorePatternError
-except ImportError:
-    from pathspec.patterns.gitwildmatch import (  # type: ignore[attr-defined]
-        GitWildMatchPatternError as GitIgnorePatternError,
-    )
-
-    _GITIGNORE_PATTERN = "gitwildmatch"
-else:
-    _GITIGNORE_PATTERN = "gitignore"
-
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
     from typing import Any, Final
 
-    from pathspec import Pattern
+    from pathspec import PathSpec, Pattern
     from typing_extensions import TypeVar
 
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
 
 
-_JS_JSON_OBJECT_PATTERN: Final = compile_pattern(
-    r"^\s*\{(?![{%]).*\}\s*$", RE_FLAGS_IX
-)
-_JS_JSON_STRING_PATTERN: Final = compile_pattern(
-    r'["\']([^"\']*)["\']', RE_FLAGS_IX
-)
+_JS_JSON_OBJECT_PATTERN: Final = compile_pattern(r"^\s*\{(?![{%]).*\}\s*$", RE_FLAGS_IX)
+_JS_JSON_STRING_PATTERN: Final = compile_pattern(r'["\']([^"\']*)["\']', RE_FLAGS_IX)
 _JS_JSON_PROPERTY_PATTERN: Final = compile_pattern(
     r"""
     (?:^|[,{]\s*)
@@ -99,7 +87,22 @@ def find_project_root(src: Path) -> Path:
 
 
 def load_gitignore(root: Path) -> PathSpec[Pattern]:
-    """Search upstream for a .gitignore file."""
+    """Search upstream for a .gitignore file.
+
+    pathspec is imported here, as most runs don't read a gitignore and it
+    takes as long to import as building a Config.
+    """
+    from pathspec import PathSpec  # noqa: PLC0415
+
+    try:
+        from pathspec.patterns.gitignore import GitIgnorePatternError  # noqa: PLC0415
+    except ImportError:
+        from pathspec.patterns.gitwildmatch import GitWildMatchPatternError as GitIgnorePatternError  # type: ignore[attr-defined] # noqa: PLC0415
+
+        pattern = "gitwildmatch"
+    else:
+        pattern = "gitignore"
+
     gitignore = root / ".gitignore"
     if gitignore.is_file():
         with gitignore.open(encoding="utf-8") as this_file:
@@ -108,7 +111,7 @@ def load_gitignore(root: Path) -> PathSpec[Pattern]:
         git_lines = []
 
     try:
-        return PathSpec.from_lines(_GITIGNORE_PATTERN, git_lines)
+        return PathSpec.from_lines(pattern, git_lines)
 
     except GitIgnorePatternError as e:
         msg = f"Could not parse {gitignore}: {e}"
@@ -189,16 +192,12 @@ def load_editorconfig(root: Path, extension: str) -> dict[str, int]:
         return result
 
     section_applies = False
-    for raw_line in path.read_text(
-        encoding="utf-8", errors="ignore"
-    ).splitlines():
+    for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         line = raw_line.strip()
         if not line or line.startswith(("#", ";")):
             continue
         if line.startswith("[") and line.endswith("]"):
-            section_applies = _editorconfig_glob_matches_html(
-                line[1:-1], extension
-            )
+            section_applies = _editorconfig_glob_matches_html(line[1:-1], extension)
             continue
         key, sep, value = line.partition("=")
         if sep and section_applies:
@@ -235,121 +234,147 @@ def load_config_file(filepath: Path) -> Any:
     return load_djlintrc_config(filepath)
 
 
+def _unreadable_config(path: Path | str, error: Exception) -> UsageError:
+    """The error for a configuration file that cannot be read.
+
+    Running on with the defaults instead would check the templates against
+    rules nobody chose, and could pass a run that should fail. The reason is
+    kept on one line: a YAML error spans several, and an editor that shows
+    the last line of a failure would show only the position.
+    """
+    reason = " ".join(str(error).split())
+    return UsageError(f"Could not read {path}: {reason}")
+
+
+def _settings_table(content: Any, path: Path | str) -> dict[str, Any]:
+    """The settings a file holds, which have to map names to values."""
+    if not isinstance(content, dict):
+        msg = f"Could not read {path}: its djLint settings are not a table of names and values."
+        raise UsageError(msg)
+    return content
+
+
 def _named_settings(config: Path | None) -> dict[str, Any]:
     """Settings from the file `--configuration` names."""
     if not config:
         return {}
 
     try:
-        return dict(load_config_file(config))
+        content = load_config_file(config)
     except Exception as error:
-        echo(
-            style(f"Failed to load config file {config}. {error}", fg="red"),
-            err=True,
-        )
-        return {}
+        raise _unreadable_config(config, error) from None
+    return _settings_table(content, config)
 
 
-def _project_settings(src: Path) -> dict[str, Any]:
-    """Settings from the project's own file, the first one that holds any."""
+def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
+    """Settings from the project's own file, the first one that holds any.
+
+    The name of that file comes with them, for the messages about a value
+    it sets.
+    """
     if pyproject_file := find_pyproject(src):
         try:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
-            echo(
-                style(f"Failed to load pyproject.toml file. {error}", fg="red"),
-                err=True,
-            )
-        else:
-            if content:
-                return dict(content)
+            raise _unreadable_config(pyproject_file.name, error) from None
+        if settings := _settings_table(content, pyproject_file.name):
+            return settings, pyproject_file.name
 
     if djlint_toml_file := find_djlint_toml(src):
         try:
-            return dict(load_djlint_toml_config(djlint_toml_file))
+            content = load_djlint_toml_config(djlint_toml_file)
         except Exception as error:
-            echo(
-                style(
-                    f"Failed to load {djlint_toml_file.name} file. {error}",
-                    fg="red",
-                ),
-                err=True,
-            )
+            raise _unreadable_config(djlint_toml_file.name, error) from None
+        return _settings_table(content, djlint_toml_file.name), djlint_toml_file.name
 
-    elif djlintrc_file := find_djlintrc(src):
+    if djlintrc_file := find_djlintrc(src):
         try:
-            return dict(load_djlintrc_config(djlintrc_file))
+            content = load_djlintrc_config(djlintrc_file)
         except Exception as error:
-            echo(
-                style(f"Failed to load .djlintrc file. {error}", fg="red"),
-                err=True,
-            )
+            raise _unreadable_config(djlintrc_file.name, error) from None
+        return _settings_table(content, djlintrc_file.name), djlintrc_file.name
 
-    return {}
+    return {}, ""
+
+
+@cache
+def _warn_once(message: str) -> None:
+    """Warn about a setting once per run.
+
+    The language server builds a Config for every change to a file, and
+    repeating the same warning each time would only fill its log.
+    """
+    echo(style(f"Warning: {message}", fg="yellow"), err=True)
 
 
 def load_project_settings(
     src: Path, config: Path | None, *, prefer_configuration: bool = False
-) -> dict[str, Any]:
-    """Load djlint config.
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """Load djlint config, and the file each setting was read from.
 
     `--configuration` names a global file, so the project's own file wins
     where the two set the same thing. `--prefer-configuration` turns that
     around, which is what naming a file on the command line usually means.
     """
     named = _named_settings(config)
-    project = _project_settings(src)
+    project, project_file = _project_settings(src)
+    named_sources = dict.fromkeys(named, str(config))
+    project_sources = dict.fromkeys(project, project_file)
 
     if prefer_configuration:
-        return {**project, **named}
-    return {**named, **project}
+        return {**project, **named}, {**project_sources, **named_sources}
+    return {**named, **project}, {**named_sources, **project_sources}
 
 
-def validate_rules(
-    rules: Iterable[_TMappingStrAny],
-) -> Iterator[_TMappingStrAny]:
+def validate_rules(rules: Iterable[_TMappingStrAny]) -> Iterator[_TMappingStrAny]:
     """Validate a list of linter rules. Returns valid rules."""
     for rule in rules:
         warning = False
         name = rule["rule"].get("name", "undefined")
         if "name" not in rule["rule"]:
             warning = True
-            echo(
-                style("Warning: A rule is missing a name! 😢", fg="red"),
-                err=True,
-            )
-        if (
-            "patterns" not in rule["rule"]
-            and "python_module" not in rule["rule"]
-        ):
+            echo(style("Warning: A rule is missing a name! 😢", fg="red"), err=True)
+        if "patterns" not in rule["rule"] and "python_module" not in rule["rule"]:
             warning = True
             echo(
                 style(
-                    f"Warning: Rule {name} is missing a pattern or a python_module! 😢",
-                    fg="red",
+                    f"Warning: Rule {name} is missing a pattern or a python_module! 😢", fg="red"
                 ),
                 err=True,
             )
         if "message" not in rule["rule"]:
             warning = True
-            echo(
-                style(
-                    f"Warning: Rule {name} is missing a message! 😢", fg="red"
-                ),
-                err=True,
-            )
+            echo(style(f"Warning: Rule {name} is missing a message! 😢", fg="red"), err=True)
 
         if not warning:
             yield rule
 
 
-def load_custom_rules(rules_file: Path | None) -> Any:
-    """Load custom linter rules from a .djlint_rules.yaml file."""
-    if rules_file:
-        with rules_file.open("rb") as f:
-            return yaml.safe_load(f)
+# libyaml reads the bundled rules six times as fast, and comes with most
+# wheels. A project's rules keep the Python loader: libyaml refuses a tab at
+# the start of a block scalar, which a rules file loaded with before.
+_YAML_LOADER: Final = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 
-    return ()
+
+def load_custom_rules(rules_file: Path | None) -> Any:
+    """Load custom linter rules from a .djlint_rules.yaml file.
+
+    An empty file holds no rules.
+    """
+    if not rules_file:
+        return ()
+
+    try:
+        with rules_file.open("rb") as f:
+            rules = yaml.safe_load(f)
+    except (OSError, yaml.YAMLError) as error:
+        raise _unreadable_config(rules_file, error) from None
+    if rules is None:
+        return ()
+    if not isinstance(rules, list):
+        msg = f"Could not read {rules_file}: it does not hold a list of rules."
+        raise UsageError(msg)
+    return rules
 
 
 def _as_comma_separated(value: Any) -> Any:
@@ -360,11 +385,7 @@ def _as_comma_separated(value: Any) -> Any:
 
 
 def _build_block_alternation(tags: Iterable[str]) -> str:
-    return "|".join(
-        sorted(
-            chain.from_iterable((rf"{tag}\b", rf"end{tag}\b") for tag in tags)
-        )
-    )
+    return "|".join(sorted(chain.from_iterable((rf"{tag}\b", rf"end{tag}\b") for tag in tags)))
 
 
 def build_custom_blocks(custom_blocks: str | None) -> str | None:
@@ -419,15 +440,14 @@ _CODES_EXCLUDED_BY_PROFILE: Final[dict[str, tuple[str, ...]]] = {
     "askama": ("D", "J", "N", "M"),
     "tera": ("D", "J", "N", "M"),
     "liquid": ("D", "J", "N", "M"),
+    "mako": ("D", "J", "T", "N", "M"),
     "nunjucks": ("D", "J", "M"),
     "handlebars": ("D", "J", "N"),
     "golang": ("D", "J", "N", "M"),
     "angular": ("D", "J", "H012", "H026", "H028"),
 }
 
-_PROFILES: Final[frozenset[str]] = frozenset(_CODES_EXCLUDED_BY_PROFILE) | {
-    "all"
-}
+_PROFILES: Final[frozenset[str]] = frozenset(_CODES_EXCLUDED_BY_PROFILE) | {"all"}
 
 _DEFAULT_EXCLUDE: Final = r"""
     __pypackages__
@@ -539,9 +559,7 @@ _ATTRIBUTE_X_PATTERN: Final = compile_pattern(_ATTRIBUTE_PATTERN, re.X)
 _TEMPLATE_TAGS: Final = r"""
     {{(?:(?!}}|{{).)*}}|{%(?:(?!%}|{%).)*%}
 """
-_TEMPLATE_TAGS_IMX_PATTERN: Final = compile_pattern(
-    _TEMPLATE_TAGS, RE_FLAGS_IMX
-)
+_TEMPLATE_TAGS_IMX_PATTERN: Final = compile_pattern(_TEMPLATE_TAGS, RE_FLAGS_IMX)
 
 _TAG_UNINDENT_LINE_TEMPLATE: Final = r"""
       (?:\{%[-+]?[ ]*(?:BRANCHES))
@@ -588,6 +606,11 @@ _INDENT_TEMPLATE_TAGS: Final = r""" (?:if
     | asyncEach
     | asyncAll
     | embed
+    | apply
+    | sandbox
+    | guard
+    | ifequal
+    | ifnotequal
     | block(?!trans|translate)
     | spaceless
     | compress
@@ -618,6 +641,11 @@ _START_TEMPLATE_TAGS: Final = r"""
     | ifchanged
     | unless
     | embed
+    | apply
+    | sandbox
+    | guard
+    | ifequal
+    | ifnotequal
     | for
     | asyncEach
     | asyncAll
@@ -685,6 +713,16 @@ _BREAK_TEMPLATE_TAGS: Final = r"""
     | endwith
     | autoescape
     | endautoescape
+    | apply
+    | endapply
+    | sandbox
+    | endsandbox
+    | guard
+    | endguard
+    | ifequal
+    | endifequal
+    | ifnotequal
+    | endifnotequal
     | filter
     | endfilter
     | elif
@@ -851,9 +889,7 @@ def _build_ignored_inline_blocks(*, for_linting: bool) -> str:
 
 
 _IGNORED_INLINE_BLOCKS: Final = _build_ignored_inline_blocks(for_linting=False)
-_LINT_IGNORED_INLINE_BLOCKS: Final = _build_ignored_inline_blocks(
-    for_linting=True
-)
+_LINT_IGNORED_INLINE_BLOCKS: Final = _build_ignored_inline_blocks(for_linting=True)
 
 _IGNORED_BLOCKS_TAIL: Final = (
     r"""
@@ -892,7 +928,11 @@ _TEMPLATE_NAMED_OPENING_TAG: Final = (
     rf"<(?:{TEMPLATE_TAG_NAME})(?!(?:[^>\"']|\"[^\"]*\"|'[^']*')*?/>)"
 )
 
-_RAW_TEXT_OPENING_TAG: Final = r"""(?:\"[^\"]*\"|'[^']*'|[^>\"'])*>"""
+# A template tag is read whole, so a ">" in one is not the tag's end, and
+# another tag's start ends one that was never closed.
+_RAW_TEXT_OPENING_TAG: Final = (
+    rf"""(?:{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|(?!{TAG_START})[^>\"'{{]|\{{)*+>"""
+)
 
 
 def _build_ignored_blocks(*, for_linting: bool) -> str:
@@ -951,12 +991,8 @@ _RAW_TEXT_CLOSING_PATTERN: Final = compile_pattern(
     """,
     RE_FLAGS_IX,
 )
-_RAW_TEXT_INLINE_IMSX_PATTERN: Final = compile_pattern(
-    _RAW_TEXT_INLINE, RE_FLAGS_IMSX
-)
-_RAW_TEXT_INLINE_IX_PATTERN: Final = compile_pattern(
-    _RAW_TEXT_INLINE, RE_FLAGS_IX
-)
+_RAW_TEXT_INLINE_IMSX_PATTERN: Final = compile_pattern(_RAW_TEXT_INLINE, RE_FLAGS_IMSX)
+_RAW_TEXT_INLINE_IX_PATTERN: Final = compile_pattern(_RAW_TEXT_INLINE, RE_FLAGS_IX)
 _IGNORED_BLOCK_OPENING_PATTERN: Final = compile_pattern(
     r"""
       <style
@@ -993,12 +1029,16 @@ _IGNORED_BLOCK_CLOSING_AT_START: Final = r"""
       (?:(?!<pre\b|<textarea\b).)*?-->
     | (?:(?!{\#).)*\#} # lines that have a #}, but not a {#
 """
+# An endcomment written right after "djlint:off" closes nothing. That is
+# looked for behind the tag once it is found: looked for first, a lookbehind
+# of no fixed length was tried from every position of the line, each time
+# back to its start, which took quadratic time on a long one.
 _IGNORED_BLOCK_CLOSING_AFTER: Final = r"""
       </pre
     | </textarea
     | {%[ ]*endfilter(?:(?!%}).)*?%}
     | {\#\s*djlint\:\s*on\s*\#}
-    | (?<!djlint:off\s*?){%[ ]+?endcomment[ ]+?%}
+    | {%[ ]+?endcomment[ ]+?%}(?<!djlint:off\s*?{%[ ]+endcomment[ ]+%})
     | {{!--\s*djlint\:on\s*--}}
     | {{-?\s*/\*\s*djlint\:on\s*\*/\s*-?}}
     | {%[ ]*endblocktrans(?:late)?(?:(?!%}).)*?%}
@@ -1014,8 +1054,7 @@ _IGNORED_BLOCK_CLOSING_AT_START_PATTERN: Final = compile_pattern(
     _IGNORED_BLOCK_CLOSING_AT_START, RE_FLAGS_IX
 )
 _IGNORED_BLOCK_CLOSING_ANYWHERE_PATTERN: Final = compile_pattern(
-    _IGNORED_BLOCK_CLOSING_BEFORE + "|" + _IGNORED_BLOCK_CLOSING_AFTER,
-    RE_FLAGS_IX,
+    _IGNORED_BLOCK_CLOSING_BEFORE + "|" + _IGNORED_BLOCK_CLOSING_AFTER, RE_FLAGS_IX
 )
 _IGNORED_BLOCKS_PATTERN: Final = compile_pattern(
     _IGNORED_BLOCKS + "|" + SKIP_TEMPLATE_TAG, RE_FLAGS_IMSX
@@ -1065,9 +1104,7 @@ _IGNORED_LINTER_BLOCKS_PATTERN: Final = compile_pattern(
     """,
     RE_FLAGS_IMSX,
 )
-_UNFORMATTED_BLOCKS_COARSE_PATTERN: Final = compile_pattern(
-    r"djlint\:\s*off", RE_FLAGS_IMSX
-)
+_UNFORMATTED_BLOCKS_COARSE_PATTERN: Final = compile_pattern(r"djlint\:\s*off", RE_FLAGS_IMSX)
 _UNFORMATTED_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
     # html comment
@@ -1354,26 +1391,22 @@ class Config:
         else:
             start = Path(stdin_filename).resolve().parent
         self.project_root = find_project_root(start)
-        djlint_settings = load_project_settings(
-            self.project_root,
-            configuration,
-            prefer_configuration=prefer_configuration,
+        djlint_settings, setting_sources = load_project_settings(
+            self.project_root, configuration, prefer_configuration=prefer_configuration
         )
+        if prefer_configuration and configuration is None:
+            _warn_once("--prefer-configuration has no effect without --configuration.")
 
         def setting_int(key: str, default: int) -> int:
             """Read an integer option from the config file."""
             try:
                 return int(djlint_settings.get(key, default))
-            except ValueError:
-                echo(
-                    style(
-                        f"Error: Invalid pyproject.toml {key} value"
-                        f" {djlint_settings[key]}",
-                        fg="red",
-                    ),
-                    err=True,
+            except (TypeError, ValueError):
+                msg = (
+                    f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
+                    " It must be a whole number."
                 )
-                return default
+                raise UsageError(msg) from None
 
         self.reformat = reformat
         self.check = check
@@ -1384,52 +1417,34 @@ class Config:
         self.statistics = statistics
         self.stdin_filename = stdin_filename
 
-        self.extension = str(
-            extension or djlint_settings.get("extension", "html")
-        )
+        self.extension = str(extension or djlint_settings.get("extension", "html"))
         self.quiet = quiet or djlint_settings.get("quiet", False)
         self.require_pragma = (
-            require_pragma
-            or str(djlint_settings.get("require_pragma", "false")).lower()
-            == "true"
+            require_pragma or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
         )
-        self.preserve_leading_space = (
-            preserve_leading_space
-            or djlint_settings.get("preserve_leading_space", False)
+        self.preserve_leading_space = preserve_leading_space or djlint_settings.get(
+            "preserve_leading_space", False
         )
         self.preserve_blank_lines = preserve_blank_lines or djlint_settings.get(
             "preserve_blank_lines", False
         )
-        self.preserve_class_newlines = (
-            preserve_class_newlines
-            or djlint_settings.get("preserve_class_newlines", False)
+        self.preserve_class_newlines = preserve_class_newlines or djlint_settings.get(
+            "preserve_class_newlines", False
         )
         self.format_js = format_js or djlint_settings.get("format_js", False)
         self.format_css = format_css or djlint_settings.get("format_css", False)
-        self.ignore_case = ignore_case or djlint_settings.get(
-            "ignore_case", False
-        )
-        self.close_void_tags = close_void_tags or djlint_settings.get(
-            "close_void_tags", False
-        )
+        self.ignore_case = ignore_case or djlint_settings.get("ignore_case", False)
+        self.close_void_tags = close_void_tags or djlint_settings.get("close_void_tags", False)
         self.no_line_after_yaml = no_line_after_yaml or djlint_settings.get(
             "no_line_after_yaml", False
         )
         self.no_indent_inner_html = no_indent_inner_html or djlint_settings.get(
             "no_indent_inner_html", False
         )
-        self.sort_attributes = sort_attributes or djlint_settings.get(
-            "sort_attributes", False
-        )
-        self.sort_load_tags = sort_load_tags or djlint_settings.get(
-            "sort_load_tags", False
-        )
-        self.name_endblocks = name_endblocks or djlint_settings.get(
-            "name_endblocks", False
-        )
-        selected_profile = str(
-            profile or djlint_settings.get("profile", "")
-        ).lower()
+        self.sort_attributes = sort_attributes or djlint_settings.get("sort_attributes", False)
+        self.sort_load_tags = sort_load_tags or djlint_settings.get("sort_load_tags", False)
+        self.name_endblocks = name_endblocks or djlint_settings.get("name_endblocks", False)
+        selected_profile = str(profile or djlint_settings.get("profile", "")).lower()
         expressions_are_rust = selected_profile == "askama"
         self.no_set_formatting = (
             no_set_formatting
@@ -1444,29 +1459,22 @@ class Config:
         self.no_entity_formatting = no_entity_formatting or djlint_settings.get(
             "no_entity_formatting", False
         )
-        self.keep_br_inline = keep_br_inline or djlint_settings.get(
-            "keep_br_inline", False
-        )
-        self.quote_style = str(
-            quote_style or djlint_settings.get("quote_style", "double")
-        ).lower()
+        self.keep_br_inline = keep_br_inline or djlint_settings.get("keep_br_inline", False)
+        self.quote_style = str(quote_style or djlint_settings.get("quote_style", "double")).lower()
         if self.quote_style not in _QUOTE_STYLES:
             msg = (
                 f"Invalid quote style {self.quote_style!r}."
                 f" Choose from {', '.join(sorted(_QUOTE_STYLES))}."
             )
             raise BadParameter(msg, param_hint="'--quote-style'")
-        self.format_attribute_template_tags = (
-            format_attribute_template_tags
-            or djlint_settings.get("format_attribute_template_tags", False)
+        self.format_attribute_template_tags = format_attribute_template_tags or djlint_settings.get(
+            "format_attribute_template_tags", False
         )
-        self.single_attribute_per_line = (
-            single_attribute_per_line
-            or djlint_settings.get("single_attribute_per_line", False)
+        self.single_attribute_per_line = single_attribute_per_line or djlint_settings.get(
+            "single_attribute_per_line", False
         )
-        self.format_attribute_js_json = (
-            format_attribute_js_json
-            or djlint_settings.get("format_attribute_js_json", False)
+        self.format_attribute_js_json = format_attribute_js_json or djlint_settings.get(
+            "format_attribute_js_json", False
         )
         self.format_attribute_js_json_min_props = (
             format_attribute_js_json_min_props
@@ -1484,27 +1492,17 @@ class Config:
         self.blank_line_after_tag = blank_line_after_tag or _as_comma_separated(
             djlint_settings.get("blank_line_after_tag", None)
         )
-        self.blank_line_before_tag = (
-            blank_line_before_tag
-            or _as_comma_separated(
-                djlint_settings.get("blank_line_before_tag", None)
-            )
+        self.blank_line_before_tag = blank_line_before_tag or _as_comma_separated(
+            djlint_settings.get("blank_line_before_tag", None)
         )
-        self.line_break_after_multiline_tag = (
-            line_break_after_multiline_tag
-            or djlint_settings.get("line_break_after_multiline_tag", False)
+        self.line_break_after_multiline_tag = line_break_after_multiline_tag or djlint_settings.get(
+            "line_break_after_multiline_tag", False
         )
-        self.js_config = _beautifier_config(
-            djlint_settings.get("js"), indent_size=indent_js
-        )
-        self.css_config = _beautifier_config(
-            djlint_settings.get("css"), indent_size=indent_css
-        )
+        self.js_config = _beautifier_config(djlint_settings.get("js"), indent_size=indent_js)
+        self.css_config = _beautifier_config(djlint_settings.get("css"), indent_size=indent_css)
 
         editorconfig = load_editorconfig(self.project_root, self.extension)
-        indent = indent or setting_int(
-            "indent", editorconfig.get("indent_size", 4)
-        )
+        indent = indent or setting_int("indent", editorconfig.get("indent_size", 4))
         self.indent_size = indent
         self.indent = indent * " "
         self.max_line_length = max_line_length or setting_int(
@@ -1516,16 +1514,13 @@ class Config:
             else setting_int("max_attribute_length", 70)
         )
         self.max_blank_lines = (
-            max_blank_lines
-            if max_blank_lines is not None
-            else setting_int("max_blank_lines", 0)
+            max_blank_lines if max_blank_lines is not None else setting_int("max_blank_lines", 0)
         )
+        if self.preserve_blank_lines and self.max_blank_lines > 0:
+            _warn_once("max_blank_lines has no effect with preserve_blank_lines.")
 
         exclude = build_exclude(
-            exclude
-            or _as_comma_separated(
-                djlint_settings.get("exclude", _DEFAULT_EXCLUDE)
-            )
+            exclude or _as_comma_separated(djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
         )
         extend_exclude = extend_exclude or _as_comma_separated(
             djlint_settings.get("extend_exclude", "")
@@ -1533,9 +1528,7 @@ class Config:
         if extend_exclude:
             exclude += r" | " + build_exclude(extend_exclude)
         self.exclude = exclude
-        self.exclude_pattern = compile_pattern(
-            rf"(?:^|/)(?:{exclude})(?=$|/|(?<=/))", re.X
-        )
+        self.exclude_pattern = compile_pattern(rf"(?:^|/)(?:{exclude})(?=$|/|(?<=/))", re.X)
 
         self.files = djlint_settings.get("files", None)
         self.stdin = (src == "-" if stdin is None else stdin) and (
@@ -1544,10 +1537,8 @@ class Config:
         self.use_gitignore = (
             use_gitignore or bool(djlint_settings.get("use_gitignore", False))
         ) and (not self.stdin or stdin_filename is not None)
-        self.gitignore = (
-            load_gitignore(self.project_root)
-            if self.use_gitignore
-            else PathSpec([])
+        self.gitignore: PathSpec[Pattern] | None = (
+            load_gitignore(self.project_root) if self.use_gitignore else None
         )
         self.allow_empty_input = allow_empty_input or bool(
             djlint_settings.get("allow_empty_input", False)
@@ -1556,25 +1547,14 @@ class Config:
         self.has_profile = bool(selected_profile)
         self.profile = selected_profile or "all"
         if self.profile not in _PROFILES:
-            msg = (
-                f"Invalid profile {self.profile!r}."
-                f" Choose from {', '.join(sorted(_PROFILES))}."
-            )
+            msg = f"Invalid profile {self.profile!r}. Choose from {', '.join(sorted(_PROFILES))}."
             raise BadParameter(msg, param_hint="'--profile'")
-        profile_codes = _CODES_EXCLUDED_BY_PROFILE.get(
-            selected_profile or "html", ()
-        )
-        self.ignore = str(
-            ignore or _as_comma_separated(djlint_settings.get("ignore", ""))
-        )
-        self.include = str(
-            include or _as_comma_separated(djlint_settings.get("include", ""))
-        )
+        profile_codes = _CODES_EXCLUDED_BY_PROFILE.get(selected_profile or "html", ())
+        self.ignore = str(ignore or _as_comma_separated(djlint_settings.get("ignore", "")))
+        self.include = str(include or _as_comma_separated(djlint_settings.get("include", "")))
         with (Path(__file__).parent / "rules.yaml").open("rb") as f:
-            default_rules = yaml.safe_load(f)
-        custom_rules = load_custom_rules(
-            rules or find_djlint_rules(self.project_root)
-        )
+            default_rules = yaml.load(f, Loader=_YAML_LOADER)  # noqa: S506
+        custom_rules = load_custom_rules(rules or find_djlint_rules(self.project_root))
         self.skipped_rules: tuple[str, ...] = ()
         if not python_rules:
             self.skipped_rules = tuple(
@@ -1582,9 +1562,7 @@ class Config:
                 for x in custom_rules
                 if "python_module" in x["rule"]
             )
-            custom_rules = tuple(
-                x for x in custom_rules if "python_module" not in x["rule"]
-            )
+            custom_rules = tuple(x for x in custom_rules if "python_module" not in x["rule"])
         rule_set = tuple(validate_rules(chain(default_rules, custom_rules)))
         ignored_codes = set(split_option_list(self.ignore))
         included_codes = set(split_option_list(self.include))
@@ -1601,20 +1579,13 @@ class Config:
             for any one of them cannot be trusted under it either.
             """
             excluded_profiles = rule.get("exclude", ())
-            if excluded_profiles and (
-                self.profile == "all" or self.profile in excluded_profiles
-            ):
+            if excluded_profiles and (self.profile == "all" or self.profile in excluded_profiles):
                 return False
-            return not any(
-                rule["name"].startswith(code) for code in profile_codes
-            )
+            return not any(rule["name"].startswith(code) for code in profile_codes)
 
         self.entity_pattern = next(
             (
-                re.compile(
-                    x["rule"]["patterns"][0],
-                    build_flags(x["rule"].get("flags", "re.S")),
-                )
+                re.compile(x["rule"]["patterns"][0], build_flags(x["rule"].get("flags", "re.S")))
                 for x in rule_set
                 if x["rule"]["name"] == "H023" and "patterns" in x["rule"]
             ),
@@ -1625,18 +1596,14 @@ class Config:
             for x in rule_set
             if x["rule"]["name"] not in ignored_codes
             and rule_applies(x["rule"])
-            and (
-                x["rule"].get("default", True)
-                or x["rule"]["name"] in included_codes
-            )
+            and (x["rule"].get("default", True) or x["rule"]["name"] in included_codes)
         )
         for entry in self.linter_rules:
             linter_rule = entry["rule"]
             if "patterns" in linter_rule:
                 rule_flags = build_flags(linter_rule.get("flags", "re.S"))
                 linter_rule["compiled_patterns"] = tuple(
-                    compile_pattern(pattern, rule_flags)
-                    for pattern in linter_rule["patterns"]
+                    compile_rule_pattern(pattern, rule_flags) for pattern in linter_rule["patterns"]
                 )
 
         if self.lint:
@@ -1658,9 +1625,7 @@ class Config:
                     for x in (
                         str(
                             custom_blocks
-                            or _as_comma_separated(
-                                djlint_settings.get("custom_blocks")
-                            )
+                            or _as_comma_separated(djlint_settings.get("custom_blocks"))
                             or ""
                         ),
                         _PROFILE_ONLY_BLOCKS.get(self.profile, ""),
@@ -1674,40 +1639,30 @@ class Config:
         self.custom_html = (
             str(
                 build_custom_html(
-                    custom_html
-                    or _as_comma_separated(djlint_settings.get("custom_html"))
+                    custom_html or _as_comma_separated(djlint_settings.get("custom_html"))
                 )
                 or ""
             )
             + django_cotton_components
         )
         self.ignore_blocks = build_ignore_blocks(
-            ignore_blocks
-            or _as_comma_separated(djlint_settings.get("ignore_blocks", ""))
+            ignore_blocks or _as_comma_separated(djlint_settings.get("ignore_blocks", ""))
         )
-        ignore_blocks_guard = (
-            rf"(?!{self.ignore_blocks})" if self.ignore_blocks else ""
-        )
+        ignore_blocks_guard = rf"(?!{self.ignore_blocks})" if self.ignore_blocks else ""
         self.format_attribute_js_json_pattern = compile_pattern(
             format_attribute_js_json_pattern
-            or djlint_settings.get(
-                "format_attribute_js_json_pattern", _DEFAULT_JS_JSON_PATTERN
-            ),
+            or djlint_settings.get("format_attribute_js_json_pattern", _DEFAULT_JS_JSON_PATTERN),
             RE_FLAGS_IX,
         )
 
         indenting_html_tags = (
-            HTML_TAG_NAMES - {"html"}
-            if self.no_indent_inner_html
-            else HTML_TAG_NAMES
+            HTML_TAG_NAMES - {"html"} if self.no_indent_inner_html else HTML_TAG_NAMES
         )
         self.indent_html_tags = "|".join(indenting_html_tags) + self.custom_html
         self.always_self_closing_html_tags = _ALWAYS_SELF_CLOSING_HTML_TAGS
 
         not_self_closed = r"\b(?!(?:(?!%\}).)*/\s*-?%\})"
-        custom_block_openers = self.custom_blocks.replace(
-            r"\b", not_self_closed
-        )
+        custom_block_openers = self.custom_blocks.replace(r"\b", not_self_closed)
         is_golang = self.profile == "golang"
         self.template_indent = (
             r"""
@@ -1723,13 +1678,10 @@ class Config:
             + (_GOLANG_BLOCK_OPEN if is_golang else "")
         )
         trans_is_a_custom_block = (
-            r"|trans\b" in self.custom_blocks
-            or r"|translate\b" in self.custom_blocks
+            r"|trans\b" in self.custom_blocks or r"|translate\b" in self.custom_blocks
         )
         end_tag_guard = (
-            r"(?!comment)"
-            if trans_is_a_custom_block
-            else r"(?!comment|trans(?:late)?\b)"
+            r"(?!comment)" if trans_is_a_custom_block else r"(?!comment|trans(?:late)?\b)"
         )
         self.template_unindent = (
             r"""
@@ -1757,10 +1709,7 @@ class Config:
             + (_GOLANG_BLOCK_OPEN if is_golang else "")
         )
         self.single_line_template_tags = (
-            ignore_blocks_guard
-            + _INDENT_TEMPLATE_TAGS
-            + custom_block_openers
-            + r")"
+            ignore_blocks_guard + _INDENT_TEMPLATE_TAGS + custom_block_openers + r")"
         )
         self.break_template_tags = (
             ignore_blocks_guard
@@ -1821,85 +1770,58 @@ class Config:
         """
         )
 
-        self.template_indent_ix_pattern = compile_pattern(
-            self.template_indent, RE_FLAGS_IX
-        )
-        self.template_indent_imx_pattern = compile_pattern(
-            self.template_indent, RE_FLAGS_IMX
-        )
-        self.template_unindent_ix_pattern = compile_pattern(
-            self.template_unindent, RE_FLAGS_IX
-        )
-        self.template_unindent_imx_pattern = compile_pattern(
-            self.template_unindent, RE_FLAGS_IMX
-        )
+        self.template_indent_ix_pattern = compile_pattern(self.template_indent, RE_FLAGS_IX)
+        self.template_indent_imx_pattern = compile_pattern(self.template_indent, RE_FLAGS_IMX)
+        self.template_unindent_ix_pattern = compile_pattern(self.template_unindent, RE_FLAGS_IX)
+        self.template_unindent_imx_pattern = compile_pattern(self.template_unindent, RE_FLAGS_IMX)
 
         self.attribute_pattern = _ATTRIBUTE_X_PATTERN
         self.template_tags = _TEMPLATE_TAGS
         self.template_tags_imx_pattern = _TEMPLATE_TAGS_IMX_PATTERN
         self.tag_unindent_line = (
-            _LIQUID_TAG_UNINDENT_LINE
-            if self.profile == "liquid"
-            else _TAG_UNINDENT_LINE
+            _LIQUID_TAG_UNINDENT_LINE if self.profile == "liquid" else _TAG_UNINDENT_LINE
         )
         if is_golang:
             self.tag_unindent_line += _GOLANG_BRANCH
-        self.tag_unindent_line_ix_pattern = compile_pattern(
-            self.tag_unindent_line, RE_FLAGS_IX
-        )
+        self.tag_unindent_line_ix_pattern = compile_pattern(self.tag_unindent_line, RE_FLAGS_IX)
         self.break_before = _BREAK_BEFORE
         self.ignored_attributes = _IGNORED_ATTRIBUTES
         self.ignored_inline_blocks = _IGNORED_INLINE_BLOCKS
         self.optional_single_line_html_tags = _OPTIONAL_SINGLE_LINE_HTML_TAGS
-        self.optional_single_line_template_tags = (
-            _OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS
-        )
+        self.optional_single_line_template_tags = _OPTIONAL_SINGLE_LINE_TEMPLATE_TAGS
         self.format_attribute_js_json_object_pattern = _JS_JSON_OBJECT_PATTERN
         self.format_attribute_js_json_string_pattern = _JS_JSON_STRING_PATTERN
-        self.format_attribute_js_json_property_pattern = (
-            _JS_JSON_PROPERTY_PATTERN
-        )
+        self.format_attribute_js_json_property_pattern = _JS_JSON_PROPERTY_PATTERN
         self.raw_text_opening_pattern = _RAW_TEXT_OPENING_PATTERN
         self.raw_text_closing_pattern = _RAW_TEXT_CLOSING_PATTERN
         self.raw_text_inline_imsx_pattern = _RAW_TEXT_INLINE_IMSX_PATTERN
         self.raw_text_inline_ix_pattern = _RAW_TEXT_INLINE_IX_PATTERN
         self.ignored_block_opening_pattern = _IGNORED_BLOCK_OPENING_PATTERN
         self.ignored_block_closing_pattern = _IGNORED_BLOCK_CLOSING_PATTERN
-        self.ignored_block_closing_at_start_pattern = (
-            _IGNORED_BLOCK_CLOSING_AT_START_PATTERN
-        )
-        self.ignored_block_closing_anywhere_pattern = (
-            _IGNORED_BLOCK_CLOSING_ANYWHERE_PATTERN
-        )
+        self.ignored_block_closing_at_start_pattern = _IGNORED_BLOCK_CLOSING_AT_START_PATTERN
+        self.ignored_block_closing_anywhere_pattern = _IGNORED_BLOCK_CLOSING_ANYWHERE_PATTERN
         self.ignored_blocks_pattern = _IGNORED_BLOCKS_PATTERN
         self.lint_ignored_blocks_pattern = _LINT_IGNORED_BLOCKS_PATTERN
         self.ignored_blocks_inline_pattern = _IGNORED_BLOCKS_INLINE_PATTERN
-        self.ignored_inline_blocks_ix_pattern = (
-            _IGNORED_INLINE_BLOCKS_IX_PATTERN
-        )
-        self.lint_ignored_inline_blocks_ix_pattern = (
-            _LINT_IGNORED_INLINE_BLOCKS_IX_PATTERN
-        )
+        self.ignored_inline_blocks_ix_pattern = _IGNORED_INLINE_BLOCKS_IX_PATTERN
+        self.lint_ignored_inline_blocks_ix_pattern = _LINT_IGNORED_INLINE_BLOCKS_IX_PATTERN
         self.ignored_linter_blocks_pattern = _IGNORED_LINTER_BLOCKS_PATTERN
         self.ignored_trans_blocks_pattern = _IGNORED_TRANS_BLOCKS_PATTERN
-        self.ignored_trans_blocks_closing_pattern = (
-            _IGNORED_TRANS_BLOCKS_CLOSING_PATTERN
-        )
+        self.ignored_trans_blocks_closing_pattern = _IGNORED_TRANS_BLOCKS_CLOSING_PATTERN
         self.trans_trimmed_blocks_pattern = _TRANS_TRIMMED_BLOCKS_PATTERN
         self.safe_closing_block_pattern = _SAFE_CLOSING_BLOCK_PATTERN
         self.safe_closing_tag_pattern = _SAFE_CLOSING_TAG_PATTERN
         self.template_blocks_pattern = _TEMPLATE_BLOCKS_PATTERN
-        self.unformatted_blocks_coarse_pattern = (
-            _UNFORMATTED_BLOCKS_COARSE_PATTERN
-        )
+        self.unformatted_blocks_coarse_pattern = _UNFORMATTED_BLOCKS_COARSE_PATTERN
         self.unformatted_blocks_pattern = _UNFORMATTED_BLOCKS_PATTERN
         self.ignored_rule_patterns = _IGNORED_RULE_PATTERNS
-        self.optional_single_line_html_pattern = (
-            _OPTIONAL_SINGLE_LINE_HTML_PATTERN
-        )
-        self.optional_single_line_template_pattern = (
-            _OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN
-        )
+        self.optional_single_line_html_pattern = _OPTIONAL_SINGLE_LINE_HTML_PATTERN
+        self.optional_single_line_template_pattern = _OPTIONAL_SINGLE_LINE_TEMPLATE_PATTERN
+        if self.profile == "mako":
+            # The block tags under this profile stand for Mako's control lines,
+            # which a block put on one line would join.
+            self.optional_single_line_template_tags = "(?!)"
+            self.optional_single_line_template_pattern = compile_pattern("(?!)")
         if profile_blocks := _PROFILE_ONLY_BLOCKS.get(self.profile):
             self.optional_single_line_template_tags += "|" + "|".join(
                 split_option_list(profile_blocks)

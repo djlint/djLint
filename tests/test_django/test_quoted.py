@@ -61,10 +61,7 @@ test_data = [
         id="issue #443",
     ),
     pytest.param(
-        (
-            '<div><div class="{{ c|default:"[&>a]:flex" }} block">'
-            "<p>x</p></div></div>"
-        ),
+        ('<div><div class="{{ c|default:"[&>a]:flex" }} block"><p>x</p></div></div>'),
         (
             "<div>\n"
             '    <div class="{{ c|default:"[&>a]:flex" }} block">\n'
@@ -73,6 +70,46 @@ test_data = [
             "</div>\n"
         ),
         id="gt_in_template_string_in_attribute",
+    ),
+    pytest.param(
+        '<p><input value="{{ _("a students\' b") }}"></p>\n<p>x</p>\n',
+        '<p>\n    <input value="{{ _("a students\' b") }}">\n</p>\n<p>x</p>\n',
+        id="a_quote_in_a_template_string_in_an_attribute_is_not_the_attributes",
+    ),
+    pytest.param(
+        '<div>\n{% trans "a\n   b" %}\n</div>\n',
+        '<div>\n    {% trans "a\n   b" %}\n</div>\n',
+        id="a_string_across_lines_keeps_its_whitespace",
+    ),
+    pytest.param(
+        "<div>\n{% if x == 'a\n   b' %}\n<p>y</p>\n{% endif %}\n</div>\n",
+        '<div>\n    {% if x == "a\n   b" %}\n        <p>y</p>\n    {% endif %}\n</div>\n',
+        id="a_string_across_lines_in_a_condition_keeps_its_whitespace",
+    ),
+    pytest.param(
+        "<div>\n{% include 'a.html' with s='x\n   y' %}\n</div>\n",
+        '<div>\n    {% include "a.html" with s="x\n   y" %}\n</div>\n',
+        id="a_string_across_lines_in_an_argument_keeps_its_whitespace",
+    ),
+    pytest.param(
+        '<div>\n{% trans "a %}\n   b" %}\n{{ "c }}\n   d" }}\n</div>\n',
+        '<div>\n    {% trans "a %}\n   b" %}\n    {{ "c }}\n   d" }}\n</div>\n',
+        id="a_string_across_lines_holding_a_closer_keeps_its_whitespace",
+    ),
+    pytest.param(
+        '<div>\n{% trans "a {%\n   b" %}\n{{ "c {{\n   d" }}\n</div>\n',
+        '<div>\n    {% trans "a {%\n   b" %}\n    {{ "c {{\n   d" }}\n</div>\n',
+        id="a_string_across_lines_holding_an_opener_keeps_its_whitespace",
+    ),
+    pytest.param(
+        '<div>\n{# {% " #}\n{% trans "a\n   b" %}\n</div>\n',
+        '<div>\n    {# {% " #}\n    {% trans "a\n   b" %}\n</div>\n',
+        id="a_quote_in_a_comment_does_not_pair_with_one_after_it",
+    ),
+    pytest.param(
+        '<div>\n{% comment %}{% " {% endcomment %}\n{% trans "c\n   d" %}\n</div>\n',
+        '<div>\n    {% comment %}{% " {% endcomment %}\n    {% trans "c\n   d" %}\n</div>\n',
+        id="a_quote_in_a_comment_block_does_not_pair_with_one_after_it",
     ),
 ]
 

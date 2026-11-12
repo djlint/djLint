@@ -1,31 +1,31 @@
 ---
-title: "Django Template Linter and Formatter"
-description: "djLint - это линтер шаблонов django и форматер шаблонов django! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint."
+title: "Линтер и форматер шаблонов Django"
+description: "djLint проверяет и форматирует шаблоны Django. Задайте профиль django, чтобы правила и форматирование подходили для них."
 sidebar:
   label: "Django"
 ---
 
-djLint - это линтер шаблонов django и форматер шаблонов django! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
+djLint проверяет и форматирует шаблоны Django. Задайте профиль `django`, чтобы правила и форматирование подходили для них.
 
 **[Что такое Django?](https://django.readthedocs.io/en/stable/ref/templates/language.html)**
 
-#### Использование командной строки
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile=django
 ```
 
-#### Или используйте файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="django"
+profile = "django"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="django"
+profile = "django"
 ```
 
 ```json title=".djlintrc"
@@ -33,5 +33,5 @@ profile="django"
 ```
 
 :::tip
-[Ознакомьтесь с руководством по настройке, чтобы узнать обо всех возможностях!](/ru/docs/configuration/)
+[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
 :::

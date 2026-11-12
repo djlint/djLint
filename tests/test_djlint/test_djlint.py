@@ -5,6 +5,7 @@ uv run pytest tests/test_djlint/test_djlint.py
 
 from __future__ import annotations
 
+import concurrent.futures
 import errno
 import subprocess
 import sys
@@ -13,15 +14,21 @@ from importlib import metadata
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import djlint as djlint_module
-from djlint import main as djlint, output as djlint_output
+import pytest
+
+from djlint import _cli as djlint_module, output as djlint_output  # noqa: PLC2701
+from djlint._cli import main as djlint  # noqa: PLC2701
 from tests.conftest import write_to_file
 
 if TYPE_CHECKING:
     from tempfile import _TemporaryFileWrapper
+    from typing import Any
 
-    import pytest
     from click.testing import CliRunner
+
+# A mypyc build calls between djLint's modules directly, past a patched
+# module attribute.
+_COMPILED = not str(djlint_module.__file__).endswith(".py")
 
 
 def test_help(runner: CliRunner) -> None:
@@ -62,11 +69,7 @@ def test_hyphen_file(runner: CliRunner) -> None:
 def test_multiple_files(runner: CliRunner) -> None:
     result = runner.invoke(
         djlint,
-        (
-            "tests/test_djlint/multiple_files/a",
-            "tests/test_djlint/multiple_files/b",
-            "--check",
-        ),
+        ("tests/test_djlint/multiple_files/a", "tests/test_djlint/multiple_files/b", "--check"),
     )
     assert result.exit_code == 1
     assert "3 files would be updated." in result.output
@@ -99,9 +102,7 @@ def test_good_path_with_e(runner: CliRunner) -> None:
 
 
 def test_good_path_with_extension(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_djlint/", "--extension", "html*")
-    )
+    result = runner.invoke(djlint, ("tests/test_djlint/", "--extension", "html*"))
     assert result.exit_code == 1
     assert str(Path("tests", "test_djlint", "bad.html")) in result.output
     assert str(Path("tests", "test_djlint", "bad.html.dj")) in result.output
@@ -109,9 +110,7 @@ def test_good_path_with_extension(runner: CliRunner) -> None:
 
 def test_good_path_with_bad_ext(runner: CliRunner) -> None:
     """Nothing matched at all, so the run checked nothing it was asked to."""
-    result = runner.invoke(
-        djlint, ("tests/test_djlint/", "-e", "html.alphabet")
-    )
+    result = runner.invoke(djlint, ("tests/test_djlint/", "-e", "html.alphabet"))
     assert result.exit_code == 2
     assert "No files to check!" in result.stderr
     assert not result.stdout
@@ -119,16 +118,13 @@ def test_good_path_with_bad_ext(runner: CliRunner) -> None:
 
 def test_good_path_with_bad_ext_allow_empty_input(runner: CliRunner) -> None:
     result = runner.invoke(
-        djlint,
-        ("tests/test_djlint/", "-e", "html.alphabet", "--allow-empty-input"),
+        djlint, ("tests/test_djlint/", "-e", "html.alphabet", "--allow-empty-input")
     )
     assert result.exit_code == 0
     assert "No files to check!" in result.stderr
 
 
-def test_empty_file(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
+def test_empty_file(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
     write_to_file(tmp_file.name, b"")
     result = runner.invoke(djlint, (tmp_file.name,))
     assert result.exit_code == 0
@@ -140,9 +136,7 @@ def test_stdin(runner: CliRunner) -> None:
     assert "Linted 1 file" in result.output
     assert "1/1 files" not in result.stderr
 
-    result = runner.invoke(
-        djlint, ("-", "-"), input='<div><p id="a"></p></div>'
-    )
+    result = runner.invoke(djlint, ("-", "-"), input='<div><p id="a"></p></div>')
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
 
@@ -155,18 +149,14 @@ def test_stdin(runner: CliRunner) -> None:
     assert result.output == "<div></div>\n"
 
     # check require pragma
-    result = runner.invoke(
-        djlint, ("-", "--require-pragma"), input="<div></div>"
-    )
+    result = runner.invoke(djlint, ("-", "--require-pragma"), input="<div></div>")
     assert result.exit_code == 0
     assert "No files to check!" in result.stderr
     assert not result.stdout
 
     # input skipped by require-pragma must come back byte for byte, and the
     result = runner.invoke(
-        djlint,
-        ("-", "--reformat", "--require-pragma"),
-        input="<div>   <p>x</p></div>\n\n\n",
+        djlint, ("-", "--reformat", "--require-pragma"), input="<div>   <p>x</p></div>\n\n\n"
     )
     assert result.exit_code == 0
     assert result.stdout == "<div>   <p>x</p></div>\n\n\n"
@@ -184,9 +174,7 @@ def test_stdin_lints_crlf_as_a_file_would(runner: CliRunner) -> None:
 
 def test_stdin_filename_option(runner: CliRunner) -> None:
     result = runner.invoke(
-        djlint,
-        ("-", "--stdin-filename", "custom.html"),
-        input='<div><p id="a"></p></div>',
+        djlint, ("-", "--stdin-filename", "custom.html"), input='<div><p id="a"></p></div>'
     )
     assert result.exit_code == 0
     assert "Linted 1 file" in result.output
@@ -195,9 +183,7 @@ def test_stdin_filename_option(runner: CliRunner) -> None:
 def test_stdin_filename_excluded(
     runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    (tmp_path / ".djlintrc").write_text(
-        '{"exclude": "vendor"}', encoding="utf-8"
-    )
+    (tmp_path / ".djlintrc").write_text('{"exclude": "vendor"}', encoding="utf-8")
     monkeypatch.chdir(tmp_path)
     text = "<div><p>x</p></div>"
     args = ("-", "--stdin-filename", "vendor/a.html")
@@ -224,24 +210,16 @@ def test_stdin_filename_gitignored(
 def test_stdin_filename_not_excluded(
     runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    (tmp_path / ".djlintrc").write_text(
-        '{"exclude": "vendor"}', encoding="utf-8"
-    )
+    (tmp_path / ".djlintrc").write_text('{"exclude": "vendor"}', encoding="utf-8")
     monkeypatch.chdir(tmp_path)
     result = runner.invoke(
-        djlint,
-        ("-", "--stdin-filename", "templates/a.html"),
-        input='<img src="x">',
+        djlint, ("-", "--stdin-filename", "templates/a.html"), input='<img src="x">'
     )
     assert "H013" in result.output
 
 
-def test_stdin_filename_finds_its_own_configuration(
-    runner: CliRunner, tmp_path: Path
-) -> None:
-    (tmp_path / ".djlintrc").write_text(
-        '{"exclude": "vendor"}', encoding="utf-8"
-    )
+def test_stdin_filename_finds_its_own_configuration(runner: CliRunner, tmp_path: Path) -> None:
+    (tmp_path / ".djlintrc").write_text('{"exclude": "vendor"}', encoding="utf-8")
     result = runner.invoke(
         djlint,
         ("-", "--stdin-filename", str(tmp_path / "vendor" / "a.html")),
@@ -259,9 +237,7 @@ def test_stdin_reformat_without_temp_file(
 
     monkeypatch.setattr(tempfile, "NamedTemporaryFile", fail_named_temp_file)
 
-    result = runner.invoke(
-        djlint, ("-", "--check"), input="<div><p>nice stuff here</p></div>"
-    )
+    result = runner.invoke(djlint, ("-", "--check"), input="<div><p>nice stuff here</p></div>")
 
     assert result.exit_code == 1
     assert result.output == "<div>\n    <p>nice stuff here</p>\n</div>\n"
@@ -294,9 +270,7 @@ def test_stdin_lint_output_stream(runner: CliRunner) -> None:
     assert "H021" in result.stderr
     assert "Linted 1 file" in result.stderr
 
-    result = runner.invoke(
-        djlint, ("-", "--check", "--lint", "--statistics"), input=src
-    )
+    result = runner.invoke(djlint, ("-", "--check", "--lint", "--statistics"), input=src)
     assert result.stdout == src + "\n"
     assert "H021" in result.stderr
     assert "Statistics" in result.stderr
@@ -304,9 +278,7 @@ def test_stdin_lint_output_stream(runner: CliRunner) -> None:
 
 def test_stdin_invalid_utf8(runner: CliRunner) -> None:
     """Undecodable input is bad data, not a djLint crash."""
-    result = runner.invoke(
-        djlint, ("-", "--reformat"), input=b"<div>\xff</div>"
-    )
+    result = runner.invoke(djlint, ("-", "--reformat"), input=b"<div>\xff</div>")
     assert result.exit_code == 2
     assert not result.stdout
     assert "not valid UTF-8" in result.stderr
@@ -325,20 +297,15 @@ def test_stdin_preserves_line_endings(runner: CliRunner) -> None:
     assert result.stdout_bytes == b"<div>\r\n    <p>hi</p>\r\n</div>\r\n"
 
     # the pragma passthrough really is byte for byte
-    result = runner.invoke(
-        djlint, ("-", "--reformat", "--require-pragma"), input=crlf
-    )
+    result = runner.invoke(djlint, ("-", "--reformat", "--require-pragma"), input=crlf)
     assert result.stdout_bytes == crlf
 
-    result = runner.invoke(
-        djlint, ("-", "--reformat"), input=b"<div>\n<p>hi</p>\n</div>\n"
-    )
+    result = runner.invoke(djlint, ("-", "--reformat"), input=b"<div>\n<p>hi</p>\n</div>\n")
     assert result.stdout_bytes == b"<div>\n    <p>hi</p>\n</div>\n"
 
 
-def test_closed_pipe_is_not_a_crash(
-    runner: CliRunner, monkeypatch: pytest.MonkeyPatch
-) -> None:
+@pytest.mark.skipif(_COMPILED, reason="patches print_output")
+def test_closed_pipe_is_not_a_crash(runner: CliRunner, monkeypatch: pytest.MonkeyPatch) -> None:
     """`djlint . | head` is the consumer's choice, not a djLint failure.
 
     No traceback, and no invitation to file a bug against djLint.
@@ -356,18 +323,31 @@ def test_closed_pipe_is_not_a_crash(
     assert "report unexpected failures" not in result.stderr
 
 
-def test_check(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
+@pytest.mark.skipif(_COMPILED, reason="patches print_output")
+def test_ctrl_c_does_not_look_like_a_finding(
+    runner: CliRunner, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """An interrupted run exits 130, as a shell reports it, rather than 1."""
+
+    def interrupt(*_args: object, **_kwargs: object) -> int:
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(djlint_output, "print_output", interrupt)
+
+    result = runner.invoke(djlint, ("-", "--lint"), input="<div></div>")
+
+    assert result.exit_code == 130
+    assert result.stderr == "Aborted!\n"
+
+
+def test_check(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
     write_to_file(tmp_file.name, b"<div></div>")
     result = runner.invoke(djlint, (tmp_file.name, "--check"))
     assert result.exit_code == 0
 
 
 def test_single_worker_skips_executor(
-    runner: CliRunner,
-    tmp_file: _TemporaryFileWrapper[bytes],
-    monkeypatch: pytest.MonkeyPatch,
+    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     write_to_file(tmp_file.name, b"<div></div>")
     monkeypatch.setattr(djlint_module, "process_cpu_count", lambda: 1)
@@ -382,7 +362,7 @@ def test_import_skips_runtime_helpers() -> None:
     code = (
         "import sys; "
         f"sys.path.insert(0, {src_path!r}); "
-        "import djlint; "
+        "import djlint._cli; "
         "blocked = {'concurrent.futures', 'cssbeautifier', 'jsbeautifier', "
         "'djlint.lint', 'djlint.reformat'}; "
         "loaded = sorted(blocked & sys.modules.keys()); "
@@ -390,19 +370,14 @@ def test_import_skips_runtime_helpers() -> None:
         "raise SystemExit(bool(loaded))"
     )
     py_sub = subprocess.run(  # noqa: S603
-        (sys.executable, "-c", code),
-        capture_output=True,
-        check=False,
-        text=True,
+        (sys.executable, "-c", code), capture_output=True, check=False, text=True
     )
 
     assert py_sub.returncode == 0, py_sub.stdout
 
 
 def test_check_non_existing_file(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_djlint/nothing.html", "--check")
-    )
+    result = runner.invoke(djlint, ("tests/test_djlint/nothing.html", "--check"))
     assert result.exit_code == 2
 
 
@@ -429,9 +404,7 @@ def test_reformatter_simple_error(
     assert "1 file was updated." in result.output
 
 
-def test_reformatter_no_error(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
+def test_reformatter_no_error(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
     write_to_file(tmp_file.name, b"<div>\n    <p>nice stuff here</p>\n</div>\n")
     old_mtime = Path(tmp_file.name).stat().st_mtime
     result = runner.invoke(djlint, (tmp_file.name, "--reformat"))
@@ -459,12 +432,8 @@ def test_check_reformatter_no_error(
     assert "0 files would be updated." in result.output
 
 
-def test_warn(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
-    write_to_file(
-        tmp_file.name, b"<div style='color:pink;'><p>nice stuff here</p></div>"
-    )
+def test_warn(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
+    write_to_file(tmp_file.name, b"<div style='color:pink;'><p>nice stuff here</p></div>")
     result = runner.invoke(djlint, (tmp_file.name, "--lint", "--warn"))
     assert result.exit_code == 0
 
@@ -474,32 +443,18 @@ def test_version(runner: CliRunner) -> None:
     assert metadata.version("djlint") in result.output
 
 
-def test_python_call() -> None:
-    if sys.platform != "win32":
-        py_sub = subprocess.run(
-            ("python", "-m", "djlint", "-h"),  # noqa: S607
-            capture_output=True,
-            check=False,
-        )
-        print(py_sub.stdout)
-        print(py_sub.returncode)
-        assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
-        assert py_sub.returncode == 0
-
-        py_sub = subprocess.run(
-            ("python", "-m", "djlint", "__init__", "-h"),  # noqa: S607
-            capture_output=True,
-            check=False,
-        )
-        print(py_sub.stdout)
-        print(py_sub.returncode)
-        assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
-        assert py_sub.returncode == 0
+@pytest.mark.parametrize("args", [("-h",), ("__init__", "-h")])
+def test_python_call(args: tuple[str, ...]) -> None:
+    py_sub = subprocess.run(  # noqa: S603
+        (sys.executable, "-m", "djlint", *args), capture_output=True, check=False
+    )
+    print(py_sub.stdout)
+    print(py_sub.returncode)
+    assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
+    assert py_sub.returncode == 0
 
 
-def test_line_ending(
-    runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]
-) -> None:
+def test_line_ending(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
     text_in = "<div></div>\r\n"
     Path(tmp_file.name).write_text(text_in, encoding="utf-8", newline="")
 
@@ -517,8 +472,49 @@ def test_stdin_filename_with_parent_steps_leaves_an_excluded_folder(
     (tmp_path / "build").mkdir()
     monkeypatch.chdir(tmp_path / "build")
     result = runner.invoke(
-        djlint,
-        ("-", "--stdin-filename", "../templates/a.html"),
-        input='<img src="x">',
+        djlint, ("-", "--stdin-filename", "../templates/a.html"), input='<img src="x">'
     )
     assert "H013" in result.output
+
+
+# Under pytest-xdist the process runs more than one thread, which Python 3.12
+# and 3.13 warn about where the workers are forked.
+@pytest.mark.filterwarnings("ignore:This process .* is multi-threaded:DeprecationWarning")
+def test_large_files_are_shared_out_to_workers(
+    runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Files too large for one worker are processed in parallel, to the same results."""
+    unformatted = "<div><p>hi</p>\n</div>\n" * 3000
+    for name in ("a.html", "b.html"):
+        (tmp_path / name).write_text(unformatted, encoding="utf-8")
+    (tmp_path / "c.html").write_text('<img src="x">\n', encoding="utf-8")
+
+    executors: list[str] = []
+
+    class RecordedProcessPool(concurrent.futures.ProcessPoolExecutor):
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            executors.append("process")
+            super().__init__(*args, **kwargs)
+
+    class RecordedThreadPool(concurrent.futures.ThreadPoolExecutor):
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            executors.append("thread")
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setattr(concurrent.futures, "ProcessPoolExecutor", RecordedProcessPool)
+    monkeypatch.setattr(concurrent.futures, "ThreadPoolExecutor", RecordedThreadPool)
+
+    monkeypatch.setattr(djlint_module, "process_cpu_count", lambda: 1)
+    serial = runner.invoke(djlint, (str(tmp_path), "--check", "--lint"))
+    assert not executors
+
+    monkeypatch.setattr(djlint_module, "process_cpu_count", lambda: 2)
+    result = runner.invoke(djlint, (str(tmp_path), "--check", "--lint"))
+    assert len(executors) == 1
+
+    assert result.exit_code == 1
+    assert "Checking and Linting 3/3 files" in result.stderr
+    assert "2 files would be updated." in result.output
+    assert "H013 1:0 Img tag should have an alt attribute." in result.output
+    assert "Linted 3 files, found 1 error." in result.output
+    assert (result.exit_code, result.output) == (serial.exit_code, serial.output)

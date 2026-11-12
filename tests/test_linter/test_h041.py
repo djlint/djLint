@@ -38,13 +38,7 @@ test_data = [
         id="issue 88 closed in other block (issue 88)",
     ),
     pytest.param(
-        (
-            "{% block content %}\n"
-            "<div>\n"
-            "<p>x</p>\n"
-            "</div>\n"
-            "{% endblock content %}\n"
-        ),
+        ("{% block content %}\n<div>\n<p>x</p>\n</div>\n{% endblock content %}\n"),
         ([]),
         id="closed_in_same_block",
     ),
@@ -117,11 +111,7 @@ test_data = [
         id="block_mentioned_in_verbatim_ignored",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            "{% comment %} old: {% block inner %} {% endcomment %}\n"
-            "</div>\n"
-        ),
+        ("<div>\n{% comment %} old: {% block inner %} {% endcomment %}\n</div>\n"),
         ([]),
         id="block_mentioned_in_comment_block_ignored",
     ),
@@ -129,9 +119,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], django_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], django_config: Config) -> None:
     filename = "test.html"
     output = linter(django_config, source, filename, filename)
 

@@ -1,6 +1,6 @@
 ---
 title: "Formatter Usage"
-description: "Format your HTML Templates with djLint. Fast, accurate, output will make your templates shine."
+description: "How djLint formats HTML templates, and how to check the changes before applying them."
 sidebar:
   label: "Formatter"
 ---
@@ -12,7 +12,7 @@ Review the output with `--check` before applying changes.
 To review what may change in formatting run:
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 To format the code and update files run:
@@ -42,7 +42,7 @@ djLint is not an html parser or syntax validator.
 
 Here's a blob of HTML that's in desperate need of attention -
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -71,7 +71,7 @@ Here's a blob of HTML that's in desperate need of attention -
 
 It looks a bit better now... we can read it :)
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}
@@ -103,7 +103,7 @@ It looks a bit better now... we can read it :)
 
 Prefer Prettier-style attributes? Enable the `single_attribute_per_line` option:
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% load admin_list %}
 {% load i18n %}

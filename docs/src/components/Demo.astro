@@ -46,6 +46,7 @@ const profiles = [
   ["angular", "angular"],
   ["tera", "tera"],
   ["askama", "askama"],
+  ["mako", "mako"],
 ];
 
 const help = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
@@ -217,6 +218,8 @@ const kebab = (name: string) => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase(
     border-radius: 0.75rem;
     overflow: hidden;
     background: var(--dj-code-bg);
+    /* The editors are dark in both themes, and so are their scrollbars. */
+    color-scheme: dark;
   }
   .demo-head {
     margin: 0;

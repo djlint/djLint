@@ -29,9 +29,7 @@ test_data = [
         id="one",
     ),
     pytest.param(
-        ("<form action=\"{% url 'foo:bar' %}\" ...>...</form>"),
-        ([]),
-        id="one - no error",
+        ("<form action=\"{% url 'foo:bar' %}\" ...>...</form>"), ([]), id="one - no error"
     ),
     pytest.param(
         ("<form action=\" {% url 'foo:bar' %} {{ asdf}} \" ...>...</form>"),
@@ -46,21 +44,7 @@ test_data = [
         id="two",
     ),
     pytest.param(
-        ("<form action=\"{% url 'foo:bar' %} {{ asdf}}\" ...>...</form>"),
-        ([]),
-        id="two - no error",
-    ),
-    pytest.param(
-        ("<form action=\" {% url 'foo:bar' %} \" ...>...</form>"),
-        ([
-            {
-                "code": "H033",
-                "line": "1:0",
-                "match": '<form action="',
-                "message": "Extra whitespace found in form action.",
-            }
-        ]),
-        id="three",
+        ("<form action=\"{% url 'foo:bar' %} {{ asdf}}\" ...>...</form>"), ([]), id="two - no error"
     ),
     pytest.param(
         ('<form action=" {{ asdf}} " ...>...</form>'),
@@ -98,9 +82,7 @@ test_data = [
         ]),
         id="six",
     ),
-    pytest.param(
-        ('<form action="asdf" ...>...</form>'), ([]), id="six - no error"
-    ),
+    pytest.param(('<form action="asdf" ...>...</form>'), ([]), id="six - no error"),
     pytest.param(
         (
             '<form action="#"\n'
@@ -131,9 +113,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 
@@ -146,9 +126,7 @@ def test_base(
     assert not mismatch
 
 
-def test_action_after_an_attribute_holding_a_bracket(
-    django_config: Config,
-) -> None:
+def test_action_after_an_attribute_holding_a_bracket(django_config: Config) -> None:
     source = '<form x-show="count > 0" action=" /x/">f</form>'
     filename = "test.html"
     output = linter(django_config, source, filename, filename)

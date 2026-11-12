@@ -17,17 +17,11 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{% if stuff %}\n{% endif %}"),
-        ("{% if stuff %}{% endif %}\n"),
-        id="tags_on_one_line",
+        ("{% if stuff %}\n{% endif %}"), ("{% if stuff %}{% endif %}\n"), id="tags_on_one_line"
     ),
     pytest.param(
-        (
-            "{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}"
-        ),
-        (
-            "{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}\n"
-        ),
+        ("{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}"),
+        ("{% templatetag openblock %} url 'entry_list' {% templatetag closeblock %}\n"),
         id="tags_random_text",
     ),
     pytest.param(

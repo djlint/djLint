@@ -6,39 +6,22 @@ import { EditorView } from "codemirror";
 // the home page editor use.
 const theme = EditorView.theme(
   {
-    "&": {
-      height: "100%",
-      backgroundColor: "#1a1b26",
-      color: "#c0caf5",
-      fontSize: "0.85rem",
-    },
+    "&": { height: "100%", backgroundColor: "#1a1b26", color: "#c0caf5", fontSize: "0.85rem" },
     "&.cm-focused": { outline: "none" },
     ".cm-scroller": { fontFamily: "var(--sl-font-mono)", lineHeight: "1.7" },
     ".cm-content": { caretColor: "#f5c542", padding: "0.75rem 0" },
     ".cm-cursor, .cm-dropCursor": { borderLeftColor: "#f5c542" },
     "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection":
       { backgroundColor: "#283457" },
-    ".cm-gutters": {
-      backgroundColor: "#1a1b26",
-      color: "#3b4061",
-      border: "none",
-    },
+    ".cm-gutters": { backgroundColor: "#1a1b26", color: "#3b4061", border: "none" },
     ".cm-activeLine": { backgroundColor: "#ffffff08" },
     ".cm-activeLineGutter": { backgroundColor: "#ffffff08", color: "#a9b1d6" },
     ".cm-matchingBracket, .cm-nonmatchingBracket": {
       backgroundColor: "#ffffff1a",
       outline: "none",
     },
-    ".cm-foldPlaceholder": {
-      backgroundColor: "#24283b",
-      border: "none",
-      color: "#c0caf5",
-    },
-    ".cm-tooltip": {
-      backgroundColor: "#24283b",
-      border: "1px solid #2a2c3d",
-      color: "#c0caf5",
-    },
+    ".cm-foldPlaceholder": { backgroundColor: "#24283b", border: "none", color: "#c0caf5" },
+    ".cm-tooltip": { backgroundColor: "#24283b", border: "1px solid #2a2c3d", color: "#c0caf5" },
     ".cm-tooltip-autocomplete > ul > li[aria-selected]": {
       backgroundColor: "#283457",
       color: "#ffffff",

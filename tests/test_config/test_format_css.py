@@ -35,15 +35,7 @@ test_data = [
     ),
     pytest.param(
         ("<div><style>body{color:red}</style></div>"),
-        (
-            "<div>\n"
-            "    <style>\n"
-            "     body {\n"
-            "      color: red\n"
-            "     }\n"
-            "    </style>\n"
-            "</div>\n"
-        ),
+        ("<div>\n    <style>\n     body {\n      color: red\n     }\n    </style>\n</div>\n"),
         ({"format_css": True, "indent_css": 1}),
         id="enabled_with_indent",
     ),
@@ -196,14 +188,7 @@ test_data = [
     ),
     pytest.param(
         ("<style>\n{# TODO: fix later #}\nbody{color:red;}\n</style>"),
-        (
-            "<style>\n"
-            "    {# TODO: fix later #}\n"
-            "    body {\n"
-            "        color: red;\n"
-            "    }\n"
-            "</style>\n"
-        ),
+        ("<style>\n    {# TODO: fix later #}\n    body {\n        color: red;\n    }\n</style>\n"),
         ({"format_css": True, "profile": "jinja"}),
         id="template comments",
     ),

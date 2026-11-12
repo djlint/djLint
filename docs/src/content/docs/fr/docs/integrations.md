@@ -1,19 +1,19 @@
 ---
 title: "Intégrations"
-description: "Intégrez djLint avec votre éditeur préféré. Formatez automatiquement vos modèles avec Pre-Commit. Lint avec SublimeText."
+description: "Utilisez djLint dans votre éditeur et exécutez-le avec pre-commit."
 sidebar:
   label: "Intégrations"
 ---
 
-Il existe plusieurs intégrations d'éditeurs construites pour djLint.
+Plusieurs intégrations d'éditeurs ont été conçues pour djLint.
 
-Quel que soit l'éditeur, installez djLint là où il peut le trouver, idéalement dans l'environnement virtuel du projet, et lancez l'éditeur depuis celui-ci ou indiquez-lui le `djlint` de cet environnement. L'éditeur utilise alors la version fixée par le projet, avec les mêmes résultats que votre hook pre-commit ou votre CI.
+Quel que soit votre éditeur, installez djLint là où l'éditeur peut le trouver, idéalement dans l'environnement virtuel du projet, puis lancez l'éditeur depuis cet environnement ou indiquez-lui le `djlint` de cet environnement. Ainsi, l'éditeur exécute la version fixée par votre projet, avec les mêmes résultats que votre hook pre-commit ou votre CI.
 
 ## Visual Studio Code
 
-Installez l'[extension djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint), ou [sa version sur Open VSX](https://open-vsx.org/extension/monosans/djlint) pour VSCodium. Elle trouve djLint dans votre environnement, utilise celui qu'elle embarque sinon, et passe par le serveur de langage quand votre djLint le propose.
+Installez l'[extension djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint), ou [celle publiée sur Open VSX](https://open-vsx.org/extension/monosans/djlint) pour VSCodium. Elle trouve djLint dans votre environnement, se rabat sur une version embarquée, et utilise le serveur de langage quand votre djLint en dispose.
 
-Son code se trouve sur [GitHub](https://github.com/djlint/djlint-vscode).
+Son code est sur [GitHub](https://github.com/djlint/djlint-vscode).
 
 ## Zed
 
@@ -33,11 +33,11 @@ Les [réglages](#réglages) se placent dans `lsp.djlint.settings`.
 
 ## Neovim
 
-djLint peut être utilisé comme linter et formateur dans Neovim.
+djLint peut servir de linter et de formateur dans Neovim.
 
 ### Client LSP intégré (recommandé)
 
-Neovim 0.11 ou plus récent peut parler directement au [serveur de langage](#serveur-de-langage) de djLint, sans plugin. Vous obtenez les erreurs pendant la saisie, avec leur étendue soulignée, et le formatage avec `vim.lsp.buf.format()` :
+Neovim 0.11 ou plus récent peut dialoguer directement avec le [serveur de langage](#serveur-de-langage) de djLint, sans plugin. Vous obtenez ainsi les signalements pendant la frappe, avec les plages concernées soulignées, et `vim.lsp.buf.format()` pour le formatage :
 
 ```lua
 vim.lsp.config("djlint", {
@@ -48,7 +48,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Pour formater à l'enregistrement, ajoutez à la même configuration :
+Pour formater à l'enregistrement, ajoutez ceci à la même configuration :
 
 ```lua
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -62,11 +62,11 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 ```
 
-Voir les [réglages](#réglages).
+Voir [Options](#options).
 
 ### conform.nvim et nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) formate et [nvim-lint](https://github.com/mfussenegger/nvim-lint) analyse, en lançant djLint comme une commande. Les erreurs n'ont pas d'étendue soulignée et n'arrivent que lorsque vous demandez à nvim-lint d'analyser.
+[conform.nvim](https://github.com/stevearc/conform.nvim) formate et [nvim-lint](https://github.com/mfussenegger/nvim-lint) linte, en exécutant djLint comme une commande. Les signalements n'ont pas de plage soulignée, et n'arrivent que lorsque vous demandez à nvim-lint de linter.
 
 ```lua
 require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
@@ -75,17 +75,17 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 ### none-ls
 
-- [GitHub dépôt](https://github.com/nvimtools/none-ls.nvim)
-- [Linting](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
+- [Dépôt GitHub](https://github.com/nvimtools/none-ls.nvim)
+- [Lint](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [Formatage](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
 
 ### efm-langserver
 
-- [GitHub dépôt](https://github.com/mattn/efm-langserver)
+- [Dépôt GitHub](https://github.com/mattn/efm-langserver)
 
 1. Installez efm-langserver et djLint avec Mason via `:MasonInstall efm djlint`
 1. Ajoutez `htmldjango` à `filetypes`.
-1. Créez la configuration de formatage :
+1. Créez la configuration de formatage :
 
 ```lua
 local djlint = {
@@ -96,7 +96,7 @@ local djlint = {
 
 1. Associez le langage au formateur avec `htmldjango = { djlint }`.
 
-Exemple de configuration :
+Exemple de configuration :
 
 ```lua
 local djlint = {
@@ -118,51 +118,45 @@ require("lspconfig").efm.setup({
 
 ### coc.nvim
 
-- [npm package](https://www.npmjs.com/package/coc-htmldjango)
+- [Paquet npm](https://www.npmjs.com/package/coc-htmldjango)
 
 ## IDE JetBrains
 
-Dans PyCharm et les autres IDE basés sur IntelliJ, utilisez le plugin gratuit [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) :
+Dans PyCharm et les autres IDE basés sur IntelliJ, utilisez le plugin gratuit [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) :
 
 1. Installez LSP4IJ depuis le Marketplace.
-1. Ouvrez la fenêtre LSP Consoles et ajoutez un nouveau serveur de langage.
-1. Dans l'onglet **Server**, indiquez le nom `djLint` et la commande `djlint --lsp`, avec le chemin complet du `djlint` de l'environnement virtuel du projet s'il n'est pas dans le PATH.
-1. Dans l'onglet **Mappings**, ajoutez un motif de nom de fichier pour vos modèles, comme `*.html`. Pour un projet Django, donnez l'identifiant de langage `htmldjango`, afin de choisir le bon [profil](/fr/docs/configuration/#profile).
-1. Dans l'onglet **Configuration**, vous pouvez donner les [réglages](#réglages) en JSON, sous une clé `djlint`.
+1. Ouvrez la fenêtre d'outils LSP Consoles et ajoutez un nouveau serveur de langage.
+1. Dans l'onglet **Server**, définissez le nom `djLint` et la commande `djlint --lsp`, avec le chemin complet du `djlint` de l'environnement virtuel du projet s'il n'est pas dans le PATH.
+1. Dans l'onglet **Mappings**, ajoutez un motif de nom de fichier pour vos templates, par exemple `*.html`. Si la configuration du projet n'a pas de [profil](/fr/docs/configuration/#profile), définissez l'identifiant de langage `htmldjango` pour un projet Django, afin que le bon profil soit choisi.
+1. Dans l'onglet **Configuration**, vous pouvez définir des [options](#options) en JSON, sous une clé `djlint`.
 
-Les erreurs apparaissent dans l'éditeur, et **Reformat Code** peut utiliser le serveur pour ces fichiers.
+Les signalements apparaissent dans l'éditeur, et **Reformat Code** peut utiliser le serveur pour les fichiers associés.
 
 ## Sublime Text
 
 ### LSP (recommandé)
 
-Le paquet [LSP](https://packagecontrol.io/packages/LSP) lance le [serveur de langage](#serveur-de-langage), qui signale les erreurs pendant la saisie et formate.
+Le paquet [LSP](https://packagecontrol.io/packages/LSP) exécute le [serveur de langage](#serveur-de-langage), qui fournit les signalements pendant la frappe ainsi que le formatage.
 
-Lancez **Preferences: LSP Server Configurations** et ajoutez :
+Exécutez **Preferences: LSP Server Configurations** et ajoutez :
 
 ```json
-{
-  "djlint": {
-    "enabled": true,
-    "command": ["djlint", "--lsp"],
-    "selector": "text.html"
-  }
-}
+{ "djlint": { "enabled": true, "command": ["djlint", "--lsp"], "selector": "text.html" } }
 ```
 
 ### SublimeLinter
 
-djLint peut être utilisé comme un plugin SublimeText Linter. Il peut être installé via [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint).
+djLint peut servir de plugin de linter pour Sublime Text. Il s'installe via [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint).
 
 1. `cmd + shift + p`
-2. Installer SublimeLinter
-3. Installer SublimeLinter-contrib-djlint
+2. Installez SublimeLinter
+3. Installez SublimeLinter-contrib-djlint
 
-Assurez-vous que djLint est installé dans votre python global, ou sur votre `PATH`.
+Vérifiez que djLint est installé dans votre Python global, ou dans votre `PATH`.
 
 ## Helix
 
-Helix lance le [serveur de langage](#serveur-de-langage) depuis `languages.toml` :
+Helix peut exécuter le [serveur de langage](#serveur-de-langage) depuis `languages.toml` :
 
 ```toml
 [language-server.djlint]
@@ -176,7 +170,7 @@ language-servers = ["djlint", "vscode-html-language-server"]
 
 ## Emacs
 
-Eglot, fourni avec Emacs 29 et plus récent :
+Eglot, fourni avec Emacs 29 et plus récent :
 
 ```elisp
 (with-eval-after-load 'eglot
@@ -184,17 +178,17 @@ Eglot, fourni avec Emacs 29 et plus récent :
                '((html-mode web-mode) . ("djlint" "--lsp"))))
 ```
 
-Lancez ensuite `M-x eglot` dans un modèle. `eglot-format-buffer` le formate.
+Exécutez ensuite `M-x eglot` dans un template. `eglot-format-buffer` le formate.
 
 ## Serveur de langage
 
-`djlint --lsp` lance djLint comme serveur de langage sur stdio. Il reste actif : l'éditeur reçoit les erreurs pendant la saisie et formate un document sans démarrer un processus à chaque fois.
+`djlint --lsp` exécute djLint en tant que serveur de langage sur stdio. Il reste actif : un éditeur obtient donc les signalements pendant la frappe et formate un document sans lancer de processus à chaque fois.
 
-Il signale les erreurs et formate des documents entiers. Il ne demande aucun paquet supplémentaire. Tout autre éditeur compatible LSP peut le lancer avec la même commande.
+Il remonte les signalements et formate des documents entiers. Il ne nécessite aucun paquet supplémentaire. Tout autre éditeur compatible LSP peut l'exécuter avec la même commande.
 
-### Réglages
+### Options
 
-Le serveur lit la [configuration](/fr/docs/configuration/) du projet comme la ligne de commande, depuis le dossier de chaque fichier vers le haut. Les réglages de l'éditeur ont la priorité mais, comme en ligne de commande, ils peuvent seulement activer une option ou donner une valeur : `false` ne désactive pas ce que le projet active. Ils portent les noms des [options de la ligne de commande](/fr/docs/configuration/), avec des tirets bas ou en camelCase, et des listes peuvent remplacer les valeurs séparées par des virgules :
+Le serveur lit la [configuration](/fr/docs/configuration/) du projet comme le fait la ligne de commande, en remontant depuis le dossier de chaque fichier. Les réglages de l'éditeur l'emportent sur elle, mais comme en ligne de commande, ils peuvent seulement activer une option ou définir une valeur : `false` ne désactive pas ce que le projet active. Ils portent les noms des [options de la ligne de commande](/fr/docs/configuration/), avec des tirets bas ou en camelCase, et des listes peuvent remplacer les valeurs séparées par des virgules :
 
 ```lua
 vim.lsp.config("djlint", {
@@ -202,34 +196,40 @@ vim.lsp.config("djlint", {
 })
 ```
 
-Le serveur demande la section `djlint` avec `workspace/configuration`. Un éditeur qui ne sait pas répondre peut envoyer les mêmes clés dans `initializationOptions`.
+Le serveur demande la section `djlint` avec `workspace/configuration`. Un éditeur qui ne sait pas y répondre peut envoyer les mêmes clés dans `initializationOptions`.
 
-Deux réglages n'ont pas d'option de ligne de commande :
+Deux réglages n'ont pas d'option en ligne de commande :
 
-- `use_editor_indentation` : formater avec la taille de tabulation de l'éditeur, au lieu de `indent`.
-- `python_rules` : la valeur `false` ignore les règles personnalisées avec un `python_module`, ce qui évite d'exécuter le code du projet.
+- `use_editor_indentation` : formater avec la taille de tabulation de l'éditeur, au lieu de `indent`.
+- `python_rules` : réglez-le sur `false` pour ignorer les règles personnalisées dotées d'un `python_module`, ce qui empêche le code du projet de s'exécuter.
 
-Sans `profile` défini à l'un de ces endroits, la langue du document en choisit un : `htmldjango` utilise le profil `django`, par exemple.
+djLint prend le `profile` dans la première de ces sources qui en définit un :
 
-### Fonctionnement
+1. Les réglages de l'éditeur.
+1. La configuration du projet.
+1. Le langage du document : `htmldjango` utilise le profil `django`, par exemple.
 
-- Les erreurs arrivent après une courte pause dans la saisie. Un éditeur avec les diagnostics en pull les demande, les autres les reçoivent.
-- `exclude`, `extend_exclude` et `use_gitignore` s'appliquent aux documents ouverts. Un document exclu n'a pas d'erreurs et n'est pas formaté.
-- Il recharge la configuration quand `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` ou `.gitignore` changent, si l'éditeur sait surveiller les fichiers, et sinon à l'ouverture ou à l'enregistrement d'un document. Les fichiers indiqués par `configuration` ou `rules` sont relus à l'ouverture ou à l'enregistrement d'un document. Une modification du code du `python_module` d'une règle personnalisée demande un redémarrage.
-- Une règle lente retarde ce qui la suit, car le serveur traite une chose à la fois.
+Si aucune n'en définit, il s'exécute sans profil, comme en ligne de commande. Un `profile` dans la configuration du projet est le choix le plus simple : il fonctionne dans tous les éditeurs, sans identifiant de langage à configurer.
+
+### Ce qu'il fait
+
+- Les signalements arrivent après une courte pause dans la frappe. Un éditeur qui prend en charge les diagnostics en mode pull les demande, et tout autre les reçoit en mode push.
+- `exclude`, `extend_exclude` et `use_gitignore` s'appliquent aux documents ouverts. Un document exclu n'a aucun signalement et n'est pas formaté.
+- Il recharge la configuration quand `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml`, `.editorconfig` ou `.gitignore` changent, si l'éditeur sait surveiller les fichiers, et sinon quand un document est ouvert ou enregistré. Les fichiers désignés par `configuration` ou `rules` sont relus quand un document est ouvert ou enregistré. Une modification du code du `python_module` d'une règle personnalisée nécessite un redémarrage.
+- Une règle lente retarde ce qui vient après elle, car le serveur ne fait qu'une chose à la fois.
 
 ## GitHub Actions
 
-Dans un workflow GitHub Actions, djLint signale chaque résultat sous forme d'annotation, qui apparaît donc directement dans le diff d'une pull request. Aucune configuration n'est nécessaire : djLint détecte le workflow et adapte sa sortie automatiquement.
+Dans un workflow GitHub Actions, djLint remonte chaque signalement sous forme d'annotation, qui apparaît donc directement dans le diff d'une pull request. Aucune configuration n'est nécessaire : djLint détecte le workflow et change de format de sortie automatiquement.
 
 ```yaml
 - run: pip install djlint
 - run: djlint . --lint --profile django
 ```
 
-Utilisez `--no-github-output` pour obtenir la sortie console habituelle, ou `--github-output` pour forcer les annotations en dehors d'Actions.
+Utilisez `--no-github-output` pour obtenir à la place la sortie console classique, ou `--github-output` pour forcer les annotations en dehors d'Actions.
 
-Les annotations sont liées à une seule pull request. Pour conserver les résultats dans l'onglet Security du dépôt, avec leur historique d'une exécution à l'autre, écrivez-les au format SARIF et téléversez le fichier :
+Les annotations sont liées à une seule pull request. Pour conserver les signalements dans l'onglet Security du dépôt, avec leur historique d'une exécution à l'autre, écrivez-les au format SARIF et envoyez le fichier :
 
 ```yaml
 - run: djlint . --lint --sarif > djlint.sarif
@@ -239,38 +239,40 @@ Les annotations sont liées à une seule pull request. Pour conserver les résul
     sarif_file: djlint.sarif
 ```
 
-L'étape de téléversement nécessite la permission `security-events: write` sur le job ou le workflow.
+L'étape d'envoi nécessite la permission `security-events: write` sur le job ou le workflow.
 
-`--sarif` écrit sur stdout un document SARIF 2.1.0 et rien d'autre, la sortie peut donc être redirigée comme ci-dessus. Chaque règle activée y figure avec un lien vers sa documentation, chaque résultat indique sa ligne et sa colonne, et avec `--check` un fichier qui serait reformaté est signalé sous une règle `formatting`. Azure DevOps, GitLab et la plupart des éditeurs lisent le même format.
+`--sarif` écrit un document SARIF 2.1.0 sur stdout et rien d'autre, ce qui permet de le rediriger comme ci-dessus. Chaque règle activée y figure avec un lien vers sa documentation, chaque signalement indique sa ligne et sa colonne, et avec `--check`, un fichier qui serait reformaté est signalé sous une règle `formatting`. Azure DevOps, GitLab et la plupart des éditeurs lisent ce même format.
 
 ## Pre-Commit
 
-djLint peut être utilisé comme un hook [pre-commit](https://pre-commit.com) en tant que linter et formatter.
+djLint peut servir de hook [pre-commit](https://pre-commit.com), à la fois comme linter et comme formateur.
 
-Le repo fournit de multiples hooks pré-configurés pour des profils djLint spécifiques (il suffit de prédéfinir l'argument `--profile` et d'indiquer à pre-commit les extensions de fichiers à rechercher) :
+Le dépôt fournit plusieurs hooks préconfigurés pour certains profils de djLint (ils se contentent de prérégler l'argument `--profile` et d'indiquer à pre-commit quelles extensions de fichiers rechercher) :
 
 - `djlint` pour le linting et `djlint-reformat` pour le formatage
-  Ceci recherchera les fichiers correspondant à `*.html` sans définir `--profile`.
+  Recherche les fichiers correspondant à `*.html` sans définir `--profile`.
 - `djlint-django` et `djlint-reformat-django`
-  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=django`.
+  Recherche les fichiers correspondant à `*.html` et définit `--profile=django`.
 - `djlint-jinja` et `djlint-reformat-jinja`
-  Ceci recherchera les fichiers correspondant à `*.j2`, `*.jinja` ou `*.jinja2` et définira `--profile=jinja`.
+  Recherche les fichiers correspondant à `*.j2`,`*.jinja` ou `*.jinja2` et définit `--profile=jinja`.
 - `djlint-nunjucks` et `djlint-reformat-nunjucks`
-  Ceci recherchera les fichiers correspondant à `*.njk` et définira `--profile=nunjucks`.
+  Recherche les fichiers correspondant à `*.njk` et définit `--profile=nunjucks`.
 - `djlint-handlebars` et `djlint-reformat-handlebars`
-  Ceci recherchera les fichiers correspondant à `*.hbs` et définira `--profile=handlebars`.
+  Recherche les fichiers correspondant à `*.hbs` et définit `--profile=handlebars`.
 - `djlint-liquid` et `djlint-reformat-liquid`
-  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=liquid`.
+  Recherche les fichiers correspondant à `*.html` et définit `--profile=liquid`.
 - `djlint-golang` et `djlint-reformat-golang`
-  Ceci recherchera les fichiers correspondant à `*.gotmpl` et définira `--profile=golang`.
+  Recherche les fichiers correspondant à `*.gotmpl` et définit `--profile=golang`.
 - `djlint-tera` et `djlint-reformat-tera`
-  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=tera`.
+  Recherche les fichiers correspondant à `*.html` et définit `--profile=tera`.
 - `djlint-askama` et `djlint-reformat-askama`
-  Ceci recherchera les fichiers correspondant à `*.html` et définira `--profile=askama`.
+  Recherche les fichiers correspondant à `*.html` et définit `--profile=askama`.
+- `djlint-mako` et `djlint-reformat-mako`
+  Recherche les fichiers correspondant à `*.html` et définit `--profile=mako`.
 
-Notez que ces hooks prédéfinis sont parfois trop conservateurs dans les entrées qu'ils acceptent (vos templates peuvent utiliser une extension différente) donc pre-commit vous permet explicitement de remplacer n'importe laquelle de ces options prédéfinies. Consultez la [docs pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) pour une configuration supplémentaire.
+Notez que ces hooks prédéfinis sont parfois trop restrictifs quant aux fichiers qu'ils acceptent (vos templates utilisent peut-être une autre extension) : pre-commit vous permet donc explicitement de remplacer chacune de ces options prédéfinies. Consultez la [documentation de pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) pour les autres options de configuration.
 
-### Exemple de Django par défaut
+### Exemple Django par défaut
 
 ```yaml
 repos:
@@ -296,13 +298,13 @@ repos:
         types_or: ["html"]
 ```
 
-Vous pouvez utiliser les paramètres `files` ou `exclude` pour contraindre chaque hook à son propre répertoire, ce qui vous permet de supporter plusieurs langages de template dans le même repo.
+Vous pouvez utiliser les paramètres `files` ou `exclude` pour limiter chaque hook à son propre répertoire, ce qui permet de gérer plusieurs langages de templates dans un même dépôt.
 
 ## MegaLinter
 
-djLint est intégré nativement parmi les plus de 100 linters de [MegaLinter](https://megalinter.io).
+djlint est intégré nativement parmi les plus de 100 linters de [MegaLinter](https://megalinter.io)
 
-Pour l'installer, lancez `npx mega-linter-runner --install` et suivez les instructions.
+Pour l'installer, exécutez simplement `npx mega-linter-runner --install` et suivez les instructions
 
-- [GitHub dépôt](https://github.com/oxsecurity/megalinter)
+- [Dépôt GitHub](https://github.com/oxsecurity/megalinter)
 - [djlint dans la documentation de MegaLinter](https://megalinter.io/latest/descriptors/html_djlint/)

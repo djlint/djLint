@@ -98,17 +98,22 @@ function highlight(text: string) {
   return html + escape(text.slice(last));
 }
 
+// The finding is text in the mark, not CSS generated content, so screen readers
+// read it too, after a space. It is clipped away until the mark is hovered or
+// focused, and the tooltip drops the leading space.
+const tip = (code: string, message: string) => span("tip", ` ${code} ${message}`);
+
 function markLine(text: string, lineMarks: [string, string, string][] = []) {
   if (text === "" && lineMarks.length) {
     const [, code, message] = lineMarks[0];
-    return `<mark class="lint lint-blank" tabindex="0" data-tip="${code} ${message}"></mark>`;
+    return `<mark class="lint lint-blank" tabindex="0">${tip(code, message)}</mark>`;
   }
   let html = "";
   let rest = text;
   for (const [needle, code, message] of lineMarks) {
     const at = rest.indexOf(needle);
     html += highlight(rest.slice(0, at));
-    html += `<mark class="lint" tabindex="0" data-tip="${code} ${message}">${highlight(needle)}</mark>`;
+    html += `<mark class="lint" tabindex="0">${highlight(needle)}${tip(code, message)}</mark>`;
     rest = rest.slice(at + needle.length);
   }
   return html + highlight(rest);
@@ -133,8 +138,6 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
               <button
                 type="button"
                 data-copy={command}
-                data-label={`${t("djlint.copy")}: ${command}`}
-                data-done={t("djlint.copied")}
                 aria-label={`${t("djlint.copy")}: ${command}`}
               >
                 <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
@@ -146,6 +149,7 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
           ))
         }
       </div>
+      <p class="sr-only" role="status" data-done={t("djlint.copied")}></p>
     </div>
     <div class="actions">
       {
@@ -205,14 +209,26 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     else swap();
   });
 
-  for (const button of document.querySelectorAll<HTMLButtonElement>(".dj-hero [data-copy]")) {
+  // "Copied" goes to a status region: a changed label on the focused button is
+  // not reliably announced.
+  const copyStatus = document.querySelector<HTMLElement>(".dj-hero [role=status]")!;
+  const copyButtons = document.querySelectorAll<HTMLButtonElement>(".dj-hero [data-copy]");
+  let copyTimer: ReturnType<typeof setTimeout> | undefined;
+  for (const button of copyButtons) {
     button.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(button.dataset.copy!);
-      button.ariaLabel = button.dataset.done!;
-      button.classList.add("done");
-      setTimeout(() => {
-        button.ariaLabel = button.dataset.label!;
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy!);
+      } catch {
+        return; // Clipboard access was denied, so nothing was copied.
+      }
+      clearTimeout(copyTimer);
+      for (const other of copyButtons) other.classList.toggle("done", other === button);
+      // Emptied first, so a second copy is announced again.
+      copyStatus.textContent = "";
+      requestAnimationFrame(() => (copyStatus.textContent = copyStatus.dataset.done!));
+      copyTimer = setTimeout(() => {
         button.classList.remove("done");
+        copyStatus.textContent = "";
       }, 1500);
     });
   }
@@ -301,6 +317,8 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   /* The editor is always dark: it is a picture of a terminal, not of the page. */
   .editor {
     --fg: #c0caf5;
+    /* Dark scrollbars on the dark editor in the light theme too. */
+    color-scheme: dark;
     margin: 0;
     min-width: 0;
     border: 1px solid var(--dj-code-line);
@@ -383,9 +401,25 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath d='M0 1.5 Q1.5 0 3 1.5 T6 1.5' fill='none' stroke='%23f5c542' stroke-width='1.2'/%3E%3C/svg%3E")
       repeat-x 0 100% / 6px 3px;
   }
-  .line :global(mark.lint:is(:hover, :focus-visible)::after) {
-    content: attr(data-tip);
+  /* A line with a view-transition-name is a stacking context, which would keep
+     its tooltip under the marks on the lines after it. */
+  .line:is(:hover, :focus-within) {
+    position: relative;
+    z-index: 1;
+  }
+  .line :global(.tip) {
     position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    user-select: none;
+  }
+  .line :global(mark.lint:is(:hover, :focus-visible) .tip) {
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
     z-index: 1;
     top: 1.9em;
     left: 0;

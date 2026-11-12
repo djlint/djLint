@@ -7,16 +7,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
 
 
 def test_exclude(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_excludes", "--profile", "django")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_excludes", "--profile", "django"))
     print(result.output)
     assert """html.html""" in result.output
     assert """excluded.html""" not in result.output

@@ -1,31 +1,31 @@
 ---
-title: "Tera Template Linter and Formatter"
-description: "djLint - это линтер шаблонов Tera и форматер шаблонов Tera! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint."
+title: "Линтер и форматер шаблонов Tera"
+description: "djLint проверяет и форматирует шаблоны Tera. Задайте профиль tera, чтобы правила и форматирование подходили для них."
 sidebar:
   label: "Tera"
 ---
 
-djLint - это линтер шаблонов Tera и форматер шаблонов Tera! Используйте преимущества готового профиля при линтинге и форматировании ваших шаблонов с помощью djLint.
+djLint проверяет и форматирует шаблоны Tera. Задайте профиль `tera`, чтобы правила и форматирование подходили для них.
 
 **[Что такое Tera?](https://keats.github.io/tera/)**
 
-#### Использование командной строки
+## Через командную строку
 
 ```bash
 djlint /path/to/templates --profile=tera
 ```
 
-#### Или используйте файл конфигурации
+## Или через файл конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
 ```toml title="pyproject.toml"
 [tool.djlint]
-profile="tera"
+profile = "tera"
 ```
 
 ```toml title="djlint.toml / .djlint.toml"
-profile="tera"
+profile = "tera"
 ```
 
 ```json title=".djlintrc"
@@ -33,5 +33,5 @@ profile="tera"
 ```
 
 :::tip
-[Ознакомьтесь с руководством по настройке, чтобы узнать обо всех возможностях!](/ru/docs/configuration/)
+[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
 :::

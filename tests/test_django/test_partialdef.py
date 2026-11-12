@@ -34,16 +34,8 @@ test_data = [
         id="named_partialdef",
     ),
     pytest.param(
-        (
-            "{% partialdef user_info %}\n"
-            "<div>{{ user.name }}</div>\n"
-            "{% endpartialdef %}"
-        ),
-        (
-            "{% partialdef user_info %}\n"
-            "    <div>{{ user.name }}</div>\n"
-            "{% endpartialdef %}\n"
-        ),
+        ("{% partialdef user_info %}\n<div>{{ user.name }}</div>\n{% endpartialdef %}"),
+        ("{% partialdef user_info %}\n    <div>{{ user.name }}</div>\n{% endpartialdef %}\n"),
         id="unnamed_endpartialdef",
     ),
 ]

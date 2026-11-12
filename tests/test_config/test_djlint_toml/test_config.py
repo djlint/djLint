@@ -8,6 +8,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+from click import UsageError
+
 from djlint.settings import Config
 
 
@@ -31,10 +34,7 @@ def test_default() -> None:
     assert config.ignore_case is True
     assert config.include == "H014,H015"
     assert config.indent == 3 * " "
-    assert (
-        config.linter_output_format
-        == "{filename}:{line}: {code} {message} {match}"
-    )
+    assert config.linter_output_format == "{filename}:{line}: {code} {message} {match}"
     assert config.max_attribute_length == 10
     assert config.max_line_length == 120
     assert config.preserve_blank_lines is True
@@ -47,10 +47,7 @@ def test_default() -> None:
     assert config.js_config == {"indent_size": 5}
     assert config.css_config == {"indent_size": 5}
 
-    assert config.per_file_ignores == {
-        "file.html": "H026,H025",
-        "file_two.html": "H001",
-    }
+    assert config.per_file_ignores == {"file.html": "H026,H025", "file_two.html": "H001"}
 
 
 def test_dot_djlint_toml(tmp_path: Path) -> None:
@@ -77,3 +74,11 @@ def test_djlint_toml_precedes_dot_djlint_toml(tmp_path: Path) -> None:
     config = Config(str(html_file))
 
     assert config.ignore == "H014"
+
+
+@pytest.mark.parametrize("value", ["[100]", "{ width = 100 }"])
+def test_a_number_setting_of_another_type_is_a_usage_error(tmp_path: Path, value: str) -> None:
+    (tmp_path / "djlint.toml").write_text(f"max_line_length = {value}\n", encoding="utf-8")
+
+    with pytest.raises(UsageError, match=r"Invalid djlint.toml max_line_length value"):
+        Config(str(tmp_path))

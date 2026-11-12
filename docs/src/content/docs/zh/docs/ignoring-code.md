@@ -1,51 +1,51 @@
 ---
 title: "忽略代码"
-description: "如何防止 djLint 格式化代码块以及如何在行内忽略 djLint 规则。"
+description: "如何阻止 djLint 格式化某个代码块，以及如何以内联方式忽略代码检查规则。"
 sidebar:
   label: "忽略代码"
 ---
 
-可以通过用 djLint 标签包裹代码来跳过代码检查或格式化：
+把代码包裹在 `djlint` 标签中即可忽略它：
 
-对于传统 HTML -
+普通 HTML：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 <!-- djlint:off -->
    <bad html to ignore>
 <!-- djlint:on -->
 ```
 
-或使用注释 -
+或者写成注释：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off #}
    <bad html to ignore>
 {# djlint:on #}
 ```
 
-或使用长注释 -
+或者写成长注释：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {% comment %} djlint:off {% endcomment %}
    <bad html to ignore>
 {% comment %} djlint:on {% endcomment %}
 ```
 
-亦或是 golang 风格注释 -
+或者写成 Go 风格的注释：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{ /* djlint:off */ }}
    <bad html to ignore>
 {{ /* djlint:on */ }}
 ```
 
-以及 handlebars 风格注释 -
+或者写成 Handlebars 风格的注释：
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {{!-- djlint:off --}}
    <bad html to ignore>
@@ -54,9 +54,9 @@ sidebar:
 
 ## 忽略规则
 
-通过在忽略块的开始标签中添加规则名，可以忽略特定的代码检查规则。
+也可以在忽略块的起始标签中写上规则名称，从而只忽略特定的代码检查规则。
 
-<!-- prettier-ignore -->
+<!-- oxfmt-ignore -->
 ```html
 {# djlint:off H025,H026 #}
 <p>

@@ -1,7 +1,7 @@
 [project]
 name = "djlint"
-version = "1.49.1"
-description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates)"
+version = "1.50.0"
+description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Mustache, Liquid, Go templates, Angular, Tera, Askama, Mako)"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "GPL-3.0-or-later"
@@ -12,6 +12,7 @@ maintainers = [
   { name = "monosans", email = "hsyqixco@protonmail.com" },
 ]
 keywords = [
+  "angular",
   "askama",
   "django",
   "formatter",
@@ -24,6 +25,7 @@ keywords = [
   "jinja2",
   "linter",
   "liquid",
+  "mako",
   "mustache",
   "nunjucks",
   "templates",
@@ -50,7 +52,7 @@ classifiers = [
 ]
 urls.documentation = "https://djlint.com"
 urls.repository = "https://github.com/djlint/djLint"
-scripts.djlint = "djlint:main"
+scripts.djlint = "djlint._cli:main"
 dependencies = [
   "click>=8.2.0",
   "cssbeautifier>=1.13.0",
@@ -59,16 +61,16 @@ dependencies = [
   "pathspec>=0.9.0",
   "pyyaml>=5.1",
   "regex>=2021.8.21",
-  "typing-extensions>=4.3.0; python_version<'3.13'",
+  "typing-extensions>=4.4.0; python_version<'3.13'",
 ]
 
 [dependency-groups]
 dev = [
   "covdefaults==2.3.0",
   "pytest-cov==7.1.0",
-  "ruff==0.17.3",
-  "types-pyyaml==6.0.12.20260906",
-  "types-regex==2026.9.29.20261017",
+  "ruff==0.17.4",
+  "types-pyyaml==6.0.12.20261103",
+  "types-regex==2026.11.8.20261109",
   { include-group = "test" },
 ]
 test = [
@@ -108,17 +110,26 @@ include = ["djlint", "mypy.ini"]
 [tool.hatch.build.targets.wheel.hooks.mypyc]
 dependencies = [
   "hatch-mypyc==0.16.0",
-  "click==8.5.0",
+  "click==8.5.1",
   "cssbeautifier==2.0.3",
   "jsbeautifier==2.0.3",
   "json5==0.17.3",
   "mypy==2.4.1",
-  "types-pyyaml==6.0.12.20260906",
-  "types-regex==2026.9.29.20261017",
+  "types-pyyaml==6.0.12.20261103",
+  "types-regex==2026.11.8.20261109",
 ]
 enable-by-default = false
-exclude = ["src/djlint/__main__.py"]
+exclude = ["src/djlint/__init__.py", "src/djlint/__main__.py"]
 options = { opt_level = "3", debug_level = "0" }
 
 [tool.uv]
+# The mypyc build hook's pins of runtime dependencies, which hold uv.lock at
+# them: lock file maintenance would otherwise move a lock entry and leave the
+# pin behind. The other pins it has are in dependency groups.
+constraint-dependencies = [
+  "click==8.5.1",
+  "cssbeautifier==2.0.3",
+  "jsbeautifier==2.0.3",
+  "json5==0.17.3",
+]
 exclude-newer = "3 days"

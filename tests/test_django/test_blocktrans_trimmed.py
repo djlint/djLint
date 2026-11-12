@@ -26,52 +26,22 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "{% blocktranslate trimmed %} The width is: {{ width }}{% endblocktranslate %}"
-        ),
-        (
-            "{% blocktranslate trimmed %}\n"
-            "    The width is: {{ width }}\n"
-            "{% endblocktranslate %}\n"
-        ),
+        ("{% blocktranslate trimmed %} The width is: {{ width }}{% endblocktranslate %}"),
+        ("{% blocktranslate trimmed %}\n    The width is: {{ width }}\n{% endblocktranslate %}\n"),
         ({"max_line_length": 10}),
         id="blocktranslate_no_attr",
     ),
     pytest.param(
-        (
-            "{% blocktranslate trimmed %}The width is: {{ width }} {% endblocktranslate %}"
-        ),
-        (
-            "{% blocktranslate trimmed %}\n"
-            "    The width is: {{ width }}\n"
-            "{% endblocktranslate %}\n"
-        ),
+        ("{% blocktranslate trimmed %}The width is: {{ width }} {% endblocktranslate %}"),
+        ("{% blocktranslate trimmed %}\n    The width is: {{ width }}\n{% endblocktranslate %}\n"),
         ({"max_line_length": 10}),
         id="blocktranslate_with_attr",
     ),
     pytest.param(
-        (
-            "{% blocktrans trimmed %} The width is: {{ width }}{% endblocktrans %}"
-        ),
-        (
-            "{% blocktrans trimmed %}\n"
-            "    The width is: {{ width }}\n"
-            "{% endblocktrans %}\n"
-        ),
+        ("{% blocktrans trimmed %} The width is: {{ width }}{% endblocktrans %}"),
+        ("{% blocktrans trimmed %}\n    The width is: {{ width }}\n{% endblocktrans %}\n"),
         ({"max_line_length": 10}),
         id="blocktrans_no_attr",
-    ),
-    pytest.param(
-        (
-            "{% blocktranslate trimmed %}The width is: {{ width }} {% endblocktranslate %}"
-        ),
-        (
-            "{% blocktranslate trimmed %}\n"
-            "    The width is: {{ width }}\n"
-            "{% endblocktranslate %}\n"
-        ),
-        ({"max_line_length": 10}),
-        id="blocktranslage",
     ),
     pytest.param(
         (
@@ -272,6 +242,36 @@ test_data = [
         ),
         ({}),
         id="plural formatted",
+    ),
+    pytest.param(
+        (
+            "{% block p %}\n"
+            "{% if a %}\n"
+            "{% filter force_escape %}\n"
+            "{% blocktrans trimmed %}\n"
+            "x\n"
+            "{% endblocktrans %}\n"
+            "{% endfilter %}\n"
+            "{% else %}\n"
+            "y\n"
+            "{% endif %}\n"
+            "{% endblock %}\n"
+        ),
+        (
+            "{% block p %}\n"
+            "    {% if a %}\n"
+            "        {% filter force_escape %}\n"
+            "{% blocktrans trimmed %}\n"
+            "x\n"
+            "{% endblocktrans %}\n"
+            "{% endfilter %}\n"
+            "    {% else %}\n"
+            "        y\n"
+            "    {% endif %}\n"
+            "{% endblock %}\n"
+        ),
+        ({}),
+        id="a trimmed block inside a filter does not end the filter",
     ),
 ]
 

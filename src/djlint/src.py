@@ -12,9 +12,9 @@ from click import echo, style
 
 from djlint.helpers import compile_pattern
 
-if sys.version_info >= (3, 13):
+if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
     from typing import NamedTuple
-else:
+else:  # pragma: <3.13 cover
     from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
@@ -45,6 +45,8 @@ def _gitignore_match(config: Config, filepath: Path) -> bool:
     an absolute path causes false positives when parent directories
     (outside the project) match a gitignore pattern.
     """
+    if config.gitignore is None:
+        return False
     try:
         rel = filepath.relative_to(config.project_root)
     except ValueError:
@@ -55,9 +57,7 @@ def _gitignore_match(config: Config, filepath: Path) -> bool:
 def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
     """Check if a file matches exclude patterns using relative paths."""
     relative_roots = (
-        (config.project_root,)
-        if config.project_root == root
-        else (config.project_root, root)
+        (config.project_root,) if config.project_root == root else (config.project_root, root)
     )
     for relative_root in relative_roots:
         try:
@@ -67,26 +67,18 @@ def _exclude_match(config: Config, filepath: Path, root: Path) -> bool:
         rel_path = rel.as_posix()
         if config.exclude_pattern.search(rel_path):
             return True
-        if (
-            relative_root == config.project_root
-            and config.exclude_pattern.search(f"/{rel_path}")
-        ):
+        if relative_root == config.project_root and config.exclude_pattern.search(f"/{rel_path}"):
             return True
     return False
 
 
-def is_excluded(
-    config: Config, filepath: Path, root: Path | None = None
-) -> bool:
+def is_excluded(config: Config, filepath: Path, root: Path | None = None) -> bool:
     """Check whether the configuration leaves a file out, by its path alone."""
     # Both, for a symlink in an excluded folder and for a root behind a symlink.
     return any(
         _exclude_match(config, path, root or config.project_root)
         or (config.use_gitignore and _gitignore_match(config, path))
-        for path in (
-            Path(os.path.normpath(filepath.absolute())),
-            filepath.resolve(),
-        )
+        for path in (Path(os.path.normpath(filepath.absolute())), filepath.resolve())
     )
 
 
@@ -139,21 +131,17 @@ def print_no_files_to_check(*, excluded: bool) -> None:
 
 
 _HTML_PRAGMA_PATTERNS: Final = (compile_pattern(r"<!--\s*djlint\:on\s*-->"),)
-_TEMPLATE_COMMENT_PRAGMA_PATTERN: Final = compile_pattern(
-    r"\{#\s*djlint\:on\s*#\}"
-)
+_TEMPLATE_COMMENT_PRAGMA_PATTERN: Final = compile_pattern(r"\{#\s*djlint\:on\s*#\}")
 _DJANGO_JINJA_PRAGMA_PATTERNS: Final = (
     _TEMPLATE_COMMENT_PRAGMA_PATTERN,
-    compile_pattern(
-        r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}"
-    ),
+    compile_pattern(r"\{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}"),
 )
 _NUNJUCKS_PRAGMA_PATTERNS: Final = (_TEMPLATE_COMMENT_PRAGMA_PATTERN,)
-_HANDLEBARS_PRAGMA_PATTERNS: Final = (
-    compile_pattern(r"\{\{!--\s*djlint\:on\s*--\}\}"),
-)
-_GOLANG_PRAGMA_PATTERNS: Final = (
-    compile_pattern(r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}"),
+_HANDLEBARS_PRAGMA_PATTERNS: Final = (compile_pattern(r"\{\{!--\s*djlint\:on\s*--\}\}"),)
+_GOLANG_PRAGMA_PATTERNS: Final = (compile_pattern(r"\{\{-?\s*/\*\s*djlint\:on\s*\*/\s*-?\}\}"),)
+_MAKO_PRAGMA_PATTERNS: Final = (
+    compile_pattern(r"[ \t]*\#\#\s*djlint\:on\b"),
+    compile_pattern(r"<%doc>\s*djlint\:on\s*</%doc>"),
 )
 _PRAGMA_PATTERNS: Final = MappingProxyType({
     "html": _HTML_PRAGMA_PATTERNS,
@@ -166,10 +154,12 @@ _PRAGMA_PATTERNS: Final = MappingProxyType({
     "handlebars": _HANDLEBARS_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
     "golang": _GOLANG_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
     "angular": _HTML_PRAGMA_PATTERNS,
+    "mako": _MAKO_PRAGMA_PATTERNS + _HTML_PRAGMA_PATTERNS,
     "all": _DJANGO_JINJA_PRAGMA_PATTERNS
     + _NUNJUCKS_PRAGMA_PATTERNS
     + _HANDLEBARS_PRAGMA_PATTERNS
     + _GOLANG_PRAGMA_PATTERNS
+    + _MAKO_PRAGMA_PATTERNS
     + _HTML_PRAGMA_PATTERNS,
 })
 
@@ -186,12 +176,17 @@ def _has_required_pragma(config: Config, this_file: Path) -> bool:
     """Whether the file opens with the pragma, when one is required.
 
     The pragma is ascii, so a byte the file's first line cannot decode
-    is not it, and is reported when the file itself is read.
+    is not it, and is reported when the file itself is read. A file that
+    cannot be opened at all is kept, so that read reports it too, rather
+    than skipping a file that may well hold the pragma.
     """
     if not config.require_pragma:
         return True
 
-    with this_file.open(encoding="utf-8", errors="replace") as open_file:
-        first_line = open_file.readline()
+    try:
+        with this_file.open(encoding="utf-8", errors="replace") as open_file:
+            first_line = open_file.readline()
+    except OSError:
+        return True
 
     return has_pragma(config, first_line)

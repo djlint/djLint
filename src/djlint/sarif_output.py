@@ -20,6 +20,7 @@ from djlint.output import (
     finding_end,
     finding_position,
     first_filename,
+    print_unreadable,
     report_on_stderr,
 )
 
@@ -43,9 +44,7 @@ def _artifact(filename: str, config: Config) -> dict[str, Any]:
 
 
 def _lint_results(
-    error: Mapping[str, Sequence[LintError]],
-    config: Config,
-    rule_index: Mapping[str, int],
+    error: Mapping[str, Sequence[LintError]], config: Config, rule_index: Mapping[str, int]
 ) -> list[dict[str, Any]]:
     filename = next(iter(error))
     artifact = _artifact(filename, config)
@@ -85,19 +84,19 @@ def _format_result(
         "level": "error",
         "message": {"text": "Formatting changes required."},
         "locations": [
-            {
-                "physicalLocation": {
-                    "artifactLocation": _artifact(next(iter(errors)), config)
-                }
-            }
+            {"physicalLocation": {"artifactLocation": _artifact(next(iter(errors)), config)}}
         ],
     }
 
 
 def build_sarif(
-    config: Config, file_errors: Sequence[ProcessResult]
+    config: Config, file_errors: Sequence[ProcessResult], unreadable: Sequence[tuple[str, str]] = ()
 ) -> tuple[dict[str, Any], int]:
-    """Build the SARIF document and count the findings it holds."""
+    """Build the SARIF document and count the findings it holds.
+
+    A file that could not be processed has no results to give, so it is
+    reported as a notification about the run, which did not succeed.
+    """
     rules: list[dict[str, Any]] = []
     rule_index: dict[str, int] = {}
     for entry in config.linter_rules:
@@ -116,9 +115,7 @@ def build_sarif(
             found = _lint_results(lint, config, rule_index)
             results.extend(found)
             count += len(found)
-        if (formatting := error.get("format_message")) and next(
-            iter(formatting.values())
-        ):
+        if (formatting := error.get("format_message")) and next(iter(formatting.values())):
             if _FORMATTING_RULE not in rule_index:
                 rule_index[_FORMATTING_RULE] = len(rules)
                 rules.append({
@@ -126,10 +123,19 @@ def build_sarif(
                     "shortDescription": {"text": "File would be reformatted."},
                     "helpUri": "https://djlint.com/docs/formatter/",
                 })
-            results.append(
-                _format_result(formatting, config, rule_index[_FORMATTING_RULE])
-            )
+            results.append(_format_result(formatting, config, rule_index[_FORMATTING_RULE]))
             count += count_format_errors(formatting)
+
+    invocation: dict[str, Any] = {"executionSuccessful": not unreadable}
+    if unreadable:
+        invocation["toolExecutionNotifications"] = [
+            {
+                "level": "error",
+                "message": {"text": reason},
+                "locations": [{"physicalLocation": {"artifactLocation": _artifact(path, config)}}],
+            }
+            for path, reason in unreadable
+        ]
 
     document = {
         "$schema": _SCHEMA,
@@ -144,6 +150,7 @@ def build_sarif(
                         "rules": rules,
                     }
                 },
+                "invocations": [invocation],
                 "results": results,
             }
         ],
@@ -152,9 +159,13 @@ def build_sarif(
 
 
 def print_sarif_output(
-    config: Config, file_errors: Sequence[ProcessResult], _file_count: int
+    config: Config,
+    file_errors: Sequence[ProcessResult],
+    _file_count: int,
+    unreadable: Sequence[tuple[str, str]] = (),
 ) -> int:
     """Print the SARIF document and return how many findings it holds."""
-    document, count = build_sarif(config, file_errors)
+    document, count = build_sarif(config, file_errors, unreadable)
     echo(json.dumps(document, indent=2), err=report_on_stderr(config))
+    print_unreadable(config, unreadable)
     return count

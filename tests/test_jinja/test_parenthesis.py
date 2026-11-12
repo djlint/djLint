@@ -5,6 +5,7 @@ uv run pytest tests/test_jinja/test_parenthesis.py
 
 from __future__ import annotations
 
+import sys
 from typing import TYPE_CHECKING
 
 import pytest
@@ -16,22 +17,16 @@ if TYPE_CHECKING:
     from djlint.settings import Config
 
 test_data = [
-    pytest.param(
-        "{{ url('foo') }}", '{{ url("foo") }}\n', id="single_parenthesis_tag"
-    ),
-    pytest.param(
-        "{{_(error)}}", "{{ _(error) }}\n", id="function_arg_named_error"
-    ),
+    pytest.param("{{ url('foo') }}", '{{ url("foo") }}\n', id="single_parenthesis_tag"),
+    pytest.param("{{_(error)}}", "{{ _(error) }}\n", id="function_arg_named_error"),
     pytest.param(
         "{{ content | addID(id) | toc(tags=['h2']) | safe }}",
         "{{ content | addID(id) | toc(tags=['h2']) | safe }}\n",
         id="function_arg_named_id",
     ),
     pytest.param(
-        '<a href="{{ url("fo\'o") }}">Test</a>\n'
-        "<a href='{{ url('fo\"o') }}'>Test</a>",
-        "<a href=\"{{ url('fo\\'o') }}\">Test</a>\n"
-        '<a href=\'{{ url("fo\\"o") }}\'>Test</a>\n',
+        "<a href=\"{{ url(\"fo'o\") }}\">Test</a>\n<a href='{{ url('fo\"o') }}'>Test</a>",
+        "<a href=\"{{ url('fo\\'o') }}\">Test</a>\n<a href='{{ url(\"fo\\\"o\") }}'>Test</a>\n",
         id="attribute_quote_escaping",
     ),
     pytest.param(
@@ -49,9 +44,7 @@ test_data = [
         "<a href=\"/{{ url_for('test_reminders') }}/\">Test reminders</a>\n",
         id="single_url_for_partial_attribute_value",
     ),
-    pytest.param(
-        '{{ url("foo") }}', '{{ url("foo") }}\n', id="double_parenthesis_tag"
-    ),
+    pytest.param('{{ url("foo") }}', '{{ url("foo") }}\n', id="double_parenthesis_tag"),
     pytest.param(
         (
             "<div>\n"
@@ -117,9 +110,7 @@ test_data = [
         id="single_quoted_attribute_url_for",
     ),
     pytest.param(
-        '{{ _("test")|upper }}',
-        '{{ _("test")|upper }}\n',
-        id="issue_2409_filter_against_call",
+        '{{ _("test")|upper }}', '{{ _("test")|upper }}\n', id="issue_2409_filter_against_call"
     ),
     pytest.param(
         '{{ _("test") | upper }}',
@@ -131,6 +122,24 @@ test_data = [
         "{{ function(\n    a=1,\n    b=2,\n) }}\n",
         id="issue_2410_arguments_on_their_own_lines",
     ),
+    pytest.param(
+        '{{ _("Hello " "world") }}',
+        '{{ _("Hello " "world") }}\n',
+        id="adjacent_strings_stay_strings",
+    ),
+    pytest.param(
+        '{{ f("""a""") }}', '{{ f("""a""") }}\n', id="triple_quoted_string_stays_a_string"
+    ),
+    pytest.param(
+        '<a href="{{ url_for(page, 2) }}">x</a>',
+        '<a href="{{ url_for(page, 2) }}">x</a>\n',
+        id="arguments in an attribute holding no string",
+    ),
+    pytest.param(
+        '<a href="{{ url_for(page, [) }}">x</a>',
+        '<a href="{{ url_for(page, [) }}">x</a>\n',
+        id="arguments in an attribute that python cannot read are left alone",
+    ),
 ]
 
 
@@ -140,6 +149,17 @@ def test_base(source: str, expected: str, jinja_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+def test_a_number_too_long_to_write_out_stays_as_written(jinja_config: Config) -> None:
+    """str() refuses an integer past the conversion limit, so the call is left as written."""
+    source = "{{ f(0x" + "f" * 4000 + ") }}"
+    limit = sys.get_int_max_str_digits()
+    sys.set_int_max_str_digits(4300)
+    try:
+        assert formatter(jinja_config, source) == source + "\n"
+    finally:
+        sys.set_int_max_str_digits(limit)
 
 
 def test_issue_1428_no_trailing_whitespace(jinja_config: Config) -> None:

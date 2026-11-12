@@ -14,16 +14,16 @@
    </a>
 </p>
 
-<h4 align="center"><a href="https://djlint.com">How to use</a> • <a href="https://djlint.com/ru/">Как пользоваться</a> • <a href="https://djlint.com/fr/">Utilisation</a> • <a href="https://djlint.com/zh/">如何使用</a></h4>
+<h4 align="center">How to use: <a href="https://djlint.com/">English</a> • <a href="https://djlint.com/zh/">简体中文</a> • <a href="https://djlint.com/ja/">日本語</a> • <a href="https://djlint.com/es/">Español</a> • <a href="https://djlint.com/pt-br/">Português (Brasil)</a> • <a href="https://djlint.com/ru/">Русский</a> • <a href="https://djlint.com/ko/">한국어</a> • <a href="https://djlint.com/fr/">Français</a> • <a href="https://djlint.com/de/">Deutsch</a> • <a href="https://djlint.com/zh-tw/">繁體中文</a> • <a href="https://djlint.com/it/">Italiano</a> • <a href="https://djlint.com/pl/">Polski</a> • <a href="https://djlint.com/cs/">Čeština</a> • <a href="https://djlint.com/tr/">Türkçe</a></h4>
 <h4 align="center">What lang are you using?</h4>
 
 <p align="center">
-   <a href="https://djlint.com/docs/languages/django/">Django</a> • <a href="https://djlint.com/docs/languages/jinja/">Jinja</a> • <a href="https://djlint.com/docs/languages/twig/">Twig</a> • <a href="https://djlint.com/docs/languages/nunjucks/">Nunjucks</a> • <a href="https://djlint.com/docs/languages/handlebars/">Handlebars</a> • <a href="https://djlint.com/docs/languages/liquid/">Liquid</a> • <a href="https://djlint.com/docs/languages/golang/">Go templates</a> • <a href="https://djlint.com/docs/languages/angular/">Angular</a> • <a href="https://djlint.com/docs/languages/mustache/">Mustache</a> • <a href="https://djlint.com/docs/languages/tera/">Tera</a> • <a href="https://djlint.com/docs/languages/askama/">Askama</a>
+   <a href="https://djlint.com/docs/languages/django/">Django</a> • <a href="https://djlint.com/docs/languages/jinja/">Jinja</a> • <a href="https://djlint.com/docs/languages/twig/">Twig</a> • <a href="https://djlint.com/docs/languages/nunjucks/">Nunjucks</a> • <a href="https://djlint.com/docs/languages/handlebars/">Handlebars</a> • <a href="https://djlint.com/docs/languages/mustache/">Mustache</a> • <a href="https://djlint.com/docs/languages/liquid/">Liquid</a> • <a href="https://djlint.com/docs/languages/golang/">Go templates</a> • <a href="https://djlint.com/docs/languages/angular/">Angular</a> • <a href="https://djlint.com/docs/languages/tera/">Tera</a> • <a href="https://djlint.com/docs/languages/askama/">Askama</a> • <a href="https://djlint.com/docs/languages/mako/">Mako</a>
 </p>
 
 ## 🤔 For What?
 
-Every language in your stack has a formatter and a linter. HTML templates are the exception. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
+Every language in your stack has a formatter and a linter, except HTML templates. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
 
 djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more.
 
@@ -114,7 +114,7 @@ Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/for
 brew install djlint
 ```
 
-_Or with npm - **warning**: the npm package is only a wrapper, its install script runs `pip install --upgrade djlint` on whatever `python3` is on your system path. npm will not manage or uninstall the actual package - prefer pip directly when possible._
+_Or with npm. **Warning**: the npm package is only a wrapper. Its install script runs pip on whatever `python3` is on your system path and installs the djLint version of that npm release, which can replace a newer djLint with an older one. npm will not manage or uninstall the actual package, so prefer pip when you can._
 
 ```bash
 npm i djlint
@@ -131,7 +131,7 @@ djlint . --lint
 Check your format
 
 ```bash
-djlint . --check
+djlint . --check --single-attribute-per-line
 ```
 
 Fix my format!
@@ -151,7 +151,7 @@ Or use `pre-commit` to reformat, then lint!
 ```yaml
 repos:
   - repo: https://github.com/djlint/djLint
-    rev: v1.49.1 # use the latest version instead
+    rev: v1.50.0 # use the latest version instead
     hooks:
       - id: djlint-reformat
       - id: djlint
@@ -160,7 +160,8 @@ repos:
 ## 🧩 Editors
 
 - **VS Code**: install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) (also on [Open VSX](https://open-vsx.org/extension/monosans/djlint)).
-- **neovim, Sublime Text, MegaLinter and more**: see the [integrations docs](https://djlint.com/docs/integrations/).
+- **Neovim, JetBrains IDEs, Sublime Text, Helix and Emacs**: run the language server, `djlint --lsp`. See the [setup for each](https://djlint.com/docs/integrations/).
+- **CI**: [GitHub Actions](https://djlint.com/docs/integrations/#github-actions) and [MegaLinter](https://djlint.com/docs/integrations/#megalinter).
 
 ## 💙 Like it?
 
