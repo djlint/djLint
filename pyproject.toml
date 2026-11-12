@@ -70,7 +70,7 @@ dev = [
   "pytest-cov==7.1.0",
   "ruff==0.17.4",
   "types-pyyaml==6.0.12.20261103",
-  "types-regex==2026.11.7.20261108",
+  "types-regex==2026.11.8.20261109",
   { include-group = "test" },
 ]
 test = [
@@ -116,7 +116,7 @@ dependencies = [
   "json5==0.17.3",
   "mypy==2.4.1",
   "types-pyyaml==6.0.12.20261103",
-  "types-regex==2026.11.7.20261108",
+  "types-regex==2026.11.8.20261109",
 ]
 enable-by-default = false
 exclude = ["src/djlint/__init__.py", "src/djlint/__main__.py"]
