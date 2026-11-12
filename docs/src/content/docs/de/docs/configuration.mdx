@@ -1,0 +1,37 @@
+---
+title: "Konfiguration"
+description: "Die Optionen, die festlegen, wie djLint HTML-Templates lintet und formatiert."
+sidebar:
+  label: "Konfiguration"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+Die Konfiguration erfolgt entweder über die Datei `pyproject.toml` Ihres Projekts, über eine Datei `djlint.toml` oder `.djlint.toml` oder über eine Datei `.djlintrc`. Argumente auf der Befehlszeile haben immer Vorrang vor den Einstellungen in Konfigurationsdateien. Lokale Projekteinstellungen haben Vorrang vor einer globalen Konfigurationsdatei, die mit `--configuration` angegeben wird, es sei denn, `--prefer-configuration` ist gesetzt.
+
+Für `pyproject.toml` wird das Format `toml` verwendet.
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+Für `djlint.toml` und `.djlint.toml` wird das Format `toml` verwendet.
+
+```toml
+<config options>
+```
+
+Für `.djlintrc` wird das Format `json` verwendet.
+
+```json
+{ "option": "value" }
+```
+
+## Optionen
+
+<ConfigOptions
+  label="Optionen filtern"
+  placeholder="Tippen, um Optionen zu filtern …"
+  empty="Nichts gefunden. Versuchen Sie einen anderen Suchbegriff."
+/>

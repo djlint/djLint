@@ -1,0 +1,4 @@
+node_modules/
+_site/
+.astro/
+public/static/py/

@@ -20,10 +20,10 @@ from tests.conftest import linter, printer
 if TYPE_CHECKING:
     from typing import Any
 
-_LINTER_DOCS = Path("docs/src/docs/linter.md")
+_LINTER_DOCS = Path("docs/src/content/docs/docs/linter.md")
 _FORMATTER_DOCS = tuple(sorted(Path("docs/src").rglob("formatter.md")))
 _RULES_FILE = Path("src/djlint/rules.yaml")
-_CONFIGURATION_DATA = Path("docs/src/_data/configuration.json")
+_CONFIGURATION_DATA = Path("docs/src/data/configuration.json")
 _RULE_SECTION_PATTERN = re.compile(r"^#### ([A-Z]\d{3})\s*$", re.MULTILINE)
 _VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 _EXAMPLE_LABEL_PATTERN = re.compile(r"^(Don't|Do):\s*$", re.MULTILINE)

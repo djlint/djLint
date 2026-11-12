@@ -1,0 +1,37 @@
+---
+title: "配置"
+description: "用于配置 djLint 如何检查和格式化 HTML 模板的选项。"
+sidebar:
+  label: "配置"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+可以通过项目的 `pyproject.toml` 文件、`djlint.toml` 或 `.djlint.toml` 文件，或者 `.djlintrc` 文件进行配置。命令行参数始终会覆盖配置文件中的任何设置。本地项目设置会覆盖通过 `--configuration` 指定的全局配置文件，除非设置了 `--prefer-configuration`。
+
+`pyproject.toml` 的格式为 `toml`。
+
+```toml
+[tool.djlint]
+<config options>
+```
+
+`djlint.toml` 和 `.djlint.toml` 的格式为 `toml`。
+
+```toml
+<config options>
+```
+
+`.djlintrc` 的格式为 `json`。
+
+```json
+{ "option": "value" }
+```
+
+## 选项
+
+<ConfigOptions
+  label="筛选选项"
+  placeholder="输入关键字筛选选项..."
+  empty="未找到结果，请换个关键字再试。"
+/>

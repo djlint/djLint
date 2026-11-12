@@ -1,5 +1,5 @@
 // Builds what the demo installs: a wheel of djLint from this checkout and a
-// Pyodide lock file that names it and its dependencies, into src/static/py/.
+// Pyodide lock file that names it and its dependencies, into public/static/py/.
 // With the lock file the demo loads every package at once, in parallel, which
 // takes about a second less than resolving them in the browser with micropip.
 import { execFileSync } from "node:child_process";
@@ -12,14 +12,14 @@ import { loadPyodide, version } from "pyodide";
 
 const DOCS = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.dirname(DOCS);
-const OUT = path.join(DOCS, "src/static/py");
+const OUT = path.join(DOCS, "public/static/py");
 const CDN = `https://cdn.jsdelivr.net/pyodide/v${version}/full/`;
 
 // The worker loads Pyodide from the CDN, and a lock file only works with the
 // Pyodide it was made by.
-const worker = readFileSync(path.join(DOCS, "src/static/js/worker.js"), "utf8");
+const worker = readFileSync(path.join(DOCS, "public/static/js/worker.js"), "utf8");
 if (!worker.includes(CDN)) {
-  throw new Error(`src/static/js/worker.js must load Pyodide ${version} from ${CDN}`);
+  throw new Error(`public/static/js/worker.js must load Pyodide ${version} from ${CDN}`);
 }
 
 /** @returns {string} The commit, which the demo shows next to the version. */
