@@ -17,7 +17,7 @@ Jeho kód je na [GitHubu](https://github.com/djlint/djlint-vscode).
 
 ## Zed
 
-Nainstalujte [rozšíření djLint](https://github.com/djlint/djlint-zed), které spouští [jazykový server](#jazykový-server). Nálezy se po instalaci hned zobrazují v HTML a v jazycích rozšíření pro šablony.
+Nainstalujte [rozšíření djLint](https://github.com/djlint/djlint-zed), které spouští [jazykový server](#jazykový-server). Nálezy se po instalaci hned zobrazují v HTML a v jazycích rozšíření pro šablony. Vyžaduje djLint 1.49 nebo novější. Spouští `djlint` z PATH, a když tam není, djLint přes uv; jiný nastavíte v `lsp.djlint.binary.path`.
 
 Chcete-li formátovat pomocí djLint, nastavte ho jako formátovač jazyka:
 

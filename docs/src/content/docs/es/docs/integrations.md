@@ -17,7 +17,7 @@ Su código está en [GitHub](https://github.com/djlint/djlint-vscode).
 
 ## Zed
 
-Instala la [extensión de djLint](https://github.com/djlint/djlint-zed), que ejecuta el [servidor de lenguaje](#servidor-de-lenguaje). Los avisos aparecen en HTML y en los lenguajes de las extensiones de plantillas en cuanto la instalas.
+Instala la [extensión de djLint](https://github.com/djlint/djlint-zed), que ejecuta el [servidor de lenguaje](#servidor-de-lenguaje). Los avisos aparecen en HTML y en los lenguajes de las extensiones de plantillas en cuanto la instalas. Necesita djLint 1.49 o posterior. Ejecuta el `djlint` del PATH o, si no hay ninguno, djLint con uv; para usar otro, define `lsp.djlint.binary.path`.
 
 Para formatear con djLint, hazlo el formateador de un lenguaje:
 

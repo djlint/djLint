@@ -17,7 +17,7 @@ Its code is on [GitHub](https://github.com/djlint/djlint-vscode).
 
 ## Zed
 
-Install the [djLint extension](https://github.com/djlint/djlint-zed), which runs the [language server](#language-server). Findings appear in HTML and in the languages of the template extensions as soon as it's installed.
+Install the [djLint extension](https://github.com/djlint/djlint-zed), which runs the [language server](#language-server). Findings appear in HTML and in the languages of the template extensions as soon as it's installed. It needs djLint 1.49 or newer. It runs the `djlint` on PATH, or djLint through uv when there is none; to use another one, set `lsp.djlint.binary.path`.
 
 To format with djLint, make it the formatter of a language:
 

@@ -17,7 +17,7 @@ Kodu [GitHub](https://github.com/djlint/djlint-vscode) üzerindedir.
 
 ## Zed
 
-[Dil sunucusunu](#dil-sunucusu) çalıştıran [djLint uzantısını](https://github.com/djlint/djlint-zed) kurun. Bulgular, kurulumdan hemen sonra HTML'de ve şablon uzantılarının dillerinde görünür.
+[Dil sunucusunu](#dil-sunucusu) çalıştıran [djLint uzantısını](https://github.com/djlint/djlint-zed) kurun. Bulgular, kurulumdan hemen sonra HTML'de ve şablon uzantılarının dillerinde görünür. djLint 1.49 veya daha yenisi gerekir. Uzantı PATH'teki `djlint`'i, yoksa uv ile djLint'i çalıştırır; başka birini kullanmak için `lsp.djlint.binary.path` ayarını yapın.
 
 djLint ile biçimlendirmek için onu bir dilin biçimlendiricisi yapın:
 

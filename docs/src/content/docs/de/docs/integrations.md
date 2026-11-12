@@ -17,7 +17,7 @@ Der Code der Erweiterung liegt auf [GitHub](https://github.com/djlint/djlint-vsc
 
 ## Zed
 
-Installieren Sie die [djLint-Erweiterung](https://github.com/djlint/djlint-zed), die den [Sprachserver](#sprachserver) startet. Die Befunde erscheinen gleich nach der Installation in HTML und in den Sprachen der Template-Erweiterungen.
+Installieren Sie die [djLint-Erweiterung](https://github.com/djlint/djlint-zed), die den [Sprachserver](#sprachserver) startet. Die Befunde erscheinen gleich nach der Installation in HTML und in den Sprachen der Template-Erweiterungen. Sie braucht djLint 1.49 oder neuer. Sie startet das `djlint` aus dem PATH oder, wenn dort keins ist, djLint über uv; ein anderes legen Sie mit `lsp.djlint.binary.path` fest.
 
 Um mit djLint zu formatieren, machen Sie es zum Formatierer einer Sprache:
 

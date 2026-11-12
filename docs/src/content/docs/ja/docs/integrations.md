@@ -17,7 +17,7 @@ djLint 向けに作られたエディター連携がいくつかあります。
 
 ## Zed
 
-[djLint 拡張機能](https://github.com/djlint/djlint-zed)をインストールしてください。この拡張機能は[言語サーバー](#言語サーバー)を起動します。インストールするとすぐに、HTML とテンプレート拡張機能の言語で検出結果が表示されます。
+[djLint 拡張機能](https://github.com/djlint/djlint-zed)をインストールしてください。この拡張機能は[言語サーバー](#言語サーバー)を起動します。インストールするとすぐに、HTML とテンプレート拡張機能の言語で検出結果が表示されます。djLint 1.49 以降が必要です。PATH 上の `djlint` を実行し、見つからなければ uv で djLint を実行します。別の djLint を使うには `lsp.djlint.binary.path` を設定します。
 
 djLint でフォーマットするには、言語のフォーマッターに djLint を指定します。
 

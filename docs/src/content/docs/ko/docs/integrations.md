@@ -17,7 +17,7 @@ djLint를 위한 에디터 통합이 여러 가지 있습니다.
 
 ## Zed
 
-[djLint 확장](https://github.com/djlint/djlint-zed)을 설치하세요. 이 확장은 [언어 서버](#언어-서버)를 실행합니다. 설치하면 바로 HTML과 템플릿 확장의 언어에서 검사 결과가 표시됩니다.
+[djLint 확장](https://github.com/djlint/djlint-zed)을 설치하세요. 이 확장은 [언어 서버](#언어-서버)를 실행합니다. 설치하면 바로 HTML과 템플릿 확장의 언어에서 검사 결과가 표시됩니다. djLint 1.49 이상이 필요합니다. PATH에 있는 `djlint`를 실행하고, 없으면 uv로 djLint를 실행합니다. 다른 djLint를 쓰려면 `lsp.djlint.binary.path`를 설정하세요.
 
 djLint로 포맷하려면 언어의 포매터로 djLint를 지정하세요.
 
