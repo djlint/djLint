@@ -15,6 +15,18 @@ Nainstalujte [rozšíření djLint](https://marketplace.visualstudio.com/items?i
 
 Jeho kód je na [GitHubu](https://github.com/djlint/djlint-vscode).
 
+## Zed
+
+Nainstalujte [rozšíření djLint](https://github.com/djlint/djlint-zed), které spouští [jazykový server](#jazykový-server). Nálezy se po instalaci hned zobrazují v HTML a v jazycích rozšíření pro šablony. Vyžaduje djLint 1.49 nebo novější. Spouští `djlint` z PATH, a když tam není, djLint přes uv; jiný nastavíte v `lsp.djlint.binary.path`.
+
+Chcete-li formátovat pomocí djLint, nastavte ho jako formátovač jazyka:
+
+```json
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[Nastavení](#nastavení) patří pod `lsp.djlint.settings`.
+
 ## Neovim
 
 djLint lze v Neovimu používat jako linter i formátovač.

@@ -15,6 +15,18 @@ sidebar:
 
 Его код находится на [GitHub](https://github.com/djlint/djlint-vscode).
 
+## Zed
+
+Установите [расширение djLint](https://github.com/djlint/djlint-zed), которое запускает [языковой сервер](#языковой-сервер). Находки появляются в HTML и в языках расширений для шаблонов сразу после установки. Нужен djLint 1.49 или новее. Расширение запускает `djlint` из PATH, а если его там нет, djLint через uv; чтобы взять другой, задайте `lsp.djlint.binary.path`.
+
+Чтобы форматировать с помощью djLint, сделайте его форматером языка:
+
+```json
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[Настройки](#настройки) задаются в `lsp.djlint.settings`.
+
 ## Neovim
 
 В Neovim djLint можно использовать как линтер и как форматер.

@@ -15,6 +15,18 @@ djLint 已有多种编辑器集成。
 
 其代码托管在 [GitHub](https://github.com/djlint/djlint-vscode) 上。
 
+## Zed
+
+安装 [djLint 扩展](https://github.com/djlint/djlint-zed)，它会运行[语言服务器](#语言服务器)。安装后，HTML 以及各模板扩展的语言中就会显示检查结果。需要 djLint 1.49 或更高版本。扩展会运行 PATH 中的 `djlint`，找不到时通过 uv 运行 djLint；要使用其他版本，请设置 `lsp.djlint.binary.path`。
+
+要使用 djLint 进行格式化，请将其设为某种语言的格式化工具：
+
+```json
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[设置](#设置)位于 `lsp.djlint.settings` 下。
+
 ## Neovim
 
 在 Neovim 中，djLint 既可以用作代码检查工具，也可以用作格式化工具。
