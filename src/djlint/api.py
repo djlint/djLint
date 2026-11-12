@@ -16,9 +16,9 @@ from djlint.reformat import formatter
 from djlint.settings import Config
 from djlint.src import has_pragma, is_excluded as _is_excluded
 
-if sys.version_info >= (3, 13):
+if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
     from typing import NamedTuple
-else:
+else:  # pragma: <3.13 cover
     from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
@@ -55,7 +55,8 @@ def load_config(
     what the configuration turns on. With `python_rules=False`, custom rules
     with a `python_module` aren't loaded,
     which keeps the project's code from running. Their names are then in
-    `config.skipped_rules`.
+    `config.skipped_rules`. A configuration file that can't be read, or a
+    value that isn't valid, raises `click.UsageError`.
     """
     return Config(str(folder), python_rules=python_rules, **options)
 

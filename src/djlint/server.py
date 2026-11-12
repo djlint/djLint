@@ -909,7 +909,7 @@ class Server:
 
 
 def _known_settings() -> set[str]:
-    from djlint import main  # noqa: PLC0415
+    from djlint._cli import main  # noqa: PLC0415
 
     known = {parameter.name for parameter in main.params} - _NOT_SETTINGS
     known.update(("python_rules", "use_editor_indentation"))
@@ -929,7 +929,7 @@ def _path(uri: object) -> Path | None:
     path = unquote(parsed.path)
     if parsed.netloc not in {"", "localhost"}:
         return Path(f"//{unquote(parsed.netloc)}{path}")
-    if sys.platform == "win32" and _WINDOWS_DRIVE.match(path):
+    if sys.platform == "win32" and _WINDOWS_DRIVE.match(path):  # pragma: win32 cover
         path = path[1:]
     return Path(path)
 
@@ -947,7 +947,11 @@ def serve() -> NoReturn:
     os.dup2(sys.stderr.fileno(), sys.stdout.fileno())
     with Path(os.devnull).open("rb") as null:
         os.dup2(null.fileno(), sys.stdin.fileno())
-    code = Server(reader, writer).serve()
+    try:
+        code = Server(reader, writer).serve()
+    except KeyboardInterrupt:
+        # As the command line exits on Ctrl+C, rather than click's 1.
+        code = 130
     writer.flush()
     sys.stderr.flush()
     # Python can crash at exit on a thread blocked in a read of stdin.

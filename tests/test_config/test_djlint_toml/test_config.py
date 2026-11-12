@@ -9,6 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from click import UsageError
 
 from djlint.settings import Config
 
@@ -76,12 +77,8 @@ def test_djlint_toml_precedes_dot_djlint_toml(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize("value", ["[100]", "{ width = 100 }"])
-def test_a_number_setting_of_another_type_keeps_its_default(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str], value: str
-) -> None:
+def test_a_number_setting_of_another_type_is_a_usage_error(tmp_path: Path, value: str) -> None:
     (tmp_path / "djlint.toml").write_text(f"max_line_length = {value}\n", encoding="utf-8")
 
-    config = Config(str(tmp_path))
-
-    assert "Invalid djlint.toml max_line_length value" in capsys.readouterr().err
-    assert config.max_line_length == 120
+    with pytest.raises(UsageError, match=r"Invalid djlint.toml max_line_length value"):
+        Config(str(tmp_path))

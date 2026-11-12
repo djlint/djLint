@@ -1,6 +1,6 @@
 {
   "name": "djlint",
-  "version": "1.49.9",
+  "version": "1.50.0",
   "description": "HTML Template Linter and Formatter",
   "keywords": [
     "angular template formatter",
@@ -47,9 +47,9 @@
   },
   "files": [],
   "scripts": {
-    "postinstall": "python3 -m pip install --upgrade djlint==1.49.9"
+    "postinstall": "python3 -m pip install --upgrade djlint==1.50.0"
   },
   "devDependencies": {
-    "oxfmt": "0.75.0"
+    "oxfmt": "0.78.0"
   }
 }

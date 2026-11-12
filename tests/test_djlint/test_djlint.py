@@ -16,8 +16,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-import djlint as djlint_module
-from djlint import main as djlint, output as djlint_output
+from djlint import _cli as djlint_module, output as djlint_output  # noqa: PLC2701
+from djlint._cli import main as djlint  # noqa: PLC2701
 from tests.conftest import write_to_file
 
 if TYPE_CHECKING:
@@ -25,6 +25,10 @@ if TYPE_CHECKING:
     from typing import Any
 
     from click.testing import CliRunner
+
+# A mypyc build calls between djLint's modules directly, past a patched
+# module attribute.
+_COMPILED = not str(djlint_module.__file__).endswith(".py")
 
 
 def test_help(runner: CliRunner) -> None:
@@ -300,6 +304,7 @@ def test_stdin_preserves_line_endings(runner: CliRunner) -> None:
     assert result.stdout_bytes == b"<div>\n    <p>hi</p>\n</div>\n"
 
 
+@pytest.mark.skipif(_COMPILED, reason="patches print_output")
 def test_closed_pipe_is_not_a_crash(runner: CliRunner, monkeypatch: pytest.MonkeyPatch) -> None:
     """`djlint . | head` is the consumer's choice, not a djLint failure.
 
@@ -316,6 +321,23 @@ def test_closed_pipe_is_not_a_crash(runner: CliRunner, monkeypatch: pytest.Monke
     assert result.exit_code == 2
     assert "Traceback" not in result.stderr
     assert "report unexpected failures" not in result.stderr
+
+
+@pytest.mark.skipif(_COMPILED, reason="patches print_output")
+def test_ctrl_c_does_not_look_like_a_finding(
+    runner: CliRunner, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An interrupted run exits 130, as a shell reports it, rather than 1."""
+
+    def interrupt(*_args: object, **_kwargs: object) -> int:
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(djlint_output, "print_output", interrupt)
+
+    result = runner.invoke(djlint, ("-", "--lint"), input="<div></div>")
+
+    assert result.exit_code == 130
+    assert result.stderr == "Aborted!\n"
 
 
 def test_check(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:
@@ -340,7 +362,7 @@ def test_import_skips_runtime_helpers() -> None:
     code = (
         "import sys; "
         f"sys.path.insert(0, {src_path!r}); "
-        "import djlint; "
+        "import djlint._cli; "
         "blocked = {'concurrent.futures', 'cssbeautifier', 'jsbeautifier', "
         "'djlint.lint', 'djlint.reformat'}; "
         "loaded = sorted(blocked & sys.modules.keys()); "
@@ -421,27 +443,15 @@ def test_version(runner: CliRunner) -> None:
     assert metadata.version("djlint") in result.output
 
 
-def test_python_call() -> None:
-    if sys.platform != "win32":
-        py_sub = subprocess.run(
-            ("python", "-m", "djlint", "-h"),  # noqa: S607
-            capture_output=True,
-            check=False,
-        )
-        print(py_sub.stdout)
-        print(py_sub.returncode)
-        assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
-        assert py_sub.returncode == 0
-
-        py_sub = subprocess.run(
-            ("python", "-m", "djlint", "__init__", "-h"),  # noqa: S607
-            capture_output=True,
-            check=False,
-        )
-        print(py_sub.stdout)
-        print(py_sub.returncode)
-        assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
-        assert py_sub.returncode == 0
+@pytest.mark.parametrize("args", [("-h",), ("__init__", "-h")])
+def test_python_call(args: tuple[str, ...]) -> None:
+    py_sub = subprocess.run(  # noqa: S603
+        (sys.executable, "-m", "djlint", *args), capture_output=True, check=False
+    )
+    print(py_sub.stdout)
+    print(py_sub.returncode)
+    assert b"python -m djlint [OPTIONS] SRC ..." in py_sub.stdout
+    assert py_sub.returncode == 0
 
 
 def test_line_ending(runner: CliRunner, tmp_file: _TemporaryFileWrapper[bytes]) -> None:

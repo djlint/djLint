@@ -122,19 +122,29 @@ def test_custom_element_is_not_the_document_root(django_config: Config) -> None:
     assert not output[filename]
 
 
-def test_junk_before_the_html_tag_does_not_silence_the_rule(basic_config: Config) -> None:
-    for source in (
+@pytest.mark.parametrize(
+    "source",
+    [
         '<?xml version="1.0"?>\n<html lang="en"><body>x</body></html>',
         '{{ define "main" }}\n<html lang="en"><body>x</body></html>',
         '<!foo>\n<html lang="en"><body>x</body></html>',
         '<!doctypehtml>\n<html lang="en"><body>x</body></html>',
-    ):
-        output = linter(basic_config, source, "t.html", "t.html")["t.html"]
-        assert any(error["code"] == "H007" for error in output), source
+    ],
+)
+def test_junk_before_the_html_tag_does_not_silence_the_rule(
+    source: str, basic_config: Config
+) -> None:
+    output = linter(basic_config, source, "t.html", "t.html")["t.html"]
+    assert any(error["code"] == "H007" for error in output)
 
-    for source in (
+
+@pytest.mark.parametrize(
+    "source",
+    [
         '<!DOCTYPE html>\n<html lang="en"><body>x</body></html>',
         '<!doctype html>\n<html lang="en"><body>x</body></html>',
-    ):
-        output = linter(basic_config, source, "t.html", "t.html")["t.html"]
-        assert not any(error["code"] == "H007" for error in output), source
+    ],
+)
+def test_a_doctype_before_the_html_tag_silences_the_rule(source: str, basic_config: Config) -> None:
+    output = linter(basic_config, source, "t.html", "t.html")["t.html"]
+    assert not any(error["code"] == "H007" for error in output)

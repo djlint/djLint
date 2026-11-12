@@ -6,11 +6,11 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
-permissions:
-  contents: read
+permissions: {}
 jobs:
   build-compiled:
     runs-on: ${{ matrix.os }}
+    if: ${{ github.repository_owner == 'djlint' }}
     strategy:
       matrix:
         include:
@@ -46,6 +46,7 @@ jobs:
           path: dist
   build-pure:
     runs-on: ubuntu-26.04
+    if: ${{ github.repository_owner == 'djlint' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -64,7 +65,6 @@ jobs:
           path: dist
   publish-pypi:
     runs-on: ubuntu-26.04
-    if: ${{ github.repository_owner == 'djlint' && startsWith(github.ref, 'refs/tags/')  }}
     needs:
       - build-compiled
       - build-pure
@@ -82,7 +82,6 @@ jobs:
       - run: uv publish --trusted-publishing always --no-cache
   publish-npm:
     runs-on: ubuntu-26.04
-    if: ${{ github.repository_owner == 'djlint' && startsWith(github.ref, 'refs/tags/')  }}
     needs:
       - publish-pypi
     permissions:

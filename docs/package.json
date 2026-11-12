@@ -18,6 +18,7 @@
     "@fontsource-variable/jetbrains-mono": "5.3.0",
     "@lezer/highlight": "1.2.5",
     "astro": "7.4.2",
-    "codemirror": "6.0.2"
+    "codemirror": "6.0.2",
+    "pyodide": "314.0.7"
   }
 }

@@ -7,12 +7,15 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import click
+import pytest
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
@@ -20,6 +23,24 @@ if TYPE_CHECKING:
 _CLI_DOCS = Path("docs/src/data/cli-help.txt")
 _CONFIGURATION_DOCS = Path("docs/src/data/configuration.json")
 _HELP_WIDTH = 80
+
+
+def test_the_command_line_is_still_found_in_the_package() -> None:
+    import djlint  # noqa: PLC0415
+    from djlint import _cli, main, process, process_stdin  # noqa: PLC0415, PLC2701
+
+    assert (main, process, process_stdin) == (_cli.main, _cli.process, _cli.process_stdin)
+    with pytest.raises(AttributeError, match="no_such_name"):
+        _ = djlint.no_such_name
+
+
+def test_importing_the_package_leaves_the_command_line_out() -> None:
+    """Runs in a process of its own, as the tests import the command line."""
+    code = "import sys, djlint\nprint('djlint._cli' in sys.modules)\n"
+    done = subprocess.run(  # noqa: S603
+        (sys.executable, "-c", code), capture_output=True, check=True, encoding="utf-8"
+    )
+    assert done.stdout.strip() == "False"
 
 
 def test_help_snapshot_matches_docs(runner: CliRunner) -> None:

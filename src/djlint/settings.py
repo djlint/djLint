@@ -234,16 +234,36 @@ def load_config_file(filepath: Path) -> Any:
     return load_djlintrc_config(filepath)
 
 
+def _unreadable_config(path: Path | str, error: Exception) -> UsageError:
+    """The error for a configuration file that cannot be read.
+
+    Running on with the defaults instead would check the templates against
+    rules nobody chose, and could pass a run that should fail. The reason is
+    kept on one line: a YAML error spans several, and an editor that shows
+    the last line of a failure would show only the position.
+    """
+    reason = " ".join(str(error).split())
+    return UsageError(f"Could not read {path}: {reason}")
+
+
+def _settings_table(content: Any, path: Path | str) -> dict[str, Any]:
+    """The settings a file holds, which have to map names to values."""
+    if not isinstance(content, dict):
+        msg = f"Could not read {path}: its djLint settings are not a table of names and values."
+        raise UsageError(msg)
+    return content
+
+
 def _named_settings(config: Path | None) -> dict[str, Any]:
     """Settings from the file `--configuration` names."""
     if not config:
         return {}
 
     try:
-        return dict(load_config_file(config))
+        content = load_config_file(config)
     except Exception as error:
-        echo(style(f"Failed to load config file {config}. {error}", fg="red"), err=True)
-        return {}
+        raise _unreadable_config(config, error) from None
+    return _settings_table(content, config)
 
 
 def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
@@ -256,22 +276,23 @@ def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
         try:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
-            echo(style(f"Failed to load pyproject.toml file. {error}", fg="red"), err=True)
-        else:
-            if content:
-                return dict(content), pyproject_file.name
+            raise _unreadable_config(pyproject_file.name, error) from None
+        if settings := _settings_table(content, pyproject_file.name):
+            return settings, pyproject_file.name
 
     if djlint_toml_file := find_djlint_toml(src):
         try:
-            return dict(load_djlint_toml_config(djlint_toml_file)), djlint_toml_file.name
+            content = load_djlint_toml_config(djlint_toml_file)
         except Exception as error:
-            echo(style(f"Failed to load {djlint_toml_file.name} file. {error}", fg="red"), err=True)
+            raise _unreadable_config(djlint_toml_file.name, error) from None
+        return _settings_table(content, djlint_toml_file.name), djlint_toml_file.name
 
-    elif djlintrc_file := find_djlintrc(src):
+    if djlintrc_file := find_djlintrc(src):
         try:
-            return dict(load_djlintrc_config(djlintrc_file)), djlintrc_file.name
+            content = load_djlintrc_config(djlintrc_file)
         except Exception as error:
-            echo(style(f"Failed to load .djlintrc file. {error}", fg="red"), err=True)
+            raise _unreadable_config(djlintrc_file.name, error) from None
+        return _settings_table(content, djlintrc_file.name), djlintrc_file.name
 
     return {}, ""
 
@@ -336,12 +357,24 @@ _YAML_LOADER: Final = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 
 
 def load_custom_rules(rules_file: Path | None) -> Any:
-    """Load custom linter rules from a .djlint_rules.yaml file."""
-    if rules_file:
-        with rules_file.open("rb") as f:
-            return yaml.safe_load(f)
+    """Load custom linter rules from a .djlint_rules.yaml file.
 
-    return ()
+    An empty file holds no rules.
+    """
+    if not rules_file:
+        return ()
+
+    try:
+        with rules_file.open("rb") as f:
+            rules = yaml.safe_load(f)
+    except (OSError, yaml.YAMLError) as error:
+        raise _unreadable_config(rules_file, error) from None
+    if rules is None:
+        return ()
+    if not isinstance(rules, list):
+        msg = f"Could not read {rules_file}: it does not hold a list of rules."
+        raise UsageError(msg)
+    return rules
 
 
 def _as_comma_separated(value: Any) -> Any:
@@ -1369,14 +1402,11 @@ class Config:
             try:
                 return int(djlint_settings.get(key, default))
             except (TypeError, ValueError):
-                echo(
-                    style(
-                        f"Error: Invalid {setting_sources[key]} {key} value {djlint_settings[key]}",
-                        fg="red",
-                    ),
-                    err=True,
+                msg = (
+                    f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
+                    " It must be a whole number."
                 )
-                return default
+                raise UsageError(msg) from None
 
         self.reformat = reformat
         self.check = check

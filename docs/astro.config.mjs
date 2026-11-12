@@ -15,12 +15,26 @@ function remarkDjlintVersion() {
   return walk;
 }
 
+// Builds the djLint the demo runs, into public/static/py/. An ES module runs
+// once per process, so a config reload in the dev server doesn't build it again.
+const demoLock = {
+  name: "demo-lock",
+  hooks: {
+    "astro:config:setup": async ({ command }) => {
+      if (command === "build" || command === "dev") {
+        await import("./demo-lock.mjs");
+      }
+    },
+  },
+};
+
 export default defineConfig({
   site: "https://djlint.com",
   outDir: "_site",
   trailingSlash: "always",
   markdown: { processor: unified({ remarkPlugins: [remarkDjlintVersion] }) },
   integrations: [
+    demoLock,
     starlight({
       title: "djLint",
       logo: {

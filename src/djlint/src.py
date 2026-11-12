@@ -12,9 +12,9 @@ from click import echo, style
 
 from djlint.helpers import compile_pattern
 
-if sys.version_info >= (3, 13):
+if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
     from typing import NamedTuple
-else:
+else:  # pragma: <3.13 cover
     from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
@@ -176,12 +176,17 @@ def _has_required_pragma(config: Config, this_file: Path) -> bool:
     """Whether the file opens with the pragma, when one is required.
 
     The pragma is ascii, so a byte the file's first line cannot decode
-    is not it, and is reported when the file itself is read.
+    is not it, and is reported when the file itself is read. A file that
+    cannot be opened at all is kept, so that read reports it too, rather
+    than skipping a file that may well hold the pragma.
     """
     if not config.require_pragma:
         return True
 
-    with this_file.open(encoding="utf-8", errors="replace") as open_file:
-        first_line = open_file.readline()
+    try:
+        with this_file.open(encoding="utf-8", errors="replace") as open_file:
+            first_line = open_file.readline()
+    except OSError:
+        return True
 
     return has_pragma(config, first_line)

@@ -47,7 +47,7 @@ def _forget_rule_module(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "path", list(sys.path))
 
 
-@pytest.mark.skipif(sys.platform == "win32", reason="needs symlinks")
+@pytest.mark.skipif(sys.platform == "win32", reason="needs symlinks")  # pragma: win32 no cover
 def test_is_excluded_by_the_path_of_a_symlink(tmp_path: Path) -> None:
     (tmp_path / ".djlintrc").write_text('{"exclude": "vendor"}', encoding="utf-8")
     (tmp_path / "vendor").mkdir()
@@ -137,6 +137,19 @@ def test_python_rules_can_be_left_out(tmp_path: Path) -> None:
     findings = lint_text(config, "<div>")
     assert "project_rule" not in sys.modules
     assert {x.code for x in findings} == {"H025"}
+
+
+def test_importing_the_api_leaves_the_command_line_out() -> None:
+    """Runs in a process of its own, as the tests import the command line."""
+    code = (
+        "import sys, djlint.api\n"
+        "loaded = sorted({'djlint._cli', 'djlint.server'} & sys.modules.keys())\n"
+        "print(*loaded)\n"
+    )
+    done = subprocess.run(  # noqa: S603
+        (sys.executable, "-c", code), capture_output=True, check=True, encoding="utf-8"
+    )
+    assert not done.stdout.strip()
 
 
 def test_a_module_of_a_project_does_not_replace_the_standard_library(tmp_path: Path) -> None:

@@ -5,10 +5,10 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "The mypyc build hook's pins, which pep621 does not read. An update shares its branch with the pep621 one of the same package, so a pin moves with its uv.lock entry.",
+      "description": "The mypyc build hook's pins and uv's constraints, which pep621 does not read. An update shares its branch with the pep621 one of the same package, so a pin moves with its uv.lock entry, and uv locks the new version under the moved constraint.",
       "managerFilePatterns": ["/^pyproject\\.toml$/"],
       "matchStrings": [
-        "\\[tool\\.hatch\\.build\\.targets\\.wheel\\.hooks\\.mypyc\\]\\ndependencies = \\[[^\\]]*\\]",
+        "(?:\\[tool\\.hatch\\.build\\.targets\\.wheel\\.hooks\\.mypyc\\]\\ndependencies|constraint-dependencies) = \\[[^\\]]*\\]",
         "\"(?<depName>[^\"=]+)==(?<currentValue>[^\"]+)\""
       ],
       "matchStringsStrategy": "recursive",
@@ -60,6 +60,11 @@
     { "matchPackageNames": ["mypy", "pre-commit/mirrors-mypy"], "groupName": "mypy" },
     { "matchPackageNames": ["ruff", "charliermarsh/ruff-pre-commit"], "groupName": "ruff" },
     { "matchPackageNames": ["oxfmt", "oxc-project/mirrors-oxfmt"], "groupName": "oxfmt" },
+    {
+      "description": "The Pyodide that builds the demo's lock file and the one the demo loads from the CDN have to be the same",
+      "matchPackageNames": ["pyodide"],
+      "groupName": "pyodide"
+    },
     { "matchCurrentVersion": "!/^0/", "matchUpdateTypes": ["minor"], "automerge": true },
     { "matchUpdateTypes": ["lockFileMaintenance", "patch", "replacement"], "automerge": true },
     { "matchDepTypes": ["dependency-groups"], "matchManagers": ["pep621"], "automerge": true },

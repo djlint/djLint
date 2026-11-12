@@ -5,11 +5,14 @@ uv run pytest tests/test_djlint/test_exit_codes.py
 
 from __future__ import annotations
 
+import os
+import sys
 from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint import main as djlint
+from djlint import _cli  # noqa: PLC2701
+from djlint._cli import main as djlint  # noqa: PLC2701
 from djlint.settings import _PROFILES  # noqa: PLC2701
 from djlint.src import _PRAGMA_PATTERNS  # noqa: PLC2701
 
@@ -73,20 +76,62 @@ def test_every_profile_survives_require_pragma(
     assert result.exit_code == 0
 
 
-def test_unreadable_file_does_not_look_like_a_finding(runner: CliRunner, tmp_path: Path) -> None:
-    """A file djLint cannot decode is a failure, not a lint error.
+# Under pytest-xdist the process runs more than one thread, which Python 3.12
+# and 3.13 warn about where the workers are forked.
+@pytest.mark.filterwarnings("ignore:This process .* is multi-threaded:DeprecationWarning")
+@pytest.mark.parametrize("cpus", [1, 2])
+def test_unreadable_file_does_not_look_like_a_finding(
+    runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, cpus: int
+) -> None:
+    """A file djLint cannot decode is named, and the other files are still checked.
 
-    Exiting 1 here would be indistinguishable from "found 1 problem". The
-    traceback is kept, so a bug report still has something to go on.
+    It is bad input, not a djLint bug, so there is no traceback. The run
+    still exits 2 rather than 1, which would read as "found 1 problem", and
+    --warn does not let a file that went unchecked pass. With two cpus the
+    files are large enough to go to worker processes.
     """
     _project(tmp_path)
-    (tmp_path / "latin.html").write_bytes("<div>caf\xe9</div>".encode("latin-1"))
+    (tmp_path / "latin.html").write_bytes("<div>caf\xe9</div>\n".encode("latin-1") * 8000)
+    (tmp_path / "real.html").write_text('<img src="x">\n', encoding="utf-8")
+    monkeypatch.setattr(_cli, "process_cpu_count", lambda: cpus)
 
-    result = runner.invoke(djlint, (str(tmp_path), "--lint"))
+    result = runner.invoke(djlint, (str(tmp_path), "--lint", "--warn"))
 
     assert result.exit_code == 2
-    assert "djLint failed and did not finish checking" in result.output
-    assert "UnicodeDecodeError" in result.output
+    assert "Error: latin.html: not valid UTF-8: 'utf-8' codec can't decode" in result.stderr
+    assert "H013 1:0 Img tag should have an alt attribute." in result.output
+    assert "Linted 1 file, found 1 error." in result.output
+    assert "Traceback" not in result.output
+    assert "djLint failed" not in result.output
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32" or os.geteuid() == 0, reason="needs a file the user cannot read"
+)
+@pytest.mark.parametrize("require_pragma", [False, True])
+def test_file_without_read_permission_does_not_look_like_a_finding(
+    runner: CliRunner, tmp_path: Path, *, require_pragma: bool
+) -> None:
+    """A file djLint may not open is named like an undecodable one.
+
+    It is an issue with that file, not a djLint bug to report, and the
+    other files are still checked. --require-pragma cannot tell whether
+    the file holds the pragma, so it keeps the file for that report.
+    """
+    _project(tmp_path)
+    pragma = "{# djlint:on #}\n" if require_pragma else ""
+    locked = tmp_path / "locked.html"
+    locked.write_text(pragma + DIRTY, encoding="utf-8")
+    locked.chmod(0)
+    (tmp_path / "real.html").write_text(pragma + DIRTY, encoding="utf-8")
+    args = ("--require-pragma",) if require_pragma else ()
+
+    result = runner.invoke(djlint, (str(tmp_path), "--check", *args))
+
+    assert result.exit_code == 2
+    assert "Error: locked.html: Permission denied" in result.stderr
+    assert "1 file would be updated." in result.output
+    assert "Traceback" not in result.output
 
 
 def test_undecodable_first_line_has_no_pragma(runner: CliRunner, tmp_path: Path) -> None:

@@ -5,10 +5,9 @@ on:
       - master
   pull_request:
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
-permissions:
-  contents: read
+permissions: {}
 jobs:
   check:
     if: ${{ always() && github.event_name == 'pull_request' }}
@@ -63,12 +62,24 @@ jobs:
           RUFF_OUTPUT_FORMAT: github
           UV_EXCLUDE_NEWER: 3 days
   pytest:
-    runs-on: ubuntu-26.04
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         python-version:
           - "3.11"
           - "3.15"
+        os:
+          - ubuntu-26.04
+        include:
+          # Code and tests that only run on Windows: the process limit, drive
+          # letters in the server's URIs.
+          - python-version: "3.15"
+            os: windows-2025
+          # The wheels on PyPI are compiled with mypyc, which checks annotations
+          # at runtime. This turns the newest Linux run into a compiled one.
+          - python-version: "3.15"
+            os: ubuntu-26.04
+            mypyc: true
       fail-fast: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -81,3 +92,7 @@ jobs:
           prune-cache: true
           save-cache: ${{ github.ref == 'refs/heads/master' }}
       - run: uv run --group test-ci --no-group dev --locked pytest
+        env:
+          # A non-editable install builds a wheel, which the hook compiles.
+          HATCH_BUILD_HOOK_ENABLE_MYPYC: ${{ matrix.mypyc && '1' || '0' }}
+          UV_NO_EDITABLE: ${{ matrix.mypyc && '1' || '0' }}
