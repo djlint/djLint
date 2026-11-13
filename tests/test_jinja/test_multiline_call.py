@@ -84,8 +84,13 @@ test_data = [
         id="whitespace_control_close_after_nested_dicts_keeps_indent",
     ),
     pytest.param(
-        "<div>\n  {{\n    function(\n      'a'\n  }}) text\n</div>\n",
-        "<div>\n  {{\n    function(\n      'a'\n  }}) text\n</div>\n",
+        "{{ func(\n  outer={\n    'inner': {\n      'key': value\n    }}) | safe }}\n",
+        "{{ func(\n  outer={\n    'inner': {\n      'key': value\n    }}) | safe }}\n",
+        id="filter_after_nested_dicts_keeps_indent",
+    ),
+    pytest.param(
+        "<div>\n  {{\n    function(\n      nested(\n        'a'\n      ))\n  }}) text\n</div>\n",
+        "<div>\n  {{\n    function(\n      nested(\n        'a'\n      ))\n  }}) text\n</div>\n",
         id="literal_parenthesis_after_template_close_keeps_tag_indent",
     ),
 ]

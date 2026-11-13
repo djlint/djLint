@@ -796,7 +796,7 @@ def indent_html(rawcode: str, config: Config) -> str:
                 stripped = item.lstrip()
                 after_parenthesis = stripped[3:].lstrip()
                 closes_nested_dicts = stripped.startswith("}})") and bool(
-                    re.match(r"[-+]?(?:\}\}|%\})", after_parenthesis)
+                    re.search(r"[-+]?(?:\}\}|%\})", after_parenthesis)
                 )
                 is_only_template_close = (
                     first_bracket == "}" and stripped.startswith("}}") and not closes_nested_dicts
