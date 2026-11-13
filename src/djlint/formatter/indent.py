@@ -783,11 +783,23 @@ def indent_html(rawcode: str, config: Config) -> str:
             indent_level = max(indent_level + set_depth_change, set_tag_level + 1)
 
         elif not is_block_raw and in_multiline_tag and _MULTILINE_TAG_CLOSE_PATTERN.search(item):
-            tmp_level = (
-                multiline_tag_level
-                if _LEADING_CLOSE_BRACKET_PATTERN.match(item)
-                else multiline_tag_level + 1
-            )
+            # When line starts with data structure closing brackets (] or }), indent to match
+            # the data structure opening. Function call closing parens () stay at base level.
+            # A line starting with }} is the template close, not a data structure.
+            leading_close_match = _LEADING_CLOSE_BRACKET_PATTERN.match(item)
+            if leading_close_match:
+                first_bracket = leading_close_match.group().strip()
+                # ] closes an array. } closes a dict, but only if not followed by another }
+                # (which would make it }} - the template tag close, not a data structure).
+                is_template_close = first_bracket == "}" and item.lstrip().startswith("}}")
+                has_data_structure_close = first_bracket in "]}" and not is_template_close
+                tmp_level = (
+                    max(indent_level - 1, multiline_tag_level)
+                    if has_data_structure_close
+                    else multiline_tag_level
+                )
+            else:
+                tmp_level = multiline_tag_level + 1
             tmp = (indent * tmp_level) + formatted_item(item) + "\n"
             indent_level = multiline_tag_level + (1 if multiline_tag_is_block else 0)
             if multiline_tag_is_block:

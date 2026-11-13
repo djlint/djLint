@@ -58,6 +58,21 @@ test_data = [
         "<div>{{ function(a, b) }}</div>\n",
         id="a_call_on_one_line_is_left_alone",
     ),
+    pytest.param(
+        "{{ func(title={'text': 'hello'},\nitems=[\n{\n'type': 'test'\n}\n]) }}\n",
+        "{{ func(title={'text': 'hello'},\n"
+        "  items=[\n"
+        "    {\n"
+        "      'type': 'test'\n"
+        "    }\n"
+        "  ]) }}\n",
+        id="nested_array_close_with_paren_is_indented",
+    ),
+    pytest.param(
+        "{{ func(title={'text': 'hello'},\ndata={\n'key': 'value'\n}) }}\n",
+        "{{ func(title={'text': 'hello'},\n  data={\n    'key': 'value'\n  }) }}\n",
+        id="nested_dict_close_with_paren_is_indented",
+    ),
 ]
 
 
