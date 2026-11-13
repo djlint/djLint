@@ -74,9 +74,19 @@ test_data = [
         id="nested_dict_close_with_paren_is_indented",
     ),
     pytest.param(
-        "{{ func(\nouter={\n'inner': {\n'key': 'value'\n}\n}}) }}\n",
-        "{{ func(\n  outer={\n    'inner': {\n      'key': 'value'\n    }\n  }}) }}\n",
+        "{{ func(\nouter={\n'inner': {\n'key': 'value'\n}}) }}\n",
+        "{{ func(\n  outer={\n    'inner': {\n      'key': 'value'\n    }}) }}\n",
         id="double_nested_dict_close_not_confused_with_template_close",
+    ),
+    pytest.param(
+        "{{ func(\n  outer={\n    'inner': {\n      'key': value\n    }}) -}}\n",
+        "{{ func(\n  outer={\n    'inner': {\n      'key': value\n    }}) -}}\n",
+        id="whitespace_control_close_after_nested_dicts_keeps_indent",
+    ),
+    pytest.param(
+        "<div>\n  {{\n    function(\n      'a'\n  }}) text\n</div>\n",
+        "<div>\n  {{\n    function(\n      'a'\n  }}) text\n</div>\n",
+        id="literal_parenthesis_after_template_close_keeps_tag_indent",
     ),
 ]
 

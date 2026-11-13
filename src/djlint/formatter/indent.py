@@ -790,14 +790,16 @@ def indent_html(rawcode: str, config: Config) -> str:
             if leading_close_match:
                 first_bracket = leading_close_match.group().strip()
                 # ] closes an array. } closes a dict, but we must distinguish }} as dict
-                # closes from }} as the template tag close. If there's a ) after the leading
-                # braces (like }}) }}), the leading braces close dicts, not the template.
+                # closes from }} as the template tag close. In }}) }}, the later template
+                # delimiter shows that the leading braces close dictionaries. A literal )
+                # after the template close, as in }}) text, does not.
                 stripped = item.lstrip()
+                after_parenthesis = stripped[3:].lstrip()
+                closes_nested_dicts = stripped.startswith("}})") and bool(
+                    re.match(r"[-+]?(?:\}\}|%\})", after_parenthesis)
+                )
                 is_only_template_close = (
-                    first_bracket == "}"
-                    and stripped.startswith("}}")
-                    and not stripped.startswith("}}) ")
-                    and not stripped.startswith("}})")
+                    first_bracket == "}" and stripped.startswith("}}") and not closes_nested_dicts
                 )
                 has_data_structure_close = first_bracket in "]}" and not is_only_template_close
                 tmp_level = (
