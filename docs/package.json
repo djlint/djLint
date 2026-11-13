@@ -41,7 +41,7 @@
     "eleventy-plugin-metagen": "1.8.5",
     "esbuild": "0.28.2",
     "fontawesome-subset": "4.6.0",
-    "html-minifier": "5.0.2",
+    "html-minifier": "5.0.3",
     "markdown-it": "15.0.3",
     "markdown-it-anchor": "10.1.0",
     "markdown-it-div": "1.1.0",
