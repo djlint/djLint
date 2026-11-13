@@ -785,14 +785,21 @@ def indent_html(rawcode: str, config: Config) -> str:
         elif not is_block_raw and in_multiline_tag and _MULTILINE_TAG_CLOSE_PATTERN.search(item):
             # When line starts with data structure closing brackets (] or }), indent to match
             # the data structure opening. Function call closing parens () stay at base level.
-            # A line starting with }} is the template close, not a data structure.
+            # A line starting with }} could be the template close or nested dict closes.
             leading_close_match = _LEADING_CLOSE_BRACKET_PATTERN.match(item)
             if leading_close_match:
                 first_bracket = leading_close_match.group().strip()
-                # ] closes an array. } closes a dict, but only if not followed by another }
-                # (which would make it }} - the template tag close, not a data structure).
-                is_template_close = first_bracket == "}" and item.lstrip().startswith("}}")
-                has_data_structure_close = first_bracket in "]}" and not is_template_close
+                # ] closes an array. } closes a dict, but we must distinguish }} as dict
+                # closes from }} as the template tag close. If there's a ) after the leading
+                # braces (like }}) }}), the leading braces close dicts, not the template.
+                stripped = item.lstrip()
+                is_only_template_close = (
+                    first_bracket == "}"
+                    and stripped.startswith("}}")
+                    and not stripped.startswith("}}) ")
+                    and not stripped.startswith("}})")
+                )
+                has_data_structure_close = first_bracket in "]}" and not is_only_template_close
                 tmp_level = (
                     max(indent_level - 1, multiline_tag_level)
                     if has_data_structure_close

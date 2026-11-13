@@ -73,6 +73,11 @@ test_data = [
         "{{ func(title={'text': 'hello'},\n  data={\n    'key': 'value'\n  }) }}\n",
         id="nested_dict_close_with_paren_is_indented",
     ),
+    pytest.param(
+        "{{ func(\nouter={\n'inner': {\n'key': 'value'\n}\n}}) }}\n",
+        "{{ func(\n  outer={\n    'inner': {\n      'key': 'value'\n    }\n  }}) }}\n",
+        id="double_nested_dict_close_not_confused_with_template_close",
+    ),
 ]
 
 
