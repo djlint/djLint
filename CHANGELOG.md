@@ -7,6 +7,7 @@
 ### Bug fixes
 
 - The error for a `.djlint_rules.yaml` that isn't valid YAML fits on one line. It ran over three, and editors that show the last line of a failure showed only where in the file the problem was.
+- When the last line of a multiline template tag starts with a closing bracket, as in `]) }}`, the line lines up with the line that opened that bracket. It used to line up with the tag.
 
 ## [1.50.0] - 2026-11-11
 
