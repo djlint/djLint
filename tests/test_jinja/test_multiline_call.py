@@ -98,6 +98,16 @@ test_data = [
         "{% if f(\n  items=[\n    1\n  ]) %}\n  x\n{% endif %}\n",
         id="nested_array_close_before_block_tag_close_is_indented",
     ),
+    pytest.param(
+        "{{ function([\nnested(\nargument=value),\n]) }}\n",
+        "{{ function([\n  nested(\n    argument=value),\n]) }}\n",
+        id="close_of_a_bracket_opened_on_the_tag_line_keeps_tag_indent",
+    ),
+    pytest.param(
+        "{{ outer(\ninner(\na\n)) }}\n",
+        "{{ outer(\n  inner(\n    a\n  )) }}\n",
+        id="nested_call_close_is_indented",
+    ),
 ]
 
 
