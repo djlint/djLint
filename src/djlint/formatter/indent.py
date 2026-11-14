@@ -196,8 +196,8 @@ def _offset(line_offsets: list[int], position: tuple[int, int]) -> int:
     return line_offsets[row - 1] + column
 
 
-def _set_line_brackets(line: str, quote: str) -> tuple[int, int, str]:
-    """Read the brackets of one line of a set tag's value.
+def _line_brackets(line: str, quote: str) -> tuple[int, int, str]:
+    """Read the brackets of one line of a template tag's value.
 
     Returns how many closing brackets the line starts with, how much it changes
     the bracket depth, and the quote still open at its end. A bracket inside a
@@ -521,6 +521,10 @@ def indent_html(rawcode: str, config: Config) -> str:
     in_multiline_tag = False
     multiline_tag_level = 0
     multiline_tag_is_block = False
+    # The brackets the multiline tag's value has open and the quote of a string a line
+    # left open, which tell the value's closing braces from the tag's own `}}`.
+    multiline_depth = 0
+    multiline_quote = ""
     is_raw_first_line = False
     in_raw_text_tag = False
     is_block_raw = False
@@ -729,7 +733,12 @@ def indent_html(rawcode: str, config: Config) -> str:
         starts_in_set_string = False
         if in_set_tag:
             starts_in_set_string = bool(set_quote)
-            set_leading_closes, set_depth_change, set_quote = _set_line_brackets(item, set_quote)
+            set_leading_closes, set_depth_change, set_quote = _line_brackets(item, set_quote)
+        multiline_leading_closes = 0
+        if in_multiline_tag:
+            leading, depth_change, multiline_quote = _line_brackets(item, multiline_quote)
+            multiline_leading_closes = min(leading, multiline_depth)
+            multiline_depth = max(multiline_depth + depth_change, 0)
 
         if (not is_block_raw and ignored_inline_start_pattern.search(item)) or (
             not is_block_raw
@@ -783,30 +792,14 @@ def indent_html(rawcode: str, config: Config) -> str:
             indent_level = max(indent_level + set_depth_change, set_tag_level + 1)
 
         elif not is_block_raw and in_multiline_tag and _MULTILINE_TAG_CLOSE_PATTERN.search(item):
-            # When line starts with data structure closing brackets (] or }), indent to match
-            # the data structure opening. Function call closing parens () stay at base level.
-            # A line starting with }} could be the template close or nested dict closes.
-            leading_close_match = _LEADING_CLOSE_BRACKET_PATTERN.match(item)
-            if leading_close_match:
-                first_bracket = leading_close_match.group().strip()
-                # ] closes an array. } closes a dict, but we must distinguish }} as dict
-                # closes from }} as the template tag close. In }}) }}, the later template
-                # delimiter shows that the leading braces close dictionaries. A literal )
-                # after the template close, as in }}) text, does not.
-                stripped = item.lstrip()
-                after_parenthesis = stripped[3:].lstrip()
-                closes_nested_dicts = stripped.startswith("}})") and bool(
-                    re.search(r"[-+]?(?:\}\}|%\})", after_parenthesis)
-                )
-                is_only_template_close = (
-                    first_bracket == "}" and stripped.startswith("}}") and not closes_nested_dicts
-                )
-                has_data_structure_close = first_bracket in "]}" and not is_only_template_close
-                tmp_level = (
-                    max(indent_level - 1, multiline_tag_level)
-                    if has_data_structure_close
-                    else multiline_tag_level
-                )
+            # A line that starts with a bracket closing a list or a dict of the value lines
+            # up with what it closes. One that starts with any other closing bracket or
+            # with the tag's own close lines up with the tag, and anything else is one
+            # more line of the value.
+            if multiline_leading_closes > 0 and item.lstrip()[0] in "]}":
+                tmp_level = max(indent_level - 1, multiline_tag_level)
+            elif _LEADING_CLOSE_BRACKET_PATTERN.match(item):
+                tmp_level = multiline_tag_level
             else:
                 tmp_level = multiline_tag_level + 1
             tmp = (indent * tmp_level) + formatted_item(item) + "\n"
@@ -816,9 +809,11 @@ def indent_html(rawcode: str, config: Config) -> str:
             closes_an_html_tag_too = bool(tag_unindent_pattern.search(item.lstrip()))
             if closes_an_html_tag_too:
                 indent_level = max(indent_level - 1, 0)
-            opens_another_multiline_tag = bool(_MULTILINE_TAG_OPEN_PATTERN.search(item))
-            if opens_another_multiline_tag:
+            if multiline_open := _MULTILINE_TAG_OPEN_PATTERN.search(item):
                 multiline_tag_level = indent_level
+                _, multiline_depth, multiline_quote = _line_brackets(
+                    item[multiline_open.start() + 2 :], ""
+                )
                 multiline_tag_is_block = len(template_start_pattern.findall(item)) > len(
                     template_unindent_pattern.findall(item)
                 )
@@ -917,7 +912,7 @@ def indent_html(rawcode: str, config: Config) -> str:
             set_tag_level = indent_level
             # The value starts a level in, or one per bracket it leaves open, as in
             # `outer(inner(`.
-            _, opened, set_quote = _set_line_brackets(item[set_open.end(1) :], "")
+            _, opened, set_quote = _line_brackets(item[set_open.end(1) :], "")
             indent_level += max(opened, 1)
             in_set_tag = True
 
@@ -926,12 +921,16 @@ def indent_html(rawcode: str, config: Config) -> str:
             and not config.preserve_leading_space
             and not in_set_tag
             and not in_multiline_tag
-            and _MULTILINE_TAG_OPEN_PATTERN.search(item)
+            and (multiline_open := _MULTILINE_TAG_OPEN_PATTERN.search(item))
             and not starts_unclosed_html_tag(item)
         ):
             tmp = (indent * indent_level) + formatted_item(item) + "\n"
             in_multiline_tag = True
             multiline_tag_level = indent_level
+            # The opener's own braces are not part of the value.
+            _, multiline_depth, multiline_quote = _line_brackets(
+                item[multiline_open.start() + 2 :], ""
+            )
             multiline_tag_is_block = len(template_start_pattern.findall(item)) > len(
                 template_unindent_pattern.findall(item)
             )

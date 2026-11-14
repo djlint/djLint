@@ -7,7 +7,7 @@
 ### Bug fixes
 
 - The error for a `.djlint_rules.yaml` that isn't valid YAML fits on one line. It ran over three, and editors that show the last line of a failure showed only where in the file the problem was.
-- Closing brackets like `])` or `})` in multiline template tags now keep their indentation to match the data structure they close. They used to lose their indent when on the same line as the tag close.
+- In a multiline template tag, a `]` or `}` that starts the tag's last line, as in `]) }}`, lines up with the list or dict it closes, as it does on the lines before. It used to line up with the tag.
 
 ## [1.50.0] - 2026-11-11
 

@@ -93,6 +93,11 @@ test_data = [
         "<div>\n  {{\n    function(\n      nested(\n        'a'\n      ))\n  }}) text\n</div>\n",
         id="literal_parenthesis_after_template_close_keeps_tag_indent",
     ),
+    pytest.param(
+        "{% if f(\nitems=[\n1\n]) %}\nx\n{% endif %}\n",
+        "{% if f(\n  items=[\n    1\n  ]) %}\n  x\n{% endif %}\n",
+        id="nested_array_close_before_block_tag_close_is_indented",
+    ),
 ]
 
 
