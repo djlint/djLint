@@ -9,6 +9,8 @@ date: Last Modified
 
 구성은 프로젝트의 `pyproject.toml` 파일, `djlint.toml` 또는 `.djlint.toml` 파일, `.djlintrc` 파일 중 하나로 합니다. 명령줄 인수는 언제나 구성 파일의 모든 설정보다 우선합니다. `--prefer-configuration`을 지정하지 않는 한, 로컬 프로젝트 설정은 `--configuration`으로 지정한 전역 구성 파일보다 우선합니다.
 
+djLint는 처음 검사하는 경로(`-`이면 `--stdin-filename`의 폴더, 이 옵션이 없으면 현재 디렉터리)에서 위쪽으로 이 파일들을 찾습니다. `.git` 폴더나 파일, `.hg` 폴더, `pyproject.toml`, `djlint.toml`, `.djlint.toml`, `.djlintrc` 중 하나가 있는 첫 폴더에서 멈추고 그 폴더만 읽습니다. `pyproject.toml`의 `[tool.djlint]`에 설정이 있으면 그것을 읽고, 없으면 `djlint.toml`이나 `.djlint.toml`을, 그것도 없으면 `.djlintrc`를 읽습니다. 따라서 djLint 설정이 없는 `pyproject.toml`이 있으면 상위 폴더의 구성 파일은 읽히지 않습니다.
+
 `pyproject.toml`의 형식은 `toml`입니다.
 
 ```toml

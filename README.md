@@ -25,7 +25,7 @@
 
 Every language in your stack has a formatter and a linter, except HTML templates. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
 
-djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more.
+djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more. It runs from the command line, as a pre-commit hook and as a language server in your editor.
 
 Take a template only its author could love:
 
@@ -165,7 +165,7 @@ repos:
 
 ## 💙 Like it?
 
-Add a badge to your projects `readme.md`:
+Add a badge to your project's `readme.md`:
 
 ```md
 [![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://djlint.com)

@@ -375,6 +375,8 @@ HTML 파서는 대문자 태그 이름을 받아들이지만, XHTML과 XML 직�
 
 HTML은 "=" 주위의 공백을 허용하므로 이 규칙은 스타일 규칙입니다. name="value"처럼 공백 없이 쓰는 것이 일반적인 스타일이고, grep이나 찾아 바꾸기 같은 단순한 텍스트 도구도 이렇게 붙어 있다고 가정합니다. 그래서 공백이 섞여 있으면 속성을 찾거나 리팩터링하기가 더 어렵습니다. `--reformat`이 공백을 대신 없애 줍니다.
 
+angular 프로필에는 적용되지 않습니다.
+
 잘못된 예:
 
 ```html
@@ -693,6 +695,8 @@ text/javascript와 text/css는 HTML5에서 `<script>`와 `<style>`의 기본값�
 `Empty id and class tags can be removed.`
 
 빈 속성에 일치하는 class 선택자나 id 선택자는 없으며, 빈 id는 유효하지 않은 HTML입니다(id 값은 빈 문자열이면 안 됩니다). 다만 `div[class]` 같은 속성 존재 선택자는 여전히 일치하므로, 그런 식으로 작성한 스타일시트에서는 속성을 제거한 결과가 드러납니다. 빈 속성은 대개 변수를 넣으려던 템플릿 버그의 신호이므로, 제거하거나 채우면 그런 버그를 놓치지 않습니다.
+
+angular 프로필에는 적용되지 않습니다.
 
 잘못된 예:
 
@@ -1483,7 +1487,7 @@ HTML 명세는 빈 `src`가 유효하지 않다고 정하고, 브라우저가 �
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1496,7 +1500,7 @@ HTML 명세는 빈 `src`가 유효하지 않다고 정하고, 브라우저가 �
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

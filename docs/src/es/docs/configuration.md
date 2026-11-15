@@ -9,6 +9,8 @@ date: Last Modified
 
 La configuración se hace a través del archivo `pyproject.toml` de tu proyecto, de un archivo `djlint.toml` o `.djlint.toml`, o de un archivo `.djlintrc`. Los argumentos de la línea de comandos siempre prevalecen sobre cualquier ajuste de los archivos de configuración. Los ajustes locales del proyecto prevalecen sobre un archivo de configuración global indicado con `--configuration`, salvo que se use `--prefer-configuration`.
 
+djLint busca estos archivos hacia arriba a partir de la primera ruta que revisa (con `-`, desde la carpeta de `--stdin-filename`, o desde el directorio actual si no se indica). Se detiene en la primera carpeta que contiene una carpeta o un archivo `.git`, una carpeta `.hg`, un `pyproject.toml`, un `djlint.toml`, un `.djlint.toml` o un `.djlintrc`, y solo lee esa carpeta: `[tool.djlint]` en su `pyproject.toml` si esa tabla define algo; si no, su `djlint.toml` o `.djlint.toml`; si no, su `.djlintrc`. Así, un `pyproject.toml` sin ajustes de djLint impide que se lea un archivo de configuración de una carpeta superior.
+
 El formato de `pyproject.toml` es `toml`.
 
 ```toml
