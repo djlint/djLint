@@ -375,6 +375,8 @@ Správně:
 
 HTML kolem „=“ prázdné znaky povoluje, takže jde o stylové pravidlo. Obvyklý styl je zápis name="value" bez mezer a právě ten předpokládají jednoduché textové nástroje jako grep nebo hledání a nahrazování, takže nejednotné mezery ztěžují hledání a refaktoring atributů. `--reformat` mezery odstraní za vás.
 
+Neuplatňuje se v profilu angular.
+
 Špatně:
 
 ```html
@@ -693,6 +695,8 @@ Správně:
 `Empty id and class tags can be removed.`
 
 Prázdnému atributu neodpovídá žádný selektor třídy ani id a prázdné id je neplatné HTML (hodnota id nesmí být prázdný řetězec). Selektor přítomnosti atributu jako `div[class]` mu ale stále odpovídá, takže odstranění atributu se ve stylopisu napsaném tímto způsobem projeví. Obvykle signalizuje chybu v šabloně, kde se měla dosadit proměnná, takže jeho odstranění nebo vyplnění zabrání tomu, aby tato chyba zůstala skrytá na očích.
+
+Neuplatňuje se v profilu angular.
 
 Špatně:
 
@@ -1483,7 +1487,7 @@ Můžete přidat pravidla, která selžou, pokud některý z regulárních výr
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1496,7 +1500,7 @@ Můžete přidat pravidla, která importují a spustí vlastní funkci v Pytho
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

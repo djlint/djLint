@@ -375,6 +375,8 @@ Haz esto:
 
 HTML admite espacios en blanco alrededor del "=", así que esta es una regla de estilo. Escribir nombre="valor" sin espacios es el estilo habitual, y es lo que dan por hecho las herramientas de texto sencillas, como grep o buscar y reemplazar, así que un espaciado mezclado hace más difícil encontrar los atributos y refactorizarlos. `--reformat` quita los espacios por ti.
 
+No se aplica al perfil angular.
+
 No hagas esto:
 
 ```html
@@ -693,6 +695,8 @@ Haz esto:
 `Empty id and class tags can be removed.`
 
 Ningún selector de clase o de id coincide con un atributo vacío, y un id vacío es HTML no válido (el valor del id no puede ser la cadena vacía). Un selector de presencia de atributo como `div[class]` sí coincide con él, así que eliminarlo se nota en una hoja de estilo escrita de esa forma. Suele indicar un error en la plantilla, donde se pretendía interpolar una variable, así que eliminarlo o rellenarlo evita que ese error pase desapercibido.
+
+No se aplica al perfil angular.
 
 No hagas esto:
 
@@ -1483,7 +1487,7 @@ Puedes añadir reglas que fallan si alguno de los patrones de expresión regular
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1496,7 +1500,7 @@ Puedes añadir reglas que importan y ejecutan una función de Python personaliza
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

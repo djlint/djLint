@@ -375,6 +375,8 @@ HTML パーサーは大文字のタグ名を受け付けますが、XHTML や XM
 
 HTML では "=" の前後に空白を入れてもかまわないため、これはスタイルのルールです。name="value" とスペースなしで書くのが一般的なスタイルで、grep や検索と置換のような単純なテキストツールもその書き方を前提としているため、スペースの入れ方が混在していると、属性を見つけたりリファクタリングしたりしにくくなります。`--reformat` がスペースを取り除きます。
 
+angular プロファイルには適用されません。
+
 悪い例：
 
 ```html
@@ -693,6 +695,8 @@ text/javascript と text/css は `<script>` と `<style>` の HTML5 でのデフ
 `Empty id and class tags can be removed.`
 
 空の属性に一致する class セレクターや id セレクターはなく、空の id は無効な HTML です（id の値は空文字列であってはなりません）。ただし、`div[class]` のような属性の存在セレクターには一致するため、そのように書かれたスタイルシートには、属性を削除したことが影響します。空の属性はたいてい、変数を埋め込むつもりだったテンプレートのバグを示しているので、削除するか値を埋めれば、そのバグが見過ごされることはなくなります。
+
+angular プロファイルには適用されません。
 
 悪い例：
 
@@ -1483,7 +1487,7 @@ html の仕様では空の `src` は無効とされており、ブラウザー�
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1496,7 +1500,7 @@ html の仕様では空の `src` は無効とされており、ブラウザー�
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

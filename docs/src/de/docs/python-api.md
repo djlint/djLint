@@ -21,7 +21,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` liest die Konfiguration, die für die Dateien eines Ordners gilt. Es sucht sie vom Ordner aus aufwärts, so wie die Befehlszeile vom aktuellen Verzeichnis aus, und wechselt dabei nicht das aktuelle Verzeichnis.
+`load_config(folder=".", *, python_rules=True, **options)` liest die Konfiguration, die für die Dateien eines Ordners gilt. Es sucht sie vom Ordner aus aufwärts, so wie die Befehlszeile vom ersten übergebenen Pfad aus, und wechselt dabei nicht das aktuelle Verzeichnis.
 
 Optionen tragen die Namen der Befehlszeilenoptionen, mit Unterstrichen, und wirken wie dort: Ein gesetzter Wert hat Vorrang vor der Konfigurationsdatei, während `False`, ein leerer String und bei den meisten Optionen auch `0` als nicht angegeben gelten. Pfade werden als `pathlib.Path` übergeben.
 

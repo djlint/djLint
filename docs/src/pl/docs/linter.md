@@ -375,6 +375,8 @@ Dobrze:
 
 HTML dopuszcza białe znaki wokół „=”, więc to reguła stylu. Zwykle zapisuje się name="value" bez spacji i tego właśnie oczekują proste narzędzia tekstowe, takie jak grep czy wyszukiwanie i zamiana, więc mieszane odstępy utrudniają odnajdywanie i refaktoryzację atrybutów. `--reformat` sam usuwa te spacje.
 
+Nie dotyczy profilu angular.
+
 Źle:
 
 ```html
@@ -693,6 +695,8 @@ Dobrze:
 `Empty id and class tags can be removed.`
 
 Żaden selektor klasy ani id nie pasuje do pustego atrybutu, a pusty id to nieprawidłowy HTML (wartość id nie może być pustym ciągiem znaków). Selektor obecności atrybutu, taki jak `div[class]`, nadal do niego pasuje, więc usunięcie takiego atrybutu będzie widoczne dla arkusza stylów napisanego w ten sposób. Zwykle sygnalizuje to błąd w szablonie, w którym miała zostać wstawiona zmienna, więc usunięcie lub wypełnienie atrybutu nie pozwala temu błędowi ukrywać się na widoku.
+
+Nie dotyczy profilu angular.
 
 Źle:
 
@@ -1483,7 +1487,7 @@ Możesz dodawać reguły, które zgłaszają błąd, gdy któryś ze wzorców wy
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1496,7 +1500,7 @@ Możesz dodawać reguły, które importują i wykonują własną funkcję w Pyth
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

@@ -375,6 +375,8 @@ Yapın:
 
 HTML, "=" çevresinde boşluğa izin verdiği için bu bir stil kuralıdır. Yaygın stil name="value" biçiminde boşluksuz yazmaktır; grep ya da bul ve değiştir gibi basit metin araçları da bunu varsayar. Bu yüzden karışık boşluk kullanımı öznitelikleri bulmayı ve yeniden düzenlemeyi zorlaştırır. `--reformat` bu boşlukları sizin yerinize kaldırır.
 
+angular profilinde uygulanmaz.
+
 Yapmayın:
 
 ```html
@@ -693,6 +695,8 @@ Yapın:
 `Empty id and class tags can be removed.`
 
 Hiçbir class ya da id seçicisi boş bir öznitelikle eşleşmez ve boş bir id geçersiz HTML'dir (id değeri boş dize olmamalıdır). `div[class]` gibi bir öznitelik varlığı seçicisi ise yine de onunla eşleşir; bu yüzden böyle yazılmış bir stil sayfası, özniteliğin kaldırılmasını fark eder. Boş öznitelik genellikle bir değişkenin yerleştirilmesi amaçlanan bir şablon hatasına işaret eder; bu yüzden onu kaldırmak ya da doldurmak, bu hatanın göz önünde saklanmasını önler.
+
+angular profilinde uygulanmaz.
 
 Yapmayın:
 
@@ -1483,7 +1487,7 @@ Regex kalıplarından biri eşleştiğinde başarısız olan kurallar ekleyebili
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1496,7 +1500,7 @@ Regex kalıplarından biri eşleştiğinde başarısız olan kurallar ekleyebili
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

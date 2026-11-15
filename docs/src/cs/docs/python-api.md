@@ -21,7 +21,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` načte konfiguraci, která platí pro soubory dané složky. Hledá ji od složky směrem nahoru, stejně jako ji příkazový řádek hledá od aktuálního adresáře, a aktuální adresář nemění.
+`load_config(folder=".", *, python_rules=True, **options)` načte konfiguraci, která platí pro soubory dané složky. Hledá ji od složky směrem nahoru, stejně jako ji příkazový řádek hledá od první zadané cesty, a aktuální adresář nemění.
 
 Možnosti mají názvy jako možnosti příkazového řádku, jen s podtržítky, a fungují stejně jako tam: nastavená hodnota má přednost před konfiguračním souborem, zatímco `False`, prázdný řetězec a u většiny možností i `0` se berou, jako by zadané nebyly. Cesty se zadávají jako `pathlib.Path`.
 
