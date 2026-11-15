@@ -33,6 +33,7 @@ keywords = [
   "twig",
 ]
 classifiers = [
+  "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
   "Framework :: Django",
   "Intended Audience :: Developers",
@@ -50,7 +51,9 @@ classifiers = [
   "Topic :: Text Processing :: Markup :: HTML",
   "Typing :: Typed",
 ]
+urls.changelog = "https://github.com/djlint/djLint/blob/master/CHANGELOG.md"
 urls.documentation = "https://djlint.com"
+urls.issues = "https://github.com/djlint/djLint/issues"
 urls.repository = "https://github.com/djlint/djLint"
 scripts.djlint = "djlint._cli:main"
 dependencies = [
