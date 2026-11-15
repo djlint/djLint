@@ -34,6 +34,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 Bu, [{{ "configuration" | i18n }}]({{ "lang_code_url" | i18n }}/docs/configuration) dosyası üzerinden de yapılabilir.
 
+[Profil]({{ "lang_code_url" | i18n }}/docs/configuration/#profile) ayarlanmadığında yerleşik kurallardan yalnızca H kuralları çalışır. T kuralları ve tek bir şablon diline ait kurallar (D, J, M, N), uygulandıkları profillerle gelir. `--include` ile verilen bir kural her profilde ve profil olmadan da çalışır; aşağıdaki açıklamasında uygulanmadığı söylenen profil bunun dışındadır.
+
 ## Kurallar
 
 | Kod  | Anlamı                                                                                                            | Varsayılan |

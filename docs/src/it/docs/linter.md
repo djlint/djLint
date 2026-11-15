@@ -34,6 +34,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 Si può fare anche tramite il file di [{{ "configuration" | i18n }}]({{ "lang_code_url" | i18n }}/docs/configuration).
 
+Senza [profilo]({{ "lang_code_url" | i18n }}/docs/configuration/#profile), delle regole integrate girano solo le regole H. Le regole T e quelle di un singolo linguaggio di template (D, J, M, N) arrivano con i profili a cui si applicano. Una regola indicata in `--include` gira con qualsiasi profilo o senza profilo, tranne con uno a cui, secondo la sua descrizione più sotto, non si applica.
+
 ## Regole
 
 | Codice | Significato                                                                                                       | Predefinita |
