@@ -36,11 +36,16 @@ from djlint.helpers import (
 from djlint.lint import build_flags
 
 if TYPE_CHECKING:
+    import sys
     from collections.abc import Iterable, Iterator, Mapping
     from typing import Any, Final
 
     from pathspec import PathSpec, Pattern
-    from typing_extensions import TypeVar
+
+    if sys.version_info >= (3, 13):
+        from typing import TypeVar
+    else:
+        from typing_extensions import TypeVar
 
     _TMappingStrAny = TypeVar("_TMappingStrAny", bound=Mapping[str, Any])
 

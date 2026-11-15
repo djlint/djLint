@@ -13,10 +13,14 @@ from djlint.const import TAG_ATTRIBUTES
 from djlint.formatter.tokenizer import tokenize_tags
 
 if TYPE_CHECKING:
+    import sys
     from collections.abc import Iterable
     from typing import Final
 
-    from typing_extensions import TypeVar
+    if sys.version_info >= (3, 13):
+        from typing import TypeVar
+    else:
+        from typing_extensions import TypeVar
 
     from djlint.formatter.tokenizer import TagToken
     from djlint.settings import Config

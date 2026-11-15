@@ -1,6 +1,12 @@
+import sys
 from typing import NotRequired, type_check_only
 
-from typing_extensions import Protocol, TypedDict
+from typing_extensions import TypedDict
+
+if sys.version_info >= (3, 14):
+    from typing import Protocol
+else:
+    from typing_extensions import Protocol
 
 @type_check_only
 class LintError(TypedDict):
