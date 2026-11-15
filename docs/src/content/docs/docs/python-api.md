@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` reads the configuration that applies to the files of a folder. It looks for it upward from the folder, as the command line does from the current directory, and it doesn't change the current directory.
+`load_config(folder=".", *, python_rules=True, **options)` reads the configuration that applies to the files of a folder. It looks for it upward from the folder, as the command line does from the first path it is given, and it doesn't change the current directory.
 
 Options take the names of the command line options, with underscores, and work as they do there: a value that is set wins over the configuration file, while `False`, an empty string and, for most options, `0` count as not given. Paths are given as `pathlib.Path`.
 

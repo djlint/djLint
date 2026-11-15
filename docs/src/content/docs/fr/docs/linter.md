@@ -369,6 +369,8 @@ Une valeur d'attribut sans guillemets s'arrête au premier espace : une valeur 
 
 HTML autorise les espaces autour de « = » : il s'agit donc d'une règle de style. Écrire nom="valeur" sans espaces est le style habituel, et c'est ce que supposent les outils textuels simples comme grep ou le rechercher-remplacer : un espacement mélangé rend les attributs plus difficiles à trouver et à refactoriser. `--reformat` supprime les espaces pour vous.
 
+Ne s'applique pas au profil angular.
+
 À éviter :
 
 ```html
@@ -687,6 +689,8 @@ Une balise sans sa balise ouvrante ou fermante correspondante oblige la récupé
 `Empty id and class tags can be removed.`
 
 Aucun sélecteur de classe ou d'id ne correspond à un attribut vide, et un id vide est du HTML invalide (la valeur d'un id ne doit pas être la chaîne vide). Un sélecteur de présence d'attribut comme `div[class]` y correspond tout de même : en supprimer un est donc visible pour une feuille de style écrite de cette façon. Cela signale généralement un bug de template où une variable devait être interpolée : le supprimer ou le remplir évite que ce bug passe inaperçu.
+
+Ne s'applique pas au profil angular.
 
 À éviter :
 
@@ -1472,7 +1476,7 @@ Vous pouvez ajouter des règles qui échouent si l'un des motifs d'expression r�
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1485,7 +1489,7 @@ Vous pouvez ajouter des règles qui importent et exécutent une fonction Python 
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

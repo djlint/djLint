@@ -369,6 +369,8 @@ HTML 解析器接受大写的标签名，但 XHTML 和 XML 序列化区分大小
 
 HTML 允许 "=" 两侧有空白，因此这是一条风格规则。name="value" 不加空格是常见的写法，grep 或搜索替换这类简单的文本工具也默认这种写法，因此空格风格不一致会让属性更难查找和重构。`--reformat` 会自动删除这些空格。
 
+不适用于 angular 预设。
+
 错误示例：
 
 ```html
@@ -687,6 +689,8 @@ text/javascript 和 text/css 分别是 `<script>` 和 `<style>` 在 HTML5 中的
 `Empty id and class tags can be removed.`
 
 任何 class 或 id 选择器都不会匹配空属性，而空的 id 是无效的 HTML（id 值不能是空字符串）。不过像 `div[class]` 这样的属性存在选择器仍会匹配它，因此对于以这种方式编写的样式表，删除这样的属性会产生可见的影响。它通常意味着模板中存在本该插入变量的错误，删除它或者填上值，可以避免这个错误藏在显眼处而无人察觉。
+
+不适用于 angular 预设。
 
 错误示例：
 
@@ -1472,7 +1476,7 @@ html 规范规定空的 `src` 是无效的，并警告浏览器会根据文档�
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1485,7 +1489,7 @@ html 规范规定空的 `src` 是无效的，并警告浏览器会根据文档�
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

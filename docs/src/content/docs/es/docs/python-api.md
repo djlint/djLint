@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` lee la configuración que se aplica a los archivos de una carpeta. La busca hacia arriba a partir de la carpeta, igual que la línea de comandos lo hace desde el directorio actual, y no cambia el directorio actual.
+`load_config(folder=".", *, python_rules=True, **options)` lee la configuración que se aplica a los archivos de una carpeta. La busca hacia arriba a partir de la carpeta, igual que la línea de comandos lo hace desde la primera ruta que recibe, y no cambia el directorio actual.
 
 Las opciones usan los nombres de las opciones de la línea de comandos, con guiones bajos, y funcionan igual que allí: un valor definido prevalece sobre el archivo de configuración, mientras que `False`, una cadena vacía y, en la mayoría de las opciones, `0` cuentan como no indicados. Las rutas se pasan como `pathlib.Path`.
 

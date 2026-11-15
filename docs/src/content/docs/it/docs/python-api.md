@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` legge la configurazione che si applica ai file di una cartella. La cerca risalendo a partire dalla cartella, come fa la riga di comando a partire dalla directory corrente, e non cambia la directory corrente.
+`load_config(folder=".", *, python_rules=True, **options)` legge la configurazione che si applica ai file di una cartella. La cerca risalendo a partire dalla cartella, come fa la riga di comando a partire dal primo percorso che riceve, e non cambia la directory corrente.
 
 Le opzioni usano i nomi delle opzioni della riga di comando, con i trattini bassi, e funzionano allo stesso modo: un valore impostato ha la precedenza sul file di configurazione, mentre `False`, una stringa vuota e, per la maggior parte delle opzioni, `0` contano come non specificati. I percorsi si passano come `pathlib.Path`.
 

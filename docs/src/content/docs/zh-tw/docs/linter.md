@@ -369,6 +369,8 @@ HTML 剖析器接受大寫的標籤名稱，但 XHTML 和 XML 序列化區分大
 
 HTML 允許「=」前後有空白，因此這是一條風格規則。寫成不含空格的 name="value" 是常見的風格，也是簡單的文字工具（例如 grep 或搜尋與取代）所預設的寫法，因此空格不一致會讓屬性更難尋找與重構。`--reformat` 會替你刪除這些空格。
 
+不適用於 angular profile。
+
 不要這樣寫：
 
 ```html
@@ -687,6 +689,8 @@ text/javascript 和 text/css 是 HTML5 中 `<script>` 和 `<style>` 的預設值
 `Empty id and class tags can be removed.`
 
 沒有任何 class 或 id 選擇器會符合空的屬性，而且空的 id 是無效的 HTML（id 值不得為空字串）。像 `div[class]` 這樣的屬性存在選擇器仍然會符合它，因此移除它，會影響以這種方式撰寫的樣式表。它通常代表範本有錯誤，原本應該要插入某個變數，因此移除或填入它，可以避免這個錯誤明明就在眼前卻沒被發現。
+
+不適用於 angular profile。
 
 不要這樣寫：
 
@@ -1472,7 +1476,7 @@ html 規格表示空的 `src` 是無效的，並警告瀏覽器會以文件本�
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1485,7 +1489,7 @@ html 規格表示空的 `src` 是無效的，並警告瀏覽器會以文件本�
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```
