@@ -33,6 +33,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 這也可以透過[設定](/zh-tw/docs/configuration)檔完成。
 
+未設定 [profile](/zh-tw/docs/configuration/#profile) 時，內建規則中只會執行 H 規則。T 規則和針對單一範本語言的規則（D、J、M、N）要設定它們適用的 profile 才會啟用。`--include` 指定的規則在任何 profile 下以及未設定 profile 時都會執行，下方說明中寫明不適用的 profile 除外。
+
 ## 規則
 
 | 代碼 | 意義                                                                        | 預設 |
