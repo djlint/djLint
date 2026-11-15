@@ -1575,11 +1575,18 @@ class Config:
         def rule_applies(rule: Mapping[str, Any]) -> bool:
             """Whether the rule runs under the profile in force.
 
-            "all" is every template language at once, so a rule excluded
-            for any one of them cannot be trusted under it either.
+            A profile the rule's own exclude lists always drops it, as the
+            rule is wrong for that template language. A rule named in
+            include runs under any other profile, even one that leaves out
+            its code. Otherwise "all", being every template language at
+            once, drops a rule excluded for any one of them.
             """
             excluded_profiles = rule.get("exclude", ())
-            if excluded_profiles and (self.profile == "all" or self.profile in excluded_profiles):
+            if self.profile in excluded_profiles:
+                return False
+            if rule["name"] in included_codes:
+                return True
+            if excluded_profiles and self.profile == "all":
                 return False
             return not any(rule["name"].startswith(code) for code in profile_codes)
 

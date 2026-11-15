@@ -34,6 +34,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 これは[{{ "configuration" | i18n }}]({{ "lang_code_url" | i18n }}/docs/configuration)ファイルでも行えます。
 
+[プロファイル]({{ "lang_code_url" | i18n }}/docs/configuration/#profile)を設定しない場合、組み込みルールのうち実行されるのは H のルールだけです。T のルールと、特定のテンプレート言語向けのルール（D、J、M、N）はプロファイルを設定すると有効になります。`--include` に指定したルールはどのプロファイルでも有効になりますが、下の説明で適用されないとされているプロファイルは例外です。
+
 ## ルール
 
 | コード | 意味                                                                                                              | デフォルト |

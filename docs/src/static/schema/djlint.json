@@ -101,7 +101,7 @@
       "type": "boolean"
     },
     "include": {
-      "description": "Linter codes to turn on that are off by default.",
+      "description": "Linter codes to turn on that are off by default or that the profile leaves out.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "indent": {
@@ -183,7 +183,7 @@
       "type": "boolean"
     },
     "profile": {
-      "description": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nOptions:\n\n:::content\n\n- html (default)\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n- mako (control lines and `##` comments are kept as written)\n- all (every template language at once)\n  :::",
+      "description": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nWithout a profile, djLint formats the template syntax of every language, as `all` does, and lints with the rules of `html`.\n\nOptions:\n\n:::content\n\n- html\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n- mako (control lines and `##` comments are kept as written)\n- all (every template language at once)\n  :::",
       "enum": [
         "all",
         "angular",

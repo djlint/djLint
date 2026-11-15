@@ -34,7 +34,8 @@ Configuration:
                                   nunjucks, handlebars, liquid, golang, angular,
                                   tera, askama, mako or all. It decides which
                                   linter rules run and how template syntax is
-                                  formatted. [default: html]
+                                  formatted. Without one, formatting follows all
+                                  and linting follows html.
   --configuration FILE            Global config file: a pyproject.toml,
                                   djlint.toml or .djlintrc. The project's own
                                   config file wins where both set an option.
@@ -44,8 +45,9 @@ Configuration:
 Linter:
   -i, --ignore CODES              Linter codes to skip, comma-separated, for
                                   example H014,H017.
-  --include CODES                 Linter codes to turn on that are off by
-                                  default, comma-separated, for example H017.
+  --include CODES                 Linter codes to turn on, comma-separated, for
+                                  example H017. Works for rules that are off by
+                                  default and for rules the profile leaves out.
   --per-file-ignores <PATTERN CODES>...
                                   Skip linter codes in the files whose path
                                   matches a regex. Can be repeated.
