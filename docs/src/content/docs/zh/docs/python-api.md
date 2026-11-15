@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` 读取适用于某个文件夹中文件的配置。它从该文件夹开始向上查找配置，与命令行从传给它的第一个路径开始查找的方式相同，并且不会改变当前目录。
+`load_config(folder=".", *, python_rules=True, **options)` 读取适用于某个文件夹中文件的配置。它从该文件夹开始向上查找配置，与命令行从传给它的第一个路径（对 `-` 而言是 `--stdin-filename` 所在的文件夹，未指定时是当前目录）开始查找的方式相同，并且不会改变当前目录。
 
 选项使用命令行选项的名称，但写成下划线形式，作用也与命令行中相同：设置了的值优先于配置文件，而 `False`、空字符串，以及对大多数选项而言的 `0`，都视为未指定。路径以 `pathlib.Path` 的形式给出。
 

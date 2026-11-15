@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)`, bir klasördeki dosyalara uygulanan yapılandırmayı okur. Komut satırının kendisine verilen ilk yoldan yaptığı gibi yapılandırmayı klasörden yukarı doğru arar ve geçerli dizini değiştirmez.
+`load_config(folder=".", *, python_rules=True, **options)`, bir klasördeki dosyalara uygulanan yapılandırmayı okur. Komut satırının kendisine verilen ilk yoldan (`-` için `--stdin-filename` klasöründen, bu seçenek yoksa geçerli dizinden) yaptığı gibi yapılandırmayı klasörden yukarı doğru arar ve geçerli dizini değiştirmez.
 
 Seçenekler, komut satırı seçeneklerinin adlarını alt çizgili olarak alır ve orada olduğu gibi çalışır: ayarlanmış bir değer yapılandırma dosyasının önüne geçer; `False`, boş bir dize ve çoğu seçenek için `0` ise verilmemiş sayılır. Yollar `pathlib.Path` olarak verilir.
 
