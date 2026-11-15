@@ -9,6 +9,8 @@ import ConfigOptions from "../../../components/ConfigOptions.astro";
 
 Configuration is done either through your project's `pyproject.toml` file, a `djlint.toml` or `.djlint.toml` file, or a `.djlintrc` file. Command line args will always override any settings in configuration files. Local project settings override a global configuration file given with `--configuration`, unless `--prefer-configuration` is set.
 
+djLint looks for these files upward from the first path it checks (for `-`, from the folder of `--stdin-filename`, or from the current directory without it). It stops at the first folder that holds a `.git` or `.hg` folder, a `pyproject.toml`, a `djlint.toml`, a `.djlint.toml` or a `.djlintrc`, and reads only that folder: `[tool.djlint]` in its `pyproject.toml`, otherwise its `djlint.toml` or `.djlint.toml`, otherwise its `.djlintrc`. So a `pyproject.toml` without djLint settings keeps a configuration file in a parent folder from being read.
+
 The format for `pyproject.toml` is `toml`.
 
 ```toml
