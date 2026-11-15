@@ -33,7 +33,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 Bu, [Yapılandırma](/tr/docs/configuration) dosyası üzerinden de yapılabilir.
 
-[Profil](/tr/docs/configuration/#profile) ayarlanmadığında yerleşik kurallardan yalnızca H kuralları çalışır. T kuralları ve tek bir şablon diline ait kurallar (D, J, M, N) bir profille gelir. `--include` bir kuralı her profilde açar; aşağıdaki açıklamasında uygulanmadığı söylenen profil bunun dışındadır.
+[Profil](/tr/docs/configuration/#profile) ayarlanmadığında yerleşik kurallardan yalnızca H kuralları çalışır. T kuralları ve tek bir şablon diline ait kurallar (D, J, M, N) bir profille gelir. `--include` ile verilen bir kural her profilde ve profil olmadan da çalışır; aşağıdaki açıklamasında uygulanmadığı söylenen profil bunun dışındadır.
 
 ## Kurallar
 

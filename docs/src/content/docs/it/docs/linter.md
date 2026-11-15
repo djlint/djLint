@@ -33,7 +33,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 Si può fare anche tramite il file di [configurazione](/it/docs/configuration).
 
-Senza [profilo](/it/docs/configuration/#profile), delle regole integrate girano solo le regole H. Le regole T e quelle di un singolo linguaggio di template (D, J, M, N) arrivano con un profilo. `--include` attiva una regola con qualsiasi profilo, tranne uno a cui, secondo la sua descrizione più sotto, non si applica.
+Senza [profilo](/it/docs/configuration/#profile), delle regole integrate girano solo le regole H. Le regole T e quelle di un singolo linguaggio di template (D, J, M, N) arrivano con un profilo. Una regola indicata in `--include` gira con qualsiasi profilo o senza profilo, tranne con uno a cui, secondo la sua descrizione più sotto, non si applica.
 
 ## Regole
 
