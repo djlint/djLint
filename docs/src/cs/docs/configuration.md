@@ -9,6 +9,8 @@ date: Last Modified
 
 Konfigurace se zapisuje buď do souboru `pyproject.toml` vašeho projektu, do souboru `djlint.toml` nebo `.djlint.toml`, nebo do souboru `.djlintrc`. Argumenty příkazového řádku vždy přepíší jakékoli nastavení z konfiguračních souborů. Lokální nastavení projektu má přednost před globálním konfiguračním souborem zadaným pomocí `--configuration`, pokud není nastaveno `--prefer-configuration`.
 
+djLint tyto soubory hledá směrem nahoru od první cesty, kterou kontroluje (u `-` od složky `--stdin-filename`, bez něj od aktuálního adresáře). Zastaví se u první složky, která obsahuje složku `.git` nebo `.hg`, soubor `pyproject.toml`, `djlint.toml`, `.djlint.toml` nebo `.djlintrc`, a čte jen tuto složku: `[tool.djlint]` v jejím `pyproject.toml`, jinak její `djlint.toml` nebo `.djlint.toml`, jinak její `.djlintrc`. Soubor `pyproject.toml` bez nastavení djLintu tak zabrání načtení konfiguračního souboru v nadřazené složce.
+
 Soubor `pyproject.toml` je ve formátu `toml`.
 
 ```toml
