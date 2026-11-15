@@ -175,22 +175,6 @@ module.exports = {
     cs: "Python API",
     tr: "Python API",
   },
-  best_practices: {
-    "en-US": "Best Practices",
-    zh: "最佳实践",
-    ja: "ベストプラクティス",
-    es: "Buenas prácticas",
-    "pt-br": "Boas práticas",
-    ru: "Рекомендации",
-    ko: "모범 사례",
-    fr: "Bonnes pratiques",
-    de: "Best Practices",
-    "zh-tw": "最佳做法",
-    it: "Buone pratiche",
-    pl: "Dobre praktyki",
-    cs: "Osvědčené postupy",
-    tr: "En İyi Uygulamalar",
-  },
   description: {
     "en-US":
       "Find common mistakes in HTML templates and reformat them. Supports Django, Jinja, Twig, Nunjucks, Handlebars, Mustache, Liquid, Go templates, Angular, Tera, Askama, Mako and more.",
