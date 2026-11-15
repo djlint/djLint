@@ -21,7 +21,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` lit la configuration qui s'applique aux fichiers d'un dossier. Il la cherche en remontant depuis ce dossier, comme la ligne de commande le fait depuis le premier chemin qu'on lui donne, et ne change pas de répertoire courant.
+`load_config(folder=".", *, python_rules=True, **options)` lit la configuration qui s'applique aux fichiers d'un dossier. Il la cherche en remontant depuis ce dossier, comme la ligne de commande le fait depuis le premier chemin qu'on lui donne (pour `-`, depuis le dossier de `--stdin-filename`, ou depuis le répertoire courant sans cette option), et ne change pas de répertoire courant.
 
 Les options portent les noms des options de la ligne de commande, avec des tirets bas, et fonctionnent comme là-bas : une valeur définie l'emporte sur le fichier de configuration, tandis que `False`, une chaîne vide et, pour la plupart des options, `0` comptent comme non renseignés. Les chemins sont passés en `pathlib.Path`.
 

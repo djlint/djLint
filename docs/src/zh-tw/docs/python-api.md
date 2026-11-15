@@ -21,7 +21,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` 會讀取適用於某個資料夾內檔案的設定。它會從該資料夾往上層尋找設定，就像命令列從傳給它的第一個路徑往上找一樣，而且不會變更目前目錄。
+`load_config(folder=".", *, python_rules=True, **options)` 會讀取適用於某個資料夾內檔案的設定。它會從該資料夾往上層尋找設定，就像命令列從傳給它的第一個路徑（對 `-` 而言是 `--stdin-filename` 所在的資料夾，未指定時則是目前目錄）往上找一樣，而且不會變更目前目錄。
 
 選項使用命令列選項的名稱（以底線連接），作用方式也與命令列相同：有設定的值會優先於設定檔，而 `False`、空字串，以及大多數選項的 `0`，都視為未指定。路徑以 `pathlib.Path` 指定。
 
