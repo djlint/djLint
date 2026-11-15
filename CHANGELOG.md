@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.50.4] - 2026-11-15
+
 ### Bug fixes
 
 - `include` turns on a rule that the profile leaves out, so `--include=T003` now runs T003 without a profile or under `--profile=html`. Before, the template rules (T) and the rules for one template language (D, J, M, N) stayed off there, whatever `include` said. A rule still stays off under a profile it doesn't apply to, such as T028 under `django` or H012 under `angular`.
