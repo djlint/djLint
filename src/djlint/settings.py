@@ -1549,7 +1549,10 @@ class Config:
         if self.profile not in _PROFILES:
             msg = f"Invalid profile {self.profile!r}. Choose from {', '.join(sorted(_PROFILES))}."
             raise BadParameter(msg, param_hint="'--profile'")
-        profile_codes = _CODES_EXCLUDED_BY_PROFILE.get(selected_profile or "html", ())
+        # with no profile the formatter reads every template language, as
+        # under "all", and the linter picks the rules html does
+        lint_profile = selected_profile or "html"
+        profile_codes = _CODES_EXCLUDED_BY_PROFILE.get(lint_profile, ())
         self.ignore = str(ignore or _as_comma_separated(djlint_settings.get("ignore", "")))
         self.include = str(include or _as_comma_separated(djlint_settings.get("include", "")))
         with (Path(__file__).parent / "rules.yaml").open("rb") as f:
@@ -1575,20 +1578,22 @@ class Config:
         def rule_applies(rule: Mapping[str, Any]) -> bool:
             """Whether the rule runs under the profile in force.
 
-            A profile the rule's own exclude lists always drops it, as the
-            rule is wrong for that template language. A rule named in
-            include runs under any other profile, even one that leaves out
-            its code. Otherwise "all", being every template language at
-            once, drops a rule excluded for any one of them.
+            A profile that names the rule, in the rule's own exclude or by
+            its full code, always drops it, as the rule is wrong for that
+            template language. A rule named in include runs under any other
+            profile, even one that leaves out its family of codes. Otherwise
+            "all", being every template language at once, drops a rule
+            excluded for any one of them.
             """
+            name = rule["name"]
             excluded_profiles = rule.get("exclude", ())
-            if self.profile in excluded_profiles:
+            if lint_profile in excluded_profiles or name in profile_codes:
                 return False
-            if rule["name"] in included_codes:
+            if name in included_codes:
                 return True
-            if excluded_profiles and self.profile == "all":
+            if excluded_profiles and lint_profile == "all":
                 return False
-            return not any(rule["name"].startswith(code) for code in profile_codes)
+            return not any(name.startswith(code) for code in profile_codes)
 
         self.entity_pattern = next(
             (

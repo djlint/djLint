@@ -34,7 +34,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 Totéž lze nastavit i v konfiguračním souboru (viz [{{ "configuration" | i18n }}]({{ "lang_code_url" | i18n }}/docs/configuration)).
 
-Bez [profilu]({{ "lang_code_url" | i18n }}/docs/configuration/#profile) běží z vestavěných pravidel jen pravidla H. Pravidla T a pravidla pro jednotlivé šablonovací jazyky (D, J, M, N) zapíná profil. `--include` zapne pravidlo v kterémkoli profilu kromě toho, o kterém jeho popis níže říká, že se v něm neuplatňuje.
+Bez [profilu]({{ "lang_code_url" | i18n }}/docs/configuration/#profile) běží z vestavěných pravidel jen pravidla H. Pravidla T a pravidla pro jednotlivé šablonovací jazyky (D, J, M, N) zapíná profil. Pravidlo uvedené v `--include` běží v kterémkoli profilu i bez profilu, kromě profilu, o kterém jeho popis níže říká, že se v něm neuplatňuje.
 
 ## Pravidla
 

@@ -13,6 +13,8 @@ from djlint._cli import main as djlint  # noqa: PLC2701
 from djlint.settings import Config
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from click.testing import CliRunner
 
 
@@ -60,8 +62,10 @@ def test_profile(runner: CliRunner) -> None:
         pytest.param(None, "", "T003", False, id="no profile leaves T rules out"),
         pytest.param(None, "T003", "T003", True, id="include beats the default profile"),
         pytest.param("html", "T003", "T003", True, id="include beats the html profile"),
-        pytest.param("angular", "H012", "H012", True, id="include beats a code the profile drops"),
-        pytest.param(None, "T028", "T028", True, id="include beats the caution of no profile"),
+        pytest.param(
+            "angular", "H012", "H012", False, id="include never beats a code the profile names"
+        ),
+        pytest.param(None, "T028", "T028", True, id="include runs T028 without a profile"),
         pytest.param("all", "", "T028", False, id="all leaves out a rule excluded anywhere"),
         pytest.param("django", "T028", "T028", False, id="include never beats the rule's exclude"),
     ],
@@ -72,3 +76,32 @@ def test_include_turns_on_a_rule_the_profile_leaves_out(
     config = Config("dummy/source.html", profile=profile, include=include)
 
     assert (rule in {x["rule"]["name"] for x in config.linter_rules}) is runs
+
+
+@pytest.mark.parametrize(
+    ("profile", "runs"),
+    [
+        pytest.param(None, True, id="no profile lints as html"),
+        pytest.param("html", True, id="html"),
+        pytest.param("all", False, id="all leaves it out"),
+        pytest.param("django", False, id="the profile it excludes"),
+    ],
+)
+def test_no_profile_picks_the_rules_html_does(
+    tmp_path: Path, profile: str | None, *, runs: bool
+) -> None:
+    rules = tmp_path / ".djlint_rules.yaml"
+    rules.write_text(
+        """- rule:
+    name: C001
+    message: x
+    exclude:
+      - django
+    patterns:
+      - x
+""",
+        encoding="utf-8",
+    )
+    config = Config(str(tmp_path / "a.html"), profile=profile, rules=rules)
+
+    assert ("C001" in {x["rule"]["name"] for x in config.linter_rules}) is runs
