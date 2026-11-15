@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### Packaging
+
+- Raise the minimum required dependency versions to ones that work on Python 3.11, djLint's oldest supported version:
+  - jsbeautifier from 1.13.0 to 1.14.10. Older releases have an invalid escape sequence, which Python 3.12 and newer warn about the first time djLint formats JavaScript.
+  - pathspec from 0.9.0 to 0.10.0. Older releases accept an invalid `.gitignore` line such as `build\` without an error.
+  - pyyaml from 5.1 to 6.0 and regex from 2021.8.21 to 2022.9.11, the first releases with wheels for Python 3.11.
+
 ## [1.50.1] - 2026-11-14
 
 ### Bug fixes
