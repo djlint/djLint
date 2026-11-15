@@ -33,6 +33,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 Das geht auch in der Konfigurationsdatei (siehe [Konfiguration](/de/docs/configuration)).
 
+Ohne [Profil](/de/docs/configuration/#profile) laufen von den eingebauten Regeln nur die H-Regeln. Die T-Regeln und die Regeln für eine einzelne Template-Sprache (D, J, M, N) schaltet ein Profil ein. `--include` schaltet eine Regel unter jedem Profil ein, außer unter einem, für das sie laut ihrer Beschreibung unten nicht gilt.
+
 ## Regeln
 
 | Code | Bedeutung                                                                                                    | Standard |

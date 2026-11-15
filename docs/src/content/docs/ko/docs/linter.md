@@ -33,6 +33,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 [구성](/ko/docs/configuration) 파일에서도 같은 설정을 할 수 있습니다.
 
+[프로필](/ko/docs/configuration/#profile)이 없으면 기본 제공 규칙 중 H 규칙만 실행됩니다. T 규칙과 특정 템플릿 언어용 규칙(D, J, M, N)은 프로필을 설정해야 켜집니다. `--include`로 지정한 규칙은 어느 프로필에서나 켜지지만, 아래 설명에서 적용되지 않는다고 한 프로필은 예외입니다.
+
 ## 규칙
 
 | 코드 | 의미                                                                                  | 기본값 |
