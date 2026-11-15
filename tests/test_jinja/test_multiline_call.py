@@ -58,6 +58,56 @@ test_data = [
         "<div>{{ function(a, b) }}</div>\n",
         id="a_call_on_one_line_is_left_alone",
     ),
+    pytest.param(
+        "{{ func(title={'text': 'hello'},\nitems=[\n{\n'type': 'test'\n}\n]) }}\n",
+        "{{ func(title={'text': 'hello'},\n"
+        "  items=[\n"
+        "    {\n"
+        "      'type': 'test'\n"
+        "    }\n"
+        "  ]) }}\n",
+        id="nested_array_close_with_paren_is_indented",
+    ),
+    pytest.param(
+        "{{ func(title={'text': 'hello'},\ndata={\n'key': 'value'\n}) }}\n",
+        "{{ func(title={'text': 'hello'},\n  data={\n    'key': 'value'\n  }) }}\n",
+        id="nested_dict_close_with_paren_is_indented",
+    ),
+    pytest.param(
+        "{{ func(\nouter={\n'inner': {\n'key': 'value'\n}}) }}\n",
+        "{{ func(\n  outer={\n    'inner': {\n      'key': 'value'\n    }}) }}\n",
+        id="double_nested_dict_close_not_confused_with_template_close",
+    ),
+    pytest.param(
+        "{{ func(\n  outer={\n    'inner': {\n      'key': value\n    }}) -}}\n",
+        "{{ func(\n  outer={\n    'inner': {\n      'key': value\n    }}) -}}\n",
+        id="whitespace_control_close_after_nested_dicts_keeps_indent",
+    ),
+    pytest.param(
+        "{{ func(\n  outer={\n    'inner': {\n      'key': value\n    }}) | safe }}\n",
+        "{{ func(\n  outer={\n    'inner': {\n      'key': value\n    }}) | safe }}\n",
+        id="filter_after_nested_dicts_keeps_indent",
+    ),
+    pytest.param(
+        "<div>\n  {{\n    function(\n      nested(\n        'a'\n      ))\n  }}) text\n</div>\n",
+        "<div>\n  {{\n    function(\n      nested(\n        'a'\n      ))\n  }}) text\n</div>\n",
+        id="literal_parenthesis_after_template_close_keeps_tag_indent",
+    ),
+    pytest.param(
+        "{% if f(\nitems=[\n1\n]) %}\nx\n{% endif %}\n",
+        "{% if f(\n  items=[\n    1\n  ]) %}\n  x\n{% endif %}\n",
+        id="nested_array_close_before_block_tag_close_is_indented",
+    ),
+    pytest.param(
+        "{{ function([\nnested(\nargument=value),\n]) }}\n",
+        "{{ function([\n  nested(\n    argument=value),\n]) }}\n",
+        id="close_of_a_bracket_opened_on_the_tag_line_keeps_tag_indent",
+    ),
+    pytest.param(
+        "{{ outer(\ninner(\na\n)) }}\n",
+        "{{ outer(\n  inner(\n    a\n  )) }}\n",
+        id="nested_call_close_is_indented",
+    ),
 ]
 
 

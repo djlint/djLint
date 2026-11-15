@@ -253,7 +253,7 @@ wheels = [
 
 [[package]]
 name = "djlint"
-version = "1.50.0"
+version = "1.50.1"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -309,8 +309,8 @@ dev = [
     { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-xdist", specifier = "==3.8" },
     { name = "ruff", specifier = "==0.17.4" },
-    { name = "types-pyyaml", specifier = "==6.0.12.20261103" },
-    { name = "types-regex", specifier = "==2026.11.8.20261109" },
+    { name = "types-pyyaml", specifier = "==6.0.12.20261111" },
+    { name = "types-regex", specifier = "==2026.11.9.20261110" },
 ]
 test = [
     { name = "mypy", specifier = "==2.4.1" },
@@ -851,20 +851,20 @@ wheels = [
 
 [[package]]
 name = "types-pyyaml"
-version = "6.0.12.20261103"
+version = "6.0.12.20261111"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d9/82/2ed4d215a2840b467a9a864f03b0d21904250e28f5e1f006ad36fba0311a/types_pyyaml-6.0.12.20261103.tar.gz", hash = "sha256:7a1b5f837881dd35d5448b5f18275164f89f206185e31e8eae6e0b42607bc001", size = 18911, upload-time = "2026-11-03T08:45:23.714Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/80/49/96041fdb54de08a5b47bcfcbb4881873b25bae367d1e4dec79d19dfeb84b/types_pyyaml-6.0.12.20261111.tar.gz", hash = "sha256:c511f563eaf820b948c4ff6f43fe0b9d48b227be442a69058d9f68f139cae1fb", size = 18970, upload-time = "2026-11-11T08:32:30.036Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/10/4353eb86278f6a59aeb9fe2be4d979c20b110b4009fa455a3ea6467cf5cb/types_pyyaml-6.0.12.20261103-py3-none-any.whl", hash = "sha256:444654c61f635dab82c092a511aa96a0ce31164810784b9a37314e3e56532ac8", size = 21299, upload-time = "2026-11-03T08:45:22.749Z" },
+    { url = "https://files.pythonhosted.org/packages/54/ec/b23dd6911cd0e870e9396b48929ef7c92b58a551c3651d184bb573f371eb/types_pyyaml-6.0.12.20261111-py3-none-any.whl", hash = "sha256:b7e46cbc847dc235305e95e3e3570792d72e6ccf64bf9b831306f48da490322d", size = 21317, upload-time = "2026-11-11T08:32:29.148Z" },
 ]
 
 [[package]]
 name = "types-regex"
-version = "2026.11.8.20261109"
+version = "2026.11.9.20261110"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a4/42/425025d834f565abf89f803cfeccf2c5cbc8646589d776af45b051708c8e/types_regex-2026.11.8.20261109.tar.gz", hash = "sha256:5430774773d7940a9701b849b9438e64bdbb9eb24814d89a99e4545258adf1fd", size = 14259, upload-time = "2026-11-09T08:47:38.792Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/63/4f/3b60e524ae059ad151160756f8029eaeef804f627fa23c23c62d063389df/types_regex-2026.11.9.20261110.tar.gz", hash = "sha256:b3f459f43eabbe541b4f550252233e5b6689fc1e2bccba528e8731536acace00", size = 14400, upload-time = "2026-11-10T08:54:13.597Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/b5/305f23aa81238573d0809baec47779b4cc36bea500ba42206f9669296696/types_regex-2026.11.8.20261109-py3-none-any.whl", hash = "sha256:2f5efa1cafea16973d0f4833c345b534b91aa0347916010605a5d95a96ea4d75", size = 11212, upload-time = "2026-11-09T08:47:37.959Z" },
+    { url = "https://files.pythonhosted.org/packages/58/47/23427ff7c9fdf6055b8b5eb951959c783f0cbddb8e2294be7e45b63a4dc9/types_regex-2026.11.9.20261110-py3-none-any.whl", hash = "sha256:b5effea974bdc751b9c544cb0ecae60b2337da0653bad9698cb63d45e1956d47", size = 11211, upload-time = "2026-11-10T08:54:12.516Z" },
 ]
 
 [[package]]

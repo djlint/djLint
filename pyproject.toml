@@ -1,6 +1,6 @@
 [project]
 name = "djlint"
-version = "1.50.0"
+version = "1.50.1"
 description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Mustache, Liquid, Go templates, Angular, Tera, Askama, Mako)"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -69,8 +69,8 @@ dev = [
   "covdefaults==2.3.0",
   "pytest-cov==7.1.0",
   "ruff==0.17.4",
-  "types-pyyaml==6.0.12.20261103",
-  "types-regex==2026.11.8.20261109",
+  "types-pyyaml==6.0.12.20261111",
+  "types-regex==2026.11.9.20261110",
   { include-group = "test" },
 ]
 test = [
@@ -115,8 +115,8 @@ dependencies = [
   "jsbeautifier==2.0.3",
   "json5==0.17.3",
   "mypy==2.4.1",
-  "types-pyyaml==6.0.12.20261103",
-  "types-regex==2026.11.8.20261109",
+  "types-pyyaml==6.0.12.20261111",
+  "types-regex==2026.11.9.20261110",
 ]
 enable-by-default = false
 exclude = ["src/djlint/__init__.py", "src/djlint/__main__.py"]

@@ -23,9 +23,19 @@ body:
     attributes:
       label: Language
       options:
-        - Russian
-        - French
         - Chinese (Simplified)
+        - Chinese (Traditional)
+        - Czech
+        - French
+        - German
+        - Italian
+        - Japanese
+        - Korean
+        - Polish
+        - Portuguese (Brazil)
+        - Russian
+        - Spanish
+        - Turkish
         - New language
     validations:
       required: true
