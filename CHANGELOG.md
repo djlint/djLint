@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.50.3] - 2026-11-15
+
 ### Packaging
 
 - Lower the minimum required dependency versions to the oldest ones djLint works with. 1.50.2 raised some of them because of problems in those packages, such as a warning jsbeautifier emits or missing wheels for Python 3.11, rather than anything djLint needs:
