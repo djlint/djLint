@@ -33,7 +33,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 This can also be done through the [Configuration](/docs/configuration) file.
 
-Of the built-in rules, only the H rules run without a [profile](/docs/configuration/#profile). The T rules and the rules for one template language (D, J, M, N) come with a profile. A rule named in `--include` runs under any profile or without one, except under a profile its details below say it is not applied to.
+Of the built-in rules, only the H rules run without a [profile](/docs/configuration/#profile). The T rules and the rules for one template language (D, J, M, N) come with the profiles they apply to. A rule named in `--include` runs under any profile or without one, except under a profile its details below say it is not applied to.
 
 ## Rules
 
