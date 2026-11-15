@@ -369,6 +369,8 @@ Da preferire:
 
 L'HTML ammette spazi attorno a "=", quindi questa è una regola di stile. Scrivere name="value" senza spazi è lo stile abituale, ed è ciò che presuppongono i semplici strumenti testuali come grep o cerca e sostituisci, quindi una spaziatura mista rende gli attributi più difficili da trovare e da rifattorizzare. `--reformat` rimuove gli spazi al posto tuo.
 
+Non si applica al profilo angular.
+
 Da evitare:
 
 ```html
@@ -687,6 +689,8 @@ Da preferire:
 `Empty id and class tags can be removed.`
 
 Nessun selettore di classe o di id corrisponde a un attributo vuoto, e un id vuoto è HTML non valido (il valore dell'id non deve essere la stringa vuota). Un selettore di presenza dell'attributo come `div[class]` invece lo seleziona comunque, quindi rimuoverne uno ha effetto su un foglio di stile scritto in quel modo. Di solito indica un bug del template in cui doveva essere interpolata una variabile, quindi rimuoverlo o riempirlo evita che quel bug resti nascosto in piena vista.
+
+Non si applica al profilo angular.
 
 Da evitare:
 
@@ -1472,7 +1476,7 @@ Puoi aggiungere regole che falliscono se uno dei pattern regex trova una corrisp
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1485,7 +1489,7 @@ Puoi aggiungere regole che importano ed eseguono una funzione Python personalizz
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

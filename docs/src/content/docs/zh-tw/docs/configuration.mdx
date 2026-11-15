@@ -9,6 +9,8 @@ import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
 設定可以透過專案的 `pyproject.toml` 檔案、`djlint.toml` 或 `.djlint.toml` 檔案，或是 `.djlintrc` 檔案進行。命令列引數一律會覆寫設定檔中的任何設定。除非設定了 `--prefer-configuration`，否則專案層級的設定會覆寫以 `--configuration` 指定的全域設定檔。
 
+djLint 會從它檢查的第一個路徑（對 `-` 而言是 `--stdin-filename` 所在的資料夾，未指定時則是目前目錄）往上尋找這些檔案。它會停在第一個含有 `.git` 資料夾或檔案、`.hg` 資料夾、`pyproject.toml`、`djlint.toml`、`.djlint.toml` 或 `.djlintrc` 的資料夾，而且只讀取這個資料夾：先讀 `pyproject.toml` 中的 `[tool.djlint]`（其中有設定時），沒有就讀 `djlint.toml` 或 `.djlint.toml`，再沒有就讀 `.djlintrc`。因此，沒有 djLint 設定的 `pyproject.toml` 會讓上層資料夾中的設定檔不被讀取。
+
 `pyproject.toml` 的格式為 `toml`。
 
 ```toml

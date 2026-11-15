@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)`는 폴더 안의 파일에 적용되는 구성을 읽습니다. 명령줄이 현재 디렉터리에서 그러듯 폴더에서 위쪽으로 구성을 찾으며, 현재 디렉터리를 바꾸지는 않습니다.
+`load_config(folder=".", *, python_rules=True, **options)`는 폴더 안의 파일에 적용되는 구성을 읽습니다. 명령줄이 처음 받은 경로(`-`이면 `--stdin-filename`의 폴더, 이 옵션이 없으면 현재 디렉터리)에서 그러듯 폴더에서 위쪽으로 구성을 찾으며, 현재 디렉터리를 바꾸지는 않습니다.
 
 옵션은 명령줄 옵션의 이름을 밑줄로 바꿔 쓰며, 동작도 명령줄과 같습니다. 지정한 값은 구성 파일보다 우선하고, `False`, 빈 문자열, 그리고 대부분의 옵션에서 `0`은 지정하지 않은 것으로 간주합니다. 경로는 `pathlib.Path`로 전달합니다.
 

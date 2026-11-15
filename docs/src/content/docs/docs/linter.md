@@ -369,6 +369,8 @@ Do:
 
 HTML allows whitespace around "=", so this is a style rule. Writing name="value" without spaces is the usual style, and it is what simple text tooling such as grep or search-and-replace assumes, so mixed spacing makes attributes harder to find and refactor. `--reformat` drops the spaces for you.
 
+Not applied to the angular profile.
+
 Don't:
 
 ```html
@@ -687,6 +689,8 @@ Do:
 `Empty id and class tags can be removed.`
 
 No class or id selector matches an empty attribute, and an empty id is invalid HTML (the id value must not be the empty string). An attribute presence selector such as `div[class]` does still match it, so removing one is visible to a stylesheet written that way. It usually signals a template bug where a variable was meant to be interpolated, so removing or filling it keeps that bug from hiding in plain sight.
+
+Not applied to the angular profile.
 
 Don't:
 
@@ -1472,7 +1476,7 @@ You can add rules that fails if one of the regex pattern has a match:
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1485,7 +1489,7 @@ You can add rules that import and execute a custom python function:
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```

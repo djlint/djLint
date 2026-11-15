@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` wczytuje konfigurację obowiązującą dla plików danego folderu. Szuka jej, idąc w górę od tego folderu, tak jak wiersz poleceń robi to od bieżącego katalogu, i nie zmienia bieżącego katalogu.
+`load_config(folder=".", *, python_rules=True, **options)` wczytuje konfigurację obowiązującą dla plików danego folderu. Szuka jej, idąc w górę od tego folderu, tak jak wiersz poleceń robi to od pierwszej podanej ścieżki (dla `-` od folderu z `--stdin-filename`, a bez tej opcji od bieżącego katalogu), i nie zmienia bieżącego katalogu.
 
 Opcje mają nazwy opcji wiersza poleceń, zapisane z podkreśleniami, i działają tak samo jak tam: ustawiona wartość ma pierwszeństwo przed plikiem konfiguracyjnym, a `False`, pusty ciąg znaków oraz, w przypadku większości opcji, `0` są traktowane jak niepodane. Ścieżki podaje się jako `pathlib.Path`.
 

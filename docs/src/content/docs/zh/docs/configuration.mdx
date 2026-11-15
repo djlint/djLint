@@ -9,6 +9,8 @@ import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
 可以通过项目的 `pyproject.toml` 文件、`djlint.toml` 或 `.djlint.toml` 文件，或者 `.djlintrc` 文件进行配置。命令行参数始终会覆盖配置文件中的任何设置。本地项目设置会覆盖通过 `--configuration` 指定的全局配置文件，除非设置了 `--prefer-configuration`。
 
+djLint 从它检查的第一个路径（对 `-` 而言是 `--stdin-filename` 所在的文件夹，未指定时是当前目录）开始向上查找这些文件。它会在第一个包含 `.git` 文件夹或文件、`.hg` 文件夹、`pyproject.toml`、`djlint.toml`、`.djlint.toml` 或 `.djlintrc` 的文件夹处停下，并且只读取这个文件夹：先读 `pyproject.toml` 中的 `[tool.djlint]`（其中有设置时），没有则读 `djlint.toml` 或 `.djlint.toml`，再没有则读 `.djlintrc`。因此，一个没有 djLint 设置的 `pyproject.toml` 会使上层文件夹中的配置文件不被读取。
+
 `pyproject.toml` 的格式为 `toml`。
 
 ```toml

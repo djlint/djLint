@@ -369,6 +369,8 @@ Sondern so:
 
 HTML erlaubt Leerraum um das „=“, es handelt sich also um eine Stilregel. Üblich ist name="value" ohne Leerzeichen, und davon gehen auch einfache Textwerkzeuge wie grep oder Suchen und Ersetzen aus, sodass gemischte Abstände es erschweren, Attribute zu finden und zu refaktorieren. `--reformat` entfernt die Leerzeichen für Sie.
 
+Gilt nicht für das Profil angular.
+
 Nicht so:
 
 ```html
@@ -687,6 +689,8 @@ Sondern so:
 `Empty id and class tags can be removed.`
 
 Kein Klassen- oder id-Selektor trifft auf ein leeres Attribut zu, und eine leere id ist ungültiges HTML (der id-Wert darf nicht der leere String sein). Ein Selektor auf das bloße Vorhandensein des Attributs wie `div[class]` trifft es dagegen schon, sodass das Entfernen für ein so geschriebenes Stylesheet sichtbar ist. Meist weist es auf einen Template-Fehler hin, bei dem eigentlich eine Variable eingesetzt werden sollte; wer es entfernt oder füllt, sorgt dafür, dass dieser Fehler nicht unbemerkt bleibt.
+
+Gilt nicht für das Profil angular.
 
 Nicht so:
 
@@ -1472,7 +1476,7 @@ Sie können Regeln hinzufügen, die fehlschlagen, wenn eines der Regex-Muster ei
 
 ```yaml
 - rule:
-    name: T001
+    name: C001
     message: Find Trichotillomania
     flags: re.DOTALL|re.I
     patterns:
@@ -1485,7 +1489,7 @@ Sie können Regeln hinzufügen, die eine eigene Python-Funktion importieren und 
 
 ```yaml
 - rule:
-    name: T001
+    name: C002
     message: Found the 'bad' word
     python_module: your_package.your_module
 ```
