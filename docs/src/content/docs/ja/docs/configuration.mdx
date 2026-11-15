@@ -9,7 +9,7 @@ import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
 設定は、プロジェクトの `pyproject.toml` ファイル、`djlint.toml` または `.djlint.toml` ファイル、あるいは `.djlintrc` ファイルで行います。コマンドライン引数は、設定ファイルのどの設定よりも常に優先されます。`--prefer-configuration` を指定しない限り、プロジェクトのローカル設定は `--configuration` で指定したグローバル設定ファイルよりも優先されます。
 
-djLint は、最初にチェックするパス（`-` の場合は `--stdin-filename` のフォルダー、指定がなければカレントディレクトリ）から上に向かってこれらのファイルを探します。`.git` フォルダーまたはファイル、`.hg` フォルダー、`pyproject.toml`、`djlint.toml`、`.djlint.toml`、`.djlintrc` のいずれかがある最初のフォルダーで探すのをやめ、そのフォルダーだけを読み込みます。読み込むのは `pyproject.toml` の `[tool.djlint]`、なければ `djlint.toml` か `.djlint.toml`、それもなければ `.djlintrc` です。そのため、djLint の設定がない `pyproject.toml` があると、親フォルダーの設定ファイルは読み込まれません。
+djLint は、最初にチェックするパス（`-` の場合は `--stdin-filename` のフォルダー、指定がなければカレントディレクトリ）から上に向かってこれらのファイルを探します。`.git` フォルダーまたはファイル、`.hg` フォルダー、`pyproject.toml`、`djlint.toml`、`.djlint.toml`、`.djlintrc` のいずれかがある最初のフォルダーで探すのをやめ、そのフォルダーだけを読み込みます。読み込むのは `pyproject.toml` の `[tool.djlint]`（中に設定があるとき）、なければ `djlint.toml` か `.djlint.toml`、それもなければ `.djlintrc` です。そのため、djLint の設定がない `pyproject.toml` があると、親フォルダーの設定ファイルは読み込まれません。
 
 `pyproject.toml` の形式は `toml` です。
 
