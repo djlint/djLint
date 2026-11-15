@@ -109,7 +109,6 @@ export default defineConfig({
             "docs/configuration",
             "docs/integrations",
             "docs/python-api",
-            "docs/best-practices",
             // English only: it shows the repository's CHANGELOG.md.
             {
               slug: "docs/changelog",
