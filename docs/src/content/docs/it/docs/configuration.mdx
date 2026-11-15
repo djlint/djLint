@@ -9,7 +9,7 @@ import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
 La configurazione si imposta nel file `pyproject.toml` del progetto, in un file `djlint.toml` o `.djlint.toml`, oppure in un file `.djlintrc`. Gli argomenti della riga di comando hanno sempre la precedenza su qualsiasi impostazione dei file di configurazione. Le impostazioni locali del progetto hanno la precedenza su un file di configurazione globale indicato con `--configuration`, a meno che non sia impostato `--prefer-configuration`.
 
-djLint cerca questi file risalendo dal primo percorso che controlla (con `-`, dalla cartella di `--stdin-filename`, o dalla directory corrente se manca). Si ferma alla prima cartella che contiene una cartella `.git` o `.hg`, un `pyproject.toml`, un `djlint.toml`, un `.djlint.toml` o un `.djlintrc`, e legge solo quella cartella: `[tool.djlint]` nel suo `pyproject.toml`, altrimenti il suo `djlint.toml` o `.djlint.toml`, altrimenti il suo `.djlintrc`. Quindi un `pyproject.toml` senza impostazioni di djLint impedisce di leggere un file di configurazione in una cartella superiore.
+djLint cerca questi file risalendo dal primo percorso che controlla (con `-`, dalla cartella di `--stdin-filename`, o dalla directory corrente se manca). Si ferma alla prima cartella che contiene una cartella o un file `.git`, una cartella `.hg`, un `pyproject.toml`, un `djlint.toml`, un `.djlint.toml` o un `.djlintrc`, e legge solo quella cartella: `[tool.djlint]` nel suo `pyproject.toml`, altrimenti il suo `djlint.toml` o `.djlint.toml`, altrimenti il suo `.djlintrc`. Quindi un `pyproject.toml` senza impostazioni di djLint impedisce di leggere un file di configurazione in una cartella superiore.
 
 Il formato di `pyproject.toml` è `toml`.
 
