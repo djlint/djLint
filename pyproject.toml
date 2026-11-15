@@ -61,11 +61,11 @@ scripts.djlint = "djlint._cli:main"
 dependencies = [
   "click>=8.2.0",
   "cssbeautifier>=1.13.0",
-  "jsbeautifier>=1.14.10",
+  "jsbeautifier>=1.13.0",
   "json5>=0.10.0",
-  "pathspec>=0.10.0",
-  "pyyaml>=6.0",
-  "regex>=2022.9.11",
+  "pathspec>=0.9.0",
+  "pyyaml>=5.1",
+  "regex>=2020.10.22",
   "typing-extensions>=4.4.0; python_version<'3.13'",
 ]
 
