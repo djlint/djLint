@@ -9,7 +9,7 @@ date: Last Modified
 
 Konfigurację ustawia się w pliku `pyproject.toml` projektu, w pliku `djlint.toml` lub `.djlint.toml` albo w pliku `.djlintrc`. Argumenty wiersza poleceń zawsze mają pierwszeństwo przed ustawieniami z plików konfiguracyjnych. Lokalne ustawienia projektu mają pierwszeństwo przed globalnym plikiem konfiguracyjnym podanym przez `--configuration`, chyba że ustawiono `--prefer-configuration`.
 
-djLint szuka tych plików, idąc w górę od pierwszej sprawdzanej ścieżki (dla `-` od folderu z `--stdin-filename`, a bez tej opcji od bieżącego katalogu). Zatrzymuje się na pierwszym folderze, w którym jest folder lub plik `.git`, folder `.hg`, plik `pyproject.toml`, `djlint.toml`, `.djlint.toml` albo `.djlintrc`, i czyta tylko ten folder: `[tool.djlint]` z jego `pyproject.toml`, a jeśli go nie ma, jego `djlint.toml` lub `.djlint.toml`, a w ostateczności jego `.djlintrc`. Dlatego `pyproject.toml` bez ustawień djLint sprawia, że plik konfiguracyjny w folderze nadrzędnym nie zostanie wczytany.
+djLint szuka tych plików, idąc w górę od pierwszej sprawdzanej ścieżki (dla `-` od folderu z `--stdin-filename`, a bez tej opcji od bieżącego katalogu). Zatrzymuje się na pierwszym folderze, w którym jest folder lub plik `.git`, folder `.hg`, plik `pyproject.toml`, `djlint.toml`, `.djlint.toml` albo `.djlintrc`, i czyta tylko ten folder: `[tool.djlint]` z jego `pyproject.toml`, jeśli ta tabela coś ustawia, a jeśli nie, jego `djlint.toml` lub `.djlint.toml`, a w ostateczności jego `.djlintrc`. Dlatego `pyproject.toml` bez ustawień djLint sprawia, że plik konfiguracyjny w folderze nadrzędnym nie zostanie wczytany.
 
 Plik `pyproject.toml` ma format `toml`.
 

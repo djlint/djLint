@@ -9,7 +9,7 @@ date: Last Modified
 
 Yapılandırma, projenizin `pyproject.toml` dosyası, bir `djlint.toml` ya da `.djlint.toml` dosyası veya bir `.djlintrc` dosyası üzerinden yapılır. Komut satırı argümanları, yapılandırma dosyalarındaki ayarları her zaman geçersiz kılar. `--prefer-configuration` ayarlanmadıkça yerel proje ayarları, `--configuration` ile verilen genel bir yapılandırma dosyasını geçersiz kılar.
 
-djLint bu dosyaları denetlediği ilk yoldan (`-` için `--stdin-filename` klasöründen, bu seçenek yoksa geçerli dizinden) yukarı doğru arar. `.git` klasörü ya da dosyası, `.hg` klasörü, `pyproject.toml`, `djlint.toml`, `.djlint.toml` ya da `.djlintrc` bulunan ilk klasörde durur ve yalnızca o klasörü okur: `pyproject.toml` dosyasındaki `[tool.djlint]`, yoksa `djlint.toml` ya da `.djlint.toml`, o da yoksa `.djlintrc`. Bu yüzden djLint ayarı olmayan bir `pyproject.toml`, üst klasördeki bir yapılandırma dosyasının okunmasını engeller.
+djLint bu dosyaları denetlediği ilk yoldan (`-` için `--stdin-filename` klasöründen, bu seçenek yoksa geçerli dizinden) yukarı doğru arar. `.git` klasörü ya da dosyası, `.hg` klasörü, `pyproject.toml`, `djlint.toml`, `.djlint.toml` ya da `.djlintrc` bulunan ilk klasörde durur ve yalnızca o klasörü okur: `pyproject.toml` dosyasındaki `[tool.djlint]` (içinde bir ayar varsa), yoksa `djlint.toml` ya da `.djlint.toml`, o da yoksa `.djlintrc`. Bu yüzden djLint ayarı olmayan bir `pyproject.toml`, üst klasördeki bir yapılandırma dosyasının okunmasını engeller.
 
 `pyproject.toml` dosyası `toml` biçimindedir.
 
