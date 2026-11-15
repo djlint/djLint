@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Packaging
+
+- Lower the minimum required dependency versions to the oldest ones djLint works with. 1.50.2 raised some of them because of problems in those packages, such as a warning jsbeautifier emits or missing wheels for Python 3.11, rather than anything djLint needs:
+  - jsbeautifier from 1.14.10 back to 1.13.0
+  - pathspec from 0.10.0 back to 0.9.0
+  - pyyaml from 6.0 back to 5.1
+  - regex from 2022.9.11 to 2020.10.22
+
 ## [1.50.2] - 2026-11-15
 
 ### Packaging
