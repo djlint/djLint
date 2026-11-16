@@ -103,6 +103,8 @@ Sans [profil]({{ "lang_code_url" | i18n }}/docs/configuration/#profile), seules 
 | H055 | L'attribut lang doit être une étiquette de langue, comme en ou pt-BR.                                                          | ✔️         |
 | H056 | Src ne doit pas être vide.                                                                                                     | ✔️         |
 | H057 | Une vidéo doit avoir une piste de sous-titres.                                                                                 | ✔️         |
+| D058 | (Django) Une balise ou un commentaire de template s'étend sur plusieurs lignes, et Django le lit comme du texte.               | ✔️         |
+| D059 | (Django) Des lignes {% raw %}`{# #}`{% endraw %} consécutives devraient former un seul bloc de commentaire.                    | -          |
 
 ### Forme des codes
 
@@ -1455,6 +1457,56 @@ Une vidéo `muted` n'a pas d'audio à sous-titrer et n'est pas signalée. Une vi
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django ne lit une balise que sur une seule ligne. Un `{{ }}`, `{% %}` ou `{# #}` qui se ferme sur une ligne suivante est du texte pour lui : la page l'affiche tel quel, et un `{% if %}` coupé de cette façon fait de son `{% endif %}` une balise de bloc invalide qui empêche le template de compiler. Jinja et Nunjucks lisent ces balises, si bien que l'habitude se prend facilement. Écrivez la balise sur une seule ligne, et un commentaire plus long sous forme de bloc `{% comment %}`.
+
+Rien n'est signalé à l'intérieur d'un bloc `{% comment %}` ou `{% verbatim %}`, puisque Django supprime l'un et affiche l'autre tel quel. Un `{%` ou `{{` dans lequel une autre balise s'ouvre avant sa fermeture n'a jamais été fermé, et c'est `T039` qui le signale. Un commentaire va jusqu'à son `#}` quel que soit son contenu, donc une balise mise en commentaire à l'intérieur ne le termine pas.
+
+À éviter :
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+À privilégier :
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+Un commentaire `{# #}` doit tenir sur une ligne, si bien qu'une note plus longue finit souvent en un `{# #}` par ligne. La documentation de Django renvoie au bloc `{% comment %}` pour tout ce qui est plus long : la note reste d'un seul tenant et chaque ligne ne contient que son texte.
+
+Désactivée par défaut ; activez-la avec `--include=D059`. Une colonne de lignes `{# #}` est du Django valide, c'est donc une question de style, et le formateur ne convertit jamais une forme en l'autre. Il indente les balises `{% comment %}` et `{% endcomment %}` d'un bloc mais laisse les lignes entre elles telles qu'elles sont écrites.
+
+Une ligne compte quand elle ne contient que le commentaire, et une ligne vide termine une série. Une directive `djlint:` n'en fait jamais partie, car elle ne fonctionne que comme un commentaire à part entière. Un commentaire pour les traducteurs, `{# Translators: ... #}`, non plus : `makemessages` transmet aux traducteurs chaque ligne d'un bloc `{% comment %}` depuis celle qui commence par `Translators` jusqu'à la fin, si bien que les lignes suivantes leur parviendraient aussi. Les commentaires à l'intérieur de `<pre>` et de `<textarea>` ne sont pas touchés, car chaque ligne `{# #}` y laisse un saut de ligne visible sur la page, et un bloc en laisserait moins.
+
+À éviter :
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+À privilégier :
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 {% endraw %}

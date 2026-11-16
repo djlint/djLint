@@ -103,6 +103,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H055 | Lang 屬性應為語言標記，例如 en 或 pt-BR。                                           | ✔️   |
 | H056 | Src 不應為空。                                                                      | ✔️   |
 | H057 | Video 應具有字幕軌。                                                                | ✔️   |
+| D058 | （Django）範本標籤或註解跨越多行，Django 會將其當成文字讀取。                       | ✔️   |
+| D059 | （Django）連續的 {% raw %}`{# #}`{% endraw %} 行應合併為一個註解區塊。              | -    |
 
 ### 代碼規則
 
@@ -1455,6 +1457,56 @@ html 規格表示空的 `src` 是無效的，並警告瀏覽器會以文件本�
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django 只會在一行之內讀取標籤。在後面某一行才結束的 `{{ }}`、`{% %}` 或 `{# #}` 對它來說是文字，所以頁面會照原樣顯示；以這種方式拆開的 `{% if %}` 還會讓它的 `{% endif %}` 成為無效的區塊標籤，使範本無法編譯。Jinja 和 Nunjucks 能讀取這樣的標籤，所以這個習慣很容易被帶過來。請把標籤寫在一行內，較長的註解則寫成 `{% comment %}` 區塊。
+
+`{% comment %}` 或 `{% verbatim %}` 區塊內的內容都不會回報，因為 Django 會捨棄前者，並照原樣輸出後者。在結束之前又開啟了另一個標籤的 `{%` 或 `{{` 從未結束，由 `T039` 回報。註解不論包含什麼都會延續到它的 `#}`，所以其中被註解掉的標籤不會讓註解結束。
+
+不要這樣寫：
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+應該這樣寫：
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+`{# #}` 註解必須寫在一行內，所以較長的說明常常寫成每行一個 `{# #}`。對於更長的內容，Django 文件建議使用 `{% comment %}` 區塊：說明維持為一個整體，每行只包含自己的文字。
+
+預設為停用；可用 `--include=D059` 啟用。連續的 `{# #}` 行是合法的 Django，所以這屬於風格問題，格式化工具也從不把一種形式改寫成另一種。它會縮排區塊的 `{% comment %}` 和 `{% endcomment %}` 標籤，但其間的行維持原樣。
+
+只有整行只含註解時才計入，空行會中斷連續。`djlint:` 指令從不計入連續，因為它只能作為單獨的註解發揮作用。給譯者的註解 `{# Translators: ... #}` 也不計入：`makemessages` 會把 `{% comment %}` 區塊中從以 `Translators` 開頭的那一行到結尾的每一行都交給譯者，所以它之後的行也會交到譯者手上。`<pre>` 和 `<textarea>` 內的註解不予處理，因為那裡每個 `{# #}` 行都會留下一個在頁面上看得到的換行，而區塊留下的換行比較少。
+
+不要這樣寫：
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+應該這樣寫：
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 {% endraw %}

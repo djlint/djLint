@@ -103,6 +103,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H055 | lang 属性应为语言标签，例如 en 或 pt-BR。                                             | ✔️   |
 | H056 | src 不应为空。                                                                        | ✔️   |
 | H057 | video 应带有字幕轨道。                                                                | ✔️   |
+| D058 | （Django）模板标签或注释跨越多行，Django 会将其当作文本读取。                         | ✔️   |
+| D059 | （Django）连续的 {% raw %}`{# #}`{% endraw %} 行应合并为一个注释块。                  | -    |
 
 ### 代码规律
 
@@ -1455,6 +1457,56 @@ html 规范规定空的 `src` 是无效的，并警告浏览器会根据文档�
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django 只在一行之内读取标签。在后面某一行才闭合的 `{{ }}`、`{% %}` 或 `{# #}` 对它来说是文本，因此页面会原样显示它；以这种方式拆开的 `{% if %}` 还会让它的 `{% endif %}` 成为无效的块标签，导致模板无法编译。Jinja 和 Nunjucks 能读取这样的标签，所以这个习惯很容易被带过来。请把标签写在一行内，较长的注释写成 `{% comment %}` 块。
+
+`{% comment %}` 或 `{% verbatim %}` 块内的内容都不会报告，因为 Django 会丢弃前者，并原样输出后者。在闭合之前又打开了另一个标签的 `{%` 或 `{{` 从未被闭合，由 `T039` 报告。注释无论包含什么都会延续到它的 `#}`，因此其中被注释掉的标签不会让注释结束。
+
+错误示例：
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+正确示例：
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+`{# #}` 注释必须写在一行内，所以较长的说明常常写成每行一个 `{# #}`。对于更长的内容，Django 文档推荐使用 `{% comment %}` 块：说明保持为一个整体，每行只包含自己的文字。
+
+默认关闭；使用 `--include=D059` 启用。连续的 `{# #}` 行是合法的 Django，因此这属于风格问题，格式化工具也从不把一种形式改写成另一种。它会缩进块的 `{% comment %}` 和 `{% endcomment %}` 标签，但其间的行保持原样。
+
+只有整行仅包含注释时才计入，空行会中断连续。`djlint:` 指令从不计入连续，因为它只能作为单独的注释起作用。面向译者的注释 `{# Translators: ... #}` 也不计入：`makemessages` 会把 `{% comment %}` 块中从以 `Translators` 开头的那一行到末尾的每一行都交给译者，因此它之后的行也会被交给译者。`<pre>` 和 `<textarea>` 内的注释不予处理，因为那里每个 `{# #}` 行都会留下一个在页面上可见的换行，而块留下的换行更少。
+
+错误示例：
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+正确示例：
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 {% endraw %}

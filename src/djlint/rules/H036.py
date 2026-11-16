@@ -22,6 +22,7 @@ from typing import TYPE_CHECKING, final
 import regex as re
 
 from djlint.helpers import (
+    Span,
     compile_pattern,
     inside_html_attribute,
     inside_ignored_linter_block,
@@ -65,18 +66,6 @@ _MARK_PATTERN: Final = compile_pattern(r"[\"'>]")
 
 
 @final
-class _Break(NamedTuple):
-    """One use of a break, spanning what is reported with it."""
-
-    start: int
-    end: int
-
-    def span(self) -> tuple[int, int]:
-        """Return the source span."""
-        return self.start, self.end
-
-
-@final
 class _TagEnds(NamedTuple):
     """Where a tag running into each quote or bracket of the document ends."""
 
@@ -114,11 +103,11 @@ def _tag_ends(html: str) -> _TagEnds:
     return _TagEnds(marks, ends)
 
 
-def _spans(pattern: re.Pattern[str], html: str) -> Iterator[_Break]:
-    return (_Break(*match.span()) for match in pattern.finditer(html))
+def _spans(pattern: re.Pattern[str], html: str) -> Iterator[Span]:
+    return (Span(*match.span()) for match in pattern.finditer(html))
 
 
-def _against_a_block_opening(html: str) -> Iterator[_Break]:
+def _against_a_block_opening(html: str) -> Iterator[Span]:
     """Yield each break written against the inside edge of a block box.
 
     Openings are read in document order and one reported with a break is
@@ -139,11 +128,11 @@ def _against_a_block_opening(html: str) -> Iterator[_Break]:
         space = _SPACE_PATTERN.match(html, tag_end + 1)
         following = space and _BREAK_PATTERN.match(html, space.end())
         if following is not None:
-            yield _Break(opening.start(), following.end())
+            yield Span(opening.start(), following.end())
             reported_to = following.end()
 
 
-def _reported(config: Config, html: str, rule: dict[str, Any], found: _Break) -> bool:
+def _reported(config: Config, html: str, rule: dict[str, Any], found: Span) -> bool:
     """Whether the use is a finding rather than ignored content.
 
     The rule looks for a tag, so markup written inside an attribute

@@ -103,6 +103,8 @@ Sin [perfil]({{ "lang_code_url" | i18n }}/docs/configuration/#profile), de las r
 | H055   | El atributo lang debe ser una etiqueta de idioma, como en o pt-BR.                                                            | ✔️          |
 | H056   | Src no debe estar vacío.                                                                                                      | ✔️          |
 | H057   | El vídeo debe tener una pista de subtítulos.                                                                                  | ✔️          |
+| D058   | (Django) La etiqueta o el comentario de plantilla ocupa varias líneas, así que Django lo lee como texto.                      | ✔️          |
+| D059   | (Django) Las líneas {% raw %}`{# #}`{% endraw %} seguidas deben ser un solo bloque de comentario.                             | -           |
 
 ### Patrones de los códigos
 
@@ -1455,6 +1457,56 @@ Haz esto:
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django solo lee una etiqueta dentro de una línea. Un `{{ }}`, `{% %}` o `{# #}` que se cierra en una línea posterior es texto para Django, así que la página lo muestra tal cual, y un `{% if %}` partido de esa forma deja su `{% endif %}` como una etiqueta de bloque no válida que impide compilar la plantilla. Jinja y Nunjucks sí leen esas etiquetas, por eso es fácil traerse la costumbre. Escribe la etiqueta en una sola línea y los comentarios largos como un bloque `{% comment %}`.
+
+No se informa nada dentro de un bloque `{% comment %}` o `{% verbatim %}`, ya que Django descarta el primero e imprime el segundo tal cual. Un `{%` o `{{` en el que se abre otra etiqueta antes de su cierre nunca se cerró, y eso lo informa `T039`. Un comentario llega hasta su `#}` contenga lo que contenga, así que una etiqueta comentada dentro de él no lo termina.
+
+No hagas esto:
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+Haz esto:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+Un comentario `{# #}` tiene que caber en una línea, así que una nota más larga suele acabar como un `{# #}` por línea. La documentación de Django remite al bloque `{% comment %}` para todo lo que sea más largo: la nota queda en una sola pieza y cada línea contiene solo su texto.
+
+Desactivada por defecto; actívala con `--include=D059`. Una columna de líneas `{# #}` es Django válido, así que es una cuestión de estilo, y el formateador nunca convierte una forma en la otra. Sangra las etiquetas `{% comment %}` y `{% endcomment %}` de un bloque, pero deja las líneas entre ellas tal como están escritas.
+
+Una línea cuenta cuando no contiene más que el comentario, y una línea en blanco termina la serie. Una directiva `djlint:` nunca se une a ella, porque solo funciona como un comentario propio. Tampoco un comentario para traductores, `{# Translators: ... #}`: `makemessages` pasa a los traductores cada línea de un bloque `{% comment %}` desde la que empieza por `Translators` hasta el final, así que también les llegarían las líneas que vienen después. Los comentarios dentro de `<pre>` y `<textarea>` no se tocan, ya que allí cada línea `{# #}` deja un salto de línea que se ve en la página, y un bloque dejaría menos.
+
+No hagas esto:
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+Haz esto:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 {% endraw %}
