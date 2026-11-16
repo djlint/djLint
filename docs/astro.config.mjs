@@ -61,7 +61,6 @@ const demoLock = {
 
 export default defineConfig({
   site: "https://djlint.com",
-  outDir: "_site",
   trailingSlash: "always",
   markdown: {
     processor: unified({

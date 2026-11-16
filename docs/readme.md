@@ -8,7 +8,7 @@ The docs are built with [Astro Starlight](https://starlight.astro.build).
 2. Install node deps: `npm install --ignore-scripts`
 3. Start the dev server: `npm start`
 
-`npm run build` writes the static site to `_site/`.
+`npm run build` writes the static site to `dist/`.
 
 ## Where things are
 
