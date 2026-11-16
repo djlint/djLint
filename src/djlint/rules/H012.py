@@ -19,7 +19,6 @@ good, so tokenizing here would drop findings the rule used to report.
 
 from __future__ import annotations
 
-import sys
 from bisect import bisect_left
 from itertools import chain
 from typing import TYPE_CHECKING, final
@@ -27,6 +26,7 @@ from typing import TYPE_CHECKING, final
 import regex as re
 
 from djlint.helpers import (
+    Span,
     compile_pattern,
     inside_html_attribute,
     inside_ignored_linter_block,
@@ -35,11 +35,6 @@ from djlint.helpers import (
     overlaps_ignored_block,
 )
 from djlint.lint import get_line
-
-if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
-    from typing import NamedTuple
-else:  # pragma: <3.13 cover
-    from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -60,18 +55,6 @@ _SPACE_AFTER_PATTERN: Final = compile_pattern(r"=\s", re.S)
 
 _UNVISITED: Final = -2
 _NOTHING: Final = -1
-
-
-@final
-class _Span(NamedTuple):
-    """Where a finding sits, standing in for the pattern match."""
-
-    start: int
-    end: int
-
-    def span(self) -> tuple[int, int]:
-        """Return the source span."""
-        return self.start, self.end
 
 
 @final
@@ -185,7 +168,7 @@ def _walk(
             return found
 
 
-def _spans(html: str, marks: _Marks, exits: dict[int, int]) -> Iterator[_Span]:
+def _spans(html: str, marks: _Marks, exits: dict[int, int]) -> Iterator[Span]:
     """The tags reported, in the order the replaced pattern found them."""
     if not exits:
         return
@@ -201,7 +184,7 @@ def _spans(html: str, marks: _Marks, exits: dict[int, int]) -> Iterator[_Span]:
         if end == _NOTHING:
             position = start + 1
             continue
-        yield _Span(start, end)
+        yield Span(start, end)
         # the replaced pattern took its matches apart, so a `<` written
         # inside one of them opened no tag of its own
         position = end

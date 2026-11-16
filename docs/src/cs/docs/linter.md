@@ -103,6 +103,8 @@ Bez [profilu]({{ "lang_code_url" | i18n }}/docs/configuration/#profile) běží 
 | H055 | Atribut lang by měl obsahovat jazykovou značku, například en nebo pt-BR.                                 | ✔️      |
 | H056 | Src by neměl být prázdný.                                                                                | ✔️      |
 | H057 | Video by mělo mít stopu s titulky.                                                                       | ✔️      |
+| D058 | (Django) Značka nebo komentář šablony přesahuje na další řádek, takže je Django čte jako text.           | ✔️      |
+| D059 | (Django) Po sobě jdoucí řádky {% raw %}`{# #}`{% endraw %} by měly být jedním blokem komentáře.          | -       |
 
 ### Struktura kódů
 
@@ -1455,6 +1457,56 @@ Správně:
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django čte značku jen v rámci jednoho řádku. `{{ }}`, `{% %}` nebo `{# #}`, které se uzavře až na některém z dalších řádků, je pro něj text, takže se na stránce zobrazí tak, jak je napsané, a `{% if %}` rozdělené tímto způsobem udělá ze svého `{% endif %}` neplatnou blokovou značku, kvůli které se šablona nezkompiluje. Jinja a Nunjucks takové značky čtou, a tak se tento zvyk snadno přenese. Napište značku na jeden řádek a delší komentář zapište jako blok `{% comment %}`.
+
+Nic uvnitř bloku `{% comment %}` nebo `{% verbatim %}` se nehlásí, protože Django první zahodí a druhý vypíše tak, jak je napsaný. `{%` nebo `{{`, ve kterém se před uzavřením otevře další značka, nebylo nikdy uzavřeno a hlásí ho `T039`. Komentář sahá až ke svému `#}` bez ohledu na to, co obsahuje, takže ho neukončí ani značka, která je v něm zakomentovaná.
+
+Špatně:
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+Správně:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+Komentář `{# #}` se musí vejít na jeden řádek, a tak delší poznámka často skončí jako jeden `{# #}` na každém řádku. Dokumentace Djanga pro cokoli delšího odkazuje na blok `{% comment %}`: poznámka zůstane pohromadě a každý řádek obsahuje jen svůj text.
+
+Ve výchozím nastavení vypnuto; zapněte ho pomocí `--include=D059`. Sloupec řádků `{# #}` je v Djangu platný, takže jde o věc stylu, a formátovač jednu podobu na druhou nikdy nepřevádí. Značky `{% comment %}` a `{% endcomment %}` bloku odsadí, ale řádky mezi nimi ponechá tak, jak jsou napsané.
+
+Řádek se počítá, když na něm není nic než komentář, a prázdný řádek řadu ukončí. Direktiva `djlint:` se k řadě nikdy nepřipojí, protože funguje jen jako samostatný komentář. Stejně tak komentář pro překladatele, `{# Translators: ... #}`: `makemessages` předá překladatelům každý řádek bloku `{% comment %}` od toho, který začíná na `Translators`, až do konce, takže by se k nim dostaly i řádky za ním. Komentáře uvnitř `<pre>` a `<textarea>` zůstávají beze změny, protože každý řádek `{# #}` tam nechá zalomení řádku, které je na stránce vidět, a blok by jich nechal méně.
+
+Špatně:
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+Správně:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 {% endraw %}
