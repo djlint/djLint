@@ -47,7 +47,7 @@
       "autoReplaceStringTemplate": "\"Programming Language :: Python :: {{{currentValue}}}\",\n  \"Programming Language :: Python :: {{{newValue}}}\","
     }
   ],
-  "dependencyDashboard": false,
+  "dependencyDashboard": { "enabled": false },
   "extends": [
     "config:recommended",
     ":disableRateLimiting",
