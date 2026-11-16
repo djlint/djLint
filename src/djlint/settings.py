@@ -68,13 +68,15 @@ _QUOTE_STYLES: Final = frozenset(("double", "single"))
 def _sets_djlint(pyproject: Path) -> bool:
     """Whether a pyproject.toml has djLint settings.
 
-    One that can't be read counts, so that its error is what the run reports,
-    rather than the settings of a folder above it.
+    Only a missing or empty [tool.djlint] table doesn't count. One that can't
+    be read, or that isn't a table, does, so that its error is what the run
+    reports, rather than the settings of a folder above it.
     """
     try:
-        return bool(load_pyproject_config(pyproject))
+        settings = load_pyproject_config(pyproject)
     except (AttributeError, OSError, UnicodeDecodeError, tomllib.TOMLDecodeError):
         return True
+    return not (isinstance(settings, dict) and not settings)
 
 
 def find_project_root(src: Path) -> Path:
@@ -200,13 +202,14 @@ def _editorconfig_glob_matches_html(glob: str, extension: str) -> bool:
     )
 
 
-def _read_editorconfig(path: Path, extension: str) -> tuple[dict[str, int], bool]:
+def _read_editorconfig(path: Path, extension: str) -> tuple[dict[str, int | None], bool]:
     """The indent_size and max_line_length of one .editorconfig, and its root flag.
 
     Sections are considered when their glob applies to html or the configured
-    extension.
+    extension. A property set to `unset` is None, which drops what a file
+    further up gives it.
     """
-    result: dict[str, int] = {}
+    result: dict[str, int | None] = {}
     is_root = False
     section: bool | None = None
     for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
@@ -220,8 +223,11 @@ def _read_editorconfig(path: Path, extension: str) -> tuple[dict[str, int], bool
         key, value = key.strip().lower(), value.strip()
         if sep and section is None and key == "root":
             is_root = value.lower() == "true"
-        elif sep and section and key in {"indent_size", "max_line_length"} and value.isdigit():
-            result[key] = int(value)
+        elif sep and section and key in {"indent_size", "max_line_length"}:
+            if value.isdigit():
+                result[key] = int(value)
+            elif value.lower() == "unset":
+                result[key] = None
     return result, is_root
 
 
@@ -234,7 +240,7 @@ def load_editorconfig(start: Path, root: Path, extension: str) -> dict[str, int]
     line and djlint config files take precedence.
     """
     folders = [start, *start.parents]
-    result: dict[str, int] = {}
+    result: dict[str, int | None] = {}
     for folder in folders[: folders.index(root) + 1] if root in folders else [start]:
         path = folder / ".editorconfig"
         if path.is_file():
@@ -242,7 +248,7 @@ def load_editorconfig(start: Path, root: Path, extension: str) -> dict[str, int]
             result = {**settings, **result}
             if is_root:
                 break
-    return result
+    return {key: value for key, value in result.items() if value is not None}
 
 
 def load_pyproject_config(filepath: Path) -> Any:
