@@ -10,6 +10,8 @@
   - a name in a configuration file that is not a djLint setting, with the closest one it knows, as `max_line_length` for `max_line_lenght` or `max-line-length`;
   - a rule code in `ignore`, `include` or `per-file-ignores` that no rule has, with the right case for `h006`; a code in both `ignore` and `include`, which stays off; and a code in `include` that the profile never runs, such as T028 under `django`;
   - `--indent-css` or the `css` settings without `format_css`, the same for JavaScript, and `format_attribute_js_json_pattern` or `format_attribute_js_json_min_props` without `format_attribute_js_json`.
+- The language server shows these warnings in the editor, each once until the configuration changes, and so does a setting the editor sends that djLint doesn't know, with the closest one it does. The editor's ones used to go only to the server's log.
+- `djlint.api.load_config` takes `on_warning`, a function that gets every warning about the settings, for a program that shows them itself. Without it, they go to stderr once per process, as before.
 - A switch in a configuration file can also be written as the words configparser takes, in any case: `"yes"`, `"on"`, `"true"` or `"1"` for on, `"no"`, `"off"`, `"false"` or `"0"` for off, and the numbers 1 and 0.
 
 ### Bug fixes

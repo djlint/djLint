@@ -57,6 +57,11 @@ def load_config(
     which keeps the project's code from running. Their names are then in
     `config.skipped_rules`. A configuration file that can't be read, or a
     value that isn't valid, raises `click.UsageError`.
+
+    djLint warns about settings that would not do what they look like, such
+    as a misspelled name or a rule code no rule has. By default each warning
+    goes to stderr once per process; `on_warning`, a function taking the
+    message, gets every one of them instead, for a program that shows them.
     """
     return Config(str(folder), python_rules=python_rules, **options)
 

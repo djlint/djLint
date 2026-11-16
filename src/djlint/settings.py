@@ -37,7 +37,7 @@ from djlint.helpers import (
 from djlint.lint import build_flags
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Mapping, Set as AbstractSet
+    from collections.abc import Callable, Iterable, Iterator, Mapping, Set as AbstractSet
     from typing import Any, Final
 
     from pathspec import PathSpec, Pattern
@@ -376,7 +376,9 @@ _BOOLEAN_WORDS: Final = {
 _OUTPUT_FIELDS: Final = frozenset(("code", "end", "filename", "line", "match", "message"))
 
 
-def _check_settings(settings: Mapping[str, Any], sources: Mapping[str, str]) -> None:
+def _check_settings(
+    settings: Mapping[str, Any], sources: Mapping[str, str], warn: Callable[[str], None]
+) -> None:
     """Warn about settings in a file that djLint ignores or reads unlike they look.
 
     A misspelled name would otherwise do nothing without a word.
@@ -387,7 +389,7 @@ def _check_settings(settings: Mapping[str, Any], sources: Mapping[str, str]) -> 
 
             close = get_close_matches(name, _SETTINGS, n=1)
             hint = f" Did you mean {close[0]}?" if close else ""
-            _warn_once(f"{sources[name]} sets {name}, which is not a djLint setting.{hint}")
+            warn(f"{sources[name]} sets {name}, which is not a djLint setting.{hint}")
 
 
 def _format_fields(text: str) -> Iterator[str]:
@@ -421,12 +423,14 @@ def _check_output_format(output_format: str) -> None:
         raise UsageError(msg)
 
 
-def _check_codes(option: str, codes: Iterable[str], known: AbstractSet[str]) -> None:
+def _check_codes(
+    option: str, codes: Iterable[str], known: AbstractSet[str], warn: Callable[[str], None]
+) -> None:
     """Warn about rule codes no rule has, which an option would quietly skip."""
     for code in codes:
         if code not in known:
             hint = f" Did you mean {code.upper()}?" if code.upper() in known else ""
-            _warn_once(f"{option} names {code}, which is not a linter rule.{hint}")
+            warn(f"{option} names {code}, which is not a linter rule.{hint}")
 
 
 def load_project_settings(
@@ -448,27 +452,27 @@ def load_project_settings(
     return {**named, **project}, {**named_sources, **project_sources}
 
 
-def validate_rules(rules: Iterable[_TMappingStrAny]) -> Iterator[_TMappingStrAny]:
-    """Validate a list of linter rules. Returns valid rules."""
+def validate_rules(
+    rules: Iterable[_TMappingStrAny], warn: Callable[[str], None] = _warn_once
+) -> Iterator[_TMappingStrAny]:
+    """Yield the rules that have what a rule needs, and warn about the rest."""
     for rule in rules:
-        warning = False
         name = rule["rule"].get("name", "undefined")
-        if "name" not in rule["rule"]:
-            warning = True
-            echo(style("Warning: A rule is missing a name! 😢", fg="red"), err=True)
-        if "patterns" not in rule["rule"] and "python_module" not in rule["rule"]:
-            warning = True
-            echo(
-                style(
-                    f"Warning: Rule {name} is missing a pattern or a python_module! 😢", fg="red"
+        problems = [
+            message
+            for missing, message in (
+                ("name" not in rule["rule"], "A rule is missing a name! 😢"),
+                (
+                    "patterns" not in rule["rule"] and "python_module" not in rule["rule"],
+                    f"Rule {name} is missing a pattern or a python_module! 😢",
                 ),
-                err=True,
+                ("message" not in rule["rule"], f"Rule {name} is missing a message! 😢"),
             )
-        if "message" not in rule["rule"]:
-            warning = True
-            echo(style(f"Warning: Rule {name} is missing a message! 😢", fg="red"), err=True)
-
-        if not warning:
+            if missing
+        ]
+        for problem in problems:
+            warn(problem)
+        if not problems:
             yield rule
 
 
@@ -1505,7 +1509,11 @@ class Config:
         stdin: bool | None = None,
         stdin_filename: str | None = None,
         python_rules: bool = True,
+        on_warning: Callable[[str], None] | None = None,
     ) -> None:
+        # A program that shows the warnings itself gets each of them, every
+        # time; the command line prints each one once per run.
+        report = on_warning or _warn_once
         if src != "-":
             start = Path(src).resolve()
         elif stdin_filename is None:
@@ -1517,8 +1525,8 @@ class Config:
             self.project_root, configuration, prefer_configuration=prefer_configuration
         )
         if prefer_configuration and configuration is None:
-            _warn_once("--prefer-configuration has no effect without --configuration.")
-        _check_settings(djlint_settings, setting_sources)
+            report("--prefer-configuration has no effect without --configuration.")
+        _check_settings(djlint_settings, setting_sources, report)
 
         def setting_int(key: str, default: int) -> int:
             """Read a whole number from the config file, or the text of one.
@@ -1644,9 +1652,9 @@ class Config:
         self.js_config = _beautifier_config(djlint_settings.get("js"), indent_size=indent_js)
         self.css_config = _beautifier_config(djlint_settings.get("css"), indent_size=indent_css)
         if not self.format_js and (indent_js is not None or djlint_settings.get("js")):
-            _warn_once("--indent-js and the js settings have no effect without format_js.")
+            report("--indent-js and the js settings have no effect without format_js.")
         if not self.format_css and (indent_css is not None or djlint_settings.get("css")):
-            _warn_once("--indent-css and the css settings have no effect without format_css.")
+            report("--indent-css and the css settings have no effect without format_css.")
         if not self.format_attribute_js_json and (
             unused := [
                 name
@@ -1660,7 +1668,7 @@ class Config:
                 if given or name in djlint_settings
             ]
         ):
-            _warn_once(
+            report(
                 f"{' and '.join(unused)} {'has' if len(unused) == 1 else 'have'}"
                 " no effect without format_attribute_js_json."
             )
@@ -1681,7 +1689,7 @@ class Config:
             max_blank_lines if max_blank_lines is not None else setting_int("max_blank_lines", 0)
         )
         if self.preserve_blank_lines and self.max_blank_lines > 0:
-            _warn_once("max_blank_lines has no effect with preserve_blank_lines.")
+            report("max_blank_lines has no effect with preserve_blank_lines.")
 
         exclude = build_exclude(
             exclude or _as_comma_separated(djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
@@ -1728,17 +1736,17 @@ class Config:
                 if "python_module" in x["rule"]
             )
             custom_rules = tuple(x for x in custom_rules if "python_module" not in x["rule"])
-        rule_set = tuple(validate_rules(chain(default_rules, custom_rules)))
+        rule_set = tuple(validate_rules(chain(default_rules, custom_rules), report))
         ignored_codes = set(split_option_list(self.ignore))
         included_codes = set(split_option_list(self.include))
         rules_by_code = {x["rule"]["name"]: x["rule"] for x in rule_set}
         known_codes = {*rules_by_code, *self.skipped_rules}
-        _check_codes("ignore", sorted(ignored_codes), known_codes)
-        _check_codes("include", sorted(included_codes), known_codes)
+        _check_codes("ignore", sorted(ignored_codes), known_codes, report)
+        _check_codes("include", sorted(included_codes), known_codes, report)
         for codes in self.per_file_ignores.values():
-            _check_codes("per-file-ignores", split_option_list(codes), known_codes)
+            _check_codes("per-file-ignores", split_option_list(codes), known_codes, report)
         for code in sorted(ignored_codes & included_codes):
-            _warn_once(f"{code} is in both ignore and include, so it stays off.")
+            report(f"{code} is in both ignore and include, so it stays off.")
         if self.ignore_case:
             ignored_codes.update(("H009", "H010"))
         # the formatter writes `<img />` under it, which H018 rejects
@@ -1767,9 +1775,7 @@ class Config:
 
         for code in sorted(included_codes.intersection(rules_by_code)):
             if lint_profile in rules_by_code[code].get("exclude", ()) or code in profile_codes:
-                _warn_once(
-                    f"include names {code}, which never runs under the {lint_profile} profile."
-                )
+                report(f"include names {code}, which never runs under the {lint_profile} profile.")
 
         self.entity_pattern = next(
             (
@@ -1797,13 +1803,8 @@ class Config:
         if self.lint:
             enabled_rules = {x["rule"]["name"] for x in self.linter_rules}
             if {"H017", "H018"} <= enabled_rules:
-                echo(
-                    style(
-                        "Warning: H017 and H018 enforce opposite void tag"
-                        " styles. Enable only one convention. 😢",
-                        fg="yellow",
-                    ),
-                    err=True,
+                report(
+                    "H017 and H018 enforce opposite void tag styles. Enable only one convention. 😢"
                 )
 
         self.custom_blocks = str(

@@ -1096,3 +1096,21 @@ def test_ctrl_c_exits_130(client: Client) -> None:
     client.start()
     client.process.send_signal(signal.SIGINT)
     assert client.process.wait(TIMEOUT_SECONDS) == 130
+
+
+def test_shows_what_djlint_warns_about_the_settings(client: Client, tmp_path: Path) -> None:
+    (tmp_path / ".djlintrc").write_text('{"max_line_lenght": 100}', encoding="utf-8")
+    client.start(tmp_path, options={"ignor": "H006"})
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, "<p>x</p>\n")
+    client.diagnostics(uri)
+    shown = [client.notification("window/showMessage") for _ in range(2)]
+    assert {message["type"] for message in shown} == {2}
+    assert sorted(message["message"] for message in shown) == [
+        (
+            "djLint: .djlintrc sets max_line_lenght, which is not a djLint setting."
+            " Did you mean max_line_length?"
+        ),
+        "djLint: the editor sets ignor, which is not a djLint setting. Did you mean ignore?",
+    ]
+    assert client.stop() == 0
