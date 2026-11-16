@@ -1,7 +1,7 @@
 {
   "name": "djlint",
-  "version": "1.50.1",
-  "description": "HTML Template Linter and Formatter",
+  "version": "1.50.4",
+  "description": "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Mustache, Liquid, Go templates, Angular, Tera, Askama, Mako)",
   "keywords": [
     "angular template formatter",
     "angular template linter",
@@ -16,7 +16,9 @@
     "handlebars template formatter",
     "handlebars template linter",
     "html template formatter",
+    "html template language server",
     "html template linter",
+    "html template lsp",
     "jinja template formatter",
     "jinja template linter",
     "liquid template formatter",
@@ -47,7 +49,7 @@
   },
   "files": [],
   "scripts": {
-    "postinstall": "python3 -m pip install --upgrade djlint==1.50.1"
+    "postinstall": "python3 -m pip install --upgrade djlint==1.50.4"
   },
   "devDependencies": {
     "oxfmt": "0.78.0"

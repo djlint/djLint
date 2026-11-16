@@ -1,6 +1,6 @@
 [project]
 name = "djlint"
-version = "1.50.1"
+version = "1.50.4"
 description = "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Mustache, Liquid, Go templates, Angular, Tera, Askama, Mako)"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -23,8 +23,10 @@ keywords = [
   "hugo",
   "jinja",
   "jinja2",
+  "language server",
   "linter",
   "liquid",
+  "lsp",
   "mako",
   "mustache",
   "nunjucks",
@@ -33,6 +35,7 @@ keywords = [
   "twig",
 ]
 classifiers = [
+  "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
   "Framework :: Django",
   "Intended Audience :: Developers",
@@ -50,7 +53,9 @@ classifiers = [
   "Topic :: Text Processing :: Markup :: HTML",
   "Typing :: Typed",
 ]
+urls.changelog = "https://github.com/djlint/djLint/blob/master/CHANGELOG.md"
 urls.documentation = "https://djlint.com"
+urls.issues = "https://github.com/djlint/djLint/issues"
 urls.repository = "https://github.com/djlint/djLint"
 scripts.djlint = "djlint._cli:main"
 dependencies = [
@@ -60,7 +65,7 @@ dependencies = [
   "json5>=0.10.0",
   "pathspec>=0.9.0",
   "pyyaml>=5.1",
-  "regex>=2021.8.21",
+  "regex>=2020.10.22",
   "typing-extensions>=4.4.0; python_version<'3.13'",
 ]
 
@@ -68,7 +73,7 @@ dependencies = [
 dev = [
   "covdefaults==2.3.0",
   "pytest-cov==7.1.0",
-  "ruff==0.17.4",
+  "ruff==0.17.5",
   "types-pyyaml==6.0.12.20261111",
   "types-regex==2026.11.9.20261110",
   { include-group = "test" },
