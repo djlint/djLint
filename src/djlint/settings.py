@@ -1720,7 +1720,7 @@ class Config:
         ignored_codes = set(split_option_list(self.ignore))
         included_codes = set(split_option_list(self.include))
         rules_by_code = {x["rule"]["name"]: x["rule"] for x in rule_set}
-        known_codes = rules_by_code.keys() | set(self.skipped_rules)
+        known_codes = {*rules_by_code, *self.skipped_rules}
         _check_codes("ignore", sorted(ignored_codes), known_codes)
         _check_codes("include", sorted(included_codes), known_codes)
         for codes in self.per_file_ignores.values():
@@ -1753,7 +1753,7 @@ class Config:
                 return False
             return not any(name.startswith(code) for code in profile_codes)
 
-        for code in sorted(included_codes & rules_by_code.keys()):
+        for code in sorted(included_codes.intersection(rules_by_code)):
             if lint_profile in rules_by_code[code].get("exclude", ()) or code in profile_codes:
                 _warn_once(
                     f"include names {code}, which never runs under the {lint_profile} profile."
