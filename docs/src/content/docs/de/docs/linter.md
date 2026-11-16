@@ -102,6 +102,8 @@ Ohne [Profil](/de/docs/configuration/#profile) laufen von den eingebauten Regeln
 | [H055](#h055) | Das lang-Attribut sollte ein Sprach-Tag wie en oder pt-BR sein.                                              | ✔️       |
 | [H056](#h056) | Src sollte nicht leer sein.                                                                                  | ✔️       |
 | [H057](#h057) | Ein Video sollte eine Untertitelspur haben.                                                                  | ✔️       |
+| [D058](#d058) | (Django) Ein Template-Tag oder Kommentar geht über mehrere Zeilen, daher liest Django ihn als Text.          | ✔️       |
+| [D059](#d059) | (Django) Aufeinanderfolgende `{# #}`-Zeilen sollten ein Kommentarblock sein.                                 | -        |
 
 ### Code-Muster
 
@@ -1449,6 +1451,56 @@ Sondern so:
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django liest ein Tag nur innerhalb einer Zeile. Ein `{{ }}`, `{% %}` oder `{# #}`, das erst auf einer späteren Zeile schließt, ist für Django Text: Die Seite zeigt es so, wie es geschrieben ist, und ein so aufgeteiltes `{% if %}` macht sein `{% endif %}` zu einem ungültigen Block-Tag, an dem das Kompilieren des Templates scheitert. Jinja und Nunjucks lesen solche Tags, daher schleicht sich die Gewohnheit leicht ein. Schreiben Sie das Tag in eine Zeile und einen längeren Kommentar als `{% comment %}`-Block.
+
+Innerhalb eines `{% comment %}`- oder `{% verbatim %}`-Blocks wird nichts gemeldet, da Django den einen verwirft und den anderen so ausgibt, wie er geschrieben ist. Ein `{%` oder `{{`, in dem sich vor seinem Schluss ein weiteres Tag öffnet, wurde nie geschlossen, und das meldet `T039`. Ein Kommentar reicht bis zu seinem `#}`, egal was er enthält, daher beendet ihn auch ein darin auskommentiertes Tag nicht.
+
+Nicht so:
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+Sondern so:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+Ein `{# #}`-Kommentar muss in eine Zeile passen, deshalb wird eine längere Notiz oft als ein `{# #}` pro Zeile geschrieben. Für alles Längere verweist die Django-Dokumentation auf den `{% comment %}`-Block: Die Notiz bleibt zusammen, und jede Zeile enthält nur ihren Text.
+
+Standardmäßig deaktiviert; aktivieren Sie die Regel mit `--include=D059`. Eine Spalte von `{# #}`-Zeilen ist gültiges Django, es geht also um Stil, und der Formatter wandelt nie eine Form in die andere um. Er rückt die Tags `{% comment %}` und `{% endcomment %}` eines Blocks ein, lässt die Zeilen dazwischen aber so, wie sie geschrieben sind.
+
+Eine Zeile zählt, wenn sie nur den Kommentar enthält, und eine Leerzeile beendet eine Folge. Eine `djlint:`-Direktive gehört nie dazu, da sie nur als eigener Kommentar wirkt. Ebenso wenig ein Kommentar für Übersetzer, `{# Translators: ... #}`: `makemessages` gibt den Übersetzern jede Zeile eines `{% comment %}`-Blocks ab der Zeile, die mit `Translators` beginnt, bis zum Ende weiter, sodass auch die Zeilen danach bei ihnen ankämen. Kommentare in `<pre>` und `<textarea>` bleiben unberührt, da jede `{# #}`-Zeile dort einen Zeilenumbruch hinterlässt, der auf der Seite sichtbar ist, und ein Block weniger davon hinterließe.
+
+Nicht so:
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+Sondern so:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 <!-- oxfmt-ignore-end -->

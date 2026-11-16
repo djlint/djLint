@@ -102,6 +102,8 @@ Bu, [Yapılandırma](/tr/docs/configuration/) dosyası üzerinden de yapılabili
 | [H055](#h055) | Lang özniteliği en ya da pt-BR gibi bir dil etiketi olmalıdır.                                                    | ✔️         |
 | [H056](#h056) | Src boş olmamalıdır.                                                                                              | ✔️         |
 | [H057](#h057) | Videoda bir altyazı (captions) izi bulunmalıdır.                                                                  | ✔️         |
+| [D058](#d058) | (Django) Şablon etiketi veya yorumu birden fazla satıra yayılıyor, bu yüzden Django onu metin olarak okur.        | ✔️         |
+| [D059](#d059) | (Django) Art arda gelen `{# #}` satırları tek bir yorum bloğu olmalıdır.                                          | -          |
 
 ### Kod kalıpları
 
@@ -1449,6 +1451,56 @@ Yapın:
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django bir etiketi yalnızca tek bir satır içinde okur. Sonraki bir satırda kapanan `{{ }}`, `{% %}` veya `{# #}` onun için metindir, bu yüzden sayfa onu yazıldığı gibi gösterir; bu şekilde bölünmüş bir `{% if %}` ise `{% endif %}` etiketini geçersiz bir blok etiketine çevirir ve şablon derlenmez. Jinja ve Nunjucks bu tür etiketleri okur, bu yüzden bu alışkanlık kolayca taşınır. Etiketi tek satıra yazın, uzun bir yorumu da `{% comment %}` bloğu olarak yazın.
+
+`{% comment %}` veya `{% verbatim %}` bloğunun içindeki hiçbir şey bildirilmez, çünkü Django ilkini atar, ikincisini de yazıldığı gibi basar. Kapanmadan önce içinde başka bir etiket açılan `{%` veya `{{` hiç kapatılmamıştır ve bunu `T039` bildirir. Bir yorum, içinde ne olursa olsun `#}` işaretine kadar sürer, bu yüzden içinde yorum satırına alınmış bir etiket onu bitirmez.
+
+Yapmayın:
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+Yapın:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+Bir `{# #}` yorumu tek satıra sığmak zorundadır, bu yüzden uzun bir not çoğu zaman her satırda bir `{# #}` olarak yazılır. Django belgeleri daha uzun her şey için `{% comment %}` bloğunu önerir: not tek parça kalır ve her satırda yalnızca kendi metni bulunur.
+
+Varsayılan olarak kapalıdır; `--include=D059` ile etkinleştirin. Alt alta `{# #}` satırları geçerli Django'dur, yani bu bir üslup meselesidir ve biçimlendirici bir biçimi asla diğerine çevirmez. Bir bloğun `{% comment %}` ve `{% endcomment %}` etiketlerini girintiler, ama aradaki satırları yazıldığı gibi bırakır.
+
+Bir satır, yalnızca yorumu içerdiğinde sayılır ve boş bir satır diziyi bitirir. Bir `djlint:` yönergesi diziye hiçbir zaman katılmaz, çünkü yalnızca kendi başına bir yorum olarak çalışır. Çevirmenlere yönelik bir yorum, `{# Translators: ... #}`, de katılmaz: `makemessages`, bir `{% comment %}` bloğunun `Translators` ile başlayan satırından sonuna kadar her satırını çevirmenlere iletir, böylece ondan sonraki satırlar da onlara ulaşırdı. `<pre>` ve `<textarea>` içindeki yorumlara dokunulmaz, çünkü orada her `{# #}` satırı sayfada görünen bir satır sonu bırakır ve bir blok daha azını bırakırdı.
+
+Yapmayın:
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+Yapın:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 <!-- oxfmt-ignore-end -->
