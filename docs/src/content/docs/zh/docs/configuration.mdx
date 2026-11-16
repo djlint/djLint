@@ -15,20 +15,24 @@ djLint 从它检查的第一个路径（对 `-` 而言是 `--stdin-filename` 所
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `djlint.toml` 和 `.djlint.toml` 的格式为 `toml`。
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `.djlintrc` 的格式为 `json`。
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+像 `ignore` 这样有多个值的选项接受列表。也可以写成逗号分隔的字符串，例如 `"H014,H015"`，djLint 1.41 之前的版本只认这种写法。
 
 ## 选项
 

@@ -15,20 +15,24 @@ djLint は、最初にチェックするパス（`-` の場合は `--stdin-filen
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `djlint.toml` と `.djlint.toml` の形式は `toml` です。
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `.djlintrc` の形式は `json` です。
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+`ignore` のように複数の値を取るオプションにはリストを指定します。`"H014,H015"` のようなカンマ区切りの文字列も使え、djLint 1.41 より前ではこちらが必要です。
 
 ## オプション
 

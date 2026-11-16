@@ -26,14 +26,14 @@ test("commands quote what the shell would split or expand", () => {
   );
 });
 
-test("config files put the CSS and JS indents in their own tables", () => {
+test("config files take lists and put the CSS and JS indents in their own tables", () => {
   expect(configFile(CONFIG, "pyproject.toml")).toBe(
     [
       "[tool.djlint]",
       'profile = "jinja"',
       "indent = 2",
-      "custom_html = 'mj-\\w+'",
-      'blank_line_after_tag = "load,extends"',
+      "custom_html = ['mj-\\w+']",
+      'blank_line_after_tag = ["load", "extends"]',
       "format_css = true",
       "",
       "[tool.djlint.css]",
@@ -44,8 +44,8 @@ test("config files put the CSS and JS indents in their own tables", () => {
   expect(JSON.parse(configFile(CONFIG, ".djlintrc"))).toEqual({
     profile: "jinja",
     indent: 2,
-    custom_html: "mj-\\w+",
-    blank_line_after_tag: "load,extends",
+    custom_html: ["mj-\\w+"],
+    blank_line_after_tag: ["load", "extends"],
     format_css: true,
     css: { indent_size: 3 },
   });

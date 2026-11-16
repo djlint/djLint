@@ -14,6 +14,17 @@ const NUMBERS = new Set([
   "max_line_length",
 ]);
 
+// Comma-separated on the command line, lists in a configuration file.
+const LISTS = new Set([
+  "blank_line_after_tag",
+  "blank_line_before_tag",
+  "custom_blocks",
+  "custom_html",
+  "ignore",
+  "ignore_blocks",
+  "include",
+]);
+
 // --indent-css and --indent-js are indent_size in the css and js tables of a
 // configuration file.
 const TABLES: Record<string, string> = { indent_css: "css", indent_js: "js" };
@@ -39,24 +50,33 @@ export function commands(config: DemoConfig) {
     .join("\n");
 }
 
-const tomlValue = (value: string | number | boolean) => {
+type Value = string | number | boolean | string[];
+const tomlValue = (value: Value): string => {
+  if (Array.isArray(value)) return `[${value.map(tomlValue).join(", ")}]`;
   if (typeof value !== "string") return String(value);
   // A literal string keeps the backslashes of a regex as they are.
   if (/["\\]/.test(value) && !value.includes("'")) return `'${value}'`;
   return JSON.stringify(value);
 };
+const fileValue = (name: string, value: string | boolean): Value =>
+  typeof value === "string" && LISTS.has(name)
+    ? value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+    : typed(name, value);
 
 /** One configuration file with these settings, or an empty string when none are set. */
 export function configFile(
   config: DemoConfig,
   file: "pyproject.toml" | "djlint.toml" | ".djlintrc",
 ) {
-  const top: Record<string, string | number | boolean> = {};
+  const top: Record<string, Value> = {};
   const tables: Record<string, Record<string, number>> = {};
   for (const [name, value] of Object.entries(config)) {
     const table = TABLES[name];
     if (table) tables[table] = { indent_size: Number(value) };
-    else top[name] = typed(name, value);
+    else top[name] = fileValue(name, value);
   }
   if (file === ".djlintrc") return JSON.stringify({ ...top, ...tables }, null, 2);
 

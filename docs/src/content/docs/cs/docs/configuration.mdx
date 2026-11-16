@@ -15,20 +15,24 @@ Soubor `pyproject.toml` je ve formátu `toml`.
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 Soubory `djlint.toml` a `.djlint.toml` jsou ve formátu `toml`.
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 Soubor `.djlintrc` je ve formátu `json`.
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+Volby s více hodnotami, například `ignore`, berou seznam. Funguje i řetězec oddělený čárkami, například `"H014,H015"`, který potřebuje djLint starší než 1.41.
 
 ## Možnosti
 

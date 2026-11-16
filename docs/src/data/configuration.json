@@ -308,8 +308,8 @@
       "tr": "Atlanacak linter kodları."
     },
     "usage": [
-      { "name": "pyproject.toml", "value": "ignore=\"H014,H015\"" },
-      { "name": ".djlintrc", "value": "\"ignore\": \"H014,H015\"" },
+      { "name": "pyproject.toml", "value": "ignore=[\"H014\", \"H015\"]" },
+      { "name": ".djlintrc", "value": "\"ignore\": [\"H014\", \"H015\"]" },
       { "name": "cli", "value": "--ignore \"H014,H015\"" }
     ],
     "tags": ["linter"]
@@ -336,8 +336,8 @@
     },
     "tags": ["linter"],
     "usage": [
-      { "name": "pyproject.toml", "value": "include=\"H014,H015\"" },
-      { "name": ".djlintrc", "value": "\"include\": \"H014,H015\"" },
+      { "name": "pyproject.toml", "value": "include=[\"H014\", \"H015\"]" },
+      { "name": ".djlintrc", "value": "\"include\": [\"H014\", \"H015\"]" },
       { "name": "cli", "value": "--include \"H014,H015\"" }
     ]
   },
@@ -390,8 +390,8 @@
     },
     "tags": ["formatter"],
     "usage": [
-      { "name": "pyproject.toml", "value": "custom_blocks=\"toc,example\"" },
-      { "name": ".djlintrc", "value": "\"custom_blocks\": \"toc,example\"" },
+      { "name": "pyproject.toml", "value": "custom_blocks=[\"toc\", \"example\"]" },
+      { "name": ".djlintrc", "value": "\"custom_blocks\": [\"toc\", \"example\"]" },
       { "name": "cli", "value": "--custom-blocks \"toc,example\"" }
     ]
   },
@@ -417,8 +417,8 @@
     },
     "tags": ["formatter"],
     "usage": [
-      { "name": "pyproject.toml", "value": "ignore_blocks=\"raw,example\"" },
-      { "name": ".djlintrc", "value": "\"ignore_blocks\": \"raw,example\"" },
+      { "name": "pyproject.toml", "value": "ignore_blocks=[\"raw\", \"example\"]" },
+      { "name": ".djlintrc", "value": "\"ignore_blocks\": [\"raw\", \"example\"]" },
       { "name": "cli", "value": "--ignore-blocks \"raw,example\"" }
     ]
   },
@@ -444,9 +444,15 @@
     },
     "tags": ["formatter"],
     "usage": [
-      { "name": "pyproject.toml", "value": "custom_html=\"mjml,simple-greeting,mj-\\\\w+\"" },
-      { "name": ".djlintrc", "value": "\"custom_html\": \"mjml,simple-greeting,mj-\\\\w+\"" },
-      { "name": "cli", "value": "--custom-html \"mjml,simple-greeting,mj-\\\\w+\"" }
+      {
+        "name": "pyproject.toml",
+        "value": "custom_html=[\"mjml\", \"simple-greeting\", 'mj-\\w+']"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"custom_html\": [\"mjml\", \"simple-greeting\", \"mj-\\\\w+\"]"
+      },
+      { "name": "cli", "value": "--custom-html \"mjml,simple-greeting,mj-\\w+\"" }
     ]
   },
   {
@@ -498,9 +504,9 @@
       "tr": "Varsayılan hariç tutma yollarını geçersiz kılar."
     },
     "usage": [
-      { "name": "pyproject.toml", "value": "exclude=\".venv,venv,.tox,.eggs,...\"" },
-      { "name": ".djlintrc", "value": "\"exclude\": \".venv,venv,.tox,.eggs,...\"" },
-      { "name": "cli", "value": "--exclude \".venv,venv,.tox,.eggs,...\"" }
+      { "name": "pyproject.toml", "value": "exclude=[\".venv\", \"venv\", \"build\"]" },
+      { "name": ".djlintrc", "value": "\"exclude\": [\".venv\", \"venv\", \"build\"]" },
+      { "name": "cli", "value": "--exclude \".venv,venv,build\"" }
     ]
   },
   {
@@ -525,8 +531,8 @@
       "tr": "Varsayılan hariç tutma listesine ek yollar ekler."
     },
     "usage": [
-      { "name": "pyproject.toml", "value": "extend_exclude=\".custom\"" },
-      { "name": ".djlintrc", "value": "\"extend_exclude\": \".custom\"" },
+      { "name": "pyproject.toml", "value": "extend_exclude=[\".custom\"]" },
+      { "name": ".djlintrc", "value": "\"extend_exclude\": [\".custom\"]" },
       { "name": "cli", "value": "--extend-exclude \".custom\"" }
     ]
   },
@@ -552,8 +558,14 @@
       "tr": "`{% <tag> ... %}` etiket gruplarından sonra fazladan bir boş satır ekler. Bir bloğun sonuna hiçbir zaman boş satır eklenmez."
     },
     "usage": [
-      { "name": "pyproject.toml", "value": "blank_line_after_tag=\"load,extends,include\"" },
-      { "name": ".djlintrc", "value": "\"blank_line_after_tag\": \"load,extends,include\"" },
+      {
+        "name": "pyproject.toml",
+        "value": "blank_line_after_tag=[\"load\", \"extends\", \"include\"]"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"blank_line_after_tag\": [\"load\", \"extends\", \"include\"]"
+      },
       { "name": "cli", "value": "--blank-line-after-tag \"load,extends,include\"" }
     ]
   },
@@ -579,8 +591,14 @@
       "tr": "`{% <tag> ... %}` etiket gruplarından önce fazladan bir boş satır ekler. Dosyanın ya da bir bloğun başına veya benzer etiketlerin arasına hiçbir zaman boş satır eklenmez."
     },
     "usage": [
-      { "name": "pyproject.toml", "value": "blank_line_before_tag=\"load,extends,include\"" },
-      { "name": ".djlintrc", "value": "\"blank_line_before_tag\": \"load,extends,include\"" },
+      {
+        "name": "pyproject.toml",
+        "value": "blank_line_before_tag=[\"load\", \"extends\", \"include\"]"
+      },
+      {
+        "name": ".djlintrc",
+        "value": "\"blank_line_before_tag\": [\"load\", \"extends\", \"include\"]"
+      },
       { "name": "cli", "value": "--blank-line-before-tag \"load,extends,include\"" }
     ]
   },

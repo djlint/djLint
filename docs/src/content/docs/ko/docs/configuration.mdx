@@ -15,20 +15,24 @@ djLint는 처음 검사하는 경로(`-`이면 `--stdin-filename`의 폴더, 이
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `djlint.toml`과 `.djlint.toml`의 형식은 `toml`입니다.
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `.djlintrc`의 형식은 `json`입니다.
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+`ignore`처럼 값이 여러 개인 옵션은 리스트를 받습니다. `"H014,H015"`처럼 쉼표로 구분한 문자열도 되며, djLint 1.41 이전에는 이 형식이 필요합니다.
 
 ## 옵션
 

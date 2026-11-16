@@ -15,20 +15,24 @@ djLint bu dosyaları denetlediği ilk yoldan (`-` için `--stdin-filename` klas�
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `djlint.toml` ve `.djlint.toml` dosyaları `toml` biçimindedir.
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `.djlintrc` dosyası `json` biçimindedir.
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+`ignore` gibi birden çok değer alan seçenekler bir liste alır. `"H014,H015"` gibi virgülle ayrılmış bir metin de çalışır ve 1.41'den önceki djLint yalnızca bunu okur.
 
 ## Seçenekler
 

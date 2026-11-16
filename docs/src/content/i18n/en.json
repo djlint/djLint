@@ -5,7 +5,7 @@
   "djlint.index_add_badge": "Add a badge to your projects",
   "djlint.contributing": "Contributing",
   "djlint.contributing_message": "Contributions are welcome. Pick an <a href=\"https://github.com/djlint/djlint/issues\">issue</a> to work on, or open a pull request with a fix or a new feature.",
-  "djlint.credits": "djLint was originally created by the <a href=\"https://github.com/djlint/\">Riverside Healthcare Analytics</a> team for their <a href=\"https://atlas.bi\">Atlas</a> projects. It's now maintained by <a href=\"https://github.com/monosans\">monosans</a>.",
+  "djlint.credits": "djLint was created by <a href=\"https://github.com/christopherpickering\">Christopher Pickering</a> for the <a href=\"https://atlas.bi\">Atlas</a> projects. It's now maintained by <a href=\"https://github.com/monosans\">monosans</a> and <a href=\"https://github.com/djlint/djLint/graphs/contributors\">everyone who contributes</a>.",
   "djlint.getting_started": "Getting started",
   "djlint.formatter": "Formatter",
   "djlint.linter": "Linter",

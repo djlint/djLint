@@ -15,20 +15,24 @@ The format for `pyproject.toml` is `toml`.
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 The format for `djlint.toml` and `.djlint.toml` is `toml`.
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 The format for `.djlintrc` is `json`.
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+Options that take several values, such as `ignore`, take a list. A comma-separated string such as `"H014,H015"` works too, and is what djLint before 1.41 needs.
 
 ## Options
 

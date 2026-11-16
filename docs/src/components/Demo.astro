@@ -502,10 +502,19 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     clearTimeout(hideTimer);
     hint.innerHTML = document.getElementById(link.getAttribute("aria-describedby")!)!.innerHTML;
     hint.hidden = false;
+    // Right of the settings, level with the "?", so it covers the editor and
+    // never the next field; under or over it where the window is too narrow.
     const box = link.getBoundingClientRect();
-    const fitsBelow = box.bottom + 6 + hint.offsetHeight <= innerHeight;
-    hint.style.left = `${Math.max(8, Math.min(box.left - 8, innerWidth - hint.offsetWidth - 8))}px`;
-    hint.style.top = `${fitsBelow ? box.bottom + 6 : box.top - 6 - hint.offsetHeight}px`;
+    const beside = form.getBoundingClientRect().right + 12;
+    const { offsetWidth: width, offsetHeight: height } = hint;
+    if (beside + width <= innerWidth - 8) {
+      hint.style.left = `${beside}px`;
+      hint.style.top = `${Math.max(8, Math.min(box.top - 8, innerHeight - height - 8))}px`;
+    } else {
+      const fitsBelow = box.bottom + 6 + height <= innerHeight;
+      hint.style.left = `${Math.max(8, Math.min(box.left - 8, innerWidth - width - 8))}px`;
+      hint.style.top = `${fitsBelow ? box.bottom + 6 : box.top - 6 - height}px`;
+    }
   }
   form.addEventListener("pointerover", ({ target, pointerType }) => {
     const link = hintLink(target);
