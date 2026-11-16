@@ -33,7 +33,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 也可以通过[配置](/zh/docs/configuration/)文件完成同样的设置。
 
-未设置[预设](/zh/docs/configuration/#profile)时，内置规则中只运行 H 规则。T 规则和针对某一种模板语言的规则（D、J、M、N）需要设置它们适用的预设才会启用。`--include` 指定的规则在任何预设下以及未设置预设时都会运行，下方说明中写明不适用的预设除外。
+未设置[预设](/zh/docs/configuration/#profile)时，内置规则中只运行 H 规则。T 规则和针对某一种模板语言的规则（D、J）需要设置它们适用的预设才会启用。`--include` 指定的规则在任何预设下以及未设置预设时都会运行，下方说明中写明不适用的预设除外。
 
 ## 规则
 
