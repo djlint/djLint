@@ -65,26 +65,46 @@ DJLINT_TOML_CONFIG_FILES: Final = ("djlint.toml", ".djlint.toml")
 _QUOTE_STYLES: Final = frozenset(("double", "single"))
 
 
+def _sets_djlint(pyproject: Path) -> bool:
+    """Whether a pyproject.toml has djLint settings.
+
+    One that can't be read counts, so that its error is what the run reports,
+    rather than the settings of a folder above it.
+    """
+    try:
+        return bool(load_pyproject_config(pyproject))
+    except (AttributeError, OSError, UnicodeDecodeError, tomllib.TOMLDecodeError):
+        return True
+
+
 def find_project_root(src: Path) -> Path:
-    """Attempt to get the project root."""
+    """Find the folder whose configuration applies to src.
+
+    That's the first folder upward with a djlint.toml, a .djlint.toml, a
+    .djlintrc, a .djlint_rules.yaml or a pyproject.toml with djLint settings,
+    or the root of a repository, which the search never passes. A pyproject.toml without
+    djLint settings, as a package in a monorepo has, is passed by, so the
+    configuration of the repository still applies to it; with nothing above,
+    its folder is the root.
+    """
+    settingless: Path | None = None
     for directory in (src, *src.parents):
-        if (directory / ".git").exists():
+        if any(
+            (directory / name).is_file()
+            for name in (*DJLINT_TOML_CONFIG_FILES, ".djlintrc", ".djlint_rules.yaml")
+        ):
             return directory
 
-        if (directory / ".hg").is_dir():
-            return directory
-
-        if (directory / "pyproject.toml").is_file():
-            return directory
-
-        for config_file in DJLINT_TOML_CONFIG_FILES:
-            if (directory / config_file).is_file():
+        pyproject = directory / "pyproject.toml"
+        if pyproject.is_file():
+            if _sets_djlint(pyproject):
                 return directory
+            settingless = settingless or directory
 
-        if (directory / ".djlintrc").is_file():
+        if (directory / ".git").exists() or (directory / ".hg").is_dir():
             return directory
 
-    return src if src.is_dir() else src.parent
+    return settingless or (src if src.is_dir() else src.parent)
 
 
 def load_gitignore(root: Path) -> PathSpec[Pattern]:
@@ -180,31 +200,48 @@ def _editorconfig_glob_matches_html(glob: str, extension: str) -> bool:
     )
 
 
-def load_editorconfig(root: Path, extension: str) -> dict[str, int]:
-    """Read indent_size and max_line_length from a root .editorconfig.
+def _read_editorconfig(path: Path, extension: str) -> tuple[dict[str, int], bool]:
+    """The indent_size and max_line_length of one .editorconfig, and its root flag.
 
-    Used as defaults only: the command line and djlint config files take
-    precedence. Sections are considered when their glob applies to html
-    or the configured extension.
+    Sections are considered when their glob applies to html or the configured
+    extension.
     """
-    path = root / ".editorconfig"
     result: dict[str, int] = {}
-    if not path.is_file():
-        return result
-
-    section_applies = False
+    is_root = False
+    section: bool | None = None
     for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         line = raw_line.strip()
         if not line or line.startswith(("#", ";")):
             continue
         if line.startswith("[") and line.endswith("]"):
-            section_applies = _editorconfig_glob_matches_html(line[1:-1], extension)
+            section = _editorconfig_glob_matches_html(line[1:-1], extension)
             continue
         key, sep, value = line.partition("=")
-        if sep and section_applies:
-            key, value = key.strip().lower(), value.strip()
-            if key in {"indent_size", "max_line_length"} and value.isdigit():
-                result[key] = int(value)
+        key, value = key.strip().lower(), value.strip()
+        if sep and section is None and key == "root":
+            is_root = value.lower() == "true"
+        elif sep and section and key in {"indent_size", "max_line_length"} and value.isdigit():
+            result[key] = int(value)
+    return result, is_root
+
+
+def load_editorconfig(start: Path, root: Path, extension: str) -> dict[str, int]:
+    """Read indent_size and max_line_length from the .editorconfig files over start.
+
+    As editors read them: the nearest file wins, the ones above it fill in
+    what it leaves out, and one with `root = true` ends the search, which
+    goes no higher than the project root. Used as defaults only: the command
+    line and djlint config files take precedence.
+    """
+    folders = [start, *start.parents]
+    result: dict[str, int] = {}
+    for folder in folders[: folders.index(root) + 1] if root in folders else [start]:
+        path = folder / ".editorconfig"
+        if path.is_file():
+            settings, is_root = _read_editorconfig(path, extension)
+            result = {**settings, **result}
+            if is_root:
+                break
     return result
 
 
@@ -267,18 +304,26 @@ def _named_settings(config: Path | None) -> dict[str, Any]:
     return _settings_table(content, config)
 
 
-def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
+def _project_settings(src: Path, warn: Callable[[str], None]) -> tuple[dict[str, Any], str]:
     """Settings from the project's own file, the first one that holds any.
 
     The name of that file comes with them, for the messages about a value
-    it sets.
+    it sets. A djLint file beside the one read is not read, which is worth
+    saying: its settings would otherwise do nothing without a word.
     """
+    others = [
+        path.name
+        for path in (*(src / name for name in DJLINT_TOML_CONFIG_FILES), src / ".djlintrc")
+        if path.is_file()
+    ]
     if pyproject_file := find_pyproject(src):
         try:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
             raise _unreadable_config(pyproject_file.name, error) from None
         if settings := _settings_table(content, pyproject_file.name):
+            for other in others:
+                warn(f"{other} is not read, as [tool.djlint] in pyproject.toml comes first.")
             return settings, pyproject_file.name
 
     if djlint_toml_file := find_djlint_toml(src):
@@ -286,6 +331,8 @@ def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
             content = load_djlint_toml_config(djlint_toml_file)
         except Exception as error:
             raise _unreadable_config(djlint_toml_file.name, error) from None
+        for other in others[others.index(djlint_toml_file.name) + 1 :]:
+            warn(f"{other} is not read, as {djlint_toml_file.name} comes first.")
         return _settings_table(content, djlint_toml_file.name), djlint_toml_file.name
 
     if djlintrc_file := find_djlintrc(src):
@@ -434,7 +481,11 @@ def _check_codes(
 
 
 def load_project_settings(
-    src: Path, config: Path | None, *, prefer_configuration: bool = False
+    src: Path,
+    config: Path | None,
+    *,
+    prefer_configuration: bool = False,
+    warn: Callable[[str], None] = _warn_once,
 ) -> tuple[dict[str, Any], dict[str, str]]:
     """Load djlint config, and the file each setting was read from.
 
@@ -443,7 +494,7 @@ def load_project_settings(
     around, which is what naming a file on the command line usually means.
     """
     named = _named_settings(config)
-    project, project_file = _project_settings(src)
+    project, project_file = _project_settings(src, warn)
     named_sources = dict.fromkeys(named, str(config))
     project_sources = dict.fromkeys(project, project_file)
 
@@ -1522,7 +1573,7 @@ class Config:
             start = Path(stdin_filename).resolve().parent
         self.project_root = find_project_root(start)
         djlint_settings, setting_sources = load_project_settings(
-            self.project_root, configuration, prefer_configuration=prefer_configuration
+            self.project_root, configuration, prefer_configuration=prefer_configuration, warn=report
         )
         if prefer_configuration and configuration is None:
             report("--prefer-configuration has no effect without --configuration.")
@@ -1673,7 +1724,9 @@ class Config:
                 " no effect without format_attribute_js_json."
             )
 
-        editorconfig = load_editorconfig(self.project_root, self.extension)
+        editorconfig = load_editorconfig(
+            start if start.is_dir() else start.parent, self.project_root, self.extension
+        )
         indent = indent or setting_int("indent", editorconfig.get("indent_size", 4))
         self.indent_size = indent
         self.indent = indent * " "

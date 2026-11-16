@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### Feature
+
+- djLint warns about a djLint file that sits beside the one it reads and so isn't read, such as a `djlint.toml` next to `[tool.djlint]` in `pyproject.toml`, or a `.djlintrc` next to a `djlint.toml`.
+- `.editorconfig` files are read as editors read them: the nearest one to the checked path wins, the ones above it fill in what it leaves out, and one with `root = true` ends the search, which goes no higher than the project root. Only the project root's `.editorconfig` was read.
+
+### Bug fixes
+
+- A `pyproject.toml` without djLint settings no longer stops the search for the configuration, so a package in a monorepo with its own `pyproject.toml` gets the settings of the repository instead of none. The search still stops at a folder with a `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml` or a `pyproject.toml` with `[tool.djlint]`, and never goes past the root of the repository (`.git` or `.hg`).
+
 ## [1.51.0] - 2026-11-16
 
 ### Feature
