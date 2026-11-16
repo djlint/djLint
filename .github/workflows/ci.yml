@@ -12,7 +12,7 @@ jobs:
   check:
     if: ${{ always() && github.event_name == 'pull_request' }}
     needs:
-      - linkcheck
+      - docs
       - pre-commit
       - pytest
     runs-on: ubuntu-26.04
@@ -20,7 +20,7 @@ jobs:
       - uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # release/v1
         with:
           jobs: ${{ toJSON(needs) }}
-  linkcheck:
+  docs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -45,6 +45,29 @@ jobs:
             --index-files index.html
             --root-dir ${{ github.workspace }}/docs/dist
             docs/dist
+      # The browser tests in docs/tests/, on the site just built.
+      - id: playwright
+        run: echo "version=$(node -p "require('./package.json').devDependencies['@playwright/test']")" >> "$GITHUB_OUTPUT"
+        working-directory: docs
+      - id: browsers
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - run: npx playwright install --with-deps --only-shell chromium
+        working-directory: docs
+      - if: ${{ github.ref == 'refs/heads/master' && steps.browsers.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ steps.browsers.outputs.cache-primary-key }}
+      - run: npm test
+        working-directory: docs
+      - if: ${{ failure() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: playwright
+          path: docs/test-results
   pre-commit:
     runs-on: ubuntu-26.04
     steps:
