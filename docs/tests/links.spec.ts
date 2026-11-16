@@ -22,3 +22,16 @@ test("translated pages keep their address", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("lang", "ru");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Конфигурация");
 });
+
+// Files other projects load from the site: the README logos, the MegaLinter
+// banner, the JSON schema SchemaStore points to.
+for (const path of [
+  "/static/img/icon.png",
+  "/static/img/logo-wide-dark.svg",
+  "/static/img/logo-wide-light.svg",
+  "/schema/djlint.json",
+]) {
+  test(`${path} is still served`, async ({ request }) => {
+    expect((await request.get(path)).ok()).toBe(true);
+  });
+}
