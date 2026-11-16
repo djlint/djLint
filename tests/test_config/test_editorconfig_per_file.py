@@ -87,6 +87,8 @@ def test_stdin_takes_the_editorconfig_of_its_filename(runner: CliRunner, project
         ("pages/*.html", ["pages/a.html"], ["a.html", "x/pages/a.html", "pages/x/a.html"]),
         ("/pages/*.html", ["pages/a.html"], ["x/pages/a.html"]),
         ("pages/**.html", ["pages/x/y/a.html"], ["a.html"]),
+        ("pages/**/*.html", ["pages/a.html", "pages/x/y/a.html"], ["a.html", "x/pages/a.html"]),
+        ("**/a.html", ["a.html", "x/y/a.html"], ["b.html"]),
         ("*.{html,jinja}", ["a.html", "a.jinja"], ["a.txt"]),
         ("a{1..3}.html", ["a1.html", "a3.html"], ["a4.html"]),
         ("[!b]*.html", ["a.html"], ["b.html"]),

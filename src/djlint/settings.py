@@ -205,6 +205,12 @@ def _editorconfig_regex(glob: str) -> str:
             i += 2
             continue
         if char == "*":
+            # A `**/` at the start or after a `/` also stands for no folder, so
+            # `pages/**/*.html` takes pages/index.html too.
+            if glob.startswith("**/", i) and (i == 0 or glob[i - 1] == "/"):
+                out.append("(?:.*/)?")
+                i += 3
+                continue
             if glob.startswith("**", i):
                 out.append(".*")
                 i += 2
