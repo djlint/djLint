@@ -84,43 +84,15 @@ You can [try it on your own templates in the online playground](https://djlint.c
 
 ## ✨ How?
 
-Add it to your project as a development dependency with [uv](https://docs.astral.sh/uv/)
+Add it to your project as a development dependency with [uv](https://docs.astral.sh/uv/), or install it with pip:
 
 ```bash
 uv add --dev djlint
-```
-
-Or install it as a standalone tool
-
-```bash
-uv tool install djlint
-```
-
-Or with `pip`
-
-```bash
+# or
 pip install djlint
 ```
 
-Or with [pipx](https://pipx.pypa.io/)
-
-```bash
-pipx install djlint
-```
-
-Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux
-
-```bash
-brew install djlint
-```
-
-_Or with npm. **Warning**: the npm package is only a wrapper. Its install script runs pip on whatever `python3` is on your system path and installs the djLint version of that npm release, which can replace a newer djLint with an older one. npm will not manage or uninstall the actual package, so prefer pip when you can._
-
-```bash
-npm i djlint
-```
-
-To run djLint on every commit, see [pre-commit](https://djlint.com/docs/integrations/#pre-commit).
+The [installation guide](https://djlint.com/docs/getting-started/#installation) also covers installing it as a standalone tool, and with pipx, Homebrew or npm.
 
 Lint your project
 
