@@ -203,6 +203,40 @@ def _closing_brace(glob: str, start: int) -> int:
     return -1
 
 
+def _closing_bracket(glob: str, start: int) -> int:
+    """The index of the `]` that closes the `[` at start, or -1 without one.
+
+    A `/` before it makes the `[` a plain character, as a class never takes one.
+    """
+    i = start + 1
+    while i < len(glob):
+        if glob[i] == "\\":
+            i += 2
+            continue
+        if glob[i] == "/":
+            return -1
+        if glob[i] == "]" and i > start + 1:
+            return i
+        i += 1
+    return -1
+
+
+def _character_class(body: str) -> str:
+    """The regex of the members of a `[...]` class, `!` or `^` first negating it."""
+    negated = body[:1] in {"!", "^"}
+    members: list[str] = ["^"] if negated else []
+    i = 1 if negated else 0
+    while i < len(body):
+        if body[i] == "\\" and i + 1 < len(body):
+            members.append(re.escape(body[i + 1]))
+            i += 2
+            continue
+        # An unescaped `-` makes a range, as in the glob.
+        members.append("-" if body[i] == "-" else re.escape(body[i]))
+        i += 1
+    return f"[{''.join(members)}]"
+
+
 @final
 class _EditorConfigGlob:
     """An EditorConfig section glob, as the specification reads it.
@@ -219,7 +253,8 @@ class _EditorConfigGlob:
     def __init__(self, glob: str) -> None:
         out: list[str] = []
         # Each {1..9} captures its number, which matches() checks against the
-        # range, as the EditorConfig core library does.
+        # range, as the EditorConfig core library does. A number written with
+        # a leading zero, such as 060, is never in one.
         ranges: list[tuple[int, int]] = []
         # For each open brace, whether it holds alternatives or is a literal one.
         braces: list[bool] = []
@@ -244,11 +279,8 @@ class _EditorConfigGlob:
                 out.append("[^/]*")
             elif char == "?":
                 out.append("[^/]")
-            elif char == "[" and (close := glob.find("]", i + 1)) > i + 1:
-                body = glob[i + 1 : close]
-                negated = body.startswith("!")
-                body = body.removeprefix("!").replace("\\", "\\\\")
-                out.append(f"[{'^' if negated else ''}{body}]")
+            elif char == "[" and (close := _closing_bracket(glob, i)) != -1:
+                out.append(_character_class(glob[i + 1 : close]))
                 i = close + 1
                 continue
             elif char == "{":
@@ -257,7 +289,7 @@ class _EditorConfigGlob:
                 if numbers := re.fullmatch(r"([+-]?[0-9]+)\.\.([+-]?[0-9]+)", span):
                     low, high = sorted((int(numbers[1]), int(numbers[2])))
                     ranges.append((low, high))
-                    out.append("([+-]?[0-9]+)")
+                    out.append("([+-]?(?:0|[1-9][0-9]*))")
                     i = close + 1
                     continue
                 braces.append("," in span)
