@@ -1,8 +1,6 @@
 ---
 title: "Kodu yok sayma"
 description: "djLint'in bir kod bloğunu biçimlendirmesi nasıl engellenir, linter kuralları satır içinde nasıl yok sayılır."
-sidebar:
-  label: "Kodu yok sayma"
 ---
 
 Kod, `djlint` etiketleri arasına alınarak yok sayılabilir:

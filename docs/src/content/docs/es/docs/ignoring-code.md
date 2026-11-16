@@ -1,8 +1,6 @@
 ---
 title: "Ignorar código"
 description: "Cómo evitar que djLint formatee un bloque de código y cómo ignorar reglas del linter en línea."
-sidebar:
-  label: "Ignorar código"
 ---
 
 Para que se ignore un fragmento de código, enciérralo entre etiquetas `djlint`:

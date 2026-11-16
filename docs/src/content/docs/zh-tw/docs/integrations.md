@@ -1,8 +1,6 @@
 ---
 title: "整合"
 description: "在編輯器中使用 djLint，並透過 pre-commit 執行它。"
-sidebar:
-  label: "整合"
 ---
 
 djLint 有好幾種編輯器整合。

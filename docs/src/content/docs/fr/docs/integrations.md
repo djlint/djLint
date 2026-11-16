@@ -1,8 +1,6 @@
 ---
 title: "Intégrations"
 description: "Utilisez djLint dans votre éditeur et exécutez-le avec pre-commit."
-sidebar:
-  label: "Intégrations"
 ---
 
 Plusieurs intégrations d'éditeurs ont été conçues pour djLint.

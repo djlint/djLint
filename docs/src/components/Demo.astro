@@ -610,7 +610,6 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
   fieldset {
     gap: 0.6rem;
     min-width: 0;
-    margin: 0;
     padding: 0;
     border: 0;
   }
@@ -630,7 +629,6 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    margin: 0;
   }
   label.checkbox {
     flex-direction: row;
@@ -664,7 +662,6 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     border-radius: 0.375rem;
     background: var(--sl-color-black);
     color: var(--sl-color-white);
-    font: inherit;
   }
   /* The placeholders are the defaults, readable but quieter than a value. */
   input::placeholder {
@@ -687,12 +684,9 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     display: block;
     width: fit-content;
     margin-block-end: 0.25rem;
-    font-variant-ligatures: none;
   }
   .demo-hint :global(code) {
     color: var(--sl-color-white);
-    font-family: var(--sl-font-mono);
-    font-size: 0.875em;
   }
   .demo-warnings {
     margin: 0 0 0.75rem;
@@ -710,13 +704,11 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto minmax(0, 1fr);
     gap: 0 1rem;
-    margin: 0;
   }
   .demo-editors section {
     display: grid;
     grid-row: span 2;
     grid-template-rows: subgrid;
-    margin: 0;
     border: 1px solid var(--dj-code-line);
     border-radius: 0.75rem;
     overflow: hidden;
@@ -728,7 +720,6 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin: 0;
     padding: 0.4rem 1rem;
     border-bottom: 1px solid var(--dj-code-line);
     color: #a9b1d6;
@@ -743,7 +734,6 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     border-radius: 0.375rem;
     background: transparent;
     color: inherit;
-    font: inherit;
     cursor: pointer;
   }
   .demo-head button:hover {
@@ -806,7 +796,6 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
   .demo-editor {
     grid-area: 2 / 1;
     min-height: 20rem;
-    margin: 0;
   }
   /* Side by side, the demo fills the window under the header: the editors and
      the settings scroll inside it, the page doesn't. Every wrapper between the

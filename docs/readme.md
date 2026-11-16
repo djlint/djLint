@@ -26,4 +26,4 @@ Before the site is built, `demo-lock.mjs` builds a wheel of djLint from this che
 
 When the page is opened, a web worker starts, loads Pyodide with that lock file and loads djLint, which loads all of its dependencies at once (see `public/static/js/worker.js`). The demo runs the djLint of the commit the site was built from, and shows that commit next to the version.
 
-Once the worker responds "ready" the web UI is shown.
+The editors are there from the start. Until the worker says it's ready, the output's first line says djLint is loading.

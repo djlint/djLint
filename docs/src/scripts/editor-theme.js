@@ -2,8 +2,8 @@ import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { tags as t } from "@lezer/highlight";
 import { EditorView } from "codemirror";
 
-// Dark in both color schemes, with the Tokyo Night colors the code blocks and
-// the home page editor use.
+// Dark in both color schemes, with the Tokyo Night colors of the home page
+// editor and of the code blocks in the dark theme.
 const theme = EditorView.theme(
   {
     "&": { height: "100%", backgroundColor: "#222436", color: "#c0caf5", fontSize: "0.85rem" },
@@ -24,8 +24,7 @@ const theme = EditorView.theme(
     ".cm-tooltip": { backgroundColor: "#2f334d", border: "1px solid #3b4261", color: "#c0caf5" },
     // Findings get the squiggle of the home page's editor.
     ".cm-lintRange-warning": {
-      backgroundImage:
-        "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath d='M0 1.5 Q1.5 0 3 1.5 T6 1.5' fill='none' stroke='%23f5c542' stroke-width='1.2'/%3E%3C/svg%3E\")",
+      backgroundImage: "var(--dj-squiggle-wave)",
       backgroundSize: "6px 3px",
       paddingBottom: "2px",
     },

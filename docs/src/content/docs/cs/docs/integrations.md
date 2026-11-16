@@ -1,8 +1,6 @@
 ---
 title: "Integrace"
 description: "Používejte djLint ve svém editoru a spouštějte ho pomocí pre-commit."
-sidebar:
-  label: "Integrace"
 ---
 
 Pro djLint existuje několik integrací do editorů.

@@ -9,3 +9,8 @@ export function starlightRoute(locals: App.Locals) {
     return undefined;
   }
 }
+
+/** The page's id without its locale, the same in every language: "docs/linter". */
+export function pageId({ id, locale }: { id: string; locale?: string | undefined }) {
+  return locale ? id.slice(locale.length + 1) : id;
+}

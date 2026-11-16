@@ -1,8 +1,6 @@
 ---
 title: "連携"
 description: "エディターで djLint を使い、pre-commit で実行します。"
-sidebar:
-  label: "連携"
 ---
 
 djLint 向けに作られたエディター連携がいくつかあります。

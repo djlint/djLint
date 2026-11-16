@@ -1,8 +1,6 @@
 ---
 title: "통합"
 description: "에디터에서 djLint를 사용하고 pre-commit으로 실행하는 방법입니다."
-sidebar:
-  label: "통합"
 ---
 
 djLint를 위한 에디터 통합이 여러 가지 있습니다.

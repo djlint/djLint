@@ -1,8 +1,6 @@
 ---
 title: "集成"
 description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
-sidebar:
-  label: "集成"
 ---
 
 djLint 已有多种编辑器集成。

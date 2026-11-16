@@ -1,8 +1,6 @@
 ---
 title: "Entegrasyonlar"
 description: "djLint'i düzenleyicinizde kullanın ve pre-commit ile çalıştırın."
-sidebar:
-  label: "Entegrasyonlar"
 ---
 
 djLint için geliştirilmiş birkaç düzenleyici entegrasyonu vardır.

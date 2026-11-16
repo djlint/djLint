@@ -30,8 +30,7 @@ from djlint.api import format_text, lint_text, load_config
 
 def _djlint_run(html, options):
     # djLint warns about a setting once per run, and every edit here is a run.
-    if hasattr(settings, "_warn_once"):
-        settings._warn_once.cache_clear()
+    settings._warn_once.cache_clear()
     stderr = io.StringIO()
     with contextlib.redirect_stderr(stderr):
         config = load_config(**options)
