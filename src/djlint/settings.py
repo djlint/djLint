@@ -390,13 +390,25 @@ def _check_settings(settings: Mapping[str, Any], sources: Mapping[str, str]) -> 
             _warn_once(f"{sources[name]} sets {name}, which is not a djLint setting.{hint}")
 
 
+def _format_fields(text: str) -> Iterator[str]:
+    """The names a format string looks up, in it and in its format specs.
+
+    A field such as `code[0]` or `message.upper` looks up `code` or `message`.
+    """
+    for _, field, spec, _ in Formatter().parse(text):
+        if field is not None:
+            yield re.split(r"[.\[]", field, maxsplit=1)[0]
+        if spec:
+            yield from _format_fields(spec)
+
+
 def _check_output_format(output_format: str) -> None:
     """Refuse a linter_output_format naming a field there is none of.
 
     Otherwise the run would fail at its first finding.
     """
     try:
-        fields = {field for _, field, _, _ in Formatter().parse(output_format) if field is not None}
+        fields = set(_format_fields(output_format))
     except ValueError as error:
         msg = f"Invalid linter_output_format {output_format!r}: {error}."
         raise UsageError(msg) from None

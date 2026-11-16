@@ -239,6 +239,11 @@ def test_the_switch_they_need_silences_them(
             id="positional",
         ),
         pytest.param("{code", "Invalid linter_output_format '{code':", id="unclosed"),
+        pytest.param(
+            "{message:{lin}}",
+            "Invalid linter_output_format '{message:{lin}}': {lin} is not one of",
+            id="in a format spec",
+        ),
     ],
 )
 def test_an_output_format_that_would_fail(tmp_path: Path, output_format: str, message: str) -> None:
@@ -308,3 +313,11 @@ def test_a_number_refuses_other_values(tmp_path: Path, value: str) -> None:
 
     with pytest.raises(UsageError, match="It must be a whole number"):
         Config(str(tmp_path))
+
+
+def test_an_output_format_can_look_into_its_fields(tmp_path: Path) -> None:
+    output_format = "{code[0]} {line:>4} {message.upper} {match!r:{line}}"
+
+    assert Config(str(tmp_path), linter_output_format=output_format).linter_output_format == (
+        output_format
+    )
