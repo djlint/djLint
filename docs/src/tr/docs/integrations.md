@@ -12,7 +12,7 @@ Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabil
 
 ## Visual Studio Code
 
-[djLint uzantısını](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) ya da VSCodium için [Open VSX'teki uzantıyı](https://open-vsx.org/extension/monosans/djlint) kurun. Uzantı djLint'i ortamınızda bulur, bulamazsa kendisiyle birlikte gelen sürüme geri döner ve djLint sürümünüzde dil sunucusu varsa onu kullanır.
+[djLint uzantısını](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) Visual Studio Marketplace'ten kurun. Cursor, Windsurf, VSCodium ve VS Code tabanlı diğer editörler [aynı uzantıyı Open VSX'ten](https://open-vsx.org/extension/monosans/djlint) kurar. Uzantı djLint'i ortamınızda bulur, bulamazsa kendisiyle birlikte gelen sürüme geri döner ve djLint sürümünüzde dil sunucusu varsa onu kullanır.
 
 Kodu [GitHub](https://github.com/djlint/djlint-vscode) üzerindedir.
 
