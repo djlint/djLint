@@ -1114,3 +1114,25 @@ def test_shows_what_djlint_warns_about_the_settings(client: Client, tmp_path: Pa
         "djLint: the editor sets ignor, which is not a djLint setting. Did you mean ignore?",
     ]
     assert client.stop() == 0
+
+
+def test_warns_about_the_profile_in_use_only(client: Client, tmp_path: Path) -> None:
+    """Without a profile, a jinja document is linted under jinja, not html."""
+    (tmp_path / ".djlint_rules.yaml").write_text(
+        "- rule:\n"
+        "    name: X001\n"
+        "    message: x\n"
+        "    patterns: ['nothing here']\n"
+        "    exclude: [html]\n",
+        encoding="utf-8",
+    )
+    (tmp_path / ".djlintrc").write_text('{"include": "X001,H999"}', encoding="utf-8")
+    client.start(tmp_path)
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, "<p>x</p>\n", language="jinja")
+    client.diagnostics(uri)
+    assert client.notification("window/showMessage")["message"] == (
+        "djLint: include names H999, which is not a linter rule."
+    )
+    assert client.stop() == 0
+    assert not [m for m in client.ignored if m.get("method") == "window/showMessage"]

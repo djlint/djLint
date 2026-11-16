@@ -837,10 +837,16 @@ class Server:
         key = (folder, json.dumps(options, sort_keys=True, default=str), document.language)
         config = self._configs.get(key)
         if config is None:
-            config = load_config(folder, **options, on_warning=self._warn)
+            # Only the configuration that ends up in use says what's wrong with
+            # it: a rule left out under html can run under the document's profile.
+            warnings: list[str] = []
+            config = load_config(folder, **options, on_warning=warnings.append)
             profile = _PROFILES.get(document.language)
             if profile is not None and "profile" not in options and not config.has_profile:
-                config = load_config(folder, **options, profile=profile, on_warning=self._warn)
+                warnings.clear()
+                config = load_config(folder, **options, profile=profile, on_warning=warnings.append)
+            for warning in warnings:
+                self._warn(warning)
             self._configs[key] = config
         return config
 
