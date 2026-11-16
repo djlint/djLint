@@ -19,6 +19,7 @@
   "djlint.demo_version": "In esecuzione con Python {python}; djLint {djlint}",
   "djlint.demo_error": "Impossibile caricare djLint. Controlla la connessione e ricarica la pagina.",
   "djlint.demo_copy_link": "Copia link",
+  "djlint.demo_options": "Opzioni",
   "djlint.since": "dalla",
   "djlint.hero_problems": "{count} problemi",
   "djlint.hero_clean": "Nessun problema",

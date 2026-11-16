@@ -19,6 +19,7 @@
   "djlint.demo_version": "Běží na Pythonu {python}; djLint {djlint}",
   "djlint.demo_error": "djLint se nepodařilo načíst. Zkontrolujte připojení a obnovte stránku.",
   "djlint.demo_copy_link": "Kopírovat odkaz",
+  "djlint.demo_options": "Možnosti",
   "djlint.since": "od verze",
   "djlint.hero_problems": "Počet problémů: {count}",
   "djlint.hero_clean": "Žádné problémy",

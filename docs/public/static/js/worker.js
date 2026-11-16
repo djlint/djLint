@@ -1,51 +1,22 @@
 const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
 const { loadPyodide } = await import(`${PYODIDE_URL}pyodide.mjs`);
 
-const CONFIG_ARGS = [
-  { kwarg: "profile", key: "profile", kind: "string" },
-  { kwarg: "indent", key: "indent", kind: "value" },
-  { kwarg: "preserve_leading_space", key: "preserveLeadingSpace", kind: "bool" },
-  { kwarg: "preserve_blank_lines", key: "preserveBlankSpace", kind: "bool" },
-  { kwarg: "preserve_class_newlines", key: "preserveClassNewlines", kind: "bool" },
-  { kwarg: "format_js", key: "formatJs", kind: "bool" },
-  { kwarg: "indent_js", key: "indentJs", kind: "value" },
-  { kwarg: "format_css", key: "formatCss", kind: "bool" },
-  { kwarg: "indent_css", key: "indentCss", kind: "value" },
-  { kwarg: "custom_blocks", key: "customBlocks", kind: "string" },
-  { kwarg: "ignore_blocks", key: "ignoreBlocks", kind: "string" },
-  { kwarg: "custom_html", key: "customHtml", kind: "string" },
-  { kwarg: "max_line_length", key: "maxLineLength", kind: "value" },
-  { kwarg: "max_attribute_length", key: "maxAttributeLength", kind: "value" },
-  { kwarg: "max_blank_lines", key: "maxBlankLines", kind: "value" },
-  { kwarg: "format_attribute_template_tags", key: "formatAttributeTemplateTags", kind: "bool" },
-  { kwarg: "single_attribute_per_line", key: "singleAttributePerLine", kind: "bool" },
-  { kwarg: "format_attribute_js_json", key: "formatAttributeJsJson", kind: "bool" },
-  {
-    kwarg: "format_attribute_js_json_pattern",
-    key: "formatAttributeJsJsonPattern",
-    kind: "string",
-  },
-  {
-    kwarg: "format_attribute_js_json_min_props",
-    key: "formatAttributeJsJsonMinProps",
-    kind: "value",
-  },
-  { kwarg: "blank_line_after_tag", key: "blankLineAfterTag", kind: "string" },
-  { kwarg: "blank_line_before_tag", key: "blankLineBeforeTag", kind: "string" },
-  { kwarg: "close_void_tags", key: "closeVoidTags", kind: "bool" },
-  { kwarg: "ignore_case", key: "ignoreCase", kind: "bool" },
-  { kwarg: "line_break_after_multiline_tag", key: "lineBreakAfterMultilineTag", kind: "bool" },
-  { kwarg: "no_line_after_yaml", key: "noLineAfterYaml", kind: "bool" },
-  { kwarg: "no_set_formatting", key: "noSetFormatting", kind: "bool" },
-  { kwarg: "no_function_formatting", key: "noFunctionFormatting", kind: "bool" },
-];
+// The page sends the options under their Python names, all as strings or
+// booleans; these ones are numbers.
+const NUMBERS = new Set([
+  "indent",
+  "indent_css",
+  "indent_js",
+  "max_attribute_length",
+  "max_blank_lines",
+  "max_line_length",
+  "format_attribute_js_json_min_props",
+]);
 
 function buildConfig(config) {
   const options = {};
-  for (const { kwarg, key, kind } of CONFIG_ARGS) {
-    const value = config[key];
-    if (!value) continue;
-    options[kwarg] = kind === "value" ? Number(value) : value;
+  for (const [name, value] of Object.entries(config)) {
+    if (value) options[name] = NUMBERS.has(name) ? Number(value) : value;
   }
   return options;
 }

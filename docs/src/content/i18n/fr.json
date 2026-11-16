@@ -19,6 +19,7 @@
   "djlint.demo_version": "Exécuté avec Python {python} ; djLint {djlint}",
   "djlint.demo_error": "Impossible de charger djLint. Vérifiez votre connexion et rechargez la page.",
   "djlint.demo_copy_link": "Copier le lien",
+  "djlint.demo_options": "Options",
   "djlint.since": "depuis",
   "djlint.hero_problems": "{count} problèmes",
   "djlint.hero_clean": "Aucun problème",

@@ -19,6 +19,7 @@
   "djlint.demo_version": "运行环境：Python {python}；djLint {djlint}",
   "djlint.demo_error": "无法加载 djLint。请检查网络连接，然后刷新页面。",
   "djlint.demo_copy_link": "复制链接",
+  "djlint.demo_options": "选项",
   "djlint.since": "始于",
   "djlint.hero_problems": "{count} 个问题",
   "djlint.hero_clean": "没有问题",

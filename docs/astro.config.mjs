@@ -153,11 +153,21 @@ export default defineConfig({
       ],
       expressiveCode: {
         themes: ["tokyo-night", "github-light"],
+        // Both themes paint code on the page's own background, so the blocks
+        // take their colors from custom.css, which tints them apart from it.
         styleOverrides: {
           borderRadius: "0.5rem",
+          borderColor: "var(--dj-block-line)",
+          codeBackground: "var(--dj-block-bg)",
           codeFontFamily: "var(--sl-font-mono)",
           uiFontFamily: "var(--sl-font)",
-          frames: { shadowColor: "transparent" },
+          frames: {
+            editorActiveTabBackground: "var(--dj-block-bg)",
+            editorTabBarBackground: "var(--dj-block-bar)",
+            shadowColor: "transparent",
+            terminalBackground: "var(--dj-block-bg)",
+            terminalTitlebarBackground: "var(--dj-block-bar)",
+          },
         },
       },
       sidebar: [

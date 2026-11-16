@@ -19,6 +19,7 @@
   "djlint.demo_version": "執行環境：Python {python}；djLint {djlint}",
   "djlint.demo_error": "無法載入 djLint。請檢查網路連線，然後重新整理頁面。",
   "djlint.demo_copy_link": "複製連結",
+  "djlint.demo_options": "選項",
   "djlint.since": "始於",
   "djlint.hero_problems": "{count} 個問題",
   "djlint.hero_clean": "沒有問題",

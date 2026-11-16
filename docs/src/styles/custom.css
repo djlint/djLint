@@ -16,8 +16,15 @@
   --dj-squiggle: #f5c542;
   --dj-focus: var(--dj-squiggle);
   --dj-ok: #73daca;
-  --dj-code-bg: #1a1b26;
-  --dj-code-line: #2a2c3d;
+  /* The editors on the home and demo pages are Tokyo Night Moon in both
+     themes; code blocks follow the theme, lighter than the page in the dark
+     one and greyer than it in the light one. */
+  --dj-code-bg: #222436;
+  --dj-code-bar: #1e2030;
+  --dj-code-line: #2f334d;
+  --dj-block-bg: var(--dj-code-bg);
+  --dj-block-bar: var(--dj-code-bar);
+  --dj-block-line: var(--dj-code-line);
 
   --sl-color-accent-low: #3a3216;
   --sl-color-accent: #f5c542;
@@ -40,6 +47,8 @@
   --sl-text-h1: 2.4rem;
   --sl-text-h2: 1.75rem;
   --sl-text-h3: 1.3rem;
+  --sl-text-h4: 1.125rem;
+  --sl-text-h5: 1rem;
   --sl-line-height: 1.7;
   --sl-content-width: 46rem;
   /* The content panel's own padding is room enough under the footer.
@@ -51,6 +60,9 @@
   --dj-squiggle: #e3a600;
   /* The light squiggle is too faint on white for a focus ring (WCAG 1.4.11). */
   --dj-focus: var(--sl-color-accent);
+  --dj-block-bg: #f6f7fa;
+  --dj-block-bar: #eef0f4;
+  --dj-block-line: #d5d8e2;
 
   --sl-color-accent-low: #fcefc4;
   --sl-color-accent: #8f5f00;

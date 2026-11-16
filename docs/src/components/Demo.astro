@@ -6,59 +6,70 @@ const { t } = Astro.locals;
 const route = starlightRoute(Astro.locals);
 const prefix = route?.locale ? `/${route.locale}` : "";
 
-// Form fields named after the worker's config keys. A field with a
-// placeholder is a text box, one without is a checkbox. `anchor` points at the
-// option on the configuration page when its name differs.
-const fields = [
-  { name: "customBlocks", label: "Custom Blocks", placeholder: "toc,example" },
-  { name: "ignoreBlocks", label: "Ignore Blocks", placeholder: "toc,example" },
-  { name: "customHtml", label: "Custom HTML", placeholder: "mjml,simple-greeting,mj-\\w+" },
-  { name: "indent", label: "Indent", placeholder: "4" },
-  { name: "blankLineAfterTag", label: "Blank Line after Tag", placeholder: "load,extends,include" },
-  { name: "blankLineBeforeTag", label: "Blank Line before Tag", placeholder: "load,extends,include" },
-  { name: "maxLineLength", label: "Max Line Length", placeholder: "80" },
-  { name: "maxAttributeLength", label: "Max Attribute Length", placeholder: "0" },
-  { name: "maxBlankLines", label: "Max Blank Lines", placeholder: "0" },
-  { name: "formatAttributeTemplateTags", label: "Format Attribute Template Tags" },
-  { name: "singleAttributePerLine", label: "Single Attribute Per Line" },
-  { name: "formatAttributeJsJson", label: "Format Attribute JS/JSON" },
-  { name: "formatAttributeJsJsonPattern", label: "Attribute JS/JSON Pattern", placeholder: "^(on[a-z]+|x-[a-z-]+)$" },
-  { name: "formatAttributeJsJsonMinProps", label: "Attribute JS/JSON Min Props", placeholder: "2" },
-  { name: "preserveLeadingSpace", label: "Preserve Leading Space" },
-  { name: "preserveBlankSpace", label: "Preserve Blank Space", anchor: "preserve-blank-lines" },
-  { name: "preserveClassNewlines", label: "Preserve Class Newlines" },
-  { name: "formatJs", label: "Format JS" },
-  { name: "indentJs", label: "JS Indent", placeholder: "4", anchor: "format-js" },
-  { name: "formatCss", label: "Format CSS" },
-  { name: "indentCss", label: "CSS Indent", placeholder: "4", anchor: "format-css" },
-  { name: "closeVoidTags", label: "Close Void Tags" },
-  { name: "ignoreCase", label: "Ignore Case" },
-  { name: "lineBreakAfterMultilineTag", label: "Line Break After Multiline Tag" },
-  { name: "noLineAfterYaml", label: "No Line After YAML" },
-  { name: "noFunctionFormatting", label: "No Function Formatting" },
-  { name: "noSetFormatting", label: "No Set Formatting" },
+// The formatter's options, named as in its Python API and shown as their
+// command line flags, in the order of `djlint --help`. A field with options is
+// a menu, one with a placeholder takes a value (a number when the placeholder
+// is one), any other is a switch. `anchor` is the option's section on the
+// configuration page, where it differs from its name.
+const fields: { name: string; placeholder?: string; options?: string[][]; anchor?: string }[] = [
+  {
+    name: "profile",
+    options: [
+      ["", "none"],
+      ["html", "html"],
+      ["django", "django"],
+      ["jinja", "jinja"],
+      ["nunjucks", "nunjucks (and twig)"],
+      ["handlebars", "handlebars (and mustache)"],
+      ["liquid", "liquid"],
+      ["golang", "golang (go templates)"],
+      ["angular", "angular"],
+      ["tera", "tera"],
+      ["askama", "askama"],
+      ["mako", "mako"],
+    ],
+  },
+  { name: "indent", placeholder: "4" },
+  { name: "max_line_length", placeholder: "120" },
+  { name: "max_attribute_length", placeholder: "70" },
+  { name: "single_attribute_per_line" },
+  { name: "line_break_after_multiline_tag" },
+  { name: "no_indent_inner_html" },
+  { name: "keep_br_inline" },
+  { name: "custom_blocks", placeholder: "toc,example" },
+  { name: "custom_html", placeholder: "mjml,simple-greeting,mj-\\w+" },
+  { name: "ignore_blocks", placeholder: "raw,example" },
+  { name: "blank_line_after_tag", placeholder: "load,extends,include" },
+  { name: "blank_line_before_tag", placeholder: "load,extends,include" },
+  { name: "max_blank_lines", placeholder: "0" },
+  { name: "preserve_blank_lines" },
+  { name: "preserve_leading_space" },
+  { name: "no_line_after_yaml" },
+  { name: "close_void_tags" },
+  { name: "ignore_case" },
+  { name: "sort_attributes" },
+  { name: "sort_load_tags" },
+  { name: "name_endblocks" },
+  { name: "quote_style", options: [["", "double"], ["single", "single"]] },
+  { name: "no_entity_formatting" },
+  { name: "no_function_formatting" },
+  { name: "no_set_formatting" },
+  { name: "preserve_class_newlines" },
+  { name: "format_attribute_template_tags" },
+  { name: "format_css" },
+  { name: "indent_css", placeholder: "4", anchor: "format-css" },
+  { name: "format_js" },
+  { name: "indent_js", placeholder: "4", anchor: "format-js" },
+  { name: "format_attribute_js_json" },
+  { name: "format_attribute_js_json_pattern", placeholder: "^(on[a-z]+|x-[a-z-]+)$" },
+  { name: "format_attribute_js_json_min_props", placeholder: "2" },
 ];
 
-const profiles = [
-  ["", "none (default)"],
-  ["html", "html"],
-  ["django", "django"],
-  ["jinja", "jinja"],
-  ["nunjucks", "nunjucks (nunjucks and twig)"],
-  ["handlebars", "handlebars (handlebars and mustache)"],
-  ["liquid", "liquid"],
-  ["golang", "golang (go templates)"],
-  ["angular", "angular"],
-  ["tera", "tera"],
-  ["askama", "askama"],
-  ["mako", "mako"],
-];
-
-const kebab = (name: string) => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+const kebab = (name: string) => name.replaceAll("_", "-");
 const help = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
 // What a "?" link says to a screen reader: which option's documentation it opens.
 // The fields get their names from aria-label, so the link doesn't join them.
-const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
+const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
 ---
 
 {
@@ -67,29 +78,46 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
       <p>{t("djlint.demo_description")} <small id="djlint-version"></small></p>
 
       <div class="demo-workspace">
-        <form id="djlint-settings">
-          <label>
-            <span>Profile <a href={help("profile")} target="_blank" aria-label={helpLabel("Profile")}>?</a></span>
-            <select name="profile" aria-label="Profile">
-              {profiles.map(([value, text]) => <option value={value}>{text}</option>)}
-            </select>
-          </label>
-          {
-            fields.map(({ name, label, placeholder, anchor }) => (
-              <label class:list={{ checkbox: !placeholder }}>
-                {placeholder ? null : <input name={name} type="checkbox" aria-label={label} />}
-                <span>
-                  {label} <a href={help(anchor ?? kebab(name))} target="_blank" aria-label={helpLabel(label)}>
-                    ?
-                  </a>
-                </span>
-                {placeholder ? (
-                  <input name={name} type="text" placeholder={placeholder} aria-label={label} />
-                ) : null}
-              </label>
-            ))
-          }
-        </form>
+        <details class="demo-settings" open>
+          <summary>{t("djlint.demo_options")}</summary>
+          <form id="djlint-settings">
+            {
+              fields.map(({ name, placeholder, options, anchor }) => {
+                const flag = `--${kebab(name)}`;
+                const toggle = !placeholder && !options;
+                return (
+                  <label class:list={{ checkbox: toggle }}>
+                    {toggle && <input name={name} type="checkbox" aria-label={flag} />}
+                    <span>
+                      <span class="flag">{flag}</span>{" "}
+                      <a href={help(anchor ?? kebab(name))} target="_blank" aria-label={helpLabel(flag)}>
+                        ?
+                      </a>
+                    </span>
+                    {options && (
+                      <select name={name} aria-label={flag}>
+                        {options.map(([value, text]) => <option value={value}>{text}</option>)}
+                      </select>
+                    )}
+                    {placeholder && (
+                      <input
+                        name={name}
+                        type={/^\d+$/.test(placeholder) ? "number" : "text"}
+                        min="0"
+                        placeholder={placeholder}
+                        aria-label={flag}
+                      />
+                    )}
+                  </label>
+                );
+              })
+            }
+          </form>
+        </details>
+        {/* Side by side the settings stay open; above the editors they start closed. */}
+        <script is:inline>
+          document.currentScript.previousElementSibling.open = matchMedia("(width >= 60rem)").matches;
+        </script>
         <div class="demo-editors">
           <section>
             <div class="demo-head">
@@ -104,7 +132,8 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
           <section>
             <div class="demo-head">
               <span id="djlint-output-label">
-                <span class="prompt" aria-hidden="true">$</span> djlint input.html --reformat
+                <span class="prompt" aria-hidden="true">$</span>{" "}
+                <span id="djlint-command">djlint input.html --reformat</span>
               </span>
               <span
                 id="djlint-status"
@@ -180,12 +209,22 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     if (id === sessionId) history.replaceState(null, "", url);
   }
 
+  // The output's header is the command that gives the same result.
+  const command = document.getElementById("djlint-command")!;
+  const shellWord = (text: string) =>
+    /^[\w,.+-]+$/.test(text) ? text : `'${text.replaceAll("'", "'\\''")}'`;
+
   function format() {
     sessionId += 1;
     const config = getConfig();
     const html = input.state.doc.toString();
     worker.postMessage({ config, html, id: sessionId });
     void saveState(html, config, sessionId);
+    const flags = Object.entries(config).map(([name, value]) => {
+      const flag = `--${name.replaceAll("_", "-")}`;
+      return value === true ? flag : `${flag}=${shellWord(value)}`;
+    });
+    command.textContent = ["djlint input.html --reformat", ...flags].join(" ");
   }
 
   // A later restore wins over an earlier one that is still decoding.
@@ -205,16 +244,19 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     }
   }
 
+  // Typing in the editor or a field formats once the typing pauses.
   let timer: ReturnType<typeof setTimeout>;
+  const formatSoon = () => {
+    clearTimeout(timer);
+    timer = setTimeout(format, 100);
+  };
   const input = new EditorView({
     parent: document.getElementById("djlint-input")!,
     state: editorState(
       "djlint-input-label",
       [
         EditorView.updateListener.of((update) => {
-          if (!update.docChanged) return;
-          clearTimeout(timer);
-          timer = setTimeout(format, 100);
+          if (update.docChanged) formatSoon();
         }),
       ],
       WELCOME,
@@ -251,7 +293,13 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     }
   };
 
-  form.addEventListener("change", format);
+  form.addEventListener("input", formatSoon);
+
+  // The settings are open beside the editors and folded above them.
+  const settings = document.querySelector<HTMLDetailsElement>(".demo-settings")!;
+  matchMedia("(width >= 60rem)").addEventListener("change", ({ matches }) => {
+    settings.open = matches;
+  });
 
   // "Copied" goes to a status region: a changed label on the focused button is
   // not reliably announced.
@@ -292,16 +340,24 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
   }
   .demo-workspace {
     display: grid;
-    grid-template-columns: 16rem 1fr;
+    grid-template-columns: 17rem 1fr;
     gap: 1.5rem;
+  }
+  summary {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.375rem;
+    font-weight: 600;
+    cursor: pointer;
   }
   form {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
-    overflow-y: auto;
-    overscroll-behavior: contain;
     font-size: var(--sl-text-sm);
+  }
+  details[open] form {
+    margin-block-start: 0.75rem;
   }
   label {
     display: flex;
@@ -314,7 +370,13 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     align-items: center;
     gap: 0.5rem;
   }
-  /* A ringed "?" after each label: the ring sets the link apart from the text. */
+  .flag {
+    color: var(--sl-color-white);
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    overflow-wrap: anywhere;
+  }
+  /* A ringed "?" after each flag: the ring sets the link apart from the text. */
   form a {
     display: inline-grid;
     place-items: center;
@@ -331,7 +393,7 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
   form a:hover {
     color: var(--sl-color-white);
   }
-  input[type="text"],
+  input:not([type="checkbox"]),
   select {
     padding: 0.3rem 0.5rem;
     border: 1px solid var(--sl-color-gray-5);
@@ -340,13 +402,22 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     color: var(--sl-color-white);
     font: inherit;
   }
+  /* The placeholders are the defaults, readable but quieter than a value. */
+  input::placeholder {
+    color: var(--sl-color-gray-3);
+  }
+  /* The heads share a row, so the editors line up when the command wraps. */
   .demo-editors {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 0 1rem;
     margin: 0;
   }
   .demo-editors section {
+    display: grid;
+    grid-row: span 2;
+    grid-template-rows: subgrid;
     margin: 0;
     border: 1px solid var(--dj-code-line);
     border-radius: 0.75rem;
@@ -355,12 +426,10 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     /* The editors are dark in both themes, and so are their scrollbars. */
     color-scheme: dark;
   }
-  /* Both heads are as tall as the one with the button, so the editors line up. */
   .demo-head {
     display: flex;
     align-items: center;
     gap: 1rem;
-    min-height: 2.875rem;
     margin: 0;
     padding: 0.4rem 1rem;
     border-bottom: 1px solid var(--dj-code-line);
@@ -379,7 +448,7 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     cursor: pointer;
   }
   .demo-head button:hover {
-    border-color: #7d84ad;
+    border-color: #8a91b8;
     color: #c0caf5;
   }
   .demo-head .prompt {
@@ -387,14 +456,9 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
   }
   #djlint-status {
     margin-inline-start: auto;
-    color: #a9b1d6;
-  }
-  .demo-editors section {
-    display: flex;
-    flex-direction: column;
+    white-space: nowrap;
   }
   .demo-editor {
-    flex: 1;
     min-height: 20rem;
     margin: 0;
   }
@@ -416,6 +480,16 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
       grid-template-rows: minmax(0, 1fr);
       min-height: 22rem;
     }
+    .demo-settings {
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    summary {
+      display: none;
+    }
+    details[open] form {
+      margin: 0;
+    }
     .demo-editor {
       min-height: 0;
     }
@@ -425,8 +499,11 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     .demo-editors {
       grid-template-columns: 1fr;
     }
+    .demo-editors {
+      grid-template-rows: none;
+      gap: 1rem;
+    }
     .demo-editor {
-      flex: none;
       height: 40dvh;
     }
   }
