@@ -138,6 +138,22 @@ djLint może działać jako wtyczka lintera SublimeText. Można ją zainstalowa�
 
 Upewnij się, że djLint jest zainstalowany w globalnym Pythonie lub dostępny w `PATH`.
 
+## Zed
+
+[Rozszerzenie djLint](https://github.com/djlint/djlint-zed) uruchamia [serwer języka](#serwer-jezyka) w HTML i w językach rozszerzeń szablonów, takich jak Django, Jinja i Twig. Nie ma go jeszcze w rejestrze rozszerzeń Zeda, więc zainstaluj je jako rozszerzenie deweloperskie:
+
+1. Zainstaluj Rusta przez [rustup](https://rustup.rs): Zed buduje nim rozszerzenie.
+1. Sklonuj rozszerzenie: `git clone https://github.com/djlint/djlint-zed`.
+1. Uruchom **zed: install dev extension** z palety poleceń i wybierz sklonowany folder.
+
+Rozszerzenie uruchamia `djlint` z PATH (1.49 lub nowszy), a gdy go tam nie ma, korzysta z [uv](https://docs.astral.sh/uv/). Aby formatować djLintem, ustaw go w `settings.json` jako formater języka:
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[Ustawienia](#ustawienia) umieszcza się w `lsp.djlint.settings`.
+
 ## Helix
 
 Helix może uruchamiać [serwer języka](#serwer-jezyka) skonfigurowany w `languages.toml`:

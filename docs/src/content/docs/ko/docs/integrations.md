@@ -138,6 +138,22 @@ djLint를 SublimeText Linter 플러그인으로 사용할 수 있습니다. [pac
 
 djLint가 전역 Python이나 `PATH`에 설치되어 있는지 확인하세요.
 
+## Zed
+
+[djLint 확장](https://github.com/djlint/djlint-zed)은 HTML과 Django, Jinja, Twig 같은 템플릿 확장의 언어에서 [언어 서버](#언어-서버)를 실행합니다. 아직 Zed 확장 레지스트리에 없으므로 개발 확장으로 설치하세요.
+
+1. [rustup](https://rustup.rs)으로 Rust를 설치합니다. Zed는 Rust로 확장을 빌드합니다.
+1. 확장을 클론합니다: `git clone https://github.com/djlint/djlint-zed`
+1. 명령 팔레트에서 **zed: install dev extension**을 실행하고 클론한 폴더를 고릅니다.
+
+확장은 PATH에 있는 `djlint`(1.49 이상)를 실행하고, 없으면 [uv](https://docs.astral.sh/uv/)로 실행합니다. djLint로 포맷하려면 `settings.json`에서 언어의 포매터로 지정하세요.
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[설정](#설정)은 `lsp.djlint.settings` 아래에 둡니다.
+
 ## Helix
 
 Helix는 `languages.toml`에서 [언어 서버](#언어-서버)를 실행할 수 있습니다.

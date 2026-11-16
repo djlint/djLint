@@ -138,6 +138,22 @@ O djLint pode ser usado como um plugin de linter do SublimeText. Ele pode ser in
 
 Certifique-se de que o djLint esteja instalado no seu Python global ou no seu `PATH`.
 
+## Zed
+
+A [extensão do djLint](https://github.com/djlint/djlint-zed) executa o [servidor de linguagem](#servidor-de-linguagem) no HTML e nas linguagens das extensões de templates, como Django, Jinja e Twig. Ela ainda não está no registro de extensões do Zed, então instale-a como extensão de desenvolvimento:
+
+1. Instale o Rust pelo [rustup](https://rustup.rs): o Zed compila a extensão com ele.
+1. Clone a extensão: `git clone https://github.com/djlint/djlint-zed`.
+1. Execute **zed: install dev extension** na paleta de comandos e escolha a pasta clonada.
+
+A extensão executa o `djlint` do PATH (1.49 ou mais recente) ou, se não houver, usa o [uv](https://docs.astral.sh/uv/). Para formatar com o djLint, defina-o como formatador de uma linguagem no `settings.json`:
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+As [configurações](#configuracoes) ficam em `lsp.djlint.settings`.
+
 ## Helix
 
 O Helix pode executar o [servidor de linguagem](#servidor-de-linguagem) a partir do `languages.toml`:

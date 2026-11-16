@@ -65,17 +65,8 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
   route && (
     <div class="demo not-content">
       <p>{t("djlint.demo_description")} <small id="djlint-version"></small></p>
-      <p
-        id="djlint-status"
-        role="status"
-        data-installing={t("djlint.demo_installing")}
-        data-version={t("djlint.demo_version")}
-        data-error={t("djlint.demo_error")}
-      >
-        {t("djlint.demo_loading")}
-      </p>
 
-      <div class="demo-workspace" hidden>
+      <div class="demo-workspace">
         <form id="djlint-settings">
           <label>
             <span>Profile <a href={help("profile")} target="_blank" aria-label={helpLabel("Profile")}>?</a></span>
@@ -111,9 +102,20 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
             <div class="demo-editor" id="djlint-input"></div>
           </section>
           <section>
-            <p class="demo-head" id="djlint-output-label">
-              <span><span class="prompt" aria-hidden="true">$</span> djlint input.html --reformat</span>
-            </p>
+            <div class="demo-head">
+              <span id="djlint-output-label">
+                <span class="prompt" aria-hidden="true">$</span> djlint input.html --reformat
+              </span>
+              <span
+                id="djlint-status"
+                role="status"
+                data-installing={t("djlint.demo_installing")}
+                data-version={t("djlint.demo_version")}
+                data-error={t("djlint.demo_error")}
+              >
+                {t("djlint.demo_loading")}
+              </span>
+            </div>
             <div class="demo-editor" id="djlint-output"></div>
           </section>
         </div>
@@ -232,8 +234,9 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
   worker.onerror = showError;
   worker.onmessage = ({ data: { id, type, message } }) => {
     if (type === "status" && message === "ready") {
+      // Edits made while djLint loaded may have reached the worker before it
+      // listened, so the current example goes again.
       status.hidden = true;
-      document.querySelector<HTMLElement>(".demo-workspace")!.hidden = false;
       void restored.then(format);
     } else if (type === "status" && message === "error") {
       showError();
@@ -287,7 +290,7 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
   :global(main:has(.demo) .sl-container) {
     max-width: none;
   }
-  .demo-workspace:not([hidden]) {
+  .demo-workspace {
     display: grid;
     grid-template-columns: 16rem 1fr;
     gap: 1.5rem;
@@ -296,8 +299,8 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
-    max-height: 75vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
     font-size: var(--sl-text-sm);
   }
   label {
@@ -383,22 +386,48 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     color: var(--dj-squiggle);
   }
   #djlint-status {
-    color: var(--sl-color-gray-3);
+    margin-inline-start: auto;
+    color: #a9b1d6;
+  }
+  .demo-editors section {
+    display: flex;
+    flex-direction: column;
   }
   .demo-editor {
-    height: 70vh;
+    flex: 1;
+    min-height: 20rem;
     margin: 0;
   }
-  @media (max-width: 60rem) {
-    .demo-workspace:not([hidden]),
+  /* Side by side, the demo fills the window under the header: the editors and
+     the settings scroll inside it, the page doesn't. Every wrapper between the
+     page and the demo passes the height down. */
+  @media (width >= 60rem) {
+    :global(.page :has(.demo)),
+    .demo {
+      display: flex;
+      flex: 1 1 0;
+      flex-direction: column;
+      inline-size: 100%;
+      min-height: 0;
+    }
+    /* A window too short for this lets the page scroll after all. */
+    .demo-workspace {
+      flex: 1 1 0;
+      grid-template-rows: minmax(0, 1fr);
+      min-height: 22rem;
+    }
+    .demo-editor {
+      min-height: 0;
+    }
+  }
+  @media (width < 60rem) {
+    .demo-workspace,
     .demo-editors {
       grid-template-columns: 1fr;
     }
-    form {
-      max-height: none;
-    }
     .demo-editor {
-      height: 40vh;
+      flex: none;
+      height: 40dvh;
     }
   }
 </style>

@@ -138,6 +138,22 @@ djLint 可以用作 Sublime Text 的 Linter 插件，可通过 [package-control]
 
 请确保 djLint 安装在全局 Python 中，或者位于 `PATH` 上。
 
+## Zed
+
+[djLint 扩展](https://github.com/djlint/djlint-zed)在 HTML 以及 Django、Jinja、Twig 等模板扩展的语言中运行[语言服务器](#语言服务器)。它还没有进入 Zed 的扩展注册表，所以要作为开发扩展安装：
+
+1. 通过 [rustup](https://rustup.rs) 安装 Rust，Zed 用它构建扩展。
+1. 克隆扩展：`git clone https://github.com/djlint/djlint-zed`
+1. 在命令面板中运行 **zed: install dev extension**，选择克隆下来的文件夹。
+
+扩展会运行 PATH 中的 `djlint`（1.49 或更新版本），找不到时通过 [uv](https://docs.astral.sh/uv/) 运行。要用 djLint 格式化，在 `settings.json` 中把它设为某个语言的格式化工具：
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[设置](#设置)写在 `lsp.djlint.settings` 下。
+
 ## Helix
 
 Helix 可以通过 `languages.toml` 运行[语言服务器](#语言服务器)：
