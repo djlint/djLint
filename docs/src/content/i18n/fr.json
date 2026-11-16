@@ -1,8 +1,5 @@
 {
-  "djlint.index_title": "Lintez et formatez vos templates HTML",
-  "djlint.index_description": "Chaque langage de votre stack a son formateur et son linter, sauf les templates HTML. Les outils HTML génériques ne savent pas analyser <code>{% %}</code> ni <code>&#123;&#123; &#125;&#125;</code>, et les moteurs de templates ne se soucient pas de l'allure du balisage qui les entoure. djLint reformate le HTML chargé de syntaxe de template et y détecte les erreurs courantes, avec des profils pour Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, les templates Go et d'autres encore.",
   "djlint.index_fav_lang": "Un profil pour votre langage de templates",
-  "djlint.index_before_after": "Avant et après",
   "djlint.index_show_format": "Affichez votre format !",
   "djlint.index_looks_like": "Voici le rendu :",
   "djlint.index_add_badge": "Ajoutez un badge à vos projets",

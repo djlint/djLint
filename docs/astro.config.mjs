@@ -1,6 +1,7 @@
 import { unified } from "@astrojs/markdown-remark";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import slugify from "slugify";
 
 import djlint from "../package.json" with { type: "json" };
 
@@ -13,6 +14,36 @@ function remarkDjlintVersion() {
     node.children?.forEach(walk);
   };
   return walk;
+}
+
+// Heading ids as the Eleventy site made them, transliterated to ASCII, so links
+// to sections of the translated pages keep working. Astro's own ids (GitHub's)
+// stay on the changelog, whose CHANGELOG.md lives outside src/content/docs/.
+function rehypeEleventyHeadingIds() {
+  const text = (node) =>
+    node.type === "text" ? node.value : (node.children?.map(text).join("") ?? "");
+  const walk = (node, visit) => {
+    visit(node);
+    node.children?.forEach((child) => walk(child, visit));
+  };
+  return (tree, file) => {
+    if (!/[\\/]src[\\/]content[\\/]docs[\\/]/u.test(file.path ?? "")) {
+      return;
+    }
+    const used = new Set();
+    walk(tree, (node) => {
+      if (!/^h[2-5]$/u.test(node.tagName ?? "") || node.properties?.id) {
+        return;
+      }
+      const slug = slugify(text(node), { lower: true, remove: /[*+~.()'"!:@]/g });
+      let id = slug;
+      for (let i = 1; used.has(id); i++) {
+        id = `${slug}-${i}`;
+      }
+      used.add(id);
+      node.properties.id = id;
+    });
+  };
 }
 
 // Builds the djLint the demo runs, into public/static/py/. An ES module runs
@@ -32,7 +63,12 @@ export default defineConfig({
   site: "https://djlint.com",
   outDir: "_site",
   trailingSlash: "always",
-  markdown: { processor: unified({ remarkPlugins: [remarkDjlintVersion] }) },
+  markdown: {
+    processor: unified({
+      remarkPlugins: [remarkDjlintVersion],
+      rehypePlugins: [rehypeEleventyHeadingIds],
+    }),
+  },
   integrations: [
     demoLock,
     starlight({

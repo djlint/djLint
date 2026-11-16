@@ -31,7 +31,7 @@ Kuralların çoğu varsayılan olarak etkindir. Kurallar komut satırında `--ig
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Bu, [Yapılandırma](/tr/docs/configuration) dosyası üzerinden de yapılabilir.
+Bu, [Yapılandırma](/tr/docs/configuration/) dosyası üzerinden de yapılabilir.
 
 [Profil](/tr/docs/configuration/#profile) ayarlanmadığında yerleşik kurallardan yalnızca H kuralları çalışır. T kuralları ve tek bir şablon diline ait kurallar (D, J, M, N), uygulandıkları profillerle gelir. `--include` ile verilen bir kural her profilde ve profil olmadan da çalışır; aşağıdaki açıklamasında uygulanmadığı söylenen profil bunun dışındadır.
 
@@ -58,7 +58,7 @@ Bu, [Yapılandırma](/tr/docs/configuration) dosyası üzerinden de yapılabilir
 | H016 | html içinde `title` etiketi eksik.                                                                                | ✔️         |
 | H017 | Void etiketler kendiliğinden kapanmalıdır (çakıştığı kural: H018).                                                | -          |
 | D018 | (Django) İç bağlantılar `{% url ... %}` kalıbını kullanmalıdır.                                                   | ✔️         |
-| H018 | Void etiketler doğası gereği kendiliğinden kapanır ve "/>" ile değil, ">" ile bitmelidir (çakıştığı kural: H017). | -          |
+| H018 | Void etiketler doğası gereği kendiliğinden kapanır ve `/>` ile değil, `>` ile bitmelidir (çakıştığı kural: H017). | -          |
 | J018 | (Jinja) İç bağlantılar `{{ url_for() ... }}` kalıbını kullanmalıdır.                                              | ✔️         |
 | H019 | `javascript:abc()` yerine `on_` olayı ve gerçek bir URL kullanın.                                                 | ✔️         |
 | H020 | Boş etiket çifti bulundu. Kaldırmayı düşünün.                                                                     | ✔️         |
@@ -351,7 +351,7 @@ Yapın:
 
 `Attribute values should be quoted.`
 
-Tırnaksız öznitelik değerleri ilk boşlukta biter; bu yüzden class=btn primary gibi bir değer, boşluktan sonraki her şeyi sessizce düşürür (tarayıcı "primary" değerini ayrı bir boolean öznitelik olarak ele alır). Şablon değişkenlerinden gelen değerler özellikle kırılgandır: işlenen herhangi bir boşluk, "=" ya da ">" etiketi bozar. Tırnak kullanmak değerin sınırını açık ve güvenli hâle getirir.
+Tırnaksız öznitelik değerleri ilk boşlukta biter; bu yüzden class=btn primary gibi bir değer, boşluktan sonraki her şeyi sessizce düşürür (tarayıcı "primary" değerini ayrı bir boolean öznitelik olarak ele alır). Şablon değişkenlerinden gelen değerler özellikle kırılgandır: işlenen herhangi bir boşluk, `=` ya da `>` etiketi bozar. Tırnak kullanmak değerin sınırını açık ve güvenli hâle getirir.
 
 Yapmayın:
 
@@ -369,7 +369,7 @@ Yapın:
 
 `There should be no spaces around attribute =.`
 
-HTML, "=" çevresinde boşluğa izin verdiği için bu bir stil kuralıdır. Yaygın stil name="value" biçiminde boşluksuz yazmaktır; grep ya da bul ve değiştir gibi basit metin araçları da bunu varsayar. Bu yüzden karışık boşluk kullanımı öznitelikleri bulmayı ve yeniden düzenlemeyi zorlaştırır. `--reformat` bu boşlukları sizin yerinize kaldırır.
+HTML, `=` çevresinde boşluğa izin verdiği için bu bir stil kuralıdır. Yaygın stil name="value" biçiminde boşluksuz yazmaktır; grep ya da bul ve değiştir gibi basit metin araçları da bunu varsayar. Bu yüzden karışık boşluk kullanımı öznitelikleri bulmayı ve yeniden düzenlemeyi zorlaştırır. `--reformat` bu boşlukları sizin yerinize kaldırır.
 
 angular profilinde uygulanmaz.
 

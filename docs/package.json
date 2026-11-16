@@ -19,6 +19,7 @@
     "@lezer/highlight": "1.2.5",
     "astro": "7.4.2",
     "codemirror": "6.0.2",
-    "pyodide": "314.0.7"
+    "pyodide": "314.0.7",
+    "slugify": "1.6.9"
   }
 }

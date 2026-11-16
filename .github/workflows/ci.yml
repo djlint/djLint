@@ -28,7 +28,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version-file: .nvmrc
+          # The Node that Workers Builds builds the site with.
+          node-version-file: docs/.node-version
           check-latest: true
           package-manager-cache: false
       - run: npm ci --ignore-scripts

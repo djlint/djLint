@@ -31,7 +31,7 @@ Na przykład:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Można to też zrobić w pliku konfiguracyjnym (zobacz [Konfiguracja](/pl/docs/configuration)).
+Można to też zrobić w pliku konfiguracyjnym (zobacz [Konfiguracja](/pl/docs/configuration/)).
 
 Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają tylko reguły H. Reguły T i reguły dla jednego języka szablonów (D, J, M, N) włączają profile, których dotyczą. Reguła podana w `--include` działa przy każdym profilu i bez profilu, poza profilem, którego według opisu poniżej ona nie dotyczy.
 
@@ -58,7 +58,7 @@ Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają 
 | H016 | Brak tagu `title` w html.                                                                       | ✔️        |
 | H017 | Tagi void powinny być samozamykające (konflikt z: H018).                                        | -         |
 | D018 | (Django) Linki wewnętrzne powinny używać wzorca `{% url ... %}`.                                | ✔️        |
-| H018 | Tagi void są z natury samozamykające i muszą kończyć się na „>”, a nie „/>” (konflikt z: H017). | -         |
+| H018 | Tagi void są z natury samozamykające i muszą kończyć się na `>`, a nie `/>` (konflikt z: H017). | -         |
 | J018 | (Jinja) Linki wewnętrzne powinny używać wzorca `{{ url_for() ... }}`.                           | ✔️        |
 | H019 | Zastąp `javascript:abc()` zdarzeniem `on_` i prawdziwym adresem URL.                            | ✔️        |
 | H020 | Znaleziono pustą parę tagów. Rozważ jej usunięcie.                                              | ✔️        |
@@ -351,7 +351,7 @@ Dobrze:
 
 `Attribute values should be quoted.`
 
-Wartość atrybutu bez cudzysłowów kończy się na pierwszym białym znaku, więc wartość taka jak class=btn primary po cichu gubi wszystko, co następuje po spacji (przeglądarka traktuje „primary” jako osobny atrybut logiczny). Szczególnie podatne są wartości pochodzące ze zmiennych szablonu: każda wyrenderowana spacja, „=” lub „>” psuje tag. Cudzysłowy wyznaczają granice wartości jednoznacznie i bezpiecznie.
+Wartość atrybutu bez cudzysłowów kończy się na pierwszym białym znaku, więc wartość taka jak class=btn primary po cichu gubi wszystko, co następuje po spacji (przeglądarka traktuje „primary” jako osobny atrybut logiczny). Szczególnie podatne są wartości pochodzące ze zmiennych szablonu: każda wyrenderowana spacja, `=` lub `>` psuje tag. Cudzysłowy wyznaczają granice wartości jednoznacznie i bezpiecznie.
 
 Źle:
 
@@ -369,7 +369,7 @@ Dobrze:
 
 `There should be no spaces around attribute =.`
 
-HTML dopuszcza białe znaki wokół „=”, więc to reguła stylu. Zwykle zapisuje się name="value" bez spacji i tego właśnie oczekują proste narzędzia tekstowe, takie jak grep czy wyszukiwanie i zamiana, więc mieszane odstępy utrudniają odnajdywanie i refaktoryzację atrybutów. `--reformat` sam usuwa te spacje.
+HTML dopuszcza białe znaki wokół `=`, więc to reguła stylu. Zwykle zapisuje się name="value" bez spacji i tego właśnie oczekują proste narzędzia tekstowe, takie jak grep czy wyszukiwanie i zamiana, więc mieszane odstępy utrudniają odnajdywanie i refaktoryzację atrybutów. `--reformat` sam usuwa te spacje.
 
 Nie dotyczy profilu angular.
 
