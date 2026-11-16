@@ -164,17 +164,18 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
                 <span class="prompt" aria-hidden="true">$</span>{" "}
                 <span id="djlint-command">djlint input.html --reformat</span>
               </span>
-              <span
-                id="djlint-status"
-                role="status"
-                data-installing={t("djlint.demo_installing")}
-                data-version={t("djlint.demo_version")}
-                data-error={t("djlint.demo_error")}
-              >
-                {t("djlint.demo_loading")}
-              </span>
             </div>
             <div class="demo-editor" id="djlint-output"></div>
+            {/* Where the formatted code will be, until djLint has loaded. */}
+            <p
+              id="djlint-status"
+              role="status"
+              data-installing={t("djlint.demo_installing")}
+              data-version={t("djlint.demo_version")}
+              data-error={t("djlint.demo_error")}
+            >
+              {t("djlint.demo_loading")}
+            </p>
           </section>
         </div>
       </div>
@@ -302,6 +303,7 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
   // The worker reports its progress as codes; the page holds their translations.
   const showError = () => {
     status.textContent = status.dataset.error!;
+    status.dataset.state = "error";
   };
   worker.onerror = showError;
   worker.onmessage = ({ data: { id, type, message } }) => {
@@ -539,11 +541,43 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
   .demo-head .prompt {
     color: var(--dj-squiggle);
   }
+  /* Over the empty output editor, in the middle of where the code will go. */
   #djlint-status {
-    margin-inline-start: auto;
-    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    grid-area: 2 / 1;
+    place-self: center;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 80%;
+    margin: 0;
+    color: #c0caf5;
+    font-size: var(--sl-text-sm);
+    text-align: center;
+  }
+  #djlint-status:not([data-state="error"])::before {
+    content: "";
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #3b4261;
+    border-top-color: var(--dj-squiggle);
+    border-radius: 50%;
+    animation: demo-spin 0.8s linear infinite;
+  }
+  @keyframes demo-spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #djlint-status::before {
+      animation-duration: 3s;
+    }
   }
   .demo-editor {
+    grid-area: 2 / 1;
     min-height: 20rem;
     margin: 0;
   }
@@ -565,7 +599,10 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
       grid-template-rows: minmax(0, 1fr);
       min-height: 22rem;
     }
+    /* The padding is room for the focus ring, which the scrolling would clip. */
     .demo-settings {
+      margin: -0.25rem;
+      padding: 0.25rem;
       overflow-y: auto;
       overscroll-behavior: contain;
     }
