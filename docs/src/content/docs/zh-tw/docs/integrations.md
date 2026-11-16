@@ -11,7 +11,7 @@ djLint 有好幾種編輯器整合。
 
 從 Visual Studio Marketplace 安裝 [djLint 擴充功能](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)。Cursor、Windsurf、VSCodium 等以 VS Code 為基礎的編輯器則從 [Open VSX 安裝同一個擴充功能](https://open-vsx.org/extension/monosans/djlint)。它會在你的環境中尋找 djLint，找不到時改用內建的版本，並在你的 djLint 支援時使用語言伺服器。
 
-它的程式碼位於 [GitHub](https://github.com/djlint/djlint-vscode)。
+它的 [README](https://github.com/djlint/djlint-vscode#readme) 說明了它的設定，以及它會執行哪一個 djLint。
 
 ## Zed
 
@@ -28,15 +28,7 @@ djLint 有好幾種編輯器整合。
 
 若要更新，請在該資料夾中執行 `git pull`，再執行 **zed: rebuild dev extension**。
 
-需要 PATH 中有 djLint 1.49 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。若要用 djLint 格式化，請在 `settings.json` 中將它設為某個語言的格式化工具，這裡以 HTML 為例：
-
-```json
-{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-Django、Jinja 等範本語言由各自的 Zed 擴充功能提供：把 `"HTML"` 換成它們的名稱，例如 `"Django"`。
-
-[設定](#設定)寫在 `lsp.djlint.settings` 底下。
+需要 PATH 中有 djLint 1.49 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何將它設為某個語言的格式化工具，以及它的設定。
 
 ## Neovim
 

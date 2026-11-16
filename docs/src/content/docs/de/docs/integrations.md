@@ -11,7 +11,7 @@ Egal welchen Editor Sie verwenden: Installieren Sie djLint dort, wo der Editor e
 
 Installieren Sie die [djLint-Erweiterung](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) aus dem Visual Studio Marketplace. Cursor, Windsurf, VSCodium und andere auf VS Code basierende Editoren beziehen [dieselbe Erweiterung über Open VSX](https://open-vsx.org/extension/monosans/djlint). Sie findet djLint in Ihrer Umgebung, greift sonst auf ein mitgeliefertes djLint zurück und verwendet den Sprachserver, wenn Ihr djLint ihn mitbringt.
 
-Der Code der Erweiterung liegt auf [GitHub](https://github.com/djlint/djlint-vscode).
+Das [README](https://github.com/djlint/djlint-vscode#readme) der Erweiterung beschreibt ihre Einstellungen und welches djLint sie ausführt.
 
 ## Zed
 
@@ -28,15 +28,7 @@ Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprac
 
 Zum Aktualisieren führen Sie in diesem Ordner `git pull` aus und danach **zed: rebuild dev extension**.
 
-Sie braucht djLint 1.49 oder neuer im PATH oder [uv](https://docs.astral.sh/uv/), das djLint ohne Installation ausführt. Damit djLint formatiert, legen Sie es in `settings.json` als Formatierer einer Sprache fest, hier für HTML:
-
-```json
-{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-Template-Sprachen wie Django und Jinja kommen aus ihren eigenen Zed-Erweiterungen: Setzen Sie deren Namen, etwa `"Django"`, statt `"HTML"` ein.
-
-[Einstellungen](#einstellungen) gehören unter `lsp.djlint.settings`.
+Sie braucht djLint 1.49 oder neuer im PATH oder [uv](https://docs.astral.sh/uv/), das djLint ohne Installation ausführt. Ihr [README](https://github.com/djlint/djlint-zed#readme) zeigt, wie Sie sie als Formatter einer Sprache festlegen, und beschreibt ihre Einstellungen.
 
 ## Neovim
 

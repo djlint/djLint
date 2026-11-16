@@ -11,7 +11,7 @@ Ať používáte jakýkoli editor, nainstalujte djLint tam, kde ho editor najde,
 
 Nainstalujte [rozšíření djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) z Visual Studio Marketplace. Cursor, Windsurf, VSCodium a další editory postavené na VS Code instalují [stejné rozšíření z Open VSX](https://open-vsx.org/extension/monosans/djlint). Najde djLint ve vašem prostředí, jinak použije přibalenou verzi, a pokud ho váš djLint podporuje, používá jazykový server.
 
-Jeho kód je na [GitHubu](https://github.com/djlint/djlint-vscode).
+Jeho [README](https://github.com/djlint/djlint-vscode#readme) popisuje nastavení rozšíření a to, který djLint spouští.
 
 ## Zed
 
@@ -28,15 +28,7 @@ Jeho kód je na [GitHubu](https://github.com/djlint/djlint-vscode).
 
 Aktualizace: ve složce spusťte `git pull` a potom **zed: rebuild dev extension**.
 
-Potřebuje djLint 1.49 nebo novější v PATH, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Aby formátoval djLint, nastavte ho v `settings.json` jako formátovač jazyka, tady HTML:
-
-```json
-{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-Šablonové jazyky jako Django a Jinja přidávají jejich vlastní rozšíření pro Zed: místo `"HTML"` uveďte jejich název, například `"Django"`.
-
-[Nastavení](#nastaveni) patří pod `lsp.djlint.settings`.
+Potřebuje djLint 1.49 nebo novější v PATH, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Jeho [README](https://github.com/djlint/djlint-zed#readme) ukazuje, jak ho nastavit jako formátovač jazyka, a popisuje jeho nastavení.
 
 ## Neovim
 

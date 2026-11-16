@@ -11,7 +11,7 @@ djLint를 위한 에디터 통합이 여러 가지 있습니다.
 
 Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)을 설치하세요. Cursor, Windsurf, VSCodium 등 VS Code 기반 편집기에서는 [같은 확장을 Open VSX에서](https://open-vsx.org/extension/monosans/djlint) 설치합니다. 이 확장은 환경에서 djLint를 찾고, 찾지 못하면 번들된 djLint를 사용하며, djLint가 언어 서버를 지원하면 언어 서버를 사용합니다.
 
-코드는 [GitHub](https://github.com/djlint/djlint-vscode)에 있습니다.
+설정과 어떤 djLint를 실행하는지는 [README](https://github.com/djlint/djlint-vscode#readme)에서 설명합니다.
 
 ## Zed
 
@@ -28,15 +28,7 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 
 업데이트하려면 그 폴더에서 `git pull`을 실행한 다음 **zed: rebuild dev extension**을 실행하세요.
 
-PATH에 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. djLint로 포맷하려면 `settings.json`에서 언어의 포매터로 지정하세요. 다음은 HTML의 예입니다.
-
-```json
-{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-Django, Jinja 같은 템플릿 언어는 각자의 Zed 확장이 추가합니다. `"HTML"` 대신 `"Django"`처럼 그 언어 이름을 쓰세요.
-
-[설정](#설정)은 `lsp.djlint.settings` 아래에 둡니다.
+PATH에 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 
 ## Neovim
 

@@ -1,5 +1,4 @@
 ---
-import help from "../data/cli-help.txt?raw";
 import options from "../data/configuration.json";
 import labels from "../data/demo-labels.json";
 import { starlightRoute } from "../utils/route";
@@ -109,8 +108,8 @@ const views = [
 const kebab = (name: string) => name.replaceAll("_", "-");
 
 // What a "?" says on hover: the option's description from the configuration
-// page, up to its first example, or the --help line of an option the page
-// has no section for (the CSS and JS indents).
+// page, up to its first example. The CSS and JS indents have no section of
+// their own, so theirs is the paragraph of their section that names the flag.
 const lang = route?.locale ?? "en";
 const descriptions = new Map(
   options.map(({ name, description }) => [
@@ -118,19 +117,20 @@ const descriptions = new Map(
     (description as Record<string, string>)[lang] ?? description.en,
   ]),
 );
-const helpLines = new Map(
-  [...help.matchAll(/^ {2}--([\w-]+)[^\n]*? {2,}(\S.*(?:\n {34}\S.*)*)/gm)].map(([, flag, text]) => [
-    flag,
-    text.replace(/\s+/g, " ").replace(/ \[default: [^\]]+\]$/, ""),
-  ]),
-);
 const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
-const hint = (name: string) => {
-  const text = descriptions.get(name)?.split(/\n\n|```/)[0] ?? helpLines.get(kebab(name)) ?? "";
+const hint = ({ name, anchor }: Field) => {
+  const flag = `--${kebab(name)}`;
+  const text =
+    descriptions.get(name)?.split(/\n\n|```/)[0] ??
+    descriptions
+      .get(anchor?.replaceAll("-", "_") ?? "")
+      ?.split("\n\n")
+      .find((paragraph) => paragraph.includes(`\`${flag}\``));
+  if (!text) throw new Error(`The configuration page says nothing about ${name}.`);
   const prose = escape(text.trim())
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/`([^`]+)`/g, "<code>$1</code>");
-  return `<code class="flag">--${kebab(name)}</code> ${prose}`;
+  return `<code class="flag">${flag}</code> ${prose}`;
 };
 const label = (name: string) => {
   const texts: Record<string, string> = labels[name as keyof typeof labels];
@@ -156,7 +156,8 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
             {groups.map(({ legend, fields }) => (
               <fieldset>
                 {legend && <legend>{legend}</legend>}
-                {fields.map(({ name, placeholder, options, anchor }) => {
+                {fields.map((field) => {
+                  const { name, placeholder, options, anchor } = field;
                   const text = label(name);
                   const toggle = !placeholder && !options;
                   return (
@@ -173,7 +174,7 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
                           ?
                         </a>
                       </span>
-                      <span id={`djlint-hint-${name}`} hidden set:html={hint(name)} />
+                      <span id={`djlint-hint-${name}`} hidden set:html={hint(field)} />
                       {options && (
                         <select name={name} aria-label={text}>
                           {options.map(([value, text]) => (

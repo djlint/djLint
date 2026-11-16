@@ -11,7 +11,7 @@ Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabil
 
 [djLint uzantısını](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) Visual Studio Marketplace'ten kurun. Cursor, Windsurf, VSCodium ve VS Code tabanlı diğer editörler [aynı uzantıyı Open VSX'ten](https://open-vsx.org/extension/monosans/djlint) kurar. Uzantı djLint'i ortamınızda bulur, bulamazsa kendisiyle birlikte gelen sürüme geri döner ve djLint sürümünüzde dil sunucusu varsa onu kullanır.
 
-Kodu [GitHub](https://github.com/djlint/djlint-vscode) üzerindedir.
+Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, ayarlarını ve hangi djLint'i çalıştırdığını anlatır.
 
 ## Zed
 
@@ -28,15 +28,7 @@ Kodu [GitHub](https://github.com/djlint/djlint-vscode) üzerindedir.
 
 Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extension** çalıştırın.
 
-PATH'te djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. djLint ile biçimlendirmek için `settings.json` içinde onu bir dilin biçimlendiricisi yapın, burada HTML'in:
-
-```json
-{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-Django ve Jinja gibi şablon dilleri kendi Zed uzantılarından gelir: `"HTML"` yerine `"Django"` gibi onların adını yazın.
-
-[Ayarlar](#ayarlar) `lsp.djlint.settings` altına yazılır.
+PATH'te djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
 
 ## Neovim
 
