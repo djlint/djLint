@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.52.0] - 2026-11-17
+
 ### Feature
 
 - New rule `D058` reports a Django tag or comment that spans lines, such as a `{# #}` comment written over several lines or an `{% include %}` whose arguments go on to the next line. Django reads a tag only within one line, so it prints these as text, and an `{% if %}` split that way stops the template from compiling. Anything inside a `{% comment %}` or `{% verbatim %}` block is left alone, and so is a `{%` or `{{` that another tag follows before its closing, which `T039` reports.
