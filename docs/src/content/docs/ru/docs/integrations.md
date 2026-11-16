@@ -19,9 +19,16 @@ sidebar:
 
 [Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет, поэтому установите его как dev-расширение:
 
-1. Установите Rust через [rustup](https://rustup.rs): Zed собирает им расширение.
-1. Склонируйте расширение: `git clone https://github.com/djlint/djlint-zed`.
-1. Выполните **zed: install dev extension** в палитре команд и выберите склонированную папку.
+1. Установите Rust через [rustup](https://rustup.rs): Zed собирает им расширение и сам добавляет таргет `wasm32-wasip2`. Если Rust установлен иначе, например через Homebrew или Nix, добавьте таргет сами.
+1. Склонируйте расширение:
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. Откройте в Zed палитру команд (`cmd-shift-p` на macOS, `ctrl-shift-p` в остальных системах), выполните **zed: install dev extension** и выберите склонированную папку `djlint-zed`.
+
+Чтобы обновить расширение, выполните в этой папке `git pull`, а затем **zed: rebuild dev extension**.
 
 Нужен djLint 1.49 или новее в PATH либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. Чтобы форматировать через djLint, назначьте его форматтером языка в `settings.json`, здесь HTML:
 

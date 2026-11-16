@@ -19,9 +19,16 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 
 [djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていないため、開発用拡張機能としてインストールします：
 
-1. [rustup](https://rustup.rs) で Rust をインストールします。Zed はこれで拡張機能をビルドします。
-1. 拡張機能をクローンします：`git clone https://github.com/djlint/djlint-zed`
-1. コマンドパレットで **zed: install dev extension** を実行し、クローンしたフォルダーを選びます。
+1. [rustup](https://rustup.rs) で Rust をインストールします。Zed はこれで拡張機能をビルドし、`wasm32-wasip2` ターゲットも自動で追加します。Homebrew や Nix など別の方法で入れた Rust では、このターゲットを自分で追加してください。
+1. 拡張機能をクローンします：
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. Zed でコマンドパレットを開き（macOS では `cmd-shift-p`、それ以外では `ctrl-shift-p`）、**zed: install dev extension** を実行して、クローンした `djlint-zed` フォルダーを選びます。
+
+更新するには、そのフォルダーで `git pull` を実行してから **zed: rebuild dev extension** を実行します。
 
 PATH 上の djLint 1.49 以降か、djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。djLint で整形するには、`settings.json` で言語のフォーマッターに指定します（この例では HTML）：
 

@@ -19,9 +19,16 @@ Jeho kód je na [GitHubu](https://github.com/djlint/djlint-vscode).
 
 [Rozšíření djLint](https://github.com/djlint/djlint-zed) spouští [jazykový server](#jazykovy-server) v HTML a v jazycích šablonových rozšíření, například Django, Jinja a Twig. V registru rozšíření Zedu zatím není, proto ho nainstalujte jako vývojové rozšíření (dev extension):
 
-1. Nainstalujte Rust přes [rustup](https://rustup.rs), Zed s ním rozšíření sestavuje.
-1. Naklonujte rozšíření: `git clone https://github.com/djlint/djlint-zed`.
-1. V paletě příkazů spusťte **zed: install dev extension** a vyberte naklonovanou složku.
+1. Nainstalujte Rust přes [rustup](https://rustup.rs), Zed s ním rozšíření sestavuje a sám si přidá cíl `wasm32-wasip2`. S Rustem odjinud, například z Homebrew nebo Nixu, ho přidejte sami.
+1. Naklonujte rozšíření:
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. V Zedu otevřete paletu příkazů (`cmd-shift-p` na macOS, jinde `ctrl-shift-p`), spusťte **zed: install dev extension** a vyberte naklonovanou složku `djlint-zed`.
+
+Aktualizace: ve složce spusťte `git pull` a potom **zed: rebuild dev extension**.
 
 Potřebuje djLint 1.49 nebo novější v PATH, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Aby formátoval djLint, nastavte ho v `settings.json` jako formátovač jazyka, tady HTML:
 

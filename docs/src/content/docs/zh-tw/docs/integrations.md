@@ -19,9 +19,16 @@ djLint 有好幾種編輯器整合。
 
 [djLint 擴充功能](https://github.com/djlint/djlint-zed)會在 HTML 以及 Django、Jinja、Twig 等範本擴充功能的語言中執行[語言伺服器](#語言伺服器)。它還沒有列入 Zed 的擴充功能登錄庫，因此請以開發用擴充功能的方式安裝：
 
-1. 透過 [rustup](https://rustup.rs) 安裝 Rust，Zed 會用它建置擴充功能。
-1. 複製擴充功能：`git clone https://github.com/djlint/djlint-zed`
-1. 在命令面板中執行 **zed: install dev extension**，並選擇複製下來的資料夾。
+1. 透過 [rustup](https://rustup.rs) 安裝 Rust，Zed 會用它建置擴充功能，並自動加入 `wasm32-wasip2` 目標。如果 Rust 是用 Homebrew 或 Nix 等其他方式安裝，請自行加入這個目標。
+1. 複製擴充功能：
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. 在 Zed 中開啟命令面板（macOS 為 `cmd-shift-p`，其他系統為 `ctrl-shift-p`），執行 **zed: install dev extension**，並選擇複製下來的 `djlint-zed` 資料夾。
+
+若要更新，請在該資料夾中執行 `git pull`，再執行 **zed: rebuild dev extension**。
 
 需要 PATH 中有 djLint 1.49 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。若要用 djLint 格式化，請在 `settings.json` 中將它設為某個語言的格式化工具，這裡以 HTML 為例：
 
