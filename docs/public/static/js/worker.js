@@ -11,7 +11,6 @@ async function loadPyodideAndPackages() {
     indexURL: PYODIDE_URL,
     lockFileURL: new URL("/static/py/pyodide-lock.json", self.location).href,
   });
-  self.postMessage({ type: "status", message: "installing" });
   await pyodide.loadPackage("djlint");
   const versions = await pyodide.runPythonAsync(`
 import platform

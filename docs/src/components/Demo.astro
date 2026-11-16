@@ -1,6 +1,7 @@
 ---
 import help from "../data/cli-help.txt?raw";
 import options from "../data/configuration.json";
+import labels from "../data/demo-labels.json";
 import { starlightRoute } from "../utils/route";
 
 const { t } = Astro.locals;
@@ -8,8 +9,9 @@ const { t } = Astro.locals;
 const route = starlightRoute(Astro.locals);
 const prefix = route?.locale ? `/${route.locale}` : "";
 
-// The options, named as in djLint's Python API and shown as their command line
-// flags, grouped and ordered as in `djlint --help`. A field with options is a
+// The options, named as in djLint's Python API, grouped and ordered as in
+// `djlint --help`. Their labels are in demo-labels.json; the hints and the CLI
+// view show the flags. A field with options is a
 // menu, one with a placeholder takes a value (a number when the placeholder is
 // one, which is then its default), any other is a switch. `anchor` is the
 // option's section on the configuration page, where it differs from its name.
@@ -125,14 +127,19 @@ const helpLines = new Map(
 const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
 const hint = (name: string) => {
   const text = descriptions.get(name)?.split(/\n\n|```/)[0] ?? helpLines.get(kebab(name)) ?? "";
-  return escape(text.trim())
+  const prose = escape(text.trim())
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/`([^`]+)`/g, "<code>$1</code>");
+  return `<code class="flag">--${kebab(name)}</code> ${prose}`;
+};
+const label = (name: string) => {
+  const texts: Record<string, string> = labels[name as keyof typeof labels];
+  return texts[lang] ?? texts.en;
 };
 const docs = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
 // What a "?" link says to a screen reader: which option's documentation it opens.
 // The fields get their names from aria-label, so the link doesn't join them.
-const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
+const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
 ---
 
 {
@@ -148,17 +155,17 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
               <fieldset>
                 {legend && <legend>{legend}</legend>}
                 {fields.map(({ name, placeholder, options, anchor }) => {
-                  const flag = `--${kebab(name)}`;
+                  const text = label(name);
                   const toggle = !placeholder && !options;
                   return (
                     <label class:list={{ checkbox: toggle }}>
-                      {toggle && <input name={name} type="checkbox" aria-label={flag} />}
+                      {toggle && <input name={name} type="checkbox" aria-label={text} />}
                       <span>
-                        <span class="flag">{flag}</span>{" "}
+                        {text}{" "}
                         <a
                           href={docs(anchor ?? kebab(name))}
                           target="_blank"
-                          aria-label={helpLabel(flag)}
+                          aria-label={helpLabel(text)}
                           aria-describedby={`djlint-hint-${name}`}
                         >
                           ?
@@ -166,7 +173,7 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
                       </span>
                       <span id={`djlint-hint-${name}`} hidden set:html={hint(name)} />
                       {options && (
-                        <select name={name} aria-label={flag}>
+                        <select name={name} aria-label={text}>
                           {options.map(([value, text]) => (
                             <option value={value}>{text}</option>
                           ))}
@@ -178,7 +185,7 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
                           type={/^\d+$/.test(placeholder) ? "number" : "text"}
                           min="0"
                           placeholder={placeholder}
-                          aria-label={flag}
+                          aria-label={text}
                         />
                       )}
                     </label>
@@ -232,7 +239,6 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
               class="sr-only"
               id="djlint-status"
               role="status"
-              data-installing={t("djlint.demo_installing")}
               data-version={t("djlint.demo_version")}
               data-error={t("djlint.demo_error")}
             >
@@ -458,8 +464,6 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
       void restored.then(format);
     } else if (type === "status" && message === "error") {
       showError();
-    } else if (type === "status" && message === "installing") {
-      setStatus(status.dataset.installing!);
     } else if (type === "version") {
       document.getElementById("djlint-version")!.textContent = status.dataset
         .version!.replace("{python}", message.python)
@@ -615,12 +619,8 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     align-items: center;
     gap: 0.5rem;
   }
-  .flag {
+  label > span {
     color: var(--sl-color-white);
-    font-family: var(--sl-font-mono);
-    font-variant-ligatures: none;
-    font-size: var(--sl-text-xs);
-    overflow-wrap: anywhere;
   }
   /* A ringed "?" after each flag: the ring sets the link apart from the text. */
   form a {
@@ -664,6 +664,12 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     color: var(--sl-color-gray-2);
     font-size: var(--sl-text-sm);
     line-height: 1.5;
+  }
+  .demo-hint :global(.flag) {
+    display: block;
+    width: fit-content;
+    margin-block-end: 0.25rem;
+    font-variant-ligatures: none;
   }
   .demo-hint :global(code) {
     color: var(--sl-color-white);

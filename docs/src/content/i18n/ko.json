@@ -15,7 +15,6 @@
   "djlint.sections": "섹션",
   "djlint.demo_description": "djLint로 브라우저에서 HTML 템플릿을 포맷하고 검사하세요.",
   "djlint.demo_loading": "djLint 불러오는 중…",
-  "djlint.demo_installing": "djLint 설치 중…",
   "djlint.demo_version": "Python {python}, djLint {djlint}에서 실행 중",
   "djlint.demo_error": "djLint를 불러오지 못했습니다. 연결을 확인한 뒤 페이지를 새로 고치세요.",
   "djlint.demo_copy_link": "링크 복사",

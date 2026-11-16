@@ -1,0 +1,113 @@
+{
+  "profile": {
+    "en": "Profile"
+  },
+  "ignore": {
+    "en": "Rules to skip"
+  },
+  "include": {
+    "en": "Rules to add"
+  },
+  "indent": {
+    "en": "Indent"
+  },
+  "max_line_length": {
+    "en": "Max line length"
+  },
+  "max_attribute_length": {
+    "en": "Max attribute length"
+  },
+  "single_attribute_per_line": {
+    "en": "One attribute per line"
+  },
+  "line_break_after_multiline_tag": {
+    "en": "Line break after a multiline tag"
+  },
+  "no_indent_inner_html": {
+    "en": "Don't indent head and body"
+  },
+  "keep_br_inline": {
+    "en": "Keep <br> inline"
+  },
+  "custom_blocks": {
+    "en": "Custom blocks"
+  },
+  "custom_html": {
+    "en": "Custom HTML tags"
+  },
+  "ignore_blocks": {
+    "en": "Blocks left unindented"
+  },
+  "blank_line_after_tag": {
+    "en": "Blank line after tags"
+  },
+  "blank_line_before_tag": {
+    "en": "Blank line before tags"
+  },
+  "max_blank_lines": {
+    "en": "Max blank lines"
+  },
+  "preserve_blank_lines": {
+    "en": "Keep blank lines"
+  },
+  "preserve_leading_space": {
+    "en": "Keep leading spaces"
+  },
+  "no_line_after_yaml": {
+    "en": "No blank line after YAML"
+  },
+  "close_void_tags": {
+    "en": "Close void tags"
+  },
+  "ignore_case": {
+    "en": "Keep the case of tags"
+  },
+  "sort_attributes": {
+    "en": "Sort attributes"
+  },
+  "sort_load_tags": {
+    "en": "Sort {% load %} tags"
+  },
+  "name_endblocks": {
+    "en": "Name endblocks"
+  },
+  "quote_style": {
+    "en": "Quotes in template tags"
+  },
+  "no_entity_formatting": {
+    "en": "Keep entities as written"
+  },
+  "no_function_formatting": {
+    "en": "Don't format function calls"
+  },
+  "no_set_formatting": {
+    "en": "Don't format {% set %}"
+  },
+  "preserve_class_newlines": {
+    "en": "Keep line breaks in classes"
+  },
+  "format_attribute_template_tags": {
+    "en": "Format template tags in attributes"
+  },
+  "format_css": {
+    "en": "Format CSS"
+  },
+  "indent_css": {
+    "en": "CSS indent"
+  },
+  "format_js": {
+    "en": "Format JavaScript"
+  },
+  "indent_js": {
+    "en": "JavaScript indent"
+  },
+  "format_attribute_js_json": {
+    "en": "Format JS and JSON in attributes"
+  },
+  "format_attribute_js_json_pattern": {
+    "en": "Attributes with JS or JSON"
+  },
+  "format_attribute_js_json_min_props": {
+    "en": "Min properties to spread JSON"
+  }
+}

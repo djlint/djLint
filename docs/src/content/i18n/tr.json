@@ -15,7 +15,6 @@
   "djlint.sections": "Bölümler",
   "djlint.demo_description": "djLint ile HTML şablonlarını tarayıcınızda biçimlendirin ve denetleyin.",
   "djlint.demo_loading": "djLint yükleniyor…",
-  "djlint.demo_installing": "djLint kuruluyor…",
   "djlint.demo_version": "Python {python} ile çalışıyor; djLint {djlint}",
   "djlint.demo_error": "djLint yüklenemedi. Bağlantınızı kontrol edip sayfayı yenileyin.",
   "djlint.demo_copy_link": "Bağlantıyı kopyala",

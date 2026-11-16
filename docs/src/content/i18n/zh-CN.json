@@ -15,7 +15,6 @@
   "djlint.sections": "栏目",
   "djlint.demo_description": "在浏览器中用 djLint 格式化和检查 HTML 模板。",
   "djlint.demo_loading": "正在加载 djLint…",
-  "djlint.demo_installing": "正在安装 djLint…",
   "djlint.demo_version": "运行环境：Python {python}；djLint {djlint}",
   "djlint.demo_error": "无法加载 djLint。请检查网络连接，然后刷新页面。",
   "djlint.demo_copy_link": "复制链接",
