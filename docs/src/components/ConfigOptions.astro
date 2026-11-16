@@ -106,6 +106,17 @@ const rendered = await Promise.all(
     }
     empty.hidden = shown > 0;
   });
+
+  // A link to an option the filter hides (the table of contents lists them
+  // all) clears the filter first, so the browser can scroll to it.
+  document.addEventListener("click", (event) => {
+    const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+    const target = link && document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    if (target?.closest<HTMLElement>(".config-option")?.hidden) {
+      filter.value = "";
+      filter.dispatchEvent(new Event("input"));
+    }
+  });
 </script>
 
 <style>

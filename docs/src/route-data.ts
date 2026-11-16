@@ -1,4 +1,5 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
+
 import options from "./data/configuration.json";
 
 // The configuration page renders its options in a component, so Astro never
