@@ -109,6 +109,14 @@ const links = [
   .top-nav a[aria-current="page"] {
     color: var(--sl-color-white);
   }
+  /* The current section is squiggled, as the current page in the sidebar is. */
+  .top-nav a[aria-current="page"],
+  .menu nav a[aria-current="page"] {
+    text-decoration: underline wavy var(--dj-squiggle);
+    text-decoration-thickness: 1.5px;
+    text-decoration-skip-ink: none;
+    text-underline-offset: 0.35em;
+  }
   .right-group,
   .social-icons {
     gap: 1rem;
