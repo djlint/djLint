@@ -23,7 +23,7 @@ sidebar:
 1. Склонируйте расширение: `git clone https://github.com/djlint/djlint-zed`.
 1. Выполните **zed: install dev extension** в палитре команд и выберите склонированную папку.
 
-Расширение запускает `djlint` из PATH (1.49 или новее), а если его там нет, то через [uv](https://docs.astral.sh/uv/). Чтобы форматировать через djLint, назначьте его форматтером языка в `settings.json`, здесь HTML:
+Нужен djLint 1.49 или новее в PATH либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. Чтобы форматировать через djLint, назначьте его форматтером языка в `settings.json`, здесь HTML:
 
 ```json
 { "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }

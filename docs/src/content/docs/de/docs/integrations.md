@@ -23,7 +23,7 @@ Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprac
 1. Klonen Sie die Erweiterung: `git clone https://github.com/djlint/djlint-zed`.
 1. Führen Sie in der Befehlspalette **zed: install dev extension** aus und wählen Sie den geklonten Ordner.
 
-Die Erweiterung startet `djlint` aus dem PATH (1.49 oder neuer) oder, wenn es dort fehlt, über [uv](https://docs.astral.sh/uv/). Damit djLint formatiert, legen Sie es in `settings.json` als Formatierer einer Sprache fest, hier für HTML:
+Sie braucht djLint 1.49 oder neuer im PATH oder [uv](https://docs.astral.sh/uv/), das djLint ohne Installation ausführt. Damit djLint formatiert, legen Sie es in `settings.json` als Formatierer einer Sprache fest, hier für HTML:
 
 ```json
 { "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }

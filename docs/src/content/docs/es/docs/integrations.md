@@ -23,7 +23,7 @@ La [extensión de djLint](https://github.com/djlint/djlint-zed) ejecuta el [serv
 1. Clona la extensión: `git clone https://github.com/djlint/djlint-zed`.
 1. Ejecuta **zed: install dev extension** desde la paleta de comandos y elige la carpeta clonada.
 
-La extensión ejecuta el `djlint` del PATH (1.49 o posterior) o, si no lo hay, lo ejecuta con [uv](https://docs.astral.sh/uv/). Para formatear con djLint, ponlo como formateador de un lenguaje en `settings.json`, aquí HTML:
+Necesita djLint 1.49 o posterior en el PATH, o [uv](https://docs.astral.sh/uv/), que ejecuta djLint sin instalarlo. Para formatear con djLint, ponlo como formateador de un lenguaje en `settings.json`, aquí HTML:
 
 ```json
 { "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }

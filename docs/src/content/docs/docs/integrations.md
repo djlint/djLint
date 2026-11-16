@@ -23,7 +23,7 @@ The [djLint extension](https://github.com/djlint/djlint-zed) runs the [language 
 1. Clone the extension: `git clone https://github.com/djlint/djlint-zed`.
 1. Run **zed: install dev extension** from the command palette and pick the cloned folder.
 
-The extension runs `djlint` from PATH (1.49 or newer), or through [uv](https://docs.astral.sh/uv/) when there's none. To format with djLint, make it the formatter of a language in `settings.json`, here HTML:
+It needs djLint 1.49 or newer on PATH, or [uv](https://docs.astral.sh/uv/), which runs djLint with no install. To format with djLint, make it the formatter of a language in `settings.json`, here HTML:
 
 ```json
 { "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }

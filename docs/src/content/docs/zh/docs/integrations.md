@@ -23,7 +23,7 @@ djLint 已有多种编辑器集成。
 1. 克隆扩展：`git clone https://github.com/djlint/djlint-zed`
 1. 在命令面板中运行 **zed: install dev extension**，选择克隆下来的文件夹。
 
-扩展会运行 PATH 中的 `djlint`（1.49 或更新版本），找不到时通过 [uv](https://docs.astral.sh/uv/) 运行。要用 djLint 格式化，在 `settings.json` 中把它设为某个语言的格式化工具，这里以 HTML 为例：
+需要 PATH 中有 djLint 1.49 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。要用 djLint 格式化，在 `settings.json` 中把它设为某个语言的格式化工具，这里以 HTML 为例：
 
 ```json
 { "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }

@@ -23,7 +23,7 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 1. 拡張機能をクローンします：`git clone https://github.com/djlint/djlint-zed`
 1. コマンドパレットで **zed: install dev extension** を実行し、クローンしたフォルダーを選びます。
 
-拡張機能は PATH 上の `djlint`（1.49 以降）を実行し、見つからない場合は [uv](https://docs.astral.sh/uv/) 経由で実行します。djLint で整形するには、`settings.json` で言語のフォーマッターに指定します（この例では HTML）：
+PATH 上の djLint 1.49 以降か、djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。djLint で整形するには、`settings.json` で言語のフォーマッターに指定します（この例では HTML）：
 
 ```json
 { "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
