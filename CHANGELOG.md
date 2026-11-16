@@ -9,6 +9,11 @@
 - New rule `D058` reports a Django tag or comment that spans lines, such as a `{# #}` comment written over several lines or an `{% include %}` whose arguments go on to the next line. Django reads a tag only within one line, so it prints these as text, and an `{% if %}` split that way stops the template from compiling. Anything inside a `{% comment %}` or `{% verbatim %}` block is left alone, and so is a `{%` or `{{` that another tag follows before its closing, which `T039` reports.
 - New rule `D059`, off by default, reports consecutive lines that each hold only a `{# #}` comment, which a `{% comment %}` block holds as one. A `djlint:` directive and a translator comment never join such a run, and comments inside `<pre>` and `<textarea>` are left alone, since the line breaks they leave show on the page there.
 
+### Bug fixes
+
+- A switch in a configuration file takes `true` or `false` again, nothing else. 1.51.0 also read `"yes"`, `"on"`, `"1"` and other words for one, which is now an error naming the file. The text `"true"` or `"false"` still works, with a warning to write it without quotes, and so does a number written as text, such as `"100"`.
+- The warning about a code in `include` that never runs no longer names the `html` profile when none is set. It says the rule never runs without a profile, where the linter follows `html`.
+
 ## [1.51.0] - 2026-11-16
 
 ### Feature

@@ -360,18 +360,6 @@ _SETTINGS: Final = frozenset((
     "use_gitignore",
 ))
 
-# The words a switch can be written as, the ones configparser takes.
-_BOOLEAN_WORDS: Final = {
-    "1": True,
-    "yes": True,
-    "true": True,
-    "on": True,
-    "0": False,
-    "no": False,
-    "false": False,
-    "off": False,
-}
-
 # What linter_output_format can name.
 _OUTPUT_FIELDS: Final = frozenset(("code", "end", "filename", "line", "match", "message"))
 
@@ -1529,19 +1517,29 @@ class Config:
         _check_settings(djlint_settings, setting_sources, report)
 
         def setting_int(key: str, default: int) -> int:
-            """Read a whole number from the config file, or the text of one.
+            """Read a whole number from the config file.
 
-            true and false are numbers to Python, and 2.5 would quietly
+            The text of one works too, with a warning, as djLint always took
+            it. true and false are numbers to Python, and 2.5 would quietly
             become 2, so both are refused.
             """
             value = djlint_settings.get(key, default)
             if isinstance(value, float) and value.is_integer():
                 value = int(value)
-            if not isinstance(value, (bool, float)):
+            if isinstance(value, int) and not isinstance(value, bool):
+                return value
+            if isinstance(value, str):
                 try:
-                    return int(value)
-                except (TypeError, ValueError):
+                    number = int(value)
+                except ValueError:
                     pass
+                else:
+                    if key in djlint_settings:
+                        report(
+                            f"{key} in {setting_sources[key]} should be the number {number},"
+                            f" not the text {json.dumps(value)}."
+                        )
+                    return number
             msg = (
                 f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
                 " It must be a whole number."
@@ -1549,19 +1547,21 @@ class Config:
             raise UsageError(msg)
 
         def setting_bool(key: str) -> bool:
-            """Read a switch from the config file: true or false, or a word for one.
+            """Read a switch from the config file: true or false.
 
-            The words are the ones configparser takes, in any case, and 1 or 0.
-            Anything else is refused rather than read as true, so the text
-            "false" can't turn a switch on.
+            The text "true" or "false" works too, with a warning, since older
+            configurations quote it. Anything else is refused rather than read
+            as true, so no text can turn a switch on by being there.
             """
             value = djlint_settings.get(key, False)
             if isinstance(value, bool):
                 return value
-            if isinstance(value, int) and value in {0, 1}:
-                return bool(value)
-            if isinstance(value, str) and (word := value.strip().lower()) in _BOOLEAN_WORDS:
-                return _BOOLEAN_WORDS[word]
+            if isinstance(value, str) and (text := value.strip().lower()) in {"true", "false"}:
+                report(
+                    f"{key} in {setting_sources[key]} should be {text},"
+                    f" not the text {json.dumps(value)}."
+                )
+                return text == "true"
             msg = (
                 f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
                 " It must be true or false."
@@ -1773,9 +1773,15 @@ class Config:
                 return False
             return not any(name.startswith(code) for code in profile_codes)
 
+        # With no profile set, naming html would read as if one were.
+        profile_name = (
+            f"the {lint_profile} profile"
+            if selected_profile
+            else "no profile, where the linter follows html"
+        )
         for code in sorted(included_codes.intersection(rules_by_code)):
             if lint_profile in rules_by_code[code].get("exclude", ()) or code in profile_codes:
-                report(f"include names {code}, which never runs under the {lint_profile} profile.")
+                report(f"include names {code}, which never runs under {profile_name}.")
 
         self.entity_pattern = next(
             (
