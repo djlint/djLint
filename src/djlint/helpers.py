@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import itertools
 from bisect import bisect_left, bisect_right
+from dataclasses import dataclass
 from functools import lru_cache, partial
-from typing import TYPE_CHECKING
+from types import MappingProxyType
+from typing import TYPE_CHECKING, final
 
 import regex as re
 
@@ -754,6 +756,103 @@ def inside_ignored_rule(config: Config, html: str, match: SpanMatch, rule: str) 
             ignore_all_rules,
         ) in _inside_ignored_rule(html, ignored_rules=config.ignored_rule_patterns)
     )
+
+
+@final
+@dataclass(repr=False, eq=False, frozen=True, match_args=False, kw_only=False, slots=True)
+class Span:
+    """A stretch of the html, with the `span()` the ignore checks ask of a match."""
+
+    start: int
+    end: int
+
+    def span(self) -> tuple[int, int]:
+        return self.start, self.end
+
+
+@final
+@dataclass(repr=False, eq=False, frozen=True, match_args=False, kw_only=True, slots=True)
+class DjangoTemplate:
+    """What Django's template lexer reads in a document.
+
+    `comments` are the `{# #}` comments. `stray_openers` are the `{%`, `{{`
+    and `{#` read as text, as nothing closes them on their line, each with
+    where the next closing of its kind starts, or -1. Neither holds what
+    is inside a `{% verbatim %}` block, which Django prints as written, or
+    a `{% comment %}` block, which it drops.
+    """
+
+    comments: tuple[Span, ...]
+    stray_openers: tuple[tuple[int, int], ...]
+
+
+DJANGO_OPENER_PATTERN: Final = compile_pattern(r"\{[%{\#]")
+_DJANGO_CLOSINGS: Final = MappingProxyType({"%": "%}", "{": "}}", "#": "#}"})
+
+
+@lru_cache(maxsize=_SPAN_CACHE_SIZE)
+def read_django_template(html: str) -> DjangoTemplate:
+    """Read a template the way Django's lexer and parser do.
+
+    Django finds its tags with `{%.*?%}|{{.*?}}|{#.*?#}`, whose `.` stops at
+    a line break, so a tag ends on the line it opens on or is text. Inside
+    `{% verbatim %}` every tag but its closing one is text, and
+    `{% comment %}` drops everything up to the first `{% endcomment %}`;
+    both closings are matched by their stripped contents, as Django does.
+
+    Openers come in order, so each search below starts at or past the last
+    one for the same text, and a result still ahead is used again: a run of
+    openers that share one closing, or have none, then costs a lookup each
+    rather than a read to the end of the file.
+    """
+    found: dict[str, int] = {}
+
+    def find(text: str, start: int) -> int:
+        position = found.get(text)
+        if position is None or 0 <= position < start:
+            position = html.find(text, start)
+            found[text] = position
+        return position
+
+    comments: list[Span] = []
+    stray_openers: list[tuple[int, int]] = []
+    verbatim_closing = ""
+    inside_comment_block = False
+    position = 0
+    while (opener := DJANGO_OPENER_PATTERN.search(html, position)) is not None:
+        start = opener.start()
+        kind = html[start + 1]
+        closing = find(_DJANGO_CLOSINGS[kind], start + 2)
+        line_end = find("\n", start)
+        read = not verbatim_closing and not inside_comment_block
+        if closing < 0 or 0 <= line_end < closing:
+            if read:
+                stray_openers.append((start, closing))
+            # the second brace of "{{" can still open a tag, as in "{{#"
+            position = start + 1
+            continue
+
+        # a tag opening on the second brace of a stray "{{" leaves only
+        # the first brace as text
+        if stray_openers and stray_openers[-1][0] == start - 1:
+            stray_openers.pop()
+        position = closing + 2
+        if kind == "#":
+            if read:
+                comments.append(Span(start, position))
+        elif kind == "%":
+            contents = html[start + 2 : closing].strip()
+            if verbatim_closing:
+                if contents == verbatim_closing:
+                    verbatim_closing = ""
+            elif contents[:9] in {"verbatim", "verbatim "}:
+                verbatim_closing = f"end{contents}"
+            elif inside_comment_block:
+                inside_comment_block = contents != "endcomment"
+            else:
+                inside_comment_block = contents.split(maxsplit=1)[:1] == ["comment"]
+
+    return DjangoTemplate(comments=tuple(comments), stray_openers=tuple(stray_openers))
 
 
 _BRANCHED_BLOCK_PATTERN: Final = compile_pattern(

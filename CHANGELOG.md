@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Feature
+
+- New rule `D058` reports a Django tag or comment that spans lines, such as a `{# #}` comment written over several lines or an `{% include %}` whose arguments go on to the next line. Django reads a tag only within one line, so it prints these as text, and an `{% if %}` split that way stops the template from compiling. Anything inside a `{% comment %}` or `{% verbatim %}` block is left alone, and so is a `{%` or `{{` that another tag follows before its closing, which `T039` reports.
+- New rule `D059`, off by default, reports consecutive lines that each hold only a `{# #}` comment, which a `{% comment %}` block holds as one. A `djlint:` directive and a translator comment never join such a run, and comments inside `<pre>` and `<textarea>` are left alone, since the line breaks they leave show on the page there.
+
 ## [1.51.0] - 2026-11-16
 
 ### Feature

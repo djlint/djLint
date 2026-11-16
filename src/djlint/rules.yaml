@@ -471,3 +471,12 @@
     name: H057
     message: Video should have a captions track.
     python_module: djlint.rules.H057
+- rule:
+    name: D058
+    message: (Django) Template tag or comment spans lines, which Django reads as text.
+    python_module: djlint.rules.D058
+- rule:
+    name: D059
+    message: "(Django) Consecutive {# #} comment lines should be one {% comment %} block."
+    default: false
+    python_module: djlint.rules.D059

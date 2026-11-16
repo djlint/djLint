@@ -103,6 +103,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H055   | lang 属性は en や pt-BR のような言語タグにする必要があります。                                                    | ✔️         |
 | H056   | src を空にしてはいけません。                                                                                      | ✔️         |
 | H057   | video にはキャプションのトラックが必要です。                                                                      | ✔️         |
+| D058   | （Django）テンプレートタグやコメントが複数行にまたがり、Django がテキストとして読みます。                         | ✔️         |
+| D059   | （Django）連続する {% raw %}`{# #}`{% endraw %} の行は 1 つのコメントブロックにする必要があります。               | -          |
 
 ### コードのパターン
 
@@ -1455,6 +1457,56 @@ html の仕様では空の `src` は無効とされており、ブラウザー�
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django がタグを読むのは 1 行の中だけです。後の行で閉じる `{{ }}`、`{% %}`、`{# #}` は Django にとってテキストなので、ページには書いたとおりに表示されます。このように分割された `{% if %}` では、対応する `{% endif %}` が無効なブロックタグになり、テンプレートがコンパイルできなくなります。Jinja や Nunjucks はこうしたタグを読むので、その癖を持ち込みがちです。タグは 1 行に書き、長いコメントは `{% comment %}` ブロックで書いてください。
+
+`{% comment %}` ブロックや `{% verbatim %}` ブロックの中は報告されません。Django は前者を捨て、後者を書いたとおりに出力するためです。閉じる前に別のタグが開く `{%` や `{{` はそもそも閉じられていないので、`T039` が報告します。コメントは中身が何であれ `#}` まで続くので、中でコメントアウトされたタグがあってもコメントは終わりません。
+
+悪い例：
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+良い例：
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+`{# #}` コメントは 1 行に収める必要があるため、長いメモは 1 行に 1 つずつ `{# #}` を書く形になりがちです。Django のドキュメントは、それより長いものには `{% comment %}` ブロックを使うよう案内しています。メモがひとまとまりになり、各行には本文だけが残ります。
+
+デフォルトでは無効です。`--include=D059` で有効にします。`{# #}` の行を並べても Django としては正しいので、これはスタイルの問題であり、フォーマッターが一方の形をもう一方に書き換えることはありません。フォーマッターはブロックの `{% comment %}` と `{% endcomment %}` タグをインデントしますが、その間の行は書いたとおりに残します。
+
+数えるのは、コメントだけが書かれた行です。空行があるとそこで連続は途切れます。`djlint:` ディレクティブは単独のコメントとしてしか働かないので、連続には含まれません。翻訳者向けコメント `{# Translators: ... #}` も同様です。`makemessages` は `{% comment %}` ブロックのうち `Translators` で始まる行から最後までのすべての行を翻訳者に渡すので、その後の行まで翻訳者に届いてしまいます。`<pre>` と `<textarea>` の中のコメントはそのままにします。そこでは `{# #}` の行ごとに改行が残ってページに表示され、ブロックにすると改行が減るためです。
+
+悪い例：
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+良い例：
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 {% endraw %}

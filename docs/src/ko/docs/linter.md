@@ -103,6 +103,8 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | H055 | lang 속성은 en이나 pt-BR 같은 언어 태그여야 합니다.                                        | ✔️     |
 | H056 | src는 비어 있으면 안 됩니다.                                                               | ✔️     |
 | H057 | video에는 자막 트랙이 있어야 합니다.                                                       | ✔️     |
+| D058 | (Django) 템플릿 태그나 주석이 여러 줄에 걸쳐 있어 Django가 텍스트로 읽습니다.              | ✔️     |
+| D059 | (Django) 연속된 {% raw %}`{# #}`{% endraw %} 줄은 하나의 주석 블록이어야 합니다.           | -      |
 
 ### 코드 패턴
 
@@ -1455,6 +1457,56 @@ HTML 명세는 빈 `src`가 유효하지 않다고 정하고, 브라우저가 �
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django는 한 줄 안에서만 태그를 읽습니다. 다음 줄에서 닫히는 `{{ }}`, `{% %}`, `{# #}`는 Django에게 텍스트이므로 페이지에 쓴 그대로 표시되고, 이렇게 나뉜 `{% if %}`는 그 `{% endif %}`를 잘못된 블록 태그로 만들어 템플릿이 컴파일되지 않습니다. Jinja와 Nunjucks는 이런 태그를 읽기 때문에 그 습관을 그대로 가져오기 쉽습니다. 태그는 한 줄에 쓰고, 긴 주석은 `{% comment %}` 블록으로 쓰세요.
+
+`{% comment %}`나 `{% verbatim %}` 블록 안은 보고하지 않습니다. Django는 앞의 것을 버리고 뒤의 것은 쓴 그대로 출력하기 때문입니다. 닫히기 전에 다른 태그가 열리는 `{%`나 `{{`는 애초에 닫힌 적이 없으며, `T039`가 보고합니다. 주석은 무엇을 담고 있든 `#}`까지 이어지므로, 안에서 주석 처리된 태그가 주석을 끝내지 않습니다.
+
+잘못된 예:
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+올바른 예:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+`{# #}` 주석은 한 줄에 들어가야 하므로, 긴 메모는 흔히 한 줄에 하나씩 `{# #}`로 쓰게 됩니다. Django 문서는 그보다 긴 것에는 `{% comment %}` 블록을 쓰라고 안내합니다. 메모가 한 덩어리로 유지되고 각 줄에는 본문만 남습니다.
+
+기본으로 꺼져 있으며, `--include=D059`로 켭니다. `{# #}` 줄을 이어 쓴 것도 올바른 Django이므로 이것은 스타일의 문제이고, 포맷터는 한 형태를 다른 형태로 바꾸지 않습니다. 포맷터는 블록의 `{% comment %}`와 `{% endcomment %}` 태그는 들여쓰지만 그 사이의 줄은 쓴 그대로 둡니다.
+
+주석만 있는 줄을 셉니다. 빈 줄이 있으면 연속이 끊깁니다. `djlint:` 지시문은 독립된 주석으로만 동작하므로 연속에 포함되지 않습니다. 번역자용 주석 `{# Translators: ... #}`도 마찬가지입니다. `makemessages`는 `{% comment %}` 블록에서 `Translators`로 시작하는 줄부터 끝까지의 모든 줄을 번역자에게 전달하므로, 그 뒤의 줄까지 번역자에게 전달됩니다. `<pre>`와 `<textarea>` 안의 주석은 그대로 둡니다. 그곳에서는 `{# #}` 줄마다 남는 줄바꿈이 페이지에 보이고, 블록으로 바꾸면 줄바꿈이 줄어들기 때문입니다.
+
+잘못된 예:
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+올바른 예:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 {% endraw %}
