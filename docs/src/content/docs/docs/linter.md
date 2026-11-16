@@ -31,7 +31,7 @@ For example:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-This can also be done through the [Configuration](/docs/configuration) file.
+This can also be done through the [Configuration](/docs/configuration/) file.
 
 Of the built-in rules, only the H rules run without a [profile](/docs/configuration/#profile). The T rules and the rules for one template language (D, J, M, N) come with the profiles they apply to. A rule named in `--include` runs under any profile or without one, except under a profile its details below say it is not applied to.
 
@@ -58,7 +58,7 @@ Of the built-in rules, only the H rules run without a [profile](/docs/configurat
 | H016 | Missing `title` tag in html.                                                                 | ✔️      |
 | H017 | Void tags should be self closing (conflicts with: H018).                                     | -       |
 | D018 | (Django) Internal links should use the `{% url ... %}` pattern.                              | ✔️      |
-| H018 | Void tags are self closing by nature and must end with ">", not "/>" (conflicts with: H017). | -       |
+| H018 | Void tags are self closing by nature and must end with `>`, not `/>` (conflicts with: H017). | -       |
 | J018 | (Jinja) Internal links should use the `{{ url_for() ... }}` pattern.                         | ✔️      |
 | H019 | Replace `javascript:abc()` with `on_` event and real url.                                    | ✔️      |
 | H020 | Empty tag pair found. Consider removing.                                                     | ✔️      |
@@ -351,7 +351,7 @@ Do:
 
 `Attribute values should be quoted.`
 
-Unquoted attribute values end at the first whitespace, so a value like class=btn primary silently drops everything after the space (the browser treats "primary" as a separate boolean attribute). Values that come from template variables are especially fragile: any rendered space, "=", or ">" corrupts the tag. Quoting makes the value boundary explicit and safe.
+Unquoted attribute values end at the first whitespace, so a value like class=btn primary silently drops everything after the space (the browser treats "primary" as a separate boolean attribute). Values that come from template variables are especially fragile: any rendered space, `=`, or `>` corrupts the tag. Quoting makes the value boundary explicit and safe.
 
 Don't:
 
@@ -369,7 +369,7 @@ Do:
 
 `There should be no spaces around attribute =.`
 
-HTML allows whitespace around "=", so this is a style rule. Writing name="value" without spaces is the usual style, and it is what simple text tooling such as grep or search-and-replace assumes, so mixed spacing makes attributes harder to find and refactor. `--reformat` drops the spaces for you.
+HTML allows whitespace around `=`, so this is a style rule. Writing name="value" without spaces is the usual style, and it is what simple text tooling such as grep or search-and-replace assumes, so mixed spacing makes attributes harder to find and refactor. `--reformat` drops the spaces for you.
 
 Not applied to the angular profile.
 

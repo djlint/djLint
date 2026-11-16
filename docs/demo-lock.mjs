@@ -24,7 +24,7 @@ if (!worker.includes(CDN)) {
 
 /** @returns {string} The commit, which the demo shows next to the version. */
 function commit() {
-  const sha = process.env.CF_PAGES_COMMIT_SHA ?? process.env.GITHUB_SHA;
+  const sha = process.env.WORKERS_CI_COMMIT_SHA ?? process.env.GITHUB_SHA;
   if (sha) {
     return sha.slice(0, 7);
   }

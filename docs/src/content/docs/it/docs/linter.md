@@ -31,7 +31,7 @@ Ad esempio:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Si può fare anche tramite il file di [configurazione](/it/docs/configuration).
+Si può fare anche tramite il file di [configurazione](/it/docs/configuration/).
 
 Senza [profilo](/it/docs/configuration/#profile), delle regole integrate girano solo le regole H. Le regole T e quelle di un singolo linguaggio di template (D, J, M, N) arrivano con i profili a cui si applicano. Una regola indicata in `--include` gira con qualsiasi profilo o senza profilo, tranne con uno a cui, secondo la sua descrizione più sotto, non si applica.
 
@@ -58,7 +58,7 @@ Senza [profilo](/it/docs/configuration/#profile), delle regole integrate girano 
 | H016   | Tag `title` mancante nell'html.                                                                                   | ✔️          |
 | H017   | I tag void devono essere autochiudenti (in conflitto con: H018).                                                  | -           |
 | D018   | (Django) I link interni devono usare lo schema `{% url ... %}`.                                                   | ✔️          |
-| H018   | I tag void sono autochiudenti per natura e devono terminare con ">", non con "/>" (in conflitto con: H017).       | -           |
+| H018   | I tag void sono autochiudenti per natura e devono terminare con `>`, non con `/>` (in conflitto con: H017).       | -           |
 | J018   | (Jinja) I link interni devono usare lo schema `{{ url_for() ... }}`.                                              | ✔️          |
 | H019   | Sostituisci `javascript:abc()` con un evento `on_` e un URL reale.                                                | ✔️          |
 | H020   | Trovata una coppia di tag vuota. Valuta di rimuoverla.                                                            | ✔️          |
@@ -351,7 +351,7 @@ Da preferire:
 
 `Attribute values should be quoted.`
 
-I valori di attributo senza virgolette terminano al primo spazio, quindi un valore come class=btn primary perde silenziosamente tutto ciò che segue lo spazio (il browser tratta "primary" come un attributo booleano separato). I valori che provengono da variabili di template sono particolarmente fragili: qualsiasi spazio, "=" o ">" renderizzato corrompe il tag. Le virgolette rendono esplicito e sicuro il confine del valore.
+I valori di attributo senza virgolette terminano al primo spazio, quindi un valore come class=btn primary perde silenziosamente tutto ciò che segue lo spazio (il browser tratta "primary" come un attributo booleano separato). I valori che provengono da variabili di template sono particolarmente fragili: qualsiasi spazio, `=` o `>` renderizzato corrompe il tag. Le virgolette rendono esplicito e sicuro il confine del valore.
 
 Da evitare:
 
@@ -369,7 +369,7 @@ Da preferire:
 
 `There should be no spaces around attribute =.`
 
-L'HTML ammette spazi attorno a "=", quindi questa è una regola di stile. Scrivere name="value" senza spazi è lo stile abituale, ed è ciò che presuppongono i semplici strumenti testuali come grep o cerca e sostituisci, quindi una spaziatura mista rende gli attributi più difficili da trovare e da rifattorizzare. `--reformat` rimuove gli spazi al posto tuo.
+L'HTML ammette spazi attorno a `=`, quindi questa è una regola di stile. Scrivere name="value" senza spazi è lo stile abituale, ed è ciò che presuppongono i semplici strumenti testuali come grep o cerca e sostituisci, quindi una spaziatura mista rende gli attributi più difficili da trovare e da rifattorizzare. `--reformat` rimuove gli spazi al posto tuo.
 
 Non si applica al profilo angular.
 

@@ -46,7 +46,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 ```
 
-Veja [Configurações](#configurações).
+Veja [Configurações](#configuracoes).
 
 ### conform.nvim e nvim-lint
 
@@ -112,7 +112,7 @@ No PyCharm e nas outras IDEs baseadas no IntelliJ, use o plugin gratuito [LSP4IJ
 1. Abra a janela de ferramentas LSP Consoles e adicione um novo servidor de linguagem.
 1. Na aba **Server**, defina o nome como `djLint` e o comando como `djlint --lsp`, com o caminho completo do `djlint` no ambiente virtual do projeto, caso ele não esteja no PATH.
 1. Na aba **Mappings**, adicione um padrão de nome de arquivo para os seus templates, como `*.html`. Se a configuração do projeto não tiver um [perfil](/pt-br/docs/configuration/#profile), defina o ID de linguagem como `htmldjango` em um projeto Django, para que o perfil certo seja escolhido.
-1. Na aba **Configuration**, você pode definir as [configurações](#configurações) em JSON, sob a chave `djlint`.
+1. Na aba **Configuration**, você pode definir as [configurações](#configuracoes) em JSON, sob a chave `djlint`.
 
 As ocorrências aparecem no editor, e o **Reformat Code** pode usar o servidor para os arquivos mapeados.
 

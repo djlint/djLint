@@ -31,7 +31,7 @@ Por ejemplo:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-También se puede hacer desde el archivo de [configuración](/es/docs/configuration).
+También se puede hacer desde el archivo de [configuración](/es/docs/configuration/).
 
 Sin [perfil](/es/docs/configuration/#profile), de las reglas incluidas solo se aplican las reglas H. Las reglas T y las de un lenguaje de plantillas concreto (D, J, M, N) llegan con los perfiles a los que se aplican. Una regla indicada en `--include` se aplica con cualquier perfil o sin perfil, salvo con uno al que, según su descripción más abajo, no se aplica.
 
@@ -58,7 +58,7 @@ Sin [perfil](/es/docs/configuration/#profile), de las reglas incluidas solo se a
 | H016   | Falta la etiqueta `title` en el html.                                                                                         | ✔️          |
 | H017   | Las etiquetas vacías deben ser autocerradas (en conflicto con: H018).                                                         | -           |
 | D018   | (Django) Los enlaces internos deben usar el patrón `{% url ... %}`.                                                           | ✔️          |
-| H018   | Las etiquetas vacías se cierran solas por naturaleza y deben terminar en ">", no en "/>" (en conflicto con: H017).            | -           |
+| H018   | Las etiquetas vacías se cierran solas por naturaleza y deben terminar en `>`, no en `/>` (en conflicto con: H017).            | -           |
 | J018   | (Jinja) Los enlaces internos deben usar el patrón `{{ url_for() ... }}`.                                                      | ✔️          |
 | H019   | Sustituye `javascript:abc()` por un evento `on_` y una URL real.                                                              | ✔️          |
 | H020   | Se encontró un par de etiquetas vacío. Plantéate eliminarlo.                                                                  | ✔️          |
@@ -351,7 +351,7 @@ Haz esto:
 
 `Attribute values should be quoted.`
 
-Los valores de atributo sin comillas terminan en el primer espacio en blanco, así que un valor como class=btn primary pierde sin avisar todo lo que va después del espacio (el navegador trata "primary" como un atributo booleano aparte). Los valores que vienen de variables de plantilla son especialmente frágiles: cualquier espacio, "=" o ">" que se renderice corrompe la etiqueta. Las comillas hacen explícito y seguro el límite del valor.
+Los valores de atributo sin comillas terminan en el primer espacio en blanco, así que un valor como class=btn primary pierde sin avisar todo lo que va después del espacio (el navegador trata "primary" como un atributo booleano aparte). Los valores que vienen de variables de plantilla son especialmente frágiles: cualquier espacio, `=` o `>` que se renderice corrompe la etiqueta. Las comillas hacen explícito y seguro el límite del valor.
 
 No hagas esto:
 
@@ -369,7 +369,7 @@ Haz esto:
 
 `There should be no spaces around attribute =.`
 
-HTML admite espacios en blanco alrededor del "=", así que esta es una regla de estilo. Escribir nombre="valor" sin espacios es el estilo habitual, y es lo que dan por hecho las herramientas de texto sencillas, como grep o buscar y reemplazar, así que un espaciado mezclado hace más difícil encontrar los atributos y refactorizarlos. `--reformat` quita los espacios por ti.
+HTML admite espacios en blanco alrededor del `=`, así que esta es una regla de estilo. Escribir nombre="valor" sin espacios es el estilo habitual, y es lo que dan por hecho las herramientas de texto sencillas, como grep o buscar y reemplazar, así que un espaciado mezclado hace más difícil encontrar los atributos y refactorizarlos. `--reformat` quita los espacios por ti.
 
 No se aplica al perfil angular.
 

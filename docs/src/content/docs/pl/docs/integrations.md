@@ -21,7 +21,7 @@ W Neovimie djLint może służyć jako linter i formater.
 
 ### Wbudowany klient LSP (zalecany)
 
-Neovim 0.11 lub nowszy może komunikować się z [serwerem języka](#serwer-języka) djLint bezpośrednio, bez żadnej wtyczki. Daje to zgłoszenia już podczas pisania, z podkreślonymi zakresami, oraz formatowanie przez `vim.lsp.buf.format()`:
+Neovim 0.11 lub nowszy może komunikować się z [serwerem języka](#serwer-jezyka) djLint bezpośrednio, bez żadnej wtyczki. Daje to zgłoszenia już podczas pisania, z podkreślonymi zakresami, oraz formatowanie przez `vim.lsp.buf.format()`:
 
 ```lua
 vim.lsp.config("djlint", {
@@ -120,7 +120,7 @@ Zgłoszenia pojawiają się w edytorze, a **Reformat Code** może używać serwe
 
 ### LSP (zalecany)
 
-Pakiet [LSP](https://packagecontrol.io/packages/LSP) uruchamia [serwer języka](#serwer-języka), który zapewnia zgłoszenia podczas pisania oraz formatowanie.
+Pakiet [LSP](https://packagecontrol.io/packages/LSP) uruchamia [serwer języka](#serwer-jezyka), który zapewnia zgłoszenia podczas pisania oraz formatowanie.
 
 Uruchom **Preferences: LSP Server Configurations** i dodaj:
 
@@ -140,7 +140,7 @@ Upewnij się, że djLint jest zainstalowany w globalnym Pythonie lub dostępny w
 
 ## Helix
 
-Helix może uruchamiać [serwer języka](#serwer-języka) skonfigurowany w `languages.toml`:
+Helix może uruchamiać [serwer języka](#serwer-jezyka) skonfigurowany w `languages.toml`:
 
 ```toml
 [language-server.djlint]

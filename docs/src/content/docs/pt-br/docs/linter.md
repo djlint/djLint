@@ -31,7 +31,7 @@ Por exemplo:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Isso também pode ser feito pelo arquivo de [configuração](/pt-br/docs/configuration).
+Isso também pode ser feito pelo arquivo de [configuração](/pt-br/docs/configuration/).
 
 Sem [perfil](/pt-br/docs/configuration/#profile), das regras embutidas só as regras H rodam. As regras T e as de uma linguagem de template específica (D, J, M, N) vêm com os perfis aos quais se aplicam. Uma regra indicada em `--include` roda em qualquer perfil ou sem perfil, exceto em um ao qual, segundo a descrição dela abaixo, ela não se aplica.
 
@@ -58,7 +58,7 @@ Sem [perfil](/pt-br/docs/configuration/#profile), das regras embutidas só as re
 | H016   | Falta a tag `title` no html.                                                                                               | ✔️     |
 | H017   | As tags vazias (void) devem ser autofechadas (conflita com: H018).                                                         | -      |
 | D018   | (Django) Links internos devem usar o padrão `{% url ... %}`.                                                               | ✔️     |
-| H018   | As tags vazias (void) já são autofechadas por natureza e devem terminar com ">", não "/>" (conflita com: H017).            | -      |
+| H018   | As tags vazias (void) já são autofechadas por natureza e devem terminar com `>`, não `/>` (conflita com: H017).            | -      |
 | J018   | (Jinja) Links internos devem usar o padrão `{{ url_for() ... }}`.                                                          | ✔️     |
 | H019   | Substitua `javascript:abc()` por um evento `on_` e uma URL real.                                                           | ✔️     |
 | H020   | Par de tags vazio encontrado. Considere removê-lo.                                                                         | ✔️     |
@@ -351,7 +351,7 @@ Faça:
 
 `Attribute values should be quoted.`
 
-Valores de atributos sem aspas terminam no primeiro espaço em branco, então um valor como class=btn primary descarta silenciosamente tudo o que vem depois do espaço (o navegador trata "primary" como um atributo booleano separado). Valores que vêm de variáveis de template são especialmente frágeis: qualquer espaço, "=" ou ">" renderizado corrompe a tag. As aspas deixam o limite do valor explícito e seguro.
+Valores de atributos sem aspas terminam no primeiro espaço em branco, então um valor como class=btn primary descarta silenciosamente tudo o que vem depois do espaço (o navegador trata "primary" como um atributo booleano separado). Valores que vêm de variáveis de template são especialmente frágeis: qualquer espaço, `=` ou `>` renderizado corrompe a tag. As aspas deixam o limite do valor explícito e seguro.
 
 Não faça:
 
@@ -369,7 +369,7 @@ Faça:
 
 `There should be no spaces around attribute =.`
 
-O HTML permite espaços em torno do "=", então esta é uma regra de estilo. Escrever name="value" sem espaços é o estilo usual, e é o que ferramentas simples de texto, como grep ou buscar e substituir, pressupõem, então um espaçamento misto torna os atributos mais difíceis de encontrar e refatorar. O `--reformat` remove os espaços para você.
+O HTML permite espaços em torno do `=`, então esta é uma regra de estilo. Escrever name="value" sem espaços é o estilo usual, e é o que ferramentas simples de texto, como grep ou buscar e substituir, pressupõem, então um espaçamento misto torna os atributos mais difíceis de encontrar e refatorar. O `--reformat` remove os espaços para você.
 
 Não se aplica ao perfil angular.
 

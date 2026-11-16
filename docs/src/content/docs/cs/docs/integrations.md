@@ -21,7 +21,7 @@ djLint lze v Neovimu používat jako linter i formátovač.
 
 ### Vestavěný klient LSP (doporučeno)
 
-Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykový-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`:
+Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`:
 
 ```lua
 vim.lsp.config("djlint", {
@@ -46,7 +46,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 ```
 
-Viz [Nastavení](#nastavení).
+Viz [Nastavení](#nastaveni).
 
 ### conform.nvim a nvim-lint
 
@@ -112,7 +112,7 @@ V PyCharmu a dalších IDE postavených na IntelliJ použijte bezplatný plugi
 1. Otevřete nástrojové okno LSP Consoles a přidejte nový jazykový server.
 1. Na kartě **Server** nastavte název na `djLint` a příkaz na `djlint --lsp`, a pokud `djlint` z virtuálního prostředí projektu není v PATH, uveďte jeho úplnou cestu.
 1. Na kartě **Mappings** přidejte vzor názvů souborů pro vaše šablony, například `*.html`. Pokud konfigurace projektu nemá žádný [profil](/cs/docs/configuration/#profile), nastavte u projektu v Djangu ID jazyka na `htmldjango`, aby se vybral ten správný.
-1. Na kartě **Configuration** můžete zadat [nastavení](#nastavení) jako JSON pod klíčem `djlint`.
+1. Na kartě **Configuration** můžete zadat [nastavení](#nastaveni) jako JSON pod klíčem `djlint`.
 
 Nálezy se zobrazují v editoru a **Reformat Code** může pro namapované soubory používat server.
 
@@ -120,7 +120,7 @@ Nálezy se zobrazují v editoru a **Reformat Code** může pro namapované sou
 
 ### LSP (doporučeno)
 
-Balíček [LSP](https://packagecontrol.io/packages/LSP) spouští [jazykový server](#jazykový-server), který poskytuje nálezy už během psaní a formátování.
+Balíček [LSP](https://packagecontrol.io/packages/LSP) spouští [jazykový server](#jazykovy-server), který poskytuje nálezy už během psaní a formátování.
 
 Spusťte **Preferences: LSP Server Configurations** a přidejte:
 
@@ -140,7 +140,7 @@ Ujistěte se, že je djLint nainstalovaný v globálním Pythonu nebo je ve va�
 
 ## Helix
 
-Helix umí spouštět [jazykový server](#jazykový-server) ze souboru `languages.toml`:
+Helix umí spouštět [jazykový server](#jazykovy-server) ze souboru `languages.toml`:
 
 ```toml
 [language-server.djlint]
