@@ -327,8 +327,8 @@ class _SectionedHelpCommand(click.Command):
     help=(
         "Template language: html, django, jinja, nunjucks, handlebars, liquid, golang,"
         " angular, tera, askama, mako or all. It decides which linter rules run and how"
-        " template syntax is formatted. Without one, formatting follows all and linting"
-        " follows html."
+        " template syntax is formatted. Without one, formatting follows all and the"
+        " linter runs the rules of html."
     ),
 )
 @click.option(

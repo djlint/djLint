@@ -35,7 +35,7 @@ Configuration:
                                   tera, askama, mako or all. It decides which
                                   linter rules run and how template syntax is
                                   formatted. Without one, formatting follows all
-                                  and linting follows html.
+                                  and the linter runs the rules of html.
   --configuration FILE            Global config file: a pyproject.toml,
                                   djlint.toml or .djlintrc. The project's own
                                   config file wins where both set an option.
