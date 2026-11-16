@@ -1,4 +1,4 @@
-const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
+const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.8/full/";
 const { loadPyodide } = await import(`${PYODIDE_URL}pyodide.mjs`);
 
 const CONFIG_ARGS = [
