@@ -1,6 +1,8 @@
 {
   "name": "djlint",
   "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "preview_urls": true,
   "assets": { "directory": "./dist", "not_found_handling": "404-page" },
   "previews": {},
 }
