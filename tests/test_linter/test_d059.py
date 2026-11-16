@@ -65,6 +65,11 @@ test_data = [
         id="a pre opening inside a comment block opens nothing",
     ),
     pytest.param(
+        ("{# <textarea> #}\n<pre>\n{# a #}\n{# b #}\n</pre>\n{# </textarea> #}"),
+        ([]),
+        id="a textarea inside comments does not hide a pre",
+    ),
+    pytest.param(
         ("{% comment %}\n{# a #}\n{# b #}\n{% endcomment %}"), ([]), id="inside a comment block"
     ),
     pytest.param(

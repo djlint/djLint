@@ -40,24 +40,25 @@ _PREFORMATTED: Final = frozenset(("pre", "textarea"))
 _NON_NEWLINE_PATTERN: Final = compile_pattern(r"[^\n]")
 
 
-def _preformatted_bodies(
-    html: str, comment_blocks: tuple[Span, ...]
-) -> tuple[tuple[int, int], ...]:
+def _preformatted_bodies(html: str, template: DjangoTemplate) -> tuple[tuple[int, int], ...]:
     """The bodies of `<pre>` and `<textarea>`, in order.
 
     Neither nests, so an opening is closed by the next closing tag of its
     name, or by the end of the document as a browser reads it. Django drops
-    a `{% comment %}` block before any browser sees it, so the tags in one
-    are blanked first, keeping every offset.
+    its comments, `{# #}` and `{% comment %}` alike, before any browser sees
+    them, so a comment holding markup is blanked first, keeping every
+    offset. The two kinds never overlap, as neither opens inside the other.
     """
     pieces: list[str] = []
     previous = 0
-    for block in comment_blocks:
+    for comment in sorted((*template.comments, *template.comment_blocks)):
+        if "<" not in html[comment.start : comment.end]:
+            continue
         pieces.extend((
-            html[previous : block.start],
-            _NON_NEWLINE_PATTERN.sub(" ", html[block.start : block.end]),
+            html[previous : comment.start],
+            _NON_NEWLINE_PATTERN.sub(" ", html[comment.start : comment.end]),
         ))
-        previous = block.end
+        previous = comment.end
     pieces.append(html[previous:])
     bodies: list[tuple[int, int]] = []
     opening: TagToken | None = None
@@ -95,7 +96,7 @@ def _joins_a_block(html: str, comment: Span, bodies: tuple[tuple[int, int], ...]
 
 def _runs(html: str, template: DjangoTemplate) -> Iterator[Span]:
     """Each run of two or more comment lines in a row, as one span."""
-    bodies = _preformatted_bodies(html, template.comment_blocks)
+    bodies = _preformatted_bodies(html, template)
     lines: list[Span] = []
     for comment in template.comments:
         if not _joins_a_block(html, comment, bodies):
