@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- A switch in a configuration file takes `true` or `false` again, nothing else. 1.51.0 also read `"yes"`, `"on"`, `"1"` and other words for one, which is now an error naming the file. The text `"true"` or `"false"` still works, with a warning to write it without quotes, and so does a number written as text, such as `"100"`.
+
 ## [1.51.0] - 2026-11-16
 
 ### Feature

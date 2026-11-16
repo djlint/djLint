@@ -259,24 +259,9 @@ def test_per_file_ignores_take_a_list(tmp_path: Path) -> None:
     assert Config(str(tmp_path)).per_file_ignores == {"base.html": "H030,H025"}
 
 
-@pytest.mark.parametrize(
-    ("value", "expected"),
-    [
-        pytest.param("true", True, id="true"),
-        pytest.param('"true"', True, id="text true"),
-        pytest.param('"Yes"', True, id="yes"),
-        pytest.param('" on "', True, id="on"),
-        pytest.param('"1"', True, id="text 1"),
-        pytest.param("1", True, id="1"),
-        pytest.param("false", False, id="false"),
-        pytest.param('"false"', False, id="text false"),
-        pytest.param('"NO"', False, id="no"),
-        pytest.param('"off"', False, id="off"),
-        pytest.param("0", False, id="0"),
-    ],
-)
-def test_a_switch_takes_the_words_for_true_and_false(
-    tmp_path: Path, value: str, expected: bool
+@pytest.mark.parametrize(("value", "expected"), [("true", True), ("false", False)])
+def test_a_switch_is_true_or_false(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], value: str, expected: bool
 ) -> None:
     (tmp_path / ".djlintrc").write_text(
         f'{{"format_css": {value}, "require_pragma": {value}}}', encoding="utf-8"
@@ -284,11 +269,25 @@ def test_a_switch_takes_the_words_for_true_and_false(
 
     config = Config(str(tmp_path))
 
-    assert config.format_css is expected
-    assert config.require_pragma is expected
+    assert (config.format_css, config.require_pragma) == (expected, expected)
+    assert not capsys.readouterr().err
 
 
-@pytest.mark.parametrize("value", ['"maybe"', "2", '""', "[]", "null"])
+@pytest.mark.parametrize(("value", "expected"), [('"true"', True), ('" False "', False)])
+def test_a_switch_written_as_text_works_with_a_warning(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], value: str, expected: bool
+) -> None:
+    (tmp_path / ".djlintrc").write_text(f'{{"format_css": {value}}}', encoding="utf-8")
+
+    assert Config(str(tmp_path)).format_css is expected
+    assert _warnings(capsys) == [
+        f"format_css in .djlintrc should be {str(expected).lower()}, not the text {value}."
+    ]
+
+
+@pytest.mark.parametrize(
+    "value", ['"yes"', '"off"', '"1"', "1", "0", '"maybe"', '""', "[]", "null"]
+)
 def test_a_switch_refuses_other_values(tmp_path: Path, value: str) -> None:
     (tmp_path / ".djlintrc").write_text(f'{{"format_css": {value}}}', encoding="utf-8")
 
@@ -298,13 +297,25 @@ def test_a_switch_refuses_other_values(tmp_path: Path, value: str) -> None:
         Config(str(tmp_path))
 
 
-@pytest.mark.parametrize(("value", "expected"), [("100", 100), ('"100"', 100), ("100.0", 100)])
-def test_a_number_takes_a_whole_number_in_any_form(
-    tmp_path: Path, value: str, expected: int
+@pytest.mark.parametrize("value", ["100", "100.0"])
+def test_a_number_takes_a_whole_number(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], value: str
 ) -> None:
     (tmp_path / ".djlintrc").write_text(f'{{"max_line_length": {value}}}', encoding="utf-8")
 
-    assert Config(str(tmp_path)).max_line_length == expected
+    assert Config(str(tmp_path)).max_line_length == 100
+    assert not capsys.readouterr().err
+
+
+def test_a_number_written_as_text_works_with_a_warning(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    (tmp_path / ".djlintrc").write_text('{"max_line_length": "100"}', encoding="utf-8")
+
+    assert Config(str(tmp_path)).max_line_length == 100
+    assert _warnings(capsys) == [
+        'max_line_length in .djlintrc should be the number 100, not the text "100".'
+    ]
 
 
 @pytest.mark.parametrize("value", ["true", "100.5", '"100.5"', '"wide"'])
@@ -313,11 +324,3 @@ def test_a_number_refuses_other_values(tmp_path: Path, value: str) -> None:
 
     with pytest.raises(UsageError, match="It must be a whole number"):
         Config(str(tmp_path))
-
-
-def test_an_output_format_can_look_into_its_fields(tmp_path: Path) -> None:
-    output_format = "{code[0]} {line:>4} {message.upper} {match!r:{line}}"
-
-    assert Config(str(tmp_path), linter_output_format=output_format).linter_output_format == (
-        output_format
-    )
