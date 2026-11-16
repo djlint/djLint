@@ -444,7 +444,7 @@ _CODES_EXCLUDED_BY_PROFILE: Final[dict[str, tuple[str, ...]]] = {
     "nunjucks": ("D", "J", "M"),
     "handlebars": ("D", "J", "N"),
     "golang": ("D", "J", "N", "M"),
-    "angular": ("D", "J", "H012", "H026", "H028"),
+    "angular": ("D", "J", "H012", "H026"),
 }
 
 _PROFILES: Final[frozenset[str]] = frozenset(_CODES_EXCLUDED_BY_PROFILE) | {"all"}

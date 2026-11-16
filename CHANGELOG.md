@@ -10,7 +10,7 @@
 
 - `include` turns on a rule that the profile leaves out, so `--include=T003` now runs T003 without a profile or under `--profile=html`. Before, the template rules (T) and the rules for one template language (D, J, M, N) stayed off there, whatever `include` said. A rule still stays off under a profile it doesn't apply to, such as T028 under `django` or H012 under `angular`.
 - Without a profile, the linter runs the same rules as under `--profile=html`. A custom rule with an `exclude` list used to be skipped there, as under `all`.
-- `djlint --help` and the docs no longer call `html` the default profile. Without one, djLint formats the template syntax of every language, as `all` does, and lints as `html` does.
+- `djlint --help` and the docs no longer call `html` the default profile. Without one, djLint formats the template syntax of every language, as `all` does, and lints with the rules of `html`.
 
 ## [1.50.3] - 2026-11-15
 
