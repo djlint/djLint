@@ -146,6 +146,8 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
   route && (
     <div class="demo not-content">
       <p>{t("djlint.demo_description")} <small id="djlint-version" /></p>
+      {/* What djLint says about the settings, such as a rule code it doesn't know. */}
+      <ul class="demo-warnings" id="djlint-warnings" role="status" />
 
       <div class="demo-workspace">
         <details class="demo-settings" open>
@@ -455,7 +457,13 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
   // The worker reports its progress as codes; the page holds their translations.
   const showError = () => setStatus(status.dataset.error!, true);
   worker.onerror = showError;
-  worker.onmessage = ({ data: { id, type, message, html, findings } }) => {
+  const warningList = document.getElementById("djlint-warnings")!;
+  const showWarnings = (warnings: string[]) => {
+    warningList.replaceChildren(
+      ...warnings.map((warning) => Object.assign(document.createElement("li"), { textContent: warning })),
+    );
+  };
+  worker.onmessage = ({ data: { id, type, message, html, findings, warnings } }) => {
     if (type === "status" && message === "ready") {
       // Edits made while djLint loaded may have reached the worker before it
       // listened, so the current example goes again.
@@ -470,6 +478,7 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
         .replace("{djlint}", message.djlint);
     } else if ((type === "result" || type === "error") && id === sessionId) {
       formatted = type === "result" ? html : message;
+      showWarnings(type === "result" ? warnings : []);
       if (view === "output") showOutput();
       if (input.state.doc === requested) showFindings(type === "result" ? findings : null);
     }
@@ -684,6 +693,20 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     color: var(--sl-color-white);
     font-family: var(--sl-font-mono);
     font-size: 0.875em;
+  }
+  .demo-warnings {
+    margin: 0 0 0.75rem;
+    padding: 0;
+    list-style: none;
+    color: var(--sl-color-text-accent);
+    font-size: var(--sl-text-sm);
+  }
+  .demo-warnings:empty {
+    display: none;
+  }
+  /* The status role already says what these are; the sign is for the eye. */
+  .demo-warnings li::before {
+    content: "⚠ " / "";
   }
   /* The heads share a row, so the editors line up when the command wraps. */
   .demo-editors {

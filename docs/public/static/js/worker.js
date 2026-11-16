@@ -22,12 +22,22 @@ from importlib import metadata
   versions.destroy();
   self.postMessage({ type: "version", message: { python, djlint } });
   run = await pyodide.runPythonAsync(`
+import contextlib
+import io
+
+from djlint import settings
 from djlint.api import format_text, lint_text, load_config
 
 def _djlint_run(html, options):
-    config = load_config(**options)
+    # djLint warns about a setting once per run, and every edit here is a run.
+    if hasattr(settings, "_warn_once"):
+        settings._warn_once.cache_clear()
+    stderr = io.StringIO()
+    with contextlib.redirect_stderr(stderr):
+        config = load_config(**options)
+    warnings = [line.removeprefix("Warning: ") for line in stderr.getvalue().splitlines() if line]
     findings = [finding._asdict() for finding in lint_text(config, html)]
-    return format_text(config, html).rstrip(), findings
+    return format_text(config, html).rstrip(), findings, warnings
 
 _djlint_run
 `);
@@ -41,16 +51,17 @@ const pyodideReadyPromise = loadPyodideAndPackages().catch((error) => {
 });
 
 // The page sends djlint.api.load_config's keyword arguments, with numbers as
-// numbers, and gets back the formatted text and the findings on the original.
+// numbers, and gets back the formatted text, the findings on the original and
+// what djLint warned about the settings.
 self.onmessage = async ({ data: { id, options, html } }) => {
   await pyodideReadyPromise;
 
   const pyOptions = pyodide.toPy(options);
   try {
     const result = run(html, pyOptions);
-    const [formatted, findings] = result.toJs({ dict_converter: Object.fromEntries });
+    const [formatted, findings, warnings] = result.toJs({ dict_converter: Object.fromEntries });
     result.destroy();
-    self.postMessage({ type: "result", id, html: formatted, findings });
+    self.postMessage({ type: "result", id, html: formatted, findings, warnings });
   } catch (err) {
     self.postMessage({ type: "error", id, message: err.message });
   } finally {
