@@ -1773,9 +1773,15 @@ class Config:
                 return False
             return not any(name.startswith(code) for code in profile_codes)
 
+        # With no profile set, naming html would read as if one were.
+        profile_name = (
+            f"the {lint_profile} profile"
+            if selected_profile
+            else "no profile, where the linter follows html"
+        )
         for code in sorted(included_codes.intersection(rules_by_code)):
             if lint_profile in rules_by_code[code].get("exclude", ()) or code in profile_codes:
-                report(f"include names {code}, which never runs under the {lint_profile} profile.")
+                report(f"include names {code}, which never runs under {profile_name}.")
 
         self.entity_pattern = next(
             (

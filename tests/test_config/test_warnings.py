@@ -324,3 +324,18 @@ def test_a_number_refuses_other_values(tmp_path: Path, value: str) -> None:
 
     with pytest.raises(UsageError, match="It must be a whole number"):
         Config(str(tmp_path))
+
+
+def test_a_rule_left_out_without_a_profile_says_so(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    (tmp_path / ".djlint_rules.yaml").write_text(
+        "- rule:\n    name: X001\n    message: x\n    patterns: ['x']\n    exclude: [html]\n",
+        encoding="utf-8",
+    )
+
+    Config(str(tmp_path), include="X001")
+
+    assert _warnings(capsys) == [
+        "include names X001, which never runs under no profile, where the linter follows html."
+    ]
