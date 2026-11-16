@@ -1,5 +1,8 @@
 ---
-// Starlight's header with the main docs sections linked across the top.
+// Starlight's header with the main docs sections linked across the top. Pages
+// without a sidebar (home, demo) have no mobile menu of Starlight's, so on
+// narrow screens they get their own, with the sections, theme and language.
+import { Icon } from "@astrojs/starlight/components";
 import LanguageSelect from "@astrojs/starlight/components/LanguageSelect.astro";
 import Search from "@astrojs/starlight/components/Search.astro";
 import SiteTitle from "@astrojs/starlight/components/SiteTitle.astro";
@@ -7,7 +10,7 @@ import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
 import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
 
 const { t } = Astro.locals;
-const { locale, id } = Astro.locals.starlightRoute;
+const { locale, id, hasSidebar } = Astro.locals.starlightRoute;
 const prefix = locale ? `${locale}/` : "";
 const page = locale ? id.slice(prefix.length) : id;
 
@@ -16,6 +19,7 @@ const links = [
   ["docs/formatter", "djlint.formatter"],
   ["docs/linter", "djlint.linter"],
   ["docs/configuration", "djlint.configuration"],
+  ["docs/integrations", "djlint.integrations"],
   ["demo", "djlint.try_online"],
 ] as const;
 ---
@@ -24,7 +28,7 @@ const links = [
   <div class="title-wrapper sl-flex">
     <SiteTitle />
   </div>
-  <nav class="top-nav print:hidden" aria-label="Main">
+  <nav class="top-nav print:hidden" aria-label={t("djlint.sections")}>
     {
       links.map(([slug, key]) => (
         <a href={`/${prefix}${slug}/`} aria-current={page === slug ? "page" : undefined}>
@@ -33,7 +37,7 @@ const links = [
       ))
     }
   </nav>
-  <div class="sl-flex print:hidden">
+  <div class="search sl-flex print:hidden">
     <Search />
   </div>
   <div class="sl-hidden md:sl-flex print:hidden right-group">
@@ -43,6 +47,32 @@ const links = [
     <ThemeSelect />
     <LanguageSelect />
   </div>
+  {
+    !hasSidebar && (
+      <>
+        <button class="menu-button print:hidden" popovertarget="dj-menu">
+          <Icon name="bars" />
+          <span class="sr-only">{t("menuButton.accessibleLabel")}</span>
+        </button>
+        <div id="dj-menu" class="menu" popover>
+          <nav aria-label={t("djlint.sections")}>
+            {links.map(([slug, key]) => (
+              <a href={`/${prefix}${slug}/`} aria-current={page === slug ? "page" : undefined}>
+                {t(key)}
+              </a>
+            ))}
+          </nav>
+          <div class="menu-controls md:sl-hidden">
+            <div class="sl-flex social-icons">
+              <SocialIcons />
+            </div>
+            <ThemeSelect />
+            <LanguageSelect />
+          </div>
+        </div>
+      </>
+    )
+  }
 </div>
 
 <style>
@@ -92,9 +122,74 @@ const links = [
     height: 2rem;
     border-inline-end: 1px solid var(--sl-color-gray-5);
   }
-  @media (min-width: 80rem) {
+  /* Without the section links, the search sits by the controls on the right. */
+  @media (max-width: 89.99rem) {
+    .search {
+      margin-inline-start: auto;
+    }
+  }
+  .menu-button {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--sl-color-white);
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  .menu {
+    inset: var(--sl-nav-height) 0 auto auto;
+    width: min(20rem, 100vw);
+    max-height: calc(100dvh - var(--sl-nav-height));
+    margin: 0;
+    padding: 1rem var(--sl-nav-pad-x);
+    overflow-y: auto;
+    border: 0;
+    border-inline-start: 1px solid var(--sl-color-gray-6);
+    border-bottom: 1px solid var(--sl-color-gray-6);
+    border-end-start-radius: 0.75rem;
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+    box-shadow: var(--sl-shadow-md);
+  }
+  .menu nav {
+    display: flex;
+    flex-direction: column;
+  }
+  .menu nav a {
+    padding: 0.5rem 0;
+    color: var(--sl-color-gray-2);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .menu nav a[aria-current="page"] {
+    color: var(--sl-color-white);
+  }
+  .menu-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--sl-color-gray-6);
+  }
+  .menu-controls .social-icons::after {
+    content: none;
+  }
+  /* The longest translations of the section links need the full 90rem page. */
+  @media (min-width: 90rem) {
     .top-nav {
       display: flex;
+    }
+    .menu-button,
+    .menu {
+      display: none;
     }
   }
 </style>

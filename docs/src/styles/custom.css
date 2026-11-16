@@ -14,6 +14,7 @@
   --sl-font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 
   --dj-squiggle: #f5c542;
+  --dj-focus: var(--dj-squiggle);
   --dj-ok: #73daca;
   --dj-code-bg: #1a1b26;
   --dj-code-line: #2a2c3d;
@@ -45,6 +46,8 @@
 
 :root[data-theme="light"] {
   --dj-squiggle: #e3a600;
+  /* The light squiggle is too faint on white for a focus ring (WCAG 1.4.11). */
+  --dj-focus: var(--sl-color-accent);
 
   --sl-color-accent-low: #fcefc4;
   --sl-color-accent: #8f5f00;
@@ -93,9 +96,9 @@
 }
 
 /* The squiggle itself. */
-.dj-squiggle,
 .sidebar-content a[aria-current="page"],
-.top-nav a[aria-current="page"] {
+.top-nav a[aria-current="page"],
+#dj-menu a[aria-current="page"] {
   text-decoration: underline wavy var(--dj-squiggle);
   text-decoration-thickness: 1.5px;
   text-decoration-skip-ink: none;
@@ -143,6 +146,16 @@ header.header {
   font-weight: 600;
 }
 
+/* JetBrains Mono would draw <!-- as an arrow and --> as a long dash: template
+   syntax is what the docs are about, so code shows the characters as typed. */
+pre,
+code,
+kbd,
+samp,
+.cm-scroller {
+  font-variant-ligatures: none;
+}
+
 /* Content */
 .sl-markdown-content a {
   text-underline-offset: 0.2em;
@@ -170,7 +183,7 @@ header.header {
 }
 
 :focus-visible {
-  outline: 2px solid var(--dj-squiggle);
+  outline: 2px solid var(--dj-focus);
   outline-offset: 2px;
 }
 

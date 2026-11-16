@@ -58,7 +58,7 @@ Sans [profil](/fr/docs/configuration/#profile), seules les règles H parmi les r
 | H016 | Balise `title` manquante dans le html.                                                                                         | ✔️         |
 | H017 | Les balises vides doivent être auto-fermantes (en conflit avec : H018).                                                        | -          |
 | D018 | (Django) Les liens internes doivent utiliser la forme `{% url ... %}`.                                                         | ✔️         |
-| H018 | Les balises vides sont auto-fermantes par nature et doivent se terminer par « > », et non « /> » (en conflit avec : H017).     | -          |
+| H018 | Les balises vides sont auto-fermantes par nature et doivent se terminer par `>`, et non `/>` (en conflit avec : H017).         | -          |
 | J018 | (Jinja) Les liens internes doivent utiliser la forme `{{ url_for() ... }}`.                                                    | ✔️         |
 | H019 | Remplacer `javascript:abc()` par un événement `on_` et une vraie URL.                                                          | ✔️         |
 | H020 | Paire de balises vide trouvée. Envisagez de la supprimer.                                                                      | ✔️         |
@@ -351,7 +351,7 @@ Non signalée avec `--ignore-case`, qui demande au formateur de ne pas toucher �
 
 `Attribute values should be quoted.`
 
-Une valeur d'attribut sans guillemets s'arrête au premier espace : une valeur comme class=btn primary perd silencieusement tout ce qui suit l'espace (le navigateur traite « primary » comme un attribut booléen distinct). Les valeurs issues de variables de template sont particulièrement fragiles : tout espace, « = » ou « > » rendu corrompt la balise. Les guillemets rendent la limite de la valeur explicite et sûre.
+Une valeur d'attribut sans guillemets s'arrête au premier espace : une valeur comme class=btn primary perd silencieusement tout ce qui suit l'espace (le navigateur traite « primary » comme un attribut booléen distinct). Les valeurs issues de variables de template sont particulièrement fragiles : tout espace, `=` ou `>` rendu corrompt la balise. Les guillemets rendent la limite de la valeur explicite et sûre.
 
 À éviter :
 
@@ -369,7 +369,7 @@ Une valeur d'attribut sans guillemets s'arrête au premier espace : une valeur 
 
 `There should be no spaces around attribute =.`
 
-HTML autorise les espaces autour de « = » : il s'agit donc d'une règle de style. Écrire nom="valeur" sans espaces est le style habituel, et c'est ce que supposent les outils textuels simples comme grep ou le rechercher-remplacer : un espacement mélangé rend les attributs plus difficiles à trouver et à refactoriser. `--reformat` supprime les espaces pour vous.
+HTML autorise les espaces autour de `=` : il s'agit donc d'une règle de style. Écrire nom="valeur" sans espaces est le style habituel, et c'est ce que supposent les outils textuels simples comme grep ou le rechercher-remplacer : un espacement mélangé rend les attributs plus difficiles à trouver et à refactoriser. `--reformat` supprime les espaces pour vous.
 
 Ne s'applique pas au profil angular.
 

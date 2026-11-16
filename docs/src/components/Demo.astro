@@ -50,30 +50,45 @@ const profiles = [
   ["mako", "mako"],
 ];
 
-const help = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
 const kebab = (name: string) => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+const help = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
+// What a "?" link says to a screen reader: which option's documentation it opens.
+// The fields get their names from aria-label, so the link doesn't join them.
+const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
 ---
 
 <div class="demo not-content">
   <p>{t("djlint.demo_description")} <small id="djlint-version"></small></p>
-  <p id="djlint-status">{t("djlint.demo_loading")}</p>
+  <p
+    id="djlint-status"
+    role="status"
+    data-installing={t("djlint.demo_installing")}
+    data-version={t("djlint.demo_version")}
+    data-error={t("djlint.demo_error")}
+  >
+    {t("djlint.demo_loading")}
+  </p>
 
   <div class="demo-workspace" hidden>
     <form id="djlint-settings">
       <label>
-        <span>Profile <a href={help("profile")} target="_blank">?</a></span>
-        <select name="profile">
+        <span>Profile <a href={help("profile")} target="_blank" aria-label={helpLabel("Profile")}>?</a></span>
+        <select name="profile" aria-label="Profile">
           {profiles.map(([value, text]) => <option value={value}>{text}</option>)}
         </select>
       </label>
       {
         fields.map(({ name, label, placeholder, anchor }) => (
-          <label class={placeholder ? undefined : "checkbox"}>
-            {placeholder ? null : <input name={name} type="checkbox" />}
+          <label class:list={{ checkbox: !placeholder }}>
+            {placeholder ? null : <input name={name} type="checkbox" aria-label={label} />}
             <span>
-              {label} <a href={help(anchor ?? kebab(name))} target="_blank">?</a>
+              {label} <a href={help(anchor ?? kebab(name))} target="_blank" aria-label={helpLabel(label)}>
+                ?
+              </a>
             </span>
-            {placeholder ? <input name={name} type="text" placeholder={placeholder} /> : null}
+            {placeholder ? (
+              <input name={name} type="text" placeholder={placeholder} aria-label={label} />
+            ) : null}
           </label>
         ))
       }
@@ -148,15 +163,24 @@ const kebab = (name: string) => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase(
     state: editorState("djlint-output-label", [EditorState.readOnly.of(true)]),
   });
 
+  // The worker reports its progress as codes; the page holds their translations.
+  const showError = () => {
+    status.textContent = status.dataset.error!;
+  };
+  worker.onerror = showError;
   worker.onmessage = ({ data: { id, type, message } }) => {
     if (type === "status" && message === "ready") {
       status.hidden = true;
       document.querySelector<HTMLElement>(".demo-workspace")!.hidden = false;
       format();
-    } else if (type === "status") {
-      status.textContent = message;
+    } else if (type === "status" && message === "error") {
+      showError();
+    } else if (type === "status" && message === "installing") {
+      status.textContent = status.dataset.installing!;
     } else if (type === "version") {
-      document.getElementById("djlint-version")!.textContent = message;
+      document.getElementById("djlint-version")!.textContent = status.dataset
+        .version!.replace("{python}", message.python)
+        .replace("{djlint}", message.djlint);
     } else if ((type === "html" || type === "error") && id === sessionId) {
       output.dispatch({ changes: { from: 0, to: output.state.doc.length, insert: message } });
     }
@@ -195,8 +219,22 @@ const kebab = (name: string) => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase(
     align-items: center;
     gap: 0.5rem;
   }
+  /* A ringed "?" after each label: the ring sets the link apart from the text. */
   form a {
+    display: inline-grid;
+    place-items: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    color: var(--sl-color-gray-3);
+    font-size: 0.7rem;
+    line-height: 1;
     text-decoration: none;
+    vertical-align: middle;
+  }
+  form a:hover {
+    color: var(--sl-color-white);
   }
   input[type="text"],
   select {

@@ -13,7 +13,7 @@ const theme = EditorView.theme(
     ".cm-cursor, .cm-dropCursor": { borderLeftColor: "#f5c542" },
     "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection":
       { backgroundColor: "#283457" },
-    ".cm-gutters": { backgroundColor: "#1a1b26", color: "#3b4061", border: "none" },
+    ".cm-gutters": { backgroundColor: "#1a1b26", color: "#7d84ad", border: "none" },
     ".cm-activeLine": { backgroundColor: "#ffffff08" },
     ".cm-activeLineGutter": { backgroundColor: "#ffffff08", color: "#a9b1d6" },
     ".cm-matchingBracket, .cm-nonmatchingBracket": {

@@ -1135,7 +1135,7 @@
       "ru": "Путь, которым считается stdin: он попадает в сообщения и сверяется с исключениями и per-file-ignores. По умолчанию `-`.",
       "ko": "stdin을 나타낼 경로입니다. 메시지에 쓰이고, 제외 경로와 per-file-ignores에 대조됩니다. 기본값은 `-`입니다.",
       "fr": "Chemin qui représente stdin dans les messages et pour la comparaison avec les exclusions et per-file-ignores. Par défaut `-`.",
-      "de": "Pfad, der für stdin steht, in Meldungen und beim Abgleich mit Ausschlüssen und per-file-ignores. Standard ist „-“.",
+      "de": "Pfad, der für stdin steht, in Meldungen und beim Abgleich mit Ausschlüssen und per-file-ignores. Standard ist `-`.",
       "zh-tw": "代表 stdin 的路徑，用於訊息，以及與排除路徑和 per-file-ignores 的比對。預設為 `-`。",
       "it": "Percorso che rappresenta stdin nei messaggi e nel confronto con le esclusioni e per-file-ignores. Il valore predefinito è `-`.",
       "pl": "Ścieżka, która oznacza stdin w komunikatach i przy dopasowywaniu wykluczeń oraz per-file-ignores. Domyślnie `-`.",

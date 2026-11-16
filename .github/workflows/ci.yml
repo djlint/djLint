@@ -43,8 +43,8 @@ jobs:
             --offline
             --include-fragments
             --index-files index.html
-            --root-dir ${{ github.workspace }}/docs/_site
-            docs/_site
+            --root-dir ${{ github.workspace }}/docs/dist
+            docs/dist
   pre-commit:
     runs-on: ubuntu-26.04
     steps:

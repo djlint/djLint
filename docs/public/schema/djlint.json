@@ -59,7 +59,7 @@
       "type": "string"
     },
     "files": {
-      "description": "A list of paths to use as djlint's source. When this option is specified, the command line source must be `-` as if using stdin.",
+      "description": "A list of paths to use as djlint's source. When this option is specified, the command line source must be `-` as if using stdin. `--stdin-filename` makes `-` mean stdin regardless.",
       "type": "array",
       "items": { "type": "string" }
     },
@@ -122,7 +122,7 @@
       "type": "boolean"
     },
     "linter_output_format": {
-      "description": "Customize the order of the output message. Default is \"{code} {line} {message} {match}\". If `{filename}` is not in the message, the output is grouped by file and each group gets a header.\n\nOptional variables:\n::: content\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`\n  :::",
+      "description": "Customize the order of the output message. Default is \"{code} {line} {message} {match}\". If `{filename}` is not in the message, the output is grouped by file and each group gets a header.\n\nOptional variables:\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`",
       "type": "string",
       "examples": ["{filename}:{line}: {code} {message} {match}"]
     },
@@ -183,7 +183,7 @@
       "type": "boolean"
     },
     "profile": {
-      "description": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nWithout a profile, djLint formats the template syntax of every language, as `all` does, and lints with the rules of `html`.\n\nOptions:\n\n:::content\n\n- html\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n- mako (control lines and `##` comments are kept as written)\n- all (every template language at once)\n  :::",
+      "description": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nWithout a profile, djLint formats the template syntax of every language, as `all` does, and lints with the rules of `html`.\n\nOptions:\n\n- html\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n- mako (control lines and `##` comments are kept as written)\n- all (every template language at once)",
       "enum": [
         "all",
         "angular",
@@ -208,7 +208,7 @@
       "enum": ["double", "single"]
     },
     "require_pragma": {
-      "description": "Only format or lint files that start with a comment with only the text 'djlint:on'. The comment can be an HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```\n",
+      "description": "Only format or lint files that start with a comment with only the text 'djlint:on'. The comment can be an HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```",
       "type": "boolean"
     },
     "single_attribute_per_line": {

@@ -58,7 +58,7 @@ Ohne [Profil](/de/docs/configuration/#profile) laufen von den eingebauten Regeln
 | H016 | Fehlendes `title`-Tag in HTML.                                                                               | ✔️       |
 | H017 | Void-Tags sollten selbstschließend sein (Konflikt mit: H018).                                                | -        |
 | D018 | (Django) Interne Links sollten das Muster `{% url ... %}` verwenden.                                         | ✔️       |
-| H018 | Void-Tags sind von Natur aus selbstschließend und müssen mit „>“ enden, nicht mit „/>“ (Konflikt mit: H017). | -        |
+| H018 | Void-Tags sind von Natur aus selbstschließend und müssen mit `>` enden, nicht mit `/>` (Konflikt mit: H017). | -        |
 | J018 | (Jinja) Interne Links sollten das Muster `{{ url_for() ... }}` verwenden.                                    | ✔️       |
 | H019 | Ersetzen Sie `javascript:abc()` durch ein `on_`-Ereignis und eine echte URL.                                 | ✔️       |
 | H020 | Leeres Tag-Paar gefunden. Erwägen Sie, es zu entfernen.                                                      | ✔️       |
@@ -351,7 +351,7 @@ Sondern so:
 
 `Attribute values should be quoted.`
 
-Attributwerte ohne Anführungszeichen enden am ersten Leerraum, sodass bei einem Wert wie class=btn primary alles nach dem Leerzeichen stillschweigend wegfällt (der Browser behandelt „primary“ als eigenes boolesches Attribut). Besonders anfällig sind Werte aus Template-Variablen: Jedes gerenderte Leerzeichen, „=“ oder „>“ zerstört das Tag. Anführungszeichen machen die Grenze des Werts eindeutig und sicher.
+Attributwerte ohne Anführungszeichen enden am ersten Leerraum, sodass bei einem Wert wie class=btn primary alles nach dem Leerzeichen stillschweigend wegfällt (der Browser behandelt „primary“ als eigenes boolesches Attribut). Besonders anfällig sind Werte aus Template-Variablen: Jedes gerenderte Leerzeichen, `=` oder `>` zerstört das Tag. Anführungszeichen machen die Grenze des Werts eindeutig und sicher.
 
 Nicht so:
 
@@ -369,7 +369,7 @@ Sondern so:
 
 `There should be no spaces around attribute =.`
 
-HTML erlaubt Leerraum um das „=“, es handelt sich also um eine Stilregel. Üblich ist name="value" ohne Leerzeichen, und davon gehen auch einfache Textwerkzeuge wie grep oder Suchen und Ersetzen aus, sodass gemischte Abstände es erschweren, Attribute zu finden und zu refaktorieren. `--reformat` entfernt die Leerzeichen für Sie.
+HTML erlaubt Leerraum um das `=`, es handelt sich also um eine Stilregel. Üblich ist name="value" ohne Leerzeichen, und davon gehen auch einfache Textwerkzeuge wie grep oder Suchen und Ersetzen aus, sodass gemischte Abstände es erschweren, Attribute zu finden und zu refaktorieren. `--reformat` entfernt die Leerzeichen für Sie.
 
 Gilt nicht für das Profil angular.
 
