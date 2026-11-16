@@ -83,6 +83,21 @@ def test_every_rule_is_documented() -> None:
 
 
 @pytest.mark.parametrize(
+    "path",
+    sorted(Path("docs/src/content/docs").glob("**/linter.md")),
+    ids=lambda path: path.parent.parent.name,
+)
+def test_the_rule_table_links_to_each_rules_details(path: Path) -> None:
+    """Every rule has a row in the table, and its code opens the rule's section."""
+    text = path.read_text(encoding="utf-8")
+    links = re.findall(r"^\| \[([A-Z]\d{3})\]\(#([\w-]+)\) +\|", text, re.MULTILINE)
+
+    assert re.findall(r"^\| ([A-Z]\d{3}) +\|", text, re.MULTILINE) == []
+    assert [code for code, anchor in links if anchor != code.lower()] == []
+    assert {code for code, _ in links} == set(_RULE_SECTION_PATTERN.findall(text)) == set(_rules())
+
+
+@pytest.mark.parametrize(
     ("code", "profile", "label", "sample"),
     examples,
     ids=[f"{code}-{label}" for code, _, label, _ in examples],

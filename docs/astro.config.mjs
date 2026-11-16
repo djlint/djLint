@@ -1,7 +1,11 @@
+import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+
 import { unified } from "@astrojs/markdown-remark";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import slugify from "slugify";
+import starlightLlmsTxt from "starlight-llms-txt";
 
 import djlint from "../package.json" with { type: "json" };
 
@@ -46,14 +50,18 @@ function rehypeEleventyHeadingIds() {
   };
 }
 
-// Builds the djLint the demo runs, into public/static/py/. An ES module runs
-// once per process, so a config reload in the dev server doesn't build it again.
+// Builds the djLint the demo runs, into public/static/py/, in a process of its
+// own: Pyodide stays out of Astro's memory. The flag on globalThis outlives a
+// config reload in the dev server, so a reload doesn't build it again.
 const demoLock = {
   name: "demo-lock",
   hooks: {
-    "astro:config:setup": async ({ command }) => {
-      if (command === "build" || command === "dev") {
-        await import("./demo-lock.mjs");
+    "astro:config:setup": ({ command }) => {
+      if ((command === "build" || command === "dev") && !globalThis.djlintDemoLockBuilt) {
+        execFileSync(process.execPath, [fileURLToPath(new URL("demo-lock.mjs", import.meta.url))], {
+          stdio: "inherit",
+        });
+        globalThis.djlintDemoLockBuilt = true;
       }
     },
   },
@@ -117,6 +125,16 @@ export default defineConfig({
       customCss: ["./src/styles/custom.css"],
       components: { Header: "./src/components/Header.astro", Hero: "./src/components/Hero.astro" },
       routeMiddleware: "./src/route-data.ts",
+      // llms.txt and its full and small versions, for AI assistants, from the
+      // English docs. The demo and the changelog say nothing they need, and
+      // the home page renders nothing there (see Home.astro).
+      plugins: [
+        starlightLlmsTxt({
+          description:
+            "djLint is a linter and formatter for HTML templates: Django, Jinja, Twig, Nunjucks, Handlebars, Mustache, Liquid, Go templates, Angular, Tera, Askama and Mako.",
+          exclude: ["demo", "docs/changelog"],
+        }),
+      ],
       expressiveCode: {
         themes: ["tokyo-night", "github-light"],
         styleOverrides: {

@@ -37,71 +37,71 @@ Of the built-in rules, only the H rules run without a [profile](/docs/configurat
 
 ## Rules
 
-| Code | Meaning                                                                                      | Default |
-| ---- | -------------------------------------------------------------------------------------------- | ------- |
-| T001 | Variables should be wrapped in whitespace. Ex: `{{ this }}`                                  | ✔️      |
-| T002 | Double quotes should be used in tags. Ex `{% extends "this.html" %}`                         | ✔️      |
-| T003 | Endblock should have name. Ex: `{% endblock body %}`.                                        | -       |
-| D004 | (Django) Static urls should follow `{% static path/to/file %}` pattern.                      | ✔️      |
-| J004 | (Jinja) Static urls should follow `{{ url_for('static'..) }}` pattern.                       | ✔️      |
-| H005 | Html tag should have a non-empty `lang` attribute.                                           | ✔️      |
-| H006 | `img` tag should have `height` and `width` attributes.                                       | -       |
-| H007 | `<!DOCTYPE ... >` should be present before the html tag.                                     | ✔️      |
-| H008 | Attributes should be double quoted.                                                          | ✔️      |
-| H009 | Tag names should be lowercase.                                                               | ✔️      |
-| H010 | Attribute names should be lowercase.                                                         | ✔️      |
-| H011 | Attribute values should be quoted.                                                           | ✔️      |
-| H012 | There should be no spaces around attribute `=`.                                              | ✔️      |
-| H013 | `img` tag should have alt attributes.                                                        | ✔️      |
-| H014 | More blank lines than the configuration keeps.                                               | ✔️      |
-| H015 | Follow `h` tags with a line break.                                                           | ✔️      |
-| H016 | Missing `title` tag in html.                                                                 | ✔️      |
-| H017 | Void tags should be self closing (conflicts with: H018).                                     | -       |
-| D018 | (Django) Internal links should use the `{% url ... %}` pattern.                              | ✔️      |
-| H018 | Void tags are self closing by nature and must end with `>`, not `/>` (conflicts with: H017). | -       |
-| J018 | (Jinja) Internal links should use the `{{ url_for() ... }}` pattern.                         | ✔️      |
-| H019 | Replace `javascript:abc()` with `on_` event and real url.                                    | ✔️      |
-| H020 | Empty tag pair found. Consider removing.                                                     | ✔️      |
-| H021 | Inline styles should be avoided.                                                             | ✔️      |
-| H022 | Use HTTPS for external links.                                                                | ✔️      |
-| H023 | Do not use entity references.                                                                | ✔️      |
-| H024 | Omit type on scripts and styles.                                                             | ✔️      |
-| H025 | Tag seems to be an orphan.                                                                   | ✔️      |
-| H026 | Empty id and class tags can be removed.                                                      | ✔️      |
-| T027 | Unclosed string found in template syntax.                                                    | ✔️      |
-| T028 | Consider using spaceless tags inside attribute values. `{%- if/for -%}`                      | -       |
-| H029 | Consider using lowercase form method values.                                                 | ✔️      |
-| H030 | Consider adding a meta description.                                                          | ✔️      |
-| T032 | Extra whitespace found in template tags.                                                     | ✔️      |
-| H033 | Extra whitespace found in form action.                                                       | ✔️      |
-| T034 | Did you intend to use {% ... %} instead of {% ... }%?                                        | ✔️      |
-| H036 | Do not use `br` tags for spacing.                                                            | ✔️      |
-| H037 | Duplicate attribute found.                                                                   | ✔️      |
-| T038 | Block tag has no matching end tag.                                                           | ✔️      |
-| T039 | Unclosed template tag found.                                                                 | ✔️      |
-| T040 | Missing or empty template name in extends or include tag.                                    | ✔️      |
-| H041 | Tag is closed in a different template block than it was opened.                              | ✔️      |
-| T041 | Extends tag should be the first tag in the template.                                         | ✔️      |
-| H042 | Label for attribute has no matching element id in this file.                                 | ✔️      |
-| T042 | Content outside a block is not rendered in a template that extends another.                  | ✔️      |
-| H043 | Button tag should have a `type` attribute.                                                   | ✔️      |
-| T043 | Block name is used more than once in the template.                                           | ✔️      |
-| H044 | Thead should not mix `th` and `td` cells.                                                    | ✔️      |
-| T044 | Output tag holds a statement keyword; use a block tag.                                       | ✔️      |
-| H045 | Iframe tag should have a `title` attribute.                                                  | ✔️      |
-| T045 | Template tag inside an html comment still runs; use a template comment to disable it.        | ✔️      |
-| H046 | Tabindex should not be positive.                                                             | ✔️      |
-| H047 | Aria-hidden should not be set on a focusable element.                                        | ✔️      |
-| H048 | Aria attribute is not one the specification defines.                                         | ✔️      |
-| H049 | Viewport should not stop the page being zoomed.                                              | ✔️      |
-| H050 | Element is obsolete and should be replaced.                                                  | ✔️      |
-| H051 | Role is not one ARIA defines for markup.                                                     | ✔️      |
-| H052 | Meta refresh should not reload or redirect the page on a timer.                              | ✔️      |
-| H053 | Id is used more than once in the file.                                                       | ✔️      |
-| H054 | Interactive element should not be nested inside another.                                     | ✔️      |
-| H055 | Lang attribute should be a language tag such as en or pt-BR.                                 | ✔️      |
-| H056 | Src should not be empty.                                                                     | ✔️      |
-| H057 | Video should have a captions track.                                                          | ✔️      |
+| Code          | Meaning                                                                                      | Default |
+| ------------- | -------------------------------------------------------------------------------------------- | ------- |
+| [T001](#t001) | Variables should be wrapped in whitespace. Ex: `{{ this }}`                                  | ✔️      |
+| [T002](#t002) | Double quotes should be used in tags. Ex `{% extends "this.html" %}`                         | ✔️      |
+| [T003](#t003) | Endblock should have name. Ex: `{% endblock body %}`.                                        | -       |
+| [D004](#d004) | (Django) Static urls should follow `{% static path/to/file %}` pattern.                      | ✔️      |
+| [J004](#j004) | (Jinja) Static urls should follow `{{ url_for('static'..) }}` pattern.                       | ✔️      |
+| [H005](#h005) | Html tag should have a non-empty `lang` attribute.                                           | ✔️      |
+| [H006](#h006) | `img` tag should have `height` and `width` attributes.                                       | -       |
+| [H007](#h007) | `<!DOCTYPE ... >` should be present before the html tag.                                     | ✔️      |
+| [H008](#h008) | Attributes should be double quoted.                                                          | ✔️      |
+| [H009](#h009) | Tag names should be lowercase.                                                               | ✔️      |
+| [H010](#h010) | Attribute names should be lowercase.                                                         | ✔️      |
+| [H011](#h011) | Attribute values should be quoted.                                                           | ✔️      |
+| [H012](#h012) | There should be no spaces around attribute `=`.                                              | ✔️      |
+| [H013](#h013) | `img` tag should have alt attributes.                                                        | ✔️      |
+| [H014](#h014) | More blank lines than the configuration keeps.                                               | ✔️      |
+| [H015](#h015) | Follow `h` tags with a line break.                                                           | ✔️      |
+| [H016](#h016) | Missing `title` tag in html.                                                                 | ✔️      |
+| [H017](#h017) | Void tags should be self closing (conflicts with: H018).                                     | -       |
+| [D018](#d018) | (Django) Internal links should use the `{% url ... %}` pattern.                              | ✔️      |
+| [H018](#h018) | Void tags are self closing by nature and must end with `>`, not `/>` (conflicts with: H017). | -       |
+| [J018](#j018) | (Jinja) Internal links should use the `{{ url_for() ... }}` pattern.                         | ✔️      |
+| [H019](#h019) | Replace `javascript:abc()` with `on_` event and real url.                                    | ✔️      |
+| [H020](#h020) | Empty tag pair found. Consider removing.                                                     | ✔️      |
+| [H021](#h021) | Inline styles should be avoided.                                                             | ✔️      |
+| [H022](#h022) | Use HTTPS for external links.                                                                | ✔️      |
+| [H023](#h023) | Do not use entity references.                                                                | ✔️      |
+| [H024](#h024) | Omit type on scripts and styles.                                                             | ✔️      |
+| [H025](#h025) | Tag seems to be an orphan.                                                                   | ✔️      |
+| [H026](#h026) | Empty id and class tags can be removed.                                                      | ✔️      |
+| [T027](#t027) | Unclosed string found in template syntax.                                                    | ✔️      |
+| [T028](#t028) | Consider using spaceless tags inside attribute values. `{%- if/for -%}`                      | -       |
+| [H029](#h029) | Consider using lowercase form method values.                                                 | ✔️      |
+| [H030](#h030) | Consider adding a meta description.                                                          | ✔️      |
+| [T032](#t032) | Extra whitespace found in template tags.                                                     | ✔️      |
+| [H033](#h033) | Extra whitespace found in form action.                                                       | ✔️      |
+| [T034](#t034) | Did you intend to use {% ... %} instead of {% ... }%?                                        | ✔️      |
+| [H036](#h036) | Do not use `br` tags for spacing.                                                            | ✔️      |
+| [H037](#h037) | Duplicate attribute found.                                                                   | ✔️      |
+| [T038](#t038) | Block tag has no matching end tag.                                                           | ✔️      |
+| [T039](#t039) | Unclosed template tag found.                                                                 | ✔️      |
+| [T040](#t040) | Missing or empty template name in extends or include tag.                                    | ✔️      |
+| [H041](#h041) | Tag is closed in a different template block than it was opened.                              | ✔️      |
+| [T041](#t041) | Extends tag should be the first tag in the template.                                         | ✔️      |
+| [H042](#h042) | Label for attribute has no matching element id in this file.                                 | ✔️      |
+| [T042](#t042) | Content outside a block is not rendered in a template that extends another.                  | ✔️      |
+| [H043](#h043) | Button tag should have a `type` attribute.                                                   | ✔️      |
+| [T043](#t043) | Block name is used more than once in the template.                                           | ✔️      |
+| [H044](#h044) | Thead should not mix `th` and `td` cells.                                                    | ✔️      |
+| [T044](#t044) | Output tag holds a statement keyword; use a block tag.                                       | ✔️      |
+| [H045](#h045) | Iframe tag should have a `title` attribute.                                                  | ✔️      |
+| [T045](#t045) | Template tag inside an html comment still runs; use a template comment to disable it.        | ✔️      |
+| [H046](#h046) | Tabindex should not be positive.                                                             | ✔️      |
+| [H047](#h047) | Aria-hidden should not be set on a focusable element.                                        | ✔️      |
+| [H048](#h048) | Aria attribute is not one the specification defines.                                         | ✔️      |
+| [H049](#h049) | Viewport should not stop the page being zoomed.                                              | ✔️      |
+| [H050](#h050) | Element is obsolete and should be replaced.                                                  | ✔️      |
+| [H051](#h051) | Role is not one ARIA defines for markup.                                                     | ✔️      |
+| [H052](#h052) | Meta refresh should not reload or redirect the page on a timer.                              | ✔️      |
+| [H053](#h053) | Id is used more than once in the file.                                                       | ✔️      |
+| [H054](#h054) | Interactive element should not be nested inside another.                                     | ✔️      |
+| [H055](#h055) | Lang attribute should be a language tag such as en or pt-BR.                                 | ✔️      |
+| [H056](#h056) | Src should not be empty.                                                                     | ✔️      |
+| [H057](#h057) | Video should have a captions track.                                                          | ✔️      |
 
 ### Code Patterns
 

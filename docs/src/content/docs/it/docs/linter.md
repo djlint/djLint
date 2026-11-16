@@ -37,71 +37,71 @@ Senza [profilo](/it/docs/configuration/#profile), delle regole integrate girano 
 
 ## Regole
 
-| Codice | Significato                                                                                                       | Predefinita |
-| ------ | ----------------------------------------------------------------------------------------------------------------- | ----------- |
-| T001   | Le variabili devono essere racchiuse tra spazi. Es.: `{{ this }}`                                                 | ✔️          |
-| T002   | Nei tag vanno usate le virgolette doppie. Es. `{% extends "this.html" %}`                                         | ✔️          |
-| T003   | Endblock deve avere un nome. Es.: `{% endblock body %}`.                                                          | -           |
-| D004   | (Django) Gli URL statici devono seguire lo schema `{% static path/to/file %}`.                                    | ✔️          |
-| J004   | (Jinja) Gli URL statici devono seguire lo schema `{{ url_for('static'..) }}`.                                     | ✔️          |
-| H005   | Il tag html deve avere un attributo `lang` non vuoto.                                                             | ✔️          |
-| H006   | Il tag `img` deve avere gli attributi `height` e `width`.                                                         | -           |
-| H007   | `<!DOCTYPE ... >` deve essere presente prima del tag html.                                                        | ✔️          |
-| H008   | Gli attributi devono essere tra virgolette doppie.                                                                | ✔️          |
-| H009   | I nomi dei tag devono essere in minuscolo.                                                                        | ✔️          |
-| H010   | I nomi degli attributi devono essere in minuscolo.                                                                | ✔️          |
-| H011   | I valori degli attributi devono essere tra virgolette.                                                            | ✔️          |
-| H012   | Non devono esserci spazi attorno al `=` degli attributi.                                                          | ✔️          |
-| H013   | Il tag `img` deve avere attributi alt.                                                                            | ✔️          |
-| H014   | Più righe vuote di quante ne mantenga la configurazione.                                                          | ✔️          |
-| H015   | Fai seguire i tag `h` da un a capo.                                                                               | ✔️          |
-| H016   | Tag `title` mancante nell'html.                                                                                   | ✔️          |
-| H017   | I tag void devono essere autochiudenti (in conflitto con: H018).                                                  | -           |
-| D018   | (Django) I link interni devono usare lo schema `{% url ... %}`.                                                   | ✔️          |
-| H018   | I tag void sono autochiudenti per natura e devono terminare con `>`, non con `/>` (in conflitto con: H017).       | -           |
-| J018   | (Jinja) I link interni devono usare lo schema `{{ url_for() ... }}`.                                              | ✔️          |
-| H019   | Sostituisci `javascript:abc()` con un evento `on_` e un URL reale.                                                | ✔️          |
-| H020   | Trovata una coppia di tag vuota. Valuta di rimuoverla.                                                            | ✔️          |
-| H021   | Evita gli stili inline.                                                                                           | ✔️          |
-| H022   | Usa HTTPS per i link esterni.                                                                                     | ✔️          |
-| H023   | Non usare riferimenti a entità.                                                                                   | ✔️          |
-| H024   | Ometti type negli script e negli stili.                                                                           | ✔️          |
-| H025   | Il tag sembra orfano.                                                                                             | ✔️          |
-| H026   | I tag id e class vuoti si possono rimuovere.                                                                      | ✔️          |
-| T027   | Trovata una stringa non chiusa nella sintassi del template.                                                       | ✔️          |
-| T028   | Valuta di usare tag senza spazi nei valori degli attributi. `{%- if/for -%}`                                      | -           |
-| H029   | Valuta di usare valori in minuscolo per il method dei form.                                                       | ✔️          |
-| H030   | Valuta di aggiungere una meta description.                                                                        | ✔️          |
-| T032   | Trovati spazi in eccesso nei tag di template.                                                                     | ✔️          |
-| H033   | Trovati spazi in eccesso nell'action del form.                                                                    | ✔️          |
-| T034   | Intendevi usare {% ... %} invece di {% ... }%?                                                                    | ✔️          |
-| H036   | Non usare tag `br` per la spaziatura.                                                                             | ✔️          |
-| H037   | Trovato un attributo duplicato.                                                                                   | ✔️          |
-| T038   | Il tag di blocco non ha un tag di chiusura corrispondente.                                                        | ✔️          |
-| T039   | Trovato un tag di template non chiuso.                                                                            | ✔️          |
-| T040   | Nome del template mancante o vuoto nel tag extends o include.                                                     | ✔️          |
-| H041   | Il tag viene chiuso in un blocco di template diverso da quello in cui è stato aperto.                             | ✔️          |
-| T041   | Il tag extends deve essere il primo tag del template.                                                             | ✔️          |
-| H042   | L'attributo for della label non ha un id di elemento corrispondente in questo file.                               | ✔️          |
-| T042   | Il contenuto al di fuori di un blocco non viene renderizzato in un template che ne estende un altro.              | ✔️          |
-| H043   | Il tag button deve avere un attributo `type`.                                                                     | ✔️          |
-| T043   | Il nome del blocco è usato più di una volta nel template.                                                         | ✔️          |
-| H044   | Thead non deve mescolare celle `th` e `td`.                                                                       | ✔️          |
-| T044   | Il tag di output contiene una parola chiave di istruzione; usa un tag di blocco.                                  | ✔️          |
-| H045   | Il tag iframe deve avere un attributo `title`.                                                                    | ✔️          |
-| T045   | Un tag di template dentro un commento html viene comunque eseguito; usa un commento di template per disattivarlo. | ✔️          |
-| H046   | Tabindex non deve essere positivo.                                                                                | ✔️          |
-| H047   | Aria-hidden non deve essere impostato su un elemento focalizzabile.                                               | ✔️          |
-| H048   | L'attributo aria non è tra quelli definiti dalla specifica.                                                       | ✔️          |
-| H049   | Il viewport non deve impedire lo zoom della pagina.                                                               | ✔️          |
-| H050   | L'elemento è obsoleto e va sostituito.                                                                            | ✔️          |
-| H051   | Il ruolo non è tra quelli che ARIA definisce per il markup.                                                       | ✔️          |
-| H052   | Il meta refresh non deve ricaricare o reindirizzare la pagina a tempo.                                            | ✔️          |
-| H053   | L'id è usato più di una volta nel file.                                                                           | ✔️          |
-| H054   | Un elemento interattivo non deve essere annidato in un altro.                                                     | ✔️          |
-| H055   | L'attributo lang deve essere un tag di lingua, come en o pt-BR.                                                   | ✔️          |
-| H056   | Src non deve essere vuoto.                                                                                        | ✔️          |
-| H057   | Il video deve avere una traccia di sottotitoli.                                                                   | ✔️          |
+| Codice        | Significato                                                                                                       | Predefinita |
+| ------------- | ----------------------------------------------------------------------------------------------------------------- | ----------- |
+| [T001](#t001) | Le variabili devono essere racchiuse tra spazi. Es.: `{{ this }}`                                                 | ✔️          |
+| [T002](#t002) | Nei tag vanno usate le virgolette doppie. Es. `{% extends "this.html" %}`                                         | ✔️          |
+| [T003](#t003) | Endblock deve avere un nome. Es.: `{% endblock body %}`.                                                          | -           |
+| [D004](#d004) | (Django) Gli URL statici devono seguire lo schema `{% static path/to/file %}`.                                    | ✔️          |
+| [J004](#j004) | (Jinja) Gli URL statici devono seguire lo schema `{{ url_for('static'..) }}`.                                     | ✔️          |
+| [H005](#h005) | Il tag html deve avere un attributo `lang` non vuoto.                                                             | ✔️          |
+| [H006](#h006) | Il tag `img` deve avere gli attributi `height` e `width`.                                                         | -           |
+| [H007](#h007) | `<!DOCTYPE ... >` deve essere presente prima del tag html.                                                        | ✔️          |
+| [H008](#h008) | Gli attributi devono essere tra virgolette doppie.                                                                | ✔️          |
+| [H009](#h009) | I nomi dei tag devono essere in minuscolo.                                                                        | ✔️          |
+| [H010](#h010) | I nomi degli attributi devono essere in minuscolo.                                                                | ✔️          |
+| [H011](#h011) | I valori degli attributi devono essere tra virgolette.                                                            | ✔️          |
+| [H012](#h012) | Non devono esserci spazi attorno al `=` degli attributi.                                                          | ✔️          |
+| [H013](#h013) | Il tag `img` deve avere attributi alt.                                                                            | ✔️          |
+| [H014](#h014) | Più righe vuote di quante ne mantenga la configurazione.                                                          | ✔️          |
+| [H015](#h015) | Fai seguire i tag `h` da un a capo.                                                                               | ✔️          |
+| [H016](#h016) | Tag `title` mancante nell'html.                                                                                   | ✔️          |
+| [H017](#h017) | I tag void devono essere autochiudenti (in conflitto con: H018).                                                  | -           |
+| [D018](#d018) | (Django) I link interni devono usare lo schema `{% url ... %}`.                                                   | ✔️          |
+| [H018](#h018) | I tag void sono autochiudenti per natura e devono terminare con `>`, non con `/>` (in conflitto con: H017).       | -           |
+| [J018](#j018) | (Jinja) I link interni devono usare lo schema `{{ url_for() ... }}`.                                              | ✔️          |
+| [H019](#h019) | Sostituisci `javascript:abc()` con un evento `on_` e un URL reale.                                                | ✔️          |
+| [H020](#h020) | Trovata una coppia di tag vuota. Valuta di rimuoverla.                                                            | ✔️          |
+| [H021](#h021) | Evita gli stili inline.                                                                                           | ✔️          |
+| [H022](#h022) | Usa HTTPS per i link esterni.                                                                                     | ✔️          |
+| [H023](#h023) | Non usare riferimenti a entità.                                                                                   | ✔️          |
+| [H024](#h024) | Ometti type negli script e negli stili.                                                                           | ✔️          |
+| [H025](#h025) | Il tag sembra orfano.                                                                                             | ✔️          |
+| [H026](#h026) | I tag id e class vuoti si possono rimuovere.                                                                      | ✔️          |
+| [T027](#t027) | Trovata una stringa non chiusa nella sintassi del template.                                                       | ✔️          |
+| [T028](#t028) | Valuta di usare tag senza spazi nei valori degli attributi. `{%- if/for -%}`                                      | -           |
+| [H029](#h029) | Valuta di usare valori in minuscolo per il method dei form.                                                       | ✔️          |
+| [H030](#h030) | Valuta di aggiungere una meta description.                                                                        | ✔️          |
+| [T032](#t032) | Trovati spazi in eccesso nei tag di template.                                                                     | ✔️          |
+| [H033](#h033) | Trovati spazi in eccesso nell'action del form.                                                                    | ✔️          |
+| [T034](#t034) | Intendevi usare {% ... %} invece di {% ... }%?                                                                    | ✔️          |
+| [H036](#h036) | Non usare tag `br` per la spaziatura.                                                                             | ✔️          |
+| [H037](#h037) | Trovato un attributo duplicato.                                                                                   | ✔️          |
+| [T038](#t038) | Il tag di blocco non ha un tag di chiusura corrispondente.                                                        | ✔️          |
+| [T039](#t039) | Trovato un tag di template non chiuso.                                                                            | ✔️          |
+| [T040](#t040) | Nome del template mancante o vuoto nel tag extends o include.                                                     | ✔️          |
+| [H041](#h041) | Il tag viene chiuso in un blocco di template diverso da quello in cui è stato aperto.                             | ✔️          |
+| [T041](#t041) | Il tag extends deve essere il primo tag del template.                                                             | ✔️          |
+| [H042](#h042) | L'attributo for della label non ha un id di elemento corrispondente in questo file.                               | ✔️          |
+| [T042](#t042) | Il contenuto al di fuori di un blocco non viene renderizzato in un template che ne estende un altro.              | ✔️          |
+| [H043](#h043) | Il tag button deve avere un attributo `type`.                                                                     | ✔️          |
+| [T043](#t043) | Il nome del blocco è usato più di una volta nel template.                                                         | ✔️          |
+| [H044](#h044) | Thead non deve mescolare celle `th` e `td`.                                                                       | ✔️          |
+| [T044](#t044) | Il tag di output contiene una parola chiave di istruzione; usa un tag di blocco.                                  | ✔️          |
+| [H045](#h045) | Il tag iframe deve avere un attributo `title`.                                                                    | ✔️          |
+| [T045](#t045) | Un tag di template dentro un commento html viene comunque eseguito; usa un commento di template per disattivarlo. | ✔️          |
+| [H046](#h046) | Tabindex non deve essere positivo.                                                                                | ✔️          |
+| [H047](#h047) | Aria-hidden non deve essere impostato su un elemento focalizzabile.                                               | ✔️          |
+| [H048](#h048) | L'attributo aria non è tra quelli definiti dalla specifica.                                                       | ✔️          |
+| [H049](#h049) | Il viewport non deve impedire lo zoom della pagina.                                                               | ✔️          |
+| [H050](#h050) | L'elemento è obsoleto e va sostituito.                                                                            | ✔️          |
+| [H051](#h051) | Il ruolo non è tra quelli che ARIA definisce per il markup.                                                       | ✔️          |
+| [H052](#h052) | Il meta refresh non deve ricaricare o reindirizzare la pagina a tempo.                                            | ✔️          |
+| [H053](#h053) | L'id è usato più di una volta nel file.                                                                           | ✔️          |
+| [H054](#h054) | Un elemento interattivo non deve essere annidato in un altro.                                                     | ✔️          |
+| [H055](#h055) | L'attributo lang deve essere un tag di lingua, come en o pt-BR.                                                   | ✔️          |
+| [H056](#h056) | Src non deve essere vuoto.                                                                                        | ✔️          |
+| [H057](#h057) | Il video deve avere una traccia di sottotitoli.                                                                   | ✔️          |
 
 ### Schema dei codici
 
