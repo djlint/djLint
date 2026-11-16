@@ -20,6 +20,8 @@
   "djlint.demo_error": "djLint を読み込めませんでした。接続を確認してから、ページを再読み込みしてください。",
   "djlint.demo_copy_link": "リンクをコピー",
   "djlint.since": "導入バージョン",
+  "djlint.default": "デフォルト:",
+  "djlint.default_none": "なし",
   "djlint.hero_problems": "{count} 件の問題",
   "djlint.hero_clean": "問題はありません",
   "djlint.hero_run": "実行",

@@ -20,6 +20,8 @@
   "djlint.demo_error": "Nie udało się wczytać djLint. Sprawdź połączenie i odśwież stronę.",
   "djlint.demo_copy_link": "Kopiuj link",
   "djlint.since": "od wersji",
+  "djlint.default": "Domyślnie:",
+  "djlint.default_none": "brak",
   "djlint.hero_problems": "Problemy: {count}",
   "djlint.hero_clean": "Brak problemów",
   "djlint.hero_run": "Uruchom",

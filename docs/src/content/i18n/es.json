@@ -20,6 +20,8 @@
   "djlint.demo_error": "No se pudo cargar djLint. Comprueba tu conexión y recarga la página.",
   "djlint.demo_copy_link": "Copiar enlace",
   "djlint.since": "desde",
+  "djlint.default": "Valor predeterminado:",
+  "djlint.default_none": "ninguno",
   "djlint.hero_problems": "{count} problemas",
   "djlint.hero_clean": "Sin problemas",
   "djlint.hero_run": "Ejecutar",

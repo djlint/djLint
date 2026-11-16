@@ -20,6 +20,8 @@
   "djlint.demo_error": "無法載入 djLint。請檢查網路連線，然後重新整理頁面。",
   "djlint.demo_copy_link": "複製連結",
   "djlint.since": "始於",
+  "djlint.default": "預設值：",
+  "djlint.default_none": "無",
   "djlint.hero_problems": "{count} 個問題",
   "djlint.hero_clean": "沒有問題",
   "djlint.hero_run": "執行",

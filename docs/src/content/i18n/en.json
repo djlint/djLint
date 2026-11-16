@@ -20,6 +20,8 @@
   "djlint.demo_error": "djLint could not be loaded. Check your connection and reload the page.",
   "djlint.demo_copy_link": "Copy link",
   "djlint.since": "since",
+  "djlint.default": "Default:",
+  "djlint.default_none": "none",
   "djlint.hero_problems": "{count} problems",
   "djlint.hero_clean": "No problems",
   "djlint.hero_run": "Run",

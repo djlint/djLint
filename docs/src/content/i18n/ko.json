@@ -20,6 +20,8 @@
   "djlint.demo_error": "djLint를 불러오지 못했습니다. 연결을 확인한 뒤 페이지를 새로 고치세요.",
   "djlint.demo_copy_link": "링크 복사",
   "djlint.since": "도입 버전",
+  "djlint.default": "기본값:",
+  "djlint.default_none": "없음",
   "djlint.hero_problems": "문제 {count}개",
   "djlint.hero_clean": "문제 없음",
   "djlint.hero_run": "실행",

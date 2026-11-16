@@ -20,6 +20,8 @@
   "djlint.demo_error": "无法加载 djLint。请检查网络连接，然后刷新页面。",
   "djlint.demo_copy_link": "复制链接",
   "djlint.since": "始于",
+  "djlint.default": "默认值：",
+  "djlint.default_none": "无",
   "djlint.hero_problems": "{count} 个问题",
   "djlint.hero_clean": "没有问题",
   "djlint.hero_run": "运行",
