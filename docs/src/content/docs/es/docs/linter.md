@@ -33,7 +33,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 También se puede hacer desde el archivo de [configuración](/es/docs/configuration/).
 
-Sin [perfil](/es/docs/configuration/#profile), de las reglas incluidas solo se aplican las reglas H. Las reglas T y las de un lenguaje de plantillas concreto (D, J, M, N) llegan con los perfiles a los que se aplican. Una regla indicada en `--include` se aplica con cualquier perfil o sin perfil, salvo con uno al que, según su descripción más abajo, no se aplica.
+Sin [perfil](/es/docs/configuration/#profile), de las reglas incluidas solo se aplican las reglas H. Las reglas T y las de un lenguaje de plantillas concreto (D, J) llegan con los perfiles a los que se aplican. Una regla indicada en `--include` se aplica con cualquier perfil o sin perfil, salvo con uno al que, según su descripción más abajo, no se aplica.
 
 ## Reglas
 

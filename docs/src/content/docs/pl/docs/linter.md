@@ -33,7 +33,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 Można to też zrobić w pliku konfiguracyjnym (zobacz [Konfiguracja](/pl/docs/configuration/)).
 
-Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają tylko reguły H. Reguły T i reguły dla jednego języka szablonów (D, J, M, N) włączają profile, których dotyczą. Reguła podana w `--include` działa przy każdym profilu i bez profilu, poza profilem, którego według opisu poniżej ona nie dotyczy.
+Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają tylko reguły H. Reguły T i reguły dla jednego języka szablonów (D, J) włączają profile, których dotyczą. Reguła podana w `--include` działa przy każdym profilu i bez profilu, poza profilem, którego według opisu poniżej ona nie dotyczy.
 
 ## Reguły
 
