@@ -370,11 +370,13 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   .line::before {
     counter-increment: line;
     content: counter(line);
+    /* Screen readers skip the numbers where the alt text syntax is known. */
+    content: counter(line) / "";
     display: inline-block;
     width: 2ch;
     margin-inline: 0.75rem 1.25rem;
     text-align: end;
-    color: #3b4061;
+    color: #7d84ad;
   }
   .line :global(.tk-tag) { color: #f7768e; }
   .line :global(.tk-attr) { color: #bb9af7; }

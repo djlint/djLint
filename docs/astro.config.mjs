@@ -84,6 +84,12 @@ export default defineConfig({
           tag: "link",
           attrs: { rel: "apple-touch-icon", href: "/static/img/apple-touch-icon.png" },
         },
+        // The picture a link preview shows in chats and social networks.
+        {
+          tag: "meta",
+          attrs: { property: "og:image", content: "https://djlint.com/static/img/icon.png" },
+        },
+        { tag: "meta", attrs: { property: "og:image:alt", content: "djLint" } },
       ],
       defaultLocale: "root",
       locales: {
@@ -105,11 +111,13 @@ export default defineConfig({
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/djlint/djlint" },
         { icon: "discord", label: "Discord", href: "https://discord.gg/taghAqebzU" },
+        { icon: "seti:python", label: "PyPI", href: "https://pypi.org/project/djlint/" },
       ],
       editLink: { baseUrl: "https://github.com/djlint/djLint/edit/master/docs/" },
       lastUpdated: true,
       customCss: ["./src/styles/custom.css"],
       components: { Header: "./src/components/Header.astro", Hero: "./src/components/Hero.astro" },
+      routeMiddleware: "./src/route-data.ts",
       expressiveCode: {
         themes: ["tokyo-night", "github-light"],
         styleOverrides: {

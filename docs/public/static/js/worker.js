@@ -60,17 +60,17 @@ async function loadPyodideAndPackages() {
     indexURL: PYODIDE_URL,
     lockFileURL: new URL("/static/py/pyodide-lock.json", self.location).href,
   });
-  self.postMessage({ type: "status", message: "Installing djLint" });
+  self.postMessage({ type: "status", message: "installing" });
   await pyodide.loadPackage("djlint");
-  self.postMessage({
-    type: "version",
-    message: await pyodide.runPythonAsync(`
+  const versions = await pyodide.runPythonAsync(`
 import platform
 from importlib import metadata
 
-f"Running with Python {platform.python_version()}; djLint {metadata.version('djlint')}"
-`),
-  });
+[platform.python_version(), metadata.version("djlint")]
+`);
+  const [python, djlint] = versions.toJs();
+  versions.destroy();
+  self.postMessage({ type: "version", message: { python, djlint } });
   formatHtml = await pyodide.runPythonAsync(`
 from djlint.api import format_text, load_config
 
@@ -82,7 +82,11 @@ _djlint_format
   self.postMessage({ type: "status", message: "ready" });
 }
 
-const pyodideReadyPromise = loadPyodideAndPackages();
+// The page shows its own message: the error is for the console.
+const pyodideReadyPromise = loadPyodideAndPackages().catch((error) => {
+  self.postMessage({ type: "status", message: "error" });
+  throw error;
+});
 
 self.onmessage = async (event) => {
   await pyodideReadyPromise;

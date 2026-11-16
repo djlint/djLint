@@ -58,7 +58,7 @@ Bez [profilu](/cs/docs/configuration/#profile) běží z vestavěných pravidel 
 | H016 | V html chybí značka `title`.                                                                           | ✔️      |
 | H017 | Nepárové značky by měly být samouzavírací (v konfliktu s: H018).                                       | -       |
 | D018 | (Django) Interní odkazy by měly používat tvar `{% url ... %}`.                                         | ✔️      |
-| H018 | Nepárové značky jsou ze své podstaty samouzavírací a musí končit „>“, ne „/>“ (v konfliktu s: H017).   | -       |
+| H018 | Nepárové značky jsou ze své podstaty samouzavírací a musí končit `>`, ne `/>` (v konfliktu s: H017).   | -       |
 | J018 | (Jinja) Interní odkazy by měly používat tvar `{{ url_for() ... }}`.                                    | ✔️      |
 | H019 | Nahraďte `javascript:abc()` událostí `on_` a skutečnou URL.                                            | ✔️      |
 | H020 | Nalezen prázdný pár značek. Zvažte jeho odstranění.                                                    | ✔️      |
@@ -351,7 +351,7 @@ Správně:
 
 `Attribute values should be quoted.`
 
-Hodnoty atributů bez uvozovek končí prvním prázdným znakem, takže hodnota jako class=btn primary tiše zahodí vše za mezerou (prohlížeč považuje „primary“ za samostatný logický atribut). Obzvlášť křehké jsou hodnoty pocházející ze šablonových proměnných: jakákoli vykreslená mezera, „=“ nebo „>“ značku poškodí. Uvozovky dělají hranici hodnoty explicitní a bezpečnou.
+Hodnoty atributů bez uvozovek končí prvním prázdným znakem, takže hodnota jako class=btn primary tiše zahodí vše za mezerou (prohlížeč považuje „primary“ za samostatný logický atribut). Obzvlášť křehké jsou hodnoty pocházející ze šablonových proměnných: jakákoli vykreslená mezera, `=` nebo `>` značku poškodí. Uvozovky dělají hranici hodnoty explicitní a bezpečnou.
 
 Špatně:
 
@@ -369,7 +369,7 @@ Správně:
 
 `There should be no spaces around attribute =.`
 
-HTML kolem „=“ prázdné znaky povoluje, takže jde o stylové pravidlo. Obvyklý styl je zápis name="value" bez mezer a právě ten předpokládají jednoduché textové nástroje jako grep nebo hledání a nahrazování, takže nejednotné mezery ztěžují hledání a refaktoring atributů. `--reformat` mezery odstraní za vás.
+HTML kolem `=` prázdné znaky povoluje, takže jde o stylové pravidlo. Obvyklý styl je zápis name="value" bez mezer a právě ten předpokládají jednoduché textové nástroje jako grep nebo hledání a nahrazování, takže nejednotné mezery ztěžují hledání a refaktoring atributů. `--reformat` mezery odstraní za vás.
 
 Neuplatňuje se v profilu angular.
 

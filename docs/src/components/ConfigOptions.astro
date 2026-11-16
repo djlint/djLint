@@ -30,13 +30,32 @@ const usageTabs = (usage: (typeof options)[number]["usage"]) =>
     ];
   });
 
+// Code blocks in a description go through <Code>, like every other code block
+// on the site; the plain Markdown processor would use Astro's default theme.
+const fence = /^```(\w*)\n([\s\S]*?)\n```$/gm;
+async function describe(text: string) {
+  const parts: ({ html: string } | { code: string; lang: string })[] = [];
+  let last = 0;
+  const prose = async (end: number) => {
+    const chunk = text.slice(last, end);
+    if (chunk.trim()) parts.push({ html: (await markdown.render(chunk)).code });
+  };
+  for (const match of text.matchAll(fence)) {
+    await prose(match.index);
+    parts.push({ lang: match[1] || "text", code: match[2] });
+    last = match.index + match[0].length;
+  }
+  await prose(text.length);
+  return parts;
+}
+
 const rendered = await Promise.all(
   options
     .toSorted((a, b) => a.name.localeCompare(b.name))
     .map(async (option) => ({
       ...option,
       id: option.name.replaceAll("_", "-"),
-      html: (await markdown.render(option.description[lang] ?? option.description.en)).code,
+      parts: await describe(option.description[lang] ?? option.description.en),
       tabs: usageTabs(option.usage),
     })),
 );
@@ -46,7 +65,7 @@ const rendered = await Promise.all(
   <span>{label}</span>
   <input id="config-filter" type="search" placeholder={placeholder} />
 </label>
-<p id="config-empty" hidden>{empty}</p>
+<p id="config-empty" role="status" hidden>{empty}</p>
 
 {
   rendered.map((option) => (
@@ -58,7 +77,9 @@ const rendered = await Promise.all(
         <Badge text={`${Astro.locals.t("djlint.since")} ${option.since}`} variant="default" />
         {option.tags.map((tag) => <Badge text={tag} variant="note" />)}
       </p>
-      <Fragment set:html={option.html} />
+      {option.parts.map((part) =>
+        "code" in part ? <Code code={part.code} lang={part.lang} /> : <Fragment set:html={part.html} />,
+      )}
       <Tabs syncKey="config-file">
         {option.tabs.map((tab) => (
           <TabItem label={tab.label}>
