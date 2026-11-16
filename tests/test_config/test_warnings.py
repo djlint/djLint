@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 import pytest
 from click import UsageError
 
-from djlint.settings import _SETTINGS, _SWITCHES, Config, _warn_once  # noqa: PLC2701
+from djlint.settings import _SETTINGS, Config, _warn_once  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -36,14 +36,13 @@ def _settings_read() -> set[str]:
         str(node.args[0].value)
         for node in ast.walk(ast.parse(source))
         if isinstance(node, ast.Call)
-        and ast.unparse(node.func) in {"djlint_settings.get", "setting_int"}
+        and ast.unparse(node.func) in {"djlint_settings.get", "setting_bool", "setting_int"}
         and isinstance(node.args[0], ast.Constant)
     }
 
 
 def test_the_known_settings_are_the_ones_djlint_reads() -> None:
     assert _settings_read() == _SETTINGS
-    assert _SWITCHES <= _SETTINGS
 
 
 @pytest.mark.parametrize(
@@ -72,20 +71,9 @@ def test_the_known_settings_are_the_ones_djlint_reads() -> None:
             ".djlintrc sets colour, which is not a djLint setting.",
             id="nothing close",
         ),
-        pytest.param(
-            '{"format_css": "false"}',
-            'format_css in .djlintrc should be true or false, not "false".'
-            " djLint reads it as true.",
-            id="switch as text",
-        ),
-        pytest.param(
-            '{"format_css": 0}',
-            "format_css in .djlintrc should be true or false, not 0. djLint reads it as false.",
-            id="switch as a number",
-        ),
     ],
 )
-def test_a_setting_that_looks_wrong(
+def test_a_setting_djlint_does_not_know(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], settings: str, expected: str
 ) -> None:
     (tmp_path / ".djlintrc").write_text(settings, encoding="utf-8")
@@ -264,3 +252,59 @@ def test_per_file_ignores_take_a_list(tmp_path: Path) -> None:
     )
 
     assert Config(str(tmp_path)).per_file_ignores == {"base.html": "H030,H025"}
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        pytest.param("true", True, id="true"),
+        pytest.param('"true"', True, id="text true"),
+        pytest.param('"Yes"', True, id="yes"),
+        pytest.param('" on "', True, id="on"),
+        pytest.param('"1"', True, id="text 1"),
+        pytest.param("1", True, id="1"),
+        pytest.param("false", False, id="false"),
+        pytest.param('"false"', False, id="text false"),
+        pytest.param('"NO"', False, id="no"),
+        pytest.param('"off"', False, id="off"),
+        pytest.param("0", False, id="0"),
+    ],
+)
+def test_a_switch_takes_the_words_for_true_and_false(
+    tmp_path: Path, value: str, expected: bool
+) -> None:
+    (tmp_path / ".djlintrc").write_text(
+        f'{{"format_css": {value}, "require_pragma": {value}}}', encoding="utf-8"
+    )
+
+    config = Config(str(tmp_path))
+
+    assert config.format_css is expected
+    assert config.require_pragma is expected
+
+
+@pytest.mark.parametrize("value", ['"maybe"', "2", '""', "[]", "null"])
+def test_a_switch_refuses_other_values(tmp_path: Path, value: str) -> None:
+    (tmp_path / ".djlintrc").write_text(f'{{"format_css": {value}}}', encoding="utf-8")
+
+    with pytest.raises(
+        UsageError, match=r"Invalid \.djlintrc format_css value .* It must be true or false\."
+    ):
+        Config(str(tmp_path))
+
+
+@pytest.mark.parametrize(("value", "expected"), [("100", 100), ('"100"', 100), ("100.0", 100)])
+def test_a_number_takes_a_whole_number_in_any_form(
+    tmp_path: Path, value: str, expected: int
+) -> None:
+    (tmp_path / ".djlintrc").write_text(f'{{"max_line_length": {value}}}', encoding="utf-8")
+
+    assert Config(str(tmp_path)).max_line_length == expected
+
+
+@pytest.mark.parametrize("value", ["true", "100.5", '"100.5"', '"wide"'])
+def test_a_number_refuses_other_values(tmp_path: Path, value: str) -> None:
+    (tmp_path / ".djlintrc").write_text(f'{{"max_line_length": {value}}}', encoding="utf-8")
+
+    with pytest.raises(UsageError, match="It must be a whole number"):
+        Config(str(tmp_path))

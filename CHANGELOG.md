@@ -8,12 +8,14 @@
 
 - djLint warns about settings that would not do what they look like, so a typo no longer goes unnoticed. The warnings go to stderr once per run, as the others do:
   - a name in a configuration file that is not a djLint setting, with the closest one it knows, as `max_line_length` for `max_line_lenght` or `max-line-length`;
-  - a switch written as text or a number, such as `"false"`, which counts as on;
   - a rule code in `ignore`, `include` or `per-file-ignores` that no rule has, with the right case for `h006`; a code in both `ignore` and `include`, which stays off; and a code in `include` that the profile never runs, such as T028 under `django`;
   - `--indent-css` or the `css` settings without `format_css`, the same for JavaScript, and `format_attribute_js_json_pattern` or `format_attribute_js_json_min_props` without `format_attribute_js_json`.
+- A switch in a configuration file can also be written as the words configparser takes, in any case: `"yes"`, `"on"`, `"true"` or `"1"` for on, `"no"`, `"off"`, `"false"` or `"0"` for off, and the numbers 1 and 0.
 
 ### Bug fixes
 
+- The text `"false"` in a configuration file turns a switch off. Any text used to turn it on, so `"format_css": "false"` formatted CSS. A value that is no switch, such as `"maybe"`, is now an error naming the file, as a number setting that is no number already was.
+- A number setting written as `true` or with a fraction, such as `indent = true` or `max_line_length = 100.5`, is an error. They used to become 1 and 100. A whole number written with a fraction part, `100.0`, still counts.
 - A `linter_output_format` naming a field djLint doesn't have, such as `{lin}`, is reported when the run starts, with the fields it can name. The run used to fail at the first finding.
 - `per-file-ignores` takes a list of codes for a pattern, as the other options with several values do, such as `"base.html" = ["H030", "H025"]`. A list used to make linting fail.
 

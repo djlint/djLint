@@ -360,33 +360,17 @@ _SETTINGS: Final = frozenset((
     "use_gitignore",
 ))
 
-# The settings that are on or off. djLint takes any value of one as a
-# truth value, so the text "false" turns it on.
-_SWITCHES: Final = frozenset((
-    "allow_empty_input",
-    "close_void_tags",
-    "format_attribute_js_json",
-    "format_attribute_template_tags",
-    "format_css",
-    "format_js",
-    "ignore_case",
-    "keep_br_inline",
-    "line_break_after_multiline_tag",
-    "name_endblocks",
-    "no_entity_formatting",
-    "no_function_formatting",
-    "no_indent_inner_html",
-    "no_line_after_yaml",
-    "no_set_formatting",
-    "preserve_blank_lines",
-    "preserve_class_newlines",
-    "preserve_leading_space",
-    "quiet",
-    "single_attribute_per_line",
-    "sort_attributes",
-    "sort_load_tags",
-    "use_gitignore",
-))
+# The words a switch can be written as, the ones configparser takes.
+_BOOLEAN_WORDS: Final = {
+    "1": True,
+    "yes": True,
+    "true": True,
+    "on": True,
+    "0": False,
+    "no": False,
+    "false": False,
+    "off": False,
+}
 
 # What linter_output_format can name.
 _OUTPUT_FIELDS: Final = frozenset(("code", "end", "filename", "line", "match", "message"))
@@ -395,21 +379,15 @@ _OUTPUT_FIELDS: Final = frozenset(("code", "end", "filename", "line", "match", "
 def _check_settings(settings: Mapping[str, Any], sources: Mapping[str, str]) -> None:
     """Warn about settings in a file that djLint ignores or reads unlike they look.
 
-    A misspelled name would otherwise do nothing without a word, and a
-    switch written as the text "false" would turn on.
+    A misspelled name would otherwise do nothing without a word.
     """
-    for name, value in settings.items():
+    for name in settings:
         if name not in _SETTINGS:
             from difflib import get_close_matches  # noqa: PLC0415
 
             close = get_close_matches(name, _SETTINGS, n=1)
             hint = f" Did you mean {close[0]}?" if close else ""
             _warn_once(f"{sources[name]} sets {name}, which is not a djLint setting.{hint}")
-        elif name in _SWITCHES and not isinstance(value, bool):
-            _warn_once(
-                f"{name} in {sources[name]} should be true or false, not {json.dumps(value)}."
-                f" djLint reads it as {json.dumps(bool(value))}."
-            )
 
 
 def _check_output_format(output_format: str) -> None:
@@ -1531,15 +1509,44 @@ class Config:
         _check_settings(djlint_settings, setting_sources)
 
         def setting_int(key: str, default: int) -> int:
-            """Read an integer option from the config file."""
-            try:
-                return int(djlint_settings.get(key, default))
-            except (TypeError, ValueError):
-                msg = (
-                    f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
-                    " It must be a whole number."
-                )
-                raise UsageError(msg) from None
+            """Read a whole number from the config file, or the text of one.
+
+            true and false are numbers to Python, and 2.5 would quietly
+            become 2, so both are refused.
+            """
+            value = djlint_settings.get(key, default)
+            if isinstance(value, float) and value.is_integer():
+                value = int(value)
+            if not isinstance(value, (bool, float)):
+                try:
+                    return int(value)
+                except (TypeError, ValueError):
+                    pass
+            msg = (
+                f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
+                " It must be a whole number."
+            )
+            raise UsageError(msg)
+
+        def setting_bool(key: str) -> bool:
+            """Read a switch from the config file: true or false, or a word for one.
+
+            The words are the ones configparser takes, in any case, and 1 or 0.
+            Anything else is refused rather than read as true, so the text
+            "false" can't turn a switch on.
+            """
+            value = djlint_settings.get(key, False)
+            if isinstance(value, bool):
+                return value
+            if isinstance(value, int) and value in {0, 1}:
+                return bool(value)
+            if isinstance(value, str) and (word := value.strip().lower()) in _BOOLEAN_WORDS:
+                return _BOOLEAN_WORDS[word]
+            msg = (
+                f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
+                " It must be true or false."
+            )
+            raise UsageError(msg)
 
         self.reformat = reformat
         self.check = check
@@ -1551,48 +1558,34 @@ class Config:
         self.stdin_filename = stdin_filename
 
         self.extension = str(extension or djlint_settings.get("extension", "html"))
-        self.quiet = quiet or djlint_settings.get("quiet", False)
-        self.require_pragma = (
-            require_pragma or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
+        self.quiet = quiet or setting_bool("quiet")
+        self.require_pragma = require_pragma or setting_bool("require_pragma")
+        self.preserve_leading_space = preserve_leading_space or setting_bool(
+            "preserve_leading_space"
         )
-        self.preserve_leading_space = preserve_leading_space or djlint_settings.get(
-            "preserve_leading_space", False
+        self.preserve_blank_lines = preserve_blank_lines or setting_bool("preserve_blank_lines")
+        self.preserve_class_newlines = preserve_class_newlines or setting_bool(
+            "preserve_class_newlines"
         )
-        self.preserve_blank_lines = preserve_blank_lines or djlint_settings.get(
-            "preserve_blank_lines", False
-        )
-        self.preserve_class_newlines = preserve_class_newlines or djlint_settings.get(
-            "preserve_class_newlines", False
-        )
-        self.format_js = format_js or djlint_settings.get("format_js", False)
-        self.format_css = format_css or djlint_settings.get("format_css", False)
-        self.ignore_case = ignore_case or djlint_settings.get("ignore_case", False)
-        self.close_void_tags = close_void_tags or djlint_settings.get("close_void_tags", False)
-        self.no_line_after_yaml = no_line_after_yaml or djlint_settings.get(
-            "no_line_after_yaml", False
-        )
-        self.no_indent_inner_html = no_indent_inner_html or djlint_settings.get(
-            "no_indent_inner_html", False
-        )
-        self.sort_attributes = sort_attributes or djlint_settings.get("sort_attributes", False)
-        self.sort_load_tags = sort_load_tags or djlint_settings.get("sort_load_tags", False)
-        self.name_endblocks = name_endblocks or djlint_settings.get("name_endblocks", False)
+        self.format_js = format_js or setting_bool("format_js")
+        self.format_css = format_css or setting_bool("format_css")
+        self.ignore_case = ignore_case or setting_bool("ignore_case")
+        self.close_void_tags = close_void_tags or setting_bool("close_void_tags")
+        self.no_line_after_yaml = no_line_after_yaml or setting_bool("no_line_after_yaml")
+        self.no_indent_inner_html = no_indent_inner_html or setting_bool("no_indent_inner_html")
+        self.sort_attributes = sort_attributes or setting_bool("sort_attributes")
+        self.sort_load_tags = sort_load_tags or setting_bool("sort_load_tags")
+        self.name_endblocks = name_endblocks or setting_bool("name_endblocks")
         selected_profile = str(profile or djlint_settings.get("profile", "")).lower()
         expressions_are_rust = selected_profile == "askama"
         self.no_set_formatting = (
-            no_set_formatting
-            or djlint_settings.get("no_set_formatting", False)
-            or expressions_are_rust
+            no_set_formatting or setting_bool("no_set_formatting") or expressions_are_rust
         )
         self.no_function_formatting = (
-            no_function_formatting
-            or djlint_settings.get("no_function_formatting", False)
-            or expressions_are_rust
+            no_function_formatting or setting_bool("no_function_formatting") or expressions_are_rust
         )
-        self.no_entity_formatting = no_entity_formatting or djlint_settings.get(
-            "no_entity_formatting", False
-        )
-        self.keep_br_inline = keep_br_inline or djlint_settings.get("keep_br_inline", False)
+        self.no_entity_formatting = no_entity_formatting or setting_bool("no_entity_formatting")
+        self.keep_br_inline = keep_br_inline or setting_bool("keep_br_inline")
         self.quote_style = str(quote_style or djlint_settings.get("quote_style", "double")).lower()
         if self.quote_style not in _QUOTE_STYLES:
             msg = (
@@ -1600,14 +1593,14 @@ class Config:
                 f" Choose from {', '.join(sorted(_QUOTE_STYLES))}."
             )
             raise BadParameter(msg, param_hint="'--quote-style'")
-        self.format_attribute_template_tags = format_attribute_template_tags or djlint_settings.get(
-            "format_attribute_template_tags", False
+        self.format_attribute_template_tags = format_attribute_template_tags or setting_bool(
+            "format_attribute_template_tags"
         )
-        self.single_attribute_per_line = single_attribute_per_line or djlint_settings.get(
-            "single_attribute_per_line", False
+        self.single_attribute_per_line = single_attribute_per_line or setting_bool(
+            "single_attribute_per_line"
         )
-        self.format_attribute_js_json = format_attribute_js_json or djlint_settings.get(
-            "format_attribute_js_json", False
+        self.format_attribute_js_json = format_attribute_js_json or setting_bool(
+            "format_attribute_js_json"
         )
         self.format_attribute_js_json_min_props = (
             format_attribute_js_json_min_props
@@ -1633,8 +1626,8 @@ class Config:
         self.blank_line_before_tag = blank_line_before_tag or _as_comma_separated(
             djlint_settings.get("blank_line_before_tag", None)
         )
-        self.line_break_after_multiline_tag = line_break_after_multiline_tag or djlint_settings.get(
-            "line_break_after_multiline_tag", False
+        self.line_break_after_multiline_tag = line_break_after_multiline_tag or setting_bool(
+            "line_break_after_multiline_tag"
         )
         self.js_config = _beautifier_config(djlint_settings.get("js"), indent_size=indent_js)
         self.css_config = _beautifier_config(djlint_settings.get("css"), indent_size=indent_css)
@@ -1693,15 +1686,13 @@ class Config:
         self.stdin = (src == "-" if stdin is None else stdin) and (
             not self.files or stdin_filename is not None
         )
-        self.use_gitignore = (
-            use_gitignore or bool(djlint_settings.get("use_gitignore", False))
-        ) and (not self.stdin or stdin_filename is not None)
+        self.use_gitignore = (use_gitignore or setting_bool("use_gitignore")) and (
+            not self.stdin or stdin_filename is not None
+        )
         self.gitignore: PathSpec[Pattern] | None = (
             load_gitignore(self.project_root) if self.use_gitignore else None
         )
-        self.allow_empty_input = allow_empty_input or bool(
-            djlint_settings.get("allow_empty_input", False)
-        )
+        self.allow_empty_input = allow_empty_input or setting_bool("allow_empty_input")
 
         self.has_profile = bool(selected_profile)
         self.profile = selected_profile or "all"
