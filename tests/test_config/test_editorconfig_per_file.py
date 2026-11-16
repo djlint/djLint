@@ -8,10 +8,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
-import regex as re
 
 from djlint._cli import main as djlint  # noqa: PLC2701
-from djlint.settings import Config, _editorconfig_regex  # noqa: PLC2701
+from djlint.settings import Config, _EditorConfigGlob  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -90,7 +89,15 @@ def test_stdin_takes_the_editorconfig_of_its_filename(runner: CliRunner, project
         ("pages/**/*.html", ["pages/a.html", "pages/x/y/a.html"], ["a.html", "x/pages/a.html"]),
         ("**/a.html", ["a.html", "x/y/a.html"], ["b.html"]),
         ("*.{html,jinja}", ["a.html", "a.jinja"], ["a.txt"]),
-        ("a{1..3}.html", ["a1.html", "a3.html"], ["a4.html"]),
+        ("a{1..3}.html", ["a1.html", "a3.html", "a+2.html"], ["a4.html", "a0.html"]),
+        ("a{-3..-1}.html", ["a-2.html"], ["a-4.html", "a1.html"]),
+        (
+            "page{1000..9999}.html",
+            ["page1000.html", "page9999.html"],
+            ["page10.html", "page10000.html"],
+        ),
+        ("{{1..3},index}.html", ["2.html", "index.html"], ["4.html", "{index}.html"]),
+        ("{a,{b}}.html", ["a.html", "{b}.html"], ["b.html"]),
         ("[!b]*.html", ["a.html"], ["b.html"]),
         ("[ab].html", ["a.html", "b.html"], ["c.html"]),
         ("{single}.html", ["{single}.html"], ["single.html"]),
@@ -101,10 +108,10 @@ def test_stdin_takes_the_editorconfig_of_its_filename(runner: CliRunner, project
 def test_section_globs_follow_the_editorconfig_specification(
     glob: str, matches: list[str], misses: list[str]
 ) -> None:
-    pattern = re.compile(_editorconfig_regex(glob))
+    section = _EditorConfigGlob(glob)
 
-    assert [path for path in matches if not pattern.fullmatch(path)] == []
-    assert [path for path in misses if pattern.fullmatch(path)] == []
+    assert [path for path in matches if not section.matches(path)] == []
+    assert [path for path in misses if section.matches(path)] == []
 
 
 def test_a_later_section_wins_within_a_file(tmp_path: Path) -> None:

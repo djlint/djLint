@@ -183,97 +183,125 @@ def find_djlint_rules(root: Path) -> Path | None:
 
 
 _EDITORCONFIG_PROPERTIES: Final = frozenset(("indent_size", "max_line_length"))
-# A {1..9} range wider than this would make a huge pattern; any number stands in.
-_EDITORCONFIG_RANGE_LIMIT: Final = 1000
 
 
-def _editorconfig_regex(glob: str) -> str:
-    """The regex of an EditorConfig section glob, as the specification reads it.
-
-    `*` and `?` stay within one folder, `**` crosses them, `[...]` and `[!...]`
-    are character classes, `{a,b}` alternatives and `{1..9}` a number in that
-    range. A glob without a `/` matches a file's name in any folder below the
-    .editorconfig; one with a `/` is matched from the folder of that file.
-    """
-    out: list[str] = []
-    i = 0
+def _closing_brace(glob: str, start: int) -> int:
+    """The index of the `}` that closes the `{` at start, or -1 without one."""
     depth = 0
+    i = start
     while i < len(glob):
-        char = glob[i]
-        if char == "\\" and i + 1 < len(glob):
-            out.append(re.escape(glob[i + 1]))
+        if glob[i] == "\\":
             i += 2
             continue
-        if char == "*":
-            # A `**/` at the start or after a `/` also stands for no folder, so
-            # `pages/**/*.html` takes pages/index.html too.
-            if glob.startswith("**/", i) and (i == 0 or glob[i - 1] == "/"):
-                out.append("(?:.*/)?")
-                i += 3
-                continue
-            if glob.startswith("**", i):
-                out.append(".*")
+        if glob[i] == "{":
+            depth += 1
+        elif glob[i] == "}":
+            depth -= 1
+            if not depth:
+                return i
+        i += 1
+    return -1
+
+
+@final
+class _EditorConfigGlob:
+    """An EditorConfig section glob, as the specification reads it.
+
+    `*` and `?` stay within one folder, `**` crosses them, `[...]` and `[!...]`
+    are character classes, `{a,b}` alternatives, which can nest, and `{1..9}` a
+    number in that range. A glob without a `/` matches a file's name in any
+    folder below the .editorconfig; one with a `/` is matched from the folder
+    of that file.
+    """
+
+    __slots__ = ("pattern", "ranges")
+
+    def __init__(self, glob: str) -> None:
+        out: list[str] = []
+        # Each {1..9} captures its number, which matches() checks against the
+        # range, as the EditorConfig core library does.
+        ranges: list[tuple[int, int]] = []
+        # For each open brace, whether it holds alternatives or is a literal one.
+        braces: list[bool] = []
+        i = 0
+        while i < len(glob):
+            char = glob[i]
+            if char == "\\" and i + 1 < len(glob):
+                out.append(re.escape(glob[i + 1]))
                 i += 2
                 continue
-            out.append("[^/]*")
-        elif char == "?":
-            out.append("[^/]")
-        elif char == "[" and (close := glob.find("]", i + 1)) > i + 1:
-            body = glob[i + 1 : close]
-            negated = body.startswith("!")
-            body = body.removeprefix("!").replace("\\", "\\\\")
-            out.append(f"[{'^' if negated else ''}{body}]")
-            i = close + 1
-            continue
-        elif char == "{":
-            close = glob.find("}", i)
-            span = glob[i + 1 : close] if close > i else ""
-            if numbers := re.fullmatch(r"([+-]?\d+)\.\.([+-]?\d+)", span):
-                low, high = sorted((int(numbers[1]), int(numbers[2])))
-                choices = range(low, high + 1) if high - low <= _EDITORCONFIG_RANGE_LIMIT else ()
-                out.append(f"(?:{'|'.join(map(str, choices)) or '[+-]?[0-9]+'})")
+            if char == "*":
+                # A `**/` at the start or after a `/` also stands for no
+                # folder, so `pages/**/*.html` takes pages/index.html too.
+                if glob.startswith("**/", i) and (i == 0 or glob[i - 1] == "/"):
+                    out.append("(?:.*/)?")
+                    i += 3
+                    continue
+                if glob.startswith("**", i):
+                    out.append(".*")
+                    i += 2
+                    continue
+                out.append("[^/]*")
+            elif char == "?":
+                out.append("[^/]")
+            elif char == "[" and (close := glob.find("]", i + 1)) > i + 1:
+                body = glob[i + 1 : close]
+                negated = body.startswith("!")
+                body = body.removeprefix("!").replace("\\", "\\\\")
+                out.append(f"[{'^' if negated else ''}{body}]")
                 i = close + 1
                 continue
-            if "," in span:
-                out.append("(?:")
-                depth += 1
+            elif char == "{":
+                close = _closing_brace(glob, i)
+                span = glob[i + 1 : close] if close != -1 else ""
+                if numbers := re.fullmatch(r"([+-]?[0-9]+)\.\.([+-]?[0-9]+)", span):
+                    low, high = sorted((int(numbers[1]), int(numbers[2])))
+                    ranges.append((low, high))
+                    out.append("([+-]?[0-9]+)")
+                    i = close + 1
+                    continue
+                braces.append("," in span)
+                out.append("(?:" if braces[-1] else re.escape(char))
+            elif char == "}" and braces:
+                out.append(")" if braces.pop() else re.escape(char))
+            elif char == "," and braces and braces[-1]:
+                out.append("|")
             else:
-                # A brace without alternatives is a literal one.
                 out.append(re.escape(char))
-        elif char == "}" and depth:
-            out.append(")")
-            depth -= 1
-        elif char == "," and depth:
-            out.append("|")
-        else:
-            out.append(re.escape(char))
-        i += 1
-    pattern = "".join(out)
-    if "/" not in glob:
-        return f"(?:.*/)?{pattern}"
-    return pattern.removeprefix("/")
+            i += 1
+        pattern = "".join(out)
+        pattern = pattern.removeprefix("/") if "/" in glob else f"(?:.*/)?{pattern}"
+        try:
+            self.pattern = re.compile(pattern)
+        except re.error:
+            self.pattern = re.compile(r"(?!)")
+        self.ranges = tuple(ranges)
+
+    def matches(self, path: str) -> bool:
+        """Whether the glob takes a path, relative to its .editorconfig."""
+        found = self.pattern.fullmatch(path)
+        return found is not None and all(
+            number is None or low <= int(number) <= high
+            for number, (low, high) in zip(found.groups(), self.ranges, strict=True)
+        )
 
 
 def _read_editorconfig(
     path: Path,
-) -> tuple[list[tuple[re.Pattern[str], dict[str, int | None]]], bool]:
+) -> tuple[list[tuple[_EditorConfigGlob, dict[str, int | None]]], bool]:
     """The sections of one .editorconfig with djLint's properties, and its root flag.
 
     A property set to `unset` is None, which drops what a file further up or a
     section before it gives it.
     """
-    sections: list[tuple[re.Pattern[str], dict[str, int | None]]] = []
+    sections: list[tuple[_EditorConfigGlob, dict[str, int | None]]] = []
     is_root = False
     for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         line = raw_line.strip()
         if not line or line.startswith(("#", ";")):
             continue
         if line.startswith("[") and line.endswith("]"):
-            try:
-                pattern = re.compile(_editorconfig_regex(line[1:-1]))
-            except re.error:
-                pattern = re.compile(r"(?!)")
-            sections.append((pattern, {}))
+            sections.append((_EditorConfigGlob(line[1:-1]), {}))
             continue
         key, sep, value = line.partition("=")
         key, value = key.strip().lower(), value.strip()
@@ -291,7 +319,7 @@ def _read_editorconfig(
 
 def editorconfig_files(
     folder: Path, root: Path
-) -> tuple[tuple[Path, list[tuple[re.Pattern[str], dict[str, int | None]]]], ...]:
+) -> tuple[tuple[Path, list[tuple[_EditorConfigGlob, dict[str, int | None]]]], ...]:
     """The .editorconfig files over a folder, nearest first.
 
     The search ends at one with `root = true`, and goes no higher than the
@@ -310,7 +338,8 @@ def editorconfig_files(
 
 
 def editorconfig_for(
-    file: Path, files: tuple[tuple[Path, list[tuple[re.Pattern[str], dict[str, int | None]]]], ...]
+    file: Path,
+    files: tuple[tuple[Path, list[tuple[_EditorConfigGlob, dict[str, int | None]]]], ...],
 ) -> dict[str, int]:
     """indent_size and max_line_length for a file, as editors read them.
 
@@ -324,8 +353,8 @@ def editorconfig_for(
         except ValueError:
             continue
         own: dict[str, int | None] = {}
-        for pattern, values in sections:
-            if pattern.fullmatch(relative):
+        for glob, values in sections:
+            if glob.matches(relative):
                 own.update(values)
         result = {**own, **result}
     return {key: value for key, value in result.items() if value is not None}
