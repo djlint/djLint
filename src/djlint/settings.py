@@ -204,21 +204,34 @@ def _closing_brace(glob: str, start: int) -> int:
 
 
 def _closing_bracket(glob: str, start: int) -> int:
-    """The index of the `]` that closes the `[` at start, or -1 without one.
-
-    A `/` before it makes the `[` a plain character, as a class never takes one.
-    """
+    """The index of the `]` that closes the `[` at start, or -1 without one."""
     i = start + 1
     while i < len(glob):
         if glob[i] == "\\":
             i += 2
             continue
-        if glob[i] == "/":
-            return -1
         if glob[i] == "]" and i > start + 1:
             return i
         i += 1
     return -1
+
+
+def _has_alternatives(span: str) -> bool:
+    """Whether the inside of a `{...}` has a `,` of its own, unescaped."""
+    depth = 0
+    i = 0
+    while i < len(span):
+        if span[i] == "\\":
+            i += 2
+            continue
+        if span[i] == "{":
+            depth += 1
+        elif span[i] == "}":
+            depth -= 1
+        elif span[i] == "," and not depth:
+            return True
+        i += 1
+    return False
 
 
 def _character_class(body: str) -> str:
@@ -280,7 +293,12 @@ class _EditorConfigGlob:
             elif char == "?":
                 out.append("[^/]")
             elif char == "[" and (close := _closing_bracket(glob, i)) != -1:
-                out.append(_character_class(glob[i + 1 : close]))
+                body = glob[i + 1 : close]
+                # A class never takes a `/`, so one with a `/` in it is plain
+                # text, wildcards and all, as in the core library.
+                out.append(
+                    re.escape(glob[i : close + 1]) if "/" in body else _character_class(body)
+                )
                 i = close + 1
                 continue
             elif char == "{":
@@ -292,7 +310,7 @@ class _EditorConfigGlob:
                     out.append("([+-]?(?:0|[1-9][0-9]*))")
                     i = close + 1
                     continue
-                braces.append("," in span)
+                braces.append(_has_alternatives(span))
                 out.append("(?:" if braces[-1] else re.escape(char))
             elif char == "}" and braces:
                 out.append(")" if braces.pop() else re.escape(char))
@@ -1633,6 +1651,12 @@ class Config:
         "use_gitignore",
         "warn",
     )
+
+    def __new__(cls, *_args: object, **_kwargs: object) -> Config:
+        # for_file copies a Config. Under mypyc, a class without its own
+        # __new__ runs __init__ again for a copy, which would read the
+        # configuration of the current folder.
+        return super().__new__(cls)
 
     def __init__(
         self,

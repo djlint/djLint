@@ -54,6 +54,18 @@ def test_a_file_with_the_settings_of_the_run_is_the_same_config(project: Path) -
     assert config.for_file(project / "other.html") is config
 
 
+def test_a_file_s_config_does_not_read_the_current_folder(
+    project: Path, tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config = Config(str(project))
+    elsewhere = tmp_path_factory.mktemp("elsewhere")
+    (elsewhere / ".git").mkdir()
+    (elsewhere / "djlint.toml").write_text("indent = [\n", encoding="utf-8")
+    monkeypatch.chdir(elsewhere)
+
+    assert config.for_file(project / "web" / "index.html").indent_size == 2
+
+
 def test_a_directory_run_formats_each_file_by_its_editorconfig(
     runner: CliRunner, project: Path
 ) -> None:
@@ -98,6 +110,8 @@ def test_stdin_takes_the_editorconfig_of_its_filename(runner: CliRunner, project
         ),
         ("{{1..3},index}.html", ["2.html", "index.html"], ["4.html", "{index}.html"]),
         ("{a,{b}}.html", ["a.html", "{b}.html"], ["b.html"]),
+        (r"{a\,b}.html", ["{a,b}.html"], ["a,b.html"]),
+        ("a[*/]b.html", ["a[*/]b.html"], ["a[xyz/]b.html", "a*b.html"]),
         ("[!b]*.html", ["a.html"], ["b.html"]),
         ("[ab].html", ["a.html", "b.html"], ["c.html"]),
         ("{single}.html", ["{single}.html"], ["single.html"]),
