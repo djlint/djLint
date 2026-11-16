@@ -243,31 +243,31 @@ Krok przesyłania wymaga uprawnienia `security-events: write` dla zadania lub wo
 
 `--sarif` zapisuje na stdout dokument SARIF 2.1.0 i nic więcej, więc można go przekierować tak jak powyżej. Każda włączona reguła jest wymieniona wraz z linkiem do swojej dokumentacji, każde zgłoszenie zawiera wiersz i kolumnę, a przy `--check` plik, który zostałby przeformatowany, jest zgłaszany pod regułą `formatting`. Ten sam format odczytują Azure DevOps, GitLab i większość edytorów.
 
-## Pre-Commit
+## pre-commit
 
 djLint może działać jako hook [pre-commit](https://pre-commit.com), zarówno jako linter, jak i formater.
 
 Repozytorium udostępnia kilka wstępnie skonfigurowanych hooków dla konkretnych profili djLint (ustawiają one jedynie argument `--profile` i informują pre-commit, jakich rozszerzeń plików ma szukać):
 
-- `djlint` do lintowania i `djlint-reformat` do formatowania
+- `djlint` do lintowania i `djlint-reformat` do formatowania.
   Szukają plików pasujących do `*.html` bez ustawiania `--profile`.
-- `djlint-django` i `djlint-reformat-django`
+- `djlint-django` i `djlint-reformat-django`.
   Szukają plików pasujących do `*.html` i ustawiają `--profile=django`.
-- `djlint-jinja` i `djlint-reformat-jinja`
+- `djlint-jinja` i `djlint-reformat-jinja`.
   Szukają plików pasujących do `*.j2`,`*.jinja` lub `*.jinja2` i ustawiają `--profile=jinja`.
-- `djlint-nunjucks` i `djlint-reformat-nunjucks`
+- `djlint-nunjucks` i `djlint-reformat-nunjucks`.
   Szukają plików pasujących do `*.njk` i ustawiają `--profile=nunjucks`.
-- `djlint-handlebars` i `djlint-reformat-handlebars`
+- `djlint-handlebars` i `djlint-reformat-handlebars`.
   Szukają plików pasujących do `*.hbs` i ustawiają `--profile=handlebars`.
-- `djlint-liquid` i `djlint-reformat-liquid`
+- `djlint-liquid` i `djlint-reformat-liquid`.
   Szukają plików pasujących do `*.html` i ustawiają `--profile=liquid`.
-- `djlint-golang` i `djlint-reformat-golang`
+- `djlint-golang` i `djlint-reformat-golang`.
   Szukają plików pasujących do `*.gotmpl` i ustawiają `--profile=golang`.
-- `djlint-tera` i `djlint-reformat-tera`
+- `djlint-tera` i `djlint-reformat-tera`.
   Szukają plików pasujących do `*.html` i ustawiają `--profile=tera`.
-- `djlint-askama` i `djlint-reformat-askama`
+- `djlint-askama` i `djlint-reformat-askama`.
   Szukają plików pasujących do `*.html` i ustawiają `--profile=askama`.
-- `djlint-mako` i `djlint-reformat-mako`
+- `djlint-mako` i `djlint-reformat-mako`.
   Szukają plików pasujących do `*.html` i ustawiają `--profile=mako`.
 
 Pamiętaj, że te predefiniowane hooki bywają zbyt zachowawcze w kwestii akceptowanych plików wejściowych (twoje szablony mogą mieć inne rozszerzenie), dlatego pre-commit wprost pozwala nadpisać każdą z tych predefiniowanych opcji. Więcej o konfiguracji przeczytasz w [dokumentacji pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

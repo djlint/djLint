@@ -243,31 +243,31 @@ Der Upload-Schritt benötigt die Berechtigung `security-events: write` für den 
 
 `--sarif` schreibt ein SARIF-2.1.0-Dokument nach stdout und sonst nichts, sodass es sich wie oben umleiten lässt. Jede aktivierte Regel wird mit einem Link zu ihrer Dokumentation aufgeführt, jeder Befund enthält Zeile und Spalte, und mit `--check` wird eine Datei, die neu formatiert würde, unter einer Regel `formatting` gemeldet. Azure DevOps, GitLab und die meisten Editoren lesen dasselbe Format.
 
-## Pre-Commit
+## pre-commit
 
 djLint lässt sich als [pre-commit](https://pre-commit.com)-Hook sowohl als Linter als auch als Formatter verwenden.
 
 Das Repository stellt mehrere vorkonfigurierte Hooks für bestimmte djLint-Profile bereit (sie setzen lediglich das Argument `--profile` vorab und teilen pre-commit mit, nach welchen Dateiendungen gesucht werden soll):
 
-- `djlint` zum Linten und `djlint-reformat` zum Formatieren
+- `djlint` zum Linten und `djlint-reformat` zum Formatieren.
   Sucht nach Dateien, die auf `*.html` passen, ohne `--profile` zu setzen.
-- `djlint-django` und `djlint-reformat-django`
+- `djlint-django` und `djlint-reformat-django`.
   Sucht nach Dateien, die auf `*.html` passen, und setzt `--profile=django`.
-- `djlint-jinja` und `djlint-reformat-jinja`
+- `djlint-jinja` und `djlint-reformat-jinja`.
   Sucht nach Dateien, die auf `*.j2`,`*.jinja` oder `*.jinja2` passen, und setzt `--profile=jinja`.
-- `djlint-nunjucks` und `djlint-reformat-nunjucks`
+- `djlint-nunjucks` und `djlint-reformat-nunjucks`.
   Sucht nach Dateien, die auf `*.njk` passen, und setzt `--profile=nunjucks`.
-- `djlint-handlebars` und `djlint-reformat-handlebars`
+- `djlint-handlebars` und `djlint-reformat-handlebars`.
   Sucht nach Dateien, die auf `*.hbs` passen, und setzt `--profile=handlebars`.
-- `djlint-liquid` und `djlint-reformat-liquid`
+- `djlint-liquid` und `djlint-reformat-liquid`.
   Sucht nach Dateien, die auf `*.html` passen, und setzt `--profile=liquid`.
-- `djlint-golang` und `djlint-reformat-golang`
+- `djlint-golang` und `djlint-reformat-golang`.
   Sucht nach Dateien, die auf `*.gotmpl` passen, und setzt `--profile=golang`.
-- `djlint-tera` und `djlint-reformat-tera`
+- `djlint-tera` und `djlint-reformat-tera`.
   Sucht nach Dateien, die auf `*.html` passen, und setzt `--profile=tera`.
-- `djlint-askama` und `djlint-reformat-askama`
+- `djlint-askama` und `djlint-reformat-askama`.
   Sucht nach Dateien, die auf `*.html` passen, und setzt `--profile=askama`.
-- `djlint-mako` und `djlint-reformat-mako`
+- `djlint-mako` und `djlint-reformat-mako`.
   Sucht nach Dateien, die auf `*.html` passen, und setzt `--profile=mako`.
 
 Beachten Sie, dass diese vordefinierten Hooks bei den akzeptierten Eingaben manchmal zu zurückhaltend sind (Ihre Templates verwenden vielleicht eine andere Dateiendung). Deshalb erlaubt pre-commit ausdrücklich, jede dieser vordefinierten Optionen zu überschreiben. Weitere Konfigurationsmöglichkeiten finden Sie in der [Dokumentation von pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

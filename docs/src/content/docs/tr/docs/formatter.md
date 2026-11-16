@@ -1,5 +1,5 @@
 ---
-title: "Biçimlendirici Kullanımı"
+title: "Biçimlendirici kullanımı"
 description: "djLint'in HTML şablonlarını nasıl biçimlendirdiği ve değişiklikleri uygulamadan önce nasıl gözden geçireceğiniz."
 sidebar:
   label: "Biçimlendirici"

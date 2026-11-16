@@ -1,5 +1,5 @@
 ---
-title: "Liquid Template Linter and Formatter"
+title: "Liquid template linter and formatter"
 description: "djLint lints and formats Liquid templates. Set the liquid profile so the rules and the formatting fit them."
 sidebar:
   label: "Liquid"

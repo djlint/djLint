@@ -5,11 +5,17 @@ sidebar:
   label: "はじめに"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../../components/CliHelp.astro";
 
 ## インストール
 
-djLint は [Python](https://python.org) で作られており、[PyPI](https://pypi.org/project/djlint/) で公開されています。[uv](https://docs.astral.sh/uv/) を使う場合は、開発用の依存関係としてプロジェクトに追加します：
+djLint は [Python](https://python.org) で作られており、[PyPI](https://pypi.org/project/djlint/) で公開されています。
+
+<Tabs>
+<TabItem label="uv">
+
+[uv](https://docs.astral.sh/uv/) を使う場合は、開発用の依存関係としてプロジェクトに追加します：
 
 ```bash
 uv add --dev djlint
@@ -21,41 +27,74 @@ uv add --dev djlint
 uv tool install djlint
 ```
 
-または、pip でインストールします：
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-または、[pipx](https://pipx.pypa.io/) でインストールします：
+</TabItem>
+<TabItem label="pipx">
+
+[pipx](https://pipx.pypa.io/) でインストールします：
 
 ```bash
 pipx install djlint
 ```
 
-または、macOS や Linux では、コミュニティが管理している [Homebrew formula](https://formulae.brew.sh/formula/djlint) でインストールします：
+</TabItem>
+<TabItem label="Homebrew">
+
+macOS や Linux では、コミュニティが管理している [Homebrew formula](https://formulae.brew.sh/formula/djlint) でインストールします：
 
 ```bash
 brew install djlint
 ```
 
-_または、npm でインストールします。**警告**：npm パッケージはラッパーにすぎません。そのインストールスクリプトはシステムのパス上にある `python3` で pip を実行し、その npm リリースに対応するバージョンの djLint をインストールするため、新しい djLint が古いものに置き換えられることがあります。npm は実際のパッケージを管理もアンインストールもしないため、できれば pip を使ってください。_
+</TabItem>
+<TabItem label="npm">
+
+:::caution[警告]
+npm パッケージはラッパーにすぎません。そのインストールスクリプトはシステムのパス上にある `python3` で pip を実行し、その npm リリースに対応するバージョンの djLint をインストールするため、新しい djLint が古いものに置き換えられることがあります。npm は実際のパッケージを管理もアンインストールもしないため、できれば pip を使ってください。
+:::
 
 ```bash
 npm i djlint
 ```
 
+</TabItem>
+</Tabs>
+
 コミットのたびに djLint を実行するには、[pre-commit](/ja/docs/integrations/#pre-commit) を参照してください。
-
-## CLI の使い方
-
-djLint はコマンドラインアプリケーションです。高度な設定については[設定](/ja/docs/configuration/)のページを参照してください。
-
-<CliHelp />
 
 :::note[メモ]
 `djlint` コマンドが見つからない場合は、Python が[パスに含まれている](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)ことを確認してください。
 :::
+
+## はじめての実行
+
+テンプレートのあるフォルダーを djLint に渡し、`--profile` にテンプレート言語を指定します。どのリンタールールを実行し、テンプレート構文をどうフォーマットするかはプロファイルで決まります。Django プロジェクトの場合：
+
+テンプレートをリントします（リントはデフォルトのモードなので、`--lint` は省略できます）：
+
+```bash
+djlint templates --lint --profile=django
+```
+
+フォーマットで何が変わるかを確認します。`--check` を付けると、djLint は差分を表示するだけでファイルは変更しません：
+
+```bash
+djlint templates --check --profile=django
+```
+
+ファイルをその場でフォーマットします：
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+すべてのプロファイルは [`profile`](/ja/docs/configuration/#profile) オプションに一覧があります。テンプレート言語ごとのページもあり（例：[Django](/ja/docs/languages/django/)、[Jinja](/ja/docs/languages/jinja/)、[Handlebars](/ja/docs/languages/handlebars/)）、毎回指定しなくて済むように設定ファイルでプロファイルを設定する方法も載っています。
 
 ## パスと標準入力の使い分け
 
@@ -116,3 +155,9 @@ djLint が _実際に_ 見つけたうえで、`exclude`、`extend_exclude`、`u
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## CLI の使い方
+
+djLint はコマンドラインアプリケーションです。高度な設定については[設定](/ja/docs/configuration/)のページを参照してください。
+
+<CliHelp />

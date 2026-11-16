@@ -5,11 +5,17 @@ sidebar:
   label: "Začínáme"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Instalace
 
-djLint je napsaný v [Pythonu](https://python.org) a publikovaný na [PyPI](https://pypi.org/project/djlint/). S [uv](https://docs.astral.sh/uv/) ho přidejte do projektu jako vývojovou závislost:
+djLint je napsaný v [Pythonu](https://python.org) a publikovaný na [PyPI](https://pypi.org/project/djlint/).
+
+<Tabs>
+<TabItem label="uv">
+
+S [uv](https://docs.astral.sh/uv/) ho přidejte do projektu jako vývojovou závislost:
 
 ```bash
 uv add --dev djlint
@@ -21,41 +27,74 @@ Nebo ho nainstalujte jako samostatný nástroj:
 uv tool install djlint
 ```
 
-Nebo pomocí pip:
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-Nebo pomocí [pipx](https://pipx.pypa.io/):
+</TabItem>
+<TabItem label="pipx">
+
+Pomocí [pipx](https://pipx.pypa.io/):
 
 ```bash
 pipx install djlint
 ```
 
-Nebo v systémech macOS a Linux pomocí [formule Homebrew](https://formulae.brew.sh/formula/djlint), kterou spravuje komunita:
+</TabItem>
+<TabItem label="Homebrew">
+
+V systémech macOS a Linux pomocí [formule Homebrew](https://formulae.brew.sh/formula/djlint), kterou spravuje komunita:
 
 ```bash
 brew install djlint
 ```
 
-_Nebo pomocí npm. **Upozornění**: balíček npm je jen obálka. Jeho instalační skript spustí pip pro ten `python3`, který je zrovna v systémové cestě, a nainstaluje verzi djLint odpovídající danému vydání npm, což může novější djLint nahradit starším. npm skutečný balíček nespravuje ani neodinstaluje, takže pokud můžete, použijte raději pip._
+</TabItem>
+<TabItem label="npm">
+
+:::caution[Upozornění]
+Balíček npm je jen obálka. Jeho instalační skript spustí pip pro ten `python3`, který je zrovna v systémové cestě, a nainstaluje verzi djLint odpovídající danému vydání npm, což může novější djLint nahradit starším. npm skutečný balíček nespravuje ani neodinstaluje, takže pokud můžete, použijte raději pip.
+:::
 
 ```bash
 npm i djlint
 ```
 
+</TabItem>
+</Tabs>
+
 Chcete-li djLint spouštět při každém commitu, přečtěte si část [pre-commit](/cs/docs/integrations/#pre-commit).
-
-## Použití z příkazového řádku
-
-djLint je aplikace pro příkazový řádek. Pokročilou konfiguraci popisuje stránka [Konfigurace](/cs/docs/configuration/).
-
-<CliHelp />
 
 :::note[Poznámka]
 Pokud příkaz `djlint` není nalezen, ověřte, že je Python [v systémové cestě (PATH)](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
 :::
+
+## První spuštění
+
+Předejte djLint složku se šablonami a v `--profile` uveďte svůj šablonovací jazyk. Na profilu závisí, která pravidla linteru se spustí a jak se naformátuje syntaxe šablon. Pro projekt v Djangu:
+
+Lintujte šablony (lintování je výchozí režim, takže `--lint` můžete vynechat):
+
+```bash
+djlint templates --lint --profile=django
+```
+
+Podívejte se, co by formátování změnilo. S `--check` djLint vypíše diff a soubory nechá beze změny:
+
+```bash
+djlint templates --check --profile=django
+```
+
+Naformátujte soubory přímo na místě:
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+Všechny profily uvádí volba [`profile`](/cs/docs/configuration/#profile). Každý šablonovací jazyk má navíc vlastní stránku, například [Django](/cs/docs/languages/django/), [Jinja](/cs/docs/languages/jinja/) nebo [Handlebars](/cs/docs/languages/handlebars/), kde se dočtete, jak profil nastavit v konfiguračním souboru, abyste ho nemuseli zadávat pokaždé.
 
 ## Cesta, nebo stdin
 
@@ -116,3 +155,9 @@ Pokud je pro vaši pipeline normální, že cesta oprávněně neobsahuje žádn
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## Použití z příkazového řádku
+
+djLint je aplikace pro příkazový řádek. Pokročilou konfiguraci popisuje stránka [Konfigurace](/cs/docs/configuration/).
+
+<CliHelp />

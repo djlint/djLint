@@ -5,11 +5,17 @@ sidebar:
   label: "開始使用"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../../components/CliHelp.astro";
 
 ## 安裝
 
-djLint 以 [Python](https://python.org) 開發，並發布在 [PyPI](https://pypi.org/project/djlint/) 上。使用 [uv](https://docs.astral.sh/uv/) 時，將它加入專案作為開發相依套件：
+djLint 以 [Python](https://python.org) 開發，並發布在 [PyPI](https://pypi.org/project/djlint/) 上。
+
+<Tabs>
+<TabItem label="uv">
+
+使用 [uv](https://docs.astral.sh/uv/) 時，將它加入專案作為開發相依套件：
 
 ```bash
 uv add --dev djlint
@@ -21,41 +27,74 @@ uv add --dev djlint
 uv tool install djlint
 ```
 
-或者使用 pip：
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-或者使用 [pipx](https://pipx.pypa.io/)：
+</TabItem>
+<TabItem label="pipx">
+
+使用 [pipx](https://pipx.pypa.io/)：
 
 ```bash
 pipx install djlint
 ```
 
-或者在 macOS 或 Linux 上使用由社群維護的 [Homebrew formula](https://formulae.brew.sh/formula/djlint)：
+</TabItem>
+<TabItem label="Homebrew">
+
+在 macOS 或 Linux 上使用由社群維護的 [Homebrew formula](https://formulae.brew.sh/formula/djlint)：
 
 ```bash
 brew install djlint
 ```
 
-_或者使用 npm。**警告**：npm 套件只是一層包裝，它的安裝指令碼會用你系統路徑上剛好找到的 `python3` 執行 pip，安裝與該 npm 版本對應的 djLint 版本，這可能會把較新的 djLint 換成較舊的版本。npm 不會管理或解除安裝實際的套件，可以的話，請直接使用 pip。_
+</TabItem>
+<TabItem label="npm">
+
+:::caution[警告]
+npm 套件只是一層包裝，它的安裝指令碼會用你系統路徑上剛好找到的 `python3` 執行 pip，安裝與該 npm 版本對應的 djLint 版本，這可能會把較新的 djLint 換成較舊的版本。npm 不會管理或解除安裝實際的套件，可以的話，請直接使用 pip。
+:::
 
 ```bash
 npm i djlint
 ```
 
+</TabItem>
+</Tabs>
+
 若要在每次提交時執行 djLint，請參閱 [pre-commit](/zh-tw/docs/integrations/#pre-commit)。
-
-## CLI 用法
-
-djLint 是一個命令列應用程式。進階設定請參閱[設定](/zh-tw/docs/configuration/)頁面。
-
-<CliHelp />
 
 :::note[注意]
 如果找不到 `djlint` 指令，請確認 Python 已[加入你的 PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)。
 :::
+
+## 第一次執行
+
+把範本所在的資料夾交給 djLint，並用 `--profile` 指定範本語言。要執行哪些 linter 規則、範本語法要怎麼格式化，都由 profile 決定。以 Django 專案為例：
+
+lint 範本（lint 是預設模式，所以 `--lint` 可以省略）：
+
+```bash
+djlint templates --lint --profile=django
+```
+
+查看格式化會改動哪些地方。加上 `--check` 時，djLint 只會輸出 diff，不會修改檔案：
+
+```bash
+djlint templates --check --profile=django
+```
+
+直接在原處格式化檔案：
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+所有 profile 都列在 [`profile`](/zh-tw/docs/configuration/#profile) 選項中。每種範本語言也有自己的頁面，例如 [Django](/zh-tw/docs/languages/django/)、[Jinja](/zh-tw/docs/languages/jinja/) 或 [Handlebars](/zh-tw/docs/languages/handlebars/)，頁面上也說明了如何在設定檔中設定 profile，省得每次都要傳入。
 
 ## 使用路徑與使用 stdin
 
@@ -116,3 +155,9 @@ djLint *確實*找到、但隨後透過 `exclude`、`extend_exclude`、`use_giti
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## CLI 用法
+
+djLint 是一個命令列應用程式。進階設定請參閱[設定](/zh-tw/docs/configuration/)頁面。
+
+<CliHelp />

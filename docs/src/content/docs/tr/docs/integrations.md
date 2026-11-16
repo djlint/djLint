@@ -243,31 +243,31 @@ Yükleme adımı, job'da ya da iş akışında `security-events: write` iznine i
 
 `--sarif`, stdout'a bir SARIF 2.1.0 belgesi yazar ve başka hiçbir şey yazmaz; bu yüzden yukarıdaki gibi yönlendirilebilir. Etkin her kural, belgelerine giden bir bağlantıyla listelenir, her bulgu satırını ve sütununu taşır ve `--check` ile yeniden biçimlendirilecek bir dosya `formatting` kuralı altında bildirilir. Azure DevOps, GitLab ve çoğu düzenleyici aynı biçimi okur.
 
-## Pre-Commit
+## pre-commit
 
 djLint, hem linter hem de biçimlendirici olarak bir [pre-commit](https://pre-commit.com) kancası şeklinde kullanılabilir.
 
 Depo, belirli djLint profilleri için önceden yapılandırılmış birden çok kanca sunar (bunlar yalnızca `--profile` argümanını önceden ayarlar ve pre-commit'e hangi dosya uzantılarına bakacağını söyler):
 
-- Lint denetimi için `djlint` ve biçimlendirme için `djlint-reformat`
+- Lint denetimi için `djlint` ve biçimlendirme için `djlint-reformat`.
   Bu kancalar `--profile` ayarlamadan `*.html` ile eşleşen dosyaları arar.
-- `djlint-django` ve `djlint-reformat-django`
+- `djlint-django` ve `djlint-reformat-django`.
   Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=django` ayarlar.
-- `djlint-jinja` ve `djlint-reformat-jinja`
+- `djlint-jinja` ve `djlint-reformat-jinja`.
   Bu kancalar `*.j2`,`*.jinja` ya da `*.jinja2` ile eşleşen dosyaları arar ve `--profile=jinja` ayarlar.
-- `djlint-nunjucks` ve `djlint-reformat-nunjucks`
+- `djlint-nunjucks` ve `djlint-reformat-nunjucks`.
   Bu kancalar `*.njk` ile eşleşen dosyaları arar ve `--profile=nunjucks` ayarlar.
-- `djlint-handlebars` ve `djlint-reformat-handlebars`
+- `djlint-handlebars` ve `djlint-reformat-handlebars`.
   Bu kancalar `*.hbs` ile eşleşen dosyaları arar ve `--profile=handlebars` ayarlar.
-- `djlint-liquid` ve `djlint-reformat-liquid`
+- `djlint-liquid` ve `djlint-reformat-liquid`.
   Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=liquid` ayarlar.
-- `djlint-golang` ve `djlint-reformat-golang`
+- `djlint-golang` ve `djlint-reformat-golang`.
   Bu kancalar `*.gotmpl` ile eşleşen dosyaları arar ve `--profile=golang` ayarlar.
-- `djlint-tera` ve `djlint-reformat-tera`
+- `djlint-tera` ve `djlint-reformat-tera`.
   Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=tera` ayarlar.
-- `djlint-askama` ve `djlint-reformat-askama`
+- `djlint-askama` ve `djlint-reformat-askama`.
   Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=askama` ayarlar.
-- `djlint-mako` ve `djlint-reformat-mako`
+- `djlint-mako` ve `djlint-reformat-mako`.
   Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=mako` ayarlar.
 
 Önceden tanımlanmış bu kancaların kabul ettikleri girdiler konusunda bazen fazla tutucu olduğunu unutmayın (şablonlarınız farklı bir uzantı kullanıyor olabilir); bu yüzden pre-commit, önceden tanımlanmış bu seçeneklerin herhangi birini geçersiz kılmanıza açıkça izin verir. Ek yapılandırma için [pre-commit belgelerine](https://pre-commit.com/#pre-commit-configyaml---hooks) bakın.

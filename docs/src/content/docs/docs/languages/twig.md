@@ -1,5 +1,5 @@
 ---
-title: "Twig Template Linter and Formatter"
+title: "Twig template linter and formatter"
 description: "djLint lints and formats Twig templates. Set the nunjucks profile so the rules and the formatting fit them."
 sidebar:
   label: "Twig"

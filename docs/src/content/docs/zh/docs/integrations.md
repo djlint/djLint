@@ -243,31 +243,31 @@ djLint 会从以下来源中第一个设置了 `profile` 的来源获取它：
 
 `--sarif` 只会向 stdout 写入一个 SARIF 2.1.0 文档，不输出其他任何内容，因此可以像上面那样重定向。其中会列出每条已启用的规则及其文档链接，每条检查结果都带有行号和列号；配合 `--check` 使用时，需要重新格式化的文件会在 `formatting` 规则下报告。Azure DevOps、GitLab 以及大多数编辑器都能读取这种格式。
 
-## Pre-Commit
+## pre-commit
 
 djLint 可以用作 [pre-commit](https://pre-commit.com) 钩子，既能做代码检查，也能做格式化。
 
 该仓库为特定的 djLint 预设提供了多个预先配置好的钩子（它们只是预先设置了 `--profile` 参数，并告诉 pre-commit 要查找哪些文件扩展名）：
 
-- `djlint` 用于代码检查，`djlint-reformat` 用于格式化
+- `djlint` 用于代码检查，`djlint-reformat` 用于格式化。
   查找匹配 `*.html` 的文件，不设置 `--profile`。
-- `djlint-django` 和 `djlint-reformat-django`
+- `djlint-django` 和 `djlint-reformat-django`。
   查找匹配 `*.html` 的文件，并设置 `--profile=django`。
-- `djlint-jinja` 和 `djlint-reformat-jinja`
+- `djlint-jinja` 和 `djlint-reformat-jinja`。
   查找匹配 `*.j2`、`*.jinja` 或 `*.jinja2` 的文件，并设置 `--profile=jinja`。
-- `djlint-nunjucks` 和 `djlint-reformat-nunjucks`
+- `djlint-nunjucks` 和 `djlint-reformat-nunjucks`。
   查找匹配 `*.njk` 的文件，并设置 `--profile=nunjucks`。
-- `djlint-handlebars` 和 `djlint-reformat-handlebars`
+- `djlint-handlebars` 和 `djlint-reformat-handlebars`。
   查找匹配 `*.hbs` 的文件，并设置 `--profile=handlebars`。
-- `djlint-liquid` 和 `djlint-reformat-liquid`
+- `djlint-liquid` 和 `djlint-reformat-liquid`。
   查找匹配 `*.html` 的文件，并设置 `--profile=liquid`。
-- `djlint-golang` 和 `djlint-reformat-golang`
+- `djlint-golang` 和 `djlint-reformat-golang`。
   查找匹配 `*.gotmpl` 的文件，并设置 `--profile=golang`。
-- `djlint-tera` 和 `djlint-reformat-tera`
+- `djlint-tera` 和 `djlint-reformat-tera`。
   查找匹配 `*.html` 的文件，并设置 `--profile=tera`。
-- `djlint-askama` 和 `djlint-reformat-askama`
+- `djlint-askama` 和 `djlint-reformat-askama`。
   查找匹配 `*.html` 的文件，并设置 `--profile=askama`。
-- `djlint-mako` 和 `djlint-reformat-mako`
+- `djlint-mako` 和 `djlint-reformat-mako`。
   查找匹配 `*.html` 的文件，并设置 `--profile=mako`。
 
 请注意，这些预定义钩子接受的输入有时过于保守（你的模板可能使用了不同的扩展名），因此 pre-commit 明确允许你覆盖其中任何预定义选项。更多配置请参阅 [pre-commit 文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。
