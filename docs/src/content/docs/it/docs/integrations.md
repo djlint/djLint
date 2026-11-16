@@ -243,31 +243,31 @@ Il passaggio di caricamento richiede il permesso `security-events: write` sul jo
 
 `--sarif` scrive su stdout un documento SARIF 2.1.0 e nient'altro, quindi può essere reindirizzato come sopra. Ogni regola attiva è elencata con un link alla sua documentazione, ogni segnalazione riporta la sua riga e colonna e, con `--check`, un file che verrebbe riformattato viene segnalato sotto una regola `formatting`. Azure DevOps, GitLab e la maggior parte degli editor leggono lo stesso formato.
 
-## Pre-Commit
+## pre-commit
 
 djLint può essere usato come hook di [pre-commit](https://pre-commit.com), sia come linter sia come formattatore.
 
 Il repository fornisce diversi hook preconfigurati per specifici profili di djLint (si limitano a preimpostare l'argomento `--profile` e a indicare a pre-commit quali estensioni di file cercare):
 
-- `djlint` per il lint e `djlint-reformat` per la formattazione
+- `djlint` per il lint e `djlint-reformat` per la formattazione.
   Cerca i file che corrispondono a `*.html` senza impostare `--profile`.
-- `djlint-django` e `djlint-reformat-django`
+- `djlint-django` e `djlint-reformat-django`.
   Cerca i file che corrispondono a `*.html` e imposta `--profile=django`.
-- `djlint-jinja` e `djlint-reformat-jinja`
+- `djlint-jinja` e `djlint-reformat-jinja`.
   Cerca i file che corrispondono a `*.j2`,`*.jinja` o `*.jinja2` e imposta `--profile=jinja`.
-- `djlint-nunjucks` e `djlint-reformat-nunjucks`
+- `djlint-nunjucks` e `djlint-reformat-nunjucks`.
   Cerca i file che corrispondono a `*.njk` e imposta `--profile=nunjucks`.
-- `djlint-handlebars` e `djlint-reformat-handlebars`
+- `djlint-handlebars` e `djlint-reformat-handlebars`.
   Cerca i file che corrispondono a `*.hbs` e imposta `--profile=handlebars`.
-- `djlint-liquid` e `djlint-reformat-liquid`
+- `djlint-liquid` e `djlint-reformat-liquid`.
   Cerca i file che corrispondono a `*.html` e imposta `--profile=liquid`.
-- `djlint-golang` e `djlint-reformat-golang`
+- `djlint-golang` e `djlint-reformat-golang`.
   Cerca i file che corrispondono a `*.gotmpl` e imposta `--profile=golang`.
-- `djlint-tera` e `djlint-reformat-tera`
+- `djlint-tera` e `djlint-reformat-tera`.
   Cerca i file che corrispondono a `*.html` e imposta `--profile=tera`.
-- `djlint-askama` e `djlint-reformat-askama`
+- `djlint-askama` e `djlint-reformat-askama`.
   Cerca i file che corrispondono a `*.html` e imposta `--profile=askama`.
-- `djlint-mako` e `djlint-reformat-mako`
+- `djlint-mako` e `djlint-reformat-mako`.
   Cerca i file che corrispondono a `*.html` e imposta `--profile=mako`.
 
 Nota che a volte questi hook predefiniti sono troppo restrittivi negli input che accettano (i tuoi template potrebbero usare un'estensione diversa), per questo pre-commit permette esplicitamente di sovrascrivere qualsiasi opzione predefinita. Consulta la [documentazione di pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) per ulteriori opzioni di configurazione.

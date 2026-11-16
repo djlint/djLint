@@ -1,5 +1,5 @@
 ---
-title: "Formatter Usage"
+title: "Formatter usage"
 description: "How djLint formats HTML templates, and how to check the changes before applying them."
 sidebar:
   label: "Formatter"

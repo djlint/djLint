@@ -1,15 +1,21 @@
 ---
-title: "Getting Started"
+title: "Getting started"
 description: "Install djLint and lint or format HTML templates from the command line."
 sidebar:
   label: "Getting started"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../components/CliHelp.astro";
 
 ## Installation
 
-djLint is built with [Python](https://python.org) and published on [PyPI](https://pypi.org/project/djlint/). With [uv](https://docs.astral.sh/uv/), add it to your project as a development dependency:
+djLint is built with [Python](https://python.org) and published on [PyPI](https://pypi.org/project/djlint/).
+
+<Tabs>
+<TabItem label="uv">
+
+With [uv](https://docs.astral.sh/uv/), add it to your project as a development dependency:
 
 ```bash
 uv add --dev djlint
@@ -21,43 +27,76 @@ Or install it as a standalone tool:
 uv tool install djlint
 ```
 
-Or with pip:
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-Or with [pipx](https://pipx.pypa.io/):
+</TabItem>
+<TabItem label="pipx">
+
+With [pipx](https://pipx.pypa.io/):
 
 ```bash
 pipx install djlint
 ```
 
-Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux:
+</TabItem>
+<TabItem label="Homebrew">
+
+With the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux:
 
 ```bash
 brew install djlint
 ```
 
-_Or with npm. **Warning**: the npm package is only a wrapper. Its install script runs pip on whatever `python3` is on your system path and installs the djLint version of that npm release, which can replace a newer djLint with an older one. npm will not manage or uninstall the actual package, so prefer pip when you can._
+</TabItem>
+<TabItem label="npm">
+
+:::caution[Warning]
+The npm package is only a wrapper. Its install script runs pip on whatever `python3` is on your system path and installs the djLint version of that npm release, which can replace a newer djLint with an older one. npm will not manage or uninstall the actual package, so prefer pip when you can.
+:::
 
 ```bash
 npm i djlint
 ```
 
+</TabItem>
+</Tabs>
+
 To run djLint on every commit, see [pre-commit](/docs/integrations/#pre-commit).
-
-## CLI Usage
-
-djLint is a command line application. See the [configuration](/docs/configuration/) page for advanced configuration.
-
-<CliHelp />
 
 :::note[Note]
 If the command `djlint` is not found, make sure that Python is [in your path](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
 :::
 
-## Using Path vs Stdin
+## First run
+
+Point djLint at the folder with your templates and set `--profile` to your template language. The profile decides which linter rules run and how the template syntax is formatted. For a Django project:
+
+Lint the templates (linting is the default mode, so `--lint` can be left out):
+
+```bash
+djlint templates --lint --profile=django
+```
+
+See what reformatting would change. With `--check`, djLint prints a diff and leaves the files alone:
+
+```bash
+djlint templates --check --profile=django
+```
+
+Reformat the files in place:
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+The [`profile`](/docs/configuration/#profile) option lists every profile. Each template language also has its own page, for example [Django](/docs/languages/django/), [Jinja](/docs/languages/jinja/) or [Handlebars](/docs/languages/handlebars/), which shows how to set the profile in a config file so you don't have to pass it every time.
+
+## Using path vs stdin
 
 djLint works with a path or stdin.
 
@@ -97,7 +136,7 @@ When reading from stdin, djLint has no real path to match against `per-file-igno
 echo "<div></div>" | djlint - --stdin-filename templates/index.html
 ```
 
-## Exit Codes
+## Exit codes
 
 | Code | Meaning                                                                                                                          |
 | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -116,3 +155,9 @@ If a path that legitimately has no templates is normal for your pipeline, turn c
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## CLI usage
+
+djLint is a command line application. See the [configuration](/docs/configuration/) page for advanced configuration.
+
+<CliHelp />

@@ -243,31 +243,31 @@ djLint берёт `profile` из первого источника, где он 
 
 `--sarif` выводит в stdout документ SARIF 2.1.0 и больше ничего, поэтому вывод можно перенаправить, как показано выше. Каждое включённое правило перечисляется со ссылкой на свою документацию, у каждого замечания указаны строка и столбец, а с `--check` файл, который был бы переформатирован, попадает в отчёт под правилом `formatting`. Тот же формат читают Azure DevOps, GitLab и большинство редакторов.
 
-## Pre-Commit
+## pre-commit
 
 djLint можно использовать как хук [pre-commit](https://pre-commit.com) и для проверки, и для форматирования.
 
 В репозитории есть несколько готовых хуков для отдельных профилей djLint (они лишь заранее задают аргумент `--profile` и сообщают pre-commit, файлы с какими расширениями искать):
 
-- `djlint` для проверки и `djlint-reformat` для форматирования
+- `djlint` для проверки и `djlint-reformat` для форматирования.
   Ищут файлы по маске `*.html`, не задавая `--profile`.
-- `djlint-django` и `djlint-reformat-django`
+- `djlint-django` и `djlint-reformat-django`.
   Ищут файлы по маске `*.html` и задают `--profile=django`.
-- `djlint-jinja` и `djlint-reformat-jinja`
+- `djlint-jinja` и `djlint-reformat-jinja`.
   Ищут файлы по маскам `*.j2`,`*.jinja` или `*.jinja2` и задают `--profile=jinja`.
-- `djlint-nunjucks` и `djlint-reformat-nunjucks`
+- `djlint-nunjucks` и `djlint-reformat-nunjucks`.
   Ищут файлы по маске `*.njk` и задают `--profile=nunjucks`.
-- `djlint-handlebars` и `djlint-reformat-handlebars`
+- `djlint-handlebars` и `djlint-reformat-handlebars`.
   Ищут файлы по маске `*.hbs` и задают `--profile=handlebars`.
-- `djlint-liquid` и `djlint-reformat-liquid`
+- `djlint-liquid` и `djlint-reformat-liquid`.
   Ищут файлы по маске `*.html` и задают `--profile=liquid`.
-- `djlint-golang` и `djlint-reformat-golang`
+- `djlint-golang` и `djlint-reformat-golang`.
   Ищут файлы по маске `*.gotmpl` и задают `--profile=golang`.
-- `djlint-tera` и `djlint-reformat-tera`
+- `djlint-tera` и `djlint-reformat-tera`.
   Ищут файлы по маске `*.html` и задают `--profile=tera`.
-- `djlint-askama` и `djlint-reformat-askama`
+- `djlint-askama` и `djlint-reformat-askama`.
   Ищут файлы по маске `*.html` и задают `--profile=askama`.
-- `djlint-mako` и `djlint-reformat-mako`
+- `djlint-mako` и `djlint-reformat-mako`.
   Ищут файлы по маске `*.html` и задают `--profile=mako`.
 
 Учтите, что эти готовые хуки иногда слишком строги к тому, какие файлы принимают (у ваших шаблонов может быть другое расширение), поэтому pre-commit явно позволяет переопределить любые из этих заранее заданных параметров. Подробнее о настройке см. в [документации pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

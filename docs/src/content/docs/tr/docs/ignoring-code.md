@@ -1,5 +1,5 @@
 ---
-title: "Kodu Yok Sayma"
+title: "Kodu yok sayma"
 description: "djLint'in bir kod bloğunu biçimlendirmesi nasıl engellenir, linter kuralları satır içinde nasıl yok sayılır."
 sidebar:
   label: "Kodu yok sayma"

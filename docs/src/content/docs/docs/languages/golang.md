@@ -1,5 +1,5 @@
 ---
-title: "Go Template Linter and Formatter"
+title: "Go template linter and formatter"
 description: "djLint lints and formats Go templates. Set the golang profile so the rules and the formatting fit them."
 sidebar:
   label: "Go templates"

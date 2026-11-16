@@ -1,5 +1,5 @@
 ---
-title: "Jinja Template Linter and Formatter"
+title: "Jinja template linter and formatter"
 description: "djLint lints and formats Jinja templates. Set the jinja profile so the rules and the formatting fit them."
 sidebar:
   label: "Jinja"

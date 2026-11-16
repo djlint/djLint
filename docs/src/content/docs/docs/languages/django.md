@@ -1,5 +1,5 @@
 ---
-title: "Django Template Linter and Formatter"
+title: "Django template linter and formatter"
 description: "djLint lints and formats Django templates. Set the django profile so the rules and the formatting fit them."
 sidebar:
   label: "Django"

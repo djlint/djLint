@@ -1,5 +1,5 @@
 ---
-title: "Linter Kuralları"
+title: "Linter kuralları"
 description: "djLint HTML şablon linter'ının kuralları ve kendi kurallarınızı nasıl ekleyeceğiniz."
 sidebar:
   label: "Linter"

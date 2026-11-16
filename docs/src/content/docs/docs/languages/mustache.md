@@ -1,5 +1,5 @@
 ---
-title: "Mustache Template Linter and Formatter"
+title: "Mustache template linter and formatter"
 description: "djLint lints and formats Mustache templates. Set the handlebars profile so the rules and the formatting fit them."
 sidebar:
   label: "Mustache"

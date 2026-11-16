@@ -243,31 +243,31 @@ GitHub Actions 워크플로에서 djLint는 각 검사 결과를 주석(annotati
 
 `--sarif`는 SARIF 2.1.0 문서만 stdout에 쓰므로 위와 같이 리디렉션할 수 있습니다. 활성화된 모든 규칙이 문서 링크와 함께 나열되고, 각 검사 결과에는 줄과 열이 담기며, `--check`를 함께 쓰면 다시 포맷될 파일이 `formatting` 규칙으로 보고됩니다. Azure DevOps, GitLab과 대부분의 에디터가 같은 형식을 읽습니다.
 
-## Pre-Commit
+## pre-commit
 
 djLint는 [pre-commit](https://pre-commit.com) 훅으로 린터와 포맷터 모두에 사용할 수 있습니다.
 
 저장소에는 특정 djLint 프로필에 맞게 미리 구성된 훅이 여러 개 있습니다. 이 훅들은 `--profile` 인수를 미리 지정하고, pre-commit에 어떤 파일 확장자를 찾을지 알려 줄 뿐입니다.
 
-- 린트용 `djlint`와 포맷용 `djlint-reformat`
+- 린트용 `djlint`와 포맷용 `djlint-reformat`.
   `--profile`을 지정하지 않고 `*.html`과 일치하는 파일을 찾습니다.
-- `djlint-django`와 `djlint-reformat-django`
+- `djlint-django`와 `djlint-reformat-django`.
   `*.html`과 일치하는 파일을 찾고 `--profile=django`를 지정합니다.
-- `djlint-jinja`와 `djlint-reformat-jinja`
+- `djlint-jinja`와 `djlint-reformat-jinja`.
   `*.j2`,`*.jinja`, `*.jinja2` 중 하나와 일치하는 파일을 찾고 `--profile=jinja`를 지정합니다.
-- `djlint-nunjucks`와 `djlint-reformat-nunjucks`
+- `djlint-nunjucks`와 `djlint-reformat-nunjucks`.
   `*.njk`와 일치하는 파일을 찾고 `--profile=nunjucks`를 지정합니다.
-- `djlint-handlebars`와 `djlint-reformat-handlebars`
+- `djlint-handlebars`와 `djlint-reformat-handlebars`.
   `*.hbs`와 일치하는 파일을 찾고 `--profile=handlebars`를 지정합니다.
-- `djlint-liquid`와 `djlint-reformat-liquid`
+- `djlint-liquid`와 `djlint-reformat-liquid`.
   `*.html`과 일치하는 파일을 찾고 `--profile=liquid`를 지정합니다.
-- `djlint-golang`과 `djlint-reformat-golang`
+- `djlint-golang`과 `djlint-reformat-golang`.
   `*.gotmpl`과 일치하는 파일을 찾고 `--profile=golang`을 지정합니다.
-- `djlint-tera`와 `djlint-reformat-tera`
+- `djlint-tera`와 `djlint-reformat-tera`.
   `*.html`과 일치하는 파일을 찾고 `--profile=tera`를 지정합니다.
-- `djlint-askama`와 `djlint-reformat-askama`
+- `djlint-askama`와 `djlint-reformat-askama`.
   `*.html`과 일치하는 파일을 찾고 `--profile=askama`를 지정합니다.
-- `djlint-mako`와 `djlint-reformat-mako`
+- `djlint-mako`와 `djlint-reformat-mako`.
   `*.html`과 일치하는 파일을 찾고 `--profile=mako`를 지정합니다.
 
 이렇게 미리 정의된 훅은 받아들이는 입력이 지나치게 보수적일 때가 있으므로(템플릿에 다른 확장자를 쓰고 있을 수도 있습니다), pre-commit에서는 미리 정의된 옵션을 무엇이든 재정의할 수 있습니다. 추가 구성은 [pre-commit 문서](https://pre-commit.com/#pre-commit-configyaml---hooks)를 참고하세요.

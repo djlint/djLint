@@ -5,11 +5,17 @@ sidebar:
   label: "Prise en main"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Installation
 
-djLint est écrit en [Python](https://python.org) et publié sur [PyPI](https://pypi.org/project/djlint/). Avec [uv](https://docs.astral.sh/uv/), ajoutez-le à votre projet comme dépendance de développement :
+djLint est écrit en [Python](https://python.org) et publié sur [PyPI](https://pypi.org/project/djlint/).
+
+<Tabs>
+<TabItem label="uv">
+
+Avec [uv](https://docs.astral.sh/uv/), ajoutez-le à votre projet comme dépendance de développement :
 
 ```bash
 uv add --dev djlint
@@ -21,41 +27,74 @@ Ou installez-le comme outil autonome :
 uv tool install djlint
 ```
 
-Ou avec pip :
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-Ou avec [pipx](https://pipx.pypa.io/) :
+</TabItem>
+<TabItem label="pipx">
+
+Avec [pipx](https://pipx.pypa.io/) :
 
 ```bash
 pipx install djlint
 ```
 
-Ou avec la [formule Homebrew](https://formulae.brew.sh/formula/djlint) maintenue par la communauté, sous macOS ou Linux :
+</TabItem>
+<TabItem label="Homebrew">
+
+Avec la [formule Homebrew](https://formulae.brew.sh/formula/djlint) maintenue par la communauté, sous macOS ou Linux :
 
 ```bash
 brew install djlint
 ```
 
-_Ou avec npm. **Attention** : le paquet npm n'est qu'une surcouche. Son script d'installation exécute pip avec le `python3` présent dans le PATH de votre système et installe la version de djLint de cette release npm, ce qui peut remplacer un djLint plus récent par un plus ancien. npm ne gère ni ne désinstalle le vrai paquet : préférez donc pip quand vous le pouvez._
+</TabItem>
+<TabItem label="npm">
+
+:::caution[Attention]
+Le paquet npm n'est qu'une surcouche. Son script d'installation exécute pip avec le `python3` présent dans le PATH de votre système et installe la version de djLint de cette release npm, ce qui peut remplacer un djLint plus récent par un plus ancien. npm ne gère ni ne désinstalle le vrai paquet : préférez donc pip quand vous le pouvez.
+:::
 
 ```bash
 npm i djlint
 ```
 
+</TabItem>
+</Tabs>
+
 Pour exécuter djLint à chaque commit, consultez [pre-commit](/fr/docs/integrations/#pre-commit).
-
-## Utilisation en ligne de commande
-
-djLint est une application en ligne de commande. Consultez la page [configuration](/fr/docs/configuration/) pour une configuration avancée.
-
-<CliHelp />
 
 :::note[Remarque]
 Si la commande `djlint` est introuvable, vérifiez que Python est bien [dans votre PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
 :::
+
+## Premier lancement
+
+Indiquez à djLint le dossier de vos templates et passez à `--profile` le langage de vos templates. Le profil décide des règles du linter qui s'appliquent et de la façon dont la syntaxe des templates est formatée. Pour un projet Django :
+
+Lintez les templates (c'est le mode par défaut, vous pouvez donc omettre `--lint`) :
+
+```bash
+djlint templates --lint --profile=django
+```
+
+Voyez ce que le formatage changerait. Avec `--check`, djLint affiche un diff sans toucher aux fichiers :
+
+```bash
+djlint templates --check --profile=django
+```
+
+Reformatez les fichiers sur place :
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+L'option [`profile`](/fr/docs/configuration/#profile) liste tous les profils. Chaque langage de templates a aussi sa propre page, par exemple [Django](/fr/docs/languages/django/), [Jinja](/fr/docs/languages/jinja/) ou [Handlebars](/fr/docs/languages/handlebars/), qui montre comment définir le profil dans un fichier de configuration pour ne pas avoir à le passer à chaque fois.
 
 ## Chemin ou stdin
 
@@ -116,3 +155,9 @@ Si, dans votre pipeline, il est normal qu'un chemin ne contienne légitimement a
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## Utilisation en ligne de commande
+
+djLint est une application en ligne de commande. Consultez la page [configuration](/fr/docs/configuration/) pour une configuration avancée.
+
+<CliHelp />

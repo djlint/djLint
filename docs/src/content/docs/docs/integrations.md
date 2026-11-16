@@ -243,31 +243,31 @@ The upload step needs the `security-events: write` permission on the job or the 
 
 `--sarif` writes a SARIF 2.1.0 document to stdout and nothing else, so it can be redirected as above. Every enabled rule is listed with a link to its documentation, each finding carries its line and column, and with `--check` a file that would be reformatted is reported under a `formatting` rule. Azure DevOps, GitLab and most editors read the same format.
 
-## Pre-Commit
+## pre-commit
 
 djLint can be used as a [pre-commit](https://pre-commit.com) hook as both a linter and a formatter.
 
 The repo provides multiple pre-configured hooks for specific djLint profiles (it just pre-sets the `--profile` argument and tells pre-commit which file extensions to look for):
 
-- `djlint` for linting and `djlint-reformat` for formatting
+- `djlint` for linting and `djlint-reformat` for formatting.
   This will look for files matching `*.html` without setting `--profile`.
-- `djlint-django` and `djlint-reformat-django`
+- `djlint-django` and `djlint-reformat-django`.
   This will look for files matching `*.html` and set `--profile=django`.
-- `djlint-jinja` and `djlint-reformat-jinja`
+- `djlint-jinja` and `djlint-reformat-jinja`.
   This will look for files matching `*.j2`,`*.jinja` or `*.jinja2` and set `--profile=jinja`.
-- `djlint-nunjucks` and `djlint-reformat-nunjucks`
+- `djlint-nunjucks` and `djlint-reformat-nunjucks`.
   This will look for files matching `*.njk` and set `--profile=nunjucks`.
-- `djlint-handlebars` and `djlint-reformat-handlebars`
+- `djlint-handlebars` and `djlint-reformat-handlebars`.
   This will look for files matching `*.hbs` and set `--profile=handlebars`.
-- `djlint-liquid` and `djlint-reformat-liquid`
+- `djlint-liquid` and `djlint-reformat-liquid`.
   This will look for files matching `*.html` and set `--profile=liquid`.
-- `djlint-golang` and `djlint-reformat-golang`
+- `djlint-golang` and `djlint-reformat-golang`.
   This will look for files matching `*.gotmpl` and set `--profile=golang`.
-- `djlint-tera` and `djlint-reformat-tera`
+- `djlint-tera` and `djlint-reformat-tera`.
   This will look for files matching `*.html` and set `--profile=tera`.
-- `djlint-askama` and `djlint-reformat-askama`
+- `djlint-askama` and `djlint-reformat-askama`.
   This will look for files matching `*.html` and set `--profile=askama`.
-- `djlint-mako` and `djlint-reformat-mako`
+- `djlint-mako` and `djlint-reformat-mako`.
   This will look for files matching `*.html` and set `--profile=mako`.
 
 Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) for additional configuration.

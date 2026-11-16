@@ -5,11 +5,17 @@ sidebar:
   label: "Per iniziare"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Installazione
 
-djLint è scritto in [Python](https://python.org) ed è pubblicato su [PyPI](https://pypi.org/project/djlint/). Con [uv](https://docs.astral.sh/uv/), aggiungilo al progetto come dipendenza di sviluppo:
+djLint è scritto in [Python](https://python.org) ed è pubblicato su [PyPI](https://pypi.org/project/djlint/).
+
+<Tabs>
+<TabItem label="uv">
+
+Con [uv](https://docs.astral.sh/uv/), aggiungilo al progetto come dipendenza di sviluppo:
 
 ```bash
 uv add --dev djlint
@@ -21,41 +27,74 @@ Oppure installalo come strumento autonomo:
 uv tool install djlint
 ```
 
-Oppure con pip:
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-Oppure con [pipx](https://pipx.pypa.io/):
+</TabItem>
+<TabItem label="pipx">
+
+Con [pipx](https://pipx.pypa.io/):
 
 ```bash
 pipx install djlint
 ```
 
-Oppure con la [formula Homebrew](https://formulae.brew.sh/formula/djlint) mantenuta dalla community, su macOS o Linux:
+</TabItem>
+<TabItem label="Homebrew">
+
+Con la [formula Homebrew](https://formulae.brew.sh/formula/djlint) mantenuta dalla community, su macOS o Linux:
 
 ```bash
 brew install djlint
 ```
 
-_Oppure con npm. **Attenzione**: il pacchetto npm è solo un wrapper. Il suo script di installazione esegue pip con il `python3` che si trova nel PATH di sistema e installa la versione di djLint di quella release npm, che può sostituire un djLint più recente con uno più vecchio. npm non gestisce né disinstalla il pacchetto vero e proprio, quindi, se puoi, preferisci pip._
+</TabItem>
+<TabItem label="npm">
+
+:::caution[Attenzione]
+Il pacchetto npm è solo un wrapper. Il suo script di installazione esegue pip con il `python3` che si trova nel PATH di sistema e installa la versione di djLint di quella release npm, che può sostituire un djLint più recente con uno più vecchio. npm non gestisce né disinstalla il pacchetto vero e proprio, quindi, se puoi, preferisci pip.
+:::
 
 ```bash
 npm i djlint
 ```
 
+</TabItem>
+</Tabs>
+
 Per eseguire djLint a ogni commit, consulta [pre-commit](/it/docs/integrations/#pre-commit).
-
-## Uso da riga di comando
-
-djLint è un'applicazione a riga di comando. Per la configurazione avanzata, consulta la pagina [configurazione](/it/docs/configuration/).
-
-<CliHelp />
 
 :::note[Nota]
 Se il comando `djlint` non viene trovato, assicurati che Python sia [nel PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
 :::
+
+## Primo avvio
+
+Passa a djLint la cartella dei template e imposta `--profile` sul tuo linguaggio di template. Il profilo decide quali regole del linter vengono eseguite e come viene formattata la sintassi dei template. Per un progetto Django:
+
+Analizza i template (è la modalità predefinita, quindi puoi omettere `--lint`):
+
+```bash
+djlint templates --lint --profile=django
+```
+
+Guarda cosa cambierebbe la formattazione. Con `--check` djLint mostra un diff e lascia i file come sono:
+
+```bash
+djlint templates --check --profile=django
+```
+
+Formatta i file sul posto:
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+L'opzione [`profile`](/it/docs/configuration/#profile) elenca tutti i profili. Ogni linguaggio di template ha anche una pagina sua, per esempio [Django](/it/docs/languages/django/), [Jinja](/it/docs/languages/jinja/) o [Handlebars](/it/docs/languages/handlebars/), che mostra come impostare il profilo in un file di configurazione, così non devi passarlo ogni volta.
 
 ## Percorso o stdin
 
@@ -116,3 +155,9 @@ Se per la tua pipeline è normale un percorso che legittimamente non contiene te
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## Uso da riga di comando
+
+djLint è un'applicazione a riga di comando. Per la configurazione avanzata, consulta la pagina [configurazione](/it/docs/configuration/).
+
+<CliHelp />

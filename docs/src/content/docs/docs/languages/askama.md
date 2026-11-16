@@ -1,5 +1,5 @@
 ---
-title: "Askama Template Linter and Formatter"
+title: "Askama template linter and formatter"
 description: "djLint lints and formats Askama templates. Set the askama profile so the rules and the formatting fit them."
 sidebar:
   label: "Askama"

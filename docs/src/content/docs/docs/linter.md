@@ -1,5 +1,5 @@
 ---
-title: "Linter Rules"
+title: "Linter rules"
 description: "The rules of the djLint HTML template linter, and how to add your own."
 sidebar:
   label: "Linter"
@@ -21,7 +21,7 @@ djlint /path/to/this.html.j2  --profile=jinja
 [Check out the configuration guide for all the options!](/docs/configuration/)
 :::
 
-## Enabling or Disabling Rules
+## Enabling or disabling rules
 
 Most rules are enabled by default. Rules can be disabled in the command line with the `--ignore` flag. Rules can be enabled with the `--include` flag.
 
@@ -103,7 +103,7 @@ Of the built-in rules, only the H rules run without a [profile](/docs/configurat
 | [H056](#h056) | Src should not be empty.                                                                     | ✔️      |
 | [H057](#h057) | Video should have a captions track.                                                          | ✔️      |
 
-### Code Patterns
+### Code patterns
 
 The first letter of a code follows the pattern:
 
@@ -114,7 +114,7 @@ The first letter of a code follows the pattern:
 - N: applies specifically to Nunjucks
 - T: applies generally to templates
 
-### Rule Details
+### Rule details
 
 <!-- oxfmt-ignore-start -->
 
@@ -1453,7 +1453,7 @@ Do:
 
 <!-- oxfmt-ignore-end -->
 
-### Adding Rules
+### Adding rules
 
 We welcome pull requests with new rules!
 
@@ -1468,11 +1468,11 @@ A good rule consists of
 
 Please include a test to validate the rule.
 
-## Custom Rules
+## Custom rules
 
 You can add custom rules just for your project by creating a `.djlint_rules.yaml` alongside your `pyproject.toml`. Rules can be added to this files and djLint will pick them up. A rules file in another location can be given with the `--rules` CLI option.
 
-### Pattern Rules
+### Pattern rules
 
 You can add rules that fails if one of the regex pattern has a match:
 
@@ -1485,7 +1485,7 @@ You can add rules that fails if one of the regex pattern has a match:
       - Trichotillomania
 ```
 
-### Python module Rules
+### Python module rules
 
 You can add rules that import and execute a custom python function:
 

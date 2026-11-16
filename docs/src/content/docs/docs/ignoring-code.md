@@ -1,5 +1,5 @@
 ---
-title: "Ignoring Code"
+title: "Ignoring code"
 description: "How to keep djLint from formatting a block of code, and how to ignore linter rules inline."
 sidebar:
   label: "Ignoring code"
@@ -52,7 +52,7 @@ or as a handlebars style comment -
 {{!-- djlint:on --}}
 ```
 
-## Ignoring Rules
+## Ignoring rules
 
 Specific linter rules can also be ignored by adding the rule name into the ignored block opening tag.
 

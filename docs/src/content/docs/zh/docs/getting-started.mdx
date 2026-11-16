@@ -5,11 +5,17 @@ sidebar:
   label: "快速入门"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../../components/CliHelp.astro";
 
 ## 安装
 
-djLint 使用 [Python](https://python.org) 编写，发布在 [PyPI](https://pypi.org/project/djlint/) 上。使用 [uv](https://docs.astral.sh/uv/) 时，可以将其添加为项目的开发依赖：
+djLint 使用 [Python](https://python.org) 编写，发布在 [PyPI](https://pypi.org/project/djlint/) 上。
+
+<Tabs>
+<TabItem label="uv">
+
+使用 [uv](https://docs.astral.sh/uv/) 时，可以将其添加为项目的开发依赖：
 
 ```bash
 uv add --dev djlint
@@ -21,41 +27,74 @@ uv add --dev djlint
 uv tool install djlint
 ```
 
-或者使用 pip：
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-或者使用 [pipx](https://pipx.pypa.io/)：
+</TabItem>
+<TabItem label="pipx">
+
+使用 [pipx](https://pipx.pypa.io/)：
 
 ```bash
 pipx install djlint
 ```
 
-或者在 macOS 或 Linux 上使用社区维护的 [Homebrew formula](https://formulae.brew.sh/formula/djlint)：
+</TabItem>
+<TabItem label="Homebrew">
+
+在 macOS 或 Linux 上使用社区维护的 [Homebrew formula](https://formulae.brew.sh/formula/djlint)：
 
 ```bash
 brew install djlint
 ```
 
-_或者使用 npm。**警告**：npm 包只是一个包装器。它的安装脚本会用系统路径中碰巧存在的那个 `python3` 运行 pip，安装与该 npm 版本对应的 djLint 版本，这可能会用较旧的 djLint 替换较新的 djLint。npm 不会管理或卸载实际安装的包，因此请尽量使用 pip。_
+</TabItem>
+<TabItem label="npm">
+
+:::caution[警告]
+npm 包只是一个包装器。它的安装脚本会用系统路径中碰巧存在的那个 `python3` 运行 pip，安装与该 npm 版本对应的 djLint 版本，这可能会用较旧的 djLint 替换较新的 djLint。npm 不会管理或卸载实际安装的包，因此请尽量使用 pip。
+:::
 
 ```bash
 npm i djlint
 ```
 
+</TabItem>
+</Tabs>
+
 要在每次提交时运行 djLint，请参阅 [pre-commit](/zh/docs/integrations/#pre-commit)。
-
-## 命令行用法
-
-djLint 是一个命令行应用程序。高级配置请参阅[配置](/zh/docs/configuration/)页面。
-
-<CliHelp />
 
 :::note[注意]
 如果找不到 `djlint` 命令，请确认 Python 已[添加到 PATH 中](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)。
 :::
+
+## 首次运行
+
+把模板所在的文件夹交给 djLint，并用 `--profile` 指定模板语言。启用哪些检查规则、模板语法如何格式化，都由预设决定。以 Django 项目为例：
+
+检查模板（检查是默认模式，所以可以省略 `--lint`）：
+
+```bash
+djlint templates --lint --profile=django
+```
+
+查看格式化会改动什么。使用 `--check` 时，djLint 只输出 diff，不会修改文件：
+
+```bash
+djlint templates --check --profile=django
+```
+
+就地格式化文件：
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+所有预设都列在 [`profile`](/zh/docs/configuration/#profile) 选项中。每种模板语言也有自己的页面，例如 [Django](/zh/docs/languages/django/)、[Jinja](/zh/docs/languages/jinja/) 或 [Handlebars](/zh/docs/languages/handlebars/)，其中还介绍了如何在配置文件中设置预设，免得每次都要传入。
 
 ## 使用路径还是标准输入
 
@@ -116,3 +155,9 @@ djLint *确实*找到、但随后因 `exclude`、`extend_exclude`、`use_gitigno
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## 命令行用法
+
+djLint 是一个命令行应用程序。高级配置请参阅[配置](/zh/docs/configuration/)页面。
+
+<CliHelp />

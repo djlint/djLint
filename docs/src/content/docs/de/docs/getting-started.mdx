@@ -5,11 +5,17 @@ sidebar:
   label: "Erste Schritte"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Installation
 
-djLint ist in [Python](https://python.org) geschrieben und auf [PyPI](https://pypi.org/project/djlint/) veröffentlicht. Mit [uv](https://docs.astral.sh/uv/) fügen Sie es Ihrem Projekt als Entwicklungsabhängigkeit hinzu:
+djLint ist in [Python](https://python.org) geschrieben und auf [PyPI](https://pypi.org/project/djlint/) veröffentlicht.
+
+<Tabs>
+<TabItem label="uv">
+
+Mit [uv](https://docs.astral.sh/uv/) fügen Sie es Ihrem Projekt als Entwicklungsabhängigkeit hinzu:
 
 ```bash
 uv add --dev djlint
@@ -21,41 +27,74 @@ Oder installieren Sie es als eigenständiges Tool:
 uv tool install djlint
 ```
 
-Oder mit pip:
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-Oder mit [pipx](https://pipx.pypa.io/):
+</TabItem>
+<TabItem label="pipx">
+
+Mit [pipx](https://pipx.pypa.io/):
 
 ```bash
 pipx install djlint
 ```
 
-Oder unter macOS oder Linux mit der von der Community gepflegten [Homebrew-Formel](https://formulae.brew.sh/formula/djlint):
+</TabItem>
+<TabItem label="Homebrew">
+
+Unter macOS oder Linux mit der von der Community gepflegten [Homebrew-Formel](https://formulae.brew.sh/formula/djlint):
 
 ```bash
 brew install djlint
 ```
 
-_Oder mit npm. **Achtung**: Das npm-Paket ist nur ein Wrapper. Sein Installationsskript führt pip mit dem `python3` aus, das gerade in Ihrem Systempfad liegt, und installiert die djLint-Version dieses npm-Releases, die ein neueres djLint durch ein älteres ersetzen kann. npm verwaltet das eigentliche Paket nicht und deinstalliert es auch nicht, verwenden Sie daher nach Möglichkeit pip._
+</TabItem>
+<TabItem label="npm">
+
+:::caution[Achtung]
+Das npm-Paket ist nur ein Wrapper. Sein Installationsskript führt pip mit dem `python3` aus, das gerade in Ihrem Systempfad liegt, und installiert die djLint-Version dieses npm-Releases, die ein neueres djLint durch ein älteres ersetzen kann. npm verwaltet das eigentliche Paket nicht und deinstalliert es auch nicht, verwenden Sie daher nach Möglichkeit pip.
+:::
 
 ```bash
 npm i djlint
 ```
 
+</TabItem>
+</Tabs>
+
 Wie Sie djLint bei jedem Commit ausführen, lesen Sie unter [pre-commit](/de/docs/integrations/#pre-commit).
-
-## Verwendung auf der Befehlszeile
-
-djLint ist ein Befehlszeilenprogramm. Für die erweiterte Konfiguration siehe die Seite [Konfiguration](/de/docs/configuration/).
-
-<CliHelp />
 
 :::note[Hinweis]
 Wird der Befehl `djlint` nicht gefunden, prüfen Sie, ob Python [in Ihrem PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/) liegt.
 :::
+
+## Erster Aufruf
+
+Übergeben Sie djLint den Ordner mit Ihren Templates und setzen Sie `--profile` auf Ihre Template-Sprache. Das Profil bestimmt, welche Linter-Regeln laufen und wie die Template-Syntax formatiert wird. Für ein Django-Projekt:
+
+Templates linten (Linten ist der Standardmodus, `--lint` können Sie also weglassen):
+
+```bash
+djlint templates --lint --profile=django
+```
+
+Ansehen, was die Formatierung ändern würde. Mit `--check` gibt djLint einen Diff aus und lässt die Dateien unverändert:
+
+```bash
+djlint templates --check --profile=django
+```
+
+Die Dateien direkt formatieren:
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+Alle Profile listet die Option [`profile`](/de/docs/configuration/#profile) auf. Jede Template-Sprache hat außerdem eine eigene Seite, zum Beispiel [Django](/de/docs/languages/django/), [Jinja](/de/docs/languages/jinja/) oder [Handlebars](/de/docs/languages/handlebars/). Dort steht auch, wie Sie das Profil in einer Konfigurationsdatei setzen, damit Sie es nicht jedes Mal angeben müssen.
 
 ## Pfad oder stdin
 
@@ -116,3 +155,9 @@ Ist ein Pfad, der berechtigterweise keine Templates enthält, in Ihrer Pipeline 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## Verwendung auf der Befehlszeile
+
+djLint ist ein Befehlszeilenprogramm. Für die erweiterte Konfiguration siehe die Seite [Konfiguration](/de/docs/configuration/).
+
+<CliHelp />

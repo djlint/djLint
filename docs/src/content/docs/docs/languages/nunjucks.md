@@ -1,5 +1,5 @@
 ---
-title: "Nunjucks Template Linter and Formatter"
+title: "Nunjucks template linter and formatter"
 description: "djLint lints and formats Nunjucks templates. Set the nunjucks profile so the rules and the formatting fit them."
 sidebar:
   label: "Nunjucks"
