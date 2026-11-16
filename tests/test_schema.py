@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 
 _SCHEMA = Path("docs/src/static/schema/djlint.json")
 _SETTINGS = Path("src/djlint/settings.py")
-_CONFIG_KEY_PATTERN = re.compile(r"""(?:djlint_settings\.get|setting_int)\(\s*["']([\w-]+)["']""")
+_CONFIG_KEY_PATTERN = re.compile(
+    r"""(?:djlint_settings\.get|setting_bool|setting_int)\(\s*["']([\w-]+)["']"""
+)
 
 
 def _schema() -> dict[str, Any]:

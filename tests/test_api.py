@@ -312,3 +312,26 @@ def test_custom_rule_flags_can_be_a_number(tmp_path: Path) -> None:
     config = load_config(tmp_path)
 
     assert [x.code for x in lint_text(config, "HELLO")] == ["X903"]
+
+
+def test_on_warning_gets_every_warning_instead_of_stderr(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    (tmp_path / ".djlintrc").write_text('{"max_line_lenght": 100}', encoding="utf-8")
+    warnings: list[str] = []
+
+    for _ in range(2):
+        load_config(tmp_path, ignore="H999", on_warning=warnings.append)
+
+    assert (
+        warnings
+        == [
+            (
+                ".djlintrc sets max_line_lenght, which is not a djLint setting."
+                " Did you mean max_line_length?"
+            ),
+            "ignore names H999, which is not a linter rule.",
+        ]
+        * 2
+    )
+    assert not capsys.readouterr().err
