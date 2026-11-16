@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import tomllib
-from fnmatch import fnmatch
 from functools import cache
 from itertools import chain
 from pathlib import Path
@@ -182,72 +182,146 @@ def find_djlint_rules(root: Path) -> Path | None:
     return None
 
 
-def _editorconfig_glob_matches_html(glob: str, extension: str) -> bool:
-    """Whether an .editorconfig section applies to template files.
+_EDITORCONFIG_PROPERTIES: Final = frozenset(("indent_size", "max_line_length"))
+# A {1..9} range wider than this would make a huge pattern; any number stands in.
+_EDITORCONFIG_RANGE_LIMIT: Final = 1000
 
-    One level of {a,b} alternation is expanded before matching.
+
+def _editorconfig_regex(glob: str) -> str:
+    """The regex of an EditorConfig section glob, as the specification reads it.
+
+    `*` and `?` stay within one folder, `**` crosses them, `[...]` and `[!...]`
+    are character classes, `{a,b}` alternatives and `{1..9}` a number in that
+    range. A glob without a `/` matches a file's name in any folder below the
+    .editorconfig; one with a `/` is matched from the folder of that file.
     """
-    if glob == "*":
-        return True
-    globs = [glob]
-    if "{" in glob and "}" in glob:
-        head, _, rest = glob.partition("{")
-        body, _, tail = rest.partition("}")
-        globs = [head + alt + tail for alt in body.split(",")]
-    names = (f"test.{extension}", "test.html")
-    return any(
-        fnmatch(name, g.lstrip("*").lstrip("/") if g.startswith("**") else g)
-        for g in globs
-        for name in names
-    )
+    out: list[str] = []
+    i = 0
+    depth = 0
+    while i < len(glob):
+        char = glob[i]
+        if char == "\\" and i + 1 < len(glob):
+            out.append(re.escape(glob[i + 1]))
+            i += 2
+            continue
+        if char == "*":
+            if glob.startswith("**", i):
+                out.append(".*")
+                i += 2
+                continue
+            out.append("[^/]*")
+        elif char == "?":
+            out.append("[^/]")
+        elif char == "[" and (close := glob.find("]", i + 1)) > i + 1:
+            body = glob[i + 1 : close]
+            negated = body.startswith("!")
+            body = body.removeprefix("!").replace("\\", "\\\\")
+            out.append(f"[{'^' if negated else ''}{body}]")
+            i = close + 1
+            continue
+        elif char == "{":
+            close = glob.find("}", i)
+            span = glob[i + 1 : close] if close > i else ""
+            if numbers := re.fullmatch(r"([+-]?\d+)\.\.([+-]?\d+)", span):
+                low, high = sorted((int(numbers[1]), int(numbers[2])))
+                choices = range(low, high + 1) if high - low <= _EDITORCONFIG_RANGE_LIMIT else ()
+                out.append(f"(?:{'|'.join(map(str, choices)) or '[+-]?[0-9]+'})")
+                i = close + 1
+                continue
+            if "," in span:
+                out.append("(?:")
+                depth += 1
+            else:
+                # A brace without alternatives is a literal one.
+                out.append(re.escape(char))
+        elif char == "}" and depth:
+            out.append(")")
+            depth -= 1
+        elif char == "," and depth:
+            out.append("|")
+        else:
+            out.append(re.escape(char))
+        i += 1
+    pattern = "".join(out)
+    if "/" not in glob:
+        return f"(?:.*/)?{pattern}"
+    return pattern.removeprefix("/")
 
 
-def _read_editorconfig(path: Path, extension: str) -> tuple[dict[str, int | None], bool]:
-    """The indent_size and max_line_length of one .editorconfig, and its root flag.
+def _read_editorconfig(
+    path: Path,
+) -> tuple[list[tuple[re.Pattern[str], dict[str, int | None]]], bool]:
+    """The sections of one .editorconfig with djLint's properties, and its root flag.
 
-    Sections are considered when their glob applies to html or the configured
-    extension. A property set to `unset` is None, which drops what a file
-    further up gives it.
+    A property set to `unset` is None, which drops what a file further up or a
+    section before it gives it.
     """
-    result: dict[str, int | None] = {}
+    sections: list[tuple[re.Pattern[str], dict[str, int | None]]] = []
     is_root = False
-    section: bool | None = None
     for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         line = raw_line.strip()
         if not line or line.startswith(("#", ";")):
             continue
         if line.startswith("[") and line.endswith("]"):
-            section = _editorconfig_glob_matches_html(line[1:-1], extension)
+            try:
+                pattern = re.compile(_editorconfig_regex(line[1:-1]))
+            except re.error:
+                pattern = re.compile(r"(?!)")
+            sections.append((pattern, {}))
             continue
         key, sep, value = line.partition("=")
         key, value = key.strip().lower(), value.strip()
-        if sep and section is None and key == "root":
+        if not sep:
+            continue
+        if not sections and key == "root":
             is_root = value.lower() == "true"
-        elif sep and section and key in {"indent_size", "max_line_length"}:
-            if value.isdigit():
-                result[key] = int(value)
+        elif sections and key in _EDITORCONFIG_PROPERTIES:
+            if value.isdecimal():
+                sections[-1][1][key] = int(value)
             elif value.lower() == "unset":
-                result[key] = None
-    return result, is_root
+                sections[-1][1][key] = None
+    return sections, is_root
 
 
-def load_editorconfig(start: Path, root: Path, extension: str) -> dict[str, int]:
-    """Read indent_size and max_line_length from the .editorconfig files over start.
+def editorconfig_files(
+    folder: Path, root: Path
+) -> tuple[tuple[Path, list[tuple[re.Pattern[str], dict[str, int | None]]]], ...]:
+    """The .editorconfig files over a folder, nearest first.
 
-    As editors read them: the nearest file wins, the ones above it fill in
-    what it leaves out, and one with `root = true` ends the search, which
-    goes no higher than the project root. Used as defaults only: the command
-    line and djlint config files take precedence.
+    The search ends at one with `root = true`, and goes no higher than the
+    project root.
     """
-    folders = [start, *start.parents]
-    result: dict[str, int | None] = {}
-    for folder in folders[: folders.index(root) + 1] if root in folders else [start]:
-        path = folder / ".editorconfig"
+    folders = [folder, *folder.parents]
+    found = []
+    for directory in folders[: folders.index(root) + 1] if root in folders else [folder]:
+        path = directory / ".editorconfig"
         if path.is_file():
-            settings, is_root = _read_editorconfig(path, extension)
-            result = {**settings, **result}
+            sections, is_root = _read_editorconfig(path)
+            found.append((directory, sections))
             if is_root:
                 break
+    return tuple(found)
+
+
+def editorconfig_for(
+    file: Path, files: tuple[tuple[Path, list[tuple[re.Pattern[str], dict[str, int | None]]]], ...]
+) -> dict[str, int]:
+    """indent_size and max_line_length for a file, as editors read them.
+
+    The nearest .editorconfig wins, the ones above it fill in what it leaves
+    out, and within one file a later section wins over an earlier one.
+    """
+    result: dict[str, int | None] = {}
+    for directory, sections in files:
+        try:
+            relative = file.relative_to(directory).as_posix()
+        except ValueError:
+            continue
+        own: dict[str, int | None] = {}
+        for pattern, values in sections:
+            if pattern.fullmatch(relative):
+                own.update(values)
+        result = {**own, **result}
     return {key: value for key, value in result.items() if value is not None}
 
 
@@ -1374,6 +1448,7 @@ class Config:
     """Djlint Config."""
 
     __slots__ = (
+        "_editorconfig_files",
         "allow_empty_input",
         "always_self_closing_html_tags",
         "attribute_pattern",
@@ -1387,6 +1462,7 @@ class Config:
         "css_config",
         "custom_blocks",
         "custom_html",
+        "editorconfig_defaults",
         "entity_pattern",
         "exclude",
         "exclude_pattern",
@@ -1730,9 +1806,20 @@ class Config:
                 " no effect without format_attribute_js_json."
             )
 
-        editorconfig = load_editorconfig(
-            start if start.is_dir() else start.parent, self.project_root, self.extension
+        # .editorconfig only fills in what neither the command line nor the
+        # configuration sets. Each file gets its own (see for_file); this is
+        # for a file of the configured extension in the folder checked.
+        self.editorconfig_defaults = frozenset(
+            name
+            for name, given in (
+                ("indent_size", indent or "indent" in djlint_settings),
+                ("max_line_length", max_line_length or "max_line_length" in djlint_settings),
+            )
+            if not given
         )
+        self._editorconfig_files: dict[Path, tuple[Any, ...]] = {}
+        folder = start if start.is_dir() else start.parent
+        editorconfig = self._editorconfig_for(folder / f"_.{self.extension}")
         indent = indent or setting_int("indent", editorconfig.get("indent_size", 4))
         self.indent_size = indent
         self.indent = indent * " "
@@ -2083,3 +2170,37 @@ class Config:
             self.optional_single_line_template_pattern = compile_pattern(
                 rf"^(?:{self.optional_single_line_template_tags})$", RE_FLAGS_IX
             )
+
+    def _editorconfig_for(self, file: Path) -> dict[str, int]:
+        folder = file.parent
+        if folder not in self._editorconfig_files:
+            self._editorconfig_files[folder] = editorconfig_files(folder, self.project_root)
+        return editorconfig_for(file, self._editorconfig_files[folder])
+
+    def for_file(self, file: Path) -> Config:
+        """This configuration with the .editorconfig of a file, where it applies.
+
+        The configuration is built for the folder a run starts from, but
+        editors read .editorconfig for each file, by its path. Only what the
+        command line and the configuration leave to .editorconfig changes.
+        """
+        if not self.editorconfig_defaults:
+            return self
+        found = self._editorconfig_for(file.resolve())
+        indent_size = (
+            found.get("indent_size", 4)
+            if "indent_size" in self.editorconfig_defaults
+            else self.indent_size
+        )
+        max_line_length = (
+            found.get("max_line_length", 120)
+            if "max_line_length" in self.editorconfig_defaults
+            else self.max_line_length
+        )
+        if (indent_size, max_line_length) == (self.indent_size, self.max_line_length):
+            return self
+        config = copy.copy(self)
+        config.indent_size = indent_size
+        config.indent = indent_size * " "
+        config.max_line_length = max_line_length
+        return config
