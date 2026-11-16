@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import itertools
+import sys
 from bisect import bisect_left, bisect_right
 from dataclasses import dataclass
 from functools import lru_cache, partial
@@ -13,6 +14,11 @@ import regex as re
 
 from djlint.const import TAG_ATTRIBUTES
 from djlint.formatter.tokenizer import tokenize_tags
+
+if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
+    from typing import NamedTuple
+else:  # pragma: <3.13 cover
+    from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -759,14 +765,14 @@ def inside_ignored_rule(config: Config, html: str, match: SpanMatch, rule: str) 
 
 
 @final
-@dataclass(repr=False, eq=False, frozen=True, match_args=False, kw_only=False, slots=True)
-class Span:
-    """A stretch of the html, with the `span()` the ignore checks ask of a match."""
+class Span(NamedTuple):
+    """Where a finding sits, standing in for the pattern match."""
 
     start: int
     end: int
 
     def span(self) -> tuple[int, int]:
+        """Return the source span."""
         return self.start, self.end
 
 
@@ -779,14 +785,17 @@ class DjangoTemplate:
     and `{#` read as text, as nothing closes them on their line, each with
     where the next closing of its kind starts, or -1. Neither holds what
     is inside a `{% verbatim %}` block, which Django prints as written, or
-    a `{% comment %}` block, which it drops.
+    a `{% comment %}` block, which it drops. `comment_blocks` are those
+    blocks, from the opening tag to past the closing one, or to the end of
+    a document that never closes one.
     """
 
     comments: tuple[Span, ...]
     stray_openers: tuple[tuple[int, int], ...]
+    comment_blocks: tuple[Span, ...]
 
 
-DJANGO_OPENER_PATTERN: Final = compile_pattern(r"\{[%{\#]")
+_DJANGO_OPENER_PATTERN: Final = compile_pattern(r"\{[%{\#]")
 _DJANGO_CLOSINGS: Final = MappingProxyType({"%": "%}", "{": "}}", "#": "#}"})
 
 
@@ -816,15 +825,16 @@ def read_django_template(html: str) -> DjangoTemplate:
 
     comments: list[Span] = []
     stray_openers: list[tuple[int, int]] = []
+    comment_blocks: list[Span] = []
     verbatim_closing = ""
-    inside_comment_block = False
+    comment_block_start = -1
     position = 0
-    while (opener := DJANGO_OPENER_PATTERN.search(html, position)) is not None:
+    while (opener := _DJANGO_OPENER_PATTERN.search(html, position)) is not None:
         start = opener.start()
         kind = html[start + 1]
         closing = find(_DJANGO_CLOSINGS[kind], start + 2)
         line_end = find("\n", start)
-        read = not verbatim_closing and not inside_comment_block
+        read = not verbatim_closing and comment_block_start < 0
         if closing < 0 or 0 <= line_end < closing:
             if read:
                 stray_openers.append((start, closing))
@@ -847,12 +857,20 @@ def read_django_template(html: str) -> DjangoTemplate:
                     verbatim_closing = ""
             elif contents[:9] in {"verbatim", "verbatim "}:
                 verbatim_closing = f"end{contents}"
-            elif inside_comment_block:
-                inside_comment_block = contents != "endcomment"
-            else:
-                inside_comment_block = contents.split(maxsplit=1)[:1] == ["comment"]
+            elif comment_block_start >= 0:
+                if contents == "endcomment":
+                    comment_blocks.append(Span(comment_block_start, position))
+                    comment_block_start = -1
+            elif contents.split(maxsplit=1)[:1] == ["comment"]:
+                comment_block_start = start
 
-    return DjangoTemplate(comments=tuple(comments), stray_openers=tuple(stray_openers))
+    if comment_block_start >= 0:
+        comment_blocks.append(Span(comment_block_start, len(html)))
+    return DjangoTemplate(
+        comments=tuple(comments),
+        stray_openers=tuple(stray_openers),
+        comment_blocks=tuple(comment_blocks),
+    )
 
 
 _BRANCHED_BLOCK_PATTERN: Final = compile_pattern(

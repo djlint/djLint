@@ -55,6 +55,16 @@ test_data = [
     pytest.param(("<pre>\n{# a #}\n{# b #}"), ([]), id="inside a pre nothing closes"),
     pytest.param(("<pre></pre>\n{# a #}\n{# b #}"), (["2:0"]), id="after a pre"),
     pytest.param(
+        ("<pre>\n{% comment %}\n</pre>\n{% endcomment %}\n{# a #}\n{# b #}\n</pre>"),
+        ([]),
+        id="a pre closing inside a comment block closes nothing",
+    ),
+    pytest.param(
+        ("{% comment %}<pre>{% endcomment %}\n{# a #}\n{# b #}"),
+        (["2:0"]),
+        id="a pre opening inside a comment block opens nothing",
+    ),
+    pytest.param(
         ("{% comment %}\n{# a #}\n{# b #}\n{% endcomment %}"), ([]), id="inside a comment block"
     ),
     pytest.param(

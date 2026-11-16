@@ -44,6 +44,22 @@ test_data = [
     ),
     pytest.param(("{{ a\n<p>x</p>"), ("django"), ([]), id="a tag nothing closes"),
     pytest.param(
+        ('{{ value|default:\n"{{ fallback }}" }}'),
+        ("django"),
+        (["1:0"]),
+        id="a quoted opener does not end the tag",
+    ),
+    pytest.param(
+        ("{% if a\n{# b #}\n%}"),
+        ("django"),
+        (["1:0"]),
+        id="a comment inside the tag does not end it",
+    ),
+    pytest.param(("{% if a\n}%"), ("django"), ([]), id="a typo for the closing is left to T034"),
+    pytest.param(
+        ('{{ "a\n}}'), ("django"), ([]), id="a closing in an unterminated string is left to T027"
+    ),
+    pytest.param(
         ("{{% if a %}\n}}"), ("django"), ([]), id="a brace before a tag is text of its own"
     ),
     pytest.param(

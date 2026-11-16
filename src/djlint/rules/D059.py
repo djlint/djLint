@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 
 from djlint.helpers import (
     Span,
+    compile_pattern,
     inside_ignored_linter_block,
     inside_ignored_rule,
     read_django_template,
@@ -30,22 +31,37 @@ if TYPE_CHECKING:
     from typing import Any, Final
 
     from djlint.formatter.tokenizer import TagToken
+    from djlint.helpers import DjangoTemplate
     from djlint.settings import Config
     from djlint.types import LintError
 
 
 _PREFORMATTED: Final = frozenset(("pre", "textarea"))
+_NON_NEWLINE_PATTERN: Final = compile_pattern(r"[^\n]")
 
 
-def _preformatted_bodies(html: str) -> tuple[tuple[int, int], ...]:
+def _preformatted_bodies(
+    html: str, comment_blocks: tuple[Span, ...]
+) -> tuple[tuple[int, int], ...]:
     """The bodies of `<pre>` and `<textarea>`, in order.
 
     Neither nests, so an opening is closed by the next closing tag of its
-    name, or by the end of the document as a browser reads it.
+    name, or by the end of the document as a browser reads it. Django drops
+    a `{% comment %}` block before any browser sees it, so the tags in one
+    are blanked first, keeping every offset.
     """
+    pieces: list[str] = []
+    previous = 0
+    for block in comment_blocks:
+        pieces.extend((
+            html[previous : block.start],
+            _NON_NEWLINE_PATTERN.sub(" ", html[block.start : block.end]),
+        ))
+        previous = block.end
+    pieces.append(html[previous:])
     bodies: list[tuple[int, int]] = []
     opening: TagToken | None = None
-    for tag in tokenize_markup(html):
+    for tag in tokenize_markup("".join(pieces)):
         name = tag.name.lower()
         if name not in _PREFORMATTED:
             continue
@@ -77,11 +93,11 @@ def _joins_a_block(html: str, comment: Span, bodies: tuple[tuple[int, int], ...]
     return index < 0 or not bodies[index][0] <= comment.start < bodies[index][1]
 
 
-def _runs(html: str, comments: tuple[Span, ...]) -> Iterator[Span]:
+def _runs(html: str, template: DjangoTemplate) -> Iterator[Span]:
     """Each run of two or more comment lines in a row, as one span."""
-    bodies = _preformatted_bodies(html)
+    bodies = _preformatted_bodies(html, template.comment_blocks)
     lines: list[Span] = []
-    for comment in comments:
+    for comment in template.comments:
         if not _joins_a_block(html, comment, bodies):
             if len(lines) > 1:
                 yield Span(lines[0].start, lines[-1].end)
@@ -116,7 +132,7 @@ def run(
             "match": html[lines.start : lines.end].strip()[:20],
             "message": rule["message"],
         }
-        for lines in _runs(html, read_django_template(html).comments)
+        for lines in _runs(html, read_django_template(html))
         if not inside_ignored_rule(config, html, lines, rule["name"])
         and not inside_ignored_linter_block(config, html, lines)
     )

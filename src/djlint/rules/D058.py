@@ -7,9 +7,11 @@ comment written over several lines are text it prints as written, and an
 Jinja and Nunjucks read all of them, which is where the habit comes from.
 
 An opener with no closing on its line is reported when its closing comes
-on a later one. A `{%` or `{{` that another opener follows first was never
-closed, which T039 reports. A comment runs to its `#}` whatever it holds,
-since a comment is what tags are commented out with.
+on a later one. A `{%` or `{{` is read as T039 reads it, so a delimiter in
+a quoted string neither closes it nor opens another, and what T039 reports
+as unclosed, T034 as a `}%` typo or T027 as an unterminated string is left
+to them. A comment runs to its first `#}` whatever it holds, since a
+comment is what tags are commented out with.
 """
 
 from __future__ import annotations
@@ -17,13 +19,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from djlint.helpers import (
-    DJANGO_OPENER_PATTERN,
     Span,
     inside_ignored_linter_block,
     inside_ignored_rule,
     read_django_template,
 )
 from djlint.lint import get_line
+from djlint.rules.T039 import scan_tag
 
 if TYPE_CHECKING:
     from typing import Any
@@ -49,12 +51,17 @@ def run(
     errors: list[LintError] = []
     reported_to = 0
     for start, closing in read_django_template(html).stray_openers:
-        if start < reported_to or closing < 0:
+        if start < reported_to:
             continue
-        if html[start + 1] != "#" and DJANGO_OPENER_PATTERN.search(html, start + 2, closing):
+        kind = html[start + 1]
+        if kind == "#":
+            end = closing + 2 if closing >= 0 else -1
+        else:
+            end = scan_tag(html, start + 2, "%}" if kind == "%" else "}}").end
+        if end < 0:
             continue
 
-        tag = Span(start, closing + 2)
+        tag = Span(start, end)
         reported_to = tag.end
         if inside_ignored_rule(config, html, tag, rule["name"]) or inside_ignored_linter_block(
             config, html, tag
