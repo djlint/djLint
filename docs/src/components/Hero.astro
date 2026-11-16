@@ -460,8 +460,9 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   /* The whole bar is the button; the yellow pill says what clicking it does. */
   .run {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem 1rem;
     width: 100%;
     padding: 0.6rem 0.75rem 0.6rem 1rem;
     border: 0;
@@ -479,12 +480,13 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   .run .prompt {
     color: var(--dj-squiggle);
   }
+  /* No narrower than its longest argument: where that leaves no room for
+     the pill, the pill moves to a line of its own. */
   .command {
     display: flex;
-    flex: 1;
+    flex: 1 1 auto;
     flex-wrap: wrap;
     gap: 0 1ch;
-    min-width: 0;
   }
   .arg {
     white-space: nowrap;
@@ -494,6 +496,7 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   }
   .action {
     flex: none;
+    margin-inline-start: auto;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
