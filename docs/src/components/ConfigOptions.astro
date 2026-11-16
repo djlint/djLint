@@ -2,6 +2,7 @@
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import { Badge, Code, TabItem, Tabs } from "@astrojs/starlight/components";
 import options from "../data/configuration.json";
+import { starlightRoute } from "../utils/route";
 
 interface Props {
   label: string;
@@ -10,7 +11,8 @@ interface Props {
 }
 
 const { label, placeholder, empty } = Astro.props;
-const lang = Astro.locals.starlightRoute.locale ?? "en";
+// llms.txt renders the English page, without a route.
+const lang = starlightRoute(Astro.locals)?.locale ?? "en";
 const markdown = await createMarkdownProcessor();
 
 // djlint.toml takes the pyproject.toml settings without the [tool.djlint] table.
@@ -75,7 +77,13 @@ const rendered = await Promise.all(
       </h3>
       <p class="config-tags">
         <Badge text={`${Astro.locals.t("djlint.since")} ${option.since}`} variant="default" />
-        {option.tags.map((tag) => <Badge text={tag} variant="note" />)}
+        {/* The spaces keep "since 1.44.0 formatter linter" apart for screen readers. */}
+        {option.tags.map((tag) => (
+          <>
+            {" "}
+            <Badge text={tag} variant="note" />
+          </>
+        ))}
       </p>
       {option.parts.map((part) =>
         "code" in part ? <Code code={part.code} lang={part.lang} /> : <Fragment set:html={part.html} />,

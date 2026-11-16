@@ -37,71 +37,71 @@ Sin [perfil](/es/docs/configuration/#profile), de las reglas incluidas solo se a
 
 ## Reglas
 
-| Código | Significado                                                                                                                   | Por defecto |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| T001   | Las variables deben ir rodeadas de espacios. Ej.: `{{ this }}`                                                                | ✔️          |
-| T002   | En las etiquetas deben usarse comillas dobles. Ej. `{% extends "this.html" %}`                                                | ✔️          |
-| T003   | El endblock debe tener nombre. Ej.: `{% endblock body %}`.                                                                    | -           |
-| D004   | (Django) Las URL estáticas deben seguir el patrón `{% static path/to/file %}`.                                                | ✔️          |
-| J004   | (Jinja) Las URL estáticas deben seguir el patrón `{{ url_for('static'..) }}`.                                                 | ✔️          |
-| H005   | La etiqueta html debe tener un atributo `lang` no vacío.                                                                      | ✔️          |
-| H006   | La etiqueta `img` debe tener los atributos `height` y `width`.                                                                | -           |
-| H007   | Debe haber un `<!DOCTYPE ... >` antes de la etiqueta html.                                                                    | ✔️          |
-| H008   | Los atributos deben ir entre comillas dobles.                                                                                 | ✔️          |
-| H009   | Los nombres de etiqueta deben ir en minúsculas.                                                                               | ✔️          |
-| H010   | Los nombres de atributo deben ir en minúsculas.                                                                               | ✔️          |
-| H011   | Los valores de atributo deben ir entre comillas.                                                                              | ✔️          |
-| H012   | No debe haber espacios alrededor del `=` de un atributo.                                                                      | ✔️          |
-| H013   | La etiqueta `img` debe tener atributos alt.                                                                                   | ✔️          |
-| H014   | Más líneas en blanco de las que conserva la configuración.                                                                    | ✔️          |
-| H015   | Pon un salto de línea después de las etiquetas `h`.                                                                           | ✔️          |
-| H016   | Falta la etiqueta `title` en el html.                                                                                         | ✔️          |
-| H017   | Las etiquetas vacías deben ser autocerradas (en conflicto con: H018).                                                         | -           |
-| D018   | (Django) Los enlaces internos deben usar el patrón `{% url ... %}`.                                                           | ✔️          |
-| H018   | Las etiquetas vacías se cierran solas por naturaleza y deben terminar en `>`, no en `/>` (en conflicto con: H017).            | -           |
-| J018   | (Jinja) Los enlaces internos deben usar el patrón `{{ url_for() ... }}`.                                                      | ✔️          |
-| H019   | Sustituye `javascript:abc()` por un evento `on_` y una URL real.                                                              | ✔️          |
-| H020   | Se encontró un par de etiquetas vacío. Plantéate eliminarlo.                                                                  | ✔️          |
-| H021   | Deben evitarse los estilos en línea.                                                                                          | ✔️          |
-| H022   | Usa HTTPS para los enlaces externos.                                                                                          | ✔️          |
-| H023   | No uses referencias de entidad.                                                                                               | ✔️          |
-| H024   | Omite el type en scripts y estilos.                                                                                           | ✔️          |
-| H025   | La etiqueta parece huérfana.                                                                                                  | ✔️          |
-| H026   | Las etiquetas id y class vacías se pueden eliminar.                                                                           | ✔️          |
-| T027   | Se encontró una cadena sin cerrar en la sintaxis de plantilla.                                                                | ✔️          |
-| T028   | Plantéate usar etiquetas con control de espacios dentro de los valores de atributo. `{%- if/for -%}`                          | -           |
-| H029   | Plantéate usar valores en minúsculas para el method de los formularios.                                                       | ✔️          |
-| H030   | Plantéate añadir una meta description.                                                                                        | ✔️          |
-| T032   | Se encontraron espacios en blanco de más en las etiquetas de plantilla.                                                       | ✔️          |
-| H033   | Se encontraron espacios en blanco de más en el action del formulario.                                                         | ✔️          |
-| T034   | ¿Querías usar {% ... %} en lugar de {% ... }%?                                                                                | ✔️          |
-| H036   | No uses etiquetas `br` para crear espacio.                                                                                    | ✔️          |
-| H037   | Se encontró un atributo duplicado.                                                                                            | ✔️          |
-| T038   | La etiqueta de bloque no tiene su etiqueta de cierre.                                                                         | ✔️          |
-| T039   | Se encontró una etiqueta de plantilla sin cerrar.                                                                             | ✔️          |
-| T040   | Falta el nombre de plantilla, o está vacío, en una etiqueta extends o include.                                                | ✔️          |
-| H041   | La etiqueta se cierra en un bloque de plantilla distinto de aquel en el que se abrió.                                         | ✔️          |
-| T041   | La etiqueta extends debe ser la primera etiqueta de la plantilla.                                                             | ✔️          |
-| H042   | El atributo for de la etiqueta label no tiene ningún elemento con ese id en este archivo.                                     | ✔️          |
-| T042   | El contenido fuera de un bloque no se renderiza en una plantilla que extiende otra.                                           | ✔️          |
-| H043   | La etiqueta button debe tener un atributo `type`.                                                                             | ✔️          |
-| T043   | El nombre de bloque se usa más de una vez en la plantilla.                                                                    | ✔️          |
-| H044   | Thead no debe mezclar celdas `th` y `td`.                                                                                     | ✔️          |
-| T044   | La etiqueta de salida contiene una palabra clave de sentencia; usa una etiqueta de bloque.                                    | ✔️          |
-| H045   | La etiqueta iframe debe tener un atributo `title`.                                                                            | ✔️          |
-| T045   | Una etiqueta de plantilla dentro de un comentario html se sigue ejecutando; usa un comentario de plantilla para desactivarla. | ✔️          |
-| H046   | Tabindex no debe ser positivo.                                                                                                | ✔️          |
-| H047   | No debe ponerse aria-hidden en un elemento que puede recibir el foco.                                                         | ✔️          |
-| H048   | El atributo aria no es uno de los que define la especificación.                                                               | ✔️          |
-| H049   | El viewport no debe impedir que se haga zoom en la página.                                                                    | ✔️          |
-| H050   | El elemento está obsoleto y debe sustituirse.                                                                                 | ✔️          |
-| H051   | El role no es uno de los que ARIA define para el marcado.                                                                     | ✔️          |
-| H052   | Meta refresh no debe recargar ni redirigir la página con un temporizador.                                                     | ✔️          |
-| H053   | El id se usa más de una vez en el archivo.                                                                                    | ✔️          |
-| H054   | Un elemento interactivo no debe ir anidado dentro de otro.                                                                    | ✔️          |
-| H055   | El atributo lang debe ser una etiqueta de idioma, como en o pt-BR.                                                            | ✔️          |
-| H056   | Src no debe estar vacío.                                                                                                      | ✔️          |
-| H057   | El vídeo debe tener una pista de subtítulos.                                                                                  | ✔️          |
+| Código        | Significado                                                                                                                   | Por defecto |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [T001](#t001) | Las variables deben ir rodeadas de espacios. Ej.: `{{ this }}`                                                                | ✔️          |
+| [T002](#t002) | En las etiquetas deben usarse comillas dobles. Ej. `{% extends "this.html" %}`                                                | ✔️          |
+| [T003](#t003) | El endblock debe tener nombre. Ej.: `{% endblock body %}`.                                                                    | -           |
+| [D004](#d004) | (Django) Las URL estáticas deben seguir el patrón `{% static path/to/file %}`.                                                | ✔️          |
+| [J004](#j004) | (Jinja) Las URL estáticas deben seguir el patrón `{{ url_for('static'..) }}`.                                                 | ✔️          |
+| [H005](#h005) | La etiqueta html debe tener un atributo `lang` no vacío.                                                                      | ✔️          |
+| [H006](#h006) | La etiqueta `img` debe tener los atributos `height` y `width`.                                                                | -           |
+| [H007](#h007) | Debe haber un `<!DOCTYPE ... >` antes de la etiqueta html.                                                                    | ✔️          |
+| [H008](#h008) | Los atributos deben ir entre comillas dobles.                                                                                 | ✔️          |
+| [H009](#h009) | Los nombres de etiqueta deben ir en minúsculas.                                                                               | ✔️          |
+| [H010](#h010) | Los nombres de atributo deben ir en minúsculas.                                                                               | ✔️          |
+| [H011](#h011) | Los valores de atributo deben ir entre comillas.                                                                              | ✔️          |
+| [H012](#h012) | No debe haber espacios alrededor del `=` de un atributo.                                                                      | ✔️          |
+| [H013](#h013) | La etiqueta `img` debe tener atributos alt.                                                                                   | ✔️          |
+| [H014](#h014) | Más líneas en blanco de las que conserva la configuración.                                                                    | ✔️          |
+| [H015](#h015) | Pon un salto de línea después de las etiquetas `h`.                                                                           | ✔️          |
+| [H016](#h016) | Falta la etiqueta `title` en el html.                                                                                         | ✔️          |
+| [H017](#h017) | Las etiquetas vacías deben ser autocerradas (en conflicto con: H018).                                                         | -           |
+| [D018](#d018) | (Django) Los enlaces internos deben usar el patrón `{% url ... %}`.                                                           | ✔️          |
+| [H018](#h018) | Las etiquetas vacías se cierran solas por naturaleza y deben terminar en `>`, no en `/>` (en conflicto con: H017).            | -           |
+| [J018](#j018) | (Jinja) Los enlaces internos deben usar el patrón `{{ url_for() ... }}`.                                                      | ✔️          |
+| [H019](#h019) | Sustituye `javascript:abc()` por un evento `on_` y una URL real.                                                              | ✔️          |
+| [H020](#h020) | Se encontró un par de etiquetas vacío. Plantéate eliminarlo.                                                                  | ✔️          |
+| [H021](#h021) | Deben evitarse los estilos en línea.                                                                                          | ✔️          |
+| [H022](#h022) | Usa HTTPS para los enlaces externos.                                                                                          | ✔️          |
+| [H023](#h023) | No uses referencias de entidad.                                                                                               | ✔️          |
+| [H024](#h024) | Omite el type en scripts y estilos.                                                                                           | ✔️          |
+| [H025](#h025) | La etiqueta parece huérfana.                                                                                                  | ✔️          |
+| [H026](#h026) | Las etiquetas id y class vacías se pueden eliminar.                                                                           | ✔️          |
+| [T027](#t027) | Se encontró una cadena sin cerrar en la sintaxis de plantilla.                                                                | ✔️          |
+| [T028](#t028) | Plantéate usar etiquetas con control de espacios dentro de los valores de atributo. `{%- if/for -%}`                          | -           |
+| [H029](#h029) | Plantéate usar valores en minúsculas para el method de los formularios.                                                       | ✔️          |
+| [H030](#h030) | Plantéate añadir una meta description.                                                                                        | ✔️          |
+| [T032](#t032) | Se encontraron espacios en blanco de más en las etiquetas de plantilla.                                                       | ✔️          |
+| [H033](#h033) | Se encontraron espacios en blanco de más en el action del formulario.                                                         | ✔️          |
+| [T034](#t034) | ¿Querías usar {% ... %} en lugar de {% ... }%?                                                                                | ✔️          |
+| [H036](#h036) | No uses etiquetas `br` para crear espacio.                                                                                    | ✔️          |
+| [H037](#h037) | Se encontró un atributo duplicado.                                                                                            | ✔️          |
+| [T038](#t038) | La etiqueta de bloque no tiene su etiqueta de cierre.                                                                         | ✔️          |
+| [T039](#t039) | Se encontró una etiqueta de plantilla sin cerrar.                                                                             | ✔️          |
+| [T040](#t040) | Falta el nombre de plantilla, o está vacío, en una etiqueta extends o include.                                                | ✔️          |
+| [H041](#h041) | La etiqueta se cierra en un bloque de plantilla distinto de aquel en el que se abrió.                                         | ✔️          |
+| [T041](#t041) | La etiqueta extends debe ser la primera etiqueta de la plantilla.                                                             | ✔️          |
+| [H042](#h042) | El atributo for de la etiqueta label no tiene ningún elemento con ese id en este archivo.                                     | ✔️          |
+| [T042](#t042) | El contenido fuera de un bloque no se renderiza en una plantilla que extiende otra.                                           | ✔️          |
+| [H043](#h043) | La etiqueta button debe tener un atributo `type`.                                                                             | ✔️          |
+| [T043](#t043) | El nombre de bloque se usa más de una vez en la plantilla.                                                                    | ✔️          |
+| [H044](#h044) | Thead no debe mezclar celdas `th` y `td`.                                                                                     | ✔️          |
+| [T044](#t044) | La etiqueta de salida contiene una palabra clave de sentencia; usa una etiqueta de bloque.                                    | ✔️          |
+| [H045](#h045) | La etiqueta iframe debe tener un atributo `title`.                                                                            | ✔️          |
+| [T045](#t045) | Una etiqueta de plantilla dentro de un comentario html se sigue ejecutando; usa un comentario de plantilla para desactivarla. | ✔️          |
+| [H046](#h046) | Tabindex no debe ser positivo.                                                                                                | ✔️          |
+| [H047](#h047) | No debe ponerse aria-hidden en un elemento que puede recibir el foco.                                                         | ✔️          |
+| [H048](#h048) | El atributo aria no es uno de los que define la especificación.                                                               | ✔️          |
+| [H049](#h049) | El viewport no debe impedir que se haga zoom en la página.                                                                    | ✔️          |
+| [H050](#h050) | El elemento está obsoleto y debe sustituirse.                                                                                 | ✔️          |
+| [H051](#h051) | El role no es uno de los que ARIA define para el marcado.                                                                     | ✔️          |
+| [H052](#h052) | Meta refresh no debe recargar ni redirigir la página con un temporizador.                                                     | ✔️          |
+| [H053](#h053) | El id se usa más de una vez en el archivo.                                                                                    | ✔️          |
+| [H054](#h054) | Un elemento interactivo no debe ir anidado dentro de otro.                                                                    | ✔️          |
+| [H055](#h055) | El atributo lang debe ser una etiqueta de idioma, como en o pt-BR.                                                            | ✔️          |
+| [H056](#h056) | Src no debe estar vacío.                                                                                                      | ✔️          |
+| [H057](#h057) | El vídeo debe tener una pista de subtítulos.                                                                                  | ✔️          |
 
 ### Patrones de los códigos
 

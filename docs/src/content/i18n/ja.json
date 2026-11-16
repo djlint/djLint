@@ -18,6 +18,7 @@
   "djlint.demo_installing": "djLint をインストール中…",
   "djlint.demo_version": "Python {python} と djLint {djlint} で実行中",
   "djlint.demo_error": "djLint を読み込めませんでした。接続を確認してから、ページを再読み込みしてください。",
+  "djlint.demo_copy_link": "リンクをコピー",
   "djlint.since": "導入バージョン",
   "djlint.hero_problems": "{count} 件の問題",
   "djlint.hero_clean": "問題はありません",

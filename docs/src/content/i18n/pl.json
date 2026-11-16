@@ -18,6 +18,7 @@
   "djlint.demo_installing": "Instalowanie djLint…",
   "djlint.demo_version": "Działa na Pythonie {python}; djLint {djlint}",
   "djlint.demo_error": "Nie udało się wczytać djLint. Sprawdź połączenie i odśwież stronę.",
+  "djlint.demo_copy_link": "Kopiuj link",
   "djlint.since": "od wersji",
   "djlint.hero_problems": "Problemy: {count}",
   "djlint.hero_clean": "Brak problemów",

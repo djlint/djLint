@@ -1,6 +1,10 @@
 ---
+import { starlightRoute } from "../utils/route";
+
 const { t } = Astro.locals;
-const prefix = Astro.locals.starlightRoute.locale ? `/${Astro.locals.starlightRoute.locale}` : "";
+// llms.txt renders pages without a route, and the demo has nothing for it.
+const route = starlightRoute(Astro.locals);
+const prefix = route?.locale ? `/${route.locale}` : "";
 
 // Form fields named after the worker's config keys. A field with a
 // placeholder is a text box, one without is a checkbox. `anchor` points at the
@@ -57,61 +61,75 @@ const help = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
 const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
 ---
 
-<div class="demo not-content">
-  <p>{t("djlint.demo_description")} <small id="djlint-version"></small></p>
-  <p
-    id="djlint-status"
-    role="status"
-    data-installing={t("djlint.demo_installing")}
-    data-version={t("djlint.demo_version")}
-    data-error={t("djlint.demo_error")}
-  >
-    {t("djlint.demo_loading")}
-  </p>
+{
+  route && (
+    <div class="demo not-content">
+      <p>{t("djlint.demo_description")} <small id="djlint-version"></small></p>
+      <p
+        id="djlint-status"
+        role="status"
+        data-installing={t("djlint.demo_installing")}
+        data-version={t("djlint.demo_version")}
+        data-error={t("djlint.demo_error")}
+      >
+        {t("djlint.demo_loading")}
+      </p>
 
-  <div class="demo-workspace" hidden>
-    <form id="djlint-settings">
-      <label>
-        <span>Profile <a href={help("profile")} target="_blank" aria-label={helpLabel("Profile")}>?</a></span>
-        <select name="profile" aria-label="Profile">
-          {profiles.map(([value, text]) => <option value={value}>{text}</option>)}
-        </select>
-      </label>
-      {
-        fields.map(({ name, label, placeholder, anchor }) => (
-          <label class:list={{ checkbox: !placeholder }}>
-            {placeholder ? null : <input name={name} type="checkbox" aria-label={label} />}
-            <span>
-              {label} <a href={help(anchor ?? kebab(name))} target="_blank" aria-label={helpLabel(label)}>
-                ?
-              </a>
-            </span>
-            {placeholder ? (
-              <input name={name} type="text" placeholder={placeholder} aria-label={label} />
-            ) : null}
+      <div class="demo-workspace" hidden>
+        <form id="djlint-settings">
+          <label>
+            <span>Profile <a href={help("profile")} target="_blank" aria-label={helpLabel("Profile")}>?</a></span>
+            <select name="profile" aria-label="Profile">
+              {profiles.map(([value, text]) => <option value={value}>{text}</option>)}
+            </select>
           </label>
-        ))
-      }
-    </form>
-    <div class="demo-editors">
-      <section>
-        <p class="demo-head" id="djlint-input-label">input.html</p>
-        <div class="demo-editor" id="djlint-input"></div>
-      </section>
-      <section>
-        <p class="demo-head" id="djlint-output-label"><span class="prompt" aria-hidden="true">$</span> djlint input.html --reformat</p>
-        <div class="demo-editor" id="djlint-output"></div>
-      </section>
+          {
+            fields.map(({ name, label, placeholder, anchor }) => (
+              <label class:list={{ checkbox: !placeholder }}>
+                {placeholder ? null : <input name={name} type="checkbox" aria-label={label} />}
+                <span>
+                  {label} <a href={help(anchor ?? kebab(name))} target="_blank" aria-label={helpLabel(label)}>
+                    ?
+                  </a>
+                </span>
+                {placeholder ? (
+                  <input name={name} type="text" placeholder={placeholder} aria-label={label} />
+                ) : null}
+              </label>
+            ))
+          }
+        </form>
+        <div class="demo-editors">
+          <section>
+            <div class="demo-head">
+              <span id="djlint-input-label">input.html</span>
+              <button type="button" id="djlint-share" data-copied={t("djlint.copied")}>
+                {t("djlint.demo_copy_link")}
+              </button>
+              <span class="sr-only" role="status" id="djlint-share-status"></span>
+            </div>
+            <div class="demo-editor" id="djlint-input"></div>
+          </section>
+          <section>
+            <p class="demo-head" id="djlint-output-label">
+              <span><span class="prompt" aria-hidden="true">$</span> djlint input.html --reformat</span>
+            </p>
+            <div class="demo-editor" id="djlint-output"></div>
+          </section>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  )
+}
 
 <script>
   import { html } from "@codemirror/lang-html";
   import { EditorState } from "@codemirror/state";
   import { basicSetup, EditorView } from "codemirror";
+  import { decodeState, encodeState } from "../scripts/demo-state";
   import { djlintEditorTheme } from "../scripts/editor-theme.js";
 
+  const WELCOME = "<div>\n    <p>Welcome to djLint online!</p>\n</div>";
   const status = document.getElementById("djlint-status")!;
   const form = document.querySelector<HTMLFormElement>("#djlint-settings")!;
   const worker = new Worker("/static/js/worker.js", { type: "module" });
@@ -138,9 +156,35 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     return config;
   }
 
+  function setConfig(config: Record<string, string | boolean>) {
+    for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
+      const value = config[field.name];
+      if (field.type === "checkbox") field.checked = value === true;
+      else field.value = typeof value === "string" ? value : "";
+    }
+  }
+
+  // The address always holds the current example, so it can be shared as is.
+  // The welcome example with no settings keeps the plain address.
+  async function saveState(html: string, config: Record<string, string | boolean>, id: number) {
+    const plain = html === WELCOME && Object.keys(config).length === 0;
+    const hash = plain ? "" : `#${await encodeState({ html, config })}`;
+    if (id === sessionId) history.replaceState(null, "", `${location.pathname}${hash}`);
+  }
+
   function format() {
     sessionId += 1;
-    worker.postMessage({ config: getConfig(), html: input.state.doc.toString(), id: sessionId });
+    const config = getConfig();
+    const html = input.state.doc.toString();
+    worker.postMessage({ config, html, id: sessionId });
+    void saveState(html, config, sessionId);
+  }
+
+  async function restore() {
+    const state = await decodeState(location.hash.slice(1));
+    if (!state) return;
+    setConfig(state.config);
+    input.dispatch({ changes: { from: 0, to: input.state.doc.length, insert: state.html } });
   }
 
   let timer: ReturnType<typeof setTimeout>;
@@ -155,9 +199,11 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
           timer = setTimeout(format, 100);
         }),
       ],
-      "<div>\n    <p>Welcome to djLint online!</p>\n</div>",
+      WELCOME,
     ),
   });
+  const restored = restore();
+  addEventListener("hashchange", restore);
   const output = new EditorView({
     parent: document.getElementById("djlint-output")!,
     state: editorState("djlint-output-label", [EditorState.readOnly.of(true)]),
@@ -172,7 +218,7 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     if (type === "status" && message === "ready") {
       status.hidden = true;
       document.querySelector<HTMLElement>(".demo-workspace")!.hidden = false;
-      format();
+      void restored.then(format);
     } else if (type === "status" && message === "error") {
       showError();
     } else if (type === "status" && message === "installing") {
@@ -187,6 +233,26 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
   };
 
   form.addEventListener("change", format);
+
+  // "Copied" goes to a status region: a changed label on the focused button is
+  // not reliably announced.
+  const share = document.querySelector<HTMLButtonElement>("#djlint-share")!;
+  const shareStatus = document.getElementById("djlint-share-status")!;
+  const shareLabel = share.textContent!.trim();
+  let shareTimer: ReturnType<typeof setTimeout> | undefined;
+  share.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+    } catch {
+      return; // Clipboard access was denied; the address bar has the link too.
+    }
+    clearTimeout(shareTimer);
+    share.textContent = shareStatus.textContent = share.dataset.copied!;
+    shareTimer = setTimeout(() => {
+      share.textContent = shareLabel;
+      shareStatus.textContent = "";
+    }, 1500);
+  });
 </script>
 
 <style>
@@ -260,13 +326,32 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     /* The editors are dark in both themes, and so are their scrollbars. */
     color-scheme: dark;
   }
+  /* Both heads are as tall as the one with the button, so the editors line up. */
   .demo-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 2.875rem;
     margin: 0;
-    padding: 0.6rem 1rem;
+    padding: 0.4rem 1rem;
     border-bottom: 1px solid var(--dj-code-line);
     color: #a9b1d6;
     font-family: var(--sl-font-mono);
     font-size: var(--sl-text-xs);
+  }
+  .demo-head button {
+    margin-inline-start: auto;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--dj-code-line);
+    border-radius: 0.375rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .demo-head button:hover {
+    border-color: #7d84ad;
+    color: #c0caf5;
   }
   .demo-head .prompt {
     color: var(--dj-squiggle);

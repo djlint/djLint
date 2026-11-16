@@ -37,71 +37,71 @@ Bez [profilu](/cs/docs/configuration/#profile) běží z vestavěných pravidel 
 
 ## Pravidla
 
-| Kód  | Význam                                                                                                 | Výchozí |
-| ---- | ------------------------------------------------------------------------------------------------------ | ------- |
-| T001 | Proměnné by měly být obalené prázdnými znaky. Např.: `{{ this }}`                                      | ✔️      |
-| T002 | Ve značkách by se měly používat dvojité uvozovky. Např. `{% extends "this.html" %}`                    | ✔️      |
-| T003 | Endblock by měl mít název. Např.: `{% endblock body %}`.                                               | -       |
-| D004 | (Django) Statické URL by měly mít tvar `{% static path/to/file %}`.                                    | ✔️      |
-| J004 | (Jinja) Statické URL by měly mít tvar `{{ url_for('static'..) }}`.                                     | ✔️      |
-| H005 | Značka html by měla mít neprázdný atribut `lang`.                                                      | ✔️      |
-| H006 | Značka `img` by měla mít atributy `height` a `width`.                                                  | -       |
-| H007 | Před značkou html by měl být uveden `<!DOCTYPE ... >`.                                                 | ✔️      |
-| H008 | Atributy by měly být ve dvojitých uvozovkách.                                                          | ✔️      |
-| H009 | Názvy značek by měly být malými písmeny.                                                               | ✔️      |
-| H010 | Názvy atributů by měly být malými písmeny.                                                             | ✔️      |
-| H011 | Hodnoty atributů by měly být v uvozovkách.                                                             | ✔️      |
-| H012 | Kolem `=` u atributu by neměly být mezery.                                                             | ✔️      |
-| H013 | Značka `img` by měla mít atribut alt.                                                                  | ✔️      |
-| H014 | Více prázdných řádků, než kolik konfigurace ponechává.                                                 | ✔️      |
-| H015 | Za značkami `h` zalamujte řádek.                                                                       | ✔️      |
-| H016 | V html chybí značka `title`.                                                                           | ✔️      |
-| H017 | Nepárové značky by měly být samouzavírací (v konfliktu s: H018).                                       | -       |
-| D018 | (Django) Interní odkazy by měly používat tvar `{% url ... %}`.                                         | ✔️      |
-| H018 | Nepárové značky jsou ze své podstaty samouzavírací a musí končit `>`, ne `/>` (v konfliktu s: H017).   | -       |
-| J018 | (Jinja) Interní odkazy by měly používat tvar `{{ url_for() ... }}`.                                    | ✔️      |
-| H019 | Nahraďte `javascript:abc()` událostí `on_` a skutečnou URL.                                            | ✔️      |
-| H020 | Nalezen prázdný pár značek. Zvažte jeho odstranění.                                                    | ✔️      |
-| H021 | Vyhněte se inline stylům.                                                                              | ✔️      |
-| H022 | Pro externí odkazy používejte HTTPS.                                                                   | ✔️      |
-| H023 | Nepoužívejte znakové entity.                                                                           | ✔️      |
-| H024 | U skriptů a stylů vynechte type.                                                                       | ✔️      |
-| H025 | Značka se zdá být osiřelá.                                                                             | ✔️      |
-| H026 | Prázdné značky id a class lze odstranit.                                                               | ✔️      |
-| T027 | V šablonové syntaxi nalezen neuzavřený řetězec.                                                        | ✔️      |
-| T028 | Zvažte použití značek bez mezer uvnitř hodnot atributů. `{%- if/for -%}`                               | -       |
-| H029 | Zvažte hodnoty method formuláře malými písmeny.                                                        | ✔️      |
-| H030 | Zvažte přidání meta description.                                                                       | ✔️      |
-| T032 | V šablonových značkách nalezeny nadbytečné prázdné znaky.                                              | ✔️      |
-| H033 | V action formuláře nalezeny nadbytečné prázdné znaky.                                                  | ✔️      |
-| T034 | Chtěli jste použít {% ... %} místo {% ... }%?                                                          | ✔️      |
-| H036 | Nepoužívejte značky `br` k vytváření mezer.                                                            | ✔️      |
-| H037 | Nalezen duplicitní atribut.                                                                            | ✔️      |
-| T038 | Bloková značka nemá odpovídající koncovou značku.                                                      | ✔️      |
-| T039 | Nalezena neuzavřená šablonová značka.                                                                  | ✔️      |
-| T040 | Ve značce extends nebo include chybí název šablony nebo je prázdný.                                    | ✔️      |
-| H041 | Značka je uzavřena v jiném bloku šablony, než ve kterém byla otevřena.                                 | ✔️      |
-| T041 | Značka extends by měla být první značkou v šabloně.                                                    | ✔️      |
-| H042 | Atribut for značky label nemá v tomto souboru odpovídající id elementu.                                | ✔️      |
-| T042 | Obsah mimo blok se v šabloně, která rozšiřuje jinou, nevykreslí.                                       | ✔️      |
-| H043 | Značka button by měla mít atribut `type`.                                                              | ✔️      |
-| T043 | Název bloku je v šabloně použit vícekrát.                                                              | ✔️      |
-| H044 | Thead by neměl míchat buňky `th` a `td`.                                                               | ✔️      |
-| T044 | Výstupní značka obsahuje klíčové slovo příkazu; použijte blokovou značku.                              | ✔️      |
-| H045 | Značka iframe by měla mít atribut `title`.                                                             | ✔️      |
-| T045 | Šablonová značka uvnitř html komentáře se stále provede; k jejímu vypnutí použijte šablonový komentář. | ✔️      |
-| H046 | Tabindex by neměl být kladný.                                                                          | ✔️      |
-| H047 | Aria-hidden by nemělo být nastavené na fokusovatelném elementu.                                        | ✔️      |
-| H048 | Atribut aria nepatří mezi ty, které definuje specifikace.                                              | ✔️      |
-| H049 | Viewport by neměl bránit přiblížení stránky.                                                           | ✔️      |
-| H050 | Element je zastaralý a měl by být nahrazen.                                                            | ✔️      |
-| H051 | Role nepatří mezi ty, které ARIA definuje pro značkování.                                              | ✔️      |
-| H052 | Meta refresh by neměl stránku po uplynutí času znovu načítat ani přesměrovávat.                        | ✔️      |
-| H053 | Id je v souboru použito vícekrát.                                                                      | ✔️      |
-| H054 | Interaktivní element by neměl být vnořený do jiného.                                                   | ✔️      |
-| H055 | Atribut lang by měl obsahovat jazykovou značku, například en nebo pt-BR.                               | ✔️      |
-| H056 | Src by neměl být prázdný.                                                                              | ✔️      |
-| H057 | Video by mělo mít stopu s titulky.                                                                     | ✔️      |
+| Kód           | Význam                                                                                                 | Výchozí |
+| ------------- | ------------------------------------------------------------------------------------------------------ | ------- |
+| [T001](#t001) | Proměnné by měly být obalené prázdnými znaky. Např.: `{{ this }}`                                      | ✔️      |
+| [T002](#t002) | Ve značkách by se měly používat dvojité uvozovky. Např. `{% extends "this.html" %}`                    | ✔️      |
+| [T003](#t003) | Endblock by měl mít název. Např.: `{% endblock body %}`.                                               | -       |
+| [D004](#d004) | (Django) Statické URL by měly mít tvar `{% static path/to/file %}`.                                    | ✔️      |
+| [J004](#j004) | (Jinja) Statické URL by měly mít tvar `{{ url_for('static'..) }}`.                                     | ✔️      |
+| [H005](#h005) | Značka html by měla mít neprázdný atribut `lang`.                                                      | ✔️      |
+| [H006](#h006) | Značka `img` by měla mít atributy `height` a `width`.                                                  | -       |
+| [H007](#h007) | Před značkou html by měl být uveden `<!DOCTYPE ... >`.                                                 | ✔️      |
+| [H008](#h008) | Atributy by měly být ve dvojitých uvozovkách.                                                          | ✔️      |
+| [H009](#h009) | Názvy značek by měly být malými písmeny.                                                               | ✔️      |
+| [H010](#h010) | Názvy atributů by měly být malými písmeny.                                                             | ✔️      |
+| [H011](#h011) | Hodnoty atributů by měly být v uvozovkách.                                                             | ✔️      |
+| [H012](#h012) | Kolem `=` u atributu by neměly být mezery.                                                             | ✔️      |
+| [H013](#h013) | Značka `img` by měla mít atribut alt.                                                                  | ✔️      |
+| [H014](#h014) | Více prázdných řádků, než kolik konfigurace ponechává.                                                 | ✔️      |
+| [H015](#h015) | Za značkami `h` zalamujte řádek.                                                                       | ✔️      |
+| [H016](#h016) | V html chybí značka `title`.                                                                           | ✔️      |
+| [H017](#h017) | Nepárové značky by měly být samouzavírací (v konfliktu s: H018).                                       | -       |
+| [D018](#d018) | (Django) Interní odkazy by měly používat tvar `{% url ... %}`.                                         | ✔️      |
+| [H018](#h018) | Nepárové značky jsou ze své podstaty samouzavírací a musí končit `>`, ne `/>` (v konfliktu s: H017).   | -       |
+| [J018](#j018) | (Jinja) Interní odkazy by měly používat tvar `{{ url_for() ... }}`.                                    | ✔️      |
+| [H019](#h019) | Nahraďte `javascript:abc()` událostí `on_` a skutečnou URL.                                            | ✔️      |
+| [H020](#h020) | Nalezen prázdný pár značek. Zvažte jeho odstranění.                                                    | ✔️      |
+| [H021](#h021) | Vyhněte se inline stylům.                                                                              | ✔️      |
+| [H022](#h022) | Pro externí odkazy používejte HTTPS.                                                                   | ✔️      |
+| [H023](#h023) | Nepoužívejte znakové entity.                                                                           | ✔️      |
+| [H024](#h024) | U skriptů a stylů vynechte type.                                                                       | ✔️      |
+| [H025](#h025) | Značka se zdá být osiřelá.                                                                             | ✔️      |
+| [H026](#h026) | Prázdné značky id a class lze odstranit.                                                               | ✔️      |
+| [T027](#t027) | V šablonové syntaxi nalezen neuzavřený řetězec.                                                        | ✔️      |
+| [T028](#t028) | Zvažte použití značek bez mezer uvnitř hodnot atributů. `{%- if/for -%}`                               | -       |
+| [H029](#h029) | Zvažte hodnoty method formuláře malými písmeny.                                                        | ✔️      |
+| [H030](#h030) | Zvažte přidání meta description.                                                                       | ✔️      |
+| [T032](#t032) | V šablonových značkách nalezeny nadbytečné prázdné znaky.                                              | ✔️      |
+| [H033](#h033) | V action formuláře nalezeny nadbytečné prázdné znaky.                                                  | ✔️      |
+| [T034](#t034) | Chtěli jste použít {% ... %} místo {% ... }%?                                                          | ✔️      |
+| [H036](#h036) | Nepoužívejte značky `br` k vytváření mezer.                                                            | ✔️      |
+| [H037](#h037) | Nalezen duplicitní atribut.                                                                            | ✔️      |
+| [T038](#t038) | Bloková značka nemá odpovídající koncovou značku.                                                      | ✔️      |
+| [T039](#t039) | Nalezena neuzavřená šablonová značka.                                                                  | ✔️      |
+| [T040](#t040) | Ve značce extends nebo include chybí název šablony nebo je prázdný.                                    | ✔️      |
+| [H041](#h041) | Značka je uzavřena v jiném bloku šablony, než ve kterém byla otevřena.                                 | ✔️      |
+| [T041](#t041) | Značka extends by měla být první značkou v šabloně.                                                    | ✔️      |
+| [H042](#h042) | Atribut for značky label nemá v tomto souboru odpovídající id elementu.                                | ✔️      |
+| [T042](#t042) | Obsah mimo blok se v šabloně, která rozšiřuje jinou, nevykreslí.                                       | ✔️      |
+| [H043](#h043) | Značka button by měla mít atribut `type`.                                                              | ✔️      |
+| [T043](#t043) | Název bloku je v šabloně použit vícekrát.                                                              | ✔️      |
+| [H044](#h044) | Thead by neměl míchat buňky `th` a `td`.                                                               | ✔️      |
+| [T044](#t044) | Výstupní značka obsahuje klíčové slovo příkazu; použijte blokovou značku.                              | ✔️      |
+| [H045](#h045) | Značka iframe by měla mít atribut `title`.                                                             | ✔️      |
+| [T045](#t045) | Šablonová značka uvnitř html komentáře se stále provede; k jejímu vypnutí použijte šablonový komentář. | ✔️      |
+| [H046](#h046) | Tabindex by neměl být kladný.                                                                          | ✔️      |
+| [H047](#h047) | Aria-hidden by nemělo být nastavené na fokusovatelném elementu.                                        | ✔️      |
+| [H048](#h048) | Atribut aria nepatří mezi ty, které definuje specifikace.                                              | ✔️      |
+| [H049](#h049) | Viewport by neměl bránit přiblížení stránky.                                                           | ✔️      |
+| [H050](#h050) | Element je zastaralý a měl by být nahrazen.                                                            | ✔️      |
+| [H051](#h051) | Role nepatří mezi ty, které ARIA definuje pro značkování.                                              | ✔️      |
+| [H052](#h052) | Meta refresh by neměl stránku po uplynutí času znovu načítat ani přesměrovávat.                        | ✔️      |
+| [H053](#h053) | Id je v souboru použito vícekrát.                                                                      | ✔️      |
+| [H054](#h054) | Interaktivní element by neměl být vnořený do jiného.                                                   | ✔️      |
+| [H055](#h055) | Atribut lang by měl obsahovat jazykovou značku, například en nebo pt-BR.                               | ✔️      |
+| [H056](#h056) | Src by neměl být prázdný.                                                                              | ✔️      |
+| [H057](#h057) | Video by mělo mít stopu s titulky.                                                                     | ✔️      |
 
 ### Struktura kódů
 

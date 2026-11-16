@@ -37,71 +37,71 @@ Sans [profil](/fr/docs/configuration/#profile), seules les règles H parmi les r
 
 ## Règles
 
-| Code | Signification                                                                                                                  | Par défaut |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------ | ---------- |
-| T001 | Les variables doivent être entourées d'espaces. Ex. : `{{ this }}`                                                             | ✔️         |
-| T002 | Les balises doivent utiliser des guillemets doubles. Ex. : `{% extends "this.html" %}`                                         | ✔️         |
-| T003 | Un endblock doit porter un nom. Ex. : `{% endblock body %}`.                                                                   | -          |
-| D004 | (Django) Les URL statiques doivent suivre la forme `{% static path/to/file %}`.                                                | ✔️         |
-| J004 | (Jinja) Les URL statiques doivent suivre la forme `{{ url_for('static'..) }}`.                                                 | ✔️         |
-| H005 | La balise html doit avoir un attribut `lang` non vide.                                                                         | ✔️         |
-| H006 | La balise `img` doit avoir des attributs `height` et `width`.                                                                  | -          |
-| H007 | `<!DOCTYPE ... >` doit figurer avant la balise html.                                                                           | ✔️         |
-| H008 | Les attributs doivent être entre guillemets doubles.                                                                           | ✔️         |
-| H009 | Les noms de balises doivent être en minuscules.                                                                                | ✔️         |
-| H010 | Les noms d'attributs doivent être en minuscules.                                                                               | ✔️         |
-| H011 | Les valeurs d'attributs doivent être entre guillemets.                                                                         | ✔️         |
-| H012 | Pas d'espaces autour du `=` d'un attribut.                                                                                     | ✔️         |
-| H013 | La balise `img` doit avoir un attribut alt.                                                                                    | ✔️         |
-| H014 | Plus de lignes vides que la configuration n'en conserve.                                                                       | ✔️         |
-| H015 | Les balises `h` doivent être suivies d'un saut de ligne.                                                                       | ✔️         |
-| H016 | Balise `title` manquante dans le html.                                                                                         | ✔️         |
-| H017 | Les balises vides doivent être auto-fermantes (en conflit avec : H018).                                                        | -          |
-| D018 | (Django) Les liens internes doivent utiliser la forme `{% url ... %}`.                                                         | ✔️         |
-| H018 | Les balises vides sont auto-fermantes par nature et doivent se terminer par `>`, et non `/>` (en conflit avec : H017).         | -          |
-| J018 | (Jinja) Les liens internes doivent utiliser la forme `{{ url_for() ... }}`.                                                    | ✔️         |
-| H019 | Remplacer `javascript:abc()` par un événement `on_` et une vraie URL.                                                          | ✔️         |
-| H020 | Paire de balises vide trouvée. Envisagez de la supprimer.                                                                      | ✔️         |
-| H021 | Les styles en ligne sont à éviter.                                                                                             | ✔️         |
-| H022 | Utiliser HTTPS pour les liens externes.                                                                                        | ✔️         |
-| H023 | Ne pas utiliser de références d'entités.                                                                                       | ✔️         |
-| H024 | Omettre type sur les scripts et les styles.                                                                                    | ✔️         |
-| H025 | La balise semble orpheline.                                                                                                    | ✔️         |
-| H026 | Les attributs id et class vides peuvent être supprimés.                                                                        | ✔️         |
-| T027 | Chaîne non fermée dans la syntaxe de template.                                                                                 | ✔️         |
-| T028 | Envisagez des balises sans espaces dans les valeurs d'attributs. `{%- if/for -%}`                                              | -          |
-| H029 | Envisagez des valeurs en minuscules pour la méthode des formulaires.                                                           | ✔️         |
-| H030 | Envisagez d'ajouter une meta description.                                                                                      | ✔️         |
-| T032 | Espaces superflus dans les balises de template.                                                                                | ✔️         |
-| H033 | Espaces superflus dans l'action d'un formulaire.                                                                               | ✔️         |
-| T034 | Vouliez-vous écrire {% ... %} au lieu de {% ... }% ?                                                                           | ✔️         |
-| H036 | Ne pas utiliser de balises `br` pour créer de l'espacement.                                                                    | ✔️         |
-| H037 | Attribut en double.                                                                                                            | ✔️         |
-| T038 | La balise de bloc n'a pas de balise de fin correspondante.                                                                     | ✔️         |
-| T039 | Balise de template non fermée.                                                                                                 | ✔️         |
-| T040 | Nom de template manquant ou vide dans une balise extends ou include.                                                           | ✔️         |
-| H041 | La balise est fermée dans un autre bloc de template que celui où elle est ouverte.                                             | ✔️         |
-| T041 | La balise extends doit être la première balise du template.                                                                    | ✔️         |
-| H042 | L'attribut for du label ne correspond à aucun id d'élément dans ce fichier.                                                    | ✔️         |
-| T042 | Le contenu hors d'un bloc n'est pas rendu dans un template qui en étend un autre.                                              | ✔️         |
-| H043 | La balise button doit avoir un attribut `type`.                                                                                | ✔️         |
-| T043 | Le nom de bloc est utilisé plus d'une fois dans le template.                                                                   | ✔️         |
-| H044 | Un thead ne doit pas mélanger cellules `th` et `td`.                                                                           | ✔️         |
-| T044 | La balise d'affichage contient un mot-clé d'instruction ; utilisez une balise de bloc.                                         | ✔️         |
-| H045 | La balise iframe doit avoir un attribut `title`.                                                                               | ✔️         |
-| T045 | Une balise de template dans un commentaire html s'exécute quand même ; utilisez un commentaire de template pour la désactiver. | ✔️         |
-| H046 | Tabindex ne doit pas être positif.                                                                                             | ✔️         |
-| H047 | Aria-hidden ne doit pas être défini sur un élément focalisable.                                                                | ✔️         |
-| H048 | L'attribut aria ne fait pas partie de ceux que définit la spécification.                                                       | ✔️         |
-| H049 | Le viewport ne doit pas empêcher de zoomer sur la page.                                                                        | ✔️         |
-| H050 | L'élément est obsolète et doit être remplacé.                                                                                  | ✔️         |
-| H051 | Le rôle ne fait pas partie de ceux que définit ARIA pour le balisage.                                                          | ✔️         |
-| H052 | Meta refresh ne doit pas recharger ni rediriger la page après un délai.                                                        | ✔️         |
-| H053 | L'id est utilisé plus d'une fois dans le fichier.                                                                              | ✔️         |
-| H054 | Un élément interactif ne doit pas être imbriqué dans un autre.                                                                 | ✔️         |
-| H055 | L'attribut lang doit être une étiquette de langue, comme en ou pt-BR.                                                          | ✔️         |
-| H056 | Src ne doit pas être vide.                                                                                                     | ✔️         |
-| H057 | Une vidéo doit avoir une piste de sous-titres.                                                                                 | ✔️         |
+| Code          | Signification                                                                                                                  | Par défaut |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| [T001](#t001) | Les variables doivent être entourées d'espaces. Ex. : `{{ this }}`                                                             | ✔️         |
+| [T002](#t002) | Les balises doivent utiliser des guillemets doubles. Ex. : `{% extends "this.html" %}`                                         | ✔️         |
+| [T003](#t003) | Un endblock doit porter un nom. Ex. : `{% endblock body %}`.                                                                   | -          |
+| [D004](#d004) | (Django) Les URL statiques doivent suivre la forme `{% static path/to/file %}`.                                                | ✔️         |
+| [J004](#j004) | (Jinja) Les URL statiques doivent suivre la forme `{{ url_for('static'..) }}`.                                                 | ✔️         |
+| [H005](#h005) | La balise html doit avoir un attribut `lang` non vide.                                                                         | ✔️         |
+| [H006](#h006) | La balise `img` doit avoir des attributs `height` et `width`.                                                                  | -          |
+| [H007](#h007) | `<!DOCTYPE ... >` doit figurer avant la balise html.                                                                           | ✔️         |
+| [H008](#h008) | Les attributs doivent être entre guillemets doubles.                                                                           | ✔️         |
+| [H009](#h009) | Les noms de balises doivent être en minuscules.                                                                                | ✔️         |
+| [H010](#h010) | Les noms d'attributs doivent être en minuscules.                                                                               | ✔️         |
+| [H011](#h011) | Les valeurs d'attributs doivent être entre guillemets.                                                                         | ✔️         |
+| [H012](#h012) | Pas d'espaces autour du `=` d'un attribut.                                                                                     | ✔️         |
+| [H013](#h013) | La balise `img` doit avoir un attribut alt.                                                                                    | ✔️         |
+| [H014](#h014) | Plus de lignes vides que la configuration n'en conserve.                                                                       | ✔️         |
+| [H015](#h015) | Les balises `h` doivent être suivies d'un saut de ligne.                                                                       | ✔️         |
+| [H016](#h016) | Balise `title` manquante dans le html.                                                                                         | ✔️         |
+| [H017](#h017) | Les balises vides doivent être auto-fermantes (en conflit avec : H018).                                                        | -          |
+| [D018](#d018) | (Django) Les liens internes doivent utiliser la forme `{% url ... %}`.                                                         | ✔️         |
+| [H018](#h018) | Les balises vides sont auto-fermantes par nature et doivent se terminer par `>`, et non `/>` (en conflit avec : H017).         | -          |
+| [J018](#j018) | (Jinja) Les liens internes doivent utiliser la forme `{{ url_for() ... }}`.                                                    | ✔️         |
+| [H019](#h019) | Remplacer `javascript:abc()` par un événement `on_` et une vraie URL.                                                          | ✔️         |
+| [H020](#h020) | Paire de balises vide trouvée. Envisagez de la supprimer.                                                                      | ✔️         |
+| [H021](#h021) | Les styles en ligne sont à éviter.                                                                                             | ✔️         |
+| [H022](#h022) | Utiliser HTTPS pour les liens externes.                                                                                        | ✔️         |
+| [H023](#h023) | Ne pas utiliser de références d'entités.                                                                                       | ✔️         |
+| [H024](#h024) | Omettre type sur les scripts et les styles.                                                                                    | ✔️         |
+| [H025](#h025) | La balise semble orpheline.                                                                                                    | ✔️         |
+| [H026](#h026) | Les attributs id et class vides peuvent être supprimés.                                                                        | ✔️         |
+| [T027](#t027) | Chaîne non fermée dans la syntaxe de template.                                                                                 | ✔️         |
+| [T028](#t028) | Envisagez des balises sans espaces dans les valeurs d'attributs. `{%- if/for -%}`                                              | -          |
+| [H029](#h029) | Envisagez des valeurs en minuscules pour la méthode des formulaires.                                                           | ✔️         |
+| [H030](#h030) | Envisagez d'ajouter une meta description.                                                                                      | ✔️         |
+| [T032](#t032) | Espaces superflus dans les balises de template.                                                                                | ✔️         |
+| [H033](#h033) | Espaces superflus dans l'action d'un formulaire.                                                                               | ✔️         |
+| [T034](#t034) | Vouliez-vous écrire {% ... %} au lieu de {% ... }% ?                                                                           | ✔️         |
+| [H036](#h036) | Ne pas utiliser de balises `br` pour créer de l'espacement.                                                                    | ✔️         |
+| [H037](#h037) | Attribut en double.                                                                                                            | ✔️         |
+| [T038](#t038) | La balise de bloc n'a pas de balise de fin correspondante.                                                                     | ✔️         |
+| [T039](#t039) | Balise de template non fermée.                                                                                                 | ✔️         |
+| [T040](#t040) | Nom de template manquant ou vide dans une balise extends ou include.                                                           | ✔️         |
+| [H041](#h041) | La balise est fermée dans un autre bloc de template que celui où elle est ouverte.                                             | ✔️         |
+| [T041](#t041) | La balise extends doit être la première balise du template.                                                                    | ✔️         |
+| [H042](#h042) | L'attribut for du label ne correspond à aucun id d'élément dans ce fichier.                                                    | ✔️         |
+| [T042](#t042) | Le contenu hors d'un bloc n'est pas rendu dans un template qui en étend un autre.                                              | ✔️         |
+| [H043](#h043) | La balise button doit avoir un attribut `type`.                                                                                | ✔️         |
+| [T043](#t043) | Le nom de bloc est utilisé plus d'une fois dans le template.                                                                   | ✔️         |
+| [H044](#h044) | Un thead ne doit pas mélanger cellules `th` et `td`.                                                                           | ✔️         |
+| [T044](#t044) | La balise d'affichage contient un mot-clé d'instruction ; utilisez une balise de bloc.                                         | ✔️         |
+| [H045](#h045) | La balise iframe doit avoir un attribut `title`.                                                                               | ✔️         |
+| [T045](#t045) | Une balise de template dans un commentaire html s'exécute quand même ; utilisez un commentaire de template pour la désactiver. | ✔️         |
+| [H046](#h046) | Tabindex ne doit pas être positif.                                                                                             | ✔️         |
+| [H047](#h047) | Aria-hidden ne doit pas être défini sur un élément focalisable.                                                                | ✔️         |
+| [H048](#h048) | L'attribut aria ne fait pas partie de ceux que définit la spécification.                                                       | ✔️         |
+| [H049](#h049) | Le viewport ne doit pas empêcher de zoomer sur la page.                                                                        | ✔️         |
+| [H050](#h050) | L'élément est obsolète et doit être remplacé.                                                                                  | ✔️         |
+| [H051](#h051) | Le rôle ne fait pas partie de ceux que définit ARIA pour le balisage.                                                          | ✔️         |
+| [H052](#h052) | Meta refresh ne doit pas recharger ni rediriger la page après un délai.                                                        | ✔️         |
+| [H053](#h053) | L'id est utilisé plus d'une fois dans le fichier.                                                                              | ✔️         |
+| [H054](#h054) | Un élément interactif ne doit pas être imbriqué dans un autre.                                                                 | ✔️         |
+| [H055](#h055) | L'attribut lang doit être une étiquette de langue, comme en ou pt-BR.                                                          | ✔️         |
+| [H056](#h056) | Src ne doit pas être vide.                                                                                                     | ✔️         |
+| [H057](#h057) | Une vidéo doit avoir une piste de sous-titres.                                                                                 | ✔️         |
 
 ### Forme des codes
 

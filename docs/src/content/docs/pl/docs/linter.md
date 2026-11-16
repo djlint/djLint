@@ -37,71 +37,71 @@ Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają 
 
 ## Reguły
 
-| Kod  | Znaczenie                                                                                       | Domyślnie |
-| ---- | ----------------------------------------------------------------------------------------------- | --------- |
-| T001 | Zmienne powinny być otoczone białymi znakami. Np.: `{{ this }}`                                 | ✔️        |
-| T002 | W tagach należy używać podwójnych cudzysłowów. Np. `{% extends "this.html" %}`                  | ✔️        |
-| T003 | Endblock powinien mieć nazwę. Np.: `{% endblock body %}`.                                       | -         |
-| D004 | (Django) Statyczne adresy URL powinny mieć postać `{% static path/to/file %}`.                  | ✔️        |
-| J004 | (Jinja) Statyczne adresy URL powinny mieć postać `{{ url_for('static'..) }}`.                   | ✔️        |
-| H005 | Tag html powinien mieć niepusty atrybut `lang`.                                                 | ✔️        |
-| H006 | Tag `img` powinien mieć atrybuty `height` i `width`.                                            | -         |
-| H007 | Przed tagiem html powinien się znajdować `<!DOCTYPE ... >`.                                     | ✔️        |
-| H008 | Wartości atrybutów powinny być w podwójnych cudzysłowach.                                       | ✔️        |
-| H009 | Nazwy tagów powinny być pisane małymi literami.                                                 | ✔️        |
-| H010 | Nazwy atrybutów powinny być pisane małymi literami.                                             | ✔️        |
-| H011 | Wartości atrybutów powinny być ujęte w cudzysłowy.                                              | ✔️        |
-| H012 | Wokół `=` w atrybucie nie powinno być spacji.                                                   | ✔️        |
-| H013 | Tag `img` powinien mieć atrybut alt.                                                            | ✔️        |
-| H014 | Więcej pustych wierszy, niż zachowuje konfiguracja.                                             | ✔️        |
-| H015 | Po tagach `h` wstawiaj podział wiersza.                                                         | ✔️        |
-| H016 | Brak tagu `title` w html.                                                                       | ✔️        |
-| H017 | Tagi void powinny być samozamykające (konflikt z: H018).                                        | -         |
-| D018 | (Django) Linki wewnętrzne powinny używać wzorca `{% url ... %}`.                                | ✔️        |
-| H018 | Tagi void są z natury samozamykające i muszą kończyć się na `>`, a nie `/>` (konflikt z: H017). | -         |
-| J018 | (Jinja) Linki wewnętrzne powinny używać wzorca `{{ url_for() ... }}`.                           | ✔️        |
-| H019 | Zastąp `javascript:abc()` zdarzeniem `on_` i prawdziwym adresem URL.                            | ✔️        |
-| H020 | Znaleziono pustą parę tagów. Rozważ jej usunięcie.                                              | ✔️        |
-| H021 | Należy unikać stylów inline.                                                                    | ✔️        |
-| H022 | Używaj HTTPS w linkach zewnętrznych.                                                            | ✔️        |
-| H023 | Nie używaj odwołań do encji.                                                                    | ✔️        |
-| H024 | Pomijaj atrybut type w skryptach i stylach.                                                     | ✔️        |
-| H025 | Tag wygląda na osierocony.                                                                      | ✔️        |
-| H026 | Puste atrybuty id i class można usunąć.                                                         | ✔️        |
-| T027 | W składni szablonu znaleziono niezamknięty ciąg znaków.                                         | ✔️        |
-| T028 | Rozważ użycie tagów usuwających białe znaki w wartościach atrybutów. `{%- if/for -%}`           | -         |
-| H029 | Rozważ zapisywanie wartości atrybutu method formularza małymi literami.                         | ✔️        |
-| H030 | Rozważ dodanie opisu meta (meta description).                                                   | ✔️        |
-| T032 | W tagach szablonu znaleziono nadmiarowe białe znaki.                                            | ✔️        |
-| H033 | W atrybucie action formularza znaleziono nadmiarowe białe znaki.                                | ✔️        |
-| T034 | Czy chodziło o {% ... %} zamiast {% ... }%?                                                     | ✔️        |
-| H036 | Nie używaj tagów `br` do tworzenia odstępów.                                                    | ✔️        |
-| H037 | Znaleziono zduplikowany atrybut.                                                                | ✔️        |
-| T038 | Tag blokowy nie ma pasującego tagu końcowego.                                                   | ✔️        |
-| T039 | Znaleziono niezamknięty tag szablonu.                                                           | ✔️        |
-| T040 | Brak nazwy szablonu lub pusta nazwa w tagu extends lub include.                                 | ✔️        |
-| H041 | Tag został zamknięty w innym bloku szablonu niż ten, w którym go otwarto.                       | ✔️        |
-| T041 | Tag extends powinien być pierwszym tagiem w szablonie.                                          | ✔️        |
-| H042 | Atrybut for etykiety nie ma w tym pliku elementu o pasującym id.                                | ✔️        |
-| T042 | Treść poza blokiem nie jest renderowana w szablonie, który rozszerza inny szablon.              | ✔️        |
-| H043 | Tag button powinien mieć atrybut `type`.                                                        | ✔️        |
-| T043 | Nazwa bloku występuje w szablonie więcej niż raz.                                               | ✔️        |
-| H044 | Thead nie powinien mieszać komórek `th` i `td`.                                                 | ✔️        |
-| T044 | Tag wyjścia zawiera słowo kluczowe instrukcji; użyj tagu blokowego.                             | ✔️        |
-| H045 | Tag iframe powinien mieć atrybut `title`.                                                       | ✔️        |
-| T045 | Tag szablonu w komentarzu HTML nadal się wykonuje; aby go wyłączyć, użyj komentarza szablonu.   | ✔️        |
-| H046 | Tabindex nie powinien być dodatni.                                                              | ✔️        |
-| H047 | Aria-hidden nie powinien być ustawiony na elemencie, który może otrzymać fokus.                 | ✔️        |
-| H048 | Atrybut aria nie należy do zdefiniowanych w specyfikacji.                                       | ✔️        |
-| H049 | Viewport nie powinien blokować powiększania strony.                                             | ✔️        |
-| H050 | Element jest przestarzały i należy go zastąpić.                                                 | ✔️        |
-| H051 | Rola nie należy do ról, które ARIA definiuje dla znaczników.                                    | ✔️        |
-| H052 | Meta refresh nie powinien przeładowywać strony ani przekierowywać po upływie czasu.             | ✔️        |
-| H053 | Id występuje w pliku więcej niż raz.                                                            | ✔️        |
-| H054 | Element interaktywny nie powinien być zagnieżdżony w innym.                                     | ✔️        |
-| H055 | Atrybut lang powinien zawierać znacznik języka, np. en lub pt-BR.                               | ✔️        |
-| H056 | Src nie powinien być pusty.                                                                     | ✔️        |
-| H057 | Wideo powinno mieć ścieżkę z napisami.                                                          | ✔️        |
+| Kod           | Znaczenie                                                                                       | Domyślnie |
+| ------------- | ----------------------------------------------------------------------------------------------- | --------- |
+| [T001](#t001) | Zmienne powinny być otoczone białymi znakami. Np.: `{{ this }}`                                 | ✔️        |
+| [T002](#t002) | W tagach należy używać podwójnych cudzysłowów. Np. `{% extends "this.html" %}`                  | ✔️        |
+| [T003](#t003) | Endblock powinien mieć nazwę. Np.: `{% endblock body %}`.                                       | -         |
+| [D004](#d004) | (Django) Statyczne adresy URL powinny mieć postać `{% static path/to/file %}`.                  | ✔️        |
+| [J004](#j004) | (Jinja) Statyczne adresy URL powinny mieć postać `{{ url_for('static'..) }}`.                   | ✔️        |
+| [H005](#h005) | Tag html powinien mieć niepusty atrybut `lang`.                                                 | ✔️        |
+| [H006](#h006) | Tag `img` powinien mieć atrybuty `height` i `width`.                                            | -         |
+| [H007](#h007) | Przed tagiem html powinien się znajdować `<!DOCTYPE ... >`.                                     | ✔️        |
+| [H008](#h008) | Wartości atrybutów powinny być w podwójnych cudzysłowach.                                       | ✔️        |
+| [H009](#h009) | Nazwy tagów powinny być pisane małymi literami.                                                 | ✔️        |
+| [H010](#h010) | Nazwy atrybutów powinny być pisane małymi literami.                                             | ✔️        |
+| [H011](#h011) | Wartości atrybutów powinny być ujęte w cudzysłowy.                                              | ✔️        |
+| [H012](#h012) | Wokół `=` w atrybucie nie powinno być spacji.                                                   | ✔️        |
+| [H013](#h013) | Tag `img` powinien mieć atrybut alt.                                                            | ✔️        |
+| [H014](#h014) | Więcej pustych wierszy, niż zachowuje konfiguracja.                                             | ✔️        |
+| [H015](#h015) | Po tagach `h` wstawiaj podział wiersza.                                                         | ✔️        |
+| [H016](#h016) | Brak tagu `title` w html.                                                                       | ✔️        |
+| [H017](#h017) | Tagi void powinny być samozamykające (konflikt z: H018).                                        | -         |
+| [D018](#d018) | (Django) Linki wewnętrzne powinny używać wzorca `{% url ... %}`.                                | ✔️        |
+| [H018](#h018) | Tagi void są z natury samozamykające i muszą kończyć się na `>`, a nie `/>` (konflikt z: H017). | -         |
+| [J018](#j018) | (Jinja) Linki wewnętrzne powinny używać wzorca `{{ url_for() ... }}`.                           | ✔️        |
+| [H019](#h019) | Zastąp `javascript:abc()` zdarzeniem `on_` i prawdziwym adresem URL.                            | ✔️        |
+| [H020](#h020) | Znaleziono pustą parę tagów. Rozważ jej usunięcie.                                              | ✔️        |
+| [H021](#h021) | Należy unikać stylów inline.                                                                    | ✔️        |
+| [H022](#h022) | Używaj HTTPS w linkach zewnętrznych.                                                            | ✔️        |
+| [H023](#h023) | Nie używaj odwołań do encji.                                                                    | ✔️        |
+| [H024](#h024) | Pomijaj atrybut type w skryptach i stylach.                                                     | ✔️        |
+| [H025](#h025) | Tag wygląda na osierocony.                                                                      | ✔️        |
+| [H026](#h026) | Puste atrybuty id i class można usunąć.                                                         | ✔️        |
+| [T027](#t027) | W składni szablonu znaleziono niezamknięty ciąg znaków.                                         | ✔️        |
+| [T028](#t028) | Rozważ użycie tagów usuwających białe znaki w wartościach atrybutów. `{%- if/for -%}`           | -         |
+| [H029](#h029) | Rozważ zapisywanie wartości atrybutu method formularza małymi literami.                         | ✔️        |
+| [H030](#h030) | Rozważ dodanie opisu meta (meta description).                                                   | ✔️        |
+| [T032](#t032) | W tagach szablonu znaleziono nadmiarowe białe znaki.                                            | ✔️        |
+| [H033](#h033) | W atrybucie action formularza znaleziono nadmiarowe białe znaki.                                | ✔️        |
+| [T034](#t034) | Czy chodziło o {% ... %} zamiast {% ... }%?                                                     | ✔️        |
+| [H036](#h036) | Nie używaj tagów `br` do tworzenia odstępów.                                                    | ✔️        |
+| [H037](#h037) | Znaleziono zduplikowany atrybut.                                                                | ✔️        |
+| [T038](#t038) | Tag blokowy nie ma pasującego tagu końcowego.                                                   | ✔️        |
+| [T039](#t039) | Znaleziono niezamknięty tag szablonu.                                                           | ✔️        |
+| [T040](#t040) | Brak nazwy szablonu lub pusta nazwa w tagu extends lub include.                                 | ✔️        |
+| [H041](#h041) | Tag został zamknięty w innym bloku szablonu niż ten, w którym go otwarto.                       | ✔️        |
+| [T041](#t041) | Tag extends powinien być pierwszym tagiem w szablonie.                                          | ✔️        |
+| [H042](#h042) | Atrybut for etykiety nie ma w tym pliku elementu o pasującym id.                                | ✔️        |
+| [T042](#t042) | Treść poza blokiem nie jest renderowana w szablonie, który rozszerza inny szablon.              | ✔️        |
+| [H043](#h043) | Tag button powinien mieć atrybut `type`.                                                        | ✔️        |
+| [T043](#t043) | Nazwa bloku występuje w szablonie więcej niż raz.                                               | ✔️        |
+| [H044](#h044) | Thead nie powinien mieszać komórek `th` i `td`.                                                 | ✔️        |
+| [T044](#t044) | Tag wyjścia zawiera słowo kluczowe instrukcji; użyj tagu blokowego.                             | ✔️        |
+| [H045](#h045) | Tag iframe powinien mieć atrybut `title`.                                                       | ✔️        |
+| [T045](#t045) | Tag szablonu w komentarzu HTML nadal się wykonuje; aby go wyłączyć, użyj komentarza szablonu.   | ✔️        |
+| [H046](#h046) | Tabindex nie powinien być dodatni.                                                              | ✔️        |
+| [H047](#h047) | Aria-hidden nie powinien być ustawiony na elemencie, który może otrzymać fokus.                 | ✔️        |
+| [H048](#h048) | Atrybut aria nie należy do zdefiniowanych w specyfikacji.                                       | ✔️        |
+| [H049](#h049) | Viewport nie powinien blokować powiększania strony.                                             | ✔️        |
+| [H050](#h050) | Element jest przestarzały i należy go zastąpić.                                                 | ✔️        |
+| [H051](#h051) | Rola nie należy do ról, które ARIA definiuje dla znaczników.                                    | ✔️        |
+| [H052](#h052) | Meta refresh nie powinien przeładowywać strony ani przekierowywać po upływie czasu.             | ✔️        |
+| [H053](#h053) | Id występuje w pliku więcej niż raz.                                                            | ✔️        |
+| [H054](#h054) | Element interaktywny nie powinien być zagnieżdżony w innym.                                     | ✔️        |
+| [H055](#h055) | Atrybut lang powinien zawierać znacznik języka, np. en lub pt-BR.                               | ✔️        |
+| [H056](#h056) | Src nie powinien być pusty.                                                                     | ✔️        |
+| [H057](#h057) | Wideo powinno mieć ścieżkę z napisami.                                                          | ✔️        |
 
 ### Wzorce kodów
 

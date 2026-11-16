@@ -18,6 +18,7 @@
   "djlint.demo_installing": "Установка djLint…",
   "djlint.demo_version": "Работает на Python {python}; djLint {djlint}",
   "djlint.demo_error": "Не удалось загрузить djLint. Проверьте подключение и обновите страницу.",
+  "djlint.demo_copy_link": "Скопировать ссылку",
   "djlint.since": "с версии",
   "djlint.hero_problems": "Проблем: {count}",
   "djlint.hero_clean": "Проблем нет",

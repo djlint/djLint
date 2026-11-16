@@ -37,71 +37,71 @@ Bu, [Yapılandırma](/tr/docs/configuration/) dosyası üzerinden de yapılabili
 
 ## Kurallar
 
-| Kod  | Anlamı                                                                                                            | Varsayılan |
-| ---- | ----------------------------------------------------------------------------------------------------------------- | ---------- |
-| T001 | Değişkenler boşlukla çevrelenmelidir. Örn: `{{ this }}`                                                           | ✔️         |
-| T002 | Etiketlerde çift tırnak kullanılmalıdır. Örn `{% extends "this.html" %}`                                          | ✔️         |
-| T003 | Endblock bir ad içermelidir. Örn: `{% endblock body %}`.                                                          | -          |
-| D004 | (Django) Statik URL'ler `{% static path/to/file %}` kalıbına uymalıdır.                                           | ✔️         |
-| J004 | (Jinja) Statik URL'ler `{{ url_for('static'..) }}` kalıbına uymalıdır.                                            | ✔️         |
-| H005 | Html etiketinde boş olmayan bir `lang` özniteliği bulunmalıdır.                                                   | ✔️         |
-| H006 | `img` etiketinde `height` ve `width` öznitelikleri bulunmalıdır.                                                  | -          |
-| H007 | html etiketinden önce `<!DOCTYPE ... >` bulunmalıdır.                                                             | ✔️         |
-| H008 | Öznitelikler çift tırnak içinde olmalıdır.                                                                        | ✔️         |
-| H009 | Etiket adları küçük harfle yazılmalıdır.                                                                          | ✔️         |
-| H010 | Öznitelik adları küçük harfle yazılmalıdır.                                                                       | ✔️         |
-| H011 | Öznitelik değerleri tırnak içinde olmalıdır.                                                                      | ✔️         |
-| H012 | Öznitelikteki `=` işaretinin çevresinde boşluk olmamalıdır.                                                       | ✔️         |
-| H013 | `img` etiketinde alt özniteliği bulunmalıdır.                                                                     | ✔️         |
-| H014 | Yapılandırmanın izin verdiğinden daha fazla boş satır var.                                                        | ✔️         |
-| H015 | `h` etiketlerinden sonra satır sonu ekleyin.                                                                      | ✔️         |
-| H016 | html içinde `title` etiketi eksik.                                                                                | ✔️         |
-| H017 | Void etiketler kendiliğinden kapanmalıdır (çakıştığı kural: H018).                                                | -          |
-| D018 | (Django) İç bağlantılar `{% url ... %}` kalıbını kullanmalıdır.                                                   | ✔️         |
-| H018 | Void etiketler doğası gereği kendiliğinden kapanır ve `/>` ile değil, `>` ile bitmelidir (çakıştığı kural: H017). | -          |
-| J018 | (Jinja) İç bağlantılar `{{ url_for() ... }}` kalıbını kullanmalıdır.                                              | ✔️         |
-| H019 | `javascript:abc()` yerine `on_` olayı ve gerçek bir URL kullanın.                                                 | ✔️         |
-| H020 | Boş etiket çifti bulundu. Kaldırmayı düşünün.                                                                     | ✔️         |
-| H021 | Satır içi stillerden kaçınılmalıdır.                                                                              | ✔️         |
-| H022 | Dış bağlantılar için HTTPS kullanın.                                                                              | ✔️         |
-| H023 | Varlık başvuruları (entity reference) kullanmayın.                                                                | ✔️         |
-| H024 | Betiklerde ve stillerde type belirtmeyin.                                                                         | ✔️         |
-| H025 | Etiketin eşi yok gibi görünüyor.                                                                                  | ✔️         |
-| H026 | Boş id ve class öznitelikleri kaldırılabilir.                                                                     | ✔️         |
-| T027 | Şablon sözdiziminde kapatılmamış dize bulundu.                                                                    | ✔️         |
-| T028 | Öznitelik değerlerinin içinde boşluksuz etiketler kullanmayı düşünün. `{%- if/for -%}`                            | -          |
-| H029 | Form method değerlerini küçük harfle yazmayı düşünün.                                                             | ✔️         |
-| H030 | Bir meta açıklaması (description) eklemeyi düşünün.                                                               | ✔️         |
-| T032 | Şablon etiketlerinde fazladan boşluk bulundu.                                                                     | ✔️         |
-| H033 | Form action değerinde fazladan boşluk bulundu.                                                                    | ✔️         |
-| T034 | {% ... }% yerine {% ... %} mi kullanmak istediniz?                                                                | ✔️         |
-| H036 | Boşluk vermek için `br` etiketleri kullanmayın.                                                                   | ✔️         |
-| H037 | Yinelenen öznitelik bulundu.                                                                                      | ✔️         |
-| T038 | Blok etiketinin eşleşen bir bitiş etiketi yok.                                                                    | ✔️         |
-| T039 | Kapatılmamış şablon etiketi bulundu.                                                                              | ✔️         |
-| T040 | extends ya da include etiketinde şablon adı eksik ya da boş.                                                      | ✔️         |
-| H041 | Etiket, açıldığı şablon bloğundan farklı bir blokta kapatılmış.                                                   | ✔️         |
-| T041 | Extends etiketi şablondaki ilk etiket olmalıdır.                                                                  | ✔️         |
-| H042 | Label etiketinin for özniteliğiyle eşleşen bir öğe id'si bu dosyada yok.                                          | ✔️         |
-| T042 | Başka bir şablonu genişleten bir şablonda, blok dışındaki içerik işlenmez.                                        | ✔️         |
-| H043 | Button etiketinde bir `type` özniteliği bulunmalıdır.                                                             | ✔️         |
-| T043 | Blok adı şablonda birden fazla kez kullanılmış.                                                                   | ✔️         |
-| H044 | Thead içinde `th` ve `td` hücreleri karıştırılmamalıdır.                                                          | ✔️         |
-| T044 | Çıktı etiketi bir deyim anahtar sözcüğü içeriyor; bir blok etiketi kullanın.                                      | ✔️         |
-| H045 | Iframe etiketinde bir `title` özniteliği bulunmalıdır.                                                            | ✔️         |
-| T045 | Html yorumunun içindeki şablon etiketi yine de çalışır; devre dışı bırakmak için şablon yorumu kullanın.          | ✔️         |
-| H046 | Tabindex pozitif olmamalıdır.                                                                                     | ✔️         |
-| H047 | Odaklanılabilir bir öğede aria-hidden ayarlanmamalıdır.                                                           | ✔️         |
-| H048 | Aria özniteliği, belirtimin tanımladıklarından biri değil.                                                        | ✔️         |
-| H049 | Viewport, sayfanın yakınlaştırılmasını engellememelidir.                                                          | ✔️         |
-| H050 | Öğe eskimiştir ve başka bir öğeyle değiştirilmelidir.                                                             | ✔️         |
-| H051 | Role, ARIA'nın işaretleme için tanımladığı rollerden biri değil.                                                  | ✔️         |
-| H052 | Meta refresh, sayfayı bir zamanlayıcıyla yeniden yüklememeli ya da yönlendirmemelidir.                            | ✔️         |
-| H053 | Id dosyada birden fazla kez kullanılmış.                                                                          | ✔️         |
-| H054 | Etkileşimli öğe, başka bir etkileşimli öğenin içine yerleştirilmemelidir.                                         | ✔️         |
-| H055 | Lang özniteliği en ya da pt-BR gibi bir dil etiketi olmalıdır.                                                    | ✔️         |
-| H056 | Src boş olmamalıdır.                                                                                              | ✔️         |
-| H057 | Videoda bir altyazı (captions) izi bulunmalıdır.                                                                  | ✔️         |
+| Kod           | Anlamı                                                                                                            | Varsayılan |
+| ------------- | ----------------------------------------------------------------------------------------------------------------- | ---------- |
+| [T001](#t001) | Değişkenler boşlukla çevrelenmelidir. Örn: `{{ this }}`                                                           | ✔️         |
+| [T002](#t002) | Etiketlerde çift tırnak kullanılmalıdır. Örn `{% extends "this.html" %}`                                          | ✔️         |
+| [T003](#t003) | Endblock bir ad içermelidir. Örn: `{% endblock body %}`.                                                          | -          |
+| [D004](#d004) | (Django) Statik URL'ler `{% static path/to/file %}` kalıbına uymalıdır.                                           | ✔️         |
+| [J004](#j004) | (Jinja) Statik URL'ler `{{ url_for('static'..) }}` kalıbına uymalıdır.                                            | ✔️         |
+| [H005](#h005) | Html etiketinde boş olmayan bir `lang` özniteliği bulunmalıdır.                                                   | ✔️         |
+| [H006](#h006) | `img` etiketinde `height` ve `width` öznitelikleri bulunmalıdır.                                                  | -          |
+| [H007](#h007) | html etiketinden önce `<!DOCTYPE ... >` bulunmalıdır.                                                             | ✔️         |
+| [H008](#h008) | Öznitelikler çift tırnak içinde olmalıdır.                                                                        | ✔️         |
+| [H009](#h009) | Etiket adları küçük harfle yazılmalıdır.                                                                          | ✔️         |
+| [H010](#h010) | Öznitelik adları küçük harfle yazılmalıdır.                                                                       | ✔️         |
+| [H011](#h011) | Öznitelik değerleri tırnak içinde olmalıdır.                                                                      | ✔️         |
+| [H012](#h012) | Öznitelikteki `=` işaretinin çevresinde boşluk olmamalıdır.                                                       | ✔️         |
+| [H013](#h013) | `img` etiketinde alt özniteliği bulunmalıdır.                                                                     | ✔️         |
+| [H014](#h014) | Yapılandırmanın izin verdiğinden daha fazla boş satır var.                                                        | ✔️         |
+| [H015](#h015) | `h` etiketlerinden sonra satır sonu ekleyin.                                                                      | ✔️         |
+| [H016](#h016) | html içinde `title` etiketi eksik.                                                                                | ✔️         |
+| [H017](#h017) | Void etiketler kendiliğinden kapanmalıdır (çakıştığı kural: H018).                                                | -          |
+| [D018](#d018) | (Django) İç bağlantılar `{% url ... %}` kalıbını kullanmalıdır.                                                   | ✔️         |
+| [H018](#h018) | Void etiketler doğası gereği kendiliğinden kapanır ve `/>` ile değil, `>` ile bitmelidir (çakıştığı kural: H017). | -          |
+| [J018](#j018) | (Jinja) İç bağlantılar `{{ url_for() ... }}` kalıbını kullanmalıdır.                                              | ✔️         |
+| [H019](#h019) | `javascript:abc()` yerine `on_` olayı ve gerçek bir URL kullanın.                                                 | ✔️         |
+| [H020](#h020) | Boş etiket çifti bulundu. Kaldırmayı düşünün.                                                                     | ✔️         |
+| [H021](#h021) | Satır içi stillerden kaçınılmalıdır.                                                                              | ✔️         |
+| [H022](#h022) | Dış bağlantılar için HTTPS kullanın.                                                                              | ✔️         |
+| [H023](#h023) | Varlık başvuruları (entity reference) kullanmayın.                                                                | ✔️         |
+| [H024](#h024) | Betiklerde ve stillerde type belirtmeyin.                                                                         | ✔️         |
+| [H025](#h025) | Etiketin eşi yok gibi görünüyor.                                                                                  | ✔️         |
+| [H026](#h026) | Boş id ve class öznitelikleri kaldırılabilir.                                                                     | ✔️         |
+| [T027](#t027) | Şablon sözdiziminde kapatılmamış dize bulundu.                                                                    | ✔️         |
+| [T028](#t028) | Öznitelik değerlerinin içinde boşluksuz etiketler kullanmayı düşünün. `{%- if/for -%}`                            | -          |
+| [H029](#h029) | Form method değerlerini küçük harfle yazmayı düşünün.                                                             | ✔️         |
+| [H030](#h030) | Bir meta açıklaması (description) eklemeyi düşünün.                                                               | ✔️         |
+| [T032](#t032) | Şablon etiketlerinde fazladan boşluk bulundu.                                                                     | ✔️         |
+| [H033](#h033) | Form action değerinde fazladan boşluk bulundu.                                                                    | ✔️         |
+| [T034](#t034) | {% ... }% yerine {% ... %} mi kullanmak istediniz?                                                                | ✔️         |
+| [H036](#h036) | Boşluk vermek için `br` etiketleri kullanmayın.                                                                   | ✔️         |
+| [H037](#h037) | Yinelenen öznitelik bulundu.                                                                                      | ✔️         |
+| [T038](#t038) | Blok etiketinin eşleşen bir bitiş etiketi yok.                                                                    | ✔️         |
+| [T039](#t039) | Kapatılmamış şablon etiketi bulundu.                                                                              | ✔️         |
+| [T040](#t040) | extends ya da include etiketinde şablon adı eksik ya da boş.                                                      | ✔️         |
+| [H041](#h041) | Etiket, açıldığı şablon bloğundan farklı bir blokta kapatılmış.                                                   | ✔️         |
+| [T041](#t041) | Extends etiketi şablondaki ilk etiket olmalıdır.                                                                  | ✔️         |
+| [H042](#h042) | Label etiketinin for özniteliğiyle eşleşen bir öğe id'si bu dosyada yok.                                          | ✔️         |
+| [T042](#t042) | Başka bir şablonu genişleten bir şablonda, blok dışındaki içerik işlenmez.                                        | ✔️         |
+| [H043](#h043) | Button etiketinde bir `type` özniteliği bulunmalıdır.                                                             | ✔️         |
+| [T043](#t043) | Blok adı şablonda birden fazla kez kullanılmış.                                                                   | ✔️         |
+| [H044](#h044) | Thead içinde `th` ve `td` hücreleri karıştırılmamalıdır.                                                          | ✔️         |
+| [T044](#t044) | Çıktı etiketi bir deyim anahtar sözcüğü içeriyor; bir blok etiketi kullanın.                                      | ✔️         |
+| [H045](#h045) | Iframe etiketinde bir `title` özniteliği bulunmalıdır.                                                            | ✔️         |
+| [T045](#t045) | Html yorumunun içindeki şablon etiketi yine de çalışır; devre dışı bırakmak için şablon yorumu kullanın.          | ✔️         |
+| [H046](#h046) | Tabindex pozitif olmamalıdır.                                                                                     | ✔️         |
+| [H047](#h047) | Odaklanılabilir bir öğede aria-hidden ayarlanmamalıdır.                                                           | ✔️         |
+| [H048](#h048) | Aria özniteliği, belirtimin tanımladıklarından biri değil.                                                        | ✔️         |
+| [H049](#h049) | Viewport, sayfanın yakınlaştırılmasını engellememelidir.                                                          | ✔️         |
+| [H050](#h050) | Öğe eskimiştir ve başka bir öğeyle değiştirilmelidir.                                                             | ✔️         |
+| [H051](#h051) | Role, ARIA'nın işaretleme için tanımladığı rollerden biri değil.                                                  | ✔️         |
+| [H052](#h052) | Meta refresh, sayfayı bir zamanlayıcıyla yeniden yüklememeli ya da yönlendirmemelidir.                            | ✔️         |
+| [H053](#h053) | Id dosyada birden fazla kez kullanılmış.                                                                          | ✔️         |
+| [H054](#h054) | Etkileşimli öğe, başka bir etkileşimli öğenin içine yerleştirilmemelidir.                                         | ✔️         |
+| [H055](#h055) | Lang özniteliği en ya da pt-BR gibi bir dil etiketi olmalıdır.                                                    | ✔️         |
+| [H056](#h056) | Src boş olmamalıdır.                                                                                              | ✔️         |
+| [H057](#h057) | Videoda bir altyazı (captions) izi bulunmalıdır.                                                                  | ✔️         |
 
 ### Kod kalıpları
 
