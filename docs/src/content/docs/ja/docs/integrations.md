@@ -11,7 +11,7 @@ djLint 向けに作られたエディター連携がいくつかあります。
 
 ## Visual Studio Code
 
-[djLint 拡張機能](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)をインストールしてください。VSCodium では [Open VSX 版](https://open-vsx.org/extension/monosans/djlint)を使います。この拡張機能は環境内の djLint を見つけ、見つからなければ同梱の djLint を使い、djLint が言語サーバーに対応していればそれを使います。
+Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)をインストールしてください。Cursor、Windsurf、VSCodium など VS Code ベースのエディターでは、[同じ拡張機能を Open VSX から](https://open-vsx.org/extension/monosans/djlint)インストールします。この拡張機能は環境内の djLint を見つけ、見つからなければ同梱の djLint を使い、djLint が言語サーバーに対応していればそれを使います。
 
 ソースコードは [GitHub](https://github.com/djlint/djlint-vscode) にあります。
 

@@ -1,0 +1,11 @@
+---
+// Starlight's footer, left out where it would be empty: the home page and the
+// demo have no edit link and no previous or next page, and an empty footer
+// still adds its margins under the content.
+import Default from "@astrojs/starlight/components/Footer.astro";
+
+const { editUrl, pagination } = Astro.locals.starlightRoute;
+const empty = !editUrl && !pagination.prev && !pagination.next;
+---
+
+{!empty && <Default />}

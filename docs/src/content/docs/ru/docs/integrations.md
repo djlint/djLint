@@ -11,7 +11,7 @@ sidebar:
 
 ## Visual Studio Code
 
-Установите [расширение djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) или, для VSCodium, [его версию в Open VSX](https://open-vsx.org/extension/monosans/djlint). Оно ищет djLint в вашем окружении и, если не находит, использует встроенный. Если ваша версия djLint поддерживает языковой сервер, расширение работает через него.
+Установите [расширение djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) из Visual Studio Marketplace. Cursor, Windsurf, VSCodium и другие редакторы на основе VS Code ставят [то же расширение из Open VSX](https://open-vsx.org/extension/monosans/djlint). Оно ищет djLint в вашем окружении и, если не находит, использует встроенный. Если ваша версия djLint поддерживает языковой сервер, расширение работает через него.
 
 Его код находится на [GitHub](https://github.com/djlint/djlint-vscode).
 

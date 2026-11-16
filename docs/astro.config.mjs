@@ -20,6 +20,19 @@ function remarkDjlintVersion() {
   return walk;
 }
 
+// The examples are templates, not plain HTML. Twig's grammar is HTML plus the
+// {{ }}, {% %} and {# #} tags that Django, Jinja and Nunjucks share, so code
+// marked html is highlighted with it and its template syntax isn't left grey.
+function remarkTemplateCode() {
+  const walk = (node) => {
+    if (node.type === "code" && node.lang === "html") {
+      node.lang = "twig";
+    }
+    node.children?.forEach(walk);
+  };
+  return walk;
+}
+
 // Heading ids as the Eleventy site made them, transliterated to ASCII, so links
 // to sections of the translated pages keep working. Astro's own ids (GitHub's)
 // stay on the changelog, whose CHANGELOG.md lives outside src/content/docs/.
@@ -72,7 +85,7 @@ export default defineConfig({
   trailingSlash: "always",
   markdown: {
     processor: unified({
-      remarkPlugins: [remarkDjlintVersion],
+      remarkPlugins: [remarkDjlintVersion, remarkTemplateCode],
       rehypePlugins: [rehypeEleventyHeadingIds],
     }),
   },
@@ -121,9 +134,12 @@ export default defineConfig({
         { icon: "seti:python", label: "PyPI", href: "https://pypi.org/project/djlint/" },
       ],
       editLink: { baseUrl: "https://github.com/djlint/djLint/edit/master/docs/" },
-      lastUpdated: true,
       customCss: ["./src/styles/custom.css"],
-      components: { Header: "./src/components/Header.astro", Hero: "./src/components/Hero.astro" },
+      components: {
+        Footer: "./src/components/Footer.astro",
+        Header: "./src/components/Header.astro",
+        Hero: "./src/components/Hero.astro",
+      },
       routeMiddleware: "./src/route-data.ts",
       // llms.txt and its full and small versions, for AI assistants, from the
       // English docs. The demo and the changelog say nothing they need, and

@@ -22,6 +22,7 @@
   "djlint.since": "dalla",
   "djlint.hero_problems": "{count} problemi",
   "djlint.hero_clean": "Nessun problema",
+  "djlint.hero_run": "Esegui",
   "djlint.hero_undo": "Mostra l'originale",
   "djlint.copy": "Copia",
   "djlint.copied": "Copiato"

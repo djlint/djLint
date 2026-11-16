@@ -22,6 +22,7 @@
   "djlint.since": "始於",
   "djlint.hero_problems": "{count} 個問題",
   "djlint.hero_clean": "沒有問題",
+  "djlint.hero_run": "執行",
   "djlint.hero_undo": "顯示原始內容",
   "djlint.copy": "複製",
   "djlint.copied": "已複製"

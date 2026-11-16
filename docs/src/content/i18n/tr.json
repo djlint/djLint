@@ -22,6 +22,7 @@
   "djlint.since": "eklendiği sürüm:",
   "djlint.hero_problems": "{count} sorun",
   "djlint.hero_clean": "Sorun yok",
+  "djlint.hero_run": "Çalıştır",
   "djlint.hero_undo": "Özgün hâlini göster",
   "djlint.copy": "Kopyala",
   "djlint.copied": "Kopyalandı"

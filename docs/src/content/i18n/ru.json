@@ -22,6 +22,7 @@
   "djlint.since": "с версии",
   "djlint.hero_problems": "Проблем: {count}",
   "djlint.hero_clean": "Проблем нет",
+  "djlint.hero_run": "Запустить",
   "djlint.hero_undo": "Показать исходный вариант",
   "djlint.copy": "Копировать",
   "djlint.copied": "Скопировано"

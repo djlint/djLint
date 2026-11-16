@@ -11,7 +11,7 @@ Niezależnie od edytora zainstaluj djLint tam, gdzie edytor może go znaleźć, 
 
 ## Visual Studio Code
 
-Zainstaluj [rozszerzenie djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) lub, w przypadku VSCodium, [jego wersję z Open VSX](https://open-vsx.org/extension/monosans/djlint). Rozszerzenie znajduje djLint w twoim środowisku, a gdy go tam nie ma, korzysta z dołączonej wersji; jeśli twój djLint ma serwer języka, rozszerzenie go używa.
+Zainstaluj [rozszerzenie djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) z Visual Studio Marketplace. Cursor, Windsurf, VSCodium i inne edytory oparte na VS Code instalują [to samo rozszerzenie z Open VSX](https://open-vsx.org/extension/monosans/djlint). Rozszerzenie znajduje djLint w twoim środowisku, a gdy go tam nie ma, korzysta z dołączonej wersji; jeśli twój djLint ma serwer języka, rozszerzenie go używa.
 
 Jego kod jest dostępny na [GitHubie](https://github.com/djlint/djlint-vscode).
 

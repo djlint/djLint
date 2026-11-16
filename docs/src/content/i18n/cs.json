@@ -22,6 +22,7 @@
   "djlint.since": "od verze",
   "djlint.hero_problems": "Počet problémů: {count}",
   "djlint.hero_clean": "Žádné problémy",
+  "djlint.hero_run": "Spustit",
   "djlint.hero_undo": "Zobrazit původní",
   "djlint.copy": "Kopírovat",
   "djlint.copied": "Zkopírováno"

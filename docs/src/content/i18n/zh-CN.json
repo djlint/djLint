@@ -22,6 +22,7 @@
   "djlint.since": "始于",
   "djlint.hero_problems": "{count} 个问题",
   "djlint.hero_clean": "没有问题",
+  "djlint.hero_run": "运行",
   "djlint.hero_undo": "显示原始代码",
   "djlint.copy": "复制",
   "djlint.copied": "已复制"

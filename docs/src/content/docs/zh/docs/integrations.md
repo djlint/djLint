@@ -11,7 +11,7 @@ djLint 已有多种编辑器集成。
 
 ## Visual Studio Code
 
-安装 [djLint 扩展](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)；如果使用 VSCodium，则安装 [Open VSX 上的版本](https://open-vsx.org/extension/monosans/djlint)。它会在你的环境中查找 djLint，找不到时回退到内置的 djLint；如果你的 djLint 支持语言服务器，它就会使用语言服务器。
+从 Visual Studio Marketplace 安装 [djLint 扩展](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)。Cursor、Windsurf、VSCodium 等基于 VS Code 的编辑器则从 [Open VSX 安装同一个扩展](https://open-vsx.org/extension/monosans/djlint)。它会在你的环境中查找 djLint，找不到时回退到内置的 djLint；如果你的 djLint 支持语言服务器，它就会使用语言服务器。
 
 其代码托管在 [GitHub](https://github.com/djlint/djlint-vscode) 上。
 
