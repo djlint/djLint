@@ -23,7 +23,7 @@ const demo = (page: Page) => ({
   // The output editor is labelled by the view it shows.
   output: page.locator("#djlint-output").getByRole("textbox"),
   problems: page.locator("#djlint-problems"),
-  indent: page.getByRole("spinbutton", { name: "--indent", exact: true }),
+  indent: page.getByRole("spinbutton", { name: "Indent", exact: true }),
   view: (name: string) => page.getByRole("button", { name, exact: true }),
 });
 
