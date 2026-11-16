@@ -15,6 +15,22 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 
 ソースコードは [GitHub](https://github.com/djlint/djlint-vscode) にあります。
 
+## Zed
+
+[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていないため、開発用拡張機能としてインストールします：
+
+1. [rustup](https://rustup.rs) で Rust をインストールします。Zed はこれで拡張機能をビルドします。
+1. 拡張機能をクローンします：`git clone https://github.com/djlint/djlint-zed`
+1. コマンドパレットで **zed: install dev extension** を実行し、クローンしたフォルダーを選びます。
+
+拡張機能は PATH 上の `djlint`（1.49 以降）を実行し、見つからない場合は [uv](https://docs.astral.sh/uv/) 経由で実行します。djLint で整形するには、`settings.json` で言語のフォーマッターに指定します：
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[設定](#設定)は `lsp.djlint.settings` に書きます。
+
 ## Neovim
 
 djLint は Neovim でリンターとフォーマッターとして使えます。
@@ -137,22 +153,6 @@ djLint は SublimeText のリンタープラグインとして使えます。[pa
 3. SublimeLinter-contrib-djlint をインストール
 
 djLint がグローバルの Python か、`PATH` 上にインストールされていることを確認してください。
-
-## Zed
-
-[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていないため、開発用拡張機能としてインストールします：
-
-1. [rustup](https://rustup.rs) で Rust をインストールします。Zed はこれで拡張機能をビルドします。
-1. 拡張機能をクローンします：`git clone https://github.com/djlint/djlint-zed`
-1. コマンドパレットで **zed: install dev extension** を実行し、クローンしたフォルダーを選びます。
-
-拡張機能は PATH 上の `djlint`（1.49 以降）を実行し、見つからない場合は [uv](https://docs.astral.sh/uv/) 経由で実行します。djLint で整形するには、`settings.json` で言語のフォーマッターに指定します：
-
-```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-[設定](#設定)は `lsp.djlint.settings` に書きます。
 
 ## Helix
 

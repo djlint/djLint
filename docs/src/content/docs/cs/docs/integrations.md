@@ -15,6 +15,22 @@ Nainstalujte [rozšíření djLint](https://marketplace.visualstudio.com/items?i
 
 Jeho kód je na [GitHubu](https://github.com/djlint/djlint-vscode).
 
+## Zed
+
+[Rozšíření djLint](https://github.com/djlint/djlint-zed) spouští [jazykový server](#jazykovy-server) v HTML a v jazycích šablonových rozšíření, například Django, Jinja a Twig. V registru rozšíření Zedu zatím není, proto ho nainstalujte jako vývojové rozšíření (dev extension):
+
+1. Nainstalujte Rust přes [rustup](https://rustup.rs), Zed s ním rozšíření sestavuje.
+1. Naklonujte rozšíření: `git clone https://github.com/djlint/djlint-zed`.
+1. V paletě příkazů spusťte **zed: install dev extension** a vyberte naklonovanou složku.
+
+Rozšíření spouští `djlint` z PATH (verze 1.49 nebo novější), a když tam není, tak přes [uv](https://docs.astral.sh/uv/). Aby formátoval djLint, nastavte ho v `settings.json` jako formátovač jazyka:
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[Nastavení](#nastaveni) patří pod `lsp.djlint.settings`.
+
 ## Neovim
 
 djLint lze v Neovimu používat jako linter i formátovač.
@@ -137,22 +153,6 @@ djLint lze používat jako plugin linteru pro Sublime Text. Nainstalovat ho mů�
 3. Nainstalujte SublimeLinter-contrib-djlint
 
 Ujistěte se, že je djLint nainstalovaný v globálním Pythonu nebo je ve vaší `PATH`.
-
-## Zed
-
-[Rozšíření djLint](https://github.com/djlint/djlint-zed) spouští [jazykový server](#jazykovy-server) v HTML a v jazycích šablonových rozšíření, například Django, Jinja a Twig. V registru rozšíření Zedu zatím není, proto ho nainstalujte jako vývojové rozšíření (dev extension):
-
-1. Nainstalujte Rust přes [rustup](https://rustup.rs), Zed s ním rozšíření sestavuje.
-1. Naklonujte rozšíření: `git clone https://github.com/djlint/djlint-zed`.
-1. V paletě příkazů spusťte **zed: install dev extension** a vyberte naklonovanou složku.
-
-Rozšíření spouští `djlint` z PATH (verze 1.49 nebo novější), a když tam není, tak přes [uv](https://docs.astral.sh/uv/). Aby formátoval djLint, nastavte ho v `settings.json` jako formátovač jazyka:
-
-```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-[Nastavení](#nastaveni) patří pod `lsp.djlint.settings`.
 
 ## Helix
 

@@ -1,4 +1,6 @@
 ---
+import help from "../data/cli-help.txt?raw";
+import options from "../data/configuration.json";
 import { starlightRoute } from "../utils/route";
 
 const { t } = Astro.locals;
@@ -66,7 +68,28 @@ const fields: { name: string; placeholder?: string; options?: string[][]; anchor
 ];
 
 const kebab = (name: string) => name.replaceAll("_", "-");
-const help = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
+
+// What a "?" says on hover: the option's description from the configuration
+// page, up to its first example, or the --help line of an option the page
+// has no section for (the CSS and JS indents).
+const lang = route?.locale ?? "en";
+const descriptions = new Map(
+  options.map(({ name, description }) => [name, (description as Record<string, string>)[lang] ?? description.en]),
+);
+const helpLines = new Map(
+  [...help.matchAll(/^ {2}--([\w-]+)[^\n]*? {2,}(\S.*(?:\n {34}\S.*)*)/gm)].map(([, flag, text]) => [
+    flag,
+    text.replace(/\s+/g, " ").replace(/ \[default: [^\]]+\]$/, ""),
+  ]),
+);
+const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+const hint = (name: string) => {
+  const text = descriptions.get(name)?.split(/\n\n|```/)[0] ?? helpLines.get(kebab(name)) ?? "";
+  return escape(text.trim())
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+};
+const docs = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
 // What a "?" link says to a screen reader: which option's documentation it opens.
 // The fields get their names from aria-label, so the link doesn't join them.
 const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
@@ -90,10 +113,16 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
                     {toggle && <input name={name} type="checkbox" aria-label={flag} />}
                     <span>
                       <span class="flag">{flag}</span>{" "}
-                      <a href={help(anchor ?? kebab(name))} target="_blank" aria-label={helpLabel(flag)}>
+                      <a
+                        href={docs(anchor ?? kebab(name))}
+                        target="_blank"
+                        aria-label={helpLabel(flag)}
+                        aria-describedby={`djlint-hint-${name}`}
+                      >
                         ?
                       </a>
                     </span>
+                    <span id={`djlint-hint-${name}`} hidden set:html={hint(name)} />
                     {options && (
                       <select name={name} aria-label={flag}>
                         {options.map(([value, text]) => <option value={value}>{text}</option>)}
@@ -149,6 +178,7 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
           </section>
         </div>
       </div>
+      <div class="demo-hint" id="djlint-hint" aria-hidden="true" hidden />
     </div>
   )
 }
@@ -301,6 +331,41 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     settings.open = matches;
   });
 
+  // The "?" next to a field shows the option's description on hover or focus.
+  // Screen readers get it through aria-describedby; this copy is for the eye.
+  const hint = document.getElementById("djlint-hint")!;
+  const hideHint = () => {
+    hint.hidden = true;
+  };
+  const hintLink = (target: EventTarget | null) =>
+    target instanceof Element ? target.closest<HTMLAnchorElement>("a[aria-describedby]") : null;
+  function showHint(link: HTMLAnchorElement) {
+    hint.innerHTML = document.getElementById(link.getAttribute("aria-describedby")!)!.innerHTML;
+    hint.hidden = false;
+    const box = link.getBoundingClientRect();
+    const fitsBelow = box.bottom + 6 + hint.offsetHeight <= innerHeight;
+    hint.style.left = `${Math.max(8, Math.min(box.left - 8, innerWidth - hint.offsetWidth - 8))}px`;
+    hint.style.top = `${fitsBelow ? box.bottom + 6 : box.top - 6 - hint.offsetHeight}px`;
+  }
+  form.addEventListener("pointerover", ({ target, pointerType }) => {
+    const link = hintLink(target);
+    if (link && pointerType === "mouse") showHint(link);
+  });
+  form.addEventListener("focusin", ({ target }) => {
+    const link = hintLink(target);
+    if (link) showHint(link);
+  });
+  // The pointer can move onto the hint without it going away.
+  form.addEventListener("pointerout", ({ target, relatedTarget }) => {
+    if (hintLink(target) && !hint.contains(relatedTarget as Node | null)) hideHint();
+  });
+  hint.addEventListener("pointerleave", hideHint);
+  form.addEventListener("focusout", hideHint);
+  settings.addEventListener("scroll", hideHint);
+  addEventListener("keydown", ({ key }) => {
+    if (key === "Escape") hideHint();
+  });
+
   // "Copied" goes to a status region: a changed label on the focused button is
   // not reliably announced.
   const share = document.querySelector<HTMLButtonElement>("#djlint-share")!;
@@ -373,6 +438,7 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
   .flag {
     color: var(--sl-color-white);
     font-family: var(--sl-font-mono);
+    font-variant-ligatures: none;
     font-size: var(--sl-text-xs);
     overflow-wrap: anywhere;
   }
@@ -406,6 +472,24 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
   input::placeholder {
     color: var(--sl-color-gray-3);
   }
+  .demo-hint {
+    position: fixed;
+    z-index: var(--sl-z-index-menu);
+    max-width: min(22rem, calc(100vw - 1rem));
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    background: var(--sl-color-black);
+    box-shadow: var(--sl-shadow-md);
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    line-height: 1.5;
+  }
+  .demo-hint :global(code) {
+    color: var(--sl-color-white);
+    font-family: var(--sl-font-mono);
+    font-size: 0.875em;
+  }
   /* The heads share a row, so the editors line up when the command wraps. */
   .demo-editors {
     display: grid;
@@ -436,6 +520,7 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     color: #a9b1d6;
     font-family: var(--sl-font-mono);
     font-size: var(--sl-text-xs);
+    font-variant-ligatures: none;
   }
   .demo-head button {
     margin-inline-start: auto;

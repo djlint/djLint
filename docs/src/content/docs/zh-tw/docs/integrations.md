@@ -15,6 +15,22 @@ djLint 有好幾種編輯器整合。
 
 它的程式碼位於 [GitHub](https://github.com/djlint/djlint-vscode)。
 
+## Zed
+
+[djLint 擴充功能](https://github.com/djlint/djlint-zed)會在 HTML 以及 Django、Jinja、Twig 等範本擴充功能的語言中執行[語言伺服器](#語言伺服器)。它還沒有列入 Zed 的擴充功能登錄庫，因此請以開發用擴充功能的方式安裝：
+
+1. 透過 [rustup](https://rustup.rs) 安裝 Rust，Zed 會用它建置擴充功能。
+1. 複製擴充功能：`git clone https://github.com/djlint/djlint-zed`
+1. 在命令面板中執行 **zed: install dev extension**，並選擇複製下來的資料夾。
+
+擴充功能會執行 PATH 中的 `djlint`（1.49 或更新版本），找不到時則透過 [uv](https://docs.astral.sh/uv/) 執行。若要用 djLint 格式化，請在 `settings.json` 中將它設為某個語言的格式化工具：
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[設定](#設定)寫在 `lsp.djlint.settings` 底下。
+
 ## Neovim
 
 djLint 可以在 Neovim 中作為 linter 和格式化工具使用。
@@ -137,22 +153,6 @@ djLint 可以作為 SublimeText 的 Linter 外掛使用。可以透過 [package-
 3. 安裝 SublimeLinter-contrib-djlint
 
 請確認 djLint 已安裝在全域的 Python 中，或位於你的 `PATH` 上。
-
-## Zed
-
-[djLint 擴充功能](https://github.com/djlint/djlint-zed)會在 HTML 以及 Django、Jinja、Twig 等範本擴充功能的語言中執行[語言伺服器](#語言伺服器)。它還沒有列入 Zed 的擴充功能登錄庫，因此請以開發用擴充功能的方式安裝：
-
-1. 透過 [rustup](https://rustup.rs) 安裝 Rust，Zed 會用它建置擴充功能。
-1. 複製擴充功能：`git clone https://github.com/djlint/djlint-zed`
-1. 在命令面板中執行 **zed: install dev extension**，並選擇複製下來的資料夾。
-
-擴充功能會執行 PATH 中的 `djlint`（1.49 或更新版本），找不到時則透過 [uv](https://docs.astral.sh/uv/) 執行。若要用 djLint 格式化，請在 `settings.json` 中將它設為某個語言的格式化工具：
-
-```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-[設定](#設定)寫在 `lsp.djlint.settings` 底下。
 
 ## Helix
 

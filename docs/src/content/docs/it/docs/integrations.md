@@ -15,6 +15,22 @@ Installa l'[estensione djLint](https://marketplace.visualstudio.com/items?itemNa
 
 Il suo codice è su [GitHub](https://github.com/djlint/djlint-vscode).
 
+## Zed
+
+L'[estensione djLint](https://github.com/djlint/djlint-zed) esegue il [server di linguaggio](#server-di-linguaggio) in HTML e nei linguaggi delle estensioni per i template, come Django, Jinja e Twig. Non è ancora nel registro delle estensioni di Zed, quindi installala come estensione di sviluppo:
+
+1. Installa Rust con [rustup](https://rustup.rs): Zed compila l'estensione con esso.
+1. Clona l'estensione: `git clone https://github.com/djlint/djlint-zed`.
+1. Esegui **zed: install dev extension** dalla palette dei comandi e scegli la cartella clonata.
+
+L'estensione avvia il `djlint` presente nel PATH (1.49 o successiva) oppure, se manca, lo esegue tramite [uv](https://docs.astral.sh/uv/). Per formattare con djLint, impostalo come formattatore di un linguaggio in `settings.json`:
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+Le [impostazioni](#impostazioni) vanno in `lsp.djlint.settings`.
+
 ## Neovim
 
 djLint può essere usato come linter e formattatore in Neovim.
@@ -137,22 +153,6 @@ djLint può essere usato come plugin linter di SublimeText. Si può installare t
 3. Installa SublimeLinter-contrib-djlint
 
 Assicurati che djLint sia installato nel Python globale o che si trovi nel `PATH`.
-
-## Zed
-
-L'[estensione djLint](https://github.com/djlint/djlint-zed) esegue il [server di linguaggio](#server-di-linguaggio) in HTML e nei linguaggi delle estensioni per i template, come Django, Jinja e Twig. Non è ancora nel registro delle estensioni di Zed, quindi installala come estensione di sviluppo:
-
-1. Installa Rust con [rustup](https://rustup.rs): Zed compila l'estensione con esso.
-1. Clona l'estensione: `git clone https://github.com/djlint/djlint-zed`.
-1. Esegui **zed: install dev extension** dalla palette dei comandi e scegli la cartella clonata.
-
-L'estensione avvia il `djlint` presente nel PATH (1.49 o successiva) oppure, se manca, lo esegue tramite [uv](https://docs.astral.sh/uv/). Per formattare con djLint, impostalo come formattatore di un linguaggio in `settings.json`:
-
-```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-Le [impostazioni](#impostazioni) vanno in `lsp.djlint.settings`.
 
 ## Helix
 

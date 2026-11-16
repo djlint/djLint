@@ -15,6 +15,22 @@ Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabil
 
 Kodu [GitHub](https://github.com/djlint/djlint-vscode) üzerindedir.
 
+## Zed
+
+[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Henüz Zed'in uzantı kayıt defterinde olmadığından onu geliştirme uzantısı olarak kurun:
+
+1. Rust'ı [rustup](https://rustup.rs) ile kurun: Zed uzantıyı onunla derler.
+1. Uzantıyı klonlayın: `git clone https://github.com/djlint/djlint-zed`.
+1. Komut paletinden **zed: install dev extension** komutunu çalıştırın ve klonlanan klasörü seçin.
+
+Uzantı PATH'teki `djlint`'i (1.49 veya daha yeni) çalıştırır, orada yoksa [uv](https://docs.astral.sh/uv/) üzerinden çalıştırır. djLint ile biçimlendirmek için `settings.json` içinde onu bir dilin biçimlendiricisi yapın:
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[Ayarlar](#ayarlar) `lsp.djlint.settings` altına yazılır.
+
 ## Neovim
 
 djLint, Neovim'de linter ve biçimlendirici olarak kullanılabilir.
@@ -137,22 +153,6 @@ djLint, bir SublimeText Linter eklentisi olarak kullanılabilir. [package-contro
 3. SublimeLinter-contrib-djlint'i kurun
 
 djLint'in genel Python kurulumunuzda ya da `PATH` üzerinde kurulu olduğundan emin olun.
-
-## Zed
-
-[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Henüz Zed'in uzantı kayıt defterinde olmadığından onu geliştirme uzantısı olarak kurun:
-
-1. Rust'ı [rustup](https://rustup.rs) ile kurun: Zed uzantıyı onunla derler.
-1. Uzantıyı klonlayın: `git clone https://github.com/djlint/djlint-zed`.
-1. Komut paletinden **zed: install dev extension** komutunu çalıştırın ve klonlanan klasörü seçin.
-
-Uzantı PATH'teki `djlint`'i (1.49 veya daha yeni) çalıştırır, orada yoksa [uv](https://docs.astral.sh/uv/) üzerinden çalıştırır. djLint ile biçimlendirmek için `settings.json` içinde onu bir dilin biçimlendiricisi yapın:
-
-```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-[Ayarlar](#ayarlar) `lsp.djlint.settings` altına yazılır.
 
 ## Helix
 

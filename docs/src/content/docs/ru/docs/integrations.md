@@ -15,6 +15,22 @@ sidebar:
 
 Его код находится на [GitHub](https://github.com/djlint/djlint-vscode).
 
+## Zed
+
+[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет, поэтому установите его как dev-расширение:
+
+1. Установите Rust через [rustup](https://rustup.rs): Zed собирает им расширение.
+1. Склонируйте расширение: `git clone https://github.com/djlint/djlint-zed`.
+1. Выполните **zed: install dev extension** в палитре команд и выберите склонированную папку.
+
+Расширение запускает `djlint` из PATH (1.49 или новее), а если его там нет, то через [uv](https://docs.astral.sh/uv/). Чтобы форматировать через djLint, назначьте его форматтером языка в `settings.json`:
+
+```json
+{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+```
+
+[Настройки](#nastrojki) задаются в `lsp.djlint.settings`.
+
 ## Neovim
 
 В Neovim djLint можно использовать как линтер и как форматер.
@@ -137,22 +153,6 @@ djLint можно использовать как плагин линтера д
 3. Установите SublimeLinter-contrib-djlint
 
 Убедитесь, что djLint установлен в глобальный Python или доступен в `PATH`.
-
-## Zed
-
-[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет, поэтому установите его как dev-расширение:
-
-1. Установите Rust через [rustup](https://rustup.rs): Zed собирает им расширение.
-1. Склонируйте расширение: `git clone https://github.com/djlint/djlint-zed`.
-1. Выполните **zed: install dev extension** в палитре команд и выберите склонированную папку.
-
-Расширение запускает `djlint` из PATH (1.49 или новее), а если его там нет, то через [uv](https://docs.astral.sh/uv/). Чтобы форматировать через djLint, назначьте его форматтером языка в `settings.json`:
-
-```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
-```
-
-[Настройки](#nastrojki) задаются в `lsp.djlint.settings`.
 
 ## Helix
 
