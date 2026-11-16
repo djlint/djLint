@@ -6,11 +6,15 @@
 
 ### Feature
 
+- New rule `D058` reports a Django tag or comment that spans lines, such as a `{# #}` comment written over several lines or an `{% include %}` whose arguments go on to the next line. Django reads a tag only within one line, so it prints these as text, and an `{% if %}` split that way stops the template from compiling. Anything inside a `{% comment %}` or `{% verbatim %}` block is left alone, and so is a `{%` or `{{` that another tag follows before its closing, which `T039` reports.
+- New rule `D059`, off by default, reports consecutive lines that each hold only a `{# #}` comment, which a `{% comment %}` block holds as one. A `djlint:` directive and a translator comment never join such a run, and comments inside `<pre>` and `<textarea>` are left alone, since the line breaks they leave show on the page there.
 - djLint warns about a djLint file that sits beside the one it reads and so isn't read, such as a `djlint.toml` next to `[tool.djlint]` in `pyproject.toml`, or a `.djlintrc` next to a `djlint.toml`.
 - `.editorconfig` files are read as editors read them: the nearest one to the checked path wins, the ones above it fill in what it leaves out, and one with `root = true` ends the search, which goes no higher than the project root. Only the project root's `.editorconfig` was read.
 
 ### Bug fixes
 
+- A switch in a configuration file takes `true` or `false` again, nothing else. 1.51.0 also read `"yes"`, `"on"`, `"1"` and other words for one, which is now an error naming the file. The text `"true"` or `"false"` still works, with a warning to write it without quotes, and so does a number written as text, such as `"100"`.
+- The warning about a code in `include` that never runs no longer names the `html` profile when none is set. It says the rule never runs without a profile, where the linter follows `html`.
 - A `pyproject.toml` without djLint settings no longer stops the search for the configuration, so a package in a monorepo with its own `pyproject.toml` gets the settings of the repository instead of none. The search still stops at a folder with a `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml` or a `pyproject.toml` with `[tool.djlint]`, and never goes past the root of the repository (`.git` or `.hg`).
 
 ## [1.51.0] - 2026-11-16
