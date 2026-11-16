@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+### Feature
+
+- djLint warns about settings that would not do what they look like, so a typo no longer goes unnoticed. The warnings go to stderr once per run, as the others do:
+  - a name in a configuration file that is not a djLint setting, with the closest one it knows, as `max_line_length` for `max_line_lenght` or `max-line-length`;
+  - a switch written as text or a number, such as `"false"`, which counts as on;
+  - a rule code in `ignore`, `include` or `per-file-ignores` that no rule has, with the right case for `h006`; a code in both `ignore` and `include`, which stays off; and a code in `include` that the profile never runs, such as T028 under `django`;
+  - `--indent-css` or the `css` settings without `format_css`, the same for JavaScript, and `format_attribute_js_json_pattern` or `format_attribute_js_json_min_props` without `format_attribute_js_json`.
+
+### Bug fixes
+
+- A `linter_output_format` naming a field djLint doesn't have, such as `{lin}`, is reported when the run starts, with the fields it can name. The run used to fail at the first finding.
+- `per-file-ignores` takes a list of codes for a pattern, as the other options with several values do, such as `"base.html" = ["H030", "H025"]`. A list used to make linting fail.
+
 ## [1.50.4] - 2026-11-15
 
 ### Bug fixes
