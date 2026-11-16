@@ -51,7 +51,8 @@ const links = [
     !hasSidebar && (
       <>
         <button class="menu-button print:hidden" popovertarget="dj-menu">
-          <Icon name="bars" />
+          <Icon name="bars" class="open-menu" />
+          <Icon name="close" class="close-menu" />
           <span class="sr-only">{t("menuButton.accessibleLabel")}</span>
         </button>
         <div id="dj-menu" class="menu" popover>
@@ -128,19 +129,35 @@ const links = [
       margin-inline-start: auto;
     }
   }
+  /* The same round button as Starlight's sidebar toggle on the other pages. */
   .menu-button {
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    width: 2.5rem;
-    height: 2.5rem;
-    padding: 0;
+    width: var(--sl-menu-button-size);
+    height: var(--sl-menu-button-size);
+    padding: 0.5rem;
     border: 0;
     border-radius: 50%;
-    background: transparent;
-    color: var(--sl-color-white);
-    font-size: 1.5rem;
+    background: var(--sl-color-white);
+    color: var(--sl-color-black);
+    box-shadow: var(--sl-shadow-md);
     cursor: pointer;
+  }
+  :global([data-theme="light"]) .menu-button {
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+  }
+  .menu-button:has(~ :popover-open) {
+    background: var(--sl-color-gray-2);
+    box-shadow: none;
+  }
+  :global([data-theme="light"]) .menu-button:has(~ :popover-open) {
+    background: var(--sl-color-gray-5);
+  }
+  .menu-button:has(~ :popover-open) :global(.open-menu),
+  .menu-button:not(:has(~ :popover-open)) :global(.close-menu) {
+    display: none;
   }
   .menu {
     inset: var(--sl-nav-height) 0 auto auto;
