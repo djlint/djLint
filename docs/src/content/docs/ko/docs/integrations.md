@@ -23,11 +23,13 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 1. 확장을 클론합니다: `git clone https://github.com/djlint/djlint-zed`
 1. 명령 팔레트에서 **zed: install dev extension**을 실행하고 클론한 폴더를 고릅니다.
 
-확장은 PATH에 있는 `djlint`(1.49 이상)를 실행하고, 없으면 [uv](https://docs.astral.sh/uv/)로 실행합니다. djLint로 포맷하려면 `settings.json`에서 언어의 포매터로 지정하세요.
+확장은 PATH에 있는 `djlint`(1.49 이상)를 실행하고, 없으면 [uv](https://docs.astral.sh/uv/)로 실행합니다. djLint로 포맷하려면 `settings.json`에서 언어의 포매터로 지정하세요. 다음은 HTML의 예입니다.
 
 ```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
+
+Django, Jinja 같은 템플릿 언어는 각자의 Zed 확장이 추가합니다. `"HTML"` 대신 `"Django"`처럼 그 언어 이름을 쓰세요.
 
 [설정](#설정)은 `lsp.djlint.settings` 아래에 둡니다.
 

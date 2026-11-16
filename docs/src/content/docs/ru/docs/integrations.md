@@ -23,11 +23,13 @@ sidebar:
 1. Склонируйте расширение: `git clone https://github.com/djlint/djlint-zed`.
 1. Выполните **zed: install dev extension** в палитре команд и выберите склонированную папку.
 
-Расширение запускает `djlint` из PATH (1.49 или новее), а если его там нет, то через [uv](https://docs.astral.sh/uv/). Чтобы форматировать через djLint, назначьте его форматтером языка в `settings.json`:
+Расширение запускает `djlint` из PATH (1.49 или новее), а если его там нет, то через [uv](https://docs.astral.sh/uv/). Чтобы форматировать через djLint, назначьте его форматтером языка в `settings.json`, здесь HTML:
 
 ```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
+
+Языки шаблонов, такие как Django и Jinja, добавляют их собственные расширения Zed: укажите их имя, например `"Django"`, вместо `"HTML"`.
 
 [Настройки](#nastrojki) задаются в `lsp.djlint.settings`.
 

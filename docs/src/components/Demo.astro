@@ -336,12 +336,20 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
   // The "?" next to a field shows the option's description on hover or focus.
   // Screen readers get it through aria-describedby; this copy is for the eye.
   const hint = document.getElementById("djlint-hint")!;
+  let hideTimer: ReturnType<typeof setTimeout> | undefined;
   const hideHint = () => {
+    clearTimeout(hideTimer);
     hint.hidden = true;
+  };
+  // Long enough to cross the gap between the "?" and the hint.
+  const hideHintSoon = () => {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hideHint, 300);
   };
   const hintLink = (target: EventTarget | null) =>
     target instanceof Element ? target.closest<HTMLAnchorElement>("a[aria-describedby]") : null;
   function showHint(link: HTMLAnchorElement) {
+    clearTimeout(hideTimer);
     hint.innerHTML = document.getElementById(link.getAttribute("aria-describedby")!)!.innerHTML;
     hint.hidden = false;
     const box = link.getBoundingClientRect();
@@ -358,10 +366,11 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     if (link) showHint(link);
   });
   // The pointer can move onto the hint without it going away.
-  form.addEventListener("pointerout", ({ target, relatedTarget }) => {
-    if (hintLink(target) && !hint.contains(relatedTarget as Node | null)) hideHint();
+  form.addEventListener("pointerout", ({ target }) => {
+    if (hintLink(target)) hideHintSoon();
   });
-  hint.addEventListener("pointerleave", hideHint);
+  hint.addEventListener("pointerenter", () => clearTimeout(hideTimer));
+  hint.addEventListener("pointerleave", hideHintSoon);
   form.addEventListener("focusout", hideHint);
   settings.addEventListener("scroll", hideHint);
   addEventListener("keydown", ({ key }) => {

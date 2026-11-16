@@ -23,11 +23,13 @@ Jego kod jest dostępny na [GitHubie](https://github.com/djlint/djlint-vscode).
 1. Sklonuj rozszerzenie: `git clone https://github.com/djlint/djlint-zed`.
 1. Uruchom **zed: install dev extension** z palety poleceń i wybierz sklonowany folder.
 
-Rozszerzenie uruchamia `djlint` z PATH (1.49 lub nowszy), a gdy go tam nie ma, korzysta z [uv](https://docs.astral.sh/uv/). Aby formatować djLintem, ustaw go w `settings.json` jako formater języka:
+Rozszerzenie uruchamia `djlint` z PATH (1.49 lub nowszy), a gdy go tam nie ma, korzysta z [uv](https://docs.astral.sh/uv/). Aby formatować djLintem, ustaw go w `settings.json` jako formater języka, tutaj HTML:
 
 ```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
+
+Języki szablonów, takie jak Django i Jinja, dodają ich własne rozszerzenia Zeda: wpisz ich nazwę, na przykład `"Django"`, zamiast `"HTML"`.
 
 [Ustawienia](#ustawienia) umieszcza się w `lsp.djlint.settings`.
 

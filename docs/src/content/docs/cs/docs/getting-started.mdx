@@ -96,6 +96,8 @@ djlint templates --reformat --profile=django
 
 Všechny profily uvádí volba [`profile`](/cs/docs/configuration/#profile). Každý šablonovací jazyk má navíc vlastní stránku, například [Django](/cs/docs/languages/django/), [Jinja](/cs/docs/languages/jinja/) nebo [Handlebars](/cs/docs/languages/handlebars/), kde se dočtete, jak profil nastavit v konfiguračním souboru, abyste ho nemuseli zadávat pokaždé.
 
+Pokud jste djLint přidali do projektu přes `uv add --dev`, je v prostředí projektu: příkazy spouštějte s `uv run` na začátku, například `uv run djlint templates --lint --profile=django`.
+
 ## Cesta, nebo stdin
 
 djLint pracuje s cestou i se standardním vstupem (stdin).

@@ -96,6 +96,8 @@ djlint templates --reformat --profile=django
 
 所有 profile 都列在 [`profile`](/zh-tw/docs/configuration/#profile) 選項中。每種範本語言也有自己的頁面，例如 [Django](/zh-tw/docs/languages/django/)、[Jinja](/zh-tw/docs/languages/jinja/) 或 [Handlebars](/zh-tw/docs/languages/handlebars/)，頁面上也說明了如何在設定檔中設定 profile，省得每次都要傳入。
 
+如果是用 `uv add --dev` 把 djLint 加入專案，它位於專案的環境中：請在指令前加上 `uv run`，例如 `uv run djlint templates --lint --profile=django`。
+
 ## 使用路徑與使用 stdin
 
 djLint 可以處理路徑或 stdin。

@@ -23,11 +23,13 @@ djLint 有好幾種編輯器整合。
 1. 複製擴充功能：`git clone https://github.com/djlint/djlint-zed`
 1. 在命令面板中執行 **zed: install dev extension**，並選擇複製下來的資料夾。
 
-擴充功能會執行 PATH 中的 `djlint`（1.49 或更新版本），找不到時則透過 [uv](https://docs.astral.sh/uv/) 執行。若要用 djLint 格式化，請在 `settings.json` 中將它設為某個語言的格式化工具：
+擴充功能會執行 PATH 中的 `djlint`（1.49 或更新版本），找不到時則透過 [uv](https://docs.astral.sh/uv/) 執行。若要用 djLint 格式化，請在 `settings.json` 中將它設為某個語言的格式化工具，這裡以 HTML 為例：
 
 ```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
+
+Django、Jinja 等範本語言由各自的 Zed 擴充功能提供：把 `"HTML"` 換成它們的名稱，例如 `"Django"`。
 
 [設定](#設定)寫在 `lsp.djlint.settings` 底下。
 

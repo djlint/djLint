@@ -96,6 +96,8 @@ djlint templates --reformat --profile=django
 
 Tüm profiller [`profile`](/tr/docs/configuration/#profile) seçeneğinde listelenir. Her şablon dilinin ayrıca kendi sayfası vardır, örneğin [Django](/tr/docs/languages/django/), [Jinja](/tr/docs/languages/jinja/) ya da [Handlebars](/tr/docs/languages/handlebars/). Profili her seferinde yazmamak için bir yapılandırma dosyasında nasıl ayarlayacağınız da orada gösterilir.
 
+djLint'i projeye `uv add --dev` ile eklediyseniz projenin ortamındadır: komutların başına `uv run` ekleyin, örneğin `uv run djlint templates --lint --profile=django`.
+
 ## Yol ya da stdin kullanımı
 
 djLint bir yolla ya da stdin ile çalışır.

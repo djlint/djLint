@@ -23,11 +23,13 @@ Kodu [GitHub](https://github.com/djlint/djlint-vscode) üzerindedir.
 1. Uzantıyı klonlayın: `git clone https://github.com/djlint/djlint-zed`.
 1. Komut paletinden **zed: install dev extension** komutunu çalıştırın ve klonlanan klasörü seçin.
 
-Uzantı PATH'teki `djlint`'i (1.49 veya daha yeni) çalıştırır, orada yoksa [uv](https://docs.astral.sh/uv/) üzerinden çalıştırır. djLint ile biçimlendirmek için `settings.json` içinde onu bir dilin biçimlendiricisi yapın:
+Uzantı PATH'teki `djlint`'i (1.49 veya daha yeni) çalıştırır, orada yoksa [uv](https://docs.astral.sh/uv/) üzerinden çalıştırır. djLint ile biçimlendirmek için `settings.json` içinde onu bir dilin biçimlendiricisi yapın, burada HTML'in:
 
 ```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
+
+Django ve Jinja gibi şablon dilleri kendi Zed uzantılarından gelir: `"HTML"` yerine `"Django"` gibi onların adını yazın.
 
 [Ayarlar](#ayarlar) `lsp.djlint.settings` altına yazılır.
 

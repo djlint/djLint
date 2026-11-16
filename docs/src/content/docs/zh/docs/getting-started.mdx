@@ -96,6 +96,8 @@ djlint templates --reformat --profile=django
 
 所有预设都列在 [`profile`](/zh/docs/configuration/#profile) 选项中。每种模板语言也有自己的页面，例如 [Django](/zh/docs/languages/django/)、[Jinja](/zh/docs/languages/jinja/) 或 [Handlebars](/zh/docs/languages/handlebars/)，其中还介绍了如何在配置文件中设置预设，免得每次都要传入。
 
+如果是用 `uv add --dev` 把 djLint 加进项目的，它位于项目的环境中：在命令前加上 `uv run`，例如 `uv run djlint templates --lint --profile=django`。
+
 ## 使用路径还是标准输入
 
 djLint 既可以处理路径，也可以处理标准输入（stdin）。

@@ -96,6 +96,8 @@ djlint templates --reformat --profile=django
 
 Wszystkie profile wymienia opcja [`profile`](/pl/docs/configuration/#profile). Każdy język szablonów ma też własną stronę, na przykład [Django](/pl/docs/languages/django/), [Jinja](/pl/docs/languages/jinja/) albo [Handlebars](/pl/docs/languages/handlebars/), na której widać, jak ustawić profil w pliku konfiguracyjnym, żeby nie podawać go za każdym razem.
 
+Jeśli djLint został dodany do projektu przez `uv add --dev`, znajduje się w środowisku projektu: poprzedzaj polecenia `uv run`, na przykład `uv run djlint templates --lint --profile=django`.
+
 ## Ścieżka a stdin
 
 djLint działa ze ścieżką lub ze standardowym wejściem (stdin).

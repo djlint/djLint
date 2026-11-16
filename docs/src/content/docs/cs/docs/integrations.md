@@ -23,11 +23,13 @@ Jeho kód je na [GitHubu](https://github.com/djlint/djlint-vscode).
 1. Naklonujte rozšíření: `git clone https://github.com/djlint/djlint-zed`.
 1. V paletě příkazů spusťte **zed: install dev extension** a vyberte naklonovanou složku.
 
-Rozšíření spouští `djlint` z PATH (verze 1.49 nebo novější), a když tam není, tak přes [uv](https://docs.astral.sh/uv/). Aby formátoval djLint, nastavte ho v `settings.json` jako formátovač jazyka:
+Rozšíření spouští `djlint` z PATH (verze 1.49 nebo novější), a když tam není, tak přes [uv](https://docs.astral.sh/uv/). Aby formátoval djLint, nastavte ho v `settings.json` jako formátovač jazyka, tady HTML:
 
 ```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
+
+Šablonové jazyky jako Django a Jinja přidávají jejich vlastní rozšíření pro Zed: místo `"HTML"` uveďte jejich název, například `"Django"`.
 
 [Nastavení](#nastaveni) patří pod `lsp.djlint.settings`.
 

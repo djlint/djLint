@@ -23,11 +23,13 @@ L'[extension djLint](https://github.com/djlint/djlint-zed) exécute le [serveur 
 1. Clonez l'extension : `git clone https://github.com/djlint/djlint-zed`.
 1. Lancez **zed: install dev extension** depuis la palette de commandes et choisissez le dossier cloné.
 
-L'extension lance le `djlint` du PATH (1.49 ou plus récent) ou, à défaut, passe par [uv](https://docs.astral.sh/uv/). Pour formater avec djLint, faites-en le formateur d'un langage dans `settings.json` :
+L'extension lance le `djlint` du PATH (1.49 ou plus récent) ou, à défaut, passe par [uv](https://docs.astral.sh/uv/). Pour formater avec djLint, faites-en le formateur d'un langage dans `settings.json`, ici HTML :
 
 ```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
+
+Les langages de templates comme Django et Jinja viennent de leurs propres extensions Zed : mettez leur nom, par exemple `"Django"`, à la place de `"HTML"`.
 
 Les [options](#options) se placent sous `lsp.djlint.settings`.
 

@@ -23,11 +23,13 @@ Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprac
 1. Klonen Sie die Erweiterung: `git clone https://github.com/djlint/djlint-zed`.
 1. Führen Sie in der Befehlspalette **zed: install dev extension** aus und wählen Sie den geklonten Ordner.
 
-Die Erweiterung startet `djlint` aus dem PATH (1.49 oder neuer) oder, wenn es dort fehlt, über [uv](https://docs.astral.sh/uv/). Damit djLint formatiert, legen Sie es in `settings.json` als Formatierer einer Sprache fest:
+Die Erweiterung startet `djlint` aus dem PATH (1.49 oder neuer) oder, wenn es dort fehlt, über [uv](https://docs.astral.sh/uv/). Damit djLint formatiert, legen Sie es in `settings.json` als Formatierer einer Sprache fest, hier für HTML:
 
 ```json
-{ "languages": { "Django": { "formatter": { "language_server": { "name": "djlint" } } } } }
+{ "languages": { "HTML": { "formatter": { "language_server": { "name": "djlint" } } } } }
 ```
+
+Template-Sprachen wie Django und Jinja kommen aus ihren eigenen Zed-Erweiterungen: Setzen Sie deren Namen, etwa `"Django"`, statt `"HTML"` ein.
 
 [Einstellungen](#einstellungen) gehören unter `lsp.djlint.settings`.
 
