@@ -76,6 +76,20 @@ test("the demo formats, lints, takes settings and restores them from the address
     await expect.poll(() => new URL(page.url()).hash.length).toBeGreaterThan(1);
   });
 
+  await test.step("an indent of 0, which djLint reads as unset, is unset everywhere", async () => {
+    await indent.fill("0");
+    await expect.poll(() => text(output)).toBe(formatted("    "));
+    await view("CLI").click();
+    await expect
+      .poll(() => text(output))
+      .toBe("djlint input.html --reformat\ndjlint input.html --lint");
+    await view("pyproject.toml").click();
+    await expect.poll(() => text(output)).toMatch(/^# /);
+    await view("Output").click();
+    await indent.fill("2");
+    await expect.poll(() => text(output)).toBe(formatted("  "));
+  });
+
   await test.step("the address brings back the example and its settings", async () => {
     await page.reload();
     await expect.poll(() => text(input)).toBe(MESSY);
