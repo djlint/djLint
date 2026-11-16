@@ -957,6 +957,7 @@ def _process_or_report(config: Config, this_file: Path) -> ProcessResult | tuple
 def process(config: Config, this_file: Path) -> ProcessResult:
     """Run linter or formatter."""
     output: ProcessResult = {}
+    config = config.for_file(this_file)
     if config.reformat or config.check:
         from djlint.reformat import reformat_file  # noqa: PLC0415
 
@@ -979,6 +980,8 @@ def process_stdin(config: Config, stdin_text: str) -> tuple[ProcessResult, str |
     html = stdin_text
     formatted_code = None
     stdin_filename = config.stdin_filename or "-"
+    if config.stdin_filename:
+        config = config.for_file(Path(config.stdin_filename))
 
     if config.reformat or config.check:
         from djlint.reformat import reformat_string  # noqa: PLC0415

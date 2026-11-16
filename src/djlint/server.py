@@ -918,6 +918,8 @@ class Server:
         path = _path(uri)
         if path is not None and self._is_excluded(config, path):
             return None
+        if path is not None:
+            config = config.for_file(path)
         return _edits(document.text, format_text(config, document.text))
 
 
