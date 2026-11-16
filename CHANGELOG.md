@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.51.0] - 2026-11-16
+
 ### Feature
 
 - djLint warns about settings that would not do what they look like, so a typo no longer goes unnoticed. The warnings go to stderr once per run, as the others do:
