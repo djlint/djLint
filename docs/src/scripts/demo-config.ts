@@ -32,6 +32,14 @@ const TABLES: Record<string, string> = { indent_css: "css", indent_js: "js" };
 const typed = (name: string, value: string | boolean) =>
   typeof value === "string" && NUMBERS.has(name) ? Number(value) : value;
 
+// djLint reads 0 for these as "not set" on the command line and in its API,
+// but a configuration file would set 0, so the demo leaves a 0 out.
+const ZERO_IS_UNSET = new Set(["indent", "indent_css", "indent_js", "max_line_length"]);
+
+/** Whether a form value sets anything. */
+export const isSet = (name: string, value: string | boolean) =>
+  Boolean(value) && !(ZERO_IS_UNSET.has(name) && Number(value) === 0);
+
 /** Keyword arguments for djlint.api.load_config. */
 export const apiOptions = (config: DemoConfig) =>
   Object.fromEntries(Object.entries(config).map(([name, value]) => [name, typed(name, value)]));

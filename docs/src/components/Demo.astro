@@ -264,7 +264,13 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
   import { Compartment, EditorState, type Extension, type Text } from "@codemirror/state";
   import { placeholder } from "@codemirror/view";
   import { basicSetup, EditorView } from "codemirror";
-  import { apiOptions, commands, configFile, type DemoConfig } from "../scripts/demo-config";
+  import {
+    apiOptions,
+    commands,
+    configFile,
+    type DemoConfig,
+    isSet,
+  } from "../scripts/demo-config";
   import { decodeState, encodeState } from "../scripts/demo-state";
   import { djlintEditorTheme } from "../scripts/editor-theme.js";
 
@@ -285,7 +291,7 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     const config: DemoConfig = {};
     for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
       const value = field.type === "checkbox" ? field.checked : field.value;
-      if (value) config[field.name] = value;
+      if (isSet(field.name, value)) config[field.name] = value;
     }
     return config;
   }

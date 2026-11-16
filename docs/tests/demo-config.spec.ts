@@ -1,7 +1,7 @@
 // The demo's settings as djLint takes them, without a browser.
 import { expect, test } from "@playwright/test";
 
-import { apiOptions, commands, configFile } from "../src/scripts/demo-config";
+import { apiOptions, commands, configFile, isSet } from "../src/scripts/demo-config";
 
 const CONFIG = {
   profile: "jinja",
@@ -50,4 +50,12 @@ test("config files take lists and put the CSS and JS indents in their own tables
     css: { indent_size: 3 },
   });
   expect(configFile({}, "pyproject.toml")).toBe("");
+});
+
+test("a 0 that djLint reads as unset is left out", () => {
+  expect(isSet("indent", "0")).toBe(false);
+  expect(isSet("max_line_length", "0")).toBe(false);
+  expect(isSet("max_blank_lines", "0")).toBe(true);
+  expect(isSet("indent", "2")).toBe(true);
+  expect(isSet("format_css", false)).toBe(false);
 });
