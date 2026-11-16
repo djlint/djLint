@@ -21,6 +21,8 @@
   "djlint.demo_copy_link": "複製連結",
   "djlint.demo_options": "選項",
   "djlint.since": "始於",
+  "djlint.default": "預設值：",
+  "djlint.default_none": "無",
   "djlint.hero_problems": "{count} 個問題",
   "djlint.hero_clean": "沒有問題",
   "djlint.hero_run": "執行",

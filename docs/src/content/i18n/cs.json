@@ -21,6 +21,8 @@
   "djlint.demo_copy_link": "Kopírovat odkaz",
   "djlint.demo_options": "Možnosti",
   "djlint.since": "od verze",
+  "djlint.default": "Výchozí:",
+  "djlint.default_none": "žádná",
   "djlint.hero_problems": "Počet problémů: {count}",
   "djlint.hero_clean": "Žádné problémy",
   "djlint.hero_run": "Spustit",

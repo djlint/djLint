@@ -21,6 +21,8 @@
   "djlint.demo_copy_link": "Bağlantıyı kopyala",
   "djlint.demo_options": "Seçenekler",
   "djlint.since": "eklendiği sürüm:",
+  "djlint.default": "Varsayılan:",
+  "djlint.default_none": "yok",
   "djlint.hero_problems": "{count} sorun",
   "djlint.hero_clean": "Sorun yok",
   "djlint.hero_run": "Çalıştır",

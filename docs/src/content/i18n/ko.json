@@ -21,6 +21,8 @@
   "djlint.demo_copy_link": "링크 복사",
   "djlint.demo_options": "옵션",
   "djlint.since": "도입 버전",
+  "djlint.default": "기본값:",
+  "djlint.default_none": "없음",
   "djlint.hero_problems": "문제 {count}개",
   "djlint.hero_clean": "문제 없음",
   "djlint.hero_run": "실행",

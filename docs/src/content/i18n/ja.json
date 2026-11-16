@@ -21,6 +21,8 @@
   "djlint.demo_copy_link": "リンクをコピー",
   "djlint.demo_options": "オプション",
   "djlint.since": "導入バージョン",
+  "djlint.default": "デフォルト:",
+  "djlint.default_none": "なし",
   "djlint.hero_problems": "{count} 件の問題",
   "djlint.hero_clean": "問題はありません",
   "djlint.hero_run": "実行",

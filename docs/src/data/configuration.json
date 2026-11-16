@@ -2,6 +2,7 @@
   {
     "name": "warn",
     "since": "0.7.6",
+    "default": false,
     "description": {
       "en": "Exit with 0 instead of 1 when there are lint errors or files to reformat.",
       "zh": "存在代码检查错误或需要重新格式化的文件时，以 0 而不是 1 退出。",
@@ -46,6 +47,7 @@
   {
     "name": "quiet",
     "since": "0.0.9",
+    "default": false,
     "description": {
       "en": "Do not print diffs, the progress bar or the summary.",
       "zh": "不打印差异、进度条和汇总。",
@@ -72,6 +74,7 @@
   {
     "name": "max_blank_lines",
     "since": "1.31.0",
+    "default": 0,
     "description": {
       "en": "Keep at most this many blank lines in a row. Default is 0, which removes blank lines. It has no effect with `preserve_blank_lines`.",
       "zh": "最多保留这么多行连续的空行。默认值为 0，即删除空行。启用 `preserve_blank_lines` 时此选项无效。",
@@ -98,6 +101,7 @@
   {
     "name": "no_set_formatting",
     "since": "1.30.2",
+    "default": false,
     "description": {
       "en": "Do not attempt to format the contents of `{% set %}` tags.",
       "zh": "不尝试格式化 `{% set %}` 标签的内容。",
@@ -124,6 +128,7 @@
   {
     "name": "no_function_formatting",
     "since": "1.30.2",
+    "default": false,
     "description": {
       "en": "Do not attempt to format the arguments of function calls inside `{{ }}` expressions.",
       "zh": "不尝试格式化 `{{ }}` 表达式中函数调用的参数。",
@@ -150,6 +155,7 @@
   {
     "name": "quote_style",
     "since": "1.45.0",
+    "default": "double",
     "description": {
       "en": "Quotes to use for strings inside template tags, either `double` (the default) or `single`. `T002` requires the same quotes. The formatter uses them in a condition too, such as `{% if x == \"a\" %}`, so one file does not spell the same string both ways. HTML attribute quoting is left to `H008`.",
       "zh": "模板标签内字符串使用的引号，可以是 `double`（默认）或 `single`。`T002` 要求使用相同的引号。格式化工具在条件中也会使用这种引号，例如 `{% if x == \"a\" %}`，这样同一个文件中同一个字符串就不会有两种写法。HTML 属性的引号交由 `H008` 处理。",
@@ -176,6 +182,7 @@
   {
     "name": "keep_br_inline",
     "since": "1.45.0",
+    "default": false,
     "description": {
       "en": "Keep `<br>` on the line of the text it breaks, rather than giving it a line of its own. `<hr>`, which renders as a rule below the preceding content, is unaffected.",
       "zh": "让 `<br>` 留在它所断开的文本所在的行，而不是单独占一行。`<hr>` 会渲染为前面内容下方的一条横线，不受影响。",
@@ -202,6 +209,7 @@
   {
     "name": "no_entity_formatting",
     "since": "1.45.0",
+    "default": false,
     "description": {
       "en": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `©`. The entities that carry syntax, and the invisible ones, are never rewritten either way. `H023` still reports an entity under it; add `H023` to `ignore` to keep entities.",
       "zh": "不把实体引用改写为它所表示的字符，因此 `&copy;` 会保持原样，而不会变成 `©`。承载语法的实体和不可见字符的实体，无论如何都不会被改写。启用此选项时，`H023` 仍会报告实体；要保留实体，请把 `H023` 添加到 `ignore` 中。",
@@ -228,6 +236,7 @@
   {
     "name": "no_line_after_yaml",
     "since": "1.29.0",
+    "default": false,
     "description": {
       "en": "Do not add a blank line after YAML front matter.",
       "zh": "不在 YAML front matter 之后添加空行。",
@@ -254,6 +263,7 @@
   {
     "name": "close_void_tags",
     "since": "1.26.0",
+    "default": false,
     "description": {
       "en": "Add a closing mark to known void tags, so that `<img>` becomes `<img />`. `H018`, which asks for the opposite, is not reported under it.",
       "zh": "为已知的空元素标签添加闭合标记，使 `<img>` 变成 `<img />`。启用此选项时，不会报告要求相反写法的 `H018`。",
@@ -280,6 +290,7 @@
   {
     "name": "ignore",
     "since": "0.1.5",
+    "default": null,
     "description": {
       "en": "Linter codes to skip.",
       "zh": "要跳过的代码检查规则代码。",
@@ -306,6 +317,7 @@
   {
     "name": "include",
     "since": "1.20.0",
+    "default": null,
     "description": {
       "en": "Linter codes to turn on that are off by default or that the profile leaves out.",
       "zh": "要启用的代码检查规则代码，包括默认关闭的规则和预设未包含的规则。",
@@ -332,6 +344,7 @@
   {
     "name": "extension",
     "since": "0.0.5",
+    "default": "html",
     "description": {
       "en": "Extension of the files to look for in folders. Default is `html`.",
       "zh": "在文件夹中查找的文件的扩展名。默认为 `html`。",
@@ -358,6 +371,7 @@
   {
     "name": "custom_blocks",
     "since": "0.3.5",
+    "default": null,
     "description": {
       "en": "Names of custom template blocks to indent, such as `toc` for `{% toc %}...{% endtoc %}`.",
       "zh": "要缩进的自定义模板块的名称，例如 `toc` 表示 `{% toc %}...{% endtoc %}`。",
@@ -384,6 +398,7 @@
   {
     "name": "ignore_blocks",
     "since": "1.24.0",
+    "default": null,
     "description": {
       "en": "Template blocks that do not indent their contents. Their children are treated as siblings of the block and indented accordingly.",
       "zh": "不为其内容增加缩进的模板块。其子元素被视为该块的同级元素，并相应地缩进。",
@@ -410,6 +425,7 @@
   {
     "name": "custom_html",
     "since": "0.7.0",
+    "default": null,
     "description": {
       "en": "Names of custom HTML tags to indent, such as `mjml` or `simple-greeting`. A name can be a regex, as in `mj-\\w+`.",
       "zh": "要缩进的自定义 HTML 标签的名称，例如 `mjml` 或 `simple-greeting`。名称可以是正则表达式，如 `mj-\\w+`。",
@@ -436,6 +452,7 @@
   {
     "name": "indent",
     "since": "0.3.5",
+    "default": 4,
     "tags": ["formatter"],
     "description": {
       "en": "Spaces per indent level. Default is 4, or the `indent_size` of a `.editorconfig` at the project root.",
@@ -462,6 +479,7 @@
   {
     "name": "exclude",
     "since": "0.4.0",
+    "default": "__pypackages__,_build,_site,.bzr,.direnv,.eggs,.git,.git-rewrite,.hg,.nox,.svn,.tox,.venv,build,dist,htmlcov,node_modules,site-packages,venv",
     "tags": ["linter", "formatter"],
     "description": {
       "en": "Override the default exclude paths.",
@@ -488,6 +506,7 @@
   {
     "name": "extend_exclude",
     "since": "0.4.0",
+    "default": null,
     "tags": ["linter", "formatter"],
     "description": {
       "en": "Add additional paths to the default exclude.",
@@ -514,6 +533,7 @@
   {
     "name": "blank_line_after_tag",
     "since": "0.4.2",
+    "default": null,
     "tags": ["formatter"],
     "description": {
       "en": "Add an additional blank line after `{% <tag> ... %}` tag groups. Blank lines will never be added to end of block.",
@@ -540,6 +560,7 @@
   {
     "name": "blank_line_before_tag",
     "since": "1.8.0",
+    "default": null,
     "tags": ["formatter"],
     "description": {
       "en": "Add an additional blank line before `{% <tag> ... %}` tag groups. Blank lines will never be added to start of file or block, or between similar tags.",
@@ -566,6 +587,7 @@
   {
     "name": "line_break_after_multiline_tag",
     "since": "1.27.0",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "When a tag's attributes are spread over lines, start its content on a new line.",
@@ -592,6 +614,7 @@
   {
     "name": "profile",
     "since": "0.4.5",
+    "default": null,
     "tags": ["linter", "formatter"],
     "description": {
       "en": "Set a profile for the template language. The profile will enable linter rules that apply to your template language, and may also change reformatting. For example, in `handlebars` there are no spaces inside `{{#if}}` tags.\n\nWithout a profile, djLint formats the template syntax of every language, as `all` does, and lints with the rules of `html`.\n\nOptions:\n\n- html\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n- mako (control lines and `##` comments are kept as written)\n- all (every template language at once)",
@@ -618,6 +641,7 @@
   {
     "name": "require_pragma",
     "since": "0.5.8",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "Only format or lint files that start with a comment with only the text 'djlint:on'. The comment can be an HTML comment or a comment in the template language defined by the profile setting. If no profile is specified, a comment in any of the template languages is accepted.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```",
@@ -644,6 +668,7 @@
   {
     "name": "max_line_length",
     "since": "0.5.7",
+    "default": 120,
     "tags": ["formatter"],
     "description": {
       "en": "The formatter joins some HTML and template tags onto one line only when the line fits within this length. Default is 120, or the `max_line_length` of a `.editorconfig` at the project root.",
@@ -662,14 +687,15 @@
       "tr": "Biçimlendirici bazı HTML ve şablon etiketlerini yalnızca satır bu uzunluğa sığıyorsa tek satırda birleştirir. Varsayılan değer 120'dir ya da proje kökündeki bir `.editorconfig` dosyasının `max_line_length` değeridir."
     },
     "usage": [
-      { "name": "pyproject.toml", "value": "max_line_length=120" },
-      { "name": ".djlintrc", "value": "\"max_line_length\": 120" },
-      { "name": "cli", "value": "--max-line-length 120" }
+      { "name": "pyproject.toml", "value": "max_line_length=100" },
+      { "name": ".djlintrc", "value": "\"max_line_length\": 100" },
+      { "name": "cli", "value": "--max-line-length 100" }
     ]
   },
   {
     "name": "max_attribute_length",
     "since": "0.5.8",
+    "default": 70,
     "tags": ["formatter"],
     "description": {
       "en": "The formatter spreads a tag's attributes over lines once they are longer than this. Default is 70.",
@@ -696,6 +722,7 @@
   {
     "name": "use_gitignore",
     "since": "0.5.9",
+    "default": false,
     "tags": ["linter", "formatter"],
     "description": {
       "en": "Add .gitignore excludes to the default exclude. Disabled by default.",
@@ -722,6 +749,7 @@
   {
     "name": "format_attribute_template_tags",
     "since": "0.6.7",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "Format template syntax inside tag attributes. Disabled by default.",
@@ -748,6 +776,7 @@
   {
     "name": "single_attribute_per_line",
     "since": "1.40.0",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "When an opening tag wraps, put the tag name, each attribute, and the closing bracket on separate lines. Disabled by default.",
@@ -774,6 +803,7 @@
   {
     "name": "linter_output_format",
     "since": "0.6.7",
+    "default": "{code} {line} {message} {match}",
     "tags": ["linter"],
     "description": {
       "en": "Customize the order of the output message. Default is \"{code} {line} {message} {match}\". If `{filename}` is not in the message, the output is grouped by file and each group gets a header.\n\nOptional variables:\n\n- `{filename}`\n- `{line}`\n- `{end}`\n- `{code}`\n- `{message}`\n- `{match}`",
@@ -809,6 +839,7 @@
   {
     "name": "preserve_leading_space",
     "since": "1.2.0",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "Preserve leading space on text, where possible. Ideal for non-html template files where text indent is intentional.",
@@ -835,6 +866,7 @@
   {
     "name": "preserve_blank_lines",
     "since": "1.3.0",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "Preserve blank lines where possible. Ideal for non-html template files where blank lines are intentional.",
@@ -861,6 +893,7 @@
   {
     "name": "preserve_class_newlines",
     "since": "1.39.0",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "Preserve line breaks inside multiline class attributes.",
@@ -887,6 +920,7 @@
   {
     "name": "per_file_ignores",
     "since": "1.7.0",
+    "default": null,
     "tags": ["linter"],
     "description": {
       "en": "Ignore linter rules on a per-file basis.",
@@ -922,6 +956,7 @@
   {
     "name": "format_js",
     "since": "1.9.0",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "Format contents of `script` tags using `js-beautify`. See [js-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues). A script whose `type` is neither JavaScript nor JSON, such as a client-side template in `text/template`, is left as written.",
@@ -954,6 +989,7 @@
   {
     "name": "format_css",
     "since": "1.9.0",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "Format contents of `style` tags using `css-beautify`. See [css-beautify](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) for all configuration options. Template syntax is not [fully supported](https://github.com/beautify-web/js-beautify/issues).",
@@ -986,6 +1022,7 @@
   {
     "name": "files",
     "since": "1.14.0",
+    "default": null,
     "tags": ["linter", "formatter"],
     "description": {
       "en": "A list of paths to use as djlint's source. When this option is specified, the command line source must be `-` as if using stdin. `--stdin-filename` makes `-` mean stdin regardless.",
@@ -1012,6 +1049,7 @@
   {
     "name": "ignore_case",
     "since": "1.23.0",
+    "default": false,
     "tags": ["formatter", "linter"],
     "description": {
       "en": "Do not attempt to fix the case of known html tags. `H009` and `H010` are not reported under it.",
@@ -1038,6 +1076,7 @@
   {
     "name": "format_attribute_js_json",
     "since": "1.37.0",
+    "default": false,
     "tags": ["formatter"],
     "description": {
       "en": "Format JavaScript and JSON code inside HTML attributes. This will format object literals and JavaScript code in attributes like `onclick`, `x-*`, and other JavaScript-related attributes. Objects with fewer properties than `format_attribute_js_json_min_props` will not be formatted.",
@@ -1064,6 +1103,7 @@
   {
     "name": "format_attribute_js_json_pattern",
     "since": "1.37.0",
+    "default": "^(?:on[a-z]+|x-[a-z\\-]+|@[a-z\\-]+|:[a-z\\-]+|v-[a-z\\-]+|\\([a-z\\-]+\\)|\\[[a-z\\-]+\\]|\\*ng[A-Z][a-zA-Z]*|[a-z\\-]+\\.(bind|delegate|call|trigger))$",
     "tags": ["formatter"],
     "description": {
       "en": "Custom regex pattern to match JavaScript attributes for formatting. Default pattern matches common JavaScript attributes like `onclick`, `x-*`, Vue.js directives, Alpine.js directives, Angular directives, and more.",
@@ -1099,6 +1139,7 @@
   {
     "name": "format_attribute_js_json_min_props",
     "since": "1.37.0",
+    "default": 2,
     "tags": ["formatter"],
     "description": {
       "en": "Minimum number of properties required in a JavaScript/JSON object for it to be formatted. Default is 2. Objects with fewer properties will remain on a single line.",
@@ -1125,6 +1166,7 @@
   {
     "name": "stdin_filename",
     "since": "1.43.0",
+    "default": "-",
     "tags": ["formatter", "linter"],
     "description": {
       "en": "Path that stands for stdin in messages and when matching excludes and per-file-ignores. Defaults to `-`.",
@@ -1147,6 +1189,7 @@
   {
     "name": "allow_empty_input",
     "since": "1.44.0",
+    "default": false,
     "tags": ["formatter", "linter"],
     "description": {
       "en": "Exit with 0 instead of 2 when the given paths match no files at all. Files that were found and then skipped by exclude, extend_exclude, use_gitignore or require_pragma already exit with 0. Disabled by default.",
@@ -1173,6 +1216,7 @@
   {
     "name": "no_indent_inner_html",
     "since": "1.45.0",
+    "default": false,
     "description": {
       "en": "Do not indent `<head>` and `<body>` below `<html>`, which is how the default VS Code html formatter lays a document out.",
       "zh": "不在 `<html>` 之下缩进 `<head>` 和 `<body>`，VS Code 默认的 html 格式化工具就是这样排版文档的。",
@@ -1199,6 +1243,7 @@
   {
     "name": "sort_attributes",
     "since": "1.45.0",
+    "default": false,
     "description": {
       "en": "Sort attributes by name, with `id` first and `class` second. A tag whose attributes are guarded by a template tag keeps the order it was written in, since moving one out of its branch would change the page.",
       "zh": "按名称对属性排序，`id` 排在第一位，`class` 排在第二位。如果标签的属性受模板标签控制，则保持原有的书写顺序，因为把属性移出其所在的分支会改变页面。",
@@ -1225,6 +1270,7 @@
   {
     "name": "sort_load_tags",
     "since": "1.47.0",
+    "default": false,
     "description": {
       "en": "Sort the libraries in a django `{% load %}` tag and drop the ones written twice, so `{% load static i18n %}` becomes `{% load i18n static %}`. In `{% load a b from library %}` the names before `from` are sorted. Where two libraries define a tag or filter of the same name, the one loaded last wins, so sorting can change which one the template uses.",
       "zh": "对 django `{% load %}` 标签中的库进行排序，并删除写了两次的库，因此 `{% load static i18n %}` 会变成 `{% load i18n static %}`。在 `{% load a b from library %}` 中，会对 `from` 之前的名称排序。如果两个库定义了同名的标签或过滤器，最后加载的那个生效，因此排序可能会改变模板实际使用的是哪一个。",
@@ -1251,6 +1297,7 @@
   {
     "name": "name_endblocks",
     "since": "1.45.0",
+    "default": false,
     "description": {
       "en": "Write the block's name into the `{% endblock %}` that closes it, where the block is written across lines. This is what `T003` asks for.",
       "zh": "对于跨多行书写的块，把块的名称写入关闭它的 `{% endblock %}` 中。这正是 `T003` 所要求的。",
@@ -1277,6 +1324,7 @@
   {
     "name": "prefer_configuration",
     "since": "1.45.0",
+    "default": false,
     "description": {
       "en": "Let the file named by `configuration` override the project's own config file. `configuration` names a global file, so by default a `pyproject.toml` or `.djlintrc` beside the templates wins where the two set the same thing. Command line only, since it decides how the config files themselves are read.",
       "zh": "让 `configuration` 指定的文件覆盖项目自身的配置文件。`configuration` 指定的是一个全局文件，因此默认情况下，当两者设置了同一项时，模板旁边的 `pyproject.toml` 或 `.djlintrc` 优先。仅限命令行使用，因为它决定的是配置文件本身如何被读取。",

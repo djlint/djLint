@@ -28,7 +28,8 @@ const usageTabs = (usage: (typeof options)[number]["usage"]) =>
     if (name === ".djlintrc") return [{ label: name, lang: "json", code: value }];
     return [
       { label: name, lang: "toml", code: value },
-      { label: "djlint.toml / .djlint.toml", lang: "toml", code: djlintToml(value) },
+      // Short enough for the tab bar to fit a phone; .djlint.toml takes the same.
+      { label: "djlint.toml", lang: "toml", code: djlintToml(value) },
     ];
   });
 
@@ -52,6 +53,10 @@ async function describe(text: string) {
   return parts;
 }
 
+// The exclude list and the regex defaults are long; on a phone they break
+// after a comma or a bar rather than inside a name.
+const breakable = (value: string) => value.split(/(?<=[,|])/);
+
 const rendered = await Promise.all(
   options
     .toSorted((a, b) => a.name.localeCompare(b.name))
@@ -60,6 +65,9 @@ const rendered = await Promise.all(
       id: option.name.replaceAll("_", "-"),
       parts: await describe(option.description[lang] ?? option.description.en),
       tabs: usageTabs(option.usage),
+      // The flag shows next to the badges, since the cli tab is the last one.
+      flag: option.usage.find(({ name }) => name === "cli")?.value.match(/^--[\w-]+/)?.[0],
+      defaultValue: "default" in option ? option.default : undefined,
     })),
 );
 ---
@@ -85,14 +93,40 @@ const rendered = await Promise.all(
             <Badge text={tag} variant="note" />
           </>
         ))}
+        {option.flag && (
+          <>
+            {" "}
+            <code>{option.flag}</code>
+          </>
+        )}
       </p>
+      {option.defaultValue !== undefined && (
+        <p class="config-default">
+          {Astro.locals.t("djlint.default")}{" "}
+          {option.defaultValue === null ? (
+            Astro.locals.t("djlint.default_none")
+          ) : (
+            <code>
+              {breakable(JSON.stringify(option.defaultValue)).map((part, index) => (
+                <>
+                  {index > 0 && <wbr />}
+                  {part}
+                </>
+              ))}
+            </code>
+          )}
+        </p>
+      )}
       {option.parts.map((part) =>
         "code" in part ? <Code code={part.code} lang={part.lang} /> : <Fragment set:html={part.html} />,
       )}
       <Tabs syncKey="config-file">
         {option.tabs.map((tab) => (
           <TabItem label={tab.label}>
-            <Code code={tab.code} lang={tab.lang} />
+            {/* Print shows every panel, so each one carries its label. */}
+            <div class="config-usage" data-label={tab.label}>
+              <Code code={tab.code} lang={tab.lang} />
+            </div>
           </TabItem>
         ))}
       </Tabs>
@@ -103,17 +137,23 @@ const rendered = await Promise.all(
 <script>
   const filter = document.querySelector<HTMLInputElement>("#config-filter")!;
   const empty = document.querySelector<HTMLElement>("#config-empty")!;
-  const sections = document.querySelectorAll<HTMLElement>(".config-option");
+  const sections = [...document.querySelectorAll<HTMLElement>(".config-option")];
+  const list = sections[0]!.parentElement!;
+  const end = sections.at(-1)!.nextSibling;
 
   filter.addEventListener("input", () => {
     const words = filter.value.toLowerCase().split(/[\s_-]+/).filter(Boolean);
-    let shown = 0;
+    const matches = (text: string) => words.every((word) => text.includes(word));
     for (const section of sections) {
-      const text = section.textContent!.toLowerCase();
-      section.hidden = !words.every((word) => text.includes(word));
-      if (!section.hidden) shown++;
+      section.hidden = !matches(section.textContent!.toLowerCase());
     }
-    empty.hidden = shown > 0;
+    empty.hidden = sections.some((section) => !section.hidden);
+    // Options named after the search come first, so "ignore" leads with
+    // ignore and ignore_blocks rather than with every option that mentions it.
+    const rank = (section: HTMLElement) => (matches(section.dataset.name!) ? 0 : 1);
+    for (const section of sections.toSorted((a, b) => rank(a) - rank(b))) {
+      list.insertBefore(section, end);
+    }
   });
 
   // A link to an option the filter hides (the table of contents lists them
@@ -126,6 +166,38 @@ const rendered = await Promise.all(
       filter.dispatchEvent(new Event("input"));
     }
   });
+
+  // The table of contents lists every option, more than its panel holds, and
+  // Starlight never scrolls the panel to the entry it marks as current. Scroll
+  // the panel itself, not with scrollIntoView, which can move the page too.
+  function reveal(link: Element | null) {
+    // The desktop panel holds the phone table too, hidden; measuring a hidden
+    // link would scroll the panel to nowhere.
+    if (!link?.checkVisibility()) return;
+    let panel = link.parentElement;
+    while (
+      panel &&
+      !(panel.scrollHeight > panel.clientHeight && /auto|scroll/.test(getComputedStyle(panel).overflowY))
+    ) {
+      panel = panel.parentElement;
+    }
+    if (!panel || panel === document.scrollingElement) return;
+    const box = link.getBoundingClientRect();
+    const view = panel.getBoundingClientRect();
+    // The desktop panel starts under the header, which pads its top.
+    const top = view.top + parseFloat(getComputedStyle(panel).paddingTop);
+    if (box.top < top) panel.scrollTop -= top - box.top;
+    else if (box.bottom > view.bottom) panel.scrollTop += box.bottom - view.bottom;
+  }
+  for (const toc of document.querySelectorAll("starlight-toc, mobile-starlight-toc")) {
+    const current = () => toc.querySelector('a[aria-current="true"]');
+    new MutationObserver(() => reveal(current())).observe(toc, {
+      attributeFilter: ["aria-current"],
+      subtree: true,
+    });
+    // The phone menu is closed while the current entry changes.
+    toc.querySelector("details")?.addEventListener("toggle", () => reveal(current()));
+  }
 </script>
 
 <style>
@@ -155,6 +227,34 @@ const rendered = await Promise.all(
   .config-tags {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.25rem;
+  }
+  .config-default code {
+    overflow-wrap: anywhere;
+  }
+  /* Starlight's tab padding leaves the four config file tabs too wide for a
+     phone, where the last one, cli, would only show on a sideways scroll. */
+  @media (max-width: 30rem) {
+    .config-option :global([role="tab"]) {
+      padding-inline: 0.625rem;
+      font-size: var(--sl-text-sm);
+    }
+  }
+
+  /* Paper has no tabs: print every config file's example under its name. */
+  @media print {
+    .config-filter,
+    .config-option :global(.tablist-wrapper) {
+      display: none;
+    }
+    .config-option :global([role="tabpanel"][hidden]) {
+      display: block;
+    }
+    .config-usage::before {
+      content: attr(data-label);
+      display: block;
+      font-weight: 600;
+    }
   }
 </style>

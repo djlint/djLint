@@ -21,6 +21,8 @@
   "djlint.demo_copy_link": "Copy link",
   "djlint.demo_options": "Options",
   "djlint.since": "since",
+  "djlint.default": "Default:",
+  "djlint.default_none": "none",
   "djlint.hero_problems": "{count} problems",
   "djlint.hero_clean": "No problems",
   "djlint.hero_run": "Run",
