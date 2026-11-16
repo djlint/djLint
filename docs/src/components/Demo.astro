@@ -8,63 +8,100 @@ const { t } = Astro.locals;
 const route = starlightRoute(Astro.locals);
 const prefix = route?.locale ? `/${route.locale}` : "";
 
-// The formatter's options, named as in its Python API and shown as their
-// command line flags, in the order of `djlint --help`. A field with options is
-// a menu, one with a placeholder takes a value (a number when the placeholder
-// is one), any other is a switch. `anchor` is the option's section on the
-// configuration page, where it differs from its name.
-const fields: { name: string; placeholder?: string; options?: string[][]; anchor?: string }[] = [
+// The options, named as in djLint's Python API and shown as their command line
+// flags, grouped and ordered as in `djlint --help`. A field with options is a
+// menu, one with a placeholder takes a value (a number when the placeholder is
+// one, which is then its default), any other is a switch. `anchor` is the
+// option's section on the configuration page, where it differs from its name.
+type Field = { name: string; placeholder?: string; options?: string[][]; anchor?: string };
+const groups: { legend?: string; fields: Field[] }[] = [
   {
-    name: "profile",
-    options: [
-      ["", "none"],
-      ["html", "html"],
-      ["django", "django"],
-      ["jinja", "jinja"],
-      ["nunjucks", "nunjucks (and twig)"],
-      ["handlebars", "handlebars (and mustache)"],
-      ["liquid", "liquid"],
-      ["golang", "golang (go templates)"],
-      ["angular", "angular"],
-      ["tera", "tera"],
-      ["askama", "askama"],
-      ["mako", "mako"],
+    fields: [
+      {
+        name: "profile",
+        options: [
+          ["", "none"],
+          ["html", "html"],
+          ["django", "django"],
+          ["jinja", "jinja"],
+          ["nunjucks", "nunjucks (and twig)"],
+          ["handlebars", "handlebars (and mustache)"],
+          ["liquid", "liquid"],
+          ["golang", "golang (go templates)"],
+          ["angular", "angular"],
+          ["tera", "tera"],
+          ["askama", "askama"],
+          ["mako", "mako"],
+        ],
+      },
     ],
   },
-  { name: "indent", placeholder: "4" },
-  { name: "max_line_length", placeholder: "120" },
-  { name: "max_attribute_length", placeholder: "70" },
-  { name: "single_attribute_per_line" },
-  { name: "line_break_after_multiline_tag" },
-  { name: "no_indent_inner_html" },
-  { name: "keep_br_inline" },
-  { name: "custom_blocks", placeholder: "toc,example" },
-  { name: "custom_html", placeholder: "mjml,simple-greeting,mj-\\w+" },
-  { name: "ignore_blocks", placeholder: "raw,example" },
-  { name: "blank_line_after_tag", placeholder: "load,extends,include" },
-  { name: "blank_line_before_tag", placeholder: "load,extends,include" },
-  { name: "max_blank_lines", placeholder: "0" },
-  { name: "preserve_blank_lines" },
-  { name: "preserve_leading_space" },
-  { name: "no_line_after_yaml" },
-  { name: "close_void_tags" },
-  { name: "ignore_case" },
-  { name: "sort_attributes" },
-  { name: "sort_load_tags" },
-  { name: "name_endblocks" },
-  { name: "quote_style", options: [["", "double"], ["single", "single"]] },
-  { name: "no_entity_formatting" },
-  { name: "no_function_formatting" },
-  { name: "no_set_formatting" },
-  { name: "preserve_class_newlines" },
-  { name: "format_attribute_template_tags" },
-  { name: "format_css" },
-  { name: "indent_css", placeholder: "4", anchor: "format-css" },
-  { name: "format_js" },
-  { name: "indent_js", placeholder: "4", anchor: "format-js" },
-  { name: "format_attribute_js_json" },
-  { name: "format_attribute_js_json_pattern", placeholder: "^(on[a-z]+|x-[a-z-]+)$" },
-  { name: "format_attribute_js_json_min_props", placeholder: "2" },
+  {
+    legend: t("djlint.linter"),
+    fields: [
+      { name: "ignore", placeholder: "H014,H015" },
+      { name: "include", placeholder: "H017,T027" },
+    ],
+  },
+  {
+    legend: t("djlint.demo_layout"),
+    fields: [
+      { name: "indent", placeholder: "4" },
+      { name: "max_line_length", placeholder: "120" },
+      { name: "max_attribute_length", placeholder: "70" },
+      { name: "single_attribute_per_line" },
+      { name: "line_break_after_multiline_tag" },
+      { name: "no_indent_inner_html" },
+      { name: "keep_br_inline" },
+      { name: "custom_blocks", placeholder: "toc,example" },
+      { name: "custom_html", placeholder: "mjml,simple-greeting,mj-\\w+" },
+      { name: "ignore_blocks", placeholder: "raw,example" },
+      { name: "blank_line_after_tag", placeholder: "load,extends,include" },
+      { name: "blank_line_before_tag", placeholder: "load,extends,include" },
+      { name: "max_blank_lines", placeholder: "0" },
+      { name: "preserve_blank_lines" },
+      { name: "preserve_leading_space" },
+      { name: "no_line_after_yaml" },
+    ],
+  },
+  {
+    legend: t("djlint.demo_rewrites"),
+    fields: [
+      { name: "close_void_tags" },
+      { name: "ignore_case" },
+      { name: "sort_attributes" },
+      { name: "sort_load_tags" },
+      { name: "name_endblocks" },
+      { name: "quote_style", options: [["", "double"], ["single", "single"]] },
+      { name: "no_entity_formatting" },
+      { name: "no_function_formatting" },
+      { name: "no_set_formatting" },
+      { name: "preserve_class_newlines" },
+      { name: "format_attribute_template_tags" },
+    ],
+  },
+  {
+    legend: t("djlint.demo_css_js"),
+    fields: [
+      { name: "format_css" },
+      { name: "indent_css", placeholder: "4", anchor: "format-css" },
+      { name: "format_js" },
+      { name: "indent_js", placeholder: "4", anchor: "format-js" },
+      { name: "format_attribute_js_json" },
+      { name: "format_attribute_js_json_pattern", placeholder: "^(on[a-z]+|x-[a-z-]+)$" },
+      { name: "format_attribute_js_json_min_props", placeholder: "2" },
+    ],
+  },
+];
+
+// What the output panel can show: the formatted template, or the settings as
+// commands or as a configuration file.
+const views = [
+  ["output", t("djlint.demo_output")],
+  ["cli", "CLI"],
+  ["pyproject.toml", "pyproject.toml"],
+  ["djlint.toml", "djlint.toml"],
+  [".djlintrc", ".djlintrc"],
 ];
 
 const kebab = (name: string) => name.replaceAll("_", "-");
@@ -74,7 +111,10 @@ const kebab = (name: string) => name.replaceAll("_", "-");
 // has no section for (the CSS and JS indents).
 const lang = route?.locale ?? "en";
 const descriptions = new Map(
-  options.map(({ name, description }) => [name, (description as Record<string, string>)[lang] ?? description.en]),
+  options.map(({ name, description }) => [
+    name,
+    (description as Record<string, string>)[lang] ?? description.en,
+  ]),
 );
 const helpLines = new Map(
   [...help.matchAll(/^ {2}--([\w-]+)[^\n]*? {2,}(\S.*(?:\n {34}\S.*)*)/gm)].map(([, flag, text]) => [
@@ -98,49 +138,54 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
 {
   route && (
     <div class="demo not-content">
-      <p>{t("djlint.demo_description")} <small id="djlint-version"></small></p>
+      <p>{t("djlint.demo_description")} <small id="djlint-version" /></p>
 
       <div class="demo-workspace">
         <details class="demo-settings" open>
           <summary>{t("djlint.demo_options")}</summary>
           <form id="djlint-settings">
-            {
-              fields.map(({ name, placeholder, options, anchor }) => {
-                const flag = `--${kebab(name)}`;
-                const toggle = !placeholder && !options;
-                return (
-                  <label class:list={{ checkbox: toggle }}>
-                    {toggle && <input name={name} type="checkbox" aria-label={flag} />}
-                    <span>
-                      <span class="flag">{flag}</span>{" "}
-                      <a
-                        href={docs(anchor ?? kebab(name))}
-                        target="_blank"
-                        aria-label={helpLabel(flag)}
-                        aria-describedby={`djlint-hint-${name}`}
-                      >
-                        ?
-                      </a>
-                    </span>
-                    <span id={`djlint-hint-${name}`} hidden set:html={hint(name)} />
-                    {options && (
-                      <select name={name} aria-label={flag}>
-                        {options.map(([value, text]) => <option value={value}>{text}</option>)}
-                      </select>
-                    )}
-                    {placeholder && (
-                      <input
-                        name={name}
-                        type={/^\d+$/.test(placeholder) ? "number" : "text"}
-                        min="0"
-                        placeholder={placeholder}
-                        aria-label={flag}
-                      />
-                    )}
-                  </label>
-                );
-              })
-            }
+            {groups.map(({ legend, fields }) => (
+              <fieldset>
+                {legend && <legend>{legend}</legend>}
+                {fields.map(({ name, placeholder, options, anchor }) => {
+                  const flag = `--${kebab(name)}`;
+                  const toggle = !placeholder && !options;
+                  return (
+                    <label class:list={{ checkbox: toggle }}>
+                      {toggle && <input name={name} type="checkbox" aria-label={flag} />}
+                      <span>
+                        <span class="flag">{flag}</span>{" "}
+                        <a
+                          href={docs(anchor ?? kebab(name))}
+                          target="_blank"
+                          aria-label={helpLabel(flag)}
+                          aria-describedby={`djlint-hint-${name}`}
+                        >
+                          ?
+                        </a>
+                      </span>
+                      <span id={`djlint-hint-${name}`} hidden set:html={hint(name)} />
+                      {options && (
+                        <select name={name} aria-label={flag}>
+                          {options.map(([value, text]) => (
+                            <option value={value}>{text}</option>
+                          ))}
+                        </select>
+                      )}
+                      {placeholder && (
+                        <input
+                          name={name}
+                          type={/^\d+$/.test(placeholder) ? "number" : "text"}
+                          min="0"
+                          placeholder={placeholder}
+                          aria-label={flag}
+                        />
+                      )}
+                    </label>
+                  );
+                })}
+              </fieldset>
+            ))}
           </form>
         </details>
         {/* Side by side the settings stay open; above the editors they start closed. */}
@@ -151,23 +196,40 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
           <section>
             <div class="demo-head">
               <span id="djlint-input-label">input.html</span>
+              <span
+                id="djlint-problems"
+                data-count={t("djlint.demo_problems")}
+                data-clean={t("djlint.hero_clean")}
+              />
               <button type="button" id="djlint-share" data-copied={t("djlint.copied")}>
                 {t("djlint.demo_copy_link")}
               </button>
-              <span class="sr-only" role="status" id="djlint-share-status"></span>
+              <span class="sr-only" role="status" id="djlint-share-status" />
             </div>
-            <div class="demo-editor" id="djlint-input"></div>
+            <div class="demo-editor" id="djlint-input" />
           </section>
           <section>
             <div class="demo-head">
-              <span id="djlint-output-label">
-                <span class="prompt" aria-hidden="true">$</span>{" "}
-                <span id="djlint-command">djlint input.html --reformat</span>
-              </span>
+              <div class="views">
+                {views.map(([view, label], i) => (
+                  <button
+                    type="button"
+                    id={`djlint-view-${i}`}
+                    data-view={view}
+                    aria-pressed={i === 0 ? "true" : "false"}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <button type="button" id="djlint-copy" data-copied={t("djlint.copied")}>
+                {t("djlint.copy")}
+              </button>
+              <span class="sr-only" role="status" id="djlint-copy-status" />
             </div>
-            <div class="demo-editor" id="djlint-output"></div>
-            {/* Where the formatted code will be, until djLint has loaded. */}
+            <div class="demo-editor" id="djlint-output" data-defaults={t("djlint.demo_defaults")} />
             <p
+              class="sr-only"
               id="djlint-status"
               role="status"
               data-installing={t("djlint.demo_installing")}
@@ -186,32 +248,33 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
 
 <script>
   import { jinja } from "@codemirror/lang-jinja";
-  import { EditorState } from "@codemirror/state";
+  import { StreamLanguage } from "@codemirror/language";
+  import { json } from "@codemirror/legacy-modes/mode/javascript";
+  import { shell } from "@codemirror/legacy-modes/mode/shell";
+  import { toml } from "@codemirror/legacy-modes/mode/toml";
+  import { type Diagnostic, setDiagnostics } from "@codemirror/lint";
+  import { Compartment, EditorState, type Extension, type Text } from "@codemirror/state";
+  import { placeholder } from "@codemirror/view";
   import { basicSetup, EditorView } from "codemirror";
+  import { apiOptions, commands, configFile, type DemoConfig } from "../scripts/demo-config";
   import { decodeState, encodeState } from "../scripts/demo-state";
   import { djlintEditorTheme } from "../scripts/editor-theme.js";
 
   const WELCOME = "<div>\n    <p>Welcome to djLint online!</p>\n</div>";
   const status = document.getElementById("djlint-status")!;
+  const problems = document.getElementById("djlint-problems")!;
   const form = document.querySelector<HTMLFormElement>("#djlint-settings")!;
   const worker = new Worker("/static/js/worker.js", { type: "module" });
   let sessionId = 0;
 
-  const editorState = (label: string, extensions: object[], doc = "") =>
-    EditorState.create({
-      doc,
-      extensions: [
-        basicSetup,
-        // HTML with the {{ }}, {% %} and {# #} tags of Django, Jinja, Nunjucks and Twig.
-        jinja(),
-        djlintEditorTheme,
-        EditorView.contentAttributes.of({ "aria-labelledby": label }),
-        ...extensions,
-      ],
-    });
+  // HTML with the {{ }}, {% %} and {# #} tags of Django, Jinja, Nunjucks and Twig.
+  const template = jinja();
+  const editorState = (extensions: Extension[], doc = "") =>
+    EditorState.create({ doc, extensions: [basicSetup, djlintEditorTheme, ...extensions] });
+  const labelledBy = (id: string) => EditorView.contentAttributes.of({ "aria-labelledby": id });
 
   function getConfig() {
-    const config: Record<string, string | boolean> = {};
+    const config: DemoConfig = {};
     for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
       const value = field.type === "checkbox" ? field.checked : field.value;
       if (value) config[field.name] = value;
@@ -219,7 +282,7 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     return config;
   }
 
-  function setConfig(config: Record<string, string | boolean>) {
+  function setConfig(config: DemoConfig) {
     for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
       const value = config[field.name];
       if (field.type === "checkbox") field.checked = value === true;
@@ -229,33 +292,27 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
 
   // The address always holds the current example, so it can be shared as is.
   // The welcome example with no settings keeps the plain address.
-  async function exampleUrl(html: string, config: Record<string, string | boolean>) {
+  async function exampleUrl(html: string, config: DemoConfig) {
     const plain = html === WELCOME && Object.keys(config).length === 0;
     const hash = plain ? "" : `#${await encodeState({ html, config })}`;
     return `${location.origin}${location.pathname}${hash}`;
   }
 
-  async function saveState(html: string, config: Record<string, string | boolean>, id: number) {
+  async function saveState(html: string, config: DemoConfig, id: number) {
     const url = await exampleUrl(html, config);
     if (id === sessionId) history.replaceState(null, "", url);
   }
 
-  // The output's header is the command that gives the same result.
-  const command = document.getElementById("djlint-command")!;
-  const shellWord = (text: string) =>
-    /^[\w,.+-]+$/.test(text) ? text : `'${text.replaceAll("'", "'\\''")}'`;
-
+  // The input the worker is formatting and linting now: findings for any
+  // other text would land in the wrong places.
+  let requested: Text | undefined;
   function format() {
     sessionId += 1;
     const config = getConfig();
-    const html = input.state.doc.toString();
-    worker.postMessage({ config, html, id: sessionId });
-    void saveState(html, config, sessionId);
-    const flags = Object.entries(config).map(([name, value]) => {
-      const flag = `--${name.replaceAll("_", "-")}`;
-      return value === true ? flag : `${flag}=${shellWord(value)}`;
-    });
-    command.textContent = ["djlint input.html --reformat", ...flags].join(" ");
+    requested = input.state.doc;
+    worker.postMessage({ options: apiOptions(config), html: requested.toString(), id: sessionId });
+    void saveState(requested.toString(), config, sessionId);
+    if (view !== "output") showOutput();
   }
 
   // A later restore wins over an earlier one that is still decoding.
@@ -284,8 +341,9 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
   const input = new EditorView({
     parent: document.getElementById("djlint-input")!,
     state: editorState(
-      "djlint-input-label",
       [
+        template,
+        labelledBy("djlint-input-label"),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) formatSoon();
         }),
@@ -293,35 +351,123 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
       WELCOME,
     ),
   });
-  const restored = restore();
-  addEventListener("hashchange", restore);
+  // Until djLint has loaded, the output's first line says how far it got.
+  const loading = document.createElement("span");
+  loading.className = "demo-loading";
+  const setStatus = (text: string, error = false) => {
+    status.textContent = loading.textContent = text;
+    loading.classList.toggle("error", error);
+  };
+  setStatus(status.textContent!.trim());
+
+  const outputElement = document.getElementById("djlint-output")!;
+  const language = new Compartment();
+  const label = new Compartment();
   const output = new EditorView({
-    parent: document.getElementById("djlint-output")!,
-    state: editorState("djlint-output-label", [EditorState.readOnly.of(true)]),
+    parent: outputElement,
+    state: editorState([
+      language.of(template),
+      label.of(labelledBy("djlint-view-0")),
+      EditorState.readOnly.of(true),
+      placeholder(() => loading),
+    ]),
   });
 
-  // The worker reports its progress as codes; the page holds their translations.
-  const showError = () => {
-    status.textContent = status.dataset.error!;
-    status.dataset.state = "error";
+  const languages: Record<string, Extension> = {
+    output: template,
+    // The commands get long, so they wrap.
+    cli: [StreamLanguage.define(shell), EditorView.lineWrapping],
+    "pyproject.toml": StreamLanguage.define(toml),
+    "djlint.toml": StreamLanguage.define(toml),
+    ".djlintrc": StreamLanguage.define(json),
   };
+  let view = "output";
+  let formatted = "";
+  function showOutput() {
+    const config = getConfig();
+    const text =
+      view === "output"
+        ? formatted
+        : view === "cli"
+          ? commands(config)
+          : configFile(config, view as "pyproject.toml") || `# ${outputElement.dataset.defaults}`;
+    output.dispatch({
+      changes: { from: 0, to: output.state.doc.length, insert: text },
+      effects: language.reconfigure(languages[view]),
+    });
+  }
+
+  // After the output and its view exist: restoring formats the example.
+  const restored = restore();
+  addEventListener("hashchange", restore);
+
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>("[data-view]")];
+  for (const tab of tabs) {
+    tab.addEventListener("click", () => {
+      view = tab.dataset.view!;
+      for (const other of tabs) other.setAttribute("aria-pressed", String(other === tab));
+      output.dispatch({ effects: label.reconfigure(labelledBy(tab.id)) });
+      showOutput();
+    });
+  }
+
+  // Finding positions count characters from line 1 and column 0; CodeMirror
+  // counts UTF-16 code units from the start of the document.
+  function position(doc: Text, line: number, column: number) {
+    if (line > doc.lines) return doc.length;
+    const { from, text } = doc.line(line);
+    let offset = 0;
+    for (const [i, char] of [...text].entries()) {
+      if (i === column) break;
+      offset += char.length;
+    }
+    return from + offset;
+  }
+
+  type Finding = Record<"code" | "message", string> &
+    Record<"line" | "column" | "end_line" | "end_column", number>;
+  function showFindings(findings: Finding[] | null) {
+    const doc = input.state.doc;
+    const diagnostics: Diagnostic[] = (findings ?? []).map((finding) => {
+      const from = position(doc, finding.line, finding.column);
+      return {
+        from,
+        to: Math.max(from, position(doc, finding.end_line, finding.end_column)),
+        severity: "warning",
+        message: `${finding.code} ${finding.message}`,
+      };
+    });
+    input.dispatch(setDiagnostics(input.state, diagnostics));
+    problems.textContent = !findings
+      ? ""
+      : findings.length
+        ? problems.dataset.count!.replace("{count}", String(findings.length))
+        : problems.dataset.clean!;
+    problems.dataset.state = findings?.length ? "messy" : "clean";
+  }
+
+  // The worker reports its progress as codes; the page holds their translations.
+  const showError = () => setStatus(status.dataset.error!, true);
   worker.onerror = showError;
-  worker.onmessage = ({ data: { id, type, message } }) => {
+  worker.onmessage = ({ data: { id, type, message, html, findings } }) => {
     if (type === "status" && message === "ready") {
       // Edits made while djLint loaded may have reached the worker before it
       // listened, so the current example goes again.
-      status.hidden = true;
+      setStatus("");
+      loading.hidden = true;
       void restored.then(format);
     } else if (type === "status" && message === "error") {
       showError();
     } else if (type === "status" && message === "installing") {
-      status.textContent = status.dataset.installing!;
+      setStatus(status.dataset.installing!);
     } else if (type === "version") {
       document.getElementById("djlint-version")!.textContent = status.dataset
         .version!.replace("{python}", message.python)
         .replace("{djlint}", message.djlint);
-    } else if ((type === "html" || type === "error") && id === sessionId) {
-      output.dispatch({ changes: { from: 0, to: output.state.doc.length, insert: message } });
+    } else if ((type === "result" || type === "error") && id === sessionId) {
+      formatted = type === "result" ? html : message;
+      if (view === "output") showOutput();
+      if (input.state.doc === requested) showFindings(type === "result" ? findings : null);
     }
   };
 
@@ -378,34 +524,38 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
   });
 
   // "Copied" goes to a status region: a changed label on the focused button is
-  // not reliably announced.
-  const share = document.querySelector<HTMLButtonElement>("#djlint-share")!;
-  const shareStatus = document.getElementById("djlint-share-status")!;
-  const shareLabel = share.textContent!.trim();
-  let shareTimer: ReturnType<typeof setTimeout> | undefined;
-  share.addEventListener("click", async () => {
-    // The link is made from the editor as it is now, not from the address,
-    // which waits for the debounce. Safari only lets the click itself write
-    // to the clipboard, so the link goes in as a promise.
-    const url = exampleUrl(input.state.doc.toString(), getConfig());
-    const blob = url.then((text) => new Blob([text], { type: "text/plain" }));
-    try {
-      await navigator.clipboard.write([new ClipboardItem({ "text/plain": blob })]);
-    } catch {
-      // A browser without promises in ClipboardItem gets the finished text.
+  // not reliably announced. Safari only lets the click itself write to the
+  // clipboard, so the text goes in as a promise.
+  function copyButton(id: string, text: () => string | Promise<string>) {
+    const button = document.getElementById(id)!;
+    const announce = document.getElementById(`${id}-status`)!;
+    const idle = button.textContent!.trim();
+    let reset: ReturnType<typeof setTimeout> | undefined;
+    button.addEventListener("click", async () => {
+      const value = Promise.resolve(text());
+      const blob = value.then((done) => new Blob([done], { type: "text/plain" }));
       try {
-        await navigator.clipboard.writeText(await url);
+        await navigator.clipboard.write([new ClipboardItem({ "text/plain": blob })]);
       } catch {
-        return; // Clipboard access was denied; the address bar has the link too.
+        // A browser without promises in ClipboardItem gets the finished text.
+        try {
+          await navigator.clipboard.writeText(await value);
+        } catch {
+          return; // Clipboard access was denied.
+        }
       }
-    }
-    clearTimeout(shareTimer);
-    share.textContent = shareStatus.textContent = share.dataset.copied!;
-    shareTimer = setTimeout(() => {
-      share.textContent = shareLabel;
-      shareStatus.textContent = "";
-    }, 1500);
-  });
+      clearTimeout(reset);
+      button.textContent = announce.textContent = button.dataset.copied!;
+      reset = setTimeout(() => {
+        button.textContent = idle;
+        announce.textContent = "";
+      }, 1500);
+    });
+  }
+  // The link is made from the editor as it is now, not from the address,
+  // which waits for the debounce.
+  copyButton("djlint-share", () => exampleUrl(input.state.doc.toString(), getConfig()));
+  copyButton("djlint-copy", () => output.state.doc.toString());
 </script>
 
 <style>
@@ -426,11 +576,30 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     font-weight: 600;
     cursor: pointer;
   }
-  form {
+  form,
+  fieldset {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
     font-size: var(--sl-text-sm);
+  }
+  form {
+    gap: 1.5rem;
+  }
+  fieldset {
+    gap: 0.6rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  legend {
+    margin-block-end: 0.6rem;
+    padding: 0;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
   details[open] form {
     margin-block-start: 0.75rem;
@@ -547,29 +716,44 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     border-color: #8a91b8;
     color: #c0caf5;
   }
-  .demo-head .prompt {
+  #djlint-problems[data-state="messy"] {
     color: var(--dj-squiggle);
   }
-  /* Over the empty output editor, in the middle of where the code will go. */
-  #djlint-status {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    grid-area: 2 / 1;
-    place-self: center;
-    align-items: center;
-    gap: 0.75rem;
-    max-width: 80%;
-    margin: 0;
-    color: #c0caf5;
-    font-size: var(--sl-text-sm);
-    text-align: center;
+  #djlint-problems[data-state="clean"] {
+    color: var(--dj-ok);
   }
-  #djlint-status:not([data-state="error"])::before {
-    content: "";
+  /* The views wrap before the copy button gets pushed out of the panel. */
+  .views {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  .demo-head .views button {
+    margin: 0;
+    padding-inline: 0.45rem;
+    border-color: transparent;
+  }
+  #djlint-copy {
     flex: none;
-    width: 1.25rem;
-    height: 1.25rem;
+  }
+  .demo-head .views button[aria-pressed="true"] {
+    border-color: var(--dj-code-line);
+    background: #2f334d;
+    color: #c0caf5;
+  }
+  /* The output's first line while djLint loads; the script puts it there. */
+  .demo-editor :global(.demo-loading:not([hidden])) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #a9b1d6;
+  }
+  .demo-editor :global(.demo-loading:not(.error)::before) {
+    content: "";
+    width: 0.9em;
+    height: 0.9em;
     border: 2px solid #3b4261;
     border-top-color: var(--dj-squiggle);
     border-radius: 50%;
@@ -581,7 +765,7 @@ const helpLabel = (flag: string) => `${t("djlint.configuration")}: ${flag}`;
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    #djlint-status::before {
+    .demo-editor :global(.demo-loading::before) {
       animation-duration: 3s;
     }
   }

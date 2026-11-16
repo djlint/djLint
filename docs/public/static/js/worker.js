@@ -1,28 +1,8 @@
 const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
 const { loadPyodide } = await import(`${PYODIDE_URL}pyodide.mjs`);
 
-// The page sends the options under their Python names, all as strings or
-// booleans; these ones are numbers.
-const NUMBERS = new Set([
-  "indent",
-  "indent_css",
-  "indent_js",
-  "max_attribute_length",
-  "max_blank_lines",
-  "max_line_length",
-  "format_attribute_js_json_min_props",
-]);
-
-function buildConfig(config) {
-  const options = {};
-  for (const [name, value] of Object.entries(config)) {
-    if (value) options[name] = NUMBERS.has(name) ? Number(value) : value;
-  }
-  return options;
-}
-
 let pyodide;
-let formatHtml;
+let run;
 
 async function loadPyodideAndPackages() {
   // demo-lock.mjs builds djLint from the checkout the site is built from, and
@@ -42,13 +22,15 @@ from importlib import metadata
   const [python, djlint] = versions.toJs();
   versions.destroy();
   self.postMessage({ type: "version", message: { python, djlint } });
-  formatHtml = await pyodide.runPythonAsync(`
-from djlint.api import format_text, load_config
+  run = await pyodide.runPythonAsync(`
+from djlint.api import format_text, lint_text, load_config
 
-def _djlint_format(html, options):
-    return format_text(load_config(**options), html).rstrip()
+def _djlint_run(html, options):
+    config = load_config(**options)
+    findings = [finding._asdict() for finding in lint_text(config, html)]
+    return format_text(config, html).rstrip(), findings
 
-_djlint_format
+_djlint_run
 `);
   self.postMessage({ type: "status", message: "ready" });
 }
@@ -59,18 +41,20 @@ const pyodideReadyPromise = loadPyodideAndPackages().catch((error) => {
   throw error;
 });
 
-self.onmessage = async (event) => {
+// The page sends djlint.api.load_config's keyword arguments, with numbers as
+// numbers, and gets back the formatted text and the findings on the original.
+self.onmessage = async ({ data: { id, options, html } }) => {
   await pyodideReadyPromise;
 
-  const { id, config, html } = event.data;
-
-  const options = pyodide.toPy(buildConfig(config));
+  const pyOptions = pyodide.toPy(options);
   try {
-    const output = formatHtml(html, options);
-    self.postMessage({ type: "html", message: output, id: id });
+    const result = run(html, pyOptions);
+    const [formatted, findings] = result.toJs({ dict_converter: Object.fromEntries });
+    result.destroy();
+    self.postMessage({ type: "result", id, html: formatted, findings });
   } catch (err) {
-    self.postMessage({ type: "error", message: err.message, id: id });
+    self.postMessage({ type: "error", id, message: err.message });
   } finally {
-    options.destroy();
+    pyOptions.destroy();
   }
 };
