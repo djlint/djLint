@@ -44,7 +44,8 @@ async function describe(text: string) {
   };
   for (const match of text.matchAll(fence)) {
     await prose(match.index);
-    parts.push({ lang: match[1] || "text", code: match[2] });
+    // html is highlighted as Twig, as in the pages (see astro.config.mjs).
+    parts.push({ lang: match[1] === "html" ? "twig" : match[1] || "text", code: match[2] });
     last = match.index + match[0].length;
   }
   await prose(text.length);

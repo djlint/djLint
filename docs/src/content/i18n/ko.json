@@ -22,6 +22,7 @@
   "djlint.since": "도입 버전",
   "djlint.hero_problems": "문제 {count}개",
   "djlint.hero_clean": "문제 없음",
+  "djlint.hero_run": "실행",
   "djlint.hero_undo": "원본 보기",
   "djlint.copy": "복사",
   "djlint.copied": "복사됨"

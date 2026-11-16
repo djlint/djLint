@@ -42,6 +42,9 @@
   --sl-text-h3: 1.3rem;
   --sl-line-height: 1.7;
   --sl-content-width: 46rem;
+  /* The content panel's own padding is room enough under the footer.
+     Starlight's extra 3vh made pages scroll that otherwise fit the window. */
+  --sl-main-pad: 0;
 }
 
 :root[data-theme="light"] {

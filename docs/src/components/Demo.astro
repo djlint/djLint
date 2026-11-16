@@ -123,7 +123,7 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
 }
 
 <script>
-  import { html } from "@codemirror/lang-html";
+  import { jinja } from "@codemirror/lang-jinja";
   import { EditorState } from "@codemirror/state";
   import { basicSetup, EditorView } from "codemirror";
   import { decodeState, encodeState } from "../scripts/demo-state";
@@ -140,7 +140,8 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
       doc,
       extensions: [
         basicSetup,
-        html(),
+        // HTML with the {{ }}, {% %} and {# #} tags of Django, Jinja, Nunjucks and Twig.
+        jinja(),
         djlintEditorTheme,
         EditorView.contentAttributes.of({ "aria-labelledby": label }),
         ...extensions,

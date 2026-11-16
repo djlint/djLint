@@ -8,6 +8,9 @@ const { t } = Astro.locals;
 const { title, tagline, actions = [] } = Astro.locals.starlightRoute.entry.data.hero!;
 
 const installs = ["uv tool install djlint", "pip install djlint"];
+// What the run button shows, one word per span: a narrow screen wraps it
+// between the arguments, not after the dashes inside one.
+const command = ["djlint", "messy.html", "--reformat", "--single-attribute-per-line"];
 
 // `djlint messy.html --lint --profile=django`, one finding per mark.
 const marks: Record<number, [string, string, string][]> = {
@@ -185,10 +188,27 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
       ))
     }</code></pre>
     <button type="button" class="run">
-      <span class="when-messy"
-        ><span class="prompt" aria-hidden="true">$</span> djlint messy.html --reformat --single-attribute-per-line</span
-      >
-      <span class="when-clean">{t("djlint.hero_undo")}</span>
+      <span class="command">
+        <span class="prompt" aria-hidden="true">$</span>
+        {
+          command.map((arg) => (
+            <>
+              {" "}
+              <span class="arg">{arg}</span>
+            </>
+          ))
+        }
+      </span>
+      <span class="action when-messy">
+        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor" /></svg>
+        {t("djlint.hero_run")}
+      </span>
+      <span class="action when-clean">
+        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+          <path d="M3 8a5 5 0 1 0 1.5-3.5M3 2.5v3h3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {t("djlint.hero_undo")}
+      </span>
     </button>
   </figure>
 </div>
@@ -437,10 +457,14 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     outline: 1px solid var(--dj-squiggle);
   }
 
+  /* The whole bar is the button; the yellow pill says what clicking it does. */
   .run {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 0.75rem 0.6rem 1rem;
     border: 0;
     border-top: 1px solid var(--dj-code-line);
     background: #16161e;
@@ -455,6 +479,47 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   }
   .run .prompt {
     color: var(--dj-squiggle);
+  }
+  /* No narrower than its longest argument: where that leaves no room for
+     the pill, the pill moves to a line of its own. */
+  .command {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 0 1ch;
+  }
+  .arg {
+    white-space: nowrap;
+  }
+  .editor[data-state="clean"] .command {
+    color: #7d84ad;
+  }
+  .action {
+    flex: none;
+    margin-inline-start: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--dj-squiggle);
+    border-radius: 999px;
+    background: var(--dj-squiggle);
+    color: #15161f;
+    font-family: var(--sl-font);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .run:hover .action.when-messy {
+    background: #ffd65c;
+  }
+  .action.when-clean {
+    border-color: #3b4061;
+    background: transparent;
+    color: var(--fg);
+  }
+  .run:hover .action.when-clean {
+    border-color: #7d84ad;
   }
 
   /* Title and calls to action on the left, the explanation and install
