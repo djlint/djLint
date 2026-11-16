@@ -66,6 +66,19 @@ def test_a_file_s_config_does_not_read_the_current_folder(
     assert config.for_file(project / "web" / "index.html").indent_size == 2
 
 
+def test_a_file_of_another_project_reads_that_project_s_editorconfig(
+    project: Path, tmp_path_factory: pytest.TempPathFactory
+) -> None:
+    other = tmp_path_factory.mktemp("other")
+    (other / ".git").mkdir()
+    (other / ".editorconfig").write_text("[*]\nindent_size = 2\n", encoding="utf-8")
+    (other / "templates").mkdir()
+
+    config = Config(str(project))
+
+    assert config.for_file(other / "templates" / "index.html").indent_size == 2
+
+
 def test_a_directory_run_formats_each_file_by_its_editorconfig(
     runner: CliRunner, project: Path
 ) -> None:
@@ -111,6 +124,7 @@ def test_stdin_takes_the_editorconfig_of_its_filename(runner: CliRunner, project
         ("{{1..3},index}.html", ["2.html", "index.html"], ["4.html", "{index}.html"]),
         ("{a,{b}}.html", ["a.html", "{b}.html"], ["b.html"]),
         (r"{a\,b}.html", ["{a,b}.html"], ["a,b.html"]),
+        ("{[a,b]}.html", ["{a}.html", "{,}.html"], ["a.html"]),
         ("a[*/]b.html", ["a[*/]b.html"], ["a[xyz/]b.html", "a*b.html"]),
         ("[!b]*.html", ["a.html"], ["b.html"]),
         ("[ab].html", ["a.html", "b.html"], ["c.html"]),

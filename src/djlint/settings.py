@@ -185,24 +185,6 @@ def find_djlint_rules(root: Path) -> Path | None:
 _EDITORCONFIG_PROPERTIES: Final = frozenset(("indent_size", "max_line_length"))
 
 
-def _closing_brace(glob: str, start: int) -> int:
-    """The index of the `}` that closes the `{` at start, or -1 without one."""
-    depth = 0
-    i = start
-    while i < len(glob):
-        if glob[i] == "\\":
-            i += 2
-            continue
-        if glob[i] == "{":
-            depth += 1
-        elif glob[i] == "}":
-            depth -= 1
-            if not depth:
-                return i
-        i += 1
-    return -1
-
-
 def _closing_bracket(glob: str, start: int) -> int:
     """The index of the `]` that closes the `[` at start, or -1 without one."""
     i = start + 1
@@ -216,22 +198,33 @@ def _closing_bracket(glob: str, start: int) -> int:
     return -1
 
 
-def _has_alternatives(span: str) -> bool:
-    """Whether the inside of a `{...}` has a `,` of its own, unescaped."""
+def _brace(glob: str, start: int) -> tuple[int, bool]:
+    """The index of the `}` closing the `{` at start, or -1, and if it has alternatives.
+
+    Only a `,` of its own makes them: one unescaped, and outside a nested
+    `{...}` or a `[...]`.
+    """
     depth = 0
-    i = 0
-    while i < len(span):
-        if span[i] == "\\":
+    alternatives = False
+    i = start
+    while i < len(glob):
+        char = glob[i]
+        if char == "\\":
             i += 2
             continue
-        if span[i] == "{":
+        if char == "[" and (close := _closing_bracket(glob, i)) != -1:
+            i = close + 1
+            continue
+        if char == "{":
             depth += 1
-        elif span[i] == "}":
+        elif char == "}":
             depth -= 1
-        elif span[i] == "," and not depth:
-            return True
+            if not depth:
+                return i, alternatives
+        elif char == "," and depth == 1:
+            alternatives = True
         i += 1
-    return False
+    return -1, False
 
 
 def _character_class(body: str) -> str:
@@ -302,7 +295,7 @@ class _EditorConfigGlob:
                 i = close + 1
                 continue
             elif char == "{":
-                close = _closing_brace(glob, i)
+                close, alternatives = _brace(glob, i)
                 span = glob[i + 1 : close] if close != -1 else ""
                 if numbers := re.fullmatch(r"([+-]?[0-9]+)\.\.([+-]?[0-9]+)", span):
                     low, high = sorted((int(numbers[1]), int(numbers[2])))
@@ -310,7 +303,7 @@ class _EditorConfigGlob:
                     out.append("([+-]?(?:0|[1-9][0-9]*))")
                     i = close + 1
                     continue
-                braces.append(_has_alternatives(span))
+                braces.append(alternatives)
                 out.append("(?:" if braces[-1] else re.escape(char))
             elif char == "}" and braces:
                 out.append(")" if braces.pop() else re.escape(char))
@@ -377,7 +370,11 @@ def editorconfig_files(
     """
     folders = [folder, *folder.parents]
     found = []
-    for directory in folders[: folders.index(root) + 1] if root in folders else [folder]:
+    if root not in folders:
+        # A file outside the project of the run, as with `djlint a b`,
+        # searches up to its own project's root.
+        root = find_project_root(folder)
+    for directory in folders[: folders.index(root) + 1]:
         path = directory / ".editorconfig"
         if path.is_file():
             sections, is_root = _read_editorconfig(path)
