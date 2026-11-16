@@ -166,10 +166,15 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
 
   // The address always holds the current example, so it can be shared as is.
   // The welcome example with no settings keeps the plain address.
-  async function saveState(html: string, config: Record<string, string | boolean>, id: number) {
+  async function exampleUrl(html: string, config: Record<string, string | boolean>) {
     const plain = html === WELCOME && Object.keys(config).length === 0;
     const hash = plain ? "" : `#${await encodeState({ html, config })}`;
-    if (id === sessionId) history.replaceState(null, "", `${location.pathname}${hash}`);
+    return `${location.origin}${location.pathname}${hash}`;
+  }
+
+  async function saveState(html: string, config: Record<string, string | boolean>, id: number) {
+    const url = await exampleUrl(html, config);
+    if (id === sessionId) history.replaceState(null, "", url);
   }
 
   function format() {
@@ -180,11 +185,21 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
     void saveState(html, config, sessionId);
   }
 
+  // A later restore wins over an earlier one that is still decoding.
+  let restoreId = 0;
   async function restore() {
-    const state = await decodeState(location.hash.slice(1));
-    if (!state) return;
+    const id = ++restoreId;
+    const hash = location.hash.slice(1);
+    // No hash is the welcome example (going back to the plain address); a hash
+    // that doesn't decode, such as #_top from the skip link, changes nothing.
+    const state = hash ? await decodeState(hash) : { html: WELCOME, config: {} };
+    if (!state || id !== restoreId) return;
     setConfig(state.config);
-    input.dispatch({ changes: { from: 0, to: input.state.doc.length, insert: state.html } });
+    if (state.html !== input.state.doc.toString()) {
+      input.dispatch({ changes: { from: 0, to: input.state.doc.length, insert: state.html } });
+    } else {
+      format();
+    }
   }
 
   let timer: ReturnType<typeof setTimeout>;
@@ -241,10 +256,20 @@ const helpLabel = (label: string) => `${t("djlint.configuration")}: ${label}`;
   const shareLabel = share.textContent!.trim();
   let shareTimer: ReturnType<typeof setTimeout> | undefined;
   share.addEventListener("click", async () => {
+    // The link is made from the editor as it is now, not from the address,
+    // which waits for the debounce. Safari only lets the click itself write
+    // to the clipboard, so the link goes in as a promise.
+    const url = exampleUrl(input.state.doc.toString(), getConfig());
+    const blob = url.then((text) => new Blob([text], { type: "text/plain" }));
     try {
-      await navigator.clipboard.writeText(location.href);
+      await navigator.clipboard.write([new ClipboardItem({ "text/plain": blob })]);
     } catch {
-      return; // Clipboard access was denied; the address bar has the link too.
+      // A browser without promises in ClipboardItem gets the finished text.
+      try {
+        await navigator.clipboard.writeText(await url);
+      } catch {
+        return; // Clipboard access was denied; the address bar has the link too.
+      }
     }
     clearTimeout(shareTimer);
     share.textContent = shareStatus.textContent = share.dataset.copied!;
