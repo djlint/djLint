@@ -30,6 +30,17 @@ It needs djLint 1.49 or newer on PATH, or [uv](https://docs.astral.sh/uv/), whic
 
 ## Neovim
 
+Neovim gives some template extensions no filetype. Whichever option below you use, register them first:
+
+```lua
+vim.filetype.add({
+  extension = {
+    gohtml = "gotmpl", gotmpl = "gotmpl", handlebars = "handlebars",
+    j2 = "jinja", jinja2 = "jinja", mako = "mako", njk = "nunjucks",
+  },
+})
+```
+
 ### Built-in LSP client (recommended)
 
 Neovim 0.11 or newer can talk to the [language server](#language-server) of djLint directly, with no plugin. That gives findings as you type, with underlined ranges, and `vim.lsp.buf.format()` for formatting:
@@ -38,8 +49,8 @@ Neovim 0.11 or newer can talk to the [language server](#language-server) of djLi
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
   filetypes = {
-    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
-    "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+    "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
   },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
@@ -49,12 +60,15 @@ vim.lsp.enable("djlint")
 To format on save, add this to the same configuration:
 
 ```lua
+local group = vim.api.nvim_create_augroup("djlint_format", {})
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
       return
     end
+    vim.api.nvim_clear_autocmds({ group = group, buffer = args.buf })
     vim.api.nvim_create_autocmd("BufWritePre", {
+      group = group,
       buffer = args.buf,
       callback = function()
         vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
@@ -68,19 +82,29 @@ See [Settings](#settings).
 
 ### conform.nvim and nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) formats and [nvim-lint](https://github.com/mfussenegger/nvim-lint) lints, by running djLint as a command. Findings have no underlined range, and arrive only when you ask nvim-lint to lint.
+[conform.nvim](https://github.com/stevearc/conform.nvim) formats and [nvim-lint](https://github.com/mfussenegger/nvim-lint) lints, by running djLint as a command. Findings have no underlined range, and arrive only when you ask nvim-lint to lint. The profile comes from the project's [configuration](/docs/configuration/#profile), as on the command line.
 
 ```lua
 local formatters, linters = {}, {}
 for _, filetype in ipairs({
-  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
-  "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+  "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
 }) do
   formatters[filetype] = { "djlint" }
   linters[filetype] = { "djlint" }
 end
-require("conform").setup({ formatters_by_ft = formatters })
-require("lint").linters_by_ft = linters
+require("conform").setup({
+  formatters_by_ft = formatters,
+  formatters = { djlint = { prepend_args = { "--stdin-filename", "$FILENAME" } } },
+})
+local lint = require("lint")
+lint.linters_by_ft = linters
+vim.list_extend(lint.linters.djlint.args, {
+  "--stdin-filename",
+  function()
+    return vim.api.nvim_buf_get_name(0)
+  end,
+})
 ```
 
 ### none-ls
@@ -171,16 +195,17 @@ name = "tera"
 language-servers = ["djlint"]
 ```
 
+Helix opens no file as `htmldjango` by itself. In a Django project, add `file-types = ["html"]` to that entry in the project's `.helix/languages.toml`.
+
 ## Emacs
 
 Eglot, which comes with Emacs 29 and newer:
 
 ```elisp
 (with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '((html-mode mhtml-mode web-mode jinja2-mode twig-mode
-                  handlebars-mode mustache-mode)
-                 . ("djlint" "--lsp"))))
+  (dolist (mode '(html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode))
+    (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
 Then run `M-x eglot` in a template. `eglot-format-buffer` formats it.

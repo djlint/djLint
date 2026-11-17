@@ -30,6 +30,17 @@ PATH'te djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştır
 
 ## Neovim
 
+Neovim bazı şablon uzantılarına dosya türü atamaz. Aşağıdaki seçeneklerden hangisini kullanırsanız kullanın, önce bunları kaydedin:
+
+```lua
+vim.filetype.add({
+  extension = {
+    gohtml = "gotmpl", gotmpl = "gotmpl", handlebars = "handlebars",
+    j2 = "jinja", jinja2 = "jinja", mako = "mako", njk = "nunjucks",
+  },
+})
+```
+
 ### Yerleşik LSP istemcisi (önerilen)
 
 Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](#dil-sunucusu) doğrudan konuşabilir. Bu sayede bulgular, altı çizili aralıklarla birlikte siz yazarken gelir ve biçimlendirme için `vim.lsp.buf.format()` kullanılabilir:
@@ -38,8 +49,8 @@ Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
   filetypes = {
-    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
-    "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+    "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
   },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
@@ -49,12 +60,15 @@ vim.lsp.enable("djlint")
 Kaydederken biçimlendirmek için aynı yapılandırmaya şunu ekleyin:
 
 ```lua
+local group = vim.api.nvim_create_augroup("djlint_format", {})
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
       return
     end
+    vim.api.nvim_clear_autocmds({ group = group, buffer = args.buf })
     vim.api.nvim_create_autocmd("BufWritePre", {
+      group = group,
       buffer = args.buf,
       callback = function()
         vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
@@ -68,19 +82,29 @@ Bkz. [Ayarlar](#ayarlar).
 
 ### conform.nvim ve nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) biçimlendirir, [nvim-lint](https://github.com/mfussenegger/nvim-lint) ise lint denetimi yapar; ikisi de djLint'i bir komut olarak çalıştırır. Bulguların altı çizili bir aralığı olmaz ve yalnızca nvim-lint'ten denetim yapmasını istediğinizde gelirler.
+[conform.nvim](https://github.com/stevearc/conform.nvim) biçimlendirir, [nvim-lint](https://github.com/mfussenegger/nvim-lint) ise lint denetimi yapar; ikisi de djLint'i bir komut olarak çalıştırır. Bulguların altı çizili bir aralığı olmaz ve yalnızca nvim-lint'ten denetim yapmasını istediğinizde gelirler. Profil, komut satırında olduğu gibi projenin [yapılandırmasından](/tr/docs/configuration/#profile) gelir.
 
 ```lua
 local formatters, linters = {}, {}
 for _, filetype in ipairs({
-  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
-  "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+  "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
 }) do
   formatters[filetype] = { "djlint" }
   linters[filetype] = { "djlint" }
 end
-require("conform").setup({ formatters_by_ft = formatters })
-require("lint").linters_by_ft = linters
+require("conform").setup({
+  formatters_by_ft = formatters,
+  formatters = { djlint = { prepend_args = { "--stdin-filename", "$FILENAME" } } },
+})
+local lint = require("lint")
+lint.linters_by_ft = linters
+vim.list_extend(lint.linters.djlint.args, {
+  "--stdin-filename",
+  function()
+    return vim.api.nvim_buf_get_name(0)
+  end,
+})
 ```
 
 ### none-ls
@@ -171,16 +195,17 @@ name = "tera"
 language-servers = ["djlint"]
 ```
 
+Helix hiçbir dosyayı kendiliğinden `htmldjango` olarak açmaz. Bir Django projesinde, projenin `.helix/languages.toml` dosyasında bu girdiye `file-types = ["html"]` ekleyin.
+
 ## Emacs
 
 Emacs 29 ve üzeriyle birlikte gelen Eglot ile:
 
 ```elisp
 (with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '((html-mode mhtml-mode web-mode jinja2-mode twig-mode
-                  handlebars-mode mustache-mode)
-                 . ("djlint" "--lsp"))))
+  (dolist (mode '(html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode))
+    (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
 Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şablonu biçimlendirir.

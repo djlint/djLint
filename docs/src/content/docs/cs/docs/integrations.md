@@ -30,6 +30,17 @@ Potřebuje djLint 1.49 nebo novější v PATH, nebo [uv](https://docs.astral.sh/
 
 ## Neovim
 
+Některým příponám šablon Neovim žádný filetype nepřiřadí. Ať použijete kteroukoli možnost níže, nejdřív je zaregistrujte:
+
+```lua
+vim.filetype.add({
+  extension = {
+    gohtml = "gotmpl", gotmpl = "gotmpl", handlebars = "handlebars",
+    j2 = "jinja", jinja2 = "jinja", mako = "mako", njk = "nunjucks",
+  },
+})
+```
+
 ### Vestavěný klient LSP (doporučeno)
 
 Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`:
@@ -38,8 +49,8 @@ Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
   filetypes = {
-    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
-    "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+    "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
   },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
@@ -49,12 +60,15 @@ vim.lsp.enable("djlint")
 Chcete-li formátovat při ukládání, přidejte do stejné konfigurace:
 
 ```lua
+local group = vim.api.nvim_create_augroup("djlint_format", {})
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
       return
     end
+    vim.api.nvim_clear_autocmds({ group = group, buffer = args.buf })
     vim.api.nvim_create_autocmd("BufWritePre", {
+      group = group,
       buffer = args.buf,
       callback = function()
         vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
@@ -68,19 +82,29 @@ Viz [Nastavení](#nastaveni).
 
 ### conform.nvim a nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) formátuje a [nvim-lint](https://github.com/mfussenegger/nvim-lint) lintuje tak, že djLint spouštějí jako příkaz. Nálezy nemají podtržený úsek a objeví se, jen když nvim-lint požádáte o lintování.
+[conform.nvim](https://github.com/stevearc/conform.nvim) formátuje a [nvim-lint](https://github.com/mfussenegger/nvim-lint) lintuje tak, že djLint spouštějí jako příkaz. Nálezy nemají podtržený úsek a objeví se, jen když nvim-lint požádáte o lintování. Profil se bere z [konfigurace](/cs/docs/configuration/#profile) projektu, stejně jako na příkazové řádce.
 
 ```lua
 local formatters, linters = {}, {}
 for _, filetype in ipairs({
-  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
-  "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+  "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
 }) do
   formatters[filetype] = { "djlint" }
   linters[filetype] = { "djlint" }
 end
-require("conform").setup({ formatters_by_ft = formatters })
-require("lint").linters_by_ft = linters
+require("conform").setup({
+  formatters_by_ft = formatters,
+  formatters = { djlint = { prepend_args = { "--stdin-filename", "$FILENAME" } } },
+})
+local lint = require("lint")
+lint.linters_by_ft = linters
+vim.list_extend(lint.linters.djlint.args, {
+  "--stdin-filename",
+  function()
+    return vim.api.nvim_buf_get_name(0)
+  end,
+})
 ```
 
 ### none-ls
@@ -171,16 +195,17 @@ name = "tera"
 language-servers = ["djlint"]
 ```
 
+Helix sám žádný soubor jako `htmldjango` neotevře. V projektu s Djangem přidejte k této položce `file-types = ["html"]` v souboru `.helix/languages.toml` projektu.
+
 ## Emacs
 
 Eglot, který je součástí Emacsu 29 a novějšího:
 
 ```elisp
 (with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '((html-mode mhtml-mode web-mode jinja2-mode twig-mode
-                  handlebars-mode mustache-mode)
-                 . ("djlint" "--lsp"))))
+  (dolist (mode '(html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode))
+    (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
 Pak v šabloně spusťte `M-x eglot`. Příkaz `eglot-format-buffer` ji naformátuje.

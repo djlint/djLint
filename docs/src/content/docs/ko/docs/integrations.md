@@ -30,6 +30,17 @@ PATH에 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [u
 
 ## Neovim
 
+Neovim은 일부 템플릿 확장자에 파일 타입을 지정하지 않습니다. 아래 어떤 방법을 쓰든 먼저 등록하세요.
+
+```lua
+vim.filetype.add({
+  extension = {
+    gohtml = "gotmpl", gotmpl = "gotmpl", handlebars = "handlebars",
+    j2 = "jinja", jinja2 = "jinja", mako = "mako", njk = "nunjucks",
+  },
+})
+```
+
 ### 내장 LSP 클라이언트(권장)
 
 Neovim 0.11 이상은 플러그인 없이 djLint의 [언어 서버](#언어-서버)와 직접 통신할 수 있습니다. 입력하는 동안 범위에 밑줄이 그어진 검사 결과를 받을 수 있고, `vim.lsp.buf.format()`으로 포맷할 수 있습니다.
@@ -38,8 +49,8 @@ Neovim 0.11 이상은 플러그인 없이 djLint의 [언어 서버](#언어-서�
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
   filetypes = {
-    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
-    "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+    "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
   },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
@@ -49,12 +60,15 @@ vim.lsp.enable("djlint")
 저장할 때 포맷하려면 같은 구성에 다음을 추가합니다.
 
 ```lua
+local group = vim.api.nvim_create_augroup("djlint_format", {})
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
       return
     end
+    vim.api.nvim_clear_autocmds({ group = group, buffer = args.buf })
     vim.api.nvim_create_autocmd("BufWritePre", {
+      group = group,
       buffer = args.buf,
       callback = function()
         vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
@@ -68,19 +82,29 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 ### conform.nvim과 nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim)은 포맷을, [nvim-lint](https://github.com/mfussenegger/nvim-lint)는 린트를 맡으며, 둘 다 djLint를 명령으로 실행합니다. 검사 결과에 밑줄이 그어진 범위가 없고, nvim-lint에 린트를 요청할 때만 결과가 나타납니다.
+[conform.nvim](https://github.com/stevearc/conform.nvim)은 포맷을, [nvim-lint](https://github.com/mfussenegger/nvim-lint)는 린트를 맡으며, 둘 다 djLint를 명령으로 실행합니다. 검사 결과에 밑줄이 그어진 범위가 없고, nvim-lint에 린트를 요청할 때만 결과가 나타납니다. 프로필은 명령줄에서처럼 프로젝트 [구성](/ko/docs/configuration/#profile)에서 정해집니다.
 
 ```lua
 local formatters, linters = {}, {}
 for _, filetype in ipairs({
-  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
-  "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+  "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
 }) do
   formatters[filetype] = { "djlint" }
   linters[filetype] = { "djlint" }
 end
-require("conform").setup({ formatters_by_ft = formatters })
-require("lint").linters_by_ft = linters
+require("conform").setup({
+  formatters_by_ft = formatters,
+  formatters = { djlint = { prepend_args = { "--stdin-filename", "$FILENAME" } } },
+})
+local lint = require("lint")
+lint.linters_by_ft = linters
+vim.list_extend(lint.linters.djlint.args, {
+  "--stdin-filename",
+  function()
+    return vim.api.nvim_buf_get_name(0)
+  end,
+})
 ```
 
 ### none-ls
@@ -171,16 +195,17 @@ name = "tera"
 language-servers = ["djlint"]
 ```
 
+Helix는 스스로 어떤 파일도 `htmldjango`로 열지 않습니다. Django 프로젝트에서는 프로젝트의 `.helix/languages.toml`에서 이 항목에 `file-types = ["html"]`을 추가하세요.
+
 ## Emacs
 
 Emacs 29 이상에 포함된 Eglot에서는 다음과 같이 합니다.
 
 ```elisp
 (with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '((html-mode mhtml-mode web-mode jinja2-mode twig-mode
-                  handlebars-mode mustache-mode)
-                 . ("djlint" "--lsp"))))
+  (dolist (mode '(html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode))
+    (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
 그런 다음 템플릿에서 `M-x eglot`을 실행합니다. `eglot-format-buffer`로 템플릿을 포맷할 수 있습니다.
