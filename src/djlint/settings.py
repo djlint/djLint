@@ -754,10 +754,31 @@ def _beautifier_config(
 
 
 def build_exclude(exclude: str) -> str:
-    """Build regex string for exclude paths."""
+    """Build regex string for exclude paths.
+
+    The patterns are verbose, so each goes on a line of its own: a `#`
+    comment in one then ends with it, rather than swallowing the rest.
+    """
     if "," not in exclude:
         return exclude
-    return r" | ".join(split_option_list(exclude))
+    return "\n| ".join(split_option_list(exclude))
+
+
+def _check_regex(setting: str, pattern: str) -> None:
+    """Refuse a setting whose value is no regular expression.
+
+    exclude, extend_exclude and per-file-ignores take regexes, and a shell glob
+    such as *.min.html isn't one; it would otherwise stop the run with a
+    traceback.
+    """
+    try:
+        compile_pattern(pattern, re.X)
+    except re.error as error:
+        msg = (
+            f"Invalid {setting} {pattern!r}: {error}. It takes regular expressions,"
+            r" so *.min.html is written .*\.min\.html."
+        )
+        raise UsageError(msg) from None
 
 
 _CODES_EXCLUDED_BY_PROFILE: Final[dict[str, tuple[str, ...]]] = {
@@ -1861,6 +1882,8 @@ class Config:
                 else djlint_settings.get("per-file-ignores", {})
             ).items()
         }
+        for pattern in self.per_file_ignores:
+            _check_regex("per-file-ignores", pattern)
         self.blank_line_after_tag = blank_line_after_tag or _as_comma_separated(
             djlint_settings.get("blank_line_after_tag", None)
         )
@@ -1928,13 +1951,18 @@ class Config:
         exclude = build_exclude(
             exclude or _as_comma_separated(djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
         )
+        _check_regex("exclude", exclude)
         extend_exclude = extend_exclude or _as_comma_separated(
             djlint_settings.get("extend_exclude", "")
         )
         if extend_exclude:
-            exclude += r" | " + build_exclude(extend_exclude)
+            _check_regex("extend_exclude", build_exclude(extend_exclude))
+            exclude += "\n| " + build_exclude(extend_exclude)
         self.exclude = exclude
-        self.exclude_pattern = compile_pattern(rf"(?:^|/)(?:{exclude})(?=$|/|(?<=/))", re.X)
+        # A line break ends a `#` comment the patterns may close with.
+        self.exclude_pattern = compile_pattern(
+            rf"(?:^|/)(?:{exclude}" + "\n" + r")(?=$|/|(?<=/))", re.X
+        )
 
         self.files = djlint_settings.get("files", None)
         self.stdin = (src == "-" if stdin is None else stdin) and (

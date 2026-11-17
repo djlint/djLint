@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- A pattern in `exclude`, `extend_exclude` or `per-file-ignores` that isn't a valid regular expression, such as the shell glob `*.min.html`, is an error naming the setting, with the regular expression to write instead. It used to stop the run with a traceback. A `#` comment at the end of an `exclude` or `extend_exclude` entry no longer hides the entries after it.
+- The `djlint-handlebars` and `djlint-reformat-handlebars` pre-commit hooks also check `.mustache` files, and the Liquid hooks also check `.liquid` files. They used to skip them.
+
 ## [1.52.0] - 2026-11-17
 
 ### Feature

@@ -17,7 +17,7 @@ from djlint.settings import Config
 def test_default() -> None:
     config = Config(str(Path(__file__).parent / "blank.html"))
 
-    assert config.exclude == ".venv | venv | .tox | .eggs | ... | .custom"
+    assert config.exclude == ".venv\n| venv\n| .tox\n| .eggs\n| ...\n| .custom"
     assert config.blank_line_after_tag == "load,extends,include"
     assert config.blank_line_before_tag == "load,extends,include"
     assert config.custom_blocks == r"|endexample\b|endtoc\b|example\b|toc\b"

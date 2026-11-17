@@ -16,7 +16,7 @@ from djlint.settings import Config
 def test_list_settings() -> None:
     config = Config(str(Path(__file__) / "blank.html"))
 
-    assert config.exclude == "foo/excluded.html | excluded.html"
+    assert config.exclude == "foo/excluded.html\n| excluded.html"
     assert config.blank_line_after_tag == "load,extends,include"
     assert config.blank_line_before_tag == "load,extends,include"
     assert config.custom_blocks == r"|endexample\b|endtoc\b|example\b|toc\b"
