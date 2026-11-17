@@ -198,6 +198,28 @@ test_data = [
         ([]),
         id="dynamic_textarea_id_silences_file",
     ),
+    pytest.param(
+        (
+            '<label for="x">X</label>\n'
+            "<preview-card></preview-card>\n"
+            "<script-x></script-x>\n"
+            '<input id="x">\n'
+        ),
+        ([]),
+        id="custom_element_named_like_raw_text_hides_nothing",
+    ),
+    pytest.param(
+        ('<label for="x">X</label>\n<script>a()</script-x><input id="x"></script>\n'),
+        ([
+            {
+                "code": "H042",
+                "line": "1:0",
+                "match": '<label for="x">',
+                "message": "Label for attribute has no matching element id in this file.",
+            }
+        ]),
+        id="custom_closing_tag_does_not_end_raw_text",
+    ),
 ]
 
 

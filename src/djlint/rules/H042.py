@@ -157,14 +157,15 @@ def run(
     **kwargs: Any,
 ) -> tuple[LintError, ...]:
     """Check that label for attributes match an id in the file."""
-    ids: set[str] = set()
-    labels: list[tuple[TagToken, str]] = []
+    if not _holds_the_labelled_control(tokenize_tags(html)):
+        return ()
+
     masked = _masked(config, html)
     if not _can_check(masked):
         return ()
 
-    if not _holds_the_labelled_control(tokenize_tags(html)):
-        return ()
+    ids: set[str] = set()
+    labels: list[tuple[TagToken, str]] = []
 
     for token in tokenize_tags(masked):
         if token.closing or token.declaration:

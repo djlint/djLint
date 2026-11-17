@@ -30,6 +30,10 @@ sources = [
     pytest.param("<style>\n" * 4000, id="styles never closed"),
     pytest.param("<textarea>\n" * 4000, id="textareas never closed"),
     pytest.param("<!-- a\n" * 20000, id="comments never closed"),
+    pytest.param(
+        '<label for="a">A</label><input id="a">\n' + "<!-- a\n" * 20000,
+        id="comments never closed after a form",
+    ),
     pytest.param("</p\n" * 20000, id="closing tags with no > after them"),
     pytest.param('</p x="a\n' * 20000, id="closing tags each opening a value"),
     pytest.param("</p {\n" * 20000 + "<div>", id="closing tags each opening a brace"),

@@ -7,6 +7,7 @@
 ### Bug fixes
 
 - `H042` no longer reports a `<label for>` that points at a `<textarea>`. When it looked for ids, it skipped every `<textarea>`, `<script>`, `<style>` and `<pre>` element whole, opening tag included, so an `id` written on one never counted.
+- The linter no longer skips what follows a custom element whose name starts with that of a raw text element, such as `<preview-card>` or `<script-x>`. It used to read one as a `<pre>` or `<script>` that runs on to the next `</pre>` or `</script>`, or to the end of the file.
 
 ## [1.53.0] - 2026-11-17
 
