@@ -21,6 +21,9 @@ if TYPE_CHECKING:
         (r"report[0-9]{1,2}\.html", ["report1.html", "report12.html"], ["report123.html"]),
         (r"[,;]tmp\.html,vendor", [",tmp.html", "vendor/a.html"], ["tmp.html"]),
         (r"a\,b\.html,build", ["a,b.html", "build/a.html"], ["a.html"]),
+        # A bracket in a comment opens nothing, so the comma still ends it.
+        ("legacy # generated {,vendor", ["legacy/a.html", "vendor/a.html"], ["a.html"]),
+        ("legacy # see [1,vendor", ["legacy/a.html", "vendor/a.html"], ["a.html"]),
     ],
 )
 def test_commas_inside_a_regex_belong_to_it(
@@ -38,3 +41,17 @@ def test_a_list_in_the_config_file_keeps_its_commas(tmp_path: Path) -> None:
     )
 
     assert Config(str(tmp_path)).exclude_pattern.search("report12.html")
+
+
+def test_each_item_of_a_list_is_one_regex(tmp_path: Path) -> None:
+    # A literal brace no longer pulls the next item into its regex.
+    (tmp_path / "djlint.toml").write_text(
+        'exclude = ["a{", "vendor", "b,c\\\\.html"]\n', encoding="utf-8"
+    )
+
+    pattern = Config(str(tmp_path)).exclude_pattern
+
+    assert [
+        path for path in ("a{/x.html", "vendor/x.html", "b,c.html") if not pattern.search(path)
+    ] == []
+    assert not pattern.search("c.html")

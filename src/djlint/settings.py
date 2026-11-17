@@ -761,12 +761,13 @@ def _split_patterns(value: str) -> list[str]:
     r"""Split comma-separated regexes, dropping blank entries.
 
     A comma inside `{1,2}` or `[,;]`, or escaped as `\,`, belongs to its
-    regex, so `report[0-9]{1,2}\.html` stays one pattern.
+    regex, so `report[0-9]{1,2}\.html` stays one pattern. A `#` comment ends
+    at the next comma, whatever brackets it holds.
     """
     parts: list[str] = []
     current: list[str] = []
     braces = 0
-    in_class = False
+    in_class = in_comment = False
     i = 0
     while i < len(value):
         char = value[i]
@@ -774,17 +775,23 @@ def _split_patterns(value: str) -> list[str]:
             current.append(value[i : i + 2])
             i += 2
             continue
-        if in_class:
+        if in_comment:
+            in_comment = char != "\n"
+        elif in_class:
             in_class = char != "]"
+        elif char == "#":
+            in_comment = True
         elif char == "[":
             in_class = True
         elif char == "{":
             braces += 1
         elif char == "}" and braces:
             braces -= 1
-        elif char == "," and not braces:
+        if char == "," and (in_comment or not (braces or in_class)):
             parts.append("".join(current))
             current = []
+            braces = 0
+            in_comment = False
             i += 1
             continue
         current.append(char)
@@ -793,12 +800,15 @@ def _split_patterns(value: str) -> list[str]:
     return [entry for part in parts if (entry := part.strip())]
 
 
-def build_exclude(exclude: str) -> str:
+def build_exclude(exclude: str | list[Any]) -> str:
     """Build regex string for exclude paths.
 
     The patterns are verbose, so each goes on a line of its own: a `#`
-    comment in one then ends with it, rather than swallowing the rest.
+    comment in one then ends with it, rather than swallowing the rest. A list
+    from a config file holds one regex per item, commas and all.
     """
+    if not isinstance(exclude, str):
+        return "\n| ".join(entry for x in exclude if (entry := str(x).strip()))
     if "," not in exclude:
         return exclude
     return "\n| ".join(_split_patterns(exclude))
@@ -1988,13 +1998,9 @@ class Config:
         if self.preserve_blank_lines and self.max_blank_lines > 0:
             report("max_blank_lines has no effect with preserve_blank_lines.")
 
-        exclude = build_exclude(
-            exclude or _as_comma_separated(djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
-        )
+        exclude = build_exclude(exclude or djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
         _check_regex("exclude", exclude)
-        extend_exclude = extend_exclude or _as_comma_separated(
-            djlint_settings.get("extend_exclude", "")
-        )
+        extend_exclude = extend_exclude or djlint_settings.get("extend_exclude", "")
         if extend_exclude:
             _check_regex("extend_exclude", build_exclude(extend_exclude))
             exclude += "\n| " + build_exclude(extend_exclude)
