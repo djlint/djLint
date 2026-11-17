@@ -33,6 +33,17 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+npm 패키지는 자체 Python을 함께 제공하므로 Node.js 16.9 이상만 있으면 됩니다. Linux(x64, Arm64, ppc64le, s390x, riscv64), macOS(x64, Arm64), Windows(x64, x86, Arm64)용 빌드가 있습니다. Alpine처럼 musl을 쓰는 Linux에서는 x64와 Arm64에서 동작합니다. 프로젝트에 개발 의존성으로 추가합니다.
+
+```bash
+npm i -D djlint
+```
+
+그런 다음 `npx djlint`로 실행합니다. 예: `npx djlint . --lint`.
+
+</TabItem>
 <TabItem label="pipx">
 
 [pipx](https://pipx.pypa.io/)로 설치합니다.
@@ -49,17 +60,6 @@ macOS나 Linux에서는 커뮤니티가 관리하는 [Homebrew 포뮬러](https:
 ```bash
 brew install djlint
 ```
-
-</TabItem>
-<TabItem label="npm">
-
-npm 패키지는 자체 Python을 함께 제공하므로 Node.js 16.9 이상만 있으면 됩니다. Linux(x64, Arm64, ppc64le, s390x, riscv64), macOS(x64, Arm64), Windows(x64, x86, Arm64)용 빌드가 있습니다. Alpine처럼 musl을 쓰는 Linux에서는 x64와 Arm64에서 동작합니다. 프로젝트에 개발 의존성으로 추가합니다.
-
-```bash
-npm i -D djlint
-```
-
-그런 다음 `npx djlint`로 실행합니다. 예: `npx djlint . --lint`.
 
 </TabItem>
 </Tabs>

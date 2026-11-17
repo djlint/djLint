@@ -33,6 +33,17 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+The npm package comes with its own Python, so all it needs is Node.js 16.9 or newer. It has builds for Linux on x64, Arm64, ppc64le, s390x and riscv64, macOS on x64 and Arm64, and Windows on x64, x86 and Arm64. On Linux with musl, such as Alpine, it runs on x64 and Arm64. Add it to your project as a development dependency:
+
+```bash
+npm i -D djlint
+```
+
+Then run it with `npx djlint`, as in `npx djlint . --lint`.
+
+</TabItem>
 <TabItem label="pipx">
 
 With [pipx](https://pipx.pypa.io/):
@@ -49,17 +60,6 @@ With the community-maintained [Homebrew formula](https://formulae.brew.sh/formul
 ```bash
 brew install djlint
 ```
-
-</TabItem>
-<TabItem label="npm">
-
-The npm package comes with its own Python, so all it needs is Node.js 16.9 or newer. It has builds for Linux on x64, Arm64, ppc64le, s390x and riscv64, macOS on x64 and Arm64, and Windows on x64, x86 and Arm64. On Linux with musl, such as Alpine, it runs on x64 and Arm64. Add it to your project as a development dependency:
-
-```bash
-npm i -D djlint
-```
-
-Then run it with `npx djlint`, as in `npx djlint . --lint`.
 
 </TabItem>
 </Tabs>

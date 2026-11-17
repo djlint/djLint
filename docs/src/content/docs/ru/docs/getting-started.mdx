@@ -33,6 +33,17 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+npm-пакет поставляется со своим Python, так что ему нужен только Node.js 16.9 или новее. Есть сборки для Linux на x64, Arm64, ppc64le, s390x и riscv64, macOS на x64 и Arm64 и Windows на x64, x86 и Arm64. На Linux с musl, например Alpine, он работает на x64 и Arm64. Добавьте его в проект как зависимость для разработки:
+
+```bash
+npm i -D djlint
+```
+
+Потом запускайте его через `npx djlint`, например `npx djlint . --lint`.
+
+</TabItem>
 <TabItem label="pipx">
 
 Через [pipx](https://pipx.pypa.io/):
@@ -49,17 +60,6 @@ pipx install djlint
 ```bash
 brew install djlint
 ```
-
-</TabItem>
-<TabItem label="npm">
-
-npm-пакет поставляется со своим Python, так что ему нужен только Node.js 16.9 или новее. Есть сборки для Linux на x64, Arm64, ppc64le, s390x и riscv64, macOS на x64 и Arm64 и Windows на x64, x86 и Arm64. На Linux с musl, например Alpine, он работает на x64 и Arm64. Добавьте его в проект как зависимость для разработки:
-
-```bash
-npm i -D djlint
-```
-
-Потом запускайте его через `npx djlint`, например `npx djlint . --lint`.
 
 </TabItem>
 </Tabs>
