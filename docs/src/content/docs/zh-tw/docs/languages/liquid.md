@@ -17,7 +17,7 @@ djLint 可以 lint 並格式化 Liquid 範本。設定 `liquid` profile，讓規
 djlint /path/to/templates --profile=liquid
 ```
 
-## 或者，使用設定檔
+## 在設定檔中
 
 在專案的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 檔案中設定 djLint。
 
@@ -33,7 +33,3 @@ profile = "liquid"
 ```json title=".djlintrc"
 { "profile": "liquid" }
 ```
-
-:::tip
-[查看設定指南，了解所有選項！](/zh-tw/docs/configuration/)
-:::

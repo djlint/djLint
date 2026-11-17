@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "為你的範本語言準備的 profile",
-  "djlint.index_show_format": "秀出你的格式！",
+  "djlint.index_show_format": "徽章",
   "djlint.index_looks_like": "看起來像這樣：",
   "djlint.index_add_badge": "為你的專案加上徽章",
   "djlint.contributing": "參與貢獻",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "選項",
   "djlint.demo_output": "輸出",
   "djlint.demo_problems": "問題：{count}",
-  "djlint.demo_defaults": "無需設定，這些就是 djLint 的預設值",
+  "djlint.demo_defaults": "無需設定：這些就是 djLint 的預設值",
   "djlint.demo_layout": "版面",
   "djlint.demo_rewrites": "改寫",
   "djlint.demo_css_js": "CSS 和 JavaScript",

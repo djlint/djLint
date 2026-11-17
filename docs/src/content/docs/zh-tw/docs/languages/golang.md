@@ -17,7 +17,7 @@ Hugo 佈景主題和 Helm chart 也是以 Go 範本（`text/template`、`html/te
 djlint /path/to/templates --profile=golang
 ```
 
-## 或者，使用設定檔
+## 在設定檔中
 
 在專案的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 檔案中設定 djLint。
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[查看設定指南，了解所有選項！](/zh-tw/docs/configuration/)
-:::

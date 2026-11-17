@@ -9,9 +9,7 @@ djLint で Jinja テンプレートをリント・フォーマットできます
 
 **[Jinja とは？](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja のテンプレートは Jinja2 と完全に互換性があるので、同じ `jinja` プロファイルを使ってください。
-
-HubSpot の Jinjava のテンプレートも jinja 形式なので、これらにもこのプロファイルを使ってください。
+MiniJinja は Jinja2 の構文に従い、HubSpot の Jinjava のテンプレートも Jinja 形式なので、どちらにも `jinja` プロファイルを使ってください。J004 と J018 は Flask の `url_for` を勧めるルールなので、Flask を使わないプロジェクトでは無視してください。
 
 ## コマンドラインを使う
 
@@ -19,7 +17,7 @@ HubSpot の Jinjava のテンプレートも jinja 形式なので、これら�
 djlint /path/to/templates --profile=jinja
 ```
 
-## または、設定ファイルを使う
+## 設定ファイルで
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 
@@ -35,7 +33,3 @@ profile = "jinja"
 ```json title=".djlintrc"
 { "profile": "jinja" }
 ```
-
-:::tip
-[すべてのオプションは設定ガイドで確認してください！](/ja/docs/configuration/)
-:::

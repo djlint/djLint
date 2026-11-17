@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "お使いのテンプレート言語向けのプロファイル",
-  "djlint.index_show_format": "フォーマットをアピールしましょう！",
+  "djlint.index_show_format": "バッジ",
   "djlint.index_looks_like": "表示例：",
   "djlint.index_add_badge": "プロジェクトにバッジを追加しましょう",
   "djlint.contributing": "コントリビュート",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "オプション",
   "djlint.demo_output": "出力",
   "djlint.demo_problems": "問題: {count}",
-  "djlint.demo_defaults": "設定する項目はありません（djLint のデフォルトです）",
+  "djlint.demo_defaults": "設定する項目はありません：djLint のデフォルトです",
   "djlint.demo_layout": "レイアウト",
   "djlint.demo_rewrites": "書き換え",
   "djlint.demo_css_js": "CSS と JavaScript",

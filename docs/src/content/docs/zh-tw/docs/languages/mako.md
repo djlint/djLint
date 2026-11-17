@@ -17,7 +17,7 @@ djLint 可以 lint 並格式化 Mako 範本。設定 `mako` profile，讓規則�
 djlint /path/to/templates --profile=mako
 ```
 
-## 或者，使用設定檔
+## 在設定檔中
 
 在專案的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 檔案中設定 djLint。
 
@@ -33,7 +33,3 @@ profile = "mako"
 ```json title=".djlintrc"
 { "profile": "mako" }
 ```
-
-:::tip
-[查看設定指南，了解所有選項！](/zh-tw/docs/configuration/)
-:::

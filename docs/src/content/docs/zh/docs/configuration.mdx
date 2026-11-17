@@ -5,7 +5,7 @@ description: "用于配置 djLint 如何检查和格式化 HTML 模板的选项�
 
 import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
-可以通过项目的 `pyproject.toml` 文件、`djlint.toml` 或 `.djlint.toml` 文件，或者 `.djlintrc` 文件进行配置。命令行参数始终会覆盖配置文件中的任何设置。本地项目设置会覆盖通过 `--configuration` 指定的全局配置文件，除非设置了 `--prefer-configuration`。
+配置写在项目的 `pyproject.toml`、`djlint.toml` 或 `.djlint.toml`，或者 `.djlintrc` 中。命令行选项会覆盖配置文件，但参数只能开启某个选项，因此无法关闭配置文件中开启的开关。项目的设置会覆盖通过 `--configuration` 指定的全局配置文件，除非设置了 `--prefer-configuration`。
 
 djLint 从它检查的第一个路径（对 `-` 而言是 `--stdin-filename` 所在的文件夹，未指定时是当前目录）开始向上查找这些文件。它会在第一个包含 `djlint.toml`、`.djlint.toml`、`.djlintrc`、`.djlint_rules.yaml` 或带有 `[tool.djlint]` 的 `pyproject.toml` 的文件夹处停下，并且不会越过仓库的根目录（包含 `.git` 文件夹或文件，或 `.hg` 文件夹的文件夹）。没有 djLint 设置的 `pyproject.toml` 不会让它停下，因此 monorepo 中自带 `pyproject.toml` 的包也会使用仓库的设置。djLint 只读取它停下的文件夹：先读 `pyproject.toml` 中的 `[tool.djlint]`（其中有设置时），没有则读 `djlint.toml` 或 `.djlint.toml`，再没有则读 `.djlintrc`；同一文件夹中未被读取的文件会给出警告。
 

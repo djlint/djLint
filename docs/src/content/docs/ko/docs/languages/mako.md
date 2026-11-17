@@ -17,7 +17,7 @@ mako 프로필에서는 `% if x:` 같은 제어 줄과 `##` 주석이 항상 한
 djlint /path/to/templates --profile=mako
 ```
 
-## 또는 구성 파일 사용
+## 구성 파일에서
 
 프로젝트의 `pyproject.toml`, `djlint.toml` / `.djlint.toml`, `.djlintrc` 파일 중 하나에서 djLint를 구성합니다.
 
@@ -33,7 +33,3 @@ profile = "mako"
 ```json title=".djlintrc"
 { "profile": "mako" }
 ```
-
-:::tip
-[모든 옵션은 구성 가이드에서 확인하세요!](/ko/docs/configuration/)
-:::

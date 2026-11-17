@@ -3,8 +3,6 @@ title: "集成"
 description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 ---
 
-djLint 已有多种编辑器集成。
-
 无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，然后从该环境启动编辑器，或者让编辑器指向该环境中的 `djlint`。这样，编辑器运行的就是项目锁定的版本，结果与 pre-commit 钩子或 CI 中的一致。
 
 ## Visual Studio Code
@@ -31,8 +29,6 @@ djLint 已有多种编辑器集成。
 需要 PATH 中有 djLint 1.49 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
 
 ## Neovim
-
-在 Neovim 中，djLint 既可以用作代码检查工具，也可以用作格式化工具。
 
 ### 内置 LSP 客户端（推荐）
 
@@ -82,38 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub 仓库](https://github.com/mattn/efm-langserver)
 
-1. 通过 Mason 使用 `:MasonInstall efm djlint` 安装 efm-langserver 和 djLint
-1. 将 `htmldjango` 添加到 `filetypes` 中。
-1. 创建格式化配置：
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-```
-
-1. 通过 `htmldjango = { djlint }` 将语言与格式化工具关联起来。
-
-配置示例：
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-
-require("lspconfig").efm.setup({
-    filetypes = { "htmldjango" },
-    init_options = { documentFormatting = true },
-    settings = {
-        rootMarkers = { ".git/" },
-        languages = {
-            htmldjango = { djlint },
-        },
-    },
-})
-```
+为 `htmldjango` 配置一个格式化工具，设置 `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` 和 `formatStdin = true`。
 
 ### coc.nvim
 
@@ -145,13 +110,7 @@ require("lspconfig").efm.setup({
 
 ### SublimeLinter
 
-djLint 可以用作 Sublime Text 的 Linter 插件，可通过 [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) 安装。
-
-1. `cmd + shift + p`
-2. 安装 SublimeLinter
-3. 安装 SublimeLinter-contrib-djlint
-
-请确保 djLint 安装在全局 Python 中，或者位于 `PATH` 上。
+通过 Package Control 安装 SublimeLinter 和 [SublimeLinter-contrib-djlint](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint)。djLint 必须位于 Sublime Text 所见的 PATH 中。
 
 ## Helix
 
@@ -240,36 +199,28 @@ djLint 会从以下来源中第一个设置了 `profile` 的来源获取它：
 
 上传步骤需要在作业或工作流上授予 `security-events: write` 权限。
 
-`--sarif` 只会向 stdout 写入一个 SARIF 2.1.0 文档，不输出其他任何内容，因此可以像上面那样重定向。其中会列出每条已启用的规则及其文档链接，每条检查结果都带有行号和列号；配合 `--check` 使用时，需要重新格式化的文件会在 `formatting` 规则下报告。Azure DevOps、GitLab 以及大多数编辑器都能读取这种格式。
+`--sarif` 只会向 stdout 写入一个 SARIF 2.1.0 文档，不输出其他任何内容，因此可以像上面那样重定向。其中会列出每条已启用的规则及其文档链接，每条检查结果都带有行号和列号；配合 `--check` 使用时，需要重新格式化的文件会在 `formatting` 规则下报告。
 
 ## pre-commit
 
 djLint 可以用作 [pre-commit](https://pre-commit.com) 钩子，既能做代码检查，也能做格式化。
 
-该仓库为特定的 djLint 预设提供了多个预先配置好的钩子（它们只是预先设置了 `--profile` 参数，并告诉 pre-commit 要查找哪些文件扩展名）：
+下表中的每个预设都有一个做代码检查的钩子（列在表中），以及一个做格式化的钩子，名称相同但带有 `reformat`：例如 `djlint-django` 对应 `djlint-reformat-django`。它们会设置 `--profile` 以及 pre-commit 传入的文件。`angular` 没有自己的钩子：请给 `djlint` 或 `djlint-reformat` 设置 `args: [--profile=angular]`。
 
-- `djlint` 用于代码检查，`djlint-reformat` 用于格式化。
-  查找匹配 `*.html` 的文件，不设置 `--profile`。
-- `djlint-django` 和 `djlint-reformat-django`。
-  查找匹配 `*.html` 的文件，并设置 `--profile=django`。
-- `djlint-jinja` 和 `djlint-reformat-jinja`。
-  查找匹配 `*.j2`、`*.jinja` 或 `*.jinja2` 的文件，并设置 `--profile=jinja`。
-- `djlint-nunjucks` 和 `djlint-reformat-nunjucks`。
-  查找匹配 `*.njk` 的文件，并设置 `--profile=nunjucks`。
-- `djlint-handlebars` 和 `djlint-reformat-handlebars`。
-  查找匹配 `*.hbs` 的文件，并设置 `--profile=handlebars`。
-- `djlint-liquid` 和 `djlint-reformat-liquid`。
-  查找匹配 `*.html` 的文件，并设置 `--profile=liquid`。
-- `djlint-golang` 和 `djlint-reformat-golang`。
-  查找匹配 `*.gotmpl` 的文件，并设置 `--profile=golang`。
-- `djlint-tera` 和 `djlint-reformat-tera`。
-  查找匹配 `*.html` 的文件，并设置 `--profile=tera`。
-- `djlint-askama` 和 `djlint-reformat-askama`。
-  查找匹配 `*.html` 的文件，并设置 `--profile=askama`。
-- `djlint-mako` 和 `djlint-reformat-mako`。
-  查找匹配 `*.html` 的文件，并设置 `--profile=mako`。
+| 钩子                | 预设       | 文件                                 |
+| ------------------- | ---------- | ------------------------------------ |
+| `djlint`            | 无         | `.html`, `.htm`, `.xhtml`            |
+| `djlint-django`     | django     | `.html`, `.htm`, `.xhtml`            |
+| `djlint-jinja`      | jinja      | `.j2`, `.jinja`, `.jinja2`           |
+| `djlint-nunjucks`   | nunjucks   | `.njk`                               |
+| `djlint-handlebars` | handlebars | `.hbs`, `.handlebars`, `.mustache`   |
+| `djlint-liquid`     | liquid     | `.html`, `.htm`, `.xhtml`, `.liquid` |
+| `djlint-golang`     | golang     | `.gotmpl`                            |
+| `djlint-tera`       | tera       | `.html`, `.htm`, `.xhtml`            |
+| `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
+| `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-请注意，这些预定义钩子接受的输入有时过于保守（你的模板可能使用了不同的扩展名），因此 pre-commit 明确允许你覆盖其中任何预定义选项。更多配置请参阅 [pre-commit 文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。
+对于使用其他扩展名的模板，请在配置中覆盖 `files`；如果钩子设置了 `types_or`，也要一并覆盖，因为 pre-commit 要求两者都匹配。请参阅 [pre-commit 文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。
 
 ### 默认 Django 示例
 
@@ -301,9 +252,4 @@ repos:
 
 ## MegaLinter
 
-djlint 已原生内置于 [MegaLinter](https://megalinter.io) 的 100 多个代码检查工具之中
-
-要安装它，只需运行 `npx mega-linter-runner --install` 并按照说明操作
-
-- [GitHub 仓库](https://github.com/oxsecurity/megalinter)
-- [MegaLinter 文档中的 djlint](https://megalinter.io/latest/descriptors/html_djlint/)
+[MegaLinter](https://megalinter.io) 已内置 djLint。运行 `npx mega-linter-runner --install` 进行设置，选项请参阅[其 djLint 页面](https://megalinter.io/latest/descriptors/html_djlint/)。

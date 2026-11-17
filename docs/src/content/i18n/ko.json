@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "사용하는 템플릿 언어를 위한 프로필",
-  "djlint.index_show_format": "포맷을 자랑하세요!",
+  "djlint.index_show_format": "배지",
   "djlint.index_looks_like": "이렇게 표시됩니다:",
   "djlint.index_add_badge": "프로젝트에 배지 추가하기",
   "djlint.contributing": "기여하기",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "옵션",
   "djlint.demo_output": "출력",
   "djlint.demo_problems": "문제: {count}",
-  "djlint.demo_defaults": "설정할 항목이 없습니다. djLint 기본값입니다",
+  "djlint.demo_defaults": "설정할 항목 없음: djLint 기본값입니다",
   "djlint.demo_layout": "레이아웃",
   "djlint.demo_rewrites": "다시 쓰기",
   "djlint.demo_css_js": "CSS와 JavaScript",

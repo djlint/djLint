@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## 安装
 
-djLint 使用 [Python](https://python.org) 编写，发布在 [PyPI](https://pypi.org/project/djlint/) 上。
+djLint 需要 [Python](https://python.org) 3.11 或更高版本，发布在 [PyPI](https://pypi.org/project/djlint/) 上。
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 要在编辑器中或每次提交时运行 djLint，请参阅[集成](/zh/docs/integrations/)和 [pre-commit](/zh/docs/integrations/#pre-commit)。
 
 :::note[注意]
-如果找不到 `djlint` 命令，请确认 Python 已[添加到 PATH 中](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)。
+如果找不到 `djlint` 命令，请把它的安装文件夹添加到 PATH 中。如果 djLint 安装在某个 Python 环境中，也可以用该环境的 Python 运行 `python -m djlint`。
 :::
 
 ## 首次运行
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## 退出码
 
-| 代码 | 含义                                                                                                         |
-| ---- | ------------------------------------------------------------------------------------------------------------ |
-| `0`  | djLint 被要求检查的内容全部没有问题，或者找到的每个文件都被你的配置跳过了。                                  |
-| `1`  | djLint 发现了代码检查错误，或者有需要重新格式化的文件。使用 `--warn` 时，这些会作为警告报告，并以 `0` 退出。 |
-| `2`  | djLint 没有检查你要求它检查的内容：路径没有匹配到任何文件、命令行或配置无效，或者 djLint 运行失败。          |
+| 代码 | 含义                                                                                                                                            |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | djLint 被要求检查的内容全部没有问题，或者找到的每个文件都被你的配置跳过了。                                                                     |
+| `1`  | djLint 发现了代码检查错误，或者有需要重新格式化的文件。使用 `--warn` 时，这些会作为警告报告，并以 `0` 退出。                                    |
+| `2`  | djLint 没有检查你要求它检查的内容：路径没有匹配到任何文件、某个文件无法读取（不是 UTF-8，或没有权限）、命令行或配置无效，或者 djLint 运行失败。 |
 
-只有代码 `1` 表示 djLint 检查了你的模板，并且对发现的内容不满意。代码 `2` 始终表示这次运行本身没有完成任务，因此流水线可以区别对待这两种情况。
+只有代码 `1` 表示 djLint 检查了你的模板，并且对发现的内容不满意，因此流水线可以把检查未通过与什么都没检查的运行区分开来，例如路径写错了，或者 `--extension` 不再匹配。
 
-代码 `2` 能捕获根本什么都没检查的运行：路径写错了、`--extension` 不再匹配，或者模板已经移走了。没有它，这样的运行会静默通过。
-
-djLint *确实*找到、但随后因 `exclude`、`extend_exclude`、`use_gitignore` 或 `require_pragma` 而有意跳过的文件，不算错误。这样的运行以 `0` 退出，因为配置完全按照指示执行了。也正因如此，`exclude` 才能在 pre-commit 下正常工作：无论你是否希望 djLint 检查，pre-commit 都会传入所有已暂存文件的名称。
-
-如果某个路径确实没有模板，而这在你的流水线中是正常情况，可以用 `allow_empty_input` 关闭代码 `2`：
+djLint 找到、但随后因 `exclude`、`extend_exclude`、`use_gitignore` 或 `require_pragma` 而有意跳过的文件，不算错误，也正因如此，`exclude` 才能在 pre-commit 下正常工作。如果某个路径没有模板在你的流水线中是正常情况，可以用 [`allow_empty_input`](/zh/docs/configuration/#allow-empty-input) 关闭代码 `2`：
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## 命令行用法
-
-djLint 是一个命令行应用程序。高级配置请参阅[配置](/zh/docs/configuration/)页面。
 
 <CliHelp />

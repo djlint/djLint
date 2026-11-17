@@ -9,9 +9,7 @@ djLint 可以 lint 並格式化 Jinja 範本。設定 `jinja` profile，讓規�
 
 **[什麼是 Jinja？](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja 範本與 Jinja2 完全相容，因此請使用同一個 `jinja` profile。
-
-HubSpot 的 Jinjava 範本也是 jinja 風格，因此它們也請使用這個 profile。
+MiniJinja 遵循 Jinja2 的語法，HubSpot 的 Jinjava 範本也是 Jinja 風格，因此兩者都請使用 `jinja` profile。J004 和 J018 會建議使用 Flask 的 `url_for`，因此在未使用 Flask 的專案中請忽略它們。
 
 ## 使用命令列
 
@@ -19,7 +17,7 @@ HubSpot 的 Jinjava 範本也是 jinja 風格，因此它們也請使用這個 p
 djlint /path/to/templates --profile=jinja
 ```
 
-## 或者，使用設定檔
+## 在設定檔中
 
 在專案的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 檔案中設定 djLint。
 
@@ -35,7 +33,3 @@ profile = "jinja"
 ```json title=".djlintrc"
 { "profile": "jinja" }
 ```
-
-:::tip
-[查看設定指南，了解所有選項！](/zh-tw/docs/configuration/)
-:::

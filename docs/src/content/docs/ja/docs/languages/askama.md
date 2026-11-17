@@ -15,7 +15,7 @@ djLint で Askama テンプレートをリント・フォーマットできま�
 djlint /path/to/templates --profile=askama
 ```
 
-## または、設定ファイルを使う
+## 設定ファイルで
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 
@@ -31,7 +31,3 @@ profile = "askama"
 ```json title=".djlintrc"
 { "profile": "askama" }
 ```
-
-:::tip
-[すべてのオプションは設定ガイドで確認してください！](/ja/docs/configuration/)
-:::

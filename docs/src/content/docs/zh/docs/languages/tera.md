@@ -15,7 +15,7 @@ djLint 可以检查和格式化 Tera 模板。设置 `tera` 预设，让规则�
 djlint /path/to/templates --profile=tera
 ```
 
-## 或者，使用配置文件
+## 在配置文件中
 
 在项目的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 文件中配置 djLint。
 
@@ -31,7 +31,3 @@ profile = "tera"
 ```json title=".djlintrc"
 { "profile": "tera" }
 ```
-
-:::tip
-[查看配置指南，了解所有选项！](/zh/docs/configuration/)
-:::

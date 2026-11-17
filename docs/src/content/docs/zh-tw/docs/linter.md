@@ -5,7 +5,7 @@ sidebar:
   label: "Linter"
 ---
 
-djLint 內含許多規則，用來檢查範本的風格與正確性。將 linter 設定為使用你所選範本語言的預設 profile，就能充分發揮它的功用。
+Linter 會檢查範本中的錯誤與不一致的風格。請設定範本語言的 [profile](/zh-tw/docs/configuration/#profile)，讓適用於它的規則執行。
 
 ```bash
 djlint /path/to/templates --lint
@@ -13,13 +13,9 @@ djlint /path/to/templates --lint
 # 使用自訂副檔名
 djlint /path/to/templates -e html.dj --profile=django
 
-# 或指定檔案
-djlint /path/to/this.html.j2  --profile=jinja
+# 或指定單一檔案
+djlint /path/to/this.html.j2 --profile=jinja
 ```
-
-:::tip
-[查看設定指南，了解所有選項！](/zh-tw/docs/configuration/)
-:::
 
 ## 啟用或停用規則
 
@@ -31,9 +27,9 @@ djlint /path/to/this.html.j2  --profile=jinja
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-這也可以透過[設定](/zh-tw/docs/configuration/)檔完成。
+也可以在設定檔中設定 [`ignore`](/zh-tw/docs/configuration/#ignore) 和 [`include`](/zh-tw/docs/configuration/#include)。
 
-未設定 [profile](/zh-tw/docs/configuration/#profile) 時，內建規則中只會執行 H 規則。T 規則和針對單一範本語言的規則（D、J）要設定它們適用的 profile 才會啟用。`--include` 指定的規則在任何 profile 下以及未設定 profile 時都會執行，下方說明中寫明不適用的 profile 除外。
+哪些 profile 會執行某條規則，請參閱[代碼規則](#代碼規則)。`--include` 指定的規則在任何 profile 下以及未設定 profile 時都會執行，下方說明中寫明不適用的 profile 除外。
 
 ## 規則
 
@@ -53,7 +49,7 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 | [H011](#h011) | 屬性值應加上引號。                                                         | ✔️   |
 | [H012](#h012) | 屬性的 `=` 前後不應有空格。                                                | ✔️   |
 | [H013](#h013) | `img` 標籤應具有 alt 屬性。                                                | ✔️   |
-| [H014](#h014) | 空白行多於設定所保留的數量。                                               | ✔️   |
+| [H014](#h014) | 連續的空白行過多。                                                         | ✔️   |
 | [H015](#h015) | `h` 標籤之後應換行。                                                       | ✔️   |
 | [H016](#h016) | html 中缺少 `title` 標籤。                                                 | ✔️   |
 | [H017](#h017) | 空元素標籤應自閉合（與 H018 衝突）。                                       | -    |
@@ -107,14 +103,15 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 
 ### 代碼規則
 
-代碼的第一個字母遵循以下規則：
+代碼的第一個字母表示哪些 profile 會執行該規則：
 
-- D：專門適用於 Django
-- H：適用於 html
-- J：專門適用於 Jinja
-- M：專門適用於 Handlebars
-- N：專門適用於 Nunjucks
-- T：普遍適用於範本
+- D：Django，在 `django` 下執行。
+- H：HTML，在每個 profile 下執行。`angular` 會略過 H012 和 H026。
+- J：Jinja，在 `jinja` 下執行。
+- T：範本語法，在 `html` 和 `mako` 以外的每個 profile 下執行。T001 以及 T041 至 T044 還會略過各自詳細說明中列出的 profile。
+- M 和 N 沒有 djLint 本身的規則。代碼以 M 開頭的自訂規則會在 `handlebars` 和 `angular` 下執行，以 N 開頭的則在 `nunjucks` 和 `angular` 下執行。
+
+`all` 會執行所有範本語言的規則，但預設為停用的規則，以及像 T001 和 T041 至 T044 這類會略過某些 profile 的規則除外；可以用 `--include` 加入它們。未設定 profile 時，linter 會執行 `html` 的規則。
 
 ### 規則詳細說明
 
@@ -172,7 +169,7 @@ HTML 屬性值中的單引號（例如 `<span title="{% trans 'x' %}">`）不會
 
 預設為停用；可用 `--include=T003` 啟用。`--name-endblocks` 會替你寫上名稱。
 
-區塊在同一行開啟並關閉時不需要名稱，例如 `{% block title %}``{% endblock %}`。格式化工具會將含有其他標籤的區塊內容移到各自獨立的行，因此寫在一行上的區塊在格式化之後可能需要名稱；使用 `--name-endblocks` 時，格式化工具也會寫上該名稱。
+區塊在同一行開啟並關閉時不需要名稱，例如 `{% block title %}{% endblock %}`。格式化工具會將含有其他標籤的區塊內容移到各自獨立的行，因此寫在一行上的區塊在格式化之後可能需要名稱；使用 `--name-endblocks` 時，格式化工具也會寫上該名稱。
 
 不要這樣寫：
 
@@ -411,7 +408,7 @@ HTML 允許 `=` 前後有空白，因此這是一條風格規則。寫成不含�
 
 `Found extra blank lines.`
 
-連續的空白行對渲染後的頁面沒有任何影響（HTML 會合併空白），卻會讓範本變得臃腫，並在相鄰行變更時產生雜亂的 diff。djLint 的格式化工具預設會將它們完全移除（最多保留 `max_blank_lines` 個空白行，預設值為 0），因此殘留的連續空白行表示程式碼尚未格式化。
+連續的空白行對渲染後的頁面沒有任何影響（HTML 會合併空白），卻會讓範本變得臃腫，並在相鄰行變更時產生雜亂的 diff。這條規則會回報連續兩行以上的空白行；若 `max_blank_lines` 更大，則回報超過該數量的空白行；啟用 `preserve_blank_lines` 時不回報任何空白行。單一空白行不會被回報，儘管 `--reformat` 預設會將它移除。
 
 不要這樣寫：
 
@@ -578,7 +575,7 @@ javascript: URL 會讓中鍵點擊和「在新分頁中開啟」失效，在 Jav
 
 `Empty tag pair found. Consider removing.`
 
-空的標籤對不會渲染任何內容，但仍會建立 DOM 節點，可能從樣式表套用到 margin、border 或 flex/grid 間距，產生難以追查的幽靈間距；它通常是先前編輯時留下的標記。在一般標記中本來就可以合法為空的標籤（td、th、li、dt、dd、slot）不受此限。帶有任何屬性的標籤（像 `<div id="app">``</div>` 這樣的 JS 掛載點，或像 `<i class="fa fa-user">``</i>` 這樣的圖示字型元素）也不會被標記；只有完全沒有屬性的空標籤對才會符合。
+空的標籤對不會渲染任何內容，但仍會建立 DOM 節點，可能從樣式表套用到 margin、border 或 flex/grid 間距，產生難以追查的幽靈間距；它通常是先前編輯時留下的標記。在一般標記中本來就可以合法為空的標籤（td、th、li、dt、dd、slot）不受此限。帶有任何屬性的標籤（像 `<div id="app"></div>` 這樣的 JS 掛載點，或像 `<i class="fa fa-user"></i>` 這樣的圖示字型元素）也不會被標記；只有完全沒有屬性的空標籤對才會符合。
 
 不要這樣寫：
 
@@ -658,7 +655,7 @@ text/javascript 和 text/css 是 HTML5 中 `<script>` 和 `<style>` 的預設值
 不要這樣寫：
 
 ```html
-<script type="text/javascript" src="app.js">
+<script type="text/javascript" src="app.js"></script>
 ```
 
 應該這樣寫：
@@ -774,7 +771,7 @@ HTML 規格將表單的 method 關鍵字定義為小寫（get、post）；瀏覽
 
 搜尋引擎會將 meta description 作為搜尋結果中頁面標題下方的摘要；如果沒有，搜尋引擎會從頁面上任意的文字拼湊出摘要，這會降低點閱率，並在分享頁面時產生不佳的連結預覽。
 
-只會在包含完整 `<html>`...`</html>` 文件的檔案上觸發。上述關於摘要的理由只適用於公開索引的頁面；對於需要登入或內部網路的應用程式，這條規則通常會被停用。
+只會在包含完整 `<html>`...`</html>` 文件的檔案上觸發。它只對搜尋引擎會索引的頁面有意義，因此在需要登入的應用程式中可以忽略它。
 
 不要這樣寫：
 
@@ -896,7 +893,7 @@ html 規格只允許 `<br>` 用於屬於內容本身的換行，例如郵寄地�
 
 `Block tag has no matching end tag.`
 
-像 `{% if %}`、`{% for %}` 或 `{% macro %}` 這樣缺少對應結束標籤的區塊標籤，在 Django 和 Jinja 中是嚴重的 TemplateSyntaxError：頁面會在請求時無法渲染，而這條規則能在部署前抓出這個問題。它也會標記沒有開始標籤的孤立結束標籤，以及交錯不正確的區塊（例如 `{% if %}``{% for %}``{% endif %}`）。
+像 `{% if %}`、`{% for %}` 或 `{% macro %}` 這樣缺少對應結束標籤的區塊標籤，在 Django 和 Jinja 中是嚴重的 TemplateSyntaxError：頁面會在請求時無法渲染，而這條規則能在部署前抓出這個問題。它也會標記沒有開始標籤的孤立結束標籤，以及交錯不正確的區塊（例如 `{% if %}{% for %}{% endif %}`）。
 
 `{% block %}`/`{% endblock %}` 的配對以及 endblock 名稱不符，都由這條規則檢查；T003（預設停用）則另外要求每個多行的 `{% endblock %}` 都要寫上名稱。透過 custom_blocks 註冊的自訂區塊標籤也會被檢查，包括它們以 / %} 結尾的自閉合形式。
 
@@ -985,7 +982,7 @@ html 規格只允許 `<br>` 用於屬於內容本身的換行，例如郵寄地�
 
 Django 拒絕編譯在 `{% extends %}` 之前出現其他標籤的範本，而寫在它之前的文字會被渲染，因此會洩漏到頁面中，出現在父範本產生的所有內容之前。Jinja 也會渲染那段文字，而 nunjucks 則會將它丟棄，因此不論在哪個引擎中，範本的行為都與看起來的不同。
 
-`{# #}` 註解不會渲染任何內容，因此不算在內；`{% comment %}`、<code>{&#37; raw %}</code> 或 `{% verbatim %}` 區塊（無論是否具名）內的任何內容、三種寫法中任一種的 `{# djlint:off #}` 區域，以及 yaml front matter 也都不算。html 註解則會算在內：引擎會將它寫入頁面，出現在父範本的 doctype 之前，這正是這條規則所針對的洩漏。`{% blocktrans %}` 區塊、`{% filter %}` 區塊和 `<?php ?>` 區塊也一樣會算在內，因為它們都會被渲染。只會檢查第一個 `{% extends %}`；第二個本身就是另一個錯誤。在 jinja 和 nunjucks profile 中，出現在它之前的分支標籤不算在內，因為 jinja 的說明文件將 `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` 記載為選擇父範本的方法；django 則會把範本的其餘部分讀入 `{% extends %}`，然後拒絕 `{% endif %}`，因此在該 profile 中，分支標籤會算在內。
+`{# #}` 註解不會渲染任何內容，因此不算在內；`{% comment %}`、`{% raw %}` 或 `{% verbatim %}` 區塊（無論是否具名）內的任何內容、三種寫法中任一種的 `{# djlint:off #}` 區域，以及 yaml front matter 也都不算。html 註解則會算在內：引擎會將它寫入頁面，出現在父範本的 doctype 之前，這正是這條規則所針對的洩漏。`{% blocktrans %}` 區塊、`{% filter %}` 區塊和 `<?php ?>` 區塊也一樣會算在內，因為它們都會被渲染。只會檢查第一個 `{% extends %}`；第二個本身就是另一個錯誤。在 jinja 和 nunjucks profile 中，出現在它之前的分支標籤不算在內，因為 jinja 的說明文件將 `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` 記載為選擇父範本的方法；django 則會把範本的其餘部分讀入 `{% extends %}`，然後拒絕 `{% endif %}`，因此在該 profile 中，分支標籤會算在內。
 
 不適用於 handlebars、golang、liquid 和 angular profile。
 
@@ -1029,9 +1026,9 @@ Django 拒絕編譯在 `{% extends %}` 之前出現其他標籤的範本，而�
 
 範本一旦繼承了另一個範本，輸出的內容就由父範本決定，子範本只負責填入父範本的區塊。寫在 `{% extends %}` 之後、且位於所有 `{% block %}` 之外的文字或 html，會在渲染時被默默丟棄，因此在原始碼中看起來沒問題的段落，永遠不會出現在頁面上。
 
-那裡的範本標籤仍會執行，因此 `{% load %}`、`{% set %}`，以及包住某個區塊的 `{% if %}` 都不會回報；`{# #}` 和 `{% comment %}` 註解、html 註解、<code>{&#37; raw %}</code> 和 `{% verbatim %}` 區塊，以及 `{% macro %}`、區塊形式的 `{% set %}`、`{% partialdef %}` 或 `{% addtoblock %}` 的主體（這些內容會被擷取而非輸出）也是如此。`{% blocktrans %}` 的文字會回報，因為 `{% blocktrans %}` 不是 `{% block %}`。只會考慮 extends 標籤之後的內容，而每一段連續的內容只會在其開頭回報一次。
+那裡的範本標籤仍會執行，因此 `{% load %}`、`{% set %}`，以及包住某個區塊的 `{% if %}` 都不會回報；`{# #}` 和 `{% comment %}` 註解、html 註解、`{% raw %}` 和 `{% verbatim %}` 區塊，以及 `{% macro %}`、區塊形式的 `{% set %}`、`{% partialdef %}` 或 `{% addtoblock %}` 的主體（這些內容會被擷取而非輸出）也是如此。`{% blocktrans %}` 的文字會回報，因為 `{% blocktrans %}` 不是 `{% block %}`。只會考慮 extends 標籤之後的內容，而每一段連續的內容只會在其開頭回報一次。
 
-引擎會先讀取範本標籤再處理 html，因此寫在 html 註解或 `<pre>` 內的 `{% extends %}` 仍會執行，檔案也仍會成為子範本；只有 `{# #}`、`{% comment %}`、<code>{&#37; raw %}</code> 和 `{% verbatim %}` 才能真正隱藏它。html 註解內的文字無論如何都不會被讀者看到，因此不會回報，但寫在那裡的標籤仍會被讀取。
+引擎會先讀取範本標籤再處理 html，因此寫在 html 註解或 `<pre>` 內的 `{% extends %}` 仍會執行，檔案也仍會成為子範本；只有 `{# #}`、`{% comment %}`、`{% raw %}` 和 `{% verbatim %}` 才能真正隱藏它。html 註解內的文字無論如何都不會被讀者看到，因此不會回報，但寫在那裡的標籤仍會被讀取。
 
 不適用於 handlebars、golang、liquid 和 angular profile。
 
@@ -1085,7 +1082,7 @@ Django、Jinja 和 Nunjucks 都拒絕剖析有兩個同名區塊的範本，因�
 
 只有 `{% block %}` 會被計算：`{% blocktrans %}` 不是區塊，而 `{% endblock name %}` 只是為它所關閉的區塊命名。名稱會依照寫法比較，因為引擎會將 `Content` 和 `content` 視為兩個區塊。
 
-只有引擎本身從不剖析的內容才會被略過：範本註解、`{% comment %}` 區塊、<code>{&#37; raw %}</code> 或 `{% verbatim %}` 的主體，以及 `djlint:off` 區域。寫在 html 註解、`<script>`、`<style>`、`<pre>` 或 `<textarea>` 主體，或 `{% filter %}` 主體內的區塊仍會被計算，因為引擎會讀取這些內容，同樣會因重複的名稱而引發錯誤。
+只有引擎本身從不剖析的內容才會被略過：範本註解、`{% comment %}` 區塊、`{% raw %}` 或 `{% verbatim %}` 的主體，以及 `djlint:off` 區域。寫在 html 註解、`<script>`、`<style>`、`<pre>` 或 `<textarea>` 主體，或 `{% filter %}` 主體內的區塊仍會被計算，因為引擎會讀取這些內容，同樣會因重複的名稱而引發錯誤。
 
 `{% embed %}` 會開啟自己的作用域：其中的區塊填入的是被嵌入的範本，而不是這個範本，因此同一個部分範本的兩次嵌入可以各自寫上 `{% block body %}`。在單一 embed 內重複的名稱仍會回報。
 
@@ -1145,7 +1142,7 @@ Django、Jinja 和 Nunjucks 都拒絕剖析有兩個同名區塊的範本，因�
 
 單獨的關鍵字是普通的變數名稱，因此 `{{ url }}`、`{{ url|default:"/" }}` 和 `{{ set.name }}` 不會回報。只有帶有引數的關鍵字才會回報，單獨出現的結束或分支關鍵字（例如 `{{ endif }}` 或 `{{ else }}`）也是。像 `if` 或 `for` 這樣的控制關鍵字不能作為運算式的開頭，因此跟在它後面的任何內容（包括運算子）都是引數，`{{ if -1 > count }}` 會回報。其餘的名稱同時也可以作為變數和函式，對它們而言，只有加上引號的字串或單字才算是引數，因此恰好以其中某個名稱開頭的運算式不予檢查：`{{ url ~ "/x" }}`、`{{ url if url else "#" }}`、`{{ url ? url : '#' }}`、`{{ block ('title') }}`、`{{ block .super }}` 和 `{{ filter [0] }}` 都不會回報。
 
-<code>{&#37; raw %}</code> 或 `{% verbatim %}` 區塊的主體是文字而不是範本語法，因此會被略過，具名的形式 `{% verbatim vueapp %}...{% endverbatim vueapp %}` 也包括在內，所以以這種方式保護的 Vue 或 Handlebars `{{ }}` 不會回報。寫在區塊標籤引號引數內的 `{{ }}`，如 `{% trans "Write {{ if x }} instead" %}`，是引擎會印出的文字，同樣不予檢查。
+`{% raw %}` 或 `{% verbatim %}` 區塊的主體是文字而不是範本語法，因此會被略過，具名的形式 `{% verbatim vueapp %}...{% endverbatim vueapp %}` 也包括在內，所以以這種方式保護的 Vue 或 Handlebars `{{ }}` 不會回報。寫在區塊標籤引號引數內的 `{{ }}`，如 `{% trans "Write {{ if x }} instead" %}`，是引擎會印出的文字，同樣不予檢查。
 
 不要這樣寫：
 
@@ -1351,7 +1348,7 @@ html 註解只會對瀏覽器隱藏標記，而不會對範本引擎隱藏。`<!
 
 同一個 `{% if %}...{% else %}...{% endif %}` 中互斥分支內的兩個 id 永遠不會同時被渲染，因此不會回報。`{% for %}` 迴圈或 `{% block %}` 不是分支：位於其中的 id 和位於其外的相同 id 都會被渲染，後出現的那個會回報。由範本標籤寫入的值無法得知其內容，因此不予檢查；空值也是如此。id 會依照瀏覽器的做法精確比較，因此 `save` 和 `Save` 是兩個不同的 id。
 
-分支會以檔案所使用的語言來讀取，分隔符號與標籤名稱之間也可以有該語言允許的任何空白：`{% elif %}` 和 `{% else %}`、liquid 的 `{% elsif %}` 和 `{% when %}`、go 的 `{{ else }}`、mako 的 `% else:` 行陳述式，以及 handlebars 的 `{{else}}`、其鏈式的 `{{else if x}}`，和任何 `{{#helper}}` 區塊（包括自訂 helper）的反向區段。`<template>` 的內容是一個獨立的文件片段，`getElementById` 永遠無法觸及，因此其中的 id 只會與同一個 `<template>` 內的 id 比較：兩個 template 可以各自含有相同 id 的一列，但同一個 template 內的兩個相同 id 仍會回報。註解、<code>{&#37; raw %}</code> 或 `{% verbatim %}` 主體，或 `djlint:off` 區域內的 id 完全不會被讀取。
+分支會以檔案所使用的語言來讀取，分隔符號與標籤名稱之間也可以有該語言允許的任何空白：`{% elif %}` 和 `{% else %}`、liquid 的 `{% elsif %}` 和 `{% when %}`、go 的 `{{ else }}`、mako 的 `% else:` 行陳述式，以及 handlebars 的 `{{else}}`、其鏈式的 `{{else if x}}`，和任何 `{{#helper}}` 區塊（包括自訂 helper）的反向區段。`<template>` 的內容是一個獨立的文件片段，`getElementById` 永遠無法觸及，因此其中的 id 只會與同一個 `<template>` 內的 id 比較：兩個 template 可以各自含有相同 id 的一列，但同一個 template 內的兩個相同 id 仍會回報。註解、`{% raw %}` 或 `{% verbatim %}` 主體，或 `djlint:off` 區域內的 id 完全不會被讀取。
 
 不要這樣寫：
 
@@ -1505,28 +1502,13 @@ Django 只會在一行之內讀取標籤。在後面某一行才結束的 `{{ }}
 
 <!-- oxfmt-ignore-end -->
 
-### 新增規則
-
-我們歡迎提交新增規則的 pull request！
-
-一條好的規則包含
-
-- 名稱
-- 代碼
-- 訊息：發現錯誤時要顯示的訊息。
-- 旗標：regex 旗標，例如 re.I|re.M。預設為 re.DOTALL。
-- 模式：用來找出錯誤的正規表示式。
-- 排除：此規則不適用的 profile 清單（選用）。
-
-請附上驗證這條規則的測試。
-
 ## 自訂規則
 
-你可以在 `pyproject.toml` 旁建立 `.djlint_rules.yaml`，為專案新增專屬的自訂規則。規則可以加到這個檔案中，djLint 就會讀取它們。位於其他位置的規則檔案，可以透過 `--rules` CLI 選項指定。
+自己的規則寫在專案根目錄中、與設定檔並列的 `.djlint_rules.yaml` 裡，djLint 會讀取它們。`--rules` 可以指定位於其他位置的規則檔案。自訂規則的代碼遵循[相同的字母](#代碼規則)，因此以其他字母（例如 C）開頭的規則會在每個 profile 下執行。`default: false` 和 `exclude` 在自訂規則中同樣有效。
 
 ### 模式規則
 
-你可以新增在任一 regex 模式比對成功時判定失敗的規則：
+模式規則會回報其模式的每個比對結果：
 
 ```yaml
 - rule:
@@ -1539,7 +1521,7 @@ Django 只會在一行之內讀取標籤。在後面某一行才結束的 `{{ }}
 
 ### Python 模組規則
 
-你可以新增會匯入並執行自訂 Python 函式的規則：
+Python 模組規則會執行你自己的函式：
 
 ```yaml
 - rule:
@@ -1551,7 +1533,7 @@ Django 只會在一行之內讀取標籤。在後面某一行才結束的 `{{ }}
 指定的 `python_module` 必須包含一個 `run()` 函式，它會在每個受檢查的檔案上執行。它必須接受下列引數：
 
 - `rule`：代表 `.djlint_rules.yaml` 中這條規則的 dict。你通常會用這個變數來取得規則名稱和訊息。
-- `config`：DJLint 的設定物件。
+- `config`：djLint 的設定物件。
 - `html`：檔案的完整 html 內容。
 - `filepath`：目前正在檢查的檔案路徑。
 - `line_ends`：每一行 `start` 和 `end` 字元位置的清單，可搭配 `djlint.lint.get_line()` 從字元位置取得行號。請參閱範例。
@@ -1559,7 +1541,7 @@ Django 只會在一行之內讀取標籤。在後面某一行才結束的 `{{ }}
 
 模組可以放在專案根目錄中。如果它傳回的 `line` 或 `end` 不是一個位置，djLint 就會停止並顯示指名該規則的錯誤。
 
-它必須傳回一個 dict 清單，每個錯誤一個 dict，並包含下列鍵：
+它必須傳回一個 dict 清單，每個檢查結果一個 dict，並包含下列鍵：
 
 - `code`：回報錯誤的規則代碼名稱（通常是 `rule['name']`）
 - `line`：行號以及該行中的字元位置，以 ':' 分隔，寫成字串。

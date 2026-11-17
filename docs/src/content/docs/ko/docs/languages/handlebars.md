@@ -15,7 +15,7 @@ djLint는 Handlebars 템플릿을 린트하고 포맷합니다. 규칙과 포맷
 djlint /path/to/templates --profile=handlebars
 ```
 
-## 또는 구성 파일 사용
+## 구성 파일에서
 
 프로젝트의 `pyproject.toml`, `djlint.toml` / `.djlint.toml`, `.djlintrc` 파일 중 하나에서 djLint를 구성합니다.
 
@@ -31,7 +31,3 @@ profile = "handlebars"
 ```json title=".djlintrc"
 { "profile": "handlebars" }
 ```
-
-:::tip
-[모든 옵션은 구성 가이드에서 확인하세요!](/ko/docs/configuration/)
-:::

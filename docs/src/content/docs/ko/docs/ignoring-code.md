@@ -3,9 +3,7 @@ title: "코드 무시하기"
 description: "djLint가 코드 블록을 포맷하지 않게 하는 방법과 린터 규칙을 인라인으로 무시하는 방법입니다."
 ---
 
-코드를 `djlint` 태그로 감싸면 무시할 수 있습니다.
-
-일반 HTML에서는 다음과 같이 씁니다.
+`djlint:off`와 `djlint:on` 주석 사이의 코드는 포맷터와 린터가 건드리지 않습니다. HTML 주석을 쓸 수 있습니다.
 
 <!-- oxfmt-ignore -->
 ```html
@@ -14,7 +12,7 @@ description: "djLint가 코드 블록을 포맷하지 않게 하는 방법과 �
 <!-- djlint:on -->
 ```
 
-주석으로 쓸 수도 있습니다.
+Django와 Jinja 주석도 쓸 수 있습니다.
 
 <!-- oxfmt-ignore -->
 ```html
@@ -23,7 +21,7 @@ description: "djLint가 코드 블록을 포맷하지 않게 하는 방법과 �
 {# djlint:on #}
 ```
 
-긴 주석으로 쓸 수도 있습니다.
+`{% comment %}` 블록도 쓸 수 있습니다.
 
 <!-- oxfmt-ignore -->
 ```html
@@ -32,16 +30,16 @@ description: "djLint가 코드 블록을 포맷하지 않게 하는 방법과 �
 {% comment %} djlint:on {% endcomment %}
 ```
 
-golang 스타일 주석으로 쓸 수도 있습니다.
+Go 템플릿 주석도 쓸 수 있습니다.
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
-handlebars 스타일 주석으로 쓸 수도 있습니다.
+Handlebars 주석도 쓸 수 있습니다.
 
 <!-- oxfmt-ignore -->
 ```html
@@ -72,7 +70,7 @@ handlebars 스타일 주석으로 쓸 수도 있습니다.
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

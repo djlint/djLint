@@ -3,7 +3,7 @@ title: "Python API"
 description: "通过 djLint API 在你自己的 Python 代码中格式化和检查模板。"
 ---
 
-`djlint.api` 可以在 Python 程序中格式化和检查文本，结果与命令行完全相同。它面向编辑器、构建工具以及其他在内存中持有模板的程序。包中的其他部分在任何版本中都可能发生变化，因此请使用这个模块，而不要使用 `djlint.settings` 或 `djlint.lint`。
+`djlint.api` 可以在 Python 程序中格式化和检查文本，结果与命令行完全相同。它面向编辑器、构建工具以及其他在内存中持有模板的程序。包中的其他部分在任何版本中都可能发生变化，因此请使用这个模块，而不要使用 `djlint.settings` 或 `djlint.lint`。[自定义规则示例](/zh/docs/linter/#python-模块规则)导入的辅助函数 `djlint.lint.get_line`、`djlint.helpers.inside_ignored_rule` 和 `djlint.helpers.inside_ignored_linter_block` 也会继续可用。
 
 ```python
 from djlint.api import format_text, lint_text, load_config
@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` 读取适用于某个文件夹中文件的配置。它从该文件夹开始向上查找配置，与命令行从传给它的第一个路径（对 `-` 而言是 `--stdin-filename` 所在的文件夹，未指定时是当前目录）开始查找的方式相同，并且不会改变当前目录。
+`load_config(folder=".", *, python_rules=True, on_warning=None, **options)` 读取适用于某个文件夹中文件的配置。它从该文件夹开始向上查找配置，与命令行从传给它的第一个路径开始[查找](/zh/docs/configuration/)的方式相同，并且不会改变当前目录。
 
 选项使用命令行选项的名称，但写成下划线形式，作用也与命令行中相同：设置了的值优先于配置文件，而 `False`、空字符串，以及对大多数选项而言的 `0`，都视为未指定。路径以 `pathlib.Path` 的形式给出。
 
@@ -26,9 +26,11 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 设置 `python_rules=False` 时，不会加载带有 `python_module` 的自定义规则，从而避免运行你不信任的项目中的代码。这些规则的名称会列在 `config.skipped_rules` 中。
 
+`on_warning` 是一个接收消息的函数，会收到有关设置的每一条警告，例如名称拼错，或者某个规则代码没有对应的规则。不设置时，每条警告在每个进程中只会向 stderr 输出一次。无法读取的配置文件或无效的值会引发 `click.UsageError`。
+
 ## format_text
 
-`format_text(config, text)` 返回格式化后的文本。第一行以 CRLF 结尾的文本，返回时使用 CRLF，其他文本则使用 LF。设置了 `require_pragma` 时，不含 pragma 的文本会原样返回。
+`format_text(config, text)` 返回格式化后的文本。第一行以 CRLF 结尾的文本，返回时使用 CRLF，其他文本则使用 LF。设置了 `require_pragma` 时，不含 pragma 的文本会原样返回。如果 `load_config` 的选项和配置文件都没有设置 `indent` 或 `max_line_length`，它会以传给 `load_config` 的文件夹中一个扩展名为所配置扩展名的文件为准，从适用于该文件的 `.editorconfig` 节中读取它们，而命令行则按每个文件的路径分别读取它们。
 
 ## lint_text
 
@@ -50,4 +52,4 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## 规则模块
 
-自定义规则的 `python_module` 在每个进程中只导入一次，从配置所在的项目根目录导入。如果一个长期运行的程序需要处理多个项目，那么要读取另一个项目的规则，就必须从 `sys.modules` 中移除所有从当前项目导入的内容，并移除项目根目录（它会一直留在 `sys.path` 的末尾）。
+自定义规则的 `python_module` 在每个进程中只导入一次，从配置所在的项目根目录导入。要读取另一个项目的规则，长期运行的程序必须从 `sys.modules` 中移除它从第一个项目导入的所有内容，并从 `sys.path` 的末尾移除该项目的根目录。

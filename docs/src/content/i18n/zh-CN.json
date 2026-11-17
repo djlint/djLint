@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "为你的模板语言准备的预设",
-  "djlint.index_show_format": "亮出你的格式！",
+  "djlint.index_show_format": "徽章",
   "djlint.index_looks_like": "效果如下：",
   "djlint.index_add_badge": "为你的项目添加徽章",
   "djlint.contributing": "参与贡献",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "选项",
   "djlint.demo_output": "输出",
   "djlint.demo_problems": "问题：{count}",
-  "djlint.demo_defaults": "无需设置，这些就是 djLint 的默认值",
+  "djlint.demo_defaults": "无需设置：这些就是 djLint 的默认值",
   "djlint.demo_layout": "布局",
   "djlint.demo_rewrites": "改写",
   "djlint.demo_css_js": "CSS 和 JavaScript",
