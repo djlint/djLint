@@ -15,7 +15,6 @@
   "djlint.sections": "Sekcje",
   "djlint.demo_description": "Formatuj i sprawdzaj szablony HTML w przeglądarce za pomocą djLint.",
   "djlint.demo_loading": "Wczytywanie djLint…",
-  "djlint.demo_version": "Działa na Pythonie {python}; djLint {djlint}",
   "djlint.demo_error": "Nie udało się wczytać djLint. Sprawdź połączenie i odśwież stronę.",
   "djlint.demo_copy_link": "Kopiuj link",
   "djlint.demo_options": "Opcje",

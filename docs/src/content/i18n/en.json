@@ -15,7 +15,6 @@
   "djlint.sections": "Sections",
   "djlint.demo_description": "Format and lint HTML templates in your browser with djLint.",
   "djlint.demo_loading": "Loading djLint…",
-  "djlint.demo_version": "Running with Python {python}; djLint {djlint}",
   "djlint.demo_error": "djLint could not be loaded. Check your connection and reload the page.",
   "djlint.demo_copy_link": "Copy link",
   "djlint.demo_options": "Options",

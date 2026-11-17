@@ -145,7 +145,10 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
 {
   route && (
     <div class="demo not-content">
-      <p>{t("djlint.demo_description")} <small id="djlint-version" /></p>
+      <p>
+        {t("djlint.demo_description")}
+        <span class="demo-version" id="djlint-version" />
+      </p>
       {/* What djLint says about the settings, such as a rule code it doesn't know. */}
       <ul class="demo-warnings" id="djlint-warnings" role="status" />
 
@@ -242,7 +245,6 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
               class="sr-only"
               id="djlint-status"
               role="status"
-              data-version={t("djlint.demo_version")}
               data-error={t("djlint.demo_error")}
             >
               {t("djlint.demo_loading")}
@@ -480,9 +482,7 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     } else if (type === "status" && message === "error") {
       showError();
     } else if (type === "version") {
-      document.getElementById("djlint-version")!.textContent = status.dataset
-        .version!.replace("{python}", message.python)
-        .replace("{djlint}", message.djlint);
+      document.getElementById("djlint-version")!.textContent = `djLint ${message}`;
     } else if ((type === "result" || type === "error") && id === sessionId) {
       formatted = type === "result" ? html : message;
       showWarnings(type === "result" ? warnings : []);
@@ -592,6 +592,12 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
      whole page column, which custom.css already caps for wide screens. */
   :global(main:has(.demo) .sl-container) {
     max-width: none;
+  }
+  /* Which djLint the demo runs, a quiet line under the description. */
+  .demo-version {
+    display: block;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
   }
   .demo-workspace {
     display: grid;

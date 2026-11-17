@@ -12,15 +12,12 @@ async function loadPyodideAndPackages() {
     lockFileURL: new URL("/static/py/pyodide-lock.json", self.location).href,
   });
   await pyodide.loadPackage("djlint");
-  const versions = await pyodide.runPythonAsync(`
-import platform
+  const version = await pyodide.runPythonAsync(`
 from importlib import metadata
 
-[platform.python_version(), metadata.version("djlint")]
+metadata.version("djlint")
 `);
-  const [python, djlint] = versions.toJs();
-  versions.destroy();
-  self.postMessage({ type: "version", message: { python, djlint } });
+  self.postMessage({ type: "version", message: version });
   run = await pyodide.runPythonAsync(`
 from djlint.api import format_text, lint_text, load_config
 

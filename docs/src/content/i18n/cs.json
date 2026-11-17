@@ -15,7 +15,6 @@
   "djlint.sections": "Sekce",
   "djlint.demo_description": "Formátujte a kontrolujte HTML šablony v prohlížeči pomocí djLint.",
   "djlint.demo_loading": "Načítání djLint…",
-  "djlint.demo_version": "Běží na Pythonu {python}; djLint {djlint}",
   "djlint.demo_error": "djLint se nepodařilo načíst. Zkontrolujte připojení a obnovte stránku.",
   "djlint.demo_copy_link": "Kopírovat odkaz",
   "djlint.demo_options": "Možnosti",

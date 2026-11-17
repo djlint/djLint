@@ -16,8 +16,11 @@
   --dj-squiggle: #f5c542;
   --dj-focus: var(--dj-squiggle);
   --dj-ok: #73daca;
-  /* The wavy underline of a lint finding, on the home page and in the demo. */
-  --dj-squiggle-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath d='M0 1.5 Q1.5 0 3 1.5 T6 1.5' fill='none' stroke='%23f5c542' stroke-width='1.2'/%3E%3C/svg%3E");
+  /* The squiggle under a lint finding and under the current page, drawn as an
+     image: each browser draws text-decoration: wavy at a size of its own, so
+     it was twice as tall in Chrome as in Firefox and Safari. */
+  --dj-squiggle-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='5'%3E%3Cpath d='M0 2.5 Q1.5 0 3 2.5 T6 2.5' fill='none' stroke='%23f5c542' stroke-width='1.5'/%3E%3C/svg%3E")
+    repeat-x 0 100% / 6px 5px;
   /* The editors on the home and demo pages are Tokyo Night Moon in both
      themes; code blocks follow the theme, lighter than the page in the dark
      one and greyer than it in the light one. */
@@ -110,11 +113,9 @@
 }
 
 /* The squiggle itself. Header.astro draws the one under the current section. */
-.sidebar-content a[aria-current="page"] {
-  text-decoration: underline wavy var(--dj-squiggle);
-  text-decoration-thickness: 1.5px;
-  text-decoration-skip-ink: none;
-  text-underline-offset: 0.35em;
+.sidebar-content a[aria-current="page"] > span {
+  padding-block-end: 0.4em;
+  background: var(--dj-squiggle-wave);
 }
 
 /* Headings: sharpened terminals at heavy weights read as djLint's own voice. */

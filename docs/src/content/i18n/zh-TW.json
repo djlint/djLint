@@ -15,7 +15,6 @@
   "djlint.sections": "欄目",
   "djlint.demo_description": "使用 djLint 在瀏覽器中格式化並檢查 HTML 範本。",
   "djlint.demo_loading": "正在載入 djLint…",
-  "djlint.demo_version": "執行環境：Python {python}；djLint {djlint}",
   "djlint.demo_error": "無法載入 djLint。請檢查網路連線，然後重新整理頁面。",
   "djlint.demo_copy_link": "複製連結",
   "djlint.demo_options": "選項",
