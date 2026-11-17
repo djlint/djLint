@@ -1096,3 +1096,43 @@ def test_ctrl_c_exits_130(client: Client) -> None:
     client.start()
     client.process.send_signal(signal.SIGINT)
     assert client.process.wait(TIMEOUT_SECONDS) == 130
+
+
+def test_shows_what_djlint_warns_about_the_settings(client: Client, tmp_path: Path) -> None:
+    (tmp_path / ".djlintrc").write_text('{"max_line_lenght": 100}', encoding="utf-8")
+    client.start(tmp_path, options={"ignor": "H006"})
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, "<p>x</p>\n")
+    client.diagnostics(uri)
+    shown = [client.notification("window/showMessage") for _ in range(2)]
+    assert {message["type"] for message in shown} == {2}
+    assert sorted(message["message"] for message in shown) == [
+        (
+            "djLint: .djlintrc sets max_line_lenght, which is not a djLint setting."
+            " Did you mean max_line_length?"
+        ),
+        "djLint: the editor sets ignor, which is not a djLint setting. Did you mean ignore?",
+    ]
+    assert client.stop() == 0
+
+
+def test_warns_about_the_profile_in_use_only(client: Client, tmp_path: Path) -> None:
+    """Without a profile, a jinja document is linted under jinja, not html."""
+    (tmp_path / ".djlint_rules.yaml").write_text(
+        "- rule:\n"
+        "    name: X001\n"
+        "    message: x\n"
+        "    patterns: ['nothing here']\n"
+        "    exclude: [html]\n",
+        encoding="utf-8",
+    )
+    (tmp_path / ".djlintrc").write_text('{"include": "X001,H999"}', encoding="utf-8")
+    client.start(tmp_path)
+    uri = (tmp_path / "a.html").as_uri()
+    client.open(uri, "<p>x</p>\n", language="jinja")
+    client.diagnostics(uri)
+    assert client.notification("window/showMessage")["message"] == (
+        "djLint: include names H999, which is not a linter rule."
+    )
+    assert client.stop() == 0
+    assert not [m for m in client.ignored if m.get("method") == "window/showMessage"]

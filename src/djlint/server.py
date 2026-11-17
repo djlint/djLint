@@ -16,6 +16,7 @@ import re
 import sys
 import threading
 from bisect import bisect_right
+from difflib import get_close_matches
 from importlib.metadata import version
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, final
@@ -462,12 +463,16 @@ class Server:
     def _log(self, level: int, message: str) -> None:
         self._notify("window/logMessage", {"type": level, "message": message})
 
-    def _report_once(self, message: str) -> None:
+    def _report_once(self, message: str, level: int = _LOG_ERROR) -> None:
         """Show a problem with a setup, which every run would run into."""
-        self._log(_LOG_ERROR, message)
+        self._log(level, message)
         if message not in self._reported:
             self._reported.add(message)
-            self._notify("window/showMessage", {"type": _LOG_ERROR, "message": message})
+            self._notify("window/showMessage", {"type": level, "message": message})
+
+    def _warn(self, message: str) -> None:
+        """Show what djLint says about the settings, as the command line would."""
+        self._report_once(f"djLint: {message}", _LOG_WARNING)
 
     def _handle(self, message: Json) -> None:
         method = message.get("method")
@@ -795,7 +800,9 @@ class Server:
             if option == "use_editor_indentation":
                 continue
             if option not in known:
-                self._log(_LOG_WARNING, f"Ignoring the setting {name}.")
+                close = get_close_matches(option, known, n=1)
+                hint = f" Did you mean {close[0]}?" if close else ""
+                self._warn(f"the editor sets {name}, which is not a djLint setting.{hint}")
             elif option in _PATH_SETTINGS:
                 if value:
                     options[option] = self._resolve(str(value), path)
@@ -830,10 +837,16 @@ class Server:
         key = (folder, json.dumps(options, sort_keys=True, default=str), document.language)
         config = self._configs.get(key)
         if config is None:
-            config = load_config(folder, **options)
+            # Only the configuration that ends up in use says what's wrong with
+            # it: a rule left out under html can run under the document's profile.
+            warnings: list[str] = []
+            config = load_config(folder, **options, on_warning=warnings.append)
             profile = _PROFILES.get(document.language)
             if profile is not None and "profile" not in options and not config.has_profile:
-                config = load_config(folder, **options, profile=profile)
+                warnings.clear()
+                config = load_config(folder, **options, profile=profile, on_warning=warnings.append)
+            for warning in warnings:
+                self._warn(warning)
             self._configs[key] = config
         return config
 
@@ -905,6 +918,8 @@ class Server:
         path = _path(uri)
         if path is not None and self._is_excluded(config, path):
             return None
+        if path is not None:
+            config = config.for_file(path)
         return _edits(document.text, format_text(config, document.text))
 
 

@@ -4,13 +4,47 @@
 
 ## [Unreleased]
 
+## [1.52.0] - 2026-11-17
+
+### Feature
+
+- New rule `D058` reports a Django tag or comment that spans lines, such as a `{# #}` comment written over several lines or an `{% include %}` whose arguments go on to the next line. Django reads a tag only within one line, so it prints these as text, and an `{% if %}` split that way stops the template from compiling. Anything inside a `{% comment %}` or `{% verbatim %}` block is left alone, and so is a `{%` or `{{` that another tag follows before its closing, which `T039` reports.
+- New rule `D059`, off by default, reports consecutive lines that each hold only a `{# #}` comment, which a `{% comment %}` block holds as one. A `djlint:` directive and a translator comment never join such a run, and comments inside `<pre>` and `<textarea>` are left alone, since the line breaks they leave show on the page there.
+- djLint warns about a djLint file that sits beside the one it reads and so isn't read, such as a `djlint.toml` next to `[tool.djlint]` in `pyproject.toml`, or a `.djlintrc` next to a `djlint.toml`.
+- `.editorconfig` files are read as editors read them, for each file by its own path: the nearest `.editorconfig` wins, the ones above it fill in what it leaves out, and one with `root = true` ends the search, which goes no higher than the project root. Sections match by the EditorConfig globs, paths included, so `[pages/*.html]` sets only the templates in `pages`, and `unset` drops a value that a file above gives. Only the project root's `.editorconfig` was read, and its settings went to every file of the run.
+
+### Bug fixes
+
+- A switch in a configuration file takes `true` or `false` again, nothing else. 1.51.0 also read `"yes"`, `"on"`, `"1"` and other words for one, which is now an error naming the file. The text `"true"` or `"false"` still works, with a warning to write it without quotes, and so does a number written as text, such as `"100"`.
+- The warning about a code in `include` that never runs no longer names the `html` profile when none is set. It says the rule never runs without a profile, where the linter follows `html`.
+- A `pyproject.toml` without djLint settings no longer stops the search for the configuration, so a package in a monorepo with its own `pyproject.toml` gets the settings of the repository instead of none. The search still stops at a folder with a `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml` or a `pyproject.toml` with `[tool.djlint]`, and never goes past the root of the repository (`.git` or `.hg`).
+
+## [1.51.0] - 2026-11-16
+
+### Feature
+
+- djLint warns about settings that would not do what they look like, so a typo no longer goes unnoticed. The warnings go to stderr once per run, as the others do:
+  - a name in a configuration file that is not a djLint setting, with the closest one it knows, as `max_line_length` for `max_line_lenght` or `max-line-length`;
+  - a rule code in `ignore`, `include` or `per-file-ignores` that no rule has, with the right case for `h006`; a code in both `ignore` and `include`, which stays off; and a code in `include` that the profile never runs, such as T028 under `django`;
+  - `--indent-css` or the `css` settings without `format_css`, the same for JavaScript, and `format_attribute_js_json_pattern` or `format_attribute_js_json_min_props` without `format_attribute_js_json`.
+- The language server shows these warnings in the editor, each once until the configuration changes, and so does a setting the editor sends that djLint doesn't know, with the closest one it does. The editor's ones used to go only to the server's log.
+- `djlint.api.load_config` takes `on_warning`, a function that gets every warning about the settings, for a program that shows them itself. Without it, they go to stderr once per process, as before.
+- A switch in a configuration file can also be written as the words configparser takes, in any case: `"yes"`, `"on"`, `"true"` or `"1"` for on, `"no"`, `"off"`, `"false"` or `"0"` for off, and the numbers 1 and 0.
+
+### Bug fixes
+
+- The text `"false"` in a configuration file turns a switch off. Any text used to turn it on, so `"format_css": "false"` formatted CSS. A value that is no switch, such as `"maybe"`, is now an error naming the file, as a number setting that is no number already was.
+- A number setting written as `true` or with a fraction, such as `indent = true` or `max_line_length = 100.5`, is an error. They used to become 1 and 100. A whole number written with a fraction part, `100.0`, still counts.
+- A `linter_output_format` naming a field djLint doesn't have, such as `{lin}`, is reported when the run starts, with the fields it can name. The run used to fail at the first finding.
+- `per-file-ignores` takes a list of codes for a pattern, as the other options with several values do, such as `"base.html" = ["H030", "H025"]`. A list used to make linting fail.
+
 ## [1.50.4] - 2026-11-15
 
 ### Bug fixes
 
 - `include` turns on a rule that the profile leaves out, so `--include=T003` now runs T003 without a profile or under `--profile=html`. Before, the template rules (T) and the rules for one template language (D, J, M, N) stayed off there, whatever `include` said. A rule still stays off under a profile it doesn't apply to, such as T028 under `django` or H012 under `angular`.
 - Without a profile, the linter runs the same rules as under `--profile=html`. A custom rule with an `exclude` list used to be skipped there, as under `all`.
-- `djlint --help` and the docs no longer call `html` the default profile. Without one, djLint formats the template syntax of every language, as `all` does, and lints as `html` does.
+- `djlint --help` and the docs no longer call `html` the default profile. Without one, djLint formats the template syntax of every language, as `all` does, and lints with the rules of `html`.
 
 ## [1.50.3] - 2026-11-15
 

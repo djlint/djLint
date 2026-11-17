@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import tomllib
-from fnmatch import fnmatch
 from functools import cache
 from itertools import chain
 from pathlib import Path
+from string import Formatter
 from typing import TYPE_CHECKING, final
 
 import regex as re
@@ -36,7 +37,7 @@ from djlint.helpers import (
 from djlint.lint import build_flags
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Mapping
+    from collections.abc import Callable, Iterable, Iterator, Mapping, Set as AbstractSet
     from typing import Any, Final
 
     from pathspec import PathSpec, Pattern
@@ -64,26 +65,48 @@ DJLINT_TOML_CONFIG_FILES: Final = ("djlint.toml", ".djlint.toml")
 _QUOTE_STYLES: Final = frozenset(("double", "single"))
 
 
+def _sets_djlint(pyproject: Path) -> bool:
+    """Whether a pyproject.toml has djLint settings.
+
+    Only a missing or empty [tool.djlint] table doesn't count. One that can't
+    be read, or that isn't a table, does, so that its error is what the run
+    reports, rather than the settings of a folder above it.
+    """
+    try:
+        settings = load_pyproject_config(pyproject)
+    except (AttributeError, OSError, UnicodeDecodeError, tomllib.TOMLDecodeError):
+        return True
+    return not (isinstance(settings, dict) and not settings)
+
+
 def find_project_root(src: Path) -> Path:
-    """Attempt to get the project root."""
+    """Find the folder whose configuration applies to src.
+
+    That's the first folder upward with a djlint.toml, a .djlint.toml, a
+    .djlintrc, a .djlint_rules.yaml or a pyproject.toml with djLint settings,
+    or the root of a repository, which the search never passes. A pyproject.toml without
+    djLint settings, as a package in a monorepo has, is passed by, so the
+    configuration of the repository still applies to it; with nothing above,
+    its folder is the root.
+    """
+    settingless: Path | None = None
     for directory in (src, *src.parents):
-        if (directory / ".git").exists():
+        if any(
+            (directory / name).is_file()
+            for name in (*DJLINT_TOML_CONFIG_FILES, ".djlintrc", ".djlint_rules.yaml")
+        ):
             return directory
 
-        if (directory / ".hg").is_dir():
-            return directory
-
-        if (directory / "pyproject.toml").is_file():
-            return directory
-
-        for config_file in DJLINT_TOML_CONFIG_FILES:
-            if (directory / config_file).is_file():
+        pyproject = directory / "pyproject.toml"
+        if pyproject.is_file():
+            if _sets_djlint(pyproject):
                 return directory
+            settingless = settingless or directory
 
-        if (directory / ".djlintrc").is_file():
+        if (directory / ".git").exists() or (directory / ".hg").is_dir():
             return directory
 
-    return src if src.is_dir() else src.parent
+    return settingless or (src if src.is_dir() else src.parent)
 
 
 def load_gitignore(root: Path) -> PathSpec[Pattern]:
@@ -159,52 +182,229 @@ def find_djlint_rules(root: Path) -> Path | None:
     return None
 
 
-def _editorconfig_glob_matches_html(glob: str, extension: str) -> bool:
-    """Whether an .editorconfig section applies to template files.
+_EDITORCONFIG_PROPERTIES: Final = frozenset(("indent_size", "max_line_length"))
 
-    One level of {a,b} alternation is expanded before matching.
+
+def _closing_bracket(glob: str, start: int) -> int:
+    """The index of the `]` that closes the `[` at start, or -1 without one."""
+    i = start + 1
+    while i < len(glob):
+        if glob[i] == "\\":
+            i += 2
+            continue
+        if glob[i] == "]" and i > start + 1:
+            return i
+        i += 1
+    return -1
+
+
+def _brace(glob: str, start: int) -> tuple[int, bool]:
+    """The index of the `}` closing the `{` at start, or -1, and if it has alternatives.
+
+    Only a `,` of its own makes them: one unescaped, and outside a nested
+    `{...}` or a `[...]`.
     """
-    if glob == "*":
-        return True
-    globs = [glob]
-    if "{" in glob and "}" in glob:
-        head, _, rest = glob.partition("{")
-        body, _, tail = rest.partition("}")
-        globs = [head + alt + tail for alt in body.split(",")]
-    names = (f"test.{extension}", "test.html")
-    return any(
-        fnmatch(name, g.lstrip("*").lstrip("/") if g.startswith("**") else g)
-        for g in globs
-        for name in names
-    )
+    depth = 0
+    alternatives = False
+    i = start
+    while i < len(glob):
+        char = glob[i]
+        if char == "\\":
+            i += 2
+            continue
+        if char == "[" and (close := _closing_bracket(glob, i)) != -1:
+            i = close + 1
+            continue
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if not depth:
+                return i, alternatives
+        elif char == "," and depth == 1:
+            alternatives = True
+        i += 1
+    return -1, False
 
 
-def load_editorconfig(root: Path, extension: str) -> dict[str, int]:
-    """Read indent_size and max_line_length from a root .editorconfig.
+def _character_class(body: str) -> str:
+    """The regex of the members of a `[...]` class, `!` or `^` first negating it."""
+    negated = body[:1] in {"!", "^"}
+    members: list[str] = ["^"] if negated else []
+    i = 1 if negated else 0
+    while i < len(body):
+        if body[i] == "\\" and i + 1 < len(body):
+            members.append(re.escape(body[i + 1]))
+            i += 2
+            continue
+        # An unescaped `-` makes a range, as in the glob.
+        members.append("-" if body[i] == "-" else re.escape(body[i]))
+        i += 1
+    return f"[{''.join(members)}]"
 
-    Used as defaults only: the command line and djlint config files take
-    precedence. Sections are considered when their glob applies to html
-    or the configured extension.
+
+@final
+class _EditorConfigGlob:
+    """An EditorConfig section glob, as the specification reads it.
+
+    `*` and `?` stay within one folder, `**` crosses them, `[...]` and `[!...]`
+    are character classes, `{a,b}` alternatives, which can nest, and `{1..9}` a
+    number in that range. A glob without a `/` matches a file's name in any
+    folder below the .editorconfig; one with a `/` is matched from the folder
+    of that file.
     """
-    path = root / ".editorconfig"
-    result: dict[str, int] = {}
-    if not path.is_file():
-        return result
 
-    section_applies = False
+    __slots__ = ("pattern", "ranges")
+
+    def __init__(self, glob: str) -> None:
+        out: list[str] = []
+        # Each {1..9} captures its number, which matches() checks against the
+        # range, as the EditorConfig core library does. A number written with
+        # a leading zero, such as 060, is never in one.
+        ranges: list[tuple[int, int]] = []
+        # For each open brace, whether it holds alternatives or is a literal one.
+        braces: list[bool] = []
+        i = 0
+        while i < len(glob):
+            char = glob[i]
+            if char == "\\" and i + 1 < len(glob):
+                out.append(re.escape(glob[i + 1]))
+                i += 2
+                continue
+            if char == "*":
+                # A `**/` at the start or after a `/` also stands for no
+                # folder, so `pages/**/*.html` takes pages/index.html too.
+                if glob.startswith("**/", i) and (i == 0 or glob[i - 1] == "/"):
+                    out.append("(?:.*/)?")
+                    i += 3
+                    continue
+                if glob.startswith("**", i):
+                    out.append(".*")
+                    i += 2
+                    continue
+                out.append("[^/]*")
+            elif char == "?":
+                out.append("[^/]")
+            elif char == "[" and (close := _closing_bracket(glob, i)) != -1:
+                body = glob[i + 1 : close]
+                # A class never takes a `/`, so one with a `/` in it is plain
+                # text, wildcards and all, as in the core library.
+                out.append(
+                    re.escape(glob[i : close + 1]) if "/" in body else _character_class(body)
+                )
+                i = close + 1
+                continue
+            elif char == "{":
+                close, alternatives = _brace(glob, i)
+                span = glob[i + 1 : close] if close != -1 else ""
+                if numbers := re.fullmatch(r"([+-]?[0-9]+)\.\.([+-]?[0-9]+)", span):
+                    low, high = sorted((int(numbers[1]), int(numbers[2])))
+                    ranges.append((low, high))
+                    out.append("([+-]?(?:0|[1-9][0-9]*))")
+                    i = close + 1
+                    continue
+                braces.append(alternatives)
+                out.append("(?:" if braces[-1] else re.escape(char))
+            elif char == "}" and braces:
+                out.append(")" if braces.pop() else re.escape(char))
+            elif char == "," and braces and braces[-1]:
+                out.append("|")
+            else:
+                out.append(re.escape(char))
+            i += 1
+        pattern = "".join(out)
+        pattern = pattern.removeprefix("/") if "/" in glob else f"(?:.*/)?{pattern}"
+        try:
+            self.pattern = re.compile(pattern)
+        except re.error:
+            self.pattern = re.compile(r"(?!)")
+        self.ranges = tuple(ranges)
+
+    def matches(self, path: str) -> bool:
+        """Whether the glob takes a path, relative to its .editorconfig."""
+        found = self.pattern.fullmatch(path)
+        return found is not None and all(
+            number is None or low <= int(number) <= high
+            for number, (low, high) in zip(found.groups(), self.ranges, strict=True)
+        )
+
+
+def _read_editorconfig(
+    path: Path,
+) -> tuple[list[tuple[_EditorConfigGlob, dict[str, int | None]]], bool]:
+    """The sections of one .editorconfig with djLint's properties, and its root flag.
+
+    A property set to `unset` is None, which drops what a file further up or a
+    section before it gives it.
+    """
+    sections: list[tuple[_EditorConfigGlob, dict[str, int | None]]] = []
+    is_root = False
     for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         line = raw_line.strip()
         if not line or line.startswith(("#", ";")):
             continue
         if line.startswith("[") and line.endswith("]"):
-            section_applies = _editorconfig_glob_matches_html(line[1:-1], extension)
+            sections.append((_EditorConfigGlob(line[1:-1]), {}))
             continue
         key, sep, value = line.partition("=")
-        if sep and section_applies:
-            key, value = key.strip().lower(), value.strip()
-            if key in {"indent_size", "max_line_length"} and value.isdigit():
-                result[key] = int(value)
-    return result
+        key, value = key.strip().lower(), value.strip()
+        if not sep:
+            continue
+        if not sections and key == "root":
+            is_root = value.lower() == "true"
+        elif sections and key in _EDITORCONFIG_PROPERTIES:
+            if value.isdecimal():
+                sections[-1][1][key] = int(value)
+            elif value.lower() == "unset":
+                sections[-1][1][key] = None
+    return sections, is_root
+
+
+def editorconfig_files(
+    folder: Path, root: Path
+) -> tuple[tuple[Path, list[tuple[_EditorConfigGlob, dict[str, int | None]]]], ...]:
+    """The .editorconfig files over a folder, nearest first.
+
+    The search ends at one with `root = true`, and goes no higher than the
+    project root.
+    """
+    folders = [folder, *folder.parents]
+    found = []
+    if root not in folders:
+        # A file outside the project of the run, as with `djlint a b`,
+        # searches up to its own project's root.
+        root = find_project_root(folder)
+    for directory in folders[: folders.index(root) + 1]:
+        path = directory / ".editorconfig"
+        if path.is_file():
+            sections, is_root = _read_editorconfig(path)
+            found.append((directory, sections))
+            if is_root:
+                break
+    return tuple(found)
+
+
+def editorconfig_for(
+    file: Path,
+    files: tuple[tuple[Path, list[tuple[_EditorConfigGlob, dict[str, int | None]]]], ...],
+) -> dict[str, int]:
+    """indent_size and max_line_length for a file, as editors read them.
+
+    The nearest .editorconfig wins, the ones above it fill in what it leaves
+    out, and within one file a later section wins over an earlier one.
+    """
+    result: dict[str, int | None] = {}
+    for directory, sections in files:
+        try:
+            relative = file.relative_to(directory).as_posix()
+        except ValueError:
+            continue
+        own: dict[str, int | None] = {}
+        for glob, values in sections:
+            if glob.matches(relative):
+                own.update(values)
+        result = {**own, **result}
+    return {key: value for key, value in result.items() if value is not None}
 
 
 def load_pyproject_config(filepath: Path) -> Any:
@@ -266,18 +466,26 @@ def _named_settings(config: Path | None) -> dict[str, Any]:
     return _settings_table(content, config)
 
 
-def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
+def _project_settings(src: Path, warn: Callable[[str], None]) -> tuple[dict[str, Any], str]:
     """Settings from the project's own file, the first one that holds any.
 
     The name of that file comes with them, for the messages about a value
-    it sets.
+    it sets. A djLint file beside the one read is not read, which is worth
+    saying: its settings would otherwise do nothing without a word.
     """
+    others = [
+        path.name
+        for path in (*(src / name for name in DJLINT_TOML_CONFIG_FILES), src / ".djlintrc")
+        if path.is_file()
+    ]
     if pyproject_file := find_pyproject(src):
         try:
             content = load_pyproject_config(pyproject_file)
         except Exception as error:
             raise _unreadable_config(pyproject_file.name, error) from None
         if settings := _settings_table(content, pyproject_file.name):
+            for other in others:
+                warn(f"{other} is not read, as [tool.djlint] in pyproject.toml comes first.")
             return settings, pyproject_file.name
 
     if djlint_toml_file := find_djlint_toml(src):
@@ -285,6 +493,8 @@ def _project_settings(src: Path) -> tuple[dict[str, Any], str]:
             content = load_djlint_toml_config(djlint_toml_file)
         except Exception as error:
             raise _unreadable_config(djlint_toml_file.name, error) from None
+        for other in others[others.index(djlint_toml_file.name) + 1 :]:
+            warn(f"{other} is not read, as {djlint_toml_file.name} comes first.")
         return _settings_table(content, djlint_toml_file.name), djlint_toml_file.name
 
     if djlintrc_file := find_djlintrc(src):
@@ -307,8 +517,125 @@ def _warn_once(message: str) -> None:
     echo(style(f"Warning: {message}", fg="yellow"), err=True)
 
 
+# The settings a configuration file can hold. tests/test_config/test_warnings.py
+# checks that Config reads each of them and nothing else.
+_SETTINGS: Final = frozenset((
+    "allow_empty_input",
+    "blank_line_after_tag",
+    "blank_line_before_tag",
+    "close_void_tags",
+    "css",
+    "custom_blocks",
+    "custom_html",
+    "exclude",
+    "extend_exclude",
+    "extension",
+    "files",
+    "format_attribute_js_json",
+    "format_attribute_js_json_min_props",
+    "format_attribute_js_json_pattern",
+    "format_attribute_template_tags",
+    "format_css",
+    "format_js",
+    "ignore",
+    "ignore_blocks",
+    "ignore_case",
+    "include",
+    "indent",
+    "js",
+    "keep_br_inline",
+    "line_break_after_multiline_tag",
+    "linter_output_format",
+    "max_attribute_length",
+    "max_blank_lines",
+    "max_line_length",
+    "name_endblocks",
+    "no_entity_formatting",
+    "no_function_formatting",
+    "no_indent_inner_html",
+    "no_line_after_yaml",
+    "no_set_formatting",
+    "per-file-ignores",
+    "preserve_blank_lines",
+    "preserve_class_newlines",
+    "preserve_leading_space",
+    "profile",
+    "quiet",
+    "quote_style",
+    "require_pragma",
+    "single_attribute_per_line",
+    "sort_attributes",
+    "sort_load_tags",
+    "use_gitignore",
+))
+
+# What linter_output_format can name.
+_OUTPUT_FIELDS: Final = frozenset(("code", "end", "filename", "line", "match", "message"))
+
+
+def _check_settings(
+    settings: Mapping[str, Any], sources: Mapping[str, str], warn: Callable[[str], None]
+) -> None:
+    """Warn about settings in a file that djLint ignores or reads unlike they look.
+
+    A misspelled name would otherwise do nothing without a word.
+    """
+    for name in settings:
+        if name not in _SETTINGS:
+            from difflib import get_close_matches  # noqa: PLC0415
+
+            close = get_close_matches(name, _SETTINGS, n=1)
+            hint = f" Did you mean {close[0]}?" if close else ""
+            warn(f"{sources[name]} sets {name}, which is not a djLint setting.{hint}")
+
+
+def _format_fields(text: str) -> Iterator[str]:
+    """The names a format string looks up, in it and in its format specs.
+
+    A field such as `code[0]` or `message.upper` looks up `code` or `message`.
+    """
+    for _, field, spec, _ in Formatter().parse(text):
+        if field is not None:
+            yield re.split(r"[.\[]", field, maxsplit=1)[0]
+        if spec:
+            yield from _format_fields(spec)
+
+
+def _check_output_format(output_format: str) -> None:
+    """Refuse a linter_output_format naming a field there is none of.
+
+    Otherwise the run would fail at its first finding.
+    """
+    try:
+        fields = set(_format_fields(output_format))
+    except ValueError as error:
+        msg = f"Invalid linter_output_format {output_format!r}: {error}."
+        raise UsageError(msg) from None
+    if unknown := sorted(fields - _OUTPUT_FIELDS):
+        known = ", ".join(f"{{{field}}}" for field in sorted(_OUTPUT_FIELDS))
+        msg = (
+            f"Invalid linter_output_format {output_format!r}:"
+            f" {', '.join(f'{{{field}}}' for field in unknown)} is not one of {known}."
+        )
+        raise UsageError(msg)
+
+
+def _check_codes(
+    option: str, codes: Iterable[str], known: AbstractSet[str], warn: Callable[[str], None]
+) -> None:
+    """Warn about rule codes no rule has, which an option would quietly skip."""
+    for code in codes:
+        if code not in known:
+            hint = f" Did you mean {code.upper()}?" if code.upper() in known else ""
+            warn(f"{option} names {code}, which is not a linter rule.{hint}")
+
+
 def load_project_settings(
-    src: Path, config: Path | None, *, prefer_configuration: bool = False
+    src: Path,
+    config: Path | None,
+    *,
+    prefer_configuration: bool = False,
+    warn: Callable[[str], None] = _warn_once,
 ) -> tuple[dict[str, Any], dict[str, str]]:
     """Load djlint config, and the file each setting was read from.
 
@@ -317,7 +644,7 @@ def load_project_settings(
     around, which is what naming a file on the command line usually means.
     """
     named = _named_settings(config)
-    project, project_file = _project_settings(src)
+    project, project_file = _project_settings(src, warn)
     named_sources = dict.fromkeys(named, str(config))
     project_sources = dict.fromkeys(project, project_file)
 
@@ -326,27 +653,27 @@ def load_project_settings(
     return {**named, **project}, {**named_sources, **project_sources}
 
 
-def validate_rules(rules: Iterable[_TMappingStrAny]) -> Iterator[_TMappingStrAny]:
-    """Validate a list of linter rules. Returns valid rules."""
+def validate_rules(
+    rules: Iterable[_TMappingStrAny], warn: Callable[[str], None] = _warn_once
+) -> Iterator[_TMappingStrAny]:
+    """Yield the rules that have what a rule needs, and warn about the rest."""
     for rule in rules:
-        warning = False
         name = rule["rule"].get("name", "undefined")
-        if "name" not in rule["rule"]:
-            warning = True
-            echo(style("Warning: A rule is missing a name! 😢", fg="red"), err=True)
-        if "patterns" not in rule["rule"] and "python_module" not in rule["rule"]:
-            warning = True
-            echo(
-                style(
-                    f"Warning: Rule {name} is missing a pattern or a python_module! 😢", fg="red"
+        problems = [
+            message
+            for missing, message in (
+                ("name" not in rule["rule"], "A rule is missing a name! 😢"),
+                (
+                    "patterns" not in rule["rule"] and "python_module" not in rule["rule"],
+                    f"Rule {name} is missing a pattern or a python_module! 😢",
                 ),
-                err=True,
+                ("message" not in rule["rule"], f"Rule {name} is missing a message! 😢"),
             )
-        if "message" not in rule["rule"]:
-            warning = True
-            echo(style(f"Warning: Rule {name} is missing a message! 😢", fg="red"), err=True)
-
-        if not warning:
+            if missing
+        ]
+        for problem in problems:
+            warn(problem)
+        if not problems:
             yield rule
 
 
@@ -444,7 +771,7 @@ _CODES_EXCLUDED_BY_PROFILE: Final[dict[str, tuple[str, ...]]] = {
     "nunjucks": ("D", "J", "M"),
     "handlebars": ("D", "J", "N"),
     "golang": ("D", "J", "N", "M"),
-    "angular": ("D", "J", "H012", "H026", "H028"),
+    "angular": ("D", "J", "H012", "H026"),
 }
 
 _PROFILES: Final[frozenset[str]] = frozenset(_CODES_EXCLUDED_BY_PROFILE) | {"all"}
@@ -1203,6 +1530,7 @@ class Config:
     """Djlint Config."""
 
     __slots__ = (
+        "_editorconfig_files",
         "allow_empty_input",
         "always_self_closing_html_tags",
         "attribute_pattern",
@@ -1216,6 +1544,7 @@ class Config:
         "css_config",
         "custom_blocks",
         "custom_html",
+        "editorconfig_defaults",
         "entity_pattern",
         "exclude",
         "exclude_pattern",
@@ -1320,6 +1649,12 @@ class Config:
         "warn",
     )
 
+    def __new__(cls, *_args: object, **_kwargs: object) -> Config:
+        # for_file copies a Config. Under mypyc, a class without its own
+        # __new__ runs __init__ again for a copy, which would read the
+        # configuration of the current folder.
+        return super().__new__(cls)
+
     def __init__(
         self,
         src: str = ".",
@@ -1383,7 +1718,11 @@ class Config:
         stdin: bool | None = None,
         stdin_filename: str | None = None,
         python_rules: bool = True,
+        on_warning: Callable[[str], None] | None = None,
     ) -> None:
+        # A program that shows the warnings itself gets each of them, every
+        # time; the command line prints each one once per run.
+        report = on_warning or _warn_once
         if src != "-":
             start = Path(src).resolve()
         elif stdin_filename is None:
@@ -1392,21 +1731,63 @@ class Config:
             start = Path(stdin_filename).resolve().parent
         self.project_root = find_project_root(start)
         djlint_settings, setting_sources = load_project_settings(
-            self.project_root, configuration, prefer_configuration=prefer_configuration
+            self.project_root, configuration, prefer_configuration=prefer_configuration, warn=report
         )
         if prefer_configuration and configuration is None:
-            _warn_once("--prefer-configuration has no effect without --configuration.")
+            report("--prefer-configuration has no effect without --configuration.")
+        _check_settings(djlint_settings, setting_sources, report)
 
         def setting_int(key: str, default: int) -> int:
-            """Read an integer option from the config file."""
-            try:
-                return int(djlint_settings.get(key, default))
-            except (TypeError, ValueError):
-                msg = (
-                    f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
-                    " It must be a whole number."
+            """Read a whole number from the config file.
+
+            The text of one works too, with a warning, as djLint always took
+            it. true and false are numbers to Python, and 2.5 would quietly
+            become 2, so both are refused.
+            """
+            value = djlint_settings.get(key, default)
+            if isinstance(value, float) and value.is_integer():
+                value = int(value)
+            if isinstance(value, int) and not isinstance(value, bool):
+                return value
+            if isinstance(value, str):
+                try:
+                    number = int(value)
+                except ValueError:
+                    pass
+                else:
+                    if key in djlint_settings:
+                        report(
+                            f"{key} in {setting_sources[key]} should be the number {number},"
+                            f" not the text {json.dumps(value)}."
+                        )
+                    return number
+            msg = (
+                f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
+                " It must be a whole number."
+            )
+            raise UsageError(msg)
+
+        def setting_bool(key: str) -> bool:
+            """Read a switch from the config file: true or false.
+
+            The text "true" or "false" works too, with a warning, since older
+            configurations quote it. Anything else is refused rather than read
+            as true, so no text can turn a switch on by being there.
+            """
+            value = djlint_settings.get(key, False)
+            if isinstance(value, bool):
+                return value
+            if isinstance(value, str) and (text := value.strip().lower()) in {"true", "false"}:
+                report(
+                    f"{key} in {setting_sources[key]} should be {text},"
+                    f" not the text {json.dumps(value)}."
                 )
-                raise UsageError(msg) from None
+                return text == "true"
+            msg = (
+                f"Invalid {setting_sources[key]} {key} value {djlint_settings[key]}."
+                " It must be true or false."
+            )
+            raise UsageError(msg)
 
         self.reformat = reformat
         self.check = check
@@ -1418,48 +1799,34 @@ class Config:
         self.stdin_filename = stdin_filename
 
         self.extension = str(extension or djlint_settings.get("extension", "html"))
-        self.quiet = quiet or djlint_settings.get("quiet", False)
-        self.require_pragma = (
-            require_pragma or str(djlint_settings.get("require_pragma", "false")).lower() == "true"
+        self.quiet = quiet or setting_bool("quiet")
+        self.require_pragma = require_pragma or setting_bool("require_pragma")
+        self.preserve_leading_space = preserve_leading_space or setting_bool(
+            "preserve_leading_space"
         )
-        self.preserve_leading_space = preserve_leading_space or djlint_settings.get(
-            "preserve_leading_space", False
+        self.preserve_blank_lines = preserve_blank_lines or setting_bool("preserve_blank_lines")
+        self.preserve_class_newlines = preserve_class_newlines or setting_bool(
+            "preserve_class_newlines"
         )
-        self.preserve_blank_lines = preserve_blank_lines or djlint_settings.get(
-            "preserve_blank_lines", False
-        )
-        self.preserve_class_newlines = preserve_class_newlines or djlint_settings.get(
-            "preserve_class_newlines", False
-        )
-        self.format_js = format_js or djlint_settings.get("format_js", False)
-        self.format_css = format_css or djlint_settings.get("format_css", False)
-        self.ignore_case = ignore_case or djlint_settings.get("ignore_case", False)
-        self.close_void_tags = close_void_tags or djlint_settings.get("close_void_tags", False)
-        self.no_line_after_yaml = no_line_after_yaml or djlint_settings.get(
-            "no_line_after_yaml", False
-        )
-        self.no_indent_inner_html = no_indent_inner_html or djlint_settings.get(
-            "no_indent_inner_html", False
-        )
-        self.sort_attributes = sort_attributes or djlint_settings.get("sort_attributes", False)
-        self.sort_load_tags = sort_load_tags or djlint_settings.get("sort_load_tags", False)
-        self.name_endblocks = name_endblocks or djlint_settings.get("name_endblocks", False)
+        self.format_js = format_js or setting_bool("format_js")
+        self.format_css = format_css or setting_bool("format_css")
+        self.ignore_case = ignore_case or setting_bool("ignore_case")
+        self.close_void_tags = close_void_tags or setting_bool("close_void_tags")
+        self.no_line_after_yaml = no_line_after_yaml or setting_bool("no_line_after_yaml")
+        self.no_indent_inner_html = no_indent_inner_html or setting_bool("no_indent_inner_html")
+        self.sort_attributes = sort_attributes or setting_bool("sort_attributes")
+        self.sort_load_tags = sort_load_tags or setting_bool("sort_load_tags")
+        self.name_endblocks = name_endblocks or setting_bool("name_endblocks")
         selected_profile = str(profile or djlint_settings.get("profile", "")).lower()
         expressions_are_rust = selected_profile == "askama"
         self.no_set_formatting = (
-            no_set_formatting
-            or djlint_settings.get("no_set_formatting", False)
-            or expressions_are_rust
+            no_set_formatting or setting_bool("no_set_formatting") or expressions_are_rust
         )
         self.no_function_formatting = (
-            no_function_formatting
-            or djlint_settings.get("no_function_formatting", False)
-            or expressions_are_rust
+            no_function_formatting or setting_bool("no_function_formatting") or expressions_are_rust
         )
-        self.no_entity_formatting = no_entity_formatting or djlint_settings.get(
-            "no_entity_formatting", False
-        )
-        self.keep_br_inline = keep_br_inline or djlint_settings.get("keep_br_inline", False)
+        self.no_entity_formatting = no_entity_formatting or setting_bool("no_entity_formatting")
+        self.keep_br_inline = keep_br_inline or setting_bool("keep_br_inline")
         self.quote_style = str(quote_style or djlint_settings.get("quote_style", "double")).lower()
         if self.quote_style not in _QUOTE_STYLES:
             msg = (
@@ -1467,14 +1834,14 @@ class Config:
                 f" Choose from {', '.join(sorted(_QUOTE_STYLES))}."
             )
             raise BadParameter(msg, param_hint="'--quote-style'")
-        self.format_attribute_template_tags = format_attribute_template_tags or djlint_settings.get(
-            "format_attribute_template_tags", False
+        self.format_attribute_template_tags = format_attribute_template_tags or setting_bool(
+            "format_attribute_template_tags"
         )
-        self.single_attribute_per_line = single_attribute_per_line or djlint_settings.get(
-            "single_attribute_per_line", False
+        self.single_attribute_per_line = single_attribute_per_line or setting_bool(
+            "single_attribute_per_line"
         )
-        self.format_attribute_js_json = format_attribute_js_json or djlint_settings.get(
-            "format_attribute_js_json", False
+        self.format_attribute_js_json = format_attribute_js_json or setting_bool(
+            "format_attribute_js_json"
         )
         self.format_attribute_js_json_min_props = (
             format_attribute_js_json_min_props
@@ -1484,24 +1851,63 @@ class Config:
         self.linter_output_format = linter_output_format or djlint_settings.get(
             "linter_output_format", "{code} {line} {message} {match}"
         )
-        self.per_file_ignores = (
-            dict(per_file_ignores)
-            if per_file_ignores
-            else djlint_settings.get("per-file-ignores", {})
-        )
+        _check_output_format(self.linter_output_format)
+        # The codes can be a list, as in the other options that take several.
+        self.per_file_ignores = {
+            pattern: str(_as_comma_separated(codes))
+            for pattern, codes in (
+                dict(per_file_ignores)
+                if per_file_ignores
+                else djlint_settings.get("per-file-ignores", {})
+            ).items()
+        }
         self.blank_line_after_tag = blank_line_after_tag or _as_comma_separated(
             djlint_settings.get("blank_line_after_tag", None)
         )
         self.blank_line_before_tag = blank_line_before_tag or _as_comma_separated(
             djlint_settings.get("blank_line_before_tag", None)
         )
-        self.line_break_after_multiline_tag = line_break_after_multiline_tag or djlint_settings.get(
-            "line_break_after_multiline_tag", False
+        self.line_break_after_multiline_tag = line_break_after_multiline_tag or setting_bool(
+            "line_break_after_multiline_tag"
         )
         self.js_config = _beautifier_config(djlint_settings.get("js"), indent_size=indent_js)
         self.css_config = _beautifier_config(djlint_settings.get("css"), indent_size=indent_css)
+        if not self.format_js and (indent_js is not None or djlint_settings.get("js")):
+            report("--indent-js and the js settings have no effect without format_js.")
+        if not self.format_css and (indent_css is not None or djlint_settings.get("css")):
+            report("--indent-css and the css settings have no effect without format_css.")
+        if not self.format_attribute_js_json and (
+            unused := [
+                name
+                for name, given in (
+                    ("format_attribute_js_json_pattern", bool(format_attribute_js_json_pattern)),
+                    (
+                        "format_attribute_js_json_min_props",
+                        format_attribute_js_json_min_props is not None,
+                    ),
+                )
+                if given or name in djlint_settings
+            ]
+        ):
+            report(
+                f"{' and '.join(unused)} {'has' if len(unused) == 1 else 'have'}"
+                " no effect without format_attribute_js_json."
+            )
 
-        editorconfig = load_editorconfig(self.project_root, self.extension)
+        # .editorconfig only fills in what neither the command line nor the
+        # configuration sets. Each file gets its own (see for_file); this is
+        # for a file of the configured extension in the folder checked.
+        self.editorconfig_defaults = frozenset(
+            name
+            for name, given in (
+                ("indent_size", indent or "indent" in djlint_settings),
+                ("max_line_length", max_line_length or "max_line_length" in djlint_settings),
+            )
+            if not given
+        )
+        self._editorconfig_files: dict[Path, tuple[Any, ...]] = {}
+        folder = start if start.is_dir() else start.parent
+        editorconfig = self._editorconfig_for(folder / f"_.{self.extension}")
         indent = indent or setting_int("indent", editorconfig.get("indent_size", 4))
         self.indent_size = indent
         self.indent = indent * " "
@@ -1517,7 +1923,7 @@ class Config:
             max_blank_lines if max_blank_lines is not None else setting_int("max_blank_lines", 0)
         )
         if self.preserve_blank_lines and self.max_blank_lines > 0:
-            _warn_once("max_blank_lines has no effect with preserve_blank_lines.")
+            report("max_blank_lines has no effect with preserve_blank_lines.")
 
         exclude = build_exclude(
             exclude or _as_comma_separated(djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
@@ -1534,15 +1940,13 @@ class Config:
         self.stdin = (src == "-" if stdin is None else stdin) and (
             not self.files or stdin_filename is not None
         )
-        self.use_gitignore = (
-            use_gitignore or bool(djlint_settings.get("use_gitignore", False))
-        ) and (not self.stdin or stdin_filename is not None)
+        self.use_gitignore = (use_gitignore or setting_bool("use_gitignore")) and (
+            not self.stdin or stdin_filename is not None
+        )
         self.gitignore: PathSpec[Pattern] | None = (
             load_gitignore(self.project_root) if self.use_gitignore else None
         )
-        self.allow_empty_input = allow_empty_input or bool(
-            djlint_settings.get("allow_empty_input", False)
-        )
+        self.allow_empty_input = allow_empty_input or setting_bool("allow_empty_input")
 
         self.has_profile = bool(selected_profile)
         self.profile = selected_profile or "all"
@@ -1566,9 +1970,17 @@ class Config:
                 if "python_module" in x["rule"]
             )
             custom_rules = tuple(x for x in custom_rules if "python_module" not in x["rule"])
-        rule_set = tuple(validate_rules(chain(default_rules, custom_rules)))
+        rule_set = tuple(validate_rules(chain(default_rules, custom_rules), report))
         ignored_codes = set(split_option_list(self.ignore))
         included_codes = set(split_option_list(self.include))
+        rules_by_code = {x["rule"]["name"]: x["rule"] for x in rule_set}
+        known_codes = {*rules_by_code, *self.skipped_rules}
+        _check_codes("ignore", sorted(ignored_codes), known_codes, report)
+        _check_codes("include", sorted(included_codes), known_codes, report)
+        for codes in self.per_file_ignores.values():
+            _check_codes("per-file-ignores", split_option_list(codes), known_codes, report)
+        for code in sorted(ignored_codes & included_codes):
+            report(f"{code} is in both ignore and include, so it stays off.")
         if self.ignore_case:
             ignored_codes.update(("H009", "H010"))
         # the formatter writes `<img />` under it, which H018 rejects
@@ -1594,6 +2006,16 @@ class Config:
             if excluded_profiles and lint_profile == "all":
                 return False
             return not any(name.startswith(code) for code in profile_codes)
+
+        # With no profile set, naming html would read as if one were.
+        profile_name = (
+            f"the {lint_profile} profile"
+            if selected_profile
+            else "no profile, where the linter follows html"
+        )
+        for code in sorted(included_codes.intersection(rules_by_code)):
+            if lint_profile in rules_by_code[code].get("exclude", ()) or code in profile_codes:
+                report(f"include names {code}, which never runs under {profile_name}.")
 
         self.entity_pattern = next(
             (
@@ -1621,13 +2043,8 @@ class Config:
         if self.lint:
             enabled_rules = {x["rule"]["name"] for x in self.linter_rules}
             if {"H017", "H018"} <= enabled_rules:
-                echo(
-                    style(
-                        "Warning: H017 and H018 enforce opposite void tag"
-                        " styles. Enable only one convention. 😢",
-                        fg="yellow",
-                    ),
-                    err=True,
+                report(
+                    "H017 and H018 enforce opposite void tag styles. Enable only one convention. 😢"
                 )
 
         self.custom_blocks = str(
@@ -1841,3 +2258,37 @@ class Config:
             self.optional_single_line_template_pattern = compile_pattern(
                 rf"^(?:{self.optional_single_line_template_tags})$", RE_FLAGS_IX
             )
+
+    def _editorconfig_for(self, file: Path) -> dict[str, int]:
+        folder = file.parent
+        if folder not in self._editorconfig_files:
+            self._editorconfig_files[folder] = editorconfig_files(folder, self.project_root)
+        return editorconfig_for(file, self._editorconfig_files[folder])
+
+    def for_file(self, file: Path) -> Config:
+        """This configuration with the .editorconfig of a file, where it applies.
+
+        The configuration is built for the folder a run starts from, but
+        editors read .editorconfig for each file, by its path. Only what the
+        command line and the configuration leave to .editorconfig changes.
+        """
+        if not self.editorconfig_defaults:
+            return self
+        found = self._editorconfig_for(file.resolve())
+        indent_size = (
+            found.get("indent_size", 4)
+            if "indent_size" in self.editorconfig_defaults
+            else self.indent_size
+        )
+        max_line_length = (
+            found.get("max_line_length", 120)
+            if "max_line_length" in self.editorconfig_defaults
+            else self.max_line_length
+        )
+        if (indent_size, max_line_length) == (self.indent_size, self.max_line_length):
+            return self
+        config = copy.copy(self)
+        config.indent_size = indent_size
+        config.indent = indent_size * " "
+        config.max_line_length = max_line_length
+        return config

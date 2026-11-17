@@ -60,13 +60,14 @@ def test_profile(runner: CliRunner) -> None:
     ("profile", "include", "rule", "runs"),
     [
         pytest.param(None, "", "T003", False, id="no profile leaves T rules out"),
-        pytest.param(None, "T003", "T003", True, id="include beats the default profile"),
+        pytest.param(None, "T003", "T003", True, id="include runs T003 without a profile"),
         pytest.param("html", "T003", "T003", True, id="include beats the html profile"),
         pytest.param(
             "angular", "H012", "H012", False, id="include never beats a code the profile names"
         ),
         pytest.param(None, "T028", "T028", True, id="include runs T028 without a profile"),
         pytest.param("all", "", "T028", False, id="all leaves out a rule excluded anywhere"),
+        pytest.param("all", "T028", "T028", True, id="include beats all leaving a rule out"),
         pytest.param("django", "T028", "T028", False, id="include never beats the rule's exclude"),
     ],
 )
