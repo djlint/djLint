@@ -108,10 +108,10 @@ Der erste Buchstabe eines Codes sagt, welche Profile die Regel ausführen:
 - D: Django, läuft unter `django`.
 - H: HTML, läuft unter jedem Profil. `angular` lässt H012 und H026 aus.
 - J: Jinja, läuft unter `jinja`.
-- T: Template-Syntax, läuft unter jedem Profil außer `html` und `mako`.
+- T: Template-Syntax, läuft unter jedem Profil außer `html` und `mako`. T001 und T041 bis T044 lassen außerdem die Profile aus, die ihre Beschreibung nennt.
 - M und N haben keine eigenen Regeln von djLint. Eine benutzerdefinierte Regel, deren Code mit M beginnt, läuft unter `handlebars` und `angular`, eine mit N unter `nunjucks` und `angular`.
 
-`all` führt alle Regeln aus, und ohne Profil führt der Linter die Regeln von `html` aus.
+`all` führt die Regeln aller Template-Sprachen aus, außer denen, die standardmäßig deaktiviert sind, und denen, die ein Profil auslassen, etwa T001 und T041 bis T044; `--include` fügt sie hinzu. Ohne Profil führt der Linter die Regeln von `html` aus.
 
 ### Regeln im Detail
 

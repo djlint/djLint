@@ -108,10 +108,10 @@ La prima lettera di un codice indica quali profili eseguono la regola:
 - D: Django, eseguita con `django`.
 - H: HTML, eseguita con ogni profilo. `angular` esclude H012 e H026.
 - J: Jinja, eseguita con `jinja`.
-- T: sintassi dei template, eseguita con ogni profilo tranne `html` e `mako`.
+- T: sintassi dei template, eseguita con ogni profilo tranne `html` e `mako`. T001 e le regole da T041 a T044 escludono anche i profili indicati nella loro descrizione.
 - M e N non hanno regole proprie di djLint. Una regola personalizzata il cui codice inizia con M gira con `handlebars` e `angular`, e una con N con `nunjucks` e `angular`.
 
-`all` esegue tutte le regole e, senza profilo, il linter esegue le regole di `html`.
+`all` esegue le regole di tutti i linguaggi di template, tranne quelle disattivate per impostazione predefinita e quelle che escludono qualche profilo, come T001 e le regole da T041 a T044; `--include` le aggiunge. Senza profilo, il linter esegue le regole di `html`.
 
 ### Dettagli delle regole
 

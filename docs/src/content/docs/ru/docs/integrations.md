@@ -205,7 +205,7 @@ djLint берёт `profile` из первого источника, где он 
 
 djLint можно использовать как хук [pre-commit](https://pre-commit.com) и для проверки, и для форматирования.
 
-У каждого профиля есть хук для проверки (они перечислены ниже) и хук для форматирования с тем же именем, но с `reformat`: `djlint-reformat-django` для `djlint-django`. Хуки задают `--profile` и файлы, которые передаёт pre-commit:
+У каждого из этих профилей есть хук для проверки (хуки перечислены ниже) и хук для форматирования с тем же именем, но с `reformat`: `djlint-reformat-django` для `djlint-django`. Хуки задают `--profile` и файлы, которые передаёт pre-commit. У `angular` своих хуков нет: добавьте `args: [--profile=angular]` к `djlint` или `djlint-reformat`.
 
 | Хук                 | Профиль    | Файлы                                |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ djLint можно использовать как хук [pre-commit](https://pr
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Для шаблонов с другими расширениями переопределите `files` или `types_or` в своей конфигурации, как описано в [документации pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
+Для шаблонов с другими расширениями переопределите `files` в своей конфигурации, а если хук задаёт `types_or`, то и его, потому что pre-commit требует, чтобы совпадали оба. Подробнее в [документации pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
 
 ### Стандартный пример для Django
 

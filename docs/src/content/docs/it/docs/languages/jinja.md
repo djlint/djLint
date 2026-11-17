@@ -9,7 +9,7 @@ djLint analizza e formatta i template Jinja. Imposta il profilo `jinja` per adat
 
 **[Che cos'è Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja segue la sintassi di Jinja2 e anche i template Jinjava di HubSpot sono in stile Jinja, quindi usa il profilo `jinja` per entrambi.
+MiniJinja segue la sintassi di Jinja2 e anche i template Jinjava di HubSpot sono in stile Jinja, quindi usa il profilo `jinja` per entrambi. J004 e J018 suggeriscono `url_for` di Flask, quindi ignorale in un progetto senza Flask.
 
 ## Uso dalla riga di comando
 

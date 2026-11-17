@@ -30,7 +30,7 @@ Con `python_rules=False`, no se cargan las reglas personalizadas con un `python_
 
 ## format_text
 
-`format_text(config, text)` devuelve el texto formateado. Un texto cuya primera línea termina en CRLF se devuelve en CRLF, y cualquier otro, en LF. Con `require_pragma`, un texto sin el pragma se devuelve sin cambios. Toma `indent` y `max_line_length` del `.editorconfig` que se aplica a la carpeta que se pasa a `load_config`, mientras que la línea de comandos los toma para cada archivo según su ruta.
+`format_text(config, text)` devuelve el texto formateado. Un texto cuya primera línea termina en CRLF se devuelve en CRLF, y cualquier otro, en LF. Con `require_pragma`, un texto sin el pragma se devuelve sin cambios. Si ni las opciones de `load_config` ni el archivo de configuración definen `indent` o `max_line_length`, los toma de las secciones del `.editorconfig` que se aplican a un archivo de la extensión configurada en la carpeta que se pasa a `load_config`, mientras que la línea de comandos los toma para cada archivo según su ruta.
 
 ## lint_text
 

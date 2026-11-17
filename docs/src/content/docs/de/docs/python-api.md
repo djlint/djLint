@@ -30,7 +30,7 @@ Mit `python_rules=False` werden benutzerdefinierte Regeln mit einem `python_modu
 
 ## format_text
 
-`format_text(config, text)` gibt den formatierten Text zurück. Ein Text, dessen erste Zeile auf CRLF endet, kommt mit CRLF zurück, jeder andere mit LF. Mit `require_pragma` kommt ein Text ohne das Pragma unverändert zurück. Die Funktion nimmt `indent` und `max_line_length` aus der `.editorconfig`, die für den an `load_config` übergebenen Ordner gilt, während die Befehlszeile sie für jede Datei anhand ihres Pfads nimmt.
+`format_text(config, text)` gibt den formatierten Text zurück. Ein Text, dessen erste Zeile auf CRLF endet, kommt mit CRLF zurück, jeder andere mit LF. Mit `require_pragma` kommt ein Text ohne das Pragma unverändert zurück. Wenn weder die Optionen von `load_config` noch die Konfigurationsdatei `indent` oder `max_line_length` setzen, nimmt die Funktion sie aus den Abschnitten der `.editorconfig`, die für eine Datei mit der konfigurierten Endung im an `load_config` übergebenen Ordner gelten, während die Befehlszeile sie für jede Datei anhand ihres Pfads nimmt.
 
 ## lint_text
 

@@ -205,7 +205,7 @@ El paso de subida necesita el permiso `security-events: write` en el job o en el
 
 djLint se puede usar como hook de [pre-commit](https://pre-commit.com), tanto de linter como de formateador.
 
-Cada perfil tiene un hook que analiza, el de la lista, y otro que formatea, con el mismo nombre más `reformat`: `djlint-reformat-django` para `djlint-django`. Definen `--profile` y los archivos que pasa pre-commit:
+Cada uno de estos perfiles tiene un hook que analiza, el de la lista, y otro que formatea, con el mismo nombre más `reformat`: `djlint-reformat-django` para `djlint-django`. Definen `--profile` y los archivos que pasa pre-commit. `angular` no tiene hooks propios: añade `args: [--profile=angular]` a `djlint` o a `djlint-reformat`.
 
 | Hook                | Perfil     | Archivos                             |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ Cada perfil tiene un hook que analiza, el de la lista, y otro que formatea, con 
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Para plantillas con otras extensiones, sobrescribe `files` o `types_or` en tu configuración, como explica la [documentación de pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
+Para plantillas con otras extensiones, sobrescribe `files` en tu configuración, y también `types_or` si el hook lo define, ya que pre-commit necesita que coincidan los dos. Consulta la [documentación de pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
 
 ### Ejemplo predeterminado para Django
 

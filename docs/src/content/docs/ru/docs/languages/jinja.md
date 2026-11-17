@@ -9,7 +9,7 @@ djLint проверяет и форматирует шаблоны Jinja. Зад
 
 **[Что такое Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja следует синтаксису Jinja2, а шаблоны Jinjava от HubSpot тоже написаны в стиле Jinja, поэтому для обоих используйте профиль `jinja`.
+MiniJinja следует синтаксису Jinja2, а шаблоны Jinjava от HubSpot тоже написаны в стиле Jinja, поэтому для обоих используйте профиль `jinja`. J004 и J018 предлагают `url_for` из Flask, поэтому в проекте без Flask отключите их.
 
 ## Через командную строку
 

@@ -205,7 +205,7 @@ Il passaggio di caricamento richiede il permesso `security-events: write` sul jo
 
 djLint può essere usato come hook di [pre-commit](https://pre-commit.com), sia come linter sia come formattatore.
 
-Ogni profilo ha un hook che esegue il lint, elencato qui, e uno che formatta, con lo stesso nome più `reformat`: `djlint-reformat-django` per `djlint-django`. Impostano `--profile` e i file che pre-commit passa:
+Ognuno di questi profili ha un hook che esegue il lint, elencato qui, e uno che formatta, con lo stesso nome più `reformat`: `djlint-reformat-django` per `djlint-django`. Impostano `--profile` e i file che pre-commit passa. `angular` non ha hook propri: aggiungi `args: [--profile=angular]` a `djlint` o `djlint-reformat`.
 
 | Hook                | Profilo    | File                                 |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ Ogni profilo ha un hook che esegue il lint, elencato qui, e uno che formatta, co
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Per template con altre estensioni, sovrascrivi `files` o `types_or` nella tua configurazione, come descrive la [documentazione di pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
+Per template con altre estensioni, sovrascrivi `files` nella tua configurazione, e anche `types_or` dove l'hook lo imposta, perché pre-commit richiede che corrispondano entrambi. Vedi la [documentazione di pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
 
 ### Esempio predefinito per Django
 
