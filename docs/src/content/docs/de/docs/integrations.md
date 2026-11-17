@@ -30,6 +30,17 @@ Sie braucht djLint 1.49 oder neuer im PATH oder [uv](https://docs.astral.sh/uv/)
 
 ## Neovim
 
+Einigen Template-Endungen gibt Neovim keinen Filetype. Welche Option unten Sie auch nutzen, registrieren Sie sie zuerst:
+
+```lua
+vim.filetype.add({
+  extension = {
+    gohtml = "gotmpl", gotmpl = "gotmpl", handlebars = "handlebars",
+    j2 = "jinja", jinja2 = "jinja", mako = "mako", njk = "nunjucks",
+  },
+})
+```
+
 ### Integrierter LSP-Client (empfohlen)
 
 Neovim 0.11 oder neuer kann ohne Plug-in direkt mit dem [Sprachserver](#sprachserver) von djLint kommunizieren. Damit erhalten Sie Befunde schon während der Eingabe, mit unterstrichenen Bereichen, und zum Formatieren `vim.lsp.buf.format()`:
@@ -37,7 +48,10 @@ Neovim 0.11 oder neuer kann ohne Plug-in direkt mit dem [Sprachserver](#sprachse
 ```lua
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
-  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  filetypes = {
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+    "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
 vim.lsp.enable("djlint")
@@ -46,13 +60,20 @@ vim.lsp.enable("djlint")
 Um beim Speichern zu formatieren, ergänzen Sie dieselbe Konfiguration um Folgendes:
 
 ```lua
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = {
-    "*.html", "*.jinja", "*.jinja2", "*.j2",
-    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
-  },
+local group = vim.api.nvim_create_augroup("djlint_format", {})
+vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
-    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+    if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
+      return
+    end
+    vim.api.nvim_clear_autocmds({ group = group, buffer = args.buf })
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      group = group,
+      buffer = args.buf,
+      callback = function()
+        vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+      end,
+    })
   end,
 })
 ```
@@ -61,11 +82,29 @@ Siehe [Einstellungen](#einstellungen).
 
 ### conform.nvim und nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) formatiert und [nvim-lint](https://github.com/mfussenegger/nvim-lint) lintet, indem sie djLint als Befehl ausführen. Befunde haben keinen unterstrichenen Bereich und kommen erst, wenn Sie nvim-lint zum Linten auffordern.
+[conform.nvim](https://github.com/stevearc/conform.nvim) formatiert und [nvim-lint](https://github.com/mfussenegger/nvim-lint) lintet, indem sie djLint als Befehl ausführen. Befunde haben keinen unterstrichenen Bereich und kommen erst, wenn Sie nvim-lint zum Linten auffordern. Das Profil kommt aus der [Konfiguration](/de/docs/configuration/#profile) des Projekts, wie auf der Kommandozeile. Dieses Beispiel braucht djLint 1.49 oder neuer.
 
 ```lua
-require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
-require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+local formatters, linters = {}, {}
+for _, filetype in ipairs({
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+  "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+}) do
+  formatters[filetype] = { "djlint" }
+  linters[filetype] = { "djlint" }
+end
+require("conform").setup({
+  formatters_by_ft = formatters,
+  formatters = { djlint = { prepend_args = { "--stdin-filename", "$FILENAME" } } },
+})
+local lint = require("lint")
+lint.linters_by_ft = linters
+vim.list_extend(lint.linters.djlint.args, {
+  "--stdin-filename",
+  function()
+    return vim.api.nvim_buf_get_name(0)
+  end,
+})
 ```
 
 ### none-ls
@@ -85,7 +124,19 @@ Verwenden Sie in PyCharm und den anderen IDEs auf Basis von IntelliJ das kostenl
 1. Installieren Sie LSP4IJ aus dem Marketplace.
 1. Öffnen Sie das Toolfenster „LSP Consoles“ und fügen Sie einen neuen Sprachserver hinzu.
 1. Setzen Sie auf dem Tab **Server** den Namen auf `djLint` und den Befehl auf `djlint --lsp`, mit dem vollständigen Pfad des `djlint` in der virtuellen Umgebung des Projekts, falls es nicht im PATH liegt.
-1. Fügen Sie auf dem Tab **Mappings** ein Dateinamensmuster für Ihre Templates hinzu, etwa `*.html`. Hat die Konfiguration des Projekts kein [Profil](/de/docs/configuration/#profile), setzen Sie bei einem Django-Projekt die Sprach-ID auf `htmldjango`, damit das richtige gewählt wird.
+1. Fügen Sie auf dem Tab **Mappings** die Dateinamensmuster Ihrer Templates hinzu. Hat die Konfiguration des Projekts kein [Profil](/de/docs/configuration/#profile), wählt die Sprach-ID eines Musters es aus:
+
+   | Muster                                | Sprach-ID                      |
+   | ------------------------------------- | ------------------------------ |
+   | `*.html`, `*.htm`                     | `html`, in Django `htmldjango` |
+   | `*.jinja`, `*.jinja2`, `*.j2`         | `jinja`                        |
+   | `*.njk`, `*.twig`                     | `nunjucks`                     |
+   | `*.hbs`, `*.handlebars`, `*.mustache` | `handlebars`                   |
+   | `*.liquid`                            | `liquid`                       |
+   | `*.gotmpl`, `*.gohtml`                | `gotmpl`                       |
+   | `*.tera`                              | `tera`                         |
+   | `*.mako`                              | `mako`                         |
+
 1. Auf dem Tab **Configuration** können Sie [Einstellungen](#einstellungen) als JSON unter einem Schlüssel `djlint` festlegen.
 
 Die Befunde erscheinen im Editor, und **Reformat Code** kann den Server für die zugeordneten Dateien verwenden.
@@ -108,7 +159,7 @@ Installieren Sie SublimeLinter und [SublimeLinter-contrib-djlint](https://packag
 
 ## Helix
 
-Helix kann den [Sprachserver](#sprachserver) über `languages.toml` ausführen:
+Helix kann den [Sprachserver](#sprachserver) über `languages.toml` ausführen. Eine Liste `language-servers` ersetzt die, die Helix für diese Sprache hat, also behalten Sie dessen eigene Server nach `djlint` bei:
 
 ```toml
 [language-server.djlint]
@@ -117,8 +168,34 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["djlint", "vscode-html-language-server"]
+language-servers = ["djlint", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "htmldjango"
+language-servers = ["djlint", "djlsp", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "gotmpl"
+language-servers = ["djlint", "gopls"]
+
+[[language]]
+name = "jinja"
+language-servers = ["djlint"]
+
+[[language]]
+name = "nunjucks"
+language-servers = ["djlint"]
+
+[[language]]
+name = "twig"
+language-servers = ["djlint"]
+
+[[language]]
+name = "tera"
+language-servers = ["djlint"]
 ```
+
+Helix öffnet von sich aus keine Datei als `htmldjango`. Fügen Sie in einem Django-Projekt diesem Eintrag in der `.helix/languages.toml` des Projekts `file-types = ["html"]` hinzu.
 
 ## Emacs
 
@@ -126,11 +203,12 @@ Eglot, das ab Emacs 29 mitgeliefert wird:
 
 ```elisp
 (with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '((html-mode web-mode) . ("djlint" "--lsp"))))
+  (dolist (mode '(html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode))
+    (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-Führen Sie dann in einem Template `M-x eglot` aus. `eglot-format-buffer` formatiert es.
+Führen Sie dann in einem Template `M-x eglot` aus. `eglot-format-buffer` formatiert es. `html-mode`, `mhtml-mode` und `web-mode` nennen keine Template-Sprache, daher kommt das Profil dort aus der [Konfiguration](/de/docs/configuration/#profile) des Projekts.
 
 ## Sprachserver
 
