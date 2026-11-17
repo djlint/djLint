@@ -7,7 +7,7 @@ sidebar:
 
 djLint는 Angular 템플릿을 린트합니다. 규칙이 템플릿에 맞도록 `angular` 프로필을 설정하세요.
 
-**[Angular란?](https://angular.io/guide/template-syntax)**
+**[Angular란?](https://angular.dev/guide/templates)**
 
 ## 명령줄 사용
 
@@ -15,7 +15,7 @@ djLint는 Angular 템플릿을 린트합니다. 규칙이 템플릿에 맞도록
 djlint /path/to/templates --profile=angular
 ```
 
-## 또는 구성 파일 사용
+## 구성 파일에서
 
 프로젝트의 `pyproject.toml`, `djlint.toml` / `.djlint.toml`, `.djlintrc` 파일 중 하나에서 djLint를 구성합니다.
 
@@ -31,7 +31,3 @@ profile = "angular"
 ```json title=".djlintrc"
 { "profile": "angular" }
 ```
-
-:::tip
-[모든 옵션은 구성 가이드에서 확인하세요!](/ko/docs/configuration/)
-:::

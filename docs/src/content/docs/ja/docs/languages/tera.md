@@ -15,7 +15,7 @@ djLint で Tera テンプレートをリント・フォーマットできます�
 djlint /path/to/templates --profile=tera
 ```
 
-## または、設定ファイルを使う
+## 設定ファイルで
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 
@@ -31,7 +31,3 @@ profile = "tera"
 ```json title=".djlintrc"
 { "profile": "tera" }
 ```
-
-:::tip
-[すべてのオプションは設定ガイドで確認してください！](/ja/docs/configuration/)
-:::

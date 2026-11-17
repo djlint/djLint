@@ -5,7 +5,7 @@ description: "djLint가 HTML 템플릿을 린트하고 포맷하는 방식을 �
 
 import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
-구성은 프로젝트의 `pyproject.toml` 파일, `djlint.toml` 또는 `.djlint.toml` 파일, `.djlintrc` 파일 중 하나로 합니다. 명령줄 인수는 언제나 구성 파일의 모든 설정보다 우선합니다. `--prefer-configuration`을 지정하지 않는 한, 로컬 프로젝트 설정은 `--configuration`으로 지정한 전역 구성 파일보다 우선합니다.
+구성은 프로젝트의 `pyproject.toml`, `djlint.toml` 또는 `.djlint.toml`, `.djlintrc` 중 하나에 둡니다. 명령줄 옵션은 구성 파일보다 우선하지만, 플래그는 옵션을 켤 수만 있으므로 구성 파일에서 켠 스위치를 끌 수는 없습니다. `--prefer-configuration`을 지정하지 않는 한, 프로젝트의 설정은 `--configuration`으로 지정한 전역 구성 파일보다 우선합니다.
 
 djLint는 처음 검사하는 경로(`-`이면 `--stdin-filename`의 폴더, 이 옵션이 없으면 현재 디렉터리)에서 위쪽으로 이 파일들을 찾습니다. `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml` 또는 `[tool.djlint]`가 있는 `pyproject.toml` 중 하나가 있는 첫 폴더에서 멈추며, 저장소의 루트(`.git` 폴더나 파일, 또는 `.hg` 폴더가 있는 폴더)보다 위로는 가지 않습니다. djLint 설정이 없는 `pyproject.toml`에서는 멈추지 않으므로, 자체 `pyproject.toml`이 있는 모노레포의 패키지도 저장소의 설정을 받습니다. djLint는 멈춘 폴더만 읽습니다. `pyproject.toml`의 `[tool.djlint]`에 설정이 있으면 그것을 읽고, 없으면 `djlint.toml`이나 `.djlint.toml`을, 그것도 없으면 `.djlintrc`를 읽으며, 그 폴더에 있지만 읽지 않는 파일은 경고로 알려 줍니다.
 

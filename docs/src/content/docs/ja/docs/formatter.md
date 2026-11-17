@@ -5,28 +5,17 @@ sidebar:
   label: "フォーマッター"
 ---
 
-djLint のフォーマッターは、雑に書かれた HTML テンプレートを、一貫性があって読みやすいフォーマットに整えます！
-
-変更を適用する前に、`--check` で出力を確認してください。
-
-フォーマットで何が変わるかを確認するには、次のコマンドを実行します：
+djLint のフォーマッターは、HTML テンプレートのレイアウトを一貫したものに整えます。まず、何が変わるかを確認します：
 
 ```bash
-djlint . --check --single-attribute-per-line
+djlint . --check
 ```
 
-コードをフォーマットしてファイルを更新するには、次のコマンドを実行します：
+次に、ファイルをその場でフォーマットします。この例では `<style>` と `<script>` の中身もフォーマットします：
 
 ```bash
-djlint . --reformat --single-attribute-per-line
-
-# スクリプトとスタイルもフォーマットするには？
-djlint . --reformat --single-attribute-per-line --format-css --format-js
+djlint . --reformat --format-css --format-js
 ```
-
-:::tip
-[すべてのオプションは設定ガイドで確認してください！](/ja/docs/configuration/)
-:::
 
 :::note[メモ]
 属性内に書かれた JSON と JavaScript は、`--format-attribute-js-json` を有効にしない限りそのまま残されます。属性内の HTML は常にそのまま残されます。
@@ -36,11 +25,9 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 djLint は HTML パーサーでも構文バリデーターでもありません。
 :::
 
-## 例を見てみましょう！
+## 例
 
 ### 変更前
-
-手入れがどうしても必要な HTML の塊です：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -68,8 +55,6 @@ djLint は HTML パーサーでも構文バリデーターでもありません�
 ```
 
 ### 変更後
-
-少し良くなりました……これなら読めますね :)
 
 <!-- oxfmt-ignore -->
 ```html

@@ -7,7 +7,7 @@ sidebar:
 
 djLint で Angular テンプレートをリントできます。ルールがテンプレートに合うよう、`angular` プロファイルを設定してください。
 
-**[Angular とは？](https://angular.io/guide/template-syntax)**
+**[Angular とは？](https://angular.dev/guide/templates)**
 
 ## コマンドラインを使う
 
@@ -15,7 +15,7 @@ djLint で Angular テンプレートをリントできます。ルールがテ�
 djlint /path/to/templates --profile=angular
 ```
 
-## または、設定ファイルを使う
+## 設定ファイルで
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 
@@ -31,7 +31,3 @@ profile = "angular"
 ```json title=".djlintrc"
 { "profile": "angular" }
 ```
-
-:::tip
-[すべてのオプションは設定ガイドで確認してください！](/ja/docs/configuration/)
-:::

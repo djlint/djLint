@@ -3,8 +3,6 @@ title: "통합"
 description: "에디터에서 djLint를 사용하고 pre-commit으로 실행하는 방법입니다."
 ---
 
-djLint를 위한 에디터 통합이 여러 가지 있습니다.
-
 어떤 에디터를 쓰든 djLint는 에디터가 찾을 수 있는 곳, 가급적 프로젝트의 가상 환경에 설치하고, 에디터를 그 환경에서 시작하거나 에디터가 그 환경의 `djlint`를 가리키도록 하세요. 그러면 에디터가 프로젝트에 고정된 버전을 실행하므로 pre-commit 훅이나 CI와 같은 결과를 얻을 수 있습니다.
 
 ## Visual Studio Code
@@ -31,8 +29,6 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 PATH에 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 
 ## Neovim
-
-Neovim에서 djLint를 린터와 포맷터로 사용할 수 있습니다.
 
 ### 내장 LSP 클라이언트(권장)
 
@@ -82,38 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub 저장소](https://github.com/mattn/efm-langserver)
 
-1. Mason에서 `:MasonInstall efm djlint`로 efm-langserver와 djLint를 설치합니다.
-1. `filetypes`에 `htmldjango`를 추가합니다.
-1. 포맷 구성을 만듭니다.
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-```
-
-1. `htmldjango = { djlint }`로 언어와 포맷터를 연결합니다.
-
-구성 예시:
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-
-require("lspconfig").efm.setup({
-    filetypes = { "htmldjango" },
-    init_options = { documentFormatting = true },
-    settings = {
-        rootMarkers = { ".git/" },
-        languages = {
-            htmldjango = { djlint },
-        },
-    },
-})
-```
+`htmldjango`에 `formatCommand = "djlint --reformat --quiet --warn -"`, `formatStdin = true`로 포맷터를 지정합니다.
 
 ### coc.nvim
 
@@ -145,13 +110,7 @@ PyCharm을 비롯한 IntelliJ 기반 IDE에서는 무료 플러그인인 [LSP4IJ
 
 ### SublimeLinter
 
-djLint를 SublimeText Linter 플러그인으로 사용할 수 있습니다. [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint)에서 설치할 수 있습니다.
-
-1. `cmd + shift + p`
-2. SublimeLinter 설치
-3. SublimeLinter-contrib-djlint 설치
-
-djLint가 전역 Python이나 `PATH`에 설치되어 있는지 확인하세요.
+Package Control로 SublimeLinter와 [SublimeLinter-contrib-djlint](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint)를 설치합니다. djLint는 Sublime Text가 보는 PATH에 있어야 합니다.
 
 ## Helix
 
@@ -240,36 +199,28 @@ GitHub Actions 워크플로에서 djLint는 각 검사 결과를 주석(annotati
 
 업로드 단계에는 잡이나 워크플로에 `security-events: write` 권한이 필요합니다.
 
-`--sarif`는 SARIF 2.1.0 문서만 stdout에 쓰므로 위와 같이 리디렉션할 수 있습니다. 활성화된 모든 규칙이 문서 링크와 함께 나열되고, 각 검사 결과에는 줄과 열이 담기며, `--check`를 함께 쓰면 다시 포맷될 파일이 `formatting` 규칙으로 보고됩니다. Azure DevOps, GitLab과 대부분의 에디터가 같은 형식을 읽습니다.
+`--sarif`는 SARIF 2.1.0 문서만 stdout에 쓰므로 위와 같이 리디렉션할 수 있습니다. 활성화된 모든 규칙이 문서 링크와 함께 나열되고, 각 검사 결과에는 줄과 열이 담기며, `--check`를 함께 쓰면 다시 포맷될 파일이 `formatting` 규칙으로 보고됩니다.
 
 ## pre-commit
 
 djLint는 [pre-commit](https://pre-commit.com) 훅으로 린터와 포맷터 모두에 사용할 수 있습니다.
 
-저장소에는 특정 djLint 프로필에 맞게 미리 구성된 훅이 여러 개 있습니다. 이 훅들은 `--profile` 인수를 미리 지정하고, pre-commit에 어떤 파일 확장자를 찾을지 알려 줄 뿐입니다.
+각 프로필에는 아래에 나열한 린트용 훅과, 같은 이름에 `reformat`이 붙은 포맷용 훅이 있습니다. 예를 들어 `djlint-django`의 포맷용 훅은 `djlint-reformat-django`입니다. 이 훅들은 `--profile`과 pre-commit이 넘겨줄 파일을 지정합니다.
 
-- 린트용 `djlint`와 포맷용 `djlint-reformat`.
-  `--profile`을 지정하지 않고 `*.html`과 일치하는 파일을 찾습니다.
-- `djlint-django`와 `djlint-reformat-django`.
-  `*.html`과 일치하는 파일을 찾고 `--profile=django`를 지정합니다.
-- `djlint-jinja`와 `djlint-reformat-jinja`.
-  `*.j2`,`*.jinja`, `*.jinja2` 중 하나와 일치하는 파일을 찾고 `--profile=jinja`를 지정합니다.
-- `djlint-nunjucks`와 `djlint-reformat-nunjucks`.
-  `*.njk`와 일치하는 파일을 찾고 `--profile=nunjucks`를 지정합니다.
-- `djlint-handlebars`와 `djlint-reformat-handlebars`.
-  `*.hbs`와 일치하는 파일을 찾고 `--profile=handlebars`를 지정합니다.
-- `djlint-liquid`와 `djlint-reformat-liquid`.
-  `*.html`과 일치하는 파일을 찾고 `--profile=liquid`를 지정합니다.
-- `djlint-golang`과 `djlint-reformat-golang`.
-  `*.gotmpl`과 일치하는 파일을 찾고 `--profile=golang`을 지정합니다.
-- `djlint-tera`와 `djlint-reformat-tera`.
-  `*.html`과 일치하는 파일을 찾고 `--profile=tera`를 지정합니다.
-- `djlint-askama`와 `djlint-reformat-askama`.
-  `*.html`과 일치하는 파일을 찾고 `--profile=askama`를 지정합니다.
-- `djlint-mako`와 `djlint-reformat-mako`.
-  `*.html`과 일치하는 파일을 찾고 `--profile=mako`를 지정합니다.
+| 훅                  | 프로필     | 파일                                 |
+| ------------------- | ---------- | ------------------------------------ |
+| `djlint`            | 없음       | `.html`, `.htm`, `.xhtml`            |
+| `djlint-django`     | django     | `.html`, `.htm`, `.xhtml`            |
+| `djlint-jinja`      | jinja      | `.j2`, `.jinja`, `.jinja2`           |
+| `djlint-nunjucks`   | nunjucks   | `.njk`                               |
+| `djlint-handlebars` | handlebars | `.hbs`, `.handlebars`, `.mustache`   |
+| `djlint-liquid`     | liquid     | `.html`, `.htm`, `.xhtml`, `.liquid` |
+| `djlint-golang`     | golang     | `.gotmpl`                            |
+| `djlint-tera`       | tera       | `.html`, `.htm`, `.xhtml`            |
+| `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
+| `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-이렇게 미리 정의된 훅은 받아들이는 입력이 지나치게 보수적일 때가 있으므로(템플릿에 다른 확장자를 쓰고 있을 수도 있습니다), pre-commit에서는 미리 정의된 옵션을 무엇이든 재정의할 수 있습니다. 추가 구성은 [pre-commit 문서](https://pre-commit.com/#pre-commit-configyaml---hooks)를 참고하세요.
+다른 확장자를 쓰는 템플릿이라면 [pre-commit 문서](https://pre-commit.com/#pre-commit-configyaml---hooks)에서 설명하는 대로 구성에서 `files`나 `types_or`를 재정의하세요.
 
 ### 기본 Django 예시
 
@@ -301,9 +252,4 @@ repos:
 
 ## MegaLinter
 
-djlint는 [MegaLinter](https://megalinter.io)의 100개가 넘는 린터에 기본으로 포함되어 있습니다.
-
-설치하려면 `npx mega-linter-runner --install`을 실행하고 안내를 따르기만 하면 됩니다.
-
-- [GitHub 저장소](https://github.com/oxsecurity/megalinter)
-- [MegaLinter 문서의 djlint 항목](https://megalinter.io/latest/descriptors/html_djlint/)
+[MegaLinter](https://megalinter.io)에는 djLint가 포함되어 있습니다. `npx mega-linter-runner --install`을 실행해 설정하고, 옵션은 [MegaLinter의 djLint 페이지](https://megalinter.io/latest/descriptors/html_djlint/)를 참고하세요.

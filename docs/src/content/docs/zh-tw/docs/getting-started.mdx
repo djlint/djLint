@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## 安裝
 
-djLint 以 [Python](https://python.org) 開發，並發布在 [PyPI](https://pypi.org/project/djlint/) 上。
+djLint 需要 [Python](https://python.org) 3.11 或更新版本，並發布在 [PyPI](https://pypi.org/project/djlint/) 上。
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 若要在編輯器中或每次提交時執行 djLint，請參閱[整合](/zh-tw/docs/integrations/)和 [pre-commit](/zh-tw/docs/integrations/#pre-commit)。
 
 :::note[注意]
-如果找不到 `djlint` 指令，請確認 Python 已[加入你的 PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/)。
+如果找不到 `djlint` 指令，表示它的安裝資料夾不在你的 PATH 上。這時仍可以用 `python -m djlint` 執行它。
 :::
 
 ## 第一次執行
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## 結束代碼
 
-| 代碼 | 意義                                                                                            |
-| ---- | ----------------------------------------------------------------------------------------------- |
-| `0`  | 要求 djLint 檢查的所有內容都沒有問題，或是它找到的每個檔案都被你的設定略過了。                  |
-| `1`  | djLint 發現了 lint 錯誤，或有需要重新格式化的檔案。`--warn` 會將這些回報為警告，改以 `0` 結束。 |
-| `2`  | djLint 沒有檢查你要求的內容：路徑沒有比對到任何檔案、命令列或設定無效，或是 djLint 執行失敗。   |
+| 代碼 | 意義                                                                                                                                    |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | 要求 djLint 檢查的所有內容都沒有問題，或是它找到的每個檔案都被你的設定略過了。                                                          |
+| `1`  | djLint 發現了 lint 錯誤，或有需要重新格式化的檔案。`--warn` 會將這些回報為警告，改以 `0` 結束。                                         |
+| `2`  | djLint 沒有檢查你要求的內容：路徑沒有比對到任何檔案、有檔案無法讀取（不是 UTF-8，或沒有權限）、命令列或設定無效，或是 djLint 執行失敗。 |
 
-只有代碼 `1` 表示 djLint 檢查了你的範本，而且不滿意它找到的內容。代碼 `2` 一律表示這次執行本身沒有完成任務，因此管線可以分別處理這兩種情況。
+只有代碼 `1` 表示 djLint 檢查了你的範本，而且不滿意它找到的內容，因此管線可以區分檢查未通過，以及什麼都沒檢查到的執行，例如路徑錯誤，或 `--extension` 已不再相符。
 
-代碼 `2` 能抓出完全沒有檢查任何東西的執行：路徑錯誤、`--extension` 已不再相符，或範本已經移動。若沒有它，這樣的執行會默默通過。
-
-djLint *確實*找到、但隨後透過 `exclude`、`extend_exclude`、`use_gitignore` 或 `require_pragma` 刻意略過的檔案，不算是錯誤。這種執行會以 `0` 結束，因為設定完全照著指示運作。這也讓 `exclude` 能在 pre-commit 底下正常運作，因為 pre-commit 會傳入你暫存檔案的名稱，不論你是否希望 djLint 檢查它們。
-
-如果你的管線中本來就會有合理地不含任何範本的路徑，請使用 `allow_empty_input` 關閉代碼 `2`：
+djLint 找到、但隨後透過 `exclude`、`extend_exclude`、`use_gitignore` 或 `require_pragma` 刻意略過的檔案，不算是錯誤，`exclude` 也因此能在 pre-commit 底下正常運作。如果你的管線中本來就會有不含任何範本的路徑，請使用 [`allow_empty_input`](/zh-tw/docs/configuration/#allow-empty-input) 關閉代碼 `2`：
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## CLI 用法
-
-djLint 是一個命令列應用程式。進階設定請參閱[設定](/zh-tw/docs/configuration/)頁面。
 
 <CliHelp />

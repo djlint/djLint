@@ -5,28 +5,17 @@ sidebar:
   label: "格式化工具"
 ---
 
-djLint 的格式化工具能把杂乱的 HTML 模板整理成一致、易读的格式！
-
-在应用更改之前，先用 `--check` 检查输出。
-
-要查看格式化可能带来的更改，请运行：
+djLint 的格式化工具会让 HTML 模板的布局保持一致。先看看它会做哪些更改：
 
 ```bash
-djlint . --check --single-attribute-per-line
+djlint . --check
 ```
 
-要格式化代码并更新文件，请运行：
+然后就地格式化文件，这里连同 `<style>` 和 `<script>` 的内容一起格式化：
 
 ```bash
-djlint . --reformat --single-attribute-per-line
-
-# 想同时格式化脚本和样式？
-djlint . --reformat --single-attribute-per-line --format-css --format-js
+djlint . --reformat --format-css --format-js
 ```
-
-:::tip
-[查看配置指南，了解所有选项！](/zh/docs/configuration/)
-:::
 
 :::note[注意]
 写在属性中的 JSON 和 JavaScript 会保持原样，除非开启了 `--format-attribute-js-json`。属性中的 HTML 始终不会被改动。
@@ -36,11 +25,9 @@ djlint . --reformat --single-attribute-per-line --format-css --format-js
 djLint 不是 HTML 解析器，也不是语法验证器。
 :::
 
-## 来看个示例！
+## 示例
 
 ### 格式化之前
-
-下面是一段急需整理的 HTML：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -68,8 +55,6 @@ djLint 不是 HTML 解析器，也不是语法验证器。
 ```
 
 ### 格式化之后
-
-现在看起来好一些了……至少能读懂了 :)
 
 <!-- oxfmt-ignore -->
 ```html

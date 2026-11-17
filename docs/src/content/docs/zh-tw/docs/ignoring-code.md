@@ -3,9 +3,7 @@ title: "忽略程式碼"
 description: "如何避免 djLint 格式化某個程式碼區塊，以及如何在行內忽略 linter 規則。"
 ---
 
-只要用 `djlint` 標籤包住程式碼，就能忽略它：
-
-一般的 HTML：
+位於 `djlint:off` 和 `djlint:on` 註解之間的程式碼，格式化工具和 linter 都不會處理。這些註解可以是 HTML 註解：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -14,7 +12,7 @@ description: "如何避免 djLint 格式化某個程式碼區塊，以及如何�
 <!-- djlint:on -->
 ```
 
-或寫成註解：
+或是 Django 和 Jinja 的註解：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -23,7 +21,7 @@ description: "如何避免 djLint 格式化某個程式碼區塊，以及如何�
 {# djlint:on #}
 ```
 
-或寫成長註解：
+或是 `{% comment %}` 區塊：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -32,7 +30,7 @@ description: "如何避免 djLint 格式化某個程式碼區塊，以及如何�
 {% comment %} djlint:on {% endcomment %}
 ```
 
-或寫成 golang 風格的註解：
+或是 Go 範本的註解：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -41,7 +39,7 @@ description: "如何避免 djLint 格式化某個程式碼區塊，以及如何�
 {{ /* djlint:on */ }}
 ```
 
-或寫成 handlebars 風格的註解：
+或是 Handlebars 的註解：
 
 <!-- oxfmt-ignore -->
 ```html

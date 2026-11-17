@@ -3,9 +3,7 @@ title: "コードの無視"
 description: "djLint にコードブロックをフォーマットさせない方法と、リンターのルールをインラインで無視する方法。"
 ---
 
-コードは `djlint` タグで囲むと無視できます：
-
-通常の HTML の場合：
+`djlint:off` と `djlint:on` のコメントで囲んだコードは、フォーマッターもリンターもそのままにします。コメントは HTML のものでも構いません：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -14,7 +12,7 @@ description: "djLint にコードブロックをフォーマットさせない�
 <!-- djlint:on -->
 ```
 
-コメントとして書く場合：
+Django や Jinja のコメントでも：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -23,7 +21,7 @@ description: "djLint にコードブロックをフォーマットさせない�
 {# djlint:on #}
 ```
 
-長い形式のコメントとして書く場合：
+`{% comment %}` ブロックでも：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -32,7 +30,7 @@ description: "djLint にコードブロックをフォーマットさせない�
 {% comment %} djlint:on {% endcomment %}
 ```
 
-golang 形式のコメントとして書く場合：
+Go テンプレートのコメントでも：
 
 <!-- oxfmt-ignore -->
 ```html
@@ -41,7 +39,7 @@ golang 形式のコメントとして書く場合：
 {{ /* djlint:on */ }}
 ```
 
-handlebars 形式のコメントとして書く場合：
+Handlebars のコメントでも：
 
 <!-- oxfmt-ignore -->
 ```html

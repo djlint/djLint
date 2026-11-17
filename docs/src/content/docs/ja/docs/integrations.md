@@ -3,8 +3,6 @@ title: "連携"
 description: "エディターで djLint を使い、pre-commit で実行します。"
 ---
 
-djLint 向けに作られたエディター連携がいくつかあります。
-
 どのエディターを使う場合も、djLint はエディターが見つけられる場所、できればプロジェクトの仮想環境にインストールし、その環境からエディターを起動するか、その環境の `djlint` をエディターに指定してください。そうすれば、エディターはプロジェクトで固定したバージョンを実行し、pre-commit フックや CI と同じ結果が得られます。
 
 ## Visual Studio Code
@@ -31,8 +29,6 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 PATH 上の djLint 1.49 以降か、djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
 
 ## Neovim
-
-djLint は Neovim でリンターとフォーマッターとして使えます。
 
 ### 組み込みの LSP クライアント（推奨）
 
@@ -82,38 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub リポジトリ](https://github.com/mattn/efm-langserver)
 
-1. Mason で `:MasonInstall efm djlint` を実行して、efm-langserver と djLint をインストールします。
-1. `filetypes` に `htmldjango` を追加します。
-1. フォーマットの設定を作成します：
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-```
-
-1. `htmldjango = { djlint }` で言語とフォーマッターを結び付けます。
-
-設定例：
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-
-require("lspconfig").efm.setup({
-    filetypes = { "htmldjango" },
-    init_options = { documentFormatting = true },
-    settings = {
-        rootMarkers = { ".git/" },
-        languages = {
-            htmldjango = { djlint },
-        },
-    },
-})
-```
+`htmldjango` のフォーマッターを `formatCommand = "djlint --reformat --quiet --warn -"` と `formatStdin = true` で設定します。
 
 ### coc.nvim
 
@@ -145,13 +110,7 @@ PyCharm やその他の IntelliJ ベースの IDE では、無料の [LSP4IJ](ht
 
 ### SublimeLinter
 
-djLint は SublimeText のリンタープラグインとして使えます。[package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) からインストールできます。
-
-1. `cmd + shift + p`
-2. SublimeLinter をインストール
-3. SublimeLinter-contrib-djlint をインストール
-
-djLint がグローバルの Python か、`PATH` 上にインストールされていることを確認してください。
+Package Control で SublimeLinter と [SublimeLinter-contrib-djlint](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) をインストールします。djLint は Sublime Text から見える PATH 上に必要です。
 
 ## Helix
 
@@ -240,36 +199,28 @@ GitHub Actions のワークフローでは、djLint は各検出結果をアノ�
 
 アップロードのステップには、ジョブかワークフローに `security-events: write` 権限が必要です。
 
-`--sarif` は SARIF 2.1.0 ドキュメントだけを標準出力に書き出すため、上のようにリダイレクトできます。有効なルールはすべてドキュメントへのリンク付きで一覧され、各検出結果には行と列が含まれます。また `--check` と組み合わせると、再フォーマットされるファイルが `formatting` ルールとして報告されます。Azure DevOps、GitLab、そしてほとんどのエディターが同じ形式を読み込めます。
+`--sarif` は SARIF 2.1.0 ドキュメントだけを標準出力に書き出すため、上のようにリダイレクトできます。有効なルールはすべてドキュメントへのリンク付きで一覧され、各検出結果には行と列が含まれます。また `--check` と組み合わせると、再フォーマットされるファイルが `formatting` ルールとして報告されます。
 
 ## pre-commit
 
 djLint は [pre-commit](https://pre-commit.com) フックとして、リンターとしてもフォーマッターとしても使えます。
 
-リポジトリには、djLint の各プロファイル向けに設定済みのフックが複数用意されています（`--profile` 引数を事前に設定し、対象とするファイル拡張子を pre-commit に伝えるだけのものです）：
+プロファイルごとに、リントするフック（下の表）と、フォーマットするフックがあります。フォーマット用のフックは名前に `reformat` が入り、`djlint-django` なら `djlint-reformat-django` です。どちらも `--profile` と、pre-commit が渡すファイルを設定します：
 
-- リント用の `djlint` とフォーマット用の `djlint-reformat`。
-  `--profile` を設定せずに、`*.html` に一致するファイルを対象とします。
-- `djlint-django` と `djlint-reformat-django`。
-  `*.html` に一致するファイルを対象とし、`--profile=django` を設定します。
-- `djlint-jinja` と `djlint-reformat-jinja`。
-  `*.j2`、`*.jinja`、`*.jinja2` に一致するファイルを対象とし、`--profile=jinja` を設定します。
-- `djlint-nunjucks` と `djlint-reformat-nunjucks`。
-  `*.njk` に一致するファイルを対象とし、`--profile=nunjucks` を設定します。
-- `djlint-handlebars` と `djlint-reformat-handlebars`。
-  `*.hbs` に一致するファイルを対象とし、`--profile=handlebars` を設定します。
-- `djlint-liquid` と `djlint-reformat-liquid`。
-  `*.html` に一致するファイルを対象とし、`--profile=liquid` を設定します。
-- `djlint-golang` と `djlint-reformat-golang`。
-  `*.gotmpl` に一致するファイルを対象とし、`--profile=golang` を設定します。
-- `djlint-tera` と `djlint-reformat-tera`。
-  `*.html` に一致するファイルを対象とし、`--profile=tera` を設定します。
-- `djlint-askama` と `djlint-reformat-askama`。
-  `*.html` に一致するファイルを対象とし、`--profile=askama` を設定します。
-- `djlint-mako` と `djlint-reformat-mako`。
-  `*.html` に一致するファイルを対象とし、`--profile=mako` を設定します。
+| フック              | プロファイル | ファイル                             |
+| ------------------- | ------------ | ------------------------------------ |
+| `djlint`            | なし         | `.html`, `.htm`, `.xhtml`            |
+| `djlint-django`     | django       | `.html`, `.htm`, `.xhtml`            |
+| `djlint-jinja`      | jinja        | `.j2`, `.jinja`, `.jinja2`           |
+| `djlint-nunjucks`   | nunjucks     | `.njk`                               |
+| `djlint-handlebars` | handlebars   | `.hbs`, `.handlebars`, `.mustache`   |
+| `djlint-liquid`     | liquid       | `.html`, `.htm`, `.xhtml`, `.liquid` |
+| `djlint-golang`     | golang       | `.gotmpl`                            |
+| `djlint-tera`       | tera         | `.html`, `.htm`, `.xhtml`            |
+| `djlint-askama`     | askama       | `.html`, `.htm`, `.xhtml`            |
+| `djlint-mako`       | mako         | `.html`, `.htm`, `.xhtml`            |
 
-これらの定義済みフックは、受け付ける入力の点で保守的すぎることがあります（テンプレートで別の拡張子を使っている場合など）。そのため pre-commit では、定義済みのオプションをどれでも明示的に上書きできます。その他の設定については [pre-commit のドキュメント](https://pre-commit.com/#pre-commit-configyaml---hooks)を参照してください。
+ほかの拡張子のテンプレートでは、[pre-commit のドキュメント](https://pre-commit.com/#pre-commit-configyaml---hooks)にあるとおり、設定で `files` か `types_or` を上書きします。
 
 ### デフォルトの Django の例
 
@@ -301,9 +252,4 @@ repos:
 
 ## MegaLinter
 
-djlint は [MegaLinter](https://megalinter.io) の 100 以上のリンターにネイティブに組み込まれています。
-
-インストールするには、`npx mega-linter-runner --install` を実行して指示に従うだけです。
-
-- [GitHub リポジトリ](https://github.com/oxsecurity/megalinter)
-- [MegaLinter ドキュメントの djlint](https://megalinter.io/latest/descriptors/html_djlint/)
+[MegaLinter](https://megalinter.io) には djLint が含まれています。`npx mega-linter-runner --install` を実行するとセットアップでき、オプションは [MegaLinter の djLint のページ](https://megalinter.io/latest/descriptors/html_djlint/)にあります。

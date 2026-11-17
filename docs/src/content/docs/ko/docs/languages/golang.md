@@ -17,7 +17,7 @@ Hugo 테마와 Helm 차트도 Go 템플릿(`text/template`, `html/template`)으�
 djlint /path/to/templates --profile=golang
 ```
 
-## 또는 구성 파일 사용
+## 구성 파일에서
 
 프로젝트의 `pyproject.toml`, `djlint.toml` / `.djlint.toml`, `.djlintrc` 파일 중 하나에서 djLint를 구성합니다.
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[모든 옵션은 구성 가이드에서 확인하세요!](/ko/docs/configuration/)
-:::

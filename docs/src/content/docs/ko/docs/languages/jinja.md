@@ -9,9 +9,7 @@ djLint는 Jinja 템플릿을 린트하고 포맷합니다. 규칙과 포맷이 �
 
 **[Jinja란?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja 템플릿은 Jinja2와 완전히 호환되므로 같은 `jinja` 프로필을 사용하세요.
-
-HubSpot의 Jinjava 템플릿도 jinja 스타일이므로 여기에도 이 프로필을 사용하세요.
+MiniJinja는 Jinja2 문법을 따르고 HubSpot의 Jinjava 템플릿도 Jinja 스타일이므로, 둘 다 `jinja` 프로필을 사용하세요.
 
 ## 명령줄 사용
 
@@ -19,7 +17,7 @@ HubSpot의 Jinjava 템플릿도 jinja 스타일이므로 여기에도 이 프로
 djlint /path/to/templates --profile=jinja
 ```
 
-## 또는 구성 파일 사용
+## 구성 파일에서
 
 프로젝트의 `pyproject.toml`, `djlint.toml` / `.djlint.toml`, `.djlintrc` 파일 중 하나에서 djLint를 구성합니다.
 
@@ -35,7 +33,3 @@ profile = "jinja"
 ```json title=".djlintrc"
 { "profile": "jinja" }
 ```
-
-:::tip
-[모든 옵션은 구성 가이드에서 확인하세요!](/ko/docs/configuration/)
-:::

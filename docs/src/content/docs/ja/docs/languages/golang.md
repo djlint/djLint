@@ -17,7 +17,7 @@ Go テンプレート（`text/template`、`html/template`）は Hugo のテー�
 djlint /path/to/templates --profile=golang
 ```
 
-## または、設定ファイルを使う
+## 設定ファイルで
 
 プロジェクトの `pyproject.toml`、`djlint.toml` / `.djlint.toml`、または `.djlintrc` ファイルで djLint を設定します。
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[すべてのオプションは設定ガイドで確認してください！](/ja/docs/configuration/)
-:::

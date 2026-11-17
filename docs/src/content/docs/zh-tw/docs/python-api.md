@@ -3,7 +3,7 @@ title: "Python API"
 description: "透過 djLint API，在你自己的 Python 程式碼中格式化與 lint 範本。"
 ---
 
-`djlint.api` 可以在 Python 程式中格式化與 lint 文字，結果與命令列相同。它是為編輯器、建置工具，以及其他在記憶體中持有範本的程式所設計。套件中的其他部分在任何版本都可能變動，因此請使用這個模組，而不要使用 `djlint.settings` 或 `djlint.lint`。
+`djlint.api` 可以在 Python 程式中格式化與 lint 文字，結果與命令列相同。它是為編輯器、建置工具，以及其他在記憶體中持有範本的程式所設計。套件中的其他部分在任何版本都可能變動，因此請使用這個模組，而不要使用 `djlint.settings` 或 `djlint.lint`。[自訂規則範例](/zh-tw/docs/linter/#python-模組規則)所匯入的輔助函式 `djlint.lint.get_line`、`djlint.helpers.inside_ignored_rule` 和 `djlint.helpers.inside_ignored_linter_block` 也會繼續可用。
 
 ```python
 from djlint.api import format_text, lint_text, load_config
@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` 會讀取適用於某個資料夾內檔案的設定。它會從該資料夾往上層尋找設定，就像命令列從傳給它的第一個路徑（對 `-` 而言是 `--stdin-filename` 所在的資料夾，未指定時則是目前目錄）往上找一樣，而且不會變更目前目錄。
+`load_config(folder=".", *, python_rules=True, on_warning=None, **options)` 會讀取適用於某個資料夾內檔案的設定。它會從該資料夾往上層尋找設定，就像命令列從傳給它的第一個路徑往上[尋找](/zh-tw/docs/configuration/)一樣，而且不會變更目前目錄。
 
 選項使用命令列選項的名稱（以底線連接），作用方式也與命令列相同：有設定的值會優先於設定檔，而 `False`、空字串，以及大多數選項的 `0`，都視為未指定。路徑以 `pathlib.Path` 指定。
 
@@ -26,9 +26,11 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 使用 `python_rules=False` 時，不會載入帶有 `python_module` 的自訂規則，可避免執行你不信任的專案的程式碼。這些規則的名稱會列在 `config.skipped_rules` 中。
 
+`on_warning` 是一個接受訊息的函式，會收到所有關於設定的警告，例如拼錯的名稱，或沒有任何規則使用的規則代碼。未指定時，每個警告在每個處理程序中只會輸出到 stderr 一次。無法讀取的設定檔或無效的值會引發 `click.UsageError`。
+
 ## format_text
 
-`format_text(config, text)` 會傳回格式化後的文字。第一行以 CRLF 結尾的文字，傳回時會使用 CRLF；其他文字則使用 LF。使用 `require_pragma` 時，沒有 pragma 的文字會原樣傳回。
+`format_text(config, text)` 會傳回格式化後的文字。第一行以 CRLF 結尾的文字，傳回時會使用 CRLF；其他文字則使用 LF。使用 `require_pragma` 時，沒有 pragma 的文字會原樣傳回。它會從適用於傳給 `load_config` 之資料夾的 `.editorconfig` 取得 `indent` 和 `max_line_length`，而命令列則是依每個檔案的路徑分別取得。
 
 ## lint_text
 
@@ -50,4 +52,4 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## 規則模組
 
-自訂規則的 `python_module` 在每個處理程序中只會匯入一次，從設定的專案根目錄匯入。一個持續執行並處理多個專案的程式，若要讀取另一個專案的規則模組，必須從 `sys.modules` 移除所有從該專案匯入的內容，並移除專案根目錄（它會一直留在 `sys.path` 的末端）。
+自訂規則的 `python_module` 在每個處理程序中只會匯入一次，從設定的專案根目錄匯入。若要讀取另一個專案的規則，持續執行的程式必須從 `sys.modules` 移除所有從第一個專案匯入的內容，並從 `sys.path` 的末端移除該專案的根目錄。

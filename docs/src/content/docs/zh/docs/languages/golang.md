@@ -17,7 +17,7 @@ Hugo 主题和 Helm chart 同样基于 Go 模板（`text/template`、`html/templ
 djlint /path/to/templates --profile=golang
 ```
 
-## 或者，使用配置文件
+## 在配置文件中
 
 在项目的 `pyproject.toml`、`djlint.toml` / `.djlint.toml` 或 `.djlintrc` 文件中配置 djLint。
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[查看配置指南，了解所有选项！](/zh/docs/configuration/)
-:::
