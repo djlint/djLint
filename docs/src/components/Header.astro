@@ -1,11 +1,11 @@
 ---
 // Starlight's header with the main docs sections linked across the top. Pages
 // without a sidebar (home, demo) have no mobile menu of Starlight's, so on
-// narrow screens they get their own, with the sections, theme and language.
+// narrow screens they get a menu button that opens the same sidebar.
 import { Icon } from "@astrojs/starlight/components";
 import LanguageSelect from "@astrojs/starlight/components/LanguageSelect.astro";
-import MobileMenuFooter from "@astrojs/starlight/components/MobileMenuFooter.astro";
 import Search from "@astrojs/starlight/components/Search.astro";
+import Sidebar from "@astrojs/starlight/components/Sidebar.astro";
 import SiteTitle from "@astrojs/starlight/components/SiteTitle.astro";
 import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
 import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
@@ -57,16 +57,10 @@ const links = [
           <Icon name="close" class="close-menu" />
           <span class="sr-only">{t("menuButton.accessibleLabel")}</span>
         </button>
+        {/* The docs pages' own sidebar, so the menu is the same on every page. */}
         <div id="dj-menu" class="menu" popover>
-          <nav aria-label={t("djlint.sections")}>
-            {links.map(([slug, key]) => (
-              <a href={`/${prefix}${slug}/`} aria-current={page === slug ? "page" : undefined}>
-                {t(key)}
-              </a>
-            ))}
-          </nav>
-          <div class="md:sl-hidden">
-            <MobileMenuFooter />
+          <div class="sidebar-content">
+            <Sidebar />
           </div>
         </div>
       </>
@@ -107,8 +101,7 @@ const links = [
     color: var(--sl-color-white);
   }
   /* The current section is squiggled, as the current page in the sidebar is. */
-  .top-nav a[aria-current="page"],
-  .menu nav a[aria-current="page"] {
+  .top-nav a[aria-current="page"] {
     text-decoration: underline wavy var(--dj-squiggle);
     text-decoration-thickness: 1.5px;
     text-decoration-skip-ink: none;
@@ -166,7 +159,7 @@ const links = [
     display: none;
   }
   /* On a phone, a pane over the whole page below the header, as Starlight's
-     sidebar is on the docs pages, with the same preferences at its foot. */
+     sidebar is on the docs pages. */
   .menu {
     inset: var(--sl-nav-height) 0 0;
     width: 100%;
@@ -177,20 +170,10 @@ const links = [
     background: var(--sl-color-black);
     color: var(--sl-color-white);
   }
-  .menu nav {
+  .sidebar-content {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
-  }
-  .menu nav a {
-    padding: 0.3em 0;
-    line-height: 1.4;
-    color: var(--sl-color-gray-2);
-    text-decoration: none;
-  }
-  .menu nav a:hover,
-  .menu nav a[aria-current="page"] {
-    color: var(--sl-color-white);
+    gap: 1rem;
   }
   :global(body:has(#dj-menu:popover-open)) {
     overflow: hidden;
@@ -207,9 +190,6 @@ const links = [
       border-bottom: 1px solid var(--sl-color-gray-6);
       border-end-start-radius: 0.75rem;
       box-shadow: var(--sl-shadow-md);
-    }
-    .menu nav {
-      margin-bottom: 0;
     }
     :global(body:has(#dj-menu:popover-open)) {
       overflow: auto;
