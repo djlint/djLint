@@ -108,10 +108,10 @@ The first letter of a code says which profiles run the rule:
 - D: Django, run under `django`.
 - H: HTML, run under every profile. `angular` leaves out H012 and H026.
 - J: Jinja, run under `jinja`.
-- T: template syntax, run under every profile but `html` and `mako`.
+- T: template syntax, run under every profile but `html` and `mako`. T001 and T041 to T044 also skip the profiles their details name.
 - M and N have no rules of djLint's own. A custom rule whose code starts with M runs under `handlebars` and `angular`, and one with N under `nunjucks` and `angular`.
 
-`all` runs every rule, and without a profile the linter runs the rules of `html`.
+`all` runs the rules of every template language, except those that are off by default and those that skip some profile, such as T001 and T041 to T044; `--include` adds them. Without a profile, the linter runs the rules of `html`.
 
 ### Rule details
 

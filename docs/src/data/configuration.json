@@ -488,7 +488,7 @@
     "default": "__pypackages__,_build,_site,.bzr,.direnv,.eggs,.git,.git-rewrite,.hg,.nox,.svn,.tox,.venv,build,dist,htmlcov,node_modules,site-packages,venv",
     "tags": ["linter", "formatter"],
     "description": {
-      "en": "Paths to skip, in place of the default list. Each entry is a regular expression matched against whole folder or file names in the path relative to the project root, such as `vendor` or `templates/legacy`, so `*.min.html` is written `.*\\.min\\.html`.",
+      "en": "Paths to skip, in place of the default list. Each entry is a regular expression matched against whole folder or file names in the path relative to the project root or to the folder being checked, such as `vendor` or `templates/legacy`, so `*.min.html` is written `.*\\.min\\.html`.",
       "zh": "要跳过的路径，用来替代默认列表。每一项都是正则表达式，与相对于项目根目录的路径中完整的文件夹名或文件名匹配，例如 `vendor` 或 `templates/legacy`，因此 `*.min.html` 要写成 `.*\\.min\\.html`。",
       "ja": "スキップするパス。デフォルトのリストの代わりに使われます。各エントリーは正規表現で、プロジェクトのルートからの相対パスに含まれるフォルダー名やファイル名の全体（`vendor` や `templates/legacy` など）と照合されます。そのため `*.min.html` は `.*\\.min\\.html` と書きます。",
       "es": "Rutas que se omiten, en lugar de la lista por defecto. Cada entrada es una expresión regular que se compara con nombres completos de carpetas o archivos en la ruta relativa a la raíz del proyecto, como `vendor` o `templates/legacy`, así que `*.min.html` se escribe `.*\\.min\\.html`.",
@@ -515,7 +515,7 @@
     "default": null,
     "tags": ["linter", "formatter"],
     "description": {
-      "en": "Paths to skip on top of the default list, as regular expressions like those of `exclude`.",
+      "en": "Paths to skip on top of `exclude`, or of the default list when `exclude` isn't set, as regular expressions like those of `exclude`.",
       "zh": "要跳过的路径，添加在默认列表之外，和 `exclude` 一样用正则表达式书写。",
       "ja": "スキップするパス。デフォルトのリストに加えて使われます。`exclude` と同じく正規表現で書きます。",
       "es": "Rutas que se omiten además de la lista por defecto, como expresiones regulares iguales a las de `exclude`.",

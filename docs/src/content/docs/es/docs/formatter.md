@@ -8,7 +8,7 @@ sidebar:
 El formateador de djLint deja coherente la disposición de las plantillas HTML. Primero mira qué cambiaría:
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 Después formatea los archivos en su sitio, aquí también con el contenido de `<style>` y `<script>`:

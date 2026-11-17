@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub repository](https://github.com/mattn/efm-langserver)
 
-Give `htmldjango` a formatter with `formatCommand = "djlint --reformat --quiet --warn -"` and `formatStdin = true`.
+Give `htmldjango` a formatter with `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` and `formatStdin = true`.
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ The upload step needs the `security-events: write` permission on the job or the 
 
 djLint can be used as a [pre-commit](https://pre-commit.com) hook as both a linter and a formatter.
 
-Each profile has a hook that lints, listed here, and one that formats, named the same with `reformat`: `djlint-reformat-django` for `djlint-django`. They set `--profile` and the files pre-commit passes:
+These profiles each have a hook that lints, listed here, and one that formats, named the same with `reformat`: `djlint-reformat-django` for `djlint-django`. They set `--profile` and the files pre-commit passes. `angular` has no hooks of its own: give `djlint` or `djlint-reformat` `args: [--profile=angular]`.
 
 | Hook                | Profile    | Files                                |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ Each profile has a hook that lints, listed here, and one that formats, named the
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-For templates with other extensions, override `files` or `types_or` in your config, as the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) describe.
+For templates with other extensions, override `files` in your config, and `types_or` too where the hook sets it, since pre-commit needs both to match. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks).
 
 ### Default Django example
 

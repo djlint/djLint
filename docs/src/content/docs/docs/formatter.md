@@ -8,7 +8,7 @@ sidebar:
 djLint's formatter makes the layout of HTML templates consistent. See what it would change first:
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 Then format the files in place, here with the contents of `<style>` and `<script>` too:

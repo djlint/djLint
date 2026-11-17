@@ -8,7 +8,7 @@ sidebar:
 Le formateur de djLint rend la mise en page des templates HTML cohérente. Regardez d'abord ce qu'il changerait :
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 Formatez ensuite les fichiers sur place, ici avec le contenu de `<style>` et `<script>` aussi :
