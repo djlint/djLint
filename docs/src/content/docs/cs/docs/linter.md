@@ -108,10 +108,10 @@ První písmeno kódu říká, které profily pravidlo spouštějí:
 - D: Django, spouští se v `django`.
 - H: HTML, spouští se v každém profilu. `angular` vynechává H012 a H026.
 - J: Jinja, spouští se v `jinja`.
-- T: syntaxe šablon, spouští se v každém profilu kromě `html` a `mako`.
+- T: syntaxe šablon, spouští se v každém profilu kromě `html` a `mako`. T001 a T041 až T044 se navíc nespouštějí v profilech, které uvádí jejich popis.
 - Pro M a N nemá djLint žádná vestavěná pravidla. Vlastní pravidlo, jehož kód začíná na M, se spouští v `handlebars` a `angular`, pravidlo začínající na N v `nunjucks` a `angular`.
 
-`all` spouští všechna pravidla a bez profilu linter spouští pravidla `html`.
+`all` spouští pravidla všech šablonových jazyků kromě těch, která jsou ve výchozím nastavení vypnutá, a těch, která některý profil vynechávají, jako T001 a T041 až T044; `--include` je přidá. Bez profilu linter spouští pravidla `html`.
 
 ### Podrobnosti pravidel
 

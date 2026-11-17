@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub deposu](https://github.com/mattn/efm-langserver)
 
-`htmldjango` için `formatCommand = "djlint --reformat --quiet --warn -"` ve `formatStdin = true` ile bir biçimlendirici tanımlayın.
+`htmldjango` için `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` ve `formatStdin = true` ile bir biçimlendirici tanımlayın.
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ Yükleme adımı, job'da ya da iş akışında `security-events: write` iznine i
 
 djLint, hem linter hem de biçimlendirici olarak bir [pre-commit](https://pre-commit.com) kancası şeklinde kullanılabilir.
 
-Her profilin burada listelenen, lint denetimi yapan bir kancası ve biçimlendiren, aynı adı `reformat` ile taşıyan bir kancası vardır: `djlint-django` için `djlint-reformat-django`. Kancalar `--profile` değerini ve pre-commit'in ileteceği dosyaları ayarlar:
+Bu profillerin her birinin burada listelenen, lint denetimi yapan bir kancası ve biçimlendiren, aynı adı `reformat` ile taşıyan bir kancası vardır: `djlint-django` için `djlint-reformat-django`. Kancalar `--profile` değerini ve pre-commit'in ileteceği dosyaları ayarlar. `angular` profilinin kendine ait kancası yoktur: `djlint` ya da `djlint-reformat` kancasına `args: [--profile=angular]` verin.
 
 | Kanca               | Profil     | Dosyalar                             |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ Her profilin burada listelenen, lint denetimi yapan bir kancası ve biçimlendir
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Başka uzantılı şablonlar için [pre-commit belgelerinde](https://pre-commit.com/#pre-commit-configyaml---hooks) anlatıldığı gibi yapılandırmanızda `files` ya da `types_or` değerini geçersiz kılın.
+Başka uzantılı şablonlar için yapılandırmanızda `files` değerini, kanca ayarlıyorsa `types_or` değerini de geçersiz kılın, çünkü pre-commit ikisinin de eşleşmesini ister. Ayrıntılar için [pre-commit belgelerine](https://pre-commit.com/#pre-commit-configyaml---hooks) bakın.
 
 ### Varsayılan Django örneği
 

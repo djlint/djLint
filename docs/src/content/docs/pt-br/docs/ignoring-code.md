@@ -34,9 +34,9 @@ Ou comentários de templates Go:
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
 Ou comentários do Handlebars:
@@ -70,7 +70,7 @@ Regras específicas do linter também podem ser ignoradas adicionando o nome da 
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

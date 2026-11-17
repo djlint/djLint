@@ -8,7 +8,7 @@ sidebar:
 djLint'in biçimlendiricisi HTML şablonlarının düzenini tutarlı hâle getirir. Önce neyi değiştireceğine bakın:
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 Sonra dosyaları yerinde biçimlendirin, burada `<style>` ve `<script>` içerikleriyle birlikte:

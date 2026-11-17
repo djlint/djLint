@@ -9,7 +9,7 @@ djLint lintuje i formatuje szablony Jinja. Ustaw profil `jinja`, aby reguły i f
 
 **[Czym jest Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja stosuje składnię Jinja2, a szablony Jinjava od HubSpot też są w stylu Jinja, więc dla obu używaj profilu `jinja`.
+MiniJinja stosuje składnię Jinja2, a szablony Jinjava od HubSpot też są w stylu Jinja, więc dla obu używaj profilu `jinja`. J004 i J018 proponują `url_for` z Flaska, dlatego w projekcie bez Flaska je zignoruj.
 
 ## Z wiersza poleceń
 

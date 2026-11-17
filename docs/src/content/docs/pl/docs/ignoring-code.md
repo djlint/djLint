@@ -34,9 +34,9 @@ Albo komentarze szablonów Go:
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
 Albo komentarze Handlebars:
@@ -70,7 +70,7 @@ Można też ignorować konkretne reguły lintera, dopisując nazwę reguły do t
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

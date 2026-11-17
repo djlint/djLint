@@ -30,7 +30,7 @@ S `python_rules=False` se nenačítají vlastní pravidla s `python_module`, t
 
 ## format_text
 
-`format_text(config, text)` vrátí naformátovaný text. Text, jehož první řádek končí znaky CRLF, se vrátí s CRLF, jakýkoli jiný s LF. S `require_pragma` se text bez pragmy vrátí beze změny. `indent` a `max_line_length` bere z `.editorconfig`, který platí pro složku zadanou v `load_config`, kdežto příkazový řádek je bere pro každý soubor podle jeho cesty.
+`format_text(config, text)` vrátí naformátovaný text. Text, jehož první řádek končí znaky CRLF, se vrátí s CRLF, jakýkoli jiný s LF. S `require_pragma` se text bez pragmy vrátí beze změny. Pokud `indent` nebo `max_line_length` nenastaví možnosti `load_config` ani konfigurační soubor, bere je ze sekcí `.editorconfig`, které platí pro soubor s příponou nastavenou v konfiguraci ve složce zadané v `load_config`, kdežto příkazový řádek je bere pro každý soubor podle jeho cesty.
 
 ## lint_text
 

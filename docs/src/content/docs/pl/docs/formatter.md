@@ -8,7 +8,7 @@ sidebar:
 Formater djLint nadaje szablonom HTML spójny układ. Najpierw zobacz, co by zmienił:
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 Potem sformatuj pliki na miejscu, tutaj razem z zawartością `<style>` i `<script>`:

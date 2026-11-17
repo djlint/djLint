@@ -34,9 +34,9 @@ Ya da Go şablonu yorumları:
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
 Ya da Handlebars yorumları:
@@ -70,7 +70,7 @@ Belirli linter kuralları da kural adı, yok sayılan bloğun açılış etiketi
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

@@ -8,7 +8,7 @@ sidebar:
 Formátovač djLint sjednocuje rozvržení HTML šablon. Nejdřív se podívejte, co by změnil:
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 Potom soubory naformátujte na místě, tady i s obsahem `<style>` a `<script>`:

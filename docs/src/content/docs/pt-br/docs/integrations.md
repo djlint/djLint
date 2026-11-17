@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [Repositório no GitHub](https://github.com/mattn/efm-langserver)
 
-Dê ao `htmldjango` um formatador com `formatCommand = "djlint --reformat --quiet --warn -"` e `formatStdin = true`.
+Dê ao `htmldjango` um formatador com `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` e `formatStdin = true`.
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ A etapa de upload precisa da permissão `security-events: write` no job ou no wo
 
 O djLint pode ser usado como hook do [pre-commit](https://pre-commit.com), tanto como linter quanto como formatador.
 
-Cada perfil tem um hook que faz o lint, listado aqui, e um que formata, com o mesmo nome mais `reformat`: `djlint-reformat-django` para `djlint-django`. Eles definem o `--profile` e os arquivos que o pre-commit passa:
+Cada um destes perfis tem um hook que faz o lint, listado aqui, e um que formata, com o mesmo nome mais `reformat`: `djlint-reformat-django` para `djlint-django`. Eles definem o `--profile` e os arquivos que o pre-commit passa. `angular` não tem hooks próprios: passe `args: [--profile=angular]` para `djlint` ou `djlint-reformat`.
 
 | Hook                | Perfil     | Arquivos                             |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ Cada perfil tem um hook que faz o lint, listado aqui, e um que formata, com o me
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Para templates com outras extensões, sobrescreva `files` ou `types_or` na sua configuração, como descreve a [documentação do pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
+Para templates com outras extensões, sobrescreva `files` na sua configuração, e também `types_or` quando o hook o define, já que o pre-commit exige que os dois correspondam. Veja a [documentação do pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
 
 ### Exemplo padrão para Django
 

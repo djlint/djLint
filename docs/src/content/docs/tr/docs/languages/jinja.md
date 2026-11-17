@@ -9,7 +9,7 @@ djLint, Jinja şablonlarını denetler ve biçimlendirir. Kuralların ve biçiml
 
 **[Jinja nedir?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja, Jinja2 söz dizimini izler, HubSpot'un Jinjava şablonları da Jinja tarzındadır; bu yüzden ikisi için de `jinja` profilini kullanın.
+MiniJinja, Jinja2 söz dizimini izler, HubSpot'un Jinjava şablonları da Jinja tarzındadır; bu yüzden ikisi için de `jinja` profilini kullanın. J004 ve J018 Flask'ın `url_for` işlevini önerdiği için Flask kullanmayan bir projede bunları yok sayın.
 
 ## Komut satırını kullanma
 

@@ -108,10 +108,10 @@ A primeira letra de um código diz quais perfis rodam a regra:
 - D: Django, roda em `django`.
 - H: HTML, roda em todos os perfis. `angular` deixa de fora H012 e H026.
 - J: Jinja, roda em `jinja`.
-- T: sintaxe de template, roda em todos os perfis exceto `html` e `mako`.
+- T: sintaxe de template, roda em todos os perfis exceto `html` e `mako`. T001 e T041 a T044 também não rodam nos perfis citados em seus detalhes.
 - M e N não têm regras próprias do djLint. Uma regra personalizada cujo código começa com M roda em `handlebars` e `angular`, e uma com N em `nunjucks` e `angular`.
 
-`all` roda todas as regras e, sem perfil, o linter roda as regras de `html`.
+`all` roda as regras de todas as linguagens de template, exceto as desativadas por padrão e as que deixam de fora algum perfil, como T001 e T041 a T044; o `--include` as adiciona. Sem perfil, o linter roda as regras de `html`.
 
 ### Detalhes das regras
 

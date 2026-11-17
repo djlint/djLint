@@ -30,7 +30,7 @@ Yapılandırmayı okumak biraz zaman alır; bu yüzden sonucu, okunduğu dosyala
 
 ## format_text
 
-`format_text(config, text)` biçimlendirilmiş metni döndürür. İlk satırı CRLF ile biten bir metin CRLF ile, diğer her metin LF ile geri döner. `require_pragma` ile pragma içermeyen bir metin değiştirilmeden geri döner. `indent` ve `max_line_length` değerlerini `load_config`'e verilen klasöre uygulanan `.editorconfig` dosyasından alır; komut satırı ise bunları her dosya için o dosyanın yoluna göre alır.
+`format_text(config, text)` biçimlendirilmiş metni döndürür. İlk satırı CRLF ile biten bir metin CRLF ile, diğer her metin LF ile geri döner. `require_pragma` ile pragma içermeyen bir metin değiştirilmeden geri döner. `indent` ya da `max_line_length` değerini `load_config` seçenekleri de yapılandırma dosyası da ayarlamıyorsa, bunları `load_config`'e verilen klasörde yapılandırılmış uzantıya sahip bir dosyaya uygulanan `.editorconfig` bölümlerinden alır; komut satırı ise bunları her dosya için o dosyanın yoluna göre alır.
 
 ## lint_text
 

@@ -108,10 +108,10 @@ Bir kodun ilk harfi, kuralı hangi profillerin çalıştırdığını söyler:
 - D: Django, `django` altında çalışır.
 - H: HTML, her profilde çalışır. `angular`, H012 ve H026'yı dışarıda bırakır.
 - J: Jinja, `jinja` altında çalışır.
-- T: şablon söz dizimi, `html` ve `mako` dışındaki her profilde çalışır.
+- T: şablon söz dizimi, `html` ve `mako` dışındaki her profilde çalışır. T001 ve T041'den T044'e kadar olan kurallar, ayrıntılarında adı geçen profilleri de atlar.
 - djLint'in kendi kuralları arasında M ya da N ile başlayan yoktur. Kodu M ile başlayan özel bir kural `handlebars` ve `angular` altında, N ile başlayan ise `nunjucks` ve `angular` altında çalışır.
 
-`all` her kuralı çalıştırır; profil olmadan linter `html` profilinin kurallarını çalıştırır.
+`all`, varsayılan olarak kapalı olan kurallar ile T001 ve T041'den T044'e kadar olanlar gibi bir profili atlayan kurallar dışında her şablon dilinin kurallarını çalıştırır; `--include` bunları ekler. Profil olmadan linter `html` profilinin kurallarını çalıştırır.
 
 ### Kural ayrıntıları
 

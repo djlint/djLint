@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [Repozytorium na GitHubie](https://github.com/mattn/efm-langserver)
 
-Ustaw dla `htmldjango` formater z `formatCommand = "djlint --reformat --quiet --warn -"` i `formatStdin = true`.
+Ustaw dla `htmldjango` formater z `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` i `formatStdin = true`.
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ Krok przesyłania wymaga uprawnienia `security-events: write` dla zadania lub wo
 
 djLint może działać jako hook [pre-commit](https://pre-commit.com), zarówno jako linter, jak i formater.
 
-Każdy profil ma hook lintujący, wymieniony poniżej, i hook formatujący o tej samej nazwie z `reformat`: `djlint-reformat-django` dla `djlint-django`. Ustawiają `--profile` i pliki, które przekazuje pre-commit:
+Każdy z tych profili ma hook lintujący, wymieniony poniżej, i hook formatujący o tej samej nazwie z `reformat`: `djlint-reformat-django` dla `djlint-django`. Ustawiają `--profile` i pliki, które przekazuje pre-commit. `angular` nie ma własnych hooków: ustaw dla `djlint` lub `djlint-reformat` `args: [--profile=angular]`.
 
 | Hook                | Profil     | Pliki                                |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ Każdy profil ma hook lintujący, wymieniony poniżej, i hook formatujący o tej
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Dla szablonów z innymi rozszerzeniami nadpisz w swojej konfiguracji `files` lub `types_or`, jak opisuje [dokumentacja pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
+Dla szablonów z innymi rozszerzeniami nadpisz w swojej konfiguracji `files`, a także `types_or`, jeśli hook je ustawia, bo pre-commit wymaga dopasowania obu. Zobacz [dokumentację pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
 
 ### Domyślny przykład dla Django
 

@@ -108,10 +108,10 @@ Pierwsza litera kodu mówi, przy jakich profilach działa reguła:
 - D: Django, działa przy `django`.
 - H: HTML, działa przy każdym profilu. `angular` pomija H012 i H026.
 - J: Jinja, działa przy `jinja`.
-- T: składnia szablonów, działa przy każdym profilu poza `html` i `mako`.
+- T: składnia szablonów, działa przy każdym profilu poza `html` i `mako`. T001 i reguły od T041 do T044 nie działają też przy profilach wymienionych w ich opisach.
 - M i N nie mają własnych reguł djLint. Własna reguła z kodem zaczynającym się od M działa przy `handlebars` i `angular`, a od N przy `nunjucks` i `angular`.
 
-`all` uruchamia wszystkie reguły, a bez profilu linter uruchamia reguły profilu `html`.
+`all` uruchamia reguły wszystkich języków szablonów poza tymi, które są domyślnie wyłączone, i tymi, które pomijają jakiś profil, jak T001 i reguły od T041 do T044; `--include` je dodaje. Bez profilu linter uruchamia reguły profilu `html`.
 
 ### Szczegóły reguł
 

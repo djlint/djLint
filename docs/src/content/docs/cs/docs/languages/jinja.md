@@ -9,7 +9,7 @@ djLint lintuje a formátuje šablony Jinja. Nastavte profil `jinja`, aby jim pr
 
 **[Co je Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja má syntaxi Jinja2 a šablony Jinjava od HubSpotu jsou také ve stylu Jinja, takže pro obě použijte profil `jinja`.
+MiniJinja má syntaxi Jinja2 a šablony Jinjava od HubSpotu jsou také ve stylu Jinja, takže pro obě použijte profil `jinja`. J004 a J018 navrhují `url_for` z Flasku, proto je v projektu bez Flasku ignorujte.
 
 ## Z příkazového řádku
 

@@ -34,9 +34,9 @@ Nebo komentáře šablon Go:
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
 Nebo komentáře Handlebars:
@@ -70,7 +70,7 @@ Konkrétní pravidla linteru lze ignorovat také tak, že název pravidla přid�
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

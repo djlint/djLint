@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [Repozitář na GitHubu](https://github.com/mattn/efm-langserver)
 
-Nastavte pro `htmldjango` formátovač s `formatCommand = "djlint --reformat --quiet --warn -"` a `formatStdin = true`.
+Nastavte pro `htmldjango` formátovač s `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` a `formatStdin = true`.
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ Krok nahrání potřebuje oprávnění `security-events: write` na úrovni jobu 
 
 djLint lze používat jako hook [pre-commit](https://pre-commit.com), a to jako linter i jako formátovač.
 
-Každý profil má hook, který lintuje (jsou uvedené níže), a hook, který formátuje, se stejným názvem s `reformat`: `djlint-reformat-django` k `djlint-django`. Nastavují `--profile` a soubory, které pre-commit předává:
+Každý z těchto profilů má hook, který lintuje (jsou uvedené níže), a hook, který formátuje, se stejným názvem s `reformat`: `djlint-reformat-django` k `djlint-django`. Nastavují `--profile` a soubory, které pre-commit předává. `angular` vlastní hooky nemá: nastavte hooku `djlint` nebo `djlint-reformat` `args: [--profile=angular]`.
 
 | Hook                | Profil     | Soubory                              |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ Každý profil má hook, který lintuje (jsou uvedené níže), a hook, který 
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Pro šablony s jinými příponami přepište ve své konfiguraci `files` nebo `types_or`, jak popisuje [dokumentace pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
+Pro šablony s jinými příponami přepište ve své konfiguraci `files`, a pokud ho hook nastavuje, také `types_or`, protože pre-commit vyžaduje shodu obou. Viz [dokumentaci pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
 
 ### Výchozí příklad pro Django
 
