@@ -55,3 +55,12 @@ def test_each_item_of_a_list_is_one_regex(tmp_path: Path) -> None:
         path for path in ("a{/x.html", "vendor/x.html", "b,c.html") if not pattern.search(path)
     ] == []
     assert not pattern.search("c.html")
+
+
+@pytest.mark.parametrize(
+    "setting", ['exclude = ""', "exclude = []", 'extend_exclude = " "', 'extend_exclude = [" "]']
+)
+def test_a_blank_list_excludes_nothing(tmp_path: Path, setting: str) -> None:
+    (tmp_path / "djlint.toml").write_text(f"{setting}\n", encoding="utf-8")
+
+    assert not Config(str(tmp_path)).exclude_pattern.search("templates/a.html")

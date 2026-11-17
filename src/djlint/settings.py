@@ -807,11 +807,9 @@ def build_exclude(exclude: str | list[Any]) -> str:
     comment in one then ends with it, rather than swallowing the rest. A list
     from a config file holds one regex per item, commas and all.
     """
-    if not isinstance(exclude, str):
-        return "\n| ".join(entry for x in exclude if (entry := str(x).strip()))
-    if "," not in exclude:
-        return exclude
-    return "\n| ".join(_split_patterns(exclude))
+    if isinstance(exclude, str):
+        return "\n| ".join(_split_patterns(exclude))
+    return "\n| ".join(entry for x in exclude if (entry := str(x).strip()))
 
 
 def _check_regex(setting: str, pattern: str) -> None:
@@ -2000,14 +1998,14 @@ class Config:
 
         exclude = build_exclude(exclude or djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
         _check_regex("exclude", exclude)
-        extend_exclude = extend_exclude or djlint_settings.get("extend_exclude", "")
-        if extend_exclude:
-            _check_regex("extend_exclude", build_exclude(extend_exclude))
-            exclude += "\n| " + build_exclude(extend_exclude)
+        if extension := build_exclude(extend_exclude or djlint_settings.get("extend_exclude", "")):
+            _check_regex("extend_exclude", extension)
+            exclude = f"{exclude}\n| {extension}" if exclude else extension
         self.exclude = exclude
-        # A line break ends a `#` comment the patterns may close with.
+        # A line break ends a `#` comment the patterns may close with. Nothing to
+        # exclude matches no path, where an empty pattern would match them all.
         self.exclude_pattern = compile_pattern(
-            rf"(?:^|/)(?:{exclude}" + "\n" + r")(?=$|/|(?<=/))", re.X
+            rf"(?:^|/)(?:{exclude}" + "\n" + r")(?=$|/|(?<=/))" if exclude else r"(?!)", re.X
         )
 
         self.files = djlint_settings.get("files", None)
