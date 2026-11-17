@@ -797,7 +797,15 @@ def _split_patterns(value: str) -> list[str]:
         current.append(char)
         i += 1
     parts.append("".join(current))
-    return [entry for part in parts if (entry := part.strip())]
+    return [entry for part in parts if (entry := _strip_pattern(part))]
+
+
+def _strip_pattern(pattern: str) -> str:
+    r"""Strip the whitespace around a verbose regex, but keep a space escaped as `\ `."""
+    stripped = pattern.rstrip()
+    if (len(stripped) - len(stripped.rstrip("\\"))) % 2:
+        stripped += pattern[len(stripped)]
+    return stripped.lstrip()
 
 
 def build_exclude(exclude: str | list[Any]) -> str:
@@ -809,7 +817,7 @@ def build_exclude(exclude: str | list[Any]) -> str:
     """
     if isinstance(exclude, str):
         return "\n| ".join(_split_patterns(exclude))
-    return "\n| ".join(entry for x in exclude if (entry := str(x).strip()))
+    return "\n| ".join(entry for x in exclude if (entry := _strip_pattern(str(x))))
 
 
 def _check_regex(setting: str, pattern: str) -> None:
