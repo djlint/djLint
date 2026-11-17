@@ -15,7 +15,6 @@
   "djlint.sections": "Разделы",
   "djlint.demo_description": "Форматируйте и проверяйте HTML-шаблоны с помощью djLint прямо в браузере.",
   "djlint.demo_loading": "Загрузка djLint…",
-  "djlint.demo_version": "Работает на Python {python}; djLint {djlint}",
   "djlint.demo_error": "Не удалось загрузить djLint. Проверьте подключение и обновите страницу.",
   "djlint.demo_copy_link": "Скопировать ссылку",
   "djlint.demo_options": "Параметры",

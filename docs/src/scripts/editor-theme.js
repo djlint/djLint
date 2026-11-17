@@ -23,11 +23,7 @@ const theme = EditorView.theme(
     ".cm-foldPlaceholder": { backgroundColor: "#2f334d", border: "none", color: "#c0caf5" },
     ".cm-tooltip": { backgroundColor: "#2f334d", border: "1px solid #3b4261", color: "#c0caf5" },
     // Findings get the squiggle of the home page's editor.
-    ".cm-lintRange-warning": {
-      backgroundImage: "var(--dj-squiggle-wave)",
-      backgroundSize: "6px 3px",
-      paddingBottom: "2px",
-    },
+    ".cm-lintRange-warning": { background: "var(--dj-squiggle-wave)", paddingBottom: "0.35em" },
     ".cm-diagnostic": { padding: "0.3rem 0.6rem", fontSize: "0.75rem" },
     ".cm-diagnostic-warning": { borderLeft: "3px solid #f5c542" },
     ".cm-tooltip-autocomplete > ul > li[aria-selected]": {

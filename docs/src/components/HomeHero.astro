@@ -470,18 +470,14 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
 
   .line :global(mark.lint) {
     position: relative;
-    background: none;
+    padding-block-end: 0.35em;
+    background: var(--dj-squiggle-wave);
     color: inherit;
-    text-decoration: underline wavy var(--dj-squiggle);
-    text-decoration-thickness: 1.5px;
-    text-decoration-skip-ink: none;
-    text-underline-offset: 0.3em;
     cursor: help;
   }
-  /* An empty line has no text to underline, so give it a few invisible letters:
-     the squiggle under them is the same one as under text. Browsers skip the
-     underline under spaces at the end of a line. The empty alt text keeps
-     screen readers from reading the letters out. */
+  /* An empty line has no text to underline, so give it a few invisible letters
+     to stretch the squiggle under. The empty alt text keeps screen readers
+     from reading them out. */
   .line :global(mark.lint-blank)::before {
     content: "xxxx";
     content: "xxxx" / "";

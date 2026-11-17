@@ -15,7 +15,6 @@
   "djlint.sections": "Seções",
   "djlint.demo_description": "Formate e analise templates HTML no seu navegador com o djLint.",
   "djlint.demo_loading": "Carregando o djLint…",
-  "djlint.demo_version": "Executando com Python {python}; djLint {djlint}",
   "djlint.demo_error": "Não foi possível carregar o djLint. Verifique sua conexão e recarregue a página.",
   "djlint.demo_copy_link": "Copiar link",
   "djlint.demo_options": "Opções",

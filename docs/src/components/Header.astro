@@ -102,10 +102,9 @@ const links = [
   }
   /* The current section is squiggled, as the current page in the sidebar is. */
   .top-nav a[aria-current="page"] {
-    text-decoration: underline wavy var(--dj-squiggle);
-    text-decoration-thickness: 1.5px;
-    text-decoration-skip-ink: none;
-    text-underline-offset: 0.35em;
+    margin-block-end: -0.4em;
+    padding-block-end: 0.4em;
+    background: var(--dj-current-wave);
   }
   .right-group,
   .social-icons {

@@ -15,7 +15,6 @@
   "djlint.sections": "Bereiche",
   "djlint.demo_description": "Formatieren und prüfen Sie HTML-Templates im Browser mit djLint.",
   "djlint.demo_loading": "djLint wird geladen…",
-  "djlint.demo_version": "Läuft mit Python {python}; djLint {djlint}",
   "djlint.demo_error": "djLint konnte nicht geladen werden. Prüfen Sie Ihre Verbindung und laden Sie die Seite neu.",
   "djlint.demo_copy_link": "Link kopieren",
   "djlint.demo_options": "Optionen",
