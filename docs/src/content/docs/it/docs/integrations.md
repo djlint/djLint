@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [Repository GitHub](https://github.com/mattn/efm-langserver)
 
-Assegna a `htmldjango` un formattatore con `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` e `formatStdin = true`.
+Assegna a `htmldjango` un formattatore con `formatCommand = "djlint --reformat --quiet --warn -"` e `formatStdin = true`.
 
 ### coc.nvim
 

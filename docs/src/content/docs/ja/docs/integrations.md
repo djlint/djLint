@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub リポジトリ](https://github.com/mattn/efm-langserver)
 
-`htmldjango` のフォーマッターを `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` と `formatStdin = true` で設定します。
+`htmldjango` のフォーマッターを `formatCommand = "djlint --reformat --quiet --warn -"` と `formatStdin = true` で設定します。
 
 ### coc.nvim
 

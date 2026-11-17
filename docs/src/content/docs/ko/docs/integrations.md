@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub 저장소](https://github.com/mattn/efm-langserver)
 
-`htmldjango`에 `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"`, `formatStdin = true`로 포맷터를 지정합니다.
+`htmldjango`에 `formatCommand = "djlint --reformat --quiet --warn -"`, `formatStdin = true`로 포맷터를 지정합니다.
 
 ### coc.nvim
 
