@@ -82,7 +82,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 ### conform.nvim과 nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim)은 포맷을, [nvim-lint](https://github.com/mfussenegger/nvim-lint)는 린트를 맡으며, 둘 다 djLint를 명령으로 실행합니다. 검사 결과에 밑줄이 그어진 범위가 없고, nvim-lint에 린트를 요청할 때만 결과가 나타납니다. 프로필은 명령줄에서처럼 프로젝트 [구성](/ko/docs/configuration/#profile)에서 정해집니다.
+[conform.nvim](https://github.com/stevearc/conform.nvim)은 포맷을, [nvim-lint](https://github.com/mfussenegger/nvim-lint)는 린트를 맡으며, 둘 다 djLint를 명령으로 실행합니다. 검사 결과에 밑줄이 그어진 범위가 없고, nvim-lint에 린트를 요청할 때만 결과가 나타납니다. 프로필은 명령줄에서처럼 프로젝트 [구성](/ko/docs/configuration/#profile)에서 정해집니다. 이 예시에는 djLint 1.49 이상이 필요합니다.
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Emacs 29 이상에 포함된 Eglot에서는 다음과 같이 합니다.
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-그런 다음 템플릿에서 `M-x eglot`을 실행합니다. `eglot-format-buffer`로 템플릿을 포맷할 수 있습니다.
+그런 다음 템플릿에서 `M-x eglot`을 실행합니다. `eglot-format-buffer`로 템플릿을 포맷할 수 있습니다. `html-mode`, `mhtml-mode`, `web-mode`는 템플릿 언어를 알려 주지 않으므로, 이 모드에서는 프로필이 프로젝트 [구성](/ko/docs/configuration/#profile)에서 정해집니다.
 
 ## 언어 서버
 

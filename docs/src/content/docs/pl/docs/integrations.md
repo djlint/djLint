@@ -82,7 +82,7 @@ Zobacz [Ustawienia](#ustawienia).
 
 ### conform.nvim i nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) formatuje, a [nvim-lint](https://github.com/mfussenegger/nvim-lint) lintuje, uruchamiając djLint jako polecenie. Zgłoszenia nie mają podkreślonego zakresu i pojawiają się dopiero wtedy, gdy poprosisz nvim-lint o lintowanie. Profil pochodzi z [konfiguracji](/pl/docs/configuration/#profile) projektu, tak jak w wierszu poleceń.
+[conform.nvim](https://github.com/stevearc/conform.nvim) formatuje, a [nvim-lint](https://github.com/mfussenegger/nvim-lint) lintuje, uruchamiając djLint jako polecenie. Zgłoszenia nie mają podkreślonego zakresu i pojawiają się dopiero wtedy, gdy poprosisz nvim-lint o lintowanie. Profil pochodzi z [konfiguracji](/pl/docs/configuration/#profile) projektu, tak jak w wierszu poleceń. Ten przykład wymaga djLint 1.49 lub nowszego.
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Eglot, dostarczany z Emacsem 29 i nowszymi:
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-Następnie uruchom `M-x eglot` w szablonie. `eglot-format-buffer` go sformatuje.
+Następnie uruchom `M-x eglot` w szablonie. `eglot-format-buffer` go sformatuje. `html-mode`, `mhtml-mode` i `web-mode` nie wskazują języka szablonów, więc w nich profil pochodzi z [konfiguracji](/pl/docs/configuration/#profile) projektu.
 
 ## Serwer języka
 

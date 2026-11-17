@@ -82,7 +82,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 ### conform.nvim и nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) форматирует, а [nvim-lint](https://github.com/mfussenegger/nvim-lint) проверяет код, запуская djLint как команду. Замечания приходят без подчёркивания фрагментов и только тогда, когда вы запускаете проверку в nvim-lint. Профиль берётся из [конфигурации](/ru/docs/configuration/#profile) проекта, как в командной строке.
+[conform.nvim](https://github.com/stevearc/conform.nvim) форматирует, а [nvim-lint](https://github.com/mfussenegger/nvim-lint) проверяет код, запуская djLint как команду. Замечания приходят без подчёркивания фрагментов и только тогда, когда вы запускаете проверку в nvim-lint. Профиль берётся из [конфигурации](/ru/docs/configuration/#profile) проекта, как в командной строке. Этому примеру нужен djLint 1.49 или новее.
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Eglot, входящий в состав Emacs 29 и новее:
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-Затем выполните `M-x eglot` в шаблоне. `eglot-format-buffer` отформатирует его.
+Затем выполните `M-x eglot` в шаблоне. `eglot-format-buffer` отформатирует его. `html-mode`, `mhtml-mode` и `web-mode` не называют язык шаблонов, поэтому в них профиль берётся из [конфигурации](/ru/docs/configuration/#profile) проекта.
 
 ## Языковой сервер
 

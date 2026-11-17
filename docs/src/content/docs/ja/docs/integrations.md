@@ -82,7 +82,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 ### conform.nvim と nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) はフォーマットを、[nvim-lint](https://github.com/mfussenegger/nvim-lint) はリントを、djLint をコマンドとして実行して行います。検出結果には範囲の下線が付かず、nvim-lint にリントを指示したときにだけ表示されます。プロファイルは、コマンドラインと同じくプロジェクトの[設定](/ja/docs/configuration/#profile)から決まります。
+[conform.nvim](https://github.com/stevearc/conform.nvim) はフォーマットを、[nvim-lint](https://github.com/mfussenegger/nvim-lint) はリントを、djLint をコマンドとして実行して行います。検出結果には範囲の下線が付かず、nvim-lint にリントを指示したときにだけ表示されます。プロファイルは、コマンドラインと同じくプロジェクトの[設定](/ja/docs/configuration/#profile)から決まります。この例には djLint 1.49 以降が必要です。
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Emacs 29 以降に付属している Eglot を使います：
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-あとはテンプレートで `M-x eglot` を実行します。`eglot-format-buffer` でフォーマットできます。
+あとはテンプレートで `M-x eglot` を実行します。`eglot-format-buffer` でフォーマットできます。`html-mode`、`mhtml-mode`、`web-mode` はテンプレート言語を示さないため、これらではプロファイルはプロジェクトの[設定](/ja/docs/configuration/#profile)から決まります。
 
 ## 言語サーバー
 

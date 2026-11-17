@@ -82,7 +82,7 @@ Viz [Nastavení](#nastaveni).
 
 ### conform.nvim a nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) formátuje a [nvim-lint](https://github.com/mfussenegger/nvim-lint) lintuje tak, že djLint spouštějí jako příkaz. Nálezy nemají podtržený úsek a objeví se, jen když nvim-lint požádáte o lintování. Profil se bere z [konfigurace](/cs/docs/configuration/#profile) projektu, stejně jako na příkazové řádce.
+[conform.nvim](https://github.com/stevearc/conform.nvim) formátuje a [nvim-lint](https://github.com/mfussenegger/nvim-lint) lintuje tak, že djLint spouštějí jako příkaz. Nálezy nemají podtržený úsek a objeví se, jen když nvim-lint požádáte o lintování. Profil se bere z [konfigurace](/cs/docs/configuration/#profile) projektu, stejně jako na příkazové řádce. Tento příklad potřebuje djLint 1.49 nebo novější.
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Eglot, který je součástí Emacsu 29 a novějšího:
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-Pak v šabloně spusťte `M-x eglot`. Příkaz `eglot-format-buffer` ji naformátuje.
+Pak v šabloně spusťte `M-x eglot`. Příkaz `eglot-format-buffer` ji naformátuje. `html-mode`, `mhtml-mode` a `web-mode` žádný šablonovací jazyk neurčují, proto se v nich profil bere z [konfigurace](/cs/docs/configuration/#profile) projektu.
 
 ## Jazykový server
 

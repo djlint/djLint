@@ -82,7 +82,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 ### conform.nvim 和 nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) 負責格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 負責 lint，兩者都是以指令的方式執行 djLint。檢查結果不會以底線標示範圍，而且只有在你要求 nvim-lint 進行 lint 時才會出現。profile 和命令列一樣，來自專案的[設定](/zh-tw/docs/configuration/#profile)。
+[conform.nvim](https://github.com/stevearc/conform.nvim) 負責格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 負責 lint，兩者都是以指令的方式執行 djLint。檢查結果不會以底線標示範圍，而且只有在你要求 nvim-lint 進行 lint 時才會出現。profile 和命令列一樣，來自專案的[設定](/zh-tw/docs/configuration/#profile)。此範例需要 djLint 1.49 或更新版本。
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Emacs 29 及更新版本內建的 Eglot：
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-接著在範本中執行 `M-x eglot`。`eglot-format-buffer` 會將它格式化。
+接著在範本中執行 `M-x eglot`。`eglot-format-buffer` 會將它格式化。`html-mode`、`mhtml-mode` 和 `web-mode` 不會指出範本語言，因此在這些模式中，profile 來自專案的[設定](/zh-tw/docs/configuration/#profile)。
 
 ## 語言伺服器
 

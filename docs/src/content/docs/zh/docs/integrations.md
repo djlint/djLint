@@ -82,7 +82,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 ### conform.nvim 和 nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) 负责格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 负责代码检查，两者都以命令的形式运行 djLint。检查结果没有下划线标出的范围，并且只有在你让 nvim-lint 执行检查时才会出现。预设和命令行一样，来自项目的[配置](/zh/docs/configuration/#profile)。
+[conform.nvim](https://github.com/stevearc/conform.nvim) 负责格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 负责代码检查，两者都以命令的形式运行 djLint。检查结果没有下划线标出的范围，并且只有在你让 nvim-lint 执行检查时才会出现。预设和命令行一样，来自项目的[配置](/zh/docs/configuration/#profile)。此示例需要 djLint 1.49 或更高版本。
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Helix 本身不会把任何文件当作 `htmldjango` 打开。在 Django 项目�
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 可以格式化该模板。
+然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 可以格式化该模板。`html-mode`、`mhtml-mode` 和 `web-mode` 不表明模板语言，因此在这些模式中，预设来自项目的[配置](/zh/docs/configuration/#profile)。
 
 ## 语言服务器
 

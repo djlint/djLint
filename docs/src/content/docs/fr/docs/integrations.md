@@ -82,7 +82,7 @@ Voir [Options](#options).
 
 ### conform.nvim et nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) formate et [nvim-lint](https://github.com/mfussenegger/nvim-lint) linte, en exécutant djLint comme une commande. Les signalements n'ont pas de plage soulignée, et n'arrivent que lorsque vous demandez à nvim-lint de linter. Le profil vient de la [configuration](/fr/docs/configuration/#profile) du projet, comme en ligne de commande.
+[conform.nvim](https://github.com/stevearc/conform.nvim) formate et [nvim-lint](https://github.com/mfussenegger/nvim-lint) linte, en exécutant djLint comme une commande. Les signalements n'ont pas de plage soulignée, et n'arrivent que lorsque vous demandez à nvim-lint de linter. Le profil vient de la [configuration](/fr/docs/configuration/#profile) du projet, comme en ligne de commande. Cet exemple demande djLint 1.49 ou plus récent.
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Eglot, fourni avec Emacs 29 et plus récent :
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-Exécutez ensuite `M-x eglot` dans un template. `eglot-format-buffer` le formate.
+Exécutez ensuite `M-x eglot` dans un template. `eglot-format-buffer` le formate. `html-mode`, `mhtml-mode` et `web-mode` n'indiquent aucun langage de templates : le profil y vient donc de la [configuration](/fr/docs/configuration/#profile) du projet.
 
 ## Serveur de langage
 

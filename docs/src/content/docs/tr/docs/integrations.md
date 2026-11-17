@@ -82,7 +82,7 @@ Bkz. [Ayarlar](#ayarlar).
 
 ### conform.nvim ve nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) biçimlendirir, [nvim-lint](https://github.com/mfussenegger/nvim-lint) ise lint denetimi yapar; ikisi de djLint'i bir komut olarak çalıştırır. Bulguların altı çizili bir aralığı olmaz ve yalnızca nvim-lint'ten denetim yapmasını istediğinizde gelirler. Profil, komut satırında olduğu gibi projenin [yapılandırmasından](/tr/docs/configuration/#profile) gelir.
+[conform.nvim](https://github.com/stevearc/conform.nvim) biçimlendirir, [nvim-lint](https://github.com/mfussenegger/nvim-lint) ise lint denetimi yapar; ikisi de djLint'i bir komut olarak çalıştırır. Bulguların altı çizili bir aralığı olmaz ve yalnızca nvim-lint'ten denetim yapmasını istediğinizde gelirler. Profil, komut satırında olduğu gibi projenin [yapılandırmasından](/tr/docs/configuration/#profile) gelir. Bu örnek djLint 1.49 veya daha yenisini gerektirir.
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Emacs 29 ve üzeriyle birlikte gelen Eglot ile:
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şablonu biçimlendirir.
+Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şablonu biçimlendirir. `html-mode`, `mhtml-mode` ve `web-mode` bir şablon dili belirtmez; bu modlarda profil projenin [yapılandırmasından](/tr/docs/configuration/#profile) gelir.
 
 ## Dil sunucusu
 

@@ -82,7 +82,7 @@ See [Settings](#settings).
 
 ### conform.nvim and nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) formats and [nvim-lint](https://github.com/mfussenegger/nvim-lint) lints, by running djLint as a command. Findings have no underlined range, and arrive only when you ask nvim-lint to lint. The profile comes from the project's [configuration](/docs/configuration/#profile), as on the command line.
+[conform.nvim](https://github.com/stevearc/conform.nvim) formats and [nvim-lint](https://github.com/mfussenegger/nvim-lint) lints, by running djLint as a command. Findings have no underlined range, and arrive only when you ask nvim-lint to lint. The profile comes from the project's [configuration](/docs/configuration/#profile), as on the command line. This example needs djLint 1.49 or newer.
 
 ```lua
 local formatters, linters = {}, {}
@@ -208,7 +208,7 @@ Eglot, which comes with Emacs 29 and newer:
     (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-Then run `M-x eglot` in a template. `eglot-format-buffer` formats it.
+Then run `M-x eglot` in a template. `eglot-format-buffer` formats it. `html-mode`, `mhtml-mode` and `web-mode` name no template language, so in them the profile comes from the project's [configuration](/docs/configuration/#profile).
 
 ## Language server
 
