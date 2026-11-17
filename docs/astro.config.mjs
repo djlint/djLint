@@ -1,4 +1,7 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { unified } from "@astrojs/markdown-remark";
@@ -110,6 +113,59 @@ const demoLock = {
   },
 };
 
+// Every page gets a CSP <meta> right after its charset that runs no inline
+// script but the page's own, by hash. Astro's security.csp would leave out
+// Starlight's is:inline scripts, so the hashes come from the built HTML.
+// Vite inlines the smallest font files as data: URLs, the stylesheets draw
+// icons from data: URLs, the home page shows a shields.io badge, and Pagefind
+// fetches its index in the page when its worker fails. Styles stay unrestricted inline: Expressive Code
+// colors code with style attributes, and CodeMirror writes its styles into a
+// <style> at run time. frame-ancestors can't go in a <meta>: public/_headers
+// sends it.
+const CSP = [
+  "default-src 'none'",
+  "connect-src 'self'",
+  "font-src 'self' data:",
+  "img-src 'self' data: https://img.shields.io",
+  "style-src 'self' 'unsafe-inline'",
+  "base-uri 'none'",
+  "form-action 'none'",
+].join("; ");
+
+/** @param {string} html */
+function scriptHashes(html) {
+  const hashes = new Set();
+  for (const [, attrs = "", body] of html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/gu)) {
+    if (body && !/\ssrc=/u.test(attrs)) {
+      hashes.add(`'sha256-${createHash("sha256").update(body).digest("base64")}'`);
+    }
+  }
+  return [...hashes].join(" ");
+}
+
+const csp = {
+  name: "csp",
+  hooks: {
+    "astro:build:done": ({ dir }) => {
+      const root = fileURLToPath(dir);
+      const charset = '<meta charset="utf-8"/>';
+      for (const file of readdirSync(root, { recursive: true })) {
+        if (!file.endsWith(".html")) {
+          continue;
+        }
+        const htmlPath = path.join(root, file);
+        const html = readFileSync(htmlPath, "utf8");
+        if (!html.includes(charset)) {
+          throw new Error(`${file} has no ${charset} to put the CSP after`);
+        }
+        const policy = `${CSP}; script-src 'self' ${scriptHashes(html)}`;
+        const meta = `<meta http-equiv="content-security-policy" content="${policy}"/>`;
+        writeFileSync(htmlPath, html.replace(charset, charset + meta));
+      }
+    },
+  },
+};
+
 export default defineConfig({
   site: "https://djlint.com",
   trailingSlash: "always",
@@ -121,6 +177,7 @@ export default defineConfig({
   },
   integrations: [
     demoLock,
+    csp,
     starlight({
       title: "djLint",
       logo: {
