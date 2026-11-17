@@ -41,7 +41,11 @@ npm パッケージは独自の Python を同梱しているため、必要な�
 npm i -D djlint
 ```
 
-実行するときは `npx djlint` を使います（例: `npx djlint . --lint`）。
+または、グローバルにインストールします：
+
+```bash
+npm i -g djlint
+```
 
 </TabItem>
 <TabItem label="pipx">
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 すべてのプロファイルは [`profile`](/ja/docs/configuration/#profile) オプションに一覧があります。テンプレート言語ごとのページもあり（例：[Django](/ja/docs/languages/django/)、[Jinja](/ja/docs/languages/jinja/)、[Handlebars](/ja/docs/languages/handlebars/)）、毎回指定しなくて済むように設定ファイルでプロファイルを設定する方法も載っています。
 
-`uv add --dev` でプロジェクトに追加した場合、djLint はプロジェクトの環境に入っています。コマンドの前に `uv run` を付けてください（例：`uv run djlint templates --lint --profile=django`）。
+`uv add --dev` でプロジェクトに追加した場合、djLint はプロジェクトの環境に入っています。コマンドの前に `uv run` を付けてください（例：`uv run djlint templates --lint --profile=django`）。 `npm i -D` で追加した場合は、代わりに `npx` を付けます（例：`npx djlint templates --lint --profile=django`）。
 
 ## パスと標準入力の使い分け
 

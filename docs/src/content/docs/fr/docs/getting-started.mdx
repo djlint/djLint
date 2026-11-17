@@ -41,7 +41,11 @@ Le paquet npm embarque son propre Python : il lui suffit de Node.js 16.9 ou plus
 npm i -D djlint
 ```
 
-Lancez-le ensuite avec `npx djlint`, par exemple `npx djlint . --lint`.
+Ou installez-le globalement :
+
+```bash
+npm i -g djlint
+```
 
 </TabItem>
 <TabItem label="pipx">
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 L'option [`profile`](/fr/docs/configuration/#profile) liste tous les profils. Chaque langage de templates a aussi sa propre page, par exemple [Django](/fr/docs/languages/django/), [Jinja](/fr/docs/languages/jinja/) ou [Handlebars](/fr/docs/languages/handlebars/), qui montre comment définir le profil dans un fichier de configuration pour ne pas avoir à le passer à chaque fois.
 
-Si vous avez ajouté djLint au projet avec `uv add --dev`, il se trouve dans l'environnement du projet : préfixez les commandes par `uv run`, par exemple `uv run djlint templates --lint --profile=django`.
+Si vous avez ajouté djLint au projet avec `uv add --dev`, il se trouve dans l'environnement du projet : préfixez les commandes par `uv run`, par exemple `uv run djlint templates --lint --profile=django`. Avec `npm i -D`, préfixez-les plutôt par `npx`, par exemple `npx djlint templates --lint --profile=django`.
 
 ## Chemin ou stdin
 

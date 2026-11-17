@@ -41,7 +41,11 @@ Balíček npm si nese vlastní Python, takže potřebuje jen Node.js 16.9 nebo n
 npm i -D djlint
 ```
 
-Pak ho spouštějte přes `npx djlint`, například `npx djlint . --lint`.
+Nebo ho nainstalujte globálně:
+
+```bash
+npm i -g djlint
+```
 
 </TabItem>
 <TabItem label="pipx">
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 Všechny profily uvádí volba [`profile`](/cs/docs/configuration/#profile). Každý šablonovací jazyk má navíc vlastní stránku, například [Django](/cs/docs/languages/django/), [Jinja](/cs/docs/languages/jinja/) nebo [Handlebars](/cs/docs/languages/handlebars/), kde se dočtete, jak profil nastavit v konfiguračním souboru, abyste ho nemuseli zadávat pokaždé.
 
-Pokud jste djLint přidali do projektu přes `uv add --dev`, je v prostředí projektu: příkazy spouštějte s `uv run` na začátku, například `uv run djlint templates --lint --profile=django`.
+Pokud jste djLint přidali do projektu přes `uv add --dev`, je v prostředí projektu: příkazy spouštějte s `uv run` na začátku, například `uv run djlint templates --lint --profile=django`. Po `npm i -D` dejte na začátek místo toho `npx`, například `npx djlint templates --lint --profile=django`.
 
 ## Cesta, nebo stdin
 

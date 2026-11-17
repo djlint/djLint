@@ -7,7 +7,7 @@ import { LinkButton } from "@astrojs/starlight/components";
 const { t } = Astro.locals;
 const { title, tagline, actions = [] } = Astro.locals.starlightRoute.entry.data.hero!;
 
-const installs = ["uv tool install djlint", "pip install djlint"];
+const installs = ["uv tool install djlint", "pip install djlint", "npm i -g djlint"];
 // The command the bar shows, one word per span: a narrow screen wraps it
 // between the arguments, not after the dashes inside one. The flag after it is
 // off by default, as in djLint, and a click turns it on.
