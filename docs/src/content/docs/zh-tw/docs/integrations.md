@@ -43,15 +43,7 @@ vim.filetype.add({
 
 ### 內建 LSP 用戶端（建議使用）
 
-Neovim 0.11 或更新版本不需要任何外掛，就能直接與 djLint 的[語言伺服器](#語言伺服器)溝通。這樣可以在輸入時取得檢查結果，並以底線標示範圍，還能用 `vim.lsp.buf.format()` 進行格式化。
-
-v2.12.0 之後的 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 內建它的設定，裝了它只要一行：
-
-```lua
-vim.lsp.enable("djlint")
-```
-
-不使用 nvim-lspconfig 或版本較舊時，請自行定義設定：
+Neovim 0.11 或更新版本不需要任何外掛，就能直接與 djLint 的[語言伺服器](#語言伺服器)溝通。這樣可以在輸入時取得檢查結果，並以底線標示範圍，還能用 `vim.lsp.buf.format()` 進行格式化：
 
 ```lua
 vim.lsp.config("djlint", {

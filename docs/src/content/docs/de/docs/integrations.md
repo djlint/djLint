@@ -43,15 +43,7 @@ vim.filetype.add({
 
 ### Integrierter LSP-Client (empfohlen)
 
-Neovim 0.11 oder neuer kann ohne Plug-in direkt mit dem [Sprachserver](#sprachserver) von djLint kommunizieren. Damit erhalten Sie Befunde schon während der Eingabe, mit unterstrichenen Bereichen, und zum Formatieren `vim.lsp.buf.format()`.
-
-[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) nach v2.12.0 bringt die Konfiguration mit, damit genügt eine Zeile:
-
-```lua
-vim.lsp.enable("djlint")
-```
-
-Ohne es oder mit einer älteren Version definieren Sie die Konfiguration selbst:
+Neovim 0.11 oder neuer kann ohne Plug-in direkt mit dem [Sprachserver](#sprachserver) von djLint kommunizieren. Damit erhalten Sie Befunde schon während der Eingabe, mit unterstrichenen Bereichen, und zum Formatieren `vim.lsp.buf.format()`:
 
 ```lua
 vim.lsp.config("djlint", {
