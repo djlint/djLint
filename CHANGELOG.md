@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Feature
+
+- The language server picks the profile from more of the language names editors use: `twig` (Neovim, Helix, Emacs) gets `nunjucks`, `htmlangular` (Neovim) gets `angular`, and the names VS Code extensions give HubL, Spacebars, Mustache, Liquid and Go templates get the profile of their language.
+
 ### Bug fixes
 
 - Each item of an `exclude` or `extend_exclude` list in the config file is one regex, whatever it holds, so a comma in it needs no `\,` and an unclosed `{` no longer joins the next item to it.

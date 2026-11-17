@@ -909,6 +909,17 @@ def test_picks_the_profile_from_the_language(client: Client, tmp_path: Path) -> 
     assert [item["code"] for item in client.diagnostics(uri)] == ["D018"]
 
 
+def test_reads_twig_as_nunjucks(client: Client, tmp_path: Path) -> None:
+    # Neovim and Helix call the language twig, and its templates take nunjucks.
+    client.start(tmp_path)
+    uri = (tmp_path / "a.twig").as_uri()
+    # The jinja profile would also report J004 on the static path.
+    client.open(uri, '{{a}}\n<img src="/static/a.png" alt="">\n', language="twig")
+    codes = [item["code"] for item in client.diagnostics(uri)]
+    assert "T001" in codes
+    assert "J004" not in codes
+
+
 def test_lets_the_project_choose_the_profile(client: Client, tmp_path: Path) -> None:
     (tmp_path / ".djlintrc").write_text('{"profile": "jinja"}', encoding="utf-8")
     client.start(tmp_path)

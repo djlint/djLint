@@ -30,6 +30,17 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 ## Neovim
 
+Neovim 不会给一些模板扩展名设置文件类型。无论你使用下面哪种方式，都请先注册它们：
+
+```lua
+vim.filetype.add({
+  extension = {
+    gohtml = "gotmpl", gotmpl = "gotmpl", handlebars = "handlebars",
+    j2 = "jinja", jinja2 = "jinja", mako = "mako", njk = "nunjucks",
+  },
+})
+```
+
 ### 内置 LSP 客户端（推荐）
 
 Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言服务器)通信，无需任何插件。这样可以在输入时得到检查结果，并带有下划线标出的范围，还能用 `vim.lsp.buf.format()` 格式化：
@@ -37,7 +48,10 @@ Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言�
 ```lua
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
-  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  filetypes = {
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+    "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
 vim.lsp.enable("djlint")
@@ -46,13 +60,20 @@ vim.lsp.enable("djlint")
 要在保存时格式化，请在同一配置中添加以下内容：
 
 ```lua
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = {
-    "*.html", "*.jinja", "*.jinja2", "*.j2",
-    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
-  },
+local group = vim.api.nvim_create_augroup("djlint_format", {})
+vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
-    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+    if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
+      return
+    end
+    vim.api.nvim_clear_autocmds({ group = group, buffer = args.buf })
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      group = group,
+      buffer = args.buf,
+      callback = function()
+        vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+      end,
+    })
   end,
 })
 ```
@@ -61,11 +82,29 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 ### conform.nvim 和 nvim-lint
 
-[conform.nvim](https://github.com/stevearc/conform.nvim) 负责格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 负责代码检查，两者都以命令的形式运行 djLint。检查结果没有下划线标出的范围，并且只有在你让 nvim-lint 执行检查时才会出现。
+[conform.nvim](https://github.com/stevearc/conform.nvim) 负责格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 负责代码检查，两者都以命令的形式运行 djLint。检查结果没有下划线标出的范围，并且只有在你让 nvim-lint 执行检查时才会出现。预设和命令行一样，来自项目的[配置](/zh/docs/configuration/#profile)。此示例需要 djLint 1.49 或更高版本。
 
 ```lua
-require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
-require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+local formatters, linters = {}, {}
+for _, filetype in ipairs({
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "nunjucks",
+  "twig", "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+}) do
+  formatters[filetype] = { "djlint" }
+  linters[filetype] = { "djlint" }
+end
+require("conform").setup({
+  formatters_by_ft = formatters,
+  formatters = { djlint = { prepend_args = { "--stdin-filename", "$FILENAME" } } },
+})
+local lint = require("lint")
+lint.linters_by_ft = linters
+vim.list_extend(lint.linters.djlint.args, {
+  "--stdin-filename",
+  function()
+    return vim.api.nvim_buf_get_name(0)
+  end,
+})
 ```
 
 ### none-ls
@@ -85,7 +124,19 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 1. 从 Marketplace 安装 LSP4IJ。
 1. 打开 LSP Consoles 工具窗口，添加一个新的语言服务器。
 1. 在 **Server** 选项卡中，将名称设为 `djLint`，将命令设为 `djlint --lsp`；如果它不在 PATH 中，请使用项目虚拟环境中 `djlint` 的完整路径。
-1. 在 **Mappings** 选项卡中，为你的模板添加文件名模式，例如 `*.html`。如果项目的配置中没有设置[预设](/zh/docs/configuration/#profile)，对于 Django 项目，请将语言 ID 设为 `htmldjango`，以便选中正确的预设。
+1. 在 **Mappings** 选项卡中，添加你的模板的文件名模式。如果项目的配置中没有设置[预设](/zh/docs/configuration/#profile)，就由每个模式的语言 ID 来选择预设：
+
+   | 模式                                  | 语言 ID                          |
+   | ------------------------------------- | -------------------------------- |
+   | `*.html`, `*.htm`                     | `html`，Django 中为 `htmldjango` |
+   | `*.jinja`, `*.jinja2`, `*.j2`         | `jinja`                          |
+   | `*.njk`, `*.twig`                     | `nunjucks`                       |
+   | `*.hbs`, `*.handlebars`, `*.mustache` | `handlebars`                     |
+   | `*.liquid`                            | `liquid`                         |
+   | `*.gotmpl`, `*.gohtml`                | `gotmpl`                         |
+   | `*.tera`                              | `tera`                           |
+   | `*.mako`                              | `mako`                           |
+
 1. 在 **Configuration** 选项卡中，可以以 JSON 格式在 `djlint` 键下填写[设置](#设置)。
 
 检查结果会显示在编辑器中，并且 **Reformat Code** 可以对已映射的文件使用该服务器。
@@ -108,7 +159,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 ## Helix
 
-Helix 可以通过 `languages.toml` 运行[语言服务器](#语言服务器)：
+Helix 可以通过 `languages.toml` 运行[语言服务器](#语言服务器)。`language-servers` 列表会替换 Helix 为该语言设置的列表，所以请在 `djlint` 之后保留 Helix 自带的服务器：
 
 ```toml
 [language-server.djlint]
@@ -117,8 +168,34 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["djlint", "vscode-html-language-server"]
+language-servers = ["djlint", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "htmldjango"
+language-servers = ["djlint", "djlsp", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "gotmpl"
+language-servers = ["djlint", "gopls"]
+
+[[language]]
+name = "jinja"
+language-servers = ["djlint"]
+
+[[language]]
+name = "nunjucks"
+language-servers = ["djlint"]
+
+[[language]]
+name = "twig"
+language-servers = ["djlint"]
+
+[[language]]
+name = "tera"
+language-servers = ["djlint"]
 ```
+
+Helix 本身不会把任何文件当作 `htmldjango` 打开。在 Django 项目中，请在项目的 `.helix/languages.toml` 里为这一项添加 `file-types = ["html"]`。
 
 ## Emacs
 
@@ -126,11 +203,12 @@ language-servers = ["djlint", "vscode-html-language-server"]
 
 ```elisp
 (with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '((html-mode web-mode) . ("djlint" "--lsp"))))
+  (dolist (mode '(html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode))
+    (add-to-list 'eglot-server-programs `(,mode . ("djlint" "--lsp")))))
 ```
 
-然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 可以格式化该模板。
+然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 可以格式化该模板。`html-mode`、`mhtml-mode` 和 `web-mode` 不表明模板语言，因此在这些模式中，预设来自项目的[配置](/zh/docs/configuration/#profile)。
 
 ## 语言服务器
 

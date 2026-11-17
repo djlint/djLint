@@ -97,13 +97,15 @@ const badge = "https://img.shields.io/badge/html%20style-djLint-blue.svg";
     color: var(--sl-color-white);
   }
   /* Every logo gets the same box; logoScale only evens out how much of it the
-     drawing fills. */
+     drawing fills. The drawing fits inside the padding whichever side is
+     longer, and a scale that would take it past the box stops at the box. */
   .mark {
     flex: none;
     width: 2rem;
     height: 2rem;
+    padding: max(0rem, (1 - 0.7 * var(--logo-scale)) * 1rem);
     background: var(--brand);
-    mask: var(--mark) center / calc(70% * var(--logo-scale)) no-repeat;
+    mask: var(--mark) center / contain no-repeat content-box;
   }
   .closing {
     display: grid;
