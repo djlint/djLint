@@ -9,7 +9,7 @@ djLint で Jinja テンプレートをリント・フォーマットできます
 
 **[Jinja とは？](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja は Jinja2 の構文に従い、HubSpot の Jinjava のテンプレートも Jinja 形式なので、どちらにも `jinja` プロファイルを使ってください。
+MiniJinja は Jinja2 の構文に従い、HubSpot の Jinjava のテンプレートも Jinja 形式なので、どちらにも `jinja` プロファイルを使ってください。J004 と J018 は Flask の `url_for` を勧めるルールなので、Flask を使わないプロジェクトでは無視してください。
 
 ## コマンドラインを使う
 

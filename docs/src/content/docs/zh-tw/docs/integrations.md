@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub 儲存庫](https://github.com/mattn/efm-langserver)
 
-為 `htmldjango` 設定格式化工具，指定 `formatCommand = "djlint --reformat --quiet --warn -"` 與 `formatStdin = true`。
+為 `htmldjango` 設定格式化工具，指定 `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` 與 `formatStdin = true`。
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ djLint 會從下列來源中，取第一個有指定 `profile` 的來源：
 
 djLint 可以作為 [pre-commit](https://pre-commit.com) hook 使用，同時擔任 linter 和格式化工具。
 
-每個 profile 都有一個用於 lint 的 hook（列於下表），以及一個用於格式化、名稱中多了 `reformat` 的 hook：例如 `djlint-django` 對應 `djlint-reformat-django`。這些 hook 會設定 `--profile`，以及 pre-commit 要傳入的檔案：
+下表中的每個 profile 都有一個用於 lint 的 hook（列於表中），以及一個用於格式化、名稱中多了 `reformat` 的 hook：例如 `djlint-django` 對應 `djlint-reformat-django`。這些 hook 會設定 `--profile`，以及 pre-commit 要傳入的檔案。`angular` 沒有專屬的 hook：請為 `djlint` 或 `djlint-reformat` 設定 `args: [--profile=angular]`。
 
 | Hook                | Profile    | 檔案                                 |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ djLint 可以作為 [pre-commit](https://pre-commit.com) hook 使用，同時擔
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-若範本使用其他副檔名，請依照 [pre-commit 說明文件](https://pre-commit.com/#pre-commit-configyaml---hooks)的說明，在設定中覆寫 `files` 或 `types_or`。
+若範本使用其他副檔名，請在設定中覆寫 `files`；如果 hook 有設定 `types_or`，也要一併覆寫，因為 pre-commit 需要兩者都符合。請參閱 [pre-commit 說明文件](https://pre-commit.com/#pre-commit-configyaml---hooks)。
 
 ### 預設的 Django 範例
 

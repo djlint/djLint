@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub 仓库](https://github.com/mattn/efm-langserver)
 
-为 `htmldjango` 配置一个格式化工具，设置 `formatCommand = "djlint --reformat --quiet --warn -"` 和 `formatStdin = true`。
+为 `htmldjango` 配置一个格式化工具，设置 `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` 和 `formatStdin = true`。
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ djLint 会从以下来源中第一个设置了 `profile` 的来源获取它：
 
 djLint 可以用作 [pre-commit](https://pre-commit.com) 钩子，既能做代码检查，也能做格式化。
 
-每个预设都有一个做代码检查的钩子（列在下表中），以及一个做格式化的钩子，名称相同但带有 `reformat`：例如 `djlint-django` 对应 `djlint-reformat-django`。它们会设置 `--profile` 以及 pre-commit 传入的文件：
+下表中的每个预设都有一个做代码检查的钩子（列在表中），以及一个做格式化的钩子，名称相同但带有 `reformat`：例如 `djlint-django` 对应 `djlint-reformat-django`。它们会设置 `--profile` 以及 pre-commit 传入的文件。`angular` 没有自己的钩子：请给 `djlint` 或 `djlint-reformat` 设置 `args: [--profile=angular]`。
 
 | 钩子                | 预设       | 文件                                 |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ djLint 可以用作 [pre-commit](https://pre-commit.com) 钩子，既能做代�
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-对于使用其他扩展名的模板，请按照 [pre-commit 文档](https://pre-commit.com/#pre-commit-configyaml---hooks)的说明，在配置中覆盖 `files` 或 `types_or`。
+对于使用其他扩展名的模板，请在配置中覆盖 `files`；如果钩子设置了 `types_or`，也要一并覆盖，因为 pre-commit 要求两者都匹配。请参阅 [pre-commit 文档](https://pre-commit.com/#pre-commit-configyaml---hooks)。
 
 ### 默认 Django 示例
 

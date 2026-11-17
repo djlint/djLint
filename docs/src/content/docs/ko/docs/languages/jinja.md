@@ -9,7 +9,7 @@ djLint는 Jinja 템플릿을 린트하고 포맷합니다. 규칙과 포맷이 �
 
 **[Jinja란?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja는 Jinja2 문법을 따르고 HubSpot의 Jinjava 템플릿도 Jinja 스타일이므로, 둘 다 `jinja` 프로필을 사용하세요.
+MiniJinja는 Jinja2 문법을 따르고 HubSpot의 Jinjava 템플릿도 Jinja 스타일이므로, 둘 다 `jinja` 프로필을 사용하세요. J004와 J018은 Flask의 `url_for`를 권하므로, Flask를 쓰지 않는 프로젝트에서는 이 규칙들을 무시하세요.
 
 ## 명령줄 사용
 

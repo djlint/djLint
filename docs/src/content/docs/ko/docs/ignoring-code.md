@@ -34,9 +34,9 @@ Go 템플릿 주석도 쓸 수 있습니다.
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
 Handlebars 주석도 쓸 수 있습니다.
@@ -70,7 +70,7 @@ Handlebars 주석도 쓸 수 있습니다.
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

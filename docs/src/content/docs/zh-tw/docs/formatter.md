@@ -8,7 +8,7 @@ sidebar:
 djLint 的格式化工具會讓 HTML 範本的版面配置保持一致。先看看它會變更哪些地方：
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 然後就地格式化檔案，這裡連同 `<style>` 和 `<script>` 的內容一起格式化：

@@ -108,10 +108,10 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 - D：Django，在 `django` 下執行。
 - H：HTML，在每個 profile 下執行。`angular` 會略過 H012 和 H026。
 - J：Jinja，在 `jinja` 下執行。
-- T：範本語法，在 `html` 和 `mako` 以外的每個 profile 下執行。
+- T：範本語法，在 `html` 和 `mako` 以外的每個 profile 下執行。T001 以及 T041 至 T044 還會略過各自詳細說明中列出的 profile。
 - M 和 N 沒有 djLint 本身的規則。代碼以 M 開頭的自訂規則會在 `handlebars` 和 `angular` 下執行，以 N 開頭的則在 `nunjucks` 和 `angular` 下執行。
 
-`all` 會執行所有規則；未設定 profile 時，linter 會執行 `html` 的規則。
+`all` 會執行所有範本語言的規則，但預設為停用的規則，以及像 T001 和 T041 至 T044 這類會略過某些 profile 的規則除外；可以用 `--include` 加入它們。未設定 profile 時，linter 會執行 `html` 的規則。
 
 ### 規則詳細說明
 

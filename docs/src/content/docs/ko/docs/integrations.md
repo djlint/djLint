@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub 저장소](https://github.com/mattn/efm-langserver)
 
-`htmldjango`에 `formatCommand = "djlint --reformat --quiet --warn -"`, `formatStdin = true`로 포맷터를 지정합니다.
+`htmldjango`에 `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"`, `formatStdin = true`로 포맷터를 지정합니다.
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ GitHub Actions 워크플로에서 djLint는 각 검사 결과를 주석(annotati
 
 djLint는 [pre-commit](https://pre-commit.com) 훅으로 린터와 포맷터 모두에 사용할 수 있습니다.
 
-각 프로필에는 아래에 나열한 린트용 훅과, 같은 이름에 `reformat`이 붙은 포맷용 훅이 있습니다. 예를 들어 `djlint-django`의 포맷용 훅은 `djlint-reformat-django`입니다. 이 훅들은 `--profile`과 pre-commit이 넘겨줄 파일을 지정합니다.
+아래 표의 프로필에는 각각 표에 나열한 린트용 훅과, 같은 이름에 `reformat`이 붙은 포맷용 훅이 있습니다. 예를 들어 `djlint-django`의 포맷용 훅은 `djlint-reformat-django`입니다. 이 훅들은 `--profile`과 pre-commit이 넘겨줄 파일을 지정합니다. `angular`에는 전용 훅이 없으므로 `djlint`나 `djlint-reformat`에 `args: [--profile=angular]`를 지정하세요.
 
 | 훅                  | 프로필     | 파일                                 |
 | ------------------- | ---------- | ------------------------------------ |
@@ -220,7 +220,7 @@ djLint는 [pre-commit](https://pre-commit.com) 훅으로 린터와 포맷터 모
 | `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-다른 확장자를 쓰는 템플릿이라면 [pre-commit 문서](https://pre-commit.com/#pre-commit-configyaml---hooks)에서 설명하는 대로 구성에서 `files`나 `types_or`를 재정의하세요.
+다른 확장자를 쓰는 템플릿이라면 구성에서 `files`를 재정의하고, 훅이 `types_or`를 지정한 경우에는 그것도 재정의하세요. pre-commit은 두 조건이 모두 맞아야 파일을 넘기기 때문입니다. 자세한 내용은 [pre-commit 문서](https://pre-commit.com/#pre-commit-configyaml---hooks)를 참고하세요.
 
 ### 기본 Django 예시
 

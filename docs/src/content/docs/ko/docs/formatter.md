@@ -8,7 +8,7 @@ sidebar:
 djLint의 포맷터는 HTML 템플릿의 레이아웃을 일관되게 맞춥니다. 먼저 무엇이 바뀌는지 확인하세요.
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 그런 다음 파일을 그 자리에서 포맷합니다. 이 예시에서는 `<style>`과 `<script>`의 내용도 포맷합니다.

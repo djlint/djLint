@@ -30,7 +30,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## format_text
 
-`format_text(config, text)` 會傳回格式化後的文字。第一行以 CRLF 結尾的文字，傳回時會使用 CRLF；其他文字則使用 LF。使用 `require_pragma` 時，沒有 pragma 的文字會原樣傳回。它會從適用於傳給 `load_config` 之資料夾的 `.editorconfig` 取得 `indent` 和 `max_line_length`，而命令列則是依每個檔案的路徑分別取得。
+`format_text(config, text)` 會傳回格式化後的文字。第一行以 CRLF 結尾的文字，傳回時會使用 CRLF；其他文字則使用 LF。使用 `require_pragma` 時，沒有 pragma 的文字會原樣傳回。如果 `load_config` 的選項和設定檔都沒有設定 `indent` 或 `max_line_length`，它會以傳給 `load_config` 之資料夾中一個副檔名為所設定副檔名的檔案為準，從適用於該檔案的 `.editorconfig` 區段取得它們，而命令列則是依每個檔案的路徑分別取得。
 
 ## lint_text
 

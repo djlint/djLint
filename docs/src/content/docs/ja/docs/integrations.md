@@ -78,7 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub リポジトリ](https://github.com/mattn/efm-langserver)
 
-`htmldjango` のフォーマッターを `formatCommand = "djlint --reformat --quiet --warn -"` と `formatStdin = true` で設定します。
+`htmldjango` のフォーマッターを `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` と `formatStdin = true` で設定します。
 
 ### coc.nvim
 
@@ -205,7 +205,7 @@ GitHub Actions のワークフローでは、djLint は各検出結果をアノ�
 
 djLint は [pre-commit](https://pre-commit.com) フックとして、リンターとしてもフォーマッターとしても使えます。
 
-プロファイルごとに、リントするフック（下の表）と、フォーマットするフックがあります。フォーマット用のフックは名前に `reformat` が入り、`djlint-django` なら `djlint-reformat-django` です。どちらも `--profile` と、pre-commit が渡すファイルを設定します：
+下の表のプロファイルには、それぞれ表に載っているリント用のフックと、フォーマット用のフックがあります。フォーマット用のフックは名前に `reformat` が入り、`djlint-django` なら `djlint-reformat-django` です。どちらも `--profile` と、pre-commit が渡すファイルを設定します。`angular` には専用のフックがないため、`djlint` か `djlint-reformat` に `args: [--profile=angular]` を指定してください。
 
 | フック              | プロファイル | ファイル                             |
 | ------------------- | ------------ | ------------------------------------ |
@@ -220,7 +220,7 @@ djLint は [pre-commit](https://pre-commit.com) フックとして、リンタ�
 | `djlint-askama`     | askama       | `.html`, `.htm`, `.xhtml`            |
 | `djlint-mako`       | mako         | `.html`, `.htm`, `.xhtml`            |
 
-ほかの拡張子のテンプレートでは、[pre-commit のドキュメント](https://pre-commit.com/#pre-commit-configyaml---hooks)にあるとおり、設定で `files` か `types_or` を上書きします。
+ほかの拡張子のテンプレートでは、設定で `files` を上書きし、フックが `types_or` を設定している場合はそれも上書きします。pre-commit では両方に一致する必要があるためです。詳しくは [pre-commit のドキュメント](https://pre-commit.com/#pre-commit-configyaml---hooks)を参照してください。
 
 ### デフォルトの Django の例
 

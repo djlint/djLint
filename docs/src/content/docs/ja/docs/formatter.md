@@ -8,7 +8,7 @@ sidebar:
 djLint のフォーマッターは、HTML テンプレートのレイアウトを一貫したものに整えます。まず、何が変わるかを確認します：
 
 ```bash
-djlint . --check
+djlint . --check --format-css --format-js
 ```
 
 次に、ファイルをその場でフォーマットします。この例では `<style>` と `<script>` の中身もフォーマットします：

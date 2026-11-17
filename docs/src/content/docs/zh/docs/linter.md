@@ -108,10 +108,10 @@ djlint . --lint --include=H006,H017 --ignore=H013,H015
 - D：Django，在 `django` 下运行。
 - H：HTML，在所有预设下运行。`angular` 不运行 H012 和 H026。
 - J：Jinja，在 `jinja` 下运行。
-- T：模板语法，在除 `html` 和 `mako` 之外的所有预设下运行。
+- T：模板语法，在除 `html` 和 `mako` 之外的所有预设下运行。T001 以及 T041 至 T044 还会跳过各自详情中列出的预设。
 - M 和 N 没有 djLint 自带的规则。以 M 开头的自定义规则在 `handlebars` 和 `angular` 下运行，以 N 开头的在 `nunjucks` 和 `angular` 下运行。
 
-`all` 运行所有规则；未设置预设时，代码检查工具运行 `html` 的规则。
+`all` 运行所有模板语言的规则，但默认不启用的规则，以及像 T001 和 T041 至 T044 这样会跳过某些预设的规则除外；可以用 `--include` 加上它们。未设置预设时，代码检查工具运行 `html` 的规则。
 
 ### 规则详情
 

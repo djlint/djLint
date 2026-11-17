@@ -9,7 +9,7 @@ djLint 可以 lint 並格式化 Jinja 範本。設定 `jinja` profile，讓規�
 
 **[什麼是 Jinja？](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja 遵循 Jinja2 的語法，HubSpot 的 Jinjava 範本也是 Jinja 風格，因此兩者都請使用 `jinja` profile。
+MiniJinja 遵循 Jinja2 的語法，HubSpot 的 Jinjava 範本也是 Jinja 風格，因此兩者都請使用 `jinja` profile。J004 和 J018 會建議使用 Flask 的 `url_for`，因此在未使用 Flask 的專案中請忽略它們。
 
 ## 使用命令列
 

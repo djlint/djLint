@@ -30,7 +30,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## format_text
 
-`format_text(config, text)` はフォーマット済みのテキストを返します。最初の行が CRLF で終わるテキストは CRLF で、それ以外は LF で返されます。`require_pragma` が有効な場合、プラグマのないテキストは変更されずに返されます。`indent` と `max_line_length` は `load_config` に渡したフォルダーに適用される `.editorconfig` から取ります。コマンドラインでは、ファイルごとにそのパスで決まります。
+`format_text(config, text)` はフォーマット済みのテキストを返します。最初の行が CRLF で終わるテキストは CRLF で、それ以外は LF で返されます。`require_pragma` が有効な場合、プラグマのないテキストは変更されずに返されます。`load_config` のオプションでも設定ファイルでも `indent` や `max_line_length` が設定されていない場合は、`load_config` に渡したフォルダーにある、設定された拡張子のファイルに適用される `.editorconfig` のセクションから取ります。コマンドラインでは、ファイルごとにそのパスで決まります。
 
 ## lint_text
 

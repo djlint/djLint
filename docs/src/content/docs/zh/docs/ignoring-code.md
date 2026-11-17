@@ -34,9 +34,9 @@ description: "如何阻止 djLint 格式化某个代码块，以及如何以内�
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
 也可以是 Handlebars 的注释：
@@ -70,7 +70,7 @@ description: "如何阻止 djLint 格式化某个代码块，以及如何以内�
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

@@ -30,7 +30,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## format_text
 
-`format_text(config, text)`는 포맷된 텍스트를 반환합니다. 첫 줄이 CRLF로 끝나는 텍스트는 CRLF로, 그 밖의 텍스트는 LF로 돌려줍니다. `require_pragma`를 사용하면 프래그마가 없는 텍스트는 바뀌지 않은 채로 돌아옵니다. `indent`와 `max_line_length`는 `load_config`에 넘긴 폴더에 적용되는 `.editorconfig`에서 가져옵니다. 명령줄은 파일마다 그 경로에 따라 가져옵니다.
+`format_text(config, text)`는 포맷된 텍스트를 반환합니다. 첫 줄이 CRLF로 끝나는 텍스트는 CRLF로, 그 밖의 텍스트는 LF로 돌려줍니다. `require_pragma`를 사용하면 프래그마가 없는 텍스트는 바뀌지 않은 채로 돌아옵니다. `load_config`의 옵션과 구성 파일 어디에서도 `indent`나 `max_line_length`를 지정하지 않았다면, `load_config`에 넘긴 폴더 안에서 설정된 확장자를 가진 파일에 적용되는 `.editorconfig` 섹션에서 가져옵니다. 명령줄은 파일마다 그 경로에 따라 가져옵니다.
 
 ## lint_text
 
