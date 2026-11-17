@@ -108,9 +108,13 @@ for (const name of queue) {
 }
 // Relative to the lock file. The wheel sits in a folder named after its hash,
 // so its URL changes with its bytes and _headers lets browsers keep it for a
-// year, whatever version or commit it was built from.
+// year, whatever version or commit it was built from. With the folder telling
+// builds apart, the file name leaves out the commit: Workers answers a `+` in
+// a path with a redirect to `%2B`, a round trip before the download starts.
+// Pyodide installs the wheel from its contents, so the version it reports
+// still names the commit.
 const sha256 = createHash("sha256").update(wheel).digest("hex");
-const wheelFile = `${sha256.slice(0, 16)}/${wheelName}`;
+const wheelFile = `${sha256.slice(0, 16)}/${wheelName.replace(/\+[^-]+/u, "")}`;
 packages.djlint.file_name = wheelFile;
 packages.djlint.sha256 = sha256;
 for (const [name, entry] of Object.entries(packages)) {
