@@ -79,6 +79,11 @@ jobs:
       - run: mkdir dist
       - run: mv wheels-*/* dist
       - uses: astral-sh/attest-action@39b6ce43875c196a579e31635b11aa2a2036384a # v0.0.7
+        env:
+          # attest-action 0.0.7 locks cffi 2.0.0, which has no wheels for
+          # Python 3.15, and installs without building. Revert once it locks
+          # a cffi that has them.
+          UV_PYTHON: "3.14"
       - run: uv publish --trusted-publishing always --no-cache
   publish-npm:
     runs-on: ubuntu-26.04
