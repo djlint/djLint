@@ -26,7 +26,7 @@ description: "Используйте djLint в своём редакторе и 
 
 Чтобы обновить расширение, выполните в этой папке `git pull`, а затем **zed: rebuild dev extension**.
 
-Нужен djLint 1.49 или новее в PATH либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
+Нужен djLint 1.49.8 или новее в PATH либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
 
 ## Neovim
 
@@ -43,7 +43,15 @@ vim.filetype.add({
 
 ### Встроенный LSP-клиент (рекомендуется)
 
-Neovim 0.11 и новее может работать с [языковым сервером](#yazykovoj-server) djLint напрямую, без плагинов. Так замечания появляются прямо во время набора, с подчёркиванием проблемных фрагментов, а форматирование выполняет `vim.lsp.buf.format()`:
+Neovim 0.11 и новее может работать с [языковым сервером](#yazykovoj-server) djLint напрямую, без плагинов. Так замечания появляются прямо во время набора, с подчёркиванием проблемных фрагментов, а форматирование выполняет `vim.lsp.buf.format()`.
+
+В [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) его конфигурация уже есть, так что с ним хватит одной строки:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+Без nvim-lspconfig задайте конфигурацию сами:
 
 ```lua
 vim.lsp.config("djlint", {

@@ -26,7 +26,7 @@ Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, a
 
 Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extension** çalıştırın.
 
-PATH'te djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
+PATH'te djLint 1.49.8 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
 
 ## Neovim
 
@@ -43,7 +43,15 @@ vim.filetype.add({
 
 ### Yerleşik LSP istemcisi (önerilen)
 
-Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](#dil-sunucusu) doğrudan konuşabilir. Bu sayede bulgular, altı çizili aralıklarla birlikte siz yazarken gelir ve biçimlendirme için `vim.lsp.buf.format()` kullanılabilir:
+Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](#dil-sunucusu) doğrudan konuşabilir. Bu sayede bulgular, altı çizili aralıklarla birlikte siz yazarken gelir ve biçimlendirme için `vim.lsp.buf.format()` kullanılabilir.
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) yapılandırmasını içerir, bu yüzden onunla tek satır yeterlidir:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+nvim-lspconfig olmadan yapılandırmayı kendiniz tanımlayın:
 
 ```lua
 vim.lsp.config("djlint", {

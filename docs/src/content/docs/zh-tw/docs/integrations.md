@@ -26,7 +26,7 @@ description: "在編輯器中使用 djLint，並透過 pre-commit 執行它。"
 
 若要更新，請在該資料夾中執行 `git pull`，再執行 **zed: rebuild dev extension**。
 
-需要 PATH 中有 djLint 1.49 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何將它設為某個語言的格式化工具，以及它的設定。
+需要 PATH 中有 djLint 1.49.8 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何將它設為某個語言的格式化工具，以及它的設定。
 
 ## Neovim
 
@@ -43,7 +43,15 @@ vim.filetype.add({
 
 ### 內建 LSP 用戶端（建議使用）
 
-Neovim 0.11 或更新版本不需要任何外掛，就能直接與 djLint 的[語言伺服器](#語言伺服器)溝通。這樣可以在輸入時取得檢查結果，並以底線標示範圍，還能用 `vim.lsp.buf.format()` 進行格式化：
+Neovim 0.11 或更新版本不需要任何外掛，就能直接與 djLint 的[語言伺服器](#語言伺服器)溝通。這樣可以在輸入時取得檢查結果，並以底線標示範圍，還能用 `vim.lsp.buf.format()` 進行格式化。
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 內建它的設定，裝了它只要一行：
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+不使用 nvim-lspconfig 時，請自行定義設定：
 
 ```lua
 vim.lsp.config("djlint", {

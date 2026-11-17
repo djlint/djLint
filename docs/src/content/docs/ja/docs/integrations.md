@@ -26,7 +26,7 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 
 更新するには、そのフォルダーで `git pull` を実行してから **zed: rebuild dev extension** を実行します。
 
-PATH 上の djLint 1.49 以降か、djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
+PATH 上の djLint 1.49.8 以降か、djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
 
 ## Neovim
 
@@ -43,7 +43,15 @@ vim.filetype.add({
 
 ### 組み込みの LSP クライアント（推奨）
 
-Neovim 0.11 以降は、プラグインなしで djLint の[言語サーバー](#言語サーバー)と直接やり取りできます。入力中に検出結果が範囲の下線付きで表示され、`vim.lsp.buf.format()` でフォーマットできます：
+Neovim 0.11 以降は、プラグインなしで djLint の[言語サーバー](#言語サーバー)と直接やり取りできます。入力中に検出結果が範囲の下線付きで表示され、`vim.lsp.buf.format()` でフォーマットできます。
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) には設定が含まれているので、導入済みなら 1 行で足ります：
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+nvim-lspconfig を使わない場合は、設定を自分で定義します：
 
 ```lua
 vim.lsp.config("djlint", {

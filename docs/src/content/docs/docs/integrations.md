@@ -26,7 +26,7 @@ The [djLint extension](https://github.com/djlint/djlint-zed) runs the [language 
 
 To update it, run `git pull` in that folder, then **zed: rebuild dev extension**.
 
-It needs djLint 1.49 or newer on PATH, or [uv](https://docs.astral.sh/uv/), which runs djLint with no install. Its [README](https://github.com/djlint/djlint-zed#readme) shows how to make it the formatter of a language, and its settings.
+It needs djLint 1.49.8 or newer on PATH, or [uv](https://docs.astral.sh/uv/), which runs djLint with no install. Its [README](https://github.com/djlint/djlint-zed#readme) shows how to make it the formatter of a language, and its settings.
 
 ## Neovim
 
@@ -43,7 +43,15 @@ vim.filetype.add({
 
 ### Built-in LSP client (recommended)
 
-Neovim 0.11 or newer can talk to the [language server](#language-server) of djLint directly, with no plugin. That gives findings as you type, with underlined ranges, and `vim.lsp.buf.format()` for formatting:
+Neovim 0.11 or newer can talk to the [language server](#language-server) of djLint directly, with no plugin. That gives findings as you type, with underlined ranges, and `vim.lsp.buf.format()` for formatting.
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) ships its configuration, so with it one line is enough:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+Without nvim-lspconfig, define the configuration yourself:
 
 ```lua
 vim.lsp.config("djlint", {

@@ -26,7 +26,7 @@ Jego [README](https://github.com/djlint/djlint-vscode#readme) opisuje ustawienia
 
 Aby je zaktualizować, uruchom w tym folderze `git pull`, a potem **zed: rebuild dev extension**.
 
-Potrzebuje djLinta 1.49 lub nowszego w PATH albo [uv](https://docs.astral.sh/uv/), które uruchamia djLinta bez instalacji. Jego [README](https://github.com/djlint/djlint-zed#readme) pokazuje, jak ustawić je jako formater języka, i opisuje jego ustawienia.
+Potrzebuje djLinta 1.49.8 lub nowszego w PATH albo [uv](https://docs.astral.sh/uv/), które uruchamia djLinta bez instalacji. Jego [README](https://github.com/djlint/djlint-zed#readme) pokazuje, jak ustawić je jako formater języka, i opisuje jego ustawienia.
 
 ## Neovim
 
@@ -43,7 +43,15 @@ vim.filetype.add({
 
 ### Wbudowany klient LSP (zalecany)
 
-Neovim 0.11 lub nowszy może komunikować się z [serwerem języka](#serwer-jezyka) djLint bezpośrednio, bez żadnej wtyczki. Daje to zgłoszenia już podczas pisania, z podkreślonymi zakresami, oraz formatowanie przez `vim.lsp.buf.format()`:
+Neovim 0.11 lub nowszy może komunikować się z [serwerem języka](#serwer-jezyka) djLint bezpośrednio, bez żadnej wtyczki. Daje to zgłoszenia już podczas pisania, z podkreślonymi zakresami, oraz formatowanie przez `vim.lsp.buf.format()`.
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) zawiera jego konfigurację, więc z nim wystarczy jedna linia:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+Bez nvim-lspconfig zdefiniuj konfigurację samodzielnie:
 
 ```lua
 vim.lsp.config("djlint", {

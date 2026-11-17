@@ -26,7 +26,7 @@ Jeho [README](https://github.com/djlint/djlint-vscode#readme) popisuje nastaven�
 
 Aktualizace: ve složce spusťte `git pull` a potom **zed: rebuild dev extension**.
 
-Potřebuje djLint 1.49 nebo novější v PATH, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Jeho [README](https://github.com/djlint/djlint-zed#readme) ukazuje, jak ho nastavit jako formátovač jazyka, a popisuje jeho nastavení.
+Potřebuje djLint 1.49.8 nebo novější v PATH, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Jeho [README](https://github.com/djlint/djlint-zed#readme) ukazuje, jak ho nastavit jako formátovač jazyka, a popisuje jeho nastavení.
 
 ## Neovim
 
@@ -43,7 +43,15 @@ vim.filetype.add({
 
 ### Vestavěný klient LSP (doporučeno)
 
-Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`:
+Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`.
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) jeho konfiguraci obsahuje, takže s ním stačí jeden řádek:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+Bez nvim-lspconfig si konfiguraci nadefinujte sami:
 
 ```lua
 vim.lsp.config("djlint", {
