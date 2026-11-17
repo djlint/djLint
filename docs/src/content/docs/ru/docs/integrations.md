@@ -26,7 +26,7 @@ description: "Используйте djLint в своём редакторе и 
 
 Чтобы обновить расширение, выполните в этой папке `git pull`, а затем **zed: rebuild dev extension**.
 
-Нужен djLint 1.49.8 или новее в PATH либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
+Нужен djLint 1.49 или новее в PATH либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
 
 ## Neovim
 

@@ -26,7 +26,7 @@ Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, a
 
 Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extension** çalıştırın.
 
-PATH'te djLint 1.49.8 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
+PATH'te djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
 
 ## Neovim
 

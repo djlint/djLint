@@ -26,7 +26,7 @@ description: "在編輯器中使用 djLint，並透過 pre-commit 執行它。"
 
 若要更新，請在該資料夾中執行 `git pull`，再執行 **zed: rebuild dev extension**。
 
-需要 PATH 中有 djLint 1.49.8 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何將它設為某個語言的格式化工具，以及它的設定。
+需要 PATH 中有 djLint 1.49 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何將它設為某個語言的格式化工具，以及它的設定。
 
 ## Neovim
 

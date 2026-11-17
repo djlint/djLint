@@ -26,7 +26,7 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 
 업데이트하려면 그 폴더에서 `git pull`을 실행한 다음 **zed: rebuild dev extension**을 실행하세요.
 
-PATH에 djLint 1.49.8 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
+PATH에 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 
 ## Neovim
 

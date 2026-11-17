@@ -26,7 +26,7 @@ Jego [README](https://github.com/djlint/djlint-vscode#readme) opisuje ustawienia
 
 Aby je zaktualizować, uruchom w tym folderze `git pull`, a potem **zed: rebuild dev extension**.
 
-Potrzebuje djLinta 1.49.8 lub nowszego w PATH albo [uv](https://docs.astral.sh/uv/), które uruchamia djLinta bez instalacji. Jego [README](https://github.com/djlint/djlint-zed#readme) pokazuje, jak ustawić je jako formater języka, i opisuje jego ustawienia.
+Potrzebuje djLinta 1.49 lub nowszego w PATH albo [uv](https://docs.astral.sh/uv/), które uruchamia djLinta bez instalacji. Jego [README](https://github.com/djlint/djlint-zed#readme) pokazuje, jak ustawić je jako formater języka, i opisuje jego ustawienia.
 
 ## Neovim
 

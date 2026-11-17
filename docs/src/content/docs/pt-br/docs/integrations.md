@@ -26,7 +26,7 @@ A [extensão do djLint](https://github.com/djlint/djlint-zed) executa o [servido
 
 Para atualizá-la, execute `git pull` nessa pasta e depois **zed: rebuild dev extension**.
 
-Ela precisa do djLint 1.49.8 ou mais recente no PATH, ou do [uv](https://docs.astral.sh/uv/), que executa o djLint sem instalar. O [README](https://github.com/djlint/djlint-zed#readme) dela mostra como torná-la o formatador de uma linguagem e descreve as configurações.
+Ela precisa do djLint 1.49 ou mais recente no PATH, ou do [uv](https://docs.astral.sh/uv/), que executa o djLint sem instalar. O [README](https://github.com/djlint/djlint-zed#readme) dela mostra como torná-la o formatador de uma linguagem e descreve as configurações.
 
 ## Neovim
 
