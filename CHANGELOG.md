@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- `H042` no longer reports a `<label for>` that points at a `<textarea>`. When it looked for ids, it skipped every `<textarea>`, `<script>`, `<style>` and `<pre>` element whole, opening tag included, so an `id` written on one never counted.
+
 ## [1.53.0] - 2026-11-17
 
 ### Feature

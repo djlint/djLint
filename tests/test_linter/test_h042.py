@@ -166,6 +166,38 @@ test_data = [
         ]),
         id="commented_out_id_does_not_count",
     ),
+    pytest.param(
+        ('<label for="note">Note</label>\n<textarea id="note"></textarea>\n'),
+        ([]),
+        id="textarea_id_counts (issue 3010)",
+    ),
+    pytest.param(
+        (
+            '<label for="note">Note</label>\n'
+            '<textarea id="note" placeholder="a > b">\n'
+            "don't <b>\n"
+            "</textarea>\n"
+        ),
+        ([]),
+        id="textarea_id_counts_past_its_body",
+    ),
+    pytest.param(
+        ('<label for="x">X</label>\n<textarea><input id="x"></textarea>\n'),
+        ([
+            {
+                "code": "H042",
+                "line": "1:0",
+                "match": '<label for="x">',
+                "message": "Label for attribute has no matching element id in this file.",
+            }
+        ]),
+        id="id_in_textarea_body_does_not_count",
+    ),
+    pytest.param(
+        ('<label for="note">Note</label>\n<textarea id="{{ prefix }}-note"></textarea>\n'),
+        ([]),
+        id="dynamic_textarea_id_silences_file",
+    ),
 ]
 
 

@@ -558,15 +558,6 @@ def inside_ignored_linter_block(config: Config, html: str, match: SpanMatch) -> 
     )
 
 
-def ignored_block_spans(config: Config, html: str) -> tuple[tuple[int, int], ...]:
-    """The spans of the blocks the formatter leaves alone, in no order."""
-    return _inside_ignored_block(
-        _disarm_unclosed_raw_text(html, closed_by_gt=True)[0],
-        ignored_blocks=config.ignored_blocks_pattern,
-        ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
-    )
-
-
 def _inside_ignored_block(
     html: str, /, *, ignored_blocks: re.Pattern[str], ignored_inline_blocks: re.Pattern[str]
 ) -> tuple[tuple[int, int], ...]:
@@ -694,6 +685,19 @@ def _merged_ignored_blocks(
     return tuple(merged)
 
 
+def lint_ignored_block_spans(config: Config, html: str) -> tuple[tuple[int, int], ...]:
+    """The spans of the blocks the linter skips, sorted and merged.
+
+    A raw text element's span holds its body only, so the attributes of
+    its opening tag are still there for a rule to read.
+    """
+    return _merged_ignored_blocks(
+        html,
+        ignored_blocks=config.lint_ignored_blocks_pattern,
+        ignored_inline_blocks=config.lint_ignored_inline_blocks_ix_pattern,
+    )
+
+
 def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Check if a match is in a block the linter skips.
 
@@ -705,11 +709,7 @@ def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     open, so a match that only touches an ignored block, as in
     `{% if x %}{# comment #}`, starts and ends outside of it.
     """
-    spans = _merged_ignored_blocks(
-        html,
-        ignored_blocks=config.lint_ignored_blocks_pattern,
-        ignored_inline_blocks=config.lint_ignored_inline_blocks_ix_pattern,
-    )
+    spans = lint_ignored_block_spans(config, html)
     if not spans:
         return False
 
