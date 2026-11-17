@@ -7,7 +7,9 @@ import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
 可以通过项目的 `pyproject.toml` 文件、`djlint.toml` 或 `.djlint.toml` 文件，或者 `.djlintrc` 文件进行配置。命令行参数始终会覆盖配置文件中的任何设置。本地项目设置会覆盖通过 `--configuration` 指定的全局配置文件，除非设置了 `--prefer-configuration`。
 
-djLint 从它检查的第一个路径（对 `-` 而言是 `--stdin-filename` 所在的文件夹，未指定时是当前目录）开始向上查找这些文件。它会在第一个包含 `.git` 文件夹或文件、`.hg` 文件夹、`pyproject.toml`、`djlint.toml`、`.djlint.toml` 或 `.djlintrc` 的文件夹处停下，并且只读取这个文件夹：先读 `pyproject.toml` 中的 `[tool.djlint]`（其中有设置时），没有则读 `djlint.toml` 或 `.djlint.toml`，再没有则读 `.djlintrc`。因此，一个没有 djLint 设置的 `pyproject.toml` 会使上层文件夹中的配置文件不被读取。
+djLint 从它检查的第一个路径（对 `-` 而言是 `--stdin-filename` 所在的文件夹，未指定时是当前目录）开始向上查找这些文件。它会在第一个包含 `djlint.toml`、`.djlint.toml`、`.djlintrc`、`.djlint_rules.yaml` 或带有 `[tool.djlint]` 的 `pyproject.toml` 的文件夹处停下，并且不会越过仓库的根目录（包含 `.git` 文件夹或文件，或 `.hg` 文件夹的文件夹）。没有 djLint 设置的 `pyproject.toml` 不会让它停下，因此 monorepo 中自带 `pyproject.toml` 的包也会使用仓库的设置。djLint 只读取它停下的文件夹：先读 `pyproject.toml` 中的 `[tool.djlint]`（其中有设置时），没有则读 `djlint.toml` 或 `.djlint.toml`，再没有则读 `.djlintrc`；同一文件夹中未被读取的文件会给出警告。
+
+命令行和配置都没有设置 `indent` 或 `max_line_length` 时，djLint 会像编辑器一样从 `.editorconfig` 文件中读取 `indent_size` 或 `max_line_length`：每个文件按自己的路径取值，最近的 `.editorconfig` 优先，上层的文件补上缺少的值，直到遇到带有 `root = true` 的文件或到达项目根目录。
 
 `pyproject.toml` 的格式为 `toml`。
 

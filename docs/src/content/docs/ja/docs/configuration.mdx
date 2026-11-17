@@ -7,7 +7,9 @@ import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
 設定は、プロジェクトの `pyproject.toml` ファイル、`djlint.toml` または `.djlint.toml` ファイル、あるいは `.djlintrc` ファイルで行います。コマンドライン引数は、設定ファイルのどの設定よりも常に優先されます。`--prefer-configuration` を指定しない限り、プロジェクトのローカル設定は `--configuration` で指定したグローバル設定ファイルよりも優先されます。
 
-djLint は、最初にチェックするパス（`-` の場合は `--stdin-filename` のフォルダー、指定がなければカレントディレクトリ）から上に向かってこれらのファイルを探します。`.git` フォルダーまたはファイル、`.hg` フォルダー、`pyproject.toml`、`djlint.toml`、`.djlint.toml`、`.djlintrc` のいずれかがある最初のフォルダーで探すのをやめ、そのフォルダーだけを読み込みます。読み込むのは `pyproject.toml` の `[tool.djlint]`（中に設定があるとき）、なければ `djlint.toml` か `.djlint.toml`、それもなければ `.djlintrc` です。そのため、djLint の設定がない `pyproject.toml` があると、親フォルダーの設定ファイルは読み込まれません。
+djLint は、最初にチェックするパス（`-` の場合は `--stdin-filename` のフォルダー、指定がなければカレントディレクトリ）から上に向かってこれらのファイルを探します。`djlint.toml`、`.djlint.toml`、`.djlintrc`、`.djlint_rules.yaml`、または `[tool.djlint]` のある `pyproject.toml` がある最初のフォルダーで探すのをやめ、リポジトリのルート（`.git` フォルダーまたはファイル、あるいは `.hg` フォルダーのあるフォルダー）より上には進みません。djLint の設定がない `pyproject.toml` では止まらないため、自分の `pyproject.toml` を持つモノレポ内のパッケージにもリポジトリの設定が適用されます。読み込むのは止まったフォルダーだけで、`pyproject.toml` の `[tool.djlint]`（中に設定があるとき）、なければ `djlint.toml` か `.djlint.toml`、それもなければ `.djlintrc` です。同じフォルダーにあって読み込まれないファイルについては警告が出ます。
+
+コマンドラインでも設定でも `indent` や `max_line_length` が指定されていない場合、djLint はエディターと同じように `.editorconfig` ファイルから `indent_size` や `max_line_length` を読み取ります。値はファイルごとにそのパスで決まり、いちばん近い `.editorconfig` が優先され、上にあるものが足りない値を補います。探すのは `root = true` のあるファイルかプロジェクトのルートまでです。
 
 `pyproject.toml` の形式は `toml` です。
 

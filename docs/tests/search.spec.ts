@@ -7,8 +7,8 @@ test("Ctrl+K opens the search, which finds an option", async ({ page }) => {
   const dialog = page.getByRole("dialog", { name: "Search" });
   await expect(dialog).toBeVisible();
   await dialog.getByRole("textbox", { name: "Search" }).fill("max_line_length");
-  await expect(dialog.getByRole("link", { name: "Configuration", exact: true })).toHaveAttribute(
-    "href",
-    "/docs/configuration/",
-  );
+  // The page's own result comes first; a match in its intro adds one for #_top below it.
+  await expect(
+    dialog.getByRole("link", { name: "Configuration", exact: true }).first(),
+  ).toHaveAttribute("href", "/docs/configuration/");
 });
