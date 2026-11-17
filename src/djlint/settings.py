@@ -377,7 +377,11 @@ def editorconfig_files(
     for directory in folders[: folders.index(root) + 1]:
         path = directory / ".editorconfig"
         if path.is_file():
-            sections, is_root = _read_editorconfig(path)
+            try:
+                sections, is_root = _read_editorconfig(path)
+            except OSError:
+                # One djLint may not read is left out, as editors leave it out.
+                continue
             found.append((directory, sections))
             if is_root:
                 break
@@ -1242,7 +1246,7 @@ _LINT_IGNORED_INLINE_BLOCKS: Final = _build_ignored_inline_blocks(for_linting=Tr
 _IGNORED_BLOCKS_TAIL: Final = (
     r"""
     # html comment
-    | <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
+    | <!--\s*djlint\:off\s*-->(?:(?!<!--\s*djlint\:on\s*-->).)*
     # django/jinja/nunjucks
     | {\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
     | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
@@ -1456,7 +1460,7 @@ _UNFORMATTED_BLOCKS_COARSE_PATTERN: Final = compile_pattern(r"djlint\:\s*off", R
 _UNFORMATTED_BLOCKS_PATTERN: Final = compile_pattern(
     r"""
     # html comment
-      <!--\s*djlint\:off\s*-->.(?:(?!<!--\s*djlint\:on\s*-->).)*
+      <!--\s*djlint\:off\s*-->(?:(?!<!--\s*djlint\:on\s*-->).)*
     # django/jinja/nunjucks
     | (?<!{){\#\s*djlint\:\s*off\s*\#}(?:(?!{\#\s*djlint\:\s*on\s*\#}).)*
     | {%\s*comment\s*%\}\s*djlint\:off\s*\{%\s*endcomment\s*%\}(?:(?!{%\s*comment\s*%\}\s*djlint\:on\s*\{%\s*endcomment\s*%\}).)*
