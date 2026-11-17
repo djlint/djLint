@@ -50,7 +50,7 @@ Take a template only its author could love:
 {% endblock %}
 ```
 
-One `djlint --reformat --single-attribute-per-line` later:
+One `djlint --reformat` later:
 
 ```django
 {% block content %}
@@ -60,12 +60,10 @@ One `djlint --reformat --single-attribute-per-line` later:
             <ul>
                 {% for post in posts %}
                     <li>
-                        <a
-                            href="{% url 'post' post.slug %}"
-                            class="post-link {% if post.featured %}is-featured{% endif %}"
-                            data-analytics-id="post-{{ post.id }}"
-                            aria-label="Read {{ post.title }}"
-                        >{{ post.title|title }}</a>
+                        <a href="{% url 'post' post.slug %}"
+                           class="post-link {% if post.featured %}is-featured{% endif %}"
+                           data-analytics-id="post-{{ post.id }}"
+                           aria-label="Read {{ post.title }}">{{ post.title|title }}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -76,7 +74,18 @@ One `djlint --reformat --single-attribute-per-line` later:
 {% endblock %}
 ```
 
-One command rebuilt the indentation, fixed the tag case, split the long tag into one attribute per line, normalized the template tags and collapsed stray blank lines.
+One command rebuilt the indentation, fixed the tag case, spread the long tag over lines, normalized the template tags and collapsed stray blank lines.
+
+Rather indent the attributes under the tag and give the closing bracket a line of its own, as Prettier does? Add `--single-attribute-per-line`:
+
+```django
+<a
+    href="{% url 'post' post.slug %}"
+    class="post-link {% if post.featured %}is-featured{% endif %}"
+    data-analytics-id="post-{{ post.id }}"
+    aria-label="Read {{ post.title }}"
+>{{ post.title|title }}</a>
+```
 
 The linter catches what formatting can't fix: orphan tags, missing `alt` attributes, hard-coded URLs and dozens of other checks.
 
@@ -103,19 +112,19 @@ djlint . --lint
 See what formatting would change:
 
 ```bash
-djlint . --check --single-attribute-per-line
+djlint . --check
 ```
 
 Format the files in place:
 
 ```bash
-djlint . --reformat --single-attribute-per-line
+djlint . --reformat
 ```
 
 Set a `--profile` for the rules and formatting of your template language:
 
 ```bash
-djlint . --reformat --single-attribute-per-line --profile=django
+djlint . --reformat --profile=django
 ```
 
 Or run it with [pre-commit](https://djlint.com/docs/integrations/#pre-commit), formatting first and then linting:

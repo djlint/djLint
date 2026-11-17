@@ -8,9 +8,11 @@ const { t } = Astro.locals;
 const { title, tagline, actions = [] } = Astro.locals.starlightRoute.entry.data.hero!;
 
 const installs = ["uv tool install djlint", "pip install djlint"];
-// What the run button shows, one word per span: a narrow screen wraps it
-// between the arguments, not after the dashes inside one.
-const command = ["djlint", "messy.html", "--reformat", "--single-attribute-per-line"];
+// The command the bar shows, one word per span: a narrow screen wraps it
+// between the arguments, not after the dashes inside one. The flag after it is
+// off by default, as in djLint, and a click turns it on.
+const command = ["djlint", "messy.html", "--reformat"];
+const flag = "--single-attribute-per-line";
 
 // `djlint messy.html --lint --profile=django`, one finding per mark.
 const marks: Record<number, [string, string, string][]> = {
@@ -49,8 +51,28 @@ const messy = `{% block content %}
 </SECTION>
 {% endblock %}`.split("\n");
 
-// `djlint messy.html --reformat --single-attribute-per-line --profile=django`
-const clean = `{% block content %}
+// `djlint messy.html --reformat --profile=django`
+const aligned = `{% block content %}
+    <section class="posts">
+        <h2>Latest posts</h2>
+        {% if posts %}
+            <ul>
+                {% for post in posts %}
+                    <li>
+                        <a href="{% url 'post' post.slug %}"
+                           class="post-link"
+                           aria-label="Read {{ post.title }}">{{ post.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No posts yet.</p>
+        {% endif %}
+    </section>
+{% endblock %}`.split("\n");
+
+// The same with `--single-attribute-per-line`.
+const single = `{% block content %}
     <section class="posts">
         <h2>Latest posts</h2>
         {% if posts %}
@@ -71,9 +93,14 @@ const clean = `{% block content %}
     </section>
 {% endblock %}`.split("\n");
 
-// Which clean line each messy line becomes. The blank lines go away, and the
+// A formatted line is named after its number in `single`, so it slides to
+// where it lands, whichever way the template is formatted.
+// Which line each messy line becomes. The blank lines go away, and the
 // attributes of the <a> fan out onto lines of their own.
 const lineMap = [1, 2, 0, 0, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20];
+// Which line of `single` each line of `aligned` is. The two lines only
+// `single` has, `href` on its own and the closing bracket, fade in and out.
+const alignedNames = [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20];
 const problemCount = Object.values(marks).flat().length;
 
 const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
@@ -165,7 +192,7 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     </div>
   </div>
 
-  <figure class="editor" data-state="messy">
+  <figure class="editor" data-state="messy" data-attributes="aligned">
     <figcaption>
       <span class="file">messy.html</span>
       <span class="status" aria-live="polite">
@@ -182,12 +209,17 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
         />
       ))
     }</code></pre>
-    <pre class="code when-clean"><code>{
-      clean.map((text, i) => (
+    <pre class="code when-clean when-aligned"><code>{
+      aligned.map((text, i) => (
+        <span class="line" style={`view-transition-name: dj-line-${alignedNames[i]}`} set:html={highlight(text)} />
+      ))
+    }</code></pre>
+    <pre class="code when-clean when-single"><code>{
+      single.map((text, i) => (
         <span class="line" style={`view-transition-name: dj-line-${i + 1}`} set:html={highlight(text)} />
       ))
     }</code></pre>
-    <button type="button" class="run">
+    <div class="bar">
       <span class="command">
         <span class="prompt" aria-hidden="true">$</span>
         {
@@ -198,7 +230,10 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
             </>
           ))
         }
+        {" "}
+        <button type="button" class="arg flag" aria-pressed="false">{flag}</button>
       </span>
+      <button type="button" class="run">
       <span class="action when-messy">
         <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor" /></svg>
         {t("djlint.hero_run")}
@@ -209,20 +244,35 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
         </svg>
         {t("djlint.hero_undo")}
       </span>
-    </button>
+      </button>
+    </div>
   </figure>
 </div>
 
 <script>
   const editor = document.querySelector<HTMLElement>(".dj-hero .editor")!;
 
-  editor.querySelector(".run")!.addEventListener("click", () => {
-    const formatted = editor.dataset.state === "messy";
-    const swap = () => {
-      editor.dataset.state = formatted ? "clean" : "messy";
-    };
+  // Each line slides to where it goes in the code shown next.
+  const transition = (swap: () => void) => {
     const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (document.startViewTransition && !reduceMotion) document.startViewTransition(swap);
+    else swap();
+  };
+
+  editor.querySelector(".run")!.addEventListener("click", () => {
+    const formatted = editor.dataset.state === "messy";
+    transition(() => (editor.dataset.state = formatted ? "clean" : "messy"));
+  });
+
+  // The flag changes the command, and the formatted code if it is on show.
+  const flag = editor.querySelector<HTMLButtonElement>(".flag")!;
+  flag.addEventListener("click", () => {
+    const on = flag.getAttribute("aria-pressed") !== "true";
+    const swap = () => {
+      flag.setAttribute("aria-pressed", String(on));
+      editor.dataset.attributes = on ? "single" : "aligned";
+    };
+    if (editor.dataset.state === "clean") transition(swap);
     else swap();
   });
 
@@ -370,7 +420,9 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     color: var(--dj-ok);
   }
   .editor[data-state="messy"] .when-clean,
-  .editor[data-state="clean"] .when-messy {
+  .editor[data-state="clean"] .when-messy,
+  .editor[data-attributes="aligned"] .when-single,
+  .editor[data-attributes="single"] .when-aligned {
     display: none;
   }
   pre.code {
@@ -470,28 +522,20 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     outline: 1px solid var(--dj-squiggle);
   }
 
-  /* The whole bar is the button; the yellow pill says what clicking it does. */
-  .run {
+  /* The command, with its optional flag, and the yellow pill that runs it. */
+  .bar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem 1rem;
-    width: 100%;
     padding: 0.6rem 0.75rem 0.6rem 1rem;
-    border: 0;
     border-top: 1px solid var(--dj-code-line);
     background: var(--dj-code-bar);
-    color: var(--fg);
     font-family: var(--sl-font-mono);
     font-size: var(--sl-text-sm);
-    text-align: start;
-    cursor: pointer;
     font-variant-ligatures: none;
   }
-  .run:hover {
-    background: #282b42;
-  }
-  .run .prompt {
+  .bar .prompt {
     color: var(--dj-squiggle);
   }
   /* No narrower than its longest argument: where that leaves no room for
@@ -500,6 +544,7 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     display: flex;
     flex: 1 1 auto;
     flex-wrap: wrap;
+    align-items: baseline;
     gap: 0 1ch;
   }
   .arg {
@@ -508,9 +553,43 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   .editor[data-state="clean"] .command {
     color: #8a91b8;
   }
-  .action {
+  /* Off, the flag is a dashed outline of itself, there to be clicked; on, it
+     reads as part of the command. */
+  .flag {
+    margin-block: -0.15rem;
+    padding: 0.1rem 0.4rem;
+    border: 1px dashed #5a6190;
+    border-radius: 0.3rem;
+    background: transparent;
+    color: #8a91b8;
+    font: inherit;
+    cursor: pointer;
+  }
+  .flag:hover {
+    border-color: #a9b1d6;
+    color: var(--fg);
+  }
+  .flag[aria-pressed="true"] {
+    border-style: solid;
+    border-color: #3b4061;
+    background: #2f334d;
+    color: var(--fg);
+  }
+  .run {
     flex: none;
     margin-inline-start: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    cursor: pointer;
+  }
+  .flag:focus-visible,
+  .run:focus-visible {
+    outline: 2px solid var(--dj-focus);
+    outline-offset: 2px;
+  }
+  .action {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
