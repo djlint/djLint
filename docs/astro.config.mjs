@@ -34,8 +34,10 @@ function remarkTemplateCode() {
 }
 
 // Heading ids as the Eleventy site made them, transliterated to ASCII, so links
-// to sections of the translated pages keep working. Astro's own ids (GitHub's)
-// stay on the changelog, whose CHANGELOG.md lives outside src/content/docs/.
+// to sections of the translated pages keep working. CHANGELOG.md lives outside
+// src/content/docs/ and gets its ids from remarkChangelog.
+const eleventySlug = (text) => slugify(text, { lower: true, remove: /[*+~.()'"!:@]/g });
+
 function rehypeEleventyHeadingIds() {
   const text = (node) =>
     node.type === "text" ? node.value : (node.children?.map(text).join("") ?? "");
@@ -52,13 +54,41 @@ function rehypeEleventyHeadingIds() {
       if (!/^h[2-5]$/u.test(node.tagName ?? "") || node.properties?.id) {
         return;
       }
-      const slug = slugify(text(node), { lower: true, remove: /[*+~.()'"!:@]/g });
+      const slug = eleventySlug(text(node));
       let id = slug;
       for (let i = 1; used.has(id); i++) {
         id = `${slug}-${i}`;
       }
       used.add(id);
       node.properties.id = id;
+    });
+  };
+}
+
+// The changelog page starts CHANGELOG.md at its first "##": the "# Changelog"
+// above it would repeat the page title, and the intro is only a link to
+// Semantic Versioning. An empty Unreleased section goes too. A release heading
+// ("[1.50.4] - 2026-11-15") gets the id the old site gave it, the version
+// without dots ("1504"), so old links to a release still land on it.
+function remarkChangelog() {
+  const isSection = (node) => node?.type === "heading" && node.depth === 2;
+  return (tree, file) => {
+    if (!/[\\/]CHANGELOG\.md$/u.test(file.path ?? "")) {
+      return;
+    }
+    const nodes = tree.children.slice(tree.children.findIndex(isSection));
+    tree.children = nodes.filter((node, i) => {
+      if (!isSection(node)) {
+        return true;
+      }
+      const version = node.children[0]?.value?.match(/^\[(.+?)\]/u)?.[1];
+      if (version === "Unreleased" && (!nodes[i + 1] || isSection(nodes[i + 1]))) {
+        return false;
+      }
+      if (version) {
+        node.data = { hProperties: { id: eleventySlug(version) } };
+      }
+      return true;
     });
   };
 }
@@ -85,7 +115,7 @@ export default defineConfig({
   trailingSlash: "always",
   markdown: {
     processor: unified({
-      remarkPlugins: [remarkDjlintVersion, remarkTemplateCode],
+      remarkPlugins: [remarkDjlintVersion, remarkTemplateCode, remarkChangelog],
       rehypePlugins: [rehypeEleventyHeadingIds],
     }),
   },
@@ -140,10 +170,14 @@ export default defineConfig({
         Header: "./src/components/Header.astro",
         Hero: "./src/components/Hero.astro",
       },
+      // Starlight's heading anchor links for CHANGELOG.md too, which lives in
+      // the repository root.
+      markdown: { processedDirs: [".."] },
       routeMiddleware: "./src/route-data.ts",
       // llms.txt and its full and small versions, for AI assistants, from the
-      // English docs. The demo and the changelog say nothing they need, and
-      // the home page renders nothing there (see Home.astro).
+      // English docs. The demo and the changelog say nothing they need: they
+      // render nothing there, as the home page does (see Home.astro), and
+      // `exclude` drops them from llms-small.txt, the only file it applies to.
       plugins: [
         starlightLlmsTxt({
           description:
@@ -153,11 +187,21 @@ export default defineConfig({
       ],
       expressiveCode: {
         themes: ["tokyo-night", "github-light"],
+        // Both themes paint code on the page's own background, so the blocks
+        // take their colors from custom.css, which tints them apart from it.
         styleOverrides: {
           borderRadius: "0.5rem",
+          borderColor: "var(--dj-block-line)",
+          codeBackground: "var(--dj-block-bg)",
           codeFontFamily: "var(--sl-font-mono)",
           uiFontFamily: "var(--sl-font)",
-          frames: { shadowColor: "transparent" },
+          frames: {
+            editorActiveTabBackground: "var(--dj-block-bg)",
+            editorTabBarBackground: "var(--dj-block-bar)",
+            shadowColor: "transparent",
+            terminalBackground: "var(--dj-block-bg)",
+            terminalTitlebarBackground: "var(--dj-block-bar)",
+          },
         },
       },
       sidebar: [

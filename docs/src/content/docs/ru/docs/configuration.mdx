@@ -1,8 +1,6 @@
 ---
 title: "Конфигурация"
 description: "Параметры, которые определяют, как djLint проверяет и форматирует HTML-шаблоны."
-sidebar:
-  label: "Конфигурация"
 ---
 
 import ConfigOptions from "../../../../components/ConfigOptions.astro";
@@ -15,20 +13,26 @@ djLint ищет эти файлы вверх от первого проверя�
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 Файлы `djlint.toml` и `.djlint.toml` записываются в формате `toml`.
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 Файл `.djlintrc` записывается в формате `json`.
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+Параметры с несколькими значениями, например `ignore`, принимают список. Строка через запятую вроде `"H014,H015"` тоже работает, а djLint до 1.41 понимает только её.
+
+С версии 1.51 djLint предупреждает о незнакомом параметре или коде правила и подсказывает ближайший известный.
 
 ## Параметры
 

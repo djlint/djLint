@@ -1,8 +1,6 @@
 ---
 title: "整合"
 description: "在編輯器中使用 djLint，並透過 pre-commit 執行它。"
-sidebar:
-  label: "整合"
 ---
 
 djLint 有好幾種編輯器整合。
@@ -13,7 +11,24 @@ djLint 有好幾種編輯器整合。
 
 從 Visual Studio Marketplace 安裝 [djLint 擴充功能](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)。Cursor、Windsurf、VSCodium 等以 VS Code 為基礎的編輯器則從 [Open VSX 安裝同一個擴充功能](https://open-vsx.org/extension/monosans/djlint)。它會在你的環境中尋找 djLint，找不到時改用內建的版本，並在你的 djLint 支援時使用語言伺服器。
 
-它的程式碼位於 [GitHub](https://github.com/djlint/djlint-vscode)。
+它的 [README](https://github.com/djlint/djlint-vscode#readme) 說明了它的設定，以及它會執行哪一個 djLint。
+
+## Zed
+
+[djLint 擴充功能](https://github.com/djlint/djlint-zed)會在 HTML 以及 Django、Jinja、Twig 等範本擴充功能的語言中執行[語言伺服器](#語言伺服器)。它還沒有列入 Zed 的擴充功能登錄庫，因此請以開發用擴充功能的方式安裝：
+
+1. 透過 [rustup](https://rustup.rs) 安裝 Rust，Zed 會用它建置擴充功能，並自動加入 `wasm32-wasip2` 目標。如果 Rust 是用 Homebrew 或 Nix 等其他方式安裝，請自行加入這個目標。
+1. 複製擴充功能：
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. 在 Zed 中開啟命令面板（macOS 為 `cmd-shift-p`，其他系統為 `ctrl-shift-p`），執行 **zed: install dev extension**，並選擇複製下來的 `djlint-zed` 資料夾。
+
+若要更新，請在該資料夾中執行 `git pull`，再執行 **zed: rebuild dev extension**。
+
+需要 PATH 中有 djLint 1.49 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何將它設為某個語言的格式化工具，以及它的設定。
 
 ## Neovim
 
@@ -227,31 +242,31 @@ djLint 會從下列來源中，取第一個有指定 `profile` 的來源：
 
 `--sarif` 會將 SARIF 2.1.0 文件寫到 stdout，且只輸出這份文件，因此可以如上所示重新導向。每條已啟用的規則都會附上其說明文件的連結，每個檢查結果都帶有行號與欄號；搭配 `--check` 時，需要重新格式化的檔案會以 `formatting` 規則回報。Azure DevOps、GitLab 和大多數編輯器都能讀取相同的格式。
 
-## Pre-Commit
+## pre-commit
 
 djLint 可以作為 [pre-commit](https://pre-commit.com) hook 使用，同時擔任 linter 和格式化工具。
 
 這個儲存庫為特定的 djLint profile 提供了多個預先設定好的 hook（它只是預先設定 `--profile` 引數，並告訴 pre-commit 要尋找哪些副檔名）：
 
-- `djlint` 用於 lint，`djlint-reformat` 用於格式化
+- `djlint` 用於 lint，`djlint-reformat` 用於格式化。
   這會尋找符合 `*.html` 的檔案，且不設定 `--profile`。
-- `djlint-django` 和 `djlint-reformat-django`
+- `djlint-django` 和 `djlint-reformat-django`。
   這會尋找符合 `*.html` 的檔案，並設定 `--profile=django`。
-- `djlint-jinja` 和 `djlint-reformat-jinja`
+- `djlint-jinja` 和 `djlint-reformat-jinja`。
   這會尋找符合 `*.j2`、`*.jinja` 或 `*.jinja2` 的檔案，並設定 `--profile=jinja`。
-- `djlint-nunjucks` 和 `djlint-reformat-nunjucks`
+- `djlint-nunjucks` 和 `djlint-reformat-nunjucks`。
   這會尋找符合 `*.njk` 的檔案，並設定 `--profile=nunjucks`。
-- `djlint-handlebars` 和 `djlint-reformat-handlebars`
+- `djlint-handlebars` 和 `djlint-reformat-handlebars`。
   這會尋找符合 `*.hbs` 的檔案，並設定 `--profile=handlebars`。
-- `djlint-liquid` 和 `djlint-reformat-liquid`
+- `djlint-liquid` 和 `djlint-reformat-liquid`。
   這會尋找符合 `*.html` 的檔案，並設定 `--profile=liquid`。
-- `djlint-golang` 和 `djlint-reformat-golang`
+- `djlint-golang` 和 `djlint-reformat-golang`。
   這會尋找符合 `*.gotmpl` 的檔案，並設定 `--profile=golang`。
-- `djlint-tera` 和 `djlint-reformat-tera`
+- `djlint-tera` 和 `djlint-reformat-tera`。
   這會尋找符合 `*.html` 的檔案，並設定 `--profile=tera`。
-- `djlint-askama` 和 `djlint-reformat-askama`
+- `djlint-askama` 和 `djlint-reformat-askama`。
   這會尋找符合 `*.html` 的檔案，並設定 `--profile=askama`。
-- `djlint-mako` 和 `djlint-reformat-mako`
+- `djlint-mako` 和 `djlint-reformat-mako`。
   這會尋找符合 `*.html` 的檔案，並設定 `--profile=mako`。
 
 請注意，這些預先定義的 hook 對接受的輸入有時過於保守（你的範本可能使用不同的副檔名），因此 pre-commit 明確允許你覆寫任何預先定義的選項。其他設定方式請參閱 [pre-commit 說明文件](https://pre-commit.com/#pre-commit-configyaml---hooks)。

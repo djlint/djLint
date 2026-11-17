@@ -1,5 +1,5 @@
 ---
-title: "Handlebars Template Linter and Formatter"
+title: "Handlebars template linter and formatter"
 description: "djLint lints and formats Handlebars templates. Set the handlebars profile so the rules and the formatting fit them."
 sidebar:
   label: "Handlebars"

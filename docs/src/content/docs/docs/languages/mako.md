@@ -1,5 +1,5 @@
 ---
-title: "Mako Template Linter and Formatter"
+title: "Mako template linter and formatter"
 description: "djLint lints and formats Mako templates. Set the mako profile so the rules and the formatting fit them."
 sidebar:
   label: "Mako"

@@ -1,8 +1,6 @@
 ---
 title: "통합"
 description: "에디터에서 djLint를 사용하고 pre-commit으로 실행하는 방법입니다."
-sidebar:
-  label: "통합"
 ---
 
 djLint를 위한 에디터 통합이 여러 가지 있습니다.
@@ -13,7 +11,24 @@ djLint를 위한 에디터 통합이 여러 가지 있습니다.
 
 Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)을 설치하세요. Cursor, Windsurf, VSCodium 등 VS Code 기반 편집기에서는 [같은 확장을 Open VSX에서](https://open-vsx.org/extension/monosans/djlint) 설치합니다. 이 확장은 환경에서 djLint를 찾고, 찾지 못하면 번들된 djLint를 사용하며, djLint가 언어 서버를 지원하면 언어 서버를 사용합니다.
 
-코드는 [GitHub](https://github.com/djlint/djlint-vscode)에 있습니다.
+설정과 어떤 djLint를 실행하는지는 [README](https://github.com/djlint/djlint-vscode#readme)에서 설명합니다.
+
+## Zed
+
+[djLint 확장](https://github.com/djlint/djlint-zed)은 HTML과 Django, Jinja, Twig 같은 템플릿 확장의 언어에서 [언어 서버](#언어-서버)를 실행합니다. 아직 Zed 확장 레지스트리에 없으므로 개발 확장으로 설치하세요.
+
+1. [rustup](https://rustup.rs)으로 Rust를 설치합니다. Zed는 Rust로 확장을 빌드하고 `wasm32-wasip2` 타깃도 직접 추가합니다. Homebrew나 Nix 등 다른 방법으로 설치한 Rust라면 이 타깃을 직접 추가하세요.
+1. 확장을 클론합니다:
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. Zed에서 명령 팔레트를 열고(macOS는 `cmd-shift-p`, 그 밖에는 `ctrl-shift-p`) **zed: install dev extension**을 실행한 뒤 클론한 `djlint-zed` 폴더를 고릅니다.
+
+업데이트하려면 그 폴더에서 `git pull`을 실행한 다음 **zed: rebuild dev extension**을 실행하세요.
+
+PATH에 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 
 ## Neovim
 
@@ -227,31 +242,31 @@ GitHub Actions 워크플로에서 djLint는 각 검사 결과를 주석(annotati
 
 `--sarif`는 SARIF 2.1.0 문서만 stdout에 쓰므로 위와 같이 리디렉션할 수 있습니다. 활성화된 모든 규칙이 문서 링크와 함께 나열되고, 각 검사 결과에는 줄과 열이 담기며, `--check`를 함께 쓰면 다시 포맷될 파일이 `formatting` 규칙으로 보고됩니다. Azure DevOps, GitLab과 대부분의 에디터가 같은 형식을 읽습니다.
 
-## Pre-Commit
+## pre-commit
 
 djLint는 [pre-commit](https://pre-commit.com) 훅으로 린터와 포맷터 모두에 사용할 수 있습니다.
 
 저장소에는 특정 djLint 프로필에 맞게 미리 구성된 훅이 여러 개 있습니다. 이 훅들은 `--profile` 인수를 미리 지정하고, pre-commit에 어떤 파일 확장자를 찾을지 알려 줄 뿐입니다.
 
-- 린트용 `djlint`와 포맷용 `djlint-reformat`
+- 린트용 `djlint`와 포맷용 `djlint-reformat`.
   `--profile`을 지정하지 않고 `*.html`과 일치하는 파일을 찾습니다.
-- `djlint-django`와 `djlint-reformat-django`
+- `djlint-django`와 `djlint-reformat-django`.
   `*.html`과 일치하는 파일을 찾고 `--profile=django`를 지정합니다.
-- `djlint-jinja`와 `djlint-reformat-jinja`
+- `djlint-jinja`와 `djlint-reformat-jinja`.
   `*.j2`,`*.jinja`, `*.jinja2` 중 하나와 일치하는 파일을 찾고 `--profile=jinja`를 지정합니다.
-- `djlint-nunjucks`와 `djlint-reformat-nunjucks`
+- `djlint-nunjucks`와 `djlint-reformat-nunjucks`.
   `*.njk`와 일치하는 파일을 찾고 `--profile=nunjucks`를 지정합니다.
-- `djlint-handlebars`와 `djlint-reformat-handlebars`
+- `djlint-handlebars`와 `djlint-reformat-handlebars`.
   `*.hbs`와 일치하는 파일을 찾고 `--profile=handlebars`를 지정합니다.
-- `djlint-liquid`와 `djlint-reformat-liquid`
+- `djlint-liquid`와 `djlint-reformat-liquid`.
   `*.html`과 일치하는 파일을 찾고 `--profile=liquid`를 지정합니다.
-- `djlint-golang`과 `djlint-reformat-golang`
+- `djlint-golang`과 `djlint-reformat-golang`.
   `*.gotmpl`과 일치하는 파일을 찾고 `--profile=golang`을 지정합니다.
-- `djlint-tera`와 `djlint-reformat-tera`
+- `djlint-tera`와 `djlint-reformat-tera`.
   `*.html`과 일치하는 파일을 찾고 `--profile=tera`를 지정합니다.
-- `djlint-askama`와 `djlint-reformat-askama`
+- `djlint-askama`와 `djlint-reformat-askama`.
   `*.html`과 일치하는 파일을 찾고 `--profile=askama`를 지정합니다.
-- `djlint-mako`와 `djlint-reformat-mako`
+- `djlint-mako`와 `djlint-reformat-mako`.
   `*.html`과 일치하는 파일을 찾고 `--profile=mako`를 지정합니다.
 
 이렇게 미리 정의된 훅은 받아들이는 입력이 지나치게 보수적일 때가 있으므로(템플릿에 다른 확장자를 쓰고 있을 수도 있습니다), pre-commit에서는 미리 정의된 옵션을 무엇이든 재정의할 수 있습니다. 추가 구성은 [pre-commit 문서](https://pre-commit.com/#pre-commit-configyaml---hooks)를 참고하세요.

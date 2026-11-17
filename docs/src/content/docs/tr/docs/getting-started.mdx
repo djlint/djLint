@@ -1,15 +1,19 @@
 ---
 title: "Başlarken"
 description: "djLint'i kurun ve HTML şablonlarını komut satırından denetleyin ya da biçimlendirin."
-sidebar:
-  label: "Başlarken"
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Kurulum
 
-djLint [Python](https://python.org) ile yazılmıştır ve [PyPI](https://pypi.org/project/djlint/) üzerinde yayımlanır. [uv](https://docs.astral.sh/uv/) ile projenize geliştirme bağımlılığı olarak ekleyin:
+djLint [Python](https://python.org) ile yazılmıştır ve [PyPI](https://pypi.org/project/djlint/) üzerinde yayımlanır.
+
+<Tabs>
+<TabItem label="uv">
+
+[uv](https://docs.astral.sh/uv/) ile projenize geliştirme bağımlılığı olarak ekleyin:
 
 ```bash
 uv add --dev djlint
@@ -21,41 +25,76 @@ Ya da bağımsız bir araç olarak kurun:
 uv tool install djlint
 ```
 
-Ya da pip ile:
+</TabItem>
+<TabItem label="pip">
 
 ```bash
 pip install djlint
 ```
 
-Ya da [pipx](https://pipx.pypa.io/) ile:
+</TabItem>
+<TabItem label="pipx">
+
+[pipx](https://pipx.pypa.io/) ile:
 
 ```bash
 pipx install djlint
 ```
 
-Ya da macOS veya Linux'ta topluluk tarafından sürdürülen [Homebrew formülüyle](https://formulae.brew.sh/formula/djlint):
+</TabItem>
+<TabItem label="Homebrew">
+
+macOS veya Linux'ta topluluk tarafından sürdürülen [Homebrew formülüyle](https://formulae.brew.sh/formula/djlint):
 
 ```bash
 brew install djlint
 ```
 
-_Ya da npm ile. **Uyarı**: npm paketi yalnızca bir sarmalayıcıdır. Kurulum betiği, sistem yolunuzda hangi `python3` varsa onunla pip'i çalıştırır ve o npm sürümüne ait djLint sürümünü kurar; bu, daha yeni bir djLint'in yerine eskisini kurabilir. npm asıl paketi yönetmez ya da kaldırmaz, bu yüzden mümkünse pip'i tercih edin._
+</TabItem>
+<TabItem label="npm">
+
+:::caution[Uyarı]
+npm paketi yalnızca bir sarmalayıcıdır. Kurulum betiği, sistem yolunuzda hangi `python3` varsa onunla pip'i çalıştırır ve o npm sürümüne ait djLint sürümünü kurar; bu, daha yeni bir djLint'in yerine eskisini kurabilir. npm asıl paketi yönetmez ya da kaldırmaz, bu yüzden mümkünse pip'i tercih edin.
+:::
 
 ```bash
 npm i djlint
 ```
 
-djLint'i her commit'te çalıştırmak için [pre-commit](/tr/docs/integrations/#pre-commit) bölümüne bakın.
+</TabItem>
+</Tabs>
 
-## Komut satırı kullanımı
-
-djLint bir komut satırı uygulamasıdır. Gelişmiş yapılandırma için [yapılandırma](/tr/docs/configuration/) sayfasına bakın.
-
-<CliHelp />
+djLint'i düzenleyicinizde ya da her commit'te çalıştırmak için [Entegrasyonlar](/tr/docs/integrations/) sayfasına ve [pre-commit](/tr/docs/integrations/#pre-commit) bölümüne bakın.
 
 :::note[Not]
 `djlint` komutu bulunamıyorsa Python'un [PATH'inizde](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/) olduğundan emin olun.
 :::
+
+## İlk çalıştırma
+
+djLint'e şablonlarınızın bulunduğu klasörü verin ve `--profile` ile şablon dilinizi belirtin. Hangi linter kurallarının çalışacağını ve şablon söz diziminin nasıl biçimlendirileceğini profil belirler. Bir Django projesi için:
+
+Şablonları denetleyin (denetleme varsayılan mod olduğundan `--lint` yazmasanız da olur):
+
+```bash
+djlint templates --lint --profile=django
+```
+
+Biçimlendirmenin neyi değiştireceğine bakın. `--check` ile djLint bir diff yazdırır ve dosyalara dokunmaz:
+
+```bash
+djlint templates --check --profile=django
+```
+
+Dosyaları yerinde biçimlendirin:
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+Tüm profiller [`profile`](/tr/docs/configuration/#profile) seçeneğinde listelenir. Her şablon dilinin ayrıca kendi sayfası vardır, örneğin [Django](/tr/docs/languages/django/), [Jinja](/tr/docs/languages/jinja/) ya da [Handlebars](/tr/docs/languages/handlebars/). Profili her seferinde yazmamak için bir yapılandırma dosyasında nasıl ayarlayacağınız da orada gösterilir.
+
+djLint'i projeye `uv add --dev` ile eklediyseniz projenin ortamındadır: komutların başına `uv run` ekleyin, örneğin `uv run djlint templates --lint --profile=django`.
 
 ## Yol ya da stdin kullanımı
 
@@ -116,3 +155,9 @@ djLint'in _bulduğu_ ve ardından `exclude`, `extend_exclude`, `use_gitignore` y
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
+
+## Komut satırı kullanımı
+
+djLint bir komut satırı uygulamasıdır. Gelişmiş yapılandırma için [yapılandırma](/tr/docs/configuration/) sayfasına bakın.
+
+<CliHelp />

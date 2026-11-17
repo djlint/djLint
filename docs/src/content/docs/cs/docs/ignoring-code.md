@@ -1,8 +1,6 @@
 ---
 title: "Ignorování kódu"
 description: "Jak zabránit djLint ve formátování bloku kódu a jak ignorovat pravidla linteru přímo v kódu."
-sidebar:
-  label: "Ignorování kódu"
 ---
 
 Kód lze ignorovat tak, že ho obalíte značkami `djlint`:

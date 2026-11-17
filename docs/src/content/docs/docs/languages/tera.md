@@ -1,5 +1,5 @@
 ---
-title: "Tera Template Linter and Formatter"
+title: "Tera template linter and formatter"
 description: "djLint lints and formats Tera templates. Set the tera profile so the rules and the formatting fit them."
 sidebar:
   label: "Tera"

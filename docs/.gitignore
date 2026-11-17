@@ -2,3 +2,4 @@ node_modules/
 dist/
 .astro/
 public/static/py/
+test-results/

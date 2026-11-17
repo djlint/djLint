@@ -8,11 +8,12 @@ import Search from "@astrojs/starlight/components/Search.astro";
 import SiteTitle from "@astrojs/starlight/components/SiteTitle.astro";
 import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
 import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
+import { pageId } from "../utils/route";
 
 const { t } = Astro.locals;
-const { locale, id, hasSidebar } = Astro.locals.starlightRoute;
-const prefix = locale ? `${locale}/` : "";
-const page = locale ? id.slice(prefix.length) : id;
+const route = Astro.locals.starlightRoute;
+const prefix = route.locale ? `${route.locale}/` : "";
+const page = pageId(route);
 
 const links = [
   ["docs/getting-started", "djlint.getting_started"],
@@ -48,10 +49,11 @@ const links = [
     <LanguageSelect />
   </div>
   {
-    !hasSidebar && (
+    !route.hasSidebar && (
       <>
         <button class="menu-button print:hidden" popovertarget="dj-menu">
-          <Icon name="bars" />
+          <Icon name="bars" class="open-menu" />
+          <Icon name="close" class="close-menu" />
           <span class="sr-only">{t("menuButton.accessibleLabel")}</span>
         </button>
         <div id="dj-menu" class="menu" popover>
@@ -62,7 +64,7 @@ const links = [
               </a>
             ))}
           </nav>
-          <div class="menu-controls md:sl-hidden">
+          <div class="menu-controls">
             <div class="sl-flex social-icons">
               <SocialIcons />
             </div>
@@ -128,25 +130,40 @@ const links = [
       margin-inline-start: auto;
     }
   }
+  /* The same round button as Starlight's sidebar toggle on the other pages. */
   .menu-button {
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    width: 2.5rem;
-    height: 2.5rem;
-    padding: 0;
+    width: var(--sl-menu-button-size);
+    height: var(--sl-menu-button-size);
+    padding: 0.5rem;
     border: 0;
     border-radius: 50%;
-    background: transparent;
-    color: var(--sl-color-white);
-    font-size: 1.5rem;
+    background: var(--sl-color-white);
+    color: var(--sl-color-black);
+    box-shadow: var(--sl-shadow-md);
     cursor: pointer;
+  }
+  :global([data-theme="light"]) .menu-button {
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+  }
+  .menu-button:has(~ :popover-open) {
+    background: var(--sl-color-gray-2);
+    box-shadow: none;
+  }
+  :global([data-theme="light"]) .menu-button:has(~ :popover-open) {
+    background: var(--sl-color-gray-5);
+  }
+  .menu-button:has(~ :popover-open) :global(.open-menu),
+  .menu-button:not(:has(~ :popover-open)) :global(.close-menu) {
+    display: none;
   }
   .menu {
     inset: var(--sl-nav-height) 0 auto auto;
     width: min(20rem, 100vw);
     max-height: calc(100dvh - var(--sl-nav-height));
-    margin: 0;
     padding: 1rem var(--sl-nav-pad-x);
     overflow-y: auto;
     border: 0;
@@ -178,6 +195,13 @@ const links = [
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid var(--sl-color-gray-6);
+  }
+  /* From 50rem the header shows these itself. Starlight's md:sl-hidden is in
+     a layer, so the display above would win over it. */
+  @media (min-width: 50rem) {
+    .menu-controls {
+      display: none;
+    }
   }
   .menu-controls .social-icons::after {
     content: none;

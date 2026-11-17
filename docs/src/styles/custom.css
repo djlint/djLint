@@ -16,8 +16,17 @@
   --dj-squiggle: #f5c542;
   --dj-focus: var(--dj-squiggle);
   --dj-ok: #73daca;
-  --dj-code-bg: #1a1b26;
-  --dj-code-line: #2a2c3d;
+  /* The wavy underline of a lint finding, on the home page and in the demo. */
+  --dj-squiggle-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath d='M0 1.5 Q1.5 0 3 1.5 T6 1.5' fill='none' stroke='%23f5c542' stroke-width='1.2'/%3E%3C/svg%3E");
+  /* The editors on the home and demo pages are Tokyo Night Moon in both
+     themes; code blocks follow the theme, lighter than the page in the dark
+     one and greyer than it in the light one. */
+  --dj-code-bg: #222436;
+  --dj-code-bar: #1e2030;
+  --dj-code-line: #2f334d;
+  --dj-block-bg: var(--dj-code-bg);
+  --dj-block-bar: var(--dj-code-bar);
+  --dj-block-line: var(--dj-code-line);
 
   --sl-color-accent-low: #3a3216;
   --sl-color-accent: #f5c542;
@@ -35,11 +44,12 @@
   --sl-color-bg-nav: var(--sl-color-black);
   --sl-color-bg-sidebar: var(--sl-color-black);
   --sl-color-hairline-shade: var(--sl-color-gray-6);
-  --sl-color-text-accent: var(--sl-color-accent-high);
 
   --sl-text-h1: 2.4rem;
   --sl-text-h2: 1.75rem;
   --sl-text-h3: 1.3rem;
+  --sl-text-h4: 1.125rem;
+  --sl-text-h5: 1rem;
   --sl-line-height: 1.7;
   --sl-content-width: 46rem;
   /* The content panel's own padding is room enough under the footer.
@@ -51,6 +61,9 @@
   --dj-squiggle: #e3a600;
   /* The light squiggle is too faint on white for a focus ring (WCAG 1.4.11). */
   --dj-focus: var(--sl-color-accent);
+  --dj-block-bg: #f6f7fa;
+  --dj-block-bar: #eef0f4;
+  --dj-block-line: #d5d8e2;
 
   --sl-color-accent-low: #fcefc4;
   --sl-color-accent: #8f5f00;
@@ -63,9 +76,7 @@
   --sl-color-gray-4: #8a8fa6;
   --sl-color-gray-5: #d5d8e2;
   --sl-color-gray-6: #eef0f4;
-  --sl-color-gray-7: #f6f7fa;
   --sl-color-black: #ffffff;
-  --sl-color-text-accent: var(--sl-color-accent);
 }
 
 /*
@@ -109,11 +120,7 @@
 }
 
 /* Headings: sharpened terminals at heavy weights read as djLint's own voice. */
-h1,
-h2,
-h3,
-h4,
-.sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
+:is(h1, h2, h3, h4, h5, h6) {
   font-variation-settings: "SHRP" 100;
   letter-spacing: -0.015em;
 }
@@ -124,12 +131,8 @@ h1 {
   font-weight: 700;
 }
 
-/* Header */
-header.header {
-  border-bottom: 1px solid var(--sl-color-gray-6);
-}
-
 /* Sidebar: the current page is squiggled, not filled. */
+/* The top-level link, Try it online, in the grey of the others too. */
 .sidebar-content a {
   border-radius: 0.375rem;
   color: var(--sl-color-gray-2);
@@ -137,24 +140,19 @@ header.header {
 .sidebar-content a:hover {
   color: var(--sl-color-white);
 }
-.sidebar-content a[aria-current="page"],
-.sidebar-content a[aria-current="page"]:hover {
+.sidebar-content a[aria-current="page"] {
   background: transparent;
   color: var(--sl-color-white);
-  font-weight: 600;
 }
 .sidebar-content .group-label .large {
   font-size: var(--sl-text-sm);
   color: var(--sl-color-gray-3);
-  font-weight: 600;
 }
 
 /* JetBrains Mono would draw <!-- as an arrow and --> as a long dash: template
    syntax is what the docs are about, so code shows the characters as typed. */
 pre,
 code,
-kbd,
-samp,
 .cm-scroller {
   font-variant-ligatures: none;
 }
@@ -188,12 +186,4 @@ samp,
 :focus-visible {
   outline: 2px solid var(--dj-focus);
   outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none !important;
-  }
 }

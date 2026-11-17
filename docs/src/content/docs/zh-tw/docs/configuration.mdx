@@ -1,8 +1,6 @@
 ---
 title: "設定"
 description: "設定 djLint 如何 lint 與格式化 HTML 範本的選項。"
-sidebar:
-  label: "設定"
 ---
 
 import ConfigOptions from "../../../../components/ConfigOptions.astro";
@@ -15,20 +13,26 @@ djLint 會從它檢查的第一個路徑（對 `-` 而言是 `--stdin-filename` 
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `djlint.toml` 和 `.djlint.toml` 的格式為 `toml`。
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `.djlintrc` 的格式為 `json`。
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+像 `ignore` 這樣有多個值的選項接受清單。也可以寫成以逗號分隔的字串，例如 `"H014,H015"`，djLint 1.41 之前的版本只認得這種寫法。
+
+從 1.51 版起，遇到不認得的設定或規則代碼時，djLint 會發出警告並列出最接近的已知項目。
 
 ## 選項
 

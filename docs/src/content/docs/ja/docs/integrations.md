@@ -1,8 +1,6 @@
 ---
 title: "連携"
 description: "エディターで djLint を使い、pre-commit で実行します。"
-sidebar:
-  label: "連携"
 ---
 
 djLint 向けに作られたエディター連携がいくつかあります。
@@ -13,7 +11,24 @@ djLint 向けに作られたエディター連携がいくつかあります。
 
 Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)をインストールしてください。Cursor、Windsurf、VSCodium など VS Code ベースのエディターでは、[同じ拡張機能を Open VSX から](https://open-vsx.org/extension/monosans/djlint)インストールします。この拡張機能は環境内の djLint を見つけ、見つからなければ同梱の djLint を使い、djLint が言語サーバーに対応していればそれを使います。
 
-ソースコードは [GitHub](https://github.com/djlint/djlint-vscode) にあります。
+[README](https://github.com/djlint/djlint-vscode#readme) では、設定と、どの djLint を実行するかを説明しています。
+
+## Zed
+
+[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていないため、開発用拡張機能としてインストールします：
+
+1. [rustup](https://rustup.rs) で Rust をインストールします。Zed はこれで拡張機能をビルドし、`wasm32-wasip2` ターゲットも自動で追加します。Homebrew や Nix など別の方法で入れた Rust では、このターゲットを自分で追加してください。
+1. 拡張機能をクローンします：
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. Zed でコマンドパレットを開き（macOS では `cmd-shift-p`、それ以外では `ctrl-shift-p`）、**zed: install dev extension** を実行して、クローンした `djlint-zed` フォルダーを選びます。
+
+更新するには、そのフォルダーで `git pull` を実行してから **zed: rebuild dev extension** を実行します。
+
+PATH 上の djLint 1.49 以降か、djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
 
 ## Neovim
 
@@ -227,31 +242,31 @@ GitHub Actions のワークフローでは、djLint は各検出結果をアノ�
 
 `--sarif` は SARIF 2.1.0 ドキュメントだけを標準出力に書き出すため、上のようにリダイレクトできます。有効なルールはすべてドキュメントへのリンク付きで一覧され、各検出結果には行と列が含まれます。また `--check` と組み合わせると、再フォーマットされるファイルが `formatting` ルールとして報告されます。Azure DevOps、GitLab、そしてほとんどのエディターが同じ形式を読み込めます。
 
-## Pre-Commit
+## pre-commit
 
 djLint は [pre-commit](https://pre-commit.com) フックとして、リンターとしてもフォーマッターとしても使えます。
 
 リポジトリには、djLint の各プロファイル向けに設定済みのフックが複数用意されています（`--profile` 引数を事前に設定し、対象とするファイル拡張子を pre-commit に伝えるだけのものです）：
 
-- リント用の `djlint` とフォーマット用の `djlint-reformat`
+- リント用の `djlint` とフォーマット用の `djlint-reformat`。
   `--profile` を設定せずに、`*.html` に一致するファイルを対象とします。
-- `djlint-django` と `djlint-reformat-django`
+- `djlint-django` と `djlint-reformat-django`。
   `*.html` に一致するファイルを対象とし、`--profile=django` を設定します。
-- `djlint-jinja` と `djlint-reformat-jinja`
+- `djlint-jinja` と `djlint-reformat-jinja`。
   `*.j2`、`*.jinja`、`*.jinja2` に一致するファイルを対象とし、`--profile=jinja` を設定します。
-- `djlint-nunjucks` と `djlint-reformat-nunjucks`
+- `djlint-nunjucks` と `djlint-reformat-nunjucks`。
   `*.njk` に一致するファイルを対象とし、`--profile=nunjucks` を設定します。
-- `djlint-handlebars` と `djlint-reformat-handlebars`
+- `djlint-handlebars` と `djlint-reformat-handlebars`。
   `*.hbs` に一致するファイルを対象とし、`--profile=handlebars` を設定します。
-- `djlint-liquid` と `djlint-reformat-liquid`
+- `djlint-liquid` と `djlint-reformat-liquid`。
   `*.html` に一致するファイルを対象とし、`--profile=liquid` を設定します。
-- `djlint-golang` と `djlint-reformat-golang`
+- `djlint-golang` と `djlint-reformat-golang`。
   `*.gotmpl` に一致するファイルを対象とし、`--profile=golang` を設定します。
-- `djlint-tera` と `djlint-reformat-tera`
+- `djlint-tera` と `djlint-reformat-tera`。
   `*.html` に一致するファイルを対象とし、`--profile=tera` を設定します。
-- `djlint-askama` と `djlint-reformat-askama`
+- `djlint-askama` と `djlint-reformat-askama`。
   `*.html` に一致するファイルを対象とし、`--profile=askama` を設定します。
-- `djlint-mako` と `djlint-reformat-mako`
+- `djlint-mako` と `djlint-reformat-mako`。
   `*.html` に一致するファイルを対象とし、`--profile=mako` を設定します。
 
 これらの定義済みフックは、受け付ける入力の点で保守的すぎることがあります（テンプレートで別の拡張子を使っている場合など）。そのため pre-commit では、定義済みのオプションをどれでも明示的に上書きできます。その他の設定については [pre-commit のドキュメント](https://pre-commit.com/#pre-commit-configyaml---hooks)を参照してください。

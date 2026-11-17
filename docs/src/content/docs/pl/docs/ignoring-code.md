@@ -1,8 +1,6 @@
 ---
 title: "Ignorowanie kodu"
 description: "Jak sprawić, by djLint nie formatował bloku kodu, i jak ignorować reguły lintera bezpośrednio w kodzie."
-sidebar:
-  label: "Ignorowanie kodu"
 ---
 
 Kod można zignorować, otaczając go tagami `djlint`:

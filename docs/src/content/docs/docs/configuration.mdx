@@ -1,8 +1,6 @@
 ---
 title: "Configuration"
 description: "The options that configure how djLint lints and formats HTML templates."
-sidebar:
-  label: "Configuration"
 ---
 
 import ConfigOptions from "../../../components/ConfigOptions.astro";
@@ -15,25 +13,31 @@ The format for `pyproject.toml` is `toml`.
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 The format for `djlint.toml` and `.djlint.toml` is `toml`.
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 The format for `.djlintrc` is `json`.
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+Options that take several values, such as `ignore`, take a list. A comma-separated string such as `"H014,H015"` works too, and is what djLint before 1.41 needs.
+
+From version 1.51, djLint warns about a setting or a rule code it doesn't know, and names the closest one it does.
 
 ## Options
 
 <ConfigOptions
-  label="Filter Options"
+  label="Filter options"
   placeholder="type to filter options..."
   empty="Nothing found. Try another search."
 />

@@ -1,8 +1,6 @@
 ---
 title: "Integrace"
 description: "Používejte djLint ve svém editoru a spouštějte ho pomocí pre-commit."
-sidebar:
-  label: "Integrace"
 ---
 
 Pro djLint existuje několik integrací do editorů.
@@ -13,7 +11,24 @@ Ať používáte jakýkoli editor, nainstalujte djLint tam, kde ho editor najde,
 
 Nainstalujte [rozšíření djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) z Visual Studio Marketplace. Cursor, Windsurf, VSCodium a další editory postavené na VS Code instalují [stejné rozšíření z Open VSX](https://open-vsx.org/extension/monosans/djlint). Najde djLint ve vašem prostředí, jinak použije přibalenou verzi, a pokud ho váš djLint podporuje, používá jazykový server.
 
-Jeho kód je na [GitHubu](https://github.com/djlint/djlint-vscode).
+Jeho [README](https://github.com/djlint/djlint-vscode#readme) popisuje nastavení rozšíření a to, který djLint spouští.
+
+## Zed
+
+[Rozšíření djLint](https://github.com/djlint/djlint-zed) spouští [jazykový server](#jazykovy-server) v HTML a v jazycích šablonových rozšíření, například Django, Jinja a Twig. V registru rozšíření Zedu zatím není, proto ho nainstalujte jako vývojové rozšíření (dev extension):
+
+1. Nainstalujte Rust přes [rustup](https://rustup.rs), Zed s ním rozšíření sestavuje a sám si přidá cíl `wasm32-wasip2`. S Rustem odjinud, například z Homebrew nebo Nixu, ho přidejte sami.
+1. Naklonujte rozšíření:
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. V Zedu otevřete paletu příkazů (`cmd-shift-p` na macOS, jinde `ctrl-shift-p`), spusťte **zed: install dev extension** a vyberte naklonovanou složku `djlint-zed`.
+
+Aktualizace: ve složce spusťte `git pull` a potom **zed: rebuild dev extension**.
+
+Potřebuje djLint 1.49 nebo novější v PATH, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Jeho [README](https://github.com/djlint/djlint-zed#readme) ukazuje, jak ho nastavit jako formátovač jazyka, a popisuje jeho nastavení.
 
 ## Neovim
 
@@ -227,31 +242,31 @@ Krok nahrání potřebuje oprávnění `security-events: write` na úrovni jobu 
 
 `--sarif` zapíše na stdout dokument SARIF 2.1.0 a nic jiného, takže ho lze přesměrovat jako výše. Každé zapnuté pravidlo je uvedené s odkazem na svou dokumentaci, každý nález nese svůj řádek a sloupec a s `--check` se soubor, který by se přeformátoval, hlásí pod pravidlem `formatting`. Stejný formát čtou Azure DevOps, GitLab i většina editorů.
 
-## Pre-Commit
+## pre-commit
 
 djLint lze používat jako hook [pre-commit](https://pre-commit.com), a to jako linter i jako formátovač.
 
 Repozitář poskytuje několik předkonfigurovaných hooků pro konkrétní profily djLint (jen předem nastaví argument `--profile` a řekne pre-commit, jaké přípony souborů má hledat):
 
-- `djlint` pro lintování a `djlint-reformat` pro formátování
+- `djlint` pro lintování a `djlint-reformat` pro formátování.
   Hledá soubory odpovídající `*.html` a nenastavuje `--profile`.
-- `djlint-django` a `djlint-reformat-django`
+- `djlint-django` a `djlint-reformat-django`.
   Hledá soubory odpovídající `*.html` a nastaví `--profile=django`.
-- `djlint-jinja` a `djlint-reformat-jinja`
+- `djlint-jinja` a `djlint-reformat-jinja`.
   Hledá soubory odpovídající `*.j2`,`*.jinja` nebo `*.jinja2` a nastaví `--profile=jinja`.
-- `djlint-nunjucks` a `djlint-reformat-nunjucks`
+- `djlint-nunjucks` a `djlint-reformat-nunjucks`.
   Hledá soubory odpovídající `*.njk` a nastaví `--profile=nunjucks`.
-- `djlint-handlebars` a `djlint-reformat-handlebars`
+- `djlint-handlebars` a `djlint-reformat-handlebars`.
   Hledá soubory odpovídající `*.hbs` a nastaví `--profile=handlebars`.
-- `djlint-liquid` a `djlint-reformat-liquid`
+- `djlint-liquid` a `djlint-reformat-liquid`.
   Hledá soubory odpovídající `*.html` a nastaví `--profile=liquid`.
-- `djlint-golang` a `djlint-reformat-golang`
+- `djlint-golang` a `djlint-reformat-golang`.
   Hledá soubory odpovídající `*.gotmpl` a nastaví `--profile=golang`.
-- `djlint-tera` a `djlint-reformat-tera`
+- `djlint-tera` a `djlint-reformat-tera`.
   Hledá soubory odpovídající `*.html` a nastaví `--profile=tera`.
-- `djlint-askama` a `djlint-reformat-askama`
+- `djlint-askama` a `djlint-reformat-askama`.
   Hledá soubory odpovídající `*.html` a nastaví `--profile=askama`.
-- `djlint-mako` a `djlint-reformat-mako`
+- `djlint-mako` a `djlint-reformat-mako`.
   Hledá soubory odpovídající `*.html` a nastaví `--profile=mako`.
 
 Tyto předdefinované hooky jsou někdy příliš konzervativní v tom, jaké vstupy přijímají (vaše šablony mohou používat jinou příponu), a proto vám pre-commit výslovně umožňuje kteroukoli z těchto předdefinovaných možností přepsat. Další konfiguraci popisuje [dokumentace pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

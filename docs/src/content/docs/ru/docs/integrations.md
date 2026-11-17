@@ -1,8 +1,6 @@
 ---
 title: "Интеграции"
 description: "Используйте djLint в своём редакторе и запускайте его через pre-commit."
-sidebar:
-  label: "Интеграции"
 ---
 
 Для djLint существует несколько интеграций с редакторами.
@@ -13,7 +11,24 @@ sidebar:
 
 Установите [расширение djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) из Visual Studio Marketplace. Cursor, Windsurf, VSCodium и другие редакторы на основе VS Code ставят [то же расширение из Open VSX](https://open-vsx.org/extension/monosans/djlint). Оно ищет djLint в вашем окружении и, если не находит, использует встроенный. Если ваша версия djLint поддерживает языковой сервер, расширение работает через него.
 
-Его код находится на [GitHub](https://github.com/djlint/djlint-vscode).
+В его [README](https://github.com/djlint/djlint-vscode#readme) описаны настройки расширения и то, какой djLint оно запускает.
+
+## Zed
+
+[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет, поэтому установите его как dev-расширение:
+
+1. Установите Rust через [rustup](https://rustup.rs): Zed собирает им расширение и сам добавляет таргет `wasm32-wasip2`. Если Rust установлен иначе, например через Homebrew или Nix, добавьте таргет сами.
+1. Склонируйте расширение:
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. Откройте в Zed палитру команд (`cmd-shift-p` на macOS, `ctrl-shift-p` в остальных системах), выполните **zed: install dev extension** и выберите склонированную папку `djlint-zed`.
+
+Чтобы обновить расширение, выполните в этой папке `git pull`, а затем **zed: rebuild dev extension**.
+
+Нужен djLint 1.49 или новее в PATH либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
 
 ## Neovim
 
@@ -227,31 +242,31 @@ djLint берёт `profile` из первого источника, где он 
 
 `--sarif` выводит в stdout документ SARIF 2.1.0 и больше ничего, поэтому вывод можно перенаправить, как показано выше. Каждое включённое правило перечисляется со ссылкой на свою документацию, у каждого замечания указаны строка и столбец, а с `--check` файл, который был бы переформатирован, попадает в отчёт под правилом `formatting`. Тот же формат читают Azure DevOps, GitLab и большинство редакторов.
 
-## Pre-Commit
+## pre-commit
 
 djLint можно использовать как хук [pre-commit](https://pre-commit.com) и для проверки, и для форматирования.
 
 В репозитории есть несколько готовых хуков для отдельных профилей djLint (они лишь заранее задают аргумент `--profile` и сообщают pre-commit, файлы с какими расширениями искать):
 
-- `djlint` для проверки и `djlint-reformat` для форматирования
+- `djlint` для проверки и `djlint-reformat` для форматирования.
   Ищут файлы по маске `*.html`, не задавая `--profile`.
-- `djlint-django` и `djlint-reformat-django`
+- `djlint-django` и `djlint-reformat-django`.
   Ищут файлы по маске `*.html` и задают `--profile=django`.
-- `djlint-jinja` и `djlint-reformat-jinja`
+- `djlint-jinja` и `djlint-reformat-jinja`.
   Ищут файлы по маскам `*.j2`,`*.jinja` или `*.jinja2` и задают `--profile=jinja`.
-- `djlint-nunjucks` и `djlint-reformat-nunjucks`
+- `djlint-nunjucks` и `djlint-reformat-nunjucks`.
   Ищут файлы по маске `*.njk` и задают `--profile=nunjucks`.
-- `djlint-handlebars` и `djlint-reformat-handlebars`
+- `djlint-handlebars` и `djlint-reformat-handlebars`.
   Ищут файлы по маске `*.hbs` и задают `--profile=handlebars`.
-- `djlint-liquid` и `djlint-reformat-liquid`
+- `djlint-liquid` и `djlint-reformat-liquid`.
   Ищут файлы по маске `*.html` и задают `--profile=liquid`.
-- `djlint-golang` и `djlint-reformat-golang`
+- `djlint-golang` и `djlint-reformat-golang`.
   Ищут файлы по маске `*.gotmpl` и задают `--profile=golang`.
-- `djlint-tera` и `djlint-reformat-tera`
+- `djlint-tera` и `djlint-reformat-tera`.
   Ищут файлы по маске `*.html` и задают `--profile=tera`.
-- `djlint-askama` и `djlint-reformat-askama`
+- `djlint-askama` и `djlint-reformat-askama`.
   Ищут файлы по маске `*.html` и задают `--profile=askama`.
-- `djlint-mako` и `djlint-reformat-mako`
+- `djlint-mako` и `djlint-reformat-mako`.
   Ищут файлы по маске `*.html` и задают `--profile=mako`.
 
 Учтите, что эти готовые хуки иногда слишком строги к тому, какие файлы принимают (у ваших шаблонов может быть другое расширение), поэтому pre-commit явно позволяет переопределить любые из этих заранее заданных параметров. Подробнее о настройке см. в [документации pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).

@@ -1,8 +1,6 @@
 ---
 title: "Yapılandırma"
 description: "djLint'in HTML şablonlarını nasıl denetleyip biçimlendireceğini belirleyen seçenekler."
-sidebar:
-  label: "Yapılandırma"
 ---
 
 import ConfigOptions from "../../../../components/ConfigOptions.astro";
@@ -15,20 +13,26 @@ djLint bu dosyaları denetlediği ilk yoldan (`-` için `--stdin-filename` klas�
 
 ```toml
 [tool.djlint]
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `djlint.toml` ve `.djlint.toml` dosyaları `toml` biçimindedir.
 
 ```toml
-<config options>
+profile = "django"
+ignore = ["H014", "H015"]
 ```
 
 `.djlintrc` dosyası `json` biçimindedir.
 
 ```json
-{ "option": "value" }
+{ "profile": "django", "ignore": ["H014", "H015"] }
 ```
+
+`ignore` gibi birden çok değer alan seçenekler bir liste alır. `"H014,H015"` gibi virgülle ayrılmış bir metin de çalışır ve 1.41'den önceki djLint yalnızca bunu okur.
+
+djLint 1.51 sürümünden itibaren tanımadığı bir ayar ya da kural kodu için uyarır ve en yakın bildiğini söyler.
 
 ## Seçenekler
 

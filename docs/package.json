@@ -6,21 +6,29 @@
   "scripts": {
     "build": "astro build",
     "preview": "astro preview",
-    "start": "astro dev"
+    "start": "astro dev",
+    "test": "playwright test"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "7.3.4",
-    "@astrojs/starlight": "0.42.7",
+    "@astrojs/markdown-remark": "7.3.8",
+    "@astrojs/starlight": "0.42.11",
     "@codemirror/lang-jinja": "6.0.1",
     "@codemirror/language": "6.13.1",
+    "@codemirror/legacy-modes": "6.5.5",
+    "@codemirror/lint": "6.9.8",
     "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.15",
     "@fontsource-variable/geologica": "5.3.0",
     "@fontsource-variable/jetbrains-mono": "5.3.0",
     "@lezer/highlight": "1.2.5",
-    "astro": "7.4.2",
+    "astro": "7.4.11",
     "codemirror": "6.0.2",
     "pyodide": "314.0.7",
     "slugify": "1.6.9",
     "starlight-llms-txt": "0.12.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.0"
   }
 }

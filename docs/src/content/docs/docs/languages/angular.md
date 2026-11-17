@@ -1,5 +1,5 @@
 ---
-title: "Angular Template Linter"
+title: "Angular template linter"
 description: "djLint lints Angular templates. Set the angular profile so the rules fit them."
 sidebar:
   label: "Angular"

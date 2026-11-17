@@ -1,8 +1,6 @@
 ---
 title: "Integrations"
 description: "Use djLint in your editor and run it with pre-commit."
-sidebar:
-  label: "Integrations"
 ---
 
 There are several editor integrations built for djLint.
@@ -13,7 +11,24 @@ Whichever editor you use, install djLint where the editor can find it, ideally i
 
 Install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) from the Visual Studio Marketplace. Cursor, Windsurf, VSCodium and other editors built on VS Code install [the same extension from Open VSX](https://open-vsx.org/extension/monosans/djlint). It finds djLint in your environment, falls back to a bundled one, and uses the language server when your djLint has it.
 
-Its code is on [GitHub](https://github.com/djlint/djlint-vscode).
+Its [README](https://github.com/djlint/djlint-vscode#readme) covers its settings and which djLint it runs.
+
+## Zed
+
+The [djLint extension](https://github.com/djlint/djlint-zed) runs the [language server](#language-server) in HTML and in the languages of the template extensions, such as Django, Jinja and Twig. It isn't in Zed's extension registry yet, so install it as a dev extension:
+
+1. Install Rust through [rustup](https://rustup.rs): Zed builds the extension with it and adds the `wasm32-wasip2` target itself. With a Rust from elsewhere, such as Homebrew or Nix, add that target yourself.
+1. Clone the extension:
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. In Zed, open the command palette (`cmd-shift-p` on macOS, `ctrl-shift-p` elsewhere), run **zed: install dev extension** and pick the cloned `djlint-zed` folder.
+
+To update it, run `git pull` in that folder, then **zed: rebuild dev extension**.
+
+It needs djLint 1.49 or newer on PATH, or [uv](https://docs.astral.sh/uv/), which runs djLint with no install. Its [README](https://github.com/djlint/djlint-zed#readme) shows how to make it the formatter of a language, and its settings.
 
 ## Neovim
 
@@ -227,31 +242,31 @@ The upload step needs the `security-events: write` permission on the job or the 
 
 `--sarif` writes a SARIF 2.1.0 document to stdout and nothing else, so it can be redirected as above. Every enabled rule is listed with a link to its documentation, each finding carries its line and column, and with `--check` a file that would be reformatted is reported under a `formatting` rule. Azure DevOps, GitLab and most editors read the same format.
 
-## Pre-Commit
+## pre-commit
 
 djLint can be used as a [pre-commit](https://pre-commit.com) hook as both a linter and a formatter.
 
 The repo provides multiple pre-configured hooks for specific djLint profiles (it just pre-sets the `--profile` argument and tells pre-commit which file extensions to look for):
 
-- `djlint` for linting and `djlint-reformat` for formatting
+- `djlint` for linting and `djlint-reformat` for formatting.
   This will look for files matching `*.html` without setting `--profile`.
-- `djlint-django` and `djlint-reformat-django`
+- `djlint-django` and `djlint-reformat-django`.
   This will look for files matching `*.html` and set `--profile=django`.
-- `djlint-jinja` and `djlint-reformat-jinja`
+- `djlint-jinja` and `djlint-reformat-jinja`.
   This will look for files matching `*.j2`,`*.jinja` or `*.jinja2` and set `--profile=jinja`.
-- `djlint-nunjucks` and `djlint-reformat-nunjucks`
+- `djlint-nunjucks` and `djlint-reformat-nunjucks`.
   This will look for files matching `*.njk` and set `--profile=nunjucks`.
-- `djlint-handlebars` and `djlint-reformat-handlebars`
+- `djlint-handlebars` and `djlint-reformat-handlebars`.
   This will look for files matching `*.hbs` and set `--profile=handlebars`.
-- `djlint-liquid` and `djlint-reformat-liquid`
+- `djlint-liquid` and `djlint-reformat-liquid`.
   This will look for files matching `*.html` and set `--profile=liquid`.
-- `djlint-golang` and `djlint-reformat-golang`
+- `djlint-golang` and `djlint-reformat-golang`.
   This will look for files matching `*.gotmpl` and set `--profile=golang`.
-- `djlint-tera` and `djlint-reformat-tera`
+- `djlint-tera` and `djlint-reformat-tera`.
   This will look for files matching `*.html` and set `--profile=tera`.
-- `djlint-askama` and `djlint-reformat-askama`
+- `djlint-askama` and `djlint-reformat-askama`.
   This will look for files matching `*.html` and set `--profile=askama`.
-- `djlint-mako` and `djlint-reformat-mako`
+- `djlint-mako` and `djlint-reformat-mako`.
   This will look for files matching `*.html` and set `--profile=mako`.
 
 Note that these predefined hooks are sometimes too conservative in the inputs they accept (your templates may be using a different extension) so pre-commit explicitly allows you to override any of these pre-defined options. See the [pre-commit docs](https://pre-commit.com/#pre-commit-configyaml---hooks) for additional configuration.

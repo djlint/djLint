@@ -1,8 +1,6 @@
 ---
 title: "Integraciones"
 description: "Usa djLint en tu editor y ejecútalo con pre-commit."
-sidebar:
-  label: "Integraciones"
 ---
 
 Existen varias integraciones de djLint con editores.
@@ -13,7 +11,24 @@ Uses el editor que uses, instala djLint donde el editor pueda encontrarlo, ideal
 
 Instala la [extensión de djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) desde Visual Studio Marketplace. Cursor, Windsurf, VSCodium y otros editores basados en VS Code instalan [la misma extensión desde Open VSX](https://open-vsx.org/extension/monosans/djlint). Busca djLint en tu entorno, recurre a uno incluido si no lo encuentra y usa el servidor de lenguaje cuando tu djLint lo tiene.
 
-Su código está en [GitHub](https://github.com/djlint/djlint-vscode).
+Su [README](https://github.com/djlint/djlint-vscode#readme) describe sus ajustes y qué djLint ejecuta.
+
+## Zed
+
+La [extensión de djLint](https://github.com/djlint/djlint-zed) ejecuta el [servidor de lenguaje](#servidor-de-lenguaje) en HTML y en los lenguajes de las extensiones de plantillas, como Django, Jinja y Twig. Todavía no está en el registro de extensiones de Zed, así que instálala como extensión de desarrollo:
+
+1. Instala Rust con [rustup](https://rustup.rs): Zed compila la extensión con él y añade por su cuenta el target `wasm32-wasip2`. Con un Rust de otra fuente, como Homebrew o Nix, añádelo tú.
+1. Clona la extensión:
+
+   ```bash
+   git clone https://github.com/djlint/djlint-zed
+   ```
+
+1. En Zed, abre la paleta de comandos (`cmd-shift-p` en macOS, `ctrl-shift-p` en el resto), ejecuta **zed: install dev extension** y elige la carpeta clonada `djlint-zed`.
+
+Para actualizarla, ejecuta `git pull` en esa carpeta y luego **zed: rebuild dev extension**.
+
+Necesita djLint 1.49 o posterior en el PATH, o [uv](https://docs.astral.sh/uv/), que ejecuta djLint sin instalarlo. Su [README](https://github.com/djlint/djlint-zed#readme) explica cómo convertirla en el formateador de un lenguaje y cuáles son sus ajustes.
 
 ## Neovim
 
@@ -227,31 +242,31 @@ El paso de subida necesita el permiso `security-events: write` en el job o en el
 
 `--sarif` escribe un documento SARIF 2.1.0 en stdout y nada más, así que se puede redirigir como arriba. Se listan todas las reglas activadas con un enlace a su documentación, cada problema lleva su línea y su columna, y con `--check` un archivo que se reformatearía se notifica bajo una regla `formatting`. Azure DevOps, GitLab y la mayoría de los editores leen el mismo formato.
 
-## Pre-Commit
+## pre-commit
 
 djLint se puede usar como hook de [pre-commit](https://pre-commit.com), tanto de linter como de formateador.
 
 El repositorio ofrece varios hooks preconfigurados para perfiles concretos de djLint (simplemente predefinen el argumento `--profile` y le indican a pre-commit qué extensiones de archivo buscar):
 
-- `djlint` para analizar y `djlint-reformat` para formatear
+- `djlint` para analizar y `djlint-reformat` para formatear.
   Buscará archivos que coincidan con `*.html` sin definir `--profile`.
-- `djlint-django` y `djlint-reformat-django`
+- `djlint-django` y `djlint-reformat-django`.
   Buscará archivos que coincidan con `*.html` y definirá `--profile=django`.
-- `djlint-jinja` y `djlint-reformat-jinja`
+- `djlint-jinja` y `djlint-reformat-jinja`.
   Buscará archivos que coincidan con `*.j2`,`*.jinja` o `*.jinja2` y definirá `--profile=jinja`.
-- `djlint-nunjucks` y `djlint-reformat-nunjucks`
+- `djlint-nunjucks` y `djlint-reformat-nunjucks`.
   Buscará archivos que coincidan con `*.njk` y definirá `--profile=nunjucks`.
-- `djlint-handlebars` y `djlint-reformat-handlebars`
+- `djlint-handlebars` y `djlint-reformat-handlebars`.
   Buscará archivos que coincidan con `*.hbs` y definirá `--profile=handlebars`.
-- `djlint-liquid` y `djlint-reformat-liquid`
+- `djlint-liquid` y `djlint-reformat-liquid`.
   Buscará archivos que coincidan con `*.html` y definirá `--profile=liquid`.
-- `djlint-golang` y `djlint-reformat-golang`
+- `djlint-golang` y `djlint-reformat-golang`.
   Buscará archivos que coincidan con `*.gotmpl` y definirá `--profile=golang`.
-- `djlint-tera` y `djlint-reformat-tera`
+- `djlint-tera` y `djlint-reformat-tera`.
   Buscará archivos que coincidan con `*.html` y definirá `--profile=tera`.
-- `djlint-askama` y `djlint-reformat-askama`
+- `djlint-askama` y `djlint-reformat-askama`.
   Buscará archivos que coincidan con `*.html` y definirá `--profile=askama`.
-- `djlint-mako` y `djlint-reformat-mako`
+- `djlint-mako` y `djlint-reformat-mako`.
   Buscará archivos que coincidan con `*.html` y definirá `--profile=mako`.
 
 Ten en cuenta que estos hooks predefinidos a veces son demasiado conservadores con las entradas que aceptan (puede que tus plantillas usen otra extensión), por lo que pre-commit te permite explícitamente sobrescribir cualquiera de estas opciones predefinidas. Consulta la [documentación de pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) para más opciones de configuración.
