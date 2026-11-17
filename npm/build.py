@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import compileall
 import hashlib
+import io
 import json
 import os
 import py_compile
@@ -155,8 +156,18 @@ def _run(*args: str | Path, cwd: Path = _ROOT) -> str:
     return result.stdout
 
 
+def _fetch(url: str) -> bytes:
+    with urllib.request.urlopen(url) as response:  # noqa: S310
+        data: bytes = response.read()
+    return data
+
+
 def _download(name: str, url: str) -> Path:
-    """Download a file once, and keep it for later builds."""
+    """Download a file once, and keep it for later builds.
+
+    Only what is checked against a hash fetched anew is kept, so a file in
+    the downloads can't stand in for another one.
+    """
     path = _DOWNLOADS / name
     if not path.exists():
         _DOWNLOADS.mkdir(parents=True, exist_ok=True)
@@ -169,11 +180,8 @@ def _download(name: str, url: str) -> Path:
 
 def _python_archives() -> tuple[str, dict[str, str]]:
     """Return the Python version, and the sha256 of each of its archives."""
-    sums = _download(f"SHA256SUMS-{PYTHON_BUILD_STANDALONE}", f"{_RELEASE_URL}/SHA256SUMS")
-    hashes = {
-        name: digest
-        for digest, name in (line.split() for line in sums.read_text(encoding="utf-8").splitlines())
-    }
+    sums = _fetch(f"{_RELEASE_URL}/SHA256SUMS").decode()
+    hashes = {name: digest for digest, name in (line.split() for line in sums.splitlines())}
     versions = {
         name.removeprefix("cpython-").partition("+")[0]
         for name in hashes
@@ -185,13 +193,12 @@ def _python_archives() -> tuple[str, dict[str, str]]:
 
 def _licenses() -> dict[str, bytes]:
     """Return the licenses of what python-build-standalone builds into Python."""
-    archive = _download(
-        f"python-build-standalone-{PYTHON_BUILD_STANDALONE}.tar.gz",
+    archive = _fetch(
         "https://github.com/astral-sh/python-build-standalone/archive/refs/tags/"
-        f"{PYTHON_BUILD_STANDALONE}.tar.gz",
+        f"{PYTHON_BUILD_STANDALONE}.tar.gz"
     )
     licenses: dict[str, bytes] = {}
-    with tarfile.open(archive) as tar:
+    with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
         for member in tar:
             name = member.name.partition("/")[2]
             # extractfile() gives nothing for what isn't a file.
@@ -253,6 +260,9 @@ def _install(site: Path, tag: str, *requirements: str | Path) -> None:
         "--isolated",
         "--quiet",
         "--disable-pip-version-check",
+        # With the downloads, which CI keeps from one run to the next.
+        "--cache-dir",
+        _DOWNLOADS / "pip",
         "--target",
         site,
         "--platform",

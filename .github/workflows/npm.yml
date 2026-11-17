@@ -37,10 +37,10 @@ jobs:
             qemu: linux/ppc64le
           - os: ubuntu-26.04
             platform: linux-riscv64-gnu
-            # Node has no image for riscv64, and Debian has Node.
+            # Node has no image for riscv64, so its unofficial build runs in Debian.
             image: debian:trixie-slim
             qemu: linux/riscv64
-            setup: apt-get update -qq && apt-get install -qq -y nodejs npm > /dev/null
+            node-build: linux-riscv64
           - os: ubuntu-26.04
             platform: linux-s390x-gnu
             image: node:{node}
@@ -71,15 +71,28 @@ jobs:
           architecture: ${{ matrix.architecture }}
           check-latest: true
           package-manager-cache: false
+      # Python, the wheels and Node for riscv64, each checked against a hash
+      # fetched anew. Only master saves it, and a release builds without it.
+      - id: downloads
+        if: ${{ !inputs.packages }}
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: npm/dist/downloads
+          key: npm-${{ matrix.platform }}-${{ hashFiles('npm/build.py', 'uv.lock', '.nvmrc') }}
       # The build script asks for the Python it compiles the bytecode with.
       - if: ${{ !inputs.packages }}
         uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          enable-cache: false
+          enable-cache: true
+          cache-dependency-glob: |
+            uv.lock
+            npm/build.py
+          cache-python: true
+          save-cache: ${{ github.ref == 'refs/heads/master' }}
       - if: ${{ !inputs.packages }}
-        run: uv build --wheel --out-dir wheels --no-cache
+        run: uv build --wheel --out-dir wheels
       - if: ${{ !inputs.packages }}
-        run: uv run --no-cache npm/build.py wheels "$PLATFORM"
+        run: uv run npm/build.py wheels "$PLATFORM"
         env:
           PLATFORM: ${{ matrix.platform }}
       - if: ${{ inputs.packages }}
@@ -87,6 +100,27 @@ jobs:
         with:
           name: ${{ inputs.packages }}
           path: npm/dist
+      - if: ${{ matrix.node-build }}
+        run: |
+          base=https://unofficial-builds.nodejs.org/download/release
+          read -r version build < <(
+            curl -fsSL "$base/index.json" | jq -r --arg major "v$(cat .nvmrc)." --arg build "$BUILD" \
+              'first(.[] | select(.version | startswith($major)) | .version as $version
+                | .files[] | select(startswith($build)) | "\($version) \(.)")'
+          )
+          archive=node-$version-$build.tar.xz
+          mkdir -p npm/dist/downloads node
+          cd npm/dist/downloads
+          [ -f "$archive" ] || curl -fsSL -o "$archive" "$base/$version/$archive"
+          curl -fsSL "$base/$version/SHASUMS256.txt" | grep " $archive\$" | sha256sum --check --strict -
+          tar -xJf "$archive" -C "$GITHUB_WORKSPACE/node" --strip-components=1
+        env:
+          BUILD: ${{ matrix.node-build }}
+      - if: ${{ !inputs.packages && github.ref == 'refs/heads/master' && steps.downloads.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: npm/dist/downloads
+          key: ${{ steps.downloads.outputs.cache-primary-key }}
       - if: ${{ matrix.qemu }}
         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
         with:
@@ -95,14 +129,14 @@ jobs:
         run: node --test npm/test.mjs
         env:
           DJLINT_PLATFORM: ${{ matrix.platform }}
+      # Node from node-build comes in on the PATH; an image has its own.
       - if: ${{ matrix.image }}
         run: |
           image=${IMAGE/'{node}'/$(cat .nvmrc)}
           docker run --rm ${QEMU:+--platform "$QEMU"} --env DJLINT_PLATFORM \
             --volume "$PWD:/djlint" --workdir /djlint "$image" \
-            sh -c "${SETUP:+$SETUP && }node --test npm/test.mjs"
+            sh -c 'PATH="/djlint/node/bin:$PATH" exec node --test npm/test.mjs'
         env:
           DJLINT_PLATFORM: ${{ matrix.platform }}
           IMAGE: ${{ matrix.image }}
           QEMU: ${{ matrix.qemu }}
-          SETUP: ${{ matrix.setup }}
