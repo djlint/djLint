@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- A `<!-- djlint:off -->` written right before its `<!-- djlint:on -->`, with nothing between them, no longer hides the rest of the file from the linter.
+- A `.editorconfig` djLint isn't allowed to read is left out, as editors leave it out, instead of stopping the run with a traceback.
+
 ## [1.52.1] - 2026-11-17
 
 ### Bug fixes
