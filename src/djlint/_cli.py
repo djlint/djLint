@@ -341,7 +341,11 @@ class _SectionedHelpCommand(click.Command):
     is_flag=True,
     help="Lint the files. This is the default when neither --reformat nor --check is given.",
 )
-@click.option("--use-gitignore", is_flag=True, help="Also skip the paths that .gitignore lists.")
+@click.option(
+    "--use-gitignore",
+    is_flag=True,
+    help="Also skip the paths that the .gitignore in the project root lists.",
+)
 @click.option(
     "--allow-empty-input",
     is_flag=True,
@@ -489,14 +493,14 @@ class _SectionedHelpCommand(click.Command):
     type=str,
     default="",
     metavar="PATHS",
-    help="Paths to skip, comma-separated, in place of the default list.",
+    help="Regexes of the paths to skip, comma-separated, in place of the default list.",
 )
 @click.option(
     "--extend-exclude",
     type=str,
     default="",
     metavar="PATHS",
-    help="Paths to skip on top of the default list, comma-separated.",
+    help="Regexes of the paths to skip on top of the exclude list, comma-separated.",
 )
 @click.option(
     "--linter-output-format",

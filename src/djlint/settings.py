@@ -757,6 +757,42 @@ def _beautifier_config(
     return settings
 
 
+def _split_patterns(value: str) -> list[str]:
+    r"""Split comma-separated regexes, dropping blank entries.
+
+    A comma inside `{1,2}` or `[,;]`, or escaped as `\,`, belongs to its
+    regex, so `report[0-9]{1,2}\.html` stays one pattern.
+    """
+    parts: list[str] = []
+    current: list[str] = []
+    braces = 0
+    in_class = False
+    i = 0
+    while i < len(value):
+        char = value[i]
+        if char == "\\" and i + 1 < len(value):
+            current.append(value[i : i + 2])
+            i += 2
+            continue
+        if in_class:
+            in_class = char != "]"
+        elif char == "[":
+            in_class = True
+        elif char == "{":
+            braces += 1
+        elif char == "}" and braces:
+            braces -= 1
+        elif char == "," and not braces:
+            parts.append("".join(current))
+            current = []
+            i += 1
+            continue
+        current.append(char)
+        i += 1
+    parts.append("".join(current))
+    return [entry for part in parts if (entry := part.strip())]
+
+
 def build_exclude(exclude: str) -> str:
     """Build regex string for exclude paths.
 
@@ -765,7 +801,7 @@ def build_exclude(exclude: str) -> str:
     """
     if "," not in exclude:
         return exclude
-    return "\n| ".join(split_option_list(exclude))
+    return "\n| ".join(_split_patterns(exclude))
 
 
 def _check_regex(setting: str, pattern: str) -> None:
