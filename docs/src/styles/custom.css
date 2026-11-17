@@ -109,10 +109,8 @@
   }
 }
 
-/* The squiggle itself. */
-.sidebar-content a[aria-current="page"],
-.top-nav a[aria-current="page"],
-#dj-menu a[aria-current="page"] {
+/* The squiggle itself. Header.astro draws the one under the current section. */
+.sidebar-content a[aria-current="page"] {
   text-decoration: underline wavy var(--dj-squiggle);
   text-decoration-thickness: 1.5px;
   text-decoration-skip-ink: none;
