@@ -13,11 +13,14 @@ const dist = path.join(import.meta.dirname, "dist");
 const project = mkdtempSync(path.join(tmpdir(), "djlint-npm-"));
 const launcher = path.join(project, "node_modules", "djlint", "djlint.mjs");
 const windows = process.platform === "win32";
+// On GitHub Actions, djLint reports as annotations.
+const { GITHUB_ACTIONS: _, ...env } = process.env;
 
 function djlint(args, options = {}) {
   return spawnSync(process.execPath, [launcher, ...args], {
     cwd: project,
     encoding: "utf8",
+    env,
     ...options,
   });
 }
@@ -78,7 +81,7 @@ test("passes the exit code on", () => {
 
 test("keeps the settings of another Python out", () => {
   const result = djlint(["--version"], {
-    env: { ...process.env, PYTHONHOME: project, PYTHONPATH: project },
+    env: { ...env, PYTHONHOME: project, PYTHONPATH: project },
   });
   assert.equal(result.status, 0, result.stderr);
 });
@@ -94,7 +97,7 @@ test("runs the language server", async () => {
   server.stdin.write(frame({ id: 2, method: "shutdown" }));
   server.stdin.end(frame({ method: "exit" }));
   const code = await new Promise((resolve) => {
-    server.on("exit", resolve);
+    server.on("close", resolve);
   });
   assert.equal(code, 0);
   const answers = output
@@ -118,7 +121,7 @@ test("ends as djLint does when a signal stops it", { skip: windows }, async () =
   });
   server.kill("SIGTERM");
   const signal = await new Promise((resolve) => {
-    server.on("exit", (_code, received) => {
+    server.on("close", (_code, received) => {
       resolve(received);
     });
   });

@@ -49,7 +49,8 @@ const python = path.join(
 // -I keeps the settings, packages and folder of some other Python out of this one.
 const child = spawn(python, ["-I", "-c", MAIN, ...process.argv.slice(2)], { stdio: "inherit" });
 
-// Ctrl+C reaches djLint too, which stops on its own.
+// Ctrl+C in a terminal reaches djLint too, which stops on its own. Passing it
+// on as well would interrupt djLint again while it handles the first one.
 process.on("SIGINT", () => {});
 for (const signal of ["SIGHUP", "SIGTERM"]) {
   process.on(signal, () => {
