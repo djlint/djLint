@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://djlint.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/djlint/djLint/master/docs/src/static/img/logo-wide-dark.svg"><img src="https://raw.githubusercontent.com/djlint/djLint/master/docs/src/static/img/logo-wide-light.svg" alt="djLint Logo" width="300"></picture></a>
+  <a href="https://djlint.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://djlint.com/static/img/logo-wide-dark.svg"><img src="https://djlint.com/static/img/logo-wide-light.svg" alt="djLint Logo" width="300"></picture></a>
   <br>
 </h1>
 <h4 align="center">The missing formatter and linter for HTML templates.</h4>
@@ -160,6 +160,7 @@ repos:
 ## 🧩 Editors
 
 - **VS Code**: install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) (also on [Open VSX](https://open-vsx.org/extension/monosans/djlint)).
+- **Zed**: install the [djLint extension](https://github.com/djlint/djlint-zed) as a dev extension until it's in Zed's registry. See [how](https://djlint.com/docs/integrations/#zed).
 - **Neovim, JetBrains IDEs, Sublime Text, Helix and Emacs**: run the language server, `djlint --lsp`. See the [setup for each](https://djlint.com/docs/integrations/).
 - **CI**: [GitHub Actions](https://djlint.com/docs/integrations/#github-actions) and [MegaLinter](https://djlint.com/docs/integrations/#megalinter).
 

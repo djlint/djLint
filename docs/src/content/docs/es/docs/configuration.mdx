@@ -1,0 +1,45 @@
+---
+title: "Configuración"
+description: "Las opciones que configuran cómo djLint analiza y formatea las plantillas HTML."
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+La configuración se hace a través del archivo `pyproject.toml` de tu proyecto, de un archivo `djlint.toml` o `.djlint.toml`, o de un archivo `.djlintrc`. Los argumentos de la línea de comandos siempre prevalecen sobre cualquier ajuste de los archivos de configuración. Los ajustes locales del proyecto prevalecen sobre un archivo de configuración global indicado con `--configuration`, salvo que se use `--prefer-configuration`.
+
+djLint busca estos archivos hacia arriba a partir de la primera ruta que revisa (con `-`, desde la carpeta de `--stdin-filename`, o desde el directorio actual si no se indica). Se detiene en la primera carpeta que contiene un `djlint.toml`, un `.djlint.toml`, un `.djlintrc`, un `.djlint_rules.yaml` o un `pyproject.toml` con `[tool.djlint]`, y nunca pasa de la raíz de un repositorio (una carpeta con una carpeta o un archivo `.git`, o una carpeta `.hg`). Un `pyproject.toml` sin ajustes de djLint no la detiene, así que un paquete de un monorepo con su propio `pyproject.toml` recibe los ajustes del repositorio. djLint solo lee la carpeta donde se detiene: `[tool.djlint]` en su `pyproject.toml` si esa tabla define algo; si no, su `djlint.toml` o `.djlint.toml`; si no, su `.djlintrc`, y avisa de los que hay ahí y no lee.
+
+Cuando ni la línea de comandos ni la configuración fijan `indent` o `max_line_length`, djLint toma `indent_size` o `max_line_length` de los archivos `.editorconfig`, como hacen los editores: cada archivo los recibe según su propia ruta, gana el `.editorconfig` más cercano y los de más arriba completan lo que falta, hasta uno con `root = true` o la raíz del proyecto.
+
+El formato de `pyproject.toml` es `toml`.
+
+```toml
+[tool.djlint]
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+El formato de `djlint.toml` y `.djlint.toml` es `toml`.
+
+```toml
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+El formato de `.djlintrc` es `json`.
+
+```json
+{ "profile": "django", "ignore": ["H014", "H015"] }
+```
+
+Las opciones con varios valores, como `ignore`, aceptan una lista. También vale una cadena separada por comas, como `"H014,H015"`, que es lo que necesita djLint antes de la 1.41.
+
+Desde la versión 1.51, djLint avisa de un ajuste o un código de regla que no conoce y propone el más parecido que sí conoce.
+
+## Opciones
+
+<ConfigOptions
+  label="Filtrar opciones"
+  placeholder="escribe para filtrar las opciones..."
+  empty="No se encontró nada. Prueba con otra búsqueda."
+/>

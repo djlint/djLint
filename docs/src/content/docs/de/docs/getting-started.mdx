@@ -1,0 +1,163 @@
+---
+title: "Erste Schritte"
+description: "djLint installieren und HTML-Templates auf der Befehlszeile linten oder formatieren."
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import CliHelp from "../../../../components/CliHelp.astro";
+
+## Installation
+
+djLint ist in [Python](https://python.org) geschrieben und auf [PyPI](https://pypi.org/project/djlint/) veröffentlicht.
+
+<Tabs>
+<TabItem label="uv">
+
+Mit [uv](https://docs.astral.sh/uv/) fügen Sie es Ihrem Projekt als Entwicklungsabhängigkeit hinzu:
+
+```bash
+uv add --dev djlint
+```
+
+Oder installieren Sie es als eigenständiges Tool:
+
+```bash
+uv tool install djlint
+```
+
+</TabItem>
+<TabItem label="pip">
+
+```bash
+pip install djlint
+```
+
+</TabItem>
+<TabItem label="pipx">
+
+Mit [pipx](https://pipx.pypa.io/):
+
+```bash
+pipx install djlint
+```
+
+</TabItem>
+<TabItem label="Homebrew">
+
+Unter macOS oder Linux mit der von der Community gepflegten [Homebrew-Formel](https://formulae.brew.sh/formula/djlint):
+
+```bash
+brew install djlint
+```
+
+</TabItem>
+<TabItem label="npm">
+
+:::caution[Achtung]
+Das npm-Paket ist nur ein Wrapper. Sein Installationsskript führt pip mit dem `python3` aus, das gerade in Ihrem Systempfad liegt, und installiert die djLint-Version dieses npm-Releases, die ein neueres djLint durch ein älteres ersetzen kann. npm verwaltet das eigentliche Paket nicht und deinstalliert es auch nicht, verwenden Sie daher nach Möglichkeit pip.
+:::
+
+```bash
+npm i djlint
+```
+
+</TabItem>
+</Tabs>
+
+Wie Sie djLint in Ihrem Editor oder bei jedem Commit ausführen, lesen Sie unter [Integrationen](/de/docs/integrations/) und [pre-commit](/de/docs/integrations/#pre-commit).
+
+:::note[Hinweis]
+Wird der Befehl `djlint` nicht gefunden, prüfen Sie, ob Python [in Ihrem PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/) liegt.
+:::
+
+## Erster Aufruf
+
+Übergeben Sie djLint den Ordner mit Ihren Templates und setzen Sie `--profile` auf Ihre Template-Sprache. Das Profil bestimmt, welche Linter-Regeln laufen und wie die Template-Syntax formatiert wird. Für ein Django-Projekt:
+
+Templates linten (Linten ist der Standardmodus, `--lint` können Sie also weglassen):
+
+```bash
+djlint templates --lint --profile=django
+```
+
+Ansehen, was die Formatierung ändern würde. Mit `--check` gibt djLint einen Diff aus und lässt die Dateien unverändert:
+
+```bash
+djlint templates --check --profile=django
+```
+
+Die Dateien direkt formatieren:
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+Alle Profile listet die Option [`profile`](/de/docs/configuration/#profile) auf. Jede Template-Sprache hat außerdem eine eigene Seite, zum Beispiel [Django](/de/docs/languages/django/), [Jinja](/de/docs/languages/jinja/) oder [Handlebars](/de/docs/languages/handlebars/). Dort steht auch, wie Sie das Profil in einer Konfigurationsdatei setzen, damit Sie es nicht jedes Mal angeben müssen.
+
+Wenn Sie djLint mit `uv add --dev` zum Projekt hinzugefügt haben, liegt es in der Umgebung des Projekts: Stellen Sie den Befehlen `uv run` voran, etwa `uv run djlint templates --lint --profile=django`.
+
+## Pfad oder stdin
+
+djLint arbeitet mit einem Pfad oder mit stdin.
+
+Mit einem Pfad:
+
+```bash
+djlint /path/to/templates --lint
+```
+
+Oder mit einer bestimmten Datei:
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+Oder mit stdin:
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+Über stdin lässt sich Code auch neu formatieren. Ausgegeben wird dann nur der formatierte Code, ohne Meldungen.
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+Ausgabe:
+
+```html
+<div></div>
+```
+
+Beim Lesen von stdin hat djLint keinen echten Pfad, mit dem es `per-file-ignores` abgleichen oder den es in Meldungen anzeigen könnte, und verwendet deshalb standardmäßig `-`. Mit `--stdin-filename` teilen Sie djLint den echten Pfad des übergebenen Inhalts mit, zum Beispiel wenn eine Editor-Integration beim Speichern den Inhalt einer Datei per Pipe übergibt.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## Exit-Codes
+
+| Code | Bedeutung                                                                                                                                                                  |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | Alles, was djLint prüfen sollte, ist fehlerfrei, oder jede gefundene Datei wurde durch Ihre Konfiguration übersprungen.                                                    |
+| `1`  | djLint hat Linting-Fehler gefunden oder Dateien, die neu formatiert werden müssen. Mit `--warn` werden diese als Warnungen gemeldet und der Exit-Code ist `0`.             |
+| `2`  | djLint hat nicht geprüft, was Sie verlangt haben: Die Pfade passten auf keine Datei, die Befehlszeile oder die Konfiguration war ungültig, oder djLint ist fehlgeschlagen. |
+
+Nur Code `1` bedeutet, dass djLint sich Ihre Templates angesehen hat und mit dem Ergebnis nicht zufrieden ist. Code `2` bedeutet immer, dass der Lauf selbst nicht getan hat, was er sollte. So kann eine Pipeline die beiden Fälle unterschiedlich behandeln.
+
+Code `2` fängt einen Lauf ab, der überhaupt nichts geprüft hat: ein falscher Pfad, eine `--extension`, die nicht mehr passt, oder Templates, die verschoben wurden. Ohne ihn geht ein solcher Lauf stillschweigend durch.
+
+Dateien, die djLint _durchaus_ gefunden und dann absichtlich übersprungen hat, über `exclude`, `extend_exclude`, `use_gitignore` oder `require_pragma`, sind kein Fehler. Ein solcher Lauf endet mit `0`, denn die Konfiguration hat genau das getan, was sie sollte. Dadurch funktioniert auch `exclude` unter pre-commit, das die Namen der Dateien in Ihrer Staging-Area übergibt, ob djLint sie sich ansehen soll oder nicht.
+
+Ist ein Pfad, der berechtigterweise keine Templates enthält, in Ihrer Pipeline normal, schalten Sie Code `2` mit `allow_empty_input` ab:
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```
+
+## Verwendung auf der Befehlszeile
+
+djLint ist ein Befehlszeilenprogramm. Für die erweiterte Konfiguration siehe die Seite [Konfiguration](/de/docs/configuration/).
+
+<CliHelp />

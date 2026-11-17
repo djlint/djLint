@@ -1,0 +1,45 @@
+---
+title: "Konfigurace"
+description: "Možnosti, kterými se nastavuje, jak djLint lintuje a formátuje HTML šablony."
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+Konfigurace se zapisuje buď do souboru `pyproject.toml` vašeho projektu, do souboru `djlint.toml` nebo `.djlint.toml`, nebo do souboru `.djlintrc`. Argumenty příkazového řádku vždy přepíší jakékoli nastavení z konfiguračních souborů. Lokální nastavení projektu má přednost před globálním konfiguračním souborem zadaným pomocí `--configuration`, pokud není nastaveno `--prefer-configuration`.
+
+djLint tyto soubory hledá směrem nahoru od první cesty, kterou kontroluje (u `-` od složky `--stdin-filename`, bez něj od aktuálního adresáře). Zastaví se u první složky, která obsahuje soubor `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml` nebo `pyproject.toml` s `[tool.djlint]`, a nikdy nejde výš než kořen repozitáře (složka se složkou nebo souborem `.git` nebo se složkou `.hg`). Soubor `pyproject.toml` bez nastavení djLintu hledání nezastaví, takže balíček v monorepu s vlastním `pyproject.toml` dostane nastavení repozitáře. djLint čte jen složku, u které se zastavil: `[tool.djlint]` v jejím `pyproject.toml`, pokud tato tabulka něco nastavuje, jinak její `djlint.toml` nebo `.djlint.toml`, jinak její `.djlintrc`, a upozorní na soubory, které tam leží, ale nečte je.
+
+Pokud příkazový řádek ani konfigurace nenastavují `indent` nebo `max_line_length`, djLint vezme `indent_size` nebo `max_line_length` ze souborů `.editorconfig`, stejně jako editory: každý soubor je dostane podle své vlastní cesty, nejbližší `.editorconfig` má přednost a ty výše doplní zbytek, až po soubor s `root = true` nebo kořen projektu.
+
+Soubor `pyproject.toml` je ve formátu `toml`.
+
+```toml
+[tool.djlint]
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+Soubory `djlint.toml` a `.djlint.toml` jsou ve formátu `toml`.
+
+```toml
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+Soubor `.djlintrc` je ve formátu `json`.
+
+```json
+{ "profile": "django", "ignore": ["H014", "H015"] }
+```
+
+Volby s více hodnotami, například `ignore`, berou seznam. Funguje i řetězec oddělený čárkami, například `"H014,H015"`, který potřebuje djLint starší než 1.41.
+
+Od verze 1.51 djLint upozorní na nastavení nebo kód pravidla, které nezná, a nabídne nejbližší známé.
+
+## Možnosti
+
+<ConfigOptions
+  label="Filtrovat možnosti"
+  placeholder="zadejte text pro filtrování možností…"
+  empty="Nic nenalezeno. Zkuste hledat jinak."
+/>

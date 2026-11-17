@@ -1,0 +1,45 @@
+---
+title: "設定"
+description: "djLint による HTML テンプレートのリントとフォーマットを設定するオプション。"
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+設定は、プロジェクトの `pyproject.toml` ファイル、`djlint.toml` または `.djlint.toml` ファイル、あるいは `.djlintrc` ファイルで行います。コマンドライン引数は、設定ファイルのどの設定よりも常に優先されます。`--prefer-configuration` を指定しない限り、プロジェクトのローカル設定は `--configuration` で指定したグローバル設定ファイルよりも優先されます。
+
+djLint は、最初にチェックするパス（`-` の場合は `--stdin-filename` のフォルダー、指定がなければカレントディレクトリ）から上に向かってこれらのファイルを探します。`djlint.toml`、`.djlint.toml`、`.djlintrc`、`.djlint_rules.yaml`、または `[tool.djlint]` のある `pyproject.toml` がある最初のフォルダーで探すのをやめ、リポジトリのルート（`.git` フォルダーまたはファイル、あるいは `.hg` フォルダーのあるフォルダー）より上には進みません。djLint の設定がない `pyproject.toml` では止まらないため、自分の `pyproject.toml` を持つモノレポ内のパッケージにもリポジトリの設定が適用されます。読み込むのは止まったフォルダーだけで、`pyproject.toml` の `[tool.djlint]`（中に設定があるとき）、なければ `djlint.toml` か `.djlint.toml`、それもなければ `.djlintrc` です。同じフォルダーにあって読み込まれないファイルについては警告が出ます。
+
+コマンドラインでも設定でも `indent` や `max_line_length` が指定されていない場合、djLint はエディターと同じように `.editorconfig` ファイルから `indent_size` や `max_line_length` を読み取ります。値はファイルごとにそのパスで決まり、いちばん近い `.editorconfig` が優先され、上にあるものが足りない値を補います。探すのは `root = true` のあるファイルかプロジェクトのルートまでです。
+
+`pyproject.toml` の形式は `toml` です。
+
+```toml
+[tool.djlint]
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+`djlint.toml` と `.djlint.toml` の形式は `toml` です。
+
+```toml
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+`.djlintrc` の形式は `json` です。
+
+```json
+{ "profile": "django", "ignore": ["H014", "H015"] }
+```
+
+`ignore` のように複数の値を取るオプションにはリストを指定します。`"H014,H015"` のようなカンマ区切りの文字列も使え、djLint 1.41 より前ではこちらが必要です。
+
+バージョン 1.51 からは、知らない設定やルールコードがあると、いちばん近い既知のものを添えて警告します。
+
+## オプション
+
+<ConfigOptions
+  label="オプションを絞り込む"
+  placeholder="入力してオプションを絞り込み..."
+  empty="見つかりませんでした。別のキーワードで検索してください。"
+/>

@@ -1,0 +1,4 @@
+Sitemap: https://djlint.com/sitemap-index.xml
+
+User-agent: *
+Disallow: /cdn-cgi/

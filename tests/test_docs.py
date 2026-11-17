@@ -5,14 +5,18 @@ uv run pytest tests/test_docs.py
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import click
 import pytest
 import yaml
 
+from djlint import settings
+from djlint._cli import main  # noqa: PLC2701
 from djlint.reformat import formatter
 from djlint.settings import Config
 from tests.conftest import linter, printer
@@ -20,10 +24,11 @@ from tests.conftest import linter, printer
 if TYPE_CHECKING:
     from typing import Any
 
-_LINTER_DOCS = Path("docs/src/docs/linter.md")
+_LINTER_DOCS = Path("docs/src/content/docs/docs/linter.md")
 _FORMATTER_DOCS = tuple(sorted(Path("docs/src").rglob("formatter.md")))
 _RULES_FILE = Path("src/djlint/rules.yaml")
-_CONFIGURATION_DATA = Path("docs/src/_data/configuration.json")
+_CONFIGURATION_DATA = Path("docs/src/data/configuration.json")
+_SETTINGS = Path("src/djlint/settings.py")
 _RULE_SECTION_PATTERN = re.compile(r"^#### ([A-Z]\d{3})\s*$", re.MULTILINE)
 _VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 _EXAMPLE_LABEL_PATTERN = re.compile(r"^(Don't|Do):\s*$", re.MULTILINE)
@@ -78,8 +83,78 @@ def test_every_option_says_which_release_brought_it() -> None:
     ] == []
 
 
+def _setting_defaults() -> dict[str, Any]:
+    """What settings.py falls back to for each key of a config file."""
+    defaults: dict[str, Any] = {}
+    for node in ast.walk(ast.parse(_SETTINGS.read_text(encoding="utf-8"))):
+        # Only reads of a named key: the one inside setting_int takes a variable.
+        if not (
+            isinstance(node, ast.Call)
+            and ast.unparse(node.func) in {"djlint_settings.get", "setting_int"}
+            and isinstance(node.args[0], ast.Constant)
+        ):
+            continue
+        key, *fallback = node.args
+        default = fallback[0] if fallback else ast.Constant(None)
+        # indent and max_line_length fall back to .editorconfig, then to a number.
+        while isinstance(default, ast.Call):
+            default = default.args[-1]
+        defaults[ast.literal_eval(key).replace("-", "_")] = (
+            getattr(settings, default.id)
+            if isinstance(default, ast.Name)
+            else ast.literal_eval(default)
+        )
+    # The default exclude is a verbose regex; the docs list its paths.
+    defaults["exclude"] = ",".join(
+        path.strip().replace("\\", "") for path in defaults["exclude"].split("|")
+    )
+    return defaults
+
+
+def test_the_docs_give_the_defaults_djlint_uses() -> None:
+    """A default shown on the page is the one djLint falls back to.
+
+    An option only the command line takes falls back to its flag's default,
+    or to the one its help names.
+    """
+    options = json.loads(_CONFIGURATION_DATA.read_text(encoding="utf-8"))
+    context = click.Context(main)
+    defaults = {
+        param.name: (
+            shown.group(1)
+            if (shown := re.search(r"\[default: (.+)\]", getattr(param, "help", None) or ""))
+            else param.get_default(context)
+        )
+        for param in main.params
+    } | _setting_defaults()
+    # settings.py reads require_pragma as text.
+    defaults["require_pragma"] = defaults["require_pragma"] == "true"
+    documented = {option["name"]: option["default"] for option in options if "default" in option}
+
+    assert [option["name"] for option in options if "default" not in option] == ["version"]
+    # The docs show an unset list or string as null.
+    assert documented == {
+        name: None if defaults[name] in ("", None, {}) else defaults[name] for name in documented
+    }
+
+
 def test_every_rule_is_documented() -> None:
     assert {code for code, _, _, _ in examples} == set(_rules())
+
+
+@pytest.mark.parametrize(
+    "path",
+    sorted(Path("docs/src/content/docs").glob("**/linter.md")),
+    ids=lambda path: path.parent.parent.name,
+)
+def test_the_rule_table_links_to_each_rules_details(path: Path) -> None:
+    """Every rule has a row in the table, and its code opens the rule's section."""
+    text = path.read_text(encoding="utf-8")
+    links = re.findall(r"^\| \[([A-Z]\d{3})\]\(#([\w-]+)\) +\|", text, re.MULTILINE)
+
+    assert re.findall(r"^\| ([A-Z]\d{3}) +\|", text, re.MULTILINE) == []
+    assert [code for code, anchor in links if anchor != code.lower()] == []
+    assert {code for code, _ in links} == set(_RULE_SECTION_PATTERN.findall(text)) == set(_rules())
 
 
 @pytest.mark.parametrize(

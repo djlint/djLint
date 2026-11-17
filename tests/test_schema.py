@@ -15,7 +15,8 @@ from djlint.settings import _PROFILES, _QUOTE_STYLES  # noqa: PLC2701
 if TYPE_CHECKING:
     from typing import Any
 
-_SCHEMA = Path("docs/src/static/schema/djlint.json")
+_SCHEMA = Path("docs/public/schema/djlint.json")
+_CONFIGURATION_DATA = Path("docs/src/data/configuration.json")
 _SETTINGS = Path("src/djlint/settings.py")
 _CONFIG_KEY_PATTERN = re.compile(
     r"""(?:djlint_settings\.get|setting_bool|setting_int)\(\s*["']([\w-]+)["']"""
@@ -84,3 +85,19 @@ def test_the_schema_accepts_lists_where_djlint_does() -> None:
     assert {
         name for name, entry in _schema()["properties"].items() if entry.get("$ref") == list_ref
     } == keys
+
+
+def test_the_schema_describes_options_as_the_docs_do() -> None:
+    """Editors show these descriptions on hover, so they say what the docs say."""
+    docs = {
+        option["name"]: option["description"]["en"]
+        for option in json.loads(_CONFIGURATION_DATA.read_text(encoding="utf-8"))
+    }
+
+    # The schema spells per-file-ignores with hyphens, as the config file does.
+    schema = {
+        name.replace("-", "_"): entry.get("description")
+        for name, entry in _schema()["properties"].items()
+    }
+
+    assert [name for name, text in docs.items() if name in schema and schema[name] != text] == []

@@ -1,0 +1,163 @@
+---
+title: "Getting started"
+description: "Install djLint and lint or format HTML templates from the command line."
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import CliHelp from "../../../components/CliHelp.astro";
+
+## Installation
+
+djLint is built with [Python](https://python.org) and published on [PyPI](https://pypi.org/project/djlint/).
+
+<Tabs>
+<TabItem label="uv">
+
+With [uv](https://docs.astral.sh/uv/), add it to your project as a development dependency:
+
+```bash
+uv add --dev djlint
+```
+
+Or install it as a standalone tool:
+
+```bash
+uv tool install djlint
+```
+
+</TabItem>
+<TabItem label="pip">
+
+```bash
+pip install djlint
+```
+
+</TabItem>
+<TabItem label="pipx">
+
+With [pipx](https://pipx.pypa.io/):
+
+```bash
+pipx install djlint
+```
+
+</TabItem>
+<TabItem label="Homebrew">
+
+With the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux:
+
+```bash
+brew install djlint
+```
+
+</TabItem>
+<TabItem label="npm">
+
+:::caution[Warning]
+The npm package is only a wrapper. Its install script runs pip on whatever `python3` is on your system path and installs the djLint version of that npm release, which can replace a newer djLint with an older one. npm will not manage or uninstall the actual package, so prefer pip when you can.
+:::
+
+```bash
+npm i djlint
+```
+
+</TabItem>
+</Tabs>
+
+To run djLint in your editor or on every commit, see [Integrations](/docs/integrations/) and [pre-commit](/docs/integrations/#pre-commit).
+
+:::note[Note]
+If the command `djlint` is not found, make sure that Python is [in your path](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
+:::
+
+## First run
+
+Point djLint at the folder with your templates and set `--profile` to your template language. The profile decides which linter rules run and how the template syntax is formatted. For a Django project:
+
+Lint the templates (linting is the default mode, so `--lint` can be left out):
+
+```bash
+djlint templates --lint --profile=django
+```
+
+See what reformatting would change. With `--check`, djLint prints a diff and leaves the files alone:
+
+```bash
+djlint templates --check --profile=django
+```
+
+Reformat the files in place:
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+The [`profile`](/docs/configuration/#profile) option lists every profile. Each template language also has its own page, for example [Django](/docs/languages/django/), [Jinja](/docs/languages/jinja/) or [Handlebars](/docs/languages/handlebars/), which shows how to set the profile in a config file so you don't have to pass it every time.
+
+If you added djLint to a project with `uv add --dev`, it lives in the project's environment: put `uv run` in front of the commands, as in `uv run djlint templates --lint --profile=django`.
+
+## Using path vs stdin
+
+djLint works with a path or stdin.
+
+Running with a path -
+
+```bash
+djlint /path/to/templates --lint
+```
+
+Or a specific file -
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+Or with stdin -
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+Stdin can also be used to reformat code. The output will be only the formatted code without messages.
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+Output -
+
+```html
+<div></div>
+```
+
+When reading from stdin, djLint has no real path to match against `per-file-ignores` or to show in messages, so it uses `-` by default. Pass `--stdin-filename` to tell djLint the real path of the piped content, for example when an editor integration pipes a file's contents in on save.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## Exit codes
+
+| Code | Meaning                                                                                                                          |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | Everything djLint was asked to check is clean, or every file it found was skipped by your configuration.                         |
+| `1`  | djLint found linting errors, or files that need reformatting. `--warn` reports these as warnings and exits `0` instead.          |
+| `2`  | djLint did not check what you asked it to: the paths matched no files, the command line or config was invalid, or djLint failed. |
+
+Only code `1` means djLint looked at your templates and did not like what it found. Code `2` always means the run itself did not deliver, so a pipeline can treat the two differently.
+
+Code `2` is what catches a run that checked nothing at all: a wrong path, an `--extension` that no longer matches, or templates that have moved. Without it such a run passes silently.
+
+Files that djLint _did_ find and then skipped on purpose, through `exclude`, `extend_exclude`, `use_gitignore` or `require_pragma`, are not an error. That run exits `0`, because the configuration did exactly what it was told to. It is also what lets `exclude` work under pre-commit, which passes the names of your staged files whether or not you want djLint to look at them.
+
+If a path that legitimately has no templates is normal for your pipeline, turn code `2` off with `allow_empty_input`:
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```
+
+## CLI usage
+
+djLint is a command line application. See the [configuration](/docs/configuration/) page for advanced configuration.
+
+<CliHelp />

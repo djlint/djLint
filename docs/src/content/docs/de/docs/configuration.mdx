@@ -1,0 +1,45 @@
+---
+title: "Konfiguration"
+description: "Die Optionen, die festlegen, wie djLint HTML-Templates lintet und formatiert."
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+Die Konfiguration erfolgt entweder über die Datei `pyproject.toml` Ihres Projekts, über eine Datei `djlint.toml` oder `.djlint.toml` oder über eine Datei `.djlintrc`. Argumente auf der Befehlszeile haben immer Vorrang vor den Einstellungen in Konfigurationsdateien. Lokale Projekteinstellungen haben Vorrang vor einer globalen Konfigurationsdatei, die mit `--configuration` angegeben wird, es sei denn, `--prefer-configuration` ist gesetzt.
+
+djLint sucht diese Dateien vom ersten geprüften Pfad aus aufwärts (bei `-` vom Ordner von `--stdin-filename`, ohne diese Option vom aktuellen Verzeichnis). Es hält beim ersten Ordner an, der eine `djlint.toml`, eine `.djlint.toml`, eine `.djlintrc`, eine `.djlint_rules.yaml` oder eine `pyproject.toml` mit `[tool.djlint]` enthält, und geht nie über die Wurzel eines Repositorys hinaus (einen Ordner mit einem Ordner oder einer Datei `.git` oder einem Ordner `.hg`). Eine `pyproject.toml` ohne djLint-Einstellungen hält die Suche nicht an, sodass ein Paket in einem Monorepo mit eigener `pyproject.toml` die Einstellungen des Repositorys bekommt. djLint liest nur den Ordner, bei dem es anhält: `[tool.djlint]` in dessen `pyproject.toml`, sofern die Tabelle etwas setzt, sonst dessen `djlint.toml` oder `.djlint.toml`, sonst dessen `.djlintrc`, und warnt vor den Dateien dort, die es nicht liest.
+
+Wo weder die Befehlszeile noch die Konfiguration `indent` oder `max_line_length` setzt, nimmt djLint `indent_size` oder `max_line_length` aus `.editorconfig`-Dateien, wie Editoren es tun: Jede Datei bekommt die Werte nach ihrem eigenen Pfad, die nächstgelegene `.editorconfig` gewinnt, und die darüber ergänzen sie, bis zu einer mit `root = true` oder bis zur Projektwurzel.
+
+Für `pyproject.toml` wird das Format `toml` verwendet.
+
+```toml
+[tool.djlint]
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+Für `djlint.toml` und `.djlint.toml` wird das Format `toml` verwendet.
+
+```toml
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+Für `.djlintrc` wird das Format `json` verwendet.
+
+```json
+{ "profile": "django", "ignore": ["H014", "H015"] }
+```
+
+Optionen mit mehreren Werten, etwa `ignore`, nehmen eine Liste. Eine kommagetrennte Zeichenkette wie `"H014,H015"` geht auch, und djLint vor 1.41 braucht sie.
+
+Ab Version 1.51 warnt djLint vor einer Einstellung oder einem Regelcode, den es nicht kennt, und nennt den nächstliegenden bekannten.
+
+## Optionen
+
+<ConfigOptions
+  label="Optionen filtern"
+  placeholder="Tippen, um Optionen zu filtern …"
+  empty="Nichts gefunden. Versuchen Sie einen anderen Suchbegriff."
+/>

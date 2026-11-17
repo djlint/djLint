@@ -1,0 +1,8 @@
+---
+// `djlint --help`, kept in one file that tests/test_cli.py checks against the
+// real output.
+import { Code } from "@astrojs/starlight/components";
+import help from "../data/cli-help.txt?raw";
+---
+
+<Code code={help.trimEnd()} lang="text" />
