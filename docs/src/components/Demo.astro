@@ -140,14 +140,19 @@ const docs = (anchor: string) => `${prefix}/docs/configuration/#${anchor}`;
 // What a "?" link says to a screen reader: which option's documentation it opens.
 // The fields get their names from aria-label, so the link doesn't join them.
 const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
+
+// The version goes right after the name in the description, once it's known.
+const description = t("djlint.demo_description").split("djLint");
+if (description.length !== 2) {
+  throw new Error("djlint.demo_description must name djLint once in every language");
+}
 ---
 
 {
   route && (
     <div class="demo not-content">
       <p>
-        {t("djlint.demo_description")}
-        <span class="demo-version" id="djlint-version" />
+        {description[0]}djLint<span class="demo-version" id="djlint-version" />{description[1]}
       </p>
       {/* What djLint says about the settings, such as a rule code it doesn't know. */}
       <ul class="demo-warnings" id="djlint-warnings" role="status" />
@@ -482,7 +487,7 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
     } else if (type === "status" && message === "error") {
       showError();
     } else if (type === "version") {
-      document.getElementById("djlint-version")!.textContent = `djLint ${message}`;
+      document.getElementById("djlint-version")!.textContent = ` ${message}`;
     } else if ((type === "result" || type === "error") && id === sessionId) {
       formatted = type === "result" ? html : message;
       showWarnings(type === "result" ? warnings : []);
@@ -593,11 +598,9 @@ const helpLabel = (text: string) => `${t("djlint.configuration")}: ${text}`;
   :global(main:has(.demo) .sl-container) {
     max-width: none;
   }
-  /* Which djLint the demo runs, a quiet line under the description. */
+  /* Which djLint the demo runs, quieter than the sentence it sits in. */
   .demo-version {
-    display: block;
     color: var(--sl-color-gray-3);
-    font-size: var(--sl-text-sm);
   }
   .demo-workspace {
     display: grid;
