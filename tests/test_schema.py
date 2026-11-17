@@ -75,7 +75,7 @@ def test_the_schema_accepts_lists_where_djlint_does() -> None:
     """An option djLint joins from a list may be written as one."""
     keys = set(
         re.findall(
-            r"""_as_comma_separated\(\s*djlint_settings\.get\(\s*["']([\w-]+)["']""",
+            r"""(?:_as_comma_separated\(|build_exclude\(\s*\w+ or)\s*djlint_settings\.get\(\s*["']([\w-]+)["']""",
             _SETTINGS.read_text(encoding="utf-8"),
         )
     )

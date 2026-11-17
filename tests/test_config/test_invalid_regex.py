@@ -33,6 +33,18 @@ def test_a_glob_where_a_regex_goes_is_a_usage_error(
         Config(str(tmp_path))
 
 
+@pytest.mark.parametrize(
+    # Joined to the next item, the backslash would escape the line break between them.
+    "toml",
+    ['exclude = "legacy\\\\"', 'exclude = ["legacy\\\\"]', 'exclude = ["legacy\\\\", "vendor"]'],
+)
+def test_a_trailing_backslash_is_a_usage_error(tmp_path: Path, toml: str) -> None:
+    (tmp_path / "djlint.toml").write_text(f"{toml}\n", encoding="utf-8")
+
+    with pytest.raises(UsageError, match=r"^Invalid exclude 'legacy\\\\'"):
+        Config(str(tmp_path))
+
+
 def test_a_comment_ends_with_its_entry(tmp_path: Path) -> None:
     (tmp_path / "djlint.toml").write_text(
         'exclude = ["vendor # third-party", "build"]\nextend_exclude = ["legacy # old"]\n',
