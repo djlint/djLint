@@ -92,7 +92,7 @@ uv add --dev djlint
 pip install djlint
 ```
 
-The [installation guide](https://djlint.com/docs/getting-started/#installation) also covers installing it as a standalone tool, and with pipx, Homebrew or npm.
+With uv, put `uv run` in front of the commands below, as in `uv run djlint . --lint`. The [installation guide](https://djlint.com/docs/getting-started/#installation) also covers installing it as a standalone tool, and with pipx, Homebrew or npm.
 
 Lint your project:
 
