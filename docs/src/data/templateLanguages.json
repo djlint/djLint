@@ -1,7 +1,7 @@
 [
   { "name": "Django", "slug": "django", "logo": "django.svg", "brand": "#44b78b" },
   { "name": "Jinja", "slug": "jinja", "logo": "jinja.svg", "brand": "#d9473f" },
-  { "name": "Twig", "slug": "twig", "logo": "twig.svg", "logoScale": 1.15, "brand": "#8bb43a" },
+  { "name": "Twig", "slug": "twig", "logo": "twig.svg", "logoScale": 1.4, "brand": "#8bb43a" },
   { "name": "Nunjucks", "slug": "nunjucks", "logo": "nunjucks.svg", "brand": "#3f9a38" },
   { "name": "Handlebars", "slug": "handlebars", "logo": "handlebars.svg", "brand": "#f0772b" },
   { "name": "Mustache", "slug": "mustache", "logo": "mustache.svg", "brand": "#9a9a9a" },
@@ -9,14 +9,14 @@
     "name": "Liquid",
     "slug": "liquid",
     "logo": "liquid.svg",
-    "logoScale": 1.1,
+    "logoScale": 1.4,
     "brand": "#3b82c4"
   },
   {
     "name": "Go templates",
     "slug": "golang",
     "logo": "golang.svg",
-    "logoScale": 1.8,
+    "logoScale": 1.4,
     "brand": "#00add8"
   },
   { "name": "Angular", "slug": "angular", "logo": "angular.svg", "brand": "#dd0031" },
