@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Instalacja
 
-djLint jest napisany w [Pythonie](https://python.org) i opublikowany w [PyPI](https://pypi.org/project/djlint/).
+djLint wymaga [Pythona](https://python.org) 3.11 lub nowszego i jest opublikowany w [PyPI](https://pypi.org/project/djlint/).
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 Aby uruchamiać djLint w edytorze lub przy każdym commicie, zobacz [Integracje](/pl/docs/integrations/) i [pre-commit](/pl/docs/integrations/#pre-commit).
 
 :::note[Uwaga]
-Jeśli polecenie `djlint` nie zostanie znalezione, upewnij się, że Python jest [w ścieżce systemowej (PATH)](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
+Jeśli polecenie `djlint` nie zostanie znalezione, folderu, do którego je zainstalowano, nie ma w PATH. Wtedy `python -m djlint` i tak je uruchomi.
 :::
 
 ## Pierwsze uruchomienie
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## Kody wyjścia
 
-| Kod | Znaczenie                                                                                                                                                      |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `0` | Wszystko, co djLint miał sprawdzić, jest w porządku albo każdy znaleziony plik został pominięty zgodnie z konfiguracją.                                        |
-| `1` | djLint znalazł błędy lintowania lub pliki wymagające przeformatowania. Przy `--warn` są one zgłaszane jako ostrzeżenia, a djLint kończy działanie z kodem `0`. |
-| `2` | djLint nie sprawdził tego, o co go poproszono: ścieżki nie pasowały do żadnych plików, wiersz poleceń lub konfiguracja były nieprawidłowe albo djLint zawiódł. |
+| Kod | Znaczenie                                                                                                                                                                                                                           |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0` | Wszystko, co djLint miał sprawdzić, jest w porządku albo każdy znaleziony plik został pominięty zgodnie z konfiguracją.                                                                                                             |
+| `1` | djLint znalazł błędy lintowania lub pliki wymagające przeformatowania. Przy `--warn` są one zgłaszane jako ostrzeżenia, a djLint kończy działanie z kodem `0`.                                                                      |
+| `2` | djLint nie sprawdził tego, o co go poproszono: ścieżki nie pasowały do żadnych plików, nie udało się odczytać pliku (nie jest w UTF-8 albo brak uprawnień), wiersz poleceń lub konfiguracja były nieprawidłowe albo djLint zawiódł. |
 
-Tylko kod `1` oznacza, że djLint przejrzał twoje szablony i nie spodobało mu się to, co znalazł. Kod `2` zawsze oznacza, że samo uruchomienie nie spełniło swojego zadania, więc potok CI może traktować te dwa przypadki różnie.
+Tylko kod `1` oznacza, że djLint przejrzał twoje szablony i nie spodobało mu się to, co znalazł, więc potok CI odróżni nieudane sprawdzenie od uruchomienia, które niczego nie sprawdziło, na przykład z błędną ścieżką albo z `--extension`, które już do niczego nie pasuje.
 
-To właśnie kod `2` wychwytuje uruchomienie, które niczego nie sprawdziło: błędną ścieżkę, `--extension`, które już do niczego nie pasuje, albo szablony, które zostały przeniesione. Bez niego takie uruchomienie po cichu kończy się sukcesem.
-
-Pliki, które djLint _znalazł_, a potem celowo pominął z powodu `exclude`, `extend_exclude`, `use_gitignore` lub `require_pragma`, nie są błędem. Takie uruchomienie kończy się kodem `0`, ponieważ konfiguracja zrobiła dokładnie to, co jej kazano. Dzięki temu `exclude` działa też w pre-commit, który przekazuje nazwy plików dodanych do indeksu (staged) niezależnie od tego, czy chcesz, żeby djLint je sprawdzał.
-
-Jeśli w twoim potoku CI ścieżka, w której z założenia nie ma szablonów, jest czymś normalnym, wyłącz kod `2` opcją `allow_empty_input`:
+Pliki, które djLint znalazł, a potem celowo pominął z powodu `exclude`, `extend_exclude`, `use_gitignore` lub `require_pragma`, nie są błędem i dzięki temu `exclude` działa w pre-commit. Jeśli w twoim potoku CI ścieżka bez szablonów jest czymś normalnym, wyłącz kod `2` opcją [`allow_empty_input`](/pl/docs/configuration/#allow-empty-input):
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## Użycie w wierszu poleceń
-
-djLint jest aplikacją wiersza poleceń. Zaawansowaną konfigurację opisuje strona [Konfiguracja](/pl/docs/configuration/).
 
 <CliHelp />

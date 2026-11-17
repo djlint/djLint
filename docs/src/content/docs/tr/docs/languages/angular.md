@@ -7,7 +7,7 @@ sidebar:
 
 djLint, Angular şablonlarını denetler. Kuralların bu şablonlara uyması için `angular` profilini ayarlayın.
 
-**[Angular nedir?](https://angular.io/guide/template-syntax)**
+**[Angular nedir?](https://angular.dev/guide/templates)**
 
 ## Komut satırını kullanma
 
@@ -15,7 +15,7 @@ djLint, Angular şablonlarını denetler. Kuralların bu şablonlara uyması iç
 djlint /path/to/templates --profile=angular
 ```
 
-## Ya da bir yapılandırma dosyası kullanın
+## Yapılandırma dosyasında
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 
@@ -31,7 +31,3 @@ profile = "angular"
 ```json title=".djlintrc"
 { "profile": "angular" }
 ```
-
-:::tip
-[Tüm seçenekler için yapılandırma kılavuzuna göz atın!](/tr/docs/configuration/)
-:::

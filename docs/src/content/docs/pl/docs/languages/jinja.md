@@ -9,9 +9,7 @@ djLint lintuje i formatuje szablony Jinja. Ustaw profil `jinja`, aby reguły i f
 
 **[Czym jest Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-Szablony MiniJinja są w pełni zgodne z Jinja2, więc używaj tego samego profilu `jinja`.
-
-Szablony Jinjava od HubSpot również są w stylu jinja, więc używaj tego profilu także dla nich.
+MiniJinja stosuje składnię Jinja2, a szablony Jinjava od HubSpot też są w stylu Jinja, więc dla obu używaj profilu `jinja`.
 
 ## Z wiersza poleceń
 
@@ -19,7 +17,7 @@ Szablony Jinjava od HubSpot również są w stylu jinja, więc używaj tego prof
 djlint /path/to/templates --profile=jinja
 ```
 
-## Lub w pliku konfiguracyjnym
+## W pliku konfiguracyjnym
 
 Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub `.djlintrc` swojego projektu.
 
@@ -35,7 +33,3 @@ profile = "jinja"
 ```json title=".djlintrc"
 { "profile": "jinja" }
 ```
-
-:::tip
-[Wszystkie opcje znajdziesz w przewodniku po konfiguracji!](/pl/docs/configuration/)
-:::

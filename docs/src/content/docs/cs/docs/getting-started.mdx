@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Instalace
 
-djLint je napsaný v [Pythonu](https://python.org) a publikovaný na [PyPI](https://pypi.org/project/djlint/).
+djLint potřebuje [Python](https://python.org) 3.11 nebo novější a je publikovaný na [PyPI](https://pypi.org/project/djlint/).
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 Chcete-li djLint spouštět v editoru nebo při každém commitu, přečtěte si [Integrace](/cs/docs/integrations/) a [pre-commit](/cs/docs/integrations/#pre-commit).
 
 :::note[Poznámka]
-Pokud příkaz `djlint` není nalezen, ověřte, že je Python [v systémové cestě (PATH)](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
+Pokud příkaz `djlint` není nalezen, složka, do které se nainstaloval, není ve vaší PATH. Příkaz `python -m djlint` ho spustí i tak.
 :::
 
 ## První spuštění
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## Návratové kódy
 
-| Kód | Význam                                                                                                                                           |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `0` | Vše, co měl djLint zkontrolovat, je v pořádku, nebo vaše konfigurace přeskočila všechny soubory, které našel.                                    |
-| `1` | djLint našel chyby lintování nebo soubory, které je potřeba přeformátovat. `--warn` je místo toho nahlásí jako varování a skončí s kódem `0`.    |
-| `2` | djLint nezkontroloval to, co jste chtěli: cestám neodpovídaly žádné soubory, příkazový řádek nebo konfigurace byly neplatné, nebo djLint selhal. |
+| Kód | Význam                                                                                                                                                                                                             |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `0` | Vše, co měl djLint zkontrolovat, je v pořádku, nebo vaše konfigurace přeskočila všechny soubory, které našel.                                                                                                      |
+| `1` | djLint našel chyby lintování nebo soubory, které je potřeba přeformátovat. `--warn` je místo toho nahlásí jako varování a skončí s kódem `0`.                                                                      |
+| `2` | djLint nezkontroloval to, co jste chtěli: cestám neodpovídaly žádné soubory, některý soubor nešel přečíst (není v UTF-8 nebo chybí oprávnění), příkazový řádek nebo konfigurace byly neplatné, nebo djLint selhal. |
 
-Jen kód `1` znamená, že se djLint na vaše šablony podíval a nelíbilo se mu, co našel. Kód `2` vždy znamená, že samotné spuštění nesplnilo svůj účel, takže pipeline může s oběma případy zacházet různě.
+Jen kód `1` znamená, že se djLint na vaše šablony podíval a nelíbilo se mu, co našel, takže pipeline rozliší neúspěšnou kontrolu od spuštění, které nic nezkontrolovalo, například s chybnou cestou nebo s `--extension`, které už neodpovídá.
 
-Právě kód `2` zachytí spuštění, které nezkontrolovalo vůbec nic: chybnou cestu, `--extension`, které už neodpovídá, nebo šablony, které se přesunuly. Bez něj by takové spuštění tiše prošlo.
-
-Soubory, které djLint _našel_ a pak záměrně přeskočil kvůli `exclude`, `extend_exclude`, `use_gitignore` nebo `require_pragma`, nejsou chybou. Takové spuštění skončí s kódem `0`, protože konfigurace udělala přesně to, co jí bylo řečeno. Díky tomu také `exclude` funguje v pre-commit, který předává názvy vašich připravených (staged) souborů bez ohledu na to, zda chcete, aby se na ně djLint díval.
-
-Pokud je pro vaši pipeline normální, že cesta oprávněně neobsahuje žádné šablony, vypněte kód `2` pomocí `allow_empty_input`:
+Soubory, které djLint našel a pak záměrně přeskočil kvůli `exclude`, `extend_exclude`, `use_gitignore` nebo `require_pragma`, nejsou chybou, a díky tomu funguje `exclude` v pre-commit. Pokud je pro vaši pipeline normální, že cesta neobsahuje žádné šablony, vypněte kód `2` pomocí [`allow_empty_input`](/cs/docs/configuration/#allow-empty-input):
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## Použití z příkazového řádku
-
-djLint je aplikace pro příkazový řádek. Pokročilou konfiguraci popisuje stránka [Konfigurace](/cs/docs/configuration/).
 
 <CliHelp />

@@ -5,7 +5,7 @@ sidebar:
   label: "Linter"
 ---
 
-djLint zawiera wiele reguł, które sprawdzają styl i poprawność szablonów. Aby w pełni wykorzystać linter, skonfiguruj go tak, by korzystał z gotowego profilu dla wybranego języka szablonów.
+Linter szuka w szablonach błędów i niespójnego stylu. Ustaw [profil](/pl/docs/configuration/#profile) swojego języka szablonów, aby działały reguły dla niego.
 
 ```bash
 djlint /path/to/templates --lint
@@ -14,12 +14,8 @@ djlint /path/to/templates --lint
 djlint /path/to/templates -e html.dj --profile=django
 
 # lub dla pojedynczego pliku
-djlint /path/to/this.html.j2  --profile=jinja
+djlint /path/to/this.html.j2 --profile=jinja
 ```
-
-:::tip
-[Wszystkie opcje znajdziesz w przewodniku po konfiguracji!](/pl/docs/configuration/)
-:::
 
 ## Włączanie i wyłączanie reguł
 
@@ -31,9 +27,9 @@ Na przykład:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Można to też zrobić w pliku konfiguracyjnym (zobacz [Konfiguracja](/pl/docs/configuration/)).
+Można też ustawić [`ignore`](/pl/docs/configuration/#ignore) i [`include`](/pl/docs/configuration/#include) w pliku konfiguracyjnym.
 
-Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają tylko reguły H. Reguły T i reguły dla jednego języka szablonów (D, J) włączają profile, których dotyczą. Reguła podana w `--include` działa przy każdym profilu i bez profilu, poza profilem, którego według opisu poniżej ona nie dotyczy.
+Przy jakich profilach działa reguła, opisują [Wzorce kodów](#wzorce-kodow). Reguła podana w `--include` działa przy każdym profilu i bez profilu, poza profilem, którego według opisu poniżej ona nie dotyczy.
 
 ## Reguły
 
@@ -53,7 +49,7 @@ Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają 
 | [H011](#h011) | Wartości atrybutów powinny być ujęte w cudzysłowy.                                              | ✔️        |
 | [H012](#h012) | Wokół `=` w atrybucie nie powinno być spacji.                                                   | ✔️        |
 | [H013](#h013) | Tag `img` powinien mieć atrybut alt.                                                            | ✔️        |
-| [H014](#h014) | Więcej pustych wierszy, niż zachowuje konfiguracja.                                             | ✔️        |
+| [H014](#h014) | Za dużo pustych wierszy z rzędu.                                                                | ✔️        |
 | [H015](#h015) | Po tagach `h` wstawiaj podział wiersza.                                                         | ✔️        |
 | [H016](#h016) | Brak tagu `title` w html.                                                                       | ✔️        |
 | [H017](#h017) | Tagi void powinny być samozamykające (konflikt z: H018).                                        | -         |
@@ -107,14 +103,15 @@ Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają 
 
 ### Wzorce kodów
 
-Pierwsza litera kodu oznacza:
+Pierwsza litera kodu mówi, przy jakich profilach działa reguła:
 
-- D: dotyczy wyłącznie Django
-- H: dotyczy HTML
-- J: dotyczy wyłącznie Jinja
-- M: dotyczy wyłącznie Handlebars
-- N: dotyczy wyłącznie Nunjucks
-- T: dotyczy szablonów ogólnie
+- D: Django, działa przy `django`.
+- H: HTML, działa przy każdym profilu. `angular` pomija H012 i H026.
+- J: Jinja, działa przy `jinja`.
+- T: składnia szablonów, działa przy każdym profilu poza `html` i `mako`.
+- M i N nie mają własnych reguł djLint. Własna reguła z kodem zaczynającym się od M działa przy `handlebars` i `angular`, a od N przy `nunjucks` i `angular`.
+
+`all` uruchamia wszystkie reguły, a bez profilu linter uruchamia reguły profilu `html`.
 
 ### Szczegóły reguł
 
@@ -172,7 +169,7 @@ Gdy `{% block %}` obejmuje wiele wierszy lub bloki są zagnieżdżone, samo `{% 
 
 Domyślnie wyłączona; włącz ją za pomocą `--include=T003`. `--name-endblocks` sam wpisuje nazwę.
 
-Nazwa nie jest wymagana, gdy blok otwiera się i zamyka w tym samym wierszu, np. `{% block title %}``{% endblock %}`. Formater przenosi zawartość bloku zawierającego inne tagi do osobnych wierszy, więc blok zapisany w jednym wierszu może po sformatowaniu wymagać nazwy; z `--name-endblocks` formater wpisze także tę nazwę.
+Nazwa nie jest wymagana, gdy blok otwiera się i zamyka w tym samym wierszu, np. `{% block title %}{% endblock %}`. Formater przenosi zawartość bloku zawierającego inne tagi do osobnych wierszy, więc blok zapisany w jednym wierszu może po sformatowaniu wymagać nazwy; z `--name-endblocks` formater wpisze także tę nazwę.
 
 Źle:
 
@@ -411,7 +408,7 @@ Dobrze:
 
 `Found extra blank lines.`
 
-Ciągi pustych wierszy nie mają wpływu na wyrenderowaną stronę (HTML zwija białe znaki), ale rozdymają szablony i zaśmiecają diffy, gdy zmieniają się sąsiednie wiersze. Formater djLint domyślnie usuwa je całkowicie (zostawiając co najwyżej `max_blank_lines` pustych wierszy, domyślnie 0), więc pozostałe ciągi wskazują na niesformatowany kod.
+Ciągi pustych wierszy nie mają wpływu na wyrenderowaną stronę (HTML zwija białe znaki), ale rozdymają szablony i zaśmiecają diffy, gdy zmieniają się sąsiednie wiersze. Reguła zgłasza dwa lub więcej pustych wierszy z rzędu albo więcej niż `max_blank_lines`, gdy ta wartość jest większa, a przy `preserve_blank_lines` nie zgłasza niczego. Pojedynczy pusty wiersz nie jest zgłaszany, choć `--reformat` domyślnie go usuwa.
 
 Źle:
 
@@ -578,7 +575,7 @@ Dobrze:
 
 `Empty tag pair found. Consider removing.`
 
-Pusta para tagów nie renderuje żadnej treści, ale nadal tworzy węzeł DOM, który może przejąć marginesy, obramowania lub odstępy flex/grid z arkuszy stylów, dając trudne do wyśledzenia widmowe odstępy; zwykle jest to pozostałość po wcześniejszej edycji. Tagi, które w zwykłych znacznikach bywają puste z uzasadnionych powodów (td, th, li, dt, dd, slot), są wyłączone z reguły. Nie są też zgłaszane tagi z jakimkolwiek atrybutem (punkty montowania JS, takie jak `<div id="app">``</div>`, elementy fontów z ikonami, takie jak `<i class="fa fa-user">``</i>`); dopasowywane są tylko puste pary całkowicie pozbawione atrybutów.
+Pusta para tagów nie renderuje żadnej treści, ale nadal tworzy węzeł DOM, który może przejąć marginesy, obramowania lub odstępy flex/grid z arkuszy stylów, dając trudne do wyśledzenia widmowe odstępy; zwykle jest to pozostałość po wcześniejszej edycji. Tagi, które w zwykłych znacznikach bywają puste z uzasadnionych powodów (td, th, li, dt, dd, slot), są wyłączone z reguły. Nie są też zgłaszane tagi z jakimkolwiek atrybutem (punkty montowania JS, takie jak `<div id="app"></div>`, elementy fontów z ikonami, takie jak `<i class="fa fa-user"></i>`); dopasowywane są tylko puste pary całkowicie pozbawione atrybutów.
 
 Źle:
 
@@ -658,7 +655,7 @@ text/javascript i text/css to domyślne wartości HTML5 dla `<script>` i `<style
 Źle:
 
 ```html
-<script type="text/javascript" src="app.js">
+<script type="text/javascript" src="app.js"></script>
 ```
 
 Dobrze:
@@ -774,7 +771,7 @@ Dobrze:
 
 Wyszukiwarki używają opisu meta jako fragmentu wyświetlanego w wynikach pod tytułem strony; bez niego same składają fragment z przypadkowego tekstu strony, co obniża współczynnik klikalności i daje słabe podglądy linku przy udostępnianiu strony.
 
-Działa tylko na plikach zawierających kompletny dokument `<html>`...`</html>`. Argument dotyczący fragmentu w wynikach wyszukiwania odnosi się do stron indeksowanych publicznie; w aplikacjach wymagających logowania i w aplikacjach intranetowych ta reguła jest często wyłączana.
+Działa tylko na plikach zawierających kompletny dokument `<html>`...`</html>`. Ma znaczenie tylko dla stron indeksowanych przez wyszukiwarki, więc w aplikacji za logowaniem ją zignoruj.
 
 Źle:
 
@@ -896,7 +893,7 @@ Dobrze:
 
 `Block tag has no matching end tag.`
 
-Tag blokowy, taki jak `{% if %}`, `{% for %}` czy `{% macro %}`, bez pasującego tagu końcowego to twardy TemplateSyntaxError w Django i Jinja: strona nie renderuje się w chwili obsługi żądania, a ta reguła wychwytuje to przed wdrożeniem. Zgłasza też osierocone tagi końcowe bez tagu otwierającego oraz nieprawidłowo przeplecione bloki (np. `{% if %}``{% for %}``{% endif %}`).
+Tag blokowy, taki jak `{% if %}`, `{% for %}` czy `{% macro %}`, bez pasującego tagu końcowego to twardy TemplateSyntaxError w Django i Jinja: strona nie renderuje się w chwili obsługi żądania, a ta reguła wychwytuje to przed wdrożeniem. Zgłasza też osierocone tagi końcowe bez tagu otwierającego oraz nieprawidłowo przeplecione bloki (np. `{% if %}{% for %}{% endif %}`).
 
 Ta reguła sprawdza parowanie `{% block %}`/`{% endblock %}` i niezgodności nazw w endblock; T003 (domyślnie wyłączona) dodatkowo wymaga nazwy w każdym wielowierszowym `{% endblock %}`. Sprawdzane są też własne tagi blokowe zarejestrowane przez custom_blocks, łącznie z ich samozamykającą formą / %}.
 
@@ -985,7 +982,7 @@ Dobrze:
 
 Django odmawia skompilowania szablonu, w którym przed `{% extends %}` znajduje się inny tag, a tekst zapisany przed nim jest renderowany, więc wycieka na stronę przed wszystkim, co generuje szablon nadrzędny. Jinja również renderuje ten tekst, a nunjucks go odrzuca, więc w każdym silniku szablon nie robi tego, na co wygląda.
 
-Komentarz `{# #}` niczego nie renderuje i się nie liczy; nie liczy się też nic wewnątrz bloku `{% comment %}`, <code>{&#37; raw %}</code> ani `{% verbatim %}`, nazwanego czy nie, obszar `{# djlint:off #}` w dowolnym z trzech zapisów ani front matter w yaml. Komentarz HTML się liczy: silnik zapisuje go na stronie przed doctype szablonu nadrzędnego, a właśnie o taki wyciek chodzi w tej regule. Liczą się również blok `{% blocktrans %}`, blok `{% filter %}` i blok `<?php ?>`, bo każdy z nich coś renderuje. Sprawdzane jest tylko pierwsze `{% extends %}`; drugie jest osobnym błędem. W profilach jinja i nunjucks tag gałęzi przed nim się nie liczy, ponieważ jinja dokumentuje `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` jako sposób wyboru szablonu nadrzędnego; django wczytuje resztę szablonu do `{% extends %}`, a potem odrzuca `{% endif %}`, więc w tym profilu tag gałęzi się liczy.
+Komentarz `{# #}` niczego nie renderuje i się nie liczy; nie liczy się też nic wewnątrz bloku `{% comment %}`, `{% raw %}` ani `{% verbatim %}`, nazwanego czy nie, obszar `{# djlint:off #}` w dowolnym z trzech zapisów ani front matter w yaml. Komentarz HTML się liczy: silnik zapisuje go na stronie przed doctype szablonu nadrzędnego, a właśnie o taki wyciek chodzi w tej regule. Liczą się również blok `{% blocktrans %}`, blok `{% filter %}` i blok `<?php ?>`, bo każdy z nich coś renderuje. Sprawdzane jest tylko pierwsze `{% extends %}`; drugie jest osobnym błędem. W profilach jinja i nunjucks tag gałęzi przed nim się nie liczy, ponieważ jinja dokumentuje `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` jako sposób wyboru szablonu nadrzędnego; django wczytuje resztę szablonu do `{% extends %}`, a potem odrzuca `{% endif %}`, więc w tym profilu tag gałęzi się liczy.
 
 Nie dotyczy profili handlebars, golang, liquid i angular.
 
@@ -1029,9 +1026,9 @@ Dobrze:
 
 Gdy szablon rozszerza inny, o tym, co trafia na wyjście, decyduje szablon nadrzędny, a potomny jedynie wypełnia jego bloki. Tekst lub HTML zapisany po `{% extends %}` i poza wszystkimi `{% block %}` jest podczas renderowania po cichu odrzucany, więc akapit, który w źródle wygląda dobrze, nigdy nie trafia na stronę.
 
-Tag szablonu w tym miejscu nadal się wykonuje, więc `{% load %}`, `{% set %}` i `{% if %}` otaczający blok pozostają bez zgłoszenia, podobnie jak komentarze `{# #}` i `{% comment %}`, komentarze HTML, bloki <code>{&#37; raw %}</code> i `{% verbatim %}` oraz treść `{% macro %}`, blokowej formy `{% set %}`, `{% partialdef %}` lub `{% addtoblock %}`, która jest przechwytywana, a nie wypisywana. Tekst `{% blocktrans %}` jest zgłaszany, ponieważ `{% blocktrans %}` nie jest `{% block %}`. Brana jest pod uwagę tylko treść po tagu extends, a każdy jej ciągły fragment jest zgłaszany raz, w miejscu, w którym się zaczyna.
+Tag szablonu w tym miejscu nadal się wykonuje, więc `{% load %}`, `{% set %}` i `{% if %}` otaczający blok pozostają bez zgłoszenia, podobnie jak komentarze `{# #}` i `{% comment %}`, komentarze HTML, bloki `{% raw %}` i `{% verbatim %}` oraz treść `{% macro %}`, blokowej formy `{% set %}`, `{% partialdef %}` lub `{% addtoblock %}`, która jest przechwytywana, a nie wypisywana. Tekst `{% blocktrans %}` jest zgłaszany, ponieważ `{% blocktrans %}` nie jest `{% block %}`. Brana jest pod uwagę tylko treść po tagu extends, a każdy jej ciągły fragment jest zgłaszany raz, w miejscu, w którym się zaczyna.
 
-Silnik czyta tagi szablonu przed HTML-em, więc `{% extends %}` zapisany wewnątrz komentarza HTML lub `<pre>` nadal się wykonuje i nadal czyni plik szablonem potomnym; naprawdę ukrywają go tylko `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> i `{% verbatim %}`. Tekst wewnątrz komentarza HTML i tak nie trafia do żadnego czytelnika i nie jest zgłaszany, ale zapisane tam tagi nadal są odczytywane.
+Silnik czyta tagi szablonu przed HTML-em, więc `{% extends %}` zapisany wewnątrz komentarza HTML lub `<pre>` nadal się wykonuje i nadal czyni plik szablonem potomnym; naprawdę ukrywają go tylko `{# #}`, `{% comment %}`, `{% raw %}` i `{% verbatim %}`. Tekst wewnątrz komentarza HTML i tak nie trafia do żadnego czytelnika i nie jest zgłaszany, ale zapisane tam tagi nadal są odczytywane.
 
 Nie dotyczy profili handlebars, golang, liquid i angular.
 
@@ -1085,7 +1082,7 @@ Django, Jinja i Nunjucks odmawiają sparsowania szablonu, w którym dwa bloki ma
 
 Liczy się tylko `{% block %}`: `{% blocktrans %}` nie jest blokiem, a `{% endblock name %}` jedynie nazywa blok, który zamyka. Nazwy są porównywane dokładnie w zapisanej postaci, ponieważ silniki traktują `Content` i `content` jako dwa bloki.
 
-Pomijane jest tylko to, czego sam silnik nigdy nie parsuje: komentarz szablonu, blok `{% comment %}`, treść <code>{&#37; raw %}</code> lub `{% verbatim %}` oraz obszar `djlint:off`. Blok zapisany wewnątrz komentarza HTML, w treści `<script>`, `<style>`, `<pre>` lub `<textarea>` albo w treści `{% filter %}` nadal jest liczony, ponieważ silnik czyta to wszystko i tak samo zgłasza błąd zduplikowanej nazwy.
+Pomijane jest tylko to, czego sam silnik nigdy nie parsuje: komentarz szablonu, blok `{% comment %}`, treść `{% raw %}` lub `{% verbatim %}` oraz obszar `djlint:off`. Blok zapisany wewnątrz komentarza HTML, w treści `<script>`, `<style>`, `<pre>` lub `<textarea>` albo w treści `{% filter %}` nadal jest liczony, ponieważ silnik czyta to wszystko i tak samo zgłasza błąd zduplikowanej nazwy.
 
 `{% embed %}` otwiera własny zakres: bloki w nim wypełniają osadzany szablon, a nie bieżący, więc dwa osadzenia tego samego fragmentu szablonu mogą każde zawierać `{% block body %}`. Nazwa powtórzona w obrębie jednego osadzenia nadal jest zgłaszana.
 
@@ -1145,7 +1142,7 @@ Tag wyjścia wypisuje wartość, a `if`, `for`, `url`, `include` i pozostałe to
 
 Samo słowo kluczowe jest zwykłą nazwą zmiennej, więc `{{ url }}`, `{{ url|default:"/" }}` i `{{ set.name }}` nie są zgłaszane. Zgłaszane jest tylko słowo kluczowe z argumentem, a także samo słowo zamykające lub słowo gałęzi, takie jak `{{ endif }}` lub `{{ else }}`. Słowo kluczowe sterujące, takie jak `if` czy `for`, nie może rozpoczynać wyrażenia, więc wszystko, co po nim następuje, jest argumentem, łącznie z operatorem, i `{{ if -1 > count }}` jest zgłaszane. Pozostałe nazwy służą też jako zmienne i funkcje i w ich przypadku za argument uznaje się tylko ciąg znaków w cudzysłowach lub słowo, więc wyrażenie, które akurat zaczyna się od jednej z nich, pozostaje bez zgłoszenia: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` i `{{ filter [0] }}` nie są zgłaszane.
 
-Treść bloku <code>{&#37; raw %}</code> lub `{% verbatim %}` jest tekstem, a nie składnią szablonu, i jest pomijana, łącznie z nazwaną formą `{% verbatim vueapp %}...{% endverbatim vueapp %}`, więc chronione w ten sposób `{{ }}` z Vue lub Handlebars nie jest zgłaszane. `{{ }}` zapisane w argumencie tagu blokowego w cudzysłowach, jak w `{% trans "Write {{ if x }} instead" %}`, to tekst, który silnik wypisuje, więc również pozostaje bez zgłoszenia.
+Treść bloku `{% raw %}` lub `{% verbatim %}` jest tekstem, a nie składnią szablonu, i jest pomijana, łącznie z nazwaną formą `{% verbatim vueapp %}...{% endverbatim vueapp %}`, więc chronione w ten sposób `{{ }}` z Vue lub Handlebars nie jest zgłaszane. `{{ }}` zapisane w argumencie tagu blokowego w cudzysłowach, jak w `{% trans "Write {{ if x }} instead" %}`, to tekst, który silnik wypisuje, więc również pozostaje bez zgłoszenia.
 
 Źle:
 
@@ -1351,7 +1348,7 @@ Id nazywa jeden element. Drugi element z tym samym id psuje `getElementById`, `<
 
 Dwa id w wykluczających się gałęziach jednego `{% if %}...{% else %}...{% endif %}` nigdy nie są renderowane jednocześnie, więc nie są zgłaszane. Pętla `{% for %}` ani `{% block %}` nie są gałęzią: id wewnątrz nich i to samo id na zewnątrz są renderowane oba, a późniejsze jest zgłaszane. Wartości zapisanej przez tag szablonu nie da się ustalić, więc pozostaje bez zgłoszenia, podobnie jak wartość pusta. Id są porównywane dokładnie, tak jak robi to przeglądarka, więc `save` i `Save` to dwa różne id.
 
-Gałęzie są odczytywane w języku, w którym napisano plik, z dowolnymi białymi znakami, jakie ten język dopuszcza między ogranicznikami a nazwą tagu: `{% elif %}` i `{% else %}`, `{% elsif %}` i `{% when %}` z liquid, `{{ else }}` z go, instrukcja wierszowa `% else:` z mako oraz `{{else}}` z handlebars, jego łańcuchowe `{{else if x}}` i sekcja odwrócona dowolnego bloku `{{#helper}}`, łącznie z własnymi helperami. Zawartość `<template>` to osobny fragment dokumentu, do którego `getElementById` nigdy nie sięga, więc id w nim jest porównywane tylko z id z tego samego `<template>`: dwa elementy template mogą każdy zawierać wiersz z tym samym id, a dwa takie id w jednym elemencie template nadal są zgłaszane. Id wewnątrz komentarza, treści <code>{&#37; raw %}</code> lub `{% verbatim %}` albo obszaru `djlint:off` w ogóle nie jest odczytywane.
+Gałęzie są odczytywane w języku, w którym napisano plik, z dowolnymi białymi znakami, jakie ten język dopuszcza między ogranicznikami a nazwą tagu: `{% elif %}` i `{% else %}`, `{% elsif %}` i `{% when %}` z liquid, `{{ else }}` z go, instrukcja wierszowa `% else:` z mako oraz `{{else}}` z handlebars, jego łańcuchowe `{{else if x}}` i sekcja odwrócona dowolnego bloku `{{#helper}}`, łącznie z własnymi helperami. Zawartość `<template>` to osobny fragment dokumentu, do którego `getElementById` nigdy nie sięga, więc id w nim jest porównywane tylko z id z tego samego `<template>`: dwa elementy template mogą każdy zawierać wiersz z tym samym id, a dwa takie id w jednym elemencie template nadal są zgłaszane. Id wewnątrz komentarza, treści `{% raw %}` lub `{% verbatim %}` albo obszaru `djlint:off` w ogóle nie jest odczytywane.
 
 Źle:
 
@@ -1505,28 +1502,13 @@ Dobrze:
 
 <!-- oxfmt-ignore-end -->
 
-### Dodawanie reguł
-
-Chętnie przyjmujemy pull requesty z nowymi regułami!
-
-Dobra reguła składa się z następujących elementów:
-
-- Nazwa
-- Kod
-- Komunikat: komunikat wyświetlany po znalezieniu błędu.
-- Flagi: flagi wyrażeń regularnych, na przykład re.I|re.M. Domyślnie re.DOTALL.
-- Wzorce: wyrażenia regularne, które znajdują błąd.
-- Wykluczenia: opcjonalna lista profili, do których reguła się nie stosuje.
-
-Dołącz test, który sprawdza regułę.
-
 ## Własne reguły
 
-Możesz dodać własne reguły tylko dla swojego projektu, tworząc plik `.djlint_rules.yaml` obok `pyproject.toml`. Reguły dodane do tego pliku zostaną wczytane przez djLint. Plik reguł w innej lokalizacji można wskazać opcją wiersza poleceń `--rules`.
+Własne reguły zapisuje się w pliku `.djlint_rules.yaml` w katalogu głównym projektu, obok pliku konfiguracyjnego, a djLint je wczytuje. `--rules` wskazuje plik reguł w innym miejscu. Dla kodu własnej reguły obowiązują [te same litery](#wzorce-kodow), więc reguła z kodem zaczynającym się od innej litery, na przykład C, działa przy każdym profilu. `default: false` i `exclude` działają także we własnych regułach.
 
 ### Reguły oparte na wzorcach
 
-Możesz dodawać reguły, które zgłaszają błąd, gdy któryś ze wzorców wyrażeń regularnych zostanie dopasowany:
+Reguła oparta na wzorcach zgłasza każde dopasowanie swoich wzorców:
 
 ```yaml
 - rule:
@@ -1539,7 +1521,7 @@ Możesz dodawać reguły, które zgłaszają błąd, gdy któryś ze wzorców wy
 
 ### Reguły w modułach Pythona
 
-Możesz dodawać reguły, które importują i wykonują własną funkcję w Pythonie:
+Reguła w module Pythona uruchamia twoją własną funkcję:
 
 ```yaml
 - rule:
@@ -1551,7 +1533,7 @@ Możesz dodawać reguły, które importują i wykonują własną funkcję w Pyth
 Wskazany `python_module` musi zawierać funkcję `run()`, która zostanie wykonana dla każdego sprawdzanego pliku. Musi ona przyjmować następujące argumenty:
 
 - `rule`: słownik reprezentujący regułę w `.djlint_rules.yaml`. Zwykle używa się tej zmiennej, aby odczytać nazwę i komunikat reguły.
-- `config`: obiekt konfiguracji DJLint.
+- `config`: obiekt konfiguracji djLint.
 - `html`: pełna treść HTML pliku.
 - `filepath`: ścieżka do aktualnie sprawdzanego pliku.
 - `line_ends`: lista pozycji znaków `start` i `end` wierszy, której możesz użyć z `djlint.lint.get_line()`, aby uzyskać numery wierszy na podstawie pozycji znaku. Zobacz przykład.
@@ -1559,7 +1541,7 @@ Wskazany `python_module` musi zawierać funkcję `run()`, która zostanie wykona
 
 Moduł może znajdować się w katalogu głównym projektu. Jeśli zwróci `line` lub `end`, które nie są pozycją, djLint zatrzyma się z błędem podającym nazwę reguły.
 
-Funkcja musi zwracać listę słowników, po jednym dla każdego błędu, z następującymi kluczami:
+Funkcja musi zwracać listę słowników, po jednym dla każdego zgłoszenia, z następującymi kluczami:
 
 - `code`: kod reguły, która zgłasza błąd (zwykle `rule['name']`)
 - `line`: numer wiersza i numer znaku w tym wierszu, oddzielone znakiem „:”, w postaci ciągu znaków.

@@ -5,7 +5,7 @@ sidebar:
   label: "Linter"
 ---
 
-djLint, şablonlarınızın stilini ve geçerliliğini denetleyen birçok kural içerir. Linter'ı, seçtiğiniz şablon dili için hazır bir profili kullanacak şekilde yapılandırarak ondan tam olarak yararlanın.
+Linter, şablonlardaki hataları ve tutarsız stili denetler. Şablon dilinizin [profilini](/tr/docs/configuration/#profile) ayarlayın, böylece o dilin kuralları çalışır.
 
 ```bash
 djlint /path/to/templates --lint
@@ -13,13 +13,9 @@ djlint /path/to/templates --lint
 # özel uzantılarla
 djlint /path/to/templates -e html.dj --profile=django
 
-# ya da bir dosya için
-djlint /path/to/this.html.j2  --profile=jinja
+# ya da tek bir dosya
+djlint /path/to/this.html.j2 --profile=jinja
 ```
-
-:::tip
-[Tüm seçenekler için yapılandırma kılavuzuna göz atın!](/tr/docs/configuration/)
-:::
 
 ## Kuralları etkinleştirme ya da devre dışı bırakma
 
@@ -31,9 +27,9 @@ Kuralların çoğu varsayılan olarak etkindir. Kurallar komut satırında `--ig
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Bu, [Yapılandırma](/tr/docs/configuration/) dosyası üzerinden de yapılabilir.
+Ya da yapılandırma dosyasında [`ignore`](/tr/docs/configuration/#ignore) ve [`include`](/tr/docs/configuration/#include) değerlerini ayarlayın.
 
-[Profil](/tr/docs/configuration/#profile) ayarlanmadığında yerleşik kurallardan yalnızca H kuralları çalışır. T kuralları ve tek bir şablon diline ait kurallar (D, J), uygulandıkları profillerle gelir. `--include` ile verilen bir kural her profilde ve profil olmadan da çalışır; aşağıdaki açıklamasında uygulanmadığı söylenen profil bunun dışındadır.
+Bir kuralı hangi profillerin çalıştırdığı [Kod kalıpları](#kod-kaliplari) bölümünde yazar. `--include` ile verilen bir kural her profilde ve profil olmadan da çalışır; aşağıdaki açıklamasında uygulanmadığı söylenen profil bunun dışındadır.
 
 ## Kurallar
 
@@ -53,7 +49,7 @@ Bu, [Yapılandırma](/tr/docs/configuration/) dosyası üzerinden de yapılabili
 | [H011](#h011) | Öznitelik değerleri tırnak içinde olmalıdır.                                                                      | ✔️         |
 | [H012](#h012) | Öznitelikteki `=` işaretinin çevresinde boşluk olmamalıdır.                                                       | ✔️         |
 | [H013](#h013) | `img` etiketinde alt özniteliği bulunmalıdır.                                                                     | ✔️         |
-| [H014](#h014) | Yapılandırmanın izin verdiğinden daha fazla boş satır var.                                                        | ✔️         |
+| [H014](#h014) | Art arda çok fazla boş satır.                                                                                     | ✔️         |
 | [H015](#h015) | `h` etiketlerinden sonra satır sonu ekleyin.                                                                      | ✔️         |
 | [H016](#h016) | html içinde `title` etiketi eksik.                                                                                | ✔️         |
 | [H017](#h017) | Void etiketler kendiliğinden kapanmalıdır (çakıştığı kural: H018).                                                | -          |
@@ -107,14 +103,15 @@ Bu, [Yapılandırma](/tr/docs/configuration/) dosyası üzerinden de yapılabili
 
 ### Kod kalıpları
 
-Bir kodun ilk harfi şu kalıbı izler:
+Bir kodun ilk harfi, kuralı hangi profillerin çalıştırdığını söyler:
 
-- D: yalnızca Django'ya özgüdür
-- H: html'e uygulanır
-- J: yalnızca Jinja'ya özgüdür
-- M: yalnızca Handlebars'a özgüdür
-- N: yalnızca Nunjucks'a özgüdür
-- T: genel olarak şablonlara uygulanır
+- D: Django, `django` altında çalışır.
+- H: HTML, her profilde çalışır. `angular`, H012 ve H026'yı dışarıda bırakır.
+- J: Jinja, `jinja` altında çalışır.
+- T: şablon söz dizimi, `html` ve `mako` dışındaki her profilde çalışır.
+- djLint'in kendi kuralları arasında M ya da N ile başlayan yoktur. Kodu M ile başlayan özel bir kural `handlebars` ve `angular` altında, N ile başlayan ise `nunjucks` ve `angular` altında çalışır.
+
+`all` her kuralı çalıştırır; profil olmadan linter `html` profilinin kurallarını çalıştırır.
 
 ### Kural ayrıntıları
 
@@ -172,7 +169,7 @@ Bir `{% block %}` çok sayıda satıra yayıldığında ya da bloklar iç içe o
 
 Varsayılan olarak kapalıdır; `--include=T003` ile etkinleştirin. `--name-endblocks` adı sizin yerinize yazar.
 
-Blok aynı satırda açılıp kapanıyorsa ad gerekmez, örn. `{% block title %}``{% endblock %}`. Biçimlendirici, başka etiketler içeren bir bloğun içeriğini ayrı satırlara taşır; bu yüzden tek satırda yazılmış bir blok biçimlendirildikten sonra bir ad gerektirebilir. `--name-endblocks` ile biçimlendirici bu adı da yazar.
+Blok aynı satırda açılıp kapanıyorsa ad gerekmez, örn. `{% block title %}{% endblock %}`. Biçimlendirici, başka etiketler içeren bir bloğun içeriğini ayrı satırlara taşır; bu yüzden tek satırda yazılmış bir blok biçimlendirildikten sonra bir ad gerektirebilir. `--name-endblocks` ile biçimlendirici bu adı da yazar.
 
 Yapmayın:
 
@@ -411,7 +408,7 @@ Yapın:
 
 `Found extra blank lines.`
 
-Art arda gelen boş satırların işlenen sayfa üzerinde hiçbir etkisi yoktur (HTML boşlukları daraltır), ancak şablonları şişirir ve komşu satırlar değiştiğinde gürültülü diff'ler oluşturur. djLint'in biçimlendiricisi bunları varsayılan olarak tamamen kaldırır (en fazla `max_blank_lines` kadar boş satır bırakır; bunun varsayılan değeri 0'dır); bu yüzden kalan boş satır dizileri biçimlendirilmemiş koda işaret eder.
+Art arda gelen boş satırların işlenen sayfa üzerinde hiçbir etkisi yoktur (HTML boşlukları daraltır), ancak şablonları şişirir ve komşu satırlar değiştiğinde gürültülü diff'ler oluşturur. Kural art arda iki ya da daha fazla boş satırı, `max_blank_lines` daha yüksekse ondan fazlasını bildirir; `preserve_blank_lines` açıkken hiçbir şey bildirmez. Tek bir boş satır bildirilmez, ancak `--reformat` onu varsayılan olarak kaldırır.
 
 Yapmayın:
 
@@ -578,7 +575,7 @@ Yapın:
 
 `Empty tag pair found. Consider removing.`
 
-Boş bir etiket çifti hiçbir içerik göstermez, ancak yine de stil sayfalarından kenar boşluğu, kenarlık ya da flex/grid aralıkları alabilen bir DOM düğümü oluşturur; bu da izini sürmesi zor hayalet boşluklar üretir. Genellikle daha önceki bir düzenlemeden kalmış işaretlemedir. Normal işaretlemede meşru olarak boş olan etiketler (td, th, li, dt, dd, slot) muaftır. Herhangi bir öznitelik taşıyan etiketler de (`<div id="app">``</div>` gibi JS bağlama noktaları, `<i class="fa fa-user">``</i>` gibi simge yazı tipi öğeleri) bildirilmez; yalnızca hiç özniteliği olmayan boş çiftler eşleşir.
+Boş bir etiket çifti hiçbir içerik göstermez, ancak yine de stil sayfalarından kenar boşluğu, kenarlık ya da flex/grid aralıkları alabilen bir DOM düğümü oluşturur; bu da izini sürmesi zor hayalet boşluklar üretir. Genellikle daha önceki bir düzenlemeden kalmış işaretlemedir. Normal işaretlemede meşru olarak boş olan etiketler (td, th, li, dt, dd, slot) muaftır. Herhangi bir öznitelik taşıyan etiketler de (`<div id="app"></div>` gibi JS bağlama noktaları, `<i class="fa fa-user"></i>` gibi simge yazı tipi öğeleri) bildirilmez; yalnızca hiç özniteliği olmayan boş çiftler eşleşir.
 
 Yapmayın:
 
@@ -658,7 +655,7 @@ text/javascript ve text/css, `<script>` ve `<style>` için HTML5 varsayılanlar�
 Yapmayın:
 
 ```html
-<script type="text/javascript" src="app.js">
+<script type="text/javascript" src="app.js"></script>
 ```
 
 Yapın:
@@ -774,7 +771,7 @@ Yapın:
 
 Arama motorları meta açıklamasını sonuçlarda sayfa başlığınızın altındaki kısa metin olarak kullanır; açıklama olmadığında bu metni sayfadaki rastgele bir metinden kendileri oluşturur. Bu da tıklama oranlarını düşürür ve sayfa paylaşıldığında kötü bağlantı önizlemeleri üretir.
 
-Yalnızca eksiksiz bir `<html>`...`</html>` belgesi içeren dosyalarda tetiklenir. Kısa metin gerekçesi herkese açık olarak dizinlenen sayfalar için geçerlidir; kimlik doğrulama arkasındaki ya da intranet uygulamalarında bu kural genellikle devre dışı bırakılır.
+Yalnızca eksiksiz bir `<html>`...`</html>` belgesi içeren dosyalarda tetiklenir. Yalnızca arama motorlarının dizinlediği sayfalar için önemlidir, bu yüzden giriş gerektiren bir uygulamada bu kuralı yok sayın.
 
 Yapmayın:
 
@@ -896,7 +893,7 @@ Yapın:
 
 `Block tag has no matching end tag.`
 
-Eşleşen bitiş etiketi olmayan `{% if %}`, `{% for %}` ya da `{% macro %}` gibi bir blok etiketi Django ve Jinja'da kesin bir TemplateSyntaxError'dır: sayfa istek sırasında işlenemez; bu kural da bunu dağıtımdan önce yakalar. Kural ayrıca açılış etiketi olmayan, eşi bulunmayan bitiş etiketlerini ve yanlış iç içe geçmiş blokları da (örn. `{% if %}``{% for %}``{% endif %}`) bildirir.
+Eşleşen bitiş etiketi olmayan `{% if %}`, `{% for %}` ya da `{% macro %}` gibi bir blok etiketi Django ve Jinja'da kesin bir TemplateSyntaxError'dır: sayfa istek sırasında işlenemez; bu kural da bunu dağıtımdan önce yakalar. Kural ayrıca açılış etiketi olmayan, eşi bulunmayan bitiş etiketlerini ve yanlış iç içe geçmiş blokları da (örn. `{% if %}{% for %}{% endif %}`) bildirir.
 
 `{% block %}`/`{% endblock %}` eşleşmesi ve endblock adı uyuşmazlıkları bu kural tarafından denetlenir; T003 (varsayılan olarak kapalı) ek olarak çok satırlı her `{% endblock %}` için bir ad ister. custom_blocks ile kaydedilmiş özel blok etiketleri de, kendiliğinden kapanan / %} biçimleri dahil, denetlenir.
 
@@ -985,7 +982,7 @@ Yapın:
 
 Django, `{% extends %}` etiketinden önce başka bir etiketin geldiği şablonu derlemeyi reddeder; ondan önce yazılan metin ise işlenir ve böylece üst şablonun ürettiği her şeyden önce sayfaya sızar. Jinja da bu metni işler, nunjucks ise atar; yani her motorda şablon, göründüğü şeyi yapmaz.
 
-Bir `{# #}` yorumu hiçbir şey üretmez ve sayılmaz; adlandırılmış olsun ya da olmasın bir `{% comment %}`, <code>{&#37; raw %}</code> ya da `{% verbatim %}` bloğunun içindeki hiçbir şey, üç yazımından herhangi biriyle bir `{# djlint:off #}` bölgesi ya da yaml ön bilgisi (front matter) de sayılmaz. Bir html yorumu ise sayılır: motor onu üst şablonun doctype'ından önce sayfaya yazar ve bu kuralın konusu olan sızıntı da budur. Her biri çıktı üreten bir `{% blocktrans %}` bloğu, bir `{% filter %}` bloğu ve bir `<?php ?>` bloğu da sayılır. Yalnızca ilk `{% extends %}` denetlenir; ikincisi kendi başına bir hatadır. jinja ve nunjucks profillerinde ondan önce gelen bir dal etiketi sayılmaz, çünkü jinja bir üst şablon seçmenin yolu olarak `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` yazımını belgeler; django ise şablonun geri kalanını `{% extends %}` içine okur ve ardından `{% endif %}` etiketini reddeder, bu yüzden bu profilde bir dal etiketi sayılır.
+Bir `{# #}` yorumu hiçbir şey üretmez ve sayılmaz; adlandırılmış olsun ya da olmasın bir `{% comment %}`, `{% raw %}` ya da `{% verbatim %}` bloğunun içindeki hiçbir şey, üç yazımından herhangi biriyle bir `{# djlint:off #}` bölgesi ya da yaml ön bilgisi (front matter) de sayılmaz. Bir html yorumu ise sayılır: motor onu üst şablonun doctype'ından önce sayfaya yazar ve bu kuralın konusu olan sızıntı da budur. Her biri çıktı üreten bir `{% blocktrans %}` bloğu, bir `{% filter %}` bloğu ve bir `<?php ?>` bloğu da sayılır. Yalnızca ilk `{% extends %}` denetlenir; ikincisi kendi başına bir hatadır. jinja ve nunjucks profillerinde ondan önce gelen bir dal etiketi sayılmaz, çünkü jinja bir üst şablon seçmenin yolu olarak `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` yazımını belgeler; django ise şablonun geri kalanını `{% extends %}` içine okur ve ardından `{% endif %}` etiketini reddeder, bu yüzden bu profilde bir dal etiketi sayılır.
 
 handlebars, golang, liquid ve angular profillerinde uygulanmaz.
 
@@ -1029,9 +1026,9 @@ Yapın:
 
 Bir şablon başka bir şablonu genişlettiğinde, neyin çıktı olarak verileceğine üst şablon karar verir ve alt şablon yalnızca üst şablonun bloklarını doldurur. `{% extends %}` etiketinden sonra ve tüm `{% block %}` bloklarının dışında yazılan metin ya da html, işleme sırasında sessizce atılır; böylece kaynakta düzgün görünen bir paragraf sayfaya hiçbir zaman ulaşmaz.
 
-Orada bulunan bir şablon etiketi yine de çalışır; bu yüzden `{% load %}`, `{% set %}` ve bir bloğu saran bir `{% if %}` olduğu gibi bırakılır; `{# #}` ve `{% comment %}` yorumları, html yorumları, <code>{&#37; raw %}</code> ve `{% verbatim %}` blokları ile çıktı olarak verilmek yerine yakalanan bir `{% macro %}`, blok biçimindeki bir `{% set %}`, bir `{% partialdef %}` ya da bir `{% addtoblock %}` gövdesi de öyle. Bir `{% blocktrans %}` metni bildirilir, çünkü `{% blocktrans %}` bir `{% block %}` değildir. Yalnızca extends etiketinden sonraki içerik dikkate alınır ve bu içeriğin her kesintisiz parçası, başlangıcında bir kez bildirilir.
+Orada bulunan bir şablon etiketi yine de çalışır; bu yüzden `{% load %}`, `{% set %}` ve bir bloğu saran bir `{% if %}` olduğu gibi bırakılır; `{# #}` ve `{% comment %}` yorumları, html yorumları, `{% raw %}` ve `{% verbatim %}` blokları ile çıktı olarak verilmek yerine yakalanan bir `{% macro %}`, blok biçimindeki bir `{% set %}`, bir `{% partialdef %}` ya da bir `{% addtoblock %}` gövdesi de öyle. Bir `{% blocktrans %}` metni bildirilir, çünkü `{% blocktrans %}` bir `{% block %}` değildir. Yalnızca extends etiketinden sonraki içerik dikkate alınır ve bu içeriğin her kesintisiz parçası, başlangıcında bir kez bildirilir.
 
-Motor şablon etiketlerini html'den önce okur; bu yüzden bir html yorumunun ya da bir `<pre>` öğesinin içine yazılmış bir `{% extends %}` yine de çalışır ve dosyayı yine de bir alt şablon yapar; birini gerçekten gizleyen yalnızca `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> ve `{% verbatim %}` yapılarıdır. Bir html yorumunun içindeki metin her durumda hiçbir okuyucuya ulaşmaz ve bildirilmez, ancak oraya yazılan etiketler yine de okunur.
+Motor şablon etiketlerini html'den önce okur; bu yüzden bir html yorumunun ya da bir `<pre>` öğesinin içine yazılmış bir `{% extends %}` yine de çalışır ve dosyayı yine de bir alt şablon yapar; birini gerçekten gizleyen yalnızca `{# #}`, `{% comment %}`, `{% raw %}` ve `{% verbatim %}` yapılarıdır. Bir html yorumunun içindeki metin her durumda hiçbir okuyucuya ulaşmaz ve bildirilmez, ancak oraya yazılan etiketler yine de okunur.
 
 handlebars, golang, liquid ve angular profillerinde uygulanmaz.
 
@@ -1085,7 +1082,7 @@ Django, Jinja ve Nunjucks'ın üçü de iki bloğa aynı adı veren bir şablonu
 
 Yalnızca `{% block %}` sayılır: bir `{% blocktrans %}` blok değildir ve bir `{% endblock name %}` yalnızca kapattığı bloğun adını verir. Motorlar `Content` ve `content` adlarını iki ayrı blok olarak ele aldığından adlar yazıldığı gibi karşılaştırılır.
 
-Yalnızca motorun kendisinin hiç ayrıştırmadığı şeyler atlanır: bir şablon yorumu, bir `{% comment %}` bloğu, bir <code>{&#37; raw %}</code> ya da `{% verbatim %}` gövdesi ve bir `djlint:off` bölgesi. Bir html yorumunun, bir `<script>`, `<style>`, `<pre>` ya da `<textarea>` gövdesinin veya bir `{% filter %}` gövdesinin içine yazılmış bir blok yine de sayılır, çünkü motor bunların hepsini okur ve yinelenen ad için yine hata fırlatır.
+Yalnızca motorun kendisinin hiç ayrıştırmadığı şeyler atlanır: bir şablon yorumu, bir `{% comment %}` bloğu, bir `{% raw %}` ya da `{% verbatim %}` gövdesi ve bir `djlint:off` bölgesi. Bir html yorumunun, bir `<script>`, `<style>`, `<pre>` ya da `<textarea>` gövdesinin veya bir `{% filter %}` gövdesinin içine yazılmış bir blok yine de sayılır, çünkü motor bunların hepsini okur ve yinelenen ad için yine hata fırlatır.
 
 Bir `{% embed %}` kendi kapsamını açar: içindeki bloklar bu şablonu değil, gömülen şablonu doldurur; bu yüzden aynı kısmi şablonun iki gömmesinin her biri `{% block body %}` yazabilir. Tek bir gömme içinde tekrarlanan bir ad yine de bildirilir.
 
@@ -1145,7 +1142,7 @@ Bir çıktı etiketi bir değer yazdırır; `if`, `for`, `url`, `include` ve di�
 
 Yalın bir anahtar sözcük sıradan bir değişken adıdır; bu yüzden `{{ url }}`, `{{ url|default:"/" }}` ve `{{ set.name }}` bildirilmez. Yalnızca argüman verilmiş bir anahtar sözcük ile `{{ endif }}` ya da `{{ else }}` gibi tek başına duran bir kapanış ya da dal anahtar sözcüğü bildirilir. `if` ya da `for` gibi bir denetim anahtar sözcüğü bir ifadeye başlayamaz; bu yüzden ondan sonra gelen her şey, bir operatör de olsa, argümandır ve `{{ if -1 > count }}` bildirilir. Diğer adlar değişken ve işlev olarak da kullanılır; onlarda yalnızca tırnaklı bir dize ya da bir sözcük argüman sayılır; bu yüzden bunlardan biriyle başlayan bir ifade olduğu gibi bırakılır: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` ve `{{ filter [0] }}` ifadelerinin hiçbiri bildirilmez.
 
-Bir <code>{&#37; raw %}</code> ya da `{% verbatim %}` bloğunun gövdesi şablon sözdizimi değil metindir ve atlanır; adlandırılmış `{% verbatim vueapp %}...{% endverbatim vueapp %}` biçimi de dahil; bu yüzden bu şekilde korunan bir Vue ya da Handlebars `{{ }}` yapısı bildirilmez. `{% trans "Write {{ if x }} instead" %}` örneğinde olduğu gibi bir blok etiketinin tırnaklı argümanının içine yazılmış bir `{{ }}` da motorun yazdırdığı bir metindir ve olduğu gibi bırakılır.
+Bir `{% raw %}` ya da `{% verbatim %}` bloğunun gövdesi şablon sözdizimi değil metindir ve atlanır; adlandırılmış `{% verbatim vueapp %}...{% endverbatim vueapp %}` biçimi de dahil; bu yüzden bu şekilde korunan bir Vue ya da Handlebars `{{ }}` yapısı bildirilmez. `{% trans "Write {{ if x }} instead" %}` örneğinde olduğu gibi bir blok etiketinin tırnaklı argümanının içine yazılmış bir `{{ }}` da motorun yazdırdığı bir metindir ve olduğu gibi bırakılır.
 
 Yapmayın:
 
@@ -1351,7 +1348,7 @@ Bir id tek bir öğeyi adlandırır. Aynı id'yi taşıyan ikinci bir öğe `get
 
 Tek bir `{% if %}...{% else %}...{% endif %}` yapısının birbirini dışlayan dallarındaki iki id hiçbir zaman birlikte işlenmediğinden bildirilmez. Bir `{% for %}` döngüsü ya da bir `{% block %}` dal değildir: bunlardan birinin içindeki bir id ile dışındaki aynı id ikisi de işlenir ve sonraki bildirilir. Bir şablon etiketinin yazdığı bir değer bilinemez ve olduğu gibi bırakılır; boş bir değer de öyle. Id'ler, tarayıcının yaptığı gibi birebir karşılaştırılır; bu yüzden `save` ve `Save` iki ayrı id'dir.
 
-Dallar, dosyanın yazıldığı dilde ve o dilin sınırlayıcılar ile etiket adı arasında izin verdiği her türlü boşlukla okunur: `{% elif %}` ve `{% else %}`, liquid'in `{% elsif %}` ve `{% when %}` etiketleri, go'nun `{{ else }}` etiketi, bir mako `% else:` satır deyimi ve handlebars'ın `{{else}}` etiketi, zincirleme `{{else if x}}` biçimi ve özel yardımcılar dahil herhangi bir `{{#helper}}` bloğunun ters (inverse) bölümü. Bir `<template>` öğesinin içeriği, `getElementById` ile hiçbir zaman erişilemeyen kendine ait bir belge parçasıdır; bu yüzden oradaki bir id yalnızca aynı `<template>` içindeki id'lerle karşılaştırılır: iki şablonun her biri aynı id'ye sahip bir satır içerebilir, ancak tek bir şablonun içindeki iki aynı id yine de bildirilir. Bir yorumun, bir <code>{&#37; raw %}</code> ya da `{% verbatim %}` gövdesinin veya bir `djlint:off` bölgesinin içindeki bir id hiç okunmaz.
+Dallar, dosyanın yazıldığı dilde ve o dilin sınırlayıcılar ile etiket adı arasında izin verdiği her türlü boşlukla okunur: `{% elif %}` ve `{% else %}`, liquid'in `{% elsif %}` ve `{% when %}` etiketleri, go'nun `{{ else }}` etiketi, bir mako `% else:` satır deyimi ve handlebars'ın `{{else}}` etiketi, zincirleme `{{else if x}}` biçimi ve özel yardımcılar dahil herhangi bir `{{#helper}}` bloğunun ters (inverse) bölümü. Bir `<template>` öğesinin içeriği, `getElementById` ile hiçbir zaman erişilemeyen kendine ait bir belge parçasıdır; bu yüzden oradaki bir id yalnızca aynı `<template>` içindeki id'lerle karşılaştırılır: iki şablonun her biri aynı id'ye sahip bir satır içerebilir, ancak tek bir şablonun içindeki iki aynı id yine de bildirilir. Bir yorumun, bir `{% raw %}` ya da `{% verbatim %}` gövdesinin veya bir `djlint:off` bölgesinin içindeki bir id hiç okunmaz.
 
 Yapmayın:
 
@@ -1505,28 +1502,13 @@ Yapın:
 
 <!-- oxfmt-ignore-end -->
 
-### Kural ekleme
-
-Yeni kurallar içeren pull request'leri memnuniyetle karşılıyoruz!
-
-İyi bir kural şunlardan oluşur:
-
-- Ad
-- Kod
-- Mesaj: hata bulunduğunda gösterilecek mesaj.
-- Bayraklar: regex bayrakları, örneğin re.I|re.M. Varsayılan değer re.DOTALL'dur.
-- Kalıplar: hatayı bulan düzenli ifadeler.
-- Hariç tutma: kuralın uygulanmadığı profillerin isteğe bağlı listesi.
-
-Lütfen kuralı doğrulayan bir test de ekleyin.
-
 ## Özel kurallar
 
-`pyproject.toml` dosyanızın yanına bir `.djlint_rules.yaml` oluşturarak yalnızca projenize özel kurallar ekleyebilirsiniz. Kurallar bu dosyaya eklenebilir ve djLint onları algılar. Başka bir konumdaki kural dosyası `--rules` CLI seçeneğiyle verilebilir.
+Kendi kurallarınız proje kökünde, yapılandırma dosyanızın yanındaki bir `.djlint_rules.yaml` dosyasına yazılır ve djLint onları algılar. `--rules` başka bir yerdeki kural dosyasını belirtir. Özel bir kuralın kodu da [aynı harfleri](#kod-kaliplari) izler, bu yüzden C gibi başka bir harfle başlayan bir kural her profilde çalışır. `default: false` ve `exclude` özel kurallarda da çalışır.
 
 ### Kalıp kuralları
 
-Regex kalıplarından biri eşleştiğinde başarısız olan kurallar ekleyebilirsiniz:
+Bir kalıp kuralı, kalıplarının her eşleşmesini bildirir:
 
 ```yaml
 - rule:
@@ -1539,7 +1521,7 @@ Regex kalıplarından biri eşleştiğinde başarısız olan kurallar ekleyebili
 
 ### Python modülü kuralları
 
-Özel bir Python işlevini içe aktarıp çalıştıran kurallar ekleyebilirsiniz:
+Bir Python modülü kuralı, kendi yazdığınız bir işlevi çalıştırır:
 
 ```yaml
 - rule:
@@ -1551,7 +1533,7 @@ Regex kalıplarından biri eşleştiğinde başarısız olan kurallar ekleyebili
 Belirtilen `python_module`, denetlenen her dosyada çalıştırılacak bir `run()` işlevi içermelidir. Bu işlev aşağıdaki argümanları kabul etmelidir:
 
 - `rule`: Kuralınızı `.djlint_rules.yaml` içinde temsil eden dict. Bu değişkeni genellikle kural adına ve mesajına erişmek için kullanırsınız.
-- `config`: DJLint yapılandırma nesnesi.
+- `config`: djLint yapılandırma nesnesi.
 - `html`: Dosyanın tam html içeriği.
 - `filepath`: O anda denetlenen dosyanın yolu.
 - `line_ends`: Bir karakter konumundan satır numarası elde etmek için `djlint.lint.get_line()` ile kullanabileceğiniz satır `start` ve `end` karakter konumlarının listesi. Örneğe bakın.
@@ -1559,7 +1541,7 @@ Belirtilen `python_module`, denetlenen her dosyada çalıştırılacak bir `run(
 
 Modül proje kökünde olabilir. Bir konum olmayan bir `line` ya da `end` döndürürse djLint, kuralın adını veren bir hatayla durur.
 
-İşlev, her hata için bir tane olmak üzere, aşağıdaki anahtarlara sahip bir dict listesi döndürmelidir:
+İşlev, her bulgu için bir tane olmak üzere, aşağıdaki anahtarlara sahip bir dict listesi döndürmelidir:
 
 - `code`: Hatayı bildiren kuralın kod adı (genellikle `rule['name']`)
 - `line`: Satır numarası ve bu satırdaki karakter numarası; ':' ile ayrılmış bir dize olarak.

@@ -7,7 +7,7 @@ sidebar:
 
 djLint lintuje šablony Angular. Nastavte profil `angular`, aby jim pravidla odpovídala.
 
-**[Co je Angular?](https://angular.io/guide/template-syntax)**
+**[Co je Angular?](https://angular.dev/guide/templates)**
 
 ## Z příkazového řádku
 
@@ -15,7 +15,7 @@ djLint lintuje šablony Angular. Nastavte profil `angular`, aby jim pravidla odp
 djlint /path/to/templates --profile=angular
 ```
 
-## Nebo v konfiguračním souboru
+## V konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 
@@ -31,7 +31,3 @@ profile = "angular"
 ```json title=".djlintrc"
 { "profile": "angular" }
 ```
-
-:::tip
-[Všechny možnosti najdete v průvodci konfigurací!](/cs/docs/configuration/)
-:::

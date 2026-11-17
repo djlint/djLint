@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Instalação
 
-O djLint é feito em [Python](https://python.org) e publicado no [PyPI](https://pypi.org/project/djlint/).
+O djLint precisa do [Python](https://python.org) 3.11 ou mais recente e é publicado no [PyPI](https://pypi.org/project/djlint/).
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 Para executar o djLint no seu editor ou a cada commit, consulte [Integrações](/pt-br/docs/integrations/) e [pre-commit](/pt-br/docs/integrations/#pre-commit).
 
 :::note[Observação]
-Se o comando `djlint` não for encontrado, verifique se o Python está [no seu PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
+Se o comando `djlint` não for encontrado, a pasta em que ele foi instalado não está no seu PATH. `python -m djlint` o executa mesmo assim.
 :::
 
 ## Primeira execução
@@ -100,19 +100,19 @@ Se você adicionou o djLint ao projeto com `uv add --dev`, ele fica no ambiente 
 
 O djLint funciona com um caminho ou com o stdin.
 
-Executando com um caminho -
+Executando com um caminho:
 
 ```bash
 djlint /path/to/templates --lint
 ```
 
-Ou com um arquivo específico -
+Ou com um arquivo específico:
 
 ```bash
 djlint /path/to/this.mustache --lint
 ```
 
-Ou com o stdin -
+Ou com o stdin:
 
 ```bash
 echo "<div></div>" | djlint -
@@ -124,7 +124,7 @@ O stdin também pode ser usado para reformatar código. A saída será apenas o 
 echo "<div></div>" | djlint - --reformat
 ```
 
-Saída -
+Saída:
 
 ```html
 <div></div>
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## Códigos de saída
 
-| Código | Significado                                                                                                                                                      |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `0`    | Tudo o que você pediu para o djLint verificar está limpo, ou todos os arquivos encontrados foram ignorados pela sua configuração.                                |
-| `1`    | O djLint encontrou erros de lint ou arquivos que precisam ser reformatados. `--warn` relata esses casos como avisos e, em vez disso, sai com `0`.                |
-| `2`    | O djLint não verificou o que você pediu: os caminhos não corresponderam a nenhum arquivo, a linha de comando ou a configuração era inválida, ou o djLint falhou. |
+| Código | Significado                                                                                                                                                                                                                            |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`    | Tudo o que você pediu para o djLint verificar está limpo, ou todos os arquivos encontrados foram ignorados pela sua configuração.                                                                                                      |
+| `1`    | O djLint encontrou erros de lint ou arquivos que precisam ser reformatados. `--warn` relata esses casos como avisos e, em vez disso, sai com `0`.                                                                                      |
+| `2`    | O djLint não verificou o que você pediu: os caminhos não corresponderam a nenhum arquivo, um arquivo não pôde ser lido (não está em UTF-8, ou falta permissão), a linha de comando ou a configuração era inválida, ou o djLint falhou. |
 
-Somente o código `1` significa que o djLint analisou seus templates e não gostou do que encontrou. O código `2` sempre significa que a própria execução não cumpriu seu papel, então um pipeline pode tratar os dois de forma diferente.
+Somente o código `1` significa que o djLint analisou seus templates e não gostou do que encontrou, então um pipeline consegue distinguir uma verificação que falhou de uma execução que não verificou nada, como uma com um caminho errado ou com uma `--extension` que não corresponde mais a nada.
 
-O código `2` é o que detecta uma execução que não verificou absolutamente nada: um caminho errado, uma `--extension` que não corresponde mais a nada, ou templates que foram movidos. Sem ele, uma execução assim passa silenciosamente.
-
-Arquivos que o djLint _encontrou_ e depois ignorou de propósito, por meio de `exclude`, `extend_exclude`, `use_gitignore` ou `require_pragma`, não são um erro. Essa execução sai com `0`, porque a configuração fez exatamente o que lhe foi pedido. É também isso que permite que `exclude` funcione com o pre-commit, que passa os nomes dos seus arquivos preparados para commit, quer você queira ou não que o djLint os analise.
-
-Se um caminho que legitimamente não tem templates for normal no seu pipeline, desative o código `2` com `allow_empty_input`:
+Arquivos que o djLint encontrou e depois ignorou de propósito, por meio de `exclude`, `extend_exclude`, `use_gitignore` ou `require_pragma`, não são um erro, e é isso que permite que `exclude` funcione com o pre-commit. Se um caminho sem templates for normal no seu pipeline, desative o código `2` com [`allow_empty_input`](/pt-br/docs/configuration/#allow-empty-input):
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## Uso da CLI
-
-O djLint é um aplicativo de linha de comando. Consulte a página de [configuração](/pt-br/docs/configuration/) para a configuração avançada.
 
 <CliHelp />

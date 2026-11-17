@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "Şablon diliniz için bir profil",
-  "djlint.index_show_format": "Biçiminizi gösterin!",
+  "djlint.index_show_format": "Rozet",
   "djlint.index_looks_like": "Şöyle görünür:",
   "djlint.index_add_badge": "Projelerinize bir rozet ekleyin",
   "djlint.contributing": "Katkıda bulunma",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "Seçenekler",
   "djlint.demo_output": "Çıktı",
   "djlint.demo_problems": "Sorunlar: {count}",
-  "djlint.demo_defaults": "Ayarlanacak bir şey yok, bunlar djLint'in varsayılanları",
+  "djlint.demo_defaults": "Ayarlanacak bir şey yok: bunlar djLint'in varsayılanları",
   "djlint.demo_layout": "Düzen",
   "djlint.demo_rewrites": "Yeniden yazımlar",
   "djlint.demo_css_js": "CSS ve JavaScript",

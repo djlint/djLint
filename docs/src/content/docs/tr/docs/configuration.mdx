@@ -5,7 +5,7 @@ description: "djLint'in HTML şablonlarını nasıl denetleyip biçimlendireceğ
 
 import ConfigOptions from "../../../../components/ConfigOptions.astro";
 
-Yapılandırma, projenizin `pyproject.toml` dosyası, bir `djlint.toml` ya da `.djlint.toml` dosyası veya bir `.djlintrc` dosyası üzerinden yapılır. Komut satırı argümanları, yapılandırma dosyalarındaki ayarları her zaman geçersiz kılar. `--prefer-configuration` ayarlanmadıkça yerel proje ayarları, `--configuration` ile verilen genel bir yapılandırma dosyasını geçersiz kılar.
+Yapılandırma projenizin `pyproject.toml` dosyasına, bir `djlint.toml` ya da `.djlint.toml` dosyasına veya bir `.djlintrc` dosyasına yazılır. Komut satırı seçenekleri yapılandırma dosyasını geçersiz kılar, ama bir bayrak bir seçeneği yalnızca açabilir, yani yapılandırma dosyasının açtığı bir anahtarı kapatamaz. `--prefer-configuration` ayarlanmadıkça projenin ayarları, `--configuration` ile verilen genel bir yapılandırma dosyasını geçersiz kılar.
 
 djLint bu dosyaları denetlediği ilk yoldan (`-` için `--stdin-filename` klasöründen, bu seçenek yoksa geçerli dizinden) yukarı doğru arar. `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml` ya da `[tool.djlint]` içeren bir `pyproject.toml` bulunan ilk klasörde durur ve bir deponun kökünü (`.git` klasörü ya da dosyası veya `.hg` klasörü olan klasörü) hiçbir zaman aşmaz. djLint ayarı olmayan bir `pyproject.toml` aramayı durdurmaz, bu yüzden bir monorepoda kendi `pyproject.toml` dosyası olan bir paket deponun ayarlarını alır. djLint yalnızca durduğu klasörü okur: `pyproject.toml` dosyasındaki `[tool.djlint]` (içinde bir ayar varsa), yoksa `djlint.toml` ya da `.djlint.toml`, o da yoksa `.djlintrc`; orada olup okumadığı dosyalar için de uyarır.
 

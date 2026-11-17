@@ -5,28 +5,17 @@ sidebar:
   label: "Biçimlendirici"
 ---
 
-djLint'in biçimlendiricisi özensiz yazılmış HTML şablonlarını alır ve biçimlendirmelerini tutarlı ve kolay takip edilir hâle getirir!
-
-Değişiklikleri uygulamadan önce çıktıyı `--check` ile gözden geçirin.
-
-Biçimlendirmede nelerin değişebileceğini görmek için şunu çalıştırın:
+djLint'in biçimlendiricisi HTML şablonlarının düzenini tutarlı hâle getirir. Önce neyi değiştireceğine bakın:
 
 ```bash
-djlint . --check --single-attribute-per-line
+djlint . --check
 ```
 
-Kodu biçimlendirip dosyaları güncellemek için şunu çalıştırın:
+Sonra dosyaları yerinde biçimlendirin, burada `<style>` ve `<script>` içerikleriyle birlikte:
 
 ```bash
-djlint . --reformat --single-attribute-per-line
-
-# betikleri ve stilleri de biçimlendirmeye ne dersiniz?
-djlint . --reformat --single-attribute-per-line --format-css --format-js
+djlint . --reformat --format-css --format-js
 ```
-
-:::tip
-[Tüm seçenekler için yapılandırma kılavuzuna göz atın!](/tr/docs/configuration/)
-:::
 
 :::note[Not]
 Bir özniteliğin içine yazılmış JSON ve JavaScript, `--format-attribute-js-json` açık olmadıkça olduğu gibi bırakılır. Bir özniteliğin içindeki HTML'e ise hiçbir zaman dokunulmaz.
@@ -36,11 +25,9 @@ Bir özniteliğin içine yazılmış JSON ve JavaScript, `--format-attribute-js-
 djLint bir HTML ayrıştırıcısı ya da sözdizimi doğrulayıcısı değildir.
 :::
 
-## İşte bir örnek!
+## Örnek
 
 ### Önce
-
-Acilen ilgi bekleyen bir yığın HTML -
 
 <!-- oxfmt-ignore -->
 ```html
@@ -68,8 +55,6 @@ Acilen ilgi bekleyen bir yığın HTML -
 ```
 
 ### Sonra
-
-Şimdi biraz daha iyi görünüyor... artık okuyabiliyoruz :)
 
 <!-- oxfmt-ignore -->
 ```html

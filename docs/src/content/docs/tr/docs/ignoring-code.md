@@ -3,9 +3,7 @@ title: "Kodu yok sayma"
 description: "djLint'in bir kod bloğunu biçimlendirmesi nasıl engellenir, linter kuralları satır içinde nasıl yok sayılır."
 ---
 
-Kod, `djlint` etiketleri arasına alınarak yok sayılabilir:
-
-Düz HTML için -
+`djlint:off` ve `djlint:on` yorumları arasındaki koda biçimlendirici de linter da dokunmaz. Yorumlar HTML yorumu olabilir:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -14,7 +12,7 @@ Düz HTML için -
 <!-- djlint:on -->
 ```
 
-ya da bir yorum olarak -
+Ya da Django ve Jinja yorumları:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -23,7 +21,7 @@ ya da bir yorum olarak -
 {# djlint:on #}
 ```
 
-ya da uzun bir yorum olarak -
+Ya da `{% comment %}` blokları:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -32,7 +30,7 @@ ya da uzun bir yorum olarak -
 {% comment %} djlint:on {% endcomment %}
 ```
 
-ya da golang tarzı bir yorum olarak -
+Ya da Go şablonu yorumları:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -41,7 +39,7 @@ ya da golang tarzı bir yorum olarak -
 {{ /* djlint:on */ }}
 ```
 
-ya da handlebars tarzı bir yorum olarak -
+Ya da Handlebars yorumları:
 
 <!-- oxfmt-ignore -->
 ```html

@@ -5,28 +5,17 @@ sidebar:
   label: "Formátovač"
 ---
 
-Formátovač djLint vezme neupravené HTML šablony a sjednotí jejich formátování, aby byly přehledné a snadno čitelné!
-
-Než změny použijete, prohlédněte si výstup s `--check`.
-
-Chcete-li zjistit, co se při formátování může změnit, spusťte:
+Formátovač djLint sjednocuje rozvržení HTML šablon. Nejdřív se podívejte, co by změnil:
 
 ```bash
-djlint . --check --single-attribute-per-line
+djlint . --check
 ```
 
-Chcete-li kód naformátovat a soubory aktualizovat, spusťte:
+Potom soubory naformátujte na místě, tady i s obsahem `<style>` a `<script>`:
 
 ```bash
-djlint . --reformat --single-attribute-per-line
-
-# a co takhle naformátovat i skripty a styly?
-djlint . --reformat --single-attribute-per-line --format-css --format-js
+djlint . --reformat --format-css --format-js
 ```
-
-:::tip
-[Všechny možnosti najdete v průvodci konfigurací!](/cs/docs/configuration/)
-:::
 
 :::note[Poznámka]
 JSON a JavaScript zapsané v atributu zůstávají beze změny, pokud není zapnuté `--format-attribute-js-json`. HTML uvnitř atributu zůstává vždy beze změny.
@@ -39,8 +28,6 @@ djLint není parser HTML ani validátor syntaxe.
 ## Ukázka
 
 ### Před
-
-Tady je kus HTML, který zoufale potřebuje péči:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -68,8 +55,6 @@ Tady je kus HTML, který zoufale potřebuje péči:
 ```
 
 ### Po
-
-Teď to vypadá o něco lépe… dá se to přečíst :)
 
 <!-- oxfmt-ignore -->
 ```html

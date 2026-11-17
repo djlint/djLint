@@ -3,7 +3,7 @@ title: "Python API"
 description: "Formátujte a lintujte šablony z vlastního kódu v Pythonu pomocí API djLint."
 ---
 
-`djlint.api` formátuje a lintuje text z programu v Pythonu se stejnými výsledky jako příkazový řádek. Je určené pro editory, nástroje pro sestavení a cokoli dalšího, co má šablonu v paměti. Cokoli jiného v balíčku se může změnit v kterékoli verzi, proto používejte tento modul, a ne `djlint.settings` nebo `djlint.lint`.
+`djlint.api` formátuje a lintuje text z programu v Pythonu se stejnými výsledky jako příkazový řádek. Je určené pro editory, nástroje pro sestavení a cokoli dalšího, co má šablonu v paměti. Cokoli jiného v balíčku se může změnit v kterékoli verzi, proto používejte tento modul, a ne `djlint.settings` nebo `djlint.lint`. Pomocné funkce, které importuje [příklad vlastního pravidla](/cs/docs/linter/#pravidla-s-modulem-pythonu), tedy `djlint.lint.get_line`, `djlint.helpers.inside_ignored_rule` a `djlint.helpers.inside_ignored_linter_block`, také fungují dál.
 
 ```python
 from djlint.api import format_text, lint_text, load_config
@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` načte konfiguraci, která platí pro soubory dané složky. Hledá ji od složky směrem nahoru, stejně jako ji příkazový řádek hledá od první zadané cesty (u `-` od složky `--stdin-filename`, bez něj od aktuálního adresáře), a aktuální adresář nemění.
+`load_config(folder=".", *, python_rules=True, on_warning=None, **options)` načte konfiguraci, která platí pro soubory dané složky. Hledá ji od složky směrem nahoru, stejně jako ji příkazový řádek [hledá](/cs/docs/configuration/) od první zadané cesty, a aktuální adresář nemění.
 
 Možnosti mají názvy jako možnosti příkazového řádku, jen s podtržítky, a fungují stejně jako tam: nastavená hodnota má přednost před konfiguračním souborem, zatímco `False`, prázdný řetězec a u většiny možností i `0` se berou, jako by zadané nebyly. Cesty se zadávají jako `pathlib.Path`.
 
@@ -26,9 +26,11 @@ Načtení konfigurace chvíli trvá, proto si výsledek ponechte tak dlouho, dok
 
 S `python_rules=False` se nenačítají vlastní pravidla s `python_module`, takže se nespustí kód projektu, kterému nedůvěřujete. Jejich názvy jsou v `config.skipped_rules`.
 
+`on_warning`, funkce, která přijímá zprávu, dostane každé varování k nastavení, například překlep v názvu nebo kód pravidla, který žádné pravidlo nemá. Bez ní jde každé varování na stderr, jednou za proces. Konfigurační soubor, který nejde přečíst, nebo neplatná hodnota vyvolá `click.UsageError`.
+
 ## format_text
 
-`format_text(config, text)` vrátí naformátovaný text. Text, jehož první řádek končí znaky CRLF, se vrátí s CRLF, jakýkoli jiný s LF. S `require_pragma` se text bez pragmy vrátí beze změny.
+`format_text(config, text)` vrátí naformátovaný text. Text, jehož první řádek končí znaky CRLF, se vrátí s CRLF, jakýkoli jiný s LF. S `require_pragma` se text bez pragmy vrátí beze změny. `indent` a `max_line_length` bere z `.editorconfig`, který platí pro složku zadanou v `load_config`, kdežto příkazový řádek je bere pro každý soubor podle jeho cesty.
 
 ## lint_text
 
@@ -50,4 +52,4 @@ Sloupce počítají znaky, ne bajty ani kódové jednotky UTF-16.
 
 ## Moduly pravidel
 
-`python_module` vlastního pravidla se importuje jednou za proces, z kořene projektu dané konfigurace. Program, který zůstává spuštěný a pracuje s více projekty, musí před načtením modulů jiného projektu odebrat ze `sys.modules` vše, co z projektu importoval, a také kořen projektu, který zůstává na konci `sys.path`.
+`python_module` vlastního pravidla se importuje jednou za proces, z kořene projektu dané konfigurace. Aby program, který zůstává spuštěný, načetl pravidla jiného projektu, musí ze `sys.modules` odebrat vše, co importoval z prvního projektu, a z konce `sys.path` odebrat kořen tohoto projektu.

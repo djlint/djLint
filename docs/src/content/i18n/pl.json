@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "Profil dla twojego języka szablonów",
-  "djlint.index_show_format": "Pochwal się formatowaniem!",
+  "djlint.index_show_format": "Odznaka",
   "djlint.index_looks_like": "Wygląda to tak:",
   "djlint.index_add_badge": "Dodaj odznakę do swoich projektów",
   "djlint.contributing": "Współtworzenie",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "Opcje",
   "djlint.demo_output": "Wynik",
   "djlint.demo_problems": "Problemy: {count}",
-  "djlint.demo_defaults": "Nic do ustawienia, to domyślne wartości djLinta",
+  "djlint.demo_defaults": "Nic do ustawienia: to domyślne wartości djLinta",
   "djlint.demo_layout": "Układ",
   "djlint.demo_rewrites": "Przepisywanie",
   "djlint.demo_css_js": "CSS i JavaScript",

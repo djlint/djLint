@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Kurulum
 
-djLint [Python](https://python.org) ile yazılmıştır ve [PyPI](https://pypi.org/project/djlint/) üzerinde yayımlanır.
+djLint [Python](https://python.org) 3.11 ya da daha yenisini gerektirir ve [PyPI](https://pypi.org/project/djlint/) üzerinde yayımlanır.
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 djLint'i düzenleyicinizde ya da her commit'te çalıştırmak için [Entegrasyonlar](/tr/docs/integrations/) sayfasına ve [pre-commit](/tr/docs/integrations/#pre-commit) bölümüne bakın.
 
 :::note[Not]
-`djlint` komutu bulunamıyorsa Python'un [PATH'inizde](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/) olduğundan emin olun.
+`djlint` komutu bulunamıyorsa kurulduğu klasör PATH'inizde değildir. `python -m djlint` onu yine de çalıştırır.
 :::
 
 ## İlk çalıştırma
@@ -100,19 +100,19 @@ djLint'i projeye `uv add --dev` ile eklediyseniz projenin ortamındadır: komutl
 
 djLint bir yolla ya da stdin ile çalışır.
 
-Bir yolla çalıştırma -
+Bir yolla çalıştırma:
 
 ```bash
 djlint /path/to/templates --lint
 ```
 
-Ya da belirli bir dosyayla -
+Ya da belirli bir dosyayla:
 
 ```bash
 djlint /path/to/this.mustache --lint
 ```
 
-Ya da stdin ile -
+Ya da stdin ile:
 
 ```bash
 echo "<div></div>" | djlint -
@@ -124,7 +124,7 @@ Stdin kodu yeniden biçimlendirmek için de kullanılabilir. Çıktı, mesajlar 
 echo "<div></div>" | djlint - --reformat
 ```
 
-Çıktı -
+Çıktı:
 
 ```html
 <div></div>
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## Çıkış kodları
 
-| Kod | Anlamı                                                                                                                                             |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `0` | djLint'ten denetlemesi istenen her şey temiz ya da bulduğu her dosya yapılandırmanız tarafından atlandı.                                           |
-| `1` | djLint lint hataları ya da yeniden biçimlendirilmesi gereken dosyalar buldu. `--warn` bunları uyarı olarak bildirir ve bunun yerine `0` ile çıkar. |
-| `2` | djLint istediğiniz şeyi denetlemedi: yollar hiçbir dosyayla eşleşmedi, komut satırı ya da yapılandırma geçersizdi veya djLint başarısız oldu.      |
+| Kod | Anlamı                                                                                                                                                                                          |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0` | djLint'ten denetlemesi istenen her şey temiz ya da bulduğu her dosya yapılandırmanız tarafından atlandı.                                                                                        |
+| `1` | djLint lint hataları ya da yeniden biçimlendirilmesi gereken dosyalar buldu. `--warn` bunları uyarı olarak bildirir ve bunun yerine `0` ile çıkar.                                              |
+| `2` | djLint istediğiniz şeyi denetlemedi: yollar hiçbir dosyayla eşleşmedi, bir dosya okunamadı (UTF-8 değil ya da izin yok), komut satırı ya da yapılandırma geçersizdi veya djLint başarısız oldu. |
 
-Yalnızca `1` kodu, djLint'in şablonlarınıza baktığı ve bulduklarını beğenmediği anlamına gelir. `2` kodu ise her zaman çalıştırmanın kendisinin sonuç vermediği anlamına gelir; böylece bir işlem hattı bu ikisini ayrı ele alabilir.
+Yalnızca `1` kodu, djLint'in şablonlarınıza baktığı ve bulduklarını beğenmediği anlamına gelir. Böylece bir işlem hattı başarısız bir denetimi, hiçbir şeyi denetlemeyen bir çalıştırmadan ayırabilir; örneğin yanlış bir yol verilmiş ya da `--extension` artık eşleşmiyordur.
 
-`2` kodu, hiçbir şeyi denetlemeyen bir çalıştırmayı yakalar: yanlış bir yol, artık eşleşmeyen bir `--extension` ya da yeri değişmiş şablonlar. Bu kod olmasaydı böyle bir çalıştırma sessizce başarılı olurdu.
-
-djLint'in _bulduğu_ ve ardından `exclude`, `extend_exclude`, `use_gitignore` ya da `require_pragma` aracılığıyla bilerek atladığı dosyalar hata sayılmaz. Böyle bir çalıştırma `0` ile çıkar, çünkü yapılandırma tam olarak kendisine söyleneni yapmıştır. `exclude` seçeneğinin pre-commit altında çalışmasını sağlayan da budur; pre-commit, djLint'in bakmasını isteseniz de istemeseniz de hazırlanmış (staged) dosyalarınızın adlarını iletir.
-
-İşlem hattınızda gerçekten hiç şablon içermeyen bir yol olağansa `2` kodunu `allow_empty_input` ile kapatın:
+djLint'in bulduğu ve ardından `exclude`, `extend_exclude`, `use_gitignore` ya da `require_pragma` aracılığıyla bilerek atladığı dosyalar hata sayılmaz; `exclude` seçeneğinin pre-commit altında çalışmasını sağlayan da budur. İşlem hattınızda hiç şablon içermeyen bir yol olağansa `2` kodunu [`allow_empty_input`](/tr/docs/configuration/#allow-empty-input) ile kapatın:
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## Komut satırı kullanımı
-
-djLint bir komut satırı uygulamasıdır. Gelişmiş yapılandırma için [yapılandırma](/tr/docs/configuration/) sayfasına bakın.
 
 <CliHelp />
