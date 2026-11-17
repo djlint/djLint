@@ -56,7 +56,9 @@ PYTHON: Final = "3.14"
 class Platform:
     # python-build-standalone's name for it.
     python: str
-    # The wheel tag pip takes the packages for it by.
+    # The wheel tag pip takes the packages for it by. It caps the glibc or macOS
+    # a wheel may need at what the Python needs: pip passes over a wheel that
+    # needs a newer one, and the build stops instead of quietly asking for more.
     tag: str
     # Whether djLint has compiled wheels for it.
     mypyc: bool = True
@@ -71,16 +73,16 @@ class Platform:
 PLATFORMS: Final = {
     "darwin-arm64": Platform("aarch64-apple-darwin", "macosx_11_0_arm64"),
     "darwin-x64": Platform("x86_64-apple-darwin", "macosx_10_15_x86_64"),
-    "linux-arm64-gnu": Platform("aarch64-unknown-linux-gnu", "manylinux_2_28_aarch64"),
+    "linux-arm64-gnu": Platform("aarch64-unknown-linux-gnu", "manylinux_2_17_aarch64"),
     "linux-arm64-musl": Platform("aarch64-unknown-linux-musl", "musllinux_1_2_aarch64"),
     "linux-ppc64-gnu": Platform(
-        "ppc64le-unknown-linux-gnu", "manylinux_2_28_ppc64le", mypyc=False, libyaml=False
+        "ppc64le-unknown-linux-gnu", "manylinux_2_17_ppc64le", mypyc=False, libyaml=False
     ),
     "linux-riscv64-gnu": Platform(
         "riscv64-unknown-linux-gnu", "manylinux_2_31_riscv64", mypyc=False, libyaml=False
     ),
-    "linux-s390x-gnu": Platform("s390x-unknown-linux-gnu", "manylinux_2_28_s390x", mypyc=False),
-    "linux-x64-gnu": Platform("x86_64-unknown-linux-gnu", "manylinux_2_28_x86_64"),
+    "linux-s390x-gnu": Platform("s390x-unknown-linux-gnu", "manylinux_2_17_s390x", mypyc=False),
+    "linux-x64-gnu": Platform("x86_64-unknown-linux-gnu", "manylinux_2_17_x86_64"),
     "linux-x64-musl": Platform("x86_64-unknown-linux-musl", "musllinux_1_2_x86_64"),
     "win32-arm64": Platform("aarch64-pc-windows-msvc", "win_arm64"),
     "win32-ia32": Platform("i686-pc-windows-msvc", "win32", libyaml=False),
