@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.53.0] - 2026-11-17
+
 ### Feature
 
 - The language server picks the profile from more of the language names editors use: `twig` (Neovim, Helix, Emacs) gets `nunjucks`, `htmlangular` (Neovim) gets `angular`, and the names VS Code extensions give HubL, Spacebars, Mustache, Liquid and Go templates get the profile of their language.
