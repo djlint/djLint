@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.52.2] - 2026-11-17
+
 ### Bug fixes
 
 - A comma inside an `exclude` or `extend_exclude` regex, as in `report[0-9]{1,2}\.html` or `[,;]`, stays part of it. Such a regex used to be cut in two at the comma and match nothing, also when written in a list in the config file. A comma meant literally is written `\,`.
@@ -11,6 +13,8 @@
 - A `.editorconfig` djLint isn't allowed to read is left out, as editors leave it out, instead of stopping the run with a traceback.
 
 ## [1.52.1] - 2026-11-17
+
+This version never reached PyPI or npm: its release build failed. 1.52.2 carries its fixes.
 
 ### Bug fixes
 
