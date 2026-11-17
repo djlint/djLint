@@ -45,13 +45,13 @@ vim.filetype.add({
 
 O Neovim 0.11 ou mais recente consegue se comunicar diretamente com o [servidor de linguagem](#servidor-de-linguagem) do djLint, sem nenhum plugin. Isso traz as ocorrências enquanto você digita, com os trechos sublinhados, e `vim.lsp.buf.format()` para a formatação.
 
-O [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) já traz a configuração, então com ele basta uma linha:
+O [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) posterior à v2.12.0 já traz a configuração, então com ele basta uma linha:
 
 ```lua
 vim.lsp.enable("djlint")
 ```
 
-Sem o nvim-lspconfig, defina a configuração você mesmo:
+Sem ele, ou com uma versão mais antiga, defina a configuração você mesmo:
 
 ```lua
 vim.lsp.config("djlint", {
