@@ -185,3 +185,14 @@ code,
   outline: 2px solid var(--dj-focus);
   outline-offset: 2px;
 }
+
+/*
+ * With the search dialog open, the page under it stays put: iOS Safari scrolled
+ * it once a swipe ran past the end of the results.
+ */
+:root:has(body[data-search-modal-open]) {
+  overflow: hidden;
+}
+site-search .dialog-frame {
+  overscroll-behavior: contain;
+}

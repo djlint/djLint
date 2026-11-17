@@ -487,6 +487,12 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     content: "xxxx" / "";
     color: transparent;
   }
+  /* The transition draws the lines above the rest of the page, so a line
+     scrolled under the header would slide over it. Given a snapshot of its
+     own, the header is drawn above them, as it is outside the transition. */
+  :global(header.header) {
+    view-transition-name: dj-header;
+  }
   /* A line with a view-transition-name is a stacking context, which would keep
      its tooltip under the marks on the lines after it. */
   .line:is(:hover, :focus-within) {
