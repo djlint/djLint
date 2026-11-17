@@ -123,7 +123,7 @@ Or run it with [pre-commit](https://djlint.com/docs/integrations/#pre-commit), f
 ```yaml
 repos:
   - repo: https://github.com/djlint/djLint
-    rev: v1.52.0 # use the latest version instead
+    rev: v1.52.1 # use the latest version instead
     hooks:
       - id: djlint-reformat
       - id: djlint
