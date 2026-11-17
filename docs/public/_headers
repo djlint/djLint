@@ -1,4 +1,4 @@
-# File names under these paths change with their content, so browsers may keep them for a year.
+# File names here change with their content, so browsers may keep them for a year.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 /pagefind/fragment/*
@@ -6,6 +6,8 @@
 /pagefind/index/*
   Cache-Control: public, max-age=31536000, immutable
 /pagefind/filter/*
+  Cache-Control: public, max-age=31536000, immutable
+/pagefind/*.pf_meta
   Cache-Control: public, max-age=31536000, immutable
 
 # Every response: no content sniffing, and no framing of the site by others.
