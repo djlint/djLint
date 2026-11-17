@@ -426,14 +426,14 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     text-underline-offset: 0.3em;
     cursor: help;
   }
-  /* Browsers draw no underline under an empty line, so paint the squiggle. */
-  .line :global(mark.lint-blank) {
-    display: inline-block;
-    width: 4ch;
-    height: 1.2em;
-    vertical-align: top;
-    background: var(--dj-squiggle-wave)
-      repeat-x 0 100% / 6px 3px;
+  /* An empty line has no text to underline, so give it a few invisible letters:
+     the squiggle under them is the same one as under text. Browsers skip the
+     underline under spaces at the end of a line. The empty alt text keeps
+     screen readers from reading the letters out. */
+  .line :global(mark.lint-blank)::before {
+    content: "xxxx";
+    content: "xxxx" / "";
+    color: transparent;
   }
   /* A line with a view-transition-name is a stacking context, which would keep
      its tooltip under the marks on the lines after it. */
