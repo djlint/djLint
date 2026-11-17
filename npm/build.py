@@ -392,6 +392,9 @@ def _build_platform(
         **({"libc": ["glibc" if libc == ["gnu"] else "musl"]} if libc else {}),
         # Yarn's Plug'n'Play can't run Python out of a zip archive.
         "preferUnplugged": True,
+        # The interpreter, which the launcher and the VS Code extension run
+        # djLint with.
+        "python": "python/python.exe" if windows else "python/bin/python3",
     }
     (folder / "package.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return _pack(folder)

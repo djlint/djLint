@@ -32,20 +32,16 @@ const name = `@djlint/${platform()}`;
 if (!Object.hasOwn(optionalDependencies, name)) {
   fail(`the npm package has no build for ${name.slice(8)}. Install djLint from PyPI: ${INSTALL}`);
 }
-let folder;
+let python;
 try {
-  folder = path.dirname(require.resolve(`${name}/package.json`));
+  const manifest = require.resolve(`${name}/package.json`);
+  python = path.join(path.dirname(manifest), require(manifest).python);
 } catch {
   fail(
     `${name} isn't installed. npm leaves this optional dependency out with --omit=optional, and so does a lock file made without it. Reinstall djlint.`,
   );
 }
 
-const python = path.join(
-  folder,
-  "python",
-  process.platform === "win32" ? "python.exe" : path.join("bin", "python3"),
-);
 // -I keeps the settings, packages and folder of some other Python out of this one.
 const child = spawn(python, ["-I", "-c", MAIN, ...process.argv.slice(2)], { stdio: "inherit" });
 
