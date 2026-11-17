@@ -13,18 +13,7 @@ Su [README](https://github.com/djlint/djlint-vscode#readme) describe sus ajustes
 
 ## Zed
 
-La [extensión de djLint](https://github.com/djlint/djlint-zed) ejecuta el [servidor de lenguaje](#servidor-de-lenguaje) en HTML y en los lenguajes de las extensiones de plantillas, como Django, Jinja y Twig. Todavía no está en el registro de extensiones de Zed, así que instálala como extensión de desarrollo:
-
-1. Instala Rust con [rustup](https://rustup.rs): Zed compila la extensión con él y añade por su cuenta el target `wasm32-wasip2`. Con un Rust de otra fuente, como Homebrew o Nix, añádelo tú.
-1. Clona la extensión:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. En Zed, abre la paleta de comandos (`cmd-shift-p` en macOS, `ctrl-shift-p` en el resto), ejecuta **zed: install dev extension** y elige la carpeta clonada `djlint-zed`.
-
-Para actualizarla, ejecuta `git pull` en esa carpeta y luego **zed: rebuild dev extension**.
+La [extensión de djLint](https://github.com/djlint/djlint-zed) ejecuta el [servidor de lenguaje](#servidor-de-lenguaje) en HTML y en los lenguajes de las extensiones de plantillas, como Django, Jinja y Twig. Para instalarla, abre la paleta de comandos (`cmd-shift-p` en macOS, `ctrl-shift-p` en el resto), ejecuta **zed: extensions**, busca djLint y haz clic en **Install**.
 
 Necesita djLint 1.49 o posterior en el PATH, o [uv](https://docs.astral.sh/uv/), que ejecuta djLint sin instalarlo. Su [README](https://github.com/djlint/djlint-zed#readme) explica cómo convertirla en el formateador de un lenguaje y cuáles son sus ajustes.
 

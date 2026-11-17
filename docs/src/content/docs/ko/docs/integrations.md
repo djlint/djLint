@@ -13,18 +13,7 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 
 ## Zed
 
-[djLint 확장](https://github.com/djlint/djlint-zed)은 HTML과 Django, Jinja, Twig 같은 템플릿 확장의 언어에서 [언어 서버](#언어-서버)를 실행합니다. 아직 Zed 확장 레지스트리에 없으므로 개발 확장으로 설치하세요.
-
-1. [rustup](https://rustup.rs)으로 Rust를 설치합니다. Zed는 Rust로 확장을 빌드하고 `wasm32-wasip2` 타깃도 직접 추가합니다. Homebrew나 Nix 등 다른 방법으로 설치한 Rust라면 이 타깃을 직접 추가하세요.
-1. 확장을 클론합니다:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Zed에서 명령 팔레트를 열고(macOS는 `cmd-shift-p`, 그 밖에는 `ctrl-shift-p`) **zed: install dev extension**을 실행한 뒤 클론한 `djlint-zed` 폴더를 고릅니다.
-
-업데이트하려면 그 폴더에서 `git pull`을 실행한 다음 **zed: rebuild dev extension**을 실행하세요.
+[djLint 확장](https://github.com/djlint/djlint-zed)은 HTML과 Django, Jinja, Twig 같은 템플릿 확장의 언어에서 [언어 서버](#언어-서버)를 실행합니다. 설치하려면 명령 팔레트(macOS에서는 `cmd-shift-p`, 그 밖에서는 `ctrl-shift-p`)를 열고 **zed: extensions**를 실행한 뒤 djLint를 검색해 **Install**을 클릭하세요.
 
 PATH에 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 

@@ -13,18 +13,7 @@ Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, a
 
 ## Zed
 
-[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Henüz Zed'in uzantı kayıt defterinde olmadığından onu geliştirme uzantısı olarak kurun:
-
-1. Rust'ı [rustup](https://rustup.rs) ile kurun: Zed uzantıyı onunla derler ve `wasm32-wasip2` hedefini kendisi ekler. Rust'ı Homebrew ya da Nix gibi başka bir yoldan kurduysanız bu hedefi kendiniz ekleyin.
-1. Uzantıyı klonlayın:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Zed'de komut paletini açın (macOS'ta `cmd-shift-p`, diğerlerinde `ctrl-shift-p`), **zed: install dev extension** komutunu çalıştırın ve klonlanan `djlint-zed` klasörünü seçin.
-
-Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extension** çalıştırın.
+[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Kurmak için komut paletini açın (macOS'ta `cmd-shift-p`, diğerlerinde `ctrl-shift-p`), **zed: extensions** komutunu çalıştırın, djLint'i arayın ve **Install**'a tıklayın.
 
 PATH'te djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
 
