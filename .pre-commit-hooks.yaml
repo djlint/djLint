@@ -25,7 +25,7 @@
 - id: djlint-handlebars
   name: djLint linting for Handlebars/Mustache
   entry: djlint --profile=handlebars
-  types_or: [handlebars, mustache]
+  files: \.(handlebars|hbs|mustache)$
   language: python
 
 - id: djlint-liquid
@@ -85,7 +85,7 @@
 - id: djlint-reformat-handlebars
   name: djLint formatting for Handlebars/Mustache
   entry: djlint --reformat --profile=handlebars
-  types_or: [handlebars, mustache]
+  files: \.(handlebars|hbs|mustache)$
   language: python
 
 - id: djlint-reformat-liquid
