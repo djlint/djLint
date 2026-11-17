@@ -6,6 +6,7 @@
 
 ### Bug fixes
 
+- A comma inside an `exclude` or `extend_exclude` regex, as in `report[0-9]{1,2}\.html` or `[,;]`, stays part of it. Such a regex used to be cut in two at the comma and match nothing, also when written in a list in the config file. A comma meant literally is written `\,`.
 - A `<!-- djlint:off -->` written right before its `<!-- djlint:on -->`, with nothing between them, no longer hides the rest of the file from the linter.
 - A `.editorconfig` djLint isn't allowed to read is left out, as editors leave it out, instead of stopping the run with a traceback.
 

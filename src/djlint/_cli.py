@@ -500,7 +500,7 @@ class _SectionedHelpCommand(click.Command):
     type=str,
     default="",
     metavar="PATHS",
-    help="Regexes of the paths to skip on top of --exclude or the default list, comma-separated.",
+    help="Regexes of the paths to skip on top of the exclude list, comma-separated.",
 )
 @click.option(
     "--linter-output-format",

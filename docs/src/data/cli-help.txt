@@ -16,9 +16,8 @@ Files:
                                   [default: html]
   --exclude PATHS                 Regexes of the paths to skip, comma-separated,
                                   in place of the default list.
-  --extend-exclude PATHS          Regexes of the paths to skip on top of
-                                  --exclude or the default list, comma-
-                                  separated.
+  --extend-exclude PATHS          Regexes of the paths to skip on top of the
+                                  exclude list, comma-separated.
   --use-gitignore                 Also skip the paths that the .gitignore in the
                                   project root lists.
   --require-pragma                Only format or lint files whose first line is
