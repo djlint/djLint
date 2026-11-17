@@ -17,7 +17,7 @@ Go şablonları (`text/template`, `html/template`) Hugo temalarının ve Helm ch
 djlint /path/to/templates --profile=golang
 ```
 
-## Ya da bir yapılandırma dosyası kullanın
+## Yapılandırma dosyasında
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[Tüm seçenekler için yapılandırma kılavuzuna göz atın!](/tr/docs/configuration/)
-:::

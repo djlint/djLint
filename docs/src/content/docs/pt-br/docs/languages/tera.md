@@ -15,7 +15,7 @@ O djLint faz o lint e formata templates Tera. Defina o perfil `tera` para que as
 djlint /path/to/templates --profile=tera
 ```
 
-## Ou use um arquivo de configuração
+## Em um arquivo de configuração
 
 Configure o djLint no arquivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` do seu projeto.
 
@@ -31,7 +31,3 @@ profile = "tera"
 ```json title=".djlintrc"
 { "profile": "tera" }
 ```
-
-:::tip
-[Confira o guia de configuração para ver todas as opções!](/pt-br/docs/configuration/)
-:::

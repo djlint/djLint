@@ -17,7 +17,7 @@ Com o perfil mako, uma linha de controle como `% if x:` e um comentário `##` se
 djlint /path/to/templates --profile=mako
 ```
 
-## Ou use um arquivo de configuração
+## Em um arquivo de configuração
 
 Configure o djLint no arquivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` do seu projeto.
 
@@ -33,7 +33,3 @@ profile = "mako"
 ```json title=".djlintrc"
 { "profile": "mako" }
 ```
-
-:::tip
-[Confira o guia de configuração para ver todas as opções!](/pt-br/docs/configuration/)
-:::

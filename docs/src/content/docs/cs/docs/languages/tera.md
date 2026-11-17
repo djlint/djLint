@@ -15,7 +15,7 @@ djLint lintuje a formátuje šablony Tera. Nastavte profil `tera`, aby jim prav
 djlint /path/to/templates --profile=tera
 ```
 
-## Nebo v konfiguračním souboru
+## V konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 
@@ -31,7 +31,3 @@ profile = "tera"
 ```json title=".djlintrc"
 { "profile": "tera" }
 ```
-
-:::tip
-[Všechny možnosti najdete v průvodci konfigurací!](/cs/docs/configuration/)
-:::

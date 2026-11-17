@@ -5,7 +5,7 @@ sidebar:
   label: "Linter"
 ---
 
-djLint obsahuje mnoho pravidel, která kontrolují styl a platnost vašich šablon. Linter naplno využijete, když ho nastavíte na připravený profil pro šablonovací jazyk, který používáte.
+Linter v šablonách hledá chyby a nejednotný styl. Nastavte [profil](/cs/docs/configuration/#profile) svého šablonovacího jazyka, aby se spustila pravidla pro něj.
 
 ```bash
 djlint /path/to/templates --lint
@@ -13,13 +13,9 @@ djlint /path/to/templates --lint
 # s vlastními příponami
 djlint /path/to/templates -e html.dj --profile=django
 
-# nebo pro soubor
-djlint /path/to/this.html.j2  --profile=jinja
+# nebo jeden soubor
+djlint /path/to/this.html.j2 --profile=jinja
 ```
-
-:::tip
-[Všechny možnosti najdete v průvodci konfigurací!](/cs/docs/configuration/)
-:::
 
 ## Zapnutí a vypnutí pravidel
 
@@ -31,9 +27,9 @@ Například:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Totéž lze nastavit i v konfiguračním souboru (viz [Konfigurace](/cs/docs/configuration/)).
+Nebo v konfiguračním souboru nastavte [`ignore`](/cs/docs/configuration/#ignore) a [`include`](/cs/docs/configuration/#include).
 
-Bez [profilu](/cs/docs/configuration/#profile) běží z vestavěných pravidel jen pravidla H. Pravidla T a pravidla pro jednotlivé šablonovací jazyky (D, J) zapínají profily, pro které platí. Pravidlo uvedené v `--include` běží v kterémkoli profilu i bez profilu, kromě profilu, o kterém jeho popis níže říká, že se v něm neuplatňuje.
+Které profily pravidlo spouštějí, uvádí [Struktura kódů](#struktura-kodu). Pravidlo uvedené v `--include` běží v kterémkoli profilu i bez profilu, kromě profilu, o kterém jeho popis níže říká, že se v něm neuplatňuje.
 
 ## Pravidla
 
@@ -53,7 +49,7 @@ Bez [profilu](/cs/docs/configuration/#profile) běží z vestavěných pravidel 
 | [H011](#h011) | Hodnoty atributů by měly být v uvozovkách.                                                             | ✔️      |
 | [H012](#h012) | Kolem `=` u atributu by neměly být mezery.                                                             | ✔️      |
 | [H013](#h013) | Značka `img` by měla mít atribut alt.                                                                  | ✔️      |
-| [H014](#h014) | Více prázdných řádků, než kolik konfigurace ponechává.                                                 | ✔️      |
+| [H014](#h014) | Příliš mnoho prázdných řádků za sebou.                                                                 | ✔️      |
 | [H015](#h015) | Za značkami `h` zalamujte řádek.                                                                       | ✔️      |
 | [H016](#h016) | V html chybí značka `title`.                                                                           | ✔️      |
 | [H017](#h017) | Nepárové značky by měly být samouzavírací (v konfliktu s: H018).                                       | -       |
@@ -107,14 +103,15 @@ Bez [profilu](/cs/docs/configuration/#profile) běží z vestavěných pravidel 
 
 ### Struktura kódů
 
-První písmeno kódu má tento význam:
+První písmeno kódu říká, které profily pravidlo spouštějí:
 
-- D: týká se konkrétně Djanga
-- H: týká se html
-- J: týká se konkrétně Jinja
-- M: týká se konkrétně Handlebars
-- N: týká se konkrétně Nunjucks
-- T: týká se šablon obecně
+- D: Django, spouští se v `django`.
+- H: HTML, spouští se v každém profilu. `angular` vynechává H012 a H026.
+- J: Jinja, spouští se v `jinja`.
+- T: syntaxe šablon, spouští se v každém profilu kromě `html` a `mako`. T001 a T041 až T044 se navíc nespouštějí v profilech, které uvádí jejich popis.
+- Pro M a N nemá djLint žádná vestavěná pravidla. Vlastní pravidlo, jehož kód začíná na M, se spouští v `handlebars` a `angular`, pravidlo začínající na N v `nunjucks` a `angular`.
+
+`all` spouští pravidla všech šablonových jazyků kromě těch, která jsou ve výchozím nastavení vypnutá, a těch, která některý profil vynechávají, jako T001 a T041 až T044; `--include` je přidá. Bez profilu linter spouští pravidla `html`.
 
 ### Podrobnosti pravidel
 
@@ -172,7 +169,7 @@ Když `{% block %}` zabírá mnoho řádků nebo jsou bloky vnořené, holý `{%
 
 Ve výchozím nastavení vypnuto; zapněte ho pomocí `--include=T003`. `--name-endblocks` název zapíše za vás.
 
-Název není nutný, když se blok otevírá i zavírá na stejném řádku, např. `{% block title %}``{% endblock %}`. Formátovač přesouvá obsah bloku, který obsahuje další značky, na samostatné řádky, takže blok zapsaný na jednom řádku může po naformátování název potřebovat; s `--name-endblocks` formátovač zapíše i tento název.
+Název není nutný, když se blok otevírá i zavírá na stejném řádku, např. `{% block title %}{% endblock %}`. Formátovač přesouvá obsah bloku, který obsahuje další značky, na samostatné řádky, takže blok zapsaný na jednom řádku může po naformátování název potřebovat; s `--name-endblocks` formátovač zapíše i tento název.
 
 Špatně:
 
@@ -411,7 +408,7 @@ Správně:
 
 `Found extra blank lines.`
 
-Řady prázdných řádků nemají na vykreslenou stránku žádný vliv (HTML prázdné znaky slučuje), ale nafukují šablony a vytvářejí zašuměné diffy, když se změní sousední řádky. Formátovač djLint je ve výchozím nastavení úplně odstraní (ponechá nejvýše `max_blank_lines` prázdných řádků, výchozí hodnota je 0), takže zbylé řady ukazují na nenaformátovaný kód.
+Řady prázdných řádků nemají na vykreslenou stránku žádný vliv (HTML prázdné znaky slučuje), ale nafukují šablony a vytvářejí zašuměné diffy, když se změní sousední řádky. Hlásí dva a více prázdných řádků za sebou, nebo víc než `max_blank_lines`, pokud je tato hodnota vyšší, a s `preserve_blank_lines` nehlásí nic. Jeden prázdný řádek se nehlásí, i když ho `--reformat` ve výchozím nastavení odstraní.
 
 Špatně:
 
@@ -578,7 +575,7 @@ Správně:
 
 `Empty tag pair found. Consider removing.`
 
-Prázdný pár značek nevykreslí žádný obsah, ale přesto vytvoří uzel DOM, na který se mohou ze stylů uplatnit okraje, rámečky nebo mezery flex/grid, a vzniká tak fantomové odsazení, které se těžko dohledává; obvykle jde o zbytek značkování z dřívější úpravy. Značky, které jsou v běžném značkování oprávněně prázdné (td, th, li, dt, dd, slot), jsou výjimkou. Nehlásí se ani značky s jakýmkoli atributem (body pro připojení JS jako `<div id="app">``</div>`, elementy ikonových fontů jako `<i class="fa fa-user">``</i>`); pravidlu odpovídají jen prázdné páry zcela bez atributů.
+Prázdný pár značek nevykreslí žádný obsah, ale přesto vytvoří uzel DOM, na který se mohou ze stylů uplatnit okraje, rámečky nebo mezery flex/grid, a vzniká tak fantomové odsazení, které se těžko dohledává; obvykle jde o zbytek značkování z dřívější úpravy. Značky, které jsou v běžném značkování oprávněně prázdné (td, th, li, dt, dd, slot), jsou výjimkou. Nehlásí se ani značky s jakýmkoli atributem (body pro připojení JS jako `<div id="app"></div>`, elementy ikonových fontů jako `<i class="fa fa-user"></i>`); pravidlu odpovídají jen prázdné páry zcela bez atributů.
 
 Špatně:
 
@@ -658,7 +655,7 @@ text/javascript a text/css jsou výchozí hodnoty HTML5 pro `<script>` a `<sty
 Špatně:
 
 ```html
-<script type="text/javascript" src="app.js">
+<script type="text/javascript" src="app.js"></script>
 ```
 
 Správně:
@@ -774,7 +771,7 @@ Správně:
 
 Vyhledávače používají meta description jako úryvek pod názvem stránky ve výsledcích; bez něj si úryvek poskládají z libovolného textu stránky, což snižuje míru prokliku a vytváří špatné náhledy odkazů, když je stránka sdílena.
 
-Spouští se jen na souborech obsahujících úplný dokument `<html>`...`</html>`. Argument s úryvkem se týká veřejně indexovaných stránek; u aplikací za přihlášením nebo intranetových aplikací se toto pravidlo běžně vypíná.
+Spouští se jen na souborech obsahujících úplný dokument `<html>`...`</html>`. Má význam jen pro stránky, které indexují vyhledávače, takže v aplikaci za přihlášením ho ignorujte.
 
 Špatně:
 
@@ -896,7 +893,7 @@ Správně:
 
 `Block tag has no matching end tag.`
 
-Bloková značka jako `{% if %}`, `{% for %}` nebo `{% macro %}` bez odpovídající koncové značky je v Djangu a Jinja tvrdou chybou TemplateSyntaxError: stránka se při požadavku nevykreslí, což toto pravidlo zachytí ještě před nasazením. Hlásí také osiřelé koncové značky bez otevírací značky a nesprávně prokládané bloky (např. `{% if %}``{% for %}``{% endif %}`).
+Bloková značka jako `{% if %}`, `{% for %}` nebo `{% macro %}` bez odpovídající koncové značky je v Djangu a Jinja tvrdou chybou TemplateSyntaxError: stránka se při požadavku nevykreslí, což toto pravidlo zachytí ještě před nasazením. Hlásí také osiřelé koncové značky bez otevírací značky a nesprávně prokládané bloky (např. `{% if %}{% for %}{% endif %}`).
 
 Toto pravidlo kontroluje párování `{% block %}`/`{% endblock %}` i nesouhlasné názvy v endblock; T003 (ve výchozím nastavení vypnuté) navíc vyžaduje název u každého víceřádkového `{% endblock %}`. Kontrolují se i vlastní blokové značky registrované přes custom_blocks, včetně jejich samouzavírací podoby / %}.
 
@@ -985,7 +982,7 @@ Správně:
 
 Django odmítne zkompilovat šablonu, ve které před `{% extends %}` stojí jiná značka, a text zapsaný před ní se vykreslí, takže prosákne do stránky před vše, co vytvoří rodičovská šablona. Jinja tento text také vykreslí a nunjucks ho zahodí, takže v žádném systému šablona nedělá to, co se zdá, že dělá.
 
-Komentář `{# #}` nic nevykresluje a nepočítá se, stejně jako cokoli uvnitř bloku `{% comment %}`, <code>{&#37; raw %}</code> nebo `{% verbatim %}`, ať pojmenovaného, nebo ne, oblast `{# djlint:off #}` v kterémkoli ze tří zápisů nebo yaml front matter. HTML komentář se počítá: systém ho zapíše do stránky před doctype rodičovské šablony, a to je právě ten únik, o který v tomto pravidle jde. Počítá se také blok `{% blocktrans %}`, blok `{% filter %}` a blok `<?php ?>`, protože každý z nich něco vykreslí. Kontroluje se jen první `{% extends %}`; druhý je chybou sám o sobě. V profilech jinja a nunjucks se značka větvení před ním nepočítá, protože jinja dokumentuje `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` jako způsob, jak zvolit rodiče; django načte zbytek šablony do `{% extends %}` a pak odmítne `{% endif %}`, takže v tomto profilu se značka větvení počítá.
+Komentář `{# #}` nic nevykresluje a nepočítá se, stejně jako cokoli uvnitř bloku `{% comment %}`, `{% raw %}` nebo `{% verbatim %}`, ať pojmenovaného, nebo ne, oblast `{# djlint:off #}` v kterémkoli ze tří zápisů nebo yaml front matter. HTML komentář se počítá: systém ho zapíše do stránky před doctype rodičovské šablony, a to je právě ten únik, o který v tomto pravidle jde. Počítá se také blok `{% blocktrans %}`, blok `{% filter %}` a blok `<?php ?>`, protože každý z nich něco vykreslí. Kontroluje se jen první `{% extends %}`; druhý je chybou sám o sobě. V profilech jinja a nunjucks se značka větvení před ním nepočítá, protože jinja dokumentuje `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` jako způsob, jak zvolit rodiče; django načte zbytek šablony do `{% extends %}` a pak odmítne `{% endif %}`, takže v tomto profilu se značka větvení počítá.
 
 Neuplatňuje se v profilech handlebars, golang, liquid a angular.
 
@@ -1029,9 +1026,9 @@ Správně:
 
 Jakmile šablona rozšiřuje jinou, o výstupu rozhoduje rodič a potomek jen vyplňuje bloky rodiče. Text nebo html zapsané za `{% extends %}` a mimo všechny `{% block %}` se při vykreslování tiše zahodí, takže odstavec, který ve zdrojovém kódu vypadá v pořádku, se na stránku nikdy nedostane.
 
-Šablonová značka se tam stále provede, takže `{% load %}`, `{% set %}` a `{% if %}` obalující blok se nehlásí, stejně jako komentáře `{# #}` a `{% comment %}`, html komentáře, bloky <code>{&#37; raw %}</code> a `{% verbatim %}` a tělo `{% macro %}`, blokové podoby `{% set %}`, `{% partialdef %}` nebo `{% addtoblock %}`, které se zachytí, místo aby se vypsalo. Text `{% blocktrans %}` se hlásí, protože `{% blocktrans %}` není `{% block %}`. Zohledňuje se jen obsah za značkou extends a každý jeho souvislý úsek se hlásí jednou, na svém začátku.
+Šablonová značka se tam stále provede, takže `{% load %}`, `{% set %}` a `{% if %}` obalující blok se nehlásí, stejně jako komentáře `{# #}` a `{% comment %}`, html komentáře, bloky `{% raw %}` a `{% verbatim %}` a tělo `{% macro %}`, blokové podoby `{% set %}`, `{% partialdef %}` nebo `{% addtoblock %}`, které se zachytí, místo aby se vypsalo. Text `{% blocktrans %}` se hlásí, protože `{% blocktrans %}` není `{% block %}`. Zohledňuje se jen obsah za značkou extends a každý jeho souvislý úsek se hlásí jednou, na svém začátku.
 
-Šablonovací systém čte šablonové značky dřív než html, takže `{% extends %}` zapsané uvnitř html komentáře nebo `<pre>` se stále provede a ze souboru stále udělá potomka; skutečně ho skryjí jen `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> a `{% verbatim %}`. Text uvnitř html komentáře se tak či tak k žádnému čtenáři nedostane a nehlásí se, ale značky v něm zapsané se stále čtou.
+Šablonovací systém čte šablonové značky dřív než html, takže `{% extends %}` zapsané uvnitř html komentáře nebo `<pre>` se stále provede a ze souboru stále udělá potomka; skutečně ho skryjí jen `{# #}`, `{% comment %}`, `{% raw %}` a `{% verbatim %}`. Text uvnitř html komentáře se tak či tak k žádnému čtenáři nedostane a nehlásí se, ale značky v něm zapsané se stále čtou.
 
 Neuplatňuje se v profilech handlebars, golang, liquid a angular.
 
@@ -1085,7 +1082,7 @@ Django, Jinja i Nunjucks odmítnou zpracovat šablonu, která pojmenuje dva blo
 
 Počítá se jen `{% block %}`: `{% blocktrans %}` není blok a `{% endblock name %}` jen pojmenovává blok, který uzavírá. Názvy se porovnávají tak, jak jsou zapsané, protože šablonovací systémy považují `Content` a `content` za dva bloky.
 
-Přeskakuje se jen to, co šablonovací systém sám nikdy nezpracovává: šablonový komentář, blok `{% comment %}`, tělo <code>{&#37; raw %}</code> nebo `{% verbatim %}` a oblast `djlint:off`. Blok zapsaný uvnitř html komentáře, v těle `<script>`, `<style>`, `<pre>` nebo `<textarea>` nebo v těle `{% filter %}` se stále počítá, protože systém všechny tyto části čte a na duplicitní název stejně vyvolá chybu.
+Přeskakuje se jen to, co šablonovací systém sám nikdy nezpracovává: šablonový komentář, blok `{% comment %}`, tělo `{% raw %}` nebo `{% verbatim %}` a oblast `djlint:off`. Blok zapsaný uvnitř html komentáře, v těle `<script>`, `<style>`, `<pre>` nebo `<textarea>` nebo v těle `{% filter %}` se stále počítá, protože systém všechny tyto části čte a na duplicitní název stejně vyvolá chybu.
 
 `{% embed %}` otevírá vlastní obor: bloky v něm vyplňují vloženou šablonu, a ne tuto, takže dvě vložení stejné dílčí šablony mohou každé obsahovat `{% block body %}`. Název opakovaný uvnitř jednoho embed se stále hlásí.
 
@@ -1145,7 +1142,7 @@ Výstupní značka vypisuje hodnotu, kdežto `if`, `for`, `url`, `include` a os
 
 Samotné klíčové slovo je obyčejný název proměnné, takže `{{ url }}`, `{{ url|default:"/" }}` a `{{ set.name }}` se nehlásí. Hlásí se jen klíčové slovo s argumentem a vedle toho samotné uzavírací nebo větvicí klíčové slovo jako `{{ endif }}` nebo `{{ else }}`. Řídicím klíčovým slovem jako `if` nebo `for` výraz začínat nemůže, takže cokoli za ním je argument, včetně operátoru, a `{{ if -1 > count }}` se hlásí. Ostatní názvy slouží zároveň jako proměnné a funkce a u nich se za argument považuje jen řetězec v uvozovkách nebo slovo, takže výraz, který jedním z nich náhodou začíná, se nehlásí: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` i `{{ filter [0] }}` se nehlásí.
 
-Tělo bloku <code>{&#37; raw %}</code> nebo `{% verbatim %}` je text, nikoli šablonová syntaxe, a přeskakuje se, včetně pojmenované podoby `{% verbatim vueapp %}...{% endverbatim vueapp %}`, takže `{{ }}` z Vue nebo Handlebars chráněné tímto způsobem se nehlásí. `{{ }}` zapsané uvnitř argumentu blokové značky v uvozovkách, jako v `{% trans "Write {{ if x }} instead" %}`, je text, který systém vypíše, a také se nehlásí.
+Tělo bloku `{% raw %}` nebo `{% verbatim %}` je text, nikoli šablonová syntaxe, a přeskakuje se, včetně pojmenované podoby `{% verbatim vueapp %}...{% endverbatim vueapp %}`, takže `{{ }}` z Vue nebo Handlebars chráněné tímto způsobem se nehlásí. `{{ }}` zapsané uvnitř argumentu blokové značky v uvozovkách, jako v `{% trans "Write {{ if x }} instead" %}`, je text, který systém vypíše, a také se nehlásí.
 
 Špatně:
 
@@ -1351,7 +1348,7 @@ Id pojmenovává jeden element. Druhý element se stejným id rozbije `getElemen
 
 Dvě id ve vzájemně se vylučujících větvích jednoho `{% if %}...{% else %}...{% endif %}` se nikdy nevykreslí obě, a proto se nehlásí. Cyklus `{% for %}` ani `{% block %}` větví není: id uvnitř něj i stejné id mimo něj se vykreslí obě a hlásí se to pozdější. Hodnota zapsaná šablonovou značkou je nepoznatelná a nehlásí se, stejně jako prázdná hodnota. Id se porovnávají přesně, stejně jako to dělá prohlížeč, takže `save` a `Save` jsou dvě různá id.
 
-Větve se čtou v jazyce, ve kterém je soubor napsaný, a s jakýmikoli prázdnými znaky, které jazyk mezi oddělovači a názvem značky dovoluje: `{% elif %}` a `{% else %}`, `{% elsif %}` a `{% when %}` z liquid, `{{ else }}` z go, řádkový příkaz `% else:` z mako a `{{else}}` z handlebars, jeho řetězené `{{else if x}}` a inverzní sekce libovolného bloku `{{#helper}}`, včetně vlastních helperů. Obsah `<template>` je samostatný fragment dokumentu, ke kterému `getElementById` nikdy nedosáhne, takže id v něm se porovnává jen s id téhož `<template>`: dvě šablony mohou každá obsahovat řádek se stejným id, ale dvě taková id uvnitř jedné šablony se stále hlásí. Id uvnitř komentáře, těla <code>{&#37; raw %}</code> nebo `{% verbatim %}` nebo oblasti `djlint:off` se vůbec nečte.
+Větve se čtou v jazyce, ve kterém je soubor napsaný, a s jakýmikoli prázdnými znaky, které jazyk mezi oddělovači a názvem značky dovoluje: `{% elif %}` a `{% else %}`, `{% elsif %}` a `{% when %}` z liquid, `{{ else }}` z go, řádkový příkaz `% else:` z mako a `{{else}}` z handlebars, jeho řetězené `{{else if x}}` a inverzní sekce libovolného bloku `{{#helper}}`, včetně vlastních helperů. Obsah `<template>` je samostatný fragment dokumentu, ke kterému `getElementById` nikdy nedosáhne, takže id v něm se porovnává jen s id téhož `<template>`: dvě šablony mohou každá obsahovat řádek se stejným id, ale dvě taková id uvnitř jedné šablony se stále hlásí. Id uvnitř komentáře, těla `{% raw %}` nebo `{% verbatim %}` nebo oblasti `djlint:off` se vůbec nečte.
 
 Špatně:
 
@@ -1505,28 +1502,13 @@ Správně:
 
 <!-- oxfmt-ignore-end -->
 
-### Přidávání pravidel
-
-Pull requesty s novými pravidly vítáme!
-
-Dobré pravidlo se skládá z těchto částí:
-
-- Název
-- Kód
-- Zpráva: zpráva, která se zobrazí při nalezení chyby.
-- Příznaky: příznaky regulárního výrazu, například re.I|re.M. Výchozí je re.DOTALL.
-- Vzory: regulární výrazy, které chybu najdou.
-- Vyloučení: volitelný seznam profilů, pro které pravidlo neplatí.
-
-K pravidlu prosím přidejte test, který ho ověří.
-
 ## Vlastní pravidla
 
-Vlastní pravidla jen pro svůj projekt můžete přidat tak, že vedle souboru `pyproject.toml` vytvoříte soubor `.djlint_rules.yaml`. Pravidla přidaná do tohoto souboru djLint načte. Soubor pravidel v jiném umístění lze zadat možností příkazového řádku `--rules`.
+Vlastní pravidla patří do souboru `.djlint_rules.yaml` v kořeni projektu, vedle konfiguračního souboru, a djLint je načte. `--rules` zadává soubor pravidel jinde. Kód vlastního pravidla se řídí [stejnými písmeny](#struktura-kodu), takže pravidlo začínající jiným písmenem, například C, se spouští v každém profilu. Ve vlastních pravidlech fungují i `default: false` a `exclude`.
 
 ### Pravidla se vzory
 
-Můžete přidat pravidla, která selžou, pokud některý z regulárních výrazů najde shodu:
+Pravidlo se vzory hlásí každou shodu svých vzorů:
 
 ```yaml
 - rule:
@@ -1539,7 +1521,7 @@ Můžete přidat pravidla, která selžou, pokud některý z regulárních výr
 
 ### Pravidla s modulem Pythonu
 
-Můžete přidat pravidla, která importují a spustí vlastní funkci v Pythonu:
+Pravidlo s modulem Pythonu spustí vaši vlastní funkci:
 
 ```yaml
 - rule:
@@ -1559,7 +1541,7 @@ Zadaný `python_module` musí obsahovat funkci `run()`, která se spustí pro ka
 
 Modul může být v kořeni projektu. Pokud vrátí `line` nebo `end`, které není pozicí, djLint skončí s chybou, která uvádí název pravidla.
 
-Musí vracet seznam slovníků, jeden pro každou chybu, s těmito klíči:
+Musí vracet seznam slovníků, jeden pro každý nález, s těmito klíči:
 
 - `code`: Kódové označení pravidla, které chybu hlásí (obvykle `rule['name']`)
 - `line`: Číslo řádku a číslo znaku na tomto řádku oddělené znakem „:“, jako řetězec.

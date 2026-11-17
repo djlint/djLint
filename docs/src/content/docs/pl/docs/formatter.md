@@ -5,28 +5,17 @@ sidebar:
   label: "Formater"
 ---
 
-Formater djLint weźmie niechlujne szablony HTML i nada im spójne, czytelne formatowanie!
-
-Zanim zastosujesz zmiany, przejrzyj wynik za pomocą `--check`.
-
-Aby sprawdzić, co może się zmienić w formatowaniu, uruchom:
+Formater djLint nadaje szablonom HTML spójny układ. Najpierw zobacz, co by zmienił:
 
 ```bash
-djlint . --check --single-attribute-per-line
+djlint . --check --format-css --format-js
 ```
 
-Aby sformatować kod i zaktualizować pliki, uruchom:
+Potem sformatuj pliki na miejscu, tutaj razem z zawartością `<style>` i `<script>`:
 
 ```bash
-djlint . --reformat --single-attribute-per-line
-
-# a może sformatować też skrypty i style?
-djlint . --reformat --single-attribute-per-line --format-css --format-js
+djlint . --reformat --format-css --format-js
 ```
-
-:::tip
-[Wszystkie opcje znajdziesz w przewodniku po konfiguracji!](/pl/docs/configuration/)
-:::
 
 :::note[Uwaga]
 JSON i JavaScript zapisane w atrybucie pozostają bez zmian, chyba że włączona jest opcja `--format-attribute-js-json`. HTML wewnątrz atrybutu nigdy nie jest zmieniany.
@@ -36,11 +25,9 @@ JSON i JavaScript zapisane w atrybucie pozostają bez zmian, chyba że włączon
 djLint nie jest parserem HTML ani walidatorem składni.
 :::
 
-## Oto przykład!
+## Przykład
 
 ### Przed
-
-Oto kawałek HTML-a, który rozpaczliwie potrzebuje uwagi:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -68,8 +55,6 @@ Oto kawałek HTML-a, który rozpaczliwie potrzebuje uwagi:
 ```
 
 ### Po
-
-Teraz wygląda trochę lepiej… da się to czytać :)
 
 <!-- oxfmt-ignore -->
 ```html

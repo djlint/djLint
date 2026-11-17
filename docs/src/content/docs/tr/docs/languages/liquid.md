@@ -17,7 +17,7 @@ Tek bir profil tüm Liquid lehçelerini kapsar: Shopify temaları, Jekyll, Liqui
 djlint /path/to/templates --profile=liquid
 ```
 
-## Ya da bir yapılandırma dosyası kullanın
+## Yapılandırma dosyasında
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 
@@ -33,7 +33,3 @@ profile = "liquid"
 ```json title=".djlintrc"
 { "profile": "liquid" }
 ```
-
-:::tip
-[Tüm seçenekler için yapılandırma kılavuzuna göz atın!](/tr/docs/configuration/)
-:::

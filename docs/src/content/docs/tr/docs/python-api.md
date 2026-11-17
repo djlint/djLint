@@ -3,7 +3,7 @@ title: "Python API"
 description: "djLint API'si ile şablonları kendi Python kodunuzdan biçimlendirin ve denetleyin."
 ---
 
-`djlint.api`, bir Python programının içinden metni komut satırıyla aynı sonuçları vererek biçimlendirir ve denetler. Düzenleyiciler, derleme araçları ve bellekte bir şablon tutan diğer her şey için tasarlanmıştır. Paketteki diğer her şey herhangi bir sürümde değişebilir; bu yüzden `djlint.settings` ya da `djlint.lint` yerine bu modülü kullanın.
+`djlint.api`, bir Python programının içinden metni komut satırıyla aynı sonuçları vererek biçimlendirir ve denetler. Düzenleyiciler, derleme araçları ve bellekte bir şablon tutan diğer her şey için tasarlanmıştır. Paketteki diğer her şey herhangi bir sürümde değişebilir; bu yüzden `djlint.settings` ya da `djlint.lint` yerine bu modülü kullanın. [Özel kural örneğinin](/tr/docs/linter/#python-modulu-kurallari) içe aktardığı yardımcılar, yani `djlint.lint.get_line`, `djlint.helpers.inside_ignored_rule` ve `djlint.helpers.inside_ignored_linter_block` da çalışmaya devam eder.
 
 ```python
 from djlint.api import format_text, lint_text, load_config
@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)`, bir klasördeki dosyalara uygulanan yapılandırmayı okur. Komut satırının kendisine verilen ilk yoldan (`-` için `--stdin-filename` klasöründen, bu seçenek yoksa geçerli dizinden) yaptığı gibi yapılandırmayı klasörden yukarı doğru arar ve geçerli dizini değiştirmez.
+`load_config(folder=".", *, python_rules=True, on_warning=None, **options)`, bir klasördeki dosyalara uygulanan yapılandırmayı okur. Komut satırının kendisine verilen ilk yoldan [yaptığı](/tr/docs/configuration/) gibi yapılandırmayı klasörden yukarı doğru arar ve geçerli dizini değiştirmez.
 
 Seçenekler, komut satırı seçeneklerinin adlarını alt çizgili olarak alır ve orada olduğu gibi çalışır: ayarlanmış bir değer yapılandırma dosyasının önüne geçer; `False`, boş bir dize ve çoğu seçenek için `0` ise verilmemiş sayılır. Yollar `pathlib.Path` olarak verilir.
 
@@ -26,9 +26,11 @@ Yapılandırmayı okumak biraz zaman alır; bu yüzden sonucu, okunduğu dosyala
 
 `python_rules=False` ile `python_module` içeren özel kurallar yüklenmez; bu, güvenmediğiniz bir projenin kodunun çalışmasını önler. Bu kuralların adları `config.skipped_rules` içindedir.
 
+`on_warning`, bir mesaj alan bir işlevdir ve ayarlarla ilgili her uyarıyı alır, örneğin yanlış yazılmış bir ad ya da hiçbir kurala ait olmayan bir kural kodu. Verilmezse her uyarı süreç başına bir kez stderr'e yazılır. Okunamayan bir yapılandırma dosyası ya da geçersiz bir değer `click.UsageError` fırlatır.
+
 ## format_text
 
-`format_text(config, text)` biçimlendirilmiş metni döndürür. İlk satırı CRLF ile biten bir metin CRLF ile, diğer her metin LF ile geri döner. `require_pragma` ile pragma içermeyen bir metin değiştirilmeden geri döner.
+`format_text(config, text)` biçimlendirilmiş metni döndürür. İlk satırı CRLF ile biten bir metin CRLF ile, diğer her metin LF ile geri döner. `require_pragma` ile pragma içermeyen bir metin değiştirilmeden geri döner. `indent` ya da `max_line_length` değerini `load_config` seçenekleri de yapılandırma dosyası da ayarlamıyorsa, bunları `load_config`'e verilen klasörde yapılandırılmış uzantıya sahip bir dosyaya uygulanan `.editorconfig` bölümlerinden alır; komut satırı ise bunları her dosya için o dosyanın yoluna göre alır.
 
 ## lint_text
 
@@ -50,4 +52,4 @@ Sütunlar bayt ya da UTF-16 kod birimi değil, karakter sayar.
 
 ## Kural modülleri
 
-Özel bir kuralın `python_module` modülü, yapılandırmanın proje kökünden, süreç başına bir kez içe aktarılır. Çalışmaya devam eden ve birden çok projeyle çalışan bir program, başka bir projenin modüllerini okuyabilmek için projeden içe aktarılan her şeyi `sys.modules` içinden, `sys.path` sonunda kalan proje kökünü de bu listeden kaldırmalıdır.
+Özel bir kuralın `python_module` modülü, yapılandırmanın proje kökünden, süreç başına bir kez içe aktarılır. Çalışmaya devam eden bir program, başka bir projenin kurallarını okumak için ilk projeden içe aktardığı her şeyi `sys.modules` içinden, o projenin kökünü de `sys.path` sonundan kaldırmalıdır.

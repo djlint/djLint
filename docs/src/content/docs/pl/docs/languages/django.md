@@ -15,7 +15,7 @@ djLint lintuje i formatuje szablony Django. Ustaw profil `django`, aby reguły i
 djlint /path/to/templates --profile=django
 ```
 
-## Lub w pliku konfiguracyjnym
+## W pliku konfiguracyjnym
 
 Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub `.djlintrc` swojego projektu.
 
@@ -31,7 +31,3 @@ profile = "django"
 ```json title=".djlintrc"
 { "profile": "django" }
 ```
-
-:::tip
-[Wszystkie opcje znajdziesz w przewodniku po konfiguracji!](/pl/docs/configuration/)
-:::

@@ -17,7 +17,7 @@ V profilu mako má řídicí řádek jako `% if x:` i komentář `##` vždy vlas
 djlint /path/to/templates --profile=mako
 ```
 
-## Nebo v konfiguračním souboru
+## V konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 
@@ -33,7 +33,3 @@ profile = "mako"
 ```json title=".djlintrc"
 { "profile": "mako" }
 ```
-
-:::tip
-[Všechny možnosti najdete v průvodci konfigurací!](/cs/docs/configuration/)
-:::

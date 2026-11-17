@@ -17,7 +17,7 @@ Szablony Go (`text/template`, `html/template`) napędzają też motywy Hugo i ch
 djlint /path/to/templates --profile=golang
 ```
 
-## Lub w pliku konfiguracyjnym
+## W pliku konfiguracyjnym
 
 Skonfiguruj djLint w pliku `pyproject.toml`, `djlint.toml` / `.djlint.toml` lub `.djlintrc` swojego projektu.
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[Wszystkie opcje znajdziesz w przewodniku po konfiguracji!](/pl/docs/configuration/)
-:::

@@ -15,7 +15,7 @@ djLint, Handlebars şablonlarını denetler ve biçimlendirir. Kuralların ve bi
 djlint /path/to/templates --profile=handlebars
 ```
 
-## Ya da bir yapılandırma dosyası kullanın
+## Yapılandırma dosyasında
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 
@@ -31,7 +31,3 @@ profile = "handlebars"
 ```json title=".djlintrc"
 { "profile": "handlebars" }
 ```
-
-:::tip
-[Tüm seçenekler için yapılandırma kılavuzuna göz atın!](/tr/docs/configuration/)
-:::

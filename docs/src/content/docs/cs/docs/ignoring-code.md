@@ -3,9 +3,7 @@ title: "Ignorování kódu"
 description: "Jak zabránit djLint ve formátování bloku kódu a jak ignorovat pravidla linteru přímo v kódu."
 ---
 
-Kód lze ignorovat tak, že ho obalíte značkami `djlint`:
-
-Pro obyčejné HTML:
+Kód mezi komentáři `djlint:off` a `djlint:on` nechá formátovač i linter beze změny. Mohou to být komentáře HTML:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -14,7 +12,7 @@ Pro obyčejné HTML:
 <!-- djlint:on -->
 ```
 
-nebo jako komentář:
+Nebo komentáře Django a Jinja:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -23,7 +21,7 @@ nebo jako komentář:
 {# djlint:on #}
 ```
 
-nebo jako dlouhý komentář:
+Nebo bloky `{% comment %}`:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -32,16 +30,16 @@ nebo jako dlouhý komentář:
 {% comment %} djlint:on {% endcomment %}
 ```
 
-nebo jako komentář ve stylu golang:
+Nebo komentáře šablon Go:
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
-nebo jako komentář ve stylu handlebars:
+Nebo komentáře Handlebars:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -72,7 +70,7 @@ Konkrétní pravidla linteru lze ignorovat také tak, že název pravidla přid�
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

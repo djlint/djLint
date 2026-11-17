@@ -17,7 +17,7 @@ mako profilinde `% if x:` gibi bir kontrol satırı ve `##` yorumu her zaman ken
 djlint /path/to/templates --profile=mako
 ```
 
-## Ya da bir yapılandırma dosyası kullanın
+## Yapılandırma dosyasında
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 
@@ -33,7 +33,3 @@ profile = "mako"
 ```json title=".djlintrc"
 { "profile": "mako" }
 ```
-
-:::tip
-[Tüm seçenekler için yapılandırma kılavuzuna göz atın!](/tr/docs/configuration/)
-:::

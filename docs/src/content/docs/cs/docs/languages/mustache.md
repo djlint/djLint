@@ -15,7 +15,7 @@ djLint lintuje a formátuje šablony Mustache. Nastavte profil `handlebars`, ab
 djlint /path/to/templates --profile=handlebars
 ```
 
-## Nebo v konfiguračním souboru
+## V konfiguračním souboru
 
 Nastavte djLint v souboru `pyproject.toml`, `djlint.toml` / `.djlint.toml` nebo `.djlintrc` svého projektu.
 
@@ -31,7 +31,3 @@ profile = "handlebars"
 ```json title=".djlintrc"
 { "profile": "handlebars" }
 ```
-
-:::tip
-[Všechny možnosti najdete v průvodci konfigurací!](/cs/docs/configuration/)
-:::

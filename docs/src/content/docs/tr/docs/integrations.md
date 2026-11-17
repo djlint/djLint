@@ -3,8 +3,6 @@ title: "Entegrasyonlar"
 description: "djLint'i düzenleyicinizde kullanın ve pre-commit ile çalıştırın."
 ---
 
-djLint için geliştirilmiş birkaç düzenleyici entegrasyonu vardır.
-
 Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabileceği bir yere, tercihen projenin sanal ortamına kurun ve düzenleyiciyi oradan başlatın ya da düzenleyiciyi o ortamdaki `djlint` komutuna yönlendirin. Böylece düzenleyici, projenizin sabitlediği sürümü çalıştırır ve pre-commit kancanızla ya da CI ile aynı sonuçları verir.
 
 ## Visual Studio Code
@@ -31,8 +29,6 @@ Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extensio
 PATH'te djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
 
 ## Neovim
-
-djLint, Neovim'de linter ve biçimlendirici olarak kullanılabilir.
 
 ### Yerleşik LSP istemcisi (önerilen)
 
@@ -82,38 +78,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 - [GitHub deposu](https://github.com/mattn/efm-langserver)
 
-1. efm-langserver ve djLint'i Mason ile `:MasonInstall efm djlint` komutuyla kurun
-1. `filetypes` listesine `htmldjango` ekleyin.
-1. Biçimlendirme yapılandırmasını oluşturun:
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-```
-
-1. Dili biçimlendiriciye `htmldjango = { djlint }` ile bağlayın.
-
-Örnek yapılandırma:
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-
-require("lspconfig").efm.setup({
-    filetypes = { "htmldjango" },
-    init_options = { documentFormatting = true },
-    settings = {
-        rootMarkers = { ".git/" },
-        languages = {
-            htmldjango = { djlint },
-        },
-    },
-})
-```
+`htmldjango` için `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` ve `formatStdin = true` ile bir biçimlendirici tanımlayın.
 
 ### coc.nvim
 
@@ -145,13 +110,7 @@ Bulgular düzenleyicide görünür ve **Reformat Code**, eşlenen dosyalar için
 
 ### SublimeLinter
 
-djLint, bir SublimeText Linter eklentisi olarak kullanılabilir. [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) üzerinden kurulabilir.
-
-1. `cmd + shift + p`
-2. SublimeLinter'ı kurun
-3. SublimeLinter-contrib-djlint'i kurun
-
-djLint'in genel Python kurulumunuzda ya da `PATH` üzerinde kurulu olduğundan emin olun.
+SublimeLinter'ı ve [SublimeLinter-contrib-djlint](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) paketini Package Control ile kurun. djLint, Sublime Text'in gördüğü PATH üzerinde olmalıdır.
 
 ## Helix
 
@@ -240,36 +199,28 @@ Ek açıklamalar tek bir pull request'e aittir. Bulguları, çalıştırmalar ar
 
 Yükleme adımı, job'da ya da iş akışında `security-events: write` iznine ihtiyaç duyar.
 
-`--sarif`, stdout'a bir SARIF 2.1.0 belgesi yazar ve başka hiçbir şey yazmaz; bu yüzden yukarıdaki gibi yönlendirilebilir. Etkin her kural, belgelerine giden bir bağlantıyla listelenir, her bulgu satırını ve sütununu taşır ve `--check` ile yeniden biçimlendirilecek bir dosya `formatting` kuralı altında bildirilir. Azure DevOps, GitLab ve çoğu düzenleyici aynı biçimi okur.
+`--sarif`, stdout'a bir SARIF 2.1.0 belgesi yazar ve başka hiçbir şey yazmaz; bu yüzden yukarıdaki gibi yönlendirilebilir. Etkin her kural, belgelerine giden bir bağlantıyla listelenir, her bulgu satırını ve sütununu taşır ve `--check` ile yeniden biçimlendirilecek bir dosya `formatting` kuralı altında bildirilir.
 
 ## pre-commit
 
 djLint, hem linter hem de biçimlendirici olarak bir [pre-commit](https://pre-commit.com) kancası şeklinde kullanılabilir.
 
-Depo, belirli djLint profilleri için önceden yapılandırılmış birden çok kanca sunar (bunlar yalnızca `--profile` argümanını önceden ayarlar ve pre-commit'e hangi dosya uzantılarına bakacağını söyler):
+Bu profillerin her birinin burada listelenen, lint denetimi yapan bir kancası ve biçimlendiren, aynı adı `reformat` ile taşıyan bir kancası vardır: `djlint-django` için `djlint-reformat-django`. Kancalar `--profile` değerini ve pre-commit'in ileteceği dosyaları ayarlar. `angular` profilinin kendine ait kancası yoktur: `djlint` ya da `djlint-reformat` kancasına `args: [--profile=angular]` verin.
 
-- Lint denetimi için `djlint` ve biçimlendirme için `djlint-reformat`.
-  Bu kancalar `--profile` ayarlamadan `*.html` ile eşleşen dosyaları arar.
-- `djlint-django` ve `djlint-reformat-django`.
-  Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=django` ayarlar.
-- `djlint-jinja` ve `djlint-reformat-jinja`.
-  Bu kancalar `*.j2`,`*.jinja` ya da `*.jinja2` ile eşleşen dosyaları arar ve `--profile=jinja` ayarlar.
-- `djlint-nunjucks` ve `djlint-reformat-nunjucks`.
-  Bu kancalar `*.njk` ile eşleşen dosyaları arar ve `--profile=nunjucks` ayarlar.
-- `djlint-handlebars` ve `djlint-reformat-handlebars`.
-  Bu kancalar `*.hbs` ile eşleşen dosyaları arar ve `--profile=handlebars` ayarlar.
-- `djlint-liquid` ve `djlint-reformat-liquid`.
-  Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=liquid` ayarlar.
-- `djlint-golang` ve `djlint-reformat-golang`.
-  Bu kancalar `*.gotmpl` ile eşleşen dosyaları arar ve `--profile=golang` ayarlar.
-- `djlint-tera` ve `djlint-reformat-tera`.
-  Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=tera` ayarlar.
-- `djlint-askama` ve `djlint-reformat-askama`.
-  Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=askama` ayarlar.
-- `djlint-mako` ve `djlint-reformat-mako`.
-  Bu kancalar `*.html` ile eşleşen dosyaları arar ve `--profile=mako` ayarlar.
+| Kanca               | Profil     | Dosyalar                             |
+| ------------------- | ---------- | ------------------------------------ |
+| `djlint`            | yok        | `.html`, `.htm`, `.xhtml`            |
+| `djlint-django`     | django     | `.html`, `.htm`, `.xhtml`            |
+| `djlint-jinja`      | jinja      | `.j2`, `.jinja`, `.jinja2`           |
+| `djlint-nunjucks`   | nunjucks   | `.njk`                               |
+| `djlint-handlebars` | handlebars | `.hbs`, `.handlebars`, `.mustache`   |
+| `djlint-liquid`     | liquid     | `.html`, `.htm`, `.xhtml`, `.liquid` |
+| `djlint-golang`     | golang     | `.gotmpl`                            |
+| `djlint-tera`       | tera       | `.html`, `.htm`, `.xhtml`            |
+| `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
+| `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Önceden tanımlanmış bu kancaların kabul ettikleri girdiler konusunda bazen fazla tutucu olduğunu unutmayın (şablonlarınız farklı bir uzantı kullanıyor olabilir); bu yüzden pre-commit, önceden tanımlanmış bu seçeneklerin herhangi birini geçersiz kılmanıza açıkça izin verir. Ek yapılandırma için [pre-commit belgelerine](https://pre-commit.com/#pre-commit-configyaml---hooks) bakın.
+Başka uzantılı şablonlar için yapılandırmanızda `files` değerini, kanca ayarlıyorsa `types_or` değerini de geçersiz kılın, çünkü pre-commit ikisinin de eşleşmesini ister. Ayrıntılar için [pre-commit belgelerine](https://pre-commit.com/#pre-commit-configyaml---hooks) bakın.
 
 ### Varsayılan Django örneği
 
@@ -301,9 +252,4 @@ Her kancayı kendi dizinine sınırlamak için `files` ya da `exclude` parametre
 
 ## MegaLinter
 
-djlint, [MegaLinter](https://megalinter.io) içindeki 100'den fazla linter arasında yerleşik olarak bulunur
-
-Kurmak için `npx mega-linter-runner --install` komutunu çalıştırıp talimatları izlemeniz yeterli
-
-- [GitHub deposu](https://github.com/oxsecurity/megalinter)
-- [MegaLinter belgelerinde djlint](https://megalinter.io/latest/descriptors/html_djlint/)
+[MegaLinter](https://megalinter.io) djLint'i içerir. Kurmak için `npx mega-linter-runner --install` komutunu çalıştırın, seçenekler için [djLint sayfasına](https://megalinter.io/latest/descriptors/html_djlint/) bakın.

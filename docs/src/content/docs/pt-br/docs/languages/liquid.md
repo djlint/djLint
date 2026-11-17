@@ -17,7 +17,7 @@ Um único perfil cobre todos os dialetos do Liquid: temas da Shopify, Jekyll, Li
 djlint /path/to/templates --profile=liquid
 ```
 
-## Ou use um arquivo de configuração
+## Em um arquivo de configuração
 
 Configure o djLint no arquivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` do seu projeto.
 
@@ -33,7 +33,3 @@ profile = "liquid"
 ```json title=".djlintrc"
 { "profile": "liquid" }
 ```
-
-:::tip
-[Confira o guia de configuração para ver todas as opções!](/pt-br/docs/configuration/)
-:::

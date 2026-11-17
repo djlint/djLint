@@ -9,9 +9,7 @@ djLint, Jinja şablonlarını denetler ve biçimlendirir. Kuralların ve biçiml
 
 **[Jinja nedir?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja şablonları Jinja2 ile tamamen uyumludur; bu yüzden aynı `jinja` profilini kullanın.
-
-HubSpot'un Jinjava şablonları da jinja tarzındadır; bu yüzden onlar için de bu profili kullanın.
+MiniJinja, Jinja2 söz dizimini izler, HubSpot'un Jinjava şablonları da Jinja tarzındadır; bu yüzden ikisi için de `jinja` profilini kullanın. J004 ve J018 Flask'ın `url_for` işlevini önerdiği için Flask kullanmayan bir projede bunları yok sayın.
 
 ## Komut satırını kullanma
 
@@ -19,7 +17,7 @@ HubSpot'un Jinjava şablonları da jinja tarzındadır; bu yüzden onlar için d
 djlint /path/to/templates --profile=jinja
 ```
 
-## Ya da bir yapılandırma dosyası kullanın
+## Yapılandırma dosyasında
 
 djLint'i projenizin `pyproject.toml`, `djlint.toml` / `.djlint.toml` ya da `.djlintrc` dosyasında yapılandırın.
 
@@ -35,7 +33,3 @@ profile = "jinja"
 ```json title=".djlintrc"
 { "profile": "jinja" }
 ```
-
-:::tip
-[Tüm seçenekler için yapılandırma kılavuzuna göz atın!](/tr/docs/configuration/)
-:::

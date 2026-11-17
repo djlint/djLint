@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "Profil pro váš šablonovací jazyk",
-  "djlint.index_show_format": "Pochlubte se formátováním!",
+  "djlint.index_show_format": "Odznak",
   "djlint.index_looks_like": "Vypadá takto:",
   "djlint.index_add_badge": "Přidejte do svých projektů odznak",
   "djlint.contributing": "Přispívání",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "Možnosti",
   "djlint.demo_output": "Výstup",
   "djlint.demo_problems": "Problémy: {count}",
-  "djlint.demo_defaults": "Není co nastavit, toto jsou výchozí hodnoty djLintu",
+  "djlint.demo_defaults": "Není co nastavit: toto jsou výchozí hodnoty djLintu",
   "djlint.demo_layout": "Rozvržení",
   "djlint.demo_rewrites": "Přepisy",
   "djlint.demo_css_js": "CSS a JavaScript",
