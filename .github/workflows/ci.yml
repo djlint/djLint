@@ -70,60 +70,7 @@ jobs:
           name: playwright
           path: docs/test-results
   npm:
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash
-    strategy:
-      matrix:
-        include:
-          - os: macos-26
-            platform: darwin-arm64
-          - os: macos-26-intel
-            platform: darwin-x64
-          - os: ubuntu-26.04-arm
-            platform: linux-arm64-gnu
-          - os: ubuntu-26.04-arm
-            platform: linux-arm64-musl
-          - os: ubuntu-26.04
-            platform: linux-x64-gnu
-          - os: ubuntu-26.04
-            platform: linux-x64-musl
-          - os: windows-11-vs2026-arm
-            platform: win32-arm64
-          - os: windows-2025
-            platform: win32-x64
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      # The build script asks for the Python it compiles the bytecode with.
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          enable-cache: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version-file: .nvmrc
-          check-latest: true
-          package-manager-cache: false
-      # The pure wheel, as compiling one takes minutes. The release tests the
-      # packages with the compiled ones before it publishes them.
-      - run: uv build --wheel --out-dir wheels --no-cache
-      - run: uv run --no-cache npm/build.py wheels "$PLATFORM"
-        env:
-          PLATFORM: ${{ matrix.platform }}
-      - if: ${{ !endsWith(matrix.platform, '-musl') }}
-        run: node --test npm/test.mjs
-        env:
-          DJLINT_PLATFORM: ${{ matrix.platform }}
-      # The runner has glibc, so the musl build is tested in Alpine.
-      - if: ${{ endsWith(matrix.platform, '-musl') }}
-        run: >-
-          docker run --rm --env DJLINT_PLATFORM --volume "$PWD:/djlint" --workdir /djlint
-          "node:$(cat .nvmrc)-alpine" node --test npm/test.mjs
-        env:
-          DJLINT_PLATFORM: ${{ matrix.platform }}
+    uses: $/.github/workflows/npm.yml
   pre-commit:
     runs-on: ubuntu-26.04
     steps:

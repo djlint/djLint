@@ -153,52 +153,8 @@ jobs:
       - run: uv publish --trusted-publishing always --no-cache
   # The packages with the compiled djLint, on the platforms they are for.
   test-npm:
-    runs-on: ${{ matrix.os }}
     needs:
       - build-npm
-    defaults:
-      run:
-        shell: bash
-    strategy:
-      matrix:
-        include:
-          - os: macos-26
-            platform: darwin-arm64
-          - os: macos-26-intel
-            platform: darwin-x64
-          - os: ubuntu-26.04-arm
-            platform: linux-arm64-gnu
-          - os: ubuntu-26.04-arm
-            platform: linux-arm64-musl
-          - os: ubuntu-26.04
-            platform: linux-x64-gnu
-          - os: ubuntu-26.04
-            platform: linux-x64-musl
-          - os: windows-11-vs2026-arm
-            platform: win32-arm64
-          - os: windows-2025
-            platform: win32-x64
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version-file: .nvmrc
-          check-latest: true
-          package-manager-cache: false
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-        with:
-          name: npm
-          path: npm/dist
-      - if: ${{ !endsWith(matrix.platform, '-musl') }}
-        run: node --test npm/test.mjs
-        env:
-          DJLINT_PLATFORM: ${{ matrix.platform }}
-      - if: ${{ endsWith(matrix.platform, '-musl') }}
-        run: >-
-          docker run --rm --env DJLINT_PLATFORM --volume "$PWD:/djlint" --workdir /djlint
-          "node:$(cat .nvmrc)-alpine" node --test npm/test.mjs
-        env:
-          DJLINT_PLATFORM: ${{ matrix.platform }}
+    uses: $/.github/workflows/npm.yml
+    with:
+      packages: npm

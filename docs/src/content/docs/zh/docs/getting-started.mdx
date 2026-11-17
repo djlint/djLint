@@ -53,7 +53,7 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-npm 包自带 Python，因此只需要 Node.js 16.9 或更高版本。它提供 x64 和 Arm64 上 Linux、macOS 和 Windows 的构建。将其添加为项目的开发依赖：
+npm 包自带 Python，因此只需要 Node.js 16.9 或更高版本。它提供 Linux（x64、Arm64、ppc64le、s390x、riscv64）、macOS（x64、Arm64）和 Windows（x64、x86、Arm64）的构建。在使用 musl 的 Linux（如 Alpine）上，它支持 x64 和 Arm64。将其添加为项目的开发依赖：
 
 ```bash
 npm i -D djlint

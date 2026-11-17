@@ -53,7 +53,7 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-npm パッケージは独自の Python を同梱しているため、必要なのは Node.js 16.9 以降だけです。x64 と Arm64 の Linux、macOS、Windows 向けのビルドがあります。開発用の依存関係としてプロジェクトに追加します：
+npm パッケージは独自の Python を同梱しているため、必要なのは Node.js 16.9 以降だけです。Linux（x64、Arm64、ppc64le、s390x、riscv64）、macOS（x64、Arm64）、Windows（x64、x86、Arm64）向けのビルドがあります。Alpine などの musl を使う Linux では x64 と Arm64 で動きます。開発用の依存関係としてプロジェクトに追加します：
 
 ```bash
 npm i -D djlint

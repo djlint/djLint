@@ -1,5 +1,6 @@
 # /// script
 # requires-python = "==3.14.*"
+# dependencies = ["pip==26.3"]
 # ///
 """Build the npm packages of djLint.
 
@@ -11,9 +12,10 @@ djLint can use, with djLint and its dependencies installed into it.
     uv run npm/build.py WHEELS [PLATFORM ...]
 
 WHEELS is a folder with the djLint wheels of this version. When it has
-compiled ones, as for a release, each platform has to find its own there;
-with only the pure one, as for a test, they all take that. With no PLATFORM,
-all of them are built. The packages are packed into npm/dist.
+compiled ones, as for a release, each platform that djLint is compiled for
+has to find its own there; the others, and all of them when there is only the
+pure one, as for a test, take the pure one. With no PLATFORM, all of them are
+built. The packages are packed into npm/dist.
 
 The Python of a package runs this one's bytecode, so this script runs on the
 same Python version. A package for Linux or macOS has to be built on one of
@@ -31,13 +33,16 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import tempfile
 import tomllib
 import urllib.parse
 import urllib.request
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from typing import Final
 
 # Renovate updates it. Each release has every Python version, and the package
@@ -46,20 +51,44 @@ PYTHON_BUILD_STANDALONE: Final = "20261110"
 # The newest Python that every dependency has wheels for: PyYAML has none for 3.15.
 PYTHON: Final = "3.14"
 
+
+@dataclass(frozen=True)
+class Platform:
+    # python-build-standalone's name for it.
+    python: str
+    # The wheel tag pip takes the packages for it by.
+    tag: str
+    # Whether djLint has compiled wheels for it.
+    mypyc: bool = True
+    # Whether PyYAML has wheels for it. Where it has none, PyYAML goes without
+    # its C extension, as it does where pip builds it without LibYAML.
+    libyaml: bool = True
+
+
 # The npm name of each platform, after Node's process.platform and
-# process.arch, with python-build-standalone's and uv's name for it. Linux has
-# one for each libc. Windows on 32-bit x86 and Linux on 32-bit Arm are left
-# out: regex and PyYAML have no wheels for them.
+# process.arch, with one for each libc on Linux: every one python-build-standalone
+# builds this Python for, but Linux on 32-bit Arm, which regex has no wheels for.
 PLATFORMS: Final = {
-    "darwin-arm64": "aarch64-apple-darwin",
-    "darwin-x64": "x86_64-apple-darwin",
-    "linux-arm64-gnu": "aarch64-unknown-linux-gnu",
-    "linux-arm64-musl": "aarch64-unknown-linux-musl",
-    "linux-x64-gnu": "x86_64-unknown-linux-gnu",
-    "linux-x64-musl": "x86_64-unknown-linux-musl",
-    "win32-arm64": "aarch64-pc-windows-msvc",
-    "win32-x64": "x86_64-pc-windows-msvc",
+    "darwin-arm64": Platform("aarch64-apple-darwin", "macosx_11_0_arm64"),
+    "darwin-x64": Platform("x86_64-apple-darwin", "macosx_10_15_x86_64"),
+    "linux-arm64-gnu": Platform("aarch64-unknown-linux-gnu", "manylinux_2_28_aarch64"),
+    "linux-arm64-musl": Platform("aarch64-unknown-linux-musl", "musllinux_1_2_aarch64"),
+    "linux-ppc64-gnu": Platform(
+        "ppc64le-unknown-linux-gnu", "manylinux_2_28_ppc64le", mypyc=False, libyaml=False
+    ),
+    "linux-riscv64-gnu": Platform(
+        "riscv64-unknown-linux-gnu", "manylinux_2_31_riscv64", mypyc=False, libyaml=False
+    ),
+    "linux-s390x-gnu": Platform("s390x-unknown-linux-gnu", "manylinux_2_28_s390x", mypyc=False),
+    "linux-x64-gnu": Platform("x86_64-unknown-linux-gnu", "manylinux_2_28_x86_64"),
+    "linux-x64-musl": Platform("x86_64-unknown-linux-musl", "musllinux_1_2_x86_64"),
+    "win32-arm64": Platform("aarch64-pc-windows-msvc", "win_arm64"),
+    "win32-ia32": Platform("i686-pc-windows-msvc", "win32", libyaml=False),
+    "win32-x64": Platform("x86_64-pc-windows-msvc", "win_amd64"),
 }
+# Where PyYAML without its C extension comes from: its Python is the same in
+# every wheel.
+_PYYAML_TAG: Final = PLATFORMS["linux-x64-gnu"].tag
 
 # What djLint has no use for: headers and libraries to build against, Tk and
 # IDLE, pip, and the tests of Python itself. Relative to the python folder, on
@@ -212,27 +241,59 @@ def _trim(python: Path, stdlib: Path, *, windows: bool) -> None:
         raise RuntimeError(msg)
 
 
-def _install(site: Path, triple: str, *requirements: str | Path) -> None:
+def _install(site: Path, tag: str, *requirements: str | Path) -> None:
+    # pip, as uv knows no wheel tags for ppc64le or s390x.
     _run(
-        os.environ.get("UV", "uv"),
+        sys.executable,
+        "-m",
         "pip",
         "install",
-        "--no-config",
+        "--isolated",
         "--quiet",
+        "--disable-pip-version-check",
         "--target",
         site,
-        "--python-platform",
-        triple,
+        "--platform",
+        tag,
         "--python-version",
         PYTHON,
+        "--implementation",
+        "cp",
         "--only-binary",
         ":all:",
         "--no-deps",
-        "--no-installer-metadata",
-        "--link-mode",
-        "copy",
+        "--no-compile",
         *requirements,
     )
+
+
+def _requirements() -> dict[str, str]:
+    """Return what uv.lock pins djLint's dependencies to, with their hashes, by name."""
+    exported = _run(
+        os.environ.get("UV", "uv"),
+        "export",
+        "--frozen",
+        "--no-default-groups",
+        "--no-emit-project",
+        "--no-header",
+        "--no-annotate",
+    )
+    # A requirement takes its first line and the --hash lines under it.
+    entries = exported.replace(" \\\n    ", " ").splitlines()
+    for entry in entries:
+        marker = entry.partition(";")[2].partition("--hash")[0]
+        # pip, which installs them, reads a marker for the Python it runs on.
+        if any(word in marker for word in ("sys_platform", "platform_", "os_name")):
+            msg = f"a requirement only some platforms have: {entry}"
+            raise RuntimeError(msg)
+    return {entry.partition("==")[0]: entry for entry in entries}
+
+
+def _install_locked(site: Path, tag: str, requirements: Iterable[str]) -> None:
+    with tempfile.TemporaryDirectory() as folder:
+        path = Path(folder) / "requirements.txt"
+        path.write_text("".join(f"{line}\n" for line in requirements), encoding="utf-8")
+        _install(site, tag, "--require-hashes", "--requirement", path)
 
 
 def _pack(folder: Path) -> Path:
@@ -253,24 +314,31 @@ def _build_platform(
     name: str,
     *,
     wheels: Path,
-    requirements: Path,
+    requirements: dict[str, str],
     version: str,
     python_version: str,
     hashes: dict[str, str],
     licenses: dict[str, bytes],
 ) -> Path:
-    triple = PLATFORMS[name]
+    platform = PLATFORMS[name]
     system, cpu, *libc = name.split("-")
     folder = _DIST / name
     python = folder / "python"
     windows = system == "win32"
     stdlib = python / ("Lib" if windows else f"lib/python{PYTHON}")
 
-    _extract_python(folder, triple, python_version, hashes)
+    _extract_python(folder, platform.python, python_version, hashes)
     _trim(python, stdlib, windows=windows)
     site = stdlib / "site-packages"
-    _install(site, triple, "--require-hashes", "--requirement", requirements)
-    _install(site, triple, "--no-index", "--find-links", wheels, f"djlint=={version}")
+    if platform.libyaml:
+        _install_locked(site, platform.tag, requirements.values())
+    else:
+        others = [line for package, line in requirements.items() if package != "pyyaml"]
+        _install_locked(site, platform.tag, others)
+        _install_locked(site, _PYYAML_TAG, [requirements["pyyaml"]])
+        for extension in (site / "yaml").glob("_yaml.*"):
+            extension.unlink()
+    _install(site, platform.tag, "--no-index", "--find-links", wheels, f"djlint=={version}")
     # The commands of the packages, made for a Python that is not this one.
     shutil.rmtree(site / "bin", ignore_errors=True)
     # An unchecked hash lets Python take the bytecode as is: npm gives every
@@ -286,7 +354,7 @@ def _build_platform(
     shutil.copy(_ROOT / "LICENSE", folder)
 
     compiled = any(site.glob("*__mypyc*"))
-    if not compiled and any(wheels.glob("djlint-*-cp*.whl")):
+    if platform.mypyc and not compiled and any(wheels.glob("djlint-*-cp*.whl")):
         msg = f"none of the compiled djLint wheels is for {name}"
         raise RuntimeError(msg)
     (folder / "README.md").write_text(
@@ -356,18 +424,7 @@ def main(wheels: Path, platforms: list[str]) -> None:
             _remove(path)
     python_version, hashes = _python_archives()
     licenses = _licenses()
-    requirements = _DIST / "requirements.txt"
-    _run(
-        os.environ.get("UV", "uv"),
-        "export",
-        "--frozen",
-        "--no-default-groups",
-        "--no-emit-project",
-        "--no-header",
-        "--no-annotate",
-        "--output-file",
-        requirements,
-    )
+    requirements = _requirements()
     packed = [_build_launcher(version)]
     packed.extend(
         _build_platform(
@@ -381,7 +438,6 @@ def main(wheels: Path, platforms: list[str]) -> None:
         )
         for name in platforms
     )
-    requirements.unlink()
     for path in packed:
         print(f"{path.name}: {path.stat().st_size / 2**20:.1f} MiB")
 

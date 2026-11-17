@@ -53,7 +53,7 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-npm 패키지는 자체 Python을 함께 제공하므로 Node.js 16.9 이상만 있으면 됩니다. x64와 Arm64용 Linux, macOS, Windows 빌드가 있습니다. 프로젝트에 개발 의존성으로 추가합니다.
+npm 패키지는 자체 Python을 함께 제공하므로 Node.js 16.9 이상만 있으면 됩니다. Linux(x64, Arm64, ppc64le, s390x, riscv64), macOS(x64, Arm64), Windows(x64, x86, Arm64)용 빌드가 있습니다. Alpine처럼 musl을 쓰는 Linux에서는 x64와 Arm64에서 동작합니다. 프로젝트에 개발 의존성으로 추가합니다.
 
 ```bash
 npm i -D djlint
