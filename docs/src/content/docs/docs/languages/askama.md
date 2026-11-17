@@ -15,7 +15,7 @@ djLint lints and formats Askama templates. Set the `askama` profile so the rules
 djlint /path/to/templates --profile=askama
 ```
 
-## Or, use a config file
+## In a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 
@@ -31,7 +31,3 @@ profile = "askama"
 ```json title=".djlintrc"
 { "profile": "askama" }
 ```
-
-:::tip
-[Check out the configuration guide for all the options!](/docs/configuration/)
-:::

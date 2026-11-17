@@ -17,7 +17,7 @@ Les templates Go (`text/template`, `html/template`) servent aussi aux thèmes Hu
 djlint /path/to/templates --profile=golang
 ```
 
-## Ou avec un fichier de configuration
+## Dans un fichier de configuration
 
 Configurez djLint dans le fichier `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` de votre projet.
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[Consultez le guide de configuration pour découvrir toutes les options !](/fr/docs/configuration/)
-:::

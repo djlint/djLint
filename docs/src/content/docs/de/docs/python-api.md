@@ -3,7 +3,7 @@ title: "Python-API"
 description: "Formatieren und linten Sie Templates mit der djLint-API aus Ihrem eigenen Python-Code."
 ---
 
-`djlint.api` formatiert und lintet Text aus einem Python-Programm heraus, mit denselben Ergebnissen wie auf der Befehlszeile. Das Modul ist für Editoren, Build-Tools und alles andere gedacht, was ein Template im Speicher hält. Alles andere im Paket kann sich mit jedem Release ändern, verwenden Sie also dieses Modul und nicht `djlint.settings` oder `djlint.lint`.
+`djlint.api` formatiert und lintet Text aus einem Python-Programm heraus, mit denselben Ergebnissen wie auf der Befehlszeile. Das Modul ist für Editoren, Build-Tools und alles andere gedacht, was ein Template im Speicher hält. Alles andere im Paket kann sich mit jedem Release ändern, verwenden Sie also dieses Modul und nicht `djlint.settings` oder `djlint.lint`. Die Hilfsfunktionen, die das [Beispiel für eine benutzerdefinierte Regel](/de/docs/linter/#regeln-als-python-modul) importiert, `djlint.lint.get_line`, `djlint.helpers.inside_ignored_rule` und `djlint.helpers.inside_ignored_linter_block`, funktionieren ebenfalls weiter.
 
 ```python
 from djlint.api import format_text, lint_text, load_config
@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` liest die Konfiguration, die für die Dateien eines Ordners gilt. Es sucht sie vom Ordner aus aufwärts, so wie die Befehlszeile vom ersten übergebenen Pfad aus (bei `-` vom Ordner von `--stdin-filename`, ohne diese Option vom aktuellen Verzeichnis), und wechselt dabei nicht das aktuelle Verzeichnis.
+`load_config(folder=".", *, python_rules=True, on_warning=None, **options)` liest die Konfiguration, die für die Dateien eines Ordners gilt. Es sucht sie vom Ordner aus aufwärts, so wie die Befehlszeile [vom ersten übergebenen Pfad aus](/de/docs/configuration/), und wechselt dabei nicht das aktuelle Verzeichnis.
 
 Optionen tragen die Namen der Befehlszeilenoptionen, mit Unterstrichen, und wirken wie dort: Ein gesetzter Wert hat Vorrang vor der Konfigurationsdatei, während `False`, ein leerer String und bei den meisten Optionen auch `0` als nicht angegeben gelten. Pfade werden als `pathlib.Path` übergeben.
 
@@ -26,9 +26,11 @@ Das Lesen der Konfiguration dauert etwas. Behalten Sie das Ergebnis daher, solan
 
 Mit `python_rules=False` werden benutzerdefinierte Regeln mit einem `python_module` nicht geladen. So wird der Code eines Projekts, dem Sie nicht vertrauen, nicht ausgeführt. Ihre Namen stehen in `config.skipped_rules`.
 
+`on_warning`, eine Funktion, die eine Meldung entgegennimmt, bekommt jede Warnung zu den Einstellungen, etwa zu einem falsch geschriebenen Namen oder einem Regelcode, den keine Regel hat. Ohne sie geht jede Warnung einmal pro Prozess nach stderr. Eine Konfigurationsdatei, die sich nicht lesen lässt, oder ein ungültiger Wert löst `click.UsageError` aus.
+
 ## format_text
 
-`format_text(config, text)` gibt den formatierten Text zurück. Ein Text, dessen erste Zeile auf CRLF endet, kommt mit CRLF zurück, jeder andere mit LF. Mit `require_pragma` kommt ein Text ohne das Pragma unverändert zurück.
+`format_text(config, text)` gibt den formatierten Text zurück. Ein Text, dessen erste Zeile auf CRLF endet, kommt mit CRLF zurück, jeder andere mit LF. Mit `require_pragma` kommt ein Text ohne das Pragma unverändert zurück. Die Funktion nimmt `indent` und `max_line_length` aus der `.editorconfig`, die für den an `load_config` übergebenen Ordner gilt, während die Befehlszeile sie für jede Datei anhand ihres Pfads nimmt.
 
 ## lint_text
 
@@ -50,4 +52,4 @@ Spalten zählen Zeichen, nicht Bytes oder UTF-16-Codeeinheiten.
 
 ## Regelmodule
 
-Das `python_module` einer benutzerdefinierten Regel wird einmal pro Prozess importiert, und zwar aus dem Projektstamm der Konfiguration. Ein Programm, das weiterläuft und mit mehreren Projekten arbeitet, muss alles, was aus dem Projekt importiert wurde, aus `sys.modules` entfernen und ebenso den Projektstamm, der am Ende von `sys.path` stehen bleibt, um die Regelmodule eines anderen Projekts zu lesen.
+Das `python_module` einer benutzerdefinierten Regel wird einmal pro Prozess importiert, und zwar aus dem Projektstamm der Konfiguration. Um die Regeln eines anderen Projekts zu lesen, muss ein Programm, das weiterläuft, alles aus `sys.modules` entfernen, was es aus dem ersten Projekt importiert hat, und den Stamm dieses Projekts vom Ende von `sys.path` entfernen.

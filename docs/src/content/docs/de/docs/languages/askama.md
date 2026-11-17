@@ -15,7 +15,7 @@ djLint lintet und formatiert Askama-Templates. Setzen Sie das Profil `askama`, d
 djlint /path/to/templates --profile=askama
 ```
 
-## Oder über eine Konfigurationsdatei
+## In einer Konfigurationsdatei
 
 Konfigurieren Sie djLint in der Datei `pyproject.toml`, `djlint.toml` / `.djlint.toml` oder `.djlintrc` Ihres Projekts.
 
@@ -31,7 +31,3 @@ profile = "askama"
 ```json title=".djlintrc"
 { "profile": "askama" }
 ```
-
-:::tip
-[Alle Optionen finden Sie in der Anleitung zur Konfiguration!](/de/docs/configuration/)
-:::

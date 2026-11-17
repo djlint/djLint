@@ -17,7 +17,7 @@ djLint проверяет и форматирует шаблоны Liquid. За�
 djlint /path/to/templates --profile=liquid
 ```
 
-## Или через файл конфигурации
+## В файле конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
@@ -33,7 +33,3 @@ profile = "liquid"
 ```json title=".djlintrc"
 { "profile": "liquid" }
 ```
-
-:::tip
-[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
-:::

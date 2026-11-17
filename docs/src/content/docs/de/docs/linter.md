@@ -5,7 +5,7 @@ sidebar:
   label: "Linter"
 ---
 
-djLint enthält viele Regeln, die Stil und Gültigkeit Ihrer Templates prüfen. Schöpfen Sie den Linter voll aus, indem Sie ihn ein vordefiniertes Profil für die Template-Sprache Ihrer Wahl verwenden lassen.
+Der Linter prüft Templates auf Fehler und uneinheitlichen Stil. Setzen Sie das [Profil](/de/docs/configuration/#profile) Ihrer Template-Sprache, damit die Regeln dafür laufen.
 
 ```bash
 djlint /path/to/templates --lint
@@ -13,13 +13,9 @@ djlint /path/to/templates --lint
 # mit eigenen Dateiendungen
 djlint /path/to/templates -e html.dj --profile=django
 
-# oder für eine Datei
-djlint /path/to/this.html.j2  --profile=jinja
+# oder für eine einzelne Datei
+djlint /path/to/this.html.j2 --profile=jinja
 ```
-
-:::tip
-[Alle Optionen finden Sie in der Anleitung zur Konfiguration!](/de/docs/configuration/)
-:::
 
 ## Regeln aktivieren oder deaktivieren
 
@@ -31,9 +27,9 @@ Zum Beispiel:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Das geht auch in der Konfigurationsdatei (siehe [Konfiguration](/de/docs/configuration/)).
+Oder setzen Sie [`ignore`](/de/docs/configuration/#ignore) und [`include`](/de/docs/configuration/#include) in der Konfigurationsdatei.
 
-Ohne [Profil](/de/docs/configuration/#profile) laufen von den eingebauten Regeln nur die H-Regeln. Die T-Regeln und die Regeln für eine einzelne Template-Sprache (D, J) schalten die Profile ein, für die sie gelten. Eine Regel in `--include` läuft unter jedem Profil und auch ohne Profil, außer unter einem, für das sie laut ihrer Beschreibung unten nicht gilt.
+Welche Profile eine Regel ausführen, steht unter [Code-Muster](#code-muster). Eine Regel in `--include` läuft unter jedem Profil und auch ohne Profil, außer unter einem, für das sie laut ihrer Beschreibung unten nicht gilt.
 
 ## Regeln
 
@@ -53,7 +49,7 @@ Ohne [Profil](/de/docs/configuration/#profile) laufen von den eingebauten Regeln
 | [H011](#h011) | Attributwerte sollten in Anführungszeichen stehen.                                                           | ✔️       |
 | [H012](#h012) | Um das `=` eines Attributs sollten keine Leerzeichen stehen.                                                 | ✔️       |
 | [H013](#h013) | Das `img`-Tag sollte alt-Attribute haben.                                                                    | ✔️       |
-| [H014](#h014) | Mehr Leerzeilen, als die Konfiguration beibehält.                                                            | ✔️       |
+| [H014](#h014) | Zu viele Leerzeilen hintereinander.                                                                          | ✔️       |
 | [H015](#h015) | Auf `h`-Tags sollte ein Zeilenumbruch folgen.                                                                | ✔️       |
 | [H016](#h016) | Fehlendes `title`-Tag in HTML.                                                                               | ✔️       |
 | [H017](#h017) | Void-Tags sollten selbstschließend sein (Konflikt mit: H018).                                                | -        |
@@ -107,14 +103,15 @@ Ohne [Profil](/de/docs/configuration/#profile) laufen von den eingebauten Regeln
 
 ### Code-Muster
 
-Der erste Buchstabe eines Codes folgt diesem Muster:
+Der erste Buchstabe eines Codes sagt, welche Profile die Regel ausführen:
 
-- D: gilt speziell für Django
-- H: gilt für HTML
-- J: gilt speziell für Jinja
-- M: gilt speziell für Handlebars
-- N: gilt speziell für Nunjucks
-- T: gilt allgemein für Templates
+- D: Django, läuft unter `django`.
+- H: HTML, läuft unter jedem Profil. `angular` lässt H012 und H026 aus.
+- J: Jinja, läuft unter `jinja`.
+- T: Template-Syntax, läuft unter jedem Profil außer `html` und `mako`.
+- M und N haben keine eigenen Regeln von djLint. Eine benutzerdefinierte Regel, deren Code mit M beginnt, läuft unter `handlebars` und `angular`, eine mit N unter `nunjucks` und `angular`.
+
+`all` führt alle Regeln aus, und ohne Profil führt der Linter die Regeln von `html` aus.
 
 ### Regeln im Detail
 
@@ -172,7 +169,7 @@ Erstreckt sich ein `{% block %}` über viele Zeilen oder sind Blöcke verschacht
 
 Standardmäßig deaktiviert; aktivieren Sie die Regel mit `--include=T003`. `--name-endblocks` schreibt den Namen für Sie.
 
-Ein Name ist nicht erforderlich, wenn der Block in derselben Zeile geöffnet und geschlossen wird, z. B. `{% block title %}``{% endblock %}`. Der Formatter verschiebt den Inhalt eines Blocks, der andere Tags enthält, in eigene Zeilen, sodass ein in einer Zeile geschriebener Block nach dem Formatieren einen Namen benötigen kann; mit `--name-endblocks` schreibt der Formatter auch diesen Namen.
+Ein Name ist nicht erforderlich, wenn der Block in derselben Zeile geöffnet und geschlossen wird, z. B. `{% block title %}{% endblock %}`. Der Formatter verschiebt den Inhalt eines Blocks, der andere Tags enthält, in eigene Zeilen, sodass ein in einer Zeile geschriebener Block nach dem Formatieren einen Namen benötigen kann; mit `--name-endblocks` schreibt der Formatter auch diesen Namen.
 
 Nicht so:
 
@@ -411,7 +408,7 @@ Sondern so:
 
 `Found extra blank lines.`
 
-Folgen von Leerzeilen wirken sich nicht auf die gerenderte Seite aus (HTML fasst Leerraum zusammen), blähen aber Templates auf und erzeugen unruhige Diffs, wenn sich benachbarte Zeilen ändern. Der Formatter von djLint entfernt sie standardmäßig vollständig (er behält höchstens `max_blank_lines` Leerzeilen, standardmäßig 0); übrig gebliebene Folgen deuten also auf unformatierten Code hin.
+Folgen von Leerzeilen wirken sich nicht auf die gerenderte Seite aus (HTML fasst Leerraum zusammen), blähen aber Templates auf und erzeugen unruhige Diffs, wenn sich benachbarte Zeilen ändern. Die Regel meldet zwei oder mehr Leerzeilen hintereinander, oder mehr als `max_blank_lines`, wenn dieser Wert höher ist, und unter `preserve_blank_lines` gar nichts. Eine einzelne Leerzeile wird nicht gemeldet, obwohl `--reformat` sie standardmäßig entfernt.
 
 Nicht so:
 
@@ -578,7 +575,7 @@ Sondern so:
 
 `Empty tag pair found. Consider removing.`
 
-Ein leeres Tag-Paar rendert keinen Inhalt, erzeugt aber trotzdem einen DOM-Knoten, der aus Stylesheets Außenabstände, Rahmen oder Flex-/Grid-Lücken übernehmen kann. Das ergibt Phantomabstände, die schwer aufzuspüren sind; meist handelt es sich um Markup-Reste einer früheren Bearbeitung. Tags, die in normalem Markup legitim leer sind (td, th, li, dt, dd, slot), sind ausgenommen. Tags mit irgendeinem Attribut (JS-Einhängepunkte wie `<div id="app">``</div>`, Icon-Font-Elemente wie `<i class="fa fa-user">``</i>`) werden ebenfalls nicht gemeldet; nur völlig attributlose leere Paare sind betroffen.
+Ein leeres Tag-Paar rendert keinen Inhalt, erzeugt aber trotzdem einen DOM-Knoten, der aus Stylesheets Außenabstände, Rahmen oder Flex-/Grid-Lücken übernehmen kann. Das ergibt Phantomabstände, die schwer aufzuspüren sind; meist handelt es sich um Markup-Reste einer früheren Bearbeitung. Tags, die in normalem Markup legitim leer sind (td, th, li, dt, dd, slot), sind ausgenommen. Tags mit irgendeinem Attribut (JS-Einhängepunkte wie `<div id="app"></div>`, Icon-Font-Elemente wie `<i class="fa fa-user"></i>`) werden ebenfalls nicht gemeldet; nur völlig attributlose leere Paare sind betroffen.
 
 Nicht so:
 
@@ -658,7 +655,7 @@ text/javascript und text/css sind in HTML5 die Standardwerte für `<script>` und
 Nicht so:
 
 ```html
-<script type="text/javascript" src="app.js">
+<script type="text/javascript" src="app.js"></script>
 ```
 
 Sondern so:
@@ -774,7 +771,7 @@ Sondern so:
 
 Suchmaschinen verwenden die Meta-Description als Snippet unter Ihrem Seitentitel in den Ergebnissen; fehlt sie, bauen sie ein Snippet aus beliebigem Seitentext zusammen, was die Klickrate senkt und schwache Linkvorschauen erzeugt, wenn die Seite geteilt wird.
 
-Schlägt nur bei Dateien an, die ein vollständiges `<html>`...`</html>`-Dokument enthalten. Das Argument mit dem Snippet gilt für öffentlich indexierte Seiten; bei Apps hinter einer Anmeldung oder im Intranet wird diese Regel häufig deaktiviert.
+Schlägt nur bei Dateien an, die ein vollständiges `<html>`...`</html>`-Dokument enthalten. Die Regel ist nur für Seiten wichtig, die Suchmaschinen indexieren, ignorieren Sie sie also in einer App hinter einer Anmeldung.
 
 Nicht so:
 
@@ -896,7 +893,7 @@ Sondern so:
 
 `Block tag has no matching end tag.`
 
-Ein Block-Tag wie `{% if %}`, `{% for %}` oder `{% macro %}` ohne passendes End-Tag ist in Django und Jinja ein harter TemplateSyntaxError: Die Seite lässt sich bei der Anfrage nicht rendern, und diese Regel fängt das vor dem Deployment ab. Sie meldet auch verwaiste End-Tags ohne öffnendes Tag und falsch verschränkte Blöcke (z. B. `{% if %}``{% for %}``{% endif %}`).
+Ein Block-Tag wie `{% if %}`, `{% for %}` oder `{% macro %}` ohne passendes End-Tag ist in Django und Jinja ein harter TemplateSyntaxError: Die Seite lässt sich bei der Anfrage nicht rendern, und diese Regel fängt das vor dem Deployment ab. Sie meldet auch verwaiste End-Tags ohne öffnendes Tag und falsch verschränkte Blöcke (z. B. `{% if %}{% for %}{% endif %}`).
 
 Die Zuordnung von `{% block %}`/`{% endblock %}` und nicht passende Endblock-Namen prüft diese Regel; T003 (standardmäßig deaktiviert) verlangt zusätzlich einen Namen an jedem mehrzeiligen `{% endblock %}`. Eigene Block-Tags, die über custom_blocks registriert sind, werden ebenfalls geprüft, einschließlich ihrer selbstschließenden Form mit / %}.
 
@@ -985,7 +982,7 @@ Sondern so:
 
 Django weigert sich, ein Template zu kompilieren, in dem ein anderes Tag vor `{% extends %}` steht, und Text, der davor steht, wird gerendert und landet so in der Seite noch vor allem, was das Eltern-Template erzeugt. Jinja rendert diesen Text ebenfalls, und nunjucks verwirft ihn, sodass das Template in keiner Engine tut, wonach es aussieht.
 
-Ein `{# #}`-Kommentar rendert nichts und zählt nicht, ebenso wenig alles innerhalb eines `{% comment %}`-, <code>{&#37; raw %}</code>- oder `{% verbatim %}`-Blocks, ob benannt oder nicht, ein `{# djlint:off #}`-Bereich in jeder seiner drei Schreibweisen oder YAML-Front-Matter. Ein HTML-Kommentar zählt dagegen: Die Engine schreibt ihn vor dem Doctype des Eltern-Templates in die Seite, und genau um dieses Durchsickern geht es bei dieser Regel. Dasselbe gilt für einen `{% blocktrans %}`-Block, einen `{% filter %}`-Block und einen `<?php ?>`-Block, die alle etwas rendern. Geprüft wird nur das erste `{% extends %}`; ein zweites ist ein eigener Fehler. In den Profilen jinja und nunjucks zählt ein Verzweigungs-Tag davor nicht, da jinja `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` als Weg dokumentiert, ein Eltern-Template zu wählen; django liest den Rest des Templates in das `{% extends %}` ein und lehnt dann das `{% endif %}` ab, daher zählt in diesem Profil ein Verzweigungs-Tag.
+Ein `{# #}`-Kommentar rendert nichts und zählt nicht, ebenso wenig alles innerhalb eines `{% comment %}`-, `{% raw %}`- oder `{% verbatim %}`-Blocks, ob benannt oder nicht, ein `{# djlint:off #}`-Bereich in jeder seiner drei Schreibweisen oder YAML-Front-Matter. Ein HTML-Kommentar zählt dagegen: Die Engine schreibt ihn vor dem Doctype des Eltern-Templates in die Seite, und genau um dieses Durchsickern geht es bei dieser Regel. Dasselbe gilt für einen `{% blocktrans %}`-Block, einen `{% filter %}`-Block und einen `<?php ?>`-Block, die alle etwas rendern. Geprüft wird nur das erste `{% extends %}`; ein zweites ist ein eigener Fehler. In den Profilen jinja und nunjucks zählt ein Verzweigungs-Tag davor nicht, da jinja `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` als Weg dokumentiert, ein Eltern-Template zu wählen; django liest den Rest des Templates in das `{% extends %}` ein und lehnt dann das `{% endif %}` ab, daher zählt in diesem Profil ein Verzweigungs-Tag.
 
 Gilt nicht für die Profile handlebars, golang, liquid und angular.
 
@@ -1029,9 +1026,9 @@ Sondern so:
 
 Sobald ein Template ein anderes erweitert, entscheidet das Eltern-Template, was ausgegeben wird, und das Kind füllt nur dessen Blöcke. Text oder HTML, das nach `{% extends %}` und außerhalb jedes `{% block %}` steht, wird beim Rendern stillschweigend verworfen, sodass ein Absatz, der im Quelltext gut aussieht, nie auf der Seite ankommt.
 
-Ein Template-Tag an dieser Stelle wird trotzdem ausgeführt, daher bleiben `{% load %}`, `{% set %}` und ein `{% if %}` um einen Block herum unangetastet, ebenso `{# #}`- und `{% comment %}`-Kommentare, HTML-Kommentare, <code>{&#37; raw %}</code>- und `{% verbatim %}`-Blöcke sowie der Rumpf eines `{% macro %}`, eines `{% set %}` in Blockform, eines `{% partialdef %}` oder eines `{% addtoblock %}`, der erfasst statt ausgegeben wird. Der Text eines `{% blocktrans %}` wird gemeldet, da ein `{% blocktrans %}` kein `{% block %}` ist. Berücksichtigt wird nur Inhalt nach dem extends-Tag, und jeder zusammenhängende Abschnitt davon wird einmal gemeldet, an seinem Anfang.
+Ein Template-Tag an dieser Stelle wird trotzdem ausgeführt, daher bleiben `{% load %}`, `{% set %}` und ein `{% if %}` um einen Block herum unangetastet, ebenso `{# #}`- und `{% comment %}`-Kommentare, HTML-Kommentare, `{% raw %}`- und `{% verbatim %}`-Blöcke sowie der Rumpf eines `{% macro %}`, eines `{% set %}` in Blockform, eines `{% partialdef %}` oder eines `{% addtoblock %}`, der erfasst statt ausgegeben wird. Der Text eines `{% blocktrans %}` wird gemeldet, da ein `{% blocktrans %}` kein `{% block %}` ist. Berücksichtigt wird nur Inhalt nach dem extends-Tag, und jeder zusammenhängende Abschnitt davon wird einmal gemeldet, an seinem Anfang.
 
-Die Engine liest Template-Tags vor HTML, daher wird ein `{% extends %}` in einem HTML-Kommentar oder einem `<pre>` trotzdem ausgeführt und macht die Datei trotzdem zu einem Kind; nur `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> und `{% verbatim %}` verbergen eines wirklich. Text in einem HTML-Kommentar erreicht ohnehin keinen Leser und wird nicht gemeldet, die dort geschriebenen Tags werden aber trotzdem gelesen.
+Die Engine liest Template-Tags vor HTML, daher wird ein `{% extends %}` in einem HTML-Kommentar oder einem `<pre>` trotzdem ausgeführt und macht die Datei trotzdem zu einem Kind; nur `{# #}`, `{% comment %}`, `{% raw %}` und `{% verbatim %}` verbergen eines wirklich. Text in einem HTML-Kommentar erreicht ohnehin keinen Leser und wird nicht gemeldet, die dort geschriebenen Tags werden aber trotzdem gelesen.
 
 Gilt nicht für die Profile handlebars, golang, liquid und angular.
 
@@ -1085,7 +1082,7 @@ Django, Jinja und Nunjucks weigern sich alle, ein Template zu parsen, das zwei B
 
 Nur `{% block %}` zählt: Ein `{% blocktrans %}` ist kein Block, und ein `{% endblock name %}` nennt lediglich den Block, den es schließt. Namen werden so verglichen, wie sie geschrieben sind, da die Engines `Content` und `content` als zwei Blöcke behandeln.
 
-Übersprungen wird nur, was die Engine selbst nie parst: ein Template-Kommentar, ein `{% comment %}`-Block, der Rumpf eines <code>{&#37; raw %}</code> oder `{% verbatim %}` und ein `djlint:off`-Bereich. Ein Block in einem HTML-Kommentar, im Rumpf eines `<script>`, `<style>`, `<pre>` oder `<textarea>` oder im Rumpf eines `{% filter %}` wird trotzdem gezählt, da die Engine all diese liest und beim doppelten Namen genauso einen Fehler auslöst.
+Übersprungen wird nur, was die Engine selbst nie parst: ein Template-Kommentar, ein `{% comment %}`-Block, der Rumpf eines `{% raw %}` oder `{% verbatim %}` und ein `djlint:off`-Bereich. Ein Block in einem HTML-Kommentar, im Rumpf eines `<script>`, `<style>`, `<pre>` oder `<textarea>` oder im Rumpf eines `{% filter %}` wird trotzdem gezählt, da die Engine all diese liest und beim doppelten Namen genauso einen Fehler auslöst.
 
 Ein `{% embed %}` öffnet einen eigenen Gültigkeitsbereich: Die Blöcke darin füllen das eingebettete Template und nicht dieses, sodass zwei Embeds desselben Partials jeweils `{% block body %}` schreiben dürfen. Ein Name, der innerhalb eines einzigen Embeds wiederholt wird, wird trotzdem gemeldet.
 
@@ -1145,7 +1142,7 @@ Ein Ausgabe-Tag gibt einen Wert aus, und `if`, `for`, `url`, `include` und die �
 
 Ein bloßes Schlüsselwort ist ein gewöhnlicher Variablenname, daher werden `{{ url }}`, `{{ url|default:"/" }}` und `{{ set.name }}` nicht gemeldet. Gemeldet wird nur ein Schlüsselwort mit Argument sowie ein schließendes oder verzweigendes Schlüsselwort für sich allein wie `{{ endif }}` oder `{{ else }}`. Ein Steuerschlüsselwort wie `if` oder `for` kann keinen Ausdruck einleiten, daher ist alles, was danach kommt, ein Argument, auch ein Operator, und `{{ if -1 > count }}` wird gemeldet. Die übrigen Namen dienen auch als Variablen und Funktionen, und dort zählt nur ein String in Anführungszeichen oder ein Wort als Argument, sodass ein Ausdruck, der zufällig mit einem davon beginnt, unangetastet bleibt: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` und `{{ filter [0] }}` lösen alle keine Meldung aus.
 
-Der Rumpf eines <code>{&#37; raw %}</code>- oder `{% verbatim %}`-Blocks ist Text und keine Template-Syntax und wird übersprungen, die benannte Form `{% verbatim vueapp %}...{% endverbatim vueapp %}` eingeschlossen, sodass ein auf diese Weise geschütztes `{{ }}` von Vue oder Handlebars nicht gemeldet wird. Ein `{{ }}` innerhalb eines Arguments in Anführungszeichen eines Block-Tags, wie in `{% trans "Write {{ if x }} instead" %}`, ist Text, den die Engine ausgibt, und bleibt ebenfalls unangetastet.
+Der Rumpf eines `{% raw %}`- oder `{% verbatim %}`-Blocks ist Text und keine Template-Syntax und wird übersprungen, die benannte Form `{% verbatim vueapp %}...{% endverbatim vueapp %}` eingeschlossen, sodass ein auf diese Weise geschütztes `{{ }}` von Vue oder Handlebars nicht gemeldet wird. Ein `{{ }}` innerhalb eines Arguments in Anführungszeichen eines Block-Tags, wie in `{% trans "Write {{ if x }} instead" %}`, ist Text, den die Engine ausgibt, und bleibt ebenfalls unangetastet.
 
 Nicht so:
 
@@ -1351,7 +1348,7 @@ Eine id benennt ein Element. Ein zweites Element mit derselben id macht `getElem
 
 Zwei ids in sich gegenseitig ausschließenden Zweigen eines `{% if %}...{% else %}...{% endif %}` werden nie beide gerendert und daher nicht gemeldet. Eine `{% for %}`-Schleife oder ein `{% block %}` ist kein Zweig: Eine id darin und dieselbe id außerhalb werden beide gerendert, und die spätere wird gemeldet. Ein von einem Template-Tag geschriebener Wert ist nicht bestimmbar und bleibt unangetastet, ebenso ein leerer Wert. Die ids werden exakt verglichen, wie es der Browser tut, daher sind `save` und `Save` zwei ids.
 
-Zweige werden in der Sprache gelesen, in der die Datei geschrieben ist, und mit jedem Leerraum, den die Sprache zwischen den Begrenzern und dem Tag-Namen erlaubt: `{% elif %}` und `{% else %}`, `{% elsif %}` und `{% when %}` von Liquid, `{{ else }}` von Go, eine Mako-Zeilenanweisung `% else:` sowie `{{else}}` von Handlebars, sein verkettetes `{{else if x}}` und die inverse Section jedes `{{#helper}}`-Blocks, eigene Helper eingeschlossen. Der Inhalt eines `<template>` ist ein eigenes Dokumentfragment, das `getElementById` nie erreicht, daher wird eine id dort nur mit den ids desselben `<template>` verglichen: Zwei `<template>`-Elemente dürfen jeweils eine Zeile mit derselben id enthalten, zwei solche innerhalb eines `<template>` werden aber trotzdem gemeldet. Eine id in einem Kommentar, im Rumpf eines <code>{&#37; raw %}</code> oder `{% verbatim %}` oder in einem `djlint:off`-Bereich wird gar nicht gelesen.
+Zweige werden in der Sprache gelesen, in der die Datei geschrieben ist, und mit jedem Leerraum, den die Sprache zwischen den Begrenzern und dem Tag-Namen erlaubt: `{% elif %}` und `{% else %}`, `{% elsif %}` und `{% when %}` von Liquid, `{{ else }}` von Go, eine Mako-Zeilenanweisung `% else:` sowie `{{else}}` von Handlebars, sein verkettetes `{{else if x}}` und die inverse Section jedes `{{#helper}}`-Blocks, eigene Helper eingeschlossen. Der Inhalt eines `<template>` ist ein eigenes Dokumentfragment, das `getElementById` nie erreicht, daher wird eine id dort nur mit den ids desselben `<template>` verglichen: Zwei `<template>`-Elemente dürfen jeweils eine Zeile mit derselben id enthalten, zwei solche innerhalb eines `<template>` werden aber trotzdem gemeldet. Eine id in einem Kommentar, im Rumpf eines `{% raw %}` oder `{% verbatim %}` oder in einem `djlint:off`-Bereich wird gar nicht gelesen.
 
 Nicht so:
 
@@ -1505,28 +1502,13 @@ Sondern so:
 
 <!-- oxfmt-ignore-end -->
 
-### Regeln hinzufügen
-
-Pull Requests mit neuen Regeln sind willkommen!
-
-Eine gute Regel besteht aus
-
-- Name
-- Code
-- Meldung: die Meldung, die angezeigt wird, wenn der Fehler gefunden wird.
-- Flags: Regex-Flags, zum Beispiel re.I|re.M. Standard ist re.DOTALL.
-- Muster: reguläre Ausdrücke, die den Fehler finden.
-- Ausschluss: optionale Liste von Profilen, für die die Regel nicht gilt.
-
-Bitte fügen Sie einen Test hinzu, der die Regel überprüft.
-
 ## Benutzerdefinierte Regeln
 
-Sie können eigene Regeln nur für Ihr Projekt hinzufügen, indem Sie neben Ihrer `pyproject.toml` eine Datei `.djlint_rules.yaml` anlegen. Regeln, die Sie in diese Datei schreiben, greift djLint automatisch auf. Eine Regeldatei an einem anderen Ort lässt sich mit der Befehlszeilenoption `--rules` angeben.
+Eigene Regeln gehören in eine `.djlint_rules.yaml` im Projektstamm, neben Ihre Konfigurationsdatei, und djLint greift sie auf. `--rules` gibt eine Regeldatei an einem anderen Ort an. Der Code einer benutzerdefinierten Regel folgt [denselben Buchstaben](#code-muster), eine Regel mit einem anderen Anfangsbuchstaben, etwa C, läuft also unter jedem Profil. `default: false` und `exclude` funktionieren auch in benutzerdefinierten Regeln.
 
 ### Musterregeln
 
-Sie können Regeln hinzufügen, die fehlschlagen, wenn eines der Regex-Muster einen Treffer hat:
+Eine Musterregel meldet jeden Treffer ihrer Muster:
 
 ```yaml
 - rule:
@@ -1539,7 +1521,7 @@ Sie können Regeln hinzufügen, die fehlschlagen, wenn eines der Regex-Muster ei
 
 ### Regeln als Python-Modul
 
-Sie können Regeln hinzufügen, die eine eigene Python-Funktion importieren und ausführen:
+Eine Regel als Python-Modul führt eine eigene Funktion aus:
 
 ```yaml
 - rule:
@@ -1559,7 +1541,7 @@ Das angegebene `python_module` muss eine Funktion `run()` enthalten, die für je
 
 Das Modul kann im Projektstamm liegen. Gibt es eine `line` oder ein `end` zurück, das keine Position ist, bricht djLint mit einem Fehler ab, der die Regel nennt.
 
-Sie muss eine Liste von Dicts zurückgeben, eines pro Fehler, mit den folgenden Schlüsseln:
+Sie muss eine Liste von Dicts zurückgeben, eines pro Befund, mit den folgenden Schlüsseln:
 
 - `code`: Der Codename der Regel, die den Fehler meldet (typischerweise `rule['name']`)
 - `line`: Zeilennummer und Zeichennummer in dieser Zeile, getrennt durch „:“, als String.

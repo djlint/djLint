@@ -17,7 +17,7 @@ Las plantillas de Go (`text/template`, `html/template`) también son la base de 
 djlint /path/to/templates --profile=golang
 ```
 
-## O bien, con un archivo de configuración
+## En un archivo de configuración
 
 Configura djLint en el archivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` de tu proyecto.
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[¡Consulta la guía de configuración para ver todas las opciones!](/es/docs/configuration/)
-:::

@@ -15,7 +15,7 @@ djLint analiza y formatea plantillas de Askama. Usa el perfil `askama` para que 
 djlint /path/to/templates --profile=askama
 ```
 
-## O bien, con un archivo de configuración
+## En un archivo de configuración
 
 Configura djLint en el archivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` de tu proyecto.
 
@@ -31,7 +31,3 @@ profile = "askama"
 ```json title=".djlintrc"
 { "profile": "askama" }
 ```
-
-:::tip
-[¡Consulta la guía de configuración para ver todas las opciones!](/es/docs/configuration/)
-:::

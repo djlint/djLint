@@ -131,7 +131,12 @@ def test_the_docs_give_the_defaults_djlint_uses() -> None:
     defaults["require_pragma"] = defaults["require_pragma"] == "true"
     documented = {option["name"]: option["default"] for option in options if "default" in option}
 
-    assert [option["name"] for option in options if "default" not in option] == ["version"]
+    # A path to a file has no default to show.
+    assert sorted(option["name"] for option in options if "default" not in option) == [
+        "configuration",
+        "rules",
+        "version",
+    ]
     # The docs show an unset list or string as null.
     assert documented == {
         name: None if defaults[name] in ("", None, {}) else defaults[name] for name in documented

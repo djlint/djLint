@@ -15,7 +15,7 @@ djLint lintet und formatiert Handlebars-Templates. Setzen Sie das Profil `handle
 djlint /path/to/templates --profile=handlebars
 ```
 
-## Oder über eine Konfigurationsdatei
+## In einer Konfigurationsdatei
 
 Konfigurieren Sie djLint in der Datei `pyproject.toml`, `djlint.toml` / `.djlint.toml` oder `.djlintrc` Ihres Projekts.
 
@@ -31,7 +31,3 @@ profile = "handlebars"
 ```json title=".djlintrc"
 { "profile": "handlebars" }
 ```
-
-:::tip
-[Alle Optionen finden Sie in der Anleitung zur Konfiguration!](/de/docs/configuration/)
-:::

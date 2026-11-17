@@ -17,7 +17,7 @@ Go templates (`text/template`, `html/template`) also power Hugo themes and Helm 
 djlint /path/to/templates --profile=golang
 ```
 
-## Or, use a config file
+## In a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[Check out the configuration guide for all the options!](/docs/configuration/)
-:::

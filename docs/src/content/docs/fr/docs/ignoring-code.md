@@ -3,9 +3,7 @@ title: "Ignorer du code"
 description: "Comment empêcher djLint de formater un bloc de code, et comment ignorer des règles du linter directement dans le code."
 ---
 
-Pour ignorer du code, entourez-le de balises `djlint` :
-
-En HTML classique :
+Le formateur et le linter ne touchent pas au code placé entre les commentaires `djlint:off` et `djlint:on`. Ce peuvent être des commentaires HTML :
 
 <!-- oxfmt-ignore -->
 ```html
@@ -14,7 +12,7 @@ En HTML classique :
 <!-- djlint:on -->
 ```
 
-ou sous forme de commentaire :
+Ou des commentaires Django et Jinja :
 
 <!-- oxfmt-ignore -->
 ```html
@@ -23,7 +21,7 @@ ou sous forme de commentaire :
 {# djlint:on #}
 ```
 
-ou sous forme de commentaire long :
+Ou des blocs `{% comment %}` :
 
 <!-- oxfmt-ignore -->
 ```html
@@ -32,7 +30,7 @@ ou sous forme de commentaire long :
 {% comment %} djlint:on {% endcomment %}
 ```
 
-ou sous forme de commentaire de style golang :
+Ou des commentaires de templates Go :
 
 <!-- oxfmt-ignore -->
 ```html
@@ -41,7 +39,7 @@ ou sous forme de commentaire de style golang :
 {{ /* djlint:on */ }}
 ```
 
-ou sous forme de commentaire de style handlebars :
+Ou des commentaires Handlebars :
 
 <!-- oxfmt-ignore -->
 ```html

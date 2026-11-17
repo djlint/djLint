@@ -17,7 +17,7 @@ One profile covers all Liquid dialects: Shopify themes, Jekyll, LiquidJS (Eleven
 djlint /path/to/templates --profile=liquid
 ```
 
-## Or, use a config file
+## In a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 
@@ -33,7 +33,3 @@ profile = "liquid"
 ```json title=".djlintrc"
 { "profile": "liquid" }
 ```
-
-:::tip
-[Check out the configuration guide for all the options!](/docs/configuration/)
-:::

@@ -17,7 +17,7 @@ djLint проверяет и форматирует шаблоны Twig. Зад�
 djlint /path/to/templates --profile=nunjucks
 ```
 
-## Или через файл конфигурации
+## В файле конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
@@ -33,7 +33,3 @@ profile = "nunjucks"
 ```json title=".djlintrc"
 { "profile": "nunjucks" }
 ```
-
-:::tip
-[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
-:::

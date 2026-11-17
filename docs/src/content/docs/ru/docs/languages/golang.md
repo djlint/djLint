@@ -17,7 +17,7 @@ djLint проверяет и форматирует шаблоны Go. Зада�
 djlint /path/to/templates --profile=golang
 ```
 
-## Или через файл конфигурации
+## В файле конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
@@ -33,7 +33,3 @@ profile = "golang"
 ```json title=".djlintrc"
 { "profile": "golang" }
 ```
-
-:::tip
-[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
-:::

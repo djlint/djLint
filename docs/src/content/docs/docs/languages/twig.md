@@ -17,7 +17,7 @@ Pebble (Java) templates are Twig-compatible, so use this same profile for them.
 djlint /path/to/templates --profile=nunjucks
 ```
 
-## Or, use a config file
+## In a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 
@@ -33,7 +33,3 @@ profile = "nunjucks"
 ```json title=".djlintrc"
 { "profile": "nunjucks" }
 ```
-
-:::tip
-[Check out the configuration guide for all the options!](/docs/configuration/)
-:::

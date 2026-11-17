@@ -9,9 +9,7 @@ djLint analiza y formatea plantillas de Jinja. Usa el perfil `jinja` para que la
 
 **[¿Qué es Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-Las plantillas de MiniJinja son totalmente compatibles con Jinja2, así que usa este mismo perfil `jinja`.
-
-Las plantillas Jinjava de HubSpot también son de estilo jinja, así que usa también este perfil para ellas.
+MiniJinja sigue la sintaxis de Jinja2, y las plantillas Jinjava de HubSpot también son de estilo Jinja, así que usa el perfil `jinja` para ambas.
 
 ## Desde la línea de comandos
 
@@ -19,7 +17,7 @@ Las plantillas Jinjava de HubSpot también son de estilo jinja, así que usa tam
 djlint /path/to/templates --profile=jinja
 ```
 
-## O bien, con un archivo de configuración
+## En un archivo de configuración
 
 Configura djLint en el archivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` de tu proyecto.
 
@@ -35,7 +33,3 @@ profile = "jinja"
 ```json title=".djlintrc"
 { "profile": "jinja" }
 ```
-
-:::tip
-[¡Consulta la guía de configuración para ver todas las opciones!](/es/docs/configuration/)
-:::

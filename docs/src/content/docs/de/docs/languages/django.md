@@ -15,7 +15,7 @@ djLint lintet und formatiert Django-Templates. Setzen Sie das Profil `django`, d
 djlint /path/to/templates --profile=django
 ```
 
-## Oder über eine Konfigurationsdatei
+## In einer Konfigurationsdatei
 
 Konfigurieren Sie djLint in der Datei `pyproject.toml`, `djlint.toml` / `.djlint.toml` oder `.djlintrc` Ihres Projekts.
 
@@ -31,7 +31,3 @@ profile = "django"
 ```json title=".djlintrc"
 { "profile": "django" }
 ```
-
-:::tip
-[Alle Optionen finden Sie in der Anleitung zur Konfiguration!](/de/docs/configuration/)
-:::

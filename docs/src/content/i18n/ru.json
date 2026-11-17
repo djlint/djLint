@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "Профиль для вашего языка шаблонов",
-  "djlint.index_show_format": "Покажите, что код отформатирован!",
+  "djlint.index_show_format": "Значок",
   "djlint.index_looks_like": "Выглядит так:",
   "djlint.index_add_badge": "Добавьте значок в свои проекты",
   "djlint.contributing": "Участие в разработке",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "Параметры",
   "djlint.demo_output": "Результат",
   "djlint.demo_problems": "Найдено проблем: {count}",
-  "djlint.demo_defaults": "Настраивать нечего, это значения djLint по умолчанию",
+  "djlint.demo_defaults": "Настраивать нечего: это значения djLint по умолчанию",
   "djlint.demo_layout": "Разметка",
   "djlint.demo_rewrites": "Исправления",
   "djlint.demo_css_js": "CSS и JavaScript",
