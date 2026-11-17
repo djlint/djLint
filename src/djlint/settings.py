@@ -754,10 +754,14 @@ def _beautifier_config(
 
 
 def build_exclude(exclude: str) -> str:
-    """Build regex string for exclude paths."""
+    """Build regex string for exclude paths.
+
+    The patterns are verbose, so each goes on a line of its own: a `#`
+    comment in one then ends with it, rather than swallowing the rest.
+    """
     if "," not in exclude:
         return exclude
-    return r" | ".join(split_option_list(exclude))
+    return "\n| ".join(split_option_list(exclude))
 
 
 def _check_regex(setting: str, pattern: str) -> None:
@@ -1953,9 +1957,12 @@ class Config:
         )
         if extend_exclude:
             _check_regex("extend_exclude", build_exclude(extend_exclude))
-            exclude += r" | " + build_exclude(extend_exclude)
+            exclude += "\n| " + build_exclude(extend_exclude)
         self.exclude = exclude
-        self.exclude_pattern = compile_pattern(rf"(?:^|/)(?:{exclude})(?=$|/|(?<=/))", re.X)
+        # A line break ends a `#` comment the patterns may close with.
+        self.exclude_pattern = compile_pattern(
+            rf"(?:^|/)(?:{exclude}" + "\n" + r")(?=$|/|(?<=/))", re.X
+        )
 
         self.files = djlint_settings.get("files", None)
         self.stdin = (src == "-" if stdin is None else stdin) and (

@@ -33,6 +33,22 @@ def test_a_glob_where_a_regex_goes_is_a_usage_error(
         Config(str(tmp_path))
 
 
+def test_a_comment_ends_with_its_entry(tmp_path: Path) -> None:
+    (tmp_path / "djlint.toml").write_text(
+        'exclude = ["vendor # third-party", "build"]\nextend_exclude = ["legacy # old"]\n',
+        encoding="utf-8",
+    )
+
+    pattern = Config(str(tmp_path)).exclude_pattern
+
+    assert [
+        path
+        for path in ("vendor/a.html", "build/a.html", "legacy/a.html")
+        if not pattern.search(path)
+    ] == []
+    assert not pattern.search("templates/a.html")
+
+
 def test_regexes_still_work(tmp_path: Path) -> None:
     (tmp_path / "djlint.toml").write_text(
         'extend_exclude = [".*\\\\.min\\\\.html"]\nper-file-ignores = { ".*\\\\.html" = "H013" }\n',
