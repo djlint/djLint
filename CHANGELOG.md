@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Bug fixes
+
+- A shell glob such as `*.min.html` in `exclude`, `extend_exclude` or `per-file-ignores` is an error naming the setting and showing the regular expression to write instead. These settings take regular expressions, and a glob used to stop the run with a traceback.
+- The `djlint-handlebars` and `djlint-reformat-handlebars` pre-commit hooks also check `.mustache` files, and the Liquid hooks also check `.liquid` files. They used to skip them.
+
 ## [1.52.0] - 2026-11-17
 
 ### Feature
