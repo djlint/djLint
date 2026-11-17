@@ -90,6 +90,20 @@ test("the demo formats, lints, takes settings and restores them from the address
     await expect.poll(() => text(output)).toBe(formatted("  "));
   });
 
+  await test.step("a setting djLint warns about shows the warning, every time", async () => {
+    const include = page.getByRole("textbox", { name: "Rules to add", exact: true });
+    const warnings = page.locator("#djlint-warnings");
+    await include.fill("X999");
+    await expect(warnings).toHaveText("include names X999, which is not a linter rule.");
+    await include.fill("");
+    await expect(warnings).toBeEmpty();
+    // A second run with the same setting warns again.
+    await include.fill("X999");
+    await expect(warnings).toHaveText("include names X999, which is not a linter rule.");
+    await include.fill("");
+    await expect(warnings).toBeEmpty();
+  });
+
   await test.step("the address brings back the example and its settings", async () => {
     await page.reload();
     await expect.poll(() => text(input)).toBe(MESSY);

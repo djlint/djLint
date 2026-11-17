@@ -22,19 +22,13 @@ from importlib import metadata
   versions.destroy();
   self.postMessage({ type: "version", message: { python, djlint } });
   run = await pyodide.runPythonAsync(`
-import contextlib
-import io
-
-from djlint import settings
 from djlint.api import format_text, lint_text, load_config
 
 def _djlint_run(html, options):
-    # djLint warns about a setting once per run, and every edit here is a run.
-    settings._warn_once.cache_clear()
-    stderr = io.StringIO()
-    with contextlib.redirect_stderr(stderr):
-        config = load_config(**options)
-    warnings = [line.removeprefix("Warning: ") for line in stderr.getvalue().splitlines() if line]
+    # Every edit here is a run of its own, so it gets every warning, not only
+    # the ones this process hasn't printed yet.
+    warnings = []
+    config = load_config(**options, on_warning=warnings.append)
     findings = [finding._asdict() for finding in lint_text(config, html)]
     return format_text(config, html).rstrip(), findings, warnings
 
