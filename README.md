@@ -15,7 +15,7 @@
 </p>
 
 <h4 align="center">How to use: <a href="https://djlint.com/">English</a> • <a href="https://djlint.com/zh/">简体中文</a> • <a href="https://djlint.com/ja/">日本語</a> • <a href="https://djlint.com/es/">Español</a> • <a href="https://djlint.com/pt-br/">Português (Brasil)</a> • <a href="https://djlint.com/ru/">Русский</a> • <a href="https://djlint.com/ko/">한국어</a> • <a href="https://djlint.com/fr/">Français</a> • <a href="https://djlint.com/de/">Deutsch</a> • <a href="https://djlint.com/zh-tw/">繁體中文</a> • <a href="https://djlint.com/it/">Italiano</a> • <a href="https://djlint.com/pl/">Polski</a> • <a href="https://djlint.com/cs/">Čeština</a> • <a href="https://djlint.com/tr/">Türkçe</a></h4>
-<h4 align="center">What lang are you using?</h4>
+<h4 align="center">Template languages</h4>
 
 <p align="center">
    <a href="https://djlint.com/docs/languages/django/">Django</a> • <a href="https://djlint.com/docs/languages/jinja/">Jinja</a> • <a href="https://djlint.com/docs/languages/twig/">Twig</a> • <a href="https://djlint.com/docs/languages/nunjucks/">Nunjucks</a> • <a href="https://djlint.com/docs/languages/handlebars/">Handlebars</a> • <a href="https://djlint.com/docs/languages/mustache/">Mustache</a> • <a href="https://djlint.com/docs/languages/liquid/">Liquid</a> • <a href="https://djlint.com/docs/languages/golang/">Go templates</a> • <a href="https://djlint.com/docs/languages/angular/">Angular</a> • <a href="https://djlint.com/docs/languages/tera/">Tera</a> • <a href="https://djlint.com/docs/languages/askama/">Askama</a> • <a href="https://djlint.com/docs/languages/mako/">Mako</a>
@@ -23,7 +23,7 @@
 
 ## 🤔 For What?
 
-Every language in your stack has a formatter and a linter, except HTML templates. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
+Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
 
 djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more. It runs from the command line, as a pre-commit hook and as a language server in your editor.
 
@@ -94,31 +94,31 @@ pip install djlint
 
 The [installation guide](https://djlint.com/docs/getting-started/#installation) also covers installing it as a standalone tool, and with pipx, Homebrew or npm.
 
-Lint your project
+Lint your project:
 
 ```bash
 djlint . --lint
 ```
 
-Check your format
+See what formatting would change:
 
 ```bash
 djlint . --check --single-attribute-per-line
 ```
 
-Fix my format!
+Format the files in place:
 
 ```bash
 djlint . --reformat --single-attribute-per-line
 ```
 
-Set a `--profile` to enable the rules and formatting of your template engine
+Set a `--profile` for the rules and formatting of your template language:
 
 ```bash
 djlint . --reformat --single-attribute-per-line --profile=django
 ```
 
-Or use `pre-commit` to reformat, then lint!
+Or run it with [pre-commit](https://djlint.com/docs/integrations/#pre-commit), formatting first and then linting:
 
 ```yaml
 repos:
@@ -141,19 +141,19 @@ repos:
 Add a badge to your project's `readme.md`:
 
 ```md
-[![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://djlint.com)
+[![html style: djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://djlint.com)
 ```
 
 Add a badge to your `readme.rst`:
 
 ```rst
-.. image:: https://img.shields.io/badge/html%20style-djlint-blue.svg
+.. image:: https://img.shields.io/badge/html%20style-djLint-blue.svg
    :target: https://djlint.com
 ```
 
 Looks like this:
 
-[![djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://github.com/djlint/djlint)
+[![html style: djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://djlint.com)
 
 ## 🛠️ Can I help?
 
