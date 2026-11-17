@@ -53,13 +53,13 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-:::caution[Advertencia]
-El paquete de npm es solo un envoltorio. Su script de instalación ejecuta pip con el `python3` que haya en la ruta de tu sistema e instala la versión de djLint que corresponde a esa publicación del paquete de npm, lo que puede sustituir un djLint más reciente por otro más antiguo. npm no gestionará ni desinstalará el paquete real, así que, si puedes, usa pip.
-:::
+El paquete de npm trae su propio Python, así que solo necesita Node.js 16.9 o posterior. Tiene compilaciones para Linux, macOS y Windows en x64 y Arm64. Añádelo a tu proyecto como dependencia de desarrollo:
 
 ```bash
-npm i djlint
+npm i -D djlint
 ```
+
+Luego ejecútalo con `npx djlint`, como en `npx djlint . --lint`.
 
 </TabItem>
 </Tabs>

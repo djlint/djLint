@@ -53,13 +53,13 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-:::caution[警告]
-npm 套件只是一層包裝，它的安裝指令碼會用你系統路徑上剛好找到的 `python3` 執行 pip，安裝與該 npm 版本對應的 djLint 版本，這可能會把較新的 djLint 換成較舊的版本。npm 不會管理或解除安裝實際的套件，可以的話，請直接使用 pip。
-:::
+npm 套件自帶 Python，所以只需要 Node.js 16.9 或更新版本。它提供 x64 與 Arm64 上 Linux、macOS 和 Windows 的建置。將它加入專案作為開發相依套件：
 
 ```bash
-npm i djlint
+npm i -D djlint
 ```
+
+接著用 `npx djlint` 執行，例如 `npx djlint . --lint`。
 
 </TabItem>
 </Tabs>

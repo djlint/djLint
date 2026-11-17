@@ -24,6 +24,15 @@
     },
     {
       "customType": "regex",
+      "description": "The python-build-standalone release whose Python the npm packages bring.",
+      "managerFilePatterns": ["/^npm/build\\.py$/"],
+      "matchStrings": ["PYTHON_BUILD_STANDALONE: Final = \"(?<currentValue>\\d+)\""],
+      "depNameTemplate": "astral-sh/python-build-standalone",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
       "description": "Keep CI on the newest Python: the version the tools run on and the last one the tests run on. The first test version is the oldest supported one, so it stays",
       "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
       "matchStrings": [

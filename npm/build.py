@@ -1,0 +1,393 @@
+# /// script
+# requires-python = "==3.14.*"
+# ///
+"""Build the npm packages of djLint.
+
+The djlint package runs djLint on the Python of a package for its platform,
+which npm picks out of its optional dependencies by their os, cpu and libc.
+Each of those holds a CPython from python-build-standalone, cut down to what
+djLint can use, with djLint and its dependencies installed into it.
+
+    uv run npm/build.py WHEELS [PLATFORM ...]
+
+WHEELS is a folder with the djLint wheels of this version. When it has
+compiled ones, as for a release, each platform has to find its own there;
+with only the pure one, as for a test, they all take that. With no PLATFORM,
+all of them are built. The packages are packed into npm/dist.
+
+The Python of a package runs this one's bytecode, so this script runs on the
+same Python version. A package for Linux or macOS has to be built on one of
+them, as Windows can't keep the files' modes.
+"""
+
+from __future__ import annotations
+
+import compileall
+import hashlib
+import json
+import os
+import py_compile
+import shutil
+import subprocess
+import sys
+import tarfile
+import tomllib
+import urllib.parse
+import urllib.request
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Final
+
+# Renovate updates it. Each release has every Python version, and the package
+# takes the newest one of PYTHON.
+PYTHON_BUILD_STANDALONE: Final = "20261110"
+# The newest Python that every dependency has wheels for: PyYAML has none for 3.15.
+PYTHON: Final = "3.14"
+
+# The npm name of each platform, after Node's process.platform and
+# process.arch, with python-build-standalone's and uv's name for it. Linux has
+# one for each libc. Windows on 32-bit x86 and Linux on 32-bit Arm are left
+# out: regex and PyYAML have no wheels for them.
+PLATFORMS: Final = {
+    "darwin-arm64": "aarch64-apple-darwin",
+    "darwin-x64": "x86_64-apple-darwin",
+    "linux-arm64-gnu": "aarch64-unknown-linux-gnu",
+    "linux-arm64-musl": "aarch64-unknown-linux-musl",
+    "linux-x64-gnu": "x86_64-unknown-linux-gnu",
+    "linux-x64-musl": "x86_64-unknown-linux-musl",
+    "win32-arm64": "aarch64-pc-windows-msvc",
+    "win32-x64": "x86_64-pc-windows-msvc",
+}
+
+# What djLint has no use for: headers and libraries to build against, Tk and
+# IDLE, pip, and the tests of Python itself. Relative to the python folder, on
+# Linux and macOS, where the interpreter has libpython built in.
+_REMOVED_POSIX: Final = (
+    "include",
+    "lib/itcl*",
+    "lib/libpython*",
+    "lib/libtcl*",
+    "lib/pkgconfig",
+    "lib/tcl*",
+    "lib/thread*",
+    "lib/tk*",
+    "share",
+)
+# The same on Windows, kept apart: where case does not matter, lib/thread*
+# would take Lib/threading.py.
+_REMOVED_WINDOWS: Final = (
+    "DLLs/_ctypes_test*",
+    "DLLs/_test*",
+    "DLLs/_tkinter*",
+    "DLLs/tcl*",
+    "DLLs/xxlimited*",
+    "Scripts",
+    "include",
+    "libs",
+    "pythonw.exe",
+    "tcl",
+)
+# The same, relative to the standard library.
+_REMOVED_FROM_STDLIB: Final = (
+    "config-*",
+    "ensurepip",
+    "idlelib",
+    "lib-dynload/_ctypes_test*",
+    "lib-dynload/_test*",
+    "lib-dynload/_tkinter*",
+    "lib-dynload/_xxtestfuzz*",
+    "lib-dynload/xxlimited*",
+    "pydoc_data",
+    "site-packages/*",
+    "test",
+    "tkinter",
+    "turtle.py",
+    "turtledemo",
+)
+
+_ROOT: Final = Path(__file__).resolve().parent.parent
+_DIST: Final = _ROOT / "npm" / "dist"
+_DOWNLOADS: Final = _DIST / "downloads"
+_RELEASE_URL: Final = f"https://github.com/astral-sh/python-build-standalone/releases/download/{PYTHON_BUILD_STANDALONE}"
+_REPOSITORY: Final = {"type": "git", "url": "git+https://github.com/djlint/djLint.git"}
+
+
+def _run(*args: str | Path, cwd: Path = _ROOT) -> str:
+    result = subprocess.run(  # noqa: S603
+        [str(arg) for arg in args], cwd=cwd, check=False, capture_output=True, text=True
+    )
+    if result.returncode:
+        msg = f"{' '.join(map(str, args))} failed:\n{result.stdout}{result.stderr}"
+        raise RuntimeError(msg)
+    return result.stdout
+
+
+def _download(name: str, url: str) -> Path:
+    """Download a file once, and keep it for later builds."""
+    path = _DOWNLOADS / name
+    if not path.exists():
+        _DOWNLOADS.mkdir(parents=True, exist_ok=True)
+        partial = path.with_name(f"{name}.part")
+        with urllib.request.urlopen(url) as response, partial.open("wb") as file:  # noqa: S310
+            shutil.copyfileobj(response, file)
+        partial.replace(path)
+    return path
+
+
+def _python_archives() -> tuple[str, dict[str, str]]:
+    """Return the Python version, and the sha256 of each of its archives."""
+    sums = _download(f"SHA256SUMS-{PYTHON_BUILD_STANDALONE}", f"{_RELEASE_URL}/SHA256SUMS")
+    hashes = {
+        name: digest
+        for digest, name in (line.split() for line in sums.read_text(encoding="utf-8").splitlines())
+    }
+    versions = {
+        name.removeprefix("cpython-").partition("+")[0]
+        for name in hashes
+        if name.startswith(f"cpython-{PYTHON}.")
+    }
+    version = max(versions, key=lambda version: tuple(map(int, version.split("."))))
+    return version, hashes
+
+
+def _licenses() -> dict[str, bytes]:
+    """Return the licenses of what python-build-standalone builds into Python."""
+    archive = _download(
+        f"python-build-standalone-{PYTHON_BUILD_STANDALONE}.tar.gz",
+        "https://github.com/astral-sh/python-build-standalone/archive/refs/tags/"
+        f"{PYTHON_BUILD_STANDALONE}.tar.gz",
+    )
+    licenses: dict[str, bytes] = {}
+    with tarfile.open(archive) as tar:
+        for member in tar:
+            name = member.name.partition("/")[2]
+            # extractfile() gives nothing for what isn't a file.
+            if name.startswith("LICENSE.") and (file := tar.extractfile(member)):
+                licenses[name] = file.read()
+    if not licenses:
+        msg = "found no licenses in python-build-standalone's source"
+        raise RuntimeError(msg)
+    return licenses
+
+
+def _extract_python(folder: Path, triple: str, version: str, hashes: dict[str, str]) -> None:
+    name = f"cpython-{version}+{PYTHON_BUILD_STANDALONE}-{triple}-install_only_stripped.tar.gz"
+    archive = _download(name, f"{_RELEASE_URL}/{urllib.parse.quote(name)}")
+    if hashlib.sha256(archive.read_bytes()).hexdigest() != hashes[name]:
+        archive.unlink()
+        msg = f"{name} does not match its sha256"
+        raise RuntimeError(msg)
+    with tarfile.open(archive) as tar:
+        tar.extractall(folder, filter="data")
+
+
+def _remove(path: Path) -> None:
+    if path.is_dir() and not path.is_symlink():
+        shutil.rmtree(path)
+    else:
+        path.unlink()
+
+
+def _trim(python: Path, stdlib: Path, *, windows: bool) -> None:
+    removed = _REMOVED_WINDOWS if windows else _REMOVED_POSIX
+    for base, patterns in ((python, removed), (stdlib, _REMOVED_FROM_STDLIB)):
+        for pattern in patterns:
+            for path in base.glob(pattern):
+                _remove(path)
+    for cache in list(python.rglob("__pycache__")):
+        shutil.rmtree(cache)
+    binaries = python / "bin"
+    if binaries.is_dir():
+        # npm packs no symbolic links, so the interpreter is kept under the
+        # name of the link the launcher calls.
+        for path in binaries.iterdir():
+            if path.name != f"python{PYTHON}":
+                _remove(path)
+        (binaries / f"python{PYTHON}").rename(binaries / "python3")
+    links = [path for path in python.rglob("*") if path.is_symlink()]
+    if links:
+        msg = f"npm would leave out these symbolic links: {links}"
+        raise RuntimeError(msg)
+
+
+def _install(site: Path, triple: str, *requirements: str | Path) -> None:
+    _run(
+        os.environ.get("UV", "uv"),
+        "pip",
+        "install",
+        "--no-config",
+        "--quiet",
+        "--target",
+        site,
+        "--python-platform",
+        triple,
+        "--python-version",
+        PYTHON,
+        "--only-binary",
+        ":all:",
+        "--no-deps",
+        "--no-installer-metadata",
+        "--link-mode",
+        "copy",
+        *requirements,
+    )
+
+
+def _pack(folder: Path) -> Path:
+    npm = shutil.which("npm")
+    if npm is None:
+        msg = "npm is not on PATH"
+        raise RuntimeError(msg)
+    [packed] = json.loads(_run(npm, "pack", "--json", "--pack-destination", _DIST, cwd=folder))
+    files = {path for path in folder.rglob("*") if path.is_file()}
+    if packed["entryCount"] != len(files):
+        msg = f"npm packed {packed['entryCount']} of the {len(files)} files in {folder}"
+        raise RuntimeError(msg)
+    filename: str = packed["filename"]
+    return _DIST / filename
+
+
+def _build_platform(
+    name: str,
+    *,
+    wheels: Path,
+    requirements: Path,
+    version: str,
+    python_version: str,
+    hashes: dict[str, str],
+    licenses: dict[str, bytes],
+) -> Path:
+    triple = PLATFORMS[name]
+    system, cpu, *libc = name.split("-")
+    folder = _DIST / name
+    python = folder / "python"
+    windows = system == "win32"
+    stdlib = python / ("Lib" if windows else f"lib/python{PYTHON}")
+
+    _extract_python(folder, triple, python_version, hashes)
+    _trim(python, stdlib, windows=windows)
+    site = stdlib / "site-packages"
+    _install(site, triple, "--require-hashes", "--requirement", requirements)
+    _install(site, triple, "--no-index", "--find-links", wheels, f"djlint=={version}")
+    # The commands of the packages, made for a Python that is not this one.
+    shutil.rmtree(site / "bin", ignore_errors=True)
+    # An unchecked hash lets Python take the bytecode as is: npm gives every
+    # file the same date, and may install them where they can't be rewritten.
+    if not compileall.compile_dir(
+        python, quiet=1, invalidation_mode=py_compile.PycInvalidationMode.UNCHECKED_HASH
+    ):
+        msg = f"some of Python's modules for {name} did not compile"
+        raise RuntimeError(msg)
+    (python / "licenses").mkdir()
+    for license_name, text in licenses.items():
+        (python / "licenses" / license_name).write_bytes(text)
+    shutil.copy(_ROOT / "LICENSE", folder)
+
+    compiled = any(site.glob("*__mypyc*"))
+    if not compiled and any(wheels.glob("djlint-*-cp*.whl")):
+        msg = f"none of the compiled djLint wheels is for {name}"
+        raise RuntimeError(msg)
+    (folder / "README.md").write_text(
+        f"# @djlint/{name}\n\n"
+        f"[djLint](https://djlint.com) {version} for {name}, with CPython {python_version}"
+        " from [python-build-standalone](https://github.com/astral-sh/python-build-standalone)."
+        f" djLint here is {'compiled with mypyc' if compiled else 'pure Python'}.\n\n"
+        "Install [djlint](https://www.npmjs.com/package/djlint) rather than this package:"
+        " it runs djLint with the package for your platform.\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    manifest = {
+        "name": f"@djlint/{name}",
+        "version": version,
+        "description": f"djLint for {name}, which the djlint package runs",
+        "homepage": "https://djlint.com",
+        "bugs": {"url": "https://github.com/djlint/djLint/issues"},
+        "license": "GPL-3.0-or-later",
+        "repository": _REPOSITORY,
+        "os": [system],
+        "cpu": [cpu],
+        **({"libc": ["glibc" if libc == ["gnu"] else "musl"]} if libc else {}),
+        # Yarn's Plug'n'Play can't run Python out of a zip archive.
+        "preferUnplugged": True,
+    }
+    (folder / "package.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return _pack(folder)
+
+
+def _build_launcher(version: str) -> Path:
+    folder = _DIST / "djlint"
+    folder.mkdir(parents=True)
+    manifest = json.loads((_ROOT / "package.json").read_text(encoding="utf-8"))
+    if manifest["version"] != version:
+        msg = f"package.json has {manifest['version']} and pyproject.toml {version}"
+        raise RuntimeError(msg)
+    for field in ("private", "devDependencies", "scripts"):
+        manifest.pop(field, None)
+    manifest |= {
+        "bin": {"djlint": "djlint.mjs"},
+        "files": ["djlint.mjs"],
+        "optionalDependencies": {f"@djlint/{name}": version for name in PLATFORMS},
+        # The launcher's Object.hasOwn came in Node 16.9.
+        "engines": {"node": ">=16.9"},
+    }
+    (folder / "package.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    for file in (_ROOT / "npm" / "djlint.mjs", _ROOT / "README.md", _ROOT / "LICENSE"):
+        shutil.copy(file, folder)
+    return _pack(folder)
+
+
+def main(wheels: Path, platforms: list[str]) -> None:
+    unknown = set(platforms) - PLATFORMS.keys()
+    if unknown:
+        msg = f"unknown platforms: {', '.join(sorted(unknown))}"
+        raise SystemExit(msg)
+    platforms = platforms or list(PLATFORMS)
+    if os.name == "nt" and any(not name.startswith("win32-") for name in platforms):
+        msg = "build the packages for Linux and macOS on Linux or macOS"
+        raise SystemExit(msg)
+
+    with (_ROOT / "pyproject.toml").open("rb") as file:
+        version = tomllib.load(file)["project"]["version"]
+    for path in _DIST.glob("*"):
+        if path != _DOWNLOADS:
+            _remove(path)
+    python_version, hashes = _python_archives()
+    licenses = _licenses()
+    requirements = _DIST / "requirements.txt"
+    _run(
+        os.environ.get("UV", "uv"),
+        "export",
+        "--frozen",
+        "--no-default-groups",
+        "--no-emit-project",
+        "--no-header",
+        "--no-annotate",
+        "--output-file",
+        requirements,
+    )
+    packed = [_build_launcher(version)]
+    packed.extend(
+        _build_platform(
+            name,
+            wheels=wheels.resolve(),
+            requirements=requirements,
+            version=version,
+            python_version=python_version,
+            hashes=hashes,
+            licenses=licenses,
+        )
+        for name in platforms
+    )
+    requirements.unlink()
+    for path in packed:
+        print(f"{path.name}: {path.stat().st_size / 2**20:.1f} MiB")
+
+
+if __name__ == "__main__":
+    arguments = sys.argv[1:]
+    if not arguments:
+        raise SystemExit(__doc__)
+    main(Path(arguments[0]), arguments[1:])

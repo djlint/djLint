@@ -65,6 +65,8 @@ select = ["ALL"]
 unfixable = ["RUF027", "T"]
 
 [lint.per-file-ignores]
+# A script, which reports what it built.
+"npm/build.py" = ["T201"]
 "src/djlint/rules/*" = ["ARG001", "N999"]
 "tests/*" = ["FBT001", "S101", "T201", "PLR2004"]
 

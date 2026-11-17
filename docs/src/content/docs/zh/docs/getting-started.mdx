@@ -53,13 +53,13 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-:::caution[警告]
-npm 包只是一个包装器。它的安装脚本会用系统路径中碰巧存在的那个 `python3` 运行 pip，安装与该 npm 版本对应的 djLint 版本，这可能会用较旧的 djLint 替换较新的 djLint。npm 不会管理或卸载实际安装的包，因此请尽量使用 pip。
-:::
+npm 包自带 Python，因此只需要 Node.js 16.9 或更高版本。它提供 x64 和 Arm64 上 Linux、macOS 和 Windows 的构建。将其添加为项目的开发依赖：
 
 ```bash
-npm i djlint
+npm i -D djlint
 ```
+
+然后用 `npx djlint` 运行，例如 `npx djlint . --lint`。
 
 </TabItem>
 </Tabs>

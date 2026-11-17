@@ -53,13 +53,13 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-:::caution[警告]
-npm パッケージはラッパーにすぎません。そのインストールスクリプトはシステムのパス上にある `python3` で pip を実行し、その npm リリースに対応するバージョンの djLint をインストールするため、新しい djLint が古いものに置き換えられることがあります。npm は実際のパッケージを管理もアンインストールもしないため、できれば pip を使ってください。
-:::
+npm パッケージは独自の Python を同梱しているため、必要なのは Node.js 16.9 以降だけです。x64 と Arm64 の Linux、macOS、Windows 向けのビルドがあります。開発用の依存関係としてプロジェクトに追加します：
 
 ```bash
-npm i djlint
+npm i -D djlint
 ```
+
+実行するときは `npx djlint` を使います（例: `npx djlint . --lint`）。
 
 </TabItem>
 </Tabs>

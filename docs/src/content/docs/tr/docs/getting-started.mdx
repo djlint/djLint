@@ -53,13 +53,13 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-:::caution[Uyarı]
-npm paketi yalnızca bir sarmalayıcıdır. Kurulum betiği, sistem yolunuzda hangi `python3` varsa onunla pip'i çalıştırır ve o npm sürümüne ait djLint sürümünü kurar; bu, daha yeni bir djLint'in yerine eskisini kurabilir. npm asıl paketi yönetmez ya da kaldırmaz, bu yüzden mümkünse pip'i tercih edin.
-:::
+npm paketi kendi Python'ıyla gelir, bu yüzden yalnızca Node.js 16.9 veya daha yenisine ihtiyaç duyar. x64 ve Arm64 üzerinde Linux, macOS ve Windows için derlemeleri vardır. Projenize geliştirme bağımlılığı olarak ekleyin:
 
 ```bash
-npm i djlint
+npm i -D djlint
 ```
+
+Ardından `npx djlint` ile çalıştırın, örneğin `npx djlint . --lint`.
 
 </TabItem>
 </Tabs>

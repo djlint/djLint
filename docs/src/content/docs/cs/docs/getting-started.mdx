@@ -53,13 +53,13 @@ brew install djlint
 </TabItem>
 <TabItem label="npm">
 
-:::caution[Upozornění]
-Balíček npm je jen obálka. Jeho instalační skript spustí pip pro ten `python3`, který je zrovna v systémové cestě, a nainstaluje verzi djLint odpovídající danému vydání npm, což může novější djLint nahradit starším. npm skutečný balíček nespravuje ani neodinstaluje, takže pokud můžete, použijte raději pip.
-:::
+Balíček npm si nese vlastní Python, takže potřebuje jen Node.js 16.9 nebo novější. Má sestavení pro Linux, macOS a Windows na x64 a Arm64. Přidejte ho do projektu jako vývojovou závislost:
 
 ```bash
-npm i djlint
+npm i -D djlint
 ```
+
+Pak ho spouštějte přes `npx djlint`, například `npx djlint . --lint`.
 
 </TabItem>
 </Tabs>
