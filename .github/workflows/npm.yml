@@ -12,6 +12,7 @@ on:
 permissions: {}
 jobs:
   test:
+    name: ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
