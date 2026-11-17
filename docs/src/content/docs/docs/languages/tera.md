@@ -15,7 +15,7 @@ djLint lints and formats Tera templates. Set the `tera` profile so the rules and
 djlint /path/to/templates --profile=tera
 ```
 
-## Or, use a config file
+## In a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 
@@ -31,7 +31,3 @@ profile = "tera"
 ```json title=".djlintrc"
 { "profile": "tera" }
 ```
-
-:::tip
-[Check out the configuration guide for all the options!](/docs/configuration/)
-:::

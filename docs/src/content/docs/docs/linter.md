@@ -5,7 +5,7 @@ sidebar:
   label: "Linter"
 ---
 
-djLint includes many rules to check the style and validity of your templates. Take full advantage of the linter by configuring it to use a preset profile for the template language of your choice.
+The linter checks templates for mistakes and inconsistent style. Set the [profile](/docs/configuration/#profile) of your template language, so the rules for it run.
 
 ```bash
 djlint /path/to/templates --lint
@@ -13,13 +13,9 @@ djlint /path/to/templates --lint
 # with custom extensions
 djlint /path/to/templates -e html.dj --profile=django
 
-# or to file
-djlint /path/to/this.html.j2  --profile=jinja
+# or a single file
+djlint /path/to/this.html.j2 --profile=jinja
 ```
-
-:::tip
-[Check out the configuration guide for all the options!](/docs/configuration/)
-:::
 
 ## Enabling or disabling rules
 
@@ -31,9 +27,9 @@ For example:
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-This can also be done through the [Configuration](/docs/configuration/) file.
+Or set [`ignore`](/docs/configuration/#ignore) and [`include`](/docs/configuration/#include) in the config file.
 
-Of the built-in rules, only the H rules run without a [profile](/docs/configuration/#profile). The T rules and the rules for one template language (D, J) come with the profiles they apply to. A rule named in `--include` runs under any profile or without one, except under a profile its details below say it is not applied to.
+Which profiles run a rule is in [Code patterns](#code-patterns). A rule named in `--include` runs under any profile or without one, except under a profile its details below say it is not applied to.
 
 ## Rules
 
@@ -53,7 +49,7 @@ Of the built-in rules, only the H rules run without a [profile](/docs/configurat
 | [H011](#h011) | Attribute values should be quoted.                                                           | ✔️      |
 | [H012](#h012) | There should be no spaces around attribute `=`.                                              | ✔️      |
 | [H013](#h013) | `img` tag should have alt attributes.                                                        | ✔️      |
-| [H014](#h014) | More blank lines than the configuration keeps.                                               | ✔️      |
+| [H014](#h014) | Too many blank lines in a row.                                                               | ✔️      |
 | [H015](#h015) | Follow `h` tags with a line break.                                                           | ✔️      |
 | [H016](#h016) | Missing `title` tag in html.                                                                 | ✔️      |
 | [H017](#h017) | Void tags should be self closing (conflicts with: H018).                                     | -       |
@@ -107,14 +103,15 @@ Of the built-in rules, only the H rules run without a [profile](/docs/configurat
 
 ### Code patterns
 
-The first letter of a code follows the pattern:
+The first letter of a code says which profiles run the rule:
 
-- D: applies specifically to Django
-- H: applies to html
-- J: applies specifically to Jinja
-- M: applies specifically to Handlebars
-- N: applies specifically to Nunjucks
-- T: applies generally to templates
+- D: Django, run under `django`.
+- H: HTML, run under every profile. `angular` leaves out H012 and H026.
+- J: Jinja, run under `jinja`.
+- T: template syntax, run under every profile but `html` and `mako`. T001 and T041 to T044 also skip the profiles their details name.
+- M and N have no rules of djLint's own. A custom rule whose code starts with M runs under `handlebars` and `angular`, and one with N under `nunjucks` and `angular`.
+
+`all` runs the rules of every template language, except those that are off by default and those that skip some profile, such as T001 and T041 to T044; `--include` adds them. Without a profile, the linter runs the rules of `html`.
 
 ### Rule details
 
@@ -172,7 +169,7 @@ When a `{% block %}` spans many lines or blocks are nested, a bare `{% endblock 
 
 Off by default; enable with `--include=T003`. `--name-endblocks` writes the name for you.
 
-A name is not required when the block opens and closes on the same line, e.g. `{% block title %}``{% endblock %}`. The formatter moves the contents of a block holding other tags onto lines of their own, so a block written on one line can need a name once formatted; with `--name-endblocks` the formatter writes that name too.
+A name is not required when the block opens and closes on the same line, e.g. `{% block title %}{% endblock %}`. The formatter moves the contents of a block holding other tags onto lines of their own, so a block written on one line can need a name once formatted; with `--name-endblocks` the formatter writes that name too.
 
 Don't:
 
@@ -411,7 +408,7 @@ Do:
 
 `Found extra blank lines.`
 
-Runs of blank lines have no effect on the rendered page (HTML collapses whitespace) but bloat templates and create noisy diffs when neighboring lines change. djLint's formatter removes them entirely by default (keeping at most `max_blank_lines` blank lines, which defaults to 0), so leftover runs indicate unformatted code.
+Runs of blank lines have no effect on the rendered page (HTML collapses whitespace) but bloat templates and create noisy diffs when neighboring lines change. It reports two or more blank lines in a row, or more than `max_blank_lines` when that is higher, and nothing under `preserve_blank_lines`. A single blank line isn't reported, although `--reformat` removes it by default.
 
 Don't:
 
@@ -578,7 +575,7 @@ Do:
 
 `Empty tag pair found. Consider removing.`
 
-An empty tag pair renders no content but still creates a DOM node that can pick up margins, borders, or flex/grid gaps from stylesheets, producing phantom spacing that is hard to trace; it is usually leftover markup from an earlier edit. Tags that are legitimately empty in normal markup (td, th, li, dt, dd, slot) are exempt. Tags carrying any attribute (JS mount points like `<div id="app">``</div>`, icon-font elements like `<i class="fa fa-user">``</i>`) are not flagged either; only fully attribute-less empty pairs match.
+An empty tag pair renders no content but still creates a DOM node that can pick up margins, borders, or flex/grid gaps from stylesheets, producing phantom spacing that is hard to trace; it is usually leftover markup from an earlier edit. Tags that are legitimately empty in normal markup (td, th, li, dt, dd, slot) are exempt. Tags carrying any attribute (JS mount points like `<div id="app"></div>`, icon-font elements like `<i class="fa fa-user"></i>`) are not flagged either; only fully attribute-less empty pairs match.
 
 Don't:
 
@@ -658,7 +655,7 @@ text/javascript and text/css are the HTML5 defaults for `<script>` and `<style>`
 Don't:
 
 ```html
-<script type="text/javascript" src="app.js">
+<script type="text/javascript" src="app.js"></script>
 ```
 
 Do:
@@ -774,7 +771,7 @@ Do:
 
 Search engines use the meta description as the snippet under your page title in results; without one they synthesize a snippet from arbitrary page text, which hurts click-through rates and produces poor link previews when the page is shared.
 
-Only fires on files containing a complete `<html>`...`</html>` document. The snippet argument applies to publicly indexed pages; for auth-gated or intranet apps this rule is commonly disabled.
+Only fires on files containing a complete `<html>`...`</html>` document. It matters only for pages search engines index, so ignore it in an app behind a login.
 
 Don't:
 
@@ -896,7 +893,7 @@ Do:
 
 `Block tag has no matching end tag.`
 
-A block tag such as `{% if %}`, `{% for %}` or `{% macro %}` without its matching end tag is a hard TemplateSyntaxError in Django and Jinja: the page fails to render at request time, which this rule catches before deploy. It also flags orphan end tags with no opening tag and incorrectly interleaved blocks (e.g. `{% if %}``{% for %}``{% endif %}`).
+A block tag such as `{% if %}`, `{% for %}` or `{% macro %}` without its matching end tag is a hard TemplateSyntaxError in Django and Jinja: the page fails to render at request time, which this rule catches before deploy. It also flags orphan end tags with no opening tag and incorrectly interleaved blocks (e.g. `{% if %}{% for %}{% endif %}`).
 
 `{% block %}`/`{% endblock %}` pairing and endblock-name mismatches are checked by this rule; T003 (off by default) additionally demands a name on every multi-line `{% endblock %}`. Custom block tags registered via custom_blocks are also checked, including their self-closing / %} form.
 
@@ -985,7 +982,7 @@ Do:
 
 Django refuses to compile a template in which another tag comes before `{% extends %}`, and text written before it is rendered, so it leaks into the page ahead of everything the parent template produces. Jinja renders that text too, and nunjucks drops it, so in every engine the template does not do what it looks like it does.
 
-A `{# #}` comment renders nothing and does not count, and neither does anything inside a `{% comment %}`, <code>{&#37; raw %}</code> or `{% verbatim %}` block, named or not, a `{# djlint:off #}` region in any of its three spellings, or yaml front matter. An html comment does count: the engine writes it into the page ahead of the parent template's doctype, which is the leak this rule is about. So do a `{% blocktrans %}` block, a `{% filter %}` block and a `<?php ?>` block, each of which renders. Only the first `{% extends %}` is checked; a second one is an error of its own. On the jinja and nunjucks profiles a branch tag before it does not count, since jinja documents `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` as the way to choose a parent; django reads the rest of the template into the `{% extends %}` and then rejects the `{% endif %}`, so on that profile a branch tag counts.
+A `{# #}` comment renders nothing and does not count, and neither does anything inside a `{% comment %}`, `{% raw %}` or `{% verbatim %}` block, named or not, a `{# djlint:off #}` region in any of its three spellings, or yaml front matter. An html comment does count: the engine writes it into the page ahead of the parent template's doctype, which is the leak this rule is about. So do a `{% blocktrans %}` block, a `{% filter %}` block and a `<?php ?>` block, each of which renders. Only the first `{% extends %}` is checked; a second one is an error of its own. On the jinja and nunjucks profiles a branch tag before it does not count, since jinja documents `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` as the way to choose a parent; django reads the rest of the template into the `{% extends %}` and then rejects the `{% endif %}`, so on that profile a branch tag counts.
 
 Not applied to the handlebars, golang, liquid and angular profiles.
 
@@ -1029,9 +1026,9 @@ Do:
 
 Once a template extends another, the parent decides what is output and the child only fills the parent's blocks. Text or html written after `{% extends %}` and outside every `{% block %}` is silently discarded at render time, so a paragraph that looks fine in the source never reaches the page.
 
-A template tag there still runs, so `{% load %}`, `{% set %}` and an `{% if %}` wrapped around a block are left alone, as are `{# #}` and `{% comment %}` comments, html comments, <code>{&#37; raw %}</code> and `{% verbatim %}` blocks, and the body of a `{% macro %}`, a block form `{% set %}`, a `{% partialdef %}` or an `{% addtoblock %}`, which is captured rather than output. The text of a `{% blocktrans %}` is reported, since a `{% blocktrans %}` is not a `{% block %}`. Only content after the extends tag is considered, and each run of it is reported once, at its start.
+A template tag there still runs, so `{% load %}`, `{% set %}` and an `{% if %}` wrapped around a block are left alone, as are `{# #}` and `{% comment %}` comments, html comments, `{% raw %}` and `{% verbatim %}` blocks, and the body of a `{% macro %}`, a block form `{% set %}`, a `{% partialdef %}` or an `{% addtoblock %}`, which is captured rather than output. The text of a `{% blocktrans %}` is reported, since a `{% blocktrans %}` is not a `{% block %}`. Only content after the extends tag is considered, and each run of it is reported once, at its start.
 
-The engine reads template tags before html, so an `{% extends %}` written inside an html comment or a `<pre>` still runs and still makes the file a child; only `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> and `{% verbatim %}` really hide one. Text inside an html comment reaches no reader either way and is not reported, but the tags written there are still read.
+The engine reads template tags before html, so an `{% extends %}` written inside an html comment or a `<pre>` still runs and still makes the file a child; only `{# #}`, `{% comment %}`, `{% raw %}` and `{% verbatim %}` really hide one. Text inside an html comment reaches no reader either way and is not reported, but the tags written there are still read.
 
 Not applied to the handlebars, golang, liquid and angular profiles.
 
@@ -1085,7 +1082,7 @@ Django, Jinja and Nunjucks all refuse to parse a template that names two blocks 
 
 Only `{% block %}` counts: a `{% blocktrans %}` is not a block and a `{% endblock name %}` merely names the block it closes. Names are compared as written, since the engines treat `Content` and `content` as two blocks.
 
-Only what the engine itself never parses is skipped: a template comment, a `{% comment %}` block, a <code>{&#37; raw %}</code> or `{% verbatim %}` body, and a `djlint:off` region. A block written inside an html comment, a `<script>`, `<style>`, `<pre>` or `<textarea>` body, or a `{% filter %}` body is still counted, since the engine reads all of those and raises on the duplicate name all the same.
+Only what the engine itself never parses is skipped: a template comment, a `{% comment %}` block, a `{% raw %}` or `{% verbatim %}` body, and a `djlint:off` region. A block written inside an html comment, a `<script>`, `<style>`, `<pre>` or `<textarea>` body, or a `{% filter %}` body is still counted, since the engine reads all of those and raises on the duplicate name all the same.
 
 An `{% embed %}` opens a scope of its own: the blocks in it fill the embedded template rather than this one, so two embeds of the same partial may each write `{% block body %}`. A name repeated inside a single embed is still reported.
 
@@ -1145,7 +1142,7 @@ An output tag prints a value, and `if`, `for`, `url`, `include` and the rest are
 
 A bare keyword is an ordinary variable name, so `{{ url }}`, `{{ url|default:"/" }}` and `{{ set.name }}` are not reported. Only a keyword given an argument is, along with a closing or branch keyword on its own such as `{{ endif }}` or `{{ else }}`. A control keyword such as `if` or `for` cannot begin an expression, so whatever comes after one is an argument, an operator included, and `{{ if -1 > count }}` is reported. The rest of the names double as variables and functions, and there only a quoted string or a word counts as an argument, so an expression that happens to start with one of them is left alone: `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` and `{{ filter [0] }}` are all quiet.
 
-The body of a <code>{&#37; raw %}</code> or `{% verbatim %}` block is text rather than template syntax and is skipped, the named form `{% verbatim vueapp %}...{% endverbatim vueapp %}` included, so a Vue or Handlebars `{{ }}` protected that way is not reported. A `{{ }}` written inside a quoted argument of a block tag, as in `{% trans "Write {{ if x }} instead" %}`, is text the engine prints and is left alone too.
+The body of a `{% raw %}` or `{% verbatim %}` block is text rather than template syntax and is skipped, the named form `{% verbatim vueapp %}...{% endverbatim vueapp %}` included, so a Vue or Handlebars `{{ }}` protected that way is not reported. A `{{ }}` written inside a quoted argument of a block tag, as in `{% trans "Write {{ if x }} instead" %}`, is text the engine prints and is left alone too.
 
 Don't:
 
@@ -1351,7 +1348,7 @@ An id names one element. A second element carrying the same id breaks `getElemen
 
 Two ids in exclusive branches of one `{% if %}...{% else %}...{% endif %}` are never both rendered, so they are not reported. A `{% for %}` loop or a `{% block %}` is not a branch: an id inside one and the same id outside it both render, and the later one is reported. A value written by a template tag is unknowable and is left alone, and so is an empty value. Ids are compared exactly, as the browser does, so `save` and `Save` are two ids.
 
-Branches are read in whichever language the file is written in, and in any whitespace the language allows between the delimiters and the tag name: `{% elif %}` and `{% else %}`, liquid's `{% elsif %}` and `{% when %}`, go's `{{ else }}`, a mako `% else:` line statement, and handlebars' `{{else}}`, its chained `{{else if x}}` and the inverse section of any `{{#helper}}` block, custom helpers included. The contents of a `<template>` are a document fragment of their own that `getElementById` never reaches, so an id there is compared only with the ids of that same `<template>`: two templates may each hold a row of the same id, while two of them inside one template are still reported. An id inside a comment, a <code>{&#37; raw %}</code> or `{% verbatim %}` body, or a `djlint:off` region is not read at all.
+Branches are read in whichever language the file is written in, and in any whitespace the language allows between the delimiters and the tag name: `{% elif %}` and `{% else %}`, liquid's `{% elsif %}` and `{% when %}`, go's `{{ else }}`, a mako `% else:` line statement, and handlebars' `{{else}}`, its chained `{{else if x}}` and the inverse section of any `{{#helper}}` block, custom helpers included. The contents of a `<template>` are a document fragment of their own that `getElementById` never reaches, so an id there is compared only with the ids of that same `<template>`: two templates may each hold a row of the same id, while two of them inside one template are still reported. An id inside a comment, a `{% raw %}` or `{% verbatim %}` body, or a `djlint:off` region is not read at all.
 
 Don't:
 
@@ -1505,28 +1502,13 @@ Do:
 
 <!-- oxfmt-ignore-end -->
 
-### Adding rules
-
-We welcome pull requests with new rules!
-
-A good rule consists of
-
-- Name
-- Code
-- Message: message to display when the error is found.
-- Flags: regex flags, for example re.I|re.M. Defaults to re.DOTALL.
-- Patterns: regular expressions that find the error.
-- Exclude: optional list of profiles the rule does not apply to.
-
-Please include a test to validate the rule.
-
 ## Custom rules
 
-You can add custom rules just for your project by creating a `.djlint_rules.yaml` alongside your `pyproject.toml`. Rules can be added to this files and djLint will pick them up. A rules file in another location can be given with the `--rules` CLI option.
+Rules of your own go in a `.djlint_rules.yaml` in the project root, beside your config file, and djLint picks them up. `--rules` names a rules file elsewhere. A custom rule's code follows the [same letters](#code-patterns), so one starting with another letter, such as C, runs under every profile. `default: false` and `exclude` work in custom rules too.
 
 ### Pattern rules
 
-You can add rules that fails if one of the regex pattern has a match:
+A pattern rule reports every match of its patterns:
 
 ```yaml
 - rule:
@@ -1539,7 +1521,7 @@ You can add rules that fails if one of the regex pattern has a match:
 
 ### Python module rules
 
-You can add rules that import and execute a custom python function:
+A Python module rule runs a function of your own:
 
 ```yaml
 - rule:
@@ -1550,8 +1532,8 @@ You can add rules that import and execute a custom python function:
 
 The specified `python_module` must contain a `run()` function that will be executed on every checked file. It must accept the following arguments:
 
-- `rule`: The dict that represent your rule in `.djlint_rules.yaml`. You will typically use this variable to access the rule name and message.
-- `config`: The DJLint configuration object.
+- `rule`: The dict that represents your rule in `.djlint_rules.yaml`. You will typically use this variable to access the rule name and message.
+- `config`: The djLint configuration object.
 - `html`: The full html content of the file.
 - `filepath`: Path to the file that we are currently checking.
 - `line_ends`: List of line `start` and `end` character position that you can use with `djlint.lint.get_line()` to get line numbers from a character position. See the example.
@@ -1559,7 +1541,7 @@ The specified `python_module` must contain a `run()` function that will be execu
 
 The module can be in the project root. If it returns a `line` or an `end` that isn't a position, djLint stops with an error that names the rule.
 
-It must return a list of dict, one for each errors, with the following keys:
+It must return a list of dicts, one for each finding, with the following keys:
 
 - `code`: Code name of the rule that report the error (typically `rule['name']`)
 - `line`: Line number and character number on this line, separated by a ':' as a string.

@@ -4,6 +4,7 @@
 // narrow screens they get their own, with the sections, theme and language.
 import { Icon } from "@astrojs/starlight/components";
 import LanguageSelect from "@astrojs/starlight/components/LanguageSelect.astro";
+import MobileMenuFooter from "@astrojs/starlight/components/MobileMenuFooter.astro";
 import Search from "@astrojs/starlight/components/Search.astro";
 import SiteTitle from "@astrojs/starlight/components/SiteTitle.astro";
 import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
@@ -64,12 +65,8 @@ const links = [
               </a>
             ))}
           </nav>
-          <div class="menu-controls">
-            <div class="sl-flex social-icons">
-              <SocialIcons />
-            </div>
-            <ThemeSelect />
-            <LanguageSelect />
+          <div class="md:sl-hidden">
+            <MobileMenuFooter />
           </div>
         </div>
       </>
@@ -168,51 +165,55 @@ const links = [
   .menu-button:not(:has(~ :popover-open)) :global(.close-menu) {
     display: none;
   }
+  /* On a phone, a pane over the whole page below the header, as Starlight's
+     sidebar is on the docs pages, with the same preferences at its foot. */
   .menu {
-    inset: var(--sl-nav-height) 0 auto auto;
-    width: min(20rem, 100vw);
-    max-height: calc(100dvh - var(--sl-nav-height));
-    padding: 1rem var(--sl-nav-pad-x);
+    inset: var(--sl-nav-height) 0 0;
+    width: 100%;
+    height: auto;
+    padding: 1rem var(--sl-sidebar-pad-x) 0;
     overflow-y: auto;
     border: 0;
-    border-inline-start: 1px solid var(--sl-color-gray-6);
-    border-bottom: 1px solid var(--sl-color-gray-6);
-    border-end-start-radius: 0.75rem;
     background: var(--sl-color-black);
     color: var(--sl-color-white);
-    box-shadow: var(--sl-shadow-md);
   }
   .menu nav {
     display: flex;
     flex-direction: column;
+    margin-bottom: 1rem;
   }
   .menu nav a {
-    padding: 0.5rem 0;
+    padding: 0.3em 0;
+    line-height: 1.4;
     color: var(--sl-color-gray-2);
-    font-weight: 500;
     text-decoration: none;
   }
+  .menu nav a:hover,
   .menu nav a[aria-current="page"] {
     color: var(--sl-color-white);
   }
-  .menu-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--sl-color-gray-6);
+  :global(body:has(#dj-menu:popover-open)) {
+    overflow: hidden;
   }
-  /* From 50rem the header shows these itself. Starlight's md:sl-hidden is in
-     a layer, so the display above would win over it. */
+  /* Wider, where the header shows the preferences itself, a panel under the
+     button is enough. */
   @media (min-width: 50rem) {
-    .menu-controls {
-      display: none;
+    .menu {
+      inset: var(--sl-nav-height) 0 auto auto;
+      width: 20rem;
+      max-height: calc(100dvh - var(--sl-nav-height));
+      padding: 1rem var(--sl-nav-pad-x);
+      border-inline-start: 1px solid var(--sl-color-gray-6);
+      border-bottom: 1px solid var(--sl-color-gray-6);
+      border-end-start-radius: 0.75rem;
+      box-shadow: var(--sl-shadow-md);
     }
-  }
-  .menu-controls .social-icons::after {
-    content: none;
+    .menu nav {
+      margin-bottom: 0;
+    }
+    :global(body:has(#dj-menu:popover-open)) {
+      overflow: auto;
+    }
   }
   /* The longest translations of the section links need the full 90rem page. */
   @media (min-width: 90rem) {

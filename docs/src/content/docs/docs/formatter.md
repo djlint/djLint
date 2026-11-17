@@ -5,28 +5,17 @@ sidebar:
   label: "Formatter"
 ---
 
-djLint's formatter will take sloppy html templates and make the formatting consistent and easy to follow!
-
-Review the output with `--check` before applying changes.
-
-To review what may change in formatting run:
+djLint's formatter makes the layout of HTML templates consistent. See what it would change first:
 
 ```bash
-djlint . --check --single-attribute-per-line
+djlint . --check --format-css --format-js
 ```
 
-To format the code and update files run:
+Then format the files in place, here with the contents of `<style>` and `<script>` too:
 
 ```bash
-djlint . --reformat --single-attribute-per-line
-
-# how about formatting scripts and styles?
-djlint . --reformat --single-attribute-per-line --format-css --format-js
+djlint . --reformat --format-css --format-js
 ```
-
-:::tip
-[Check out the configuration guide for all the options!](/docs/configuration/)
-:::
 
 :::note[Note]
 JSON and JavaScript written into an attribute are left as they are unless `--format-attribute-js-json` is on. HTML inside an attribute is always left alone.
@@ -36,11 +25,9 @@ JSON and JavaScript written into an attribute are left as they are unless `--for
 djLint is not an html parser or syntax validator.
 :::
 
-## Here's an example!
+## Example
 
 ### Before
-
-Here's a blob of HTML that's in desperate need of attention -
 
 <!-- oxfmt-ignore -->
 ```html
@@ -68,8 +55,6 @@ Here's a blob of HTML that's in desperate need of attention -
 ```
 
 ### After
-
-It looks a bit better now... we can read it :)
 
 <!-- oxfmt-ignore -->
 ```html

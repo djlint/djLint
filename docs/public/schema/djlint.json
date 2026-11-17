@@ -47,15 +47,15 @@
       "$ref": "#/definitions/comma-separated-list"
     },
     "exclude": {
-      "description": "Paths to skip, in place of the default list.",
+      "description": "Paths to skip, in place of the default list. Each entry is a regular expression matched against whole folder or file names in the path relative to the project root or to the folder being checked, such as `vendor` or `templates/legacy`, so `*.min.html` is written `.*\\.min\\.html`.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "extend_exclude": {
-      "description": "Paths to skip on top of the default list.",
+      "description": "Paths to skip on top of `exclude`, or of the default list when `exclude` isn't set, as regular expressions like those of `exclude`.",
       "$ref": "#/definitions/comma-separated-list"
     },
     "extension": {
-      "description": "Extension of the files to look for in folders.",
+      "description": "Extension of the files to look for in folders. It takes one extension; a file given by name is checked whatever its extension.",
       "type": "string"
     },
     "files": {
@@ -166,7 +166,7 @@
       "type": "boolean"
     },
     "per-file-ignores": {
-      "description": "Linter codes to skip in the files whose path matches a regex.",
+      "description": "Linter codes to skip in the files whose path matches a regex. In a config file the key is `per-file-ignores`, with hyphens.",
       "type": "object",
       "additionalProperties": { "type": "string" }
     },
@@ -224,7 +224,7 @@
       "type": "boolean"
     },
     "use_gitignore": {
-      "description": "Also skip the paths that `.gitignore` lists.",
+      "description": "Also skip the paths that the `.gitignore` in the project root lists.",
       "type": "boolean"
     }
   }

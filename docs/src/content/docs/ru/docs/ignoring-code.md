@@ -3,9 +3,7 @@ title: "Игнорирование кода"
 description: "Как запретить djLint форматировать блок кода и как отключать правила линтера прямо в коде."
 ---
 
-Чтобы djLint пропускал код, оберните его в теги `djlint`:
-
-Для обычного HTML:
+Код между комментариями `djlint:off` и `djlint:on` не трогают ни форматер, ни линтер. Это могут быть HTML-комментарии:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -14,7 +12,7 @@ description: "Как запретить djLint форматировать бло
 <!-- djlint:on -->
 ```
 
-или в виде комментария:
+Или комментарии Django и Jinja:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -23,7 +21,7 @@ description: "Как запретить djLint форматировать бло
 {# djlint:on #}
 ```
 
-или в виде длинного комментария:
+Или блоки `{% comment %}`:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -32,16 +30,16 @@ description: "Как запретить djLint форматировать бло
 {% comment %} djlint:on {% endcomment %}
 ```
 
-или в виде комментария в стиле golang:
+Или комментарии шаблонов Go:
 
 <!-- oxfmt-ignore -->
 ```html
-{{ /* djlint:off */ }}
+{{/* djlint:off */}}
    <bad html to ignore>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```
 
-или в виде комментария в стиле handlebars:
+Или комментарии Handlebars:
 
 <!-- oxfmt-ignore -->
 ```html
@@ -72,7 +70,7 @@ description: "Как запретить djLint форматировать бло
 <p>
 {{!-- djlint:on --}}
 
-{{ /* djlint:off H025 */ }}
+{{/* djlint:off H025 */}}
 <p>
-{{ /* djlint:on */ }}
+{{/* djlint:on */}}
 ```

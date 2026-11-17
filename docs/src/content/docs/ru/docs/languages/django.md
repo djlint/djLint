@@ -15,7 +15,7 @@ djLint проверяет и форматирует шаблоны Django. За�
 djlint /path/to/templates --profile=django
 ```
 
-## Или через файл конфигурации
+## В файле конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
@@ -31,7 +31,3 @@ profile = "django"
 ```json title=".djlintrc"
 { "profile": "django" }
 ```
-
-:::tip
-[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
-:::

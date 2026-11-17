@@ -9,15 +9,13 @@ djLint lintet und formatiert Nunjucks-Templates. Setzen Sie das Profil `nunjucks
 
 **[Was ist Nunjucks?](https://mozilla.github.io/nunjucks/)**
 
-Pebble-Templates (Java) sind Twig-kompatibel. Verwenden Sie für sie daher dasselbe Profil.
-
 ## Über die Befehlszeile
 
 ```bash
 djlint /path/to/templates --profile=nunjucks
 ```
 
-## Oder über eine Konfigurationsdatei
+## In einer Konfigurationsdatei
 
 Konfigurieren Sie djLint in der Datei `pyproject.toml`, `djlint.toml` / `.djlint.toml` oder `.djlintrc` Ihres Projekts.
 
@@ -33,7 +31,3 @@ profile = "nunjucks"
 ```json title=".djlintrc"
 { "profile": "nunjucks" }
 ```
-
-:::tip
-[Alle Optionen finden Sie in der Anleitung zur Konfiguration!](/de/docs/configuration/)
-:::

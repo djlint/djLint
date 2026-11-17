@@ -74,12 +74,6 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 - [リント](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [フォーマット](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
 
-### efm-langserver
-
-- [GitHub リポジトリ](https://github.com/mattn/efm-langserver)
-
-`htmldjango` のフォーマッターを `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` と `formatStdin = true` で設定します。
-
 ### coc.nvim
 
 - [npm パッケージ](https://www.npmjs.com/package/coc-htmldjango)

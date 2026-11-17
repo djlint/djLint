@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Instalación
 
-djLint está escrito en [Python](https://python.org) y publicado en [PyPI](https://pypi.org/project/djlint/).
+djLint necesita [Python](https://python.org) 3.11 o posterior y está publicado en [PyPI](https://pypi.org/project/djlint/).
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 Para ejecutar djLint en tu editor o en cada commit, consulta [Integraciones](/es/docs/integrations/) y [pre-commit](/es/docs/integrations/#pre-commit).
 
 :::note[Nota]
-Si no se encuentra el comando `djlint`, asegúrate de que Python esté [en tu PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
+Si no se encuentra el comando `djlint`, añade a tu PATH la carpeta en la que se instaló. Si djLint está instalado en un entorno de Python, también lo ejecuta `python -m djlint` con el Python de ese entorno.
 :::
 
 ## Primera ejecución
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## Códigos de salida
 
-| Código | Significado                                                                                                                                                |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `0`    | Todo lo que se le pidió revisar a djLint está limpio, o tu configuración omitió todos los archivos que encontró.                                           |
-| `1`    | djLint encontró errores del linter, o archivos que hay que reformatear. `--warn` los muestra como advertencias y sale con `0` en su lugar.                 |
-| `2`    | djLint no revisó lo que le pediste: las rutas no coincidieron con ningún archivo, la línea de comandos o la configuración no eran válidas, o djLint falló. |
+| Código | Significado                                                                                                                                                                                                            |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`    | Todo lo que se le pidió revisar a djLint está limpio, o tu configuración omitió todos los archivos que encontró.                                                                                                       |
+| `1`    | djLint encontró errores del linter, o archivos que hay que reformatear. `--warn` los muestra como advertencias y sale con `0` en su lugar.                                                                             |
+| `2`    | djLint no revisó lo que le pediste: las rutas no coincidieron con ningún archivo, no se pudo leer un archivo (no es UTF-8, o no hay permiso), la línea de comandos o la configuración no eran válidas, o djLint falló. |
 
-Solo el código `1` significa que djLint examinó tus plantillas y no le gustó lo que encontró. El código `2` siempre significa que la propia ejecución no cumplió su cometido, así que un pipeline puede tratar ambos casos de forma distinta.
+Solo el código `1` significa que djLint examinó tus plantillas y no le gustó lo que encontró, así que un pipeline puede distinguir una comprobación que falla de una ejecución que no revisó nada, como una con una ruta incorrecta o una `--extension` que ya no coincide.
 
-El código `2` es el que detecta una ejecución que no revisó nada en absoluto: una ruta incorrecta, una `--extension` que ya no coincide o plantillas que se han movido. Sin él, una ejecución así pasa sin avisar.
-
-Los archivos que djLint _sí_ encontró y luego omitió a propósito, mediante `exclude`, `extend_exclude`, `use_gitignore` o `require_pragma`, no son un error. Esa ejecución sale con `0`, porque la configuración hizo exactamente lo que se le indicó. Es también lo que permite que `exclude` funcione con pre-commit, que pasa los nombres de tus archivos preparados para el commit tanto si quieres que djLint los examine como si no.
-
-Si en tu pipeline es normal que una ruta no tenga plantillas, desactiva el código `2` con `allow_empty_input`:
+Los archivos que djLint encontró y luego omitió a propósito, mediante `exclude`, `extend_exclude`, `use_gitignore` o `require_pragma`, no son un error, y eso es lo que permite que `exclude` funcione con pre-commit. Si en tu pipeline es normal que una ruta no tenga plantillas, desactiva el código `2` con [`allow_empty_input`](/es/docs/configuration/#allow-empty-input):
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## Uso de la línea de comandos
-
-djLint es una aplicación de línea de comandos. Consulta la página de [configuración](/es/docs/configuration/) para una configuración avanzada.
 
 <CliHelp />

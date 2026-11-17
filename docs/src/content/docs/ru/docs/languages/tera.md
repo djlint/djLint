@@ -15,7 +15,7 @@ djLint проверяет и форматирует шаблоны Tera. Зад�
 djlint /path/to/templates --profile=tera
 ```
 
-## Или через файл конфигурации
+## В файле конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
@@ -31,7 +31,3 @@ profile = "tera"
 ```json title=".djlintrc"
 { "profile": "tera" }
 ```
-
-:::tip
-[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
-:::

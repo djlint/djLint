@@ -1,6 +1,6 @@
 {
   "djlint.index_fav_lang": "A profile for your template language",
-  "djlint.index_show_format": "Show your format!",
+  "djlint.index_show_format": "Badge",
   "djlint.index_looks_like": "Looks like this:",
   "djlint.index_add_badge": "Add a badge to your projects",
   "djlint.contributing": "Contributing",
@@ -21,7 +21,7 @@
   "djlint.demo_options": "Options",
   "djlint.demo_output": "Output",
   "djlint.demo_problems": "Problems: {count}",
-  "djlint.demo_defaults": "Nothing to set, these are djLint's defaults",
+  "djlint.demo_defaults": "Nothing to set: these are djLint's defaults",
   "djlint.demo_layout": "Layout",
   "djlint.demo_rewrites": "Rewrites",
   "djlint.demo_css_js": "CSS and JavaScript",

@@ -74,12 +74,6 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 - [Lintování](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [Formátování](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
 
-### efm-langserver
-
-- [Repozitář na GitHubu](https://github.com/mattn/efm-langserver)
-
-Nastavte pro `htmldjango` formátovač s `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` a `formatStdin = true`.
-
 ### coc.nvim
 
 - [Balíček npm](https://www.npmjs.com/package/coc-htmldjango)

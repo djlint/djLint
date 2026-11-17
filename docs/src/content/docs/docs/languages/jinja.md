@@ -9,9 +9,7 @@ djLint lints and formats Jinja templates. Set the `jinja` profile so the rules a
 
 **[What is Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-MiniJinja templates are fully Jinja2-compatible, so use this same `jinja` profile.
-
-HubSpot's Jinjava templates are also jinja-style, so use this profile for them too.
+MiniJinja follows Jinja2's syntax, and HubSpot's Jinjava templates are Jinja-style too, so use the `jinja` profile for both. J004 and J018 suggest Flask's `url_for`, so ignore them in a project without Flask.
 
 ## Using the command line
 
@@ -19,7 +17,7 @@ HubSpot's Jinjava templates are also jinja-style, so use this profile for them t
 djlint /path/to/templates --profile=jinja
 ```
 
-## Or, use a config file
+## In a config file
 
 Configure djLint in your project's `pyproject.toml`, `djlint.toml` / `.djlint.toml`, or `.djlintrc` file.
 
@@ -35,7 +33,3 @@ profile = "jinja"
 ```json title=".djlintrc"
 { "profile": "jinja" }
 ```
-
-:::tip
-[Check out the configuration guide for all the options!](/docs/configuration/)
-:::

@@ -3,7 +3,7 @@ title: "API Python"
 description: "Formatez et lintez des templates depuis votre propre code Python avec l'API de djLint."
 ---
 
-`djlint.api` formate et linte du texte depuis un programme Python, avec les mêmes résultats que la ligne de commande. Il s'adresse aux éditeurs, aux outils de build et à tout ce qui garde un template en mémoire. Tout le reste du paquet peut changer d'une version à l'autre : utilisez donc ce module plutôt que `djlint.settings` ou `djlint.lint`.
+`djlint.api` formate et linte du texte depuis un programme Python, avec les mêmes résultats que la ligne de commande. Il s'adresse aux éditeurs, aux outils de build et à tout ce qui garde un template en mémoire. Tout le reste du paquet peut changer d'une version à l'autre : utilisez donc ce module plutôt que `djlint.settings` ou `djlint.lint`. Les fonctions utilitaires qu'importe l'[exemple de règle personnalisée](/fr/docs/linter/#regles-en-module-python), `djlint.lint.get_line`, `djlint.helpers.inside_ignored_rule` et `djlint.helpers.inside_ignored_linter_block`, continuent aussi de fonctionner.
 
 ```python
 from djlint.api import format_text, lint_text, load_config
@@ -18,7 +18,7 @@ for finding in lint_text(config, '<img src="a.png">', "templates/home.html"):
 
 ## load_config
 
-`load_config(folder=".", *, python_rules=True, **options)` lit la configuration qui s'applique aux fichiers d'un dossier. Il la cherche en remontant depuis ce dossier, comme la ligne de commande le fait depuis le premier chemin qu'on lui donne (pour `-`, depuis le dossier de `--stdin-filename`, ou depuis le répertoire courant sans cette option), et ne change pas de répertoire courant.
+`load_config(folder=".", *, python_rules=True, on_warning=None, **options)` lit la configuration qui s'applique aux fichiers d'un dossier. Il la cherche en remontant depuis ce dossier, comme la ligne de commande [le fait](/fr/docs/configuration/) depuis le premier chemin qu'on lui donne, et ne change pas de répertoire courant.
 
 Les options portent les noms des options de la ligne de commande, avec des tirets bas, et fonctionnent comme là-bas : une valeur définie l'emporte sur le fichier de configuration, tandis que `False`, une chaîne vide et, pour la plupart des options, `0` comptent comme non renseignés. Les chemins sont passés en `pathlib.Path`.
 
@@ -26,9 +26,11 @@ La lecture de la configuration prend un certain temps : conservez donc le résu
 
 Avec `python_rules=False`, les règles personnalisées dotées d'un `python_module` ne sont pas chargées, ce qui empêche le code d'un projet auquel vous ne faites pas confiance de s'exécuter. Leurs noms figurent dans `config.skipped_rules`.
 
+`on_warning`, une fonction qui prend un message, reçoit chaque avertissement sur les réglages, comme un nom mal orthographié ou un code qu'aucune règle ne porte. Sans elle, chaque avertissement va sur stderr une fois par processus. Un fichier de configuration illisible, ou une valeur invalide, lève `click.UsageError`.
+
 ## format_text
 
-`format_text(config, text)` renvoie le texte formaté. Un texte dont la première ligne se termine par CRLF est renvoyé en CRLF, et tout autre en LF. Avec `require_pragma`, un texte sans le pragma est renvoyé inchangé.
+`format_text(config, text)` renvoie le texte formaté. Un texte dont la première ligne se termine par CRLF est renvoyé en CRLF, et tout autre en LF. Avec `require_pragma`, un texte sans le pragma est renvoyé inchangé. Si ni les options de `load_config` ni le fichier de configuration ne définissent `indent` ou `max_line_length`, la fonction les prend dans les sections du `.editorconfig` qui s'appliquent à un fichier de l'extension configurée dans le dossier passé à `load_config`, alors que la ligne de commande les prend pour chaque fichier d'après son chemin.
 
 ## lint_text
 
@@ -50,4 +52,4 @@ Les colonnes comptent des caractères, pas des octets ni des unités de code UTF
 
 ## Modules de règles
 
-Le `python_module` d'une règle personnalisée est importé une fois par processus, depuis la racine du projet de la configuration. Un programme qui reste en cours d'exécution et travaille avec plusieurs projets doit retirer de `sys.modules` tout ce qui a été importé depuis le projet, ainsi que la racine du projet, qui reste à la fin de `sys.path`, pour lire les modules d'un autre projet.
+Le `python_module` d'une règle personnalisée est importé une fois par processus, depuis la racine du projet de la configuration. Pour lire les règles d'un autre projet, un programme qui reste en cours d'exécution doit retirer de `sys.modules` tout ce qu'il a importé depuis le premier projet, et retirer la racine de ce projet de la fin de `sys.path`.

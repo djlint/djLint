@@ -15,7 +15,7 @@ djLint linte et formate les templates Mustache. Utilisez le profil `handlebars` 
 djlint /path/to/templates --profile=handlebars
 ```
 
-## Ou avec un fichier de configuration
+## Dans un fichier de configuration
 
 Configurez djLint dans le fichier `pyproject.toml`, `djlint.toml` / `.djlint.toml` ou `.djlintrc` de votre projet.
 
@@ -31,7 +31,3 @@ profile = "handlebars"
 ```json title=".djlintrc"
 { "profile": "handlebars" }
 ```
-
-:::tip
-[Consultez le guide de configuration pour découvrir toutes les options !](/fr/docs/configuration/)
-:::

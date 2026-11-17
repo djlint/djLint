@@ -8,7 +8,7 @@ import CliHelp from "../../../components/CliHelp.astro";
 
 ## Installation
 
-djLint is built with [Python](https://python.org) and published on [PyPI](https://pypi.org/project/djlint/).
+djLint needs [Python](https://python.org) 3.11 or newer and is published on [PyPI](https://pypi.org/project/djlint/).
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 To run djLint in your editor or on every commit, see [Integrations](/docs/integrations/) and [pre-commit](/docs/integrations/#pre-commit).
 
 :::note[Note]
-If the command `djlint` is not found, make sure that Python is [in your path](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
+If the `djlint` command isn't found, add the folder it was installed into to your PATH. Where djLint is installed into a Python environment, `python -m djlint` with that environment's Python runs it too.
 :::
 
 ## First run
@@ -100,19 +100,19 @@ If you added djLint to a project with `uv add --dev`, it lives in the project's 
 
 djLint works with a path or stdin.
 
-Running with a path -
+Running with a path:
 
 ```bash
 djlint /path/to/templates --lint
 ```
 
-Or a specific file -
+Or a specific file:
 
 ```bash
 djlint /path/to/this.mustache --lint
 ```
 
-Or with stdin -
+Or with stdin:
 
 ```bash
 echo "<div></div>" | djlint -
@@ -124,7 +124,7 @@ Stdin can also be used to reformat code. The output will be only the formatted c
 echo "<div></div>" | djlint - --reformat
 ```
 
-Output -
+Output:
 
 ```html
 <div></div>
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## Exit codes
 
-| Code | Meaning                                                                                                                          |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `0`  | Everything djLint was asked to check is clean, or every file it found was skipped by your configuration.                         |
-| `1`  | djLint found linting errors, or files that need reformatting. `--warn` reports these as warnings and exits `0` instead.          |
-| `2`  | djLint did not check what you asked it to: the paths matched no files, the command line or config was invalid, or djLint failed. |
+| Code | Meaning                                                                                                                                                                                 |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | Everything djLint was asked to check is clean, or every file it found was skipped by your configuration.                                                                                |
+| `1`  | djLint found linting errors, or files that need reformatting. `--warn` reports these as warnings and exits `0` instead.                                                                 |
+| `2`  | djLint did not check what you asked it to: the paths matched no files, a file couldn't be read (not UTF-8, or no permission), the command line or config was invalid, or djLint failed. |
 
-Only code `1` means djLint looked at your templates and did not like what it found. Code `2` always means the run itself did not deliver, so a pipeline can treat the two differently.
+Only code `1` means djLint looked at your templates and did not like what it found, so a pipeline can tell a failing check from a run that checked nothing, such as one with a wrong path or an `--extension` that no longer matches.
 
-Code `2` is what catches a run that checked nothing at all: a wrong path, an `--extension` that no longer matches, or templates that have moved. Without it such a run passes silently.
-
-Files that djLint _did_ find and then skipped on purpose, through `exclude`, `extend_exclude`, `use_gitignore` or `require_pragma`, are not an error. That run exits `0`, because the configuration did exactly what it was told to. It is also what lets `exclude` work under pre-commit, which passes the names of your staged files whether or not you want djLint to look at them.
-
-If a path that legitimately has no templates is normal for your pipeline, turn code `2` off with `allow_empty_input`:
+Files djLint found and then skipped on purpose, through `exclude`, `extend_exclude`, `use_gitignore` or `require_pragma`, are not an error, which is what lets `exclude` work under pre-commit. If a path with no templates is normal for your pipeline, turn code `2` off with [`allow_empty_input`](/docs/configuration/#allow-empty-input):
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## CLI usage
-
-djLint is a command line application. See the [configuration](/docs/configuration/) page for advanced configuration.
 
 <CliHelp />

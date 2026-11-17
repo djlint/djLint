@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Installation
 
-djLint est écrit en [Python](https://python.org) et publié sur [PyPI](https://pypi.org/project/djlint/).
+djLint demande [Python](https://python.org) 3.11 ou plus récent et est publié sur [PyPI](https://pypi.org/project/djlint/).
 
 <Tabs>
 <TabItem label="uv">
@@ -67,7 +67,7 @@ npm i djlint
 Pour exécuter djLint dans votre éditeur ou à chaque commit, consultez [Intégrations](/fr/docs/integrations/) et [pre-commit](/fr/docs/integrations/#pre-commit).
 
 :::note[Remarque]
-Si la commande `djlint` est introuvable, vérifiez que Python est bien [dans votre PATH](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/).
+Si la commande `djlint` est introuvable, ajoutez à votre PATH le dossier où il a été installé. Si djLint est installé dans un environnement Python, `python -m djlint` avec le Python de cet environnement le lance aussi.
 :::
 
 ## Premier lancement
@@ -138,26 +138,20 @@ echo "<div></div>" | djlint - --stdin-filename templates/index.html
 
 ## Codes de sortie
 
-| Code | Signification                                                                                                                                                                  |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `0`  | Tout ce que djLint devait vérifier est correct, ou chaque fichier trouvé a été ignoré par votre configuration.                                                                 |
-| `1`  | djLint a trouvé des erreurs de linting, ou des fichiers à reformater. Avec `--warn`, ils sont signalés comme des avertissements et le code de sortie est `0`.                  |
-| `2`  | djLint n'a pas vérifié ce que vous lui avez demandé : les chemins ne correspondent à aucun fichier, la ligne de commande ou la configuration est invalide, ou djLint a échoué. |
+| Code | Signification                                                                                                                                                                                                                                    |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `0`  | Tout ce que djLint devait vérifier est correct, ou chaque fichier trouvé a été ignoré par votre configuration.                                                                                                                                   |
+| `1`  | djLint a trouvé des erreurs de linting, ou des fichiers à reformater. Avec `--warn`, ils sont signalés comme des avertissements et le code de sortie est `0`.                                                                                    |
+| `2`  | djLint n'a pas vérifié ce que vous lui avez demandé : les chemins ne correspondent à aucun fichier, un fichier n'a pas pu être lu (pas en UTF-8, ou sans permission), la ligne de commande ou la configuration est invalide, ou djLint a échoué. |
 
-Seul le code `1` signifie que djLint a examiné vos templates et n'a pas aimé ce qu'il y a trouvé. Le code `2` signifie toujours que l'exécution elle-même n'a pas abouti : un pipeline peut donc traiter les deux cas différemment.
+Seul le code `1` signifie que djLint a examiné vos templates et n'a pas aimé ce qu'il y a trouvé : un pipeline peut donc distinguer une vérification qui échoue d'une exécution qui n'a rien vérifié, par exemple avec un chemin erroné ou une `--extension` qui ne correspond plus.
 
-C'est le code `2` qui repère une exécution qui n'a rien vérifié du tout : un chemin erroné, une `--extension` qui ne correspond plus, ou des templates qui ont été déplacés. Sans lui, une telle exécution passe en silence.
-
-Les fichiers que djLint a _bien_ trouvés puis volontairement ignorés, via `exclude`, `extend_exclude`, `use_gitignore` ou `require_pragma`, ne constituent pas une erreur. L'exécution se termine alors avec `0`, car la configuration a fait exactement ce qu'on lui demandait. C'est aussi ce qui permet à `exclude` de fonctionner avec pre-commit, qui transmet les noms de vos fichiers indexés, que vous vouliez ou non que djLint les examine.
-
-Si, dans votre pipeline, il est normal qu'un chemin ne contienne légitimement aucun template, désactivez le code `2` avec `allow_empty_input` :
+Les fichiers que djLint a trouvés puis volontairement ignorés, via `exclude`, `extend_exclude`, `use_gitignore` ou `require_pragma`, ne constituent pas une erreur, et c'est ce qui permet à `exclude` de fonctionner avec pre-commit. Si, dans votre pipeline, il est normal qu'un chemin ne contienne aucun template, désactivez le code `2` avec [`allow_empty_input`](/fr/docs/configuration/#allow-empty-input) :
 
 ```bash
 djlint /path/to/templates --lint --allow-empty-input
 ```
 
 ## Utilisation en ligne de commande
-
-djLint est une application en ligne de commande. Consultez la page [configuration](/fr/docs/configuration/) pour une configuration avancée.
 
 <CliHelp />

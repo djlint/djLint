@@ -326,6 +326,19 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     flex-wrap: wrap;
     gap: 1rem;
   }
+  /* On a phone the commands and buttons span the column, as the editor below
+     does. The buttons share a row while their labels fit on one line, and
+     take a row each where they don't, as in Russian. */
+  @media (max-width: 49.99rem) {
+    .installs {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .actions > :global(a) {
+      flex: 1 1 auto;
+      justify-content: center;
+      white-space: nowrap;
+    }
+  }
 
   /* The editor is always dark: it is a picture of a terminal, not of the page. */
   .editor {

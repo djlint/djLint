@@ -3,8 +3,6 @@ title: "Integraciones"
 description: "Usa djLint en tu editor y ejecútalo con pre-commit."
 ---
 
-Existen varias integraciones de djLint con editores.
-
 Uses el editor que uses, instala djLint donde el editor pueda encontrarlo, idealmente en el entorno virtual del proyecto, e inicia el editor desde ahí o indícale el `djlint` de ese entorno. Así el editor ejecuta la versión que fija tu proyecto, con los mismos resultados que tu hook de pre-commit o tu CI.
 
 ## Visual Studio Code
@@ -31,8 +29,6 @@ Para actualizarla, ejecuta `git pull` en esa carpeta y luego **zed: rebuild dev 
 Necesita djLint 1.49 o posterior en el PATH, o [uv](https://docs.astral.sh/uv/), que ejecuta djLint sin instalarlo. Su [README](https://github.com/djlint/djlint-zed#readme) explica cómo convertirla en el formateador de un lenguaje y cuáles son sus ajustes.
 
 ## Neovim
-
-djLint se puede usar como linter y como formateador en Neovim.
 
 ### Cliente LSP integrado (recomendado)
 
@@ -78,43 +74,6 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 - [Análisis](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [Formato](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
 
-### efm-langserver
-
-- [Repositorio de GitHub](https://github.com/mattn/efm-langserver)
-
-1. Instala efm-langserver y djLint con Mason mediante `:MasonInstall efm djlint`
-1. Añade `htmldjango` a `filetypes`.
-1. Crea la configuración de formato:
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-```
-
-1. Conecta el lenguaje con el formateador mediante `htmldjango = { djlint }`.
-
-Configuración de ejemplo:
-
-```lua
-local djlint = {
-    formatCommand = "djlint --reformat --quiet --warn -",
-    formatStdin = true,
-}
-
-require("lspconfig").efm.setup({
-    filetypes = { "htmldjango" },
-    init_options = { documentFormatting = true },
-    settings = {
-        rootMarkers = { ".git/" },
-        languages = {
-            htmldjango = { djlint },
-        },
-    },
-})
-```
-
 ### coc.nvim
 
 - [Paquete de npm](https://www.npmjs.com/package/coc-htmldjango)
@@ -145,13 +104,7 @@ Ejecuta **Preferences: LSP Server Configurations** y añade:
 
 ### SublimeLinter
 
-djLint se puede usar como plugin de linter de SublimeText. Se puede instalar mediante [package-control](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint).
-
-1. `cmd + shift + p`
-2. Instala SublimeLinter
-3. Instala SublimeLinter-contrib-djlint
-
-Asegúrate de que djLint esté instalado en tu Python global o en tu `PATH`.
+Instala SublimeLinter y [SublimeLinter-contrib-djlint](https://packagecontrol.io/packages/SublimeLinter-contrib-djlint) con Package Control. djLint tiene que estar en el PATH que ve Sublime Text.
 
 ## Helix
 
@@ -240,36 +193,28 @@ Las anotaciones pertenecen a una sola pull request. Para conservar los problemas
 
 El paso de subida necesita el permiso `security-events: write` en el job o en el flujo de trabajo.
 
-`--sarif` escribe un documento SARIF 2.1.0 en stdout y nada más, así que se puede redirigir como arriba. Se listan todas las reglas activadas con un enlace a su documentación, cada problema lleva su línea y su columna, y con `--check` un archivo que se reformatearía se notifica bajo una regla `formatting`. Azure DevOps, GitLab y la mayoría de los editores leen el mismo formato.
+`--sarif` escribe un documento SARIF 2.1.0 en stdout y nada más, así que se puede redirigir como arriba. Se listan todas las reglas activadas con un enlace a su documentación, cada problema lleva su línea y su columna, y con `--check` un archivo que se reformatearía se notifica bajo una regla `formatting`.
 
 ## pre-commit
 
 djLint se puede usar como hook de [pre-commit](https://pre-commit.com), tanto de linter como de formateador.
 
-El repositorio ofrece varios hooks preconfigurados para perfiles concretos de djLint (simplemente predefinen el argumento `--profile` y le indican a pre-commit qué extensiones de archivo buscar):
+Cada uno de estos perfiles tiene un hook que analiza, el de la lista, y otro que formatea, con el mismo nombre más `reformat`: `djlint-reformat-django` para `djlint-django`. Definen `--profile` y los archivos que pasa pre-commit. `angular` no tiene hooks propios: añade `args: [--profile=angular]` a `djlint` o a `djlint-reformat`.
 
-- `djlint` para analizar y `djlint-reformat` para formatear.
-  Buscará archivos que coincidan con `*.html` sin definir `--profile`.
-- `djlint-django` y `djlint-reformat-django`.
-  Buscará archivos que coincidan con `*.html` y definirá `--profile=django`.
-- `djlint-jinja` y `djlint-reformat-jinja`.
-  Buscará archivos que coincidan con `*.j2`,`*.jinja` o `*.jinja2` y definirá `--profile=jinja`.
-- `djlint-nunjucks` y `djlint-reformat-nunjucks`.
-  Buscará archivos que coincidan con `*.njk` y definirá `--profile=nunjucks`.
-- `djlint-handlebars` y `djlint-reformat-handlebars`.
-  Buscará archivos que coincidan con `*.hbs` y definirá `--profile=handlebars`.
-- `djlint-liquid` y `djlint-reformat-liquid`.
-  Buscará archivos que coincidan con `*.html` y definirá `--profile=liquid`.
-- `djlint-golang` y `djlint-reformat-golang`.
-  Buscará archivos que coincidan con `*.gotmpl` y definirá `--profile=golang`.
-- `djlint-tera` y `djlint-reformat-tera`.
-  Buscará archivos que coincidan con `*.html` y definirá `--profile=tera`.
-- `djlint-askama` y `djlint-reformat-askama`.
-  Buscará archivos que coincidan con `*.html` y definirá `--profile=askama`.
-- `djlint-mako` y `djlint-reformat-mako`.
-  Buscará archivos que coincidan con `*.html` y definirá `--profile=mako`.
+| Hook                | Perfil     | Archivos                             |
+| ------------------- | ---------- | ------------------------------------ |
+| `djlint`            | ninguno    | `.html`, `.htm`, `.xhtml`            |
+| `djlint-django`     | django     | `.html`, `.htm`, `.xhtml`            |
+| `djlint-jinja`      | jinja      | `.j2`, `.jinja`, `.jinja2`           |
+| `djlint-nunjucks`   | nunjucks   | `.njk`                               |
+| `djlint-handlebars` | handlebars | `.hbs`, `.handlebars`, `.mustache`   |
+| `djlint-liquid`     | liquid     | `.html`, `.htm`, `.xhtml`, `.liquid` |
+| `djlint-golang`     | golang     | `.gotmpl`                            |
+| `djlint-tera`       | tera       | `.html`, `.htm`, `.xhtml`            |
+| `djlint-askama`     | askama     | `.html`, `.htm`, `.xhtml`            |
+| `djlint-mako`       | mako       | `.html`, `.htm`, `.xhtml`            |
 
-Ten en cuenta que estos hooks predefinidos a veces son demasiado conservadores con las entradas que aceptan (puede que tus plantillas usen otra extensión), por lo que pre-commit te permite explícitamente sobrescribir cualquiera de estas opciones predefinidas. Consulta la [documentación de pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks) para más opciones de configuración.
+Para plantillas con otras extensiones, sobrescribe `files` en tu configuración, y también `types_or` si el hook lo define, ya que pre-commit necesita que coincidan los dos. Consulta la [documentación de pre-commit](https://pre-commit.com/#pre-commit-configyaml---hooks).
 
 ### Ejemplo predeterminado para Django
 
@@ -301,9 +246,4 @@ Puedes usar los parámetros `files` o `exclude` para limitar cada hook a su prop
 
 ## MegaLinter
 
-djlint viene integrado de forma nativa entre los más de 100 linters de [MegaLinter](https://megalinter.io)
-
-Para instalarlo, simplemente ejecuta `npx mega-linter-runner --install` y sigue las instrucciones
-
-- [Repositorio de GitHub](https://github.com/oxsecurity/megalinter)
-- [djlint en la documentación de MegaLinter](https://megalinter.io/latest/descriptors/html_djlint/)
+[MegaLinter](https://megalinter.io) incluye djLint. Ejecuta `npx mega-linter-runner --install` para configurarlo, y consulta [su página de djLint](https://megalinter.io/latest/descriptors/html_djlint/) para ver las opciones.

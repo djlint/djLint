@@ -7,7 +7,7 @@ sidebar:
 
 djLint analiza plantillas de Angular. Usa el perfil `angular` para que las reglas se ajusten a ellas.
 
-**[¿Qué es Angular?](https://angular.io/guide/template-syntax)**
+**[¿Qué es Angular?](https://angular.dev/guide/templates)**
 
 ## Desde la línea de comandos
 
@@ -15,7 +15,7 @@ djLint analiza plantillas de Angular. Usa el perfil `angular` para que las regla
 djlint /path/to/templates --profile=angular
 ```
 
-## O bien, con un archivo de configuración
+## En un archivo de configuración
 
 Configura djLint en el archivo `pyproject.toml`, `djlint.toml` / `.djlint.toml` o `.djlintrc` de tu proyecto.
 
@@ -31,7 +31,3 @@ profile = "angular"
 ```json title=".djlintrc"
 { "profile": "angular" }
 ```
-
-:::tip
-[¡Consulta la guía de configuración para ver todas las opciones!](/es/docs/configuration/)
-:::

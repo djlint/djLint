@@ -9,9 +9,7 @@ djLint проверяет и форматирует шаблоны Jinja. Зад
 
 **[Что такое Jinja?](https://jinja.palletsprojects.com/en/stable/templates/)**
 
-Шаблоны MiniJinja полностью совместимы с Jinja2, поэтому используйте тот же профиль `jinja`.
-
-Шаблоны Jinjava от HubSpot тоже написаны в стиле jinja, поэтому используйте этот профиль и для них.
+MiniJinja следует синтаксису Jinja2, а шаблоны Jinjava от HubSpot тоже написаны в стиле Jinja, поэтому для обоих используйте профиль `jinja`. J004 и J018 предлагают `url_for` из Flask, поэтому в проекте без Flask отключите их.
 
 ## Через командную строку
 
@@ -19,7 +17,7 @@ djLint проверяет и форматирует шаблоны Jinja. Зад
 djlint /path/to/templates --profile=jinja
 ```
 
-## Или через файл конфигурации
+## В файле конфигурации
 
 Настройте djLint в файле `pyproject.toml`, `djlint.toml` / `.djlint.toml` или `.djlintrc` вашего проекта.
 
@@ -35,7 +33,3 @@ profile = "jinja"
 ```json title=".djlintrc"
 { "profile": "jinja" }
 ```
-
-:::tip
-[Обо всех параметрах читайте в руководстве по конфигурации!](/ru/docs/configuration/)
-:::

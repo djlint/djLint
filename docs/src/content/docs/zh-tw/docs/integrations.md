@@ -74,12 +74,6 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 - [Lint](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint)
 - [格式化](https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md#djlint-1)
 
-### efm-langserver
-
-- [GitHub 儲存庫](https://github.com/mattn/efm-langserver)
-
-為 `htmldjango` 設定格式化工具，指定 `formatCommand = "djlint --reformat --quiet --warn --stdin-filename ${INPUT} -"` 與 `formatStdin = true`。
-
 ### coc.nvim
 
 - [npm 套件](https://www.npmjs.com/package/coc-htmldjango)

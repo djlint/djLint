@@ -5,28 +5,17 @@ sidebar:
   label: "Formateur"
 ---
 
-Le formateur de djLint prend des templates HTML négligés et leur donne une mise en forme cohérente et facile à suivre !
-
-Vérifiez le résultat avec `--check` avant d'appliquer les modifications.
-
-Pour voir ce que le formatage pourrait modifier, exécutez :
+Le formateur de djLint rend la mise en page des templates HTML cohérente. Regardez d'abord ce qu'il changerait :
 
 ```bash
-djlint . --check --single-attribute-per-line
+djlint . --check --format-css --format-js
 ```
 
-Pour formater le code et mettre à jour les fichiers, exécutez :
+Formatez ensuite les fichiers sur place, ici avec le contenu de `<style>` et `<script>` aussi :
 
 ```bash
-djlint . --reformat --single-attribute-per-line
-
-# et si on formatait aussi les scripts et les styles ?
-djlint . --reformat --single-attribute-per-line --format-css --format-js
+djlint . --reformat --format-css --format-js
 ```
-
-:::tip
-[Consultez le guide de configuration pour découvrir toutes les options !](/fr/docs/configuration/)
-:::
 
 :::note[Remarque]
 Le JSON et le JavaScript écrits dans un attribut sont laissés tels quels, sauf si `--format-attribute-js-json` est activé. Le HTML à l'intérieur d'un attribut n'est jamais modifié.
@@ -36,11 +25,9 @@ Le JSON et le JavaScript écrits dans un attribut sont laissés tels quels, sauf
 djLint n'est ni un parseur HTML ni un validateur de syntaxe.
 :::
 
-## Un exemple !
+## Exemple
 
 ### Avant
-
-Voici un bloc de HTML qui a désespérément besoin d'attention :
 
 <!-- oxfmt-ignore -->
 ```html
@@ -68,8 +55,6 @@ Voici un bloc de HTML qui a désespérément besoin d'attention :
 ```
 
 ### Après
-
-C'est un peu mieux maintenant… on arrive à le lire :)
 
 <!-- oxfmt-ignore -->
 ```html

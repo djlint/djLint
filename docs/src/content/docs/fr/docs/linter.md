@@ -5,7 +5,7 @@ sidebar:
   label: "Linter"
 ---
 
-djLint comprend de nombreuses règles pour vérifier le style et la validité de vos templates. Tirez pleinement parti du linter en le configurant avec un profil prédéfini pour le langage de templates de votre choix.
+Le linter cherche dans les templates les erreurs et le style incohérent. Définissez le [profil](/fr/docs/configuration/#profile) de votre langage de templates, pour que ses règles s'appliquent.
 
 ```bash
 djlint /path/to/templates --lint
@@ -13,13 +13,9 @@ djlint /path/to/templates --lint
 # avec des extensions personnalisées
 djlint /path/to/templates -e html.dj --profile=django
 
-# ou sur un fichier
-djlint /path/to/this.html.j2  --profile=jinja
+# ou sur un seul fichier
+djlint /path/to/this.html.j2 --profile=jinja
 ```
-
-:::tip
-[Consultez le guide de configuration pour découvrir toutes les options !](/fr/docs/configuration/)
-:::
 
 ## Activer ou désactiver des règles
 
@@ -31,9 +27,9 @@ Par exemple :
 djlint . --lint --include=H006,H017 --ignore=H013,H015
 ```
 
-Vous pouvez aussi le faire dans le fichier de [configuration](/fr/docs/configuration/).
+Ou définissez [`ignore`](/fr/docs/configuration/#ignore) et [`include`](/fr/docs/configuration/#include) dans le fichier de configuration.
 
-Sans [profil](/fr/docs/configuration/#profile), seules les règles H parmi les règles intégrées s'appliquent. Les règles T et celles d'un langage de templates précis (D, J) viennent avec les profils auxquels elles s'appliquent. Une règle indiquée dans `--include` s'applique sous n'importe quel profil ou sans profil, sauf sous un profil auquel, d'après sa description plus bas, elle ne s'applique pas.
+Les profils qui appliquent une règle sont indiqués dans [Forme des codes](#forme-des-codes). Une règle indiquée dans `--include` s'applique sous n'importe quel profil ou sans profil, sauf sous un profil auquel, d'après sa description plus bas, elle ne s'applique pas.
 
 ## Règles
 
@@ -53,7 +49,7 @@ Sans [profil](/fr/docs/configuration/#profile), seules les règles H parmi les r
 | [H011](#h011) | Les valeurs d'attributs doivent être entre guillemets.                                                                         | ✔️         |
 | [H012](#h012) | Pas d'espaces autour du `=` d'un attribut.                                                                                     | ✔️         |
 | [H013](#h013) | La balise `img` doit avoir un attribut alt.                                                                                    | ✔️         |
-| [H014](#h014) | Plus de lignes vides que la configuration n'en conserve.                                                                       | ✔️         |
+| [H014](#h014) | Trop de lignes vides à la suite.                                                                                               | ✔️         |
 | [H015](#h015) | Les balises `h` doivent être suivies d'un saut de ligne.                                                                       | ✔️         |
 | [H016](#h016) | Balise `title` manquante dans le html.                                                                                         | ✔️         |
 | [H017](#h017) | Les balises vides doivent être auto-fermantes (en conflit avec : H018).                                                        | -          |
@@ -107,14 +103,15 @@ Sans [profil](/fr/docs/configuration/#profile), seules les règles H parmi les r
 
 ### Forme des codes
 
-La première lettre d'un code suit ce schéma :
+La première lettre d'un code indique quels profils appliquent la règle :
 
-- D : s'applique spécifiquement à Django
-- H : s'applique au html
-- J : s'applique spécifiquement à Jinja
-- M : s'applique spécifiquement à Handlebars
-- N : s'applique spécifiquement à Nunjucks
-- T : s'applique aux templates en général
+- D : Django, appliquée sous `django`.
+- H : HTML, appliquée sous tous les profils. `angular` laisse de côté H012 et H026.
+- J : Jinja, appliquée sous `jinja`.
+- T : syntaxe de template, appliquée sous tous les profils sauf `html` et `mako`. T001 et T041 à T044 laissent aussi de côté les profils que nomme leur description.
+- M et N n'ont aucune règle propre à djLint. Une règle personnalisée dont le code commence par M s'applique sous `handlebars` et `angular`, et une dont le code commence par N sous `nunjucks` et `angular`.
+
+`all` applique les règles de tous les langages de template, sauf celles désactivées par défaut et celles qui laissent de côté un profil, comme T001 et T041 à T044 ; `--include` les ajoute. Sans profil, le linter applique les règles de `html`.
 
 ### Détail des règles
 
@@ -172,7 +169,7 @@ Quand un `{% block %}` s'étend sur de nombreuses lignes ou que des blocs sont i
 
 Désactivée par défaut ; activez-la avec `--include=T003`. `--name-endblocks` écrit le nom pour vous.
 
-Aucun nom n'est requis quand le bloc s'ouvre et se ferme sur la même ligne, par ex. `{% block title %}``{% endblock %}`. Le formateur place le contenu d'un bloc qui contient d'autres balises sur des lignes séparées : un bloc écrit sur une seule ligne peut donc avoir besoin d'un nom une fois formaté ; avec `--name-endblocks`, le formateur écrit aussi ce nom.
+Aucun nom n'est requis quand le bloc s'ouvre et se ferme sur la même ligne, par ex. `{% block title %}{% endblock %}`. Le formateur place le contenu d'un bloc qui contient d'autres balises sur des lignes séparées : un bloc écrit sur une seule ligne peut donc avoir besoin d'un nom une fois formaté ; avec `--name-endblocks`, le formateur écrit aussi ce nom.
 
 À éviter :
 
@@ -411,7 +408,7 @@ Un `alt` sans valeur équivaut à `alt=""`, le cas de l'image décorative : il 
 
 `Found extra blank lines.`
 
-Les suites de lignes vides n'ont aucun effet sur la page rendue (HTML fusionne les espaces), mais elles alourdissent les templates et créent des diffs bruyants quand les lignes voisines changent. Par défaut, le formateur de djLint les supprime entièrement (il conserve au plus `max_blank_lines` lignes vides, valeur qui vaut 0 par défaut) : des suites restantes signalent donc du code non formaté.
+Les suites de lignes vides n'ont aucun effet sur la page rendue (HTML fusionne les espaces), mais elles alourdissent les templates et créent des diffs bruyants quand les lignes voisines changent. La règle signale deux lignes vides ou plus à la suite, ou plus de `max_blank_lines` quand cette valeur est plus élevée, et rien sous `preserve_blank_lines`. Une seule ligne vide n'est pas signalée, même si `--reformat` la supprime par défaut.
 
 À éviter :
 
@@ -578,7 +575,7 @@ Les URL javascript: cassent le clic du milieu et l'ouverture dans un nouvel ongl
 
 `Empty tag pair found. Consider removing.`
 
-Une paire de balises vide n'affiche aucun contenu mais crée tout de même un nœud DOM qui peut recevoir des marges, des bordures ou des espacements flex/grid des feuilles de style, ce qui produit des espacements fantômes difficiles à retrouver ; il s'agit généralement d'un reste de balisage d'une modification antérieure. Les balises légitimement vides dans un balisage normal (td, th, li, dt, dd, slot) sont exemptées. Les balises portant un attribut quelconque (points de montage JS comme `<div id="app">``</div>`, éléments de police d'icônes comme `<i class="fa fa-user">``</i>`) ne sont pas signalées non plus ; seules les paires vides sans aucun attribut correspondent.
+Une paire de balises vide n'affiche aucun contenu mais crée tout de même un nœud DOM qui peut recevoir des marges, des bordures ou des espacements flex/grid des feuilles de style, ce qui produit des espacements fantômes difficiles à retrouver ; il s'agit généralement d'un reste de balisage d'une modification antérieure. Les balises légitimement vides dans un balisage normal (td, th, li, dt, dd, slot) sont exemptées. Les balises portant un attribut quelconque (points de montage JS comme `<div id="app"></div>`, éléments de police d'icônes comme `<i class="fa fa-user"></i>`) ne sont pas signalées non plus ; seules les paires vides sans aucun attribut correspondent.
 
 À éviter :
 
@@ -658,7 +655,7 @@ text/javascript et text/css sont les valeurs par défaut HTML5 pour `<script>` e
 À éviter :
 
 ```html
-<script type="text/javascript" src="app.js">
+<script type="text/javascript" src="app.js"></script>
 ```
 
 À privilégier :
@@ -774,7 +771,7 @@ La spécification HTML définit les mots-clés de méthode de formulaire en minu
 
 Les moteurs de recherche utilisent la meta description comme extrait sous le titre de votre page dans les résultats ; sans elle, ils composent un extrait à partir d'un texte quelconque de la page, ce qui nuit au taux de clics et produit de mauvais aperçus de liens quand la page est partagée.
 
-Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>` complet. L'argument de l'extrait vaut pour les pages indexées publiquement ; pour les applications derrière une authentification ou sur un intranet, cette règle est couramment désactivée.
+Ne se déclenche que sur les fichiers contenant un document `<html>`...`</html>` complet. La règle ne compte que pour les pages que les moteurs de recherche indexent : ignorez-la donc dans une application derrière une authentification.
 
 À éviter :
 
@@ -896,7 +893,7 @@ Les attributs en double sont du HTML invalide, et les navigateurs ne gardent que
 
 `Block tag has no matching end tag.`
 
-Une balise de bloc comme `{% if %}`, `{% for %}` ou `{% macro %}` sans sa balise de fin correspondante est une TemplateSyntaxError bloquante dans Django et Jinja : la page ne s'affiche pas au moment de la requête, ce que cette règle détecte avant le déploiement. Elle signale aussi les balises de fin orphelines sans balise ouvrante et les blocs mal entrelacés (par ex. `{% if %}``{% for %}``{% endif %}`).
+Une balise de bloc comme `{% if %}`, `{% for %}` ou `{% macro %}` sans sa balise de fin correspondante est une TemplateSyntaxError bloquante dans Django et Jinja : la page ne s'affiche pas au moment de la requête, ce que cette règle détecte avant le déploiement. Elle signale aussi les balises de fin orphelines sans balise ouvrante et les blocs mal entrelacés (par ex. `{% if %}{% for %}{% endif %}`).
 
 L'appariement `{% block %}`/`{% endblock %}` et les noms d'endblock qui ne correspondent pas sont vérifiés par cette règle ; T003 (désactivée par défaut) exige en plus un nom sur chaque `{% endblock %}` multiligne. Les balises de bloc personnalisées déclarées via custom_blocks sont aussi vérifiées, y compris leur forme auto-fermante / %}.
 
@@ -985,7 +982,7 @@ Quand une balise HTML est ouverte dans un `{% block %}` mais fermée dans un aut
 
 Django refuse de compiler un template dans lequel une autre balise précède `{% extends %}`, et le texte écrit avant est rendu : il s'échappe donc dans la page avant tout ce que produit le template parent. Jinja rend aussi ce texte, et nunjucks le supprime : quel que soit le moteur, le template ne fait pas ce qu'il semble faire.
 
-Un commentaire `{# #}` n'affiche rien et ne compte pas, pas plus que le contenu d'un bloc `{% comment %}`, <code>{&#37; raw %}</code> ou `{% verbatim %}`, nommé ou non, une région `{# djlint:off #}` sous l'une de ses trois graphies, ou un front matter yaml. Un commentaire html compte, lui : le moteur l'écrit dans la page avant le doctype du template parent, ce qui est la fuite que vise cette règle. Comptent aussi un bloc `{% blocktrans %}`, un bloc `{% filter %}` et un bloc `<?php ?>`, qui produisent chacun un rendu. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Avec les profils jinja et nunjucks, une balise de branche placée avant ne compte pas, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent ; django lit le reste du template dans le `{% extends %}` puis rejette le `{% endif %}` : avec ce profil, une balise de branche compte donc.
+Un commentaire `{# #}` n'affiche rien et ne compte pas, pas plus que le contenu d'un bloc `{% comment %}`, `{% raw %}` ou `{% verbatim %}`, nommé ou non, une région `{# djlint:off #}` sous l'une de ses trois graphies, ou un front matter yaml. Un commentaire html compte, lui : le moteur l'écrit dans la page avant le doctype du template parent, ce qui est la fuite que vise cette règle. Comptent aussi un bloc `{% blocktrans %}`, un bloc `{% filter %}` et un bloc `<?php ?>`, qui produisent chacun un rendu. Seul le premier `{% extends %}` est vérifié ; un second est une erreur à part entière. Avec les profils jinja et nunjucks, une balise de branche placée avant ne compte pas, puisque jinja documente `{% if x %}{% extends "a.html" %}{% else %}{% extends "b.html" %}{% endif %}` comme la façon de choisir un parent ; django lit le reste du template dans le `{% extends %}` puis rejette le `{% endif %}` : avec ce profil, une balise de branche compte donc.
 
 Ne s'applique pas aux profils handlebars, golang, liquid et angular.
 
@@ -1029,9 +1026,9 @@ La vérification ne s'exécute que sur les fichiers qu'elle peut analyser de fa�
 
 Dès qu'un template en étend un autre, c'est le parent qui décide de ce qui est produit, et l'enfant ne fait que remplir les blocs du parent. Le texte ou le html écrit après `{% extends %}` et en dehors de tout `{% block %}` est silencieusement écarté au rendu : un paragraphe qui semble correct dans le source n'atteint jamais la page.
 
-Une balise de template placée là s'exécute quand même : `{% load %}`, `{% set %}` et un `{% if %}` entourant un bloc ne sont donc pas touchés, pas plus que les commentaires `{# #}` et `{% comment %}`, les commentaires html, les blocs <code>{&#37; raw %}</code> et `{% verbatim %}`, et le corps d'un `{% macro %}`, d'un `{% set %}` sous forme de bloc, d'un `{% partialdef %}` ou d'un `{% addtoblock %}`, qui est capturé plutôt que produit. Le texte d'un `{% blocktrans %}` est signalé, puisqu'un `{% blocktrans %}` n'est pas un `{% block %}`. Seul le contenu situé après la balise extends est pris en compte, et chaque portion de ce contenu est signalée une seule fois, à son début.
+Une balise de template placée là s'exécute quand même : `{% load %}`, `{% set %}` et un `{% if %}` entourant un bloc ne sont donc pas touchés, pas plus que les commentaires `{# #}` et `{% comment %}`, les commentaires html, les blocs `{% raw %}` et `{% verbatim %}`, et le corps d'un `{% macro %}`, d'un `{% set %}` sous forme de bloc, d'un `{% partialdef %}` ou d'un `{% addtoblock %}`, qui est capturé plutôt que produit. Le texte d'un `{% blocktrans %}` est signalé, puisqu'un `{% blocktrans %}` n'est pas un `{% block %}`. Seul le contenu situé après la balise extends est pris en compte, et chaque portion de ce contenu est signalée une seule fois, à son début.
 
-Le moteur lit les balises de template avant le html : un `{% extends %}` écrit dans un commentaire html ou dans un `<pre>` s'exécute donc quand même et fait tout de même du fichier un enfant ; seuls `{# #}`, `{% comment %}`, <code>{&#37; raw %}</code> et `{% verbatim %}` en cachent vraiment un. Le texte d'un commentaire html n'atteint de toute façon aucun lecteur et n'est pas signalé, mais les balises qui y sont écrites sont tout de même lues.
+Le moteur lit les balises de template avant le html : un `{% extends %}` écrit dans un commentaire html ou dans un `<pre>` s'exécute donc quand même et fait tout de même du fichier un enfant ; seuls `{# #}`, `{% comment %}`, `{% raw %}` et `{% verbatim %}` en cachent vraiment un. Le texte d'un commentaire html n'atteint de toute façon aucun lecteur et n'est pas signalé, mais les balises qui y sont écrites sont tout de même lues.
 
 Ne s'applique pas aux profils handlebars, golang, liquid et angular.
 
@@ -1085,7 +1082,7 @@ Django, Jinja et Nunjucks refusent tous d'analyser un template qui donne le mêm
 
 Seul `{% block %}` compte : un `{% blocktrans %}` n'est pas un bloc, et un `{% endblock name %}` ne fait que nommer le bloc qu'il ferme. Les noms sont comparés tels qu'ils sont écrits, puisque les moteurs traitent `Content` et `content` comme deux blocs.
 
-Seul ce que le moteur lui-même n'analyse jamais est ignoré : un commentaire de template, un bloc `{% comment %}`, le corps d'un <code>{&#37; raw %}</code> ou d'un `{% verbatim %}`, et une région `djlint:off`. Un bloc écrit dans un commentaire html, dans le corps d'un `<script>`, `<style>`, `<pre>` ou `<textarea>`, ou dans le corps d'un `{% filter %}` est tout de même compté, puisque le moteur lit tout cela et lève une erreur sur le nom en double de la même façon.
+Seul ce que le moteur lui-même n'analyse jamais est ignoré : un commentaire de template, un bloc `{% comment %}`, le corps d'un `{% raw %}` ou d'un `{% verbatim %}`, et une région `djlint:off`. Un bloc écrit dans un commentaire html, dans le corps d'un `<script>`, `<style>`, `<pre>` ou `<textarea>`, ou dans le corps d'un `{% filter %}` est tout de même compté, puisque le moteur lit tout cela et lève une erreur sur le nom en double de la même façon.
 
 Un `{% embed %}` ouvre sa propre portée : les blocs qu'il contient remplissent le template intégré plutôt que celui-ci, si bien que deux embeds du même partiel peuvent chacun écrire `{% block body %}`. Un nom répété au sein d'un même embed est tout de même signalé.
 
@@ -1145,7 +1142,7 @@ Une balise d'affichage imprime une valeur, alors que `if`, `for`, `url`, `includ
 
 Un mot-clé seul est un nom de variable ordinaire : `{{ url }}`, `{{ url|default:"/" }}` et `{{ set.name }}` ne sont donc pas signalés. Seul l'est un mot-clé suivi d'un argument, ainsi qu'un mot-clé de fermeture ou de branche isolé comme `{{ endif }}` ou `{{ else }}`. Un mot-clé de contrôle comme `if` ou `for` ne peut pas commencer une expression : tout ce qui le suit est donc un argument, opérateur compris, et `{{ if -1 > count }}` est signalé. Les autres noms servent aussi de variables et de fonctions, et seule une chaîne entre guillemets ou un mot y compte comme argument : une expression qui commence par l'un d'eux est donc laissée telle quelle. `{{ url ~ "/x" }}`, `{{ url if url else "#" }}`, `{{ url ? url : '#' }}`, `{{ block ('title') }}`, `{{ block .super }}` et `{{ filter [0] }}` ne déclenchent rien.
 
-Le corps d'un bloc <code>{&#37; raw %}</code> ou `{% verbatim %}` est du texte plutôt que de la syntaxe de template et il est ignoré, y compris sous la forme nommée `{% verbatim vueapp %}...{% endverbatim vueapp %}` : un `{{ }}` de Vue ou de Handlebars ainsi protégé n'est pas signalé. Un `{{ }}` écrit dans un argument entre guillemets d'une balise de bloc, comme dans `{% trans "Write {{ if x }} instead" %}`, est du texte que le moteur imprime et il est lui aussi laissé tel quel.
+Le corps d'un bloc `{% raw %}` ou `{% verbatim %}` est du texte plutôt que de la syntaxe de template et il est ignoré, y compris sous la forme nommée `{% verbatim vueapp %}...{% endverbatim vueapp %}` : un `{{ }}` de Vue ou de Handlebars ainsi protégé n'est pas signalé. Un `{{ }}` écrit dans un argument entre guillemets d'une balise de bloc, comme dans `{% trans "Write {{ if x }} instead" %}`, est du texte que le moteur imprime et il est lui aussi laissé tel quel.
 
 À éviter :
 
@@ -1351,7 +1348,7 @@ Un id nomme un seul élément. Un second élément portant le même id casse `ge
 
 Deux ids placés dans des branches exclusives d'un même `{% if %}...{% else %}...{% endif %}` ne sont jamais rendus tous les deux : ils ne sont donc pas signalés. Une boucle `{% for %}` ou un `{% block %}` n'est pas une branche : un id à l'intérieur et le même id à l'extérieur sont tous deux rendus, et c'est le second qui est signalé. Une valeur écrite par une balise de template est impossible à connaître et n'est pas touchée, pas plus qu'une valeur vide. Les ids sont comparés exactement, comme le fait le navigateur : `save` et `Save` sont donc deux ids.
 
-Les branches sont lues dans le langage dans lequel le fichier est écrit, et avec tous les espaces que ce langage autorise entre les délimiteurs et le nom de la balise : `{% elif %}` et `{% else %}`, le `{% elsif %}` et le `{% when %}` de liquid, le `{{ else }}` de go, une instruction de ligne mako `% else:`, et le `{{else}}` de handlebars, son `{{else if x}}` chaîné et la section inverse de tout bloc `{{#helper}}`, helpers personnalisés compris. Le contenu d'un `<template>` est un fragment de document à part que `getElementById` n'atteint jamais : un id qui s'y trouve n'est donc comparé qu'aux ids de ce même `<template>`. Deux templates peuvent ainsi contenir chacun une ligne portant le même id, alors que deux de ces lignes dans un même template sont tout de même signalées. Un id situé dans un commentaire, dans le corps d'un <code>{&#37; raw %}</code> ou d'un `{% verbatim %}`, ou dans une région `djlint:off` n'est pas lu du tout.
+Les branches sont lues dans le langage dans lequel le fichier est écrit, et avec tous les espaces que ce langage autorise entre les délimiteurs et le nom de la balise : `{% elif %}` et `{% else %}`, le `{% elsif %}` et le `{% when %}` de liquid, le `{{ else }}` de go, une instruction de ligne mako `% else:`, et le `{{else}}` de handlebars, son `{{else if x}}` chaîné et la section inverse de tout bloc `{{#helper}}`, helpers personnalisés compris. Le contenu d'un `<template>` est un fragment de document à part que `getElementById` n'atteint jamais : un id qui s'y trouve n'est donc comparé qu'aux ids de ce même `<template>`. Deux templates peuvent ainsi contenir chacun une ligne portant le même id, alors que deux de ces lignes dans un même template sont tout de même signalées. Un id situé dans un commentaire, dans le corps d'un `{% raw %}` ou d'un `{% verbatim %}`, ou dans une région `djlint:off` n'est pas lu du tout.
 
 À éviter :
 
@@ -1505,28 +1502,13 @@ Une ligne compte quand elle ne contient que le commentaire, et une ligne vide te
 
 <!-- oxfmt-ignore-end -->
 
-### Ajouter des règles
-
-Les pull requests proposant de nouvelles règles sont les bienvenues !
-
-Une bonne règle se compose de
-
-- Nom
-- Code
-- Message : message à afficher quand l'erreur est trouvée.
-- Drapeaux : drapeaux d'expression régulière, par exemple re.I|re.M. Par défaut re.DOTALL.
-- Motifs : expressions régulières qui trouvent l'erreur.
-- Exclusions : liste facultative des profils auxquels la règle ne s'applique pas.
-
-Merci d'inclure un test qui valide la règle.
-
 ## Règles personnalisées
 
-Vous pouvez ajouter des règles personnalisées propres à votre projet en créant un fichier `.djlint_rules.yaml` à côté de votre `pyproject.toml`. Les règles ajoutées à ce fichier sont prises en compte par djLint. Un fichier de règles situé ailleurs peut être indiqué avec l'option CLI `--rules`.
+Vos propres règles vont dans un `.djlint_rules.yaml` à la racine du projet, à côté de votre fichier de configuration, et djLint les prend en compte. `--rules` indique un fichier de règles situé ailleurs. Le code d'une règle personnalisée suit les [mêmes lettres](#forme-des-codes) : une règle dont le code commence par une autre lettre, comme C, s'applique donc sous tous les profils. `default: false` et `exclude` fonctionnent aussi dans les règles personnalisées.
 
 ### Règles à motifs
 
-Vous pouvez ajouter des règles qui échouent si l'un des motifs d'expression régulière trouve une correspondance :
+Une règle à motifs signale chaque correspondance de ses motifs :
 
 ```yaml
 - rule:
@@ -1539,7 +1521,7 @@ Vous pouvez ajouter des règles qui échouent si l'un des motifs d'expression r�
 
 ### Règles en module Python
 
-Vous pouvez ajouter des règles qui importent et exécutent une fonction Python personnalisée :
+Une règle en module Python exécute une fonction que vous écrivez :
 
 ```yaml
 - rule:
@@ -1551,7 +1533,7 @@ Vous pouvez ajouter des règles qui importent et exécutent une fonction Python 
 Le `python_module` indiqué doit contenir une fonction `run()` qui sera exécutée sur chaque fichier vérifié. Elle doit accepter les arguments suivants :
 
 - `rule` : le dict qui représente votre règle dans `.djlint_rules.yaml`. Vous utiliserez généralement cette variable pour accéder au nom et au message de la règle.
-- `config` : l'objet de configuration de DJLint.
+- `config` : l'objet de configuration de djLint.
 - `html` : le contenu html complet du fichier.
 - `filepath` : le chemin du fichier en cours de vérification.
 - `line_ends` : la liste des positions de caractère `start` et `end` des lignes, que vous pouvez utiliser avec `djlint.lint.get_line()` pour obtenir des numéros de ligne à partir d'une position de caractère. Voir l'exemple.
@@ -1559,7 +1541,7 @@ Le `python_module` indiqué doit contenir une fonction `run()` qui sera exécut�
 
 Le module peut se trouver à la racine du projet. S'il renvoie une `line` ou un `end` qui n'est pas une position, djLint s'arrête avec une erreur qui nomme la règle.
 
-Elle doit renvoyer une liste de dicts, un par erreur, avec les clés suivantes :
+Elle doit renvoyer une liste de dicts, un par signalement, avec les clés suivantes :
 
 - `code` : le nom de code de la règle qui signale l'erreur (généralement `rule['name']`)
 - `line` : le numéro de ligne et le numéro de caractère sur cette ligne, séparés par un « : », sous forme de chaîne.
