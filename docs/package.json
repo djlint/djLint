@@ -10,7 +10,7 @@
     "test": "playwright test"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "7.3.8",
+    "@astrojs/markdown-remark": "7.3.9",
     "@astrojs/starlight": "0.43.1",
     "@codemirror/lang-jinja": "6.0.1",
     "@codemirror/language": "6.13.1",
@@ -21,7 +21,7 @@
     "@fontsource-variable/geologica": "5.3.0",
     "@fontsource-variable/jetbrains-mono": "5.3.0",
     "@lezer/highlight": "1.2.5",
-    "astro": "7.4.11",
+    "astro": "7.4.12",
     "codemirror": "6.0.2",
     "pyodide": "314.0.8",
     "slugify": "1.6.9",
