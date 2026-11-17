@@ -37,7 +37,10 @@ Neovim 0.11 以降は、プラグインなしで djLint の[言語サーバー](
 ```lua
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
-  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  filetypes = {
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
+    "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
 vim.lsp.enable("djlint")
@@ -46,13 +49,17 @@ vim.lsp.enable("djlint")
 保存時にフォーマットするには、同じ設定に次を追加します：
 
 ```lua
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = {
-    "*.html", "*.jinja", "*.jinja2", "*.j2",
-    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
-  },
+vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
-    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+    if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
+      return
+    end
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = args.buf,
+      callback = function()
+        vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+      end,
+    })
   end,
 })
 ```
@@ -64,8 +71,16 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 [conform.nvim](https://github.com/stevearc/conform.nvim) はフォーマットを、[nvim-lint](https://github.com/mfussenegger/nvim-lint) はリントを、djLint をコマンドとして実行して行います。検出結果には範囲の下線が付かず、nvim-lint にリントを指示したときにだけ表示されます。
 
 ```lua
-require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
-require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+local formatters, linters = {}, {}
+for _, filetype in ipairs({
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
+  "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+}) do
+  formatters[filetype] = { "djlint" }
+  linters[filetype] = { "djlint" }
+end
+require("conform").setup({ formatters_by_ft = formatters })
+require("lint").linters_by_ft = linters
 ```
 
 ### none-ls
@@ -85,7 +100,19 @@ PyCharm やその他の IntelliJ ベースの IDE では、無料の [LSP4IJ](ht
 1. Marketplace から LSP4IJ をインストールします。
 1. LSP Consoles ツールウィンドウを開き、新しい言語サーバーを追加します。
 1. **Server** タブで、名前を `djLint`、コマンドを `djlint --lsp` に設定します。`djlint` が PATH 上にない場合は、プロジェクトの仮想環境にある `djlint` のフルパスを指定します。
-1. **Mappings** タブで、`*.html` などテンプレートのファイル名パターンを追加します。プロジェクトの設定に[プロファイル](/ja/docs/configuration/#profile)がない場合、Django プロジェクトでは正しいプロファイルが選ばれるように、言語 ID を `htmldjango` に設定します。
+1. **Mappings** タブで、テンプレートのファイル名パターンを追加します。プロジェクトの設定に[プロファイル](/ja/docs/configuration/#profile)がない場合は、パターンごとの言語 ID でプロファイルが選ばれます：
+
+   | パターン                              | 言語 ID                          |
+   | ------------------------------------- | -------------------------------- |
+   | `*.html`, `*.htm`                     | `html`、Django では `htmldjango` |
+   | `*.jinja`, `*.jinja2`, `*.j2`         | `jinja`                          |
+   | `*.njk`, `*.twig`                     | `nunjucks`                       |
+   | `*.hbs`, `*.handlebars`, `*.mustache` | `handlebars`                     |
+   | `*.liquid`                            | `liquid`                         |
+   | `*.gotmpl`, `*.gohtml`                | `gotmpl`                         |
+   | `*.tera`                              | `tera`                           |
+   | `*.mako`                              | `mako`                           |
+
 1. **Configuration** タブでは、[設定](#設定)を `djlint` キーの下に JSON で指定できます。
 
 検出結果がエディターに表示され、マッピングしたファイルでは **Reformat Code** がこのサーバーを使えるようになります。
@@ -108,7 +135,7 @@ Package Control で SublimeLinter と [SublimeLinter-contrib-djlint](https://pac
 
 ## Helix
 
-Helix は `languages.toml` から[言語サーバー](#言語サーバー)を実行できます：
+Helix は `languages.toml` から[言語サーバー](#言語サーバー)を実行できます。`language-servers` のリストは Helix がその言語に持つリストを置き換えるので、`djlint` の後に Helix 自身のサーバーを残してください：
 
 ```toml
 [language-server.djlint]
@@ -117,7 +144,31 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["djlint", "vscode-html-language-server"]
+language-servers = ["djlint", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "htmldjango"
+language-servers = ["djlint", "djlsp", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "gotmpl"
+language-servers = ["djlint", "gopls"]
+
+[[language]]
+name = "jinja"
+language-servers = ["djlint"]
+
+[[language]]
+name = "nunjucks"
+language-servers = ["djlint"]
+
+[[language]]
+name = "twig"
+language-servers = ["djlint"]
+
+[[language]]
+name = "tera"
+language-servers = ["djlint"]
 ```
 
 ## Emacs
@@ -127,7 +178,9 @@ Emacs 29 以降に付属している Eglot を使います：
 ```elisp
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               '((html-mode web-mode) . ("djlint" "--lsp"))))
+               '((html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode)
+                 . ("djlint" "--lsp"))))
 ```
 
 あとはテンプレートで `M-x eglot` を実行します。`eglot-format-buffer` でフォーマットできます。

@@ -37,7 +37,10 @@ Neovim 0.11 o posterior puede comunicarse directamente con el [servidor de lengu
 ```lua
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
-  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  filetypes = {
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
+    "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
 vim.lsp.enable("djlint")
@@ -46,13 +49,17 @@ vim.lsp.enable("djlint")
 Para formatear al guardar, añade esto a la misma configuración:
 
 ```lua
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = {
-    "*.html", "*.jinja", "*.jinja2", "*.j2",
-    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
-  },
+vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
-    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+    if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
+      return
+    end
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = args.buf,
+      callback = function()
+        vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+      end,
+    })
   end,
 })
 ```
@@ -64,8 +71,16 @@ Consulta [Ajustes](#ajustes).
 [conform.nvim](https://github.com/stevearc/conform.nvim) formatea y [nvim-lint](https://github.com/mfussenegger/nvim-lint) analiza el código, ejecutando djLint como comando. Los problemas no tienen rango subrayado y solo llegan cuando le pides a nvim-lint que analice.
 
 ```lua
-require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
-require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+local formatters, linters = {}, {}
+for _, filetype in ipairs({
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
+  "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+}) do
+  formatters[filetype] = { "djlint" }
+  linters[filetype] = { "djlint" }
+end
+require("conform").setup({ formatters_by_ft = formatters })
+require("lint").linters_by_ft = linters
 ```
 
 ### none-ls
@@ -85,7 +100,19 @@ En PyCharm y los demás IDE basados en IntelliJ, usa el plugin gratuito [LSP4IJ]
 1. Instala LSP4IJ desde el Marketplace.
 1. Abre la ventana de herramientas LSP Consoles y añade un nuevo servidor de lenguaje.
 1. En la pestaña **Server**, pon `djLint` como nombre y `djlint --lsp` como comando, con la ruta completa del `djlint` del entorno virtual del proyecto si no está en el PATH.
-1. En la pestaña **Mappings**, añade un patrón de nombres de archivo para tus plantillas, como `*.html`. Si la configuración del proyecto no tiene [perfil](/es/docs/configuration/#profile), pon `htmldjango` como ID de lenguaje en un proyecto de Django, para que se elija el correcto.
+1. En la pestaña **Mappings**, añade los patrones de nombres de archivo de tus plantillas. Si la configuración del proyecto no tiene [perfil](/es/docs/configuration/#profile), lo elige el ID de lenguaje de cada patrón:
+
+   | Patrones                              | ID de lenguaje                   |
+   | ------------------------------------- | -------------------------------- |
+   | `*.html`, `*.htm`                     | `html`, o `htmldjango` en Django |
+   | `*.jinja`, `*.jinja2`, `*.j2`         | `jinja`                          |
+   | `*.njk`, `*.twig`                     | `nunjucks`                       |
+   | `*.hbs`, `*.handlebars`, `*.mustache` | `handlebars`                     |
+   | `*.liquid`                            | `liquid`                         |
+   | `*.gotmpl`, `*.gohtml`                | `gotmpl`                         |
+   | `*.tera`                              | `tera`                           |
+   | `*.mako`                              | `mako`                           |
+
 1. En la pestaña **Configuration**, puedes definir [ajustes](#ajustes) en JSON, bajo una clave `djlint`.
 
 Los problemas aparecen en el editor, y **Reformat Code** puede usar el servidor para los archivos asociados.
@@ -108,7 +135,7 @@ Instala SublimeLinter y [SublimeLinter-contrib-djlint](https://packagecontrol.io
 
 ## Helix
 
-Helix puede ejecutar el [servidor de lenguaje](#servidor-de-lenguaje) desde `languages.toml`:
+Helix puede ejecutar el [servidor de lenguaje](#servidor-de-lenguaje) desde `languages.toml`. Una lista `language-servers` sustituye a la que Helix tiene para ese lenguaje, así que conserva sus propios servidores después de `djlint`:
 
 ```toml
 [language-server.djlint]
@@ -117,7 +144,31 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["djlint", "vscode-html-language-server"]
+language-servers = ["djlint", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "htmldjango"
+language-servers = ["djlint", "djlsp", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "gotmpl"
+language-servers = ["djlint", "gopls"]
+
+[[language]]
+name = "jinja"
+language-servers = ["djlint"]
+
+[[language]]
+name = "nunjucks"
+language-servers = ["djlint"]
+
+[[language]]
+name = "twig"
+language-servers = ["djlint"]
+
+[[language]]
+name = "tera"
+language-servers = ["djlint"]
 ```
 
 ## Emacs
@@ -127,7 +178,9 @@ Eglot, que viene incluido en Emacs 29 y posteriores:
 ```elisp
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               '((html-mode web-mode) . ("djlint" "--lsp"))))
+               '((html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode)
+                 . ("djlint" "--lsp"))))
 ```
 
 Después ejecuta `M-x eglot` en una plantilla. `eglot-format-buffer` la formatea.

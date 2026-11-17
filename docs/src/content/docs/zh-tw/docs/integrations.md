@@ -37,7 +37,10 @@ Neovim 0.11 或更新版本不需要任何外掛，就能直接與 djLint 的[�
 ```lua
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
-  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  filetypes = {
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
+    "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
 vim.lsp.enable("djlint")
@@ -46,13 +49,17 @@ vim.lsp.enable("djlint")
 若要在儲存時格式化，請在同一份設定中加入：
 
 ```lua
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = {
-    "*.html", "*.jinja", "*.jinja2", "*.j2",
-    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
-  },
+vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
-    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+    if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
+      return
+    end
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = args.buf,
+      callback = function()
+        vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+      end,
+    })
   end,
 })
 ```
@@ -64,8 +71,16 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 [conform.nvim](https://github.com/stevearc/conform.nvim) 負責格式化，[nvim-lint](https://github.com/mfussenegger/nvim-lint) 負責 lint，兩者都是以指令的方式執行 djLint。檢查結果不會以底線標示範圍，而且只有在你要求 nvim-lint 進行 lint 時才會出現。
 
 ```lua
-require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
-require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+local formatters, linters = {}, {}
+for _, filetype in ipairs({
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
+  "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+}) do
+  formatters[filetype] = { "djlint" }
+  linters[filetype] = { "djlint" }
+end
+require("conform").setup({ formatters_by_ft = formatters })
+require("lint").linters_by_ft = linters
 ```
 
 ### none-ls
@@ -85,7 +100,19 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 1. 從 Marketplace 安裝 LSP4IJ。
 1. 開啟 LSP Consoles 工具視窗，新增一個語言伺服器。
 1. 在 **Server** 分頁中，將名稱設為 `djLint`，指令設為 `djlint --lsp`；如果它不在 PATH 上，請使用專案虛擬環境中 `djlint` 的完整路徑。
-1. 在 **Mappings** 分頁中，為你的範本新增檔案名稱模式，例如 `*.html`。如果專案的設定沒有指定 [profile](/zh-tw/docs/configuration/#profile)，請為 Django 專案將語言 ID 設為 `htmldjango`，以便選用正確的 profile。
+1. 在 **Mappings** 分頁中，新增你的範本的檔案名稱模式。如果專案的設定沒有指定 [profile](/zh-tw/docs/configuration/#profile)，就由每個模式的語言 ID 選用 profile：
+
+   | 模式                                  | 語言 ID                          |
+   | ------------------------------------- | -------------------------------- |
+   | `*.html`, `*.htm`                     | `html`，Django 中為 `htmldjango` |
+   | `*.jinja`, `*.jinja2`, `*.j2`         | `jinja`                          |
+   | `*.njk`, `*.twig`                     | `nunjucks`                       |
+   | `*.hbs`, `*.handlebars`, `*.mustache` | `handlebars`                     |
+   | `*.liquid`                            | `liquid`                         |
+   | `*.gotmpl`, `*.gohtml`                | `gotmpl`                         |
+   | `*.tera`                              | `tera`                           |
+   | `*.mako`                              | `mako`                           |
+
 1. 在 **Configuration** 分頁中，你可以在 `djlint` 鍵底下以 JSON 指定[設定](#設定)。
 
 檢查結果會顯示在編輯器中，而 **Reformat Code** 可以對對應的檔案使用這個伺服器。
@@ -108,7 +135,7 @@ require("lint").linters_by_ft = { htmldjango = { "djlint" } }
 
 ## Helix
 
-Helix 可以透過 `languages.toml` 執行[語言伺服器](#語言伺服器)：
+Helix 可以透過 `languages.toml` 執行[語言伺服器](#語言伺服器)。`language-servers` 清單會取代 Helix 為該語言設定的清單，所以請在 `djlint` 之後保留 Helix 自己的伺服器：
 
 ```toml
 [language-server.djlint]
@@ -117,7 +144,31 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["djlint", "vscode-html-language-server"]
+language-servers = ["djlint", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "htmldjango"
+language-servers = ["djlint", "djlsp", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "gotmpl"
+language-servers = ["djlint", "gopls"]
+
+[[language]]
+name = "jinja"
+language-servers = ["djlint"]
+
+[[language]]
+name = "nunjucks"
+language-servers = ["djlint"]
+
+[[language]]
+name = "twig"
+language-servers = ["djlint"]
+
+[[language]]
+name = "tera"
+language-servers = ["djlint"]
 ```
 
 ## Emacs
@@ -127,7 +178,9 @@ Emacs 29 及更新版本內建的 Eglot：
 ```elisp
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               '((html-mode web-mode) . ("djlint" "--lsp"))))
+               '((html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode)
+                 . ("djlint" "--lsp"))))
 ```
 
 接著在範本中執行 `M-x eglot`。`eglot-format-buffer` 會將它格式化。

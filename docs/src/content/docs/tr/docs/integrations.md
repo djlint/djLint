@@ -37,7 +37,10 @@ Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](
 ```lua
 vim.lsp.config("djlint", {
   cmd = { "djlint", "--lsp" },
-  filetypes = { "html", "htmldjango", "jinja", "jinja.html", "handlebars", "liquid", "gotmpl" },
+  filetypes = {
+    "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
+    "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+  },
   root_markers = { "pyproject.toml", "djlint.toml", ".djlint.toml", ".djlintrc", ".git" },
 })
 vim.lsp.enable("djlint")
@@ -46,13 +49,17 @@ vim.lsp.enable("djlint")
 Kaydederken biçimlendirmek için aynı yapılandırmaya şunu ekleyin:
 
 ```lua
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = {
-    "*.html", "*.jinja", "*.jinja2", "*.j2",
-    "*.hbs", "*.handlebars", "*.liquid", "*.gotmpl",
-  },
+vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
-    vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+    if vim.lsp.get_client_by_id(args.data.client_id).name ~= "djlint" then
+      return
+    end
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = args.buf,
+      callback = function()
+        vim.lsp.buf.format({ bufnr = args.buf, name = "djlint" })
+      end,
+    })
   end,
 })
 ```
@@ -64,8 +71,16 @@ Bkz. [Ayarlar](#ayarlar).
 [conform.nvim](https://github.com/stevearc/conform.nvim) biçimlendirir, [nvim-lint](https://github.com/mfussenegger/nvim-lint) ise lint denetimi yapar; ikisi de djLint'i bir komut olarak çalıştırır. Bulguların altı çizili bir aralığı olmaz ve yalnızca nvim-lint'ten denetim yapmasını istediğinizde gelirler.
 
 ```lua
-require("conform").setup({ formatters_by_ft = { htmldjango = { "djlint" } } })
-require("lint").linters_by_ft = { htmldjango = { "djlint" } }
+local formatters, linters = {}, {}
+for _, filetype in ipairs({
+  "html", "htmldjango", "htmlangular", "jinja", "jinja.html", "twig",
+  "handlebars", "mustache", "liquid", "gotmpl", "tera", "mako",
+}) do
+  formatters[filetype] = { "djlint" }
+  linters[filetype] = { "djlint" }
+end
+require("conform").setup({ formatters_by_ft = formatters })
+require("lint").linters_by_ft = linters
 ```
 
 ### none-ls
@@ -85,7 +100,19 @@ PyCharm'da ve IntelliJ tabanlı diğer IDE'lerde ücretsiz [LSP4IJ](https://plug
 1. LSP4IJ'yi Marketplace'ten kurun.
 1. LSP Consoles araç penceresini açın ve yeni bir dil sunucusu ekleyin.
 1. **Server** sekmesinde adı `djLint`, komutu `djlint --lsp` olarak ayarlayın; PATH üzerinde değilse projenin sanal ortamındaki `djlint` komutunun tam yolunu kullanın.
-1. **Mappings** sekmesinde şablonlarınız için `*.html` gibi bir dosya adı kalıbı ekleyin. Projenin yapılandırmasında bir [profil](/tr/docs/configuration/#profile) yoksa doğru profilin seçilmesi için Django projelerinde dil kimliğini `htmldjango` olarak ayarlayın.
+1. **Mappings** sekmesinde şablonlarınızın dosya adı kalıplarını ekleyin. Projenin yapılandırmasında bir [profil](/tr/docs/configuration/#profile) yoksa profili her kalıbın dil kimliği seçer:
+
+   | Kalıplar                              | Dil kimliği                    |
+   | ------------------------------------- | ------------------------------ |
+   | `*.html`, `*.htm`                     | `html`, Django'da `htmldjango` |
+   | `*.jinja`, `*.jinja2`, `*.j2`         | `jinja`                        |
+   | `*.njk`, `*.twig`                     | `nunjucks`                     |
+   | `*.hbs`, `*.handlebars`, `*.mustache` | `handlebars`                   |
+   | `*.liquid`                            | `liquid`                       |
+   | `*.gotmpl`, `*.gohtml`                | `gotmpl`                       |
+   | `*.tera`                              | `tera`                         |
+   | `*.mako`                              | `mako`                         |
+
 1. **Configuration** sekmesinde [ayarları](#ayarlar) JSON olarak, bir `djlint` anahtarı altında belirleyebilirsiniz.
 
 Bulgular düzenleyicide görünür ve **Reformat Code**, eşlenen dosyalar için sunucuyu kullanabilir.
@@ -108,7 +135,7 @@ SublimeLinter'ı ve [SublimeLinter-contrib-djlint](https://packagecontrol.io/pac
 
 ## Helix
 
-Helix, [dil sunucusunu](#dil-sunucusu) `languages.toml` dosyasından çalıştırabilir:
+Helix, [dil sunucusunu](#dil-sunucusu) `languages.toml` dosyasından çalıştırabilir. Bir `language-servers` listesi, Helix'in o dil için kullandığı listenin yerini alır; bu yüzden Helix'in kendi sunucularını `djlint` ardından koruyun:
 
 ```toml
 [language-server.djlint]
@@ -117,7 +144,31 @@ args = ["--lsp"]
 
 [[language]]
 name = "html"
-language-servers = ["djlint", "vscode-html-language-server"]
+language-servers = ["djlint", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "htmldjango"
+language-servers = ["djlint", "djlsp", "vscode-html-language-server", "superhtml"]
+
+[[language]]
+name = "gotmpl"
+language-servers = ["djlint", "gopls"]
+
+[[language]]
+name = "jinja"
+language-servers = ["djlint"]
+
+[[language]]
+name = "nunjucks"
+language-servers = ["djlint"]
+
+[[language]]
+name = "twig"
+language-servers = ["djlint"]
+
+[[language]]
+name = "tera"
+language-servers = ["djlint"]
 ```
 
 ## Emacs
@@ -127,7 +178,9 @@ Emacs 29 ve üzeriyle birlikte gelen Eglot ile:
 ```elisp
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               '((html-mode web-mode) . ("djlint" "--lsp"))))
+               '((html-mode mhtml-mode web-mode jinja2-mode twig-mode
+                  handlebars-mode mustache-mode)
+                 . ("djlint" "--lsp"))))
 ```
 
 Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şablonu biçimlendirir.
