@@ -102,6 +102,8 @@ Of the built-in rules, only the H rules run without a [profile](/docs/configurat
 | [H055](#h055) | Lang attribute should be a language tag such as en or pt-BR.                                 | ✔️      |
 | [H056](#h056) | Src should not be empty.                                                                     | ✔️      |
 | [H057](#h057) | Video should have a captions track.                                                          | ✔️      |
+| [D058](#d058) | (Django) Template tag or comment spans lines, which Django reads as text.                    | ✔️      |
+| [D059](#d059) | (Django) Consecutive `{# #}` lines should be one comment block.                              | -       |
 
 ### Code patterns
 
@@ -1449,6 +1451,56 @@ Do:
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django reads a tag only within one line. A `{{ }}`, `{% %}` or `{# #}` that closes on a later line is text to it, so the page shows it as written, and an `{% if %}` split that way leaves its `{% endif %}` an invalid block tag that stops the template from compiling. Jinja and Nunjucks read such tags, so the habit is easy to bring along. Put the tag on one line, and write a longer comment as a `{% comment %}` block.
+
+Nothing inside a `{% comment %}` or `{% verbatim %}` block is reported, since Django drops the one and prints the other as written. A `{%` or `{{` with another tag opening before its closing was never closed, and `T039` reports it. A comment runs to its `#}` whatever it holds, so a tag commented out inside it doesn't end it.
+
+Don't:
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+Do:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+A `{# #}` comment has to fit on one line, so a longer note often ends up as one `{# #}` per line. Django's docs point to the `{% comment %}` block for anything longer: the note stays in one piece, and each line holds only its text.
+
+Off by default; enable with `--include=D059`. A column of `{# #}` lines is valid Django, so this is a matter of style, and the formatter never turns one form into the other. It indents the `{% comment %}` and `{% endcomment %}` tags of a block but leaves the lines between them as written.
+
+A line counts when the comment is all it holds, and a blank line ends a run. A `djlint:` directive never joins one, since it only works as a comment of its own. Nor does a translator comment, `{# Translators: ... #}`: `makemessages` gives translators every line of a `{% comment %}` block from the one starting with `Translators` to the end, so the lines after it would reach them too. Comments inside `<pre>` and `<textarea>` are left alone, as each `{# #}` line leaves a line break there that shows on the page, and a block would leave fewer.
+
+Don't:
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+Do:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 <!-- oxfmt-ignore-end -->

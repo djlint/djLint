@@ -102,6 +102,8 @@ Bez [profilu](/pl/docs/configuration/#profile) ze wbudowanych reguł działają 
 | [H055](#h055) | Atrybut lang powinien zawierać znacznik języka, np. en lub pt-BR.                               | ✔️        |
 | [H056](#h056) | Src nie powinien być pusty.                                                                     | ✔️        |
 | [H057](#h057) | Wideo powinno mieć ścieżkę z napisami.                                                          | ✔️        |
+| [D058](#d058) | (Django) Tag lub komentarz szablonu zajmuje kilka wierszy, więc Django czyta go jako tekst.     | ✔️        |
+| [D059](#d059) | (Django) Kolejne wiersze `{# #}` powinny być jednym blokiem komentarza.                         | -         |
 
 ### Wzorce kodów
 
@@ -1449,6 +1451,56 @@ Dobrze:
 <video controls src="talk.mp4">
   <track kind="captions" src="talk.vtt" srclang="en">
 </video>
+```
+
+#### D058
+
+`(Django) Template tag or comment spans lines, which Django reads as text.`
+
+Django czyta tag tylko w obrębie jednego wiersza. `{{ }}`, `{% %}` lub `{# #}` zamknięte dopiero w którymś z kolejnych wierszy jest dla niego tekstem, więc strona pokazuje je tak, jak zostało napisane, a `{% if %}` podzielone w ten sposób robi ze swojego `{% endif %}` nieprawidłowy tag blokowy, przez który szablon się nie kompiluje. Jinja i Nunjucks czytają takie tagi, więc łatwo przenieść ten nawyk. Zapisz tag w jednym wierszu, a dłuższy komentarz jako blok `{% comment %}`.
+
+Nic wewnątrz bloku `{% comment %}` ani `{% verbatim %}` nie jest zgłaszane, ponieważ Django pierwszy odrzuca, a drugi wypisuje tak, jak został napisany. `{%` lub `{{`, w którym przed zamknięciem otwiera się kolejny tag, nigdy nie zostało zamknięte i zgłasza je `T039`. Komentarz sięga do swojego `#}` bez względu na to, co zawiera, więc zakomentowany w nim tag go nie kończy.
+
+Źle:
+
+```html
+{# The banner comes back
+   when the sale starts. #}
+```
+
+Dobrze:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
+```
+
+#### D059
+
+`(Django) Consecutive {# #} comment lines should be one {% comment %} block.`
+
+Komentarz `{# #}` musi zmieścić się w jednym wierszu, więc dłuższa notatka często kończy jako jeden `{# #}` na wiersz. Dokumentacja Django w przypadku dłuższych odsyła do bloku `{% comment %}`: notatka zostaje w jednym kawałku, a każdy wiersz zawiera tylko swój tekst.
+
+Domyślnie wyłączona; włącz ją za pomocą `--include=D059`. Kolumna wierszy `{# #}` to poprawne Django, więc to kwestia stylu, a formater nigdy nie zamienia jednej formy na drugą. Wcina tagi `{% comment %}` i `{% endcomment %}` bloku, ale wiersze między nimi zostawia tak, jak zostały napisane.
+
+Wiersz się liczy, gdy zawiera tylko komentarz, a pusty wiersz kończy serię. Dyrektywa `djlint:` nigdy do niej nie dołącza, ponieważ działa tylko jako osobny komentarz. Komentarz dla tłumaczy, `{# Translators: ... #}`, również nie: `makemessages` przekazuje tłumaczom każdy wiersz bloku `{% comment %}` od tego, który zaczyna się od `Translators`, do końca, więc dotarłyby do nich także wiersze po nim. Komentarze wewnątrz `<pre>` i `<textarea>` są pomijane, ponieważ każdy wiersz `{# #}` zostawia tam podział wiersza widoczny na stronie, a blok zostawiłby ich mniej.
+
+Źle:
+
+```html
+{# The banner comes back #}
+{# when the sale starts. #}
+```
+
+Dobrze:
+
+```html
+{% comment %}
+  The banner comes back
+  when the sale starts.
+{% endcomment %}
 ```
 
 <!-- oxfmt-ignore-end -->
