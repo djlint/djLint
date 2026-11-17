@@ -37,10 +37,14 @@ jobs:
             qemu: linux/ppc64le
           - os: ubuntu-26.04
             platform: linux-riscv64-gnu
-            # Node has no image for riscv64, so its unofficial build runs in Debian.
+            # Node has no image for riscv64, so its unofficial build runs in
+            # Debian, which has to add the libatomic it needs.
             image: debian:trixie-slim
             qemu: linux/riscv64
             node-build: linux-riscv64
+            setup: >-
+              apt-get update -qq &&
+              apt-get install -qq -y --no-install-recommends libatomic1 > /dev/null
           - os: ubuntu-26.04
             platform: linux-s390x-gnu
             image: node:{node}
@@ -124,6 +128,10 @@ jobs:
       - if: ${{ matrix.qemu }}
         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
         with:
+          # It runs privileged, so it is pinned, and not kept in a cache a
+          # release would read.
+          image: docker.io/tonistiigi/binfmt:qemu-v10.2.3@sha256:400a4873b838d1b89194d982c45e5fb3cda4593fbfd7e08a02e76b03b21166f0
+          cache-image: false
           platforms: ${{ matrix.qemu }}
       - if: ${{ !matrix.image }}
         run: node --test npm/test.mjs
@@ -133,10 +141,11 @@ jobs:
       - if: ${{ matrix.image }}
         run: |
           image=${IMAGE/'{node}'/$(cat .nvmrc)}
-          docker run --rm ${QEMU:+--platform "$QEMU"} --env DJLINT_PLATFORM \
+          docker run --rm ${QEMU:+--platform "$QEMU"} --env DJLINT_PLATFORM --env SETUP \
             --volume "$PWD:/djlint" --workdir /djlint "$image" \
-            sh -c 'PATH="/djlint/node/bin:$PATH" exec node --test npm/test.mjs'
+            sh -c 'eval "${SETUP:-:}" && PATH="/djlint/node/bin:$PATH" exec node --test npm/test.mjs'
         env:
           DJLINT_PLATFORM: ${{ matrix.platform }}
           IMAGE: ${{ matrix.image }}
           QEMU: ${{ matrix.qemu }}
+          SETUP: ${{ matrix.setup }}
