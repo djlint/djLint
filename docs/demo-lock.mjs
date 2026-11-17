@@ -106,9 +106,13 @@ for (const name of queue) {
   packages[name] = entry;
   queue.push(...entry.depends);
 }
-// Relative to the lock file, which is served next to the wheel.
-packages.djlint.file_name = wheelName;
-packages.djlint.sha256 = createHash("sha256").update(wheel).digest("hex");
+// Relative to the lock file. The wheel sits in a folder named after its hash,
+// so its URL changes with its bytes and _headers lets browsers keep it for a
+// year, whatever version or commit it was built from.
+const sha256 = createHash("sha256").update(wheel).digest("hex");
+const wheelFile = `${sha256.slice(0, 16)}/${wheelName}`;
+packages.djlint.file_name = wheelFile;
+packages.djlint.sha256 = sha256;
 for (const [name, entry] of Object.entries(packages)) {
   if (name !== "djlint" && !/^https:\/\//u.test(entry.file_name)) {
     entry.file_name = CDN + path.posix.basename(entry.file_name);
@@ -117,6 +121,7 @@ for (const [name, entry] of Object.entries(packages)) {
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
-writeFileSync(path.join(OUT, wheelName), wheel);
+mkdirSync(path.join(OUT, path.posix.dirname(wheelFile)));
+writeFileSync(path.join(OUT, wheelFile), wheel);
 writeFileSync(path.join(OUT, "pyodide-lock.json"), JSON.stringify({ info: frozen.info, packages }));
 console.log(`Demo: ${wheelName} with ${Object.keys(packages).length - 1} dependencies`);
