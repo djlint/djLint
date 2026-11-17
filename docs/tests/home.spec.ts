@@ -3,7 +3,7 @@ import { expect, test } from "./fixtures";
 test("the home page editor reformats the template and goes back", async ({ page }) => {
   await page.goto("/");
   const editor = page.getByRole("figure").filter({ hasText: "messy.html" });
-  const run = editor.getByRole("button", { name: /--reformat/ });
+  const run = editor.getByRole("button", { name: /^(Run|Show the original)$/ });
   const problems = await editor.locator("mark").count();
   expect(problems).toBeGreaterThan(0);
 
@@ -21,6 +21,26 @@ test("the home page editor reformats the template and goes back", async ({ page 
 
   await run.click();
   await messy();
+});
+
+test("the home page flag switches the formatted template to one attribute per line", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const editor = page.getByRole("figure").filter({ hasText: "messy.html" });
+  const flag = editor.getByRole("button", { name: "--single-attribute-per-line" });
+  const lines = editor.locator("pre:visible .line");
+  await expect(flag).toHaveAttribute("aria-pressed", "false");
+
+  await editor.getByRole("button", { name: "Run" }).click();
+  await expect(lines).toHaveCount(18);
+
+  await flag.click();
+  await expect(flag).toHaveAttribute("aria-pressed", "true");
+  await expect(lines).toHaveCount(20);
+
+  await flag.click();
+  await expect(lines).toHaveCount(18);
 });
 
 test("the home page menu lists what the docs sidebar does", async ({ page }) => {
