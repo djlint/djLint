@@ -757,47 +757,54 @@ def _beautifier_config(
     return settings
 
 
-def _split_patterns(value: str) -> list[str]:
-    r"""Split comma-separated regexes, dropping blank entries.
+def _split_patterns(value: str, *, split: bool = True) -> list[str]:
+    r"""Split comma-separated verbose regexes, dropping entries with no pattern.
 
     A comma inside `{1,2}` or `[,;]`, or escaped as `\,`, belongs to its
     regex, so `report[0-9]{1,2}\.html` stays one pattern. A `#` comment ends
-    at the next comma, whatever brackets it holds.
+    at the next comma, whatever brackets or backslashes it holds. An entry of
+    only whitespace and comments would match every path, so it is dropped.
+    With `split` off, the value is one regex, commas and all.
     """
     parts: list[str] = []
     current: list[str] = []
     braces = 0
-    in_class = in_comment = False
+    in_class = in_comment = has_pattern = False
     i = 0
     while i < len(value):
         char = value[i]
-        if char == "\\" and i + 1 < len(value):
-            current.append(value[i : i + 2])
-            i += 2
+        if split and char == "," and (in_comment or not (braces or in_class)):
+            if has_pattern:
+                parts.append(_strip_pattern("".join(current)))
+            current = []
+            braces = 0
+            in_comment = has_pattern = False
+            i += 1
             continue
         if in_comment:
             in_comment = char != "\n"
+        elif char == "\\" and i + 1 < len(value):
+            current.append(value[i : i + 2])
+            has_pattern = True
+            i += 2
+            continue
         elif in_class:
             in_class = char != "]"
         elif char == "#":
             in_comment = True
-        elif char == "[":
-            in_class = True
-        elif char == "{":
-            braces += 1
-        elif char == "}" and braces:
-            braces -= 1
-        if char == "," and (in_comment or not (braces or in_class)):
-            parts.append("".join(current))
-            current = []
-            braces = 0
-            in_comment = False
-            i += 1
-            continue
+        elif not char.isspace():
+            has_pattern = True
+            if char == "[":
+                in_class = True
+            elif char == "{":
+                braces += 1
+            elif char == "}" and braces:
+                braces -= 1
         current.append(char)
         i += 1
-    parts.append("".join(current))
-    return [entry for part in parts if (entry := _strip_pattern(part))]
+    if has_pattern:
+        parts.append(_strip_pattern("".join(current)))
+    return parts
 
 
 def _strip_pattern(pattern: str) -> str:
@@ -808,16 +815,14 @@ def _strip_pattern(pattern: str) -> str:
     return stripped.lstrip()
 
 
-def build_exclude(exclude: str | list[Any]) -> str:
-    """Build regex string for exclude paths.
+def build_exclude(exclude: str | list[Any]) -> list[str]:
+    """Split an exclude setting into its regexes.
 
-    The patterns are verbose, so each goes on a line of its own: a `#`
-    comment in one then ends with it, rather than swallowing the rest. A list
-    from a config file holds one regex per item, commas and all.
+    A list from a config file holds one regex per item, commas and all.
     """
     if isinstance(exclude, str):
-        return "\n| ".join(_split_patterns(exclude))
-    return "\n| ".join(entry for x in exclude if (entry := _strip_pattern(str(x))))
+        return _split_patterns(exclude)
+    return [entry for x in exclude for entry in _split_patterns(str(x), split=False)]
 
 
 def _check_regex(setting: str, pattern: str) -> None:
@@ -2004,17 +2009,17 @@ class Config:
         if self.preserve_blank_lines and self.max_blank_lines > 0:
             report("max_blank_lines has no effect with preserve_blank_lines.")
 
-        exclude = build_exclude(exclude or djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
-        _check_regex("exclude", exclude)
-        if extension := build_exclude(extend_exclude or djlint_settings.get("extend_exclude", "")):
-            _check_regex("extend_exclude", extension)
-            exclude = f"{exclude}\n| {extension}" if exclude else extension
-        self.exclude = exclude
-        # A line break ends a `#` comment the patterns may close with. Nothing to
-        # exclude matches no path, where an empty pattern would match them all.
-        self.exclude_pattern = compile_pattern(
-            rf"(?:^|/)(?:{exclude}" + "\n" + r")(?=$|/|(?<=/))" if exclude else r"(?!)", re.X
-        )
+        excludes = build_exclude(exclude or djlint_settings.get("exclude", _DEFAULT_EXCLUDE))
+        extensions = build_exclude(extend_exclude or djlint_settings.get("extend_exclude", ""))
+        for setting, patterns in (("exclude", excludes), ("extend_exclude", extensions)):
+            for pattern in patterns:
+                _check_regex(setting, pattern)
+        self.exclude = "\n| ".join(excludes + extensions)
+        # The patterns are verbose, so each gets a group and a line of its own: a
+        # `#` comment in one ends with it, and nothing in one runs into the next.
+        # Nothing to exclude matches no path.
+        alternatives = "|".join(f"(?:{pattern}\n)" for pattern in excludes + extensions) or "(?!)"
+        self.exclude_pattern = compile_pattern(rf"(?:^|/)(?:{alternatives})(?=$|/|(?<=/))", re.X)
 
         self.files = djlint_settings.get("files", None)
         self.stdin = (src == "-" if stdin is None else stdin) and (

@@ -8,7 +8,7 @@
 
 - Each item of an `exclude` or `extend_exclude` list in the config file is one regex, whatever it holds, so a comma in it needs no `\,` and an unclosed `{` no longer joins the next item to it.
 - In a comma-separated `exclude` or `extend_exclude`, a `{` or `[` inside a `#` comment no longer hides the entries after the comment.
-- An empty `exclude`, or an `extend_exclude` with only blank entries, no longer excludes every file inside a folder.
+- An empty `exclude` or `extend_exclude`, or an entry in one that holds only a comment, no longer excludes every file inside a folder. Each regex is checked on its own, so a trailing backslash in one is reported instead of swallowing the next.
 
 ## [1.52.2] - 2026-11-17
 

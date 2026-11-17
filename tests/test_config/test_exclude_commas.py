@@ -27,6 +27,9 @@ if TYPE_CHECKING:
         # Verbose mode keeps an escaped space, so trimming leaves it too.
         ("legacy\\ ", ["legacy /a.html"], ["legacy/a.html"]),
         ("legacy\\ ,vendor", ["legacy /a.html", "vendor/a.html"], ["legacy/a.html"]),
+        # A backslash in a comment escapes nothing, and a comment alone is no pattern.
+        ("legacy # see \\,vendor", ["legacy/a.html", "vendor/a.html"], ["a.html"]),
+        ("vendor, # note, build", ["vendor/a.html", "build/a.html"], ["templates/a.html"]),
     ],
 )
 def test_commas_inside_a_regex_belong_to_it(
@@ -63,7 +66,14 @@ def test_each_item_of_a_list_is_one_regex(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize(
-    "setting", ['exclude = ""', "exclude = []", 'extend_exclude = " "', 'extend_exclude = [" "]']
+    "setting",
+    [
+        'exclude = ""',
+        "exclude = []",
+        'extend_exclude = " "',
+        'extend_exclude = [" "]',
+        'exclude = ["# none yet"]',
+    ],
 )
 def test_a_blank_list_excludes_nothing(tmp_path: Path, setting: str) -> None:
     (tmp_path / "djlint.toml").write_text(f"{setting}\n", encoding="utf-8")
