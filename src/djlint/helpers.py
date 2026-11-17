@@ -465,22 +465,31 @@ def _disarm_unclosed_raw_text(html: str, *, closed_by_gt: bool) -> tuple[str, tu
     renamed = [
         start + 1 for start, name in openings if last_closing.get(name, -1) < start + 1 + len(name)
     ]
+    renamed.extend(_unclosed_comments(html))
+    if not renamed:
+        return html, ()
+    return _renamed(html, renamed), tuple(renamed)
 
+
+def _unclosed_comments(html: str) -> list[int]:
+    """Where the first "-" is of each "<!--" that no "-->" closes."""
+    unclosed: list[int] = []
     # A comment's "-->" can start right after its "<!--".
     last_comment_end = html.rfind("-->")
     comment = html.find("<!--", max(last_comment_end - 3, 0))
     while comment >= 0:
         if last_comment_end < comment + 4:
-            renamed.append(comment + 2)
+            unclosed.append(comment + 2)
         comment = html.find("<!--", comment + 1)
+    return unclosed
 
-    if not renamed:
-        return html, ()
 
+def _renamed(html: str, positions: Iterable[int]) -> str:
+    """Change the characters at the positions to an "x"."""
     characters = list(html)
-    for position in renamed:
+    for position in positions:
         characters[position] = "x"
-    return "".join(characters), tuple(renamed)
+    return "".join(characters)
 
 
 def mask_raw_text_bodies(html: str, *, comments: bool = False) -> str:
@@ -555,15 +564,6 @@ def inside_ignored_linter_block(config: Config, html: str, match: SpanMatch) -> 
         ),
         match_start,
         match_end,
-    )
-
-
-def ignored_block_spans(config: Config, html: str) -> tuple[tuple[int, int], ...]:
-    """The spans of the blocks the formatter leaves alone, in no order."""
-    return _inside_ignored_block(
-        _disarm_unclosed_raw_text(html, closed_by_gt=True)[0],
-        ignored_blocks=config.ignored_blocks_pattern,
-        ignored_inline_blocks=config.ignored_inline_blocks_ix_pattern,
     )
 
 
@@ -679,7 +679,14 @@ def _merged_ignored_blocks(
     Merging preserves which points are covered, and the two patterns are
     searched separately, so the raw spans arrive as two sorted runs that
     can overlap each other.
+
+    The comments nothing closes are renamed first, as in
+    `_disarm_unclosed_raw_text`. A raw text element nothing closes is
+    left alone: these patterns read its body to the end of the file, once.
     """
+    unclosed = _unclosed_comments(html)
+    if unclosed:
+        html = _renamed(html, unclosed)
     merged: list[tuple[int, int]] = []
     for start, end in sorted(
         _inside_ignored_block(
@@ -694,6 +701,19 @@ def _merged_ignored_blocks(
     return tuple(merged)
 
 
+def lint_ignored_block_spans(config: Config, html: str) -> tuple[tuple[int, int], ...]:
+    """The spans of the blocks the linter skips, sorted and merged.
+
+    A raw text element's span holds its body only, so the attributes of
+    its opening tag are still there for a rule to read.
+    """
+    return _merged_ignored_blocks(
+        html,
+        ignored_blocks=config.lint_ignored_blocks_pattern,
+        ignored_inline_blocks=config.lint_ignored_inline_blocks_ix_pattern,
+    )
+
+
 def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     """Check if a match is in a block the linter skips.
 
@@ -705,11 +725,7 @@ def overlaps_ignored_block(config: Config, html: str, match: SpanMatch) -> bool:
     open, so a match that only touches an ignored block, as in
     `{% if x %}{# comment #}`, starts and ends outside of it.
     """
-    spans = _merged_ignored_blocks(
-        html,
-        ignored_blocks=config.lint_ignored_blocks_pattern,
-        ignored_inline_blocks=config.lint_ignored_inline_blocks_ix_pattern,
-    )
+    spans = lint_ignored_block_spans(config, html)
     if not spans:
         return False
 

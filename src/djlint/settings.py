@@ -1356,13 +1356,15 @@ def _build_ignored_blocks(*, for_linting: bool) -> str:
     `type="text/javascript"` it exists for, and `D004` blind to the
     `<script src>` its own pattern names. A span covering the whole
     element instead leaves a rule that pairs tags (`H025`) with a closing
-    tag whose opening tag it never saw.
+    tag whose opening tag it never saw. The tag name must end where the
+    element's does, so `<preview-card>` and `</script-x>` open and close
+    nothing.
     """
     if for_linting:
         return (
             rf"""
-      <(pre|textarea){_RAW_TEXT_OPENING_TAG}\K(?:(?!</(?:\1)\b)[\s\S])*
-    | <(script|style){_RAW_TEXT_OPENING_TAG}\K(?:(?!</(?:\2)\b)[\s\S])*
+      <(pre|textarea)(?![-.:\w]){_RAW_TEXT_OPENING_TAG}\K(?:(?!</(?:\1)(?![-.:\w]))[\s\S])*
+    | <(script|style)(?![-.:\w]){_RAW_TEXT_OPENING_TAG}\K(?:(?!</(?:\2)(?![-.:\w]))[\s\S])*
 """
             + _IGNORED_BLOCKS_TAIL
         )

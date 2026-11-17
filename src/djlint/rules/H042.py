@@ -17,9 +17,9 @@ import regex as re
 from djlint.formatter.tokenizer import tokenize_tags
 from djlint.helpers import (
     compile_pattern,
-    ignored_block_spans,
     inside_ignored_linter_block,
     inside_ignored_rule,
+    lint_ignored_block_spans,
     overlaps_ignored_block,
 )
 from djlint.lint import get_line
@@ -131,23 +131,17 @@ def _attributes(html: str, token: TagToken) -> tuple[tuple[str, str], ...]:
 
 
 def _masked(config: Config, html: str) -> str:
-    """Blank ignored regions (script/style bodies, comments, ...).
+    """Blank ignored regions (script/style/textarea bodies, comments, ...).
 
     Their content neither defines ids nor labels, and stray "<" or quote
     characters inside them would poison the tag tokenizer for the rest of
-    the file.
+    the file. The opening tag of a raw text element is kept, so the id of
+    a `<textarea>` still counts.
     """
-    spans = sorted(ignored_block_spans(config, html))
-    if not spans:
-        return html
-
     parts: list[str] = []
     cursor = 0
-    for start, end in spans:
-        if end <= cursor:
-            continue
-        blank_from = max(start, cursor)
-        parts.extend((html[cursor:blank_from], " " * (end - blank_from)))
+    for start, end in lint_ignored_block_spans(config, html):
+        parts.extend((html[cursor:start], " " * (end - start)))
         cursor = end
     parts.append(html[cursor:])
     return "".join(parts)
@@ -163,14 +157,15 @@ def run(
     **kwargs: Any,
 ) -> tuple[LintError, ...]:
     """Check that label for attributes match an id in the file."""
-    ids: set[str] = set()
-    labels: list[tuple[TagToken, str]] = []
+    if not _holds_the_labelled_control(tokenize_tags(html)):
+        return ()
+
     masked = _masked(config, html)
     if not _can_check(masked):
         return ()
 
-    if not _holds_the_labelled_control(tokenize_tags(html)):
-        return ()
+    ids: set[str] = set()
+    labels: list[tuple[TagToken, str]] = []
 
     for token in tokenize_tags(masked):
         if token.closing or token.declaration:
