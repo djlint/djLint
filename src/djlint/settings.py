@@ -803,7 +803,7 @@ def _split_patterns(value: str) -> list[str]:
 def _strip_pattern(pattern: str) -> str:
     r"""Strip the whitespace around a verbose regex, but keep a space escaped as `\ `."""
     stripped = pattern.rstrip()
-    if (len(stripped) - len(stripped.rstrip("\\"))) % 2:
+    if len(stripped) < len(pattern) and (len(stripped) - len(stripped.rstrip("\\"))) % 2:
         stripped += pattern[len(stripped)]
     return stripped.lstrip()
 
