@@ -33,6 +33,21 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+O pacote npm traz o próprio Python, então só precisa do Node.js 16.9 ou mais recente. Há builds para Linux em x64, Arm64, ppc64le, s390x e riscv64, macOS em x64 e Arm64, e Windows em x64, x86 e Arm64. No Linux com musl, como o Alpine, ele roda em x64 e Arm64. Adicione-o ao seu projeto como dependência de desenvolvimento:
+
+```bash
+npm i -D djlint
+```
+
+Ou instale-o globalmente:
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
 <TabItem label="pipx">
 
 Com o [pipx](https://pipx.pypa.io/):
@@ -48,17 +63,6 @@ Com a [fórmula do Homebrew](https://formulae.brew.sh/formula/djlint) mantida pe
 
 ```bash
 brew install djlint
-```
-
-</TabItem>
-<TabItem label="npm">
-
-:::caution[Atenção]
-O pacote npm é apenas um wrapper. O script de instalação dele executa o pip com o `python3` que estiver no PATH do seu sistema e instala a versão do djLint correspondente àquela release do npm, o que pode substituir um djLint mais novo por um mais antigo. O npm não vai gerenciar nem desinstalar o pacote de fato, então prefira o pip sempre que puder.
-:::
-
-```bash
-npm i djlint
 ```
 
 </TabItem>
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 A opção [`profile`](/pt-br/docs/configuration/#profile) lista todos os perfis. Cada linguagem de template também tem uma página própria, por exemplo [Django](/pt-br/docs/languages/django/), [Jinja](/pt-br/docs/languages/jinja/) ou [Handlebars](/pt-br/docs/languages/handlebars/), que mostra como definir o perfil em um arquivo de configuração para não precisar passá-lo toda vez.
 
-Se você adicionou o djLint ao projeto com `uv add --dev`, ele fica no ambiente do projeto: coloque `uv run` antes dos comandos, por exemplo `uv run djlint templates --lint --profile=django`.
+Se você adicionou o djLint ao projeto com `uv add --dev`, ele fica no ambiente do projeto: coloque `uv run` antes dos comandos, por exemplo `uv run djlint templates --lint --profile=django`. Com `npm i -D`, coloque `npx` antes deles, por exemplo `npx djlint templates --lint --profile=django`.
 
 ## Usando caminho ou stdin
 

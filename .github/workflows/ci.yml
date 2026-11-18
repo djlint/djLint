@@ -13,6 +13,7 @@ jobs:
     if: ${{ always() && github.event_name == 'pull_request' }}
     needs:
       - docs
+      - npm
       - pre-commit
       - pytest
     runs-on: ubuntu-26.04
@@ -68,6 +69,8 @@ jobs:
         with:
           name: playwright
           path: docs/test-results
+  npm:
+    uses: $/.github/workflows/npm.yml
   pre-commit:
     runs-on: ubuntu-26.04
     steps:

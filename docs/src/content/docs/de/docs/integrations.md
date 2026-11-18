@@ -5,6 +5,8 @@ description: "djLint in Ihrem Editor verwenden und mit pre-commit ausführen."
 
 Egal welchen Editor Sie verwenden: Installieren Sie djLint dort, wo der Editor es findet, am besten in der virtuellen Umgebung des Projekts, und starten Sie den Editor von dort aus oder verweisen Sie ihn auf das `djlint` dieser Umgebung. So führt der Editor die Version aus, die Ihr Projekt festlegt, mit denselben Ergebnissen wie Ihr pre-commit-Hook oder Ihre CI.
 
+Installiert das Projekt djLint mit [npm](/de/docs/getting-started/#installation), ist sein Befehl `node_modules/.bin/djlint` im Projekt, unter Windows `node_modules\.bin\djlint.cmd`. Wo ein Editor unten `djlint` ausführt, geben Sie ihm diesen Pfad an. Die Erweiterungen für VS Code und Zed finden ihn von selbst.
+
 ## Visual Studio Code
 
 Installieren Sie die [djLint-Erweiterung](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) aus dem Visual Studio Marketplace. Cursor, Windsurf, VSCodium und andere auf VS Code basierende Editoren beziehen [dieselbe Erweiterung über Open VSX](https://open-vsx.org/extension/monosans/djlint). Sie findet djLint in Ihrer Umgebung, greift sonst auf ein mitgeliefertes djLint zurück und verwendet den Sprachserver, wenn Ihr djLint ihn mitbringt.
@@ -26,7 +28,7 @@ Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprac
 
 Zum Aktualisieren führen Sie in diesem Ordner `git pull` aus und danach **zed: rebuild dev extension**.
 
-Sie braucht djLint 1.49 oder neuer im PATH oder [uv](https://docs.astral.sh/uv/), das djLint ohne Installation ausführt. Ihr [README](https://github.com/djlint/djlint-zed#readme) zeigt, wie Sie sie als Formatter einer Sprache festlegen, und beschreibt ihre Einstellungen.
+Sie braucht djLint 1.49 oder neuer im PATH oder mit npm im Projekt installiert, oder [uv](https://docs.astral.sh/uv/), das djLint ohne Installation ausführt. Ihr [README](https://github.com/djlint/djlint-zed#readme) zeigt, wie Sie sie als Formatter einer Sprache festlegen, und beschreibt ihre Einstellungen.
 
 ## Neovim
 

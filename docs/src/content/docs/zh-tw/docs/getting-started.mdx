@@ -33,6 +33,21 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+npm 套件自帶 Python，所以只需要 Node.js 16.9 或更新版本。它提供 Linux（x64、Arm64、ppc64le、s390x、riscv64）、macOS（x64、Arm64）和 Windows（x64、x86、Arm64）的建置。在使用 musl 的 Linux（如 Alpine）上，它支援 x64 與 Arm64。將它加入專案作為開發相依套件：
+
+```bash
+npm i -D djlint
+```
+
+或者全域安裝：
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
 <TabItem label="pipx">
 
 使用 [pipx](https://pipx.pypa.io/)：
@@ -48,17 +63,6 @@ pipx install djlint
 
 ```bash
 brew install djlint
-```
-
-</TabItem>
-<TabItem label="npm">
-
-:::caution[警告]
-npm 套件只是一層包裝，它的安裝指令碼會用你系統路徑上剛好找到的 `python3` 執行 pip，安裝與該 npm 版本對應的 djLint 版本，這可能會把較新的 djLint 換成較舊的版本。npm 不會管理或解除安裝實際的套件，可以的話，請直接使用 pip。
-:::
-
-```bash
-npm i djlint
 ```
 
 </TabItem>
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 所有 profile 都列在 [`profile`](/zh-tw/docs/configuration/#profile) 選項中。每種範本語言也有自己的頁面，例如 [Django](/zh-tw/docs/languages/django/)、[Jinja](/zh-tw/docs/languages/jinja/) 或 [Handlebars](/zh-tw/docs/languages/handlebars/)，頁面上也說明了如何在設定檔中設定 profile，省得每次都要傳入。
 
-如果是用 `uv add --dev` 把 djLint 加入專案，它位於專案的環境中：請在指令前加上 `uv run`，例如 `uv run djlint templates --lint --profile=django`。
+如果是用 `uv add --dev` 把 djLint 加入專案，它位於專案的環境中：請在指令前加上 `uv run`，例如 `uv run djlint templates --lint --profile=django`。 如果是用 `npm i -D` 加入的，請改在前面加上 `npx`，例如 `npx djlint templates --lint --profile=django`。
 
 ## 使用路徑與使用 stdin
 

@@ -5,6 +5,8 @@ description: "에디터에서 djLint를 사용하고 pre-commit으로 실행하�
 
 어떤 에디터를 쓰든 djLint는 에디터가 찾을 수 있는 곳, 가급적 프로젝트의 가상 환경에 설치하고, 에디터를 그 환경에서 시작하거나 에디터가 그 환경의 `djlint`를 가리키도록 하세요. 그러면 에디터가 프로젝트에 고정된 버전을 실행하므로 pre-commit 훅이나 CI와 같은 결과를 얻을 수 있습니다.
 
+프로젝트에서 djLint를 [npm](/ko/docs/getting-started/#설치)으로 설치한다면, 명령은 프로젝트 안의 `node_modules/.bin/djlint`이고 Windows에서는 `node_modules\.bin\djlint.cmd`입니다. 아래 에디터에서 `djlint`를 실행하는 곳에 이 경로를 지정하세요. VS Code와 Zed 확장은 알아서 찾습니다.
+
 ## Visual Studio Code
 
 Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)을 설치하세요. Cursor, Windsurf, VSCodium 등 VS Code 기반 편집기에서는 [같은 확장을 Open VSX에서](https://open-vsx.org/extension/monosans/djlint) 설치합니다. 이 확장은 환경에서 djLint를 찾고, 찾지 못하면 번들된 djLint를 사용하며, djLint가 언어 서버를 지원하면 언어 서버를 사용합니다.
@@ -26,7 +28,7 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 
 업데이트하려면 그 폴더에서 `git pull`을 실행한 다음 **zed: rebuild dev extension**을 실행하세요.
 
-PATH에 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
+PATH에 있거나 프로젝트에 npm으로 설치한 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 
 ## Neovim
 

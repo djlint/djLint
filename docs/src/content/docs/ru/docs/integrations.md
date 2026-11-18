@@ -5,6 +5,8 @@ description: "Используйте djLint в своём редакторе и 
 
 Какой бы редактор вы ни использовали, установите djLint туда, где редактор сможет его найти, лучше всего в виртуальное окружение проекта, и запускайте редактор из этого окружения или укажите ему `djlint` из него. Тогда редактор будет запускать версию, зафиксированную в проекте, и результаты совпадут с результатами хука pre-commit или CI.
 
+Если djLint в проекте установлен через [npm](/ru/docs/getting-started/#ustanovka), его команда лежит в проекте: `node_modules/.bin/djlint`, а на Windows `node_modules\.bin\djlint.cmd`. Там, где редактор ниже запускает `djlint`, укажите ему этот путь. Расширения для VS Code и Zed находят его сами.
+
 ## Visual Studio Code
 
 Установите [расширение djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) из Visual Studio Marketplace. Cursor, Windsurf, VSCodium и другие редакторы на основе VS Code ставят [то же расширение из Open VSX](https://open-vsx.org/extension/monosans/djlint). Оно ищет djLint в вашем окружении и, если не находит, использует встроенный. Если ваша версия djLint поддерживает языковой сервер, расширение работает через него.
@@ -26,7 +28,7 @@ description: "Используйте djLint в своём редакторе и 
 
 Чтобы обновить расширение, выполните в этой папке `git pull`, а затем **zed: rebuild dev extension**.
 
-Нужен djLint 1.49 или новее в PATH либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
+Нужен djLint 1.49 или новее в PATH или установленный в проекте через npm, либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
 
 ## Neovim
 

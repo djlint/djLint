@@ -33,6 +33,21 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+npm paketi kendi Python'ıyla gelir, bu yüzden yalnızca Node.js 16.9 veya daha yenisine ihtiyaç duyar. x64, Arm64, ppc64le, s390x ve riscv64 üzerinde Linux, x64 ve Arm64 üzerinde macOS ve x64, x86 ve Arm64 üzerinde Windows için derlemeleri vardır. Alpine gibi musl kullanan Linux'ta x64 ve Arm64 üzerinde çalışır. Projenize geliştirme bağımlılığı olarak ekleyin:
+
+```bash
+npm i -D djlint
+```
+
+Ya da genel olarak kurun:
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
 <TabItem label="pipx">
 
 [pipx](https://pipx.pypa.io/) ile:
@@ -48,17 +63,6 @@ macOS veya Linux'ta topluluk tarafından sürdürülen [Homebrew formülüyle](h
 
 ```bash
 brew install djlint
-```
-
-</TabItem>
-<TabItem label="npm">
-
-:::caution[Uyarı]
-npm paketi yalnızca bir sarmalayıcıdır. Kurulum betiği, sistem yolunuzda hangi `python3` varsa onunla pip'i çalıştırır ve o npm sürümüne ait djLint sürümünü kurar; bu, daha yeni bir djLint'in yerine eskisini kurabilir. npm asıl paketi yönetmez ya da kaldırmaz, bu yüzden mümkünse pip'i tercih edin.
-:::
-
-```bash
-npm i djlint
 ```
 
 </TabItem>
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 Tüm profiller [`profile`](/tr/docs/configuration/#profile) seçeneğinde listelenir. Her şablon dilinin ayrıca kendi sayfası vardır, örneğin [Django](/tr/docs/languages/django/), [Jinja](/tr/docs/languages/jinja/) ya da [Handlebars](/tr/docs/languages/handlebars/). Profili her seferinde yazmamak için bir yapılandırma dosyasında nasıl ayarlayacağınız da orada gösterilir.
 
-djLint'i projeye `uv add --dev` ile eklediyseniz projenin ortamındadır: komutların başına `uv run` ekleyin, örneğin `uv run djlint templates --lint --profile=django`.
+djLint'i projeye `uv add --dev` ile eklediyseniz projenin ortamındadır: komutların başına `uv run` ekleyin, örneğin `uv run djlint templates --lint --profile=django`. `npm i -D` ile eklediyseniz başlarına bunun yerine `npx` ekleyin, örneğin `npx djlint templates --lint --profile=django`.
 
 ## Yol ya da stdin kullanımı
 

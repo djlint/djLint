@@ -5,6 +5,8 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，然后从该环境启动编辑器，或者让编辑器指向该环境中的 `djlint`。这样，编辑器运行的就是项目锁定的版本，结果与 pre-commit 钩子或 CI 中的一致。
 
+如果项目用 [npm](/zh/docs/getting-started/#安装) 安装 djLint，它的命令是项目中的 `node_modules/.bin/djlint`，在 Windows 上是 `node_modules\.bin\djlint.cmd`。下面的编辑器中运行 `djlint` 的地方，请填写这个路径。VS Code 和 Zed 的扩展会自己找到它。
+
 ## Visual Studio Code
 
 从 Visual Studio Marketplace 安装 [djLint 扩展](https://marketplace.visualstudio.com/items?itemName=monosans.djlint)。Cursor、Windsurf、VSCodium 等基于 VS Code 的编辑器则从 [Open VSX 安装同一个扩展](https://open-vsx.org/extension/monosans/djlint)。它会在你的环境中查找 djLint，找不到时回退到内置的 djLint；如果你的 djLint 支持语言服务器，它就会使用语言服务器。
@@ -26,7 +28,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 要更新它，在该文件夹中运行 `git pull`，然后运行 **zed: rebuild dev extension**。
 
-需要 PATH 中有 djLint 1.49 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
+需要 PATH 中或项目里用 npm 安装的 djLint 1.49 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
 
 ## Neovim
 

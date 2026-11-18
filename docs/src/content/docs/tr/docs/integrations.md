@@ -5,6 +5,8 @@ description: "djLint'i düzenleyicinizde kullanın ve pre-commit ile çalıştı
 
 Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabileceği bir yere, tercihen projenin sanal ortamına kurun ve düzenleyiciyi oradan başlatın ya da düzenleyiciyi o ortamdaki `djlint` komutuna yönlendirin. Böylece düzenleyici, projenizin sabitlediği sürümü çalıştırır ve pre-commit kancanızla ya da CI ile aynı sonuçları verir.
 
+Proje djLint'i [npm](/tr/docs/getting-started/#kurulum) ile kuruyorsa komutu projede `node_modules/.bin/djlint`, Windows'ta ise `node_modules\.bin\djlint.cmd` olur. Aşağıdaki düzenleyicilerde `djlint` çalıştırılan yerlerde bu yolu verin. VS Code ve Zed uzantıları onu kendileri bulur.
+
 ## Visual Studio Code
 
 [djLint uzantısını](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) Visual Studio Marketplace'ten kurun. Cursor, Windsurf, VSCodium ve VS Code tabanlı diğer editörler [aynı uzantıyı Open VSX'ten](https://open-vsx.org/extension/monosans/djlint) kurar. Uzantı djLint'i ortamınızda bulur, bulamazsa kendisiyle birlikte gelen sürüme geri döner ve djLint sürümünüzde dil sunucusu varsa onu kullanır.
@@ -26,7 +28,7 @@ Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, a
 
 Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extension** çalıştırın.
 
-PATH'te djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
+PATH'te ya da projede npm ile kurulu djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
 
 ## Neovim
 

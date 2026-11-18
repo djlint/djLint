@@ -5,6 +5,8 @@ description: "Use o djLint no seu editor e execute-o com o pre-commit."
 
 Seja qual for o seu editor, instale o djLint onde o editor consiga encontrá-lo, de preferência no ambiente virtual do projeto, e abra o editor a partir dele ou aponte-o para o `djlint` desse ambiente. Assim, o editor executa a versão fixada pelo seu projeto, com os mesmos resultados do seu hook de pre-commit ou da CI.
 
+Se o projeto instala o djLint com o [npm](/pt-br/docs/getting-started/#instalacao), o comando dele é `node_modules/.bin/djlint` no projeto, ou `node_modules\.bin\djlint.cmd` no Windows. Onde um editor abaixo executa `djlint`, informe esse caminho. As extensões para VS Code e Zed o encontram sozinhas.
+
 ## Visual Studio Code
 
 Instale a [extensão do djLint](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) pelo Visual Studio Marketplace. Cursor, Windsurf, VSCodium e outros editores baseados no VS Code instalam [a mesma extensão pelo Open VSX](https://open-vsx.org/extension/monosans/djlint). Ela encontra o djLint no seu ambiente ou, na falta dele, usa um embutido, e usa o servidor de linguagem quando o seu djLint o oferece.
@@ -26,7 +28,7 @@ A [extensão do djLint](https://github.com/djlint/djlint-zed) executa o [servido
 
 Para atualizá-la, execute `git pull` nessa pasta e depois **zed: rebuild dev extension**.
 
-Ela precisa do djLint 1.49 ou mais recente no PATH, ou do [uv](https://docs.astral.sh/uv/), que executa o djLint sem instalar. O [README](https://github.com/djlint/djlint-zed#readme) dela mostra como torná-la o formatador de uma linguagem e descreve as configurações.
+Ela precisa do djLint 1.49 ou mais recente no PATH ou instalado no projeto com o npm, ou do [uv](https://docs.astral.sh/uv/), que executa o djLint sem instalar. O [README](https://github.com/djlint/djlint-zed#readme) dela mostra como torná-la o formatador de uma linguagem e descreve as configurações.
 
 ## Neovim
 
