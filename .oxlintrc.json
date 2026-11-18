@@ -17,7 +17,7 @@
     "typeCheck": true
   },
   "env": { "node": true },
-  "ignorePatterns": ["docs/", "npm/dist/"],
+  "ignorePatterns": ["npm/dist/"],
   "rules": {
     "eqeqeq": ["error", "always", { "null": "ignore" }],
     "func-style": ["error", "declaration"],

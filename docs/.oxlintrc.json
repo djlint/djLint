@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
   "plugins": ["eslint", "typescript", "unicorn", "oxc", "import", "jsdoc", "promise", "node"],
   "categories": {
     "correctness": "error",
@@ -8,13 +8,6 @@
     "perf": "error",
     "style": "error",
     "restriction": "error"
-  },
-  "options": {
-    "denyWarnings": true,
-    "reportUnusedDisableDirectives": "error",
-    "respectEslintDisableDirectives": false,
-    "typeAware": true,
-    "typeCheck": true
   },
   "env": { "browser": true },
   "ignorePatterns": ["dist/", "_site/", "public/static/py/", ".astro/"],
