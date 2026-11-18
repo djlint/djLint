@@ -14,33 +14,38 @@ for (const theme of ["light", "dark"]) {
       .evaluate((pre) => {
         const context = document
           .createElement("canvas")
-          .getContext("2d", { willReadFrequently: true })!;
+          .getContext("2d", { willReadFrequently: true });
+        if (!context) {
+          throw new Error("no 2D canvas");
+        }
         // The canvas turns any CSS color into sRGB bytes.
         const rgba = (color: string) => {
           context.clearRect(0, 0, 1, 1);
           context.fillStyle = color;
           context.fillRect(0, 0, 1, 1);
-          return [...context.getImageData(0, 0, 1, 1).data];
+          const [r = 0, g = 0, b = 0, a = 0] = context.getImageData(0, 0, 1, 1).data;
+          return { a, b, g, r };
         };
-        const background = (element: Element | null) => {
-          for (; element; element = element.parentElement) {
-            const color = rgba(getComputedStyle(element).backgroundColor);
-            if (color[3] === 255) return color;
+        const background = (element: Element | null | undefined) => {
+          for (let node = element; node; node = node.parentElement) {
+            const color = rgba(getComputedStyle(node).backgroundColor);
+            if (color.a === 255) {
+              return color;
+            }
           }
-          return [255, 255, 255, 255];
+          return rgba("white");
         };
-        const luminance = ([r, g, b]: number[]) => {
-          const [lr, lg, lb] = [r, g, b].map((byte) => {
-            const c = byte / 255;
-            return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-          });
-          return 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
+        const linear = (byte: number) => {
+          const c = byte / 255;
+          return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
         };
-        const [a, b] = [
-          background(pre),
-          background(pre.parentElement!.closest(".expressive-code")!.parentElement),
-        ].map(luminance);
-        return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+        const luminance = ({ b, g, r }: { b: number; g: number; r: number }) =>
+          0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+        const block = luminance(background(pre));
+        const page = luminance(
+          background(pre.parentElement?.closest(".expressive-code")?.parentElement),
+        );
+        return (Math.max(block, page) + 0.05) / (Math.min(block, page) + 0.05);
       });
     // #f6f7fa on white is 1.07.
     expect(contrast).toBeGreaterThan(1.05);

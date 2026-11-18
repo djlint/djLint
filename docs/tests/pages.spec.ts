@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright";
+import { AxeBuilder } from "@axe-core/playwright";
 
 import { MISSING, expect, test } from "./fixtures";
 
@@ -28,15 +28,21 @@ for (const path of PAGES) {
     test.slow(LONG.has(path), "a long page");
     await page.goto(path);
     // The web fonts are wider than the fallbacks.
-    await page.evaluate(() => document.fonts.ready.then(() => undefined));
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+    });
 
     // Anything wider than the window, outside a box that scrolls or clips it.
     const overflow = await page.evaluate(() => {
       const width = document.documentElement.clientWidth;
       const clipped = (element: Element) => {
         for (let parent = element.parentElement; parent; parent = parent.parentElement) {
-          if (parent === document.body) return false;
-          if (getComputedStyle(parent).overflowX !== "visible") return true;
+          if (parent === document.body) {
+            return false;
+          }
+          if (getComputedStyle(parent).overflowX !== "visible") {
+            return true;
+          }
         }
         return false;
       };
@@ -54,7 +60,7 @@ for (const path of PAGES) {
     // Expressive Code makes a code block that scrolls focusable a moment after
     // it lays out; axe would find the ones it hasn't reached yet.
     await expect
-      .poll(() =>
+      .poll(async () =>
         page.evaluate(
           () =>
             [...document.querySelectorAll(".expressive-code pre")].filter(
@@ -70,14 +76,20 @@ for (const path of PAGES) {
       await page.emulateMedia({ colorScheme: theme });
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       const axe = new AxeBuilder({ page });
-      if (theme === "dark") axe.withRules(["color-contrast"]);
+      if (theme === "dark") {
+        axe.withRules(["color-contrast"]);
+      }
       // Expressive Code gives every code block that scrolls role="region" with
       // no label of its own, so a page with several fails this best-practice
       // rule; it is Expressive Code's to fix, not the page's.
-      else axe.disableRules(["landmark-unique"]);
+      else {
+        axe.disableRules(["landmark-unique"]);
+      }
       const { violations } = await axe.analyze();
       const found = violations.flatMap(({ id, nodes }) =>
-        nodes.filter(({ html }) => !upstream(id, html)).map(({ target }) => `${id}: ${target}`),
+        nodes
+          .filter(({ html }) => !upstream(id, html))
+          .map(({ target }) => `${id}: ${target.join(" ")}`),
       );
       expect(found, `axe in the ${theme} theme`).toEqual([]);
     }

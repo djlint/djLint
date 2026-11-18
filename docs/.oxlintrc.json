@@ -1,0 +1,157 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "import", "jsdoc", "promise", "node"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "style": "error",
+    "restriction": "error"
+  },
+  "options": {
+    "denyWarnings": true,
+    "reportUnusedDisableDirectives": "error",
+    "respectEslintDisableDirectives": false,
+    "typeAware": true,
+    "typeCheck": true
+  },
+  "env": { "browser": true },
+  "ignorePatterns": ["dist/", "_site/", "public/static/py/", ".astro/"],
+  "rules": {
+    "capitalized-comments": ["error", "always", { "ignoreConsecutiveComments": true }],
+    "eqeqeq": ["error", "always", { "null": "ignore" }],
+    "func-style": ["error", "declaration"],
+    "id-length": "off",
+    "init-declarations": "off",
+    "max-classes-per-file": "off",
+    "max-depth": "off",
+    "max-lines": "off",
+    "max-lines-per-function": "off",
+    "max-nested-callbacks": "off",
+    "max-params": "off",
+    "max-statements": "off",
+    "no-continue": "off",
+    "no-duplicate-imports": ["error", { "allowSeparateTypeImports": true }],
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-eq-null": "off",
+    "no-magic-numbers": "off",
+    "no-new": "off",
+    "no-ternary": "off",
+    "no-unreachable-loop": "error",
+    "no-useless-assignment": "error",
+    "no-void": "off",
+    "one-var": ["error", "never"],
+    "radix": "off",
+    "require-await": "off",
+    "sort-imports": "off",
+    "import/export": "error",
+    "import/exports-last": "off",
+    "import/group-exports": "off",
+    "import/max-dependencies": "off",
+    "import/no-named-export": "off",
+    "import/no-nodejs-modules": "off",
+    "import/no-relative-parent-imports": "off",
+    "import/prefer-default-export": "off",
+    "node/no-top-level-await": "off",
+    "oxc/no-async-await": "off",
+    "oxc/no-optional-chaining": "off",
+    "oxc/no-rest-spread-properties": "off",
+    "promise/avoid-new": "off",
+    "promise/no-return-in-finally": "error",
+    "typescript/explicit-member-accessibility": ["error", { "accessibility": "no-public" }],
+    "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
+    "typescript/no-unnecessary-condition": "error",
+    "typescript/parameter-properties": ["error", { "prefer": "parameter-property" }],
+    "typescript/prefer-readonly-parameter-types": "off",
+    "typescript/strict-boolean-expressions": [
+      "error",
+      { "allowNullableBoolean": true, "allowNullableNumber": true, "allowNullableString": true }
+    ],
+    "unicorn/catch-error-name": ["error", { "name": "e" }],
+    "unicorn/explicit-length-check": "off",
+    "unicorn/no-null": "off",
+    "unicorn/no-useless-iterator-to-array": "error",
+    "unicorn/number-literal-case": "off",
+    "unicorn/prefer-top-level-await": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": { "jsdoc/require-param-type": "off", "jsdoc/require-returns-type": "off" }
+    },
+    {
+      "files": ["*.mjs", "*.config.ts", "src/content.config.js", "tests/**"],
+      "env": { "browser": false, "node": true }
+    },
+    {
+      "files": ["*.mjs"],
+      "rules": {
+        "capitalized-comments": "off",
+        "no-await-in-loop": "off",
+        "no-console": "off",
+        "no-inline-comments": "off",
+        "prefer-named-capture-group": "off",
+        "sort-keys": "off",
+        "jsdoc/require-param-description": "off",
+        "jsdoc/require-returns-description": "off",
+        "node/no-sync": "off",
+        "typescript/explicit-function-return-type": "off",
+        "typescript/explicit-module-boundary-types": "off",
+        "typescript/no-unsafe-type-assertion": "off",
+        "unicorn/no-await-expression-member": "off"
+      }
+    },
+    {
+      "files": ["tests/**"],
+      "rules": {
+        "capitalized-comments": "off",
+        "func-style": "off",
+        "no-await-in-loop": "off",
+        "no-duplicate-imports": "off",
+        "no-inline-comments": "off",
+        "no-shadow": "off",
+        "sort-keys": "off",
+        "node/no-sync": "off",
+        "promise/prefer-await-to-then": "off",
+        "typescript/consistent-type-imports": "off",
+        "typescript/explicit-function-return-type": "off",
+        "typescript/no-unnecessary-type-assertion": "off",
+        "typescript/no-unnecessary-type-conversion": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-type-assertion": "off",
+        "typescript/only-throw-error": "off",
+        "typescript/prefer-promise-reject-errors": "off",
+        "typescript/require-await": "off",
+        "typescript/strict-boolean-expressions": "off",
+        "typescript/unbound-method": "off",
+        "unicorn/consistent-function-scoping": "off",
+        "unicorn/custom-error-definition": "off",
+        "unicorn/max-nested-calls": "off",
+        "unicorn/no-await-expression-member": "off",
+        "unicorn/no-unreadable-array-destructuring": "off",
+        "unicorn/prefer-event-target": "off",
+        "unicorn/require-array-join-separator": "off",
+        "unicorn/require-post-message-target-origin": "off"
+      }
+    },
+    {
+      "files": ["**/*.astro"],
+      "rules": {
+        "import/unambiguous": "off",
+        "unicorn/filename-case": ["error", { "case": "pascalCase" }]
+      }
+    },
+    {
+      "files": ["public/static/js/worker.js"],
+      "env": { "browser": false, "worker": true },
+      "rules": { "unicorn/require-post-message-target-origin": "off" }
+    },
+    { "files": ["*.config.*"], "rules": { "import/no-default-export": "off" } },
+    { "files": ["playwright.config.ts"], "rules": { "node/no-process-env": "off" } },
+    {
+      "files": ["*.d.ts"],
+      "rules": { "import/no-unassigned-import": "off", "import/unambiguous": "off" }
+    }
+  ]
+}

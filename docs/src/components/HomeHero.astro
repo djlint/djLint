@@ -5,7 +5,11 @@
 import { LinkButton } from "@astrojs/starlight/components";
 
 const { t } = Astro.locals;
-const { title, tagline, actions = [] } = Astro.locals.starlightRoute.entry.data.hero!;
+const { hero } = Astro.locals.starlightRoute.entry.data;
+if (!hero) {
+  throw new Error("The home page has no hero in its frontmatter");
+}
+const { title, tagline, actions = [] } = hero;
 
 const installs = ["uv tool install djlint", "pip install djlint", "npm i -g djlint"];
 // The command the bar shows, one word per span: a narrow screen wraps it
@@ -15,22 +19,22 @@ const command = ["djlint", "messy.html", "--reformat"];
 const flag = "--single-attribute-per-line";
 
 // `djlint messy.html --lint --profile=django`, one finding per mark.
-const marks: Record<number, [string, string, string][]> = {
-  2: [
+const marks = new Map<number, [string, string, string][]>([
+  [2, [
     ["<SECTION", "H009", "Tag names should be lowercase."],
     ["class='posts'", "H008", "Attributes should be double quoted."],
-  ],
-  3: [["", "H014", "Found extra blank lines."]],
-  6: [["{%if posts%}", "T001", "Variables should be wrapped in a whitespace."]],
-  10: [
+  ]],
+  [3, [["", "H014", "Found extra blank lines."]]],
+  [6, [["{%if posts%}", "T001", "Variables should be wrapped in a whitespace."]]],
+  [10, [
     ["class='post-link'", "H008", "Attributes should be double quoted."],
     ['"Read {{post.title}}"', "T001", "Variables should be wrapped in a whitespace."],
     ["{{post.title}}", "T001", "Variables should be wrapped in a whitespace."],
-  ],
-  14: [["{%else%}", "T001", "Variables should be wrapped in a whitespace."]],
-  16: [["{%endif%}", "T001", "Variables should be wrapped in a whitespace."]],
-  17: [["</SECTION", "H009", "Tag names should be lowercase."]],
-};
+  ]],
+  [14, [["{%else%}", "T001", "Variables should be wrapped in a whitespace."]]],
+  [16, [["{%endif%}", "T001", "Variables should be wrapped in a whitespace."]]],
+  [17, [["</SECTION", "H009", "Tag names should be lowercase."]]],
+]);
 
 const messy = `{% block content %}
 <SECTION class='posts'>
@@ -101,29 +105,50 @@ const lineMap = [1, 2, 0, 0, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20];
 // Which line of `single` each line of `aligned` is. The two lines only
 // `single` has, `href` on its own and the closing bracket, fade in and out.
 const alignedNames = [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20];
-const problemCount = Object.values(marks).flat().length;
+const problemCount = [...marks.values()].flat().length;
 
-const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
-const span = (cls: string, text: string) => `<span class="${cls}">${escape(text)}</span>`;
-const templateTags = (text: string) =>
-  text.replace(/(\{%.*?%\}|\{\{.*?\}\})|([^{]+|\{)/g, (_, tag, rest) =>
-    tag ? span("tk-tpl", tag) : escape(rest),
-  );
+function escape(text: string): string {
+  return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+}
 
-function highlight(text: string) {
-  const token = /(\{%.*?%\}|\{\{.*?\}\})|("[^"]*"|'[^']*')|(<\/?)([\w-]+)|([\w-]+)(?==)|(\/?>)/g;
+function span(cls: string, text: string): string {
+  return `<span class="${cls}">${escape(text)}</span>`;
+}
+
+const TEMPLATE_TAG = /\{%.*?%\}|\{\{.*?\}\}/gu;
+const TOKEN =
+  /(?<tpl>\{%.*?%\}|\{\{.*?\}\})|(?<str>"[^"]*"|'[^']*')|(?<open><\/?)(?<tag>[\w-]+)|(?<attr>[\w-]+)(?==)|(?<close>\/?>)/gu;
+
+function templateTags(text: string): string {
   let html = "";
   let last = 0;
-  for (const m of text.matchAll(token)) {
-    html += escape(text.slice(last, m.index));
-    const [whole, tpl, str, open, tag, attr, close] = m;
-    if (tpl) html += span("tk-tpl", tpl);
-    else if (str) html += `<span class="tk-str">${templateTags(str)}</span>`;
-    else if (open) html += span("tk-punct", open) + span("tk-tag", tag);
-    else if (attr) html += span("tk-attr", attr);
-    else if (close) html += span("tk-punct", close);
-    else html += escape(whole);
-    last = m.index + whole.length;
+  for (const { 0: tag, index } of text.matchAll(TEMPLATE_TAG)) {
+    html += escape(text.slice(last, index)) + span("tk-tpl", tag);
+    last = index + tag.length;
+  }
+  return html + escape(text.slice(last));
+}
+
+function highlight(text: string): string {
+  let html = "";
+  let last = 0;
+  for (const { 0: whole, groups = {}, index } of text.matchAll(TOKEN)) {
+    html += escape(text.slice(last, index));
+    const { attr, close, open, str, tag = "", tpl } = groups;
+    if (tpl) {
+      html += span("tk-tpl", tpl);
+    } else if (str) {
+      html += `<span class="tk-str">${templateTags(str)}</span>`;
+    } else if (open) {
+      html += span("tk-punct", open) + span("tk-tag", tag);
+    } else if (attr) {
+      html += span("tk-attr", attr);
+    } else if (close) {
+      html += span("tk-punct", close);
+    } else {
+      html += escape(whole);
+    }
+    last = index + whole.length;
   }
   return html + escape(text.slice(last));
 }
@@ -131,11 +156,14 @@ function highlight(text: string) {
 // The finding is text in the mark, not CSS generated content, so screen readers
 // read it too, after a space. It is clipped away until the mark is hovered or
 // focused, and the tooltip drops the leading space.
-const tip = (code: string, message: string) => span("tip", ` ${code} ${message}`);
+function tip(code: string, message: string): string {
+  return span("tip", ` ${code} ${message}`);
+}
 
-function markLine(text: string, lineMarks: [string, string, string][] = []) {
-  if (text === "" && lineMarks.length) {
-    const [, code, message] = lineMarks[0];
+function markLine(text: string, lineMarks: [string, string, string][] = []): string {
+  const [first] = lineMarks;
+  if (text === "" && first) {
+    const [, code, message] = first;
     return `<mark class="lint lint-blank" tabindex="0">${tip(code, message)}</mark>`;
   }
   let html = "";
@@ -205,7 +233,7 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
         <span
           class="line"
           style={lineMap[i] ? `view-transition-name: dj-line-${lineMap[i]}` : undefined}
-          set:html={markLine(text, marks[i + 1])}
+          set:html={markLine(text, marks.get(i + 1))}
         />
       ))
     }</code></pre>
@@ -250,53 +278,73 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
 </div>
 
 <script>
-  const editor = document.querySelector<HTMLElement>(".dj-hero .editor")!;
+  import { requiredData, requiredElement } from "../scripts/dom";
+
+  const editor = requiredElement(".dj-hero .editor", HTMLElement);
 
   // Each line slides to where it goes in the code shown next.
-  const transition = (swap: () => void) => {
+  function transition(swap: () => void): void {
     const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (document.startViewTransition && !reduceMotion) document.startViewTransition(swap);
-    else swap();
-  };
+    if ("startViewTransition" in document && !reduceMotion) {
+      document.startViewTransition(swap);
+    } else {
+      swap();
+    }
+  }
 
-  editor.querySelector(".run")!.addEventListener("click", () => {
+  requiredElement(".run", HTMLButtonElement, editor).addEventListener("click", () => {
     const formatted = editor.dataset.state === "messy";
-    transition(() => (editor.dataset.state = formatted ? "clean" : "messy"));
+    transition(() => {
+      editor.dataset.state = formatted ? "clean" : "messy";
+    });
   });
 
   // The flag changes the command, and the formatted code if it is on show.
-  const flag = editor.querySelector<HTMLButtonElement>(".flag")!;
+  const flag = requiredElement(".flag", HTMLButtonElement, editor);
   flag.addEventListener("click", () => {
     const on = flag.getAttribute("aria-pressed") !== "true";
-    const swap = () => {
+    function swap(): void {
       flag.setAttribute("aria-pressed", String(on));
       editor.dataset.attributes = on ? "single" : "aligned";
-    };
-    if (editor.dataset.state === "clean") transition(swap);
-    else swap();
+    }
+    if (editor.dataset.state === "clean") {
+      transition(swap);
+    } else {
+      swap();
+    }
   });
 
   // "Copied" goes to a status region: a changed label on the focused button is
   // not reliably announced.
-  const copyStatus = document.querySelector<HTMLElement>(".dj-hero [role=status]")!;
+  const copyStatus = requiredElement(".dj-hero [role=status]", HTMLElement);
   const copyButtons = document.querySelectorAll<HTMLButtonElement>(".dj-hero [data-copy]");
   let copyTimer: ReturnType<typeof setTimeout> | undefined;
-  for (const button of copyButtons) {
-    button.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(button.dataset.copy!);
-      } catch {
-        return; // Clipboard access was denied, so nothing was copied.
-      }
-      clearTimeout(copyTimer);
-      for (const other of copyButtons) other.classList.toggle("done", other === button);
-      // Emptied first, so a second copy is announced again.
+
+  async function copy(button: HTMLButtonElement): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(requiredData(button, "copy"));
+    } catch {
+      // Clipboard access was denied, so nothing was copied.
+      return;
+    }
+    clearTimeout(copyTimer);
+    for (const other of copyButtons) {
+      other.classList.toggle("done", other === button);
+    }
+    // Emptied first, so a second copy is announced again.
+    copyStatus.textContent = "";
+    requestAnimationFrame(() => {
+      copyStatus.textContent = requiredData(copyStatus, "done");
+    });
+    copyTimer = setTimeout(() => {
+      button.classList.remove("done");
       copyStatus.textContent = "";
-      requestAnimationFrame(() => (copyStatus.textContent = copyStatus.dataset.done!));
-      copyTimer = setTimeout(() => {
-        button.classList.remove("done");
-        copyStatus.textContent = "";
-      }, 1500);
+    }, 1500);
+  }
+
+  for (const button of copyButtons) {
+    button.addEventListener("click", () => {
+      void copy(button);
     });
   }
 </script>
@@ -307,82 +355,96 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     gap: 3rem;
     padding-block: 2rem 3rem;
   }
+
   .pitch {
     display: grid;
     gap: 1.5rem 4rem;
   }
+
   .intro {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
+
   h1 {
     font-size: clamp(2.5rem, 1.6rem + 3vw, 3.75rem);
     line-height: 1.05;
-    letter-spacing: -0.03em;
     color: var(--sl-color-white);
-    text-wrap: balance;
+    letter-spacing: -0.03em;
+
     /* Russian and French titles carry words too long for the column. */
     hyphens: auto;
+    text-wrap: balance;
   }
+
   .tagline {
-    color: var(--sl-color-gray-2);
     font-size: var(--sl-text-base);
     line-height: 1.7;
+    color: var(--sl-color-gray-2);
   }
+
   .tagline :global(code) {
     font-size: 0.9em;
     color: var(--sl-color-white);
   }
+
   /* One column as wide as the longest command, so the copy buttons line up. */
   .installs {
     display: grid;
     grid-template-columns: max-content;
     gap: 0.75rem;
   }
+
   .install {
     display: flex;
+    gap: 0.75rem;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
     padding: 0.4rem 0.4rem 0.4rem 0.9rem;
-    border: 1px solid var(--sl-color-gray-5);
-    border-radius: 0.5rem;
     font-family: var(--sl-font-mono);
     font-size: var(--sl-text-sm);
     color: var(--sl-color-white);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
   }
+
   .install code span {
     color: var(--dj-squiggle);
   }
+
   .install button {
     display: grid;
     place-items: center;
     width: 2rem;
     height: 2rem;
-    border: 0;
-    border-radius: 0.375rem;
-    background: transparent;
     color: var(--sl-color-gray-3);
     cursor: pointer;
+    background: transparent;
+    border: 0;
+    border-radius: 0.375rem;
   }
+
   .install button:hover,
   .install button.done {
-    background: var(--sl-color-gray-6);
     color: var(--sl-color-white);
+    background: var(--sl-color-gray-6);
   }
+
   .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
   }
+
   /* On a phone the commands and buttons span the column, as the editor below
      does. The buttons share a row while their labels fit on one line, and
      take a row each where they don't, as in Russian. */
-  @media (max-width: 49.99rem) {
+  @media (width <= 49.99rem) {
     .installs {
       grid-template-columns: minmax(0, 1fr);
     }
+
     .actions > :global(a) {
       flex: 1 1 auto;
       justify-content: center;
@@ -393,38 +455,45 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   /* The editor is always dark: it is a picture of a terminal, not of the page. */
   .editor {
     --fg: #c0caf5;
+
+    min-width: 0;
+    overflow: hidden;
+    color: var(--fg);
+
     /* Dark scrollbars on the dark editor in the light theme too. */
     color-scheme: dark;
-    min-width: 0;
+    background: var(--dj-code-bg);
     border: 1px solid var(--dj-code-line);
     border-radius: 0.75rem;
-    background: var(--dj-code-bg);
-    color: var(--fg);
-    box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.5);
-    overflow: hidden;
+    box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 50%);
   }
+
   figcaption {
     display: flex;
     justify-content: space-between;
     padding: 0.6rem 1rem;
-    border-bottom: 1px solid var(--dj-code-line);
     font-family: var(--sl-font-mono);
     font-size: var(--sl-text-xs);
-    color: #a9b1d6;
     font-variant-ligatures: none;
+    color: #a9b1d6;
+    border-bottom: 1px solid var(--dj-code-line);
   }
+
   .status {
     color: var(--dj-squiggle);
   }
+
   .editor[data-state="clean"] .status {
     color: var(--dj-ok);
   }
+
   .editor[data-state="messy"] .when-clean,
   .editor[data-state="clean"] .when-messy,
   .editor[data-attributes="aligned"] .when-single,
   .editor[data-attributes="single"] .when-aligned {
     display: none;
   }
+
   pre.code {
     /* Room for the 20 formatted lines, so the editor keeps its height. */
     min-height: calc(20 * 1.75em + 2rem);
@@ -435,6 +504,7 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     line-height: 1.75;
     counter-reset: line;
   }
+
   /* Every line is as wide as the longest, so the line numbers can stay put
      while the code scrolls under them. */
   pre.code code {
@@ -442,25 +512,28 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     width: max-content;
     min-width: 100%;
   }
+
   .line {
     display: block;
     min-height: 1.75em;
     padding-inline-end: 1rem;
     white-space: pre;
   }
+
   .line::before {
-    counter-increment: line;
-    /* Screen readers skip the numbers where the alt text syntax is known. */
-    content: counter(line) / "";
-    display: inline-block;
     position: sticky;
     inset-inline-start: 0;
     z-index: 1;
+    display: inline-block;
     width: calc(2ch + 2rem);
     padding-inline: 0.75rem 1.25rem;
-    background: var(--dj-code-bg);
-    text-align: end;
     color: #8a91b8;
+    text-align: end;
+
+    /* Screen readers skip the numbers where the alt text syntax is known. */
+    content: counter(line) / "";
+    counter-increment: line;
+    background: var(--dj-code-bg);
   }
   .line :global(.tk-tag) { color: #f7768e; }
   .line :global(.tk-attr) { color: #bb9af7; }
@@ -471,55 +544,61 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   .line :global(mark.lint) {
     position: relative;
     padding-block-end: 0.35em;
-    background: var(--dj-squiggle-wave);
     color: inherit;
     cursor: help;
+    background: var(--dj-squiggle-wave);
   }
+
   /* An empty line has no text to underline, so give it a few invisible letters
      to stretch the squiggle under. The empty alt text keeps screen readers
      from reading them out. */
   .line :global(mark.lint-blank)::before {
+    color: transparent;
     content: "xxxx";
     content: "xxxx" / "";
-    color: transparent;
   }
+
   /* The transition draws the lines above the rest of the page, so a line
      scrolled under the header would slide over it. Given a snapshot of its
      own, the header is drawn above them, as it is outside the transition. */
   :global(header.header) {
     view-transition-name: dj-header;
   }
+
   /* A line with a view-transition-name is a stacking context, which would keep
      its tooltip under the marks on the lines after it. */
   .line:is(:hover, :focus-within) {
     position: relative;
     z-index: 1;
   }
+
   .line :global(.tip) {
     position: absolute;
     width: 1px;
     height: 1px;
     overflow: hidden;
-    clip-path: inset(50%);
     user-select: none;
+    clip-path: inset(50%);
   }
+
   .line :global(mark.lint:is(:hover, :focus-visible) .tip) {
-    height: auto;
-    overflow: visible;
-    clip-path: none;
-    z-index: 2;
     top: 1.9em;
     left: 0;
-    padding: 0.3rem 0.6rem;
-    border: 1px solid var(--dj-code-line);
-    border-radius: 0.375rem;
-    background: #2f334d;
-    color: #e4e6f0;
-    font-size: 0.75rem;
+    z-index: 2;
     width: max-content;
     max-width: min(20rem, 75vw);
+    height: auto;
+    padding: 0.3rem 0.6rem;
+    overflow: visible;
+    font-size: 0.75rem;
+    color: #e4e6f0;
     white-space: normal;
+    background: #2f334d;
+    border: 1px solid var(--dj-code-line);
+    border-radius: 0.375rem;
+    clip-path: none;
   }
+
   .line :global(mark.lint:focus-visible) {
     outline: 1px solid var(--dj-squiggle);
   }
@@ -528,112 +607,127 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   .bar {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: 0.5rem 1rem;
+    align-items: center;
     padding: 0.6rem 0.75rem 0.6rem 1rem;
-    border-top: 1px solid var(--dj-code-line);
-    background: var(--dj-code-bar);
     font-family: var(--sl-font-mono);
     font-size: var(--sl-text-sm);
     font-variant-ligatures: none;
+    background: var(--dj-code-bar);
+    border-top: 1px solid var(--dj-code-line);
   }
+
   .bar .prompt {
     color: var(--dj-squiggle);
   }
+
   /* No narrower than its longest argument: where that leaves no room for
      the pill, the pill moves to a line of its own. */
   .command {
     display: flex;
     flex: 1 1 auto;
     flex-wrap: wrap;
-    align-items: baseline;
     gap: 0 1ch;
+    align-items: baseline;
   }
+
   .arg {
     white-space: nowrap;
   }
+
   .editor[data-state="clean"] .command {
     color: #8a91b8;
   }
+
   /* Off, the flag is a dashed outline of itself, there to be clicked; on, it
      reads as part of the command. */
   .flag {
-    margin-block: -0.15rem;
     padding: 0.1rem 0.4rem;
+    margin-block: -0.15rem;
+    font: inherit;
+    color: #8a91b8;
+    cursor: pointer;
+    background: transparent;
     border: 1px dashed #5a6190;
     border-radius: 0.3rem;
-    background: transparent;
-    color: #8a91b8;
-    font: inherit;
-    cursor: pointer;
   }
+
   .flag:hover {
+    color: var(--fg);
     border-color: #a9b1d6;
-    color: var(--fg);
   }
+
   .flag[aria-pressed="true"] {
-    border-style: solid;
-    border-color: #3b4061;
-    background: #2f334d;
     color: var(--fg);
+    background: #2f334d;
+    border-color: #3b4061;
+    border-style: solid;
   }
+
   .run {
     flex: none;
-    margin-inline-start: auto;
     padding: 0;
+    margin-inline-start: auto;
+    cursor: pointer;
+    background: none;
     border: 0;
     border-radius: 999px;
-    background: none;
-    cursor: pointer;
   }
+
   .flag:focus-visible,
   .run:focus-visible {
     outline: 2px solid var(--dj-focus);
     outline-offset: 2px;
   }
+
   .action {
     display: inline-flex;
-    align-items: center;
     gap: 0.4rem;
+    align-items: center;
     padding: 0.35rem 0.9rem;
-    border: 1px solid var(--dj-squiggle);
-    border-radius: 999px;
-    background: var(--dj-squiggle);
-    color: #15161f;
     font-family: var(--sl-font);
     font-size: var(--sl-text-xs);
     font-weight: 600;
+    color: #15161f;
     white-space: nowrap;
+    background: var(--dj-squiggle);
+    border: 1px solid var(--dj-squiggle);
+    border-radius: 999px;
   }
+
   .run:hover .action.when-messy {
     background: #ffd65c;
   }
+
   .action.when-clean {
-    border-color: #3b4061;
-    background: transparent;
     color: var(--fg);
+    background: transparent;
+    border-color: #3b4061;
   }
+
   .run:hover .action.when-clean {
     border-color: #8a91b8;
   }
 
   /* Title and calls to action on the left, the explanation and install
      commands on the right; on narrow screens they stack in reading order. */
-  @media (min-width: 64rem) {
+  @media (width >= 64rem) {
     .dj-hero {
       padding-block: 3rem 4rem;
     }
+
     .pitch {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      grid-template-areas: "title intro" "actions intro";
-      grid-template-rows: auto 1fr;
+      grid-template: "title intro" auto "actions intro" 1fr / minmax(0, 1fr) minmax(0, 1fr);
     }
+
     h1 {
       grid-area: title;
     }
+
     .intro {
       grid-area: intro;
     }
+
     .actions {
       grid-area: actions;
       align-self: start;

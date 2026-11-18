@@ -4,7 +4,7 @@ import languages from "../data/templateLanguages.json";
 import { starlightRoute } from "../utils/route";
 
 const { t } = Astro.locals;
-// llms.txt renders pages without a route, and the home page has nothing for it.
+// The llms.txt plugin renders pages without a route, and the home page has nothing for it.
 const route = starlightRoute(Astro.locals);
 const prefix = route?.locale ? `/${route.locale}` : "";
 const badge = "https://img.shields.io/badge/html%20style-djLint-blue.svg";
@@ -67,14 +67,17 @@ const badge = "https://img.shields.io/badge/html%20style-djLint-blue.svg";
   h2 {
     font-size: var(--sl-text-h3);
   }
+
   .languages {
     padding-block: 3rem;
     border-block: 1px solid var(--sl-color-gray-6);
   }
+
   .languages h2 {
     margin-block-end: 1.5rem;
     color: var(--sl-color-white);
   }
+
   .languages ul {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
@@ -82,20 +85,23 @@ const badge = "https://img.shields.io/badge/html%20style-djLint-blue.svg";
     padding: 0;
     list-style: none;
   }
+
   .languages a {
     display: flex;
-    align-items: center;
     gap: 0.75rem;
+    align-items: center;
     padding: 0.75rem;
-    border-radius: 0.5rem;
-    color: var(--sl-color-gray-2);
     font-weight: 500;
+    color: var(--sl-color-gray-2);
     text-decoration: none;
+    border-radius: 0.5rem;
   }
+
   .languages a:hover {
-    background: color-mix(in srgb, var(--brand) 12%, transparent);
     color: var(--sl-color-white);
+    background: color-mix(in srgb, var(--brand) 12%, transparent);
   }
+
   /* Every logo gets the same box; logoScale only evens out how much of it the
      drawing fills. The drawing fits inside the padding whichever side is
      longer, and a scale that would take it past the box stops at the box. */
@@ -107,26 +113,31 @@ const badge = "https://img.shields.io/badge/html%20style-djLint-blue.svg";
     background: var(--brand);
     mask: var(--mark) center / contain no-repeat content-box;
   }
+
   .closing {
     display: grid;
     gap: 3rem;
     padding-block: 3rem 1rem;
   }
+
   .closing > section {
     margin: 0;
   }
+
   .closing img {
-    vertical-align: middle;
     margin-inline-start: 0.5rem;
+    vertical-align: middle;
   }
+
   .credits {
-    margin: 0;
     padding-block: 2rem 1rem;
-    border-top: 1px solid var(--sl-color-gray-6);
-    color: var(--sl-color-gray-3);
+    margin: 0;
     font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+    border-top: 1px solid var(--sl-color-gray-6);
   }
-  @media (min-width: 50rem) {
+
+  @media (width >= 50rem) {
     .closing {
       grid-template-columns: 3fr 2fr;
     }

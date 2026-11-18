@@ -80,6 +80,11 @@
     { "matchPackageNames": ["ruff", "charliermarsh/ruff-pre-commit"], "groupName": "ruff" },
     { "matchPackageNames": ["oxfmt", "oxc-project/mirrors-oxfmt"], "groupName": "oxfmt" },
     {
+      "description": "A config's major version requires the stylelint it was made for, so neither passes CI without the other",
+      "matchPackageNames": ["stylelint", "stylelint-config-*", "thibaudcolas/pre-commit-stylelint"],
+      "groupName": "stylelint"
+    },
+    {
       "description": "The Pyodide that builds the demo's lock file and the one the demo loads from the CDN have to be the same",
       "matchPackageNames": ["pyodide"],
       "groupName": "pyodide"

@@ -1,4 +1,6 @@
-import { test as base, expect } from "@playwright/test";
+import { expect, test as base } from "@playwright/test";
+
+export { expect } from "@playwright/test";
 
 /** An address with no page behind it: the browser logs its 404, which is expected. */
 export const MISSING = "/no-such-page/";
@@ -10,8 +12,12 @@ export const test = base.extend<{ pageErrors: string[] }>({
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(`${error.name}: ${error.message}`));
       page.on("console", (message) => {
-        if (message.type() !== "error") return;
-        if (new URL(message.location().url || "about:blank").pathname === MISSING) return;
+        if (message.type() !== "error") {
+          return;
+        }
+        if (new URL(message.location().url || "about:blank").pathname === MISSING) {
+          return;
+        }
         errors.push(`console: ${message.text()} (${message.location().url})`);
       });
       await use(errors);
@@ -20,5 +26,3 @@ export const test = base.extend<{ pageErrors: string[] }>({
     { auto: true },
   ],
 });
-
-export { expect };

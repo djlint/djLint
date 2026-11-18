@@ -72,91 +72,106 @@ const links = [
   .header {
     display: flex;
     gap: var(--sl-nav-gap);
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     height: 100%;
   }
+
   .title-wrapper {
-    overflow: clip;
+    flex-shrink: 0;
+    min-width: 0;
     padding: 0.25rem;
     margin: -0.25rem;
-    min-width: 0;
-    flex-shrink: 0;
+    overflow: clip;
   }
+
   .top-nav {
     display: none;
     gap: 1.5rem;
-    margin-inline-end: auto;
     padding-inline-start: 1.5rem;
+    margin-inline-end: auto;
   }
+
   .top-nav a {
-    color: var(--sl-color-gray-2);
     font-size: var(--sl-text-sm);
     font-weight: 500;
-    text-decoration: none;
+    color: var(--sl-color-gray-2);
     white-space: nowrap;
+    text-decoration: none;
   }
+
   .top-nav a:hover,
   .top-nav a[aria-current="page"] {
     color: var(--sl-color-white);
   }
+
   /* The current section is squiggled, as the current page in the sidebar is. */
   .top-nav a[aria-current="page"] {
-    margin-block-end: -0.4em;
     padding-block-end: 0.4em;
+    margin-block-end: -0.4em;
     background: var(--dj-current-wave);
   }
+
   .right-group,
   .social-icons {
+    flex-shrink: 0;
     gap: 1rem;
     align-items: center;
-    flex-shrink: 0;
   }
+
   /* Starlight sizes these for its own font; "Светлая" and "Русский" need more. */
   .right-group :global(label) {
     --sl-select-width: 7.5em !important;
   }
+
   .social-icons::after {
-    content: "";
     height: 2rem;
+    content: "";
     border-inline-end: 1px solid var(--sl-color-gray-5);
   }
+
   /* Without the section links, the search sits by the controls on the right. */
-  @media (max-width: 89.99rem) {
+  @media (width <= 89.99rem) {
     .search {
       margin-inline-start: auto;
     }
   }
+
   /* The same round button as Starlight's sidebar toggle on the other pages. */
   .menu-button {
     display: grid;
-    place-items: center;
     flex-shrink: 0;
+    place-items: center;
     width: var(--sl-menu-button-size);
     height: var(--sl-menu-button-size);
     padding: 0.5rem;
+    color: var(--sl-color-black);
+    cursor: pointer;
+    background: var(--sl-color-white);
     border: 0;
     border-radius: 50%;
-    background: var(--sl-color-white);
-    color: var(--sl-color-black);
     box-shadow: var(--sl-shadow-md);
-    cursor: pointer;
   }
+
   :global([data-theme="light"]) .menu-button {
-    background: var(--sl-color-black);
     color: var(--sl-color-white);
+    background: var(--sl-color-black);
   }
+
   .menu-button:has(~ :popover-open) {
     background: var(--sl-color-gray-2);
     box-shadow: none;
   }
+
   :global([data-theme="light"]) .menu-button:has(~ :popover-open) {
     background: var(--sl-color-gray-5);
   }
+
   .menu-button:has(~ :popover-open) :global(.open-menu),
   .menu-button:not(:has(~ :popover-open)) :global(.close-menu) {
     display: none;
   }
+
   /* On a phone, a pane over the whole page below the header, as Starlight's
      sidebar is on the docs pages. */
   .menu {
@@ -165,21 +180,24 @@ const links = [
     height: auto;
     padding: 1rem var(--sl-sidebar-pad-x) 0;
     overflow-y: auto;
-    border: 0;
-    background: var(--sl-color-black);
     color: var(--sl-color-white);
+    background: var(--sl-color-black);
+    border: 0;
   }
+
   .sidebar-content {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
+
   :global(body:has(#dj-menu:popover-open)) {
     overflow: hidden;
   }
+
   /* Wider, where the header shows the preferences itself, a panel under the
      button is enough. */
-  @media (min-width: 50rem) {
+  @media (width >= 50rem) {
     .menu {
       inset: var(--sl-nav-height) 0 auto auto;
       width: 20rem;
@@ -190,15 +208,18 @@ const links = [
       border-end-start-radius: 0.75rem;
       box-shadow: var(--sl-shadow-md);
     }
+
     :global(body:has(#dj-menu:popover-open)) {
       overflow: auto;
     }
   }
+
   /* The longest translations of the section links need the full 90rem page. */
-  @media (min-width: 90rem) {
+  @media (width >= 90rem) {
     .top-nav {
       display: flex;
     }
+
     .menu-button,
     .menu {
       display: none;

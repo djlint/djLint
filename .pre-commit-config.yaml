@@ -17,6 +17,19 @@ repos:
         args:
           - --fix=lf
       - id: trailing-whitespace
+  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
+    rev: a43d64a23287d2dc2e02289bd3b2cb0da5eddfb1 # frozen: v17.16.0
+    hooks:
+      - id: stylelint
+        language: node
+        files: ^docs/.*\.(?:astro|css)$
+        args:
+          - --fix=lax
+        additional_dependencies:
+          - postcss-html@2.0.0
+          - stylelint@17.16.0
+          - stylelint-config-recess-order@7.10.0
+          - stylelint-config-standard@40.0.0
   - repo: https://github.com/tombi-toml/tombi-pre-commit
     rev: 6f428aba5ced98b5a579ff23cab6b39822b4347d # frozen: v1.11.2
     hooks:

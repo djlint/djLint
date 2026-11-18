@@ -29,6 +29,19 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
-    "@playwright/test": "1.65.1"
+    "@playwright/test": "1.65.1",
+    "@total-typescript/ts-reset": "0.6.1",
+    "@tsconfig/strictest": "2.0.9",
+    "@types/emscripten": "1.41.6",
+    "@types/hast": "3.0.5",
+    "@types/mdast": "4.0.4",
+    "oxlint": "1.93.0",
+    "oxlint-tsgolint": "7.0.2007",
+    "postcss-html": "2.0.0",
+    "stylelint": "17.16.0",
+    "stylelint-config-recess-order": "7.10.0",
+    "stylelint-config-standard": "40.0.0",
+    "typescript": "7.0.2",
+    "vfile": "6.0.3"
   }
 }

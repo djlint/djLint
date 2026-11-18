@@ -6,9 +6,24 @@ export interface DemoState {
   config: Record<string, string | boolean>;
 }
 
-async function pipe(bytes: BufferSource, transform: CompressionStream | DecompressionStream) {
+async function pipe(
+  bytes: BufferSource,
+  transform: CompressionStream | DecompressionStream,
+): Promise<Uint8Array<ArrayBuffer>> {
   const stream = new Blob([bytes]).stream().pipeThrough(transform);
   return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+function isDemoState(value: unknown): value is DemoState {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "html" in value &&
+    typeof value.html === "string" &&
+    "config" in value &&
+    typeof value.config === "object" &&
+    value.config !== null
+  );
 }
 
 export async function encodeState(state: DemoState): Promise<string> {
@@ -16,24 +31,28 @@ export async function encodeState(state: DemoState): Promise<string> {
     new TextEncoder().encode(JSON.stringify(state)),
     new CompressionStream("deflate-raw"),
   );
-  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
-  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+  const binary = Array.from(bytes, (byte) => String.fromCodePoint(byte)).join("");
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/[=]+$/u, "");
 }
 
-/** The state in `hash`, or undefined when it holds none or is damaged. */
+/**
+ * Reads the state back from the address.
+ * @param hash - The address's hash, without the "#".
+ * @returns The state, or undefined when the hash holds none or is damaged.
+ */
 export async function decodeState(hash: string): Promise<DemoState | undefined> {
-  if (!hash) return undefined;
+  if (!hash) {
+    return void 0;
+  }
   try {
     const binary = atob(hash.replaceAll("-", "+").replaceAll("_", "/"));
     const bytes = await pipe(
-      Uint8Array.from(binary, (char) => char.charCodeAt(0)),
+      Uint8Array.from(binary, (char) => char.codePointAt(0) ?? 0),
       new DecompressionStream("deflate-raw"),
     );
-    const state = JSON.parse(new TextDecoder().decode(bytes));
-    const valid =
-      typeof state?.html === "string" && state.config && typeof state.config === "object";
-    return valid ? state : undefined;
+    const state: unknown = JSON.parse(new TextDecoder().decode(bytes));
+    return isDemoState(state) ? state : void 0;
   } catch {
-    return undefined;
+    return void 0;
   }
 }
