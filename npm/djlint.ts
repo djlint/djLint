@@ -23,14 +23,21 @@ async function readManifest(file: string): Promise<Record<string, unknown>> {
   return { ...manifest };
 }
 
-// What the detect-libc package looks at: ldd is a script, which on musl runs musl's loader.
+// What the detect-libc package looks at. The ldd script runs musl's loader on musl.
+// On glibc, the GNU C Library ships it. Without ldd, Node's report names the glibc it runs on.
 async function isMusl(): Promise<boolean> {
-  try {
-    const ldd = await readFile("/usr/bin/ldd", "latin1");
-    return ldd.includes("musl");
-  } catch {
+  const ldd = await readFile("/usr/bin/ldd", "latin1").catch(() => "");
+  if (ldd.includes("musl")) {
+    return true;
+  }
+  if (ldd.includes("GNU C Library")) {
     return false;
   }
+  // The types of Node 16 have the report as a string, which it isn't.
+  const report: unknown = process.report?.getReport();
+  const header: unknown =
+    typeof report === "object" && report !== null && "header" in report ? report.header : null;
+  return !(typeof header === "object" && header !== null && "glibcVersionRuntime" in header);
 }
 
 async function platform(): Promise<string> {
@@ -53,7 +60,10 @@ let python = "";
 try {
   const manifest = require.resolve(`${name}/package.json`);
   const { python: interpreter } = await readManifest(manifest);
-  python = path.join(path.dirname(manifest), String(interpreter));
+  if (typeof interpreter !== "string" || !interpreter) {
+    throw new TypeError(`${manifest} names no Python`);
+  }
+  python = path.join(path.dirname(manifest), interpreter);
 } catch {
   fail(
     `${name} isn't installed. npm leaves this optional dependency out with --omit=optional, and so does a lock file made without it. Reinstall djlint.`,

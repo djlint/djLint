@@ -51,9 +51,11 @@ jobs:
             qemu: linux/s390x
           - os: ubuntu-26.04
             platform: linux-x64-gnu
+          # Without the ldd the launcher reads first, Node's report tells it the libc.
           - os: ubuntu-26.04
             platform: linux-x64-musl
             image: node:{node}-alpine
+            setup: rm /usr/bin/ldd
           - os: windows-11-vs2026-arm
             platform: win32-arm64
           # Node has no 32-bit Windows builds after 22.
@@ -68,6 +70,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+      # The oldest Node the launcher runs on, which one platform is enough to try.
+      - id: oldest-node
+        if: ${{ matrix.platform == 'linux-x64-gnu' }}
+        run: |
+          sed -nE 's/^_LAUNCHER_NODE: Final = "(.+)"$/version=\1.0/p' npm/build.py >> "$GITHUB_OUTPUT"
+      - if: ${{ steps.oldest-node.outputs.version }}
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: ${{ steps.oldest-node.outputs.version }}
+          package-manager-cache: false
+      - id: oldest-node-path
+        if: ${{ steps.oldest-node.outputs.version }}
+        run: echo "path=$(command -v node)" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: ${{ matrix.node }}
@@ -139,6 +154,7 @@ jobs:
       - if: ${{ !matrix.image }}
         run: node --test npm/test.ts
         env:
+          DJLINT_OLDEST_NODE: ${{ steps.oldest-node-path.outputs.path }}
           DJLINT_PLATFORM: ${{ matrix.platform }}
       # Node from node-build comes in on the PATH; an image has its own.
       - if: ${{ matrix.image }}

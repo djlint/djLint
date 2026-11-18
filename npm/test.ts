@@ -8,8 +8,8 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { after, before, test } from "node:test";
 
-interface Answer {
-  id: unknown;
+interface Message {
+  id?: unknown;
   result?: { capabilities?: unknown };
 }
 
@@ -19,6 +19,8 @@ const launcher = path.join(project, "node_modules", "djlint", "djlint.mjs");
 const windows = process.platform === "win32";
 // On GitHub Actions, djLint reports as annotations.
 const { GITHUB_ACTIONS: _, ...env } = process.env;
+// The oldest Node in the engines of the package, which the CI tries it with on one platform.
+const oldestNode = process.env["DJLINT_OLDEST_NODE"];
 
 function djlint(
   args: readonly string[],
@@ -37,8 +39,8 @@ function frame(message: object): string {
   return `Content-Length: ${Buffer.byteLength(body)}\r\n\r\n${body}`;
 }
 
-function isAnswer(message: unknown): message is Answer {
-  return typeof message === "object" && message !== null && "id" in message;
+function isObject(value: unknown): value is object {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 before(() => {
@@ -63,6 +65,17 @@ after(() => {
 test("npm links the command", () => {
   const output = execSync("npx --no-install djlint --version", { cwd: project, encoding: "utf8" });
   assert.match(output, /^djlint, version \d+\.\d+\.\d+/u);
+});
+
+test("runs on the oldest Node it supports", { skip: !oldestNode }, () => {
+  assert.ok(oldestNode);
+  const result = spawnSync(oldestNode, [launcher, "--version"], {
+    cwd: project,
+    encoding: "utf8",
+    env,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /^djlint, version \d+\.\d+\.\d+/u);
 });
 
 test("lints what comes in on stdin", () => {
@@ -114,13 +127,17 @@ test("runs the language server", async () => {
   const answers = output
     .split(/Content-Length: \d+\r\n\r\n/u)
     .filter(Boolean)
-    .map((body) => JSON.parse(body))
-    .filter((message) => isAnswer(message));
+    .map((body): Message => {
+      const message: unknown = JSON.parse(body);
+      assert.ok(isObject(message), body);
+      return message;
+    })
+    .filter((message) => "id" in message);
   assert.deepEqual(
     answers.map((answer) => answer.id),
     [1, 2],
   );
-  assert.equal(typeof answers[0]?.result?.capabilities, "object");
+  assert.ok(isObject(answers[0]?.result?.capabilities));
 });
 
 // Windows has no signals to send.
