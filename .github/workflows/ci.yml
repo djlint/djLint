@@ -38,9 +38,6 @@ jobs:
         working-directory: docs
       - run: npm run build
         working-directory: docs
-      # After the build, which writes the types of Astro's virtual modules.
-      - run: npx oxlint
-        working-directory: docs
       # The type check of the components, which oxlint's misses.
       - run: npx astro check
         working-directory: docs
@@ -90,7 +87,12 @@ jobs:
           package-manager-cache: false
           check-latest: true
       - run: npm ci
-      # docs/ has a config of its own, which its job runs.
+      # docs/ is linted too, against its own packages.
+      - run: npm ci --ignore-scripts
+        working-directory: docs
+      # The types of Astro's virtual modules.
+      - run: npx astro sync
+        working-directory: docs
       - run: npm run lint
   pre-commit:
     runs-on: ubuntu-26.04
