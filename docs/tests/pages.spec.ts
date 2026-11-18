@@ -21,7 +21,7 @@ const upstream = (rule: string, html: string) =>
   rule === "label-content-name-mismatch" && html.startsWith("<button data-open-modal");
 
 // axe takes over 30 seconds on these on a CI runner, against under 10 here.
-const LONG = new Set(["/docs/linter/", "/docs/changelog/"]);
+const LONG = new Set(["/docs/configuration/", "/docs/linter/", "/docs/changelog/"]);
 
 for (const path of PAGES) {
   test(`${path} fits the window and passes axe`, async ({ page }) => {
