@@ -24,8 +24,15 @@ async function readManifest(file: string): Promise<Record<string, unknown>> {
 }
 
 // How npm tells the libc apart when it picks the optional dependency to install.
-// Node reports the version of glibc it runs on, and nothing on musl.
-function libc(): "gnu" | "musl" {
+// The ldd script names musl or the GNU C Library; without it, Node reports its glibc.
+async function libc(): Promise<"gnu" | "musl"> {
+  const ldd = await readFile("/usr/bin/ldd", "latin1").catch(() => "");
+  if (ldd.includes("musl")) {
+    return "musl";
+  }
+  if (ldd.includes("GNU C Library")) {
+    return "gnu";
+  }
   // Reverse DNS lookups of open sockets, which the libc doesn't need, can stall the report.
   Object.assign(process.report ?? {}, { excludeNetwork: true });
   // The types of Node 16 have the report as a string, which it isn't.
@@ -36,11 +43,11 @@ function libc(): "gnu" | "musl" {
   return glibc ? "gnu" : "musl";
 }
 
-function platform(): string {
+async function platform(): Promise<string> {
   if (process.platform !== "linux") {
     return `${process.platform}-${process.arch}`;
   }
-  return `linux-${process.arch}-${libc()}`;
+  return `linux-${process.arch}-${await libc()}`;
 }
 
 const require = createRequire(import.meta.url);
@@ -48,7 +55,7 @@ const { optionalDependencies } = await readManifest(require.resolve("./package.j
 if (typeof optionalDependencies !== "object" || optionalDependencies === null) {
   throw new TypeError("package.json has no optionalDependencies");
 }
-const name = `@djlint/${platform()}`;
+const name = `@djlint/${await platform()}`;
 if (!Object.hasOwn(optionalDependencies, name)) {
   fail(`the npm package has no build for ${name.slice(8)}. Install djLint from PyPI: ${INSTALL}`);
 }
