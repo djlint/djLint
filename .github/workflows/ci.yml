@@ -14,6 +14,7 @@ jobs:
     needs:
       - docs
       - npm
+      - oxlint
       - pre-commit
       - pytest
     runs-on: ubuntu-26.04
@@ -77,6 +78,19 @@ jobs:
           path: docs/test-results
   npm:
     uses: $/.github/workflows/npm.yml
+  oxlint:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+          check-latest: true
+      - run: npm ci
+      - run: npx oxlint
   pre-commit:
     runs-on: ubuntu-26.04
     steps:

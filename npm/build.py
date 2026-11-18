@@ -9,13 +9,15 @@ which npm picks out of its optional dependencies by their os, cpu and libc.
 Each of those holds a CPython from python-build-standalone, cut down to what
 djLint can use, with djLint and its dependencies installed into it.
 
+    npm ci --include=dev
     uv run npm/build.py WHEELS [PLATFORM ...]
 
 WHEELS is a folder with the djLint wheels of this version. When it has
 compiled ones, as for a release, each platform that djLint is compiled for
 has to find its own there; the others, and all of them when there is only the
 pure one, as for a test, take the pure one. With no PLATFORM, all of them are
-built. The packages are packed into npm/dist.
+built. The packages are packed into npm/dist. npm ci, on the Node in .nvmrc,
+installs esbuild, which builds the launcher, even with NODE_ENV=production.
 
 The Python of a package runs this one's bytecode, so this script runs on the
 same Python version. A package for Linux or macOS has to be built on one of
@@ -30,6 +32,7 @@ import io
 import json
 import os
 import py_compile
+import re
 import shutil
 import subprocess
 import sys
@@ -43,7 +46,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Mapping
     from typing import Final
 
 # Renovate updates it. Each release has every Python version, and the package
@@ -308,12 +311,23 @@ def _install_locked(site: Path, tag: str, requirements: Iterable[str]) -> None:
         _install(site, tag, "--require-hashes", "--requirement", path)
 
 
-def _pack(folder: Path) -> Path:
+def _npm() -> str:
     npm = shutil.which("npm")
     if npm is None:
         msg = "npm is not on PATH"
         raise RuntimeError(msg)
-    [packed] = json.loads(_run(npm, "pack", "--json", "--pack-destination", _DIST, cwd=folder))
+    return npm
+
+
+def _write_manifest(folder: Path, manifest: Mapping[str, object]) -> None:
+    # Without spaces, as no one reads it in the package.
+    (folder / "package.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
+
+
+def _pack(folder: Path) -> Path:
+    [packed] = json.loads(_run(_npm(), "pack", "--json", "--pack-destination", _DIST, cwd=folder))
     files = {path for path in folder.rglob("*") if path.is_file()}
     if packed["entryCount"] != len(files):
         msg = f"npm packed {packed['entryCount']} of the {len(files)} files in {folder}"
@@ -396,7 +410,7 @@ def _build_platform(
         # djLint with.
         "python": "python/python.exe" if windows else "python/bin/python3",
     }
-    (folder / "package.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    _write_manifest(folder, manifest)
     return _pack(folder)
 
 
@@ -407,17 +421,25 @@ def _build_launcher(version: str) -> Path:
     if manifest["version"] != version:
         msg = f"package.json has {manifest['version']} and pyproject.toml {version}"
         raise RuntimeError(msg)
-    for field in ("private", "devDependencies", "scripts"):
+    # The oldest Node the launcher runs on is the one esbuild builds it for, the first with
+    # Object.hasOwn.
+    target = re.search(
+        r"--target=node(\d+(?:\.\d+){0,2})\b", manifest["scripts"]["esbuild-launcher"]
+    )
+    if target is None:
+        msg = "the esbuild-launcher script in package.json has no --target=node"
+        raise RuntimeError(msg)
+    for field in ("devDependencies", "private", "scripts", "type"):
         manifest.pop(field, None)
     manifest |= {
         "bin": {"djlint": "djlint.mjs"},
         "files": ["djlint.mjs"],
         "optionalDependencies": {f"@djlint/{name}": version for name in PLATFORMS},
-        # The launcher's Object.hasOwn came in Node 16.9.
-        "engines": {"node": ">=16.9"},
+        "engines": {"node": f">={target[1]}"},
     }
-    (folder / "package.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    for file in (_ROOT / "npm" / "djlint.mjs", _ROOT / "README.md", _ROOT / "LICENSE"):
+    _write_manifest(folder, manifest)
+    _run(_npm(), "run", "esbuild-launcher", "--", "--minify")
+    for file in (_ROOT / "README.md", _ROOT / "LICENSE"):
         shutil.copy(file, folder)
     return _pack(folder)
 
