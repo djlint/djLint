@@ -329,9 +329,9 @@ if (description.length !== 2) {
     return config;
   }
 
-  // A value a field can't hold, such as "abc" in a number field or a profile the menu
-  // doesn't list, leaves it empty, as an option the form no longer has is left out: the rest
-  // of the link still opens.
+  // A value a field can't hold as it is, such as "abc" in a number field, a profile the menu
+  // doesn't list or a line break in a text field, leaves it empty, as an option the form no
+  // longer has is left out: the rest of the link still opens.
   function setConfig(config: DemoConfig): void {
     for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
       const value = config[field.name];
@@ -339,6 +339,9 @@ if (description.length !== 2) {
         field.checked = value === true;
       } else {
         field.value = typeof value === "string" ? value : "";
+        if (field.value !== value) {
+          field.value = "";
+        }
       }
     }
   }
