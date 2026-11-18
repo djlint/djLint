@@ -25,18 +25,23 @@ async function loadDjlint() {
       lockFileURL: new URL("/static/py/pyodide-lock.json", globalThis.location.href).href,
     });
     await pyodide.loadPackage("djlint");
+    /** @type {unknown} */
+    const version = await pyodide.runPythonAsync(`
+from importlib import metadata
+
+metadata.version("djlint")
+`);
+    if (typeof version !== "string") {
+      throw new TypeError("djLint has no version");
+    }
+    answer({ message: version, type: "version" });
     // The answer goes back as a plain object, with no proxies left to free.
     /** @type {unknown} */
     const run = await pyodide.runPythonAsync(`
-from importlib import metadata
-
-from js import Object, postMessage
+from js import Object
 from pyodide.ffi import to_js
 
 from djlint.api import format_text, lint_text, load_config
-
-version = metadata.version("djlint")
-postMessage(to_js({"message": version, "type": "version"}, dict_converter=Object.fromEntries))
 
 def _djlint_run(html, options):
     # Every edit is a run of its own, so it gets every warning, not only the

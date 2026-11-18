@@ -330,14 +330,26 @@ if (description.length !== 2) {
   }
 
   // A link from an older djLint may name an option the form no longer has, which is left
-  // out, but a value of the wrong kind for a field would be lost on the way in.
+  // out, but a value its field can't hold would be lost on the way in. A copy of the field
+  // tells: a number field drops "abc", a menu a profile it doesn't list.
   function fitsForm(config: DemoConfig): boolean {
     return Object.entries(config).every(([name, value]) => {
       const field = form.elements.namedItem(name);
-      if (field instanceof HTMLInputElement && field.type === "checkbox") {
+      if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement)) {
+        return field === null;
+      }
+      if (field.type === "checkbox") {
         return value === true;
       }
-      return field === null || typeof value === "string";
+      if (typeof value !== "string") {
+        return false;
+      }
+      const copy = field.cloneNode(true);
+      if (!(copy instanceof HTMLInputElement || copy instanceof HTMLSelectElement)) {
+        return false;
+      }
+      copy.value = value;
+      return copy.value === value;
     });
   }
 

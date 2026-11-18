@@ -90,7 +90,8 @@ jobs:
           package-manager-cache: false
           check-latest: true
       - run: npm ci
-      - run: npx oxlint
+      # docs/ has a config of its own, which its job runs.
+      - run: npm run lint
   pre-commit:
     runs-on: ubuntu-26.04
     steps:
