@@ -35,7 +35,8 @@ metadata.version("djlint")
       throw new TypeError("djLint has no version");
     }
     answer({ message: version, type: "version" });
-    // The answer goes back as a plain object, with no proxies left to free.
+    // The answer goes back as a plain object, with no proxies left to free: a value with no JS
+    // counterpart fails the conversion instead.
     /** @type {unknown} */
     const run = await pyodide.runPythonAsync(`
 from js import Object
@@ -51,6 +52,7 @@ def _djlint_run(html, options):
     findings = [finding._asdict() for finding in lint_text(config, html)]
     return to_js(
         {"findings": findings, "html": format_text(config, html).rstrip(), "warnings": warnings},
+        create_pyproxies=False,
         dict_converter=Object.fromEntries,
     )
 

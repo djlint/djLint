@@ -24,7 +24,7 @@ repos:
         language: node
         files: ^docs/.*\.(?:astro|css)$
         args:
-          - --fix=lax
+          - --fix
         additional_dependencies:
           - postcss-html@2.0.0
           - stylelint@17.16.0

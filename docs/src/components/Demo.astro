@@ -329,30 +329,9 @@ if (description.length !== 2) {
     return config;
   }
 
-  // A link from an older djLint may name an option the form no longer has, which is left
-  // out, but a value its field can't hold would be lost on the way in. A copy of the field
-  // tells: a number field drops "abc", a menu a profile it doesn't list.
-  function fitsForm(config: DemoConfig): boolean {
-    return Object.entries(config).every(([name, value]) => {
-      const field = form.elements.namedItem(name);
-      if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement)) {
-        return field === null;
-      }
-      if (field.type === "checkbox") {
-        return value === true;
-      }
-      if (typeof value !== "string") {
-        return false;
-      }
-      const copy = field.cloneNode(true);
-      if (!(copy instanceof HTMLInputElement || copy instanceof HTMLSelectElement)) {
-        return false;
-      }
-      copy.value = value;
-      return copy.value === value;
-    });
-  }
-
+  // A value a field can't hold, such as "abc" in a number field or a profile the menu
+  // doesn't list, leaves it empty, as an option the form no longer has is left out: the rest
+  // of the link still opens.
   function setConfig(config: DemoConfig): void {
     for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
       const value = config[field.name];
@@ -481,7 +460,7 @@ if (description.length !== 2) {
     // No hash is the welcome example (going back to the plain address); a hash
     // that doesn't decode, such as #_top from the skip link, changes nothing.
     const state = hash ? await decodeState(hash) : { config: {}, html: WELCOME };
-    if (!state || id !== restoreId || !fitsForm(state.config)) {
+    if (!state || id !== restoreId) {
       return;
     }
     setConfig(state.config);
