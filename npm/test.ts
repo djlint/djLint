@@ -1,13 +1,17 @@
-// Installs djlint and the package for this platform, which npm/build.py packed
-// into npm/dist, and runs djLint through them:
-//
-//     DJLINT_PLATFORM=linux-x64-gnu node --test npm/test.mjs
+// Installs djlint and the package for this platform, which npm/build.py packed into npm/dist, and runs djLint through them:
+//     DJLINT_PLATFORM=linux-x64-gnu node --test npm/test.ts
 import assert from "node:assert/strict";
 import { execSync, spawn, spawnSync } from "node:child_process";
+import type { SpawnSyncOptionsWithStringEncoding, SpawnSyncReturns } from "node:child_process";
 import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { after, before, test } from "node:test";
+
+interface Answer {
+  id: unknown;
+  result?: { capabilities?: unknown };
+}
 
 const dist = path.join(import.meta.dirname, "dist");
 const project = mkdtempSync(path.join(tmpdir(), "djlint-npm-"));
@@ -16,7 +20,10 @@ const windows = process.platform === "win32";
 // On GitHub Actions, djLint reports as annotations.
 const { GITHUB_ACTIONS: _, ...env } = process.env;
 
-function djlint(args, options = {}) {
+function djlint(
+  args: readonly string[],
+  options: Partial<SpawnSyncOptionsWithStringEncoding> = {},
+): SpawnSyncReturns<string> {
   return spawnSync(process.execPath, [launcher, ...args], {
     cwd: project,
     encoding: "utf8",
@@ -25,14 +32,18 @@ function djlint(args, options = {}) {
   });
 }
 
-function frame(message) {
+function frame(message: object): string {
   const body = JSON.stringify({ jsonrpc: "2.0", ...message });
   return `Content-Length: ${Buffer.byteLength(body)}\r\n\r\n${body}`;
 }
 
+function isAnswer(message: unknown): message is Answer {
+  return typeof message === "object" && message !== null && "id" in message;
+}
+
 before(() => {
-  // npm refuses a package for another platform, so it gets only this one.
-  const platform = process.env.DJLINT_PLATFORM;
+  // Only the package for this platform, as npm refuses one for another.
+  const platform = process.env["DJLINT_PLATFORM"];
   assert.ok(platform, "set DJLINT_PLATFORM to the platform to test");
   const names = new RegExp(String.raw`^djlint-(${platform}-)?\d.*\.tgz$`, "u");
   const packages = readdirSync(dist).filter((name) => names.test(name));
@@ -90,7 +101,7 @@ test("runs the language server", async () => {
   const server = spawn(process.execPath, [launcher, "--lsp"], { cwd: project });
   let output = "";
   server.stdout.setEncoding("utf8");
-  server.stdout.on("data", (chunk) => {
+  server.stdout.on("data", (chunk: string) => {
     output += chunk;
   });
   server.stdin.write(frame({ id: 1, method: "initialize", params: { capabilities: {} } }));
@@ -104,14 +115,15 @@ test("runs the language server", async () => {
     .split(/Content-Length: \d+\r\n\r\n/u)
     .filter(Boolean)
     .map((body) => JSON.parse(body))
-    .filter((message) => "id" in message);
+    .filter((message) => isAnswer(message));
   assert.deepEqual(
     answers.map((answer) => answer.id),
     [1, 2],
   );
-  assert.ok(answers[0].result.capabilities);
+  assert.equal(typeof answers[0]?.result?.capabilities, "object");
 });
 
+// Windows has no signals to send.
 test("ends as djLint does when a signal stops it", { skip: windows }, async () => {
   const server = spawn(process.execPath, [launcher, "--lsp"], { cwd: project });
   // Once djLint is up, which its answer to initialize shows.

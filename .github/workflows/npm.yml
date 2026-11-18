@@ -93,6 +93,9 @@ jobs:
             npm/build.py
           cache-python: true
           save-cache: ${{ github.ref == 'refs/heads/master' }}
+      # esbuild, which builds the launcher.
+      - if: ${{ !inputs.packages }}
+        run: npm ci
       - if: ${{ !inputs.packages }}
         run: uv build --wheel --out-dir wheels
       - if: ${{ !inputs.packages }}
@@ -134,7 +137,7 @@ jobs:
           cache-image: false
           platforms: ${{ matrix.qemu }}
       - if: ${{ !matrix.image }}
-        run: node --test npm/test.mjs
+        run: node --test npm/test.ts
         env:
           DJLINT_PLATFORM: ${{ matrix.platform }}
       # Node from node-build comes in on the PATH; an image has its own.
@@ -143,7 +146,7 @@ jobs:
           image=${IMAGE/'{node}'/$(cat .nvmrc)}
           docker run --rm ${QEMU:+--platform "$QEMU"} --env DJLINT_PLATFORM --env SETUP \
             --volume "$PWD:/djlint" --workdir /djlint "$image" \
-            sh -c 'eval "${SETUP:-:}" && PATH="/djlint/node/bin:$PATH" exec node --test npm/test.mjs'
+            sh -c 'eval "${SETUP:-:}" && PATH="/djlint/node/bin:$PATH" exec node --test npm/test.ts'
         env:
           DJLINT_PLATFORM: ${{ matrix.platform }}
           IMAGE: ${{ matrix.image }}

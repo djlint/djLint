@@ -43,7 +43,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Mapping
     from typing import Final
 
 # Renovate updates it. Each release has every Python version, and the package
@@ -144,6 +144,8 @@ _DIST: Final = _ROOT / "npm" / "dist"
 _DOWNLOADS: Final = _DIST / "downloads"
 _RELEASE_URL: Final = f"https://github.com/astral-sh/python-build-standalone/releases/download/{PYTHON_BUILD_STANDALONE}"
 _REPOSITORY: Final = {"type": "git", "url": "git+https://github.com/djlint/djLint.git"}
+# The oldest Node the launcher runs on, which esbuild builds it for: its Object.hasOwn came in 16.9.
+_LAUNCHER_NODE: Final = "16.9"
 
 
 def _run(*args: str | Path, cwd: Path = _ROOT) -> str:
@@ -308,12 +310,23 @@ def _install_locked(site: Path, tag: str, requirements: Iterable[str]) -> None:
         _install(site, tag, "--require-hashes", "--requirement", path)
 
 
-def _pack(folder: Path) -> Path:
+def _npm() -> str:
     npm = shutil.which("npm")
     if npm is None:
         msg = "npm is not on PATH"
         raise RuntimeError(msg)
-    [packed] = json.loads(_run(npm, "pack", "--json", "--pack-destination", _DIST, cwd=folder))
+    return npm
+
+
+def _write_manifest(folder: Path, manifest: Mapping[str, object]) -> None:
+    # Without spaces, as no one reads it in the package.
+    (folder / "package.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
+
+
+def _pack(folder: Path) -> Path:
+    [packed] = json.loads(_run(_npm(), "pack", "--json", "--pack-destination", _DIST, cwd=folder))
     files = {path for path in folder.rglob("*") if path.is_file()}
     if packed["entryCount"] != len(files):
         msg = f"npm packed {packed['entryCount']} of the {len(files)} files in {folder}"
@@ -396,7 +409,7 @@ def _build_platform(
         # djLint with.
         "python": "python/python.exe" if windows else "python/bin/python3",
     }
-    (folder / "package.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    _write_manifest(folder, manifest)
     return _pack(folder)
 
 
@@ -407,17 +420,17 @@ def _build_launcher(version: str) -> Path:
     if manifest["version"] != version:
         msg = f"package.json has {manifest['version']} and pyproject.toml {version}"
         raise RuntimeError(msg)
-    for field in ("private", "devDependencies", "scripts"):
+    for field in ("devDependencies", "private", "scripts", "type"):
         manifest.pop(field, None)
     manifest |= {
         "bin": {"djlint": "djlint.mjs"},
         "files": ["djlint.mjs"],
         "optionalDependencies": {f"@djlint/{name}": version for name in PLATFORMS},
-        # The launcher's Object.hasOwn came in Node 16.9.
-        "engines": {"node": ">=16.9"},
+        "engines": {"node": f">={_LAUNCHER_NODE}"},
     }
-    (folder / "package.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    for file in (_ROOT / "npm" / "djlint.mjs", _ROOT / "README.md", _ROOT / "LICENSE"):
+    _write_manifest(folder, manifest)
+    _run(_npm(), "run", "esbuild-launcher", "--", "--minify", f"--target=node{_LAUNCHER_NODE}")
+    for file in (_ROOT / "README.md", _ROOT / "LICENSE"):
         shutil.copy(file, folder)
     return _pack(folder)
 

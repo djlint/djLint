@@ -1,0 +1,6 @@
+{
+  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node26/tsconfig.json"],
+  "include": ["npm"],
+  "exclude": ["npm/dist", "npm/djlint.ts"],
+  "compilerOptions": { "noEmit": true, "checkJs": true, "verbatimModuleSyntax": true }
+}

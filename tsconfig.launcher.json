@@ -1,0 +1,12 @@
+// The launcher of the npm package, which runs on the oldest Node in its engines.
+{
+  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node16/tsconfig.json"],
+  "files": ["npm/djlint.ts", "npm/reset.d.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+    // Object.hasOwn came in Node 16.9, with the rest of ES2022 after it.
+    "lib": ["es2021", "es2022.object"],
+    "types": ["node16"],
+    "verbatimModuleSyntax": true
+  }
+}
