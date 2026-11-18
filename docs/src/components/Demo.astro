@@ -151,7 +151,7 @@ if (description.length !== 2) {
 {
   route && (
     <div class="demo not-content">
-      <p>
+      <p class="demo-description">
         {description[0]}djLint<span class="demo-version" id="djlint-version" />{description[1]}
       </p>
       {/* What djLint says about the settings, such as a rule code it doesn't know. */}
@@ -597,6 +597,9 @@ if (description.length !== 2) {
      whole page column, which custom.css already caps for wide screens. */
   :global(main:has(.demo) .sl-container) {
     max-width: none;
+  }
+  .demo-description {
+    margin-block-end: 1rem;
   }
   /* Which djLint the demo runs, quieter than the sentence it sits in. */
   .demo-version {
