@@ -23,31 +23,53 @@ async function readManifest(file: string): Promise<Record<string, unknown>> {
   return { ...manifest };
 }
 
-// How npm tells the libc apart when it picks the optional dependency to install.
-// The ldd script names musl or the GNU C Library; without it, Node reports its glibc.
-async function libc(): Promise<"gnu" | "musl"> {
-  const ldd = await readFile("/usr/bin/ldd", "latin1").catch(() => "");
-  if (ldd.includes("musl")) {
-    return "musl";
-  }
-  if (ldd.includes("GNU C Library")) {
-    return "gnu";
-  }
+type Libc = "gnu" | "musl" | undefined;
+
+function isMuslObject(file: unknown): boolean {
+  return typeof file === "string" && (file.includes("libc.musl-") || file.includes("ld-musl-"));
+}
+
+// Node reports the glibc it runs on, and the shared objects it loaded, musl's among them.
+function reportedLibc(): Libc {
   // Reverse DNS lookups of open sockets, which the libc doesn't need, can stall the report.
   Object.assign(process.report ?? {}, { excludeNetwork: true });
   // The types of Node 16 have the report as a string, which it isn't.
   const report: unknown = process.report?.getReport();
-  const header: unknown =
-    typeof report === "object" && report !== null && "header" in report ? report.header : null;
-  const glibc = typeof header === "object" && header !== null && "glibcVersionRuntime" in header;
-  return glibc ? "gnu" : "musl";
+  if (typeof report !== "object" || report === null) {
+    return void 0;
+  }
+  const header: unknown = "header" in report ? report.header : null;
+  if (typeof header === "object" && header !== null && "glibcVersionRuntime" in header) {
+    return "gnu";
+  }
+  const objects: unknown = "sharedObjects" in report ? report.sharedObjects : null;
+  return Array.isArray(objects) && objects.some((file) => isMuslObject(file)) ? "musl" : void 0;
+}
+
+// How npm tells the libc apart when it picks the optional dependency to install.
+// The ldd script names musl or the GNU C Library; only without it does the report decide.
+async function libc(): Promise<Libc> {
+  const ldd = await readFile("/usr/bin/ldd", "latin1").catch(() => null);
+  if (ldd === null) {
+    return reportedLibc();
+  }
+  if (ldd.includes("musl")) {
+    return "musl";
+  }
+  return ldd.includes("GNU C Library") ? "gnu" : void 0;
 }
 
 async function platform(): Promise<string> {
   if (process.platform !== "linux") {
     return `${process.platform}-${process.arch}`;
   }
-  return `linux-${process.arch}-${await libc()}`;
+  const family = await libc();
+  if (!family) {
+    fail(
+      `can't tell the libc of this Linux, and neither can npm, so it installed no Python for it. Install djLint from PyPI: ${INSTALL}`,
+    );
+  }
+  return `linux-${process.arch}-${family}`;
 }
 
 const require = createRequire(import.meta.url);
