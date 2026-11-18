@@ -79,6 +79,7 @@
     { "matchPackageNames": ["mypy", "pre-commit/mirrors-mypy"], "groupName": "mypy" },
     { "matchPackageNames": ["ruff", "charliermarsh/ruff-pre-commit"], "groupName": "ruff" },
     { "matchPackageNames": ["oxfmt", "oxc-project/mirrors-oxfmt"], "groupName": "oxfmt" },
+    { "matchPackageNames": ["oxlint", "oxlint-tsgolint"], "groupName": "oxlint" },
     {
       "description": "The Pyodide that builds the demo's lock file and the one the demo loads from the CDN have to be the same",
       "matchPackageNames": ["pyodide"],
@@ -96,11 +97,20 @@
     { "matchDepTypes": ["devDependencies"], "matchManagers": ["npm"], "automerge": true },
     { "matchManagers": ["github-actions", "pre-commit"], "automerge": true },
     {
-      "description": "A new Node is reviewed by hand. Node versioning holds it back until the major version reaches LTS",
-      "matchPackageNames": ["node"],
+      "description": "A new Node is reviewed by hand, in one pull request with its types. Node versioning holds each back until the major version reaches LTS",
+      "matchPackageNames": ["node", "@types/node"],
       "matchUpdateTypes": ["major"],
       "groupName": "node",
-      "automerge": false
+      "automerge": false,
+      "prBodyNotes": [
+        "Replace `@tsconfig/node<major>` with the one of the new Node by hand, in package.json and in the `extends` of npm/tsconfig.node.json, then run `npm install` for the lock file: Renovate updates a version, not a package name."
+      ]
+    },
+    {
+      "description": "The launcher of the npm package is checked against the oldest Node it runs on, so its types stay on that Node",
+      "matchDepNames": ["@types/node16", "@tsconfig/node16"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
     {
       "description": "A new Python is reviewed by hand. A cooldown would count from the last rebuild of an image tag, which keeps part of the update out of the PR. A classifier can name a Python that is not out yet, which is not a reason to roll it back",
