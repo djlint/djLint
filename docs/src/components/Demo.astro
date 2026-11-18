@@ -16,7 +16,7 @@ const prefix = route?.locale ? `/${route.locale}` : "";
 // option's section on the configuration page, where it differs from its name.
 interface Field {
   anchor?: string;
-  name: string;
+  name: keyof typeof labels;
   options?: string[][];
   placeholder?: string;
 }
@@ -143,8 +143,8 @@ function hint({ name, anchor }: Field): string {
     .replaceAll(/`(?<code>[^`]+)`/gu, "<code>$<code></code>");
   return `<code class="flag">${flag}</code> ${prose}`;
 }
-function label(name: string): string {
-  const texts: Record<string, string> & { en: string } = labels[name as keyof typeof labels];
+function label(name: keyof typeof labels): string {
+  const texts: Record<string, string> & { en: string } = labels[name];
   return texts[lang] ?? texts.en;
 }
 function docs(anchor: string): string {
@@ -329,6 +329,18 @@ if (description.length !== 2) {
     return config;
   }
 
+  // A link from an older djLint may name an option the form no longer has, which is left
+  // out, but a value of the wrong kind for a field would be lost on the way in.
+  function fitsForm(config: DemoConfig): boolean {
+    return Object.entries(config).every(([name, value]) => {
+      const field = form.elements.namedItem(name);
+      if (field instanceof HTMLInputElement && field.type === "checkbox") {
+        return value === true;
+      }
+      return field === null || typeof value === "string";
+    });
+  }
+
   function setConfig(config: DemoConfig): void {
     for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
       const value = config[field.name];
@@ -457,7 +469,7 @@ if (description.length !== 2) {
     // No hash is the welcome example (going back to the plain address); a hash
     // that doesn't decode, such as #_top from the skip link, changes nothing.
     const state = hash ? await decodeState(hash) : { config: {}, html: WELCOME };
-    if (!state || id !== restoreId) {
+    if (!state || id !== restoreId || !fitsForm(state.config)) {
       return;
     }
     setConfig(state.config);

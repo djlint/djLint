@@ -63,6 +63,24 @@ _djlint_run
 
 const run = await loadDjlint();
 
+/**
+ * Whether Python answered with every field of a result.
+ * @param {unknown} value - What djLint's run returned.
+ * @returns {value is Omit<Extract<WorkerReply, { type: "result" }>, "id" | "type">} The check.
+ */
+function isResult(value) {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "findings" in value &&
+    Array.isArray(value.findings) &&
+    "html" in value &&
+    typeof value.html === "string" &&
+    "warnings" in value &&
+    Array.isArray(value.warnings)
+  );
+}
+
 // The page sends djlint.api.load_config's keyword arguments, with numbers as numbers, and
 // gets back the formatted text, the findings on the original and what djLint warned about the
 // settings.
@@ -73,8 +91,12 @@ globalThis.addEventListener(
    */
   ({ data: { html, id, options } }) => {
     try {
-      // oxlint-disable-next-line typescript/no-unsafe-argument -- the Python side builds the result
-      answer({ ...run(html, options), id, type: "result" });
+      /** @type {unknown} */
+      const result = run(html, options);
+      if (!isResult(result)) {
+        throw new TypeError("djLint's answer lacks a field");
+      }
+      answer({ ...result, id, type: "result" });
     } catch (e) {
       answer({ id, message: e instanceof Error ? e.message : String(e), type: "error" });
     }
