@@ -1,0 +1,13 @@
+// The demo worker, which a browser runs as it is, as a module with the worker globals.
+{
+  "extends": ["astro/tsconfigs/strictest", "@tsconfig/strictest/tsconfig.json"],
+  "include": ["."],
+  "compilerOptions": {
+    "checkJs": true,
+    "lib": ["esnext", "webworker"],
+    "moduleDetection": "force",
+    "paths": {
+      "https://cdn.jsdelivr.net/pyodide/*/full/pyodide.mjs": ["../../../node_modules/pyodide"]
+    }
+  }
+}

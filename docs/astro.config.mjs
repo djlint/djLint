@@ -12,60 +12,135 @@ import starlightLlmsTxt from "starlight-llms-txt";
 
 import djlint from "../package.json" with { type: "json" };
 
+/** @import { AstroIntegration } from "astro" */
+/** @import { Nodes as HastNodes, Root as HastRoot } from "hast" */
+/** @import { Heading, Nodes as MdastNodes, Root as MdastRoot } from "mdast" */
+/** @import { VFile } from "vfile" */
+
+/**
+ * @param {(node: MdastNodes) => void} visit
+ * @returns {(tree: MdastRoot) => void} A plugin that calls visit on every node of the tree.
+ */
+function visitMdast(visit) {
+  /** @param {MdastNodes} node */
+  function walk(node) {
+    visit(node);
+    if ("children" in node) {
+      for (const child of node.children) {
+        walk(child);
+      }
+    }
+  }
+  return walk;
+}
+
 // Pre-commit snippets pin the release the docs were built from.
 function remarkDjlintVersion() {
-  const walk = (node) => {
-    if (typeof node.value === "string") {
+  return visitMdast((node) => {
+    if ("value" in node) {
       node.value = node.value.replaceAll("{{ djlint_version }}", djlint.version);
     }
-    node.children?.forEach(walk);
-  };
-  return walk;
+  });
 }
 
 // The examples are templates, not plain HTML. Twig's grammar is HTML plus the
 // {{ }}, {% %} and {# #} tags that Django, Jinja and Nunjucks share, so code
 // marked html is highlighted with it and its template syntax isn't left grey.
 function remarkTemplateCode() {
-  const walk = (node) => {
+  return visitMdast((node) => {
     if (node.type === "code" && node.lang === "html") {
       node.lang = "twig";
     }
-    node.children?.forEach(walk);
-  };
-  return walk;
+  });
 }
 
 // Heading ids as the Eleventy site made them, transliterated to ASCII, so links
 // to sections of the translated pages keep working. CHANGELOG.md lives outside
 // src/content/docs/ and gets its ids from remarkChangelog.
-const eleventySlug = (text) => slugify(text, { lower: true, remove: /[*+~.()'"!:@]/g });
+/**
+ * @param {string} text
+ * @returns {string} The id the Eleventy site gave a heading with this text.
+ */
+function eleventySlug(text) {
+  return slugify(text, { lower: true, remove: /[*+~.()'"!:@]/gu });
+}
 
-function rehypeEleventyHeadingIds() {
-  const text = (node) =>
-    node.type === "text" ? node.value : (node.children?.map(text).join("") ?? "");
-  const walk = (node, visit) => {
-    visit(node);
-    node.children?.forEach((child) => walk(child, visit));
-  };
-  return (tree, file) => {
-    if (!/[\\/]src[\\/]content[\\/]docs[\\/]/u.test(file.path ?? "")) {
-      return;
-    }
-    const used = new Set();
-    walk(tree, (node) => {
-      if (!/^h[2-5]$/u.test(node.tagName ?? "") || node.properties?.id) {
-        return;
-      }
-      const slug = eleventySlug(text(node));
+/**
+ * @param {HastNodes} node
+ * @returns {string} The text in the node.
+ */
+function hastText(node) {
+  if (node.type === "text") {
+    return node.value;
+  }
+  return "children" in node ? node.children.map((child) => hastText(child)).join("") : "";
+}
+
+/**
+ * @param {HastRoot} tree
+ * @param {VFile} file
+ */
+function addEleventyHeadingIds(tree, file) {
+  if (!/[\\/]src[\\/]content[\\/]docs[\\/]/u.test(file.path)) {
+    return;
+  }
+  const used = new Set();
+  /** @param {HastNodes} node */
+  function walk(node) {
+    if (node.type === "element" && /^h[2-5]$/u.test(node.tagName) && !("id" in node.properties)) {
+      const slug = eleventySlug(hastText(node));
       let id = slug;
-      for (let i = 1; used.has(id); i++) {
+      for (let i = 1; used.has(id); i += 1) {
         id = `${slug}-${i}`;
       }
       used.add(id);
-      node.properties.id = id;
-    });
-  };
+      Object.assign(node.properties, { id });
+    }
+    if ("children" in node) {
+      for (const child of node.children) {
+        walk(child);
+      }
+    }
+  }
+  walk(tree);
+}
+
+function rehypeEleventyHeadingIds() {
+  return addEleventyHeadingIds;
+}
+
+/**
+ * @param {MdastNodes | undefined} node
+ * @returns {node is Heading} Whether the node starts a section of the changelog.
+ */
+function isChangelogSection(node) {
+  return node?.type === "heading" && node.depth === 2;
+}
+
+/**
+ * @param {MdastRoot} tree
+ * @param {VFile} file
+ */
+function trimChangelog(tree, file) {
+  if (!/[\\/]CHANGELOG\.md$/u.test(file.path)) {
+    return;
+  }
+  const nodes = tree.children.slice(tree.children.findIndex((node) => isChangelogSection(node)));
+  tree.children = nodes.filter((node, i) => {
+    if (!isChangelogSection(node)) {
+      return true;
+    }
+    const [title] = node.children;
+    // Text, or inline code or HTML, if a heading ever starts with that.
+    const version = title && "value" in title ? /^\[(.+?)\]/u.exec(title.value)?.[1] : null;
+    if (version === "Unreleased" && (nodes[i + 1] == null || isChangelogSection(nodes[i + 1]))) {
+      return false;
+    }
+    if (version != null) {
+      node.data = { hProperties: { id: eleventySlug(version) } };
+    }
+    return true;
+  });
 }
 
 // The changelog page starts CHANGELOG.md at its first "##": the "# Changelog"
@@ -74,40 +149,23 @@ function rehypeEleventyHeadingIds() {
 // ("[1.50.4] - 2026-11-15") gets the id the old site gave it, the version
 // without dots ("1504"), so old links to a release still land on it.
 function remarkChangelog() {
-  const isSection = (node) => node?.type === "heading" && node.depth === 2;
-  return (tree, file) => {
-    if (!/[\\/]CHANGELOG\.md$/u.test(file.path ?? "")) {
-      return;
-    }
-    const nodes = tree.children.slice(tree.children.findIndex(isSection));
-    tree.children = nodes.filter((node, i) => {
-      if (!isSection(node)) {
-        return true;
-      }
-      const version = node.children[0]?.value?.match(/^\[(.+?)\]/u)?.[1];
-      if (version === "Unreleased" && (!nodes[i + 1] || isSection(nodes[i + 1]))) {
-        return false;
-      }
-      if (version) {
-        node.data = { hProperties: { id: eleventySlug(version) } };
-      }
-      return true;
-    });
-  };
+  return trimChangelog;
 }
 
 // Builds the djLint the demo runs, into public/static/py/, in a process of its
 // own: Pyodide stays out of Astro's memory. The flag on globalThis outlives a
 // config reload in the dev server, so a reload doesn't build it again.
+const flags = /** @type {typeof globalThis & { djlintDemoLockBuilt?: boolean }} */ (globalThis);
+/** @type {AstroIntegration} */
 const demoLock = {
   name: "demo-lock",
   hooks: {
     "astro:config:setup": ({ command }) => {
-      if ((command === "build" || command === "dev") && !globalThis.djlintDemoLockBuilt) {
+      if ((command === "build" || command === "dev") && flags.djlintDemoLockBuilt !== true) {
         execFileSync(process.execPath, [fileURLToPath(new URL("demo-lock.mjs", import.meta.url))], {
           stdio: "inherit",
         });
-        globalThis.djlintDemoLockBuilt = true;
+        flags.djlintDemoLockBuilt = true;
       }
     },
   },
@@ -132,7 +190,10 @@ const CSP = [
   "form-action 'none'",
 ].join("; ");
 
-/** @param {string} html */
+/**
+ * @param {string} html
+ * @returns {string} The CSP sources of the inline scripts in the page.
+ */
 function scriptHashes(html) {
   const hashes = new Set();
   for (const [, attrs = "", body] of html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/gu)) {
@@ -143,13 +204,14 @@ function scriptHashes(html) {
   return [...hashes].join(" ");
 }
 
+/** @type {AstroIntegration} */
 const csp = {
   name: "csp",
   hooks: {
     "astro:build:done": ({ dir }) => {
       const root = fileURLToPath(dir);
       const charset = '<meta charset="utf-8"/>';
-      for (const file of readdirSync(root, { recursive: true })) {
+      for (const file of readdirSync(root, { encoding: "utf8", recursive: true })) {
         if (!file.endsWith(".html")) {
           continue;
         }

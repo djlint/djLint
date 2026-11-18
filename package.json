@@ -52,7 +52,7 @@
   "scripts": {
     "esbuild-launcher": "esbuild ./npm/djlint.ts --outfile=npm/dist/djlint/djlint.mjs --format=esm --platform=node --target=node16.9",
     "format": "oxfmt",
-    "lint": "oxlint"
+    "lint": "oxlint --disable-nested-config"
   },
   "devDependencies": {
     "@total-typescript/ts-reset": "0.6.1",

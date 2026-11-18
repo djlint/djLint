@@ -37,7 +37,7 @@ test("the demo formats, lints, takes settings and restores them from the address
 
   await test.step("djLint loads, formats the welcome example and fills the window", async () => {
     await expect(page.locator("#djlint-version")).not.toBeEmpty({ timeout: 60_000 });
-    await expect.poll(() => text(output)).toBe(WELCOME);
+    await expect.poll(async () => text(output)).toBe(WELCOME);
     await expect(page.locator(".demo-loading")).toBeHidden();
     await expect(problems).toHaveText("No problems");
     expect(new URL(page.url()).hash).toBe("");
@@ -55,39 +55,39 @@ test("the demo formats, lints, takes settings and restores them from the address
 
   await test.step("a template is formatted and linted", async () => {
     await input.fill(MESSY);
-    await expect.poll(() => text(output)).toBe(formatted("    "));
+    await expect.poll(async () => text(output)).toBe(formatted("    "));
     await expect(problems).toHaveText("Problems: 2");
     await expect(input.locator(".cm-lintRange")).toHaveCount(2);
   });
 
   await test.step("a setting changes the output, the commands and the config files", async () => {
     await indent.fill("2");
-    await expect.poll(() => text(output)).toBe(formatted("  "));
+    await expect.poll(async () => text(output)).toBe(formatted("  "));
 
     await view("CLI").click();
     await expect(view("CLI")).toHaveAttribute("aria-pressed", "true");
     await expect
-      .poll(() => text(output))
+      .poll(async () => text(output))
       .toBe("djlint input.html --reformat --indent=2\ndjlint input.html --lint --indent=2");
     await view("pyproject.toml").click();
-    await expect.poll(() => text(output)).toBe("[tool.djlint]\nindent = 2");
+    await expect.poll(async () => text(output)).toBe("[tool.djlint]\nindent = 2");
     await view("Output").click();
-    await expect.poll(() => text(output)).toBe(formatted("  "));
+    await expect.poll(async () => text(output)).toBe(formatted("  "));
     await expect.poll(() => new URL(page.url()).hash.length).toBeGreaterThan(1);
   });
 
   await test.step("an indent of 0, which djLint reads as unset, is unset everywhere", async () => {
     await indent.fill("0");
-    await expect.poll(() => text(output)).toBe(formatted("    "));
+    await expect.poll(async () => text(output)).toBe(formatted("    "));
     await view("CLI").click();
     await expect
-      .poll(() => text(output))
+      .poll(async () => text(output))
       .toBe("djlint input.html --reformat\ndjlint input.html --lint");
     await view("pyproject.toml").click();
-    await expect.poll(() => text(output)).toMatch(/^# /);
+    await expect.poll(async () => text(output)).toMatch(/^# /u);
     await view("Output").click();
     await indent.fill("2");
-    await expect.poll(() => text(output)).toBe(formatted("  "));
+    await expect.poll(async () => text(output)).toBe(formatted("  "));
   });
 
   await test.step("a setting djLint warns about shows the warning, every time", async () => {
@@ -106,9 +106,9 @@ test("the demo formats, lints, takes settings and restores them from the address
 
   await test.step("the address brings back the example and its settings", async () => {
     await page.reload();
-    await expect.poll(() => text(input)).toBe(MESSY);
+    await expect.poll(async () => text(input)).toBe(MESSY);
     await expect(indent).toHaveValue("2");
-    await expect.poll(() => text(output), { timeout: 60_000 }).toBe(formatted("  "));
+    await expect.poll(async () => text(output), { timeout: 60_000 }).toBe(formatted("  "));
     await expect(problems).toHaveText("Problems: 2");
   });
 });

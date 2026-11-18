@@ -5,7 +5,7 @@ import { expect, test } from "./fixtures";
 for (const [path, target] of [
   ["/docs/configuration/#max-line-length", "max_line_length"],
   ["/docs/linter/#h006", "H006"],
-]) {
+] as const) {
   test(`${path} still lands on its section`, async ({ page }) => {
     const response = await page.goto(path);
     expect(response?.ok()).toBe(true);

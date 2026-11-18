@@ -11,63 +11,91 @@ interface Props {
 }
 
 const { label, placeholder, empty } = Astro.props;
-// llms.txt renders the English page, without a route.
+// The llms.txt plugin renders the English page, without a route.
 const lang = starlightRoute(Astro.locals)?.locale ?? "en";
 const markdown = await createMarkdownProcessor();
 
-// djlint.toml takes the pyproject.toml settings without the [tool.djlint] table.
-const djlintToml = (value: string) =>
-  value
-    .replace(/\[tool\.djlint\.([^\]]+)\]/g, "[$1]")
-    .replace(/\[tool\.djlint\]\n?/g, "")
+/// A djlint.toml takes the pyproject.toml settings without the [tool.djlint] table.
+function djlintToml(value: string): string {
+  return value
+    .replaceAll(/\[tool\.djlint\.(?<table>[^\]]+)\]/gu, "[$<table>]")
+    .replaceAll(/\[tool\.djlint\]\n?/gu, "")
     .trim();
+}
 
-const usageTabs = (usage: (typeof options)[number]["usage"]) =>
-  usage.flatMap(({ name, value }) => {
-    if (name === "cli") return [{ label: name, lang: "bash", code: value }];
-    if (name === ".djlintrc") return [{ label: name, lang: "json", code: value }];
+interface Tab {
+  code: string;
+  label: string;
+  lang: string;
+}
+
+function usageTabs(usage: (typeof options)[number]["usage"]): Tab[] {
+  return usage.flatMap(({ name, value }) => {
+    if (name === "cli") {
+      return [{ code: value, label: name, lang: "bash" }];
+    }
+    if (name === ".djlintrc") {
+      return [{ code: value, label: name, lang: "json" }];
+    }
     return [
-      { label: name, lang: "toml", code: value },
+      { code: value, label: name, lang: "toml" },
       // Short enough for the tab bar to fit a phone; .djlint.toml takes the same.
-      { label: "djlint.toml", lang: "toml", code: djlintToml(value) },
+      { code: djlintToml(value), label: "djlint.toml", lang: "toml" },
     ];
   });
+}
+
+type Part = { html: string } | { code: string; lang: string };
+
+async function prose(text: string): Promise<Part | null> {
+  if (!text.trim()) {
+    return null;
+  }
+  const { code } = await markdown.render(text);
+  return { html: code };
+}
 
 // Code blocks in a description go through <Code>, like every other code block
 // on the site; the plain Markdown processor would use Astro's default theme.
-const fence = /^```(\w*)\n([\s\S]*?)\n```$/gm;
-async function describe(text: string) {
-  const parts: ({ html: string } | { code: string; lang: string })[] = [];
+const fence = /^```(?<lang>\w*)\n(?<code>[\s\S]*?)\n```$/gmu;
+async function describe(text: string): Promise<Part[]> {
+  const parts: (Part | Promise<Part | null>)[] = [];
   let last = 0;
-  const prose = async (end: number) => {
-    const chunk = text.slice(last, end);
-    if (chunk.trim()) parts.push({ html: (await markdown.render(chunk)).code });
-  };
   for (const match of text.matchAll(fence)) {
-    await prose(match.index);
-    // html is highlighted as Twig, as in the pages (see astro.config.mjs).
-    parts.push({ lang: match[1] === "html" ? "twig" : match[1] || "text", code: match[2] });
+    parts.push(prose(text.slice(last, match.index)));
+    const { code = "", lang: fenceLang = "" } = match.groups ?? {};
+    // HTML is highlighted as Twig, as in the pages (see astro.config.mjs).
+    parts.push({ code, lang: fenceLang === "html" ? "twig" : fenceLang || "text" });
     last = match.index + match[0].length;
   }
-  await prose(text.length);
-  return parts;
+  parts.push(prose(text.slice(last)));
+  const resolved = await Promise.all(parts);
+  return resolved.filter((part) => part !== null);
+}
+
+function translated(texts: Record<string, string> & { en: string }): string {
+  return texts[lang] ?? texts.en;
 }
 
 // The exclude list and the regex defaults are long; on a phone they break
 // after a comma or a bar rather than inside a name.
-const breakable = (value: string) => value.split(/(?<=[,|])/);
+function breakable(value: string): string[] {
+  return value.split(/(?<=[,|])/u);
+}
 
 const rendered = await Promise.all(
   options
     .toSorted((a, b) => a.name.localeCompare(b.name))
     .map(async (option) => ({
-      ...option,
-      id: option.name.replaceAll("_", "-"),
-      parts: await describe(option.description[lang] ?? option.description.en),
-      tabs: usageTabs(option.usage),
+      defaultValue: "default" in option ? option.default : void 0,
       // The flag shows next to the badges, since the cli tab is the last one.
-      flag: option.usage.find(({ name }) => name === "cli")?.value.match(/^--[\w-]+/)?.[0],
-      defaultValue: "default" in option ? option.default : undefined,
+      flag: option.usage.find(({ name }) => name === "cli")?.value.match(/^--[\w-]+/u)?.[0],
+      id: option.name.replaceAll("_", "-"),
+      name: option.name,
+      parts: await describe(translated(option.description)),
+      since: option.since,
+      tabs: usageTabs(option.usage),
+      tags: option.tags,
     })),
 );
 ---
@@ -135,33 +163,44 @@ const rendered = await Promise.all(
 }
 
 <script>
-  const filter = document.querySelector<HTMLInputElement>("#config-filter")!;
-  const empty = document.querySelector<HTMLElement>("#config-empty")!;
+  import { requiredData, requiredElement } from "../scripts/dom";
+
+  const filter = requiredElement("#config-filter", HTMLInputElement);
+  const empty = requiredElement("#config-empty", HTMLElement);
   const sections = [...document.querySelectorAll<HTMLElement>(".config-option")];
-  const list = sections[0]!.parentElement!;
-  const end = sections.at(-1)!.nextSibling;
+  const list = sections[0]?.parentElement;
+  if (!list) {
+    throw new TypeError("The page has no options");
+  }
+  const end = sections.at(-1)?.nextSibling ?? null;
+
+  function matches(text: string, words: readonly string[]): boolean {
+    return words.every((word) => text.includes(word));
+  }
 
   filter.addEventListener("input", () => {
-    const words = filter.value.toLowerCase().split(/[\s_-]+/).filter(Boolean);
-    const matches = (text: string) => words.every((word) => text.includes(word));
+    const words = filter.value.toLowerCase().split(/[\s_-]+/u).filter(Boolean);
     for (const section of sections) {
-      section.hidden = !matches(section.textContent!.toLowerCase());
+      section.hidden = !matches(section.textContent.toLowerCase(), words);
     }
     empty.hidden = sections.some((section) => !section.hidden);
     // Options named after the search come first, so "ignore" leads with
     // ignore and ignore_blocks rather than with every option that mentions it.
-    const rank = (section: HTMLElement) => (matches(section.dataset.name!) ? 0 : 1);
-    for (const section of sections.toSorted((a, b) => rank(a) - rank(b))) {
+    const named = sections.filter((section) => matches(requiredData(section, "name"), words));
+    const others = sections.filter((section) => !named.includes(section));
+    for (const section of [...named, ...others]) {
+      // oxlint-disable-next-line unicorn/prefer-modern-dom-apis -- end is null when the options end the page
       list.insertBefore(section, end);
     }
   });
 
   // A link to an option the filter hides (the table of contents lists them
   // all) clears the filter first, so the browser can scroll to it.
-  document.addEventListener("click", (event) => {
-    const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
-    const target = link && document.getElementById(decodeURIComponent(link.hash.slice(1)));
-    if (target?.closest<HTMLElement>(".config-option")?.hidden) {
+  document.addEventListener("click", ({ target }) => {
+    const link =
+      target instanceof Element ? target.closest<HTMLAnchorElement>('a[href^="#"]') : null;
+    const id = link ? CSS.escape(decodeURIComponent(link.hash.slice(1))) : "";
+    if (id && document.querySelector(`#${id}`)?.closest<HTMLElement>(".config-option")?.hidden) {
       filter.value = "";
       filter.dispatchEvent(new Event("input"));
     }
@@ -170,33 +209,49 @@ const rendered = await Promise.all(
   // The table of contents lists every option, more than its panel holds, and
   // Starlight never scrolls the panel to the entry it marks as current. Scroll
   // the panel itself, not with scrollIntoView, which can move the page too.
-  function reveal(link: Element | null) {
+  function reveal(link: Element | null): void {
     // The desktop panel holds the phone table too, hidden; measuring a hidden
     // link would scroll the panel to nowhere.
-    if (!link?.checkVisibility()) return;
+    if (!link?.checkVisibility()) {
+      return;
+    }
     let panel = link.parentElement;
     while (
       panel &&
-      !(panel.scrollHeight > panel.clientHeight && /auto|scroll/.test(getComputedStyle(panel).overflowY))
+      !(
+        panel.scrollHeight > panel.clientHeight &&
+        /auto|scroll/u.test(getComputedStyle(panel).overflowY)
+      )
     ) {
       panel = panel.parentElement;
     }
-    if (!panel || panel === document.scrollingElement) return;
+    if (!panel || panel === document.scrollingElement) {
+      return;
+    }
     const box = link.getBoundingClientRect();
     const view = panel.getBoundingClientRect();
     // The desktop panel starts under the header, which pads its top.
-    const top = view.top + parseFloat(getComputedStyle(panel).paddingTop);
-    if (box.top < top) panel.scrollTop -= top - box.top;
-    else if (box.bottom > view.bottom) panel.scrollTop += box.bottom - view.bottom;
+    // oxlint-disable-next-line unicorn/prefer-number-coercion -- Number() reads "4rem" or "56px" as NaN
+    const top = view.top + Number.parseFloat(getComputedStyle(panel).paddingTop);
+    if (box.top < top) {
+      panel.scrollTop -= top - box.top;
+    } else if (box.bottom > view.bottom) {
+      panel.scrollTop += box.bottom - view.bottom;
+    }
   }
+
+  function revealCurrent(toc: Element): void {
+    reveal(toc.querySelector('a[aria-current="true"]'));
+  }
+
   for (const toc of document.querySelectorAll("starlight-toc, mobile-starlight-toc")) {
-    const current = () => toc.querySelector('a[aria-current="true"]');
-    new MutationObserver(() => reveal(current())).observe(toc, {
-      attributeFilter: ["aria-current"],
-      subtree: true,
-    });
+    new MutationObserver(() => {
+      revealCurrent(toc);
+    }).observe(toc, { attributeFilter: ["aria-current"], subtree: true });
     // The phone menu is closed while the current entry changes.
-    toc.querySelector("details")?.addEventListener("toggle", () => reveal(current()));
+    toc.querySelector("details")?.addEventListener("toggle", () => {
+      revealCurrent(toc);
+    });
   }
 </script>
 
@@ -207,34 +262,40 @@ const rendered = await Promise.all(
     gap: 0.25rem;
     font-weight: 600;
   }
+
   .config-filter input {
     padding: 0.5rem 0.75rem;
+    font-weight: normal;
+    color: var(--sl-color-white);
+    background: var(--sl-color-black);
     border: 1px solid var(--sl-color-gray-5);
     border-radius: 0.5rem;
-    background: var(--sl-color-black);
-    color: var(--sl-color-white);
-    font-weight: normal;
   }
+
   .config-option {
     padding-top: 1rem;
     border-top: 1px solid var(--sl-color-hairline);
   }
+
   .config-option h3 a {
     color: inherit;
     text-decoration: none;
   }
+
   .config-tags {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: 0.25rem;
+    align-items: center;
   }
+
   .config-default code {
     overflow-wrap: anywhere;
   }
+
   /* Starlight's tab padding leaves the four config file tabs too wide for a
      phone, where the last one, cli, would only show on a sideways scroll. */
-  @media (max-width: 30rem) {
+  @media (width <= 30rem) {
     .config-option :global([role="tab"]) {
       padding-inline: 0.625rem;
       font-size: var(--sl-text-sm);
@@ -247,13 +308,15 @@ const rendered = await Promise.all(
     .config-option :global(.tablist-wrapper) {
       display: none;
     }
+
     .config-option :global([role="tabpanel"][hidden]) {
       display: block;
     }
+
     .config-usage::before {
-      content: attr(data-label);
       display: block;
       font-weight: 600;
+      content: attr(data-label);
     }
   }
 </style>

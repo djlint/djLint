@@ -81,6 +81,12 @@
     { "matchPackageNames": ["oxfmt", "oxc-project/mirrors-oxfmt"], "groupName": "oxfmt" },
     { "matchPackageNames": ["oxlint", "oxlint-tsgolint"], "groupName": "oxlint" },
     {
+      "description": "A config's major version requires the stylelint it was made for, so neither passes CI without the other",
+      "matchPackageNames": ["stylelint", "stylelint-config-*", "thibaudcolas/pre-commit-stylelint"],
+      "groupName": "stylelint",
+      "separateMajorMinor": false
+    },
+    {
       "description": "The Pyodide that builds the demo's lock file and the one the demo loads from the CDN have to be the same",
       "matchPackageNames": ["pyodide"],
       "groupName": "pyodide"
