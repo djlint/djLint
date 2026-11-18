@@ -32,6 +32,7 @@ import io
 import json
 import os
 import py_compile
+import re
 import shutil
 import subprocess
 import sys
@@ -146,8 +147,6 @@ _DIST: Final = _ROOT / "npm" / "dist"
 _DOWNLOADS: Final = _DIST / "downloads"
 _RELEASE_URL: Final = f"https://github.com/astral-sh/python-build-standalone/releases/download/{PYTHON_BUILD_STANDALONE}"
 _REPOSITORY: Final = {"type": "git", "url": "git+https://github.com/djlint/djLint.git"}
-# The oldest Node the launcher runs on, which esbuild builds it for: its Object.hasOwn came in 16.9.
-_LAUNCHER_NODE: Final = "16.9"
 
 
 def _run(*args: str | Path, cwd: Path = _ROOT) -> str:
@@ -422,16 +421,22 @@ def _build_launcher(version: str) -> Path:
     if manifest["version"] != version:
         msg = f"package.json has {manifest['version']} and pyproject.toml {version}"
         raise RuntimeError(msg)
+    # The oldest Node the launcher runs on is the one esbuild builds it for, the first with
+    # Object.hasOwn.
+    target = re.search(r"--target=node(\d+\.\d+)\b", manifest["scripts"]["esbuild-launcher"])
+    if target is None:
+        msg = "the esbuild-launcher script in package.json has no --target=node"
+        raise RuntimeError(msg)
     for field in ("devDependencies", "private", "scripts", "type"):
         manifest.pop(field, None)
     manifest |= {
         "bin": {"djlint": "djlint.mjs"},
         "files": ["djlint.mjs"],
         "optionalDependencies": {f"@djlint/{name}": version for name in PLATFORMS},
-        "engines": {"node": f">={_LAUNCHER_NODE}"},
+        "engines": {"node": f">={target[1]}"},
     }
     _write_manifest(folder, manifest)
-    _run(_npm(), "run", "esbuild-launcher", "--", "--minify", f"--target=node{_LAUNCHER_NODE}")
+    _run(_npm(), "run", "esbuild-launcher", "--", "--minify")
     for file in (_ROOT / "README.md", _ROOT / "LICENSE"):
         shutil.copy(file, folder)
     return _pack(folder)

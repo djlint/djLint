@@ -72,9 +72,9 @@ jobs:
       - id: oldest-node
         if: ${{ matrix.platform == 'linux-x64-gnu' }}
         run: |
-          version=$(sed -nE 's/^_LAUNCHER_NODE: Final = "([0-9]+\.[0-9]+)"$/\1.0/p' npm/build.py)
-          [ -n "$version" ] || { echo "::error::npm/build.py names no _LAUNCHER_NODE"; exit 1; }
-          echo "version=$version" >> "$GITHUB_OUTPUT"
+          target=$(grep -oE -- '--target=node[0-9]+\.[0-9]+' package.json) ||
+            { echo "::error::the esbuild-launcher script in package.json has no --target=node"; exit 1; }
+          echo "version=${target#--target=node}.0" >> "$GITHUB_OUTPUT"
       - if: ${{ steps.oldest-node.outputs.version }}
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:

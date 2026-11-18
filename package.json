@@ -50,7 +50,7 @@
   },
   "type": "module",
   "scripts": {
-    "esbuild-launcher": "esbuild ./npm/djlint.ts --outfile=npm/dist/djlint/djlint.mjs --format=esm --platform=node",
+    "esbuild-launcher": "esbuild ./npm/djlint.ts --outfile=npm/dist/djlint/djlint.mjs --format=esm --platform=node --target=node16.9",
     "format": "oxfmt",
     "lint": "oxlint"
   },
