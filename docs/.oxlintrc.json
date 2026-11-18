@@ -81,7 +81,7 @@
       "rules": { "jsdoc/require-param-type": "off", "jsdoc/require-returns-type": "off" }
     },
     {
-      "files": ["*.mjs", "*.config.ts", "src/content.config.js", "tests/**"],
+      "files": ["*.mjs", "*.config.ts", "src/content.config.ts", "tests/**"],
       "env": { "browser": false, "node": true }
     },
     {

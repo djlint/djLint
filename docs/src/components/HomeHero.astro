@@ -293,9 +293,9 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
   }
 
   requiredElement(".run", HTMLButtonElement, editor).addEventListener("click", () => {
-    const formatted = editor.dataset.state === "messy";
+    const formatted = editor.dataset["state"] === "messy";
     transition(() => {
-      editor.dataset.state = formatted ? "clean" : "messy";
+      editor.dataset["state"] = formatted ? "clean" : "messy";
     });
   });
 
@@ -305,9 +305,9 @@ const problems = t("djlint.hero_problems").replace("{count}", String(problemCoun
     const on = flag.getAttribute("aria-pressed") !== "true";
     function swap(): void {
       flag.setAttribute("aria-pressed", String(on));
-      editor.dataset.attributes = on ? "single" : "aligned";
+      editor.dataset["attributes"] = on ? "single" : "aligned";
     }
-    if (editor.dataset.state === "clean") {
+    if (editor.dataset["state"] === "clean") {
       transition(swap);
     } else {
       swap();

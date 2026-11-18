@@ -26,14 +26,35 @@ for (const theme of ["light", "dark"]) {
           const [r = 0, g = 0, b = 0, a = 0] = context.getImageData(0, 0, 1, 1).data;
           return { a, b, g, r };
         };
+        type Color = ReturnType<typeof rgba>;
+        const blend = (over: Color, under: Color): Color => {
+          const alpha = over.a / 255;
+          const mix = (top: number, bottom: number) => top * alpha + bottom * (1 - alpha);
+          return {
+            a: 255,
+            b: mix(over.b, under.b),
+            g: mix(over.g, under.g),
+            r: mix(over.r, under.r),
+          };
+        };
+        // The color as it shows: the translucent backgrounds above the first opaque one (or
+        // the white of the canvas) blended over it.
         const background = (element: Element | null | undefined) => {
+          const layers: Color[] = [];
+          let base = rgba("white");
           for (let node = element; node; node = node.parentElement) {
             const color = rgba(getComputedStyle(node).backgroundColor);
             if (color.a === 255) {
-              return color;
+              base = color;
+              break;
             }
+            layers.push(color);
           }
-          return rgba("white");
+          let shown = base;
+          for (const layer of layers.toReversed()) {
+            shown = blend(layer, shown);
+          }
+          return shown;
         };
         const linear = (byte: number) => {
           const c = byte / 255;

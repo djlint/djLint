@@ -28,6 +28,7 @@
     "starlight-llms-txt": "0.12.0"
   },
   "devDependencies": {
+    "@astrojs/check": "0.9.12",
     "@axe-core/playwright": "4.14.0",
     "@playwright/test": "1.65.1",
     "@total-typescript/ts-reset": "0.6.1",
@@ -41,7 +42,6 @@
     "stylelint": "17.16.0",
     "stylelint-config-recess-order": "7.10.0",
     "stylelint-config-standard": "40.0.0",
-    "typescript": "7.0.2",
     "vfile": "6.0.3"
   }
 }

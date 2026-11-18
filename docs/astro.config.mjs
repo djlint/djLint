@@ -131,7 +131,8 @@ function trimChangelog(tree, file) {
       return true;
     }
     const [title] = node.children;
-    const version = title?.type === "text" ? /^\[(.+?)\]/u.exec(title.value)?.[1] : null;
+    // Text, or inline code or HTML, if a heading ever starts with that.
+    const version = title && "value" in title ? /^\[(.+?)\]/u.exec(title.value)?.[1] : null;
     if (version === "Unreleased" && (nodes[i + 1] == null || isChangelogSection(nodes[i + 1]))) {
       return false;
     }

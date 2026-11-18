@@ -1,8 +1,17 @@
+/** @import { PyCallable } from "pyodide/ffi" */
+/** @import { WorkerReply, WorkerRequest } from "../../../src/scripts/demo-worker" */
+
 // Not a static import: a module worker's static imports load under the page's Content Security
 // Policy, which allows no CDN, and a dynamic one under the worker's own.
 const { loadPyodide } = await import("https://cdn.jsdelivr.net/pyodide/v314.0.8/full/pyodide.mjs");
 
-/** @import { PyCallable } from "pyodide/ffi" */
+/**
+ * Sends the page an answer.
+ * @param {WorkerReply} reply - The answer.
+ */
+function answer(reply) {
+  globalThis.postMessage(reply);
+}
 
 /**
  * Loads djLint. The page shows its own message when that fails: the error is for the console.
@@ -47,7 +56,7 @@ _djlint_run
     }
     return run;
   } catch (e) {
-    globalThis.postMessage({ message: "error", type: "status" });
+    answer({ message: "error", type: "status" });
     throw e;
   }
 }
@@ -60,19 +69,15 @@ const run = await loadDjlint();
 globalThis.addEventListener(
   "message",
   /**
-   * @param {MessageEvent<{ html: string, id: number, options: Record<string, unknown> }>} event
-   *   The template and the settings to run djLint with.
+   * @param {MessageEvent<WorkerRequest>} event - The template and the settings to run djLint with.
    */
   ({ data: { html, id, options } }) => {
     try {
-      globalThis.postMessage({ ...run(html, options), id, type: "result" });
+      // oxlint-disable-next-line typescript/no-unsafe-argument -- the Python side builds the result
+      answer({ ...run(html, options), id, type: "result" });
     } catch (e) {
-      globalThis.postMessage({
-        id,
-        message: e instanceof Error ? e.message : String(e),
-        type: "error",
-      });
+      answer({ id, message: e instanceof Error ? e.message : String(e), type: "error" });
     }
   },
 );
-globalThis.postMessage({ message: "ready", type: "status" });
+answer({ message: "ready", type: "status" });

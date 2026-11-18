@@ -68,9 +68,12 @@ function shellWord(text: string): string {
  * @returns The commands that format and lint input.html with these settings.
  */
 export function commands(config: DemoConfig): string {
-  const flags = Object.entries(config).map(([name, value]) => {
+  const flags = Object.entries(config).flatMap(([name, value]) => {
     const flag = `--${name.replaceAll("_", "-")}`;
-    return typeof value === "string" ? `${flag}=${shellWord(value)}` : flag;
+    if (typeof value === "string") {
+      return [`${flag}=${shellWord(value)}`];
+    }
+    return value ? [flag] : [];
   });
   return ["--reformat", "--lint"]
     .map((mode) => ["djlint input.html", mode, ...flags].join(" "))

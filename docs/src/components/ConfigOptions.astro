@@ -73,6 +73,10 @@ async function describe(text: string): Promise<Part[]> {
   return resolved.filter((part) => part !== null);
 }
 
+function translated(texts: Record<string, string> & { en: string }): string {
+  return texts[lang] ?? texts.en;
+}
+
 // The exclude list and the regex defaults are long; on a phone they break
 // after a comma or a bar rather than inside a name.
 function breakable(value: string): string[] {
@@ -88,7 +92,7 @@ const rendered = await Promise.all(
       flag: option.usage.find(({ name }) => name === "cli")?.value.match(/^--[\w-]+/u)?.[0],
       id: option.name.replaceAll("_", "-"),
       name: option.name,
-      parts: await describe(option.description[lang] ?? option.description.en),
+      parts: await describe(translated(option.description)),
       since: option.since,
       tabs: usageTabs(option.usage),
       tags: option.tags,

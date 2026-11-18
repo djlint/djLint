@@ -144,7 +144,7 @@ function hint({ name, anchor }: Field): string {
   return `<code class="flag">${flag}</code> ${prose}`;
 }
 function label(name: string): string {
-  const texts: Record<string, string> = labels[name as keyof typeof labels];
+  const texts: Record<string, string> & { en: string } = labels[name as keyof typeof labels];
   return texts[lang] ?? texts.en;
 }
 function docs(anchor: string): string {
@@ -223,7 +223,12 @@ if (description.length !== 2) {
         </details>
         {/* Side by side the settings stay open; above the editors they start closed. */}
         <script is:inline>
-          document.currentScript.previousElementSibling.open = matchMedia("(width >= 60rem)").matches;
+          {
+            const settings = document.currentScript?.previousElementSibling;
+            if (settings instanceof HTMLDetailsElement) {
+              settings.open = matchMedia("(width >= 60rem)").matches;
+            }
+          }
         </script>
         <div class="demo-editors">
           <section>
@@ -292,6 +297,7 @@ if (description.length !== 2) {
   import { apiOptions, commands, configFile, isSet } from "../scripts/demo-config";
   import type { DemoConfig } from "../scripts/demo-config";
   import { decodeState, encodeState } from "../scripts/demo-state";
+  import type { Finding, WorkerReply, WorkerRequest } from "../scripts/demo-worker";
   import { requiredData, requiredElement } from "../scripts/dom";
   import { djlintEditorTheme } from "../scripts/editor-theme.js";
 
@@ -415,8 +421,13 @@ if (description.length !== 2) {
     sessionId += 1;
     const config = getConfig();
     requested = input.state.doc;
+    const request: WorkerRequest = {
+      html: requested.toString(),
+      id: sessionId,
+      options: apiOptions(config),
+    };
     // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a worker's postMessage takes no origin
-    worker.postMessage({ html: requested.toString(), id: sessionId, options: apiOptions(config) });
+    worker.postMessage(request);
     void saveState(requested.toString(), config, sessionId);
     if (view !== "output") {
       showOutput();
@@ -499,15 +510,6 @@ if (description.length !== 2) {
     return from + offset;
   }
 
-  interface Finding {
-    code: string;
-    column: number;
-    end_column: number;
-    end_line: number;
-    line: number;
-    message: string;
-  }
-
   function problemsText(findings: Finding[] | null): string {
     if (!findings) {
       return "";
@@ -530,7 +532,7 @@ if (description.length !== 2) {
     });
     input.dispatch(setDiagnostics(input.state, diagnostics));
     problems.textContent = problemsText(findings);
-    problems.dataset.state = findings?.length ? "messy" : "clean";
+    problems.dataset["state"] = findings?.length ? "messy" : "clean";
   }
 
   // The worker reports its progress as codes; the page holds their translations.
@@ -548,25 +550,25 @@ if (description.length !== 2) {
     await restored;
     format();
   }
-  worker.addEventListener("message", ({ data: { id, type, message, html, findings, warnings } }) => {
-    if (type === "status" && message === "ready") {
+  worker.addEventListener("message", ({ data }: MessageEvent<WorkerReply>) => {
+    if (data.type === "status" && data.message === "ready") {
       // Edits made while djLint loaded may have reached the worker before it
       // listened, so the current example goes again.
       setStatus("");
       loading.hidden = true;
       void formatOnceRestored();
-    } else if (type === "status" && message === "error") {
+    } else if (data.type === "status") {
       showError();
-    } else if (type === "version") {
-      requiredElement("#djlint-version", HTMLElement).textContent = ` ${message}`;
-    } else if ((type === "result" || type === "error") && id === sessionId) {
-      formatted = type === "result" ? html : message;
-      showWarnings(type === "result" ? warnings : []);
+    } else if (data.type === "version") {
+      requiredElement("#djlint-version", HTMLElement).textContent = ` ${data.message}`;
+    } else if (data.id === sessionId) {
+      formatted = data.type === "result" ? data.html : data.message;
+      showWarnings(data.type === "result" ? data.warnings : []);
       if (view === "output") {
         showOutput();
       }
       if (input.state.doc === requested) {
-        showFindings(type === "result" ? findings : null);
+        showFindings(data.type === "result" ? data.findings : null);
       }
     }
   });

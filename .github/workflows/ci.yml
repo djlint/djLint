@@ -40,6 +40,9 @@ jobs:
       # After the build, which writes the types of Astro's virtual modules.
       - run: npx oxlint
         working-directory: docs
+      # The type check of the components, which oxlint's misses.
+      - run: npx astro check
+        working-directory: docs
       - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
           args: >-

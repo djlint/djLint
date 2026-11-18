@@ -14,6 +14,15 @@ async function pipe(
   return new Uint8Array(await new Response(stream).arrayBuffer());
 }
 
+function isConfig(value: unknown): value is DemoState["config"] {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every((item) => typeof item === "string" || typeof item === "boolean")
+  );
+}
+
 function isDemoState(value: unknown): value is DemoState {
   return (
     typeof value === "object" &&
@@ -21,8 +30,7 @@ function isDemoState(value: unknown): value is DemoState {
     "html" in value &&
     typeof value.html === "string" &&
     "config" in value &&
-    typeof value.config === "object" &&
-    value.config !== null
+    isConfig(value.config)
   );
 }
 
