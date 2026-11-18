@@ -9,7 +9,7 @@ which npm picks out of its optional dependencies by their os, cpu and libc.
 Each of those holds a CPython from python-build-standalone, cut down to what
 djLint can use, with djLint and its dependencies installed into it.
 
-    npm ci
+    npm ci --include=dev
     uv run npm/build.py WHEELS [PLATFORM ...]
 
 WHEELS is a folder with the djLint wheels of this version. When it has
@@ -17,7 +17,7 @@ compiled ones, as for a release, each platform that djLint is compiled for
 has to find its own there; the others, and all of them when there is only the
 pure one, as for a test, take the pure one. With no PLATFORM, all of them are
 built. The packages are packed into npm/dist. npm ci, on the Node in .nvmrc,
-installs esbuild, which builds the launcher.
+installs esbuild, which builds the launcher, even with NODE_ENV=production.
 
 The Python of a package runs this one's bytecode, so this script runs on the
 same Python version. A package for Linux or macOS has to be built on one of
@@ -423,7 +423,9 @@ def _build_launcher(version: str) -> Path:
         raise RuntimeError(msg)
     # The oldest Node the launcher runs on is the one esbuild builds it for, the first with
     # Object.hasOwn.
-    target = re.search(r"--target=node(\d+\.\d+)\b", manifest["scripts"]["esbuild-launcher"])
+    target = re.search(
+        r"--target=node(\d+(?:\.\d+){0,2})\b", manifest["scripts"]["esbuild-launcher"]
+    )
     if target is None:
         msg = "the esbuild-launcher script in package.json has no --target=node"
         raise RuntimeError(msg)

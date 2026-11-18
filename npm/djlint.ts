@@ -46,30 +46,31 @@ function reportedLibc(): Libc {
   return Array.isArray(objects) && objects.some((file) => isMuslObject(file)) ? "musl" : void 0;
 }
 
+const LIBC_UNKNOWN = `can't tell the libc of this Linux, and neither can npm, so it installed no Python for it. Install djLint from PyPI: ${INSTALL}`;
+
 // How npm tells the libc apart when it picks the optional dependency to install.
 // The ldd script names musl or the GNU C Library; only without it does the report decide.
-async function libc(): Promise<Libc> {
+// When ldd names neither, npm installs nothing, but a package from before may be there.
+async function libc(): Promise<{ family: Libc; npmKnows: boolean }> {
   const ldd = await readFile("/usr/bin/ldd", "latin1").catch(() => null);
-  if (ldd === null) {
-    return reportedLibc();
+  if (ldd?.includes("musl")) {
+    return { family: "musl", npmKnows: true };
   }
-  if (ldd.includes("musl")) {
-    return "musl";
+  if (ldd?.includes("GNU C Library")) {
+    return { family: "gnu", npmKnows: true };
   }
-  return ldd.includes("GNU C Library") ? "gnu" : void 0;
+  return { family: reportedLibc(), npmKnows: ldd === null };
 }
 
-async function platform(): Promise<string> {
+async function platform(): Promise<{ id: string; npmKnows: boolean }> {
   if (process.platform !== "linux") {
-    return `${process.platform}-${process.arch}`;
+    return { id: `${process.platform}-${process.arch}`, npmKnows: true };
   }
-  const family = await libc();
+  const { family, npmKnows } = await libc();
   if (!family) {
-    fail(
-      `can't tell the libc of this Linux, and neither can npm, so it installed no Python for it. Install djLint from PyPI: ${INSTALL}`,
-    );
+    fail(LIBC_UNKNOWN);
   }
-  return `linux-${process.arch}-${family}`;
+  return { id: `linux-${process.arch}-${family}`, npmKnows };
 }
 
 const require = createRequire(import.meta.url);
@@ -77,7 +78,8 @@ const { optionalDependencies } = await readManifest(require.resolve("./package.j
 if (typeof optionalDependencies !== "object" || optionalDependencies === null) {
   throw new TypeError("package.json has no optionalDependencies");
 }
-const name = `@djlint/${await platform()}`;
+const { id, npmKnows } = await platform();
+const name = `@djlint/${id}`;
 if (!Object.hasOwn(optionalDependencies, name)) {
   fail(`the npm package has no build for ${name.slice(8)}. Install djLint from PyPI: ${INSTALL}`);
 }
@@ -91,7 +93,9 @@ try {
   python = path.join(path.dirname(manifest), interpreter);
 } catch {
   fail(
-    `${name} isn't installed. npm leaves this optional dependency out with --omit=optional, and so does a lock file made without it. Reinstall djlint.`,
+    npmKnows
+      ? `${name} isn't installed. npm leaves this optional dependency out with --omit=optional, and so does a lock file made without it. Reinstall djlint.`
+      : LIBC_UNKNOWN,
   );
 }
 

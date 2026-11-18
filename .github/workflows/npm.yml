@@ -72,9 +72,11 @@ jobs:
       - id: oldest-node
         if: ${{ matrix.platform == 'linux-x64-gnu' }}
         run: |
-          target=$(grep -oE -- '--target=node[0-9]+\.[0-9]+' package.json) ||
+          target=$(jq -er '.scripts["esbuild-launcher"] | capture("--target=node(?<v>[0-9]+(\\.[0-9]+){0,2})\\b").v' package.json) ||
             { echo "::error::the esbuild-launcher script in package.json has no --target=node"; exit 1; }
-          echo "version=${target#--target=node}.0" >> "$GITHUB_OUTPUT"
+          # setup-node takes 16.9 as the newest 16.9.x, and the oldest is wanted.
+          until [[ $target =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; do target+=.0; done
+          echo "version=$target" >> "$GITHUB_OUTPUT"
       - if: ${{ steps.oldest-node.outputs.version }}
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
