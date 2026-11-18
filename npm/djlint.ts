@@ -83,21 +83,30 @@ const name = `@djlint/${id}`;
 if (!Object.hasOwn(optionalDependencies, name)) {
   fail(`the npm package has no build for ${name.slice(8)}. Install djLint from PyPI: ${INSTALL}`);
 }
-let python = "";
-try {
-  const manifest = require.resolve(`${name}/package.json`);
-  const { python: interpreter } = await readManifest(manifest);
-  if (typeof interpreter !== "string" || !interpreter) {
-    throw new TypeError(`${manifest} names no Python`);
+
+function resolveManifest(): string {
+  try {
+    return require.resolve(`${name}/package.json`);
+  } catch {
+    return fail(
+      npmKnows
+        ? `${name} isn't installed. npm leaves this optional dependency out with --omit=optional, and so does a lock file made without it. Reinstall djlint.`
+        : LIBC_UNKNOWN,
+    );
   }
-  python = path.join(path.dirname(manifest), interpreter);
-} catch {
-  fail(
-    npmKnows
-      ? `${name} isn't installed. npm leaves this optional dependency out with --omit=optional, and so does a lock file made without it. Reinstall djlint.`
-      : LIBC_UNKNOWN,
-  );
 }
+
+async function interpreter(manifest: string): Promise<string> {
+  try {
+    const { python } = await readManifest(manifest);
+    if (typeof python === "string" && python) {
+      return path.join(path.dirname(manifest), python);
+    }
+  } catch {}
+  return fail(`${name} is damaged: ${manifest} names no Python to run. Reinstall djlint.`);
+}
+
+const python = await interpreter(resolveManifest());
 
 // -I keeps the settings, packages and folder of some other Python out of this one.
 const child = spawn(python, ["-I", "-c", MAIN, ...process.argv.slice(2)], { stdio: "inherit" });
