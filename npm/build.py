@@ -16,8 +16,8 @@ WHEELS is a folder with the djLint wheels of this version. When it has
 compiled ones, as for a release, each platform that djLint is compiled for
 has to find its own there; the others, and all of them when there is only the
 pure one, as for a test, take the pure one. With no PLATFORM, all of them are
-built. The packages are packed into npm/dist. npm ci installs esbuild, which
-builds the launcher.
+built. The packages are packed into npm/dist. npm ci, on the Node in .nvmrc,
+installs esbuild, which builds the launcher.
 
 The Python of a package runs this one's bytecode, so this script runs on the
 same Python version. A package for Linux or macOS has to be built on one of

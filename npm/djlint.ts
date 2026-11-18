@@ -23,28 +23,24 @@ async function readManifest(file: string): Promise<Record<string, unknown>> {
   return { ...manifest };
 }
 
-// What the detect-libc package looks at. The ldd script runs musl's loader on musl.
-// On glibc, the GNU C Library ships it. Without ldd, Node's report names the glibc it runs on.
-async function isMusl(): Promise<boolean> {
-  const ldd = await readFile("/usr/bin/ldd", "latin1").catch(() => "");
-  if (ldd.includes("musl")) {
-    return true;
-  }
-  if (ldd.includes("GNU C Library")) {
-    return false;
-  }
+// How npm tells the libc apart when it picks the optional dependency to install.
+// Node reports the version of glibc it runs on, and nothing on musl.
+function libc(): "gnu" | "musl" {
+  // Reverse DNS lookups of open sockets, which the libc doesn't need, can stall the report.
+  Object.assign(process.report ?? {}, { excludeNetwork: true });
   // The types of Node 16 have the report as a string, which it isn't.
   const report: unknown = process.report?.getReport();
   const header: unknown =
     typeof report === "object" && report !== null && "header" in report ? report.header : null;
-  return !(typeof header === "object" && header !== null && "glibcVersionRuntime" in header);
+  const glibc = typeof header === "object" && header !== null && "glibcVersionRuntime" in header;
+  return glibc ? "gnu" : "musl";
 }
 
-async function platform(): Promise<string> {
+function platform(): string {
   if (process.platform !== "linux") {
     return `${process.platform}-${process.arch}`;
   }
-  return `linux-${process.arch}-${(await isMusl()) ? "musl" : "gnu"}`;
+  return `linux-${process.arch}-${libc()}`;
 }
 
 const require = createRequire(import.meta.url);
@@ -52,7 +48,7 @@ const { optionalDependencies } = await readManifest(require.resolve("./package.j
 if (typeof optionalDependencies !== "object" || optionalDependencies === null) {
   throw new TypeError("package.json has no optionalDependencies");
 }
-const name = `@djlint/${await platform()}`;
+const name = `@djlint/${platform()}`;
 if (!Object.hasOwn(optionalDependencies, name)) {
   fail(`the npm package has no build for ${name.slice(8)}. Install djLint from PyPI: ${INSTALL}`);
 }

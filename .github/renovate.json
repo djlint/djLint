@@ -103,7 +103,7 @@
       "groupName": "node",
       "automerge": false,
       "prBodyNotes": [
-        "Replace `@tsconfig/node<major>` with the one of the new Node by hand, in package.json and in the `extends` of npm/tsconfig.node.json: Renovate updates a version, not a package name."
+        "Replace `@tsconfig/node<major>` with the one of the new Node by hand, in package.json and in the `extends` of npm/tsconfig.node.json, then run `npm install` for the lock file: Renovate updates a version, not a package name."
       ]
     },
     {
