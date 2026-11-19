@@ -36,7 +36,7 @@
     "@types/emscripten": "1.41.6",
     "@types/hast": "3.0.5",
     "@types/mdast": "4.0.4",
-    "postcss-html": "2.0.0",
+    "postcss-html": "2.0.1",
     "stylelint": "17.16.0",
     "stylelint-config-recess-order": "7.10.0",
     "stylelint-config-standard": "40.0.0",
