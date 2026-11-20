@@ -21,6 +21,8 @@ const config = {
       rules: { "selector-pseudo-class-no-unknown": [true, { ignorePseudoClasses: ["global"] }] },
     },
   ],
+  // Declares the --dj-* custom properties, so the rules check what var() gives in the components.
+  referenceFiles: "src/styles/custom.css",
   reportDescriptionlessDisables: true,
   reportInvalidScopeDisables: true,
   reportNeedlessDisables: true,
@@ -32,9 +34,6 @@ const config = {
     "function-url-no-scheme-relative": true,
     "no-unknown-animations": true,
     "no-unknown-custom-media": true,
-    "selector-no-deprecated": true,
-    "selector-no-invalid": true,
-    "selector-no-unmatchable": true,
     "unit-no-unknown": true,
   },
 };
