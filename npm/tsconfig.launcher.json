@@ -1,6 +1,6 @@
 // The launcher of the npm package, which runs on the oldest Node in its engines.
 {
-  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node22/tsconfig.json"],
+  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node24/tsconfig.json"],
   "files": ["djlint.ts", "reset.d.ts"],
   "compilerOptions": {
     "noEmit": true,
