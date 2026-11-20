@@ -103,19 +103,15 @@
     { "matchDepTypes": ["devDependencies"], "matchManagers": ["npm"], "automerge": true },
     { "matchManagers": ["github-actions", "pre-commit"], "automerge": true },
     {
-      "description": "A new Node is reviewed by hand, in one pull request with its types and tsconfig base. Node versioning holds Node and its types back until the major version reaches LTS. The base is a replacement from Renovate's list, which learns of a new one on its own schedule",
+      "description": "A new Node is reviewed by hand, in one pull request with its types and tsconfig base. Node versioning holds Node and its types back until the major version reaches LTS. The base is a replacement from Renovate's list, which learns of a new one on its own schedule. Renovate never groups a replacement, so the branch topic puts it in the branch of the group's majors",
       "matchPackageNames": ["node", "@types/node", "/^@tsconfig/node\\d+$/"],
       "matchUpdateTypes": ["major", "replacement"],
       "groupName": "node",
+      "branchTopic": "major-node",
       "automerge": false,
       "prBodyNotes": [
         "Merge once this PR moves both Node and `@tsconfig/node<major>`. If the base is missing, replace it by hand in package.json and in the `extends` of npm/tsconfig.node.json, then run `npm install`."
       ]
-    },
-    {
-      "description": "A major update and a replacement get separate branches unless majors stay with minors, and the Node PR needs both. Matching by dependency name leaves out the launcher's types, which would otherwise lose their minor updates",
-      "matchDepNames": ["node", "@types/node", "/^@tsconfig/node\\d+$/"],
-      "separateMajorMinor": false
     },
     {
       "description": "The launcher of the npm package is checked against the oldest Node it runs on, so its types and tsconfig base stay on that Node",
