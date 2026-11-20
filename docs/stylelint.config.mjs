@@ -21,7 +21,9 @@ const config = {
       rules: { "selector-pseudo-class-no-unknown": [true, { ignorePseudoClasses: ["global"] }] },
     },
   ],
-  // Declares the --dj-* custom properties, so the rules check what var() gives in the components.
+  // Where the --dj-* custom properties the components use are declared. no-unknown-custom-properties
+  // is off: the --sl-* ones come from Starlight, which the pre-commit hook doesn't install, and
+  // Home.astro sets some in inline styles.
   referenceFiles: "src/styles/custom.css",
   reportDescriptionlessDisables: true,
   reportInvalidScopeDisables: true,
