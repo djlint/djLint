@@ -19,6 +19,7 @@
   "env": { "node": true },
   "ignorePatterns": ["npm/dist/"],
   "rules": {
+    "capitalized-comments": ["error", "always", { "ignoreConsecutiveComments": true }],
     "eqeqeq": ["error", "always", { "null": "ignore" }],
     "func-style": ["error", "declaration"],
     "id-length": "off",
