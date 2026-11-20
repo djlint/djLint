@@ -103,19 +103,24 @@
     { "matchDepTypes": ["devDependencies"], "matchManagers": ["npm"], "automerge": true },
     { "matchManagers": ["github-actions", "pre-commit"], "automerge": true },
     {
-      "description": "A new Node is reviewed by hand, in one pull request with its types. Node versioning holds each back until the major version reaches LTS",
-      "matchPackageNames": ["node", "@types/node"],
-      "matchUpdateTypes": ["major"],
+      "description": "A new Node is reviewed by hand, in one pull request with its types and tsconfig base. Node versioning holds Node and its types back until the major version reaches LTS. The base is a replacement from Renovate's list, which learns of a new one on its own schedule",
+      "matchPackageNames": ["node", "@types/node", "/^@tsconfig/node\\d+$/"],
+      "matchUpdateTypes": ["major", "replacement"],
       "groupName": "node",
       "automerge": false,
       "prBodyNotes": [
-        "Replace `@tsconfig/node<major>` with the one of the new Node by hand, in package.json and in the `extends` of npm/tsconfig.node.json, then run `npm install` for the lock file: Renovate updates a version, not a package name."
+        "Merge once this PR moves both Node and `@tsconfig/node<major>`. If the base is missing, replace it by hand in package.json and in the `extends` of npm/tsconfig.node.json, then run `npm install`."
       ]
     },
     {
-      "description": "The launcher of the npm package is checked against the oldest Node it runs on, so its types stay on that Node",
+      "description": "A major update and a replacement get separate branches unless majors stay with minors, and the Node PR needs both. Matching by dependency name leaves out the launcher's types, which would otherwise lose their minor updates",
+      "matchDepNames": ["node", "@types/node", "/^@tsconfig/node\\d+$/"],
+      "separateMajorMinor": false
+    },
+    {
+      "description": "The launcher of the npm package is checked against the oldest Node it runs on, so its types and tsconfig base stay on that Node",
       "matchDepNames": ["@types/node16", "@tsconfig/node16"],
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": ["major", "replacement"],
       "enabled": false
     },
     {
