@@ -15,18 +15,7 @@ Das [README](https://github.com/djlint/djlint-vscode#readme) der Erweiterung bes
 
 ## Zed
 
-Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprachserver](#sprachserver) in HTML und in den Sprachen der Template-Erweiterungen aus, etwa Django, Jinja und Twig. Sie ist noch nicht in der Erweiterungsliste von Zed, installieren Sie sie daher als Dev-Erweiterung:
-
-1. Installieren Sie Rust über [rustup](https://rustup.rs), Zed baut die Erweiterung damit und fügt das Target `wasm32-wasip2` selbst hinzu. Mit einem Rust aus anderer Quelle, etwa Homebrew oder Nix, fügen Sie es selbst hinzu.
-1. Klonen Sie die Erweiterung:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Öffnen Sie in Zed die Befehlspalette (`cmd-shift-p` auf macOS, sonst `ctrl-shift-p`), führen Sie **zed: install dev extension** aus und wählen Sie den geklonten Ordner `djlint-zed`.
-
-Zum Aktualisieren führen Sie in diesem Ordner `git pull` aus und danach **zed: rebuild dev extension**.
+Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprachserver](#sprachserver) in HTML und in den Sprachen der Template-Erweiterungen aus, etwa Django, Jinja und Twig. Zum Installieren öffnen Sie die Befehlspalette (`cmd-shift-p` unter macOS, sonst `ctrl-shift-p`), führen **zed: extensions** aus, suchen nach djLint und klicken auf **Install**.
 
 Sie braucht djLint 1.49 oder neuer im PATH oder mit npm im Projekt installiert, oder [uv](https://docs.astral.sh/uv/), das djLint ohne Installation ausführt. Ihr [README](https://github.com/djlint/djlint-zed#readme) zeigt, wie Sie sie als Formatter einer Sprache festlegen, und beschreibt ihre Einstellungen.
 

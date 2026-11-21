@@ -15,18 +15,7 @@ Son [README](https://github.com/djlint/djlint-vscode#readme) décrit ses paramè
 
 ## Zed
 
-L'[extension djLint](https://github.com/djlint/djlint-zed) exécute le [serveur de langage](#serveur-de-langage) dans le HTML et dans les langages des extensions de templates, comme Django, Jinja et Twig. Elle n'est pas encore dans le registre d'extensions de Zed, installez-la donc comme extension de développement :
-
-1. Installez Rust avec [rustup](https://rustup.rs) : Zed compile l'extension avec et ajoute lui-même la cible `wasm32-wasip2`. Avec un Rust installé autrement, par exemple via Homebrew ou Nix, ajoutez-la vous-même.
-1. Clonez l'extension :
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Dans Zed, ouvrez la palette de commandes (`cmd-shift-p` sur macOS, `ctrl-shift-p` ailleurs), lancez **zed: install dev extension** et choisissez le dossier cloné `djlint-zed`.
-
-Pour la mettre à jour, lancez `git pull` dans ce dossier, puis **zed: rebuild dev extension**.
+L'[extension djLint](https://github.com/djlint/djlint-zed) exécute le [serveur de langage](#serveur-de-langage) dans le HTML et dans les langages des extensions de templates, comme Django, Jinja et Twig. Pour l'installer, ouvrez la palette de commandes (`cmd-shift-p` sur macOS, `ctrl-shift-p` ailleurs), lancez **zed: extensions**, cherchez djLint et cliquez sur **Install**.
 
 Elle a besoin de djLint 1.49 ou plus récent dans le PATH ou installé dans le projet avec npm, ou de [uv](https://docs.astral.sh/uv/), qui lance djLint sans l'installer. Son [README](https://github.com/djlint/djlint-zed#readme) explique comment en faire le formateur d'un langage, et présente ses réglages.
 
