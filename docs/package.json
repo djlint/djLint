@@ -37,9 +37,9 @@
     "@types/hast": "3.0.5",
     "@types/mdast": "4.0.4",
     "postcss-html": "2.0.1",
-    "stylelint": "17.16.0",
+    "stylelint": "18.0.0",
     "stylelint-config-recess-order": "7.10.1",
-    "stylelint-config-standard": "40.0.0",
+    "stylelint-config-standard": "41.0.0",
     "vfile": "6.0.3"
   }
 }
