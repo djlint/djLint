@@ -28,7 +28,7 @@ repos:
         additional_dependencies:
           - postcss-html@2.0.1
           - stylelint@17.16.0
-          - stylelint-config-recess-order@7.10.0
+          - stylelint-config-recess-order@7.10.1
           - stylelint-config-standard@40.0.0
   - repo: https://github.com/tombi-toml/tombi-pre-commit
     rev: 1066584123cce44a99b4818c2b2c4a7e732ff8e9 # frozen: v1.11.3
