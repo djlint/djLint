@@ -45,7 +45,15 @@ vim.filetype.add({
 
 ### Built-in LSP client (recommended)
 
-Neovim 0.11 or newer can talk to the [language server](#language-server) of djLint directly, with no plugin. That gives findings as you type, with underlined ranges, and `vim.lsp.buf.format()` for formatting:
+Neovim 0.11 or newer can talk to the [language server](#language-server) of djLint directly, with no plugin. That gives findings as you type, with underlined ranges, and `vim.lsp.buf.format()` for formatting.
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) after v2.12.0 ships its configuration, so with it one line is enough:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+Without it, or with an older one, define the configuration yourself:
 
 ```lua
 vim.lsp.config("djlint", {

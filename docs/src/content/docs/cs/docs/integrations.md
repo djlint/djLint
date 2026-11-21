@@ -45,7 +45,15 @@ vim.filetype.add({
 
 ### Vestavěný klient LSP (doporučeno)
 
-Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`:
+Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`.
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) novější než v2.12.0 jeho konfiguraci obsahuje, takže s ním stačí jeden řádek:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+Bez něj nebo se starší verzí si konfiguraci nadefinujte sami:
 
 ```lua
 vim.lsp.config("djlint", {
