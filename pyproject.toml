@@ -73,7 +73,7 @@ dependencies = [
 dev = [
   "covdefaults==2.3.0",
   "pytest-cov==7.1.0",
-  "ruff==0.17.5",
+  "ruff==0.17.6",
   "types-pyyaml==6.0.12.20261113",
   "types-regex==2026.11.19.20261119",
   { include-group = "test" },
