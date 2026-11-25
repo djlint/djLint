@@ -1,4 +1,7 @@
-/** @import { PyCallable } from "pyodide/ffi" */
+/** @import { PyodideInterface } from "pyodide" */
+// Pyodide's types declare PyCallable twice, as two unrelated classes: `instanceof
+// pyodide.ffi.PyCallable` narrows to the one from "pyodide", not the one from "pyodide/ffi".
+/** @typedef {PyodideInterface["ffi"]["PyCallable"]["prototype"]} PyCallable */
 /** @import { WorkerReply, WorkerRequest } from "../../../src/scripts/demo-worker" */
 
 // Not a static import: a module worker's static imports load under the page's Content Security
