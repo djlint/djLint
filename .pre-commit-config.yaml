@@ -68,7 +68,7 @@ repos:
           - pathspec==1.1.1
           - pytest==9.2.0
           - types-pyyaml==6.0.12.20261122
-          - types-regex==2026.11.19.20261119
+          - types-regex==2026.11.19.20261122
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: 0eb9e4a60caf04df64b499ed1e8bef55f4440eae # frozen: v1.33.0
     hooks:
