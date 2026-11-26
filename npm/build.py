@@ -1,5 +1,5 @@
 # /// script
-# requires-python = "==3.14.*"
+# requires-python = "==3.15.*"
 # dependencies = ["pip==26.3"]
 # ///
 """Build the npm packages of djLint.
@@ -51,9 +51,10 @@ if TYPE_CHECKING:
 
 # Renovate updates it. Each release has every Python version, and the package
 # takes the newest one of PYTHON.
-PYTHON_BUILD_STANDALONE: Final = "20261110"
-# The newest Python that every dependency has wheels for: PyYAML has none for 3.15.
-PYTHON: Final = "3.14"
+PYTHON_BUILD_STANDALONE: Final = "20261123"
+# Renovate moves it, with requires-python above, to CI's newest Python. Every
+# dependency needs wheels for that one, or the build stops.
+PYTHON: Final = "3.15"
 
 
 @dataclass(frozen=True)

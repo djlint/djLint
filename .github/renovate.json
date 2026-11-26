@@ -54,6 +54,17 @@
     },
     {
       "customType": "regex",
+      "description": "The Python the npm packages bring and their build script runs on, as it compiles their bytecode: CI's newest one",
+      "managerFilePatterns": ["/^npm/build\\.py$/"],
+      "matchStrings": [
+        "requires-python = \"==(?<currentValue>\\d+\\.\\d+)\\.\\*\"",
+        "PYTHON: Final = \"(?<currentValue>\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "docker.io/python",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
       "description": "Add a classifier after the last one for each new Python version. The first match stops at the last classifier, the second takes the version out of it",
       "managerFilePatterns": ["/^pyproject\\.toml$/"],
       "matchStrings": [
