@@ -28,7 +28,7 @@ Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprac
 
 Zum Aktualisieren führen Sie in diesem Ordner `git pull` aus und danach **zed: rebuild dev extension**.
 
-Sie braucht djLint 1.49 oder neuer im PATH oder mit npm im Projekt installiert, oder [uv](https://docs.astral.sh/uv/), das djLint ohne Installation ausführt. Ihr [README](https://github.com/djlint/djlint-zed#readme) zeigt, wie Sie sie als Formatter einer Sprache festlegen, und beschreibt ihre Einstellungen.
+Sie braucht djLint 1.49 oder neuer im PATH, 1.54.0 oder neuer mit npm im Projekt installiert, oder [uv](https://docs.astral.sh/uv/), das djLint ohne Installation ausführt. Ihr [README](https://github.com/djlint/djlint-zed#readme) zeigt, wie Sie sie als Formatter einer Sprache festlegen, und beschreibt ihre Einstellungen.
 
 ## Neovim
 

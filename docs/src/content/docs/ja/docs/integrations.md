@@ -28,7 +28,7 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 
 更新するには、そのフォルダーで `git pull` を実行してから **zed: rebuild dev extension** を実行します。
 
-PATH 上またはプロジェクトに npm でインストールした djLint 1.49 以降か、djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
+PATH 上の djLint 1.49 以降、プロジェクトに npm でインストールした djLint 1.54.0 以降、または djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
 
 ## Neovim
 

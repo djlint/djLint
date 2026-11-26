@@ -28,7 +28,7 @@ Jeho [README](https://github.com/djlint/djlint-vscode#readme) popisuje nastaven�
 
 Aktualizace: ve složce spusťte `git pull` a potom **zed: rebuild dev extension**.
 
-Potřebuje djLint 1.49 nebo novější v PATH nebo nainstalovaný v projektu přes npm, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Jeho [README](https://github.com/djlint/djlint-zed#readme) ukazuje, jak ho nastavit jako formátovač jazyka, a popisuje jeho nastavení.
+Potřebuje djLint 1.49 nebo novější v PATH, 1.54.0 nebo novější nainstalovaný v projektu přes npm, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Jeho [README](https://github.com/djlint/djlint-zed#readme) ukazuje, jak ho nastavit jako formátovač jazyka, a popisuje jeho nastavení.
 
 ## Neovim
 

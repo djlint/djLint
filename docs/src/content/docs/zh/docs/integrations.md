@@ -28,7 +28,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 要更新它，在该文件夹中运行 `git pull`，然后运行 **zed: rebuild dev extension**。
 
-需要 PATH 中或项目里用 npm 安装的 djLint 1.49 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
+需要 PATH 中的 djLint 1.49 或更新版本、项目里用 npm 安装的 djLint 1.54.0 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
 
 ## Neovim
 
