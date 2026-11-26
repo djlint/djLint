@@ -53,7 +53,7 @@ Neovim 0.11 lub nowszy może komunikować się z [serwerem języka](#serwer-jezy
 vim.lsp.enable("djlint")
 ```
 
-Dla djLint zainstalowanego w projekcie przez npm wstaw przed tę linię `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, a na Windows z `node_modules\.bin\djlint.cmd`.
+Dla djLint zainstalowanego w projekcie przez npm wstaw przed tę linię `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, a na Windows z `"node_modules/.bin/djlint.cmd"`.
 
 Bez nvim-lspconfig lub z jego starszą wersją zdefiniuj konfigurację samodzielnie:
 

@@ -53,7 +53,7 @@ Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-
 vim.lsp.enable("djlint")
 ```
 
-Pro djLint nainstalovaný v projektu přes npm dejte před tento řádek `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, na Windows s `node_modules\.bin\djlint.cmd`.
+Pro djLint nainstalovaný v projektu přes npm dejte před tento řádek `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, na Windows s `"node_modules/.bin/djlint.cmd"`.
 
 Bez nvim-lspconfig nebo s jeho starší verzí si konfiguraci nadefinujte sami:
 
