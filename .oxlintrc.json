@@ -71,7 +71,8 @@
     "unicorn/catch-error-name": ["error", { "name": "e" }],
     "unicorn/no-null": "off",
     "unicorn/no-useless-iterator-to-array": "error",
-    "unicorn/number-literal-case": "off"
+    "unicorn/number-literal-case": "off",
+    "unicorn/prefer-top-level-await": "off"
   },
   "overrides": [
     {
