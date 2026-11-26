@@ -5,7 +5,7 @@ description: "エディターで djLint を使い、pre-commit で実行しま�
 
 どのエディターを使う場合も、djLint はエディターが見つけられる場所、できればプロジェクトの仮想環境にインストールし、その環境からエディターを起動するか、その環境の `djlint` をエディターに指定してください。そうすれば、エディターはプロジェクトで固定したバージョンを実行し、pre-commit フックや CI と同じ結果が得られます。
 
-プロジェクトで djLint を [npm](/ja/docs/getting-started/#インストール) でインストールしている場合、コマンドはプロジェクト内の `node_modules/.bin/djlint`（Windows では `node_modules\.bin\djlint.cmd`）です。以下のエディターで `djlint` を実行する箇所には、このパスを指定してください。VS Code と Zed の拡張機能は自動で見つけます。
+プロジェクトで djLint を [npm](/ja/docs/getting-started/#インストール) でインストールしている場合、コマンドはプロジェクト内の `node_modules/.bin/djlint`（Windows では `node_modules/.bin/djlint.cmd`）です。以下のエディターで `djlint` を実行する箇所には、このパスを指定してください。相対パスなので、エディターはプロジェクトのルートで起動してください。VS Code と Zed の拡張機能は自動で見つけます。
 
 ## Visual Studio Code
 

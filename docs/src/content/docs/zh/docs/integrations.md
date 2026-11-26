@@ -5,7 +5,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，然后从该环境启动编辑器，或者让编辑器指向该环境中的 `djlint`。这样，编辑器运行的就是项目锁定的版本，结果与 pre-commit 钩子或 CI 中的一致。
 
-如果项目用 [npm](/zh/docs/getting-started/#安装) 安装 djLint，它的命令是项目中的 `node_modules/.bin/djlint`，在 Windows 上是 `node_modules\.bin\djlint.cmd`。下面的编辑器中运行 `djlint` 的地方，请填写这个路径。VS Code 和 Zed 的扩展会自己找到它。
+如果项目用 [npm](/zh/docs/getting-started/#安装) 安装 djLint，它的命令是项目中的 `node_modules/.bin/djlint`，在 Windows 上是 `node_modules/.bin/djlint.cmd`。下面的编辑器中运行 `djlint` 的地方，请填写这个路径。这是相对路径，所以请在项目根目录启动编辑器。VS Code 和 Zed 的扩展会自己找到它。
 
 ## Visual Studio Code
 
