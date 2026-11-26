@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Aby formatować przy zapisie, dodaj do tej samej konfiguracji:
+W obu przypadkach Neovim sam nie formatuje przy zapisie. Aby to robił, dodaj do konfiguracji także:
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Pour formater à l'enregistrement, ajoutez ceci à la même configuration :
+Dans les deux cas, Neovim ne formate pas à l'enregistrement de lui-même. Pour cela, ajoutez aussi ceci à votre configuration :
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

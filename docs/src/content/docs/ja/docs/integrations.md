@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-保存時にフォーマットするには、同じ設定に次を追加します：
+どちらの場合も、Neovim は保存時に自動ではフォーマットしません。保存時にフォーマットするには、設定に次も追加します：
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

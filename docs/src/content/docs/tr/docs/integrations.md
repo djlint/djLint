@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Kaydederken biçimlendirmek için aynı yapılandırmaya şunu ekleyin:
+Her iki durumda da Neovim kaydederken kendiliğinden biçimlendirmez. Bunun için yapılandırmanıza şunu da ekleyin:
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

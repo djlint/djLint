@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-저장할 때 포맷하려면 같은 구성에 다음을 추가합니다.
+어느 쪽이든 Neovim은 저장할 때 스스로 포맷하지 않습니다. 저장할 때 포맷하려면 구성에 다음도 추가합니다.
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

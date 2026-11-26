@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-要在保存时格式化，请在同一配置中添加以下内容：
+无论哪种方式，Neovim 都不会在保存时自动格式化。要在保存时格式化，请在配置中再添加以下内容：
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

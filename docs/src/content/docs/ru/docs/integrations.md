@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Чтобы форматировать при сохранении, добавьте в ту же конфигурацию:
+В обоих случаях Neovim сам при сохранении не форматирует. Чтобы форматировал, добавьте в конфигурацию ещё и это:
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})
