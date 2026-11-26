@@ -520,7 +520,7 @@ if (description.length !== 2) {
     if (!findings) {
       return "";
     }
-    return findings.length
+    return findings.length > 0
       ? requiredData(problems, "count").replace("{count}", String(findings.length))
       : requiredData(problems, "clean");
   }

@@ -135,7 +135,7 @@ export function configFile(
 
   const prefix = file === "pyproject.toml" ? "tool.djlint" : "";
   const sections: string[] = [];
-  if (Object.keys(top).length) {
+  if (Object.keys(top).length > 0) {
     const lines = tomlLines(top);
     sections.push((prefix ? [`[${prefix}]`, ...lines] : lines).join("\n"));
   }
