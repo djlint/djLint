@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Chcete-li formátovat při ukládání, přidejte do stejné konfigurace:
+Ani v jednom případě Neovim sám při ukládání neformátuje. Pokud to chcete, přidejte do konfigurace ještě:
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})
