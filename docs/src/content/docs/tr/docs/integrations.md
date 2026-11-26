@@ -5,7 +5,7 @@ description: "djLint'i düzenleyicinizde kullanın ve pre-commit ile çalıştı
 
 Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabileceği bir yere, tercihen projenin sanal ortamına kurun ve düzenleyiciyi oradan başlatın ya da düzenleyiciyi o ortamdaki `djlint` komutuna yönlendirin. Böylece düzenleyici, projenizin sabitlediği sürümü çalıştırır ve pre-commit kancanızla ya da CI ile aynı sonuçları verir.
 
-Proje djLint'i [npm](/tr/docs/getting-started/#kurulum) ile kuruyorsa komutu projede `node_modules/.bin/djlint`, Windows'ta ise `node_modules/.bin/djlint.cmd` olur. Aşağıdaki düzenleyicilerde `djlint` çalıştırılan yerlerde bu yolu verin. Yol görelidir, bu yüzden düzenleyiciyi proje kökünde başlatın. VS Code ve Zed uzantıları onu kendileri bulur.
+Proje djLint'i [npm](/tr/docs/getting-started/#kurulum) ile kuruyorsa komutu projede `node_modules/.bin/djlint`, Windows'ta ise `node_modules/.bin/djlint.cmd` olur. Aşağıdaki düzenleyicilerde `djlint` çalıştırılan yerlerde bu yolu verin. Yol görelidir: düzenleyici djLint'i `node_modules` klasörünün bulunduğu yerden başka bir klasörden çalıştırıyorsa tam yolu verin. VS Code ve Zed uzantıları onu kendileri bulur.
 
 ## Visual Studio Code
 

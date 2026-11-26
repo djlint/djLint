@@ -5,7 +5,7 @@ description: "Używaj djLint w swoim edytorze i uruchamiaj go za pomocą pre-com
 
 Niezależnie od edytora zainstaluj djLint tam, gdzie edytor może go znaleźć, najlepiej w środowisku wirtualnym projektu, a następnie uruchamiaj edytor z tego środowiska albo wskaż mu `djlint` z tego środowiska. Dzięki temu edytor uruchamia wersję przypiętą w projekcie i daje takie same wyniki jak hook pre-commit czy CI.
 
-Jeśli projekt instaluje djLint przez [npm](/pl/docs/getting-started/#instalacja), jego polecenie to `node_modules/.bin/djlint` w projekcie, a na Windows `node_modules/.bin/djlint.cmd`. Tam, gdzie edytor poniżej uruchamia `djlint`, podaj mu tę ścieżkę. Ścieżka jest względna, więc uruchamiaj edytor w katalogu głównym projektu. Rozszerzenia dla VS Code i Zed znajdą go same.
+Jeśli projekt instaluje djLint przez [npm](/pl/docs/getting-started/#instalacja), jego polecenie to `node_modules/.bin/djlint` w projekcie, a na Windows `node_modules/.bin/djlint.cmd`. Tam, gdzie edytor poniżej uruchamia `djlint`, podaj mu tę ścieżkę. Ścieżka jest względna: jeśli edytor uruchamia djLint z innego folderu niż ten z `node_modules`, podaj pełną ścieżkę. Rozszerzenia dla VS Code i Zed znajdą go same.
 
 ## Visual Studio Code
 
