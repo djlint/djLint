@@ -53,7 +53,7 @@ v2.12.0 之后的 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 自
 vim.lsp.enable("djlint")
 ```
 
-如果项目用 npm 安装了 djLint，请在这一行之前加上 `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`（Windows 上用 `"node_modules/.bin/djlint.cmd"`）。这个路径相对于 Neovim 运行时所在的目录，所以请在项目根目录启动 Neovim。
+如果项目用 npm 安装了 djLint，请在这一行之前加上 `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`（Windows 上用 `"node_modules/.bin/djlint.cmd"`）。
 
 不用 nvim-lspconfig 或版本较旧时，请自行定义配置：
 
