@@ -5,7 +5,7 @@ description: "djLint'i düzenleyicinizde kullanın ve pre-commit ile çalıştı
 
 Hangi düzenleyiciyi kullanırsanız kullanın, djLint'i düzenleyicinin bulabileceği bir yere, tercihen projenin sanal ortamına kurun ve düzenleyiciyi oradan başlatın ya da düzenleyiciyi o ortamdaki `djlint` komutuna yönlendirin. Böylece düzenleyici, projenizin sabitlediği sürümü çalıştırır ve pre-commit kancanızla ya da CI ile aynı sonuçları verir.
 
-Proje djLint'i [npm](/tr/docs/getting-started/#kurulum) ile kuruyorsa komutu projede `node_modules/.bin/djlint`, Windows'ta ise `node_modules/.bin/djlint.cmd` olur. Aşağıdaki düzenleyicilerde `djlint` çalıştırılan yerlerde bu yolu verin. Yol görelidir: düzenleyici djLint'i `node_modules` klasörünün bulunduğu yerden başka bir klasörden çalıştırıyorsa tam yolu verin. VS Code ve Zed uzantıları onu kendileri bulur.
+Proje djLint'i [npm](/tr/docs/getting-started/#kurulum) ile kuruyorsa komutu projede `node_modules/.bin/djlint`, Windows'ta ise `node_modules/.bin/djlint.cmd` olur. djLint'in npm'deki 1.54.0'dan önceki sürümlerinde bu komut yoktur. Aşağıdaki düzenleyicilerde `djlint` çalıştırılan yerlerde bu yolu verin. Yol görelidir: düzenleyici djLint'i `node_modules` klasörünün bulunduğu yerden başka bir klasörden çalıştırıyorsa tam yolu verin. VS Code ve Zed uzantıları onu kendileri bulur.
 
 ## Visual Studio Code
 
@@ -28,7 +28,7 @@ Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, a
 
 Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extension** çalıştırın.
 
-PATH'te ya da projede npm ile kurulu djLint 1.49 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
+PATH'te djLint 1.49 veya daha yenisi, projede npm ile kurulu djLint 1.54.0 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
 
 ## Neovim
 
@@ -45,7 +45,17 @@ vim.filetype.add({
 
 ### Yerleşik LSP istemcisi (önerilen)
 
-Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](#dil-sunucusu) doğrudan konuşabilir. Bu sayede bulgular, altı çizili aralıklarla birlikte siz yazarken gelir ve biçimlendirme için `vim.lsp.buf.format()` kullanılabilir:
+Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](#dil-sunucusu) doğrudan konuşabilir. Bu sayede bulgular, altı çizili aralıklarla birlikte siz yazarken gelir ve biçimlendirme için `vim.lsp.buf.format()` kullanılabilir.
+
+v2.12.0 sonrası [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) yapılandırmasını içerir, bu yüzden onunla tek satır yeterlidir:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+djLint projeye npm ile kuruluysa bu satırdan önce `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` ekleyin (Windows'ta `"node_modules/.bin/djlint.cmd"` ile).
+
+nvim-lspconfig olmadan, eski bir sürümüyle ya da onun gerektirdiği 0.11.3'ten eski bir Neovim'de yapılandırmayı kendiniz tanımlayın:
 
 ```lua
 vim.lsp.config("djlint", {

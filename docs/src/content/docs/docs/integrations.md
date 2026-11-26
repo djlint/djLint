@@ -5,7 +5,7 @@ description: "Use djLint in your editor and run it with pre-commit."
 
 Whichever editor you use, install djLint where the editor can find it, ideally in the project's virtual environment, and start the editor from there or point it at the `djlint` of that environment. That way the editor runs the version your project pins, with the same results as your pre-commit hook or CI.
 
-If the project installs djLint with [npm](/docs/getting-started/#installation), its command is `node_modules/.bin/djlint` in the project, or `node_modules/.bin/djlint.cmd` on Windows. Where an editor below runs `djlint`, give it that path. The path is relative: if the editor runs djLint from a folder other than the one with `node_modules`, give the full path. The VS Code and Zed extensions find it by themselves.
+If the project installs djLint with [npm](/docs/getting-started/#installation), its command is `node_modules/.bin/djlint` in the project, or `node_modules/.bin/djlint.cmd` on Windows. djLint releases on npm before 1.54.0 don't have it. Where an editor below runs `djlint`, give it that path. The path is relative: if the editor runs djLint from a folder other than the one with `node_modules`, give the full path. The VS Code and Zed extensions find it by themselves.
 
 ## Visual Studio Code
 
@@ -28,7 +28,7 @@ The [djLint extension](https://github.com/djlint/djlint-zed) runs the [language 
 
 To update it, run `git pull` in that folder, then **zed: rebuild dev extension**.
 
-It needs djLint 1.49 or newer on PATH or installed in the project with npm, or [uv](https://docs.astral.sh/uv/), which runs djLint with no install. Its [README](https://github.com/djlint/djlint-zed#readme) shows how to make it the formatter of a language, and its settings.
+It needs djLint 1.49 or newer on PATH, 1.54.0 or newer installed in the project with npm, or [uv](https://docs.astral.sh/uv/), which runs djLint with no install. Its [README](https://github.com/djlint/djlint-zed#readme) shows how to make it the formatter of a language, and its settings.
 
 ## Neovim
 
@@ -45,7 +45,17 @@ vim.filetype.add({
 
 ### Built-in LSP client (recommended)
 
-Neovim 0.11 or newer can talk to the [language server](#language-server) of djLint directly, with no plugin. That gives findings as you type, with underlined ranges, and `vim.lsp.buf.format()` for formatting:
+Neovim 0.11 or newer can talk to the [language server](#language-server) of djLint directly, with no plugin. That gives findings as you type, with underlined ranges, and `vim.lsp.buf.format()` for formatting.
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) after v2.12.0 ships its configuration, so with it one line is enough:
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+For djLint installed with npm in the project, put `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` before that line, with `"node_modules/.bin/djlint.cmd"` on Windows.
+
+Without nvim-lspconfig, with an older one, or on Neovim before 0.11.3, which it requires, define the configuration yourself:
 
 ```lua
 vim.lsp.config("djlint", {

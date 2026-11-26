@@ -5,7 +5,7 @@ description: "Utilisez djLint dans votre éditeur et exécutez-le avec pre-commi
 
 Quel que soit votre éditeur, installez djLint là où l'éditeur peut le trouver, idéalement dans l'environnement virtuel du projet, puis lancez l'éditeur depuis cet environnement ou indiquez-lui le `djlint` de cet environnement. Ainsi, l'éditeur exécute la version fixée par votre projet, avec les mêmes résultats que votre hook pre-commit ou votre CI.
 
-Si le projet installe djLint avec [npm](/fr/docs/getting-started/#installation), sa commande est `node_modules/.bin/djlint` dans le projet, ou `node_modules/.bin/djlint.cmd` sous Windows. Là où un éditeur ci-dessous lance `djlint`, donnez-lui ce chemin. Le chemin est relatif : si l'éditeur lance djLint depuis un autre dossier que celui qui contient `node_modules`, donnez le chemin complet. Les extensions pour VS Code et Zed le trouvent d'elles-mêmes.
+Si le projet installe djLint avec [npm](/fr/docs/getting-started/#installation), sa commande est `node_modules/.bin/djlint` dans le projet, ou `node_modules/.bin/djlint.cmd` sous Windows. Les versions de djLint sur npm antérieures à 1.54.0 ne l'ont pas. Là où un éditeur ci-dessous lance `djlint`, donnez-lui ce chemin. Le chemin est relatif : si l'éditeur lance djLint depuis un autre dossier que celui qui contient `node_modules`, donnez le chemin complet. Les extensions pour VS Code et Zed le trouvent d'elles-mêmes.
 
 ## Visual Studio Code
 
@@ -28,7 +28,7 @@ L'[extension djLint](https://github.com/djlint/djlint-zed) exécute le [serveur 
 
 Pour la mettre à jour, lancez `git pull` dans ce dossier, puis **zed: rebuild dev extension**.
 
-Elle a besoin de djLint 1.49 ou plus récent dans le PATH ou installé dans le projet avec npm, ou de [uv](https://docs.astral.sh/uv/), qui lance djLint sans l'installer. Son [README](https://github.com/djlint/djlint-zed#readme) explique comment en faire le formateur d'un langage, et présente ses réglages.
+Elle a besoin de djLint 1.49 ou plus récent dans le PATH, 1.54.0 ou plus récent installé dans le projet avec npm, ou de [uv](https://docs.astral.sh/uv/), qui lance djLint sans l'installer. Son [README](https://github.com/djlint/djlint-zed#readme) explique comment en faire le formateur d'un langage, et présente ses réglages.
 
 ## Neovim
 
@@ -45,7 +45,17 @@ vim.filetype.add({
 
 ### Client LSP intégré (recommandé)
 
-Neovim 0.11 ou plus récent peut dialoguer directement avec le [serveur de langage](#serveur-de-langage) de djLint, sans plugin. Vous obtenez ainsi les signalements pendant la frappe, avec les plages concernées soulignées, et `vim.lsp.buf.format()` pour le formatage :
+Neovim 0.11 ou plus récent peut dialoguer directement avec le [serveur de langage](#serveur-de-langage) de djLint, sans plugin. Vous obtenez ainsi les signalements pendant la frappe, avec les plages concernées soulignées, et `vim.lsp.buf.format()` pour le formatage.
+
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) après la v2.12.0 fournit sa configuration, une ligne suffit donc avec lui :
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+Pour djLint installé avec npm dans le projet, placez `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` avant cette ligne, avec `"node_modules/.bin/djlint.cmd"` sous Windows.
+
+Sans nvim-lspconfig, avec une version plus ancienne ou sous Neovim avant 0.11.3, dont il a besoin, définissez la configuration vous-même :
 
 ```lua
 vim.lsp.config("djlint", {

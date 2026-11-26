@@ -5,7 +5,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，然后从该环境启动编辑器，或者让编辑器指向该环境中的 `djlint`。这样，编辑器运行的就是项目锁定的版本，结果与 pre-commit 钩子或 CI 中的一致。
 
-如果项目用 [npm](/zh/docs/getting-started/#安装) 安装 djLint，它的命令是项目中的 `node_modules/.bin/djlint`，在 Windows 上是 `node_modules/.bin/djlint.cmd`。下面的编辑器中运行 `djlint` 的地方，请填写这个路径。这是相对路径：如果编辑器不是在包含 `node_modules` 的目录中运行 djLint，请填写完整路径。VS Code 和 Zed 的扩展会自己找到它。
+如果项目用 [npm](/zh/docs/getting-started/#安装) 安装 djLint，它的命令是项目中的 `node_modules/.bin/djlint`，在 Windows 上是 `node_modules/.bin/djlint.cmd`。npm 上 1.54.0 之前的 djLint 版本没有这个命令。下面的编辑器中运行 `djlint` 的地方，请填写这个路径。这是相对路径：如果编辑器不是在包含 `node_modules` 的目录中运行 djLint，请填写完整路径。VS Code 和 Zed 的扩展会自己找到它。
 
 ## Visual Studio Code
 
@@ -28,7 +28,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 要更新它，在该文件夹中运行 `git pull`，然后运行 **zed: rebuild dev extension**。
 
-需要 PATH 中或项目里用 npm 安装的 djLint 1.49 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
+需要 PATH 中的 djLint 1.49 或更新版本、项目里用 npm 安装的 djLint 1.54.0 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
 
 ## Neovim
 
@@ -45,7 +45,17 @@ vim.filetype.add({
 
 ### 内置 LSP 客户端（推荐）
 
-Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言服务器)通信，无需任何插件。这样可以在输入时得到检查结果，并带有下划线标出的范围，还能用 `vim.lsp.buf.format()` 格式化：
+Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言服务器)通信，无需任何插件。这样可以在输入时得到检查结果，并带有下划线标出的范围，还能用 `vim.lsp.buf.format()` 格式化。
+
+v2.12.0 之后的 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 自带它的配置，装了它只需一行：
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+如果项目用 npm 安装了 djLint，请在这一行之前加上 `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`（Windows 上用 `"node_modules/.bin/djlint.cmd"`）。
+
+不用 nvim-lspconfig、它的版本较旧，或 Neovim 低于它所需的 0.11.3 时，请自行定义配置：
 
 ```lua
 vim.lsp.config("djlint", {

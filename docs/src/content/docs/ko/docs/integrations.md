@@ -5,7 +5,7 @@ description: "에디터에서 djLint를 사용하고 pre-commit으로 실행하�
 
 어떤 에디터를 쓰든 djLint는 에디터가 찾을 수 있는 곳, 가급적 프로젝트의 가상 환경에 설치하고, 에디터를 그 환경에서 시작하거나 에디터가 그 환경의 `djlint`를 가리키도록 하세요. 그러면 에디터가 프로젝트에 고정된 버전을 실행하므로 pre-commit 훅이나 CI와 같은 결과를 얻을 수 있습니다.
 
-프로젝트에서 djLint를 [npm](/ko/docs/getting-started/#설치)으로 설치한다면, 명령은 프로젝트 안의 `node_modules/.bin/djlint`이고 Windows에서는 `node_modules/.bin/djlint.cmd`입니다. 아래 에디터에서 `djlint`를 실행하는 곳에 이 경로를 지정하세요. 상대 경로이므로, 에디터가 `node_modules`가 있는 폴더가 아닌 곳에서 djLint를 실행한다면 전체 경로를 지정하세요. VS Code와 Zed 확장은 알아서 찾습니다.
+프로젝트에서 djLint를 [npm](/ko/docs/getting-started/#설치)으로 설치한다면, 명령은 프로젝트 안의 `node_modules/.bin/djlint`이고 Windows에서는 `node_modules/.bin/djlint.cmd`입니다. npm에 올라온 djLint 1.54.0 이전 릴리스에는 이 명령이 없습니다. 아래 에디터에서 `djlint`를 실행하는 곳에 이 경로를 지정하세요. 상대 경로이므로, 에디터가 `node_modules`가 있는 폴더가 아닌 곳에서 djLint를 실행한다면 전체 경로를 지정하세요. VS Code와 Zed 확장은 알아서 찾습니다.
 
 ## Visual Studio Code
 
@@ -28,7 +28,7 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 
 업데이트하려면 그 폴더에서 `git pull`을 실행한 다음 **zed: rebuild dev extension**을 실행하세요.
 
-PATH에 있거나 프로젝트에 npm으로 설치한 djLint 1.49 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
+PATH에 djLint 1.49 이상이 있거나, 프로젝트에 npm으로 설치한 djLint 1.54.0 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 
 ## Neovim
 
@@ -46,6 +46,16 @@ vim.filetype.add({
 ### 내장 LSP 클라이언트(권장)
 
 Neovim 0.11 이상은 플러그인 없이 djLint의 [언어 서버](#언어-서버)와 직접 통신할 수 있습니다. 입력하는 동안 범위에 밑줄이 그어진 검사 결과를 받을 수 있고, `vim.lsp.buf.format()`으로 포맷할 수 있습니다.
+
+v2.12.0 이후의 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)에 구성이 들어 있으므로, 이를 쓰면 한 줄로 충분합니다.
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+프로젝트에 npm으로 djLint를 설치했다면 이 줄 앞에 `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`를 넣으세요(Windows에서는 `"node_modules/.bin/djlint.cmd"`).
+
+nvim-lspconfig 없이 쓰거나, 이전 버전이거나, Neovim이 nvim-lspconfig에 필요한 0.11.3보다 오래되었다면 구성을 직접 정의하세요.
 
 ```lua
 vim.lsp.config("djlint", {

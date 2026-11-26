@@ -5,7 +5,7 @@ description: "エディターで djLint を使い、pre-commit で実行しま�
 
 どのエディターを使う場合も、djLint はエディターが見つけられる場所、できればプロジェクトの仮想環境にインストールし、その環境からエディターを起動するか、その環境の `djlint` をエディターに指定してください。そうすれば、エディターはプロジェクトで固定したバージョンを実行し、pre-commit フックや CI と同じ結果が得られます。
 
-プロジェクトで djLint を [npm](/ja/docs/getting-started/#インストール) でインストールしている場合、コマンドはプロジェクト内の `node_modules/.bin/djlint`（Windows では `node_modules/.bin/djlint.cmd`）です。以下のエディターで `djlint` を実行する箇所には、このパスを指定してください。これは相対パスなので、エディターが `node_modules` のあるフォルダー以外から djLint を実行する場合は、フルパスを指定してください。VS Code と Zed の拡張機能は自動で見つけます。
+プロジェクトで djLint を [npm](/ja/docs/getting-started/#インストール) でインストールしている場合、コマンドはプロジェクト内の `node_modules/.bin/djlint`（Windows では `node_modules/.bin/djlint.cmd`）です。npm で配布されている djLint の 1.54.0 より前の版には、このコマンドはありません。以下のエディターで `djlint` を実行する箇所には、このパスを指定してください。これは相対パスなので、エディターが `node_modules` のあるフォルダー以外から djLint を実行する場合は、フルパスを指定してください。VS Code と Zed の拡張機能は自動で見つけます。
 
 ## Visual Studio Code
 
@@ -28,7 +28,7 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 
 更新するには、そのフォルダーで `git pull` を実行してから **zed: rebuild dev extension** を実行します。
 
-PATH 上またはプロジェクトに npm でインストールした djLint 1.49 以降か、djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
+PATH 上の djLint 1.49 以降、プロジェクトに npm でインストールした djLint 1.54.0 以降、または djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
 
 ## Neovim
 
@@ -45,7 +45,17 @@ vim.filetype.add({
 
 ### 組み込みの LSP クライアント（推奨）
 
-Neovim 0.11 以降は、プラグインなしで djLint の[言語サーバー](#言語サーバー)と直接やり取りできます。入力中に検出結果が範囲の下線付きで表示され、`vim.lsp.buf.format()` でフォーマットできます：
+Neovim 0.11 以降は、プラグインなしで djLint の[言語サーバー](#言語サーバー)と直接やり取りできます。入力中に検出結果が範囲の下線付きで表示され、`vim.lsp.buf.format()` でフォーマットできます。
+
+v2.12.0 より新しい [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) には設定が含まれているので、導入済みなら 1 行で足ります：
+
+```lua
+vim.lsp.enable("djlint")
+```
+
+プロジェクトに npm で djLint をインストールしている場合は、この行の前に `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` を書いてください（Windows では `"node_modules/.bin/djlint.cmd"`）。
+
+nvim-lspconfig を使わない場合、古い版の場合、または Neovim が nvim-lspconfig に必要な 0.11.3 より前の場合は、設定を自分で定義します：
 
 ```lua
 vim.lsp.config("djlint", {
