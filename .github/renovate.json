@@ -43,11 +43,11 @@
     },
     {
       "customType": "regex",
-      "description": "Keep CI on the newest Python: the version the tools run on and the last one the tests run on. The first test version is the oldest supported one, so it stays",
+      "description": "Keep CI on the newest Python: the version the tools run on and the last one the tests run on. The first test version is the oldest supported one, so it stays, and so does a version with a comment after it, which says why it is held back",
       "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
       "matchStrings": [
-        "python-version: \"(?<currentValue>\\d+\\.\\d+)\"",
-        "python-version:\\n +- \"\\d+\\.\\d+\"\\n +- \"(?<currentValue>\\d+\\.\\d+)\""
+        "python-version: \"(?<currentValue>\\d+\\.\\d+)\"\\n",
+        "python-version:\\n +- \"\\d+\\.\\d+\"\\n +- \"(?<currentValue>\\d+\\.\\d+)\"\\n"
       ],
       "depNameTemplate": "docker.io/python",
       "datasourceTemplate": "docker"

@@ -4,11 +4,13 @@
 
 ## [Unreleased]
 
-## [1.54.1] - 2026-11-26
-
 ### Packaging
 
 - The npm package runs djLint on Python 3.15.2 instead of 3.14.10, from python-build-standalone 20261123, which updates libffi to 3.8.1.
+
+## [1.54.1] - 2026-11-26
+
+This version never reached PyPI or npm: its release build failed. 1.54.2 carries its changes.
 
 ## [1.54.0] - 2026-11-18
 
