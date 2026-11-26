@@ -5,7 +5,7 @@ description: "Používejte djLint ve svém editoru a spouštějte ho pomocí pr
 
 Ať používáte jakýkoli editor, nainstalujte djLint tam, kde ho editor najde, ideálně do virtuálního prostředí projektu, a editor spouštějte z něj, nebo ho nasměrujte na `djlint` z tohoto prostředí. Editor pak spouští verzi, kterou má váš projekt zafixovanou, se stejnými výsledky jako váš hook pre-commit nebo CI.
 
-Pokud projekt instaluje djLint přes [npm](/cs/docs/getting-started/#instalace), jeho příkaz je v projektu `node_modules/.bin/djlint`, na Windows `node_modules/.bin/djlint.cmd`. Kde editor níže spouští `djlint`, zadejte mu tuto cestu. Cesta je relativní: pokud editor spouští djLint z jiné složky než té s `node_modules`, zadejte plnou cestu. Rozšíření pro VS Code a Zed ho najdou sama.
+Pokud projekt instaluje djLint přes [npm](/cs/docs/getting-started/#instalace), jeho příkaz je v projektu `node_modules/.bin/djlint`, na Windows `node_modules/.bin/djlint.cmd`. Vydání na npm starší než 1.54.0 ho nemají. Kde editor níže spouští `djlint`, zadejte mu tuto cestu. Cesta je relativní: pokud editor spouští djLint z jiné složky než té s `node_modules`, zadejte plnou cestu. Rozšíření pro VS Code a Zed ho najdou sama.
 
 ## Visual Studio Code
 
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 Pro djLint nainstalovaný v projektu přes npm dejte před tento řádek `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, na Windows s `"node_modules/.bin/djlint.cmd"`.
 
-Bez nvim-lspconfig nebo s jeho starší verzí si konfiguraci nadefinujte sami:
+Bez nvim-lspconfig, s jeho starší verzí nebo na Neovimu starším než 0.11.3, který vyžaduje, si konfiguraci nadefinujte sami:
 
 ```lua
 vim.lsp.config("djlint", {

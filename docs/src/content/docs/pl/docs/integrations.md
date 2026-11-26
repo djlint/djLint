@@ -5,7 +5,7 @@ description: "Używaj djLint w swoim edytorze i uruchamiaj go za pomocą pre-com
 
 Niezależnie od edytora zainstaluj djLint tam, gdzie edytor może go znaleźć, najlepiej w środowisku wirtualnym projektu, a następnie uruchamiaj edytor z tego środowiska albo wskaż mu `djlint` z tego środowiska. Dzięki temu edytor uruchamia wersję przypiętą w projekcie i daje takie same wyniki jak hook pre-commit czy CI.
 
-Jeśli projekt instaluje djLint przez [npm](/pl/docs/getting-started/#instalacja), jego polecenie to `node_modules/.bin/djlint` w projekcie, a na Windows `node_modules/.bin/djlint.cmd`. Tam, gdzie edytor poniżej uruchamia `djlint`, podaj mu tę ścieżkę. Ścieżka jest względna: jeśli edytor uruchamia djLint z innego folderu niż ten z `node_modules`, podaj pełną ścieżkę. Rozszerzenia dla VS Code i Zed znajdą go same.
+Jeśli projekt instaluje djLint przez [npm](/pl/docs/getting-started/#instalacja), jego polecenie to `node_modules/.bin/djlint` w projekcie, a na Windows `node_modules/.bin/djlint.cmd`. Wydania npm starsze niż 1.54.0 go nie mają. Tam, gdzie edytor poniżej uruchamia `djlint`, podaj mu tę ścieżkę. Ścieżka jest względna: jeśli edytor uruchamia djLint z innego folderu niż ten z `node_modules`, podaj pełną ścieżkę. Rozszerzenia dla VS Code i Zed znajdą go same.
 
 ## Visual Studio Code
 
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 Dla djLint zainstalowanego w projekcie przez npm wstaw przed tę linię `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, a na Windows z `"node_modules/.bin/djlint.cmd"`.
 
-Bez nvim-lspconfig lub z jego starszą wersją zdefiniuj konfigurację samodzielnie:
+Bez nvim-lspconfig, z jego starszą wersją lub na Neovimie starszym niż wymagane przez niego 0.11.3 zdefiniuj konfigurację samodzielnie:
 
 ```lua
 vim.lsp.config("djlint", {

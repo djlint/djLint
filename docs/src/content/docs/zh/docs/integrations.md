@@ -5,7 +5,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 无论使用哪种编辑器，都请把 djLint 安装在编辑器能找到的位置，最好是项目的虚拟环境中，然后从该环境启动编辑器，或者让编辑器指向该环境中的 `djlint`。这样，编辑器运行的就是项目锁定的版本，结果与 pre-commit 钩子或 CI 中的一致。
 
-如果项目用 [npm](/zh/docs/getting-started/#安装) 安装 djLint，它的命令是项目中的 `node_modules/.bin/djlint`，在 Windows 上是 `node_modules/.bin/djlint.cmd`。下面的编辑器中运行 `djlint` 的地方，请填写这个路径。这是相对路径：如果编辑器不是在包含 `node_modules` 的目录中运行 djLint，请填写完整路径。VS Code 和 Zed 的扩展会自己找到它。
+如果项目用 [npm](/zh/docs/getting-started/#安装) 安装 djLint，它的命令是项目中的 `node_modules/.bin/djlint`，在 Windows 上是 `node_modules/.bin/djlint.cmd`。1.54.0 之前的 npm 版本没有这个命令。下面的编辑器中运行 `djlint` 的地方，请填写这个路径。这是相对路径：如果编辑器不是在包含 `node_modules` 的目录中运行 djLint，请填写完整路径。VS Code 和 Zed 的扩展会自己找到它。
 
 ## Visual Studio Code
 
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 如果项目用 npm 安装了 djLint，请在这一行之前加上 `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`（Windows 上用 `"node_modules/.bin/djlint.cmd"`）。
 
-不用 nvim-lspconfig 或版本较旧时，请自行定义配置：
+不用 nvim-lspconfig、它的版本较旧，或 Neovim 低于它所需的 0.11.3 时，请自行定义配置：
 
 ```lua
 vim.lsp.config("djlint", {
