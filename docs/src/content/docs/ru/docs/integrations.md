@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 Если djLint стоит в проекте через npm, поставьте перед этой строкой `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, на Windows с путём `"node_modules/.bin/djlint.cmd"`.
 
-Без nvim-lspconfig, с его старой версией или на Neovim ниже 0.11.3, который ему нужен, задайте конфигурацию сами:
+Без nvim-lspconfig или с его старой версией задайте конфигурацию сами:
 
 ```lua
 vim.lsp.config("djlint", {
