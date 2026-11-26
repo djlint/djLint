@@ -5,7 +5,7 @@ description: "Utilisez djLint dans votre éditeur et exécutez-le avec pre-commi
 
 Quel que soit votre éditeur, installez djLint là où l'éditeur peut le trouver, idéalement dans l'environnement virtuel du projet, puis lancez l'éditeur depuis cet environnement ou indiquez-lui le `djlint` de cet environnement. Ainsi, l'éditeur exécute la version fixée par votre projet, avec les mêmes résultats que votre hook pre-commit ou votre CI.
 
-Si le projet installe djLint avec [npm](/fr/docs/getting-started/#installation), sa commande est `node_modules/.bin/djlint` dans le projet, ou `node_modules/.bin/djlint.cmd` sous Windows. Les versions npm antérieures à 1.54.0 ne l'ont pas. Là où un éditeur ci-dessous lance `djlint`, donnez-lui ce chemin. Le chemin est relatif : si l'éditeur lance djLint depuis un autre dossier que celui qui contient `node_modules`, donnez le chemin complet. Les extensions pour VS Code et Zed le trouvent d'elles-mêmes.
+Si le projet installe djLint avec [npm](/fr/docs/getting-started/#installation), sa commande est `node_modules/.bin/djlint` dans le projet, ou `node_modules/.bin/djlint.cmd` sous Windows. Les versions de djLint sur npm antérieures à 1.54.0 ne l'ont pas. Là où un éditeur ci-dessous lance `djlint`, donnez-lui ce chemin. Le chemin est relatif : si l'éditeur lance djLint depuis un autre dossier que celui qui contient `node_modules`, donnez le chemin complet. Les extensions pour VS Code et Zed le trouvent d'elles-mêmes.
 
 ## Visual Studio Code
 
