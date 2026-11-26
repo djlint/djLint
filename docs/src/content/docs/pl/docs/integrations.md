@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 lub nowszy może komunikować się z [serwerem języka](#serwer-jezyka) djLint bezpośrednio, bez żadnej wtyczki. Daje to zgłoszenia już podczas pisania, z podkreślonymi zakresami, oraz formatowanie przez `vim.lsp.buf.format()`.
 
-[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) od v2.13.0 zawiera jego konfigurację, więc z nim wystarczy jedna linia:
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) od v2.13.0 zawiera konfigurację djLint, więc z nim wystarczy jedna linia:
 
 ```lua
 vim.lsp.enable("djlint")

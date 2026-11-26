@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`.
 
-[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) od v2.13.0 jeho konfiguraci obsahuje, takže s ním stačí jeden řádek:
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) od v2.13.0 obsahuje konfiguraci djLint, takže s ním stačí jeden řádek:
 
 ```lua
 vim.lsp.enable("djlint")

@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言服务器)通信，无需任何插件。这样可以在输入时得到检查结果，并带有下划线标出的范围，还能用 `vim.lsp.buf.format()` 格式化。
 
-v2.13.0 及更新版本的 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 自带它的配置，装了它只需一行：
+v2.13.0 及更新版本的 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 自带 djLint 的配置，装了它只需一行：
 
 ```lua
 vim.lsp.enable("djlint")

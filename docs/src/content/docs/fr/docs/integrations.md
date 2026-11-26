@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 ou plus récent peut dialoguer directement avec le [serveur de langage](#serveur-de-langage) de djLint, sans plugin. Vous obtenez ainsi les signalements pendant la frappe, avec les plages concernées soulignées, et `vim.lsp.buf.format()` pour le formatage.
 
-[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) à partir de la v2.13.0 fournit sa configuration, une ligne suffit donc avec lui :
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) à partir de la v2.13.0 fournit la configuration de djLint, une ligne suffit donc avec lui :
 
 ```lua
 vim.lsp.enable("djlint")

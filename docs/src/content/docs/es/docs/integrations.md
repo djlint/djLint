@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 o posterior puede comunicarse directamente con el [servidor de lenguaje](#servidor-de-lenguaje) de djLint, sin ningún plugin. Así obtienes los problemas mientras escribes, con los rangos subrayados, y `vim.lsp.buf.format()` para formatear.
 
-[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) desde la v2.13.0 incluye su configuración, así que con él basta una línea:
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) desde la v2.13.0 incluye la configuración de djLint, así que con él basta una línea:
 
 ```lua
 vim.lsp.enable("djlint")
