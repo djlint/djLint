@@ -144,7 +144,7 @@ jobs:
     steps:
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
-          python-version: "3.15"
+          python-version: "3.14" # attest-action locks cffi 2.0.0, which has no wheels for 3.15
           enable-cache: false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
@@ -152,11 +152,6 @@ jobs:
           path: dist
           merge-multiple: true
       - uses: astral-sh/attest-action@39b6ce43875c196a579e31635b11aa2a2036384a # v0.0.7
-        # Its uv.lock pins cffi 2.0.0, which has no wheels for Python 3.15, so
-        # it runs on 3.14 until a release locks cffi 2.1 or newer:
-        # https://github.com/astral-sh/attest-action/blob/v0.0.7/uv.lock
-        env:
-          UV_PYTHON: "3.14"
       - run: uv publish --trusted-publishing always --no-cache
   # The packages with the compiled djLint, on the platforms they are for.
   test-npm:
