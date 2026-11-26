@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 以降は、プラグインなしで djLint の[言語サーバー](#言語サーバー)と直接やり取りできます。入力中に検出結果が範囲の下線付きで表示され、`vim.lsp.buf.format()` でフォーマットできます。
 
-v2.12.0 より新しい [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) には設定が含まれているので、導入済みなら 1 行で足ります：
+v2.13.0 以降の [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) には設定が含まれているので、導入済みなら 1 行で足ります：
 
 ```lua
 vim.lsp.enable("djlint")

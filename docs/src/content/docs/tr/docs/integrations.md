@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](#dil-sunucusu) doğrudan konuşabilir. Bu sayede bulgular, altı çizili aralıklarla birlikte siz yazarken gelir ve biçimlendirme için `vim.lsp.buf.format()` kullanılabilir.
 
-v2.12.0 sonrası [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) yapılandırmasını içerir, bu yüzden onunla tek satır yeterlidir:
+v2.13.0 ve sonrası [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) yapılandırmasını içerir, bu yüzden onunla tek satır yeterlidir:
 
 ```lua
 vim.lsp.enable("djlint")
