@@ -59,18 +59,12 @@ def run(
     def context(token: TagToken) -> dict[int, int]:
         cached = branch_contexts.get(token.start)
         if cached is None:
-            cached = branch_contexts[token.start] = branch_context(
-                blocks, token.start
-            )
+            cached = branch_contexts[token.start] = branch_context(blocks, token.start)
         return cached
 
     for token in tokenize_markup(html):
         tag_name = token.name.lower()
-        if (
-            token.declaration
-            or token.self_closing
-            or tag_name in HTML_VOID_ELEMENTS
-        ):
+        if token.declaration or token.self_closing or tag_name in HTML_VOID_ELEMENTS:
             continue
 
         in_unformatted_block = child_of_unformatted_block(config, html, token)
@@ -94,8 +88,7 @@ def run(
                         p_child_tags.append(token)
                         break
             if any(
-                tag.name.lower() == tag_name
-                and mutually_exclusive(context(tag), context(token))
+                tag.name.lower() == tag_name and mutually_exclusive(context(tag), context(token))
                 for tag in open_tags
             ):
                 continue
@@ -136,6 +129,7 @@ def run(
         return {
             "code": rule["name"],
             "line": get_line(token.start, line_ends),
+            "end": get_line(token.end, line_ends),
             "match": html[token.start : token.end].strip()[:20],
             "message": message,
         }
@@ -144,8 +138,4 @@ def run(
         error(token, rule["message"])
         for token in chain(open_tags, orphan_tags)
         if reportable(token)
-    ) + tuple(
-        error(token, P_LIST_CHILD_MESSAGE)
-        for token in p_child_tags
-        if reportable(token)
-    )
+    ) + tuple(error(token, P_LIST_CHILD_MESSAGE) for token in p_child_tags if reportable(token))

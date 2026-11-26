@@ -185,6 +185,23 @@ test_data = [
         ),
         id="nested_inline_comment",
     ),
+    pytest.param(
+        (
+            '<div class="x" {# note #}>t</div>\n'
+            "<div {# note #}>t</div>\n"
+            '<img src="a.png" {# note #} />\n'
+            '<script {# a -#} type="text/javascript"></script>\n'
+            "<div {% comment %}note{% endcomment %}>t</div>\n"
+        ),
+        (
+            '<div class="x" {# note #}>t</div>\n'
+            "<div {# note #}>t</div>\n"
+            '<img src="a.png" {# note #} />\n'
+            '<script {# a -#} type="text/javascript"></script>\n'
+            "<div {% comment %}note{% endcomment %}>t</div>\n"
+        ),
+        id="a_comment_ending_the_attributes_is_kept",
+    ),
 ]
 
 

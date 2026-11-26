@@ -1,0 +1,161 @@
+---
+title: "開始使用"
+description: "安裝 djLint，並從命令列 lint 或格式化 HTML 範本。"
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import CliHelp from "../../../../components/CliHelp.astro";
+
+## 安裝
+
+djLint 發布在 [PyPI](https://pypi.org/project/djlint/) 和 [npm](https://www.npmjs.com/package/djlint) 上。PyPI 版需要 [Python](https://python.org) 3.11 或更新版本，npm 版則自帶 Python。在 Python 專案中用 uv 或 pip 加入，在 Angular 應用程式、Eleventy 網站或 Shopify 佈景主題等 JavaScript 專案中用 npm 加入。
+
+<Tabs>
+<TabItem label="uv">
+
+使用 [uv](https://docs.astral.sh/uv/) 時，將它加入專案作為開發相依套件：
+
+```bash
+uv add --dev djlint
+```
+
+或者將它安裝為獨立工具：
+
+```bash
+uv tool install djlint
+```
+
+</TabItem>
+<TabItem label="pip">
+
+```bash
+pip install djlint
+```
+
+</TabItem>
+<TabItem label="npm">
+
+npm 套件自帶 Python，所以只需要 Node.js 16.9 或更新版本。它提供 Linux（x64、Arm64、ppc64le、s390x、riscv64）、macOS（x64、Arm64）和 Windows（x64、x86、Arm64）的建置。在使用 musl 的 Linux（如 Alpine）上，它支援 x64 與 Arm64。將它加入專案作為開發相依套件：
+
+```bash
+npm i -D djlint
+```
+
+或者全域安裝：
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
+<TabItem label="pipx">
+
+使用 [pipx](https://pipx.pypa.io/)：
+
+```bash
+pipx install djlint
+```
+
+</TabItem>
+<TabItem label="Homebrew">
+
+在 macOS 或 Linux 上使用由社群維護的 [Homebrew formula](https://formulae.brew.sh/formula/djlint)：
+
+```bash
+brew install djlint
+```
+
+</TabItem>
+</Tabs>
+
+若要在編輯器中或每次提交時執行 djLint，請參閱[整合](/zh-tw/docs/integrations/)和 [pre-commit](/zh-tw/docs/integrations/#pre-commit)。
+
+:::note[注意]
+如果找不到 `djlint` 指令，請將它的安裝資料夾加入你的 PATH。如果 djLint 安裝在某個 Python 環境中，也可以用該環境的 Python 執行 `python -m djlint`。
+:::
+
+## 第一次執行
+
+把範本所在的資料夾交給 djLint，並用 `--profile` 指定範本語言。要執行哪些 linter 規則、範本語法要怎麼格式化，都由 profile 決定。以 Django 專案為例：
+
+lint 範本（lint 是預設模式，所以 `--lint` 可以省略）：
+
+```bash
+djlint templates --lint --profile=django
+```
+
+查看格式化會改動哪些地方。加上 `--check` 時，djLint 只會輸出 diff，不會修改檔案：
+
+```bash
+djlint templates --check --profile=django
+```
+
+直接在原處格式化檔案：
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+所有 profile 都列在 [`profile`](/zh-tw/docs/configuration/#profile) 選項中。每種範本語言也有自己的頁面，例如 [Django](/zh-tw/docs/languages/django/)、[Jinja](/zh-tw/docs/languages/jinja/) 或 [Handlebars](/zh-tw/docs/languages/handlebars/)，頁面上也說明了如何在設定檔中設定 profile，省得每次都要傳入。
+
+如果是用 `uv add --dev` 把 djLint 加入專案，它位於專案的環境中：請在指令前加上 `uv run`，例如 `uv run djlint templates --lint --profile=django`。 如果是用 `npm i -D` 加入的，請改在前面加上 `npx`，例如 `npx djlint templates --lint --profile=django`。
+
+## 使用路徑與使用 stdin
+
+djLint 可以處理路徑或 stdin。
+
+使用路徑執行：
+
+```bash
+djlint /path/to/templates --lint
+```
+
+或指定單一檔案：
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+或使用 stdin：
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+stdin 也可以用來重新格式化程式碼。輸出只會包含格式化後的程式碼，不含任何訊息。
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+輸出：
+
+```html
+<div></div>
+```
+
+從 stdin 讀取時，djLint 沒有實際路徑可用來比對 `per-file-ignores` 或顯示在訊息中，因此預設使用 `-`。傳入 `--stdin-filename` 可以告訴 djLint 透過管線傳入的內容的實際路徑，例如當編輯器整合在儲存時以管線傳入檔案內容的情況。
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## 結束代碼
+
+| 代碼 | 意義                                                                                                                                    |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | 要求 djLint 檢查的所有內容都沒有問題，或是它找到的每個檔案都被你的設定略過了。                                                          |
+| `1`  | djLint 發現了 lint 錯誤，或有需要重新格式化的檔案。`--warn` 會將這些回報為警告，改以 `0` 結束。                                         |
+| `2`  | djLint 沒有檢查你要求的內容：路徑沒有比對到任何檔案、有檔案無法讀取（不是 UTF-8，或沒有權限）、命令列或設定無效，或是 djLint 執行失敗。 |
+
+只有代碼 `1` 表示 djLint 檢查了你的範本，而且不滿意它找到的內容，因此管線可以區分檢查未通過，以及什麼都沒檢查到的執行，例如路徑錯誤，或 `--extension` 已不再相符。
+
+djLint 找到、但隨後透過 `exclude`、`extend_exclude`、`use_gitignore` 或 `require_pragma` 刻意略過的檔案，不算是錯誤，`exclude` 也因此能在 pre-commit 底下正常運作。如果你的管線中本來就會有不含任何範本的路徑，請使用 [`allow_empty_input`](/zh-tw/docs/configuration/#allow-empty-input) 關閉代碼 `2`：
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```
+
+## CLI 用法
+
+<CliHelp />

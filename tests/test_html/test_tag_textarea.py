@@ -22,20 +22,8 @@ test_data = [
         id="textarea",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            '    <div class="field">\n'
-            "        <textarea>asdf</textarea>\n"
-            "    </div>\n"
-            "</div>\n"
-        ),
-        (
-            "<div>\n"
-            '    <div class="field">\n'
-            "        <textarea>asdf</textarea>\n"
-            "    </div>\n"
-            "</div>\n"
-        ),
+        ('<div>\n    <div class="field">\n        <textarea>asdf</textarea>\n    </div>\n</div>\n'),
+        ('<div>\n    <div class="field">\n        <textarea>asdf</textarea>\n    </div>\n</div>\n'),
         id="nesting",
     ),
     pytest.param(
@@ -62,20 +50,8 @@ test_data = [
         id="a_tag",
     ),
     pytest.param(
-        (
-            "<a>\n"
-            "    <span>hi</span>hi</a>\n"
-            "<div>\n"
-            '    <h4>{{ _("Options") }}</h4>\n'
-            "</div>\n"
-        ),
-        (
-            "<a>\n"
-            "    <span>hi</span>hi</a>\n"
-            "<div>\n"
-            '    <h4>{{ _("Options") }}</h4>\n'
-            "</div>\n"
-        ),
+        ('<a>\n    <span>hi</span>hi</a>\n<div>\n    <h4>{{ _("Options") }}</h4>\n</div>\n'),
+        ('<a>\n    <span>hi</span>hi</a>\n<div>\n    <h4>{{ _("Options") }}</h4>\n</div>\n'),
         id="a with nesting (issue 189)",
     ),
     pytest.param(

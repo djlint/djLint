@@ -5,10 +5,12 @@ uv run pytest tests/test_html/test_tag_span.py
 
 from __future__ import annotations
 
+import time
 from typing import TYPE_CHECKING
 
 import pytest
 
+from djlint.formatter.indent import indent_html
 from djlint.reformat import formatter
 from tests.conftest import printer
 
@@ -17,12 +19,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            '<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>\n'
-        ),
-        (
-            '<span class="icon has-text-grey is-large"><i class="fas fa-lg fa-star"></i></span>\n'
-        ),
+        ('<span class="icon has-text-grey is-large "><i class="fas fa-lg fa-star"></i></span>\n'),
+        ('<span class="icon has-text-grey is-large"><i class="fas fa-lg fa-star"></i></span>\n'),
         id="icon",
     ),
     pytest.param(
@@ -62,20 +60,8 @@ test_data = [
         id="nested string",
     ),
     pytest.param(
-        (
-            "<ul>\n"
-            "    <li>\n"
-            "        <span>C</span> <a>D</a> <strong>Q</strong>\n"
-            "    </li>\n"
-            "</ul>\n"
-        ),
-        (
-            "<ul>\n"
-            "    <li>\n"
-            "        <span>C</span> <a>D</a> <strong>Q</strong>\n"
-            "    </li>\n"
-            "</ul>\n"
-        ),
+        ("<ul>\n    <li>\n        <span>C</span> <a>D</a> <strong>Q</strong>\n    </li>\n</ul>\n"),
+        ("<ul>\n    <li>\n        <span>C</span> <a>D</a> <strong>Q</strong>\n    </li>\n</ul>\n"),
         id="more_strings",
     ),
     pytest.param(
@@ -149,3 +135,19 @@ def test_base(source: str, expected: str, basic_config: Config) -> None:
 
     printer(expected, source, output)
     assert expected == output
+
+
+def test_a_line_of_inline_tags_before_a_block_is_indented_at_once(django_config: Config) -> None:
+    """Twelve spans before a "<div>" on one line never finished.
+
+    The formatter keeps such a line when a stray quote, as in `"=""`, hides
+    its tags from the tokenizer, and the pattern for a line of inline tags
+    tried every way to split it.
+    """
+    line = "<span>x</span> " * 30 + "<div>"
+
+    started = time.perf_counter()
+    indented = indent_html(line, django_config)
+
+    assert indented.startswith("<span>x</span> <span>x</span>")
+    assert time.perf_counter() - started < 1

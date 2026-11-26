@@ -9,9 +9,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
 from djlint.settings import Config
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.types import LintError
@@ -47,12 +46,8 @@ test_data = [
         ]),
         id="mismatched_block_name_is_T038s_job",
     ),
-    pytest.param(
-        ("{% block foo %}\n{% endblock foo %}"), ([]), id="matching_block_name"
-    ),
-    pytest.param(
-        ("{% block foo %}{% endblock %}"), ([]), id="single_line_block"
-    ),
+    pytest.param(("{% block foo %}\n{% endblock foo %}"), ([]), id="matching_block_name"),
+    pytest.param(("{% block foo %}{% endblock %}"), ([]), id="single_line_block"),
     pytest.param(
         ("{% block foo %}\n{% endblock %}"),
         ([
@@ -64,6 +59,11 @@ test_data = [
             }
         ]),
         id="multi_line_block_without_name",
+    ),
+    pytest.param(
+        ("{# djlint:off #}{% block foo %}\n{% endblock %}{# djlint:on #}"),
+        ([]),
+        id="inside a djlint:off region",
     ),
 ]
 

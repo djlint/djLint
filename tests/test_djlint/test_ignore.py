@@ -19,9 +19,7 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        ("{# djlint:off #}\n<img \n/>"),
-        ("{# djlint:off #}\n<img \n/>\n"),
-        id="don't compress",
+        ("{# djlint:off #}\n<img \n/>"), ("{# djlint:off #}\n<img \n/>\n"), id="don't compress"
     )
 ]
 
@@ -100,18 +98,14 @@ def test_djlint_off_inside_attribute_list_is_preserved() -> None:
         '  "{# djlint:on #}></p>'
     )
     expected = f"{source}\n"
-    output = formatter(
-        config_builder({"profile": "django", "indent": 2}), source
-    )
+    output = formatter(config_builder({"profile": "django", "indent": 2}), source)
 
     printer(expected, source, output)
     assert expected == output
 
 
 @pytest.mark.parametrize(("source", "ignored_block", "config"), test_off_blocks)
-def test_off_blocks_are_preserved(
-    source: str, ignored_block: str, config: dict[str, Any]
-) -> None:
+def test_off_blocks_are_preserved(source: str, ignored_block: str, config: dict[str, Any]) -> None:
     output = formatter(config_builder(config), source)
 
     printer(ignored_block, source, output)

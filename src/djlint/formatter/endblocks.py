@@ -40,9 +40,9 @@ def name_endblocks(html: str, config: Config) -> str:
     open_blocks: list[tuple[str | None, int]] = []
 
     for match in _BLOCK_PATTERN.finditer(html):
-        if overlaps_ignored_block(
+        if overlaps_ignored_block(config, html, match) or inside_ignored_linter_block(
             config, html, match
-        ) or inside_ignored_linter_block(config, html, match):
+        ):
             continue
 
         if not match.group("closing"):
@@ -53,11 +53,7 @@ def name_endblocks(html: str, config: Config) -> str:
             continue
 
         name, opened_at = open_blocks.pop()
-        if (
-            name
-            and not match.group("name")
-            and "\n" in html[opened_at : match.start()]
-        ):
+        if name and not match.group("name") and "\n" in html[opened_at : match.start()]:
             insertions.append((match.end("keyword"), f" {name}"))
 
     if not insertions:

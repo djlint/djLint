@@ -10,6 +10,7 @@ from djlint.output import (
     build_relative_path,
     build_stats_output,
     count_format_errors,
+    finding_end,
     finding_position,
     first_filename,
     report_on_stderr,
@@ -40,7 +41,10 @@ def escape_property(data: str) -> str:
 
 
 def print_github_output(
-    config: Config, file_errors: Sequence[ProcessResult], _file_count: int
+    config: Config,
+    file_errors: Sequence[ProcessResult],
+    _file_count: int,
+    unreadable: Sequence[tuple[str, str]] = (),
 ) -> int:
     """Print results as GitHub workflow commands."""
     lint_error_count = 0
@@ -49,31 +53,29 @@ def print_github_output(
     for error in sorted(file_errors, key=first_filename):
         if error.get("format_message"):
             if config.stdin and config.check:
-                format_error_count += count_format_errors(
-                    error["format_message"]
-                )
+                format_error_count += count_format_errors(error["format_message"])
             elif not config.stdin:
-                format_error_count += print_format_errors(
-                    error["format_message"], config
-                )
+                format_error_count += print_format_errors(error["format_message"], config)
         if error.get("lint_message"):
             lint_error_count += print_lint_errors(error["lint_message"], config)
 
     if config.statistics and config.lint:
-        build_stats_output(
-            tuple(x.get("lint_message") for x in file_errors), config
-        )
+        build_stats_output(tuple(x.get("lint_message") for x in file_errors), config)
+
+    for path, reason in unreadable:
+        filename = escape_property(build_relative_path(path, config.project_root))
+        echo(f"::error file={filename}::{escape_data(reason)}")
 
     return lint_error_count + format_error_count
 
 
-def print_lint_errors(
-    error: Mapping[str, Iterable[LintError]], config: Config
-) -> int:
+def print_lint_errors(error: Mapping[str, Iterable[LintError]], config: Config) -> int:
     """Print lint errors in GitHub format.
 
     djLint counts columns from zero and GitHub from one, so the column
-    is shifted to land the annotation on the finding itself.
+    is shifted to land the annotation on the finding itself. Its end
+    column is the finding's last, and it takes one only for an annotation
+    on a single line.
     """
     errors = sorted(next(iter(error.values())), key=finding_position)
     if not errors:
@@ -82,37 +84,33 @@ def print_lint_errors(
     if config.stdin:
         file_property = ""
     else:
-        filename = escape_property(
-            build_relative_path(next(iter(error)), config.project_root)
-        )
+        filename = escape_property(build_relative_path(next(iter(error)), config.project_root))
         file_property = f"file={filename},"
 
     err = report_on_stderr(config)
 
     for message_dict in errors:
         line, column = finding_position(message_dict)
+        end_line, end_column = finding_end(message_dict)
+        end_property = f",endLine={end_line}"
+        if end_line == line:
+            end_property += f",endColumn={max(end_column, column + 1)}"
         level = "error" if message_dict["code"].startswith("E") else "warning"
-        message = escape_data(
-            f"{message_dict['code']} {message_dict['message']}"
-        )
+        message = escape_data(f"{message_dict['code']} {message_dict['message']}")
         echo(
-            f"::{level} {file_property}line={line},col={column + 1}::{message}",
+            f"::{level} {file_property}line={line},col={column + 1}{end_property}::{message}",
             err=err,
         )
 
     return len(errors)
 
 
-def print_format_errors(
-    errors: Mapping[str, Sequence[str]], config: Config
-) -> int:
+def print_format_errors(errors: Mapping[str, Sequence[str]], config: Config) -> int:
     """Print format errors in GitHub format."""
     if not errors:
         return 0
 
-    filename = escape_property(
-        build_relative_path(next(iter(errors)), config.project_root)
-    )
+    filename = escape_property(build_relative_path(next(iter(errors)), config.project_root))
     if next(iter(errors.values())):
         echo(f"::error file={filename}::Formatting changes required")
 

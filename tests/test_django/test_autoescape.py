@@ -22,18 +22,8 @@ test_data = [
         id="autoescape_tag",
     ),
     pytest.param(
-        (
-            "<p>\n"
-            "    {% autoescape on %}Something{% endautoescape %}\n"
-            "    <span>Test</span>\n"
-            "</p>\n"
-        ),
-        (
-            "<p>\n"
-            "    {% autoescape on %}Something{% endautoescape %}\n"
-            "    <span>Test</span>\n"
-            "</p>\n"
-        ),
+        ("<p>\n    {% autoescape on %}Something{% endautoescape %}\n    <span>Test</span>\n</p>\n"),
+        ("<p>\n    {% autoescape on %}Something{% endautoescape %}\n    <span>Test</span>\n</p>\n"),
         id="issue_2411_siblings_keep_their_level",
     ),
 ]

@@ -21,11 +21,7 @@ test_data = [
         "<p>\n  a<br />b\n</p>\n",
         id="self closing form, the p breaks as it always does",
     ),
-    pytest.param(
-        "<p>a<hr>b</p>\n",
-        "<p>\n  a\n  <hr>\n  b\n</p>\n",
-        id="hr is unaffected",
-    ),
+    pytest.param("<p>a<hr>b</p>\n", "<p>\n  a\n  <hr>\n  b\n</p>\n", id="hr is unaffected"),
 ]
 
 

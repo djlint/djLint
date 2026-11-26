@@ -14,9 +14,11 @@ from typing import TYPE_CHECKING
 import pytest
 
 from djlint.reformat import formatter
+from djlint.settings import Config
 from tests.conftest import config_builder, printer
 
 if TYPE_CHECKING:
+    from pathlib import Path
     from typing import Any
 
 test_data = [
@@ -29,11 +31,7 @@ test_data = [
     pytest.param(
         ('<div data-config=\'{"name": "value", "enabled": true}\'></div>'),
         ('<div data-config=\'{"name": "value", "enabled": true}\'></div>\n'),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            "indent_js": 2,
-        }),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0, "indent_js": 2}),
         id="data_attribute_not_formatted_by_default",
     ),
     pytest.param(
@@ -69,9 +67,7 @@ test_data = [
         id="json_two_properties_multiline_short_attr",
     ),
     pytest.param(
-        (
-            '<div data-very-long-attribute-name=\'{"name": "value", "enabled": true}\'></div>'
-        ),
+        ('<div data-very-long-attribute-name=\'{"name": "value", "enabled": true}\'></div>'),
         (
             "<div data-very-long-attribute-name='{\n"
             '                                      "name": "value",\n'
@@ -100,11 +96,7 @@ test_data = [
             "                preventDefault: true\n"
             "              }'></div>\n"
         ),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            "indent_js": 2,
-        }),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0, "indent_js": 2}),
         id="js_two_properties_multiline",
     ),
     pytest.param(
@@ -124,55 +116,31 @@ test_data = [
             "               }\n"
             '             }"></div>\n'
         ),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            "indent_js": 2,
-        }),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0, "indent_js": 2}),
         id="alpine_x_data_method_multiline",
     ),
     pytest.param(
         ("<div x-data='{value: foo()}'></div>"),
         ("<div x-data='{value: foo()}'></div>\n"),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            "indent_js": 2,
-        }),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0, "indent_js": 2}),
         id="js_function_call_not_counted_as_property",
     ),
     pytest.param(
         ("<div onclick='foo();'></div>"),
         ("<div onclick='foo();'></div>\n"),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            "indent_js": 2,
-        }),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0, "indent_js": 2}),
         id="js_code_single_function_no_formatting",
     ),
     pytest.param(
         ("<div onclick='foo(); var x = 1; baz();'></div>"),
-        (
-            "<div onclick='foo();\n"
-            "              var x = 1;\n"
-            "              baz();'></div>\n"
-        ),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            "indent_js": 2,
-        }),
+        ("<div onclick='foo();\n              var x = 1;\n              baz();'></div>\n"),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0, "indent_js": 2}),
         id="js_code_multiple_statements_multiline",
     ),
     pytest.param(
         ("<div onclick='foo(); baz();'></div>"),
         ("<div onclick='foo(); baz();'></div>\n"),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 50,
-            "indent_js": 2,
-        }),
+        ({"format_attribute_js_json": True, "max_attribute_length": 50, "indent_js": 2}),
         id="js_code_under_max_length_no_formatting",
     ),
     pytest.param(
@@ -200,17 +168,11 @@ test_data = [
             "<a href='/path/to/page'></a>\n"
             '<img src="/path/to/image.jpg" /><img alt="Image Description" />\n'
         ),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            "indent_js": 2,
-        }),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0, "indent_js": 2}),
         id="non_js_attributes_no_formatting",
     ),
     pytest.param(
-        (
-            "<div onclick='{foo: \"bar\", get baz() { return this.foo; }}'></div>"
-        ),
+        ("<div onclick='{foo: \"bar\", get baz() { return this.foo; }}'></div>"),
         (
             "<div onclick='{\n"
             '                 foo: "bar",\n'
@@ -219,11 +181,7 @@ test_data = [
             "                 }\n"
             "              }'></div>\n"
         ),
-        ({
-            "format_attribute_js_json": True,
-            "max_attribute_length": 0,
-            "indent_js": 3,
-        }),
+        ({"format_attribute_js_json": True, "max_attribute_length": 0, "indent_js": 3}),
         id="js_getter_function_nested_indent",
     ),
     pytest.param(
@@ -259,5 +217,22 @@ test_data = [
 @pytest.mark.parametrize(("source", "expected", "args"), test_data)
 def test_base(source: str, expected: str, args: dict[str, Any]) -> None:
     output = formatter(config_builder(args), source)
+    printer(expected, source, output)
+    assert expected == output
+
+
+def test_brace_style_preserve_inline(tmp_path: Path) -> None:
+    """A short object stays on its line under `preserve-inline`."""
+    (tmp_path / ".djlintrc").write_text(
+        '{"js": {"brace_style": "collapse,preserve-inline"}}', encoding="utf-8"
+    )
+    template = tmp_path / "a.html"
+    template.write_text("<div></div>", encoding="utf-8")
+    source = "<div onclick='foo({ a: 1 }); bar();'></div>"
+    expected = "<div onclick='foo({ a: 1 });\n              bar();'></div>\n"
+    config = Config(str(template), format_attribute_js_json=True, max_attribute_length=0)
+
+    output = formatter(config, source)
+
     printer(expected, source, output)
     assert expected == output

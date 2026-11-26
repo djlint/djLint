@@ -9,23 +9,18 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
 from djlint.settings import Config
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.types import LintError
 
 test_data = [
     pytest.param(
-        ("<table><thead><tr><th>a</th><th>b</th></tr></thead></table>"),
-        ([]),
-        id="all_th",
+        ("<table><thead><tr><th>a</th><th>b</th></tr></thead></table>"), ([]), id="all_th"
     ),
     pytest.param(
-        ("<table><thead><tr><td>a</td><td>b</td></tr></thead></table>"),
-        ([]),
-        id="all_td",
+        ("<table><thead><tr><td>a</td><td>b</td></tr></thead></table>"), ([]), id="all_td"
     ),
     pytest.param(
         (
@@ -83,6 +78,18 @@ test_data = [
         ([]),
         id="each_thead_decides_for_itself",
     ),
+    pytest.param(
+        ("<table><thead><tr><th>a</th><span>b</span><td>c</td></tr></thead></table>"),
+        ([
+            {
+                "code": "H044",
+                "line": "1:42",
+                "match": "<td>",
+                "message": "Thead should not mix th and td cells.",
+            }
+        ]),
+        id="a tag between the cells is no cell",
+    ),
 ]
 
 
@@ -96,9 +103,7 @@ def test_base(source: str, expected: list[LintError]) -> None:
     assert output[filename] == expected
 
 
-def test_mutually_exclusive_branches_are_not_a_mixture(
-    django_config: Config,
-) -> None:
+def test_mutually_exclusive_branches_are_not_a_mixture(django_config: Config) -> None:
     source = (
         "<table><thead><tr>"
         "{% if numeric %}<th>Total</th>{% else %}<td>Total</td>{% endif %}"

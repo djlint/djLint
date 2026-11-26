@@ -5,11 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, final
 
-from djlint.helpers import (
-    inside_ignored_linter_block,
-    inside_ignored_rule,
-    overlaps_ignored_block,
-)
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
 from djlint.lint import get_line
 
 if TYPE_CHECKING:
@@ -21,14 +17,7 @@ if TYPE_CHECKING:
 
 
 @final
-@dataclass(
-    repr=False,
-    eq=False,
-    frozen=True,
-    match_args=False,
-    kw_only=False,
-    slots=True,
-)
+@dataclass(repr=False, eq=False, frozen=True, match_args=False, kw_only=False, slots=True)
 class _TemplateTagMatch:
     _html: str
     _start: int
@@ -39,6 +28,9 @@ class _TemplateTagMatch:
 
     def start(self) -> int:
         return self._start
+
+    def end(self) -> int:
+        return self._end
 
     def group(self) -> str:
         return self._html[self._start : self._end]
@@ -69,8 +61,15 @@ def _close_past_strings(html: str, start: int, close: str) -> int | None:
     Returns None when another tag opens first. No template language nests
     tags, so this one was never closed, and scanning on would read the
     rest of the file again for each tag in a run of unclosed ones.
+
+    A brace opened inside the tag is closed before the tag is, so the
+    `}}` ending `{{ f({"a": {"b": 1}}) }}` is the last one, as jinja and
+    nunjucks read it. Where the braces never balance, the first delimiter
+    seen ends the tag, as it did before braces were counted.
     """
     quote = ""
+    depth = 0
+    first_close: int | None = None
     pos = start + 2
     # a run of braces, as in "{{{{", opens one tag
     while pos < start + _LONGEST_BRACE_RUN and html.startswith("{", pos):
@@ -87,23 +86,36 @@ def _close_past_strings(html: str, start: int, close: str) -> int | None:
         elif char in {"'", '"'}:
             quote = char
         elif html.startswith(close, pos):
-            return pos
+            if not depth:
+                return pos
+            if first_close is None:
+                first_close = pos
+            if char == "}":
+                depth -= 1
         elif html.startswith(_OPENERS, pos):
-            return None
+            return first_close
+        elif char == "{":
+            depth += 1
+        elif char == "}" and depth:
+            depth -= 1
         pos += 1
-    return -1
+    return -1 if first_close is None else first_close
 
 
 def _iter_template_tags(html: str) -> Iterator[_TemplateTagMatch]:
     pos = 0
+    # each opener is looked for again only once the read has passed it, so
+    # one the document never holds is not searched for to its end per tag
+    block_start = html.find("{%")
+    variable_start = html.find("{{")
     while True:
-        block_start = html.find("{%", pos)
-        variable_start = html.find("{{", pos)
+        if 0 <= block_start < pos:
+            block_start = html.find("{%", pos)
+        if 0 <= variable_start < pos:
+            variable_start = html.find("{{", pos)
         if block_start == -1 and variable_start == -1:
             break
-        if variable_start != -1 and (
-            block_start == -1 or variable_start < block_start
-        ):
+        if variable_start != -1 and (block_start == -1 or variable_start < block_start):
             start, close = variable_start, "}}"
         else:
             start, close = block_start, "%}"
@@ -164,6 +176,7 @@ def run(
         errors.append({
             "code": rule["name"],
             "line": get_line(start, line_ends),
+            "end": get_line(match.end(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         })

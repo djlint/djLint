@@ -17,12 +17,8 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "{% set absoluteUrl %}{{ page.url | htmlBaseUrl(metadata.url) }}{% endset %}\n"
-        ),
-        (
-            "{% set absoluteUrl %}{{ page.url | htmlBaseUrl(metadata.url) }}{% endset %}\n"
-        ),
+        ("{% set absoluteUrl %}{{ page.url | htmlBaseUrl(metadata.url) }}{% endset %}\n"),
+        ("{% set absoluteUrl %}{{ page.url | htmlBaseUrl(metadata.url) }}{% endset %}\n"),
         ({}),
         id="one",
     ),

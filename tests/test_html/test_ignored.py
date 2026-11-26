@@ -208,6 +208,17 @@ test_data = [
         ),
         id="backslashes_in_ignored_attributes",
     ),
+    pytest.param(
+        (
+            "<p>/*__DJLINT_UNFORMATTED_BLOCK_0__*/</p>\n"
+            "<!-- djlint:off -->\n<div><p>x</p></div>\n<!-- djlint:on -->\n"
+        ),
+        (
+            "<p>/*__DJLINT_UNFORMATTED_BLOCK_0__*/</p>\n"
+            "<!-- djlint:off -->\n<div><p>x</p></div>\n<!-- djlint:on -->\n"
+        ),
+        id="text_spelling_the_marker_of_an_ignored_block",
+    ),
 ]
 
 

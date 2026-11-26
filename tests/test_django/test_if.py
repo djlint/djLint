@@ -44,6 +44,11 @@ test_data = [
         id="preserve_multiline_if_opened_against_a_tag",
     ),
     pytest.param(
+        ("{% if x %}\n<span>{{ _('Deleted') }}</span>\n{% endif %}\n"),
+        ('{% if x %}\n    <span>{{ _("Deleted") }}</span>\n{% endif %}\n'),
+        id="preserve_multiline_if_whose_quotes_the_formatter_rewrites",
+    ),
+    pytest.param(
         ('{% if x %}\nx\n{% endif %} <td title="t">y\n  </td>\n'),
         ('{% if x %}\n    x\n{% endif %} <td title="t">y</td>\n'),
         id="end_tag_unindents_with_a_whole_tag_after_it",
@@ -54,10 +59,7 @@ test_data = [
         id="branch_tag_aligns_with_a_whole_tag_after_it",
     ),
     pytest.param(
-        (
-            "<div>{% if x %}\na\n{% endif %}</div>\n"
-            "<div>\n{% if x %}\nb\n{% endif %}\n</div>\n"
-        ),
+        ("<div>{% if x %}\na\n{% endif %}</div>\n<div>\n{% if x %}\nb\n{% endif %}\n</div>\n"),
         (
             "<div>\n"
             "    {% if x %}\n"
@@ -73,12 +75,8 @@ test_data = [
         id="preserve_multiline_if_for_each_block_independently",
     ),
     pytest.param(
-        (
-            "{% if show_the_thing %}<div>Please keep inline source inline</div>{% endif %}\n"
-        ),
-        (
-            "{% if show_the_thing %}<div>Please keep inline source inline</div>{% endif %}\n"
-        ),
+        ("{% if show_the_thing %}<div>Please keep inline source inline</div>{% endif %}\n"),
+        ("{% if show_the_thing %}<div>Please keep inline source inline</div>{% endif %}\n"),
         id="issue_1597_keep_inline_short_if",
     ),
     pytest.param(
@@ -188,18 +186,8 @@ test_data = [
         id="close_tag_in_an_inline_if_keeps_the_block_level",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            "    {% if x %}</b>{% endif %}\n"
-            "    <span>after</span>\n"
-            "</div>\n"
-        ),
-        (
-            "<div>\n"
-            "    {% if x %}</b>{% endif %}\n"
-            "    <span>after</span>\n"
-            "</div>\n"
-        ),
+        ("<div>\n    {% if x %}</b>{% endif %}\n    <span>after</span>\n</div>\n"),
+        ("<div>\n    {% if x %}</b>{% endif %}\n    <span>after</span>\n</div>\n"),
         id="unmatched_close_tag_in_an_inline_if_does_not_dedent",
     ),
     pytest.param(
@@ -284,11 +272,7 @@ def test_single_line_if_blocks_format_in_one_pass() -> None:
         "  </div>\n"
         "</form>\n"
     )
-    config = config_builder({
-        "profile": "django",
-        "indent": 2,
-        "max_line_length": 120,
-    })
+    config = config_builder({"profile": "django", "indent": 2, "max_line_length": 120})
     output = formatter(config, source)
     second_pass = formatter(config, output)
 

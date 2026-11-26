@@ -1,4 +1,4 @@
-from typing import type_check_only
+from typing import NotRequired, type_check_only
 
 from typing_extensions import Protocol, TypedDict
 
@@ -6,6 +6,7 @@ from typing_extensions import Protocol, TypedDict
 class LintError(TypedDict):
     code: str
     line: str
+    end: NotRequired[str]
     match: str
     message: str
 

@@ -1,8 +1,72 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "branchTopic": "{{{depNameSanitized}}}-{{{newMajor}}}{{#if separateMinorPatch}}{{#if isPatch}}.{{{newMinor}}}{{/if}}{{/if}}{{#if separateMultipleMinor}}{{#if isMinor}}.{{{newMinor}}}{{/if}}{{/if}}.x",
   "configMigration": true,
-  "dependencyDashboard": false,
-  "docker-compose": { "enabled": true },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The mypyc build hook's pins and uv's constraints, which pep621 does not read. An update shares its branch with the pep621 one of the same package, so a pin moves with its uv.lock entry, and uv locks the new version under the moved constraint.",
+      "managerFilePatterns": ["/^pyproject\\.toml$/"],
+      "matchStrings": [
+        "(?:\\[tool\\.hatch\\.build\\.targets\\.wheel\\.hooks\\.mypyc\\]\\ndependencies|constraint-dependencies) = \\[[^\\]]*\\]",
+        "\"(?<depName>[^\"=]+)==(?<currentValue>[^\"]+)\""
+      ],
+      "matchStringsStrategy": "recursive",
+      "datasourceTemplate": "pypi"
+    },
+    {
+      "customType": "regex",
+      "description": "The Pyodide the demo on the website loads from the CDN.",
+      "managerFilePatterns": ["/(^|/)static/js/worker\\.js$/"],
+      "matchStrings": ["cdn\\.jsdelivr\\.net/pyodide/v(?<currentValue>[^/]+)/full/"],
+      "depNameTemplate": "pyodide",
+      "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "description": "The python-build-standalone release whose Python the npm packages bring.",
+      "managerFilePatterns": ["/^npm/build\\.py$/"],
+      "matchStrings": ["PYTHON_BUILD_STANDALONE: Final = \"(?<currentValue>\\d+)\""],
+      "depNameTemplate": "astral-sh/python-build-standalone",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "description": "The image that sets up QEMU for the npm tests, pinned by digest as it runs privileged.",
+      "managerFilePatterns": ["/^\\.github/workflows/npm\\.yml$/"],
+      "matchStrings": [
+        "image: (?<depName>docker\\.io/tonistiigi/binfmt):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[0-9a-f]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "regex:^qemu-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Keep CI on the newest Python: the version the tools run on and the last one the tests run on. The first test version is the oldest supported one, so it stays",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
+      "matchStrings": [
+        "python-version: \"(?<currentValue>\\d+\\.\\d+)\"",
+        "python-version:\\n +- \"\\d+\\.\\d+\"\\n +- \"(?<currentValue>\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "docker.io/python",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "description": "Add a classifier after the last one for each new Python version. The first match stops at the last classifier, the second takes the version out of it",
+      "managerFilePatterns": ["/^pyproject\\.toml$/"],
+      "matchStrings": [
+        "classifiers = \\[[^\\]]*\"Programming Language :: Python :: \\d+\\.\\d+\",",
+        "\"Programming Language :: Python :: (?<currentValue>\\d+\\.\\d+)\",$"
+      ],
+      "matchStringsStrategy": "recursive",
+      "depNameTemplate": "docker.io/python",
+      "datasourceTemplate": "docker",
+      "autoReplaceStringTemplate": "\"Programming Language :: Python :: {{{currentValue}}}\",\n  \"Programming Language :: Python :: {{{newValue}}}\","
+    }
+  ],
+  "dependencyDashboard": { "enabled": false },
   "extends": [
     "config:recommended",
     ":disableRateLimiting",
@@ -12,29 +76,58 @@
   "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
   "minimumReleaseAge": "3 days",
   "packageRules": [
+    { "matchPackageNames": ["mypy", "pre-commit/mirrors-mypy"], "groupName": "mypy" },
+    { "matchPackageNames": ["ruff", "charliermarsh/ruff-pre-commit"], "groupName": "ruff" },
+    { "matchPackageNames": ["oxfmt", "oxc-project/mirrors-oxfmt"], "groupName": "oxfmt" },
+    { "matchPackageNames": ["oxlint", "oxlint-tsgolint"], "groupName": "oxlint" },
     {
-      "matchCurrentVersion": "!/^0/",
-      "matchUpdateTypes": ["minor"],
-      "automerge": true
+      "description": "A config's major version requires the stylelint it was made for, so neither passes CI without the other",
+      "matchPackageNames": ["stylelint", "stylelint-config-*", "thibaudcolas/pre-commit-stylelint"],
+      "groupName": "stylelint"
     },
     {
-      "matchUpdateTypes": ["lockFileMaintenance", "patch", "replacement"],
-      "automerge": true
+      "description": "The Pyodide that builds the demo's lock file and the one the demo loads from the CDN have to be the same",
+      "matchPackageNames": ["pyodide"],
+      "groupName": "pyodide"
     },
+    { "matchCurrentVersion": "!/^0/", "matchUpdateTypes": ["minor"], "automerge": true },
+    { "matchUpdateTypes": ["lockFileMaintenance", "patch", "replacement"], "automerge": true },
+    { "matchDepTypes": ["dependency-groups"], "matchManagers": ["pep621"], "automerge": true },
     {
-      "matchDepTypes": ["dependency-groups"],
+      "description": "Update a locked dependency in its own branch, which the mypyc build hook's pin of it joins, rather than only in lock file maintenance",
+      "matchDepTypes": ["project.dependencies"],
       "matchManagers": ["pep621"],
-      "automerge": true
+      "rangeStrategy": "update-lockfile"
+    },
+    { "matchDepTypes": ["devDependencies"], "matchManagers": ["npm"], "automerge": true },
+    { "matchManagers": ["github-actions", "pre-commit"], "automerge": true },
+    {
+      "description": "A new Node is reviewed by hand, in one pull request with its types and tsconfig base. Node versioning holds Node and its types back until the major version reaches LTS. The base is a replacement from Renovate's list, which learns of a new one on its own schedule. Renovate never groups a replacement, so the branch topic puts it in the branch of the group's majors",
+      "matchPackageNames": ["node", "@types/node", "/^@tsconfig/node\\d+$/"],
+      "matchUpdateTypes": ["major", "replacement"],
+      "groupName": "node",
+      "branchTopic": "major-node",
+      "automerge": false,
+      "prBodyNotes": [
+        "Merge once this PR moves both Node and `@tsconfig/node<major>`. If the base is missing, replace it by hand in package.json and in the `extends` of npm/tsconfig.node.json, then run `npm install`."
+      ]
     },
     {
-      "matchDepTypes": ["devDependencies"],
-      "matchManagers": ["npm"],
-      "automerge": true
+      "description": "The launcher of the npm package is checked against the oldest Node it runs on, so its types and tsconfig base stay on that Node",
+      "matchDepNames": ["@types/node16", "@tsconfig/node16"],
+      "matchUpdateTypes": ["major", "replacement"],
+      "enabled": false
     },
-    { "matchManagers": ["github-actions", "pre-commit"], "automerge": true }
+    {
+      "description": "A new Python is reviewed by hand. A cooldown would count from the last rebuild of an image tag, which keeps part of the update out of the PR. A classifier can name a Python that is not out yet, which is not a reason to roll it back",
+      "matchPackageNames": ["python", "docker.io/python"],
+      "groupName": "python",
+      "automerge": false,
+      "minimumReleaseAge": null,
+      "rollbackPrs": false
+    }
   ],
   "pre-commit": { "enabled": true },
   "rollbackPrs": true,
-  "semanticCommits": "enabled",
-  "schedule": ["at any time"]
+  "semanticCommits": "enabled"
 }

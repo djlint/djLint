@@ -1,4 +1,4 @@
-line-length = 80
+line-length = 100
 output-prefer-rule-codes = true
 preview = true
 target-version = "py311"
@@ -65,8 +65,13 @@ select = ["ALL"]
 unfixable = ["RUF027", "T"]
 
 [lint.per-file-ignores]
+# A script, which reports what it built.
+"npm/build.py" = ["T201"]
 "src/djlint/rules/*" = ["ARG001", "N999"]
 "tests/*" = ["FBT001", "S101", "T201", "PLR2004"]
+
+[lint.flake8-pytest-style]
+warns-require-match-for = ["*"]
 
 [lint.flake8-self]
 ignore-names = ["_name_", "_value_"]

@@ -33,9 +33,7 @@ test_data = [
         id="self_closing",
     ),
     pytest.param(
-        (
-            "<p><span>Hello</span> <br><input><link><img><source><meta> <span>World</span></p>\n"
-        ),
+        ("<p><span>Hello</span> <br><input><link><img><source><meta> <span>World</span></p>\n"),
         (
             "<p>\n"
             "    <span>Hello</span>\n"

@@ -7,9 +7,8 @@ from __future__ import annotations
 
 import pytest
 
-from djlint.lint import linter
 from djlint.reformat import formatter
-from tests.conftest import config_builder, printer
+from tests.conftest import config_builder, linter, printer
 
 test_data = [
     pytest.param(
@@ -53,6 +52,11 @@ test_data = [
         "{% blocktrans %}\nx\n{% endblocktrans %}\n",
         id="blocktrans is not a block",
     ),
+    pytest.param(
+        "{% endblock %}\n{% block a %}\nx\n{% endblock %}\n",
+        "{% endblock %}\n{% block a %}\n    x\n{% endblock a %}\n",
+        id="an endblock closing nothing takes no name",
+    ),
 ]
 
 
@@ -73,11 +77,7 @@ def test_default_leaves_the_endblock_bare() -> None:
 
 
 def test_the_formatter_clears_t003() -> None:
-    config = config_builder({
-        "name_endblocks": True,
-        "profile": "django",
-        "include": "T003",
-    })
+    config = config_builder({"name_endblocks": True, "profile": "django", "include": "T003"})
     output = formatter(config, "{% block a %}\nx\n{% endblock %}\n")
     findings = linter(config, output, "a.html", "a.html")
 

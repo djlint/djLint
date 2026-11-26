@@ -19,26 +19,22 @@ good, so tokenizing here would drop findings the rule used to report.
 
 from __future__ import annotations
 
-import sys
 from bisect import bisect_left
 from itertools import chain
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import regex as re
 
 from djlint.helpers import (
+    Span,
     compile_pattern,
+    inside_html_attribute,
     inside_ignored_linter_block,
     inside_ignored_rule,
     inside_template_block,
     overlaps_ignored_block,
 )
 from djlint.lint import get_line
-
-if sys.version_info >= (3, 13):
-    from typing import NamedTuple
-else:
-    from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -61,17 +57,7 @@ _UNVISITED: Final = -2
 _NOTHING: Final = -1
 
 
-class _Span(NamedTuple):
-    """Where a finding sits, standing in for the pattern match."""
-
-    start: int
-    end: int
-
-    def span(self) -> tuple[int, int]:
-        """Return the source span."""
-        return self.start, self.end
-
-
+@final
 class _Marks:
     """Where each character of interest sits, read once per document."""
 
@@ -117,9 +103,7 @@ def _steps(html: str, marks: _Marks, position: int) -> tuple[int, ...]:
         if opener in {"{", "%", "#"}:
             # `{{ }}`, `{% %}` and `{# #}` each close on their own mark
             # written against the brace
-            closing = marks.after(
-                "}" if opener == "{" else opener, position + 2
-            )
+            closing = marks.after("}" if opener == "{" else opener, position + 2)
             if closing >= 0 and html[closing + 1 : closing + 2] == "}":
                 steps.append(closing + 2)
         # a lone `{ }` is stepped over the same way, and stands in where
@@ -136,12 +120,7 @@ def _steps(html: str, marks: _Marks, position: int) -> tuple[int, ...]:
 
 
 def _walk(
-    html: str,
-    marks: _Marks,
-    exits: dict[int, int],
-    walked: dict[int, int],
-    limit: int,
-    start: int,
+    html: str, marks: _Marks, exits: dict[int, int], walked: dict[int, int], limit: int, start: int
 ) -> int:
     """Where the walk starting here ends, or -1 if it reaches no equals.
 
@@ -189,7 +168,7 @@ def _walk(
             return found
 
 
-def _spans(html: str, marks: _Marks, exits: dict[int, int]) -> Iterator[_Span]:
+def _spans(html: str, marks: _Marks, exits: dict[int, int]) -> Iterator[Span]:
     """The tags reported, in the order the replaced pattern found them."""
     if not exits:
         return
@@ -205,7 +184,7 @@ def _spans(html: str, marks: _Marks, exits: dict[int, int]) -> Iterator[_Span]:
         if end == _NOTHING:
             position = start + 1
             continue
-        yield _Span(start, end)
+        yield Span(start, end)
         # the replaced pattern took its matches apart, so a `<` written
         # inside one of them opened no tag of its own
         position = end
@@ -225,10 +204,7 @@ def _space_before(html: str) -> dict[int, int]:
 
 def _space_after(html: str) -> dict[int, int]:
     """Where a walk landing on the position reaches a space after `=`."""
-    return {
-        match.start(): match.end()
-        for match in _SPACE_AFTER_PATTERN.finditer(html)
-    }
+    return {match.start(): match.end() for match in _SPACE_AFTER_PATTERN.finditer(html)}
 
 
 def run(
@@ -246,17 +222,19 @@ def run(
         {
             "code": rule["name"],
             "line": get_line(span.start, line_ends),
+            "end": get_line(span.end, line_ends),
             "match": html[span.start : span.end].strip()[:20],
             "message": rule["message"],
         }
         for span in chain(
-            _spans(html, marks, _space_before(html)),
-            _spans(html, marks, _space_after(html)),
+            _spans(html, marks, _space_before(html)), _spans(html, marks, _space_after(html))
         )
         # markup written inside a template tag is a string argument
-        # rather than part of the document
+        # rather than part of the document, and markup inside an attribute
+        # value, as in `<p title="<b id = 1>">`, is text
         if not overlaps_ignored_block(config, html, span)
         and not inside_template_block(config, html, span)
+        and not inside_html_attribute(html, span)
         and not inside_ignored_rule(config, html, span, rule["name"])
         and not inside_ignored_linter_block(config, html, span)
     )

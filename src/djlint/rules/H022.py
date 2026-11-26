@@ -18,12 +18,12 @@ good, so tokenizing here would drop findings the rule used to report.
 
 from __future__ import annotations
 
-import sys
 from typing import TYPE_CHECKING
 
 import regex as re
 
 from djlint.helpers import (
+    Span,
     compile_pattern,
     inside_html_attribute,
     inside_ignored_linter_block,
@@ -32,12 +32,6 @@ from djlint.helpers import (
     overlaps_ignored_block,
 )
 from djlint.lint import get_line
-
-if sys.version_info >= (3, 13):
-    from typing import NamedTuple
-else:
-    from typing_extensions import NamedTuple
-
 
 if TYPE_CHECKING:
     from typing import Any, Final
@@ -72,23 +66,8 @@ _UNVISITED: Final = -2
 _NOTHING: Final = -1
 
 
-class _Span(NamedTuple):
-    """Where a finding sits, standing in for the pattern match."""
-
-    start: int
-    end: int
-
-    def span(self) -> tuple[int, int]:
-        """Return the source span."""
-        return self.start, self.end
-
-
 def _first_link(
-    html: str,
-    links: dict[int, int],
-    walked: dict[int, int],
-    start: int,
-    limit: int,
+    html: str, links: dict[int, int], walked: dict[int, int], start: int, limit: int
 ) -> int:
     """Where the first link the attribute walk reaches ends, or -1.
 
@@ -127,18 +106,15 @@ def _first_link(
     return found
 
 
-def _spans(html: str) -> tuple[_Span, ...]:
+def _spans(html: str) -> tuple[Span, ...]:
     """The tags reported, in the order the replaced pattern found them."""
-    links = {
-        match.start(): match.end()
-        for match in _LINK_PATTERN.finditer(html, overlapped=True)
-    }
+    links = {match.start(): match.end() for match in _LINK_PATTERN.finditer(html, overlapped=True)}
     if not links:
         return ()
 
     limit = max(links)
     walked: dict[int, int] = {}
-    found: list[_Span] = []
+    found: list[Span] = []
     position = 0
     while 0 <= (start := html.find("<", position)) <= limit:
         tag = _TAG_START_PATTERN.match(html, start)
@@ -149,7 +125,7 @@ def _spans(html: str) -> tuple[_Span, ...]:
         if end == _NOTHING:
             position = start + 1
             continue
-        found.append(_Span(start, end))
+        found.append(Span(start, end))
         # the replaced pattern took its matches apart, so a "<" written
         # inside one of them opened no tag of its own
         position = end
@@ -170,6 +146,7 @@ def run(
         {
             "code": rule["name"],
             "line": get_line(span.start, line_ends),
+            "end": get_line(span.end, line_ends),
             "match": html[span.start : span.end].strip()[:20],
             "message": rule["message"],
         }

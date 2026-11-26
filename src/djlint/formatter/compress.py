@@ -7,7 +7,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint.const import HTML_TAG_NAMES, HTML_VOID_ELEMENTS
+from djlint.const import (
+    HTML_TAG_NAMES,
+    HTML_VOID_ELEMENTS,
+    QUOTED_ATTRIBUTE_VALUE,
+    TEMPLATE_TAG_WHOLE,
+)
 from djlint.formatter.attributes import normalize_attributes, sort_attributes
 from djlint.formatter.class_attributes import encode_attribute_newlines
 from djlint.formatter.tokenizer import tokenize_tags
@@ -44,9 +49,7 @@ _TEMPLATE_COMMENT_PROFILES: Final = frozenset((
 
 
 _LOOSE_ATTRIBUTE_SPACING_PATTERN: Final = compile_pattern(
-    r"\"[^\"]*\"|'[^']*'|\{\{.*?\}\}|\{%.*?%\}|\{\#.*?\#\}|[ \t]+=[ \t]*|=[ \t]+"
-    r"|[ \t]{2,}",
-    RE_FLAGS_IS,
+    rf"{QUOTED_ATTRIBUTE_VALUE}|{TEMPLATE_TAG_WHOLE}|[ \t]+=[ \t]*|=[ \t]+|[ \t]{{2,}}", RE_FLAGS_IS
 )
 
 
@@ -98,6 +101,7 @@ def _tokenizer_source(html: str, config: Config) -> str:
 
 def compress_html(html: str, config: Config) -> str:
     """Compress html."""
+    source = _tokenizer_source(html, config)
 
     def _fix_case(tag: str) -> str:
         if not config.ignore_case and tag.lower() in HTML_TAG_NAMES:
@@ -120,20 +124,24 @@ def compress_html(html: str, config: Config) -> str:
         open_bracket = html[token.start : token.name_start]
         tag = _fix_case(token.name)
 
-        raw_attributes = html[token.name_end : token.attributes_end]
+        # A template comment after the last attribute was blanked for the
+        # tokenizer, which ends the attributes before it; it is still part
+        # of the tag and is kept where it was written.
+        attributes_end = token.attributes_end
+        close = source.rfind("/" if token.self_closing else ">", attributes_end, token.end)
+        if close > attributes_end:
+            attributes_end += len(html[attributes_end:close].rstrip())
+
+        raw_attributes = html[token.name_end : attributes_end]
         attributes = ""
         if raw_attributes:
             leading = " " if raw_attributes[0].isspace() else ""
             flattened = " ".join(
                 x.strip()
-                for x in encode_attribute_newlines(raw_attributes, config)
-                .strip()
-                .splitlines()
+                for x in encode_attribute_newlines(raw_attributes, config).strip().splitlines()
             )
             normalized = normalize_attributes(config, flattened)
-            attributes = leading + _normalize_spacing(
-                sort_attributes(config, normalized), config
-            )
+            attributes = leading + _normalize_spacing(sort_attributes(config, normalized), config)
         if config.close_void_tags and tag.lower() in HTML_VOID_ELEMENTS:
             close_bracket = " />"
         else:
@@ -143,7 +151,7 @@ def compress_html(html: str, config: Config) -> str:
 
     output: list[str] = []
     previous_end = 0
-    for token in tokenize_tags(_tokenizer_source(html, config)):
+    for token in tokenize_tags(source):
         output.extend((html[previous_end : token.start], _clean_tag(token)))
         previous_end = token.end
     output.append(html[previous_end:])

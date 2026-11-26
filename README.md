@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://djlint.com"><img src="https://raw.githubusercontent.com/djlint/djLint/master/docs/src/static/img/icon.png" alt="djLint Logo" width="270"></a>
+  <a href="https://djlint.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://djlint.com/static/img/logo-wide-dark.svg"><img src="https://djlint.com/static/img/logo-wide-light.svg" alt="djLint Logo" width="300"></picture></a>
   <br>
 </h1>
 <h4 align="center">The missing formatter and linter for HTML templates.</h4>
@@ -14,18 +14,18 @@
    </a>
 </p>
 
-<h4 align="center"><a href="https://djlint.com">How to use</a> • <a href="https://djlint.com/ru/">Как пользоваться</a> • <a href="https://djlint.com/fr/">Utilisation</a> • <a href="https://djlint.com/zh/">如何使用</a></h4>
-<h4 align="center">What lang are you using?</h4>
+<h4 align="center">How to use: <a href="https://djlint.com/">English</a> • <a href="https://djlint.com/zh/">简体中文</a> • <a href="https://djlint.com/ja/">日本語</a> • <a href="https://djlint.com/es/">Español</a> • <a href="https://djlint.com/pt-br/">Português (Brasil)</a> • <a href="https://djlint.com/ru/">Русский</a> • <a href="https://djlint.com/ko/">한국어</a> • <a href="https://djlint.com/fr/">Français</a> • <a href="https://djlint.com/de/">Deutsch</a> • <a href="https://djlint.com/zh-tw/">繁體中文</a> • <a href="https://djlint.com/it/">Italiano</a> • <a href="https://djlint.com/pl/">Polski</a> • <a href="https://djlint.com/cs/">Čeština</a> • <a href="https://djlint.com/tr/">Türkçe</a></h4>
+<h4 align="center">Template languages</h4>
 
 <p align="center">
-   <a href="https://djlint.com/docs/languages/django/">Django</a> • <a href="https://djlint.com/docs/languages/jinja/">Jinja</a> • <a href="https://djlint.com/docs/languages/twig/">Twig</a> • <a href="https://djlint.com/docs/languages/nunjucks/">Nunjucks</a> • <a href="https://djlint.com/docs/languages/handlebars/">Handlebars</a> • <a href="https://djlint.com/docs/languages/liquid/">Liquid</a> • <a href="https://djlint.com/docs/languages/golang/">Go templates</a> • <a href="https://djlint.com/docs/languages/angular/">Angular</a> • <a href="https://djlint.com/docs/languages/mustache/">Mustache</a> • <a href="https://djlint.com/docs/languages/tera/">Tera</a> • <a href="https://djlint.com/docs/languages/askama/">Askama</a>
+   <a href="https://djlint.com/docs/languages/django/">Django</a> • <a href="https://djlint.com/docs/languages/jinja/">Jinja</a> • <a href="https://djlint.com/docs/languages/twig/">Twig</a> • <a href="https://djlint.com/docs/languages/nunjucks/">Nunjucks</a> • <a href="https://djlint.com/docs/languages/handlebars/">Handlebars</a> • <a href="https://djlint.com/docs/languages/mustache/">Mustache</a> • <a href="https://djlint.com/docs/languages/liquid/">Liquid</a> • <a href="https://djlint.com/docs/languages/golang/">Go templates</a> • <a href="https://djlint.com/docs/languages/angular/">Angular</a> • <a href="https://djlint.com/docs/languages/tera/">Tera</a> • <a href="https://djlint.com/docs/languages/askama/">Askama</a> • <a href="https://djlint.com/docs/languages/mako/">Mako</a>
 </p>
 
 ## 🤔 For What?
 
-Every language in your stack has a formatter and a linter. HTML templates are the exception. Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
+Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
 
-djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more.
+djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more. It runs from the command line, as a pre-commit hook and as a language server in your editor.
 
 Take a template only its author could love:
 
@@ -50,7 +50,7 @@ Take a template only its author could love:
 {% endblock %}
 ```
 
-One `djlint --reformat --single-attribute-per-line` later:
+One `djlint --reformat` later:
 
 ```django
 {% block content %}
@@ -60,12 +60,10 @@ One `djlint --reformat --single-attribute-per-line` later:
             <ul>
                 {% for post in posts %}
                     <li>
-                        <a
-                            href="{% url 'post' post.slug %}"
-                            class="post-link {% if post.featured %}is-featured{% endif %}"
-                            data-analytics-id="post-{{ post.id }}"
-                            aria-label="Read {{ post.title }}"
-                        >{{ post.title|title }}</a>
+                        <a href="{% url 'post' post.slug %}"
+                           class="post-link {% if post.featured %}is-featured{% endif %}"
+                           data-analytics-id="post-{{ post.id }}"
+                           aria-label="Read {{ post.title }}">{{ post.title|title }}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -76,7 +74,18 @@ One `djlint --reformat --single-attribute-per-line` later:
 {% endblock %}
 ```
 
-One command rebuilt the indentation, fixed the tag case, split the long tag into one attribute per line, normalized the template tags and collapsed stray blank lines.
+One command rebuilt the indentation, fixed the tag case, spread the long tag over lines, normalized the template tags and collapsed stray blank lines.
+
+Rather indent the attributes under the tag and give the closing bracket a line of its own, as Prettier does? Add `--single-attribute-per-line`:
+
+```django
+<a
+    href="{% url 'post' post.slug %}"
+    class="post-link {% if post.featured %}is-featured{% endif %}"
+    data-analytics-id="post-{{ post.id }}"
+    aria-label="Read {{ post.title }}"
+>{{ post.title|title }}</a>
+```
 
 The linter catches what formatting can't fix: orphan tags, missing `alt` attributes, hard-coded URLs and dozens of other checks.
 
@@ -84,66 +93,48 @@ You can [try it on your own templates in the online playground](https://djlint.c
 
 ## ✨ How?
 
-Grab it from PyPI with `pip`
+Add it to your project as a development dependency with [uv](https://docs.astral.sh/uv/), or install it with pip. In a JavaScript project, npm adds it with a Python of its own:
 
 ```bash
+uv add --dev djlint
+# or
 pip install djlint
+# or
+npm i -D djlint
 ```
 
-Or as a standalone tool with [uv](https://docs.astral.sh/uv/)
+Put `uv run` or `npx` in front of the commands below if you used uv or npm, as in `uv run djlint . --lint`. The [installation guide](https://djlint.com/docs/getting-started/#installation) also covers installing it as a standalone tool, and with pipx or Homebrew.
 
-```bash
-uv tool install djlint
-```
-
-Or with [pipx](https://pipx.pypa.io/)
-
-```bash
-pipx install djlint
-```
-
-Or with the community-maintained [Homebrew formula](https://formulae.brew.sh/formula/djlint) on macOS or Linux
-
-```bash
-brew install djlint
-```
-
-_Or with npm - **warning**: the npm package is only a wrapper, its install script runs `pip install --upgrade djlint` on whatever `python3` is on your system path. npm will not manage or uninstall the actual package - prefer pip directly when possible._
-
-```bash
-npm i djlint
-```
-
-Lint your project
+Lint your project:
 
 ```bash
 djlint . --lint
 ```
 
-Check your format
+See what formatting would change:
 
 ```bash
 djlint . --check
 ```
 
-Fix my format!
+Format the files in place:
 
 ```bash
-djlint . --reformat --single-attribute-per-line
+djlint . --reformat
 ```
 
-Set a `--profile` to enable the rules and formatting of your template engine
+Set a `--profile` for the rules and formatting of your template language:
 
 ```bash
-djlint . --reformat --single-attribute-per-line --profile=django
+djlint . --reformat --profile=django
 ```
 
-Or use `pre-commit` to reformat, then lint!
+Or run it with [pre-commit](https://djlint.com/docs/integrations/#pre-commit), formatting first and then linting:
 
 ```yaml
 repos:
   - repo: https://github.com/djlint/djLint
-    rev: v1.46.4 # use the latest version instead
+    rev: v1.54.0 # use the latest version instead
     hooks:
       - id: djlint-reformat
       - id: djlint
@@ -152,26 +143,28 @@ repos:
 ## 🧩 Editors
 
 - **VS Code**: install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) (also on [Open VSX](https://open-vsx.org/extension/monosans/djlint)).
-- **neovim, Sublime Text, MegaLinter and more**: see the [integrations docs](https://djlint.com/docs/integrations/).
+- **Zed**: install the [djLint extension](https://github.com/djlint/djlint-zed) as a dev extension until it's in Zed's registry. See [how](https://djlint.com/docs/integrations/#zed).
+- **Neovim, JetBrains IDEs, Sublime Text, Helix and Emacs**: run the language server, `djlint --lsp`. See the [setup for each](https://djlint.com/docs/integrations/).
+- **CI**: [GitHub Actions](https://djlint.com/docs/integrations/#github-actions) and [MegaLinter](https://djlint.com/docs/integrations/#megalinter).
 
 ## 💙 Like it?
 
-Add a badge to your projects `readme.md`:
+Add a badge to your project's `readme.md`:
 
 ```md
-[![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://djlint.com)
+[![html style: djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://djlint.com)
 ```
 
 Add a badge to your `readme.rst`:
 
 ```rst
-.. image:: https://img.shields.io/badge/html%20style-djlint-blue.svg
+.. image:: https://img.shields.io/badge/html%20style-djLint-blue.svg
    :target: https://djlint.com
 ```
 
 Looks like this:
 
-[![djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://github.com/djlint/djlint)
+[![html style: djLint](https://img.shields.io/badge/html%20style-djLint-blue.svg)](https://djlint.com)
 
 ## 🛠️ Can I help?
 

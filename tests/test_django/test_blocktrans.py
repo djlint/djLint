@@ -26,21 +26,13 @@ if TYPE_CHECKING:
 
 test_data = [
     pytest.param(
-        (
-            "{% blocktranslate %} The width is: {{ width }}{% endblocktranslate %}"
-        ),
-        (
-            "{% blocktranslate %} The width is: {{ width }}{% endblocktranslate %}\n"
-        ),
+        ("{% blocktranslate %} The width is: {{ width }}{% endblocktranslate %}"),
+        ("{% blocktranslate %} The width is: {{ width }}{% endblocktranslate %}\n"),
         id="blocktranslate_no_attr",
     ),
     pytest.param(
-        (
-            "{% blocktranslate  %}The width is: {{ width }} {% endblocktranslate %}"
-        ),
-        (
-            "{% blocktranslate  %}The width is: {{ width }} {% endblocktranslate %}\n"
-        ),
+        ("{% blocktranslate  %}The width is: {{ width }} {% endblocktranslate %}"),
+        ("{% blocktranslate  %}The width is: {{ width }} {% endblocktranslate %}\n"),
         id="blocktranslate_with_attr",
     ),
     pytest.param(

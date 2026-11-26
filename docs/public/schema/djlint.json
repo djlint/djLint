@@ -1,0 +1,231 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://djlint.com/schema/djlint.json",
+  "$comment": "Source: https://github.com/djlint/djLint/blob/master/docs/public/schema/djlint.json",
+  "title": "djLint configuration",
+  "description": "Configuration for djLint, an HTML template linter and formatter. https://djlint.com/docs/configuration/",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "comma-separated-list": {
+      "anyOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+    },
+    "css-beautify": { "type": "object", "additionalProperties": true },
+    "js-beautify": { "type": "object", "additionalProperties": true }
+  },
+  "properties": {
+    "$schema": {
+      "description": "The url of the schema this file is checked against.",
+      "type": "string"
+    },
+    "allow_empty_input": {
+      "description": "Exit with 0 instead of 2 when the given paths match no files at all. Files that were found and then skipped by `exclude`, `extend_exclude`, `use_gitignore` or `require_pragma` already exit with 0.",
+      "type": "boolean"
+    },
+    "blank_line_after_tag": {
+      "description": "Template tags to follow with a blank line, such as `load` and `extends`. A group of them in a row gets one after the last, and none is added at the end of a block.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "blank_line_before_tag": {
+      "description": "Template tags to precede with a blank line, such as `load` and `extends`. A group of them in a row gets one before the first, and none is added at the start of a file or block.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "close_void_tags": {
+      "description": "Close known void tags with a slash, so `<img>` becomes `<img />`. `H018`, which asks for the opposite, is not reported under it.",
+      "type": "boolean"
+    },
+    "css": {
+      "description": "Options passed to cssbeautifier when --format-css is on, such as indent_size.",
+      "$ref": "#/definitions/css-beautify"
+    },
+    "custom_blocks": {
+      "description": "Names of custom template blocks to indent, such as `toc` for `{% toc %}...{% endtoc %}`.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "custom_html": {
+      "description": "Names of custom HTML tags to indent, such as `mjml` or `simple-greeting`. A name can be a regex, as in `mj-\\w+`.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "exclude": {
+      "description": "Paths to skip, in place of the default list. Each entry is a regular expression matched against whole folder or file names in the path relative to the project root or to the folder being checked, such as `vendor` or `templates/legacy`, so `*.min.html` is written `.*\\.min\\.html`.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "extend_exclude": {
+      "description": "Paths to skip on top of `exclude`, or of the default list when `exclude` isn't set, as regular expressions like those of `exclude`.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "extension": {
+      "description": "Extension of the files to look for in folders. It takes one extension; a file given by name is checked whatever its extension.",
+      "type": "string"
+    },
+    "files": {
+      "description": "Paths to check instead of the ones on the command line, which must then be `-`, as for stdin. With `--stdin-filename`, `-` means stdin regardless.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "format_attribute_js_json": {
+      "description": "Also format JavaScript and JSON in attributes such as `onclick` and `x-data`, the ones `format_attribute_js_json_pattern` names. An object with fewer properties than `format_attribute_js_json_min_props` stays on one line.",
+      "type": "boolean"
+    },
+    "format_attribute_js_json_min_props": {
+      "description": "Format an object only when it has at least this many properties. One with fewer stays on one line.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "format_attribute_js_json_pattern": {
+      "description": "Regex for the names of the attributes to format as JavaScript or JSON. The default takes `on*` event handlers and the bindings of Alpine, Vue, Angular and Aurelia.",
+      "type": "string"
+    },
+    "format_attribute_template_tags": {
+      "description": "Format template syntax inside tag attributes.",
+      "type": "boolean"
+    },
+    "format_css": {
+      "description": "Also format the contents of `<style>` tags, with [css-beautify](https://github.com/beautify-web/js-beautify). Template syntax inside them is not fully supported.\n\n`indent_size` in the `css` table, or `--indent-css` on the command line, sets the indent inside `<style>` tags, 4 by default. The table takes the other [css-beautify options](https://github.com/beautify-web/js-beautify/blob/main/python/cssbeautifier/css/options.py) too.",
+      "type": "boolean"
+    },
+    "format_js": {
+      "description": "Also format JavaScript and JSON in `<script>` tags, with [js-beautify](https://github.com/beautify-web/js-beautify). A script whose `type` is neither JavaScript nor JSON, such as a client-side template in `text/template`, is left as written. Template syntax inside them is not fully supported.\n\n`indent_size` in the `js` table, or `--indent-js` on the command line, sets the indent inside `<script>` tags, 4 by default. The table takes the other [js-beautify options](https://github.com/beautify-web/js-beautify/blob/main/python/jsbeautifier/javascript/options.py) too.",
+      "type": "boolean"
+    },
+    "ignore": {
+      "description": "Linter codes to skip.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "ignore_blocks": {
+      "description": "Template blocks that do not indent their contents. Their children are treated as siblings of the block and indented accordingly.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "ignore_case": {
+      "description": "Do not fix the case of known HTML tags. `H009` and `H010` are not reported under it.",
+      "type": "boolean"
+    },
+    "include": {
+      "description": "Linter codes to turn on that are off by default or that the profile leaves out.",
+      "$ref": "#/definitions/comma-separated-list"
+    },
+    "indent": {
+      "description": "Spaces per indent level. When it isn't set, djLint takes the `indent_size` that `.editorconfig` gives the file, if any.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "js": {
+      "description": "Options passed to jsbeautifier when --format-js is on, such as indent_size.",
+      "$ref": "#/definitions/js-beautify"
+    },
+    "keep_br_inline": {
+      "description": "Keep `<br>` on the line of the text it breaks, rather than giving it a line of its own. `<hr>`, which renders as a rule below the preceding content, is unaffected.",
+      "type": "boolean"
+    },
+    "line_break_after_multiline_tag": {
+      "description": "When a tag's attributes are spread over lines, start its content on a new line.",
+      "type": "boolean"
+    },
+    "linter_output_format": {
+      "description": "The layout of each lint message, from `{filename}`, `{line}`, `{end}`, `{code}`, `{message}` and `{match}`. Without `{filename}`, the output is grouped by file and each group gets a header.",
+      "type": "string",
+      "examples": ["{filename}:{line}: {code} {message} {match}"]
+    },
+    "max_attribute_length": {
+      "description": "The formatter spreads a tag's attributes over lines once they are longer than this.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_blank_lines": {
+      "description": "Keep at most this many blank lines in a row, so 0 removes them. It has no effect with `preserve_blank_lines`.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_line_length": {
+      "description": "The formatter joins some HTML and template tags onto one line only when the line fits within this length. When it isn't set, djLint takes the `max_line_length` that `.editorconfig` gives the file, if any.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "name_endblocks": {
+      "description": "Write the block's name into the `{% endblock %}` that closes it, where the block is written across lines. This is what `T003` asks for.",
+      "type": "boolean"
+    },
+    "no_entity_formatting": {
+      "description": "Do not rewrite an entity reference as the character it names, so `&copy;` is left as written rather than becoming `©`. The entities that carry syntax, and the invisible ones, are never rewritten either way. `H023` still reports an entity under it; add `H023` to `ignore` to keep entities.",
+      "type": "boolean"
+    },
+    "no_function_formatting": {
+      "description": "Do not format the arguments of function calls inside `{{ }}`.",
+      "type": "boolean"
+    },
+    "no_indent_inner_html": {
+      "description": "Do not indent `<head>` and `<body>` inside `<html>`, which is how the built-in VS Code HTML formatter lays a document out.",
+      "type": "boolean"
+    },
+    "no_line_after_yaml": {
+      "description": "Do not add a blank line after YAML front matter.",
+      "type": "boolean"
+    },
+    "no_set_formatting": {
+      "description": "Do not format the contents of `{% set %}` tags.",
+      "type": "boolean"
+    },
+    "per-file-ignores": {
+      "description": "Linter codes to skip in the files whose path matches a regex. In a config file the key is `per-file-ignores`, with hyphens.",
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "preserve_blank_lines": {
+      "description": "Keep blank lines where possible. Useful for templates other than HTML, where blank lines are intentional.",
+      "type": "boolean"
+    },
+    "preserve_class_newlines": {
+      "description": "Keep the line breaks in `class` attributes written across lines.",
+      "type": "boolean"
+    },
+    "preserve_leading_space": {
+      "description": "Keep the leading spaces of text lines where possible. Useful for templates other than HTML, where the indent of text is intentional.",
+      "type": "boolean"
+    },
+    "profile": {
+      "description": "The template language. It decides which linter rules run and how the template syntax is formatted: in `handlebars`, for example, there are no spaces inside `{{#if}}` tags.\n\nWithout a profile, djLint formats the template syntax of every language, as `all` does, and lints with the rules of `html`.\n\nOptions:\n\n- html\n- django\n- jinja\n- nunjucks (for nunjucks and twig)\n- handlebars (for handlebars and mustache)\n- liquid (shopify, jekyll, eleventy)\n- golang (go templates; hugo, helm)\n- angular\n- tera (also for zola; use jinja for minijinja)\n- askama (jinja-style templates in rust; rust expressions are never reformatted)\n- mako (control lines and `##` comments are kept as written)\n- all (every template language at once)",
+      "enum": [
+        "all",
+        "angular",
+        "askama",
+        "django",
+        "golang",
+        "handlebars",
+        "html",
+        "jinja",
+        "liquid",
+        "mako",
+        "nunjucks",
+        "tera"
+      ]
+    },
+    "quiet": {
+      "description": "Do not print diffs, the progress bar or the summary.",
+      "type": "boolean"
+    },
+    "quote_style": {
+      "description": "Quotes for strings inside template tags, `double` or `single`. `T002` asks for the same quotes, and the formatter uses them in conditions such as `{% if x == \"a\" %}`, so one file does not spell the same string both ways. Quoting of HTML attributes is left to `H008`.",
+      "enum": ["double", "single"]
+    },
+    "require_pragma": {
+      "description": "Only format or lint files that start with a `djlint:on` comment. It can be an HTML comment or one in the template language of the `profile`, and without a profile, one in any of them.\n\n```html\n<!-- djlint:on -->\n{# djlint:on #}\n{% comment %} djlint:on {% endcomment %}\n{{ /* djlint:on */ }}\n{{!-- djlint:on --}}\n```",
+      "type": "boolean"
+    },
+    "single_attribute_per_line": {
+      "description": "When an opening tag wraps, put the tag name, each attribute and the closing bracket on separate lines.",
+      "type": "boolean"
+    },
+    "sort_attributes": {
+      "description": "Sort attributes by name, with `id` first and `class` second. A tag whose attributes are guarded by a template tag keeps the order it was written in, since moving one out of its branch would change the page.",
+      "type": "boolean"
+    },
+    "sort_load_tags": {
+      "description": "Sort the libraries in `{% load %}` tags and drop the ones written twice, so `{% load static i18n %}` becomes `{% load i18n static %}`. In `{% load a b from library %}` the names before `from` are sorted. Where two libraries define a tag or filter of the same name, the one loaded last wins, so sorting can change which one the template uses.",
+      "type": "boolean"
+    },
+    "use_gitignore": {
+      "description": "Also skip the paths that the `.gitignore` in the project root lists.",
+      "type": "boolean"
+    }
+  }
+}

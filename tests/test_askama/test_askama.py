@@ -37,9 +37,7 @@ test_data = [
         ('{% set x = \'a\' %}\n{% set y = ("ab", "cd") %}\n'),
         id='set is an askama alias for let; \'a\' is a rust char literal and ("ab", "cd") is a tuple; neither survives python-style literal formatting',
     ),
-    pytest.param(
-        ("{% let x = 'a' %}\n"), ("{% let x = 'a' %}\n"), id="let_untouched"
-    ),
+    pytest.param(("{% let x = 'a' %}\n"), ("{% let x = 'a' %}\n"), id="let_untouched"),
 ]
 
 
@@ -66,6 +64,4 @@ def test_profile_defaults() -> None:
 
 
 def test_other_profiles_keep_function_formatting() -> None:
-    assert not Config(
-        "dummy/source.html", profile="jinja"
-    ).no_function_formatting
+    assert not Config("dummy/source.html", profile="jinja").no_function_formatting

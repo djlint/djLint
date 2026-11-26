@@ -9,9 +9,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
 from djlint.settings import Config
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.types import LintError
@@ -29,9 +28,7 @@ test_data = [
         ]),
         id="one",
     ),
-    pytest.param(
-        ('<img \n alt="test" width="10" height="10"/>'), ([]), id="line break"
-    ),
+    pytest.param(('<img \n alt="test" width="10" height="10"/>'), ([]), id="line break"),
     pytest.param(
         (
             '{# [INFO][JINJA] I use syntax "{% if <img alt=""\n'

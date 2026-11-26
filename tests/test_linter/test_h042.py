@@ -9,9 +9,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
 from djlint.settings import Config
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.types import LintError
@@ -30,11 +29,7 @@ test_data = [
         id="issue 820 no matching id (issue 820)",
     ),
     pytest.param(
-        (
-            '<label for="wine">Wine</label>\n'
-            '<input id="cheese">\n'
-            '<input id="cheese">\n'
-        ),
+        ('<label for="wine">Wine</label>\n<input id="cheese">\n<input id="cheese">\n'),
         ([
             {
                 "code": "H042",
@@ -52,9 +47,7 @@ test_data = [
         id="issue_820_duplicate_other_ids",
     ),
     pytest.param(
-        ('<label for="cheese">Cheese</label>\n<input id="cheese">\n'),
-        ([]),
-        id="matching_id",
+        ('<label for="cheese">Cheese</label>\n<input id="cheese">\n'), ([]), id="matching_id"
     ),
     pytest.param(
         ('<label for="wine">Wine</label>\n<input data-x.id="wine">\n'),
@@ -74,9 +67,7 @@ test_data = [
         id="name_ending_in_for_is_not_a_for",
     ),
     pytest.param(
-        ('<label for=wine>Wine</label>\n<div id="wine"></div>\n'),
-        ([]),
-        id="unquoted_attributes",
+        ('<label for=wine>Wine</label>\n<div id="wine"></div>\n'), ([]), id="unquoted_attributes"
     ),
     pytest.param(
         ('<label for="{{ field.id_for_label }}">Field</label>\n'),
@@ -94,9 +85,7 @@ test_data = [
         id="widget_output_silences_file",
     ),
     pytest.param(
-        ('<label for="x">X</label>\n{% include "form.html" %}\n'),
-        ([]),
-        id="include_silences_file",
+        ('<label for="x">X</label>\n{% include "form.html" %}\n'), ([]), id="include_silences_file"
     ),
     pytest.param(
         ('<label for="x">X</label>\n{% render_field form.x %}\n'),
@@ -104,12 +93,7 @@ test_data = [
         id="unknown_tag_silences_file",
     ),
     pytest.param(
-        (
-            "{% if a %}\n"
-            '<label for="wine">Wine</label>\n'
-            '<input id="cheese">\n'
-            "{% endif %}\n"
-        ),
+        ('{% if a %}\n<label for="wine">Wine</label>\n<input id="cheese">\n{% endif %}\n'),
         ([
             {
                 "code": "H042",
@@ -120,9 +104,7 @@ test_data = [
         ]),
         id="control_flow_only_file_is_checked",
     ),
-    pytest.param(
-        ("<label>Wine <input></label>\n"), ([]), id="label_without_for"
-    ),
+    pytest.param(("<label>Wine <input></label>\n"), ([]), id="label_without_for"),
     pytest.param(
         (
             '<label data-for="ghost" for="x">X</label>\n'
@@ -173,10 +155,7 @@ test_data = [
         id="whitespace_padded_for_is_broken_in_browsers",
     ),
     pytest.param(
-        (
-            '<label for="x">X</label>\n'
-            '{% comment %}<input id="x">{% endcomment %}\n'
-        ),
+        ('<label for="x">X</label>\n{% comment %}<input id="x">{% endcomment %}\n'),
         ([
             {
                 "code": "H042",
@@ -186,6 +165,60 @@ test_data = [
             }
         ]),
         id="commented_out_id_does_not_count",
+    ),
+    pytest.param(
+        ('<label for="note">Note</label>\n<textarea id="note"></textarea>\n'),
+        ([]),
+        id="textarea_id_counts (issue 3010)",
+    ),
+    pytest.param(
+        (
+            '<label for="note">Note</label>\n'
+            '<textarea id="note" placeholder="a > b">\n'
+            "don't <b>\n"
+            "</textarea>\n"
+        ),
+        ([]),
+        id="textarea_id_counts_past_its_body",
+    ),
+    pytest.param(
+        ('<label for="x">X</label>\n<textarea><input id="x"></textarea>\n'),
+        ([
+            {
+                "code": "H042",
+                "line": "1:0",
+                "match": '<label for="x">',
+                "message": "Label for attribute has no matching element id in this file.",
+            }
+        ]),
+        id="id_in_textarea_body_does_not_count",
+    ),
+    pytest.param(
+        ('<label for="note">Note</label>\n<textarea id="{{ prefix }}-note"></textarea>\n'),
+        ([]),
+        id="dynamic_textarea_id_silences_file",
+    ),
+    pytest.param(
+        (
+            '<label for="x">X</label>\n'
+            "<preview-card></preview-card>\n"
+            "<script-x></script-x>\n"
+            '<input id="x">\n'
+        ),
+        ([]),
+        id="custom_element_named_like_raw_text_hides_nothing",
+    ),
+    pytest.param(
+        ('<label for="x">X</label>\n<script>a()</script-x><input id="x"></script>\n'),
+        ([
+            {
+                "code": "H042",
+                "line": "1:0",
+                "match": '<label for="x">',
+                "message": "Label for attribute has no matching element id in this file.",
+            }
+        ]),
+        id="custom_closing_tag_does_not_end_raw_text",
     ),
 ]
 
@@ -205,9 +238,7 @@ def test_base(source: str, expected: list[LintError]) -> None:
     assert not mismatch
 
 
-def test_a_partial_without_a_control_is_not_checked(
-    django_config: Config,
-) -> None:
+def test_a_partial_without_a_control_is_not_checked(django_config: Config) -> None:
     source = '<label for="email">Email</label>\n'
     filename = "test.html"
 

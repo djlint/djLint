@@ -9,9 +9,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
 from djlint.settings import Config
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.types import LintError
@@ -73,9 +72,7 @@ test_data = [
         id="translate",
     ),
     pytest.param(
-        ("<span title=\"{% translate 'this' %}\"></span>"),
-        ([]),
-        id="translate_in_attribute",
+        ("<span title=\"{% translate 'this' %}\"></span>"), ([]), id="translate_in_attribute"
     ),
     pytest.param(
         ("{% include 'this' %}"),
@@ -119,15 +116,10 @@ test_data = [
         id="test_greedy_regex",
     ),
     pytest.param(
-        ("{% if form.action_url %}\n   ='stuff'\n {% endif %}"),
-        ([]),
-        id="test_greedy_regex_2",
+        ("{% if form.action_url %}\n   ='stuff'\n {% endif %}"), ([]), id="test_greedy_regex_2"
     ),
     pytest.param(
-        (
-            '{% include "template.html" %}\n'
-            " {% include \"template.html\" with type='mono' %}"
-        ),
+        ('{% include "template.html" %}\n {% include "template.html" with type=\'mono\' %}'),
         ([
             {
                 "code": "T002",
@@ -180,12 +172,7 @@ single_quote_test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), single_quote_test_data)
 def test_single_quote_style(source: str, expected: list[LintError]) -> None:
-    config = Config(
-        "dummy/source.html",
-        profile="django",
-        include="T002",
-        quote_style="single",
-    )
+    config = Config("dummy/source.html", profile="django", include="T002", quote_style="single")
     filename = "test.html"
     output = linter(config, source, filename, filename)
 

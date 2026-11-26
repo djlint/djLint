@@ -10,8 +10,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -47,9 +46,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], nunjucks_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], nunjucks_config: Config) -> None:
     filename = "test.html"
     output = linter(nunjucks_config, source, filename, filename)
 

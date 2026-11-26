@@ -52,16 +52,58 @@ test_data = [
         id="issue_1877",
     ),
     pytest.param(
-        (
-            '<a href = "http://test.test:3000/'
-            'testtesttesttesttesttesttesttesttesttest">Test</a>\n'
-        ),
-        (
-            '<a href="http://test.test:3000/'
-            'testtesttesttesttesttesttesttesttesttest">Test</a>\n'
-        ),
+        ('<a href = "http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'),
+        ('<a href="http://test.test:3000/testtesttesttesttesttesttesttesttesttest">Test</a>\n'),
         ({"single_attribute_per_line": True}),
         id="space around equals does not oscillate",
+    ),
+    pytest.param(
+        (
+            "<ul>\n"
+            '<li><a href="{% url \'post\' post.slug %}" class="post-link" '
+            'aria-label="Read {{ post.title }}">{{ post.title }}</a></li>\n'
+            "</ul>\n"
+        ),
+        (
+            "<ul>\n"
+            "    <li><a\n"
+            "        href=\"{% url 'post' post.slug %}\"\n"
+            '        class="post-link"\n'
+            '        aria-label="Read {{ post.title }}"\n'
+            "    >{{ post.title }}</a></li>\n"
+            "</ul>\n"
+        ),
+        {"profile": "django"},
+        id="tag after another tag indents from the line",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            '<p>Read the <a href="https://example.com/a/very/long/path/to/an/article" '
+            'class="external-link" target="_blank">article</a> first.</p>\n'
+            "</div>\n"
+        ),
+        (
+            "<div>\n"
+            "    <p>Read the <a\n"
+            '        href="https://example.com/a/very/long/path/to/an/article"\n'
+            '        class="external-link"\n'
+            '        target="_blank"\n'
+            "    >article</a> first.</p>\n"
+            "</div>\n"
+        ),
+        {},
+        id="tag after text indents from the line",
+    ),
+    pytest.param(
+        '<div{% if a %} hidden{% endif %} class="aaaaaaaaaaaaaaaaaaaa"{{ s }}'
+        ' id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">t</div>\n',
+        "<div{% if a %} hidden{% endif %}\n"
+        '    class="aaaaaaaaaaaaaaaaaaaa"{{ s }}\n'
+        '    id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"\n'
+        ">t</div>\n",
+        {},
+        id="template tags written against the name or an attribute stay there",
     ),
 ]
 
@@ -82,8 +124,52 @@ def test_default_keeps_hanging_indent() -> None:
         '<input type="text" name="firstName" id="first-name" '
         'autocomplete="given-name" class="form-input mt-1" />\n'
     )
-    output = formatter(
-        config_builder({"indent": 2, "max_line_length": 1}), source
-    )
+    output = formatter(config_builder({"indent": 2, "max_line_length": 1}), source)
 
     assert output.startswith('<input type="text"\n       name=')
+
+
+def test_default_aligns_attributes_of_a_tag_after_another_tag() -> None:
+    source = (
+        "<ul>\n"
+        '<li><a href="https://example.com/a/very/long/path/to/an/article" '
+        'class="post-link" aria-label="Read the article">Article</a></li>\n'
+        "</ul>\n"
+    )
+    expected = (
+        "<ul>\n"
+        '    <li><a href="https://example.com/a/very/long/path/to/an/article"\n'
+        '           class="post-link"\n'
+        '           aria-label="Read the article">Article</a></li>\n'
+        "</ul>\n"
+    )
+    config = config_builder({})
+    output = formatter(config, source)
+
+    printer(expected, source, output)
+    assert expected == output
+    assert expected == formatter(config, output)
+
+
+def test_default_aligns_attributes_of_a_tag_after_a_wrapped_tag() -> None:
+    source = (
+        "<ul>\n"
+        '<li class="item item--featured item--with-a-very-long-modifier-name" '
+        'data-id="x"><a href="https://example.com/a/very/long/path/to/an/article" '
+        'class="post-link" aria-label="Read the article">Article</a></li>\n'
+        "</ul>\n"
+    )
+    expected = (
+        "<ul>\n"
+        '    <li class="item item--featured item--with-a-very-long-modifier-name"\n'
+        '        data-id="x"><a href="https://example.com/a/very/long/path/to/an/article"\n'
+        '                       class="post-link"\n'
+        '                       aria-label="Read the article">Article</a></li>\n'
+        "</ul>\n"
+    )
+    config = config_builder({})
+    output = formatter(config, source)
+
+    printer(expected, source, output)
+    assert expected == output
+    assert expected == formatter(config, output)

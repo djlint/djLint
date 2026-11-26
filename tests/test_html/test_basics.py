@@ -47,13 +47,7 @@ test_data = [
     pytest.param("<!--hello world-->", "<!--hello world-->\n", id="comment"),
     pytest.param(
         ("<!doctype html>\n<html>\n<head></head>\n<body></body>\n</html>\n"),
-        (
-            "<!DOCTYPE html>\n"
-            "<html>\n"
-            "    <head></head>\n"
-            "    <body></body>\n"
-            "</html>\n"
-        ),
+        ("<!DOCTYPE html>\n<html>\n    <head></head>\n    <body></body>\n</html>\n"),
         id="empty_doc",
     ),
     pytest.param("", "", id="empty"),

@@ -220,8 +220,7 @@ test_data = [
             "<span {%if a%}required{%endif%}title=\"{% if eev.status == eev.STATUS_CURRENT %} {% trans 'A' %} {% elif eev.status == eev.STATUS_APPROVED %} {% trans 'B' %} {% elif eev.status == eev.STATUS_EXPIRED %} {% trans 'C' %}{% endif %}\" class=\"asdf{%if a%}b{%endif%} asdf\" {%if a%}checked{%endif%}>\n"
         ),
         (
-            "<span {% if a %}required{% endif %}\n"
-            "      title=\"{% if eev.status == eev.STATUS_CURRENT %} {% trans 'A' %} {% elif eev.status == eev.STATUS_APPROVED %} {% trans 'B' %} {% elif eev.status == eev.STATUS_EXPIRED %} {% trans 'C' %}{% endif %}\"\n"
+            "<span {% if a %}required{% endif %}title=\"{% if eev.status == eev.STATUS_CURRENT %} {% trans 'A' %} {% elif eev.status == eev.STATUS_APPROVED %} {% trans 'B' %} {% elif eev.status == eev.STATUS_EXPIRED %} {% trans 'C' %}{% endif %}\"\n"
             '      class="asdf{% if a %}b{% endif %} asdf"\n'
             "      {% if a %}checked{% endif %}>\n"
         ),
@@ -334,8 +333,8 @@ test_data = [
         ),
         (
             '<select name="order"\n'
-            '        {% for key, value in widget.attrs.items %}{{ key }}="{{ value }}" {% endfor %}\n'
-            '        class="form-select"></select>\n'
+            '        {% for key, value in widget.attrs.items %}{{ key }}="{{ value }}" {% endfor %}'
+            'class="form-select"></select>\n'
         ),
         ({"profile": "django"}),
         id="issue_2237_preserve_loop_attribute_separator",

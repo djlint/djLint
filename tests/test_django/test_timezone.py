@@ -34,37 +34,13 @@ test_data = [
         id="timezone_tag_indent",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            "    {% localtime on %}\n"
-            "        {{ value }}\n"
-            "    {% endlocaltime %}\n"
-            "</div>\n"
-        ),
-        (
-            "<div>\n"
-            "    {% localtime on %}\n"
-            "        {{ value }}\n"
-            "    {% endlocaltime %}\n"
-            "</div>\n"
-        ),
+        ("<div>\n    {% localtime on %}\n        {{ value }}\n    {% endlocaltime %}\n</div>\n"),
+        ("<div>\n    {% localtime on %}\n        {{ value }}\n    {% endlocaltime %}\n</div>\n"),
         id="localtime_tag_indent",
     ),
     pytest.param(
-        (
-            "<div>\n"
-            "    {% localize on %}\n"
-            "        {{ value }}\n"
-            "    {% endlocalize %}\n"
-            "</div>\n"
-        ),
-        (
-            "<div>\n"
-            "    {% localize on %}\n"
-            "        {{ value }}\n"
-            "    {% endlocalize %}\n"
-            "</div>\n"
-        ),
+        ("<div>\n    {% localize on %}\n        {{ value }}\n    {% endlocalize %}\n</div>\n"),
+        ("<div>\n    {% localize on %}\n        {{ value }}\n    {% endlocalize %}\n</div>\n"),
         id="localize_tag_indent",
     ),
 ]

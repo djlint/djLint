@@ -1,0 +1,9 @@
+---
+// Starlight's 404 page is the other page with a hero, and it keeps the default one.
+import Default from "@astrojs/starlight/components/Hero.astro";
+import HomeHero from "./HomeHero.astro";
+
+const is404 = Astro.locals.starlightRoute.entry.id === "404";
+---
+
+{is404 ? <Default /> : <HomeHero />}

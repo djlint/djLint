@@ -1,0 +1,161 @@
+---
+title: "Prise en main"
+description: "Installez djLint et lintez ou formatez des templates HTML en ligne de commande."
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import CliHelp from "../../../../components/CliHelp.astro";
+
+## Installation
+
+djLint est sur [PyPI](https://pypi.org/project/djlint/), où il demande [Python](https://python.org) 3.11 ou plus récent, et sur [npm](https://www.npmjs.com/package/djlint), qui embarque son propre Python. Dans un projet Python, ajoutez-le avec uv ou pip. Dans un projet JavaScript, comme une application Angular, un site Eleventy ou un thème Shopify, avec npm.
+
+<Tabs>
+<TabItem label="uv">
+
+Avec [uv](https://docs.astral.sh/uv/), ajoutez-le à votre projet comme dépendance de développement :
+
+```bash
+uv add --dev djlint
+```
+
+Ou installez-le comme outil autonome :
+
+```bash
+uv tool install djlint
+```
+
+</TabItem>
+<TabItem label="pip">
+
+```bash
+pip install djlint
+```
+
+</TabItem>
+<TabItem label="npm">
+
+Le paquet npm embarque son propre Python : il lui suffit de Node.js 16.9 ou plus récent. Il existe des builds pour Linux sur x64, Arm64, ppc64le, s390x et riscv64, macOS sur x64 et Arm64, et Windows sur x64, x86 et Arm64. Sous Linux avec musl, comme Alpine, il tourne sur x64 et Arm64. Ajoutez-le à votre projet comme dépendance de développement :
+
+```bash
+npm i -D djlint
+```
+
+Ou installez-le globalement :
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
+<TabItem label="pipx">
+
+Avec [pipx](https://pipx.pypa.io/) :
+
+```bash
+pipx install djlint
+```
+
+</TabItem>
+<TabItem label="Homebrew">
+
+Avec la [formule Homebrew](https://formulae.brew.sh/formula/djlint) maintenue par la communauté, sous macOS ou Linux :
+
+```bash
+brew install djlint
+```
+
+</TabItem>
+</Tabs>
+
+Pour exécuter djLint dans votre éditeur ou à chaque commit, consultez [Intégrations](/fr/docs/integrations/) et [pre-commit](/fr/docs/integrations/#pre-commit).
+
+:::note[Remarque]
+Si la commande `djlint` est introuvable, ajoutez à votre PATH le dossier où il a été installé. Si djLint est installé dans un environnement Python, `python -m djlint` avec le Python de cet environnement le lance aussi.
+:::
+
+## Premier lancement
+
+Indiquez à djLint le dossier de vos templates et passez à `--profile` le langage de vos templates. Le profil décide des règles du linter qui s'appliquent et de la façon dont la syntaxe des templates est formatée. Pour un projet Django :
+
+Lintez les templates (c'est le mode par défaut, vous pouvez donc omettre `--lint`) :
+
+```bash
+djlint templates --lint --profile=django
+```
+
+Voyez ce que le formatage changerait. Avec `--check`, djLint affiche un diff sans toucher aux fichiers :
+
+```bash
+djlint templates --check --profile=django
+```
+
+Reformatez les fichiers sur place :
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+L'option [`profile`](/fr/docs/configuration/#profile) liste tous les profils. Chaque langage de templates a aussi sa propre page, par exemple [Django](/fr/docs/languages/django/), [Jinja](/fr/docs/languages/jinja/) ou [Handlebars](/fr/docs/languages/handlebars/), qui montre comment définir le profil dans un fichier de configuration pour ne pas avoir à le passer à chaque fois.
+
+Si vous avez ajouté djLint au projet avec `uv add --dev`, il se trouve dans l'environnement du projet : préfixez les commandes par `uv run`, par exemple `uv run djlint templates --lint --profile=django`. Avec `npm i -D`, préfixez-les plutôt par `npx`, par exemple `npx djlint templates --lint --profile=django`.
+
+## Chemin ou stdin
+
+djLint accepte un chemin ou l'entrée standard (stdin).
+
+Avec un chemin :
+
+```bash
+djlint /path/to/templates --lint
+```
+
+Ou un fichier précis :
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+Ou avec stdin :
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+L'entrée standard permet aussi de reformater du code. La sortie ne contient alors que le code formaté, sans aucun message.
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+Sortie :
+
+```html
+<div></div>
+```
+
+Quand il lit l'entrée standard, djLint n'a pas de vrai chemin à comparer à `per-file-ignores` ni à afficher dans les messages : il utilise donc `-` par défaut. Passez `--stdin-filename` pour indiquer à djLint le vrai chemin du contenu reçu, par exemple quand une intégration d'éditeur lui transmet le contenu d'un fichier à l'enregistrement.
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## Codes de sortie
+
+| Code | Signification                                                                                                                                                                                                                                    |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `0`  | Tout ce que djLint devait vérifier est correct, ou chaque fichier trouvé a été ignoré par votre configuration.                                                                                                                                   |
+| `1`  | djLint a trouvé des erreurs de linting, ou des fichiers à reformater. Avec `--warn`, ils sont signalés comme des avertissements et le code de sortie est `0`.                                                                                    |
+| `2`  | djLint n'a pas vérifié ce que vous lui avez demandé : les chemins ne correspondent à aucun fichier, un fichier n'a pas pu être lu (pas en UTF-8, ou sans permission), la ligne de commande ou la configuration est invalide, ou djLint a échoué. |
+
+Seul le code `1` signifie que djLint a examiné vos templates et n'a pas aimé ce qu'il y a trouvé : un pipeline peut donc distinguer une vérification qui échoue d'une exécution qui n'a rien vérifié, par exemple avec un chemin erroné ou une `--extension` qui ne correspond plus.
+
+Les fichiers que djLint a trouvés puis volontairement ignorés, via `exclude`, `extend_exclude`, `use_gitignore` ou `require_pragma`, ne constituent pas une erreur, et c'est ce qui permet à `exclude` de fonctionner avec pre-commit. Si, dans votre pipeline, il est normal qu'un chemin ne contienne aucun template, désactivez le code `2` avec [`allow_empty_input`](/fr/docs/configuration/#allow-empty-input) :
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```
+
+## Utilisation en ligne de commande
+
+<CliHelp />

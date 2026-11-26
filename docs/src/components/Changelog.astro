@@ -1,0 +1,19 @@
+---
+// The changelog is kept in the repository's CHANGELOG.md, and this page shows
+// it as it is, from the first release on (see remarkChangelog in astro.config.mjs).
+import { Content } from "../../../CHANGELOG.md";
+import { starlightRoute } from "../utils/route";
+
+// The llms.txt plugin renders pages without a route, and the changelog has nothing for it.
+const route = starlightRoute(Astro.locals);
+---
+
+{
+  /* Its many releases mention most of what the docs cover, so a search would
+  put it above the page that explains it. A search for a version still finds it. */
+  route && (
+    <div data-pagefind-weight="0.05">
+      <Content />
+    </div>
+  )
+}

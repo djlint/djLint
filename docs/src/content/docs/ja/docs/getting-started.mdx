@@ -1,0 +1,161 @@
+---
+title: "はじめに"
+description: "djLint をインストールし、コマンドラインから HTML テンプレートをリントまたはフォーマットします。"
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import CliHelp from "../../../../components/CliHelp.astro";
+
+## インストール
+
+djLint は [PyPI](https://pypi.org/project/djlint/) と [npm](https://www.npmjs.com/package/djlint) で公開されています。PyPI 版には [Python](https://python.org) 3.11 以降が必要で、npm 版は独自の Python を同梱しています。Python プロジェクトでは uv か pip で、Angular アプリや Eleventy のサイト、Shopify テーマなどの JavaScript プロジェクトでは npm で追加してください。
+
+<Tabs>
+<TabItem label="uv">
+
+[uv](https://docs.astral.sh/uv/) を使う場合は、開発用の依存関係としてプロジェクトに追加します：
+
+```bash
+uv add --dev djlint
+```
+
+または、単独のツールとしてインストールします：
+
+```bash
+uv tool install djlint
+```
+
+</TabItem>
+<TabItem label="pip">
+
+```bash
+pip install djlint
+```
+
+</TabItem>
+<TabItem label="npm">
+
+npm パッケージは独自の Python を同梱しているため、必要なのは Node.js 16.9 以降だけです。Linux（x64、Arm64、ppc64le、s390x、riscv64）、macOS（x64、Arm64）、Windows（x64、x86、Arm64）向けのビルドがあります。Alpine などの musl を使う Linux では x64 と Arm64 で動きます。開発用の依存関係としてプロジェクトに追加します：
+
+```bash
+npm i -D djlint
+```
+
+または、グローバルにインストールします：
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
+<TabItem label="pipx">
+
+[pipx](https://pipx.pypa.io/) でインストールします：
+
+```bash
+pipx install djlint
+```
+
+</TabItem>
+<TabItem label="Homebrew">
+
+macOS や Linux では、コミュニティが管理している [Homebrew formula](https://formulae.brew.sh/formula/djlint) でインストールします：
+
+```bash
+brew install djlint
+```
+
+</TabItem>
+</Tabs>
+
+エディターで、またはコミットのたびに djLint を実行するには、[連携](/ja/docs/integrations/)と [pre-commit](/ja/docs/integrations/#pre-commit) を参照してください。
+
+:::note[メモ]
+`djlint` コマンドが見つからない場合は、インストール先のフォルダーを PATH に追加してください。djLint を Python 環境にインストールした場合は、その環境の Python で `python -m djlint` を実行しても動かせます。
+:::
+
+## はじめての実行
+
+テンプレートのあるフォルダーを djLint に渡し、`--profile` にテンプレート言語を指定します。どのリンタールールを実行し、テンプレート構文をどうフォーマットするかはプロファイルで決まります。Django プロジェクトの場合：
+
+テンプレートをリントします（リントはデフォルトのモードなので、`--lint` は省略できます）：
+
+```bash
+djlint templates --lint --profile=django
+```
+
+フォーマットで何が変わるかを確認します。`--check` を付けると、djLint は差分を表示するだけでファイルは変更しません：
+
+```bash
+djlint templates --check --profile=django
+```
+
+ファイルをその場でフォーマットします：
+
+```bash
+djlint templates --reformat --profile=django
+```
+
+すべてのプロファイルは [`profile`](/ja/docs/configuration/#profile) オプションに一覧があります。テンプレート言語ごとのページもあり（例：[Django](/ja/docs/languages/django/)、[Jinja](/ja/docs/languages/jinja/)、[Handlebars](/ja/docs/languages/handlebars/)）、毎回指定しなくて済むように設定ファイルでプロファイルを設定する方法も載っています。
+
+`uv add --dev` でプロジェクトに追加した場合、djLint はプロジェクトの環境に入っています。コマンドの前に `uv run` を付けてください（例：`uv run djlint templates --lint --profile=django`）。 `npm i -D` で追加した場合は、代わりに `npx` を付けます（例：`npx djlint templates --lint --profile=django`）。
+
+## パスと標準入力の使い分け
+
+djLint はパスと標準入力のどちらでも動作します。
+
+パスを指定して実行する場合：
+
+```bash
+djlint /path/to/templates --lint
+```
+
+特定のファイルを指定する場合：
+
+```bash
+djlint /path/to/this.mustache --lint
+```
+
+標準入力を使う場合：
+
+```bash
+echo "<div></div>" | djlint -
+```
+
+標準入力はコードの再フォーマットにも使えます。出力はフォーマット済みのコードだけで、メッセージは含まれません。
+
+```bash
+echo "<div></div>" | djlint - --reformat
+```
+
+出力：
+
+```html
+<div></div>
+```
+
+標準入力から読み込む場合、djLint には `per-file-ignores` との照合やメッセージの表示に使う実際のパスがないため、デフォルトで `-` を使います。エディターとの連携機能が保存時にファイルの内容をパイプで渡す場合などは、`--stdin-filename` を指定して、パイプで渡した内容の実際のパスを djLint に伝えてください。
+
+```bash
+echo "<div></div>" | djlint - --stdin-filename templates/index.html
+```
+
+## 終了コード
+
+| コード | 意味                                                                                                                                                                                                       |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`    | djLint にチェックを指示したものすべてに問題がないか、見つかったファイルがすべて設定によってスキップされました。                                                                                            |
+| `1`    | djLint がリントエラー、または再フォーマットが必要なファイルを見つけました。`--warn` を指定すると、これらを警告として報告し、代わりに `0` で終了します。                                                    |
+| `2`    | djLint は指示したものをチェックしませんでした。パスに一致するファイルがなかったか、ファイルを読めなかったか（UTF-8 でない、または権限がない）、コマンドラインや設定が無効だったか、djLint が失敗しました。 |
+
+djLint がテンプレートを調べて問題を見つけたことを意味するのは、コード `1` だけです。そのため、パイプラインは失敗したチェックと、何もチェックしなかった実行（パスの誤りや、もう一致しなくなった `--extension` など）を区別できます。
+
+djLint が見つけたうえで、`exclude`、`extend_exclude`、`use_gitignore`、`require_pragma` によって意図的にスキップしたファイルはエラーではありません。pre-commit で `exclude` が機能するのはこのためです。テンプレートがないパスがパイプラインにとって正常な場合は、[`allow_empty_input`](/ja/docs/configuration/#allow-empty-input) でコード `2` を無効にしてください：
+
+```bash
+djlint /path/to/templates --lint --allow-empty-input
+```
+
+## CLI の使い方
+
+<CliHelp />

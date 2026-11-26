@@ -36,9 +36,7 @@ _PATTERNS: Final = (
 
 
 @pytest.mark.parametrize(("pattern", "flags"), _PATTERNS)
-def test_compile_pattern_compiles_what_regex_compile_would(
-    pattern: str, flags: int
-) -> None:
+def test_compile_pattern_compiles_what_regex_compile_would(pattern: str, flags: int) -> None:
     compiled = helpers.compile_pattern(pattern, flags)
     expected = re.compile(pattern, flags)
 
@@ -61,15 +59,12 @@ def test_compile_pattern_compiles_the_same_on_an_older_regex(
 
 
 @pytest.mark.skipif(
-    not _regex_accepts_cache_pattern(),
-    reason="the installed regex predates cache_pattern",
+    not _regex_accepts_cache_pattern(), reason="the installed regex predates cache_pattern"
 )
 def test_compile_pattern_leaves_the_regex_cache_alone() -> None:
     """What the shim is for, when the installed regex can do it."""
     assert re.compile(r"cached\b") is re.compile(r"cached\b")
-    assert helpers.compile_pattern(r"uncached\b") is not (
-        helpers.compile_pattern(r"uncached\b")
-    )
+    assert helpers.compile_pattern(r"uncached\b") is not (helpers.compile_pattern(r"uncached\b"))
 
 
 def test_only_the_shim_names_cache_pattern() -> None:
@@ -77,6 +72,5 @@ def test_only_the_shim_names_cache_pattern() -> None:
     assert [
         str(path)
         for path in sorted(_SOURCE_ROOT.rglob("*.py"))
-        if path != _SHIM_FILE
-        and "cache_pattern" in path.read_text(encoding="utf-8")
+        if path != _SHIM_FILE and "cache_pattern" in path.read_text(encoding="utf-8")
     ] == []

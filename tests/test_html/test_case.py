@@ -73,9 +73,7 @@ test_data_attributes = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data_attributes)
-def test_attribute_case(
-    source: str, expected: str, basic_config: Config
-) -> None:
+def test_attribute_case(source: str, expected: str, basic_config: Config) -> None:
     output = formatter(basic_config, source)
 
     printer(expected, source, output)

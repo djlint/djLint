@@ -29,16 +29,8 @@ test_data = [
         id="test quoting",
     ),
     pytest.param(
-        (
-            '{{ item.split("/")[1] }}\n'
-            '{{ item.split("/").123 }}\n'
-            '{{ item.split("/").bar }}'
-        ),
-        (
-            '{{ item.split("/")[1] }}\n'
-            '{{ item.split("/").123 }}\n'
-            '{{ item.split("/").bar }}\n'
-        ),
+        ('{{ item.split("/")[1] }}\n{{ item.split("/").123 }}\n{{ item.split("/").bar }}'),
+        ('{{ item.split("/")[1] }}\n{{ item.split("/").123 }}\n{{ item.split("/").bar }}\n'),
         ({}),
         id="test index (issue 704)",
     ),
@@ -56,15 +48,7 @@ test_data = [
     ),
     pytest.param(
         ("{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}}"),
-        (
-            "{{ myfunc({\n"
-            "    bar: {\n"
-            "        baz: {\n"
-            "            cux: 1\n"
-            "        }\n"
-            "    }\n"
-            "})}}\n"
-        ),
+        ("{{ myfunc({\n    bar: {\n        baz: {\n            cux: 1\n        }\n    }\n})}}\n"),
         ({"no_function_formatting": True}),
         id="disabled",
     ),
@@ -83,15 +67,7 @@ test_data = [
         id="short line",
     ),
     pytest.param(
-        (
-            "<div>{{ myfunc({\n"
-            "  bar: {\n"
-            "    baz: {\n"
-            "      cux: 1\n"
-            "    }\n"
-            "  }\n"
-            "})}}</div>"
-        ),
+        ("<div>{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}}</div>"),
         (
             "<div>\n"
             "    {{ myfunc({\n"
@@ -108,15 +84,7 @@ test_data = [
     ),
     pytest.param(
         ("{{ myfunc({\n  bar: {\n    baz: {\n      cux: 1\n    }\n  }\n})}"),
-        (
-            "{{ myfunc({\n"
-            "    bar: {\n"
-            "        baz: {\n"
-            "            cux: 1\n"
-            "        }\n"
-            "    }\n"
-            "})}\n"
-        ),
+        ("{{ myfunc({\n    bar: {\n        baz: {\n            cux: 1\n        }\n    }\n})}\n"),
         ({}),
         id="broken",
     ),
@@ -161,6 +129,18 @@ test_data = [
         ("{{ _expand_attrs(kwargs) }}\n"),
         ({}),
         id="function param named kwargs",
+    ),
+    pytest.param(
+        ('{{ url("a\u2028b", x) }}'),
+        ('{{ url("a\u2028b", x) }}\n'),
+        ({}),
+        id="a line separator in an argument is content",
+    ),
+    pytest.param(
+        ('{{ url("a\u2029b", x) }}'),
+        ('{{ url("a\u2029b", x) }}\n'),
+        ({}),
+        id="and so is a paragraph separator",
     ),
 ]
 

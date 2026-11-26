@@ -7,16 +7,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint import main as djlint
+from djlint._cli import main as djlint  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
 
 
 def test_with_config(runner: CliRunner) -> None:
-    result = runner.invoke(
-        djlint, ("tests/test_config/test_linter_output_format", "--lint")
-    )
+    result = runner.invoke(djlint, ("tests/test_config/test_linter_output_format", "--lint"))
     assert result.exit_code == 1
 
     print(result.output)

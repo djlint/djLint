@@ -51,19 +51,13 @@ _TOKEN_PATTERN: Final = compile_pattern(
     """,
     re.X,
 )
-_LITERAL_BLOCKS: Final = {
-    "comment": "endcomment",
-    "raw": "endraw",
-    "verbatim": "endverbatim",
-}
+_LITERAL_BLOCKS: Final = {"comment": "endcomment", "raw": "endraw", "verbatim": "endverbatim"}
 _SCOPE_OPENING: Final = "embed"
 _SCOPE_CLOSING: Final = "endembed"
 _BLOCK_OPENING: Final = "block"
 
 
-def _closed_scope(
-    scope: int, enclosing: dict[int, int], closed_scopes: set[int]
-) -> int:
+def _closed_scope(scope: int, enclosing: dict[int, int], closed_scopes: set[int]) -> int:
     """The innermost scope around a tag that an `{% endembed %}` closed."""
     while scope not in closed_scopes:
         scope = enclosing[scope]
@@ -152,6 +146,7 @@ def run(
         errors.append({
             "code": rule["name"],
             "line": get_line(match.start(), line_ends),
+            "end": get_line(match.end(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         })

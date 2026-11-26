@@ -1,0 +1,33 @@
+name: 📚 Documentation Issue
+description: Something on djlint.com is wrong, missing or unclear.
+title: "[Docs] "
+labels: [":books: documentation"]
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: >-
+            I searched the [existing
+            issues](https://github.com/djlint/djLint/issues?q=is%3Aissue)
+            and found nothing about this.
+          required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The URL of the page.
+      placeholder: https://djlint.com/docs/configuration/
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: "What is wrong or missing?"
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change

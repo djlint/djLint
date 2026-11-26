@@ -25,13 +25,13 @@
 - id: djlint-handlebars
   name: djLint linting for Handlebars/Mustache
   entry: djlint --profile=handlebars
-  types_or: [handlebars]
+  files: (?i)\.(handlebars|hbs|mustache)$
   language: python
 
 - id: djlint-liquid
   name: djLint linting for Liquid
   entry: djlint --profile=liquid
-  types_or: [html]
+  types_or: [html, liquid]
   language: python
 
 - id: djlint-golang
@@ -49,6 +49,12 @@
 - id: djlint-askama
   name: djLint linting for Askama
   entry: djlint --profile=askama
+  types_or: [html]
+  language: python
+
+- id: djlint-mako
+  name: djLint linting for Mako
+  entry: djlint --profile=mako
   types_or: [html]
   language: python
 
@@ -79,13 +85,13 @@
 - id: djlint-reformat-handlebars
   name: djLint formatting for Handlebars/Mustache
   entry: djlint --reformat --profile=handlebars
-  types_or: [handlebars]
+  files: (?i)\.(handlebars|hbs|mustache)$
   language: python
 
 - id: djlint-reformat-liquid
   name: djLint formatting for Liquid
   entry: djlint --reformat --profile=liquid
-  types_or: [html]
+  types_or: [html, liquid]
   language: python
 
 - id: djlint-reformat-golang
@@ -103,5 +109,11 @@
 - id: djlint-reformat-askama
   name: djLint formatting for Askama
   entry: djlint --reformat --profile=askama
+  types_or: [html]
+  language: python
+
+- id: djlint-reformat-mako
+  name: djLint formatting for Mako
+  entry: djlint --reformat --profile=mako
   types_or: [html]
   language: python

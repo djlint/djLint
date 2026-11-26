@@ -2,15 +2,17 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import sys
+from typing import TYPE_CHECKING, final
 
-from djlint.helpers import (
-    inside_ignored_linter_block,
-    inside_ignored_rule,
-    overlaps_ignored_block,
-)
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
 from djlint.lint import get_line
 from djlint.rules.T027 import _TemplateTagMatch
+
+if sys.version_info >= (3, 13):  # pragma: >=3.13 cover
+    from typing import NamedTuple
+else:  # pragma: <3.13 cover
+    from typing_extensions import NamedTuple
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -18,6 +20,66 @@ if TYPE_CHECKING:
 
     from djlint.settings import Config
     from djlint.types import LintError
+
+
+@final
+class TagScan(NamedTuple):
+    """How far a template tag reads, each position -1 where it has none."""
+
+    # past the closing delimiter
+    end: int
+    # past a `}%` typo, which is T034's
+    typo_end: int
+    # past a closing delimiter that only an unterminated string holds,
+    # which is T027's
+    quoted_end: int
+    # where the read stopped
+    stop: int
+
+
+def scan_tag(html: str, scan: int, close: str) -> TagScan:
+    """Read a tag from past its opener up to its closing delimiter.
+
+    Quoted strings are stepped over, so a delimiter inside one neither
+    closes the tag nor opens another. Braces inside a block tag are
+    counted, so the "}}" ending a nested mapping, as in
+    `{% set a = {"x": {"y": 1}} %}`, closes the literal rather than the
+    tag, while a "}}" with nothing open is the stray delimiter it looks
+    like and stops the read, as another `{%` or `{{` does: no template
+    language nests tags.
+    """
+    length = len(html)
+    quote = ""
+    end = -1
+    quoted_end = -1
+    typo_end = -1
+    depth = 0
+    while scan < length:
+        char = html[scan]
+        if quote:
+            if char == "\\":
+                scan += 2
+                continue
+            if char == quote:
+                quote = ""
+            elif quoted_end == -1 and html.startswith(close, scan):
+                quoted_end = scan + 2
+        elif char in {"'", '"'}:
+            quote = char
+        elif html.startswith(close, scan):
+            end = scan + 2
+            break
+        elif close == "%}" and html.startswith("}%", scan):
+            typo_end = scan + 2
+            break
+        elif close == "%}" and char == "{" and not html.startswith(("{%", "{{"), scan):
+            depth += 1
+        elif close == "%}" and char == "}" and depth:
+            depth -= 1
+        elif html.startswith(("{%", "{{"), scan) or (close == "%}" and html.startswith("}}", scan)):
+            break
+        scan += 1
+    return TagScan(end, typo_end, quoted_end, scan)
 
 
 def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
@@ -28,22 +90,21 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
     skipped whole. Two malformed shapes belong to other rules and are left
     to them: `{% ... }%` is T034's typo, and a tag whose only closing
     delimiter sits inside an unterminated string is T027's.
-
-    Braces inside a block tag are counted, so the "}}" ending a nested
-    mapping, as in `{% set a = {"x": {"y": 1}} %}`, closes the literal
-    rather than the tag. A "}}" with nothing open is still the stray
-    delimiter it looks like.
     """
     pos = 0
     length = len(html)
+    # each opener is looked for again only once the read has passed it, so
+    # one the document never holds is not searched for to its end per tag
+    block_start = html.find("{%")
+    variable_start = html.find("{{")
     while True:
-        block_start = html.find("{%", pos)
-        variable_start = html.find("{{", pos)
+        if 0 <= block_start < pos:
+            block_start = html.find("{%", pos)
+        if 0 <= variable_start < pos:
+            variable_start = html.find("{{", pos)
         if block_start == -1 and variable_start == -1:
             return
-        if variable_start != -1 and (
-            block_start == -1 or variable_start < block_start
-        ):
+        if variable_start != -1 and (block_start == -1 or variable_start < block_start):
             start, close = variable_start, "}}"
         else:
             start, close = block_start, "%}"
@@ -64,42 +125,7 @@ def _iter_unclosed_tags(html: str) -> Iterator[_TemplateTagMatch]:
                 pos = start + 2 if comment_end == -1 else comment_end + 2
                 continue
 
-        quote = ""
-        end = -1
-        quoted_end = -1
-        typo_end = -1
-        depth = 0
-        while scan < length:
-            char = html[scan]
-            if quote:
-                if char == "\\":
-                    scan += 2
-                    continue
-                if char == quote:
-                    quote = ""
-                elif quoted_end == -1 and html.startswith(close, scan):
-                    quoted_end = scan + 2
-            elif char in {"'", '"'}:
-                quote = char
-            elif html.startswith(close, scan):
-                end = scan + 2
-                break
-            elif close == "%}" and html.startswith("}%", scan):
-                typo_end = scan + 2
-                break
-            elif (
-                close == "%}"
-                and char == "{"
-                and not html.startswith(("{%", "{{"), scan)
-            ):
-                depth += 1
-            elif close == "%}" and char == "}" and depth:
-                depth -= 1
-            elif html.startswith(("{%", "{{"), scan) or (
-                close == "%}" and html.startswith("}}", scan)
-            ):
-                break
-            scan += 1
+        end, typo_end, quoted_end, scan = scan_tag(html, scan, close)
 
         if end != -1:
             pos = end
@@ -134,6 +160,7 @@ def run(
         errors.append({
             "code": rule["name"],
             "line": get_line(match.start(), line_ends),
+            "end": get_line(match.end(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         })

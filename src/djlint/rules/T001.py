@@ -4,11 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from djlint.helpers import (
-    inside_ignored_linter_block,
-    inside_ignored_rule,
-    overlaps_ignored_block,
-)
+from djlint.helpers import inside_ignored_linter_block, inside_ignored_rule, overlaps_ignored_block
 from djlint.lint import get_line
 from djlint.rules.T027 import _close_past_strings, _TemplateTagMatch
 
@@ -31,11 +27,17 @@ def _iter_tags(html: str) -> Iterator[tuple[int, int, str]]:
     """
     pos = 0
     length = len(html)
+    # each opener is looked for again only once the read has passed it, so
+    # one the document never holds is not searched for to its end per tag
+    found = [html.find(open_delimiter) for open_delimiter, _ in _DELIMITERS]
     while pos < length:
+        for index, (open_delimiter, _) in enumerate(_DELIMITERS):
+            if 0 <= found[index] < pos:
+                found[index] = html.find(open_delimiter, pos)
         starts = [
-            (found, close)
-            for open_delimiter, close in _DELIMITERS
-            if (found := html.find(open_delimiter, pos)) != -1
+            (start, close)
+            for start, (_, close) in zip(found, _DELIMITERS, strict=True)
+            if start != -1
         ]
         if not starts:
             return
@@ -94,6 +96,7 @@ def run(
         errors.append({
             "code": rule["name"],
             "line": get_line(start, line_ends),
+            "end": get_line(match.end(), line_ends),
             "match": match.group().strip()[:20],
             "message": rule["message"],
         })

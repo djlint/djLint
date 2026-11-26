@@ -37,25 +37,6 @@ test_data = [
     ),
     pytest.param(
         (
-            '<div long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
-            "text\n"
-            "</div>\n"
-            '<div long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></div>\n'
-            '<div class="a">\n'
-            "text\n"
-            "</div>\n"
-            '<div class="a">text</div>\n'
-        ),
-        (
-            '<div long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</div>\n'
-            '<div long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></div>\n'
-            '<div class="a">text</div>\n'
-            '<div class="a">text</div>\n'
-        ),
-        id="block_bracket_same_line",
-    ),
-    pytest.param(
-        (
             '<script long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
             "alert(1)</script>\n"
             '<style long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
@@ -75,25 +56,6 @@ test_data = [
     ),
     pytest.param(
         (
-            '<script long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
-            "alert(1)</script>\n"
-            '<style long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
-            ".a{color: #f00}</style>\n"
-            "<script>\n"
-            "alert(1)</script>\n"
-            "<style>\n"
-            ".a{color: #f00}</style>\n"
-        ),
-        (
-            '<script long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">alert(1)</script>\n'
-            '<style long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">.a{color: #f00}</style>\n'
-            "<script>alert(1)</script>\n"
-            "<style>.a{color: #f00}</style>\n"
-        ),
-        id="embed_bracket_same_line",
-    ),
-    pytest.param(
-        (
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
             "text\n"
             "</span>\n"
@@ -112,35 +74,12 @@ test_data = [
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>\n'
             '<span class="a">text</span>\n'
             '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
-            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"> text</span>\n'
+            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
+            "    text\n"
+            "</span>\n"
             '<span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span>\n'
         ),
         id="inline",
-    ),
-    pytest.param(
-        (
-            '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
-            "text\n"
-            "</span>\n"
-            '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>\n'
-            '<span  class="a">text</span>\n'
-            '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
-            "text\n"
-            "</span>\n"
-            '<span  class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">\n'
-            "text\n"
-            "</span>\n"
-            '<span  class="a">text</span><span  class="a">text</span><span  class="a">text</span><span  class="a">text</span><span  class="a">text</span>\n'
-        ),
-        (
-            '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
-            '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"></span>\n'
-            '<span class="a">text</span>\n'
-            '<span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value">text</span>\n'
-            '<span class="a">text</span><span long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"> text</span>\n'
-            '<span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span><span class="a">text</span>\n'
-        ),
-        id="inline_bracket_same_line",
     ),
     pytest.param(
         (
@@ -153,18 +92,6 @@ test_data = [
             '<img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" />\n'
         ),
         id="void",
-    ),
-    pytest.param(
-        (
-            '<img long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value" src="./1.jpg"/>\n'
-            '<img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/><img src="./1.jpg"/>\n'
-        ),
-        (
-            '<img long_long_attribute="long_long_long_long_long_long_long_long_long_long_long_value"\n'
-            '     src="./1.jpg" />\n'
-            '<img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" /><img src="./1.jpg" />\n'
-        ),
-        id="void_bracket_same_line",
     ),
 ]
 

@@ -5,15 +5,16 @@ on:
       - master
   pull_request:
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
-permissions:
-  contents: read
+permissions: {}
 jobs:
   check:
     if: ${{ always() && github.event_name == 'pull_request' }}
     needs:
-      - linkcheck
+      - docs
+      - npm
+      - oxlint
       - pre-commit
       - pytest
     runs-on: ubuntu-26.04
@@ -21,7 +22,7 @@ jobs:
       - uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # release/v1
         with:
           jobs: ${{ toJSON(needs) }}
-  linkcheck:
+  docs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -29,45 +30,119 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: lts/*
+          # The Node that Workers Builds builds the site with.
+          node-version-file: docs/.node-version
           check-latest: true
           package-manager-cache: false
       - run: npm ci --ignore-scripts
         working-directory: docs
       - run: npm run build
         working-directory: docs
-      - uses: untitaker/hyperlink@9375bc4063712ad490d5eb3d54df0b6aade15e54 # 0.3.2
+      # The type check of the components, which oxlint's misses.
+      - run: npx astro check
+        working-directory: docs
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
-          args: docs/_site/
+          args: >-
+            --no-progress
+            --offline
+            --include-fragments
+            --index-files index.html
+            --root-dir ${{ github.workspace }}/docs/dist
+            docs/dist
+      # The browser tests in docs/tests/, on the site just built.
+      - id: playwright
+        run: echo "version=$(node -p "require('./package.json').devDependencies['@playwright/test']")" >> "$GITHUB_OUTPUT"
+        working-directory: docs
+      - id: browsers
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - run: npx playwright install --with-deps --only-shell chromium
+        working-directory: docs
+      - if: ${{ github.ref == 'refs/heads/master' && steps.browsers.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ steps.browsers.outputs.cache-primary-key }}
+      - run: npm test
+        working-directory: docs
+      - if: ${{ failure() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: playwright
+          path: docs/test-results
+  npm:
+    uses: $/.github/workflows/npm.yml
+  oxlint:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+          check-latest: true
+      - run: npm ci
+      # docs/ is linted too, against its own packages.
+      - run: npm ci --ignore-scripts
+        working-directory: docs
+      # The types of Astro's virtual modules.
+      - run: npx astro sync
+        working-directory: docs
+      - run: npm run lint
   pre-commit:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
-          python-version: "3.14"
+          python-version: "3.15"
           enable-cache: false
+      # uvx and the hook environments prek installs read neither pyproject.toml
+      # nor .npmrc, so their dependency cooldown is set here.
       - run: uvx --no-cache prek run --all-files --show-diff-on-failure
         env:
+          NPM_CONFIG_MIN_RELEASE_AGE: "3" # days
           RUFF_OUTPUT_FORMAT: github
+          UV_EXCLUDE_NEWER: 3 days
   pytest:
-    runs-on: ubuntu-26.04
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         python-version:
           - "3.11"
           - "3.15"
+        os:
+          - ubuntu-26.04
+        include:
+          # Code and tests that only run on Windows: the process limit, drive
+          # letters in the server's URIs.
+          - python-version: "3.15"
+            os: windows-2025
+          # The wheels on PyPI are compiled with mypyc, which checks annotations
+          # at runtime. This turns the newest Linux run into a compiled one.
+          - python-version: "3.15"
+            os: ubuntu-26.04
+            mypyc: true
       fail-fast: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true
           prune-cache: true
           save-cache: ${{ github.ref == 'refs/heads/master' }}
-      - run: uv run --locked pytest
+      - run: uv run --group test-ci --no-group dev --locked pytest
+        env:
+          # A non-editable install builds a wheel, which the hook compiles.
+          HATCH_BUILD_HOOK_ENABLE_MYPYC: ${{ matrix.mypyc && '1' || '0' }}
+          UV_NO_EDITABLE: ${{ matrix.mypyc && '1' || '0' }}

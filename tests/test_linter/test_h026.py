@@ -9,8 +9,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -73,21 +72,15 @@ test_data = [
     ),
     pytest.param(('<asdf {% class="" %}></asdf>'), ([]), id="class in tag"),
     pytest.param(
-        ("<div x-id-y></div><div id-y></div><div x-id></div>"),
-        ([]),
-        id="prefix and suffix",
+        ("<div x-id-y></div><div id-y></div><div x-id></div>"), ([]), id="prefix and suffix"
     ),
     pytest.param(
-        (
-            '<div x-id-y=""></div><div id-y=""></div><div x-id=""></div><div data-id=""></div>'
-        ),
+        ('<div x-id-y=""></div><div id-y=""></div><div x-id=""></div><div data-id=""></div>'),
         ([]),
         id="prefix and suffix quoted",
     ),
     pytest.param(
-        (
-            '<input type="number" name="account_id" placeholder="enter account ID here" />'
-        ),
+        ('<input type="number" name="account_id" placeholder="enter account ID here" />'),
         ([]),
         id="id text inside quoted attributes",
     ),
@@ -103,13 +96,41 @@ test_data = [
         ]),
         id="id value after spaced equals",
     ),
+    pytest.param(
+        ('<div class="  "></div>'),
+        ([
+            {
+                "code": "H026",
+                "line": "1:0",
+                "match": '<div class="  "',
+                "message": "Empty id and class tags can be removed.",
+            }
+        ]),
+        id="whitespace only",
+    ),
+    pytest.param(
+        ('<div id = ""></div>'),
+        ([
+            {
+                "code": "H012",
+                "line": "1:0",
+                "match": "<div id =",
+                "message": "There should be no spaces around attribute =.",
+            },
+            {
+                "code": "H026",
+                "line": "1:0",
+                "match": '<div id = ""',
+                "message": "Empty id and class tags can be removed.",
+            },
+        ]),
+        id="empty value after spaced equals",
+    ),
 ]
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 

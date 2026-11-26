@@ -9,8 +9,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from djlint.lint import linter
-from tests.conftest import lint_printer
+from tests.conftest import lint_printer, linter
 
 if TYPE_CHECKING:
     from djlint.settings import Config
@@ -36,11 +35,7 @@ test_data = [
         ([]),
         id="missing",
     ),
-    pytest.param(
-        ('<abbr title="Cascading Style Sheets">CSS</abbr>'),
-        ([]),
-        id="outside tag",
-    ),
+    pytest.param(('<abbr title="Cascading Style Sheets">CSS</abbr>'), ([]), id="outside tag"),
     pytest.param(
         ('<div style="test {%"><div style="test {{">'),
         ([
@@ -87,9 +82,7 @@ test_data = [
 
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
-def test_base(
-    source: str, expected: list[LintError], basic_config: Config
-) -> None:
+def test_base(source: str, expected: list[LintError], basic_config: Config) -> None:
     filename = "test.html"
     output = linter(basic_config, source, filename, filename)
 

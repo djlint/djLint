@@ -3,6 +3,6 @@
 from __future__ import annotations
 
 if __name__ == "__main__":
-    from djlint import main
+    from djlint._cli import main
 
     main()

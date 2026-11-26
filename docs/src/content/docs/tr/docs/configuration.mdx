@@ -1,0 +1,45 @@
+---
+title: "Yapılandırma"
+description: "djLint'in HTML şablonlarını nasıl denetleyip biçimlendireceğini belirleyen seçenekler."
+---
+
+import ConfigOptions from "../../../../components/ConfigOptions.astro";
+
+Yapılandırma projenizin `pyproject.toml` dosyasına, bir `djlint.toml` ya da `.djlint.toml` dosyasına veya bir `.djlintrc` dosyasına yazılır. Komut satırı seçenekleri yapılandırma dosyasını geçersiz kılar, ama bir bayrak bir seçeneği yalnızca açabilir, yani yapılandırma dosyasının açtığı bir anahtarı kapatamaz. `--prefer-configuration` ayarlanmadıkça projenin ayarları, `--configuration` ile verilen genel bir yapılandırma dosyasını geçersiz kılar.
+
+djLint bu dosyaları denetlediği ilk yoldan (`-` için `--stdin-filename` klasöründen, bu seçenek yoksa geçerli dizinden) yukarı doğru arar. `djlint.toml`, `.djlint.toml`, `.djlintrc`, `.djlint_rules.yaml` ya da `[tool.djlint]` içeren bir `pyproject.toml` bulunan ilk klasörde durur ve bir deponun kökünü (`.git` klasörü ya da dosyası veya `.hg` klasörü olan klasörü) hiçbir zaman aşmaz. djLint ayarı olmayan bir `pyproject.toml` aramayı durdurmaz, bu yüzden bir monorepoda kendi `pyproject.toml` dosyası olan bir paket deponun ayarlarını alır. djLint yalnızca durduğu klasörü okur: `pyproject.toml` dosyasındaki `[tool.djlint]` (içinde bir ayar varsa), yoksa `djlint.toml` ya da `.djlint.toml`, o da yoksa `.djlintrc`; orada olup okumadığı dosyalar için de uyarır.
+
+Komut satırı da yapılandırma da `indent` ya da `max_line_length` ayarlamıyorsa djLint, düzenleyicilerin yaptığı gibi `indent_size` ya da `max_line_length` değerini `.editorconfig` dosyalarından alır: her dosya bu değerleri kendi yoluna göre alır, en yakın `.editorconfig` kazanır ve üsttekiler eksikleri tamamlar; arama `root = true` içeren bir dosyada ya da proje kökünde biter.
+
+`pyproject.toml` dosyası `toml` biçimindedir.
+
+```toml
+[tool.djlint]
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+`djlint.toml` ve `.djlint.toml` dosyaları `toml` biçimindedir.
+
+```toml
+profile = "django"
+ignore = ["H014", "H015"]
+```
+
+`.djlintrc` dosyası `json` biçimindedir.
+
+```json
+{ "profile": "django", "ignore": ["H014", "H015"] }
+```
+
+`ignore` gibi birden çok değer alan seçenekler bir liste alır. `"H014,H015"` gibi virgülle ayrılmış bir metin de çalışır ve 1.41'den önceki djLint yalnızca bunu okur.
+
+djLint 1.51 sürümünden itibaren tanımadığı bir ayar ya da kural kodu için uyarır ve en yakın bildiğini söyler.
+
+## Seçenekler
+
+<ConfigOptions
+  label="Seçenekleri filtrele"
+  placeholder="seçenekleri filtrelemek için yazın..."
+  empty="Hiçbir şey bulunamadı. Başka bir arama deneyin."
+/>

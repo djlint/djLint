@@ -74,6 +74,108 @@ test_data = [
         ),
         id="single_line_set_block_nested_in_html",
     ),
+    pytest.param(
+        (
+            "{% set menu = menu_item(\n"
+            "    title='title',\n"
+            "    submenu=[\n"
+            "        menu_item(\n"
+            "            title='title',\n"
+            "            submenu=[],\n"
+            "        )\n"
+            "    ],\n"
+            ") %}"
+        ),
+        (
+            "{% set menu = menu_item(\n"
+            "    title='title',\n"
+            "    submenu=[\n"
+            "        menu_item(\n"
+            "            title='title',\n"
+            "            submenu=[],\n"
+            "        )\n"
+            "    ],\n"
+            ") %}\n"
+        ),
+        id="nested_call_in_multiline_set_is_indented",
+    ),
+    pytest.param(
+        (
+            "<div>\n"
+            "    {% set items = pick(\n"
+            "        [1,\n"
+            "            2]) %}\n"
+            "    <p>after</p>\n"
+            "</div>"
+        ),
+        (
+            "<div>\n"
+            "    {% set items = pick(\n"
+            "        [1,\n"
+            "            2]) %}\n"
+            "    <p>after</p>\n"
+            "</div>\n"
+        ),
+        id="multiline_set_closing_after_an_opener_restores_the_level",
+    ),
+    pytest.param(
+        ('{% set style = style ~\n    "url(\'data:image/svg+xml," ~\n    icon ~\n    "\');" %}'),
+        ('{% set style = style ~\n    "url(\'data:image/svg+xml," ~\n    icon ~\n    "\');" %}\n'),
+        id="bracket_inside_a_string_in_multiline_set_opens_nothing",
+    ),
+    pytest.param(
+        ("{% set x = outer(\n    build(inner(),\n        1),\n    2,\n) %}"),
+        ("{% set x = outer(\n    build(inner(),\n        1),\n    2,\n) %}\n"),
+        id="call_left_open_after_a_closed_one_in_multiline_set",
+    ),
+    pytest.param(
+        ("{% set x = pair(\n    first(\n        1\n    ), second(\n        2\n    )\n) %}"),
+        ("{% set x = pair(\n    first(\n        1\n    ), second(\n        2\n    )\n) %}\n"),
+        id="line_closing_one_call_and_opening_another_in_multiline_set",
+    ),
+    pytest.param(
+        ("{% set x = outer(\n    inner(\n        deep(\n            1\n        )),\n    2\n) %}"),
+        ("{% set x = outer(\n    inner(\n        deep(\n            1\n        )),\n    2\n) %}\n"),
+        id="line_closing_two_calls_in_multiline_set",
+    ),
+    pytest.param(
+        ("{% set value = outer(inner(\n        1\n    ),\n    2\n) %}\n<p>after</p>"),
+        ("{% set value = outer(inner(\n        1\n    ),\n    2\n) %}\n<p>after</p>\n"),
+        id="two_calls_opened_on_the_set_line",
+    ),
+    pytest.param(
+        ('<div>\n    {% set x = "((\ntext" %}\n    <p>after</p>\n</div>'),
+        ('<div>\n    {% set x = "((\ntext" %}\n    <p>after</p>\n</div>\n'),
+        id="string_across_lines_in_set_gets_no_indentation",
+    ),
+    pytest.param(
+        ('<div>\n{% set x = "a\n   b" %}\n</div>'),
+        ('<div>\n    {% set x = "a\n   b" %}\n</div>\n'),
+        id="string_across_lines_in_set_keeps_its_whitespace",
+    ),
+    pytest.param(
+        ('<div>\n{% set x = {\n"k": "a\n   b",\n"j": 1\n} %}\n</div>'),
+        ('<div>\n    {% set x = {\n        "k": "a\n   b",\n        "j": 1\n    } %}\n</div>\n'),
+        id="string_across_lines_in_a_set_dict_keeps_its_whitespace",
+    ),
+    pytest.param(
+        ('<div>\n{{ f("a\n   b") }}\n</div>'),
+        ('<div>\n    {{ f("a\n   b") }}\n</div>\n'),
+        id="string_across_lines_in_a_call_keeps_its_whitespace",
+    ),
+    pytest.param(
+        "{% set x = foo(\n) ~\n    bar %}",
+        "{% set x = foo(\n) ~\n    bar %}\n",
+        id="value_after_a_closed_call_stays_inside_the_set",
+    ),
+    pytest.param(
+        '{% set x = "a" "b" %}', '{% set x = "a" "b" %}\n', id="adjacent_strings_stay_strings"
+    ),
+    pytest.param(
+        ('<div>\n{% set x = [\n"a\\"]",\ny\n] %}\n</div>'),
+        ('<div>\n    {% set x = [\n        "a\\"]",\n        y\n    ] %}\n</div>\n'),
+        id="a bracket after an escaped quote in a set string is still in the string",
+    ),
 ]
 
 

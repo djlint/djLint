@@ -28,9 +28,7 @@ test_data = [
             "{% example stuff %}<p>this is a very very long paragraph that does nothing except be a long paragraph asdfasdfasdfasdfasdf fasdf asdfasdfasdf</p>{% endexample %}\n"
             "{% verylongexampletagthatiskindaneattolookat stuff %}{{ tag }}{% endverylongexampletagthatiskindaneattolookat %}\n"
         ),
-        ({
-            "custom_blocks": "toc,example,verylongexampletagthatiskindaneattolookat"
-        }),
+        ({"custom_blocks": "toc,example,verylongexampletagthatiskindaneattolookat"}),
         id="one",
     ),
     pytest.param(
@@ -104,18 +102,8 @@ test_data = [
         id="issue 1040 multiline tag params keep indent (issue 1040)",
     ),
     pytest.param(
-        (
-            '{% component "calendar" date="2015-06-19" / %}\n'
-            "<div>\n"
-            "    <p>hello</p>\n"
-            "</div>\n"
-        ),
-        (
-            '{% component "calendar" date="2015-06-19" / %}\n'
-            "<div>\n"
-            "    <p>hello</p>\n"
-            "</div>\n"
-        ),
+        ('{% component "calendar" date="2015-06-19" / %}\n<div>\n    <p>hello</p>\n</div>\n'),
+        ('{% component "calendar" date="2015-06-19" / %}\n<div>\n    <p>hello</p>\n</div>\n'),
         ({"custom_blocks": "component,slot,fill"}),
         id="issue 1113 self closing tag does not indent (issue 1113)",
     ),

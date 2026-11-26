@@ -41,11 +41,7 @@ test_data = [
 
 @pytest.mark.parametrize(("source", "expected"), test_data)
 def test_multiline_attribute_tag(source: str, expected: str) -> None:
-    config = config_builder({
-        "profile": "jinja",
-        "indent": 2,
-        "quote_style": "single",
-    })
+    config = config_builder({"profile": "jinja", "indent": 2, "quote_style": "single"})
 
     output = formatter(config, source)
 

@@ -12,13 +12,7 @@ from tests.conftest import config_builder, printer
 
 test_data = [
     pytest.param(
-        (
-            '{{ define "main" }}\n'
-            "{{ if .Page }}\n"
-            "{{ .Page.Title }}\n"
-            "{{ end }}\n"
-            "{{ end }}\n"
-        ),
+        ('{{ define "main" }}\n{{ if .Page }}\n{{ .Page.Title }}\n{{ end }}\n{{ end }}\n'),
         (
             '{{ define "main" }}\n'
             "    {{ if .Page }}\n"
@@ -30,17 +24,11 @@ test_data = [
     ),
     pytest.param(
         ("{{ range .Items }}\n<li>{{ .Name }}</li>\n{{ end }}\n<p>after</p>\n"),
-        (
-            "{{ range .Items }}\n    <li>{{ .Name }}</li>\n{{ end }}\n"
-            "<p>after</p>\n"
-        ),
+        ("{{ range .Items }}\n    <li>{{ .Name }}</li>\n{{ end }}\n<p>after</p>\n"),
         id="range_block",
     ),
     pytest.param(
-        (
-            "{{ if .A }}\n<p>a</p>\n{{ else if .B }}\n<p>b</p>\n"
-            "{{ else }}\n<p>c</p>\n{{ end }}\n"
-        ),
+        ("{{ if .A }}\n<p>a</p>\n{{ else if .B }}\n<p>b</p>\n{{ else }}\n<p>c</p>\n{{ end }}\n"),
         (
             "{{ if .A }}\n    <p>a</p>\n{{ else if .B }}\n    <p>b</p>\n"
             "{{ else }}\n    <p>c</p>\n{{ end }}\n"

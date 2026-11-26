@@ -48,12 +48,12 @@ _INERT: Final = frozenset(("template",))
 
 _AFTER_EVERY_SPAN: Final = float("inf")
 
-_HREF_PATTERN = compile_pattern(r"(?<![-.:\w])href(?![-.:\w])", re.I)
-_TYPE_PATTERN = compile_pattern(r"(?<![-.:\w])type(?![-.:\w])", re.I)
-_TEMPLATE_PATTERN = compile_pattern(r"{[{%#]")
+_HREF_PATTERN: Final = compile_pattern(r"(?<![-.:\w])href(?![-.:\w])", re.I)
+_TYPE_PATTERN: Final = compile_pattern(r"(?<![-.:\w])type(?![-.:\w])", re.I)
+_TEMPLATE_PATTERN: Final = compile_pattern(r"{[{%#]")
 # A second opener before the close means the first one never closed, as
 # the tokenizer reads it, so a run of unclosed tags is read once.
-_TEMPLATE_OR_QUOTE_PATTERN = compile_pattern(
+_TEMPLATE_OR_QUOTE_PATTERN: Final = compile_pattern(
     r"""
       {\#(?:(?!\#}|{\#).)*\#}
     | {%(?:(?!%}|{%).)*%}
@@ -64,10 +64,8 @@ _TEMPLATE_OR_QUOTE_PATTERN = compile_pattern(
 )
 # djLint's shared skip reads "{% comment %}" but not the "{%- comment -%}"
 # a liquid theme is written in, so the rule finds those bodies itself.
-_COMMENT_OPENING_PATTERN = compile_pattern(r"{%[-+]?[ \t]*comment\b", re.I)
-_COMMENT_CLOSING_PATTERN = compile_pattern(
-    r"{%[-+]?[ \t]*endcomment[ \t]*[-+]?%}", re.I
-)
+_COMMENT_OPENING_PATTERN: Final = compile_pattern(r"{%[-+]?[ \t]*comment\b", re.I)
+_COMMENT_CLOSING_PATTERN: Final = compile_pattern(r"{%[-+]?[ \t]*endcomment[ \t]*[-+]?%}", re.I)
 
 
 def _written(area: str) -> str:
@@ -89,9 +87,7 @@ def _written(area: str) -> str:
                 quote = token
             elif token == quote:
                 quote = None
-        elif token.startswith("{#") or (
-            quote is None and token.startswith("{%")
-        ):
+        elif token.startswith("{#") or (quote is None and token.startswith("{%")):
             parts.append(area[position : match.start()])
             position = match.end()
     parts.append(area[position:])
@@ -134,8 +130,7 @@ def _is_interactive(config: Config, name: str, area: str) -> bool:
         return False
     if name == "a":
         return _HREF_PATTERN.search(area) is not None and any(
-            _HREF_PATTERN.search(attribute)
-            for attribute, _ in _attributes(config, area)
+            _HREF_PATTERN.search(attribute) for attribute, _ in _attributes(config, area)
         )
     if name != "input":
         return True
@@ -163,9 +158,7 @@ def _comment_block_spans(html: str) -> tuple[tuple[int, int], ...]:
     """
     spans: list[tuple[int, int]] = []
     position = 0
-    while (
-        opening := _COMMENT_OPENING_PATTERN.search(html, position)
-    ) is not None:
+    while (opening := _COMMENT_OPENING_PATTERN.search(html, position)) is not None:
         body_start = html.find("%}", opening.end())
         if body_start < 0:
             break
@@ -184,9 +177,7 @@ def _within(spans: Sequence[tuple[int, int]], position: int) -> bool:
 
 
 def _close(
-    open_elements: list[tuple[str, int, int]],
-    open_by_name: dict[str, list[int]],
-    name: str,
+    open_elements: list[tuple[str, int, int]], open_by_name: dict[str, list[int]], name: str
 ) -> None:
     """Pop back to the element a closing tag closes, if one is open.
 
@@ -251,13 +242,12 @@ def run(
             _close(open_elements, open_by_name, name)
             continue
 
-        interactive = _is_interactive(
-            config, name, html[token.name_end : token.attributes_end]
-        )
+        interactive = _is_interactive(config, name, html[token.name_end : token.attributes_end])
         if interactive and containers:
             errors.append({
                 "code": rule["name"],
                 "line": get_line(token.start, line_ends),
+                "end": get_line(token.end, line_ends),
                 "match": html[token.start : token.end].strip()[:20],
                 "message": rule["message"],
             })
@@ -269,10 +259,6 @@ def run(
         elif interactive and name in _CONTAINERS:
             containers += 1
         open_by_name.setdefault(name, []).append(len(open_elements))
-        open_elements.append((
-            name,
-            containers,
-            pres + 1 if name == "pre" else pres,
-        ))
+        open_elements.append((name, containers, pres + 1 if name == "pre" else pres))
 
     return tuple(errors)

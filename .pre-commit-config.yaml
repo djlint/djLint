@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-case-conflict
       - id: check-executables-have-shebangs
@@ -11,47 +11,66 @@ repos:
       - id: check-xml
       - id: destroyed-symlinks
       - id: end-of-file-fixer
+        exclude: \.svg$
       - id: fix-byte-order-marker
       - id: mixed-line-ending
         args:
           - --fix=lf
       - id: trailing-whitespace
+  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
+    rev: 2396e2ed32cb8dda1f2bf1414e2aff8eb47e3f0b # frozen: v18.1.0
+    hooks:
+      - id: stylelint
+        language: node
+        files: ^docs/.*\.(?:astro|css)$
+        args:
+          - --fix
+        additional_dependencies:
+          - postcss-html@2.0.1
+          - stylelint@18.1.0
+          - stylelint-config-recess-order@7.10.1
+          - stylelint-config-standard@41.1.0
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v1.7.3
+    rev: 1066584123cce44a99b4818c2b2c4a7e732ff8e9 # frozen: v1.11.3
     hooks:
       - id: tombi-format
         exclude: ^uv.lock$
-  - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.9.9
+  - repo: https://github.com/oxc-project/mirrors-oxfmt
+    rev: b082b2f0f22aabef0f5cea2bd183dd85c08ba9ca # frozen: v0.79.0
     hooks:
-      - id: prettier
+      - id: oxfmt
+        language: node
+        types_or:
+          - text
         args:
-          - --object-wrap=collapse
-          - --no-config
+          - --no-error-on-unmatched-pattern
+        additional_dependencies:
+          - oxfmt@0.79.0
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.16.10
+    rev: 9026c9127e153371d7a78dfcb0c45ae2046a3d10 # frozen: v0.17.6
     hooks:
       - id: ruff-check
         args:
           - --fix
       - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.4.0
+    rev: ad26ebfa797fcb9b8f83275937c1c1d6e126719c # frozen: v2.4.1
     hooks:
       - id: mypy
         language: python
         args:
           - --scripts-are-modules
         additional_dependencies:
-          - click==8.5.0
+          - click==8.5.1
           - cssbeautifier==2.0.3
           - jsbeautifier==2.0.3
-          - json5==0.16.0
+          - json5==0.17.3
           - pathspec==1.1.1
-          - pytest==9.1.1
-          - types-pyyaml==6.0.12.20260906
-          - types-regex==2026.9.29.20261005
+          - pytest==9.2.0
+          - types-pyyaml==6.0.12.20261122
+          - types-regex==2026.11.19.20261122
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.30.1
+    rev: c7d31dc612dffdd4d3b2f2b88b9660d3ab057ee8 # frozen: v1.33.1
     hooks:
       - id: zizmor
+        args: [--no-progress, --persona=pedantic]

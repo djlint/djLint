@@ -15,16 +15,7 @@ _DOCUMENT = "<html><head><title>t</title></head><body><p>x</p></body></html>\n"
 test_data = [
     pytest.param(
         _DOCUMENT,
-        (
-            "<html>\n"
-            "<head>\n"
-            "    <title>t</title>\n"
-            "</head>\n"
-            "<body>\n"
-            "    <p>x</p>\n"
-            "</body>\n"
-            "</html>\n"
-        ),
+        ("<html>\n<head>\n    <title>t</title>\n</head>\n<body>\n    <p>x</p>\n</body>\n</html>\n"),
         id="head and body sit level with html",
     ),
     pytest.param(

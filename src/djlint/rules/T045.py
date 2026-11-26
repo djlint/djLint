@@ -96,14 +96,7 @@ _IGNORED_BLOCK_PATTERN: Final = compile_pattern(
 
 
 @final
-@dataclass(
-    repr=False,
-    eq=False,
-    frozen=True,
-    match_args=False,
-    kw_only=False,
-    slots=True,
-)
+@dataclass(repr=False, eq=False, frozen=True, match_args=False, kw_only=False, slots=True)
 class _HtmlComment:
     """An html comment, from its `<!--` to past whatever closes it."""
 
@@ -117,6 +110,9 @@ class _HtmlComment:
 
     def start(self) -> int:
         return self._start
+
+    def end(self) -> int:
+        return self._end
 
     def group(self) -> str:
         return self._html[self._start : self._end]
@@ -179,8 +175,7 @@ def _is_conditional_comment(body: str) -> bool:
     html parser makes of it.
     """
     return bool(
-        _CONDITIONAL_OPENING_PATTERN.match(body)
-        and _CONDITIONAL_CLOSING_PATTERN.search(body)
+        _CONDITIONAL_OPENING_PATTERN.match(body) and _CONDITIONAL_CLOSING_PATTERN.search(body)
     )
 
 
@@ -222,9 +217,7 @@ def _holds_statement(config: Config, body: str) -> bool:
 
 @lru_cache(maxsize=1)
 def _ignored_block_spans(html: str) -> tuple[tuple[int, int], ...]:
-    return tuple(
-        match.span() for match in _IGNORED_BLOCK_PATTERN.finditer(html)
-    )
+    return tuple(match.span() for match in _IGNORED_BLOCK_PATTERN.finditer(html))
 
 
 def _inside_ignored_block(html: str, comment: _HtmlComment) -> bool:
@@ -280,6 +273,7 @@ def run(
         errors.append({
             "code": rule["name"],
             "line": get_line(comment.start(), line_ends),
+            "end": get_line(comment.end(), line_ends),
             "match": comment.group().strip()[:20],
             "message": rule["message"],
         })
