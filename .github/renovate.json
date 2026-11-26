@@ -47,7 +47,7 @@
       "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
       "matchStrings": [
         "python-version: \"(?<currentValue>\\d+\\.\\d+)\"\\n",
-        "python-version:\\n +- \"\\d+\\.\\d+\"\\n +- \"(?<currentValue>\\d+\\.\\d+)\""
+        "python-version:\\n +- \"\\d+\\.\\d+\"\\n +- \"(?<currentValue>\\d+\\.\\d+)\"\\n"
       ],
       "depNameTemplate": "docker.io/python",
       "datasourceTemplate": "docker"
