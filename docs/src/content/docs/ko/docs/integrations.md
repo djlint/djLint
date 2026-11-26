@@ -5,7 +5,7 @@ description: "에디터에서 djLint를 사용하고 pre-commit으로 실행하�
 
 어떤 에디터를 쓰든 djLint는 에디터가 찾을 수 있는 곳, 가급적 프로젝트의 가상 환경에 설치하고, 에디터를 그 환경에서 시작하거나 에디터가 그 환경의 `djlint`를 가리키도록 하세요. 그러면 에디터가 프로젝트에 고정된 버전을 실행하므로 pre-commit 훅이나 CI와 같은 결과를 얻을 수 있습니다.
 
-프로젝트에서 djLint를 [npm](/ko/docs/getting-started/#설치)으로 설치한다면, 명령은 프로젝트 안의 `node_modules/.bin/djlint`이고 Windows에서는 `node_modules\.bin\djlint.cmd`입니다. 아래 에디터에서 `djlint`를 실행하는 곳에 이 경로를 지정하세요. VS Code와 Zed 확장은 알아서 찾습니다.
+프로젝트에서 djLint를 [npm](/ko/docs/getting-started/#설치)으로 설치한다면, 명령은 프로젝트 안의 `node_modules/.bin/djlint`이고 Windows에서는 `node_modules/.bin/djlint.cmd`입니다. 아래 에디터에서 `djlint`를 실행하는 곳에 이 경로를 지정하세요. 상대 경로이므로, 에디터가 `node_modules`가 있는 폴더가 아닌 곳에서 djLint를 실행한다면 전체 경로를 지정하세요. VS Code와 Zed 확장은 알아서 찾습니다.
 
 ## Visual Studio Code
 

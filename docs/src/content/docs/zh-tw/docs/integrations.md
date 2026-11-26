@@ -5,7 +5,7 @@ description: "在編輯器中使用 djLint，並透過 pre-commit 執行它。"
 
 無論你使用哪種編輯器，都請將 djLint 安裝在編輯器找得到的地方，最好是專案的虛擬環境中，然後從該環境啟動編輯器，或讓編輯器指向該環境中的 `djlint`。這樣編輯器執行的就是專案鎖定的版本，結果會與你的 pre-commit hook 或 CI 相同。
 
-如果專案用 [npm](/zh-tw/docs/getting-started/#安裝) 安裝 djLint，它的命令是專案中的 `node_modules/.bin/djlint`，在 Windows 上則是 `node_modules\.bin\djlint.cmd`。下面的編輯器中執行 `djlint` 的地方，請填入這個路徑。VS Code 和 Zed 的擴充功能會自己找到它。
+如果專案用 [npm](/zh-tw/docs/getting-started/#安裝) 安裝 djLint，它的命令是專案中的 `node_modules/.bin/djlint`，在 Windows 上則是 `node_modules/.bin/djlint.cmd`。下面的編輯器中執行 `djlint` 的地方，請填入這個路徑。這是相對路徑：如果編輯器不是在包含 `node_modules` 的目錄中執行 djLint，請填入完整路徑。VS Code 和 Zed 的擴充功能會自己找到它。
 
 ## Visual Studio Code
 

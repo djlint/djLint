@@ -5,7 +5,7 @@ description: "Používejte djLint ve svém editoru a spouštějte ho pomocí pr
 
 Ať používáte jakýkoli editor, nainstalujte djLint tam, kde ho editor najde, ideálně do virtuálního prostředí projektu, a editor spouštějte z něj, nebo ho nasměrujte na `djlint` z tohoto prostředí. Editor pak spouští verzi, kterou má váš projekt zafixovanou, se stejnými výsledky jako váš hook pre-commit nebo CI.
 
-Pokud projekt instaluje djLint přes [npm](/cs/docs/getting-started/#instalace), jeho příkaz je v projektu `node_modules/.bin/djlint`, na Windows `node_modules\.bin\djlint.cmd`. Kde editor níže spouští `djlint`, zadejte mu tuto cestu. Rozšíření pro VS Code a Zed ho najdou sama.
+Pokud projekt instaluje djLint přes [npm](/cs/docs/getting-started/#instalace), jeho příkaz je v projektu `node_modules/.bin/djlint`, na Windows `node_modules/.bin/djlint.cmd`. Kde editor níže spouští `djlint`, zadejte mu tuto cestu. Cesta je relativní: pokud editor spouští djLint z jiné složky než té s `node_modules`, zadejte plnou cestu. Rozšíření pro VS Code a Zed ho najdou sama.
 
 ## Visual Studio Code
 
