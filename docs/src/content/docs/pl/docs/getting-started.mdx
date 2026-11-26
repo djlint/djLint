@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## Instalacja
 
-djLint wymaga [Pythona](https://python.org) 3.11 lub nowszego i jest opublikowany w [PyPI](https://pypi.org/project/djlint/).
+djLint jest w [PyPI](https://pypi.org/project/djlint/), gdzie wymaga [Pythona](https://python.org) 3.11 lub nowszego, oraz w [npm](https://www.npmjs.com/package/djlint), który ma własnego Pythona. Do projektu w Pythonie dodaj go przez uv albo pip. Do projektu w JavaScripcie, takiego jak aplikacja w Angularze, strona w Eleventy czy motyw Shopify, przez npm.
 
 <Tabs>
 <TabItem label="uv">
@@ -33,6 +33,21 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+Pakiet npm ma własnego Pythona, więc potrzebuje tylko Node.js 16.9 lub nowszego. Ma kompilacje dla Linuksa na x64, Arm64, ppc64le, s390x i riscv64, macOS na x64 i Arm64 oraz Windows na x64, x86 i Arm64. Na Linuksie z musl, takim jak Alpine, działa na x64 i Arm64. Dodaj go do projektu jako zależność deweloperską:
+
+```bash
+npm i -D djlint
+```
+
+Możesz też zainstalować go globalnie:
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
 <TabItem label="pipx">
 
 Za pomocą [pipx](https://pipx.pypa.io/):
@@ -48,17 +63,6 @@ W systemie macOS lub Linux za pomocą rozwijanej przez społeczność [formuły 
 
 ```bash
 brew install djlint
-```
-
-</TabItem>
-<TabItem label="npm">
-
-:::caution[Uwaga]
-Pakiet npm jest tylko nakładką. Jego skrypt instalacyjny uruchamia pip dla tego `python3`, który akurat znajduje się w ścieżce systemowej, i instaluje wersję djLint przypisaną do danego wydania pakietu npm, co może zastąpić nowszy djLint starszym. npm nie zarządza właściwym pakietem ani go nie odinstalowuje, więc jeśli możesz, używaj pip.
-:::
-
-```bash
-npm i djlint
 ```
 
 </TabItem>
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 Wszystkie profile wymienia opcja [`profile`](/pl/docs/configuration/#profile). Każdy język szablonów ma też własną stronę, na przykład [Django](/pl/docs/languages/django/), [Jinja](/pl/docs/languages/jinja/) albo [Handlebars](/pl/docs/languages/handlebars/), na której widać, jak ustawić profil w pliku konfiguracyjnym, żeby nie podawać go za każdym razem.
 
-Jeśli djLint został dodany do projektu przez `uv add --dev`, znajduje się w środowisku projektu: poprzedzaj polecenia `uv run`, na przykład `uv run djlint templates --lint --profile=django`.
+Jeśli djLint został dodany do projektu przez `uv add --dev`, znajduje się w środowisku projektu: poprzedzaj polecenia `uv run`, na przykład `uv run djlint templates --lint --profile=django`. Po `npm i -D` poprzedzaj je zamiast tego `npx`, na przykład `npx djlint templates --lint --profile=django`.
 
 ## Ścieżka a stdin
 

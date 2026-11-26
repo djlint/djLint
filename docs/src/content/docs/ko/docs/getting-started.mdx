@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## 설치
 
-djLint를 실행하려면 [Python](https://python.org) 3.11 이상이 필요하며, djLint는 [PyPI](https://pypi.org/project/djlint/)에 게시되어 있습니다.
+djLint는 [PyPI](https://pypi.org/project/djlint/)와 [npm](https://www.npmjs.com/package/djlint)에 게시되어 있습니다. PyPI 판은 [Python](https://python.org) 3.11 이상이 필요하고, npm 판은 자체 Python을 함께 제공합니다. Python 프로젝트에서는 uv나 pip으로, Angular 앱, Eleventy 사이트, Shopify 테마 같은 JavaScript 프로젝트에서는 npm으로 추가하세요.
 
 <Tabs>
 <TabItem label="uv">
@@ -33,6 +33,21 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+npm 패키지는 자체 Python을 함께 제공하므로 Node.js 16.9 이상만 있으면 됩니다. Linux(x64, Arm64, ppc64le, s390x, riscv64), macOS(x64, Arm64), Windows(x64, x86, Arm64)용 빌드가 있습니다. Alpine처럼 musl을 쓰는 Linux에서는 x64와 Arm64에서 동작합니다. 프로젝트에 개발 의존성으로 추가합니다.
+
+```bash
+npm i -D djlint
+```
+
+또는 전역으로 설치합니다.
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
 <TabItem label="pipx">
 
 [pipx](https://pipx.pypa.io/)로 설치합니다.
@@ -48,17 +63,6 @@ macOS나 Linux에서는 커뮤니티가 관리하는 [Homebrew 포뮬러](https:
 
 ```bash
 brew install djlint
-```
-
-</TabItem>
-<TabItem label="npm">
-
-:::caution[경고]
-npm 패키지는 래퍼일 뿐입니다. 설치 스크립트는 시스템 경로에 있는 `python3`이 무엇이든 그것으로 pip을 실행해 해당 npm 릴리스에 맞는 djLint 버전을 설치하므로, 더 새로운 djLint가 이전 버전으로 바뀔 수 있습니다. npm은 실제 패키지를 관리하거나 제거하지 않으므로 가능하면 pip을 사용하세요.
-:::
-
-```bash
-npm i djlint
 ```
 
 </TabItem>
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 모든 프로필은 [`profile`](/ko/docs/configuration/#profile) 옵션에 나와 있습니다. 템플릿 언어마다 별도 페이지도 있으며(예: [Django](/ko/docs/languages/django/), [Jinja](/ko/docs/languages/jinja/), [Handlebars](/ko/docs/languages/handlebars/)), 매번 넘기지 않도록 구성 파일에 프로필을 설정하는 방법도 그곳에 나와 있습니다.
 
-`uv add --dev`로 프로젝트에 추가했다면 djLint는 프로젝트 환경에 있습니다. 명령 앞에 `uv run`을 붙이세요. 예: `uv run djlint templates --lint --profile=django`.
+`uv add --dev`로 프로젝트에 추가했다면 djLint는 프로젝트 환경에 있습니다. 명령 앞에 `uv run`을 붙이세요. 예: `uv run djlint templates --lint --profile=django`. `npm i -D`로 추가했다면 대신 `npx`를 붙이세요. 예: `npx djlint templates --lint --profile=django`.
 
 ## 경로와 stdin 사용
 

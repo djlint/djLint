@@ -7,7 +7,7 @@ const CONFIG = {
   profile: "jinja",
   indent: "2",
   indent_css: "3",
-  custom_html: "mj-\\w+",
+  custom_html: String.raw`mj-\w+`,
   blank_line_after_tag: "load,extends",
   format_css: true,
 };
@@ -19,10 +19,10 @@ test("API options turn the numbers into numbers", () => {
 test("commands quote what the shell would split or expand", () => {
   expect(commands({})).toBe("djlint input.html --reformat\ndjlint input.html --lint");
   expect(commands({ custom_html: "it's", format_css: true }).split("\n")[0]).toBe(
-    "djlint input.html --reformat --custom-html='it'\\''s' --format-css",
+    String.raw`djlint input.html --reformat --custom-html='it'\''s' --format-css`,
   );
   expect(commands(CONFIG).split("\n")[1]).toBe(
-    "djlint input.html --lint --profile=jinja --indent=2 --indent-css=3 --custom-html='mj-\\w+' --blank-line-after-tag=load,extends --format-css",
+    String.raw`djlint input.html --lint --profile=jinja --indent=2 --indent-css=3 --custom-html='mj-\w+' --blank-line-after-tag=load,extends --format-css`,
   );
 });
 
@@ -32,7 +32,7 @@ test("config files take lists and put the CSS and JS indents in their own tables
       "[tool.djlint]",
       'profile = "jinja"',
       "indent = 2",
-      "custom_html = ['mj-\\w+']",
+      String.raw`custom_html = ['mj-\w+']`,
       'blank_line_after_tag = ["load", "extends"]',
       "format_css = true",
       "",
@@ -44,7 +44,7 @@ test("config files take lists and put the CSS and JS indents in their own tables
   expect(JSON.parse(configFile(CONFIG, ".djlintrc"))).toEqual({
     profile: "jinja",
     indent: 2,
-    custom_html: ["mj-\\w+"],
+    custom_html: [String.raw`mj-\w+`],
     blank_line_after_tag: ["load", "extends"],
     format_css: true,
     css: { indent_size: 3 },

@@ -33,9 +33,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
-          python-version: "3.14"
+          python-version: "3.15"
           enable-cache: false
       - run: uvx --exclude-newer '3 days' --no-cache cibuildwheel --output-dir dist
         env:
@@ -44,6 +44,36 @@ jobs:
         with:
           name: wheels-${{ matrix.os }}-${{ matrix.archs || 'auto' }}
           path: dist
+  build-npm:
+    runs-on: ubuntu-26.04
+    needs:
+      - build-compiled
+      - build-pure
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      # The build script asks for the Python it compiles the bytecode with.
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          enable-cache: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          check-latest: true
+          package-manager-cache: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: wheels-*
+          path: wheels
+          merge-multiple: true
+      # esbuild, which builds the launcher.
+      - run: npm ci
+      - run: uv run --no-cache npm/build.py wheels
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: npm
+          path: npm/dist/*.tgz
   build-pure:
     runs-on: ubuntu-26.04
     if: ${{ github.repository_owner == 'djlint' }}
@@ -54,38 +84,22 @@ jobs:
           persist-credentials: false
       - run: git merge-base --is-ancestor "$GITHUB_SHA" origin/master
       - run: test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
-          python-version: "3.14"
+          python-version: "3.15"
           enable-cache: false
       - run: uv build --no-cache
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: wheels-any
           path: dist
-  publish-pypi:
-    runs-on: ubuntu-26.04
-    needs:
-      - build-compiled
-      - build-pure
-    permissions:
-      id-token: write # to publish to PyPI with trusted publishing
-    steps:
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          python-version: "3.14"
-          enable-cache: false
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-      - run: mkdir dist
-      - run: mv wheels-*/* dist
-      - uses: astral-sh/attest-action@39b6ce43875c196a579e31635b11aa2a2036384a # v0.0.7
-      - run: uv publish --trusted-publishing always --no-cache
   publish-npm:
     runs-on: ubuntu-26.04
     needs:
       - publish-pypi
+      - test-npm
     permissions:
-      id-token: write # to publish to npm with provenance
+      id-token: write # to publish to npm with trusted publishing
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -96,4 +110,53 @@ jobs:
           check-latest: true
           package-manager-cache: false
           registry-url: https://registry.npmjs.org
-      - run: npm publish --access public
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: npm
+          path: npm/dist
+      # The packages for the platforms go first, so that no djlint is out
+      # without them. A package that is out already is passed over, so a run
+      # can be repeated after a failed publish.
+      - working-directory: npm/dist
+        run: |
+          version=${TAG#v}
+          publish() {
+            name=$(tar -xOzf "$1" package/package.json | node -p 'JSON.parse(require("fs").readFileSync(0, "utf8")).name')
+            if [ -n "$(npm view "$name@$version" version 2>/dev/null)" ]; then
+              echo "$name $version is on npm already"
+            else
+              npm publish "$1" --access public
+            fi
+          }
+          for package in djlint-*-"$version".tgz; do
+            publish "$package"
+          done
+          publish "djlint-$version.tgz"
+        env:
+          TAG: ${{ github.ref_name }}
+  publish-pypi:
+    runs-on: ubuntu-26.04
+    needs:
+      - build-compiled
+      - build-pure
+    permissions:
+      id-token: write # to publish to PyPI with trusted publishing
+    steps:
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          python-version: "3.15"
+          enable-cache: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+      - uses: astral-sh/attest-action@39b6ce43875c196a579e31635b11aa2a2036384a # v0.0.7
+      - run: uv publish --trusted-publishing always --no-cache
+  # The packages with the compiled djLint, on the platforms they are for.
+  test-npm:
+    needs:
+      - build-npm
+    uses: $/.github/workflows/npm.yml
+    with:
+      packages: npm

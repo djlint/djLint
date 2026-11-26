@@ -8,7 +8,7 @@ import CliHelp from "../../../../components/CliHelp.astro";
 
 ## インストール
 
-djLint には [Python](https://python.org) 3.11 以降が必要で、[PyPI](https://pypi.org/project/djlint/) で公開されています。
+djLint は [PyPI](https://pypi.org/project/djlint/) と [npm](https://www.npmjs.com/package/djlint) で公開されています。PyPI 版には [Python](https://python.org) 3.11 以降が必要で、npm 版は独自の Python を同梱しています。Python プロジェクトでは uv か pip で、Angular アプリや Eleventy のサイト、Shopify テーマなどの JavaScript プロジェクトでは npm で追加してください。
 
 <Tabs>
 <TabItem label="uv">
@@ -33,6 +33,21 @@ pip install djlint
 ```
 
 </TabItem>
+<TabItem label="npm">
+
+npm パッケージは独自の Python を同梱しているため、必要なのは Node.js 16.9 以降だけです。Linux（x64、Arm64、ppc64le、s390x、riscv64）、macOS（x64、Arm64）、Windows（x64、x86、Arm64）向けのビルドがあります。Alpine などの musl を使う Linux では x64 と Arm64 で動きます。開発用の依存関係としてプロジェクトに追加します：
+
+```bash
+npm i -D djlint
+```
+
+または、グローバルにインストールします：
+
+```bash
+npm i -g djlint
+```
+
+</TabItem>
 <TabItem label="pipx">
 
 [pipx](https://pipx.pypa.io/) でインストールします：
@@ -48,17 +63,6 @@ macOS や Linux では、コミュニティが管理している [Homebrew formu
 
 ```bash
 brew install djlint
-```
-
-</TabItem>
-<TabItem label="npm">
-
-:::caution[警告]
-npm パッケージはラッパーにすぎません。そのインストールスクリプトはシステムのパス上にある `python3` で pip を実行し、その npm リリースに対応するバージョンの djLint をインストールするため、新しい djLint が古いものに置き換えられることがあります。npm は実際のパッケージを管理もアンインストールもしないため、できれば pip を使ってください。
-:::
-
-```bash
-npm i djlint
 ```
 
 </TabItem>
@@ -94,7 +98,7 @@ djlint templates --reformat --profile=django
 
 すべてのプロファイルは [`profile`](/ja/docs/configuration/#profile) オプションに一覧があります。テンプレート言語ごとのページもあり（例：[Django](/ja/docs/languages/django/)、[Jinja](/ja/docs/languages/jinja/)、[Handlebars](/ja/docs/languages/handlebars/)）、毎回指定しなくて済むように設定ファイルでプロファイルを設定する方法も載っています。
 
-`uv add --dev` でプロジェクトに追加した場合、djLint はプロジェクトの環境に入っています。コマンドの前に `uv run` を付けてください（例：`uv run djlint templates --lint --profile=django`）。
+`uv add --dev` でプロジェクトに追加した場合、djLint はプロジェクトの環境に入っています。コマンドの前に `uv run` を付けてください（例：`uv run djlint templates --lint --profile=django`）。 `npm i -D` で追加した場合は、代わりに `npx` を付けます（例：`npx djlint templates --lint --profile=django`）。
 
 ## パスと標準入力の使い分け
 

@@ -3,7 +3,7 @@ import { expect, test } from "./fixtures";
 test("the home page editor reformats the template and goes back", async ({ page }) => {
   await page.goto("/");
   const editor = page.getByRole("figure").filter({ hasText: "messy.html" });
-  const run = editor.getByRole("button", { name: /^(Run|Show the original)$/ });
+  const run = editor.getByRole("button", { name: /^(?:Run|Show the original)$/u });
   const problems = await editor.locator("mark").count();
   expect(problems).toBeGreaterThan(0);
 
@@ -46,7 +46,7 @@ test("the home page flag switches the formatted template to one attribute per li
 test("the home page menu lists what the docs sidebar does", async ({ page }) => {
   // Narrower than the header's section links, where the menu button shows.
   await page.setViewportSize({ width: 1000, height: 800 });
-  const links = (selector: string) =>
+  const links = async (selector: string) =>
     page.locator(`${selector} a`).evaluateAll((all) => all.map((a) => a.getAttribute("href")));
 
   await page.goto("/docs/getting-started/");

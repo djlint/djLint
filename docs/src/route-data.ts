@@ -11,23 +11,27 @@ import { pageId } from "./utils/route";
 export const onRequest = defineRouteMiddleware(({ locals }) => {
   const { toc } = locals.starlightRoute;
   const page = pageId(locals.starlightRoute);
-  if (!toc) return;
+  if (!toc) {
+    return;
+  }
   if (page === "docs/configuration") {
     const section = toc.items.at(-1);
-    if (!section) return;
+    if (!section) {
+      return;
+    }
     section.children = options
       .map(({ name }) => name)
       .toSorted((a, b) => a.localeCompare(b))
-      .map((name) => ({ depth: 3, slug: name.replaceAll("_", "-"), text: name, children: [] }));
+      .map((name) => ({ children: [], depth: 3, slug: name.replaceAll("_", "-"), text: name }));
   } else if (page === "docs/changelog") {
     toc.items.push(
       ...getHeadings()
         .filter(({ depth }) => depth === 2)
         .map(({ slug, text }) => ({
+          children: [],
           depth: 2,
           slug,
-          text: text.match(/^\[(.+?)\]/u)?.[1] ?? text,
-          children: [],
+          text: /^\[(?<version>.+?)\]/u.exec(text)?.groups?.["version"] ?? text,
         })),
     );
   }

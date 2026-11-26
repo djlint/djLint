@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [1.54.0] - 2026-11-18
+
+### Packaging
+
+- The npm package no longer runs pip on whatever `python3` it finds. It comes with its own Python and djLint, so it needs only Node.js 16.9 or newer, and works under pnpm and Bun, which skip the install scripts of dependencies. npm installs the build for the platform: Linux on x64, Arm64, ppc64le, s390x or riscv64 (with musl, on x64 or Arm64), macOS on x64 or Arm64, or Windows on x64, x86 or Arm64. Where PyPI has wheels of djLint compiled with mypyc, the build has the same one; on Linux for ppc64le, s390x and riscv64 djLint is pure Python.
+
 ## [1.53.1] - 2026-11-17
 
 ### Bug fixes

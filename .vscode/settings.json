@@ -2,7 +2,10 @@
   "[python]": { "editor.defaultFormatter": "charliermarsh.ruff" },
   "[toml]": { "editor.defaultFormatter": "tombi-toml.tombi" },
   "editor.defaultFormatter": "oxc.oxc-vscode",
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.tsdk.path": "./node_modules/typescript",
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "python.testing.pytestEnabled": true,
-  "ruff.importStrategy": "fromEnvironment"
+  "ruff.importStrategy": "fromEnvironment",
+  "stylelint.validate": ["astro", "css"]
 }

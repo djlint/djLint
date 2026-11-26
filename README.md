@@ -93,15 +93,17 @@ You can [try it on your own templates in the online playground](https://djlint.c
 
 ## ✨ How?
 
-Add it to your project as a development dependency with [uv](https://docs.astral.sh/uv/), or install it with pip:
+Add it to your project as a development dependency with [uv](https://docs.astral.sh/uv/), or install it with pip. In a JavaScript project, npm adds it with a Python of its own:
 
 ```bash
 uv add --dev djlint
 # or
 pip install djlint
+# or
+npm i -D djlint
 ```
 
-With uv, put `uv run` in front of the commands below, as in `uv run djlint . --lint`. The [installation guide](https://djlint.com/docs/getting-started/#installation) also covers installing it as a standalone tool, and with pipx, Homebrew or npm.
+Put `uv run` or `npx` in front of the commands below if you used uv or npm, as in `uv run djlint . --lint`. The [installation guide](https://djlint.com/docs/getting-started/#installation) also covers installing it as a standalone tool, and with pipx or Homebrew.
 
 Lint your project:
 
@@ -132,7 +134,7 @@ Or run it with [pre-commit](https://djlint.com/docs/integrations/#pre-commit), f
 ```yaml
 repos:
   - repo: https://github.com/djlint/djLint
-    rev: v1.53.1 # use the latest version instead
+    rev: v1.54.0 # use the latest version instead
     hooks:
       - id: djlint-reformat
       - id: djlint

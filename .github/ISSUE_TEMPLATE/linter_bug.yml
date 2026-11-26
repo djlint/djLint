@@ -131,14 +131,27 @@ body:
       description: "`djlint --version`"
     validations:
       required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: "How did you install djLint?"
+      options:
+        - uv
+        - pip
+        - npm
+        - pipx
+        - Homebrew
+        - Other
+    validations:
+      required: true
   - type: input
     id: python_version
     attributes:
       label: Python version
-      description: "`python --version`"
+      description: >-
+        `python --version` of the Python that runs djLint. Leave it empty for
+        the npm package, which brings its own.
       placeholder: 3.14.0
-    validations:
-      required: true
   - type: dropdown
     id: os
     attributes:

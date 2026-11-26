@@ -2,15 +2,16 @@
 // Pyodide lock file that names it and its dependencies, into public/static/py/.
 // With the lock file the demo loads every package at once, in parallel, which
 // takes about a second less than resolving them in the browser with micropip.
+/// <reference types="emscripten" />
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import process from "node:process";
 
 import { loadPyodide, version } from "pyodide";
 
-const DOCS = path.dirname(fileURLToPath(import.meta.url));
+const DOCS = import.meta.dirname;
 const REPO = path.dirname(DOCS);
 const OUT = path.join(DOCS, "public/static/py");
 const CDN = `https://cdn.jsdelivr.net/pyodide/v${version}/full/`;
@@ -24,7 +25,8 @@ if (!worker.includes(CDN)) {
 
 /** @returns {string} The commit, which the demo shows next to the version. */
 function commit() {
-  const sha = process.env.WORKERS_CI_COMMIT_SHA ?? process.env.GITHUB_SHA;
+  const { GITHUB_SHA, WORKERS_CI_COMMIT_SHA } = process.env;
+  const sha = WORKERS_CI_COMMIT_SHA ?? GITHUB_SHA;
   if (sha) {
     return sha.slice(0, 7);
   }
@@ -61,12 +63,16 @@ for (const entry of readdirSync(path.join(REPO, "src/djlint"), {
   pyodide.FS.writeFile(target, readFileSync(path.join(REPO, relative)));
 }
 
-pyodide.globals.set("COMMIT", commit());
-const wheelPath = await pyodide.runPythonAsync(`
+// A string literal in Python too.
+const commitLiteral = JSON.stringify(commit());
+const wheelPath = String(
+  await pyodide.runPythonAsync(`
 import os
 import re
 
 import micropip
+
+COMMIT = ${commitLiteral}
 
 await micropip.install("hatchling")
 from hatchling.build import build_wheel
@@ -79,20 +85,23 @@ if COMMIT:
     with open("pyproject.toml", "w", encoding="utf-8") as f:
         f.write(pyproject)
 "/dist/" + build_wheel("/dist")
-`);
+`),
+);
 await pyodide.runPythonAsync(`
 import micropip
 
 await micropip.install("emfs:${wheelPath}")
 `);
 
-/** @type {{ info: object, packages: Record<string, { file_name: string, sha256: string, depends: string[] }> }} */
-const frozen = JSON.parse(pyodide.runPython("import micropip; micropip.freeze()"));
+/** @typedef {{ file_name: string, sha256: string, depends: string[] }} LockEntry */
+const frozen = /** @type {{ info: object, packages: Record<string, LockEntry> }} */ (
+  JSON.parse(String(pyodide.runPython("import micropip; micropip.freeze()")))
+);
 const wheel = pyodide.FS.readFile(wheelPath);
 const wheelName = path.posix.basename(wheelPath);
 
 // Only djLint and what it depends on, not all of Pyodide's packages.
-/** @type {typeof frozen.packages} */
+/** @type {Record<string, LockEntry>} */
 const packages = {};
 const queue = ["djlint"];
 for (const name of queue) {
@@ -115,10 +124,14 @@ for (const name of queue) {
 // still names the commit.
 const sha256 = createHash("sha256").update(wheel).digest("hex");
 const wheelFile = `${sha256.slice(0, 16)}/${wheelName.replace(/\+[^-]+/u, "")}`;
-packages.djlint.file_name = wheelFile;
-packages.djlint.sha256 = sha256;
+const { djlint } = packages;
+if (!djlint) {
+  throw new Error("micropip.freeze() left out djlint");
+}
+djlint.file_name = wheelFile;
+djlint.sha256 = sha256;
 for (const [name, entry] of Object.entries(packages)) {
-  if (name !== "djlint" && !/^https:\/\//u.test(entry.file_name)) {
+  if (name !== "djlint" && !entry.file_name.startsWith("https://")) {
     entry.file_name = CDN + path.posix.basename(entry.file_name);
   }
 }

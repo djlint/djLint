@@ -1,0 +1,5 @@
+{
+  "extends": ["astro/tsconfigs/strictest", "@tsconfig/strictest/tsconfig.json"],
+  "exclude": ["dist", "_site", "public/static"],
+  "compilerOptions": { "checkJs": true }
+}

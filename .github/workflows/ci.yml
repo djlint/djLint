@@ -13,6 +13,8 @@ jobs:
     if: ${{ always() && github.event_name == 'pull_request' }}
     needs:
       - docs
+      - npm
+      - oxlint
       - pre-commit
       - pytest
     runs-on: ubuntu-26.04
@@ -35,6 +37,9 @@ jobs:
       - run: npm ci --ignore-scripts
         working-directory: docs
       - run: npm run build
+        working-directory: docs
+      # The type check of the components, which oxlint's misses.
+      - run: npx astro check
         working-directory: docs
       - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
@@ -68,15 +73,36 @@ jobs:
         with:
           name: playwright
           path: docs/test-results
+  npm:
+    uses: $/.github/workflows/npm.yml
+  oxlint:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+          check-latest: true
+      - run: npm ci
+      # docs/ is linted too, against its own packages.
+      - run: npm ci --ignore-scripts
+        working-directory: docs
+      # The types of Astro's virtual modules.
+      - run: npx astro sync
+        working-directory: docs
+      - run: npm run lint
   pre-commit:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
-          python-version: "3.14"
+          python-version: "3.15"
           enable-cache: false
       # uvx and the hook environments prek installs read neither pyproject.toml
       # nor .npmrc, so their dependency cooldown is set here.
@@ -109,7 +135,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true

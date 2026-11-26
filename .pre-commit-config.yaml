@@ -17,13 +17,26 @@ repos:
         args:
           - --fix=lf
       - id: trailing-whitespace
+  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
+    rev: 2396e2ed32cb8dda1f2bf1414e2aff8eb47e3f0b # frozen: v18.1.0
+    hooks:
+      - id: stylelint
+        language: node
+        files: ^docs/.*\.(?:astro|css)$
+        args:
+          - --fix
+        additional_dependencies:
+          - postcss-html@2.0.1
+          - stylelint@18.1.0
+          - stylelint-config-recess-order@7.10.1
+          - stylelint-config-standard@41.1.0
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: 6f428aba5ced98b5a579ff23cab6b39822b4347d # frozen: v1.11.2
+    rev: 1066584123cce44a99b4818c2b2c4a7e732ff8e9 # frozen: v1.11.3
     hooks:
       - id: tombi-format
         exclude: ^uv.lock$
   - repo: https://github.com/oxc-project/mirrors-oxfmt
-    rev: 45ab8ff3cdd7a4f08acb093f7f650b42bae5dd4f # frozen: v0.78.0
+    rev: b082b2f0f22aabef0f5cea2bd183dd85c08ba9ca # frozen: v0.79.0
     hooks:
       - id: oxfmt
         language: node
@@ -32,9 +45,9 @@ repos:
         args:
           - --no-error-on-unmatched-pattern
         additional_dependencies:
-          - oxfmt@0.78.0
+          - oxfmt@0.79.0
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: ef6cf06c079dd6b299dfc720b0f14400c9d168e1 # frozen: v0.17.5
+    rev: 9026c9127e153371d7a78dfcb0c45ae2046a3d10 # frozen: v0.17.6
     hooks:
       - id: ruff-check
         args:
@@ -54,10 +67,10 @@ repos:
           - json5==0.17.3
           - pathspec==1.1.1
           - pytest==9.2.0
-          - types-pyyaml==6.0.12.20261113
-          - types-regex==2026.11.9.20261110
+          - types-pyyaml==6.0.12.20261122
+          - types-regex==2026.11.19.20261122
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: 06a39750ec31860bb44f2acf67182c40016cd1e7 # frozen: v1.32.0
+    rev: c7d31dc612dffdd4d3b2f2b88b9660d3ab057ee8 # frozen: v1.33.1
     hooks:
       - id: zizmor
         args: [--no-progress, --persona=pedantic]

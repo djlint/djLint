@@ -1,6 +1,7 @@
 {
   "name": "djlint",
-  "version": "1.53.1",
+  "version": "1.54.0",
+  "private": true,
   "description": "HTML template linter and formatter (Django, Jinja, Twig, Nunjucks, Handlebars, Mustache, Liquid, Go templates, Angular, Tera, Askama, Mako)",
   "keywords": [
     "angular template formatter",
@@ -47,11 +48,23 @@
     "type": "git",
     "url": "git+https://github.com/djlint/djLint.git"
   },
-  "files": [],
+  "type": "module",
   "scripts": {
-    "postinstall": "python3 -m pip install --upgrade djlint==1.53.1"
+    "esbuild-launcher": "esbuild ./npm/djlint.ts --outfile=npm/dist/djlint/djlint.mjs --format=esm --platform=node --target=node16.9",
+    "format": "oxfmt",
+    "lint": "oxlint"
   },
   "devDependencies": {
-    "oxfmt": "0.78.0"
+    "@total-typescript/ts-reset": "0.6.1",
+    "@tsconfig/node16": "16.1.10",
+    "@tsconfig/node26": "26.0.2",
+    "@tsconfig/strictest": "2.0.9",
+    "@types/node": "26.6.6",
+    "@types/node16": "npm:@types/node@16.18.126",
+    "esbuild": "0.28.2",
+    "oxfmt": "0.79.0",
+    "oxlint": "1.94.0",
+    "oxlint-tsgolint": "7.0.2008",
+    "typescript": "7.0.2"
   }
 }

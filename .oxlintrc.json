@@ -1,0 +1,98 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "import", "jsdoc", "promise", "node"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "style": "error",
+    "restriction": "error"
+  },
+  "options": {
+    "denyWarnings": true,
+    "reportUnusedDisableDirectives": "error",
+    "respectEslintDisableDirectives": false,
+    "typeAware": true,
+    "typeCheck": true
+  },
+  "env": { "node": true },
+  "ignorePatterns": ["npm/dist/"],
+  "rules": {
+    "capitalized-comments": ["error", "always", { "ignoreConsecutiveComments": true }],
+    "eqeqeq": ["error", "always", { "null": "ignore" }],
+    "func-style": ["error", "declaration"],
+    "id-length": "off",
+    "init-declarations": "off",
+    "max-classes-per-file": "off",
+    "max-depth": "off",
+    "max-lines": "off",
+    "max-lines-per-function": "off",
+    "max-nested-callbacks": "off",
+    "max-params": "off",
+    "max-statements": "off",
+    "no-continue": "off",
+    "no-duplicate-imports": ["error", { "allowSeparateTypeImports": true }],
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-eq-null": "off",
+    "no-magic-numbers": "off",
+    "no-new": "off",
+    "no-redeclare": ["error", { "ignoreDeclarationMerge": false }],
+    "no-ternary": "off",
+    "no-unreachable-loop": "error",
+    "no-useless-assignment": "error",
+    "no-void": "off",
+    "one-var": ["error", "never"],
+    "radix": "off",
+    "require-await": "off",
+    "sort-imports": "off",
+    "import/export": "error",
+    "import/exports-last": "off",
+    "import/group-exports": "off",
+    "import/max-dependencies": "off",
+    "import/no-named-export": "off",
+    "import/no-nodejs-modules": "off",
+    "import/no-relative-parent-imports": "off",
+    "import/prefer-default-export": "off",
+    "node/no-top-level-await": "off",
+    "oxc/no-async-await": "off",
+    "oxc/no-optional-chaining": "off",
+    "oxc/no-rest-spread-properties": "off",
+    "promise/avoid-new": "off",
+    "promise/no-return-in-finally": "error",
+    "typescript/explicit-member-accessibility": ["error", { "accessibility": "no-public" }],
+    "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
+    "typescript/no-misused-promises": ["error", { "checksConditionals": { "flagUnions": "all" } }],
+    "typescript/no-unnecessary-condition": "error",
+    "typescript/parameter-properties": ["error", { "prefer": "parameter-property" }],
+    "typescript/prefer-readonly-parameter-types": "off",
+    "typescript/strict-boolean-expressions": [
+      "error",
+      { "allowNullableBoolean": true, "allowNullableNumber": true, "allowNullableString": true }
+    ],
+    "unicorn/catch-error-name": ["error", { "name": "e" }],
+    "unicorn/explicit-length-check": "off",
+    "unicorn/no-null": "off",
+    "unicorn/no-useless-iterator-to-array": "error",
+    "unicorn/number-literal-case": "off",
+    "unicorn/prefer-top-level-await": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": { "jsdoc/require-param-type": "off", "jsdoc/require-returns-type": "off" }
+    },
+    {
+      "files": ["npm/test.ts"],
+      "rules": {
+        "node/no-process-env": "off",
+        "node/no-sync": "off",
+        "typescript/no-floating-promises": "off"
+      }
+    },
+    {
+      "files": ["*.d.ts"],
+      "rules": { "import/no-unassigned-import": "off", "import/unambiguous": "off" }
+    }
+  ]
+}

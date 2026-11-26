@@ -1,5 +1,5 @@
-@import "@fontsource-variable/geologica/shrp.css";
-@import "@fontsource-variable/jetbrains-mono/index.css";
+@import url("@fontsource-variable/geologica/shrp.css");
+@import url("@fontsource-variable/jetbrains-mono/index.css");
 
 /*
  * djLint's one loud element is the yellow squiggle from its logo: the mark a
@@ -12,17 +12,19 @@
 :root {
   --sl-font: "Geologica Variable", system-ui, sans-serif;
   --sl-font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
-
   --dj-squiggle: #f5c542;
   --dj-focus: var(--dj-squiggle);
   --dj-ok: #73daca;
+
   /* The squiggle under a lint finding and under the current page, drawn as an
      image: each browser draws text-decoration: wavy at a size of its own, so
      it was twice as tall in Chrome as in Firefox and Safari. */
   --dj-squiggle-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='5'%3E%3Cpath d='M0 2.5 Q1.5 0 3 2.5 T6 2.5' fill='none' stroke='%23f5c542' stroke-width='1.5'/%3E%3C/svg%3E")
     repeat-x 0 100% / 6px 5px;
+
   /* The current page's squiggle, on the page's own background. */
   --dj-current-wave: var(--dj-squiggle-wave);
+
   /* The editors on the home and demo pages are Tokyo Night Moon in both
      themes; code blocks follow the theme, lighter than the page in the dark
      one and greyer than it in the light one. */
@@ -32,11 +34,9 @@
   --dj-block-bg: var(--dj-code-bg);
   --dj-block-bar: var(--dj-code-bar);
   --dj-block-line: var(--dj-code-line);
-
   --sl-color-accent-low: #3a3216;
   --sl-color-accent: #f5c542;
   --sl-color-accent-high: #fbe3a0;
-
   --sl-color-white: #f0f1f7;
   --sl-color-gray-1: #e4e6f0;
   --sl-color-gray-2: #c5c8d8;
@@ -45,11 +45,9 @@
   --sl-color-gray-5: #34374c;
   --sl-color-gray-6: #1d1e29;
   --sl-color-black: #15161f;
-
   --sl-color-bg-nav: var(--sl-color-black);
   --sl-color-bg-sidebar: var(--sl-color-black);
   --sl-color-hairline-shade: var(--sl-color-gray-6);
-
   --sl-text-h1: 2.4rem;
   --sl-text-h2: 1.75rem;
   --sl-text-h3: 1.3rem;
@@ -57,6 +55,7 @@
   --sl-text-h5: 1rem;
   --sl-line-height: 1.7;
   --sl-content-width: 46rem;
+
   /* The content panel's own padding is room enough under the footer.
      Starlight's extra 3vh made pages scroll that otherwise fit the window. */
   --sl-main-pad: 0;
@@ -66,16 +65,15 @@
   --dj-squiggle: #e3a600;
   --dj-current-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='5'%3E%3Cpath d='M0 2.5 Q1.5 0 3 2.5 T6 2.5' fill='none' stroke='%23e3a600' stroke-width='1.5'/%3E%3C/svg%3E")
     repeat-x 0 100% / 6px 5px;
+
   /* The light squiggle is too faint on white for a focus ring (WCAG 1.4.11). */
   --dj-focus: var(--sl-color-accent);
   --dj-block-bg: #f6f7fa;
   --dj-block-bar: #eef0f4;
   --dj-block-line: #d5d8e2;
-
   --sl-color-accent-low: #fcefc4;
   --sl-color-accent: #8f5f00;
   --sl-color-accent-high: #4a3200;
-
   --sl-color-white: #15161f;
   --sl-color-gray-1: #23252f;
   --sl-color-gray-2: #3d4058;
@@ -83,7 +81,7 @@
   --sl-color-gray-4: #8a8fa6;
   --sl-color-gray-5: #d5d8e2;
   --sl-color-gray-6: #eef0f4;
-  --sl-color-black: #ffffff;
+  --sl-color-black: #fff;
 }
 
 /*
@@ -92,22 +90,27 @@
  * edge of a 32:9 monitor. Starlight positions the header, sidebar and table of
  * contents with `position: fixed`, so each gets the side gutter explicitly.
  */
+/* stylelint-disable-next-line no-duplicate-selectors -- the layout keeps its variables with it */
 :root {
   --dj-page-max: 90rem;
   --dj-gutter: max(0px, (100vw - var(--dj-page-max)) / 2);
 }
-@media (min-width: 50rem) {
+
+@media (width >= 50rem) {
   header.header {
     padding-inline: calc(var(--sl-nav-pad-x) + var(--dj-gutter));
   }
+
   .sidebar-pane {
     inset-inline-start: var(--dj-gutter);
   }
+
   .main-frame {
     padding-inline: calc(var(--sl-content-inline-start, 0rem) + var(--dj-gutter)) var(--dj-gutter);
   }
 }
-@media (min-width: 90rem) {
+
+@media (width >= 90rem) {
   .right-sidebar {
     width: calc(
       var(--sl-sidebar-width) +
@@ -127,33 +130,40 @@
   font-variation-settings: "SHRP" 100;
   letter-spacing: -0.015em;
 }
+
 h1 {
   font-weight: 800;
 }
+
 .sl-markdown-content :is(h2, h3) {
   font-weight: 700;
 }
 
 /* Sidebar: the current page is squiggled, not filled. */
+
 /* The top-level link, Try it online, in the grey of the others too. */
 .sidebar-content a {
-  border-radius: 0.375rem;
   color: var(--sl-color-gray-2);
+  border-radius: 0.375rem;
 }
+
 .sidebar-content a:hover {
   color: var(--sl-color-white);
 }
+
 .sidebar-content a[aria-current="page"] {
-  background: transparent;
   color: var(--sl-color-white);
+  background: transparent;
 }
+
 .sidebar-content .group-label .large {
   font-size: var(--sl-text-sm);
   color: var(--sl-color-gray-3);
 }
 
-/* JetBrains Mono would draw <!-- as an arrow and --> as a long dash: template
-   syntax is what the docs are about, so code shows the characters as typed. */
+/* JetBrains Mono would draw the start of an HTML comment as an arrow and its end
+   as a long dash: template syntax is what the docs are about, so code shows the
+   characters as typed. */
 pre,
 code,
 .cm-scroller {
@@ -161,29 +171,33 @@ code,
 }
 
 /* Content */
+/* stylelint-disable-next-line no-descending-specificity -- no link is in both the sidebar and the content */
 .sl-markdown-content a {
   text-underline-offset: 0.2em;
 }
+
 .sl-markdown-content :not(pre) > code {
   padding: 0.1em 0.35em;
+  font-size: 0.875em;
+  background: var(--sl-color-gray-6);
   border: 1px solid var(--sl-color-gray-5);
   border-radius: 0.3rem;
-  background: var(--sl-color-gray-6);
-  font-size: 0.875em;
 }
 
 /* Tips point somewhere, so they take the squiggle colour too. */
+/* stylelint-disable-next-line selector-class-pattern -- Starlight's class */
 .starlight-aside--tip {
   --sl-color-asides-text-accent: var(--sl-color-accent-high);
   --sl-color-asides-border: var(--dj-squiggle);
+
   background-color: var(--sl-color-accent-low);
 }
 
 /* Primary buttons are squiggle yellow with ink text in both themes. */
 .sl-link-button.primary {
-  border-color: var(--dj-squiggle);
-  background: var(--dj-squiggle);
   color: #15161f;
+  background: var(--dj-squiggle);
+  border-color: var(--dj-squiggle);
 }
 
 :focus-visible {
@@ -198,6 +212,7 @@ code,
 :root:has(body[data-search-modal-open]) {
   overflow: hidden;
 }
+
 site-search .dialog-frame {
   overscroll-behavior: contain;
 }
