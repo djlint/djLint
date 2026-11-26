@@ -36,14 +36,12 @@
     "no-empty": ["error", { "allowEmptyCatch": true }],
     "no-eq-null": "off",
     "no-magic-numbers": "off",
-    "no-new": "off",
     "no-redeclare": ["error", { "ignoreDeclarationMerge": false }],
     "no-ternary": "off",
     "no-unreachable-loop": "error",
     "no-useless-assignment": "error",
     "no-void": "off",
     "one-var": ["error", "never"],
-    "radix": "off",
     "require-await": "off",
     "sort-imports": "off",
     "import/export": "error",
@@ -71,11 +69,9 @@
       { "allowNullableBoolean": true, "allowNullableNumber": true, "allowNullableString": true }
     ],
     "unicorn/catch-error-name": ["error", { "name": "e" }],
-    "unicorn/explicit-length-check": "off",
     "unicorn/no-null": "off",
     "unicorn/no-useless-iterator-to-array": "error",
-    "unicorn/number-literal-case": "off",
-    "unicorn/prefer-top-level-await": "off"
+    "unicorn/number-literal-case": "off"
   },
   "overrides": [
     {
