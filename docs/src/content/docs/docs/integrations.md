@@ -53,7 +53,9 @@ Neovim 0.11 or newer can talk to the [language server](#language-server) of djLi
 vim.lsp.enable("djlint")
 ```
 
-Without it, or with an older one, define the configuration yourself:
+For djLint installed with npm in the project, put `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` before that line.
+
+Without nvim-lspconfig, or with an older one, define the configuration yourself:
 
 ```lua
 vim.lsp.config("djlint", {

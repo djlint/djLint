@@ -53,6 +53,8 @@ v2.12.0 sonrası [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) yap�
 vim.lsp.enable("djlint")
 ```
 
+djLint projeye npm ile kuruluysa bu satırdan önce `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` ekleyin.
+
 nvim-lspconfig olmadan ya da eski bir sürümüyle yapılandırmayı kendiniz tanımlayın:
 
 ```lua
