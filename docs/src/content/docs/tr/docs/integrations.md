@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 ve üzeri, herhangi bir eklenti olmadan djLint'in [dil sunucusuyla](#dil-sunucusu) doğrudan konuşabilir. Bu sayede bulgular, altı çizili aralıklarla birlikte siz yazarken gelir ve biçimlendirme için `vim.lsp.buf.format()` kullanılabilir.
 
-v2.12.0 sonrası [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) yapılandırmasını içerir, bu yüzden onunla tek satır yeterlidir:
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) v2.13.0 ve sonrası djLint yapılandırmasını içerir, bu yüzden onunla tek satır yeterlidir:
 
 ```lua
 vim.lsp.enable("djlint")
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 djLint projeye npm ile kuruluysa bu satırdan önce `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` ekleyin (Windows'ta `"node_modules/.bin/djlint.cmd"` ile).
 
-nvim-lspconfig olmadan, eski bir sürümüyle ya da onun gerektirdiği 0.11.3'ten eski bir Neovim'de yapılandırmayı kendiniz tanımlayın:
+nvim-lspconfig olmadan ya da eski bir sürümüyle yapılandırmayı kendiniz tanımlayın:
 
 ```lua
 vim.lsp.config("djlint", {
@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Kaydederken biçimlendirmek için aynı yapılandırmaya şunu ekleyin:
+Her iki durumda da Neovim kaydederken kendiliğinden biçimlendirmez. Bunun için yapılandırmanıza şunu da ekleyin:
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

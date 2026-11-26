@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 及更高版本可以直接与 djLint 的[语言服务器](#语言服务器)通信，无需任何插件。这样可以在输入时得到检查结果，并带有下划线标出的范围，还能用 `vim.lsp.buf.format()` 格式化。
 
-v2.12.0 之后的 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 自带它的配置，装了它只需一行：
+v2.13.0 及更新版本的 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 自带 djLint 的配置，装了它只需一行：
 
 ```lua
 vim.lsp.enable("djlint")
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 如果项目用 npm 安装了 djLint，请在这一行之前加上 `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`（Windows 上用 `"node_modules/.bin/djlint.cmd"`）。
 
-不用 nvim-lspconfig、它的版本较旧，或 Neovim 低于它所需的 0.11.3 时，请自行定义配置：
+不用 nvim-lspconfig 或版本较旧时，请自行定义配置：
 
 ```lua
 vim.lsp.config("djlint", {
@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-要在保存时格式化，请在同一配置中添加以下内容：
+无论哪种方式，Neovim 都不会在保存时自动格式化。要在保存时格式化，请在配置中再添加以下内容：
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

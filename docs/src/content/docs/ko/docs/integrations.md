@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 이상은 플러그인 없이 djLint의 [언어 서버](#언어-서버)와 직접 통신할 수 있습니다. 입력하는 동안 범위에 밑줄이 그어진 검사 결과를 받을 수 있고, `vim.lsp.buf.format()`으로 포맷할 수 있습니다.
 
-v2.12.0 이후의 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)에 구성이 들어 있으므로, 이를 쓰면 한 줄로 충분합니다.
+v2.13.0 이상의 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)에 djLint 구성이 들어 있으므로, 이를 쓰면 한 줄로 충분합니다.
 
 ```lua
 vim.lsp.enable("djlint")
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 프로젝트에 npm으로 djLint를 설치했다면 이 줄 앞에 `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`를 넣으세요(Windows에서는 `"node_modules/.bin/djlint.cmd"`).
 
-nvim-lspconfig 없이 쓰거나, 이전 버전이거나, Neovim이 nvim-lspconfig에 필요한 0.11.3보다 오래되었다면 구성을 직접 정의하세요.
+nvim-lspconfig 없이 쓰거나 이전 버전이라면 구성을 직접 정의하세요.
 
 ```lua
 vim.lsp.config("djlint", {
@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-저장할 때 포맷하려면 같은 구성에 다음을 추가합니다.
+어느 쪽이든 Neovim은 저장할 때 스스로 포맷하지 않습니다. 저장할 때 포맷하려면 구성에 다음도 추가합니다.
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

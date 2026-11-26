@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 nebo novější umí komunikovat s [jazykovým serverem](#jazykovy-server) djLint přímo, bez pluginu. Získáte tak nálezy už během psaní, s podtrženými úseky, a formátování pomocí `vim.lsp.buf.format()`.
 
-[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) novější než v2.12.0 jeho konfiguraci obsahuje, takže s ním stačí jeden řádek:
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) od v2.13.0 obsahuje konfiguraci djLint, takže s ním stačí jeden řádek:
 
 ```lua
 vim.lsp.enable("djlint")
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 Pro djLint nainstalovaný v projektu přes npm dejte před tento řádek `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, na Windows s `"node_modules/.bin/djlint.cmd"`.
 
-Bez nvim-lspconfig, s jeho starší verzí nebo na Neovimu starším než 0.11.3, který vyžaduje, si konfiguraci nadefinujte sami:
+Bez nvim-lspconfig nebo s jeho starší verzí si konfiguraci nadefinujte sami:
 
 ```lua
 vim.lsp.config("djlint", {
@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Chcete-li formátovat při ukládání, přidejte do stejné konfigurace:
+Ani v jednom případě Neovim sám při ukládání neformátuje. Pokud to chcete, přidejte do konfigurace ještě:
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

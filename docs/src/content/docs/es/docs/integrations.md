@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 o posterior puede comunicarse directamente con el [servidor de lenguaje](#servidor-de-lenguaje) de djLint, sin ningún plugin. Así obtienes los problemas mientras escribes, con los rangos subrayados, y `vim.lsp.buf.format()` para formatear.
 
-[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) posterior a v2.12.0 incluye su configuración, así que con él basta una línea:
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) desde la v2.13.0 incluye la configuración de djLint, así que con él basta una línea:
 
 ```lua
 vim.lsp.enable("djlint")
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 Para djLint instalado con npm en el proyecto, pon `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` antes de esa línea, con `"node_modules/.bin/djlint.cmd"` en Windows.
 
-Sin nvim-lspconfig, con una versión anterior o con Neovim anterior a 0.11.3, que es lo que requiere, define la configuración tú mismo:
+Sin nvim-lspconfig, o con una versión anterior, define la configuración tú mismo:
 
 ```lua
 vim.lsp.config("djlint", {
@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Para formatear al guardar, añade esto a la misma configuración:
+En ambos casos, Neovim no formatea al guardar por sí solo. Para eso, añade también esto a tu configuración:
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

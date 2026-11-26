@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 以降は、プラグインなしで djLint の[言語サーバー](#言語サーバー)と直接やり取りできます。入力中に検出結果が範囲の下線付きで表示され、`vim.lsp.buf.format()` でフォーマットできます。
 
-v2.12.0 より新しい [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) には設定が含まれているので、導入済みなら 1 行で足ります：
+v2.13.0 以降の [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) には djLint の設定が含まれているので、導入済みなら 1 行で足ります：
 
 ```lua
 vim.lsp.enable("djlint")
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 プロジェクトに npm で djLint をインストールしている場合は、この行の前に `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })` を書いてください（Windows では `"node_modules/.bin/djlint.cmd"`）。
 
-nvim-lspconfig を使わない場合、古い版の場合、または Neovim が nvim-lspconfig に必要な 0.11.3 より前の場合は、設定を自分で定義します：
+nvim-lspconfig を使わない場合や古い版の場合は、設定を自分で定義します：
 
 ```lua
 vim.lsp.config("djlint", {
@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-保存時にフォーマットするには、同じ設定に次を追加します：
+どちらの場合も、Neovim は保存時に自動ではフォーマットしません。保存時にフォーマットするには、設定に次も追加します：
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})

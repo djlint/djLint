@@ -47,7 +47,7 @@ vim.filetype.add({
 
 Neovim 0.11 и новее может работать с [языковым сервером](#yazykovoj-server) djLint напрямую, без плагинов. Так замечания появляются прямо во время набора, с подчёркиванием проблемных фрагментов, а форматирование выполняет `vim.lsp.buf.format()`.
 
-В [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) новее v2.12.0 его конфигурация уже есть, так что с ним хватит одной строки:
+В [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) начиная с v2.13.0 уже есть конфигурация djLint, так что с ним хватит одной строки:
 
 ```lua
 vim.lsp.enable("djlint")
@@ -55,7 +55,7 @@ vim.lsp.enable("djlint")
 
 Если djLint стоит в проекте через npm, поставьте перед этой строкой `vim.lsp.config("djlint", { cmd = { "node_modules/.bin/djlint", "--lsp" } })`, на Windows с путём `"node_modules/.bin/djlint.cmd"`.
 
-Без nvim-lspconfig, с его старой версией или на Neovim ниже 0.11.3, который ему нужен, задайте конфигурацию сами:
+Без nvim-lspconfig или с его старой версией задайте конфигурацию сами:
 
 ```lua
 vim.lsp.config("djlint", {
@@ -69,7 +69,7 @@ vim.lsp.config("djlint", {
 vim.lsp.enable("djlint")
 ```
 
-Чтобы форматировать при сохранении, добавьте в ту же конфигурацию:
+В обоих случаях Neovim сам при сохранении не форматирует. Чтобы форматировал, добавьте в конфигурацию ещё и это:
 
 ```lua
 local group = vim.api.nvim_create_augroup("djlint_format", {})
