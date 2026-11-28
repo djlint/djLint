@@ -15,20 +15,7 @@ description: "在編輯器中使用 djLint，並透過 pre-commit 執行它。"
 
 ## Zed
 
-[djLint 擴充功能](https://github.com/djlint/djlint-zed)會在 HTML 以及 Django、Jinja、Twig 等範本擴充功能的語言中執行[語言伺服器](#語言伺服器)。它還沒有列入 Zed 的擴充功能登錄庫，因此請以開發用擴充功能的方式安裝：
-
-1. 透過 [rustup](https://rustup.rs) 安裝 Rust，Zed 會用它建置擴充功能，並自動加入 `wasm32-wasip2` 目標。如果 Rust 是用 Homebrew 或 Nix 等其他方式安裝，請自行加入這個目標。
-1. 複製擴充功能：
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. 在 Zed 中開啟命令面板（macOS 為 `cmd-shift-p`，其他系統為 `ctrl-shift-p`），執行 **zed: install dev extension**，並選擇複製下來的 `djlint-zed` 資料夾。
-
-若要更新，請在該資料夾中執行 `git pull`，再執行 **zed: rebuild dev extension**。
-
-需要 PATH 中的 djLint 1.49 或更新版本、專案裡用 npm 安裝的 djLint 1.54.0 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何將它設為某個語言的格式化工具，以及它的設定。
+[djLint 擴充功能](https://github.com/djlint/djlint-zed)會在 HTML 以及 Django、Jinja、Twig 等範本擴充功能的語言中執行[語言伺服器](#語言伺服器)。它還沒有列入 Zed 的擴充功能登錄庫。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何以開發用擴充功能的方式安裝、它會執行哪一個 djLint，以及如何設定。
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Emacs 29 及更新版本內建的 Eglot：
 ```
 
 接著在範本中執行 `M-x eglot`。`eglot-format-buffer` 會將它格式化。`html-mode`、`mhtml-mode` 和 `web-mode` 不會指出範本語言，因此在這些模式中，profile 來自專案的[設定](/zh-tw/docs/configuration/#profile)。
+
+## 程式設計代理
+
+[djLint 外掛](https://github.com/djlint/agent-plugins)會把 Claude Code、Codex、GitHub Copilot CLI、Gemini CLI 和 OpenCode 所編輯範本的檢查結果交給它們，讓代理在繼續下一步之前修正。它們的 [README](https://github.com/djlint/agent-plugins#readme) 說明了如何在各個代理中安裝與更新它們。
+
+在編輯器中運作的代理，例如 Cursor、Windsurf 或 Zed 的代理，或 VS Code 中的 Copilot，看到的則是編輯器的 djLint 擴充功能所提供的檢查結果。Crush 和 Aider 不需要外掛。
+
+### Crush
+
+Crush 透過 `crush.json` 執行語言伺服器，並在每次編輯後把它的檢查結果顯示給代理：
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider 會對它編輯的檔案進行 lint，並把 linter 輸出的內容交給模型。若要用 djLint 對 HTML 檔案進行 lint：
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## 語言伺服器
 

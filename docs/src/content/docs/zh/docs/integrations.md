@@ -15,20 +15,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 ## Zed
 
-[djLint 扩展](https://github.com/djlint/djlint-zed)在 HTML 以及 Django、Jinja、Twig 等模板扩展的语言中运行[语言服务器](#语言服务器)。它还没有进入 Zed 的扩展注册表，所以要作为开发扩展安装：
-
-1. 通过 [rustup](https://rustup.rs) 安装 Rust，Zed 用它构建扩展，并会自动添加 `wasm32-wasip2` 目标。如果 Rust 是用 Homebrew 或 Nix 等其他方式安装的，需要自己添加这个目标。
-1. 克隆扩展：
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. 在 Zed 中打开命令面板（macOS 上是 `cmd-shift-p`，其他系统是 `ctrl-shift-p`），运行 **zed: install dev extension**，选择克隆下来的 `djlint-zed` 文件夹。
-
-要更新它，在该文件夹中运行 `git pull`，然后运行 **zed: rebuild dev extension**。
-
-需要 PATH 中的 djLint 1.49 或更新版本、项目里用 npm 安装的 djLint 1.54.0 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
+[djLint 扩展](https://github.com/djlint/djlint-zed)在 HTML 以及 Django、Jinja、Twig 等模板扩展的语言中运行[语言服务器](#语言服务器)。它还没有进入 Zed 的扩展注册表。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它作为开发扩展安装、它运行的是哪个 djLint，以及如何配置它。
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Helix 本身不会把任何文件当作 `htmldjango` 打开。在 Django 项目�
 ```
 
 然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 可以格式化该模板。`html-mode`、`mhtml-mode` 和 `web-mode` 不表明模板语言，因此在这些模式中，预设来自项目的[配置](/zh/docs/configuration/#profile)。
+
+## 编程智能体
+
+[djLint 插件](https://github.com/djlint/agent-plugins)会把 Claude Code、Codex、GitHub Copilot CLI、Gemini CLI 和 OpenCode 所编辑模板的检查结果交给它们，让智能体在继续下一步之前修复这些问题。其 [README](https://github.com/djlint/agent-plugins#readme) 介绍了如何在各个智能体中安装和更新它们。
+
+在编辑器中工作的智能体，例如 Cursor、Windsurf 或 Zed 中的智能体，或 VS Code 中的 Copilot，看到的则是编辑器中 djLint 扩展给出的检查结果。Crush 和 Aider 不需要插件。
+
+### Crush
+
+Crush 通过 `crush.json` 运行语言服务器，并在每次编辑后把它的检查结果展示给智能体：
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider 会检查它编辑的文件，并把代码检查工具输出的内容交给模型。要用 djLint 检查 HTML 文件：
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## 语言服务器
 

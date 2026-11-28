@@ -15,20 +15,7 @@ Il suo [README](https://github.com/djlint/djlint-vscode#readme) descrive le impo
 
 ## Zed
 
-L'[estensione djLint](https://github.com/djlint/djlint-zed) esegue il [server di linguaggio](#server-di-linguaggio) in HTML e nei linguaggi delle estensioni per i template, come Django, Jinja e Twig. Non è ancora nel registro delle estensioni di Zed, quindi installala come estensione di sviluppo:
-
-1. Installa Rust con [rustup](https://rustup.rs): Zed compila l'estensione con esso e aggiunge da solo il target `wasm32-wasip2`. Con un Rust installato in altro modo, ad esempio con Homebrew o Nix, aggiungilo tu.
-1. Clona l'estensione:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. In Zed, apri la palette dei comandi (`cmd-shift-p` su macOS, `ctrl-shift-p` altrove), esegui **zed: install dev extension** e scegli la cartella clonata `djlint-zed`.
-
-Per aggiornarla, esegui `git pull` in quella cartella e poi **zed: rebuild dev extension**.
-
-Serve djLint 1.49 o successivo nel PATH, 1.54.0 o successivo installato nel progetto con npm, oppure [uv](https://docs.astral.sh/uv/), che esegue djLint senza installarlo. Il suo [README](https://github.com/djlint/djlint-zed#readme) spiega come renderla il formattatore di un linguaggio e descrive le sue impostazioni.
+L'[estensione djLint](https://github.com/djlint/djlint-zed) esegue il [server di linguaggio](#server-di-linguaggio) in HTML e nei linguaggi delle estensioni per i template, come Django, Jinja e Twig. Non è ancora nel registro delle estensioni di Zed. Il suo [README](https://github.com/djlint/djlint-zed#readme) spiega come installarla come estensione di sviluppo, quale djLint esegue e come configurarla.
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Eglot, incluso in Emacs 29 e versioni successive:
 ```
 
 Poi esegui `M-x eglot` in un template. `eglot-format-buffer` lo formatta. `html-mode`, `mhtml-mode` e `web-mode` non indicano alcun linguaggio di template, quindi lì il profilo viene dalla [configurazione](/it/docs/configuration/#profile) del progetto.
+
+## Agenti di programmazione
+
+I [plugin di djLint](https://github.com/djlint/agent-plugins) passano a Claude Code, Codex, GitHub Copilot CLI, Gemini CLI e OpenCode le segnalazioni sui template che modificano, così l'agente le corregge prima di andare avanti. Il loro [README](https://github.com/djlint/agent-plugins#readme) spiega come installarli e aggiornarli in ciascun agente.
+
+Un agente che lavora nel tuo editor, come quelli di Cursor, Windsurf o Zed, o Copilot in VS Code, vede invece le segnalazioni dell'estensione djLint dell'editor. Crush e Aider non hanno bisogno di alcun plugin.
+
+### Crush
+
+Crush esegue il server di linguaggio da `crush.json` e mostra all'agente le sue segnalazioni dopo ogni modifica:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider esegue il lint dei file che modifica e passa al modello ciò che stampa il linter. Per eseguire il lint dei file HTML con djLint:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## Server di linguaggio
 

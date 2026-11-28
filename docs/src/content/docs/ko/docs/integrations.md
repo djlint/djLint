@@ -15,20 +15,7 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 
 ## Zed
 
-[djLint 확장](https://github.com/djlint/djlint-zed)은 HTML과 Django, Jinja, Twig 같은 템플릿 확장의 언어에서 [언어 서버](#언어-서버)를 실행합니다. 아직 Zed 확장 레지스트리에 없으므로 개발 확장으로 설치하세요.
-
-1. [rustup](https://rustup.rs)으로 Rust를 설치합니다. Zed는 Rust로 확장을 빌드하고 `wasm32-wasip2` 타깃도 직접 추가합니다. Homebrew나 Nix 등 다른 방법으로 설치한 Rust라면 이 타깃을 직접 추가하세요.
-1. 확장을 클론합니다:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Zed에서 명령 팔레트를 열고(macOS는 `cmd-shift-p`, 그 밖에는 `ctrl-shift-p`) **zed: install dev extension**을 실행한 뒤 클론한 `djlint-zed` 폴더를 고릅니다.
-
-업데이트하려면 그 폴더에서 `git pull`을 실행한 다음 **zed: rebuild dev extension**을 실행하세요.
-
-PATH에 djLint 1.49 이상이 있거나, 프로젝트에 npm으로 설치한 djLint 1.54.0 이상이 있거나, djLint를 설치 없이 실행하는 [uv](https://docs.astral.sh/uv/)가 있어야 합니다. 언어의 포매터로 지정하는 방법과 설정은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
+[djLint 확장](https://github.com/djlint/djlint-zed)은 HTML과 Django, Jinja, Twig 같은 템플릿 확장의 언어에서 [언어 서버](#언어-서버)를 실행합니다. 아직 Zed 확장 레지스트리에는 없습니다. 개발 확장으로 설치하는 방법, 어떤 djLint를 실행하는지, 설정 방법은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Emacs 29 이상에 포함된 Eglot에서는 다음과 같이 합니다.
 ```
 
 그런 다음 템플릿에서 `M-x eglot`을 실행합니다. `eglot-format-buffer`로 템플릿을 포맷할 수 있습니다. `html-mode`, `mhtml-mode`, `web-mode`는 템플릿 언어를 알려 주지 않으므로, 이 모드에서는 프로필이 프로젝트 [구성](/ko/docs/configuration/#profile)에서 정해집니다.
+
+## 코딩 에이전트
+
+[djLint 플러그인](https://github.com/djlint/agent-plugins)은 Claude Code, Codex, GitHub Copilot CLI, Gemini CLI, OpenCode가 편집하는 템플릿의 검사 결과를 에이전트에게 전달해, 다음 작업으로 넘어가기 전에 고치게 합니다. 각 에이전트에 설치하고 업데이트하는 방법은 [README](https://github.com/djlint/agent-plugins#readme)에서 설명합니다.
+
+Cursor, Windsurf, Zed의 에이전트나 VS Code의 Copilot처럼 에디터 안에서 동작하는 에이전트는 대신 에디터의 djLint 확장이 보여 주는 검사 결과를 봅니다. Crush와 Aider에는 플러그인이 필요하지 않습니다.
+
+### Crush
+
+Crush는 `crush.json`에서 언어 서버를 실행하고, 편집할 때마다 그 검사 결과를 에이전트에게 보여 줍니다.
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider는 편집하는 파일을 린트하고 린터가 출력한 내용을 모델에 전달합니다. HTML 파일을 djLint로 린트하려면 다음과 같이 합니다.
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## 언어 서버
 

@@ -15,20 +15,7 @@ description: "Используйте djLint в своём редакторе и 
 
 ## Zed
 
-[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет, поэтому установите его как dev-расширение:
-
-1. Установите Rust через [rustup](https://rustup.rs): Zed собирает им расширение и сам добавляет таргет `wasm32-wasip2`. Если Rust установлен иначе, например через Homebrew или Nix, добавьте таргет сами.
-1. Склонируйте расширение:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Откройте в Zed палитру команд (`cmd-shift-p` на macOS, `ctrl-shift-p` в остальных системах), выполните **zed: install dev extension** и выберите склонированную папку `djlint-zed`.
-
-Чтобы обновить расширение, выполните в этой папке `git pull`, а затем **zed: rebuild dev extension**.
-
-Нужен djLint 1.49 или новее в PATH, 1.54.0 или новее, установленный в проекте через npm, либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
+[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как установить его как dev-расширение, какой djLint оно запускает и как его настроить.
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Eglot, входящий в состав Emacs 29 и новее:
 ```
 
 Затем выполните `M-x eglot` в шаблоне. `eglot-format-buffer` отформатирует его. `html-mode`, `mhtml-mode` и `web-mode` не называют язык шаблонов, поэтому в них профиль берётся из [конфигурации](/ru/docs/configuration/#profile) проекта.
+
+## Агенты для программирования
+
+[Плагины djLint](https://github.com/djlint/agent-plugins) передают Claude Code, Codex, GitHub Copilot CLI, Gemini CLI и OpenCode замечания по шаблонам, которые те редактируют, чтобы агент исправил их, прежде чем двигаться дальше. В их [README](https://github.com/djlint/agent-plugins#readme) описано, как установить и обновить их в каждом агенте.
+
+Агент, который работает в вашем редакторе, например агент Cursor, Windsurf или Zed или Copilot в VS Code, вместо этого видит замечания расширения djLint для редактора. Для Crush и Aider плагин не нужен.
+
+### Crush
+
+Crush запускает языковой сервер, настроенный в `crush.json`, и показывает агенту его замечания после каждой правки:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider проверяет файлы, которые редактирует, и передаёт модели то, что выводит линтер. Чтобы проверять HTML-файлы через djLint:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## Языковой сервер
 

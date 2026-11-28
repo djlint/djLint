@@ -15,20 +15,7 @@ Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, a
 
 ## Zed
 
-[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Henüz Zed'in uzantı kayıt defterinde olmadığından onu geliştirme uzantısı olarak kurun:
-
-1. Rust'ı [rustup](https://rustup.rs) ile kurun: Zed uzantıyı onunla derler ve `wasm32-wasip2` hedefini kendisi ekler. Rust'ı Homebrew ya da Nix gibi başka bir yoldan kurduysanız bu hedefi kendiniz ekleyin.
-1. Uzantıyı klonlayın:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Zed'de komut paletini açın (macOS'ta `cmd-shift-p`, diğerlerinde `ctrl-shift-p`), **zed: install dev extension** komutunu çalıştırın ve klonlanan `djlint-zed` klasörünü seçin.
-
-Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extension** çalıştırın.
-
-PATH'te djLint 1.49 veya daha yenisi, projede npm ile kurulu djLint 1.54.0 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
+[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Henüz Zed'in uzantı kayıt defterinde değildir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu geliştirme uzantısı olarak nasıl kuracağınızı, hangi djLint'i çalıştırdığını ve nasıl ayarlayacağınızı anlatır.
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Emacs 29 ve üzeriyle birlikte gelen Eglot ile:
 ```
 
 Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şablonu biçimlendirir. `html-mode`, `mhtml-mode` ve `web-mode` bir şablon dili belirtmez; bu modlarda profil projenin [yapılandırmasından](/tr/docs/configuration/#profile) gelir.
+
+## Kodlama ajanları
+
+[djLint eklentileri](https://github.com/djlint/agent-plugins), Claude Code, Codex, GitHub Copilot CLI, Gemini CLI ve OpenCode'a düzenledikleri şablonlardaki bulguları iletir; böylece ajan, devam etmeden önce bunları düzeltir. Eklentilerin [README](https://github.com/djlint/agent-plugins#readme) dosyası, her ajanda nasıl kurulup güncelleneceklerini anlatır.
+
+Cursor, Windsurf veya Zed'in ajanları ya da VS Code'daki Copilot gibi düzenleyicinizin içinde çalışan bir ajan, bunun yerine düzenleyicinin djLint uzantısının bulgularını görür. Crush ve Aider için eklenti gerekmez.
+
+### Crush
+
+Crush dil sunucusunu `crush.json` dosyasından çalıştırır ve her düzenlemeden sonra sunucunun bulgularını ajana gösterir:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider düzenlediği dosyaları denetler ve linter'ın yazdırdıklarını modele iletir. HTML dosyalarını djLint ile denetlemek için:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## Dil sunucusu
 

@@ -15,20 +15,7 @@ Jeho [README](https://github.com/djlint/djlint-vscode#readme) popisuje nastaven�
 
 ## Zed
 
-[Rozšíření djLint](https://github.com/djlint/djlint-zed) spouští [jazykový server](#jazykovy-server) v HTML a v jazycích šablonových rozšíření, například Django, Jinja a Twig. V registru rozšíření Zedu zatím není, proto ho nainstalujte jako vývojové rozšíření (dev extension):
-
-1. Nainstalujte Rust přes [rustup](https://rustup.rs), Zed s ním rozšíření sestavuje a sám si přidá cíl `wasm32-wasip2`. S Rustem odjinud, například z Homebrew nebo Nixu, ho přidejte sami.
-1. Naklonujte rozšíření:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. V Zedu otevřete paletu příkazů (`cmd-shift-p` na macOS, jinde `ctrl-shift-p`), spusťte **zed: install dev extension** a vyberte naklonovanou složku `djlint-zed`.
-
-Aktualizace: ve složce spusťte `git pull` a potom **zed: rebuild dev extension**.
-
-Potřebuje djLint 1.49 nebo novější v PATH, 1.54.0 nebo novější nainstalovaný v projektu přes npm, nebo [uv](https://docs.astral.sh/uv/), které djLint spustí bez instalace. Jeho [README](https://github.com/djlint/djlint-zed#readme) ukazuje, jak ho nastavit jako formátovač jazyka, a popisuje jeho nastavení.
+[Rozšíření djLint](https://github.com/djlint/djlint-zed) spouští [jazykový server](#jazykovy-server) v HTML a v jazycích šablonových rozšíření, například Django, Jinja a Twig. V registru rozšíření Zedu zatím není. Jeho [README](https://github.com/djlint/djlint-zed#readme) popisuje, jak ho nainstalovat jako vývojové rozšíření (dev extension), který djLint spouští a jak ho nastavit.
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Eglot, který je součástí Emacsu 29 a novějšího:
 ```
 
 Pak v šabloně spusťte `M-x eglot`. Příkaz `eglot-format-buffer` ji naformátuje. `html-mode`, `mhtml-mode` a `web-mode` žádný šablonovací jazyk neurčují, proto se v nich profil bere z [konfigurace](/cs/docs/configuration/#profile) projektu.
+
+## Agenti pro programování
+
+[Pluginy djLint](https://github.com/djlint/agent-plugins) předávají agentům Claude Code, Codex, GitHub Copilot CLI, Gemini CLI a OpenCode nálezy v šablonách, které upravují, aby je agent opravil dřív, než bude pokračovat. Jejich [README](https://github.com/djlint/agent-plugins#readme) popisuje, jak je v jednotlivých agentech nainstalovat a aktualizovat.
+
+Agent, který pracuje ve vašem editoru, například agenti Cursoru, Windsurfu nebo Zedu nebo Copilot ve VS Code, místo toho vidí nálezy rozšíření djLint v editoru. Crush a Aider žádný plugin nepotřebují.
+
+### Crush
+
+Crush spouští jazykový server ze souboru `crush.json` a po každé úpravě ukazuje agentovi jeho nálezy:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider lintuje soubory, které upravuje, a předává modelu to, co vypíše linter. Pro lintování HTML souborů pomocí djLint:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## Jazykový server
 

@@ -15,20 +15,7 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 
 ## Zed
 
-[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていないため、開発用拡張機能としてインストールします：
-
-1. [rustup](https://rustup.rs) で Rust をインストールします。Zed はこれで拡張機能をビルドし、`wasm32-wasip2` ターゲットも自動で追加します。Homebrew や Nix など別の方法で入れた Rust では、このターゲットを自分で追加してください。
-1. 拡張機能をクローンします：
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Zed でコマンドパレットを開き（macOS では `cmd-shift-p`、それ以外では `ctrl-shift-p`）、**zed: install dev extension** を実行して、クローンした `djlint-zed` フォルダーを選びます。
-
-更新するには、そのフォルダーで `git pull` を実行してから **zed: rebuild dev extension** を実行します。
-
-PATH 上の djLint 1.49 以降、プロジェクトに npm でインストールした djLint 1.54.0 以降、または djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
+[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていません。開発用拡張機能としてのインストール方法、どの djLint を実行するか、設定方法については [README](https://github.com/djlint/djlint-zed#readme) で説明しています。
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Emacs 29 以降に付属している Eglot を使います：
 ```
 
 あとはテンプレートで `M-x eglot` を実行します。`eglot-format-buffer` でフォーマットできます。`html-mode`、`mhtml-mode`、`web-mode` はテンプレート言語を示さないため、これらではプロファイルはプロジェクトの[設定](/ja/docs/configuration/#profile)から決まります。
+
+## コーディングエージェント
+
+[djLint プラグイン](https://github.com/djlint/agent-plugins)は、Claude Code、Codex、GitHub Copilot CLI、Gemini CLI、OpenCode が編集したテンプレートの検出結果をエージェントに渡し、次の作業に進む前に修正させます。各エージェントへのインストール方法と更新方法は [README](https://github.com/djlint/agent-plugins#readme) で説明しています。
+
+Cursor、Windsurf、Zed のエージェントや VS Code の Copilot のように、エディター内で動くエージェントには、代わりにエディターの djLint 拡張機能の検出結果が見えます。Crush と Aider にはプラグインは不要です。
+
+### Crush
+
+Crush は `crush.json` から言語サーバーを実行し、編集のたびにその検出結果をエージェントに示します：
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider は編集したファイルをリントし、リンターの出力をモデルに渡します。HTML ファイルを djLint でリントするには：
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## 言語サーバー
 

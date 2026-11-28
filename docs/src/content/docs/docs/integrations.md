@@ -15,20 +15,7 @@ Its [README](https://github.com/djlint/djlint-vscode#readme) covers its settings
 
 ## Zed
 
-The [djLint extension](https://github.com/djlint/djlint-zed) runs the [language server](#language-server) in HTML and in the languages of the template extensions, such as Django, Jinja and Twig. It isn't in Zed's extension registry yet, so install it as a dev extension:
-
-1. Install Rust through [rustup](https://rustup.rs): Zed builds the extension with it and adds the `wasm32-wasip2` target itself. With a Rust from elsewhere, such as Homebrew or Nix, add that target yourself.
-1. Clone the extension:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. In Zed, open the command palette (`cmd-shift-p` on macOS, `ctrl-shift-p` elsewhere), run **zed: install dev extension** and pick the cloned `djlint-zed` folder.
-
-To update it, run `git pull` in that folder, then **zed: rebuild dev extension**.
-
-It needs djLint 1.49 or newer on PATH, 1.54.0 or newer installed in the project with npm, or [uv](https://docs.astral.sh/uv/), which runs djLint with no install. Its [README](https://github.com/djlint/djlint-zed#readme) shows how to make it the formatter of a language, and its settings.
+The [djLint extension](https://github.com/djlint/djlint-zed) runs the [language server](#language-server) in HTML and in the languages of the template extensions, such as Django, Jinja and Twig. It isn't in Zed's extension registry yet. Its [README](https://github.com/djlint/djlint-zed#readme) says how to install it as a dev extension, which djLint it runs and how to set it up.
 
 ## Neovim
 
@@ -221,6 +208,52 @@ Eglot, which comes with Emacs 29 and newer:
 ```
 
 Then run `M-x eglot` in a template. `eglot-format-buffer` formats it. `html-mode`, `mhtml-mode` and `web-mode` name no template language, so in them the profile comes from the project's [configuration](/docs/configuration/#profile).
+
+## Coding agents
+
+The [djLint plugins](https://github.com/djlint/agent-plugins) hand Claude Code, Codex, GitHub Copilot CLI, Gemini CLI and OpenCode the findings on the templates they edit, so that the agent fixes them before it moves on. Their [README](https://github.com/djlint/agent-plugins#readme) says how to install and update them in each agent.
+
+An agent that works in your editor, such as the ones of Cursor, Windsurf or Zed, or Copilot in VS Code, sees the findings of the editor's djLint extension instead. Crush and Aider need no plugin.
+
+### Crush
+
+Crush runs the language server from `crush.json`, and shows the agent its findings after each edit:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider lints the files it edits and hands the model what the linter prints. To lint HTML files with djLint:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
 
 ## Language server
 
