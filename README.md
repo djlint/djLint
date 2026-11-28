@@ -25,7 +25,7 @@
 
 Generic HTML tools can't parse `{% %}` and `{{ }}`, and template engines don't care what the markup around them looks like. So indentation drifts, tags go unclosed and spacing goes wherever, and none of it gets caught in review.
 
-djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more. It runs from the command line, as a pre-commit hook and as a language server in your editor.
+djLint reads HTML _and_ the template syntax inside it, with profiles for Django, Jinja, Twig, Nunjucks, Handlebars, Liquid, Go templates and more. It runs from the command line, as a pre-commit hook and as a language server in your editor, and [AI coding agents](https://github.com/djlint/agent-plugins) get its findings on the templates they edit.
 
 Take a template only its author could love:
 
@@ -140,11 +140,12 @@ repos:
       - id: djlint
 ```
 
-## 🧩 Editors
+## 🧩 Integrations
 
 - **VS Code**: install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) (also on [Open VSX](https://open-vsx.org/extension/monosans/djlint)).
-- **Zed**: install the [djLint extension](https://github.com/djlint/djlint-zed) as a dev extension until it's in Zed's registry. See [how](https://djlint.com/docs/integrations/#zed).
+- **Zed**: install the [djLint extension](https://github.com/djlint/djlint-zed) as a dev extension until it's in Zed's registry. See [how](https://github.com/djlint/djlint-zed#installation).
 - **Neovim, JetBrains IDEs, Sublime Text, Helix and Emacs**: run the language server, `djlint --lsp`. See the [setup for each](https://djlint.com/docs/integrations/).
+- **AI coding agents**: [plugins](https://github.com/djlint/agent-plugins) for Claude Code, Codex, GitHub Copilot CLI, Gemini CLI and OpenCode hand the agent djLint's findings on the templates it edits, and a skill covers the other agents.
 - **CI**: [GitHub Actions](https://djlint.com/docs/integrations/#github-actions) and [MegaLinter](https://djlint.com/docs/integrations/#megalinter).
 
 ## 💙 Like it?
