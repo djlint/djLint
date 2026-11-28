@@ -222,6 +222,111 @@ Emacs 29 ve üzeriyle birlikte gelen Eglot ile:
 
 Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şablonu biçimlendirir. `html-mode`, `mhtml-mode` ve `web-mode` bir şablon dili belirtmez; bu modlarda profil projenin [yapılandırmasından](/tr/docs/configuration/#profile) gelir.
 
+## Kodlama ajanları
+
+[djLint eklentileri](https://github.com/djlint/agent-plugins), bir kodlama ajanına düzenlediği şablonlardaki bulguları iletir; böylece ajan, devam etmeden önce bunları düzeltir. PATH'te ya da, ajanı sanal ortam etkinken başlatıyorsanız, projenin sanal ortamında djLint 1.49 veya daha yenisi gerekir. Eklentiler, [JetBrains IDE'leri](#jetbrains-ideleri) bölümündeki tablodaki kalıplara uyan dosyaları denetler. [Profili](/tr/docs/configuration/#profile) projenin yapılandırmasında ayarlayın; eklentilerin hepsi onu izler.
+
+Cursor, Windsurf veya Zed'in ajanları ya da VS Code'daki Copilot gibi düzenleyicinizin içinde çalışan bir ajan, bunun yerine düzenleyicinin djLint uzantısının bulgularını görür.
+
+### Claude Code
+
+Eklenti [dil sunucusunu](#dil-sunucusu) çalıştırır; Claude Code bu sunucunun bulgularını her düzenlemeden sonra modele gösterir. Bir oturumda:
+
+```text
+/plugin marketplace add djlint/agent-plugins
+/plugin install djlint@djlint
+```
+
+Claude Code, diğer marketplace'lerden gelen eklentileri kendiliğinden güncellemez. `/plugin` içinde `djlint` marketplace'i için otomatik güncellemeyi açın ya da `claude plugin update djlint@djlint` çalıştırın.
+
+### Codex
+
+Bir kanca, ajanın eklediği ya da değiştirdiği şablonları denetler ve bulguları düzenlemenin sonucuna ekler. PATH'teki Node.js ile çalışır.
+
+```bash
+codex plugin marketplace add djlint/agent-plugins
+codex plugin add djlint@djlint
+```
+
+Codex kancayı ancak siz `/hooks` içinde ona güvendikten sonra çalıştırır ve her güncellemeden sonra yeniden sorar. Güncellemek için `codex plugin marketplace upgrade djlint`, ardından `codex plugin add djlint@djlint` çalıştırın.
+
+### GitHub Copilot CLI
+
+Codex'tekiyle aynı kanca, PATH'teki Node.js ile:
+
+```bash
+copilot plugin marketplace add djlint/agent-plugins
+copilot plugin install djlint@djlint
+```
+
+Güncellemek için `copilot plugin update djlint` çalıştırın.
+
+### Gemini CLI
+
+Aynı kanca, bir uzantı içinde:
+
+```bash
+gemini extensions install https://github.com/djlint/agent-plugins
+```
+
+Güncellemek için `gemini extensions update djlint` çalıştırın.
+
+### OpenCode
+
+OpenCode 2'de bulguları her düzenlemenin sonucuna ekleyen bir eklenti:
+
+```bash
+opencode plugin add github:djlint/agent-plugins#main
+```
+
+OpenCode 1 ve Kilo Code gibi çatalları eklentiyi `opencode.json` içinde alır:
+
+```json
+{ "plugin": ["github:djlint/agent-plugins#main"] }
+```
+
+Eklenti `main` dalından kendiliğinden güncellenir.
+
+### Crush
+
+Crush dil sunucusunu `crush.json` dosyasından çalıştırır ve her düzenlemeden sonra sunucunun bulgularını ajana gösterir:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider düzenlediği dosyaları denetler ve linter'ın yazdırdıklarını modele iletir. HTML dosyalarını djLint ile denetlemek için:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
+
 ## Dil sunucusu
 
 `djlint --lsp`, djLint'i stdio üzerinden bir dil sunucusu olarak çalıştırır. Sunucu çalışmaya devam eder; böylece düzenleyici, siz yazarken bulguları alır ve her seferinde yeni bir süreç başlatmadan belgeyi biçimlendirir.

@@ -222,6 +222,111 @@ Emacs 29 以降に付属している Eglot を使います：
 
 あとはテンプレートで `M-x eglot` を実行します。`eglot-format-buffer` でフォーマットできます。`html-mode`、`mhtml-mode`、`web-mode` はテンプレート言語を示さないため、これらではプロファイルはプロジェクトの[設定](/ja/docs/configuration/#profile)から決まります。
 
+## コーディングエージェント
+
+[djLint プラグイン](https://github.com/djlint/agent-plugins)は、コーディングエージェントが編集したテンプレートの検出結果をエージェントに渡し、次の作業に進む前に修正させます。PATH 上の djLint 1.49 以降が必要です。仮想環境を有効にした状態でエージェントを起動する場合は、プロジェクトの仮想環境にあるものでもかまいません。プラグインがリントするのは、[JetBrains の IDE](#jetbrains-の-ide) の表にあるパターンのファイルです。どのプラグインもプロジェクトの設定に従うので、[プロファイル](/ja/docs/configuration/#profile)はそこで設定してください。
+
+Cursor、Windsurf、Zed のエージェントや VS Code の Copilot のように、エディター内で動くエージェントには、代わりにエディターの djLint 拡張機能の検出結果が見えます。
+
+### Claude Code
+
+プラグインは[言語サーバー](#言語サーバー)を実行し、Claude Code は編集のたびにその検出結果をモデルに示します。セッション内で：
+
+```text
+/plugin marketplace add djlint/agent-plugins
+/plugin install djlint@djlint
+```
+
+Claude Code は、ほかのマーケットプレイスのプラグインを自動では更新しません。`/plugin` で `djlint` マーケットプレイスの自動更新を有効にするか、`claude plugin update djlint@djlint` を実行してください。
+
+### Codex
+
+フックが、エージェントが追加または変更したテンプレートをリントし、検出結果を編集の結果に追加します。フックは PATH 上の Node.js で動きます。
+
+```bash
+codex plugin marketplace add djlint/agent-plugins
+codex plugin add djlint@djlint
+```
+
+Codex は、`/hooks` でフックを信頼するまでフックを実行せず、更新のたびに改めて確認を求めます。更新するには、`codex plugin marketplace upgrade djlint` を実行してから `codex plugin add djlint@djlint` を実行します。
+
+### GitHub Copilot CLI
+
+Codex と同じフックで、PATH 上の Node.js で動きます：
+
+```bash
+copilot plugin marketplace add djlint/agent-plugins
+copilot plugin install djlint@djlint
+```
+
+更新するには、`copilot plugin update djlint` を実行します。
+
+### Gemini CLI
+
+同じフックを拡張機能として提供します：
+
+```bash
+gemini extensions install https://github.com/djlint/agent-plugins
+```
+
+更新するには、`gemini extensions update djlint` を実行します。
+
+### OpenCode
+
+OpenCode 2 では、編集のたびに検出結果をその結果に追加するプラグインです：
+
+```bash
+opencode plugin add github:djlint/agent-plugins#main
+```
+
+OpenCode 1 と、Kilo Code などのそのフォークでは、`opencode.json` で指定します：
+
+```json
+{ "plugin": ["github:djlint/agent-plugins#main"] }
+```
+
+`main` ブランチから自動で更新されます。
+
+### Crush
+
+Crush は `crush.json` から言語サーバーを実行し、編集のたびにその検出結果をエージェントに示します：
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider は編集したファイルをリントし、リンターの出力をモデルに渡します。HTML ファイルを djLint でリントするには：
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
+
 ## 言語サーバー
 
 `djlint --lsp` は、djLint を stdio 経由の言語サーバーとして実行します。起動したまま動き続けるため、エディターは入力中に検出結果を受け取り、毎回プロセスを起動することなくドキュメントをフォーマットできます。

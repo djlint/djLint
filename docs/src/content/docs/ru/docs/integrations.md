@@ -222,6 +222,111 @@ Eglot, входящий в состав Emacs 29 и новее:
 
 Затем выполните `M-x eglot` в шаблоне. `eglot-format-buffer` отформатирует его. `html-mode`, `mhtml-mode` и `web-mode` не называют язык шаблонов, поэтому в них профиль берётся из [конфигурации](/ru/docs/configuration/#profile) проекта.
 
+## Агенты для программирования
+
+[Плагины djLint](https://github.com/djlint/agent-plugins) передают агенту для программирования замечания по шаблонам, которые он редактирует, чтобы он исправил их, прежде чем двигаться дальше. Им нужен djLint 1.49 или новее в PATH либо в виртуальном окружении проекта, если вы запускаете агента с активированным окружением. Они проверяют файлы по маскам из таблицы в разделе [IDE от JetBrains](#ide-ot-jetbrains). Задайте [профиль](/ru/docs/configuration/#profile) в конфигурации проекта: его учитывают все плагины.
+
+Агент, который работает в вашем редакторе, например агент Cursor, Windsurf или Zed или Copilot в VS Code, вместо этого видит замечания расширения djLint для редактора.
+
+### Claude Code
+
+Плагин запускает [языковой сервер](#yazykovoj-server), и Claude Code показывает модели его замечания после каждой правки. В сессии:
+
+```text
+/plugin marketplace add djlint/agent-plugins
+/plugin install djlint@djlint
+```
+
+Claude Code сам не обновляет плагины из сторонних маркетплейсов. Включите автообновление для маркетплейса `djlint` в `/plugin` или выполните `claude plugin update djlint@djlint`.
+
+### Codex
+
+Хук проверяет шаблоны, которые агент добавляет или изменяет, и добавляет замечания к результату его правки. Хук работает на Node.js из PATH.
+
+```bash
+codex plugin marketplace add djlint/agent-plugins
+codex plugin add djlint@djlint
+```
+
+Codex запускает хук только после того, как вы подтвердите доверие к нему в `/hooks`, и спрашивает снова после каждого обновления. Чтобы обновить плагин, выполните `codex plugin marketplace upgrade djlint`, а затем `codex plugin add djlint@djlint`.
+
+### GitHub Copilot CLI
+
+Тот же хук, что и для Codex, на Node.js из PATH:
+
+```bash
+copilot plugin marketplace add djlint/agent-plugins
+copilot plugin install djlint@djlint
+```
+
+Чтобы обновить плагин, выполните `copilot plugin update djlint`.
+
+### Gemini CLI
+
+Тот же хук в виде расширения:
+
+```bash
+gemini extensions install https://github.com/djlint/agent-plugins
+```
+
+Чтобы обновить расширение, выполните `gemini extensions update djlint`.
+
+### OpenCode
+
+В OpenCode 2 это плагин, который добавляет замечания к результату каждой правки:
+
+```bash
+opencode plugin add github:djlint/agent-plugins#main
+```
+
+OpenCode 1 и его форки, например Kilo Code, подключают его в `opencode.json`:
+
+```json
+{ "plugin": ["github:djlint/agent-plugins#main"] }
+```
+
+Плагин сам обновляется из ветки `main`.
+
+### Crush
+
+Crush запускает языковой сервер, настроенный в `crush.json`, и показывает агенту его замечания после каждой правки:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider проверяет файлы, которые редактирует, и передаёт модели то, что выводит линтер. Чтобы проверять HTML-файлы через djLint:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
+
 ## Языковой сервер
 
 `djlint --lsp` запускает djLint как языковой сервер, работающий через stdio. Сервер работает постоянно, поэтому редактор получает замечания во время набора и форматирует документ, не запуская каждый раз новый процесс.

@@ -222,6 +222,111 @@ Emacs 29 이상에 포함된 Eglot에서는 다음과 같이 합니다.
 
 그런 다음 템플릿에서 `M-x eglot`을 실행합니다. `eglot-format-buffer`로 템플릿을 포맷할 수 있습니다. `html-mode`, `mhtml-mode`, `web-mode`는 템플릿 언어를 알려 주지 않으므로, 이 모드에서는 프로필이 프로젝트 [구성](/ko/docs/configuration/#profile)에서 정해집니다.
 
+## 코딩 에이전트
+
+[djLint 플러그인](https://github.com/djlint/agent-plugins)은 코딩 에이전트가 편집하는 템플릿의 검사 결과를 에이전트에게 전달해, 다음 작업으로 넘어가기 전에 고치게 합니다. djLint 1.49 이상이 PATH에 있거나, 가상 환경을 활성화한 채로 에이전트를 시작한다면 프로젝트 가상 환경에 있어야 합니다. 플러그인은 [JetBrains IDE](#jetbrains-ide)의 표에 있는 패턴의 파일을 린트합니다. 모든 플러그인이 프로젝트 구성을 따르므로 [프로필](/ko/docs/configuration/#profile)은 프로젝트 구성에서 지정하세요.
+
+Cursor, Windsurf, Zed의 에이전트나 VS Code의 Copilot처럼 에디터 안에서 동작하는 에이전트는 대신 에디터의 djLint 확장이 보여 주는 검사 결과를 봅니다.
+
+### Claude Code
+
+플러그인은 [언어 서버](#언어-서버)를 실행하고, Claude Code는 편집할 때마다 그 검사 결과를 모델에 보여 줍니다. 세션에서 다음을 실행합니다.
+
+```text
+/plugin marketplace add djlint/agent-plugins
+/plugin install djlint@djlint
+```
+
+Claude Code는 다른 마켓플레이스의 플러그인을 스스로 업데이트하지 않습니다. `/plugin`에서 `djlint` 마켓플레이스의 자동 업데이트를 켜거나 `claude plugin update djlint@djlint`를 실행하세요.
+
+### Codex
+
+훅이 에이전트가 추가하거나 변경한 템플릿을 린트하고, 검사 결과를 편집 결과에 덧붙입니다. 훅은 PATH에 있는 Node.js로 실행됩니다.
+
+```bash
+codex plugin marketplace add djlint/agent-plugins
+codex plugin add djlint@djlint
+```
+
+Codex는 `/hooks`에서 훅을 신뢰한 뒤에만 실행하며, 업데이트할 때마다 다시 묻습니다. 업데이트하려면 `codex plugin marketplace upgrade djlint`를 실행한 다음 `codex plugin add djlint@djlint`를 실행하세요.
+
+### GitHub Copilot CLI
+
+Codex와 같은 훅이며, PATH에 있는 Node.js로 실행됩니다.
+
+```bash
+copilot plugin marketplace add djlint/agent-plugins
+copilot plugin install djlint@djlint
+```
+
+업데이트하려면 `copilot plugin update djlint`를 실행하세요.
+
+### Gemini CLI
+
+같은 훅을 확장으로 제공합니다.
+
+```bash
+gemini extensions install https://github.com/djlint/agent-plugins
+```
+
+업데이트하려면 `gemini extensions update djlint`를 실행하세요.
+
+### OpenCode
+
+OpenCode 2에서는 편집할 때마다 검사 결과를 편집 결과에 덧붙이는 플러그인입니다.
+
+```bash
+opencode plugin add github:djlint/agent-plugins#main
+```
+
+OpenCode 1과 Kilo Code 같은 그 포크에서는 `opencode.json`에 지정합니다.
+
+```json
+{ "plugin": ["github:djlint/agent-plugins#main"] }
+```
+
+`main` 브랜치에서 스스로 업데이트됩니다.
+
+### Crush
+
+Crush는 `crush.json`에서 언어 서버를 실행하고, 편집할 때마다 그 검사 결과를 에이전트에게 보여 줍니다.
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider는 편집하는 파일을 린트하고 린터가 출력한 내용을 모델에 전달합니다. HTML 파일을 djLint로 린트하려면 다음과 같이 합니다.
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
+
 ## 언어 서버
 
 `djlint --lsp`는 djLint를 stdio로 통신하는 언어 서버로 실행합니다. 서버가 계속 실행되므로, 에디터는 입력하는 동안 검사 결과를 받고 매번 프로세스를 시작하지 않고도 문서를 포맷할 수 있습니다.

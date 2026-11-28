@@ -222,6 +222,111 @@ Eglot, que viene incluido en Emacs 29 y posteriores:
 
 Después ejecuta `M-x eglot` en una plantilla. `eglot-format-buffer` la formatea. `html-mode`, `mhtml-mode` y `web-mode` no indican ningún lenguaje de plantillas, así que en ellos el perfil sale de la [configuración](/es/docs/configuration/#profile) del proyecto.
 
+## Agentes de programación
+
+Los [plugins de djLint](https://github.com/djlint/agent-plugins) le pasan a un agente de programación los problemas de las plantillas que edita, para que los corrija antes de seguir. Necesitan djLint 1.49 o posterior en el PATH, o en el entorno virtual del proyecto si inicias el agente con ese entorno activado. Analizan los archivos de los patrones de la tabla de [IDE de JetBrains](#ide-de-jetbrains). Define el [perfil](/es/docs/configuration/#profile) en la configuración del proyecto, que todos ellos siguen.
+
+Un agente que trabaja en tu editor, como los de Cursor, Windsurf o Zed, o Copilot en VS Code, ve en su lugar los problemas de la extensión de djLint del editor.
+
+### Claude Code
+
+El plugin ejecuta el [servidor de lenguaje](#servidor-de-lenguaje), cuyos problemas Claude Code muestra al modelo después de cada edición. En una sesión:
+
+```text
+/plugin marketplace add djlint/agent-plugins
+/plugin install djlint@djlint
+```
+
+Claude Code no actualiza por sí solo los plugins de otros marketplaces. Activa la actualización automática del marketplace `djlint` en `/plugin`, o ejecuta `claude plugin update djlint@djlint`.
+
+### Codex
+
+Un hook analiza las plantillas que el agente añade o cambia, y añade los problemas al resultado de su edición. Se ejecuta con el Node.js del PATH.
+
+```bash
+codex plugin marketplace add djlint/agent-plugins
+codex plugin add djlint@djlint
+```
+
+Codex solo ejecuta el hook después de que confíes en él en `/hooks`, y vuelve a preguntar tras cada actualización. Para actualizar, ejecuta `codex plugin marketplace upgrade djlint` y luego `codex plugin add djlint@djlint`.
+
+### GitHub Copilot CLI
+
+El mismo hook que para Codex, con el Node.js del PATH:
+
+```bash
+copilot plugin marketplace add djlint/agent-plugins
+copilot plugin install djlint@djlint
+```
+
+Para actualizar, ejecuta `copilot plugin update djlint`.
+
+### Gemini CLI
+
+El mismo hook, en una extensión:
+
+```bash
+gemini extensions install https://github.com/djlint/agent-plugins
+```
+
+Para actualizar, ejecuta `gemini extensions update djlint`.
+
+### OpenCode
+
+Un plugin que añade los problemas al resultado de cada edición, en OpenCode 2:
+
+```bash
+opencode plugin add github:djlint/agent-plugins#main
+```
+
+OpenCode 1 y sus forks, como Kilo Code, lo toman en `opencode.json`:
+
+```json
+{ "plugin": ["github:djlint/agent-plugins#main"] }
+```
+
+Se actualiza solo desde la rama `main`.
+
+### Crush
+
+Crush ejecuta el servidor de lenguaje desde `crush.json` y le muestra al agente sus problemas después de cada edición:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider analiza los archivos que edita y le pasa al modelo lo que imprime el linter. Para analizar archivos HTML con djLint:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
+
 ## Servidor de lenguaje
 
 `djlint --lsp` ejecuta djLint como servidor de lenguaje a través de stdio. Se mantiene en ejecución, así que un editor recibe los problemas mientras escribes y formatea un documento sin iniciar un proceso cada vez.

@@ -222,6 +222,111 @@ Eglot, který je součástí Emacsu 29 a novějšího:
 
 Pak v šabloně spusťte `M-x eglot`. Příkaz `eglot-format-buffer` ji naformátuje. `html-mode`, `mhtml-mode` a `web-mode` žádný šablonovací jazyk neurčují, proto se v nich profil bere z [konfigurace](/cs/docs/configuration/#profile) projektu.
 
+## Agenti pro programování
+
+[Pluginy djLint](https://github.com/djlint/agent-plugins) předávají agentovi pro programování nálezy v šablonách, které upravuje, aby je opravil dřív, než bude pokračovat. Potřebují djLint 1.49 nebo novější v PATH, nebo ve virtuálním prostředí projektu, pokud agenta spouštíte s aktivovaným prostředím. Lintují soubory podle vzorů z tabulky v sekci [IDE od JetBrains](#ide-od-jetbrains). [Profil](/cs/docs/configuration/#profile) nastavte v konfiguraci projektu, kterou se řídí všechny.
+
+Agent, který pracuje ve vašem editoru, například agenti Cursoru, Windsurfu nebo Zedu nebo Copilot ve VS Code, místo toho vidí nálezy rozšíření djLint v editoru.
+
+### Claude Code
+
+Plugin spouští [jazykový server](#jazykovy-server), jehož nálezy Claude Code ukazuje modelu po každé úpravě. V relaci:
+
+```text
+/plugin marketplace add djlint/agent-plugins
+/plugin install djlint@djlint
+```
+
+Claude Code sám neaktualizuje pluginy z jiných marketplaců. V `/plugin` zapněte automatické aktualizace pro marketplace `djlint`, nebo spusťte `claude plugin update djlint@djlint`.
+
+### Codex
+
+Hook lintuje šablony, které agent přidá nebo změní, a přidá nálezy k výsledku jeho úpravy. Běží na Node.js z PATH.
+
+```bash
+codex plugin marketplace add djlint/agent-plugins
+codex plugin add djlint@djlint
+```
+
+Codex hook spustí, až když mu v `/hooks` udělíte důvěru, a po každé aktualizaci se ptá znovu. Pro aktualizaci spusťte `codex plugin marketplace upgrade djlint` a potom `codex plugin add djlint@djlint`.
+
+### GitHub Copilot CLI
+
+Stejný hook jako pro Codex, na Node.js z PATH:
+
+```bash
+copilot plugin marketplace add djlint/agent-plugins
+copilot plugin install djlint@djlint
+```
+
+Pro aktualizaci spusťte `copilot plugin update djlint`.
+
+### Gemini CLI
+
+Stejný hook v rozšíření:
+
+```bash
+gemini extensions install https://github.com/djlint/agent-plugins
+```
+
+Pro aktualizaci spusťte `gemini extensions update djlint`.
+
+### OpenCode
+
+V OpenCode 2 je to plugin, který přidává nálezy k výsledku každé úpravy:
+
+```bash
+opencode plugin add github:djlint/agent-plugins#main
+```
+
+OpenCode 1 a jeho forky, například Kilo Code, ho přijímají v `opencode.json`:
+
+```json
+{ "plugin": ["github:djlint/agent-plugins#main"] }
+```
+
+Sám se aktualizuje z větve `main`.
+
+### Crush
+
+Crush spouští jazykový server ze souboru `crush.json` a po každé úpravě ukazuje agentovi jeho nálezy:
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider lintuje soubory, které upravuje, a předává modelu to, co vypíše linter. Pro lintování HTML souborů pomocí djLint:
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
+
 ## Jazykový server
 
 `djlint --lsp` spustí djLint jako jazykový server přes stdio. Zůstává spuštěný, takže editor dostává nálezy už během psaní a formátuje dokument, aniž by pokaždé spouštěl nový proces.

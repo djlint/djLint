@@ -222,6 +222,111 @@ Emacs 29 及更新版本內建的 Eglot：
 
 接著在範本中執行 `M-x eglot`。`eglot-format-buffer` 會將它格式化。`html-mode`、`mhtml-mode` 和 `web-mode` 不會指出範本語言，因此在這些模式中，profile 來自專案的[設定](/zh-tw/docs/configuration/#profile)。
 
+## 程式設計代理
+
+[djLint 外掛](https://github.com/djlint/agent-plugins)會把程式設計代理所編輯範本的檢查結果交給它，讓它在繼續下一步之前修正。它們需要 PATH 上的 djLint 1.49 或更新版本；如果你在啟用專案虛擬環境的狀態下啟動代理，也可以是該虛擬環境中的 djLint。它們會對符合 [JetBrains IDE](#jetbrains-ide) 一節表格中模式的檔案進行 lint。請在專案的設定中指定 [profile](/zh-tw/docs/configuration/#profile)，所有外掛都會依照它。
+
+在編輯器中運作的代理，例如 Cursor、Windsurf 或 Zed 的代理，或 VS Code 中的 Copilot，看到的則是編輯器的 djLint 擴充功能所提供的檢查結果。
+
+### Claude Code
+
+這個外掛會執行[語言伺服器](#語言伺服器)，Claude Code 會在每次編輯後把它的檢查結果顯示給模型。在工作階段中執行：
+
+```text
+/plugin marketplace add djlint/agent-plugins
+/plugin install djlint@djlint
+```
+
+Claude Code 不會自動更新來自其他 marketplace 的外掛。請在 `/plugin` 中為 `djlint` marketplace 開啟自動更新，或執行 `claude plugin update djlint@djlint`。
+
+### Codex
+
+一個 hook 會對代理新增或變更的範本進行 lint，並將檢查結果加到其編輯的結果中。它使用 PATH 上的 Node.js 執行。
+
+```bash
+codex plugin marketplace add djlint/agent-plugins
+codex plugin add djlint@djlint
+```
+
+你必須先在 `/hooks` 中信任這個 hook，Codex 才會執行它，而且每次更新後都會再次詢問。若要更新，請執行 `codex plugin marketplace upgrade djlint`，再執行 `codex plugin add djlint@djlint`。
+
+### GitHub Copilot CLI
+
+與 Codex 相同的 hook，使用 PATH 上的 Node.js 執行：
+
+```bash
+copilot plugin marketplace add djlint/agent-plugins
+copilot plugin install djlint@djlint
+```
+
+若要更新，請執行 `copilot plugin update djlint`。
+
+### Gemini CLI
+
+同一個 hook，以擴充功能的形式提供：
+
+```bash
+gemini extensions install https://github.com/djlint/agent-plugins
+```
+
+若要更新，請執行 `gemini extensions update djlint`。
+
+### OpenCode
+
+在 OpenCode 2 中，這是一個會將檢查結果加到每次編輯結果中的外掛：
+
+```bash
+opencode plugin add github:djlint/agent-plugins#main
+```
+
+OpenCode 1 及其分支（例如 Kilo Code）在 `opencode.json` 中設定它：
+
+```json
+{ "plugin": ["github:djlint/agent-plugins#main"] }
+```
+
+它會自動從 `main` 分支更新。
+
+### Crush
+
+Crush 透過 `crush.json` 執行語言伺服器，並在每次編輯後把它的檢查結果顯示給代理：
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider 會對它編輯的檔案進行 lint，並把 linter 輸出的內容交給模型。若要用 djLint 對 HTML 檔案進行 lint：
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
+
 ## 語言伺服器
 
 `djlint --lsp` 會以語言伺服器的形式透過 stdio 執行 djLint。它會持續執行，因此編輯器能在你輸入時取得檢查結果，並在格式化文件時不必每次都啟動新的處理程序。

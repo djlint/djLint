@@ -222,6 +222,111 @@ Helix 本身不会把任何文件当作 `htmldjango` 打开。在 Django 项目�
 
 然后在模板中运行 `M-x eglot`。`eglot-format-buffer` 可以格式化该模板。`html-mode`、`mhtml-mode` 和 `web-mode` 不表明模板语言，因此在这些模式中，预设来自项目的[配置](/zh/docs/configuration/#profile)。
 
+## 编程智能体
+
+[djLint 插件](https://github.com/djlint/agent-plugins)会把编程智能体所编辑模板的检查结果交给它，让它在继续下一步之前修复这些问题。它们需要 PATH 中的 djLint 1.49 或更新版本；如果你在激活项目虚拟环境的情况下启动智能体，也可以是该虚拟环境中的 djLint。它们检查的是与 [JetBrains IDE](#jetbrains-ide) 一节表格中的模式相匹配的文件。请在项目的配置中设置[预设](/zh/docs/configuration/#profile)，所有插件都会遵循它。
+
+在编辑器中工作的智能体，例如 Cursor、Windsurf 或 Zed 中的智能体，或 VS Code 中的 Copilot，看到的则是编辑器中 djLint 扩展给出的检查结果。
+
+### Claude Code
+
+该插件会运行[语言服务器](#语言服务器)，Claude Code 会在每次编辑后把它的检查结果展示给模型。在会话中运行：
+
+```text
+/plugin marketplace add djlint/agent-plugins
+/plugin install djlint@djlint
+```
+
+Claude Code 不会自动更新来自其他插件市场的插件。请在 `/plugin` 中为 `djlint` 插件市场开启自动更新，或者运行 `claude plugin update djlint@djlint`。
+
+### Codex
+
+一个钩子会检查智能体新增或修改的模板，并把检查结果附加到其编辑的结果中。它使用 PATH 中的 Node.js 运行。
+
+```bash
+codex plugin marketplace add djlint/agent-plugins
+codex plugin add djlint@djlint
+```
+
+只有在你于 `/hooks` 中信任该钩子之后，Codex 才会运行它，并且每次更新后都会再次询问。要更新，请运行 `codex plugin marketplace upgrade djlint`，然后运行 `codex plugin add djlint@djlint`。
+
+### GitHub Copilot CLI
+
+与 Codex 相同的钩子，使用 PATH 中的 Node.js 运行：
+
+```bash
+copilot plugin marketplace add djlint/agent-plugins
+copilot plugin install djlint@djlint
+```
+
+要更新，请运行 `copilot plugin update djlint`。
+
+### Gemini CLI
+
+同一个钩子，以扩展的形式提供：
+
+```bash
+gemini extensions install https://github.com/djlint/agent-plugins
+```
+
+要更新，请运行 `gemini extensions update djlint`。
+
+### OpenCode
+
+在 OpenCode 2 中，这是一个把检查结果附加到每次编辑结果中的插件：
+
+```bash
+opencode plugin add github:djlint/agent-plugins#main
+```
+
+OpenCode 1 及其分支（例如 Kilo Code）在 `opencode.json` 中配置它：
+
+```json
+{ "plugin": ["github:djlint/agent-plugins#main"] }
+```
+
+它会自动从 `main` 分支更新。
+
+### Crush
+
+Crush 通过 `crush.json` 运行语言服务器，并在每次编辑后把它的检查结果展示给智能体：
+
+```json
+{
+  "lsp": {
+    "djlint": {
+      "command": "djlint",
+      "args": ["--lsp"],
+      "filetypes": [
+        "html",
+        "htm",
+        "jinja",
+        "jinja2",
+        "j2",
+        "njk",
+        "twig",
+        "hbs",
+        "handlebars",
+        "mustache",
+        "liquid",
+        "gotmpl",
+        "gohtml",
+        "tera",
+        "mako"
+      ]
+    }
+  }
+}
+```
+
+### Aider
+
+Aider 会检查它编辑的文件，并把代码检查工具输出的内容交给模型。要用 djLint 检查 HTML 文件：
+
+```bash
+aider --lint-cmd "html: djlint --lint"
+```
+
 ## 语言服务器
 
 `djlint --lsp` 会通过 stdio 将 djLint 作为语言服务器运行。它会持续运行，因此编辑器可以在你输入时获得检查结果，格式化文档时也无需每次都启动一个进程。
