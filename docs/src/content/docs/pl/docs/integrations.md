@@ -15,7 +15,7 @@ Jego [README](https://github.com/djlint/djlint-vscode#readme) opisuje ustawienia
 
 ## Zed
 
-[Rozszerzenie djLint](https://github.com/djlint/djlint-zed) uruchamia [serwer języka](#serwer-jezyka) w HTML i w językach rozszerzeń szablonów, takich jak Django, Jinja i Twig. Nie ma go jeszcze w rejestrze rozszerzeń Zeda. Jego [README](https://github.com/djlint/djlint-zed#readme) opisuje, jak zainstalować je jako rozszerzenie deweloperskie, którego djLinta uruchamia i jak je skonfigurować.
+[Rozszerzenie djLint](https://github.com/djlint/djlint-zed) uruchamia [serwer języka](#serwer-jezyka) w HTML i w językach rozszerzeń szablonów, takich jak Django, Jinja i Twig. Zainstaluj je z **zed: extensions**. Jego [README](https://github.com/djlint/djlint-zed#readme) opisuje, którego djLinta uruchamia i jak je skonfigurować.
 
 ## Neovim
 

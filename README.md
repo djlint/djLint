@@ -143,7 +143,7 @@ repos:
 ## 🧩 Integrations
 
 - **VS Code**: install the [djLint extension](https://marketplace.visualstudio.com/items?itemName=monosans.djlint) (also on [Open VSX](https://open-vsx.org/extension/monosans/djlint)).
-- **Zed**: install the [djLint extension](https://github.com/djlint/djlint-zed) as a dev extension until it's in Zed's registry. See [how](https://github.com/djlint/djlint-zed#installation).
+- **Zed**: install the [djLint extension](https://github.com/djlint/djlint-zed) from **zed: extensions**.
 - **Neovim, JetBrains IDEs, Sublime Text, Helix and Emacs**: run the language server, `djlint --lsp`. See the [setup for each](https://djlint.com/docs/integrations/).
 - **AI coding agents**: [plugins](https://github.com/djlint/agent-plugins) for Claude Code, Codex, GitHub Copilot CLI, Gemini CLI and OpenCode hand the agent djLint's findings on the templates it edits, and a skill covers the other agents.
 - **CI**: [GitHub Actions](https://djlint.com/docs/integrations/#github-actions) and [MegaLinter](https://djlint.com/docs/integrations/#megalinter).

@@ -15,7 +15,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 ## Zed
 
-[djLint 扩展](https://github.com/djlint/djlint-zed)在 HTML 以及 Django、Jinja、Twig 等模板扩展的语言中运行[语言服务器](#语言服务器)。它还没有进入 Zed 的扩展注册表。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它作为开发扩展安装、它运行的是哪个 djLint，以及如何配置它。
+[djLint 扩展](https://github.com/djlint/djlint-zed)在 HTML 以及 Django、Jinja、Twig 等模板扩展的语言中运行[语言服务器](#语言服务器)。请通过 **zed: extensions** 安装它。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了它运行的是哪个 djLint，以及如何配置它。
 
 ## Neovim
 

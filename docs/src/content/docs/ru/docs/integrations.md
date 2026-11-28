@@ -15,7 +15,7 @@ description: "Используйте djLint в своём редакторе и 
 
 ## Zed
 
-[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как установить его как dev-расширение, какой djLint оно запускает и как его настроить.
+[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. Установите его через **zed: extensions**. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, какой djLint оно запускает и как его настроить.
 
 ## Neovim
 

@@ -15,7 +15,7 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 
 ## Zed
 
-[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていません。開発用拡張機能としてのインストール方法、どの djLint を実行するか、設定方法については [README](https://github.com/djlint/djlint-zed#readme) で説明しています。
+[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。**zed: extensions** からインストールしてください。どの djLint を実行するかと設定方法については [README](https://github.com/djlint/djlint-zed#readme) で説明しています。
 
 ## Neovim
 
