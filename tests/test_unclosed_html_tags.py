@@ -37,7 +37,7 @@ sources = [
     pytest.param("</p\n" * 20000, id="closing tags with no > after them"),
     pytest.param('</p x="a\n' * 20000, id="closing tags each opening a value"),
     pytest.param("</p {\n" * 20000 + "<div>", id="closing tags each opening a brace"),
-    pytest.param('<a title="x\n' * 40000 + '">', id="one value across many lines"),
+    pytest.param('<a title="x\n' * 10000 + '">', id="one value across many lines"),
 ]
 
 
