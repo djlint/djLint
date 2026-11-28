@@ -15,20 +15,7 @@ Visual Studio Marketplace から [djLint 拡張機能](https://marketplace.visua
 
 ## Zed
 
-[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていないため、開発用拡張機能としてインストールします：
-
-1. [rustup](https://rustup.rs) で Rust をインストールします。Zed はこれで拡張機能をビルドし、`wasm32-wasip2` ターゲットも自動で追加します。Homebrew や Nix など別の方法で入れた Rust では、このターゲットを自分で追加してください。
-1. 拡張機能をクローンします：
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Zed でコマンドパレットを開き（macOS では `cmd-shift-p`、それ以外では `ctrl-shift-p`）、**zed: install dev extension** を実行して、クローンした `djlint-zed` フォルダーを選びます。
-
-更新するには、そのフォルダーで `git pull` を実行してから **zed: rebuild dev extension** を実行します。
-
-PATH 上の djLint 1.49 以降、プロジェクトに npm でインストールした djLint 1.54.0 以降、または djLint をインストールせずに実行できる [uv](https://docs.astral.sh/uv/) が必要です。言語のフォーマッターに指定する方法と設定については、[README](https://github.com/djlint/djlint-zed#readme) で説明しています。
+[djLint 拡張機能](https://github.com/djlint/djlint-zed)は、HTML と、Django、Jinja、Twig などのテンプレート拡張機能の言語で[言語サーバー](#言語サーバー)を実行します。まだ Zed の拡張機能レジストリには登録されていません。開発用拡張機能としてのインストール方法、どの djLint を実行するか、設定方法については [README](https://github.com/djlint/djlint-zed#readme) で説明しています。
 
 ## Neovim
 
@@ -224,68 +211,9 @@ Emacs 29 以降に付属している Eglot を使います：
 
 ## コーディングエージェント
 
-[djLint プラグイン](https://github.com/djlint/agent-plugins)は、コーディングエージェントが編集したテンプレートの検出結果をエージェントに渡し、次の作業に進む前に修正させます。PATH 上の djLint 1.49 以降が必要です。仮想環境を有効にした状態でエージェントを起動する場合は、プロジェクトの仮想環境にあるものでもかまいません。プラグインがリントするのは、[JetBrains の IDE](#jetbrains-の-ide) の表にあるパターンのファイルです。どのプラグインもプロジェクトの設定に従うので、[プロファイル](/ja/docs/configuration/#profile)はそこで設定してください。
+[djLint プラグイン](https://github.com/djlint/agent-plugins)は、Claude Code、Codex、GitHub Copilot CLI、Gemini CLI、OpenCode が編集したテンプレートの検出結果をエージェントに渡し、次の作業に進む前に修正させます。各エージェントへのインストール方法と更新方法は [README](https://github.com/djlint/agent-plugins#readme) で説明しています。
 
-Cursor、Windsurf、Zed のエージェントや VS Code の Copilot のように、エディター内で動くエージェントには、代わりにエディターの djLint 拡張機能の検出結果が見えます。
-
-### Claude Code
-
-プラグインは[言語サーバー](#言語サーバー)を実行し、Claude Code は編集のたびにその検出結果をモデルに示します。セッション内で：
-
-```text
-/plugin marketplace add djlint/agent-plugins
-/plugin install djlint@djlint
-```
-
-Claude Code は、ほかのマーケットプレイスのプラグインを自動では更新しません。`/plugin` で `djlint` マーケットプレイスの自動更新を有効にするか、`claude plugin update djlint@djlint` を実行してください。
-
-### Codex
-
-フックが、エージェントが追加または変更したテンプレートをリントし、検出結果を編集の結果に追加します。フックは PATH 上の Node.js で動きます。
-
-```bash
-codex plugin marketplace add djlint/agent-plugins
-codex plugin add djlint@djlint
-```
-
-Codex は、`/hooks` でフックを信頼するまでフックを実行せず、更新のたびに改めて確認を求めます。更新するには、`codex plugin marketplace upgrade djlint` を実行してから `codex plugin add djlint@djlint` を実行します。
-
-### GitHub Copilot CLI
-
-Codex と同じフックで、PATH 上の Node.js で動きます：
-
-```bash
-copilot plugin marketplace add djlint/agent-plugins
-copilot plugin install djlint@djlint
-```
-
-更新するには、`copilot plugin update djlint` を実行します。
-
-### Gemini CLI
-
-同じフックを拡張機能として提供します：
-
-```bash
-gemini extensions install https://github.com/djlint/agent-plugins
-```
-
-更新するには、`gemini extensions update djlint` を実行します。
-
-### OpenCode
-
-OpenCode 2 では、編集のたびに検出結果をその結果に追加するプラグインです：
-
-```bash
-opencode plugin add github:djlint/agent-plugins#main
-```
-
-OpenCode 1 と、Kilo Code などのそのフォークでは、`opencode.json` で指定します：
-
-```json
-{ "plugin": ["github:djlint/agent-plugins#main"] }
-```
-
-`main` ブランチから自動で更新されます。
+Cursor、Windsurf、Zed のエージェントや VS Code の Copilot のように、エディター内で動くエージェントには、代わりにエディターの djLint 拡張機能の検出結果が見えます。Crush と Aider にはプラグインは不要です。
 
 ### Crush
 

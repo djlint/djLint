@@ -15,20 +15,7 @@ description: "Используйте djLint в своём редакторе и 
 
 ## Zed
 
-[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет, поэтому установите его как dev-расширение:
-
-1. Установите Rust через [rustup](https://rustup.rs): Zed собирает им расширение и сам добавляет таргет `wasm32-wasip2`. Если Rust установлен иначе, например через Homebrew или Nix, добавьте таргет сами.
-1. Склонируйте расширение:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Откройте в Zed палитру команд (`cmd-shift-p` на macOS, `ctrl-shift-p` в остальных системах), выполните **zed: install dev extension** и выберите склонированную папку `djlint-zed`.
-
-Чтобы обновить расширение, выполните в этой папке `git pull`, а затем **zed: rebuild dev extension**.
-
-Нужен djLint 1.49 или новее в PATH, 1.54.0 или новее, установленный в проекте через npm, либо [uv](https://docs.astral.sh/uv/), который запускает djLint без установки. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как назначить его форматером языка, и перечислены его настройки.
+[Расширение djLint](https://github.com/djlint/djlint-zed) запускает [языковой сервер](#yazykovoj-server) в HTML и в языках шаблонных расширений, например Django, Jinja и Twig. В реестре расширений Zed его пока нет. В [README](https://github.com/djlint/djlint-zed#readme) расширения описано, как установить его как dev-расширение, какой djLint оно запускает и как его настроить.
 
 ## Neovim
 
@@ -224,68 +211,9 @@ Eglot, входящий в состав Emacs 29 и новее:
 
 ## Агенты для программирования
 
-[Плагины djLint](https://github.com/djlint/agent-plugins) передают агенту для программирования замечания по шаблонам, которые он редактирует, чтобы он исправил их, прежде чем двигаться дальше. Им нужен djLint 1.49 или новее в PATH либо в виртуальном окружении проекта, если вы запускаете агента с активированным окружением. Они проверяют файлы по маскам из таблицы в разделе [IDE от JetBrains](#ide-ot-jetbrains). Задайте [профиль](/ru/docs/configuration/#profile) в конфигурации проекта: его учитывают все плагины.
+[Плагины djLint](https://github.com/djlint/agent-plugins) передают Claude Code, Codex, GitHub Copilot CLI, Gemini CLI и OpenCode замечания по шаблонам, которые те редактируют, чтобы агент исправил их, прежде чем двигаться дальше. В их [README](https://github.com/djlint/agent-plugins#readme) описано, как установить и обновить их в каждом агенте.
 
-Агент, который работает в вашем редакторе, например агент Cursor, Windsurf или Zed или Copilot в VS Code, вместо этого видит замечания расширения djLint для редактора.
-
-### Claude Code
-
-Плагин запускает [языковой сервер](#yazykovoj-server), и Claude Code показывает модели его замечания после каждой правки. В сессии:
-
-```text
-/plugin marketplace add djlint/agent-plugins
-/plugin install djlint@djlint
-```
-
-Claude Code сам не обновляет плагины из сторонних маркетплейсов. Включите автообновление для маркетплейса `djlint` в `/plugin` или выполните `claude plugin update djlint@djlint`.
-
-### Codex
-
-Хук проверяет шаблоны, которые агент добавляет или изменяет, и добавляет замечания к результату его правки. Хук работает на Node.js из PATH.
-
-```bash
-codex plugin marketplace add djlint/agent-plugins
-codex plugin add djlint@djlint
-```
-
-Codex запускает хук только после того, как вы подтвердите доверие к нему в `/hooks`, и спрашивает снова после каждого обновления. Чтобы обновить плагин, выполните `codex plugin marketplace upgrade djlint`, а затем `codex plugin add djlint@djlint`.
-
-### GitHub Copilot CLI
-
-Тот же хук, что и для Codex, на Node.js из PATH:
-
-```bash
-copilot plugin marketplace add djlint/agent-plugins
-copilot plugin install djlint@djlint
-```
-
-Чтобы обновить плагин, выполните `copilot plugin update djlint`.
-
-### Gemini CLI
-
-Тот же хук в виде расширения:
-
-```bash
-gemini extensions install https://github.com/djlint/agent-plugins
-```
-
-Чтобы обновить расширение, выполните `gemini extensions update djlint`.
-
-### OpenCode
-
-В OpenCode 2 это плагин, который добавляет замечания к результату каждой правки:
-
-```bash
-opencode plugin add github:djlint/agent-plugins#main
-```
-
-OpenCode 1 и его форки, например Kilo Code, подключают его в `opencode.json`:
-
-```json
-{ "plugin": ["github:djlint/agent-plugins#main"] }
-```
-
-Плагин сам обновляется из ветки `main`.
+Агент, который работает в вашем редакторе, например агент Cursor, Windsurf или Zed или Copilot в VS Code, вместо этого видит замечания расширения djLint для редактора. Для Crush и Aider плагин не нужен.
 
 ### Crush
 

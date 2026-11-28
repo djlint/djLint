@@ -15,20 +15,7 @@ description: "在编辑器中使用 djLint，并通过 pre-commit 运行它。"
 
 ## Zed
 
-[djLint 扩展](https://github.com/djlint/djlint-zed)在 HTML 以及 Django、Jinja、Twig 等模板扩展的语言中运行[语言服务器](#语言服务器)。它还没有进入 Zed 的扩展注册表，所以要作为开发扩展安装：
-
-1. 通过 [rustup](https://rustup.rs) 安装 Rust，Zed 用它构建扩展，并会自动添加 `wasm32-wasip2` 目标。如果 Rust 是用 Homebrew 或 Nix 等其他方式安装的，需要自己添加这个目标。
-1. 克隆扩展：
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. 在 Zed 中打开命令面板（macOS 上是 `cmd-shift-p`，其他系统是 `ctrl-shift-p`），运行 **zed: install dev extension**，选择克隆下来的 `djlint-zed` 文件夹。
-
-要更新它，在该文件夹中运行 `git pull`，然后运行 **zed: rebuild dev extension**。
-
-需要 PATH 中的 djLint 1.49 或更新版本、项目里用 npm 安装的 djLint 1.54.0 或更新版本，或者有 [uv](https://docs.astral.sh/uv/)，它无需安装即可运行 djLint。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它设为某个语言的格式化工具，以及它的设置。
+[djLint 扩展](https://github.com/djlint/djlint-zed)在 HTML 以及 Django、Jinja、Twig 等模板扩展的语言中运行[语言服务器](#语言服务器)。它还没有进入 Zed 的扩展注册表。其 [README](https://github.com/djlint/djlint-zed#readme) 介绍了如何把它作为开发扩展安装、它运行的是哪个 djLint，以及如何配置它。
 
 ## Neovim
 
@@ -224,68 +211,9 @@ Helix 本身不会把任何文件当作 `htmldjango` 打开。在 Django 项目�
 
 ## 编程智能体
 
-[djLint 插件](https://github.com/djlint/agent-plugins)会把编程智能体所编辑模板的检查结果交给它，让它在继续下一步之前修复这些问题。它们需要 PATH 中的 djLint 1.49 或更新版本；如果你在激活项目虚拟环境的情况下启动智能体，也可以是该虚拟环境中的 djLint。它们检查的是与 [JetBrains IDE](#jetbrains-ide) 一节表格中的模式相匹配的文件。请在项目的配置中设置[预设](/zh/docs/configuration/#profile)，所有插件都会遵循它。
+[djLint 插件](https://github.com/djlint/agent-plugins)会把 Claude Code、Codex、GitHub Copilot CLI、Gemini CLI 和 OpenCode 所编辑模板的检查结果交给它们，让智能体在继续下一步之前修复这些问题。其 [README](https://github.com/djlint/agent-plugins#readme) 介绍了如何在各个智能体中安装和更新它们。
 
-在编辑器中工作的智能体，例如 Cursor、Windsurf 或 Zed 中的智能体，或 VS Code 中的 Copilot，看到的则是编辑器中 djLint 扩展给出的检查结果。
-
-### Claude Code
-
-该插件会运行[语言服务器](#语言服务器)，Claude Code 会在每次编辑后把它的检查结果展示给模型。在会话中运行：
-
-```text
-/plugin marketplace add djlint/agent-plugins
-/plugin install djlint@djlint
-```
-
-Claude Code 不会自动更新来自其他插件市场的插件。请在 `/plugin` 中为 `djlint` 插件市场开启自动更新，或者运行 `claude plugin update djlint@djlint`。
-
-### Codex
-
-一个钩子会检查智能体新增或修改的模板，并把检查结果附加到其编辑的结果中。它使用 PATH 中的 Node.js 运行。
-
-```bash
-codex plugin marketplace add djlint/agent-plugins
-codex plugin add djlint@djlint
-```
-
-只有在你于 `/hooks` 中信任该钩子之后，Codex 才会运行它，并且每次更新后都会再次询问。要更新，请运行 `codex plugin marketplace upgrade djlint`，然后运行 `codex plugin add djlint@djlint`。
-
-### GitHub Copilot CLI
-
-与 Codex 相同的钩子，使用 PATH 中的 Node.js 运行：
-
-```bash
-copilot plugin marketplace add djlint/agent-plugins
-copilot plugin install djlint@djlint
-```
-
-要更新，请运行 `copilot plugin update djlint`。
-
-### Gemini CLI
-
-同一个钩子，以扩展的形式提供：
-
-```bash
-gemini extensions install https://github.com/djlint/agent-plugins
-```
-
-要更新，请运行 `gemini extensions update djlint`。
-
-### OpenCode
-
-在 OpenCode 2 中，这是一个把检查结果附加到每次编辑结果中的插件：
-
-```bash
-opencode plugin add github:djlint/agent-plugins#main
-```
-
-OpenCode 1 及其分支（例如 Kilo Code）在 `opencode.json` 中配置它：
-
-```json
-{ "plugin": ["github:djlint/agent-plugins#main"] }
-```
-
-它会自动从 `main` 分支更新。
+在编辑器中工作的智能体，例如 Cursor、Windsurf 或 Zed 中的智能体，或 VS Code 中的 Copilot，看到的则是编辑器中 djLint 扩展给出的检查结果。Crush 和 Aider 不需要插件。
 
 ### Crush
 

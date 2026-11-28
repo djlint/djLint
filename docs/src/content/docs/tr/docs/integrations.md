@@ -15,20 +15,7 @@ Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, a
 
 ## Zed
 
-[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Henüz Zed'in uzantı kayıt defterinde olmadığından onu geliştirme uzantısı olarak kurun:
-
-1. Rust'ı [rustup](https://rustup.rs) ile kurun: Zed uzantıyı onunla derler ve `wasm32-wasip2` hedefini kendisi ekler. Rust'ı Homebrew ya da Nix gibi başka bir yoldan kurduysanız bu hedefi kendiniz ekleyin.
-1. Uzantıyı klonlayın:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. Zed'de komut paletini açın (macOS'ta `cmd-shift-p`, diğerlerinde `ctrl-shift-p`), **zed: install dev extension** komutunu çalıştırın ve klonlanan `djlint-zed` klasörünü seçin.
-
-Güncellemek için o klasörde `git pull`, ardından **zed: rebuild dev extension** çalıştırın.
-
-PATH'te djLint 1.49 veya daha yenisi, projede npm ile kurulu djLint 1.54.0 veya daha yenisi ya da djLint'i kurulum olmadan çalıştıran [uv](https://docs.astral.sh/uv/) gerekir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu bir dilin biçimlendiricisi olarak nasıl ayarlayacağınızı gösterir ve ayarlarını anlatır.
+[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Henüz Zed'in uzantı kayıt defterinde değildir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu geliştirme uzantısı olarak nasıl kuracağınızı, hangi djLint'i çalıştırdığını ve nasıl ayarlayacağınızı anlatır.
 
 ## Neovim
 
@@ -224,68 +211,9 @@ Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şabl
 
 ## Kodlama ajanları
 
-[djLint eklentileri](https://github.com/djlint/agent-plugins), bir kodlama ajanına düzenlediği şablonlardaki bulguları iletir; böylece ajan, devam etmeden önce bunları düzeltir. PATH'te ya da, ajanı sanal ortam etkinken başlatıyorsanız, projenin sanal ortamında djLint 1.49 veya daha yenisi gerekir. Eklentiler, [JetBrains IDE'leri](#jetbrains-ideleri) bölümündeki tablodaki kalıplara uyan dosyaları denetler. [Profili](/tr/docs/configuration/#profile) projenin yapılandırmasında ayarlayın; eklentilerin hepsi onu izler.
+[djLint eklentileri](https://github.com/djlint/agent-plugins), Claude Code, Codex, GitHub Copilot CLI, Gemini CLI ve OpenCode'a düzenledikleri şablonlardaki bulguları iletir; böylece ajan, devam etmeden önce bunları düzeltir. Eklentilerin [README](https://github.com/djlint/agent-plugins#readme) dosyası, her ajanda nasıl kurulup güncelleneceklerini anlatır.
 
-Cursor, Windsurf veya Zed'in ajanları ya da VS Code'daki Copilot gibi düzenleyicinizin içinde çalışan bir ajan, bunun yerine düzenleyicinin djLint uzantısının bulgularını görür.
-
-### Claude Code
-
-Eklenti [dil sunucusunu](#dil-sunucusu) çalıştırır; Claude Code bu sunucunun bulgularını her düzenlemeden sonra modele gösterir. Bir oturumda:
-
-```text
-/plugin marketplace add djlint/agent-plugins
-/plugin install djlint@djlint
-```
-
-Claude Code, diğer marketplace'lerden gelen eklentileri kendiliğinden güncellemez. `/plugin` içinde `djlint` marketplace'i için otomatik güncellemeyi açın ya da `claude plugin update djlint@djlint` çalıştırın.
-
-### Codex
-
-Bir kanca, ajanın eklediği ya da değiştirdiği şablonları denetler ve bulguları düzenlemenin sonucuna ekler. PATH'teki Node.js ile çalışır.
-
-```bash
-codex plugin marketplace add djlint/agent-plugins
-codex plugin add djlint@djlint
-```
-
-Codex kancayı ancak siz `/hooks` içinde ona güvendikten sonra çalıştırır ve her güncellemeden sonra yeniden sorar. Güncellemek için `codex plugin marketplace upgrade djlint`, ardından `codex plugin add djlint@djlint` çalıştırın.
-
-### GitHub Copilot CLI
-
-Codex'tekiyle aynı kanca, PATH'teki Node.js ile:
-
-```bash
-copilot plugin marketplace add djlint/agent-plugins
-copilot plugin install djlint@djlint
-```
-
-Güncellemek için `copilot plugin update djlint` çalıştırın.
-
-### Gemini CLI
-
-Aynı kanca, bir uzantı içinde:
-
-```bash
-gemini extensions install https://github.com/djlint/agent-plugins
-```
-
-Güncellemek için `gemini extensions update djlint` çalıştırın.
-
-### OpenCode
-
-OpenCode 2'de bulguları her düzenlemenin sonucuna ekleyen bir eklenti:
-
-```bash
-opencode plugin add github:djlint/agent-plugins#main
-```
-
-OpenCode 1 ve Kilo Code gibi çatalları eklentiyi `opencode.json` içinde alır:
-
-```json
-{ "plugin": ["github:djlint/agent-plugins#main"] }
-```
-
-Eklenti `main` dalından kendiliğinden güncellenir.
+Cursor, Windsurf veya Zed'in ajanları ya da VS Code'daki Copilot gibi düzenleyicinizin içinde çalışan bir ajan, bunun yerine düzenleyicinin djLint uzantısının bulgularını görür. Crush ve Aider için eklenti gerekmez.
 
 ### Crush
 

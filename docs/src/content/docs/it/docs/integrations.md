@@ -15,20 +15,7 @@ Il suo [README](https://github.com/djlint/djlint-vscode#readme) descrive le impo
 
 ## Zed
 
-L'[estensione djLint](https://github.com/djlint/djlint-zed) esegue il [server di linguaggio](#server-di-linguaggio) in HTML e nei linguaggi delle estensioni per i template, come Django, Jinja e Twig. Non è ancora nel registro delle estensioni di Zed, quindi installala come estensione di sviluppo:
-
-1. Installa Rust con [rustup](https://rustup.rs): Zed compila l'estensione con esso e aggiunge da solo il target `wasm32-wasip2`. Con un Rust installato in altro modo, ad esempio con Homebrew o Nix, aggiungilo tu.
-1. Clona l'estensione:
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. In Zed, apri la palette dei comandi (`cmd-shift-p` su macOS, `ctrl-shift-p` altrove), esegui **zed: install dev extension** e scegli la cartella clonata `djlint-zed`.
-
-Per aggiornarla, esegui `git pull` in quella cartella e poi **zed: rebuild dev extension**.
-
-Serve djLint 1.49 o successivo nel PATH, 1.54.0 o successivo installato nel progetto con npm, oppure [uv](https://docs.astral.sh/uv/), che esegue djLint senza installarlo. Il suo [README](https://github.com/djlint/djlint-zed#readme) spiega come renderla il formattatore di un linguaggio e descrive le sue impostazioni.
+L'[estensione djLint](https://github.com/djlint/djlint-zed) esegue il [server di linguaggio](#server-di-linguaggio) in HTML e nei linguaggi delle estensioni per i template, come Django, Jinja e Twig. Non è ancora nel registro delle estensioni di Zed. Il suo [README](https://github.com/djlint/djlint-zed#readme) spiega come installarla come estensione di sviluppo, quale djLint esegue e come configurarla.
 
 ## Neovim
 
@@ -224,68 +211,9 @@ Poi esegui `M-x eglot` in un template. `eglot-format-buffer` lo formatta. `html-
 
 ## Agenti di programmazione
 
-I [plugin di djLint](https://github.com/djlint/agent-plugins) passano a un agente di programmazione le segnalazioni sui template che modifica, così le corregge prima di andare avanti. Richiedono djLint 1.49 o successivo nel PATH, oppure nell'ambiente virtuale del progetto se avvii l'agente con quell'ambiente attivo. Eseguono il lint dei file corrispondenti ai pattern della tabella in [IDE JetBrains](#ide-jetbrains). Imposta il [profilo](/it/docs/configuration/#profile) nella configurazione del progetto, che tutti seguono.
+I [plugin di djLint](https://github.com/djlint/agent-plugins) passano a Claude Code, Codex, GitHub Copilot CLI, Gemini CLI e OpenCode le segnalazioni sui template che modificano, così l'agente le corregge prima di andare avanti. Il loro [README](https://github.com/djlint/agent-plugins#readme) spiega come installarli e aggiornarli in ciascun agente.
 
-Un agente che lavora nel tuo editor, come quelli di Cursor, Windsurf o Zed, o Copilot in VS Code, vede invece le segnalazioni dell'estensione djLint dell'editor.
-
-### Claude Code
-
-Il plugin esegue il [server di linguaggio](#server-di-linguaggio), le cui segnalazioni Claude Code mostra al modello dopo ogni modifica. In una sessione:
-
-```text
-/plugin marketplace add djlint/agent-plugins
-/plugin install djlint@djlint
-```
-
-Claude Code non aggiorna da solo i plugin di altri marketplace. Attiva l'aggiornamento automatico per il marketplace `djlint` in `/plugin`, oppure esegui `claude plugin update djlint@djlint`.
-
-### Codex
-
-Un hook esegue il lint dei template che l'agente aggiunge o modifica e aggiunge le segnalazioni al risultato della sua modifica. Funziona con il Node.js nel PATH.
-
-```bash
-codex plugin marketplace add djlint/agent-plugins
-codex plugin add djlint@djlint
-```
-
-Codex esegue l'hook solo dopo che lo hai segnato come attendibile in `/hooks`, e chiede di nuovo conferma dopo ogni aggiornamento. Per aggiornare, esegui `codex plugin marketplace upgrade djlint`, poi `codex plugin add djlint@djlint`.
-
-### GitHub Copilot CLI
-
-Lo stesso hook di Codex, con il Node.js nel PATH:
-
-```bash
-copilot plugin marketplace add djlint/agent-plugins
-copilot plugin install djlint@djlint
-```
-
-Per aggiornare, esegui `copilot plugin update djlint`.
-
-### Gemini CLI
-
-Lo stesso hook, in un'estensione:
-
-```bash
-gemini extensions install https://github.com/djlint/agent-plugins
-```
-
-Per aggiornare, esegui `gemini extensions update djlint`.
-
-### OpenCode
-
-Un plugin che aggiunge le segnalazioni al risultato di ogni modifica, in OpenCode 2:
-
-```bash
-opencode plugin add github:djlint/agent-plugins#main
-```
-
-OpenCode 1 e i suoi fork, come Kilo Code, lo accettano in `opencode.json`:
-
-```json
-{ "plugin": ["github:djlint/agent-plugins#main"] }
-```
-
-Si aggiorna da solo dal branch `main`.
+Un agente che lavora nel tuo editor, come quelli di Cursor, Windsurf o Zed, o Copilot in VS Code, vede invece le segnalazioni dell'estensione djLint dell'editor. Crush e Aider non hanno bisogno di alcun plugin.
 
 ### Crush
 

@@ -15,20 +15,7 @@ description: "在編輯器中使用 djLint，並透過 pre-commit 執行它。"
 
 ## Zed
 
-[djLint 擴充功能](https://github.com/djlint/djlint-zed)會在 HTML 以及 Django、Jinja、Twig 等範本擴充功能的語言中執行[語言伺服器](#語言伺服器)。它還沒有列入 Zed 的擴充功能登錄庫，因此請以開發用擴充功能的方式安裝：
-
-1. 透過 [rustup](https://rustup.rs) 安裝 Rust，Zed 會用它建置擴充功能，並自動加入 `wasm32-wasip2` 目標。如果 Rust 是用 Homebrew 或 Nix 等其他方式安裝，請自行加入這個目標。
-1. 複製擴充功能：
-
-   ```bash
-   git clone https://github.com/djlint/djlint-zed
-   ```
-
-1. 在 Zed 中開啟命令面板（macOS 為 `cmd-shift-p`，其他系統為 `ctrl-shift-p`），執行 **zed: install dev extension**，並選擇複製下來的 `djlint-zed` 資料夾。
-
-若要更新，請在該資料夾中執行 `git pull`，再執行 **zed: rebuild dev extension**。
-
-需要 PATH 中的 djLint 1.49 或更新版本、專案裡用 npm 安裝的 djLint 1.54.0 或更新版本，或是有 [uv](https://docs.astral.sh/uv/)，它不必安裝就能執行 djLint。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何將它設為某個語言的格式化工具，以及它的設定。
+[djLint 擴充功能](https://github.com/djlint/djlint-zed)會在 HTML 以及 Django、Jinja、Twig 等範本擴充功能的語言中執行[語言伺服器](#語言伺服器)。它還沒有列入 Zed 的擴充功能登錄庫。它的 [README](https://github.com/djlint/djlint-zed#readme) 說明了如何以開發用擴充功能的方式安裝、它會執行哪一個 djLint，以及如何設定。
 
 ## Neovim
 
@@ -224,68 +211,9 @@ Emacs 29 及更新版本內建的 Eglot：
 
 ## 程式設計代理
 
-[djLint 外掛](https://github.com/djlint/agent-plugins)會把程式設計代理所編輯範本的檢查結果交給它，讓它在繼續下一步之前修正。它們需要 PATH 上的 djLint 1.49 或更新版本；如果你在啟用專案虛擬環境的狀態下啟動代理，也可以是該虛擬環境中的 djLint。它們會對符合 [JetBrains IDE](#jetbrains-ide) 一節表格中模式的檔案進行 lint。請在專案的設定中指定 [profile](/zh-tw/docs/configuration/#profile)，所有外掛都會依照它。
+[djLint 外掛](https://github.com/djlint/agent-plugins)會把 Claude Code、Codex、GitHub Copilot CLI、Gemini CLI 和 OpenCode 所編輯範本的檢查結果交給它們，讓代理在繼續下一步之前修正。它們的 [README](https://github.com/djlint/agent-plugins#readme) 說明了如何在各個代理中安裝與更新它們。
 
-在編輯器中運作的代理，例如 Cursor、Windsurf 或 Zed 的代理，或 VS Code 中的 Copilot，看到的則是編輯器的 djLint 擴充功能所提供的檢查結果。
-
-### Claude Code
-
-這個外掛會執行[語言伺服器](#語言伺服器)，Claude Code 會在每次編輯後把它的檢查結果顯示給模型。在工作階段中執行：
-
-```text
-/plugin marketplace add djlint/agent-plugins
-/plugin install djlint@djlint
-```
-
-Claude Code 不會自動更新來自其他 marketplace 的外掛。請在 `/plugin` 中為 `djlint` marketplace 開啟自動更新，或執行 `claude plugin update djlint@djlint`。
-
-### Codex
-
-一個 hook 會對代理新增或變更的範本進行 lint，並將檢查結果加到其編輯的結果中。它使用 PATH 上的 Node.js 執行。
-
-```bash
-codex plugin marketplace add djlint/agent-plugins
-codex plugin add djlint@djlint
-```
-
-你必須先在 `/hooks` 中信任這個 hook，Codex 才會執行它，而且每次更新後都會再次詢問。若要更新，請執行 `codex plugin marketplace upgrade djlint`，再執行 `codex plugin add djlint@djlint`。
-
-### GitHub Copilot CLI
-
-與 Codex 相同的 hook，使用 PATH 上的 Node.js 執行：
-
-```bash
-copilot plugin marketplace add djlint/agent-plugins
-copilot plugin install djlint@djlint
-```
-
-若要更新，請執行 `copilot plugin update djlint`。
-
-### Gemini CLI
-
-同一個 hook，以擴充功能的形式提供：
-
-```bash
-gemini extensions install https://github.com/djlint/agent-plugins
-```
-
-若要更新，請執行 `gemini extensions update djlint`。
-
-### OpenCode
-
-在 OpenCode 2 中，這是一個會將檢查結果加到每次編輯結果中的外掛：
-
-```bash
-opencode plugin add github:djlint/agent-plugins#main
-```
-
-OpenCode 1 及其分支（例如 Kilo Code）在 `opencode.json` 中設定它：
-
-```json
-{ "plugin": ["github:djlint/agent-plugins#main"] }
-```
-
-它會自動從 `main` 分支更新。
+在編輯器中運作的代理，例如 Cursor、Windsurf 或 Zed 的代理，或 VS Code 中的 Copilot，看到的則是編輯器的 djLint 擴充功能所提供的檢查結果。Crush 和 Aider 不需要外掛。
 
 ### Crush
 
