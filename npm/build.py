@@ -51,7 +51,7 @@ if TYPE_CHECKING:
 
 # Renovate updates it. Each release has every Python version, and the package
 # takes the newest one of PYTHON.
-PYTHON_BUILD_STANDALONE: Final = "20261123"
+PYTHON_BUILD_STANDALONE: Final = "20261124"
 # Renovate moves it, with requires-python above, to CI's newest Python. Every
 # dependency needs wheels for that one, or the build stops.
 PYTHON: Final = "3.15"
