@@ -211,49 +211,9 @@ Emacs 29 及更新版本內建的 Eglot：
 
 ## 程式設計代理
 
-[djLint 外掛](https://github.com/djlint/agent-plugins)會把 Claude Code、Codex、GitHub Copilot CLI、Gemini CLI 和 OpenCode 所編輯範本的檢查結果交給它們，讓代理在繼續下一步之前修正。它們的 [README](https://github.com/djlint/agent-plugins#readme) 說明了如何在各個代理中安裝與更新它們。
+[djLint 外掛](https://github.com/djlint/agent-plugins)會把 Claude Code、Codex、GitHub Copilot CLI、Gemini CLI 和 OpenCode 所編輯範本的檢查結果交給它們，讓代理在繼續下一步之前修正。它們的 [README](https://github.com/djlint/agent-plugins#readme) 說明了如何在各個代理中安裝與更新它們，以及如何設定 Crush、Aider 和會讀取 Agent Skills 的代理。
 
-在編輯器中運作的代理，例如 Cursor、Windsurf 或 Zed 的代理，或 VS Code 中的 Copilot，看到的則是編輯器的 djLint 擴充功能所提供的檢查結果。Crush 和 Aider 不需要外掛。
-
-### Crush
-
-Crush 透過 `crush.json` 執行語言伺服器，並在每次編輯後把它的檢查結果顯示給代理：
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider 會對它編輯的檔案進行 lint，並把 linter 輸出的內容交給模型。若要用 djLint 對 HTML 檔案進行 lint：
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+在編輯器中運作的代理，例如 Cursor、Windsurf 或 Zed 的代理，或 VS Code 中的 Copilot，看到的則是編輯器的 djLint 擴充功能所提供的檢查結果。
 
 ## 語言伺服器
 

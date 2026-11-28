@@ -211,49 +211,9 @@ Poi esegui `M-x eglot` in un template. `eglot-format-buffer` lo formatta. `html-
 
 ## Agenti di programmazione
 
-I [plugin di djLint](https://github.com/djlint/agent-plugins) passano a Claude Code, Codex, GitHub Copilot CLI, Gemini CLI e OpenCode le segnalazioni sui template che modificano, così l'agente le corregge prima di andare avanti. Il loro [README](https://github.com/djlint/agent-plugins#readme) spiega come installarli e aggiornarli in ciascun agente.
+I [plugin di djLint](https://github.com/djlint/agent-plugins) passano a Claude Code, Codex, GitHub Copilot CLI, Gemini CLI e OpenCode le segnalazioni sui template che modificano, così l'agente le corregge prima di andare avanti. Il loro [README](https://github.com/djlint/agent-plugins#readme) spiega come installarli e aggiornarli in ciascun agente, e come configurare Crush, Aider e gli agenti che leggono le Agent Skills.
 
-Un agente che lavora nel tuo editor, come quelli di Cursor, Windsurf o Zed, o Copilot in VS Code, vede invece le segnalazioni dell'estensione djLint dell'editor. Crush e Aider non hanno bisogno di alcun plugin.
-
-### Crush
-
-Crush esegue il server di linguaggio da `crush.json` e mostra all'agente le sue segnalazioni dopo ogni modifica:
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider esegue il lint dei file che modifica e passa al modello ciò che stampa il linter. Per eseguire il lint dei file HTML con djLint:
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Un agente che lavora nel tuo editor, come quelli di Cursor, Windsurf o Zed, o Copilot in VS Code, vede invece le segnalazioni dell'estensione djLint dell'editor.
 
 ## Server di linguaggio
 

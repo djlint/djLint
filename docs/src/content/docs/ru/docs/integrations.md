@@ -211,49 +211,9 @@ Eglot, входящий в состав Emacs 29 и новее:
 
 ## Агенты для программирования
 
-[Плагины djLint](https://github.com/djlint/agent-plugins) передают Claude Code, Codex, GitHub Copilot CLI, Gemini CLI и OpenCode замечания по шаблонам, которые те редактируют, чтобы агент исправил их, прежде чем двигаться дальше. В их [README](https://github.com/djlint/agent-plugins#readme) описано, как установить и обновить их в каждом агенте.
+[Плагины djLint](https://github.com/djlint/agent-plugins) передают Claude Code, Codex, GitHub Copilot CLI, Gemini CLI и OpenCode замечания по шаблонам, которые те редактируют, чтобы агент исправил их, прежде чем двигаться дальше. В их [README](https://github.com/djlint/agent-plugins#readme) описано, как установить и обновить их в каждом агенте, а также как настроить Crush, Aider и агентов, которые читают Agent Skills.
 
-Агент, который работает в вашем редакторе, например агент Cursor, Windsurf или Zed или Copilot в VS Code, вместо этого видит замечания расширения djLint для редактора. Для Crush и Aider плагин не нужен.
-
-### Crush
-
-Crush запускает языковой сервер, настроенный в `crush.json`, и показывает агенту его замечания после каждой правки:
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider проверяет файлы, которые редактирует, и передаёт модели то, что выводит линтер. Чтобы проверять HTML-файлы через djLint:
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Агент, который работает в вашем редакторе, например агент Cursor, Windsurf или Zed или Copilot в VS Code, вместо этого видит замечания расширения djLint для редактора.
 
 ## Языковой сервер
 

@@ -211,49 +211,9 @@ Después ejecuta `M-x eglot` en una plantilla. `eglot-format-buffer` la formatea
 
 ## Agentes de programación
 
-Los [plugins de djLint](https://github.com/djlint/agent-plugins) les pasan a Claude Code, Codex, GitHub Copilot CLI, Gemini CLI y OpenCode los problemas de las plantillas que editan, para que el agente los corrija antes de seguir. Su [README](https://github.com/djlint/agent-plugins#readme) explica cómo instalarlos y actualizarlos en cada agente.
+Los [plugins de djLint](https://github.com/djlint/agent-plugins) les pasan a Claude Code, Codex, GitHub Copilot CLI, Gemini CLI y OpenCode los problemas de las plantillas que editan, para que el agente los corrija antes de seguir. Su [README](https://github.com/djlint/agent-plugins#readme) explica cómo instalarlos y actualizarlos en cada agente, y cómo configurar Crush, Aider y los agentes que leen Agent Skills.
 
-Un agente que trabaja en tu editor, como los de Cursor, Windsurf o Zed, o Copilot en VS Code, ve en su lugar los problemas de la extensión de djLint del editor. Crush y Aider no necesitan ningún plugin.
-
-### Crush
-
-Crush ejecuta el servidor de lenguaje desde `crush.json` y le muestra al agente sus problemas después de cada edición:
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider analiza los archivos que edita y le pasa al modelo lo que imprime el linter. Para analizar archivos HTML con djLint:
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Un agente que trabaja en tu editor, como los de Cursor, Windsurf o Zed, o Copilot en VS Code, ve en su lugar los problemas de la extensión de djLint del editor.
 
 ## Servidor de lenguaje
 

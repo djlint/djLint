@@ -211,49 +211,9 @@ Emacs 29 以降に付属している Eglot を使います：
 
 ## コーディングエージェント
 
-[djLint プラグイン](https://github.com/djlint/agent-plugins)は、Claude Code、Codex、GitHub Copilot CLI、Gemini CLI、OpenCode が編集したテンプレートの検出結果をエージェントに渡し、次の作業に進む前に修正させます。各エージェントへのインストール方法と更新方法は [README](https://github.com/djlint/agent-plugins#readme) で説明しています。
+[djLint プラグイン](https://github.com/djlint/agent-plugins)は、Claude Code、Codex、GitHub Copilot CLI、Gemini CLI、OpenCode が編集したテンプレートの検出結果をエージェントに渡し、次の作業に進む前に修正させます。各エージェントへのインストール方法と更新方法、および Crush、Aider、Agent Skills を読み込むエージェントの設定方法は [README](https://github.com/djlint/agent-plugins#readme) で説明しています。
 
-Cursor、Windsurf、Zed のエージェントや VS Code の Copilot のように、エディター内で動くエージェントには、代わりにエディターの djLint 拡張機能の検出結果が見えます。Crush と Aider にはプラグインは不要です。
-
-### Crush
-
-Crush は `crush.json` から言語サーバーを実行し、編集のたびにその検出結果をエージェントに示します：
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider は編集したファイルをリントし、リンターの出力をモデルに渡します。HTML ファイルを djLint でリントするには：
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Cursor、Windsurf、Zed のエージェントや VS Code の Copilot のように、エディター内で動くエージェントには、代わりにエディターの djLint 拡張機能の検出結果が見えます。
 
 ## 言語サーバー
 

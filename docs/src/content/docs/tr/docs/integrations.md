@@ -211,49 +211,9 @@ Ardından bir şablonda `M-x eglot` çalıştırın. `eglot-format-buffer` şabl
 
 ## Kodlama ajanları
 
-[djLint eklentileri](https://github.com/djlint/agent-plugins), Claude Code, Codex, GitHub Copilot CLI, Gemini CLI ve OpenCode'a düzenledikleri şablonlardaki bulguları iletir; böylece ajan, devam etmeden önce bunları düzeltir. Eklentilerin [README](https://github.com/djlint/agent-plugins#readme) dosyası, her ajanda nasıl kurulup güncelleneceklerini anlatır.
+[djLint eklentileri](https://github.com/djlint/agent-plugins), Claude Code, Codex, GitHub Copilot CLI, Gemini CLI ve OpenCode'a düzenledikleri şablonlardaki bulguları iletir; böylece ajan, devam etmeden önce bunları düzeltir. Eklentilerin [README](https://github.com/djlint/agent-plugins#readme) dosyası, her ajanda nasıl kurulup güncelleneceklerini ve Crush, Aider ile Agent Skills okuyan ajanların nasıl ayarlanacağını anlatır.
 
-Cursor, Windsurf veya Zed'in ajanları ya da VS Code'daki Copilot gibi düzenleyicinizin içinde çalışan bir ajan, bunun yerine düzenleyicinin djLint uzantısının bulgularını görür. Crush ve Aider için eklenti gerekmez.
-
-### Crush
-
-Crush dil sunucusunu `crush.json` dosyasından çalıştırır ve her düzenlemeden sonra sunucunun bulgularını ajana gösterir:
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider düzenlediği dosyaları denetler ve linter'ın yazdırdıklarını modele iletir. HTML dosyalarını djLint ile denetlemek için:
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Cursor, Windsurf veya Zed'in ajanları ya da VS Code'daki Copilot gibi düzenleyicinizin içinde çalışan bir ajan, bunun yerine düzenleyicinin djLint uzantısının bulgularını görür.
 
 ## Dil sunucusu
 
