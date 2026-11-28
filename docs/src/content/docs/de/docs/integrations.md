@@ -15,7 +15,7 @@ Das [README](https://github.com/djlint/djlint-vscode#readme) der Erweiterung bes
 
 ## Zed
 
-Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprachserver](#sprachserver) in HTML und in den Sprachen der Template-Erweiterungen aus, etwa Django, Jinja und Twig. Sie ist noch nicht in der Erweiterungsliste von Zed. Ihr [README](https://github.com/djlint/djlint-zed#readme) beschreibt, wie Sie sie als Dev-Erweiterung installieren, welches djLint sie ausführt und wie Sie sie einrichten.
+Die [djLint-Erweiterung](https://github.com/djlint/djlint-zed) führt den [Sprachserver](#sprachserver) in HTML und in den Sprachen der Template-Erweiterungen aus, etwa Django, Jinja und Twig. Installieren Sie sie über **zed: extensions**. Ihr [README](https://github.com/djlint/djlint-zed#readme) beschreibt, welches djLint sie ausführt und wie Sie sie einrichten.
 
 ## Neovim
 

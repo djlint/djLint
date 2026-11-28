@@ -15,7 +15,7 @@ Visual Studio Marketplace에서 [djLint 확장](https://marketplace.visualstudio
 
 ## Zed
 
-[djLint 확장](https://github.com/djlint/djlint-zed)은 HTML과 Django, Jinja, Twig 같은 템플릿 확장의 언어에서 [언어 서버](#언어-서버)를 실행합니다. 아직 Zed 확장 레지스트리에는 없습니다. 개발 확장으로 설치하는 방법, 어떤 djLint를 실행하는지, 설정 방법은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
+[djLint 확장](https://github.com/djlint/djlint-zed)은 HTML과 Django, Jinja, Twig 같은 템플릿 확장의 언어에서 [언어 서버](#언어-서버)를 실행합니다. **zed: extensions**에서 설치하세요. 어떤 djLint를 실행하는지와 설정 방법은 [README](https://github.com/djlint/djlint-zed#readme)에서 설명합니다.
 
 ## Neovim
 

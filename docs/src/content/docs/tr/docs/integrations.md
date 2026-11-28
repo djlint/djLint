@@ -15,7 +15,7 @@ Uzantının [README](https://github.com/djlint/djlint-vscode#readme) dosyası, a
 
 ## Zed
 
-[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Henüz Zed'in uzantı kayıt defterinde değildir. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, onu geliştirme uzantısı olarak nasıl kuracağınızı, hangi djLint'i çalıştırdığını ve nasıl ayarlayacağınızı anlatır.
+[djLint uzantısı](https://github.com/djlint/djlint-zed), [dil sunucusunu](#dil-sunucusu) HTML'de ve Django, Jinja, Twig gibi şablon uzantılarının dillerinde çalıştırır. Uzantıyı **zed: extensions** üzerinden kurun. Uzantının [README](https://github.com/djlint/djlint-zed#readme) dosyası, hangi djLint'i çalıştırdığını ve nasıl ayarlayacağınızı anlatır.
 
 ## Neovim
 

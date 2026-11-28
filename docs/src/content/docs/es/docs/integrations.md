@@ -15,7 +15,7 @@ Su [README](https://github.com/djlint/djlint-vscode#readme) describe sus ajustes
 
 ## Zed
 
-La [extensión de djLint](https://github.com/djlint/djlint-zed) ejecuta el [servidor de lenguaje](#servidor-de-lenguaje) en HTML y en los lenguajes de las extensiones de plantillas, como Django, Jinja y Twig. Todavía no está en el registro de extensiones de Zed. Su [README](https://github.com/djlint/djlint-zed#readme) explica cómo instalarla como extensión de desarrollo, qué djLint ejecuta y cómo configurarla.
+La [extensión de djLint](https://github.com/djlint/djlint-zed) ejecuta el [servidor de lenguaje](#servidor-de-lenguaje) en HTML y en los lenguajes de las extensiones de plantillas, como Django, Jinja y Twig. Instálala desde **zed: extensions**. Su [README](https://github.com/djlint/djlint-zed#readme) explica qué djLint ejecuta y cómo configurarla.
 
 ## Neovim
 

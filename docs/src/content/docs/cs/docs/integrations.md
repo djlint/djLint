@@ -15,7 +15,7 @@ Jeho [README](https://github.com/djlint/djlint-vscode#readme) popisuje nastaven�
 
 ## Zed
 
-[Rozšíření djLint](https://github.com/djlint/djlint-zed) spouští [jazykový server](#jazykovy-server) v HTML a v jazycích šablonových rozšíření, například Django, Jinja a Twig. V registru rozšíření Zedu zatím není. Jeho [README](https://github.com/djlint/djlint-zed#readme) popisuje, jak ho nainstalovat jako vývojové rozšíření (dev extension), který djLint spouští a jak ho nastavit.
+[Rozšíření djLint](https://github.com/djlint/djlint-zed) spouští [jazykový server](#jazykovy-server) v HTML a v jazycích šablonových rozšíření, například Django, Jinja a Twig. Nainstalujte ho přes **zed: extensions**. Jeho [README](https://github.com/djlint/djlint-zed#readme) popisuje, který djLint spouští a jak ho nastavit.
 
 ## Neovim
 
