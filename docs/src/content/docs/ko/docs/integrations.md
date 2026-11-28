@@ -211,49 +211,9 @@ Emacs 29 이상에 포함된 Eglot에서는 다음과 같이 합니다.
 
 ## 코딩 에이전트
 
-[djLint 플러그인](https://github.com/djlint/agent-plugins)은 Claude Code, Codex, GitHub Copilot CLI, Gemini CLI, OpenCode가 편집하는 템플릿의 검사 결과를 에이전트에게 전달해, 다음 작업으로 넘어가기 전에 고치게 합니다. 각 에이전트에 설치하고 업데이트하는 방법은 [README](https://github.com/djlint/agent-plugins#readme)에서 설명합니다.
+[djLint 플러그인](https://github.com/djlint/agent-plugins)은 Claude Code, Codex, GitHub Copilot CLI, Gemini CLI, OpenCode가 편집하는 템플릿의 검사 결과를 에이전트에게 전달해, 다음 작업으로 넘어가기 전에 고치게 합니다. 각 에이전트에 설치하고 업데이트하는 방법과 Crush, Aider, Agent Skills를 읽는 에이전트를 설정하는 방법은 [README](https://github.com/djlint/agent-plugins#readme)에서 설명합니다.
 
-Cursor, Windsurf, Zed의 에이전트나 VS Code의 Copilot처럼 에디터 안에서 동작하는 에이전트는 대신 에디터의 djLint 확장이 보여 주는 검사 결과를 봅니다. Crush와 Aider에는 플러그인이 필요하지 않습니다.
-
-### Crush
-
-Crush는 `crush.json`에서 언어 서버를 실행하고, 편집할 때마다 그 검사 결과를 에이전트에게 보여 줍니다.
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider는 편집하는 파일을 린트하고 린터가 출력한 내용을 모델에 전달합니다. HTML 파일을 djLint로 린트하려면 다음과 같이 합니다.
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Cursor, Windsurf, Zed의 에이전트나 VS Code의 Copilot처럼 에디터 안에서 동작하는 에이전트는 대신 에디터의 djLint 확장이 보여 주는 검사 결과를 봅니다.
 
 ## 언어 서버
 

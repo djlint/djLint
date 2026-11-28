@@ -211,49 +211,9 @@ Helix 本身不会把任何文件当作 `htmldjango` 打开。在 Django 项目�
 
 ## 编程智能体
 
-[djLint 插件](https://github.com/djlint/agent-plugins)会把 Claude Code、Codex、GitHub Copilot CLI、Gemini CLI 和 OpenCode 所编辑模板的检查结果交给它们，让智能体在继续下一步之前修复这些问题。其 [README](https://github.com/djlint/agent-plugins#readme) 介绍了如何在各个智能体中安装和更新它们。
+[djLint 插件](https://github.com/djlint/agent-plugins)会把 Claude Code、Codex、GitHub Copilot CLI、Gemini CLI 和 OpenCode 所编辑模板的检查结果交给它们，让智能体在继续下一步之前修复这些问题。其 [README](https://github.com/djlint/agent-plugins#readme) 介绍了如何在各个智能体中安装和更新它们，以及如何配置 Crush、Aider 和读取 Agent Skills 的智能体。
 
-在编辑器中工作的智能体，例如 Cursor、Windsurf 或 Zed 中的智能体，或 VS Code 中的 Copilot，看到的则是编辑器中 djLint 扩展给出的检查结果。Crush 和 Aider 不需要插件。
-
-### Crush
-
-Crush 通过 `crush.json` 运行语言服务器，并在每次编辑后把它的检查结果展示给智能体：
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider 会检查它编辑的文件，并把代码检查工具输出的内容交给模型。要用 djLint 检查 HTML 文件：
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+在编辑器中工作的智能体，例如 Cursor、Windsurf 或 Zed 中的智能体，或 VS Code 中的 Copilot，看到的则是编辑器中 djLint 扩展给出的检查结果。
 
 ## 语言服务器
 

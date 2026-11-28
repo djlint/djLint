@@ -211,49 +211,9 @@ Em seguida, execute `M-x eglot` em um template. `eglot-format-buffer` o formata.
 
 ## Agentes de programação
 
-Os [plugins do djLint](https://github.com/djlint/agent-plugins) entregam ao Claude Code, Codex, GitHub Copilot CLI, Gemini CLI e OpenCode as ocorrências nos templates que eles editam, para que o agente as corrija antes de seguir em frente. O [README](https://github.com/djlint/agent-plugins#readme) deles explica como instalá-los e atualizá-los em cada agente.
+Os [plugins do djLint](https://github.com/djlint/agent-plugins) entregam ao Claude Code, Codex, GitHub Copilot CLI, Gemini CLI e OpenCode as ocorrências nos templates que eles editam, para que o agente as corrija antes de seguir em frente. O [README](https://github.com/djlint/agent-plugins#readme) deles explica como instalá-los e atualizá-los em cada agente, e como configurar o Crush, o Aider e os agentes que leem Agent Skills.
 
-Um agente que trabalha no seu editor, como os do Cursor, Windsurf ou Zed, ou o Copilot no VS Code, vê em vez disso as ocorrências da extensão do djLint do editor. O Crush e o Aider não precisam de plugin.
-
-### Crush
-
-O Crush executa o servidor de linguagem a partir do `crush.json` e mostra ao agente as ocorrências dele após cada edição:
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-O Aider faz o lint dos arquivos que edita e passa ao modelo o que o linter imprime. Para fazer o lint de arquivos HTML com o djLint:
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Um agente que trabalha no seu editor, como os do Cursor, Windsurf ou Zed, ou o Copilot no VS Code, vê em vez disso as ocorrências da extensão do djLint do editor.
 
 ## Servidor de linguagem
 

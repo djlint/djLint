@@ -211,49 +211,9 @@ Exécutez ensuite `M-x eglot` dans un template. `eglot-format-buffer` le formate
 
 ## Agents de codage
 
-Les [plugins djLint](https://github.com/djlint/agent-plugins) transmettent à Claude Code, Codex, GitHub Copilot CLI, Gemini CLI et OpenCode les signalements sur les templates qu'ils modifient, pour que l'agent les corrige avant de passer à la suite. Leur [README](https://github.com/djlint/agent-plugins#readme) explique comment les installer et les mettre à jour dans chaque agent.
+Les [plugins djLint](https://github.com/djlint/agent-plugins) transmettent à Claude Code, Codex, GitHub Copilot CLI, Gemini CLI et OpenCode les signalements sur les templates qu'ils modifient, pour que l'agent les corrige avant de passer à la suite. Leur [README](https://github.com/djlint/agent-plugins#readme) explique comment les installer et les mettre à jour dans chaque agent, et comment configurer Crush, Aider et les agents qui lisent les Agent Skills.
 
-Un agent qui travaille dans votre éditeur, comme ceux de Cursor, Windsurf ou Zed, ou Copilot dans VS Code, voit à la place les signalements de l'extension djLint de l'éditeur. Crush et Aider n'ont besoin d'aucun plugin.
-
-### Crush
-
-Crush exécute le serveur de langage depuis `crush.json`, et montre à l'agent ses signalements après chaque modification :
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider linte les fichiers qu'il modifie et transmet au modèle ce qu'affiche le linter. Pour linter les fichiers HTML avec djLint :
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Un agent qui travaille dans votre éditeur, comme ceux de Cursor, Windsurf ou Zed, ou Copilot dans VS Code, voit à la place les signalements de l'extension djLint de l'éditeur.
 
 ## Serveur de langage
 

@@ -211,49 +211,9 @@ Następnie uruchom `M-x eglot` w szablonie. `eglot-format-buffer` go sformatuje.
 
 ## Agenci programistyczni
 
-[Wtyczki djLint](https://github.com/djlint/agent-plugins) przekazują agentom Claude Code, Codex, GitHub Copilot CLI, Gemini CLI i OpenCode zgłoszenia dotyczące szablonów, które edytują, aby agent poprawił je, zanim przejdzie dalej. Ich [README](https://github.com/djlint/agent-plugins#readme) opisuje, jak zainstalować i aktualizować je w każdym agencie.
+[Wtyczki djLint](https://github.com/djlint/agent-plugins) przekazują agentom Claude Code, Codex, GitHub Copilot CLI, Gemini CLI i OpenCode zgłoszenia dotyczące szablonów, które edytują, aby agent poprawił je, zanim przejdzie dalej. Ich [README](https://github.com/djlint/agent-plugins#readme) opisuje, jak zainstalować i aktualizować je w każdym agencie oraz jak skonfigurować Crush, Aider i agentów odczytujących Agent Skills.
 
-Agent działający w twoim edytorze, na przykład agent Cursora, Windsurfa lub Zeda albo Copilot w VS Code, widzi zamiast tego zgłoszenia rozszerzenia djLint w edytorze. Crush i Aider nie potrzebują wtyczki.
-
-### Crush
-
-Crush uruchamia serwer języka skonfigurowany w `crush.json` i po każdej edycji pokazuje agentowi jego zgłoszenia:
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider lintuje pliki, które edytuje, i przekazuje modelowi to, co wypisuje linter. Aby lintować pliki HTML za pomocą djLint:
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Agent działający w twoim edytorze, na przykład agent Cursora, Windsurfa lub Zeda albo Copilot w VS Code, widzi zamiast tego zgłoszenia rozszerzenia djLint w edytorze.
 
 ## Serwer języka
 

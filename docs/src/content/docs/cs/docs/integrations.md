@@ -211,49 +211,9 @@ Pak v šabloně spusťte `M-x eglot`. Příkaz `eglot-format-buffer` ji naform�
 
 ## Agenti pro programování
 
-[Pluginy djLint](https://github.com/djlint/agent-plugins) předávají agentům Claude Code, Codex, GitHub Copilot CLI, Gemini CLI a OpenCode nálezy v šablonách, které upravují, aby je agent opravil dřív, než bude pokračovat. Jejich [README](https://github.com/djlint/agent-plugins#readme) popisuje, jak je v jednotlivých agentech nainstalovat a aktualizovat.
+[Pluginy djLint](https://github.com/djlint/agent-plugins) předávají agentům Claude Code, Codex, GitHub Copilot CLI, Gemini CLI a OpenCode nálezy v šablonách, které upravují, aby je agent opravil dřív, než bude pokračovat. Jejich [README](https://github.com/djlint/agent-plugins#readme) popisuje, jak je v jednotlivých agentech nainstalovat a aktualizovat a jak nastavit Crush, Aider a agenty, kteří čtou Agent Skills.
 
-Agent, který pracuje ve vašem editoru, například agenti Cursoru, Windsurfu nebo Zedu nebo Copilot ve VS Code, místo toho vidí nálezy rozšíření djLint v editoru. Crush a Aider žádný plugin nepotřebují.
-
-### Crush
-
-Crush spouští jazykový server ze souboru `crush.json` a po každé úpravě ukazuje agentovi jeho nálezy:
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider lintuje soubory, které upravuje, a předává modelu to, co vypíše linter. Pro lintování HTML souborů pomocí djLint:
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Agent, který pracuje ve vašem editoru, například agenti Cursoru, Windsurfu nebo Zedu nebo Copilot ve VS Code, místo toho vidí nálezy rozšíření djLint v editoru.
 
 ## Jazykový server
 

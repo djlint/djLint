@@ -211,49 +211,9 @@ Führen Sie dann in einem Template `M-x eglot` aus. `eglot-format-buffer` format
 
 ## Coding-Agenten
 
-Die [djLint-Plug-ins](https://github.com/djlint/agent-plugins) geben Claude Code, Codex, GitHub Copilot CLI, Gemini CLI und OpenCode die Befunde zu den Templates, die sie bearbeiten, damit der Agent sie behebt, bevor er weitermacht. Ihr [README](https://github.com/djlint/agent-plugins#readme) beschreibt, wie Sie sie in jedem Agenten installieren und aktualisieren.
+Die [djLint-Plug-ins](https://github.com/djlint/agent-plugins) geben Claude Code, Codex, GitHub Copilot CLI, Gemini CLI und OpenCode die Befunde zu den Templates, die sie bearbeiten, damit der Agent sie behebt, bevor er weitermacht. Ihr [README](https://github.com/djlint/agent-plugins#readme) beschreibt, wie Sie sie in jedem Agenten installieren und aktualisieren und wie Sie Crush, Aider und die Agenten einrichten, die Agent Skills lesen.
 
-Ein Agent, der in Ihrem Editor arbeitet, etwa der von Cursor, Windsurf oder Zed oder Copilot in VS Code, sieht stattdessen die Befunde der djLint-Erweiterung des Editors. Crush und Aider brauchen kein Plug-in.
-
-### Crush
-
-Crush führt den Sprachserver über `crush.json` aus und zeigt dem Agenten nach jeder Bearbeitung dessen Befunde:
-
-```json
-{
-  "lsp": {
-    "djlint": {
-      "command": "djlint",
-      "args": ["--lsp"],
-      "filetypes": [
-        "html",
-        "htm",
-        "jinja",
-        "jinja2",
-        "j2",
-        "njk",
-        "twig",
-        "hbs",
-        "handlebars",
-        "mustache",
-        "liquid",
-        "gotmpl",
-        "gohtml",
-        "tera",
-        "mako"
-      ]
-    }
-  }
-}
-```
-
-### Aider
-
-Aider lintet die Dateien, die es bearbeitet, und gibt dem Modell weiter, was der Linter ausgibt. Um HTML-Dateien mit djLint zu linten:
-
-```bash
-aider --lint-cmd "html: djlint --lint"
-```
+Ein Agent, der in Ihrem Editor arbeitet, etwa der von Cursor, Windsurf oder Zed oder Copilot in VS Code, sieht stattdessen die Befunde der djLint-Erweiterung des Editors.
 
 ## Sprachserver
 
