@@ -113,6 +113,11 @@
     { "matchDepTypes": ["devDependencies"], "matchManagers": ["npm"], "automerge": true },
     { "matchManagers": ["github-actions", "pre-commit"], "automerge": true },
     {
+      "description": "python-build-standalone names its releases by date, so Renovate takes each one for a major update. A release brings newer builds of the same Pythons and the libraries in them, and the npm tests run on those",
+      "matchDepNames": ["astral-sh/python-build-standalone"],
+      "automerge": true
+    },
+    {
       "description": "A new Node is reviewed by hand, in one pull request with its types and tsconfig base. Node versioning holds Node and its types back until the major version reaches LTS. The base is a replacement from Renovate's list, which learns of a new one on its own schedule. Renovate never groups a replacement, so the branch topic puts it in the branch of the group's majors",
       "matchPackageNames": ["node", "@types/node", "/^@tsconfig/node\\d+$/"],
       "matchUpdateTypes": ["major", "replacement"],
